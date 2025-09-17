@@ -206,6 +206,20 @@ class ChatManager {
 				// Update last_message
 				$this->roomService->setLastMessage($chat, $comment);
 				$this->unreadCountCache->clear($chat->getId() . '-');
+
+				if ($threadId !== 0) {
+					$isThread = $this->threadService->updateLastMessageInfoAfterReply($threadId, (int)$comment->getId());
+					if ($isThread && $actorType === Attendee::ACTOR_USERS) {
+						try {
+							// Add to subscribed threads list
+							$participant = $this->participantService->getParticipant($chat, $actorId);
+							$this->threadService->ensureIsThreadAttendee($participant->getAttendee(), $threadId);
+						} catch (ParticipantNotFoundException) {
+						}
+					} elseif (!$isThread) {
+						$threadId = 0;
+					}
+				}
 			}
 
 			if ($sendNotifications) {
@@ -220,7 +234,7 @@ class ChatManager {
 						$federatedUsersDirectlyMentioned = $this->notifier->getMentionedCloudIds($captionComment);
 					}
 					if ($replyTo instanceof IComment) {
-						$alreadyNotifiedUsers = $this->notifier->notifyReplyToAuthor($chat, $comment, $replyTo, $silent);
+						$alreadyNotifiedUsers = $this->notifier->notifyReplyToAuthor($chat, $comment, $replyTo, $silent, $threadId);
 						if ($replyTo->getActorType() === Attendee::ACTOR_USERS) {
 							$usersDirectlyMentioned[] = $replyTo->getActorId();
 						} elseif ($replyTo->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
@@ -229,7 +243,7 @@ class ChatManager {
 					}
 				}
 
-				$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $captionComment ?? $comment, $alreadyNotifiedUsers, $silent);
+				$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $captionComment ?? $comment, $alreadyNotifiedUsers, $silent, threadId: $threadId);
 				if (!empty($alreadyNotifiedUsers)) {
 					$userIds = array_column($alreadyNotifiedUsers, 'id');
 					$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_USERS, $userIds, (int)$comment->getId(), $usersDirectlyMentioned);
@@ -429,8 +443,10 @@ class ChatManager {
 			$messageId = (int)$comment->getId();
 			$threadId = (int)$comment->getTopmostParentId();
 			if ($threadId !== 0) {
-				$this->threadService->updateLastMessageInfoAfterReply($threadId, $messageId);
-				if ($participant instanceof Participant) {
+				$isThread = $this->threadService->updateLastMessageInfoAfterReply($threadId, $messageId);
+				if (!$isThread) {
+					$threadId = 0;
+				} elseif ($participant instanceof Participant) {
 					// Add to subscribed threads list
 					$this->threadService->ensureIsThreadAttendee($participant->getAttendee(), $threadId);
 				}
@@ -454,7 +470,7 @@ class ChatManager {
 			$usersDirectlyMentioned = $this->notifier->getMentionedUserIds($comment);
 			$federatedUsersDirectlyMentioned = $this->notifier->getMentionedCloudIds($comment);
 			if ($replyTo instanceof IComment) {
-				$alreadyNotifiedUsers = $this->notifier->notifyReplyToAuthor($chat, $comment, $replyTo, $silent);
+				$alreadyNotifiedUsers = $this->notifier->notifyReplyToAuthor($chat, $comment, $replyTo, $silent, $threadId);
 				if ($replyTo->getActorType() === Attendee::ACTOR_USERS) {
 					$usersDirectlyMentioned[] = $replyTo->getActorId();
 				} elseif ($replyTo->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
@@ -462,7 +478,7 @@ class ChatManager {
 				}
 			}
 
-			$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $alreadyNotifiedUsers, $silent, $participant);
+			$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $alreadyNotifiedUsers, $silent, $participant, threadId: $threadId);
 			if (!empty($alreadyNotifiedUsers)) {
 				$userIds = array_column($alreadyNotifiedUsers, 'id');
 				$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_USERS, $userIds, (int)$comment->getId(), $usersDirectlyMentioned);
