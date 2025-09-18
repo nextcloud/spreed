@@ -319,6 +319,7 @@ class Config {
 		}
 
 		if (str_starts_with($url, 'http://')) {
+			// noopengrep: javascript.lang.security.detect-insecure-websocket.detect-insecure-websocket
 			return 'ws://' . substr($url, 7, strpos($url, '/', 7) - 7);
 		}
 
@@ -326,6 +327,7 @@ class Config {
 			return substr($url, 0, strpos($url, '/', 6));
 		}
 
+		// noopengrep: javascript.lang.security.detect-insecure-websocket.detect-insecure-websocket
 		if (str_starts_with($url, 'ws://')) {
 			return substr($url, 0, strpos($url, '/', 5));
 		}

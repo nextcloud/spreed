@@ -65,6 +65,7 @@ class TempAvatarController extends OCSController {
 				);
 			}
 			$content = file_get_contents($files['tmp_name'][0]);
+			// noopengrep: php.lang.security.unlink-use.unlink-use
 			unlink($files['tmp_name'][0]);
 		} else {
 			return new DataResponse(
