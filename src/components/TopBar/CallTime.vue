@@ -242,6 +242,8 @@ export default {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		// Align characters width for any font
+		font-variant-numeric: tabular-nums;
 	}
 
 	&__placeholder {
