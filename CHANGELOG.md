@@ -5,6 +5,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 20.1.10 – 2025-09-18
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(chat): Support at-all in captions
+  [#15746](https://github.com/nextcloud/spreed/issues/15746)
+- fix(chat): Fix loading a completely empty conversation as a guest
+  [#15551](https://github.com/nextcloud/spreed/issues/15551)
+- fix(conversation): Fix joining and leaving conversations when errors occurred
+  [#15796](https://github.com/nextcloud/spreed/issues/15796)
+
 ## 20.1.9 – 2025-07-17
 ### Changed
 - Update translations
