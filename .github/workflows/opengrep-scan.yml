@@ -30,6 +30,7 @@ jobs:
       - name: Run OpenGrep with custom rules
         run: |
           opengrep \
+          --opengrep-ignore-pattern=noopengrep \
           --error \
           --sarif \
           --sarif-output findings.sarif \

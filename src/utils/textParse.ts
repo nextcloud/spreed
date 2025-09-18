@@ -44,7 +44,7 @@ function parseMentions(text: string, parameters: ChatMessage['messageParameters'
 
 		if (mention) {
 			// It's server-side value, we can skip the security check
-			// nosemgrep
+			// noopengrep: javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp
 			text = text.replace(new RegExp(`{${key}}`, 'g'), mention)
 		}
 	}
