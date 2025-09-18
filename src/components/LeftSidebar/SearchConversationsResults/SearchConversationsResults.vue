@@ -75,9 +75,12 @@ const searchResultsVirtual = computed(() => {
 	// Initialize
 	const virtualList = []
 
-	const lowerSearchText = props.searchText.toLowerCase()
-	const searchResultsConversationList = props.conversationsList.filter((conversation) => conversation.displayName.toLowerCase().includes(lowerSearchText)
-		|| conversation.name.toLowerCase().includes(lowerSearchText))
+	// Normalize strings for search (remove diacritics and case, e.g. 'Jérôme' -> 'jerome')
+	const normalizer = (rawString: string) => rawString.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
+	const lowerSearchText = normalizer(props.searchText)
+	const searchResultsConversationList = props.conversationsList.filter((conversation) => normalizer(conversation.displayName).includes(lowerSearchText)
+		|| normalizer(conversation.name).includes(lowerSearchText))
 
 	// Add conversations section
 	virtualList.push({ type: 'caption', id: 'conversations_caption', name: t('spreed', 'Conversations') })
