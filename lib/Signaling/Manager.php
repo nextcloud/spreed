@@ -57,7 +57,6 @@ class Manager {
 			$url = 'https://' . substr($url, 6);
 		}
 
-		// noopengrep: javascript.lang.security.detect-insecure-websocket.detect-insecure-websocket
 		if (str_starts_with($url, 'ws://')) {
 			$url = 'http://' . substr($url, 5);
 		}

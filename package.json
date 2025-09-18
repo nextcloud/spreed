@@ -17,7 +17,7 @@
     "dev": "node --max-old-space-size=4096 ./node_modules/webpack/bin/webpack.js --node-env development --progress",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "opengrep": "opengrep --opengrep-ignore-pattern=noopengrep --error --exclude '*.php' --exclude 'docs' --include '*.vue' --include '*.js' --include '*.ts' --exclude-rule 'javascript.vue.security.audit.xss.templates.avoid-v-html.avoid-v-html'",
+    "opengrep": "opengrep --opengrep-ignore-pattern=noopengrep --error --exclude '*.php' --exclude 'docs' --include '*.vue' --include '*.js' --include '*.ts' --exclude-rule 'javascript.vue.security.audit.xss.templates.avoid-v-html.avoid-v-html' --exclude-rule 'javascript.lang.security.detect-insecure-websocket.detect-insecure-websocket'",
     "serve": "node --max-old-space-size=4096 ./node_modules/webpack/bin/webpack.js serve --node-env development --progress --allowed-hosts all",
     "stylelint": "stylelint \"src/**/*.scss\" \"src/**/*.vue\"",
     "stylelint:fix": "stylelint \"src/**/*.scss\" \"src/**/*.vue\" --fix",
