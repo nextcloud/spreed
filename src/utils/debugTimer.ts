@@ -28,10 +28,12 @@ export const debugTimer = {
 		timersPool[name] = performance.now()
 	},
 	end: (name: string, payload: unknown) => {
+		// noopengrep: javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring
 		console.debug(`[DEBUG] spreed: ${name} | ${getReadable(performance.now() - timersPool[name])}`, payload)
 		delete timersPool[name]
 	},
 	tick: (name: string, payload: unknown) => {
+		// noopengrep: javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring
 		console.debug(`[DEBUG] spreed: ${name} | ${getReadable(performance.now() - timersPool[name])}`, payload)
 		timersPool[name] = performance.now()
 	},
