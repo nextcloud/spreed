@@ -87,7 +87,6 @@ class BackendNotifier {
 
 		$url = '/api/v1/room/' . $room->getToken();
 		$url = $recording['server'] . $url;
-		// noopengrep: javascript.lang.security.detect-insecure-websocket.detect-insecure-websocket
 		if (str_starts_with($url, 'ws://')) {
 			$url = 'http://' . substr($url, 5);
 		} elseif (str_starts_with($url, 'wss://')) {
