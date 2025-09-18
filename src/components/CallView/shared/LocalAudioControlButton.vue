@@ -174,7 +174,8 @@ export default {
 			updateDevices,
 			audioOutputSupported,
 			updatePreferences,
-		} = useDevices(props.token, false)
+			initializeDevices,
+		} = useDevices()
 
 		/**
 		 * Check if component is visible and not obstructed by others
@@ -200,6 +201,7 @@ export default {
 			updateDevices,
 			audioOutputSupported,
 			updatePreferences,
+			initializeDevices,
 		}
 	},
 
@@ -258,6 +260,10 @@ export default {
 	created() {
 		useHotKey('m', this.toggleAudio)
 		useHotKey(' ', this.toggleAudio, { push: true })
+	},
+
+	mounted() {
+		this.initializeDevices()
 	},
 
 	methods: {

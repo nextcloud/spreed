@@ -110,12 +110,14 @@ export default {
 			videoInputId,
 			updateDevices,
 			updatePreferences,
-		} = useDevices(props.token, false)
+			initializeDevices,
+		} = useDevices()
 		return {
 			devices,
 			videoInputId,
 			updateDevices,
 			updatePreferences,
+			initializeDevices,
 		}
 	},
 
@@ -181,6 +183,10 @@ export default {
 
 	created() {
 		useHotKey('v', this.toggleVideo)
+	},
+
+	mounted() {
+		this.initializeDevices()
 	},
 
 	methods: {
