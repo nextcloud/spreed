@@ -1728,6 +1728,7 @@ OC.L10N.register(
     "Projects" : "Projekty",
     "No shared items" : "Žádné sdílené položky",
     "Thread notifications" : "Notifikace ohledně vlákna",
+    "Thread actions" : "Akce ohledně vlákna",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Link to a conversation" : "Odkaz na konverzaci",
     "No open conversations found" : "Nenalezeny žádné všem přístupné konverzace",
