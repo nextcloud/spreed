@@ -11,6 +11,7 @@ import { n, t } from '@nextcloud/l10n'
 import moment from '@nextcloud/moment'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import usernameToColor from '@nextcloud/vue/functions/usernameToColor'
+import debounce from 'debounce'
 import { computed, onBeforeMount, provide, ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
@@ -37,7 +38,7 @@ import { useStore } from '../composables/useStore.js'
 import { ATTENDEE, CONVERSATION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
-import { convertToUnix } from '../utils/formattedTime.ts'
+import { convertToUnix, ONE_HOUR_IN_MS } from '../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
 
 const props = defineProps<{
@@ -195,6 +196,8 @@ const inviteLabel = computed(() => {
 		: t('spreed', 'Invite all users and emails in this conversation')
 })
 
+const debounceAdjustCurrentTimeRange = debounce(adjustCurrentTimeRange, 500)
+
 onBeforeMount(() => {
 	getCalendars()
 })
@@ -225,6 +228,27 @@ watch(participants, (value) => {
 		selectedAttendeeIds.value = value.map((participant: Participant) => participant.attendeeId)
 	}
 })
+
+watch(selectedDateTimeStart, () => debounceAdjustCurrentTimeRange('end'))
+watch(selectedDateTimeEnd, () => debounceAdjustCurrentTimeRange('start'))
+
+/**
+ * Autocorrect end date, if start date is after end date (or vice versa)
+ *
+ * @param direction counterpart to be adjusted
+ */
+function adjustCurrentTimeRange(direction: 'start' | 'end') {
+	if (selectedDateTimeStart.value < selectedDateTimeEnd.value) {
+		// All good, no adjustment needed
+		return
+	} else if (direction === 'end') {
+		// Keep the end time 1 hour ahead
+		selectedDateTimeEnd.value = new Date(selectedDateTimeStart.value.getTime() + ONE_HOUR_IN_MS)
+	} else {
+		// Keep the start time 1 hour behind
+		selectedDateTimeStart.value = new Date(selectedDateTimeEnd.value.getTime() - ONE_HOUR_IN_MS)
+	}
+}
 
 /**
  * Returns Date object with N hours from now at the start of hour
