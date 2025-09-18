@@ -9,6 +9,7 @@ const { resolve } = require('node:path')
 // TODO: find a way to consolidate this in one place, with webpack.common.js
 const ignorePatterns = [
 	'@mdi/svg',
+	'@nextcloud/sharing', // ESM dependency
 	'bail',
 	'ccount', // ESM dependency of remark-gfm
 	'comma-separated-tokens',
