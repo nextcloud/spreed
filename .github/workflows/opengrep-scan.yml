@@ -3,9 +3,7 @@
 
 name: OpenGrep Full Scan
 
-on:
-  workflow_dispatch:
-  pull_request:   
+on: pull_request
 
 jobs:
   scan:
@@ -19,8 +17,8 @@ jobs:
       - name: Install OpenGrep
         run: |
           # Download the OpenGrep binary
-          wget https://github.com/opengrep/opengrep/releases/download/v1.0.0-alpha.9/opengrep_manylinux_x86 -O opengrep
-          
+          wget $(curl -s https://api.github.com/repos/opengrep/opengrep/releases/latest | grep "/opengrep_manylinux_x86\"" | awk '{print $2}' | sed 's|[\"\,]*||g') -O opengrep
+
           # Make the binary executable
           chmod +x opengrep
 
@@ -29,18 +27,7 @@ jobs:
 
       - name: Run OpenGrep with custom rules
         run: |
-          opengrep \
-          --opengrep-ignore-pattern=noopengrep \
-          --error \
-          --sarif \
-          --sarif-output findings.sarif \
-          --exclude '*.php' \
-          --exclude 'docs' \
-          --include '*.vue' \
-          --include '*.js' \
-          --include '*.ts' \
-          --exclude-rule 'javascript.vue.security.audit.xss.templates.avoid-v-html.avoid-v-html' \.
-          # If findings are detected (non-zero exit code), fail the step
+          composer run opengrep-full -- --sarif --sarif-output findings.sarif
           exit_code=$?
           if [ $exit_code -ne 0 ]; then
             echo "::error::OpenGrep found issues in the code. Check the report for details."
