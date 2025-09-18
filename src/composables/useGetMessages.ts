@@ -312,6 +312,12 @@ export function useGetMessagesProvider() {
 					await store.dispatch('processMessage', { token, message: conversation.value.lastMessage })
 					chatStore.processChatBlocks(token, [conversation.value.lastMessage])
 				}
+
+				// Fallback for sensitive and federated conversations: if there is still no chat block created,
+				// ensure polling starts at least from the last read message by the user
+				if (!chatStore.chatBlocks[token]) {
+					chatStore.chatBlocks[token] = [new Set([conversation.value!.lastReadMessage])]
+				}
 			} catch (exception) {
 				console.debug(exception)
 				return
