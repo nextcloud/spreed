@@ -95,6 +95,7 @@
 				v-if="isInCall && isModeratorOrUser"
 				:title="participantsInCallAriaLabel"
 				:aria-label="participantsInCallAriaLabel"
+				class="top-bar__participants-button"
 				variant="tertiary"
 				@click="openSidebar('participants')">
 				<template #icon>
@@ -417,6 +418,11 @@ export default {
 		top: 0;
 		inset-inline-start: 0;
 	}
+}
+
+.top-bar__participants-button {
+	// Align characters width for any font
+	font-variant-numeric: tabular-nums;
 }
 
 .conversation-header {
