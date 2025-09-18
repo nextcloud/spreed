@@ -624,6 +624,7 @@ function Standalone(settings, urls) {
 	if (url.startsWith('https://')) {
 		url = 'wss://' + url.slice(8)
 	} else if (url.startsWith('http://')) {
+		// noopengrep: javascript.lang.security.detect-insecure-websocket.detect-insecure-websocket
 		url = 'ws://' + url.slice(7)
 	}
 	if (url.endsWith('/')) {
