@@ -5,6 +5,9 @@ name: OpenGrep Full Scan
 
 on: pull_request
 
+permissions:
+  contents: read
+
 jobs:
   scan:
     name: Scan with OpenGrep
