@@ -19,6 +19,7 @@
 /tests/integration/vendor
 /tests/integration/output
 /drone
+/findings.sarif
 
 # PHP Dev server output (integration tests)
 /tests/integration/phpserver*.log
