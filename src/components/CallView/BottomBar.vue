@@ -6,12 +6,15 @@
 <script setup lang="ts">
 import {
 	showError,
-	showWarning,
 } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
-import { computed, ref, toValue, watch } from 'vue'
+import { useResizeObserver } from '@vueuse/core'
+import debounce from 'debounce'
+import { computed, onUnmounted, ref, toValue, useTemplateRef, watch } from 'vue'
 import { useStore } from 'vuex'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
@@ -53,6 +56,7 @@ const callViewStore = useCallViewStore()
 const liveTranscriptionStore = useLiveTranscriptionStore()
 
 const isLiveTranscriptionLoading = ref(false)
+const bottomBar = useTemplateRef('bottomBar')
 
 const conversation = computed(() => {
 	return store.getters.conversation(token.value) || store.getters.dummyConversation
@@ -103,6 +107,108 @@ const changeViewLabel = computed(() => {
 const showCallLayoutSwitch = computed(() => !callViewStore.isEmptyCallView)
 const isGrid = computed(() => callViewStore.isGrid)
 const userIsInBreakoutRoomAndInCall = computed(() => conversation.value.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
+
+const hidingList = ref({ forceMobileCallButton: false, fullscreen: false, callLayout: false, raiseHand: false, liveTranscription: false, virtualBackground: false })
+const hasHiddenItems = computed(() => Object.values(hidingList.value).some((hidden) => hidden === true))
+/**
+ * Adjust the layout of the bottom bar based on the available width.
+ *
+ */
+function adjustLayout() {
+	const bottomBarElement = toValue(bottomBar) as HTMLElement
+	if (!bottomBarElement) {
+		return
+	}
+
+	const availableWidth = bottomBarElement.clientWidth
+	let requiredWidth = 0
+
+	// Calculate the required width for the left controls
+	const leftControls = bottomBarElement.querySelector('.layout-options') as HTMLElement
+	if (leftControls && isSidebar === false) {
+		requiredWidth += leftControls.clientWidth
+	}
+
+	// Calculate the required width for the right controls
+	const rightControls = bottomBarElement.querySelector('.interaction-options') as HTMLElement
+	if (rightControls) {
+		requiredWidth += rightControls.clientWidth
+	}
+
+	const callButton = bottomBarElement.querySelector('.call-options') as HTMLElement
+	if (callButton) {
+		requiredWidth += callButton.clientWidth
+	}
+
+	// Add some margin for spacing between the two control groups
+	requiredWidth += 10 * 2 + 8 // 10px margin on each side + 4px gap between the 3 groups
+	const diff = requiredWidth - availableWidth
+	const buttonWidth = /* clickable area + gaps */ 38
+
+	if (diff > 0) {
+		// Add items from hiding list to the menu
+		// If there is still not enough space, keep adding items to the menu
+		// until there is enough space
+		// Start with the least important items and move to the more important ones
+		// order: fullscreen, callLayout, raiseHand, liveTranscription, reactions
+		const buttonsNumToHide = Math.ceil(Math.abs(diff) / buttonWidth) + (!hasHiddenItems.value ? 1 : 0)
+		let hiddenCount = 0
+		while (hiddenCount < buttonsNumToHide) {
+			if (!hidingList.value.forceMobileCallButton) {
+				hidingList.value.forceMobileCallButton = true
+			} else if (!hidingList.value.fullscreen && !isSidebar) {
+				hidingList.value.fullscreen = true
+			} else if (!hidingList.value.callLayout && showCallLayoutSwitch.value) {
+				hidingList.value.callLayout = true
+			} else if (!hidingList.value.raiseHand) {
+				hidingList.value.raiseHand = true
+			} else if (!hidingList.value.liveTranscription && isLiveTranscriptionSupported.value) {
+				hidingList.value.liveTranscription = true
+			} else if (!hidingList.value.virtualBackground) {
+				hidingList.value.virtualBackground = true
+			} else {
+				// all items are already hidden, nothing more to do
+				break
+			}
+			hiddenCount++
+		}
+	} else if (diff < 0 && hasHiddenItems.value) {
+		// Expand the menu if there is enough space
+		// Start with the most important items and move to the less important ones
+		const buttonsNumToshow = Math.floor(Math.abs(diff) / buttonWidth)
+		const hiddenButtonsNum = Object.values(hidingList.value).filter((hidden) => hidden === true).length
+		let shownCounter = Math.min(buttonsNumToshow, hiddenButtonsNum)
+		while (shownCounter > 0) {
+			if (hidingList.value.virtualBackground) {
+				hidingList.value.virtualBackground = false
+			} else if (hidingList.value.liveTranscription && isLiveTranscriptionSupported.value) {
+				hidingList.value.liveTranscription = false
+			} else if (hidingList.value.raiseHand) {
+				hidingList.value.raiseHand = false
+			} else if (hidingList.value.callLayout && showCallLayoutSwitch.value) {
+				hidingList.value.callLayout = false
+			} else if (hidingList.value.fullscreen && !isSidebar) {
+				hidingList.value.fullscreen = false
+			} else if (hidingList.value.forceMobileCallButton) {
+				hidingList.value.forceMobileCallButton = false
+			} else {
+				// all items are already visible, nothing more to do
+				break
+			}
+			shownCounter--
+		}
+	}
+}
+
+const debounceAdjustLayout = debounce(adjustLayout, 200)
+
+useResizeObserver(bottomBar, () => {
+	debounceAdjustLayout()
+})
+
+onUnmounted(() => {
+	debounceAdjustLayout.clear?.()
+})
 
 /**
  * Toggle live transcriptions.
@@ -234,10 +340,11 @@ useHotKey('r', toggleHandRaised)
 </script>
 
 <template>
-	<div class="bottom-bar" data-theme-dark>
-		<div v-if="!isSidebar" class="bottom-bar-call-controls">
+	<div ref="bottomBar" class="bottom-bar" data-theme-dark>
+		<div v-if="!isSidebar" class="bottom-bar-call-controls layout-options">
 			<!-- Fullscreen -->
 			<NcButton
+				v-if="!hidingList.fullscreen"
 				:aria-label="fullscreenLabel"
 				:variant="isFullscreen ? 'secondary' : 'tertiary'"
 				:title="fullscreenLabel"
@@ -249,7 +356,7 @@ useHotKey('r', toggleHandRaised)
 			</NcButton>
 			<!-- Call layout switcher -->
 			<NcButton
-				v-if="showCallLayoutSwitch"
+				v-if="showCallLayoutSwitch && !hidingList.callLayout"
 				variant="tertiary"
 				:aria-label="changeViewLabel"
 				:title="changeViewLabel"
@@ -261,12 +368,13 @@ useHotKey('r', toggleHandRaised)
 			</NcButton>
 		</div>
 
-		<div class="bottom-bar-call-controls">
+		<div class="bottom-bar-call-controls interaction-options">
 			<!-- Local media controls -->
 			<TopBarMediaControls
 				:token="token"
 				:model="localMediaModel"
 				:is-sidebar="isSidebar"
+				:hide-virtual-background-shortcut="hidingList.virtualBackground"
 				:local-call-participant-model="localCallParticipantModel" />
 
 			<!-- Reactions menu -->
@@ -277,7 +385,7 @@ useHotKey('r', toggleHandRaised)
 				:local-call-participant-model="localCallParticipantModel" />
 
 			<NcButton
-				v-if="isLiveTranscriptionSupported"
+				v-if="isLiveTranscriptionSupported && !hidingList.liveTranscription"
 				:title="liveTranscriptionButtonLabel"
 				:aria-label="liveTranscriptionButtonLabel"
 				:variant="callViewStore.isLiveTranscriptionEnabled ? 'secondary' : 'tertiary'"
@@ -297,7 +405,7 @@ useHotKey('r', toggleHandRaised)
 			</NcButton>
 
 			<NcButton
-				v-if="!isSidebar"
+				v-if="!isSidebar && !hidingList.raiseHand"
 				:title="raiseHandButtonLabel"
 				:aria-label="raiseHandButtonLabel"
 				:variant="isHandRaised ? 'secondary' : 'tertiary'"
@@ -310,10 +418,75 @@ useHotKey('r', toggleHandRaised)
 				</template>
 			</NcButton>
 		</div>
+		<div class="bottom-bar-options call-options">
+			<NcActions v-if="hasHiddenItems" force-menu>
+				<!-- Fullscreen -->
+				<NcActionButton
+					v-if="!isSidebar && hidingList.fullscreen"
+					:aria-label="fullscreenLabel"
+					:variant="isFullscreen ? 'secondary' : 'tertiary'"
+					:title="fullscreenLabel"
+					@click="toggleFullscreen">
+					<template #icon>
+						<IconFullscreen v-if="!isFullscreen" :size="20" />
+						<IconFullscreenExit v-else :size="20" />
+					</template>
+					{{ fullscreenLabel }}
+				</NcActionButton>
+				<!-- Call layout switcher -->
+				<NcActionButton
+					v-if="hidingList.callLayout && showCallLayoutSwitch"
+					variant="tertiary"
+					:aria-label="changeViewLabel"
+					:title="changeViewLabel"
+					@click="changeView">
+					<template #icon>
+						<IconViewGridOutline v-if="!isGrid" :size="20" />
+						<IconViewGalleryOutline v-else :size="20" />
+					</template>
+					{{ changeViewLabel }}
+				</NcActionButton>
+				<NcActionButton
+					v-if="isLiveTranscriptionSupported && hidingList.liveTranscription"
+					:title="liveTranscriptionButtonLabel"
+					:aria-label="liveTranscriptionButtonLabel"
+					:variant="callViewStore.isLiveTranscriptionEnabled ? 'secondary' : 'tertiary'"
+					:disabled="isLiveTranscriptionLoading"
+					@click="toggleLiveTranscription">
+					<template #icon>
+						<NcLoadingIcon
+							v-if="isLiveTranscriptionLoading"
+							:size="20" />
+						<IconSubtitles
+							v-else-if="callViewStore.isLiveTranscriptionEnabled"
+							:size="20" />
+						<IconSubtitlesOutline
+							v-else
+							:size="20" />
+					</template>
+					{{ liveTranscriptionButtonLabel }}
+				</NcActionButton>
+				<NcButton
+					v-if="!isSidebar && hidingList.raiseHand"
+					:title="raiseHandButtonLabel"
+					:aria-label="raiseHandButtonLabel"
+					:variant="isHandRaised ? 'secondary' : 'tertiary'"
+					@click="toggleHandRaised">
+					<!-- The following icon is much bigger than all the others
+						so we reduce its size -->
+					<template #icon>
+						<IconHandBackLeft v-if="isHandRaised" :size="18" />
+						<IconHandBackLeftOutline v-else :size="18" />
+					</template>
+					{{ raiseHandButtonLabel }}
+				</NcButton>
+			</NcActions>
 
-		<CallButton
-			:hide-text="isSidebar"
-			:is-screensharing="!!localMediaModel.attributes.localScreen" />
+			<CallButton
+				class="call-button"
+				:hide-text="isSidebar || hidingList.forceMobileCallButton"
+				:is-screensharing="!!localMediaModel.attributes.localScreen" />
+		</div>
 	</div>
 </template>
 
@@ -338,5 +511,13 @@ useHotKey('r', toggleHandRaised)
 	align-items: center;
 	flex-direction: row;
 	gap: var(--default-grid-baseline);
+	margin-inline-end: var(--default-grid-baseline);
+}
+
+.call-options {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	gap: 4px;
 }
 </style>
