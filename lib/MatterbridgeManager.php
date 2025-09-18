@@ -790,6 +790,7 @@ class MatterbridgeManager {
 	 */
 	private function runCommand(string $cmd): ?array {
 		$descriptorspec = [fopen('php://stdin', 'r'), ['pipe', 'w'], ['pipe', 'w']];
+		// noopengrep: php.lang.security.exec-use.exec-use
 		$process = proc_open($cmd, $descriptorspec, $pipes);
 		if ($process) {
 			$output = stream_get_contents($pipes[1]);
