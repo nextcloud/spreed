@@ -3,22 +3,23 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { createSharedComposable } from '@vueuse/core'
 import createHark from 'hark'
-import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useSoundsStore } from '../stores/sounds.js'
 import attachMediaStream from '../utils/attachmediastream.js'
 import TrackToStream from '../utils/media/pipeline/TrackToStream.js'
 import VirtualBackground from '../utils/media/pipeline/VirtualBackground.js'
-import { callParticipantsAudioPlayer, mediaDevicesManager as mediaDevicesManagerInstance } from '../utils/webrtc/index.js'
+import { callParticipantsAudioPlayer, mediaDevicesManager } from '../utils/webrtc/index.js'
+
+let videoElement = ref(null)
 
 /**
  * Check whether the user joined the call of the current token in this PHP session or not
  *
- * @param {import('vue').Ref} video element ref to attach track to
- * @param {boolean} initializeOnMounted whether to initialize mixin or not
  * @return {{[key:string]: Function|import('vue').Ref|import('vue').ComputedRef}}
  */
-export function useDevices(video, initializeOnMounted) {
+export const useDevices = createSharedComposable(function() {
 	// Internal variables
 	let initialized = false
 	let pendingGetUserMediaAudioCount = 0
@@ -28,9 +29,8 @@ export function useDevices(video, initializeOnMounted) {
 
 	const hark = ref(null)
 	const videoTrackToStream = ref(null)
-	const mediaDevicesManager = reactive(mediaDevicesManagerInstance)
 
-	window.OCA.Talk.mediaDevicesManager = mediaDevicesManagerInstance
+	window.OCA.Talk.mediaDevicesManager = mediaDevicesManager
 
 	// Public refs
 	const currentVolume = ref(-100)
@@ -131,14 +131,11 @@ export function useDevices(video, initializeOnMounted) {
 		videoTrackToStream.value.addInputTrackSlot('video')
 
 		virtualBackground.value.connectTrackSink('default', videoTrackToStream.value, 'video')
-
-		if (initializeOnMounted) {
-			initializeDevices()
-		}
 	})
 
 	onBeforeUnmount(() => {
 		stopDevices()
+		videoElement.value = null
 	})
 
 	/**
@@ -262,6 +259,15 @@ export function useDevices(video, initializeOnMounted) {
 	}
 
 	/**
+	 * Reset an update counter and update audio stream if needed
+	 *
+	 * @param {import('vue').Ref} video element ref to attach track to
+	 */
+	function registerVideoElement(video) {
+		videoElement = video
+	}
+
+	/**
 	 * Update audio stream
 	 */
 	function updateAudioStream() {
@@ -315,7 +321,7 @@ export function useDevices(video, initializeOnMounted) {
 	function setVideoStream(stream) {
 		videoStream.value = stream
 		// check if <video> element is mounted
-		if (!video.value) {
+		if (!videoElement.value) {
 			return
 		}
 		if (!stream) {
@@ -326,7 +332,7 @@ export function useDevices(video, initializeOnMounted) {
 		virtualBackground.value._setInputTrack('default', videoStream.value.getVideoTracks()[0])
 
 		const options = { autoplay: true, mirror: true, muted: true }
-		attachMediaStream(videoTrackToStream.value.getStream(), video.value, options)
+		attachMediaStream(videoTrackToStream.value.getStream(), videoElement.value, options)
 	}
 
 	/**
@@ -343,8 +349,8 @@ export function useDevices(video, initializeOnMounted) {
 		videoStreamError.value = null
 
 		// check if <video> element is mounted
-		if (video.value) {
-			video.value.srcObject = null
+		if (videoElement.value) {
+			videoElement.value.srcObject = null
 		}
 	}
 
@@ -425,5 +431,6 @@ export function useDevices(video, initializeOnMounted) {
 		updatePreferences,
 		stopDevices,
 		virtualBackground,
+		registerVideoElement,
 	}
-}
+})
