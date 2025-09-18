@@ -5,6 +5,32 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.5 – 2025-09-18
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(chat): Validate file name when creating from template instead of failing afterwards
+  [#15919](https://github.com/nextcloud/spreed/issues/15919)
+- fix(conversation): Fix spacing between items in conversation list when forwarding
+  [#15812](https://github.com/nextcloud/spreed/issues/15812)
+- fix(conversation): Fix joining and leaving conversations when errors occurred
+  [#15797](https://github.com/nextcloud/spreed/issues/15797)
+
+## 20.1.10 – 2025-09-18
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(chat): Support at-all in captions
+  [#15746](https://github.com/nextcloud/spreed/issues/15746)
+- fix(chat): Fix loading a completely empty conversation as a guest
+  [#15551](https://github.com/nextcloud/spreed/issues/15551)
+- fix(conversation): Fix joining and leaving conversations when errors occurred
+  [#15796](https://github.com/nextcloud/spreed/issues/15796)
+
 ## 21.1.4 – 2025-08-28
 ### Added
 - feat(sip): Allow to send the direct dial-in number of users on out-going calls
