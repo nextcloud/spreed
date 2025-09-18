@@ -5,6 +5,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.0-rc.3 – 2025-09-18
+### Fixed
+- fix(call): Correctly sync media devices with OS sound settings
+  [#15900](https://github.com/nextcloud/spreed/pull/15900)
+  [#15972](https://github.com/nextcloud/spreed/pull/15972)
+- fix(chat): Validate file name when creating from template instead of failing afterwards
+  [#15920](https://github.com/nextcloud/spreed/issues/15920)
+- fix(threads): Post shared files in the opened thread
+  [#15938](https://github.com/nextcloud/spreed/pull/15938)
+- fix(threads): Count shared files as thread replies and last message
+  [#15946](https://github.com/nextcloud/spreed/pull/15946)
+
 ## 21.1.5 – 2025-09-18
 ### Changed
 - Update translations
