@@ -303,6 +303,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			$firstMessage = $lastMessage = null;
 			$attendee = $attendees[$thread->getId()] ?? null;
 			if ($attendee === null) {
+				// subscribed is set to false here, so clients know that attendee has not subscribed yet
 				$attendee = ThreadAttendee::createFromParticipant($thread->getId(), $participant);
 			}
 
