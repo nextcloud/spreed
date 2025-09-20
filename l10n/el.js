@@ -810,6 +810,7 @@ OC.L10N.register(
     "Enable the camera" : "Ενεργοποίηση κάμερας",
     "Update permissions" : "Ενημέρωση αδειών",
     "Create poll" : "Δημιουργία ψηφοφορίας",
+    "Question" : "Ερώτηση",
     "Settings" : "Ρυθμίσεις",
     "Anonymous poll" : "Ανώνυμη δημοσκόπηση",
     "Open poll" : "Ανοιχτή δημοσκόπηση",
