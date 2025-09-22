@@ -5,7 +5,7 @@
 
 import { createSharedComposable } from '@vueuse/core'
 import createHark from 'hark'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useSoundsStore } from '../stores/sounds.js'
 import attachMediaStream from '../utils/attachmediastream.js'
 import TrackToStream from '../utils/media/pipeline/TrackToStream.js'
@@ -122,20 +122,11 @@ export const useDevices = createSharedComposable(function() {
 		}
 	})
 
-	onMounted(() => {
-		virtualBackground.value = new VirtualBackground()
-		// The virtual background should be enabled and disabled as needed by components
-		virtualBackground.value.setEnabled(false)
-
-		videoTrackToStream.value = new TrackToStream()
-		videoTrackToStream.value.addInputTrackSlot('video')
-
-		virtualBackground.value.connectTrackSink('default', videoTrackToStream.value, 'video')
-	})
-
+	/**
+	 * Called for shared composable when all subscribers are unmounted (onScopeDispose)
+	 */
 	onBeforeUnmount(() => {
 		stopDevices()
-		videoElement.value = null
 	})
 
 	/**
@@ -163,6 +154,15 @@ export const useDevices = createSharedComposable(function() {
 				name: 'NotSupportedError',
 			}
 		}
+
+		virtualBackground.value = new VirtualBackground()
+		// The virtual background should be enabled and disabled as needed by components
+		virtualBackground.value.setEnabled(false)
+
+		videoTrackToStream.value = new TrackToStream()
+		videoTrackToStream.value.addInputTrackSlot('video')
+
+		virtualBackground.value.connectTrackSink('default', videoTrackToStream.value, 'video')
 
 		mediaDevicesManager.enableDeviceEvents()
 		updateAudioStream()
@@ -208,6 +208,13 @@ export const useDevices = createSharedComposable(function() {
 		stopAudioStream()
 		stopVideoStream()
 		mediaDevicesManager.disableDeviceEvents()
+
+		videoTrackToStream.value = null
+
+		virtualBackground.value._stopEffect()
+		virtualBackground.value = null
+
+		videoElement.value = null
 	}
 
 	/**
