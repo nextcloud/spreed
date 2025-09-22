@@ -12,6 +12,7 @@ import TrackToStream from '../utils/media/pipeline/TrackToStream.js'
 import VirtualBackground from '../utils/media/pipeline/VirtualBackground.js'
 import { callParticipantsAudioPlayer, mediaDevicesManager } from '../utils/webrtc/index.js'
 
+let subscribersCount = 0
 let videoElement = ref(null)
 
 /**
@@ -128,6 +129,37 @@ export const useDevices = createSharedComposable(function() {
 	onBeforeUnmount(() => {
 		stopDevices()
 	})
+
+	/**
+	 * Subscribe element to device changes
+	 * If at least one component instance is subscribed, initialize devices
+	 *
+	 * @public
+	 */
+	function subscribeToDevices() {
+		if (subscribersCount === 0) {
+			initializeDevices()
+		}
+		subscribersCount++
+	}
+
+	/**
+	 * Unsubscribe element from device changes
+	 * If no more component instances are subscribed, stop devices
+	 *
+	 * @public
+	 */
+	function unsubscribeFromDevices() {
+		if (subscribersCount === 0) {
+			console.error('Attempt to unsubscribe from devices when no subscribers')
+			return
+		}
+
+		subscribersCount--
+		if (subscribersCount === 0) {
+			stopDevices()
+		}
+	}
 
 	/**
 	 * Start tracking device events (audio and video)
@@ -428,15 +460,15 @@ export const useDevices = createSharedComposable(function() {
 		audioOutputId,
 		videoInputId,
 		audioOutputSupported,
+		subscribeToDevices,
+		unsubscribeFromDevices,
 		// MediaDevicesPreview only
 		audioStream,
 		audioStreamError,
 		videoStream,
 		videoStreamError,
 		// MediaSettings only
-		initializeDevices,
 		updatePreferences,
-		stopDevices,
 		virtualBackground,
 		registerVideoElement,
 	}
