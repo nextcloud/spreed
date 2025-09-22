@@ -596,6 +596,8 @@ export default {
 	watch: {
 		show(newValue) {
 			if (newValue) {
+				this.initializeDevices()
+
 				if (this.settingsStore.startWithoutMedia) {
 					// Disable audio
 					this.audioOn = false
@@ -622,8 +624,6 @@ export default {
 				} else {
 					this.clearVirtualBackground()
 				}
-
-				this.initializeDevices()
 			} else {
 				this.stopDevices()
 			}
