@@ -301,4 +301,13 @@ export default class VirtualBackground extends TrackSinkSource {
 
 		this._jitsiStreamBackgroundEffect.setVirtualBackground(virtualBackground)
 	}
+
+	/**
+	 * Destroys the VirtualBackground instance and releases all resources.
+	 */
+	destroy() {
+		this._stopEffect()
+		this._jitsiStreamBackgroundEffect.destroy()
+		this._jitsiStreamBackgroundEffect = null
+	}
 }

@@ -243,8 +243,10 @@ export const useDevices = createSharedComposable(function() {
 
 		videoTrackToStream.value = null
 
-		virtualBackground.value._stopEffect()
-		virtualBackground.value = null
+		if (virtualBackground.value) {
+			virtualBackground.value.destroy()
+			virtualBackground.value = null
+		}
 
 		videoElement.value = null
 	}

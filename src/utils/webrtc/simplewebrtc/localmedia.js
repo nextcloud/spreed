@@ -273,6 +273,9 @@ LocalMedia.prototype.stop = function() {
 	this.stopStream()
 	this.stopScreenShare()
 
+	// TODO: resources are not released after leaving the call in simplewebrtc
+	// this._virtualBackground.destroy()
+
 	this._localMediaActive = false
 }
 
