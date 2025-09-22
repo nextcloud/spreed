@@ -13,7 +13,7 @@ import VirtualBackground from '../utils/media/pipeline/VirtualBackground.js'
 import { callParticipantsAudioPlayer, mediaDevicesManager } from '../utils/webrtc/index.js'
 
 let subscribersCount = 0
-let videoElement = ref(null)
+const videoElement = ref(null)
 
 /**
  * Check whether the user joined the call of the current token in this PHP session or not
@@ -303,7 +303,11 @@ export const useDevices = createSharedComposable(function() {
 	 * @param {import('vue').Ref} video element ref to attach track to
 	 */
 	function registerVideoElement(video) {
-		videoElement = video
+		videoElement.value = video
+		// Attach video stream to the new element
+		if (videoElement.value && videoStream.value) {
+			setVideoStream(videoStream.value)
+		}
 	}
 
 	/**

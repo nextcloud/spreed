@@ -343,7 +343,6 @@ export default {
 			virtualBackground,
 			registerVideoElement,
 		} = useDevices()
-		registerVideoElement(video)
 
 		const isVirtualBackgroundAvailable = computed(() => virtualBackground.value?.isAvailable())
 
@@ -379,6 +378,7 @@ export default {
 			audioOutputSupported,
 			subscribeToDevices,
 			unsubscribeFromDevices,
+			registerVideoElement,
 			audioStreamError,
 			videoStreamError,
 			virtualBackground,
@@ -597,6 +597,9 @@ export default {
 		show(newValue) {
 			if (newValue) {
 				this.subscribeToDevices()
+				this.$nextTick(() => {
+					this.registerVideoElement(this.video)
+				})
 
 				if (this.settingsStore.startWithoutMedia) {
 					// Disable audio
