@@ -246,3 +246,23 @@ Feature: chat-4/threads
     Then user "participant2" sees the following subscribed threads
       | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
       | Message 1 | room1   | Thread 1 | 1            | Message 2     | 0                   | Message 1    | Message 2   |
+
+  Scenario: Post a location to a thread
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
+    And user "participant1" sends thread "Thread 1" with message "Message 1" to room "room1" with 201
+    When user "participant2" shares rich-object "geo-location" "geo:52.5450511,13.3741463" '{"name":"Location name","latitude":"52.5450511","longitude":"13.3741463"}' to room "room1" in thread "Message 1" with 201 (v1)
+    Then user "participant1" sees the following messages in room "room1" with 200
+      | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters | parentMessage |
+      | room1 | users     | participant2 | participant2-displayname | {object}  | "IGNORE"          | Message 1     |
+      | room1 | users     | participant1 | participant1-displayname | Message 1 | []                |               |
+    Then user "participant1" sees the following recent threads in room "room1" with 200
+      | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 1 | room1   | Thread 1 | 1            | {object}      | 0                   | Message 1    | {object}    |
+    And user "participant1" has the following notifications
+      | app | object_type | object_id | subject |
+    Then user "participant2" sees the following subscribed threads
+      | t.id      | t.token | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message 1 | room1   | Thread 1 | 1            | {object}      | 0                   | Message 1    | {object}    |

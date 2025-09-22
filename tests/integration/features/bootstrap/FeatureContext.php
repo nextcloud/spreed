@@ -2079,6 +2079,28 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
+	#[Then('/^user "([^"]*)" shares rich-object "([^"]*)" "([^"]*)" \'([^\']*)\' to room "([^"]*)" in thread "([^"]*)" with (\d+) \((v1)\)$/')]
+	public function userSharesRichObjectToThread(string $user, string $type, string $id, string $metaData, string $identifier, string $thread, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/share',
+			new TableNode([
+				['threadId', FeatureContext::getMessageIdForText($thread)],
+				['objectType', $type],
+				['objectId', $id],
+				['metaData', $metaData],
+			])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
+
+		$response = $this->getDataFromResponse($this->response);
+		if (isset($response['id'])) {
+			self::$textToMessageId['shared::' . $type . '::' . $id] = $response['id'];
+			self::$messageIdToText[$response['id']] = 'shared::' . $type . '::' . $id;
+		}
+	}
+
 	#[Then('/^user "([^"]*)" requests summary for "([^"]*)" starting from ("[^"]*"|\'[^\']*\') with (\d+)(?: \((v1)\))?$/')]
 	public function userSummarizesRoom(string $user, string $identifier, string $message, int $statusCode, string $apiVersion = 'v1', ?TableNode $tableNode = null): void {
 		$message = substr($message, 1, -1);
