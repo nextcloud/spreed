@@ -5,14 +5,15 @@
 
 import { createSharedComposable } from '@vueuse/core'
 import createHark from 'hark'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useSoundsStore } from '../stores/sounds.js'
 import attachMediaStream from '../utils/attachmediastream.js'
 import TrackToStream from '../utils/media/pipeline/TrackToStream.js'
 import VirtualBackground from '../utils/media/pipeline/VirtualBackground.js'
 import { callParticipantsAudioPlayer, mediaDevicesManager } from '../utils/webrtc/index.js'
 
-let videoElement = ref(null)
+let subscribersCount = 0
+const videoElement = ref(null)
 
 /**
  * Check whether the user joined the call of the current token in this PHP session or not
@@ -122,21 +123,43 @@ export const useDevices = createSharedComposable(function() {
 		}
 	})
 
-	onMounted(() => {
-		virtualBackground.value = new VirtualBackground()
-		// The virtual background should be enabled and disabled as needed by components
-		virtualBackground.value.setEnabled(false)
-
-		videoTrackToStream.value = new TrackToStream()
-		videoTrackToStream.value.addInputTrackSlot('video')
-
-		virtualBackground.value.connectTrackSink('default', videoTrackToStream.value, 'video')
-	})
-
+	/**
+	 * Called for shared composable when all subscribers are unmounted (onScopeDispose)
+	 */
 	onBeforeUnmount(() => {
 		stopDevices()
-		videoElement.value = null
 	})
+
+	/**
+	 * Subscribe element to device changes
+	 * If at least one component instance is subscribed, initialize devices
+	 *
+	 * @public
+	 */
+	function subscribeToDevices() {
+		if (subscribersCount === 0) {
+			initializeDevices()
+		}
+		subscribersCount++
+	}
+
+	/**
+	 * Unsubscribe element from device changes
+	 * If no more component instances are subscribed, stop devices
+	 *
+	 * @public
+	 */
+	function unsubscribeFromDevices() {
+		if (subscribersCount === 0) {
+			console.error('Attempt to unsubscribe from devices when no subscribers')
+			return
+		}
+
+		subscribersCount--
+		if (subscribersCount === 0) {
+			stopDevices()
+		}
+	}
 
 	/**
 	 * Start tracking device events (audio and video)
@@ -163,6 +186,15 @@ export const useDevices = createSharedComposable(function() {
 				name: 'NotSupportedError',
 			}
 		}
+
+		virtualBackground.value = new VirtualBackground()
+		// The virtual background should be enabled and disabled as needed by components
+		virtualBackground.value.setEnabled(false)
+
+		videoTrackToStream.value = new TrackToStream()
+		videoTrackToStream.value.addInputTrackSlot('video')
+
+		virtualBackground.value.connectTrackSink('default', videoTrackToStream.value, 'video')
 
 		mediaDevicesManager.enableDeviceEvents()
 		updateAudioStream()
@@ -208,6 +240,15 @@ export const useDevices = createSharedComposable(function() {
 		stopAudioStream()
 		stopVideoStream()
 		mediaDevicesManager.disableDeviceEvents()
+
+		videoTrackToStream.value = null
+
+		if (virtualBackground.value) {
+			virtualBackground.value.destroy()
+			virtualBackground.value = null
+		}
+
+		videoElement.value = null
 	}
 
 	/**
@@ -264,7 +305,11 @@ export const useDevices = createSharedComposable(function() {
 	 * @param {import('vue').Ref} video element ref to attach track to
 	 */
 	function registerVideoElement(video) {
-		videoElement = video
+		videoElement.value = video
+		// Attach video stream to the new element
+		if (videoElement.value && videoStream.value) {
+			setVideoStream(videoStream.value)
+		}
 	}
 
 	/**
@@ -421,15 +466,15 @@ export const useDevices = createSharedComposable(function() {
 		audioOutputId,
 		videoInputId,
 		audioOutputSupported,
+		subscribeToDevices,
+		unsubscribeFromDevices,
 		// MediaDevicesPreview only
 		audioStream,
 		audioStreamError,
 		videoStream,
 		videoStreamError,
 		// MediaSettings only
-		initializeDevices,
 		updatePreferences,
-		stopDevices,
 		virtualBackground,
 		registerVideoElement,
 	}
