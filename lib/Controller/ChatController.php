@@ -312,9 +312,10 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param string $objectType Type of the object
 	 * @param string $objectId ID of the object
-	 * @param string $metaData Additional metadata
+	 * @param string $metaData Additional metadata, sample value: `{\"type\":\"geo-location\",\"id\":\"geo:52.5450511,13.3741463\",\"name\":\"Nextcloud Berlin Office\",\"latitude\":\"52.5450511\",\"longitude\":\"13.3741463\"}`
 	 * @param string $actorDisplayName Guest name
 	 * @param string $referenceId Reference ID
+	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (also requires `threads` capability)
 	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: string}, array{}>
 	 *
 	 * 201: Object shared successfully
@@ -331,7 +332,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function shareObjectToChat(string $objectType, string $objectId, string $metaData = '', string $actorDisplayName = '', string $referenceId = ''): DataResponse {
+	public function shareObjectToChat(string $objectType, string $objectId, string $metaData = '', string $actorDisplayName = '', string $referenceId = '', int $threadId = 0): DataResponse {
 		[$actorType, $actorId] = $this->getActorInfo($actorDisplayName);
 		if (!$actorId) {
 			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
@@ -375,7 +376,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		]);
 
 		try {
-			$comment = $this->chatManager->addSystemMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, true, $referenceId);
+			$comment = $this->chatManager->addSystemMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, true, $referenceId, threadId: $threadId);
 		} catch (MessageTooLongException $e) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception $e) {
