@@ -336,8 +336,8 @@ export default {
 			audioOutputId,
 			videoInputId,
 			audioOutputSupported,
-			initializeDevices,
-			stopDevices,
+			subscribeToDevices,
+			unsubscribeFromDevices,
 			audioStreamError,
 			videoStreamError,
 			virtualBackground,
@@ -377,8 +377,8 @@ export default {
 			audioOutputId,
 			videoInputId,
 			audioOutputSupported,
-			initializeDevices,
-			stopDevices,
+			subscribeToDevices,
+			unsubscribeFromDevices,
 			audioStreamError,
 			videoStreamError,
 			virtualBackground,
@@ -596,7 +596,7 @@ export default {
 	watch: {
 		show(newValue) {
 			if (newValue) {
-				this.initializeDevices()
+				this.subscribeToDevices()
 
 				if (this.settingsStore.startWithoutMedia) {
 					// Disable audio
@@ -625,7 +625,7 @@ export default {
 					this.clearVirtualBackground()
 				}
 			} else {
-				this.stopDevices()
+				this.unsubscribeFromDevices()
 			}
 		},
 

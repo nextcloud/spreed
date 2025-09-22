@@ -174,7 +174,8 @@ export default {
 			updateDevices,
 			audioOutputSupported,
 			updatePreferences,
-			initializeDevices,
+			subscribeToDevices,
+			unsubscribeFromDevices,
 		} = useDevices()
 
 		/**
@@ -201,7 +202,8 @@ export default {
 			updateDevices,
 			audioOutputSupported,
 			updatePreferences,
-			initializeDevices,
+			subscribeToDevices,
+			unsubscribeFromDevices,
 		}
 	},
 
@@ -263,7 +265,11 @@ export default {
 	},
 
 	mounted() {
-		this.initializeDevices()
+		this.subscribeToDevices()
+	},
+
+	beforeUnmount() {
+		this.unsubscribeFromDevices()
 	},
 
 	methods: {
