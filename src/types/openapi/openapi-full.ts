@@ -10293,7 +10293,7 @@ export interface operations {
                     /** @description ID of the object */
                     objectId: string;
                     /**
-                     * @description Additional metadata
+                     * @description Additional metadata, sample value: `{\"type\":\"geo-location\",\"id\":\"geo:52.5450511,13.3741463\",\"name\":\"Nextcloud Berlin Office\",\"latitude\":\"52.5450511\",\"longitude\":\"13.3741463\"}`
                      * @default
                      */
                     metaData?: string;
@@ -10307,6 +10307,12 @@ export interface operations {
                      * @default
                      */
                     referenceId?: string;
+                    /**
+                     * Format: int64
+                     * @description Thread id which this message is a reply to without quoting a specific message (also requires `threads` capability)
+                     * @default 0
+                     */
+                    threadId?: number;
                 };
             };
         };
