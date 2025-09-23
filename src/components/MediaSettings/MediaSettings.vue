@@ -336,14 +336,13 @@ export default {
 			audioOutputId,
 			videoInputId,
 			audioOutputSupported,
-			initializeDevices,
-			stopDevices,
+			subscribeToDevices,
+			unsubscribeFromDevices,
 			audioStreamError,
 			videoStreamError,
 			virtualBackground,
 			registerVideoElement,
 		} = useDevices()
-		registerVideoElement(video)
 
 		const isVirtualBackgroundAvailable = computed(() => virtualBackground.value?.isAvailable())
 
@@ -377,8 +376,9 @@ export default {
 			audioOutputId,
 			videoInputId,
 			audioOutputSupported,
-			initializeDevices,
-			stopDevices,
+			subscribeToDevices,
+			unsubscribeFromDevices,
+			registerVideoElement,
 			audioStreamError,
 			videoStreamError,
 			virtualBackground,
@@ -596,6 +596,11 @@ export default {
 	watch: {
 		show(newValue) {
 			if (newValue) {
+				this.subscribeToDevices()
+				this.$nextTick(() => {
+					this.registerVideoElement(this.video)
+				})
+
 				if (this.settingsStore.startWithoutMedia) {
 					// Disable audio
 					this.audioOn = false
@@ -622,10 +627,8 @@ export default {
 				} else {
 					this.clearVirtualBackground()
 				}
-
-				this.initializeDevices()
 			} else {
-				this.stopDevices()
+				this.unsubscribeFromDevices()
 			}
 		},
 

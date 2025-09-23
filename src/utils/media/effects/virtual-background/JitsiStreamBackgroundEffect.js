@@ -489,15 +489,25 @@ export default class JitsiStreamBackgroundEffect {
 	stopEffect() {
 		this._running = false
 
-		this._maskFrameTimerWorker.postMessage({
-			id: CLEAR_TIMEOUT,
-			message: 'stopEffect',
-		})
-
-		this._maskFrameTimerWorker.terminate()
+		if (this._maskFrameTimerWorker) {
+			this._maskFrameTimerWorker.postMessage({
+				id: CLEAR_TIMEOUT,
+				message: 'stopEffect',
+			})
+			this._maskFrameTimerWorker.terminate()
+		}
 
 		if (this._virtualVideo) {
 			this._virtualVideo.pause()
 		}
+	}
+
+	/**
+	 * Destroys the JitsiStreamBackgroundEffect instance and releases all resources.
+	 */
+	destroy() {
+		this.stopEffect()
+		this._model.terminate()
+		this._model = null
 	}
 }

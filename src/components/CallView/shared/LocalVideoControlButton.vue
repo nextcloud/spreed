@@ -110,14 +110,16 @@ export default {
 			videoInputId,
 			updateDevices,
 			updatePreferences,
-			initializeDevices,
+			subscribeToDevices,
+			unsubscribeFromDevices,
 		} = useDevices()
 		return {
 			devices,
 			videoInputId,
 			updateDevices,
 			updatePreferences,
-			initializeDevices,
+			subscribeToDevices,
+			unsubscribeFromDevices,
 		}
 	},
 
@@ -186,7 +188,11 @@ export default {
 	},
 
 	mounted() {
-		this.initializeDevices()
+		this.subscribeToDevices()
+	},
+
+	beforeUnmount() {
+		this.unsubscribeFromDevices()
 	},
 
 	methods: {
