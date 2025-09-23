@@ -718,6 +718,7 @@ OC.L10N.register(
     "Set reminder for later today" : "Постави потсетник за денес покасно",
     "Tomorrow – {timeLocale}" : "Утре – {timeLocale}",
     "Set reminder for tomorrow" : "Постави потсетник за утре",
+    "This weekend – {timeLocale}" : "Овој викенд – {timeLocale}",
     "Set reminder for this weekend" : "Постави потсетник за овој викенд",
     "Set reminder for next week" : "Постави потсетник за наредната недела",
     "Clear reminder – {timeLocale}" : "Избришан потсетник – {timeLocale}",
