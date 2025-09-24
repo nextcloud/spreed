@@ -30,6 +30,7 @@ export default {
 	},
 
 	async beforeMount() {
+		await this.$router.isReady()
 		if (this.$route.name === 'recording') {
 			this.tokenStore.updateToken(this.$route.params.token)
 
