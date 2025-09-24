@@ -130,9 +130,9 @@ export const usePollsStore = defineStore('polls', {
 			this.debouncedFunctions[token][pollId]()
 		},
 
-		async createPoll({ token, form }: { token: string, form: createPollParams }) {
+		async createPoll({ token, form, threadId }: { token: string, form: createPollParams, threadId?: number }) {
 			try {
-				const response = await createPoll({ token, ...form })
+				const response = await createPoll({ token, ...form, threadId })
 				this.addPoll({ token, poll: response.data.ocs.data })
 
 				return response.data.ocs.data
