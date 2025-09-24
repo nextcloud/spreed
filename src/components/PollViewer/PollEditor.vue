@@ -135,6 +135,7 @@ import IconFileEditOutline from 'vue-material-design-icons/FileEditOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import IconFileDownload from '../../../img/material-icons/file-download.svg?raw'
 import IconFileUpload from '../../../img/material-icons/file-upload.svg?raw'
+import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { POLL } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
@@ -160,6 +161,7 @@ const supportPollDrafts = hasTalkFeature(props.token, 'talk-polls-drafts')
 const store = useStore()
 const pollsStore = usePollsStore()
 const currentConversationToken = useGetToken()
+const threadId = useGetThreadId()
 
 const isOpenedFromDraft = ref(false)
 const editingDraftId = ref<number | null>(null)
@@ -248,6 +250,7 @@ async function handleSubmit() {
 
 	const poll = await pollsStore.createPoll({
 		token: props.token,
+		threadId: threadId.value ? threadId.value : undefined,
 		form: pollForm,
 	})
 	if (poll) {
