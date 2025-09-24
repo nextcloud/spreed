@@ -4802,6 +4802,12 @@ export interface operations {
                      * @default false
                      */
                     draft?: boolean;
+                    /**
+                     * Format: int64
+                     * @description Thread id which this poll should be posted into (also requires `threads` capability)
+                     * @default 0
+                     */
+                    threadId?: number;
                 };
             };
         };

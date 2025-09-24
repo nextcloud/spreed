@@ -375,6 +375,15 @@ class ChatController extends AEnvironmentAwareOCSController {
 			],
 		]);
 
+		if ($threadId !== 0) {
+			try {
+				$this->threadService->findByThreadId($this->room->getId(), $threadId);
+			} catch (DoesNotExistException) {
+				// Someone tried to cheat, ignore
+				$threadId = 0;
+			}
+		}
+
 		try {
 			$comment = $this->chatManager->addSystemMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, true, $referenceId, threadId: $threadId);
 		} catch (MessageTooLongException $e) {
