@@ -212,7 +212,7 @@ async function editMessage({ token, messageId, updatedMessage }: EditMessagePayl
  * @param data.referenceId generated reference id, leave empty to generate it based on the other args
  * @param [options] Axios request options
  */
-async function postRichObjectToConversation(token: string, { objectType, objectId, metaData, referenceId }: postRichObjectParams, options?: AxiosRequestConfig): postRichObjectResponse {
+async function postRichObjectToConversation(token: string, { objectType, objectId, metaData, referenceId, threadId }: postRichObjectParams, options?: AxiosRequestConfig): postRichObjectResponse {
 	if (!referenceId) {
 		const tempId = 'richobject-' + objectType + '-' + objectId + '-' + token + '-' + (new Date().getTime())
 		referenceId = Hex.stringify(SHA256(tempId))
@@ -222,6 +222,7 @@ async function postRichObjectToConversation(token: string, { objectType, objectI
 		objectId,
 		metaData,
 		referenceId,
+		threadId,
 	} as postRichObjectParams, options)
 }
 
