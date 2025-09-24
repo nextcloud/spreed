@@ -225,10 +225,10 @@ export default {
 
 		// This is used to decide which outer element type to use
 		filePreviewElement() {
-			if (this.isUploadEditor || this.isTemporaryUpload) {
-				return 'div'
-			} else if (this.isVoiceMessage && !this.isSharedItems) {
+			if (this.isVoiceMessage && !this.isSharedItems) {
 				return AudioPlayer
+			} else if (this.isUploadEditor || this.isTemporaryUpload) {
+				return 'div'
 			}
 			return 'a'
 		},

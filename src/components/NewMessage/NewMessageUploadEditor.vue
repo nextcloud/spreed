@@ -211,6 +211,7 @@ export default {
 						threadId: temporaryMessage.threadId,
 						threadTitle: temporaryMessage.threadTitle,
 						silent: temporaryMessage.silent,
+						parent: temporaryMessage.parent,
 					},
 				})
 			} else {
