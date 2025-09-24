@@ -259,8 +259,9 @@ export function useGetMessagesProvider() {
 		if (!chatStore.hasMessage(token, { messageId, threadId })) {
 			// message not found in the list, need to fetch it first
 			await getMessageContext(token, messageId, threadId)
-		} else if (chatStore.getFirstKnownId(token, { messageId, threadId }) === messageId) {
-			// message is the first one in the block, try to get some messages above
+		} else if (chatStore.getFirstKnownId(token, { messageId, threadId }) === messageId
+			|| store.getters.message(token, messageId)?.threadId !== threadId) {
+			// message is the first one in the block or does not belong to the current context, try to get some messages above
 			isInitialisingMessages.value = true
 			await getOldMessages(token, true, { messageId, threadId })
 			isInitialisingMessages.value = false
