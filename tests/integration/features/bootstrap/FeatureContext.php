@@ -2085,7 +2085,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/share',
 			new TableNode([
-				['threadId', FeatureContext::getMessageIdForText($thread)],
+				['threadId', self::getMessageIdForText($thread)],
 				['objectType', $type],
 				['objectId', $id],
 				['metaData', $metaData],
@@ -2150,6 +2150,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 		if (isset($data['draft'])) {
 			$data['draft'] = (bool)$data['draft'];
+		}
+		if (isset($data['threadId'])) {
+			$data['threadId'] = self::$titleToThreadId[$data['threadId']];
 		}
 
 		$this->setCurrentUser($user);

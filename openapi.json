@@ -7869,6 +7869,12 @@
                                         "type": "boolean",
                                         "default": false,
                                         "description": "Whether the poll should be saved as a draft (only allowed for moderators and with `talk-polls-drafts` capability)"
+                                    },
+                                    "threadId": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "description": "Thread id which this poll should be posted into (also requires `threads` capability)"
                                     }
                                 }
                             }

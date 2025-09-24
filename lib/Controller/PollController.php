@@ -25,6 +25,7 @@ use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\PollService;
+use OCA\Talk\Service\ThreadService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -46,6 +47,7 @@ class PollController extends AEnvironmentAwareOCSController {
 		protected ChatManager $chatManager,
 		protected PollService $pollService,
 		protected AttachmentService $attachmentService,
+		protected ThreadService $threadService,
 		protected ITimeFactory $timeFactory,
 		protected LoggerInterface $logger,
 	) {
@@ -62,6 +64,7 @@ class PollController extends AEnvironmentAwareOCSController {
 	 * @psalm-param Poll::MODE_* $resultMode Mode how the results will be shown
 	 * @param int $maxVotes Number of maximum votes per voter
 	 * @param bool $draft Whether the poll should be saved as a draft (only allowed for moderators and with `talk-polls-drafts` capability)
+	 * @param int $threadId Thread id which this poll should be posted into (also requires `threads` capability)
 	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'poll'|'question'|'room'}, array{}>
 	 *
 	 * 200: Draft created successfully
@@ -75,7 +78,7 @@ class PollController extends AEnvironmentAwareOCSController {
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
-	public function createPoll(string $question, array $options, int $resultMode, int $maxVotes, bool $draft = false): DataResponse {
+	public function createPoll(string $question, array $options, int $resultMode, int $maxVotes, bool $draft = false, int $threadId = 0): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\PollController::class);
@@ -113,6 +116,15 @@ class PollController extends AEnvironmentAwareOCSController {
 			return new DataResponse($poll->renderAsDraft());
 		}
 
+		if ($threadId !== 0) {
+			try {
+				$this->threadService->findByThreadId($this->room->getId(), $threadId);
+			} catch (DoesNotExistException) {
+				// Someone tried to cheat, ignore
+				$threadId = 0;
+			}
+		}
+
 		$message = json_encode([
 			'message' => 'object_shared',
 			'parameters' => [
@@ -127,7 +139,7 @@ class PollController extends AEnvironmentAwareOCSController {
 		], JSON_THROW_ON_ERROR);
 
 		try {
-			$this->chatManager->addSystemMessage($this->room, $this->participant, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true);
+			$this->chatManager->addSystemMessage($this->room, $this->participant, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true, threadId: $threadId);
 		} catch (\Exception $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 		}
