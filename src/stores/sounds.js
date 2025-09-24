@@ -38,6 +38,7 @@ export const useSoundsStore = defineStore('sounds', {
 			leave: null,
 			wait: null,
 		},
+		audioOutputDeviceId: undefined,
 	}),
 
 	actions: {
@@ -123,6 +124,7 @@ export const useSoundsStore = defineStore('sounds', {
 			} catch (error) {
 				console.error(error)
 			}
+			this.audioOutputDeviceId = deviceId
 		},
 	},
 })
