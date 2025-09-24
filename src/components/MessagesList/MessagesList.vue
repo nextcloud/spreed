@@ -312,7 +312,7 @@ export default {
 				this.$nextTick(() => {
 					this.checkSticky()
 					// setting wheel event for non-scrollable chat
-					if (!this.isChatBeginningReached && this.checkChatNotScrollable()) {
+					if (this.checkChatNotScrollable()) {
 						this.$refs.scroller.addEventListener('wheel', this.handleWheelEvent, { passive: true })
 					}
 				})
@@ -658,8 +658,7 @@ export default {
 				this.setChatScrolledToBottom(false)
 			}
 
-			if ((scrollHeight > clientHeight && scrollTop < LOAD_HISTORY_THRESHOLD && this.isScrolling === 'up')
-				|| skipHeightCheck) {
+			if (this.isScrolling === 'up' && (skipHeightCheck || (scrollHeight > clientHeight && scrollTop < LOAD_HISTORY_THRESHOLD))) {
 				if (this.loadingOldMessages || this.isChatBeginningReached) {
 					// already loading, don't do it twice
 					return
@@ -672,8 +671,7 @@ export default {
 					})
 				}
 				this.setChatScrolledToBottom(false, { auto: true })
-			} else if ((scrollHeight > clientHeight && scrollOffsetFromBottom < LOAD_HISTORY_THRESHOLD && this.isScrolling === 'down')
-				|| skipHeightCheck) {
+			} else if (this.isScrolling === 'down' && (skipHeightCheck || (scrollHeight > clientHeight && scrollOffsetFromBottom < LOAD_HISTORY_THRESHOLD))) {
 				if (this.loadingNewMessages || this.isChatEndReached) {
 					// already loading, don't do it twice
 					return
