@@ -69,6 +69,7 @@ class RoomFormatter {
 		bool $isListingBreakoutRooms = false,
 		bool $skipLastMessage = false,
 		?Thread $thread = null,
+		bool $isThreadInfoComplete = false,
 	): array {
 		return $this->formatRoomV4(
 			$responseFormat,
@@ -80,6 +81,7 @@ class RoomFormatter {
 			$isListingBreakoutRooms,
 			$skipLastMessage,
 			$thread,
+			$isThreadInfoComplete,
 		);
 	}
 
@@ -97,6 +99,7 @@ class RoomFormatter {
 		bool $isListingBreakoutRooms,
 		bool $skipLastMessage,
 		?Thread $thread = null,
+		bool $isThreadInfoComplete = false,
 	): array {
 		$roomData = [
 			'id' => $room->getId(),
@@ -409,6 +412,7 @@ class RoomFormatter {
 				$currentParticipant,
 				$lastMessage,
 				$thread,
+				$isThreadInfoComplete,
 			);
 			if ($lastMessageData !== null) {
 				$roomData['lastMessage'] = $lastMessageData;
@@ -455,6 +459,7 @@ class RoomFormatter {
 		Participant $participant,
 		IComment $lastMessage,
 		?Thread $thread = null,
+		bool $isThreadInfoComplete = false,
 	): ?array {
 		$message = $this->messageParser->createMessage($room, $participant, $lastMessage, $this->l10n);
 		$this->messageParser->parseMessage($message, true);
@@ -469,6 +474,12 @@ class RoomFormatter {
 			return null;
 		}
 
+		if ($thread === null && $isThreadInfoComplete === false) {
+			try {
+				$thread = $this->threadService->findByThreadId($room->getId(), (int)$lastMessage->getTopmostParentId());
+			} catch (DoesNotExistException) {
+			}
+		}
 		return $message->toArray($responseFormat, $thread);
 	}
 }

@@ -302,6 +302,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 			$lastLocalMessages = array_filter(array_map(static fn (Room $room): ?IComment => !$room->isFederatedConversation() ? $room->getLastMessage() : null, $rooms));
 			$potentialThreads = array_map(static fn (IComment $lastMessage): int => (int)$lastMessage->getTopmostParentId() ?: (int)$lastMessage->getId(), $lastLocalMessages);
+
 			$threads = $this->threadService->preloadThreadsForConversationList($potentialThreads);
 		}
 
@@ -313,7 +314,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 					$this->participantService->getParticipant($room, $this->userId),
 					$statuses,
 					skipLastMessage: !$includeLastMessage,
-					thread: $threads[$room->getId()] ?? null
+					thread: $threads[$room->getId()] ?? null,
+					isThreadInfoComplete: true,
 				);
 			} catch (ParticipantNotFoundException $e) {
 				// for example in case the room was deleted concurrently,
@@ -485,7 +487,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 				$statuses = $this->statusManager->getUserStatuses($userIds);
 			}
-
 			return new DataResponse($this->formatRoom($room, $participant, $statuses, $isSIPBridgeRequest), Http::STATUS_OK, $this->getTalkHashHeader());
 		} catch (RoomNotFoundException $e) {
 			/**
@@ -545,6 +546,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		bool $isListingBreakoutRooms = false,
 		bool $skipLastMessage = false,
 		?Thread $thread = null,
+		bool $isThreadInfoComplete = false,
 	): array {
 		return $this->roomFormatter->formatRoom(
 			$this->getResponseFormat(),
@@ -556,6 +558,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$isListingBreakoutRooms,
 			$skipLastMessage,
 			$thread,
+			$isThreadInfoComplete,
 		);
 	}
 
