@@ -200,7 +200,7 @@ export const useDevices = createSharedComposable(function() {
 		updateAudioStream()
 		updateVideoStream()
 
-		if (mediaDevicesManager.attributes.audioOutputId !== undefined) {
+		if (mediaDevicesManager.attributes.audioOutputId !== soundsStore.audioOutputDeviceId) {
 			soundsStore.setGeneralAudioOutput(mediaDevicesManager.attributes.audioOutputId)
 		}
 	}
