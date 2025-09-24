@@ -43,19 +43,35 @@ onBeforeMount(async () => {
 	<CallView :token="token" is-recording />
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
+/** Hide public footer gap from recording */
+#body-public {
+	--footer-height: 0 !important;
+}
+
+/** Hide public interface from recording */
+#header .header-end {
+	display: none !important;
+}
+
 /* The CallView descendants expect border-box to be set, as in the normal UI the
  * CallView is a descendant of NcContent, which applies the border-box to all
  * its descendants.
  */
 #call-container {
-	:deep(*) {
+	--wrapper-padding: 0 !important;
+
+	* {
 		box-sizing: border-box;
 	}
 
-	:deep(#videos) {
+	#videos {
 		inset: 0;
 		height: 100%;
+	}
+
+	.video-container {
+		width: 100%;
 	}
 }
 </style>
