@@ -316,6 +316,7 @@ const actions = {
 			// Store the previously created temporary message
 			const message = {
 				...uploadedFile.temporaryMessage,
+				parent: options?.parent ? options.parent : uploadedFile.temporaryMessage.parent,
 				message: index === lastIndex && caption ? caption : '{file}',
 			}
 			// Add temporary messages (files) to the messages list
@@ -456,7 +457,7 @@ const actions = {
 				continue
 			}
 			const [index, shareableFile] = share
-			const { id, messageType, parent, referenceId } = shareableFile.temporaryMessage || {}
+			const { id, messageType, referenceId } = shareableFile.temporaryMessage || {}
 
 			const talkMetaData = JSON.stringify(Object.assign(
 				messageType !== MESSAGE.TYPE.COMMENT ? { messageType } : {},
@@ -464,7 +465,7 @@ const actions = {
 				options?.silent ? { silent: options.silent } : {},
 				options?.threadId ? { threadId: options.threadId } : {},
 				options?.threadTitle ? { threadTitle: options.threadTitle } : {},
-				parent ? { replyTo: parent.id } : {},
+				options?.parent ? { replyTo: options.parent.id } : {},
 			))
 
 			await context.dispatch('shareFile', { token, path: shareableFile.sharePath, index, uploadId, id, referenceId, talkMetaData })
