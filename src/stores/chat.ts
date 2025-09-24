@@ -247,9 +247,16 @@ export const useChatStore = defineStore('chat', () => {
 			const threadIds = Object.keys(threadIdSetsToUpdate)
 			if (threadIds.length) {
 				const chatBlockWithMergeBy: Set<number> | undefined = chatBlocks[token]?.find((set) => set.has(options.mergeBy!))
+				const lastKnownId = getLastKnownId(token)
 				if (chatBlockWithMergeBy) {
-					// Populate thread blocks from chat blocks
 					threadIds.forEach((threadId) => {
+						if (options.mergeBy === lastKnownId && chatBlockWithMergeBy.size === 1) {
+							// Fallback: This is either polling or posting new message in a thread view
+							// with no other messages in main chat block
+							threadIdSetsToUpdate[threadId].add(getLastKnownId(token, { threadId }))
+							return
+						}
+						// Populate thread blocks from chat blocks
 						for (const messageId of chatBlockWithMergeBy) {
 							const message = store.state.messagesStore.messages[token][messageId]
 							if (message && message.threadId === +threadId) {
