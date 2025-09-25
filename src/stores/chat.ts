@@ -253,7 +253,7 @@ export const useChatStore = defineStore('chat', () => {
 						for (const messageId of chatBlockWithMergeBy) {
 							const message = store.state.messagesStore.messages[token][messageId]
 							if (message && message.threadId === +threadId) {
-								threadIdSetsToUpdate[threadId].add(messageId)
+								threadIdSetsToUpdate[message.threadId].add(messageId)
 								break
 							}
 						}
