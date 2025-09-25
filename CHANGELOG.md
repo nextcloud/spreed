@@ -5,6 +5,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.0-rc.4 – 2025-09-25
+### Fixed
+- fix(threads): Support object shares, polls and file uploads
+  [#15990](https://github.com/nextcloud/spreed/pull/15990)
+  [#16001](https://github.com/nextcloud/spreed/pull/16001)
+- fix(call): Release media devices and memory resources after the call end
+  [#15992](https://github.com/nextcloud/spreed/issues/15992)
+- fix(call): Adjust call recording layout
+  [#16016](https://github.com/nextcloud/spreed/pull/16016)
+
+### Changed
+- Update translations
+- Update dependencies
+
+
 ## 22.0.0-rc.3 – 2025-09-18
 ### Fixed
 - fix(call): Correctly sync media devices with OS sound settings
