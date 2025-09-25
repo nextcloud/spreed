@@ -720,6 +720,7 @@ OC.L10N.register(
     "Set reminder for tomorrow" : "Постави потсетник за утре",
     "This weekend – {timeLocale}" : "Овој викенд – {timeLocale}",
     "Set reminder for this weekend" : "Постави потсетник за овој викенд",
+    "Next week – {timeLocale}" : "Следна недела – {timeLocale}",
     "Set reminder for next week" : "Постави потсетник за наредната недела",
     "Clear reminder – {timeLocale}" : "Избришан потсетник – {timeLocale}",
     "Message text copied to clipboard" : "Пораката е копирана во клипборд",
