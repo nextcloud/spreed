@@ -99,7 +99,6 @@
 						<NcPopover
 							v-else
 							:title="t('spreed', 'Show more info')"
-							close-on-click-outside
 							no-focus-trap>
 							<template #trigger>
 								<NcButton
@@ -133,7 +132,6 @@
 						<NcPopover
 							v-else
 							:title="t('spreed', 'Show more info')"
-							close-on-click-outside
 							no-focus-trap>
 							<template #trigger>
 								<NcButton
