@@ -19,16 +19,22 @@ use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\ICache;
+use OCP\ICacheFactory;
 use OCP\IDBConnection;
 
 class ThreadService {
 
+	private ICache $cache;
+	private const CACHE_PREFIX = 'thread/';
 	public function __construct(
 		protected IDBConnection $connection,
 		protected ThreadMapper $threadMapper,
 		protected ThreadAttendeeMapper $threadAttendeeMapper,
 		protected ITimeFactory $timeFactory,
+		protected ICacheFactory $cacheFactory,
 	) {
+		$this->cache = $this->cacheFactory->createDistributed('talk.threads');
 	}
 
 	public function createThread(Room $room, int $threadId, string $title): Thread {
@@ -40,7 +46,9 @@ class ThreadService {
 		$thread->setName($title);
 		$thread->setRoomId($room->getId());
 		$thread->setLastActivity($this->timeFactory->getDateTime());
-		$this->threadMapper->insert($thread);
+		$thread = $this->threadMapper->insert($thread);
+
+		$this->cache->set(self::CACHE_PREFIX . $room->getId() . '/' . $threadId, $thread->toJson(), 60 * 15);
 
 		return $thread;
 	}
@@ -51,7 +59,25 @@ class ThreadService {
 	 * @throws DoesNotExistException
 	 */
 	public function findByThreadId(int $roomId, int $threadId): Thread {
-		return $this->threadMapper->findById($roomId, $threadId);
+		$row = $this->cache->get(self::CACHE_PREFIX . $roomId . '/' . $threadId);
+		if (!empty($row)) {
+			return Thread::fromJson($row);
+		}
+
+		// We already looked for a thread with this id, and we didn't find anything
+		if ($row === '') {
+			throw new DoesNotExistException('No thread found');
+		}
+
+		try {
+			$thread = $this->threadMapper->findById($roomId, $threadId);
+			$this->cache->set(self::CACHE_PREFIX . $roomId . '/' . $threadId, $thread->toJson(), 60 * 15);
+		} catch (DoesNotExistException $e) {
+			$this->cache->set(self::CACHE_PREFIX . $roomId . '/' . $threadId, '', 60 * 15);
+			throw $e;
+		}
+		return $thread;
+
 	}
 
 	/**
@@ -95,6 +121,7 @@ class ThreadService {
 		$thread->setName($title);
 		$this->threadMapper->update($thread);
 
+		$this->cache->set(self::CACHE_PREFIX . $thread->getRoomId() . '/' . $thread->getId(), $thread->toJson(), 60 * 15);
 		return $thread;
 	}
 
@@ -221,7 +248,7 @@ class ThreadService {
 		$query->executeStatement();
 	}
 
-	public function updateLastMessageInfoAfterReply(int $threadId, int $lastMessageId): bool {
+	public function updateLastMessageInfoAfterReply(int $threadId, int $lastMessageId, int $roomId): bool {
 		$dateTime = $this->timeFactory->getDateTime();
 
 		$query = $this->connection->getQueryBuilder();
@@ -230,15 +257,26 @@ class ThreadService {
 			->set('last_message_id', $query->createNamedParameter($lastMessageId))
 			->set('last_activity', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE))
 			->where($query->expr()->eq('id', $query->createNamedParameter($threadId)));
+		$this->cache->remove(self::CACHE_PREFIX . $roomId . '/' . $threadId);
 		return (bool)$query->executeStatement();
 	}
 
 	public function deleteByRoom(Room $room): void {
+		$this->cache->clear(self::CACHE_PREFIX . $room->getId() . '/');
 		$this->threadMapper->deleteByRoomId($room->getId());
 		$this->threadAttendeeMapper->deleteByRoomId($room->getId());
 	}
 
 	public function validateThread(int $roomId, int $potentialThreadId): bool {
+		$row = $this->cache->get(self::CACHE_PREFIX . $roomId . '/' . $potentialThreadId);
+		if (!empty($row)) {
+			return true;
+		}
+
+		if ($row === '') {
+			return false;
+		}
+
 		$query = $this->connection->getQueryBuilder();
 		$query->select('id')
 			->from('talk_threads')
@@ -252,6 +290,11 @@ class ThreadService {
 		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
+		if ($row === false) {
+			$this->cache->set(self::CACHE_PREFIX . $roomId . '/' . $potentialThreadId, '', 60 * 15);
+		} else {
+			$this->cache->set(self::CACHE_PREFIX . $roomId . '/' . $potentialThreadId, $row, 60 * 15);
+		}
 
 		return $row !== false;
 	}

@@ -208,7 +208,7 @@ class ChatManager {
 				$this->unreadCountCache->clear($chat->getId() . '-');
 
 				if ($threadId !== 0) {
-					$isThread = $this->threadService->updateLastMessageInfoAfterReply($threadId, (int)$comment->getId());
+					$isThread = $this->threadService->updateLastMessageInfoAfterReply($threadId, (int)$comment->getId(), $chat->getId());
 					if ($isThread && $actorType === Attendee::ACTOR_USERS) {
 						try {
 							// Add to subscribed threads list
@@ -443,7 +443,7 @@ class ChatManager {
 			$messageId = (int)$comment->getId();
 			$threadId = (int)$comment->getTopmostParentId();
 			if ($threadId !== 0) {
-				$isThread = $this->threadService->updateLastMessageInfoAfterReply($threadId, $messageId);
+				$isThread = $this->threadService->updateLastMessageInfoAfterReply($threadId, $messageId, $chat->getId());
 				if (!$isThread) {
 					$threadId = 0;
 				} elseif ($participant instanceof Participant) {
