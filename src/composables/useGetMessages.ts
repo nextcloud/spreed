@@ -259,12 +259,25 @@ export function useGetMessagesProvider() {
 		if (!chatStore.hasMessage(token, { messageId, threadId })) {
 			// message not found in the list, need to fetch it first
 			await getMessageContext(token, messageId, threadId)
-		} else if (chatStore.getFirstKnownId(token, { messageId, threadId }) === messageId
-			|| store.getters.message(token, messageId)?.threadId !== threadId) {
-			// message is the first one in the block or does not belong to the current context, try to get some messages above
-			isInitialisingMessages.value = true
-			await getOldMessages(token, true, { messageId, threadId })
-			isInitialisingMessages.value = false
+		} else {
+			const firstContextMessageId = chatStore.getFirstKnownId(token, { messageId, threadId })
+			const nearestContextMessageId = chatStore.getNearestKnownContextId(token, { messageId, threadId })
+
+			if (!nearestContextMessageId) {
+				// current context is empty, need to fetch it first
+				await getMessageContext(token, messageId, threadId)
+			} else if (nearestContextMessageId !== messageId) {
+				// message to be shown does not belong to the current context, switch to nearest instead
+				contextMessageId.value = nearestContextMessageId
+				messageId = nearestContextMessageId
+			}
+
+			if (messageId === firstContextMessageId) {
+				// message is the first one in the block, try to get some messages above
+				isInitialisingMessages.value = true
+				await getOldMessages(token, true, { messageId, threadId })
+				isInitialisingMessages.value = false
+			}
 		}
 
 		// need some delay (next tick is too short) to be able to run

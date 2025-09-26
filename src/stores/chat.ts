@@ -46,6 +46,20 @@ function checkIfIntersect(parentBlock: Set<number>, childBlock: Set<number>): bo
 }
 
 /**
+ * Check, if message belongs to the current context (main chat or thread)
+ *
+ * @param message
+ * @param threadId
+ */
+function checkIfBelongsToContext(message: ChatMessage, threadId?: number): boolean {
+	return threadId
+		// In thread context, only thread messages with given threadId are allowed
+		? threadId === message.threadId
+		// In main context, only non-thread messages, topmost thread messages and temporary messages are allowed
+		: (!message.isThread || message.id === message.threadId || message.id.toString().startsWith('temp-'))
+}
+
+/**
  * Return an array of only numeric ids from given set
  * (temporary messages have a string id)
  *
@@ -113,10 +127,7 @@ export const useChatStore = defineStore('chat', () => {
 				// - completely deleted (expired) message
 				// - thread message in general view (apart from the topmost one)
 				if (message && !isHiddenSystemMessage(message)
-					&& (threadId
-						? threadId === message.threadId
-						: (!message.isThread || message.id === message.threadId || message.id.toString().startsWith('temp-'))
-					)
+					&& checkIfBelongsToContext(message, threadId)
 				) {
 					acc.push(message)
 				}
@@ -213,6 +224,31 @@ export const useChatStore = defineStore('chat', () => {
 			? chatBlocks[token][0]
 			: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
 		return Math.max(...filterNumericIds(contextBlock))
+	}
+
+	/**
+	 * Returns nearest known message id, belonging to current context
+	 *
+	 * @param token
+	 * @param payload
+	 * @param payload.messageId
+	 * @param payload.threadId
+	 */
+	function getNearestKnownContextId(
+		token: string,
+		{ messageId = 0, threadId = 0 }: GetMessagesListOptions = { messageId: 0, threadId: 0 },
+	): number | undefined {
+		const message = store.state.messagesStore.messages[token][messageId]
+		if (!message) {
+			return undefined
+		}
+
+		if (checkIfBelongsToContext(message, threadId)) {
+			return messageId
+		}
+
+		// Get last item from prepared messages list (already represents current context)
+		return getMessagesList(token, { messageId, threadId }).at(-1)?.id
 	}
 
 	/**
@@ -500,6 +536,7 @@ export const useChatStore = defineStore('chat', () => {
 		hasMessage,
 		getFirstKnownId,
 		getLastKnownId,
+		getNearestKnownContextId,
 		processChatBlocks,
 		addMessageToChatBlocks,
 		removeMessagesFromChatBlocks,
