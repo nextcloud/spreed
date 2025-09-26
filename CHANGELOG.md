@@ -5,7 +5,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.0 – 2025-09-27
+### Added
+- Implement threads feature
+- Implement "Busy" status in calls
+- Implement live-transcriptions when the ExApp is available
+- Update call interface design
+
+### Changed
+- Migrate app to Vue3
+- Update dependencies
+- Update translations
+- Require Nextcloud 32 / Hub 25 Autumn
+
+### Fixed
+- Improve chat history browsing performance
+
 ## 22.0.0-rc.4 – 2025-09-25
+### Changed
+- Update translations
+- Update dependencies
+
 ### Fixed
 - fix(threads): Support object shares, polls and file uploads
   [#15990](https://github.com/nextcloud/spreed/pull/15990)
@@ -14,11 +34,6 @@ All notable changes to this project will be documented in this file.
   [#15992](https://github.com/nextcloud/spreed/issues/15992)
 - fix(call): Adjust call recording layout
   [#16016](https://github.com/nextcloud/spreed/pull/16016)
-
-### Changed
-- Update translations
-- Update dependencies
-
 
 ## 22.0.0-rc.3 – 2025-09-18
 ### Fixed
