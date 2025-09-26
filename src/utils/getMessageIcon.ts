@@ -8,6 +8,7 @@ import type { Conversation } from '../types/index.ts'
 import IconCardTextOutline from 'vue-material-design-icons/CardTextOutline.vue'
 import IconContactsOutline from 'vue-material-design-icons/ContactsOutline.vue'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconImageOutline from 'vue-material-design-icons/ImageOutline.vue'
 import IconMapMarkerOutline from 'vue-material-design-icons/MapMarkerOutline.vue'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
@@ -24,6 +25,11 @@ export function getMessageIcon(lastMessage: Conversation['lastMessage']): Compon
 	if (!lastMessage || Array.isArray(lastMessage)) {
 		return null
 	}
+
+	if ('threadId' in lastMessage && lastMessage.isThread) {
+		return IconForumOutline
+	}
+
 	const file = lastMessage.messageParameters?.file
 	if (file) {
 		if (file.mimetype?.startsWith('video')) {
