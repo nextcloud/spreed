@@ -171,12 +171,12 @@
 					</NcAppNavigationItem>
 					<NcAppNavigationCaption
 						class="navigation-caption"
-						:name="showArchived ? t('spreed', 'Archived conversations') : t('spreed', 'Followed threads')" />
+						:name="showArchived ? t('spreed', 'Archived conversations') : t('spreed', 'Threads')" />
 				</template>
 				<NcAppNavigationItem
 					v-else-if="supportThreads && !showThreadsList && !isSearching && !isFiltered"
 					class="navigation-item"
-					:name="t('spreed', 'Followed threads')"
+					:name="t('spreed', 'Threads')"
 					@click.prevent="handleShowThreadsList">
 					<template #icon>
 						<IconForumOutline :size="20" />
