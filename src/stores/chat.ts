@@ -227,6 +227,31 @@ export const useChatStore = defineStore('chat', () => {
 	}
 
 	/**
+	 * Returns nearest known message id, belonging to current context
+	 *
+	 * @param token
+	 * @param payload
+	 * @param payload.messageId
+	 * @param payload.threadId
+	 */
+	function getNearestKnownContextId(
+		token: string,
+		{ messageId = 0, threadId = 0 }: GetMessagesListOptions = { messageId: 0, threadId: 0 },
+	): number | undefined {
+		const message = store.state.messagesStore.messages[token][messageId]
+		if (!message) {
+			return undefined
+		}
+
+		if (checkIfBelongsToContext(message, threadId)) {
+			return messageId
+		}
+
+		// Get last item from prepared messages list (already represents current context)
+		return getMessagesList(token, { messageId, threadId }).at(-1)?.id
+	}
+
+	/**
 	 * Populate chat blocks from given arrays of messages
 	 * If blocks already exist, try to extend them
 	 *
@@ -511,6 +536,7 @@ export const useChatStore = defineStore('chat', () => {
 		hasMessage,
 		getFirstKnownId,
 		getLastKnownId,
+		getNearestKnownContextId,
 		processChatBlocks,
 		addMessageToChatBlocks,
 		removeMessagesFromChatBlocks,
