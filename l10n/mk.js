@@ -825,7 +825,7 @@ OC.L10N.register(
     "Resend invitation" : "Повторно испратете ги поканите",
     "Send call notification" : "Испрати известување за повик",
     "Grant all permissions" : "Додели ги сите дозволи",
-    "Remove all permissions" : "Острани ги сите дозволи",
+    "Remove all permissions" : "Отстрани ги сите дозволи",
     "Remove" : "Отстрани ",
     "Permissions modified for {displayName}" : "Дозволите на {displayName} се променети",
     "Add users or groups" : "Add users or groups",
