@@ -2218,12 +2218,8 @@
                         "in": "query",
                         "description": "Theme used for background",
                         "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
+                            "type": "boolean",
+                            "default": false
                         }
                     },
                     {
@@ -5561,12 +5557,8 @@
                         "in": "query",
                         "description": "whether to also terminate the call for all participants",
                         "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
+                            "type": "boolean",
+                            "default": false
                         }
                     },
                     {
@@ -10443,12 +10435,8 @@
                         "in": "query",
                         "description": "Include the user status",
                         "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
+                            "type": "boolean",
+                            "default": false
                         }
                     },
                     {
@@ -10467,12 +10455,8 @@
                         "in": "query",
                         "description": "Include the last message, clients should opt-out when only rendering a compact list",
                         "schema": {
-                            "type": "integer",
-                            "default": 1,
-                            "enum": [
-                                0,
-                                1
-                            ]
+                            "type": "boolean",
+                            "default": true
                         }
                     },
                     {
@@ -13179,12 +13163,8 @@
                         "in": "query",
                         "description": "Include the user statuses",
                         "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
+                            "type": "boolean",
+                            "default": false
                         }
                     },
                     {
@@ -13623,12 +13603,8 @@
                         "in": "query",
                         "description": "Include the user statuses",
                         "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
+                            "type": "boolean",
+                            "default": false
                         }
                     },
                     {
@@ -22451,12 +22427,8 @@
                         "in": "query",
                         "description": "Include the user statuses",
                         "schema": {
-                            "type": "integer",
-                            "default": 0,
-                            "enum": [
-                                0,
-                                1
-                            ]
+                            "type": "boolean",
+                            "default": false
                         }
                     },
                     {

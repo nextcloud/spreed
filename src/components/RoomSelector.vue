@@ -177,7 +177,7 @@ export default {
 			const response = this.listOpenConversations
 				? await searchListedConversations('')
 				: await fetchConversations({
-						includeStatus: 1,
+						includeStatus: true,
 					})
 
 			this.rooms = response.data.ocs.data.sort(this.sortConversations)

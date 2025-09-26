@@ -555,7 +555,7 @@ export interface operations {
                 /** @description Federation CloudID to get the avatar for */
                 cloudId: string;
                 /** @description Theme used for background */
-                darkTheme?: 0 | 1;
+                darkTheme?: boolean;
             };
             header: {
                 /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
@@ -649,7 +649,7 @@ export interface operations {
                 /** @description Federation CloudID to get the avatar for */
                 cloudId: string;
                 /** @description Theme used for background */
-                darkTheme?: 0 | 1;
+                darkTheme?: boolean;
             };
             header: {
                 /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
