@@ -54,19 +54,14 @@ export function useInterceptNotifications() {
 
 		switch (event.action.type) {
 			case 'WEB': {
-				const load = event.action.url.split('/call/').pop()
-				if (!load) {
+				const conversationRouteIndex = event.action.url.lastIndexOf('/call/')
+				if (conversationRouteIndex === -1) {
+					// Proceed with default behaviour (open given link)
 					return
 				}
 
-				const [token, hash] = load.split('#')
-				await router.push({
-					name: 'conversation',
-					hash: hash ? `#${hash}` : '',
-					params: {
-						token,
-					},
-				})
+				const conversationRouteLocationRaw = event.action.url.substring(conversationRouteIndex)
+				await router.push(conversationRouteLocationRaw)
 
 				event.cancelAction = true
 				break
