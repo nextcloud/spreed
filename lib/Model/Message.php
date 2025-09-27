@@ -24,6 +24,7 @@ class Message {
 	public const METADATA_LAST_EDITED_TIME = 'last_edited_time';
 	public const METADATA_SILENT = 'silent';
 	public const METADATA_CAN_MENTION_ALL = 'can_mention_all';
+	public const METADATA_THREAD_ID = 'thread_id';
 
 	/** @var bool */
 	protected $visible = true;

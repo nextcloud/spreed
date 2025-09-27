@@ -28,6 +28,8 @@ use OCP\DB\Types;
  * @psalm-import-type TalkThread from ResponseDefinitions
  */
 class Thread extends Entity {
+	public const THREAD_NONE = 0;
+	public const THREAD_CREATE = -1;
 	protected int $roomId = 0;
 	protected int $lastMessageId = 0;
 	protected int $numReplies = 0;

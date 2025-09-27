@@ -36,6 +36,7 @@ use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Reminder;
 use OCA\Talk\Model\Session;
+use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
@@ -272,8 +273,10 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
+			$createThread = $replyTo === 0 && $threadId === Thread::THREAD_NONE && $threadTitle !== '';
+			$threadId = $createThread ? Thread::THREAD_CREATE : $threadId;
 			$comment = $this->chatManager->sendMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent, threadId: $threadId);
-			if ($replyTo === 0 && $threadTitle !== '') {
+			if ($createThread) {
 				$thread = $this->threadService->createThread($this->room, (int)$comment->getId(), $threadTitle);
 				// Add to subscribed threads list
 				$this->threadService->setNotificationLevel($this->participant->getAttendee(), $thread, Participant::NOTIFY_DEFAULT);
