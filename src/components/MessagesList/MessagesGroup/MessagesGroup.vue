@@ -19,7 +19,7 @@
 			<li class="messages__author" aria-level="4">
 				{{ actorInfo }}
 			</li>
-			<Message
+			<MessageItem
 				v-for="(message, index) of messages"
 				:key="message.id"
 				:message="message"
@@ -33,7 +33,7 @@
 import { t } from '@nextcloud/l10n'
 import { computed, toRefs } from 'vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
-import Message from './Message/Message.vue'
+import MessageItem from './Message/MessageItem.vue'
 import { useMessageInfo } from '../../../composables/useMessageInfo.ts'
 import { ATTENDEE, AVATAR } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
@@ -44,7 +44,7 @@ export default {
 
 	components: {
 		AvatarWrapper,
-		Message,
+		MessageItem,
 	},
 
 	props: {

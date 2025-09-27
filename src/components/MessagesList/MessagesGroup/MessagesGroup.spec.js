@@ -8,6 +8,7 @@ import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
+import MessageItem from './Message/MessageItem.vue'
 import MessagesGroup from './MessagesGroup.vue'
 import { ATTENDEE, MESSAGE } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
@@ -106,7 +107,7 @@ describe('MessagesGroup.vue', () => {
 		const authorEl = wrapper.find('.messages__author')
 		expect(authorEl.text()).toBe(actorInfo)
 
-		const messagesEl = wrapper.findAllComponents({ name: 'Message' })
+		const messagesEl = wrapper.findAllComponents(MessageItem)
 		expect(messagesEl.at(0).props()).toMatchObject({
 			message: {
 				id: 100,
