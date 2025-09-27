@@ -61,7 +61,7 @@
     "entities": "^6.0.1",
     "escape-html": "^1.0.3",
     "extendable-media-recorder": "^9.2.29",
-    "extendable-media-recorder-wav-encoder": "^7.0.131",
+    "extendable-media-recorder-wav-encoder": "^7.0.132",
     "hark": "^1.2.3",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
