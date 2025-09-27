@@ -18,7 +18,7 @@
 				:key="breakoutRoom.token"
 				:breakout-room="breakoutRoom"
 				:main-conversation="mainConversation">
-				<Participant
+				<ParticipantItem
 					v-for="participant in $store.getters.participantsList(breakoutRoom.token)"
 					:key="participant.actorId"
 					:participant="participant" />
@@ -39,7 +39,7 @@
 import { t } from '@nextcloud/l10n'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
-import Participant from '../Participants/Participant.vue'
+import ParticipantItem from '../Participants/ParticipantItem.vue'
 import BreakoutRoomItem from './BreakoutRoomItem.vue'
 import BreakoutRoomsActions from './BreakoutRoomsActions.vue'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
@@ -53,7 +53,7 @@ export default {
 		BreakoutRoomItem,
 		BreakoutRoomsActions,
 		NcEmptyContent,
-		Participant,
+		ParticipantItem,
 
 		// Icons
 		IconDotsCircle,
