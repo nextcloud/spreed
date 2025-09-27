@@ -65,7 +65,7 @@ class ThreadAttendeeMapper extends QBMapper {
 	/**
 	 * @throws DoesNotExistException if the item does not exist
 	 */
-	public function findAttendeeByThreadId(string $actorType, string $actorId, int $threadId): ThreadAttendee {
+	public function findAttendeeByThreadId(string $actorType, string $actorId, int $roomId, int $threadId): ThreadAttendee {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
@@ -76,6 +76,10 @@ class ThreadAttendeeMapper extends QBMapper {
 			->andWhere($query->expr()->eq(
 				'actor_id',
 				$query->createNamedParameter($actorId),
+			))
+			->andWhere($query->expr()->eq(
+				'room_id',
+				$query->createNamedParameter($roomId),
 			))
 			->andWhere($query->expr()->eq(
 				'thread_id',
