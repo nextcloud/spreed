@@ -16,7 +16,7 @@ import IconChatPlusOutline from 'vue-material-design-icons/ChatPlusOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
 import Hint from '../../UIShared/Hint.vue'
-import Conversation from '../ConversationsList/Conversation.vue'
+import ConversationItem from '../ConversationsList/ConversationItem.vue'
 import { ATTENDEE, AVATAR, CONVERSATION } from '../../../constants.ts'
 import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../../stores/settings.js'
@@ -219,7 +219,7 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 		type-field="type"
 		:item-size="itemSize">
 		<template #default="{ item }">
-			<Conversation
+			<ConversationItem
 				v-if="item.type === 'conversation'"
 				:ref="`conversation-${item.object.token}`"
 				:item="item.object"
@@ -238,7 +238,7 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 					{{ t('spreed', 'New group conversation') }}
 				</template>
 			</NcListItem>
-			<Conversation
+			<ConversationItem
 				v-else-if="item.type === 'open_conversation'"
 				:item="item.object"
 				is-search-result

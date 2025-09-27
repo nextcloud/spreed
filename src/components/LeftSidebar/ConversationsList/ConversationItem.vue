@@ -316,7 +316,7 @@ const notificationLevels = [
 ]
 
 export default {
-	name: 'Conversation',
+	name: 'ConversationItem',
 
 	components: {
 		ConversationIcon,
