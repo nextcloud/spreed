@@ -15,8 +15,8 @@ import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
 import Quote from '../../../Quote.vue'
 import CallButton from '../../../TopBar/CallButton.vue'
-import Message from './Message.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
+import MessageItem from './MessageItem.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
@@ -30,7 +30,7 @@ import storeConfig from '../../../../store/storeConfig.js'
 import { useActorStore } from '../../../../stores/actor.ts'
 import { useTokenStore } from '../../../../stores/token.ts'
 
-describe('Message.vue', () => {
+describe('MessageItem.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let testStoreConfig
 	let store
@@ -94,7 +94,7 @@ describe('Message.vue', () => {
 	 * Shared function to mount component
 	 */
 	function mountMessage(props) {
-		return mount(Message, {
+		return mount(MessageItem, {
 			global: {
 				plugins: [router, store],
 				provide: injected,

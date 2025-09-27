@@ -136,7 +136,7 @@ const canSummarizeChat = hasTalkFeature('local', 'chat-summary-api')
 const summaryThreshold = getTalkConfig('local', 'chat', 'summary-threshold') ?? 0
 
 export default {
-	name: 'Message',
+	name: 'MessageItem',
 
 	components: {
 		IconUnfoldLessHorizontal,
