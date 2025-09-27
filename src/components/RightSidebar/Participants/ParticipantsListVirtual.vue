@@ -11,7 +11,7 @@
 		:item-size="PARTICIPANT_ITEM_SIZE"
 		key-field="attendeeId">
 		<template #default="{ item }">
-			<Participant :participant="item" />
+			<ParticipantItem :participant="item" />
 		</template>
 		<template v-if="loading" #after>
 			<LoadingPlaceholder type="participants" :count="dummyParticipants" />
@@ -22,7 +22,7 @@
 <script>
 import { RecycleScroller } from 'vue-virtual-scroller'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
-import Participant from './Participant.vue'
+import ParticipantItem from './ParticipantItem.vue'
 import { AVATAR } from '../../../constants.ts'
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -39,7 +39,7 @@ export default {
 
 	components: {
 		LoadingPlaceholder,
-		Participant,
+		ParticipantItem,
 		RecycleScroller,
 	},
 

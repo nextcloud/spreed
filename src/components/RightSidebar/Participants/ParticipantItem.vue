@@ -391,7 +391,7 @@ import { readableNumber } from '../../../utils/readableNumber.ts'
 import { getPreloadedUserStatus, getStatusMessage } from '../../../utils/userStatus.ts'
 
 export default {
-	name: 'Participant',
+	name: 'ParticipantItem',
 
 	components: {
 		AvatarWrapper,
