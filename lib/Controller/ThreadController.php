@@ -360,7 +360,14 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ThreadController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ThreadController::class);
-			return $proxy->setNotificationLevel($this->room, $this->participant, $messageId, $level);
+			$response = $proxy->setNotificationLevel($this->room, $this->participant, $messageId, $level);
+
+			if ($response->getStatus() === Http::STATUS_OK) {
+				// Also save locally, for later handling when receiving a federated message
+				$this->threadService->setNotificationLevel($this->participant->getAttendee(), $messageId, $level);
+			}
+
+			return $response;
 		}
 
 		if (!\in_array($level, [
@@ -372,13 +379,14 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'level'], Http::STATUS_BAD_REQUEST);
 		}
 
+
 		try {
 			$thread = $this->threadService->findByThreadId($this->room->getId(), $messageId);
 		} catch (DoesNotExistException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
 		}
 
-		$threadAttendee = $this->threadService->setNotificationLevel($this->participant->getAttendee(), $thread, $level);
+		$threadAttendee = $this->threadService->setNotificationLevel($this->participant->getAttendee(), $thread->getId(), $level);
 		$attendees = [$thread->getId() => $threadAttendee];
 		$list = $this->prepareListOfThreads([$thread], $attendees);
 
