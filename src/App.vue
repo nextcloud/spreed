@@ -431,6 +431,10 @@ export default {
 		 * first navigation will be made from initial state { name : undefined }
 		 */
 		this.$router.beforeEach((to, from, next) => {
+			if (to.fullPath === from.fullPath) {
+				// Block duplicated navigation
+				return
+			}
 			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
 				// Navigating within the same conversation
 				beforeRouteChangeListener(to, from, next)
