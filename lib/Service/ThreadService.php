@@ -198,15 +198,15 @@ class ThreadService {
 		return $threadAttendees;
 	}
 
-	public function setNotificationLevel(Attendee $attendee, Thread $thread, int $level): ThreadAttendee {
+	public function setNotificationLevel(Attendee $attendee, int $threadId, int $level): ThreadAttendee {
 		try {
-			$threadAttendee = $this->threadAttendeeMapper->findAttendeeByThreadId($attendee->getActorType(), $attendee->getActorId(), $thread->getId());
+			$threadAttendee = $this->threadAttendeeMapper->findAttendeeByThreadId($attendee->getActorType(), $attendee->getActorId(), $attendee->getRoomId(), $threadId);
 			$threadAttendee->setNotificationLevel($level);
 			$this->threadAttendeeMapper->update($threadAttendee);
 		} catch (DoesNotExistException) {
 			$threadAttendee = new ThreadAttendee();
-			$threadAttendee->setThreadId($thread->getId());
-			$threadAttendee->setRoomId($thread->getRoomId());
+			$threadAttendee->setThreadId($threadId);
+			$threadAttendee->setRoomId($attendee->getRoomId());
 
 			$threadAttendee->setAttendeeId($attendee->getId());
 			$threadAttendee->setActorType($attendee->getActorType());
@@ -220,7 +220,7 @@ class ThreadService {
 
 	public function ensureIsThreadAttendee(Attendee $attendee, int $threadId): void {
 		try {
-			$this->threadAttendeeMapper->findAttendeeByThreadId($attendee->getActorType(), $attendee->getActorId(), $threadId);
+			$this->threadAttendeeMapper->findAttendeeByThreadId($attendee->getActorType(), $attendee->getActorId(), $attendee->getRoomId(), $threadId);
 		} catch (DoesNotExistException) {
 			$threadAttendee = new ThreadAttendee();
 			$threadAttendee->setThreadId($threadId);
