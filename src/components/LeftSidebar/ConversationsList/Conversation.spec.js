@@ -13,7 +13,7 @@ import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
-import Conversation from './Conversation.vue'
+import ConversationItem from './ConversationItem.vue'
 import router from '../../../__mocks__/router.js'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { leaveConversation } from '../../../services/participantsService.js'
@@ -28,7 +28,7 @@ const ComponentStub = {
 	template: '<div><slot /></div>',
 }
 
-describe('Conversation.vue', () => {
+describe('ConversationItem.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let store
 	let testStoreConfig
@@ -39,7 +39,7 @@ describe('Conversation.vue', () => {
 	 * Shared function to mount component
 	 */
 	function mountConversation(isSearchResult = false) {
-		return mount(Conversation, {
+		return mount(ConversationItem, {
 			global: {
 				plugins: [router, store],
 				stubs: {

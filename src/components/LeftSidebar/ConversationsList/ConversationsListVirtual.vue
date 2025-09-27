@@ -11,7 +11,7 @@
 		:item-size="itemSize"
 		key-field="token">
 		<template #default="{ item }">
-			<Conversation :item="item" :compact="compact" />
+			<ConversationItem :item="item" :compact="compact" />
 		</template>
 		<template #after>
 			<LoadingPlaceholder v-if="loading" type="conversations" />
@@ -23,7 +23,7 @@
 import { computed } from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
-import Conversation from './Conversation.vue'
+import ConversationItem from './ConversationItem.vue'
 import { AVATAR } from '../../../constants.ts'
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -33,7 +33,7 @@ export default {
 
 	components: {
 		LoadingPlaceholder,
-		Conversation,
+		ConversationItem,
 		RecycleScroller,
 	},
 
