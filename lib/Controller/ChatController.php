@@ -279,7 +279,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			if ($createThread) {
 				$thread = $this->threadService->createThread($this->room, (int)$comment->getId(), $threadTitle);
 				// Add to subscribed threads list
-				$this->threadService->setNotificationLevel($this->participant->getAttendee(), $thread, Participant::NOTIFY_DEFAULT);
+				$this->threadService->setNotificationLevel($this->participant->getAttendee(), $thread->getId(), Participant::NOTIFY_DEFAULT);
 
 				$this->chatManager->addSystemMessage(
 					$this->room,

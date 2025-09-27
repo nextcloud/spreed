@@ -431,7 +431,7 @@ class Listener implements IEventListener {
 			try {
 				// Add to subscribed threads list
 				$participant = $this->participantService->getParticipant($room, $this->getUserId());
-				$this->threadService->setNotificationLevel($participant->getAttendee(), $thread, Participant::NOTIFY_DEFAULT);
+				$this->threadService->setNotificationLevel($participant->getAttendee(), $thread->getId(), Participant::NOTIFY_DEFAULT);
 			} catch (ParticipantNotFoundException) {
 			}
 
