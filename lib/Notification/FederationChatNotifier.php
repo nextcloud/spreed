@@ -49,6 +49,11 @@ class FederationChatNotifier {
 			return;
 		}
 
+		$threadId = null;
+		if (isset($metaData[Message::METADATA_THREAD_ID])) {
+			$threadId = (int)$metaData[Message::METADATA_THREAD_ID];
+		}
+
 		if ($participant->getSession() instanceof Session && $participant->getSession()->getState() === Session::STATE_ACTIVE) {
 			// User has an active session
 			return;
@@ -59,22 +64,22 @@ class FederationChatNotifier {
 		if ($participant->getAttendee()->getNotificationLevel() === Participant::NOTIFY_MENTION
 			|| ($defaultLevel !== Participant::NOTIFY_NEVER && $participant->getAttendee()->getNotificationLevel() === Participant::NOTIFY_DEFAULT)) {
 			if ($this->isRepliedTo($room, $participant, $metaData)) {
-				$notification = $this->createNotification($room, $message, 'reply');
+				$notification = $this->createNotification($room, $message, 'reply', threadId: $threadId);
 				$notification->setUser($participant->getAttendee()->getActorId());
 				$this->notificationManager->notify($notification);
 			} elseif ($this->isMentioned($participant, $message)) {
-				$notification = $this->createNotification($room, $message, 'mention');
+				$notification = $this->createNotification($room, $message, 'mention', threadId: $threadId);
 				$notification->setUser($participant->getAttendee()->getActorId());
 				$this->notificationManager->notify($notification);
 			} elseif ($this->isMentionedAll($room, $message)) {
-				$notification = $this->createNotification($room, $message, 'mention_all');
+				$notification = $this->createNotification($room, $message, 'mention_all', threadId: $threadId);
 				$notification->setUser($participant->getAttendee()->getActorId());
 				$this->notificationManager->notify($notification);
 			}
 		} elseif ($participant->getAttendee()->getNotificationLevel() === Participant::NOTIFY_ALWAYS
 			|| ($defaultLevel === Participant::NOTIFY_ALWAYS && $participant->getAttendee()->getNotificationLevel() === Participant::NOTIFY_DEFAULT)) {
 			if ($this->isUserMessageOrRelevantSystemMessage($message->getSystemMessage())) {
-				$notification = $this->createNotification($room, $message, 'chat');
+				$notification = $this->createNotification($room, $message, 'chat', threadId: $threadId);
 				$notification->setUser($participant->getAttendee()->getActorId());
 				$this->notificationManager->notify($notification);
 			}
@@ -134,19 +139,23 @@ class FederationChatNotifier {
 	/**
 	 * Creates a notification for the given proxy message and mentioned users
 	 */
-	protected function createNotification(Room $chat, ProxyCacheMessage $message, string $subject, array $subjectData = []): INotification {
+	protected function createNotification(Room $chat, ProxyCacheMessage $message, string $subject, array $subjectData = [], ?int $threadId = null): INotification {
 		$subjectData['userType'] = $message->getActorType();
 		$subjectData['userId'] = $message->getActorId();
+
+		$notificationParameters = [
+			'proxyId' => $message->getId(),
+		];
+		if ($threadId !== null) {
+			$notificationParameters['threadId'] = $threadId;
+		}
 
 		$notification = $this->notificationManager->createNotification();
 		$notification
 			->setApp('spreed')
 			->setObject('chat', $chat->getToken())
 			->setSubject($subject, $subjectData)
-			->setMessage($message->getMessageType(), [
-				'proxyId' => $message->getId(),
-				// FIXME Store more info to allow querying remote?
-			])
+			->setMessage($message->getMessageType(), $notificationParameters)
 			->setDateTime($message->getCreationDatetime());
 
 		return $notification;
