@@ -38,7 +38,7 @@
 				:token="message.token"
 				:object-type="conversation.objectType"
 				:is-highlighted="isLastMessage" />
-			<Poll
+			<PollCard
 				v-else-if="showResultsButton"
 				:token="message.token"
 				show-as-button
@@ -177,7 +177,7 @@ import IconReload from 'vue-material-design-icons/Reload.vue'
 import Quote from '../../../../Quote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
 import ConversationActionsShortcut from '../../../../UIShared/ConversationActionsShortcut.vue'
-import Poll from './Poll.vue'
+import PollCard from './PollCard.vue'
 import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.ts'
@@ -201,7 +201,7 @@ export default {
 		CallButton,
 		NcButton,
 		NcRichText,
-		Poll,
+		PollCard,
 		Quote,
 		ConversationActionsShortcut,
 		// Icons

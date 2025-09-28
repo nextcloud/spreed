@@ -123,7 +123,7 @@ import FilePreview from './MessagePart/FilePreview.vue'
 import Location from './MessagePart/Location.vue'
 import Mention from './MessagePart/Mention.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
-import Poll from './MessagePart/Poll.vue'
+import PollCard from './MessagePart/PollCard.vue'
 import Reactions from './MessagePart/Reactions.vue'
 import { CONVERSATION, MENTION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
@@ -334,7 +334,7 @@ export default {
 					// Add the token to the component props
 					props.token = this.message.token
 					richParameters[p] = {
-						component: Poll,
+						component: PollCard,
 						props,
 					}
 				} else if (mimetype === 'text/vcard') {
