@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Signaling;
 
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\BeforeRoomDeletedEvent;
@@ -18,15 +20,20 @@ use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Message;
+use OCA\Talk\Model\Thread;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Signaling\BackendNotifier;
 use OCA\Talk\Signaling\Listener;
 use OCA\Talk\Signaling\Messages;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
+use OCP\IL10N;
+use OCP\L10N\IFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -40,6 +47,10 @@ class ListenerTest extends TestCase {
 	protected SessionService&MockObject $sessionService;
 	protected ITimeFactory&MockObject $timeFactory;
 	protected ?Listener $listener;
+	protected MessageParser&MockObject $messageParser;
+	protected ThreadService&MockObject $threadService;
+	protected Config&MockObject $config;
+	protected IFactory $l10nFactory;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -49,15 +60,22 @@ class ListenerTest extends TestCase {
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->sessionService = $this->createMock(SessionService::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
+		$this->messageParser = $this->createMock(MessageParser::class);
+		$this->threadService = $this->createMock(ThreadService::class);
+		$this->l10nFactory = $this->createMock(IFactory::class);
+		$this->config = $this->createMock(Config::class);
 
 		$this->listener = new Listener(
-			$this->createMock(Config::class),
+			$this->config,
 			$this->createMock(Messages::class),
 			$this->backendNotifier,
 			$this->manager,
 			$this->participantService,
 			$this->sessionService,
 			$this->timeFactory,
+			$this->messageParser,
+			$this->threadService,
+			$this->l10nFactory,
 		);
 	}
 
@@ -228,14 +246,29 @@ class ListenerTest extends TestCase {
 		$this->listener->handle($event);
 	}
 
-	public function testChatMessageSentEvent(): void {
+	public function testChatMessageInvisibleSentEvent(): void {
 		$room = $this->createMock(Room::class);
+		$room->method('getId')->willReturn(1);
 		$comment = $this->createMock(IComment::class);
+		$comment->method('getTopmostParentId')->willReturn(null);
+		$comment->method('getVerb')->willReturn(ChatManager::VERB_MESSAGE);
+		$comment->method('getId')->willReturn(1);
 
 		$event = new ChatMessageSentEvent(
 			$room,
 			$comment,
 		);
+
+		$this->config->expects($this->once())
+			->method('isChatRelayEnabled')
+			->willReturn(true);
+		$this->messageParser->expects($this->once())
+			->method('createMessage');
+		$this->messageParser->expects($this->once())
+			->method('parseMessage');
+		$this->l10nFactory->expects($this->once())
+			->method('get')
+			->willReturn($this->createMock(IL10N::class));
 
 		$this->backendNotifier->expects($this->once())
 			->method('sendRoomMessage')
@@ -249,9 +282,107 @@ class ListenerTest extends TestCase {
 		$this->listener->handle($event);
 	}
 
+	public function testChatMessageSentEvent(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getId')->willReturn(1);
+		$comment = $this->createMock(IComment::class);
+		$comment->method('getTopmostParentId')->willReturn(null);
+		$comment->method('getVerb')->willReturn(ChatManager::VERB_MESSAGE);
+		$comment->method('getId')->willReturn(1);
+		$message = $this->createConfiguredMock(Message::class, [
+			'getVisibility' => true,
+			'toArray' => [],
+			'getMessageId' => 123,
+		]);
+		$l10n = $this->createMock(IL10N::class);
+
+		$event = new ChatMessageSentEvent(
+			$room,
+			$comment,
+		);
+
+		$this->config->expects($this->once())
+			->method('isChatRelayEnabled')
+			->willReturn(true);
+		$this->l10nFactory->expects($this->once())
+			->method('get')
+			->willReturn($l10n);
+		$this->messageParser->expects($this->once())
+			->method('createMessage')
+			->with($room, null, $comment, $l10n)
+			->willReturn($message);
+		$this->messageParser->expects($this->once())
+			->method('parseMessage')
+			->with($message);
+
+		$this->backendNotifier->expects($this->once())
+			->method('sendRoomMessage')
+			->with($room, [
+				'type' => 'chat',
+				'chat' => [
+					'refresh' => true,
+					'comment' => [],
+				],
+			]);
+
+		$this->listener->handle($event);
+	}
+
+	public function testChatMessageSentWithThreadEvent(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getId')->willReturn(1);
+		$comment = $this->createMock(IComment::class);
+		$comment->method('getTopmostParentId')->willReturn(null);
+		$comment->method('getVerb')->willReturn(ChatManager::VERB_MESSAGE);
+		$comment->method('getId')->willReturn(1);
+		$message = $this->createConfiguredMock(Message::class, [
+			'getVisibility' => true,
+			'toArray' => [],
+			'getMessageId' => 123,
+		]);
+
+		$l10n = $this->createMock(IL10N::class);
+		$thread = $this->createMock(Thread::class);
+
+		$event = new ChatMessageSentEvent(
+			$room,
+			$comment,
+		);
+
+		$this->config->expects($this->once())
+			->method('isChatRelayEnabled')
+			->willReturn(true);
+		$this->l10nFactory->expects($this->once())
+			->method('get')
+			->willReturn($l10n);
+		$this->messageParser->expects($this->once())
+			->method('createMessage')
+			->with($room, null, $comment, $l10n)
+			->willReturn($message);
+		$this->messageParser->expects($this->once())
+			->method('parseMessage')
+			->with($message);
+		$this->threadService->expects($this->once())
+			->method('findByThreadId')
+			->willReturn($thread);
+
+		$this->backendNotifier->expects($this->once())
+			->method('sendRoomMessage')
+			->with($room, [
+				'type' => 'chat',
+				'chat' => [
+					'refresh' => true,
+					'comment' => [],
+				],
+			]);
+
+		$this->listener->handle($event);
+	}
+
 	public function testSystemMessageSentEvent(): void {
 		$room = $this->createMock(Room::class);
 		$comment = $this->createMock(IComment::class);
+		$comment->method('getVerb')->willReturn(ChatManager::VERB_SYSTEM);
 
 		$event = new SystemMessageSentEvent(
 			$room,
@@ -274,6 +405,7 @@ class ListenerTest extends TestCase {
 	public function testSystemMessageSentEventSkippingUpdate(): void {
 		$room = $this->createMock(Room::class);
 		$comment = $this->createMock(IComment::class);
+		$comment->method('getMessage')->willReturn(json_encode(['message' => 'test']));
 
 		$event = new SystemMessageSentEvent(
 			$room,
@@ -290,6 +422,7 @@ class ListenerTest extends TestCase {
 	public function testSystemMessagesMultipleSentEvent(): void {
 		$room = $this->createMock(Room::class);
 		$comment = $this->createMock(IComment::class);
+		$comment->method('getVerb')->willReturn(ChatManager::VERB_SYSTEM);
 
 		$event = new SystemMessagesMultipleSentEvent(
 			$room,
