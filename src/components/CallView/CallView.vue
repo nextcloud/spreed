@@ -49,7 +49,7 @@
 
 					<!-- Screens -->
 					<!-- Local screen -->
-					<Screen
+					<ScreenShare
 						v-else-if="showLocalScreen"
 						key="screen-local"
 						:token="token"
@@ -57,7 +57,7 @@
 						:shared-data="localSharedData"
 						is-big />
 					<!-- Remote or selected screen -->
-					<Screen
+					<ScreenShare
 						v-else-if="(showRemoteScreen || showSelectedScreen) && shownRemoteScreenCallParticipantModel"
 						:key="`screen-${shownRemoteScreenPeerId}`"
 						:token="token"
@@ -166,7 +166,7 @@ import LiveTranscriptionRenderer from './shared/LiveTranscriptionRenderer.vue'
 import LocalVideo from './shared/LocalVideo.vue'
 import PresenterOverlay from './shared/PresenterOverlay.vue'
 import ReactionToaster from './shared/ReactionToaster.vue'
-import Screen from './shared/Screen.vue'
+import ScreenShare from './shared/ScreenShare.vue'
 import VideoBottomBar from './shared/VideoBottomBar.vue'
 import VideoVue from './shared/VideoVue.vue'
 import ViewerOverlayCallView from './shared/ViewerOverlayCallView.vue'
@@ -197,7 +197,7 @@ export default {
 		LocalVideo,
 		PresenterOverlay,
 		ReactionToaster,
-		Screen,
+		ScreenShare,
 		VideoBottomBar,
 		VideoVue,
 		ViewerOverlayCallView,
