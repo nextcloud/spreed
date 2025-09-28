@@ -6,7 +6,7 @@
 <template>
 	<ul v-if="value">
 		<NcAppNavigationCaption :name="t('spreed', 'Phone numbers')" />
-		<Hint v-if="errorHint" :hint="errorHint" />
+		<NavigationHint v-if="errorHint" :hint="errorHint" />
 		<template v-if="libPhoneNumber">
 			<NcListItem :name="name" @click="selectPhoneNumber">
 				<template #icon>
@@ -25,7 +25,7 @@ import { t } from '@nextcloud/l10n'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
-import Hint from './UIShared/Hint.vue'
+import NavigationHint from './UIShared/NavigationHint.vue'
 import { useLibphonenumber } from '../composables/useLibphonenumber.ts'
 import { ATTENDEE, AVATAR } from '../constants.ts'
 
@@ -33,7 +33,7 @@ export default {
 	name: 'SelectPhoneNumber',
 
 	components: {
-		Hint,
+		NavigationHint,
 		NcAppNavigationCaption,
 		NcListItem,
 		IconPhoneOutline,
