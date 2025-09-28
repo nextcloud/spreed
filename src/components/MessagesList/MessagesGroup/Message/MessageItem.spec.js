@@ -20,7 +20,7 @@ import MessageItem from './MessageItem.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
-import Location from './MessagePart/Location.vue'
+import LocationCard from './MessagePart/LocationCard.vue'
 import Mention from './MessagePart/Mention.vue'
 import router from '../../../../__mocks__/router.js'
 import * as useIsInCallModule from '../../../../composables/useIsInCall.js'
@@ -99,7 +99,7 @@ describe('MessageItem.vue', () => {
 				plugins: [router, store],
 				provide: injected,
 				stubs: {
-					Location: true,
+					LocationCard: true,
 				},
 			},
 			props,
@@ -411,7 +411,7 @@ describe('MessageItem.vue', () => {
 					params,
 					{
 						'geo-location': {
-							component: Location,
+							component: LocationCard,
 							props: params['geo-location'],
 						},
 					},
