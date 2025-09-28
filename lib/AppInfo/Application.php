@@ -332,6 +332,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(ChatMessageSentEvent::class, SignalingListener::class);
 		$context->registerEventListener(SystemMessageSentEvent::class, SignalingListener::class);
 		$context->registerEventListener(SystemMessagesMultipleSentEvent::class, SignalingListener::class);
+		$context->registerEventListener(ReactionAddedEvent::class, SignalingListener::class);
+		$context->registerEventListener(ReactionRemovedEvent::class, SignalingListener::class);
 
 		// Signaling listeners (Both)
 		$context->registerEventListener(BeforeRoomDeletedEvent::class, SignalingListener::class);
