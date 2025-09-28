@@ -53,7 +53,7 @@
 			@mouseover="handleMarkdownMouseOver"
 			@mouseleave="handleMarkdownMouseLeave">
 			<!-- Replied parent message -->
-			<Quote v-if="showQuote" :message="message.parent" />
+			<MessageQuote v-if="showQuote" :message="message.parent" />
 
 			<!-- Message content / text -->
 			<NcRichText
@@ -174,7 +174,7 @@ import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
-import Quote from '../../../../Quote.vue'
+import MessageQuote from '../../../../MessageQuote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
 import ConversationActionsShortcut from '../../../../UIShared/ConversationActionsShortcut.vue'
 import PollCard from './PollCard.vue'
@@ -202,7 +202,7 @@ export default {
 		NcButton,
 		NcRichText,
 		PollCard,
-		Quote,
+		MessageQuote,
 		ConversationActionsShortcut,
 		// Icons
 		IconAlertCircleOutline,

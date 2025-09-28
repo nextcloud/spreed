@@ -13,7 +13,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
-import Quote from '../../../Quote.vue'
+import MessageQuote from '../../../MessageQuote.vue'
 import CallButton from '../../../TopBar/CallButton.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageItem from './MessageItem.vue'
@@ -236,7 +236,7 @@ describe('MessageItem.vue', () => {
 
 			const wrapper = mountMessage(messageProps)
 
-			const quote = wrapper.findComponent(Quote)
+			const quote = wrapper.findComponent(MessageQuote)
 			expect(quote.exists()).toBeTruthy()
 			expect(quote.props('message')).toStrictEqual(parentMessage)
 		})
