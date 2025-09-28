@@ -104,7 +104,7 @@
 				</div>
 
 				<!-- Stripe or fullscreen grid depending on `isGrid` -->
-				<Grid
+				<VideosGrid
 					v-if="!isSidebar"
 					:is-stripe="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
 					:is-recording="isRecording"
@@ -160,7 +160,7 @@ import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 import { provide, ref } from 'vue'
 import BottomBar from './BottomBar.vue'
-import Grid from './Grid/Grid.vue'
+import VideosGrid from './Grid/VideosGrid.vue'
 import EmptyCallView from './shared/EmptyCallView.vue'
 import LiveTranscriptionRenderer from './shared/LiveTranscriptionRenderer.vue'
 import LocalVideo from './shared/LocalVideo.vue'
@@ -192,7 +192,7 @@ export default {
 	components: {
 		BottomBar,
 		EmptyCallView,
-		Grid,
+		VideosGrid,
 		LiveTranscriptionRenderer,
 		LocalVideo,
 		PresenterOverlay,
