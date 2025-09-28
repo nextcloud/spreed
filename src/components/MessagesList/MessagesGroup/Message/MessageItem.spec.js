@@ -21,7 +21,7 @@ import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
 import LocationCard from './MessagePart/LocationCard.vue'
-import Mention from './MessagePart/Mention.vue'
+import MentionChip from './MessagePart/MentionChip.vue'
 import router from '../../../../__mocks__/router.js'
 import * as useIsInCallModule from '../../../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
@@ -282,15 +282,15 @@ describe('MessageItem.vue', () => {
 					mentions,
 					{
 						'mention-user1': {
-							component: Mention,
+							component: MentionChip,
 							props: mentions['mention-user1'],
 						},
 						'mention-user2': {
-							component: Mention,
+							component: MentionChip,
 							props: mentions['mention-user2'],
 						},
 						'mention-call1': {
-							component: Mention,
+							component: MentionChip,
 							props: mentions['mention-call1'],
 						},
 					},
@@ -317,7 +317,7 @@ describe('MessageItem.vue', () => {
 					params,
 					{
 						actor: {
-							component: Mention,
+							component: MentionChip,
 							props: params.actor,
 						},
 						file: {
@@ -349,7 +349,7 @@ describe('MessageItem.vue', () => {
 					params,
 					{
 						actor: {
-							component: Mention,
+							component: MentionChip,
 							props: params.actor,
 						},
 						file: {
@@ -384,7 +384,7 @@ describe('MessageItem.vue', () => {
 					params,
 					{
 						actor: {
-							component: Mention,
+							component: MentionChip,
 							props: params.actor,
 						},
 						'deck-card': {
@@ -437,7 +437,7 @@ describe('MessageItem.vue', () => {
 					params,
 					{
 						actor: {
-							component: Mention,
+							component: MentionChip,
 							props: params.actor,
 						},
 						unknown: {

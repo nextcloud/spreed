@@ -121,7 +121,7 @@ import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
 import LocationCard from './MessagePart/LocationCard.vue'
-import Mention from './MessagePart/Mention.vue'
+import MentionChip from './MessagePart/MentionChip.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
 import PollCard from './MessagePart/PollCard.vue'
 import ReactionsWrapper from './MessagePart/ReactionsWrapper.vue'
@@ -301,7 +301,7 @@ export default {
 				})
 				if (Object.values(MENTION.TYPE).includes(type)) {
 					richParameters[p] = {
-						component: Mention,
+						component: MentionChip,
 						props: {
 							...this.message.messageParameters[p],
 							token: this.message.token,
