@@ -20,7 +20,7 @@
 				wide
 				v-bind="item.messageParameters.object" />
 
-			<Poll
+			<PollCard
 				v-else-if="isPoll"
 				:token="token"
 				v-bind="item.messageParameters.object" />
@@ -55,7 +55,7 @@
 import DeckCard from '../../MessagesList/MessagesGroup/Message/MessagePart/DeckCard.vue'
 import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import Location from '../../MessagesList/MessagesGroup/Message/MessagePart/Location.vue'
-import Poll from '../../MessagesList/MessagesGroup/Message/MessagePart/Poll.vue'
+import PollCard from '../../MessagesList/MessagesGroup/Message/MessagePart/PollCard.vue'
 import { SHARED_ITEM } from '../../../constants.ts'
 
 export default {
@@ -65,7 +65,7 @@ export default {
 		DeckCard,
 		FilePreview,
 		Location,
-		Poll,
+		PollCard,
 	},
 
 	props: {

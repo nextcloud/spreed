@@ -70,7 +70,7 @@ import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 
 export default {
-	name: 'Poll',
+	name: 'PollCard',
 
 	components: {
 		NcButton,
