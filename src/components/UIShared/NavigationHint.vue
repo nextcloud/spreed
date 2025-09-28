@@ -11,7 +11,7 @@
 
 <script>
 export default {
-	name: 'Hint',
+	name: 'NavigationHint',
 	props: {
 		hint: {
 			type: String,
