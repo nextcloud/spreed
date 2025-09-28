@@ -31,7 +31,7 @@
 				:message="message"
 				:read-info="readInfo">
 				<!-- reactions buttons and popover with details -->
-				<Reactions
+				<ReactionsWrapper
 					v-if="Object.keys(message.reactions).length"
 					:id="message.id"
 					:token="message.token"
@@ -124,7 +124,7 @@ import LocationCard from './MessagePart/LocationCard.vue'
 import Mention from './MessagePart/Mention.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
 import PollCard from './MessagePart/PollCard.vue'
-import Reactions from './MessagePart/Reactions.vue'
+import ReactionsWrapper from './MessagePart/ReactionsWrapper.vue'
 import { CONVERSATION, MENTION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
@@ -147,7 +147,7 @@ export default {
 		MessageTranslateDialog,
 		NcAssistantButton,
 		NcButton,
-		Reactions,
+		ReactionsWrapper,
 	},
 
 	directives: {

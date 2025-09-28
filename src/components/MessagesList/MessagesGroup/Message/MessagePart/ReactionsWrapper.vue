@@ -98,7 +98,7 @@ import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { getDisplayNameWithFallback } from '../../../../../utils/getDisplayName.ts'
 
 export default {
-	name: 'Reactions',
+	name: 'ReactionsWrapper',
 
 	components: {
 		NcButton,
