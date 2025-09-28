@@ -116,7 +116,7 @@ import IconUnfoldMoreHorizontal from 'vue-material-design-icons/UnfoldMoreHorizo
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
 import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
-import Contact from './MessagePart/Contact.vue'
+import ContactCard from './MessagePart/ContactCard.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
@@ -339,7 +339,7 @@ export default {
 					}
 				} else if (mimetype === 'text/vcard') {
 					richParameters[p] = {
-						component: Contact,
+						component: ContactCard,
 						props: this.message.messageParameters[p],
 					}
 				} else {
