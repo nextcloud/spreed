@@ -660,6 +660,7 @@
     "Show all files" : "Hiện tất cả tệp",
     "Default" : "Mặc định",
     "Group" : "Nhóm",
+    "Team" : "Đội",
     "You: {lastMessage}" : "Bạn: {lastMessage}",
     "You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?" : "Bạn đang cố gắng tham gia một cuộc trò chuyện trong khi có một phiên hoạt động trong một cửa sổ hoặc thiết bị khác. Điều này hiện không được vWorkspace Talk hỗ trợ. Bạn muốn làm gì?",
     "Leave this page" : "Rời khỏi trang này",
