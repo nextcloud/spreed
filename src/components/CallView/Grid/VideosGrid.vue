@@ -64,7 +64,7 @@
 								:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
 								@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 						</template>
-						<!-- Grid developer mode -->
+						<!-- VideosGrid developer mode -->
 						<template v-if="devMode">
 							<div
 								v-for="key in displayedVideos"
@@ -191,7 +191,7 @@ const videosCapEnforced = loadState('spreed', 'grid_videos_limit_enforced') || f
 const GRID_GAP = 8
 
 export default {
-	name: 'Grid',
+	name: 'VideosGrid',
 
 	components: {
 		VideoVue,
