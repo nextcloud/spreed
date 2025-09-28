@@ -50,7 +50,7 @@ import {
 } from '@vue-leaflet/vue-leaflet'
 
 export default {
-	name: 'Location',
+	name: 'LocationCard',
 
 	components: {
 		LControlAttribution,

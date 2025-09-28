@@ -120,7 +120,7 @@ import ContactCard from './MessagePart/ContactCard.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
-import Location from './MessagePart/Location.vue'
+import LocationCard from './MessagePart/LocationCard.vue'
 import Mention from './MessagePart/Mention.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
 import PollCard from './MessagePart/PollCard.vue'
@@ -326,7 +326,7 @@ export default {
 					}
 				} else if (type === 'geo-location') {
 					richParameters[p] = {
-						component: Location,
+						component: LocationCard,
 						props: this.message.messageParameters[p],
 					}
 				} else if (type === 'talk-poll' && this.message.systemMessage !== 'poll_closed') {
