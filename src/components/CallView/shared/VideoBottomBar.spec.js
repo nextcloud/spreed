@@ -126,7 +126,7 @@ describe('VideoBottomBar.vue', () => {
 				expect(indicators).toHaveLength(3)
 			})
 
-			test('component does not render indicators for Screen.vue component', async () => {
+			test('component does not render indicators for ScreenShare.vue component', async () => {
 				componentProps.isScreen = true
 				const wrapper = mountVideoBottomBar(componentProps)
 				const indicators = wrapper.findAllComponents(NcButton)
