@@ -145,7 +145,10 @@ class ThreadService {
 		$query->select('a.*', 't.last_message_id', 't.num_replies', 't.last_activity', 't.name')
 			->selectAlias('t.id', 't_id')
 			->from('talk_thread_attendees', 'a')
-			->join('a', 'talk_threads', 't', $query->expr()->eq('a.thread_id', 't.id'))
+			->join('a', 'talk_threads', 't', $query->expr()->andX(
+				$query->expr()->eq('a.thread_id', 't.id'),
+				$query->expr()->eq('a.room_id', 't.room_id'),
+			))
 			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)))
 			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)))
 			->andWhere($query->expr()->neq('a.notification_level', $query->createNamedParameter(Participant::NOTIFY_NEVER)))
@@ -176,7 +179,7 @@ class ThreadService {
 	 * @return array<int, ThreadAttendee> Key is the thread id
 	 */
 	public function findAttendeeByThreadIds(Attendee $attendee, array $threadIds): array {
-		$attendees = $this->threadAttendeeMapper->findAttendeeByThreadIds($attendee->getActorType(), $attendee->getActorId(), $threadIds);
+		$attendees = $this->threadAttendeeMapper->findAttendeeByThreadIds($attendee->getActorType(), $attendee->getActorId(), $attendee->getRoomId(), $threadIds);
 		$threadAttendees = [];
 		foreach ($attendees as $threadAttendee) {
 			$threadAttendees[$threadAttendee->getThreadId()] = $threadAttendee;
@@ -188,8 +191,8 @@ class ThreadService {
 	/**
 	 * @return array<int, ThreadAttendee> Key is the attendee id
 	 */
-	public function findAttendeesForNotificationByThreadId(int $threadId): array {
-		$attendees = $this->threadAttendeeMapper->findAttendeesForNotification($threadId);
+	public function findAttendeesForNotificationByThreadId(int $roomId, int $threadId): array {
+		$attendees = $this->threadAttendeeMapper->findAttendeesForNotification($roomId, $threadId);
 		$threadAttendees = [];
 		foreach ($attendees as $threadAttendee) {
 			$threadAttendees[$threadAttendee->getAttendeeId()] = $threadAttendee;
@@ -256,7 +259,8 @@ class ThreadService {
 			->set('num_replies', $query->func()->add('num_replies', $query->expr()->literal(1)))
 			->set('last_message_id', $query->createNamedParameter($lastMessageId))
 			->set('last_activity', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE))
-			->where($query->expr()->eq('id', $query->createNamedParameter($threadId)));
+			->where($query->expr()->eq('id', $query->createNamedParameter($threadId)))
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($roomId)));
 		$this->cache->remove(self::CACHE_PREFIX . $roomId . '/' . $threadId);
 		return (bool)$query->executeStatement();
 	}
@@ -285,7 +289,10 @@ class ThreadService {
 				$query->createNamedParameter($potentialThreadId, IQueryBuilder::PARAM_INT),
 				IQueryBuilder::PARAM_INT)
 			)
-			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
+			->andWhere($query->expr()->eq(
+				'room_id',
+				$query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)
+			));
 
 		$result = $query->executeQuery();
 		$row = $result->fetch();

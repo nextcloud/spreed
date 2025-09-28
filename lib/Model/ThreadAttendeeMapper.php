@@ -41,7 +41,7 @@ class ThreadAttendeeMapper extends QBMapper {
 	 * @param list<int> $threadIds
 	 * @return list<ThreadAttendee>
 	 */
-	public function findAttendeeByThreadIds(string $actorType, string $actorId, array $threadIds): array {
+	public function findAttendeeByThreadIds(string $actorType, string $actorId, int $roomId, array $threadIds): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
@@ -52,6 +52,10 @@ class ThreadAttendeeMapper extends QBMapper {
 			->andWhere($query->expr()->eq(
 				'actor_id',
 				$query->createNamedParameter($actorId),
+			))
+			->andWhere($query->expr()->eq(
+				'room_id',
+				$query->createNamedParameter($roomId),
 			))
 			->andWhere($query->expr()->in(
 				'thread_id',
@@ -92,11 +96,15 @@ class ThreadAttendeeMapper extends QBMapper {
 	/**
 	 * @return list<ThreadAttendee>
 	 */
-	public function findAttendeesForNotification(int $threadId): array {
+	public function findAttendeesForNotification(int $roomId, int $threadId): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
 			->where($query->expr()->eq(
+				'room_id',
+				$query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT),
+			))
+			->andWhere($query->expr()->eq(
 				'thread_id',
 				$query->createNamedParameter($threadId, IQueryBuilder::PARAM_INT),
 			))

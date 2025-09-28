@@ -103,7 +103,8 @@ class Version22000Date20250623142327 extends SimpleMigrationStep {
 		]);
 
 		$table->setPrimaryKey(['id']);
-		$table->addUniqueIndex(['thread_id', 'actor_type', 'actor_id'], 'tta_thread_attendee');
+		/** Replaced by @see Version22001Date20250927174738 */
+		// $table->addUniqueIndex(['thread_id', 'actor_type', 'actor_id'], 'tta_thread_attendee');
 		$table->addIndex(['room_id', 'actor_type', 'actor_id'], 'tta_room_attendee');
 
 		$table = $schema->getTable('talk_attendees');

@@ -16,6 +16,7 @@ use OCA\Talk\Model\ProxyCacheMessage;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ThreadService;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Notification\IManager;
 use OCP\Notification\INotification;
@@ -25,6 +26,7 @@ class FederationChatNotifier {
 		protected IAppConfig $appConfig,
 		protected IManager $notificationManager,
 		protected UserConverter $userConverter,
+		protected ThreadService $threadService,
 	) {
 	}
 
@@ -59,10 +61,22 @@ class FederationChatNotifier {
 			return;
 		}
 
+
+		$notificationLevel = $participant->getAttendee()->getNotificationLevel();
+		if ($threadId !== null) {
+			$threadAttendees = $this->threadService->findAttendeeByThreadIds($participant->getAttendee(), [$threadId]);
+			$threadAttendee = $threadAttendees[$threadId] ?? null;
+
+			if ($threadAttendee !== null
+				&& $threadAttendee->getNotificationLevel() !== Participant::NOTIFY_DEFAULT) {
+				$notificationLevel = $threadAttendee->getNotificationLevel();
+			}
+		}
+
 		// Also notify default participants in one-to-one chats or when the admin default is "always"
 		$defaultLevel = $this->appConfig->getAppValueInt('default_group_notification', Participant::NOTIFY_MENTION);
-		if ($participant->getAttendee()->getNotificationLevel() === Participant::NOTIFY_MENTION
-			|| ($defaultLevel !== Participant::NOTIFY_NEVER && $participant->getAttendee()->getNotificationLevel() === Participant::NOTIFY_DEFAULT)) {
+		if ($notificationLevel === Participant::NOTIFY_MENTION
+			|| ($defaultLevel !== Participant::NOTIFY_NEVER && $notificationLevel === Participant::NOTIFY_DEFAULT)) {
 			if ($this->isRepliedTo($room, $participant, $metaData)) {
 				$notification = $this->createNotification($room, $message, 'reply', threadId: $threadId);
 				$notification->setUser($participant->getAttendee()->getActorId());
@@ -77,7 +91,7 @@ class FederationChatNotifier {
 				$this->notificationManager->notify($notification);
 			}
 		} elseif ($participant->getAttendee()->getNotificationLevel() === Participant::NOTIFY_ALWAYS
-			|| ($defaultLevel === Participant::NOTIFY_ALWAYS && $participant->getAttendee()->getNotificationLevel() === Participant::NOTIFY_DEFAULT)) {
+			|| ($defaultLevel === Participant::NOTIFY_ALWAYS && $notificationLevel === Participant::NOTIFY_DEFAULT)) {
 			if ($this->isUserMessageOrRelevantSystemMessage($message->getSystemMessage())) {
 				$notification = $this->createNotification($room, $message, 'chat', threadId: $threadId);
 				$notification->setUser($participant->getAttendee()->getActorId());
