@@ -210,6 +210,7 @@ async function editMessage({ token, messageId, updatedMessage }: EditMessagePayl
  * @param data.objectId object id
  * @param data.metaData JSON metadata of the rich object encoded as string
  * @param data.referenceId generated reference id, leave empty to generate it based on the other args
+ * @param data.threadId thread id to retrieve data
  * @param [options] Axios request options
  */
 async function postRichObjectToConversation(token: string, { objectType, objectId, metaData, referenceId, threadId }: postRichObjectParams, options?: AxiosRequestConfig): postRichObjectResponse {

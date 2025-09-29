@@ -22,7 +22,7 @@
 import { inject } from 'vue'
 import SelectableParticipant from '../../BreakoutRoomsEditor/SelectableParticipant.vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
-import Participant from './Participant.vue'
+import ParticipantItem from './ParticipantItem.vue'
 import { useGetToken } from '../../../composables/useGetToken.ts'
 
 export default {
@@ -30,8 +30,6 @@ export default {
 
 	components: {
 		LoadingPlaceholder,
-		Participant,
-		SelectableParticipant,
 	},
 
 	props: {
@@ -69,7 +67,7 @@ export default {
 
 	computed: {
 		component() {
-			return this.isSearchResult ? 'SelectableParticipant' : 'Participant'
+			return this.isSearchResult ? SelectableParticipant : ParticipantItem
 		},
 
 		showUserStatus() {

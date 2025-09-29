@@ -49,7 +49,7 @@
 
 					<!-- Screens -->
 					<!-- Local screen -->
-					<Screen
+					<ScreenShare
 						v-else-if="showLocalScreen"
 						key="screen-local"
 						:token="token"
@@ -57,7 +57,7 @@
 						:shared-data="localSharedData"
 						is-big />
 					<!-- Remote or selected screen -->
-					<Screen
+					<ScreenShare
 						v-else-if="(showRemoteScreen || showSelectedScreen) && shownRemoteScreenCallParticipantModel"
 						:key="`screen-${shownRemoteScreenPeerId}`"
 						:token="token"
@@ -104,7 +104,7 @@
 				</div>
 
 				<!-- Stripe or fullscreen grid depending on `isGrid` -->
-				<Grid
+				<VideosGrid
 					v-if="!isSidebar"
 					:is-stripe="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
 					:is-recording="isRecording"
@@ -160,13 +160,13 @@ import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 import { provide, ref } from 'vue'
 import BottomBar from './BottomBar.vue'
-import Grid from './Grid/Grid.vue'
+import VideosGrid from './Grid/VideosGrid.vue'
 import EmptyCallView from './shared/EmptyCallView.vue'
 import LiveTranscriptionRenderer from './shared/LiveTranscriptionRenderer.vue'
 import LocalVideo from './shared/LocalVideo.vue'
 import PresenterOverlay from './shared/PresenterOverlay.vue'
 import ReactionToaster from './shared/ReactionToaster.vue'
-import Screen from './shared/Screen.vue'
+import ScreenShare from './shared/ScreenShare.vue'
 import VideoBottomBar from './shared/VideoBottomBar.vue'
 import VideoVue from './shared/VideoVue.vue'
 import ViewerOverlayCallView from './shared/ViewerOverlayCallView.vue'
@@ -192,12 +192,12 @@ export default {
 	components: {
 		BottomBar,
 		EmptyCallView,
-		Grid,
+		VideosGrid,
 		LiveTranscriptionRenderer,
 		LocalVideo,
 		PresenterOverlay,
 		ReactionToaster,
-		Screen,
+		ScreenShare,
 		VideoBottomBar,
 		VideoVue,
 		ViewerOverlayCallView,

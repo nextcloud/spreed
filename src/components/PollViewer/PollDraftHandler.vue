@@ -22,7 +22,7 @@
 			</template>
 		</EmptyView>
 		<div v-else class="drafts__wrapper">
-			<Poll
+			<PollCard
 				v-for="item in pollDrafts"
 				:id="item.id.toString()"
 				:key="item.id"
@@ -47,7 +47,7 @@ import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
 import EmptyView from '../EmptyView.vue'
-import Poll from '../MessagesList/MessagesGroup/Message/MessagePart/Poll.vue'
+import PollCard from '../MessagesList/MessagesGroup/Message/MessagePart/PollCard.vue'
 import { EventBus } from '../../services/EventBus.ts'
 import { usePollsStore } from '../../stores/polls.ts'
 

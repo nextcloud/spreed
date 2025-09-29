@@ -30,6 +30,7 @@ type updatePollDraftPayload = { token: string, pollId: number } & updatePollDraf
  * @param payload.options The options participants can vote for
  * @param payload.resultMode Result mode of the poll (0 - always visible | 1 - hidden until the poll is closed)
  * @param payload.maxVotes Maximum amount of options a user can vote for (0 - unlimited | 1 - single answer)
+ * @param payload.threadId The thread id to create poll in
  */
 async function createPoll({ token, question, options, resultMode, maxVotes, threadId }: createPollPayload): createPollResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/poll/{token}', { token }), {

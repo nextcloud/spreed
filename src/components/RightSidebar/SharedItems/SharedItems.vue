@@ -12,7 +12,7 @@
 		}">
 		<template v-for="item in itemsToDisplay" :key="item.id">
 			<div v-if="isLocation" class="shared-items__location">
-				<Location wide v-bind="item.messageParameters.object" />
+				<LocationCard wide v-bind="item.messageParameters.object" />
 			</div>
 
 			<DeckCard
@@ -20,7 +20,7 @@
 				wide
 				v-bind="item.messageParameters.object" />
 
-			<Poll
+			<PollCard
 				v-else-if="isPoll"
 				:token="token"
 				v-bind="item.messageParameters.object" />
@@ -54,8 +54,8 @@
 <script>
 import DeckCard from '../../MessagesList/MessagesGroup/Message/MessagePart/DeckCard.vue'
 import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
-import Location from '../../MessagesList/MessagesGroup/Message/MessagePart/Location.vue'
-import Poll from '../../MessagesList/MessagesGroup/Message/MessagePart/Poll.vue'
+import LocationCard from '../../MessagesList/MessagesGroup/Message/MessagePart/LocationCard.vue'
+import PollCard from '../../MessagesList/MessagesGroup/Message/MessagePart/PollCard.vue'
 import { SHARED_ITEM } from '../../../constants.ts'
 
 export default {
@@ -64,8 +64,8 @@ export default {
 	components: {
 		DeckCard,
 		FilePreview,
-		Location,
-		Poll,
+		LocationCard,
+		PollCard,
 	},
 
 	props: {

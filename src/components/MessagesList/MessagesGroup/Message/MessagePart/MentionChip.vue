@@ -24,7 +24,7 @@ import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../../
 import { useActorStore } from '../../../../../stores/actor.ts'
 
 export default {
-	name: 'Mention',
+	name: 'MentionChip',
 
 	components: {
 		NcUserBubble,

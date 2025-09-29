@@ -45,7 +45,7 @@
 			</div>
 		</TransitionWrapper>
 		<TransitionWrapper name="fade">
-			<Screen
+			<ScreenShare
 				v-if="showSharedScreen"
 				:is-big="isBig"
 				:token="token"
@@ -101,7 +101,7 @@ import IconAccountCircleOutline from 'vue-material-design-icons/AccountCircleOut
 import IconAccountOffOutline from 'vue-material-design-icons/AccountOffOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
-import Screen from './Screen.vue'
+import ScreenShare from './ScreenShare.vue'
 import VideoBackground from './VideoBackground.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
 import { ATTENDEE, AVATAR } from '../../../constants.ts'
@@ -121,7 +121,7 @@ export default {
 		AvatarWrapper,
 		TransitionWrapper,
 		VideoBackground,
-		Screen,
+		ScreenShare,
 		VideoBottomBar,
 		NcLoadingIcon,
 		// icons

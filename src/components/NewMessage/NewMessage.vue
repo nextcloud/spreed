@@ -74,7 +74,7 @@
 					</NcButton>
 				</div>
 				<div v-if="parentMessage || messageToEdit" class="new-message-form__quote">
-					<Quote
+					<MessageQuote
 						:message="messageToEdit ?? parentMessage"
 						:can-cancel="!!parentMessage"
 						:edit-message="!!messageToEdit" />
@@ -216,7 +216,7 @@ import IconClose from 'vue-material-design-icons/Close.vue'
 import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconSend from 'vue-material-design-icons/Send.vue' // Filled for better indication
-import Quote from '../Quote.vue'
+import MessageQuote from '../MessageQuote.vue'
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
 import NewMessageAttachments from './NewMessageAttachments.vue'
 import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
@@ -258,7 +258,7 @@ export default {
 		NewMessageChatSummary,
 		NewMessageNewFileDialog,
 		NewMessageTypingIndicator,
-		Quote,
+		MessageQuote,
 		// Icons
 		IconBellOffOutline,
 		IconCheck,
