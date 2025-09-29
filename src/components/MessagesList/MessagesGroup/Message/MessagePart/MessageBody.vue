@@ -610,8 +610,29 @@ export default {
 			}
 
 			:deep(.rich-text--wrapper) {
-				text-align: start;
+				// NcRichText is used with dir="auto", so internal text direction may vary
+				// But we want to keep the alignment consistent with the rest of the UI
+				text-align: inherit;
+
 				@include markdown;
+			}
+
+			// FIXME: Should it be in the upstream NcRichText component?
+			// NcRichText is used with dir="auto", so internal text direction may vary
+			// But we want to keep the alignment consistent with the rest of the UI
+			// So we need to override the direction for task lists using the current direction, not its own direction
+			&:dir(rtl) :deep(ul.contains-task-list) {
+				direction: rtl;
+			}
+
+			&:dir(ltr) :deep(ul.contains-task-list) {
+				direction: ltr;
+			}
+
+			// Overriding direction above breaks text direction
+			// Restoring it back
+			:deep(ul.contains-task-list) .checkbox-content__wrapper {
+				unicode-bidi: plaintext;
 			}
 		}
 	}
@@ -679,10 +700,6 @@ export default {
 
 .call-button {
 	margin: 0 auto;
-}
-
-:deep(.rich-text--wrapper) {
-	direction: inherit;
 }
 
 // Always render code blocks LTR
