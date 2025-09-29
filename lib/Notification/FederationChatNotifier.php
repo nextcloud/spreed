@@ -43,7 +43,7 @@ class FederationChatNotifier {
 			return;
 		}
 
-		/** @var array{silent?: bool, last_edited_time?: int, last_edited_by_type?: string, last_edited_by_id?: string, replyToActorType?: string, replyToActorId?: string} $metaData */
+		/** @var array{silent?: bool, last_edited_time?: int, last_edited_by_type?: string, last_edited_by_id?: string, replyToActorType?: string, replyToActorId?: string, thread_id?: int} $metaData */
 		$metaData = json_decode($inboundNotification['messageData']['metaData'] ?? '', true, flags: JSON_THROW_ON_ERROR);
 
 		if (isset($metaData[Message::METADATA_SILENT])) {
@@ -101,7 +101,7 @@ class FederationChatNotifier {
 	}
 
 	/**
-	 * @param array{silent?: bool, last_edited_time?: int, last_edited_by_type?: string, last_edited_by_id?: string, replyToActorType?: string, replyToActorId?: string} $metaData
+	 * @param array{silent?: bool, last_edited_time?: int, last_edited_by_type?: string, last_edited_by_id?: string, replyToActorType?: string, replyToActorId?: string, thread_id?: int} $metaData
 	 */
 	protected function isRepliedTo(Room $room, Participant $participant, array $metaData): bool {
 		if (!isset($metaData[ProxyCacheMessage::METADATA_REPLY_TO_ACTOR_TYPE])
