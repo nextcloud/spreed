@@ -22,7 +22,7 @@
 <script>
 import { getCurrentUser } from '@nextcloud/auth'
 import { showError } from '@nextcloud/dialogs'
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
@@ -49,6 +49,7 @@ import { useDocumentTitle } from './composables/useDocumentTitle.ts'
 import { useGetMessagesProvider } from './composables/useGetMessages.ts'
 import { useGetToken } from './composables/useGetToken.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
+import { useInterceptNotifications } from './composables/useInterceptNotifications.ts'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { CONVERSATION, PARTICIPANT } from './constants.ts'
@@ -57,7 +58,6 @@ import { EventBus } from './services/EventBus.ts'
 import { leaveConversationSync } from './services/participantsService.js'
 import { useActorStore } from './stores/actor.ts'
 import { useCallViewStore } from './stores/callView.ts'
-import { useFederationStore } from './stores/federation.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
 import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
@@ -80,6 +80,8 @@ export default {
 		useDocumentTitle()
 		// Provide context for MessagesList mounted in different places
 		useGetMessagesProvider()
+		// Intercept some notifications and handle them in the Talk app
+		useInterceptNotifications()
 		// Add provided value to check if we're in the main app or plugin
 		provide('Talk:isMainApp', true)
 		useDocumentFullscreen()
@@ -92,7 +94,6 @@ export default {
 			isMobile: useIsMobile(),
 			isNextcloudTalkHashDirty: useHashCheck(),
 			supportSessionState: useActiveSession(),
-			federationStore: useFederationStore(),
 			callViewStore: useCallViewStore(),
 			sidebarStore: useSidebarStore(),
 			actorStore: useActorStore(),
@@ -226,8 +227,6 @@ export default {
 		if (!getCurrentUser()) {
 			EventBus.off('should-refresh-conversations', this.debounceRefreshCurrentConversation)
 		}
-
-		unsubscribe('notifications:action:execute', this.interceptNotificationActions)
 
 		window.removeEventListener('beforeunload', this.preventUnload)
 
@@ -432,6 +431,10 @@ export default {
 		 * first navigation will be made from initial state { name : undefined }
 		 */
 		this.$router.beforeEach((to, from, next) => {
+			if (to.fullPath === from.fullPath) {
+				// Block duplicated navigation
+				return
+			}
 			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
 				// Navigating within the same conversation
 				beforeRouteChangeListener(to, from, next)
@@ -468,120 +471,10 @@ export default {
 		if (!IS_DESKTOP) {
 			checkBrowser()
 		}
-
-		subscribe('notifications:action:execute', this.interceptNotificationActions)
-		subscribe('notifications:notification:received', this.interceptNotificationReceived)
 	},
 
 	methods: {
 		t,
-		/**
-		 * Intercept clicking actions on notifications and open the conversation without a page reload instead
-		 *
-		 * @param {object} event The event object provided by the notifications app
-		 * @param {object} event.notification The notification object
-		 * @param {string} event.notification.app The app ID of the app providing the notification
-		 * @param {object} event.action The action that was clicked
-		 * @param {string} event.action.url The URL the action is aiming at
-		 * @param {string} event.action.type The request type used for the action
-		 * @param {boolean} event.cancelAction Option to cancel the action so no page reload is happening
-		 */
-		async interceptNotificationActions(event) {
-			if (event.notification.app !== 'spreed') {
-				return
-			}
-
-			switch (event.action.type) {
-				case 'WEB': {
-					const load = event.action.url.split('/call/').pop()
-					if (!load) {
-						return
-					}
-
-					const [token, hash] = load.split('#')
-					this.$router.push({
-						name: 'conversation',
-						hash: hash ? `#${hash}` : '',
-						params: {
-							token,
-						},
-					})
-
-					event.cancelAction = true
-					break
-				}
-				case 'POST': {
-				// Federation invitation handling
-					if (event.notification.objectType === 'remote_talk_share') {
-						try {
-							event.cancelAction = true
-							this.federationStore.addInvitationFromNotification(event.notification)
-							const conversation = await this.federationStore.acceptShare(event.notification.objectId)
-							if (conversation.token) {
-								this.$store.dispatch('addConversation', conversation)
-								this.$router.push({ name: 'conversation', params: { token: conversation.token } })
-							}
-						} catch (error) {
-							console.error(error)
-						}
-					}
-					break
-				}
-				case 'DELETE': {
-				// Federation invitation handling
-					if (event.notification.objectType === 'remote_talk_share') {
-						try {
-							event.cancelAction = true
-							this.federationStore.addInvitationFromNotification(event.notification)
-							await this.federationStore.rejectShare(event.notification.objectId)
-						} catch (error) {
-							console.error(error)
-						}
-					}
-					break
-				}
-				default: break
-			}
-		},
-
-		/**
-		 * Intercept …
-		 *
-		 * @param {object} event The event object provided by the notifications app
-		 * @param {object} event.notification The notification object
-		 * @param {string} event.notification.app The app ID of the app providing the notification
-		 */
-		interceptNotificationReceived(event) {
-			if (event.notification.app !== 'spreed') {
-				return
-			}
-
-			switch (event.notification.objectType) {
-				case 'chat': {
-					if (event.notification.subjectRichParameters?.reaction) {
-					// Ignore reaction notifications in case of one-to-one and always-notify
-						return
-					}
-
-					this.$store.dispatch('updateConversationLastMessageFromNotification', {
-						notification: event.notification,
-					})
-					break
-				}
-				case 'call': {
-					this.$store.dispatch('updateCallStateFromNotification', {
-						notification: event.notification,
-					})
-					break
-				}
-				// Federation invitation handling
-				case 'remote_talk_share': {
-					this.federationStore.addInvitationFromNotification(event.notification)
-					break
-				}
-				default: break
-			}
-		},
 
 		refreshCurrentConversation() {
 			this.fetchSingleConversation(this.token)

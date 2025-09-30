@@ -77,10 +77,11 @@ export type InitialState = {
 }
 
 // Notifications
+type NotificationActionType = 'WEB' | 'POST' | 'DELETE' | string & {}
 type NotificationAction = {
 	label: string
 	link: string
-	type: 'WEB' | 'POST' | 'DELETE' | string
+	type: NotificationActionType
 	primary: boolean
 }
 
@@ -103,6 +104,15 @@ export type Notification<T = Record<string, RichObject & Record<string, unknown>
 	icon: string
 	shouldNotify: true
 	actions: NotificationAction[]
+}
+
+export type NotificationEvent = {
+	action: {
+		type: NotificationAction['type']
+		url: NotificationAction['link']
+	}
+	notification: Notification
+	cancelAction: boolean
 }
 
 // Signaling
