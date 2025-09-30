@@ -531,6 +531,7 @@ OC.L10N.register(
     "Show all polls" : "Parādīt visas aptaujas",
     "Default" : "Noklusējuma",
     "Group" : "Grupa",
+    "Team" : "Komanda",
     "You and {user0} left the call" : "Tu un {user0} pametāt zvanu",
     "Search in conversation: {conversation}" : "Meklēt sarunā: {conversation}",
     "Error while sharing file" : "Kļūda datnes kopīgošanā",
