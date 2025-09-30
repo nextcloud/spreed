@@ -6,10 +6,11 @@
 <script setup lang="ts">
 import { t } from '@nextcloud/l10n'
 import IconReload from 'vue-material-design-icons/Reload.vue'
+import StaticDateTime from './StaticDateTime.vue'
 
 const props = defineProps<{
 	name: string | null
-	start: string | null
+	start: string | number
 	color: string
 	isRecurring?: boolean
 	href?: string
@@ -31,7 +32,7 @@ const props = defineProps<{
 					<span class="calendar-event__header-text">{{ name }}</span>
 					<IconReload v-if="isRecurring" :size="13" />
 				</span>
-				<span>{{ start }}</span>
+				<StaticDateTime :time="start" calendar />
 			</span>
 		</a>
 	</li>

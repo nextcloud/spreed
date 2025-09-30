@@ -13,6 +13,8 @@ const ONE_DAY_IN_MS = 86400000
 const relativeTimeFormatter = new Intl.RelativeTimeFormat(getLanguage(), { numeric: 'always' })
 /** 'yesterday', 'tomorrow' */
 const idiomaticTimeFormatter = new Intl.RelativeTimeFormat(getLanguage(), { numeric: 'auto' })
+/** 'friday', 'saturday' */
+const weekdayTimeFormatter = new Intl.DateTimeFormat(getLanguage(), { weekday: 'long' })
 
 /**
  * Converts the given time to UNIX timestamp
@@ -78,16 +80,11 @@ function futureRelativeTime(time: number): string {
 }
 
 /**
- * Calculates the relative time (in days) from now in user language
+ * Calculates the difference (in days) from now (positive for future time, negative for the past)
  *
  * @param dateOrTimestamp Date object to calculate from (or timestamp in ms)
- * @param options function options
- * @param options.limitToWeek whether to return prefix for interval larger than a week
  */
-function getRelativeDay(
-	dateOrTimestamp: Date | number,
-	{ limitToWeek } = { limitToWeek: false },
-): string {
+function getDiffInDays(dateOrTimestamp: Date | number): number {
 	const date = new Date(dateOrTimestamp)
 	const currentDate = new Date()
 
@@ -95,14 +92,38 @@ function getRelativeDay(
 	date.setHours(0, 0, 0, 0)
 	currentDate.setHours(0, 0, 0, 0)
 
-	const diffInDays = (+date - +currentDate) / ONE_DAY_IN_MS
+	return (+date - +currentDate) / ONE_DAY_IN_MS
+}
+
+/**
+ * Calculates the relative time (in days) from now in user language
+ *
+ * @param dateOrTimestamp Date object to calculate from (or timestamp in ms)
+ * @param options function options
+ * @param options.limitToWeek whether to return prefix for interval larger than a week
+ * @param options.showWeekDay whether to return weekday names for -6 to +6 days range
+ */
+function getRelativeDay(
+	dateOrTimestamp: Date | number,
+	{ limitToWeek, showWeekDay } = { limitToWeek: false, showWeekDay: false },
+): string {
+	const date = new Date(dateOrTimestamp)
+	const diffInDays = getDiffInDays(date)
 
 	if (limitToWeek) {
 		if (Math.abs(diffInDays) === 7) {
+			if (showWeekDay) {
+				// Do not return the same weekday as the current one
+				return ''
+			}
 			return relativeTimeFormatter.format(diffInDays / 7, 'week')
 		} else if (Math.abs(diffInDays) > 7) {
 			return ''
 		}
+	}
+
+	if (showWeekDay && Math.abs(diffInDays) > 1) {
+		return weekdayTimeFormatter.format(date)
 	}
 
 	return idiomaticTimeFormatter.format(diffInDays, 'day')
@@ -112,6 +133,7 @@ export {
 	convertToUnix,
 	formattedTime,
 	futureRelativeTime,
+	getDiffInDays,
 	getRelativeDay,
 	ONE_DAY_IN_MS,
 	ONE_HOUR_IN_MS,
