@@ -11,7 +11,6 @@ import type {
 } from '../../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { computed, ref, watch } from 'vue'
@@ -38,7 +37,7 @@ import { convertToUnix } from '../../utils/formattedTime.ts'
 type MutualEvent = {
 	uri: DashboardEvent['eventLink']
 	name: DashboardEvent['eventName']
-	start: string
+	start: string | number
 	href: DashboardEvent['eventLink']
 	color: string
 }
@@ -139,7 +138,7 @@ const mutualEventsInformation = computed<MutualEvent[]>(() => {
 	const now = convertToUnix(Date.now())
 	return groupwareStore.mutualEvents[token.value].map((event) => {
 		const start = event.start
-			? (event.start <= now) ? t('spreed', 'Now') : moment(event.start * 1000).calendar()
+			? (event.start <= now) ? t('spreed', 'Now') : event.start * 1000
 			: ''
 		return {
 			uri: event.eventLink,

@@ -6,13 +6,12 @@
 import type { ComputedRef, Ref } from 'vue'
 import type { ChatMessage, Conversation } from '../types/index.ts'
 
-import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
+import { getCanonicalLocale, t } from '@nextcloud/l10n'
 import { computed, ref, toRef } from 'vue'
 import { CONVERSATION, MESSAGE, PARTICIPANT } from '../constants.ts'
 import { useChatStore } from '../stores/chat.ts'
 import { getEventTimeRange } from '../utils/conversation.ts'
-import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
+import { futureRelativeTime, getDiffInDays, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
 import { getMessageIcon } from '../utils/getMessageIcon.ts'
 import { parseToSimpleMessage } from '../utils/textParse.ts'
@@ -118,20 +117,27 @@ export function useConversationInfo({
 				return message.systemMessage === '' && message.messageType !== MESSAGE.TYPE.COMMENT_DELETED
 			})
 
+			let eventTime = ''
 			if (!hasHumanMessage && startTime - Date.now() < ONE_DAY_IN_MS) {
-				return {
-					actor: null,
-					icon: null,
-					message: futureRelativeTime(startTime),
-					title: futureRelativeTime(startTime),
-				}
+				eventTime = futureRelativeTime(startTime)
 			} else if (!hasHumanMessage) {
-				return {
-					actor: null,
-					icon: null,
-					message: moment(startTime).calendar(),
-					title: moment(startTime).calendar(),
-				}
+				const date = new Date(startTime)
+				const isSameYear = date.getFullYear() === new Date().getFullYear()
+				const diffInDays = getDiffInDays(date)
+
+				const format: Intl.DateTimeFormatOptions = (Math.abs(diffInDays) <= 6)
+					// Show weekday and time for nearest 6 days
+					? { weekday: 'long', hour: 'numeric', minute: 'numeric' }
+					: { year: !isSameYear ? 'numeric' : undefined, month: 'long', day: 'numeric' }
+
+				eventTime = new Intl.DateTimeFormat(getCanonicalLocale(), format).format(date)
+			}
+
+			return {
+				actor: null,
+				icon: null,
+				message: eventTime,
+				title: eventTime,
 			}
 		}
 
