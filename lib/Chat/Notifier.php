@@ -265,7 +265,7 @@ class Notifier {
 		/** @var array<int, ThreadAttendee> $threadAttendees */
 		$threadAttendees = [];
 		if ($threadId !== 0) {
-			$threadAttendees = $this->threadService->findAttendeesForNotificationByThreadId($threadId);
+			$threadAttendees = $this->threadService->findAttendeesForNotificationByThreadId($chat->getId(), $threadId);
 		}
 
 		// Handle participants that only subscribed with Participant::NOTIFY_ALWAYS to the thread, but not the conversation

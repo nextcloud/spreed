@@ -16,6 +16,7 @@ use OCA\Talk\Model\ProxyCacheMessage;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ThreadService;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Notification\IManager;
 use OCP\Notification\INotification;
@@ -25,6 +26,7 @@ class FederationChatNotifier {
 		protected IAppConfig $appConfig,
 		protected IManager $notificationManager,
 		protected UserConverter $userConverter,
+		protected ThreadService $threadService,
 	) {
 	}
 
@@ -41,7 +43,7 @@ class FederationChatNotifier {
 			return;
 		}
 
-		/** @var array{silent?: bool, last_edited_time?: int, last_edited_by_type?: string, last_edited_by_id?: string, replyToActorType?: string, replyToActorId?: string} $metaData */
+		/** @var array{silent?: bool, last_edited_time?: int, last_edited_by_type?: string, last_edited_by_id?: string, replyToActorType?: string, replyToActorId?: string, thread_id?: int} $metaData */
 		$metaData = json_decode($inboundNotification['messageData']['metaData'] ?? '', true, flags: JSON_THROW_ON_ERROR);
 
 		if (isset($metaData[Message::METADATA_SILENT])) {
@@ -49,32 +51,49 @@ class FederationChatNotifier {
 			return;
 		}
 
+		$threadId = null;
+		if (isset($metaData[Message::METADATA_THREAD_ID])) {
+			$threadId = (int)$metaData[Message::METADATA_THREAD_ID];
+		}
+
 		if ($participant->getSession() instanceof Session && $participant->getSession()->getState() === Session::STATE_ACTIVE) {
 			// User has an active session
 			return;
 		}
 
+
+		$notificationLevel = $participant->getAttendee()->getNotificationLevel();
+		if ($threadId !== null) {
+			$threadAttendees = $this->threadService->findAttendeeByThreadIds($participant->getAttendee(), [$threadId]);
+			$threadAttendee = $threadAttendees[$threadId] ?? null;
+
+			if ($threadAttendee !== null
+				&& $threadAttendee->getNotificationLevel() !== Participant::NOTIFY_DEFAULT) {
+				$notificationLevel = $threadAttendee->getNotificationLevel();
+			}
+		}
+
 		// Also notify default participants in one-to-one chats or when the admin default is "always"
 		$defaultLevel = $this->appConfig->getAppValueInt('default_group_notification', Participant::NOTIFY_MENTION);
-		if ($participant->getAttendee()->getNotificationLevel() === Participant::NOTIFY_MENTION
-			|| ($defaultLevel !== Participant::NOTIFY_NEVER && $participant->getAttendee()->getNotificationLevel() === Participant::NOTIFY_DEFAULT)) {
+		if ($notificationLevel === Participant::NOTIFY_MENTION
+			|| ($defaultLevel !== Participant::NOTIFY_NEVER && $notificationLevel === Participant::NOTIFY_DEFAULT)) {
 			if ($this->isRepliedTo($room, $participant, $metaData)) {
-				$notification = $this->createNotification($room, $message, 'reply');
+				$notification = $this->createNotification($room, $message, 'reply', threadId: $threadId);
 				$notification->setUser($participant->getAttendee()->getActorId());
 				$this->notificationManager->notify($notification);
 			} elseif ($this->isMentioned($participant, $message)) {
-				$notification = $this->createNotification($room, $message, 'mention');
+				$notification = $this->createNotification($room, $message, 'mention', threadId: $threadId);
 				$notification->setUser($participant->getAttendee()->getActorId());
 				$this->notificationManager->notify($notification);
 			} elseif ($this->isMentionedAll($room, $message)) {
-				$notification = $this->createNotification($room, $message, 'mention_all');
+				$notification = $this->createNotification($room, $message, 'mention_all', threadId: $threadId);
 				$notification->setUser($participant->getAttendee()->getActorId());
 				$this->notificationManager->notify($notification);
 			}
 		} elseif ($participant->getAttendee()->getNotificationLevel() === Participant::NOTIFY_ALWAYS
-			|| ($defaultLevel === Participant::NOTIFY_ALWAYS && $participant->getAttendee()->getNotificationLevel() === Participant::NOTIFY_DEFAULT)) {
+			|| ($defaultLevel === Participant::NOTIFY_ALWAYS && $notificationLevel === Participant::NOTIFY_DEFAULT)) {
 			if ($this->isUserMessageOrRelevantSystemMessage($message->getSystemMessage())) {
-				$notification = $this->createNotification($room, $message, 'chat');
+				$notification = $this->createNotification($room, $message, 'chat', threadId: $threadId);
 				$notification->setUser($participant->getAttendee()->getActorId());
 				$this->notificationManager->notify($notification);
 			}
@@ -82,7 +101,7 @@ class FederationChatNotifier {
 	}
 
 	/**
-	 * @param array{silent?: bool, last_edited_time?: int, last_edited_by_type?: string, last_edited_by_id?: string, replyToActorType?: string, replyToActorId?: string} $metaData
+	 * @param array{silent?: bool, last_edited_time?: int, last_edited_by_type?: string, last_edited_by_id?: string, replyToActorType?: string, replyToActorId?: string, thread_id?: int} $metaData
 	 */
 	protected function isRepliedTo(Room $room, Participant $participant, array $metaData): bool {
 		if (!isset($metaData[ProxyCacheMessage::METADATA_REPLY_TO_ACTOR_TYPE])
@@ -134,19 +153,23 @@ class FederationChatNotifier {
 	/**
 	 * Creates a notification for the given proxy message and mentioned users
 	 */
-	protected function createNotification(Room $chat, ProxyCacheMessage $message, string $subject, array $subjectData = []): INotification {
+	protected function createNotification(Room $chat, ProxyCacheMessage $message, string $subject, array $subjectData = [], ?int $threadId = null): INotification {
 		$subjectData['userType'] = $message->getActorType();
 		$subjectData['userId'] = $message->getActorId();
+
+		$notificationParameters = [
+			'proxyId' => $message->getId(),
+		];
+		if ($threadId !== null) {
+			$notificationParameters['threadId'] = $threadId;
+		}
 
 		$notification = $this->notificationManager->createNotification();
 		$notification
 			->setApp('spreed')
 			->setObject('chat', $chat->getToken())
 			->setSubject($subject, $subjectData)
-			->setMessage($message->getMessageType(), [
-				'proxyId' => $message->getId(),
-				// FIXME Store more info to allow querying remote?
-			])
+			->setMessage($message->getMessageType(), $notificationParameters)
 			->setDateTime($message->getCreationDatetime());
 
 		return $notification;
