@@ -3526,6 +3526,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$messageText = str_replace([$this->localServerUrl, $this->remoteServerUrl], ['{$LOCAL_URL}', '{$REMOTE_URL}'], $messageText);
 					$data['object_id'] = self::$tokenToIdentifier[$roomToken] . '/' . $messageText;
 					if (isset($parts[2])) {
+						// If you end up here with an undefined index, a notification had a thread id
+						// But you most likely have a non-user mention in the message instead
 						$data['object_id'] .= '/' . self::$threadIdToTitle[$parts[2]];
 					}
 				} elseif (str_contains($expectedNotification['object_id'], 'INVITE_ID')) {

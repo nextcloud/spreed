@@ -22,6 +22,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Poll;
+use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
@@ -402,7 +403,9 @@ class ChatManager {
 
 		if ($replyTo instanceof IComment) {
 			$comment->setParentId($replyTo->getId());
-		} elseif ($threadId !== 0) {
+			$threadId = (int)$replyTo->getTopmostParentId() ?: (int)$replyTo->getId();
+			$threadId = $this->threadService->validateThread($chat->getId(), $threadId) ? $threadId : Thread::THREAD_NONE;
+		} elseif ($threadId !== Thread::THREAD_NONE && $threadId !== Thread::THREAD_CREATE) {
 			$comment->setParentId((string)$threadId);
 		}
 
@@ -431,21 +434,26 @@ class ChatManager {
 		if ($chat->getMentionPermissions() === Room::MENTION_PERMISSIONS_EVERYONE || $participant?->hasModeratorPermissions()) {
 			$metadata[Message::METADATA_CAN_MENTION_ALL] = true;
 		}
+		if ($threadId !== Thread::THREAD_NONE) {
+			$metadata[Message::METADATA_THREAD_ID] = $threadId;
+		}
 		$comment->setMetaData($metadata);
 
 		$event = new BeforeChatMessageSentEvent($chat, $comment, $participant, $silent, $replyTo);
 		$this->dispatcher->dispatchTyped($event);
 
-		$threadId = 0;
 		$shouldFlush = $this->notificationManager->defer();
 		try {
 			$this->commentsManager->save($comment);
 			$messageId = (int)$comment->getId();
-			$threadId = (int)$comment->getTopmostParentId();
-			if ($threadId !== 0) {
+			if ($threadId === Thread::THREAD_CREATE) {
+				$metadata[Message::METADATA_THREAD_ID] = $messageId;
+				$comment->setMetaData($metadata);
+				$this->commentsManager->save($comment);
+			} elseif ($threadId !== Thread::THREAD_NONE) {
 				$isThread = $this->threadService->updateLastMessageInfoAfterReply($threadId, $messageId, $chat->getId());
 				if (!$isThread) {
-					$threadId = 0;
+					$threadId = Thread::THREAD_NONE;
 				} elseif ($participant instanceof Participant) {
 					// Add to subscribed threads list
 					$this->threadService->ensureIsThreadAttendee($participant->getAttendee(), $threadId);
@@ -495,7 +503,7 @@ class ChatManager {
 		} catch (NotFoundException $e) {
 		}
 		$this->cache->remove($chat->getToken());
-		if ($threadId !== 0) {
+		if ($threadId !== Thread::THREAD_NONE) {
 			$this->cache->remove($chat->getToken() . '/' . $threadId);
 		}
 		if ($shouldFlush) {
