@@ -49,11 +49,7 @@ class AvatarService {
 			throw new InvalidArgumentException($this->l->t('No image file provided'));
 		}
 
-		if (
-			$file['error'] !== 0
-			|| !is_uploaded_file($file['tmp_name'])
-			|| !$this->filenameValidator->isFilenameValid($file['tmp_name'])
-		) {
+		if ($file['error'] !== 0 || !is_uploaded_file($file['tmp_name'])) {
 			throw new InvalidArgumentException($this->l->t('Invalid file provided'));
 		}
 		if ($file['size'] > 20 * 1024 * 1024) {
