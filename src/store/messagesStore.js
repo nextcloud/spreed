@@ -875,6 +875,12 @@ const actions = {
 			})
 		}
 
+		const chatStore = useChatStore()
+		chatStore.processChatBlocks(token, response.data.ocs.data, {
+			mergeBy: +lastKnownMessageId,
+			threadId,
+		})
+
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach((message) => {
 			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
@@ -897,11 +903,6 @@ const actions = {
 		})
 
 		context.commit('loadedMessagesOfConversation', { token })
-		const chatStore = useChatStore()
-		chatStore.processChatBlocks(token, response.data.ocs.data, {
-			mergeBy: +lastKnownMessageId,
-			threadId,
-		})
 
 		if (minimumVisible > 0) {
 			debugTimer.tick(`${token} | fetch history`, 'first chunk')
@@ -966,6 +967,9 @@ const actions = {
 			})
 		}
 
+		const chatStore = useChatStore()
+		chatStore.processChatBlocks(token, response.data.ocs.data, { threadId })
+
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach((message) => {
 			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
@@ -984,9 +988,6 @@ const actions = {
 		})
 
 		context.commit('loadedMessagesOfConversation', { token })
-
-		const chatStore = useChatStore()
-		chatStore.processChatBlocks(token, response.data.ocs.data, { threadId })
 
 		if (minimumVisible > 0) {
 			debugTimer.tick(`${token} | get context`, 'first chunk')
@@ -1083,6 +1084,10 @@ const actions = {
 		let countNewMessages = 0
 		let hasNewMention = conversation.unreadMention
 		let lastMessage = null
+		const chatStore = useChatStore()
+		chatStore.processChatBlocks(token, response.data.ocs.data, {
+			mergeBy: +lastKnownMessageId,
+		})
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach((message) => {
 			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
@@ -1165,11 +1170,6 @@ const actions = {
 
 		context.commit('loadedMessagesOfConversation', { token })
 
-		const chatStore = useChatStore()
-		chatStore.processChatBlocks(token, response.data.ocs.data, {
-			mergeBy: +lastKnownMessageId,
-		})
-
 		return response
 	},
 
@@ -1244,10 +1244,10 @@ const actions = {
 
 			// Own message might have been added already by polling, which is more up-to-date (e.g. reactions)
 			if (!context.state.messages[token]?.[response.data.ocs.data.id]) {
-				context.dispatch('processMessage', { token, message: response.data.ocs.data })
 				chatStore.processChatBlocks(token, [response.data.ocs.data], {
 					mergeBy: conversationLastMessageId,
 				})
+				context.dispatch('processMessage', { token, message: response.data.ocs.data })
 			}
 
 			return response
