@@ -13,15 +13,15 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
-import Quote from '../../../Quote.vue'
+import MessageQuote from '../../../MessageQuote.vue'
 import CallButton from '../../../TopBar/CallButton.vue'
-import Message from './Message.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
+import MessageItem from './MessageItem.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
-import Location from './MessagePart/Location.vue'
-import Mention from './MessagePart/Mention.vue'
+import LocationCard from './MessagePart/LocationCard.vue'
+import MentionChip from './MessagePart/MentionChip.vue'
 import router from '../../../../__mocks__/router.js'
 import * as useIsInCallModule from '../../../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
@@ -30,7 +30,7 @@ import storeConfig from '../../../../store/storeConfig.js'
 import { useActorStore } from '../../../../stores/actor.ts'
 import { useTokenStore } from '../../../../stores/token.ts'
 
-describe('Message.vue', () => {
+describe('MessageItem.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let testStoreConfig
 	let store
@@ -94,12 +94,12 @@ describe('Message.vue', () => {
 	 * Shared function to mount component
 	 */
 	function mountMessage(props) {
-		return mount(Message, {
+		return mount(MessageItem, {
 			global: {
 				plugins: [router, store],
 				provide: injected,
 				stubs: {
-					Location: true,
+					LocationCard: true,
 				},
 			},
 			props,
@@ -236,7 +236,7 @@ describe('Message.vue', () => {
 
 			const wrapper = mountMessage(messageProps)
 
-			const quote = wrapper.findComponent(Quote)
+			const quote = wrapper.findComponent(MessageQuote)
 			expect(quote.exists()).toBeTruthy()
 			expect(quote.props('message')).toStrictEqual(parentMessage)
 		})
@@ -282,15 +282,15 @@ describe('Message.vue', () => {
 					mentions,
 					{
 						'mention-user1': {
-							component: Mention,
+							component: MentionChip,
 							props: mentions['mention-user1'],
 						},
 						'mention-user2': {
-							component: Mention,
+							component: MentionChip,
 							props: mentions['mention-user2'],
 						},
 						'mention-call1': {
-							component: Mention,
+							component: MentionChip,
 							props: mentions['mention-call1'],
 						},
 					},
@@ -317,7 +317,7 @@ describe('Message.vue', () => {
 					params,
 					{
 						actor: {
-							component: Mention,
+							component: MentionChip,
 							props: params.actor,
 						},
 						file: {
@@ -349,7 +349,7 @@ describe('Message.vue', () => {
 					params,
 					{
 						actor: {
-							component: Mention,
+							component: MentionChip,
 							props: params.actor,
 						},
 						file: {
@@ -384,7 +384,7 @@ describe('Message.vue', () => {
 					params,
 					{
 						actor: {
-							component: Mention,
+							component: MentionChip,
 							props: params.actor,
 						},
 						'deck-card': {
@@ -411,7 +411,7 @@ describe('Message.vue', () => {
 					params,
 					{
 						'geo-location': {
-							component: Location,
+							component: LocationCard,
 							props: params['geo-location'],
 						},
 					},
@@ -437,7 +437,7 @@ describe('Message.vue', () => {
 					params,
 					{
 						actor: {
-							component: Mention,
+							component: MentionChip,
 							props: params.actor,
 						},
 						unknown: {

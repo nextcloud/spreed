@@ -106,7 +106,7 @@ const FEDERATION_ONLY_TRUSTED_SERVERS = loadState('spreed', 'federation_only_tru
 const FEDERATION_ALLOWED_GROUPS = loadState('spreed', 'federation_allowed_groups', [])
 
 export default {
-	name: 'Federation',
+	name: 'FederationSettings',
 
 	components: {
 		NcButton,

@@ -82,7 +82,7 @@ import CancelIcon from 'vue-material-design-icons/Cancel.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import WebIcon from 'vue-material-design-icons/Web.vue'
 import ConversationIcon from '../ConversationIcon.vue'
-import Mention from '../MessagesList/MessagesGroup/Message/MessagePart/Mention.vue'
+import MentionChip from '../MessagesList/MessagesGroup/Message/MessagePart/MentionChip.vue'
 import { CONVERSATION } from '../../constants.ts'
 import { useFederationStore } from '../../stores/federation.ts'
 
@@ -170,7 +170,7 @@ export default {
 			const [id, server] = item.inviterCloudId.split('@')
 			return {
 				user: {
-					component: Mention,
+					component: MentionChip,
 					props: { id, name: item.inviterDisplayName, server, token: item.token || 'new', type: 'user' },
 				},
 			}

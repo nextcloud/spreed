@@ -59,7 +59,7 @@
 					class="known-results"
 					:items="filteredParticipants"
 					:loading="!participantsInitialised" />
-				<Hint v-else :hint="t('spreed', 'No search results')" />
+				<NavigationHint v-else :hint="t('spreed', 'No search results')" />
 			</template>
 
 			<ParticipantsSearchResults
@@ -87,7 +87,7 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import SelectPhoneNumber from '../../SelectPhoneNumber.vue'
 import DialpadPanel from '../../UIShared/DialpadPanel.vue'
-import Hint from '../../UIShared/Hint.vue'
+import NavigationHint from '../../UIShared/NavigationHint.vue'
 import SearchBox from '../../UIShared/SearchBox.vue'
 import ParticipantsList from './ParticipantsList.vue'
 import ParticipantsListVirtual from './ParticipantsListVirtual.vue'
@@ -112,7 +112,7 @@ export default {
 	components: {
 		NcNoteCard,
 		DialpadPanel,
-		Hint,
+		NavigationHint,
 		NcAppNavigationCaption,
 		ParticipantsList,
 		ParticipantsListVirtual,

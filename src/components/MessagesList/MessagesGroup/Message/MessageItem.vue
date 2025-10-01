@@ -31,7 +31,7 @@
 				:message="message"
 				:read-info="readInfo">
 				<!-- reactions buttons and popover with details -->
-				<Reactions
+				<ReactionsWrapper
 					v-if="Object.keys(message.reactions).length"
 					:id="message.id"
 					:token="message.token"
@@ -116,15 +116,15 @@ import IconUnfoldMoreHorizontal from 'vue-material-design-icons/UnfoldMoreHorizo
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
 import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
-import Contact from './MessagePart/Contact.vue'
+import ContactCard from './MessagePart/ContactCard.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
-import Location from './MessagePart/Location.vue'
-import Mention from './MessagePart/Mention.vue'
+import LocationCard from './MessagePart/LocationCard.vue'
+import MentionChip from './MessagePart/MentionChip.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
-import Poll from './MessagePart/Poll.vue'
-import Reactions from './MessagePart/Reactions.vue'
+import PollCard from './MessagePart/PollCard.vue'
+import ReactionsWrapper from './MessagePart/ReactionsWrapper.vue'
 import { CONVERSATION, MENTION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
@@ -136,7 +136,7 @@ const canSummarizeChat = hasTalkFeature('local', 'chat-summary-api')
 const summaryThreshold = getTalkConfig('local', 'chat', 'summary-threshold') ?? 0
 
 export default {
-	name: 'Message',
+	name: 'MessageItem',
 
 	components: {
 		IconUnfoldLessHorizontal,
@@ -147,7 +147,7 @@ export default {
 		MessageTranslateDialog,
 		NcAssistantButton,
 		NcButton,
-		Reactions,
+		ReactionsWrapper,
 	},
 
 	directives: {
@@ -301,7 +301,7 @@ export default {
 				})
 				if (Object.values(MENTION.TYPE).includes(type)) {
 					richParameters[p] = {
-						component: Mention,
+						component: MentionChip,
 						props: {
 							...this.message.messageParameters[p],
 							token: this.message.token,
@@ -326,7 +326,7 @@ export default {
 					}
 				} else if (type === 'geo-location') {
 					richParameters[p] = {
-						component: Location,
+						component: LocationCard,
 						props: this.message.messageParameters[p],
 					}
 				} else if (type === 'talk-poll' && this.message.systemMessage !== 'poll_closed') {
@@ -334,12 +334,12 @@ export default {
 					// Add the token to the component props
 					props.token = this.message.token
 					richParameters[p] = {
-						component: Poll,
+						component: PollCard,
 						props,
 					}
 				} else if (mimetype === 'text/vcard') {
 					richParameters[p] = {
-						component: Contact,
+						component: ContactCard,
 						props: this.message.messageParameters[p],
 					}
 				} else {

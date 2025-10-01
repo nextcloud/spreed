@@ -16,7 +16,7 @@ import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.v
 import IconPhoneDialOutline from 'vue-material-design-icons/PhoneDialOutline.vue'
 import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
-import Participant from './Participant.vue'
+import ParticipantItem from './ParticipantItem.vue'
 import router from '../../../__mocks__/router.js'
 import { ATTENDEE, PARTICIPANT, WEBINAR } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
@@ -24,7 +24,7 @@ import { useActorStore } from '../../../stores/actor.ts'
 import { useTokenStore } from '../../../stores/token.ts'
 import { findNcActionButton, findNcActionText, findNcButton } from '../../../test-helpers.js'
 
-describe('Participant.vue', () => {
+describe('ParticipantItem.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let conversation
 	let participant
@@ -89,7 +89,7 @@ describe('Participant.vue', () => {
 	 * @param {boolean} showUserStatus Whether or not the user status should be shown
 	 */
 	function mountParticipant(participant, showUserStatus = false) {
-		return mount(Participant, {
+		return mount(ParticipantItem, {
 			global: {
 				plugins: [router, store],
 				stubs: {

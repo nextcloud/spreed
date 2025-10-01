@@ -10,7 +10,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { computed, ref } from 'vue'
 import AllowedGroups from '../components/AdminSettings/AllowedGroups.vue'
 import BotsSettings from '../components/AdminSettings/BotsSettings.vue'
-import Federation from '../components/AdminSettings/Federation.vue'
+import FederationSettings from '../components/AdminSettings/FederationSettings.vue'
 import GeneralSettings from '../components/AdminSettings/GeneralSettings.vue'
 import HostedSignalingServer from '../components/AdminSettings/HostedSignalingServer.vue'
 import MatterbridgeIntegration from '../components/AdminSettings/MatterbridgeIntegration.vue'
@@ -44,7 +44,7 @@ const hasSignalingServers = computed(() => signalingServers.value.servers.length
 		<HostedSignalingServer :has-signaling-servers="hasSignalingServers" />
 		<GeneralSettings :has-signaling-servers="hasSignalingServers" />
 		<AllowedGroups />
-		<Federation v-if="supportFederation" />
+		<FederationSettings v-if="supportFederation" />
 		<BotsSettings />
 		<WebServerSetupChecks />
 		<StunServers />

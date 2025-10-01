@@ -41,7 +41,7 @@ const ZOOM_MAX = 8
 
 export default {
 
-	name: 'Screen',
+	name: 'ScreenShare',
 
 	components: {
 		VideoBottomBar,

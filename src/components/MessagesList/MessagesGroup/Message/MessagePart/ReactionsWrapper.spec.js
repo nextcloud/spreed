@@ -12,7 +12,7 @@ import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
-import Reactions from './Reactions.vue'
+import ReactionsWrapper from './ReactionsWrapper.vue'
 import router from '../../../../../__mocks__/router.js'
 import {
 	addReactionToMessage,
@@ -31,7 +31,7 @@ vi.mock('../../../../../services/reactionsService', () => ({
 	removeReactionFromMessage: vi.fn(),
 }))
 
-describe('Reactions.vue', () => {
+describe('ReactionsWrapper.vue', () => {
 	let reactionsStore
 	let token
 	let messageId
@@ -111,7 +111,7 @@ describe('Reactions.vue', () => {
 	 * Shared function to mount component
 	 */
 	function mountReactions(props) {
-		return mount(Reactions, {
+		return mount(ReactionsWrapper, {
 			global: {
 				plugins: [router, store],
 				stubs: {

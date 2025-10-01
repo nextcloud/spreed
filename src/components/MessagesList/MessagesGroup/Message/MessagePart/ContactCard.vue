@@ -29,7 +29,7 @@
 import { t } from '@nextcloud/l10n'
 
 export default {
-	name: 'Contact',
+	name: 'ContactCard',
 
 	props: {
 		name: {

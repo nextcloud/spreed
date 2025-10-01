@@ -66,8 +66,8 @@
 		</template>
 
 		<NcAppNavigationCaption v-if="sourcesWithoutResults && !onlyUsers" :name="sourcesWithoutResultsList" />
-		<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
-		<Hint v-else-if="sourcesWithoutResults" :hint="t('spreed', 'No search results')" />
+		<NavigationHint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
+		<NavigationHint v-else-if="sourcesWithoutResults" :hint="t('spreed', 'No search results')" />
 
 		<template v-if="showSearchHints">
 			<NcEmptyContent v-if="noResults" :name="t('spreed', 'No results')">
@@ -97,7 +97,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import IconAccountPlusOutline from 'vue-material-design-icons/AccountPlusOutline.vue'
 import IconAccountSearchOutline from 'vue-material-design-icons/AccountSearchOutline.vue'
-import Hint from '../../UIShared/Hint.vue'
+import NavigationHint from '../../UIShared/NavigationHint.vue'
 import ParticipantsList from './ParticipantsList.vue'
 import { ATTENDEE } from '../../../constants.ts'
 import { useIntegrationsStore } from '../../../stores/integrations.js'
@@ -110,7 +110,7 @@ export default {
 	components: {
 		IconAccountPlusOutline,
 		IconAccountSearchOutline,
-		Hint,
+		NavigationHint,
 		NcAppNavigationCaption,
 		NcButton,
 		NcEmptyContent,

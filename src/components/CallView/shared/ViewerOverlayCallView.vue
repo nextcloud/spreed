@@ -46,13 +46,13 @@
 						</div>
 
 						<!-- local screen -->
-						<Screen
+						<ScreenShare
 							v-if="showLocalScreen"
 							:token="token"
 							:local-media-model="localModel"
 							:shared-data="localSharedData" />
 						<!-- remote screen -->
-						<Screen
+						<ScreenShare
 							v-else-if="model && screens[model.attributes.peerId]"
 							:token="token"
 							:call-participant-model="model"
@@ -117,7 +117,7 @@ import EmptyCallView from './EmptyCallView.vue'
 import LocalAudioControlButton from './LocalAudioControlButton.vue'
 import LocalVideo from './LocalVideo.vue'
 import LocalVideoControlButton from './LocalVideoControlButton.vue'
-import Screen from './Screen.vue'
+import ScreenShare from './ScreenShare.vue'
 import VideoVue from './VideoVue.vue'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import { localCallParticipantModel, localMediaModel } from '../../../utils/webrtc/index.js'
@@ -129,7 +129,7 @@ export default {
 		EmptyCallView,
 		LocalAudioControlButton,
 		LocalVideoControlButton,
-		Screen,
+		ScreenShare,
 		LocalVideo,
 		ChevronUp,
 		ChevronDown,
