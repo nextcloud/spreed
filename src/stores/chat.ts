@@ -14,6 +14,7 @@ import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 import { useStore } from 'vuex'
 import { isHiddenSystemMessage } from '../utils/message.ts'
+import { useChatExtrasStore } from './chatExtras.ts'
 
 type GetMessagesListOptions = {
 	/** if given, look for Set that has it */
@@ -74,6 +75,7 @@ function filterNumericIds(block: Set<number | string>): number[] {
  */
 export const useChatStore = defineStore('chat', () => {
 	const store = useStore()
+	const chatExtrasStore = useChatExtrasStore()
 
 	const chatBlocks = reactive<TokenMap<Set<number>[]>>({})
 	const threadBlocks = reactive<TokenIdMap<Set<number>[]>>({})
@@ -283,18 +285,28 @@ export const useChatStore = defineStore('chat', () => {
 			const threadIds = Object.keys(threadIdSetsToUpdate)
 			if (threadIds.length) {
 				const chatBlockWithMergeBy: Set<number> | undefined = chatBlocks[token]?.find((set) => set.has(options.mergeBy!))
-				if (chatBlockWithMergeBy) {
+				threadIds.forEach((threadId) => {
+					// Fallback: This is either polling or posting new message in a thread view
+					// with no other messages in main chat block that thread belongs to
+					const lastMessageIdInThread = chatExtrasStore.getThread(token, +threadId)?.last?.id
+					if (lastMessageIdInThread && hasMessage(token, { messageId: lastMessageIdInThread, threadId: +threadId })) {
+						threadIdSetsToUpdate[threadId].add(lastMessageIdInThread)
+						return
+					}
+
+					if (!chatBlockWithMergeBy) {
+						return
+					}
+
 					// Populate thread blocks from chat blocks
-					threadIds.forEach((threadId) => {
-						for (const messageId of chatBlockWithMergeBy) {
-							const message = store.state.messagesStore.messages[token][messageId]
-							if (message && message.threadId === +threadId) {
-								threadIdSetsToUpdate[message.threadId].add(messageId)
-								break
-							}
+					for (const messageId of chatBlockWithMergeBy) {
+						const message = store.state.messagesStore.messages[token][messageId]
+						if (message && message.threadId === +threadId) {
+							threadIdSetsToUpdate[message.threadId].add(messageId)
+							break
 						}
-					})
-				}
+					}
+				})
 			}
 		}
 
