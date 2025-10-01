@@ -54,6 +54,32 @@ A Golang sample bot that responds to "Good morning" and "Hello" and welcomes new
 
 ## Bots
 
+### Agenda Bot
+
+Intelligent meeting agenda management bot for Nextcloud Talk with
+
+- Advanced Agenda Management
+- Intelligent Time Monitoring
+- Permission-Based Access Control
+- Smart Bot Integration
+- Transform chaotic meetings into productive sessions!
+
+![Screenshot showing agenda bot](botscreenshots/agenda-bot-meeting-flow.png)
+
+* License: AGPL-3.0-or-later
+* [Link to source code](https://github.com/LexioJ/agenda_bot)
+* [Link to installation documentation](https://github.com/LexioJ/agenda_bot#installation)
+
+### Command Bot
+
+A simple "text in, text out" bot to help with repeating questions and tasks
+
+![Screenshot showing command bot](botscreenshots/command-bot.png)
+
+* License: AGPL-3.0-or-later
+* [Link to source code](https://github.com/nextcloud/command_bot)
+* [Link to installation documentation](https://github.com/nextcloud/command_bot#command-bot-for-nextcloud-talk)
+
 ### Stable Diffusion
 
 Uses [SDXL-Turbo](https://huggingface.co/stabilityai/sdxl-turbo) for fast image generation. Usage example: `@image cinematic portrait of fluffy cat with black eyes`
