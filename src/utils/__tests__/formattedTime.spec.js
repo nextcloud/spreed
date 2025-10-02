@@ -110,8 +110,8 @@ describe('formatDateTime', () => {
 		['L', '02/15/2025'], // 'MM/DD/YYYY'
 		['LL', 'February 15, 2025'], // 'MMMM Do YYYY'
 		['ll', 'Feb 15, 2025'], // 'MMM D YYYY'
-		['LLL', 'February 15, 2025 8:30 PM'], // 'MMMM Do YYYY LT'
-		['lll', 'Feb 15, 2025 8:30 PM'], // 'MMM D YYYY LT'
+		['LLL', 'February 15, 2025 at 8:30 PM'], // 'MMMM Do YYYY LT'
+		['lll', 'Feb 15, 2025, 8:30 PM'], // 'MMM D YYYY LT'
 	]
 
 	it.each(LOCALIZED_TEST_CASES)('should return datetime with specified format %s', (format, output) => {

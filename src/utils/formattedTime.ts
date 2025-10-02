@@ -3,11 +3,23 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { getLanguage, n, t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
+import { getCanonicalLocale, getLanguage, n, t } from '@nextcloud/l10n'
 
 const ONE_HOUR_IN_MS = 3600000
 const ONE_DAY_IN_MS = 86400000
+
+const locale = getCanonicalLocale()
+const absoluteTimeFormat = {
+	LT: new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: 'numeric' }), // '8:30 PM'
+	LTS: new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: 'numeric', second: 'numeric' }), // '8:30:00 PM'
+	L: new Intl.DateTimeFormat(locale, { year: 'numeric', month: '2-digit', day: '2-digit' }), // '02/15/2025'
+	LL: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric' }), // 'February 15, 2025'
+	ll: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric' }), // 'Feb 15, 2025'
+	LLL: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }), // 'February 15, 2025 at 8:30 PM'
+	lll: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }), // 'Feb 15, 2025, 8:30 PM'
+	ddd: new Intl.DateTimeFormat(locale, { weekday: 'short' }), // 'Sat'
+} as const
+const availableFormats = Object.keys(absoluteTimeFormat) as Array<keyof typeof absoluteTimeFormat>
 
 /** Formatters in user's language */
 
@@ -85,11 +97,19 @@ function futureRelativeTime(time: number): string {
  * Converts the given time to human-readable formats. Supported formats:
  * - combination of datetime numeric representations, like 'YYYYMMDD_HHmmss'
  * - localized formats aligned with moment.js for easier migration: https://momentjs.com/docs/#/displaying/format/
+ *
  * @param time time in ms or Date object
  * @param format format to use
  */
 function formatDateTime(time: Date | number, format: string): string {
-	return moment(time).format(format)
+	const dateTime = new Date(time)
+
+	return format
+		.split(' ')
+		.map((part: string) => availableFormats.includes(part)
+			? absoluteTimeFormat[part as keyof typeof absoluteTimeFormat].format(dateTime)
+			: part)
+		.join(' ')
 }
 
 /**
