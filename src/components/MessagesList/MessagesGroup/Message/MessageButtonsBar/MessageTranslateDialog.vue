@@ -5,7 +5,6 @@
 
 <template>
 	<NcDialog
-		ref="translateDialog"
 		class="translate-dialog"
 		:name="t('spreed', 'Translate message')"
 		size="large"
@@ -205,7 +204,8 @@ export default {
 
 		this.$nextTick(() => {
 			// FIXME trick to avoid focusTrap() from activating on NcSelect
-			this.isMounted = !!this.$refs.translateDialog.navigationId
+			// REMOVE: if we add a fix to disable initial focus in NcModal upstream
+			this.isMounted = true
 		})
 	},
 
