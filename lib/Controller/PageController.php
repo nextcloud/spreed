@@ -38,6 +38,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\HintException;
@@ -78,6 +79,7 @@ class PageController extends Controller {
 		private IThrottler $throttler,
 		Config $talkConfig,
 		IConfig $serverConfig,
+		protected IUserConfig $userConfig,
 		IGroupManager $groupManager,
 	) {
 		parent::__construct($appName, $request);

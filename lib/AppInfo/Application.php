@@ -30,6 +30,7 @@ use OCA\Talk\Collaboration\Reference\TalkReferenceProvider;
 use OCA\Talk\Collaboration\Resources\ConversationProvider;
 use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Events\AttendeeRemovedEvent;
@@ -183,6 +184,7 @@ class Application extends App implements IBootstrap {
 		$context->registerMiddleWare(InjectionMiddleware::class);
 		$context->registerMiddleWare(ParameterOutOfRangeMiddleware::class);
 		$context->registerCapability(Capabilities::class);
+		$context->registerConfigLexicon(ConfigLexicon::class);
 
 		// Listeners to load the UI and integrate it into other apps
 		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPListener::class);
