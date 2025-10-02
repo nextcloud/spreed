@@ -99,7 +99,7 @@
     "@vue/tsconfig": "^0.8.1",
     "css-loader": "^7.1.2",
     "globals": "^16.4.0",
-    "jsdom": "^26.1.0",
+    "jsdom": "^27.0.0",
     "openapi-typescript": "^7.9.1",
     "regenerator-runtime": "^0.14.1",
     "sass-loader": "^16.0.5",
