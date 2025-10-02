@@ -5,7 +5,6 @@
 // @flow
 
 import { VIRTUAL_BACKGROUND } from '../../../../constants.ts'
-import WebWorker from './JitsiStreamBackgroundEffect.worker.js'
 import {
 	CLEAR_TIMEOUT,
 	SET_TIMEOUT,
@@ -61,7 +60,7 @@ export default class JitsiStreamBackgroundEffect {
 
 		const segmentationPixelCount = this._options.width * this._options.height
 		this._segmentationPixelCount = segmentationPixelCount
-		this._model = new WebWorker()
+		this._model = new Worker(new URL('./JitsiStreamBackgroundEffect.worker.js', import.meta.url))
 		this._model.postMessage({
 			message: 'makeTFLite',
 			segmentationPixelCount,
