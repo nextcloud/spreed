@@ -89,3 +89,12 @@ Uses [SDXL-Turbo](https://huggingface.co/stabilityai/sdxl-turbo) for fast image 
 * License: MIT
 * [Link to source code](https://github.com/cloud-py-api/ai_image_generator_bot)
 * [Link to installation documentation](https://github.com/cloud-py-api/ai_image_generator_bot#readme)
+
+### Uptime Kuma notification provider
+
+Use the Uptime Kuma notification provider for Nextcloud Talk to receive your monitoring notifications directly in your Talk conversations.
+
+![Screenshot showing chat message of monitoring](botscreenshots/uptime-kuma.png)
+
+* License: MIT
+* [Link to source code](https://github.com/louislam/uptime-kuma)
