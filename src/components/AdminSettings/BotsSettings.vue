@@ -126,7 +126,7 @@ export default {
 				...bot,
 				...this.getStateIcon(bot.state),
 				description: bot.description ?? t('spreed', 'Description is not provided'),
-				last_error_date: bot.last_error_date ? formatDateTime(bot.last_error_date * 1000, 'll LTS') : '---',
+				last_error_date: bot.last_error_date ? formatDateTime(bot.last_error_date * 1000, 'shortDateWithTimeSeconds') : '---',
 			}))
 		},
 	},

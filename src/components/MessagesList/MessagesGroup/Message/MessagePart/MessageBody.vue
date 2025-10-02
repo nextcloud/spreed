@@ -365,11 +365,11 @@ export default {
 		},
 
 		messageTime() {
-			return formatDateTime(this.isTemporary ? Date.now() : this.message.timestamp * 1000, 'LT')
+			return formatDateTime(this.isTemporary ? Date.now() : this.message.timestamp * 1000, 'shortTime')
 		},
 
 		messageDate() {
-			return formatDateTime(this.isTemporary ? Date.now() : this.message.timestamp * 1000, 'LL')
+			return formatDateTime(this.isTemporary ? Date.now() : this.message.timestamp * 1000, 'longDate')
 		},
 
 		lastCallStartedMessageId() {

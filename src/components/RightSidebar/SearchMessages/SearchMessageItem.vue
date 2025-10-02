@@ -63,7 +63,7 @@ const clearReminderLabel = computed(() => {
 	if (!props.isReminder) {
 		return ''
 	}
-	return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: formatDateTime(props.timestamp * 1000, 'ddd LT') })
+	return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: formatDateTime(props.timestamp * 1000, 'shortWeekdayWithTime') })
 })
 
 const active = computed(() => {
