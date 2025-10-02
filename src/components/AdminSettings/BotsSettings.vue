@@ -84,7 +84,6 @@
 
 <script>
 import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconCancel from 'vue-material-design-icons/Cancel.vue'
@@ -92,6 +91,7 @@ import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconLockOutline from 'vue-material-design-icons/LockOutline.vue'
 import { BOT } from '../../constants.ts'
 import { getAllBots } from '../../services/botsService.ts'
+import { formatDateTime } from '../../utils/formattedTime.ts'
 
 export default {
 	name: 'BotsSettings',
@@ -126,7 +126,7 @@ export default {
 				...bot,
 				...this.getStateIcon(bot.state),
 				description: bot.description ?? t('spreed', 'Description is not provided'),
-				last_error_date: bot.last_error_date ? moment(bot.last_error_date * 1000).format('ll LTS') : '---',
+				last_error_date: bot.last_error_date ? formatDateTime(bot.last_error_date * 1000, 'll LTS') : '---',
 			}))
 		},
 	},
