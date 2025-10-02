@@ -39,12 +39,11 @@
 
 <script>
 import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import IconRoomServiceOutline from 'vue-material-design-icons/RoomServiceOutline.vue'
 import MediaSettings from '../components/MediaSettings/MediaSettings.vue'
 import { useGetToken } from '../composables/useGetToken.ts'
-import { futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
+import { formatDateTime, futureRelativeTime, ONE_DAY_IN_MS } from '../utils/formattedTime.ts'
 
 export default {
 
@@ -87,7 +86,7 @@ export default {
 		},
 
 		startTime() {
-			return moment(this.lobbyTimer).format('LLL')
+			return formatDateTime(this.lobbyTimer, 'LLL')
 		},
 
 		message() {

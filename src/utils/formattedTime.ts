@@ -2,7 +2,9 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import { getLanguage, n, t } from '@nextcloud/l10n'
+import moment from '@nextcloud/moment'
 
 const ONE_HOUR_IN_MS = 3600000
 const ONE_DAY_IN_MS = 86400000
@@ -80,6 +82,17 @@ function futureRelativeTime(time: number): string {
 }
 
 /**
+ * Converts the given time to human-readable formats. Supported formats:
+ * - combination of datetime numeric representations, like 'YYYYMMDD_HHmmss'
+ * - localized formats aligned with moment.js for easier migration: https://momentjs.com/docs/#/displaying/format/
+ * @param time time in ms or Date object
+ * @param format format to use
+ */
+function formatDateTime(time: Date | number, format: string): string {
+	return moment(time).format(format)
+}
+
+/**
  * Calculates the difference (in days) from now (positive for future time, negative for the past)
  *
  * @param dateOrTimestamp Date object to calculate from (or timestamp in ms)
@@ -131,6 +144,7 @@ function getRelativeDay(
 
 export {
 	convertToUnix,
+	formatDateTime,
 	formattedTime,
 	futureRelativeTime,
 	getDiffInDays,
