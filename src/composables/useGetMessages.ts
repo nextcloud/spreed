@@ -275,7 +275,7 @@ export function useGetMessagesProvider() {
 			if (messageId === firstContextMessageId) {
 				// message is the first one in the block, try to get some messages above
 				isInitialisingMessages.value = true
-				await getOldMessages(token, true, { messageId, threadId })
+				await getOldMessages(token, false, { messageId, threadId })
 				isInitialisingMessages.value = false
 			}
 		}
