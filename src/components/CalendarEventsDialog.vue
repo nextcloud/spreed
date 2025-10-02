@@ -8,7 +8,6 @@ import type { Conversation, Participant } from '../types/index.ts'
 
 import { showSuccess } from '@nextcloud/dialogs'
 import { n, t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
 import debounce from 'debounce'
@@ -33,6 +32,7 @@ import SelectableParticipant from './BreakoutRoomsEditor/SelectableParticipant.v
 import CalendarEventSmall from './UIShared/CalendarEventSmall.vue'
 import ContactSelectionBubble from './UIShared/ContactSelectionBubble.vue'
 import SearchBox from './UIShared/SearchBox.vue'
+import StaticDateTime from './UIShared/StaticDateTime.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 import { ATTENDEE, CONVERSATION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
@@ -69,7 +69,7 @@ const upcomingEvents = computed(() => {
 		.sort((a, b) => (a.start && b.start) ? (a.start - b.start) : 0)
 		.map((event) => {
 			const start = event.start
-				? (event.start <= now) ? t('spreed', 'Now') : moment(event.start * 1000).calendar()
+				? (event.start <= now) ? t('spreed', 'Now') : event.start * 1000
 				: ''
 			const color = calendars.value[event.calendarUri]?.color ?? usernameToColor(event.calendarUri).color
 
@@ -356,7 +356,7 @@ async function submitNewMeeting() {
 						<span class="upcoming-meeting__header">
 							{{ t('spreed', 'Next meeting') }}
 						</span>
-						<span> {{ upcomingEvents[0].start }} </span>
+						<StaticDateTime :time="upcomingEvents[0].start" calendar />
 					</template>
 				</NcButton>
 			</template>

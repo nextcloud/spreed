@@ -4,24 +4,42 @@
 -->
 
 <script setup lang="ts">
-import { getLanguage, t } from '@nextcloud/l10n'
+import { getCanonicalLocale, getLanguage, t } from '@nextcloud/l10n'
 import { useFormatTime } from '@nextcloud/vue/composables/useFormatDateTime'
 import { computed } from 'vue'
-import { getRelativeDay } from '../../utils/formattedTime.ts'
+import { getDiffInDays, getRelativeDay } from '../../utils/formattedTime.ts'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
 	time: string | number
-}>()
+	calendar?: boolean
+}>(), {
+	calendar: false,
+})
+
+const isValidDate = computed(() => !isNaN(new Date(props.time).valueOf()))
 
 const absoluteDateOptions = computed(() => {
-	const isSameYear = new Date(+props.time).getFullYear() === new Date().getFullYear()
+	const date = new Date(+props.time)
+	const isSameYear = date.getFullYear() === new Date().getFullYear()
+	const diffInDays = getDiffInDays(date)
+
+	const locale = props.calendar ? getCanonicalLocale() : getLanguage()
 	const format: Intl.DateTimeFormatOptions = {
 		dateStyle: undefined,
-		year: !isSameYear ? 'numeric' : undefined,
-		month: 'long',
-		day: 'numeric',
+		timeStyle: undefined,
 	}
-	return { locale: getLanguage(), format }
+
+	if (props.calendar && Math.abs(diffInDays) <= 6) {
+		// Show weekday and time for nearest 6 days
+		format.hour = 'numeric'
+		format.minute = 'numeric'
+	} else {
+		format.year = !isSameYear ? 'numeric' : undefined
+		format.month = 'long'
+		format.day = 'numeric'
+	}
+
+	return { locale, format }
 })
 const absoluteDate = useFormatTime(+props.time, absoluteDateOptions)
 
@@ -29,7 +47,12 @@ const absoluteDate = useFormatTime(+props.time, absoluteDateOptions)
  * Generate the date header between the messages, like "Today, November 11", "3 days ago, November 8", "November 5, 2024"
  */
 const datetimeString = computed(() => {
-	const relativeDate = getRelativeDay(+props.time, { limitToWeek: true })
+	if (!isValidDate.value) {
+		// Custom string, pass as-is
+		return props.time
+	}
+
+	const relativeDate = getRelativeDay(+props.time, { limitToWeek: true, showWeekDay: props.calendar })
 
 	if (relativeDate) {
 		// TRANSLATORS: <Today>, <March 18, 2024>
