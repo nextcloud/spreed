@@ -219,12 +219,12 @@ export default {
 
 		expiryDate() {
 			return this.trialAccount.expires
-				? formatDateTime(this.trialAccount.expires, 'L')
+				? formatDateTime(this.trialAccount.expires, 'shortDateNumeric')
 				: t('spreed', 'Never')
 		},
 
 		createdDate() {
-			return formatDateTime(this.trialAccount.created, 'L')
+			return formatDateTime(this.trialAccount.created, 'shortDateNumeric')
 		},
 	},
 

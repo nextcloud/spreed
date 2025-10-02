@@ -574,11 +574,11 @@ export default {
 		},
 
 		messageDateTime() {
-			return formatDateTime(this.message.timestamp * 1000, 'lll')
+			return formatDateTime(this.message.timestamp * 1000, 'shortDateWithTime')
 		},
 
 		editedDateTime() {
-			return formatDateTime(this.message.lastEditTimestamp * 1000, 'lll')
+			return formatDateTime(this.message.lastEditTimestamp * 1000, 'shortDateWithTime')
 		},
 
 		customReminderDateTime: {
@@ -629,25 +629,25 @@ export default {
 				{
 					key: 'laterToday',
 					timestamp: laterTodayTime,
-					label: t('spreed', 'Later today – {timeLocale}', { timeLocale: formatDateTime(laterTodayTime, 'LT') }),
+					label: t('spreed', 'Later today – {timeLocale}', { timeLocale: formatDateTime(laterTodayTime, 'shortTime') }),
 					ariaLabel: t('spreed', 'Set reminder for later today'),
 				},
 				{
 					key: 'tomorrow',
 					timestamp: tomorrowTime,
-					label: t('spreed', 'Tomorrow – {timeLocale}', { timeLocale: formatDateTime(tomorrowTime, 'ddd LT') }),
+					label: t('spreed', 'Tomorrow – {timeLocale}', { timeLocale: formatDateTime(tomorrowTime, 'shortWeekdayWithTime') }),
 					ariaLabel: t('spreed', 'Set reminder for tomorrow'),
 				},
 				{
 					key: 'thisWeekend',
 					timestamp: thisWeekendTime,
-					label: t('spreed', 'This weekend – {timeLocale}', { timeLocale: formatDateTime(thisWeekendTime, 'ddd LT') }),
+					label: t('spreed', 'This weekend – {timeLocale}', { timeLocale: formatDateTime(thisWeekendTime, 'shortWeekdayWithTime') }),
 					ariaLabel: t('spreed', 'Set reminder for this weekend'),
 				},
 				{
 					key: 'nextWeek',
 					timestamp: nextWeekTime,
-					label: t('spreed', 'Next week – {timeLocale}', { timeLocale: formatDateTime(nextWeekTime, 'ddd LT') }),
+					label: t('spreed', 'Next week – {timeLocale}', { timeLocale: formatDateTime(nextWeekTime, 'shortWeekdayWithTime') }),
 					ariaLabel: t('spreed', 'Set reminder for next week'),
 				},
 			].filter((option) => option.timestamp !== null)
@@ -657,7 +657,7 @@ export default {
 			if (!this.currentReminder) {
 				return ''
 			}
-			return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: formatDateTime(this.currentReminder.timestamp * 1000, 'ddd LT') })
+			return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: formatDateTime(this.currentReminder.timestamp * 1000, 'shortWeekdayWithTime') })
 		},
 
 		lastEditActorLabel() {
@@ -839,7 +839,7 @@ export default {
 			try {
 				await setMessageReminder(this.message.token, this.message.id, convertToUnix(timestamp))
 				showSuccess(t('spreed', 'A reminder was successfully set at {datetime}', {
-					datetime: formatDateTime(timestamp, 'LLL'),
+					datetime: formatDateTime(timestamp, 'longDateWithTime'),
 				}))
 			} catch (error) {
 				console.error(error)

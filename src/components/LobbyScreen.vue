@@ -86,7 +86,7 @@ export default {
 		},
 
 		startTime() {
-			return formatDateTime(this.lobbyTimer, 'LLL')
+			return formatDateTime(this.lobbyTimer, 'longDateWithTime')
 		},
 
 		message() {

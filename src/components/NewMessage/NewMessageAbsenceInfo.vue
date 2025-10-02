@@ -114,8 +114,8 @@ export default {
 				return ''
 			}
 			return t('spreed', 'Absence period: {startDate} - {endDate}', {
-				startDate: formatDateTime(this.userAbsence.startDate * 1000, 'll'),
-				endDate: formatDateTime(this.userAbsence.endDate * 1000, 'll'),
+				startDate: formatDateTime(this.userAbsence.startDate * 1000, 'shortDate'),
+				endDate: formatDateTime(this.userAbsence.endDate * 1000, 'shortDate'),
 			})
 		},
 	},
