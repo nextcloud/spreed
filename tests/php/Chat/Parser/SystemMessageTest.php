@@ -41,12 +41,11 @@ use OCP\IUserManager;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IShare;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
-/**
- * @group DB
- */
+#[Group('DB')]
 class SystemMessageTest extends TestCase {
 	protected IAppConfig&MockObject $appConfig;
 	protected IUserManager&MockObject $userManager;

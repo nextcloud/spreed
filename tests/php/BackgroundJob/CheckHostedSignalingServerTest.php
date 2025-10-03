@@ -62,10 +62,10 @@ class CheckHostedSignalingServerTest extends TestCase {
 
 		$this->config
 			->method('getAppValue')
-			->will($this->returnValueMap([
+			->willReturnMap([
 				['spreed', 'hosted-signaling-server-account-id', '', 'my-account-id'],
 				['spreed', 'hosted-signaling-server-account', '{}', '{"status": "pending"}']
-			]));
+			]);
 
 		$this->hostedSignalingServerService->expects($this->once())
 			->method('fetchAccountInfo')
