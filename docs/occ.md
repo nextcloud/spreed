@@ -21,6 +21,25 @@ Install a new bot on the server
 | `--no-setup` | Prevent moderators from setting up the bot in a conversation | no | no | no | `false` |
 | `--feature\|-f` | Specify the list of features for the bot - webhook: The bot receives posted chat messages as webhooks - response: The bot can post messages and reactions as a response - event: The bot reads posted messages from local events - reaction: The bot is notified about adding and removing of reactions - none: When all features should be disabled for the bot | yes | yes | yes | *Required* |
 
+## talk:bot:create
+
+Creates a new bot on the server with 'response' feature only.
+
+### Usage
+
+* `talk:bot:create [--output [OUTPUT]] [-s|--secret SECRET] [--no-setup] [--] <name> [<description>]`
+
+| Arguments | Description | Is required | Is array | Default |
+|---|---|---|---|---|
+| `name` | The name under which the messages will be posted (min. 1 char, max. 64 chars) | yes | no | *Required* |
+| `description` | Optional description shown in the admin settings (max. 4000 chars) | no | no | `NULL` |
+
+| Options | Description | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|---|
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | `'plain'` |
+| `--secret\|-s` | Secret used to validate API calls (min. 40 chars, max. 128 chars). When none is provided, a random 64 chars string is generated and output. | yes | yes | no | *Required* |
+| `--no-setup` | Prevent moderators from setting up the bot in a conversation | no | no | no | `false` |
+
 ## talk:bot:list
 
 List all installed bots of the server or a conversation

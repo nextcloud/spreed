@@ -381,3 +381,13 @@ Feature: chat/bots
     Given invoking occ with "talk:bot:list room-name:room"
     And the command was successful
     And the command output is empty
+
+  Scenario: Test bot creation
+    Given invoking occ with "talk:bot:create Bot"
+    And the command was successful
+    And the command output contains the text "Secret:"
+    When invoking occ with "talk:bot:create Bot Description"
+    Then the command was successful
+    And the command output contains the text "Secret:"
+    When invoking occ with "talk:bot:create --secret Secret1234567890123456789012345678901234567890 Bot"
+    Then the command was successful
