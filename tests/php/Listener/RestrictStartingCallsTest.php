@@ -16,12 +16,11 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\IConfig;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
-/**
- * @group DB
- */
+#[Group('DB')]
 class RestrictStartingCallsTest extends TestCase {
 	protected IConfig&MockObject $serverConfig;
 	protected ParticipantService&MockObject $participantService;

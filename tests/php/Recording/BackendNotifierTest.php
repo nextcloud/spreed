@@ -33,6 +33,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -56,9 +57,7 @@ class CustomBackendNotifier extends BackendNotifier {
 	}
 }
 
-/**
- * @group DB
- */
+#[Group('DB')]
 class BackendNotifierTest extends TestCase {
 	protected IURLGenerator&MockObject $urlGenerator;
 	protected ParticipantService $participantService;

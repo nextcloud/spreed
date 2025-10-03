@@ -193,9 +193,9 @@ class NotifierTest extends TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
-			->will($this->returnCallback(function ($text, $parameters = []) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
-			}));
+			});
 
 		$room = $this->createMock(Room::class);
 		$room->expects($this->atLeastOnce())
@@ -311,9 +311,9 @@ class NotifierTest extends TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
-			->will($this->returnCallback(function ($text, $parameters = []) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
-			}));
+			});
 
 		$room = $this->createMock(Room::class);
 		$room->expects($this->atLeastOnce())
@@ -795,9 +795,9 @@ class NotifierTest extends TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
-			->will($this->returnCallback(function ($text, $parameters = []) {
+			->willReturnCallback(function ($text, $parameters = []) {
 				return vsprintf($text, $parameters);
-			}));
+			});
 
 		$this->notificationManager->method('isPreparingPushNotification')
 			->willReturn($isPushNotification);

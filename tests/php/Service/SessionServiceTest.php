@@ -14,12 +14,11 @@ use OCA\Talk\Service\SessionService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
 use OCP\Security\ISecureRandom;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
-/**
- * @group DB
- */
+#[Group('DB')]
 class SessionServiceTest extends TestCase {
 	protected ?SessionMapper $sessionMapper = null;
 	protected ISecureRandom&MockObject $secureRandom;

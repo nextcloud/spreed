@@ -28,12 +28,11 @@ use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
-/**
- * @group DB
- */
+#[Group('DB')]
 class ListenerTest extends TestCase {
 	protected BackendNotifier&MockObject $backendNotifier;
 	protected Manager&MockObject $manager;
@@ -97,12 +96,7 @@ class ListenerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataRoomModified
-	 * @param string $property
-	 * @param mixed $newValue
-	 * @param mixed $oldValue
-	 */
+	#[DataProvider('dataRoomModified')]
 	public function testRoomModified(string $property, mixed $newValue, mixed $oldValue): void {
 		$room = $this->createMock(Room::class);
 
