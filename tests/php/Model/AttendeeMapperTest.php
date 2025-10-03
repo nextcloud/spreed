@@ -14,11 +14,10 @@ use OCA\Talk\Participant;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IDBConnection;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use Test\TestCase;
 
-/**
- * @group DB
- */
+#[Group('DB')]
 class AttendeeMapperTest extends TestCase {
 	protected ?AttendeeMapper $attendeeMapper = null;
 

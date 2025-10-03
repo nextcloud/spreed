@@ -19,12 +19,11 @@ use OCP\IURLGenerator;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
-/**
- * @group DB
- */
+#[Group('DB')]
 class AvatarServiceTest extends TestCase {
 	protected IAppData&MockObject $appData;
 	protected IL10N&MockObject $l;

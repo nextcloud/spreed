@@ -169,9 +169,9 @@ class SearchPluginTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider dataSearchUsers
 	 * @param array<string, string> $users
 	 */
+	#[DataProvider('dataSearchUsers')]
 	public function testSearchUsers(string $search, array $users, array $expected, array $expectedExact): void {
 		$result = $this->createMock(ISearchResult::class);
 

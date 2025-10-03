@@ -44,6 +44,7 @@ use OCP\Security\Bruteforce\IThrottler;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -60,9 +61,7 @@ class CustomInputSignalingController extends SignalingController {
 	}
 }
 
-/**
- * @group DB
- */
+#[Group('DB')]
 class SignalingControllerTest extends TestCase {
 	protected TalkSession&MockObject $session;
 	protected \OCA\Talk\Signaling\Manager&MockObject $signalingManager;
