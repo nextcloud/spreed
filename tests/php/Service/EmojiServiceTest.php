@@ -12,11 +12,10 @@ use OCA\Talk\Service\EmojiService;
 use OCP\IEmojiHelper;
 use OCP\Server;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use Test\TestCase;
 
-/**
- * @group DB
- */
+#[Group('DB')]
 class EmojiServiceTest extends TestCase {
 	protected ?EmojiService $service = null;
 
