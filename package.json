@@ -58,7 +58,7 @@
     "emoji-regex": "^10.5.0",
     "entities": "^7.0.0",
     "escape-html": "^1.0.3",
-    "extendable-media-recorder": "^9.2.30",
+    "extendable-media-recorder": "^9.2.31",
     "extendable-media-recorder-wav-encoder": "^7.0.132",
     "hark": "^1.2.3",
     "leaflet": "^1.9.4",
