@@ -6,7 +6,6 @@
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 import { getUploader } from '@nextcloud/upload'
 import { useTemporaryMessage } from '../composables/useTemporaryMessage.ts'
 import { MESSAGE, SHARED_ITEM } from '../constants.ts'
@@ -242,7 +241,9 @@ const actions = {
 
 			if (rename) {
 				// note: can't overwrite the original read-only name attribute
-				file.newName = moment(file.lastModified || file.lastModifiedDate).format('YYYYMMDD_HHmmss')
+				// 'YYYY-MM-DDTHH:mm:ss.sssZ' -> 'YYYYMMDD_HHmmss.ext'
+				file.newName = new Date(file.lastModified ?? file.lastModifiedDate)
+					.toISOString().replace('T', '_').replace(/[:-]/g, '').split('.')[0]
 					+ getFileExtension(file.name)
 			}
 

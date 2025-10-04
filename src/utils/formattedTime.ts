@@ -2,10 +2,24 @@
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { getLanguage, n, t } from '@nextcloud/l10n'
+
+import { getCanonicalLocale, getLanguage, n, t } from '@nextcloud/l10n'
 
 const ONE_HOUR_IN_MS = 3600000
 const ONE_DAY_IN_MS = 86400000
+
+const locale = getCanonicalLocale()
+const absoluteTimeFormat = {
+	time: new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: 'numeric' }), // '8:30 PM'
+	timeWithSeconds: new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: 'numeric', second: 'numeric' }), // '8:30:00 PM'
+	dateNumeric: new Intl.DateTimeFormat(locale, { year: 'numeric', month: '2-digit', day: '2-digit' }), // '02/15/2025'
+	dateLong: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric' }), // 'February 15, 2025'
+	dateShort: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric' }), // 'Feb 15, 2025'
+	dateTimeLong: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }), // 'February 15, 2025 at 8:30 PM'
+	dateTimeShort: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }), // 'Feb 15, 2025, 8:30 PM'
+	weekdayShort: new Intl.DateTimeFormat(locale, { weekday: 'short' }), // 'Sat'
+} as const
+const availableFormats = Object.keys(absoluteTimeFormat) as Array<keyof typeof absoluteTimeFormat>
 
 /** Formatters in user's language */
 
@@ -80,6 +94,25 @@ function futureRelativeTime(time: number): string {
 }
 
 /**
+ * Converts the given time to human-readable formats. Supported formats:
+ * - combination of datetime numeric representations, like 'YYYYMMDD_HHmmss'
+ * - localized formats aligned with moment.js for easier migration: https://momentjs.com/docs/#/displaying/format/
+ *
+ * @param time time in ms or Date object
+ * @param format format to use
+ */
+function formatDateTime(time: Date | number, format: string): string {
+	const dateTime = new Date(time)
+
+	return format
+		.split(' ')
+		.map((part: string) => availableFormats.includes(part)
+			? absoluteTimeFormat[part as keyof typeof absoluteTimeFormat].format(dateTime)
+			: part)
+		.join(' ')
+}
+
+/**
  * Calculates the difference (in days) from now (positive for future time, negative for the past)
  *
  * @param dateOrTimestamp Date object to calculate from (or timestamp in ms)
@@ -131,6 +164,7 @@ function getRelativeDay(
 
 export {
 	convertToUnix,
+	formatDateTime,
 	formattedTime,
 	futureRelativeTime,
 	getDiffInDays,
