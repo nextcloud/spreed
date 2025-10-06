@@ -32,13 +32,12 @@ use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserSession;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
-/**
- * @group DB
- */
+#[Group('DB')]
 class ListenerTest extends TestCase {
 	public const DUMMY_REFERENCE_ID = 'DUMMY_REFERENCE_ID';
 
@@ -212,11 +211,7 @@ class ListenerTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataRoomTypes
-	 *
-	 * @param int $roomType
-	 */
+	#[DataProvider('dataRoomTypes')]
 	public function testAfterUsersAdd(int $roomType, string $objectType, array $participants, array $expectedMessages): void {
 		$this->mockLoggedInUser('alice_actor');
 

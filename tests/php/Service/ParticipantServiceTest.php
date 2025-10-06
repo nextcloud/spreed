@@ -30,13 +30,12 @@ use OCP\IGroupManager;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 use OCP\UserStatus\IManager;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
-/**
- * @group DB
- */
+#[Group('DB')]
 class ParticipantServiceTest extends TestCase {
 	protected IConfig&MockObject $serverConfig;
 	protected Config&MockObject $talkConfig;

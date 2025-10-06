@@ -17,13 +17,12 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
-/**
- * @group DB
- */
+#[Group('DB')]
 class ProxyCacheMessageServiceTest extends TestCase {
 	protected LoggerInterface&MockObject $logger;
 	protected ITimeFactory&MockObject $timeFactory;

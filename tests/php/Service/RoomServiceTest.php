@@ -34,13 +34,12 @@ use OCP\Security\IHasher;
 use OCP\Server;
 use OCP\Share\IManager as IShareManager;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
-/**
- * @group DB
- */
+#[Group('DB')]
 class RoomServiceTest extends TestCase {
 	protected Manager&MockObject $manager;
 	protected ParticipantService&MockObject $participantService;
