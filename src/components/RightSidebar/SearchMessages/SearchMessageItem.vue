@@ -8,7 +8,6 @@ import type { RouteLocationAsRelative } from 'vue-router'
 import type { ChatMessage, Conversation } from '../../../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
-import moment from '@nextcloud/moment'
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -21,6 +20,7 @@ import ConversationIcon from '../../ConversationIcon.vue'
 import { CONVERSATION } from '../../../constants.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { useDashboardStore } from '../../../stores/dashboard.ts'
+import { formatDateTime } from '../../../utils/formattedTime.ts'
 import { parseToSimpleMessage } from '../../../utils/textParse.ts'
 
 const props = withDefaults(defineProps<{
@@ -63,7 +63,7 @@ const clearReminderLabel = computed(() => {
 	if (!props.isReminder) {
 		return ''
 	}
-	return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: moment(props.timestamp * 1000).format('ddd LT') })
+	return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: formatDateTime(props.timestamp * 1000, 'shortWeekdayWithTime') })
 })
 
 const active = computed(() => {
