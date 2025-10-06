@@ -10,7 +10,7 @@ import { PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { setReadStatusPrivacy, setTypingStatusPrivacy } from '../../services/settingsService.ts'
 import { generateOCSResponse } from '../../test-helpers.js'
-import { useSettingsStore } from '../settings.js'
+import { useSettingsStore } from '../settings.ts'
 
 vi.mock('../../services/settingsService', () => ({
 	setReadStatusPrivacy: vi.fn(),

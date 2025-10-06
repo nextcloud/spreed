@@ -272,7 +272,7 @@ import { getTalkConfig, getTalkVersion } from '../../services/CapabilitiesManage
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
 import { setUserConfig } from '../../services/settingsService.ts'
 import { useActorStore } from '../../stores/actor.ts'
-import { useSettingsStore } from '../../stores/settings.js'
+import { useSettingsStore } from '../../stores/settings.ts'
 import { useSoundsStore } from '../../stores/sounds.js'
 import { isMac } from '../../utils/browserCheck.ts'
 import { satisfyVersion } from '../../utils/satisfyVersion.ts'
