@@ -77,6 +77,11 @@ class State extends Base {
 
 		$bot->setState($state);
 		if ($featureFlags !== null) {
+			if (str_starts_with($bot->getUrl(), Bot::URL_RESPONSE_ONLY_PREFIX)) {
+				$output->writeln('<error>Feature flags of response-only bots cannot be changed</error>');
+				return 1;
+			}
+
 			$bot->setFeatures($featureFlags);
 		}
 		$this->botServerMapper->update($bot);
