@@ -9,9 +9,11 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OC\User\NoUserException;
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Settings\UserPreference;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\Config\IUserConfig;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -24,14 +26,11 @@ use OCP\Util;
 use Psr\Log\LoggerInterface;
 
 trait TInitialState {
-	/** @var Config */
-	protected $talkConfig;
-	/** @var IConfig */
-	protected $serverConfig;
-	/** @var IInitialState */
-	protected $initialState;
-	/** @var ICacheFactory */
-	protected $memcacheFactory;
+	protected Config $talkConfig;
+	protected IConfig $serverConfig;
+	protected IUserConfig $userConfig;
+	protected IInitialState $initialState;
+	protected ICacheFactory $memcacheFactory;
 	protected IGroupManager $groupManager;
 	protected LoggerInterface $logger;
 
@@ -116,7 +115,7 @@ trait TInitialState {
 
 		$this->initialState->provideInitialState(
 			'play_sounds',
-			$this->serverConfig->getUserValue($user->getUID(), 'spreed', UserPreference::PLAY_SOUNDS, 'yes') === 'yes'
+			$this->userConfig->getValueBool($user->getUID(), Application::APP_ID, UserPreference::PLAY_SOUNDS),
 		);
 
 		$this->initialState->provideInitialState(

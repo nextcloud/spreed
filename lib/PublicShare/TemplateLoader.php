@@ -14,6 +14,7 @@ use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
 use OCA\Talk\TInitialState;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\FileInfo;
@@ -40,6 +41,7 @@ class TemplateLoader implements IEventListener {
 		IConfig $serverConfig,
 		IGroupManager $groupManager,
 		LoggerInterface $logger,
+		protected IUserConfig $userConfig,
 	) {
 		$this->initialState = $initialState;
 		$this->talkConfig = $talkConfig;
