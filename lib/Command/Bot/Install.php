@@ -115,7 +115,7 @@ class Install extends Base {
 		$bot->setState($noSetup ? Bot::STATE_NO_SETUP : Bot::STATE_ENABLED);
 		$bot->setFeatures($featureFlags);
 		try {
-			$this->botServerMapper->insert($bot);
+			$botEntity = $this->botServerMapper->insert($bot);
 		} catch (\Exception $e) {
 			if ($e instanceof Exception && $e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 				$output->writeln('<error>Bot with the same secret is already registered</error>');
@@ -126,8 +126,8 @@ class Install extends Base {
 			}
 		}
 
-
 		$output->writeln('<info>Bot installed</info>');
+		$output->writeln('ID: ' . $botEntity->getId());
 		return 0;
 	}
 }
