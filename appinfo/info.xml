@@ -40,6 +40,12 @@
 		<prevent_group_restriction />
 	</types>
 
+	<documentation>
+		<user>https://docs.nextcloud.com/server/latest/user_manual/en/talk/index.html</user>
+		<admin>https://nextcloud-talk.readthedocs.io/en/latest/#administration-documentation</admin>
+		<developer>https://nextcloud-talk.readthedocs.io/en/latest/#developer-documentation</developer>
+	</documentation>
+
 	<category>multimedia</category>
 	<category>social</category>
 	<category>workflow</category>
