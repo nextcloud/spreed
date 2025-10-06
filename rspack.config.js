@@ -5,7 +5,7 @@
 
 const browserslistConfig = require('@nextcloud/browserslist-config')
 const { defineConfig } = require('@rspack/cli')
-const { CssExtractRspackPlugin, LightningCssMinimizerRspackPlugin, DefinePlugin, IgnorePlugin, ProgressPlugin, SwcJsMinimizerRspackPlugin } = require('@rspack/core')
+const { CssExtractRspackPlugin, LightningCssMinimizerRspackPlugin, DefinePlugin, ProgressPlugin, SwcJsMinimizerRspackPlugin } = require('@rspack/core')
 const NodePolyfillPlugin = require('@rspack/plugin-node-polyfill')
 const path = require('node:path')
 const { VueLoaderPlugin } = require('vue-loader')
@@ -190,11 +190,6 @@ module.exports = defineConfig((env) => {
 				filename: '../css/talk-[name].css',
 				chunkFilename: '../css/chunks/[id].chunk.css',
 				ignoreOrder: true,
-			}),
-
-			new IgnorePlugin({
-				resourceRegExp: /^\.[/\\]locale$/,
-				contextRegExp: /moment[/\\]min$/,
 			}),
 		],
 
