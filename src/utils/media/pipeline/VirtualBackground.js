@@ -5,6 +5,7 @@
 
 import * as wasmCheck from 'wasm-check'
 import { VIRTUAL_BACKGROUND } from '../../../constants.ts'
+import { isSafari } from '../../browserCheck.ts'
 import JitsiStreamBackgroundEffect from '../effects/virtual-background/JitsiStreamBackgroundEffect.js'
 import TrackSinkSource from './TrackSinkSource.js'
 
@@ -46,11 +47,11 @@ import TrackSinkSource from './TrackSinkSource.js'
  */
 export default class VirtualBackground extends TrackSinkSource {
 	static _wasmSupported
-	static _wasmSimd
 	static _canvasFilterSupported
+	static _webGLSupported
 
 	static isSupported() {
-		return this.isWasmSupported() && this.isCanvasFilterSupported()
+		return this.isWasmSupported() && (this.isWebGLSupported() || this.isCanvasFilterSupported())
 	}
 
 	static _checkWasmSupport() {
@@ -63,8 +64,6 @@ export default class VirtualBackground extends TrackSinkSource {
 		}
 
 		this._wasmSupported = true
-
-		this._wasmSimd = wasmCheck.feature.simd
 	}
 
 	static isWasmSupported() {
@@ -75,31 +74,39 @@ export default class VirtualBackground extends TrackSinkSource {
 		return this._wasmSupported
 	}
 
-	/**
-	 * Returns whether SIMD instructions are available in WebAssembly or not.
-	 *
-	 * @return {boolean} undefined if WebAssembly is not supported, true if SIMD
-	 *         instructions are available in WebAssembly, or false otherwise.
-	 */
-	static isWasmSimd() {
-		if (this._wasmSupported === undefined) {
-			this._checkWasmSupport()
-		}
-
-		return this._wasmSimd
-	}
-
 	static isCanvasFilterSupported() {
 		if (this._canvasFilterSupported === undefined) {
-			const canvas = document.createElement('canvas')
-			const context = canvas.getContext('2d')
+			if (!isSafari) {
+				const canvas = document.createElement('canvas')
+				const context = canvas.getContext('2d')
 
-			this._canvasFilterSupported = context.filter !== undefined
+				this._canvasFilterSupported = context.filter !== undefined
 
-			canvas.remove()
+				canvas.remove()
+			} else {
+				this._canvasFilterSupported = false
+			}
 		}
 
 		return this._canvasFilterSupported
+	}
+
+	static isWebGLSupported() {
+		if (this._webGLSupported === undefined) {
+			let canvas, gl
+			try {
+				canvas = document.createElement('canvas')
+				gl = canvas.getContext('webgl2')
+				this._webGLSupported = !!gl
+			} catch (e) {
+				this._webGLSupported = false
+			} finally {
+				gl = null
+				canvas = null
+			}
+		}
+
+		return this._webGLSupported
 	}
 
 	constructor() {
@@ -130,7 +137,7 @@ export default class VirtualBackground extends TrackSinkSource {
 			return
 		}
 
-		const isSimd = VirtualBackground.isWasmSimd()
+		const webGL = VirtualBackground.isWebGLSupported()
 
 		const virtualBackground = {
 			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
@@ -139,7 +146,7 @@ export default class VirtualBackground extends TrackSinkSource {
 		const options = {
 			...segmentationDimensions.modelLandscape,
 			virtualBackground,
-			simd: isSimd,
+			webGL,
 		}
 
 		this._jitsiStreamBackgroundEffect = new JitsiStreamBackgroundEffect(options)

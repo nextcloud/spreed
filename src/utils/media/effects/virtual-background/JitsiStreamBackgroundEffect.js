@@ -2,8 +2,9 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-// @flow
 
+import { FilesetResolver, ImageSegmenter } from '@mediapipe/tasks-vision'
+import { generateFilePath } from '@nextcloud/router'
 import { VIRTUAL_BACKGROUND } from '../../../../constants.ts'
 import {
 	CLEAR_TIMEOUT,
@@ -11,43 +12,40 @@ import {
 	TIMEOUT_TICK,
 	timerWorkerScript,
 } from './TimerWorker.js'
+import WebGLCompositor from './WebGLCompositor.js'
 
 /**
- * Represents a modified MediaStream that adds effects to video background.
- * <tt>JitsiStreamBackgroundEffect</tt> does the processing of the original
- * video stream.
+ * Represents a modified MediaStream that applies virtual background effects
+ * (blur, image, video, or video stream) using MediaPipe segmentation.
+ *
+ * @class
  */
 export default class JitsiStreamBackgroundEffect {
-	// _model: Object;
 	// _options: Object;
-	// _stream: Object;
+	// _stream: MediaStream;
 	// _segmentationPixelCount: number;
 	// _inputVideoElement: HTMLVideoElement;
 	// _onMaskFrameTimer: Function;
 	// _maskFrameTimerWorker: Worker;
 	// _outputCanvasElement: HTMLCanvasElement;
-	// _outputCanvasCtx: Object;
-	// _segmentationMaskCtx: Object;
-	// _segmentationMask: Object;
-	// _segmentationMaskCanvas: Object;
+	// _outputCanvasCtx: CanvasRenderingContext2D;
+	// _segmentationMaskCtx: CanvasRenderingContext2D;
+	// _segmentationMask: ImageData;
+	// _segmentationMaskCanvas: HTMLCanvasElement;
 	// _renderMask: Function;
 	// _virtualImage: HTMLImageElement;
 	// _virtualVideo: HTMLVideoElement;
-	// isEnabled: Function;
-	// startEffect: Function;
-	// stopEffect: Function;
 
 	/**
-	 * Represents a modified video MediaStream track.
+	 * Create a new background effect processor.
 	 *
-	 * @class
-	 * @param {object} options object with the parameters.
-	 * @param {number} options.width segmentation width.
-	 * @param {number} options.height segmentation height.
-	 * @param {object} options.virtualBackground see "setVirtualBackground()".
+	 * @param {object} options - Options for the effect.
+	 * @param {number} options.width - Segmentation mask width.
+	 * @param {number} options.height - Segmentation mask height.
+	 * @param {object} options.virtualBackground - Virtual background properties (see setVirtualBackground()).
+	 * @param {boolean} options.webGL - Whether to use WebGL compositor instead of 2D canvas.
 	 */
 	constructor(options) {
-		const isSimd = options.simd
 		this._options = options
 		this._loadPromise = new Promise((resolve, reject) => {
 			this._loadPromiseResolve = resolve
@@ -57,64 +55,213 @@ export default class JitsiStreamBackgroundEffect {
 		this._loadFailed = false
 
 		this.setVirtualBackground(this._options.virtualBackground)
+		this._useWebGL = this._options.webGL
 
-		const segmentationPixelCount = this._options.width * this._options.height
-		this._segmentationPixelCount = segmentationPixelCount
-		this._model = new Worker(new URL('./JitsiStreamBackgroundEffect.worker.js', import.meta.url))
-		this._model.postMessage({
-			message: 'makeTFLite',
-			segmentationPixelCount,
-			simd: isSimd,
-		})
+		this._segmentationPixelCount = this._options.width * this._options.height
 
-		this._segmentationPixelCount = segmentationPixelCount
+		this._initMediaPipe().catch((e) => console.error(e))
 
 		// Bind event handler so it is only bound once for every instance.
 		this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this)
-		this._startFx = this._startFx.bind(this)
+		this._renderMask = this._renderMask.bind(this)
 
-		this._model.onmessage = this._startFx
+		// caches for mask processing
+		this._tempImageData = null
+		this._maskWidth = 0
+		this._maskHeight = 0
 
-		// Workaround for FF issue https://bugzilla.mozilla.org/show_bug.cgi?id=1388974
+		// Create canvas elements
 		this._outputCanvasElement = document.createElement('canvas')
-		this._outputCanvasElement.getContext('2d')
+		if (!this._useWebGL) {
+			this._outputCanvasElement.getContext('2d')
+		}
 		this._inputVideoElement = document.createElement('video')
+		this._videoResizeObserver = null
+		this._bgChanged = false
+		this._lastVideoW = 0
+		this._lastVideoH = 0
 	}
 
 	/**
-	 * EventHandler onmessage for the maskFrameTimerWorker WebWorker.
+	 * Initialize MediaPipe segmentation model.
 	 *
 	 * @private
-	 * @param {object} response - The onmessage EventHandler parameter.
+	 * @return {Promise<void>}
+	 */
+	async _initMediaPipe() {
+		try {
+			const vision = await FilesetResolver.forVisionTasks(generateFilePath('spreed', 'js', ''))
+
+			this._imageSegmenter = await ImageSegmenter.createFromOptions(vision, {
+				baseOptions: {
+					modelAssetPath: generateFilePath('spreed', 'js', 'selfie_segmenter_landscape.tflite'),
+					delegate: 'GPU',
+				},
+				runningMode: 'VIDEO',
+				outputCategoryMask: false,
+				outputConfidenceMasks: true,
+			})
+
+			this._loaded = true
+			this._loadPromiseResolve()
+		} catch (error) {
+			console.error('MediaPipe Tasks initialization failed:', error)
+			this._loadFailed = true
+			this._loadPromiseReject(error)
+		}
+	}
+
+	/**
+	 * Run segmentation inference on the current video frame.
+	 *
+	 * @private
+	 * @return {Promise<void>}
+	 */
+	async _runInference() {
+		if (!this._imageSegmenter || !this._loaded) {
+			return
+		}
+
+		let segmentationResult
+		try {
+			segmentationResult = await this._imageSegmenter.segmentForVideo(
+				this._inputVideoElement,
+				performance.now(),
+			)
+
+			if (segmentationResult.confidenceMasks && segmentationResult.confidenceMasks.length > 0) {
+				this._processSegmentationResult(segmentationResult)
+			}
+
+			this.runPostProcessing()
+			this._lastFrameId = this._frameId
+		} catch (error) {
+			console.error('MediaPipe inference failed:', error)
+		} finally {
+			if (segmentationResult?.categoryMask) {
+				segmentationResult.categoryMask.close()
+			}
+
+			if (segmentationResult?.confidenceMasks?.length) {
+				segmentationResult.confidenceMasks.forEach((mask) => mask.close())
+			}
+		}
+	}
+
+	/**
+	 * Process MediaPipe segmentation result and update internal mask.
+	 *
+	 * @private
+	 * @param {object} segmentationResult - The segmentation result from MediaPipe.
+	 * @return {void}
+	 */
+	_processSegmentationResult(segmentationResult) {
+		const confidenceMasks = segmentationResult.confidenceMasks
+		if (!confidenceMasks || confidenceMasks.length === 0) {
+			return
+		}
+
+		const mask = confidenceMasks[0]
+		const maskData = !this._useWebGL ? mask.getAsFloat32Array() : mask
+		const maskWidth = mask.width
+		const maskHeight = mask.height
+
+		if (!this._useWebGL) {
+			// Prepare backing ImageData
+			if (!this._segmentationMask
+				|| this._segmentationMask.width !== this._options.width
+				|| this._segmentationMask.height !== this._options.height) {
+				this._segmentationMask = new ImageData(this._options.width, this._options.height)
+			}
+
+			// Convert float32 mask [0..1] → grayscale canvas
+			if (this._tempCanvas.width !== maskWidth || this._tempCanvas.height !== maskHeight) {
+				this._tempCanvas.width = maskWidth
+				this._tempCanvas.height = maskHeight
+			}
+			const tempCanvas = this._tempCanvas
+			const tempCtx = this._tempCanvasCtx
+
+			if (!this._tempImageData
+				|| this._maskWidth !== maskWidth
+				|| this._maskHeight !== maskHeight) {
+				this._tempImageData = new ImageData(maskWidth, maskHeight)
+				this._maskWidth = maskWidth
+				this._maskHeight = maskHeight
+			}
+			for (let i = 0; i < maskData.length; i++) {
+				const v = Math.min(1.0, Math.max(0.0, maskData[i])) // clamp
+				const gray = Math.round(v * 255)
+				const idx = i * 4
+				this._tempImageData.data[idx] = gray
+				this._tempImageData.data[idx + 1] = gray
+				this._tempImageData.data[idx + 2] = gray
+				this._tempImageData.data[idx + 3] = 255
+			}
+			tempCtx.putImageData(this._tempImageData, 0, 0)
+
+			// Resize into segmentation canvas
+			this._segmentationMaskCtx.drawImage(
+				tempCanvas,
+				0,
+				0,
+				maskWidth,
+				maskHeight,
+				0,
+				0,
+				this._options.width,
+				this._options.height,
+			)
+
+			// Extract resized alpha channel into _segmentationMask
+			const resized = this._segmentationMaskCtx.getImageData(0, 0, this._options.width, this._options.height)
+			for (let i = 0; i < this._segmentationPixelCount; i++) {
+				this._segmentationMask.data[i * 4 + 3] = resized.data[i * 4] // R channel
+			}
+
+			// Update segmentation mask canvas
+			this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0)
+		} else {
+			this._lastMask = maskData
+		}
+	}
+
+	/**
+	 * Loop function to render the background mask and trigger inference.
+	 *
+	 * @private
+	 * @return {void}
+	 */
+	_renderMask() {
+		if (this._frameId < this._lastFrameId) {
+			console.debug('Fixing frame id, this should not happen', this._frameId, this._lastFrameId)
+			this._frameId = this._lastFrameId
+		}
+
+		// Run inference if ready
+		if (this._loaded && this._frameId === this._lastFrameId) {
+			this._frameId++
+			this._runInference().catch((e) => console.error(e))
+		}
+
+		// Schedule next frame
+		this._maskFrameTimerWorker.postMessage({
+			id: SET_TIMEOUT,
+			timeMs: 1000 / this._frameRate,
+			message: 'this._maskFrameTimerWorker',
+		})
+	}
+
+	/**
+	 * Handle timer worker ticks to schedule mask rendering.
+	 *
+	 * @private
+	 * @param {MessageEvent} response - Message from the worker.
 	 * @return {void}
 	 */
 	_onMaskFrameTimer(response) {
 		if (response.data.id === TIMEOUT_TICK) {
 			this._renderMask()
-		}
-	}
-
-	_startFx(e) {
-		switch (e.data.message) {
-			case 'inferenceRun':
-				if (e.data.frameId === this._lastFrameId + 1) {
-					this._lastFrameId = e.data.frameId
-
-					this.runInference(e.data.segmentationResult)
-					this.runPostProcessing()
-				}
-				break
-			case 'loaded':
-				this._loaded = true
-				this._loadPromiseResolve()
-				break
-			case 'loadFailed':
-				this._loadFailed = true
-				this._loadPromiseReject()
-				break
-			default:
-				console.error('_startFx: Something went wrong.')
-				break
 		}
 	}
 
@@ -177,6 +324,7 @@ export default class JitsiStreamBackgroundEffect {
 		// Clear previous elements to allow them to be garbage collected
 		this._virtualImage = null
 		this._virtualVideo = null
+		this._bgChanged = false
 
 		this._options.virtualBackground = virtualBackground
 
@@ -184,6 +332,10 @@ export default class JitsiStreamBackgroundEffect {
 			this._virtualImage = document.createElement('img')
 			this._virtualImage.crossOrigin = 'anonymous'
 			this._virtualImage.src = this._options.virtualBackground.virtualSource
+			this._virtualImage.onload = () => {
+				this._bgChanged = true
+			}
+			this._bgChanged = false
 
 			return
 		}
@@ -213,7 +365,7 @@ export default class JitsiStreamBackgroundEffect {
 	}
 
 	/**
-	 * Represents the run post processing.
+	 * Run background/foreground compositing.
 	 *
 	 * @return {void}
 	 */
@@ -226,71 +378,114 @@ export default class JitsiStreamBackgroundEffect {
 		const backgroundBlurValue = this._options.virtualBackground.blurValue * scaledBlurFactor
 		const edgesBlurValue = (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE ? 4 : 8) * scaledBlurFactor
 
-		this._outputCanvasElement.height = height
+		if (!this._outputCanvasElement.width
+			|| !this._outputCanvasElement.height) {
+			return
+		}
+
 		this._outputCanvasElement.width = width
-		this._outputCanvasCtx.globalCompositeOperation = 'copy'
+		this._outputCanvasElement.height = height
 
-		// Draw segmentation mask.
-
-		// Smooth out the edges.
-		this._outputCanvasCtx.filter = `blur(${edgesBlurValue}px)`
-		this._outputCanvasCtx.drawImage(
-			this._segmentationMaskCanvas,
-			0,
-			0,
-			this._options.width,
-			this._options.height,
-			0,
-			0,
-			this._inputVideoElement.videoWidth,
-			this._inputVideoElement.videoHeight,
-		)
-		this._outputCanvasCtx.globalCompositeOperation = 'source-in'
-		this._outputCanvasCtx.filter = 'none'
-
-		// Draw the foreground video.
-
-		this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
-
-		// Draw the background.
-
-		this._outputCanvasCtx.globalCompositeOperation = 'destination-over'
-		if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
-			|| backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO
-			|| backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO_STREAM) {
-			let source
-			let sourceWidthOriginal
-			let sourceHeightOriginal
-
-			if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
-				source = this._virtualImage
-				sourceWidthOriginal = source.naturalWidth
-				sourceHeightOriginal = source.naturalHeight
-			} else {
-				source = this._virtualVideo
-				sourceWidthOriginal = source.videoWidth
-				sourceHeightOriginal = source.videoHeight
+		if (this._useWebGL) {
+			if (!this._glFx) {
+				return
 			}
 
-			const destinationWidth = this._outputCanvasElement.width
-			const destinationHeight = this._outputCanvasElement.height
+			let mode = 1
+			let bgSource = null
+			let refreshBg = false
 
-			const [sourceX, sourceY, sourceWidth, sourceHeight] = JitsiStreamBackgroundEffect.getSourcePropertiesForDrawingBackgroundImage(sourceWidthOriginal, sourceHeightOriginal, destinationWidth, destinationHeight)
+			if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
+				|| backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO
+				|| backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO_STREAM) {
+				mode = 0
+				if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+					bgSource = this._virtualImage
+					refreshBg = this._bgChanged && bgSource && bgSource.complete && bgSource.naturalWidth > 0
+					if (refreshBg) {
+						this._bgChanged = false
+					}
+				} else {
+					bgSource = this._virtualVideo
+					refreshBg = true
+				}
+			}
 
-			this._outputCanvasCtx.drawImage(
-				source,
-				sourceX,
-				sourceY,
-				sourceWidth,
-				sourceHeight,
-				0,
-				0,
-				destinationWidth,
-				destinationHeight,
-			)
+			this._glFx.render({
+				videoEl: this._inputVideoElement,
+				mask: this._lastMask,
+				bgSource,
+				mode,
+				outW: width,
+				outH: height,
+				edgeFeatherPx: edgesBlurValue,
+				refreshBg,
+			})
 		} else {
-			this._outputCanvasCtx.filter = `blur(${backgroundBlurValue}px)`
+			this._outputCanvasCtx.globalCompositeOperation = 'copy'
+
+			// Draw segmentation mask.
+
+			// Smooth out the edges.
+			this._outputCanvasCtx.filter = `blur(${edgesBlurValue}px)`
+			this._outputCanvasCtx.drawImage(
+				this._segmentationMaskCanvas,
+				0,
+				0,
+				this._options.width,
+				this._options.height,
+				0,
+				0,
+				this._inputVideoElement.videoWidth,
+				this._inputVideoElement.videoHeight,
+			)
+			this._outputCanvasCtx.globalCompositeOperation = 'source-in'
+			this._outputCanvasCtx.filter = 'none'
+
+			// Draw the foreground video.
+
 			this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
+
+			// Draw the background.
+
+			this._outputCanvasCtx.globalCompositeOperation = 'destination-over'
+			if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
+				|| backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO
+				|| backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO_STREAM) {
+				let source
+				let sourceWidthOriginal
+				let sourceHeightOriginal
+
+				if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+					source = this._virtualImage
+					sourceWidthOriginal = source.naturalWidth
+					sourceHeightOriginal = source.naturalHeight
+				} else {
+					source = this._virtualVideo
+					sourceWidthOriginal = source.videoWidth
+					sourceHeightOriginal = source.videoHeight
+				}
+
+				const destinationWidth = this._outputCanvasElement.width
+				const destinationHeight = this._outputCanvasElement.height
+
+				const [sourceX, sourceY, sourceWidth, sourceHeight] = JitsiStreamBackgroundEffect.getSourcePropertiesForDrawingBackgroundImage(sourceWidthOriginal, sourceHeightOriginal, destinationWidth, destinationHeight)
+
+				this._outputCanvasCtx.drawImage(
+					source,
+					sourceX,
+					sourceY,
+					sourceWidth,
+					sourceHeight,
+					0,
+					0,
+					destinationWidth,
+					destinationHeight,
+				)
+			} else {
+				this._outputCanvasCtx.filter = `blur(${backgroundBlurValue}px)`
+				this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
+			}
 		}
 	}
 
@@ -333,78 +528,6 @@ export default class JitsiStreamBackgroundEffect {
 	}
 
 	/**
-	 * Represents the run Tensorflow Interference.
-	 * Worker partly
-	 *
-	 * @param {Array} data the segmentation result
-	 * @return {void}
-	 */
-	runInference(data) {
-		// All consts in Worker in obj array.
-		for (let i = 0; i < this._segmentationPixelCount; i++) {
-			this._segmentationMask.data[(i * 4) + 3] = 255 * data[i].person
-		}
-		this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0)
-	}
-
-	/**
-	 * Loop function to render the background mask.
-	 *
-	 * @private
-	 * @return {void}
-	 */
-	_renderMask() {
-		if (this._frameId < this._lastFrameId) {
-			console.debug('Fixing frame id, this should not happen', this._frameId, this._lastFrameId)
-
-			this._frameId = this._lastFrameId
-		}
-
-		// Calculate segmentation data only if the previous one finished
-		// already.
-		if (this._loaded && this._frameId === this._lastFrameId) {
-			this._frameId++
-
-			this.resizeSource()
-		}
-
-		this._maskFrameTimerWorker.postMessage({
-			id: SET_TIMEOUT,
-			timeMs: 1000 / this._frameRate,
-			message: 'this._maskFrameTimerWorker',
-		})
-	}
-
-	/**
-	 * Represents the resize source process.
-	 * Worker partly
-	 *
-	 * @return {void}
-	 */
-	resizeSource() {
-		this._segmentationMaskCtx.drawImage(
-			this._inputVideoElement,
-			0,
-			0,
-			this._inputVideoElement.videoWidth,
-			this._inputVideoElement.videoHeight,
-			0,
-			0,
-			this._options.width,
-			this._options.height,
-		)
-
-		const imageData = this._segmentationMaskCtx.getImageData(
-			0,
-			0,
-			this._options.width,
-			this._options.height,
-		)
-
-		this._model.postMessage({ message: 'resizeSource', imageData, frameId: this._frameId })
-	}
-
-	/**
 	 * Checks if the local track supports this effect.
 	 *
 	 * @param {object} jitsiLocalTrack - Track to apply effect.
@@ -429,19 +552,29 @@ export default class JitsiStreamBackgroundEffect {
 		this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer
 		const firstVideoTrack = this._stream.getVideoTracks()[0]
 		const { height, frameRate, width }
-            = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
+			= firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
 
 		this._frameRate = parseInt(frameRate, 10)
 
-		this._segmentationMask = new ImageData(this._options.width, this._options.height)
-		this._segmentationMaskCanvas = document.createElement('canvas')
-		this._segmentationMaskCanvas.width = this._options.width
-		this._segmentationMaskCanvas.height = this._options.height
-		this._segmentationMaskCtx = this._segmentationMaskCanvas.getContext('2d')
-
 		this._outputCanvasElement.width = parseInt(width, 10)
 		this._outputCanvasElement.height = parseInt(height, 10)
-		this._outputCanvasCtx = this._outputCanvasElement.getContext('2d')
+
+		if (this._useWebGL) {
+			if (!this._glFx) {
+				this._glFx = new WebGLCompositor(this._outputCanvasElement)
+			}
+		} else {
+			this._outputCanvasCtx = this._outputCanvasElement.getContext('2d')
+			this._segmentationMask = new ImageData(this._options.width, this._options.height)
+			this._segmentationMaskCanvas = document.createElement('canvas')
+			this._segmentationMaskCanvas.width = this._options.width
+			this._segmentationMaskCanvas.height = this._options.height
+			this._segmentationMaskCtx = this._segmentationMaskCanvas.getContext('2d', { willReadFrequently: true })
+
+			this._tempCanvas = document.createElement('canvas')
+			this._tempCanvasCtx = this._tempCanvas.getContext('2d', { willReadFrequently: true })
+		}
+
 		this._inputVideoElement.autoplay = true
 		this._inputVideoElement.srcObject = this._stream
 		this._inputVideoElement.onloadeddata = () => {
@@ -465,10 +598,15 @@ export default class JitsiStreamBackgroundEffect {
 		return this._outputStream
 	}
 
+	/**
+	 * Update constraints (e.g. framerate) on the output stream when the input stream changes.
+	 *
+	 * @return {void}
+	 */
 	updateInputStream() {
 		const firstVideoTrack = this._stream.getVideoTracks()[0]
 		const { frameRate }
-            = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
+			= firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
 
 		this._frameRate = parseInt(frameRate, 10)
 
@@ -481,7 +619,7 @@ export default class JitsiStreamBackgroundEffect {
 	}
 
 	/**
-	 * Stops the capture and render loop.
+	 * Stop background effect and release resources.
 	 *
 	 * @return {void}
 	 */
@@ -499,6 +637,17 @@ export default class JitsiStreamBackgroundEffect {
 		if (this._virtualVideo) {
 			this._virtualVideo.pause()
 		}
+
+		if (this._glFx) {
+			this._glFx.dispose()
+			this._glFx = null
+		}
+
+		this._segmentationMask = null
+		this._segmentationMaskCanvas = null
+		this._segmentationMaskCtx = null
+		this._tempCanvas = null
+		this._tempCanvasCtx = null
 	}
 
 	/**
@@ -506,7 +655,7 @@ export default class JitsiStreamBackgroundEffect {
 	 */
 	destroy() {
 		this.stopEffect()
-		this._model.terminate()
-		this._model = null
+		this._imageSegmenter.close()
+		this._imageSegmenter = null
 	}
 }
