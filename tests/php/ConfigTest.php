@@ -331,10 +331,10 @@ class ConfigTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider dataGetWebSocketDomainForSignalingServer
 	 * @param string $url
 	 * @param string $expectedWebSocketDomain
 	 */
+	#[DataProvider('dataGetWebSocketDomainForSignalingServer')]
 	public function testGetWebSocketDomainForSignalingServer($url, $expectedWebSocketDomain): void {
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);

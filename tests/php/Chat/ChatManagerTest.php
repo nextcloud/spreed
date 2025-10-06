@@ -38,13 +38,12 @@ use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
-/**
- * @group DB
- */
+#[Group('DB')]
 class ChatManagerTest extends TestCase {
 	protected CommentsManager|ICommentsManager|MockObject $commentsManager;
 	protected IEventDispatcher&MockObject $dispatcher;

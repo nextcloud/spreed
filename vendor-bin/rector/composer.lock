@@ -9,16 +9,16 @@
     "packages-dev": [
         {
             "name": "nextcloud/ocp",
-            "version": "v31.0.2",
+            "version": "v32.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "d8f9b556898f11d26f5884ea6754b840fa02335e"
+                "reference": "f25b267f759f10e5aad18ed15f14b9881df5652d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/d8f9b556898f11d26f5884ea6754b840fa02335e",
-                "reference": "d8f9b556898f11d26f5884ea6754b840fa02335e",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/f25b267f759f10e5aad18ed15f14b9881df5652d",
+                "reference": "f25b267f759f10e5aad18ed15f14b9881df5652d",
                 "shasum": ""
             },
             "require": {
@@ -31,7 +31,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-stable31": "31.0.0-dev"
+                    "dev-stable32": "32.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -51,9 +51,9 @@
             "description": "Composer package containing Nextcloud's public OCP API and the unstable NCU API",
             "support": {
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
-                "source": "https://github.com/nextcloud-deps/ocp/tree/v31.0.2"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/v32.0.0"
             },
-            "time": "2025-03-07T00:46:02+00:00"
+            "time": "2025-09-16T00:45:44+00:00"
         },
         {
             "name": "nextcloud/rector",
@@ -122,16 +122,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.25",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "4087d28bd252895874e174d65e26b2c202ed893a"
-            },
+            "version": "2.1.30",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/4087d28bd252895874e174d65e26b2c202ed893a",
-                "reference": "4087d28bd252895874e174d65e26b2c202ed893a",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/a4a7f159927983dd4f7c8020ed227d80b7f39d7d",
+                "reference": "a4a7f159927983dd4f7c8020ed227d80b7f39d7d",
                 "shasum": ""
             },
             "require": {
@@ -176,7 +171,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-12T14:26:42+00:00"
+            "time": "2025-10-02T16:07:52+00:00"
         },
         {
             "name": "psr/clock",
