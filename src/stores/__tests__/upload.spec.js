@@ -10,29 +10,29 @@ import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { ref } from 'vue'
 import { createStore } from 'vuex'
-import { getDavClient } from '../services/DavClient.ts'
-import { shareFile } from '../services/filesSharingServices.ts'
-import { useActorStore } from '../stores/actor.ts'
-import { useSettingsStore } from '../stores/settings.ts'
-import { findUniquePath } from '../utils/fileUpload.ts'
-import fileUploadStore from './fileUploadStore.js'
+import { getDavClient } from '../../services/DavClient.ts'
+import { shareFile } from '../../services/filesSharingServices.ts'
+import { findUniquePath } from '../../utils/fileUpload.ts'
+import { useActorStore } from '../actor.ts'
+import { useSettingsStore } from '../settings.ts'
+import fileUploadStore from '../upload.ts'
 
 const getThreadMock = ref(0)
 vi.mock('../composables/useGetThreadId.ts', () => ({
 	useGetThreadId: vi.fn(() => getThreadMock),
 }))
 
-vi.mock('../services/DavClient.ts', () => ({
+vi.mock('../../services/DavClient.ts', () => ({
 	getDavClient: vi.fn(),
 }))
-vi.mock('../utils/fileUpload.ts', async () => {
-	const fileUpload = await vi.importActual('../utils/fileUpload.ts')
+vi.mock('../../utils/fileUpload.ts', async () => {
+	const fileUpload = await vi.importActual('../../utils/fileUpload.ts')
 	return {
 		...fileUpload,
 		findUniquePath: vi.fn(),
 	}
 })
-vi.mock('../services/filesSharingServices.ts', () => ({
+vi.mock('../../services/filesSharingServices.ts', () => ({
 	shareFile: vi.fn(),
 }))
 vi.mock('../services/settingsService.ts', () => ({

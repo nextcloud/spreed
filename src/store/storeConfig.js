@@ -4,14 +4,12 @@
  */
 
 import conversationsStore from './conversationsStore.js'
-import fileUploadStore from './fileUploadStore.js'
 import messagesStore from './messagesStore.js'
 import participantsStore from './participantsStore.js'
 
 export default {
 	modules: {
 		conversationsStore,
-		fileUploadStore,
 		messagesStore,
 		participantsStore,
 	},

@@ -13,9 +13,6 @@ import { EventBus } from '../services/EventBus.ts'
 import {
 	shareFile,
 } from '../services/filesSharingServices.ts'
-import { useActorStore } from '../stores/actor.ts'
-import { useChatExtrasStore } from '../stores/chatExtras.ts'
-import { useSettingsStore } from '../stores/settings.ts'
 import {
 	findUniquePath,
 	getFileExtension,
@@ -24,6 +21,9 @@ import {
 	separateDuplicateUploads,
 } from '../utils/fileUpload.ts'
 import { parseUploadError } from '../utils/propfindErrorParse.ts'
+import { useActorStore } from './actor.ts'
+import { useChatExtrasStore } from './chatExtras.ts'
+import { useSettingsStore } from './settings.ts'
 
 /**
  *
