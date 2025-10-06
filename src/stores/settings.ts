@@ -10,6 +10,7 @@ import { PRIVACY } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import {
+	setAttachmentFolder,
 	setBlurVirtualBackground,
 	setConversationsListStyle,
 	setReadStatusPrivacy,
@@ -30,6 +31,9 @@ export const useSettingsStore = defineStore('settings', () => {
 	const startWithoutMedia = ref<boolean | undefined>(getTalkConfig('local', 'call', 'start-without-media'))
 	const blurVirtualBackgroundEnabled = ref<boolean | undefined>(getTalkConfig('local', 'call', 'blur-virtual-background'))
 	const conversationsListStyle = ref<LIST_STYLE_OPTIONS | undefined>(getTalkConfig('local', 'conversations', 'list-style'))
+
+	const attachmentFolder = ref<string>(loadState('spreed', 'attachment_folder', ''))
+	const attachmentFolderFreeSpace = ref<number>(loadState('spreed', 'attachment_folder_free_space', 0))
 
 	/**
 	 * Update the read status privacy for the user
@@ -91,6 +95,16 @@ export const useSettingsStore = defineStore('settings', () => {
 		conversationsListStyle.value = value
 	}
 
+	/**
+	 * Update the attachment folder setting for the user
+	 *
+	 * @param value - new folder to upload attachments to
+	 */
+	async function updateAttachmentFolder(value: string) {
+		await setAttachmentFolder(value)
+		attachmentFolder.value = value
+	}
+
 	return {
 		readStatusPrivacy,
 		typingStatusPrivacy,
@@ -98,6 +112,8 @@ export const useSettingsStore = defineStore('settings', () => {
 		startWithoutMedia,
 		blurVirtualBackgroundEnabled,
 		conversationsListStyle,
+		attachmentFolder,
+		attachmentFolderFreeSpace,
 
 		updateReadStatusPrivacy,
 		updateTypingStatusPrivacy,
@@ -105,5 +121,6 @@ export const useSettingsStore = defineStore('settings', () => {
 		setBlurVirtualBackgroundEnabled,
 		updateStartWithoutMedia,
 		updateConversationsListStyle,
+		updateAttachmentFolder,
 	}
 })

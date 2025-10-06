@@ -8,13 +8,18 @@ import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
-import { setReadStatusPrivacy, setTypingStatusPrivacy } from '../../services/settingsService.ts'
+import {
+	setAttachmentFolder,
+	setReadStatusPrivacy,
+	setTypingStatusPrivacy,
+} from '../../services/settingsService.ts'
 import { generateOCSResponse } from '../../test-helpers.js'
 import { useSettingsStore } from '../settings.ts'
 
 vi.mock('../../services/settingsService', () => ({
 	setReadStatusPrivacy: vi.fn(),
 	setTypingStatusPrivacy: vi.fn(),
+	setAttachmentFolder: vi.fn(),
 }))
 
 vi.spyOn(BrowserStorage, 'getItem')
@@ -27,6 +32,10 @@ describe('settingsStore', () => {
 		loadState.mockImplementation((app, key, fallback) => {
 			if (key === 'read_status_privacy' || key === 'typing_privacy') {
 				return PRIVACY.PUBLIC
+			} else if (key === 'attachment_folder') {
+				return '/Talk'
+			} else if (key === 'attachment_folder_free_space') {
+				return 1024
 			}
 			return fallback
 		})
@@ -42,6 +51,8 @@ describe('settingsStore', () => {
 		settingsStore.startWithoutMedia = false
 		settingsStore.blurVirtualBackgroundEnabled = false
 		settingsStore.conversationsListStyle = 'two-lines'
+		settingsStore.attachmentFolder = '/Talk'
+		settingsStore.attachmentFolderFreeSpace = 1024
 	})
 
 	describe('reading and typing statuses', () => {
@@ -81,6 +92,27 @@ describe('settingsStore', () => {
 			// Assert
 			expect(settingsStore.showMediaSettings).toEqual(false)
 			expect(BrowserStorage.setItem).toHaveBeenNthCalledWith(1, 'showMediaSettings', 'false')
+		})
+	})
+
+	describe('attachment folder', async () => {
+		it('shows correct loaded values for statuses', () => {
+			// Assert
+			expect(settingsStore.attachmentFolder).toBe('/Talk')
+			expect(settingsStore.attachmentFolderFreeSpace).toBe(1024)
+		})
+
+		it('updates values correctly', async () => {
+			// Arrange
+			const response = generateOCSResponse({ payload: [] })
+			setAttachmentFolder.mockResolvedValueOnce(response)
+
+			// Act
+			await settingsStore.updateAttachmentFolder('/Talk-another')
+
+			// Assert
+			expect(setAttachmentFolder).toHaveBeenCalledWith('/Talk-another')
+			expect(settingsStore.attachmentFolder).toBe('/Talk-another')
 		})
 	})
 })
