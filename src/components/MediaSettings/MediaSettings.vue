@@ -268,7 +268,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useGuestNameStore } from '../../stores/guestName.js'
-import { useSettingsStore } from '../../stores/settings.js'
+import { useSettingsStore } from '../../stores/settings.ts'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 
 const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined

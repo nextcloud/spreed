@@ -19,7 +19,7 @@ import NavigationHint from '../../UIShared/NavigationHint.vue'
 import ConversationItem from '../ConversationsList/ConversationItem.vue'
 import { ATTENDEE, AVATAR, CONVERSATION } from '../../../constants.ts'
 import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
-import { useSettingsStore } from '../../../stores/settings.js'
+import { useSettingsStore } from '../../../stores/settings.ts'
 import { getPreloadedUserStatus } from '../../../utils/userStatus.ts'
 
 const props = defineProps<{
