@@ -6,6 +6,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
 	convertToUnix,
+	formatDateTime,
 	formattedTime,
 	futureRelativeTime,
 	getRelativeDay,
@@ -98,4 +99,24 @@ describe('getRelativeDay', () => {
 			expect(result).toBe(output)
 		},
 	)
+})
+
+describe('formatDateTime', () => {
+	const TIME = new Date('2025-02-15T20:30:00Z')
+
+	const LOCALIZED_TEST_CASES = [
+		['shortTime', '8:30 PM'], // 'h:mm A'
+		['longDate', 'February 15, 2025'], // 'MMMM D, YYYY'
+		['longDateWithTime', 'February 15, 2025 at 8:30 PM'], // 'MMMM D, YYYY at h:mm A'
+		['shortDate', 'Feb 15, 2025'], // 'MMM D, YYYY'
+		['shortDateNumeric', '02/15/2025'], // 'MM/DD/YYYY'
+		['shortDateWithTime', 'Feb 15, 2025, 8:30 PM'], // 'MMM D, YYYY h:mm A'
+		['shortDateWithTimeSeconds', 'Feb 15, 2025, 8:30:00 PM'], // 'MMM D, YYYY h:mm:ss A'
+		['shortWeekdayWithTime', 'Sat 8:30 PM'], // 'ddd h:mm A'
+	]
+
+	it.each(LOCALIZED_TEST_CASES)('should return datetime with specified format %s', (format, output) => {
+		const result = formatDateTime(TIME, format)
+		expect(result).toBe(output)
+	})
 })
