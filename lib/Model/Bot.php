@@ -26,6 +26,7 @@ class Bot {
 	public const FEATURE_LABEL_EVENT = 'event';
 	public const FEATURE_LABEL_REACTION = 'reaction';
 	public const URL_APP_PREFIX = 'nextcloudapp://';
+	public const URL_RESPONSE_ONLY_PREFIX = 'responseonly://';
 
 	public const FEATURE_MAP = [
 		self::FEATURE_NONE => self::FEATURE_LABEL_NONE,
