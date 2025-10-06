@@ -8,7 +8,7 @@ import createTFLiteSIMDModule from './vendor/tflite/tflite-simd.js'
 import createTFLiteModule from './vendor/tflite/tflite.js'
 
 const models = {
-	modelLandscape: 'libs/selfie_segmentation_landscape.tflite',
+	modelLandscape: 'libs/selfie_segmenter_landscape.tflite',
 }
 
 const segmentationDimensions = {
