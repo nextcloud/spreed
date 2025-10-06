@@ -341,7 +341,7 @@ export default {
 		},
 
 		attachmentFolder() {
-			return this.$store.getters.getAttachmentFolder()
+			return this.settingsStore.attachmentFolder
 		},
 
 		locationHint() {
@@ -441,7 +441,7 @@ export default {
 
 			this.attachmentFolderLoading = true
 			try {
-				this.$store.dispatch('setAttachmentFolder', path)
+				await this.settingsStore.updateAttachmentFolder(path)
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting attachment folder'))
 			}
