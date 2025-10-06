@@ -903,7 +903,7 @@ export default {
 		async toggleStartWithoutMedia(value) {
 			this.mediaLoading = true
 			try {
-				await this.settingsStore.setStartWithoutMedia(value)
+				await this.settingsStore.updateStartWithoutMedia(value)
 				showSuccess(t('spreed', 'Your default media state has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting default media state'))
