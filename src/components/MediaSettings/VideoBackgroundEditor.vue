@@ -86,7 +86,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { getDavClient } from '../../services/DavClient.ts'
 import { useActorStore } from '../../stores/actor.ts'
-import { useSettingsStore } from '../../stores/settings.js'
+import { useSettingsStore } from '../../stores/settings.ts'
 import { findUniquePath } from '../../utils/fileUpload.js'
 
 const predefinedBackgroundLabels = {
@@ -160,7 +160,7 @@ export default {
 		},
 
 		relativeBackgroundsFolderPath() {
-			return this.$store.getters.getAttachmentFolder() + '/Backgrounds'
+			return this.settingsStore.attachmentFolder + '/Backgrounds'
 		},
 	},
 
@@ -211,7 +211,7 @@ export default {
 			// userRoot path
 			const userRoot = '/files/' + this.actorStore.userId
 
-			const filePath = this.$store.getters.getAttachmentFolder() + '/Backgrounds/' + file.name
+			const filePath = this.settingsStore.attachmentFolder + '/Backgrounds/' + file.name
 
 			const client = getDavClient()
 			// Get a unique relative path based on the previous path variable

@@ -12,8 +12,8 @@ import { ref } from 'vue'
 import { createStore } from 'vuex'
 import { getDavClient } from '../services/DavClient.ts'
 import { shareFile } from '../services/filesSharingServices.ts'
-import { setAttachmentFolder } from '../services/settingsService.ts'
 import { useActorStore } from '../stores/actor.ts'
+import { useSettingsStore } from '../stores/settings.ts'
 import { findUniquePath } from '../utils/fileUpload.js'
 import fileUploadStore from './fileUploadStore.js'
 
@@ -44,10 +44,12 @@ describe('fileUploadStore', () => {
 	let store = null
 	let mockedActions = null
 	let actorStore
+	let settingsStore
 
 	beforeEach(() => {
 		setActivePinia(createPinia())
 		actorStore = useActorStore()
+		settingsStore = useSettingsStore()
 
 		mockedActions = {
 			addTemporaryMessage: vi.fn(),
@@ -62,6 +64,7 @@ describe('fileUploadStore', () => {
 		actorStore.actorId = 'current-user'
 		actorStore.actorType = 'users'
 		actorStore.displayName = 'Current User'
+		settingsStore.attachmentFolder = '/Talk'
 	})
 
 	afterEach(() => {
@@ -75,7 +78,6 @@ describe('fileUploadStore', () => {
 		}
 
 		beforeEach(() => {
-			storeConfig.getters.getAttachmentFolder = vi.fn().mockReturnValue(() => '/Talk')
 			store = createStore(storeConfig)
 			getDavClient.mockReturnValue(client)
 			getUploader.mockReturnValue({ upload: uploadMock })
@@ -403,15 +405,5 @@ describe('fileUploadStore', () => {
 			expect(files[0].newName).toBe('20210427_153000.png')
 			expect(files[1].newName).toBe('20210425_153000.txt')
 		})
-	})
-
-	test('set attachment folder', async () => {
-		store = createStore(storeConfig)
-
-		setAttachmentFolder.mockResolvedValue()
-		await store.dispatch('setAttachmentFolder', '/Talk-another')
-
-		expect(setAttachmentFolder).toHaveBeenCalledWith('/Talk-another')
-		expect(store.getters.getAttachmentFolder()).toBe('/Talk-another')
 	})
 })

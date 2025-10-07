@@ -15,9 +15,9 @@ import {
 	getFileTemplates,
 	shareFile,
 } from '../services/filesSharingServices.ts'
-import { setAttachmentFolder } from '../services/settingsService.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
+import { useSettingsStore } from '../stores/settings.ts'
 import {
 	findUniquePath,
 	getFileExtension,
@@ -32,8 +32,6 @@ import { parseUploadError } from '../utils/propfindErrorParse.ts'
  */
 function state() {
 	return {
-		attachmentFolder: loadState('spreed', 'attachment_folder', ''),
-		attachmentFolderFreeSpace: loadState('spreed', 'attachment_folder_free_space', 0),
 		uploads: {},
 		currentUploadId: undefined,
 		localUrls: {},
@@ -77,16 +75,6 @@ const getters = {
 	getShareableFiles: (state, getters) => (uploadId) => {
 		return getters.getUploadsArray(uploadId)
 			.filter(([_index, uploadedFile]) => uploadedFile.status === 'successUpload')
-	},
-
-	// gets the current attachment folder
-	getAttachmentFolder: (state) => () => {
-		return state.attachmentFolder
-	},
-
-	// gets the current attachment folder
-	getAttachmentFolderFreeSpace: (state) => () => {
-		return state.attachmentFolderFreeSpace
 	},
 
 	// returns the local Url of uploaded image
@@ -169,16 +157,6 @@ const mutations = {
 	// Marks a given file as shared
 	markFileAsShared(state, { uploadId, index }) {
 		state.uploads[uploadId].files[index].status = 'shared'
-	},
-
-	/**
-	 * Set the attachmentFolder
-	 *
-	 * @param {object} state current store state;
-	 * @param {string} attachmentFolder The new target location for attachments
-	 */
-	setAttachmentFolder(state, attachmentFolder) {
-		state.attachmentFolder = attachmentFolder
 	},
 
 	// Set temporary message for each file
@@ -346,6 +324,7 @@ const actions = {
 	async prepareUploadPaths(context, { token, uploadId }) {
 		const client = getDavClient()
 		const actorStore = useActorStore()
+		const settingsStore = useSettingsStore()
 		const userRoot = '/files/' + actorStore.userId
 
 		// Store propfind attempts within one action to reduce amount of requests for duplicates
@@ -354,7 +333,7 @@ const actions = {
 		const performPropFind = async ([index, uploadedFile]) => {
 			const fileName = (uploadedFile.file.newName || uploadedFile.file.name)
 			// Candidate rest of the path
-			const path = context.getters.getAttachmentFolder() + '/' + fileName
+			const path = settingsStore.attachmentFolder + '/' + fileName
 
 			try {
 				// Check if previous propfind attempt was stored
@@ -536,17 +515,6 @@ const actions = {
 		}
 
 		context.commit('setCurrentUploadId', uploadId)
-	},
-
-	/**
-	 * Set the folder to store new attachments in
-	 *
-	 * @param {object} context default store context;
-	 * @param {string} attachmentFolder Folder to store new attachments in
-	 */
-	async setAttachmentFolder(context, attachmentFolder) {
-		await setAttachmentFolder(attachmentFolder)
-		context.commit('setAttachmentFolder', attachmentFolder)
 	},
 
 	/**
