@@ -1,0 +1,165 @@
+# SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: MIT
+
+name: Playwright tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - stable*
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest-low
+
+    outputs:
+      src: ${{ steps.changes.outputs.src}}
+
+    steps:
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        id: changes
+        continue-on-error: true
+        with:
+          filters: |
+            src:
+              - '.github/workflows/**'
+              - 'src/**'
+              - 'appinfo/info.xml'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'tsconfig.json'
+              - '**.js'
+              - '**.ts'
+              - '**.vue'
+
+  playwright-test:
+    runs-on: ubuntu-latest
+
+    name: Run Playwright tests
+
+    needs: changes
+    if: needs.changes.outputs.src != 'false'
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['8.2']
+        server-versions: ['master']
+        notifications-versions: ['master']
+
+    services:
+      mysql:
+        image: ghcr.io/nextcloud/continuous-integration-mysql-8.4:latest # zizmor: ignore[unpinned-images]
+        ports:
+          - 4444:3306/tcp
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+        options: --health-cmd="mysqladmin ping" --health-interval 5s --health-timeout 2s --health-retries 10
+
+    steps:
+      - name: Set app env
+        run: |
+          # Split and keep last
+          echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+
+      - name: Checkout server
+        if: ${{ matrix.branches != 'main' }}
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+          submodules: true
+          repository: nextcloud/server
+          ref: ${{ matrix.server-versions }}
+
+      - name: Checkout app
+        id: checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+          path: apps/${{ env.APP_NAME }}
+
+      - name: Checkout notifications app
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+          repository: nextcloud/notifications
+          path: apps/notifications
+          ref: ${{ matrix.notifications-versions }}
+
+      - name: Set up php ${{ matrix.php-versions }}
+        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # v2.35.5
+        with:
+          php-version: ${{ matrix.php-versions }}
+          # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
+          extensions: apcu, bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, mysql, pdo_mysql, sqlite, pdo_sqlite
+          coverage: none
+          ini-file: development
+          # Temporary workaround for missing pcntl_* in PHP 8.3: ini-values: apc.enable_cli=on
+          ini-values: apc.enable_cli=on, disable_functions=
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable ONLY_FULL_GROUP_BY MySQL option
+        run: |
+          echo "SET GLOBAL sql_mode=(SELECT CONCAT(@@sql_mode,',ONLY_FULL_GROUP_BY'));" | mysql -h 127.0.0.1 -P 4444 -u root -prootpassword
+          echo 'SELECT @@sql_mode;' | mysql -h 127.0.0.1 -P 4444 -u root -prootpassword
+
+      - name: Set up production dependencies
+        working-directory: apps/${{ env.APP_NAME }}
+        run: composer i --no-dev
+
+      - name: Set up Nextcloud
+        env:
+          DB_PORT: 4444
+        run: |
+          mkdir data
+          ./occ maintenance:install --verbose --database=mysql --database-name=nextcloud --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=root --database-pass=rootpassword --admin-user admin --admin-pass admin
+          ./occ config:system:set debug --value=true --type=boolean
+          ./occ config:system:set hashing_default_password --value=true --type=boolean
+          ./occ config:system:set memcache.local --value="\\OC\\Memcache\\APCu"
+          ./occ config:system:set memcache.distributed --value="\\OC\\Memcache\\APCu"
+          ./occ app:enable --force ${{ env.APP_NAME }}
+          ./occ app:enable --force notifications
+
+      - name: Read package.json node and npm engines version
+        if: steps.checkout.outcome == 'success'
+        uses: skjnldsv/read-package-engines-version-actions@06d6baf7d8f41934ab630e97d9e6c0bc9c9ac5e4 # v3
+        id: versions
+        with:
+          fallbackNode: '^20'
+          fallbackNpm: '^10'
+
+      - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
+        if: steps.checkout.outcome == 'success'
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: ${{ steps.versions.outputs.nodeVersion }}
+
+      - name: Set up npm ${{ steps.versions.outputs.npmVersion }}
+        if: steps.checkout.outcome == 'success'
+        run: npm i -g 'npm@${{ steps.versions.outputs.npmVersion }}'
+
+      - name: Install dependencies
+        if: steps.checkout.outcome == 'success'
+        working-directory: apps/${{ env.APP_NAME }}
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+          PUPPETEER_SKIP_DOWNLOAD: true
+        run: |
+          npm ci
+          npx playwright install --with-deps
+
+      - name: Run tests
+        if: steps.checkout.outcome == 'success'
+        working-directory: apps/${{ env.APP_NAME }}
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+          PUPPETEER_SKIP_DOWNLOAD: true
+        run: |
+          npm run test:e2e
