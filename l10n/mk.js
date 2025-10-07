@@ -874,6 +874,7 @@ OC.L10N.register(
     "Sounds" : "Звуци",
     "Play sounds when participants join or leave a call" : "Репродуцирајте звуци кога учесниците се придружуваат или оставаат повик",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "Звуците за чет и известувања за повици може да се прилагодат во личните поставки.",
+    "Performance" : "Перформанси",
     "Keyboard shortcuts" : "Кратенки преку тастатура",
     "Speed up your Talk experience with these quick shortcuts." : "Забрзајте го вашето искуство со овие брзи кратенки.",
     "Focus the chat input" : "Фокусирајте го курсорот на разговорот",

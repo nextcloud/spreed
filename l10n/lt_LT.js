@@ -759,6 +759,7 @@ OC.L10N.register(
     "File to share" : "Failas, kurį bendrinti",
     "Add emoji" : "Pridėti šypsenėlę",
     "Share from Files" : "Bendrinti iš failų",
+    "Upload from device" : "Įkelti iš įrenginio",
     "Create new poll" : "Sukurti naują apklausą",
     "Microphone either not available or disabled in settings" : "Mikrofonas arba neprieinamas, arba išjungtas nustatymuose",
     "New file" : "Naujas failas",
