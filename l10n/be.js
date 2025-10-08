@@ -872,6 +872,7 @@ OC.L10N.register(
     "Error occurred when locking the conversation" : "Памылка пры блакіраванні размовы",
     "Error occurred when unlocking the conversation" : "Памылка пры разблакіраванні размовы",
     "Lock conversation" : "Заблакіраваць размову",
+    "This will also terminate the ongoing call." : "Гэта таксама перапыніць бягучы выклік.",
     "Edit" : "Рэдагаваць",
     "More information" : "Больш інфармацыі",
     "Delete" : "Выдаліць",
