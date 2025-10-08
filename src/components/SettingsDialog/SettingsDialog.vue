@@ -272,7 +272,7 @@ import { getTalkConfig, getTalkVersion } from '../../services/CapabilitiesManage
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
 import { setUserConfig } from '../../services/settingsService.ts'
 import { useActorStore } from '../../stores/actor.ts'
-import { useSettingsStore } from '../../stores/settings.js'
+import { useSettingsStore } from '../../stores/settings.ts'
 import { useSoundsStore } from '../../stores/sounds.js'
 import { isMac } from '../../utils/browserCheck.ts'
 import { satisfyVersion } from '../../utils/satisfyVersion.ts'
@@ -341,7 +341,7 @@ export default {
 		},
 
 		attachmentFolder() {
-			return this.$store.getters.getAttachmentFolder()
+			return this.settingsStore.attachmentFolder
 		},
 
 		locationHint() {
@@ -441,7 +441,7 @@ export default {
 
 			this.attachmentFolderLoading = true
 			try {
-				this.$store.dispatch('setAttachmentFolder', path)
+				await this.settingsStore.updateAttachmentFolder(path)
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting attachment folder'))
 			}
@@ -473,7 +473,7 @@ export default {
 		async toggleConversationsListStyle(value) {
 			this.appearanceLoading = true
 			try {
-				await this.settingsStore.setConversationsListStyle(value ? CONVERSATION.LIST_STYLE.COMPACT : CONVERSATION.LIST_STYLE.TWO_LINES)
+				await this.settingsStore.updateConversationsListStyle(value ? CONVERSATION.LIST_STYLE.COMPACT : CONVERSATION.LIST_STYLE.TWO_LINES)
 				showSuccess(t('spreed', 'Your personal setting has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting personal setting'))
@@ -510,7 +510,7 @@ export default {
 		async toggleStartWithoutMedia(value) {
 			this.mediaLoading = true
 			try {
-				await this.settingsStore.setStartWithoutMedia(value)
+				await this.settingsStore.updateStartWithoutMedia(value)
 				showSuccess(t('spreed', 'Your default media state has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting default media state'))

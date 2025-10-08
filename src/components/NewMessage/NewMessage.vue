@@ -234,7 +234,7 @@ import { useActorStore } from '../../stores/actor.ts'
 import { useChatStore } from '../../stores/chat.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
-import { useSettingsStore } from '../../stores/settings.js'
+import { useSettingsStore } from '../../stores/settings.ts'
 import { useTokenStore } from '../../stores/token.ts'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
@@ -428,7 +428,7 @@ export default {
 		canUploadFiles() {
 			// TODO attachments should be allowed on both instances?
 			return getTalkConfig(this.token, 'attachments', 'allowed') && this.canShareFiles
-				&& this.$store.getters.getAttachmentFolderFreeSpace() !== 0
+				&& this.settingsStore.attachmentFolderFreeSpace !== 0
 		},
 
 		canCreatePoll() {

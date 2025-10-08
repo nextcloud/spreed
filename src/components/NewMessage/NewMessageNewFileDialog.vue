@@ -64,6 +64,7 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import NewMessageTemplatePreview from './NewMessageTemplatePreview.vue'
 import { useViewer } from '../../composables/useViewer.js'
 import { createNewFile } from '../../services/filesSharingServices.ts'
+import { useSettingsStore } from '../../stores/settings.ts'
 
 export default {
 	name: 'NewMessageNewFileDialog',
@@ -92,7 +93,10 @@ export default {
 
 	setup() {
 		const { openViewer } = useViewer('files')
-		return { openViewer }
+		return {
+			openViewer,
+			settingsStore: useSettingsStore(),
+		}
 	},
 
 	data() {
@@ -195,7 +199,7 @@ export default {
 		async handleCreateNewFile() {
 			this.loading = true
 			this.newFileError = ''
-			let filePath = this.$store.getters.getAttachmentFolder() + '/' + this.newFileTitle.replace('/', '')
+			let filePath = this.settingsStore.attachmentFolder + '/' + this.newFileTitle.replace('/', '')
 
 			if (!filePath.endsWith(this.fileTemplate.extension)) {
 				filePath += this.fileTemplate.extension

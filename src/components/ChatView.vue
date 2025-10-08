@@ -85,6 +85,7 @@ import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
+import { useSettingsStore } from '../stores/settings.ts'
 
 export default {
 
@@ -126,6 +127,7 @@ export default {
 			threadId: useGetThreadId(),
 			chatExtrasStore: useChatExtrasStore(),
 			actorStore: useActorStore(),
+			settingsStore: useSettingsStore(),
 		}
 	},
 
@@ -147,7 +149,7 @@ export default {
 
 		canUploadFiles() {
 			return getTalkConfig(this.token, 'attachments', 'allowed') && this.actorStore.userId
-				&& this.$store.getters.getAttachmentFolderFreeSpace() !== 0
+				&& this.settingsStore.attachmentFolderFreeSpace !== 0
 				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT)
 				&& !this.conversation.remoteServer // no attachments support in federated conversations
 		},
