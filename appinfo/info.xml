@@ -93,6 +93,7 @@
 
 	<commands>
 		<command>OCA\Talk\Command\Bot\Install</command>
+		<command>OCA\Talk\Command\Bot\Create</command>
 		<command>OCA\Talk\Command\Bot\ListBots</command>
 		<command>OCA\Talk\Command\Bot\Remove</command>
 		<command>OCA\Talk\Command\Bot\State</command>
