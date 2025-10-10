@@ -452,7 +452,7 @@ class BotService {
 			throw new \InvalidArgumentException('The provided secret is too short (min. 40 chars, max. 128 chars)');
 		}
 
-		if (!$url || strlen($url) > 4000 || !(str_starts_with($url, 'http://') || str_starts_with($url, 'https://') || str_starts_with($url, Bot::URL_APP_PREFIX))) {
+		if (!$url || strlen($url) > 4000 || !(str_starts_with($url, 'http://') || str_starts_with($url, 'https://') || str_starts_with($url, Bot::URL_APP_PREFIX) || str_starts_with($url, Bot::URL_RESPONSE_ONLY_PREFIX))) {
 			throw new \InvalidArgumentException('The provided URL is not a valid URL');
 		}
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -15,15 +15,17 @@ use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Service\BotService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\Exception;
+use OCP\Security\ISecureRandom;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Install extends Base {
+class Create extends Base {
 	public function __construct(
 		private BotService $botService,
 		private BotServerMapper $botServerMapper,
+		private ISecureRandom $secureRandom,
 	) {
 		parent::__construct();
 	}
@@ -32,22 +34,12 @@ class Install extends Base {
 	protected function configure(): void {
 		parent::configure();
 		$this
-			->setName('talk:bot:install')
-			->setDescription('Install a new bot on the server')
+			->setName('talk:bot:create')
+			->setDescription('Creates a new bot on the server with \'response\' feature only.')
 			->addArgument(
 				'name',
 				InputArgument::REQUIRED,
 				'The name under which the messages will be posted (min. 1 char, max. 64 chars)'
-			)
-			->addArgument(
-				'secret',
-				InputArgument::REQUIRED,
-				'Secret used to validate API calls (min. 40 chars, max. 128 chars)'
-			)
-			->addArgument(
-				'url',
-				InputArgument::REQUIRED,
-				'Webhook endpoint to post messages to (max. 4000 chars)'
 			)
 			->addArgument(
 				'description',
@@ -55,42 +47,28 @@ class Install extends Base {
 				'Optional description shown in the admin settings (max. 4000 chars)'
 			)
 			->addOption(
+				'secret',
+				's',
+				InputOption::VALUE_REQUIRED,
+				'Secret used to validate API calls (min. 40 chars, max. 128 chars). When none is provided, a random 64 chars string is generated and output.'
+			)
+			->addOption(
 				'no-setup',
 				null,
 				InputOption::VALUE_NONE,
 				'Prevent moderators from setting up the bot in a conversation'
-			)
-			->addOption(
-				'feature',
-				'f',
-				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-				'Specify the list of features for the bot' . "\n"
-				. ' - webhook: The bot receives posted chat messages as webhooks' . "\n"
-				. ' - response: The bot can post messages and reactions as a response' . "\n"
-				. ' - event: The bot reads posted messages from local events' . "\n"
-				. ' - reaction: The bot is notified about adding and removing of reactions' . "\n"
-				. ' - none: When all features should be disabled for the bot'
 			)
 		;
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$name = $input->getArgument('name');
-		$secret = $input->getArgument('secret');
-		$url = $input->getArgument('url');
 		$description = $input->getArgument('description') ?? '';
 		$noSetup = $input->getOption('no-setup');
+		$featureFlags = Bot::FEATURE_RESPONSE;
 
-		if (!empty($input->getOption('feature'))) {
-			$featureFlags = Bot::featureLabelsToFlags($input->getOption('feature'));
-			if (str_starts_with($url, Bot::URL_APP_PREFIX)) {
-				$featureFlags &= ~Bot::FEATURE_WEBHOOK;
-			}
-		} elseif (str_starts_with($url, Bot::URL_APP_PREFIX)) {
-			$featureFlags = Bot::FEATURE_EVENT;
-		} else {
-			$featureFlags = Bot::FEATURE_WEBHOOK + Bot::FEATURE_RESPONSE;
-		}
+		$secret = $input->getOption('secret') ?? $this->secureRandom->generate(64);
+		$url = Bot::URL_RESPONSE_ONLY_PREFIX . bin2hex(random_bytes(16));
 
 		try {
 			$this->botService->validateBotParameters($name, $secret, $url, $description);
@@ -128,6 +106,11 @@ class Install extends Base {
 
 		$output->writeln('<info>Bot installed</info>');
 		$output->writeln('ID: ' . $botEntity->getId());
+
+		if ($input->getOption('secret') === null) {
+			$output->writeln('Secret: ' . $secret);
+		}
+
 		return 0;
 	}
 }
