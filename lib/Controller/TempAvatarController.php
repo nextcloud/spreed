@@ -8,13 +8,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OC\Files\Filesystem;
 use OC\NotSquareException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\Files\IFilenameValidator;
 use OCP\IAvatarManager;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -28,6 +28,7 @@ class TempAvatarController extends OCSController {
 		private IAvatarManager $avatarManager,
 		private IL10N $l,
 		private LoggerInterface $logger,
+		private IFilenameValidator $filenameValidator,
 		private string $userId,
 	) {
 		parent::__construct($appName, $request);
@@ -53,11 +54,7 @@ class TempAvatarController extends OCSController {
 			);
 		}
 
-		if (
-			$files['error'][0] === 0
-			&& is_uploaded_file($files['tmp_name'][0])
-			&& !Filesystem::isFileBlacklisted($files['tmp_name'][0])
-		) {
+		if ($files['error'][0] === 0 && is_uploaded_file($files['tmp_name'][0])) {
 			if ($files['size'][0] > 20 * 1024 * 1024) {
 				return new DataResponse(
 					['message' => $this->l->t('File is too big')],
@@ -82,7 +79,7 @@ class TempAvatarController extends OCSController {
 
 			if (!$image->valid()) {
 				return new DataResponse(
-					['data' => ['message' => $this->l->t('Invalid image')]],
+					['message' => $this->l->t('Invalid image')],
 					Http::STATUS_BAD_REQUEST
 				);
 			}
@@ -90,7 +87,7 @@ class TempAvatarController extends OCSController {
 			$mimeType = $image->mimeType();
 			if ($mimeType !== 'image/jpeg' && $mimeType !== 'image/png') {
 				return new DataResponse(
-					['data' => ['message' => $this->l->t('Unknown filetype')]],
+					['message' => $this->l->t('Unknown filetype')],
 					Http::STATUS_BAD_REQUEST
 				);
 			}

@@ -10,9 +10,9 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
-use OC\Files\Filesystem;
 use OCA\Talk\Room;
 use OCP\Files\IAppData;
+use OCP\Files\IFilenameValidator;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\InMemoryFile;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -36,6 +36,7 @@ class AvatarService {
 		private RoomService $roomService,
 		private IAvatarManager $avatarManager,
 		private EmojiService $emojiService,
+		private IFilenameValidator $filenameValidator,
 	) {
 	}
 
@@ -48,11 +49,7 @@ class AvatarService {
 			throw new InvalidArgumentException($this->l->t('No image file provided'));
 		}
 
-		if (
-			$file['error'] !== 0
-			|| !is_uploaded_file($file['tmp_name'])
-			|| Filesystem::isFileBlacklisted($file['tmp_name'])
-		) {
+		if ($file['error'] !== 0 || !is_uploaded_file($file['tmp_name'])) {
 			throw new InvalidArgumentException($this->l->t('Invalid file provided'));
 		}
 		if ($file['size'] > 20 * 1024 * 1024) {
