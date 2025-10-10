@@ -5,10 +5,25 @@
 
 <template>
 	<div class="avatar-wrapper" :class="avatarClass" :style="avatarStyle">
-		<div v-if="iconClass" class="avatar icon" :class="[iconClass]" />
-		<div v-else-if="isGuestUser" class="avatar guest">
-			{{ firstLetterOfGuestName }}
-		</div>
+		<NcAvatar
+			v-if="isGuestUser || iconClass"
+			class="avatar"
+			:user="name + '_' + id"
+			:icon-class="iconClass"
+			:display-name="name"
+			:disable-tooltip="disableTooltip"
+			disable-menu
+			:is-guest="isGuestUser"
+			:hide-status="!showUserStatus"
+			:verbose-status="!showUserStatusCompact"
+			:preloaded-user-status="preloadedUserStatus"
+			:size="size">
+			<template v-if="isGuestUser" #icon>
+				<div class="avatar" :class="guestIconClass">
+					{{ firstLetterOfGuestName }}
+				</div>
+			</template>
+		</NcAvatar>
 		<div v-else-if="isBot" class="avatar bot">
 			>_
 		</div>
@@ -165,7 +180,7 @@ export default {
 	computed: {
 		// Determines which icon is displayed
 		iconClass() {
-			if (!this.source) {
+			if (!this.source || this.isGuestUser) {
 				return ''
 			}
 			switch (this.source) {
@@ -174,10 +189,6 @@ export default {
 					return !this.failed ? '' : 'icon-user'
 				case ATTENDEE.ACTOR_TYPE.FEDERATED_USERS:
 					return (this.token && !this.failed) ? '' : 'icon-user'
-				case ATTENDEE.ACTOR_TYPE.EMAILS:
-					return this.token === 'new' ? 'icon-mail' : (this.hasCustomName ? '' : 'icon-user')
-				case ATTENDEE.ACTOR_TYPE.GUESTS:
-					return this.hasCustomName ? '' : 'icon-user'
 				case ATTENDEE.ACTOR_TYPE.DELETED_USERS:
 					return 'icon-user'
 				case ATTENDEE.ACTOR_TYPE.PHONES:
@@ -190,6 +201,16 @@ export default {
 				default:
 					return 'icon-contacts'
 			}
+		},
+
+		guestIconClass() {
+			if (this.source === ATTENDEE.ACTOR_TYPE.EMAILS) {
+				return this.token === 'new' ? 'icon-mail' : (this.hasCustomName ? 'guest' : 'icon-user')
+			} else if (this.source === ATTENDEE.ACTOR_TYPE.GUESTS) {
+				return this.hasCustomName ? 'guest' : 'icon-user'
+			}
+
+			return undefined
 		},
 
 		avatarClass() {
@@ -225,6 +246,9 @@ export default {
 		},
 
 		firstLetterOfGuestName() {
+			if (!this.hasCustomName || this.token === 'new') {
+				return ''
+			}
 			return this.name?.trim()?.toUpperCase()?.charAt(0) ?? '?'
 		},
 
@@ -266,8 +290,6 @@ export default {
 		max-width: var(--avatar-size);
 		line-height: var(--avatar-size);
 		font-size: calc(var(--avatar-size) / 2);
-		overflow: hidden;
-		border-radius: 50%;
 		background-color: var(--color-text-maxcontrast-default);
 
 		&.icon {
@@ -334,6 +356,12 @@ export default {
 	inset-inline-start: 0;
 	width: 100%;
 	height: 100%;
+}
+
+// FIXME: update the use color in NcAvatar
+// TOREMOVE: when fixed in @nextcloud/vue
+:deep(.avatar-class-icon) {
+	background-color: initial;
 }
 
 </style>
