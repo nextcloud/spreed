@@ -52,6 +52,7 @@ import { getGuestNickname } from '@nextcloud/auth'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
+import debounce from 'debounce'
 import escapeHtml from 'escape-html'
 import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -85,6 +86,7 @@ const actorDisplayName = computed<string>(() => actorStore.displayName || guestU
 const displayNameLabel = computed(() => t('spreed', 'Display name: {name}', {
 	name: `<strong>${escapeHtml(actorDisplayName.value)}</strong>`,
 }, { escape: false }))
+const debounceUpdateDisplayName = debounce(updateDisplayName, 500)
 
 watch(actorDisplayName, (newValue) => {
 	guestUserName.value = newValue
@@ -145,6 +147,7 @@ function toggleEdit() {
 
 // One-way binding to parent component
 watch(guestUserName, (newValue) => {
+	debounceUpdateDisplayName()
 	emit('update', newValue)
 }, { immediate: true })
 </script>
