@@ -20,7 +20,7 @@ import WebGLCompositor from './WebGLCompositor.js'
  *
  * @class
  */
-export default class JitsiStreamBackgroundEffect {
+export default class VideoStreamBackgroundEffect {
 	// _options: Object;
 	// _stream: MediaStream;
 	// _segmentationPixelCount: number;
@@ -469,7 +469,7 @@ export default class JitsiStreamBackgroundEffect {
 				const destinationWidth = this._outputCanvasElement.width
 				const destinationHeight = this._outputCanvasElement.height
 
-				const [sourceX, sourceY, sourceWidth, sourceHeight] = JitsiStreamBackgroundEffect.getSourcePropertiesForDrawingBackgroundImage(sourceWidthOriginal, sourceHeightOriginal, destinationWidth, destinationHeight)
+				const [sourceX, sourceY, sourceWidth, sourceHeight] = VideoStreamBackgroundEffect.getSourcePropertiesForDrawingBackgroundImage(sourceWidthOriginal, sourceHeightOriginal, destinationWidth, destinationHeight)
 
 				this._outputCanvasCtx.drawImage(
 					source,
@@ -651,7 +651,7 @@ export default class JitsiStreamBackgroundEffect {
 	}
 
 	/**
-	 * Destroys the JitsiStreamBackgroundEffect instance and releases all resources.
+	 * Destroys the VideoStreamBackgroundEffect instance and releases all resources.
 	 */
 	destroy() {
 		this.stopEffect()
