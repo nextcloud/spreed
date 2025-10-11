@@ -33,7 +33,7 @@
     "@matrix-org/olm": "^3.2.15",
     "@nextcloud/auth": "^2.4.0",
     "@nextcloud/axios": "^2.5.1",
-    "@nextcloud/browser-storage": "^0.4.0",
+    "@nextcloud/browser-storage": "^0.5.0",
     "@nextcloud/capabilities": "^1.2.0",
     "@nextcloud/cdav-library": "^2.1.1",
     "@nextcloud/dialogs": "^7.0.0-rc.3",
