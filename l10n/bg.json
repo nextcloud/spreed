@@ -1369,14 +1369,11 @@
     "Tasks" : "Задачи",
     "Notes" : "Бележки",
     "Reports" : "Доклади",
-    "You tried to call {user}" : "Опитахте се да се обадите на {user}",
     "%s invited you to a conversation." : "%s ви покани на разговор.",
     "You were invited to a conversation." : "Бяхте поканени на разговор.",
     "Click the button below to join." : "Щракнете върху долния бутон, за да се присъедините.",
     "Join »%s«" : "Присъединяване към »%s«",
-    "{user} invited you to a private conversation" : "{user} ви покани на личен разговор",
     "Always show the device preview screen before joining a call in this conversation." : "Винаги показвайте екрана за визуализация на устройството, преди да се присъедините с обаждане в този разговор.",
-    "Copy conversation link" : "Копиране на връзката за разговор",
     "Media settings" : "Настройки на медиите",
     "Always show preview for this conversation" : "Винаги да се показва предварителен преглед за този разговор",
     "Call without notification" : "Обаждане без известие",
@@ -1386,17 +1383,10 @@
     "Today" : "Днес",
     "Yesterday" : "Вчера",
     "_%n day ago_::_%n days ago_" : ["преди %n ден","преди %n дни"],
-    "Close" : "Затваряне",
     "Choose devices" : "Избор на устройства",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk беше актуализиран, трябва да презаредите страницата, преди да можете да започнете или да се присъедините към обаждане.",
     "Blur background" : "Замъгляване на фона",
     "Sharing your screen only works with Firefox version 52 or newer." : "Споделянето на вашия екран работи само с Firefox версия 52 или по-нова.",
     "Screensharing extension is required to share your screen." : "За споделяне на вашия екран е нужно разширение за споделяне на екрана.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Моля, използвайте друг браузър, като Firefox или Chrome, за да споделите екрана си.",
-    "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk беше актуализиран, моля, презаредете страницата",
-    "An error happened when trying to share your file" : "Възникна грешка при опит за споделяне на вашия файл",
-    "Failed to join the conversation. Try to reload the page." : "Присъединяването към разговора не беше успешно. Опитайте да презаредите страницата.",
-    "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud е в режим на поддръжка, моля, презаредете страницата",
-    "Lost connection to signaling server. Try to reload the page manually." : "Загубена връзка със сървъра за сигнализация. Опитайте да презаредите страницата ръчно."
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Моля, използвайте друг браузър, като Firefox или Chrome, за да споделите екрана си."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

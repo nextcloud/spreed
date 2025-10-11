@@ -333,7 +333,6 @@
     "__language_name__" : "Afrikaans",
     "Tasks" : "Take",
     "Today" : "Vandag",
-    "Yesterday" : "Gister",
-    "Close" : "Sluit"
+    "Yesterday" : "Gister"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

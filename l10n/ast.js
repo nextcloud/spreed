@@ -952,17 +952,12 @@ OC.L10N.register(
     "Notes" : "Notes",
     "Reports" : "Informes",
     "Call summary" : "Resume de llamaes",
-    "You tried to call {user}" : "Tentesti de llamar a {user}",
     "You were invited to a conversation." : "Convidáronte a una conversación.",
-    "{user} invited you to a private conversation" : "{user} convidóte a una conversación privada",
-    "Copy conversation link" : "Copiar l'enllaz de la conversación",
     "Media settings" : "Configuración multimedia",
     "Normal call" : "Llamada normal",
     "Today" : "Güei",
     "Yesterday" : "Ayeri",
     "A week ago" : "Hai una selmana",
-    "_%n day ago_::_%n days ago_" : ["Hai %n día","Hai %n díes"],
-    "Close" : "Zarrar",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Anovóse Nextcloud Talk. Tienes de volver cargar la páxina enantes de poder aniciar o xunite a una llamada."
+    "_%n day ago_::_%n days ago_" : ["Hai %n día","Hai %n díes"]
 },
 "nplurals=2; plural=(n != 1);");

@@ -710,24 +710,15 @@
     "__language_name__" : "Tiếng Việt",
     "Tasks" : "Nhiệm vụ",
     "Notes" : "Ghi chú",
-    "You tried to call {user}" : "Bạn đã cố gắng gọi {user}",
     "%s invited you to a conversation." : "%s đã được mời vào cuộc trò chuyện",
     "You were invited to a conversation." : "Bạn đã được mời vào cuộc trò chuyện",
     "Click the button below to join." : "Click vào nút bên dưới để tham gia",
     "Join »%s«" : "Tham gia »%s«",
-    "{user} invited you to a private conversation" : "{user} đã mời bạn tham gia cuộc trò chuyện riêng",
-    "Copy conversation link" : "Sao chép liên kết cuộc trò chuyện",
     "Today" : "Hôm nay",
     "Yesterday" : "Hôm qua",
-    "Close" : "Đóng",
     "Choose devices" : "Chọn thiết bị",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "vWorkspace Talk đã được cập nhật, bạn cần tải lại trang trước khi có thể bắt đầu hoặc tham gia cuộc gọi.",
     "Sharing your screen only works with Firefox version 52 or newer." : "Chia sẻ màn hình của bạn chỉ hoạt động với Firefox phiên bản 52 trở lên.",
     "Screensharing extension is required to share your screen." : "Cần có tiện ích mở rộng để chia sẻ màn hình của bạn.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Vui lòng sử dụng một trình duyệt khác như Firefox hoặc Chrome để chia sẻ màn hình của bạn.",
-    "Nextcloud Talk was updated, please reload the page" : "vWorkspace Talk đã được cập nhật, vui lòng tải lại trang",
-    "Failed to join the conversation. Try to reload the page." : "Không tham gia được cuộc trò chuyện. Hãy thử tải lại trang.",
-    "Nextcloud is in maintenance mode, please reload the page" : "vWorkspace đang ở chế độ bảo trì, vui lòng tải lại trang",
-    "Lost connection to signaling server. Try to reload the page manually." : "Mất kết nối với máy chủ báo hiệu. Cố gắng tải lại trang theo cách thủ công."
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Vui lòng sử dụng một trình duyệt khác như Firefox hoặc Chrome để chia sẻ màn hình của bạn."
 },"pluralForm" :"nplurals=1; plural=0;"
 }
