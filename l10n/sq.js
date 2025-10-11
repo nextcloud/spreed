@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "_%n guest_::_%n guests_" : ["%n të ftuar","%n të ftuar"],
     "Guest" : "I ftuar",
+    "Message deleted by author" : "Mesazhi u fshi nga autori",
     "System" : "Sistem",
     "File is too big" : "Skedari është shumë i madh",
     "Invalid file provided" : "U dha kartelë e pavlefshme",
@@ -275,7 +276,6 @@ OC.L10N.register(
     "Today" : "Sot",
     "Yesterday" : "Dje",
     "_%n day ago_::_%n days ago_" : ["%n ditë më parë","%n ditë më parë"],
-    "Close" : "Mbylleni",
     "Sharing your screen only works with Firefox version 52 or newer." : "Ndarja e ekranit punon vetëm me Firefox, versionin 52 ose më të ri.",
     "Screensharing extension is required to share your screen." : "Zgjerim i ndarja së Ekranit është i nevojshëm për të ndarë ekranin tuaj.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Ju lutem përdorni një browser tjetër si Firefox ose Chrome për të ndarë ekranin tuaj."

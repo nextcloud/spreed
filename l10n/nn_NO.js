@@ -129,7 +129,6 @@ OC.L10N.register(
     "Tasks" : "Oppgåver",
     "Today" : "I dag",
     "Yesterday" : "i går",
-    "_%n day ago_::_%n days ago_" : ["%n dag sidan","%n dagar sidan"],
-    "Close" : "Lukk"
+    "_%n day ago_::_%n days ago_" : ["%n dag sidan","%n dagar sidan"]
 },
 "nplurals=2; plural=(n != 1);");

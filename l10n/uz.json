@@ -44,6 +44,7 @@
     "Reset" : "Qayta tiklash",
     "Back" : "Orqaga",
     "Cancel" : "Bekor qilish",
+    "Now" : "Hozir",
     "From" : "Dan",
     "To" : "Gacha",
     "Calendar" : "Calendar",
@@ -125,7 +126,6 @@
     "Notes" : "Eslatmalar",
     "Reports" : "Hisobotlar",
     "Today" : "Today",
-    "Yesterday" : "Kecha",
-    "Close" : "Yopish"
+    "Yesterday" : "Kecha"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

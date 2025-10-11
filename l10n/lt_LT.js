@@ -950,9 +950,6 @@ OC.L10N.register(
     "You were invited to a conversation." : "Jūs buvote pakviesti į pokalbį.",
     "Click the button below to join." : "Norėdami prisijungti, spustelėkite mygtuką žemiau.",
     "Join »%s«" : "Prisijungti prie »%s«",
-    "{user} invited you to a private conversation" : "{user} jus pakvietė į privatų pokalbį",
-    "Please try to reload the page" : "Pabandykite įkelti puslapį iš naujo",
-    "Copy conversation link" : "Kopijuoti pokalbio nuorodą",
     "Refresh devices list" : "Įkelti iš naujo įrenginių sąrašą",
     "Media settings" : "Medijos nustatymai",
     "Always show preview for this conversation" : "Visada rodyti šio pokalbio peržiūrą",
@@ -960,16 +957,10 @@ OC.L10N.register(
     "Yesterday" : "Vakar",
     "A week ago" : "Prieš savaitę",
     "_%n day ago_::_%n days ago_" : ["prieš %n dieną","prieš %n dienas","prieš %n dienų","prieš %n dieną"],
-    "Close" : "Užverti",
     "Choose devices" : "Pasirinkti įrenginius",
-    "Next call" : "Kitas skambutis",
     "Blur background" : "Sulieti foną",
     "Sharing your screen only works with Firefox version 52 or newer." : "Ekrano bendrinimas veikia tik naudojant Firefox 52 arba naujesnę versiją.",
     "Screensharing extension is required to share your screen." : "Norint bendrinti ekraną yra reikalingas ekrano bendrinimo plėtinys.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Norėdami bendrinti savo ekraną, naudokite kitą naršyklę, tokią kaip Firefox ar Chrome.",
-    "Nextcloud Talk was updated, please reload the page" : "Nextcloud Pokalbiai buvo atnaujinti, įkelkite puslapį iš naujo",
-    "An error happened when trying to share your file" : "Bandant bendrinti jūsų failą įvyko klaida",
-    "Failed to join the conversation. Try to reload the page." : "Nepavyko prisijungti prie pokalbio. Pabandykite įkelti puslapį iš naujo.",
-    "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud yra techninės priežiūros veiksenoje, įkelkite puslapį iš naujo"
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Norėdami bendrinti savo ekraną, naudokite kitą naršyklę, tokią kaip Firefox ar Chrome."
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

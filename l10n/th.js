@@ -116,7 +116,6 @@ OC.L10N.register(
     "Notes" : "โน้ต",
     "Today" : "วันนี้",
     "Yesterday" : "เมื่อวาน",
-    "_%n day ago_::_%n days ago_" : ["%n วันที่ผ่านมา"],
-    "Close" : "ปิด"
+    "_%n day ago_::_%n days ago_" : ["%n วันที่ผ่านมา"]
 },
 "nplurals=1; plural=0;");

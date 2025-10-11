@@ -382,7 +382,6 @@ OC.L10N.register(
     "Today" : "Hari ini",
     "Yesterday" : "Kemarin",
     "_%n day ago_::_%n days ago_" : ["%n hari yang lalu"],
-    "Close" : "Tutup",
     "Choose devices" : "Pilih perangkat"
 },
 "nplurals=1; plural=0;");
