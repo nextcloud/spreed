@@ -87,7 +87,7 @@
   "devDependencies": {
     "@nextcloud/browserslist-config": "^3.0.1",
     "@nextcloud/eslint-config": "^9.0.0-rc.5",
-    "@nextcloud/stylelint-config": "^3.1.0",
+    "@nextcloud/stylelint-config": "^3.1.1",
     "@rspack/cli": "^1.5.8",
     "@rspack/core": "^1.5.8",
     "@rspack/plugin-node-polyfill": "^0.5.8",
