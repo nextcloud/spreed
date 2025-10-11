@@ -599,11 +599,9 @@
     "You were invited to a conversation." : "Þér var boðið að taka þátt í samtali.",
     "Click the button below to join." : "Smelltu á hnappinn hér fyrir neðan til að taka þátt.",
     "Join »%s«" : "Taka þátt í »%s«",
-    "{user} invited you to a private conversation" : "{user} bauð þér að taka þátt í einkasímtali",
     "Today" : "Í dag",
     "Yesterday" : "Í gær",
     "_%n day ago_::_%n days ago_" : ["fyrir %n degi síðan","fyrir %n dögum síðan"],
-    "Close" : "Loka",
     "Sharing your screen only works with Firefox version 52 or newer." : "Skjádeiling virkar aðeins með Firefox útgáfu 52 eða nýrri.",
     "Screensharing extension is required to share your screen." : "Það þarf skjádeili-viðaukann til að hægt sé að deila skjánum.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Veldu einhvern annan vafra eins og Firefox eða Chrome til að deila skjánum þínum."

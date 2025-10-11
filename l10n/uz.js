@@ -46,6 +46,7 @@ OC.L10N.register(
     "Reset" : "Qayta tiklash",
     "Back" : "Orqaga",
     "Cancel" : "Bekor qilish",
+    "Now" : "Hozir",
     "From" : "Dan",
     "To" : "Gacha",
     "Calendar" : "Calendar",
@@ -127,7 +128,6 @@ OC.L10N.register(
     "Notes" : "Eslatmalar",
     "Reports" : "Hisobotlar",
     "Today" : "Today",
-    "Yesterday" : "Kecha",
-    "Close" : "Yopish"
+    "Yesterday" : "Kecha"
 },
 "nplurals=1; plural=0;");

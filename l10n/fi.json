@@ -1291,16 +1291,11 @@
     "Reports" : "Raportit",
     "Call summary" : "Puhelun yhteenveto",
     "Call summary - {title}" : "Puhelun yhteenveto - {title}",
-    "You tried to call {user}" : "Yritit soittaa käyttäjälle {user}",
     "%s invited you to a conversation." : "%s kutsui sinut keskusteluun.",
     "You were invited to a conversation." : "Sinut kutsuttiin keskusteluun.",
     "Click the button below to join." : "Napsauta alla olevaa painiketta liittyäksesi.",
     "Join »%s«" : "Liity »%s«",
-    "{user} invited you to a private conversation" : "{user} kutsui sinut yksityiskeskusteluun",
     "Always show the device preview screen before joining a call in this conversation." : "Näytä aina laitteen esikatselunäkymä ennen liittymistä puheluun tässä keskustelussa.",
-    "Copy conversation link" : "Kopioi keskustelulinkki",
-    "Filter unread mentions" : "Suodata lukemattomat maininnat",
-    "Filter unread messages" : "Suodata lukemattomat viestit",
     "Refresh devices list" : "Päivitä laitelista",
     "Media settings" : "Media-asetukset",
     "Always show preview for this conversation" : "Näytä aina esikatselu tälle keskustelulle",
@@ -1312,15 +1307,10 @@
     "Yesterday" : "Eilen",
     "A week ago" : "Viikko sitten",
     "_%n day ago_::_%n days ago_" : ["%n päivä sitten","%n päivää sitten"],
-    "Close" : "Sulje",
     "Choose devices" : "Valitse laitteet",
     "Blur background" : "Sumenna tausta",
     "Sharing your screen only works with Firefox version 52 or newer." : "Näytön jakaminen toimii vain Firefox-selaimen versiolla 52 tai sitä uudemmilla.",
     "Screensharing extension is required to share your screen." : "Liitännäinen vaaditaan näytön jakamiseen.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Käytä näytön jakamiseen jotain toista selainta, kuten Firefoxia tai Chromea.",
-    "Nextcloud Talk was updated, please reload the page" : "Nextcloud Talk päivitettiin, lataa sivu uudelleen",
-    "An error happened when trying to share your file" : "Virhe yrittäessä jakaa tiedostoasi",
-    "Failed to join the conversation. Try to reload the page." : "Liittyminen keskusteluun epäonnistui. Päivitä sivu.",
-    "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud on huoltotilassa, päivitä sivu"
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Käytä näytön jakamiseen jotain toista selainta, kuten Firefoxia tai Chromea."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -398,7 +398,6 @@ OC.L10N.register(
     "Today" : "Hoje",
     "Yesterday" : "Ontem",
     "_%n day ago_::_%n days ago_" : ["%n dia atrás","%n dias atrás","%n dias atrás"],
-    "Close" : "Fechar",
     "Sharing your screen only works with Firefox version 52 or newer." : "Partilhar o seu ecrã no Firefox apenas funciona com versão 52 ou mais recente. ",
     "Screensharing extension is required to share your screen." : "Extensão de partilha de ecrã é necessária para partilhar o seu ecrã.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor use um browser diferente como o Firefox ou o Chrome para partilhar o seu ecrã."

@@ -514,11 +514,9 @@ OC.L10N.register(
     "You were invited to a conversation." : "fuiste invitado a una conversación",
     "Click the button below to join." : "Haz click en el botón de abajo para unirte.",
     "Join »%s«" : "Unirse »%s«",
-    "{user} invited you to a private conversation" : " {user} te invitó a una conversación privada",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
-    "Close" : "Cerrar",
     "Sharing your screen only works with Firefox version 52 or newer." : "Compartir la pantalla sólo funciona con Firefox versión 52 o superior. ",
     "Screensharing extension is required to share your screen." : "Se requiere de la extenisón de compartir pantalla para compartir tu pantalla. ",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor usa un navegador diferente como Firefox o Chrome para compartir tu pantalla."

@@ -335,7 +335,6 @@ OC.L10N.register(
     "__language_name__" : "Afrikaans",
     "Tasks" : "Take",
     "Today" : "Vandag",
-    "Yesterday" : "Gister",
-    "Close" : "Sluit"
+    "Yesterday" : "Gister"
 },
 "nplurals=2; plural=(n != 1);");

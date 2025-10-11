@@ -361,7 +361,6 @@ OC.L10N.register(
     "Tasks" : "Taskoj",
     "Today" : "Hodiaŭ",
     "Yesterday" : "Hieraŭ",
-    "_%n day ago_::_%n days ago_" : ["antaŭ %n tago","antaŭ %n tagoj"],
-    "Close" : "Malfermi"
+    "_%n day ago_::_%n days ago_" : ["antaŭ %n tago","antaŭ %n tagoj"]
 },
 "nplurals=2; plural=(n != 1);");
