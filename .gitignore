@@ -21,6 +21,12 @@
 /drone
 /findings.sarif
 
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
 # PHP Dev server output (integration tests)
 /tests/integration/phpserver*.log
 
