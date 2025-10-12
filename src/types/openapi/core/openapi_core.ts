@@ -4531,7 +4531,7 @@ export interface operations {
                 term?: string;
                 /** @description Order of entries */
                 sortOrder?: number | null;
-                /** @description Maximum amount of entries, limited to 25 */
+                /** @description Maximum amount of entries (capped by configurable unified-search.max-results-per-request, default: 25) */
                 limit?: number | null;
                 /** @description Offset for searching */
                 cursor?: (number | string) | null;
