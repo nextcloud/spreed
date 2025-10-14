@@ -2,14 +2,14 @@
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import landscape from './vendor/models/selfie_segmentation_landscape.tflite'
+import segmenter from './vendor/models/selfie_segmenter.tflite'
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd.js'
 import withSIMD from './vendor/tflite/tflite-simd.wasm'
 import createTFLiteModule from './vendor/tflite/tflite.js'
 import withoutSIMD from './vendor/tflite/tflite.wasm'
 
 const models = {
-	modelLandscape: landscape.split('/').pop(),
+	model: segmenter.split('/').pop(),
 }
 
 self.compiled = false
@@ -63,7 +63,7 @@ async function makeTFLite(isSimd) {
 				return
 		}
 		self.modelBufferOffset = self.tflite._getModelBufferMemoryOffset()
-		self.modelResponse = await fetch(models.modelLandscape)
+		self.modelResponse = await fetch(models.model)
 
 		if (!self.modelResponse.ok) {
 			throw new Error('Failed to download tflite model!')
