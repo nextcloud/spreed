@@ -41,7 +41,7 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import { VIRTUAL_BACKGROUND } from '../../constants.ts'
-import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
+import VideoStreamBackgroundEffect from '../../utils/media/effects/virtual-background/VideoStreamBackgroundEffect.js'
 import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
 
 export default {
@@ -157,11 +157,11 @@ export default {
 
 			__webpack_public_path__ = generateFilePath('spreed', 'js', '')
 
-			const jitsiStreamBackgroundEffect = new JitsiStreamBackgroundEffect(options)
+			const videoStreamBackgroundEffect = new VideoStreamBackgroundEffect(options)
 
 			__webpack_public_path__ = __webpack_public_path__saved
 
-			jitsiStreamBackgroundEffect.load().then(() => {
+			videoStreamBackgroundEffect.load().then(() => {
 				this.virtualBackgroundLoaded = true
 			}).catch(() => {
 				this.virtualBackgroundLoaded = false
