@@ -395,6 +395,7 @@ OC.L10N.register(
     "Reset" : "Atiestatīt",
     "Back" : "Atpakaļ",
     "Cancel" : "Atcelt",
+    "Now" : "Tagad",
     "Loading …" : "Ielādē…",
     "From" : "No",
     "To" : "Līdz",
