@@ -8,12 +8,12 @@ import createTFLiteSIMDModule from './vendor/tflite/tflite-simd.js'
 import createTFLiteModule from './vendor/tflite/tflite.js'
 
 const models = {
-	modelLandscape: 'libs/selfie_segmentation_landscape.tflite',
+	segmenter: 'libs/selfie_segmenter.tflite',
 }
 
 const segmentationDimensions = {
-	modelLandscape: {
-		height: 144,
+	square: {
+		height: 256,
 		width: 256,
 	},
 }
@@ -49,7 +49,7 @@ export async function createVirtualBackgroundEffect(virtualBackground, dispatch)
 	}
 
 	const modelBufferOffset = tflite._getModelBufferMemoryOffset()
-	const modelResponse = await fetch(models.modelLandscape)
+	const modelResponse = await fetch(models.segmenter)
 
 	if (!modelResponse.ok) {
 		throw new Error('Failed to download tflite model!')
@@ -62,7 +62,7 @@ export async function createVirtualBackgroundEffect(virtualBackground, dispatch)
 	tflite._loadModel(model.byteLength)
 
 	const options = {
-		...segmentationDimensions.modelLandscape,
+		...segmentationDimensions.square,
 		virtualBackground,
 	}
 
