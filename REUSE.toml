@@ -54,7 +54,7 @@ SPDX-FileCopyrightText = "none"
 SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
-path = ["src/utils/media/effects/virtual-background/vendor/tflite/**.wasm", "src/utils/media/effects/virtual-background/vendor/models/selfie_segmenter.tflite", "src/utils/media/effects/virtual-background/vendor/models/Model Card MediaPipe Selfie Segmentation.pdf", "src/utils/media/effects/virtual-background/vendor/README.md"]
+path = ["src/utils/media/effects/virtual-background/vendor/models/selfie_segmenter.tflite", "src/utils/media/effects/virtual-background/vendor/models/Model Card MediaPipe Selfie Segmentation.pdf", "src/utils/media/effects/virtual-background/vendor/README.md"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2019-2022 The MediaPipe Authors"
 SPDX-License-Identifier = "Apache-2.0"
