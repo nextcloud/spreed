@@ -656,7 +656,7 @@ export default {
 
 		handleTyping() {
 			// Enable signal sending, only if indicator for this input is on
-			if (!this.showTypingStatus) {
+			if (!this.showTypingStatus || this.messageToEdit) {
 				return
 			}
 
