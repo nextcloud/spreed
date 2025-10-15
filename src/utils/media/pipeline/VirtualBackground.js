@@ -137,8 +137,6 @@ export default class VirtualBackground extends TrackSinkSource {
 			return
 		}
 
-		const webGL = VirtualBackground.isWebGLSupported()
-
 		const virtualBackground = {
 			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
 			blurValue: VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT,
@@ -146,7 +144,7 @@ export default class VirtualBackground extends TrackSinkSource {
 		const options = {
 			...segmentationDimensions.modelLandscape,
 			virtualBackground,
-			webGL,
+			webGL: VirtualBackground.isWebGLSupported(),
 		}
 
 		this._videoStreamBackgroundEffect = new VideoStreamBackgroundEffect(options)
