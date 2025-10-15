@@ -175,7 +175,7 @@ export default class VirtualBackground extends TrackSinkSource {
 			enabled = false
 		}
 
-		if (this.enabled === enabled) {
+		if (this._enabled === enabled) {
 			return
 		}
 
