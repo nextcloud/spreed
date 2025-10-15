@@ -667,7 +667,7 @@ export default class VideoStreamBackgroundEffect {
 	 */
 	destroy() {
 		this.stopEffect()
-		this._imageSegmenter.close()
+		this._imageSegmenter?.close()
 		this._imageSegmenter = null
 	}
 }
