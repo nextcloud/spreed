@@ -90,7 +90,7 @@ export default class VideoStreamBackgroundEffect {
 	 */
 	async _initMediaPipe() {
 		try {
-			const vision = await FilesetResolver.forVisionTasks(generateFilePath('spreed', 'js', ''))
+			const vision = await FilesetResolver.forVisionTasks(generateFilePath('spreed', '', 'js'))
 
 			this._imageSegmenter = await ImageSegmenter.createFromOptions(vision, {
 				baseOptions: {
