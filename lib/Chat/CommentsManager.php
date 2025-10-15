@@ -41,7 +41,7 @@ class CommentsManager extends Manager {
 			->where($query->expr()->in('id', $query->createNamedParameter($commentIds, IQueryBuilder::PARAM_INT_ARRAY)));
 
 		$comments = [];
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$comments[(int)$row['id']] = $this->getCommentFromData($row);
 		}
@@ -205,7 +205,7 @@ class CommentsManager extends Manager {
 			}
 		}
 
-		$resultStatement = $query->execute();
+		$resultStatement = $query->executeQuery();
 		while ($data = $resultStatement->fetch()) {
 			$comment = $this->getCommentFromData($data);
 			$this->cache($comment);
