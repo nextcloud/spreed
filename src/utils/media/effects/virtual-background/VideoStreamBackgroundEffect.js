@@ -14,6 +14,9 @@ import {
 } from './TimerWorker.js'
 import WebGLCompositor from './WebGLCompositor.js'
 
+// Cache MediaPipe resources to avoid loading them multiple times.
+let _WasmFileset = null
+
 /**
  * Represents a modified MediaStream that applies virtual background effects
  * (blur, image, video, or video stream) using MediaPipe segmentation.
@@ -90,9 +93,18 @@ export default class VideoStreamBackgroundEffect {
 	 */
 	async _initMediaPipe() {
 		try {
-			const vision = await FilesetResolver.forVisionTasks(generateFilePath('spreed', '', 'js'))
+			/**
+			 * Creates a fileset for the MediaPipe Vision tasks (object with paths to binaries)
+			 * Checks inside, if SIMD is supported to load the appropriate fileset
+			 */
+			if (!_WasmFileset) {
+				_WasmFileset = await FilesetResolver.forVisionTasks(generateFilePath('spreed', '', 'js'))
+			}
 
-			this._imageSegmenter = await ImageSegmenter.createFromOptions(vision, {
+			/**
+			 * Loads binaries and create an image segmentation TaskRunner
+			 */
+			this._imageSegmenter = await ImageSegmenter.createFromOptions(_WasmFileset, {
 				baseOptions: {
 					modelAssetPath: generateFilePath('spreed', 'js', 'selfie_segmenter.tflite'),
 					delegate: 'GPU',
