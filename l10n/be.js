@@ -1319,7 +1319,7 @@ OC.L10N.register(
     "Integrations" : "Інтэграцыі",
     "Searching …" : "Пошук …",
     "Search for more users" : "Пошук іншых карыстальнікаў",
-    "You can search or add participants via name, email, or Federated Cloud ID" : "Вы можаце шукаць або дадаваць удзельнікаў па імені, электроннай пошце або ідэнтыфікатары федэратыўнага воблака.",
+    "You can search or add participants via name, email, or Federated Cloud ID" : "Вы можаце шукаць або дадаваць удзельнікаў па імені, электроннай пошце або ідэнтыфікатары ў федэратыўным воблаку.",
     "Search or add participants" : "Знайсці або дадаць удзельнікаў",
     "Invitation was sent to {actorId}" : "Запрашэнне адпраўлена {actorId}",
     "An error occurred while adding the participants" : "Падчас дадавання ўдзельнікаў узнікла памылка",
