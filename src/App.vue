@@ -240,12 +240,10 @@ export default {
 		if (!getCurrentUser()) {
 			/**
 			 * When guest opens a public conversation, we wait for it to be fetched,
-			 * then joining and setting the 30 seconds interval to update information
+			 * then setting the 30 seconds interval to update information.
+			 * Joining is handled by router (initial navigation to 'conversation')
 			 */
 			EventBus.once('conversations-received', (params) => {
-				if (params.singleConversation) {
-					this.$store.dispatch('joinConversation', { token: params.singleConversation.token })
-				}
 				setInterval(() => {
 					this.refreshCurrentConversation()
 				}, 30_000)
