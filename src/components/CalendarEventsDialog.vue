@@ -348,7 +348,8 @@ async function submitNewMeeting() {
 				<NcButton
 					class="upcoming-meeting"
 					:title="t('spreed', 'Upcoming meetings')"
-					:aria-label="t('spreed', 'Upcoming meetings')">
+					:aria-label="t('spreed', 'Upcoming meetings')"
+					:variant="tertiary">
 					<template #icon>
 						<IconCalendarBlankOutline :size="20" />
 					</template>
