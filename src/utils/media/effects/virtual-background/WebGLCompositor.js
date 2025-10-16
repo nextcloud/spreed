@@ -537,6 +537,44 @@ export default class WebGLCompositor {
 	}
 
 	/**
+	 * Render the source video as is, without applying any kind of effects
+	 *
+	 * @param {number} outW - Output width.
+	 * @param {number} outH - Output height.
+	 */
+	_renderWithoutEffects(outW, outH) {
+		const gl = this.gl
+
+		gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+		gl.viewport(0, 0, outW, outH)
+		gl.clearColor(0, 0, 0, 1)
+		gl.clear(gl.COLOR_BUFFER_BIT)
+
+		// Reuse the blend program but disable mask/background sampling
+		gl.useProgram(this.progBlend)
+		this._setupVertexAttributes(this.progBlend)
+
+		gl.uniform1i(gl.getUniformLocation(this.progBlend, 'u_inputFrame'), 0)
+		gl.uniform1i(gl.getUniformLocation(this.progBlend, 'u_personMask'), 1)
+		gl.uniform1i(gl.getUniformLocation(this.progBlend, 'u_blurredFrame'), 2)
+		gl.uniform1i(gl.getUniformLocation(this.progBlend, 'u_background'), 3)
+		gl.uniform2f(gl.getUniformLocation(this.progBlend, 'u_coverage'), 0.0, 0.0)
+		gl.uniform1f(gl.getUniformLocation(this.progBlend, 'u_lightWrapping'), 0.0)
+		gl.uniform1i(gl.getUniformLocation(this.progBlend, 'u_mode'), -1)
+
+		gl.activeTexture(gl.TEXTURE0)
+		gl.bindTexture(gl.TEXTURE_2D, this.texFrame)
+		gl.activeTexture(gl.TEXTURE1)
+		gl.bindTexture(gl.TEXTURE_2D, null)
+		gl.activeTexture(gl.TEXTURE2)
+		gl.bindTexture(gl.TEXTURE_2D, null)
+		gl.activeTexture(gl.TEXTURE3)
+		gl.bindTexture(gl.TEXTURE_2D, null)
+
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+	}
+
+	/**
 	 * Run the full compositing pipeline.
 	 *
 	 * @param {object} opts - Rendering options.
@@ -572,12 +610,19 @@ export default class WebGLCompositor {
 			this.canvas.width = outW
 			this.canvas.height = outH
 		}
-		// Allocate mask filtered texture
-		gl.bindTexture(gl.TEXTURE_2D, this.texMaskFiltered)
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, outW, outH, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
 
 		// Upload video frame
 		this._upload(this.texFrame, videoEl)
+
+		// Shortcut if we have no mask or mode is no effects
+		if (mode === -1 || !mask) {
+			this._renderWithoutEffects(outW, outH)
+			return
+		}
+
+		// Allocate mask filtered texture
+		gl.bindTexture(gl.TEXTURE_2D, this.texMaskFiltered)
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, outW, outH, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
 
 		// Upload and process mask
 		if (mask) {
