@@ -238,7 +238,12 @@ import { useSettingsStore } from '../../stores/settings.ts'
 import { useTokenStore } from '../../stores/token.ts'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
-import { getCurrentSelectionRange, insertTextInElement, selectRange } from '../../utils/selectionRange.ts'
+import {
+	getCurrentSelectionRange,
+	getRangeAtEnd,
+	insertTextInElement,
+	selectRange,
+} from '../../utils/selectionRange.ts'
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
 
 export default {
@@ -973,7 +978,8 @@ export default {
 		},
 
 		restoreSelectionRange() {
-			selectRange(this.preservedSelectionRange, this.getContenteditable())
+			// If nothing to restore, set cursor at the end
+			selectRange(this.preservedSelectionRange ?? getRangeAtEnd(this.getContenteditable()), this.getContenteditable())
 			this.preservedSelectionRange = null
 		},
 
