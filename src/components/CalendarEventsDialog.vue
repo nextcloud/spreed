@@ -349,7 +349,7 @@ async function submitNewMeeting() {
 					class="upcoming-meeting"
 					:title="t('spreed', 'Upcoming meetings')"
 					:aria-label="t('spreed', 'Upcoming meetings')"
-					:variant="tertiary">
+					variant="tertiary">
 					<template #icon>
 						<IconCalendarBlankOutline :size="20" />
 					</template>
