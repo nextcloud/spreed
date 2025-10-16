@@ -75,16 +75,21 @@ class ThreadMapper extends QBMapper {
 	 * @return list<Thread>
 	 */
 	public function getForIds(array $threadIds): array {
+		$threads = [];
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from($this->getTableName())
-			->where($query->expr()->in(
+			->from($this->getTableName());
+		foreach (array_chunk($threadIds, 1000) as $ids) {
+			$query->where($query->expr()->in(
 				'id',
-				$query->createNamedParameter($threadIds, IQueryBuilder::PARAM_INT_ARRAY),
+				$query->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY),
 				IQueryBuilder::PARAM_INT,
 			));
+			$threads[] = $this->findEntities($query);
+		}
 
-		return $this->findEntities($query);
+
+		return array_merge(...$threads);
 	}
 
 
