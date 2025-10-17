@@ -367,4 +367,12 @@ export default {
 	height: 100%;
 }
 
+.avatar-wrapper:not(.avatar-wrapper--dark) {
+	// FIXME: update the used color in NcAvatar
+	// TOREMOVE: when fixed in @nextcloud/vue
+	:deep(.avatar-class-icon) {
+		background-color: var(--color-text-maxcontrast-default);
+	}
+}
+
 </style>
