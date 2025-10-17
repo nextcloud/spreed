@@ -8,6 +8,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Signaling;
 
+use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AMessageSentEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
@@ -41,9 +44,12 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Service\ThreadService;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\L10N\IFactory;
 use OCP\Server;
 
 /**
@@ -75,6 +81,9 @@ class Listener implements IEventListener {
 		protected ParticipantService $participantService,
 		protected SessionService $sessionService,
 		protected ITimeFactory $timeFactory,
+		protected MessageParser $messageParser,
+		protected ThreadService $threadService,
+		protected IFactory $l10nFactory,
 	) {
 	}
 
@@ -463,12 +472,37 @@ class Listener implements IEventListener {
 		}
 
 		$room = $event->getRoom();
-		$message = [
+		$data = [
 			'type' => 'chat',
 			'chat' => [
 				'refresh' => true,
 			],
 		];
-		$this->externalSignaling->sendRoomMessage($room, $message);
+
+		if ($event->getComment()->getVerb() !== ChatManager::VERB_MESSAGE) {
+			$this->externalSignaling->sendRoomMessage($room, $data);
+			return;
+		}
+
+
+		$comment = $event->getComment();
+		$l10n = $this->l10nFactory->get(Application::APP_ID, 'en');
+		$message = $this->messageParser->createMessage($event->getRoom(), null, $comment, $l10n);
+		$this->messageParser->parseMessage($message);
+		if ($message->getVisibility() === false) {
+			$this->externalSignaling->sendRoomMessage($room, $data);
+			return;
+		}
+
+		$threadId = (int)$comment->getTopmostParentId() ?: $comment->getId();
+		try {
+			$thread = $this->threadService->findByThreadId($room->getId(), (int)$threadId);
+		} catch (DoesNotExistException) {
+			$thread = null;
+		}
+
+		$data['chat']['comment'] = $message->toArray('json', $thread);
+		$this->externalSignaling->sendRoomMessage($room, $data);
+
 	}
 }

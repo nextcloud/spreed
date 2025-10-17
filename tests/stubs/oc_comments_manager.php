@@ -80,7 +80,7 @@ class Manager implements \OCP\Comments\ICommentsManager {
 		// TODO: Implement getNumberOfUnreadCommentsForFolder() method.
 	}
 
-	public function create($actorType, $actorId, $objectType, $objectId) {
+	public function create($actorType, $actorId, $objectType, $objectId) :IComment {
 		// TODO: Implement create() method.
 	}
 
