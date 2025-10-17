@@ -69,7 +69,7 @@ jobs:
           - 'sharing-3'
           - 'sharing-4'
         php-versions: ['8.3']
-        server-versions: ['master']
+        server-versions: ['port-55471']
         guests-versions: ['main']
         circles-versions: ['master']
         notifications-versions: ['master']
