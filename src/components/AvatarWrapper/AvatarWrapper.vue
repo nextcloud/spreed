@@ -6,11 +6,11 @@
 <template>
 	<div class="avatar-wrapper" :class="avatarClass" :style="avatarStyle">
 		<NcAvatar
-			v-if="isGuestUser || iconClass"
+			v-if="isSpecialAvatar"
+			:key="name + '_' + id"
 			class="avatar"
 			:user="name + '_' + id"
-			url="undefined"
-			:key="name + '_' + id"
+			:url="!isFederatedUser ? undefined : avatarUrl"
 			:icon-class="iconClass"
 			:display-name="name"
 			:disable-tooltip="disableTooltip"
@@ -19,24 +19,12 @@
 			:verbose-status="!showUserStatusCompact"
 			:preloaded-user-status="preloadedUserStatus ?? emptyUserStatus"
 			:size="size">
-			<template v-if="isGuestUser" #icon>
-				<div class="avatar" :class="guestIconClass">
-					{{ firstLetterOfGuestName }}
+			<template v-if="isGuestUser || isBot" #icon>
+				<div class="avatar" :class="characterIconClass">
+					{{ characterIcon }}
 				</div>
 			</template>
 		</NcAvatar>
-		<div v-else-if="isBot" class="avatar bot">
-			>_
-		</div>
-		<img
-			v-else-if="isFederatedUser && token"
-			:key="avatarUrl"
-			:src="avatarUrl"
-			:width="size"
-			:height="size"
-			:alt="name"
-			class="avatar icon"
-			@error="failed = true">
 		<NcAvatar
 			v-else
 			:key="id + (isDarkTheme ? '-dark' : '-light')"
@@ -204,11 +192,13 @@ export default {
 			}
 		},
 
-		guestIconClass() {
+		characterIconClass() {
 			if (this.source === ATTENDEE.ACTOR_TYPE.EMAILS) {
 				return this.token === 'new' ? 'icon-mail' : (this.hasCustomName ? 'guest' : 'icon-user')
 			} else if (this.source === ATTENDEE.ACTOR_TYPE.GUESTS) {
 				return this.hasCustomName ? 'guest' : 'icon-user'
+			} else if (this.isBot) {
+				return 'bot'
 			}
 
 			return undefined
@@ -246,7 +236,10 @@ export default {
 			return this.name?.trim() && this.name !== t('spreed', 'Guest')
 		},
 
-		firstLetterOfGuestName() {
+		characterIcon() {
+			if (this.isBot) {
+				return '>_'
+			}
 			if (!this.hasCustomName || this.token === 'new') {
 				return ''
 			}
@@ -263,6 +256,10 @@ export default {
 				icon: null,
 				message: null,
 			}
+		},
+
+		isSpecialAvatar() {
+			return this.isGuestUser || this.iconClass || this.isBot || (this.isFederatedUser && this.token)
 		},
 	},
 
