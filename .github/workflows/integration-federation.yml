@@ -54,7 +54,7 @@ jobs:
           - test-suite: 'federation'
             php-versions: '8.2'
             host-db: 'oci'
-            host-server-versions: 'port-55471'
+            host-server-versions: 'port-55648'
             host-spreed-versions: ${{ github.event.pull_request.head.sha }}
             host-guests-versions: 'main'
             host-circles-versions: 'master'
@@ -68,7 +68,7 @@ jobs:
           - test-suite: 'federation'
             php-versions: '8.2'
             host-db: 'pgsql'
-            host-server-versions: 'port-55471'
+            host-server-versions: 'port-55648'
             host-spreed-versions: ${{ github.event.pull_request.head.sha }}
             host-guests-versions: 'main'
             host-circles-versions: 'master'
@@ -88,7 +88,7 @@ jobs:
             host-circles-versions: 'stable32'
             host-notifications-versions: 'stable32'
             remote-db: 'mysql'
-            remote-server-versions: 'port-55471'
+            remote-server-versions: 'port-55648'
             remote-spreed-versions: ${{ github.event.pull_request.head.sha }}
             remote-guests-versions: 'main'
             remote-circles-versions: 'master'
