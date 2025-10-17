@@ -265,6 +265,7 @@ export default {
 	// Restyle NcRichContenteditable component from our library.
 	:deep(.rich-contenteditable) {
 		flex-grow: 1;
+		min-width: 0;
 	}
 
 	:deep(.rich-text--wrapper) {
