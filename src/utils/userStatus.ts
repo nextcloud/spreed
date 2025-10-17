@@ -49,7 +49,8 @@ export function getPreloadedUserStatus(userData?: Conversation | Participant | P
 		}
 	}
 
-	if (userData.actorType === ATTENDEE.ACTOR_TYPE.GUESTS || userData.actorType === ATTENDEE.ACTOR_TYPE.EMAILS) {
+	if ('sessionIds' in userData && userData.sessionIds.length > 0
+		&& (userData.actorType === ATTENDEE.ACTOR_TYPE.GUESTS || userData.actorType === ATTENDEE.ACTOR_TYPE.EMAILS)) {
 		// Guests and email users do not have status, yet if it is online, show them as online
 		if (userData.sessionIds && userData.sessionIds.length > 0) {
 			return {
