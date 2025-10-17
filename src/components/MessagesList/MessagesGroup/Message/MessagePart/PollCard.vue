@@ -39,8 +39,30 @@
 		class="poll-card"
 		role="button"
 		@click="openPoll">
+		<div v-if="showPollStatus" class="poll-card__status">
+			<NcChip
+				:variant="pollImportance"
+				no-close
+				size="small">
+				<template #icon>
+					<IconCircle
+						:size="10" />
+				</template>
+				{{ poll?.status === POLL.STATUS.OPEN ? t('spreed', 'Open poll') : t('spreed', 'Closed poll') }}
+			</NcChip>
+			<NcChip
+				v-if="poll?.resultMode === POLL.MODE.HIDDEN"
+				variant="tertiary"
+				no-close
+				size="small">
+				<template #icon>
+					<IconAccountCircleOutline :size="15" />
+				</template>
+				{{ t('spreed', 'Anonymous') }}
+			</NcChip>
+		</div>
 		<span class="poll-card__header">
-			<IconPoll class="poll-card__header-icon" :size="20" />
+			<IconPoll class="poll-card__header-icon" :size="25" />
 			<span class="poll-card__header-name">{{ name }}</span>
 		</span>
 		<span class="poll-card__footer">
@@ -62,8 +84,11 @@
 import { n, t } from '@nextcloud/l10n'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcChip from '@nextcloud/vue/components/NcChip'
+import IconAccountCircleOutline from 'vue-material-design-icons/AccountCircleOutline.vue'
+import IconPoll from 'vue-material-design-icons/ChartBoxOutline.vue'
+import IconCircle from 'vue-material-design-icons/Circle.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
-import IconPoll from 'vue-material-design-icons/Poll.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import { POLL } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
@@ -77,6 +102,9 @@ export default {
 		IconTrashCanOutline,
 		IconPencilOutline,
 		IconPoll,
+		NcChip,
+		IconCircle,
+		IconAccountCircleOutline,
 	},
 
 	directives: {
@@ -115,6 +143,7 @@ export default {
 	setup() {
 		return {
 			pollsStore: usePollsStore(),
+			POLL,
 		}
 	},
 
@@ -128,19 +157,29 @@ export default {
 		pollFooterText() {
 			if (this.poll?.status === POLL.STATUS.OPEN) {
 				return this.poll?.votedSelf.length > 0
-					? t('spreed', 'Open poll • You voted already')
-					: t('spreed', 'Open poll • Click to vote')
+					? t('spreed', 'You voted already, click to change your vote')
+					: t('spreed', 'Click to vote')
 			} else if (this.draft) {
 				return n('spreed', 'Poll draft • %n option', 'Poll draft • %n options', this.poll?.options?.length)
 			} else {
-				return this.poll?.status === POLL.STATUS.CLOSED
-					? t('spreed', 'Poll • Ended')
-					: t('spreed', 'Poll')
+				return n('spreed', '%n vote', '%n votes', this.poll?.numVoters || 0)
 			}
 		},
 
 		canEditPollDraft() {
 			return this.draft && hasTalkFeature(this.token, 'edit-draft-poll')
+		},
+
+		showPollStatus() {
+			return this.poll && Object.keys(this.poll).length > 0 && this.poll.status !== POLL.STATUS.DRAFT
+		},
+
+		pollImportance() {
+			if (this.poll.status === POLL.STATUS.OPEN) {
+				return this.poll?.votedSelf.length > 0 ? 'secondary' : 'primary'
+			} else {
+				return 'tertiary'
+			}
 		},
 	},
 
@@ -198,6 +237,13 @@ export default {
 	&:focus-visible {
 		border-color: var(--color-primary-element);
 		outline: none;
+	}
+
+	.poll-card__status {
+		display: flex;
+		gap: var(--default-grid-baseline);
+		border-bottom: 1px solid var(--color-border-dark);
+		padding-bottom: var(--default-grid-baseline);
 	}
 
 	&__header {
