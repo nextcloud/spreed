@@ -345,13 +345,11 @@ export default class VideoStreamBackgroundEffect {
 		this._options.virtualBackground = virtualBackground
 
 		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
-			this._virtualImage = document.createElement('img')
-			this._virtualImage.crossOrigin = 'anonymous'
-			this._virtualImage.src = this._options.virtualBackground.virtualSource
+			this._virtualImage = new Image()
 			this._virtualImage.onload = () => {
 				this._bgChanged = true
 			}
-			this._bgChanged = false
+			this._virtualImage.src = this._options.virtualBackground.virtualSource
 
 			return
 		}
@@ -448,6 +446,7 @@ export default class VideoStreamBackgroundEffect {
 				outH: height,
 				edgeFeatherPx: edgesBlurValue,
 				refreshBg,
+				showProgress: !this._lastMask || (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE && !this._virtualImage?.complete),
 			})
 		} else {
 			this._outputCanvasCtx.globalCompositeOperation = 'copy'
