@@ -4,8 +4,10 @@
  */
 
 import { FilesetResolver, ImageSegmenter } from '@mediapipe/tasks-vision'
+import axios from '@nextcloud/axios'
 import { generateFilePath } from '@nextcloud/router'
 import { VIRTUAL_BACKGROUND } from '../../../../constants.ts'
+import CancelableRequest from '../../../cancelableRequest.js'
 import {
 	CLEAR_TIMEOUT,
 	SET_TIMEOUT,
@@ -54,6 +56,7 @@ export default class VideoStreamBackgroundEffect {
 		this._loaded = false
 		this._loadFailed = false
 
+		this._isFirstBgChange = true
 		this.setVirtualBackground(this._options.virtualBackground)
 		this._useWebGL = this._options.webGL
 
@@ -76,10 +79,12 @@ export default class VideoStreamBackgroundEffect {
 			this._outputCanvasElement.getContext('2d')
 		}
 		this._inputVideoElement = document.createElement('video')
-		this._videoResizeObserver = null
 		this._bgChanged = false
-		this._lastVideoW = 0
-		this._lastVideoH = 0
+		this._prevBgMode = null
+
+		this._bgProgress = 0
+		this._bgObjectUrl = null
+		this._bgDownload = null
 	}
 
 	/**
@@ -242,6 +247,8 @@ export default class VideoStreamBackgroundEffect {
 		if (this._loaded && this._frameId === this._lastFrameId) {
 			this._frameId++
 			this._runInference().catch((e) => console.error(e))
+		} else if (this._useWebGL) {
+			this.runPostProcessing()
 		}
 
 		// Schedule next frame
@@ -263,6 +270,25 @@ export default class VideoStreamBackgroundEffect {
 		if (response.data.id === TIMEOUT_TICK) {
 			this._renderMask()
 		}
+	}
+
+	/**
+	 * Cancel any in-flight background image download and revoke object URL.
+	 */
+	_cleanupBgDownload() {
+		if (this._bgDownload?.cancel) {
+			try {
+				this._bgDownload.cancel('replaced')
+			} catch (e) {
+				console.error(e)
+			}
+		}
+		this._bgDownload = null
+		if (this._bgObjectUrl) {
+			URL.revokeObjectURL(this._bgObjectUrl)
+			this._bgObjectUrl = null
+		}
+		this._bgProgress = 0
 	}
 
 	/**
@@ -321,21 +347,50 @@ export default class VideoStreamBackgroundEffect {
 	 *        VIDEO_STREAM.
 	 */
 	setVirtualBackground(virtualBackground) {
+		if (this._options.virtualBackground.backgroundType !== this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE || (this._virtualImage?.complete && this._virtualImage?.naturalWidth > 0)) {
+			this._prevBgMode = !this._isFirstBgChange ? this._options.virtualBackground.backgroundType : null
+		}
 		// Clear previous elements to allow them to be garbage collected
 		this._virtualImage = null
 		this._virtualVideo = null
 		this._bgChanged = false
+		this._isFirstBgChange = false
+		this._cleanupBgDownload()
 
 		this._options.virtualBackground = virtualBackground
 
 		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
 			this._virtualImage = document.createElement('img')
 			this._virtualImage.crossOrigin = 'anonymous'
-			this._virtualImage.src = this._options.virtualBackground.virtualSource
-			this._virtualImage.onload = () => {
-				this._bgChanged = true
-			}
 			this._bgChanged = false
+			this._bgProgress = 0
+
+			const url = this._options.virtualBackground.virtualSource
+
+			this._bgDownload = new CancelableRequest((u, options) => axios.get(u, { responseType: 'blob', ...options }))
+
+			this._bgDownload.request(url, {
+				onDownloadProgress: (evt) => {
+					if (evt && (evt.total || evt.lengthComputable)) {
+						const total = evt.total || 0
+						if (total > 0) {
+							this._bgProgress = Math.max(0, Math.min(1, evt.loaded / total))
+						}
+					}
+				},
+			}).then((resp) => {
+				this._bgProgress = 1
+				this._bgObjectUrl = URL.createObjectURL(resp.data)
+				this._virtualImage.onload = () => {
+					this._bgChanged = true
+				}
+				this._virtualImage.src = this._bgObjectUrl
+			}).catch((err) => {
+				if (!CancelableRequest.isCancel(err)) {
+					console.error('Background image download failed:', err)
+				}
+				this._bgProgress = 0
+			})
 
 			return
 		}
@@ -391,23 +446,35 @@ export default class VideoStreamBackgroundEffect {
 				return
 			}
 
-			let mode = 1
+			let mode = -1
 			let bgSource = null
 			let refreshBg = false
 
-			if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
-				|| backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO
-				|| backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO_STREAM) {
-				mode = 0
-				if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
-					bgSource = this._virtualImage
-					refreshBg = this._bgChanged && bgSource && bgSource.complete && bgSource.naturalWidth > 0
-					if (refreshBg) {
-						this._bgChanged = false
+			if (this._lastMask) {
+				mode = 1
+				if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
+					|| backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO
+					|| backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO_STREAM) {
+					mode = 0
+					if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+						if (this._virtualImage?.complete && this._virtualImage?.naturalWidth > 0) {
+							// The background image is loaded, perform normal compositing and refresh the background if the image has changed
+							bgSource = this._virtualImage
+							refreshBg = this._bgChanged
+							if (refreshBg) {
+								this._bgChanged = false
+							}
+						} else if (this._prevBgMode === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
+							// The background image is not loaded yet, so keep using blur since this was the last effect used
+							mode = 1
+						} else if (this._prevBgMode === null) {
+							// The background image is not loaded yet and there was no effect before, so just render the video as is
+							mode = -1
+						}
+					} else {
+						bgSource = this._virtualVideo
+						refreshBg = true
 					}
-				} else {
-					bgSource = this._virtualVideo
-					refreshBg = true
 				}
 			}
 
@@ -420,6 +487,8 @@ export default class VideoStreamBackgroundEffect {
 				outH: height,
 				edgeFeatherPx: edgesBlurValue,
 				refreshBg,
+				showProgress: (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) && (this._bgProgress > 0 && this._bgProgress < 1),
+				progress: this._bgProgress,
 			})
 		} else {
 			this._outputCanvasCtx.globalCompositeOperation = 'copy'
@@ -593,6 +662,8 @@ export default class VideoStreamBackgroundEffect {
 		this._frameId = -1
 		this._lastFrameId = -1
 
+		this._bgChanged = true
+
 		this._outputStream = this._outputCanvasElement.captureStream(this._frameRate)
 
 		return this._outputStream
@@ -648,6 +719,9 @@ export default class VideoStreamBackgroundEffect {
 		this._segmentationMaskCtx = null
 		this._tempCanvas = null
 		this._tempCanvasCtx = null
+		this._isFirstBgChange = true
+		this._prevBgMode = null
+		this._cleanupBgDownload()
 	}
 
 	/**
