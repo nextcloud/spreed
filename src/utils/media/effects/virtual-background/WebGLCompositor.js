@@ -154,6 +154,21 @@ export default class WebGLCompositor {
 			outColor = vec4(frameColor.rgb + (1.0 - frameColor.a) * centerColor.rgb, 1.0);
 		}`
 
+		// --- HUD (solid-color) program for translucent overlays ---
+		const hudVS = `#version 300 es
+    	in vec2 a_pos;
+    	void main() {
+    		gl_Position = vec4(a_pos, 0.0, 1.0);
+    	}`
+
+		const hudFS = `#version 300 es
+    	precision highp float;
+    	uniform vec4 u_color;
+    	out vec4 outColor;
+    	void main() {
+    		outColor = u_color;
+    	}`
+
 		// --- Final Blend Fragment Shader ---
 		const blendFS = `#version 300 es
 		precision highp float;
@@ -206,6 +221,7 @@ export default class WebGLCompositor {
 		this.progBilateral = this._linkProgram(gl, vs, bilateralFS)
 		this.progBlur = this._linkProgram(gl, vs, blurFS)
 		this.progBlend = this._linkProgram(gl, vsOutput, blendFS)
+		this.progHUD = this._linkProgram(gl, hudVS, hudFS)
 
 		// --- Setup vertex buffers ---
 		this.vertexArray = gl.createVertexArray()
@@ -251,6 +267,7 @@ export default class WebGLCompositor {
 		this.sigmaColor = 0.15
 		this.coverage = [0.45, 0.75]
 		this.lightWrapping = 0.3
+		this.progressBarColor = [0.5, 0.5, 0.5, 0.5]
 	}
 
 	/**
@@ -537,6 +554,44 @@ export default class WebGLCompositor {
 	}
 
 	/**
+	 * Draw a solid bottom progress bar using scissor clear (single draw, zero shaders).
+	 *
+	 * @param {number} progress - [0..1]
+	 * @param {number} outW
+	 * @param {number} outH
+	 */
+	_drawProgressBar(progress, outW, outH) {
+		const gl = this.gl
+		if (!isFinite(progress) || progress <= 0) {
+			return
+		}
+
+		const w = Math.max(1, Math.min(outW, Math.floor(outW * Math.min(progress, 1))))
+		const h = 8 // px tall at bottom
+
+		gl.enable(gl.SCISSOR_TEST)
+		gl.scissor(outW - w, 0, w, h)
+
+		gl.enable(gl.BLEND)
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+
+		gl.useProgram(this.progHUD)
+		this._setupVertexAttributes(this.progHUD)
+		const uColor = gl.getUniformLocation(this.progHUD, 'u_color')
+		gl.uniform4f(
+			uColor,
+			this.progressBarColor[0],
+			this.progressBarColor[1],
+			this.progressBarColor[2],
+			this.progressBarColor[3],
+		)
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+
+		gl.disable(gl.BLEND)
+		gl.disable(gl.SCISSOR_TEST)
+	}
+
+	/**
 	 * Render the source video as is, without applying any kind of effects
 	 *
 	 * @param {number} outW - Output width.
@@ -617,6 +672,9 @@ export default class WebGLCompositor {
 		// Shortcut if we have no mask or mode is no effects
 		if (mode === -1 || !mask) {
 			this._renderWithoutEffects(outW, outH)
+			if (opts.showProgress) {
+				this._drawProgressBar(opts.progress || 0, outW, outH)
+			}
 			return
 		}
 
@@ -676,6 +734,10 @@ export default class WebGLCompositor {
 		gl.clearColor(0, 0, 0, 1)
 		gl.clear(gl.COLOR_BUFFER_BIT)
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+
+		if (opts.showProgress) {
+			this._drawProgressBar(opts.progress || 0, outW, outH)
+		}
 	}
 
 	/**
@@ -705,6 +767,7 @@ export default class WebGLCompositor {
 		gl.deleteProgram(this.progBilateral)
 		gl.deleteProgram(this.progBlur)
 		gl.deleteProgram(this.progBlend)
+		gl.deleteProgram(this.progHUD)
 
 		// Delete framebuffers
 		gl.deleteFramebuffer(this.fboMask)

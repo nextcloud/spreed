@@ -4,8 +4,10 @@
  */
 
 import { FilesetResolver, ImageSegmenter } from '@mediapipe/tasks-vision'
+import axios from '@nextcloud/axios'
 import { generateFilePath } from '@nextcloud/router'
 import { VIRTUAL_BACKGROUND } from '../../../../constants.ts'
+import CancelableRequest from '../../../cancelableRequest.js'
 import {
 	CLEAR_TIMEOUT,
 	SET_TIMEOUT,
@@ -79,6 +81,10 @@ export default class VideoStreamBackgroundEffect {
 		this._inputVideoElement = document.createElement('video')
 		this._bgChanged = false
 		this._prevBgMode = null
+
+		this._bgProgress = 0
+		this._bgObjectUrl = null
+		this._bgDownload = null
 	}
 
 	/**
@@ -267,6 +273,25 @@ export default class VideoStreamBackgroundEffect {
 	}
 
 	/**
+	 * Cancel any in-flight background image download and revoke object URL.
+	 */
+	_cleanupBgDownload() {
+		if (this._bgDownload?.cancel) {
+			try {
+				this._bgDownload.cancel('replaced')
+			} catch (e) {
+				console.error(e)
+			}
+		}
+		this._bgDownload = null
+		if (this._bgObjectUrl) {
+			URL.revokeObjectURL(this._bgObjectUrl)
+			this._bgObjectUrl = null
+		}
+		this._bgProgress = 0
+	}
+
+	/**
 	 * Helper method to know when the model was loaded after creating the
 	 * object.
 	 *
@@ -330,16 +355,42 @@ export default class VideoStreamBackgroundEffect {
 		this._virtualVideo = null
 		this._bgChanged = false
 		this._isFirstBgChange = false
+		this._cleanupBgDownload()
+
 		this._options.virtualBackground = virtualBackground
 
 		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
 			this._virtualImage = document.createElement('img')
 			this._virtualImage.crossOrigin = 'anonymous'
-			this._virtualImage.src = this._options.virtualBackground.virtualSource
-			this._virtualImage.onload = () => {
-				this._bgChanged = true
-			}
 			this._bgChanged = false
+			this._bgProgress = 0
+
+			const url = this._options.virtualBackground.virtualSource
+
+			this._bgDownload = new CancelableRequest((u, options) => axios.get(u, { responseType: 'blob', ...options }))
+
+			this._bgDownload.request(url, {
+				onDownloadProgress: (evt) => {
+					if (evt && (evt.total || evt.lengthComputable)) {
+						const total = evt.total || 0
+						if (total > 0) {
+							this._bgProgress = Math.max(0, Math.min(1, evt.loaded / total))
+						}
+					}
+				},
+			}).then((resp) => {
+				this._bgProgress = 1
+				this._bgObjectUrl = URL.createObjectURL(resp.data)
+				this._virtualImage.onload = () => {
+					this._bgChanged = true
+				}
+				this._virtualImage.src = this._bgObjectUrl
+			}).catch((err) => {
+				if (!CancelableRequest.isCancel(err)) {
+					console.error('Background image download failed:', err)
+				}
+				this._bgProgress = 0
+			})
 
 			return
 		}
@@ -436,6 +487,8 @@ export default class VideoStreamBackgroundEffect {
 				outH: height,
 				edgeFeatherPx: edgesBlurValue,
 				refreshBg,
+				showProgress: (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) && (this._bgProgress > 0 && this._bgProgress < 1),
+				progress: this._bgProgress,
 			})
 		} else {
 			this._outputCanvasCtx.globalCompositeOperation = 'copy'
@@ -668,6 +721,7 @@ export default class VideoStreamBackgroundEffect {
 		this._tempCanvasCtx = null
 		this._isFirstBgChange = true
 		this._prevBgMode = null
+		this._cleanupBgDownload()
 	}
 
 	/**
