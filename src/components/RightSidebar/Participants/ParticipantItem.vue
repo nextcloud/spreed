@@ -19,7 +19,7 @@
 				:id="participant.actorId"
 				:key="participant.attendeeId"
 				:token="token"
-				:name="displayName"
+				:name="isEmailActor ? computedName : displayName"
 				:source="participant.actorType"
 				disable-tooltip
 				:show-user-status="showUserStatus"
@@ -668,7 +668,7 @@ export default {
 		 * return this.participant.status === 'offline' ||  !this.sessionIds.length
 		 */
 		isOffline() {
-			return !this.sessionIds.length && (this.isUserActor || this.isFederatedActor || this.isGuestActor)
+			return !this.sessionIds.length && (this.isUserActor || this.isFederatedActor || this.isGuestActor || this.isEmailActor)
 				&& (hasTalkFeature(this.token, 'federation-v2') || (!this.conversation.remoteServer && !this.isFederatedActor))
 		},
 
