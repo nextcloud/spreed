@@ -180,6 +180,7 @@ export default class WebGLCompositor {
 		uniform vec2 u_coverage;
 		uniform float u_lightWrapping;
 		uniform int u_mode;
+		uniform vec2 u_bgScale;
 
 		in vec2 v_texCoord;
 		out vec4 outColor;
@@ -202,7 +203,7 @@ export default class WebGLCompositor {
 				bgColor = texture(u_blurredFrame, v_texCoord).rgb;
 			} else {
 				// Background image mode
-				vec2 bgCoord = v_texCoord;
+				vec2 bgCoord = (v_texCoord - 0.5) / u_bgScale + 0.5;
 				bgColor = texture(u_background, bgCoord).rgb;
 
 				// Apply light wrapping
@@ -268,6 +269,9 @@ export default class WebGLCompositor {
 		this.coverage = [0.45, 0.75]
 		this.lightWrapping = 0.3
 		this.progressBarColor = [0, 0.4, 0.62, 1] // Nextcloud default primary color (#00679E)
+		this.bgScale = [1.0, 1.0]
+		this.lastOutW = 0
+		this.lastOutH = 0
 	}
 
 	/**
@@ -588,6 +592,27 @@ export default class WebGLCompositor {
 	}
 
 	/**
+	 * Calculate UV scaling so the background image is rendered in "contain" mode
+	 *
+	 * @private
+	 * @param {HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} bgSource
+	 * @param {number} outW - Output width of the compositor
+	 * @param {number} outH - Output height of the compositor
+	 * @return {void}
+	 */
+	_calcBgScale(bgSource, outW, outH) {
+		const videoAR = outW / outH
+		const bgAR = bgSource.width / bgSource.height
+		let scaleX = 1.0, scaleY = 1.0
+		if (bgAR > videoAR) {
+			scaleX = bgAR / videoAR
+		} else {
+			scaleY = videoAR / bgAR
+		}
+		this.bgScale = [scaleX, scaleY]
+	}
+
+	/**
 	 * Render the source video as is, without applying any kind of effects
 	 *
 	 * @param {number} outW - Output width.
@@ -687,9 +712,17 @@ export default class WebGLCompositor {
 		}
 
 		// Upload background if in image mode
-		if (mode === 0 && bgSource && refreshBg) {
-			this._upload(this.texBg, bgSource)
+		if (mode === 0 && bgSource) {
+			if (refreshBg) {
+				this._upload(this.texBg, bgSource)
+			}
+
+			if (refreshBg || outW !== this.lastOutW || outH !== this.lastOutH) {
+				this._calcBgScale(bgSource, outW, outH)
+			}
 		}
+		this.lastOutW = outW
+		this.lastOutH = outH
 
 		gl.bindVertexArray(this.vertexArray)
 
@@ -718,6 +751,7 @@ export default class WebGLCompositor {
 		gl.uniform2f(gl.getUniformLocation(this.progBlend, 'u_coverage'), this.coverage[0], this.coverage[1])
 		gl.uniform1f(gl.getUniformLocation(this.progBlend, 'u_lightWrapping'), this.lightWrapping)
 		gl.uniform1i(gl.getUniformLocation(this.progBlend, 'u_mode'), mode)
+		gl.uniform2f(gl.getUniformLocation(this.progBlend, 'u_bgScale'), this.bgScale[0], this.bgScale[1])
 
 		// Bind textures for final blend
 		gl.activeTexture(gl.TEXTURE0)
