@@ -1264,18 +1264,25 @@ export type components = {
             };
         };
         Team: {
-            id: string;
-            name: string;
-            icon: string;
+            teamId: string;
+            displayName: string;
+            link: string | null;
         };
         TeamResource: {
-            /** Format: int64 */
-            id: number;
+            id: string;
             label: string;
             url: string;
             iconSvg: string | null;
             iconURL: string | null;
             iconEmoji: string | null;
+            provider: {
+                id: string;
+                name: string;
+                icon: string;
+            };
+        };
+        TeamWithResources: components["schemas"]["Team"] & {
+            resources: components["schemas"]["TeamResource"][];
         };
         TextProcessingTask: {
             /** Format: int64 */
@@ -3618,7 +3625,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                teams: components["schemas"]["Team"][];
+                                teams: components["schemas"]["TeamWithResources"][];
                             };
                         };
                     };
@@ -3734,6 +3741,20 @@ export interface operations {
                     };
                 };
             };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
             /** @description Scheduling task is not possible */
             412: {
                 headers: {
@@ -3794,6 +3815,20 @@ export interface operations {
                             data: {
                                 task: components["schemas"]["TextProcessingTask"];
                             };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
                         };
                     };
                 };
@@ -4002,6 +4037,20 @@ export interface operations {
                     };
                 };
             };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
         };
     };
     "text_to_image_api-schedule": {
@@ -4048,6 +4097,20 @@ export interface operations {
                             data: {
                                 task: components["schemas"]["TextToImageTask"];
                             };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
                         };
                     };
                 };
@@ -4112,6 +4175,20 @@ export interface operations {
                             data: {
                                 task: components["schemas"]["TextToImageTask"];
                             };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
                         };
                     };
                 };
@@ -4251,6 +4328,20 @@ export interface operations {
                 };
                 content: {
                     "*/*": string;
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
                 };
             };
             /** @description Task or image not found */
