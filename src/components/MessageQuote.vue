@@ -42,7 +42,6 @@ const {
 	isFileShare,
 	isObjectShare,
 	remoteServer,
-	lastEditor,
 	actorDisplayName,
 	actorDisplayNameWithFallback,
 } = useMessageInfo(isExistingMessage(message) ? toRef(() => message) : undefined)
@@ -76,6 +75,15 @@ const filePreview = computed(() => {
 })
 
 const simpleQuotedMessageIcon = computed(() => isExistingMessage(message) ? getMessageIcon(message) : null)
+
+const editLabel = computed(() => {
+	if (editMessage) {
+		return t('spreed', '(editing)')
+	} else if (isExistingMessage(message) && message.lastEditTimestamp) {
+		return t('spreed', '(edited)')
+	}
+	return ''
+})
 
 /**
  * This is a simplified version of the last chat message.
@@ -186,7 +194,7 @@ function handleQuoteClick() {
 					<span class="quote__main-author-name">
 						{{ actorInfo }}
 					</span>
-					{{ editMessage ? t('spreed', '(editing)') : lastEditor }}
+					{{ editLabel }}
 				</span>
 			</span>
 			<span
