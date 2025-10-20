@@ -84,6 +84,11 @@ class TransferOwnership extends Base {
 				continue;
 			}
 
+			if ($room->getObjectType() === Room::OBJECT_TYPE_SAMPLE) {
+				// Skip sample rooms
+				continue;
+			}
+
 			if ($room->isFederatedConversation()) {
 				$federatedRooms++;
 				continue;
