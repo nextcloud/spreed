@@ -318,23 +318,22 @@ export function useGetMessagesProvider() {
 				}
 
 				await getMessageContext(token, contextMessageId.value, contextThreadId.value)
-
-				// If last message is not present in the initial context,
-				// add it as most recent chat block to start long polling from it
-				if (conversation.value?.lastMessage && 'id' in conversation.value.lastMessage
-					&& !chatStore.hasMessage(token, { messageId: conversation.value.lastMessage.id })) {
-					await store.dispatch('processMessage', { token, message: conversation.value.lastMessage })
-					chatStore.processChatBlocks(token, [conversation.value.lastMessage])
-				}
-
-				// Fallback for sensitive and federated conversations: if there is still no chat block created,
-				// ensure polling starts at least from the last read message by the user
-				if (!chatStore.chatBlocks[token]) {
-					chatStore.chatBlocks[token] = [new Set([conversation.value!.lastReadMessage])]
-				}
 			} catch (exception) {
 				console.debug(exception)
-				return
+			}
+
+			// If last message is not present in the initial context,
+			// add it as most recent chat block to start long polling from it
+			if (conversation.value?.lastMessage && 'id' in conversation.value.lastMessage
+				&& !chatStore.hasMessage(token, { messageId: conversation.value.lastMessage.id })) {
+				await store.dispatch('processMessage', { token, message: conversation.value.lastMessage })
+				chatStore.processChatBlocks(token, [conversation.value.lastMessage])
+			}
+
+			// Fallback for sensitive and federated conversations: if there is still no chat block created,
+			// ensure polling starts at least from the last read message by the user
+			if (!chatStore.chatBlocks[token]) {
+				chatStore.chatBlocks[token] = [new Set([conversation.value!.lastReadMessage])]
 			}
 		} else {
 			await checkContextAndFocusMessage(token, contextMessageId.value, contextThreadId.value, focusMessageId !== null)
