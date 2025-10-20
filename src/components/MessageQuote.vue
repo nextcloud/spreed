@@ -42,7 +42,6 @@ const {
 	isFileShare,
 	isObjectShare,
 	remoteServer,
-	lastEditor,
 	actorDisplayName,
 	actorDisplayNameWithFallback,
 } = useMessageInfo(isExistingMessage(message) ? toRef(() => message) : undefined)
@@ -76,6 +75,15 @@ const filePreview = computed(() => {
 })
 
 const simpleQuotedMessageIcon = computed(() => isExistingMessage(message) ? getMessageIcon(message) : null)
+
+const editLabel = computed(() => {
+	if (editMessage) {
+		return t('spreed', '(editing)')
+	} else if (isExistingMessage(message) && message.lastEditTimestamp) {
+		return t('spreed', '(edited)')
+	}
+	return ''
+})
 
 /**
  * This is a simplified version of the last chat message.
@@ -183,10 +191,10 @@ function handleQuoteClick() {
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disable-menu />
 				<span class="quote__main-author-info">
-					{{ actorInfo }}
-				</span>
-				<span v-if="editMessage || lastEditor" class="quote__main-edit-hint">
-					{{ editMessage ? t('spreed', '(editing)') : lastEditor }}
+					<span class="quote__main-author-name">
+						{{ actorInfo }}
+					</span>
+					{{ editLabel }}
 				</span>
 			</span>
 			<span
@@ -275,6 +283,10 @@ function handleQuoteClick() {
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 0;
+
+		.quote__main-author {
+			max-width: 100%;
+		}
 	}
 
 	&__main {
@@ -282,19 +294,24 @@ function handleQuoteClick() {
 		align-items: center;
 		gap: calc(2 * var(--default-grid-baseline));
 		min-width: 0;
+		flex-grow: 1;
 		overflow: hidden;
 
 		&-author {
 			display: flex;
 			align-items: center;
 			gap: var(--default-grid-baseline);
+			max-width: 80%;
 
 			&-info {
-				flex-shrink: 0;
-				font-weight: 600;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
+			}
+
+			&-name {
+				font-weight: 600;
+				margin-inline-end: calc(0.5 * var(--default-grid-baseline));
 			}
 		}
 
@@ -303,10 +320,7 @@ function handleQuoteClick() {
 			text-overflow: ellipsis;
 			overflow: hidden;
 			text-align: start;
-		}
-
-		&-edit-hint {
-			flex-shrink: 0;
+			max-width: 100%;
 		}
 	}
 
