@@ -18,7 +18,7 @@ import type {
 import Axios from '@nextcloud/axios'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { computed, inject, onBeforeUnmount, provide, ref, watch } from 'vue'
-import { START_LOCATION, useRoute, useRouter } from 'vue-router'
+import { START_LOCATION, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { CHAT, MESSAGE } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
@@ -60,7 +60,6 @@ let pollingErrorTimeout = 1_000
  */
 export function useGetMessagesProvider() {
 	const store = useStore()
-	const router = useRouter()
 	const route = useRoute()
 	const chatStore = useChatStore()
 	const chatExtrasStore = useChatExtrasStore()
@@ -136,17 +135,11 @@ export function useGetMessagesProvider() {
 		return lastKnownMessageId >= conversationLastMessageId.value
 	})
 
-	/** Initial check to ensure context is created once route is available */
-	router.isReady().then(() => {
-		if (currentToken.value && isParticipant.value && !isInLobby.value) {
-			handleStartGettingMessagesPreconditions(currentToken.value)
-		}
-	})
-
 	watch(
 		[currentToken, () => isParticipant.value && !isInLobby.value],
 		([newToken, canGetMessages], [oldToken, _oldCanGetMessages]) => {
 			if (route.name === START_LOCATION.name) { // Direct object comparison does not work
+				// Skip potential initial check to ensure route is available
 				return
 			}
 			if (oldToken && oldToken !== newToken) {
@@ -162,6 +155,7 @@ export function useGetMessagesProvider() {
 			/** Remove expired messages when joining a room */
 			store.dispatch('removeExpiredMessages', { token: newToken })
 		},
+		{ immediate: true },
 	)
 
 	subscribe('networkOffline', handleNetworkOffline)
