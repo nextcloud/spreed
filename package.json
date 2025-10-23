@@ -37,7 +37,7 @@
     "@nextcloud/browser-storage": "^0.5.0",
     "@nextcloud/capabilities": "^1.2.0",
     "@nextcloud/cdav-library": "^2.1.1",
-    "@nextcloud/dialogs": "^7.0.0-rc.3",
+    "@nextcloud/dialogs": "^7.1.0",
     "@nextcloud/event-bus": "^3.3.2",
     "@nextcloud/files": "^3.12.0",
     "@nextcloud/initial-state": "^3.0.0",
