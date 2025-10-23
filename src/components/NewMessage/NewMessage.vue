@@ -371,6 +371,7 @@ import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useTokenStore } from '../../stores/token.ts'
+import { useUploadStore } from '../../stores/upload.ts'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 import { getCustomDateOptions } from '../../utils/getCustomDateOptions.ts'
@@ -491,6 +492,7 @@ export default {
 			chatStore: useChatStore(),
 			settingsStore: useSettingsStore(),
 			tokenStore: useTokenStore(),
+			uploadStore: useUploadStore(),
 			supportTypingStatus,
 			supportScheduleMessages,
 			autoComplete,
@@ -625,7 +627,7 @@ export default {
 		},
 
 		currentUploadId() {
-			return this.$store.getters.currentUploadId
+			return this.uploadStore.currentUploadId
 		},
 
 		hasText() {
@@ -1194,7 +1196,7 @@ export default {
 				))
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 
-				this.$store.dispatch('shareFile', { token: this.token, path, talkMetaData })
+				this.uploadStore.shareFile({ token: this.token, path, talkMetaData })
 			})
 		},
 
@@ -1264,7 +1266,7 @@ export default {
 			// Create a unique id for the upload operation
 			const uploadId = this.currentUploadId ?? new Date().getTime()
 			// Uploads and shares the files
-			this.$store.dispatch('initialiseUpload', { files, token: this.token, threadId: this.threadId, uploadId, rename, isVoiceMessage })
+			this.uploadStore.initialiseUpload({ files, token: this.token, threadId: this.threadId, uploadId, rename, isVoiceMessage })
 		},
 
 		preserveSelectionRange() {

@@ -88,6 +88,7 @@ import { SHARED_ITEM } from '../../../../../constants.ts'
 import { getTalkConfig } from '../../../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
+import { useUploadStore } from '../../../../../stores/upload.ts'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,
@@ -185,6 +186,7 @@ export default {
 			openViewer,
 			sharedItemsStore,
 			actorStore: useActorStore(),
+			uploadStore: useUploadStore(),
 		}
 	},
 
@@ -220,7 +222,7 @@ export default {
 		},
 
 		fallbackLocalUrl() {
-			return this.$store.getters.getLocalUrl(this.referenceId)
+			return this.uploadStore.getLocalUrl(this.referenceId)
 		},
 
 		// This is used to decide which outer element type to use
@@ -414,7 +416,7 @@ export default {
 		},
 
 		uploadFile() {
-			return this.$store.getters.getUploadFile(this.file.uploadId, this.file.index)
+			return this.uploadStore.getUploadFile(this.file.uploadId, this.file.index)
 		},
 
 		upload() {

@@ -211,6 +211,7 @@ import { EventBus } from '../../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
+import { useUploadStore } from '../../../../../stores/upload.ts'
 import { formatDateTime } from '../../../../../utils/formattedTime.ts'
 import { parseMentions, parseSpecialSymbols } from '../../../../../utils/textParse.ts'
 
@@ -300,6 +301,7 @@ export default {
 			isInCall: useIsInCall(),
 			chatExtrasStore: useChatExtrasStore(),
 			pollsStore: usePollsStore(),
+			uploadStore: useUploadStore(),
 			threadId,
 			isEditable,
 			isFileShare,
@@ -523,7 +525,7 @@ export default {
 		handleRetry() {
 			if (this.sendingErrorCanRetry) {
 				if (this.message.sendingFailure === 'failed-upload') {
-					this.$store.dispatch('retryUploadFiles', {
+					this.uploadStore.retryUploadFiles({
 						token: this.message.token,
 						uploadId: this.$store.getters.message(this.message.token, this.message.id)?.uploadId,
 						caption: this.renderedMessage !== this.message.message ? this.message.message : undefined,

@@ -86,6 +86,7 @@ import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
 import { useSettingsStore } from '../stores/settings.ts'
+import { useUploadStore } from '../stores/upload.ts'
 
 export default {
 
@@ -128,6 +129,7 @@ export default {
 			chatExtrasStore: useChatExtrasStore(),
 			actorStore: useActorStore(),
 			settingsStore: useSettingsStore(),
+			uploadStore: useUploadStore(),
 		}
 	},
 
@@ -223,7 +225,7 @@ export default {
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files
-			this.$store.dispatch('initialiseUpload', { files, token: this.token, threadId: this.threadId, uploadId })
+			this.uploadStore.initialiseUpload({ files, token: this.token, threadId: this.threadId, uploadId })
 		},
 
 		scrollToBottom() {
