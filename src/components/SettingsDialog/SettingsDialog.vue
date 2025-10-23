@@ -171,86 +171,40 @@
 				{{ t('spreed', 'Blur background image in the call (may increase GPU load)') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
-		<NcAppSettingsSection
-			v-if="!disableKeyboardShortcuts"
-			id="shortcuts"
-			:name="t('spreed', 'Keyboard shortcuts')">
-			<em>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</em>
+		<NcAppSettingsShortcutsSection
+			v-if="!disableKeyboardShortcuts">
+			<NcHotkeyList>
+				<NcHotkey :label="t('spreed', 'Toggle full screen')" hotkey="F" />
+				<NcHotkey :label="t('spreed', 'Return to Home screen')" hotkey="Escape" />
+				<!-- FIXME Overriden by Unified Search -->
+				<NcHotkey :label="t('spreed', 'Search')" hotkey="Control F" />
+			</NcHotkeyList>
 
-			<dl>
-				<div>
-					<dt><kbd>C</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Focus the chat input') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>Esc</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Unfocus the chat input to use shortcuts') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>{{ CmdOrCtrl }}</kbd> + <kbd>↑</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Edit your last message') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>F</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Fullscreen the chat or call') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>{{ CmdOrCtrl }}</kbd> + <kbd>F</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Search') }}
-					</dd>
-				</div>
-			</dl>
+			<NcHotkeyList :label="t('spreed', 'Shortcuts while in a chat')">
+				<NcHotkey :label="t('spreed', 'Focus the chat input')" hotkey="C" />
+				<NcHotkey :label="t('spreed', 'Unfocus the chat input to use shortcuts')" hotkey="Escape" />
+				<NcHotkey :label="t('spreed', 'Edit your last message')" hotkey="Control ArrowUp" />
+			</NcHotkeyList>
 
-			<h3>{{ t('spreed', 'Shortcuts while in a call') }}</h3>
-			<dl>
-				<div>
-					<dt><kbd>V</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Camera on and off') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>M</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Microphone on and off') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>{{ t('spreed', 'Space bar') }}</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Push to talk or push to mute') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>R</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Raise or lower hand') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>{{ t('spreed', 'Mouse wheel') }}</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Zoom-in / zoom-out a screen share') }}
-					</dd>
-				</div>
-			</dl>
-		</NcAppSettingsSection>
+			<NcHotkeyList :label="t('spreed', 'Shortcuts while in a call')">
+				<NcHotkey :label="t('spreed', 'Camera on and off')" hotkey="V" />
+				<NcHotkey :label="t('spreed', 'Microphone on and off')" hotkey="M" />
+				<NcHotkey :label="t('spreed', 'Raise or lower hand')" hotkey="R" />
+				<NcHotkey :label="t('spreed', 'Push to talk or push to mute')" hotkey="Space" />
+				<NcHotkey :label="t('spreed', 'Zoom-in / zoom-out a screen share')">
+					<template #hotkey>
+						<NcKbd :symbol="t('spreed', 'Mouse wheel')" />
+					</template>
+				</NcHotkey>
+			</NcHotkeyList>
 
-		<!-- Information about current version used. Talk Desktop has this in 'About' window -->
-		<p
-			v-if="!IS_DESKTOP"
-			class="app-settings-section__version">
-			{{ t('spreed', 'Talk version: {version}', { version: talkVersion }) }}
-		</p>
+			<!-- Information about current version used. Talk Desktop has this in 'About' window -->
+			<p
+				v-if="!IS_DESKTOP"
+				class="app-settings-section__version">
+				{{ t('spreed', 'Talk version: {version}', { version: talkVersion }) }}
+			</p>
+		</NcAppSettingsShortcutsSection>
 	</NcAppSettingsDialog>
 </template>
 
@@ -264,8 +218,12 @@ import { generateUrl } from '@nextcloud/router'
 import { ref } from 'vue'
 import NcAppSettingsDialog from '@nextcloud/vue/components/NcAppSettingsDialog'
 import NcAppSettingsSection from '@nextcloud/vue/components/NcAppSettingsSection'
+import NcAppSettingsShortcutsSection from '@nextcloud/vue/components/NcAppSettingsShortcutsSection'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcHotkey from '@nextcloud/vue/components/NcHotkey'
+import NcHotkeyList from '@nextcloud/vue/components/NcHotkeyList'
+import NcKbd from '@nextcloud/vue/components/NcKbd'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import { CONVERSATION, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -299,6 +257,10 @@ export default {
 		NcAppSettingsSection,
 		NcButton,
 		NcCheckboxRadioSwitch,
+		NcAppSettingsShortcutsSection,
+		NcHotkeyList,
+		NcHotkey,
+		NcKbd,
 	},
 
 	setup() {
@@ -548,7 +510,7 @@ export default {
 .app-settings-section {
 	margin-bottom: 80px;
 
-	&.last {
+	&:last-of-type {
 		margin-bottom: 0;
 	}
 
@@ -564,8 +526,7 @@ export default {
 	}
 
 	&__version {
-		margin-block-end: calc(2 * var(--default-grid-baseline));
-		text-align: center;
+		margin-inline: var(--form-element-label-offset);
 		color: var(--color-text-maxcontrast);
 	}
 
@@ -589,10 +550,6 @@ export default {
 		color: var(--color-main-text);
 		background-color: var(--color-main-background);
 		cursor: pointer;
-	}
-
-	.shortcut-description {
-		width: calc(100% - 160px);
 	}
 }
 
