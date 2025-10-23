@@ -46,7 +46,7 @@
     "@nextcloud/router": "^3.0.1",
     "@nextcloud/sharing": "^0.3.0",
     "@nextcloud/upload": "^2.0.0-rc.0",
-    "@nextcloud/vue": "^9.0.1",
+    "@nextcloud/vue": "^9.1.0",
     "@vue-leaflet/vue-leaflet": "^0.10.1",
     "@vueuse/components": "^14.0.0",
     "@vueuse/core": "^14.0.0",
