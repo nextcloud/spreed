@@ -1479,7 +1479,7 @@
     "Choose a conversation to forward the selected message." : "选择对话来转发所选消息",
     "Error while forwarding message" : "转发消息时出错",
     "The message has been forwarded to {selectedConversationName}" : "已转发此消息至{selectedConversationName}",
-    "Dismiss" : "忽略",
+    "Dismiss" : "关闭",
     "Go to conversation" : "转到对话",
     "The message could not be translated" : "无法翻译信息",
     "Translation copied to clipboard" : "翻译已复制到剪贴板",
