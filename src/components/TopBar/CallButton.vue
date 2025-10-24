@@ -57,7 +57,7 @@
 		v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
 		class="leave-call leave-call-actions--split"
 		:disabled="loading"
-		force-name
+		:force-name="showButtonText"
 		placement="top-end"
 		:aria-label="leaveCallActionsLabel"
 		:inline="1"
@@ -67,20 +67,26 @@
 		</template>
 		<NcActionButton
 			v-if="isBreakoutRoom"
+			:aria-label="backToMainRoomLabel"
 			@click="switchToParentRoom">
 			<template #icon>
 				<IconArrowLeft class="bidirectional-icon" :size="20" />
 			</template>
-			{{ backToMainRoomLabel }}
+			<template v-if="showButtonText" #default>
+				{{ backToMainRoomLabel }}
+			</template>
 		</NcActionButton>
 		<NcActionButton
 			class="leave-call-button--split"
+			:aria-label="leaveCallLabel"
 			@click="leaveCall(false)">
 			<template #icon>
 				<NcLoadingIcon v-if="loading" :size="20" />
 				<IconPhoneHangupOutline v-else :size="20" />
 			</template>
-			{{ leaveCallLabel }}
+			<template v-if="showButtonText || isBreakoutRoom" #default>
+				{{ leaveCallLabel }}
+			</template>
 		</NcActionButton>
 		<NcActionButton v-if="canEndForAll" @click="leaveCall(true)">
 			<template #icon>
