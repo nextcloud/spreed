@@ -62,6 +62,7 @@
 			variant="tertiary" />
 
 		<NcButton
+			v-if="!hideVirtualBackgroundShortcut"
 			:aria-label="t('spreed', 'Select virtual background')"
 			:title="t('spreed', 'Select virtual background')"
 			variant="tertiary"
@@ -171,6 +172,11 @@ export default {
 		},
 
 		isSidebar: {
+			type: Boolean,
+			default: false,
+		},
+
+		hideVirtualBackgroundShortcut: {
 			type: Boolean,
 			default: false,
 		},
