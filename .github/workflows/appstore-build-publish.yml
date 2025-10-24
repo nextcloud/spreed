@@ -140,17 +140,24 @@ jobs:
           cd ${{ env.APP_NAME }}
           make appstore
 
-      - name: Checkout server ${{ fromJSON(steps.appinfo.outputs.result).nextcloud.min-version }}
-        continue-on-error: true
-        id: server-checkout
+      - name: Check server download link for ${{ fromJSON(steps.appinfo.outputs.result).nextcloud.min-version }}
         run: |
           NCVERSION='${{ fromJSON(steps.appinfo.outputs.result).nextcloud.min-version }}'
-          wget --quiet https://download.nextcloud.com/server/releases/latest-$NCVERSION.zip
-          unzip latest-$NCVERSION.zip
+          DOWNLOAD_URL=$(curl -s "https://updates.nextcloud.com/updater_server/latest?channel=beta&version=$NCVERSION" | jq -r '.downloads.zip[0]')
+          echo "DOWNLOAD_URL=$DOWNLOAD_URL" >> $GITHUB_ENV
+
+      - name: Download server ${{ fromJSON(steps.appinfo.outputs.result).nextcloud.min-version }}
+        continue-on-error: true
+        id: server-download
+        if: ${{ env.DOWNLOAD_URL != 'null' }}
+        run: |
+          echo "Downloading release tarball from $DOWNLOAD_URL"
+          wget $DOWNLOAD_URL -O nextcloud.zip
+          unzip nextcloud.zip
 
       - name: Checkout server master fallback
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        if: ${{ steps.server-checkout.outcome != 'success' }}
+        if: ${{ steps.server-download.outcome != 'success' }}
         with:
           persist-credentials: false
           submodules: true
