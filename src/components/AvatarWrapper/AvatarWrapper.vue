@@ -7,7 +7,7 @@
 	<div class="avatar-wrapper" :class="avatarClass" :style="avatarStyle">
 		<NcAvatar
 			v-if="isSpecialAvatar"
-			:key="name + '_' + id"
+			:key="(isDarkTheme ? 'dark-' : 'light-') + '_' + id"
 			class="avatar"
 			:user="name + '_' + id"
 			:url="!isFederatedUser ? undefined : avatarUrl"
@@ -16,10 +16,10 @@
 			:disable-tooltip="disableTooltip"
 			disable-menu
 			:hide-status="!showUserStatus"
-			:verbose-status="!showUserStatusCompact"
-			:preloaded-user-status="preloadedUserStatus ?? emptyUserStatus"
+			:verbose-status="false"
+			:preloaded-user-status="preloadedUserStatus ?? {}"
 			:size="size">
-			<template v-if="isGuestUser || isBot" #icon>
+			<template v-if="characterIcon" #icon>
 				<div class="avatar" :class="characterIconClass">
 					{{ characterIcon }}
 				</div>
@@ -169,13 +169,17 @@ export default {
 	computed: {
 		// Determines which icon is displayed
 		iconClass() {
-			if (!this.source || this.isGuestUser) {
+			if (!this.source) {
 				return ''
 			}
 			switch (this.source) {
 				case ATTENDEE.ACTOR_TYPE.USERS:
 				case ATTENDEE.ACTOR_TYPE.BRIDGED:
 					return !this.failed ? '' : 'icon-user'
+				case ATTENDEE.ACTOR_TYPE.EMAILS:
+					return this.token === 'new' ? 'icon-mail' : !this.hasCustomName ? 'icon-user' : ''
+				case ATTENDEE.ACTOR_TYPE.GUESTS:
+					return !this.hasCustomName ? 'icon-user' : ''
 				case ATTENDEE.ACTOR_TYPE.FEDERATED_USERS:
 					return (this.token && !this.failed) ? '' : 'icon-user'
 				case ATTENDEE.ACTOR_TYPE.DELETED_USERS:
@@ -193,10 +197,10 @@ export default {
 		},
 
 		characterIconClass() {
-			if (this.source === ATTENDEE.ACTOR_TYPE.EMAILS) {
-				return this.token === 'new' ? 'icon-mail' : (this.hasCustomName ? 'guest' : 'icon-user')
-			} else if (this.source === ATTENDEE.ACTOR_TYPE.GUESTS) {
-				return this.hasCustomName ? 'guest' : 'icon-user'
+			if (this.source === ATTENDEE.ACTOR_TYPE.EMAILS && !this.token === 'new' && this.hasCustomName) {
+				return 'guest'
+			} else if (this.source === ATTENDEE.ACTOR_TYPE.GUESTS && this.hasCustomName) {
+				return 'guest'
 			} else if (this.isBot) {
 				return 'bot'
 			}
@@ -240,7 +244,8 @@ export default {
 			if (this.isBot) {
 				return '>_'
 			}
-			if (!this.hasCustomName || this.token === 'new') {
+
+			if (!this.isGuestUser || !this.hasCustomName || this.token === 'new') {
 				return ''
 			}
 			return this.name?.trim()?.toUpperCase()?.charAt(0) ?? '?'
@@ -248,14 +253,6 @@ export default {
 
 		avatarUrl() {
 			return getUserProxyAvatarOcsUrl(this.token, this.id, this.isDarkTheme, this.size > AVATAR.SIZE.MEDIUM ? 512 : 64)
-		},
-
-		emptyUserStatus() {
-			return {
-				status: null,
-				icon: null,
-				message: null,
-			}
 		},
 
 		isSpecialAvatar() {

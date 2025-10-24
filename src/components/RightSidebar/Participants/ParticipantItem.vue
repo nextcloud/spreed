@@ -19,7 +19,7 @@
 				:id="participant.actorId"
 				:key="participant.attendeeId"
 				:token="token"
-				:name="isEmailActor ? computedName : displayName"
+				:name="computedName"
 				:source="participant.actorType"
 				disable-tooltip
 				:show-user-status="showUserStatus"
@@ -578,10 +578,6 @@ export default {
 				// Can also be undefined, so have to check > than disconnect
 				&& this.currentParticipant.participantFlags > PARTICIPANT.CALL_FLAG.DISCONNECTED
 				&& this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
-		},
-
-		displayName() {
-			return this.participant.displayName.trim()
 		},
 
 		computedName() {

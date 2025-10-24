@@ -3,7 +3,7 @@ import { t } from '@nextcloud/l10n'
  * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { shallowMount } from '@vue/test-utils'
+import { mount, shallowMount } from '@vue/test-utils'
 import { describe, expect, it, test } from 'vitest'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import AvatarWrapper from './AvatarWrapper.vue'
@@ -27,7 +27,7 @@ describe('AvatarWrapper.vue', () => {
 			expect(avatar.props('size')).toBe(AVATAR.SIZE.DEFAULT)
 		})
 
-		test('component does not render NcAvatar for non-users', () => {
+		test('component does render NcAvatar for non-users', () => {
 			const wrapper = shallowMount(AvatarWrapper, {
 				props: {
 					name: 'Email Guest',
@@ -36,10 +36,10 @@ describe('AvatarWrapper.vue', () => {
 			})
 
 			const avatar = wrapper.findComponent(NcAvatar)
-			expect(avatar.exists()).toBeFalsy()
+			expect(avatar.exists()).toBeTruthy()
 		})
 
-		test('component does not render NcAvatar for federated users', () => {
+		test('component does render NcAvatar for federated users', () => {
 			const wrapper = shallowMount(AvatarWrapper, {
 				props: {
 					token: 'XXXTOKENXXX',
@@ -49,7 +49,7 @@ describe('AvatarWrapper.vue', () => {
 			})
 
 			const avatar = wrapper.findComponent(NcAvatar)
-			expect(avatar.exists()).toBeFalsy()
+			expect(avatar.exists()).toBeTruthy()
 		})
 
 		test('component renders NcAvatar with specified size', () => {
@@ -110,7 +110,7 @@ describe('AvatarWrapper.vue', () => {
 
 			const avatar = wrapper.find('.avatar')
 			expect(avatar.exists()).toBeTruthy()
-			expect(avatar.classes(result)).toBeTruthy()
+			expect(avatar.attributes('iconclass')).toContain(result)
 		})
 	})
 
@@ -122,7 +122,7 @@ describe('AvatarWrapper.vue', () => {
 		]
 
 		it.each(testCases)('renders for id \'%s\', name \'%s\' and source \'%s\' symbol \'%s\'', (id, name, source, result) => {
-			const wrapper = shallowMount(AvatarWrapper, {
+			const wrapper = mount(AvatarWrapper, {
 				props: { name, source },
 			})
 
