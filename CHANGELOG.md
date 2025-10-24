@@ -5,6 +5,31 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.1 – 2025-10-24
+### Added
+- feat(bots): Add create command for inbound-only bots
+  [#16111](https://github.com/nextcloud/spreed/pull/16111)
+
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(chat): Don't trigger typing indicator when editing a message
+  [#16139](https://github.com/nextcloud/spreed/pull/16139)
+- fix(meeting): Fix issue not showing name of lobbied gusts to moderators
+  [#16147](https://github.com/nextcloud/spreed/pull/16147)
+- fix(meeting): Fix issue not showed 2 guests instead of 1
+  [#16154](https://github.com/nextcloud/spreed/pull/16154)
+- fix(threads): Fix notifications for federated users
+  [#16064](https://github.com/nextcloud/spreed/pull/16064)
+- fix(threads): Fix link to thread when clicking on notification while on Talk
+  [#16056](https://github.com/nextcloud/spreed/pull/16056)
+- fix(threads): Fix Oracle compatibility with threads
+  [#16150](https://github.com/nextcloud/spreed/pull/16150)
+- fix(conversations): Don't transfer sample conversations when transferring ownership
+  [#16176](https://github.com/nextcloud/spreed/pull/16176)
+
 ## 22.0.0 – 2025-09-27
 ### Added
 - Implement threads feature
