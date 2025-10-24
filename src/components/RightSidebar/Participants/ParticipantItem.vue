@@ -19,7 +19,7 @@
 				:id="participant.actorId"
 				:key="participant.attendeeId"
 				:token="token"
-				:name="displayName"
+				:name="computedName"
 				:source="participant.actorType"
 				disable-tooltip
 				:show-user-status="showUserStatus"
@@ -580,10 +580,6 @@ export default {
 				&& this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
 
-		displayName() {
-			return this.participant.displayName.trim()
-		},
-
 		computedName() {
 			return getDisplayNameWithFallback(this.participant.displayName, this.participant.actorType)
 		},
@@ -668,7 +664,7 @@ export default {
 		 * return this.participant.status === 'offline' ||  !this.sessionIds.length
 		 */
 		isOffline() {
-			return !this.sessionIds.length && (this.isUserActor || this.isFederatedActor || this.isGuestActor)
+			return !this.sessionIds.length && (this.isUserActor || this.isFederatedActor || this.isGuestActor || this.isEmailActor)
 				&& (hasTalkFeature(this.token, 'federation-v2') || (!this.conversation.remoteServer && !this.isFederatedActor))
 		},
 

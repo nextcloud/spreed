@@ -11,6 +11,7 @@ import type {
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { t } from '@nextcloud/l10n'
+import { ATTENDEE } from '../constants.ts'
 
 /**
  * Generate user status object to use as preloaded status with NcAvatar
@@ -44,6 +45,18 @@ export function getPreloadedUserStatus(userData?: Conversation | Participant | P
 				status: null,
 				message: null,
 				icon: null,
+			}
+		}
+	}
+
+	if ('sessionIds' in userData && userData.sessionIds.length > 0
+		&& (userData.actorType === ATTENDEE.ACTOR_TYPE.GUESTS || userData.actorType === ATTENDEE.ACTOR_TYPE.EMAILS)) {
+		// Guests and email users do not have status, yet if it is online, show them as online
+		if (userData.sessionIds && userData.sessionIds.length > 0) {
+			return {
+				status: 'online',
+				message: null,
+				icon: '',
 			}
 		}
 	}
