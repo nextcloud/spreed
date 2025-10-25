@@ -63,7 +63,7 @@
     "hark": "^1.2.3",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
-    "libphonenumber-js": "^1.12.24",
+    "libphonenumber-js": "^1.12.25",
     "lodash": "^4.17.21",
     "mitt": "^3.0.1",
     "mockconsole": "0.0.1",
