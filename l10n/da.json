@@ -569,7 +569,7 @@
     "Important conversation" : "Vigtig samtale",
     "\"Do not disturb\" user status is ignored for important conversations" : "Brugerstatus \"Forstyr ikke\" ignoreres ved vigtige samtaler",
     "Sensitive conversation" : "Følsom samtale",
-    "Message preview will be disabled in conversation list and notifications" : "Forhåndsvisning vil blive deaktiveret i samtalelisten og notifikationer",
+    "Message preview will be disabled in conversation list and notifications" : "Forhåndsvisning af beskeder vil blive deaktiveret i samtalelisten og notifikationer",
     "Require recording consent before joining call in this conversation" : "Kræv optagelsessamtykke inden deltagelse i opkaldet i denne samtale",
     "Recording consent is required for all calls" : "Optagelsessamtykke er kræver for alle opkald",
     "Join" : "Deltag",
