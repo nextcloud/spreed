@@ -178,13 +178,14 @@ jobs:
         run: |
           cat data/nextcloud.log
 
-      - name: Print query logs
+      - name: Print query.log
         if: matrix.test-suite == 'scaling'
         run: |
           cat data/query.log
 
       - name: Upload query.log
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: matrix.test-suite == 'scaling'
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: query-list.txt
           path: data/query.log
