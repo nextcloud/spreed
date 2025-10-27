@@ -5,22 +5,26 @@
 
 <template>
 	<div class="avatar-wrapper" :class="avatarClass" :style="avatarStyle">
-		<div v-if="iconClass" class="avatar icon" :class="[iconClass]" />
-		<div v-else-if="isGuestUser" class="avatar guest">
-			{{ firstLetterOfGuestName }}
-		</div>
-		<div v-else-if="isBot" class="avatar bot">
-			>_
-		</div>
-		<img
-			v-else-if="isFederatedUser && token"
-			:key="avatarUrl"
-			:src="avatarUrl"
-			:width="size"
-			:height="size"
-			:alt="name"
-			class="avatar icon"
-			@error="failed = true">
+		<NcAvatar
+			v-if="isSpecialAvatar"
+			:key="(isDarkTheme ? 'dark-' : 'light-') + '_' + id"
+			class="avatar"
+			:user="name + '_' + id"
+			:url="!isFederatedUser ? undefined : avatarUrl"
+			:icon-class="iconClass"
+			:display-name="name"
+			:disable-tooltip="disableTooltip"
+			disable-menu
+			:hide-status="!showUserStatus"
+			:verbose-status="false"
+			:preloaded-user-status="preloadedUserStatus ?? {}"
+			:size="size">
+			<template v-if="characterIcon" #icon>
+				<div class="avatar" :class="characterIconClass">
+					{{ characterIcon }}
+				</div>
+			</template>
+		</NcAvatar>
 		<NcAvatar
 			v-else
 			:key="id + (isDarkTheme ? '-dark' : '-light')"
@@ -172,12 +176,12 @@ export default {
 				case ATTENDEE.ACTOR_TYPE.USERS:
 				case ATTENDEE.ACTOR_TYPE.BRIDGED:
 					return !this.failed ? '' : 'icon-user'
+				case ATTENDEE.ACTOR_TYPE.EMAILS:
+					return this.token === 'new' ? 'icon-mail' : !this.hasCustomName ? 'icon-user' : ''
+				case ATTENDEE.ACTOR_TYPE.GUESTS:
+					return !this.hasCustomName ? 'icon-user' : ''
 				case ATTENDEE.ACTOR_TYPE.FEDERATED_USERS:
 					return (this.token && !this.failed) ? '' : 'icon-user'
-				case ATTENDEE.ACTOR_TYPE.EMAILS:
-					return this.token === 'new' ? 'icon-mail' : (this.hasCustomName ? '' : 'icon-user')
-				case ATTENDEE.ACTOR_TYPE.GUESTS:
-					return this.hasCustomName ? '' : 'icon-user'
 				case ATTENDEE.ACTOR_TYPE.DELETED_USERS:
 					return 'icon-user'
 				case ATTENDEE.ACTOR_TYPE.PHONES:
@@ -190,6 +194,18 @@ export default {
 				default:
 					return 'icon-contacts'
 			}
+		},
+
+		characterIconClass() {
+			if (this.source === ATTENDEE.ACTOR_TYPE.EMAILS && this.token !== 'new' && this.hasCustomName) {
+				return 'guest'
+			} else if (this.source === ATTENDEE.ACTOR_TYPE.GUESTS && this.hasCustomName) {
+				return 'guest'
+			} else if (this.isBot) {
+				return 'bot'
+			}
+
+			return undefined
 		},
 
 		avatarClass() {
@@ -224,12 +240,23 @@ export default {
 			return this.name?.trim() && this.name !== t('spreed', 'Guest')
 		},
 
-		firstLetterOfGuestName() {
+		characterIcon() {
+			if (this.isBot) {
+				return '>_'
+			}
+
+			if (!this.isGuestUser || !this.hasCustomName || this.token === 'new') {
+				return ''
+			}
 			return this.name?.trim()?.toUpperCase()?.charAt(0) ?? '?'
 		},
 
 		avatarUrl() {
 			return getUserProxyAvatarOcsUrl(this.token, this.id, this.isDarkTheme, this.size > AVATAR.SIZE.MEDIUM ? 512 : 64)
+		},
+
+		isSpecialAvatar() {
+			return this.isGuestUser || this.iconClass || this.isBot || (this.isFederatedUser && this.token)
 		},
 	},
 
@@ -266,8 +293,6 @@ export default {
 		max-width: var(--avatar-size);
 		line-height: var(--avatar-size);
 		font-size: calc(var(--avatar-size) / 2);
-		overflow: hidden;
-		border-radius: 50%;
 		background-color: var(--color-text-maxcontrast-default);
 
 		&.icon {
@@ -334,6 +359,14 @@ export default {
 	inset-inline-start: 0;
 	width: 100%;
 	height: 100%;
+}
+
+.avatar-wrapper:not(.avatar-wrapper--dark) {
+	// FIXME: update the used color in NcAvatar
+	// TOREMOVE: when fixed in @nextcloud/vue
+	:deep(.avatar-class-icon) {
+		background-color: var(--color-text-maxcontrast-default);
+	}
 }
 
 </style>
