@@ -5,6 +5,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.2 – 2025-10-27
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(chat): Fix relative date header showing `.042` after DST change
+  [#16217](https://github.com/nextcloud/spreed/pull/16217)
+- fix(participants): Correctly show guests as online and offline
+  [#16218](https://github.com/nextcloud/spreed/pull/16218)
+
 ## 22.0.1 – 2025-10-24
 ### Added
 - feat(bots): Add create command for inbound-only bots
