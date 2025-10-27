@@ -116,7 +116,7 @@ function getDiffInDays(dateOrTimestamp: Date | number): number {
 	date.setHours(0, 0, 0, 0)
 	currentDate.setHours(0, 0, 0, 0)
 
-	return (+date - +currentDate) / ONE_DAY_IN_MS
+	return Math.ceil((+date - +currentDate) / ONE_DAY_IN_MS)
 }
 
 /**
