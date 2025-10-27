@@ -139,7 +139,7 @@ describe('ParticipantItem.vue', () => {
 			const avatarEl = wrapper.findComponent(AvatarWrapper)
 			expect(avatarEl.exists()).toBeTruthy()
 
-			expect(avatarEl.props('name')).toBe('')
+			expect(avatarEl.props('name')).toBe('Guest')
 		})
 
 		test('renders avatar with unknown name when empty', () => {
@@ -148,7 +148,7 @@ describe('ParticipantItem.vue', () => {
 			const avatarEl = wrapper.findComponent(AvatarWrapper)
 			expect(avatarEl.exists()).toBeTruthy()
 
-			expect(avatarEl.props('name')).toBe('')
+			expect(avatarEl.props('name')).toBe('Deleted user')
 		})
 
 		test('renders offline avatar when no sessions exist', () => {
