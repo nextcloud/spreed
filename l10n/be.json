@@ -30,7 +30,7 @@
     "- Mark conversations as sensitive in the notification settings, to hide the message content from the conversation list and notifications" : "- Пазначайце размовы як сакрэтныя ў наладах апавяшчэнняў, каб схаваць змест паведамленняў са спісу размоў і апавяшчэнняў",
     "- To receive push notifications during \"Do not disturb\", mark conversations as important" : "- Каб атрымліваць push-апавяшчэнні ў рэжыме \"Не турбаваць\", пазначайце размовы як важныя",
     "- Add other participants to a one-to-one call to create a new group call on the fly" : "- Дадайце іншых удзельнікаў да індывідуальнага выкліку, каб адразу стварыць новы супольны выклік",
-    "- Use threads to keep your chat and discussions organized" : "- Выкарыстоўвайце гутаркі, каб арганізаваць чаты і абмеркаванні",
+    "- Use threads to keep your chat and discussions organized" : "- Арганізоўвайце чаты і абмеркаванні з дапамогай гутарак",
     "- Live transcriptions now available during the call (requires the live-transcription ExApp and the High-performance backend)" : "- Цяпер падчас выкліку даступна імгненная транскрыпцыя (патрабуецца праграма ExApp для імгненнай транскрыпцыі і высокапрадукцыйны бэкенд)",
     "Talk updates ✅" : "Абнаўленні Talk ✅",
     "Reaction deleted by author" : "Рэакцыя выдалена аўтарам",
