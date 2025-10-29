@@ -118,8 +118,6 @@ class HostedSignalingServerController extends OCSController {
 		} catch (HostedSignalingServerAPIException $e) {
 			if ($e->getCode() === Http::STATUS_NOT_FOUND) {
 				// Account was deleted, so remove the information locally
-			} elseif ($e->getCode() === Http::STATUS_UNAUTHORIZED) {
-				// Account is expired and deletion is pending unless it's reactivated.
 			} else {
 				// API or connection issues - do nothing and just try again later
 				return new DataResponse(['message' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
