@@ -139,7 +139,7 @@ function handleResultClick() {
 		<template #details>
 			<NcDateTime :timestamp="+timestamp * 1000"
 				class="search-results__date"
-				relative-time="narrow"
+				relative-time="short"
 				ignore-seconds />
 		</template>
 	</NcListItem>
