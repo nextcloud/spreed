@@ -114,9 +114,6 @@ class CheckHostedSignalingServer extends TimedJob {
 			if ($e->getCode() === Http::STATUS_NOT_FOUND) {
 				// Account was deleted, so remove the information locally
 				$accountInfo = ['status' => 'deleted'];
-			} elseif ($e->getCode() === Http::STATUS_UNAUTHORIZED) {
-				// Account is expired and deletion is pending unless it's reactivated.
-				$accountInfo = ['status' => 'expired'];
 			} else {
 				// API or connection issues - do nothing and just try again later
 				return;
