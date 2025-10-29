@@ -967,7 +967,7 @@ OC.L10N.register(
     "You don't have any upcoming meetings" : "Няма запланаваных сустрэч",
     "Open calendar" : "Адкрыць каляндар",
     "Unread mentions" : "Непрачытаныя згадкі",
-    "Messages where you were mentioned will show up here. You can mention people by typing @ followed by their name" : "Паведамленні, у якіх вас згадвалі, будуць адлюстроўвацца тут. Вы можаце згадваць людзей, набіраючы @, а затым іх імя.",
+    "Messages where you were mentioned will show up here. You can mention people by typing @ followed by their name" : "Тут будуць адлюстроўвацца паведамленні, у якіх вас згадвалі. Вы можаце згадваць людзей, набіраючы @, а затым іх імя.",
     "Upcoming reminders" : "Будучыя напаміны",
     "Message reminders" : "Напаміны пра паведамленні",
     "Set a reminder on a message to be notified" : "Задайце напамін для паведамлення, пра якое трэба атрымаць апавяшчэнне",

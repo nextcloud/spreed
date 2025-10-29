@@ -1722,7 +1722,7 @@
     "Search for more users" : "Rechercher d'autres utilisateurs",
     "You can search or add participants via name, email, or Federated Cloud ID" : "Vous pouvez rechercher ou ajouter des participants par nom, e-mail ou ID de cloud fédéré.",
     "Search or add participants" : "Rechercher ou ajouter des participants",
-    "Invitation was sent to {actorId}" : "L'inviation a été envoyée à {actorId}",
+    "Invitation was sent to {actorId}" : "L'invitation a été envoyée à {actorId}",
     "An error occurred while adding the participants" : "Une erreur est survenue lors de l’ajout de participants",
     "A new group conversation with selected participant will be created" : "Une nouvelle conversation de groupe avec les participants sélectionnés va être créée",
     "Participants" : "Participants",
