@@ -37,8 +37,8 @@ class Version23000Date20251030090219 extends SimpleMigrationStep {
 		}
 
 		$table = $schema->getTable('talk_attendees');
-		if (!$table->hasColumn('dismissed_pinned_id')) {
-			$table->addColumn('dismissed_pinned_id', Types::BIGINT, [
+		if (!$table->hasColumn('hide_pinned_id')) {
+			$table->addColumn('hide_pinned_id', Types::BIGINT, [
 				'notnull' => false,
 				'default' => 0,
 			]);

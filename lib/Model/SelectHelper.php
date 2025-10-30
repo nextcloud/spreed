@@ -84,7 +84,7 @@ class SelectHelper {
 			->addSelect($alias . 'has_unread_threads')
 			->addSelect($alias . 'has_unread_thread_mentions')
 			->addSelect($alias . 'has_unread_thread_directs')
-			->addSelect($alias . 'dismissed_pinned_id')
+			->addSelect($alias . 'hide_pinned_id')
 			->selectAlias($alias . 'id', 'a_id');
 	}
 

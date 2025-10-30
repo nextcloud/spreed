@@ -154,7 +154,7 @@ class RoomFormatter {
 			'mentionPermissions' => Room::MENTION_PERMISSIONS_EVERYONE,
 			'liveTranscriptionLanguageId' => '',
 			'lastPinnedId' => 0,
-			'dismissedPinnedId' => 0,
+			'hidePinnedId' => 0,
 			'isArchived' => false,
 			'isImportant' => false,
 			'isSensitive' => false,
@@ -246,7 +246,7 @@ class RoomFormatter {
 			'isImportant' => $attendee->isImportant(),
 			'isSensitive' => $attendee->isSensitive(),
 			'lastPinnedId' => $room->getLastPinnedId(),
-			'dismissedPinnedId' => $attendee->getDismissedPinnedId(),
+			'hidePinnedId' => $attendee->getHidePinnedId(),
 		]);
 
 		if ($room->isFederatedConversation()) {
