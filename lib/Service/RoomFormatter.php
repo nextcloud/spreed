@@ -153,6 +153,8 @@ class RoomFormatter {
 			'recordingConsent' => $this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_OPTIONAL ? $room->getRecordingConsent() : $this->talkConfig->recordingConsentRequired(),
 			'mentionPermissions' => Room::MENTION_PERMISSIONS_EVERYONE,
 			'liveTranscriptionLanguageId' => '',
+			'lastPinnedId' => 0,
+			'hiddenPinnedId' => 0,
 			'isArchived' => false,
 			'isImportant' => false,
 			'isSensitive' => false,
@@ -243,6 +245,8 @@ class RoomFormatter {
 			'isArchived' => $attendee->isArchived(),
 			'isImportant' => $attendee->isImportant(),
 			'isSensitive' => $attendee->isSensitive(),
+			'lastPinnedId' => $room->getLastPinnedId(),
+			'hiddenPinnedId' => $attendee->getHiddenPinnedId(),
 		]);
 
 		if ($room->isFederatedConversation()) {

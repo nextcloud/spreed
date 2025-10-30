@@ -369,6 +369,10 @@ namespace OCA\Talk;
  *     isImportant: bool,
  *     // Required capability: `sensitive-conversations`
  *     isSensitive: bool,
+ *     // Required capability: `pinned-messages`
+ *     lastPinnedId: int,
+ *     // Required capability: `pinned-messages`
+ *     hiddenPinnedId: int,
  * }
  *
  * @psalm-type TalkDashboardEventAttachment = array{

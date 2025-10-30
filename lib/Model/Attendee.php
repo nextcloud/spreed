@@ -70,6 +70,8 @@ use OCP\DB\Types;
  * @method bool getHasUnreadThreadMentions()
  * @method void setHasUnreadThreadDirects(bool $hasUnreadThreadDirects)
  * @method bool getHasUnreadThreadDirects()
+ * @method void setHiddenPinnedId(int $hiddenPinnedId)
+ * @method int getHiddenPinnedId()
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';
@@ -142,6 +144,7 @@ class Attendee extends Entity {
 	protected bool $hasUnreadThreads = false;
 	protected bool $hasUnreadThreadMentions = false;
 	protected bool $hasUnreadThreadDirects = false;
+	protected int $hiddenPinnedId = 0;
 
 	public function __construct() {
 		$this->addType('roomId', Types::BIGINT);
@@ -173,6 +176,7 @@ class Attendee extends Entity {
 		$this->addType('hasUnreadThreads', Types::BOOLEAN);
 		$this->addType('hasUnreadThreadMentions', Types::BOOLEAN);
 		$this->addType('hasUnreadThreadDirects', Types::BOOLEAN);
+		$this->addType('hiddenPinnedId', Types::BIGINT);
 	}
 
 	public function getDisplayName(): string {

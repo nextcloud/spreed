@@ -124,6 +124,7 @@ class Manager {
 			'has_federation' => 0,
 			'mention_permissions' => 0,
 			'transcription_language' => '',
+			'last_pinned_id' => 0,
 		], $data));
 	}
 
@@ -194,6 +195,7 @@ class Manager {
 			(int)$row['has_federation'],
 			(int)$row['mention_permissions'],
 			(string)$row['transcription_language'],
+			(int)$row['last_pinned_id'],
 		);
 	}
 
