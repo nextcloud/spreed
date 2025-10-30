@@ -514,6 +514,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (!empty($expectedRoom['lobbyTimer'])) {
 					$data['lobbyTimer'] = (int)$room['lobbyTimer'];
 				}
+				if (isset($expectedRoom['hidePinnedId'])) {
+					if ($room['hidePinnedId'] === 0) {
+						$data['hidePinnedId'] = 'EMPTY';
+					} else {
+						$data['hidePinnedId'] = self::$messageIdToText[(int)$room['hidePinnedId']] ?? 'UNKNOWN_MESSAGE';
+					}
+				}
 				if (isset($expectedRoom['lobbyTimer'])) {
 					$data['lobbyTimer'] = (int)$room['lobbyTimer'];
 					if ($expectedRoom['lobbyTimer'] === 'GREATER_THAN_ZERO' && $room['lobbyTimer'] > 0) {
@@ -2036,12 +2043,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-	#[Then('/^user "([^"]*)" (unpins|pins) message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	#[Then('/^user "([^"]*)" (unpins|pins|hides pinned) message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userPinsMessage(string $user, string $action, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
+
+		$routeSuffix = $action === 'hides pinned' ? '/self' : '';
 		$this->sendRequest(
 			$action === 'pins' ? 'POST' : 'DELETE',
-			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/' . self::$textToMessageId[$message] . '/pin'
+			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/' . self::$textToMessageId[$message] . '/pin' . $routeSuffix
 		);
 
 		$this->assertStatusCode($this->response, $statusCode);
