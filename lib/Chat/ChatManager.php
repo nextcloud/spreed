@@ -19,6 +19,7 @@ use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Exceptions\InvalidRoomException;
 use OCA\Talk\Exceptions\MessagingNotAllowedException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Poll;
@@ -748,6 +749,68 @@ class ChatManager {
 			null,
 			$comment,
 			true
+		);
+	}
+
+	public function pinMessage(Room $chat, IComment $comment, Participant $participant): ?IComment {
+		$metaData = $comment->getMetaData() ?? [];
+
+		if (!empty($metaData[Message::METADATA_PINNED])) {
+			// Message is already pinned
+			return null;
+		}
+
+		$message = $this->addSystemMessage(
+			$chat,
+			$participant,
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId(),
+			json_encode(['message' => 'message_pinned', 'parameters' => ['message' => $comment->getId()]]),
+			$this->timeFactory->getDateTime(),
+			false,
+			null,
+			$comment,
+		);
+
+		$metaData[Message::METADATA_PINNED] = (int)$message->getId();
+		$comment->setMetaData($metaData);
+		$this->commentsManager->save($comment);
+
+		$this->attachmentService->createAttachmentEntryGeneric(
+			$chat,
+			$comment,
+			Attachment::TYPE_PINNED,
+		);
+
+		return $message;
+	}
+
+	public function unpinMessage(Room $chat, IComment $comment, Participant $participant): ?IComment {
+		$metaData = $comment->getMetaData() ?? [];
+
+		if (empty($metaData[Message::METADATA_PINNED])) {
+			// Message is not pinned
+			return null;
+		}
+
+		unset($metaData[Message::METADATA_PINNED]);
+		$comment->setMetaData($metaData);
+		$this->commentsManager->save($comment);
+
+		$this->attachmentService->deleteAttachmentByMessageId((int)$comment->getId());
+
+		return $this->addSystemMessage(
+			$chat,
+			$participant,
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId(),
+			json_encode(['message' => 'message_unpinned', 'parameters' => ['message' => $comment->getId()]]),
+			$this->timeFactory->getDateTime(),
+			false,
+			null,
+			$comment,
+			true,
+			true,
 		);
 	}
 

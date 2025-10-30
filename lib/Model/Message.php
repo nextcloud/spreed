@@ -25,6 +25,7 @@ class Message {
 	public const METADATA_SILENT = 'silent';
 	public const METADATA_CAN_MENTION_ALL = 'can_mention_all';
 	public const METADATA_THREAD_ID = 'thread_id';
+	public const METADATA_PINNED = 'pinned';
 
 	/** @var bool */
 	protected $visible = true;

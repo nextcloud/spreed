@@ -364,6 +364,13 @@ class ParticipantService {
 		$this->attendeeMapper->update($attendee);
 	}
 
+	public function hidePinnedMessage(Participant $participant, int $messagesId): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setHiddenPinnedId($messagesId);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
 	/**
 	 * @param RoomService $roomService
 	 * @param Room $room

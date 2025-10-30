@@ -168,9 +168,34 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>
+	 * @template S of Http::STATUS_*
+	 * @param S $statusCode HTTP status code
+	 * @return DataResponse<S, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>
 	 */
-	protected function parseCommentToResponse(IComment $comment, ?Message $parentMessage = null): DataResponse {
+	protected function parseCommentAndParentToResponse(?IComment $comment, ?IComment $parentComment = null, int $statusCode = Http::STATUS_CREATED): DataResponse {
+		if ($comment === null) {
+			$headers = [];
+			if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+				$headers = ['X-Chat-Last-Common-Read' => (string)$this->chatManager->getLastCommonReadMessage($this->room)];
+			}
+			return new DataResponse(null, $statusCode, $headers);
+		}
+
+		$parsedParentMessage = null;
+		if ($parentComment !== null) {
+			$parsedParentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parentComment, $this->l);
+			$this->messageParser->parseMessage($parsedParentMessage);
+		}
+
+		return $this->parseCommentToResponse($comment, $parsedParentMessage, $statusCode);
+	}
+
+	/**
+	 * @template S of Http::STATUS_*
+	 * @param S $statusCode HTTP status code
+	 * @return DataResponse<S, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>
+	 */
+	protected function parseCommentToResponse(IComment $comment, ?Message $parentMessage = null, int $statusCode = Http::STATUS_CREATED): DataResponse {
 		$chatMessage = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 		$this->messageParser->parseMessage($chatMessage);
 
@@ -179,7 +204,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 				$headers = ['X-Chat-Last-Common-Read' => (string)$this->chatManager->getLastCommonReadMessage($this->room)];
 			}
-			return new DataResponse(null, Http::STATUS_CREATED, $headers);
+			return new DataResponse(null, $statusCode, $headers);
 		}
 
 		try {
@@ -197,7 +222,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 			$headers = ['X-Chat-Last-Common-Read' => (string)$this->chatManager->getLastCommonReadMessage($this->room)];
 		}
-		return new DataResponse($data, Http::STATUS_CREATED, $headers);
+		return new DataResponse($data, $statusCode, $headers);
 	}
 
 	/**
@@ -1660,6 +1685,22 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'messageId' => '[0-9]+',
 	])]
 	public function pinMessage(int $messageId): DataResponse {
+		// FIXME add federation
+
+		try {
+			$comment = $this->chatManager->getComment($this->room, (string)$messageId);
+		} catch (NotFoundException) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($comment->getVerb() !== ChatManager::VERB_MESSAGE && $comment->getVerb() !== ChatManager::VERB_OBJECT_SHARED) {
+			// System message (since the message is not parsed, it has type "system")
+			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$systemMessageComment = $this->chatManager->pinMessage($this->room, $comment, $this->participant);
+
+		return $this->parseCommentAndParentToResponse($systemMessageComment, $comment, Http::STATUS_OK);
 	}
 
 	/**
@@ -1684,6 +1725,17 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'messageId' => '[0-9]+',
 	])]
 	public function unpinMessage(int $messageId): DataResponse {
+		// FIXME add federation
+
+		try {
+			$comment = $this->chatManager->getComment($this->room, (string)$messageId);
+		} catch (NotFoundException) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
+		}
+
+		$systemMessageComment = $this->chatManager->unpinMessage($this->room, $comment, $this->participant);
+
+		return $this->parseCommentAndParentToResponse($systemMessageComment, $comment, Http::STATUS_OK);
 	}
 
 	/**
@@ -1700,7 +1752,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 */
 	#[FederationSupported]
 	#[PublicPage]
-	#[RequireModeratorParticipant]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/chat/{token}/{messageId}/pin/self', requirements: [
 		'apiVersion' => '(v1)',
@@ -1708,6 +1761,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'messageId' => '[0-9]+',
 	])]
 	public function hidePinnedMessage(int $messageId): DataResponse {
+		$this->participantService->hidePinnedMessage($this->participant, $messageId);
+		return new DataResponse(null, Http::STATUS_OK);
 	}
 
 	/**
