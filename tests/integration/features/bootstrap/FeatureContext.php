@@ -521,6 +521,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 						$data['hidePinnedId'] = self::$messageIdToText[(int)$room['hidePinnedId']] ?? 'UNKNOWN_MESSAGE';
 					}
 				}
+				if (isset($expectedRoom['lastPinnedId'])) {
+					if ($room['lastPinnedId'] === 0) {
+						$data['lastPinnedId'] = 'EMPTY';
+					} else {
+						$data['lastPinnedId'] = self::$messageIdToText[(int)$room['lastPinnedId']] ?? 'UNKNOWN_MESSAGE';
+					}
+				}
 				if (isset($expectedRoom['lobbyTimer'])) {
 					$data['lobbyTimer'] = (int)$room['lobbyTimer'];
 					if ($expectedRoom['lobbyTimer'] === 'GREATER_THAN_ZERO' && $room['lobbyTimer'] > 0) {

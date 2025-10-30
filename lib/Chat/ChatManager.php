@@ -778,6 +778,8 @@ class ChatManager {
 
 		$this->participantService->resetHiddenPinnedId($chat, (int)$comment->getId());
 
+		$this->roomService->setLastPinnedId($chat, (int)$comment->getId());
+
 		$this->attachmentService->createAttachmentEntryGeneric(
 			$chat,
 			$comment,
@@ -795,11 +797,21 @@ class ChatManager {
 			return null;
 		}
 
+		$pinnedId = (int)$comment->getId();
 		unset($metaData[Message::METADATA_PINNED]);
 		$comment->setMetaData($metaData);
 		$this->commentsManager->save($comment);
 
-		$this->attachmentService->deleteAttachmentByMessageId((int)$comment->getId());
+		$this->attachmentService->deleteAttachmentByMessageId($pinnedId);
+
+		if ($chat->getLastPinnedId() === $pinnedId) {
+			$newLastPinned = 0;
+			$attachments = $this->attachmentService->getAttachmentsByType($chat, Attachment::TYPE_PINNED, 0, 1);
+			if (isset($attachments[0])) {
+				$newLastPinned = $attachments[0]->getMessageId();
+			}
+			$this->roomService->setLastPinnedId($chat, $newLastPinned);
+		}
 
 		return $this->addSystemMessage(
 			$chat,
