@@ -2036,6 +2036,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
+	#[Then('/^user "([^"]*)" (unpins|pins) message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userPinsMessage(string $user, string $action, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			$action === 'pins' ? 'POST' : 'DELETE',
+			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/' . self::$textToMessageId[$message] . '/pin'
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
 	#[Then('/^user "([^"]*)" gets upcoming reminders \((v1)\)$/')]
 	public function userGetsUpcomingReminders(string $user, string $apiVersion, ?TableNode $table = null): void {
 
@@ -2585,7 +2596,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->compareSearchResponse($formData);
 	}
 
-	#[Then('/^user "([^"]*)" sees the following shared (media|audio|voice|file|deckcard|location|other) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	#[Then('/^user "([^"]*)" sees the following shared (media|audio|voice|file|deckcard|location|pinned|other) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSeesTheFollowingSharedMediaInRoom(string $user, string $objectType, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/share?objectType=' . $objectType);
