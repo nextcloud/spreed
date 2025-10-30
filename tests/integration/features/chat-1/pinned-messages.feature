@@ -40,3 +40,15 @@ Feature: chat-1/pinned-messages
     Then user "participant1" sees the following shared pinned in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters |
       | room | users     | participant1 | participant1-displayname | Message 2 | []                |
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | hidePinnedId |
+      | room | 3    | EMPTY        |
+    When user "participant2" hides pinned message "Message 2" in room "room" with 200
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | hidePinnedId |
+      | room | 3    | Message 2    |
+    When user "participant1" unpins message "Message 2" in room "room" with 200
+    When user "participant1" pins message "Message 2" in room "room" with 200
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | hidePinnedId |
+      | room | 3    | EMPTY        |
