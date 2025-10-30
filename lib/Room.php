@@ -143,6 +143,7 @@ class Room {
 		private int $hasFederation,
 		private int $mentionPermissions,
 		private string $liveTranscriptionLanguageId,
+		private int $lastPinnedId,
 	) {
 	}
 
@@ -616,5 +617,13 @@ class Room {
 
 	public function setLiveTranscriptionLanguageId(string $liveTranscriptionLanguageId): void {
 		$this->liveTranscriptionLanguageId = $liveTranscriptionLanguageId;
+	}
+
+	public function getLastPinnedId(): int {
+		return $this->lastPinnedId;
+	}
+
+	public function setLastPinnedId(int $lastPinnedId): void {
+		$this->lastPinnedId = $lastPinnedId;
 	}
 }
