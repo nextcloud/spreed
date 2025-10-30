@@ -446,6 +446,24 @@
                             "threadReplies": {
                                 "type": "integer",
                                 "format": "int64"
+                            },
+                            "metaData": {
+                                "type": "object",
+                                "properties": {
+                                    "pinnedActorType": {
+                                        "type": "string"
+                                    },
+                                    "pinnedActorId": {
+                                        "type": "string"
+                                    },
+                                    "pinnedActorDisplayName": {
+                                        "type": "string"
+                                    },
+                                    "pinnedUntil": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    }
+                                }
                             }
                         }
                     }
@@ -660,7 +678,9 @@
                     "unreadMessages",
                     "isArchived",
                     "isImportant",
-                    "isSensitive"
+                    "isSensitive",
+                    "lastPinnedId",
+                    "hiddenPinnedId"
                 ],
                 "properties": {
                     "actorId": {
@@ -953,6 +973,16 @@
                     "isSensitive": {
                         "type": "boolean",
                         "description": "Required capability: `sensitive-conversations`"
+                    },
+                    "lastPinnedId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Required capability: `pinned-messages`"
+                    },
+                    "hiddenPinnedId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Required capability: `pinned-messages`"
                     }
                 }
             },
