@@ -514,6 +514,10 @@ class ChatManager {
 	}
 
 	private function setMessageExpiration(Room $room, IComment $comment): void {
+		if ($comment->getVerb() === self::VERB_REACTION_DELETED && $comment->getExpireDate() !== null) {
+			return;
+		}
+
 		$messageExpiration = $room->getMessageExpiration();
 		if (!$messageExpiration) {
 			return;
