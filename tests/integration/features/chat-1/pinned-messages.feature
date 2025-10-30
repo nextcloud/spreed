@@ -12,9 +12,21 @@ Feature: chat-1/pinned-messages
     When user "participant1" sends message "Message 2" to room "room" with 201
     When user "participant2" pins message "Message 2" in room "room" with 403
     When user "participant1" pins message "Message 2" in room "room" with 200
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastPinnedId | hidePinnedId |
+      | room | 3    | Message 2    | EMPTY        |
     When user "participant1" pins message "Message 1" in room "room" with 200
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastPinnedId | hidePinnedId |
+      | room | 3    | Message 1    | EMPTY        |
     When user "participant1" pins message "Message 2" in room "room" with 200
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastPinnedId | hidePinnedId |
+      | room | 3    | Message 1    | EMPTY        |
     When user "participant2" unpins message "Message 1" in room "room" with 403
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastPinnedId | hidePinnedId |
+      | room | 3    | Message 1    | EMPTY        |
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters |
       | room | users     | participant1 | participant1-displayname | Message 2 | []                |
@@ -41,14 +53,17 @@ Feature: chat-1/pinned-messages
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters |
       | room | users     | participant1 | participant1-displayname | Message 2 | []                |
     Then user "participant2" is participant of the following rooms (v4)
-      | id   | type | hidePinnedId |
-      | room | 3    | EMPTY        |
+      | id   | type | lastPinnedId | hidePinnedId |
+      | room | 3    | Message 2    | EMPTY        |
     When user "participant2" hides pinned message "Message 2" in room "room" with 200
     Then user "participant2" is participant of the following rooms (v4)
-      | id   | type | hidePinnedId |
-      | room | 3    | Message 2    |
+      | id   | type | lastPinnedId | hidePinnedId |
+      | room | 3    | Message 2    | Message 2    |
     When user "participant1" unpins message "Message 2" in room "room" with 200
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastPinnedId | hidePinnedId |
+      | room | 3    | EMPTY        | Message 2    |
     When user "participant1" pins message "Message 2" in room "room" with 200
     Then user "participant2" is participant of the following rooms (v4)
-      | id   | type | hidePinnedId |
-      | room | 3    | EMPTY        |
+      | id   | type | lastPinnedId | hidePinnedId |
+      | room | 3    | Message 2    | EMPTY        |
