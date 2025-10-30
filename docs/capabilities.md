@@ -197,3 +197,6 @@
 ## 22
 * `threads` - Whether the chat supports threads
 * `config => call => live-transcription` - Whether live transcription is supported in calls
+
+## 23
+* `pinned-messages` - Whether messages can be pinned
