@@ -1669,7 +1669,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $messageId ID of the message
 	 * @psalm-param non-negative-int $messageId
-	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'message'}, array{}>
 	 *
 	 * 200: Message was pinned successfully
 	 * 400: Message could not be pinned
@@ -1710,7 +1710,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $messageId ID of the message
 	 * @psalm-param non-negative-int $messageId
-	 * @return DataResponse<Http::STATUS_OK, null, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'message'}, array{}>
 	 *
 	 * 200: Message is not pinned now
 	 * 404: Message was not found
