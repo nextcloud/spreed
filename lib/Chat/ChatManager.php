@@ -793,13 +793,11 @@ class ChatManager {
 			return null;
 		}
 
-		$attachmentMessageId = (int)$metaData[Message::METADATA_PINNED];
-
 		unset($metaData[Message::METADATA_PINNED]);
 		$comment->setMetaData($metaData);
 		$this->commentsManager->save($comment);
 
-		$this->attachmentService->deleteAttachmentByMessageId($attachmentMessageId);
+		$this->attachmentService->deleteAttachmentByMessageId((int)$comment->getId());
 
 		return $this->addSystemMessage(
 			$chat,
