@@ -1571,6 +1571,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			Attachment::TYPE_LOCATION,
 			Attachment::TYPE_MEDIA,
 			Attachment::TYPE_OTHER,
+			Attachment::TYPE_PINNED,
 			Attachment::TYPE_POLL,
 			Attachment::TYPE_RECORDING,
 			Attachment::TYPE_VOICE,

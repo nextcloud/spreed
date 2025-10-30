@@ -373,6 +373,7 @@ Feature: delete
       | poll      | 0 |
       | voice     | 0 |
       | recording | 0 |
+      | pinned    | 0 |
     When user "participant1" deletes file "welcome.txt"
     Then user "participant1" sees the following shared file in room "public room" with 200
     And user "participant1" sees the following shared summarized overview in room "public room" with 200
@@ -385,6 +386,7 @@ Feature: delete
       | poll      | 0 |
       | voice     | 0 |
       | recording | 0 |
+      | pinned    | 0 |
     And user "participant1" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
       | public room | users     | participant1 | participant1-displayname | *You shared a file which is no longer available* | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
