@@ -1679,7 +1679,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
-	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/pin/{messageId}', requirements: [
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/{messageId}/pin', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 		'messageId' => '[0-9]+',
@@ -1719,7 +1719,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
-	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/chat/{token}/pin/{messageId}', requirements: [
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/chat/{token}/{messageId}/pin', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 		'messageId' => '[0-9]+',
@@ -1755,7 +1755,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
-	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/chat/{token}/pin/{messageId}/self', requirements: [
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/chat/{token}/{messageId}/pin/self', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 		'messageId' => '[0-9]+',
