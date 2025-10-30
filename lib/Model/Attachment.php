@@ -32,6 +32,7 @@ class Attachment extends Entity {
 	public const TYPE_LOCATION = 'location';
 	public const TYPE_MEDIA = 'media';
 	public const TYPE_OTHER = 'other';
+	public const TYPE_PINNED = 'pinned';
 	public const TYPE_POLL = 'poll';
 	public const TYPE_RECORDING = 'recording';
 	public const TYPE_VOICE = 'voice';
