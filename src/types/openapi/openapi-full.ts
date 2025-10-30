@@ -1576,6 +1576,50 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/{messageId}/pin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Pin a message in a chat as a moderator
+         * @description Required capability: `pinned-messages`
+         */
+        post: operations["chat-pin-message"];
+        /**
+         * Unpin a message in a chat as a moderator
+         * @description Required capability: `pinned-messages`
+         */
+        delete: operations["chat-unpin-message"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/{messageId}/pin/self": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Hide a message in a chat as a user
+         * @description Required capability: `pinned-messages`
+         */
+        delete: operations["chat-hide-pinned-message"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/mentions": {
         parameters: {
             query?: never;
@@ -2871,6 +2915,16 @@ export type components = {
             isImportant: boolean;
             /** @description Required capability: `sensitive-conversations` */
             isSensitive: boolean;
+            /**
+             * Format: int64
+             * @description Required capability: `pinned-messages`
+             */
+            lastPinnedId: number;
+            /**
+             * Format: int64
+             * @description Required capability: `pinned-messages`
+             */
+            hidePinnedId: number;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
         RoomWithInvalidInvitations: components["schemas"]["Room"] & {
@@ -11127,6 +11181,180 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 [key: string]: components["schemas"]["ChatMessage"][];
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-pin-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Message was pinned successfully */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"] | null;
+                        };
+                    };
+                };
+            };
+            /** @description Message could not be pinned */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "message";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "message";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-unpin-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Message is not pinned now */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"] | null;
+                        };
+                    };
+                };
+            };
+            /** @description Message was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "message";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-hide-pinned-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Pinned message is now hidden */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Message was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
                             };
                         };
                     };

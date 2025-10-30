@@ -511,6 +511,16 @@ export type components = {
             isImportant: boolean;
             /** @description Required capability: `sensitive-conversations` */
             isSensitive: boolean;
+            /**
+             * Format: int64
+             * @description Required capability: `pinned-messages`
+             */
+            lastPinnedId: number;
+            /**
+             * Format: int64
+             * @description Required capability: `pinned-messages`
+             */
+            hidePinnedId: number;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
     };

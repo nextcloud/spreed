@@ -660,7 +660,9 @@
                     "unreadMessages",
                     "isArchived",
                     "isImportant",
-                    "isSensitive"
+                    "isSensitive",
+                    "lastPinnedId",
+                    "hidePinnedId"
                 ],
                 "properties": {
                     "actorId": {
@@ -953,6 +955,16 @@
                     "isSensitive": {
                         "type": "boolean",
                         "description": "Required capability: `sensitive-conversations`"
+                    },
+                    "lastPinnedId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Required capability: `pinned-messages`"
+                    },
+                    "hidePinnedId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Required capability: `pinned-messages`"
                     }
                 }
             },
