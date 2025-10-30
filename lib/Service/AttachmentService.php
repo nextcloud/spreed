@@ -22,6 +22,17 @@ class AttachmentService {
 	) {
 	}
 
+	public function createAttachmentEntryGeneric(Room $room, IComment $comment, string $attachmentType): void {
+		$attachment = new Attachment();
+		$attachment->setRoomId($room->getId());
+		$attachment->setActorType($comment->getActorType());
+		$attachment->setActorId($comment->getActorId());
+		$attachment->setMessageId((int)$comment->getId());
+		$attachment->setMessageTime($comment->getCreationDateTime()->getTimestamp());
+		$attachment->setObjectType($attachmentType);
+		$this->attachmentMapper->insert($attachment);
+	}
+
 	public function createAttachmentEntry(Room $room, IComment $comment, string $messageType, array $parameters): void {
 		$attachment = new Attachment();
 		$attachment->setRoomId($room->getId());
