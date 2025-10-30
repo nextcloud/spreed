@@ -1637,6 +1637,79 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * Pin a message in a chat as a moderator
+	 *
+	 * Required capability: `pinned-messages`
+	 *
+	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
+	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'message'}, array{}>
+	 *
+	 * 200: Message was pinned successfully
+	 * 400: Message could not be pinned
+	 * 404: Message was not found
+	 */
+	#[FederationSupported]
+	#[PublicPage]
+	#[RequireModeratorParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/{messageId}/pin', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]+',
+	])]
+	public function pinMessage(int $messageId): DataResponse {
+	}
+
+	/**
+	 * Unpin a message in a chat as a moderator
+	 *
+	 * Required capability: `pinned-messages`
+	 *
+	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
+	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'message'}, array{}>
+	 *
+	 * 200: Message is not pinned now
+	 * 404: Message was not found
+	 */
+	#[FederationSupported]
+	#[PublicPage]
+	#[RequireModeratorParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/chat/{token}/{messageId}/pin', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]+',
+	])]
+	public function unpinMessage(int $messageId): DataResponse {
+	}
+
+	/**
+	 * Hide a message in a chat as a user
+	 *
+	 * Required capability: `pinned-messages`
+	 *
+	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+	 *
+	 * 200: Pinned message is now hidden
+	 * 404: Message was not found
+	 */
+	#[FederationSupported]
+	#[PublicPage]
+	#[RequireModeratorParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/chat/{token}/{messageId}/pin/self', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]+',
+	])]
+	public function hidePinnedMessage(int $messageId): DataResponse {
+	}
+
+	/**
 	 * @return array<string, TalkChatMessage>
 	 */
 	protected function getMessagesForRoom(array $messageIds): array {
