@@ -693,6 +693,7 @@ OC.L10N.register(
     "Language" : "Мова",
     "Country" : "Краіна",
     "Status" : "Статус",
+    "Created at" : "Створана",
     "STUN included" : "STUN уключаны",
     "Yes" : "Так",
     "No" : "Не",
