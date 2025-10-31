@@ -6,7 +6,11 @@
 <template>
 	<div
 		ref="messageMain"
-		:class="{ 'message-main': !isSplitViewEnabled, 'message-main--sided': isSplitViewEnabled && !isSystemMessage }">
+		:class="{
+			'message-main': !isSplitViewEnabled || isSystemMessage,
+			'message-main--sided': isSplitViewEnabled && !isSystemMessage,
+			'message-main--compressed': isSplitViewEnabled && isShortSimpleMessage,
+		}">
 		<p
 			v-if="isThreadStarterMessage"
 			class="message-main__thread-title">
@@ -405,6 +409,15 @@ export default {
 		isSplitViewEnabled() {
 			return true
 		},
+
+		isShortSimpleMessage() {
+			return this.message.message.length <= 20 // FIXME: magic number
+				&& !this.message.parent
+				&& !this.isThreadStarterMessage
+				&& this.message.messageParameters.length === 0
+				&& Object.keys(this.message.reactions).length === 0
+				&& this.message.message.split('\n').length === 1
+		},
 	},
 
 	watch: {
@@ -501,12 +514,48 @@ export default {
 
 .message-main {
 	display: grid;
-	grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
-	grid-row-gap: var(--default-grid-baseline);
 	justify-content: space-between;
 	align-items: flex-start;
 	min-height: var(--clickable-area-small);
 	min-width: 100%;
+	// Layout 1 (standard view): text and info in two columns
+	grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
+	grid-row-gap: var(--default-grid-baseline);
+
+	.message-main__thread-title {
+		grid-column: 1 / -1;
+		grid-row: 1;
+	}
+
+	// Split view begin
+	// Layout 2 (split view short message): text and info side by side without actions
+	&--sided.message-main--compressed:has(.message-main__text) {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		grid-template-rows: auto auto;
+	}
+
+	// Layout 3 (split view long message): text in full width, info and actions below
+	&--sided:has(.message-main__text):not(.message-main--compressed) {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		grid-template-rows: auto auto auto;
+
+		.message-main__info {
+			grid-row: 3;
+			grid-column: 2;
+		}
+
+		.message-actions {
+			grid-row: 3;
+			grid-column: 1;
+		}
+
+		.message-main__text {
+			grid-column: 1 / -1;
+			grid-row: 2;
+		}
+	}
 
 	&--sided:has(.system-message) {
 		display: flex;
@@ -606,7 +655,6 @@ export default {
 	}
 
 	&__thread-title {
-		grid-column: 1 / -1;
 		display: flex;
 		align-items: center;
 		gap: var(--default-grid-baseline);
