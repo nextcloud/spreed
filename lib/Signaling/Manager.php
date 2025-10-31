@@ -188,6 +188,7 @@ class Manager {
 		return array_values(array_diff([
 			'dialout',
 			'join-features',
+			'chat-relay',
 		], $features));
 	}
 
