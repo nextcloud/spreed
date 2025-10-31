@@ -22394,6 +22394,25 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "pinUntil": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "description": "Unix timestamp when to unpin the message",
+                                        "minimum": 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
                     {
                         "name": "apiVersion",
@@ -22518,7 +22537,8 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
-                                                                "message"
+                                                                "message",
+                                                                "until"
                                                             ]
                                                         }
                                                     }
@@ -22559,7 +22579,8 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
-                                                                "message"
+                                                                "message",
+                                                                "until"
                                                             ]
                                                         }
                                                     }

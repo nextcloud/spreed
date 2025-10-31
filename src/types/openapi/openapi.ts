@@ -10667,7 +10667,18 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Unix timestamp when to unpin the message
+                     * @default 0
+                     */
+                    pinUntil?: number;
+                };
+            };
+        };
         responses: {
             /** @description Message was pinned successfully */
             200: {
@@ -10695,7 +10706,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "message";
+                                error: "message" | "until";
                             };
                         };
                     };
@@ -10712,7 +10723,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "message";
+                                error: "message" | "until";
                             };
                         };
                     };
