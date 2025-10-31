@@ -463,7 +463,21 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 		// Note: `messageParameters` (array during parsing) vs `messageParameter` (string during sending)
 		$notification['messageData']['messageParameters'] = json_decode($notification['messageData']['messageParameter'], true, flags: JSON_THROW_ON_ERROR);
 		unset($notification['messageData']['messageParameter']);
+
+		if (isset($notification['messageData']['metaData'])) {
+			// Decode metaData to array and after converting back to string
+			$notification['messageData']['metaData'] = json_decode($notification['messageData']['metaData'], true, flags: JSON_THROW_ON_ERROR);
+		} else {
+			$notification['messageData']['metaData'] = [];
+		}
+
 		$converted = $this->userConverter->convertMessage($room, $notification['messageData']);
+
+		if (!empty($converted['metaData'])) {
+			$converted['metaData'] = json_encode($converted['metaData'], JSON_THROW_ON_ERROR);
+		} else {
+			unset($converted['metaData']);
+		}
 		$converted['messageParameter'] = json_encode($converted['messageParameters'], JSON_THROW_ON_ERROR);
 		unset($converted['messageParameters']);
 

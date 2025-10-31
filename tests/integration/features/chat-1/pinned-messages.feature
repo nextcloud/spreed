@@ -10,6 +10,8 @@ Feature: chat-1/pinned-messages
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     When user "participant1" sends message "Message 1" to room "room" with 201
     When user "participant1" sends message "Message 2" to room "room" with 201
+
+    # Pinned messages are sorted by moment of pinning
     When user "participant2" pins message "Message 2" in room "room" with 403
     When user "participant1" pins message "Message 2" in room "room" with 200
     Then user "participant2" is participant of the following rooms (v4)
@@ -38,9 +40,11 @@ Feature: chat-1/pinned-messages
       | room | users     | participant1 | user_added               | You added {user}             | "IGNORE"    |
       | room | users     | participant1 | conversation_created     | You created the conversation | "IGNORE"    |
     Then user "participant1" sees the following shared pinned in room "room" with 200
-      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters |
-      | room | users     | participant1 | participant1-displayname | Message 1 | []                |
-      | room | users     | participant1 | participant1-displayname | Message 2 | []                |
+      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | metaData.pinnedActorDisplayName | metaData.pinnedUntil |
+      | room | users     | participant1 | participant1-displayname | Message 1 | []                | participant1-displayname        | UNSET                |
+      | room | users     | participant1 | participant1-displayname | Message 2 | []                | participant1-displayname        | UNSET                |
+
+    # Unpinning resets lastPinnedId
     When user "participant1" unpins message "Message 1" in room "room" with 200
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | systemMessage            | message                | messageParameters |
@@ -55,6 +59,8 @@ Feature: chat-1/pinned-messages
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type | lastPinnedId | hidePinnedId |
       | room | 3    | Message 2    | EMPTY        |
+
+    # Hide as user
     When user "participant2" hides pinned message "Message 2" in room "room" with 200
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type | lastPinnedId | hidePinnedId |
@@ -63,7 +69,19 @@ Feature: chat-1/pinned-messages
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type | lastPinnedId | hidePinnedId |
       | room | 3    | EMPTY        | Message 2    |
-    When user "participant1" pins message "Message 2" in room "room" with 200
+
+    # Pin temporarily
+    When user "participant1" pins message "Message 2" for 3 seconds in room "room" with 200
+    Then user "participant1" sees the following shared pinned in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | metaData.pinnedActorDisplayName | metaData.pinnedUntil |
+      | room | users     | participant1 | participant1-displayname | Message 2 | []                | participant1-displayname        | NUMERIC              |
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type | lastPinnedId | hidePinnedId |
       | room | 3    | Message 2    | EMPTY        |
+    When wait for 4 seconds
+    And run "OCA\Talk\BackgroundJob\UnpinMessage" background jobs
+    Then user "participant1" sees the following shared pinned in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | metaData.pinnedActorDisplayName | metaData.pinnedUntil |
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastPinnedId | hidePinnedId |
+      | room | 3    | EMPTY        | EMPTY        |

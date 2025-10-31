@@ -2051,13 +2051,24 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	#[Then('/^user "([^"]*)" (unpins|pins|hides pinned) message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
-	public function userPinsMessage(string $user, string $action, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+	public function userPinActionMessage(string $user, string $action, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->userPinActionWithTimeMessage($user, $action, $message, 0, $identifier, $statusCode, $apiVersion);
+	}
+
+	#[Then('/^user "([^"]*)" (unpins|pins|hides pinned) message "([^"]*)" for (\d+) seconds in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userPinActionWithTimeMessage(string $user, string $action, string $message, int $duration, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
+
+		$body = [];
+		if ($action === 'pins' && $duration !== 0) {
+			$body['pinUntil'] = time() + $duration;
+		}
 
 		$routeSuffix = $action === 'hides pinned' ? '/self' : '';
 		$this->sendRequest(
 			$action === 'pins' ? 'POST' : 'DELETE',
-			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/' . self::$textToMessageId[$message] . '/pin' . $routeSuffix
+			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/' . self::$textToMessageId[$message] . '/pin' . $routeSuffix,
+			$body
 		);
 
 		$this->assertStatusCode($this->response, $statusCode);
@@ -2701,6 +2712,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$includeMessageType = in_array('messageType', $formData->getRow(0), true);
 		$includeThreadTitle = in_array('threadTitle', $formData->getRow(0), true);
 		$includeThreadReplies = in_array('threadReplies', $formData->getRow(0), true);
+		$includeMetaDataKeys = array_map(
+			static fn (string $field): string => substr($field, strlen('metaData.')),
+			array_filter(
+				$formData->getRow(0),
+				static fn (string $field): bool => str_starts_with($field, 'metaData.')
+			)
+		);
 
 		$expected = $formData->getHash();
 		$count = count($expected);
@@ -2775,7 +2793,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}
 
-		Assert::assertEquals($expected, array_map(function ($message, $expected) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf, $includeLastEdit, $includeMessageType, $includeThreadTitle, $includeThreadReplies) {
+		Assert::assertEquals($expected, array_map(function ($message, $expected) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf, $includeLastEdit, $includeMessageType, $includeThreadTitle, $includeThreadReplies, $includeMetaDataKeys) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],
@@ -2824,6 +2842,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if ($includeThreadReplies) {
 				$data['threadReplies'] = $message['threadReplies'] ?? null;
+			}
+
+			if (!empty($includeMetaDataKeys)) {
+				$metaData = $message['metaData'] ?? [];
+				foreach ($includeMetaDataKeys as $key) {
+					$data['metaData.' . $key] = $metaData[$key] ?? 'UNSET';
+					$expectedValue = $expected['metaData.' . $key];
+					if ($expectedValue === 'NUMERIC' && is_numeric($data['metaData.' . $key])) {
+						$data['metaData.' . $key] = $expectedValue;
+					}
+				}
 			}
 
 			return $data;
