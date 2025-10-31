@@ -1669,7 +1669,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $messageId ID of the message
 	 * @psalm-param non-negative-int $messageId
-	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'message'}, array{}>
+	 * @param int $pinUntil Unix timestamp when to unpin the message
+	 * @psalm-param non-negative-int $pinUntil
+	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'message'|'until'}, array{}>
 	 *
 	 * 200: Message was pinned successfully
 	 * 400: Message could not be pinned
@@ -1684,7 +1686,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 		'messageId' => '[0-9]+',
 	])]
-	public function pinMessage(int $messageId): DataResponse {
+	public function pinMessage(int $messageId, int $pinUntil = 0): DataResponse {
 		// FIXME add federation
 
 		try {
@@ -1698,7 +1700,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
 
-		$systemMessageComment = $this->chatManager->pinMessage($this->room, $comment, $this->participant);
+		if ($pinUntil !== 0 && $pinUntil < $this->timeFactory->getTime()) {
+			// System message (since the message is not parsed, it has type "system")
+			return new DataResponse(['error' => 'until'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$systemMessageComment = $this->chatManager->pinMessage($this->room, $comment, $this->participant, $pinUntil);
 
 		return $this->parseCommentAndParentToResponse($systemMessageComment, $comment, Http::STATUS_OK);
 	}
