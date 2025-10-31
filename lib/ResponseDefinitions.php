@@ -123,6 +123,12 @@ namespace OCA\Talk;
  *     isThread?: bool,
  *     threadTitle?: string,
  *     threadReplies?: int,
+ *     metaData?: array{
+ *         pinnedByType?: string,
+ *         pinnedById?: string,
+ *         pinnedByName?: string,
+ *         pinnedUntil?: int,
+ *     },
  * }
  *
  * @psalm-type TalkChatProxyMessage = TalkBaseMessage
