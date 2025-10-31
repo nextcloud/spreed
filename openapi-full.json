@@ -646,6 +646,24 @@
                             "threadReplies": {
                                 "type": "integer",
                                 "format": "int64"
+                            },
+                            "metaData": {
+                                "type": "object",
+                                "properties": {
+                                    "pinnedByType": {
+                                        "type": "string"
+                                    },
+                                    "pinnedById": {
+                                        "type": "string"
+                                    },
+                                    "pinnedByName": {
+                                        "type": "string"
+                                    },
+                                    "pinnedUntil": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    }
+                                }
                             }
                         }
                     }

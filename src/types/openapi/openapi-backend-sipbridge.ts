@@ -251,6 +251,13 @@ export type components = {
             threadTitle?: string;
             /** Format: int64 */
             threadReplies?: number;
+            metaData?: {
+                pinnedByType?: string;
+                pinnedById?: string;
+                pinnedByName?: string;
+                /** Format: int64 */
+                pinnedUntil?: number;
+            };
         };
         ChatProxyMessage: components["schemas"]["BaseMessage"];
         OCSMeta: {

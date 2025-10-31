@@ -2464,6 +2464,13 @@ export type components = {
             threadTitle?: string;
             /** Format: int64 */
             threadReplies?: number;
+            metaData?: {
+                pinnedByType?: string;
+                pinnedById?: string;
+                pinnedByName?: string;
+                /** Format: int64 */
+                pinnedUntil?: number;
+            };
         };
         ChatMessageWithParent: components["schemas"]["ChatMessage"] & {
             parent?: components["schemas"]["ChatMessage"] | components["schemas"]["DeletedChatMessage"];
