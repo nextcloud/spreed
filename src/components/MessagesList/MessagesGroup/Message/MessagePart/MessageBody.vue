@@ -6,7 +6,7 @@
 <template>
 	<div
 		ref="messageMain"
-		class="message-main">
+		:class="{ 'message-main': !isSplitViewEnabled, 'message-main--sided': isSplitViewEnabled && !isSystemMessage }">
 		<p
 			v-if="isThreadStarterMessage"
 			class="message-main__thread-title">
@@ -21,6 +21,7 @@
 				'system-message': isSystemMessage && !showJoinCallButton,
 				'deleted-message': isDeletedMessage,
 				'message-highlighted': showJoinCallButton,
+				'full-view': !isSplitViewEnabled,
 			}">
 			<!-- Message content / text -->
 			<IconCancel v-if="isDeletedMessage" :size="16" />
@@ -426,6 +427,10 @@ export default {
 		containsCodeBlocks() {
 			return this.message.message.includes('```')
 		},
+
+		isSplitViewEnabled() {
+			return true
+		},
 	},
 
 	watch: {
@@ -565,9 +570,17 @@ export default {
 	min-height: var(--clickable-area-small);
 	min-width: 100%;
 
+	&--sided:has(.system-message) {
+		display: flex;
+		justify-content: center;
+	}
+
 	&__text {
-		width: 100%;
 		color: var(--color-text-light);
+
+		&.full-view {
+			width: 100%;
+		}
 
 		& > .single-emoji {
 			font-size: 250%;

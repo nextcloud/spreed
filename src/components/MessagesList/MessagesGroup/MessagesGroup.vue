@@ -4,7 +4,7 @@
 -->
 
 <template>
-	<li class="wrapper">
+	<li class="wrapper" :class="{ outgoing: isSelfActor && isSplitViewEnabled, incoming: !isSelfActor && isSplitViewEnabled }" tabindex="-1">
 		<div class="messages__avatar-wrapper">
 			<AvatarWrapper
 				:id="actorId"
@@ -16,17 +16,19 @@
 				:disable-menu="disableMenu"
 				disable-tooltip />
 		</div>
-		<ul class="messages">
+		<div class="messages__content">
 			<li class="messages__author" aria-level="4">
 				{{ actorInfo }}
 			</li>
-			<MessageItem
-				v-for="(message, index) of messages"
-				:key="message.id"
-				:message="message"
-				:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
-				:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId" />
-		</ul>
+			<ul class="messages" :class="{ 'messages-bubble': isSplitViewEnabled }">
+				<MessageItem
+					v-for="(message, index) of messages"
+					:key="message.id"
+					:message="message"
+					:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
+					:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId" />
+			</ul>
+		</div>
 	</li>
 </template>
 
@@ -114,6 +116,14 @@ export default {
 			// or the message sender is a bridged user
 			return this.actorStore.isActorGuest || this.actorType === ATTENDEE.ACTOR_TYPE.BRIDGED
 		},
+
+		isSelfActor() {
+			return this.actorStore.checkIfSelfIsActor({ actorId: this.actorId, actorType: this.actorType })
+		},
+
+		isSplitViewEnabled() {
+			return true
+		},
 	},
 
 	methods: {
@@ -127,8 +137,40 @@ export default {
 
 .wrapper {
 	position: relative;
-	padding-inline-start: $messages-avatar-width;
 	width: 100%;
+	padding: var(--default-grid-baseline) 0;
+
+	&:focus:not(.outgoing):not(.incoming) {
+		background-color: rgba(47, 47, 47, 0.068);
+	}
+
+	// BEGIN Split view: own messages on the right side
+	&.outgoing {
+
+		.messages__author {
+			text-align: end;
+		}
+
+		.messages__content {
+			padding-inline-end: $messages-avatar-width;
+			padding-inline-start: 0;
+			display: flex;
+			justify-content: flex-end;
+		}
+
+		.messages__avatar-wrapper {
+			inset-inline-start: unset;
+			inset-inline-end: 0;
+			padding-block-start: 0;
+		}
+	}
+
+	&.incoming {
+		.messages__avatar-wrapper {
+			padding-block-start: 0;
+		}
+	}
+	// END Split view: own messages on the right side
 }
 
 .messages {
@@ -149,6 +191,10 @@ export default {
 		top: 0;
 	}
 
+	&__content {
+		padding-inline-start: $messages-avatar-width;
+	}
+
 	&__author {
 		max-width: $messages-text-max-width;
 		padding-inline-start: var(--default-grid-baseline);
@@ -157,5 +203,30 @@ export default {
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
+
+	// BEGIN Split view
+	&-bubble {
+		gap: 2px;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.outgoing &-bubble {
+
+		// all children except the last one are edged on the end side
+		& > li:not(:last-child) :deep(.message-body) {
+			border-end-end-radius: var(--border-radius-small);
+		}
+	}
+
+	.incoming &-bubble {
+
+		// all children except the last one are edged on the start side
+		& > li:not(:last-child) :deep(.message-body) {
+			border-end-start-radius: var(--border-radius-small);
+		}
+
+	}
+	// END Split view
 }
 </style>
