@@ -5,7 +5,9 @@
 
 <template>
 	<li class="wrapper" :class="{ outgoing: isSelfActor && isSplitViewEnabled, incoming: !isSelfActor && isSplitViewEnabled }" tabindex="-1">
-		<div class="messages__avatar-wrapper">
+		<div
+			v-if="!isSplitViewEnabled || !isSelfActor || !showAuthor"
+			class="messages__avatar-wrapper">
 			<AvatarWrapper
 				:id="actorId"
 				class="messages__avatar"
@@ -16,8 +18,8 @@
 				:disable-menu="disableMenu"
 				disable-tooltip />
 		</div>
-		<div class="messages__content">
-			<li class="messages__author" aria-level="4">
+		<div class="messages__content" :class="{ 'small-view': isMobile || isSidebar }">
+			<li v-if="showAuthor" class="messages__author" aria-level="4">
 				{{ actorInfo }}
 			</li>
 			<ul class="messages" :class="{ 'messages-bubble': isSplitViewEnabled }">
@@ -34,7 +36,8 @@
 
 <script>
 import { t } from '@nextcloud/l10n'
-import { computed, toRefs } from 'vue'
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { computed, inject, toRefs } from 'vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import MessageItem from './Message/MessageItem.vue'
 import { useMessageInfo } from '../../../composables/useMessageInfo.ts'
@@ -87,6 +90,7 @@ export default {
 			actorDisplayName,
 			actorDisplayNameWithFallback,
 		} = useMessageInfo(firstMessage)
+		const isSidebar = inject('chatView:isSidebar', false)
 
 		const actorInfo = computed(() => {
 			return [actorDisplayNameWithFallback.value, remoteServer.value, lastEditor.value]
@@ -99,6 +103,8 @@ export default {
 			actorStore: useActorStore(),
 			actorDisplayName,
 			actorInfo,
+			isMobile: useIsMobile(),
+			isSidebar,
 		}
 	},
 
@@ -123,6 +129,10 @@ export default {
 
 		isSplitViewEnabled() {
 			return true
+		},
+
+		showAuthor() {
+			return !this.isSplitViewEnabled || !this.isSelfActor || this.isMobile || this.isSidebar
 		},
 	},
 
@@ -149,6 +159,7 @@ export default {
 
 		.messages__author {
 			text-align: end;
+			padding-inline-end: var(--default-grid-baseline);
 		}
 
 		.messages__content {
@@ -156,6 +167,12 @@ export default {
 			padding-inline-start: 0;
 			display: flex;
 			justify-content: flex-end;
+
+			&.small-view {
+				display: block;
+				padding-inline-end: var(--default-grid-baseline);
+				padding-inline-start: $messages-avatar-width;
+			}
 		}
 
 		.messages__avatar-wrapper {
