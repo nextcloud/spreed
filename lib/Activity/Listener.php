@@ -43,6 +43,7 @@ class Listener implements IEventListener {
 		protected RecordingService $recordingService,
 		protected LoggerInterface $logger,
 		protected ITimeFactory $timeFactory,
+		protected Setting $setting,
 	) {
 	}
 
@@ -120,14 +121,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		foreach ($userIds as $userId) {
-			try {
-				$activity->setAffectedUser($userId);
-				$this->activityManager->publish($activity);
-			} catch (\Throwable $e) {
-				$this->logger->error($e->getMessage(), ['exception' => $e]);
-			}
-		}
+		$this->activityManager->bulkPublish($activity, $userIds, $this->setting);
 	}
 
 	/**
