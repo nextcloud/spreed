@@ -628,8 +628,13 @@ class SystemMessage implements IEventListener {
 				$parsedMessage = $this->l->t('You pinned a message');
 			}
 		} elseif ($message === 'message_unpinned') {
+			$systemIsActor = $parsedParameters['actor']['type'] === Attendee::ACTOR_GUESTS
+				&& $parsedParameters['actor']['id'] === Attendee::ACTOR_ID_SYSTEM;
+
 			$parsedMessage = $this->l->t('{actor} unpinned a message');
-			if ($currentUserIsActor) {
+			if ($systemIsActor) {
+				$parsedMessage = $this->l->t('Message was automatically unpinned');
+			} elseif ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You unpinned a message');
 			}
 		} elseif ($message === 'reaction_revoked') {
