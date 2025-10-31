@@ -72,6 +72,12 @@ jobs:
       - name: Set up npm ${{ steps.versions.outputs.npmVersion }}
         run: npm i -g 'npm@${{ steps.versions.outputs.npmVersion }}'
 
+      - name: Validate package-lock.json # See https://github.com/npm/cli/issues/4460
+        run: |
+          npm i -g npm-package-lock-add-resolved@1.1.4
+          npm-package-lock-add-resolved
+          git --no-pager diff --exit-code
+
       - name: Install dependencies & build
         env:
           CYPRESS_INSTALL_BINARY: 0

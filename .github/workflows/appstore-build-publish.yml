@@ -164,6 +164,7 @@ jobs:
           repository: nextcloud/server
           path: nextcloud
 
+
       - name: Sign app
         run: |
           # Extracting release
