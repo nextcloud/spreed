@@ -11,13 +11,18 @@
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
 		class="message"
-		:class="{ 'message--hovered': showMessageButtonsBar }"
+		:class="{
+			'message--hovered': showMessageButtonsBar,
+			'message--sided': isSplitViewEnabled && isUserMessage,
+		}"
 		tabindex="0"
 		@mouseover="handleMouseover"
 		@mouseleave="handleMouseleave">
 		<div
 			:class="{
-				'normal-message-body': !isDeletedMessage,
+				'normal-message-body': !isDeletedMessage && !isSplitViewEnabled,
+				outgoing: actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled && isUserMessage,
+				incoming: !actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled && isUserMessage,
 			}"
 			class="message-body">
 			<MessageBody
@@ -310,6 +315,14 @@ export default {
 				&& this.message.messageType !== MESSAGE.TYPE.COMMAND
 				&& this.message.messageType !== MESSAGE.TYPE.COMMENT_DELETED
 		},
+
+		isSplitViewEnabled() {
+			return true
+		},
+
+		isUserMessage() {
+			return !this.isSystemMessage && !this.isCombinedSystemMessage
+		},
 	},
 
 	methods: {
@@ -398,11 +411,39 @@ export default {
 .message {
 	position: relative;
 
+	--color-primary-element-extra-light: color(from var(--color-primary-element-light) srgb r g b / 0.45);
+	--color-primary-element-extra-light-hover: color(from var(--color-primary-element-light-hover) srgb r g b / 0.45);
+
 	&:hover .normal-message-body,
 	&--hovered .normal-message-body {
-		border-radius: 8px;
 		background-color: var(--color-background-hover);
 	}
+
+	// BEGIN Split view
+	&:hover .message-body.outgoing,
+	&--hovered .message-body.outgoing {
+		background-color: var(--color-primary-light-hover);
+	}
+
+	&:hover .message-body.incoming,
+	&--hovered .message-body.incoming {
+		background-color: var(--color-primary-element-extra-light-hover);
+	}
+
+	&--sided {
+		display: flex;
+		flex-direction: column;
+		width: fit-content;
+
+		&:has(.outgoing) {
+			align-self: flex-end;
+		}
+
+		&:has(.incoming) {
+			align-self: flex-start;
+		}
+	}
+	// END Split view
 }
 
 .message-body {
@@ -410,6 +451,7 @@ export default {
 	font-size: var(--default-font-size);
 	line-height: var(--default-line-height);
 	position: relative;
+	border-radius: var(--border-radius-large);
 
 	&__scroll {
 		position: absolute;
@@ -420,6 +462,22 @@ export default {
 		padding-top: var(--default-grid-baseline);
 		padding-inline-end: var(--default-grid-baseline);
 	}
+
+	// BEGIN Split view
+	&.outgoing {
+		background-color: var(--color-primary-light);
+		border-radius: var(--border-radius-large)  var(--border-radius-small) var(--border-radius-large) var(--border-radius-large);
+		border: 1px solid var(--color-primary-element-light-hover);
+		border-width: 1px 1px 2px 1px;
+	}
+
+	&.incoming {
+		background-color: var(--color-primary-element-extra-light);
+		border-radius: var(--border-radius-small)  var(--border-radius-large) var(--border-radius-large) var(--border-radius-large);
+		border: 1px solid var(--color-primary-element-light-hover);
+		border-width: 1px 1px 2px 1px;
+	}
+	// END Split view
 }
 
 .message--highlighted {
