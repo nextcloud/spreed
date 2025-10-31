@@ -812,7 +812,7 @@ class ChatManager {
 		$metaData = $comment->getMetaData() ?? [];
 
 		if (empty($metaData[Message::METADATA_PINNED_MESSAGE_ID])) {
-			// Message is not unpinned
+			// Message is not pinned
 			return null;
 		}
 
