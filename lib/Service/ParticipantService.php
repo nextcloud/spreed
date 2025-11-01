@@ -364,6 +364,22 @@ class ParticipantService {
 		$this->attendeeMapper->update($attendee);
 	}
 
+	public function resetHidePinnedId(Room $room, int $messagesId): void {
+		$query = $this->connection->getQueryBuilder();
+		$query->update('talk_attendees')
+			->set('hide_pinned_id', $query->createNamedParameter(0))
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($room->getId())))
+			->andWhere($query->expr()->eq('hide_pinned_id', $query->createNamedParameter($messagesId)));
+		$query->executeStatement();
+	}
+
+	public function hidePinnedMessage(Participant $participant, int $messagesId): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setHidePinnedId($messagesId);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
 	/**
 	 * @param RoomService $roomService
 	 * @param Room $room

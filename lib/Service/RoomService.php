@@ -882,6 +882,16 @@ class RoomService {
 		$this->dispatcher->dispatchTyped($event);
 	}
 
+	public function setLastPinnedId(Room $room, int $lastPinnedId): void {
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('last_pinned_id', $update->createNamedParameter($lastPinnedId))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setLastPinnedId($lastPinnedId);
+	}
+
 	public function setAssignedSignalingServer(Room $room, ?int $signalingServer): bool {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')

@@ -139,6 +139,9 @@ class UserConverter {
 		$message['token'] = $room->getToken();
 		$message = $this->convertAttendee($room, $message, 'actorType', 'actorId', 'actorDisplayName');
 		$message = $this->convertAttendee($room, $message, 'lastEditActorType', 'lastEditActorId', 'lastEditActorDisplayName');
+		if (!empty($message['metaData']['pinnedByType'])) {
+			$message['metaData'] = $this->convertAttendee($room, $message['metaData'], 'pinnedByType', 'pinnedById', 'pinnedByName');
+		}
 		$message = $this->convertMessageParameters($room, $message);
 
 		if (isset($message['parent'])) {

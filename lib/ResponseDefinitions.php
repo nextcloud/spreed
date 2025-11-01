@@ -123,6 +123,12 @@ namespace OCA\Talk;
  *     isThread?: bool,
  *     threadTitle?: string,
  *     threadReplies?: int,
+ *     metaData?: array{
+ *         pinnedByType?: string,
+ *         pinnedById?: string,
+ *         pinnedByName?: string,
+ *         pinnedUntil?: int,
+ *     },
  * }
  *
  * @psalm-type TalkChatProxyMessage = TalkBaseMessage
@@ -369,6 +375,10 @@ namespace OCA\Talk;
  *     isImportant: bool,
  *     // Required capability: `sensitive-conversations`
  *     isSensitive: bool,
+ *     // Required capability: `pinned-messages`
+ *     lastPinnedId: int,
+ *     // Required capability: `pinned-messages`
+ *     hidePinnedId: int,
  * }
  *
  * @psalm-type TalkDashboardEventAttachment = array{

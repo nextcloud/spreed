@@ -44,7 +44,10 @@ class MessageParser {
 	}
 
 	public function createMessage(Room $room, ?Participant $participant, IComment $comment, IL10N $l): Message {
-		return new Message($room, $participant, $comment, $l);
+		$message = new Message($room, $participant, $comment, $l);
+		$metaData = $this->addPinnedActorDisplayNameInfo($message, $comment->getMetaData() ?? []);
+		$message->setMetaData($metaData);
+		return $message;
 	}
 
 	public function createMessageFromProxyCache(Room $room, ?Participant $participant, ProxyCacheMessage $proxy, IL10N $l): Message {
@@ -62,6 +65,15 @@ class MessageParser {
 			$proxy->getMessage(),
 			$proxy->getParsedMessageParameters()
 		);
+
+		try {
+			$metaData = json_decode($proxy->getMetaData(), true, flags: JSON_THROW_ON_ERROR);
+			if (is_array($metaData)) {
+				$metaData = $this->addPinnedActorDisplayNameInfo($message, $metaData);
+				$message->setMetaData($metaData);
+			}
+		} catch (\JsonException) {
+		}
 
 		return $message;
 	}
@@ -119,6 +131,21 @@ class MessageParser {
 				);
 			}
 		}
+	}
+
+	protected function addPinnedActorDisplayNameInfo(Message $message, array $metaData): array {
+		if (isset($metaData[Message::METADATA_PINNED_BY_TYPE], $metaData[Message::METADATA_PINNED_BY_ID])) {
+			[$actorType, $actorId, $displayName] = $this->getActorInformation(
+				$message,
+				$metaData[Message::METADATA_PINNED_BY_TYPE],
+				$metaData[Message::METADATA_PINNED_BY_ID],
+			);
+
+			$metaData[Message::METADATA_PINNED_BY_TYPE] = $actorType;
+			$metaData[Message::METADATA_PINNED_BY_ID] = $actorId;
+			$metaData[Message::METADATA_PINNED_BY_NAME] = $displayName;
+		}
+		return $metaData;
 	}
 
 	protected function getActorInformation(Message $message, string $actorType, string $actorId, string $displayName = ''): array {
