@@ -152,6 +152,7 @@
 			<NcButton
 				v-if="isThreadStarterMessage"
 				class="message-actions__thread"
+				:class="{ light: isSplitViewEnabled && isOwnMessage }"
 				size="small"
 				@click="handleThreadClick">
 				<template #icon>
@@ -190,6 +191,7 @@ import { useMessageInfo } from '../../../../../composables/useMessageInfo.ts'
 import { CONVERSATION, MESSAGE } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../../services/EventBus.ts'
+import { useActorStore } from '../../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 import { formatDateTime } from '../../../../../utils/formattedTime.ts'
@@ -267,6 +269,7 @@ export default {
 			isEditable,
 			isFileShare,
 			isSidebar,
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -440,6 +443,10 @@ export default {
 
 		iconMessageDeliverySize() {
 			return this.isSplitViewEnabled ? 14 : 16
+		},
+
+		isOwnMessage() {
+			return this.actorStore.checkIfSelfIsActor(this.message)
 		},
 
 		isShortSimpleMessage() {
@@ -630,7 +637,7 @@ export default {
 		justify-content: center;
 	}
 
-	// Split view adjustments
+	// common styles for split view
 	&--sided {
 		.message-main__info {
 			padding-inline-end: 0;
@@ -651,7 +658,20 @@ export default {
 			height: 1lh;
 			width: 1lh;
 		}
+
+		.message-actions__thread.light {
+			background-color: var(--color-primary-element-extra-light);
+			&:hover {
+				background-color: var(--color-primary-element-extra-light-hover);
+			}
+		}
+
+		.message-main__text {
+			padding-inline: calc(var(--default-grid-baseline) / 2);
+		}
 	}
+
+	// Split view end
 
 	&__text {
 		color: var(--color-text-light);
