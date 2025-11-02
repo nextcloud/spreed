@@ -4,7 +4,13 @@
 -->
 
 <template>
-	<div v-if="reactionsCount && reactionsSorted" class="reactions-wrapper">
+	<div
+		v-if="reactionsCount && reactionsSorted"
+		class="reactions-wrapper"
+		:class="{
+			light: isSplitViewEnabled && isOwnMessage,
+			compact: isSplitViewEnabled,
+		}">
 		<NcPopover
 			v-for="reaction in reactionsSorted"
 			:key="reaction"
@@ -43,16 +49,18 @@
 			</div>
 		</NcPopover>
 
-		<!-- all reactions button -->
-		<NcButton
-			v-if="showControls"
-			size="small"
-			:title="t('spreed', 'Show all reactions')"
-			:aria-label="t('spreed', 'Show all reactions')"
-			@click="showAllReactions = true">
-			<IconHeartOutline :size="15" />
-		</NcButton>
-		<span v-else class="reaction-button--thumbnail" />
+		<template v-if="!isSplitViewEnabled">
+			<!-- all reactions button -->
+			<NcButton
+				v-if="showControls"
+				size="small"
+				:title="t('spreed', 'Show all reactions')"
+				:aria-label="t('spreed', 'Show all reactions')"
+				@click="showAllReactions = true">
+				<IconHeartOutline :size="15" />
+			</NcButton>
+			<span v-else class="reaction-button--thumbnail" />
+		</template>
 
 		<!-- More reactions picker -->
 		<NcEmojiPicker
@@ -192,6 +200,14 @@ export default {
 			return this.hasReactionsLoaded
 				&& JSON.stringify(this.plainReactions) !== JSON.stringify(detailedReactionsSimplified)
 		},
+
+		isSplitViewEnabled() {
+			return true
+		},
+
+		isOwnMessage() {
+			return this.actorStore.checkIfSelfIsActor(this.$store.getters.message(this.token, this.id))
+		},
 	},
 
 	methods: {
@@ -290,6 +306,13 @@ export default {
 		min-width: var(--minimal-button-width);
 	}
 
+	&.light :deep(.button-vue--secondary) {
+		background-color: var(--color-primary-element-extra-light);
+		&:hover {
+			background-color: var(--color-primary-element-extra-light-hover);
+		}
+	}
+
 	.reaction-emoji {
 		font-family: var(--font-family-emoji);
 	}
@@ -320,6 +343,14 @@ export default {
 	text-decoration: underline;
 	&:hover {
 		text-decoration: none;
+	}
+}
+
+// Split view
+.reactions-wrapper.compact {
+	.reaction-button--trigger,
+	.reaction-button--thumbnail {
+		padding-inline: 4px;
 	}
 }
 </style>
