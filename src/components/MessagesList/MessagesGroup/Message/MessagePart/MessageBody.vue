@@ -73,7 +73,9 @@
 		</div>
 
 		<!-- Additional message info-->
-		<div v-if="!isDeletedMessage" class="message-main__info">
+		<div
+			v-if="!isDeletedMessage"
+			class="message-main__info">
 			<span class="date" :class="{ 'date--hidden': hideDate }" :title="messageDate">{{ messageTime }}</span>
 
 			<!-- Message delivery status indicators -->
@@ -94,10 +96,10 @@
 					:aria-label="sendingErrorIconTitle"
 					@click="handleRetry">
 					<template #icon>
-						<IconReload :size="16" />
+						<IconReload :size="iconMessageDeliverySize" />
 					</template>
 				</NcButton>
-				<IconAlertCircleOutline v-else :size="16" />
+				<IconAlertCircleOutline v-else :size="iconMessageDeliverySize" />
 			</div>
 			<div
 				v-else-if="showLoadingIcon"
@@ -109,21 +111,21 @@
 				:title="readInfo.commonReadIconTitle"
 				class="message-status"
 				:aria-label="readInfo.commonReadIconTitle">
-				<IconCheckAll :size="16" />
+				<IconCheckAll :size="iconMessageDeliverySize" />
 			</div>
 			<div
 				v-else-if="readInfo?.showSentIcon"
 				:title="readInfo.sentIconTitle"
 				class="message-status"
 				:aria-label="readInfo.sentIconTitle">
-				<IconCheck :size="16" />
+				<IconCheck :size="iconMessageDeliverySize" />
 			</div>
 			<div
 				v-else-if="readInfo?.showSilentIcon"
 				:title="readInfo.silentIconTitle"
 				class="message-status"
 				:aria-label="readInfo.silentIconTitle">
-				<IconBellOffOutline :size="16" />
+				<IconBellOffOutline :size="iconMessageDeliverySize" />
 			</div>
 		</div>
 
@@ -410,6 +412,10 @@ export default {
 			return true
 		},
 
+		iconMessageDeliverySize() {
+			return this.isSplitViewEnabled ? 14 : 16
+		},
+
 		isShortSimpleMessage() {
 			return this.message.message.length <= 20 // FIXME: magic number
 				&& !this.message.parent
@@ -560,6 +566,29 @@ export default {
 	&--sided:has(.system-message) {
 		display: flex;
 		justify-content: center;
+	}
+
+	// Split view adjustments
+	&--sided {
+		.message-main__info {
+			padding-inline-end: 0;
+			align-items: end;
+			font-size: var(--font-size-small);
+			width: auto;
+		}
+
+		.date {
+			display: inline-flex;
+			justify-content: flex-end;
+			align-items: flex-end;
+			margin-inline-end: 0 !important;
+			width: auto !important;
+		}
+
+		.message-status {
+			height: 1lh;
+			width: 1lh;
+		}
 	}
 
 	&__text {
