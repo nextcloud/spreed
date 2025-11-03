@@ -17,10 +17,14 @@ Feature: chat-1/pinned-messages
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type | lastPinnedId | hiddenPinnedId |
       | room | 3    | Message 2    | EMPTY          |
+    # Ensure the order by timestamp
+    When wait for 1 second
     When user "participant1" pins message "Message 1" in room "room" with 200
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type | lastPinnedId | hiddenPinnedId |
       | room | 3    | Message 1    | EMPTY          |
+    # Ensure the order by timestamp
+    When wait for 1 second
     When user "participant1" pins message "Message 2" in room "room" with 200
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type | lastPinnedId | hiddenPinnedId |
