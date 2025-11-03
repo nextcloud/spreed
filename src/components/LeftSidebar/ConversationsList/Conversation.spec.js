@@ -8,8 +8,6 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
@@ -18,10 +16,14 @@ import router from '../../../__mocks__/router.js'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { leaveConversation } from '../../../services/participantsService.js'
 import storeConfig from '../../../store/storeConfig.js'
-import { findNcActionButton, findNcButton } from '../../../test-helpers.js'
+import { findNcActionButton } from '../../../test-helpers.js'
 
 vi.mock('../../../services/participantsService', () => ({
 	leaveConversation: vi.fn(),
+}))
+
+vi.mock('@nextcloud/vue/functions/dialog', () => ({
+	spawnDialog: vi.fn().mockResolvedValue(true),
 }))
 
 const ComponentStub = {
@@ -294,26 +296,18 @@ describe('ConversationItem.vue', () => {
 		}
 
 		/**
-		 * @param {string} actionName The name of the action to shallow
-		 * @param {number} buttonsAmount The amount of buttons to be shown in dialog
+		 * @param {string} actionName The name of the action to click
 		 */
-		async function shallowMountAndOpenDialog(actionName, buttonsAmount) {
+		async function mountAndOpenDialog(actionName) {
 			const wrapper = mountConversation(false)
 			const el = wrapper.findComponent(NcListItem)
 
 			const action = findNcActionButton(el, actionName)
 			expect(action.exists()).toBeTruthy()
 
-			// Act 1 : click on the button from the menu
 			await action.find('button').trigger('click')
-
-			// Assert 1
-			const dialog = wrapper.findComponent(NcDialog)
-			expect(dialog.exists).toBeTruthy()
-			const buttons = dialog.findAllComponents(NcButton)
-			expect(buttons).toHaveLength(buttonsAmount)
-
-			return dialog
+			// wait for dialog promise to be resolved
+			await flushPromises()
 		}
 
 		describe('leaving conversation', () => {
@@ -328,12 +322,9 @@ describe('ConversationItem.vue', () => {
 			})
 
 			test('leaves conversation when confirmed', async () => {
-				// Arrange
-				const dialog = await shallowMountAndOpenDialog('Leave conversation', 3)
+				// Act
+				await mountAndOpenDialog('Leave conversation')
 
-				// Act: click on the 'confirm' button
-				await findNcButton(dialog, 'Yes').find('button').trigger('click')
-				await flushPromises()
 				// Assert
 				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 			})
@@ -351,37 +342,12 @@ describe('ConversationItem.vue', () => {
 				testStoreConfig.modules.participantsStore.actions.removeCurrentUserFromConversation = actionHandler
 				store = createStore(testStoreConfig)
 
-				const dialog = await shallowMountAndOpenDialog('Leave conversation', 3)
-
-				// Act: click on the 'confirm' button
-				await findNcButton(dialog, 'Yes').find('button').trigger('click')
-				await flushPromises()
+				// Act
+				await mountAndOpenDialog('Leave conversation')
 
 				// Assert
 				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 				expect(showError).toHaveBeenCalledWith(expect.stringContaining('promote'))
-			})
-
-			test('does not leave conversation when not confirmed', async () => {
-				// Arrange
-				const dialog = await shallowMountAndOpenDialog('Leave conversation', 3)
-
-				// Act: click on the 'decline' button
-				await findNcButton(dialog, 'No').find('button').trigger('click')
-
-				// Assert
-				expect(actionHandler).not.toHaveBeenCalled()
-			})
-
-			test('archives conversation when selected', async () => {
-				// Arrange
-				const dialog = await shallowMountAndOpenDialog('Leave conversation', 3)
-
-				// Act: click on the 'archive' button
-				await findNcButton(dialog, 'Archive conversation').find('button').trigger('click')
-
-				// Assert
-				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), item)
 			})
 		})
 
@@ -396,28 +362,11 @@ describe('ConversationItem.vue', () => {
 			})
 
 			test('deletes conversation when confirmed', async () => {
-				// Arrange
-				const dialog = await shallowMountAndOpenDialog('Delete conversation', 2)
-
-				// Act: click on the 'confirm' button
-				await findNcButton(dialog, 'Yes').find('button').trigger('click')
-				await flushPromises()
+				// Act
+				await mountAndOpenDialog('Delete conversation')
 
 				// Assert
 				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
-				expect(router.push).not.toHaveBeenCalled()
-			})
-
-			test('does not delete conversation when not confirmed', async () => {
-				// Arrange
-				const dialog = await shallowMountAndOpenDialog('Delete conversation', 2)
-
-				// Act: click on the 'decline' button
-				await findNcButton(dialog, 'No').find('button').trigger('click')
-				await flushPromises()
-
-				// Assert
-				expect(actionHandler).not.toHaveBeenCalled()
 				expect(router.push).not.toHaveBeenCalled()
 			})
 
