@@ -33,7 +33,7 @@ class Message {
 	public const EXPOSED_METADATA_KEYS = [
 		self::METADATA_PINNED_BY_TYPE => 'pinnedActorType',
 		self::METADATA_PINNED_BY_ID => 'pinnedActorId',
-		self::METADATA_PINNED_BY_NAME => 'pinnedActorName',
+		self::METADATA_PINNED_BY_NAME => 'pinnedActorDisplayName',
 		self::METADATA_PINNED_UNTIL => 'pinnedUntil',
 	];
 
