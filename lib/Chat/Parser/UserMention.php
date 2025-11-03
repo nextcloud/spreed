@@ -94,11 +94,6 @@ class UserMention implements IEventListener {
 		$mentions = $comment->getMentions();
 		$comment->setMessage($originalCommentMessage, ChatManager::MAX_CHAT_LENGTH);
 
-		// TODO This can be removed once getMentions() returns sorted results (Nextcloud 21+)
-		usort($mentions, static function (array $m1, array $m2) {
-			return mb_strlen($m2['id']) <=> mb_strlen($m1['id']);
-		});
-
 		$metadata = $comment->getMetaData() ?? [];
 		foreach ($mentions as $mention) {
 			if ($mention['type'] === 'user' && $mention['id'] === 'all') {
