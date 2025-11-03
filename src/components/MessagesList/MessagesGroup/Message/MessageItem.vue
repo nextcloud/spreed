@@ -6,7 +6,6 @@
 <template>
 	<li
 		:id="`message_${message.id}`"
-		ref="message"
 		:data-message-id="message.id"
 		:data-seen="seen"
 		:data-next-message-id="nextMessageId"
@@ -14,7 +13,6 @@
 		class="message"
 		:class="{ 'message--hovered': showMessageButtonsBar }"
 		tabindex="0"
-		@animationend="clearHighlightedClass"
 		@mouseover="handleMouseover"
 		@mouseleave="handleMouseleave">
 		<div
@@ -45,7 +43,6 @@
 		<div class="message-body__scroll">
 			<MessageButtonsBar
 				v-if="showMessageButtonsBar"
-				ref="messageButtonsBar"
 				v-model:is-action-menu-open="isActionMenuOpen"
 				v-model:is-emoji-picker-open="isEmojiPickerOpen"
 				v-model:is-reactions-menu-open="isReactionsMenuOpen"
@@ -388,10 +385,6 @@ export default {
 			if (isIntersecting) {
 				this.seen = true
 			}
-		},
-
-		clearHighlightedClass() {
-			this.$refs.message.classList.remove('message--highlighted')
 		},
 
 		handleMouseover() {
