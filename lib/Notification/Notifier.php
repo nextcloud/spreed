@@ -53,6 +53,7 @@ use OCP\Server;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
+use OCP\Util;
 use Psr\Log\LoggerInterface;
 
 class Notifier implements INotifier {
@@ -292,14 +293,6 @@ class Notifier implements INotifier {
 
 		$this->notificationManager->markProcessed($notification);
 		throw new UnknownNotificationException('Unknown subject');
-	}
-
-	protected function shortenJsonEncodedMultibyteSave(string $subject, int $dataLength): string {
-		$temp = mb_substr($subject, 0, $dataLength);
-		while (strlen(json_encode($temp)) > $dataLength) {
-			$temp = mb_substr($temp, 0, -5);
-		}
-		return $temp;
 	}
 
 	protected function parseStoredRecordingFail(
@@ -687,7 +680,7 @@ class Notifier implements INotifier {
 
 			$richSubjectParameters = [];
 		} elseif ($this->notificationManager->isPreparingPushNotification()) {
-			$shortenMessage = $this->shortenJsonEncodedMultibyteSave($parsedMessage, 100);
+			$shortenMessage = Util::shortenMultibyteString($parsedMessage, 100);
 			if ($shortenMessage !== $parsedMessage) {
 				$shortenMessage .= '…';
 			}
