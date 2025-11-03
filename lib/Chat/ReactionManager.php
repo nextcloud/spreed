@@ -63,6 +63,7 @@ class ReactionManager {
 		} catch (NotFoundException $e) {
 		}
 
+		/** @var IComment $comment */
 		$comment = $this->commentsManager->create(
 			$actorType,
 			$actorId,
@@ -72,6 +73,7 @@ class ReactionManager {
 		$comment->setParentId($parentMessage->getId());
 		$comment->setMessage($reaction);
 		$comment->setVerb(ChatManager::VERB_REACTION);
+		$comment->setExpireDate($parentMessage->getExpireDate());
 
 		$event = new BeforeReactionAddedEvent($chat, $parentMessage, $actorType, $actorId, $actorDisplayName, $reaction);
 		$this->dispatcher->dispatchTyped($event);
