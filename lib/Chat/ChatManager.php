@@ -775,6 +775,14 @@ class ChatManager {
 			$comment,
 		);
 
+		if ($pinUntil === 0) {
+			// Pinned without expiration, pin until message expiration, if applicable
+			$pinUntil = $message->getExpireDate()?->getTimestamp() ?? 0;
+		} elseif ($message->getExpireDate()) {
+			// When the message expires, expire the pin latest at that time
+			$pinUntil = min($pinUntil, $message->getExpireDate()->getTimestamp());
+		}
+
 		$metaData[Message::METADATA_PINNED_MESSAGE_ID] = (int)$message->getId();
 		$metaData[Message::METADATA_PINNED_BY_TYPE] = $participant->getAttendee()->getActorType();
 		$metaData[Message::METADATA_PINNED_BY_ID] = $participant->getAttendee()->getActorId();
