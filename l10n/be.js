@@ -1230,7 +1230,7 @@ OC.L10N.register(
     "Access to the microphone was denied" : "Доступ да мікрафона забаронены",
     "Microphone either not available or disabled in settings" : "Мікрафон недаступны або адключаны ў наладах",
     "Error while recording audio" : "Памылка падчас запісу гуку",
-    "Talk recording from {time} ({conversation})" : "Запіс размовы ад {time} ({conversation})",
+    "Talk recording from {time} ({conversation})" : "Галасавое паведамленне ад {time} ({conversation})",
     "New file" : "Новы файл",
     "Blank" : "Пусты",
     "Error while creating file" : "Памылка пры стварэнні файла",
