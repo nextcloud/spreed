@@ -1677,7 +1677,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * 400: Message could not be pinned
 	 * 404: Message was not found
 	 */
-	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
@@ -1722,7 +1721,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * 200: Message is not pinned now
 	 * 404: Message was not found
 	 */
-	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
@@ -1757,7 +1755,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * 200: Pinned message is now hidden
 	 * 404: Message was not found
 	 */
-	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
