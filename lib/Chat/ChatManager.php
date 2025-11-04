@@ -783,6 +783,7 @@ class ChatManager {
 			$pinUntil = min($pinUntil, $message->getExpireDate()->getTimestamp());
 		}
 
+		$metaData[Message::METADATA_PINNED_AT] = $this->timeFactory->getTime();
 		$metaData[Message::METADATA_PINNED_MESSAGE_ID] = (int)$message->getId();
 		$metaData[Message::METADATA_PINNED_BY_TYPE] = $participant->getAttendee()->getActorType();
 		$metaData[Message::METADATA_PINNED_BY_ID] = $participant->getAttendee()->getActorId();
@@ -826,6 +827,7 @@ class ChatManager {
 
 		$pinnedId = (int)$comment->getId();
 		unset(
+			$metaData[Message::METADATA_PINNED_AT],
 			$metaData[Message::METADATA_PINNED_MESSAGE_ID],
 			$metaData[Message::METADATA_PINNED_BY_TYPE],
 			$metaData[Message::METADATA_PINNED_BY_ID],

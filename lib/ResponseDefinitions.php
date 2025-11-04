@@ -104,6 +104,19 @@ namespace OCA\Talk;
  *     systemMessage: string,
  *  }
  *
+ * @psalm-type TalkChatMessageMetaData = array{
+ *     // Actor type of the attendee that pinned the message - Required capability: `pinned-messages`
+ *     pinnedActorType?: string,
+ *     // Actor ID of the attendee that pinned the message - Required capability: `pinned-messages`
+ *     pinnedActorId?: string,
+ *     // Display name of the attendee that pinned the message - Required capability: `pinned-messages`
+ *     pinnedActorDisplayName?: string,
+ *     // Timestamp when the message was pinned - Required capability: `pinned-messages`
+ *     pinnedAt?: int,
+ *     // Timestamp until when the message is pinned. If missing the message is pinned infinitely - Required capability: `pinned-messages`
+ *     pinnedUntil?: int,
+ * }
+ *
  * @psalm-type TalkChatMessage = TalkBaseMessage&array{
  *     deleted?: true,
  *     id: int,
@@ -123,12 +136,7 @@ namespace OCA\Talk;
  *     isThread?: bool,
  *     threadTitle?: string,
  *     threadReplies?: int,
- *     metaData?: array{
- *         pinnedActorType?: string,
- *         pinnedActorId?: string,
- *         pinnedActorDisplayName?: string,
- *         pinnedUntil?: int,
- *     },
+ *     metaData?: TalkChatMessageMetaData,
  * }
  *
  * @psalm-type TalkChatProxyMessage = TalkBaseMessage

@@ -29,11 +29,13 @@ class Message {
 	public const METADATA_PINNED_BY_ID = 'pinned_by_id';
 	public const METADATA_PINNED_BY_NAME = 'pinned_by_name';
 	public const METADATA_PINNED_MESSAGE_ID = 'pinned_id';
+	public const METADATA_PINNED_AT = 'pinned_at';
 	public const METADATA_PINNED_UNTIL = 'pinned_until';
 	public const EXPOSED_METADATA_KEYS = [
 		self::METADATA_PINNED_BY_TYPE => 'pinnedActorType',
 		self::METADATA_PINNED_BY_ID => 'pinnedActorId',
 		self::METADATA_PINNED_BY_NAME => 'pinnedActorDisplayName',
+		self::METADATA_PINNED_AT => 'pinnedAt',
 		self::METADATA_PINNED_UNTIL => 'pinnedUntil',
 	];
 
