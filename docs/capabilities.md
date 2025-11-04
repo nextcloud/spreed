@@ -197,3 +197,6 @@
 ## 22
 * `threads` - Whether the chat supports threads
 * `config => call => live-transcription` - Whether live transcription is supported in calls
+
+## 22.0.3
+* `federated-shared-items` - Whether shared items endpoints can be called in a federated conversation
