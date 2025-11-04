@@ -37,7 +37,7 @@
 				:title="deleteButtonLabel"
 				:aria-label="deleteButtonLabel"
 				variant="error"
-				@click="toggleShowDialog">
+				@click="deleteBreakoutRooms">
 				<template #icon>
 					<IconTrashCanOutline :size="20" />
 				</template>
@@ -81,36 +81,22 @@
 				{{ confirmButtonLabel }}
 			</NcButton>
 		</div>
-		<NcDialog
-			v-if="showDialog"
-			v-model:open="showDialog"
-			:name="t('spreed', 'Delete breakout rooms')"
-			:message="dialogMessage"
-			container=".participants-editor">
-			<template #actions>
-				<NcButton variant="tertiary" @click="toggleShowDialog">
-					{{ t('spreed', 'Cancel') }}
-				</NcButton>
-				<NcButton variant="error" @click="deleteBreakoutRooms">
-					{{ t('spreed', 'Delete breakout rooms') }}
-				</NcButton>
-			</template>
-		</NcDialog>
 	</div>
 </template>
 
 <script>
 import { t } from '@nextcloud/l10n'
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { provide } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcDialog from '@nextcloud/vue/components/NcDialog'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import BreakoutRoomItem from '../RightSidebar/BreakoutRooms/BreakoutRoomItem.vue'
+import ConfirmDialog from '../UIShared/ConfirmDialog.vue'
 import SelectableParticipant from './SelectableParticipant.vue'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
@@ -128,7 +114,6 @@ export default {
 		NcButton,
 		IconArrowLeft,
 		IconTrashCanOutline,
-		NcDialog,
 	},
 
 	props: {
@@ -163,7 +148,6 @@ export default {
 		return {
 			selectedParticipants: [],
 			assignments: [],
-			showDialog: false,
 		}
 	},
 
@@ -228,10 +212,6 @@ export default {
 
 		deleteButtonLabel() {
 			return t('spreed', 'Delete breakout rooms')
-		},
-
-		dialogMessage() {
-			return t('spreed', 'Current breakout rooms and settings will be lost')
 		},
 	},
 
@@ -330,12 +310,22 @@ export default {
 			this.$emit('close')
 		},
 
-		toggleShowDialog() {
-			this.showDialog = !this.showDialog
-		},
+		async deleteBreakoutRooms() {
+			const confirmDeleteBreakoutRooms = await spawnDialog(ConfirmDialog, {
+				container: '.participants-editor',
+				name: t('spreed', 'Delete breakout rooms'),
+				message: t('spreed', 'Current breakout rooms and settings will be lost'),
+				buttons: [
+					{ label: t('spreed', 'Cancel'), variant: 'tertiary', callback: () => undefined },
+					{ label: t('spreed', 'Delete breakout rooms'), variant: 'error', callback: () => true },
+				],
+			})
 
-		deleteBreakoutRooms() {
-			this.breakoutRoomsStore.deleteBreakoutRooms(this.token)
+			if (!confirmDeleteBreakoutRooms) {
+				return
+			}
+
+			await this.breakoutRoomsStore.deleteBreakoutRooms(this.token)
 		},
 	},
 }
