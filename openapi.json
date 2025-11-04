@@ -607,26 +607,38 @@
                                 "format": "int64"
                             },
                             "metaData": {
-                                "type": "object",
-                                "properties": {
-                                    "pinnedActorType": {
-                                        "type": "string"
-                                    },
-                                    "pinnedActorId": {
-                                        "type": "string"
-                                    },
-                                    "pinnedActorDisplayName": {
-                                        "type": "string"
-                                    },
-                                    "pinnedUntil": {
-                                        "type": "integer",
-                                        "format": "int64"
-                                    }
-                                }
+                                "$ref": "#/components/schemas/ChatMessageMetaData"
                             }
                         }
                     }
                 ]
+            },
+            "ChatMessageMetaData": {
+                "type": "object",
+                "properties": {
+                    "pinnedActorType": {
+                        "type": "string",
+                        "description": "Actor type of the attendee that pinned the message - Required capability: `pinned-messages`"
+                    },
+                    "pinnedActorId": {
+                        "type": "string",
+                        "description": "Actor ID of the attendee that pinned the message - Required capability: `pinned-messages`"
+                    },
+                    "pinnedActorDisplayName": {
+                        "type": "string",
+                        "description": "Display name of the attendee that pinned the message - Required capability: `pinned-messages`"
+                    },
+                    "pinnedAt": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Timestamp when the message was pinned - Required capability: `pinned-messages`"
+                    },
+                    "pinnedUntil": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Timestamp until when the message is pinned. If missing the message is pinned infinitely - Required capability: `pinned-messages`"
+                    }
+                }
             },
             "ChatMessageWithParent": {
                 "allOf": [

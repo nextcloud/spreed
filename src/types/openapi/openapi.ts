@@ -1942,13 +1942,25 @@ export type components = {
             threadTitle?: string;
             /** Format: int64 */
             threadReplies?: number;
-            metaData?: {
-                pinnedActorType?: string;
-                pinnedActorId?: string;
-                pinnedActorDisplayName?: string;
-                /** Format: int64 */
-                pinnedUntil?: number;
-            };
+            metaData?: components["schemas"]["ChatMessageMetaData"];
+        };
+        ChatMessageMetaData: {
+            /** @description Actor type of the attendee that pinned the message - Required capability: `pinned-messages` */
+            pinnedActorType?: string;
+            /** @description Actor ID of the attendee that pinned the message - Required capability: `pinned-messages` */
+            pinnedActorId?: string;
+            /** @description Display name of the attendee that pinned the message - Required capability: `pinned-messages` */
+            pinnedActorDisplayName?: string;
+            /**
+             * Format: int64
+             * @description Timestamp when the message was pinned - Required capability: `pinned-messages`
+             */
+            pinnedAt?: number;
+            /**
+             * Format: int64
+             * @description Timestamp until when the message is pinned. If missing the message is pinned infinitely - Required capability: `pinned-messages`
+             */
+            pinnedUntil?: number;
         };
         ChatMessageWithParent: components["schemas"]["ChatMessage"] & {
             parent?: components["schemas"]["ChatMessage"] | components["schemas"]["DeletedChatMessage"];
