@@ -6,12 +6,16 @@
 <script setup lang="ts">
 import {
 	showError,
-	showWarning,
 } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
-import { computed, ref, toValue, watch } from 'vue'
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { useResizeObserver } from '@vueuse/core'
+import debounce from 'debounce'
+import { computed, onUnmounted, ref, toValue, useTemplateRef, watch } from 'vue'
 import { useStore } from 'vuex'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
@@ -53,6 +57,9 @@ const callViewStore = useCallViewStore()
 const liveTranscriptionStore = useLiveTranscriptionStore()
 
 const isLiveTranscriptionLoading = ref(false)
+const bottomBar = useTemplateRef('bottomBar')
+const callButtonWithActions = useTemplateRef('callButtonWithActions')
+const isMobile = useIsMobile()
 
 const conversation = computed(() => {
 	return store.getters.conversation(token.value) || store.getters.dummyConversation
@@ -103,6 +110,55 @@ const changeViewLabel = computed(() => {
 const showCallLayoutSwitch = computed(() => !callViewStore.isEmptyCallView)
 const isGrid = computed(() => callViewStore.isGrid)
 const userIsInBreakoutRoomAndInCall = computed(() => conversation.value.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
+
+const COLLAPSIBLE_BUTTONS = ['virtualBackground', 'liveTranscription', 'raiseHand', 'callLayout', 'fullscreen'] as const
+type CollapsibleButtons = Record<typeof COLLAPSIBLE_BUTTONS[number], boolean>
+const isActionAvailableMask = computed<CollapsibleButtons>(() => ({
+	fullscreen: !isSidebar,
+	callLayout: showCallLayoutSwitch.value,
+	raiseHand: true,
+	liveTranscription: isLiveTranscriptionSupported.value,
+	virtualBackground: !isSidebar,
+}))
+const hidingList = ref<CollapsibleButtons>({ ...isActionAvailableMask.value })
+const hasHiddenItems = computed(() => Object.values(hidingList.value).some(Boolean))
+const BUTTON_WITH_GAP_WIDTH = 38 // var(--default-clickable-area) + var--default-grid-baseline)
+const MINIMAL_MEDIA_CONTROLS_WIDTH = 236 // Minimal width to show media controls properly
+/**
+ * Adjust the layout of the bottom bar based on the available width.
+ *
+ */
+function adjustLayout() {
+	if (!bottomBar.value) {
+		return
+	}
+	// 20px is for side paddings of the bottom bar, 8px is for the gap between the call button and the options
+	const availableWidth = bottomBar.value.clientWidth - callButtonWithActions.value!.clientWidth - 28
+	if (availableWidth <= MINIMAL_MEDIA_CONTROLS_WIDTH) {
+		// Not enough space to show anything, hide all buttons
+		COLLAPSIBLE_BUTTONS.forEach((button) => {
+			hidingList.value[button as keyof typeof hidingList.value] = true
+		})
+		return
+	}
+
+	const buttonsToRender = Math.floor((availableWidth - MINIMAL_MEDIA_CONTROLS_WIDTH) / BUTTON_WITH_GAP_WIDTH)
+	// make the first n buttons visible, hide the rest
+	const buttonsToCollapse = COLLAPSIBLE_BUTTONS.filter((button) => isActionAvailableMask.value[button])
+	buttonsToCollapse.forEach((button, index) => {
+		hidingList.value[button] = index >= buttonsToRender
+	})
+}
+
+const debounceAdjustLayout = debounce(adjustLayout, 200)
+
+useResizeObserver(bottomBar, () => {
+	debounceAdjustLayout()
+})
+
+onUnmounted(() => {
+	debounceAdjustLayout.clear?.()
+})
 
 /**
  * Toggle live transcriptions.
@@ -234,10 +290,11 @@ useHotKey('r', toggleHandRaised)
 </script>
 
 <template>
-	<div class="bottom-bar" data-theme-dark>
+	<div ref="bottomBar" class="bottom-bar" data-theme-dark>
 		<div v-if="!isSidebar" class="bottom-bar-call-controls">
 			<!-- Fullscreen -->
 			<NcButton
+				v-if="!hidingList.fullscreen"
 				:aria-label="fullscreenLabel"
 				:variant="isFullscreen ? 'secondary' : 'tertiary'"
 				:title="fullscreenLabel"
@@ -249,7 +306,7 @@ useHotKey('r', toggleHandRaised)
 			</NcButton>
 			<!-- Call layout switcher -->
 			<NcButton
-				v-if="showCallLayoutSwitch"
+				v-if="showCallLayoutSwitch && !hidingList.callLayout"
 				variant="tertiary"
 				:aria-label="changeViewLabel"
 				:title="changeViewLabel"
@@ -267,6 +324,7 @@ useHotKey('r', toggleHandRaised)
 				:token="token"
 				:model="localMediaModel"
 				:is-sidebar="isSidebar"
+				:hide-virtual-background-shortcut="hidingList.virtualBackground"
 				:local-call-participant-model="localCallParticipantModel" />
 
 			<!-- Reactions menu -->
@@ -277,7 +335,7 @@ useHotKey('r', toggleHandRaised)
 				:local-call-participant-model="localCallParticipantModel" />
 
 			<NcButton
-				v-if="isLiveTranscriptionSupported"
+				v-if="isLiveTranscriptionSupported && !hidingList.liveTranscription"
 				:title="liveTranscriptionButtonLabel"
 				:aria-label="liveTranscriptionButtonLabel"
 				:variant="callViewStore.isLiveTranscriptionEnabled ? 'secondary' : 'tertiary'"
@@ -297,7 +355,7 @@ useHotKey('r', toggleHandRaised)
 			</NcButton>
 
 			<NcButton
-				v-if="!isSidebar"
+				v-if="!isSidebar && !hidingList.raiseHand"
 				:title="raiseHandButtonLabel"
 				:aria-label="raiseHandButtonLabel"
 				:variant="isHandRaised ? 'secondary' : 'tertiary'"
@@ -310,10 +368,76 @@ useHotKey('r', toggleHandRaised)
 				</template>
 			</NcButton>
 		</div>
+		<div ref="callButtonWithActions" class="bottom-bar-options call-options">
+			<!-- Collapsed actions -->
+			<NcActions v-if="hasHiddenItems" force-menu>
+				<!-- Fullscreen -->
+				<NcActionButton
+					v-if="!isSidebar && hidingList.fullscreen"
+					:aria-label="fullscreenLabel"
+					:variant="isFullscreen ? 'secondary' : 'tertiary'"
+					:title="fullscreenLabel"
+					@click="toggleFullscreen">
+					<template #icon>
+						<IconFullscreen v-if="!isFullscreen" :size="20" />
+						<IconFullscreenExit v-else :size="20" />
+					</template>
+					{{ fullscreenLabel }}
+				</NcActionButton>
+				<!-- Call layout switcher -->
+				<NcActionButton
+					v-if="hidingList.callLayout && showCallLayoutSwitch"
+					variant="tertiary"
+					:aria-label="changeViewLabel"
+					:title="changeViewLabel"
+					@click="changeView">
+					<template #icon>
+						<IconViewGridOutline v-if="!isGrid" :size="20" />
+						<IconViewGalleryOutline v-else :size="20" />
+					</template>
+					{{ changeViewLabel }}
+				</NcActionButton>
+				<NcActionButton
+					v-if="isLiveTranscriptionSupported && hidingList.liveTranscription"
+					:title="liveTranscriptionButtonLabel"
+					:aria-label="liveTranscriptionButtonLabel"
+					:variant="callViewStore.isLiveTranscriptionEnabled ? 'secondary' : 'tertiary'"
+					:disabled="isLiveTranscriptionLoading"
+					@click="toggleLiveTranscription">
+					<template #icon>
+						<NcLoadingIcon
+							v-if="isLiveTranscriptionLoading"
+							:size="20" />
+						<IconSubtitles
+							v-else-if="callViewStore.isLiveTranscriptionEnabled"
+							:size="20" />
+						<IconSubtitlesOutline
+							v-else
+							:size="20" />
+					</template>
+					{{ liveTranscriptionButtonLabel }}
+				</NcActionButton>
+				<NcActionButton
+					v-if="!isSidebar && hidingList.raiseHand"
+					:title="raiseHandButtonLabel"
+					:aria-label="raiseHandButtonLabel"
+					:variant="isHandRaised ? 'secondary' : 'tertiary'"
+					@click="toggleHandRaised">
+					<!-- The following icon is much bigger than all the others
+						so we reduce its size -->
+					<template #icon>
+						<IconHandBackLeft v-if="isHandRaised" :size="18" />
+						<IconHandBackLeftOutline v-else :size="18" />
+					</template>
+					{{ raiseHandButtonLabel }}
+				</NcActionButton>
+			</NcActions>
 
-		<CallButton
-			:hide-text="isSidebar"
-			:is-screensharing="!!localMediaModel.attributes.localScreen" />
+			<CallButton
+				class="call-button"
+				:hide-text="isSidebar || isMobile"
+				:is-screensharing="!!localMediaModel.attributes.localScreen" />
+		</div>
 	</div>
 </template>
 
@@ -327,6 +451,7 @@ useHotKey('r', toggleHandRaised)
 	justify-content: space-between;
 	padding: var(--wrapper-padding);
 	z-index: 10;
+	overflow: hidden;
 
 	:deep(.button-vue--tertiary) {
 		background-color: var(--color-primary-light);
@@ -338,5 +463,16 @@ useHotKey('r', toggleHandRaised)
 	align-items: center;
 	flex-direction: row;
 	gap: var(--default-grid-baseline);
+}
+
+.bottom-bar-call-controls:not(:has(*)) {
+	display: none
+}
+
+.call-options {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	gap: 4px;
 }
 </style>
