@@ -1433,7 +1433,10 @@ export type paths = {
             path?: never;
             cookie?: never;
         };
-        /** Get objects that are shared in the room */
+        /**
+         * Get objects that are shared in the room
+         * @description Federated conversations are supported with the `federated-shared-items` capability
+         */
         get: operations["chat-get-objects-shared-in-room"];
         put?: never;
         /**
@@ -1566,7 +1569,10 @@ export type paths = {
             path?: never;
             cookie?: never;
         };
-        /** Get objects that are shared in the room overview */
+        /**
+         * Get objects that are shared in the room overview
+         * @description Federated conversations are supported with the `federated-shared-items` capability
+         */
         get: operations["chat-get-objects-shared-in-room-overview"];
         put?: never;
         post?: never;

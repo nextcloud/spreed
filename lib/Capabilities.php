@@ -125,6 +125,7 @@ class Capabilities implements IPublicCapability {
 		'sensitive-conversations',
 		'threads',
 		'pinned-messages',
+		'federated-shared-items',
 	];
 
 	public const CONDITIONAL_FEATURES = [

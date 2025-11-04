@@ -27,6 +27,7 @@ use OCP\ICacheFactory;
 
 /**
  * @psalm-import-type TalkChatMentionSuggestion from ResponseDefinitions
+ * @psalm-import-type TalkChatMessage from ResponseDefinitions
  * @psalm-import-type TalkChatMessageWithParent from ResponseDefinitions
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
@@ -250,6 +251,66 @@ class ChatController {
 		$data = $this->userConverter->convertMessages($room, $data);
 
 		return new DataResponse($data, Http::STATUS_OK, $headers);
+	}
+
+	/**
+	 * @return DataResponse<Http::STATUS_OK, array<string, list<TalkChatMessage>>, array{}>
+	 * @throws CannotReachRemoteException
+	 *
+	 * 200: List of shared objects messages of each type returned
+	 *
+	 * @see \OCA\Talk\Controller\ChatController::getObjectsSharedInRoomOverview()
+	 */
+	public function getObjectsSharedInRoomOverview(Room $room, Participant $participant, int $limit): DataResponse {
+		$proxy = $this->proxy->get(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/share/overview',
+			[
+				'limit' => $limit,
+			],
+		);
+
+		// We allow "200 OK" and "406 Not Acceptable" here, so that 33 against 32 and before is working well
+		/** @var array<string, list<TalkChatMessage>> $data */
+		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_OK, Http::STATUS_NOT_ACCEPTABLE]);
+
+		$result = [];
+		foreach ($data as $type => $items) {
+			$result[$type] = array_values($this->userConverter->convertMessages($room, $items));
+		}
+
+		/** @var array<string, list<TalkChatMessage>> $result */
+		return new DataResponse($result, Http::STATUS_OK);
+	}
+
+	/**
+	 * @return DataResponse<Http::STATUS_OK, array<string, TalkChatMessage>, array{}>
+	 * @throws CannotReachRemoteException
+	 *
+	 * 200: List of shared objects messages returned
+	 *
+	 * @see \OCA\Talk\Controller\ChatController::getObjectsSharedInRoom()
+	 */
+	public function getObjectsSharedInRoom(Room $room, Participant $participant, string $objectType, int $lastKnownMessageId, int $limit): DataResponse {
+		$proxy = $this->proxy->get(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/share',
+			[
+				'objectType' => $objectType,
+				'lastKnownMessageId' => $lastKnownMessageId,
+				'limit' => $limit,
+			],
+		);
+
+		// We allow "200 OK" and "406 Not Acceptable" here, so that 33 against 32 and before is working well
+		/** @var array<string, TalkChatMessage> $data */
+		$data = $this->proxy->getOCSData($proxy, [Http::STATUS_OK, Http::STATUS_NOT_ACCEPTABLE]);
+		/** @var array<string, TalkChatMessage> $data */
+		$data = $this->userConverter->convertMessages($room, $data);
+
+		return new DataResponse($data, Http::STATUS_OK);
 	}
 
 	/**

@@ -533,3 +533,26 @@ Feature: federation/chat
     When user "participant1" sets setting "typing_privacy" to 0 with 200 (v1)
     Then user "participant1" has capability "spreed=>config=>chat=>typing-privacy" set to 0
     Then user "participant1" has room capability "config=>chat=>typing-privacy" set to 0 on room "room"
+
+  Scenario: Get rich object for media tab
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@LOCAL | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
+    Then user "participant2" is participant of the following rooms (v4)
+      | id          | type |
+      | LOCAL::room | 2    |
+
+    And using server "LOCAL"
+    When user "participant1" shares rich-object "geo-location" "geo:52.5450511,13.3741463" '{"name":"Location name","latitude":"52.5450511","longitude":"13.3741463"}' to room "room" with 201 (v1)
+    And using server "REMOTE"
+    Then user "participant2" sees the following shared location in room "LOCAL::room" with 200
+      | room        | actorType       | actorId                   | actorDisplayName         | message  | messageParameters |
+      | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | {object} | "IGNORE" |
