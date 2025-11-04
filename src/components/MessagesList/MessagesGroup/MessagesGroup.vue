@@ -5,9 +5,10 @@
 
 <template>
 	<li class="wrapper">
-		<div class="messages__avatar">
+		<div class="messages__avatar-wrapper">
 			<AvatarWrapper
 				:id="actorId"
+				class="messages__avatar"
 				:token="token"
 				:name="actorDisplayName"
 				:source="actorType"
@@ -125,36 +126,33 @@ export default {
 @import '../../../assets/variables';
 
 .wrapper {
-	display: flex;
-	align-items: flex-start;
+	position: relative;
+	padding-inline-start: $messages-avatar-width;
 	width: 100%;
-	padding: 0;
-
-	&:focus {
-		background-color: rgba(47, 47, 47, 0.068);
-	}
 }
 
 .messages {
-	flex: auto;
-	display: flex;
-	padding: var(--default-grid-baseline) 0;
-	flex-direction: column;
+	padding-block: var(--default-grid-baseline);
 	width: 100%;
-	min-width: 0;
+
+	&__avatar-wrapper {
+		position: absolute;
+		top: 0;
+		inset-inline-start: 0;
+		height: 100%;
+		padding-block: calc(3 * var(--default-grid-baseline));
+		padding-inline: calc(2 * var(--default-grid-baseline));
+	}
 
 	&__avatar {
 		position: sticky;
 		top: 0;
-		padding: calc(2 * var(--default-grid-baseline));
-		margin-top: calc(2 * var(--default-grid-baseline));
 	}
 
 	&__author {
 		max-width: $messages-text-max-width;
 		padding-inline-start: var(--default-grid-baseline);
 		color: var(--color-text-maxcontrast);
-		flex-shrink: 0;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;

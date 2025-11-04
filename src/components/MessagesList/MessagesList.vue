@@ -952,6 +952,9 @@ export default {
 			if (highlight && scrollElement === element) {
 				// element is visible, highlight it
 				element.classList.add('message--highlighted')
+				setTimeout(() => {
+					element?.classList.remove('message--highlighted')
+				}, 5_000)
 			}
 			this.isFocusingMessage = false
 
