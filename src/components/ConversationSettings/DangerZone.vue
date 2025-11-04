@@ -14,32 +14,9 @@
 				<p class="app-settings-section__hint">
 					{{ t('spreed', 'Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time.') }}
 				</p>
-				<NcButton variant="warning" @click="toggleShowLeaveConversationDialog">
+				<NcButton variant="warning" @click="leaveConversation">
 					{{ t('spreed', 'Leave conversation') }}
 				</NcButton>
-				<NcDialog
-					v-model:open="isLeaveConversationDialogOpen"
-					class="danger-zone__dialog"
-					:name="t('spreed', 'Leave conversation')"
-					container=".danger-zone">
-					<template #default>
-						<p>{{ leaveConversationDialogMessage }}</p>
-						<p v-if="supportsArchive && !conversation.isArchived">
-							{{ t('spreed', 'You can archive this conversation instead.') }}
-						</p>
-					</template>
-					<template #actions>
-						<NcButton variant="tertiary" @click="toggleShowLeaveConversationDialog">
-							{{ t('spreed', 'No') }}
-						</NcButton>
-						<NcButton v-if="supportsArchive && !conversation.isArchived" variant="secondary" @click="toggleArchiveConversation">
-							{{ t('spreed', 'Archive conversation') }}
-						</NcButton>
-						<NcButton variant="warning" @click="leaveConversation">
-							{{ t('spreed', 'Yes') }}
-						</NcButton>
-					</template>
-				</NcDialog>
 			</div>
 			<div v-if="canDeleteConversation" class="app-settings-subsection">
 				<h4 class="app-settings-section__subtitle">
@@ -50,24 +27,9 @@
 				</p>
 				<NcButton
 					variant="error"
-					@click="toggleShowDeleteConversationDialog">
+					@click="deleteConversation">
 					{{ t('spreed', 'Delete conversation') }}
 				</NcButton>
-				<NcDialog
-					v-model:open="isDeleteConversationDialogOpen"
-					class="danger-zone__dialog"
-					:name="t('spreed', 'Delete conversation')"
-					:message="deleteConversationDialogMessage"
-					container=".danger-zone">
-					<template #actions>
-						<NcButton variant="tertiary" @click="toggleShowDeleteConversationDialog">
-							{{ t('spreed', 'No') }}
-						</NcButton>
-						<NcButton variant="error" @click="deleteConversation">
-							{{ t('spreed', 'Yes') }}
-						</NcButton>
-					</template>
-				</NcDialog>
 			</div>
 			<div v-if="canDeleteConversation" class="app-settings-subsection">
 				<h4 class="app-settings-section__subtitle">
@@ -78,26 +40,10 @@
 				</p>
 				<NcButton
 					variant="error"
-					@click="toggleShowDeleteChatDialog">
+					@click="clearChatHistory">
 					{{ t('spreed', 'Delete chat messages') }}
 				</NcButton>
-				<NcDialog
-					v-model:open="isDeleteChatDialogOpen"
-					class="danger-zone__dialog"
-					:name="t('spreed', 'Delete all chat messages')"
-					:message="deleteChatDialogMessage"
-					container=".danger-zone">
-					<template #actions>
-						<NcButton variant="tertiary" @click="toggleShowDeleteChatDialog">
-							{{ t('spreed', 'No') }}
-						</NcButton>
-						<NcButton variant="error" @click="clearChatHistory">
-							{{ t('spreed', 'Yes') }}
-						</NcButton>
-					</template>
-				</NcDialog>
 			</div>
-			<div />
 		</div>
 	</div>
 </template>
@@ -106,10 +52,10 @@
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
-import { ref } from 'vue'
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import ConfirmDialog from '../UIShared/ConfirmDialog.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useTokenStore } from '../../stores/token.ts'
@@ -121,7 +67,6 @@ export default {
 	components: {
 		NcButton,
 		NcNoteCard,
-		NcDialog,
 	},
 
 	props: {
@@ -142,45 +87,10 @@ export default {
 	},
 
 	setup() {
-		const isLeaveConversationDialogOpen = ref(false)
-		const isDeleteConversationDialogOpen = ref(false)
-		const isDeleteChatDialogOpen = ref(false)
-
 		return {
-			supportsArchive,
-			isLeaveConversationDialogOpen,
-			isDeleteConversationDialogOpen,
-			isDeleteChatDialogOpen,
 			token: useGetToken(),
 			tokenStore: useTokenStore(),
 		}
-	},
-
-	computed: {
-		container() {
-			return '#conversation-settings-container'
-		},
-
-		leaveConversationDialogMessage() {
-			return t('spreed', 'Do you really want to leave "{displayName}"?', this.conversation, undefined, {
-				escape: false,
-				sanitize: false,
-			})
-		},
-
-		deleteConversationDialogMessage() {
-			return t('spreed', 'Do you really want to delete "{displayName}"?', this.conversation, undefined, {
-				escape: false,
-				sanitize: false,
-			})
-		},
-
-		deleteChatDialogMessage() {
-			return t('spreed', 'Do you really want to delete all messages in "{displayName}"?', this.conversation, undefined, {
-				escape: false,
-				sanitize: false,
-			})
-		},
 	},
 
 	methods: {
@@ -191,11 +101,9 @@ export default {
 		},
 
 		/**
-		 * Deletes the current user from the conversation.
+		 * Archives the current conversation.
 		 */
 		async toggleArchiveConversation() {
-			this.isLeaveConversationDialogOpen = false
-
 			await this.$store.dispatch('toggleArchive', this.conversation)
 			this.hideConversationSettings()
 		},
@@ -204,7 +112,44 @@ export default {
 		 * Deletes the current user from the conversation.
 		 */
 		async leaveConversation() {
-			this.isLeaveConversationDialogOpen = false
+			const customMessages = [
+				t('spreed', 'Do you really want to leave "{displayName}"?', {
+					displayName: this.conversation.displayName,
+				}, { escape: false, sanitize: false }),
+			]
+
+			const buttons = [
+				{ label: t('spreed', 'No'), variant: 'tertiary', callback: () => undefined },
+				{ label: t('spreed', 'Yes'), variant: 'warning', callback: () => true },
+			]
+
+			if (supportsArchive && !this.conversation.isArchived) {
+				// Offer archiving option as an alternative to leaving the conversation
+				customMessages.push(t('spreed', 'You can archive this conversation instead.'))
+				buttons.splice(1, 0, {
+					label: t('spreed', 'Archive conversation'),
+					variant: 'secondary',
+					callback: () => {
+						this.toggleArchiveConversation()
+						return undefined
+					},
+				})
+			}
+
+			const confirmLeaveConversation = await spawnDialog(ConfirmDialog, {
+				container: '.danger-zone',
+				name: t('spreed', 'Leave conversation'),
+				customMessages,
+				buttons,
+			})
+
+			if (!confirmLeaveConversation) {
+				return
+			}
+
+			if (this.token === this.conversation.token) {
+				this.$router.push({ name: 'root' })
+			}
 
 			try {
 				await this.$store.dispatch('removeCurrentUserFromConversation', { token: this.conversation.token })
@@ -222,7 +167,21 @@ export default {
 		 * Deletes the conversation.
 		 */
 		async deleteConversation() {
-			this.isDeleteConversationDialogOpen = false
+			const confirmDeleteConversation = await spawnDialog(ConfirmDialog, {
+				container: '.danger-zone',
+				name: t('spreed', 'Delete conversation'),
+				message: t('spreed', 'Do you really want to delete "{displayName}"?', {
+					displayName: this.conversation.displayName,
+				}, { escape: false, sanitize: false }),
+				buttons: [
+					{ label: t('spreed', 'No'), variant: 'tertiary', callback: () => undefined },
+					{ label: t('spreed', 'Yes'), variant: 'error', callback: () => true },
+				],
+			})
+
+			if (!confirmDeleteConversation) {
+				return
+			}
 
 			if (this.token === this.conversation.token) {
 				this.$router.push({ name: 'root' })
@@ -242,27 +201,30 @@ export default {
 		 * Clears the chat history
 		 */
 		async clearChatHistory() {
+			const confirmDeleteChatMessages = await spawnDialog(ConfirmDialog, {
+				container: '.danger-zone',
+				name: t('spreed', 'Delete all chat messages'),
+				message: t('spreed', 'Do you really want to delete all messages in "{displayName}"?', {
+					displayName: this.conversation.displayName,
+				}, { escape: false, sanitize: false }),
+				buttons: [
+					{ label: t('spreed', 'No'), variant: 'tertiary', callback: () => undefined },
+					{ label: t('spreed', 'Yes'), variant: 'error', callback: () => true },
+				],
+			})
+
+			if (!confirmDeleteChatMessages) {
+				return
+			}
+
 			try {
 				await this.$store.dispatch('clearConversationHistory', { token: this.conversation.token })
-				this.isDeleteChatDialogOpen = false
 				// Close the settings
 				this.hideConversationSettings()
 			} catch (error) {
 				console.debug(`error while clearing chat history ${error}`)
 				showError(t('spreed', 'Error while clearing chat history'))
 			}
-		},
-
-		toggleShowLeaveConversationDialog() {
-			this.isLeaveConversationDialogOpen = !this.isLeaveConversationDialogOpen
-		},
-
-		toggleShowDeleteConversationDialog() {
-			this.isDeleteConversationDialogOpen = !this.isDeleteConversationDialogOpen
-		},
-
-		toggleShowDeleteChatDialog() {
-			this.isDeleteChatDialogOpen = !this.isDeleteChatDialogOpen
 		},
 	},
 }
