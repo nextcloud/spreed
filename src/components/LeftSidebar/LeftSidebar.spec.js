@@ -38,6 +38,7 @@ describe('LeftSidebar.vue', () => {
 	let testStoreConfig
 	let loadStateSettings
 	let conversationsListMock
+	let conversationsInitialisedMock
 	let fetchConversationsAction
 	let addConversationAction
 	let createOneToOneConversationAction
@@ -47,6 +48,7 @@ describe('LeftSidebar.vue', () => {
 	const ComponentStub = {
 		template: '<div><slot /></div>',
 	}
+	// TODO remove
 	const RecycleScrollerStub = {
 		props: {
 			items: Array,
@@ -73,6 +75,7 @@ describe('LeftSidebar.vue', () => {
 					// to prevent complex dialog logic
 					NcActions: ComponentStub,
 					NcModal: ComponentStub,
+					// TODO remove
 					RecycleScroller: RecycleScrollerStub,
 				},
 				provide: {
@@ -104,11 +107,13 @@ describe('LeftSidebar.vue', () => {
 
 		// note: need a copy because the Vue modifies it when sorting
 		conversationsListMock = vi.fn()
+		conversationsInitialisedMock = vi.fn(() => true)
 		fetchConversationsAction = vi.fn().mockReturnValue({ headers: {} })
 		addConversationAction = vi.fn()
 		createOneToOneConversationAction = vi.fn()
 		actorStore.setCurrentUser({ uid: 'current-user' })
 		testStoreConfig.modules.conversationsStore.getters.conversationsList = conversationsListMock
+		testStoreConfig.modules.conversationsStore.getters.conversationsInitialised = conversationsInitialisedMock
 		testStoreConfig.modules.conversationsStore.actions.fetchConversations = fetchConversationsAction
 		testStoreConfig.modules.conversationsStore.actions.addConversation = addConversationAction
 		testStoreConfig.modules.conversationsStore.actions.createOneToOneConversation = createOneToOneConversationAction
@@ -174,10 +179,10 @@ describe('LeftSidebar.vue', () => {
 			await flushPromises()
 
 			const normalConversationsList = conversationsList.filter((conversation) => !conversation.isArchived)
-			const conversationListItems = wrapper.findAll('.vue-recycle-scroller-STUB-item')
+			const conversationListItems = wrapper.findAll('.conversation')
 			expect(conversationListItems).toHaveLength(normalConversationsList.length)
-			expect(conversationListItems.at(0).text()).toStrictEqual(normalConversationsList[0].displayName)
-			expect(conversationListItems.at(1).text()).toStrictEqual(normalConversationsList[1].displayName)
+			expect(conversationListItems.at(0).text()).toContain(normalConversationsList[0].displayName)
+			expect(conversationListItems.at(1).text()).toContain(normalConversationsList[1].displayName)
 
 			expect(conversationsReceivedEvent).toHaveBeenCalled()
 		})
