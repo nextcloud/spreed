@@ -11,6 +11,7 @@ namespace OCA\Talk\Chat;
 use DateInterval;
 use OC\Memcache\ArrayCache;
 use OC\Memcache\NullCache;
+use OCA\Talk\BackgroundJob\UnpinMessage;
 use OCA\Talk\CachePrefix;
 use OCA\Talk\Events\BeforeChatMessageSentEvent;
 use OCA\Talk\Events\BeforeSystemMessageSentEvent;
@@ -19,6 +20,7 @@ use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Exceptions\InvalidRoomException;
 use OCA\Talk\Exceptions\MessagingNotAllowedException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Poll;
@@ -34,6 +36,7 @@ use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJobList;
 use OCP\Collaboration\Reference\IReferenceManager;
 use OCP\Comments\IComment;
 use OCP\Comments\MessageTooLongException;
@@ -122,6 +125,7 @@ class ChatManager {
 		protected IReferenceManager $referenceManager,
 		protected ILimiter $rateLimiter,
 		protected IRequest $request,
+		protected IJobList $jobList,
 		protected IL10N $l,
 		protected LoggerInterface $logger,
 	) {
@@ -748,6 +752,129 @@ class ChatManager {
 			null,
 			$comment,
 			true
+		);
+	}
+
+	public function pinMessage(Room $chat, IComment $comment, Participant $participant, int $pinUntil): ?IComment {
+		$metaData = $comment->getMetaData() ?? [];
+
+		if (!empty($metaData[Message::METADATA_PINNED_MESSAGE_ID])) {
+			// Message is already pinned
+			return null;
+		}
+
+		$message = $this->addSystemMessage(
+			$chat,
+			$participant,
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId(),
+			json_encode(['message' => 'message_pinned', 'parameters' => ['message' => $comment->getId()]]),
+			$this->timeFactory->getDateTime(),
+			false,
+			null,
+			$comment,
+		);
+
+		if ($pinUntil === 0) {
+			// Pinned without expiration, pin until message expiration, if applicable
+			$pinUntil = $message->getExpireDate()?->getTimestamp() ?? 0;
+		} elseif ($message->getExpireDate()) {
+			// When the message expires, expire the pin latest at that time
+			$pinUntil = min($pinUntil, $message->getExpireDate()->getTimestamp());
+		}
+
+		$metaData[Message::METADATA_PINNED_AT] = $this->timeFactory->getTime();
+		$metaData[Message::METADATA_PINNED_MESSAGE_ID] = (int)$message->getId();
+		$metaData[Message::METADATA_PINNED_BY_TYPE] = $participant->getAttendee()->getActorType();
+		$metaData[Message::METADATA_PINNED_BY_ID] = $participant->getAttendee()->getActorId();
+		if ($pinUntil) {
+			$metaData[Message::METADATA_PINNED_UNTIL] = $pinUntil;
+		}
+		$comment->setMetaData($metaData);
+		$this->commentsManager->save($comment);
+
+		$this->participantService->resetHiddenPinnedId($chat, (int)$comment->getId());
+
+		$this->roomService->setLastPinnedId($chat, (int)$comment->getId());
+
+		$this->attachmentService->createAttachmentEntryGeneric(
+			$chat,
+			$comment,
+			Attachment::TYPE_PINNED,
+		);
+
+		if ($pinUntil) {
+			$this->jobList->scheduleAfter(
+				UnpinMessage::class,
+				$pinUntil,
+				[
+					'roomId' => $chat->getId(),
+					'messageId' => (int)$comment->getId(),
+				],
+			);
+		}
+
+		return $message;
+	}
+
+	public function unpinMessage(Room $chat, IComment $comment, ?Participant $participant): ?IComment {
+		$metaData = $comment->getMetaData() ?? [];
+
+		if (empty($metaData[Message::METADATA_PINNED_MESSAGE_ID])) {
+			// Message is not pinned
+			return null;
+		}
+
+		$pinnedId = (int)$comment->getId();
+		unset(
+			$metaData[Message::METADATA_PINNED_AT],
+			$metaData[Message::METADATA_PINNED_MESSAGE_ID],
+			$metaData[Message::METADATA_PINNED_BY_TYPE],
+			$metaData[Message::METADATA_PINNED_BY_ID],
+			$metaData[Message::METADATA_PINNED_UNTIL],
+		);
+		$comment->setMetaData($metaData);
+		$this->commentsManager->save($comment);
+
+		$this->attachmentService->deleteAttachmentByMessageId($pinnedId);
+
+		$this->jobList->remove(
+			UnpinMessage::class,
+			[
+				'roomId' => $chat->getId(),
+				'messageId' => $pinnedId,
+			],
+		);
+
+		if ($chat->getLastPinnedId() === $pinnedId) {
+			$newLastPinned = 0;
+			$attachments = $this->attachmentService->getAttachmentsByType($chat, Attachment::TYPE_PINNED, 0, 1);
+			if (isset($attachments[0])) {
+				$newLastPinned = $attachments[0]->getMessageId();
+			}
+			$this->roomService->setLastPinnedId($chat, $newLastPinned);
+		}
+
+		if ($participant instanceof Participant) {
+			$actorType = $participant->getAttendee()->getActorType();
+			$actorId = $participant->getAttendee()->getActorId();
+		} else {
+			$actorType = Attendee::ACTOR_GUESTS;
+			$actorId = Attendee::ACTOR_ID_SYSTEM;
+		}
+
+		return $this->addSystemMessage(
+			$chat,
+			$participant,
+			$actorType,
+			$actorId,
+			json_encode(['message' => 'message_unpinned', 'parameters' => ['message' => $comment->getId()]]),
+			$this->timeFactory->getDateTime(),
+			false,
+			null,
+			$comment,
+			true,
+			true,
 		);
 	}
 

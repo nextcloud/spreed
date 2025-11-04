@@ -446,10 +446,40 @@
                             "threadReplies": {
                                 "type": "integer",
                                 "format": "int64"
+                            },
+                            "metaData": {
+                                "$ref": "#/components/schemas/ChatMessageMetaData"
                             }
                         }
                     }
                 ]
+            },
+            "ChatMessageMetaData": {
+                "type": "object",
+                "properties": {
+                    "pinnedActorType": {
+                        "type": "string",
+                        "description": "Actor type of the attendee that pinned the message - Required capability: `pinned-messages`"
+                    },
+                    "pinnedActorId": {
+                        "type": "string",
+                        "description": "Actor ID of the attendee that pinned the message - Required capability: `pinned-messages`"
+                    },
+                    "pinnedActorDisplayName": {
+                        "type": "string",
+                        "description": "Display name of the attendee that pinned the message - Required capability: `pinned-messages`"
+                    },
+                    "pinnedAt": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Timestamp when the message was pinned - Required capability: `pinned-messages`"
+                    },
+                    "pinnedUntil": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Timestamp until when the message is pinned. If missing the message is pinned infinitely - Required capability: `pinned-messages`"
+                    }
+                }
             },
             "ChatProxyMessage": {
                 "$ref": "#/components/schemas/BaseMessage"
@@ -660,7 +690,9 @@
                     "unreadMessages",
                     "isArchived",
                     "isImportant",
-                    "isSensitive"
+                    "isSensitive",
+                    "lastPinnedId",
+                    "hiddenPinnedId"
                 ],
                 "properties": {
                     "actorId": {
@@ -953,6 +985,16 @@
                     "isSensitive": {
                         "type": "boolean",
                         "description": "Required capability: `sensitive-conversations`"
+                    },
+                    "lastPinnedId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Required capability: `pinned-messages`"
+                    },
+                    "hiddenPinnedId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Required capability: `pinned-messages`"
                     }
                 }
             },

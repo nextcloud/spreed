@@ -168,9 +168,34 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>
+	 * @template S of Http::STATUS_*
+	 * @param S $statusCode HTTP status code
+	 * @return DataResponse<S, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>
 	 */
-	protected function parseCommentToResponse(IComment $comment, ?Message $parentMessage = null): DataResponse {
+	protected function parseCommentAndParentToResponse(?IComment $comment, ?IComment $parentComment = null, int $statusCode = Http::STATUS_CREATED): DataResponse {
+		if ($comment === null) {
+			$headers = [];
+			if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+				$headers = ['X-Chat-Last-Common-Read' => (string)$this->chatManager->getLastCommonReadMessage($this->room)];
+			}
+			return new DataResponse(null, $statusCode, $headers);
+		}
+
+		$parsedParentMessage = null;
+		if ($parentComment !== null) {
+			$parsedParentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parentComment, $this->l);
+			$this->messageParser->parseMessage($parsedParentMessage);
+		}
+
+		return $this->parseCommentToResponse($comment, $parsedParentMessage, $statusCode);
+	}
+
+	/**
+	 * @template S of Http::STATUS_*
+	 * @param S $statusCode HTTP status code
+	 * @return DataResponse<S, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>
+	 */
+	protected function parseCommentToResponse(IComment $comment, ?Message $parentMessage = null, int $statusCode = Http::STATUS_CREATED): DataResponse {
 		$chatMessage = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 		$this->messageParser->parseMessage($chatMessage);
 
@@ -179,7 +204,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 				$headers = ['X-Chat-Last-Common-Read' => (string)$this->chatManager->getLastCommonReadMessage($this->room)];
 			}
-			return new DataResponse(null, Http::STATUS_CREATED, $headers);
+			return new DataResponse(null, $statusCode, $headers);
 		}
 
 		try {
@@ -197,7 +222,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 			$headers = ['X-Chat-Last-Common-Read' => (string)$this->chatManager->getLastCommonReadMessage($this->room)];
 		}
-		return new DataResponse($data, Http::STATUS_CREATED, $headers);
+		return new DataResponse($data, $statusCode, $headers);
 	}
 
 	/**
@@ -1571,6 +1596,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			Attachment::TYPE_LOCATION,
 			Attachment::TYPE_MEDIA,
 			Attachment::TYPE_OTHER,
+			Attachment::TYPE_PINNED,
 			Attachment::TYPE_POLL,
 			Attachment::TYPE_RECORDING,
 			Attachment::TYPE_VOICE,
@@ -1594,6 +1620,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 				if (isset($messages[$messageId])) {
 					$messagesByType[$objectType][] = $messages[$messageId];
 				}
+			}
+
+			if ($objectType === Attachment::TYPE_PINNED) {
+				// Enforce sort order of pinned messages again after loading them from the comments table instead of attachments
+				uasort($messagesByType[$objectType], static fn (array $m1, array $m2): int => ($m1['metaData'][Message::METADATA_PINNED_AT] ?? 0) <=> ($m2['metaData'][Message::METADATA_PINNED_AT] ?? 0));
 			}
 		}
 
@@ -1626,6 +1657,10 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$messageIds = array_map(static fn (Attachment $attachment): int => $attachment->getMessageId(), $attachments);
 
 		$messages = $this->getMessagesForRoom($messageIds);
+		if ($objectType === Attachment::TYPE_PINNED) {
+			// Enforce sort order of pinned messages again after loading them from the comments table instead of attachments
+			uasort($messages, static fn (array $m1, array $m2): int => ($m1['metaData'][Message::METADATA_PINNED_AT] ?? 0) <=> ($m2['metaData'][Message::METADATA_PINNED_AT] ?? 0));
+		}
 
 		$headers = [];
 		if (!empty($messages)) {
@@ -1634,6 +1669,113 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		return new DataResponse($messages, Http::STATUS_OK, $headers);
+	}
+
+	/**
+	 * Pin a message in a chat as a moderator
+	 *
+	 * Required capability: `pinned-messages`
+	 *
+	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
+	 * @param int $pinUntil Unix timestamp when to unpin the message
+	 * @psalm-param non-negative-int $pinUntil
+	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'message'|'until'}, array{}>
+	 *
+	 * 200: Message was pinned successfully
+	 * 400: Message could not be pinned
+	 * 404: Message was not found
+	 */
+	#[PublicPage]
+	#[RequireModeratorParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/{messageId}/pin', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]+',
+	])]
+	public function pinMessage(int $messageId, int $pinUntil = 0): DataResponse {
+		// FIXME add federation
+
+		try {
+			$comment = $this->chatManager->getComment($this->room, (string)$messageId);
+		} catch (NotFoundException) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($comment->getVerb() !== ChatManager::VERB_MESSAGE && $comment->getVerb() !== ChatManager::VERB_OBJECT_SHARED) {
+			// System message (since the message is not parsed, it has type "system")
+			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($pinUntil !== 0 && $pinUntil < $this->timeFactory->getTime()) {
+			// System message (since the message is not parsed, it has type "system")
+			return new DataResponse(['error' => 'until'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$systemMessageComment = $this->chatManager->pinMessage($this->room, $comment, $this->participant, $pinUntil);
+
+		return $this->parseCommentAndParentToResponse($systemMessageComment, $comment, Http::STATUS_OK);
+	}
+
+	/**
+	 * Unpin a message in a chat as a moderator
+	 *
+	 * Required capability: `pinned-messages`
+	 *
+	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
+	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'message'}, array{}>
+	 *
+	 * 200: Message is not pinned now
+	 * 404: Message was not found
+	 */
+	#[PublicPage]
+	#[RequireModeratorParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/chat/{token}/{messageId}/pin', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]+',
+	])]
+	public function unpinMessage(int $messageId): DataResponse {
+		// FIXME add federation
+
+		try {
+			$comment = $this->chatManager->getComment($this->room, (string)$messageId);
+		} catch (NotFoundException) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
+		}
+
+		$systemMessageComment = $this->chatManager->unpinMessage($this->room, $comment, $this->participant);
+
+		return $this->parseCommentAndParentToResponse($systemMessageComment, $comment, Http::STATUS_OK);
+	}
+
+	/**
+	 * Hide a message in a chat as a user
+	 *
+	 * Required capability: `pinned-messages`
+	 *
+	 * @param int $messageId ID of the message
+	 * @psalm-param non-negative-int $messageId
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+	 *
+	 * 200: Pinned message is now hidden
+	 * 404: Message was not found
+	 */
+	#[PublicPage]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/chat/{token}/{messageId}/pin/self', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]+',
+	])]
+	public function hidePinnedMessage(int $messageId): DataResponse {
+		$this->participantService->hidePinnedMessage($this->participant, $messageId);
+		return new DataResponse(null, Http::STATUS_OK);
 	}
 
 	/**

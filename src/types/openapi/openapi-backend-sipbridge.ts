@@ -251,6 +251,25 @@ export type components = {
             threadTitle?: string;
             /** Format: int64 */
             threadReplies?: number;
+            metaData?: components["schemas"]["ChatMessageMetaData"];
+        };
+        ChatMessageMetaData: {
+            /** @description Actor type of the attendee that pinned the message - Required capability: `pinned-messages` */
+            pinnedActorType?: string;
+            /** @description Actor ID of the attendee that pinned the message - Required capability: `pinned-messages` */
+            pinnedActorId?: string;
+            /** @description Display name of the attendee that pinned the message - Required capability: `pinned-messages` */
+            pinnedActorDisplayName?: string;
+            /**
+             * Format: int64
+             * @description Timestamp when the message was pinned - Required capability: `pinned-messages`
+             */
+            pinnedAt?: number;
+            /**
+             * Format: int64
+             * @description Timestamp until when the message is pinned. If missing the message is pinned infinitely - Required capability: `pinned-messages`
+             */
+            pinnedUntil?: number;
         };
         ChatProxyMessage: components["schemas"]["BaseMessage"];
         OCSMeta: {
@@ -511,6 +530,16 @@ export type components = {
             isImportant: boolean;
             /** @description Required capability: `sensitive-conversations` */
             isSensitive: boolean;
+            /**
+             * Format: int64
+             * @description Required capability: `pinned-messages`
+             */
+            lastPinnedId: number;
+            /**
+             * Format: int64
+             * @description Required capability: `pinned-messages`
+             */
+            hiddenPinnedId: number;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
     };

@@ -46,6 +46,7 @@ class SelectHelper {
 			->addSelect($alias . 'has_federation')
 			->addSelect($alias . 'mention_permissions')
 			->addSelect($alias . 'transcription_language')
+			->addSelect($alias . 'last_pinned_id')
 			->selectAlias($alias . 'id', 'r_id');
 	}
 
@@ -83,6 +84,7 @@ class SelectHelper {
 			->addSelect($alias . 'has_unread_threads')
 			->addSelect($alias . 'has_unread_thread_mentions')
 			->addSelect($alias . 'has_unread_thread_directs')
+			->addSelect($alias . 'hidden_pinned_id')
 			->selectAlias($alias . 'id', 'a_id');
 	}
 

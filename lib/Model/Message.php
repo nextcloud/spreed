@@ -25,42 +25,33 @@ class Message {
 	public const METADATA_SILENT = 'silent';
 	public const METADATA_CAN_MENTION_ALL = 'can_mention_all';
 	public const METADATA_THREAD_ID = 'thread_id';
+	public const METADATA_PINNED_BY_TYPE = 'pinned_by_type';
+	public const METADATA_PINNED_BY_ID = 'pinned_by_id';
+	public const METADATA_PINNED_BY_NAME = 'pinned_by_name';
+	public const METADATA_PINNED_MESSAGE_ID = 'pinned_id';
+	public const METADATA_PINNED_AT = 'pinned_at';
+	public const METADATA_PINNED_UNTIL = 'pinned_until';
+	public const EXPOSED_METADATA_KEYS = [
+		self::METADATA_PINNED_BY_TYPE => 'pinnedActorType',
+		self::METADATA_PINNED_BY_ID => 'pinnedActorId',
+		self::METADATA_PINNED_BY_NAME => 'pinnedActorDisplayName',
+		self::METADATA_PINNED_AT => 'pinnedAt',
+		self::METADATA_PINNED_UNTIL => 'pinnedUntil',
+	];
 
-	/** @var bool */
-	protected $visible = true;
-
-	/** @var string */
-	protected $type = '';
-
-	/** @var string */
-	protected $message = '';
-
-	/** @var string */
-	protected $rawMessage = '';
-
-	/** @var array */
-	protected $parameters = [];
-
-	/** @var string */
-	protected $actorType = '';
-
-	/** @var string */
-	protected $actorId = '';
-
-	/** @var string */
-	protected $actorDisplayName = '';
-
-	/** @var string */
-	protected $lastEditActorType = '';
-
-	/** @var string */
-	protected $lastEditActorId = '';
-
-	/** @var string */
-	protected $lastEditActorDisplayName = '';
-
-	/** @var int */
-	protected $lastEditTimestamp = 0;
+	protected bool $visible = true;
+	protected string $type = '';
+	protected string $message = '';
+	protected string $rawMessage = '';
+	protected array $parameters = [];
+	protected string $actorType = '';
+	protected string $actorId = '';
+	protected string $actorDisplayName = '';
+	protected string $lastEditActorType = '';
+	protected string $lastEditActorId = '';
+	protected string $lastEditActorDisplayName = '';
+	protected int $lastEditTimestamp = 0;
+	protected array $metaData = [];
 
 	public function __construct(
 		protected Room $room,
@@ -150,6 +141,10 @@ class Message {
 		$this->lastEditTimestamp = $timestamp;
 	}
 
+	public function setMetaData(array $metaData): void {
+		$this->metaData = $metaData;
+	}
+
 	public function getActorType(): string {
 		return $this->actorType;
 	}
@@ -236,6 +231,17 @@ class Message {
 		$metaData = $this->getComment()->getMetaData() ?? [];
 		if (!empty($metaData[self::METADATA_SILENT])) {
 			$data[self::METADATA_SILENT] = true;
+		}
+
+		$data['metaData'] = [];
+		foreach (self::EXPOSED_METADATA_KEYS as $exposedKey => $exposedAs) {
+			if (isset($this->metaData[$exposedKey])) {
+				$data['metaData'][$exposedAs] = $this->metaData[$exposedKey];
+			}
+		}
+
+		if (empty($data['metaData'])) {
+			unset($data['metaData']);
 		}
 
 		return $data;

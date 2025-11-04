@@ -23,6 +23,7 @@ use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJobList;
 use OCP\Collaboration\Reference\IReferenceManager;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -60,6 +61,7 @@ class ChatManagerTest extends TestCase {
 	protected IReferenceManager&MockObject $referenceManager;
 	protected ILimiter&MockObject $rateLimiter;
 	protected IRequest&MockObject $request;
+	protected IJobList&MockObject $jobList;
 	protected LoggerInterface&MockObject $logger;
 	protected IL10N&MockObject $l;
 	protected ?ChatManager $chatManager = null;
@@ -81,6 +83,7 @@ class ChatManagerTest extends TestCase {
 		$this->attachmentService = $this->createMock(AttachmentService::class);
 		$this->referenceManager = $this->createMock(IReferenceManager::class);
 		$this->rateLimiter = $this->createMock(ILimiter::class);
+		$this->jobList = $this->createMock(IJobList::class);
 		$this->request = $this->createMock(IRequest::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
@@ -121,6 +124,7 @@ class ChatManagerTest extends TestCase {
 					$this->referenceManager,
 					$this->rateLimiter,
 					$this->request,
+					$this->jobList,
 					$this->l,
 					$this->logger,
 				])
@@ -146,6 +150,7 @@ class ChatManagerTest extends TestCase {
 			$this->referenceManager,
 			$this->rateLimiter,
 			$this->request,
+			$this->jobList,
 			$this->l,
 			$this->logger,
 		);
@@ -437,6 +442,7 @@ class ChatManagerTest extends TestCase {
 			'has_unread_threads' => false,
 			'has_unread_thread_mentions' => false,
 			'has_unread_thread_directs' => false,
+			'hidden_pinned_id' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
@@ -505,6 +511,7 @@ class ChatManagerTest extends TestCase {
 			'has_unread_threads' => false,
 			'has_unread_thread_mentions' => false,
 			'has_unread_thread_directs' => false,
+			'hidden_pinned_id' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
@@ -595,6 +602,7 @@ class ChatManagerTest extends TestCase {
 			'has_unread_threads' => false,
 			'has_unread_thread_mentions' => false,
 			'has_unread_thread_directs' => false,
+			'hidden_pinned_id' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
