@@ -50,6 +50,7 @@
 			:class="{
 				outgoing: actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled && isUserMessage,
 				incoming: !actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled && isUserMessage,
+				'bottom-side': isSplitViewEnabled && (isSmallMobile || isSidebar),
 			}">
 			<MessageButtonsBar
 				v-if="showMessageButtonsBar"
@@ -58,7 +59,7 @@
 				v-model:is-reactions-menu-open="isReactionsMenuOpen"
 				v-model:is-forwarder-open="isForwarderOpen"
 				class="message-buttons-bar"
-				:class="{ outlined: !isSplitViewEnabled || isReactionsMenuOpen }"
+				:class="{ outlined: !isSplitViewEnabled || isReactionsMenuOpen || isSmallMobile || isSidebar }"
 				:is-translation-available="isTranslationAvailable"
 				:can-react="canReact"
 				:message="message"
@@ -116,7 +117,9 @@
 <script>
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
+import { inject } from 'vue'
 import NcAssistantButton from '@nextcloud/vue/components/NcAssistantButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconUnfoldLessHorizontal from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
@@ -214,11 +217,14 @@ export default {
 		const isTranslationAvailable = getTalkConfig(props.token, 'chat', 'has-translation-providers')
 			// Fallback for the desktop client when connecting to Talk 17
 			?? getTalkConfig(props.token, 'chat', 'translations')?.length > 0
+		const isSidebar = inject('chatView:isSidebar', false)
 
 		return {
 			isTranslationAvailable,
 			chatExtrasStore: useChatExtrasStore(),
 			actorStore: useActorStore(),
+			isSmallMobile: useIsSmallMobile(),
+			isSidebar,
 		}
 	},
 
@@ -512,6 +518,15 @@ export default {
 		display: flex;
 		flex-direction: column;
 		width: fit-content;
+		max-width: 420px; //FIXME: it should be adjusted based on the screen width
+
+		.message-body__scroll.bottom-side {
+			top: unset;
+			inset-inline-start: unset;
+			bottom: 0;
+			inset-inline-end: 0;
+			padding-block-end: var(--default-grid-baseline);
+		}
 
 		&:has(.outgoing) {
 			align-self: flex-end;
