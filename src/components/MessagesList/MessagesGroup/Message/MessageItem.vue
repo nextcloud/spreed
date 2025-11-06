@@ -43,7 +43,12 @@
 		</div>
 
 		<!-- Message actions -->
-		<div class="message-body__scroll">
+		<div
+			class="message-body__scroll"
+			:class="{
+				outgoing: actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled && isUserMessage,
+				incoming: !actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled && isUserMessage,
+			}">
 			<MessageButtonsBar
 				v-if="showMessageButtonsBar"
 				v-model:is-action-menu-open="isActionMenuOpen"
@@ -51,6 +56,7 @@
 				v-model:is-reactions-menu-open="isReactionsMenuOpen"
 				v-model:is-forwarder-open="isForwarderOpen"
 				class="message-buttons-bar"
+				:class="{ outlined: !isSplitViewEnabled || isReactionsMenuOpen }"
 				:is-translation-available="isTranslationAvailable"
 				:can-react="canReact"
 				:message="message"
@@ -437,11 +443,15 @@ export default {
 
 		&:has(.outgoing) {
 			align-self: flex-end;
+			.message-buttons-bar:not(.outlined) {
+				flex-direction: row-reverse;
+			}
 		}
 
 		&:has(.incoming) {
 			align-self: flex-start;
 		}
+
 	}
 	// END Split view
 }
@@ -455,12 +465,15 @@ export default {
 
 	&__scroll {
 		position: absolute;
-		top: 0;
-		inset-inline-end: 0;
 		width: fit-content;
-		height: 100%;
-		padding-top: var(--default-grid-baseline);
-		padding-inline-end: var(--default-grid-baseline);
+
+		&:not(.outgoing):not(.incoming) {
+			height: 100%;
+			top: 0;
+			inset-inline-end: 0;
+			padding-top: var(--default-grid-baseline);
+			padding-inline-end: var(--default-grid-baseline);
+		}
 	}
 
 	// BEGIN Split view
@@ -471,11 +484,23 @@ export default {
 		border-width: 1px 1px 2px 1px;
 	}
 
+	&__scroll.outgoing {
+		inset-inline-end: 100%;
+		top: calc(50% - var(--default-clickable-area) / 2);
+		padding-inline: var(--default-grid-baseline);
+	}
+
 	&.incoming {
 		background-color: var(--color-primary-element-extra-light);
 		border-radius: var(--border-radius-small)  var(--border-radius-large) var(--border-radius-large) var(--border-radius-large);
 		border: 1px solid var(--color-primary-element-light-hover);
 		border-width: 1px 1px 2px 1px;
+	}
+
+	&__scroll.incoming {
+		inset-inline-start: 100%;
+		top: calc(50% - var(--default-clickable-area) / 2);
+		padding-inline: var(--default-grid-baseline);
 	}
 	// END Split view
 }
@@ -529,10 +554,13 @@ export default {
 	inset-inline-end: 14px;
 	top: 0;
 	position: sticky;
-	background-color: var(--color-main-background);
-	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
-	box-shadow: 0 0 4px 0 var(--color-box-shadow);
 	height: var(--default-clickable-area);
 	z-index: 1;
+
+	&.outlined {
+		background-color: var(--color-main-background);
+		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
+		box-shadow: 0 0 4px 0 var(--color-box-shadow);
+	}
 }
 </style>
