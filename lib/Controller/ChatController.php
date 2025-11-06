@@ -1549,11 +1549,14 @@ class ChatController extends AEnvironmentAwareOCSController {
 	/**
 	 * Get objects that are shared in the room overview
 	 *
+	 * Federated conversations are supported with the `federated-shared-items` capability
+	 *
 	 * @param int<1, 20> $limit Maximum number of objects
 	 * @return DataResponse<Http::STATUS_OK, array<string, list<TalkChatMessage>>, array{}>
 	 *
 	 * 200: List of shared objects messages of each type returned
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
@@ -1562,6 +1565,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function getObjectsSharedInRoomOverview(int $limit = 7): DataResponse {
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
+			return $proxy->getObjectsSharedInRoomOverview($this->room, $this->participant, $limit);
+		}
+
 		$limit = min(20, $limit);
 
 		$objectTypes = [
@@ -1575,6 +1584,21 @@ class ChatController extends AEnvironmentAwareOCSController {
 			Attachment::TYPE_RECORDING,
 			Attachment::TYPE_VOICE,
 		];
+
+		if ($this->participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			// No file support for federated users so far
+			$objectTypes = [
+				// Attachment::TYPE_AUDIO,
+				Attachment::TYPE_DECK_CARD,
+				// Attachment::TYPE_FILE,
+				Attachment::TYPE_LOCATION,
+				// Attachment::TYPE_MEDIA,
+				// Attachment::TYPE_OTHER,
+				Attachment::TYPE_POLL,
+				// Attachment::TYPE_RECORDING,
+				// Attachment::TYPE_VOICE,
+			];
+		}
 
 		$messageIdsByType = [];
 		// Get all attachments
@@ -1603,6 +1627,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 	/**
 	 * Get objects that are shared in the room
 	 *
+	 * Federated conversations are supported with the `federated-shared-items` capability
+	 *
 	 * @param string $objectType Type of the objects
 	 * @param int $lastKnownMessageId ID of the last known message
 	 * @psalm-param non-negative-int $lastKnownMessageId
@@ -1611,6 +1637,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * 200: List of shared objects messages returned
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
@@ -1619,6 +1646,27 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function getObjectsSharedInRoom(string $objectType, int $lastKnownMessageId = 0, int $limit = 100): DataResponse {
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
+			return $proxy->getObjectsSharedInRoom($this->room, $this->participant, $objectType, $lastKnownMessageId, $limit);
+		}
+
+		$isFileType = [
+			Attachment::TYPE_AUDIO,
+			Attachment::TYPE_FILE,
+			Attachment::TYPE_MEDIA,
+			Attachment::TYPE_OTHER,
+			Attachment::TYPE_RECORDING,
+			Attachment::TYPE_VOICE,
+		];
+
+		if (in_array($objectType, $isFileType, true)
+			&& $this->participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			// No file support for federated users so far
+			return new DataResponse([], Http::STATUS_OK, []);
+		}
+
 		$offset = max(0, $lastKnownMessageId);
 		$limit = min(200, $limit);
 

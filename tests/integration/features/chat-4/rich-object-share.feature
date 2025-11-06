@@ -73,3 +73,7 @@ Feature: chat-2/rich-object-share
     Then user "participant1" sees the following shared file in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
       | public room | users     | participant1 | participant1-displayname | {file}   | "IGNORE" |
+    And user "guest" joins room "public room" with 200 (v4)
+    Then user "guest" sees the following shared file in room "public room" with 200
+      | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
+      | public room | users     | participant1 | participant1-displayname | {file}   | "IGNORE" |

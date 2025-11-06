@@ -124,6 +124,7 @@ class Capabilities implements IPublicCapability {
 		'upcoming-reminders',
 		'sensitive-conversations',
 		'threads',
+		'federated-shared-items',
 	];
 
 	public const CONDITIONAL_FEATURES = [

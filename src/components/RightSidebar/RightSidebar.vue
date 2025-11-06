@@ -367,7 +367,7 @@ export default {
 		},
 
 		showSharedItemsTab() {
-			return this.getUserId && !this.conversation.remoteServer // no attachments support in federated conversations
+			return !this.conversation.remoteServer || hasTalkFeature(this.token, 'federated-shared-items')
 		},
 
 		showDetailsTab() {
@@ -422,7 +422,13 @@ export default {
 			immediate: true,
 			handler(value) {
 				if (!value) {
-					this.activeTab = 'shared-items'
+					if (!this.getUserId) {
+						// Guests
+						this.activeTab = 'details'
+					} else {
+						// Users in one-to-one
+						this.activeTab = 'shared-items'
+					}
 				}
 			},
 		},

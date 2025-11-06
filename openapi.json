@@ -20343,6 +20343,7 @@
             "get": {
                 "operationId": "chat-get-objects-shared-in-room",
                 "summary": "Get objects that are shared in the room",
+                "description": "Federated conversations are supported with the `federated-shared-items` capability",
                 "tags": [
                     "chat"
                 ],
@@ -22268,6 +22269,7 @@
             "get": {
                 "operationId": "chat-get-objects-shared-in-room-overview",
                 "summary": "Get objects that are shared in the room overview",
+                "description": "Federated conversations are supported with the `federated-shared-items` capability",
                 "tags": [
                     "chat"
                 ],
