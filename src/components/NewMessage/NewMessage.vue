@@ -582,6 +582,11 @@ export default {
 			} else {
 				this.text = this.chatInput
 			}
+
+			this.$nextTick(() => {
+				// set cursor at the end
+				selectRange(getRangeAtEnd(this.getContenteditable()), this.getContenteditable())
+			})
 		},
 
 		parentMessage(newValue) {
@@ -978,8 +983,7 @@ export default {
 		},
 
 		restoreSelectionRange() {
-			// If nothing to restore, set cursor at the end
-			selectRange(this.preservedSelectionRange ?? getRangeAtEnd(this.getContenteditable()), this.getContenteditable())
+			selectRange(this.preservedSelectionRange, this.getContenteditable())
 			this.preservedSelectionRange = null
 		},
 
