@@ -26,11 +26,22 @@
 					<IconArrowLeftTop class="bidirectional-icon" :size="20" />
 				</template>
 			</NcButton>
+			<NcButton
+				v-if="!isActionMenuOpen"
+				variant="tertiary"
+				:aria-label="t('spreed', 'More actions')"
+				:title="t('spreed', 'More actions')"
+				@click="onMenuOpen">
+				<template #icon>
+					<IconDotsHorizontal :size="20" />
+				</template>
+			</NcButton>
 			<NcActions
-				:force-menu="true"
+				v-else
+				force-menu
+				open
 				placement="bottom-end"
 				:boundaries-element="boundariesElement"
-				@open="onMenuOpen"
 				@close="onMenuClose">
 				<template v-if="submenu === null">
 					<!-- Message timestamp -->
@@ -351,6 +362,7 @@ import IconClockEditOutline from 'vue-material-design-icons/ClockEditOutline.vue
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconCloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import IconEyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
@@ -401,6 +413,7 @@ export default {
 		IconClockEditOutline,
 		IconClockOutline,
 		IconContentCopy,
+		IconDotsHorizontal,
 		IconTrashCanOutline,
 		IconEmoticonOutline,
 		IconEyeOffOutline,
