@@ -504,10 +504,15 @@ describe('MessageItem.vue', () => {
 			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(true)
 
 			// Actions are rendered with MessageButtonsBar
+			const actionThumbnail = wrapper.findAllComponents(NcButton).at(-1)
+			expect(actionThumbnail.exists()).toBe(true)
+			await actionThumbnail.find('button').trigger('click')
 			expect(wrapper.findComponent(NcActions).exists()).toBe(true)
 
 			// Mouseleave
 			await wrapper.find('.message').trigger('mouseleave')
+			await wrapper.findComponent(NcActions).vm.$emit('close')
+
 			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
 		})
 	})
