@@ -22665,7 +22665,8 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "message",
-                                                                "until"
+                                                                "until",
+                                                                "status"
                                                             ]
                                                         }
                                                     }
@@ -22707,7 +22708,8 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "message",
-                                                                "until"
+                                                                "until",
+                                                                "status"
                                                             ]
                                                         }
                                                     }
@@ -22824,6 +22826,47 @@
                                                             "$ref": "#/components/schemas/ChatMessageWithParent"
                                                         }
                                                     ]
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Federation request answered with an unknown status code",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "status"
+                                                            ]
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
