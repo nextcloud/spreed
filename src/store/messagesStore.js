@@ -842,9 +842,9 @@ const actions = {
 		threadId,
 		requestOptions,
 		minimumVisible,
-		lookIntoFuture = CHAT.FETCH_OLD,
+		lookIntoFuture = CHAT.REQUEST.FETCH_OLD,
 	}) {
-		minimumVisible = (typeof minimumVisible === 'undefined') ? CHAT.MINIMUM_VISIBLE : minimumVisible
+		minimumVisible = (typeof minimumVisible === 'undefined') ? CHAT.REQUEST.MINIMUM_VISIBLE : minimumVisible
 
 		context.dispatch('cancelFetchMessages')
 
@@ -859,7 +859,7 @@ const actions = {
 			includeLastKnown,
 			threadId,
 			lookIntoFuture,
-			limit: CHAT.FETCH_LIMIT,
+			limit: CHAT.REQUEST.FETCH_LIMIT,
 		}, requestOptions)
 
 		const haveLastGiven = 'x-chat-last-given' in response.headers
@@ -891,7 +891,7 @@ const actions = {
 			context.dispatch('processMessage', { token, message })
 
 			if (!haveLastGiven) {
-				lastGivenMessageId = lookIntoFuture === CHAT.FETCH_NEW
+				lastGivenMessageId = lookIntoFuture === CHAT.REQUEST.FETCH_NEW
 					? Math.max(lastGivenMessageId, message.id)
 					: Math.min(lastGivenMessageId, message.id)
 			}
@@ -940,7 +940,7 @@ const actions = {
 		requestOptions,
 		minimumVisible,
 	}) {
-		minimumVisible = (typeof minimumVisible === 'undefined') ? Math.floor(CHAT.MINIMUM_VISIBLE / 2) : minimumVisible
+		minimumVisible = (typeof minimumVisible === 'undefined') ? Math.floor(CHAT.REQUEST.MINIMUM_VISIBLE / 2) : minimumVisible
 
 		context.dispatch('cancelGetMessageContext')
 
@@ -953,7 +953,7 @@ const actions = {
 			token,
 			messageId,
 			threadId,
-			limit: CHAT.FETCH_LIMIT / 2,
+			limit: CHAT.REQUEST.FETCH_LIMIT / 2,
 		}, requestOptions)
 
 		let oldestKnownMessageId = messageId
@@ -998,7 +998,7 @@ const actions = {
 				lastKnownMessageId: oldestKnownMessageId,
 				includeLastKnown: false,
 				threadId,
-				lookIntoFuture: CHAT.FETCH_OLD,
+				lookIntoFuture: CHAT.REQUEST.FETCH_OLD,
 				minimumVisible: minimumVisible * 2,
 			})
 		}
@@ -1066,7 +1066,7 @@ const actions = {
 		const response = await request({
 			token,
 			lastKnownMessageId,
-			limit: CHAT.FETCH_LIMIT,
+			limit: CHAT.REQUEST.FETCH_LIMIT,
 		}, requestOptions)
 		context.commit('setCancelPollNewMessages', { requestId })
 

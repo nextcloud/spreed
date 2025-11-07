@@ -41,10 +41,17 @@ export const SESSION = {
 } as const
 
 export const CHAT = {
-	FETCH_LIMIT: 100,
-	MINIMUM_VISIBLE: 20,
-	FETCH_OLD: 0,
-	FETCH_NEW: 1,
+	REQUEST: {
+		FETCH_LIMIT: 100,
+		MINIMUM_VISIBLE: 20,
+		FETCH_OLD: 0,
+		FETCH_NEW: 1,
+	},
+
+	STYLE: {
+		SPLIT: 'split',
+		UNIFIED: 'unified',
+	},
 } as const
 
 export const CALL = {

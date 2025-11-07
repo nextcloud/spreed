@@ -144,6 +144,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		isSplitViewEnabled: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	emits: ['emojiPickerToggled'],
@@ -199,10 +204,6 @@ export default {
 				.map(([key, value]) => [key, value.length]))
 			return this.hasReactionsLoaded
 				&& JSON.stringify(this.plainReactions) !== JSON.stringify(detailedReactionsSimplified)
-		},
-
-		isSplitViewEnabled() {
-			return true
 		},
 
 		isOwnMessage() {

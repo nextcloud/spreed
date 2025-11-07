@@ -61,7 +61,7 @@ async function fetchMessages({
 	token,
 	lastKnownMessageId,
 	includeLastKnown,
-	lookIntoFuture = CHAT.FETCH_OLD,
+	lookIntoFuture = CHAT.REQUEST.FETCH_OLD,
 	threadId,
 	limit = 100,
 }: ReceiveMessagesPayload, options?: AxiosRequestConfig): receiveMessagesResponse {
@@ -98,7 +98,7 @@ async function pollNewMessages({
 		...options,
 		params: {
 			setReadMarker: 0,
-			lookIntoFuture: CHAT.FETCH_NEW,
+			lookIntoFuture: CHAT.REQUEST.FETCH_NEW,
 			lastKnownMessageId,
 			limit,
 			includeLastKnown: 0,

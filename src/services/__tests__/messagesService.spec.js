@@ -59,7 +59,7 @@ describe('messagesService', () => {
 					setReadMarker: 0,
 					lookIntoFuture: 0,
 					lastKnownMessageId: 1234,
-					limit: CHAT.FETCH_LIMIT,
+					limit: CHAT.REQUEST.FETCH_LIMIT,
 					includeLastKnown: 0,
 					timeout: 0,
 				},
@@ -85,7 +85,7 @@ describe('messagesService', () => {
 					setReadMarker: 0,
 					lookIntoFuture: 0,
 					lastKnownMessageId: 1234,
-					limit: CHAT.FETCH_LIMIT,
+					limit: CHAT.REQUEST.FETCH_LIMIT,
 					includeLastKnown: 1,
 					threadId: 1111,
 					timeout: 0,
@@ -107,7 +107,7 @@ describe('messagesService', () => {
 			{
 				dummyOption: true,
 				params: {
-					limit: CHAT.FETCH_LIMIT / 2,
+					limit: CHAT.REQUEST.FETCH_LIMIT / 2,
 				},
 			},
 		)
@@ -129,7 +129,7 @@ describe('messagesService', () => {
 					setReadMarker: 0,
 					lookIntoFuture: 1,
 					lastKnownMessageId: 1234,
-					limit: CHAT.FETCH_LIMIT,
+					limit: CHAT.REQUEST.FETCH_LIMIT,
 					includeLastKnown: 0,
 					markNotificationsAsRead: 0,
 				},

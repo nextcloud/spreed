@@ -360,7 +360,7 @@ export function useGetMessagesProvider() {
 				// Get chat messages before last read message and after it
 				messageId: messageId !== MESSAGE.CHAT_BEGIN_ID ? messageId : 0,
 				threadId: threadId !== 0 ? threadId : undefined,
-				minimumVisible: CHAT.MINIMUM_VISIBLE,
+				minimumVisible: CHAT.REQUEST.MINIMUM_VISIBLE,
 			})
 			debugTimer.end(`${token} | get context`, 'status 200')
 		} catch (exception) {
@@ -407,9 +407,9 @@ export function useGetMessagesProvider() {
 				token,
 				lastKnownMessageId,
 				includeLastKnown,
-				lookIntoFuture: CHAT.FETCH_OLD,
+				lookIntoFuture: CHAT.REQUEST.FETCH_OLD,
 				threadId,
-				minimumVisible: CHAT.MINIMUM_VISIBLE,
+				minimumVisible: CHAT.REQUEST.MINIMUM_VISIBLE,
 			})
 			debugTimer.end(`${token} | fetch history`, 'status 200')
 		} catch (exception) {
@@ -458,8 +458,8 @@ export function useGetMessagesProvider() {
 				lastKnownMessageId,
 				threadId,
 				includeLastKnown,
-				lookIntoFuture: CHAT.FETCH_NEW,
-				minimumVisible: CHAT.MINIMUM_VISIBLE,
+				lookIntoFuture: CHAT.REQUEST.FETCH_NEW,
+				minimumVisible: CHAT.REQUEST.MINIMUM_VISIBLE,
 			})
 			debugTimer.end(`${token} | fetch history (new)`, 'status 200')
 		} catch (exception) {

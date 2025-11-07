@@ -266,6 +266,11 @@ export default {
 			type: Object,
 			required: true,
 		},
+
+		isSplitViewEnabled: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	setup(props) {
@@ -451,10 +456,6 @@ export default {
 
 		containsCodeBlocks() {
 			return this.message.message.includes('```')
-		},
-
-		isSplitViewEnabled() {
-			return true
 		},
 
 		iconMessageDeliverySize() {

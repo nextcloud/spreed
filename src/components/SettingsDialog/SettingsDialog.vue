@@ -89,6 +89,15 @@
 				@update:model-value="toggleConversationsListStyle">
 				{{ t('spreed', 'Show conversations list in compact mode') }}
 			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch
+				id="chat_style"
+				:model-value="chatSplitViewEnabled"
+				:disabled="chatAppearanceLoading"
+				type="switch"
+				class="checkbox"
+				@update:model-value="toggleChatStyle">
+				{{ t('spreed', 'Show your chat in split view') }}
+			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
 		<NcAppSettingsSection
 			v-if="!isGuest"
@@ -266,7 +275,7 @@ import NcAppSettingsSection from '@nextcloud/vue/components/NcAppSettingsSection
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
-import { CONVERSATION, PRIVACY } from '../../constants.ts'
+import { CHAT, CONVERSATION, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, getTalkVersion } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
@@ -329,6 +338,7 @@ export default {
 			showSettings: false,
 			attachmentFolderLoading: true,
 			appearanceLoading: false,
+			chatAppearanceLoading: false,
 			privacyLoading: false,
 			playSoundsLoading: false,
 			mediaLoading: false,
@@ -366,6 +376,10 @@ export default {
 
 		conversationsListStyle() {
 			return this.settingsStore.conversationsListStyle !== CONVERSATION.LIST_STYLE.TWO_LINES
+		},
+
+		chatSplitViewEnabled() {
+			return this.settingsStore.chatStyle === CHAT.STYLE.SPLIT
 		},
 
 		settingsUrl() {
@@ -479,6 +493,17 @@ export default {
 				showError(t('spreed', 'Error while setting personal setting'))
 			}
 			this.appearanceLoading = false
+		},
+
+		async toggleChatStyle(value) {
+			this.chatAppearanceLoading = true
+			try {
+				await this.settingsStore.updateChatStyle(value ? CHAT.STYLE.SPLIT : CHAT.STYLE.UNIFIED)
+				showSuccess(t('spreed', 'Your personal setting has been saved'))
+			} catch (exception) {
+				showError(t('spreed', 'Error while setting personal setting'))
+			}
+			this.chatAppearanceLoading = false
 		},
 
 		/**

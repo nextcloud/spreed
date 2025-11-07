@@ -12,6 +12,7 @@ import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import {
 	setAttachmentFolder,
 	setBlurVirtualBackground,
+	setChatStyle,
 	setConversationsListStyle,
 	setReadStatusPrivacy,
 	setStartWithoutMedia,
@@ -20,6 +21,7 @@ import {
 
 type PRIVACY_KEYS = typeof PRIVACY[keyof typeof PRIVACY]
 type LIST_STYLE_OPTIONS = 'two-lines' | 'compact'
+type CHAT_STYLE_OPTIONS = 'split' | 'unified'
 
 /**
  * Store for shared items shown in RightSidebar
@@ -31,6 +33,7 @@ export const useSettingsStore = defineStore('settings', () => {
 	const startWithoutMedia = ref<boolean | undefined>(getTalkConfig('local', 'call', 'start-without-media'))
 	const blurVirtualBackgroundEnabled = ref<boolean | undefined>(getTalkConfig('local', 'call', 'blur-virtual-background'))
 	const conversationsListStyle = ref<LIST_STYLE_OPTIONS | undefined>(getTalkConfig('local', 'conversations', 'list-style'))
+	const chatStyle = ref<CHAT_STYLE_OPTIONS | undefined>(getTalkConfig('local', 'chat', 'style') ?? 'split')
 
 	const attachmentFolder = ref<string>(loadState('spreed', 'attachment_folder', ''))
 	const attachmentFolderFreeSpace = ref<number>(loadState('spreed', 'attachment_folder_free_space', 0))
@@ -105,6 +108,16 @@ export const useSettingsStore = defineStore('settings', () => {
 		attachmentFolder.value = value
 	}
 
+	/**
+	 * Update the conversations list style setting for the user
+	 *
+	 * @param value - new selected state
+	 */
+	async function updateChatStyle(value: CHAT_STYLE_OPTIONS) {
+		await setChatStyle(value)
+		chatStyle.value = value
+	}
+
 	return {
 		readStatusPrivacy,
 		typingStatusPrivacy,
@@ -114,6 +127,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		conversationsListStyle,
 		attachmentFolder,
 		attachmentFolderFreeSpace,
+		chatStyle,
 
 		updateReadStatusPrivacy,
 		updateTypingStatusPrivacy,
@@ -122,5 +136,6 @@ export const useSettingsStore = defineStore('settings', () => {
 		updateStartWithoutMedia,
 		updateConversationsListStyle,
 		updateAttachmentFolder,
+		updateChatStyle,
 	}
 })

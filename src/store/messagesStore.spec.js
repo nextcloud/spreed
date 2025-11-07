@@ -859,10 +859,10 @@ describe('messagesStore', () => {
 		})
 
 		const testCasesOld = [
-			[true, CHAT.FETCH_OLD, [...oldMessagesList, originalMessagesList.at(0)].reverse()],
-			[false, CHAT.FETCH_OLD, [...oldMessagesList].reverse()],
-			[true, CHAT.FETCH_NEW, [originalMessagesList.at(-1), ...newMessagesList]],
-			[false, CHAT.FETCH_NEW, newMessagesList],
+			[true, CHAT.REQUEST.FETCH_OLD, [...oldMessagesList, originalMessagesList.at(0)].reverse()],
+			[false, CHAT.REQUEST.FETCH_OLD, [...oldMessagesList].reverse()],
+			[true, CHAT.REQUEST.FETCH_NEW, [originalMessagesList.at(-1), ...newMessagesList]],
+			[false, CHAT.REQUEST.FETCH_NEW, newMessagesList],
 		]
 		test.each(testCasesOld)('fetches messages from server: including last known - %s, look into future - %s', async (includeLastKnown, lookIntoFuture, payload) => {
 			const response = generateOCSResponse({
@@ -894,7 +894,7 @@ describe('messagesStore', () => {
 				lastKnownMessageId: 100,
 				includeLastKnown,
 				lookIntoFuture,
-				limit: CHAT.FETCH_LIMIT,
+				limit: CHAT.REQUEST.FETCH_LIMIT,
 			}, {
 				dummyOption: true,
 			})
@@ -997,7 +997,7 @@ describe('messagesStore', () => {
 			expect(getMessageContext).toHaveBeenCalledWith({
 				token: TOKEN,
 				messageId: 1,
-				limit: CHAT.FETCH_LIMIT / 2,
+				limit: CHAT.REQUEST.FETCH_LIMIT / 2,
 			}, {
 				dummyOption: true,
 			})
@@ -1075,7 +1075,7 @@ describe('messagesStore', () => {
 			expect(getMessageContext).toHaveBeenCalledWith({
 				token: TOKEN,
 				messageId: 3,
-				limit: CHAT.FETCH_LIMIT / 2,
+				limit: CHAT.REQUEST.FETCH_LIMIT / 2,
 			}, {
 				dummyOption: true,
 			})
@@ -1083,8 +1083,8 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				lastKnownMessageId: 3,
 				includeLastKnown: false,
-				lookIntoFuture: CHAT.FETCH_OLD,
-				limit: CHAT.FETCH_LIMIT,
+				lookIntoFuture: CHAT.REQUEST.FETCH_OLD,
+				limit: CHAT.REQUEST.FETCH_LIMIT,
 			}, undefined)
 
 			expect(updateLastCommonReadMessageAction).toHaveBeenCalledTimes(2)
@@ -1174,7 +1174,7 @@ describe('messagesStore', () => {
 			expect(pollNewMessages).toHaveBeenCalledWith({
 				token: TOKEN,
 				lastKnownMessageId: 100,
-				limit: CHAT.FETCH_LIMIT,
+				limit: CHAT.REQUEST.FETCH_LIMIT,
 			}, {
 				dummyOption: true,
 			})
