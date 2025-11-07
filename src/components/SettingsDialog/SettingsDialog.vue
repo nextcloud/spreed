@@ -89,6 +89,15 @@
 				@update:model-value="toggleConversationsListStyle">
 				{{ t('spreed', 'Show conversations list in compact mode') }}
 			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch
+				id="chat_view_style"
+				:model-value="chatSplitViewEnabled"
+				:disabled="chatAppearanceLoading"
+				type="switch"
+				class="checkbox"
+				@update:model-value="toggleChatSplitView">
+				{{ t('spreed', 'Show your chat in split view') }}
+			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
 		<NcAppSettingsSection
 			v-if="!isGuest"
@@ -329,6 +338,7 @@ export default {
 			showSettings: false,
 			attachmentFolderLoading: true,
 			appearanceLoading: false,
+			chatAppearanceLoading: false,
 			privacyLoading: false,
 			playSoundsLoading: false,
 			mediaLoading: false,
@@ -366,6 +376,10 @@ export default {
 
 		conversationsListStyle() {
 			return this.settingsStore.conversationsListStyle !== CONVERSATION.LIST_STYLE.TWO_LINES
+		},
+
+		chatSplitViewEnabled() {
+			return this.settingsStore.chatSplitViewEnabled
 		},
 
 		settingsUrl() {
@@ -479,6 +493,17 @@ export default {
 				showError(t('spreed', 'Error while setting personal setting'))
 			}
 			this.appearanceLoading = false
+		},
+
+		async toggleChatSplitView(value) {
+			this.chatAppearanceLoading = true
+			try {
+				await this.settingsStore.updateChatSplitView(value)
+				showSuccess(t('spreed', 'Your personal setting has been saved'))
+			} catch (exception) {
+				showError(t('spreed', 'Error while setting personal setting'))
+			}
+			this.chatAppearanceLoading = false
 		},
 
 		/**

@@ -6,7 +6,11 @@
 <template>
 	<div
 		ref="messageMain"
-		class="message-main">
+		:class="{
+			'message-main': !isSplitViewEnabled || isSystemMessage,
+			'message-main--sided': isSplitViewEnabled && !isSystemMessage,
+			'message-main--compressed': isSplitViewEnabled && isShortSimpleMessage,
+		}">
 		<p
 			v-if="isThreadStarterMessage"
 			class="message-main__thread-title">
@@ -21,6 +25,7 @@
 				'system-message': isSystemMessage && !showJoinCallButton,
 				'deleted-message': isDeletedMessage,
 				'message-highlighted': showJoinCallButton,
+				'full-view': !isSplitViewEnabled,
 			}">
 			<!-- Message content / text -->
 			<IconCancel v-if="isDeletedMessage" :size="16" />
@@ -86,7 +91,20 @@
 		</div>
 
 		<!-- Additional message info-->
-		<div v-if="!isDeletedMessage" class="message-main__info">
+		<div
+			v-if="!isDeletedMessage"
+			class="message-main__info">
+			<span v-if="isOwnMessage && isEditorDifferentThenAuthor" class="editor">
+				<IconPencilOutline :size="14" />
+				<AvatarWrapper
+					:id="lastEditor.userId"
+					:token="message.token"
+					:name="lastEditor.name"
+					:source="lastEditor.type"
+					:size="14"
+					disable-menu
+					disable-tooltip />
+			</span>
 			<span class="date" :class="{ 'date--hidden': hideDate }" :title="messageDate">{{ messageTime }}</span>
 
 			<!-- Message delivery status indicators -->
@@ -107,10 +125,10 @@
 					:aria-label="sendingErrorIconTitle"
 					@click="handleRetry">
 					<template #icon>
-						<IconReload :size="16" />
+						<IconReload :size="iconMessageDeliverySize" />
 					</template>
 				</NcButton>
-				<IconAlertCircleOutline v-else :size="16" />
+				<IconAlertCircleOutline v-else :size="iconMessageDeliverySize" />
 			</div>
 			<div
 				v-else-if="showLoadingIcon"
@@ -122,21 +140,21 @@
 				:title="readInfo.commonReadIconTitle"
 				class="message-status"
 				:aria-label="readInfo.commonReadIconTitle">
-				<IconCheckAll :size="16" />
+				<IconCheckAll :size="iconMessageDeliverySize" />
 			</div>
 			<div
 				v-else-if="readInfo.showSentIcon"
 				:title="readInfo.sentIconTitle"
 				class="message-status"
 				:aria-label="readInfo.sentIconTitle">
-				<IconCheck :size="16" />
+				<IconCheck :size="iconMessageDeliverySize" />
 			</div>
 			<div
 				v-else-if="readInfo.showSilentIcon"
 				:title="readInfo.silentIconTitle"
 				class="message-status"
 				:aria-label="readInfo.silentIconTitle">
-				<IconBellOffOutline :size="16" />
+				<IconBellOffOutline :size="iconMessageDeliverySize" />
 			</div>
 		</div>
 
@@ -145,6 +163,7 @@
 			<NcButton
 				v-if="isThreadStarterMessage"
 				class="message-actions__thread"
+				:class="{ light: isSplitViewEnabled && isOwnMessage }"
 				size="small"
 				@click="handleThreadClick">
 				<template #icon>
@@ -172,7 +191,9 @@ import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
+import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import MessageQuote from '../../../../MessageQuote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
 import ConversationActionsShortcut from '../../../../UIShared/ConversationActionsShortcut.vue'
@@ -183,6 +204,7 @@ import { useMessageInfo } from '../../../../../composables/useMessageInfo.ts'
 import { CONVERSATION, MESSAGE } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../../services/EventBus.ts'
+import { useActorStore } from '../../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 import { formatDateTime } from '../../../../../utils/formattedTime.ts'
@@ -198,6 +220,7 @@ export default {
 	name: 'MessageBody',
 
 	components: {
+		AvatarWrapper,
 		CallButton,
 		NcButton,
 		NcRichText,
@@ -213,6 +236,7 @@ export default {
 		IconCheckAll,
 		IconContentCopy,
 		IconForumOutline,
+		IconPencilOutline,
 		IconReload,
 	},
 
@@ -241,6 +265,11 @@ export default {
 			type: Object,
 			required: true,
 		},
+
+		isSplitViewEnabled: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	setup(props) {
@@ -260,6 +289,7 @@ export default {
 			isEditable,
 			isFileShare,
 			isSidebar,
+			actorStore: useActorStore(),
 		}
 	},
 
@@ -426,6 +456,37 @@ export default {
 		containsCodeBlocks() {
 			return this.message.message.includes('```')
 		},
+
+		iconMessageDeliverySize() {
+			return this.isSplitViewEnabled ? 14 : 16
+		},
+
+		isOwnMessage() {
+			return this.actorStore.checkIfSelfIsActor(this.message) && !this.isSystemMessage
+		},
+
+		isShortSimpleMessage() {
+			return !this.message.parent
+				&& !this.isThreadStarterMessage
+				&& Object.keys(this.message.reactions).length === 0
+				&& this.message.messageParameters.length === 0
+				&& this.message.message.split('\n').length === 1
+				&& this.message.message.length <= 40 // FIXME: magic number
+		},
+
+		lastEditor() {
+			return {
+				name: this.message.lastEditActorDisplayName,
+				userId: this.message.lastEditActorId,
+				type: this.message.lastEditActorType,
+			}
+		},
+
+		isEditorDifferentThenAuthor() {
+			return this.message.lastEditActorId
+				&& this.message.lastEditActorId !== this.message.actorId
+				&& this.message.lastEditActorDisplayName !== this.message.actorDisplayName
+		},
 	},
 
 	watch: {
@@ -558,16 +619,104 @@ export default {
 
 .message-main {
 	display: grid;
-	grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
-	grid-row-gap: var(--default-grid-baseline);
 	justify-content: space-between;
 	align-items: flex-start;
 	min-height: var(--clickable-area-small);
 	min-width: 100%;
+	// Layout 1 (standard view): text and info in two columns
+	grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
+	grid-row-gap: var(--default-grid-baseline);
+
+	.message-main__thread-title {
+		grid-column: 1 / -1;
+		grid-row: 1;
+	}
+
+	// Split view begin
+	// Layout 2 (split view short message): text and info side by side without actions
+	&--sided.message-main--compressed:has(.message-main__text) {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		grid-template-rows: auto auto;
+	}
+
+	// Layout 3 (split view long message): text in full width, info and actions below
+	&--sided:has(.message-main__text):not(.message-main--compressed) {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		grid-template-rows: auto auto auto;
+
+		.message-main__info {
+			grid-row: 3;
+			grid-column: 2;
+		}
+
+		.message-actions {
+			grid-row: 3;
+			grid-column: 1;
+		}
+
+		.message-main__text {
+			grid-column: 1 / -1;
+			grid-row: 2;
+		}
+	}
+
+	&--sided:has(.system-message) {
+		display: flex;
+		justify-content: center;
+	}
+
+	// common styles for split view
+	&--sided {
+		.message-main__info {
+			padding-inline-end: 0;
+			align-items: end;
+			font-size: var(--font-size-small);
+			width: auto;
+
+			.editor {
+				display: inline-flex;
+				align-items: center;
+				margin-inline-end: var(--default-grid-baseline);
+				gap: calc(var(--default-grid-baseline) / 2);
+				height: 1lh;
+			}
+		}
+
+		.date {
+			display: inline-flex;
+			justify-content: flex-end;
+			align-items: flex-end;
+			margin-inline-end: 0 !important;
+			width: auto !important;
+		}
+
+		.message-status {
+			height: 1lh;
+			width: 1lh;
+		}
+
+		.message-actions__thread.light {
+			background-color: var(--color-primary-element-extra-light);
+			&:hover {
+				background-color: var(--color-primary-element-extra-light-hover);
+			}
+		}
+
+		.message-main__text {
+			padding-inline: calc(var(--default-grid-baseline) / 2);
+		}
+	}
+
+	// Split view end
 
 	&__text {
-		width: 100%;
 		color: var(--color-text-light);
+
+		&.full-view {
+			width: 100%;
+		}
 
 		& > .single-emoji {
 			font-size: 250%;
@@ -663,7 +812,6 @@ export default {
 	}
 
 	&__thread-title {
-		grid-column: 1 / -1;
 		display: flex;
 		align-items: center;
 		gap: var(--default-grid-baseline);
