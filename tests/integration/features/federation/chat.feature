@@ -557,6 +557,7 @@ Feature: federation/chat
       | room        | actorType       | actorId                   | actorDisplayName         | message  | messageParameters |
       | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | {object} | "IGNORE" |
 
+  @skip32
   Scenario: Pin handling as a federated user
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
