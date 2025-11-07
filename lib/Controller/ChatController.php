@@ -1729,12 +1729,13 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @psalm-param non-negative-int $messageId
 	 * @param int $pinUntil Unix timestamp when to unpin the message
 	 * @psalm-param non-negative-int $pinUntil
-	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'message'|'until'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'message'|'until'|'status'}, array{}>
 	 *
 	 * 200: Message was pinned successfully
 	 * 400: Message could not be pinned
 	 * 404: Message was not found
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
@@ -1744,7 +1745,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'messageId' => '[0-9]+',
 	])]
 	public function pinMessage(int $messageId, int $pinUntil = 0): DataResponse {
-		// FIXME add federation
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
+			return $proxy->pinMessage($this->room, $this->participant, $messageId, $pinUntil);
+		}
 
 		try {
 			$comment = $this->chatManager->getComment($this->room, (string)$messageId);
@@ -1774,11 +1779,13 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $messageId ID of the message
 	 * @psalm-param non-negative-int $messageId
-	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'message'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'status'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'message'}, array{}>
 	 *
 	 * 200: Message is not pinned now
+	 * 400: Federation request answered with an unknown status code
 	 * 404: Message was not found
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
@@ -1788,7 +1795,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'messageId' => '[0-9]+',
 	])]
 	public function unpinMessage(int $messageId): DataResponse {
-		// FIXME add federation
+		if ($this->room->isFederatedConversation()) {
+			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
+			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
+			return $proxy->unpinMessage($this->room, $this->participant, $messageId);
+		}
 
 		try {
 			$comment = $this->chatManager->getComment($this->room, (string)$messageId);
@@ -1813,6 +1824,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * 200: Pinned message is now hidden
 	 * 404: Message was not found
 	 */
+	#[FederationSupported]
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]

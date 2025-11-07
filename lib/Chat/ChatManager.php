@@ -793,8 +793,6 @@ class ChatManager {
 		$comment->setMetaData($metaData);
 		$this->commentsManager->save($comment);
 
-		$this->participantService->resetHiddenPinnedId($chat, (int)$comment->getId());
-
 		$this->roomService->setLastPinnedId($chat, (int)$comment->getId());
 
 		$this->attachmentService->createAttachmentEntryGeneric(

@@ -883,6 +883,9 @@ class RoomService {
 	}
 
 	public function setLastPinnedId(Room $room, int $lastPinnedId): void {
+		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_LAST_PINNED_ID, $lastPinnedId);
+		$this->dispatcher->dispatchTyped($event);
+
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('last_pinned_id', $update->createNamedParameter($lastPinnedId))
@@ -890,6 +893,10 @@ class RoomService {
 		$update->executeStatement();
 
 		$room->setLastPinnedId($lastPinnedId);
+		$this->participantService->resetHiddenPinnedId($room, $lastPinnedId);
+
+		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_LAST_PINNED_ID, $lastPinnedId);
+		$this->dispatcher->dispatchTyped($event);
 	}
 
 	public function setAssignedSignalingServer(Room $room, ?int $signalingServer): bool {
@@ -1361,6 +1368,10 @@ class RoomService {
 			} catch (MentionPermissionsException $e) {
 				$this->logger->error('An error (' . $e->getReason() . ') occurred while trying to sync mentionPermissions of ' . $local->getId() . ' to ' . $host['mentionPermissions'], ['exception' => $e]);
 			}
+		}
+		if (isset($host['lastPinnedId']) && $host['lastPinnedId'] !== $local->getLastPinnedId()) {
+			$this->setLastPinnedId($local, $host['lastPinnedId']);
+			$changed[] = ARoomModifiedEvent::PROPERTY_LAST_PINNED_ID;
 		}
 		if (isset($host['messageExpiration']) && $host['messageExpiration'] !== $local->getMessageExpiration()) {
 			try {

@@ -556,3 +556,54 @@ Feature: federation/chat
     Then user "participant2" sees the following shared location in room "LOCAL::room" with 200
       | room        | actorType       | actorId                   | actorDisplayName         | message  | messageParameters |
       | LOCAL::room | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | {object} | "IGNORE" |
+
+  Scenario: Pin handling as a federated user
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@LOCAL | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
+    Then user "participant2" is participant of the following rooms (v4)
+      | id          | type |
+      | LOCAL::room | 2    |
+
+    And using server "LOCAL"
+    When user "participant1" sends message "Message 1" to room "room" with 201
+    When user "participant1" pins message "Message 1" in room "room" with 200
+    And using server "REMOTE"
+    Then user "participant2" is participant of the following rooms (v4)
+      | id          | type | lastPinnedId | hiddenPinnedId |
+      | LOCAL::room | 2    | Message 1    | EMPTY          |
+    When user "participant2" hides pinned message "Message 1" in room "LOCAL::room" with 200
+    Then user "participant2" is participant of the following rooms (v4)
+      | id          | type | lastPinnedId | hiddenPinnedId |
+      | LOCAL::room | 2    | Message 1    | Message 1      |
+
+    # Unpinning resets lastPinnedId
+    And using server "LOCAL"
+    When user "participant1" unpins message "Message 1" in room "room" with 200
+    And using server "REMOTE"
+    Then user "participant2" is participant of the following rooms (v4)
+      | id          | type | lastPinnedId | hiddenPinnedId |
+      | LOCAL::room | 2    | EMPTY        | Message 1      |
+
+    # Pin temporarily
+    And using server "LOCAL"
+    When user "participant1" pins message "Message 1" for 3 seconds in room "room" with 200
+    And using server "REMOTE"
+    Then user "participant2" is participant of the following rooms (v4)
+      | id          | type | lastPinnedId | hiddenPinnedId |
+      | LOCAL::room | 2    | Message 1    | EMPTY          |
+    When wait for 4 seconds
+    And using server "LOCAL"
+    And run "OCA\Talk\BackgroundJob\UnpinMessage" background jobs
+    And using server "REMOTE"
+    Then user "participant2" is participant of the following rooms (v4)
+      | id          | type | lastPinnedId | hiddenPinnedId |
+      | LOCAL::room | 2    | EMPTY        | EMPTY          |

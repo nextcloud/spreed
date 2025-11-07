@@ -230,10 +230,13 @@ class ProxyRequest {
 	}
 
 	/**
+	 * @template T of array<empty>|null
 	 * @param list<int> $allowedStatusCodes
+	 * @param T $default
+	 * @return array|T
 	 * @throws CannotReachRemoteException
 	 */
-	public function getOCSData(IResponse $response, array $allowedStatusCodes = [Http::STATUS_OK]): array {
+	public function getOCSData(IResponse $response, array $allowedStatusCodes = [Http::STATUS_OK], ?array $default = []): ?array {
 		if (!in_array($response->getStatusCode(), $allowedStatusCodes, true)) {
 			$this->logUnexpectedStatusCode(__METHOD__, $response->getStatusCode());
 		}
@@ -249,6 +252,6 @@ class ProxyRequest {
 			throw new CannotReachRemoteException('Error parsing JSON response', $e->getCode(), $e);
 		}
 
-		return $responseData['ocs']['data'] ?? [];
+		return $responseData['ocs']['data'] ?? $default;
 	}
 }

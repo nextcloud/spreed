@@ -408,6 +408,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS) {
 			/** @psalm-suppress InvalidArgument */
 			$this->roomService->setMentionPermissions($room, $notification['newValue']);
+		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_LAST_PINNED_ID) {
+			$this->roomService->setLastPinnedId($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION) {
 			$this->roomService->setMessageExpiration($room, $notification['newValue']);
 		} elseif ($notification['changedProperty'] === ARoomModifiedEvent::PROPERTY_NAME) {
