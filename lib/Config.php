@@ -758,6 +758,28 @@ class Config {
 	}
 
 	/**
+	 * User setting for chat style
+	 *
+	 * @param ?string $userId
+	 * @return UserPreference::CHAT_STYLE_*
+	 */
+	public function getChatStyle(?string $userId): string {
+		if ($userId !== null) {
+			$userSetting = $this->config->getUserValue(
+				$userId,
+				'spreed',
+				UserPreference::CHAT_STYLE,
+				UserPreference::CHAT_STYLE_SPLIT
+			);
+
+			if (in_array($userSetting, [UserPreference::CHAT_STYLE_SPLIT, UserPreference::CHAT_STYLE_UNIFIED], true)) {
+				return $userSetting;
+			}
+		}
+		return UserPreference::CHAT_STYLE_SPLIT;
+	}
+
+	/**
 	 * User setting falling back to admin defined app config
 	 */
 	public function getInactiveLockTime(): int {

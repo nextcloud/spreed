@@ -175,6 +175,7 @@ class Capabilities implements IPublicCapability {
 			'has-translation-task-providers',
 			'typing-privacy',
 			'summary-threshold',
+			'style',
 		],
 		'conversations' => [
 			'can-create',
@@ -262,6 +263,7 @@ class Capabilities implements IPublicCapability {
 					'has-translation-task-providers' => false,
 					'typing-privacy' => Participant::PRIVACY_PUBLIC,
 					'summary-threshold' => max(1, $this->appConfig->getAppValueInt('summary_threshold', 100)),
+					'style' => $this->talkConfig->getChatStyle($user?->getUID()),
 				],
 				'conversations' => [
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user),

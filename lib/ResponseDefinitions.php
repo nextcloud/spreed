@@ -524,6 +524,7 @@ namespace OCA\Talk;
  *             has-translation-task-providers: bool,
  *             typing-privacy: int,
  *             summary-threshold: positive-int,
+ *             style: 'split'|'unified',
  *         },
  *         conversations: array{
  *             can-create: bool,

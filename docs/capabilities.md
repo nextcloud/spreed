@@ -200,3 +200,4 @@
 
 ## 23
 * `pinned-messages` - Whether messages can be pinned
+* `config => chat => style` (local) - User selected chat style (split or unified for now)
