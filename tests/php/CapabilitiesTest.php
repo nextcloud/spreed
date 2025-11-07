@@ -181,6 +181,7 @@ class CapabilitiesTest extends TestCase {
 						'has-translation-task-providers' => false,
 						'typing-privacy' => 0,
 						'summary-threshold' => 100,
+						'style' => 'split',
 					],
 					'conversations' => [
 						'can-create' => false,
@@ -353,6 +354,7 @@ class CapabilitiesTest extends TestCase {
 						'has-translation-task-providers' => false,
 						'typing-privacy' => 0,
 						'summary-threshold' => 100,
+						'style' => 'split',
 					],
 					'conversations' => [
 						'can-create' => $canCreate,

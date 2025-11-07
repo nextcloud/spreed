@@ -31,6 +31,7 @@ class ConfigLexicon implements ILexicon {
 	public function getUserConfigs(): array {
 		return [
 			new Entry(UserPreference::PLAY_SOUNDS, ValueType::BOOL, true),
+			new Entry(UserPreference::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT),
 		];
 	}
 }
