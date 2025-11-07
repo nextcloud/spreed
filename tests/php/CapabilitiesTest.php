@@ -104,6 +104,11 @@ class CapabilitiesTest extends TestCase {
 			->method('isBreakoutRoomsEnabled')
 			->willReturn(false);
 
+		$this->talkConfig->expects($this->once())
+			->method('getChatStyle')
+			->with(null)
+			->willReturn('split');
+
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
 			->willReturnMap([
@@ -181,6 +186,7 @@ class CapabilitiesTest extends TestCase {
 						'has-translation-task-providers' => false,
 						'typing-privacy' => 0,
 						'summary-threshold' => 100,
+						'style' => 'split',
 					],
 					'conversations' => [
 						'can-create' => false,
@@ -246,6 +252,11 @@ class CapabilitiesTest extends TestCase {
 			->method('getAttachmentFolder')
 			->with('uid')
 			->willReturn('/Talk');
+
+		$this->talkConfig->expects($this->once())
+			->method('getChatStyle')
+			->with('uid')
+			->willReturn('split');
 
 		$this->talkConfig->expects($this->once())
 			->method('isNotAllowedToCreateConversations')
@@ -353,6 +364,7 @@ class CapabilitiesTest extends TestCase {
 						'has-translation-task-providers' => false,
 						'typing-privacy' => 0,
 						'summary-threshold' => 100,
+						'style' => 'split',
 					],
 					'conversations' => [
 						'can-create' => $canCreate,
