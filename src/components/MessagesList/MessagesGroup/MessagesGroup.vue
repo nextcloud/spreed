@@ -28,7 +28,8 @@
 					:key="message.id"
 					:message="message"
 					:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
-					:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId" />
+					:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId"
+					:is-split-view-enabled />
 			</ul>
 		</div>
 	</li>
@@ -44,6 +45,7 @@ import { useMessageInfo } from '../../../composables/useMessageInfo.ts'
 import { ATTENDEE, AVATAR } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useGuestNameStore } from '../../../stores/guestName.js'
+import { useSettingsStore } from '../../../stores/settings.ts'
 
 export default {
 	name: 'MessagesGroup',
@@ -105,6 +107,7 @@ export default {
 			actorInfo,
 			isMobile: useIsMobile(),
 			isSidebar,
+			settingsStore: useSettingsStore(),
 		}
 	},
 
@@ -128,7 +131,7 @@ export default {
 		},
 
 		isSplitViewEnabled() {
-			return true
+			return this.settingsStore.chatSplitViewEnabled
 		},
 
 		showAuthor() {

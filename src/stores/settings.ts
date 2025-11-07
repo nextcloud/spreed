@@ -31,6 +31,7 @@ export const useSettingsStore = defineStore('settings', () => {
 	const startWithoutMedia = ref<boolean | undefined>(getTalkConfig('local', 'call', 'start-without-media'))
 	const blurVirtualBackgroundEnabled = ref<boolean | undefined>(getTalkConfig('local', 'call', 'blur-virtual-background'))
 	const conversationsListStyle = ref<LIST_STYLE_OPTIONS | undefined>(getTalkConfig('local', 'conversations', 'list-style'))
+	const chatSplitViewEnabled = ref<boolean>(getTalkConfig('local', 'chat', 'split-view-enabled') ?? true)
 
 	const attachmentFolder = ref<string>(loadState('spreed', 'attachment_folder', ''))
 	const attachmentFolderFreeSpace = ref<number>(loadState('spreed', 'attachment_folder_free_space', 0))
@@ -105,6 +106,16 @@ export const useSettingsStore = defineStore('settings', () => {
 		attachmentFolder.value = value
 	}
 
+	/**
+	 * Update the conversations list style setting for the user
+	 *
+	 * @param value - new selected state
+	 */
+	async function updateChatSplitView(value: boolean) {
+		// await setChatSplitView(value)
+		chatSplitViewEnabled.value = value
+	}
+
 	return {
 		readStatusPrivacy,
 		typingStatusPrivacy,
@@ -114,6 +125,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		conversationsListStyle,
 		attachmentFolder,
 		attachmentFolderFreeSpace,
+		chatSplitViewEnabled,
 
 		updateReadStatusPrivacy,
 		updateTypingStatusPrivacy,
@@ -122,5 +134,6 @@ export const useSettingsStore = defineStore('settings', () => {
 		updateStartWithoutMedia,
 		updateConversationsListStyle,
 		updateAttachmentFolder,
+		updateChatSplitView,
 	}
 })
