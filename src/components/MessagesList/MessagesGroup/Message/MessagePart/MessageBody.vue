@@ -94,6 +94,17 @@
 		<div
 			v-if="!isDeletedMessage"
 			class="message-main__info">
+			<span v-if="isOwnMessage && isEditorDifferentThenAuthor" class="editor">
+				<IconPencilOutline :size="14" />
+				<AvatarWrapper
+					:id="lastEditor.userId"
+					:token="message.token"
+					:name="lastEditor.name"
+					:source="lastEditor.type"
+					:size="14"
+					disable-menu
+					disable-tooltip />
+			</span>
 			<span class="date" :class="{ 'date--hidden': hideDate }" :title="messageDate">{{ messageTime }}</span>
 
 			<!-- Message delivery status indicators -->
@@ -180,7 +191,9 @@ import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
+import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import MessageQuote from '../../../../MessageQuote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
 import ConversationActionsShortcut from '../../../../UIShared/ConversationActionsShortcut.vue'
@@ -207,6 +220,7 @@ export default {
 	name: 'MessageBody',
 
 	components: {
+		AvatarWrapper,
 		CallButton,
 		NcButton,
 		NcRichText,
@@ -222,6 +236,7 @@ export default {
 		IconCheckAll,
 		IconContentCopy,
 		IconForumOutline,
+		IconPencilOutline,
 		IconReload,
 	},
 
@@ -446,7 +461,7 @@ export default {
 		},
 
 		isOwnMessage() {
-			return this.actorStore.checkIfSelfIsActor(this.message)
+			return this.actorStore.checkIfSelfIsActor(this.message) && !this.isSystemMessage
 		},
 
 		isShortSimpleMessage() {
@@ -456,6 +471,20 @@ export default {
 				&& this.message.messageParameters.length === 0
 				&& this.message.message.split('\n').length === 1
 				&& this.message.message.length <= 40 // FIXME: magic number
+		},
+
+		lastEditor() {
+			return {
+				name: this.message.lastEditActorDisplayName,
+				userId: this.message.lastEditActorId,
+				type: this.message.lastEditActorType,
+			}
+		},
+
+		isEditorDifferentThenAuthor() {
+			return this.message.lastEditActorId
+				&& this.message.lastEditActorId !== this.message.actorId
+				&& this.message.lastEditActorDisplayName !== this.message.actorDisplayName
 		},
 	},
 
@@ -644,6 +673,14 @@ export default {
 			align-items: end;
 			font-size: var(--font-size-small);
 			width: auto;
+
+			.editor {
+				display: inline-flex;
+				align-items: center;
+				margin-inline-end: var(--default-grid-baseline);
+				gap: calc(var(--default-grid-baseline) / 2);
+				height: 1lh;
+			}
 		}
 
 		.date {
