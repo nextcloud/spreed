@@ -163,7 +163,8 @@
                                     "has-translation-providers",
                                     "has-translation-task-providers",
                                     "typing-privacy",
-                                    "summary-threshold"
+                                    "summary-threshold",
+                                    "style"
                                 ],
                                 "properties": {
                                     "max-length": {
@@ -188,6 +189,13 @@
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
+                                    },
+                                    "style": {
+                                        "type": "string",
+                                        "enum": [
+                                            "split",
+                                            "unified"
+                                        ]
                                     }
                                 }
                             },

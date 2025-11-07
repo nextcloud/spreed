@@ -87,6 +87,8 @@ export type components = {
                     "typing-privacy": number;
                     /** Format: int64 */
                     "summary-threshold": number;
+                    /** @enum {string} */
+                    style: "split" | "unified";
                 };
                 conversations: {
                     "can-create": boolean;
