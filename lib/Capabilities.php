@@ -126,6 +126,7 @@ class Capabilities implements IPublicCapability {
 		'threads',
 		'pinned-messages',
 		'federated-shared-items',
+		'scheduled-messages',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -156,6 +157,7 @@ class Capabilities implements IPublicCapability {
 		'mutual-calendar-events',
 		'upcoming-reminders',
 		'sensitive-conversations',
+		'scheduled-messages',
 	];
 
 	public const LOCAL_CONFIGS = [

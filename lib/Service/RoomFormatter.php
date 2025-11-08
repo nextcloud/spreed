@@ -158,6 +158,7 @@ class RoomFormatter {
 			'isArchived' => false,
 			'isImportant' => false,
 			'isSensitive' => false,
+			'hasScheduledMessages' => false,
 		];
 
 		if ($room->isFederatedConversation()) {
@@ -345,6 +346,7 @@ class RoomFormatter {
 					&& ($room->getType() === Room::TYPE_GROUP || $room->getType() === Room::TYPE_PUBLIC)
 					&& $currentParticipant->hasModeratorPermissions(false)
 					&& $this->talkConfig->canUserEnableSIP($currentUser);
+				$roomData['hasScheduledMessages'] = $currentParticipant->getHasScheduledMessages();
 			}
 		} elseif ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
 			$lastReadMessage = $attendee->getLastReadMessage();

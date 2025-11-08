@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OCA\Circles\Model\Circle;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
@@ -503,7 +502,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$statuses = $this->statusManager->getUserStatuses($userIds);
 			}
 			return new DataResponse($this->formatRoom($room, $participant, $statuses, $isSIPBridgeRequest), Http::STATUS_OK, $this->getTalkHashHeader());
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			/**
 			 * A hack to fix type collision
 			 * @var DataResponse<Http::STATUS_NOT_FOUND, null, array{}> $response

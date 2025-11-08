@@ -387,6 +387,8 @@ namespace OCA\Talk;
  *     lastPinnedId: int,
  *     // Required capability: `pinned-messages`
  *     hiddenPinnedId: int,
+ *     // Required capability: `scheduled-messages` (local)
+ *     hasScheduledMessages: bool,
  * }
  *
  * @psalm-type TalkDashboardEventAttachment = array{
@@ -562,6 +564,30 @@ namespace OCA\Talk;
  *         separator: string,
  *         rtl: bool,
  *     },
+ * }
+ *
+ * @psalm-type TalkScheduledMessageMetaData = array{
+ *       threadId: int,
+ *       threadTitle: string,
+ *       silent: bool,
+ *       lastEditedTime?: int,
+ * }
+ *
+ * @psalm-type TalkScheduledMessage = array{
+ *     	id: int,
+ * 	   	roomId: int,
+ *     	actorId: string,
+ * 		actorType: string,
+ * 		threadId: int,
+ *      threadExists?: boolean,
+ *      threadTitle?: string,
+ *      parentId: ?int,
+ * 		parent?: TalkChatMessage,
+ * 		message: string,
+ * 		messageType: string,
+ * 		createdAt: int,
+ * 		sendAt: ?int,
+ * 		metaData: TalkScheduledMessageMetaData,
  * }
  */
 class ResponseDefinitions {
