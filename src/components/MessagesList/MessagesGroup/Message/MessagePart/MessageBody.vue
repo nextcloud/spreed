@@ -273,6 +273,8 @@ export default {
 		},
 	},
 
+	emits: ['update:isShortSimpleMessage'],
+
 	setup(props) {
 		const { message } = toRefs(props)
 		const {
@@ -493,6 +495,14 @@ export default {
 	watch: {
 		showJoinCallButton() {
 			EventBus.emit('scroll-chat-to-bottom', { smooth: true })
+		},
+
+		isShortSimpleMessage: {
+			handler(newValue) {
+				this.$emit('update:isShortSimpleMessage', newValue)
+			},
+
+			immediate: true,
 		},
 	},
 

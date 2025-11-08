@@ -33,7 +33,8 @@
 				:has-call="conversation.hasCall"
 				:message="message"
 				:read-info="readInfo"
-				:is-split-view-enabled>
+				:is-split-view-enabled
+				@update:is-short-simple-message="isShortSimpleMessage = $event">
 				<!-- reactions buttons and popover with details -->
 				<ReactionsWrapper
 					v-if="Object.keys(message.reactions).length"
@@ -52,7 +53,8 @@
 			:class="{
 				outgoing: actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled && isUserMessage,
 				incoming: !actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled && isUserMessage,
-				'bottom-side': isSplitViewEnabled && (isSmallMobile || isSidebar),
+				'bottom-side': isSplitViewEnabled && !isShortSimpleMessage && (isSmallMobile || isSidebar),
+				overlay: isSplitViewEnabled && isReactionsMenuOpen && !(isSmallMobile || isSidebar),
 			}">
 			<MessageButtonsBar
 				v-if="showMessageButtonsBar"
@@ -61,7 +63,7 @@
 				v-model:is-reactions-menu-open="isReactionsMenuOpen"
 				v-model:is-forwarder-open="isForwarderOpen"
 				class="message-buttons-bar"
-				:class="{ outlined: !isSplitViewEnabled || isReactionsMenuOpen || isSmallMobile || isSidebar }"
+				:class="{ outlined: buttonsBarOutlined }"
 				:is-translation-available="isTranslationAvailable"
 				:can-react="canReact"
 				:message="message"
@@ -121,7 +123,7 @@ import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nex
 import { t } from '@nextcloud/l10n'
 import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
-import { inject } from 'vue'
+import { inject, ref } from 'vue'
 import NcAssistantButton from '@nextcloud/vue/components/NcAssistantButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconUnfoldLessHorizontal from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
@@ -250,6 +252,7 @@ export default {
 			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
 			isTranslateDialogOpen: false,
+			isShortSimpleMessage: ref(false),
 		}
 	},
 
@@ -404,6 +407,12 @@ export default {
 
 		isUserMessage() {
 			return !this.isSystemMessage && !this.isCombinedSystemMessage
+		},
+
+		buttonsBarOutlined() {
+			return !this.isSplitViewEnabled
+				|| (!this.isShortSimpleMessage
+					&& (this.isReactionsMenuOpen || this.isSmallMobile || this.isSidebar))
 		},
 	},
 
@@ -578,6 +587,10 @@ export default {
 		inset-inline-end: 100%;
 		top: calc(50% - var(--default-clickable-area) / 2);
 		padding-inline: var(--default-grid-baseline);
+
+		&.overlay {
+			inset-inline-end: calc(100% - var(--default-clickable-area) * 6);
+		}
 	}
 
 	&.incoming {
@@ -591,6 +604,10 @@ export default {
 		inset-inline-start: 100%;
 		top: calc(50% - var(--default-clickable-area) / 2);
 		padding-inline: var(--default-grid-baseline);
+
+		&.overlay {
+			inset-inline-start: calc(100% - var(--default-clickable-area) * 6);
+		}
 	}
 	// END Split view
 }
