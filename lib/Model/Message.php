@@ -25,6 +25,7 @@ class Message {
 	public const METADATA_SILENT = 'silent';
 	public const METADATA_CAN_MENTION_ALL = 'can_mention_all';
 	public const METADATA_THREAD_ID = 'thread_id';
+	public const METADATA_THREAD_TITLE = 'thread_title';
 	public const METADATA_PINNED_BY_TYPE = 'pinned_by_type';
 	public const METADATA_PINNED_BY_ID = 'pinned_by_id';
 	public const METADATA_PINNED_BY_NAME = 'pinned_by_name';

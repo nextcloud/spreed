@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Chat;
 
 use OCA\Talk\Events\RoomDeletedEvent;
+use OCA\Talk\Model\ScheduledMessageMapper;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 
@@ -19,6 +20,7 @@ use OCP\EventDispatcher\IEventListener;
 class Listener implements IEventListener {
 	public function __construct(
 		protected ChatManager $chatManager,
+		protected ScheduledMessageMapper $scheduledMessageMapper,
 	) {
 	}
 
@@ -26,6 +28,7 @@ class Listener implements IEventListener {
 	public function handle(Event $event): void {
 		if ($event instanceof RoomDeletedEvent) {
 			$this->chatManager->deleteMessages($event->getRoom());
+			$this->scheduledMessageMapper->deleteMessagesByRoom($event->getRoom());
 		}
 	}
 }
