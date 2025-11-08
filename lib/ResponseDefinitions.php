@@ -562,6 +562,10 @@ namespace OCA\Talk;
  *         rtl: bool,
  *     },
  * }
+ *
+ * @psalm-type TalkScheduledMessage = array {
+ *
+ * }
  */
 class ResponseDefinitions {
 }

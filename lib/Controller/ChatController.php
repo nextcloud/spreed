@@ -15,6 +15,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Chat\ReactionManager;
+use OCA\Talk\Chat\ScheduledMessageManager;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ChatSummaryException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -35,6 +36,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Reminder;
+use OCA\Talk\Model\ScheduledMessage;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
@@ -135,6 +137,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		protected ITaskProcessingManager $taskProcessingManager,
 		protected IAppConfig $appConfig,
 		protected LoggerInterface $logger,
+		protected ScheduledMessageManager $scheduledMessageManager,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -206,6 +209,33 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 			return new DataResponse(null, $statusCode, $headers);
 		}
+
+		try {
+			$threadId = (int)$comment->getTopmostParentId() ?: (int)$comment->getId();
+			$thread = $this->threadService->findByThreadId($this->room->getId(), $threadId);
+		} catch (DoesNotExistException) {
+			$thread = null;
+		}
+		$data = $chatMessage->toArray($this->getResponseFormat(), $thread);
+		if ($parentMessage instanceof Message) {
+			$data['parent'] = $parentMessage->toArray($this->getResponseFormat(), $thread);
+		}
+
+		$headers = [];
+		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
+			$headers = ['X-Chat-Last-Common-Read' => (string)$this->chatManager->getLastCommonReadMessage($this->room)];
+		}
+		return new DataResponse($data, $statusCode, $headers);
+	}
+
+	/**
+	 * @template S of Http::STATUS_*
+	 * @param S $statusCode HTTP status code
+	 * @return DataResponse<S, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>
+	 */
+	protected function parseScheduledMessageToResponse(ScheduledMessage $comment, ?Message $parentMessage = null, int $statusCode = Http::STATUS_CREATED): DataResponse {
+		$chatMessage = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
+		$this->messageParser->parseMessage($chatMessage);
 
 		try {
 			$threadId = (int)$comment->getTopmostParentId() ?: (int)$comment->getId();
@@ -320,6 +350,102 @@ class ChatController extends AEnvironmentAwareOCSController {
 					true
 				);
 			}
+		} catch (MessageTooLongException) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+		} catch (IRateLimitExceededException) {
+			return new DataResponse(['error' => 'mentions'], Http::STATUS_TOO_MANY_REQUESTS);
+		} catch (\Exception $e) {
+			$this->logger->warning($e->getMessage());
+			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
+		}
+
+		return $this->parseCommentToResponse($comment, $parentMessage);
+	}
+
+	/**
+	 * Sends a new chat message to the given room
+	 *
+	 * The author and timestamp are automatically set to the current user/guest
+	 * and time.
+	 *
+	 * @param string $message the message to send
+	 * @param string $actorDisplayName for guests
+	 * @param string $referenceId for the message to be able to later identify it again
+	 * @param int $replyTo Parent id which this message is a reply to
+	 * @psalm-param non-negative-int $replyTo
+	 * @param bool $silent If sent silent the chat message will not create any notifications
+	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
+	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
+	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
+	 *
+	 * 201: Message scheduled successfully
+	 * 400: Scheduled message is not possible
+	 * 404: Actor not found
+	 * 413: Message too long
+	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/schedule', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function scheduleMessage(string $message, int $sendAt, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, bool $silent = false, string $threadTitle = '', int $threadId = 0): DataResponse {
+		if (trim($message) === '') {
+			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($sendAt <= $this->timeFactory->getTime()) {
+			return new DataResponse(['error' => 'sendAt'], Http::STATUS_BAD_REQUEST);
+		}
+
+		[$actorType, $actorId] = $this->getActorInfo($actorDisplayName);
+		if (!$actorId) {
+			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
+		}
+
+		$parent = $parentMessage = null;
+		if ($replyTo !== 0) {
+			try {
+				$parent = $this->chatManager->getParentComment($this->room, (string)$replyTo);
+			} catch (NotFoundException $e) {
+				// Someone is trying to reply cross-rooms or to a non-existing message
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+			}
+
+			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
+			$this->messageParser->parseMessage($parentMessage);
+			if (!$parentMessage->isReplyable()) {
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+			}
+		}
+
+		if (($threadId !== 0) && !$this->threadService->validateThread($this->room->getId(), $threadId)) {
+			return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
+		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
+		$sendAtDateTime = $this->timeFactory->getDateTime('@' . $sendAt, new \DateTimeZone('UTC'));
+		try {
+			$createThread = $replyTo === 0 && $threadId === Thread::THREAD_NONE && $threadTitle !== '';
+			$threadId = $createThread ? Thread::THREAD_CREATE : $threadId;
+			$scheduledMessage = $this->scheduledMessageManager->scheduleMessage(
+				$this->room,
+				$this->participant,
+				$actorType,
+				$actorId,
+				$message,
+				ChatManager::VERB_MESSAGE,
+				null,
+				$parent,
+				$threadId,
+				$sendAtDateTime,
+				$creationDateTime,
+				$silent
+			);
+
 		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (IRateLimitExceededException) {
