@@ -308,7 +308,7 @@ export default {
 		},
 
 		canDownloadCallParticipants() {
-			return hasTalkFeature(this.token, 'download-call-participants') && this.canModerate
+			return hasTalkFeature(this.token, 'download-call-participants') && this.canModerate && !this.isOneToOneConversation
 		},
 
 		downloadCallParticipantsLink() {
