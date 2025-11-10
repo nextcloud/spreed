@@ -56,66 +56,49 @@
 		<NcAppSettingsSection
 			v-if="!isGuest && supportConversationsListStyle"
 			id="talk_appearance"
-			:name="t('spreed', 'Appearance')"
-			class="app-settings-section">
-			<NcCheckboxRadioSwitch
-				id="conversations_list_style"
+			:name="t('spreed', 'Appearance & Sounds')">
+			<NcFormBoxSwitch
 				:model-value="conversationsListStyle"
+				:label="t('spreed', 'Compact conversations list')"
 				:disabled="appearanceLoading"
-				type="switch"
-				class="checkbox"
-				@update:model-value="toggleConversationsListStyle">
-				{{ t('spreed', 'Show conversations list in compact mode') }}
-			</NcCheckboxRadioSwitch>
+				@update:model-value="toggleConversationsListStyle" />
+
+			<NcFormBox>
+				<NcFormBoxSwitch
+					:model-value="shouldPlaySounds"
+					:label="t('spreed', 'Play sounds when participants join or leave a call')"
+					:description="t('spreed', 'Currently not available on iPhone and iPad due to technical restrictions by the manufacturer.')"
+					:disabled="playSoundsLoading"
+					@update:model-value="togglePlaySounds" />
+				<NcFormBoxButton
+					:label="t('spreed', 'Notification settings')"
+					:description="t('spreed', 'Sounds for chat and call notifications')"
+					:href="settingsUrl"
+					target="_blank" />
+			</NcFormBox>
 		</NcAppSettingsSection>
+
 		<NcAppSettingsSection
 			v-if="!isGuest"
 			id="privacy"
-			:name="t('spreed', 'Privacy')"
-			class="app-settings-section">
-			<NcCheckboxRadioSwitch
-				id="read_status_privacy"
-				:model-value="readStatusPrivacyIsPublic"
-				:disabled="privacyLoading"
-				type="switch"
-				class="checkbox"
-				@update:model-value="toggleReadStatusPrivacy">
-				{{ t('spreed', 'Share my read-status and show the read-status of others') }}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch
-				v-if="supportTypingStatus"
-				id="typing_status_privacy"
-				:model-value="typingStatusPrivacyIsPublic"
-				:disabled="privacyLoading"
-				type="switch"
-				class="checkbox"
-				@update:model-value="toggleTypingStatusPrivacy">
-				{{ t('spreed', 'Share my typing-status and show the typing-status of others') }}
-			</NcCheckboxRadioSwitch>
+			:name="t('spreed', 'Privacy')">
+			<NcFormBox>
+				<NcFormBoxSwitch
+					:model-value="readStatusPrivacyIsPublic"
+					:label="t('spreed', 'Send read receipts')"
+					:description="t('spreed', 'When off, all read statuses will be hidden')"
+					:disabled="privacyLoading"
+					@update:model-value="toggleReadStatusPrivacy" />
+				<NcFormBoxSwitch
+					v-if="supportTypingStatus"
+					:model-value="typingStatusPrivacyIsPublic"
+					:label="t('spreed', 'Share typing status')"
+					:description="t('spreed', 'When off, all typing indicators will be hidden')"
+					:disabled="privacyLoading"
+					@update:model-value="toggleTypingStatusPrivacy" />
+			</NcFormBox>
 		</NcAppSettingsSection>
-		<NcAppSettingsSection
-			id="sounds"
-			:name="t('spreed', 'Sounds')"
-			class="app-settings-section">
-			<NcCheckboxRadioSwitch
-				id="play_sounds"
-				:model-value="shouldPlaySounds"
-				:disabled="playSoundsLoading"
-				type="switch"
-				class="checkbox"
-				@update:model-value="togglePlaySounds">
-				{{ t('spreed', 'Play sounds when participants join or leave a call') }}
-			</NcCheckboxRadioSwitch>
-			<em>{{ t('spreed', 'Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
 
-			<a
-				:href="settingsUrl"
-				target="_blank"
-				rel="noreferrer nofollow"
-				class="external">
-				{{ t('spreed', 'Sounds for chat and call notifications can be adjusted in the personal settings.') }} ↗
-			</a>
-		</NcAppSettingsSection>
 		<NcAppSettingsSection
 			id="performance"
 			:name="t('spreed', 'Performance')"
