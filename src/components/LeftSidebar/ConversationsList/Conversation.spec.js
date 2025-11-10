@@ -283,12 +283,13 @@ describe('ConversationItem.vue', () => {
 		/**
 		 * @param {string} actionName The name of the action to shallow
 		 */
-		function shallowMountAndGetAction(actionName) {
+		async function shallowMountAndGetAction(actionName) {
 			store = createStore(testStoreConfig)
 			const wrapper = mountConversation(false)
 
 			const el = wrapper.findComponent(NcListItem)
 			expect(el.exists()).toBe(true)
+			await el.find('a').trigger('focus')
 
 			return findNcActionButton(el, actionName)
 		}
@@ -300,6 +301,7 @@ describe('ConversationItem.vue', () => {
 		async function shallowMountAndOpenDialog(actionName, buttonsAmount) {
 			const wrapper = mountConversation(false)
 			const el = wrapper.findComponent(NcListItem)
+			await el.find('a').trigger('focus')
 
 			const action = findNcActionButton(el, actionName)
 			expect(action.exists()).toBeTruthy()
@@ -341,7 +343,7 @@ describe('ConversationItem.vue', () => {
 			test('hides "leave conversation" action when not allowed', async () => {
 				item.canLeaveConversation = false
 
-				const action = shallowMountAndGetAction('Leave conversation')
+				const action = await shallowMountAndGetAction('Leave conversation')
 				expect(action.exists()).toBe(false)
 			})
 
@@ -424,7 +426,7 @@ describe('ConversationItem.vue', () => {
 			test('hides "delete conversation" action when not allowed', async () => {
 				item.canDeleteConversation = false
 
-				const action = shallowMountAndGetAction('Delete conversation')
+				const action = await shallowMountAndGetAction('Delete conversation')
 				expect(action.exists()).toBe(false)
 			})
 		})
@@ -442,6 +444,7 @@ describe('ConversationItem.vue', () => {
 
 			const el = wrapper.findComponent(NcListItem)
 			expect(el.exists()).toBe(true)
+			await el.find('a').trigger('focus')
 
 			const action = findNcActionButton(el, 'Copy link')
 			expect(action.exists()).toBe(true)
@@ -462,6 +465,7 @@ describe('ConversationItem.vue', () => {
 
 			const el = wrapper.findComponent(NcListItem)
 			expect(el.exists()).toBe(true)
+			await el.find('a').trigger('focus')
 
 			const action = findNcActionButton(el, 'Add to favorites')
 			expect(action.exists()).toBe(true)
@@ -484,6 +488,7 @@ describe('ConversationItem.vue', () => {
 
 			const el = wrapper.findComponent(NcListItem)
 			expect(el.exists()).toBe(true)
+			await el.find('a').trigger('focus')
 
 			const action = findNcActionButton(el, 'Remove from favorites')
 			expect(action.exists()).toBe(true)
@@ -498,7 +503,7 @@ describe('ConversationItem.vue', () => {
 			const markConversationUnreadAction = vi.fn().mockResolvedValueOnce()
 			testStoreConfig.modules.conversationsStore.actions.markConversationUnread = markConversationUnreadAction
 
-			const action = shallowMountAndGetAction('Mark as unread')
+			const action = await shallowMountAndGetAction('Mark as unread')
 			expect(action.exists()).toBe(true)
 
 			await action.find('button').trigger('click')
@@ -510,19 +515,20 @@ describe('ConversationItem.vue', () => {
 			testStoreConfig.modules.conversationsStore.actions.clearLastReadMessage = clearLastReadMessageAction
 
 			item.unreadMessages = 1
-			const action = shallowMountAndGetAction('Mark as read')
+			const action = await shallowMountAndGetAction('Mark as read')
 			expect(action.exists()).toBe(true)
 
 			await action.find('button').trigger('click')
 
 			expect(clearLastReadMessageAction).toHaveBeenCalledWith(expect.anything(), { token: item.token })
 		})
-		test('does not show all actions for search result (open conversations)', () => {
+		test('does not show all actions for search result (open conversations)', async () => {
 			store = createStore(testStoreConfig)
 			const wrapper = mountConversation(true)
 
 			const el = wrapper.findComponent(NcListItem)
 			expect(el.exists()).toBe(true)
+			await el.find('a').trigger('focus')
 
 			// Join conversation and Copy link actions are intended
 			expect(findNcActionButton(el, 'Join conversation').exists()).toBe(true)
