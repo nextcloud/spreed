@@ -100,39 +100,6 @@
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection
-			id="performance"
-			:name="t('spreed', 'Performance')"
-			class="app-settings-section">
-			<template v-if="serverSupportsBackgroundBlurred">
-				<NcCheckboxRadioSwitch
-					id="blur-call-background"
-					:model-value="isBackgroundBlurred === 'yes'"
-					:indeterminate="isBackgroundBlurred === ''"
-					type="checkbox"
-					class="checkbox"
-					disabled>
-					{{ t('spreed', 'Blur background image in the call (may increase GPU load)') }}
-				</NcCheckboxRadioSwitch>
-				<a
-					:href="themingUrl"
-					target="_blank"
-					rel="noreferrer nofollow"
-					class="external">
-					{{ t('spreed', 'Background blur for Nextcloud instance can be adjusted in the theming settings.') }} ↗
-				</a>
-			</template>
-			<NcCheckboxRadioSwitch
-				v-else
-				id="blur-call-background"
-				:model-value="isBackgroundBlurred !== 'false'"
-				type="switch"
-				class="checkbox"
-				@update:model-value="toggleBackgroundBlurred">
-				{{ t('spreed', 'Blur background image in the call (may increase GPU load)') }}
-			</NcCheckboxRadioSwitch>
-		</NcAppSettingsSection>
-
-		<NcAppSettingsSection
 			v-if="!isGuest"
 			id="attachments"
 			:name="t('spreed', 'Files')">
@@ -188,10 +155,8 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-import { ref } from 'vue'
 import NcAppSettingsDialog from '@nextcloud/vue/components/NcAppSettingsDialog'
 import NcAppSettingsSection from '@nextcloud/vue/components/NcAppSettingsSection'
 import NcAppSettingsShortcutsSection from '@nextcloud/vue/components/NcAppSettingsShortcutsSection'
@@ -206,23 +171,15 @@ import NcKbd from '@nextcloud/vue/components/NcKbd'
 import IconFolderOpenOutline from 'vue-material-design-icons/FolderOpenOutline.vue'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import { CONVERSATION, PRIVACY } from '../../constants.ts'
-import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, getTalkVersion } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
-import { setUserConfig } from '../../services/settingsService.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useSoundsStore } from '../../stores/sounds.js'
 import { isMac } from '../../utils/browserCheck.ts'
-import { satisfyVersion } from '../../utils/satisfyVersion.ts'
 
-const serverVersion = loadState('core', 'config', {}).version ?? '29.0.0.0'
 const talkVersion = getTalkVersion()
-const serverSupportsBackgroundBlurred = satisfyVersion(serverVersion, '29.0.4.0')
 
-const isBackgroundBlurredState = serverSupportsBackgroundBlurred
-	? loadState('spreed', 'force_enable_blur_filter', '') // 'yes', 'no', ''
-	: BrowserStorage.getItem('background-blurred') // 'true', 'false', null
 const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !== undefined
 const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
 const supportConversationsListStyle = getTalkConfig('local', 'conversations', 'list-style') !== undefined
@@ -251,7 +208,6 @@ export default {
 		const settingsStore = useSettingsStore()
 		const soundsStore = useSoundsStore()
 		const { customSettingsSections } = useCustomSettings()
-		const isBackgroundBlurred = ref(isBackgroundBlurredState)
 		const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl'
 
 		return {
@@ -261,8 +217,6 @@ export default {
 			settingsStore,
 			soundsStore,
 			supportTypingStatus,
-			isBackgroundBlurred,
-			serverSupportsBackgroundBlurred,
 			customSettingsSections,
 			supportStartWithoutMedia,
 			supportConversationsListStyle,
@@ -315,10 +269,6 @@ export default {
 			return generateUrl('/settings/user/notifications')
 		},
 
-		themingUrl() {
-			return generateUrl('/settings/user/theming')
-		},
-
 		disableKeyboardShortcuts() {
 			return OCP.Accessibility.disableKeyboardShortcuts()
 		},
@@ -326,21 +276,6 @@ export default {
 		hideMediaSettings() {
 			return !this.settingsStore.showMediaSettings
 		},
-	},
-
-	async created() {
-		const blurred = BrowserStorage.getItem('background-blurred')
-		if (serverSupportsBackgroundBlurred) {
-			// Blur is handled by theming app, migrating
-			if (blurred === 'false' && isBackgroundBlurredState === '') {
-				console.debug('Blur was disabled intentionally, propagating last choice to server')
-				await setUserConfig('theming', 'force_enable_blur_filter', 'no')
-			}
-			BrowserStorage.removeItem('background-blurred')
-		} else if (blurred === null) {
-			// Fallback to BrowserStorage
-			BrowserStorage.setItem('background-blurred', 'true')
-		}
 	},
 
 	mounted() {
@@ -422,17 +357,6 @@ export default {
 				showError(t('spreed', 'Error while setting personal setting'))
 			}
 			this.appearanceLoading = false
-		},
-
-		/**
-		 * Fallback method for versions before v29.0.4
-		 *
-		 * @param {boolean} value whether background should be blurred
-		 */
-		toggleBackgroundBlurred(value) {
-			this.isBackgroundBlurred = value.toString()
-			BrowserStorage.setItem('background-blurred', this.isBackgroundBlurred)
-			emit('set-background-blurred', value)
 		},
 
 		async togglePlaySounds() {
