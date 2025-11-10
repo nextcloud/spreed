@@ -122,7 +122,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval 5s --health-timeout 2s --health-retries 10
 
       postgres:
-        image: ghcr.io/nextcloud/continuous-integration-postgres-16:latest # zizmor: ignore[unpinned-images]
+        image: ghcr.io/nextcloud/continuous-integration-postgres-18:latest # zizmor: ignore[unpinned-images]
         ports:
           - 4445:5432/tcp
         env:
