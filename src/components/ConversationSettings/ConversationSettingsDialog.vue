@@ -10,6 +10,7 @@
 		:name="t('spreed', 'Conversation settings')"
 		:open="showSettings"
 		show-navigation
+		legacy
 		@update:open="handleHideSettings">
 		<NcAppSettingsSection
 			id="basic-info"
