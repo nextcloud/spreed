@@ -96,23 +96,21 @@ jobs:
 
     services:
       oracle:
-        image: ghcr.io/gvenzl/oracle-xe:11
+        image: ghcr.io/gvenzl/oracle-free:23
 
         # Provide passwords and other environment variables to container
         env:
-          ORACLE_RANDOM_PASSWORD: true
-          APP_USER: autotest
-          APP_USER_PASSWORD: owncloud
+          ORACLE_PASSWORD: oracle
 
         # Forward Oracle port
         ports:
-          - 1521:1521/tcp
+          - 1521:1521
 
         # Provide healthcheck script options for startup
         options: >-
           --health-cmd healthcheck.sh
-          --health-interval 10s
-          --health-timeout 5s
+          --health-interval 20s
+          --health-timeout 10s
           --health-retries 10
 
       mysql:
@@ -124,7 +122,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval 5s --health-timeout 2s --health-retries 10
 
       postgres:
-        image: ghcr.io/nextcloud/continuous-integration-postgres-16:latest # zizmor: ignore[unpinned-images]
+        image: ghcr.io/nextcloud/continuous-integration-postgres-18:latest # zizmor: ignore[unpinned-images]
         ports:
           - 4445:5432/tcp
         env:
@@ -260,7 +258,7 @@ jobs:
         working-directory: host/
         run: |
           mkdir data
-          ./occ maintenance:install --verbose --database=oci --database-name=XE --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=autotest --database-pass=owncloud --admin-user admin --admin-pass admin
+          ./occ maintenance:install --verbose --database=oci --database-name=FREE --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=system --database-pass=oracle --admin-user admin --admin-pass admin
 
       - name: Set up Nextcloud - Host (MySQL)
         if: ${{ matrix.host-db == 'mysql' }}
@@ -287,7 +285,7 @@ jobs:
         working-directory: remote/
         run: |
           mkdir data
-          ./occ maintenance:install --verbose --database=oci --database-name=XE --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=autotest --database-pass=owncloud --admin-user admin --admin-pass admin
+          ./occ maintenance:install --verbose --database=oci --database-name=FREE --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=system --database-pass=oracle --admin-user admin --admin-pass admin
 
       - name: Set up Nextcloud - Remote (MySQL)
         if: ${{ matrix.remote-db == 'mysql' }}
