@@ -10,6 +10,7 @@ const { resolve } = require('node:path')
 const ignorePatterns = [
 	'@mdi/svg',
 	'@nextcloud/sharing', // ESM dependency
+	'@nextcloud/browser-storage', // ESM dependency
 	'bail',
 	'ccount', // ESM dependency of remark-gfm
 	'comma-separated-tokens',
