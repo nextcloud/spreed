@@ -54,25 +54,6 @@
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection
-			v-if="!isGuest"
-			id="attachments"
-			:name="t('spreed', 'Attachments folder')"
-			class="app-settings-section">
-			<em class="app-settings-section__hint">
-				{{ locationHint }}
-			</em>
-			<div class="app-settings-section__wrapper">
-				<p class="app-settings-section__input" @click="showFilePicker">
-					{{ attachmentFolder }}
-				</p>
-				<NcButton
-					variant="primary"
-					@click="showFilePicker">
-					{{ t('spreed', 'Browse …') }}
-				</NcButton>
-			</div>
-		</NcAppSettingsSection>
-		<NcAppSettingsSection
 			v-if="!isGuest && supportConversationsListStyle"
 			id="talk_appearance"
 			:name="t('spreed', 'Appearance')"
@@ -167,6 +148,22 @@
 				{{ t('spreed', 'Blur background image in the call (may increase GPU load)') }}
 			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
+
+		<NcAppSettingsSection
+			v-if="!isGuest"
+			id="attachments"
+			:name="t('spreed', 'Files')">
+			<NcFormBoxButton
+				:label="t('spreed', 'Attachments folder')"
+				:description="attachmentFolder"
+				inverted-accent
+				@click="showFilePicker">
+				<template #icon>
+					<IconFolderOpenOutline :size="20" />
+				</template>
+			</NcFormBoxButton>
+		</NcAppSettingsSection>
+
 		<NcAppSettingsShortcutsSection
 			v-if="!disableKeyboardShortcuts">
 			<NcHotkeyList>
@@ -218,10 +215,12 @@ import NcAppSettingsShortcutsSection from '@nextcloud/vue/components/NcAppSettin
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcFormBox from '@nextcloud/vue/components/NcFormBox'
+import NcFormBoxButton from '@nextcloud/vue/components/NcFormBoxButton'
 import NcFormBoxSwitch from '@nextcloud/vue/components/NcFormBoxSwitch'
 import NcHotkey from '@nextcloud/vue/components/NcHotkey'
 import NcHotkeyList from '@nextcloud/vue/components/NcHotkeyList'
 import NcKbd from '@nextcloud/vue/components/NcKbd'
+import IconFolderOpenOutline from 'vue-material-design-icons/FolderOpenOutline.vue'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import { CONVERSATION, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -250,6 +249,7 @@ export default {
 	name: 'SettingsDialog',
 
 	components: {
+		IconFolderOpenOutline,
 		IconMicrophoneOutline,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
@@ -257,6 +257,7 @@ export default {
 		NcCheckboxRadioSwitch,
 		NcAppSettingsShortcutsSection,
 		NcFormBox,
+		NcFormBoxButton,
 		NcFormBoxSwitch,
 		NcHotkeyList,
 		NcHotkey,
@@ -305,10 +306,6 @@ export default {
 
 		attachmentFolder() {
 			return this.settingsStore.attachmentFolder
-		},
-
-		locationHint() {
-			return t('spreed', 'Choose the folder in which attachments should be saved.')
 		},
 
 		isGuest() {
@@ -377,7 +374,7 @@ export default {
 
 		async showFilePicker() {
 			const filePicker = getFilePickerBuilder(t('spreed', 'Select location for attachments'))
-				.setContainer('.app-settings-section__wrapper')
+				.setContainer('#attachments')
 				.startAt(this.attachmentFolder)
 				.setMultiSelect(false)
 				.allowDirectories(true)
