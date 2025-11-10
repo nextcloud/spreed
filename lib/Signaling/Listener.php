@@ -8,9 +8,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Signaling;
 
+use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AMessageSentEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
+use OCA\Talk\Events\AReactionEvent;
 use OCA\Talk\Events\ARoomEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\ASystemMessageSentEvent;
@@ -27,6 +31,8 @@ use OCA\Talk\Events\GuestJoinedRoomEvent;
 use OCA\Talk\Events\GuestsCleanedUpEvent;
 use OCA\Talk\Events\LobbyModifiedEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
+use OCA\Talk\Events\ReactionAddedEvent;
+use OCA\Talk\Events\ReactionRemovedEvent;
 use OCA\Talk\Events\RoomExtendedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Events\RoomSyncedEvent;
@@ -41,9 +47,12 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Service\ThreadService;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\L10N\IFactory;
 use OCP\Server;
 
 /**
@@ -75,6 +84,9 @@ class Listener implements IEventListener {
 		protected ParticipantService $participantService,
 		protected SessionService $sessionService,
 		protected ITimeFactory $timeFactory,
+		protected MessageParser $messageParser,
+		protected ThreadService $threadService,
+		protected IFactory $l10nFactory,
 	) {
 	}
 
@@ -144,6 +156,8 @@ class Listener implements IEventListener {
 			ChatMessageSentEvent::class,
 			SystemMessageSentEvent::class,
 			SystemMessagesMultipleSentEvent::class => $this->notifyMessageSent($event),
+			ReactionAddedEvent::class,
+			ReactionRemovedEvent::class => $this->notifyReactionSent($event),
 			default => null, // Ignoring events subscribed by the internal signaling
 		};
 	}
@@ -458,17 +472,136 @@ class Listener implements IEventListener {
 	}
 
 	protected function notifyMessageSent(AMessageSentEvent $event): void {
-		if ($event instanceof ASystemMessageSentEvent && $event->shouldSkipLastActivityUpdate()) {
+		if (!$this->talkConfig->isChatRelayEnabled()) {
+			if ($event instanceof ASystemMessageSentEvent && $event->shouldSkipLastActivityUpdate()) {
+				return;
+			}
+
+			$room = $event->getRoom();
+			$message = [
+				'type' => 'chat',
+				'chat' => [
+					'refresh' => true,
+				],
+			];
+			$this->externalSignaling->sendRoomMessage($room, $message);
 			return;
 		}
 
+		$comment = $event->getComment();
+		if ($event instanceof ASystemMessageSentEvent && $event->shouldSkipLastActivityUpdate()) {
+			$messageDecoded = json_decode($comment->getMessage(), true);
+			$messageType = $messageDecoded['message'] ?? '';
+			if ($messageType !== 'message_deleted' && $messageType !== 'message_edited') {
+				return;
+			}
+		}
+
 		$room = $event->getRoom();
-		$message = [
+		$data = [
 			'type' => 'chat',
 			'chat' => [
 				'refresh' => true,
 			],
 		];
-		$this->externalSignaling->sendRoomMessage($room, $message);
+
+		if ($event instanceof ASystemMessageSentEvent && $comment->getVerb() === ChatManager::VERB_SYSTEM && $event->shouldSkipLastActivityUpdate() === false) {
+			$this->externalSignaling->sendRoomMessage($room, $data);
+			return;
+		}
+
+		$l10n = $this->l10nFactory->get(Application::APP_ID, 'en');
+		$message = $this->messageParser->createMessage($event->getRoom(), null, $comment, $l10n);
+		$this->messageParser->parseMessage($message);
+		if ($message->getVisibility() === false) {
+			$this->externalSignaling->sendRoomMessage($room, $data);
+			return;
+		}
+
+		$thread = null;
+		if (!isset($messageType)) {
+			$threadId = (int)$comment->getTopmostParentId() ?: $comment->getId();
+			try {
+				$thread = $this->threadService->findByThreadId($room->getId(), (int)$threadId);
+			} catch (DoesNotExistException) {
+			}
+		}
+
+		$data['chat']['comment'] = $message->toArray('json', $thread);
+
+		if ($event instanceof ASystemMessageSentEvent && $event->getParent() !== null) {
+			$parent = $event->getParent();
+			$parentMessage = $this->messageParser->createMessage($event->getRoom(), null, $parent, $l10n);
+			$this->messageParser->parseMessage($parentMessage);
+			$data['chat']['comment']['parent'] = $parentMessage->toArray('json', $thread);
+		}
+
+		$this->externalSignaling->sendRoomMessage($room, $data);
+	}
+
+	protected function notifyReactionSent(AReactionEvent $event): void {
+		if (!$this->talkConfig->isChatRelayEnabled()) {
+			return;
+		}
+
+		$room = $event->getRoom();
+		$data = [
+			'type' => 'chat',
+			'chat' => [
+				'refresh' => true,
+			],
+		];
+
+		$comment = $event->getMessage();
+		$messageType = $event instanceof ReactionAddedEvent ? ChatManager::VERB_REACTION : 'reaction_revoked';
+
+		$threadId = (int)$comment->getTopmostParentId() ?: $comment->getId();
+		try {
+			$thread = $this->threadService->findByThreadId($room->getId(), (int)$threadId);
+		} catch (DoesNotExistException) {
+			$thread = null;
+		}
+
+		$reactions = $comment->getReactions();
+		if ($event instanceof ReactionRemovedEvent) {
+			if (array_key_exists($event->getReaction(), $reactions) && $reactions[$event->getReaction()] > 1) {
+				--$reactions[$event->getReaction()];
+			} else {
+				unset($reactions[$event->getReaction()]);
+			}
+		} elseif ($event instanceof ReactionAddedEvent) {
+			if (array_key_exists($event->getReaction(), $reactions)) {
+				++$reactions[$event->getReaction()];
+			} else {
+				$reactions[$event->getReaction()] = 1;
+			}
+		}
+
+		$comment->setReactions($reactions);
+		$l10n = $this->l10nFactory->get(Application::APP_ID, 'en');
+		$message = $this->messageParser->createMessage($event->getRoom(), null, $comment, $l10n);
+		$this->messageParser->parseMessage($message);
+		// Build reaction message data
+		$data['chat']['comment'] = [
+			'id' => null,
+			'token' => $event->getRoom()->getToken(),
+			'actorType' => $event->getActorType(),
+			'actorId' => $event->getActorId(),
+			'actorDisplayName' => $event->getActorDisplayName(),
+			'timestamp' => $this->timeFactory->getTime(),
+			'message' => $event->getReaction(),
+			'messageParameters' => [],
+			'systemMessage' => $messageType,
+			'messageType' => ChatManager::VERB_SYSTEM,
+			'isReplyable' => false,
+			'referenceId' => '',
+			'reactions' => [],
+			'markdown' => false ,
+			'expirationTimestamp' => $message->getExpirationDateTime()?->getTimestamp(), // base on parent post timestamp + room expiration
+			'threadId' => $threadId,
+		];
+
+		$data['chat']['comment']['parent'] = $message->toArray('json', $thread);
+		$this->externalSignaling->sendRoomMessage($room, $data);
 	}
 }

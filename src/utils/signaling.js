@@ -1024,7 +1024,7 @@ Signaling.Standalone.prototype.sendHello = function() {
 	} else {
 		helloVersion = '1.0'
 	}
-	const features = []
+	const features = ['chat-relay']
 	Encryption.isSupported()
 		.then(() => {
 			features.push('encryption')

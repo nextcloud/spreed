@@ -40,6 +40,8 @@ class Config {
 	 */
 	public const USER_STATUS_INTEGRATION_LIMIT = 1000;
 
+	private const EXPERIMENT_CHAT_RELAY = 4;
+
 	/** @var array<string, bool> */
 	protected array $canEnableSIP = [];
 
@@ -779,5 +781,14 @@ class Config {
 
 		// TODO Default value will be set to true, once all mobile clients support it.
 		return $this->appConfig->getAppValueBool('call_end_to_end_encryption');
+	}
+
+	public function isChatRelayEnabled(): bool {
+		$isEnabled
+			= (max(0, $this->appConfig->getAppValueInt('experiments_users'))
+				| max(0, $this->appConfig->getAppValueInt('experiments_guests'))
+			)
+			& self::EXPERIMENT_CHAT_RELAY;
+		return $isEnabled === self::EXPERIMENT_CHAT_RELAY;
 	}
 }
