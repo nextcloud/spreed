@@ -21,42 +21,38 @@
 
 		<NcAppSettingsSection
 			id="devices"
-			:name="t('spreed', 'Devices')"
-			class="app-settings-section">
+			:name="t('spreed', 'Devices')">
+			<NcFormBox>
+				<NcFormBoxSwitch
+					v-if="supportStartWithoutMedia"
+					:model-value="startWithoutMediaEnabled"
+					:label="t('spreed', 'Turn camera and microphone off by default')"
+					:disabled="mediaLoading"
+					@update:model-value="toggleStartWithoutMedia" />
+				<NcFormBoxSwitch
+					v-if="supportDefaultBlurVirtualBackground"
+					:model-value="settingsStore.blurVirtualBackgroundEnabled"
+					:label="t('spreed', 'Blur camera background by default')"
+					@update:model-value="setBlurVirtualBackgroundEnabled" />
+				<NcFormBoxSwitch
+					v-if="!isGuest"
+					:model-value="hideMediaSettings"
+					:label="t('spreed', 'Skip device preview before joining a call')"
+					:description="t('spreed', 'Always shown if recording consent is required')"
+					@update:model-value="setHideMediaSettings" />
+			</NcFormBox>
+
 			<NcButton
 				variant="secondary"
+				wide
 				@click="openMediaSettings">
 				<template #icon>
 					<IconMicrophoneOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Check devices') }}
 			</NcButton>
-			<NcCheckboxRadioSwitch
-				v-if="supportStartWithoutMedia"
-				:model-value="startWithoutMediaEnabled"
-				:disabled="mediaLoading"
-				type="switch"
-				@update:model-value="toggleStartWithoutMedia">
-				{{ t('spreed', 'Turn off camera and microphone by default when joining a call') }}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch
-				v-if="supportDefaultBlurVirtualBackground"
-				type="switch"
-				:model-value="settingsStore.blurVirtualBackgroundEnabled"
-				@update:model-value="setBlurVirtualBackgroundEnabled">
-				{{ t('spreed', 'Enable blur background by default for all conversations') }}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch
-				v-if="!isGuest"
-				type="switch"
-				:model-value="hideMediaSettings"
-				@update:model-value="setHideMediaSettings">
-				{{ t('spreed', 'Do not show the device preview screen before joining a call') }}
-			</NcCheckboxRadioSwitch>
-			<p class="app-settings-section__hint">
-				{{ t('spreed', 'Preview screen will still be shown if recording consent is required') }}
-			</p>
 		</NcAppSettingsSection>
+
 		<NcAppSettingsSection
 			v-if="!isGuest"
 			id="attachments"
@@ -221,6 +217,8 @@ import NcAppSettingsSection from '@nextcloud/vue/components/NcAppSettingsSection
 import NcAppSettingsShortcutsSection from '@nextcloud/vue/components/NcAppSettingsShortcutsSection'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcFormBox from '@nextcloud/vue/components/NcFormBox'
+import NcFormBoxSwitch from '@nextcloud/vue/components/NcFormBoxSwitch'
 import NcHotkey from '@nextcloud/vue/components/NcHotkey'
 import NcHotkeyList from '@nextcloud/vue/components/NcHotkeyList'
 import NcKbd from '@nextcloud/vue/components/NcKbd'
@@ -258,6 +256,8 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcAppSettingsShortcutsSection,
+		NcFormBox,
+		NcFormBoxSwitch,
 		NcHotkeyList,
 		NcHotkey,
 		NcKbd,
