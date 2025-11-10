@@ -314,6 +314,85 @@ class ChatController {
 	}
 
 	/**
+	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'message'|'until'|'status'}, array{}>
+	 * @throws CannotReachRemoteException
+	 *
+	 * 200: Message was pinned successfully
+	 * 400: Message could not be pinned
+	 * 404: Message was not found
+	 *
+	 * @see \OCA\Talk\Controller\ChatController::pinMessage()
+	 */
+	public function pinMessage(Room $room, Participant $participant, int $messageId, int $pinUntil): DataResponse {
+		$proxy = $this->proxy->post(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/' . $messageId . '/pin',
+			['pinUntil' => $pinUntil]
+		);
+
+		$statusCode = $proxy->getStatusCode();
+		if ($statusCode !== Http::STATUS_OK) {
+			if ($statusCode !== Http::STATUS_NOT_FOUND) {
+				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
+				$data = ['error' => 'status'];
+				return new DataResponse($data, $statusCode);
+			}
+			/** @var array{error: 'message'|'until'|'status'} $data */
+			$data = $this->proxy->getOCSData($proxy, [Http::STATUS_NOT_FOUND, Http::STATUS_BAD_REQUEST]);
+			return new DataResponse($data, $statusCode);
+		}
+
+		/** @var ?TalkChatMessageWithParent $data */
+		$data = $this->proxy->getOCSData($proxy, default: null);
+		if (!empty($data)) {
+			/** @var TalkChatMessageWithParent $data */
+			$data = $this->userConverter->convertMessage($room, $data);
+		}
+
+		return new DataResponse($data, Http::STATUS_OK);
+	}
+
+	/**
+	 * @return DataResponse<Http::STATUS_OK, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'status'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'message'}, array{}>
+	 * @throws CannotReachRemoteException
+	 *
+	 * 200: Message is not pinned now
+	 * 400: Federation request answered with an unknown status code
+	 * 404: Message was not found
+	 *
+	 * @see \OCA\Talk\Controller\ChatController::unpinMessage()
+	 */
+	public function unpinMessage(Room $room, Participant $participant, int $messageId): DataResponse {
+		$proxy = $this->proxy->delete(
+			$participant->getAttendee()->getInvitedCloudId(),
+			$participant->getAttendee()->getAccessToken(),
+			$room->getRemoteServer() . '/ocs/v2.php/apps/spreed/api/v1/chat/' . $room->getRemoteToken() . '/' . $messageId . '/pin',
+		);
+
+		$statusCode = $proxy->getStatusCode();
+		if ($statusCode !== Http::STATUS_OK) {
+			if ($statusCode !== Http::STATUS_NOT_FOUND) {
+				$statusCode = $this->proxy->logUnexpectedStatusCode(__METHOD__, $statusCode);
+				$data = ['error' => 'status'];
+				return new DataResponse($data, $statusCode);
+			}
+			/** @var array{error: 'message'} $data */
+			$data = $this->proxy->getOCSData($proxy, [Http::STATUS_NOT_FOUND]);
+			return new DataResponse($data, Http::STATUS_NOT_FOUND);
+		}
+
+		/** @var ?TalkChatMessageWithParent $data */
+		$data = $this->proxy->getOCSData($proxy, default: null);
+		if (!empty($data)) {
+			/** @var TalkChatMessageWithParent $data */
+			$data = $this->userConverter->convertMessage($room, $data);
+		}
+
+		return new DataResponse($data, Http::STATUS_OK);
+	}
+
+	/**
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED, TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_METHOD_NOT_ALLOWED|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: string}, array{}>
 	 * @throws CannotReachRemoteException
 	 *

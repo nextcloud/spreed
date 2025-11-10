@@ -11269,7 +11269,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "message" | "until";
+                                error: "message" | "until" | "status";
                             };
                         };
                     };
@@ -11286,7 +11286,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "message" | "until";
+                                error: "message" | "until" | "status";
                             };
                         };
                     };
@@ -11324,6 +11324,23 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: components["schemas"]["ChatMessageWithParent"] | null;
+                        };
+                    };
+                };
+            };
+            /** @description Federation request answered with an unknown status code */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "status";
+                            };
                         };
                     };
                 };

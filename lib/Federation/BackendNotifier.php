@@ -532,6 +532,7 @@ class BackendNotifier {
 					ARoomModifiedEvent::PROPERTY_DEFAULT_PERMISSIONS => $room->getDefaultPermissions(),
 					ARoomModifiedEvent::PROPERTY_DESCRIPTION => $room->getDescription(),
 					ARoomModifiedEvent::PROPERTY_IN_CALL => $room->getCallFlag(),
+					ARoomModifiedEvent::PROPERTY_LAST_PINNED_ID => $room->getLastPinnedId(),
 					ARoomModifiedEvent::PROPERTY_MENTION_PERMISSIONS => $room->getMentionPermissions(),
 					ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION => $room->getMessageExpiration(),
 					ARoomModifiedEvent::PROPERTY_NAME => $room->getName(),
