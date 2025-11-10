@@ -102,6 +102,7 @@
     "jsdom": "^27.0.1",
     "openapi-typescript": "^7.10.1",
     "regenerator-runtime": "^0.14.1",
+    "sass-embedded": "^1.93.3",
     "sass-loader": "^16.0.6",
     "stylelint-use-logical": "^2.1.2",
     "typescript": "^5.9.3",
