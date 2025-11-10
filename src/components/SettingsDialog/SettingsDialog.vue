@@ -7,15 +7,13 @@
 	<NcAppSettingsDialog
 		v-model:open="showSettings"
 		:name="t('spreed', 'Talk settings')"
-		show-navigation
-		legacy>
+		show-navigation>
 		<!-- Custom settings sections registered via OCA.Talk.Settings -->
 		<NcAppSettingsSection
 			v-for="{ id, name, element } in customSettingsSections"
 			:id="id"
 			:key="id"
-			:name="name"
-			class="app-settings-section">
+			:name="name">
 			<component :is="element" />
 		</NcAppSettingsSection>
 
@@ -410,51 +408,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .app-settings-section {
-	margin-bottom: 80px;
-
-	&:last-of-type {
-		margin-bottom: 0;
-	}
-
-	&__title {
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-	}
-
-	&__hint {
-		color: var(--color-text-maxcontrast);
-		padding: 8px 0;
-	}
-
 	&__version {
 		margin-inline: var(--form-element-label-offset);
 		color: var(--color-text-maxcontrast);
 	}
-
-	&__wrapper {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
-
-	// Copy-pasted styles from NcInputField
-	&__input {
-		width: 300px;
-		height: var(--default-clickable-area);
-		line-height: var(--default-clickable-area);
-		padding-inline: 12px 6px;
-		border: var(--border-width-input, 2px) solid var(--color-border-maxcontrast);
-		border-radius: var(--border-radius-large);
-		font-size: var(--default-font-size);
-		text-overflow: ellipsis;
-		opacity: 0.7;
-		color: var(--color-main-text);
-		background-color: var(--color-main-background);
-		cursor: pointer;
-	}
 }
-
 </style>
