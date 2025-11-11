@@ -27,7 +27,6 @@ class Version23000Date20251105125333 extends SimpleMigrationStep {
 	 */
 	#[Override]
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
-		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 		if (!$schema->hasTable('talk_scheduled_messages')) {
 			$table = $schema->createTable('talk_scheduled_messages');
@@ -44,19 +43,12 @@ class Version23000Date20251105125333 extends SimpleMigrationStep {
 			$table->addColumn('actor_id', Types::STRING, [
 				'notnull' => true,
 				'length' => 64,
-				'default' => '',
-			]);
-			$table->addColumn('thread_id', Types::BIGINT, [
-				'notnull' => false,
-			]);
-			$table->addColumn('parent_id', Types::BIGINT, [
-				'notnull' => false,
 			]);
 			$table->addColumn('actor_type', Types::STRING, [
 				'notnull' => true,
 				'length' => 64,
 			]);
-			$table->addColumn('message', Types::JSON, [
+			$table->addColumn('message', Types::TEXT, [
 				'notnull' => true,
 				'default' => json_encode([]),
 			]);
@@ -64,15 +56,17 @@ class Version23000Date20251105125333 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 64,
 			]);
-			$table->addColumn('message_parameters', Types::TEXT, [
+			$table->addColumn('meta_data', Types::TEXT, [
 				'notnull' => false,
 			]);
-			$table->addColumn('meta_data', Types::JSON, [
+			$table->addColumn('thread_id', Types::BIGINT, [
+				'notnull' => false,
+			]);
+			$table->addColumn('parent_id', Types::BIGINT, [
 				'notnull' => false,
 			]);
 			$table->addColumn('created_at', Types::DATETIME, [
 				'notnull' => true,
-				'default' => 'CURRENT_DATETIME',
 			]);
 			$table->addColumn('send_at', Types::DATETIME, [
 				'notnull' => false,

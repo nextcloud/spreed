@@ -426,7 +426,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
-		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 		$sendAtDateTime = $this->timeFactory->getDateTime('@' . $sendAt, new \DateTimeZone('UTC'));
 		try {
 			$createThread = $replyTo === 0 && $threadId === Thread::THREAD_NONE && $threadTitle !== '';
@@ -434,28 +433,21 @@ class ChatController extends AEnvironmentAwareOCSController {
 			$scheduledMessage = $this->scheduledMessageManager->scheduleMessage(
 				$this->room,
 				$this->participant,
-				$actorType,
-				$actorId,
 				$message,
 				ChatManager::VERB_MESSAGE,
-				null,
 				$parent,
 				$threadId,
 				$sendAtDateTime,
-				$creationDateTime,
 				$silent
 			);
-
 		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
-		} catch (IRateLimitExceededException) {
-			return new DataResponse(['error' => 'mentions'], Http::STATUS_TOO_MANY_REQUESTS);
 		} catch (\Exception $e) {
 			$this->logger->warning($e->getMessage());
 			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
 
-		return $this->parseCommentToResponse($comment, $parentMessage);
+		return $this->scheduledMessageManager->parseScheduledMessage($message, $parentMessage);
 	}
 
 	/**
