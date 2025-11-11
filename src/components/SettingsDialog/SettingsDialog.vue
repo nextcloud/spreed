@@ -159,7 +159,6 @@ import NcAppSettingsDialog from '@nextcloud/vue/components/NcAppSettingsDialog'
 import NcAppSettingsSection from '@nextcloud/vue/components/NcAppSettingsSection'
 import NcAppSettingsShortcutsSection from '@nextcloud/vue/components/NcAppSettingsShortcutsSection'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcFormBox from '@nextcloud/vue/components/NcFormBox'
 import NcFormBoxButton from '@nextcloud/vue/components/NcFormBoxButton'
 import NcFormBoxSwitch from '@nextcloud/vue/components/NcFormBoxSwitch'
@@ -174,7 +173,6 @@ import { useCustomSettings } from '../../services/SettingsAPI.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useSoundsStore } from '../../stores/sounds.js'
-import { isMac } from '../../utils/browserCheck.ts'
 
 const talkVersion = getTalkVersion()
 
@@ -192,7 +190,6 @@ export default {
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcButton,
-		NcCheckboxRadioSwitch,
 		NcAppSettingsShortcutsSection,
 		NcFormBox,
 		NcFormBoxButton,
@@ -206,12 +203,10 @@ export default {
 		const settingsStore = useSettingsStore()
 		const soundsStore = useSoundsStore()
 		const { customSettingsSections } = useCustomSettings()
-		const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl'
 
 		return {
 			IS_DESKTOP,
 			talkVersion,
-			CmdOrCtrl,
 			settingsStore,
 			soundsStore,
 			supportTypingStatus,
