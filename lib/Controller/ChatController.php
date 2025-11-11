@@ -229,33 +229,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * @template S of Http::STATUS_*
-	 * @param S $statusCode HTTP status code
-	 * @return DataResponse<S, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>
-	 */
-	protected function parseScheduledMessageToResponse(ScheduledMessage $comment, ?Message $parentMessage = null, int $statusCode = Http::STATUS_CREATED): DataResponse {
-		$chatMessage = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
-		$this->messageParser->parseMessage($chatMessage);
-
-		try {
-			$threadId = (int)$comment->getTopmostParentId() ?: (int)$comment->getId();
-			$thread = $this->threadService->findByThreadId($this->room->getId(), $threadId);
-		} catch (DoesNotExistException) {
-			$thread = null;
-		}
-		$data = $chatMessage->toArray($this->getResponseFormat(), $thread);
-		if ($parentMessage instanceof Message) {
-			$data['parent'] = $parentMessage->toArray($this->getResponseFormat(), $thread);
-		}
-
-		$headers = [];
-		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-			$headers = ['X-Chat-Last-Common-Read' => (string)$this->chatManager->getLastCommonReadMessage($this->room)];
-		}
-		return new DataResponse($data, $statusCode, $headers);
-	}
-
-	/**
 	 * Sends a new chat message to the given room
 	 *
 	 * The author and timestamp are automatically set to the current user/guest
