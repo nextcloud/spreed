@@ -174,6 +174,9 @@ import { useActorStore } from '../../stores/actor.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useSoundsStore } from '../../stores/sounds.js'
 
+const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
+const settingsUrl = generateUrl('/settings/user/notifications')
+
 const talkVersion = getTalkVersion()
 
 const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !== undefined
@@ -200,12 +203,15 @@ export default {
 	},
 
 	setup() {
+		const actorStore = useActorStore()
 		const settingsStore = useSettingsStore()
 		const soundsStore = useSoundsStore()
 		const { customSettingsSections } = useCustomSettings()
 
 		return {
 			IS_DESKTOP,
+			disableKeyboardShortcuts,
+			settingsUrl,
 			talkVersion,
 			settingsStore,
 			soundsStore,
@@ -214,7 +220,7 @@ export default {
 			supportStartWithoutMedia,
 			supportConversationsListStyle,
 			supportDefaultBlurVirtualBackground,
-			actorStore: useActorStore(),
+			actorStore,
 		}
 	},
 
@@ -256,14 +262,6 @@ export default {
 
 		conversationsListStyle() {
 			return this.settingsStore.conversationsListStyle !== CONVERSATION.LIST_STYLE.TWO_LINES
-		},
-
-		settingsUrl() {
-			return generateUrl('/settings/user/notifications')
-		},
-
-		disableKeyboardShortcuts() {
-			return OCP.Accessibility.disableKeyboardShortcuts()
 		},
 
 		hideMediaSettings() {
