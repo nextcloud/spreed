@@ -91,21 +91,28 @@ describe('MessageButtonsBar.vue', () => {
 
 	const ComponentStub = {
 		template: '<div><slot /></div>',
+		provide: () => ({
+			[Symbol.for('NcActions:closeMenu')]: () => {},
+		}),
 	}
 
 	/**
 	 * Shared function to mount component
+	 * isActionMenuOpen is passed to render either NcActions (true) / NcButton (false)
 	 */
-	function mountMessageButtonsBar(props) {
+	function mountMessageButtonsBar(props, isActionMenuOpen = false) {
 		return mount(MessageButtonsBar, {
 			global: {
 				plugins: [router, store],
 				stubs: {
-					NcPopover: ComponentStub,
+					NcActions: ComponentStub,
 				},
 				provide: injected,
 			},
-			props,
+			props: {
+				...props,
+				isActionMenuOpen,
+			},
 		})
 	}
 
@@ -155,7 +162,7 @@ describe('MessageButtonsBar.vue', () => {
 
 				messageProps.message.actorId = 'another-user'
 
-				const wrapper = mountMessageButtonsBar(messageProps)
+				const wrapper = mountMessageButtonsBar(messageProps, true)
 
 				const actionButton = findNcActionButton(wrapper, 'Reply privately')
 				expect(actionButton.exists()).toBe(true)
@@ -224,7 +231,7 @@ describe('MessageButtonsBar.vue', () => {
 				useMessageInfoSpy.mockReturnValue({
 					isDeleteable: computed(() => true),
 				})
-				const wrapper = mountMessageButtonsBar(messageProps)
+				const wrapper = mountMessageButtonsBar(messageProps, true)
 
 				const actionButton = findNcActionButton(wrapper, 'Delete')
 				expect(actionButton.exists()).toBe(true)
@@ -240,7 +247,7 @@ describe('MessageButtonsBar.vue', () => {
 			 * @param {boolean} visible Whether or not the delete action is visible
 			 */
 			function testDeleteMessageVisible(visible) {
-				const wrapper = mountMessageButtonsBar(messageProps)
+				const wrapper = mountMessageButtonsBar(messageProps, true)
 
 				const actionButton = findNcActionButton(wrapper, 'Delete')
 				expect(actionButton.exists()).toBe(visible)
@@ -274,7 +281,7 @@ describe('MessageButtonsBar.vue', () => {
 			conversationProps.readOnly = CONVERSATION.STATE.READ_ONLY
 			messageProps.message.actorId = 'another-user'
 
-			const wrapper = mountMessageButtonsBar(messageProps)
+			const wrapper = mountMessageButtonsBar(messageProps, true)
 
 			const actionButton = findNcActionButton(wrapper, 'Mark as unread')
 			expect(actionButton.exists()).toBe(true)
@@ -298,7 +305,7 @@ describe('MessageButtonsBar.vue', () => {
 			conversationProps.readOnly = CONVERSATION.STATE.READ_ONLY
 			messageProps.message.actorId = 'another-user'
 
-			const wrapper = mountMessageButtonsBar(messageProps)
+			const wrapper = mountMessageButtonsBar(messageProps, true)
 
 			Object.assign(navigator, {
 				clipboard: {
@@ -325,7 +332,7 @@ describe('MessageButtonsBar.vue', () => {
 			actionsGetterMock.forEach((action) => integrationsStore.addMessageAction(action))
 			testStoreConfig.modules.messagesStore.getters.message = vi.fn(() => () => messageProps)
 			store = createStore(testStoreConfig)
-			const wrapper = mountMessageButtonsBar(messageProps)
+			const wrapper = mountMessageButtonsBar(messageProps, true)
 
 			const actionButton = findNcActionButton(wrapper, 'first action')
 			expect(actionButton.exists()).toBeTruthy()
