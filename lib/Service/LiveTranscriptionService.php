@@ -151,7 +151,7 @@ class LiveTranscriptionService {
 	public function setLanguage(Room $room, string $languageId): void {
 		$parameters = [
 			'roomToken' => $room->getToken(),
-			'langId' => ! empty($languageId) ? $languageId : 'es',
+			'langId' => $languageId !== '' ? $languageId : 'en',
 		];
 
 		try {
