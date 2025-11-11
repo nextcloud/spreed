@@ -65,7 +65,7 @@
 				<NcFormBoxSwitch
 					:model-value="shouldPlaySounds"
 					:label="t('spreed', 'Play sounds when participants join or leave a call')"
-					:description="t('spreed', 'Currently not available on iPhone and iPad due to technical restrictions by the manufacturer.')"
+					:description="t('spreed', 'Currently not available on iPhone and iPad due to technical restrictions by the manufacturer')"
 					:disabled="playSoundsLoading"
 					@update:model-value="togglePlaySounds" />
 				<NcFormBoxButton
