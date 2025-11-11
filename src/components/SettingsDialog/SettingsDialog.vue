@@ -65,7 +65,7 @@
 				<NcFormBoxSwitch
 					:model-value="shouldPlaySounds"
 					:label="t('spreed', 'Play sounds when participants join or leave a call')"
-					:description="t('spreed', 'Currently not available on iPhone and iPad due to technical restrictions by the manufacturer.')"
+					:description="t('spreed', 'Currently not available on iPhone and iPad due to technical restrictions by the manufacturer')"
 					:disabled="playSoundsLoading"
 					@update:model-value="togglePlaySounds" />
 				<NcFormBoxButton
@@ -159,7 +159,6 @@ import NcAppSettingsDialog from '@nextcloud/vue/components/NcAppSettingsDialog'
 import NcAppSettingsSection from '@nextcloud/vue/components/NcAppSettingsSection'
 import NcAppSettingsShortcutsSection from '@nextcloud/vue/components/NcAppSettingsShortcutsSection'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcFormBox from '@nextcloud/vue/components/NcFormBox'
 import NcFormBoxButton from '@nextcloud/vue/components/NcFormBoxButton'
 import NcFormBoxSwitch from '@nextcloud/vue/components/NcFormBoxSwitch'
@@ -174,7 +173,9 @@ import { useCustomSettings } from '../../services/SettingsAPI.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useSoundsStore } from '../../stores/sounds.js'
-import { isMac } from '../../utils/browserCheck.ts'
+
+const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
+const settingsUrl = generateUrl('/settings/user/notifications')
 
 const talkVersion = getTalkVersion()
 
@@ -192,7 +193,6 @@ export default {
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcButton,
-		NcCheckboxRadioSwitch,
 		NcAppSettingsShortcutsSection,
 		NcFormBox,
 		NcFormBoxButton,
@@ -203,15 +203,16 @@ export default {
 	},
 
 	setup() {
+		const actorStore = useActorStore()
 		const settingsStore = useSettingsStore()
 		const soundsStore = useSoundsStore()
 		const { customSettingsSections } = useCustomSettings()
-		const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl'
 
 		return {
 			IS_DESKTOP,
+			disableKeyboardShortcuts,
+			settingsUrl,
 			talkVersion,
-			CmdOrCtrl,
 			settingsStore,
 			soundsStore,
 			supportTypingStatus,
@@ -219,7 +220,7 @@ export default {
 			supportStartWithoutMedia,
 			supportConversationsListStyle,
 			supportDefaultBlurVirtualBackground,
-			actorStore: useActorStore(),
+			actorStore,
 		}
 	},
 
@@ -261,14 +262,6 @@ export default {
 
 		conversationsListStyle() {
 			return this.settingsStore.conversationsListStyle !== CONVERSATION.LIST_STYLE.TWO_LINES
-		},
-
-		settingsUrl() {
-			return generateUrl('/settings/user/notifications')
-		},
-
-		disableKeyboardShortcuts() {
-			return OCP.Accessibility.disableKeyboardShortcuts()
 		},
 
 		hideMediaSettings() {
