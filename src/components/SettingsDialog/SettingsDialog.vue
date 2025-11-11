@@ -7,250 +7,145 @@
 	<NcAppSettingsDialog
 		v-model:open="showSettings"
 		:name="t('spreed', 'Talk settings')"
-		show-navigation
-		legacy>
+		show-navigation>
 		<!-- Custom settings sections registered via OCA.Talk.Settings -->
 		<NcAppSettingsSection
 			v-for="{ id, name, element } in customSettingsSections"
 			:id="id"
 			:key="id"
-			:name="name"
-			class="app-settings-section">
+			:name="name">
 			<component :is="element" />
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection
 			id="devices"
-			:name="t('spreed', 'Devices')"
-			class="app-settings-section">
+			:name="t('spreed', 'Devices')">
+			<NcFormBox>
+				<NcFormBoxSwitch
+					v-if="supportStartWithoutMedia"
+					:model-value="startWithoutMediaEnabled"
+					:label="t('spreed', 'Turn camera and microphone off by default')"
+					:disabled="mediaLoading"
+					@update:model-value="toggleStartWithoutMedia" />
+				<NcFormBoxSwitch
+					v-if="supportDefaultBlurVirtualBackground"
+					:model-value="settingsStore.blurVirtualBackgroundEnabled"
+					:label="t('spreed', 'Blur camera background by default')"
+					@update:model-value="setBlurVirtualBackgroundEnabled" />
+				<NcFormBoxSwitch
+					v-if="!isGuest"
+					:model-value="hideMediaSettings"
+					:label="t('spreed', 'Skip device preview before joining a call')"
+					:description="t('spreed', 'Always shown if recording consent is required')"
+					@update:model-value="setHideMediaSettings" />
+			</NcFormBox>
+
 			<NcButton
 				variant="secondary"
+				wide
 				@click="openMediaSettings">
 				<template #icon>
 					<IconMicrophoneOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Check devices') }}
 			</NcButton>
-			<NcCheckboxRadioSwitch
-				v-if="supportStartWithoutMedia"
-				:model-value="startWithoutMediaEnabled"
-				:disabled="mediaLoading"
-				type="switch"
-				@update:model-value="toggleStartWithoutMedia">
-				{{ t('spreed', 'Turn off camera and microphone by default when joining a call') }}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch
-				v-if="supportDefaultBlurVirtualBackground"
-				type="switch"
-				:model-value="settingsStore.blurVirtualBackgroundEnabled"
-				@update:model-value="setBlurVirtualBackgroundEnabled">
-				{{ t('spreed', 'Enable blur background by default for all conversations') }}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch
-				v-if="!isGuest"
-				type="switch"
-				:model-value="hideMediaSettings"
-				@update:model-value="setHideMediaSettings">
-				{{ t('spreed', 'Do not show the device preview screen before joining a call') }}
-			</NcCheckboxRadioSwitch>
-			<p class="app-settings-section__hint">
-				{{ t('spreed', 'Preview screen will still be shown if recording consent is required') }}
-			</p>
 		</NcAppSettingsSection>
-		<NcAppSettingsSection
-			v-if="!isGuest"
-			id="attachments"
-			:name="t('spreed', 'Attachments folder')"
-			class="app-settings-section">
-			<em class="app-settings-section__hint">
-				{{ locationHint }}
-			</em>
-			<div class="app-settings-section__wrapper">
-				<p class="app-settings-section__input" @click="showFilePicker">
-					{{ attachmentFolder }}
-				</p>
-				<NcButton
-					variant="primary"
-					@click="showFilePicker">
-					{{ t('spreed', 'Browse …') }}
-				</NcButton>
-			</div>
-		</NcAppSettingsSection>
+
 		<NcAppSettingsSection
 			v-if="!isGuest && supportConversationsListStyle"
 			id="talk_appearance"
-			:name="t('spreed', 'Appearance')"
-			class="app-settings-section">
-			<NcCheckboxRadioSwitch
-				id="conversations_list_style"
+			:name="t('spreed', 'Appearance & Sounds')">
+			<NcFormBoxSwitch
 				:model-value="conversationsListStyle"
+				:label="t('spreed', 'Compact conversations list')"
 				:disabled="appearanceLoading"
-				type="switch"
-				class="checkbox"
-				@update:model-value="toggleConversationsListStyle">
-				{{ t('spreed', 'Show conversations list in compact mode') }}
-			</NcCheckboxRadioSwitch>
+				@update:model-value="toggleConversationsListStyle" />
+
+			<NcFormBox>
+				<NcFormBoxSwitch
+					:model-value="shouldPlaySounds"
+					:label="t('spreed', 'Play sounds when participants join or leave a call')"
+					:description="t('spreed', 'Currently not available on iPhone and iPad due to technical restrictions by the manufacturer.')"
+					:disabled="playSoundsLoading"
+					@update:model-value="togglePlaySounds" />
+				<NcFormBoxButton
+					:label="t('spreed', 'Notification settings')"
+					:description="t('spreed', 'Sounds for chat and call notifications')"
+					:href="settingsUrl"
+					target="_blank" />
+			</NcFormBox>
 		</NcAppSettingsSection>
+
 		<NcAppSettingsSection
 			v-if="!isGuest"
 			id="privacy"
-			:name="t('spreed', 'Privacy')"
-			class="app-settings-section">
-			<NcCheckboxRadioSwitch
-				id="read_status_privacy"
-				:model-value="readStatusPrivacyIsPublic"
-				:disabled="privacyLoading"
-				type="switch"
-				class="checkbox"
-				@update:model-value="toggleReadStatusPrivacy">
-				{{ t('spreed', 'Share my read-status and show the read-status of others') }}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch
-				v-if="supportTypingStatus"
-				id="typing_status_privacy"
-				:model-value="typingStatusPrivacyIsPublic"
-				:disabled="privacyLoading"
-				type="switch"
-				class="checkbox"
-				@update:model-value="toggleTypingStatusPrivacy">
-				{{ t('spreed', 'Share my typing-status and show the typing-status of others') }}
-			</NcCheckboxRadioSwitch>
+			:name="t('spreed', 'Privacy')">
+			<NcFormBox>
+				<NcFormBoxSwitch
+					:model-value="readStatusPrivacyIsPublic"
+					:label="t('spreed', 'Send read receipts')"
+					:description="t('spreed', 'When off, all read statuses will be hidden')"
+					:disabled="privacyLoading"
+					@update:model-value="toggleReadStatusPrivacy" />
+				<NcFormBoxSwitch
+					v-if="supportTypingStatus"
+					:model-value="typingStatusPrivacyIsPublic"
+					:label="t('spreed', 'Share typing status')"
+					:description="t('spreed', 'When off, all typing indicators will be hidden')"
+					:disabled="privacyLoading"
+					@update:model-value="toggleTypingStatusPrivacy" />
+			</NcFormBox>
 		</NcAppSettingsSection>
+
 		<NcAppSettingsSection
-			id="sounds"
-			:name="t('spreed', 'Sounds')"
-			class="app-settings-section">
-			<NcCheckboxRadioSwitch
-				id="play_sounds"
-				:model-value="shouldPlaySounds"
-				:disabled="playSoundsLoading"
-				type="switch"
-				class="checkbox"
-				@update:model-value="togglePlaySounds">
-				{{ t('spreed', 'Play sounds when participants join or leave a call') }}
-			</NcCheckboxRadioSwitch>
-			<em>{{ t('spreed', 'Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
-
-			<a
-				:href="settingsUrl"
-				target="_blank"
-				rel="noreferrer nofollow"
-				class="external">
-				{{ t('spreed', 'Sounds for chat and call notifications can be adjusted in the personal settings.') }} ↗
-			</a>
-		</NcAppSettingsSection>
-		<NcAppSettingsSection
-			id="performance"
-			:name="t('spreed', 'Performance')"
-			class="app-settings-section">
-			<template v-if="serverSupportsBackgroundBlurred">
-				<NcCheckboxRadioSwitch
-					id="blur-call-background"
-					:model-value="isBackgroundBlurred === 'yes'"
-					:indeterminate="isBackgroundBlurred === ''"
-					type="checkbox"
-					class="checkbox"
-					disabled>
-					{{ t('spreed', 'Blur background image in the call (may increase GPU load)') }}
-				</NcCheckboxRadioSwitch>
-				<a
-					:href="themingUrl"
-					target="_blank"
-					rel="noreferrer nofollow"
-					class="external">
-					{{ t('spreed', 'Background blur for Nextcloud instance can be adjusted in the theming settings.') }} ↗
-				</a>
-			</template>
-			<NcCheckboxRadioSwitch
-				v-else
-				id="blur-call-background"
-				:model-value="isBackgroundBlurred !== 'false'"
-				type="switch"
-				class="checkbox"
-				@update:model-value="toggleBackgroundBlurred">
-				{{ t('spreed', 'Blur background image in the call (may increase GPU load)') }}
-			</NcCheckboxRadioSwitch>
-		</NcAppSettingsSection>
-		<NcAppSettingsSection
-			v-if="!disableKeyboardShortcuts"
-			id="shortcuts"
-			:name="t('spreed', 'Keyboard shortcuts')">
-			<em>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</em>
-
-			<dl>
-				<div>
-					<dt><kbd>C</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Focus the chat input') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>Esc</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Unfocus the chat input to use shortcuts') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>{{ CmdOrCtrl }}</kbd> + <kbd>↑</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Edit your last message') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>F</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Fullscreen the chat or call') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>{{ CmdOrCtrl }}</kbd> + <kbd>F</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Search') }}
-					</dd>
-				</div>
-			</dl>
-
-			<h3>{{ t('spreed', 'Shortcuts while in a call') }}</h3>
-			<dl>
-				<div>
-					<dt><kbd>V</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Camera on and off') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>M</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Microphone on and off') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>{{ t('spreed', 'Space bar') }}</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Push to talk or push to mute') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>R</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Raise or lower hand') }}
-					</dd>
-				</div>
-				<div>
-					<dt><kbd>{{ t('spreed', 'Mouse wheel') }}</kbd></dt>
-					<dd class="shortcut-description">
-						{{ t('spreed', 'Zoom-in / zoom-out a screen share') }}
-					</dd>
-				</div>
-			</dl>
+			v-if="!isGuest"
+			id="attachments"
+			:name="t('spreed', 'Files')">
+			<NcFormBoxButton
+				:label="t('spreed', 'Attachments folder')"
+				:description="attachmentFolder"
+				inverted-accent
+				@click="showFilePicker">
+				<template #icon>
+					<IconFolderOpenOutline :size="20" />
+				</template>
+			</NcFormBoxButton>
 		</NcAppSettingsSection>
 
-		<!-- Information about current version used. Talk Desktop has this in 'About' window -->
-		<p
-			v-if="!IS_DESKTOP"
-			class="app-settings-section__version">
-			{{ t('spreed', 'Talk version: {version}', { version: talkVersion }) }}
-		</p>
+		<NcAppSettingsShortcutsSection
+			v-if="!disableKeyboardShortcuts">
+			<NcHotkeyList>
+				<NcHotkey :label="t('spreed', 'Toggle full screen')" hotkey="F" />
+				<NcHotkey :label="t('spreed', 'Return to Home screen')" hotkey="Escape" />
+				<!-- FIXME Overriden by Unified Search -->
+				<NcHotkey :label="t('spreed', 'Search')" hotkey="Control F" />
+			</NcHotkeyList>
+
+			<NcHotkeyList :label="t('spreed', 'Shortcuts while in a chat')">
+				<NcHotkey :label="t('spreed', 'Focus the chat input')" hotkey="C" />
+				<NcHotkey :label="t('spreed', 'Unfocus the chat input to use shortcuts')" hotkey="Escape" />
+				<NcHotkey :label="t('spreed', 'Edit your last message')" hotkey="Control ArrowUp" />
+			</NcHotkeyList>
+
+			<NcHotkeyList :label="t('spreed', 'Shortcuts while in a call')">
+				<NcHotkey :label="t('spreed', 'Camera on and off')" hotkey="V" />
+				<NcHotkey :label="t('spreed', 'Microphone on and off')" hotkey="M" />
+				<NcHotkey :label="t('spreed', 'Raise or lower hand')" hotkey="R" />
+				<NcHotkey :label="t('spreed', 'Push to talk or push to mute')" hotkey="Space" />
+				<NcHotkey :label="t('spreed', 'Zoom-in / zoom-out a screen share')">
+					<template #hotkey>
+						<NcKbd :symbol="t('spreed', 'Mouse wheel')" />
+					</template>
+				</NcHotkey>
+			</NcHotkeyList>
+
+			<!-- Information about current version used. Talk Desktop has this in 'About' window -->
+			<p
+				v-if="!IS_DESKTOP"
+				class="app-settings-section__version">
+				{{ t('spreed', 'Talk version: {version}', { version: talkVersion }) }}
+			</p>
+		</NcAppSettingsShortcutsSection>
 	</NcAppSettingsDialog>
 </template>
 
@@ -258,33 +153,31 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-import { ref } from 'vue'
 import NcAppSettingsDialog from '@nextcloud/vue/components/NcAppSettingsDialog'
 import NcAppSettingsSection from '@nextcloud/vue/components/NcAppSettingsSection'
+import NcAppSettingsShortcutsSection from '@nextcloud/vue/components/NcAppSettingsShortcutsSection'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcFormBox from '@nextcloud/vue/components/NcFormBox'
+import NcFormBoxButton from '@nextcloud/vue/components/NcFormBoxButton'
+import NcFormBoxSwitch from '@nextcloud/vue/components/NcFormBoxSwitch'
+import NcHotkey from '@nextcloud/vue/components/NcHotkey'
+import NcHotkeyList from '@nextcloud/vue/components/NcHotkeyList'
+import NcKbd from '@nextcloud/vue/components/NcKbd'
+import IconFolderOpenOutline from 'vue-material-design-icons/FolderOpenOutline.vue'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import { CONVERSATION, PRIVACY } from '../../constants.ts'
-import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, getTalkVersion } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
-import { setUserConfig } from '../../services/settingsService.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useSoundsStore } from '../../stores/sounds.js'
 import { isMac } from '../../utils/browserCheck.ts'
-import { satisfyVersion } from '../../utils/satisfyVersion.ts'
 
-const serverVersion = loadState('core', 'config', {}).version ?? '29.0.0.0'
 const talkVersion = getTalkVersion()
-const serverSupportsBackgroundBlurred = satisfyVersion(serverVersion, '29.0.4.0')
 
-const isBackgroundBlurredState = serverSupportsBackgroundBlurred
-	? loadState('spreed', 'force_enable_blur_filter', '') // 'yes', 'no', ''
-	: BrowserStorage.getItem('background-blurred') // 'true', 'false', null
 const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !== undefined
 const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
 const supportConversationsListStyle = getTalkConfig('local', 'conversations', 'list-style') !== undefined
@@ -294,18 +187,25 @@ export default {
 	name: 'SettingsDialog',
 
 	components: {
+		IconFolderOpenOutline,
 		IconMicrophoneOutline,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcButton,
 		NcCheckboxRadioSwitch,
+		NcAppSettingsShortcutsSection,
+		NcFormBox,
+		NcFormBoxButton,
+		NcFormBoxSwitch,
+		NcHotkeyList,
+		NcHotkey,
+		NcKbd,
 	},
 
 	setup() {
 		const settingsStore = useSettingsStore()
 		const soundsStore = useSoundsStore()
 		const { customSettingsSections } = useCustomSettings()
-		const isBackgroundBlurred = ref(isBackgroundBlurredState)
 		const CmdOrCtrl = isMac ? 'Cmd' : 'Ctrl'
 
 		return {
@@ -315,8 +215,6 @@ export default {
 			settingsStore,
 			soundsStore,
 			supportTypingStatus,
-			isBackgroundBlurred,
-			serverSupportsBackgroundBlurred,
 			customSettingsSections,
 			supportStartWithoutMedia,
 			supportConversationsListStyle,
@@ -345,10 +243,6 @@ export default {
 			return this.settingsStore.attachmentFolder
 		},
 
-		locationHint() {
-			return t('spreed', 'Choose the folder in which attachments should be saved.')
-		},
-
 		isGuest() {
 			return !this.actorStore.userId
 		},
@@ -373,10 +267,6 @@ export default {
 			return generateUrl('/settings/user/notifications')
 		},
 
-		themingUrl() {
-			return generateUrl('/settings/user/theming')
-		},
-
 		disableKeyboardShortcuts() {
 			return OCP.Accessibility.disableKeyboardShortcuts()
 		},
@@ -384,21 +274,6 @@ export default {
 		hideMediaSettings() {
 			return !this.settingsStore.showMediaSettings
 		},
-	},
-
-	async created() {
-		const blurred = BrowserStorage.getItem('background-blurred')
-		if (serverSupportsBackgroundBlurred) {
-			// Blur is handled by theming app, migrating
-			if (blurred === 'false' && isBackgroundBlurredState === '') {
-				console.debug('Blur was disabled intentionally, propagating last choice to server')
-				await setUserConfig('theming', 'force_enable_blur_filter', 'no')
-			}
-			BrowserStorage.removeItem('background-blurred')
-		} else if (blurred === null) {
-			// Fallback to BrowserStorage
-			BrowserStorage.setItem('background-blurred', 'true')
-		}
 	},
 
 	mounted() {
@@ -415,7 +290,7 @@ export default {
 
 		async showFilePicker() {
 			const filePicker = getFilePickerBuilder(t('spreed', 'Select location for attachments'))
-				.setContainer('.app-settings-section__wrapper')
+				.setContainer('#attachments')
 				.startAt(this.attachmentFolder)
 				.setMultiSelect(false)
 				.allowDirectories(true)
@@ -482,17 +357,6 @@ export default {
 			this.appearanceLoading = false
 		},
 
-		/**
-		 * Fallback method for versions before v29.0.4
-		 *
-		 * @param {boolean} value whether background should be blurred
-		 */
-		toggleBackgroundBlurred(value) {
-			this.isBackgroundBlurred = value.toString()
-			BrowserStorage.setItem('background-blurred', this.isBackgroundBlurred)
-			emit('set-background-blurred', value)
-		},
-
 		async togglePlaySounds() {
 			this.playSoundsLoading = true
 			try {
@@ -544,56 +408,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .app-settings-section {
-	margin-bottom: 80px;
-
-	&.last {
-		margin-bottom: 0;
-	}
-
-	&__title {
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-	}
-
-	&__hint {
-		color: var(--color-text-maxcontrast);
-		padding: 8px 0;
-	}
-
 	&__version {
-		margin-block-end: calc(2 * var(--default-grid-baseline));
-		text-align: center;
+		margin-inline: var(--form-element-label-offset);
 		color: var(--color-text-maxcontrast);
-	}
-
-	&__wrapper {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
-
-	// Copy-pasted styles from NcInputField
-	&__input {
-		width: 300px;
-		height: var(--default-clickable-area);
-		line-height: var(--default-clickable-area);
-		padding-inline: 12px 6px;
-		border: var(--border-width-input, 2px) solid var(--color-border-maxcontrast);
-		border-radius: var(--border-radius-large);
-		font-size: var(--default-font-size);
-		text-overflow: ellipsis;
-		opacity: 0.7;
-		color: var(--color-main-text);
-		background-color: var(--color-main-background);
-		cursor: pointer;
-	}
-
-	.shortcut-description {
-		width: calc(100% - 160px);
 	}
 }
-
 </style>
