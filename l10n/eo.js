@@ -322,6 +322,7 @@ OC.L10N.register(
     "Upload" : "Alŝuti",
     "Files" : "Dosieroj",
     "Reply" : "Respondi",
+    "More actions" : "Pliaj agoj",
     "Translate" : "Traduku",
     "Dismiss" : "Preterpasi",
     "Contact" : "Kontakto",
@@ -335,10 +336,7 @@ OC.L10N.register(
     "Chat" : "Babili",
     "Details" : "Detaloj",
     "Privacy" : "Privateco",
-    "Performance" : "Rendimento",
-    "Keyboard shortcuts" : "Fulmoklavoj",
     "Search" : "Serĉi",
-    "More actions" : "Pliaj agoj",
     "Keep" : "Konservi",
     "Select a region" : "Elekti regionon",
     "Submit" : "Sendi",
@@ -361,6 +359,8 @@ OC.L10N.register(
     "Tasks" : "Taskoj",
     "Today" : "Hodiaŭ",
     "Yesterday" : "Hieraŭ",
-    "_%n day ago_::_%n days ago_" : ["antaŭ %n tago","antaŭ %n tagoj"]
+    "_%n day ago_::_%n days ago_" : ["antaŭ %n tago","antaŭ %n tagoj"],
+    "Performance" : "Rendimento",
+    "Keyboard shortcuts" : "Fulmoklavoj"
 },
 "nplurals=2; plural=(n != 1);");

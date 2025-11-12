@@ -311,7 +311,6 @@ OC.L10N.register(
     "Chat" : "Klets",
     "Details" : "Besonderhede",
     "Privacy" : "Privaatheid",
-    "Keyboard shortcuts" : "Sneltoetse",
     "Search" : "Soek",
     "Keep" : "Hou",
     "Select a region" : "Kies ’n streek",
@@ -335,6 +334,7 @@ OC.L10N.register(
     "__language_name__" : "Afrikaans",
     "Tasks" : "Take",
     "Today" : "Vandag",
-    "Yesterday" : "Gister"
+    "Yesterday" : "Gister",
+    "Keyboard shortcuts" : "Sneltoetse"
 },
 "nplurals=2; plural=(n != 1);");

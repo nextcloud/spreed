@@ -109,9 +109,8 @@ OC.L10N.register(
     "Open chat" : "Start lynmelding",
     "Chat" : "Lynmelding",
     "Details" : "Detaljar",
-    "Appearance" : "Utsjånad",
+    "Notification settings" : "Varsel innstillingar",
     "Privacy" : "Personvern",
-    "Keyboard shortcuts" : "Tastatursnarvegar",
     "Search" : "Search",
     "Join a conversation or start a new one" : "Delta i ein samtale eller start ein ny ein",
     "User" : "Bruker",
@@ -129,6 +128,8 @@ OC.L10N.register(
     "Tasks" : "Oppgåver",
     "Today" : "I dag",
     "Yesterday" : "i går",
-    "_%n day ago_::_%n days ago_" : ["%n dag sidan","%n dagar sidan"]
+    "_%n day ago_::_%n days ago_" : ["%n dag sidan","%n dagar sidan"],
+    "Appearance" : "Utsjånad",
+    "Keyboard shortcuts" : "Tastatursnarvegar"
 },
 "nplurals=2; plural=(n != 1);");

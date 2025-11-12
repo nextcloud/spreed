@@ -320,6 +320,7 @@
     "Upload" : "Alŝuti",
     "Files" : "Dosieroj",
     "Reply" : "Respondi",
+    "More actions" : "Pliaj agoj",
     "Translate" : "Traduku",
     "Dismiss" : "Preterpasi",
     "Contact" : "Kontakto",
@@ -333,10 +334,7 @@
     "Chat" : "Babili",
     "Details" : "Detaloj",
     "Privacy" : "Privateco",
-    "Performance" : "Rendimento",
-    "Keyboard shortcuts" : "Fulmoklavoj",
     "Search" : "Serĉi",
-    "More actions" : "Pliaj agoj",
     "Keep" : "Konservi",
     "Select a region" : "Elekti regionon",
     "Submit" : "Sendi",
@@ -359,6 +357,8 @@
     "Tasks" : "Taskoj",
     "Today" : "Hodiaŭ",
     "Yesterday" : "Hieraŭ",
-    "_%n day ago_::_%n days ago_" : ["antaŭ %n tago","antaŭ %n tagoj"]
+    "_%n day ago_::_%n days ago_" : ["antaŭ %n tago","antaŭ %n tagoj"],
+    "Performance" : "Rendimento",
+    "Keyboard shortcuts" : "Fulmoklavoj"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
