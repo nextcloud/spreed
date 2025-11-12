@@ -33,12 +33,11 @@ class Version23000Date20251105125333 extends SimpleMigrationStep {
 			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
-				'length' => 11,
-				'unsigned' => true,
+				'length' => 20,
 			]);
-			$table->addColumn('room_token', Types::STRING, [
+			$table->addColumn('room_id', Types::BIGINT, [
 				'notnull' => true,
-				'length' => 64,
+				'length' => 20,
 			]);
 			$table->addColumn('actor_id', Types::STRING, [
 				'notnull' => true,
@@ -49,8 +48,8 @@ class Version23000Date20251105125333 extends SimpleMigrationStep {
 				'length' => 64,
 			]);
 			$table->addColumn('message', Types::TEXT, [
-				'notnull' => true,
-				'default' => json_encode([]),
+				'notnull' => false,
+				'default' => '',
 			]);
 			$table->addColumn('message_type', Types::STRING, [
 				'notnull' => true,

@@ -563,8 +563,21 @@ namespace OCA\Talk;
  *     },
  * }
  *
- * @psalm-type TalkScheduledMessage = array {
- *
+ * @psalm-type TalkScheduledMessage = array{
+ *     	id: int,
+ * 	   	roomId: int,
+ *     	actorId: string,
+ * 		actorType: string,
+ * 		threadId: ?int,
+ *      threadExists?: boolean,
+ *      threadTitle?: string,
+ *      parentId: ?int,
+ * 		parent?: TalkChatMessage,
+ * 		message: string,
+ * 		messageType: string,
+ * 		createdAt: int,
+ * 		sendAt: ?int,
+ * 		metaData: array{},
  * }
  */
 class ResponseDefinitions {

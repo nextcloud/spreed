@@ -6,8 +6,9 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Talk\Chat;
+namespace OCA\Talk\Service;
 
+use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Exceptions\MessagingNotAllowedException;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\ScheduledMessage;
@@ -15,11 +16,6 @@ use OCA\Talk\Model\ScheduledMessageMapper;
 use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
-use OCA\Talk\Service\AttachmentService;
-use OCA\Talk\Service\ParticipantService;
-use OCA\Talk\Service\PollService;
-use OCA\Talk\Service\RoomService;
-use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -35,7 +31,7 @@ use OCP\Security\RateLimiting\ILimiter;
 use OCP\Share\IManager;
 use Psr\Log\LoggerInterface;
 
-class ScheduledMessageManager {
+class ScheduledMessageService {
 	public const MAX_CHAT_LENGTH = 32000;
 
 	public function __construct(
@@ -68,7 +64,7 @@ class ScheduledMessageManager {
 		?IComment $parent,
 		int $threadId,
 		\DateTime $sendAt,
-		bool $silent,
+		array $metadata = [],
 	): ScheduledMessage {
 		if ($chat->isFederatedConversation()) {
 			$e = new MessagingNotAllowedException();
@@ -77,7 +73,7 @@ class ScheduledMessageManager {
 		}
 
 		$scheduledMessage = new ScheduledMessage();
-		$scheduledMessage->setRoomToken($chat->getToken());
+		$scheduledMessage->setRoomId($chat->getId());
 		$scheduledMessage->setActorId($participant->getAttendee()->getActorId());
 		$scheduledMessage->setActorType($participant->getAttendee()->getActorType());
 		$scheduledMessage->setSendAt($sendAt);
@@ -90,20 +86,9 @@ class ScheduledMessageManager {
 			$threadId = (int)$parent->getTopmostParentId() ?: (int)$parent->getId();
 			$threadId = $this->threadService->validateThread($chat->getId(), $threadId) ? $threadId : Thread::THREAD_NONE;
 			$scheduledMessage->setThreadId($threadId);
-		} elseif ($threadId !== Thread::THREAD_NONE && $threadId !== Thread::THREAD_CREATE) {
-			$scheduledMessage->setParentId($threadId);
 		}
 
-		$metadata = [];
-		if ($silent) {
-			$metadata[Message::METADATA_SILENT] = true;
-		}
-		if ($chat->getMentionPermissions() === Room::MENTION_PERMISSIONS_EVERYONE || $participant?->hasModeratorPermissions()) {
-			$metadata[Message::METADATA_CAN_MENTION_ALL] = true;
-		}
-		if ($threadId !== Thread::THREAD_NONE) {
-			$metadata[Message::METADATA_THREAD_ID] = $threadId;
-		}
+		$metadata[Message::METADATA_THREAD_ID] = $threadId;
 		$scheduledMessage->setMetaData($metadata);
 
 		try {
@@ -121,7 +106,12 @@ class ScheduledMessageManager {
 	 * @return int
 	 */
 	public function deleteMessage(Room $chat, int $id, Participant $participant): int {
-		return $this->scheduledMessageMapper->deleteMessage($chat, $id, $participant->getAttendee()->getActorId());
+		return $this->scheduledMessageMapper->deleteById(
+			$chat,
+			$id,
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId()
+		);
 	}
 
 	/**
@@ -141,7 +131,12 @@ class ScheduledMessageManager {
 		}
 
 		try {
-			$message = $this->scheduledMessageMapper->findById($chat, $id);
+			$message = $this->scheduledMessageMapper->findById(
+				$chat,
+				$id,
+				$participant->getAttendee()->getActorType(),
+				$participant->getAttendee()->getActorId()
+			);
 		} catch (DoesNotExistException $e) {
 			$this->logger->error('Attempt to edit scheduled message failed, message could not be found', ['exception' => $e]);
 			throw $e;
@@ -151,29 +146,49 @@ class ScheduledMessageManager {
 		$metaData[Message::METADATA_LAST_EDITED_TIME] = $this->timeFactory->getTime();
 		$metaData[Message::METADATA_SILENT] = $isSilent;
 		$message->setMetaData($metaData);
-		$message->setMessage($text, self::MAX_CHAT_LENGTH);
+		$message->setMessage($text);
 		$this->scheduledMessageMapper->update($message);
-
-		$this->referenceManager->invalidateCache($chat->getToken());
 
 		return $message;
 	}
 
-	public function deleteMessages(Room $chat, Participant $participant): void {
-		$this->scheduledMessageMapper->deleteMessagesForActor($chat, $participant->getAttendee()->getActorId());
+	public function deleteByActor(string $actorType, string $actorId): void {
+		$this->scheduledMessageMapper->deleteByActor($actorType, $actorId);
 	}
 
 	/**
 	 * @return list<ScheduledMessage>
 	 */
 	public function getMessages(Room $chat, Participant $participant): array {
-		return $this->scheduledMessageMapper->findByRoomAndActor($chat, $participant->getAttendee()->getActorId());
+		return $this->scheduledMessageMapper->findByRoomAndActor(
+			$chat,
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId()
+		);
 	}
 
 	public function getMessage(Room $chat, int $id, Participant $participant): ScheduledMessage {
-		return $this->scheduledMessageMapper->findById($chat, $id, $participant->getAttendee()->getActorId());
+		return $this->scheduledMessageMapper->findById(
+			$chat,
+			$id,
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId()
+		);
 	}
 
-	public function parseScheduledMessage(string $message, ?Message $parentMessage) {
+	public function parseScheduledMessage(ScheduledMessage $message, ?Message $parentMessage): array {
+		$threadId = $message->getThreadId();
+		if ($threadId !== Thread::THREAD_NONE && $threadId !== Thread::THREAD_CREATE) {
+			try {
+				$thread = $this->threadService->findByThreadId(
+					$message->getRoomId(),
+					$threadId
+				);
+			} catch (DoesNotExistException $e) {
+				$this->logger->warning("Could not find thread $threadId for scheduled message", ['exception' => $e]);
+				$thread = null;
+			}
+		}
+		return $message->toArray($parentMessage, $thread ?? null);
 	}
 }

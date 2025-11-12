@@ -36,7 +36,7 @@ class ScheduledMessageMapper extends QBMapper {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function findById(Room $chat, int $id, string $actorId): ScheduledMessage {
+	public function findById(Room $chat, int $id, string $actorType, string $actorId): ScheduledMessage {
 		if (!$chat->isFederatedConversation()) {
 			throw new InvalidRoomException('Can not call ProxyCacheMessageMapper::findById() with a non-federated chat.');
 		}
@@ -45,18 +45,17 @@ class ScheduledMessageMapper extends QBMapper {
 		$query->select('*')
 			->from($this->getTableName())
 			->where($query->expr()->eq('id', $query->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)))
-			->andWhere($query->expr()->eq('room_token', $query->createNamedParameter($chat->getToken(), IQueryBuilder::PARAM_STR)));
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR)));
 
 		return $this->findEntity($query);
 	}
 
 	/**
-	 * @param Room $chat
-	 * @param string $actorId
 	 * @return list<ScheduledMessage>
 	 */
-	public function findByRoomAndActor(Room $chat, string $actorId): array {
+	public function findByRoomAndActor(Room $chat, string $actorType, string $actorId): array {
 		if (!$chat->isFederatedConversation()) {
 			throw new InvalidRoomException('Can not call ProxyCacheMessageMapper::findById() with a non-federated chat.');
 		}
@@ -64,28 +63,56 @@ class ScheduledMessageMapper extends QBMapper {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->eq('room_token', $query->createNamedParameter($chat->getToken(), IQueryBuilder::PARAM_STR)))
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR)))
+			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)));
 
 		return $this->findEntities($query);
 	}
 
-	public function deleteMessagesForRoomAndActor(Room $chat, string $actorId): int {
+	public function deleteMessagesByRoomAndActor(Room $chat, string $actorType, string $actorId): int {
 		$query = $this->db->getQueryBuilder();
 		$query->delete($this->getTableName())
-			->where($query->expr()->eq('room_token', $query->createNamedParameter($chat->getToken(), IQueryBuilder::PARAM_STR)))
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR)))
+			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)));
 
 		return $query->executeStatement();
 	}
 
-	public function deleteById(Room $chat, int $id, string $actorId): int {
+	public function deleteMessagesByRoom(Room $chat): int {
 		$query = $this->db->getQueryBuilder();
 		$query->delete($this->getTableName())
-			->where($query->expr()->eq('room_token', $query->createNamedParameter($chat->getToken(), IQueryBuilder::PARAM_STR)))
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR)));
+		return $query->executeStatement();
+	}
+
+	public function deleteById(Room $chat, int $id, string $actorType, string $actorId): int {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('id', $query->createNamedParameter($id, IQueryBuilder::PARAM_STR)))
+			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)));
 
 		return $query->executeStatement();
+	}
+
+	public function deleteByActor(string $actorType, string $actorId) {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
+			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)));
+
+		return $query->executeStatement();
+	}
+
+	public function getMessagesDue(\DateTime $dateTime): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->lt('send_at', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE)));
+
+		return $this->findEntities($query);
 	}
 }

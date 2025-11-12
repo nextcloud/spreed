@@ -15,7 +15,6 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Chat\ReactionManager;
-use OCA\Talk\Chat\ScheduledMessageManager;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ChatSummaryException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -36,7 +35,6 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Reminder;
-use OCA\Talk\Model\ScheduledMessage;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
@@ -49,6 +47,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\RoomFormatter;
+use OCA\Talk\Service\ScheduledMessageService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\Helper\Preloader;
@@ -137,7 +136,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		protected ITaskProcessingManager $taskProcessingManager,
 		protected IAppConfig $appConfig,
 		protected LoggerInterface $logger,
-		protected ScheduledMessageManager $scheduledMessageManager,
+		protected ScheduledMessageService $scheduledMessageManager,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -336,14 +335,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * Sends a new chat message to the given room
+	 * Schedules the sending of a new chat message to the given room
 	 *
-	 * The author and timestamp are automatically set to the current user/guest
+	 * The author and timestamp are automatically set to the current user
 	 * and time.
 	 *
 	 * @param string $message the message to send
-	 * @param string $actorDisplayName for guests
-	 * @param string $referenceId for the message to be able to later identify it again
 	 * @param int $replyTo Parent id which this message is a reply to
 	 * @psalm-param non-negative-int $replyTo
 	 * @param bool $silent If sent silent the chat message will not create any notifications
@@ -364,7 +361,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function scheduleMessage(string $message, int $sendAt, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, bool $silent = false, string $threadTitle = '', int $threadId = 0): DataResponse {
+	public function scheduleMessage(string $message, int $sendAt, int $replyTo = 0, bool $silent = false, string $threadTitle = '', int $threadId = 0): DataResponse {
+		if ($this->room->getType() !== Room::TYPE_GROUP || $this->room->getType() !== Room::TYPE_ONE_TO_ONE) {
+			return new DataResponse(['error' => 'roomType'], Http::STATUS_BAD_REQUEST);
+		}
+
 		if (trim($message) === '') {
 			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
@@ -373,8 +374,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'sendAt'], Http::STATUS_BAD_REQUEST);
 		}
 
-		[$actorType, $actorId] = $this->getActorInfo($actorDisplayName);
-		if (!$actorId) {
+		if ($this->participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
 			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
 		}
 
@@ -398,8 +398,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
+		$this->participantService->ensureOneToOneRoomIsFilled($this->room); // needed?
 		$sendAtDateTime = $this->timeFactory->getDateTime('@' . $sendAt, new \DateTimeZone('UTC'));
+
 		try {
 			$createThread = $replyTo === 0 && $threadId === Thread::THREAD_NONE && $threadTitle !== '';
 			$threadId = $createThread ? Thread::THREAD_CREATE : $threadId;
@@ -411,7 +412,10 @@ class ChatController extends AEnvironmentAwareOCSController {
 				$parent,
 				$threadId,
 				$sendAtDateTime,
-				$silent
+				[
+					Message::METADATA_THREAD_TITLE => $threadTitle,
+					Message::METADATA_SILENT => $silent
+				]
 			);
 		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
@@ -420,7 +424,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
 
-		return $this->scheduledMessageManager->parseScheduledMessage($message, $parentMessage);
+		$data = $this->scheduledMessageManager->parseScheduledMessage($scheduledMessage, $parentMessage);
+		return new DataResponse($data, Http::STATUS_CREATED);
 	}
 
 	/**

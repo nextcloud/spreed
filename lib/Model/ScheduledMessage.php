@@ -10,13 +10,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Model;
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 use OCP\Comments\MessageTooLongException;
 use OCP\DB\Types;
 
 /**
- * @method void setRoomToken(string $localToken)
- * @method string getRoomToken()
+ * @method void setRoomId(int $roomId)
+ * @method int getRoomId()
  * @method void setActorId(string $actorId)
  * @method string getActorId()
  * @method void setActorType(string $actorType)
@@ -31,9 +32,11 @@ use OCP\DB\Types;
  * @method \DateTime getCreatedAt()
  * @method void setSendAt(?\DateTime $sendAt)
  * @method \DateTime|null getSendAt(),
+ *
+ * @psalm-import-type TalkScheduledMessage from ResponseDefinitions
  */
 class ScheduledMessage extends Entity implements \JsonSerializable {
-	protected string $roomToken = '';
+	protected int $roomId = 0;
 	protected string $actorId = '';
 	protected string $actorType = '';
 	protected ?int $threadId = null;
@@ -45,7 +48,7 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 	protected ?\DateTime $sendAt = null;
 
 	public function __construct() {
-		$this->addType('room_token', Types::STRING);
+		$this->addType('room_id', Types::INTEGER);
 		$this->addType('actorId', Types::STRING);
 		$this->addType('actorType', Types::STRING);
 		$this->addType('threadId', Types::INTEGER);
@@ -77,7 +80,7 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 	#[\Override]
 	public function jsonSerialize(): array {
 		return [
-			'room_token' => $this->getRoomToken(),
+			'roomId' => $this->getRoomId(),
 			'actorId' => $this->getActorId(),
 			'actorType' => $this->getActorType(),
 			'threadId' => $this->getThreadId(),
@@ -88,5 +91,39 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 			'sendAt' => $this->getSendAt()?->getTimestamp(),
 			'metaData' => $this->getMetaData(),
 		];
+	}
+
+	/**
+	 * @return TalkScheduledMessage
+	 */
+	public function toArray(?Message $parent, ?Thread $thread) : array {
+		$data = [
+			'id' => $this->id,
+			'roomId' => $this->getRoomId(),
+			'actorId' => $this->getActorId(),
+			'actorType' => $this->getActorType(),
+			'threadId' => $this->getThreadId(),
+			'parentId' => $this->getParentId(),
+			'message' => $this->getMessage(),
+			'messageType' => $this->getMessageType(),
+			'createdAt' => $this->getCreatedAt()->getTimestamp(),
+			'sendAt' => $this->getSendAt()?->getTimestamp(),
+		];
+		$metaData = $this->getMetaData();
+		$data['metaData'] = $metaData;
+		if ($parent !== null && $thread !== null) {
+			$data['parent'] = $parent->toArray('json', $thread);
+			// can't have both a thread and a parent
+			return $data;
+		}
+
+		if ($thread !== null) {
+			$data['threadExists'] = true;
+			$data['threadTitle'] = $thread->getName();
+		} elseif (isset($metaData[Message::METADATA_THREAD_TITLE]) && $this->getThreadId() === Thread::THREAD_CREATE) {
+			$data['threadExists'] = false;
+			$data['threadTitle'] = $metaData[Message::METADATA_THREAD_TITLE];
+		}
+		return $data;
 	}
 }
