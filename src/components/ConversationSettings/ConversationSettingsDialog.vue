@@ -36,7 +36,7 @@
 				<MentionsSettings v-if="!isNoteToSelf && !isOneToOne" :token="token" :can-moderate="canFullModerate" />
 				<LinkShareSettings v-if="!isNoteToSelf" :token="token" :can-moderate="canFullModerate" />
 				<RecordingConsentSettings v-if="!isNoteToSelf && !isOneToOneFormer && recordingConsentAvailable" :token="token" :can-moderate="selfIsOwnerOrModerator" />
-				<ExpirationSettings v-if="!isOneToOneFormer" :token="token" :can-moderate="selfIsOwnerOrModerator" />
+				<ExpirationSettings v-if="!isOneToOneFormer && hasMessageExpirationFeature" :token="token" :can-moderate="selfIsOwnerOrModerator" />
 				<BanSettings v-if="supportBanV1 && canFullModerate" :token="token" />
 			</NcAppSettingsSection>
 
@@ -280,6 +280,10 @@ export default {
 
 		recordingConsentRequired() {
 			return this.conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED
+		},
+
+		hasMessageExpirationFeature() {
+			return hasTalkFeature(this.token, 'message-expiration')
 		},
 	},
 
