@@ -326,6 +326,7 @@ OC.L10N.register(
     "Upload" : "Yuklash",
     "Files" : "Fayllar",
     "Reply" : "Javob bering",
+    "More actions" : "Ko'proq harakatlar",
     "Translate" : "Tarjima",
     "Dismiss" : "Dismiss",
     "Contact" : "Aloqa",
@@ -344,10 +345,8 @@ OC.L10N.register(
     "Load more results" : "Ko'proq natijalarni yuklang",
     "Projects" : "Loyihalar",
     "Select conversation" : "Suhbatni tanlang",
-    "Appearance" : "Tashqi ko'rinish",
-    "Keyboard shortcuts" : "Klaviatura yorliqlari",
+    "Notification settings" : "Bildirishnoma sozlamalari",
     "Search" : "Qidirish",
-    "More actions" : "Ko'proq harakatlar",
     "Select a region" : "Hududni tanlang",
     "Submit" : "Submit",
     "Password" : "Password",
@@ -367,6 +366,8 @@ OC.L10N.register(
     "Notes" : "Eslatmalar",
     "Reports" : "Hisobotlar",
     "Today" : "Today",
-    "Yesterday" : "Kecha"
+    "Yesterday" : "Kecha",
+    "Appearance" : "Tashqi ko'rinish",
+    "Keyboard shortcuts" : "Klaviatura yorliqlari"
 },
 "nplurals=1; plural=0;");

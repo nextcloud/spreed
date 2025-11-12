@@ -88,9 +88,7 @@ OC.L10N.register(
     "Chat" : "แชท",
     "Details" : "รายละเอียด",
     "Load more results" : "โหลดผลลัพธ์เพิ่มเติม",
-    "Appearance" : "ลักษณะที่ปรากฏ",
     "Privacy" : "ความเป็นส่วนตัว",
-    "Keyboard shortcuts" : "แป้นพิมพ์ลัด",
     "Search" : "ค้นหา",
     "Keep" : "เก็บ",
     "Submit" : "ส่ง",
@@ -116,6 +114,8 @@ OC.L10N.register(
     "Notes" : "โน้ต",
     "Today" : "วันนี้",
     "Yesterday" : "เมื่อวาน",
-    "_%n day ago_::_%n days ago_" : ["%n วันที่ผ่านมา"]
+    "_%n day ago_::_%n days ago_" : ["%n วันที่ผ่านมา"],
+    "Appearance" : "ลักษณะที่ปรากฏ",
+    "Keyboard shortcuts" : "แป้นพิมพ์ลัด"
 },
 "nplurals=1; plural=0;");

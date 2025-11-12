@@ -109,8 +109,8 @@ OC.L10N.register(
     "Chat" : "Chat",
     "Details" : "Detalles",
     "Load more results" : "Cargar más resultados",
+    "Notification settings" : "Configuración de las notificaciones",
     "Privacy" : "Privacidad",
-    "Keyboard shortcuts" : "Atajos de teclado",
     "Search" : "Buscar",
     "Screensharing requires the page to be loaded through HTTPS." : "Compartir pantalla requiere que la página se cargue a través de HTTPS.",
     "An error occurred while starting screensharing." : "Se presentó un error al comenzar a compartir la pantalla. ",
@@ -148,6 +148,7 @@ OC.L10N.register(
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
+    "Keyboard shortcuts" : "Atajos de teclado",
     "Sharing your screen only works with Firefox version 52 or newer." : "Compartir la pantalla sólo funciona con Firefox versión 52 o superior. ",
     "Screensharing extension is required to share your screen." : "Se requiere de la extenisón de compartir pantalla para compartir su pantalla. ",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Favor de usar un navegador diferente como Firefox o Chrome para compartir su pantalla."
