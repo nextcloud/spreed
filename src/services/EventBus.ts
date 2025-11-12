@@ -21,6 +21,7 @@ import mitt from 'mitt'
 export type Events = {
 	[key: EventType]: unknown
 	'audio-player-ended': number
+	'signaling-message-received': { token: string, message: ChatMessage }
 	'conversations-received': { singleConversation?: Conversation, fromBrowserStorage?: boolean }
 	'session-conflict-confirmation': string
 	'deleted-session-detected': void
@@ -53,6 +54,7 @@ export type Events = {
 	'signaling-users-joined': [StandaloneSignalingJoinSession[]]
 	'signaling-users-left': [string[]]
 	'signaling-all-users-changed-in-call-to-disconnected': void
+	'signaling-supported-features': string[]
 	'smart-picker-open': void
 	'switch-to-conversation': { token: string }
 	'talk:poll-added': { token: string, message: ChatMessage }
