@@ -345,11 +345,9 @@ OC.L10N.register(
     "Load more results" : "Muat lebih banyak hasil",
     "Projects" : "Proyek",
     "Search conversations or users" : "Cari percakapan atau pengguna",
-    "Attachments folder" : "Folder lampiran",
-    "Appearance" : "Tampilan",
+    "Notification settings" : "Pengaturan notifikasi",
     "Privacy" : "Privasi",
-    "Performance" : "Performa",
-    "Keyboard shortcuts" : "Pintasan keyboard",
+    "Attachments folder" : "Folder lampiran",
     "Search" : "Cari",
     "Keep" : "Simpan",
     "Join a conversation or start a new one!" : "Gabung dengan percakapan atau mulai yang baru!",
@@ -382,6 +380,9 @@ OC.L10N.register(
     "Today" : "Hari ini",
     "Yesterday" : "Kemarin",
     "_%n day ago_::_%n days ago_" : ["%n hari yang lalu"],
-    "Choose devices" : "Pilih perangkat"
+    "Choose devices" : "Pilih perangkat",
+    "Appearance" : "Tampilan",
+    "Performance" : "Performa",
+    "Keyboard shortcuts" : "Pintasan keyboard"
 },
 "nplurals=1; plural=0;");
