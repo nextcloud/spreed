@@ -1152,6 +1152,7 @@ OC.L10N.register(
     "Sounds setting saved" : "Настройката за звуци е запазена",
     "Error while saving sounds setting" : "Грешка при запазване на настройката за звуци",
     "Play sounds when participants join or leave a call" : "Възпроизвеждане на звуци, когато участниците се присъединят или напуснат разговор",
+    "Notification settings" : "Настройки на известие",
     "Privacy" : "Поверителност",
     "Attachments folder" : "Папка с прикачени файлове",
     "Search" : "Търсене",
