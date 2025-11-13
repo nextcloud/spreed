@@ -97,7 +97,29 @@ export default class VideoStreamBackgroundEffect {
 			 * Checks inside, if SIMD is supported to load the appropriate fileset
 			 */
 			if (!_WasmFileset) {
-				_WasmFileset = await FilesetResolver.forVisionTasks(generateFilePath('spreed', '', 'js'))
+				if (await FilesetResolver.isSimdSupported()) {
+					_WasmFileset = {
+						wasmLoaderPath: new URL(
+							'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_internal.js',
+							import.meta.url,
+						).pathname,
+						wasmBinaryPath: new URL(
+							'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_internal.wasm',
+							import.meta.url,
+						).pathname,
+					}
+				} else {
+					_WasmFileset = {
+						wasmLoaderPath: new URL(
+							'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_nosimd_internal.js',
+							import.meta.url,
+						).pathname,
+						wasmBinaryPath: new URL(
+							'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_nosimd_internal.wasm',
+							import.meta.url,
+						).pathname,
+					}
+				}
 			}
 
 			/**
@@ -105,7 +127,10 @@ export default class VideoStreamBackgroundEffect {
 			 */
 			this._imageSegmenter = await ImageSegmenter.createFromOptions(_WasmFileset, {
 				baseOptions: {
-					modelAssetPath: generateFilePath('spreed', 'js', 'selfie_segmenter.tflite'),
+					modelAssetPath: new URL(
+						'./vendor/models/selfie_segmenter.tflite',
+						import.meta.url,
+					).pathname,
 					delegate: 'GPU',
 				},
 				runningMode: 'VIDEO',
