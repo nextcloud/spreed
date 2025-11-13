@@ -826,6 +826,7 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Nun se pue guardar la configuración de los soníos",
     "Sounds setting saved" : "Guardóse la configuración de los soníos",
     "Error while saving sounds setting" : "Hebo un error mentanto se guardaba la configuración de soníu",
+    "Notification settings" : "Configuración de los avisos",
     "Privacy" : "Privacidá",
     "Search" : "Buscar",
     "Start call" : "Aniciar la llamada",

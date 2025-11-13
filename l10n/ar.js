@@ -1658,6 +1658,7 @@ OC.L10N.register(
     "Sounds setting saved" : "تم حفظ إعدادات الأصوات ",
     "Error while saving sounds setting" : "حدث خطأ أثناء حفظ إعدادات الأصوات ",
     "Play sounds when participants join or leave a call" : "تشغيل الأصوات عندما انضمام أو مغادرة المشاركون المكالمة",
+    "Notification settings" : "إعدادات الإشعارات",
     "Privacy" : "الخصوصية",
     "Attachments folder" : "مجلد المرفقات",
     "Toggle full screen" : "تبديل إلى ملء الشاشة",
