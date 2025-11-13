@@ -5,7 +5,6 @@
 
 const browserslistConfig = require('@nextcloud/browserslist-config')
 const { defineConfig } = require('@rspack/cli')
-const { CopyRspackPlugin } = require('@rspack/core')
 const { CssExtractRspackPlugin, LightningCssMinimizerRspackPlugin, DefinePlugin, ProgressPlugin, SwcJsMinimizerRspackPlugin } = require('@rspack/core')
 const NodePolyfillPlugin = require('@rspack/plugin-node-polyfill')
 const browserslist = require('browserslist')
@@ -204,20 +203,6 @@ module.exports = defineConfig((env) => {
 				filename: '../css/talk-[name].css',
 				chunkFilename: '../css/chunks/[id].chunk.css',
 				ignoreOrder: true,
-			}),
-
-			// Bundle wasm and tflite files required for virtual background feature
-			new CopyRspackPlugin({
-				patterns: [
-					{
-						from: path.resolve(__dirname, 'node_modules', '@mediapipe/tasks-vision', 'wasm'),
-						to: path.resolve(__dirname, 'js'),
-					},
-					{
-						from: path.resolve(__dirname, 'src', 'utils', 'media', 'effects', 'virtual-background', 'vendor', 'models', 'selfie_segmenter.tflite'),
-						to: path.resolve(__dirname, 'js'),
-					},
-				],
 			}),
 		],
 
