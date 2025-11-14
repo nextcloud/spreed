@@ -288,7 +288,7 @@ class RoomFormatter {
 			} else {
 				$adminSetting = (int)$this->serverConfig->getAppValue('spreed', 'default_group_notification', (string)Participant::NOTIFY_DEFAULT);
 				if ($adminSetting === Participant::NOTIFY_DEFAULT) {
-					$roomData['notificationLevel'] = Participant::NOTIFY_MENTION;
+					$roomData['notificationLevel'] = Participant::NOTIFY_ALWAYS;
 				} else {
 					$roomData['notificationLevel'] = $adminSetting;
 				}
