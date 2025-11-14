@@ -47,6 +47,11 @@ export const CHAT = {
 	FETCH_NEW: 1,
 } as const
 
+export const CHAT_STYLE = {
+	SPLIT: 'split',
+	UNIFIED: 'unified',
+} as const
+
 export const CALL = {
 	RECORDING: {
 		OFF: 0,
