@@ -17,11 +17,18 @@ use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireRoom;
+use OCA\Talk\Recording\RecordingFailedRequest;
+use OCA\Talk\Recording\RecordingRequest;
+use OCA\Talk\Recording\RecordingStartedRequest;
+use OCA\Talk\Recording\RecordingStoppedRequest;
 use OCA\Talk\Room;
 use OCA\Talk\Service\CertificateService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Vendor\CuyZ\Valinor\Mapper\MappingError;
+use OCA\Talk\Vendor\CuyZ\Valinor\Mapper\Source\Source;
+use OCA\Talk\Vendor\CuyZ\Valinor\MapperBuilder;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -154,8 +161,6 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	/**
 	 * Return the body of the backend request. This can be overridden in
 	 * tests.
-	 *
-	 * @return string
 	 */
 	protected function getInputStream(): string {
 		return (string)file_get_contents('php://input');
@@ -191,36 +196,39 @@ class RecordingController extends AEnvironmentAwareOCSController {
 			return $response;
 		}
 
-		$message = json_decode($json, true);
-		switch ($message['type'] ?? '') {
-			case 'started':
-				return $this->backendStarted($message['started']);
-			case 'stopped':
-				return $this->backendStopped($message['stopped']);
-			case 'failed':
-				return $this->backendFailed($message['failed']);
-			default:
-				return new DataResponse([
-					'type' => 'error',
-					'error' => [
-						'code' => 'unknown_type',
-						'message' => 'The given type ' . json_encode($message) . ' is not supported.',
-					],
-				], Http::STATUS_BAD_REQUEST);
+		try {
+			$request = (new MapperBuilder())
+				->mapper()
+				->map(RecordingRequest::class, Source::json($json));
+		} catch (MappingError $e) {
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
+			return new DataResponse([
+				'type' => 'error',
+				'error' => [
+					'code' => 'unknown_type',
+					'message' => 'The given request is not supported.',
+				],
+			], Http::STATUS_BAD_REQUEST);
 		}
+
+		return match ($request->type) {
+			RecordingRequest::TYPE_STARTED => $this->backendStarted($request->started),
+			RecordingRequest::TYPE_STOPPED => $this->backendStopped($request->stopped),
+			RecordingRequest::TYPE_FAILED => $this->backendFailed($request->failed),
+		};
 	}
 
 	/**
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{type: string, error: array{code: string, message: string}}, array{}>
 	 */
-	private function backendStarted(array $started): DataResponse {
-		$token = $started['token'];
-		$status = $started['status'];
-		$actor = $started['actor'];
+	private function backendStarted(RecordingStartedRequest $started): DataResponse {
+		$token = $started->token;
+		$status = $started->status;
+		$actor = $started->actor;
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			$this->logger->debug('Failed to get room {token}', [
 				'token' => $token,
 				'app' => 'spreed-recording',
@@ -252,7 +260,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 
 		try {
 			$participant = $this->participantService->getParticipantByActor($room, $actor['type'], $actor['id']);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			$participant = null;
 		}
 
@@ -264,12 +272,9 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	/**
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{type: string, error: array{code: string, message: string}}, array{}>
 	 */
-	private function backendStopped(array $stopped): DataResponse {
-		$token = $stopped['token'];
-		$actor = null;
-		if (array_key_exists('actor', $stopped)) {
-			$actor = $stopped['actor'];
-		}
+	private function backendStopped(RecordingStoppedRequest $stopped): DataResponse {
+		$token = $stopped->token;
+		$actor = $stopped->actor;
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
@@ -305,12 +310,12 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	/**
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{type: string, error: array{code: string, message: string}}, array{}>
 	 */
-	private function backendFailed(array $failed): DataResponse {
-		$token = $failed['token'];
+	private function backendFailed(RecordingFailedRequest $failed): DataResponse {
+		$token = $failed->token;
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			$this->logger->debug('Failed to get room {token}', [
 				'token' => $token,
 				'app' => 'spreed-recording',
