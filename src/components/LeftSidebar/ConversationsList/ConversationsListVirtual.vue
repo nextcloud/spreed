@@ -152,6 +152,7 @@ export default {
 
 <style lang="scss" scoped>
 // Overwrite NcListItem styles
+// TOREMOVE: get rid of it or find better approach
 :deep(.list-item) {
 	outline-offset: -2px;
 }
