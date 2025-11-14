@@ -17,9 +17,7 @@
 		@mouseleave="handleMouseleave">
 		<div
 			:class="{
-				'normal-message-body': !isSystemMessage && !isDeletedMessage,
-				system: isSystemMessage,
-				'combined-system': isCombinedSystemMessage,
+				'normal-message-body': !isDeletedMessage,
 			}"
 			class="message-body">
 			<MessageBody
@@ -57,20 +55,6 @@
 				@reply="handleReply"
 				@edit="handleEdit"
 				@delete="handleDelete" />
-			<div
-				v-else-if="showCombinedSystemMessageToggle"
-				class="message-buttons-bar">
-				<NcButton
-					variant="tertiary"
-					:aria-label="t('spreed', 'Show or collapse system messages')"
-					:title="t('spreed', 'Show or collapse system messages')"
-					@click="toggleCombinedSystemMessage">
-					<template #icon>
-						<IconUnfoldMoreHorizontal v-if="isCombinedSystemMessageCollapsed" />
-						<IconUnfoldLessHorizontal v-else />
-					</template>
-				</NcButton>
-			</div>
 		</div>
 
 		<MessageForwarder
@@ -107,9 +91,6 @@ import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nex
 import { t } from '@nextcloud/l10n'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
 import NcAssistantButton from '@nextcloud/vue/components/NcAssistantButton'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import IconUnfoldLessHorizontal from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
-import IconUnfoldMoreHorizontal from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
 import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
@@ -136,14 +117,11 @@ export default {
 	name: 'MessageItem',
 
 	components: {
-		IconUnfoldLessHorizontal,
-		IconUnfoldMoreHorizontal,
 		MessageBody,
 		MessageButtonsBar,
 		MessageForwarder,
 		MessageTranslateDialog,
 		NcAssistantButton,
-		NcButton,
 		ReactionsWrapper,
 	},
 
@@ -157,35 +135,6 @@ export default {
 			required: true,
 		},
 
-		/**
-		 * Specifies if the message is a combined system message.
-		 */
-		isCombinedSystemMessage: {
-			type: Boolean,
-			default: false,
-		},
-
-		/**
-		 * Specifies whether the combined system message is collapsed.
-		 */
-		isCombinedSystemMessageCollapsed: {
-			type: Boolean,
-			default: undefined,
-		},
-
-		/**
-		 * Specifies if the message is inside a collapsed group.
-		 */
-		isCollapsedSystemMessage: {
-			type: Boolean,
-			default: false,
-		},
-
-		lastCollapsedMessageId: {
-			type: [String, Number],
-			default: 0,
-		},
-
 		previousMessageId: {
 			type: [String, Number],
 			default: 0,
@@ -196,8 +145,6 @@ export default {
 			default: 0,
 		},
 	},
-
-	emits: ['toggleCombinedSystemMessage'],
 
 	setup(props) {
 		const isTranslationAvailable = getTalkConfig(props.token, 'chat', 'has-translation-providers')
@@ -248,11 +195,7 @@ export default {
 				return false
 			}
 
-			if (this.message.id === this.visualLastLastReadMessageId) {
-				return !this.isCollapsedSystemMessage || this.message.id !== this.lastCollapsedMessageId
-			}
-
-			return this.isCombinedSystemMessage && this.lastCollapsedMessageId === this.visualLastLastReadMessageId
+			return this.message.id === this.visualLastLastReadMessageId
 		},
 
 		shouldShowSummaryOption() {
@@ -260,10 +203,6 @@ export default {
 				return false
 			}
 			return (this.conversation.unreadMessages >= summaryThreshold)
-		},
-
-		isSystemMessage() {
-			return this.message.systemMessage !== ''
 		},
 
 		isDeletedMessage() {
@@ -280,8 +219,7 @@ export default {
 		},
 
 		showSentIcon() {
-			return !this.isSystemMessage
-				&& !this.isTemporary
+			return !this.isTemporary
 				&& !this.isDeleting
 				&& this.actorStore.checkIfSelfIsActor(this.message)
 				&& !this.isDeletedMessage
@@ -350,14 +288,9 @@ export default {
 		},
 
 		showMessageButtonsBar() {
-			return !this.isSystemMessage && !this.isDeletedMessage && !this.isTemporary
+			return !this.isDeletedMessage && !this.isTemporary
 				&& (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isFollowUpEmojiPickerOpen
 					|| this.isReactionsMenuOpen || this.isForwarderOpen || this.isTranslateDialogOpen)
-		},
-
-		showCombinedSystemMessageToggle() {
-			return this.isSystemMessage && !this.isDeletedMessage && !this.isTemporary
-				&& this.isCombinedSystemMessage && (this.isHovered || !this.isCombinedSystemMessageCollapsed)
 		},
 
 		readInfo() {
@@ -448,10 +381,6 @@ export default {
 			this.isDeleting = false
 		},
 
-		toggleCombinedSystemMessage() {
-			this.$emit('toggleCombinedSystemMessage')
-		},
-
 		toggleFollowUpEmojiPicker() {
 			this.isFollowUpEmojiPickerOpen = !this.isFollowUpEmojiPickerOpen
 		},
@@ -470,7 +399,6 @@ export default {
 	position: relative;
 
 	&:hover .normal-message-body,
-	&:hover .combined-system,
 	&--hovered .normal-message-body {
 		border-radius: 8px;
 		background-color: var(--color-background-hover);
