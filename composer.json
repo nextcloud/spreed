@@ -46,7 +46,7 @@
 	"require": {
 		"bamarni/composer-bin-plugin": "^1.8",
 		"cuyz/valinor": "^2.3",
-		"cweagans/composer-patches": "^1.7.3",
+		"cweagans/composer-patches": "^2.0.0",
 		"firebase/php-jwt": "^6.11"
 	},
 	"extra": {
