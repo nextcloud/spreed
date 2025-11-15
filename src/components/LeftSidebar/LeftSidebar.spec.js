@@ -38,6 +38,7 @@ describe('LeftSidebar.vue', () => {
 	let testStoreConfig
 	let loadStateSettings
 	let conversationsListMock
+	let conversationsInitialisedMock
 	let fetchConversationsAction
 	let addConversationAction
 	let createOneToOneConversationAction
@@ -46,15 +47,6 @@ describe('LeftSidebar.vue', () => {
 
 	const ComponentStub = {
 		template: '<div><slot /></div>',
-	}
-	const RecycleScrollerStub = {
-		props: {
-			items: Array,
-			itemSize: Number,
-		},
-		template: `<ul class="vue-recycle-scroller-STUB">
-			<li v-for="item in items" class="vue-recycle-scroller-STUB-item" :class="item.type" >{{ item?.name ?? item.object?.name ?? item.object?.label ?? item.hint }}</li>
-			</ul>`,
 	}
 
 	const HAS_APP_NAVIGATION_KEY = Symbol.for('NcContent:setHasAppNavigation')
@@ -73,7 +65,6 @@ describe('LeftSidebar.vue', () => {
 					// to prevent complex dialog logic
 					NcActions: ComponentStub,
 					NcModal: ComponentStub,
-					RecycleScroller: RecycleScrollerStub,
 				},
 				provide: {
 					[HAS_APP_NAVIGATION_KEY]: () => {},
@@ -104,11 +95,13 @@ describe('LeftSidebar.vue', () => {
 
 		// note: need a copy because the Vue modifies it when sorting
 		conversationsListMock = vi.fn()
+		conversationsInitialisedMock = vi.fn(() => true)
 		fetchConversationsAction = vi.fn().mockReturnValue({ headers: {} })
 		addConversationAction = vi.fn()
 		createOneToOneConversationAction = vi.fn()
 		actorStore.setCurrentUser({ uid: 'current-user' })
 		testStoreConfig.modules.conversationsStore.getters.conversationsList = conversationsListMock
+		testStoreConfig.modules.conversationsStore.getters.conversationsInitialised = conversationsInitialisedMock
 		testStoreConfig.modules.conversationsStore.actions.fetchConversations = fetchConversationsAction
 		testStoreConfig.modules.conversationsStore.actions.addConversation = addConversationAction
 		testStoreConfig.modules.conversationsStore.actions.createOneToOneConversation = createOneToOneConversationAction
@@ -174,10 +167,10 @@ describe('LeftSidebar.vue', () => {
 			await flushPromises()
 
 			const normalConversationsList = conversationsList.filter((conversation) => !conversation.isArchived)
-			const conversationListItems = wrapper.findAll('.vue-recycle-scroller-STUB-item')
+			const conversationListItems = wrapper.findAll('.conversation')
 			expect(conversationListItems).toHaveLength(normalConversationsList.length)
-			expect(conversationListItems.at(0).text()).toStrictEqual(normalConversationsList[0].displayName)
-			expect(conversationListItems.at(1).text()).toStrictEqual(normalConversationsList[1].displayName)
+			expect(conversationListItems.at(0).text()).toContain(normalConversationsList[0].displayName)
+			expect(conversationListItems.at(1).text()).toContain(normalConversationsList[1].displayName)
 
 			expect(conversationsReceivedEvent).toHaveBeenCalled()
 		})
@@ -414,10 +407,14 @@ describe('LeftSidebar.vue', () => {
 					},
 				)
 				const itemsListNames = prepareExpectedResults(usersResults, groupsResults, circlesResults, listedResults, 'Other sources')
-				const itemsList = wrapper.findAll('.vue-recycle-scroller-STUB-item')
-				expect(itemsList).toHaveLength(itemsListNames.length)
-				itemsListNames.forEach((name, index) => {
-					expect(itemsList.at(index).text()).toStrictEqual(name)
+				// Not all items are rendered by useVirtualList
+				const itemsList = wrapper.find('.scroller').findAll('.list-item__wrapper')
+				expect(itemsList.length).toBeLessThanOrEqual(itemsListNames.length)
+
+				const navigationItemsList = wrapper.find('.scroller').findAll('.app-navigation-caption, .app-navigation-hint')
+				expect(navigationItemsList.length).toBeLessThanOrEqual(itemsListNames.length)
+				navigationItemsList.forEach((name, index) => {
+					expect(itemsListNames).toContain(navigationItemsList.at(index).text())
 				})
 			})
 
@@ -434,11 +431,14 @@ describe('LeftSidebar.vue', () => {
 				)
 
 				const itemsListNames = prepareExpectedResults(usersResults, groupsResults, circlesResults, listedResults, 'Groups and teams', true, false)
-				const itemsList = wrapper.findAll('.vue-recycle-scroller-STUB-item')
-				expect(itemsList).toHaveLength(itemsListNames.length)
-				expect(itemsListNames.filter((item) => ['Groups', 'Teams', 'Federated users', SEARCH_TERM].includes(item)).length).toBe(0)
-				itemsListNames.forEach((name, index) => {
-					expect(itemsList.at(index).text()).toStrictEqual(name)
+				// Not all items are rendered by useVirtualList
+				const itemsList = wrapper.find('.scroller').findAll('.list-item__wrapper')
+				expect(itemsList.length).toBeLessThanOrEqual(itemsListNames.length)
+
+				const navigationItemsList = wrapper.find('.scroller').findAll('.app-navigation-caption, .app-navigation-hint')
+				expect(navigationItemsList.length).toBeLessThanOrEqual(itemsListNames.length)
+				navigationItemsList.forEach((name, index) => {
+					expect(itemsListNames).toContain(navigationItemsList.at(index).text())
 				})
 			})
 
@@ -453,11 +453,14 @@ describe('LeftSidebar.vue', () => {
 				)
 
 				const itemsListNames = prepareExpectedResults(usersResults, groupsResults, circlesResults, listedResults, 'Other sources', false, true)
-				const itemsList = wrapper.findAll('.vue-recycle-scroller-STUB-item')
-				expect(itemsList).toHaveLength(itemsListNames.length)
-				expect(itemsListNames.filter((item) => ['Teams'].includes(item)).length).toBe(0)
-				itemsListNames.forEach((name, index) => {
-					expect(itemsList.at(index).text()).toStrictEqual(name)
+				// Not all items are rendered by useVirtualList
+				const itemsList = wrapper.find('.scroller').findAll('.list-item__wrapper')
+				expect(itemsList.length).toBeLessThanOrEqual(itemsListNames.length)
+
+				const navigationItemsList = wrapper.find('.scroller').findAll('.app-navigation-caption, .app-navigation-hint')
+				expect(navigationItemsList.length).toBeLessThanOrEqual(itemsListNames.length)
+				navigationItemsList.forEach((name, index) => {
+					expect(itemsListNames).toContain(navigationItemsList.at(index).text())
 				})
 			})
 		})
@@ -473,7 +476,7 @@ describe('LeftSidebar.vue', () => {
 			async function testSearchNotFound(searchTerm, possibleResults, listedResults, loadStateSettingsOverride, expectedCaption) {
 				const wrapper = await testSearch(searchTerm, possibleResults, listedResults, loadStateSettingsOverride)
 
-				const captionsEls = wrapper.findAll('.caption')
+				const captionsEls = wrapper.find('.scroller').findAll('.app-navigation-caption')
 				if (listedResults.length > 0) {
 					expect(captionsEls.length).toBeGreaterThan(2)
 					expect(captionsEls.at(0).text()).toBe('Conversations')

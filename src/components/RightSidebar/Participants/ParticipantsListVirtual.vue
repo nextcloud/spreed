@@ -3,69 +3,48 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-	<RecycleScroller
-		ref="scroller"
-		item-tag="ul"
-		:items="participants"
-		:item-size="PARTICIPANT_ITEM_SIZE"
-		key-field="attendeeId">
-		<template #default="{ item }">
-			<ParticipantItem :participant="item" />
-		</template>
-		<template v-if="loading" #after>
-			<LoadingPlaceholder type="participants" :count="dummyParticipants" />
-		</template>
-	</RecycleScroller>
-</template>
+<script setup lang="ts">
+import type { Participant } from '../../../types/index.ts'
 
-<script>
-import { RecycleScroller } from 'vue-virtual-scroller'
+import { useVirtualList } from '@vueuse/core'
+import { computed, toRef } from 'vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 import ParticipantItem from './ParticipantItem.vue'
 import { AVATAR } from '../../../constants.ts'
 
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+const props = defineProps<{
+	participants: Participant[]
+	loading?: boolean
+}>()
 
 /* Consider:
  * avatar size (and two lines of text)
  * list-item padding
  * list-item__wrapper padding
  */
-const PARTICIPANT_ITEM_SIZE = AVATAR.SIZE.DEFAULT + 2 * 4 + 2 * 2
+const itemHeight = AVATAR.SIZE.DEFAULT + 2 * 4 + 2 * 2
 
-export default {
-	name: 'ParticipantsListVirtual',
+const { list, containerProps, wrapperProps } = useVirtualList<Participant>(toRef(() => props.participants), {
+	itemHeight,
+	overscan: 10,
+})
 
-	components: {
-		LoadingPlaceholder,
-		ParticipantItem,
-		RecycleScroller,
-	},
-
-	props: {
-		participants: {
-			type: Array,
-			required: true,
-		},
-
-		loading: {
-			type: Boolean,
-			default: false,
-		},
-	},
-
-	setup() {
-		return {
-			PARTICIPANT_ITEM_SIZE,
-		}
-	},
-
-	computed: {
-		dummyParticipants() {
-			const dummies = 6 - this.participants.length
-			return dummies > 0 ? dummies : 0
-		},
-	},
-}
+const count = computed(() => props.loading ? Math.max(6 - props.participants.length, 0) : 0)
 </script>
+
+<template>
+	<li
+		:ref="containerProps.ref"
+		:style="containerProps.style"
+		@scroll="containerProps.onScroll">
+		<LoadingPlaceholder v-if="loading" type="participants" :count />
+		<ul
+			v-else
+			:style="wrapperProps.style">
+			<ParticipantItem
+				v-for="item in list"
+				:key="item.data.attendeeId"
+				:participant="item.data" />
+		</ul>
+	</li>
+</template>
