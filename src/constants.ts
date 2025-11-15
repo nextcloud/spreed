@@ -22,6 +22,11 @@ export const CONFIG = {
 		 * to allow join the call without page reload
 		 */
 		RECOVER_SESSION: 2,
+		/**
+		 * Since 22.0.3
+		 * Send chat messages via the High performance-backend / websocket
+		 */
+		CHAT_RELAY: 4,
 	},
 } as const
 
