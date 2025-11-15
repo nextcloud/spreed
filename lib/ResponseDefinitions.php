@@ -480,6 +480,7 @@ namespace OCA\Talk;
  *
  * @psalm-type TalkThreadAttendee = array{
  *      notificationLevel: 0|1|2|3,
+ *      subscribed: bool,
  * }
  *
  * @psalm-type TalkThreadInfo = array{

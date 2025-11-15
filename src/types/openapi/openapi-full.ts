@@ -3021,6 +3021,7 @@ export type components = {
              * @enum {integer}
              */
             notificationLevel: 0 | 1 | 2 | 3;
+            subscribed: boolean;
         };
         ThreadInfo: {
             thread: components["schemas"]["Thread"];
