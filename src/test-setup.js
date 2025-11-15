@@ -50,12 +50,6 @@ vi.mock('@nextcloud/capabilities', () => ({
 
 HTMLAudioElement.prototype.setSinkId = vi.fn()
 
-window.IntersectionObserver = vi.fn(() => ({
-	observe: vi.fn(),
-	unobserve: vi.fn(),
-	disconnect: vi.fn(),
-}))
-
 window._oc_webroot = '/nc-webroot' // used by getRootUrl() | since @nextcloud/router 2.2.1
 
 global.appName = 'spreed'
@@ -122,16 +116,22 @@ function myArrayBuffer() {
 
 global.Blob.prototype.arrayBuffer = Blob.prototype.arrayBuffer || myArrayBuffer
 
-global.BroadcastChannel = vi.fn(() => ({
-	postMessage: vi.fn(),
-	addEventListener: vi.fn(),
-}))
+global.BroadcastChannel = vi.fn(class {
+	postMessage = vi.fn()
+	addEventListener = vi.fn()
+})
 
-global.ResizeObserver = vi.fn(() => ({
-	observe: vi.fn(),
-	unobserve: vi.fn(),
-	disconnect: vi.fn(),
-}))
+global.IntersectionObserver = vi.fn(class {
+	observe = vi.fn()
+	unobserve = vi.fn()
+	disconnect = vi.fn()
+})
+
+global.ResizeObserver = vi.fn(class {
+	observe = vi.fn()
+	unobserve = vi.fn()
+	disconnect = vi.fn()
+})
 
 global.structuredClone = vi.fn((val) => JSON.parse(JSON.stringify(val)))
 
