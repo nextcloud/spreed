@@ -47,7 +47,11 @@ type NcInputFieldProps = {
 	showTrailingButton?: boolean
 }
 
-const props = defineProps<NcDialogProps & { inputProps: NcInputFieldProps }>()
+const props = defineProps<NcDialogProps & {
+	/** This replaces 'message' in slot */
+	customMessages?: string[]
+	inputProps?: NcInputFieldProps
+}>()
 
 const emit = defineEmits<{
 	(event: 'close', value?: unknown): void
@@ -86,6 +90,11 @@ function onSubmit(value: string) {
 		:size="size"
 		:buttons="buttons"
 		@closing="onClosing">
+		<template v-if="customMessages">
+			<p v-for="customMessage in customMessages" :key="customMessage">
+				{{ customMessage }}
+			</p>
+		</template>
 		<template v-if="isForm && inputProps">
 			<NcTextField
 				v-model="inputValue"

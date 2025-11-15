@@ -119,7 +119,7 @@
 					v-if="item.canLeaveConversation"
 					key="leave-conversation"
 					close-after-click
-					@click="isLeaveDialogOpen = true">
+					@click="leaveConversation">
 					<template #icon>
 						<IconExitToApp :size="20" />
 					</template>
@@ -131,7 +131,7 @@
 					key="delete-conversation"
 					close-after-click
 					class="critical"
-					@click="isDeleteDialogOpen = true">
+					@click="deleteConversation">
 					<template #icon>
 						<IconTrashCanOutline :size="20" />
 					</template>
@@ -225,46 +225,6 @@
 				{{ t('spreed', 'Copy link') }}
 			</NcActionButton>
 		</template>
-
-		<!-- confirmation required to leave / delete conversation -->
-		<template v-if="isLeaveDialogOpen || isDeleteDialogOpen" #extra>
-			<NcDialog
-				v-if="isLeaveDialogOpen"
-				v-model:open="isLeaveDialogOpen"
-				:name="t('spreed', 'Leave conversation')">
-				<template #default>
-					<p>{{ dialogLeaveMessage }}</p>
-					<p v-if="supportsArchive && !item.isArchived">
-						{{ t('spreed', 'You can archive this conversation instead.') }}
-					</p>
-				</template>
-				<template #actions>
-					<NcButton variant="tertiary" @click="isLeaveDialogOpen = false">
-						{{ t('spreed', 'No') }}
-					</NcButton>
-					<NcButton v-if="supportsArchive && !item.isArchived" variant="secondary" @click="toggleArchiveConversation">
-						{{ t('spreed', 'Archive conversation') }}
-					</NcButton>
-					<NcButton variant="warning" @click="leaveConversation">
-						{{ t('spreed', 'Yes') }}
-					</NcButton>
-				</template>
-			</NcDialog>
-			<NcDialog
-				v-if="isDeleteDialogOpen"
-				v-model:open="isDeleteDialogOpen"
-				:name="t('spreed', 'Delete conversation')"
-				:message="dialogDeleteMessage">
-				<template #actions>
-					<NcButton variant="tertiary" @click="isDeleteDialogOpen = false">
-						{{ t('spreed', 'No') }}
-					</NcButton>
-					<NcButton variant="error" @click="deleteConversation">
-						{{ t('spreed', 'Yes') }}
-					</NcButton>
-				</template>
-			</NcDialog>
-		</template>
 	</NcListItem>
 </template>
 
@@ -274,6 +234,7 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { ref, toRefs } from 'vue'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
@@ -299,6 +260,7 @@ import IconShieldLockOutline from 'vue-material-design-icons/ShieldLockOutline.v
 import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better indication
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
+import ConfirmDialog from '../../UIShared/ConfirmDialog.vue'
 import ConversationIcon from './../../ConversationIcon.vue'
 import { useConversationInfo } from '../../../composables/useConversationInfo.ts'
 import { AVATAR, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
@@ -384,8 +346,6 @@ export default {
 	setup(props) {
 		const isDarkTheme = useIsDarkTheme()
 		const submenu = ref(null)
-		const isLeaveDialogOpen = ref(false)
-		const isDeleteDialogOpen = ref(false)
 		const { item, isSearchResult } = toRefs(props)
 		const { counterType, conversationInformation } = useConversationInfo({ item, isSearchResult })
 
@@ -395,8 +355,6 @@ export default {
 			supportImportantConversations,
 			supportSensitiveConversations,
 			submenu,
-			isLeaveDialogOpen,
-			isDeleteDialogOpen,
 			isDarkTheme,
 			counterType,
 			conversationInformation,
@@ -426,20 +384,6 @@ export default {
 
 		labelImportantHint() {
 			return t('spreed', 'Ignore "Do not disturb"')
-		},
-
-		dialogLeaveMessage() {
-			return t('spreed', 'Do you really want to leave "{displayName}"?', this.item, undefined, {
-				escape: false,
-				sanitize: false,
-			})
-		},
-
-		dialogDeleteMessage() {
-			return t('spreed', 'Do you really want to delete "{displayName}"?', this.item, undefined, {
-				escape: false,
-				sanitize: false,
-			})
 		},
 
 		to() {
@@ -504,8 +448,22 @@ export default {
 		 * Deletes the conversation.
 		 */
 		async deleteConversation() {
+			const confirmDeleteConversation = await spawnDialog(ConfirmDialog, {
+				name: t('spreed', 'Delete conversation'),
+				message: t('spreed', 'Do you really want to delete "{displayName}"?', {
+					displayName: this.item.displayName,
+				}, { escape: false, sanitize: false }),
+				buttons: [
+					{ label: t('spreed', 'No'), variant: 'tertiary', callback: () => undefined },
+					{ label: t('spreed', 'Yes'), variant: 'error', callback: () => true },
+				],
+			})
+
+			if (!confirmDeleteConversation) {
+				return
+			}
+
 			try {
-				this.isDeleteDialogOpen = false
 				if (this.isActive) {
 					await this.$router.push({ name: 'root' })
 						.catch((failure) => !isNavigationFailure(failure, NavigationFailureType.duplicated) && Promise.reject(failure))
@@ -521,8 +479,41 @@ export default {
 		 * Deletes the current user from the conversation.
 		 */
 		async leaveConversation() {
+			const customMessages = [
+				t('spreed', 'Do you really want to leave "{displayName}"?', {
+					displayName: this.item.displayName,
+				}, { escape: false, sanitize: false }),
+			]
+
+			const buttons = [
+				{ label: t('spreed', 'No'), variant: 'tertiary', callback: () => undefined },
+				{ label: t('spreed', 'Yes'), variant: 'warning', callback: () => true },
+			]
+
+			if (supportsArchive && !this.item.isArchived) {
+				// Offer archiving option as an alternative to leaving the conversation
+				customMessages.push(t('spreed', 'You can archive this conversation instead.'))
+				buttons.splice(1, 0, {
+					label: t('spreed', 'Archive conversation'),
+					variant: 'secondary',
+					callback: () => {
+						this.toggleArchiveConversation()
+						return undefined
+					},
+				})
+			}
+
+			const confirmLeaveConversation = await spawnDialog(ConfirmDialog, {
+				name: t('spreed', 'Leave conversation'),
+				customMessages,
+				buttons,
+			})
+
+			if (!confirmLeaveConversation) {
+				return
+			}
+
 			try {
-				this.isLeaveDialogOpen = false
 				if (this.isActive) {
 					await this.$router.push({ name: 'root' })
 						.catch((failure) => !isNavigationFailure(failure, NavigationFailureType.duplicated) && Promise.reject(failure))
@@ -542,7 +533,6 @@ export default {
 		},
 
 		async toggleArchiveConversation() {
-			this.isLeaveDialogOpen = false
 			this.$store.dispatch('toggleArchive', this.item)
 		},
 
