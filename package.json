@@ -54,7 +54,7 @@
     "base64-js": "^1.5.1",
     "blurhash": "^2.0.5",
     "crypto-js": "^4.2.0",
-    "debounce": "^2.2.0",
+    "debounce": "^3.0.0",
     "emoji-regex": "^10.6.0",
     "entities": "^7.0.0",
     "escape-html": "^1.0.3",
