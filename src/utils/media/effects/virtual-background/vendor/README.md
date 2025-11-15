@@ -1,14 +1,7 @@
 # Virtual Background on stream effects
 
-> From https://google.github.io/mediapipe/solutions/models.html#selfie-segmentation
-
-#### Canvas 2D + CPU
-
-This rendering pipeline is pretty much the same as for BodyPix. It relies on Canvas compositing properties to blend rendering layers according to the segmentation mask.
-
-Interactions with TFLite inference tool are executed on CPU to convert from UInt8 to Float32 for the model input and to apply softmax on the model output.
-
-The framerate is higher and the quality looks better than BodyPix
+> Guide: https://ai.google.dev/edge/mediapipe/solutions/vision/image_segmenter
+> API reference: https://ai.google.dev/edge/api/mediapipe/js/tasks-vision.imagesegmenter#imagesegmenter_class
 
 #### SIMD and non-SIMD
 
