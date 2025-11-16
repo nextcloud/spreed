@@ -42,7 +42,7 @@ jobs:
       - name: Checkout app
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
-          persist-credentials: false
+          persist-credentials: true
           path: target
           ref: ${{ matrix.branches }}
 
@@ -99,7 +99,6 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
-          token: ${{ secrets.COMMAND_BOT_PAT }}
           commit-message: 'ci(actions): Update workflow templates from organization template repository'
           committer: GitHub <noreply@github.com>
           author: nextcloud-command <nextcloud-command@users.noreply.github.com>
