@@ -57,7 +57,7 @@ jobs:
               # Only copy if the file exists in the target repository
               if [ -f "$target_file" ]; then
                 if [ -f "./target/.github/actions-lock.txt" ]; then
-                  locked_version=$(grep " $filename" ./target/.github/actions-lock.txt)
+                  locked_version=$(grep " $filename" ./target/.github/actions-lock.txt | cat)
                 else
                   echo "# SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors" >> ./target/.github/actions-lock.txt
                   echo "# SPDX-License""-Identifier: MIT" >> ./target/.github/actions-lock.txt
