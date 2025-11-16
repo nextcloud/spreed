@@ -14,9 +14,21 @@ permissions:
 
 jobs:
   dispatch:
-    runs-on: ubuntu-latest-low
+    runs-on: ubuntu-latest
 
-    name: Update all workflows in ${{ github.event.inputs.repository }}
+    strategy:
+      fail-fast: false
+      matrix:
+        branches:
+          - ${{ github.event.repository.default_branch }}
+          - 'stable32'
+          - 'stable31'
+
+    name: Update workflows in ${{ matrix.branches }}
+
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
       - name: Check actor permission
@@ -36,22 +48,23 @@ jobs:
         with:
           persist-credentials: false
           path: target
-          ref: ${{ github.event.inputs.branch }}
+          ref: ${{ matrix.branches }}
 
       - name: Copy all workflow templates
         run: |
           for workflow in ./source/workflow-templates/*.yml; do
+            echo "❓ Looking for $workflow"
             if [ -f "$workflow" ]; then
               filename=$(basename "$workflow")
               target_file="./target/.github/workflows/$filename"
 
               # Only copy if the file exists in the target repository
               if [ -f "$target_file" ]; then
-                if [ -f ".github/actions-lock.txt" ]; then
-                  locked_version=$(grep " $filename" .github/actions-lock.txt)
+                if [ -f "./target/.github/actions-lock.txt" ]; then
+                  locked_version=$(grep " $filename" ./target/.github/actions-lock.txt | cat)
                 else
-                  echo "# SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors" >> .github/actions-lock.txt
-                  echo "# SPDX-License""-Identifier: MIT" >> .github/actions-lock.txt
+                  echo "# SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors" >> ./target/.github/actions-lock.txt
+                  echo "# SPDX-License""-Identifier: MIT" >> ./target/.github/actions-lock.txt
                   locked_version=""
                 fi
                 locked_version=$(echo $locked_version | cut -f 1 -d " ")
@@ -68,21 +81,21 @@ jobs:
                   # Apply patch if one exists
                   if [ -f "$target_file.patch" ]; then
                     echo "🩹 Applying patch"
-                    cd target
-                    patch -p1 < "$target_file.patch"
+                    cd ./target
+                    patch -p1 < ".github/workflows/$filename.patch"
                     cd -
                   fi
 
                   if [[ "$locked_version" != "" ]]; then
-                    sed -i "s/$locked_version $filename/$new_version $filename/" .github/actions-lock.txt
+                    sed -i "s/$locked_version $filename/$new_version $filename/" ./target/.github/actions-lock.txt
                   else
-                    echo "$new_version $filename" >> .github/actions-lock.txt
+                    echo "$new_version $filename" >> ./target/.github/actions-lock.txt
                   fi
                 else
                   echo "✅ Skipping $filename: already up to date"
                 fi
               else
-                echo "⏭️  Skipping $filename: does not exist in target repository"
+                echo "⏭️ Skipping $filename: does not exist in target repository"
               fi
             fi
           done
@@ -90,7 +103,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
-          token: ${{ secrets.COMMAND_BOT_PAT }}
+          token: ${{ secrets.COMMAND_BOT_WORKFLOWS }}
           commit-message: 'ci(actions): Update workflow templates from organization template repository'
           committer: GitHub <noreply@github.com>
           author: nextcloud-command <nextcloud-command@users.noreply.github.com>
