@@ -76,8 +76,8 @@ jobs:
                   # Apply patch if one exists
                   if [ -f "$target_file.patch" ]; then
                     echo "🩹 Applying patch"
-                    cd target
-                    patch -p1 < "$target_file.patch"
+                    cd ./target
+                    patch -p1 < ".github/workflows/$filename.patch"
                     cd -
                   fi
 
