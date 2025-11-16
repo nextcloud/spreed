@@ -1,0 +1,105 @@
+# This workflow will update all workflow templates
+#
+# SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: MIT
+
+name: Update workflows
+on:
+  workflow_dispatch:
+  schedule:
+      - cron: "5 2 * * 0"
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest-low
+
+    name: Update all workflows in ${{ github.event.inputs.repository }}
+
+    steps:
+      - name: Check actor permission
+        uses: skjnldsv/check-actor-permission@69e92a3c4711150929bca9fcf34448c5bf5526e7 # v3.0
+        with:
+          require: admin
+
+      - name: Checkout workflow repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+          path: source
+          repository: nextcloud/.github
+
+      - name: Checkout app
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+          path: target
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Copy all workflow templates
+        run: |
+          for workflow in ./source/workflow-templates/*.yml; do
+            if [ -f "$workflow" ]; then
+              filename=$(basename "$workflow")
+              target_file="./target/.github/workflows/$filename"
+
+              # Only copy if the file exists in the target repository
+              if [ -f "$target_file" ]; then
+                if [ -f ".github/actions-lock.txt" ]; then
+                  locked_version=$(grep " $filename" .github/actions-lock.txt)
+                else
+                  echo "# SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors" >> .github/actions-lock.txt
+                  echo "# SPDX-License""-Identifier: MIT" >> .github/actions-lock.txt
+                  locked_version=""
+                fi
+                locked_version=$(echo $locked_version | cut -f 1 -d " ")
+                new_version=$(md5sum $workflow | cut -f 1 -d " ")
+
+                # Only update if the action changes
+                if [[ "$locked_version" != "$new_version" ]]; then
+                  echo "ℹ️ Locked version: $locked_version"
+                  echo "ℹ️ Current version: $new_version"
+                  echo "🆙 Updating existing workflow: $filename"
+
+                  cp "$workflow" "$target_file"
+
+                  # Apply patch if one exists
+                  if [ -f "$target_file.patch" ]; then
+                    echo "🩹 Applying patch"
+                    cd target
+                    patch -p1 < "$target_file.patch"
+                    cd -
+                  fi
+
+                  if [[ "$locked_version" != "" ]]; then
+                    sed -i "s/$locked_version $filename/$new_version $filename/" .github/actions-lock.txt
+                  else
+                    echo "$new_version $filename" >> .github/actions-lock.txt
+                  fi
+                else
+                  echo "✅ Skipping $filename: already up to date"
+                fi
+              else
+                echo "⏭️  Skipping $filename: does not exist in target repository"
+              fi
+            fi
+          done
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+        with:
+          token: ${{ secrets.COMMAND_BOT_PAT }}
+          commit-message: 'ci(actions): Update workflow templates from organization template repository'
+          committer: GitHub <noreply@github.com>
+          author: nextcloud-command <nextcloud-command@users.noreply.github.com>
+          path: target
+          signoff: true
+          branch: 'automated/noid/${{ matrix.branches }}-update-workflows'
+          title: '[${{ matrix.branches }}] ci(actions): Update workflow templates from organization template repository'
+          body: |
+            Automated update of all workflow templates from [nextcloud/.github](https://github.com/nextcloud/.github)
+          labels: |
+            dependencies
+            3. to review
