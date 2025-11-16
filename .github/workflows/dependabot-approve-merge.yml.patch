@@ -1,0 +1,20 @@
+diff --git b/.github/workflows/dependabot-approve-merge.yml a/.github/workflows/dependabot-approve-merge.yml
+index c0411c057..e1d0b9b2f 100644
+--- b/.github/workflows/dependabot-approve-merge.yml
++++ a/.github/workflows/dependabot-approve-merge.yml
+@@ -46,13 +46,13 @@ jobs:
+
+       # GitHub actions bot approve
+       - uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
+-        if: startsWith(steps.branchname.outputs.branch, 'dependabot/')
++        if: startsWith(steps.branchname.outputs.branch, 'dependabot/') && contains(steps.branchname.outputs.branch, '/webrtc-adapter-') != true && contains(steps.branchname.outputs.branch, '/nextcloud/vue-') != true
+         with:
+           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+       # Enable GitHub auto merge
+       - name: Auto merge
+         uses: alexwilson/enable-github-automerge-action@56e3117d1ae1540309dc8f7a9f2825bc3c5f06ff # v2.0.0
+-        if: startsWith(steps.branchname.outputs.branch, 'dependabot/')
++        if: startsWith(steps.branchname.outputs.branch, 'dependabot/') && contains(steps.branchname.outputs.branch, '/webrtc-adapter-') != true && contains(steps.branchname.outputs.branch, '/nextcloud/vue-') != true
+         with:
+           github-token: ${{ secrets.GITHUB_TOKEN }}
