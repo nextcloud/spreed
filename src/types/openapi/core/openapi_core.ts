@@ -1254,18 +1254,25 @@ export type components = {
             };
         };
         Team: {
-            id: string;
-            name: string;
-            icon: string;
+            teamId: string;
+            displayName: string;
+            link: string | null;
         };
         TeamResource: {
-            /** Format: int64 */
-            id: number;
+            id: string;
             label: string;
             url: string;
             iconSvg: string | null;
             iconURL: string | null;
             iconEmoji: string | null;
+            provider: {
+                id: string;
+                name: string;
+                icon: string;
+            };
+        };
+        TeamWithResources: components["schemas"]["Team"] & {
+            resources: components["schemas"]["TeamResource"][];
         };
         TextProcessingTask: {
             /** Format: int64 */
@@ -3174,7 +3181,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                teams: components["schemas"]["Team"][];
+                                teams: components["schemas"]["TeamWithResources"][];
                             };
                         };
                     };
@@ -4003,7 +4010,7 @@ export interface operations {
                 term?: string;
                 /** @description Order of entries */
                 sortOrder?: number | null;
-                /** @description Maximum amount of entries, limited to 25 */
+                /** @description Maximum amount of entries (capped by configurable unified-search.max-results-per-request, default: 25) */
                 limit?: number | null;
                 /** @description Offset for searching */
                 cursor?: (number | string) | null;
