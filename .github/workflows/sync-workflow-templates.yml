@@ -49,6 +49,7 @@ jobs:
       - name: Copy all workflow templates
         run: |
           for workflow in ./source/workflow-templates/*.yml; do
+            echo "❓ Looking for $workflow"
             if [ -f "$workflow" ]; then
               filename=$(basename "$workflow")
               target_file="./target/.github/workflows/$filename"
@@ -90,7 +91,7 @@ jobs:
                   echo "✅ Skipping $filename: already up to date"
                 fi
               else
-                echo "⏭️  Skipping $filename: does not exist in target repository"
+                echo "⏭️ Skipping $filename: does not exist in target repository"
               fi
             fi
           done
