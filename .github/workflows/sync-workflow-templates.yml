@@ -55,11 +55,11 @@ jobs:
 
               # Only copy if the file exists in the target repository
               if [ -f "$target_file" ]; then
-                if [ -f ".github/actions-lock.txt" ]; then
-                  locked_version=$(grep " $filename" .github/actions-lock.txt)
+                if [ -f "./target/.github/actions-lock.txt" ]; then
+                  locked_version=$(grep " $filename" ./target/.github/actions-lock.txt)
                 else
-                  echo "# SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors" >> .github/actions-lock.txt
-                  echo "# SPDX-License""-Identifier: MIT" >> .github/actions-lock.txt
+                  echo "# SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors" >> ./target/.github/actions-lock.txt
+                  echo "# SPDX-License""-Identifier: MIT" >> ./target/.github/actions-lock.txt
                   locked_version=""
                 fi
                 locked_version=$(echo $locked_version | cut -f 1 -d " ")
@@ -82,9 +82,9 @@ jobs:
                   fi
 
                   if [[ "$locked_version" != "" ]]; then
-                    sed -i "s/$locked_version $filename/$new_version $filename/" .github/actions-lock.txt
+                    sed -i "s/$locked_version $filename/$new_version $filename/" ./target/.github/actions-lock.txt
                   else
-                    echo "$new_version $filename" >> .github/actions-lock.txt
+                    echo "$new_version $filename" >> ./target/.github/actions-lock.txt
                   fi
                 else
                   echo "✅ Skipping $filename: already up to date"
