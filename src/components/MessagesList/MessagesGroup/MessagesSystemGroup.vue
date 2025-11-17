@@ -10,7 +10,7 @@
 			:key="messagesCollapsed.id"
 			class="messages-group__system">
 			<ul v-if="messagesCollapsed.messages?.length > 1" class="messages">
-				<MessageItem
+				<SystemMessageItem
 					is-combined-system-message
 					:is-combined-system-message-collapsed="messagesCollapsed.collapsed"
 					:next-message-id="getNextMessageId(messagesCollapsed.messages.at(-1))"
@@ -23,7 +23,7 @@
 				v-show="messagesCollapsed.messages?.length === 1 || !messagesCollapsed.collapsed"
 				class="messages"
 				:class="{ 'messages--collapsed': messagesCollapsed.messages?.length > 1 }">
-				<MessageItem
+				<SystemMessageItem
 					v-for="message in messagesCollapsed.messages"
 					:key="message.id"
 					:message="message"
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import MessageItem from './Message/MessageItem.vue'
+import SystemMessageItem from './Message/SystemMessageItem.vue'
 import { useCombinedSystemMessage } from '../../../composables/useCombinedSystemMessage.js'
 import { MESSAGE } from '../../../constants.ts'
 
@@ -45,7 +45,7 @@ export default {
 	name: 'MessagesSystemGroup',
 
 	components: {
-		MessageItem,
+		SystemMessageItem,
 	},
 
 	props: {
