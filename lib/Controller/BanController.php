@@ -14,6 +14,7 @@ use OCA\Talk\Model\Ban;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\BanService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -47,6 +48,10 @@ class BanController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/ban/{token}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function banActor(string $actorType, string $actorId, string $internalNote = ''): DataResponse {
 		try {
 			$moderator = $this->participant->getAttendee();
@@ -83,6 +88,10 @@ class BanController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/ban/{token}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function listBans(): DataResponse {
 		$bans = $this->banService->getBansForRoom($this->room->getId());
 		$result = array_map(static fn (Ban $ban): array => $ban->jsonSerialize(), $bans);
@@ -101,6 +110,11 @@ class BanController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/ban/{token}/{banId}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'banId' => '[0-9]{1,64}',
+	])]
 	public function unbanActor(int $banId): DataResponse {
 		$this->banService->findAndDeleteBanByIdForRoom($banId, $this->room->getId());
 		return new DataResponse(null, Http::STATUS_OK);

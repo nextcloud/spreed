@@ -11,6 +11,7 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Service\CertificateService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -38,6 +39,9 @@ class CertificateController extends OCSController {
 	 * 400: Getting certificate expiration is not possible
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['settings'])]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/certificate/expiration', requirements: [
+		'apiVersion' => '(v1)',
+	])]
 	public function getCertificateExpiration(string $host): DataResponse {
 		try {
 			$expirationInDays = $this->certificateService->getCertificateExpirationInDays($host);

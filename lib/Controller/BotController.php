@@ -32,6 +32,7 @@ use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
@@ -133,6 +134,10 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/bot/{token}/message', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function sendMessage(string $token, string $message, string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
 		if (trim($message) === '') {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
@@ -196,6 +201,11 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/bot/{token}/reaction/{messageId}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]+',
+	])]
 	public function react(string $token, int $messageId, string $reaction): DataResponse {
 		try {
 			$bot = $this->getBotFromHeaders($token, $reaction);
@@ -250,6 +260,11 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/bot/{token}/reaction/{messageId}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]+',
+	])]
 	public function deleteReaction(string $token, int $messageId, string $reaction): DataResponse {
 		try {
 			$bot = $this->getBotFromHeaders($token, $reaction);
@@ -294,6 +309,9 @@ class BotController extends AEnvironmentAwareOCSController {
 	 * 200: Bot list returned
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['settings'])]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/bot/admin', requirements: [
+		'apiVersion' => '(v1)',
+	])]
 	public function adminListBots(): DataResponse {
 		$data = [];
 		$bots = $this->botServerMapper->getAllBots();
@@ -315,6 +333,10 @@ class BotController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/bot/{token}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function listBots(): DataResponse {
 		$alreadyInstalled = array_map(static function (BotConversation $bot): int {
 			return $bot->getBotId();
@@ -344,6 +366,11 @@ class BotController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/bot/{token}/{botId}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'botId' => '[0-9]+',
+	])]
 	public function enableBot(int $botId): DataResponse {
 		if ($this->room->isFederatedConversation() || $this->room->getType() === ROOM::TYPE_ONE_TO_ONE_FORMER) {
 			return new DataResponse([
@@ -397,6 +424,11 @@ class BotController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/bot/{token}/{botId}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'botId' => '[0-9]+',
+	])]
 	public function disableBot(int $botId): DataResponse {
 		try {
 			$bot = $this->botServerMapper->findById($botId);

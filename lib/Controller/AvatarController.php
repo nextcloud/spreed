@@ -20,6 +20,7 @@ use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
@@ -64,6 +65,10 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/avatar', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function uploadAvatar(): DataResponse {
 		try {
 			$file = $this->request->getUploadedFile('file');
@@ -97,6 +102,10 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/avatar/emoji', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function emojiAvatar(string $emoji, ?string $color): DataResponse {
 		try {
 			$this->avatarService->setAvatarFromEmoji($this->getRoom(), $emoji, $color);
@@ -131,6 +140,10 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	#[AllowWithoutParticipantWhenPendingInvitation]
 	#[RequireParticipantOrLoggedInAndListedConversation]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/{token}/avatar', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function getAvatar(bool $darkTheme = false): FileDisplayResponse {
 		// Cache for 1 day
 		$cacheDuration = 60 * 60 * 24;
@@ -165,6 +178,10 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	#[AllowWithoutParticipantWhenPendingInvitation]
 	#[RequireParticipantOrLoggedInAndListedConversation]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/{token}/avatar/dark', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function getAvatarDark(): FileDisplayResponse {
 		return $this->getAvatar(true);
 	}
@@ -185,6 +202,10 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/proxy/new/user-avatar/{size}', requirements: [
+		'apiVersion' => '(v1)',
+		'size' => '(64|512)',
+	])]
 	public function getUserProxyAvatarWithoutRoom(int $size, string $cloudId, bool $darkTheme = false): FileDisplayResponse {
 		return $this->getUserProxyAvatar($size, $cloudId, $darkTheme);
 	}
@@ -204,6 +225,10 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/proxy/new/user-avatar/{size}/dark', requirements: [
+		'apiVersion' => '(v1)',
+		'size' => '(64|512)',
+	])]
 	public function getUserProxyAvatarDarkWithoutRoom(int $size, string $cloudId): FileDisplayResponse {
 		return $this->getUserProxyAvatar($size, $cloudId, true);
 	}
@@ -227,6 +252,11 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	#[AllowWithoutParticipantWhenPendingInvitation]
 	#[RequireLoggedInParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/proxy/{token}/user-avatar/{size}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'size' => '(64|512)',
+	])]
 	public function getUserProxyAvatar(int $size, string $cloudId, bool $darkTheme = false): FileDisplayResponse {
 		try {
 			$resolvedCloudId = $this->cloudIdManager->resolveCloudId($cloudId);
@@ -288,6 +318,11 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	#[AllowWithoutParticipantWhenPendingInvitation]
 	#[RequireLoggedInParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/proxy/{token}/user-avatar/{size}/dark', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'size' => '(64|512)',
+	])]
 	public function getUserProxyAvatarDark(int $size, string $cloudId): FileDisplayResponse {
 		return $this->getUserProxyAvatar($size, $cloudId, true);
 	}
@@ -321,6 +356,10 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/avatar', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function deleteAvatar(): DataResponse {
 		$this->avatarService->deleteAvatar($this->getRoom());
 		return new DataResponse($this->roomFormatter->formatRoom(

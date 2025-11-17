@@ -10,6 +10,7 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Settings\BeforePreferenceSetEventListener;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
@@ -47,6 +48,9 @@ class SettingsController extends OCSController {
 	 * 400: Updating user setting is not possible
 	 */
 	#[NoAdminRequired]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/settings/user', requirements: [
+		'apiVersion' => '(v1)',
+	])]
 	public function setUserSetting(string $key, string|int|null $value): DataResponse {
 		if (!$this->preferenceListener->validatePreference($this->userId, $key, $value)) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
@@ -68,6 +72,9 @@ class SettingsController extends OCSController {
 	 * 200: Successfully set new SIP settings
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['settings'])]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/settings/sip', requirements: [
+		'apiVersion' => '(v1)',
+	])]
 	public function setSIPSettings(
 		array $sipGroups = [],
 		string $dialInInfo = '',
