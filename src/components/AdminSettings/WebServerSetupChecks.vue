@@ -41,7 +41,7 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconAlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import { VIRTUAL_BACKGROUND } from '../../constants.ts'
-import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
+import VideoStreamBackgroundEffect from '../../utils/media/effects/virtual-background/VideoStreamBackgroundEffect.js'
 import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
 
 export default {
@@ -140,28 +140,11 @@ export default {
 					type: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
 				},
 
-				simd: VirtualBackground.isWasmSimd(),
+				webGL: VirtualBackground.isWebGLSupported(),
 			}
 
-			// When the worker is loaded from Talk its URL starts with
-			// "apps/spreed/js". However, when it is loaded from the
-			// administration settings its URL starts with "apps/talk/js"
-			// instead, so it fails to load.
-			//
-			// "publicPath" option in "worker-loader" configuration does not
-			// work with Webpack 5. As a workaround the public path needs to be
-			// overriden at runtime before loading the worker and restored
-			// afterwards.
-			// https://github.com/webpack-contrib/worker-loader/issues/281
-			const __webpack_public_path__saved = __webpack_public_path__
-
-			__webpack_public_path__ = generateFilePath('spreed', 'js', '')
-
-			const jitsiStreamBackgroundEffect = new JitsiStreamBackgroundEffect(options)
-
-			__webpack_public_path__ = __webpack_public_path__saved
-
-			jitsiStreamBackgroundEffect.load().then(() => {
+			const videoStreamBackgroundEffect = new VideoStreamBackgroundEffect(options)
+			videoStreamBackgroundEffect.load().then(() => {
 				this.virtualBackgroundLoaded = true
 			}).catch(() => {
 				this.virtualBackgroundLoaded = false

@@ -53,6 +53,7 @@ module.exports = mergeWithRules({
 		minimizer: [
 			new EsbuildPlugin({
 				target: 'es2020',
+				exclude: /vision_wasm(?:_nosimd)?_internal\.js/,
 			}),
 		],
 	},

@@ -5,7 +5,8 @@
 
 import * as wasmCheck from 'wasm-check'
 import { VIRTUAL_BACKGROUND } from '../../../constants.ts'
-import JitsiStreamBackgroundEffect from '../effects/virtual-background/JitsiStreamBackgroundEffect.js'
+import { isSafari } from '../../browserCheck.ts'
+import VideoStreamBackgroundEffect from '../effects/virtual-background/VideoStreamBackgroundEffect.js'
 import TrackSinkSource from './TrackSinkSource.js'
 
 /**
@@ -46,11 +47,11 @@ import TrackSinkSource from './TrackSinkSource.js'
  */
 export default class VirtualBackground extends TrackSinkSource {
 	static _wasmSupported
-	static _wasmSimd
 	static _canvasFilterSupported
+	static _webGLSupported
 
 	static isSupported() {
-		return this.isWasmSupported() && this.isCanvasFilterSupported()
+		return this.isWasmSupported() && (this.isWebGLSupported() || this.isCanvasFilterSupported())
 	}
 
 	static _checkWasmSupport() {
@@ -63,8 +64,6 @@ export default class VirtualBackground extends TrackSinkSource {
 		}
 
 		this._wasmSupported = true
-
-		this._wasmSimd = wasmCheck.feature.simd
 	}
 
 	static isWasmSupported() {
@@ -75,31 +74,39 @@ export default class VirtualBackground extends TrackSinkSource {
 		return this._wasmSupported
 	}
 
-	/**
-	 * Returns whether SIMD instructions are available in WebAssembly or not.
-	 *
-	 * @return {boolean} undefined if WebAssembly is not supported, true if SIMD
-	 *         instructions are available in WebAssembly, or false otherwise.
-	 */
-	static isWasmSimd() {
-		if (this._wasmSupported === undefined) {
-			this._checkWasmSupport()
-		}
-
-		return this._wasmSimd
-	}
-
 	static isCanvasFilterSupported() {
 		if (this._canvasFilterSupported === undefined) {
-			const canvas = document.createElement('canvas')
-			const context = canvas.getContext('2d')
+			if (!isSafari) {
+				const canvas = document.createElement('canvas')
+				const context = canvas.getContext('2d')
 
-			this._canvasFilterSupported = context.filter !== undefined
+				this._canvasFilterSupported = context.filter !== undefined
 
-			canvas.remove()
+				canvas.remove()
+			} else {
+				this._canvasFilterSupported = false
+			}
 		}
 
 		return this._canvasFilterSupported
+	}
+
+	static isWebGLSupported() {
+		if (this._webGLSupported === undefined) {
+			let canvas, gl
+			try {
+				canvas = document.createElement('canvas')
+				gl = canvas.getContext('webgl2')
+				this._webGLSupported = !!gl
+			} catch (e) {
+				this._webGLSupported = false
+			} finally {
+				gl = null
+				canvas = null
+			}
+		}
+
+		return this._webGLSupported
 	}
 
 	constructor() {
@@ -108,9 +115,9 @@ export default class VirtualBackground extends TrackSinkSource {
 		this._addInputTrackSlot()
 		this._addOutputTrackSlot()
 
-		this._initJitsiStreamBackgroundEffect()
+		this._initVideoStreamBackgroundEffect()
 
-		// JitsiStreamBackgroundEffect works with tracks internally, but
+		// VideoStreamBackgroundEffect works with tracks internally, but
 		// requires and provides streams externally
 		this._inputStream = null
 		this._outputStream = null
@@ -118,10 +125,10 @@ export default class VirtualBackground extends TrackSinkSource {
 		this._enabled = true
 	}
 
-	_initJitsiStreamBackgroundEffect() {
+	_initVideoStreamBackgroundEffect() {
 		const segmentationDimensions = {
-			modelLandscape: {
-				height: 144,
+			modelSquare: {
+				height: 256,
 				width: 256,
 			},
 		}
@@ -130,20 +137,18 @@ export default class VirtualBackground extends TrackSinkSource {
 			return
 		}
 
-		const isSimd = VirtualBackground.isWasmSimd()
-
 		const virtualBackground = {
 			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
 			blurValue: VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT,
 		}
 		const options = {
-			...segmentationDimensions.modelLandscape,
+			...segmentationDimensions.modelSquare,
 			virtualBackground,
-			simd: isSimd,
+			webGL: VirtualBackground.isWebGLSupported(),
 		}
 
-		this._jitsiStreamBackgroundEffect = new JitsiStreamBackgroundEffect(options)
-		this._jitsiStreamBackgroundEffect.load().catch(() => {
+		this._videoStreamBackgroundEffect = new VideoStreamBackgroundEffect(options)
+		this._videoStreamBackgroundEffect.load().catch(() => {
 			this._trigger('loadFailed')
 
 			this.setEnabled(false)
@@ -158,7 +163,7 @@ export default class VirtualBackground extends TrackSinkSource {
 		// If VirtualBackground is supported it is assumed to be available
 		// unless the load has failed (so it is seen as available even when
 		// still loading).
-		return !this._jitsiStreamBackgroundEffect.didLoadFail()
+		return !this._videoStreamBackgroundEffect.didLoadFail()
 	}
 
 	isEnabled() {
@@ -170,7 +175,7 @@ export default class VirtualBackground extends TrackSinkSource {
 			enabled = false
 		}
 
-		if (this.enabled === enabled) {
+		if (this._enabled === enabled) {
 			return
 		}
 
@@ -204,7 +209,7 @@ export default class VirtualBackground extends TrackSinkSource {
 		}
 
 		if (newTrack === oldTrack && newTrack !== null && newTrack.enabled) {
-			this._jitsiStreamBackgroundEffect.updateInputStream()
+			this._videoStreamBackgroundEffect.updateInputStream()
 
 			return
 		}
@@ -251,7 +256,7 @@ export default class VirtualBackground extends TrackSinkSource {
 		this._inputStream = new MediaStream()
 		this._inputStream.addTrack(this.getInputTrack())
 
-		this._outputStream = this._jitsiStreamBackgroundEffect.startEffect(this._inputStream)
+		this._outputStream = this._videoStreamBackgroundEffect.startEffect(this._inputStream)
 
 		this._setOutputTrack('default', this._outputStream.getVideoTracks()[0])
 	}
@@ -261,7 +266,7 @@ export default class VirtualBackground extends TrackSinkSource {
 			return
 		}
 
-		this._jitsiStreamBackgroundEffect.stopEffect()
+		this._videoStreamBackgroundEffect.stopEffect()
 		this._outputStream.getTracks().forEach((track) => {
 			this._disableRemoveTrackWhenEnded(track)
 
@@ -283,7 +288,7 @@ export default class VirtualBackground extends TrackSinkSource {
 			return undefined
 		}
 
-		return this._jitsiStreamBackgroundEffect.getVirtualBackground()
+		return this._videoStreamBackgroundEffect.getVirtualBackground()
 	}
 
 	/**
@@ -292,14 +297,14 @@ export default class VirtualBackground extends TrackSinkSource {
 	 * Nothing is set if the virtual background is not available.
 	 *
 	 * @param {object} virtualBackground the virtual background properties; see
-	 *        JitsiStreamBackgroundEffect.setVirtualBackground().
+	 *        VideoStreamBackgroundEffect.setVirtualBackground().
 	 */
 	setVirtualBackground(virtualBackground) {
 		if (!this.isAvailable()) {
 			return
 		}
 
-		this._jitsiStreamBackgroundEffect.setVirtualBackground(virtualBackground)
+		this._videoStreamBackgroundEffect.setVirtualBackground(virtualBackground)
 	}
 
 	/**
@@ -307,7 +312,7 @@ export default class VirtualBackground extends TrackSinkSource {
 	 */
 	destroy() {
 		this._stopEffect()
-		this._jitsiStreamBackgroundEffect.destroy()
-		this._jitsiStreamBackgroundEffect = null
+		this._videoStreamBackgroundEffect.destroy()
+		this._videoStreamBackgroundEffect = null
 	}
 }
