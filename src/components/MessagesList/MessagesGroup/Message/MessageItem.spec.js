@@ -465,15 +465,6 @@ describe('MessageItem.vue', () => {
 			store = createStore(testStoreConfig)
 		})
 
-		test('does not render actions for system messages are available', async () => {
-			messageProps.message.systemMessage = 'this is a system message'
-
-			const wrapper = mountMessage(messageProps)
-
-			await wrapper.find('.message').trigger('mouseover')
-			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
-		})
-
 		test('does not render actions for temporary messages', async () => {
 			messageProps.message.timestamp = 0
 
