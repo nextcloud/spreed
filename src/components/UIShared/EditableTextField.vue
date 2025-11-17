@@ -241,8 +241,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
-@import '../../assets/markdown';
+@use '../../assets/variables' as *;
+@use '../../assets/markdown' as *;
 
 .editable-text-field {
 	display: flex;
