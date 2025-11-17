@@ -4,16 +4,23 @@
 -->
 
 <script setup lang="ts">
-import type { Conversation, ParticipantSearchResult } from '../../../types/index.ts'
+import type {
+	Conversation,
+	ParticipantSearchResult,
+	UnifiedSearchResultEntryWithRouterLink,
+} from '../../../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
 import { useVirtualList } from '@vueuse/core'
 import { computed } from 'vue'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconChatPlusOutline from 'vue-material-design-icons/ChatPlusOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
+import SearchMessageItem from '../../RightSidebar/SearchMessages/SearchMessageItem.vue'
 import NavigationHint from '../../UIShared/NavigationHint.vue'
 import ConversationItem from '../ConversationsList/ConversationItem.vue'
 import { ATTENDEE, AVATAR, CONVERSATION } from '../../../constants.ts'
@@ -26,12 +33,17 @@ const props = defineProps<{
 	searchText: string
 	conversationsList: Conversation[]
 	searchResultsLoading: boolean
+	searchFilters: string[]
 	searchResultsListedConversations: Conversation[]
 	searchResults: ParticipantSearchResult[]
+	searchResultsMessages: UnifiedSearchResultEntryWithRouterLink[]
+	hasMoreMessages: boolean
+	messagesLoadingMore: boolean
 }>()
 
 const emit = defineEmits<{
 	abortSearch: []
+	loadMoreMessages: []
 	createNewConversation: [searchText: string]
 	createAndJoinConversation: [item: Conversation | ParticipantSearchResult]
 }>()
@@ -76,6 +88,8 @@ type VirtualListItem
 		| { type: 'hint', id: string, hint: string }
 		| { type: 'conversation', id: number, object: Conversation }
 		| { type: 'open_conversation', id: number, object: Conversation }
+		| { type: 'message', id: number, object: UnifiedSearchResultEntryWithRouterLink }
+		| { type: 'load_more_messages', id: string }
 		| { type: 'action', id: string, name: string, subname: string }
 		| { type: 'user' | 'group' | 'circle' | 'federated', id: string, object: ParticipantSearchResult, icon: Record<string, unknown> }
 
@@ -93,73 +107,100 @@ const searchResultsVirtual = computed<VirtualListItem[]>(() => {
 		return searchTerms.every((term) => displayName.includes(term) || name.includes(term))
 	})
 
+	const showConversations = props.searchFilters.includes('conversations')
+	const showPeople = props.searchFilters.includes('people')
+	const showMessages = props.searchFilters.includes('messages')
+
 	// Add conversations section
-	virtualList.push({ type: 'caption', id: 'conversations_caption', name: t('spreed', 'Conversations') })
-	if (searchResultsConversationList.length === 0) {
-		virtualList.push({ type: 'hint', id: 'hint_conversations', hint: t('spreed', 'No matches found') })
-	} else {
-		sortConversationsList(searchResultsConversationList, settingsStore.groupMode, settingsStore.sortOrder)
-			.forEach((item: Conversation) => {
-				virtualList.push({ type: 'conversation', id: item.id, object: item })
-			})
+	if (showConversations) {
+		virtualList.push({ type: 'caption', id: 'conversations_caption', name: t('spreed', 'Conversations') })
+		if (searchResultsConversationList.length === 0) {
+			virtualList.push({ type: 'hint', id: 'hint_conversations', hint: t('spreed', 'No matches found') })
+		} else {
+			sortConversationsList(searchResultsConversationList, settingsStore.groupMode, settingsStore.sortOrder)
+				.forEach((item: Conversation) => {
+					virtualList.push({ type: 'conversation', id: item.id, object: item })
+				})
+		}
 	}
 
 	// Add "New Conversation" option if allowed
-	if (canStartConversations) {
+	if (canStartConversations && showPeople) {
 		virtualList.push({ type: 'action', id: 'new_conversation', name: props.searchText, subname: t('spreed', 'New private conversation') })
 	}
 
 	// Add 'Loading' message if there are no results received from the server yet
-	if (props.searchResultsLoading && !props.searchResultsListedConversations.length && !props.searchResults.length) {
+	if ((showConversations || showPeople) && props.searchResultsLoading && !props.searchResultsListedConversations.length && !props.searchResults.length) {
 		virtualList.push({ type: 'caption', id: 'loading_results_caption', name: t('spreed', 'Other sources') })
 		virtualList.push({ type: 'hint', id: 'loading_results_hint', hint: t('spreed', 'Loading …') })
 		return virtualList
 	}
 
 	// Add open conversations section if any
-	if (props.searchResultsListedConversations.length !== 0) {
+	if (showConversations && props.searchResultsListedConversations.length !== 0) {
 		virtualList.push({ type: 'caption', id: 'open_conversation_caption', name: t('spreed', 'Open conversations') })
 		props.searchResultsListedConversations.forEach((item: Conversation) => {
 			virtualList.push({ type: 'open_conversation', id: item.id, object: item })
 		})
 	}
 
+	// Add messages section
+	if (showMessages) {
+		virtualList.push({ type: 'caption', id: 'messages_caption', name: t('spreed', 'Messages') })
+		if (props.searchResultsMessages.length === 0) {
+			virtualList.push({
+				type: 'hint',
+				id: 'hint_messages',
+				hint: props.searchResultsLoading ? t('spreed', 'Loading …') : t('spreed', 'No matches found'),
+			})
+		} else {
+			props.searchResultsMessages.forEach((item: UnifiedSearchResultEntryWithRouterLink) => {
+				virtualList.push({ type: 'message', id: +item.attributes.messageId, object: item })
+			})
+			if (props.hasMoreMessages) {
+				virtualList.push({ type: 'load_more_messages', id: 'load_more_messages' })
+			}
+		}
+	}
+
 	// Categorize search results into different sections
-	const subList = props.searchResults.reduce<SubListType>((acc, result) => {
-		if (result.source === ATTENDEE.ACTOR_TYPE.USERS) {
-			acc.user.push(result)
-		} else if (result.source === ATTENDEE.ACTOR_TYPE.GROUPS && canStartConversations) {
-			acc.group.push(result)
-		} else if (result.source === ATTENDEE.ACTOR_TYPE.CIRCLES && canStartConversations) {
-			acc.circle.push(result)
-		} else if (result.source === ATTENDEE.ACTOR_TYPE.REMOTES && canStartConversations) {
-			acc.federated.push({ ...result, source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS })
-		}
-		return acc
-	}, {
-		user: [],
-		group: [],
-		circle: [],
-		federated: [],
-	})
+	if (showPeople) {
+		const subList = props.searchResults.reduce<SubListType>((acc, result) => {
+			if (result.source === ATTENDEE.ACTOR_TYPE.USERS) {
+				acc.user.push(result)
+			} else if (result.source === ATTENDEE.ACTOR_TYPE.GROUPS && canStartConversations) {
+				acc.group.push(result)
+			} else if (result.source === ATTENDEE.ACTOR_TYPE.CIRCLES && canStartConversations) {
+				acc.circle.push(result)
+			} else if (result.source === ATTENDEE.ACTOR_TYPE.REMOTES && canStartConversations) {
+				acc.federated.push({ ...result, source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS })
+			}
+			return acc
+		}, {
+			user: [],
+			group: [],
+			circle: [],
+			federated: [],
+		})
 
-	// Iterate over sections and build the virtualList
-	sections.forEach((section) => {
-		if (subList[section.type].length > 0) {
-			virtualList.push(section.caption)
-			virtualList.push(...subList[section.type].map((match) => ({
-				type: section.type,
-				id: `${section.type}_${match.id}`,
-				object: match,
-				icon: iconData(match),
-			})))
-		}
-	})
+		// Iterate over sections and build the virtualList
+		sections.forEach((section) => {
+			if (subList[section.type].length > 0) {
+				virtualList.push(section.caption)
+				virtualList.push(...subList[section.type].map((match) => ({
+					type: section.type,
+					id: `${section.type}_${match.id}`,
+					object: match,
+					icon: iconData(match),
+				})))
+			}
+		})
 
-	// Add "No results" message if there are no results in any section
-	if (!subList.user.length || !subList.group.length || (!subList.circle.length && isCirclesEnabled) || !subList.federated.length) {
-		virtualList.push({ type: 'caption', id: 'no_results_caption', name: sourcesWithoutResults(subList) })
-		virtualList.push({ type: 'hint', id: 'no_results_hint', hint: t('spreed', 'No search results') })
+		// Add "No results" message if there are no results in any section
+		if (!subList.user.length || !subList.group.length || (!subList.circle.length && isCirclesEnabled) || !subList.federated.length) {
+			virtualList.push({ type: 'caption', id: 'no_results_caption', name: sourcesWithoutResults(subList) })
+			virtualList.push({ type: 'hint', id: 'no_results_hint', hint: t('spreed', 'No search results') })
+		}
 	}
 
 	return virtualList
@@ -265,6 +306,31 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 					isSearchResult
 					:compact="isCompact"
 					@click="emit('abortSearch')" />
+				<SearchMessageItem
+					v-if="item.data.type === 'message'"
+					:ref="`message-${item.data.object.attributes.conversation}`"
+					:messageId="+item.data.object.attributes.messageId"
+					:title="isCompact ? item.data.object.subline : item.data.object.title"
+					:subline="item.data.object.subline"
+					:actorId="item.data.object.attributes.actorId"
+					:actorType="item.data.object.attributes.actorType"
+					:token="item.data.object.attributes.conversation"
+					:timestamp="+item.data.object.attributes.timestamp"
+					:to="item.data.object.to"
+					:compact="isCompact"
+					@click="emit('abortSearch')" />
+				<NcButton
+					v-else-if="item.data.type === 'load_more_messages'"
+					class="load-more-messages"
+					variant="tertiary"
+					wide
+					:disabled="messagesLoadingMore"
+					@click="emit('loadMoreMessages')">
+					<template v-if="messagesLoadingMore" #icon>
+						<NcLoadingIcon :size="20" />
+					</template>
+					{{ t('spreed', 'Show more messages') }}
+				</NcButton>
 				<NcAppNavigationCaption
 					v-else-if="item.data.type === 'caption'"
 					:name="item.data.name"
