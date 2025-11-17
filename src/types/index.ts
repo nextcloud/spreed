@@ -488,6 +488,7 @@ export type {
 	SearchMessagePayload,
 	UnifiedSearchResponse,
 	UnifiedSearchResultEntry,
+	UnifiedSearchResultEntryWithRouterLink,
 } from './core.ts'
 
 // Files API
