@@ -25,6 +25,7 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -100,6 +101,9 @@ class PageController extends Controller {
 	#[PublicPage]
 	#[UseSession]
 	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[FrontpageRoute(verb: 'GET', url: '/call/{token}', requirements: [
+		'token' => '[a-z0-9]{4,30}',
+	], root: '')]
 	public function showCall(string $token, string $email = '', string $access = ''): Response {
 		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
 		return $this->pageHandler($token, email: $email, accessToken: $access);
@@ -115,6 +119,9 @@ class PageController extends Controller {
 	#[PublicPage]
 	#[UseSession]
 	#[BruteForceProtection(action: 'talkRoomPassword')]
+	#[FrontpageRoute(verb: 'POST', url: '/call/{token}', requirements: [
+		'token' => '[a-z0-9]{4,30}',
+	], root: '')]
 	public function authenticatePassword(string $token, string $password = ''): Response {
 		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
 		return $this->pageHandler($token, password: $password);
@@ -122,12 +129,14 @@ class PageController extends Controller {
 
 	#[NoCSRFRequired]
 	#[PublicPage]
+	#[FrontpageRoute(verb: 'GET', url: '/not-found')]
 	public function notFound(): Response {
 		return $this->pageHandler();
 	}
 
 	#[NoCSRFRequired]
 	#[PublicPage]
+	#[FrontpageRoute(verb: 'GET', url: '/duplicate-session')]
 	public function duplicateSession(): Response {
 		return $this->pageHandler();
 	}
@@ -142,6 +151,7 @@ class PageController extends Controller {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[UseSession]
+	#[FrontpageRoute(verb: 'GET', url: '/')]
 	public function index(string $token = '', string $callUser = ''): Response {
 		if ($callUser !== '') {
 			$token = '';
@@ -296,6 +306,9 @@ class PageController extends Controller {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[BruteForceProtection(action: 'talkRecordingStatus')]
+	#[FrontpageRoute(verb: 'GET', url: '/call/{token}/recording', requirements: [
+		'token' => '[a-z0-9]{4,30}',
+	], root: '')]
 	public function recording(string $token): Response {
 		try {
 			$room = $this->manager->getRoomByToken($token);

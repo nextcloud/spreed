@@ -15,6 +15,7 @@ use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\CalendarIntegrationService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
@@ -46,6 +47,9 @@ class CalendarIntegrationController extends AEnvironmentAwareOCSController {
 	 * 200: A list of dashboard entries or an empty array
 	 */
 	#[NoAdminRequired]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/dashboard/events', requirements: [
+		'apiVersion' => '(v4)',
+	])]
 	public function getDashboardEvents(): DataResponse {
 		$userId = $this->userSession->getUser()?->getUID();
 		$entries = $this->service->getDashboardEvents($userId);
@@ -65,6 +69,10 @@ class CalendarIntegrationController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireParticipant]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/{token}/mutual-events', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function getMutualEvents(): DataResponse {
 		$userId = $this->userSession->getUser()?->getUID();
 		try {

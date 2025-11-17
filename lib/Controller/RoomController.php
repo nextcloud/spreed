@@ -75,6 +75,7 @@ use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
@@ -221,6 +222,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * 200: Return list of rooms
 	 */
 	#[NoAdminRequired]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room', requirements: [
+		'apiVersion' => '(v4)',
+	])]
 	public function getRooms(int $noStatusUpdate = 0, bool $includeStatus = false, int $modifiedSince = 0, bool $includeLastMessage = true): DataResponse {
 		$nextModifiedSince = $this->timeFactory->getTime();
 
@@ -347,6 +351,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * 200: Return list of matching rooms
 	 */
 	#[NoAdminRequired]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/listed-room', requirements: [
+		'apiVersion' => '(v4)',
+	])]
 	public function getListedRooms(string $searchTerm = ''): DataResponse {
 		$rooms = $this->manager->getListedRoomsForUser($this->userId, $searchTerm);
 
@@ -371,6 +378,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/{token}/breakout-rooms', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function getBreakoutRooms(): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->getBreakoutRooms($this->room, $this->participant);
@@ -412,6 +423,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
 	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/{token}', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function getSingleRoom(string $token): DataResponse {
 		try {
 			$isSIPBridgeRequest = $this->validateSIPBridgeRequest($token);
@@ -509,6 +524,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * 200: Room returned successfully
 	 */
 	#[NoAdminRequired]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/note-to-self', requirements: [
+		'apiVersion' => '(v4)',
+	])]
 	public function getNoteToSelfConversation(): DataResponse {
 		$room = $this->noteToSelfService->ensureNoteToSelfExistsForUser($this->userId);
 		$participant = $this->participantService->getParticipant($room, $this->userId, false);
@@ -614,6 +632,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * 404: User, group or other target to invite was not found
 	 */
 	#[NoAdminRequired]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room', requirements: [
+		'apiVersion' => '(v4)',
+	])]
 	public function createRoom(
 		int $roomType = Room::TYPE_GROUP,
 		string $invite = '', /* @deprecated */
@@ -830,6 +851,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/favorite', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function addToFavorites(): DataResponse {
 		$this->participantService->updateFavoriteStatus($this->participant, true);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
@@ -845,6 +870,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/favorite', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function removeFromFavorites(): DataResponse {
 		$this->participantService->updateFavoriteStatus($this->participant, false);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
@@ -863,6 +892,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/notify', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setNotificationLevel(int $level): DataResponse {
 		try {
 			$this->participantService->updateNotificationLevel($this->participant, $level);
@@ -886,6 +919,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[FederationSupported]
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/notify-calls', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setNotificationCalls(int $level): DataResponse {
 		try {
 			$this->participantService->updateNotificationCalls($this->participant, $level);
@@ -907,6 +944,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function renameRoom(string $roomName): DataResponse {
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
 			return new DataResponse(['error' => Room::OBJECT_TYPE_EVENT], Http::STATUS_BAD_REQUEST);
@@ -931,6 +972,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/description', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setDescription(string $description): DataResponse {
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
 			return new DataResponse(['error' => Room::OBJECT_TYPE_EVENT], Http::STATUS_BAD_REQUEST);
@@ -955,6 +1000,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function deleteRoom(): DataResponse {
 		if (!$this->appConfig->getAppValueBool('delete_one_to_one_conversations')
 			&& in_array($this->room->getType(), [Room::TYPE_ONE_TO_ONE, Room::TYPE_ONE_TO_ONE_FORMER], true)) {
@@ -978,6 +1027,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/object', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function unbindRoomFromObject(): DataResponse {
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT || $this->room->getObjectType() === Room::OBJECT_TYPE_INSTANT_MEETING) {
 			$this->roomService->resetObject($this->room);
@@ -1005,6 +1058,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/{token}/participants', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function getParticipants(bool $includeStatus = false): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\RoomController $proxy */
@@ -1070,6 +1127,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/{token}/breakout-rooms/participants', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function getBreakoutRoomParticipants(bool $includeStatus = false): DataResponse {
 		if ($this->participant->getAttendee()->getParticipantType() === Participant::GUEST) {
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
@@ -1273,6 +1334,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/participants', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function addParticipantToRoom(string $newParticipant, string $source = 'users'): DataResponse {
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE
 			|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
@@ -1480,6 +1545,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/participants/self', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function removeSelfFromRoom(): DataResponse {
 		return $this->removeSelfFromRoomLogic($this->room, $this->participant);
 	}
@@ -1542,6 +1611,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/attendees', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function removeAttendeeFromRoom(int $attendeeId): DataResponse {
 		try {
 			$targetParticipant = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
@@ -1583,6 +1656,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/public', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function makePublic(string $password = ''): DataResponse {
 		if ($this->talkConfig->isPasswordEnforced() && $password === '') {
 			return new DataResponse(['error' => 'password', 'message' => $this->l->t('Password needs to be set')], Http::STATUS_BAD_REQUEST);
@@ -1613,6 +1690,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/public', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function makePrivate(): DataResponse {
 		try {
 			$this->roomService->setType($this->room, Room::TYPE_GROUP);
@@ -1635,6 +1716,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/read-only', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setReadOnly(int $state): DataResponse {
 		try {
 			$this->roomService->setReadOnly($this->room, $state);
@@ -1666,6 +1751,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/listable', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setListable(int $scope): DataResponse {
 		try {
 			$this->roomService->setListable($this->room, $scope);
@@ -1688,6 +1777,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/mention-permissions', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setMentionPermissions(int $mentionPermissions): DataResponse {
 		try {
 			$this->roomService->setMentionPermissions($this->room, $mentionPermissions);
@@ -1709,6 +1802,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/password', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setPassword(string $password): DataResponse {
 		try {
 			$this->roomService->setPassword($this->room, $password);
@@ -1735,6 +1832,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	#[FederationSupported]
 	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/archive', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function archiveConversation(): DataResponse {
 		$this->participantService->archiveConversation($this->participant);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
@@ -1752,6 +1853,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	#[FederationSupported]
 	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/archive', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function unarchiveConversation(): DataResponse {
 		$this->participantService->unarchiveConversation($this->participant);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
@@ -1769,6 +1874,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	#[FederationSupported]
 	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/important', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function markConversationAsImportant(): DataResponse {
 		$this->participantService->markConversationAsImportant($this->participant);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
@@ -1786,6 +1895,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	#[FederationSupported]
 	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/important', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function markConversationAsUnimportant(): DataResponse {
 		$this->participantService->markConversationAsUnimportant($this->participant);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
@@ -1803,6 +1916,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	#[FederationSupported]
 	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/sensitive', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function markConversationAsSensitive(): DataResponse {
 		$this->participantService->markConversationAsSensitive($this->participant);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
@@ -1820,6 +1937,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	#[FederationSupported]
 	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/sensitive', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function markConversationAsInsensitive(): DataResponse {
 		$this->participantService->markConversationAsInsensitive($this->participant);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
@@ -1841,6 +1962,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomPassword')]
 	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/participants/active', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
 		$sessionId = $this->session->getSessionForRoom($token);
 		try {
@@ -2003,6 +2128,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[BruteForceProtection(action: 'talkFederationAccess')]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/federation/active', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function joinFederatedRoom(string $token, ?string $sessionId): DataResponse {
 		if (!$this->federationAuthenticator->isFederationRequest()) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
@@ -2057,6 +2186,15 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[RequireRoom]
 	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
 	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/{token}/pin/{pin}', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+		'pin' => '\d{7,32}',
+	], postfix: 'deprecated')]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/verify-dialin', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function verifyDialInPin(string $pin): DataResponse {
 		if (!$this->talkConfig->isSIPConfigured()) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
@@ -2103,6 +2241,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
 	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/direct-dial-in', requirements: [
+		'apiVersion' => '(v4)',
+	])]
 	public function directDialIn(string $phoneNumber, string $caller): DataResponse {
 		if (!$this->talkConfig->isSIPConfigured()) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
@@ -2167,6 +2308,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[RequireRoom]
 	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
 	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/verify-dialout', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function verifyDialOutNumber(string $number, array $options = []): DataResponse {
 		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
@@ -2216,6 +2361,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[RequireRoom]
 	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
 	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/open-dial-in', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function createGuestByDialIn(): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
@@ -2257,6 +2406,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[RequireRoom]
 	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
 	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/rejected-dialout', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function rejectedDialOutRequest(string $callId, array $options = []): DataResponse {
 		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
@@ -2303,6 +2456,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[FederationSupported]
 	#[PublicPage]
 	#[RequireParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/participants/state', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setSessionState(int $state): DataResponse {
 		if (!$this->participant->getSession() instanceof Session) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
@@ -2326,6 +2483,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * 200: Successfully left the room
 	 */
 	#[PublicPage]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/participants/active', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function leaveRoom(string $token): DataResponse {
 		$sessionId = $this->session->getSessionForRoom($token);
 		$this->session->removeSessionForRoom($token);
@@ -2361,6 +2522,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/federation/active', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function leaveFederatedRoom(string $token, string $sessionId): DataResponse {
 		if (!$this->federationAuthenticator->isFederationRequest()) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
@@ -2411,6 +2576,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/moderators', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function promoteModerator(int $attendeeId): DataResponse {
 		return $this->changeParticipantType($attendeeId, true);
 	}
@@ -2429,6 +2598,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/moderators', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function demoteModerator(int $attendeeId): DataResponse {
 		return $this->changeParticipantType($attendeeId, false);
 	}
@@ -2502,6 +2675,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/permissions/{mode}', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+		'mode' => '(call|default)',
+	])]
 	public function setPermissions(string $mode, int $permissions): DataResponse {
 		if ($mode !== 'default') {
 			return new DataResponse(['error' => 'mode'], Http::STATUS_BAD_REQUEST);
@@ -2533,6 +2711,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/attendees/permissions', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setAttendeePermissions(int $attendeeId, string $method, int $permissions): DataResponse {
 		try {
 			$targetParticipant = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
@@ -2567,6 +2749,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/attendees/permissions/all', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setAllAttendeesPermissions(string $method, int $permissions): DataResponse {
 		return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 	}
@@ -2585,6 +2771,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/webinar/lobby', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setLobby(int $state, ?int $timer = null): DataResponse {
 		$timerDateTime = null;
 		if ($timer !== null && $timer > 0) {
@@ -2636,6 +2826,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/webinar/sip', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setSIPEnabled(int $state): DataResponse {
 		$user = $this->userManager->get($this->userId);
 		if (!$user instanceof IUser) {
@@ -2673,6 +2867,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/room/{token}/recording-consent', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setRecordingConsent(int $recordingConsent): DataResponse {
 		if (!$this->talkConfig->isRecordingEnabled()) {
 			return new DataResponse(['error' => 'config'], Http::STATUS_PRECONDITION_FAILED);
@@ -2699,6 +2897,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/participants/resend-invitations', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function resendInvitations(?int $attendeeId): DataResponse {
 		/** @var Participant[] $participants */
 		$participants = [];
@@ -2736,6 +2938,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/message-expiration', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setMessageExpiration(int $seconds): DataResponse {
 		try {
 			$this->roomService->setMessageExpiration($this->room, $seconds);
@@ -2763,6 +2969,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/import-emails', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function importEmailsAsParticipants(bool $testRun = false): DataResponse {
 		$file = $this->request->getUploadedFile('file');
 		if ($file === null) {
@@ -2802,6 +3012,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/{token}/capabilities', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function getCapabilities(): DataResponse {
 		$headers = [];
 		if ($this->room->isFederatedConversation()) {
@@ -2867,6 +3081,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/meeting', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function scheduleMeeting(string $calendarUri, int $start, ?array $attendeeIds = null, ?int $end = null, ?string $title = null, ?string $description = null): DataResponse {
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			return new DataResponse(['error' => 'conversation'], Http::STATUS_BAD_REQUEST);

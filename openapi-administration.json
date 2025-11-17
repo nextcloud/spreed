@@ -1175,10 +1175,10 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge": {
-            "delete": {
-                "operationId": "matterbridge_settings-stop-all-bridges",
-                "summary": "Stop all bridges",
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge/version": {
+            "get": {
+                "operationId": "matterbridge_settings-get-matterbridge-version",
+                "summary": "Get Matterbridge version",
                 "description": "This endpoint requires admin access",
                 "tags": [
                     "matterbridge"
@@ -1217,7 +1217,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "All bridges stopped successfully",
+                        "description": "Bridge version returned",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1237,7 +1237,15 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "boolean"
+                                                    "type": "object",
+                                                    "required": [
+                                                        "version"
+                                                    ],
+                                                    "properties": {
+                                                        "version": {
+                                                            "type": "string"
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -1246,8 +1254,8 @@
                             }
                         }
                     },
-                    "406": {
-                        "description": "Stopping all bridges is not possible",
+                    "400": {
+                        "description": "Getting bridge version is not possible",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1343,10 +1351,10 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge/version": {
-            "get": {
-                "operationId": "matterbridge_settings-get-matterbridge-version",
-                "summary": "Get Matterbridge version",
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge": {
+            "delete": {
+                "operationId": "matterbridge_settings-stop-all-bridges",
+                "summary": "Stop all bridges",
                 "description": "This endpoint requires admin access",
                 "tags": [
                     "matterbridge"
@@ -1385,7 +1393,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Bridge version returned",
+                        "description": "All bridges stopped successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1405,15 +1413,7 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "version"
-                                                    ],
-                                                    "properties": {
-                                                        "version": {
-                                                            "type": "string"
-                                                        }
-                                                    }
+                                                    "type": "boolean"
                                                 }
                                             }
                                         }
@@ -1422,8 +1422,8 @@
                             }
                         }
                     },
-                    "400": {
-                        "description": "Getting bridge version is not possible",
+                    "406": {
+                        "description": "Stopping all bridges is not possible",
                         "content": {
                             "application/json": {
                                 "schema": {

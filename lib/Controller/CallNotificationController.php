@@ -11,6 +11,7 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
@@ -48,6 +49,10 @@ class CallNotificationController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	#[OpenAPI(tags: ['call'])]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/call/{token}/notification-state', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function state(string $token): DataResponse {
 		if ($this->userId === null) {
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);

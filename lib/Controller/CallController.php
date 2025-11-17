@@ -33,6 +33,7 @@ use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SIPDialOutService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -84,6 +85,10 @@ class CallController extends AEnvironmentAwareOCSController {
 	#[RequireParticipant]
 	#[RequireReadWriteConversation]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/call/{token}', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function getPeersForCall(): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController $proxy */
@@ -137,6 +142,10 @@ class CallController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorParticipant]
 	#[NoCSRFRequired]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/call/{token}/download', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function downloadParticipantsForCall(string $format = 'csv'): DataDownloadResponse|Response {
 		$callStart = $this->room->getActiveSince()?->getTimestamp() ?? 0;
 		if ($callStart === 0) {
@@ -231,6 +240,10 @@ class CallController extends AEnvironmentAwareOCSController {
 	#[RequireParticipant]
 	#[RequireReadWriteConversation]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/call/{token}', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function joinCall(?int $flags = null, bool $silent = false, bool $recordingConsent = false, array $silentFor = []): DataResponse {
 		try {
 			$this->validateRecordingConsent($recordingConsent);
@@ -314,6 +327,10 @@ class CallController extends AEnvironmentAwareOCSController {
 	#[RequireReadWriteConversation]
 	#[BruteForceProtection(action: 'talkFederationAccess')]
 	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/call/{token}/federation', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function joinFederatedCall(string $sessionId, ?int $flags = null, bool $silent = false, bool $recordingConsent = false): DataResponse {
 		if (!$this->federationAuthenticator->isFederationRequest()) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
@@ -353,6 +370,10 @@ class CallController extends AEnvironmentAwareOCSController {
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::START_CALL)]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/call/{token}/ring/{attendeeId}', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function ringAttendee(int $attendeeId): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\CallController $proxy */
@@ -394,6 +415,10 @@ class CallController extends AEnvironmentAwareOCSController {
 	#[RequireCallEnabled]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::START_CALL)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/call/{token}/dialout/{attendeeId}', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function sipDialOut(int $attendeeId): DataResponse {
 		if ($this->room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
@@ -454,6 +479,10 @@ class CallController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/call/{token}', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function updateCallFlags(int $flags): DataResponse {
 		$session = $this->participant->getSession();
 		if (!$session instanceof Session) {
@@ -498,6 +527,10 @@ class CallController extends AEnvironmentAwareOCSController {
 	#[RequireFederatedParticipant]
 	#[BruteForceProtection(action: 'talkFederationAccess')]
 	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/call/{token}/federation', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function updateFederatedCallFlags(string $sessionId, int $flags): DataResponse {
 		if (!$this->federationAuthenticator->isFederationRequest()) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
@@ -527,6 +560,10 @@ class CallController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireParticipant]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/call/{token}', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function leaveCall(bool $all = false): DataResponse {
 		$session = $this->participant->getSession();
 		if (!$session instanceof Session) {
@@ -578,6 +615,10 @@ class CallController extends AEnvironmentAwareOCSController {
 	#[RequireFederatedParticipant]
 	#[BruteForceProtection(action: 'talkFederationAccess')]
 	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/call/{token}/federation', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function leaveFederatedCall(string $sessionId): DataResponse {
 		if (!$this->federationAuthenticator->isFederationRequest()) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);

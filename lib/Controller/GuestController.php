@@ -12,6 +12,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Participant;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
@@ -38,6 +39,10 @@ class GuestController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[RequireParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/guest/{token}/name', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function setDisplayName(string $displayName): DataResponse {
 		$participant = $this->getParticipant();
 		if (!$participant instanceof Participant) {

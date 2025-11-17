@@ -15,6 +15,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -83,6 +84,10 @@ class FilesIntegrationController extends OCSController {
 	 * 400: Rooms not allowed for shares
 	 */
 	#[NoAdminRequired]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/file/{fileId}', requirements: [
+		'apiVersion' => '(v1)',
+		'fileId' => '.+',
+	])]
 	public function getRoomByFileId(string $fileId): DataResponse {
 		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1') {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
@@ -158,6 +163,10 @@ class FilesIntegrationController extends OCSController {
 	#[PublicPage]
 	#[UseSession]
 	#[BruteForceProtection(action: 'shareinfo')]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/publicshare/{shareToken}', requirements: [
+		'apiVersion' => '(v1)',
+		'shareToken' => '.+',
+	])]
 	public function getRoomByShareToken(string $shareToken): DataResponse {
 		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1'
 			|| $this->config->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {

@@ -18,6 +18,7 @@ use OCA\Talk\Model\Invitation;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
@@ -79,6 +80,10 @@ class FederationController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/federation/invitation/{id}', requirements: [
+		'apiVersion' => '(v1)',
+		'id' => '[0-9]{1,64}',
+	])]
 	public function acceptShare(int $id): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
@@ -116,6 +121,10 @@ class FederationController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/federation/invitation/{id}', requirements: [
+		'apiVersion' => '(v1)',
+		'id' => '[0-9]{1,64}',
+	])]
 	public function rejectShare(int $id): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
@@ -142,6 +151,9 @@ class FederationController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/federation/invitation', requirements: [
+		'apiVersion' => '(v1)',
+	])]
 	public function getShares(): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {

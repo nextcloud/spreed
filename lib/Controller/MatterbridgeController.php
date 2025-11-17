@@ -14,6 +14,7 @@ use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
@@ -45,6 +46,10 @@ class MatterbridgeController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/bridge/{token}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function getBridgeOfRoom(): DataResponse {
 		$pid = $this->bridgeManager->checkBridge($this->room);
 		$logContent = $this->bridgeManager->getBridgeLog($this->room);
@@ -63,6 +68,10 @@ class MatterbridgeController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/bridge/{token}/process', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function getBridgeProcessState(): DataResponse {
 		$state = $this->bridgeManager->getBridgeProcessState($this->room);
 		return new DataResponse($state);
@@ -80,6 +89,10 @@ class MatterbridgeController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'PUT', url: '/api/{apiVersion}/bridge/{token}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function editBridgeOfRoom(bool $enabled, array $parts = []): DataResponse {
 		try {
 			$state = $this->bridgeManager->editBridgeOfRoom($this->room, $this->userId, $enabled, $parts);
@@ -99,6 +112,10 @@ class MatterbridgeController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/bridge/{token}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function deleteBridgeOfRoom(): DataResponse {
 		try {
 			$success = $this->bridgeManager->deleteBridgeOfRoom($this->room);

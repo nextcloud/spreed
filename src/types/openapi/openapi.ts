@@ -301,26 +301,6 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/call/{token}/notification-state": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Check the expected state of a call notification
-         * @description Required capability: `call-notification-state-api`
-         */
-        get: operations["call_notification-state"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/call/{token}/download": {
         parameters: {
             query?: never;
@@ -394,7 +374,7 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/file/{fileId}": {
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/call/{token}/notification-state": {
         parameters: {
             query?: never;
             header?: never;
@@ -402,998 +382,13 @@ export type paths = {
             cookie?: never;
         };
         /**
-         * Get the token of the room associated to the given file id
-         * @description This is the counterpart of self::getRoomByShareToken() for file ids instead of share tokens, although both return the same room token if the given file id and share token refer to the same file.
-         *     If there is no room associated to the given file id a new room is created; the new room is a public room associated with a "file" object with the given file id. Unlike normal rooms in which the owner is the user that created the room these are special rooms without owner (although self joined users with direct access to the file become persistent participants automatically when they join until they explicitly leave or no longer have access to the file).
-         *     In any case, to create or even get the token of the room, the file must be shared and the user must be the owner of a public share of the file (like a link share, for example) or have direct access to that file; an error is returned otherwise. A user has direct access to a file if they have access to it (or to an ancestor) through a user, group, circle or room share (but not through a link share, for example), or if they are the owner of such a file.
+         * Check the expected state of a call notification
+         * @description Required capability: `call-notification-state-api`
          */
-        get: operations["files_integration-get-room-by-file-id"];
+        get: operations["call_notification-state"];
         put?: never;
         post?: never;
         delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/publicshare/{shareToken}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Returns the token of the room associated to the file of the given share token
-         * @description This is the counterpart of self::getRoomByFileId() for share tokens instead of file ids, although both return the same room token if the given file id and share token refer to the same file.
-         *     If there is no room associated to the file id of the given share token a new room is created; the new room is a public room associated with a "file" object with the file id of the given share token. Unlike normal rooms in which the owner is the user that created the room these are special rooms without owner (although self joined users with direct access to the file become persistent participants automatically when they join until they explicitly leave or no longer have access to the file).
-         *     In any case, to create or even get the token of the room, the file must be publicly shared (like a link share, for example); an error is returned otherwise.
-         *     Besides the token of the room this also returns the current user ID and display name, if any; this is needed by the Talk sidebar to know the actual current user, as the public share page uses the incognito mode and thus logged-in users as seen as guests.
-         */
-        get: operations["files_integration-get-room-by-share-token"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/guest/{token}/name": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Set the display name as a guest */
-        post: operations["guest-set-display-name"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge/{token}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get bridge information of one room */
-        get: operations["matterbridge-get-bridge-of-room"];
-        /** Edit bridge information of one room */
-        put: operations["matterbridge-edit-bridge-of-room"];
-        post?: never;
-        /** Delete bridge of one room */
-        delete: operations["matterbridge-delete-bridge-of-room"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge/{token}/process": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get bridge process information */
-        get: operations["matterbridge-get-bridge-process-state"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create a poll */
-        post: operations["poll-create-poll"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/draft/{pollId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Modify a draft poll
-         * @description Required capability: `edit-draft-poll`
-         */
-        post: operations["poll-update-draft-poll"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/drafts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get all drafted polls
-         * @description Required capability: `talk-polls-drafts`
-         */
-        get: operations["poll-get-all-draft-polls"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/{pollId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a poll */
-        get: operations["poll-show-poll"];
-        put?: never;
-        /** Vote on a poll */
-        post: operations["poll-vote-poll"];
-        /** Close a poll */
-        delete: operations["poll-close-poll"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/publicshareauth": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Creates a new room for video verification (requesting the password of a share)
-         * @description The new room is a public room associated with a "share:password" object with the ID of the share token. Unlike normal rooms in which the owner is the user that created the room these are special rooms always created by a guest or user on behalf of a registered user, the sharer, who will be the owner of the room.
-         *     The share must have "send password by Talk" enabled; an error is returned otherwise.
-         */
-        post: operations["public_share_auth-create-room"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/reaction/{token}/{messageId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a list of reactions for a message */
-        get: operations["reaction-get-reactions"];
-        put?: never;
-        /** Add a reaction to a message */
-        post: operations["reaction-react"];
-        /** Delete a reaction from a message */
-        delete: operations["reaction-delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/{token}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Start the recording */
-        post: operations["recording-start"];
-        /** Stop the recording */
-        delete: operations["recording-stop"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/{token}/notification": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Dismiss the store call recording notification */
-        delete: operations["recording-notification-dismiss"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/{token}/share-chat": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Share the recorded file to the chat */
-        post: operations["recording-share-to-chat"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get all currently existent rooms which the user has joined */
-        get: operations["room-get-rooms"];
-        put?: never;
-        /**
-         * Create a room with a user, a group or a circle
-         * @description With the `conversation-creation-all` capability a lot of new options where introduced. Before that only `$roomType`, `$roomName`, `$objectType` and `$objectId` were supported all the time, and `$password` with the `conversation-creation-password` capability In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite` or `$participants` parameter is supported.
-         */
-        post: operations["room-create-room"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/listed-room": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get listed rooms with optional search term */
-        get: operations["room-get-listed-rooms"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/note-to-self": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get the "Note to self" conversation for the user
-         * @description It will be automatically created when it is currently missing
-         */
-        get: operations["room-get-note-to-self-conversation"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a room */
-        get: operations["room-get-single-room"];
-        /** Rename a room */
-        put: operations["room-rename-room"];
-        post?: never;
-        /** Delete a room */
-        delete: operations["room-delete-room"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/breakout-rooms": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get breakout rooms
-         * @description All for moderators and in case of "free selection", or the assigned breakout room for other participants
-         */
-        get: operations["room-get-breakout-rooms"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/object": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Unbind a room from its object to prevent automatic retention
-         * @description Required capability: `unbind-conversation`
-         */
-        delete: operations["room-unbind-room-from-object"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/public": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Allowed guests to join conversation
-         * @description Required capability: `conversation-creation-password` for `string $password` parameter
-         */
-        post: operations["room-make-public"];
-        /** Disallowed guests to join conversation */
-        delete: operations["room-make-private"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/description": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Update the description of a room */
-        put: operations["room-set-description"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/read-only": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Set read-only state of a room */
-        put: operations["room-set-read-only"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/listable": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Make a room listable */
-        put: operations["room-set-listable"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/password": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Set a password for a room */
-        put: operations["room-set-password"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/permissions/{mode}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Update the permissions of a room */
-        put: operations["room-set-permissions"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a list of participants for a room */
-        get: operations["room-get-participants"];
-        put?: never;
-        /** Add a participant to a room */
-        post: operations["room-add-participant-to-room"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/breakout-rooms/participants": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the breakout room participants for a room */
-        get: operations["room-get-breakout-room-participants"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants/self": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Remove the current user from a room */
-        delete: operations["room-remove-self-from-room"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/attendees": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Remove an attendee from a room */
-        delete: operations["room-remove-attendee-from-room"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/attendees/permissions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Update the permissions of an attendee */
-        put: operations["room-set-attendee-permissions"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/attendees/permissions/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /**
-         * Update the permissions of all attendees
-         * @deprecated
-         */
-        put: operations["room-set-all-attendees-permissions"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants/active": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Join a room */
-        post: operations["room-join-room"];
-        /** Leave a room */
-        delete: operations["room-leave-room"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants/resend-invitations": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Resend invitations */
-        post: operations["room-resend-invitations"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants/state": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Set active state for a session */
-        put: operations["room-set-session-state"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/moderators": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Promote an attendee to moderator */
-        post: operations["room-promote-moderator"];
-        /** Demote an attendee from moderator */
-        delete: operations["room-demote-moderator"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/favorite": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Add a room to the favorites */
-        post: operations["room-add-to-favorites"];
-        /** Remove a room from the favorites */
-        delete: operations["room-remove-from-favorites"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/important": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Mark a conversation as important (still sending notifications while on DND)
-         * @description Required capability: `important-conversations`
-         */
-        post: operations["room-mark-conversation-as-important"];
-        /**
-         * Mark a conversation as unimportant (no longer sending notifications while on DND)
-         * @description Required capability: `important-conversations`
-         */
-        delete: operations["room-mark-conversation-as-unimportant"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/sensitive": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Mark a conversation as sensitive (no last message is visible / no push preview is shown)
-         * @description Required capability: `sensitive-conversations`
-         */
-        post: operations["room-mark-conversation-as-sensitive"];
-        /**
-         * Mark a conversation as insensitive (last message is visible / push preview is shown)
-         * @description Required capability: `sensitive-conversations`
-         */
-        delete: operations["room-mark-conversation-as-insensitive"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/notify": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Update the notification level for a room */
-        post: operations["room-set-notification-level"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/notify-calls": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Update call notifications */
-        post: operations["room-set-notification-calls"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/webinar/lobby": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Update the lobby state for a room */
-        put: operations["room-set-lobby"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/webinar/sip": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Update SIP enabled state */
-        put: operations["room-setsip-enabled"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/recording-consent": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Set recording consent requirement for this conversation */
-        put: operations["room-set-recording-consent"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/message-expiration": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Update message expiration time */
-        post: operations["room-set-message-expiration"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/capabilities": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get capabilities for a room
-         * @description See "Capability handling in federated conversations" in https://github.com/nextcloud/spreed/issues/10680 to learn which capabilities should be considered from the local server or from the remote server.
-         */
-        get: operations["room-get-capabilities"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/mention-permissions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Update the mention permissions for a room */
-        put: operations["room-set-mention-permissions"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/archive": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Archive a conversation
-         * @description Required capability: `archived-conversations-v2`
-         */
-        post: operations["room-archive-conversation"];
-        /**
-         * Unarchive a conversation
-         * @description Required capability: `archived-conversations-v2`
-         */
-        delete: operations["room-unarchive-conversation"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/import-emails": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Import a list of email attendees
-         * @description Content format is comma separated values: - Header line is required and must match `"email","name"` or `"email"` - One entry per line (e.g. `"John Doe","john@example.tld"`)
-         *     Required capability: `email-csv-import`
-         */
-        post: operations["room-import-emails-as-participants"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/meeting": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Schedule a meeting for a conversation
-         * @description Required capability: `schedule-meeting`
-         */
-        post: operations["room-schedule-meeting"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/user": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Update user setting */
-        post: operations["settings-set-user-setting"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/settings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the signaling settings */
-        get: operations["signaling-get-settings"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/{token}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get signaling messages */
-        get: operations["signaling-pull-messages"];
-        put?: never;
-        /** Send signaling messages */
-        post: operations["signaling-send-messages"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/apps/spreed/temp-user-avatar": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Upload your avatar as a user */
-        post: operations["temp_avatar-post-avatar"];
-        /** Delete your avatar as a user */
-        delete: operations["temp_avatar-delete-avatar"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1643,6 +638,68 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/file/{fileId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the token of the room associated to the given file id
+         * @description This is the counterpart of self::getRoomByShareToken() for file ids instead of share tokens, although both return the same room token if the given file id and share token refer to the same file.
+         *     If there is no room associated to the given file id a new room is created; the new room is a public room associated with a "file" object with the given file id. Unlike normal rooms in which the owner is the user that created the room these are special rooms without owner (although self joined users with direct access to the file become persistent participants automatically when they join until they explicitly leave or no longer have access to the file).
+         *     In any case, to create or even get the token of the room, the file must be shared and the user must be the owner of a public share of the file (like a link share, for example) or have direct access to that file; an error is returned otherwise. A user has direct access to a file if they have access to it (or to an ancestor) through a user, group, circle or room share (but not through a link share, for example), or if they are the owner of such a file.
+         */
+        get: operations["files_integration-get-room-by-file-id"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/publicshare/{shareToken}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Returns the token of the room associated to the file of the given share token
+         * @description This is the counterpart of self::getRoomByFileId() for share tokens instead of file ids, although both return the same room token if the given file id and share token refer to the same file.
+         *     If there is no room associated to the file id of the given share token a new room is created; the new room is a public room associated with a "file" object with the file id of the given share token. Unlike normal rooms in which the owner is the user that created the room these are special rooms without owner (although self joined users with direct access to the file become persistent participants automatically when they join until they explicitly leave or no longer have access to the file).
+         *     In any case, to create or even get the token of the room, the file must be publicly shared (like a link share, for example); an error is returned otherwise.
+         *     Besides the token of the room this also returns the current user ID and display name, if any; this is needed by the Talk sidebar to know the actual current user, as the public share page uses the incognito mode and thus logged-in users as seen as guests.
+         */
+        get: operations["files_integration-get-room-by-share-token"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/guest/{token}/name": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Set the display name as a guest */
+        post: operations["guest-set-display-name"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/live-transcription/{token}": {
         parameters: {
             query?: never;
@@ -1690,6 +747,949 @@ export type paths = {
         /** Set language for live transcriptions */
         post: operations["live_transcription-set-language"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get bridge information of one room */
+        get: operations["matterbridge-get-bridge-of-room"];
+        /** Edit bridge information of one room */
+        put: operations["matterbridge-edit-bridge-of-room"];
+        post?: never;
+        /** Delete bridge of one room */
+        delete: operations["matterbridge-delete-bridge-of-room"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/bridge/{token}/process": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get bridge process information */
+        get: operations["matterbridge-get-bridge-process-state"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a poll */
+        post: operations["poll-create-poll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/draft/{pollId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Modify a draft poll
+         * @description Required capability: `edit-draft-poll`
+         */
+        post: operations["poll-update-draft-poll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/drafts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all drafted polls
+         * @description Required capability: `talk-polls-drafts`
+         */
+        get: operations["poll-get-all-draft-polls"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/{pollId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a poll */
+        get: operations["poll-show-poll"];
+        put?: never;
+        /** Vote on a poll */
+        post: operations["poll-vote-poll"];
+        /** Close a poll */
+        delete: operations["poll-close-poll"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/publicshareauth": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Creates a new room for video verification (requesting the password of a share)
+         * @description The new room is a public room associated with a "share:password" object with the ID of the share token. Unlike normal rooms in which the owner is the user that created the room these are special rooms always created by a guest or user on behalf of a registered user, the sharer, who will be the owner of the room.
+         *     The share must have "send password by Talk" enabled; an error is returned otherwise.
+         */
+        post: operations["public_share_auth-create-room"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/reaction/{token}/{messageId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a list of reactions for a message */
+        get: operations["reaction-get-reactions"];
+        put?: never;
+        /** Add a reaction to a message */
+        post: operations["reaction-react"];
+        /** Delete a reaction from a message */
+        delete: operations["reaction-delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start the recording */
+        post: operations["recording-start"];
+        /** Stop the recording */
+        delete: operations["recording-stop"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/{token}/notification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Dismiss the store call recording notification */
+        delete: operations["recording-notification-dismiss"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/{token}/share-chat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Share the recorded file to the chat */
+        post: operations["recording-share-to-chat"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all currently existent rooms which the user has joined */
+        get: operations["room-get-rooms"];
+        put?: never;
+        /**
+         * Create a room with a user, a group or a circle
+         * @description With the `conversation-creation-all` capability a lot of new options where introduced. Before that only `$roomType`, `$roomName`, `$objectType` and `$objectId` were supported all the time, and `$password` with the `conversation-creation-password` capability In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite` or `$participants` parameter is supported.
+         */
+        post: operations["room-create-room"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/listed-room": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get listed rooms with optional search term */
+        get: operations["room-get-listed-rooms"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/breakout-rooms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get breakout rooms
+         * @description All for moderators and in case of "free selection", or the assigned breakout room for other participants
+         */
+        get: operations["room-get-breakout-rooms"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a room */
+        get: operations["room-get-single-room"];
+        /** Rename a room */
+        put: operations["room-rename-room"];
+        post?: never;
+        /** Delete a room */
+        delete: operations["room-delete-room"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/note-to-self": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the "Note to self" conversation for the user
+         * @description It will be automatically created when it is currently missing
+         */
+        get: operations["room-get-note-to-self-conversation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/favorite": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add a room to the favorites */
+        post: operations["room-add-to-favorites"];
+        /** Remove a room from the favorites */
+        delete: operations["room-remove-from-favorites"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/notify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Update the notification level for a room */
+        post: operations["room-set-notification-level"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/notify-calls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Update call notifications */
+        post: operations["room-set-notification-calls"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/description": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update the description of a room */
+        put: operations["room-set-description"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/object": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Unbind a room from its object to prevent automatic retention
+         * @description Required capability: `unbind-conversation`
+         */
+        delete: operations["room-unbind-room-from-object"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a list of participants for a room */
+        get: operations["room-get-participants"];
+        put?: never;
+        /** Add a participant to a room */
+        post: operations["room-add-participant-to-room"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/breakout-rooms/participants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the breakout room participants for a room */
+        get: operations["room-get-breakout-room-participants"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants/self": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove the current user from a room */
+        delete: operations["room-remove-self-from-room"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/attendees": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove an attendee from a room */
+        delete: operations["room-remove-attendee-from-room"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/public": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Allowed guests to join conversation
+         * @description Required capability: `conversation-creation-password` for `string $password` parameter
+         */
+        post: operations["room-make-public"];
+        /** Disallowed guests to join conversation */
+        delete: operations["room-make-private"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/read-only": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set read-only state of a room */
+        put: operations["room-set-read-only"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/listable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Make a room listable */
+        put: operations["room-set-listable"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/mention-permissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update the mention permissions for a room */
+        put: operations["room-set-mention-permissions"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set a password for a room */
+        put: operations["room-set-password"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archive a conversation
+         * @description Required capability: `archived-conversations-v2`
+         */
+        post: operations["room-archive-conversation"];
+        /**
+         * Unarchive a conversation
+         * @description Required capability: `archived-conversations-v2`
+         */
+        delete: operations["room-unarchive-conversation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/important": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Mark a conversation as important (still sending notifications while on DND)
+         * @description Required capability: `important-conversations`
+         */
+        post: operations["room-mark-conversation-as-important"];
+        /**
+         * Mark a conversation as unimportant (no longer sending notifications while on DND)
+         * @description Required capability: `important-conversations`
+         */
+        delete: operations["room-mark-conversation-as-unimportant"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/sensitive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Mark a conversation as sensitive (no last message is visible / no push preview is shown)
+         * @description Required capability: `sensitive-conversations`
+         */
+        post: operations["room-mark-conversation-as-sensitive"];
+        /**
+         * Mark a conversation as insensitive (last message is visible / push preview is shown)
+         * @description Required capability: `sensitive-conversations`
+         */
+        delete: operations["room-mark-conversation-as-insensitive"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Join a room */
+        post: operations["room-join-room"];
+        /** Leave a room */
+        delete: operations["room-leave-room"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants/state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set active state for a session */
+        put: operations["room-set-session-state"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/moderators": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Promote an attendee to moderator */
+        post: operations["room-promote-moderator"];
+        /** Demote an attendee from moderator */
+        delete: operations["room-demote-moderator"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/permissions/{mode}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update the permissions of a room */
+        put: operations["room-set-permissions"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/attendees/permissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update the permissions of an attendee */
+        put: operations["room-set-attendee-permissions"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/attendees/permissions/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update the permissions of all attendees
+         * @deprecated
+         */
+        put: operations["room-set-all-attendees-permissions"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/webinar/lobby": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update the lobby state for a room */
+        put: operations["room-set-lobby"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/webinar/sip": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update SIP enabled state */
+        put: operations["room-setsip-enabled"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/recording-consent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set recording consent requirement for this conversation */
+        put: operations["room-set-recording-consent"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/participants/resend-invitations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resend invitations */
+        post: operations["room-resend-invitations"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/message-expiration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Update message expiration time */
+        post: operations["room-set-message-expiration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/import-emails": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import a list of email attendees
+         * @description Content format is comma separated values: - Header line is required and must match `"email","name"` or `"email"` - One entry per line (e.g. `"John Doe","john@example.tld"`)
+         *     Required capability: `email-csv-import`
+         */
+        post: operations["room-import-emails-as-participants"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get capabilities for a room
+         * @description See "Capability handling in federated conversations" in https://github.com/nextcloud/spreed/issues/10680 to learn which capabilities should be considered from the local server or from the remote server.
+         */
+        get: operations["room-get-capabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/meeting": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Schedule a meeting for a conversation
+         * @description Required capability: `schedule-meeting`
+         */
+        post: operations["room-schedule-meeting"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/settings/user": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Update user setting */
+        post: operations["settings-set-user-setting"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the signaling settings */
+        get: operations["signaling-get-settings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/signaling/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get signaling messages */
+        get: operations["signaling-pull-messages"];
+        put?: never;
+        /** Send signaling messages */
+        post: operations["signaling-send-messages"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/temp-user-avatar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload your avatar as a user */
+        post: operations["temp_avatar-post-avatar"];
+        /** Delete your avatar as a user */
+        delete: operations["temp_avatar-delete-avatar"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3945,94 +3945,6 @@ export interface operations {
             };
         };
     };
-    "call_notification-state": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                /** @description Conversation token to check */
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Notification should be kept alive */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description Dismiss call notification and show "Missed call"-notification instead */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description Not logged in, try again with auth data sent */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description Dismiss call notification */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
     "call-download-participants-for-call": {
         parameters: {
             query?: {
@@ -4415,6 +4327,1508 @@ export interface operations {
             };
         };
     };
+    "call_notification-state": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                /** @description Conversation token to check */
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Notification should be kept alive */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Dismiss call notification and show "Missed call"-notification instead */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Not logged in, try again with auth data sent */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Dismiss call notification */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-receive-messages": {
+        parameters: {
+            query: {
+                /** @description Polling for new messages (1) or getting the history of the chat (0) */
+                lookIntoFuture: 0 | 1;
+                /** @description Number of chat messages to receive (100 by default, 200 at most) */
+                limit?: number;
+                /** @description The last known message (serves as offset) */
+                lastKnownMessageId?: number;
+                /** @description The last known common read message (so the response is 200 instead of 304 when it changes even when there are no messages) */
+                lastCommonReadId?: number;
+                /** @description Number of seconds to wait for new messages (30 by default, 30 at most) */
+                timeout?: number;
+                /** @description Automatically set the last read marker when 1, if your client does this itself via chat/{token}/read set to 0 */
+                setReadMarker?: 0 | 1;
+                /** @description Include the $lastKnownMessageId in the messages when 1 (default 0) */
+                includeLastKnown?: 0 | 1;
+                /** @description When the user status should not be automatically set to online set to 1 (default 0) */
+                noStatusUpdate?: 0 | 1;
+                /** @description Set to 0 when notifications should not be marked as read (default 1) */
+                markNotificationsAsRead?: 0 | 1;
+                /** @description Limit the chat message list to a given thread */
+                threadId?: number;
+            };
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Messages returned */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    "X-Chat-Last-Given"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"][];
+                        };
+                    };
+                };
+            };
+            /** @description No messages */
+            304: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "chat-send-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description the message to send */
+                    message: string;
+                    /**
+                     * @description for guests
+                     * @default
+                     */
+                    actorDisplayName?: string;
+                    /**
+                     * @description for the message to be able to later identify it again
+                     * @default
+                     */
+                    referenceId?: string;
+                    /**
+                     * Format: int64
+                     * @description Parent id which this message is a reply to
+                     * @default 0
+                     */
+                    replyTo?: number;
+                    /**
+                     * @description If sent silent the chat message will not create any notifications
+                     * @default false
+                     */
+                    silent?: boolean;
+                    /**
+                     * @description Only supported when not replying, when given will create a thread (requires `threads` capability)
+                     * @default
+                     */
+                    threadTitle?: string;
+                    /**
+                     * Format: int64
+                     * @description Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
+                     * @default 0
+                     */
+                    threadId?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Message sent successfully */
+            201: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"] | null;
+                        };
+                    };
+                };
+            };
+            /** @description Sending message is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Actor not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message too long */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Mention rate limit exceeded (guests only) */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-clear-history": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description History cleared successfully */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessage"];
+                        };
+                    };
+                };
+            };
+            /** @description History cleared successfully, but Federation or Matterbridge is configured, so the information can be replicated elsewhere */
+            202: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessage"];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Missing permissions to clear history */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-get-objects-shared-in-room": {
+        parameters: {
+            query: {
+                /** @description Type of the objects */
+                objectType: string;
+                /** @description ID of the last known message */
+                lastKnownMessageId?: number;
+                /** @description Maximum number of objects */
+                limit?: number;
+            };
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of shared objects messages returned */
+            200: {
+                headers: {
+                    "X-Chat-Last-Given"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                [key: string]: components["schemas"]["ChatMessage"];
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-share-object-to-chat": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Type of the object */
+                    objectType: string;
+                    /** @description ID of the object */
+                    objectId: string;
+                    /**
+                     * @description Additional metadata, sample value: `{\"type\":\"geo-location\",\"id\":\"geo:52.5450511,13.3741463\",\"name\":\"Nextcloud Berlin Office\",\"latitude\":\"52.5450511\",\"longitude\":\"13.3741463\"}`
+                     * @default
+                     */
+                    metaData?: string;
+                    /**
+                     * @description Guest name
+                     * @default
+                     */
+                    actorDisplayName?: string;
+                    /**
+                     * @description Reference ID
+                     * @default
+                     */
+                    referenceId?: string;
+                    /**
+                     * Format: int64
+                     * @description Thread id which this message is a reply to without quoting a specific message (also requires `threads` capability)
+                     * @default 0
+                     */
+                    threadId?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Object shared successfully */
+            201: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"] | null;
+                        };
+                    };
+                };
+            };
+            /** @description Sharing object is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Actor not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message too long */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-summarize-chat": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Offset from where on the summary should be generated
+                     */
+                    fromMessageId: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Summary was scheduled, use the returned taskId to get the status information and output from the TaskProcessing API: [OCS TaskProcessing API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html#fetch-a-task-by-id). If the response data contains nextOffset, not all messages could be handled in a single request. After receiving the response a second summary should be requested with the provided nextOffset. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** Format: int64 */
+                                taskId: number;
+                                /** Format: int64 */
+                                nextOffset?: number;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description No messages found to summarize */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No AI provider available or summarizing failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "ai-no-provider" | "ai-error";
+                            };
+                        };
+                    };
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
+        };
+    };
+    "chat-get-message-context": {
+        parameters: {
+            query?: {
+                /** @description Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages) */
+                limit?: number;
+                /** @description Limit the chat message list to a given thread */
+                threadId?: number;
+            };
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description The focused message which should be in the "middle" of the returned context */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Message context returned */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    "X-Chat-Last-Given"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"][];
+                        };
+                    };
+                };
+            };
+            /** @description No messages */
+            304: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "chat-edit-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description the message to send */
+                    message: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Message edited successfully */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"];
+                        };
+                    };
+                };
+            };
+            /** @description Message edited successfully, but a bot or Matterbridge is configured, so the information can be replicated to other services */
+            202: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"];
+                        };
+                    };
+                };
+            };
+            /** @description Editing message is not possible, e.g. when the new message is empty or the message is too old */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Missing permissions to edit message */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Editing this message type is not allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message too long */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-delete-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Message deleted successfully */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"];
+                        };
+                    };
+                };
+            };
+            /** @description Message deleted successfully, but a bot or Matterbridge is configured, so the information can be replicated elsewhere */
+            202: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"];
+                        };
+                    };
+                };
+            };
+            /** @description Deleting message is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Missing permissions to delete message */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Deleting this message type is not allowed */
+            405: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-get-reminder": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reminder returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatReminder"];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Message not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error?: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-set-reminder": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Timestamp of the reminder
+                     */
+                    timestamp: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Reminder created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatReminder"];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Message not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error?: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-delete-reminder": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reminder deleted successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error?: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Message not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error?: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-get-upcoming-reminders": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reminders returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatReminderUpcoming"][];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-set-read-marker": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description ID if the last read message (Optional only with `chat-read-last` capability)
+                     * @default null
+                     */
+                    lastReadMessage?: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Read marker set successfully */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-mark-unread": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Read marker set successfully */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-get-objects-shared-in-room-overview": {
+        parameters: {
+            query?: {
+                /** @description Maximum number of objects */
+                limit?: number;
+            };
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of shared objects messages of each type returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                [key: string]: components["schemas"]["ChatMessage"][];
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-pin-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description Unix timestamp when to unpin the message
+                     * @default 0
+                     */
+                    pinUntil?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Message was pinned successfully */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"] | null;
+                        };
+                    };
+                };
+            };
+            /** @description Message could not be pinned */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "message" | "until" | "status";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "message" | "until" | "status";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-unpin-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Message is not pinned now */
+            200: {
+                headers: {
+                    "X-Chat-Last-Common-Read"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMessageWithParent"] | null;
+                        };
+                    };
+                };
+            };
+            /** @description Federation request answered with an unknown status code */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "status";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "message";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-hide-pinned-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the message */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Pinned message is now hidden */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Message was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-mentions": {
+        parameters: {
+            query: {
+                /** @description Text to search for */
+                search: string;
+                /** @description Maximum number of results */
+                limit?: number;
+                /** @description Include the user statuses */
+                includeStatus?: boolean;
+            };
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of mention suggestions returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ChatMentionSuggestion"][];
+                        };
+                    };
+                };
+            };
+        };
+    };
     "files_integration-get-room-by-file-id": {
         parameters: {
             query?: never;
@@ -4615,6 +6029,223 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "live_transcription-enable": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Live transcription enabled successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description The participant is not in the call */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "app" | "in-call";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "live_transcription-disable": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Live transcription stopped successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description The participant is not in the call */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "app" | "in-call";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "live_transcription-get-available-languages": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Available languages got successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                [key: string]: components["schemas"]["LiveTranscriptionLanguage"];
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The external app "live_transcription" is not available */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "app";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "live_transcription-set-language": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description the ID of the language to set */
+                    languageId: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Language set successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description The external app "live_transcription" is not available */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "app";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Participant is not a moderator */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "app";
+                            };
                         };
                     };
                 };
@@ -6216,7 +7847,7 @@ export interface operations {
             };
         };
     };
-    "room-get-note-to-self-conversation": {
+    "room-get-breakout-rooms": {
         parameters: {
             query?: never;
             header: {
@@ -6225,22 +7856,38 @@ export interface operations {
             };
             path: {
                 apiVersion: "v4";
+                token: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Room returned successfully */
+            /** @description Breakout rooms returned */
             200: {
                 headers: {
-                    "X-Nextcloud-Talk-Hash"?: string;
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
+                            data: components["schemas"]["Room"][];
+                        };
+                    };
+                };
+            };
+            /** @description Getting breakout rooms is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
                         };
                     };
                 };
@@ -6428,7 +8075,7 @@ export interface operations {
             };
         };
     };
-    "room-get-breakout-rooms": {
+    "room-get-note-to-self-conversation": {
         parameters: {
             query?: never;
             header: {
@@ -6437,38 +8084,22 @@ export interface operations {
             };
             path: {
                 apiVersion: "v4";
-                token: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Breakout rooms returned */
+            /** @description Room returned successfully */
             200: {
                 headers: {
+                    "X-Nextcloud-Talk-Hash"?: string;
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"][];
-                        };
-                    };
-                };
-            };
-            /** @description Getting breakout rooms is not possible */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };
@@ -6489,7 +8120,7 @@ export interface operations {
             };
         };
     };
-    "room-unbind-room-from-object": {
+    "room-add-to-favorites": {
         parameters: {
             query?: never;
             header: {
@@ -6504,7 +8135,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Room successfully unbound */
+            /** @description Successfully added room to favorites */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -6518,8 +8149,8 @@ export interface operations {
                     };
                 };
             };
-            /** @description Unbinding room is not possible */
-            400: {
+            /** @description Current user is not logged in */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6527,17 +8158,14 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "object-type";
-                            };
+                            data: unknown;
                         };
                     };
                 };
             };
         };
     };
-    "room-make-public": {
+    "room-remove-from-favorites": {
         parameters: {
             query?: never;
             header: {
@@ -6550,19 +8178,64 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: {
+        requestBody?: never;
+        responses: {
+            /** @description Successfully removed room from favorites */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-set-notification-level": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
             content: {
                 "application/json": {
                     /**
-                     * @description New password (only available with `conversation-creation-password` capability)
-                     * @default
+                     * Format: int64
+                     * @description New level
                      */
-                    password?: string;
+                    level: number;
                 };
             };
         };
         responses: {
-            /** @description Allowed guests successfully */
+            /** @description Notification level updated successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -6576,7 +8249,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Allowing guests is not possible */
+            /** @description Updating notification level is not possible */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -6587,8 +8260,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "breakout-room" | "type" | "value" | "password";
-                                message?: string;
+                                error: "level";
                             };
                         };
                     };
@@ -6610,7 +8282,7 @@ export interface operations {
             };
         };
     };
-    "room-make-private": {
+    "room-set-notification-calls": {
         parameters: {
             query?: never;
             header: {
@@ -6623,9 +8295,19 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description New level
+                     */
+                    level: number;
+                };
+            };
+        };
         responses: {
-            /** @description Room unpublished Disallowing guests successfully */
+            /** @description Call notification level updated successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -6639,7 +8321,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Disallowing guests is not possible */
+            /** @description Updating call notification level is not possible */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -6650,7 +8332,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "breakout-room" | "type" | "value";
+                                error: "level";
                             };
                         };
                     };
@@ -6727,7 +8409,7 @@ export interface operations {
             };
         };
     };
-    "room-set-read-only": {
+    "room-unbind-room-from-object": {
         parameters: {
             query?: never;
             header: {
@@ -6740,20 +8422,9 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description New read-only state
-                     * @enum {integer}
-                     */
-                    state: 0 | 1;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
-            /** @description Read-only state updated successfully */
+            /** @description Room successfully unbound */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -6767,7 +8438,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Updating read-only state is not possible */
+            /** @description Unbinding room is not possible */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -6778,210 +8449,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "type" | "value";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-set-listable": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description Scope where the room is listable
-                     * @enum {integer}
-                     */
-                    scope: 0 | 1 | 2;
-                };
-            };
-        };
-        responses: {
-            /** @description Made room listable successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-            /** @description Making room listable is not possible */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "breakout-room" | "type" | "value";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-set-password": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description New password */
-                    password: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Password set successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-            /** @description Setting password is not possible */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "breakout-room" | "type" | "value";
-                                message?: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-set-permissions": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-                /** @description Level of the permissions ('call' (removed in Talk 20), 'default') */
-                mode: "call" | "default";
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description New permissions
-                     */
-                    permissions: number;
-                };
-            };
-        };
-        responses: {
-            /** @description Permissions updated successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-            /** @description Updating permissions is not possible */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "breakout-room" | "mode" | "type" | "value";
+                                error: "object-type";
                             };
                         };
                     };
@@ -7383,7 +8851,7 @@ export interface operations {
             };
         };
     };
-    "room-set-attendee-permissions": {
+    "room-make-public": {
         parameters: {
             query?: never;
             header: {
@@ -7396,44 +8864,33 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
+        requestBody?: {
             content: {
                 "application/json": {
                     /**
-                     * Format: int64
-                     * @description ID of the attendee
+                     * @description New password (only available with `conversation-creation-password` capability)
+                     * @default
                      */
-                    attendeeId: number;
-                    /**
-                     * @description Method of updating permissions ('set', 'remove', 'add')
-                     * @enum {string}
-                     */
-                    method: "set" | "remove" | "add";
-                    /**
-                     * Format: int64
-                     * @description New permissions
-                     */
-                    permissions: number;
+                    password?: string;
                 };
             };
         };
         responses: {
-            /** @description Permissions updated successfully */
+            /** @description Allowed guests successfully */
             200: {
                 headers: {
-                    "X-Nextcloud-Has-User-Statuses"?: true;
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Participant"][];
+                            data: components["schemas"]["Room"];
                         };
                     };
                 };
             };
-            /** @description Updating permissions is not possible */
+            /** @description Allowing guests is not possible */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -7444,14 +8901,15 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "participant" | "method" | "moderator" | "room-type" | "type" | "value";
+                                error: "breakout-room" | "type" | "value" | "password";
+                                message?: string;
                             };
                         };
                     };
                 };
             };
-            /** @description Missing permissions to update permissions */
-            403: {
+            /** @description Current user is not logged in */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7459,34 +8917,76 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "participant" | "method" | "moderator" | "room-type" | "type" | "value";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Attendee not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "participant" | "method" | "moderator" | "room-type" | "type" | "value";
-                            };
+                            data: unknown;
                         };
                     };
                 };
             };
         };
     };
-    "room-set-all-attendees-permissions": {
+    "room-make-private": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Room unpublished Disallowing guests successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Disallowing guests is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "breakout-room" | "type" | "value";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-set-read-only": {
         parameters: {
             query?: never;
             header: {
@@ -7503,15 +9003,157 @@ export interface operations {
             content: {
                 "application/json": {
                     /**
-                     * @description Method of updating permissions ('set', 'remove', 'add')
-                     * @enum {string}
+                     * Format: int64
+                     * @description New read-only state
+                     * @enum {integer}
                      */
-                    method: "set" | "remove" | "add";
+                    state: 0 | 1;
+                };
+            };
+        };
+        responses: {
+            /** @description Read-only state updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Updating read-only state is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "type" | "value";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-set-listable": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
                     /**
                      * Format: int64
-                     * @description New permissions
+                     * @description Scope where the room is listable
+                     * @enum {integer}
                      */
-                    permissions: number;
+                    scope: 0 | 1 | 2;
+                };
+            };
+        };
+        responses: {
+            /** @description Made room listable successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Making room listable is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "breakout-room" | "type" | "value";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-set-mention-permissions": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description New mention permissions
+                     * @enum {integer}
+                     */
+                    mentionPermissions: 0 | 1;
                 };
             };
         };
@@ -7532,6 +9174,349 @@ export interface operations {
             };
             /** @description Updating permissions is not possible */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "breakout-room" | "type" | "value";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-set-password": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description New password */
+                    password: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Password set successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Setting password is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "breakout-room" | "type" | "value";
+                                message?: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-archive-conversation": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation was archived */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-unarchive-conversation": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation was unarchived */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-mark-conversation-as-important": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation was marked as important */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-mark-conversation-as-unimportant": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation was marked as unimportant */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-mark-conversation-as-sensitive": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation was marked as sensitive */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-mark-conversation-as-insensitive": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Conversation was marked as insensitive */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7663,75 +9648,6 @@ export interface operations {
         responses: {
             /** @description Successfully left the room */
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-resend-invitations": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description ID of the attendee
-                     */
-                    attendeeId?: number | null;
-                };
-            };
-        };
-        responses: {
-            /** @description Invitation resent successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description Attendee not found */
-            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7975,7 +9891,7 @@ export interface operations {
             };
         };
     };
-    "room-add-to-favorites": {
+    "room-set-permissions": {
         parameters: {
             query?: never;
             header: {
@@ -7985,12 +9901,24 @@ export interface operations {
             path: {
                 apiVersion: "v4";
                 token: string;
+                /** @description Level of the permissions ('call' (removed in Talk 20), 'default') */
+                mode: "call" | "default";
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description New permissions
+                     */
+                    permissions: number;
+                };
+            };
+        };
         responses: {
-            /** @description Successfully added room to favorites */
+            /** @description Permissions updated successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -8004,8 +9932,8 @@ export interface operations {
                     };
                 };
             };
-            /** @description Current user is not logged in */
-            401: {
+            /** @description Updating permissions is not possible */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8013,239 +9941,17 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "breakout-room" | "mode" | "type" | "value";
+                            };
                         };
                     };
                 };
             };
         };
     };
-    "room-remove-from-favorites": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successfully removed room from favorites */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-mark-conversation-as-important": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Conversation was marked as important */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-mark-conversation-as-unimportant": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Conversation was marked as unimportant */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-mark-conversation-as-sensitive": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Conversation was marked as sensitive */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-mark-conversation-as-insensitive": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Conversation was marked as insensitive */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-set-notification-level": {
+    "room-set-attendee-permissions": {
         parameters: {
             query?: never;
             header: {
@@ -8263,28 +9969,39 @@ export interface operations {
                 "application/json": {
                     /**
                      * Format: int64
-                     * @description New level
+                     * @description ID of the attendee
                      */
-                    level: number;
+                    attendeeId: number;
+                    /**
+                     * @description Method of updating permissions ('set', 'remove', 'add')
+                     * @enum {string}
+                     */
+                    method: "set" | "remove" | "add";
+                    /**
+                     * Format: int64
+                     * @description New permissions
+                     */
+                    permissions: number;
                 };
             };
         };
         responses: {
-            /** @description Notification level updated successfully */
+            /** @description Permissions updated successfully */
             200: {
                 headers: {
+                    "X-Nextcloud-Has-User-Statuses"?: true;
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
+                            data: components["schemas"]["Participant"][];
                         };
                     };
                 };
             };
-            /** @description Updating notification level is not possible */
+            /** @description Updating permissions is not possible */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -8295,14 +10012,14 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "level";
+                                error: "participant" | "method" | "moderator" | "room-type" | "type" | "value";
                             };
                         };
                     };
                 };
             };
-            /** @description Current user is not logged in */
-            401: {
+            /** @description Missing permissions to update permissions */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8310,14 +10027,34 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "participant" | "method" | "moderator" | "room-type" | "type" | "value";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Attendee not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "participant" | "method" | "moderator" | "room-type" | "type" | "value";
+                            };
                         };
                     };
                 };
             };
         };
     };
-    "room-set-notification-calls": {
+    "room-set-all-attendees-permissions": {
         parameters: {
             query?: never;
             header: {
@@ -8334,15 +10071,20 @@ export interface operations {
             content: {
                 "application/json": {
                     /**
-                     * Format: int64
-                     * @description New level
+                     * @description Method of updating permissions ('set', 'remove', 'add')
+                     * @enum {string}
                      */
-                    level: number;
+                    method: "set" | "remove" | "add";
+                    /**
+                     * Format: int64
+                     * @description New permissions
+                     */
+                    permissions: number;
                 };
             };
         };
         responses: {
-            /** @description Call notification level updated successfully */
+            /** @description Permissions updated successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -8356,25 +10098,8 @@ export interface operations {
                     };
                 };
             };
-            /** @description Updating call notification level is not possible */
+            /** @description Updating permissions is not possible */
             400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "level";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8672,6 +10397,75 @@ export interface operations {
             };
         };
     };
+    "room-resend-invitations": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: int64
+                     * @description ID of the attendee
+                     */
+                    attendeeId?: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Invitation resent successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Attendee not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
     "room-set-message-expiration": {
         parameters: {
             query?: never;
@@ -8724,206 +10518,6 @@ export interface operations {
                                 /** @enum {string} */
                                 error: "breakout-room" | "type" | "value";
                             };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-get-capabilities": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Get capabilities successfully */
-            200: {
-                headers: {
-                    "X-Nextcloud-Talk-Hash"?: string;
-                    "X-Nextcloud-Talk-Proxy-Hash"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Capabilities"] | {
-                                [key: string]: unknown;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-set-mention-permissions": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description New mention permissions
-                     * @enum {integer}
-                     */
-                    mentionPermissions: 0 | 1;
-                };
-            };
-        };
-        responses: {
-            /** @description Permissions updated successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-            /** @description Updating permissions is not possible */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "breakout-room" | "type" | "value";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-archive-conversation": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Conversation was archived */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "room-unarchive-conversation": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v4";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Conversation was unarchived */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
                         };
                     };
                 };
@@ -9016,6 +10610,43 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-get-capabilities": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
+                "x-nextcloud-federation"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Get capabilities successfully */
+            200: {
+                headers: {
+                    "X-Nextcloud-Talk-Hash"?: string;
+                    "X-Nextcloud-Talk-Proxy-Hash"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Capabilities"] | {
+                                [key: string]: unknown;
+                            };
                         };
                     };
                 };
@@ -9499,1637 +11130,6 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-receive-messages": {
-        parameters: {
-            query: {
-                /** @description Polling for new messages (1) or getting the history of the chat (0) */
-                lookIntoFuture: 0 | 1;
-                /** @description Number of chat messages to receive (100 by default, 200 at most) */
-                limit?: number;
-                /** @description The last known message (serves as offset) */
-                lastKnownMessageId?: number;
-                /** @description The last known common read message (so the response is 200 instead of 304 when it changes even when there are no messages) */
-                lastCommonReadId?: number;
-                /** @description Number of seconds to wait for new messages (30 by default, 30 at most) */
-                timeout?: number;
-                /** @description Automatically set the last read marker when 1, if your client does this itself via chat/{token}/read set to 0 */
-                setReadMarker?: 0 | 1;
-                /** @description Include the $lastKnownMessageId in the messages when 1 (default 0) */
-                includeLastKnown?: 0 | 1;
-                /** @description When the user status should not be automatically set to online set to 1 (default 0) */
-                noStatusUpdate?: 0 | 1;
-                /** @description Set to 0 when notifications should not be marked as read (default 1) */
-                markNotificationsAsRead?: 0 | 1;
-                /** @description Limit the chat message list to a given thread */
-                threadId?: number;
-            };
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Messages returned */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    "X-Chat-Last-Given"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"][];
-                        };
-                    };
-                };
-            };
-            /** @description No messages */
-            304: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "chat-send-message": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description the message to send */
-                    message: string;
-                    /**
-                     * @description for guests
-                     * @default
-                     */
-                    actorDisplayName?: string;
-                    /**
-                     * @description for the message to be able to later identify it again
-                     * @default
-                     */
-                    referenceId?: string;
-                    /**
-                     * Format: int64
-                     * @description Parent id which this message is a reply to
-                     * @default 0
-                     */
-                    replyTo?: number;
-                    /**
-                     * @description If sent silent the chat message will not create any notifications
-                     * @default false
-                     */
-                    silent?: boolean;
-                    /**
-                     * @description Only supported when not replying, when given will create a thread (requires `threads` capability)
-                     * @default
-                     */
-                    threadTitle?: string;
-                    /**
-                     * Format: int64
-                     * @description Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
-                     * @default 0
-                     */
-                    threadId?: number;
-                };
-            };
-        };
-        responses: {
-            /** @description Message sent successfully */
-            201: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"] | null;
-                        };
-                    };
-                };
-            };
-            /** @description Sending message is not possible */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Actor not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Message too long */
-            413: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Mention rate limit exceeded (guests only) */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-clear-history": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description History cleared successfully */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessage"];
-                        };
-                    };
-                };
-            };
-            /** @description History cleared successfully, but Federation or Matterbridge is configured, so the information can be replicated elsewhere */
-            202: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessage"];
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description Missing permissions to clear history */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-get-objects-shared-in-room": {
-        parameters: {
-            query: {
-                /** @description Type of the objects */
-                objectType: string;
-                /** @description ID of the last known message */
-                lastKnownMessageId?: number;
-                /** @description Maximum number of objects */
-                limit?: number;
-            };
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of shared objects messages returned */
-            200: {
-                headers: {
-                    "X-Chat-Last-Given"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                [key: string]: components["schemas"]["ChatMessage"];
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-share-object-to-chat": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Type of the object */
-                    objectType: string;
-                    /** @description ID of the object */
-                    objectId: string;
-                    /**
-                     * @description Additional metadata, sample value: `{\"type\":\"geo-location\",\"id\":\"geo:52.5450511,13.3741463\",\"name\":\"Nextcloud Berlin Office\",\"latitude\":\"52.5450511\",\"longitude\":\"13.3741463\"}`
-                     * @default
-                     */
-                    metaData?: string;
-                    /**
-                     * @description Guest name
-                     * @default
-                     */
-                    actorDisplayName?: string;
-                    /**
-                     * @description Reference ID
-                     * @default
-                     */
-                    referenceId?: string;
-                    /**
-                     * Format: int64
-                     * @description Thread id which this message is a reply to without quoting a specific message (also requires `threads` capability)
-                     * @default 0
-                     */
-                    threadId?: number;
-                };
-            };
-        };
-        responses: {
-            /** @description Object shared successfully */
-            201: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"] | null;
-                        };
-                    };
-                };
-            };
-            /** @description Sharing object is not possible */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Actor not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Message too long */
-            413: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-summarize-chat": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description Offset from where on the summary should be generated
-                     */
-                    fromMessageId: number;
-                };
-            };
-        };
-        responses: {
-            /** @description Summary was scheduled, use the returned taskId to get the status information and output from the TaskProcessing API: [OCS TaskProcessing API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html#fetch-a-task-by-id). If the response data contains nextOffset, not all messages could be handled in a single request. After receiving the response a second summary should be requested with the provided nextOffset. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** Format: int64 */
-                                taskId: number;
-                                /** Format: int64 */
-                                nextOffset?: number;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description No messages found to summarize */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No AI provider available or summarizing failed */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "ai-no-provider" | "ai-error";
-                            };
-                        };
-                    };
-                };
-            };
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
-    };
-    "chat-get-message-context": {
-        parameters: {
-            query?: {
-                /** @description Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages) */
-                limit?: number;
-                /** @description Limit the chat message list to a given thread */
-                threadId?: number;
-            };
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description The focused message which should be in the "middle" of the returned context */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Message context returned */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    "X-Chat-Last-Given"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"][];
-                        };
-                    };
-                };
-            };
-            /** @description No messages */
-            304: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "chat-edit-message": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description ID of the message */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description the message to send */
-                    message: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Message edited successfully */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"];
-                        };
-                    };
-                };
-            };
-            /** @description Message edited successfully, but a bot or Matterbridge is configured, so the information can be replicated to other services */
-            202: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"];
-                        };
-                    };
-                };
-            };
-            /** @description Editing message is not possible, e.g. when the new message is empty or the message is too old */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Missing permissions to edit message */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Message not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Editing this message type is not allowed */
-            405: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Message too long */
-            413: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-delete-message": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description ID of the message */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Message deleted successfully */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"];
-                        };
-                    };
-                };
-            };
-            /** @description Message deleted successfully, but a bot or Matterbridge is configured, so the information can be replicated elsewhere */
-            202: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"];
-                        };
-                    };
-                };
-            };
-            /** @description Deleting message is not possible */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Missing permissions to delete message */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Message not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Deleting this message type is not allowed */
-            405: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-get-reminder": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description ID of the message */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Reminder returned */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatReminder"];
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description Message not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error?: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-set-reminder": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description ID of the message */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description Timestamp of the reminder
-                     */
-                    timestamp: number;
-                };
-            };
-        };
-        responses: {
-            /** @description Reminder created successfully */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatReminder"];
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description Message not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error?: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-delete-reminder": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description ID of the message */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Reminder deleted successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error?: string;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description Message not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error?: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-get-upcoming-reminders": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Reminders returned */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatReminderUpcoming"][];
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-set-read-marker": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description ID if the last read message (Optional only with `chat-read-last` capability)
-                     * @default null
-                     */
-                    lastReadMessage?: number | null;
-                };
-            };
-        };
-        responses: {
-            /** @description Read marker set successfully */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-mark-unread": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Read marker set successfully */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["Room"];
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-get-objects-shared-in-room-overview": {
-        parameters: {
-            query?: {
-                /** @description Maximum number of objects */
-                limit?: number;
-            };
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of shared objects messages of each type returned */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                [key: string]: components["schemas"]["ChatMessage"][];
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-pin-message": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description ID of the message */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /**
-                     * Format: int64
-                     * @description Unix timestamp when to unpin the message
-                     * @default 0
-                     */
-                    pinUntil?: number;
-                };
-            };
-        };
-        responses: {
-            /** @description Message was pinned successfully */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"] | null;
-                        };
-                    };
-                };
-            };
-            /** @description Message could not be pinned */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "message" | "until" | "status";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Message was not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "message" | "until" | "status";
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-unpin-message": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description ID of the message */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Message is not pinned now */
-            200: {
-                headers: {
-                    "X-Chat-Last-Common-Read"?: string;
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMessageWithParent"] | null;
-                        };
-                    };
-                };
-            };
-            /** @description Federation request answered with an unknown status code */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "status";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Message was not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "message";
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-hide-pinned-message": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-                /** @description ID of the message */
-                messageId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Pinned message is now hidden */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description Message was not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                error: string;
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "chat-mentions": {
-        parameters: {
-            query: {
-                /** @description Text to search for */
-                search: string;
-                /** @description Maximum number of results */
-                limit?: number;
-                /** @description Include the user statuses */
-                includeStatus?: boolean;
-            };
-            header: {
-                /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
-                "x-nextcloud-federation"?: string;
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of mention suggestions returned */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ChatMentionSuggestion"][];
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "live_transcription-enable": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Live transcription enabled successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description The participant is not in the call */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "app" | "in-call";
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "live_transcription-disable": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Live transcription stopped successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description The participant is not in the call */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "app" | "in-call";
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "live_transcription-get-available-languages": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Available languages got successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                [key: string]: components["schemas"]["LiveTranscriptionLanguage"];
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description The external app "live_transcription" is not available */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "app";
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "live_transcription-set-language": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path: {
-                apiVersion: "v1";
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description the ID of the language to set */
-                    languageId: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Language set successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description The external app "live_transcription" is not available */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "app";
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Participant is not a moderator */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "app";
-                            };
                         };
                     };
                 };

@@ -14,6 +14,7 @@ use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
 use OCA\Talk\Exceptions\HostedSignalingServerInputException;
 use OCA\Talk\Service\HostedSignalingServerService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
@@ -48,6 +49,9 @@ class HostedSignalingServerController extends OCSController {
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 	#[PublicPage]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/hostedsignalingserver/auth', requirements: [
+		'apiVersion' => '(v1)',
+	])]
 	public function auth(): DataResponse {
 		$storedNonce = $this->config->getAppValue('spreed', 'hosted-signaling-server-nonce', '');
 		// reset nonce after one request
@@ -75,6 +79,9 @@ class HostedSignalingServerController extends OCSController {
 	 * 200: Trial requested successfully
 	 * 400: Requesting trial is not possible
 	 */
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/hostedsignalingserver/requesttrial', requirements: [
+		'apiVersion' => '(v1)',
+	])]
 	public function requestTrial(string $url, string $name, string $email, string $language, string $country): DataResponse {
 		try {
 			$registerAccountData = new RegisterAccountData(
@@ -106,6 +113,9 @@ class HostedSignalingServerController extends OCSController {
 	 * 204: Account deleted successfully
 	 * 400: Deleting account is not possible
 	 */
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/hostedsignalingserver/delete', requirements: [
+		'apiVersion' => '(v1)',
+	])]
 	public function deleteAccount(): DataResponse {
 		$accountId = $this->config->getAppValue('spreed', 'hosted-signaling-server-account-id');
 

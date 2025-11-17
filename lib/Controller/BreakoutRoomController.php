@@ -18,6 +18,7 @@ use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Comments\MessageTooLongException;
@@ -52,6 +53,10 @@ class BreakoutRoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/breakout-rooms/{token}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function configureBreakoutRooms(int $mode, int $amount, string $attendeeMap = '[]'): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->setupBreakoutRooms($this->room, $mode, $amount, $attendeeMap);
@@ -72,6 +77,10 @@ class BreakoutRoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/breakout-rooms/{token}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function removeBreakoutRooms(): DataResponse {
 		$this->breakoutRoomService->removeBreakoutRooms($this->room);
 
@@ -95,6 +104,10 @@ class BreakoutRoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/breakout-rooms/{token}/broadcast', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function broadcastChatMessage(string $message): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->broadcastChatMessage($this->room, $this->participant, $message);
@@ -118,6 +131,10 @@ class BreakoutRoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/breakout-rooms/{token}/attendees', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function applyAttendeeMap(string $attendeeMap): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->applyAttendeeMap($this->room, $attendeeMap);
@@ -138,6 +155,10 @@ class BreakoutRoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/breakout-rooms/{token}/request-assistance', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function requestAssistance(): DataResponse {
 		try {
 			$this->breakoutRoomService->requestAssistance($this->room);
@@ -163,6 +184,10 @@ class BreakoutRoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/breakout-rooms/{token}/request-assistance', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function resetRequestForAssistance(): DataResponse {
 		try {
 			$this->breakoutRoomService->resetRequestForAssistance($this->room);
@@ -188,6 +213,10 @@ class BreakoutRoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/breakout-rooms/{token}/rooms', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function startBreakoutRooms(): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->startBreakoutRooms($this->room);
@@ -209,6 +238,10 @@ class BreakoutRoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/breakout-rooms/{token}/rooms', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function stopBreakoutRooms(): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->stopBreakoutRooms($this->room);
@@ -231,6 +264,10 @@ class BreakoutRoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/breakout-rooms/{token}/switch', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function switchBreakoutRoom(string $target): DataResponse {
 		try {
 			$room = $this->breakoutRoomService->switchBreakoutRoom($this->room, $this->participant, $target);

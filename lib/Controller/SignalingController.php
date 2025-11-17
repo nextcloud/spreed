@@ -27,6 +27,7 @@ use OCA\Talk\Service\SessionService;
 use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -120,6 +121,9 @@ class SignalingController extends OCSController {
 	#[OpenAPI(tags: ['internal_signaling', 'external_signaling'])]
 	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed used to generate the request checksum', indirect: true)]
 	#[RequestHeader(name: 'talk-recording-checksum', description: 'Checksum over the request body to verify authenticity from the recording backend', indirect: true)]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/signaling/settings', requirements: [
+		'apiVersion' => '(v3)',
+	])]
 	public function getSettings(string $token = ''): DataResponse {
 		$isRecordingRequest = false;
 
@@ -283,6 +287,10 @@ class SignalingController extends OCSController {
 	 * 404: Signaling server not found
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['settings'])]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/signaling/welcome/{serverId}', requirements: [
+		'apiVersion' => '(v3)',
+		'serverId' => '\d+',
+	])]
 	public function getWelcomeMessage(int $serverId): DataResponse {
 		try {
 			$testResult = $this->signalingManager->checkServerCompatibility($serverId);
@@ -304,6 +312,10 @@ class SignalingController extends OCSController {
 	 */
 	#[PublicPage]
 	#[OpenAPI(tags: ['internal_signaling'])]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/signaling/{token}', requirements: [
+		'apiVersion' => '(v3)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function sendMessages(string $token, string $messages): DataResponse {
 		if ($this->talkConfig->getSignalingMode() !== Config::SIGNALING_INTERNAL) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
@@ -451,6 +463,10 @@ class SignalingController extends OCSController {
 	 */
 	#[PublicPage]
 	#[OpenAPI(tags: ['internal_signaling'])]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/signaling/{token}', requirements: [
+		'apiVersion' => '(v3)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function pullMessages(string $token): DataResponse {
 		if ($this->talkConfig->getSignalingMode() !== Config::SIGNALING_INTERNAL) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
@@ -656,6 +672,9 @@ class SignalingController extends OCSController {
 	#[BruteForceProtection(action: 'talkSignalingSecret')]
 	#[RequestHeader(name: 'spreed-signaling-random', description: 'Random seed used to generate the request checksum', indirect: true)]
 	#[RequestHeader(name: 'spreed-signaling-checksum', description: 'Checksum over the request body to verify authenticity from the signaling backend', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/signaling/backend', requirements: [
+		'apiVersion' => '(v3)',
+	])]
 	public function backend(): DataResponse {
 		$json = $this->getInputStream();
 		if (!$this->validateBackendRequest($json)) {

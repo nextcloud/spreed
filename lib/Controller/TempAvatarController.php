@@ -10,6 +10,7 @@ namespace OCA\Talk\Controller;
 
 use OC\NotSquareException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
@@ -44,6 +45,7 @@ class TempAvatarController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	#[OpenAPI(tags: ['user_avatar'])]
+	#[ApiRoute(verb: 'POST', url: '/temp-user-avatar')]
 	public function postAvatar(): DataResponse {
 		$files = $this->request->getUploadedFile('files');
 
@@ -116,6 +118,7 @@ class TempAvatarController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	#[OpenAPI(tags: ['user_avatar'])]
+	#[ApiRoute(verb: 'DELETE', url: '/temp-user-avatar')]
 	public function deleteAvatar(): DataResponse {
 		try {
 			$avatar = $this->avatarManager->getAvatar($this->userId);

@@ -30,6 +30,7 @@ use OCA\Talk\Vendor\CuyZ\Valinor\Mapper\MappingError;
 use OCA\Talk\Vendor\CuyZ\Valinor\Mapper\Source\Source;
 use OCA\Talk\Vendor\CuyZ\Valinor\MapperBuilder;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
@@ -70,6 +71,10 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	 * 404: Recording server not found or not configured
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION, tags: ['settings'])]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/recording/welcome/{serverId}', requirements: [
+		'apiVersion' => '(v1)',
+		'serverId' => '\d+',
+	])]
 	public function getWelcomeMessage(int $serverId): DataResponse {
 		$recordingServers = $this->talkConfig->getRecordingServers();
 		if (empty($recordingServers) || !isset($recordingServers[$serverId])) {
@@ -182,6 +187,9 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkRecordingStatus')]
 	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed used to generate the request checksum', indirect: true)]
 	#[RequestHeader(name: 'talk-recording-checksum', description: 'Checksum over the request body to verify authenticity from the recording backend', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/recording/backend', requirements: [
+		'apiVersion' => '(v1)',
+	])]
 	public function backend(): DataResponse {
 		$json = $this->getInputStream();
 		if (!$this->validateBackendRequest($json)) {
@@ -346,6 +354,10 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/recording/{token}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function start(int $status): DataResponse {
 		try {
 			$this->recordingService->start($this->room, $status, $this->userId, $this->participant);
@@ -365,6 +377,10 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/recording/{token}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function stop(): DataResponse {
 		try {
 			$this->recordingService->stop($this->room, $this->participant);
@@ -390,6 +406,10 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	#[RequireRoom]
 	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed used to generate the request checksum', indirect: true)]
 	#[RequestHeader(name: 'talk-recording-checksum', description: 'Checksum over the request body to verify authenticity from the recording backend', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/recording/{token}/store', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function store(?string $owner): DataResponse {
 		$data = $this->room->getToken();
 		if (!$this->validateBackendRequest($data)) {
@@ -435,6 +455,10 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/recording/{token}/notification', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function notificationDismiss(int $timestamp): DataResponse {
 		try {
 			$this->recordingService->notificationDismiss(
@@ -463,6 +487,10 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/recording/{token}/share-chat', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
 	public function shareToChat(int $fileId, int $timestamp): DataResponse {
 		try {
 			$this->recordingService->shareToChat(
