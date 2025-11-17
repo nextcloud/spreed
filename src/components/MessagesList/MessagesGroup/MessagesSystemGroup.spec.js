@@ -8,7 +8,7 @@ import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
-import MessageItem from './Message/MessageItem.vue'
+import SystemMessageItem from './Message/SystemMessageItem.vue'
 import MessagesSystemGroup from './MessagesSystemGroup.vue'
 import { ATTENDEE, MESSAGE } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
@@ -85,7 +85,7 @@ describe('MessagesSystemGroup.vue', () => {
 		const avatarEl = wrapper.findComponent({ name: 'AvatarWrapper' })
 		expect(avatarEl.exists()).toBe(false)
 
-		const messagesEl = wrapper.findAllComponents(MessageItem)
+		const messagesEl = wrapper.findAllComponents(SystemMessageItem)
 		expect(messagesEl.at(0).props()).toMatchObject({
 			message: {
 				id: `${MESSAGES[0].id}_combined`,
@@ -188,7 +188,7 @@ describe('MessagesSystemGroup.vue', () => {
 				},
 			})
 			// assert
-			const messagesEl = wrapper.findAllComponents(MessageItem)
+			const messagesEl = wrapper.findAllComponents(SystemMessageItem)
 			expect(messagesEl.length).toBe(4) // 3 messages + 1 combined messages
 			expect(messagesEl.at(0).props()).toMatchObject({
 				message: {
@@ -233,7 +233,7 @@ describe('MessagesSystemGroup.vue', () => {
 				},
 			})
 			// assert
-			const messagesEl = wrapper.findAllComponents(MessageItem)
+			const messagesEl = wrapper.findAllComponents(SystemMessageItem)
 			expect(messagesEl.length).toBe(4) // 3 messages + 1 combined messages
 			expect(messagesEl.at(0).props()).toMatchObject({
 				message: {
@@ -266,7 +266,7 @@ describe('MessagesSystemGroup.vue', () => {
 		 *
 		 */
 		function testGroupedSystemMessages(wrapper, expectedMessage) {
-			const messagesEl = wrapper.findAllComponents(MessageItem)
+			const messagesEl = wrapper.findAllComponents(SystemMessageItem)
 			// combined message doesn't include the last message (it has a different actor)
 			expect(messagesEl.at(0).props().message.message).toBe(expectedMessage)
 			expect(messagesEl.at(0).props().message.messageParameters).toStrictEqual({

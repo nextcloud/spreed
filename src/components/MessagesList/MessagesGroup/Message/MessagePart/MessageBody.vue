@@ -118,21 +118,21 @@
 				class="icon-loading-small message-status"
 				:aria-label="loadingIconTitle" />
 			<div
-				v-else-if="readInfo.showCommonReadIcon"
+				v-else-if="readInfo?.showCommonReadIcon"
 				:title="readInfo.commonReadIconTitle"
 				class="message-status"
 				:aria-label="readInfo.commonReadIconTitle">
 				<IconCheckAll :size="16" />
 			</div>
 			<div
-				v-else-if="readInfo.showSentIcon"
+				v-else-if="readInfo?.showSentIcon"
 				:title="readInfo.sentIconTitle"
 				class="message-status"
 				:aria-label="readInfo.sentIconTitle">
 				<IconCheck :size="16" />
 			</div>
 			<div
-				v-else-if="readInfo.showSilentIcon"
+				v-else-if="readInfo?.showSilentIcon"
 				:title="readInfo.silentIconTitle"
 				class="message-status"
 				:aria-label="readInfo.silentIconTitle">
@@ -239,7 +239,7 @@ export default {
 
 		readInfo: {
 			type: Object,
-			required: true,
+			default: null,
 		},
 	},
 
