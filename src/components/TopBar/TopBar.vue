@@ -334,7 +334,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/markdown';
+@use '../../assets/markdown' as *;
 
 .top-bar {
 	--border-width: 1px;
