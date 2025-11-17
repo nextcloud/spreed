@@ -2846,6 +2846,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 			if (!empty($includeMetaDataKeys)) {
 				$metaData = $message['metaData'] ?? [];
+				var_dump($message['message'], $metaData);
 				foreach ($includeMetaDataKeys as $key) {
 					$data['metaData.' . $key] = $metaData[$key] ?? 'UNSET';
 					$expectedValue = $expected['metaData.' . $key];
