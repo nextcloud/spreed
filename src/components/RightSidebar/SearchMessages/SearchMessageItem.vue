@@ -17,7 +17,7 @@ import NcListItem from '@nextcloud/vue/components/NcListItem'
 import CloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
-import { CONVERSATION } from '../../../constants.ts'
+import { AVATAR, CONVERSATION } from '../../../constants.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { useDashboardStore } from '../../../stores/dashboard.ts'
 import { formatDateTime } from '../../../utils/formattedTime.ts'
@@ -34,6 +34,7 @@ const props = withDefaults(defineProps<{
 	timestamp: number
 	messageParameters?: ChatMessage['messageParameters']
 	isReminder?: boolean
+	compact?: boolean
 }>(), {
 	messageParameters: () => ({}),
 	isReminder: false,
@@ -88,6 +89,8 @@ function handleResultClick() {
 		:to="to"
 		:active="active"
 		:title="richSubline"
+		:compact
+		class="search-message"
 		force-menu
 		@click="handleResultClick">
 		<template #icon>
@@ -96,6 +99,7 @@ function handleResultClick() {
 				:id="actorId"
 				:name="title"
 				:source="actorType"
+				:size="compact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT"
 				disable-menu
 				:token="token" />
 			<ConversationIcon
@@ -103,7 +107,7 @@ function handleResultClick() {
 				:item="conversation"
 				hide-user-status />
 		</template>
-		<template #subname>
+		<template v-if="!compact" #subname>
 			{{ richSubline }}
 		</template>
 		<template v-if="isReminder" #actions>
@@ -119,7 +123,7 @@ function handleResultClick() {
 		<template #details>
 			<NcDateTime
 				:timestamp="timestamp * 1000"
-				class="search-results__date"
+				class="search-message__date"
 				relative-time="short"
 				ignore-seconds />
 		</template>
@@ -127,7 +131,14 @@ function handleResultClick() {
 </template>
 
 <style lang="scss" scoped>
-.search-results__date {
-	font-size: x-small;
+.search-message {
+	&__date {
+		font-size: x-small;
+	}
+
+	/* Overwrite NcListItem styles for compact view */
+	:deep(.list-item--compact .list-item-content__name) {
+		font-weight: 400;
+	}
 }
 </style>
