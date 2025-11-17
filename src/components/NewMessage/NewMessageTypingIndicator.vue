@@ -133,7 +133,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
+@use '../../assets/variables' as *;
 
 .indicator {
 	width: 100%;

@@ -1036,7 +1036,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
+@use '../../assets/variables' as *;
 
 .scroller {
 	position: relative;

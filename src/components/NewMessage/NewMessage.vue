@@ -1097,7 +1097,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
+@use '../../assets/variables' as *;
 
 .wrapper {
 	padding: calc(var(--default-grid-baseline) * 2);

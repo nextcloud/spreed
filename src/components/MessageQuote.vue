@@ -220,7 +220,7 @@ function handleQuoteClick() {
 </template>
 
 <style lang="scss" scoped>
-@import '../assets/variables';
+@use '../assets/variables' as *;
 
 .quote {
 	position: relative;
