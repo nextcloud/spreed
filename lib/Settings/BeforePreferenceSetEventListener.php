@@ -81,6 +81,9 @@ class BeforePreferenceSetEventListener implements IEventListener {
 		if ($key === UserPreference::CONVERSATIONS_LIST_STYLE) {
 			return $value === UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES || $value === UserPreference::CONVERSATION_LIST_STYLE_COMPACT;
 		}
+		if ($key === UserPreference::CHAT_STYLE) {
+			return $value === UserPreference::CHAT_STYLE_SPLIT || $value === UserPreference::CHAT_STYLE_UNIFIED;
+		}
 
 		return false;
 	}

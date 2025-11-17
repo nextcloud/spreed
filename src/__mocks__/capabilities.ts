@@ -159,6 +159,7 @@ export const mockedCapabilities: Capabilities = {
 				'has-translation-task-providers': true,
 				'typing-privacy': 0,
 				'summary-threshold': 100,
+				style: 'split',
 			},
 			conversations: {
 				'can-create': true,
