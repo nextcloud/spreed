@@ -109,6 +109,14 @@ async function setConversationsListStyle(value: string) {
 }
 
 /**
+ *
+ * @param value
+ */
+async function setChatStyle(value: string) {
+	return setUserConfig('spreed', 'chat_style', value)
+}
+
+/**
  * Set user config using provisioning API
  *
  * @param appId - app id
@@ -124,6 +132,7 @@ async function setUserConfig(appId: string, configKey: string, configValue: stri
 export {
 	setAttachmentFolder,
 	setBlurVirtualBackground,
+	setChatStyle,
 	setConversationsListStyle,
 	setPlaySounds,
 	setReadStatusPrivacy,

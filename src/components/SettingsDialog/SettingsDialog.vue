@@ -55,11 +55,20 @@
 			v-if="!isGuest && supportConversationsListStyle"
 			id="talk_appearance"
 			:name="t('spreed', 'Appearance & Sounds')">
-			<NcFormBoxSwitch
-				:model-value="conversationsListStyle"
-				:label="t('spreed', 'Compact conversations list')"
-				:disabled="appearanceLoading"
-				@update:model-value="toggleConversationsListStyle" />
+			<NcFormBox>
+				<NcFormBoxSwitch
+					:model-value="conversationsListStyle"
+					:label="t('spreed', 'Compact conversations list')"
+					:disabled="appearanceLoading"
+					@update:model-value="toggleConversationsListStyle" />
+				<!-- FIXME: remove v-if after implementing split view -->
+				<NcFormBoxSwitch
+					v-if="false"
+					:model-value="chatSplitViewEnabled"
+					:label="t('spreed', 'Show your chat in split view')"
+					:disabled="chatAppearanceLoading"
+					@update:model-value="toggleChatStyle" />
+			</NcFormBox>
 
 			<NcFormBox>
 				<NcFormBoxSwitch
@@ -167,7 +176,7 @@ import NcHotkeyList from '@nextcloud/vue/components/NcHotkeyList'
 import NcKbd from '@nextcloud/vue/components/NcKbd'
 import IconFolderOpenOutline from 'vue-material-design-icons/FolderOpenOutline.vue'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
-import { CONVERSATION, PRIVACY } from '../../constants.ts'
+import { CHAT_STYLE, CONVERSATION, PRIVACY } from '../../constants.ts'
 import { getTalkConfig, getTalkVersion } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
 import { useActorStore } from '../../stores/actor.ts'
@@ -228,6 +237,7 @@ export default {
 		return {
 			showSettings: false,
 			attachmentFolderLoading: true,
+			chatAppearanceLoading: false,
 			appearanceLoading: false,
 			privacyLoading: false,
 			playSoundsLoading: false,
@@ -266,6 +276,10 @@ export default {
 
 		hideMediaSettings() {
 			return !this.settingsStore.showMediaSettings
+		},
+
+		chatSplitViewEnabled() {
+			return this.settingsStore.chatStyle === CHAT_STYLE.SPLIT
 		},
 	},
 
@@ -348,6 +362,17 @@ export default {
 				showError(t('spreed', 'Error while setting personal setting'))
 			}
 			this.appearanceLoading = false
+		},
+
+		async toggleChatStyle(value) {
+			this.chatAppearanceLoading = true
+			try {
+				await this.settingsStore.updateChatStyle(value ? CHAT_STYLE.SPLIT : CHAT_STYLE.UNIFIED)
+				showSuccess(t('spreed', 'Your personal setting has been saved'))
+			} catch (exception) {
+				showError(t('spreed', 'Error while setting personal setting'))
+			}
+			this.chatAppearanceLoading = false
 		},
 
 		async togglePlaySounds() {
