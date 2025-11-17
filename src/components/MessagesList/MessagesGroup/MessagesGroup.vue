@@ -123,7 +123,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/variables';
+@use '../../../assets/variables' as *;
 
 .wrapper {
 	position: relative;

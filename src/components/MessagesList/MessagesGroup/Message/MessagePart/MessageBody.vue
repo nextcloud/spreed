@@ -553,8 +553,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../../../assets/markdown';
-@import '../../../../../assets/variables';
+@use '../../../../../assets/markdown' as *;
+@use '../../../../../assets/variables' as *;
 
 .message-main {
 	display: grid;
