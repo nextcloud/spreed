@@ -653,6 +653,7 @@ export type {
 	SearchMessagePayload,
 	UnifiedSearchResponse,
 	UnifiedSearchResultEntry,
+	UnifiedSearchResultEntryWithRouterLink,
 } from './core.ts'
 
 // Translation API
