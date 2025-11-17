@@ -30,13 +30,15 @@
 				:is-deleting="isDeleting"
 				:has-call="conversation.hasCall"
 				:message="message"
-				:read-info="readInfo">
+				:read-info="readInfo"
+				:is-split-view-enabled>
 				<!-- reactions buttons and popover with details -->
 				<ReactionsWrapper
 					v-if="Object.keys(message.reactions).length"
 					:id="message.id"
 					:token="message.token"
 					:can-react="canReact"
+					:is-split-view-enabled
 					:show-controls="isHovered || isFollowUpEmojiPickerOpen"
 					@emoji-picker-toggled="toggleFollowUpEmojiPicker" />
 			</MessageBody>
@@ -157,6 +159,11 @@ export default {
 		nextMessageId: {
 			type: [String, Number],
 			default: 0,
+		},
+
+		isSplitViewEnabled: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -326,10 +333,6 @@ export default {
 				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
 				&& this.message.messageType !== MESSAGE.TYPE.COMMAND
 				&& this.message.messageType !== MESSAGE.TYPE.COMMENT_DELETED
-		},
-
-		isSplitViewEnabled() {
-			return true
 		},
 
 		isUserMessage() {

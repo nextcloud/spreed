@@ -246,6 +246,11 @@ export default {
 			type: Object,
 			default: null,
 		},
+
+		isSplitViewEnabled: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	setup(props) {
@@ -425,10 +430,6 @@ export default {
 				return t('spreed', 'You are not allowed to share files')
 			}
 			return t('spreed', 'You cannot send messages to this conversation at the moment')
-		},
-
-		isSplitViewEnabled() {
-			return true
 		},
 
 		iconMessageDeliverySize() {
