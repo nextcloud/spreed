@@ -583,7 +583,7 @@ class Listener implements IEventListener {
 		$this->messageParser->parseMessage($message);
 		// Build reaction message data
 		$data['chat']['comment'] = [
-			'id' => null,
+			'id' => $event->getReactionMessage()?->getId(),
 			'token' => $event->getRoom()->getToken(),
 			'actorType' => $event->getActorType(),
 			'actorId' => $event->getActorId(),
