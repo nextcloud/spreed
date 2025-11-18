@@ -80,7 +80,7 @@ class ReactionManager {
 
 		$this->commentsManager->save($comment);
 
-		$event = new ReactionAddedEvent($chat, $parentMessage, $actorType, $actorId, $actorDisplayName, $reaction);
+		$event = new ReactionAddedEvent($chat, $parentMessage, $actorType, $actorId, $actorDisplayName, $reaction, $comment);
 		$this->dispatcher->dispatchTyped($event);
 
 		$this->notifier->notifyReacted($chat, $parentMessage, $comment);
@@ -136,7 +136,7 @@ class ReactionManager {
 			true
 		);
 
-		$event = new ReactionRemovedEvent($chat, $parentComment, $actorType, $actorId, $actorDisplayName, $reaction);
+		$event = new ReactionRemovedEvent($chat, $parentComment, $actorType, $actorId, $actorDisplayName, $reaction, $comment);
 		$this->dispatcher->dispatchTyped($event);
 
 		return $comment;
