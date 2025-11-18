@@ -19,6 +19,7 @@ abstract class AReactionEvent extends ARoomEvent {
 		protected string $actorId,
 		protected string $actorDisplayName,
 		protected string $reaction,
+		protected ?IComment $reactionMessage = null,
 	) {
 		parent::__construct($room);
 	}
@@ -26,6 +27,11 @@ abstract class AReactionEvent extends ARoomEvent {
 	public function getMessage(): IComment {
 		return $this->message;
 	}
+
+	public function getReactionMessage(): ?IComment {
+		return $this->reactionMessage;
+	}
+
 
 	public function getActorType(): string {
 		return $this->actorType;
