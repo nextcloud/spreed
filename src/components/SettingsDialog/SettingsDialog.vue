@@ -63,7 +63,6 @@
 					@update:model-value="toggleConversationsListStyle" />
 				<!-- FIXME: remove v-if after implementing split view -->
 				<NcFormBoxSwitch
-					v-if="false"
 					:model-value="chatSplitViewEnabled"
 					:label="t('spreed', 'Show your chat in split view')"
 					:disabled="chatAppearanceLoading"
