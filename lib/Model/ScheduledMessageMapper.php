@@ -30,7 +30,7 @@ class ScheduledMessageMapper extends QBMapper {
 	public function __construct(
 		IDBConnection $db,
 	) {
-		parent::__construct($db, 'talk_scheduled_messages', ScheduledMessage::class);
+		parent::__construct($db, 'talk_scheduled_msg', ScheduledMessage::class);
 	}
 
 	/**
@@ -68,6 +68,36 @@ class ScheduledMessageMapper extends QBMapper {
 			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)));
 
 		return $this->findEntities($query);
+	}
+
+	/**
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @param string|null $roomId
+	 * @return array<array<string, int>
+	 */
+	public function getCountByActor(string $actorType, string $actorId, ?string $roomId): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select(['room_id', $query->createFunction('COUNT(DISTINCT(room_id)) AS count'), 'room_id'])
+			->from($this->getTableName())
+			->where($query->expr()->eq('actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
+			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)));
+
+		if ($roomId !== null) {
+			$query->andWhere($query->expr('room_id'), $query->createNamedParameter($roomId, IQueryBuilder::PARAM_STR));
+		}
+
+		$result = $query->executeQuery();
+		$count = $result->fetchAll();
+		$result->closeCursor();
+
+		if (empty($count)) {
+			return [];
+		}
+
+		return array_map(static function (array $row) {
+			return [$row['room_id'] => $row['count']];
+		}, $count);
 	}
 
 	public function deleteMessagesByRoomAndActor(Room $chat, string $actorType, string $actorId): int {

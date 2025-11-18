@@ -12,12 +12,10 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
-use OCP\Migration\Attributes\CreateTable;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 use Override;
 
-#[CreateTable(table: 'talk_scheduled_messages', columns: ['id', 'room_token', 'actor_id', 'actor_type', 'message', 'send_at', 'meta_data', 'thread_id', 'parent_id'], description: 'Supporting scheduled message sending')]
 class Version23000Date20251105125333 extends SimpleMigrationStep {
 	/**
 	 * @param IOutput $output
@@ -28,10 +26,9 @@ class Version23000Date20251105125333 extends SimpleMigrationStep {
 	#[Override]
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
-		if (!$schema->hasTable('talk_scheduled_messages')) {
-			$table = $schema->createTable('talk_scheduled_messages');
+		if (!$schema->hasTable('talk_scheduled_msg')) {
+			$table = $schema->createTable('talk_scheduled_msg');
 			$table->addColumn('id', Types::BIGINT, [
-				'autoincrement' => true,
 				'notnull' => true,
 				'length' => 20,
 			]);
@@ -70,6 +67,8 @@ class Version23000Date20251105125333 extends SimpleMigrationStep {
 			$table->addColumn('send_at', Types::DATETIME, [
 				'notnull' => false,
 			]);
+			$table->setPrimaryKey(['id']);
+			$table->addIndex(['room_id'], 'tt_room_sched');
 		}
 		return $schema;
 	}

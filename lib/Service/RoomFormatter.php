@@ -70,6 +70,7 @@ class RoomFormatter {
 		bool $skipLastMessage = false,
 		?Thread $thread = null,
 		bool $isThreadInfoComplete = false,
+		int $scheduleMessageCount = 0,
 	): array {
 		return $this->formatRoomV4(
 			$responseFormat,
@@ -82,6 +83,7 @@ class RoomFormatter {
 			$skipLastMessage,
 			$thread,
 			$isThreadInfoComplete,
+			$scheduleMessageCount,
 		);
 	}
 
@@ -100,6 +102,7 @@ class RoomFormatter {
 		bool $skipLastMessage,
 		?Thread $thread = null,
 		bool $isThreadInfoComplete = false,
+		int $scheduleMessageCount = 0,
 	): array {
 		$roomData = [
 			'id' => $room->getId(),
@@ -158,6 +161,7 @@ class RoomFormatter {
 			'isArchived' => false,
 			'isImportant' => false,
 			'isSensitive' => false,
+			'scheduledMessages' => $scheduleMessageCount,
 		];
 
 		if ($room->isFederatedConversation()) {

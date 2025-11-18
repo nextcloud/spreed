@@ -66,6 +66,7 @@ use OCA\Talk\Service\PhoneService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Service\ScheduledMessageService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Settings\UserPreference;
@@ -153,6 +154,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected IURLGenerator $url,
 		protected IL10N $l,
 		protected ThreadService $threadService,
+		protected ScheduledMessageService $scheduledMessageService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -306,6 +308,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$threads = $this->threadService->preloadThreadsForConversationList($potentialThreads);
 		}
 
+		// how to get the participant?
+		$scheduledMessages = $this->scheduledMessageService->getMessagesCount();
+
 		$return = [];
 		foreach ($rooms as $room) {
 			try {
@@ -316,6 +321,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 					skipLastMessage: !$includeLastMessage,
 					thread: $threads[$room->getId()] ?? null,
 					isThreadInfoComplete: true,
+					scheduleMessageCount: $scheduledMessages[$room->getId()] ?? 0,
 				);
 			} catch (ParticipantNotFoundException $e) {
 				// for example in case the room was deleted concurrently,
@@ -487,7 +493,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 				$statuses = $this->statusManager->getUserStatuses($userIds);
 			}
-			return new DataResponse($this->formatRoom($room, $participant, $statuses, $isSIPBridgeRequest), Http::STATUS_OK, $this->getTalkHashHeader());
+			$scheduledMessagesCount = $this->scheduledMessageService->getMessagesCount($participant, $room);
+			return new DataResponse($this->formatRoom($room, $participant, $statuses, $isSIPBridgeRequest, scheduleMessageCount: $scheduledMessagesCount[$room->getId()] ?? 0), Http::STATUS_OK, $this->getTalkHashHeader());
 		} catch (RoomNotFoundException $e) {
 			/**
 			 * A hack to fix type collision
@@ -547,6 +554,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		bool $skipLastMessage = false,
 		?Thread $thread = null,
 		bool $isThreadInfoComplete = false,
+		int $scheduleMessageCount = 0,
 	): array {
 		return $this->roomFormatter->formatRoom(
 			$this->getResponseFormat(),
@@ -559,6 +567,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$skipLastMessage,
 			$thread,
 			$isThreadInfoComplete,
+			$scheduleMessageCount,
 		);
 	}
 

@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
-use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Exceptions\MessagingNotAllowedException;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\ScheduledMessage;
@@ -16,35 +15,23 @@ use OCA\Talk\Model\ScheduledMessageMapper;
 use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
-use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
 use OCP\Collaboration\Reference\IReferenceManager;
 use OCP\Comments\IComment;
 use OCP\DB\Exception;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\IRequest;
-use OCP\Notification\IManager as INotificationManager;
 use OCP\Security\RateLimiting\ILimiter;
-use OCP\Share\IManager;
 use Psr\Log\LoggerInterface;
 
 class ScheduledMessageService {
 	public const MAX_CHAT_LENGTH = 32000;
 
 	public function __construct(
-		private IEventDispatcher $dispatcher,
 		private ScheduledMessageMapper $scheduledMessageMapper,
-		private INotificationManager $notificationManager,
-		private IManager $shareManager,
-		private RoomShareProvider $shareProvider,
-		private ParticipantService $participantService,
-		private RoomService $roomService,
-		private PollService $pollService,
 		protected ThreadService $threadService,
-		private Notifier $notifier,
 		protected ITimeFactory $timeFactory,
 		protected AttachmentService $attachmentService,
 		protected IReferenceManager $referenceManager,
@@ -120,12 +107,19 @@ class ScheduledMessageService {
 	 * @param Participant $participant
 	 * @param string $text
 	 * @param bool $isSilent
+	 * @param \DateTime $sendAt
 	 * @return ScheduledMessage
 	 * @throws DoesNotExistException
 	 * @throws Exception
 	 * @throws \JsonException
 	 */
-	public function editMessage(Room $chat, int $id, Participant $participant, string $text, bool $isSilent): ScheduledMessage {
+	public function editMessage(Room $chat, int $id, Participant $participant, string $text, bool $isSilent, \DateTime $sendAt): ScheduledMessage {
+		if ($chat->isFederatedConversation()) {
+			$e = new MessagingNotAllowedException();
+			$this->logger->error('Attempt to post scheduled message into proxy conversation', ['exception' => $e]);
+			throw $e;
+		}
+
 		if (trim($text) === '') {
 			throw new \InvalidArgumentException('message');
 		}
@@ -190,5 +184,13 @@ class ScheduledMessageService {
 			}
 		}
 		return $message->toArray($parentMessage, $thread ?? null);
+	}
+
+	public function getMessagesCount(Participant $participant, ?Room $chat = null): array {
+		return $this->scheduledMessageMapper->getCountByActor(
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId(),
+			$chat?->getId(),
+		);
 	}
 }
