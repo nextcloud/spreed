@@ -13,7 +13,8 @@
 		class="message"
 		:class="{
 			'message--hovered': showMessageButtonsBar,
-			'message--sided': isSplitViewEnabled && isUserMessage,
+			'message--sided': isSplitViewEnabled,
+			'message--small-view': (isSmallMobile || isSidebar) && isSplitViewEnabled,
 		}"
 		tabindex="0"
 		@mouseover="handleMouseover"
@@ -21,8 +22,8 @@
 		<div
 			:class="{
 				'normal-message-body': !isDeletedMessage && !isSplitViewEnabled,
-				outgoing: actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled && isUserMessage,
-				incoming: !actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled && isUserMessage,
+				outgoing: actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled,
+				incoming: !actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled,
 			}"
 			class="message-body">
 			<MessageBody
@@ -31,7 +32,7 @@
 				:has-call="conversation.hasCall"
 				:message="message"
 				:read-info="readInfo"
-				:is-split-view-enabled>
+				@update:is-short-simple-message="isShortSimpleMessage = $event">
 				<!-- reactions buttons and popover with details -->
 				<ReactionsWrapper
 					v-if="Object.keys(message.reactions).length"
@@ -48,9 +49,10 @@
 		<div
 			class="message-body__scroll"
 			:class="{
-				outgoing: actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled && isUserMessage,
-				incoming: !actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled && isUserMessage,
-				'bottom-side': isSplitViewEnabled && (isSmallMobile || isSidebar),
+				outgoing: actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled,
+				incoming: !actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled,
+				'bottom-side': isSplitViewEnabled && !isShortSimpleMessage && (isSmallMobile || isSidebar),
+				overlay: isSplitViewEnabled && !isShortSimpleMessage && isReactionsMenuOpen && !(isSmallMobile || isSidebar),
 			}">
 			<MessageButtonsBar
 				v-if="showMessageButtonsBar"
@@ -59,7 +61,7 @@
 				v-model:is-reactions-menu-open="isReactionsMenuOpen"
 				v-model:is-forwarder-open="isForwarderOpen"
 				class="message-buttons-bar"
-				:class="{ outlined: !isSplitViewEnabled || isReactionsMenuOpen || isSmallMobile || isSidebar }"
+				:class="{ outlined: buttonsBarOutlined }"
 				:is-translation-available="isTranslationAvailable"
 				:can-react="canReact"
 				:message="message"
@@ -105,7 +107,7 @@ import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nex
 import { t } from '@nextcloud/l10n'
 import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
-import { inject } from 'vue'
+import { inject, ref } from 'vue'
 import NcAssistantButton from '@nextcloud/vue/components/NcAssistantButton'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
@@ -197,6 +199,7 @@ export default {
 			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
 			isTranslateDialogOpen: false,
+			isShortSimpleMessage: ref(false),
 		}
 	},
 
@@ -335,8 +338,9 @@ export default {
 				&& this.message.messageType !== MESSAGE.TYPE.COMMENT_DELETED
 		},
 
-		isUserMessage() {
-			return !this.isSystemMessage && !this.isCombinedSystemMessage
+		buttonsBarOutlined() {
+			return !this.isSplitViewEnabled
+				|| (this.isReactionsMenuOpen || this.isSmallMobile || this.isSidebar)
 		},
 	},
 
@@ -446,10 +450,12 @@ export default {
 	}
 
 	&--sided {
-		display: flex;
-		flex-direction: column;
 		width: fit-content;
-		max-width: min(90%, 560px);
+		max-width: min(90%, calc(100% - 3 * var(--default-clickable-area)));
+
+		&.message--small-view {
+			max-width: 90%;
+		}
 
 		.message-body__scroll.bottom-side {
 			top: unset !important;
@@ -506,6 +512,10 @@ export default {
 		inset-inline-end: 100%;
 		top: calc(50% - var(--default-clickable-area) / 2);
 		padding-inline: var(--default-grid-baseline);
+
+		&.overlay {
+			inset-inline-end: max(100% - var(--default-clickable-area) * 6, (100% - var(--default-clickable-area) * 6) * -1);
+		}
 	}
 
 	&.incoming {
@@ -519,6 +529,10 @@ export default {
 		inset-inline-start: 100%;
 		top: calc(50% - var(--default-clickable-area) / 2);
 		padding-inline: var(--default-grid-baseline);
+
+		&.overlay {
+			inset-inline-start: max(100% - var(--default-clickable-area) * 6, (100% - var(--default-clickable-area) * 6) * -1);
+		}
 	}
 	// END Split view
 }

@@ -10,6 +10,7 @@
 			'message-main': !isSplitViewEnabled || isSystemMessage,
 			'message-main--sided': isSplitViewEnabled && !isSystemMessage,
 			'message-main--compressed': isSplitViewEnabled && isShortSimpleMessage,
+			'message-main--compressed-system': isSplitViewEnabled && isSystemMessage,
 		}">
 		<p
 			v-if="isThreadStarterMessage"
@@ -184,11 +185,13 @@ import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.ts'
 import { CONVERSATION, MESSAGE } from '../../../../../constants.ts'
+import { CHAT_STYLE } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
+import { useSettingsStore } from '../../../../../stores/settings.ts'
 import { formatDateTime } from '../../../../../utils/formattedTime.ts'
 import { parseMentions, parseSpecialSymbols } from '../../../../../utils/textParse.ts'
 
@@ -246,12 +249,9 @@ export default {
 			type: Object,
 			default: null,
 		},
-
-		isSplitViewEnabled: {
-			type: Boolean,
-			default: false,
-		},
 	},
+
+	emits: ['update:isShortSimpleMessage'],
 
 	setup(props) {
 		const { message } = toRefs(props)
@@ -271,6 +271,7 @@ export default {
 			isFileShare,
 			isSidebar,
 			actorStore: useActorStore(),
+			settingsStore: useSettingsStore(),
 		}
 	},
 
@@ -455,11 +456,23 @@ export default {
 				&& this.message.lastEditActorDisplayName !== this.message.actorDisplayName
 				&& this.message.lastEditActorType !== this.message.actorType
 		},
+
+		isSplitViewEnabled() {
+			return this.settingsStore.chatStyle === CHAT_STYLE.SPLIT
+		},
 	},
 
 	watch: {
 		showJoinCallButton() {
 			EventBus.emit('scroll-chat-to-bottom', { smooth: true })
+		},
+
+		isShortSimpleMessage: {
+			handler(newValue) {
+				this.$emit('update:isShortSimpleMessage', newValue)
+			},
+
+			immediate: true,
 		},
 	},
 
@@ -594,9 +607,30 @@ export default {
 		}
 	}
 
-	&--sided:has(.system-message) {
+	// Layout 4 split view system message: centered text and timestamp
+	&--compressed-system {
 		display: flex;
+		flex-direction: row;
 		justify-content: center;
+		font-size: var(--font-size-small);
+
+		.system-message {
+			padding: 0 !important;
+		}
+
+		.message-main__info {
+			opacity: 0;
+			width: auto;
+			font-size: var(--font-size-small);
+
+			&::before {
+				content: ' • ';
+			}
+		}
+
+		&:hover > .message-main__info {
+			opacity: 1;
+		}
 	}
 
 	// common styles for split view
