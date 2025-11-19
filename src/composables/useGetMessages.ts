@@ -280,7 +280,7 @@ export function useGetMessagesProvider() {
 				messageId = nearestContextMessageId
 			}
 
-			if (messageId === firstContextMessageId) {
+			if (messageId === firstContextMessageId || !chatStore.hasEnoughMessages(token, { messageId, threadId })) {
 				// message is the first one in the block, try to get some messages above
 				isInitialisingMessages.value = true
 				await getOldMessages(token, false, { messageId, threadId })
