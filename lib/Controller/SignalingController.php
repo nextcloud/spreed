@@ -239,6 +239,61 @@ class SignalingController extends OCSController {
 	}
 
 	/**
+	 * Backend API to query information required for standalone signaling
+	 * servers
+	 *
+	 * See sections "Backend validation" in
+	 * https://nextcloud-spreed-signaling.readthedocs.io/en/latest/standalone-signaling-api-v1/#backend-requests
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array{type: string, error?: array{code: string, message: string}, auth?: array{version: string, userid?: string, user?: array<string, mixed>}, room?: array{version: string, roomid?: string, properties?: array<string, mixed>, permissions?: list<string>, session?: array<string, mixed>}}, array{}>
+	 *
+	 * 200: Always, sorry about that
+	 */
+	#[OpenAPI(scope: 'backend-signaling')]
+	#[PublicPage]
+	#[BruteForceProtection(action: 'talkSignalingSecret')]
+	#[RequestHeader(name: 'spreed-signaling-random', description: 'Random seed used to generate the request checksum', indirect: true)]
+	#[RequestHeader(name: 'spreed-signaling-checksum', description: 'Checksum over the request body to verify authenticity from the signaling backend', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/signaling/backend', requirements: [
+		'apiVersion' => '(v3)',
+	])]
+	public function backend(): DataResponse {
+		$json = $this->getInputStream();
+		if (!$this->validateBackendRequest($json)) {
+			$response = new DataResponse([
+				'type' => 'error',
+				'error' => [
+					'code' => 'invalid_request',
+					'message' => 'The request could not be authenticated.',
+				],
+			]);
+			$response->throttle(['action' => 'talkSignalingSecret']);
+			return $response;
+		}
+
+		$message = json_decode($json, true);
+		switch ($message['type'] ?? '') {
+			case 'auth':
+				// Query authentication information about a user.
+				return $this->backendAuth($message['auth']);
+			case 'room':
+				// Query information about a room.
+				return $this->backendRoom($message['room']);
+			case 'ping':
+				// Ping sessions connected to a room.
+				return $this->backendPing($message['ping']);
+			default:
+				return new DataResponse([
+					'type' => 'error',
+					'error' => [
+						'code' => 'unknown_type',
+						'message' => 'The given type ' . json_encode($message) . ' is not supported.',
+					],
+				]);
+		}
+	}
+
+	/**
 	 * @psalm-return ?TalkSignalingFederationSettings
 	 */
 	private function getFederationSettings(?Room $room): ?array {
@@ -654,61 +709,6 @@ class SignalingController extends OCSController {
 	 */
 	protected function getInputStream(): string {
 		return (string)file_get_contents('php://input');
-	}
-
-	/**
-	 * Backend API to query information required for standalone signaling
-	 * servers
-	 *
-	 * See sections "Backend validation" in
-	 * https://nextcloud-spreed-signaling.readthedocs.io/en/latest/standalone-signaling-api-v1/#backend-requests
-	 *
-	 * @return DataResponse<Http::STATUS_OK, array{type: string, error?: array{code: string, message: string}, auth?: array{version: string, userid?: string, user?: array<string, mixed>}, room?: array{version: string, roomid?: string, properties?: array<string, mixed>, permissions?: list<string>, session?: array<string, mixed>}}, array{}>
-	 *
-	 * 200: Always, sorry about that
-	 */
-	#[OpenAPI(scope: 'backend-signaling')]
-	#[PublicPage]
-	#[BruteForceProtection(action: 'talkSignalingSecret')]
-	#[RequestHeader(name: 'spreed-signaling-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'spreed-signaling-checksum', description: 'Checksum over the request body to verify authenticity from the signaling backend', indirect: true)]
-	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/signaling/backend', requirements: [
-		'apiVersion' => '(v3)',
-	])]
-	public function backend(): DataResponse {
-		$json = $this->getInputStream();
-		if (!$this->validateBackendRequest($json)) {
-			$response = new DataResponse([
-				'type' => 'error',
-				'error' => [
-					'code' => 'invalid_request',
-					'message' => 'The request could not be authenticated.',
-				],
-			]);
-			$response->throttle(['action' => 'talkSignalingSecret']);
-			return $response;
-		}
-
-		$message = json_decode($json, true);
-		switch ($message['type'] ?? '') {
-			case 'auth':
-				// Query authentication information about a user.
-				return $this->backendAuth($message['auth']);
-			case 'room':
-				// Query information about a room.
-				return $this->backendRoom($message['room']);
-			case 'ping':
-				// Ping sessions connected to a room.
-				return $this->backendPing($message['ping']);
-			default:
-				return new DataResponse([
-					'type' => 'error',
-					'error' => [
-						'code' => 'unknown_type',
-						'message' => 'The given type ' . json_encode($message) . ' is not supported.',
-					],
-				]);
-		}
 	}
 
 	/**
