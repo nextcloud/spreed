@@ -591,7 +591,8 @@ export default {
 }
 
 // Styles for the app content at fullscreen mode
-:root:has(body.talk-in-fullscreen) {
+:root:has(body.talk-in-fullscreen) /* Default theme values override */,
+body.talk-in-fullscreen /* Theme values override */ {
 	--body-container-margin: 0px !important;
 	--body-container-radius: 0px !important;
 	--header-height: 0px !important;
