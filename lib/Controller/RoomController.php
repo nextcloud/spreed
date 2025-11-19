@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OCA\Circles\Model\Circle;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
@@ -318,7 +317,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 					skipLastMessage: !$includeLastMessage,
 					thread: $threads[$room->getId()] ?? null,
 					isThreadInfoComplete: true,
-					scheduleMessageCount: $scheduledMessages[$room->getId()] ?? 0,
 				);
 			} catch (ParticipantNotFoundException $e) {
 				// for example in case the room was deleted concurrently,
@@ -490,8 +488,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 				$statuses = $this->statusManager->getUserStatuses($userIds);
 			}
-			return new DataResponse($this->formatRoom($room, $participant, $statuses, $isSIPBridgeRequest, scheduleMessageCount: $scheduledMessagesCount[$room->getId()] ?? 0), Http::STATUS_OK, $this->getTalkHashHeader());
-		} catch (RoomNotFoundException $e) {
+			return new DataResponse($this->formatRoom($room, $participant, $statuses, $isSIPBridgeRequest), Http::STATUS_OK, $this->getTalkHashHeader());
+		} catch (RoomNotFoundException) {
 			/**
 			 * A hack to fix type collision
 			 * @var DataResponse<Http::STATUS_NOT_FOUND, null, array{}> $response
@@ -550,7 +548,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 		bool $skipLastMessage = false,
 		?Thread $thread = null,
 		bool $isThreadInfoComplete = false,
-		int $scheduleMessageCount = 0,
 	): array {
 		return $this->roomFormatter->formatRoom(
 			$this->getResponseFormat(),
@@ -563,7 +560,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$skipLastMessage,
 			$thread,
 			$isThreadInfoComplete,
-			$scheduleMessageCount,
 		);
 	}
 
