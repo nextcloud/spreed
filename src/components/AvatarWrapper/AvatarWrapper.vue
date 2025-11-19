@@ -9,12 +9,13 @@
 			v-if="isSpecialAvatar"
 			:key="(isDarkTheme ? 'dark-' : 'light-') + '_' + id"
 			class="avatar"
-			:user="name + '_' + id"
+			:user="id"
 			:url="!isFederatedUser ? undefined : avatarUrl"
 			:icon-class="iconClass"
 			:display-name="name"
 			:disable-tooltip="disableTooltip"
 			disable-menu
+			is-no-user
 			:hide-status="!showUserStatus"
 			:verbose-status="false"
 			:preloaded-user-status="preloadedUserStatus ?? {}"
