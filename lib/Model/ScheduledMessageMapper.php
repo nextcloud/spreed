@@ -76,7 +76,7 @@ class ScheduledMessageMapper extends QBMapper {
 			->from($this->getTableName())
 			->where($query->expr()->eq('actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)))
-			->andWhere($query->expr('room_id'), $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR));
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR)));
 
 		$result = $query->executeQuery();
 		$count = $result->rowCount();
