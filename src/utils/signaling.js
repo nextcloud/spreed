@@ -1113,6 +1113,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 		for (i = 0; i < features.length; i++) {
 			this.features[features[i]] = true
 		}
+		this._trigger('supportedFeatures', features)
 	}
 
 	if (!this.settings.helloAuthParams.internal
@@ -1430,8 +1431,12 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 Signaling.Standalone.prototype.processRoomMessageEvent = function(token, data) {
 	switch (data.type) {
 		case 'chat':
-		// FIXME this is not listened to
-			EventBus.emit('should-refresh-chat-messages')
+			if ('comment' in data.chat) {
+				EventBus.emit('signaling-message-received', { token, message: { ...data.chat.comment, token } })
+			} else {
+				// TOREMOVE after HPB next release
+				EventBus.emit('should-refresh-chat-messages')
+			}
 			break
 		case 'recording':
 			EventBus.emit('signaling-recording-status-changed', [token, data.recording.status])
