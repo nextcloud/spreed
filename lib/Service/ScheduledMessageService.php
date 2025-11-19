@@ -152,7 +152,7 @@ class ScheduledMessageService {
 	}
 
 	/**
-	 * @return list<ScheduledMessage>
+	 * @return array<int, ScheduledMessage>
 	 */
 	public function getMessages(Room $chat, Participant $participant): array {
 		return $this->scheduledMessageMapper->findByRoomAndActor(
