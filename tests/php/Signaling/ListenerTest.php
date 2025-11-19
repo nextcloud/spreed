@@ -383,6 +383,7 @@ class ListenerTest extends TestCase {
 		$room = $this->createMock(Room::class);
 		$comment = $this->createMock(IComment::class);
 		$comment->method('getVerb')->willReturn(ChatManager::VERB_SYSTEM);
+		$comment->method('getMessage')->willReturn(json_encode(['message' => 'test']));
 
 		$event = new SystemMessageSentEvent(
 			$room,
@@ -423,6 +424,7 @@ class ListenerTest extends TestCase {
 		$room = $this->createMock(Room::class);
 		$comment = $this->createMock(IComment::class);
 		$comment->method('getVerb')->willReturn(ChatManager::VERB_SYSTEM);
+		$comment->method('getMessage')->willReturn(json_encode(['message' => 'test']));
 
 		$event = new SystemMessagesMultipleSentEvent(
 			$room,
