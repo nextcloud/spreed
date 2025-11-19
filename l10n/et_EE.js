@@ -1753,6 +1753,7 @@ OC.L10N.register(
     "Always shown if recording consent is required" : "Kui nõusolek salvestamiseks on vajalik, siis seda ikkagi näidatakse",
     "Appearance & Sounds" : "Välimus ja heli",
     "Compact conversations list" : "Vestluste kompaktne loend",
+    "Show your chat in split view" : "Näita oma vestlust jagatud/poolitatud vaates",
     "Play sounds when participants join or leave a call" : "Kui osalejad liituvad kõnega või lahkuvad sealt, siis anna kõlliga märku",
     "Currently not available on iPhone and iPad due to technical restrictions by the manufacturer" : "Tootja poolt seatud piirangute tõttu pole see hetkel saadaval ei iPadis ega iPhone'is",
     "Notification settings" : "Teavituse seadistused",

@@ -1790,6 +1790,7 @@ OC.L10N.register(
     "Always shown if recording consent is required" : "Always shown if recording consent is required",
     "Appearance & Sounds" : "Appearance & Sounds",
     "Compact conversations list" : "Compact conversations list",
+    "Show your chat in split view" : "Show your chat in split view",
     "Play sounds when participants join or leave a call" : "Play sounds when participants join or leave a call",
     "Currently not available on iPhone and iPad due to technical restrictions by the manufacturer" : "Currently not available on iPhone and iPad due to technical restrictions by the manufacturer",
     "Notification settings" : "Notification settings",
