@@ -141,6 +141,7 @@ class ScheduledMessageService {
 		$metaData[Message::METADATA_SILENT] = $isSilent;
 		$message->setMetaData($metaData);
 		$message->setMessage($text);
+		$message->setSendAt($sendAt);
 		$this->scheduledMessageMapper->update($message);
 
 		return $message;
@@ -186,11 +187,11 @@ class ScheduledMessageService {
 		return $message->toArray($parentMessage, $thread ?? null);
 	}
 
-	public function getMessagesCount(Participant $participant, ?Room $chat = null): array {
-		return $this->scheduledMessageMapper->getCountByActor(
+	public function getScheduledMessageCount(Room $chat, Participant $participant): int {
+		return $this->scheduledMessageMapper->getCountByActorAndRoom(
+			$chat,
 			$participant->getAttendee()->getActorType(),
 			$participant->getAttendee()->getActorId(),
-			$chat?->getId(),
 		);
 	}
 }

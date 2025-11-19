@@ -53,7 +53,7 @@ class ScheduledMessageMapper extends QBMapper {
 	}
 
 	/**
-	 * @return list<ScheduledMessage>
+	 * @return array<int, ScheduledMessage>
 	 */
 	public function findByRoomAndActor(Room $chat, string $actorType, string $actorId): array {
 		if (!$chat->isFederatedConversation()) {
@@ -70,34 +70,18 @@ class ScheduledMessageMapper extends QBMapper {
 		return $this->findEntities($query);
 	}
 
-	/**
-	 * @param string $actorType
-	 * @param string $actorId
-	 * @param string|null $roomId
-	 * @return array<array<string, int>
-	 */
-	public function getCountByActor(string $actorType, string $actorId, ?string $roomId): array {
+	public function getCountByActorAndRoom(Room $chat, string $actorType, string $actorId): int {
 		$query = $this->db->getQueryBuilder();
 		$query->select(['room_id', $query->createFunction('COUNT(DISTINCT(room_id)) AS count'), 'room_id'])
 			->from($this->getTableName())
 			->where($query->expr()->eq('actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
-			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)));
-
-		if ($roomId !== null) {
-			$query->andWhere($query->expr('room_id'), $query->createNamedParameter($roomId, IQueryBuilder::PARAM_STR));
-		}
+			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)))
+			->andWhere($query->expr('room_id'), $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR));
 
 		$result = $query->executeQuery();
-		$count = $result->fetchAll();
+		$count = $result->rowCount();
 		$result->closeCursor();
-
-		if (empty($count)) {
-			return [];
-		}
-
-		return array_map(static function (array $row) {
-			return [$row['room_id'] => $row['count']];
-		}, $count);
+		return $count;
 	}
 
 	public function deleteMessagesByRoomAndActor(Room $chat, string $actorType, string $actorId): int {

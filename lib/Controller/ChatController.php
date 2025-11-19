@@ -94,6 +94,7 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type TalkChatReminderUpcoming from ResponseDefinitions
  * @psalm-import-type TalkRichObjectParameter from ResponseDefinitions
  * @psalm-import-type TalkRoom from ResponseDefinitions
+ * @psalm-import-type TalkScheduledMessage from ResponseDefinitions
  */
 class ChatController extends AEnvironmentAwareOCSController {
 	/** @var string[] */
@@ -346,7 +347,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param bool $silent If sent silent the chat message will not create any notifications
 	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
 	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
-	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
 	 *
 	 * 201: Message scheduled successfully
 	 * 400: Scheduled message is not possible
@@ -394,7 +395,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->participantService->ensureOneToOneRoomIsFilled($this->room); // needed?
 		$sendAtDateTime = $this->timeFactory->getDateTime('@' . $sendAt, new \DateTimeZone('UTC'));
 
 		try {
@@ -413,6 +413,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 					Message::METADATA_SILENT => $silent
 				]
 			);
+			$this->participantService->hasScheduledMessages($this->participant, true);
 		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception $e) {
@@ -425,20 +426,15 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * Schedules the sending of a new chat message to the given room
+	 * Update a scheduled message
 	 *
-	 * The author and timestamp are automatically set to the current user
-	 * and time.
-	 *
+	 * @param int $messageId
 	 * @param string $message the message to send
-	 * @param int $replyTo Parent id which this message is a reply to
-	 * @psalm-param non-negative-int $replyTo
+	 * @param int $sendAt
 	 * @param bool $silent If sent silent the chat message will not create any notifications
-	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
-	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
-	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_ACCEPTED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
 	 *
-	 * 201: Message scheduled successfully
+	 * 202: Message updated successfully
 	 * 400: Scheduled message is not possible
 	 * 404: Actor not found
 	 * 413: Message too long
@@ -450,6 +446,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/schedule/{messageId}', requirements: [
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]{4,30}',
 	])]
 	public function editScheduleMessage(int $messageId, string $message, int $sendAt, bool $silent = false): DataResponse {
 		if ($this->room->getType() !== Room::TYPE_GROUP || $this->room->getType() !== Room::TYPE_ONE_TO_ONE) {
@@ -464,9 +461,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
 		}
 
-		$this->participantService->ensureOneToOneRoomIsFilled($this->room); // needed?
 		$sendAtDateTime = $this->timeFactory->getDateTime('@' . $sendAt, new \DateTimeZone('UTC'));
-
 		try {
 			$scheduledMessage = $this->scheduledMessageManager->editMessage(
 				$this->room,
@@ -476,6 +471,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 				$silent,
 				$sendAtDateTime
 			);
+			$this->participantService->hasScheduledMessages($this->participant, true);
 		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception $e) {
@@ -483,8 +479,49 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
 
-		$data = $this->scheduledMessageManager->parseScheduledMessage($scheduledMessage, $parentMessage);
-		return new DataResponse($data, Http::STATUS_CREATED);
+		try {
+			$parent = $this->chatManager->getParentComment($this->room, (string)$scheduledMessage->getParentId());
+		} catch (NotFoundException $e) {
+			$parent = null;
+		}
+
+		$data = $this->scheduledMessageManager->parseScheduledMessage($scheduledMessage, $parent);
+		return new DataResponse($data, Http::STATUS_ACCEPTED);
+	}
+
+	/**
+	 * Delete a scheduled message
+	 *
+	 * @param int $messageId
+	 * @return DataResponse<Http::STATUS_OK, array{}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+	 *
+	 * 200: Message deleted
+	 * 404: Message not found
+	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/chat/{token}/schedule/{messageId}', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]{4,30}',
+	])]
+	public function deleteScheduleMessage(int $messageId): DataResponse {
+		try {
+			$deleted = $this->scheduledMessageManager->deleteMessage(
+				$this->room,
+				$messageId,
+				$this->participant,
+			);
+		} catch (\Exception $e) {
+			$this->logger->warning($e->getMessage());
+			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
+		}
+
+		$hasScheduledMessages = $this->scheduledMessageManager->getScheduledMessageCount($this->room, $this->participant) > 0;
+		$this->participantService->hasScheduledMessages($this->participant, $hasScheduledMessages);
+		return new DataResponse([], Http::STATUS_OK);
 	}
 
 	/**
