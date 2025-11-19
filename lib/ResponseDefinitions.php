@@ -579,7 +579,7 @@ namespace OCA\Talk;
  * 		messageType: string,
  * 		createdAt: int,
  * 		sendAt: ?int,
- * 		metaData: array{},
+ * 		metaData: array<string, mixed>
  * }
  */
 class ResponseDefinitions {

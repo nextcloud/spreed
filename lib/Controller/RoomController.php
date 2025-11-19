@@ -308,9 +308,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$threads = $this->threadService->preloadThreadsForConversationList($potentialThreads);
 		}
 
-		// how to get the participant?
-		$scheduledMessages = $this->scheduledMessageService->getMessagesCount();
-
 		$return = [];
 		foreach ($rooms as $room) {
 			try {
@@ -493,7 +490,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 				$statuses = $this->statusManager->getUserStatuses($userIds);
 			}
-			$scheduledMessagesCount = $this->scheduledMessageService->getMessagesCount($participant, $room);
 			return new DataResponse($this->formatRoom($room, $participant, $statuses, $isSIPBridgeRequest, scheduleMessageCount: $scheduledMessagesCount[$room->getId()] ?? 0), Http::STATUS_OK, $this->getTalkHashHeader());
 		} catch (RoomNotFoundException $e) {
 			/**

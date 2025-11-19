@@ -70,6 +70,14 @@ class Version23000Date20251105125333 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['id']);
 			$table->addIndex(['room_id'], 'tt_room_sched');
 		}
+
+		if ($schema->hasTable('talk_attendees')) {
+			$table = $schema->getTable('talk_attendees');
+			$table->addColumn('has_scheduled_messages', Types::BOOLEAN, [
+				'notnull' => true,
+				'default' => false,
+			]);
+		}
 		return $schema;
 	}
 }

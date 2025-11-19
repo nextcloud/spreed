@@ -22,15 +22,15 @@ use OCP\DB\Types;
  * @method string getActorId()
  * @method void setActorType(string $actorType)
  * @method string getActorType()
- * @method int getThreadId()
- * @method void setThreadId(int $threadId)
- * @method int getParentId()
- * @method void setParentId(int $parentId)
+ * @method int|null getThreadId()
+ * @method void setThreadId(int|null $threadId)
+ * @method int|null getParentId()
+ * @method void setParentId(int|null $parentId)
  * @method string getMessage()
  * @method void setMessageType(string $messageType)
  * @method string getMessageType()
  * @method \DateTime getCreatedAt()
- * @method void setSendAt(?\DateTime $sendAt)
+ * @method void setSendAt(\DateTime|null $sendAt)
  * @method \DateTime|null getSendAt(),
  *
  * @psalm-import-type TalkScheduledMessage from ResponseDefinitions
@@ -61,6 +61,9 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 		$this->createdAt = new \DateTime();
 	}
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function getMetaData(): array {
 		return json_decode($this->metaData ?? '[]', true, 512, JSON_THROW_ON_ERROR);
 	}
@@ -122,7 +125,7 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 			$data['threadTitle'] = $thread->getName();
 		} elseif (isset($metaData[Message::METADATA_THREAD_TITLE]) && $this->getThreadId() === Thread::THREAD_CREATE) {
 			$data['threadExists'] = false;
-			$data['threadTitle'] = $metaData[Message::METADATA_THREAD_TITLE];
+			$data['threadTitle'] = (string)$metaData[Message::METADATA_THREAD_TITLE];
 		}
 		return $data;
 	}
