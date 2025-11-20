@@ -31,7 +31,7 @@ import {
 } from '../services/participantsService.js'
 import SessionStorage from '../services/SessionStorage.js'
 import { useActorStore } from '../stores/actor.ts'
-import { useGuestNameStore } from '../stores/guestName.js'
+import { useGuestNameStore } from '../stores/guestName.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useTokenStore } from '../stores/token.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'

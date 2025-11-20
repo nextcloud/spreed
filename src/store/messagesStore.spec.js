@@ -30,7 +30,7 @@ import {
 } from '../services/messagesService.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useChatStore } from '../stores/chat.ts'
-import { useGuestNameStore } from '../stores/guestName.js'
+import { useGuestNameStore } from '../stores/guestName.ts'
 import { useReactionsStore } from '../stores/reactions.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
