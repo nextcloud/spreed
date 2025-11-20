@@ -49,9 +49,7 @@
 		<div
 			v-else
 			class="message-main__text markdown-message"
-			:class="{ 'message-highlighted': isNewPollMessage }"
-			@mouseover="handleMarkdownMouseOver"
-			@mouseleave="handleMarkdownMouseLeave">
+			:class="{ 'message-highlighted': isNewPollMessage }">
 			<!-- Replied parent message -->
 			<MessageQuote v-if="showQuote" :message="message.parent" />
 
@@ -67,22 +65,6 @@
 				:reference-limit="1"
 				reference-interactive-opt-in
 				@interact-todo="handleInteraction" />
-
-			<!-- Additional controls -->
-			<NcButton
-				v-if="containsCodeBlocks"
-				v-show="currentCodeBlock !== null"
-				class="message-copy-code"
-				variant="tertiary"
-				size="small"
-				:aria-label="t('spreed', 'Copy code block')"
-				:title="t('spreed', 'Copy code block')"
-				:style="{ top: copyButtonOffset }"
-				@click="copyCodeBlock">
-				<template #icon>
-					<IconContentCopy :size="16" />
-				</template>
-			</NcButton>
 		</div>
 
 		<!-- Additional message info-->
@@ -170,7 +152,6 @@ import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconCancel from 'vue-material-design-icons/Cancel.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
-import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
 import MessageQuote from '../../../../MessageQuote.vue'
@@ -211,7 +192,6 @@ export default {
 		IconCancel,
 		IconCheck,
 		IconCheckAll,
-		IconContentCopy,
 		IconForumOutline,
 		IconReload,
 	},
@@ -267,8 +247,6 @@ export default {
 		return {
 			isEditing: false,
 			showReloadButton: false,
-			currentCodeBlock: null,
-			copyButtonOffset: 0,
 		}
 	},
 
@@ -422,10 +400,6 @@ export default {
 			}
 			return t('spreed', 'You cannot send messages to this conversation at the moment')
 		},
-
-		containsCodeBlocks() {
-			return this.message.message.includes('```')
-		},
 	},
 
 	watch: {
@@ -446,42 +420,6 @@ export default {
 
 	methods: {
 		t,
-
-		getCodeBlocks() {
-			if (!this.containsCodeBlocks) {
-				return null
-			}
-
-			return Array.from(this.$refs.messageMain?.querySelectorAll('pre'))
-		},
-
-		handleMarkdownMouseOver(event) {
-			const codeBlocks = this.getCodeBlocks()
-			if (!codeBlocks) {
-				return
-			}
-			const index = codeBlocks.findIndex((item) => item.contains(event.target))
-			if (index !== -1) {
-				this.currentCodeBlock = index
-				const el = codeBlocks[index]
-				this.copyButtonOffset = `${el.offsetTop}px`
-			}
-		},
-
-		handleMarkdownMouseLeave() {
-			this.currentCodeBlock = null
-			this.copyButtonOffset = 0
-		},
-
-		async copyCodeBlock() {
-			try {
-				const code = this.getCodeBlocks()[this.currentCodeBlock].textContent
-				await navigator.clipboard.writeText(code)
-				showSuccess(t('spreed', 'Code block copied to clipboard'))
-			} catch (error) {
-				showError(t('spreed', 'Code block could not be copied'))
-			}
-		},
 
 		handleRetry() {
 			if (this.sendingErrorCanRetry) {
@@ -600,14 +538,6 @@ export default {
 
 		&.markdown-message {
 			position: relative;
-
-			.message-copy-code {
-				position: absolute;
-				top: 0;
-				inset-inline-end: calc(4px + var(--default-clickable-area));
-				margin-top: 4px;
-				background-color: var(--color-background-dark);
-			}
 
 			:deep(.rich-text--wrapper) {
 				// NcRichText is used with dir="auto", so internal text direction may vary
