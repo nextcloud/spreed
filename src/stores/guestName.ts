@@ -6,104 +6,113 @@
 import { getGuestNickname, setGuestNickname } from '@nextcloud/auth'
 import { t } from '@nextcloud/l10n'
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 import { setGuestUserName } from '../services/participantsService.js'
 import { useActorStore } from './actor.ts'
 
-export const useGuestNameStore = defineStore('guestName', {
-	state: () => ({
-		guestNames: {},
-		guestUserName: getGuestNickname() || '',
-	}),
+type AddGuestNamePayload = { token: string, actorId: string, actorDisplayName: string }
 
-	actions: {
-		/**
-		 * Gets the participant display name
-		 *
-		 * @param {string} token the conversation's token
-		 * @param {string} actorId the participant actorId
-		 * @return {string} the participant name
-		 */
-		getGuestName(token, actorId) {
-			return this.guestNames[token]?.[actorId] ?? t('spreed', 'Guest')
-		},
+export const useGuestNameStore = defineStore('guestName', () => {
+	const LOCALIZED_GUEST = t('spreed', 'Guest')
 
-		/**
-		 * Gets the participant display name with suffix
-		 * if the display name is not default translatable Guest
-		 *
-		 * @param {string} token the conversation's token
-		 * @param {string} actorId the participant actorId
-		 * @return {string} the participant name with/without suffix
-		 */
-		getGuestNameWithGuestSuffix(token, actorId) {
-			const displayName = this.getGuestName(token, actorId)
-			if (displayName === t('spreed', 'Guest')) {
-				return displayName
-			}
-			return t('spreed', '{guest} (guest)', {
-				guest: displayName,
-			})
-		},
+	/** A map of guest names per conversation token and actorId */
+	const guestNames = ref<Record<string, Record<string, string>>>({})
 
-		/**
-		 * Adds a guest name to the store
-		 *
-		 * @param {object} data the wrapping object
-		 * @param {string} data.token the token of the conversation
-		 * @param {string} data.actorId the guest
-		 * @param {string} data.actorDisplayName the display name to set
-		 * @param {object} options options
-		 * @param {boolean} options.noUpdate Override the display name or set it if it is empty
-		 */
-		addGuestName({ token, actorId, actorDisplayName }, { noUpdate }) {
-			if (!this.guestNames[token]) {
-				this.guestNames[token] = {}
-			}
-			if (!this.guestNames[token][actorId] || actorDisplayName === '') {
-				this.guestNames[token][actorId] = t('spreed', 'Guest')
-			} else if (noUpdate) {
-				return
-			}
+	/** An own display name of a current guest-user */
+	const guestUserName = ref(getGuestNickname() || '')
 
-			if (actorDisplayName) {
-				this.guestNames[token][actorId] = actorDisplayName
-			}
-		},
+	/**
+	 * Gets the participant display name
+	 *
+	 * @param token the conversation's token
+	 * @param actorId the participant actorId
+	 */
+	function getGuestName(token: string, actorId: string): string {
+		return guestNames.value[token]?.[actorId] ?? LOCALIZED_GUEST
+	}
 
-		/**
-		 * Add the submitted guest name to the store
-		 *
-		 * @param {string} token the token of the conversation
-		 * @param {string} name the new guest name
-		 */
-		async submitGuestUsername(token, name) {
-			if (!name) {
-				return
-			}
-			const actorStore = useActorStore()
-			const actorId = actorStore.actorId
-			const previousName = this.getGuestName(token, actorId)
+	/**
+	 * Gets the participant display name with suffix
+	 * if the display name is not default, gets localized 'Guest'
+	 *
+	 * @param token the conversation's token
+	 * @param actorId the participant actorId
+	 */
+	function getGuestNameWithGuestSuffix(token: string, actorId: string): string {
+		const guest = getGuestName(token, actorId)
+		if (guest === LOCALIZED_GUEST) {
+			return guest
+		}
+		return t('spreed', '{guest} (guest)', { guest })
+	}
 
-			try {
-				actorStore.setDisplayName(name)
-				this.addGuestName({
-					token,
-					actorId,
-					actorDisplayName: name,
-				}, { noUpdate: false })
+	/**
+	 * Adds a guest name to the store
+	 *
+	 * @param payload the wrapping object
+	 * @param payload.token the token of the conversation
+	 * @param payload.actorId the guest id
+	 * @param payload.actorDisplayName the display name to set
+	 * @param options options
+	 * @param options.noUpdate Override the display name or set it, if it is empty
+	 */
+	function addGuestName({ token, actorId, actorDisplayName }: AddGuestNamePayload, { noUpdate }: { noUpdate: boolean }) {
+		if (!guestNames.value[token]) {
+			guestNames.value[token] = {}
+		}
+		if (!guestNames.value[token][actorId] || actorDisplayName === '') {
+			guestNames.value[token][actorId] = LOCALIZED_GUEST
+		} else if (noUpdate) {
+			return
+		}
 
-				await setGuestUserName(token, name)
+		if (actorDisplayName) {
+			guestNames.value[token][actorId] = actorDisplayName
+		}
+	}
 
-				setGuestNickname(name)
-			} catch (error) {
-				actorStore.setDisplayName(previousName)
-				this.addGuestName({
-					token,
-					actorId,
-					actorDisplayName: previousName,
-				}, { noUpdate: false })
-				console.error(error)
-			}
-		},
-	},
+	/**
+	 * Add the submitted guest name to the store
+	 *
+	 * @param token the token of the conversation
+	 * @param name the new guest name
+	 */
+	async function submitGuestUsername(token: string, name: string) {
+		if (!name) {
+			return
+		}
+		const actorStore = useActorStore()
+		const actorId = actorStore.actorId!
+		const previousName = getGuestName(token, actorId)
+
+		try {
+			actorStore.setDisplayName(name)
+			addGuestName({
+				token,
+				actorId,
+				actorDisplayName: name,
+			}, { noUpdate: false })
+
+			await setGuestUserName(token, name)
+
+			setGuestNickname(name)
+		} catch (error) {
+			actorStore.setDisplayName(previousName)
+			addGuestName({
+				token,
+				actorId,
+				actorDisplayName: previousName,
+			}, { noUpdate: false })
+			console.error(error)
+		}
+	}
+
+	return {
+		guestUserName,
+
+		getGuestName,
+		getGuestNameWithGuestSuffix,
+		addGuestName,
+		submitGuestUsername,
+	}
 })
