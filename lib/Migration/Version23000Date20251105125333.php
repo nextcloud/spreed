@@ -29,6 +29,7 @@ class Version23000Date20251105125333 extends SimpleMigrationStep {
 		if (!$schema->hasTable('talk_scheduled_msg')) {
 			$table = $schema->createTable('talk_scheduled_msg');
 			$table->addColumn('id', Types::BIGINT, [
+				'autoincrement' => true,
 				'notnull' => true,
 				'length' => 20,
 			]);

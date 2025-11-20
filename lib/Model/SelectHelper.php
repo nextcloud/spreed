@@ -50,6 +50,30 @@ class SelectHelper {
 			->selectAlias($alias . 'id', 'r_id');
 	}
 
+	public function selectCommentsTable(IQueryBuilder $query, string $alias = 'c'): void {
+		if ($alias !== '') {
+			$alias .= '.';
+		}
+
+		$query->addSelect([
+			$alias . 'parent_id',
+			$alias . 'topmost_parent_id',
+			$alias . 'children_count',
+			$alias . 'actor_type',
+			$alias . 'actor_id',
+			$alias . 'message',
+			$alias . 'verb',
+			$alias . 'creation_timestamp',
+			$alias . 'latest_child_timestamp',
+			$alias . 'object_type',
+			$alias . 'object_id',
+			$alias . 'reference_id',
+			$alias . 'reactions',
+			$alias . 'expire_date',
+			$alias . 'meta_data',
+		])->selectAlias($alias . 'id', 'c_id');
+	}
+
 	public function selectAttendeesTable(IQueryBuilder $query, string $alias = 'a'): void {
 		if ($alias !== '') {
 			$alias .= '.';

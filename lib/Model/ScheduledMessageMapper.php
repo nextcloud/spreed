@@ -52,22 +52,20 @@ class ScheduledMessageMapper extends QBMapper {
 		return $this->findEntity($query);
 	}
 
-	/**
-	 * @return array<int, ScheduledMessage>
-	 */
 	public function findByRoomAndActor(Room $chat, string $actorType, string $actorId): array {
-		if (!$chat->isFederatedConversation()) {
-			throw new InvalidRoomException('Can not call ProxyCacheMessageMapper::findById() with a non-federated chat.');
-		}
-
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from($this->getTableName())
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR)))
-			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
-			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)));
+			->from($this->getTableName(), 's')
+			->where($query->expr()->eq('s.room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR)))
+			->andWhere($query->expr()->eq('s.actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
+			->andWhere($query->expr()->eq('s.actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)))
+			->leftJoin('s', 'talk_threads', 't', $query->expr()->eq('s.thread_id', 't.id'))
+			->leftJoin('s', 'comments', 'c', $query->expr()->eq('s.parent_id', 'c.id'));
 
-		return $this->findEntities($query);
+		$cursor = $query->executeQuery();
+		$result = $cursor->fetchAll();
+		$cursor->closeCursor();
+		return $result;
 	}
 
 	public function getCountByActorAndRoom(Room $chat, string $actorType, string $actorId): int {

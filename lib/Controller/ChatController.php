@@ -336,6 +336,58 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * Get all scheduled nessages of a given room
+	 *
+	 * The author and timestamp are automatically set to the current user
+	 * and time.
+	 *
+	 * Required capability: `scheduled-messages`
+	 *
+	 * @param string $message the message to send
+	 * @param int $replyTo Parent id which this message is a reply to
+	 * @psalm-param non-negative-int $replyTo
+	 * @param bool $silent If sent silent the chat message will not create any notifications
+	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
+	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
+	 * @return DataResponse<Http::STATUS_CREATED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
+	 *
+	 * 201: Message scheduled successfully
+	 * 400: Scheduled message is not possible
+	 * 404: Actor not found
+	 * 413: Message too long
+	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/chat/{token}/schedule', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function scheduledMessages(): DataResponse {
+		if ($this->room->getType() !== Room::TYPE_GROUP && $this->room->getType() !== Room::TYPE_ONE_TO_ONE) {
+			return new DataResponse(['error' => 'roomType'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
+		}
+
+		try {
+			$scheduledMessages = $this->scheduledMessageManager->getMessages(
+				$this->room,
+				$this->participant,
+			);
+		} catch (\Exception $e) {
+			$this->logger->warning($e->getMessage());
+			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$data = $scheduledMessages;
+		return new DataResponse($data, Http::STATUS_CREATED);
+	}
+
+	/**
 	 * Schedules the sending of a new chat message to the given room
 	 *
 	 * The author and timestamp are automatically set to the current user

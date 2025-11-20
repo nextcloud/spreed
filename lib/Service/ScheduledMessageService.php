@@ -151,15 +151,20 @@ class ScheduledMessageService {
 		$this->scheduledMessageMapper->deleteByActor($actorType, $actorId);
 	}
 
-	/**
-	 * @return array<int, ScheduledMessage>
-	 */
 	public function getMessages(Room $chat, Participant $participant): array {
-		return $this->scheduledMessageMapper->findByRoomAndActor(
+		if ($chat->isFederatedConversation()) {
+			$e = new MessagingNotAllowedException();
+			$this->logger->error('Attempt to get scheduled messages for a proxy conversation', ['exception' => $e]);
+			throw $e;
+		}
+
+		$messages = $this->scheduledMessageMapper->findByRoomAndActor(
 			$chat,
 			$participant->getAttendee()->getActorType(),
 			$participant->getAttendee()->getActorId()
 		);
+
+		return $messages;
 	}
 
 	public function getMessage(Room $chat, int $id, Participant $participant): ScheduledMessage {
