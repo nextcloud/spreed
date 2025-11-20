@@ -11,6 +11,7 @@
 		:open="showSettings"
 		show-navigation
 		legacy
+		no-version
 		@update:open="handleHideSettings">
 		<NcAppSettingsSection
 			id="basic-info"
