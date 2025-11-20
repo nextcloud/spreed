@@ -11,13 +11,19 @@
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
 		class="message"
-		:class="{ 'message--hovered': showMessageButtonsBar }"
+		:class="{
+			'message--hovered': showMessageButtonsBar,
+			'message--sided': isSplitViewEnabled,
+			'message--small-view': (isSmallMobile || isSidebar) && isSplitViewEnabled,
+		}"
 		tabindex="0"
 		@mouseover="handleMouseover"
 		@mouseleave="handleMouseleave">
 		<div
 			:class="{
-				'normal-message-body': !isDeletedMessage,
+				'normal-message-body': !isDeletedMessage && !isSplitViewEnabled,
+				outgoing: actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled,
+				incoming: !actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled,
 			}"
 			class="message-body">
 			<MessageBody
@@ -25,20 +31,29 @@
 				:is-deleting="isDeleting"
 				:has-call="conversation.hasCall"
 				:message="message"
-				:read-info="readInfo">
+				:read-info="readInfo"
+				@update:is-short-simple-message="isShortSimpleMessage = $event">
 				<!-- reactions buttons and popover with details -->
 				<ReactionsWrapper
 					v-if="Object.keys(message.reactions).length"
 					:id="message.id"
 					:token="message.token"
 					:can-react="canReact"
+					:is-split-view-enabled
 					:show-controls="isHovered || isFollowUpEmojiPickerOpen"
 					@emoji-picker-toggled="toggleFollowUpEmojiPicker" />
 			</MessageBody>
 		</div>
 
 		<!-- Message actions -->
-		<div class="message-body__scroll">
+		<div
+			class="message-body__scroll"
+			:class="{
+				outgoing: actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled,
+				incoming: !actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled,
+				'bottom-side': isSplitViewEnabled && !isShortSimpleMessage && (isSmallMobile || isSidebar),
+				overlay: isSplitViewEnabled && !isShortSimpleMessage && isReactionsMenuOpen && !(isSmallMobile || isSidebar),
+			}">
 			<MessageButtonsBar
 				v-if="showMessageButtonsBar"
 				v-model:is-action-menu-open="isActionMenuOpen"
@@ -46,6 +61,7 @@
 				v-model:is-reactions-menu-open="isReactionsMenuOpen"
 				v-model:is-forwarder-open="isForwarderOpen"
 				class="message-buttons-bar"
+				:class="{ outlined: buttonsBarOutlined }"
 				:is-translation-available="isTranslationAvailable"
 				:can-react="canReact"
 				:message="message"
@@ -89,7 +105,9 @@
 <script>
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
+import { inject, ref } from 'vue'
 import NcAssistantButton from '@nextcloud/vue/components/NcAssistantButton'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
@@ -144,17 +162,25 @@ export default {
 			type: [String, Number],
 			default: 0,
 		},
+
+		isSplitViewEnabled: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	setup(props) {
 		const isTranslationAvailable = getTalkConfig(props.token, 'chat', 'has-translation-providers')
 			// Fallback for the desktop client when connecting to Talk 17
 			?? getTalkConfig(props.token, 'chat', 'translations')?.length > 0
+		const isSidebar = inject('chatView:isSidebar', false)
 
 		return {
 			isTranslationAvailable,
 			chatExtrasStore: useChatExtrasStore(),
 			actorStore: useActorStore(),
+			isSmallMobile: useIsSmallMobile(),
+			isSidebar,
 		}
 	},
 
@@ -173,6 +199,7 @@ export default {
 			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
 			isTranslateDialogOpen: false,
+			isShortSimpleMessage: ref(false),
 		}
 	},
 
@@ -310,6 +337,11 @@ export default {
 				&& this.message.messageType !== MESSAGE.TYPE.COMMAND
 				&& this.message.messageType !== MESSAGE.TYPE.COMMENT_DELETED
 		},
+
+		buttonsBarOutlined() {
+			return !this.isSplitViewEnabled
+				|| (this.isReactionsMenuOpen || this.isSmallMobile || this.isSidebar)
+		},
 	},
 
 	methods: {
@@ -398,11 +430,54 @@ export default {
 .message {
 	position: relative;
 
+	--color-primary-element-extra-light: color(from var(--color-primary-element-light) srgb r g b / 0.45);
+	--color-primary-element-extra-light-hover: color(from var(--color-primary-element-light-hover) srgb r g b / 0.45);
+
 	&:hover .normal-message-body,
 	&--hovered .normal-message-body {
-		border-radius: 8px;
 		background-color: var(--color-background-hover);
 	}
+
+	// BEGIN Split view
+	&:hover .message-body.outgoing,
+	&--hovered .message-body.outgoing {
+		background-color: var(--color-primary-light-hover);
+	}
+
+	&:hover .message-body.incoming,
+	&--hovered .message-body.incoming {
+		background-color: var(--color-primary-element-extra-light-hover);
+	}
+
+	&--sided {
+		width: fit-content;
+		max-width: min(90%, calc(100% - 3 * var(--default-clickable-area)));
+
+		&.message--small-view {
+			max-width: 90%;
+		}
+
+		.message-body__scroll.bottom-side {
+			top: unset;
+			inset-inline-start: unset;
+			bottom: 0;
+			inset-inline-end: 0;
+			padding-block-end: var(--default-grid-baseline);
+		}
+
+		&:has(.outgoing) {
+			align-self: flex-end;
+			.message-buttons-bar:not(.outlined) {
+				flex-direction: row-reverse;
+			}
+		}
+
+		&:has(.incoming) {
+			align-self: flex-start;
+		}
+
+	}
+	// END Split view
 }
 
 .message-body {
@@ -410,16 +485,56 @@ export default {
 	font-size: var(--default-font-size);
 	line-height: var(--default-line-height);
 	position: relative;
+	border-radius: var(--border-radius-large);
 
 	&__scroll {
 		position: absolute;
-		top: 0;
-		inset-inline-end: 0;
 		width: fit-content;
-		height: 100%;
-		padding-top: var(--default-grid-baseline);
-		padding-inline-end: var(--default-grid-baseline);
+
+		&:not(.outgoing):not(.incoming) {
+			height: 100%;
+			top: 0;
+			inset-inline-end: 0;
+			padding-top: var(--default-grid-baseline);
+			padding-inline-end: var(--default-grid-baseline);
+		}
 	}
+
+	// BEGIN Split view
+	&.outgoing {
+		background-color: var(--color-primary-light);
+		border-radius: var(--border-radius-large)  var(--border-radius-small) var(--border-radius-large) var(--border-radius-large);
+		border: 1px solid var(--color-primary-element-light-hover);
+		border-width: 1px 1px 2px 1px;
+	}
+
+	&__scroll.outgoing {
+		inset-inline-end: 100%;
+		top: calc(50% - var(--default-clickable-area) / 2);
+		padding-inline: var(--default-grid-baseline);
+
+		&.overlay {
+			inset-inline-end: max(100% - var(--default-clickable-area) * 6, (100% - var(--default-clickable-area) * 6) * -1);
+		}
+	}
+
+	&.incoming {
+		background-color: var(--color-primary-element-extra-light);
+		border-radius: var(--border-radius-small)  var(--border-radius-large) var(--border-radius-large) var(--border-radius-large);
+		border: 1px solid var(--color-primary-element-light-hover);
+		border-width: 1px 1px 2px 1px;
+	}
+
+	&__scroll.incoming {
+		inset-inline-start: 100%;
+		top: calc(50% - var(--default-clickable-area) / 2);
+		padding-inline: var(--default-grid-baseline);
+
+		&.overlay {
+			inset-inline-start: max(100% - var(--default-clickable-area) * 6, (100% - var(--default-clickable-area) * 6) * -1);
+		}
+	}
+	// END Split view
 }
 
 .message--highlighted {
@@ -471,10 +586,13 @@ export default {
 	inset-inline-end: 14px;
 	top: 0;
 	position: sticky;
-	background-color: var(--color-main-background);
-	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
-	box-shadow: 0 0 4px 0 var(--color-box-shadow);
 	height: var(--default-clickable-area);
 	z-index: 1;
+
+	&.outlined {
+		background-color: var(--color-main-background);
+		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
+		box-shadow: 0 0 4px 0 var(--color-box-shadow);
+	}
 }
 </style>
