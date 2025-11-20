@@ -480,8 +480,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$comment = $this->chatManager->getParentComment($this->room, (string)$scheduledMessage->getParentId());
-			$parent = $this->messageParser->parseMessage($comment);
+			$parent = $this->chatManager->getParentComment($this->room, (string)$scheduledMessage->getParentId());
+			$this->messageParser->parseMessage($parent);
 		} catch (NotFoundException $e) {
 			$parent = null;
 		}
