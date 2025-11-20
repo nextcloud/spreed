@@ -14,9 +14,16 @@ const hasUserAccount = Boolean(getCurrentUser()?.uid)
 /**
  * Get play sounds option (from server for user or from browser storage for guest)
  */
-const shouldPlaySounds = hasUserAccount
-	? loadState('spreed', 'play_sounds', false)
-	: BrowserStorage.getItem('play_sounds') !== 'no'
+let shouldPlaySounds = false
+if (hasUserAccount) {
+	shouldPlaySounds = loadState('spreed', 'play_sounds', false)
+} else {
+	if (BrowserStorage.getItem('play_sounds')) {
+		shouldPlaySounds = BrowserStorage.getItem('play_sounds') !== 'no'
+	} else {
+		shouldPlaySounds = loadState('spreed', 'play_sounds', false)
+	}
+}
 
 /**
  * Preferred version is the .ogg, with .flac fallback if .ogg is not supported (Safari)
