@@ -214,7 +214,7 @@ trait TInitialState {
 
 		$this->initialState->provideInitialState(
 			'play_sounds',
-			false
+			$this->talkConfig->getPlaySoundsDefaultForGuests()
 		);
 	}
 }
