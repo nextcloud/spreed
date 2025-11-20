@@ -79,17 +79,26 @@ const token = useGetToken()
 
 const usernameInput = useTemplateRef('usernameInput')
 
-const guestUserName = ref(getGuestNickname() || '')
+const guestUserName = computed({
+	get: () => guestNameStore.guestUserName,
+	set: (newValue: string) => {
+		guestNameStore.guestUserName = newValue
+		debounceUpdateDisplayName()
+		emit('update', newValue)
+	},
+})
 const isEditingUsername = ref(false)
 
 const actorDisplayName = computed<string>(() => actorStore.displayName || guestUserName.value)
 const displayNameLabel = computed(() => t('spreed', 'Display name: {name}', {
 	name: `<strong>${escapeHtml(actorDisplayName.value)}</strong>`,
 }, { escape: false }))
-const debounceUpdateDisplayName = debounce(updateDisplayName, 500)
+const debounceUpdateDisplayName = debounce(updateDisplayName, 10_000)
 
 watch(actorDisplayName, (newValue) => {
-	guestUserName.value = newValue
+	if (newValue && newValue !== guestUserName.value) {
+		guestUserName.value = newValue
+	}
 })
 
 /** Initially set displayName in store, if available from BrowserStorage */
@@ -111,7 +120,7 @@ EventBus.once('joined-conversation', () => {
 subscribe('user:info:changed', updateDisplayNameFromPublicEvent)
 onBeforeUnmount(() => {
 	unsubscribe('user:info:changed', updateDisplayNameFromPublicEvent)
-	updateDisplayName()
+	debounceUpdateDisplayName.flush?.()
 })
 
 /**
@@ -144,12 +153,6 @@ function toggleEdit() {
 		})
 	}
 }
-
-// One-way binding to parent component
-watch(guestUserName, (newValue) => {
-	debounceUpdateDisplayName()
-	emit('update', newValue)
-}, { immediate: true })
 </script>
 
 <style lang="scss" scoped>
