@@ -53,10 +53,11 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 		$this->addType('actorType', Types::STRING);
 		$this->addType('threadId', Types::INTEGER);
 		$this->addType('parentId', Types::INTEGER);
-		$this->addType('message', Types::JSON);
+		$this->addType('message', Types::TEXT);
 		$this->addType('messageType', Types::STRING);
-		$this->addType('metaData', Types::JSON);
+		$this->addType('metaData', Types::TEXT);
 		$this->addType('sendAt', Types::DATETIME);
+		$this->addType('createdAt', Types::DATETIME);
 
 		$this->createdAt = new \DateTime();
 	}

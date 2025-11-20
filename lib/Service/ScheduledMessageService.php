@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OC\Comments\Manager as CommentsManager;
 use OCA\Talk\Exceptions\MessagingNotAllowedException;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\ScheduledMessage;
@@ -17,29 +18,23 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\IJobList;
-use OCP\Collaboration\Reference\IReferenceManager;
 use OCP\Comments\IComment;
+use OCP\Comments\ICommentsManager;
 use OCP\DB\Exception;
 use OCP\IL10N;
-use OCP\IRequest;
-use OCP\Security\RateLimiting\ILimiter;
 use Psr\Log\LoggerInterface;
 
 class ScheduledMessageService {
 	public const MAX_CHAT_LENGTH = 32000;
+	protected ICommentsManager $commentsManager;
 
 	public function __construct(
 		private ScheduledMessageMapper $scheduledMessageMapper,
 		protected ThreadService $threadService,
 		protected ITimeFactory $timeFactory,
-		protected AttachmentService $attachmentService,
-		protected IReferenceManager $referenceManager,
-		protected ILimiter $rateLimiter,
-		protected IRequest $request,
-		protected IJobList $jobList,
 		protected IL10N $l,
 		protected LoggerInterface $logger,
+		CommentsManager $commentsManager,
 	) {
 	}
 
@@ -158,11 +153,37 @@ class ScheduledMessageService {
 			throw $e;
 		}
 
-		$messages = $this->scheduledMessageMapper->findByRoomAndActor(
+		$result = $this->scheduledMessageMapper->findByRoomAndActor(
 			$chat,
 			$participant->getAttendee()->getActorType(),
 			$participant->getAttendee()->getActorId()
 		);
+
+		$messages = [];
+		foreach ($result as &$row) {
+			$comment = [];
+			$thread = [];
+			$entity = [];
+			foreach ($row as $field => $value) {
+				if (str_starts_with($field, 'c_')) {
+					$comment[substr($field, 2)] = $value;
+					continue;
+				}
+				if (str_starts_with($field, 'th_')) {
+					$thread[substr($field, 3)] = $value;
+					continue;
+				}
+				$entity[$field] = $value;
+			}
+
+			$scheduleMessage = ScheduledMessage::fromRow($entity);
+			$parent = $this->commentsManager->getCommentFromData($entity);
+			if ($thread['id'] !== null) {
+				$thread = Thread::fromRow($thread);
+			}
+
+			$messages[] = $scheduleMessage->toArray(null, $thread);
+		}
 
 		return $messages;
 	}

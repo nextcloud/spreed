@@ -56,22 +56,38 @@ class SelectHelper {
 		}
 
 		$query->addSelect([
-			$alias . 'parent_id',
-			$alias . 'topmost_parent_id',
-			$alias . 'children_count',
-			$alias . 'actor_type',
-			$alias . 'actor_id',
-			$alias . 'message',
-			$alias . 'verb',
-			$alias . 'creation_timestamp',
-			$alias . 'latest_child_timestamp',
-			$alias . 'object_type',
-			$alias . 'object_id',
-			$alias . 'reference_id',
-			$alias . 'reactions',
-			$alias . 'expire_date',
-			$alias . 'meta_data',
-		])->selectAlias($alias . 'id', 'c_id');
+			$alias . 'parent_id AS c_parent_id',
+			$alias . 'topmost_parent_id AS c_topmost_parent_id',
+			$alias . 'children_count AS c_children_count',
+			$alias . 'actor_type AS c_actor_type',
+			$alias . 'actor_id AS c_actor_id',
+			$alias . 'message AS c_message',
+			$alias . 'verb AS c_verb',
+			$alias . 'creation_timestamp AS c_creation_timestamp',
+			$alias . 'latest_child_timestamp AS c_latest_child_timestamp',
+			$alias . 'object_type AS c_object_type',
+			$alias . 'object_id AS c_object_id',
+			$alias . 'reference_id AS c_reference_id',
+			$alias . 'reactions AS c_reactions',
+			$alias . 'expire_date AS c_expire_date',
+			$alias . 'meta_data AS c_meta_data',
+			$alias . 'id AS c_id'
+		]);
+	}
+
+	public function selectThreadsTable(IQueryBuilder $query, string $alias = 'th'): void {
+		if ($alias !== '') {
+			$alias .= '.';
+		}
+
+		$query->addSelect([
+			$alias . 'room_id AS th_room_id',
+			$alias . 'last_message_id AS th_last_message_id',
+			$alias . 'num_replies AS th_num_replies',
+			$alias . 'last_activity AS th_last_activity',
+			$alias . 'name AS th_name',
+			$alias . 'id AS th_id'
+		]);
 	}
 
 	public function selectAttendeesTable(IQueryBuilder $query, string $alias = 'a'): void {

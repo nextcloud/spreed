@@ -54,17 +54,20 @@ class ScheduledMessageMapper extends QBMapper {
 
 	public function findByRoomAndActor(Room $chat, string $actorType, string $actorId): array {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from($this->getTableName(), 's')
+		$query->select('s.*');
+		$helper = new SelectHelper();
+		$helper->selectThreadsTable($query);
+		$query->from($this->getTableName(), 's')
 			->where($query->expr()->eq('s.room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('s.actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('s.actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)))
-			->leftJoin('s', 'talk_threads', 't', $query->expr()->eq('s.thread_id', 't.id'))
-			->leftJoin('s', 'comments', 'c', $query->expr()->eq('s.parent_id', 'c.id'));
+			->leftJoin('s', 'talk_threads', 'th', $query->expr()->eq('s.thread_id', 'th.id'));
 
 		$cursor = $query->executeQuery();
 		$result = $cursor->fetchAll();
 		$cursor->closeCursor();
+
+
 		return $result;
 	}
 
