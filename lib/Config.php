@@ -30,6 +30,10 @@ class Config {
 	public const SIGNALING_EXTERNAL = 'external';
 	public const SIGNALING_CLUSTER_CONVERSATION = 'conversation_cluster';
 
+	public const EXPERIMENTAL_UPDATE_PARTICIPANTS = 1;
+	public const EXPERIMENTAL_RECOVER_SESSION = 2;
+	public const EXPERIMENTAL_CHAT_RELAY = 4;
+
 	public const SIGNALING_TICKET_V1 = 1;
 	public const SIGNALING_TICKET_V2 = 2;
 
@@ -788,6 +792,14 @@ class Config {
 
 	public function enableLobbyOnLockedRooms(): bool {
 		return $this->appConfig->getAppValueBool('inactivity_enable_lobby');
+	}
+
+	/**
+	 * @param self::EXPERIMENTAL_* $experiment
+	 */
+	public function hasExperiment(int $experiment): bool {
+		return $this->appConfig->getAppValueInt('experiments_users') & $experiment
+			|| $this->appConfig->getAppValueInt('experiments_guests') & $experiment;
 	}
 
 	public function isPasswordEnforced(): bool {
