@@ -454,6 +454,8 @@ Signaling.Internal.prototype._joinRoomSuccess = function(token, sessionId) {
 	this.sessionId = sessionId
 	this._trigger('sessionId', [this.sessionId])
 	this._startPullingMessages()
+	// Event needed to inform about chat relay support
+	this._trigger('supportedFeatures', [])
 }
 
 Signaling.Internal.prototype._doLeaveRoom = function(token) {
@@ -1113,7 +1115,6 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 		for (i = 0; i < features.length; i++) {
 			this.features[features[i]] = true
 		}
-		this._trigger('supportedFeatures', features)
 	}
 
 	if (!this.settings.helloAuthParams.internal
@@ -1306,6 +1307,8 @@ Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 		})
 		this.roomCollection.sort()
 	}
+
+	this._trigger('supportedFeatures', Object.keys(this.features))
 }
 
 Signaling.Standalone.prototype._doLeaveRoom = function(token) {
