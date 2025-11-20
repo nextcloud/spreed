@@ -341,6 +341,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * The author and timestamp are automatically set to the current user
 	 * and time.
 	 *
+	 * Required capability: `scheduled-messages`
+	 *
 	 * @param string $message the message to send
 	 * @param int $replyTo Parent id which this message is a reply to
 	 * @psalm-param non-negative-int $replyTo
@@ -428,6 +430,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 	/**
 	 * Update a scheduled message
 	 *
+	 * Required capability: `scheduled-messages`
+	 *
 	 * @param int $messageId
 	 * @param string $message the message to send
 	 * @param int $sendAt
@@ -492,6 +496,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 	/**
 	 * Delete a scheduled message
+	 *
+	 * Required capability: `scheduled-messages`
 	 *
 	 * @param int $messageId
 	 * @return DataResponse<Http::STATUS_OK, array{}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
