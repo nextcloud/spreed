@@ -48,7 +48,6 @@
 <script setup lang="ts">
 import type { NextcloudUser } from '@nextcloud/auth'
 
-import { getGuestNickname } from '@nextcloud/auth'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
@@ -68,9 +67,6 @@ const { compact = false } = defineProps<{
 	compact?: boolean
 }>()
 
-const emit = defineEmits<{
-	(event: 'update', value: string): void
-}>()
 const loginUrl = `${generateUrl('/login')}?redirect_url=${encodeURIComponent(window.location.pathname)}`
 
 const actorStore = useActorStore()
@@ -84,7 +80,6 @@ const guestUserName = computed({
 	set: (newValue: string) => {
 		guestNameStore.guestUserName = newValue
 		debounceUpdateDisplayName()
-		emit('update', newValue)
 	},
 })
 const isEditingUsername = ref(false)
