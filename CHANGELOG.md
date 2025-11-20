@@ -5,6 +5,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.4 – 2025-11-20
+### Changed
+- Update translations
+
+### Fixed
+- fix(settings): Show appearance and sounds settings for guests again
+  [#16377](https://github.com/nextcloud/spreed/pull/16377)
+- fix(settings): Add app config to disable play-sounds for guests
+  [#16381](https://github.com/nextcloud/spreed/pull/16381)
+- fix(settings): Do not warn about missing experimental feature
+  [#16388](https://github.com/nextcloud/spreed/pull/16388)
+- fix(settings): Fix path for WASM file check
+  [#16389](https://github.com/nextcloud/spreed/pull/16389)
+
 ## 22.0.3 – 2025-11-20
 ### Changed
 - Update dependencies
