@@ -16,38 +16,38 @@ class SelectHelper {
 			$alias .= '.';
 		}
 
-		$query->addSelect($alias . 'type')
-			->addSelect($alias . 'read_only')
-			->addSelect($alias . 'lobby_state')
-			->addSelect($alias . 'sip_enabled')
-			->addSelect($alias . 'assigned_hpb')
-			->addSelect($alias . 'token')
-			->addSelect($alias . 'name')
-			->addSelect($alias . 'description')
-			->addSelect($alias . 'password')
-			->addSelect($alias . 'avatar')
-			->addSelect($alias . 'active_since')
-			->addSelect($alias . 'default_permissions')
-			->addSelect($alias . 'call_permissions')
-			->addSelect($alias . 'call_flag')
-			->addSelect($alias . 'last_activity')
-			->addSelect($alias . 'last_message')
-			->addSelect($alias . 'lobby_timer')
-			->addSelect($alias . 'object_type')
-			->addSelect($alias . 'object_id')
-			->addSelect($alias . 'listable')
-			->addSelect($alias . 'message_expiration')
-			->addSelect($alias . 'remote_server')
-			->addSelect($alias . 'remote_token')
-			->addSelect($alias . 'breakout_room_mode')
-			->addSelect($alias . 'breakout_room_status')
-			->addSelect($alias . 'call_recording')
-			->addSelect($alias . 'recording_consent')
-			->addSelect($alias . 'has_federation')
-			->addSelect($alias . 'mention_permissions')
-			->addSelect($alias . 'transcription_language')
-			->addSelect($alias . 'last_pinned_id')
-			->selectAlias($alias . 'id', 'r_id');
+		$query->addSelect([$alias . 'type',
+			$alias . 'read_only',
+			$alias . 'lobby_state',
+			$alias . 'sip_enabled',
+			$alias . 'assigned_hpb',
+			$alias . 'token',
+			$alias . 'name',
+			$alias . 'description',
+			$alias . 'password',
+			$alias . 'avatar',
+			$alias . 'active_since',
+			$alias . 'default_permissions',
+			$alias . 'call_permissions',
+			$alias . 'call_flag',
+			$alias . 'last_activity',
+			$alias . 'last_message',
+			$alias . 'lobby_timer',
+			$alias . 'object_type',
+			$alias . 'object_id',
+			$alias . 'listable',
+			$alias . 'message_expiration',
+			$alias . 'remote_server',
+			$alias . 'remote_token',
+			$alias . 'breakout_room_mode',
+			$alias . 'breakout_room_status',
+			$alias . 'call_recording',
+			$alias . 'recording_consent',
+			$alias . 'has_federation',
+			$alias . 'mention_permissions',
+			$alias . 'transcription_language',
+			$alias . 'last_pinned_id',
+		])->selectAlias($alias . 'id', 'r_id');
 	}
 
 	public function selectAttendeesTable(IQueryBuilder $query, string $alias = 'a'): void {
@@ -55,37 +55,38 @@ class SelectHelper {
 			$alias .= '.';
 		}
 
-		$query->addSelect($alias . 'room_id')
-			->addSelect($alias . 'actor_type')
-			->addSelect($alias . 'actor_id')
-			->addSelect($alias . 'display_name')
-			->addSelect($alias . 'pin')
-			->addSelect($alias . 'participant_type')
-			->addSelect($alias . 'favorite')
-			->addSelect($alias . 'notification_level')
-			->addSelect($alias . 'notification_calls')
-			->addSelect($alias . 'last_joined_call')
-			->addSelect($alias . 'last_read_message')
-			->addSelect($alias . 'last_mention_message')
-			->addSelect($alias . 'last_mention_direct')
-			->addSelect($alias . 'read_privacy')
-			->addSelect($alias . 'permissions')
-			->addSelect($alias . 'access_token')
-			->addSelect($alias . 'remote_id')
-			->addSelect($alias . 'invited_cloud_id')
-			->addSelect($alias . 'phone_number')
-			->addSelect($alias . 'call_id')
-			->addSelect($alias . 'state')
-			->addSelect($alias . 'unread_messages')
-			->addSelect($alias . 'last_attendee_activity')
-			->addSelect($alias . 'archived')
-			->addSelect($alias . 'important')
-			->addSelect($alias . 'sensitive')
-			->addSelect($alias . 'has_unread_threads')
-			->addSelect($alias . 'has_unread_thread_mentions')
-			->addSelect($alias . 'has_unread_thread_directs')
-			->addSelect($alias . 'hidden_pinned_id')
-			->selectAlias($alias . 'id', 'a_id');
+		$query->addSelect([
+			$alias . 'room_id',
+			$alias . 'actor_type',
+			$alias . 'actor_id',
+			$alias . 'display_name',
+			$alias . 'pin',
+			$alias . 'participant_type',
+			$alias . 'favorite',
+			$alias . 'notification_level',
+			$alias . 'notification_calls',
+			$alias . 'last_joined_call',
+			$alias . 'last_read_message',
+			$alias . 'last_mention_message',
+			$alias . 'last_mention_direct',
+			$alias . 'read_privacy',
+			$alias . 'permissions',
+			$alias . 'access_token',
+			$alias . 'remote_id',
+			$alias . 'invited_cloud_id',
+			$alias . 'phone_number',
+			$alias . 'call_id',
+			$alias . 'state',
+			$alias . 'unread_messages',
+			$alias . 'last_attendee_activity',
+			$alias . 'archived',
+			$alias . 'important',
+			$alias . 'sensitive',
+			$alias . 'has_unread_threads',
+			$alias . 'has_unread_thread_mentions',
+			$alias . 'has_unread_thread_directs',
+			$alias . 'hidden_pinned_id'
+		])->selectAlias($alias . 'id', 'a_id');
 	}
 
 	public function selectSessionsTable(IQueryBuilder $query, string $alias = 's'): void {
@@ -93,10 +94,13 @@ class SelectHelper {
 			$alias .= '.';
 		}
 
-		$query->addSelect($alias . 'attendee_id')
-			->addSelect($alias . 'session_id')
-			->addSelect($alias . 'in_call')
-			->addSelect($alias . 'last_ping')
+		$query
+			->addSelect([
+				$alias . 'attendee_id',
+				$alias . 'session_id',
+				$alias . 'in_call',
+				$alias . 'last_ping',
+			])
 			->selectAlias($alias . 'state', 's_state')
 			->selectAlias($alias . 'id', 's_id');
 	}
