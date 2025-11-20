@@ -185,11 +185,16 @@ class Manager {
 		$features = explode(',', $featureHeader);
 		$features = array_map('trim', $features);
 
-		return array_values(array_diff([
+		$optionFeatures = [
 			'dialout',
 			'join-features',
-			'chat-relay',
-		], $features));
+		];
+
+		if ($this->talkConfig->hasExperiment(Config::EXPERIMENTAL_CHAT_RELAY)) {
+			$optionFeatures[] = 'chat-relay';
+		}
+
+		return array_values(array_diff($optionFeatures, $features));
 	}
 
 	public function getSignalingServerLinkForConversation(?Room $room): string {
