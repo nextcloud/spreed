@@ -17,6 +17,7 @@ vi.mock('../../services/participantsService', () => ({
 }))
 vi.mock('@nextcloud/auth', () => ({
 	getCurrentUser: vi.fn(),
+	getGuestNickname: vi.fn(),
 	setGuestNickname: vi.fn(),
 }))
 

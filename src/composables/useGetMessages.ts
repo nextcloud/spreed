@@ -510,12 +510,12 @@ export function useGetMessagesProvider() {
 		try {
 			debugTimer.start(`${token} | long polling`)
 			// TODO: move polling logic to the store and also cancel timers on cancel
-			pollingErrorTimeout = 1_000
 			await store.dispatch('pollNewMessages', {
 				token,
 				lastKnownMessageId: chatStore.getLastKnownId(token),
 				requestId: token,
 			})
+			pollingErrorTimeout = 1_000
 			debugTimer.end(`${token} | long polling`, 'status 200')
 			tryChatRelay()
 		} catch (exception) {
