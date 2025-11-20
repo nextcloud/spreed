@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { setGuestUserName } from '../../services/participantsService.js'
 import { generateOCSErrorResponse } from '../../test-helpers.js'
 import { useActorStore } from '../actor.ts'
-import { useGuestNameStore } from '../guestName.js'
+import { useGuestNameStore } from '../guestName.ts'
 
 vi.mock('../../services/participantsService', () => ({
 	setGuestUserName: vi.fn(),
