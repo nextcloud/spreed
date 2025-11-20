@@ -1,10 +1,10 @@
-import { setGuestNickname } from '@nextcloud/auth'
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
 /**
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { getGuestNickname, setGuestNickname } from '@nextcloud/auth'
+import { t } from '@nextcloud/l10n'
 import { defineStore } from 'pinia'
 import { setGuestUserName } from '../services/participantsService.js'
 import { useActorStore } from './actor.ts'
@@ -12,6 +12,7 @@ import { useActorStore } from './actor.ts'
 export const useGuestNameStore = defineStore('guestName', {
 	state: () => ({
 		guestNames: {},
+		guestUserName: getGuestNickname() || '',
 	}),
 
 	actions: {
