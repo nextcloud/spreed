@@ -52,11 +52,11 @@
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection
-			v-if="!isGuest && supportConversationsListStyle"
 			id="talk_appearance"
 			:name="t('spreed', 'Appearance & Sounds')">
 			<NcFormBox>
 				<NcFormBoxSwitch
+					v-if="!isGuest && supportConversationsListStyle"
 					:model-value="conversationsListStyle"
 					:label="t('spreed', 'Compact conversations list')"
 					:disabled="appearanceLoading"
@@ -78,6 +78,7 @@
 					:disabled="playSoundsLoading"
 					@update:model-value="togglePlaySounds" />
 				<NcFormBoxButton
+					v-if="!isGuest"
 					:label="t('spreed', 'Notification settings')"
 					:description="t('spreed', 'Sounds for chat and call notifications')"
 					:href="settingsUrl"
