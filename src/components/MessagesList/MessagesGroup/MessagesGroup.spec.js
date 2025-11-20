@@ -13,7 +13,7 @@ import MessagesGroup from './MessagesGroup.vue'
 import { ATTENDEE, MESSAGE } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 import { useActorStore } from '../../../stores/actor.ts'
-import { useGuestNameStore } from '../../../stores/guestName.js'
+import { useGuestNameStore } from '../../../stores/guestName.ts'
 
 describe('MessagesGroup.vue', () => {
 	const TOKEN = 'XXTOKENXX'

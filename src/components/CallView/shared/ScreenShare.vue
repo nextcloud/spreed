@@ -32,7 +32,7 @@ import SHA1 from 'crypto-js/sha1.js'
 import panzoom from 'panzoom'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import VideoBottomBar from './VideoBottomBar.vue'
-import { useGuestNameStore } from '../../../stores/guestName.js'
+import { useGuestNameStore } from '../../../stores/guestName.ts'
 import attachMediaStream from '../../../utils/attachmediastream.js'
 
 const ZOOM_MIN = 1
