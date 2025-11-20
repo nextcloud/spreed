@@ -44,7 +44,7 @@ class BackgroundBlurLoading implements ISetupCheck {
 
 	#[\Override]
 	public function run(): SetupResult {
-		$url = $this->urlGenerator->linkTo('spreed', 'js/tflite.wasm');
+		$url = $this->urlGenerator->linkTo('spreed', 'js/vision_wasm_internal.wasm');
 		$noResponse = true;
 		$responses = $this->runRequest('HEAD', $url);
 		foreach ($responses as $response) {
