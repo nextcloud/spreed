@@ -33,12 +33,10 @@
 	}
 
 	pre {
-		width: calc(100% - var(--default-clickable-area));
 		padding: 4px;
-		margin: 2px 0;
+		margin: 0;
 		border-radius: var(--border-radius);
 		background-color: var(--color-background-dark);
-		overflow-x: auto;
 
 		& code {
 			margin: 0;
