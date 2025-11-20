@@ -791,4 +791,8 @@ class Config {
 			& self::EXPERIMENT_CHAT_RELAY;
 		return $isEnabled === self::EXPERIMENT_CHAT_RELAY;
 	}
+
+	public function getPlaySoundsDefaultForGuests(): bool {
+		return $this->appConfig->getAppValueBool('guests_play_sounds', true);
+	}
 }
