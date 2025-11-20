@@ -269,8 +269,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 				// Include rooms where only attendee level things changed,
 				// e.g. favorite, read-marker update, notification setting
-				$attendee = $room->getParticipant($this->userId)->getAttendee();
-				return $attendee->getLastAttendeeActivity() >= $modifiedSince;
+				$participant = $this->participantService->getParticipant($room, $this->userId);
+				return $participant->getAttendee()->getLastAttendeeActivity() >= $modifiedSince;
 			});
 		}
 
