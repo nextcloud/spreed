@@ -46,7 +46,7 @@ Feature: callapi/recording
     And recording server sent stopped request for recording in room "room1" as "participant1" with 200
     Then signaling server received the following requests
       | token | data |
-      | room1 | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+      | room1 | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true,"comment":[]}}}} |
       | room1 | {"type":"message","message":{"data":{"type":"recording","recording":{"status":0}}}} |
       | room1 | {"type":"update","update":{"userids":["participant1"],"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":{"date":"ACTIVE_SINCE()","timezone_type":3,"timezone":"UTC"},"sip-enabled":0,"description":""}}} |
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
