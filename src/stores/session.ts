@@ -17,7 +17,7 @@ import SHA1 from 'crypto-js/sha1.js'
 import { defineStore } from 'pinia'
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
 import store from '../store/index.js'
-import { useGuestNameStore } from './guestName.js'
+import { useGuestNameStore } from './guestName.ts'
 
 type Session = {
 	attendeeId: number | undefined

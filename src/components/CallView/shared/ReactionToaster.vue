@@ -40,7 +40,7 @@ import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import { useActorStore } from '../../../stores/actor.ts'
-import { useGuestNameStore } from '../../../stores/guestName.js'
+import { useGuestNameStore } from '../../../stores/guestName.ts'
 
 const reactions = {
 	'❤️': 'Heart.gif',

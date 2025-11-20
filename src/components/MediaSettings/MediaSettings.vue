@@ -264,7 +264,7 @@ import { ATTENDEE, AVATAR, CALL, CONFIG, PARTICIPANT, VIRTUAL_BACKGROUND } from 
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
-import { useGuestNameStore } from '../../stores/guestName.js'
+import { useGuestNameStore } from '../../stores/guestName.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 

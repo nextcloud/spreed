@@ -64,7 +64,7 @@ import NcModal from '@nextcloud/vue/components/NcModal'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import Check from 'vue-material-design-icons/CheckBold.vue'
 import ConversationIcon from './ConversationIcon.vue'
-import { useGuestNameStore } from '../stores/guestName.js'
+import { useGuestNameStore } from '../stores/guestName.ts'
 
 export default {
 	name: 'GuestWelcomeWindow',

@@ -61,7 +61,7 @@ import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import { useGetToken } from '../composables/useGetToken.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
-import { useGuestNameStore } from '../stores/guestName.js'
+import { useGuestNameStore } from '../stores/guestName.ts'
 
 const { compact = false } = defineProps<{
 	compact?: boolean
