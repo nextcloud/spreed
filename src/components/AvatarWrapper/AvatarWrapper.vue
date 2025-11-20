@@ -370,4 +370,8 @@ export default {
 	}
 }
 
+:deep(.icon-user) {
+	background-size: calc(var(--avatar-size) / 2);
+}
+
 </style>
