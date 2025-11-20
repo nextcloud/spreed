@@ -852,7 +852,7 @@ OC.L10N.register(
     "Allow conversations on files" : "Permitir conversas en ficheiros",
     "Allow conversations on public shares for files" : "Permitir conversas en comparticións públicas de ficheiros",
     "End-to-end encrypted calls" : "Chamadas cifradas de extremo a extremo",
-    "Enable encryption" : "Activar o cifrado",
+    "Enable encryption" : "Activar a cifraxe",
     "End-to-end encrypted calls with a configured SIP bridge require a newer version of the High-performance backend and SIP bridge." : "As chamadas cifradas de extremo a extremo cunha ponte SIP configurada precisan dunha versión máis recente da infraestrutura de alto rendemento e da ponte SIP.",
     "Mobile clients do not support end-to-end encrypted calls at the moment." : "Os clientes móbiles non admiten chamadas cifradas de extremo a extremo polo momento.",
     "By clicking the button above the information in the form is sent to the servers of Struktur AG. You can find further information at {linkstart}spreed.eu{linkend}." : "Premendo no botón superior á información do formulario envíase aos servidores de Struktur AG. Pode atopar máis información en {linkstart}spreed.eu{linkend}.",
