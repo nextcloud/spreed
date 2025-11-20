@@ -1649,7 +1649,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 			if ($objectType === Attachment::TYPE_PINNED) {
 				// Enforce sort order of pinned messages again after loading them from the comments table instead of attachments
-				uasort($messagesByType[$objectType], static fn (array $m1, array $m2): int => ($m2['metaData'][Message::METADATA_PINNED_AT] ?? 0) <=> ($m1['metaData'][Message::METADATA_PINNED_AT] ?? 0));
+				uasort($messagesByType[$objectType], static fn (array $m1, array $m2): int => ($m2['metaData']['pinnedAt'] ?? 0) <=> ($m1['metaData']['pinnedAt'] ?? 0));
 			}
 		}
 
@@ -1708,7 +1708,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$messages = $this->getMessagesForRoom($messageIds);
 		if ($objectType === Attachment::TYPE_PINNED) {
 			// Enforce sort order of pinned messages again after loading them from the comments table instead of attachments
-			uasort($messages, static fn (array $m1, array $m2): int => ($m2['metaData'][Message::METADATA_PINNED_AT] ?? 0) <=> ($m1['metaData'][Message::METADATA_PINNED_AT] ?? 0));
+			uasort($messages, static fn (array $m1, array $m2): int => ($m2['metaData']['pinnedAt'] ?? 0) <=> ($m1['metaData']['pinnedAt'] ?? 0));
 		}
 
 		$headers = [];
