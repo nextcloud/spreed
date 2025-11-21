@@ -1787,6 +1787,7 @@ OC.L10N.register(
     "Always shown if recording consent is required" : "Vždy zobrazováno, pokud je zapotřebí souhlas s nahráváním",
     "Appearance & Sounds" : "Vzhled a zvuky",
     "Compact conversations list" : "Zhuštěný seznam konverzací",
+    "Show your chat in split view" : "Zobrazit chat v děleném zobrazení",
     "Play sounds when participants join or leave a call" : "Přehrát zvuky oznámení když se účastníci připojí nebo odpojí",
     "Currently not available on iPhone and iPad due to technical restrictions by the manufacturer" : "Z důvodu technických omezení, zavedených jejich výrobcem, není  v současnosti na zařízeních iPad a iPhone k dispozici",
     "Notification settings" : "Nastavení upozorňování",
