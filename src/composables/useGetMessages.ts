@@ -57,7 +57,7 @@ function isAxiosErrorResponse(exception: unknown): exception is AxiosError<strin
 let pollingTimeout: NodeJS.Timeout | undefined
 let expirationInterval: NodeJS.Timeout | undefined
 let pollingErrorTimeout = 1_000
-let chatRelaySupported = false
+let chatRelaySupported: boolean | null = null
 
 /**
  * Composable to provide control logic for fetching messages list
@@ -148,6 +148,7 @@ export function useGetMessagesProvider() {
 			}
 			if (oldToken && oldToken !== newToken) {
 				store.dispatch('cancelPollNewMessages', { requestId: oldToken })
+				chatRelaySupported = null
 			}
 
 			if (newToken && canGetMessages) {
@@ -182,11 +183,9 @@ export function useGetMessagesProvider() {
 		unsubscribe('networkOnline', handleNetworkOnline)
 		EventBus.off('route-change', onRouteChange)
 		EventBus.off('set-context-id-to-bottom', setContextIdToBottom)
-		if (experimentalChatRelay) {
-			EventBus.off('signaling-message-received', addMessageFromChatRelay)
-			EventBus.off('signaling-supported-features', checkChatRelaySupport)
-			EventBus.off('should-refresh-chat-messages', tryPollNewMessages)
-		}
+		EventBus.off('signaling-message-received', addMessageFromChatRelay)
+		EventBus.off('signaling-supported-features', checkChatRelaySupport)
+		EventBus.off('should-refresh-chat-messages', tryPollNewMessages)
 
 		store.dispatch('cancelPollNewMessages', { requestId: currentToken.value })
 		clearInterval(pollingTimeout)
@@ -349,10 +348,16 @@ export function useGetMessagesProvider() {
 
 		isInitialisingMessages.value = false
 
-		if (!experimentalChatRelay) {
+		if (!experimentalChatRelay || chatRelaySupported === false) {
+			// Case: chat relay confirmed to be unsupported or experimental flag is off
+			pollNewMessages(token)
+		} else if (experimentalChatRelay && chatRelaySupported === true) {
+			// Case: chat relay is supported but polling was not immediately triggered on signaling hello message
+			// e.g, when received while context request is ongoing
 			pollNewMessages(token)
 		} else {
 			// Fallback polling in case signaling does not work and we will never receive Hello message
+			// chatRelaySupported is still null (signaling hello was not received yet)
 			pollingTimeout = setTimeout(() => {
 				if (chatRelaySupported) {
 					return
@@ -589,10 +594,15 @@ export function useGetMessagesProvider() {
 	 * @param features
 	 */
 	async function checkChatRelaySupport(features: string[]) {
-		if (features.includes('chat_relay')) {
+		if (features.includes('chat-relay')) {
 			chatRelaySupported = true
 		} else {
 			chatRelaySupported = false
+		}
+
+		if (!pollingTimeout) {
+			// Context request is still ongoing
+			return
 		}
 		// Once the history and Hello signaling message is received, starts looking for new messages.
 		clearTimeout(pollingTimeout)
@@ -607,6 +617,11 @@ export function useGetMessagesProvider() {
 	 * @param payload.message
 	 */
 	function addMessageFromChatRelay(payload: { token: string, message: ChatMessage }) {
+		if (!chatRelaySupported) {
+			// chat relay is not supported, ignore the message
+			return
+		}
+
 		const { token, message } = payload
 		if (token !== currentToken.value) {
 			// Guard: Message is for another conversation
