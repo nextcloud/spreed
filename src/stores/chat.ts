@@ -211,24 +211,23 @@ export const useChatStore = defineStore('chat', () => {
 		{ messageId = 0, threadId = 0 }: GetMessagesListOptions = { messageId: 0, threadId: 0 },
 	): boolean {
 		let contextBlock: Set<number>
-		let numBlocks = 0
+		const numBlocks = (threadId ? threadBlocks[token][threadId]?.length : chatBlocks[token]?.length) ?? 0
+		if (numBlocks <= 1) {
+			// If only one block, we cannot assume there is more history to load
+			return true
+		}
+
 		if (threadId) {
 			contextBlock = (messageId <= 0)
 				? threadBlocks[token][threadId][0]
 				: threadBlocks[token][threadId].find((set) => set.has(messageId)) ?? threadBlocks[token][threadId][0]
 		} else {
-			numBlocks = chatBlocks[token]?.length || 0
 			contextBlock = (messageId <= 0)
 				? chatBlocks[token][0]
 				: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
 		}
 
-		if (numBlocks > 1) {
-			return contextBlock.size > 10
-		}
-
-		// If only one block, we cannot assume there is more history to load
-		return true
+		return contextBlock.size > 10
 	}
 
 	/**
