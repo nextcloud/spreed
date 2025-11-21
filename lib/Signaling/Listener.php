@@ -42,10 +42,13 @@ use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\BreakoutRoom;
+use OCA\Talk\Model\Poll;
 use OCA\Talk\Model\Session;
+use OCA\Talk\Model\Vote;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\ThreadService;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -74,6 +77,29 @@ class Listener implements IEventListener {
 		ARoomModifiedEvent::PROPERTY_TYPE,
 	];
 
+	public const SYSTEM_MESSAGE_TYPE_RELAY = [
+		'call_started',
+		'call_joined',
+		'call_left',
+		'call_ended',
+		'call_ended_everyone',
+		'thread_created',
+		'thread_renamed',
+		'message_deleted',
+		'message_edited',
+		'moderator_promoted',
+		'moderator_demoted',
+		'guest_moderator_promoted',
+		'guest_moderator_demoted',
+		'file_shared',
+		'object_shared',
+		'history_cleared',
+		'poll_voted',
+		'poll_closed',
+		'recording_started',
+		'recording_stopped',
+	];
+
 	protected bool $pauseRoomModifiedListener = false;
 
 	public function __construct(
@@ -87,6 +113,7 @@ class Listener implements IEventListener {
 		protected MessageParser $messageParser,
 		protected ThreadService $threadService,
 		protected IFactory $l10nFactory,
+		protected PollService $pollService,
 	) {
 	}
 
@@ -153,9 +180,9 @@ class Listener implements IEventListener {
 			AttendeesRemovedEvent::class => $this->notifyAttendeesRemoved($event),
 			ParticipantModifiedEvent::class => $this->notifyParticipantModified($event),
 			SessionLeftRoomEvent::class => $this->notifySessionLeftRoom($event),
-			ChatMessageSentEvent::class,
+			ChatMessageSentEvent::class => $this->notifyMessageSent($event),
 			SystemMessageSentEvent::class,
-			SystemMessagesMultipleSentEvent::class => $this->notifyMessageSent($event),
+			SystemMessagesMultipleSentEvent::class => $this->notifySystemMessageSent($event),
 			ReactionAddedEvent::class,
 			ReactionRemovedEvent::class => $this->notifyReactionSent($event),
 			default => null, // Ignoring events subscribed by the internal signaling
@@ -472,13 +499,57 @@ class Listener implements IEventListener {
 	}
 
 	protected function notifyMessageSent(AMessageSentEvent $event): void {
+		if ($event instanceof ASystemMessageSentEvent) {
+			$this->notifySystemMessageSent($event);
+			return;
+		}
+
 		$comment = $event->getComment();
-		if ($event instanceof ASystemMessageSentEvent && $event->shouldSkipLastActivityUpdate()) {
-			$messageDecoded = json_decode($comment->getMessage(), true);
-			$messageType = $messageDecoded['message'] ?? '';
-			if ($messageType !== 'message_deleted' && $messageType !== 'message_edited') {
-				return;
-			}
+		$room = $event->getRoom();
+		$data = [
+			'type' => 'chat',
+			'chat' => [
+				'refresh' => true,
+			],
+		];
+
+		$l10n = $this->l10nFactory->get(Application::APP_ID, 'en');
+		$message = $this->messageParser->createMessage($event->getRoom(), null, $comment, $l10n);
+		$this->messageParser->parseMessage($message);
+
+		if ($message->getVisibility() === false) {
+			$this->externalSignaling->sendRoomMessage($room, $data);
+			return;
+		}
+
+		$threadId = (int)$comment->getTopmostParentId() ?: $comment->getId();
+		try {
+			$thread = $this->threadService->findByThreadId($room->getId(), (int)$threadId);
+		} catch (DoesNotExistException) {
+			$thread = null;
+		}
+		$data['chat']['comment'] = $message->toArray('json', $thread);
+
+		$parent = $event->getParent();
+		if ($parent !== null) {
+			$parentMessage = $this->messageParser->createMessage($event->getRoom(), null, $parent, $l10n);
+			$this->messageParser->parseMessage($parentMessage);
+			$data['chat']['comment']['parent'] = $parentMessage->toArray('json', $thread);
+		}
+
+		$this->externalSignaling->sendRoomMessage($room, $data);
+	}
+
+	protected function notifySystemMessageSent(ASystemMessageSentEvent $event): void {
+		$comment = $event->getComment();
+		$messageDecoded = json_decode($comment->getMessage(), true);
+		$params = $messageDecoded['parameters'] ?? [];
+		$messageType = $messageDecoded['message'] ?? '';
+
+		if ($event->shouldSkipLastActivityUpdate() === true
+			&& !in_array($messageType, ['message_deleted', 'message_edited', 'thread_created', 'thread_renamed'], true)
+		) {
+			return;
 		}
 
 		$room = $event->getRoom();
@@ -489,9 +560,18 @@ class Listener implements IEventListener {
 			],
 		];
 
-		if ($event instanceof ASystemMessageSentEvent && $comment->getVerb() === ChatManager::VERB_SYSTEM && $event->shouldSkipLastActivityUpdate() === false) {
+		if (!in_array($messageType, self::SYSTEM_MESSAGE_TYPE_RELAY, true)) {
 			$this->externalSignaling->sendRoomMessage($room, $data);
 			return;
+		}
+
+		$thread = null;
+		if ($messageType === 'thread_created' || $messageType === 'thread_renamed') {
+			$threadId = (int)$comment->getTopmostParentId() ?: $comment->getId();
+			try {
+				$thread = $this->threadService->findByThreadId($room->getId(), (int)$threadId);
+			} catch (DoesNotExistException) {
+			}
 		}
 
 		$l10n = $this->l10nFactory->get(Application::APP_ID, 'en');
@@ -502,19 +582,45 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		$thread = null;
-		if (!isset($messageType)) {
-			$threadId = (int)$comment->getTopmostParentId() ?: $comment->getId();
-			try {
-				$thread = $this->threadService->findByThreadId($room->getId(), (int)$threadId);
-			} catch (DoesNotExistException) {
+		$data['chat']['comment'] = $message->toArray('json', $thread);
+
+		if ($messageType === 'object_shared' && isset($params['objectType']) && $params['objectType'] === 'talk-poll') {
+			$poll = $this->pollService->getPoll($event->getRoom()->getId(), $params['objectId']);
+			$data['chat']['comment']['poll'] = $poll->renderAsPoll();
+		}
+
+		if ($messageType === 'poll_voted' && isset($params['poll']['id'])) {
+			$poll = $this->pollService->getPoll($event->getRoom()->getId(), $params['poll']['id']);
+			$data['chat']['comment']['poll'] = $poll->renderAsPoll();
+		}
+
+		if ($messageType === 'poll_closed' && isset($params['poll']['id'])) {
+			$poll = $this->pollService->getPoll($event->getRoom()->getId(), $params['poll']['id']);
+			$data['chat']['comment']['poll'] = $poll->renderAsPoll();
+			if ($poll->getResultMode() !== Poll::MODE_HIDDEN) {
+				$votes = $this->pollService->getVotes($poll);
+				$data['chat']['comment']['poll']['votes'] = array_map(fn (Vote $vote) => $vote->asArray(), $votes);
 			}
 		}
 
-		$data['chat']['comment'] = $message->toArray('json', $thread);
+		if ($messageType === 'thread_created' || $messageType === 'thread_renamed') {
+			$data['chat']['comment']['threadInfo']['thread'] = [
+				'id' => $thread->getId(),
+				'roomToken' => $room->getToken(),
+				'title' => $thread->getName(),
+				'lastMessageId' => $thread->getLastMessageId(),
+				'lastActivity' => $thread->getLastActivity()->getTimestamp(),
+				'numReplies' => $thread->getNumReplies(),
+			];
+			$data['chat']['comment']['threadInfo']['attendee'] = ['notificationLevel' => 0];
+			$data['chat']['comment']['threadInfo']['first'] = $thread->toArray($room);
+			$data['chat']['comment']['threadInfo']['last'] = null;
+			$this->externalSignaling->sendRoomMessage($room, $data);
+			return;
+		}
 
-		if ($event instanceof ASystemMessageSentEvent && $event->getParent() !== null) {
-			$parent = $event->getParent();
+		$parent = $event->getParent();
+		if ($parent !== null) {
 			$parentMessage = $this->messageParser->createMessage($event->getRoom(), null, $parent, $l10n);
 			$this->messageParser->parseMessage($parentMessage);
 			$data['chat']['comment']['parent'] = $parentMessage->toArray('json', $thread);
@@ -577,7 +683,7 @@ class Listener implements IEventListener {
 			'referenceId' => '',
 			'reactions' => [],
 			'markdown' => false ,
-			'expirationTimestamp' => $message->getExpirationDateTime()?->getTimestamp(), // base on parent post timestamp + room expiration
+			'expirationTimestamp' => $message->getExpirationDateTime()?->getTimestamp(),
 			'threadId' => $threadId,
 		];
 
