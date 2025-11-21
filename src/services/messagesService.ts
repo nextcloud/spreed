@@ -87,12 +87,14 @@ async function fetchMessages({
  * @param data.lastKnownMessageId The id of the last message in the store.
  * @param data.token The conversation token;
  * @param [data.limit] Number of messages to load
+ * @param data.timeout Timeout duration for long polling
  * @param [options] Axios request options
  */
 async function pollNewMessages({
 	token,
 	lastKnownMessageId,
 	limit = 100,
+	timeout,
 }: ReceiveMessagesPayload, options?: AxiosRequestConfig): receiveMessagesResponse {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), {
 		...options,
@@ -103,6 +105,7 @@ async function pollNewMessages({
 			limit,
 			includeLastKnown: 0,
 			markNotificationsAsRead: 0,
+			timeout,
 		} as receiveMessagesParams,
 	})
 }

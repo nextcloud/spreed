@@ -197,6 +197,40 @@ export const useChatStore = defineStore('chat', () => {
 	}
 
 	/**
+	 *
+	 * Check whether there are enough messages to render in the selected context, in particular
+	 * when there are other blocks, it means there is likely more history to load
+	 *
+	 * @param token The conversation token
+	 * @param data The data object containing messageId and threadId
+	 * @param data.messageId The message id
+	 * @param data.threadId The thread id
+	 */
+	function hasEnoughMessages(
+		token: string,
+		{ messageId = 0, threadId = 0 }: GetMessagesListOptions = { messageId: 0, threadId: 0 },
+	): boolean {
+		let contextBlock: Set<number>
+		const numBlocks = (threadId ? threadBlocks[token][threadId]?.length : chatBlocks[token]?.length) ?? 0
+		if (numBlocks <= 1) {
+			// If only one block, we cannot assume there is more history to load
+			return true
+		}
+
+		if (threadId) {
+			contextBlock = (messageId <= 0)
+				? threadBlocks[token][threadId][0]
+				: threadBlocks[token][threadId].find((set) => set.has(messageId)) ?? threadBlocks[token][threadId][0]
+		} else {
+			contextBlock = (messageId <= 0)
+				? chatBlocks[token][0]
+				: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
+		}
+
+		return contextBlock.size > 10
+	}
+
+	/**
 	 * Returns last known message id, belonging to current context. Defaults to given messageId
 	 *
 	 * @param token
@@ -554,5 +588,6 @@ export const useChatStore = defineStore('chat', () => {
 		removeMessagesFromChatBlocks,
 		clearMessagesHistory,
 		purgeChatStore,
+		hasEnoughMessages,
 	}
 })
