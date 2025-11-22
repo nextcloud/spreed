@@ -74,7 +74,7 @@ class FederationChatNotifier {
 		}
 
 		// Also notify default participants in one-to-one chats or when the admin default is "always"
-		$defaultLevel = $this->appConfig->getAppValueInt('default_group_notification', Participant::NOTIFY_MENTION);
+		$defaultLevel = $this->appConfig->getAppValueInt('default_group_notification', Participant::NOTIFY_ALWAYS);
 		if ($notificationLevel === Participant::NOTIFY_MENTION
 			|| ($defaultLevel !== Participant::NOTIFY_NEVER && $notificationLevel === Participant::NOTIFY_DEFAULT)) {
 			if ($this->isRepliedTo($room, $participant, $metaData)) {

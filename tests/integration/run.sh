@@ -172,6 +172,8 @@ for OCC in occ_host occ_remote; do
 	${OCC} config:system:set debug --value true --type bool
 	# Use faster password hashing
 	${OCC} config:system:set hashing_default_password --value=true --type=bool
+	# Change the default group notification level for more variate in default tests
+	${OCC} config:app:set spreed default_group_notification --value=2 --type=integer
 
 	# Build skip list
 	MAJOR_VERSION=$(${OCC} status | grep -Eo 'version: ([0-9]+).' | grep -Eo '[0-9]+')

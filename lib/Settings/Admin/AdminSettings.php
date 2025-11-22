@@ -71,7 +71,7 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initGeneralSettings(): void {
-		$this->initialState->provideInitialState('default_group_notification', (int)$this->serverConfig->getAppValue('spreed', 'default_group_notification', (string)Participant::NOTIFY_MENTION));
+		$this->initialState->provideInitialState('default_group_notification', (int)$this->serverConfig->getAppValue('spreed', 'default_group_notification', (string)Participant::NOTIFY_ALWAYS));
 		$this->initialState->provideInitialState('conversations_files', (int)$this->serverConfig->getAppValue('spreed', 'conversations_files', '1'));
 		$this->initialState->provideInitialState('conversations_files_public_shares', (int)$this->serverConfig->getAppValue('spreed', 'conversations_files_public_shares', '1'));
 		$this->initialState->provideInitialState('valid_apache_php_configuration', $this->validApachePHPConfiguration());
