@@ -12,6 +12,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\ConsentService;
 use OCA\Talk\Service\PollService;
+use OCA\Talk\Service\ScheduledMessageService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\User\Events\UserDeletedEvent;
@@ -25,6 +26,7 @@ class UserDeletedListener implements IEventListener {
 		private Manager $manager,
 		private PollService $pollService,
 		private ConsentService $consentService,
+		private ScheduledMessageService $messageManager,
 	) {
 	}
 
@@ -41,5 +43,7 @@ class UserDeletedListener implements IEventListener {
 		$this->pollService->neutralizeDeletedUser(Attendee::ACTOR_USERS, $user->getUID());
 
 		$this->consentService->deleteByActor(Attendee::ACTOR_USERS, $user->getUID());
+
+		$this->messageManager->deleteByActor(Attendee::ACTOR_USERS, $user->getUID());
 	}
 }

@@ -29,6 +29,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\RoomFormatter;
+use OCA\Talk\Service\ScheduledMessageService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\Helper\Preloader;
@@ -97,6 +98,7 @@ class ChatControllerTest extends TestCase {
 	private ?ChatController $controller = null;
 
 	private Callback $newMessageDateTimeConstraint;
+	private MockObject&ScheduledMessageService $scheduledMessageService;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -135,6 +137,7 @@ class ChatControllerTest extends TestCase {
 		$this->taskProcessingManager = $this->createMock(ITaskProcessingManager::class);
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->scheduledMessageService = $this->createMock(ScheduledMessageService::class);
 
 		$this->room = $this->createMock(Room::class);
 
@@ -148,7 +151,7 @@ class ChatControllerTest extends TestCase {
 		});
 	}
 
-	private function recreateChatController() {
+	private function recreateChatController(): void {
 		$this->controller = new ChatController(
 			'spreed',
 			$this->userId,
@@ -186,10 +189,11 @@ class ChatControllerTest extends TestCase {
 			$this->taskProcessingManager,
 			$this->appConfig,
 			$this->logger,
+			$this->scheduledMessageService,
 		);
 	}
 
-	private function newComment($id, $actorType, $actorId, $creationDateTime, $message) {
+	private function newComment($id, $actorType, $actorId, $creationDateTime, $message): IComment&MockObject {
 		$comment = $this->createMock(IComment::class);
 
 		$comment->method('getId')->willReturn($id);
@@ -209,7 +213,6 @@ class ChatControllerTest extends TestCase {
 		$this->timeFactory->expects($this->once())
 			->method('getDateTime')
 			->willReturn($date);
-		/** @var IComment&MockObject $comment */
 		$comment = $this->newComment(42, 'user', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
@@ -280,7 +283,6 @@ class ChatControllerTest extends TestCase {
 		$this->timeFactory->expects($this->once())
 			->method('getDateTime')
 			->willReturn($date);
-		/** @var IComment&MockObject $comment */
 		$comment = $this->newComment(42, 'user', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
@@ -355,7 +357,6 @@ class ChatControllerTest extends TestCase {
 		/** @var IComment&MockObject $comment */
 		$parent = $this->newComment(23, 'users', $this->userId . '2', $date, 'testMessage original');
 
-		/** @var IComment&MockObject $comment */
 		$comment = $this->newComment(42, 'users', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
@@ -513,7 +514,6 @@ class ChatControllerTest extends TestCase {
 		$this->timeFactory->expects($this->once())
 			->method('getDateTime')
 			->willReturn($date);
-		/** @var IComment&MockObject $comment */
 		$comment = $this->newComment(23, 'user', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
@@ -592,7 +592,6 @@ class ChatControllerTest extends TestCase {
 		$this->timeFactory->expects($this->once())
 			->method('getDateTime')
 			->willReturn($date);
-		/** @var IComment&MockObject $comment */
 		$comment = $this->newComment(64, 'guest', sha1('testSpreedSession'), $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
@@ -674,7 +673,6 @@ class ChatControllerTest extends TestCase {
 		$this->timeFactory->expects($this->once())
 			->method('getDateTime')
 			->willReturn($date);
-		/** @var IComment&MockObject $comment */
 		$comment = $this->newComment(42, 'user', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('addSystemMessage')
@@ -963,7 +961,7 @@ class ChatControllerTest extends TestCase {
 
 	public function testWaitForNewMessagesByUser(): void {
 		$testUser = $this->createMock(IUser::class);
-		$testUser->expects($this->any())
+		$testUser
 			->method('getUID')
 			->willReturn('testUser');
 
@@ -1044,7 +1042,7 @@ class ChatControllerTest extends TestCase {
 	public function testWaitForNewMessagesTimeoutExpired(): void {
 		$participant = $this->createMock(Participant::class);
 		$testUser = $this->createMock(IUser::class);
-		$testUser->expects($this->any())
+		$testUser
 			->method('getUID')
 			->willReturn('testUser');
 
@@ -1056,7 +1054,7 @@ class ChatControllerTest extends TestCase {
 			->with($this->room, $offset, $limit, $timeout, $testUser)
 			->willReturn([]);
 
-		$this->userManager->expects($this->any())
+		$this->userManager
 			->method('get')
 			->with('testUser')
 			->willReturn($testUser);
@@ -1072,7 +1070,7 @@ class ChatControllerTest extends TestCase {
 	public function testWaitForNewMessagesTimeoutTooLarge(): void {
 		$participant = $this->createMock(Participant::class);
 		$testUser = $this->createMock(IUser::class);
-		$testUser->expects($this->any())
+		$testUser
 			->method('getUID')
 			->willReturn('testUser');
 
@@ -1085,7 +1083,7 @@ class ChatControllerTest extends TestCase {
 			->with($this->room, $offset, $limit, $maximumTimeout, $testUser)
 			->willReturn([]);
 
-		$this->userManager->expects($this->any())
+		$this->userManager
 			->method('get')
 			->with('testUser')
 			->willReturn($testUser);
@@ -1129,7 +1127,7 @@ class ChatControllerTest extends TestCase {
 	#[DataProvider('dataMentions')]
 	public function testMentions(string $search, int $limit, array $result, array $expected): void {
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->any())
+		$this->room
 			->method('getId')
 			->willReturn(1234);
 

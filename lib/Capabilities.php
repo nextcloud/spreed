@@ -156,6 +156,7 @@ class Capabilities implements IPublicCapability {
 		'mutual-calendar-events',
 		'upcoming-reminders',
 		'sensitive-conversations',
+		'scheduled-messages',
 	];
 
 	public const LOCAL_CONFIGS = [
