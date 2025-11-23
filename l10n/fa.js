@@ -847,6 +847,7 @@ OC.L10N.register(
     "Post message" : "Post message",
     "Favorite" : "برگزیده",
     "Date:" : "تاریخ:",
+    "Note:" : "یادداشت: ",
     "Hide details" : "مخفی کردن جزئیات",
     "Show details" : "Show details",
     "Error while updating conversation name" : "Error while updating conversation name",
