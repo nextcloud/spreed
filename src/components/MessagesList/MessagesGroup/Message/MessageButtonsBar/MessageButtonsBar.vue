@@ -83,7 +83,7 @@
 					<NcActionSeparator />
 
 					<NcActionButton
-						v-if="supportReminders"
+						v-if="supportReminders && !isCurrentGuest"
 						key="set-reminder-menu"
 						is-menu
 						@click.stop="submenu = 'reminder'">
