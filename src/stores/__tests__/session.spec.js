@@ -7,7 +7,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ATTENDEE, PARTICIPANT } from '../../constants.ts'
 import vuexStore from '../../store/index.js'
-import { useGuestNameStore } from '../guestName.js'
+import { useGuestNameStore } from '../guestName.ts'
 import { useSessionStore } from '../session.ts'
 
 describe('sessionStore', () => {
