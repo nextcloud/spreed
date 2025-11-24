@@ -7,8 +7,21 @@ const browserslistConfig = require('@nextcloud/browserslist-config')
 const { defineConfig } = require('@rspack/cli')
 const { CssExtractRspackPlugin, LightningCssMinimizerRspackPlugin, DefinePlugin, IgnorePlugin, ProgressPlugin, SwcJsMinimizerRspackPlugin } = require('@rspack/core')
 const NodePolyfillPlugin = require('@rspack/plugin-node-polyfill')
+const browserslist = require('browserslist')
 const path = require('node:path')
 const { VueLoaderPlugin } = require('vue-loader')
+
+// browserslist-rs does not support baseline queries yet
+// Manually resolving the browserslist config to the list of browsers with minimal versions
+// See: https://github.com/browserslist/browserslist-rs/issues/40
+const browsers = browserslist(browserslistConfig)
+const minBrowserVersion = browsers
+	.map((str) => str.split(' '))
+	.reduce((minVersion, [browser, version]) => {
+		minVersion[browser] = minVersion[browser] ? Math.min(minVersion[browser], parseFloat(version)) : parseFloat(version)
+		return minVersion
+	}, {})
+const targets = Object.entries(minBrowserVersion).map(([browser, version]) => `${browser} >=${version}`).join(',')
 
 module.exports = defineConfig((env) => {
 	const appName = process.env.npm_package_name
@@ -94,12 +107,12 @@ module.exports = defineConfig((env) => {
 			minimizer: [
 				new SwcJsMinimizerRspackPlugin({
 					minimizerOptions: {
-						targets: browserslistConfig,
+						targets,
 					},
 				}),
 				new LightningCssMinimizerRspackPlugin({
 					minimizerOptions: {
-						targets: browserslistConfig,
+						targets,
 					},
 				}),
 			],
@@ -144,7 +157,7 @@ module.exports = defineConfig((env) => {
 							},
 						},
 						env: {
-							targets: browserslistConfig,
+							targets,
 						},
 					},
 					type: 'javascript/auto',
