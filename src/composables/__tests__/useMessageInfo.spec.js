@@ -9,7 +9,7 @@ import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { ATTENDEE, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { useActorStore } from '../../stores/actor.ts'
-import { useGuestNameStore } from '../../stores/guestName.js'
+import { useGuestNameStore } from '../../stores/guestName.ts'
 import { useConversationInfo } from '../useConversationInfo.ts'
 import { useMessageInfo } from '../useMessageInfo.ts'
 

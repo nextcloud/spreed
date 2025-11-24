@@ -56,7 +56,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconHeartOutline from 'vue-material-design-icons/HeartOutline.vue'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import { ATTENDEE, AVATAR } from '../../../../../constants.ts'
-import { useGuestNameStore } from '../../../../../stores/guestName.js'
+import { useGuestNameStore } from '../../../../../stores/guestName.ts'
 import { getDisplayNameWithFallback } from '../../../../../utils/getDisplayName.ts'
 
 export default {

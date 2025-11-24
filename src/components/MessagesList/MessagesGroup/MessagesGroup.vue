@@ -38,7 +38,7 @@ import MessageItem from './Message/MessageItem.vue'
 import { useMessageInfo } from '../../../composables/useMessageInfo.ts'
 import { ATTENDEE, AVATAR } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
-import { useGuestNameStore } from '../../../stores/guestName.js'
+import { useGuestNameStore } from '../../../stores/guestName.ts'
 
 export default {
 	name: 'MessagesGroup',
