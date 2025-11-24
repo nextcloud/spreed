@@ -989,6 +989,7 @@ OC.L10N.register(
     "Talk settings" : "Talk settings",
     "Users" : "کاربران",
     "Groups" : "گروه ها",
+    "Teams" : "تیم‌ها",
     "Open conversations" : "مکالمه جدید",
     "No search results" : "جستجو نتیجه‌ای نداشت",
     "Users and groups" : "Users and groups",
