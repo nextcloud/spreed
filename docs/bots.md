@@ -377,7 +377,6 @@ curl -X POST "${NC_URL}/ocs/v2.php/apps/spreed/api/v1/bot/${TOKEN}/message" \
   -d '{"message":"'"${MESSAGE}"'"}'
 ```
 
-
 ## Reacting to a chat message
 
 Bots can also react to a message. The same signature/verification method is applied.
