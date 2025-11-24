@@ -26,6 +26,7 @@ import { EventBus } from '../services/EventBus.ts'
 import { useChatStore } from '../stores/chat.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
+import { tryLocalizeSystemMessage } from '../utils/message.ts'
 import { useGetThreadId } from './useGetThreadId.ts'
 import { useGetToken } from './useGetToken.ts'
 
@@ -610,6 +611,22 @@ export function useGetMessagesProvider() {
 			// Guard: Message is for another conversation
 			// e.g., user switched conversation while messages were in-flight
 			return
+		}
+
+		if (message.systemMessage !== '') {
+			// Attempt to localize non-system messages
+			try {
+				// FIXME
+				console.log('[Chat Relay] New message received via signaling >>', message.message)
+
+				message.message = tryLocalizeSystemMessage(message)
+
+				// FIXME
+				console.log('[Chat Relay] New message localized fr signaling <<', message.message)
+			} catch (exception) {
+				tryPollNewMessages()
+				return
+			}
 		}
 
 		chatStore.processChatBlocks(token, [message], { mergeBy: chatStore.getLastKnownId(token) })
