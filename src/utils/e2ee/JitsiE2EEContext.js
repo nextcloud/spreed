@@ -6,8 +6,6 @@
  * the worker from Nextcloud.
  */
 
-import Worker from './JitsiEncryptionWorker.worker.js'
-
 // Flag to set on senders / receivers to avoid setting up the encryption transform
 // more than once.
 const kJitsiE2EE = Symbol('kJitsiE2EE')
@@ -32,7 +30,7 @@ export default class E2EEcontext {
 	 * @param [payload.sharedKey] - whether there is a uniques key shared amoung all participants.
 	 */
 	constructor({ sharedKey } = {}) {
-		this._worker = new Worker()
+		this._worker = new Worker(new URL('./JitsiEncryptionWorker.worker.js', import.meta.url))
 
 		this._worker.onerror = (e) => console.error(e)
 
