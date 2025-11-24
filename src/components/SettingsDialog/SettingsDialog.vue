@@ -126,15 +126,15 @@
 			v-if="!disableKeyboardShortcuts">
 			<NcHotkeyList>
 				<NcHotkey :label="t('spreed', 'Toggle full screen')" hotkey="F" />
-				<NcHotkey :label="t('spreed', 'Return to Home screen')" hotkey="Escape" />
+				<NcHotkey v-if="!isGuest" :label="t('spreed', 'Return to Home screen')" hotkey="Escape" />
 				<!-- FIXME Overriden by Unified Search -->
-				<NcHotkey :label="t('spreed', 'Search')" hotkey="Control F" />
+				<NcHotkey v-if="!isGuest" :label="t('spreed', 'Search')" hotkey="Control F" />
 			</NcHotkeyList>
 
 			<NcHotkeyList :label="t('spreed', 'Shortcuts while in a chat')">
 				<NcHotkey :label="t('spreed', 'Focus the chat input')" hotkey="C" />
 				<NcHotkey :label="t('spreed', 'Unfocus the chat input to use shortcuts')" hotkey="Escape" />
-				<NcHotkey :label="t('spreed', 'Edit your last message')" hotkey="Control ArrowUp" />
+				<NcHotkey v-if="!isGuest" :label="t('spreed', 'Edit your last message')" hotkey="Control ArrowUp" />
 			</NcHotkeyList>
 
 			<NcHotkeyList :label="t('spreed', 'Shortcuts while in a call')">
