@@ -76,7 +76,7 @@
 <script>
 import { n, t } from '@nextcloud/l10n'
 import debounce from 'debounce'
-import { computed } from 'vue'
+import { computed, provide } from 'vue'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
@@ -89,9 +89,11 @@ import { useDocumentVisibility } from '../../composables/useDocumentVisibility.t
 import { useGetMessages } from '../../composables/useGetMessages.ts'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { ATTENDEE, CONVERSATION } from '../../constants.ts'
+import { CHAT_STYLE } from '../../constants.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatStore } from '../../stores/chat.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
+import { useSettingsStore } from '../../stores/settings.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
@@ -157,6 +159,9 @@ export default {
 		const isDocumentVisible = useDocumentVisibility()
 		const isChatVisible = computed(() => isDocumentVisible.value && props.isVisible)
 		const threadId = useGetThreadId()
+		const settingsStore = useSettingsStore()
+		const isSplitViewEnabled = computed(() => settingsStore.chatStyle === CHAT_STYLE.SPLIT)
+		provide('messagesList:isSplitViewEnabled', isSplitViewEnabled)
 
 		return {
 			messagesGroupComponent,

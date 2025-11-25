@@ -61,9 +61,8 @@
 					:label="t('spreed', 'Compact conversations list')"
 					:disabled="appearanceLoading"
 					@update:model-value="toggleConversationsListStyle" />
-				<!-- FIXME: remove v-if after implementing split view -->
 				<NcFormBoxSwitch
-					v-if="false"
+					v-if="supportChatStyle"
 					:model-value="chatSplitViewEnabled"
 					:label="t('spreed', 'Show your chat in split view')"
 					:disabled="chatAppearanceLoading"
@@ -184,6 +183,7 @@ const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !==
 const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
 const supportConversationsListStyle = getTalkConfig('local', 'conversations', 'list-style') !== undefined
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
+const supportChatStyle = getTalkConfig('local', 'chat', 'style') !== undefined
 
 export default {
 	name: 'SettingsDialog',
@@ -219,6 +219,7 @@ export default {
 			supportStartWithoutMedia,
 			supportConversationsListStyle,
 			supportDefaultBlurVirtualBackground,
+			supportChatStyle,
 			actorStore,
 		}
 	},
