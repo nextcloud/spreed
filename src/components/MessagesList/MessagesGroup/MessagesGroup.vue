@@ -26,6 +26,10 @@
 				<MessageItem
 					v-for="(message, index) of messages"
 					:key="message.id"
+					:class="{
+						incoming: !isSelfActor && isSplitViewEnabled,
+						outgoing: isSelfActor && isSplitViewEnabled,
+					}"
 					:message="message"
 					:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
 					:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId"

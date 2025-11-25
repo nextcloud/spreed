@@ -22,8 +22,6 @@
 		<div
 			:class="{
 				'normal-message-body': !isDeletedMessage && !isSplitViewEnabled,
-				outgoing: actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled,
-				incoming: !actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled,
 			}"
 			class="message-body">
 			<MessageBody
@@ -49,8 +47,6 @@
 		<div
 			class="message-body__scroll"
 			:class="{
-				outgoing: actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled,
-				incoming: !actorStore.checkIfSelfIsActor(message) && isSplitViewEnabled,
 				'bottom-side': isSplitViewEnabled && !isShortSimpleMessage && (isSmallMobile || isSidebar),
 				overlay: isSplitViewEnabled && !isShortSimpleMessage && isReactionsMenuOpen && !(isSmallMobile || isSidebar),
 			}">
@@ -438,14 +434,24 @@ export default {
 		background-color: var(--color-background-hover);
 	}
 
+	&:not(.message--sided) {
+		.message-body__scroll {
+			height: 100%;
+			top: 0;
+			inset-inline-end: 0;
+			padding-top: var(--default-grid-baseline);
+			padding-inline-end: var(--default-grid-baseline);
+		}
+	}
+
 	// BEGIN Split view
-	&:hover .message-body.outgoing,
-	&--hovered .message-body.outgoing {
+	&.outgoing:hover .message-body,
+	&--hovered .message-body {
 		background-color: var(--color-primary-light-hover);
 	}
 
-	&:hover .message-body.incoming,
-	&--hovered .message-body.incoming {
+	&.incoming:hover .message-body,
+	&--hovered .message-body {
 		background-color: var(--color-primary-element-extra-light-hover);
 	}
 
@@ -465,15 +471,50 @@ export default {
 			padding-block-end: var(--default-grid-baseline);
 		}
 
-		&:has(.outgoing) {
+		&.outgoing {
 			align-self: flex-end;
+
 			.message-buttons-bar:not(.outlined) {
 				flex-direction: row-reverse;
 			}
+
+			.message-body {
+				background-color: var(--color-primary-light);
+				border-radius: var(--border-radius-large)  var(--border-radius-small) var(--border-radius-large) var(--border-radius-large);
+				border: 1px solid var(--color-primary-element-light-hover);
+				border-width: 1px 1px 2px 1px;
+
+				&__scroll {
+					inset-inline-end: 100%;
+					top: calc(50% - var(--default-clickable-area) / 2);
+					padding-inline: var(--default-grid-baseline);
+
+					&.overlay {
+						inset-inline-end: max(100% - var(--default-clickable-area) * 6, (100% - var(--default-clickable-area) * 6) * -1);
+					}
+				}
+			}
 		}
 
-		&:has(.incoming) {
+		&.incoming {
 			align-self: flex-start;
+
+			.message-body {
+				background-color: var(--color-primary-element-extra-light);
+				border-radius: var(--border-radius-small)  var(--border-radius-large) var(--border-radius-large) var(--border-radius-large);
+				border: 1px solid var(--color-primary-element-light-hover);
+				border-width: 1px 1px 2px 1px;
+
+				&__scroll {
+					inset-inline-start: 100%;
+					top: calc(50% - var(--default-clickable-area) / 2);
+					padding-inline: var(--default-grid-baseline);
+
+					&.overlay {
+						inset-inline-start: max(100% - var(--default-clickable-area) * 6, (100% - var(--default-clickable-area) * 6) * -1);
+					}
+				}
+			}
 		}
 
 	}
@@ -490,51 +531,8 @@ export default {
 	&__scroll {
 		position: absolute;
 		width: fit-content;
-
-		&:not(.outgoing):not(.incoming) {
-			height: 100%;
-			top: 0;
-			inset-inline-end: 0;
-			padding-top: var(--default-grid-baseline);
-			padding-inline-end: var(--default-grid-baseline);
-		}
 	}
 
-	// BEGIN Split view
-	&.outgoing {
-		background-color: var(--color-primary-light);
-		border-radius: var(--border-radius-large)  var(--border-radius-small) var(--border-radius-large) var(--border-radius-large);
-		border: 1px solid var(--color-primary-element-light-hover);
-		border-width: 1px 1px 2px 1px;
-	}
-
-	&__scroll.outgoing {
-		inset-inline-end: 100%;
-		top: calc(50% - var(--default-clickable-area) / 2);
-		padding-inline: var(--default-grid-baseline);
-
-		&.overlay {
-			inset-inline-end: max(100% - var(--default-clickable-area) * 6, (100% - var(--default-clickable-area) * 6) * -1);
-		}
-	}
-
-	&.incoming {
-		background-color: var(--color-primary-element-extra-light);
-		border-radius: var(--border-radius-small)  var(--border-radius-large) var(--border-radius-large) var(--border-radius-large);
-		border: 1px solid var(--color-primary-element-light-hover);
-		border-width: 1px 1px 2px 1px;
-	}
-
-	&__scroll.incoming {
-		inset-inline-start: 100%;
-		top: calc(50% - var(--default-clickable-area) / 2);
-		padding-inline: var(--default-grid-baseline);
-
-		&.overlay {
-			inset-inline-start: max(100% - var(--default-clickable-area) * 6, (100% - var(--default-clickable-area) * 6) * -1);
-		}
-	}
-	// END Split view
 }
 
 .message--highlighted {
