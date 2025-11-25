@@ -83,6 +83,8 @@ describe('MessageItem.vue', () => {
 				messageType: MESSAGE.TYPE.COMMENT,
 				reactions: [],
 			},
+
+			isSelfActor: true,
 		}
 	})
 
@@ -605,6 +607,7 @@ describe('MessageItem.vue', () => {
 			conversationProps.lastCommonReadMessage = 123
 			messageProps.message.actorId = 'user-id-2'
 			messageProps.message.actorType = ATTENDEE.ACTOR_TYPE.USERS
+			messageProps.isSelfActor = false
 			const wrapper = mountMessage(messageProps)
 
 			expect(wrapper.findComponent(IconCheck).exists()).toBe(false)

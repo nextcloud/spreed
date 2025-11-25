@@ -15,6 +15,10 @@ import storeConfig from '../../../store/storeConfig.js'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useGuestNameStore } from '../../../stores/guestName.ts'
 
+vi.mock('@nextcloud/vue/composables/useIsMobile', () => ({
+	useIsMobile: vi.fn(() => false),
+}))
+
 describe('MessagesGroup.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let store
@@ -89,7 +93,12 @@ describe('MessagesGroup.vue', () => {
 
 		// Act
 		const wrapper = shallowMount(MessagesGroup, {
-			global: { plugins: [store] },
+			global: {
+				plugins: [store],
+				provide: {
+					'messagesList:isSplitViewEnabled': false,
+				},
+			},
 			props: {
 				token: TOKEN,
 				previousMessageId: 90,
