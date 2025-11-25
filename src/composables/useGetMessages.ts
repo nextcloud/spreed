@@ -57,7 +57,7 @@ function isAxiosErrorResponse(exception: unknown): exception is AxiosError<strin
 let pollingTimeout: NodeJS.Timeout | undefined
 let expirationInterval: NodeJS.Timeout | undefined
 let pollingErrorTimeout = 1_000
-let chatRelaySupported = false
+let chatRelaySupported: boolean | null = null
 
 /**
  * Composable to provide control logic for fetching messages list
@@ -78,7 +78,6 @@ export function useGetMessagesProvider() {
 	const loadingNewMessages = ref(false)
 	const isInitialisingMessages = ref(true)
 	const stopFetchingOldMessages = ref(false)
-	let chatRelayEnabled = false
 
 	/**
 	 * Returns whether the current participant is a participant of current conversation.
@@ -149,14 +148,13 @@ export function useGetMessagesProvider() {
 			}
 			if (oldToken && oldToken !== newToken) {
 				store.dispatch('cancelPollNewMessages', { requestId: oldToken })
-				stopChatRelay()
+				chatRelaySupported = null
 			}
 
 			if (newToken && canGetMessages) {
 				handleStartGettingMessagesPreconditions(newToken)
 			} else {
 				store.dispatch('cancelPollNewMessages', { requestId: newToken })
-				stopChatRelay()
 			}
 
 			/** Remove expired messages when joining a room */
@@ -169,8 +167,11 @@ export function useGetMessagesProvider() {
 	subscribe('networkOnline', handleNetworkOnline)
 	EventBus.on('route-change', onRouteChange)
 	EventBus.on('set-context-id-to-bottom', setContextIdToBottom)
-	EventBus.on('signaling-supported-features', checkChatRelaySupport)
-	EventBus.on('should-refresh-chat-messages', tryAbortChatRelay)
+	if (experimentalChatRelay) {
+		EventBus.on('signaling-message-received', addMessageFromChatRelay)
+		EventBus.on('signaling-supported-features', checkChatRelaySupport)
+		EventBus.on('should-refresh-chat-messages', tryPollNewMessages)
+	}
 
 	/** Every 30 seconds we remove expired messages from the store */
 	expirationInterval = setInterval(() => {
@@ -184,10 +185,9 @@ export function useGetMessagesProvider() {
 		EventBus.off('set-context-id-to-bottom', setContextIdToBottom)
 		EventBus.off('signaling-message-received', addMessageFromChatRelay)
 		EventBus.off('signaling-supported-features', checkChatRelaySupport)
-		EventBus.off('should-refresh-chat-messages', tryAbortChatRelay)
+		EventBus.off('should-refresh-chat-messages', tryPollNewMessages)
 
 		store.dispatch('cancelPollNewMessages', { requestId: currentToken.value })
-		stopChatRelay()
 		clearInterval(pollingTimeout)
 		clearInterval(expirationInterval)
 	})
@@ -208,7 +208,6 @@ export function useGetMessagesProvider() {
 		if (currentToken.value) {
 			console.debug('Canceling message request as we are offline')
 			store.dispatch('cancelPollNewMessages', { requestId: currentToken.value })
-			stopChatRelay()
 		}
 	}
 
@@ -280,7 +279,7 @@ export function useGetMessagesProvider() {
 				messageId = nearestContextMessageId
 			}
 
-			if (messageId === firstContextMessageId) {
+			if (messageId === firstContextMessageId || !chatStore.hasEnoughMessages(token, { messageId, threadId })) {
 				// message is the first one in the block, try to get some messages above
 				isInitialisingMessages.value = true
 				await getOldMessages(token, false, { messageId, threadId })
@@ -349,8 +348,22 @@ export function useGetMessagesProvider() {
 
 		isInitialisingMessages.value = false
 
-		// Once the history is received, starts looking for new messages.
-		await pollNewMessages(token)
+		if (!experimentalChatRelay) {
+			pollNewMessages(token)
+		} else if (chatRelaySupported !== null) {
+			// Case: chat relay is confirmed to be supported / not supported from signaling hello message,
+			// but polling was not immediately triggered (e.g, when received while context request is ongoing)
+			pollNewMessages(token)
+		} else {
+			// Fallback polling in case signaling does not work and we will never receive Hello message
+			// chatRelaySupported is still null (signaling hello was not received yet)
+			pollingTimeout = setTimeout(() => {
+				if (chatRelaySupported) {
+					return
+				}
+				pollNewMessages(token)
+			}, 30_000)
+		}
 	}
 
 	/**
@@ -496,10 +509,6 @@ export function useGetMessagesProvider() {
 	 * @param token token of conversation where a method was called
 	 */
 	async function pollNewMessages(token: string) {
-		if (chatRelayEnabled) {
-			// Stop polling if chat relay is supported
-			return
-		}
 		// Check that the token has not changed
 		if (currentToken.value !== token) {
 			console.debug(`token has changed to ${currentToken.value}, breaking the loop for ${token}`)
@@ -514,10 +523,10 @@ export function useGetMessagesProvider() {
 				token,
 				lastKnownMessageId: chatStore.getLastKnownId(token),
 				requestId: token,
+				timeout: chatRelaySupported ? 0 : undefined,
 			})
 			pollingErrorTimeout = 1_000
 			debugTimer.end(`${token} | long polling`, 'status 200')
-			tryChatRelay()
 		} catch (exception) {
 			if (Axios.isCancel(exception)) {
 				debugTimer.end(`${token} | long polling`, 'cancelled')
@@ -531,7 +540,9 @@ export function useGetMessagesProvider() {
 				// This is not an error, so reset error timeout and poll again
 				pollingErrorTimeout = 1_000
 				clearTimeout(pollingTimeout)
-				tryChatRelay({ force: true })
+				if (chatRelaySupported) {
+					return
+				}
 				pollingTimeout = setTimeout(() => {
 					pollNewMessages(token)
 				}, 500)
@@ -547,6 +558,9 @@ export function useGetMessagesProvider() {
 			console.debug('Error happened while getting chat messages. Trying again in %d seconds', pollingErrorTimeout / 1_000, exception)
 
 			clearTimeout(pollingTimeout)
+			if (chatRelaySupported) {
+				return
+			}
 			pollingTimeout = setTimeout(() => {
 				pollNewMessages(token)
 			}, pollingErrorTimeout)
@@ -554,21 +568,23 @@ export function useGetMessagesProvider() {
 		}
 
 		clearTimeout(pollingTimeout)
+		if (chatRelaySupported) {
+			return
+		}
 		pollingTimeout = setTimeout(() => {
 			pollNewMessages(token)
 		}, 500)
 	}
 
 	/**
-	 * Try to start chat relay
 	 *
-	 * @param options
-	 * @param options.force - to skip end reached check when it is guaranteed
 	 */
-	function tryChatRelay(options?: { force: boolean }) {
-		if (chatRelaySupported && (isChatEndReached.value || options?.force)) {
-			startChatRelay()
+	function tryPollNewMessages() {
+		if (!chatRelaySupported) {
+			// the event is only relevant when chat relay is supported
+			return
 		}
+		pollNewMessages(currentToken.value)
 	}
 
 	/**
@@ -576,25 +592,20 @@ export function useGetMessagesProvider() {
 	 *
 	 * @param features
 	 */
-	function checkChatRelaySupport(features: string[]) {
-		if (experimentalChatRelay && features.includes('chat-relay')) {
+	async function checkChatRelaySupport(features: string[]) {
+		if (features.includes('chat-relay')) {
 			chatRelaySupported = true
-			tryChatRelay()
 		} else {
 			chatRelaySupported = false
 		}
-	}
 
-	/**
-	 * Initialize chat relay support by stopping polling and listening to chat relay messages
-	 */
-	function startChatRelay() {
-		if (currentToken.value) {
-			// it might have been set already, ensure we cancel it
-			store.dispatch('cancelPollNewMessages', { requestId: currentToken.value })
+		if (!pollingTimeout) {
+			// Context request is still ongoing
+			return
 		}
-		chatRelayEnabled = true
-		EventBus.on('signaling-message-received', addMessageFromChatRelay)
+		// Once the history and Hello signaling message is received, starts looking for new messages.
+		clearTimeout(pollingTimeout)
+		await pollNewMessages(currentToken.value)
 	}
 
 	/**
@@ -605,6 +616,11 @@ export function useGetMessagesProvider() {
 	 * @param payload.message
 	 */
 	function addMessageFromChatRelay(payload: { token: string, message: ChatMessage }) {
+		if (!chatRelaySupported) {
+			// chat relay is not supported, ignore the message
+			return
+		}
+
 		const { token, message } = payload
 		if (token !== currentToken.value) {
 			// Guard: Message is for another conversation
@@ -614,26 +630,6 @@ export function useGetMessagesProvider() {
 
 		chatStore.processChatBlocks(token, [message], { mergeBy: chatStore.getLastKnownId(token) })
 		store.dispatch('processMessage', { token, message })
-	}
-
-	/**
-	 * Stop chat relay and remove listener
-	 */
-	function stopChatRelay() {
-		chatRelayEnabled = false
-		EventBus.off('signaling-message-received', addMessageFromChatRelay)
-	}
-
-	/**
-	 * This is needed when something went wrong after starting chat relay
-	 * and the server is no longer sending us messages events
-	 * so we need to abort it to continue getting messages via polling
-	 */
-	function tryAbortChatRelay() {
-		if (chatRelayEnabled && chatRelaySupported) {
-			stopChatRelay()
-			pollNewMessages(currentToken.value)
-		}
 	}
 
 	provide(GET_MESSAGES_CONTEXT_KEY, {
