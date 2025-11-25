@@ -33,7 +33,7 @@
 					:message="message"
 					:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
 					:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId"
-					:is-split-view-enabled />
+					:is-self-actor />
 			</ul>
 		</div>
 	</li>
@@ -46,10 +46,9 @@ import { computed, inject, toRefs } from 'vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import MessageItem from './Message/MessageItem.vue'
 import { useMessageInfo } from '../../../composables/useMessageInfo.ts'
-import { ATTENDEE, AVATAR, CHAT, CHAT_STYLE } from '../../../constants.ts'
+import { ATTENDEE, AVATAR, CHAT } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useGuestNameStore } from '../../../stores/guestName.ts'
-import { useSettingsStore } from '../../../stores/settings.ts'
 
 export default {
 	name: 'MessagesGroup',
@@ -103,6 +102,8 @@ export default {
 				.filter((value) => value).join(' ')
 		})
 
+		const isSplitViewEnabled = inject('messagesList:isSplitViewEnabled', true)
+
 		return {
 			AVATAR,
 			guestNameStore: useGuestNameStore(),
@@ -111,7 +112,7 @@ export default {
 			actorInfo,
 			isMobile: useIsMobile(),
 			isSidebar,
-			settingsStore: useSettingsStore(),
+			isSplitViewEnabled,
 		}
 	},
 
@@ -132,10 +133,6 @@ export default {
 
 		isSelfActor() {
 			return this.actorStore.checkIfSelfIsActor({ actorId: this.actorId, actorType: this.actorType })
-		},
-
-		isSplitViewEnabled() {
-			return this.settingsStore.chatStyle === CHAT_STYLE.SPLIT
 		},
 
 		showAuthor() {

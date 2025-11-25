@@ -8,7 +8,7 @@
 		v-if="reactionsCount && reactionsSorted"
 		class="reactions-wrapper"
 		:class="{
-			light: isSplitViewEnabled && isOwnMessage,
+			light: isSplitViewEnabled && isSelfActor,
 			compact: isSplitViewEnabled,
 		}">
 		<NcPopover
@@ -92,6 +92,7 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { n, t } from '@nextcloud/l10n'
+import { inject } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
@@ -145,7 +146,7 @@ export default {
 			default: false,
 		},
 
-		isSplitViewEnabled: {
+		isSelfActor: {
 			type: Boolean,
 			default: false,
 		},
@@ -154,10 +155,12 @@ export default {
 	emits: ['emojiPickerToggled'],
 
 	setup() {
+		const isSplitViewEnabled = inject('messagesList:isSplitViewEnabled', true)
 		return {
 			guestNameStore: useGuestNameStore(),
 			reactionsStore: useReactionsStore(),
 			actorStore: useActorStore(),
+			isSplitViewEnabled,
 		}
 	},
 
@@ -204,10 +207,6 @@ export default {
 				.map(([key, value]) => [key, value.length]))
 			return this.hasReactionsLoaded
 				&& JSON.stringify(this.plainReactions) !== JSON.stringify(detailedReactionsSimplified)
-		},
-
-		isOwnMessage() {
-			return this.actorStore.checkIfSelfIsActor(this.$store.getters.message(this.token, this.id))
 		},
 	},
 

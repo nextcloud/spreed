@@ -185,13 +185,11 @@ import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.ts'
 import { CONVERSATION, MESSAGE } from '../../../../../constants.ts'
-import { CHAT_STYLE } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
-import { useSettingsStore } from '../../../../../stores/settings.ts'
 import { formatDateTime } from '../../../../../utils/formattedTime.ts'
 import { parseMentions, parseSpecialSymbols } from '../../../../../utils/textParse.ts'
 
@@ -249,9 +247,17 @@ export default {
 			type: Object,
 			default: null,
 		},
-	},
 
-	emits: ['update:isShortSimpleMessage'],
+		isShortSimpleMessage: {
+			type: Boolean,
+			default: false,
+		},
+
+		isSelfActor: {
+			type: Boolean,
+			default: false,
+		},
+	},
 
 	setup(props) {
 		const { message } = toRefs(props)
@@ -261,6 +267,7 @@ export default {
 		} = useMessageInfo(message)
 		const threadId = useGetThreadId()
 		const isSidebar = inject('chatView:isSidebar', false)
+		const isSplitViewEnabled = inject('messagesList:isSplitViewEnabled', true)
 
 		return {
 			isInCall: useIsInCall(),
@@ -271,7 +278,7 @@ export default {
 			isFileShare,
 			isSidebar,
 			actorStore: useActorStore(),
-			settingsStore: useSettingsStore(),
+			isSplitViewEnabled,
 		}
 	},
 
@@ -438,16 +445,7 @@ export default {
 		},
 
 		isOwnMessage() {
-			return this.actorStore.checkIfSelfIsActor(this.message) && !this.isSystemMessage
-		},
-
-		isShortSimpleMessage() {
-			return this.message.message.length <= 20 // FIXME: magic number
-				&& !this.message.parent
-				&& !this.isThreadStarterMessage
-				&& this.message.messageParameters.length === 0
-				&& Object.keys(this.message.reactions).length === 0
-				&& this.message.message.split('\n').length === 1
+			return this.isSelfActor && !this.isSystemMessage
 		},
 
 		isEditorDifferentThenAuthor() {
@@ -456,23 +454,11 @@ export default {
 				&& this.message.lastEditActorDisplayName !== this.message.actorDisplayName
 				&& this.message.lastEditActorType !== this.message.actorType
 		},
-
-		isSplitViewEnabled() {
-			return this.settingsStore.chatStyle === CHAT_STYLE.SPLIT
-		},
 	},
 
 	watch: {
 		showJoinCallButton() {
 			EventBus.emit('scroll-chat-to-bottom', { smooth: true })
-		},
-
-		isShortSimpleMessage: {
-			handler(newValue) {
-				this.$emit('update:isShortSimpleMessage', newValue)
-			},
-
-			immediate: true,
 		},
 	},
 

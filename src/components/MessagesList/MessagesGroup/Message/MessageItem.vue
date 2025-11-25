@@ -30,15 +30,16 @@
 				:has-call="conversation.hasCall"
 				:message="message"
 				:read-info="readInfo"
-				@update:is-short-simple-message="isShortSimpleMessage = $event">
+				:is-short-simple-message
+				:is-self-actor>
 				<!-- reactions buttons and popover with details -->
 				<ReactionsWrapper
 					v-if="Object.keys(message.reactions).length"
 					:id="message.id"
 					:token="message.token"
 					:can-react="canReact"
-					:is-split-view-enabled
 					:show-controls="isHovered || isFollowUpEmojiPickerOpen"
+					:is-self-actor
 					@emoji-picker-toggled="toggleFollowUpEmojiPicker" />
 			</MessageBody>
 		</div>
@@ -117,6 +118,7 @@ import MentionChip from './MessagePart/MentionChip.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
 import PollCard from './MessagePart/PollCard.vue'
 import ReactionsWrapper from './MessagePart/ReactionsWrapper.vue'
+import { useGetThreadId } from '../../../../composables/useGetThreadId.ts'
 import { CONVERSATION, MENTION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
@@ -159,7 +161,7 @@ export default {
 			default: 0,
 		},
 
-		isSplitViewEnabled: {
+		isSelfActor: {
 			type: Boolean,
 			default: false,
 		},
@@ -170,6 +172,8 @@ export default {
 			// Fallback for the desktop client when connecting to Talk 17
 			?? getTalkConfig(props.token, 'chat', 'translations')?.length > 0
 		const isSidebar = inject('chatView:isSidebar', false)
+		const threadId = useGetThreadId()
+		const isSplitViewEnabled = inject('messagesList:isSplitViewEnabled', true)
 
 		return {
 			isTranslationAvailable,
@@ -177,6 +181,8 @@ export default {
 			actorStore: useActorStore(),
 			isSmallMobile: useIsSmallMobile(),
 			isSidebar,
+			isSplitViewEnabled,
+			threadId,
 		}
 	},
 
@@ -195,7 +201,6 @@ export default {
 			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
 			isTranslateDialogOpen: false,
-			isShortSimpleMessage: ref(false),
 		}
 	},
 
@@ -244,7 +249,7 @@ export default {
 		showSentIcon() {
 			return !this.isTemporary
 				&& !this.isDeleting
-				&& this.actorStore.checkIfSelfIsActor(this.message)
+				&& this.isSelfActor
 				&& !this.isDeletedMessage
 		},
 
@@ -337,6 +342,24 @@ export default {
 		buttonsBarOutlined() {
 			return !this.isSplitViewEnabled
 				|| (this.isReactionsMenuOpen || this.isSmallMobile || this.isSidebar)
+		},
+
+		isThreadStarterMessage() {
+			if (this.threadId || !this.message.isThread) {
+				return false
+			}
+
+			return this.message.id === this.message.threadId
+				|| (this.message.threadTitle && this.message.id.toString().startsWith('temp-'))
+		},
+
+		isShortSimpleMessage() {
+			return this.message.message.length <= 20 // FIXME: magic number
+				&& !this.message.parent
+				&& !this.isThreadStarterMessage
+				&& this.message.messageParameters.length === 0
+				&& Object.keys(this.message.reactions).length === 0
+				&& this.message.message.split('\n').length === 1
 		},
 	},
 
