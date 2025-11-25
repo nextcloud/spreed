@@ -516,6 +516,8 @@ export default {
 
 		canEditMessage() {
 			return hasTalkFeature(this.token, 'edit-messages')
+				&& !this.isReadOnly && !this.noChatPermission
+				&& !this.actorStore.isActorGuest
 		},
 
 		supportThreads() {
