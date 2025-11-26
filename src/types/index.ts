@@ -226,6 +226,15 @@ export type JoinRoomFullResponse = {
 export type fetchPeersResponse = ApiResponse<operations['call-get-peers-for-call']['responses'][200]['content']['application/json']>
 export type callSIPDialOutResponse = ApiResponse<operations['call-sip-dial-out']['responses'][201]['content']['application/json']>
 
+export type WebRtc = {
+	on(event: string, handler: () => void): void
+	off(event: string, handler: () => void): void
+	emit(event: string): void
+
+	sendDataChannelToAll(channel: string, message: string, payload?: string | object): void
+	sendToAll(message: string, payload: object): void
+}
+
 // Participants
 export type ParticipantStatus = {
 	status?: string | null
