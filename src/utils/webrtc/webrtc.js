@@ -711,7 +711,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		webrtc.joinCall(token, mediaConstraints)
 	}
 
-	const sendDataChannelToAll = function(channel, message, payload) {
+	webrtc.sendDataChannelToAll = function(channel, message, payload) {
 		// If running with MCU, the message must be sent through the
 		// publishing peer and will be distributed by the MCU to subscribers.
 		if (signaling.hasFeature && signaling.hasFeature('mcu')) {
@@ -1617,24 +1617,24 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 
 	// Send the speaking status events via data channel
 	webrtc.on('speaking', function() {
-		sendDataChannelToAll('status', 'speaking')
+		webrtc.sendDataChannelToAll('status', 'speaking')
 	})
 	webrtc.on('stoppedSpeaking', function() {
-		sendDataChannelToAll('status', 'stoppedSpeaking')
+		webrtc.sendDataChannelToAll('status', 'stoppedSpeaking')
 	})
 
 	// Send the audio on and off events via data channel
 	webrtc.on('audioOn', function() {
-		sendDataChannelToAll('status', 'audioOn')
+		webrtc.sendDataChannelToAll('status', 'audioOn')
 	})
 	webrtc.on('audioOff', function() {
-		sendDataChannelToAll('status', 'audioOff')
+		webrtc.sendDataChannelToAll('status', 'audioOff')
 	})
 	webrtc.on('videoOn', function() {
-		sendDataChannelToAll('status', 'videoOn')
+		webrtc.sendDataChannelToAll('status', 'videoOn')
 	})
 	webrtc.on('videoOff', function() {
-		sendDataChannelToAll('status', 'videoOff')
+		webrtc.sendDataChannelToAll('status', 'videoOff')
 	})
 
 	// Send the nick changed event via data channel and signaling
@@ -1657,7 +1657,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			}
 		}
 
-		sendDataChannelToAll('status', 'nickChanged', payload)
+		webrtc.sendDataChannelToAll('status', 'nickChanged', payload)
 
 		webrtc.sendToAll('nickChanged', { name })
 	})
