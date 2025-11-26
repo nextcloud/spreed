@@ -335,32 +335,10 @@ Bots can also send message. On the sending process the same signature/verificati
 ```bash
 #!/bin/bash
 
-# Required environment variables:
-#   NC_URL: The URL of the Nextcloud instance (e.g., "https://nextcloud.example.com")
-#   TOKEN: The token of the conversation
-#   SECRET: Shared secret that is specified when installing a bot
-#   MESSAGE: The message to be sent
-
-# Check if required variables are set
-if [ -z "$NC_URL" ]; then
-    echo "Error: NC_URL is not set."
-    exit 1
-fi
-
-if [ -z "$TOKEN" ]; then
-    echo "Error: TOKEN is not set."
-    exit 1
-fi
-
-if [ -z "$SECRET" ]; then
-    echo "Error: SECRET is not set."
-    exit 1
-fi
-
-if [ -z "$MESSAGE" ]; then
-    echo "Error: MESSAGE is not set."
-    exit 1
-fi
+NC_URL="https://nextcloud.example.tld/" #  The URL of the Nextcloud instance (e.g., "https://nextcloud.example.com")
+TOKEN="12345678" # The token of the conversation
+SECRET="53CR3T" # Shared secret that is specified when installing a bot
+MESSAGE=$1 # Pass the message as first argument
 
 # Generate a random header and signature
 RANDOM_HEADER=$(openssl rand -hex 32)
