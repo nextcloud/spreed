@@ -16,6 +16,9 @@ import { useActorStore } from '../../stores/actor.ts'
 import pinia from '../../stores/pinia.ts'
 import { useTokenStore } from '../../stores/token.ts'
 import { Sounds } from '../sounds.js'
+import {
+	LocalStateBroadcaster,
+} from './LocalStateBroadcaster.ts'
 import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
 
 let webrtc
@@ -37,6 +40,8 @@ let showedTURNWarning = false
 let sendCurrentStateWithRepetitionTimeout = null
 const actorStore = useActorStore(pinia)
 const tokenStore = useTokenStore(pinia)
+
+let localStateBroadcaster
 
 /**
  * @param {Array} a Source object
@@ -586,6 +591,8 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		// takes too long to return and the associated signaling message
 		// is received before the "join call" request ends.
 		localUserInCall = true
+
+		localStateBroadcaster = new LocalStateBroadcaster(webrtc)
 	})
 	signaling.on('beforeLeaveCall', function(token, reconnect) {
 		// The user needs to be set as not in the call before the request is
@@ -593,6 +600,9 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		// takes too long to return and the associated signaling message
 		// is received before the "leave call" request ends.
 		localUserInCall = false
+
+		localStateBroadcaster.destroy()
+		localStateBroadcaster = null
 	})
 	signaling.on('leaveCall', function(token, reconnect) {
 		// When the MCU is used and there is a connection error the call is
@@ -1617,28 +1627,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			}
 			signaling.emit('message', message)
 		}
-	})
-
-	// Send the speaking status events via data channel
-	webrtc.on('speaking', function() {
-		webrtc.sendDataChannelToAll('status', 'speaking')
-	})
-	webrtc.on('stoppedSpeaking', function() {
-		webrtc.sendDataChannelToAll('status', 'stoppedSpeaking')
-	})
-
-	// Send the audio on and off events via data channel
-	webrtc.on('audioOn', function() {
-		webrtc.sendDataChannelToAll('status', 'audioOn')
-	})
-	webrtc.on('audioOff', function() {
-		webrtc.sendDataChannelToAll('status', 'audioOff')
-	})
-	webrtc.on('videoOn', function() {
-		webrtc.sendDataChannelToAll('status', 'videoOn')
-	})
-	webrtc.on('videoOff', function() {
-		webrtc.sendDataChannelToAll('status', 'videoOff')
 	})
 
 	// Send the nick changed event via data channel and signaling
