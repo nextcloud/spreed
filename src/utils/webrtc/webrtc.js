@@ -180,19 +180,23 @@ function checkStartPublishOwnPeer(signaling) {
  */
 function sendCurrentMediaState() {
 	if (!webrtc.webrtc.isVideoEnabled()) {
-		webrtc.webrtc.emit('videoOff')
+		webrtc.sendDataChannelToAll('status', 'videoOff')
+		webrtc.sendToAll('mute', { name: 'video' })
 	} else {
-		webrtc.webrtc.emit('videoOn')
+		webrtc.sendDataChannelToAll('status', 'videoOn')
+		webrtc.sendToAll('unmute', { name: 'video' })
 	}
 	if (!webrtc.webrtc.isAudioEnabled()) {
-		webrtc.webrtc.emit('audioOff')
+		webrtc.sendDataChannelToAll('status', 'audioOff')
+		webrtc.sendToAll('mute', { name: 'audio' })
 	} else {
-		webrtc.webrtc.emit('audioOn')
+		webrtc.sendDataChannelToAll('status', 'audioOn')
+		webrtc.sendToAll('unmute', { name: 'audio' })
 
 		if (!webrtc.webrtc.isSpeaking()) {
-			webrtc.webrtc.emit('stoppedSpeaking')
+			webrtc.sendDataChannelToAll('status', 'stoppedSpeaking')
 		} else {
-			webrtc.webrtc.emit('speaking')
+			webrtc.sendDataChannelToAll('status', 'speaking')
 		}
 	}
 }
