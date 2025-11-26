@@ -11,7 +11,7 @@ import { createStore } from 'vuex'
 import VideoVue from './VideoVue.vue'
 import storeConfig from '../../../store/storeConfig.js'
 import EmitterMixin from '../../../utils/EmitterMixin.js'
-import CallParticipantModel from '../../../utils/webrtc/models/CallParticipantModel.js'
+import { CallParticipantModel } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 describe('VideoVue.vue', () => {
 	let store

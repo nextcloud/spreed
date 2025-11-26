@@ -13,7 +13,7 @@ const actorStore = useActorStore(pinia)
 /**
  *
  */
-export default function LocalCallParticipantModel() {
+export function LocalCallParticipantModel() {
 	this._superEmitterMixin()
 
 	this.attributes = reactive({
