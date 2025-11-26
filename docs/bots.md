@@ -330,6 +330,31 @@ Bots can also send message. On the sending process the same signature/verificati
         + `413 Payload Too Large` When the message was longer than the allowed limit of 32000 characters (or 1000 until Nextcloud 16.0.1, check the `spreed => config => chat => max-length` capability for the limit)
         + `429 Too Many Requests` When `401 Unauthenticated` was triggered too often
 
+#### Sample bash script:
+
+```bash
+#!/bin/bash
+
+NC_URL="https://nextcloud.example.tld/" #  The URL of the Nextcloud instance (e.g., "https://nextcloud.example.com")
+TOKEN="12345678" # The token of the conversation
+SECRET="53CR3T" # Shared secret that is specified when installing a bot
+MESSAGE=$1 # Pass the message as first argument
+
+# Generate a random header and signature
+RANDOM_HEADER=$(openssl rand -hex 32)
+MESSAGE_TO_SIGN="${RANDOM_HEADER}${MESSAGE}"
+SIGNATURE=$(echo -n "${MESSAGE_TO_SIGN}" | openssl dgst -sha256 -hmac "${SECRET}" | cut -d' ' -f2)
+
+# Send the message
+curl -X POST "${NC_URL}/ocs/v2.php/apps/spreed/api/v1/bot/${TOKEN}/message" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -H "OCS-APIRequest: true" \
+  -H "X-Nextcloud-Talk-Bot-Random: ${RANDOM_HEADER}" \
+  -H "X-Nextcloud-Talk-Bot-Signature: ${SIGNATURE}" \
+  -d '{"message":"'"${MESSAGE}"'"}'
+```
+
 ## Reacting to a chat message
 
 Bots can also react to a message. The same signature/verification method is applied.
