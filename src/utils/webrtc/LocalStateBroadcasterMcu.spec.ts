@@ -19,11 +19,13 @@ import {
 import WildEmitter from 'wildemitter'
 import { LocalStateBroadcasterMcu } from './LocalStateBroadcasterMcu.ts'
 import { CallParticipantCollection } from './models/CallParticipantCollection.js'
+import { LocalCallParticipantModel } from './models/LocalCallParticipantModel.js'
 
 describe('LocalStateBroadcasterMcu', () => {
 	let webRtc: WebRtc
 	let internalWebRtc: InternalWebRtc
 	let callParticipantCollection: CallParticipantCollection
+	let localCallParticipantModel: LocalCallParticipantModel
 
 	let localStateBroadcasterMcu: LocalStateBroadcasterMcu
 
@@ -47,6 +49,8 @@ describe('LocalStateBroadcasterMcu', () => {
 		} as any)()
 
 		callParticipantCollection = new CallParticipantCollection()
+
+		localCallParticipantModel = new LocalCallParticipantModel()
 	})
 
 	afterEach(() => {
@@ -58,7 +62,7 @@ describe('LocalStateBroadcasterMcu', () => {
 		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
 
-		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
@@ -109,7 +113,7 @@ describe('LocalStateBroadcasterMcu', () => {
 		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
 
-		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
@@ -152,7 +156,7 @@ describe('LocalStateBroadcasterMcu', () => {
 		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
 
-		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
@@ -221,7 +225,7 @@ describe('LocalStateBroadcasterMcu', () => {
 		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
 
-		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
@@ -261,7 +265,7 @@ describe('LocalStateBroadcasterMcu', () => {
 		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
 
-		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
@@ -279,7 +283,7 @@ describe('LocalStateBroadcasterMcu', () => {
 	})
 
 	test('destroy while sending initial state', () => {
-		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
@@ -297,7 +301,7 @@ describe('LocalStateBroadcasterMcu', () => {
 	})
 
 	test('add and remove participant after destroying', () => {
-		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		localStateBroadcasterMcu.destroy()
 

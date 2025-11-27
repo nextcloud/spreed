@@ -6,6 +6,7 @@
 import type {
 	CallParticipantCollection,
 	CallParticipantModel,
+	LocalCallParticipantModel,
 	WebRtc,
 } from '../../types/index.ts'
 
@@ -30,6 +31,7 @@ import { ConnectionState } from './models/CallParticipantModel.js'
 export abstract class LocalStateBroadcaster {
 	protected _webRtc: WebRtc
 	private _callParticipantCollection: CallParticipantCollection
+	private _localCallParticipantModel: LocalCallParticipantModel
 
 	private _handleAudioOnBound: () => void
 	private _handleAudioOffBound: () => void
@@ -37,13 +39,15 @@ export abstract class LocalStateBroadcaster {
 	private _handleStoppedSpeakingBound: () => void
 	private _handleVideoOnBound: () => void
 	private _handleVideoOffBound: () => void
+	private _handleChangeNameBound: (localCallParticipantModel: LocalCallParticipantModel, name: string) => void
 
 	private _handleAddCallParticipantModelBound: (callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModel) => void
 	private _handleRemoveCallParticipantModelBound: (callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModel) => void
 
-	public constructor(webRtc: WebRtc, callParticipantCollection: CallParticipantCollection) {
+	public constructor(webRtc: WebRtc, callParticipantCollection: CallParticipantCollection, localCallParticipantModel: LocalCallParticipantModel) {
 		this._webRtc = webRtc
 		this._callParticipantCollection = callParticipantCollection
+		this._localCallParticipantModel = localCallParticipantModel
 
 		this._handleAudioOnBound = this._handleAudioOn.bind(this)
 		this._handleAudioOffBound = this._handleAudioOff.bind(this)
@@ -51,6 +55,7 @@ export abstract class LocalStateBroadcaster {
 		this._handleStoppedSpeakingBound = this._handleStoppedSpeaking.bind(this)
 		this._handleVideoOnBound = this._handleVideoOn.bind(this)
 		this._handleVideoOffBound = this._handleVideoOff.bind(this)
+		this._handleChangeNameBound = this._handleChangeName.bind(this)
 
 		this._handleAddCallParticipantModelBound = this._handleAddCallParticipantModel.bind(this)
 		this._handleRemoveCallParticipantModelBound = this._handleRemoveCallParticipantModel.bind(this)
@@ -61,6 +66,8 @@ export abstract class LocalStateBroadcaster {
 		this._webRtc.on('stoppedSpeaking', this._handleStoppedSpeakingBound)
 		this._webRtc.on('videoOn', this._handleVideoOnBound)
 		this._webRtc.on('videoOff', this._handleVideoOffBound)
+
+		this._localCallParticipantModel.on('change:name', this._handleChangeNameBound)
 
 		this._callParticipantCollection.on('add', this._handleAddCallParticipantModelBound)
 		this._callParticipantCollection.on('remove', this._handleRemoveCallParticipantModelBound)
@@ -73,6 +80,8 @@ export abstract class LocalStateBroadcaster {
 		this._webRtc.off('stoppedSpeaking', this._handleStoppedSpeakingBound)
 		this._webRtc.off('videoOn', this._handleVideoOnBound)
 		this._webRtc.off('videoOff', this._handleVideoOffBound)
+
+		this._localCallParticipantModel.off('change:name', this._handleChangeNameBound)
 
 		this._callParticipantCollection.off('add', this._handleAddCallParticipantModelBound)
 		this._callParticipantCollection.off('remove', this._handleRemoveCallParticipantModelBound)
@@ -111,5 +120,34 @@ export abstract class LocalStateBroadcaster {
 		this._webRtc.sendDataChannelToAll('status', 'videoOff')
 
 		this._webRtc.sendToAll('mute', { name: 'video' })
+	}
+
+	private _handleChangeName(localCallParticipantModel: LocalCallParticipantModel, name: string): void {
+		this._webRtc.sendDataChannelToAll('status', 'nickChanged', this._getNickChangedDataChannelMessagePayload(name))
+
+		this._webRtc.sendToAll('nickChanged', { name })
+	}
+
+	/**
+	 * Returns the paylod of the "nickChanged" data channel message for the
+	 * given name.
+	 *
+	 * Due to historical reasons the payload of the data channel message is
+	 * either a string that contains the name (if the participant is a guest) or
+	 * an object with "name" and "userid" string fields (when the participant is
+	 * a user).
+	 *
+	 * @param name string the name.
+	 * @return string|object the data channel message payload.
+	 */
+	private _getNickChangedDataChannelMessagePayload(name: string): string | object {
+		if (this._webRtc.connection.settings.userId === null) {
+			return name
+		}
+
+		return {
+			name,
+			userid: this._webRtc.connection.settings.userId,
+		}
 	}
 }

@@ -110,8 +110,6 @@ LocalCallParticipantModel.prototype = {
 		}
 
 		this.set('name', name)
-
-		this._webRtc.webrtc.emit('nickChanged', name)
 	},
 
 	setPeerNeeded(peerNeeded) {
