@@ -455,8 +455,9 @@ const actions = {
 	 * @param {object} payload payload;
 	 * @param {string} payload.token conversation token;
 	 * @param {object} payload.message message object;
+	 * @param {boolean} [payload.fromRealtime=false] whether the message comes from realtime (polling or signaling)
 	 */
-	processMessage(context, { token, message }) {
+	processMessage(context, { token, message, fromRealtime = false }) {
 		const sharedItemsStore = useSharedItemsStore()
 		const actorStore = useActorStore()
 		const chatExtrasStore = useChatExtrasStore()
@@ -648,7 +649,7 @@ const actions = {
 
 		try {
 			const response = await deleteMessage({ token, id })
-			context.dispatch('processMessage', { token, message: response.data.ocs.data })
+			context.dispatch('processMessage', { token, message: response.data.ocs.data, fromRealtime: true })
 			return response.status
 		} catch (error) {
 			// Restore the previous message state
@@ -680,7 +681,7 @@ const actions = {
 				messageId,
 				updatedMessage,
 			})
-			context.dispatch('processMessage', { token, message: response.data.ocs.data })
+			context.dispatch('processMessage', { token, message: response.data.ocs.data, fromRealtime: true })
 			EventBus.emit('editing-message-processing', { messageId, value: false })
 		} catch (error) {
 			console.error(error)
@@ -1115,7 +1116,7 @@ const actions = {
 				const guestNameStore = useGuestNameStore()
 				guestNameStore.addGuestName(message, { noUpdate: false })
 			}
-			context.dispatch('processMessage', { token, message })
+			context.dispatch('processMessage', { token, message, fromRealtime: true })
 			if (!lastMessage || message.id > lastMessage.id) {
 				if (!message.systemMessage) {
 					if (actorId !== message.actorId || actorType !== message.actorType) {
@@ -1265,7 +1266,7 @@ const actions = {
 				chatStore.processChatBlocks(token, [response.data.ocs.data], {
 					mergeBy: conversationLastMessageId,
 				})
-				context.dispatch('processMessage', { token, message: response.data.ocs.data })
+				context.dispatch('processMessage', { token, message: response.data.ocs.data, fromRealtime: true })
 			}
 
 			return response
