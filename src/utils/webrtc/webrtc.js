@@ -16,9 +16,8 @@ import { useActorStore } from '../../stores/actor.ts'
 import pinia from '../../stores/pinia.ts'
 import { useTokenStore } from '../../stores/token.ts'
 import { Sounds } from '../sounds.js'
-import {
-	LocalStateBroadcaster,
-} from './LocalStateBroadcaster.ts'
+import { LocalStateBroadcasterMcu } from './LocalStateBroadcasterMcu.ts'
+import { LocalStateBroadcasterNoMcu } from './LocalStateBroadcasterNoMcu.ts'
 import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
 
 let webrtc
@@ -180,32 +179,6 @@ function checkStartPublishOwnPeer(signaling) {
 	}, 10000)
 }
 
-/**
- *
- */
-function sendCurrentMediaState() {
-	if (!webrtc.webrtc.isVideoEnabled()) {
-		webrtc.sendDataChannelToAll('status', 'videoOff')
-		webrtc.sendToAll('mute', { name: 'video' })
-	} else {
-		webrtc.sendDataChannelToAll('status', 'videoOn')
-		webrtc.sendToAll('unmute', { name: 'video' })
-	}
-	if (!webrtc.webrtc.isAudioEnabled()) {
-		webrtc.sendDataChannelToAll('status', 'audioOff')
-		webrtc.sendToAll('mute', { name: 'audio' })
-	} else {
-		webrtc.sendDataChannelToAll('status', 'audioOn')
-		webrtc.sendToAll('unmute', { name: 'audio' })
-
-		if (!webrtc.webrtc.isSpeaking()) {
-			webrtc.sendDataChannelToAll('status', 'stoppedSpeaking')
-		} else {
-			webrtc.sendDataChannelToAll('status', 'speaking')
-		}
-	}
-}
-
 // TODO The participant name should be got from the participant list, but it is
 // not currently possible to associate a Nextcloud ID with a standalone
 // signaling ID for guests.
@@ -227,7 +200,6 @@ function sendCurrentStateWithRepetition(timeout) {
 	}
 
 	sendCurrentStateWithRepetitionTimeout = setTimeout(function() {
-		sendCurrentMediaState()
 		sendCurrentNick()
 
 		if (!timeout) {
@@ -592,7 +564,11 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		// is received before the "join call" request ends.
 		localUserInCall = true
 
-		localStateBroadcaster = new LocalStateBroadcaster(webrtc)
+		if (signaling.hasFeature('mcu')) {
+			localStateBroadcaster = new LocalStateBroadcasterMcu(webrtc, callParticipantCollection)
+		} else {
+			localStateBroadcaster = new LocalStateBroadcasterNoMcu(webrtc, callParticipantCollection)
+		}
 	})
 	signaling.on('beforeLeaveCall', function(token, reconnect) {
 		// The user needs to be set as not in the call before the request is
@@ -767,11 +743,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	 */
 	function handleIceConnectionStateConnected(peer) {
 		// Send the current information about the state.
-		if (!signaling.hasFeature('mcu')) {
-			// Only the media state needs to be sent, the nick was already sent
-			// in the offer/answer.
-			sendCurrentMediaState()
-		} else {
+		if (signaling.hasFeature('mcu')) {
 			sendCurrentStateWithRepetition()
 		}
 

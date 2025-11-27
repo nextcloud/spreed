@@ -4,6 +4,8 @@
  */
 
 import type {
+	CallParticipantModel as CallParticipantModelType,
+	InternalWebRtc,
 	WebRtc,
 } from '../../types/index.ts'
 
@@ -16,22 +18,46 @@ import {
 	vi,
 } from 'vitest'
 import WildEmitter from 'wildemitter'
-import {
-	LocalStateBroadcaster,
-} from './LocalStateBroadcaster.ts'
+import { LocalStateBroadcaster } from './LocalStateBroadcaster.ts'
+import { CallParticipantCollection } from './models/CallParticipantCollection.js'
+
+class BaseLocalStateBroadcaster extends LocalStateBroadcaster {
+	protected _handleAddCallParticipantModel(callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModelType): void {
+		// Not used in base class tests
+	}
+
+	protected _handleRemoveCallParticipantModel(callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModelType): void {
+		// Not used in base class tests
+	}
+}
 
 describe('LocalStateBroadcaster', () => {
 	let webRtc: WebRtc
+	let internalWebRtc: InternalWebRtc
+	let callParticipantCollection: CallParticipantCollection
 
 	let localStateBroadcaster: LocalStateBroadcaster
 
 	beforeEach(() => {
+		internalWebRtc = new (function(this: InternalWebRtc) {
+			this.isAudioEnabled = vi.fn()
+			this.isSpeaking = vi.fn()
+			this.isVideoEnabled = vi.fn()
+		} as any)()
+
 		webRtc = new (function(this: WebRtc) {
 			WildEmitter.mixin(this)
 
+			this.webrtc = internalWebRtc
+
 			this.sendDataChannelToAll = vi.fn()
 			this.sendToAll = vi.fn()
+
+			this.sendDataChannelTo = vi.fn()
+			this.sendTo = vi.fn()
 		} as any)()
+
+		callParticipantCollection = new CallParticipantCollection()
 	})
 
 	afterEach(() => {
@@ -39,7 +65,7 @@ describe('LocalStateBroadcaster', () => {
 	})
 
 	test('enable audio', () => {
-		localStateBroadcaster = new LocalStateBroadcaster(webRtc)
+		localStateBroadcaster = new BaseLocalStateBroadcaster(webRtc, callParticipantCollection)
 
 		webRtc.emit('audioOn')
 
@@ -51,7 +77,7 @@ describe('LocalStateBroadcaster', () => {
 	})
 
 	test('disable audio', () => {
-		localStateBroadcaster = new LocalStateBroadcaster(webRtc)
+		localStateBroadcaster = new BaseLocalStateBroadcaster(webRtc, callParticipantCollection)
 
 		webRtc.emit('audioOff')
 
@@ -63,7 +89,7 @@ describe('LocalStateBroadcaster', () => {
 	})
 
 	test('enable speaking', () => {
-		localStateBroadcaster = new LocalStateBroadcaster(webRtc)
+		localStateBroadcaster = new BaseLocalStateBroadcaster(webRtc, callParticipantCollection)
 
 		webRtc.emit('speaking')
 
@@ -72,7 +98,7 @@ describe('LocalStateBroadcaster', () => {
 	})
 
 	test('disable speaking', () => {
-		localStateBroadcaster = new LocalStateBroadcaster(webRtc)
+		localStateBroadcaster = new BaseLocalStateBroadcaster(webRtc, callParticipantCollection)
 
 		webRtc.emit('stoppedSpeaking')
 
@@ -81,7 +107,7 @@ describe('LocalStateBroadcaster', () => {
 	})
 
 	test('enable video', () => {
-		localStateBroadcaster = new LocalStateBroadcaster(webRtc)
+		localStateBroadcaster = new BaseLocalStateBroadcaster(webRtc, callParticipantCollection)
 
 		webRtc.emit('videoOn')
 
@@ -93,7 +119,7 @@ describe('LocalStateBroadcaster', () => {
 	})
 
 	test('disable video', () => {
-		localStateBroadcaster = new LocalStateBroadcaster(webRtc)
+		localStateBroadcaster = new BaseLocalStateBroadcaster(webRtc, callParticipantCollection)
 
 		webRtc.emit('videoOff')
 
@@ -105,7 +131,7 @@ describe('LocalStateBroadcaster', () => {
 	})
 
 	test('change state after destroying', () => {
-		localStateBroadcaster = new LocalStateBroadcaster(webRtc)
+		localStateBroadcaster = new BaseLocalStateBroadcaster(webRtc, callParticipantCollection)
 
 		localStateBroadcaster.destroy()
 
