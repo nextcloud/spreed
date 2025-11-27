@@ -482,7 +482,7 @@ const actions = {
 			// If parent message is presented in store and is different, we update it
 			const parentInStore = context.getters.message(token, message.parent.id)
 			if (Object.keys(parentInStore).length !== 0 && JSON.stringify(parentInStore) !== JSON.stringify(message.parent)) {
-				if (!message.parent.reactionsSelf) {
+				if (fromRealtime && !message.parent.reactionsSelf) {
 					// Message object might come from signaling, where we don't relay this field
 					message.parent.reactionsSelf = parentInStore.reactionsSelf ?? []
 
