@@ -174,8 +174,17 @@ export default {
 			return getPreloadedUserStatus(this.item)
 		},
 
+		canRequestAvatar() {
+			if (!supportsAvatar || this.item.isDummyConversation) {
+				return false
+			}
+
+			// Endpoint limited with #RequireParticipantOrLoggedInAndListedConversation
+			return this.item.attendeeId || this.item.listable !== CONVERSATION.LISTABLE.NONE
+		},
+
 		iconClass() {
-			return getFallbackIconClass(this.item, this.failed)
+			return getFallbackIconClass(this.item, this.failed || !this.canRequestAvatar)
 		},
 
 		themeClass() {
@@ -196,7 +205,7 @@ export default {
 		},
 
 		avatarUrl() {
-			if (!supportsAvatar || this.item.isDummyConversation) {
+			if (!this.canRequestAvatar) {
 				return undefined
 			}
 
