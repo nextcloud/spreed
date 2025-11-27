@@ -31,7 +31,7 @@ import { ConnectionState } from './models/CallParticipantModel.js'
 export abstract class LocalStateBroadcaster {
 	protected _webRtc: WebRtc
 	private _callParticipantCollection: CallParticipantCollection
-	private _localCallParticipantModel: LocalCallParticipantModel
+	protected _localCallParticipantModel: LocalCallParticipantModel
 
 	private _handleAudioOnBound: () => void
 	private _handleAudioOffBound: () => void
@@ -128,7 +128,7 @@ export abstract class LocalStateBroadcaster {
 		this._webRtc.sendToAll('nickChanged', { name: guestName })
 	}
 
-	private _getNickChangedDataChannelMessagePayload(name: string): string | object {
+	protected _getNickChangedDataChannelMessagePayload(name: string): string | object {
 		if (this._webRtc.connection.settings.userId === null) {
 			return name
 		}
@@ -250,7 +250,7 @@ export class LocalStateBroadcasterMcu extends LocalStateBroadcaster {
 		this._sendStateWithRepetition?.destroy()
 
 		this._sendStateWithRepetition = new ExponentialBackoffCallback(() => {
-			this._sendCurrentMediaStateToAll()
+			this._sendCurrentStateToAll()
 		})
 
 		const peerId = callParticipantModel.get('peerId')
@@ -258,7 +258,7 @@ export class LocalStateBroadcasterMcu extends LocalStateBroadcaster {
 		this._sendStateWithRepetitionToParticipant.get(peerId)?.destroy()
 
 		this._sendStateWithRepetitionToParticipant.set(peerId, new ExponentialBackoffCallback(() => {
-			this._sendCurrentMediaStateTo(peerId)
+			this._sendCurrentStateTo(peerId)
 		}))
 	}
 
@@ -275,7 +275,7 @@ export class LocalStateBroadcasterMcu extends LocalStateBroadcaster {
 		this._sendStateWithRepetitionToParticipant.delete(peerId)
 	}
 
-	private _sendCurrentMediaStateToAll(): void {
+	private _sendCurrentStateToAll(): void {
 		if (!this._webRtc.webrtc.isAudioEnabled()) {
 			this._webRtc.sendDataChannelToAll('status', 'audioOff')
 		} else {
@@ -293,9 +293,12 @@ export class LocalStateBroadcasterMcu extends LocalStateBroadcaster {
 		} else {
 			this._webRtc.sendDataChannelToAll('status', 'videoOn')
 		}
+
+		const name = this._localCallParticipantModel.get('guestName')
+		this._webRtc.sendDataChannelToAll('status', 'nickChanged', this._getNickChangedDataChannelMessagePayload(name))
 	}
 
-	private _sendCurrentMediaStateTo(peerId: string): void {
+	private _sendCurrentStateTo(peerId: string): void {
 		if (!this._webRtc.webrtc.isAudioEnabled()) {
 			this._webRtc.sendTo(peerId, 'mute', { name: 'audio' })
 		} else {
@@ -307,6 +310,9 @@ export class LocalStateBroadcasterMcu extends LocalStateBroadcaster {
 		} else {
 			this._webRtc.sendTo(peerId, 'unmute', { name: 'video' })
 		}
+
+		const name = this._localCallParticipantModel.get('guestName')
+		this._webRtc.sendTo(peerId, 'nickChanged', { name })
 	}
 }
 
@@ -339,6 +345,7 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 	private _callParticipantModels: Map<string, CallParticipantModel>
 
 	private _handleConnectionStateBound: (callParticipantModel: CallParticipantModel, connectionState: string) => void
+	private _handlePeerBound: (callParticipantModel: CallParticipantModel, peer?: object) => void
 
 	public constructor(webRtc: WebRtc, callParticipantCollection: CallParticipantCollection, localCallParticipantModel: LocalCallParticipantModel) {
 		super(webRtc, callParticipantCollection, localCallParticipantModel)
@@ -346,6 +353,7 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 		this._callParticipantModels = new Map()
 
 		this._handleConnectionStateBound = this._handleConnectionState.bind(this)
+		this._handlePeerBound = this._handlePeer.bind(this)
 	}
 
 	public destroy(): void {
@@ -353,6 +361,7 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 
 		this._callParticipantModels.forEach((callParticipantModel) => {
 			callParticipantModel.off('change:connectionState', this._handleConnectionStateBound)
+			callParticipantModel.off('change:peer', this._handlePeerBound)
 		})
 	}
 
@@ -360,12 +369,14 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 		this._callParticipantModels.set(callParticipantModel.get('peerId'), callParticipantModel)
 
 		callParticipantModel.on('change:connectionState', this._handleConnectionStateBound)
+		callParticipantModel.on('change:peer', this._handlePeerBound)
 	}
 
 	protected _handleRemoveCallParticipantModel(callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModel): void {
 		this._callParticipantModels.delete(callParticipantModel.get('peerId'))
 
 		callParticipantModel.off('change:connectionState', this._handleConnectionStateBound)
+		callParticipantModel.off('change:peer', this._handlePeerBound)
 	}
 
 	private _handleConnectionState(callParticipantModel: CallParticipantModel, connectionState: string): void {
@@ -374,7 +385,16 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 			this._sendCurrentMediaStateTo(callParticipantModel.get('peerId'))
 
 			callParticipantModel.off('change:connectionState', this._handleConnectionStateBound)
+			callParticipantModel.off('change:peer', this._handlePeerBound)
 		}
+	}
+
+	private _handlePeer(callParticipantModel: CallParticipantModel, peer?: object): void {
+		if (peer !== null) {
+			return
+		}
+
+		this._sendCurrentNameTo(callParticipantModel.get('peerId'))
 	}
 
 	private _sendCurrentMediaStateTo(peerId: string): void {
@@ -399,5 +419,12 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 			this._webRtc.sendDataChannelTo(peerId, 'status', 'videoOn')
 			this._webRtc.sendTo(peerId, 'unmute', { name: 'video' })
 		}
+	}
+
+	private _sendCurrentNameTo(peerId: string): void {
+		const name = this._localCallParticipantModel.get('guestName')
+
+		this._webRtc.sendDataChannelTo(peerId, 'status', 'nickChanged', this._getNickChangedDataChannelMessagePayload(name))
+		this._webRtc.sendTo(peerId, 'nickChanged', { name })
 	}
 }
