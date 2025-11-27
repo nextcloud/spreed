@@ -32,7 +32,7 @@ import { ConnectionState } from './models/CallParticipantModel.js'
 export abstract class LocalStateBroadcaster {
 	protected _webRtc: WebRtc
 	private _callParticipantCollection: CallParticipantCollection
-	private _localCallParticipantModel: LocalCallParticipantModel
+	protected _localCallParticipantModel: LocalCallParticipantModel
 
 	private _handleAudioOnBound: () => void
 	private _handleAudioOffBound: () => void
@@ -141,7 +141,7 @@ export abstract class LocalStateBroadcaster {
 	 * @param name string the name.
 	 * @return string|object the data channel message payload.
 	 */
-	private _getNickChangedDataChannelMessagePayload(name: string): string | object {
+	protected _getNickChangedDataChannelMessagePayload(name: string): string | object {
 		if (this._webRtc.connection.settings.userId === null) {
 			return name
 		}

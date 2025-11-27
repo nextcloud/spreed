@@ -38,12 +38,20 @@ describe('LocalStateBroadcasterMcu', () => {
 			this.isVideoEnabled = vi.fn()
 		} as any)()
 
+		const signaling = {
+			settings: {
+				userId: null,
+			},
+		}
+
 		webRtc = new (function(this: WebRtc) {
 			WildEmitter.mixin(this)
 
+			this.connection = signaling
 			this.webrtc = internalWebRtc
 
 			this.sendDataChannelToAll = vi.fn()
+			this.sendToAll = vi.fn()
 
 			this.sendTo = vi.fn()
 		} as any)()
@@ -61,6 +69,7 @@ describe('LocalStateBroadcasterMcu', () => {
 		vi.mocked(internalWebRtc.isAudioEnabled).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
+		localCallParticipantModel.set('name', 'theName')
 
 		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
@@ -68,14 +77,16 @@ describe('LocalStateBroadcasterMcu', () => {
 
 		vi.advanceTimersByTime(0)
 
-		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(3)
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(4)
 		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(1, 'status', 'audioOn')
 		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(2, 'status', 'speaking')
 		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(3, 'status', 'videoOn')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(4, 'status', 'nickChanged', 'theName')
 
-		expect(webRtc.sendTo).toHaveBeenCalledTimes(2)
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(3)
 		expect(webRtc.sendTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'unmute', { name: 'audio' })
 		expect(webRtc.sendTo).toHaveBeenNthCalledWith(2, 'thePeerId', 'unmute', { name: 'video' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(3, 'thePeerId', 'nickChanged', { name: 'theName' })
 
 		let timeoutCount = 1
 
@@ -85,143 +96,24 @@ describe('LocalStateBroadcasterMcu', () => {
 		timeouts.forEach((second) => {
 			vi.advanceTimersByTime(second * 1000 - 1)
 
-			expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(3 * timeoutCount)
-			expect(webRtc.sendTo).toHaveBeenCalledTimes(2 * timeoutCount)
+			expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(4 * timeoutCount)
+			expect(webRtc.sendTo).toHaveBeenCalledTimes(3 * timeoutCount)
 
 			vi.advanceTimersByTime(1)
 
-			expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(3 * timeoutCount + 3)
-			expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(3 * timeoutCount + 1, 'status', 'audioOn')
-			expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(3 * timeoutCount + 2, 'status', 'speaking')
-			expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(3 * timeoutCount + 3, 'status', 'videoOn')
+			expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(4 * timeoutCount + 4)
+			expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(4 * timeoutCount + 1, 'status', 'audioOn')
+			expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(4 * timeoutCount + 2, 'status', 'speaking')
+			expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(4 * timeoutCount + 3, 'status', 'videoOn')
+			expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(4 * timeoutCount + 4, 'status', 'nickChanged', 'theName')
 
-			expect(webRtc.sendTo).toHaveBeenCalledTimes(2 * timeoutCount + 2)
-			expect(webRtc.sendTo).toHaveBeenNthCalledWith(2 * timeoutCount + 1, 'thePeerId', 'unmute', { name: 'audio' })
-			expect(webRtc.sendTo).toHaveBeenNthCalledWith(2 * timeoutCount + 2, 'thePeerId', 'unmute', { name: 'video' })
+			expect(webRtc.sendTo).toHaveBeenCalledTimes(3 * timeoutCount + 3)
+			expect(webRtc.sendTo).toHaveBeenNthCalledWith(3 * timeoutCount + 1, 'thePeerId', 'unmute', { name: 'audio' })
+			expect(webRtc.sendTo).toHaveBeenNthCalledWith(3 * timeoutCount + 2, 'thePeerId', 'unmute', { name: 'video' })
+			expect(webRtc.sendTo).toHaveBeenNthCalledWith(3 * timeoutCount + 3, 'thePeerId', 'nickChanged', { name: 'theName' })
 
 			timeoutCount++
 		})
-
-		vi.advanceTimersByTime(100000)
-
-		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(18)
-		expect(webRtc.sendTo).toHaveBeenCalledTimes(12)
-	})
-
-	test('change current state while sending initial state', () => {
-		vi.mocked(internalWebRtc.isAudioEnabled).mockReturnValue(true)
-		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
-		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
-
-		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
-
-		callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
-
-		vi.advanceTimersByTime(1000)
-
-		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(6)
-		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(1, 'status', 'audioOn')
-		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(2, 'status', 'speaking')
-		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(3, 'status', 'videoOn')
-		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(4, 'status', 'audioOn')
-		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(5, 'status', 'speaking')
-		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(6, 'status', 'videoOn')
-
-		expect(webRtc.sendTo).toHaveBeenCalledTimes(4)
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'unmute', { name: 'audio' })
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(2, 'thePeerId', 'unmute', { name: 'video' })
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(3, 'thePeerId', 'unmute', { name: 'audio' })
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(4, 'thePeerId', 'unmute', { name: 'video' })
-
-		vi.mocked(internalWebRtc.isAudioEnabled).mockReturnValue(false)
-		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(false)
-		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(false)
-
-		vi.advanceTimersByTime(2000)
-
-		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(8)
-		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(7, 'status', 'audioOff')
-		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(8, 'status', 'videoOff')
-
-		expect(webRtc.sendTo).toHaveBeenCalledTimes(6)
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(5, 'thePeerId', 'mute', { name: 'audio' })
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(6, 'thePeerId', 'mute', { name: 'video' })
-	})
-
-	test('add several participants', () => {
-		vi.mocked(internalWebRtc.isAudioEnabled).mockReturnValue(true)
-		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
-		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
-
-		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
-
-		callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
-
-		vi.advanceTimersByTime(1000)
-
-		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(6)
-		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(1, 'status', 'audioOn')
-		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(2, 'status', 'speaking')
-		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(3, 'status', 'videoOn')
-		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(4, 'status', 'audioOn')
-		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(5, 'status', 'speaking')
-		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(6, 'status', 'videoOn')
-
-		expect(webRtc.sendTo).toHaveBeenCalledTimes(4)
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'unmute', { name: 'audio' })
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(2, 'thePeerId', 'unmute', { name: 'video' })
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(3, 'thePeerId', 'unmute', { name: 'audio' })
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(4, 'thePeerId', 'unmute', { name: 'video' })
-
-		callParticipantCollection.add({ peerId: 'thePeerId2', webRtc })
-
-		vi.advanceTimersByTime(3000)
-
-		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(15)
-		for (let i = 0; i < 3; i++) {
-			expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(i * 3 + 1, 'status', 'audioOn')
-			expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(i * 3 + 2, 'status', 'speaking')
-			expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(i * 3 + 3, 'status', 'videoOn')
-		}
-
-		expect(webRtc.sendTo).toHaveBeenCalledTimes(12)
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(5, 'thePeerId2', 'unmute', { name: 'audio' })
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(6, 'thePeerId2', 'unmute', { name: 'video' })
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(7, 'thePeerId2', 'unmute', { name: 'audio' })
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(8, 'thePeerId2', 'unmute', { name: 'video' })
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(9, 'thePeerId', 'unmute', { name: 'audio' })
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(10, 'thePeerId', 'unmute', { name: 'video' })
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(11, 'thePeerId2', 'unmute', { name: 'audio' })
-		expect(webRtc.sendTo).toHaveBeenNthCalledWith(12, 'thePeerId2', 'unmute', { name: 'video' })
-
-		vi.advanceTimersByTime(100000)
-
-		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(24)
-		expect(webRtc.sendTo).toHaveBeenCalledTimes(24)
-	})
-
-	test('remove one of several participants while sending initial state', () => {
-		vi.mocked(internalWebRtc.isAudioEnabled).mockReturnValue(true)
-		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
-		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
-
-		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
-
-		callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
-
-		vi.advanceTimersByTime(1000)
-
-		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(6)
-		expect(webRtc.sendTo).toHaveBeenCalledTimes(4)
-
-		callParticipantCollection.add({ peerId: 'thePeerId2', webRtc })
-
-		vi.advanceTimersByTime(3000)
-
-		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(15)
-		expect(webRtc.sendTo).toHaveBeenCalledTimes(12)
-
-		callParticipantCollection.remove('thePeerId')
 
 		vi.advanceTimersByTime(100000)
 
@@ -229,10 +121,11 @@ describe('LocalStateBroadcasterMcu', () => {
 		expect(webRtc.sendTo).toHaveBeenCalledTimes(18)
 	})
 
-	test('remove the last participant', () => {
+	test('change current state while sending initial state', () => {
 		vi.mocked(internalWebRtc.isAudioEnabled).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
+		localCallParticipantModel.set('name', 'theName')
 
 		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
@@ -240,15 +133,160 @@ describe('LocalStateBroadcasterMcu', () => {
 
 		vi.advanceTimersByTime(1000)
 
-		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(6)
-		expect(webRtc.sendTo).toHaveBeenCalledTimes(4)
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(8)
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(1, 'status', 'audioOn')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(2, 'status', 'speaking')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(3, 'status', 'videoOn')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(4, 'status', 'nickChanged', 'theName')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(5, 'status', 'audioOn')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(6, 'status', 'speaking')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(7, 'status', 'videoOn')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(8, 'status', 'nickChanged', 'theName')
+
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(6)
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'unmute', { name: 'audio' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(2, 'thePeerId', 'unmute', { name: 'video' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(3, 'thePeerId', 'nickChanged', { name: 'theName' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(4, 'thePeerId', 'unmute', { name: 'audio' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(5, 'thePeerId', 'unmute', { name: 'video' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(6, 'thePeerId', 'nickChanged', { name: 'theName' })
+
+		vi.mocked(internalWebRtc.isAudioEnabled).mockReturnValue(false)
+		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(false)
+		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(false)
+		localCallParticipantModel.set('name', 'theNewName')
+
+		// Changing the name on the model triggers the normal state changed
+		// message
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(9, 'status', 'nickChanged', 'theNewName')
+		expect(webRtc.sendToAll).toHaveBeenNthCalledWith(1, 'nickChanged', { name: 'theNewName' })
+
+		vi.advanceTimersByTime(2000)
+
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(12)
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(10, 'status', 'audioOff')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(11, 'status', 'videoOff')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(12, 'status', 'nickChanged', 'theNewName')
+
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(9)
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(7, 'thePeerId', 'mute', { name: 'audio' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(8, 'thePeerId', 'mute', { name: 'video' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(9, 'thePeerId', 'nickChanged', { name: 'theNewName' })
+	})
+
+	test('add several participants', () => {
+		vi.mocked(internalWebRtc.isAudioEnabled).mockReturnValue(true)
+		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
+		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
+		localCallParticipantModel.set('name', 'theName')
+
+		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
+
+		callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
+
+		vi.advanceTimersByTime(1000)
+
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(8)
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(1, 'status', 'audioOn')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(2, 'status', 'speaking')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(3, 'status', 'videoOn')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(4, 'status', 'nickChanged', 'theName')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(5, 'status', 'audioOn')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(6, 'status', 'speaking')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(7, 'status', 'videoOn')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(8, 'status', 'nickChanged', 'theName')
+
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(6)
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'unmute', { name: 'audio' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(2, 'thePeerId', 'unmute', { name: 'video' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(3, 'thePeerId', 'nickChanged', { name: 'theName' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(4, 'thePeerId', 'unmute', { name: 'audio' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(5, 'thePeerId', 'unmute', { name: 'video' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(6, 'thePeerId', 'nickChanged', { name: 'theName' })
+
+		callParticipantCollection.add({ peerId: 'thePeerId2', webRtc })
+
+		vi.advanceTimersByTime(3000)
+
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(20)
+		for (let i = 0; i < 3; i++) {
+			expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(i * 4 + 1, 'status', 'audioOn')
+			expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(i * 4 + 2, 'status', 'speaking')
+			expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(i * 4 + 3, 'status', 'videoOn')
+			expect(webRtc.sendDataChannelToAll).toHaveBeenNthCalledWith(i * 4 + 4, 'status', 'nickChanged', 'theName')
+		}
+
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(18)
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(7, 'thePeerId2', 'unmute', { name: 'audio' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(8, 'thePeerId2', 'unmute', { name: 'video' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(9, 'thePeerId2', 'nickChanged', { name: 'theName' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(10, 'thePeerId2', 'unmute', { name: 'audio' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(11, 'thePeerId2', 'unmute', { name: 'video' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(12, 'thePeerId2', 'nickChanged', { name: 'theName' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(13, 'thePeerId', 'unmute', { name: 'audio' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(14, 'thePeerId', 'unmute', { name: 'video' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(15, 'thePeerId', 'nickChanged', { name: 'theName' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(16, 'thePeerId2', 'unmute', { name: 'audio' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(17, 'thePeerId2', 'unmute', { name: 'video' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(18, 'thePeerId2', 'nickChanged', { name: 'theName' })
+
+		vi.advanceTimersByTime(100000)
+
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(32)
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(36)
+	})
+
+	test('remove one of several participants while sending initial state', () => {
+		vi.mocked(internalWebRtc.isAudioEnabled).mockReturnValue(true)
+		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
+		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
+		localCallParticipantModel.set('name', 'theName')
+
+		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
+
+		callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
+
+		vi.advanceTimersByTime(1000)
+
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(8)
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(6)
+
+		callParticipantCollection.add({ peerId: 'thePeerId2', webRtc })
+
+		vi.advanceTimersByTime(3000)
+
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(20)
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(18)
 
 		callParticipantCollection.remove('thePeerId')
 
 		vi.advanceTimersByTime(100000)
 
-		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(6)
-		expect(webRtc.sendTo).toHaveBeenCalledTimes(4)
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(32)
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(27)
+	})
+
+	test('remove the last participant', () => {
+		vi.mocked(internalWebRtc.isAudioEnabled).mockReturnValue(true)
+		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
+		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
+		localCallParticipantModel.set('name', 'theName')
+
+		localStateBroadcasterMcu = new LocalStateBroadcasterMcu(webRtc, callParticipantCollection, localCallParticipantModel)
+
+		callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
+
+		vi.advanceTimersByTime(1000)
+
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(8)
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(6)
+
+		callParticipantCollection.remove('thePeerId')
+
+		vi.advanceTimersByTime(100000)
+
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(8)
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(6)
 	})
 
 	test('destroy while sending initial state', () => {
@@ -258,15 +296,15 @@ describe('LocalStateBroadcasterMcu', () => {
 
 		vi.advanceTimersByTime(1000)
 
-		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(4)
-		expect(webRtc.sendTo).toHaveBeenCalledTimes(4)
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(6)
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(6)
 
 		localStateBroadcasterMcu.destroy()
 
 		vi.advanceTimersByTime(10000)
 
-		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(4)
-		expect(webRtc.sendTo).toHaveBeenCalledTimes(4)
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(6)
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(6)
 	})
 
 	test('add and remove participant after destroying', () => {

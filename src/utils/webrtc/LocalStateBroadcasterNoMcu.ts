@@ -21,14 +21,20 @@ import { ConnectionState } from './models/CallParticipantModel.js'
  * only handles sending the initial state when a remote participant is added.
  *
  * The state is sent when a connection with another participant is first
- * established (which implicitly broadcasts the initial state when the local
- * participant joins the call, as a connection is established with all the
- * remote participants). Note that, as long as that participant stays in the
- * call, the initial state is not sent again, even after a temporary
- * disconnection; data channels use a reliable transport by default, so even if
- * the state changes while the connection is temporarily interrupted the normal
- * state update messages should be received by the other participant once the
- * connection is restored.
+ * established. Note that only the media state is sent, as the name was
+ * already sent in the offer/answer. On the other hand, if no connection will be
+ * established with the other participant (because neither the local nor the
+ * remote participant is publishing audio nor video) the name is sent, but not
+ * the media state (as both audio and video of the local participant are
+ * implicitly disabled from the point of view of the remote participant).
+ *
+ * Regarding the state sent when a connection with another participant is first
+ * established, note that, as long as that participant stays in the call, the
+ * initial state is not sent again, even after a temporary disconnection; data
+ * channels use a reliable transport by default, so even if the state changes
+ * while the connection is temporarily interrupted the normal state update
+ * messages should be received by the other participant once the connection is
+ * restored.
  *
  * Nevertheless, in case of a failed connection and an ICE restart it is unclear
  * whether the data channel messages would be received or not (as the data
@@ -42,6 +48,7 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 	private _callParticipantModels: Map<string, CallParticipantModel>
 
 	private _handleConnectionStateBound: (callParticipantModel: CallParticipantModel, connectionState: string) => void
+	private _handlePeerBound: (callParticipantModel: CallParticipantModel, peer?: object) => void
 
 	public constructor(webRtc: WebRtc, callParticipantCollection: CallParticipantCollection, localCallParticipantModel: LocalCallParticipantModel) {
 		super(webRtc, callParticipantCollection, localCallParticipantModel)
@@ -49,6 +56,7 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 		this._callParticipantModels = new Map()
 
 		this._handleConnectionStateBound = this._handleConnectionState.bind(this)
+		this._handlePeerBound = this._handlePeer.bind(this)
 	}
 
 	public destroy(): void {
@@ -56,6 +64,7 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 
 		this._callParticipantModels.forEach((callParticipantModel) => {
 			callParticipantModel.off('change:connectionState', this._handleConnectionStateBound)
+			callParticipantModel.off('change:peer', this._handlePeerBound)
 		})
 	}
 
@@ -63,12 +72,14 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 		this._callParticipantModels.set(callParticipantModel.get('peerId') as string, callParticipantModel)
 
 		callParticipantModel.on('change:connectionState', this._handleConnectionStateBound)
+		callParticipantModel.on('change:peer', this._handlePeerBound)
 	}
 
 	protected _handleRemoveCallParticipantModel(callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModel): void {
 		this._callParticipantModels.delete(callParticipantModel.get('peerId') as string)
 
 		callParticipantModel.off('change:connectionState', this._handleConnectionStateBound)
+		callParticipantModel.off('change:peer', this._handlePeerBound)
 	}
 
 	private _handleConnectionState(callParticipantModel: CallParticipantModel, connectionState: string): void {
@@ -77,7 +88,16 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 			this._sendCurrentMediaStateTo(callParticipantModel.get('peerId') as string)
 
 			callParticipantModel.off('change:connectionState', this._handleConnectionStateBound)
+			callParticipantModel.off('change:peer', this._handlePeerBound)
 		}
+	}
+
+	private _handlePeer(callParticipantModel: CallParticipantModel, peer?: object): void {
+		if (peer !== null) {
+			return
+		}
+
+		this._sendCurrentNameTo(callParticipantModel.get('peerId') as string)
 	}
 
 	private _sendCurrentMediaStateTo(peerId: string): void {
@@ -102,5 +122,12 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 			this._webRtc.sendDataChannelTo(peerId, 'status', 'videoOn')
 			this._webRtc.sendTo(peerId, 'unmute', { name: 'video' })
 		}
+	}
+
+	private _sendCurrentNameTo(peerId: string): void {
+		const name = this._localCallParticipantModel.get('name') as string
+
+		this._webRtc.sendDataChannelTo(peerId, 'status', 'nickChanged', this._getNickChangedDataChannelMessagePayload(name))
+		this._webRtc.sendTo(peerId, 'nickChanged', { name })
 	}
 }
