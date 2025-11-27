@@ -25,6 +25,21 @@ import {
 } from './models/CallParticipantModel.js'
 import { LocalCallParticipantModel } from './models/LocalCallParticipantModel.js'
 
+class PeerMock {
+	id: string
+	parent: object
+	off: (event: string, handler: () => void) => void
+
+	constructor(id: string) {
+		this.id = id
+		this.parent = {
+			config: {
+			},
+		}
+		this.off = vi.fn()
+	}
+}
+
 describe('LocalStateBroadcasterNoMcu', () => {
 	let webRtc: WebRtc
 	let internalWebRtc: InternalWebRtc
@@ -40,9 +55,16 @@ describe('LocalStateBroadcasterNoMcu', () => {
 			this.isVideoEnabled = vi.fn()
 		} as any)()
 
+		const signaling = {
+			settings: {
+				userId: null,
+			},
+		}
+
 		webRtc = new (function(this: WebRtc) {
 			WildEmitter.mixin(this)
 
+			this.connection = signaling
 			this.webrtc = internalWebRtc
 
 			this.sendDataChannelTo = vi.fn()
@@ -62,10 +84,13 @@ describe('LocalStateBroadcasterNoMcu', () => {
 		vi.mocked(internalWebRtc.isAudioEnabled).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
+		localCallParticipantModel.set('name', 'theName')
 
 		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
+
+		callParticipantModel.set('peer', new PeerMock('thePeerId'))
 
 		callParticipantModel.set('connectionState', ConnectionState.CHECKING)
 
@@ -88,10 +113,13 @@ describe('LocalStateBroadcasterNoMcu', () => {
 		vi.mocked(internalWebRtc.isAudioEnabled).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
+		localCallParticipantModel.set('name', 'theName')
 
 		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
+
+		callParticipantModel.set('peer', new PeerMock('thePeerId'))
 
 		callParticipantModel.set('connectionState', ConnectionState.CHECKING)
 
@@ -114,6 +142,8 @@ describe('LocalStateBroadcasterNoMcu', () => {
 		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
+
+		callParticipantModel.set('peer', new PeerMock('thePeerId'))
 
 		callParticipantModel.set('connectionState', ConnectionState.CHECKING)
 
@@ -140,6 +170,8 @@ describe('LocalStateBroadcasterNoMcu', () => {
 		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
+
+		callParticipantModel.set('peer', new PeerMock('thePeerId'))
 
 		callParticipantModel.set('connectionState', ConnectionState.CHECKING)
 
@@ -194,11 +226,15 @@ describe('LocalStateBroadcasterNoMcu', () => {
 		vi.mocked(internalWebRtc.isAudioEnabled).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
+		localCallParticipantModel.set('name', 'theName')
 
 		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 		const callParticipantModel2 = callParticipantCollection.add({ peerId: 'thePeerId2', webRtc })
+
+		callParticipantModel.set('peer', new PeerMock('thePeerId'))
+		callParticipantModel2.set('peer', new PeerMock('thePeerId2'))
 
 		callParticipantModel.set('connectionState', ConnectionState.CHECKING)
 		callParticipantModel2.set('connectionState', ConnectionState.CHECKING)
@@ -232,10 +268,49 @@ describe('LocalStateBroadcasterNoMcu', () => {
 		expect(webRtc.sendTo).toHaveBeenNthCalledWith(4, 'thePeerId2', 'mute', { name: 'video' })
 	})
 
+	test('set null peer for participant as user', () => {
+		webRtc.connection.settings.userId = 'theUserId'
+		localCallParticipantModel.set('name', 'theName')
+
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
+
+		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
+
+		callParticipantModel.set('peer', null)
+
+		// The data channel message will not be actually sent due to the null
+		// peer, but that is internally handled in "sendDataChannelTo".
+		expect(webRtc.sendDataChannelTo).toHaveBeenCalledTimes(1)
+		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'status', 'nickChanged', { name: 'theName', userid: 'theUserId' })
+
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(1)
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'nickChanged', { name: 'theName' })
+	})
+
+	test('set null peer for participant as guest', () => {
+		localCallParticipantModel.set('name', 'theName')
+
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
+
+		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
+
+		callParticipantModel.set('peer', null)
+
+		// The data channel message will not be actually sent due to the null
+		// peer, but that is internally handled in "sendDataChannelTo".
+		expect(webRtc.sendDataChannelTo).toHaveBeenCalledTimes(1)
+		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'status', 'nickChanged', 'theName')
+
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(1)
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'nickChanged', { name: 'theName' })
+	})
+
 	test('remove participant and change to connected', () => {
 		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
+
+		callParticipantModel.set('peer', new PeerMock('thePeerId'))
 
 		callParticipantModel.set('connectionState', ConnectionState.CHECKING)
 
@@ -252,6 +327,8 @@ describe('LocalStateBroadcasterNoMcu', () => {
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
+		callParticipantModel.set('peer', new PeerMock('thePeerId'))
+
 		callParticipantModel.set('connectionState', ConnectionState.CHECKING)
 
 		callParticipantCollection.remove('thePeerId')
@@ -262,10 +339,25 @@ describe('LocalStateBroadcasterNoMcu', () => {
 		expect(webRtc.sendTo).toHaveBeenCalledTimes(0)
 	})
 
+	test('remove participant and set null peer', () => {
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
+
+		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
+
+		callParticipantCollection.remove('thePeerId')
+
+		callParticipantModel.set('peer', null)
+
+		expect(webRtc.sendDataChannelTo).toHaveBeenCalledTimes(0)
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(0)
+	})
+
 	test('destroy and change to connected', () => {
 		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
+
+		callParticipantModel.set('peer', new PeerMock('thePeerId'))
 
 		callParticipantModel.set('connectionState', ConnectionState.CHECKING)
 
@@ -282,11 +374,28 @@ describe('LocalStateBroadcasterNoMcu', () => {
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
+		callParticipantModel.set('peer', new PeerMock('thePeerId'))
+
 		callParticipantModel.set('connectionState', ConnectionState.CHECKING)
 
 		localStateBroadcasterNoMcu.destroy()
 
 		callParticipantModel.set('connectionState', ConnectionState.COMPLETED)
+
+		expect(webRtc.sendDataChannelTo).toHaveBeenCalledTimes(0)
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(0)
+	})
+
+	test('destroy and set null peer', () => {
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
+
+		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
+
+		callParticipantModel.set('peer', new PeerMock('thePeerId'))
+
+		localStateBroadcasterNoMcu.destroy()
+
+		callParticipantModel.set('peer', null)
 
 		expect(webRtc.sendDataChannelTo).toHaveBeenCalledTimes(0)
 		expect(webRtc.sendTo).toHaveBeenCalledTimes(0)
@@ -299,6 +408,10 @@ describe('LocalStateBroadcasterNoMcu', () => {
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 		const callParticipantModel2 = callParticipantCollection.add({ peerId: 'thePeerId2', webRtc })
+		const callParticipantModel3 = callParticipantCollection.add({ peerId: 'thePeerId3', webRtc })
+
+		callParticipantModel.set('peer', new PeerMock('thePeerId'))
+		callParticipantModel2.set('peer', new PeerMock('thePeerId2'))
 
 		callParticipantModel.set('connectionState', ConnectionState.CHECKING)
 
@@ -306,6 +419,7 @@ describe('LocalStateBroadcasterNoMcu', () => {
 
 		callParticipantModel.set('connectionState', ConnectionState.CONNECTED)
 		callParticipantModel2.set('connectionState', ConnectionState.CONNECTED)
+		callParticipantModel3.set('peer', null)
 
 		expect(webRtc.sendDataChannelTo).toHaveBeenCalledTimes(0)
 		expect(webRtc.sendTo).toHaveBeenCalledTimes(0)
