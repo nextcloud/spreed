@@ -6,6 +6,7 @@
 import type {
 	CallParticipantCollection,
 	CallParticipantModel,
+	LocalCallParticipantModel,
 	WebRtc,
 } from '../../types/index.ts'
 
@@ -113,8 +114,8 @@ export class LocalStateBroadcasterMcu extends LocalStateBroadcaster {
 	private _sendStateWithRepetition?: ExponentialBackoffCallback | null
 	private _sendStateWithRepetitionToParticipant: Map<string, ExponentialBackoffCallback>
 
-	public constructor(webRtc: WebRtc, callParticipantCollection: CallParticipantCollection) {
-		super(webRtc, callParticipantCollection)
+	public constructor(webRtc: WebRtc, callParticipantCollection: CallParticipantCollection, localCallParticipantModel: LocalCallParticipantModel) {
+		super(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		this._sendStateWithRepetition = null
 		this._sendStateWithRepetitionToParticipant = new Map()

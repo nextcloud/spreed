@@ -69,6 +69,13 @@ declare module './utils/webrtc/models/CallParticipantModel.js' {
 		off(event: string, handler: (callParticipantModel: CallParticipantModel, ...args: any[]) => void): void
 	}
 }
+
+declare module './utils/webrtc/models/LocalCallParticipantModel.js' {
+	interface LocalCallParticipantModel {
+		on(event: string, handler: (localCallParticipantModel: LocalCallParticipantModel, ...args: any[]) => void): void
+		off(event: string, handler: (localCallParticipantModel: LocalCallParticipantModel, ...args: any[]) => void): void
+	}
+}
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 export {}
