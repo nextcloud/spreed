@@ -738,6 +738,30 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		webrtc.sendDirectlyToAll(channel, message, payload)
 	}
 
+	webrtc.sendDataChannelTo = function(peerId, channel, message, payload) {
+		// There should be just one video peer with that id, but iterating is
+		// safer.
+		const peers = webrtc.getPeers(peerId, 'video')
+		peers.forEach(function(peer) {
+			peer.sendDirectly(channel, message, payload)
+		})
+	}
+
+	webrtc.sendTo = function(peerId, messageType, payload) {
+		const message = {
+			to: peerId,
+			// "roomType" is not really relevant without a peer or when
+			// referring to the whole participant, but it is nevertheless
+			// expected in the message. As most of the signaling messages
+			// currently sent to a single participant are related to audio/video
+			// state "video" is used as the room type.
+			roomType: 'video',
+			type: messageType,
+			payload,
+		}
+		signaling.emit('message', message)
+	}
+
 	/**
 	 * @param {object} peer The peer connection to handle the state on
 	 */
