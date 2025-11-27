@@ -629,7 +629,7 @@ export function useGetMessagesProvider() {
 		}
 
 		chatStore.processChatBlocks(token, [message], { mergeBy: chatStore.getLastKnownId(token) })
-		store.dispatch('processMessage', { token, message })
+		store.dispatch('processMessage', { token, message, fromRealtime: true })
 	}
 
 	provide(GET_MESSAGES_CONTEXT_KEY, {
