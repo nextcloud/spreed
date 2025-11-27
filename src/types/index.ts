@@ -250,6 +250,20 @@ export type CallParticipantModel = {
 	set(key: string, value: any): void
 }
 
+export type LocalCallParticipantModel = {
+	on(event: string, handler: (localCallParticipantModel: LocalCallParticipantModel, ...args: any[]) => void): void
+	off(event: string, handler: (localCallParticipantModel: LocalCallParticipantModel, ...args: any[]) => void): void
+
+	get(key: string): any
+	set(key: string, value: any): void
+}
+
+export type Signaling = {
+	settings: {
+		userId: string | null
+	}
+}
+
 export type InternalWebRtc = {
 	isAudioEnabled(): boolean
 	isVideoEnabled(): boolean
@@ -267,6 +281,7 @@ export type WebRtc = {
 	sendDataChannelTo(peerId: string, channel: string, message: string, payload?: string | object): void
 	sendTo(peerId: string, messageType: string, payload: object): void
 
+	connection: Signaling
 	webrtc: InternalWebRtc
 }
 
