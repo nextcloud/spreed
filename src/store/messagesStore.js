@@ -482,6 +482,22 @@ const actions = {
 			// If parent message is presented in store and is different, we update it
 			const parentInStore = context.getters.message(token, message.parent.id)
 			if (Object.keys(parentInStore).length !== 0 && JSON.stringify(parentInStore) !== JSON.stringify(message.parent)) {
+				if (fromRealtime && !message.parent.reactionsSelf) {
+					// Message object might come from signaling, where we don't relay this field
+					message.parent.reactionsSelf = parentInStore.reactionsSelf ?? []
+
+					if (message.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION
+						&& actorStore.checkIfSelfIsActor(message)
+						&& !message.parent.reactionsSelf.includes(message.message)
+					) {
+						message.parent.reactionsSelf = [...message.parent.reactionsSelf, message.message]
+					} else if (message.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION_REVOKED
+						&& actorStore.checkIfSelfIsActor(message)
+						&& message.parent.reactionsSelf.includes(message.message)
+					) {
+						message.parent.reactionsSelf = message.parent.reactionsSelf.filter((reaction) => reaction !== message.message)
+					}
+				}
 				context.commit('addMessage', { token, message: message.parent })
 			}
 
