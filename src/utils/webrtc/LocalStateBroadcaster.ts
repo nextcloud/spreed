@@ -4,8 +4,12 @@
  */
 
 import type {
+	CallParticipantCollection,
+	CallParticipantModel,
 	WebRtc,
 } from '../../types/index.ts'
+
+import { ConnectionState } from './models/CallParticipantModel.js'
 
 /**
  * Helper class to send the local participant state to the other participants in
@@ -17,9 +21,15 @@ import type {
  * participant is actually in the call or not; it is expected that the
  * LocalStateBroadcaster will be created and destroyed when the local
  * participant joins and leaves the call.
+ *
+ * The LocalStateBroadcaster (or, rather, its subclasses) also sends the current
+ * state to remote participants as needed when a participant joins (including
+ * when the local participant joins) so the remote participants can set an
+ * initial state for the local participant.
  */
-export class LocalStateBroadcaster {
-	private _webRtc: WebRtc
+export abstract class LocalStateBroadcaster {
+	protected _webRtc: WebRtc
+	private _callParticipantCollection: CallParticipantCollection
 
 	private _handleAudioOnBound: () => void
 	private _handleAudioOffBound: () => void
@@ -28,8 +38,12 @@ export class LocalStateBroadcaster {
 	private _handleVideoOnBound: () => void
 	private _handleVideoOffBound: () => void
 
-	public constructor(webRtc: WebRtc) {
+	private _handleAddCallParticipantModelBound: (callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModel) => void
+	private _handleRemoveCallParticipantModelBound: (callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModel) => void
+
+	public constructor(webRtc: WebRtc, callParticipantCollection: CallParticipantCollection) {
 		this._webRtc = webRtc
+		this._callParticipantCollection = callParticipantCollection
 
 		this._handleAudioOnBound = this._handleAudioOn.bind(this)
 		this._handleAudioOffBound = this._handleAudioOff.bind(this)
@@ -38,12 +52,18 @@ export class LocalStateBroadcaster {
 		this._handleVideoOnBound = this._handleVideoOn.bind(this)
 		this._handleVideoOffBound = this._handleVideoOff.bind(this)
 
+		this._handleAddCallParticipantModelBound = this._handleAddCallParticipantModel.bind(this)
+		this._handleRemoveCallParticipantModelBound = this._handleRemoveCallParticipantModel.bind(this)
+
 		this._webRtc.on('audioOn', this._handleAudioOnBound)
 		this._webRtc.on('audioOff', this._handleAudioOffBound)
 		this._webRtc.on('speaking', this._handleSpeakingBound)
 		this._webRtc.on('stoppedSpeaking', this._handleStoppedSpeakingBound)
 		this._webRtc.on('videoOn', this._handleVideoOnBound)
 		this._webRtc.on('videoOff', this._handleVideoOffBound)
+
+		this._callParticipantCollection.on('add', this._handleAddCallParticipantModelBound)
+		this._callParticipantCollection.on('remove', this._handleRemoveCallParticipantModelBound)
 	}
 
 	public destroy(): void {
@@ -53,7 +73,13 @@ export class LocalStateBroadcaster {
 		this._webRtc.off('stoppedSpeaking', this._handleStoppedSpeakingBound)
 		this._webRtc.off('videoOn', this._handleVideoOnBound)
 		this._webRtc.off('videoOff', this._handleVideoOffBound)
+
+		this._callParticipantCollection.off('add', this._handleAddCallParticipantModelBound)
+		this._callParticipantCollection.off('remove', this._handleRemoveCallParticipantModelBound)
 	}
+
+	protected abstract _handleAddCallParticipantModel(callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModel): void
+	protected abstract _handleRemoveCallParticipantModel(callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModel): void
 
 	private _handleAudioOn(): void {
 		this._webRtc.sendDataChannelToAll('status', 'audioOn')
