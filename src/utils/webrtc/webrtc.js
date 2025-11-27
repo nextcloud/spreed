@@ -567,9 +567,9 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		localUserInCall = true
 
 		if (signaling.hasFeature('mcu')) {
-			localStateBroadcaster = new LocalStateBroadcasterMcu(webrtc, callParticipantCollection)
+			localStateBroadcaster = new LocalStateBroadcasterMcu(webrtc, callParticipantCollection, localCallParticipantModel)
 		} else {
-			localStateBroadcaster = new LocalStateBroadcasterNoMcu(webrtc, callParticipantCollection)
+			localStateBroadcaster = new LocalStateBroadcasterNoMcu(webrtc, callParticipantCollection, localCallParticipantModel)
 		}
 	})
 	signaling.on('beforeLeaveCall', function(token, reconnect) {
