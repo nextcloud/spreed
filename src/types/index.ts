@@ -233,6 +233,9 @@ export type WebRtc = {
 
 	sendDataChannelToAll(channel: string, message: string, payload?: string | object): void
 	sendToAll(message: string, payload: object): void
+
+	sendDataChannelTo(peerId: string, channel: string, message: string, payload?: string | object): void
+	sendTo(peerId: string, messageType: string, payload: object): void
 }
 
 // Participants
