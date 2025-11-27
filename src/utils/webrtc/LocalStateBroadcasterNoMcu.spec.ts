@@ -23,11 +23,13 @@ import {
 	CallParticipantModel,
 	ConnectionState,
 } from './models/CallParticipantModel.js'
+import { LocalCallParticipantModel } from './models/LocalCallParticipantModel.js'
 
 describe('LocalStateBroadcasterNoMcu', () => {
 	let webRtc: WebRtc
 	let internalWebRtc: InternalWebRtc
 	let callParticipantCollection: CallParticipantCollection
+	let localCallParticipantModel: LocalCallParticipantModel
 
 	let localStateBroadcasterNoMcu: LocalStateBroadcasterNoMcu
 
@@ -48,6 +50,8 @@ describe('LocalStateBroadcasterNoMcu', () => {
 		} as any)()
 
 		callParticipantCollection = new CallParticipantCollection()
+
+		localCallParticipantModel = new LocalCallParticipantModel()
 	})
 
 	afterEach(() => {
@@ -59,7 +63,7 @@ describe('LocalStateBroadcasterNoMcu', () => {
 		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
 
-		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
@@ -85,7 +89,7 @@ describe('LocalStateBroadcasterNoMcu', () => {
 		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
 
-		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
@@ -107,7 +111,7 @@ describe('LocalStateBroadcasterNoMcu', () => {
 	})
 
 	test('add participant and change to connected and then completed', () => {
-		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
@@ -133,7 +137,7 @@ describe('LocalStateBroadcasterNoMcu', () => {
 	})
 
 	test('add participant and change to connected from different states', () => {
-		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
@@ -191,7 +195,7 @@ describe('LocalStateBroadcasterNoMcu', () => {
 		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
 		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
 
-		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 		const callParticipantModel2 = callParticipantCollection.add({ peerId: 'thePeerId2', webRtc })
@@ -229,7 +233,7 @@ describe('LocalStateBroadcasterNoMcu', () => {
 	})
 
 	test('remove participant and change to connected', () => {
-		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
@@ -244,7 +248,7 @@ describe('LocalStateBroadcasterNoMcu', () => {
 	})
 
 	test('remove participant and change to completed', () => {
-		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
@@ -259,7 +263,7 @@ describe('LocalStateBroadcasterNoMcu', () => {
 	})
 
 	test('destroy and change to connected', () => {
-		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
@@ -274,7 +278,7 @@ describe('LocalStateBroadcasterNoMcu', () => {
 	})
 
 	test('destroy and change to completed', () => {
-		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
 
@@ -289,7 +293,7 @@ describe('LocalStateBroadcasterNoMcu', () => {
 	})
 
 	test('add and remove participant after destroying', () => {
-		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection)
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
 
 		localStateBroadcasterNoMcu.destroy()
 
