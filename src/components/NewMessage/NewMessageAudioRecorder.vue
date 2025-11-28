@@ -189,7 +189,15 @@ export default {
 
 			// Create a media recorder to capture the stream
 			try {
-				this.mediaRecorder = new this.MediaRecorder(this.audioStream, {
+				const audioContext = new AudioContext()
+
+				const mediaStreamAudioSourceNode = audioContext.createMediaStreamSource(this.audioStream)
+				const mediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination()
+
+				mediaStreamAudioSourceNode
+					.connect(mediaStreamAudioDestinationNode) // playback audio on output device
+
+				this.mediaRecorder = new this.MediaRecorder(mediaStreamAudioDestinationNode.stream, {
 					mimeType: 'audio/wav',
 				})
 			} catch (exception) {
