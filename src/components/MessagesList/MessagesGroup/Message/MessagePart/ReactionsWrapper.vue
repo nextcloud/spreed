@@ -197,26 +197,32 @@ export default {
 			}
 			return undefined
 		},
-
-		/**
-		 * Compare the plain reactions with the simplified detailed reactions.
-		 */
-		hasOutdatedDetails() {
-			const detailedReactionsSimplified = Object.fromEntries(Object.entries(this.detailedReactions)
-				.sort() // Plain reactions come sorted
-				.map(([key, value]) => [key, value.length]))
-			return this.hasReactionsLoaded
-				&& JSON.stringify(this.plainReactions) !== JSON.stringify(detailedReactionsSimplified)
-		},
 	},
 
 	methods: {
 		t,
 		n,
+
 		fetchReactions() {
-			if (!this.hasReactionsLoaded || this.hasOutdatedDetails) {
+			if (this.hasOutdatedDetails()) {
 				this.reactionsStore.fetchReactions(this.token, this.id)
 			}
+		},
+
+		/**
+		 * Compare the plain reactions with the simplified detailed reactions.
+		 */
+		hasOutdatedDetails() {
+			if (!this.hasReactionsLoaded) {
+				// No details available yet
+				return true
+			}
+
+			const allPlainReactions = Object.keys(this.plainReactions)
+
+			// If the keys differ, we have outdated details
+			return allPlainReactions.length !== Object.keys(this.detailedReactions).length
+				|| allPlainReactions.some((reaction) => this.plainReactions[reaction] !== this.detailedReactions[reaction]?.length)
 		},
 
 		userHasReacted(reaction) {
