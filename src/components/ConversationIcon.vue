@@ -180,7 +180,7 @@ export default {
 			}
 
 			// Endpoint limited with #RequireParticipantOrLoggedInAndListedConversation
-			return !!this.item.actorId
+			return this.item.attendeeId || this.item.listable !== CONVERSATION.LISTABLE.NONE
 		},
 
 		iconClass() {

@@ -102,7 +102,7 @@ const canRequestAvatar = computed(() => {
 	}
 
 	// Endpoint limited with #RequireParticipantOrLoggedInAndListedConversation
-	return !!conversation.value.actorId
+	return conversation.value.attendeeId || conversation.value.listable !== CONVERSATION.LISTABLE.NONE
 })
 
 const iconClass = computed(() => getFallbackIconClass(conversation.value, (profileImageFailed.value || !canRequestAvatar.value)))
