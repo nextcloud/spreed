@@ -56,6 +56,13 @@ import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.v
 import { useAudioEncoder } from '../../composables/useAudioEncoder.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
+import { NoiseSuppressorWorklet_Name } from "@timephy/rnnoise-wasm"
+// This is an example how to get the script path using Vite, may be different when using other build tools
+// NOTE: `?worker&url` is important (`worker` to generate a working script, `url` to get its url to load it)
+// import NoiseSuppressorWorklet = new Worker(new URL('@timephy/rnnoise-wasm/NoiseSuppressorWorklet', import.meta.url))
+
+// import NoiseSuppressorWorklet from "../../utils/noise/NoiseSuppressorWorklet?url"
+// console.log('local', NoiseSuppressorWorklet)
 
 export default {
 	name: 'NewMessageAudioRecorder',
@@ -190,18 +197,43 @@ export default {
 			// Create a media recorder to capture the stream
 			try {
 				const audioContext = new AudioContext()
+				// Load the NoiseSuppressorWorklet into the AudioContext
+				// Load the NoiseSuppressorWorklet into the AudioContext
+// Fetch the module and use a blob URL to avoid CORS / import-url issues
+				let workletModuleUrl = undefined
+				if (typeof workletModuleUrl !== 'string') {
+					workletModuleUrl = new URL('../../utils/noise/NoiseSuppressorWorkletBundle.js', import.meta.url).href
+				}
+				const resp = await fetch(workletModuleUrl)
+				if (!resp.ok) {
+					throw new Error('Failed to fetch worklet module: ' + resp.status)
+				}
+				const scriptText = await resp.text()
+				const blob = new Blob([scriptText], { type: 'application/javascript' })
+				const blobUrl = URL.createObjectURL(blob)
+				try {
+					await audioContext.audioWorklet.addModule(blobUrl)
+				} finally {
+					URL.revokeObjectURL(blobUrl)
+				}
+				// await audioContext.audioWorklet.addModule(NoiseSuppressorWorklet)
+
+
+				// Instantiate the Worklet as a Node
+				const noiseSuppressionNode = new AudioWorkletNode(audioContext, NoiseSuppressorWorklet_Name)
 
 				const mediaStreamAudioSourceNode = audioContext.createMediaStreamSource(this.audioStream)
 				const mediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination()
 
 				mediaStreamAudioSourceNode
+					.connect(noiseSuppressionNode) // pass audio through noise suppression
 					.connect(mediaStreamAudioDestinationNode) // playback audio on output device
 
 				this.mediaRecorder = new this.MediaRecorder(mediaStreamAudioDestinationNode.stream, {
 					mimeType: 'audio/wav',
 				})
 			} catch (exception) {
-				console.debug(exception)
+				console.error(exception)
 				this.killStreams()
 				this.audioStream = null
 				showError(t('spreed', 'Error while recording audio'))

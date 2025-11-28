@@ -163,6 +163,12 @@ module.exports = defineConfig((env) => {
 					type: 'javascript/auto',
 				},
 				{
+					test: /\.m?js/,
+					resolve: {
+						fullySpecified: false
+					}
+				},
+				{
 					test: /\.(png|jpe?g|gif|svg|webp)$/i,
 					type: 'asset',
 				},
@@ -181,6 +187,10 @@ module.exports = defineConfig((env) => {
 				{
 					resourceQuery: /raw/,
 					type: 'asset/source',
+				},
+				{
+					resourceQuery: /url$/,
+					type: 'asset/resource',
 				},
 			],
 		},
