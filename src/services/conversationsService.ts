@@ -57,7 +57,6 @@ import type {
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import { hasTalkFeature } from './CapabilitiesManager.ts'
 
 /**
  * Fetches all conversations from the server.
@@ -289,10 +288,19 @@ async function setNotificationCalls(token: string, level: setConversationNotifyC
  * @param password The password to set for the conversation (optional, only if force password is enabled)
  */
 async function makeConversationPublic(token: string, password: makeConversationPublicParams['password']): makeConversationPublicResponse {
-	const data = (hasTalkFeature(token, 'conversation-creation-password') && password)
-		? { password }
-		: undefined
-	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/public', { token }), data as makeConversationPublicParams)
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/public', { token }), {
+		password,
+	} as makeConversationPublicParams)
+}
+
+/**
+ * Make the conversation public (legacy method, doesn't support password payload)
+ * Capability check for 'conversation-creation-password'
+ *
+ * @param token The token of the conversation to be removed from favorites
+ */
+async function makeLegacyConversationPublic(token: string): makeConversationPublicResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/public', { token }))
 }
 
 /**
@@ -433,6 +441,7 @@ export {
 	fetchNoteToSelfConversation,
 	makeConversationPrivate,
 	makeConversationPublic,
+	makeLegacyConversationPublic,
 	markAsImportant,
 	markAsInsensitive,
 	markAsSensitive,

@@ -34,6 +34,7 @@ import {
 	fetchConversations,
 	makeConversationPrivate,
 	makeConversationPublic,
+	makeLegacyConversationPublic,
 	markAsImportant,
 	markAsInsensitive,
 	markAsSensitive,
@@ -553,7 +554,11 @@ const actions = {
 		try {
 			const conversation = { ...getters.conversation(token) }
 			if (allowGuests) {
-				await makeConversationPublic(token, password)
+				if (hasTalkFeature(token, 'conversation-creation-password')) {
+					await makeConversationPublic(token, password)
+				} else {
+					await makeLegacyConversationPublic(token)
+				}
 				conversation.type = CONVERSATION.TYPE.PUBLIC
 				showSuccess(t('spreed', 'You allowed guests'))
 			} else {
