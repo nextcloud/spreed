@@ -35,7 +35,7 @@ jobs:
           echo "APP_VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
           path: ${{ env.APP_NAME }}
@@ -65,8 +65,8 @@ jobs:
         continue-on-error: true
         with:
           path: ${{ env.APP_NAME }}
-          fallbackNode: '^20'
-          fallbackNpm: '^10'
+          fallbackNode: '^24'
+          fallbackNpm: '^11.3'
 
       - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
         # Skip if no package.json
@@ -87,7 +87,7 @@ jobs:
           filename: ${{ env.APP_NAME }}/appinfo/info.xml
 
       - name: Set up php ${{ steps.php-versions.outputs.php-min }}
-        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # v2.35.5
+        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2.36.0
         with:
           php-version: ${{ steps.php-versions.outputs.php-min }}
           coverage: none
@@ -156,7 +156,7 @@ jobs:
           unzip nextcloud.zip
 
       - name: Checkout server master fallback
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         if: ${{ steps.server-download.outcome != 'success' }}
         with:
           persist-credentials: false
@@ -181,7 +181,7 @@ jobs:
           tar -zcvf ${{ env.APP_NAME }}.tar.gz ${{ env.APP_NAME }}
 
       - name: Attach tarball to github release
-        uses: svenstaro/upload-release-action@81c65b7cd4de9b2570615ce3aad67a41de5b1a13 # v2.11.2
+        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # v2.11.3
         id: attach_to_release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
