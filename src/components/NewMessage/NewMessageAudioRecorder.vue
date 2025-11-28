@@ -6,6 +6,13 @@
 <template>
 	<div class="audio-recorder">
 		<NcButton
+			:pressed="suppression"
+			@click="suppression = !suppression">
+			<template #icon>
+				<IconTestTube :size="20" />
+			</template>
+		</NcButton>
+		<NcButton
 			v-if="!isRecording"
 			:title="startRecordingTitle"
 			:aria-label="startRecordingTitle"
@@ -53,9 +60,15 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconClose from 'vue-material-design-icons/Close.vue'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
+import IconTestTube from 'vue-material-design-icons/TestTube.vue'
 import { useAudioEncoder } from '../../composables/useAudioEncoder.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
+
+import { RnnoiseWorkletNode, loadRnnoise } from '@sapphi-red/web-noise-suppressor'
+import rnnoiseWorkletPath from '@sapphi-red/web-noise-suppressor/rnnoiseWorklet.js?url'
+import rnnoiseWasmPath from '@sapphi-red/web-noise-suppressor/rnnoise.wasm?url'
+import rnnoiseWasmSimdPath from '@sapphi-red/web-noise-suppressor/rnnoise_simd.wasm?url'
 
 export default {
 	name: 'NewMessageAudioRecorder',
@@ -64,6 +77,7 @@ export default {
 		IconMicrophoneOutline,
 		IconClose,
 		IconCheck,
+		IconTestTube,
 		NcButton,
 	},
 
@@ -95,6 +109,7 @@ export default {
 
 	data() {
 		return {
+			suppression: false,
 			// The audio stream object
 			audioStream: null,
 			// The media recorder which generate the recorded chunks
@@ -173,7 +188,11 @@ export default {
 			// Create new audio stream
 			try {
 				this.audioStream = await mediaDevicesManager.getUserMedia({
-					audio: true,
+					audio: {
+						noiseSuppression: false,
+						echoCancellation: false,
+						autoGainControl: false
+					},
 					video: false,
 				})
 			} catch (exception) {
@@ -191,17 +210,32 @@ export default {
 			try {
 				const audioContext = new AudioContext()
 
-				const mediaStreamAudioSourceNode = audioContext.createMediaStreamSource(this.audioStream)
+				const rnnoiseWasmBinary = await loadRnnoise({
+					url: rnnoiseWasmPath,
+					simdUrl: rnnoiseWasmSimdPath
+				})
+				await audioContext.audioWorklet.addModule(rnnoiseWorkletPath)
+
+				const mediaStreamAudioSource = audioContext.createMediaStreamSource(this.audioStream)
 				const mediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination()
 
-				mediaStreamAudioSourceNode
-					.connect(mediaStreamAudioDestinationNode) // playback audio on output device
+				const rnnoise = new RnnoiseWorkletNode(audioContext, {
+					wasmBinary: rnnoiseWasmBinary,
+					maxChannels: 2
+				})
+
+				if (this.suppression) {
+					mediaStreamAudioSource.connect(rnnoise)
+					rnnoise.connect(mediaStreamAudioDestinationNode)
+				} else {
+					mediaStreamAudioSource.connect(mediaStreamAudioDestinationNode)
+				}
 
 				this.mediaRecorder = new this.MediaRecorder(mediaStreamAudioDestinationNode.stream, {
 					mimeType: 'audio/wav',
 				})
 			} catch (exception) {
-				console.debug(exception)
+				console.error(exception)
 				this.killStreams()
 				this.audioStream = null
 				showError(t('spreed', 'Error while recording audio'))
@@ -220,7 +254,7 @@ export default {
 				// Start the recording
 				this.mediaRecorder.start()
 			} catch (exception) {
-				console.debug(exception)
+				console.error(exception)
 				this.aborted = true
 				this.stop()
 				this.killStreams()
