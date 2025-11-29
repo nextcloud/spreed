@@ -47,6 +47,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\RoomFormatter;
+use OCA\Talk\Service\ScheduledMessageService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Share\Helper\Preloader;
@@ -93,6 +94,7 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type TalkChatReminderUpcoming from ResponseDefinitions
  * @psalm-import-type TalkRichObjectParameter from ResponseDefinitions
  * @psalm-import-type TalkRoom from ResponseDefinitions
+ * @psalm-import-type TalkScheduledMessage from ResponseDefinitions
  */
 class ChatController extends AEnvironmentAwareOCSController {
 	/** @var string[] */
@@ -135,6 +137,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		protected ITaskProcessingManager $taskProcessingManager,
 		protected IAppConfig $appConfig,
 		protected LoggerInterface $logger,
+		protected ScheduledMessageService $scheduledMessageManager,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -330,6 +333,254 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		return $this->parseCommentToResponse($comment, $parentMessage);
+	}
+
+	/**
+	 * Get all scheduled nessages of a given room
+	 *
+	 * The author and timestamp are automatically set to the current user
+	 * and time.
+	 *
+	 * Required capability: `scheduled-messages`
+	 *
+	 * @param string $message the message to send
+	 * @param int $replyTo Parent id which this message is a reply to
+	 * @psalm-param non-negative-int $replyTo
+	 * @param bool $silent If sent silent the chat message will not create any notifications
+	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
+	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
+	 * @return DataResponse<Http::STATUS_CREATED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
+	 *
+	 * 201: Message scheduled successfully
+	 * 400: Scheduled message is not possible
+	 * 404: Actor not found
+	 * 413: Message too long
+	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/chat/{token}/schedule', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function scheduledMessages(): DataResponse {
+		if ($this->room->getType() !== Room::TYPE_GROUP && $this->room->getType() !== Room::TYPE_ONE_TO_ONE) {
+			return new DataResponse(['error' => 'roomType'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
+		}
+
+		try {
+			$scheduledMessages = $this->scheduledMessageManager->getMessages(
+				$this->room,
+				$this->participant,
+			);
+		} catch (\Exception $e) {
+			$this->logger->warning($e->getMessage());
+			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$data = $scheduledMessages;
+		return new DataResponse($data, Http::STATUS_CREATED);
+	}
+
+	/**
+	 * Schedules the sending of a new chat message to the given room
+	 *
+	 * The author and timestamp are automatically set to the current user
+	 * and time.
+	 *
+	 * Required capability: `scheduled-messages`
+	 *
+	 * @param string $message the message to send
+	 * @param int $replyTo Parent id which this message is a reply to
+	 * @psalm-param non-negative-int $replyTo
+	 * @param bool $silent If sent silent the chat message will not create any notifications
+	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
+	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
+	 * @return DataResponse<Http::STATUS_CREATED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
+	 *
+	 * 201: Message scheduled successfully
+	 * 400: Scheduled message is not possible
+	 * 404: Actor not found
+	 * 413: Message too long
+	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/schedule', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function scheduleMessage(string $message, int $sendAt, int $replyTo = 0, bool $silent = false, string $threadTitle = '', int $threadId = 0): DataResponse {
+		if ($this->room->getType() !== Room::TYPE_GROUP || $this->room->getType() !== Room::TYPE_ONE_TO_ONE) {
+			return new DataResponse(['error' => 'roomType'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($sendAt <= $this->timeFactory->getTime()) {
+			return new DataResponse(['error' => 'sendAt'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
+		}
+
+		$parent = $parentMessage = null;
+		if ($replyTo !== 0) {
+			try {
+				$parent = $this->chatManager->getParentComment($this->room, (string)$replyTo);
+			} catch (NotFoundException $e) {
+				// Someone is trying to reply cross-rooms or to a non-existing message
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+			}
+
+			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
+			$this->messageParser->parseMessage($parentMessage);
+			if (!$parentMessage->isReplyable()) {
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+			}
+		}
+
+		if (($threadId !== 0) && !$this->threadService->validateThread($this->room->getId(), $threadId)) {
+			return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$sendAtDateTime = $this->timeFactory->getDateTime('@' . $sendAt, new \DateTimeZone('UTC'));
+
+		try {
+			$createThread = $replyTo === 0 && $threadId === Thread::THREAD_NONE && $threadTitle !== '';
+			$threadId = $createThread ? Thread::THREAD_CREATE : $threadId;
+			$scheduledMessage = $this->scheduledMessageManager->scheduleMessage(
+				$this->room,
+				$this->participant,
+				$message,
+				ChatManager::VERB_MESSAGE,
+				$parent,
+				$threadId,
+				$sendAtDateTime,
+				[
+					Message::METADATA_THREAD_TITLE => $threadTitle,
+					Message::METADATA_SILENT => $silent
+				]
+			);
+			$this->participantService->hasScheduledMessages($this->participant, true);
+		} catch (MessageTooLongException) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+		} catch (\Exception $e) {
+			$this->logger->warning($e->getMessage());
+			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$data = $this->scheduledMessageManager->parseScheduledMessage($scheduledMessage, $parentMessage);
+		return new DataResponse($data, Http::STATUS_CREATED);
+	}
+
+	/**
+	 * Update a scheduled message
+	 *
+	 * Required capability: `scheduled-messages`
+	 *
+	 * @param int $messageId
+	 * @param string $message the message to send
+	 * @param int $sendAt
+	 * @param bool $silent If sent silent the chat message will not create any notifications
+	 * @return DataResponse<Http::STATUS_ACCEPTED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
+	 *
+	 * 202: Message updated successfully
+	 * 400: Scheduled message is not possible
+	 * 404: Actor not found
+	 * 413: Message too long
+	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/schedule/{messageId}', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]{4,30}',
+	])]
+	public function editScheduleMessage(int $messageId, string $message, int $sendAt, bool $silent = false): DataResponse {
+		if ($this->room->getType() !== Room::TYPE_GROUP || $this->room->getType() !== Room::TYPE_ONE_TO_ONE) {
+			return new DataResponse(['error' => 'roomType'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($sendAt <= $this->timeFactory->getTime()) {
+			return new DataResponse(['error' => 'sendAt'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
+		}
+
+		$sendAtDateTime = $this->timeFactory->getDateTime('@' . $sendAt, new \DateTimeZone('UTC'));
+		try {
+			$scheduledMessage = $this->scheduledMessageManager->editMessage(
+				$this->room,
+				$messageId,
+				$this->participant,
+				$message,
+				$silent,
+				$sendAtDateTime
+			);
+			$this->participantService->hasScheduledMessages($this->participant, true);
+		} catch (MessageTooLongException) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+		} catch (\Exception $e) {
+			$this->logger->warning($e->getMessage());
+			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$parent = $this->chatManager->getParentComment($this->room, (string)$scheduledMessage->getParentId());
+			$this->messageParser->parseMessage($parent);
+		} catch (NotFoundException $e) {
+			$parent = null;
+		}
+
+		$data = $this->scheduledMessageManager->parseScheduledMessage($scheduledMessage, $parent);
+		return new DataResponse($data, Http::STATUS_ACCEPTED);
+	}
+
+	/**
+	 * Delete a scheduled message
+	 *
+	 * Required capability: `scheduled-messages`
+	 *
+	 * @param int $messageId
+	 * @return DataResponse<Http::STATUS_OK, array{}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+	 *
+	 * 200: Message deleted
+	 * 404: Message not found
+	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/chat/{token}/schedule/{messageId}', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+		'messageId' => '[0-9]{4,30}',
+	])]
+	public function deleteScheduleMessage(int $messageId): DataResponse {
+		try {
+			$deleted = $this->scheduledMessageManager->deleteMessage(
+				$this->room,
+				$messageId,
+				$this->participant,
+			);
+		} catch (\Exception $e) {
+			$this->logger->warning($e->getMessage());
+			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
+		}
+
+		$hasScheduledMessages = $this->scheduledMessageManager->getScheduledMessageCount($this->room, $this->participant) > 0;
+		$this->participantService->hasScheduledMessages($this->participant, $hasScheduledMessages);
+		return new DataResponse([], Http::STATUS_OK);
 	}
 
 	/**

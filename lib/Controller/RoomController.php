@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OCA\Circles\Model\Circle;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
@@ -66,6 +65,7 @@ use OCA\Talk\Service\PhoneService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Service\ScheduledMessageService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Settings\UserPreference;
@@ -154,6 +154,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected IURLGenerator $url,
 		protected IL10N $l,
 		protected ThreadService $threadService,
+		protected ScheduledMessageService $scheduledMessageService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -503,7 +504,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$statuses = $this->statusManager->getUserStatuses($userIds);
 			}
 			return new DataResponse($this->formatRoom($room, $participant, $statuses, $isSIPBridgeRequest), Http::STATUS_OK, $this->getTalkHashHeader());
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			/**
 			 * A hack to fix type collision
 			 * @var DataResponse<Http::STATUS_NOT_FOUND, null, array{}> $response
