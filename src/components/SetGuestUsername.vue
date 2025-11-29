@@ -111,7 +111,7 @@ EventBus.once('joined-conversation', () => {
 	}
 })
 
-/** Update guest displayName from public event (e.g. @nextcloud/auth) */
+/** Update guest displayName from public event (e.g. `@nextcloud/auth`) */
 subscribe('user:info:changed', updateDisplayNameFromPublicEvent)
 onBeforeUnmount(() => {
 	unsubscribe('user:info:changed', updateDisplayNameFromPublicEvent)

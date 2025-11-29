@@ -375,7 +375,7 @@ async function changeListable(token: string, scope: setConversationListableParam
 }
 
 /**
- * Set mention permissions to allow or disallow mentioning @all for non-moderators
+ * Set mention permissions to allow or disallow mentioning `@all` for non-moderators
  *
  * @param token The token of the conversation to be modified
  * @param mentionPermissions The mention permissions to set

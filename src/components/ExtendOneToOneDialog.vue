@@ -74,8 +74,7 @@ async function extendOneToOneConversation() {
 <template>
 	<NcPopover
 		:container="container"
-		popup-role="dialog"
-		close-on-click-outside>
+		popup-role="dialog">
 		<template #trigger>
 			<NcButton
 				variant="tertiary"
