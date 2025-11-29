@@ -6,7 +6,6 @@
 <template>
 	<NcModal
 		no-close
-		:close-on-click-outside="false"
 		:label-id="dialogHeaderId"
 		size="small">
 		<div class="modal__content">

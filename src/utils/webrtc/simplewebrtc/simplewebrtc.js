@@ -61,9 +61,9 @@ export default function SimpleWebRTC(opts) {
 	// Note that this is a coarse check; calling "getScreenMedia" may fail even
 	// if "supportScreenSharing" is true.
 	const screenSharingSupported
-			= (window.navigator.mediaDevices && window.navigator.mediaDevices.getDisplayMedia)
-				|| (window.navigator.webkitGetUserMedia)
-				|| (window.navigator.userAgent.match('Firefox'))
+		= (window.navigator.mediaDevices && window.navigator.mediaDevices.getDisplayMedia)
+			|| (window.navigator.webkitGetUserMedia)
+			|| (window.navigator.userAgent.match('Firefox'))
 	webrtcSupport.supportScreenSharing = window.location.protocol === 'https:' && screenSharingSupported
 
 	// attach detected support for convenience

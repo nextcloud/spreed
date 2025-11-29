@@ -8,7 +8,6 @@
 		v-if="showModal"
 		ref="modal"
 		:size="isVoiceMessage ? 'small' : 'normal'"
-		:close-on-click-outside="false"
 		:label-id="dialogHeaderId"
 		@close="handleDismiss">
 		<div
