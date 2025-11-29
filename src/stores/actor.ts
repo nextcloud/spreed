@@ -99,7 +99,7 @@ export const useActorStore = defineStore('actor', () => {
 	/**
 	 * Set the actor from the current user
 	 *
-	 * @param user A NextcloudUser object as returned by @nextcloud/auth
+	 * @param user A NextcloudUser object as returned by `@nextcloud/auth`
 	 * @param user.uid The user id of the user
 	 * @param user.displayName The display name of the user
 	 */

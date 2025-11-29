@@ -44,8 +44,13 @@ export default [
 			'@typescript-eslint/no-unused-expressions': 'off', // non-fixable
 			'@typescript-eslint/no-unused-vars': 'off', // non-fixable
 			'@typescript-eslint/no-use-before-define': 'off', // non-fixable
+			'jsdoc/check-tag-names': 'off', // need to respect JS
+			'jsdoc/reject-function-type': 'off', // need to respect JS
+			'jsdoc/reject-any-type': 'off', // need to respect JS
+			'jsdoc/require-function-type': 'off', // need to respect JS
 			'jsdoc/require-param-type': 'off', // need to respect JS
 			'jsdoc/require-param-description': 'off', // need to respect JS
+			'jsdoc/require-throws-type': 'off', // need to respect JS
 			'no-console': 'off', // non-fixable
 			'no-unused-vars': 'off', // non-fixable
 			'no-use-before-define': 'off', // non-fixable

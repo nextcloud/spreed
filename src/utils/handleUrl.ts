@@ -10,7 +10,7 @@ import { t } from '@nextcloud/l10n'
 import { generateUrl, getBaseUrl } from '@nextcloud/router'
 
 /**
- * Generate a full absolute link with @nextcloud/router.generateUrl
+ * Generate a full absolute link with `@nextcloud/router` generateUrl()
  *
  * @param url - path
  * @param params - parameters to be replaced into the address
