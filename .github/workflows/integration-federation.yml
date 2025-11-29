@@ -138,7 +138,7 @@ jobs:
           echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
 
       - name: Checkout server - Host
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
           path: host
@@ -147,14 +147,14 @@ jobs:
           ref: ${{ matrix.host-server-versions }}
 
       - name: Checkout spreed app - Host
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
           path: host/apps/spreed
           ref: ${{ matrix.host-spreed-versions }}
 
       - name: Checkout circles app - Host
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
           repository: nextcloud/circles
@@ -162,7 +162,7 @@ jobs:
           ref: ${{ matrix.host-circles-versions }}
 
       - name: Checkout guests app - Host
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
           repository: nextcloud/guests
@@ -170,7 +170,7 @@ jobs:
           ref: ${{ matrix.host-guests-versions }}
 
       - name: Checkout notifications app - Host
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
           repository: nextcloud/notifications
@@ -178,7 +178,7 @@ jobs:
           ref: ${{ matrix.host-notifications-versions }}
 
       - name: Checkout server - Remote
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
           path: remote
@@ -187,14 +187,14 @@ jobs:
           ref: ${{ matrix.remote-server-versions }}
 
       - name: Checkout spreed app - Remote
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
           path: remote/apps/spreed
           ref: ${{ matrix.remote-spreed-versions }}
 
       - name: Checkout circles app - Remote
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
           repository: nextcloud/circles
@@ -202,7 +202,7 @@ jobs:
           ref: ${{ matrix.remote-circles-versions }}
 
       - name: Checkout guests app - Remote
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
           repository: nextcloud/guests
@@ -210,7 +210,7 @@ jobs:
           ref: ${{ matrix.remote-guests-versions }}
 
       - name: Checkout notifications app - Remote
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
           repository: nextcloud/notifications
