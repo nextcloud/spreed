@@ -1709,7 +1709,7 @@ OC.L10N.register(
     "Grant all permissions" : "Conceder todos os permisos",
     "Remove all permissions" : "Retirar todos os permisos",
     "Also ban from this conversation" : "Expulsar tamén desta conversa",
-    "Internal note (reason to ban)" : "Nota interna (razón da expulsión)",
+    "Internal note (reason to ban)" : "Nota interna (motivo da expulsión)",
     "Remove" : "Retirar",
     "Permissions modified for {displayName}" : "Modificáronse os permisos de {displayName}",
     "Add users, groups or teams" : "Engadir usuarios, grupos ou equipos",
