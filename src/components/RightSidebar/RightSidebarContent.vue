@@ -30,6 +30,7 @@ import LocalTime from '../UIShared/LocalTime.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { CONVERSATION } from '../../constants.ts'
 import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { getFallbackIconClass } from '../../utils/conversation.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
@@ -54,6 +55,8 @@ const emit = defineEmits<{
 	(event: 'update:state', value: SidebarContentState): void
 	(event: 'update:mode', value: 'compact' | 'preview' | 'full'): void
 }>()
+
+const supportsAvatar = hasTalkFeature('local', 'avatar')
 
 const store = useStore()
 const groupwareStore = useGroupwareStore()
@@ -93,10 +96,19 @@ const sidebarTitle = computed(() => {
 	return conversation.value.displayName
 })
 
-const iconClass = computed(() => getFallbackIconClass(conversation.value, profileImageFailed.value))
+const canRequestAvatar = computed(() => {
+	if (!supportsAvatar || conversation.value.isDummyConversation) {
+		return false
+	}
+
+	// Endpoint limited with #RequireParticipantOrLoggedInAndListedConversation
+	return conversation.value.attendeeId || conversation.value.listable !== CONVERSATION.LISTABLE.NONE
+})
+
+const iconClass = computed(() => getFallbackIconClass(conversation.value, (profileImageFailed.value || !canRequestAvatar.value)))
 
 const avatarUrl = computed(() => {
-	if (iconClass.value) {
+	if (iconClass.value || !canRequestAvatar.value) {
 		return undefined
 	}
 

@@ -321,7 +321,7 @@ export default {
 		handleClickAvatar() {
 			if (this.threadId) {
 				this.$router.replace({ query: {}, hash: '' })
-			} else {
+			} else if (!this.isOneToOneConversation) {
 				this.openConversationSettings()
 			}
 		},
