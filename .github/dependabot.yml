@@ -51,24 +51,6 @@ updates:
   cooldown:
     default-days: 4
 
-- package-ecosystem: composer
-  target-branch: stable30
-  directory: "/"
-  commit-message:
-    prefix: "build"
-    include: "scope"
-  versioning-strategy: "increase"
-  ignore:
-    - dependency-name: "*"
-      update-types: ["version-update:semver-major", "version-update:semver-minor"]
-  schedule:
-    interval: weekly
-    day: saturday
-    time: "03:00"
-    timezone: Europe/Berlin
-  cooldown:
-    default-days: 4
-
 # Composer: Tooling
 - package-ecosystem: composer
   directories:
@@ -161,24 +143,3 @@ updates:
     default-days: 4
     exclude:
       - "@nextcloud/*"
-
-- package-ecosystem: npm
-  target-branch: stable30
-  directory: "/"
-  commit-message:
-    prefix: "build"
-    include: "scope"
-  versioning-strategy: "increase"
-  schedule:
-    interval: weekly
-    day: saturday
-    time: "03:00"
-    timezone: Europe/Berlin
-  ignore:
-    - dependency-name: "*"
-      update-types: ["version-update:semver-major", "version-update:semver-minor"]
-  cooldown:
-    default-days: 4
-    exclude:
-      - "@nextcloud/*"
-
