@@ -37,7 +37,7 @@ onBeforeUnmount(() => {
  * @param payload.to
  */
 function onRouteChange({ from, to }: { from: RouteLocation, to: RouteLocation }): void {
-	if (to.name !== 'conversation' || from.params.token !== to.params.token || (from.query.threadId !== to.query.threadId && isInCall.value)) {
+	if (to.name !== 'conversation' || ('token' in from.params && from.params.token !== to.params.token) || (from.query.threadId !== to.query.threadId && isInCall.value)) {
 		emit('close')
 	}
 }

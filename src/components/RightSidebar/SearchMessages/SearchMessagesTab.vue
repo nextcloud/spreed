@@ -105,7 +105,7 @@ onBeforeUnmount(() => {
  * @param payload.to
  */
 function onRouteChange({ from, to }: { from: RouteLocation, to: RouteLocation }): void {
-	if (to.name !== 'conversation' || from.params.token !== to.params.token || (to.hash && isInCall.value)) {
+	if (to.name !== 'conversation' || ('token' in from.params && from.params.token !== to.params.token) || (to.hash && isInCall.value)) {
 		abortSearch()
 		emit('close')
 	}

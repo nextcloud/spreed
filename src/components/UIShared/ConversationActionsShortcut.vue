@@ -61,7 +61,7 @@ const descriptionLabel = computed(() => {
  */
 async function deleteEventConversation() {
 	try {
-		if (route?.params?.token === props.token) {
+		if ('token' in route.params && route.params.token === props.token) {
 			await router.push({ name: 'root' })
 				.catch((failure) => !isNavigationFailure(failure, NavigationFailureType.duplicated) && Promise.reject(failure))
 		}
