@@ -24,13 +24,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        branches: ['main', 'master', 'stable31', 'stable30']
+        branches:
+          - ${{ github.event.repository.default_branch }}
+          - 'stable32'
+          - 'stable31'
 
     name: update-nextcloud-ocp-${{ matrix.branches }}
 
     steps:
       - id: checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
           ref: ${{ matrix.branches }}
@@ -39,7 +42,7 @@ jobs:
 
       - name: Set up php8.2
         if: steps.checkout.outcome == 'success'
-        uses: shivammathur/setup-php@ec406be512d7077f68eed36e63f4d91bc006edc4 # v2.35.4
+        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2.36.0
         with:
           php-version: 8.2
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
@@ -59,7 +62,7 @@ jobs:
         if: steps.checkout.outcome == 'success'
         run: composer install
 
-      - name: Composer update nextcloud/ocp
+      - name: Composer update nextcloud/ocp # zizmor: ignore[template-injection]
         id: update_branch
         if: ${{ steps.checkout.outcome == 'success' && matrix.branches != 'main' }}
         run: composer require --dev 'nextcloud/ocp:dev-${{ matrix.branches }}'
@@ -108,7 +111,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.checkout.outcome == 'success'
-        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+        uses: peter-evans/create-pull-request@84ae59a2cdc2258d6fa0732dd66352dddae2a412 # v7.0.9
         with:
           token: ${{ secrets.COMMAND_BOT_PAT }}
           commit-message: 'chore(dev-deps): Bump nextcloud/ocp package'
