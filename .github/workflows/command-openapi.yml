@@ -129,8 +129,8 @@ jobs:
         # Continue if no package.json
         continue-on-error: true
         with:
-          fallbackNode: '^20'
-          fallbackNpm: '^10'
+          fallbackNode: '^24'
+          fallbackNpm: '^11.3'
 
       - name: Set up node ${{ steps.node_versions.outputs.nodeVersion }}
         if: ${{ steps.node_versions.outputs.nodeVersion }}
