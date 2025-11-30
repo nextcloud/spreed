@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import type { RouteLocationAsRelative } from 'vue-router'
+import type { RouteLocationRaw } from 'vue-router'
 import type { ChatMessage, Conversation } from '../../../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
@@ -25,8 +25,8 @@ import { parseToSimpleMessage } from '../../../utils/textParse.ts'
 
 const props = withDefaults(defineProps<{
 	messageId: number
+	threadId?: number
 	title: string
-	to: RouteLocationAsRelative
 	subline: string
 	actorId: string
 	actorType: string
@@ -59,6 +59,14 @@ const richSubline = computed(() => {
 
 	return parseToSimpleMessage(props.subline, props.messageParameters)
 })
+
+const to = computed<RouteLocationRaw>(() => ({
+	name: 'conversation',
+	params: { token: props.token },
+	query: { threadId: props.threadId },
+	hash: `#message_${props.messageId}`,
+}))
+
 const clearReminderLabel = computed(() => {
 	if (!props.isReminder) {
 		return ''
@@ -67,7 +75,7 @@ const clearReminderLabel = computed(() => {
 })
 
 const active = computed(() => {
-	return route.fullPath === router.resolve(props.to).fullPath
+	return route.fullPath === router.resolve(to.value).fullPath
 })
 
 /**

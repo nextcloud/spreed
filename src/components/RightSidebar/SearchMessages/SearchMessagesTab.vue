@@ -51,15 +51,7 @@ const searchBox = ref<InstanceType<typeof SearchBox> | null>(null)
 const { initializeNavigation, resetNavigation } = useArrowNavigation(searchMessagesTab, searchBox)
 
 const isFocused = ref(false)
-const searchResults = ref<(UnifiedSearchResultEntry & {
-	to: {
-		name: string
-		hash: string
-		params: {
-			token: string
-		}
-	}
-})[]>([])
+const searchResults = ref<UnifiedSearchResultEntry[]>([])
 const searchText = ref('')
 const fromUser = ref<IUserData | undefined>(undefined)
 const sinceDate = ref<Date | null>(null)
@@ -218,19 +210,7 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 				}
 			}
 
-			searchResults.value = searchResults.value.concat(entries.map((entry: UnifiedSearchResultEntry) => {
-				const threadId = (entry.attributes.threadId !== entry.attributes.messageId) ? entry.attributes.threadId : undefined
-
-				return {
-					...entry,
-					to: {
-						name: 'conversation',
-						hash: `#message_${entry.attributes.messageId}`,
-						params: { token: entry.attributes.conversation },
-						query: { threadId },
-					},
-				}
-			}))
+			searchResults.value = searchResults.value.concat(entries)
 			nextTick(() => initializeNavigation())
 		}
 	} catch (exception) {
@@ -345,13 +325,13 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 					v-for="item of searchResults"
 					:key="`message_${item.attributes.messageId}`"
 					:message-id="+item.attributes.messageId"
+					:thread-id="(item.attributes.threadId !== item.attributes.messageId) ? +item.attributes.threadId : undefined"
 					:title="item.title"
 					:subline="item.subline"
 					:actor-id="item.attributes.actorId"
 					:actor-type="item.attributes.actorType"
 					:token="item.attributes.conversation"
-					:timestamp="+item.attributes.timestamp"
-					:to="item.to" />
+					:timestamp="+item.attributes.timestamp" />
 			</template>
 			<NcEmptyContent
 				v-else-if="!isFetchingResults && searchText.trim().length !== 0"
