@@ -13,6 +13,10 @@ on:
   schedule:
     - cron: "5 2 * * 0"
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   update-nextcloud-ocp:
     runs-on: ubuntu-latest
@@ -20,21 +24,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        branches: ['main', 'master', 'stable30', 'stable29', 'stable28']
+        branches:
+          - ${{ github.event.repository.default_branch }}
+          - 'stable32'
+          - 'stable31'
 
     name: update-nextcloud-ocp-${{ matrix.branches }}
 
     steps:
       - id: checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
+          persist-credentials: false
           ref: ${{ matrix.branches }}
           submodules: true
         continue-on-error: true
 
       - name: Set up php8.2
         if: steps.checkout.outcome == 'success'
-        uses: shivammathur/setup-php@c541c155eee45413f5b09a52248675b1a2575231 # v2.31.1
+        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2.36.0
         with:
           php-version: 8.2
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
@@ -54,7 +62,7 @@ jobs:
         if: steps.checkout.outcome == 'success'
         run: composer install
 
-      - name: Composer update nextcloud/ocp
+      - name: Composer update nextcloud/ocp # zizmor: ignore[template-injection]
         id: update_branch
         if: ${{ steps.checkout.outcome == 'success' && matrix.branches != 'main' }}
         run: composer require --dev 'nextcloud/ocp:dev-${{ matrix.branches }}'
@@ -103,7 +111,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.checkout.outcome == 'success'
-        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6.1.0
+        uses: peter-evans/create-pull-request@84ae59a2cdc2258d6fa0732dd66352dddae2a412 # v7.0.9
         with:
           token: ${{ secrets.COMMAND_BOT_PAT }}
           commit-message: 'chore(dev-deps): Bump nextcloud/ocp package'
