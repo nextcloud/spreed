@@ -3,15 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { RouteRecordRaw } from 'vue-router'
+import type { RouteRecordInfo, RouteRecordRaw } from 'vue-router'
 
 import { generateUrl, getRootUrl } from '@nextcloud/router'
-import {
-	createMemoryHistory,
-	createRouter,
-	createWebHashHistory,
-	createWebHistory,
-} from 'vue-router'
+import { createMemoryHistory, createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import CallView from '../components/CallView/CallView.vue'
 import ChatView from '../components/ChatView.vue'
 import ForbiddenView from '../views/ForbiddenView.vue'
@@ -106,7 +101,7 @@ export function createMemoryRouter() {
 	})
 
 	router.beforeEach((to, from) => {
-		if (to.name === 'conversation' && (from.params.token && from.params.token !== to.params.token)) {
+		if (to.name === 'conversation' && from.name === 'conversation' && from.params.token !== to.params.token) {
 			// in case of a link to a different conversation, open it in a new tab
 			window.open(window.location.origin + router.resolve(to).href, '_blank', 'noopener,noreferrer')
 			// cancel the navigation in current tab
@@ -120,4 +115,49 @@ export function createMemoryRouter() {
 	})
 
 	return router
+}
+
+interface RouteNamedMap {
+	root: RouteRecordInfo<
+		'root',
+		'/apps/spreed',
+		Record<never, never>,
+		Record<never, never>
+	>
+	notfound: RouteRecordInfo<
+		'notfound',
+		'/apps/spreed/not-found',
+		Record<never, never>,
+		Record<never, never>
+	>
+	forbidden: RouteRecordInfo<
+		'forbidden',
+		'/apps/spreed/forbidden',
+		Record<never, never>,
+		Record<never, never>
+	>
+	duplicatesession: RouteRecordInfo<
+		'duplicatesession',
+		'/apps/spreed/duplicate-session',
+		Record<never, never>,
+		Record<never, never>
+	>
+	conversation: RouteRecordInfo<
+		'conversation',
+		'/call/:token',
+		{ token: string },
+		{ token: string }
+	>
+	recording: RouteRecordInfo<
+		'recording',
+		'/call/:token/recording',
+		{ token: string },
+		{ token: string }
+	>
+}
+
+declare module 'vue-router' {
+	interface TypesConfig {
+		RouteNamedMap: RouteNamedMap
+	}
 }
