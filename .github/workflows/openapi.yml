@@ -35,7 +35,7 @@ jobs:
         uses: icewind1991/nextcloud-version-matrix@58becf3b4bb6dc6cef677b15e2fd8e7d48c0908f # v1.3.1
 
       - name: Set up php
-        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # v2.35.5
+        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2.36.0
         with:
           php-version: ${{ steps.php_versions.outputs.php-available }}
           extensions: xml
@@ -57,8 +57,8 @@ jobs:
         # Continue if no package.json
         continue-on-error: true
         with:
-          fallbackNode: '^20'
-          fallbackNpm: '^10'
+          fallbackNode: '^24'
+          fallbackNpm: '^11.3'
 
       - name: Set up node ${{ steps.node_versions.outputs.nodeVersion }}
         if: ${{ steps.node_versions.outputs.nodeVersion }}
