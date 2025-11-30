@@ -1216,6 +1216,7 @@ export type components = {
             /** Format: int64 */
             endedAt: number | null;
             allowCleanup: boolean;
+            includeWatermark: boolean;
         };
         TaskProcessingTaskType: {
             name: string;
@@ -3043,6 +3044,11 @@ export interface operations {
                      * @default null
                      */
                     webhookMethod?: string | null;
+                    /**
+                     * @description Whether to include a watermark in the output file or not
+                     * @default true
+                     */
+                    includeWatermark?: boolean;
                 };
             };
         };
