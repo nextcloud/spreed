@@ -607,7 +607,7 @@ describe('LeftSidebar.vue', () => {
 		subscribe('show-settings', eventHandler)
 		const wrapper = mountComponent()
 
-		const button = findNcButton(wrapper, 'Talk settings')
+		const button = findNcButton(wrapper, 'App settings')
 		expect(button.exists()).toBeTruthy()
 
 		await button.trigger('click')
