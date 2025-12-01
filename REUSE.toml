@@ -24,7 +24,7 @@ SPDX-FileCopyrightText = "2023 Nextcloud GmbH and Nextcloud contributors"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 [[annotations]]
-path = [".github/CODEOWNERS", ".github/ISSUE_TEMPLATE/1_bug_report.md", ".github/ISSUE_TEMPLATE/2_feature_request.md", ".github/ISSUE_TEMPLATE/3_bot_list.yml", ".github/contributing.md", ".github/dependabot.yml", ".github/pull_request_template.md"]
+path = [".github/CODEOWNERS", ".github/ISSUE_TEMPLATE/1_bug_report.md", ".github/ISSUE_TEMPLATE/2_feature_request.md", ".github/ISSUE_TEMPLATE/3_bot_list.yml", ".github/contributing.md", ".github/dependabot.yml", ".github/pull_request_template.md", ".github/workflows/*.patch"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "none"
 SPDX-License-Identifier = "CC0-1.0"
