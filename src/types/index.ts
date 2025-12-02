@@ -39,6 +39,11 @@ export type TokenMap<T> = Record<string, T>
 export type IdMap<T> = Record<number | string, T>
 export type TokenIdMap<T> = TokenMap<IdMap<T>>
 
+type BigInt<T, K extends PropertyKey = 'id'>
+	= K extends keyof T
+		? Omit<T, K> & Record<K, string>
+		: T & Record<K, string>
+
 type SpreedCapabilities = components['schemas']['Capabilities']
 
 // From https://github.com/nextcloud/password_policy/blob/master/lib/Capabilities.php
@@ -250,10 +255,15 @@ export type File = RichObject<'size' | 'path' | 'link' | 'mimetype' | 'preview-a
 	height: string
 }
 export type ChatMessage = components['schemas']['ChatMessageWithParent']
+/* This supports Snowflake ID */
+export type BigIntChatMessage = BigInt<ChatMessage>
+
 export type ChatTask = SummarizeChatTask & {
 	fromMessageId: number
 	summary?: string
 }
+
+export type ScheduledMessage = components['schemas']['ScheduledMessage']
 
 export type receiveMessagesParams = operations['chat-receive-messages']['parameters']['query']
 export type receiveMessagesResponse = ApiResponse<operations['chat-receive-messages']['responses'][200]['content']['application/json']>
@@ -280,6 +290,13 @@ export type pinMessageResponse = ApiResponse<operations['chat-pin-message']['res
 export type unpinMessageResponse = ApiResponse<operations['chat-unpin-message']['responses'][200]['content']['application/json']>
 export type hidePinnedMessageResponse = ApiResponse<operations['chat-hide-pinned-message']['responses'][200]['content']['application/json']>
 export type PinnedChatMessage = Omit<ChatMessage, 'metaData'> & Required<Pick<ChatMessage, 'metaData'>>
+
+export type getScheduledMessagesResponse = ApiResponse<operations['chat-get-scheduled-messages']['responses'][200]['content']['application/json']>
+export type scheduleMessageParams = operations['chat-schedule-message']['requestBody']['content']['application/json']
+export type scheduleMessageResponse = ApiResponse<operations['chat-schedule-message']['responses'][201]['content']['application/json']>
+export type editScheduledMessageParams = operations['chat-edit-scheduled-message']['requestBody']['content']['application/json']
+export type editScheduledMessageResponse = ApiResponse<operations['chat-edit-scheduled-message']['responses'][202]['content']['application/json']>
+export type deleteScheduledMessageResponse = ApiResponse<operations['chat-delete-schedule-message']['responses'][200]['content']['application/json']>
 
 // Threads
 export type Thread = components['schemas']['Thread']
