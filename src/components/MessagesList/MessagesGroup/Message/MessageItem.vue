@@ -7,7 +7,6 @@
 	<li
 		:id="`message_${message.id}`"
 		:data-message-id="message.id"
-		:data-seen="false"
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
 		class="message"

@@ -233,6 +233,8 @@ export default {
 
 			endScrollTimeout: () => {},
 
+			isUnreadMarkerSeen: false,
+
 			loadingSummary: false,
 		}
 	},
@@ -312,6 +314,7 @@ export default {
 		token(newToken, oldToken) {
 			// Expire older messages when navigating to another conversation
 			this.$store.dispatch('easeMessageList', { token: oldToken })
+			this.isUnreadMarkerSeen = false
 		},
 
 		messagesList: {
@@ -358,6 +361,7 @@ export default {
 				})
 			}
 		},
+		
 	},
 
 	mounted() {
@@ -854,7 +858,7 @@ export default {
 			const lastReadMessageElement = this.getVisualLastReadMessageElement()
 
 			// first unread message has not been seen yet, so don't move it
-			if (lastReadMessageElement && lastReadMessageElement.getAttribute('data-seen') !== 'true') {
+			if (!this.isUnreadMarkerSeen) {
 				return
 			}
 
@@ -1093,10 +1097,7 @@ export default {
 
 		lastReadMessageVisibilityChanged([{ isIntersecting }]) {
 			if (isIntersecting) {
-				const lastReadMessageElement = this.getVisualLastReadMessageElement()
-				if (lastReadMessageElement) {
-					lastReadMessageElement.setAttribute('data-seen', 'true')
-				}
+				this.isUnreadMarkerSeen = true
 			}
 		},
 
