@@ -386,7 +386,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param string $message The message to send
 	 * @param int $sendAt When to send the scheduled message
- 	 * @param int $replyTo Parent id which this scheduled message is a reply to
+	 * @param int $replyTo Parent id which this scheduled message is a reply to
 	 * @psalm-param non-negative-int $replyTo
 	 * @param bool $silent If sent silent the scheduled message will not create any notifications when sent
 	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
