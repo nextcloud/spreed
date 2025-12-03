@@ -336,7 +336,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * Get all scheduled nessages of a given room
+	 * Get all scheduled nessages of a given room and participant
 	 *
 	 * The author and timestamp are automatically set to the current user
 	 * and time.
@@ -345,7 +345,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * @return DataResponse<Http::STATUS_OK, list<TalkScheduledMessage>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'actor'|'message'}, array{}>
 	 *
-	 * 200: All scheduled messages for this room
+	 * 200: All scheduled messages for this room and participant
 	 * 400: Could not get scheduled messages
 	 * 404: Actor not found
 	 */
@@ -407,7 +407,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function scheduleMessage(string $message, int $sendAt, int $replyTo = 0, bool $silent = false, string $threadTitle = '', int $threadId = 0): DataResponse {
+	public function scheduleMessage(string $message,
+		int $sendAt,
+		int $replyTo = 0,
+		bool $silent = false,
+		string $threadTitle = '',
+		int $threadId = 0): DataResponse {
 		if ($this->participant->isSelfJoinedOrGuest()) {
 			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
 		}

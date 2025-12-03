@@ -504,6 +504,199 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 | `statusMessage` | string | Optional: Only available with `includeStatus=true` and for users with a set status                                                                                                                                                                                        |
 | `details`       | string | Optional: Only provided for the "Everyone" option and can be used as a subline directly                                                                                                                                                                                   |
 
+## Receive scheduled chat messages of a conversation
+
+* Required capability: `scheduled-messages`
+* Method: `GET`
+* Endpoint: `/chat/{token}/scheduled`
+* Response:
+	- Status code:
+		+ `200 OK` All scheduled messages for this room and participant
+		+ `400 Bad Request` Could not get scheduled messages
+		+ `404 Not Found` Actor not found
+
+	- Data:
+	  Array of scheduled messages, each message has at least:
+
+| field          | type   | Description                                                                               |
+|----------------|--------|-------------------------------------------------------------------------------------------|
+| `id`           | int    | ID of the comment                                                                         |
+| `roomId`       | int    | Conversation token                                                                        |
+| `actorId`      | string | Actor id of the message author                                                            |
+| `actorType`    | string | See [Constants - Actor types of chat messages](constants.md#actor-types-of-chat-messages) |
+| `threadId`     | int    | The thread id in which the scheduled message may be sent                                  |
+| `threadExists` | bool   | **Optional:** Whether the scheduled message thread exists                                 |
+| `threadTitle`  | string | **Optional:** The thread title of a scheduled message that creates a thread               |
+| `parentId`     | ?int   | Null if no parent message was set                                                         |
+| `parent`       | array  | **Optional:** See `Parent data` below                                                     |
+| `message`      | string | Scheduled message string in plain text                                                    |
+| `messageType`  | string | Currently known type is `comment`                                                         |
+| `createdAt`    | int    | Timestamp in seconds and UTC time zone of the creation time                               |
+| `sendAt`       | int    | Timestamp in seconds and UTC time zone of when to send the message                        |
+| `metaData`     | array  | Message metadata - see `Metadata` below                                                   |
+
+#### Parent data
+
+* When deleted:
+
+| field     | type | Description                       |
+|-----------|------|-----------------------------------|
+| `id`      | int  | ID of the parent comment          |
+| `deleted` | bool | `true` when the parent is deleted |
+
+* Regular message:
+
+  Full message array as shown in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation), but `parent` will never be set for a parent message.
+
+#### Metadata
+
+| field              | type | Description                                                 |
+|--------------------|------|-------------------------------------------------------------|
+| `silent`           | bool | Whether the message should be sent silently                 |
+| `thread_id`        | int  | The thread id                                               |
+| `thread_title`     | int  | If the schdeuled message creates a thread, the thread title |
+| `last_edited_time` | bool | **Optional:** timestamp of edit if the message was edited   |
+
+## Schedule a chat message in a conversation
+
+* Required capability: `scheduled-messages`
+* Method: `POST`
+* Endpoint: `/chat/{token}/scheduled`
+* Data:
+
+| field         | type   | Description                                                        |
+|---------------|--------|--------------------------------------------------------------------|
+| `message`     | string | The message content                                                |
+| `sendAt`      | int    | Timestamp in seconds and UTC time zone of when to send the message |
+| `replyTo`     | int    | The message a scheduled message will reply to (`0` by default)     |
+| `silent`      | bool   | Whether the message should be sent silently (`false` by default)   |
+| `threadTitle` | string | Needed when scheduling a thread creation (`''` by default)         |
+| `threadId`    | int    | The thread id a scheduled message will reply to (`0` by default)   |
+
+
+* Response:
+	- Status code:
+		+ `201 Created` Scheduled message was created for this room and participant
+		+ `400 Bad Request` Could not schedule messages
+		+ `404 Not Found` Actor not found
+		+ `413 Request entity too large` the scheduled message is too long
+	- Data:
+	  A scheduled message, which has at least:
+
+| field          | type   | Description                                                                               |
+|----------------|--------|-------------------------------------------------------------------------------------------|
+| `id`           | int    | ID of the comment                                                                         |
+| `roomId`       | int    | Conversation token                                                                        |
+| `actorId`      | string | Actor id of the message author                                                            |
+| `actorType`    | string | See [Constants - Actor types of chat messages](constants.md#actor-types-of-chat-messages) |
+| `threadId`     | int    | The thread id in which the scheduled message may be sent                                  |
+| `threadExists` | bool   | **Optional:** Whether the scheduled message thread exists                                 |
+| `threadTitle`  | string | **Optional:** The thread title of a scheduled message that creates a thread               |
+| `parentId`     | ?int   | Null if no reply to message was set                                                       |
+| `parent`       | array  | **Optional:** See `Parent data` below                                                     |
+| `message`      | string | Scheduled message string in plain text                                                    |
+| `messageType`  | string | Currently known type is `comment`                                                         |
+| `createdAt`    | int    | Timestamp in seconds and UTC time zone of the creation time                               |
+| `sendAt`       | int    | Timestamp in seconds and UTC time zone of when to send the message                        |
+| `metaData`     | array  | Message metadata - see `Metadata` below                                                   |
+
+#### Parent data
+
+* When deleted:
+
+| field     | type | Description                       |
+|-----------|------|-----------------------------------|
+| `id`      | int  | ID of the parent comment          |
+| `deleted` | bool | `true` when the parent is deleted |
+
+* Regular message:
+
+  Full message array as shown in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation), but `parent` will never be set for a parent message.
+
+#### Metadata
+
+| field              | type | Description                                                 |
+|--------------------|------|-------------------------------------------------------------|
+| `silent`           | bool | Whether the message should be sent silently                 |
+| `thread_id`        | int  | The thread id                                               |
+| `thread_title`     | int  | If the schdeuled message creates a thread, the thread title |
+| `last_edited_time` | bool | **Optional:** timestamp of edit if the message was edited   |
+
+## Edit a chat messages in a conversation
+
+* Required capability: `scheduled-messages`
+* Method: `POST`
+* Endpoint: `/chat/{token}/scheduled/{messageId}`
+* Data:
+
+| field         | type   | Description                                                        |
+|---------------|--------|--------------------------------------------------------------------|
+| `message`     | string | The message content                                                |
+| `sendAt`      | int    | Timestamp in seconds and UTC time zone of when to send the message |
+| `replyTo`     | int    | The message a scheduled message will reply to (`0` by default)     |
+| `silent`      | bool   | Whether the message should be sent silently (`false` by default)   |
+| `threadTitle` | string | Needed when scheduling a thread creation (`''` by default)         |
+
+
+* Response:
+	- Status code:
+		+ `202 Accepted Scheduled message was updated for this room and participant
+		+ `400 Bad Request` Could not edit scheduled messages
+		+ `404 Not Found` Actor not found
+		+ `413 Request entity too large` the scheduled message is too long
+	- Data:
+	  A scheduled message, which has at least:
+
+| field          | type   | Description                                                                               |
+|----------------|--------|-------------------------------------------------------------------------------------------|
+| `id`           | int    | ID of the comment                                                                         |
+| `roomId`       | int    | Conversation token                                                                        |
+| `actorId`      | string | Actor id of the message author                                                            |
+| `actorType`    | string | See [Constants - Actor types of chat messages](constants.md#actor-types-of-chat-messages) |
+| `threadId`     | int    | The thread id in which the scheduled message may be sent                                  |
+| `threadExists` | bool   | **Optional:** Whether the scheduled message thread exists                                 |
+| `threadTitle`  | string | **Optional:** The thread title of a scheduled message that creates a thread               |
+| `parentId`     | ?int   | Null if no reply to message was set                                                       |
+| `parent`       | array  | **Optional:** See `Parent data` below                                                     |
+| `message`      | string | Scheduled message string in plain text                                                    |
+| `messageType`  | string | Currently known type is `comment`                                                         |
+| `createdAt`    | int    | Timestamp in seconds and UTC time zone of the creation time                               |
+| `sendAt`       | int    | Timestamp in seconds and UTC time zone of when to send the message                        |
+| `metaData`     | array  | Message metadata - see `Metadata` below                                                   |
+
+#### Parent data
+
+* When deleted:
+
+| field     | type | Description                       |
+|-----------|------|-----------------------------------|
+| `id`      | int  | ID of the parent comment          |
+| `deleted` | bool | `true` when the parent is deleted |
+
+* Regular message:
+
+  Full message array as shown in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation), but `parent` will never be set for a parent message.
+
+#### Metadata
+
+| field              | type | Description                                                 |
+|--------------------|------|-------------------------------------------------------------|
+| `silent`           | bool | Whether the message should be sent silently                 |
+| `thread_id`        | int  | The thread id                                               |
+| `thread_title`     | int  | If the schdeuled message creates a thread, the thread title |
+| `last_edited_time` | bool | **Optional:** timestamp of edit if the message was edited   |,
+
+## Delete a scheduled message
+
+* Required capability: `scheduled-messages`
+* Method: `DELETE`
+* Endpoint: `/chat/{token}/scheduled/{messageId}`
+
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `404 Not Found`
+
 ## System messages
 
 * `conversation_created` - {actor} created the conversation
