@@ -823,12 +823,13 @@ export default {
 		},
 
 		adjustSimulcastQualityForParticipant(callParticipantModel) {
+			// Use same quality for spatial and temporal layers.
 			if (this.isGrid) {
-				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.MEDIUM)
+				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.MEDIUM, SIMULCAST.MEDIUM)
 			} else if (this.sharedDatas[callParticipantModel.attributes.peerId].promoted || this.selectedVideoPeerId === callParticipantModel.attributes.peerId) {
-				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.HIGH)
+				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.HIGH, SIMULCAST.HIGH)
 			} else {
-				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.LOW)
+				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.LOW, SIMULCAST.LOW)
 			}
 		},
 
