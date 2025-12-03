@@ -7713,7 +7713,7 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/schedule": {
             "get": {
                 "operationId": "chat-scheduled-messages",
-                "summary": "Get all scheduled nessages of a given room",
+                "summary": "Get all scheduled nessages of a given room and participant",
                 "description": "The author and timestamp are automatically set to the current user and time.\nRequired capability: `scheduled-messages`",
                 "tags": [
                     "chat"
@@ -7761,7 +7761,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "All scheduled messages for this room",
+                        "description": "All scheduled messages for this room and participant",
                         "content": {
                             "application/json": {
                                 "schema": {

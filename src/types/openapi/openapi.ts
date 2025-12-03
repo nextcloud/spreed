@@ -429,7 +429,7 @@ export type paths = {
             cookie?: never;
         };
         /**
-         * Get all scheduled nessages of a given room
+         * Get all scheduled nessages of a given room and participant
          * @description The author and timestamp are automatically set to the current user and time.
          *     Required capability: `scheduled-messages`
          */
@@ -4781,7 +4781,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description All scheduled messages for this room */
+            /** @description All scheduled messages for this room and participant */
             200: {
                 headers: {
                     [name: string]: unknown;
