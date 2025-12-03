@@ -343,12 +343,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * Required capability: `scheduled-messages`
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{TalkScheduledMessage}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'actor'|'message'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkScheduledMessage>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'actor'|'message'}, array{}>
 	 *
 	 * 200: All scheduled messages for this room
 	 * 400: Could not get scheduled messages
 	 * 404: Actor not found
-	 * 413: Message too long
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
@@ -385,13 +384,14 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * Required capability: `scheduled-messages`
 	 *
-	 * @param string $message the message to send
-	 * @param int $replyTo Parent id which this message is a reply to
+	 * @param string $message The message to send
+	 * @param int $sendAt When to send the scheduled message
+ 	 * @param int $replyTo Parent id which this scheduled message is a reply to
 	 * @psalm-param non-negative-int $replyTo
-	 * @param bool $silent If sent silent the chat message will not create any notifications
+	 * @param bool $silent If sent silent the scheduled message will not create any notifications when sent
 	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
-	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (requires `threads` capability)
-	 * @return DataResponse<Http::STATUS_CREATED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
+	 * @param int $threadId Thread id without quoting a specific message (requires `threads` capability)
+	 * @return DataResponse<Http::STATUS_CREATED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: string}, array{}>
 	 *
 	 * 201: Message scheduled successfully
 	 * 400: Scheduling the message is not possible
@@ -471,12 +471,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * Required capability: `scheduled-messages`
 	 *
-	 * @param int $messageId
-	 * @param string $message the message to send
-	 * @param int $sendAt
-	 * @param bool $silent If sent silent the chat message will not create any notifications
-	 * @param string $threadTitle
-	 * @return DataResponse<Http::STATUS_ACCEPTED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
+	 * @param int $messageId The scheduled message id
+	 * @param string $message The scheduled message to send
+	 * @param int $sendAt When to send the scheduled message
+	 * @param bool $silent If sent silent the scheduled message will not create any notifications
+	 * @param string $threadTitle The thread title if scheduled message is creating a thread
+	 * @return DataResponse<Http::STATUS_ACCEPTED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: string}, array{}>
 	 *
 	 * 202: Message updated successfully
 	 * 400: Editing scheduled message is not possible
@@ -549,8 +549,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * Required capability: `scheduled-messages`
 	 *
-	 * @param int $messageId
-	 * @return DataResponse<Http::STATUS_OK, array{}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+	 * @param int $messageId The scheduled message ud
+	 * @return DataResponse<Http::STATUS_OK, array{}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'actor'|'message'}, array{}>
 	 *
 	 * 200: Message deleted
 	 * 404: Message not found

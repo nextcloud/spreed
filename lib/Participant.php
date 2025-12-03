@@ -71,6 +71,10 @@ class Participant {
 		return \in_array($participantType, [self::GUEST, self::GUEST_MODERATOR, self::USER_SELF_JOINED], true);
 	}
 
+	public function getHasScheduledMessages(): bool {
+		return $this->attendee->getHasScheduledMessages();
+	}
+
 	public function hasModeratorPermissions(bool $guestModeratorAllowed = true): bool {
 		$participantType = $this->attendee->getParticipantType();
 		if (!$guestModeratorAllowed) {

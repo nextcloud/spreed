@@ -387,6 +387,8 @@ namespace OCA\Talk;
  *     lastPinnedId: int,
  *     // Required capability: `pinned-messages`
  *     hiddenPinnedId: int,
+ *     // Required capability: `scheduled-messages` (local)
+ *     hasScheduledMessages?: bool,
  * }
  *
  * @psalm-type TalkDashboardEventAttachment = array{
