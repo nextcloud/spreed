@@ -361,7 +361,16 @@ export default {
 				})
 			}
 		},
-		
+
+		visualLastReadMessageId(newValue, oldValue) {
+			if (newValue === oldValue) {
+				return
+			}
+			const newGroups = this.prepareMessagesGroups(this.messagesList)
+			this.softUpdateByDateGroups(this.messagesGroupedByDateByAuthor, newGroups)
+			this.isUnreadMarkerSeen = false
+		},
+
 	},
 
 	mounted() {
