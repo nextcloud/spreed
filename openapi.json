@@ -1483,7 +1483,8 @@
                     "isImportant",
                     "isSensitive",
                     "lastPinnedId",
-                    "hiddenPinnedId"
+                    "hiddenPinnedId",
+                    "hasScheduledMessages"
                 ],
                 "properties": {
                     "actorId": {
@@ -1886,10 +1887,31 @@
                         "nullable": true
                     },
                     "metaData": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "object"
-                        }
+                        "$ref": "#/components/schemas/ScheduledMessageMetaData"
+                    }
+                }
+            },
+            "ScheduledMessageMetaData": {
+                "type": "object",
+                "required": [
+                    "threadId",
+                    "threadTitle",
+                    "silent"
+                ],
+                "properties": {
+                    "threadId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "threadTitle": {
+                        "type": "string"
+                    },
+                    "silent": {
+                        "type": "boolean"
+                    },
+                    "lastEditedTime": {
+                        "type": "integer",
+                        "format": "int64"
                     }
                 }
             },
@@ -7727,7 +7749,6 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
-                                                                "actor",
                                                                 "message"
                                                             ]
                                                         }
@@ -7769,8 +7790,7 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
-                                                                "actor",
-                                                                "message"
+                                                                "actor"
                                                             ]
                                                         }
                                                     }
@@ -7966,45 +7986,12 @@
                                                     ],
                                                     "properties": {
                                                         "error": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Actor not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string"
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "message",
+                                                                "reply-to",
+                                                                "send-at"
+                                                            ]
                                                         }
                                                     }
                                                 }
@@ -8042,7 +8029,51 @@
                                                     ],
                                                     "properties": {
                                                         "error": {
-                                                            "type": "string"
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "message"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Actor not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "actor"
+                                                            ]
                                                         }
                                                     }
                                                 }
@@ -8236,45 +8267,12 @@
                                                     ],
                                                     "properties": {
                                                         "error": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Actor not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string"
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "message",
+                                                                "send-at",
+                                                                "thread-title"
+                                                            ]
                                                         }
                                                     }
                                                 }
@@ -8312,7 +8310,51 @@
                                                     ],
                                                     "properties": {
                                                         "error": {
-                                                            "type": "string"
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "message"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Actor not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "actor"
+                                                            ]
                                                         }
                                                     }
                                                 }

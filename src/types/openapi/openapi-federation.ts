@@ -570,7 +570,7 @@ export type components = {
              */
             hiddenPinnedId: number;
             /** @description Required capability: `scheduled-messages` (local) */
-            hasScheduledMessages?: boolean;
+            hasScheduledMessages: boolean;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
     };

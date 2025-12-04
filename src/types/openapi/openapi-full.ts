@@ -3003,7 +3003,7 @@ export type components = {
              */
             hiddenPinnedId: number;
             /** @description Required capability: `scheduled-messages` (local) */
-            hasScheduledMessages?: boolean;
+            hasScheduledMessages: boolean;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
         RoomWithInvalidInvitations: components["schemas"]["Room"] & {
@@ -3029,9 +3029,15 @@ export type components = {
             createdAt: number;
             /** Format: int64 */
             sendAt: number | null;
-            metaData: {
-                [key: string]: Record<string, never>;
-            };
+            metaData: components["schemas"]["ScheduledMessageMetaData"];
+        };
+        ScheduledMessageMetaData: {
+            /** Format: int64 */
+            threadId: number;
+            threadTitle: string;
+            silent: boolean;
+            /** Format: int64 */
+            lastEditedTime?: number;
         };
         SignalingFederationSettings: {
             server: string;
@@ -5344,7 +5350,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "actor" | "message";
+                                error: "message";
                             };
                         };
                     };
@@ -5375,7 +5381,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "actor" | "message";
+                                error: "actor";
                             };
                         };
                     };
@@ -5456,7 +5462,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error: string;
+                                /** @enum {string} */
+                                error: "message" | "reply-to" | "send-at";
                             };
                         };
                     };
@@ -5486,7 +5493,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error: string;
+                                /** @enum {string} */
+                                error: "actor";
                             };
                         };
                     };
@@ -5502,7 +5510,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error: string;
+                                /** @enum {string} */
+                                error: "message";
                             };
                         };
                     };
@@ -5573,7 +5582,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error: string;
+                                /** @enum {string} */
+                                error: "message" | "send-at" | "thread-title";
                             };
                         };
                     };
@@ -5603,7 +5613,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error: string;
+                                /** @enum {string} */
+                                error: "actor";
                             };
                         };
                     };
@@ -5619,7 +5630,8 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                error: string;
+                                /** @enum {string} */
+                                error: "message";
                             };
                         };
                     };

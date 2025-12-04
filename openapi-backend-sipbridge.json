@@ -700,7 +700,8 @@
                     "isImportant",
                     "isSensitive",
                     "lastPinnedId",
-                    "hiddenPinnedId"
+                    "hiddenPinnedId",
+                    "hasScheduledMessages"
                 ],
                 "properties": {
                     "actorId": {
