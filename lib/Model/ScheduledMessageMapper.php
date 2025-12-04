@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
-use OCA\Talk\Exceptions\InvalidRoomException;
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\Entity;
@@ -37,10 +36,6 @@ class ScheduledMessageMapper extends QBMapper {
 	 * @throws DoesNotExistException
 	 */
 	public function findById(Room $chat, int $id, string $actorType, string $actorId): ScheduledMessage {
-		if ($chat->isFederatedConversation()) {
-			throw new InvalidRoomException('Can not call ProxyCacheMessageMapper::findById() with a non-federated chat.');
-		}
-
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
@@ -62,7 +57,7 @@ class ScheduledMessageMapper extends QBMapper {
 			->andWhere($query->expr()->eq('s.actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('s.actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)))
 			->leftJoin('s', 'talk_threads', 'th', $query->expr()->eq('s.thread_id', 'th.id'))
-			->orderBy('s.created_at', 'ASC');
+			->orderBy('s.send_at', 'ASC');
 
 		$cursor = $query->executeQuery();
 		$result = $cursor->fetchAll();

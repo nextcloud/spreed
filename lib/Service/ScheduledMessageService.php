@@ -28,8 +28,6 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type TalkScheduledMessage from ResponseDefinitions
  */
 class ScheduledMessageService {
-	public const MAX_CHAT_LENGTH = 32000;
-
 	public function __construct(
 		private readonly ScheduledMessageMapper $scheduledMessageMapper,
 		protected ThreadService $threadService,
@@ -83,6 +81,7 @@ class ScheduledMessageService {
 	 * @throws DoesNotExistException
 	 * @throws Exception
 	 * @throws \JsonException
+	 * @throws \InvalidArgumentException
 	 */
 	public function editMessage(
 		Room $chat,
@@ -93,10 +92,6 @@ class ScheduledMessageService {
 		\DateTime $sendAt,
 		string $threadTitle = '',
 	): ScheduledMessage {
-		if (trim($text) === '') {
-			throw new \InvalidArgumentException('message');
-		}
-
 		try {
 			$message = $this->scheduledMessageMapper->findById(
 				$chat,
@@ -110,16 +105,16 @@ class ScheduledMessageService {
 		}
 
 		$metaData = $message->getDecodedMetaData();
-		if ($metaData[Message::METADATA_THREAD_ID] !== Thread::THREAD_CREATE && $threadTitle !== '') {
-			throw new \InvalidArgumentException('thread_title');
+		if ($metaData[ScheduledMessage::METADATA_THREAD_ID] !== Thread::THREAD_CREATE && $threadTitle !== '') {
+			throw new \InvalidArgumentException('thread-title');
 		}
 
-		if ($metaData[Message::METADATA_THREAD_ID] === Thread::THREAD_CREATE && $threadTitle !== '') {
-			$metaData[Message::METADATA_THREAD_TITLE] = $threadTitle;
+		if ($metaData[ScheduledMessage::METADATA_THREAD_ID] === Thread::THREAD_CREATE && $threadTitle !== '') {
+			$metaData[ScheduledMessage::METADATA_THREAD_TITLE] = $threadTitle;
 		}
 
-		$metaData[Message::METADATA_LAST_EDITED_TIME] = $this->timeFactory->getTime();
-		$metaData[Message::METADATA_SILENT] = $isSilent;
+		$metaData[ScheduledMessage::METADATA_LAST_EDITED_TIME] = $this->timeFactory->getTime();
+		$metaData[ScheduledMessage::METADATA_SILENT] = $isSilent;
 		$message->setMetaData($metaData);
 		$message->setMessage($text);
 		$message->setSendAt($sendAt);

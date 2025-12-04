@@ -35,6 +35,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Reminder;
+use OCA\Talk\Model\ScheduledMessage;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
@@ -343,7 +344,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * Required capability: `scheduled-messages`
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<TalkScheduledMessage>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'actor'|'message'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkScheduledMessage>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'message'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'actor'}, array{}>
 	 *
 	 * 200: All scheduled messages for this room and participant
 	 * 400: Could not get scheduled messages
@@ -391,7 +392,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param bool $silent If sent silent the scheduled message will not create any notifications when sent
 	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
 	 * @param int $threadId Thread id without quoting a specific message (requires `threads` capability)
-	 * @return DataResponse<Http::STATUS_CREATED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'message'|'reply-to'|'send-at'}, array{}>|DataResponse<Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: 'message'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'actor'}, array{}>
 	 *
 	 * 201: Message scheduled successfully
 	 * 400: Scheduling the message is not possible
@@ -418,7 +419,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		if ($sendAt <= $this->timeFactory->getTime()) {
-			return new DataResponse(['error' => 'sendAt'], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => 'send-at'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if (trim($message) === '') {
+			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
 
 		$parent = $parentMessage = null;
@@ -454,9 +459,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 				$threadId,
 				$sendAtDateTime,
 				[
-					Message::METADATA_THREAD_TITLE => $threadTitle,
-					Message::METADATA_SILENT => $silent,
-					Message::METADATA_THREAD_ID => $threadId,
+					ScheduledMessage::METADATA_THREAD_TITLE => $threadTitle,
+					ScheduledMessage::METADATA_SILENT => $silent,
+					ScheduledMessage::METADATA_THREAD_ID => $threadId,
 				]
 			);
 			$this->participantService->setHasScheduledMessages($this->participant, true);
@@ -481,7 +486,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param int $sendAt When to send the scheduled message
 	 * @param bool $silent If sent silent the scheduled message will not create any notifications
 	 * @param string $threadTitle The thread title if scheduled message is creating a thread
-	 * @return DataResponse<Http::STATUS_ACCEPTED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_ACCEPTED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'message'|'send-at'|'thread-title'}, array{}>|DataResponse<Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: 'message'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'actor'}, array{}>
 	 *
 	 * 202: Message updated successfully
 	 * 400: Editing scheduled message is not possible
@@ -510,7 +515,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		if ($sendAt <= $this->timeFactory->getTime()) {
-			return new DataResponse(['error' => 'sendAt'], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => 'send-at'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if (trim($message) === '') {
+			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
 
 		$sendAtDateTime = $this->timeFactory->getDateTime('@' . $sendAt, new \DateTimeZone('UTC'));
@@ -529,7 +538,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->warning($e->getMessage());
-			return new DataResponse(['error' => 'thread_title'], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		} catch (\Exception $e) {
 			$this->logger->warning($e->getMessage());
 			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
@@ -575,14 +584,13 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
 		}
 
-		try {
-			$this->scheduledMessageManager->deleteMessage(
-				$this->room,
-				$messageId,
-				$this->participant,
-			);
-		} catch (\Exception $e) {
-			$this->logger->error($e->getMessage());
+		$deleted = $this->scheduledMessageManager->deleteMessage(
+			$this->room,
+			$messageId,
+			$this->participant,
+		);
+
+		if ($deleted === 0) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
 		}
 

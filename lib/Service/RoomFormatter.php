@@ -158,6 +158,7 @@ class RoomFormatter {
 			'isArchived' => false,
 			'isImportant' => false,
 			'isSensitive' => false,
+			'hasScheduledMessages' => false,
 		];
 
 		if ($room->isFederatedConversation()) {

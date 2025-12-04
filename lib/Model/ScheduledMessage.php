@@ -37,8 +37,14 @@ use OCP\DB\Types;
  * @method \DateTime|null getSendAt()
  *
  * @psalm-import-type TalkScheduledMessage from ResponseDefinitions
+ * @psalm-import-type TalkScheduledMessageMetaData from ResponseDefinitions
  */
 class ScheduledMessage extends Entity implements \JsonSerializable {
+	public const METADATA_THREAD_TITLE = 'threadTitle';
+	public const METADATA_THREAD_ID = 'threadId';
+	public const METADATA_SILENT = 'silent';
+	public const METADATA_LAST_EDITED_TIME = 'lastEditedTime';
+
 	protected ?int $roomId = 0;
 	protected string $actorId = '';
 	protected string $actorType = '';
@@ -64,7 +70,7 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 	}
 
 	/**
-	 * @return array<string, mixed>
+	 * @return TalkScheduledMessageMetaData
 	 */
 	public function getDecodedMetaData(): array {
 		return json_decode($this->metaData, true, 512, JSON_THROW_ON_ERROR);
@@ -125,10 +131,10 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 		if ($thread !== null) {
 			$data['threadExists'] = true;
 			$data['threadTitle'] = $thread->getName();
-			$metaData[Message::METADATA_THREAD_TITLE] = $thread->getName();
-		} elseif (isset($metaData[Message::METADATA_THREAD_TITLE]) && $this->getThreadId() === Thread::THREAD_CREATE) {
+			$metaData[self::METADATA_THREAD_TITLE] = $thread->getName();
+		} elseif (isset($metaData[self::METADATA_THREAD_TITLE]) && $this->getThreadId() === Thread::THREAD_CREATE) {
 			$data['threadExists'] = false;
-			$data['threadTitle'] = (string)$metaData[Message::METADATA_THREAD_TITLE];
+			$data['threadTitle'] = (string)$metaData[self::METADATA_THREAD_TITLE];
 		}
 		$data['metaData'] = $metaData;
 		return $data;
