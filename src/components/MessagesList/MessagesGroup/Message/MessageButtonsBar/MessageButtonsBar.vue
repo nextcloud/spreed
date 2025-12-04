@@ -93,6 +93,25 @@
 						{{ t('spreed', 'Set reminder') }}
 					</NcActionButton>
 					<NcActionButton
+						v-if="true"
+						key="pin-message"
+						is-menu
+						@click.stop="submenu = 'pin'">
+						<template #icon>
+							<IconPin :size="20" />
+						</template>
+						{{ t('spreed', 'Pin message') }}
+					</NcActionButton>
+					<NcActionButton
+						v-if="true"
+						key="unpin-message"
+						@click="unpinMessage">
+						<template #icon>
+							<IconUnpin :size="20" />
+						</template>
+						{{ t('spreed', 'Unpin message') }}
+					</NcActionButton>
+					<NcActionButton
 						v-if="isPrivateReplyable"
 						key="reply-privately"
 						close-after-click
@@ -292,6 +311,25 @@
 						{{ t('spreed', 'Set custom reminder') }}
 					</NcActionButton>
 				</template>
+				<template v-else-if="submenu === 'pin'">
+					<NcActionButton
+						key="action-back"
+						:aria-label="t('spreed', 'Back')"
+						@click.stop="submenu = null">
+						<template #icon>
+							<IconArrowLeft class="bidirectional-icon" />
+						</template>
+						{{ t('spreed', 'Back') }}
+					</NcActionButton>
+					<NcActionButton
+						v-for="option in pinDurationOptions"
+						:key="option.key"
+						:aria-label="option.ariaLabel"
+						close-after-click
+						@click.stop="pinMessage(option.timestamp)">
+						{{ option.label }}
+					</NcActionButton>
+				</template>
 			</NcActions>
 		</template>
 
@@ -370,6 +408,8 @@ import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconNoteEditOutline from 'vue-material-design-icons/NoteEditOutline.vue'
 import IconOpenInNew from 'vue-material-design-icons/OpenInNew.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
+import IconUnpin from 'vue-material-design-icons/PinOffOutline.vue'
+import IconPin from 'vue-material-design-icons/PinOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import IconTranslate from 'vue-material-design-icons/Translate.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
@@ -383,6 +423,7 @@ import { useActorStore } from '../../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
+import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
 import { generatePublicShareDownloadUrl, generateUserFileUrl } from '../../../../../utils/davUtils.ts'
 import { convertToUnix, formatDateTime } from '../../../../../utils/formattedTime.ts'
 import { copyConversationLinkToClipboard } from '../../../../../utils/handleUrl.ts'
@@ -422,10 +463,12 @@ export default {
 		IconNoteEditOutline,
 		IconOpenInNew,
 		IconPencilOutline,
+		IconPin,
 		IconPlus,
 		IconArrowLeftTop,
 		IconArrowRightTop,
 		IconTranslate,
+		IconUnpin,
 	},
 
 	directives: {
@@ -490,6 +533,7 @@ export default {
 		const actorStore = useActorStore()
 		const chatExtrasStore = useChatExtrasStore()
 		const threadId = useGetThreadId()
+		const shareItemsStore = useSharedItemsStore()
 
 		const {
 			isEditable,
@@ -521,6 +565,7 @@ export default {
 			actorStore,
 			chatExtrasStore,
 			threadId,
+			shareItemsStore,
 		}
 	},
 
@@ -664,6 +709,14 @@ export default {
 					ariaLabel: t('spreed', 'Set reminder for next week'),
 				},
 			].filter((option) => option.timestamp !== null)
+		},
+
+		pinDurationOptions() {
+			return [
+				{ key: '24_hours', label: t('spreed', '24 hours'), timestamp: convertToUnix(new Date(Date.now() + 24 * 60 * 60 * 1000)) },
+				{ key: '7_days', label: t('spreed', '7 days'), timestamp: convertToUnix(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)) },
+				{ key: '30_days', label: t('spreed', '30 days'), timestamp: convertToUnix(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)) },
+			]
 		},
 
 		clearReminderLabel() {
@@ -869,6 +922,14 @@ export default {
 				return
 			}
 			this.$emit('edit')
+		},
+
+		pinMessage(pinUntil = 0) {
+			this.shareItemsStore.pinMessage(this.message.token, this.message.id, pinUntil)
+		},
+
+		unpinMessage() {
+			this.shareItemsStore.unpinMessage(this.message.token, this.message.id)
 		},
 	},
 }

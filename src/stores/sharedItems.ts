@@ -10,6 +10,11 @@ import type {
 } from '../types/index.ts'
 
 import { defineStore } from 'pinia'
+import {
+	hidePinnedMessage,
+	pinMessage,
+	unpinMessage,
+} from '../services/messagesService.ts'
 import { getSharedItems, getSharedItemsOverview } from '../services/sharedItemsService.ts'
 import { getItemTypeFromMessage } from '../utils/getItemTypeFromMessage.ts'
 
@@ -188,6 +193,24 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 				this.addSharedItemsFromOverview(token, response.data.ocs.data)
 			} catch (error) {
 				console.error(error)
+			}
+		},
+
+		async pinMessage(token: string, messageId: number, pinUntil?: number) {
+			try {
+				const response = await pinMessage({ token, messageId, pinUntil })
+				// process response
+			} catch (error) {
+				console.error('Error while toggling pin message:', error)
+			}
+		},
+
+		async unpinMessage(token: string, messageId: number) {
+			try {
+				const response = await unpinMessage({ token, messageId })
+				// process response
+			} catch (error) {
+				console.error('Error while unpinning message:', error)
 			}
 		},
 	},
