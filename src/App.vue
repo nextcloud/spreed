@@ -448,10 +448,11 @@ export default {
 					buttons: [
 						{
 							label: t('spreed', 'Stay in call'),
+							variant: 'primary',
 						},
 						{
 							label: t('spreed', 'Leave call'),
-							variant: 'primary',
+							variant: 'error',
 							callback: () => {
 								beforeRouteChangeListener(to, from, next)
 							},
