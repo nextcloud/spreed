@@ -16,7 +16,10 @@ import type {
 	getSubscribedThreadsParams,
 	getSubscribedThreadsResponse,
 	getThreadResponse,
+	hidePinnedMessageResponse,
 	markUnreadResponse,
+	pinMessageParams,
+	pinMessageResponse,
 	postNewMessageParams,
 	postNewMessageResponse,
 	postRichObjectParams,
@@ -31,6 +34,7 @@ import type {
 	setThreadNotificationLevelResponse,
 	summarizeChatParams,
 	summarizeChatResponse,
+	unpinMessageResponse,
 } from '../types/index.ts'
 
 import axios from '@nextcloud/axios'
@@ -43,6 +47,7 @@ type ReceiveMessagesPayload = Partial<receiveMessagesParams> & { token: string }
 type GetMessageContextPayload = getMessageContextParams & { token: string, messageId: number }
 type DeleteMessagePayload = { token: string, id: number }
 type EditMessagePayload = { token: string, messageId: number, updatedMessage: editMessageParams['message'] }
+type PinMessagePayload = { token: string, messageId: number, pinUntil?: pinMessageParams['pinUntil'] }
 
 /**
  * Fetches messages that belong to a particular conversation
@@ -205,6 +210,45 @@ async function editMessage({ token, messageId, updatedMessage }: EditMessagePayl
 }
 
 /**
+ * Pin a message in a conversation
+ *
+ * @param data The destructured payload
+ * @param data.token The conversation token
+ * @param data.messageId The message id
+ * @param data.pinUntil The timestamp until the message should be pinned
+ * @param [options] Axios request options
+ */
+async function pinMessage({ token, messageId, pinUntil }: PinMessagePayload, options?: AxiosRequestConfig): pinMessageResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}/pin', { token, messageId }), {
+		pinUntil,
+	} as pinMessageParams, options)
+}
+
+/**
+ * Unpin a message in a conversation
+ *
+ * @param data The destructured payload
+ * @param data.token The conversation token
+ * @param data.messageId The message id
+ * @param [options] Axios request options
+ */
+async function unpinMessage({ token, messageId }: { token: string, messageId: number }, options?: AxiosRequestConfig): unpinMessageResponse {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}/pin', { token, messageId }), options)
+}
+
+/**
+ * Hide a pinned message for the current user in a conversation
+ *
+ * @param data The destructured payload
+ * @param data.token The conversation token
+ * @param data.messageId The message id
+ * @param [options] Axios request options
+ */
+async function hidePinnedMessage({ token, messageId }: { token: string, messageId: number }, options?: AxiosRequestConfig): hidePinnedMessageResponse {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}/pin/self', { token, messageId }), options)
+}
+
+/**
  * Post a rich object to a conversation
  *
  * @param token conversation token
@@ -349,6 +393,8 @@ export {
 	getRecentThreadsForConversation,
 	getSingleThreadForConversation,
 	getSubscribedThreads,
+	hidePinnedMessage,
+	pinMessage,
 	pollNewMessages,
 	postNewMessage,
 	postRichObjectToConversation,
@@ -356,5 +402,6 @@ export {
 	setConversationUnread,
 	setThreadNotificationLevel,
 	summarizeChat,
+	unpinMessage,
 	updateLastReadMessage,
 }
