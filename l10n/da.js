@@ -491,7 +491,7 @@ OC.L10N.register(
     "Federated user" : "Fødereret bruger",
     "Confirm" : "Bekræft",
     "Reset" : "Nulstil",
-    "Cancel" : "Annuller",
+    "Cancel" : "Annullér",
     "Back" : "Tilbage",
     "Now" : "Nu",
     "Meeting created" : "Møde oprettet",
