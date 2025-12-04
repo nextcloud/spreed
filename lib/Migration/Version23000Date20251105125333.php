@@ -57,7 +57,8 @@ class Version23000Date20251105125333 extends SimpleMigrationStep {
 				'notnull' => false,
 			]);
 			$table->addColumn('thread_id', Types::BIGINT, [
-				'notnull' => false,
+				'notnull' => true,
+				'default' => 0,
 			]);
 			$table->addColumn('parent_id', Types::BIGINT, [
 				'notnull' => false,
