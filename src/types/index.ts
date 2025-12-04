@@ -275,6 +275,10 @@ export type summarizeChatResponse = ApiResponse<operations['chat-summarize-chat'
 export type SummarizeChatTask = operations['chat-summarize-chat']['responses'][201]['content']['application/json']['ocs']['data']
 export type upcomingRemindersResponse = ApiResponse<operations['chat-get-upcoming-reminders']['responses'][200]['content']['application/json']>
 export type UpcomingReminder = components['schemas']['ChatReminderUpcoming']
+export type pinMessageParams = operations['chat-pin-message']['requestBody']['content']['application/json']
+export type pinMessageResponse = ApiResponse<operations['chat-pin-message']['responses'][200]['content']['application/json']>
+export type unpinMessageResponse = ApiResponse<operations['chat-unpin-message']['responses'][200]['content']['application/json']>
+export type hidePinnedMessageResponse = ApiResponse<operations['chat-hide-pinned-message']['responses'][200]['content']['application/json']>
 
 // Threads
 export type Thread = components['schemas']['Thread']
