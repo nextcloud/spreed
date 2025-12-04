@@ -578,7 +578,7 @@ namespace OCA\Talk;
  * 	   	roomId: int,
  *     	actorId: string,
  * 		actorType: string,
- * 		threadId: ?int,
+ * 		threadId: int,
  *      threadExists?: boolean,
  *      threadTitle?: string,
  *      parentId: ?int,

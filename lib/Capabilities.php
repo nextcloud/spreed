@@ -126,6 +126,7 @@ class Capabilities implements IPublicCapability {
 		'threads',
 		'pinned-messages',
 		'federated-shared-items',
+		'scheduled-messages',
 	];
 
 	public const CONDITIONAL_FEATURES = [
