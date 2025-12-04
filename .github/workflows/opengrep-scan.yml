@@ -22,7 +22,11 @@ jobs:
       - name: Install OpenGrep
         run: |
           # Download the OpenGrep binary
-          wget $(curl -s https://api.github.com/repos/opengrep/opengrep/releases/latest | grep "/opengrep_manylinux_x86\"" | awk '{print $2}' | sed 's|[\"\,]*||g') -O opengrep
+          release_page=$(curl -s https://api.github.com/repos/opengrep/opengrep/releases/latest)
+          linux_browser_download_link=$(echo $release_page | jq . | grep "/opengrep_manylinux_x86\"" | awk '{print $2}' | sed 's|[\"\,]*||g')
+          echo "Trying to download: $linux_browser_download_link"
+
+          wget $linux_browser_download_link -O opengrep
 
           # Make the binary executable
           chmod +x opengrep
