@@ -24,8 +24,8 @@ use OCP\DB\Types;
  * @method string getActorId()
  * @method void setActorType(string $actorType)
  * @method string getActorType()
- * @method int|null getThreadId()
- * @method void setThreadId(int|null $threadId)
+ * @method int getThreadId()
+ * @method void setThreadId(int $threadId)
  * @method int|null getParentId()
  * @method void setParentId(int|null $parentId)
  * @method string getMessage()
@@ -48,7 +48,7 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 	protected ?int $roomId = 0;
 	protected string $actorId = '';
 	protected string $actorType = '';
-	protected ?int $threadId = null;
+	protected int $threadId = 0;
 	protected ?int $parentId = null;
 	protected string $message = '';
 	protected string $messageType = '';

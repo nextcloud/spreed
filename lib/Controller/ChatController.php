@@ -538,7 +538,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->warning($e->getMessage());
-			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => 'thread-title'], Http::STATUS_BAD_REQUEST);
 		} catch (\Exception $e) {
 			$this->logger->warning($e->getMessage());
 			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);

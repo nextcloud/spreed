@@ -2479,7 +2479,7 @@ export type components = {
             actorId: string;
             actorType: string;
             /** Format: int64 */
-            threadId: number | null;
+            threadId: number;
             threadExists?: boolean;
             threadTitle?: string;
             /** Format: int64 */

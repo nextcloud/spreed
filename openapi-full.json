@@ -1949,8 +1949,7 @@
                     },
                     "threadId": {
                         "type": "integer",
-                        "format": "int64",
-                        "nullable": true
+                        "format": "int64"
                     },
                     "threadExists": {
                         "type": "boolean"
