@@ -27,6 +27,11 @@ export const CONFIG = {
 		 * Send chat messages via the High performance-backend / websocket
 		 */
 		CHAT_RELAY: 4,
+		/**
+		 * Since 22.0.3
+		 * Mark sessions immediately as inactive when switching away from Talk
+		 */
+		SESSION_INACTIVE_ON_BLUR: 8,
 	},
 } as const
 
