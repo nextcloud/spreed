@@ -37,7 +37,6 @@ use OCP\DB\Types;
  * @method \DateTime|null getSendAt()
  *
  * @psalm-import-type TalkScheduledMessage from ResponseDefinitions
- * @psalm-import-type TalkScheduledMessageMetaData from ResponseDefinitions
  */
 class ScheduledMessage extends Entity implements \JsonSerializable {
 	public const METADATA_THREAD_TITLE = 'threadTitle';
@@ -70,13 +69,16 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 	}
 
 	/**
-	 * @return TalkScheduledMessageMetaData
+	 * @return array{silent: bool, threadId: int, threadTitle?: string, lastEditedTime?: int}
 	 */
 	public function getDecodedMetaData(): array {
 		return json_decode($this->metaData, true, 512, JSON_THROW_ON_ERROR);
 	}
 
-	public function setMetaData(?array $metaData): void {
+	/**
+	 * @param array{silent: bool, threadId: int, threadTitle?: string, lastEditedTime?: int} $metaData
+	 */
+	public function setMetaData(array $metaData): void {
 		$this->metaData = json_encode($metaData, JSON_THROW_ON_ERROR);
 		$this->markFieldUpdated('metaData');
 	}
@@ -110,36 +112,33 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 	}
 
 	/**
+	 * @param string $format
+	 * @psalm-param 'json'|'xml' $format
 	 * @return TalkScheduledMessage
 	 */
-	public function toArray(?Message $parent, ?Thread $thread) : array {
+	public function toArray(string $format, ?Message $parent, ?Thread $thread) : array {
+		$metaData = $this->getDecodedMetaData();
 		$data = [
-			'id' => $this->id,
-			'roomId' => $this->getRoomId(),
+			'id' => (string)$this->id,
 			'actorId' => $this->getActorId(),
 			'actorType' => $this->getActorType(),
 			'threadId' => $this->getThreadId(),
-			'parentId' => $this->getParentId(),
 			'message' => $this->getMessage(),
 			'messageType' => $this->getMessageType(),
 			'createdAt' => $this->getCreatedAt()->getTimestamp(),
-			'sendAt' => $this->getSendAt()?->getTimestamp(),
+			'sendAt' => $this->getSendAt()?->getTimestamp() ?? 0,
+			'silent' => $metaData['silent'] ?? false,
 		];
 
 		if ($parent !== null) {
 			$data['parent'] = $parent->toArray('json', $thread);
 		}
 
-		$metaData = $this->getDecodedMetaData();
 		if ($thread !== null) {
-			$data['threadExists'] = true;
 			$data['threadTitle'] = $thread->getName();
-			$metaData[self::METADATA_THREAD_TITLE] = $thread->getName();
 		} elseif (isset($metaData[self::METADATA_THREAD_TITLE]) && $this->getThreadId() === Thread::THREAD_CREATE) {
-			$data['threadExists'] = false;
 			$data['threadTitle'] = (string)$metaData[self::METADATA_THREAD_TITLE];
 		}
-		$data['metaData'] = $metaData;
 		return $data;
 	}
 }
