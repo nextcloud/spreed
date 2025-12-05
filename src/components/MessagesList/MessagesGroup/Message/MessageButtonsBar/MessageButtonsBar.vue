@@ -260,7 +260,7 @@
 					<NcActionSeparator />
 
 					<NcActionButton
-						v-for="option in reminderOptions"
+						v-for="option in getCustomDateOptions()"
 						:key="option.key"
 						:aria-label="option.ariaLabel"
 						close-after-click
@@ -385,6 +385,7 @@ import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { generatePublicShareDownloadUrl, generateUserFileUrl } from '../../../../../utils/davUtils.ts'
 import { convertToUnix, formatDateTime } from '../../../../../utils/formattedTime.ts'
+import { getCustomDateOptions } from '../../../../../utils/getCustomDateOptions.ts'
 import { copyConversationLinkToClipboard } from '../../../../../utils/handleUrl.ts'
 import { parseMentions } from '../../../../../utils/textParse.ts'
 
@@ -521,6 +522,7 @@ export default {
 			actorStore,
 			chatExtrasStore,
 			threadId,
+			getCustomDateOptions,
 		}
 	},
 
@@ -604,66 +606,6 @@ export default {
 					this.customReminderTimestamp = value.valueOf()
 				}
 			},
-		},
-
-		reminderOptions() {
-			const currentDate = new Date()
-			const currentDayOfWeek = currentDate.getDay()
-
-			const nextDay = new Date()
-			nextDay.setDate(currentDate.getDate() + 1)
-
-			const nextSaturday = new Date()
-			nextSaturday.setDate(currentDate.getDate() + ((6 + 7 - currentDayOfWeek) % 7 || 7))
-
-			const nextMonday = new Date()
-			nextMonday.setDate(currentDate.getDate() + ((1 + 7 - currentDayOfWeek) % 7 || 7))
-
-			// Same day 18:00 PM (hidden if after 17:00 PM now)
-			const laterTodayTime = (currentDate.getHours() < 17)
-				? new Date().setHours(18, 0, 0, 0)
-				: null
-
-			// Tomorrow 08:00 AM
-			const tomorrowTime = nextDay.setHours(8, 0, 0, 0)
-
-			// Saturday 08:00 AM (hidden if Friday, Saturday or Sunday now)
-			const thisWeekendTime = (![0, 5, 6].includes(currentDayOfWeek))
-				? nextSaturday.setHours(8, 0, 0, 0)
-				: null
-
-			// Next Monday 08:00 AM (hidden if Sunday now)
-			// TODO: use getFirstDay from nextcloud/l10n
-			const nextWeekTime = (currentDayOfWeek !== 0)
-				? nextMonday.setHours(8, 0, 0, 0)
-				: null
-
-			return [
-				{
-					key: 'laterToday',
-					timestamp: laterTodayTime,
-					label: t('spreed', 'Later today – {timeLocale}', { timeLocale: formatDateTime(laterTodayTime, 'shortTime') }),
-					ariaLabel: t('spreed', 'Set reminder for later today'),
-				},
-				{
-					key: 'tomorrow',
-					timestamp: tomorrowTime,
-					label: t('spreed', 'Tomorrow – {timeLocale}', { timeLocale: formatDateTime(tomorrowTime, 'shortWeekdayWithTime') }),
-					ariaLabel: t('spreed', 'Set reminder for tomorrow'),
-				},
-				{
-					key: 'thisWeekend',
-					timestamp: thisWeekendTime,
-					label: t('spreed', 'This weekend – {timeLocale}', { timeLocale: formatDateTime(thisWeekendTime, 'shortWeekdayWithTime') }),
-					ariaLabel: t('spreed', 'Set reminder for this weekend'),
-				},
-				{
-					key: 'nextWeek',
-					timestamp: nextWeekTime,
-					label: t('spreed', 'Next week – {timeLocale}', { timeLocale: formatDateTime(nextWeekTime, 'shortWeekdayWithTime') }),
-					ariaLabel: t('spreed', 'Set reminder for next week'),
-				},
-			].filter((option) => option.timestamp !== null)
 		},
 
 		clearReminderLabel() {
