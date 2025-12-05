@@ -1921,11 +1921,9 @@
                 "type": "object",
                 "required": [
                     "id",
-                    "roomId",
                     "actorId",
                     "actorType",
                     "threadId",
-                    "parentId",
                     "message",
                     "messageType",
                     "createdAt",
@@ -1934,12 +1932,8 @@
                 ],
                 "properties": {
                     "id": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "roomId": {
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "description": "SnowflakeID"
                     },
                     "actorId": {
                         "type": "string"
@@ -1957,11 +1951,6 @@
                     "threadTitle": {
                         "type": "string"
                     },
-                    "parentId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "nullable": true
-                    },
                     "parent": {
                         "$ref": "#/components/schemas/ChatMessage"
                     },
@@ -1977,8 +1966,7 @@
                     },
                     "sendAt": {
                         "type": "integer",
-                        "format": "int64",
-                        "nullable": true
+                        "format": "int64"
                     },
                     "metaData": {
                         "$ref": "#/components/schemas/ScheduledMessageMetaData"
@@ -7733,8 +7721,8 @@
         },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/schedule": {
             "get": {
-                "operationId": "chat-scheduled-messages",
-                "summary": "Get all scheduled nessages of a given room and participant",
+                "operationId": "chat-get-scheduled-messages",
+                "summary": "Get all scheduled messages of a given room and participant",
                 "description": "The author and timestamp are automatically set to the current user and time.\nRequired capability: `scheduled-messages`",
                 "tags": [
                     "chat"
@@ -7805,47 +7793,6 @@
                                                     "type": "array",
                                                     "items": {
                                                         "$ref": "#/components/schemas/ScheduledMessage"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Could not get scheduled messages",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "message"
-                                                            ]
-                                                        }
                                                     }
                                                 }
                                             }
@@ -8447,7 +8394,8 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
-                                                                "actor"
+                                                                "actor",
+                                                                "message"
                                                             ]
                                                         }
                                                     }

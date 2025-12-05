@@ -429,11 +429,11 @@ export type paths = {
             cookie?: never;
         };
         /**
-         * Get all scheduled nessages of a given room and participant
+         * Get all scheduled messages of a given room and participant
          * @description The author and timestamp are automatically set to the current user and time.
          *     Required capability: `scheduled-messages`
          */
-        get: operations["chat-scheduled-messages"];
+        get: operations["chat-get-scheduled-messages"];
         put?: never;
         /**
          * Schedules the sending of a new chat message to the given room
@@ -2472,25 +2472,21 @@ export type components = {
             invalidParticipants: components["schemas"]["InvitationList"];
         };
         ScheduledMessage: {
-            /** Format: int64 */
-            id: number;
-            /** Format: int64 */
-            roomId: number;
+            /** @description SnowflakeID */
+            id: string;
             actorId: string;
             actorType: string;
             /** Format: int64 */
             threadId: number;
             threadExists?: boolean;
             threadTitle?: string;
-            /** Format: int64 */
-            parentId: number | null;
             parent?: components["schemas"]["ChatMessage"];
             message: string;
             messageType: string;
             /** Format: int64 */
             createdAt: number;
             /** Format: int64 */
-            sendAt: number | null;
+            sendAt: number;
             metaData: components["schemas"]["ScheduledMessageMetaData"];
         };
         ScheduledMessageMetaData: {
@@ -4772,7 +4768,7 @@ export interface operations {
             };
         };
     };
-    "chat-scheduled-messages": {
+    "chat-get-scheduled-messages": {
         parameters: {
             query?: never;
             header: {
@@ -4797,23 +4793,6 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: components["schemas"]["ScheduledMessage"][];
-                        };
-                    };
-                };
-            };
-            /** @description Could not get scheduled messages */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                /** @enum {string} */
-                                error: "message";
-                            };
                         };
                     };
                 };
@@ -5076,7 +5055,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "actor";
+                                error: "actor" | "message";
                             };
                         };
                     };
