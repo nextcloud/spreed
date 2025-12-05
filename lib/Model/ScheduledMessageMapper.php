@@ -110,7 +110,7 @@ class ScheduledMessageMapper extends QBMapper {
 		return $query->executeStatement();
 	}
 
-	public function deleteByActor(string $actorType, string $actorId) {
+	public function deleteByActor(string $actorType, string $actorId): int {
 		$query = $this->db->getQueryBuilder();
 		$query->delete($this->getTableName())
 			->where($query->expr()->eq('actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
