@@ -128,7 +128,7 @@ class ScheduledMessageService {
 	/**
 	 * @return list<TalkScheduledMessage>
 	 */
-	public function getMessages(Room $chat, Participant $participant): array {
+	public function getMessages(Room $chat, Participant $participant, string $format): array {
 		$result = $this->scheduledMessageMapper->findByRoomAndActor(
 			$chat,
 			$participant->getAttendee()->getActorType(),
@@ -166,13 +166,13 @@ class ScheduledMessageService {
 			} else {
 				$thread = Thread::fromRow($thread);
 			}
-			$messages[] = $this->parseScheduledMessage($scheduleMessage, $parent, $thread);
+			$messages[] = $this->parseScheduledMessage($format, $scheduleMessage, $parent, $thread);
 		}
 
 		return $messages;
 	}
 
-	public function parseScheduledMessage(ScheduledMessage $message, ?Message $parentMessage, ?Thread $thread = null): array {
+	public function parseScheduledMessage(string $format, ScheduledMessage $message, ?Message $parentMessage, ?Thread $thread = null): array {
 		if ($thread === null
 			&& $message->getThreadId() !== Thread::THREAD_NONE
 			&& $message->getThreadId() !== Thread::THREAD_CREATE
@@ -187,7 +187,7 @@ class ScheduledMessageService {
 				$thread = null;
 			}
 		}
-		return $message->toArray($parentMessage, $thread ?? null);
+		return $message->toArray($format, $parentMessage, $thread ?? null);
 	}
 
 	public function getScheduledMessageCount(Room $chat, Participant $participant): int {

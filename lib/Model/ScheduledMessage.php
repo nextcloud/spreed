@@ -39,7 +39,7 @@ use OCP\DB\Types;
  * @psalm-import-type TalkScheduledMessage from ResponseDefinitions
  * @psalm-import-type TalkScheduledMessageMetaData from ResponseDefinitions
  */
-class ScheduledMessage extends Entity implements \JsonSerializable {
+class ScheduledMessage extends Entity {
 	public const METADATA_THREAD_TITLE = 'threadTitle';
 	public const METADATA_THREAD_ID = 'threadId';
 	public const METADATA_SILENT = 'silent';
@@ -93,26 +93,12 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 		$this->markFieldUpdated('message');
 	}
 
-	#[\Override]
-	public function jsonSerialize(): array {
-		return [
-			'roomId' => $this->getRoomId(),
-			'actorId' => $this->getActorId(),
-			'actorType' => $this->getActorType(),
-			'threadId' => $this->getThreadId(),
-			'parentId' => $this->getParentId(),
-			'message' => $this->getMessage(),
-			'messageType' => $this->getMessageType(),
-			'createdAt' => $this->getCreatedAt()->getTimestamp(),
-			'sendAt' => $this->getSendAt()?->getTimestamp(),
-			'metaData' => $this->getDecodedMetaData(),
-		];
-	}
-
 	/**
+	 * @param string $format
+	 * @psalm-param 'json'|'xml' $format
 	 * @return TalkScheduledMessage
 	 */
-	public function toArray(?Message $parent, ?Thread $thread) : array {
+	public function toArray(string $format, ?Message $parent, ?Thread $thread) : array {
 		$data = [
 			'id' => (string)$this->id,
 			'actorId' => $this->getActorId(),
@@ -125,7 +111,7 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 		];
 
 		if ($parent !== null) {
-			$data['parent'] = $parent->toArray('json', $thread);
+			$data['parent'] = $parent->toArray($format, $thread);
 		}
 
 		$metaData = $this->getDecodedMetaData();
