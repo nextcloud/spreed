@@ -344,10 +344,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * Required capability: `scheduled-messages`
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<TalkScheduledMessage>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'message'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'actor'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkScheduledMessage>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'actor'}, array{}>
 	 *
 	 * 200: All scheduled messages for this room and participant
-	 * 400: Could not get scheduled messages
 	 * 404: Actor not found
 	 */
 	#[NoAdminRequired]
