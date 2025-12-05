@@ -366,6 +366,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$scheduledMessages = $this->scheduledMessageManager->getMessages(
 			$this->room,
 			$this->participant,
+			$this->getResponseFormat(),
 		);
 
 		return new DataResponse($scheduledMessages, Http::STATUS_OK);
@@ -465,7 +466,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		}
 
-		$data = $this->scheduledMessageManager->parseScheduledMessage($scheduledMessage, $parentMessage);
+		$data = $this->scheduledMessageManager->parseScheduledMessage($this->getResponseFormat(), $scheduledMessage, $parentMessage);
 		return new DataResponse($data, Http::STATUS_CREATED);
 	}
 
@@ -545,7 +546,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 		}
 
-		$data = $this->scheduledMessageManager->parseScheduledMessage($scheduledMessage, $parentMessage);
+		$data = $this->scheduledMessageManager->parseScheduledMessage($this->getResponseFormat(), $scheduledMessage, $parentMessage);
 		return new DataResponse($data, Http::STATUS_ACCEPTED);
 	}
 
