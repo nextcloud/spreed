@@ -92,6 +92,27 @@
 						</template>
 						{{ t('spreed', 'Set reminder') }}
 					</NcActionButton>
+					<template v-if="supportPinMessage && isModerator">
+						<NcActionButton
+							v-if="!isMessagePinned"
+							key="pin-message"
+							is-menu
+							@click.stop="submenu = 'pin'">
+							<template #icon>
+								<IconPin :size="20" />
+							</template>
+							{{ t('spreed', 'Pin message') }}
+						</NcActionButton>
+						<NcActionButton
+							v-if="isMessagePinned"
+							key="unpin-message"
+							@click="unpinMessage">
+							<template #icon>
+								<IconUnpin :size="20" />
+							</template>
+							{{ t('spreed', 'Unpin message') }}
+						</NcActionButton>
+					</template>
 					<NcActionButton
 						v-if="isPrivateReplyable"
 						key="reply-privately"
@@ -292,6 +313,52 @@
 						{{ t('spreed', 'Set custom reminder') }}
 					</NcActionButton>
 				</template>
+				<template v-else-if="submenu === 'pin'">
+					<NcActionButton
+						key="action-back"
+						:aria-label="t('spreed', 'Back')"
+						@click.stop="submenu = null">
+						<template #icon>
+							<IconArrowLeft class="bidirectional-icon" />
+						</template>
+						{{ t('spreed', 'Back') }}
+					</NcActionButton>
+
+					<NcActionSeparator />
+
+					<NcActionCaption :name="t('spreed', 'Keep pinned for')" />
+					<NcActionButton
+						v-for="option in PIN_DURATION_OPTIONS"
+						:key="option.key"
+						:aria-label="option.ariaLabel"
+						close-after-click
+						@click.stop="pinMessage(option.duration)">
+						{{ option.label }}
+					</NcActionButton>
+
+					<NcActionSeparator />
+
+					<NcActionInput
+						v-model="customPinDateTime"
+						type="datetime-local"
+						is-native-picker
+						:min="new Date()">
+						<template #icon>
+							<IconCalendarClockOutline :size="20" />
+						</template>
+					</NcActionInput>
+
+					<NcActionButton
+						key="set-pin-custom"
+						:aria-label="t('spreed', 'Set custom period')"
+						close-after-click
+						@click.stop="pinMessage(customPinTimestamp)">
+						<template #icon>
+							<IconCheck :size="20" />
+						</template>
+						{{ t('spreed', 'Set custom period') }}
+					</NcActionButton>
+				</template>
 			</NcActions>
 		</template>
 
@@ -341,6 +408,7 @@ import { emojiSearch } from '@nextcloud/vue/functions/emoji'
 import { vOnClickOutside as ClickOutside } from '@vueuse/components'
 import { toRefs } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActionInput from '@nextcloud/vue/components/NcActionInput'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -370,6 +438,8 @@ import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconNoteEditOutline from 'vue-material-design-icons/NoteEditOutline.vue'
 import IconOpenInNew from 'vue-material-design-icons/OpenInNew.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
+import IconUnpin from 'vue-material-design-icons/PinOffOutline.vue'
+import IconPin from 'vue-material-design-icons/PinOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import IconTranslate from 'vue-material-design-icons/Translate.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
@@ -383,17 +453,26 @@ import { useActorStore } from '../../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
+import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
 import { generatePublicShareDownloadUrl, generateUserFileUrl } from '../../../../../utils/davUtils.ts'
-import { convertToUnix, formatDateTime } from '../../../../../utils/formattedTime.ts'
+import { convertToUnix, formatDateTime, ONE_DAY_IN_MS } from '../../../../../utils/formattedTime.ts'
 import { getCustomDateOptions } from '../../../../../utils/getCustomDateOptions.ts'
 import { copyConversationLinkToClipboard } from '../../../../../utils/handleUrl.ts'
 import { parseMentions } from '../../../../../utils/textParse.ts'
+
+const PIN_DURATION_OPTIONS = [
+	{ key: '24_hours', label: t('spreed', '24 hours'), duration: ONE_DAY_IN_MS },
+	{ key: '7_days', label: t('spreed', '7 days'), duration: 7 * ONE_DAY_IN_MS },
+	{ key: '30_days', label: t('spreed', '30 days'), duration: 30 * ONE_DAY_IN_MS },
+	{ key: 'indefinitely', label: t('spreed', 'Until unpin'), duration: 0 },
+]
 
 export default {
 	name: 'MessageButtonsBar',
 
 	components: {
 		NcActionButton,
+		NcActionCaption,
 		NcActionInput,
 		NcActionLink,
 		NcActionSeparator,
@@ -423,10 +502,12 @@ export default {
 		IconNoteEditOutline,
 		IconOpenInNew,
 		IconPencilOutline,
+		IconPin,
 		IconPlus,
 		IconArrowLeftTop,
 		IconArrowRightTop,
 		IconTranslate,
+		IconUnpin,
 	},
 
 	directives: {
@@ -491,6 +572,7 @@ export default {
 		const actorStore = useActorStore()
 		const chatExtrasStore = useChatExtrasStore()
 		const threadId = useGetThreadId()
+		const sharedItemsStore = useSharedItemsStore()
 
 		const {
 			isEditable,
@@ -504,6 +586,7 @@ export default {
 		} = useMessageInfo(message)
 		const supportReminders = hasTalkFeature(message.value.token, 'remind-me-later')
 		const supportThreads = hasTalkFeature(message.value.token, 'threads')
+		const supportPinMessage = hasTalkFeature(message.value.token, 'pinned-messages')
 
 		return {
 			IconFileDownload,
@@ -523,6 +606,9 @@ export default {
 			chatExtrasStore,
 			threadId,
 			getCustomDateOptions,
+			sharedItemsStore,
+			supportPinMessage,
+			PIN_DURATION_OPTIONS,
 		}
 	},
 
@@ -532,6 +618,7 @@ export default {
 			submenu: null,
 			currentReminder: null,
 			customReminderTimestamp: new Date().setHours(new Date().getHours() + 2, 0, 0, 0),
+			customPinTimestamp: new Date().setMinutes(new Date().getMinutes() + 5, 0, 0, 0),
 		}
 	},
 
@@ -608,6 +695,18 @@ export default {
 			},
 		},
 
+		customPinDateTime: {
+			get() {
+				return new Date(this.customPinTimestamp)
+			},
+
+			set(value) {
+				if (value !== null) {
+					this.customPinTimestamp = value.valueOf()
+				}
+			},
+		},
+
 		clearReminderLabel() {
 			if (!this.currentReminder) {
 				return ''
@@ -632,8 +731,45 @@ export default {
 				&& this.message.id === this.message.threadId
 		},
 
+		isModerator() {
+			return this.$store.getters.isModerator
+		},
+
 		isModeratorOrOwner() {
-			return this.isCurrentUserOwnMessage || this.$store.getters.isModerator
+			return this.isCurrentUserOwnMessage || this.isModerator
+		},
+
+		pinInfo() {
+			return this.message.metaData
+		},
+
+		isMessagePinned() {
+			return !!this.pinInfo?.pinnedAt
+		},
+
+		PinAuthorLabel() {
+			if (!this.pinInfo) {
+				return ''
+			}
+			const isCurrentUser = this.pinInfo.pinnedActorId === this.actorStore.actorId
+				&& this.pinInfo.pinnedActorType === this.actorStore.actorType
+			if (isCurrentUser) {
+				return t('spreed', 'Pinned by you')
+			}
+			return t('spreed', 'Pinned by {actor}', {
+				actor: this.pinInfo.pinnedActorDisplayName,
+			})
+		},
+
+		pinDurationLabel() {
+			if (!this.isMessagePinned || !this.pinInfo || !this.pinInfo.pinnedUntil
+				|| this.pinInfo.pinnedUntil === this.pinInfo.pinnedAt
+			) {
+				return ''
+			}
+
+			const absoluteDate = formatDateTime(this.pinInfo.pinnedUntil * 1000, 'shortDateWithTime')
+			return t('spreed', 'until {absoluteDate}', { absoluteDate })
 		},
 	},
 
@@ -811,6 +947,14 @@ export default {
 				return
 			}
 			this.$emit('edit')
+		},
+
+		pinMessage(duration = 0) {
+			this.sharedItemsStore.handlePinMessage(this.message.token, this.message.id, duration ? convertToUnix(Date.now() + duration) : 0)
+		},
+
+		unpinMessage() {
+			this.sharedItemsStore.handleUnpinMessage(this.message.token, this.message.id)
 		},
 	},
 }
