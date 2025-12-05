@@ -10,6 +10,10 @@ import type {
 } from '../types/index.ts'
 
 import { defineStore } from 'pinia'
+import {
+	pinMessage,
+	unpinMessage,
+} from '../services/messagesService.ts'
 import { reactive } from 'vue'
 import { getSharedItems, getSharedItemsOverview } from '../services/sharedItemsService.ts'
 import { getItemTypeFromMessage } from '../utils/getItemTypeFromMessage.ts'
@@ -224,6 +228,36 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 		}
 	}
 
+	async function handlePinMessage(token: string, messageId: number, pinUntil?: number) {
+		try {
+			const response = await pinMessage({ token, messageId, pinUntil })
+			addSharedItemsFromMessages(token, 'pinned', [response.data.ocs.data.parent])
+		} catch (error) {
+			console.error('Error while toggling pin message:', error)
+		}
+	}
+
+	async function handleUnpinMessage(token: string, messageId: number) {
+		try {
+			const response = await unpinMessage({ token, messageId })
+			deleteSharedItemFromMessage(token, messageId)
+		} catch (error) {
+			console.error('Error while unpinning message:', error)
+		}
+	}
+
+	async function fetchPinnedMessages(token: string) {
+		try {
+			const response = await getSharedItems({ token, objectType: 'pinned', limit: 5 })
+			const messages = Object.values(response.data.ocs.data)
+			if (messages.length) {
+				addSharedItemsFromMessages(token, 'pinned', messages)
+			}
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
 	return {
 		sharedItemsPool,
 		overviewLoaded,
@@ -231,11 +265,15 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 		checkForExistence,
 		addSharedItemsFromOverview,
 		addSharedItemFromMessage,
+		addSharedItemsFromMessages,
 		deleteSharedItemFromMessage,
 		addSharedItemsFromMessages,
 		purgeExpiredSharedItems,
 		purgeSharedItemsStore,
 		fetchSharedItems,
 		fetchSharedItemsOverview,
+		handlePinMessage,
+		handleUnpinMessage,
+		fetchPinnedMessages,
 	}
 })
