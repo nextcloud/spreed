@@ -337,7 +337,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * Get all scheduled nessages of a given room and participant
+	 * Get all scheduled messages of a given room and participant
 	 *
 	 * The author and timestamp are automatically set to the current user
 	 * and time.

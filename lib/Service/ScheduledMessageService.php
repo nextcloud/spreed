@@ -126,7 +126,7 @@ class ScheduledMessageService {
 	}
 
 	/**
-	 * @return array<array-key, TalkScheduledMessage>
+	 * @return list<TalkScheduledMessage>
 	 */
 	public function getMessages(Room $chat, Participant $participant): array {
 		$result = $this->scheduledMessageMapper->findByRoomAndActor(
