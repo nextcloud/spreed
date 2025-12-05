@@ -83,8 +83,7 @@ class ScheduledMessageService {
 
 	/**
 	 * @throws DoesNotExistException
-	 * @throws Exception
-	 * @throws \JsonException
+	 * @throws MessageTooLongException
 	 * @throws \InvalidArgumentException
 	 */
 	public function editMessage(
@@ -96,17 +95,12 @@ class ScheduledMessageService {
 		\DateTime $sendAt,
 		string $threadTitle = '',
 	): ScheduledMessage {
-		try {
-			$message = $this->scheduledMessageMapper->findById(
-				$chat,
-				$id,
-				$participant->getAttendee()->getActorType(),
-				$participant->getAttendee()->getActorId()
-			);
-		} catch (DoesNotExistException $e) {
-			$this->logger->error('Attempt to edit scheduled message failed, message could not be found', ['exception' => $e]);
-			throw $e;
-		}
+		$message = $this->scheduledMessageMapper->findById(
+			$chat,
+			$id,
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId()
+		);
 
 		$metaData = $message->getDecodedMetaData();
 		if ($metaData[ScheduledMessage::METADATA_THREAD_ID] !== Thread::THREAD_CREATE && $threadTitle !== '') {

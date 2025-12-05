@@ -480,7 +480,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param int $sendAt When to send the scheduled message
 	 * @param bool $silent If sent silent the scheduled message will not create any notifications
 	 * @param string $threadTitle The thread title if scheduled message is creating a thread
-	 * @return DataResponse<Http::STATUS_ACCEPTED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'message'|'send-at'|'thread-title'}, array{}>|DataResponse<Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: 'message'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'actor'}, array{}>
+	 * @return DataResponse<Http::STATUS_ACCEPTED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'message'|'send-at'|'thread-title'}, array{}>|DataResponse<Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: 'message'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'actor'|'message'}, array{}>
 	 *
 	 * 202: Message updated successfully
 	 * 400: Editing scheduled message is not possible
@@ -530,12 +530,10 @@ class ChatController extends AEnvironmentAwareOCSController {
 			$this->participantService->setHasScheduledMessages($this->participant, true);
 		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
-		} catch (\InvalidArgumentException $e) {
-			$this->logger->warning($e->getMessage());
+		} catch (\InvalidArgumentException) {
 			return new DataResponse(['error' => 'thread-title'], Http::STATUS_BAD_REQUEST);
-		} catch (\Exception $e) {
-			$this->logger->warning($e->getMessage());
-			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
+		} catch (DoesNotExistException) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
 		}
 
 		$parentMessage = null;
@@ -544,7 +542,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 				$parent = $this->chatManager->getParentComment($this->room, (string)$scheduledMessage->getParentId());
 				$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
 				$this->messageParser->parseMessage($parentMessage);
-			} catch (NotFoundException $e) {
+			} catch (NotFoundException) {
 			}
 		}
 
