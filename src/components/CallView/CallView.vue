@@ -823,12 +823,14 @@ export default {
 		},
 
 		adjustSimulcastQualityForParticipant(callParticipantModel) {
+			// Always use the high temporal layer, as a low frame rate can look
+			// bad specially with a low number of participants.
 			if (this.isGrid) {
-				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.MEDIUM)
+				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.MEDIUM, SIMULCAST.HIGH)
 			} else if (this.sharedDatas[callParticipantModel.attributes.peerId].promoted || this.selectedVideoPeerId === callParticipantModel.attributes.peerId) {
-				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.HIGH)
+				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.HIGH, SIMULCAST.HIGH)
 			} else {
-				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.LOW)
+				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.LOW, SIMULCAST.HIGH)
 			}
 		},
 

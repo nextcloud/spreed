@@ -255,7 +255,7 @@ CallParticipantModel.prototype = {
 
 		// Set expected state in Peer object.
 		if (this._simulcastVideoQuality !== undefined) {
-			this.setSimulcastVideoQuality(this._simulcastVideoQuality)
+			this.setSimulcastVideoQuality(this._simulcastVideoQuality.spatial, this._simulcastVideoQuality.temporal)
 		}
 		if (this._videoBlocked !== undefined) {
 			this.setVideoBlocked(this._videoBlocked)
@@ -380,16 +380,18 @@ CallParticipantModel.prototype = {
 		this.set('videoBlocked', remoteVideoBlocked)
 	},
 
-	setSimulcastVideoQuality(simulcastVideoQuality) {
+	setSimulcastVideoQuality(simulcastVideoQualitySpatial, simulcastVideoQualityTemporal) {
 		// Store value to be able to apply it again if a new Peer object is set.
-		this._simulcastVideoQuality = simulcastVideoQuality
+		this._simulcastVideoQuality = {
+			spatial: simulcastVideoQualitySpatial,
+			temporal: simulcastVideoQualityTemporal,
+		}
 
 		if (!this.get('peer') || !this.get('peer').enableSimulcast) {
 			return
 		}
 
-		// Use same quality for simulcast and temporal layer.
-		this.get('peer').selectSimulcastStream(simulcastVideoQuality, simulcastVideoQuality)
+		this.get('peer').selectSimulcastStream(simulcastVideoQualitySpatial, simulcastVideoQualityTemporal)
 	},
 
 	setSimulcastScreenQuality(simulcastScreenQuality) {
