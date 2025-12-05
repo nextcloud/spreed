@@ -559,7 +559,7 @@ export default {
 		},
 
 		followedThreads() {
-			return this.chatExtrasStore.getFollowedThreadsList
+			return this.chatExtrasStore.followedThreadsList
 		},
 
 		followedThreadsInitialised() {

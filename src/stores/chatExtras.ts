@@ -13,6 +13,7 @@ import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
 import ConfirmDialog from '../components/UIShared/ConfirmDialog.vue'
 import { PARTICIPANT } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
@@ -21,26 +22,11 @@ import {
 	getRecentThreadsForConversation,
 	getSingleThreadForConversation,
 	getSubscribedThreads,
-	renameThread,
-	setThreadNotificationLevel,
+	renameThread as renameThreadApi,
+	setThreadNotificationLevel as setThreadNotificationLevelApi,
 	summarizeChat,
 } from '../services/messagesService.ts'
 import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
-
-type State = {
-	threads: Record<string, Record<number, ThreadInfo>>
-	followedThreads: Set<number>
-	followedThreadsInitialised: boolean
-	allFollowedThreadsReceived: boolean
-	threadTitle: Record<string, string>
-	parentToReply: Record<string, number>
-	chatInput: Record<string, string>
-	messageIdToEdit: Record<string, number>
-	chatEditInput: Record<string, string>
-	tasksCount: number
-	tasksDoneCount: number
-	chatSummary: Record<string, Record<number, ChatTask>>
-}
 
 const FOLLOWED_THREADS_FETCH_LIMIT = 100
 const pendingFetchSingleThreadRequests = new Set<number>()
@@ -48,513 +34,633 @@ const pendingFetchSingleThreadRequests = new Set<number>()
 /**
  * Store for conversation extra chat features apart from messages
  */
-export const useChatExtrasStore = defineStore('chatExtras', {
-	state: (): State => ({
-		threads: {},
-		followedThreads: new Set(),
-		followedThreadsInitialised: false,
-		allFollowedThreadsReceived: false,
-		threadTitle: {},
-		parentToReply: {},
-		chatInput: {},
-		messageIdToEdit: {},
-		chatEditInput: {},
-		tasksCount: 0,
-		tasksDoneCount: 0,
-		chatSummary: {},
-	}),
+export const useChatExtrasStore = defineStore('chatExtras', () => {
+	const threads = ref<Record<string, Record<number, ThreadInfo>>>({})
+	const followedThreads = ref<Set<number>>(new Set())
+	const followedThreadsInitialised = ref(false)
+	const allFollowedThreadsReceived = ref(false)
+	const threadTitle = ref<Record<string, string>>({})
+	const parentToReply = ref<Record<string, number>>({})
+	const chatInput = ref<Record<string, string>>({})
+	const messageIdToEdit = ref<Record<string, number>>({})
+	const chatEditInput = ref<Record<string, string>>({})
+	const tasksCount = ref(0)
+	const tasksDoneCount = ref(0)
+	const chatSummary = ref<Record<string, Record<number, ChatTask>>>({})
 
-	getters: {
-		getThread: (state) => (token: string, threadId: number) => {
-			if (state.threads[token]?.[threadId]) {
-				return state.threads[token][threadId]
-			}
-		},
+	/**
+	 * Returns known thread information from the store
+	 *
+	 * @param token - conversation token
+	 * @param threadId - thread id
+	 */
+	function getThread(token: string, threadId: number) {
+		if (threads.value[token]?.[threadId]) {
+			return threads.value[token][threadId]
+		}
+	}
 
-		getThreadsList: (state) => (token: string): ThreadInfo[] => {
-			if (state.threads[token]) {
-				return Object.values(state.threads[token]).sort((a, b) => b.thread.lastActivity - a.thread.lastActivity)
-			} else {
-				return []
-			}
-		},
+	/**
+	 * Returns array of all known threads
+	 *
+	 * @param token - conversation token
+	 */
+	function getThreadsList(token: string): ThreadInfo[] {
+		if (threads.value[token]) {
+			return Object.values(threads.value[token]).sort((a, b) => b.thread.lastActivity - a.thread.lastActivity)
+		} else {
+			return []
+		}
+	}
 
-		getFollowedThreadsList: (state): ThreadInfo[] => {
-			if (!state.followedThreadsInitialised) {
-				return []
-			}
+	const followedThreadsList = computed<ThreadInfo[]>(() => {
+		if (!followedThreadsInitialised.value) {
+			return []
+		}
 
-			return Object.keys(state.threads)
-				.flatMap((token) => Object.values(state.threads[token] ?? {}))
-				.filter((threadInfo) => state.followedThreads.has(threadInfo.thread.id))
-				.sort((a, b) => b.thread.lastActivity - a.thread.lastActivity)
-		},
+		return Object.keys(threads.value)
+			.flatMap((token) => Object.values(threads.value[token] ?? {}))
+			.filter((threadInfo) => followedThreads.value.has(threadInfo.thread.id))
+			.sort((a, b) => b.thread.lastActivity - a.thread.lastActivity)
+	})
 
-		getThreadTitle: (state) => (token: string) => {
-			return state.threadTitle[token]
-		},
+	/**
+	 * Returns a title for thread to be created
+	 *
+	 * @param token - conversation token
+	 */
+	function getThreadTitle(token: string) {
+		return threadTitle.value[token]
+	}
 
-		getParentIdToReply: (state) => (token: string) => {
-			if (state.parentToReply[token]) {
-				return state.parentToReply[token]
-			}
-		},
+	/**
+	 * Returns a message id of parent to be replied to
+	 *
+	 * @param token - conversation token
+	 */
+	function getParentIdToReply(token: string) {
+		if (parentToReply.value[token]) {
+			return parentToReply.value[token]
+		}
+	}
 
-		getChatEditInput: (state) => (token: string) => {
-			return state.chatEditInput[token] ?? ''
-		},
+	/**
+	 * Returns edited message text for given conversation
+	 *
+	 * @param token - conversation token
+	 */
+	function getChatEditInput(token: string) {
+		return chatEditInput.value[token] ?? ''
+	}
 
-		getMessageIdToEdit: (state) => (token: string) => {
-			return state.messageIdToEdit[token]
-		},
+	/**
+	 * Returns edited message id for given conversation
+	 *
+	 * @param token - conversation token
+	 */
+	function getMessageIdToEdit(token: string) {
+		return messageIdToEdit.value[token]
+	}
 
-		getChatSummaryTaskQueue: (state) => (token: string) => {
-			return Object.values(Object(state.chatSummary[token]) as State['chatSummary'][string])
-		},
+	/**
+	 * Returns chat summary task queue for given conversation
+	 *
+	 * @param token - conversation token
+	 */
+	function getChatSummaryTaskQueue(token: string) {
+		return Object.values(chatSummary.value[token] ?? {})
+	}
 
-		hasChatSummaryTaskRequested: (state) => (token: string) => {
-			return state.chatSummary[token] !== undefined
-		},
+	/**
+	 * Returns whether chat summary task has been requested for given conversation
+	 *
+	 * @param token - conversation token
+	 */
+	function hasChatSummaryTaskRequested(token: string) {
+		return chatSummary.value[token] !== undefined
+	}
 
-		getChatSummary: (state) => (token: string) => {
-			return Object.values(Object(state.chatSummary[token]) as State['chatSummary'][string]).map((task) => task.summary).join('\n\n')
-				|| t('spreed', 'Error occurred during a summary generation')
-		},
-	},
+	/**
+	 * Returns generated chat summary for given conversation
+	 *
+	 * @param token - conversation token
+	 */
+	function getChatSummary(token: string) {
+		return Object.values(chatSummary.value[token] ?? {}).map((task) => task.summary).join('\n\n')
+			|| t('spreed', 'Error occurred during a summary generation')
+	}
 
-	actions: {
-		/**
-		 * Add a thread to the store for given conversation
-		 *
-		 * @param token - conversation token
-		 * @param thread - thread information
-		 */
-		addThread(token: string, thread: ThreadInfo) {
-			if (!this.threads[token]) {
-				this.threads[token] = {}
-			}
+	/**
+	 * Add a thread to the store for given conversation
+	 *
+	 * @param token - conversation token
+	 * @param thread - thread information
+	 */
+	function addThread(token: string, thread: ThreadInfo) {
+		if (!threads.value[token]) {
+			threads.value[token] = {}
+		}
 
-			this.threads[token][thread.thread.id] = thread
-		},
+		threads.value[token][thread.thread.id] = thread
+	}
 
-		/**
-		 * Fetch a thread from server in given conversation
-		 *
-		 * @param token - conversation token
-		 * @param threadId - thread id to fetch
-		 */
-		async fetchSingleThread(token: string, threadId: number) {
-			if (pendingFetchSingleThreadRequests.has(threadId)) {
-				// A request for this thread is already pending
-				return
-			}
+	/**
+	 * Fetch a thread from server in given conversation
+	 *
+	 * @param token - conversation token
+	 * @param threadId - thread id to fetch
+	 */
+	async function fetchSingleThread(token: string, threadId: number) {
+		if (pendingFetchSingleThreadRequests.has(threadId)) {
+			// A request for this thread is already pending
+			return
+		}
 
-			try {
-				pendingFetchSingleThreadRequests.add(threadId)
-				const response = await getSingleThreadForConversation(token, threadId)
-				this.addThread(token, response.data.ocs.data)
-			} catch (error) {
-				console.error('Error fetching thread:', error)
-			} finally {
-				pendingFetchSingleThreadRequests.delete(threadId)
-			}
-		},
+		try {
+			pendingFetchSingleThreadRequests.add(threadId)
+			const response = await getSingleThreadForConversation(token, threadId)
+			addThread(token, response.data.ocs.data)
+		} catch (error) {
+			console.error('Error fetching thread:', error)
+		} finally {
+			pendingFetchSingleThreadRequests.delete(threadId)
+		}
+	}
 
-		/**
-		 * Fetch list of recent threads from server in given conversation
-		 *
-		 * @param token - conversation token
-		 */
-		async fetchRecentThreadsList(token: string) {
-			try {
-				const response = await getRecentThreadsForConversation({ token })
-				response.data.ocs.data.forEach((threadInfo) => {
-					this.addThread(token, threadInfo)
-				})
-			} catch (error) {
-				console.error('Error fetching threads:', error)
-			}
-		},
-
-		/**
-		 * Fetch list of subscribed threads from server
-		 *
-		 * @param offset thread offset to start fetch with
-		 */
-		async fetchFollowedThreadsList(offset?: number) {
-			try {
-				const response = await getSubscribedThreads({ limit: FOLLOWED_THREADS_FETCH_LIMIT, offset })
-
-				if (!offset) {
-					// Reset the list if no offset is given
-					this.followedThreads.clear()
-					this.allFollowedThreadsReceived = false
-				}
-
-				response.data.ocs.data.forEach((threadInfo) => {
-					this.followedThreads.add(threadInfo.thread.id)
-					this.addThread(threadInfo.thread.roomToken, threadInfo)
-				})
-				this.followedThreadsInitialised = true
-
-				if (response.data.ocs.data.length < FOLLOWED_THREADS_FETCH_LIMIT) {
-					this.allFollowedThreadsReceived = true
-				}
-			} catch (error) {
-				console.error('Error fetching threads:', error)
-			}
-		},
-
-		/**
-		 * Create a thread from a reply chain in given conversation
-		 * If thread already exists, subscribe to it
-		 *
-		 * @param token - conversation token
-		 * @param messageId - message id of any reply in the chain
-		 * @param level - new level of notification for thread
-		 */
-		async setThreadNotificationLevel(token: string, messageId: number, level: number) {
-			try {
-				const response = await setThreadNotificationLevel(token, messageId, level)
-				// When unsubscribe from the thread, remove it from list of followed, add otherwise
-				if (response.data.ocs.data.attendee.notificationLevel === PARTICIPANT.NOTIFY.NEVER) {
-					this.followedThreads.delete(response.data.ocs.data.thread.id)
-				} else {
-					this.followedThreads.add(response.data.ocs.data.thread.id)
-				}
-				this.addThread(token, response.data.ocs.data)
-			} catch (error) {
-				console.error('Error updating thread notification level:', error)
-			}
-		},
-
-		/**
-		 * Update a thread from a known information
-		 *
-		 * @param token - conversation token
-		 * @param threadId - thread id to update
-		 * @param payload - updated information
-		 */
-		async updateThread(token: string, threadId: number, payload: Partial<ThreadInfo>) {
-			try {
-				if (!this.threads[token] || !this.threads[token][threadId]) {
-					// Thread is not known yet, try to fetch actual data from server
-					await this.fetchSingleThread(token, threadId)
-					return
-				}
-
-				this.threads[token][threadId] = {
-					thread: payload.thread ?? this.threads[token][threadId].thread,
-					attendee: payload.attendee ?? this.threads[token][threadId].attendee,
-					first: payload.first ?? this.threads[token][threadId].first,
-					last: payload.last ?? this.threads[token][threadId].last,
-				}
-			} catch (error) {
-				console.error('Error updating thread:', error)
-			}
-		},
-
-		/**
-		 * Update a thread name from a known information
-		 *
-		 * @param token - conversation token
-		 * @param threadId - thread id to update
-		 * @param threadTitle - thread title to set
-		 */
-		async updateThreadTitle(token: string, threadId: number, threadTitle: string) {
-			if (!this.threads[token] || !this.threads[token][threadId]) {
-				return
-			}
-
-			this.threads[token][threadId].thread.title = threadTitle
-		},
-
-		/**
-		 * Rename a thread on a server and update store
-		 *
-		 * @param token - conversation token
-		 * @param threadId - thread id to update
-		 */
-		async renameThread(token: string, threadId: number) {
-			const newThreadTitle = await spawnDialog(ConfirmDialog, {
-				name: t('spreed', 'Edit thread details'),
-				isForm: true,
-				inputProps: {
-					value: this.threads[token][threadId].thread.title,
-					label: t('spreed', 'Thread title'),
-				},
-				buttons: [
-					{
-						label: t('spreed', 'Dismiss'),
-						callback: () => undefined,
-					},
-					{
-						label: t('spreed', 'Save'),
-						variant: 'primary',
-						callback: () => true,
-					},
-				],
+	/**
+	 * Fetch list of recent threads from server in given conversation
+	 *
+	 * @param token - conversation token
+	 */
+	async function fetchRecentThreadsList(token: string) {
+		try {
+			const response = await getRecentThreadsForConversation({ token })
+			response.data.ocs.data.forEach((threadInfo) => {
+				addThread(token, threadInfo)
 			})
+		} catch (error) {
+			console.error('Error fetching threads:', error)
+		}
+	}
 
-			if (newThreadTitle && typeof newThreadTitle === 'string') {
-				try {
-					const response = await renameThread(token, threadId, newThreadTitle)
-					this.addThread(token, response.data.ocs.data)
-				} catch (e) {
-					showError(t('spreed', 'Failed to rename the thread'))
-					console.error(e)
-				}
+	/**
+	 * Fetch list of subscribed threads from server
+	 *
+	 * @param offset thread offset to start fetch with
+	 */
+	async function fetchFollowedThreadsList(offset?: number) {
+		try {
+			const response = await getSubscribedThreads({ limit: FOLLOWED_THREADS_FETCH_LIMIT, offset })
+
+			if (!offset) {
+				// Reset the list if no offset is given
+				followedThreads.value.clear()
+				allFollowedThreadsReceived.value = false
 			}
-		},
 
-		/**
-		 * Remove a thread from the store
-		 *
-		 * @param token - conversation token
-		 * @param messageId - message id to remove all preceding threads (remove all, if omitted)
-		 */
-		clearThreads(token: string, messageId?: number) {
-			if (messageId) {
-				// Clear threads that are older than the given messageId
-				for (const threadId of Object.keys(Object(this.threads[token]))) {
-					if (+threadId < messageId) {
-						delete this.threads[token][+threadId]
-					}
-				}
+			response.data.ocs.data.forEach((threadInfo) => {
+				followedThreads.value.add(threadInfo.thread.id)
+				addThread(threadInfo.thread.roomToken, threadInfo)
+			})
+			followedThreadsInitialised.value = true
+
+			if (response.data.ocs.data.length < FOLLOWED_THREADS_FETCH_LIMIT) {
+				allFollowedThreadsReceived.value = true
+			}
+		} catch (error) {
+			console.error('Error fetching threads:', error)
+		}
+	}
+
+	/**
+	 * Create a thread from a reply chain in given conversation
+	 * If thread already exists, subscribe to it
+	 *
+	 * @param token - conversation token
+	 * @param messageId - message id of any reply in the chain
+	 * @param level - new level of notification for thread
+	 */
+	async function setThreadNotificationLevel(token: string, messageId: number, level: number) {
+		try {
+			const response = await setThreadNotificationLevelApi(token, messageId, level)
+			// When unsubscribe from the thread, remove it from list of followed, add otherwise
+			if (response.data.ocs.data.attendee.notificationLevel === PARTICIPANT.NOTIFY.NEVER) {
+				followedThreads.value.delete(response.data.ocs.data.thread.id)
 			} else {
-				// Clear all threads for the conversation
-				delete this.threads[token]
+				followedThreads.value.add(response.data.ocs.data.thread.id)
 			}
-		},
+			addThread(token, response.data.ocs.data)
+		} catch (error) {
+			console.error('Error updating thread notification level:', error)
+		}
+	}
 
-		/**
-		 * Remove a message from a thread object
-		 *
-		 * @param token - conversation token
-		 * @param threadId - thread id to remove message from
-		 * @param messageId - message id to remove
-		 */
-		removeMessageFromThread(token: string, threadId: number, messageId: number) {
-			if (!this.threads[token]?.[threadId]) {
+	/**
+	 * Update a thread from a known information
+	 *
+	 * @param token - conversation token
+	 * @param threadId - thread id to update
+	 * @param payload - updated information
+	 */
+	async function updateThread(token: string, threadId: number, payload: Partial<ThreadInfo>) {
+		try {
+			if (!threads.value[token] || !threads.value[token][threadId]) {
+				// Thread is not known yet, try to fetch actual data from server
+				await fetchSingleThread(token, threadId)
 				return
 			}
 
-			const thread = this.threads[token][threadId]
-			if (thread.first?.id === messageId) {
-				thread.first = null
-			} else {
-				this.threads[token][threadId].thread.numReplies -= 1
-				if (thread.last?.id === messageId) {
-					// Last message was removed but there might be older messages in the thread
-					// that don't have expiration timestamp
-					this.fetchSingleThread(token, threadId)
-				}
+			threads.value[token][threadId] = {
+				thread: payload.thread ?? threads.value[token][threadId].thread,
+				attendee: payload.attendee ?? threads.value[token][threadId].attendee,
+				first: payload.first ?? threads.value[token][threadId].first,
+				last: payload.last ?? threads.value[token][threadId].last,
 			}
-		},
+		} catch (error) {
+			console.error('Error updating thread:', error)
+		}
+	}
 
-		/**
-		 * Get chat input for current conversation (from store or BrowserStorage)
-		 *
-		 * @param token - conversation token
-		 * @return The input text
-		 */
-		getChatInput(token: string) {
-			if (!this.chatInput[token]) {
-				this.restoreChatInput(token)
-			}
-			return this.chatInput[token] ?? ''
-		},
+	/**
+	 * Update a thread name from a known information
+	 *
+	 * @param token - conversation token
+	 * @param threadId - thread id to update
+	 * @param threadTitle - thread title to set
+	 */
+	async function updateThreadTitle(token: string, threadId: number, threadTitle: string) {
+		if (!threads.value[token] || !threads.value[token][threadId]) {
+			return
+		}
 
-		/**
-		 * Add a thread title to the store
-		 *
-		 * @param token - conversation token
-		 * @param title - title from input
-		 */
-		setThreadTitle(token: string, title: string) {
-			this.threadTitle[token] = title
-		},
+		threads.value[token][threadId].thread.title = threadTitle
+	}
 
-		/**
-		 * Removes a thread title id from the store
-		 * (after posting message or dismissing the operation)
-		 *
-		 * @param token - conversation token
-		 */
-		removeThreadTitle(token: string) {
-			delete this.threadTitle[token]
-		},
+	/**
+	 * Rename a thread on a server and update store
+	 *
+	 * @param token - conversation token
+	 * @param threadId - thread id to update
+	 */
+	async function renameThread(token: string, threadId: number) {
+		const newThreadTitle = await spawnDialog(ConfirmDialog, {
+			name: t('spreed', 'Edit thread details'),
+			isForm: true,
+			inputProps: {
+				value: threads.value[token][threadId].thread.title,
+				label: t('spreed', 'Thread title'),
+			},
+			buttons: [
+				{
+					label: t('spreed', 'Dismiss'),
+					callback: () => undefined,
+				},
+				{
+					label: t('spreed', 'Save'),
+					variant: 'primary',
+					callback: () => true,
+				},
+			],
+		})
 
-		/**
-		 * Add a reply message id to the store
-		 *
-		 * @param payload action payload
-		 * @param payload.token - conversation token
-		 * @param payload.id The id of message
-		 */
-		setParentIdToReply({ token, id }: { token: string, id: number }) {
-			this.parentToReply[token] = id
-		},
-
-		/**
-		 * Removes a reply message id from the store
-		 * (after posting message or dismissing the operation)
-		 *
-		 * @param token - conversation token
-		 */
-		removeParentIdToReply(token: string) {
-			delete this.parentToReply[token]
-		},
-
-		/**
-		 * Restore chat input from the browser storage and save to store
-		 *
-		 * @param token - conversation token
-		 */
-		restoreChatInput(token: string) {
-			const chatInput = BrowserStorage.getItem('chatInput_' + token)
-			if (chatInput) {
-				this.chatInput[token] = chatInput
-			}
-		},
-
-		/**
-		 * Add a current input value to the store for a given conversation token
-		 *
-		 * @param payload action payload
-		 * @param payload.token - conversation token
-		 * @param payload.text The string to store
-		 */
-		setChatInput({ token, text }: { token: string, text: string }) {
-			const parsedText = parseSpecialSymbols(text)
-			BrowserStorage.setItem('chatInput_' + token, parsedText)
-			this.chatInput[token] = parsedText
-		},
-
-		/**
-		 * Add a message text that is being edited to the store for a given conversation token
-		 *
-		 * @param payload action payload
-		 * @param payload.token - conversation token
-		 * @param payload.text The string to store
-		 * @param payload.parameters message parameters
-		 */
-		setChatEditInput({ token, text, parameters = {} }: { token: string, text: string, parameters?: ChatMessage['messageParameters'] }) {
-			let parsedText = text
-
-			// Handle mentions and special symbols
-			parsedText = parseMentions(parsedText, parameters)
-			parsedText = parseSpecialSymbols(parsedText)
-
-			this.chatEditInput[token] = parsedText
-		},
-
-		/**
-		 * Add a message id that is being edited to the store
-		 *
-		 * @param token - conversation token
-		 * @param id The id of message
-		 */
-		setMessageIdToEdit(token: string, id: number) {
-			this.messageIdToEdit[token] = id
-		},
-
-		/**
-		 * Remove a message id that is being edited to the store
-		 *
-		 * @param token - conversation token
-		 */
-		removeMessageIdToEdit(token: string) {
-			delete this.chatEditInput[token]
-			delete this.messageIdToEdit[token]
-		},
-
-		/**
-		 * Remove a current input value from the store for a given conversation token
-		 *
-		 * @param token - conversation token
-		 */
-		removeChatInput(token: string) {
-			BrowserStorage.removeItem('chatInput_' + token)
-			delete this.chatInput[token]
-		},
-
-		/**
-		 * Initiate editing UI for a given message
-		 *
-		 * @param payload - action payload
-		 * @param payload.token - conversation token
-		 * @param payload.id - message id
-		 * @param payload.message - message text
-		 * @param payload.messageParameters - message parameters
-		 */
-		initiateEditingMessage({ token, id, message, messageParameters }: { token: string, id: number, message: string, messageParameters: ChatMessage['messageParameters'] }) {
-			this.setMessageIdToEdit(token, id)
-			const isFileShareOnly = Object.keys(Object(messageParameters)).some((key) => key.startsWith('file'))
-				&& message === '{file}'
-			if (isFileShareOnly) {
-				this.setChatEditInput({ token, text: '' })
-			} else {
-				this.setChatEditInput({
-					token,
-					text: message,
-					parameters: messageParameters,
-				})
-			}
-			EventBus.emit('editing-message')
-			EventBus.emit('focus-chat-input')
-		},
-
-		/**
-		 * Clears store for a deleted conversation
-		 *
-		 * @param token the token of the conversation to be deleted
-		 */
-		purgeChatExtras(token: string) {
-			this.removeParentIdToReply(token)
-			this.removeChatInput(token)
-			this.clearThreads(token)
-		},
-
-		setTasksCounters({ tasksCount, tasksDoneCount }: { tasksCount: number, tasksDoneCount: number }) {
-			this.tasksCount = tasksCount
-			this.tasksDoneCount = tasksDoneCount
-		},
-
-		async requestChatSummary(token: string, fromMessageId: number) {
+		if (newThreadTitle && typeof newThreadTitle === 'string') {
 			try {
-				const response = await summarizeChat(token, fromMessageId)
-				if (!response.data) {
-					console.warn('No messages found to summarize:', { token, fromMessageId })
-					return
-				}
-				const task = response.data.ocs.data
-
-				if (!this.chatSummary[token]) {
-					this.chatSummary[token] = {}
-				}
-				this.chatSummary[token][fromMessageId] = {
-					...task,
-					fromMessageId,
-				}
-				if (task.nextOffset && task.nextOffset !== fromMessageId) {
-					await this.requestChatSummary(token, task.nextOffset)
-				}
-			} catch (error) {
-				console.error('Error while requesting a summary:', error)
+				const response = await renameThreadApi(token, threadId, newThreadTitle)
+				addThread(token, response.data.ocs.data)
+			} catch (e) {
+				showError(t('spreed', 'Failed to rename the thread'))
+				console.error(e)
 			}
-		},
+		}
+	}
 
-		storeChatSummary(token: string, fromMessageId: number, summary: string) {
-			if (this.chatSummary[token][fromMessageId]) {
-				this.chatSummary[token][fromMessageId].summary = summary
+	/**
+	 * Remove a thread from the store
+	 *
+	 * @param token - conversation token
+	 * @param messageId - message id to remove all preceding threads (remove all, if omitted)
+	 */
+	function clearThreads(token: string, messageId?: number) {
+		if (messageId) {
+			// Clear threads that are older than the given messageId
+			for (const threadId of Object.keys(threads.value[token] ?? {})) {
+				if (+threadId < messageId) {
+					delete threads.value[token][+threadId]
+				}
 			}
-		},
+		} else {
+			// Clear all threads for the conversation
+			delete threads.value[token]
+		}
+	}
 
-		dismissChatSummary(token: string) {
-			if (this.hasChatSummaryTaskRequested(token)) {
-				delete this.chatSummary[token]
+	/**
+	 * Remove a message from a thread object
+	 *
+	 * @param token - conversation token
+	 * @param threadId - thread id to remove message from
+	 * @param messageId - message id to remove
+	 */
+	function removeMessageFromThread(token: string, threadId: number, messageId: number) {
+		if (!threads.value[token]?.[threadId]) {
+			return
+		}
+
+		const thread = threads.value[token][threadId]
+		if (thread.first?.id === messageId) {
+			thread.first = null
+		} else {
+			threads.value[token][threadId].thread.numReplies -= 1
+			if (thread.last?.id === messageId) {
+				// Last message was removed but there might be older messages in the thread
+				// that don't have expiration timestamp
+				fetchSingleThread(token, threadId)
 			}
-		},
-	},
+		}
+	}
+
+	/**
+	 * Get chat input for current conversation (from store or BrowserStorage)
+	 *
+	 * @param token - conversation token
+	 * @return The input text
+	 */
+	function getChatInput(token: string) {
+		if (!chatInput.value[token]) {
+			restoreChatInput(token)
+		}
+		return chatInput.value[token] ?? ''
+	}
+
+	/**
+	 * Add a thread title to the store
+	 *
+	 * @param token - conversation token
+	 * @param title - title from input
+	 */
+	function setThreadTitle(token: string, title: string) {
+		threadTitle.value[token] = title
+	}
+
+	/**
+	 * Removes a thread title id from the store
+	 * (after posting message or dismissing the operation)
+	 *
+	 * @param token - conversation token
+	 */
+	function removeThreadTitle(token: string) {
+		delete threadTitle.value[token]
+	}
+
+	/**
+	 * Add a reply message id to the store
+	 *
+	 * @param payload action payload
+	 * @param payload.token - conversation token
+	 * @param payload.id The id of message
+	 */
+	function setParentIdToReply({ token, id }: { token: string, id: number }) {
+		parentToReply.value[token] = id
+	}
+
+	/**
+	 * Removes a reply message id from the store
+	 * (after posting message or dismissing the operation)
+	 *
+	 * @param token - conversation token
+	 */
+	function removeParentIdToReply(token: string) {
+		delete parentToReply.value[token]
+	}
+
+	/**
+	 * Restore chat input from the browser storage and save to store
+	 *
+	 * @param token - conversation token
+	 */
+	function restoreChatInput(token: string) {
+		const storedChatInput = BrowserStorage.getItem('chatInput_' + token)
+		if (storedChatInput) {
+			chatInput.value[token] = storedChatInput
+		}
+	}
+
+	/**
+	 * Add a current input value to the store for a given conversation token
+	 *
+	 * @param payload action payload
+	 * @param payload.token - conversation token
+	 * @param payload.text The string to store
+	 */
+	function setChatInput({ token, text }: { token: string, text: string }) {
+		const parsedText = parseSpecialSymbols(text)
+		BrowserStorage.setItem('chatInput_' + token, parsedText)
+		chatInput.value[token] = parsedText
+	}
+
+	/**
+	 * Add a message text that is being edited to the store for a given conversation token
+	 *
+	 * @param payload action payload
+	 * @param payload.token - conversation token
+	 * @param payload.text The string to store
+	 * @param payload.parameters message parameters
+	 */
+	function setChatEditInput({ token, text, parameters = {} }: { token: string, text: string, parameters?: ChatMessage['messageParameters'] }) {
+		let parsedText = text
+
+		// Handle mentions and special symbols
+		parsedText = parseMentions(parsedText, parameters)
+		parsedText = parseSpecialSymbols(parsedText)
+
+		chatEditInput.value[token] = parsedText
+	}
+
+	/**
+	 * Add a message id that is being edited to the store
+	 *
+	 * @param token - conversation token
+	 * @param id The id of message
+	 */
+	function setMessageIdToEdit(token: string, id: number) {
+		messageIdToEdit.value[token] = id
+	}
+
+	/**
+	 * Remove a message id that is being edited to the store
+	 *
+	 * @param token - conversation token
+	 */
+	function removeMessageIdToEdit(token: string) {
+		delete chatEditInput.value[token]
+		delete messageIdToEdit.value[token]
+	}
+
+	/**
+	 * Remove a current input value from the store for a given conversation token
+	 *
+	 * @param token - conversation token
+	 */
+	function removeChatInput(token: string) {
+		BrowserStorage.removeItem('chatInput_' + token)
+		delete chatInput.value[token]
+	}
+
+	/**
+	 * Initiate editing UI for a given message
+	 *
+	 * @param payload - action payload
+	 * @param payload.token - conversation token
+	 * @param payload.id - message id
+	 * @param payload.message - message text
+	 * @param payload.messageParameters - message parameters
+	 */
+	function initiateEditingMessage({ token, id, message, messageParameters }: { token: string, id: number, message: string, messageParameters: ChatMessage['messageParameters'] }) {
+		setMessageIdToEdit(token, id)
+		const isFileShareOnly = Object.keys(messageParameters ?? {}).some((key) => key.startsWith('file'))
+			&& message === '{file}'
+		if (isFileShareOnly) {
+			setChatEditInput({ token, text: '' })
+		} else {
+			setChatEditInput({
+				token,
+				text: message,
+				parameters: messageParameters,
+			})
+		}
+		EventBus.emit('editing-message')
+		EventBus.emit('focus-chat-input')
+	}
+
+	/**
+	 * Clears store for a deleted conversation
+	 *
+	 * @param token the token of the conversation to be deleted
+	 */
+	function purgeChatExtras(token: string) {
+		removeParentIdToReply(token)
+		removeChatInput(token)
+		clearThreads(token)
+	}
+
+	/**
+	 * Update tasks counters in the store
+	 *
+	 * @param payload - action payload
+	 * @param payload.tasksCount - total tasks count
+	 * @param payload.tasksDoneCount - done tasks count
+	 */
+	function setTasksCounters(payload: { tasksCount: number, tasksDoneCount: number }) {
+		tasksCount.value = payload.tasksCount
+		tasksDoneCount.value = payload.tasksDoneCount
+	}
+
+	/**
+	 * Request chat summary from server for given conversation and last read message id
+	 *
+	 * @param token - conversation token
+	 * @param fromMessageId
+	 */
+	async function requestChatSummary(token: string, fromMessageId: number) {
+		try {
+			const response = await summarizeChat(token, fromMessageId)
+			if (!response.data) {
+				console.warn('No messages found to summarize:', { token, fromMessageId })
+				return
+			}
+			const task = response.data.ocs.data
+
+			if (!chatSummary.value[token]) {
+				chatSummary.value[token] = {}
+			}
+			chatSummary.value[token][fromMessageId] = {
+				...task,
+				fromMessageId,
+			}
+			if (task.nextOffset && task.nextOffset !== fromMessageId) {
+				await requestChatSummary(token, task.nextOffset)
+			}
+		} catch (error) {
+			console.error('Error while requesting a summary:', error)
+		}
+	}
+
+	/**
+	 * Store generated chat summary for given conversation
+	 *
+	 * @param token - conversation token
+	 * @param fromMessageId
+	 * @param summary
+	 */
+	function storeChatSummary(token: string, fromMessageId: number, summary: string) {
+		if (chatSummary.value[token]?.[fromMessageId]) {
+			chatSummary.value[token][fromMessageId].summary = summary
+		}
+	}
+
+	/**
+	 * Clean up chat summary data for given conversation
+	 *
+	 * @param token - conversation token
+	 */
+	function dismissChatSummary(token: string) {
+		if (hasChatSummaryTaskRequested(token)) {
+			delete chatSummary.value[token]
+		}
+	}
+
+	return {
+		threads,
+		followedThreads,
+		followedThreadsInitialised,
+		allFollowedThreadsReceived,
+		threadTitle,
+		parentToReply,
+		chatInput,
+		messageIdToEdit,
+		chatEditInput,
+		tasksCount,
+		tasksDoneCount,
+		chatSummary,
+
+		followedThreadsList,
+
+		getThread,
+		getThreadsList,
+		getThreadTitle,
+		getParentIdToReply,
+		getChatEditInput,
+		getMessageIdToEdit,
+		getChatSummaryTaskQueue,
+		hasChatSummaryTaskRequested,
+		getChatSummary,
+
+		addThread,
+		fetchSingleThread,
+		fetchRecentThreadsList,
+		fetchFollowedThreadsList,
+		setThreadNotificationLevel,
+		updateThread,
+		updateThreadTitle,
+		renameThread,
+		clearThreads,
+		removeMessageFromThread,
+		getChatInput,
+		setThreadTitle,
+		removeThreadTitle,
+		setParentIdToReply,
+		removeParentIdToReply,
+		restoreChatInput,
+		setChatInput,
+		setChatEditInput,
+		setMessageIdToEdit,
+		removeMessageIdToEdit,
+		removeChatInput,
+		initiateEditingMessage,
+		purgeChatExtras,
+		setTasksCounters,
+		requestChatSummary,
+		storeChatSummary,
+		dismissChatSummary,
+	}
 })
