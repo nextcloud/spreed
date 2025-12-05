@@ -114,16 +114,14 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 	 */
 	public function toArray(?Message $parent, ?Thread $thread) : array {
 		$data = [
-			'id' => $this->id,
-			'roomId' => $this->getRoomId(),
+			'id' => (string)$this->id,
 			'actorId' => $this->getActorId(),
 			'actorType' => $this->getActorType(),
 			'threadId' => $this->getThreadId(),
-			'parentId' => $this->getParentId(),
 			'message' => $this->getMessage(),
 			'messageType' => $this->getMessageType(),
 			'createdAt' => $this->getCreatedAt()->getTimestamp(),
-			'sendAt' => $this->getSendAt()?->getTimestamp(),
+			'sendAt' => $this->getSendAt()?->getTimestamp() ?? 0,
 		];
 
 		if ($parent !== null) {

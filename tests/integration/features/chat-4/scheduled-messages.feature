@@ -16,8 +16,8 @@ Feature: chat-4/scheduling
       | message | Message 1  |
       | sendAt  | 1985514582 |
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id        | roomId | actorType | actorId      | threadId | parentId | message   | messageType | sendAt      | metaData                                       |
-      | Message 1 | room   | users     | participant1 | 0        | null     | Message 1 | comment     | 1985514582  | {"threadTitle":"","silent":false,"threadId":0} |
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | metaData                                       |
+      | Message 1 | users     | participant1 | 0        | null   | Message 1 | comment     | 1985514582  | {"threadTitle":"","silent":false,"threadId":0} |
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
@@ -28,8 +28,8 @@ Feature: chat-4/scheduling
       | sendAt  | 1985514582 |
       | silent  | true       |
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id        | roomId | actorType | actorId      | threadId | parentId | message   | messageType | sendAt      | metaData                                      |
-      | Message 2 | room   | users     | participant1 | 0        | null     | Message 2 | comment     | 1985514582  | {"threadTitle":"","silent":true,"threadId":0} |
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | metaData                                      |
+      | Message 2 | users     | participant1 | 0        | null   | Message 2 | comment     | 1985514582  | {"threadTitle":"","silent":true,"threadId":0} |
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
@@ -40,8 +40,8 @@ Feature: chat-4/scheduling
       | sendAt  | 1985514582 |
       | replyTo | Message    |
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id        | roomId | actorType | actorId      | threadId | parentId | parent  | message  | messageType | sendAt      | metaData                                       |
-      | Message 3 | room   | users     | participant1 | 0        | Message  | Message |Message 3 | comment     | 1985514582  | {"threadTitle":"","silent":false,"threadId":0} |
+      | id        | actorType | actorId      | threadId | parent  | message  | messageType | sendAt      | metaData                                       |
+      | Message 3 | users     | participant1 | 0        | Message |Message 3 | comment     | 1985514582  | {"threadTitle":"","silent":false,"threadId":0} |
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
@@ -52,8 +52,8 @@ Feature: chat-4/scheduling
       | sendAt      | 1985514582       |
       | threadTitle | Scheduled Thread |
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id        | roomId | actorType | actorId      | threadId | parentId | message   | messageType | sendAt      | metaData                                                        |
-      | Message 4 | room   | users     | participant1 | -1       | null     | Message 4 | comment     | 1985514582  | {"threadTitle":"Scheduled Thread","silent":false,"threadId":-1} |
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | metaData                                                        |
+      | Message 4 | users     | participant1 | -1       | null   | Message 4 | comment     | 1985514582  | {"threadTitle":"Scheduled Thread","silent":false,"threadId":-1} |
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
@@ -65,8 +65,8 @@ Feature: chat-4/scheduling
       | sendAt | 1985514582 |
       | threadId | Thread 1 |
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id        | roomId | actorType | actorId      | threadId | parentId | message   | messageType | sendAt      | metaData                                                        |
-      | Message 5 | room   | users     | participant1 | Thread 1 | null     | Message 5 | comment     | 1985514582  | {"threadTitle":"Thread 1","silent":false,"threadId":"Thread 1"} |
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | metaData                                                        |
+      | Message 5 | users     | participant1 | Thread 1 | null   | Message 5 | comment     | 1985514582  | {"threadTitle":"Thread 1","silent":false,"threadId":"Thread 1"} |
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
@@ -79,8 +79,8 @@ Feature: chat-4/scheduling
       | replyTo  | Message 0  |
       | threadId | Thread 1   |
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id        | roomId | actorType | actorId      | threadId | parentId  | parent    | message   | messageType | sendAt      | metaData                                                        |
-      | Message 5 | room   | users     | participant1 | Thread 1 | Message 0 | Message 0 | Message 5 | comment     | 1985514582  | {"threadTitle":"Thread 1","silent":false,"threadId":"Thread 1"} |
+      | id        | actorType | actorId      | threadId | parent    | message   | messageType | sendAt      | metaData                                                        |
+      | Message 5 | users     | participant1 | Thread 1 | Message 0 | Message 5 | comment     | 1985514582  | {"threadTitle":"Thread 1","silent":false,"threadId":"Thread 1"} |
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
@@ -95,16 +95,16 @@ Feature: chat-4/scheduling
       | sendAt  |1985514584 |
       | silent  | true      |
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id        | roomId | actorType | actorId      | threadId | parentId | message   | messageType | sendAt      | metaData                                       |
-      | Message 1 | room   | users     | participant1 | 0        | null     | Message 1 | comment     | 1985514582  | {"threadTitle":"","silent":false,"threadId":0} |
-      | Message 2 | room   | users     | participant1 | 0        | null     | Message 2 | comment     | 1985514584  | {"threadTitle":"","silent":true,"threadId":0}  |
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | metaData                                       |
+      | Message 1 | users     | participant1 | 0        | null   | Message 1 | comment     | 1985514582  | {"threadTitle":"","silent":false,"threadId":0} |
+      | Message 2 | users     | participant1 | 0        | null   | Message 2 | comment     | 1985514584  | {"threadTitle":"","silent":true,"threadId":0}  |
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
     When user "participant1" deletes scheduled message "Message 1" from room "room" with 200
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id        | roomId | actorType | actorId      | threadId | parentId | message   | messageType | sendAt      | metaData                                      |
-      | Message 2 | room   | users     | participant1 | 0        | null     | Message 2 | comment     | 1985514584  | {"threadTitle":"","silent":true,"threadId":0} |
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | metaData                                      |
+      | Message 2 | users     | participant1 | 0        | null   | Message 2 | comment     | 1985514584  | {"threadTitle":"","silent":true,"threadId":0} |
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
@@ -119,8 +119,8 @@ Feature: chat-4/scheduling
       | message | Message 1  |
       | sendAt  | 1985514582 |
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id        | roomId | actorType | actorId      | threadId | parentId | message   | messageType | sendAt      | metaData                                       |
-      | Message 1 | room   | users     | participant1 | 0        | null     | Message 1 | comment     | 1985514582  | {"threadTitle":"","silent":false,"threadId":0} |
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | metaData                                       |
+      | Message 1 | users     | participant1 | 0        | null   | Message 1 | comment     | 1985514582  | {"threadTitle":"","silent":false,"threadId":0} |
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
@@ -131,19 +131,19 @@ Feature: chat-4/scheduling
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id               | roomId | actorType | actorId      | threadId | parentId | message          | messageType | sendAt      | metaData                                                          |
-      | Message 1 edited | room   | users     | participant1 | 0        | null     | Message 1 edited | comment     | 1985514582  | {"threadTitle":"","silent":false,"threadId":0,"lastEditedTime":0} |
+      | id               | actorType | actorId      | threadId | parent | message          | messageType | sendAt      | metaData                                                          |
+      | Message 1 edited | users     | participant1 | 0        | null   | Message 1 edited | comment     | 1985514582  | {"threadTitle":"","silent":false,"threadId":0,"lastEditedTime":0} |
     When user "participant1" updates scheduled message "Message 1" in room "room" with 202
       | message | Message 1 edited |
       | sendAt  | 1985514582       |
       | silent  | true             |
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id               | roomId | actorType | actorId      | threadId | parentId | message          | messageType | sendAt      | metaData                                                         |
-      | Message 1 edited | room   | users     | participant1 | 0        | null     | Message 1 edited | comment     | 1985514582  | {"threadTitle":"","silent":true,"threadId":0,"lastEditedTime":0} |
+      | id               | actorType | actorId      | threadId | parent | message          | messageType | sendAt      | metaData                                                         |
+      | Message 1 edited | users     | participant1 | 0        | null   | Message 1 edited | comment     | 1985514582  | {"threadTitle":"","silent":true,"threadId":0,"lastEditedTime":0} |
     When user "participant1" updates scheduled message "Message 1" in room "room" with 400
       | message     | Message 1 edited |
       | sendAt      | 1985514582       |
       | threadTitle | Abcd             |
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id               | roomId | actorType | actorId      | threadId | parentId | message          | messageType | sendAt      | metaData                                                         |
-      | Message 1 edited | room   | users     | participant1 | 0        | null     | Message 1 edited | comment     | 1985514582  | {"threadTitle":"","silent":true,"threadId":0,"lastEditedTime":0} |
+      | id               | actorType | actorId      | threadId | parent | message          | messageType | sendAt      | metaData                                                         |
+      | Message 1 edited | users     | participant1 | 0        | null   | Message 1 edited | comment     | 1985514582  | {"threadTitle":"","silent":true,"threadId":0,"lastEditedTime":0} |

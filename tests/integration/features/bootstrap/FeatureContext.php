@@ -2043,6 +2043,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				Assert::assertArrayHasKey('message', $parent);
 				Assert::assertArrayHasKey('actorId', $parent);
 				$message['parent'] = self::$messageIdToText[$parent['id']];
+			} else {
+				$message['parent'] = 'null';
 			}
 			$message['metaData'] = $metaData;
 		}
@@ -2052,8 +2054,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$row['id'] = self::$textToMessageId[$row['message']];
 			$row['sendAt'] = (int)$row['sendAt'];
 			$row['metaData'] = json_decode($row['metaData'], true);
-			$row['roomId'] = self::$identifierToId[$row['roomId']];
-			$row['parentId'] = ($row['parentId'] === 'null' ? null : self::$textToMessageId[$row['parentId']]);
 			if (isset($row['parent'])) {
 				$parent = [];
 			}

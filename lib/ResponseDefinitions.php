@@ -567,27 +567,26 @@ namespace OCA\Talk;
  * }
  *
  * @psalm-type TalkScheduledMessageMetaData = array{
- *       threadId: int,
- *       threadTitle: string,
- *       silent: bool,
- *       lastEditedTime?: int,
+ *     threadId: int,
+ *     threadTitle: string,
+ *     silent: bool,
+ *     lastEditedTime?: int,
  * }
  *
  * @psalm-type TalkScheduledMessage = array{
- *     	id: int,
- * 	   	roomId: int,
- *     	actorId: string,
- * 		actorType: string,
- * 		threadId: int,
- *      threadExists?: boolean,
- *      threadTitle?: string,
- *      parentId: ?int,
- * 		parent?: TalkChatMessage,
- * 		message: string,
- * 		messageType: string,
- * 		createdAt: int,
- * 		sendAt: ?int,
- * 		metaData: TalkScheduledMessageMetaData,
+ *     // SnowflakeID
+ *     id: string,
+ *     actorId: string,
+ *     actorType: string,
+ *     threadId: int,
+ *     threadExists?: boolean,
+ *     threadTitle?: string,
+ *     parent?: TalkChatMessage,
+ *     message: string,
+ *     messageType: string,
+ *     createdAt: int,
+ *     sendAt: int,
+ *     metaData: TalkScheduledMessageMetaData,
  * }
  */
 class ResponseDefinitions {
