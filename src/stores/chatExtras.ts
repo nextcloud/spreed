@@ -48,12 +48,23 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	const tasksDoneCount = ref(0)
 	const chatSummary = ref<Record<string, Record<number, ChatTask>>>({})
 
+	/**
+	 * Returns known thread information from the store
+	 *
+	 * @param token - conversation token
+	 * @param threadId - thread id
+	 */
 	function getThread(token: string, threadId: number) {
 		if (threads.value[token]?.[threadId]) {
 			return threads.value[token][threadId]
 		}
 	}
 
+	/**
+	 * Returns array of all known threads
+	 *
+	 * @param token - conversation token
+	 */
 	function getThreadsList(token: string): ThreadInfo[] {
 		if (threads.value[token]) {
 			return Object.values(threads.value[token]).sort((a, b) => b.thread.lastActivity - a.thread.lastActivity)
@@ -73,32 +84,67 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 			.sort((a, b) => b.thread.lastActivity - a.thread.lastActivity)
 	})
 
+	/**
+	 * Returns a title for thread to be created
+	 *
+	 * @param token - conversation token
+	 */
 	function getThreadTitle(token: string) {
 		return threadTitle.value[token]
 	}
 
+	/**
+	 * Returns a message id of parent to be replied to
+	 *
+	 * @param token - conversation token
+	 */
 	function getParentIdToReply(token: string) {
 		if (parentToReply.value[token]) {
 			return parentToReply.value[token]
 		}
 	}
 
+	/**
+	 * Returns edited message text for given conversation
+	 *
+	 * @param token - conversation token
+	 */
 	function getChatEditInput(token: string) {
 		return chatEditInput.value[token] ?? ''
 	}
 
+	/**
+	 * Returns edited message id for given conversation
+	 *
+	 * @param token - conversation token
+	 */
 	function getMessageIdToEdit(token: string) {
 		return messageIdToEdit.value[token]
 	}
 
+	/**
+	 * Returns chat summary task queue for given conversation
+	 *
+	 * @param token - conversation token
+	 */
 	function getChatSummaryTaskQueue(token: string) {
 		return Object.values(chatSummary.value[token] ?? {})
 	}
 
+	/**
+	 * Returns whether chat summary task has been requested for given conversation
+	 *
+	 * @param token - conversation token
+	 */
 	function hasChatSummaryTaskRequested(token: string) {
 		return chatSummary.value[token] !== undefined
 	}
 
+	/**
+	 * Returns generated chat summary for given conversation
+	 *
+	 * @param token - conversation token
+	 */
 	function getChatSummary(token: string) {
 		return Object.values(chatSummary.value[token] ?? {}).map((task) => task.summary).join('\n\n')
 			|| t('spreed', 'Error occurred during a summary generation')
@@ -497,11 +543,24 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 		clearThreads(token)
 	}
 
+	/**
+	 * Update tasks counters in the store
+	 *
+	 * @param payload - action payload
+	 * @param payload.tasksCount - total tasks count
+	 * @param payload.tasksDoneCount - done tasks count
+	 */
 	function setTasksCounters(payload: { tasksCount: number, tasksDoneCount: number }) {
 		tasksCount.value = payload.tasksCount
 		tasksDoneCount.value = payload.tasksDoneCount
 	}
 
+	/**
+	 * Request chat summary from server for given conversation and last read message id
+	 *
+	 * @param token - conversation token
+	 * @param fromMessageId
+	 */
 	async function requestChatSummary(token: string, fromMessageId: number) {
 		try {
 			const response = await summarizeChat(token, fromMessageId)
@@ -526,12 +585,24 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 		}
 	}
 
+	/**
+	 * Store generated chat summary for given conversation
+	 *
+	 * @param token - conversation token
+	 * @param fromMessageId
+	 * @param summary
+	 */
 	function storeChatSummary(token: string, fromMessageId: number, summary: string) {
 		if (chatSummary.value[token]?.[fromMessageId]) {
 			chatSummary.value[token][fromMessageId].summary = summary
 		}
 	}
 
+	/**
+	 * Clean up chat summary data for given conversation
+	 *
+	 * @param token - conversation token
+	 */
 	function dismissChatSummary(token: string) {
 		if (hasChatSummaryTaskRequested(token)) {
 			delete chatSummary.value[token]
