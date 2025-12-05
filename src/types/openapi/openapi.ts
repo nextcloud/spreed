@@ -2478,7 +2478,6 @@ export type components = {
             actorType: string;
             /** Format: int64 */
             threadId: number;
-            threadExists?: boolean;
             threadTitle?: string;
             parent?: components["schemas"]["ChatMessage"];
             message: string;
@@ -2487,15 +2486,7 @@ export type components = {
             createdAt: number;
             /** Format: int64 */
             sendAt: number;
-            metaData: components["schemas"]["ScheduledMessageMetaData"];
-        };
-        ScheduledMessageMetaData: {
-            /** Format: int64 */
-            threadId: number;
-            threadTitle: string;
             silent: boolean;
-            /** Format: int64 */
-            lastEditedTime?: number;
         };
         SignalingFederationSettings: {
             server: string;

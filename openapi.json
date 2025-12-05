@@ -1833,7 +1833,7 @@
                     "messageType",
                     "createdAt",
                     "sendAt",
-                    "metaData"
+                    "silent"
                 ],
                 "properties": {
                     "id": {
@@ -1849,9 +1849,6 @@
                     "threadId": {
                         "type": "integer",
                         "format": "int64"
-                    },
-                    "threadExists": {
-                        "type": "boolean"
                     },
                     "threadTitle": {
                         "type": "string"
@@ -1873,32 +1870,8 @@
                         "type": "integer",
                         "format": "int64"
                     },
-                    "metaData": {
-                        "$ref": "#/components/schemas/ScheduledMessageMetaData"
-                    }
-                }
-            },
-            "ScheduledMessageMetaData": {
-                "type": "object",
-                "required": [
-                    "threadId",
-                    "threadTitle",
-                    "silent"
-                ],
-                "properties": {
-                    "threadId": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "threadTitle": {
-                        "type": "string"
-                    },
                     "silent": {
                         "type": "boolean"
-                    },
-                    "lastEditedTime": {
-                        "type": "integer",
-                        "format": "int64"
                     }
                 }
             },
