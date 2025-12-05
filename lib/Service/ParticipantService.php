@@ -2385,6 +2385,7 @@ class ParticipantService {
 	public function setHasScheduledMessages(Participant $participant, bool $hasScheduledMessages): void {
 		$attendee = $participant->getAttendee();
 		$attendee->setHasScheduledMessages($hasScheduledMessages);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
 		$this->attendeeMapper->update($attendee);
 	}
 }
