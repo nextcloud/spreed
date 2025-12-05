@@ -1989,18 +1989,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$messageIdToText[$response['id']] = $row['message'];
 		Assert::assertEquals($row['message'], $response['message']);
 		Assert::assertEquals($row['sendAt'], $response['sendAt']);
-		Assert::assertArrayHasKey('metaData', $response);
-		$metaData = $response['metaData'];
-		Assert::assertArrayHasKey('silent', $metaData);
-		Assert::assertArrayHasKey('threadTitle', $metaData);
-		Assert::assertArrayHasKey('threadId', $metaData);
-		Assert::assertArrayHasKey('lastEditedTime', $metaData);
-		if (isset($row['silent'])) {
-			Assert::assertEquals($metaData['silent'], (bool)$row['silent']);
-		}
-		if (isset($row['threadTitle'])) {
-			Assert::assertEquals($metaData['threadTitle'], (bool)$row['threadTitle']);
-		}
 	}
 
 	#[When('/^user "([^"]*)" deletes scheduled message "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
@@ -2034,10 +2022,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			Assert::assertArrayHasKey('createdAt', $message);
 			Assert::assertIsInt($message['createdAt']);
 			unset($message['createdAt']);
-			$metaData = $message['metaData'];
-			if (isset($metaData['lastEditedTime'])) {
-				$metaData['lastEditedTime'] = 0;
-			}
 			if (isset($message['parent'])) {
 				$parent = $message['parent'];
 				Assert::assertArrayHasKey('message', $parent);
@@ -2046,26 +2030,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			} else {
 				$message['parent'] = 'null';
 			}
-			$message['metaData'] = $metaData;
 		}
 
 		$expected = $formData->getColumnsHash();
 		foreach ($expected as &$row) {
 			$row['id'] = self::$textToMessageId[$row['message']];
 			$row['sendAt'] = (int)$row['sendAt'];
-			$row['metaData'] = json_decode($row['metaData'], true);
-			if (isset($row['parent'])) {
-				$parent = [];
-			}
+			$row['silent'] = $row['silent'] === 'true';
 			if ($row['threadId'] === '-1') {
 				$row['threadId'] = -1;
-				$row['threadExists'] = false;
-				$row['threadTitle'] = $row['metaData']['threadTitle'];
 			} elseif ($row['threadId'] !== '0') {
+				$row['threadTitle'] = $row['threadId'];
 				$row['threadId'] = self::$titleToThreadId[$row['threadId']];
-				$row['threadTitle'] = self::$threadIdToTitle[$row['threadId']];
-				$row['threadExists'] = true;
-				$row['metaData']['threadId'] = $row['threadId'];
 			} else {
 				$row['threadId'] = (int)$row['threadId'];
 			}

@@ -37,7 +37,6 @@ use OCP\DB\Types;
  * @method \DateTime|null getSendAt()
  *
  * @psalm-import-type TalkScheduledMessage from ResponseDefinitions
- * @psalm-import-type TalkScheduledMessageMetaData from ResponseDefinitions
  */
 class ScheduledMessage extends Entity {
 	public const METADATA_THREAD_TITLE = 'threadTitle';
@@ -70,13 +69,16 @@ class ScheduledMessage extends Entity {
 	}
 
 	/**
-	 * @return TalkScheduledMessageMetaData
+	 * @return array{silent: bool, threadId: int, threadTitle?: string, lastEditedTime?: int}
 	 */
 	public function getDecodedMetaData(): array {
 		return json_decode($this->metaData, true, 512, JSON_THROW_ON_ERROR);
 	}
 
-	public function setMetaData(?array $metaData): void {
+	/**
+	 * @param array{silent: bool, threadId: int, threadTitle?: string, lastEditedTime?: int} $metaData
+	 */
+	public function setMetaData(array $metaData): void {
 		$this->metaData = json_encode($metaData, JSON_THROW_ON_ERROR);
 		$this->markFieldUpdated('metaData');
 	}
@@ -99,6 +101,7 @@ class ScheduledMessage extends Entity {
 	 * @return TalkScheduledMessage
 	 */
 	public function toArray(string $format, ?Message $parent, ?Thread $thread) : array {
+		$metaData = $this->getDecodedMetaData();
 		$data = [
 			'id' => (string)$this->id,
 			'actorId' => $this->getActorId(),
@@ -108,22 +111,18 @@ class ScheduledMessage extends Entity {
 			'messageType' => $this->getMessageType(),
 			'createdAt' => $this->getCreatedAt()->getTimestamp(),
 			'sendAt' => $this->getSendAt()?->getTimestamp() ?? 0,
+			'silent' => $metaData['silent'] ?? false,
 		];
 
 		if ($parent !== null) {
 			$data['parent'] = $parent->toArray($format, $thread);
 		}
 
-		$metaData = $this->getDecodedMetaData();
 		if ($thread !== null) {
-			$data['threadExists'] = true;
 			$data['threadTitle'] = $thread->getName();
-			$metaData[self::METADATA_THREAD_TITLE] = $thread->getName();
 		} elseif (isset($metaData[self::METADATA_THREAD_TITLE]) && $this->getThreadId() === Thread::THREAD_CREATE) {
-			$data['threadExists'] = false;
 			$data['threadTitle'] = (string)$metaData[self::METADATA_THREAD_TITLE];
 		}
-		$data['metaData'] = $metaData;
 		return $data;
 	}
 }
