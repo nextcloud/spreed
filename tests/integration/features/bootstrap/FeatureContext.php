@@ -514,6 +514,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (!empty($expectedRoom['lobbyTimer'])) {
 					$data['lobbyTimer'] = (int)$room['lobbyTimer'];
 				}
+				if (!empty($expectedRoom['hasScheduledMessages'])) {
+					$data['hasScheduledMessages'] = $room['hasScheduledMessages'] ? 'true' : 'false';
+				}
 				if (isset($expectedRoom['hiddenPinnedId'])) {
 					if ($room['hiddenPinnedId'] === 0) {
 						$data['hiddenPinnedId'] = 'EMPTY';
@@ -2020,11 +2023,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 
-		if ($statusCode === 304) {
+		$expected = $formData?->getColumnsHash();
+		$data = $this->getDataFromResponse($this->response);
+		if (empty($expected)) {
+			Assert::assertEmpty($data);
 			return;
 		}
 
-		$data = $this->getDataFromResponse($this->response);
 		foreach ($data as &$message) {
 			Assert::assertArrayHasKey('createdAt', $message);
 			Assert::assertIsInt($message['createdAt']);
