@@ -78,17 +78,14 @@ class Version23000Date20251105125333 extends SimpleMigrationStep {
 			$table->addIndex(['send_at'], 'tt_send_at_sched');
 		}
 
-		if ($schema->hasTable('talk_attendees')) {
-			$table = $schema->getTable('talk_attendees');
-			if ($table->hasColumn('has_scheduled_messages')) {
-				return $schema;
-			}
-
+		$table = $schema->getTable('talk_attendees');
+		if (!$table->hasColumn('has_scheduled_messages')) {
 			$table->addColumn('has_scheduled_messages', Types::BOOLEAN, [
 				'notnull' => true,
 				'default' => false,
 			]);
 		}
+
 		return $schema;
 	}
 }
