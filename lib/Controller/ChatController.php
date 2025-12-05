@@ -403,12 +403,14 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function scheduleMessage(string $message,
+	public function scheduleMessage(
+		string $message,
 		int $sendAt,
 		int $replyTo = 0,
 		bool $silent = false,
 		string $threadTitle = '',
-		int $threadId = 0): DataResponse {
+		int $threadId = 0,
+	): DataResponse {
 		if ($this->participant->isSelfJoinedOrGuest()) {
 			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
 		}
@@ -462,9 +464,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 			$this->participantService->setHasScheduledMessages($this->participant, true);
 		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
-		} catch (\Exception $e) {
-			$this->logger->error($e->getMessage());
-			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
 
 		$data = $this->scheduledMessageManager->parseScheduledMessage($scheduledMessage, $parentMessage);

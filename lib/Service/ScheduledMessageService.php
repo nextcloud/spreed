@@ -20,6 +20,7 @@ use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
+use OCP\Comments\MessageTooLongException;
 use OCP\DB\Exception;
 use OCP\IL10N;
 use Psr\Log\LoggerInterface;
@@ -39,6 +40,9 @@ class ScheduledMessageService {
 	) {
 	}
 
+	/**
+	 * @throws MessageTooLongException When the message is too long (~32k characters)
+	 */
 	public function scheduleMessage(
 		Room $chat,
 		Participant $participant,

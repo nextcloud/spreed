@@ -81,6 +81,9 @@ class ScheduledMessage extends Entity implements \JsonSerializable {
 		$this->markFieldUpdated('metaData');
 	}
 
+	/**
+	 * @throws MessageTooLongException When the message is too long (~32k characters)
+	 */
 	public function setMessage(string $message): void {
 		$message = trim($message);
 		if (mb_strlen($message, 'UTF-8') > ChatManager::MAX_CHAT_LENGTH) {
