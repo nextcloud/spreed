@@ -142,13 +142,13 @@ class ScheduledMessageService {
 		}, $result));
 		try {
 			$comments = $this->commentsManager->getCommentsById($commentIds);
-		} catch (Exception $e) {
+		} catch (Exception) {
 			$comments = [];
 		}
 
 		$messages = [];
 		foreach ($result as $row) {
-			$comment = $parent = $thread = null;
+			$parent = $thread = null;
 			$entity = [];
 			foreach ($row as $field => $value) {
 				if (str_starts_with($field, 'th_')) {

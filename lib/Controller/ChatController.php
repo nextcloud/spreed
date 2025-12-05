@@ -359,20 +359,15 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function scheduledMessages(): DataResponse {
+	public function getScheduledMessages(): DataResponse {
 		if ($this->participant->isSelfJoinedOrGuest()) {
 			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
 		}
 
-		try {
-			$scheduledMessages = $this->scheduledMessageManager->getMessages(
-				$this->room,
-				$this->participant,
-			);
-		} catch (\Exception $e) {
-			$this->logger->warning($e->getMessage());
-			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
-		}
+		$scheduledMessages = $this->scheduledMessageManager->getMessages(
+			$this->room,
+			$this->participant,
+		);
 
 		return new DataResponse($scheduledMessages, Http::STATUS_OK);
 	}
