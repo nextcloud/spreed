@@ -11,6 +11,7 @@ import {
 	CHAT,
 	CONVERSATION,
 	MESSAGE,
+	SHARED_ITEM,
 } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { fetchNoteToSelfConversation } from '../services/conversationsService.ts'
@@ -575,6 +576,10 @@ const actions = {
 				token,
 				id: message.id,
 			})
+		}
+
+		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.MESSAGE_PINNED && message.parent.metaData) {
+			sharedItemsStore.addSharedItemFromMessage(token, message.parent, SHARED_ITEM.TYPES.PINNED)
 		}
 
 		context.commit('addMessage', { token, message })

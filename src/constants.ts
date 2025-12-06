@@ -221,6 +221,8 @@ export const MESSAGE = {
 		MESSAGE_EDITED: 'message_edited',
 		MESSAGE_EXPIRATION_DISABLED: 'message_expiration_disabled',
 		MESSAGE_EXPIRATION_ENABLED: 'message_expiration_enabled',
+		MESSAGE_PINNED: 'message_pinned',
+		MESSAGE_UNPINNED: 'message_unpinned',
 		MODERATOR_DEMOTED: 'moderator_demoted',
 		MODERATOR_PROMOTED: 'moderator_promoted',
 		OBJECT_SHARED: 'object_shared',
@@ -325,6 +327,7 @@ export const SHARED_ITEM = {
 		POLL: 'poll',
 		RECORDING: 'recording',
 		VOICE: 'voice',
+		PINNED: 'pinned',
 	},
 	MEDIA_ALLOWED_PREVIEW: [
 		'image/gif',
