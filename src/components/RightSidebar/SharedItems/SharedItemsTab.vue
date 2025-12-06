@@ -75,7 +75,7 @@ const hasMoreThreads = computed(() => chatExtrasStore.getThreadsList(token.value
 
 watch([token, () => props.active, () => sidebarStore.show], ([token, isActive, isOpen]) => {
 	if (token && isActive && isOpen) {
-		sharedItemsStore.getSharedItemsOverview(token)
+		sharedItemsStore.fetchSharedItemsOverview(token)
 		supportThreads.value && chatExtrasStore.fetchRecentThreadsList(token)
 	}
 }, { immediate: true })
