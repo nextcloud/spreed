@@ -50,6 +50,33 @@ class SelectHelper {
 		])->selectAlias($alias . 'id', 'r_id');
 	}
 
+	public function selectThreadsTable(IQueryBuilder $query, string $alias = 'th', bool $aliasAll = false): void {
+		if ($alias !== '') {
+			$alias .= '.';
+		}
+
+		if ($aliasAll) {
+			$query
+				->selectAlias($alias . 'room_id', 'th_room_id')
+				->selectAlias($alias . 'last_message_id', 'th_last_message_id')
+				->selectAlias($alias . 'num_replies', 'th_num_replies')
+				->selectAlias($alias . 'last_activity', 'th_last_activity')
+				->selectAlias($alias . 'name', 'th_name')
+				->selectAlias($alias . 'id', 'th_id');
+			return;
+		}
+
+		$query->addSelect([
+			$alias . 'room_id',
+			$alias . 'last_message_id',
+			$alias . 'num_replies',
+			$alias . 'last_activity',
+			$alias . 'name',
+		])->selectAlias($alias . 'id', 'th_id');
+
+
+	}
+
 	public function selectAttendeesTable(IQueryBuilder $query, string $alias = 'a'): void {
 		if ($alias !== '') {
 			$alias .= '.';
@@ -85,7 +112,8 @@ class SelectHelper {
 			$alias . 'has_unread_threads',
 			$alias . 'has_unread_thread_mentions',
 			$alias . 'has_unread_thread_directs',
-			$alias . 'hidden_pinned_id'
+			$alias . 'hidden_pinned_id',
+			$alias . 'has_scheduled_messages',
 		])->selectAlias($alias . 'id', 'a_id');
 	}
 

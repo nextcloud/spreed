@@ -514,6 +514,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (!empty($expectedRoom['lobbyTimer'])) {
 					$data['lobbyTimer'] = (int)$room['lobbyTimer'];
 				}
+				if (!empty($expectedRoom['hasScheduledMessages'])) {
+					$data['hasScheduledMessages'] = $room['hasScheduledMessages'] ? 'true' : 'false';
+				}
 				if (isset($expectedRoom['hiddenPinnedId'])) {
 					if ($room['hiddenPinnedId'] === 0) {
 						$data['hiddenPinnedId'] = 'EMPTY';
@@ -1932,6 +1935,118 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		Assert::assertEquals(implode("\n", $expected) . "\n", $this->response->getBody()->getContents());
+	}
+
+	#[When('/^user "([^"]*)" schedules a message to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userSchedulesMessageToRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$row = $formData->getRowsHash();
+		$row['sendAt'] = (int)$row['sendAt'];
+		if (isset($row['replyTo'])) {
+			$row['replyTo'] = self::$textToMessageId[$row['replyTo']];
+		}
+		if (isset($row['threadId']) && $row['threadId'] !== '0' && $row['threadId'] !== '-1') {
+			$row['threadId'] = self::$titleToThreadId[$row['threadId']];
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST',
+			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/schedule',
+			$row
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
+
+		$response = $this->getDataFromResponse($this->response);
+		if (isset($response['id'])) {
+			self::$textToMessageId[$row['message']] = $response['id'];
+			self::$messageIdToText[$response['id']] = $row['message'];
+		}
+	}
+
+	#[When('/^user "([^"]*)" updates scheduled message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userUpdatesScheduledMessageInRoom(string $user, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$row = $formData->getRowsHash();
+		$id = self::$textToMessageId[$message];
+		$row['sendAt'] = (int)$row['sendAt'];
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST',
+			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/schedule/' . $id,
+			$row
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
+		if ($this->response->getStatusCode() !== 202) {
+			return;
+		}
+		sleep(1); // make sure Postgres manages the order of the messages
+
+		$response = $this->getDataFromResponse($this->response);
+		self::$textToMessageId[$row['message']] = $response['id'];
+		self::$messageIdToText[$response['id']] = $row['message'];
+		Assert::assertEquals($row['message'], $response['message']);
+		Assert::assertEquals($row['sendAt'], $response['sendAt']);
+	}
+
+	#[When('/^user "([^"]*)" deletes scheduled message "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userDeletesScheduledMessageFromRoom(string $user, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'DELETE',
+			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/schedule/' . self::$textToMessageId[$message],
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	#[Then('/^user "([^"]*)" sees the following scheduled messages in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userSeesTheFollowingScheduledMessagesInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'GET',
+			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/schedule',
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$expected = $formData?->getColumnsHash();
+		$data = $this->getDataFromResponse($this->response);
+		if (empty($expected)) {
+			Assert::assertEmpty($data);
+			return;
+		}
+
+		foreach ($data as &$message) {
+			Assert::assertArrayHasKey('createdAt', $message);
+			Assert::assertIsInt($message['createdAt']);
+			unset($message['createdAt']);
+			if (isset($message['parent'])) {
+				$parent = $message['parent'];
+				Assert::assertArrayHasKey('message', $parent);
+				Assert::assertArrayHasKey('actorId', $parent);
+				$message['parent'] = self::$messageIdToText[$parent['id']];
+			} else {
+				$message['parent'] = 'null';
+			}
+		}
+
+		$expected = $formData->getColumnsHash();
+		foreach ($expected as &$row) {
+			$row['id'] = self::$textToMessageId[$row['message']];
+			$row['sendAt'] = (int)$row['sendAt'];
+			$row['silent'] = $row['silent'] === 'true';
+			if ($row['threadId'] === '-1') {
+				$row['threadId'] = -1;
+			} elseif ($row['threadId'] !== '0') {
+				$row['threadTitle'] = $row['threadId'];
+				$row['threadId'] = self::$titleToThreadId[$row['threadId']];
+			} else {
+				$row['threadId'] = (int)$row['threadId'];
+			}
+		}
+		Assert::assertEquals($expected, $data);
 	}
 
 	#[Then('/^user "([^"]*)" (silent sends|sends) message ("[^"]*"|\'[^\']*\') to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]

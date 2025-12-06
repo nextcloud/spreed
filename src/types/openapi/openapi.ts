@@ -421,6 +421,56 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/schedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all scheduled messages of a given room and participant
+         * @description The author and timestamp are automatically set to the current user and time.
+         *     Required capability: `scheduled-messages`
+         */
+        get: operations["chat-get-scheduled-messages"];
+        put?: never;
+        /**
+         * Schedules the sending of a new chat message to the given room
+         * @description The author and timestamp are automatically set to the current user and time.
+         *     Required capability: `scheduled-messages`
+         */
+        post: operations["chat-schedule-message"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/schedule/{messageId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Update a scheduled message
+         * @description Required capability: `scheduled-messages`
+         */
+        post: operations["chat-edit-scheduled-message"];
+        /**
+         * Delete a scheduled message
+         * @description Required capability: `scheduled-messages`
+         */
+        delete: operations["chat-delete-schedule-message"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/share": {
         parameters: {
             query?: never;
@@ -2414,10 +2464,29 @@ export type components = {
              * @description Required capability: `pinned-messages`
              */
             hiddenPinnedId: number;
+            /** @description Required capability: `scheduled-messages` (local) */
+            hasScheduledMessages: boolean;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
         RoomWithInvalidInvitations: components["schemas"]["Room"] & {
             invalidParticipants: components["schemas"]["InvitationList"];
+        };
+        ScheduledMessage: {
+            /** @description SnowflakeID */
+            id: string;
+            actorId: string;
+            actorType: string;
+            /** Format: int64 */
+            threadId: number;
+            threadTitle?: string;
+            parent?: components["schemas"]["ChatMessage"];
+            message: string;
+            messageType: string;
+            /** Format: int64 */
+            createdAt: number;
+            /** Format: int64 */
+            sendAt: number;
+            silent: boolean;
         };
         SignalingFederationSettings: {
             server: string;
@@ -4684,6 +4753,382 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-get-scheduled-messages": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description All scheduled messages for this room and participant */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ScheduledMessage"][];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Actor not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "actor";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-schedule-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description The message to send */
+                    message: string;
+                    /**
+                     * Format: int64
+                     * @description When to send the scheduled message
+                     */
+                    sendAt: number;
+                    /**
+                     * Format: int64
+                     * @description Parent id which this scheduled message is a reply to
+                     * @default 0
+                     */
+                    replyTo?: number;
+                    /**
+                     * @description If sent silent the scheduled message will not create any notifications when sent
+                     * @default false
+                     */
+                    silent?: boolean;
+                    /**
+                     * @description Only supported when not replying, when given will create a thread (requires `threads` capability)
+                     * @default
+                     */
+                    threadTitle?: string;
+                    /**
+                     * Format: int64
+                     * @description Thread id without quoting a specific message (requires `threads` capability)
+                     * @default 0
+                     */
+                    threadId?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Message scheduled successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ScheduledMessage"];
+                        };
+                    };
+                };
+            };
+            /** @description Scheduling the message is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "message" | "reply-to" | "send-at";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Actor not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "actor";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message too long */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "message";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-edit-scheduled-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description The scheduled message id */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description The scheduled message to send */
+                    message: string;
+                    /**
+                     * Format: int64
+                     * @description When to send the scheduled message
+                     */
+                    sendAt: number;
+                    /**
+                     * @description If sent silent the scheduled message will not create any notifications
+                     * @default false
+                     */
+                    silent?: boolean;
+                    /**
+                     * @description The thread title if scheduled message is creating a thread
+                     * @default
+                     */
+                    threadTitle?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Message updated successfully */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ScheduledMessage"];
+                        };
+                    };
+                };
+            };
+            /** @description Editing scheduled message is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "message" | "send-at" | "thread-title";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Actor not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "actor" | "message";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Message too long */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "message";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-delete-schedule-message": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description The scheduled message ud */
+                messageId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Message deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: Record<string, never>;
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Message not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "actor" | "message";
+                            };
                         };
                     };
                 };

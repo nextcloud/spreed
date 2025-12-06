@@ -387,6 +387,8 @@ namespace OCA\Talk;
  *     lastPinnedId: int,
  *     // Required capability: `pinned-messages`
  *     hiddenPinnedId: int,
+ *     // Required capability: `scheduled-messages` (local)
+ *     hasScheduledMessages: bool,
  * }
  *
  * @psalm-type TalkDashboardEventAttachment = array{
@@ -562,6 +564,21 @@ namespace OCA\Talk;
  *         separator: string,
  *         rtl: bool,
  *     },
+ * }
+ *
+ * @psalm-type TalkScheduledMessage = array{
+ *     // SnowflakeID
+ *     id: string,
+ *     actorId: string,
+ *     actorType: string,
+ *     threadId: int,
+ *     threadTitle?: string,
+ *     parent?: TalkChatMessage,
+ *     message: string,
+ *     messageType: string,
+ *     createdAt: int,
+ *     sendAt: int,
+ *     silent: bool,
  * }
  */
 class ResponseDefinitions {

@@ -315,6 +315,7 @@ class AttendeeMapper extends QBMapper {
 			'has_unread_thread_mentions' => (bool)$row['has_unread_thread_mentions'],
 			'has_unread_thread_directs' => (bool)$row['has_unread_thread_directs'],
 			'hidden_pinned_id' => (int)$row['hidden_pinned_id'],
+			'has_scheduled_messages' => (bool)$row['has_scheduled_messages'],
 		]);
 	}
 }

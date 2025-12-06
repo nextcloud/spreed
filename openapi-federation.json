@@ -754,7 +754,8 @@
                     "isImportant",
                     "isSensitive",
                     "lastPinnedId",
-                    "hiddenPinnedId"
+                    "hiddenPinnedId",
+                    "hasScheduledMessages"
                 ],
                 "properties": {
                     "actorId": {
@@ -1057,6 +1058,10 @@
                         "type": "integer",
                         "format": "int64",
                         "description": "Required capability: `pinned-messages`"
+                    },
+                    "hasScheduledMessages": {
+                        "type": "boolean",
+                        "description": "Required capability: `scheduled-messages` (local)"
                     }
                 }
             },
