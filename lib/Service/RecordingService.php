@@ -310,6 +310,10 @@ class RecordingService {
 	}
 
 	public function notifyAboutFailedTranscript(string $owner, string $roomToken, int $recordingFileId, string $aiType): void {
+		if ($aiType === 'transcript') {
+			return;
+		}
+
 		$userFolder = $this->rootFolder->getUserFolder($owner);
 		$recordingNodes = $userFolder->getById($recordingFileId);
 
