@@ -91,12 +91,6 @@ export default {
 		}
 	},
 
-	computed: {
-		lastReadMessageId() {
-			return this.$store.getters.conversation(this.token)?.lastReadMessage
-		},
-	},
-
 	watch: {
 		messages: {
 			deep: true,
@@ -105,10 +99,6 @@ export default {
 				this.messagesGroupedBySystemMessage = this.groupMessages(value)
 				this.updateCollapsedState()
 			},
-		},
-
-		lastReadMessageId() {
-			this.updateCollapsedState()
 		},
 	},
 
@@ -188,11 +178,7 @@ export default {
 
 		updateCollapsedState() {
 			for (const group of this.messagesGroupedBySystemMessage) {
-				const isLastReadInsideGroup = this.lastReadMessageId >= group.id && this.lastReadMessageId < group.lastId
-				if (isLastReadInsideGroup) {
-					// If the last read message is inside the group, we should show the group expanded
-					group.collapsed = false
-				} else if (this.groupIsCollapsed[group.id] !== undefined) {
+				if (this.groupIsCollapsed[group.id] !== undefined) {
 					// If the group was collapsed before, we should keep it collapsed
 					group.collapsed = this.groupIsCollapsed[group.id]
 				} else {
