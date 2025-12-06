@@ -10,6 +10,7 @@ import type {
 } from '../types/index.ts'
 
 import { defineStore } from 'pinia'
+import { SHARED_ITEM } from '../constants.ts'
 import {
 	pinMessage,
 	unpinMessage,
@@ -81,11 +82,12 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 	 *
 	 * @param token conversation token
 	 * @param message message with shared items
+	 * @param type type of shared item (optional)
 	 */
-	function addSharedItemFromMessage(token: string, message: ChatMessage) {
-		const type = getItemTypeFromMessage(message)
-		checkForExistence(token, type)
-		sharedItemsPool[token][type][message.id] = message
+	function addSharedItemFromMessage(token: string, message: ChatMessage, type?: SharedItemType) {
+		const itemType = type ?? getItemTypeFromMessage(message)
+		checkForExistence(token, itemType)
+		sharedItemsPool[token][itemType][message.id] = message
 	}
 
 	/**
@@ -93,14 +95,18 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 	 *
 	 * @param token conversation token
 	 * @param messageId id of message to be deleted
+		 * @param type type of shared item (optional)
 	 */
-	function deleteSharedItemFromMessage(token: string, messageId: number) {
+	function deleteSharedItemFromMessage(token: string, messageId: number, type?: SharedItemType) {
 		if (!sharedItemsPool[token]) {
 			return
 		}
 
-		for (const type of Object.keys(sharedItemsPool[token])) {
-			if (sharedItemsPool[token][type][messageId]) {
+		// If type is not provided, search in all types
+		const typesToDelete = type ? [type] : Object.keys(sharedItemsPool[token])
+
+		for (const type of typesToDelete) {
+			if (sharedItemsPool[token][type]?.[messageId]) {
 				delete sharedItemsPool[token][type][messageId]
 				if (Object.keys(sharedItemsPool[token][type]).length === 0) {
 					delete sharedItemsPool[token][type]
@@ -231,7 +237,7 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 	async function handlePinMessage(token: string, messageId: number, pinUntil?: number) {
 		try {
 			const response = await pinMessage({ token, messageId, pinUntil })
-			addSharedItemsFromMessages(token, 'pinned', [response.data.ocs.data.parent])
+			addSharedItemsFromMessages(token, SHARED_ITEM.TYPES.PINNED, [response.data.ocs.data.parent])
 		} catch (error) {
 			console.error('Error while toggling pin message:', error)
 		}
@@ -239,8 +245,8 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 
 	async function handleUnpinMessage(token: string, messageId: number) {
 		try {
-			const response = await unpinMessage({ token, messageId })
-			deleteSharedItemFromMessage(token, messageId)
+			await unpinMessage({ token, messageId })
+			deleteSharedItemFromMessage(token, messageId, SHARED_ITEM.TYPES.PINNED)
 		} catch (error) {
 			console.error('Error while unpinning message:', error)
 		}
@@ -248,10 +254,10 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 
 	async function fetchPinnedMessages(token: string) {
 		try {
-			const response = await getSharedItems({ token, objectType: 'pinned', limit: 5 })
+			const response = await getSharedItems({ token, objectType: SHARED_ITEM.TYPES.PINNED, limit: 5 })
 			const messages = Object.values(response.data.ocs.data)
 			if (messages.length) {
-				addSharedItemsFromMessages(token, 'pinned', messages)
+				addSharedItemsFromMessages(token, SHARED_ITEM.TYPES.PINNED, messages)
 			}
 		} catch (error) {
 			console.error(error)
