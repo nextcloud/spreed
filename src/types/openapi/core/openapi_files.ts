@@ -346,10 +346,11 @@ export type components = {
             /** Format: int64 */
             lastmod: number;
             mime: string;
-            /** Format: int64 */
             size: number;
             type: string;
             hasPreview: boolean;
+            /** Format: int64 */
+            permissions: number;
         };
         TemplateFileCreator: {
             app: string;
