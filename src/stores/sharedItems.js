@@ -32,9 +32,6 @@ import { getItemTypeFromMessage } from '../utils/getItemTypeFromMessage.ts'
 
 /**
  * Store for shared items shown in RightSidebar
- *
- * @param {string} id store name
- * @param {State} options.state store state structure
  */
 export const useSharedItemsStore = defineStore('sharedItems', {
 	state: () => ({
@@ -47,10 +44,10 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 			if (!state.sharedItemsPool[token]) {
 				Vue.set(state.sharedItemsPool, token, {})
 			}
+		}
 
-			return state.sharedItemsPool[token]
-		},
-	},
+		overviewLoaded[token] = true
+	}
 
 	actions: {
 		checkForExistence(token, type) {
@@ -181,7 +178,12 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 				console.error(error)
 				return { hasMoreItems: false, messages: [] }
 			}
-		},
+			return { hasMoreItems: messages.length >= limit, messages }
+		} catch (error) {
+			console.error(error)
+			return { hasMoreItems: false, messages: [] }
+		}
+	}
 
 		/**
 		 * @param {Token} token conversation token

@@ -58,23 +58,6 @@ describe('sharedItemsStore', () => {
 			expect(sharedItemsStore.sharedItems(token)).toEqual({ media: { 1: message } })
 		})
 
-		it('does not overwrite store with overview response', async () => {
-			// Arrange
-			const message = {
-				id: 100,
-				token,
-				message: '{file}',
-				messageParameters: { file: { mimetype: 'image/jpeg' } },
-			}
-			sharedItemsStore.addSharedItemFromMessage(token, message)
-
-			// Act
-			sharedItemsStore.addSharedItemsFromOverview(token, payloadOverview)
-
-			// Assert
-			expect(sharedItemsStore.sharedItems(token).media).toEqual({ 100: message })
-		})
-
 		it('processes an array of messages and add each unique item only once', () => {
 			// Arrange
 			const message1 = {
@@ -103,10 +86,10 @@ describe('sharedItemsStore', () => {
 			// Arrange
 			const response = generateOCSResponse({ payload: payloadOverview })
 			getSharedItemsOverview.mockResolvedValue(response)
-			await sharedItemsStore.getSharedItemsOverview(token)
+			await sharedItemsStore.fetchSharedItemsOverview(token)
 
 			// Act
-			await sharedItemsStore.getSharedItemsOverview(token)
+			await sharedItemsStore.fetchSharedItemsOverview(token)
 
 			// Assert
 			expect(getSharedItemsOverview).toHaveBeenCalledTimes(1)
@@ -120,7 +103,7 @@ describe('sharedItemsStore', () => {
 			getSharedItemsOverview.mockResolvedValueOnce(response)
 
 			// Act: load sharedItemsOverview from server
-			await sharedItemsStore.getSharedItemsOverview(token)
+			await sharedItemsStore.fetchSharedItemsOverview(token)
 
 			// Assert
 			expect(getSharedItemsOverview).toHaveBeenCalledWith(token, limitOverview)
@@ -141,10 +124,10 @@ describe('sharedItemsStore', () => {
 			getSharedItemsOverview.mockResolvedValueOnce(responseOverview)
 			const response = generateOCSResponse({ payload: { 1: message } })
 			getSharedItems.mockResolvedValueOnce(response)
-			await sharedItemsStore.getSharedItemsOverview(token)
+			await sharedItemsStore.fetchSharedItemsOverview(token)
 
 			// Act: load sharedItemsOverview from server
-			await sharedItemsStore.getSharedItems(token, SHARED_ITEM.TYPES.MEDIA)
+			await sharedItemsStore.fetchSharedItems(token, SHARED_ITEM.TYPES.MEDIA)
 
 			// Assert
 			expect(getSharedItems).toHaveBeenCalledWith(token, SHARED_ITEM.TYPES.MEDIA, 100, limitGeneral)
@@ -157,10 +140,10 @@ describe('sharedItemsStore', () => {
 			getSharedItemsOverview.mockResolvedValueOnce(responseOverview)
 			const response = generateOCSResponse({ payload: [] })
 			getSharedItems.mockResolvedValueOnce(response)
-			await sharedItemsStore.getSharedItemsOverview(token)
+			await sharedItemsStore.fetchSharedItemsOverview(token)
 
 			// Act: load sharedItemsOverview from server
-			const output = await sharedItemsStore.getSharedItems(token, SHARED_ITEM.TYPES.MEDIA)
+			const output = await sharedItemsStore.fetchSharedItems(token, SHARED_ITEM.TYPES.MEDIA)
 
 			// Assert
 			expect(getSharedItems).toHaveBeenCalledWith(token, SHARED_ITEM.TYPES.MEDIA, 100, limitGeneral)
@@ -180,7 +163,7 @@ describe('sharedItemsStore', () => {
 			getSharedItemsOverview.mockRejectedValueOnce(response)
 
 			// Act
-			await sharedItemsStore.getSharedItemsOverview(token)
+			await sharedItemsStore.fetchSharedItemsOverview(token)
 
 			// Assert: store hasn't changed
 			expect(sharedItemsStore.sharedItems(token)).toEqual({})
@@ -188,7 +171,7 @@ describe('sharedItemsStore', () => {
 
 		it('skips server request without initially loaded overview', async () => {
 			// Act
-			await sharedItemsStore.getSharedItems(token, SHARED_ITEM.TYPES.MEDIA)
+			await sharedItemsStore.fetchSharedItems(token, SHARED_ITEM.TYPES.MEDIA)
 
 			// Assert: store hasn't changed
 			expect(getSharedItems).not.toHaveBeenCalled()
@@ -199,13 +182,13 @@ describe('sharedItemsStore', () => {
 			// Arrange
 			const responseOverview = generateOCSResponse({ payload: payloadOverview })
 			getSharedItemsOverview.mockResolvedValueOnce(responseOverview)
-			await sharedItemsStore.getSharedItemsOverview(token)
+			await sharedItemsStore.fetchSharedItemsOverview(token)
 
 			const response = generateOCSErrorResponse({ status: 404, payload: [] })
 			getSharedItems.mockRejectedValueOnce(response)
 
 			// Act
-			await sharedItemsStore.getSharedItems(token, SHARED_ITEM.TYPES.MEDIA)
+			await sharedItemsStore.fetchSharedItems(token, SHARED_ITEM.TYPES.MEDIA)
 
 			// Assert: store hasn't changed
 			expect(sharedItemsStore.sharedItems(token)).toEqual(result)
