@@ -1011,7 +1011,7 @@ OC.L10N.register(
     "Unknown error occurred" : "Unbekannter Fehler aufgetreten",
     "Sending no invitations" : "Keine Einladungen versenden",
     "{participant0} will receive an invitation" : "{participant0} erhält eine Einladung",
-    "{participant0} and {participant1} will receive invitations" : "{participant0}und {participant1} erhalten Einladungen",
+    "{participant0} and {participant1} will receive invitations" : "{participant0} und {participant1} erhalten Einladungen",
     "_{participant0}, {participant1} and %n other will receive invitations_::_{participant0}, {participant1} and %n others will receive invitations_" : ["{participant0}, {participant1} und %n weiterer erhalten Einladungen","{participant0}, {participant1} und %n andere erhalten Einladungen"],
     "Invite {user}" : "{user} einladen ",
     "Invite all users and emails in this conversation" : "Alle Benutzer und E-Mail-Adressen zu dieser Unterhaltung einladen",
