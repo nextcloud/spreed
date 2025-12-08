@@ -120,6 +120,13 @@
 				class="icon-loading-small message-status"
 				:aria-label="loadingIconTitle" />
 			<div
+				v-else-if="isMessagePinned"
+				class="message-status"
+				:title="t('spreed', 'Pinned')"
+				:aria-label="t('spreed', 'Pinned')">
+				<IconPin :size="iconMessageDeliverySize" />
+			</div>
+			<div
 				v-else-if="readInfo?.showCommonReadIcon"
 				:title="readInfo.commonReadIconTitle"
 				class="message-status"
@@ -175,6 +182,7 @@ import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
+import IconPin from 'vue-material-design-icons/PinOutline.vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import MessageQuote from '../../../../MessageQuote.vue'
@@ -219,6 +227,7 @@ export default {
 		IconCheckAll,
 		IconForumOutline,
 		IconPencilOutline,
+		IconPin,
 		IconReload,
 	},
 
@@ -453,6 +462,10 @@ export default {
 				&& this.message.lastEditActorId !== this.message.actorId
 				&& this.message.lastEditActorDisplayName !== this.message.actorDisplayName
 				&& this.message.lastEditActorType !== this.message.actorType
+		},
+
+		isMessagePinned() {
+			return !!this.message.metaData?.pinnedAt
 		},
 	},
 
