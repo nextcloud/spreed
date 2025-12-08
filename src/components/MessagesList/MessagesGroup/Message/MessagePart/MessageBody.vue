@@ -89,6 +89,9 @@
 					disable-menu
 					disable-tooltip />
 			</span>
+			<span v-if="isMessagePinned" class="icon-pin-wrapper">
+				<IconPin :size="14" />
+			</span>
 			<span class="date" :class="{ 'date--hidden': hideDate }" :title="messageDate">{{ messageTime }}</span>
 
 			<!-- Message delivery status indicators -->
@@ -175,6 +178,7 @@ import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
+import IconPin from 'vue-material-design-icons/PinOutline.vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import MessageQuote from '../../../../MessageQuote.vue'
@@ -190,6 +194,7 @@ import { EventBus } from '../../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
+import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
 import { formatDateTime } from '../../../../../utils/formattedTime.ts'
 import { parseMentions, parseSpecialSymbols } from '../../../../../utils/textParse.ts'
 
@@ -219,6 +224,7 @@ export default {
 		IconCheckAll,
 		IconForumOutline,
 		IconPencilOutline,
+		IconPin,
 		IconReload,
 	},
 
@@ -279,6 +285,7 @@ export default {
 			isSidebar,
 			actorStore: useActorStore(),
 			isSplitViewEnabled,
+			sharedItemsStore: useSharedItemsStore(),
 		}
 	},
 
@@ -453,6 +460,10 @@ export default {
 				&& this.message.lastEditActorId !== this.message.actorId
 				&& this.message.lastEditActorDisplayName !== this.message.actorDisplayName
 				&& this.message.lastEditActorType !== this.message.actorType
+		},
+
+		isMessagePinned() {
+			return !!this.message.metaData?.pinnedAt
 		},
 	},
 
@@ -792,6 +803,11 @@ export default {
 
 .call-button {
 	margin: 0 auto;
+}
+
+.icon-pin-wrapper {
+	height: 1lh;
+	align-content: center;
 }
 
 // Always render code blocks LTR
