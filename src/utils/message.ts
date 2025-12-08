@@ -5,7 +5,7 @@
 
 import type { ChatMessage } from '../types/index.ts'
 
-import { MESSAGE } from '../constants.ts'
+import { ATTENDEE, MESSAGE } from '../constants.ts'
 
 /**
  * Returns whether the given system message should be hidden in the UI
@@ -14,6 +14,14 @@ import { MESSAGE } from '../constants.ts'
  * @return whether the message is hidden in the UI
  */
 export function isHiddenSystemMessage(message: ChatMessage): boolean {
+	// System message for auto unpin
+	if (message.systemMessage === MESSAGE.SYSTEM_TYPE.MESSAGE_UNPINNED
+		&& message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
+		&& message.actorId === 'system'
+	) {
+		return true
+	}
+
 	return [
 		MESSAGE.SYSTEM_TYPE.REACTION,
 		MESSAGE.SYSTEM_TYPE.REACTION_DELETED,

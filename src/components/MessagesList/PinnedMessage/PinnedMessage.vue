@@ -33,12 +33,30 @@ const richSubline = computed(() => {
 		pinnedMessage.value.messageParameters,
 	)
 })
-const pinnedMessage = computed(() => {
+
+// Array of all pinned messages
+const pinnedMessages = computed(() => {
 	if (!sharedItemsStore.sharedItems(token.value).pinned) {
+		return []
+	}
+	return Object.values(sharedItemsStore.sharedItems(token.value).pinned) || []
+})
+
+// The pinned message to be displayed (the latest one that is not hidden)
+const pinnedMessage = computed(() => {
+	if (!pinnedMessages.value.length) {
 		return null
 	}
-	return Object.values(sharedItemsStore.sharedItems(token.value).pinned).find((item) => +item.id === conversation.value.lastPinnedId)
+	const item = pinnedMessages.value.find((item) => +item.id === conversation.value.lastPinnedId)
+
+	if (!item) {
+		// Id not found (e.g: deleted, expired), return most recent pinned message
+		const fallbackId = sharedItemsStore.findMostRecentPinnedMessageId(token.value)
+		return pinnedMessages.value.find((item) => +item.id === fallbackId)
+	}
+	return item.id !== conversation.value.hiddenPinnedId ? item : null
 })
+
 const isModerator = computed(() => store.getters.isModerator)
 const isInThread = computed(() => pinnedMessage.value?.isThread && pinnedMessage.value.threadId !== pinnedMessage.value.id)
 const to = computed(() => ({
@@ -49,7 +67,7 @@ const to = computed(() => ({
 }))
 
 /**
- *
+ * Handle click on pinned message
  */
 function handlePinClick() {
 	if (pinnedMessage.value?.id && route.hash === '#message_' + pinnedMessage.value.id) {
@@ -57,8 +75,18 @@ function handlePinClick() {
 		EventBus.emit('focus-message', { messageId: pinnedMessage.value.id })
 	}
 }
+
+/**
+ * Handle hiding the pinned message
+ */
+function handleHidePinnedMessage() {
+	sharedItemsStore.handleHidePinnedMessage(token.value, pinnedMessage.value!.id)
+}
+
 onMounted(() => {
 	if (!sharedItemsStore.sharedItems(token.value).pinned) {
+		// This is only needed on reload for each conversation
+		// Afterwards, pinned messages are added/removed via system messages
 		sharedItemsStore.fetchPinnedMessages(token.value)
 	}
 })
