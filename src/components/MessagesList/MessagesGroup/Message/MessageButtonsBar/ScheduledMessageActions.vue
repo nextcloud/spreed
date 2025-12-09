@@ -21,6 +21,7 @@ import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconSendVariantClockOutline from 'vue-material-design-icons/SendVariantClockOutline.vue'
+import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { convertToUnix, formatDateTime } from '../../../../../utils/formattedTime.ts'
 import { getCustomDateOptions } from '../../../../../utils/getCustomDateOptions.ts'
@@ -64,6 +65,13 @@ async function handleReschedule(timestamp: number) {
 		sendAt: convertToUnix(timestamp),
 	})
 	EventBus.emit('focus-message', { messageId: props.message.id })
+}
+
+/**
+ * Delete the scheduled message
+ */
+async function handleDelete() {
+	await chatExtrasStore.deleteScheduledMessage(props.message.token, props.message.id)
 }
 
 /**
@@ -130,6 +138,15 @@ function onMenuClose() {
 						<IconPencilOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Edit') }}
+				</NcActionButton>
+				<NcActionButton
+					key="delete-message"
+					close-after-click
+					@click.stop="handleDelete">
+					<template #icon>
+						<IconTrashCanOutline :size="20" />
+					</template>
+					{{ t('spreed', 'Delete') }}
 				</NcActionButton>
 			</template>
 
