@@ -51,6 +51,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static array $titleToThreadId;
 	/** @var array<int, string> */
 	protected static array $messageIdToText;
+	/** @var array<int, int> */
+	protected static array $messageIdToTimestamp;
 	/** @var array<int, string> */
 	protected static array $threadIdToTitle;
 	/** @var array<string, int> */
@@ -520,8 +522,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (!empty($expectedRoom['lobbyTimer'])) {
 					$data['lobbyTimer'] = (int)$room['lobbyTimer'];
 				}
-				if (!empty($expectedRoom['hasScheduledMessages'])) {
-					$data['hasScheduledMessages'] = $room['hasScheduledMessages'] ? 'true' : 'false';
+				if (isset($expectedRoom['hasScheduledMessages'])) {
+					$data['hasScheduledMessages'] = $room['hasScheduledMessages'];
 				}
 				if (isset($expectedRoom['hiddenPinnedId'])) {
 					if ($room['hiddenPinnedId'] === 0) {
@@ -1943,15 +1945,29 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertEquals(implode("\n", $expected) . "\n", $this->response->getBody()->getContents());
 	}
 
-	#[When('/^user "([^"]*)" schedules a message to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	#[Then('/^user "([^"]*)" schedules a message to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSchedulesMessageToRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$row = $formData->getRowsHash();
-		$row['sendAt'] = (int)$row['sendAt'];
+		if ($row['sendAt'] === '{PAST}') {
+			$time = new DateTime('-5 minutes');
+		} elseif ($row['sendAt'] === '{FUTURE}') {
+			$time = new DateTime('+2 days');
+		} else {
+			$time = new DateTime('+2 seconds');
+		}
+		$row['sendAt'] = $time->getTimestamp();
 		if (isset($row['replyTo'])) {
 			$row['replyTo'] = self::$textToMessageId[$row['replyTo']];
 		}
 		if (isset($row['threadId']) && $row['threadId'] !== '0' && $row['threadId'] !== '-1') {
 			$row['threadId'] = self::$titleToThreadId[$row['threadId']];
+		}
+
+		if (str_contains($row['message'], '@"TEAM_ID(')) {
+			$result = preg_match('/TEAM_ID\(([^)]+)\)/', $row['message'], $matches);
+			if ($result) {
+				$row['message'] = str_replace($matches[0], 'team/' . self::getTeamIdForLabel($this->currentServer, $matches[1]), $row['message']);
+			}
 		}
 
 		$this->setCurrentUser($user);
@@ -1960,7 +1976,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/schedule',
 			$row
 		);
-
 		$this->assertStatusCode($this->response, $statusCode);
 		sleep(1); // make sure Postgres manages the order of the messages
 
@@ -1968,6 +1983,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if (isset($response['id'])) {
 			self::$textToMessageId[$row['message']] = $response['id'];
 			self::$messageIdToText[$response['id']] = $row['message'];
+			self::$messageIdToTimestamp[$response['id']] = $time->getTimestamp();
 		}
 	}
 
@@ -1975,7 +1991,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userUpdatesScheduledMessageInRoom(string $user, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$row = $formData->getRowsHash();
 		$id = self::$textToMessageId[$message];
-		$row['sendAt'] = (int)$row['sendAt'];
+		$time = new DateTime('+2 seconds');
+		$row['sendAt'] = $time->getTimestamp();
 
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -1993,8 +2010,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$response = $this->getDataFromResponse($this->response);
 		self::$textToMessageId[$row['message']] = $response['id'];
 		self::$messageIdToText[$response['id']] = $row['message'];
+		self::$messageIdToTimestamp[$response['id']] = $time->getTimestamp();
 		Assert::assertEquals($row['message'], $response['message']);
-		Assert::assertEquals($row['sendAt'], $response['sendAt']);
 	}
 
 	#[When('/^user "([^"]*)" deletes scheduled message "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
@@ -2016,6 +2033,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/schedule',
 		);
 		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($this->response->getStatusCode() === 404) {
+			return;
+		}
 
 		$expected = $formData?->getColumnsHash();
 		$data = $this->getDataFromResponse($this->response);
@@ -2040,8 +2061,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$expected = $formData->getColumnsHash();
 		foreach ($expected as &$row) {
+			if (str_contains($row['message'], '@"TEAM_ID(')) {
+				$result = preg_match('/TEAM_ID\(([^)]+)\)/', $row['message'], $matches);
+				if ($result) {
+					$row['message'] = str_replace($matches[0], 'team/' . self::getTeamIdForLabel($this->currentServer, $matches[1]), $row['message']);
+				}
+			}
+
 			$row['id'] = self::$textToMessageId[$row['message']];
-			$row['sendAt'] = (int)$row['sendAt'];
+			if ($row['sendAt'] !== '0') {
+				$row['sendAt'] = self::$messageIdToTimestamp[$row['id']];
+			}
 			$row['silent'] = $row['silent'] === 'true';
 			if ($row['threadId'] === '-1') {
 				$row['threadId'] = -1;
@@ -2852,6 +2882,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$result = preg_match('/POLL_ID\(([^)]+)\)/', $expected[$i]['messageParameters'], $matches);
 			if ($result) {
 				$expected[$i]['messageParameters'] = str_replace($matches[0], '"' . self::$questionToPollId[$matches[1]] . '"', $expected[$i]['messageParameters']);
+			}
+			$result = preg_match('/TEAM_ID\(([^)]+)\)/', $expected[$i]['messageParameters'], $matches);
+			if ($result) {
+				$expected[$i]['messageParameters'] = str_replace($matches[0], self::getTeamIdForLabel($this->currentServer, $matches[1]), $expected[$i]['messageParameters']);
 			}
 			if (isset($messages[$i]['messageParameters']['object']['icon-url'])) {
 				$result = preg_match('/"\{VALIDATE_ICON_URL_PATTERN\}"/', $expected[$i]['messageParameters'], $matches);

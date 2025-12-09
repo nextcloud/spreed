@@ -2464,8 +2464,11 @@ export type components = {
              * @description Required capability: `pinned-messages`
              */
             hiddenPinnedId: number;
-            /** @description Required capability: `scheduled-messages` (local) */
-            hasScheduledMessages: boolean;
+            /**
+             * Format: int64
+             * @description Required capability: `scheduled-messages` (local)
+             */
+            hasScheduledMessages: number;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
         RoomWithInvalidInvitations: components["schemas"]["Room"] & {
@@ -4962,7 +4965,7 @@ export interface operations {
                 apiVersion: "v1";
                 token: string;
                 /** @description The scheduled message id */
-                messageId: number;
+                messageId: string;
             };
             cookie?: never;
         };
@@ -5081,8 +5084,8 @@ export interface operations {
             path: {
                 apiVersion: "v1";
                 token: string;
-                /** @description The scheduled message ud */
-                messageId: number;
+                /** @description The scheduled message id */
+                messageId: string;
             };
             cookie?: never;
         };

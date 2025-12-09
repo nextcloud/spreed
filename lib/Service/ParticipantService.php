@@ -2382,7 +2382,7 @@ class ParticipantService {
 		return $participant;
 	}
 
-	public function setHasScheduledMessages(Participant $participant, bool $hasScheduledMessages): void {
+	public function setHasScheduledMessages(Participant $participant, int $hasScheduledMessages): void {
 		$attendee = $participant->getAttendee();
 		$attendee->setHasScheduledMessages($hasScheduledMessages);
 		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());

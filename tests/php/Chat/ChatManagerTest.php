@@ -443,7 +443,7 @@ class ChatManagerTest extends TestCase {
 			'has_unread_thread_mentions' => false,
 			'has_unread_thread_directs' => false,
 			'hidden_pinned_id' => 0,
-			'has_scheduled_messages' => false,
+			'has_scheduled_messages' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
@@ -513,7 +513,7 @@ class ChatManagerTest extends TestCase {
 			'has_unread_thread_mentions' => false,
 			'has_unread_thread_directs' => false,
 			'hidden_pinned_id' => 0,
-			'has_scheduled_messages' => false,
+			'has_scheduled_messages' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
@@ -605,7 +605,7 @@ class ChatManagerTest extends TestCase {
 			'has_unread_thread_mentions' => false,
 			'has_unread_thread_directs' => false,
 			'hidden_pinned_id' => 0,
-			'has_scheduled_messages' => false,
+			'has_scheduled_messages' => 0,
 		]);
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())

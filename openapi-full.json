@@ -1884,7 +1884,8 @@
                         "description": "Required capability: `pinned-messages`"
                     },
                     "hasScheduledMessages": {
-                        "type": "boolean",
+                        "type": "integer",
+                        "format": "int64",
                         "description": "Required capability: `scheduled-messages` (local)"
                     }
                 }
@@ -8208,8 +8209,8 @@
                         "description": "The scheduled message id",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "format": "int64"
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
                         }
                     },
                     {
@@ -8450,11 +8451,11 @@
                     {
                         "name": "messageId",
                         "in": "path",
-                        "description": "The scheduled message ud",
+                        "description": "The scheduled message id",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "format": "int64"
+                            "type": "string",
+                            "pattern": "^[0-9]+$"
                         }
                     },
                     {

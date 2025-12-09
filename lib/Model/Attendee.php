@@ -72,8 +72,8 @@ use OCP\DB\Types;
  * @method bool getHasUnreadThreadDirects()
  * @method void setHiddenPinnedId(int $hiddenPinnedId)
  * @method int getHiddenPinnedId()
- * @method void setHasScheduledMessages(bool $scheduledMessages)
- * @method bool getHasScheduledMessages()
+ * @method void setHasScheduledMessages(int $scheduledMessages)
+ * @method int getHasScheduledMessages()
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';
@@ -147,7 +147,7 @@ class Attendee extends Entity {
 	protected bool $hasUnreadThreadMentions = false;
 	protected bool $hasUnreadThreadDirects = false;
 	protected int $hiddenPinnedId = 0;
-	protected bool $hasScheduledMessages = false;
+	protected int $hasScheduledMessages = 0;
 
 	public function __construct() {
 		$this->addType('roomId', Types::BIGINT);
@@ -180,7 +180,7 @@ class Attendee extends Entity {
 		$this->addType('hasUnreadThreadMentions', Types::BOOLEAN);
 		$this->addType('hasUnreadThreadDirects', Types::BOOLEAN);
 		$this->addType('hiddenPinnedId', Types::BIGINT);
-		$this->addType('hasScheduledMessages', Types::BOOLEAN);
+		$this->addType('hasScheduledMessages', Types::INTEGER);
 
 	}
 
