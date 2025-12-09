@@ -52,10 +52,13 @@
 				overlay: isSplitViewEnabled && !isShortSimpleMessage && isReactionsMenuOpen && !(isSmallMobile || isSidebar),
 			}">
 			<template v-if="showMessageButtonsBar">
-				<div
+				<ScheduledMessageActions
 					v-if="showScheduledMessages"
+					v-model:is-action-menu-open="isActionMenuOpen"
+					:message="message"
 					class="message-buttons-bar"
-					:class="{ outlined: buttonsBarOutlined }" />
+					:class="{ outlined: buttonsBarOutlined }"
+					@edit="handleEdit" />
 				<MessageButtonsBar
 					v-else
 					v-model:is-action-menu-open="isActionMenuOpen"
@@ -106,6 +109,7 @@ import IconPin from 'vue-material-design-icons/PinOutline.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
 import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
+import ScheduledMessageActions from './MessageButtonsBar/ScheduledMessageActions.vue'
 import ContactCard from './MessagePart/ContactCard.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
@@ -132,6 +136,7 @@ export default {
 		MessageForwarder,
 		MessageTranslateDialog,
 		ReactionsWrapper,
+		ScheduledMessageActions,
 		IconPin,
 	},
 

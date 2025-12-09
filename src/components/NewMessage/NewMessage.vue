@@ -91,7 +91,7 @@
 						size="small"
 						:aria-label="t('spreed', 'Cancel')"
 						:title="t('spreed', 'Cancel')"
-						@click="scheduleMessageTime = null">
+						@click="handleAbortEdit">
 						<template #icon>
 							<IconClose :size="16" />
 						</template>
@@ -520,7 +520,18 @@ export default {
 		},
 
 		disabledEdit() {
-			return this.disabled || this.text === this.messageToEdit.message || this.text === ''
+			if (this.disabled || this.text === '') {
+				return true
+			}
+
+			if (!this.showScheduledMessages) {
+				return this.text === this.messageToEdit.message
+			}
+
+			return this.text === this.messageToEdit.message
+				&& this.scheduleMessageTime === this.messageToEdit.timestamp * 1_000
+				&& this.silentChat === this.messageToEdit.silent
+				&& (!this.threadCreating || this.threadTitle === this.messageToEdit.threadTitle)
 		},
 
 		placeholderText() {
@@ -552,7 +563,12 @@ export default {
 
 		messageToEdit() {
 			const messageToEditId = this.chatExtrasStore.getMessageIdToEdit(this.token)
-			return messageToEditId && this.$store.getters.message(this.token, messageToEditId)
+			if (!messageToEditId) {
+				return undefined
+			}
+			return (this.showScheduledMessages)
+				? this.chatExtrasStore.getScheduledMessage(this.token, messageToEditId)
+				: this.$store.getters.message(this.token, messageToEditId)
 		},
 
 		canShareFiles() {
@@ -606,7 +622,7 @@ export default {
 		},
 
 		showSendActions() {
-			return !this.broadcast && !this.isRecordingAudio && !this.messageToEdit
+			return !this.broadcast && !this.isRecordingAudio && (!this.messageToEdit || this.showScheduledMessages)
 		},
 
 		showAttachmentsMenu() {
@@ -733,7 +749,17 @@ export default {
 		messageToEdit(newValue) {
 			if (newValue) {
 				this.text = this.chatExtrasStore.getChatEditInput(this.token)
-				this.chatExtrasStore.removeThreadTitle(this.token)
+
+				// Clear thread title when editing a message (unless it's a scheduled thread)
+				if (newValue.threadId !== -1) {
+					this.chatExtrasStore.removeThreadTitle(this.token)
+				}
+
+				if (this.showScheduledMessages) {
+					this.chatExtrasStore.setScheduleMessageTime(newValue.timestamp * 1_000)
+					this.silentChat = newValue.silent
+				}
+
 				if (this.parentMessage) {
 					this.chatExtrasStore.removeParentIdToReply(this.token)
 				}
@@ -745,6 +771,10 @@ export default {
 				// set cursor at the end
 				selectRange(getRangeAtEnd(this.getContenteditable()), this.getContenteditable())
 			})
+		},
+
+		showScheduledMessages() {
+			this.handleAbortEdit()
 		},
 
 		parentMessage(newValue) {
@@ -1014,13 +1044,25 @@ export default {
 
 		async handleEdit() {
 			try {
-				await this.$store.dispatch('editMessage', {
-					token: this.token,
-					messageId: this.messageToEdit.id,
-					updatedMessage: parseSpecialSymbols(this.text.trim()),
-				})
+				if (this.showScheduledMessages) {
+					await this.chatExtrasStore.editScheduledMessage(this.token, this.messageToEdit.id, {
+						message: parseSpecialSymbols(this.text.trim()),
+						sendAt: convertToUnix(this.scheduleMessageTime),
+						silent: this.silentChat,
+						threadTitle: this.threadTitle,
+					})
+				} else {
+					await this.$store.dispatch('editMessage', {
+						token: this.token,
+						messageId: this.messageToEdit.id,
+						updatedMessage: parseSpecialSymbols(this.text.trim()),
+					})
+				}
+				EventBus.emit('focus-message', { messageId: this.messageToEdit.id })
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+				this.chatExtrasStore.removeThreadTitle(this.token)
 				this.chatExtrasStore.setScheduleMessageTime(null)
+				this.silentChat = false
 				this.resetTypingIndicator()
 				// refocus input as the user might want to type further
 				this.focusInput()
@@ -1063,6 +1105,7 @@ export default {
 				})
 			} else {
 				this.chatExtrasStore.removeThreadTitle(this.token)
+				this.chatExtrasStore.removeMessageIdToEdit(this.token)
 				this.chatExtrasStore.setScheduleMessageTime(null)
 			}
 		},
@@ -1257,7 +1300,9 @@ export default {
 
 		handleAbortEdit() {
 			this.chatExtrasStore.removeMessageIdToEdit(this.token)
+			this.chatExtrasStore.removeThreadTitle(this.token)
 			this.chatExtrasStore.setScheduleMessageTime(null)
+			this.silentChat = false
 		},
 
 		toggleSilentChat() {
