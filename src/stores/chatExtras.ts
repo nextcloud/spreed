@@ -38,6 +38,13 @@ import {
 import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
 import { useActorStore } from './actor.ts'
 
+type InitiateEditingMessagePayload = {
+	token: string
+	id: number | string
+	message: string
+	messageParameters: ChatMessage['messageParameters']
+}
+
 const FOLLOWED_THREADS_FETCH_LIMIT = 100
 const pendingFetchSingleThreadRequests = new Set<number>()
 
@@ -52,7 +59,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	const threadTitle = ref<Record<string, string>>({})
 	const parentToReply = ref<Record<string, number>>({})
 	const chatInput = ref<Record<string, string>>({})
-	const messageIdToEdit = ref<Record<string, number>>({})
+	const messageIdToEdit = ref<Record<string, number | string>>({})
 	const chatEditInput = ref<Record<string, string>>({})
 	const tasksCount = ref(0)
 	const tasksDoneCount = ref(0)
@@ -132,7 +139,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	 *
 	 * @param token - conversation token
 	 */
-	function getMessageIdToEdit(token: string) {
+	function getMessageIdToEdit(token: string): number | string | undefined {
 		return messageIdToEdit.value[token]
 	}
 
@@ -519,7 +526,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	 * @param token - conversation token
 	 * @param id The id of message
 	 */
-	function setMessageIdToEdit(token: string, id: number) {
+	function setMessageIdToEdit(token: string, id: number | string) {
 		messageIdToEdit.value[token] = id
 	}
 
@@ -552,7 +559,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	 * @param payload.message - message text
 	 * @param payload.messageParameters - message parameters
 	 */
-	function initiateEditingMessage({ token, id, message, messageParameters }: { token: string, id: number, message: string, messageParameters: ChatMessage['messageParameters'] }) {
+	function initiateEditingMessage({ token, id, message, messageParameters }: InitiateEditingMessagePayload) {
 		setMessageIdToEdit(token, id)
 		const isFileShareOnly = Object.keys(messageParameters ?? {}).some((key) => key.startsWith('file'))
 			&& message === '{file}'
@@ -564,6 +571,9 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 				text: message,
 				parameters: messageParameters,
 			})
+		}
+		if (scheduledMessages.value[token]?.[id] && scheduledMessages.value[token][id].threadId === -1) {
+			setThreadTitle(token, scheduledMessages.value[token][id].threadTitle!)
 		}
 		EventBus.emit('editing-message')
 		EventBus.emit('focus-chat-input')

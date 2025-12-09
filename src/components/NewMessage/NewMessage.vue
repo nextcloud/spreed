@@ -557,7 +557,12 @@ export default {
 
 		messageToEdit() {
 			const messageToEditId = this.chatExtrasStore.getMessageIdToEdit(this.token)
-			return messageToEditId && this.$store.getters.message(this.token, messageToEditId)
+			if (!messageToEditId) {
+				return undefined
+			}
+			return (this.showScheduledMessages)
+				? this.chatExtrasStore.getScheduledMessage(this.token, messageToEditId)
+				: this.$store.getters.message(this.token, messageToEditId)
 		},
 
 		canShareFiles() {
@@ -727,7 +732,12 @@ export default {
 		messageToEdit(newValue) {
 			if (newValue) {
 				this.text = this.chatExtrasStore.getChatEditInput(this.token)
-				this.chatExtrasStore.removeThreadTitle(this.token)
+
+				// Clear thread title when editing a message (unless it's a scheduled thread)
+				if (newValue.threadId !== -1) {
+					this.chatExtrasStore.removeThreadTitle(this.token)
+				}
+
 				if (this.parentMessage) {
 					this.chatExtrasStore.removeParentIdToReply(this.token)
 				}
@@ -998,12 +1008,21 @@ export default {
 
 		async handleEdit() {
 			try {
-				await this.$store.dispatch('editMessage', {
-					token: this.token,
-					messageId: this.messageToEdit.id,
-					updatedMessage: parseSpecialSymbols(this.text.trim()),
-				})
+				if (this.showScheduledMessages) {
+					await this.chatExtrasStore.editScheduledMessage(this.token, this.messageToEdit.id, {
+						message: parseSpecialSymbols(this.text.trim()),
+						sendAt: this.messageToEdit.timestamp,
+						threadTitle: this.threadTitle,
+					})
+				} else {
+					await this.$store.dispatch('editMessage', {
+						token: this.token,
+						messageId: this.messageToEdit.id,
+						updatedMessage: parseSpecialSymbols(this.text.trim()),
+					})
+				}
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+				this.chatExtrasStore.removeThreadTitle(this.token)
 				this.resetTypingIndicator()
 				// refocus input as the user might want to type further
 				this.focusInput()

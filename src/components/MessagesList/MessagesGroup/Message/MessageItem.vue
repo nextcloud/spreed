@@ -50,9 +50,12 @@
 				'bottom-side': isSplitViewEnabled && !isShortSimpleMessage && (isSmallMobile || isSidebar),
 				overlay: isSplitViewEnabled && !isShortSimpleMessage && isReactionsMenuOpen && !(isSmallMobile || isSidebar),
 			}">
-			<div
+			<ScheduledMessageActions
 				v-if="isScheduledMessage && showMessageButtonsBar"
-				class="message-buttons-bar" />
+				v-model:is-action-menu-open="isActionMenuOpen"
+				:message="message"
+				class="message-buttons-bar"
+				@edit="handleEdit" />
 			<MessageButtonsBar
 				v-else-if="showMessageButtonsBar"
 				v-model:is-action-menu-open="isActionMenuOpen"
@@ -94,6 +97,7 @@ import { inject } from 'vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
 import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
+import ScheduledMessageActions from './MessageButtonsBar/ScheduledMessageActions.vue'
 import ContactCard from './MessagePart/ContactCard.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
@@ -120,6 +124,7 @@ export default {
 		MessageForwarder,
 		MessageTranslateDialog,
 		ReactionsWrapper,
+		ScheduledMessageActions,
 	},
 
 	props: {
@@ -358,6 +363,7 @@ export default {
 				id: this.message.id,
 				message: this.message.message,
 				messageParameters: this.message.messageParameters,
+				isScheduledMessage: this.isScheduledMessage,
 			})
 		},
 
