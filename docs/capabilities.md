@@ -202,3 +202,4 @@
 * `pinned-messages` - Whether messages can be pinned
 * `federated-shared-items` - Whether shared items endpoints can be called in a federated conversation
 * `config => chat => style` (local) - User selected chat style (split or unified for now)
+* `scheduled-messages` (local) - Whether a user can schedule messages

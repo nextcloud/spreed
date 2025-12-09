@@ -2381,4 +2381,11 @@ class ParticipantService {
 		$this->cacheParticipant($room, $participant);
 		return $participant;
 	}
+
+	public function setHasScheduledMessages(Participant $participant, bool $hasScheduledMessages): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setHasScheduledMessages($hasScheduledMessages);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
 }
