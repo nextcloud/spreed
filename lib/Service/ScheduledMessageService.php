@@ -72,12 +72,12 @@ class ScheduledMessageService {
 		return $scheduledMessage;
 	}
 
-	public function deleteMessage(Room $chat, int $id, Participant $participant): int {
+	public function deleteMessage(Room $chat, int $id, string $actorType, string $actorId): int {
 		return $this->scheduledMessageMapper->deleteById(
 			$chat,
 			$id,
-			$participant->getAttendee()->getActorType(),
-			$participant->getAttendee()->getActorId()
+			$actorType,
+			$actorId,
 		);
 	}
 
@@ -196,5 +196,9 @@ class ScheduledMessageService {
 			$participant->getAttendee()->getActorType(),
 			$participant->getAttendee()->getActorId(),
 		);
+	}
+
+	public function getDue(\DateTime $getDateTime): array {
+		return $this->scheduledMessageMapper->getMessagesDue($getDateTime);
 	}
 }
