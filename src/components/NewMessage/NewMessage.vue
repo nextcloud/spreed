@@ -79,6 +79,25 @@
 						:can-cancel="!!parentMessage"
 						:edit-message="!!messageToEdit" />
 				</div>
+
+				<!-- scheduling message hint -->
+				<NcNoteCard
+					v-if="scheduleMessageTime"
+					class="new-message-form__scheduled-hint"
+					type="info">
+					<p>{{ scheduleMessageHint }}</p>
+					<NcButton
+						variant="tertiary"
+						size="small"
+						:aria-label="t('spreed', 'Cancel')"
+						:title="t('spreed', 'Cancel')"
+						@click="scheduleMessageTime = null">
+						<template #icon>
+							<IconClose :size="16" />
+						</template>
+					</NcButton>
+				</NcNoteCard>
+
 				<!-- mention editing hint -->
 				<NcNoteCard
 					v-if="showMentionEditHint"
@@ -122,20 +141,81 @@
 			<NcActions
 				v-if="showSilentToggle"
 				force-menu
-				:primary="silentChat">
+				:primary="silentChat"
+				@close="submenu = null">
 				<template #icon>
 					<IconBellOffOutline v-if="silentChat" :size="20" />
 				</template>
-				<NcActionButton
-					close-after-click
-					:model-value="silentChat"
-					:description="silentSendInfo"
-					@click="toggleSilentChat">
-					{{ silentSendLabel }}
-					<template #icon>
-						<IconBellOffOutline :size="20" />
-					</template>
-				</NcActionButton>
+				<template v-if="submenu === null">
+					<NcActionButton
+						v-if="supportScheduleMessages"
+						key="action-schedule"
+						is-menu
+						@click.stop="submenu = 'schedule'">
+						<template #icon>
+							<IconClockOutline :size="20" />
+						</template>
+						{{ t('spreed', 'Send later') }}
+					</NcActionButton>
+
+					<NcActionButton
+						key="silent-send"
+						close-after-click
+						:model-value="silentChat"
+						:description="silentSendInfo"
+						@click="toggleSilentChat">
+						{{ silentSendLabel }}
+						<template #icon>
+							<IconBellOffOutline :size="20" />
+						</template>
+					</NcActionButton>
+				</template>
+
+				<template v-else-if="submenu === 'schedule'">
+					<NcActionButton
+						key="action-back"
+						:aria-label="t('spreed', 'Back')"
+						@click.stop="submenu = null">
+						<template #icon>
+							<IconArrowLeft class="bidirectional-icon" />
+						</template>
+						{{ t('spreed', 'Back') }}
+					</NcActionButton>
+
+					<NcActionSeparator />
+
+					<NcActionButton
+						v-for="option in getCustomDateOptions()"
+						:key="option.key"
+						:aria-label="option.ariaLabel"
+						close-after-click
+						@click.stop="scheduleMessageTime = option.timestamp">
+						{{ option.label }}
+					</NcActionButton>
+
+					<NcActionInput
+						v-model="customScheduleTimestamp"
+						type="datetime-local"
+						:label="t('spreed', 'Custom date and time')"
+						:min="new Date()"
+						:step="300"
+						is-native-picker>
+						<template #icon>
+							<IconCalendarClockOutline :size="20" />
+						</template>
+					</NcActionInput>
+
+					<NcActionButton
+						key="custom-time-submit"
+						:disabled="!customScheduleTimestamp"
+						close-after-click
+						@click.stop="scheduleMessageTime = customScheduleTimestamp.valueOf()">
+						<template #icon>
+							<IconCheck :size="20" />
+						</template>
+						{{ t('spreed', 'Send on custom time') }}
+					</NcActionButton>
+				</template>
 			</NcActions>
 
 			<!-- Audio recorder -->
@@ -173,6 +253,20 @@
 			<!-- Send buttons -->
 			<template v-else>
 				<NcButton
+					v-if="supportScheduleMessages && scheduleMessageTime"
+					:disabled="disabled"
+					variant="tertiary"
+					type="submit"
+					:title="t('spreed', 'Schedule message')"
+					:aria-label="t('spreed', 'Schedule message')"
+					@click="handleScheduleMessage">
+					<template #icon>
+						<IconSendVariantClock :size="20" />
+					</template>
+				</NcButton>
+
+				<NcButton
+					v-else
 					:disabled="disabled"
 					variant="tertiary"
 					type="submit"
@@ -204,18 +298,24 @@ import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import debounce from 'debounce'
 import { nextTick, toRefs, useTemplateRef } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionInput from '@nextcloud/vue/components/NcActionInput'
 import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
+import IconCalendarClockOutline from 'vue-material-design-icons/CalendarClockOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconClose from 'vue-material-design-icons/Close.vue'
 import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconSend from 'vue-material-design-icons/Send.vue' // Filled for better indication
+import IconSendVariantClock from 'vue-material-design-icons/SendVariantClock.vue' // Filled for better indication
 import MessageQuote from '../MessageQuote.vue'
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
 import NewMessageAttachments from './NewMessageAttachments.vue'
@@ -237,7 +337,8 @@ import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useTokenStore } from '../../stores/token.ts'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
-import { ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
+import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
+import { getCustomDateOptions } from '../../utils/getCustomDateOptions.ts'
 import {
 	getCurrentSelectionRange,
 	getRangeAtEnd,
@@ -246,11 +347,15 @@ import {
 } from '../../utils/selectionRange.ts'
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
 
+const supportScheduleMessages = hasTalkFeature('local', 'scheduled-messages')
+
 export default {
 	name: 'NewMessage',
 
 	components: {
 		NcActionButton,
+		NcActionInput,
+		NcActionSeparator,
 		NcActions,
 		NcButton,
 		NcEmojiPicker,
@@ -265,12 +370,16 @@ export default {
 		NewMessageTypingIndicator,
 		MessageQuote,
 		// Icons
+		IconArrowLeft,
+		IconCalendarClockOutline,
+		IconClockOutline,
 		IconBellOffOutline,
 		IconCheck,
 		IconClose,
 		IconEmoticonOutline,
 		IconForumOutline,
 		IconSend,
+		IconSendVariantClock,
 	},
 
 	props: {
@@ -345,11 +454,13 @@ export default {
 			settingsStore: useSettingsStore(),
 			tokenStore: useTokenStore(),
 			supportTypingStatus,
+			supportScheduleMessages,
 			autoComplete,
 			userData,
 			threadId,
 			threadTitleInputRef,
 			createTemporaryMessage,
+			convertToUnix,
 		}
 	},
 
@@ -367,6 +478,11 @@ export default {
 			wasTypingWithinInterval: false,
 			debouncedUpdateChatInput: debounce(this.updateChatInput, 200),
 			preservedSelectionRange: null,
+
+			/* Schedule messages feature local state */
+			submenu: null,
+			scheduleMessageTime: null,
+			customScheduleTimestamp: null,
 		}
 	},
 
@@ -481,7 +597,7 @@ export default {
 		},
 
 		showAudioRecorder() {
-			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload && !this.messageToEdit && !this.threadCreating
+			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload && !this.messageToEdit && !this.threadCreating && !this.scheduleMessageTime
 		},
 
 		showTypingStatus() {
@@ -541,6 +657,17 @@ export default {
 
 		threadCreating() {
 			return this.threadTitle !== undefined
+		},
+
+		scheduleMessageHint() {
+			// FIXME use relative date and time (like in StaticDateTime)
+			const relativeSendTime = new Date(this.scheduleMessageTime).toLocaleString(undefined, {
+				dateStyle: 'medium',
+				timeStyle: 'short',
+			})
+
+			// TRANSLATORS: "... sent tomorrow, <March 18, 2026>"
+			return t('spreed', 'Message will be sent {relativeSendTime}', { relativeSendTime })
 		},
 	},
 
@@ -633,6 +760,16 @@ export default {
 				this.clearSilentState()
 			},
 		},
+
+		submenu(newValue) {
+			if (newValue === 'schedule') {
+				const dateInFuture = new Date()
+				dateInFuture.setHours(dateInFuture.getHours() + 1, 0, 0, 0)
+				this.customScheduleTimestamp = dateInFuture
+			} else {
+				this.customScheduleTimestamp = null
+			}
+		},
 	},
 
 	created() {
@@ -661,6 +798,8 @@ export default {
 
 	methods: {
 		t,
+
+		getCustomDateOptions,
 
 		getContenteditable() {
 			return this.$refs.richContenteditable.$refs.contenteditable
@@ -1094,6 +1233,79 @@ export default {
 				this.toggleSilentChat()
 			}
 		},
+
+		async handleScheduleMessage() {
+			// Submit event has enter key listener
+			// Handle edit here too
+			if (this.messageToEdit) {
+				if (!this.disabledEdit) {
+					this.handleEdit()
+				}
+				return
+			}
+
+			if (this.hasText) {
+				this.text = parseSpecialSymbols(this.text)
+			}
+
+			if (this.threadCreating) {
+				if (!this.threadTitle) {
+					// TRANSLATORS Error indicator: do not allow to create a thread without a thread title
+					this.errorTitle = t('spreed', 'Thread title is required')
+				}
+				if (!this.hasText) {
+					// TRANSLATORS Error indicator: do not allow to create a thread without a message text
+					this.errorMessage = t('spreed', 'Message text is required')
+				}
+				if (this.errorTitle || this.errorMessage) {
+					return
+				}
+			}
+
+			// Clear input content from store
+			this.debouncedUpdateChatInput.clear()
+			this.chatExtrasStore.removeChatInput(this.token)
+
+			if (this.dialog && this.upload) {
+				// FIXME handle file upload in scheduled messages
+				return
+			}
+
+			if (this.hasText) {
+				const scheduleMessagePayload = {
+					message: this.text.trim(),
+					sendAt: convertToUnix(this.scheduleMessageTime),
+				}
+
+				if (this.silentChat) {
+					scheduleMessagePayload.silent = true
+				}
+				if (this.threadId) {
+					scheduleMessagePayload.threadId = this.threadId
+				}
+				if (this.parentMessage) {
+					scheduleMessagePayload.replyTo = this.parentMessage.id
+				}
+				if (this.threadCreating) {
+					// Substitute thread title with message text, if missing
+					scheduleMessagePayload.threadTitle = this.threadTitle.trim()
+				}
+
+				this.text = ''
+				this.chatExtrasStore.removeThreadTitle(this.token)
+				this.scheduleMessageTime = null
+
+				// Reset the hash from focused message id (but keep the thread id)
+				this.$router.replace({ query: this.$route.query, hash: '' })
+				// Scrolls the message list to the last added message
+				EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
+				// Also remove the message to be replied for this conversation
+				this.chatExtrasStore.removeParentIdToReply(this.token)
+
+				await this.chatExtrasStore.scheduleMessage(this.token, scheduleMessagePayload)
+				this.resetTypingIndicator()
+			}
+		},
 	},
 }
 </script>
@@ -1147,6 +1359,14 @@ export default {
 		margin-block-end: var(--default-grid-baseline);
 		background-color: var(--color-background-hover);
 		border-radius: var(--border-radius-large);
+	}
+
+	&__scheduled-hint > :deep(div:last-child) {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: calc(var(--default-grid-baseline) / 2);
+		width: 100%;
 	}
 
 	&__thread-title {
