@@ -51,23 +51,29 @@
 				'bottom-side': isSplitViewEnabled && !isShortSimpleMessage && (isSmallMobile || isSidebar),
 				overlay: isSplitViewEnabled && !isShortSimpleMessage && isReactionsMenuOpen && !(isSmallMobile || isSidebar),
 			}">
-			<MessageButtonsBar
-				v-if="showMessageButtonsBar"
-				v-model:is-action-menu-open="isActionMenuOpen"
-				v-model:is-emoji-picker-open="isEmojiPickerOpen"
-				v-model:is-reactions-menu-open="isReactionsMenuOpen"
-				v-model:is-forwarder-open="isForwarderOpen"
-				class="message-buttons-bar"
-				:class="{ outlined: buttonsBarOutlined }"
-				:is-translation-available="isTranslationAvailable"
-				:can-react="canReact"
-				:message="message"
-				:previous-message-id="previousMessageId"
-				:read-info="readInfo"
-				@show-translate-dialog="isTranslateDialogOpen = true"
-				@reply="handleReply"
-				@edit="handleEdit"
-				@delete="handleDelete" />
+			<template v-if="showMessageButtonsBar">
+				<div
+					v-if="showScheduledMessages"
+					class="message-buttons-bar"
+					:class="{ outlined: buttonsBarOutlined }" />
+				<MessageButtonsBar
+					v-else
+					v-model:is-action-menu-open="isActionMenuOpen"
+					v-model:is-emoji-picker-open="isEmojiPickerOpen"
+					v-model:is-reactions-menu-open="isReactionsMenuOpen"
+					v-model:is-forwarder-open="isForwarderOpen"
+					class="message-buttons-bar"
+					:class="{ outlined: buttonsBarOutlined }"
+					:is-translation-available="isTranslationAvailable"
+					:can-react="canReact"
+					:message="message"
+					:previous-message-id="previousMessageId"
+					:read-info="readInfo"
+					@show-translate-dialog="isTranslateDialogOpen = true"
+					@reply="handleReply"
+					@edit="handleEdit"
+					@delete="handleDelete" />
+			</template>
 			<div
 				v-else-if="isSplitViewEnabled && isPinned"
 				class="icon-pin-highlighted"
@@ -194,6 +200,10 @@ export default {
 			return this.message.messageType === MESSAGE.TYPE.COMMENT_DELETED
 		},
 
+		showScheduledMessages() {
+			return this.chatExtrasStore.showScheduledMessages
+		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.message.token)
 		},
@@ -279,6 +289,13 @@ export default {
 		},
 
 		readInfo() {
+			if (this.showScheduledMessages) {
+				return {
+					showSilentIcon: this.message.silent,
+					silentIconTitle: t('spreed', 'Will be sent without notification'),
+				}
+			}
+
 			return {
 				showCommonReadIcon: this.showCommonReadIcon,
 				commonReadIconTitle: t('spreed', 'Message read by everyone who shares their reading status'),
@@ -308,6 +325,8 @@ export default {
 
 			return this.message.id === this.message.threadId
 				|| (this.message.threadTitle && this.message.id.toString().startsWith('temp-'))
+				// FIXME properly render scheduled messages as threads
+				|| (this.message.threadTitle && this.message.threadId === -1)
 		},
 
 		isShortSimpleMessage() {

@@ -219,6 +219,16 @@
 				</template>
 			</NcActions>
 
+			<NcButton
+				v-if="showScheduledMessagesToggle"
+				:variant="showScheduledMessages ? 'secondary' : 'tertiary'"
+				:title="t('spreed', 'Show scheduled messages')"
+				@click="chatExtrasStore.setShowScheduledMessages(!showScheduledMessages)">
+				<template #icon>
+					<IconClockOutline :size="20" />
+				</template>
+			</NcButton>
+
 			<!-- Audio recorder -->
 			<NewMessageAudioRecorder
 				v-if="showAudioRecorder"
@@ -667,6 +677,17 @@ export default {
 			return this.threadTitle !== undefined
 		},
 
+		showScheduledMessagesToggle() {
+			return this.conversation.hasScheduledMessages
+				&& !this.dialog
+				&& !this.isRecordingAudio
+				&& !this.messageToEdit
+		},
+
+		showScheduledMessages() {
+			return this.chatExtrasStore.showScheduledMessages
+		},
+
 		scheduleMessageHint() {
 			// FIXME use relative date and time (like in StaticDateTime)
 			const datetimeString = new Date(this.scheduleMessageTime).toLocaleString(undefined, {
@@ -923,6 +944,8 @@ export default {
 			// Clear input content from store
 			this.debouncedUpdateChatInput.clear()
 			this.chatExtrasStore.removeChatInput(this.token)
+
+			this.chatExtrasStore.setShowScheduledMessages(false)
 
 			if (this.hasText || (this.dialog && this.upload)) {
 				const temporaryMessagePayload = {
