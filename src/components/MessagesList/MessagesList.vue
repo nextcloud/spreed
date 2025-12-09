@@ -51,14 +51,30 @@
 						role="heading"
 						aria-level="3" />
 				</li>
-				<component
-					:is="messagesGroupComponent[group.type]"
+				<template
 					v-for="group in list"
-					:key="group.id"
-					:token="token"
-					:messages="group.messages"
-					:previous-message-id="group.previousMessageId"
-					:next-message-id="group.nextMessageId" />
+					:key="group.id">
+					<component
+						:is="messagesGroupComponent[group.type]"
+						:token="token"
+						:messages="group.messages"
+						:previous-message-id="group.previousMessageId"
+						:next-message-id="group.nextMessageId" />
+					<div
+						v-if="isLastReadMessage(group)"
+						v-intersection-observer="lastReadMessageVisibilityChanged"
+						class="message-unread-marker">
+						<div class="message-unread-marker__wrapper">
+							<span class="message-unread-marker__text">{{ t('spreed', 'Unread messages') }}</span>
+							<NcAssistantButton
+								v-if="shouldShowSummaryOption"
+								:disabled="loadingSummary"
+								@click="generateSummary">
+								{{ t('spreed', 'Generate summary') }}
+							</NcAssistantButton>
+						</div>
+					</div>
+				</template>
 			</ul>
 
 			<TransitionWrapper name="fade">
@@ -75,8 +91,10 @@
 
 <script>
 import { n, t } from '@nextcloud/l10n'
+import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
 import debounce from 'debounce'
-import { computed, provide } from 'vue'
+import { computed, provide, ref } from 'vue'
+import NcAssistantButton from '@nextcloud/vue/components/NcAssistantButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
@@ -90,6 +108,7 @@ import { useGetMessages } from '../../composables/useGetMessages.ts'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { ATTENDEE, CONVERSATION } from '../../constants.ts'
 import { CHAT_STYLE } from '../../constants.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatStore } from '../../stores/chat.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
@@ -98,6 +117,8 @@ import { convertToUnix } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
 const LOAD_HISTORY_THRESHOLD = 800
+const canSummarizeChat = hasTalkFeature('local', 'chat-summary-api')
+const summaryThreshold = getTalkConfig('local', 'chat', 'summary-threshold') ?? 0
 
 const messagesGroupComponent = {
 	system: MessagesSystemGroup,
@@ -110,9 +131,14 @@ export default {
 		IconMessageOutline,
 		LoadingPlaceholder,
 		NcEmptyContent,
+		NcAssistantButton,
 		NcLoadingIcon,
 		StaticDateTime,
 		TransitionWrapper,
+	},
+
+	directives: {
+		IntersectionObserver,
 	},
 
 	provide() {
@@ -206,6 +232,10 @@ export default {
 			stickyDate: null,
 
 			endScrollTimeout: () => {},
+
+			isUnreadMarkerSeen: false,
+
+			loadingSummary: false,
 		}
 	},
 
@@ -255,6 +285,13 @@ export default {
 		currentDay() {
 			return convertToUnix(new Date().setHours(0, 0, 0, 0))
 		},
+
+		shouldShowSummaryOption() {
+			if (this.conversation.remoteServer || !canSummarizeChat || this.chatExtrasStore.hasChatSummaryTaskRequested(this.token)) {
+				return false
+			}
+			return (this.conversation.unreadMessages >= summaryThreshold)
+		},
 	},
 
 	watch: {
@@ -277,6 +314,7 @@ export default {
 		token(newToken, oldToken) {
 			// Expire older messages when navigating to another conversation
 			this.$store.dispatch('easeMessageList', { token: oldToken })
+			this.isUnreadMarkerSeen = false
 		},
 
 		messagesList: {
@@ -323,6 +361,16 @@ export default {
 				})
 			}
 		},
+
+		visualLastReadMessageId(newValue, oldValue) {
+			if (newValue === oldValue) {
+				return
+			}
+			const newGroups = this.prepareMessagesGroups(this.messagesList)
+			this.softUpdateByDateGroups(this.messagesGroupedByDateByAuthor, newGroups)
+			this.isUnreadMarkerSeen = false
+		},
+
 	},
 
 	mounted() {
@@ -486,6 +534,12 @@ export default {
 		messagesShouldBeGrouped(message1, message2) {
 			if (!message2) {
 				return false // No previous message
+			}
+
+			// If there is last read message visually, the group ends there
+			if ((message1.id === this.visualLastReadMessageId && message2.id > message1.id)
+				|| (message2.id === this.visualLastReadMessageId && message1.id > message2.id)) {
+				return false
 			}
 
 			if (!!message1.lastEditTimestamp || !!message2.lastEditTimestamp) {
@@ -813,7 +867,7 @@ export default {
 			const lastReadMessageElement = this.getVisualLastReadMessageElement()
 
 			// first unread message has not been seen yet, so don't move it
-			if (lastReadMessageElement && lastReadMessageElement.getAttribute('data-seen') !== 'true') {
+			if (!this.isUnreadMarkerSeen) {
 				return
 			}
 
@@ -1036,6 +1090,31 @@ export default {
 				this.debounceHandleScroll({ skipHeightCheck: true })
 			}
 		},
+
+		isLastReadMessage(group) {
+			if (!group.nextMessageId) {
+				return false
+			}
+
+			const message = group.messages.at(-1)
+			if (this.conversation.lastMessage && message.id >= this.conversation.lastMessage?.id) {
+				return false
+			}
+
+			return message.id === this.visualLastReadMessageId
+		},
+
+		lastReadMessageVisibilityChanged([{ isIntersecting }]) {
+			if (isIntersecting) {
+				this.isUnreadMarkerSeen = true
+			}
+		},
+
+		async generateSummary() {
+			this.loadingSummary = true
+			await this.chatExtrasStore.requestChatSummary(this.token, this.visualLastReadMessageId)
+			this.loadingSummary = false
+		},
 	},
 }
 </script>
@@ -1138,5 +1217,38 @@ export default {
 .scroller--isScrolling .has-sticky .messages-date {
 	opacity: 1;
 	transition: opacity 0s;
+}
+
+.message-unread-marker {
+	position: relative;
+	margin: calc(4 * var(--default-grid-baseline));
+
+	&::before {
+		content: '';
+		width: 100%;
+		border-top: 1px solid var(--color-border-maxcontrast);
+		position: absolute;
+		top: 50%;
+		z-index: -1;
+	}
+
+	&__wrapper {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: calc(3 * var(--default-grid-baseline));
+		margin-inline: auto;
+		padding-inline: calc(3 * var(--default-grid-baseline));
+		width: fit-content;
+		border-radius: var(--border-radius);
+		background-color: var(--color-main-background);
+	}
+
+	&__text {
+		text-align: center;
+		white-space: nowrap;
+		font-weight: bold;
+		color: var(--color-main-text);
+	}
 }
 </style>

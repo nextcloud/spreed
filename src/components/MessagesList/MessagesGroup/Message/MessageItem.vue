@@ -7,7 +7,6 @@
 	<li
 		:id="`message_${message.id}`"
 		:data-message-id="message.id"
-		:data-seen="seen"
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
 		class="message"
@@ -81,21 +80,6 @@
 			:message="message.message"
 			:rich-parameters="richParameters"
 			@close="isTranslateDialogOpen = false" />
-
-		<div
-			v-if="isLastReadMessage"
-			v-intersection-observer="lastReadMessageVisibilityChanged"
-			class="message-unread-marker">
-			<div class="message-unread-marker__wrapper">
-				<span class="message-unread-marker__text">{{ t('spreed', 'Unread messages') }}</span>
-				<NcAssistantButton
-					v-if="shouldShowSummaryOption"
-					:disabled="loading"
-					@click="generateSummary">
-					{{ t('spreed', 'Generate summary') }}
-				</NcAssistantButton>
-			</div>
-		</div>
 	</li>
 </template>
 
@@ -103,9 +87,7 @@
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
-import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
-import { inject, ref } from 'vue'
-import NcAssistantButton from '@nextcloud/vue/components/NcAssistantButton'
+import { inject } from 'vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
 import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
@@ -120,14 +102,11 @@ import PollCard from './MessagePart/PollCard.vue'
 import ReactionsWrapper from './MessagePart/ReactionsWrapper.vue'
 import { useGetThreadId } from '../../../../composables/useGetThreadId.ts'
 import { CONVERSATION, MENTION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
-import { getTalkConfig, hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
+import { getTalkConfig } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.ts'
 import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.ts'
-
-const canSummarizeChat = hasTalkFeature('local', 'chat-summary-api')
-const summaryThreshold = getTalkConfig('local', 'chat', 'summary-threshold') ?? 0
 
 export default {
 	name: 'MessageItem',
@@ -137,12 +116,7 @@ export default {
 		MessageButtonsBar,
 		MessageForwarder,
 		MessageTranslateDialog,
-		NcAssistantButton,
 		ReactionsWrapper,
-	},
-
-	directives: {
-		IntersectionObserver,
 	},
 
 	props: {
@@ -188,11 +162,8 @@ export default {
 
 	data() {
 		return {
-			loading: false,
 			isHovered: false,
 			isDeleting: false,
-			// whether the message was seen, only used if this was marked as last read message
-			seen: false,
 			isActionMenuOpen: false,
 			// Right side bottom bar
 			isEmojiPickerOpen: false,
@@ -207,30 +178,6 @@ export default {
 	computed: {
 		isTemporary() {
 			return this.message.timestamp === 0
-		},
-
-		isLastMessage() {
-			// never displayed for the very last message
-			return !this.nextMessageId || this.message.id === this.conversation?.lastMessage?.id
-		},
-
-		visualLastLastReadMessageId() {
-			return this.$store.getters.getVisualLastReadMessageId(this.message.token)
-		},
-
-		isLastReadMessage() {
-			if (this.isLastMessage) {
-				return false
-			}
-
-			return this.message.id === this.visualLastLastReadMessageId
-		},
-
-		shouldShowSummaryOption() {
-			if (this.conversation.remoteServer || !canSummarizeChat || this.chatExtrasStore.hasChatSummaryTaskRequested(this.message.token)) {
-				return false
-			}
-			return (this.conversation.unreadMessages >= summaryThreshold)
 		},
 
 		isDeletedMessage() {
@@ -365,11 +312,6 @@ export default {
 
 	methods: {
 		t,
-		lastReadMessageVisibilityChanged([{ isIntersecting }]) {
-			if (isIntersecting) {
-				this.seen = true
-			}
-		},
 
 		handleMouseover() {
 			if (!this.isHovered) {
@@ -434,12 +376,6 @@ export default {
 
 		toggleFollowUpEmojiPicker() {
 			this.isFollowUpEmojiPickerOpen = !this.isFollowUpEmojiPickerOpen
-		},
-
-		async generateSummary() {
-			this.loading = true
-			await this.chatExtrasStore.requestChatSummary(this.message.token, this.message.id)
-			this.loading = false
 		},
 	},
 }
@@ -567,39 +503,6 @@ export default {
 	0% { background-color: var(--color-background-hover); }
 	50% { background-color: var(--color-background-hover); }
 	100% { background-color: rgba(var(--color-background-hover), 0); }
-}
-
-.message-unread-marker {
-	position: relative;
-	margin: calc(4 * var(--default-grid-baseline));
-
-	&::before {
-		content: '';
-		width: 100%;
-		border-top: 1px solid var(--color-border-maxcontrast);
-		position: absolute;
-		top: 50%;
-		z-index: -1;
-	}
-
-	&__wrapper {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: calc(3 * var(--default-grid-baseline));
-		margin-inline: auto;
-		padding-inline: calc(3 * var(--default-grid-baseline));
-		width: fit-content;
-		border-radius: var(--border-radius);
-		background-color: var(--color-main-background);
-	}
-
-	&__text {
-		text-align: center;
-		white-space: nowrap;
-		font-weight: bold;
-		color: var(--color-main-text);
-	}
 }
 
 .message-buttons-bar {
