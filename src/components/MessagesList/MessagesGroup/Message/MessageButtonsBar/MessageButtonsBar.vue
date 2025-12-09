@@ -66,7 +66,7 @@
 					<!-- Edited message timestamp -->
 					<NcActionText
 						v-if="message.lastEditTimestamp"
-						class="edit-timestamp"
+						class="label-timestamp"
 						:name="lastEditActorLabel">
 						<template #icon>
 							<IconClockEditOutline :size="20" />
@@ -968,7 +968,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.edit-timestamp :deep(.action-text__longtext-wrapper) {
-	padding: 0;
+.label-timestamp {
+	:deep(.action-text__longtext-wrapper) {
+		padding: 0;
+	}
+
+	:deep(.action-text__name) {
+		font-weight: normal;
+	}
+
+	:deep(.action-text__longtext) {
+		color: var(--color-text-maxcontrast);
+	}
 }
 </style>

@@ -16,10 +16,12 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import { AVATAR } from '../../..//constants.ts'
 import { useGetToken } from '../../../composables/useGetToken.ts'
 import { EventBus } from '../../../services/EventBus.ts'
+import { useActorStore } from '../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../stores/sharedItems.ts'
 import { parseToSimpleMessage } from '../../../utils/textParse.ts'
 
 const store = useStore()
+const actorStore = useActorStore()
 const route = useRoute()
 const token = useGetToken()
 const sharedItemsStore = useSharedItemsStore()
@@ -39,7 +41,7 @@ const pinnedMessages = computed(() => {
 	if (!sharedItemsStore.sharedItems(token.value).pinned) {
 		return []
 	}
-	return Object.values(sharedItemsStore.sharedItems(token.value).pinned) || []
+	return Object.values(sharedItemsStore.sharedItems(token.value).pinned ?? {})
 })
 
 // The pinned message to be displayed (the latest one that is not hidden)
@@ -55,6 +57,32 @@ const pinnedMessage = computed(() => {
 		return pinnedMessages.value.find((item) => +item.id === fallbackId)
 	}
 	return item.id !== conversation.value.hiddenPinnedId ? item : null
+})
+
+// Display name for the pinned message
+const displayNameDetails = computed(() => {
+	if (!pinnedMessage.value?.metaData) {
+		return ''
+	}
+	const metaData = pinnedMessage.value.metaData
+	const isPinnerSameAsAuthor = metaData.pinnedActorId === pinnedMessage.value.actorId
+		&& metaData.pinnedActorType === pinnedMessage.value.actorType
+
+	if (isPinnerSameAsAuthor) {
+		return pinnedMessage.value.actorDisplayName || ''
+	}
+	const isPinnerSameAsCurrentUser = metaData.pinnedActorId === actorStore.actorId
+		&& metaData.pinnedActorType === actorStore.actorType
+
+	if (isPinnerSameAsCurrentUser) {
+		return t('spreed', '{author} (pinned by you)', {
+			author: pinnedMessage.value.actorDisplayName || '',
+		})
+	}
+	return t('spreed', '{author} (pinned by {actor})', {
+		author: pinnedMessage.value.actorDisplayName || '',
+		actor: metaData.pinnedActorDisplayName || '',
+	})
 })
 
 const isModerator = computed(() => store.getters.isModerator)
@@ -95,7 +123,6 @@ onMounted(() => {
 <template>
 	<div v-if="pinnedMessage">
 		<NcListItem
-			:name="pinnedMessage.actorDisplayName"
 			:title="richSubline"
 			:active="false"
 			:to="to"
@@ -108,6 +135,11 @@ onMounted(() => {
 					disable-menu
 					:token="token"
 					:size="AVATAR.SIZE.SMALL" />
+			</template>
+			<template #name>
+				<span class="display-name">
+					{{ displayNameDetails }}
+				</span>
 			</template>
 			<template #subname>
 				{{ richSubline }}
@@ -139,7 +171,29 @@ onMounted(() => {
 
 <style scoped lang="scss">
 
+.display-name {
+	display: flex;
+	align-items: center;
+	gap: 1px;
+
+	:deep(svg) {
+		fill: currentColor;
+		width: 14px;
+		height: 14px;
+		vertical-align: middle;
+	}
+}
+
 :deep(.list-item__wrapper) {
     padding: 0 !important;
+}
+
+:deep(.list-item-content__name) {
+	color: var(--color-text-maxcontrast);
+	font-size: var(--font-size-small);
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	gap: 1px;
 }
 </style>
