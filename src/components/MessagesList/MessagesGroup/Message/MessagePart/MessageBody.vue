@@ -145,7 +145,7 @@
 		<!-- Actions and reactions slot -->
 		<div v-if="!isDeletedMessage" class="message-actions">
 			<NcButton
-				v-if="isThreadStarterMessage"
+				v-if="isThreadStarterMessage && message.threadId !== -1"
 				class="message-actions__thread"
 				:class="{ light: isSplitViewEnabled && isOwnMessage }"
 				size="small"
@@ -330,6 +330,8 @@ export default {
 
 			return this.message.id === this.message.threadId
 				|| (this.message.threadTitle && this.message.id.toString().startsWith('temp-'))
+				// FIXME properly render scheduled messages as threads
+				|| (this.message.threadTitle && this.message.threadId === -1)
 		},
 
 		threadInfo() {

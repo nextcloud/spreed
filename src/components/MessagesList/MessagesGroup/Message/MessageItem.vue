@@ -50,8 +50,11 @@
 				'bottom-side': isSplitViewEnabled && !isShortSimpleMessage && (isSmallMobile || isSidebar),
 				overlay: isSplitViewEnabled && !isShortSimpleMessage && isReactionsMenuOpen && !(isSmallMobile || isSidebar),
 			}">
+			<div
+				v-if="isScheduledMessage && showMessageButtonsBar"
+				class="message-buttons-bar" />
 			<MessageButtonsBar
-				v-if="showMessageButtonsBar"
+				v-else-if="showMessageButtonsBar"
 				v-model:is-action-menu-open="isActionMenuOpen"
 				v-model:is-emoji-picker-open="isEmojiPickerOpen"
 				v-model:is-reactions-menu-open="isReactionsMenuOpen"
@@ -184,6 +187,13 @@ export default {
 			return this.message.messageType === MESSAGE.TYPE.COMMENT_DELETED
 		},
 
+		isScheduledMessage() {
+			// FIXME better way to identify scheduled messages?
+			// - Provide from ChatView for all MessageItems?
+			// - Additional internal prop flag?
+			return this.message.referenceId === 'scheduled_message'
+		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.message.token)
 		},
@@ -269,6 +279,13 @@ export default {
 		},
 
 		readInfo() {
+			if (this.isScheduledMessage) {
+				return {
+					showSilentIcon: this.message.silent,
+					silentIconTitle: t('spreed', 'Will be sent without notification'),
+				}
+			}
+
 			return {
 				showCommonReadIcon: this.showCommonReadIcon,
 				commonReadIconTitle: t('spreed', 'Message read by everyone who shares their reading status'),
@@ -298,6 +315,8 @@ export default {
 
 			return this.message.id === this.message.threadId
 				|| (this.message.threadTitle && this.message.id.toString().startsWith('temp-'))
+				// FIXME properly render scheduled messages as threads
+				|| (this.message.threadTitle && this.message.threadId === -1)
 		},
 
 		isShortSimpleMessage() {

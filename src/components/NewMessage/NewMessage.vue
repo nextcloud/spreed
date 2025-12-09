@@ -218,6 +218,17 @@
 				</template>
 			</NcActions>
 
+			<NcButton
+				v-if="hasScheduledMessages"
+				variant="tertiary"
+				:pressed="showScheduledMessages"
+				:title="t('spreed', 'Show scheduled messages')"
+				@click="$emit('update:showScheduledMessages', !showScheduledMessages)">
+				<template #icon>
+					<IconClockOutline :size="20" />
+				</template>
+			</NcButton>
+
 			<!-- Audio recorder -->
 			<NewMessageAudioRecorder
 				v-if="showAudioRecorder"
@@ -431,9 +442,17 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		/**
+		 * Sync show scheduled messages state with ChatView.
+		 */
+		showScheduledMessages: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
-	emits: ['submit', 'dismiss'],
+	emits: ['submit', 'dismiss', 'update:showScheduledMessages'],
 
 	expose: ['focusInput'],
 
@@ -657,6 +676,10 @@ export default {
 
 		threadCreating() {
 			return this.threadTitle !== undefined
+		},
+
+		hasScheduledMessages() {
+			return this.conversation.hasScheduledMessages
 		},
 
 		scheduleMessageHint() {

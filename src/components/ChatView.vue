@@ -31,6 +31,7 @@
 				role="region"
 				:aria-label="t('spreed', 'Conversation messages')"
 				:token="token"
+				:show-scheduled-messages="showScheduledMessages"
 				:is-visible="isVisible" />
 		</div>
 
@@ -52,6 +53,7 @@
 
 		<!-- Input field -->
 		<NewMessage
+			v-model:show-scheduled-messages="showScheduledMessages"
 			role="region"
 			:token="token"
 			has-typing-indicator
@@ -135,6 +137,7 @@ export default {
 		return {
 			isChatScrolledToBottom: false,
 			isDraggingOver: false,
+			showScheduledMessages: false,
 		}
 	},
 
