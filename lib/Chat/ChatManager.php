@@ -391,6 +391,7 @@ class ChatManager {
 		bool $silent = false,
 		bool $rateLimitGuestMentions = true,
 		int $threadId = 0,
+		array $messageParameters = [],
 	): IComment {
 		if ($chat->isFederatedConversation()) {
 			$e = new MessagingNotAllowedException();
@@ -440,6 +441,9 @@ class ChatManager {
 		}
 		if ($threadId !== Thread::THREAD_NONE) {
 			$metadata[Message::METADATA_THREAD_ID] = $threadId;
+		}
+		if (!empty($messageParameters)) {
+			$metadata[Message::METADATA_MESSAGE_PARAMETERS] = $messageParameters;
 		}
 		$comment->setMetaData($metadata);
 

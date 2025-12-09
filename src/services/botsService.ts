@@ -44,9 +44,24 @@ async function disableBotForConversation(token: string, id: Bot['id']): disableB
 	return axios.delete(generateOcsUrl('/apps/spreed/api/v1/bot/{token}/{id}', { token, id }))
 }
 
+/**
+ * Submit an Adaptive Card response to the bot
+ *
+ * @param token The conversation token
+ * @param cardId The adaptive card ID
+ * @param values The collected input values from the card
+ */
+async function submitAdaptiveCardResponse(token: string, cardId: string, values: Record<string, unknown>) {
+	return axios.post(
+		generateOcsUrl('/apps/spreed/api/v1/adaptivecard/{token}/{cardId}/respond', { token, cardId }),
+		{ values }
+	)
+}
+
 export {
 	disableBotForConversation,
 	enableBotForConversation,
 	getAllBots,
 	getConversationBots,
+	submitAdaptiveCardResponse,
 }

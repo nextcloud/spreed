@@ -24,6 +24,7 @@
 ## Developer documentation
 
 * [Developer setup](developer-setup.md)
+* [Architecture Decision Records](adr/README.md)
 * [Bots and webhooks](bots.md)
 * [Constants](constants.md)
 * [Capabilities](capabilities.md)
