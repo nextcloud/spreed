@@ -66,12 +66,21 @@
 					<!-- Edited message timestamp -->
 					<NcActionText
 						v-if="message.lastEditTimestamp"
-						class="edit-timestamp"
+						class="label-timestamp"
 						:name="lastEditActorLabel">
 						<template #icon>
 							<IconClockEditOutline :size="20" />
 						</template>
 						{{ editedDateTime }}
+					</NcActionText>
+					<NcActionText
+						v-if="isMessagePinned"
+						class="label-timestamp"
+						:name="pinDurationLabel ? PinAuthorLabel : undefined">
+						<template #icon>
+							<IconPin :size="20" />
+						</template>
+						{{ pinDurationLabel || PinAuthorLabel }}
 					</NcActionText>
 					<!-- Silent message information -->
 					<NcActionText v-if="readInfo.showSilentIcon">
@@ -456,6 +465,7 @@ import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
 import { generatePublicShareDownloadUrl, generateUserFileUrl } from '../../../../../utils/davUtils.ts'
 import { convertToUnix, formatDateTime, ONE_DAY_IN_MS } from '../../../../../utils/formattedTime.ts'
+import { getRelativeDay } from '../../../../../utils/formattedTime.ts'
 import { getCustomDateOptions } from '../../../../../utils/getCustomDateOptions.ts'
 import { copyConversationLinkToClipboard } from '../../../../../utils/handleUrl.ts'
 import { parseMentions } from '../../../../../utils/textParse.ts'
@@ -961,7 +971,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.edit-timestamp :deep(.action-text__longtext-wrapper) {
+.label-timestamp :deep(.action-text__longtext-wrapper) {
 	padding: 0;
 }
 </style>

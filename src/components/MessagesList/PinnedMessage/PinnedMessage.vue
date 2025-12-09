@@ -5,6 +5,7 @@
 <script setup lang="ts">
 
 import { t } from '@nextcloud/l10n'
+import escapeHtml from 'escape-html'
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
@@ -13,13 +14,16 @@ import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconClose from 'vue-material-design-icons/Close.vue'
 import IconPinOff from 'vue-material-design-icons/PinOffOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
+import IconPin from '../../../../img/material-icons/pin-outline.svg?raw'
 import { AVATAR } from '../../..//constants.ts'
 import { useGetToken } from '../../../composables/useGetToken.ts'
 import { EventBus } from '../../../services/EventBus.ts'
+import { useActorStore } from '../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../stores/sharedItems.ts'
 import { parseToSimpleMessage } from '../../../utils/textParse.ts'
 
 const store = useStore()
+const actorStore = useActorStore()
 const route = useRoute()
 const token = useGetToken()
 const sharedItemsStore = useSharedItemsStore()
@@ -55,6 +59,30 @@ const pinnedMessage = computed(() => {
 		return pinnedMessages.value.find((item) => +item.id === fallbackId)
 	}
 	return item.id !== conversation.value.hiddenPinnedId ? item : null
+})
+
+// Display name for the pinned message
+const isPinnerSameAsAuthor = computed(() => pinnedMessage.value?.metaData?.pinnedActorId === pinnedMessage.value?.actorId
+	&& pinnedMessage.value?.metaData?.pinnedActorType === pinnedMessage.value?.actorType)
+
+const isPinnerSameAsCurrentUser = computed(() => pinnedMessage.value?.metaData?.pinnedActorId === actorStore.actorId
+	&& pinnedMessage.value?.metaData?.pinnedActorType === actorStore.actorType)
+
+const displayNameDetails = computed(() => {
+	if (isPinnerSameAsAuthor.value) {
+		return pinnedMessage.value?.actorDisplayName || ''
+	}
+	if (isPinnerSameAsCurrentUser.value) {
+		return t('spreed', '{author} ({icon} by you)', {
+			author: escapeHtml(pinnedMessage.value?.actorDisplayName || ''),
+			icon: IconPin,
+		}, { escape: false })
+	}
+	return t('spreed', '{author} ({icon} by {pinner})', {
+		author: escapeHtml(pinnedMessage.value?.actorDisplayName || ''),
+		icon: IconPin,
+		pinner: escapeHtml(pinnedMessage.value?.metaData?.pinnedActorDisplayName || ''),
+	}, { escape: false })
 })
 
 const isModerator = computed(() => store.getters.isModerator)
@@ -95,7 +123,6 @@ onMounted(() => {
 <template>
 	<div v-if="pinnedMessage">
 		<NcListItem
-			:name="pinnedMessage.actorDisplayName"
 			:title="richSubline"
 			:active="false"
 			:to="to"
@@ -108,6 +135,10 @@ onMounted(() => {
 					disable-menu
 					:token="token"
 					:size="AVATAR.SIZE.SMALL" />
+			</template>
+			<template #name>
+				<!-- eslint-disable-next-line vue/no-v-html -->
+				<span class="display-name" v-html="displayNameDetails" />
 			</template>
 			<template #subname>
 				{{ richSubline }}
@@ -139,7 +170,29 @@ onMounted(() => {
 
 <style scoped lang="scss">
 
+.display-name {
+	display: flex;
+	align-items: center;
+	gap: 1px;
+
+	:deep(svg) {
+		fill: currentColor;
+		width: 14px;
+		height: 14px;
+		vertical-align: middle;
+	}
+}
+
 :deep(.list-item__wrapper) {
     padding: 0 !important;
+}
+
+:deep(.list-item-content__name) {
+	color: var(--color-text-maxcontrast);
+	font-size: var(--font-size-small);
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	gap: 1px;
 }
 </style>
