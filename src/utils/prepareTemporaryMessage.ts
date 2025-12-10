@@ -10,6 +10,21 @@ import SHA256 from 'crypto-js/sha256.js'
 import { MESSAGE } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
+export type RawTemporaryMessagePayload = Pick<ChatMessage,
+	| 'message'
+	| 'token'
+	| 'silent'
+> & Partial<Pick<ChatMessage,
+| 'actorId'
+| 'actorType'
+| 'actorDisplayName'
+| 'threadId'
+| 'isThread'
+| 'threadTitle'
+| 'threadReplies'
+| 'parent'
+>>
+
 export type PrepareTemporaryMessagePayload = Pick<ChatMessage,
 	| 'message'
 	| 'token'
@@ -21,13 +36,13 @@ export type PrepareTemporaryMessagePayload = Pick<ChatMessage,
 	| 'isThread'
 	| 'threadTitle'
 	| 'threadReplies'
+	| 'parent'
 > & {
-	uploadId: string
-	index: number
-	file: File & { newName?: string }
-	localUrl: string
+	uploadId?: string
+	index?: number
+	file?: File & { newName?: string }
+	localUrl?: string
 	messageType?: typeof MESSAGE.TYPE['VOICE_MESSAGE' | 'COMMENT']
-	parent: Omit<ChatMessage, 'parent'>
 }
 
 /**
