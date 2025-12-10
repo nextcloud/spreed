@@ -45,6 +45,7 @@ class Util {
 
 			$node = array_shift($nodes);
 			$accessList = $this->shareManager->getAccessList($node);
+			$accessList['users'] ??= [];
 			if (!$node->getStorage()->instanceOfStorage(SharedStorage::class)) {
 				// The file is not a shared file,
 				// let's check the accesslist for mount points of groupfolders and external storages
@@ -76,7 +77,7 @@ class Util {
 
 			$node = array_shift($nodes);
 			$accessList = $this->shareManager->getAccessList($node, false);
-			$this->publicAccessLists[$fileId] = $accessList['public'];
+			$this->publicAccessLists[$fileId] = $accessList['public'] ?? false;
 		}
 		return $this->publicAccessLists[$fileId] === true;
 	}
