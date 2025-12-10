@@ -60,7 +60,9 @@ class SendScheduledMessages extends TimedJob {
 	#[\Override]
 	protected function run($argument): void {
 		$messages = $this->scheduledMessageService->getDue($this->time->getDateTime());
+		//		$this->logger->error('Here');
 		if (empty($messages)) {
+			$this->logger->error('No messages found');
 			return;
 		}
 
@@ -73,6 +75,7 @@ class SendScheduledMessages extends TimedJob {
 				} catch (RoomNotFoundException) {
 					// This shouldn't happen
 					// What to do, what to do
+					$this->logger->error('Room not found: ' . $message->getRoomId());
 					continue;
 				}
 			}
@@ -80,17 +83,20 @@ class SendScheduledMessages extends TimedJob {
 			$room = $rooms[$message->getRoomId()];
 			try {
 				$participant = $this->participantService->getParticipantByActor($room, $message->getActorType(), $message->getActorId());
-			} catch (ParticipantNotFoundException) {
+			} catch (ParticipantNotFoundException $e) {
+				$this->logger->error('Participant not found', ['exception' => $e]);
 				$this->scheduledMessageService->deleteMessage($room, (int)$message->getId(), $message->getActorType(), $message->getActorId());
 				continue;
 			}
 
 			if ($room->isFederatedConversation()) {
+				$this->logger->error('Federated Convo');
 				// skip for now
 				continue;
 			}
 
 			if (($participant->getPermissions() & Attendee::PERMISSIONS_CHAT) === 0) {
+				$this->logger->error('No chat permissions');
 				$this->scheduledMessageService->deleteMessage($room, (int)$message->getId(), $message->getActorType(), $message->getActorId());
 				$hasScheduledMessages = $this->scheduledMessageService->getScheduledMessageCount($room, $participant);
 				$this->participantService->setHasScheduledMessages($participant, $hasScheduledMessages !== 0);
@@ -98,6 +104,7 @@ class SendScheduledMessages extends TimedJob {
 			}
 
 			if ($room->getReadOnly()) {
+				$this->logger->error('Read only room');
 				$this->scheduledMessageService->deleteMessage($room, (int)$message->getId(), $message->getActorType(), $message->getActorId());
 				$hasScheduledMessages = $this->scheduledMessageService->getScheduledMessageCount($room, $participant);
 				$this->participantService->setHasScheduledMessages($participant, $hasScheduledMessages !== 0);
@@ -105,22 +112,24 @@ class SendScheduledMessages extends TimedJob {
 			}
 
 			$parent = $parentMessage = null;
-			if ($message->getParentId() !== 0) {
+			if ($message->getParentId() !== 0 && $message->getParentId() !== null) {
 				try {
 					$parent = $this->chatManager->getParentComment($room, (string)$message->getParentId());
+					$parentMessage = $this->messageParser->createMessage($room, $participant, $parent, $this->l10n);
+					$this->messageParser->parseMessage($parentMessage);
+					if (!$parentMessage->isReplyable()) {
+						// Log and continue or delete?
+						$this->logger->error('Parent message for scheduled message not replyable');
+						continue;
+					}
 				} catch (NotFoundException $e) {
 					// Log and continue or delete?
-					continue;
-				}
-
-				$parentMessage = $this->messageParser->createMessage($room, $participant, $parent, $this->l10n);
-				$this->messageParser->parseMessage($parentMessage);
-				if (!$parentMessage->isReplyable()) {
-					// Log and continue or delete?
-					continue;
+					$this->logger->error('Parent for scheduled message not found', ['exception' => $e]);
 				}
 			} elseif ($message->getThreadId() > 0) {
+				$this->logger->error('Thread');
 				if (!$this->threadService->validateThread($room->getId(), $message->getThreadId())) {
+					$this->logger->error('Could not validate thread for scheduled message');
 					$message->setThreadId(0);
 				}
 			}
@@ -128,6 +137,7 @@ class SendScheduledMessages extends TimedJob {
 			$this->participantService->ensureOneToOneRoomIsFilled($room);
 
 			try {
+				//				$this->logger->error('Sending');
 				$metaData = $message->getDecodedMetaData();
 				$threadId = $message->getThreadId();
 				$threadTitle = $metaData[ScheduledMessage::METADATA_THREAD_TITLE];
@@ -142,7 +152,9 @@ class SendScheduledMessages extends TimedJob {
 					$metaData[ScheduledMessage::METADATA_SILENT] ?? false,
 					threadId: $threadId);
 				if ($threadId === Thread::THREAD_CREATE && $threadTitle !== '') {
+					//					$this->logger->error('thread');
 					$thread = $this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
+					//					$this->logger->error('Thread created', ['thread' => $thread]);
 					// Add to subscribed threads list
 					$this->threadService->setNotificationLevel($participant->getAttendee(), $thread->getId(), Participant::NOTIFY_DEFAULT);
 
@@ -160,15 +172,18 @@ class SendScheduledMessages extends TimedJob {
 						true
 					);
 				}
-			} catch (MessageTooLongException) {
+			} catch (MessageTooLongException $e) {
+				$this->logger->error('Sending scheduled message failed, message too long', ['exception' => $e]);
 				continue;
 			} catch (\Exception $e) {
-				$this->logger->warning($e->getMessage());
+				$this->logger->error('Sending scheduled message failed, general exception', ['exception' => $e]);
 				continue;
 			}
 
-			$this->scheduledMessageService->deleteMessage($room, (int)$message->getId(), $message->getActorType(), $message->getActorId());
+			$deleted = $this->scheduledMessageService->deleteMessage($room, (int)$message->getId(), $message->getActorType(), $message->getActorId());
+			//			$this->logger->error('Deleted: ' . (string)$deleted);
 			$hasScheduledMessages = $this->scheduledMessageService->getScheduledMessageCount($room, $participant);
+			//			$this->logger->error((string)$hasScheduledMessages);
 			$this->participantService->setHasScheduledMessages($participant, $hasScheduledMessages !== 0);
 		}
 	}

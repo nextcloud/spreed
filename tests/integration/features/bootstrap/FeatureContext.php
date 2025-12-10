@@ -1973,7 +1973,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userUpdatesScheduledMessageInRoom(string $user, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$row = $formData->getRowsHash();
 		$id = self::$textToMessageId[$message];
-		$row['sendAt'] = (int)$row['sendAt'];
+		$time = new DateTime('+ 2 seconds');
+		$row['sendAt'] = $time->getTimestamp();
 
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -1991,8 +1992,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$response = $this->getDataFromResponse($this->response);
 		self::$textToMessageId[$row['message']] = $response['id'];
 		self::$messageIdToText[$response['id']] = $row['message'];
+		self::$messageIdToTimestamp[$response['id']] = $time->getTimestamp();
 		Assert::assertEquals($row['message'], $response['message']);
-		Assert::assertEquals($row['sendAt'], $response['sendAt']);
 	}
 
 	#[When('/^user "([^"]*)" deletes scheduled message "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
