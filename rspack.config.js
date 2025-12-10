@@ -183,6 +183,10 @@ module.exports = defineConfig((env) => {
 					resourceQuery: /raw/,
 					type: 'asset/source',
 				},
+				{
+					resourceQuery: /url$/,
+					type: 'asset/resource',
+				},
 			],
 		},
 
