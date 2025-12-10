@@ -92,11 +92,15 @@ class SendScheduledMessages extends TimedJob {
 
 			if (($participant->getPermissions() & Attendee::PERMISSIONS_CHAT) === 0) {
 				$this->scheduledMessageService->deleteMessage($room, (int)$message->getId(), $message->getActorType(), $message->getActorId());
+				$hasScheduledMessages = $this->scheduledMessageService->getScheduledMessageCount($room, $participant);
+				$this->participantService->setHasScheduledMessages($participant, $hasScheduledMessages !== 0);
 				continue;
 			}
 
 			if ($room->getReadOnly()) {
 				$this->scheduledMessageService->deleteMessage($room, (int)$message->getId(), $message->getActorType(), $message->getActorId());
+				$hasScheduledMessages = $this->scheduledMessageService->getScheduledMessageCount($room, $participant);
+				$this->participantService->setHasScheduledMessages($participant, $hasScheduledMessages !== 0);
 				continue;
 			}
 
@@ -164,6 +168,8 @@ class SendScheduledMessages extends TimedJob {
 			}
 
 			$this->scheduledMessageService->deleteMessage($room, (int)$message->getId(), $message->getActorType(), $message->getActorId());
+			$hasScheduledMessages = $this->scheduledMessageService->getScheduledMessageCount($room, $participant);
+			$this->participantService->setHasScheduledMessages($participant, $hasScheduledMessages !== 0);
 		}
 	}
 }

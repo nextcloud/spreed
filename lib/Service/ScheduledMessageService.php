@@ -135,6 +135,10 @@ class ScheduledMessageService {
 			$participant->getAttendee()->getActorId()
 		);
 
+		if (empty($result)) {
+			return [];
+		}
+
 		$commentIds = array_filter(array_map(static function (array $result) {
 			return $result['parent_id'];
 		}, $result));

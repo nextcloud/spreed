@@ -50,6 +50,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static array $titleToThreadId;
 	/** @var array<int, string> */
 	protected static array $messageIdToText;
+	/** @var array<int, int> */
+	protected static array $messageIdToTimestamp;
 	/** @var array<int, string> */
 	protected static array $threadIdToTitle;
 	/** @var array<string, int> */
@@ -1940,7 +1942,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	#[When('/^user "([^"]*)" schedules a message to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function userSchedulesMessageToRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$row = $formData->getRowsHash();
-		$row['sendAt'] = (int)$row['sendAt'];
+		$time = new DateTime('+ 2 seconds');
+		$row['sendAt'] = $time->getTimestamp();
 		if (isset($row['replyTo'])) {
 			$row['replyTo'] = self::$textToMessageId[$row['replyTo']];
 		}
@@ -1962,6 +1965,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if (isset($response['id'])) {
 			self::$textToMessageId[$row['message']] = $response['id'];
 			self::$messageIdToText[$response['id']] = $row['message'];
+			self::$messageIdToTimestamp[$response['id']] = $time->getTimestamp();
 		}
 	}
 
@@ -2035,7 +2039,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$expected = $formData->getColumnsHash();
 		foreach ($expected as &$row) {
 			$row['id'] = self::$textToMessageId[$row['message']];
-			$row['sendAt'] = (int)$row['sendAt'];
+			$row['sendAt'] = self::$messageIdToTimestamp[$row['id']];
 			$row['silent'] = $row['silent'] === 'true';
 			if ($row['threadId'] === '-1') {
 				$row['threadId'] = -1;

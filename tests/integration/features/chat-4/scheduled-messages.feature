@@ -21,6 +21,13 @@ Feature: chat-4/scheduling
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
+    When wait for 3 seconds
+    And run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | hasScheduledMessages |
+      | room | 2    | false                 |
+    Then user "participant1" sees the following scheduled messages in room "room" with 200
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | silent |
 
   Scenario: Schedule a silent message
     When user "participant1" schedules a message to room "room" with 201
