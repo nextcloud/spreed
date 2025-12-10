@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2023-2024 Nextcloud GmbH and Nextcloud contributors
 # SPDX-License-Identifier: MIT
-
+# Curious what https://github.com/nextcloud/server/pull/55072 is doing
 name: Integration mariadb
 
 on:
