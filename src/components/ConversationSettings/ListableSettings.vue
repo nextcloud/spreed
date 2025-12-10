@@ -56,13 +56,13 @@ export default {
 			default: true,
 		},
 
-		value: {
+		modelValue: {
 			type: Number,
 			default: null,
 		},
 	},
 
-	emits: ['input'],
+	emits: ['update:modelValue'],
 
 	data() {
 		return {
@@ -93,7 +93,7 @@ export default {
 	},
 
 	watch: {
-		value(value) {
+		modelValue(value) {
 			this.listable = value
 		},
 
@@ -107,9 +107,9 @@ export default {
 
 	mounted() {
 		if (this.token) {
-			this.listable = this.value || this.conversation.listable
+			this.listable = this.modelValue || this.conversation.listable
 		} else {
-			this.listable = this.value
+			this.listable = this.modelValue
 		}
 	},
 
@@ -131,7 +131,7 @@ export default {
 		},
 
 		async saveListable(listable) {
-			this.$emit('input', listable)
+			this.$emit('update:modelValue', listable)
 			if (!this.token) {
 				this.listable = listable
 				return
