@@ -5,9 +5,11 @@
 
 <script setup lang="ts">
 import type { BigIntChatMessage } from '../../../../../types/index.ts'
+import type { RawTemporaryMessagePayload } from '../../../../../utils/prepareTemporaryMessage.ts'
 
 import { t } from '@nextcloud/l10n'
 import { computed, inject, ref } from 'vue'
+import { useStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionInput from '@nextcloud/vue/components/NcActionInput'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -20,11 +22,15 @@ import IconCalendarClockOutline from 'vue-material-design-icons/CalendarClockOut
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
+import IconSend from 'vue-material-design-icons/Send.vue'
 import IconSendVariantClock from 'vue-material-design-icons/SendVariantClock.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
+import { useTemporaryMessage } from '../../../../../composables/useTemporaryMessage.ts'
+import { EventBus } from '../../../../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { convertToUnix, formatDateTime } from '../../../../../utils/formattedTime.ts'
 import { getCustomDateOptions } from '../../../../../utils/getCustomDateOptions.ts'
+
 const props = defineProps<{
 	message: BigIntChatMessage
 	isActionMenuOpen: boolean
@@ -38,6 +44,9 @@ const emit = defineEmits<{
 const getMessagesListScroller = inject('getMessagesListScroller', () => undefined)
 
 const chatExtrasStore = useChatExtrasStore()
+const vuexStore = useStore()
+
+const { createTemporaryMessage } = useTemporaryMessage()
 
 const submenu = ref<'schedule' | null>(null)
 const customScheduleTimestamp = ref(new Date(new Date().setHours(new Date().getHours() + 1, 0, 0, 0)))
@@ -69,6 +78,40 @@ async function handleReschedule(timestamp: number) {
  * Delete the scheduled message
  */
 async function handleDelete() {
+	await chatExtrasStore.deleteScheduledMessage(props.message.token, props.message.id)
+}
+
+/**
+ * Delete the scheduled message
+ */
+async function handleSubmit() {
+	const temporaryMessagePayload: RawTemporaryMessagePayload = {
+		message: props.message.message,
+		token: props.message.token,
+		silent: props.message.silent,
+	}
+
+	if ((props.message.threadId ?? 0) > 0) {
+		temporaryMessagePayload.threadId = props.message.threadId
+		temporaryMessagePayload.isThread = true
+	}
+	if (props.message.parent?.id && !props.message.parent.deleted) {
+		temporaryMessagePayload.parent = props.message.parent
+	}
+	if (props.message.threadId === -1) {
+		// Substitute thread title with message text, if missing
+		temporaryMessagePayload.threadTitle = props.message.threadTitle
+		temporaryMessagePayload.threadReplies = 0
+		temporaryMessagePayload.isThread = true
+	}
+
+	const temporaryMessage = createTemporaryMessage(temporaryMessagePayload)
+
+	// FIXME: quite scheduled messages view
+	// FIXME: Scroll to bottom after sending the scheduled message
+	EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
+
+	await vuexStore.dispatch('postNewMessage', { token: props.message.token, temporaryMessage })
 	await chatExtrasStore.deleteScheduledMessage(props.message.token, props.message.id)
 }
 
@@ -129,7 +172,6 @@ function onMenuClose() {
 
 				<NcActionButton
 					key="edit-message"
-					:aria-label="t('spreed', 'Edit message')"
 					close-after-click
 					@click.stop="handleEdit">
 					<template #icon>
@@ -145,6 +187,18 @@ function onMenuClose() {
 						<IconTrashCanOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Delete') }}
+				</NcActionButton>
+
+				<NcActionSeparator />
+
+				<NcActionButton
+					key="send-message"
+					close-after-click
+					@click.stop="handleSubmit">
+					<template #icon>
+						<IconSend :size="20" />
+					</template>
+					{{ t('spreed', 'Send message now') }}
 				</NcActionButton>
 			</template>
 
