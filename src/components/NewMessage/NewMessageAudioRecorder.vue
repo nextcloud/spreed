@@ -55,6 +55,11 @@ import IconClose from 'vue-material-design-icons/Close.vue'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import { useAudioEncoder } from '../../composables/useAudioEncoder.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
+import {
+	destroyNoiseSuppressionWorklet,
+	processNoiseSuppression,
+	registerNoiseSuppressionWorklet,
+} from '../../utils/supressNoise.ts'
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
 export default {
@@ -173,7 +178,9 @@ export default {
 			// Create new audio stream
 			try {
 				this.audioStream = await mediaDevicesManager.getUserMedia({
-					audio: true,
+					audio: {
+						noiseSuppression: false,
+					},
 					video: false,
 				})
 			} catch (exception) {
@@ -189,7 +196,9 @@ export default {
 
 			// Create a media recorder to capture the stream
 			try {
-				this.mediaRecorder = new this.MediaRecorder(this.audioStream, {
+				await registerNoiseSuppressionWorklet()
+				const audioStreamProcessed = processNoiseSuppression(this.audioStream, true)
+				this.mediaRecorder = new this.MediaRecorder(audioStreamProcessed, {
 					mimeType: 'audio/wav',
 				})
 			} catch (exception) {
@@ -243,6 +252,7 @@ export default {
 			this.mediaRecorder.stop()
 			clearInterval(this.recordTimer)
 			this.$emit('recording', false)
+			destroyNoiseSuppressionWorklet()
 		},
 
 		/**
