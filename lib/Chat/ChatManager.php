@@ -645,11 +645,20 @@ class ChatManager {
 
 		$this->commentsManager->save($comment);
 
-		$this->attachmentService->deleteAttachmentByMessageId((int)$comment->getId());
+		$messageId = (int)$comment->getId();
+		$this->attachmentService->deleteAttachmentByMessageId($messageId);
 
 		$this->referenceManager->invalidateCache($chat->getToken());
 
 		$this->unreadCountCache->clear($chat->getId() . '-');
+
+		if ($chat->getLastPinnedId() === $messageId) {
+			$pinnedMessages = $this->attachmentService->getAttachmentsByType($chat, Attachment::TYPE_PINNED, 0, 1);
+			if (!empty($pinnedMessages)) {
+				$pinnedMessage = array_shift($pinnedMessages);
+				$this->roomService->setLastPinnedId($chat, $pinnedMessage->getMessageId());
+			}
+		}
 
 		return $this->addSystemMessage(
 			$chat,
