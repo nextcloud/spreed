@@ -254,8 +254,8 @@ export type LocalCallParticipantModel = {
 	on(event: string, handler: (localCallParticipantModel: LocalCallParticipantModel, ...args: any[]) => void): void
 	off(event: string, handler: (localCallParticipantModel: LocalCallParticipantModel, ...args: any[]) => void): void
 
-	get(key: string): any
-	set(key: string, value: any): void
+	get(key: string): unknown
+	set(key: string, value: unknown): void
 }
 
 export type Signaling = {
