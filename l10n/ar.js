@@ -1271,6 +1271,7 @@ OC.L10N.register(
     "Back to conversations" : "عودة إلى المحادثات",
     "Archived conversations" : "المحادثات المؤرشفة",
     "Clear filter" : "إزالة التصفية",
+    "App settings" : "إعدادات التطبيق",
     "Users" : "المستخدمين:",
     "Groups" : "المجموعات",
     "Teams" : "الفرق",

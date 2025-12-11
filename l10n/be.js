@@ -1078,6 +1078,7 @@ OC.L10N.register(
     "Threads" : "Гутаркі",
     "Clear filter" : "Ачысціць фільтр",
     "Show more threads" : "Паказаць больш гутарак",
+    "App settings" : "Налады праграмы",
     "Users" : "Карыстальнікі",
     "Groups" : "Групы",
     "Teams" : "Каманды",
