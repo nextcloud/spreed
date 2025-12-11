@@ -1221,11 +1221,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" propfinds path "([^"]*)"$/
 	 * @param string $user
 	 * @param string $path
 	 * @return int
 	 */
-	private function getFileIdForPath($user, $path) {
+	public function getFileIdForPath($user, $path) {
 		$this->setCurrentUser($user);
 
 		$url = "/$user/$path";
