@@ -1064,16 +1064,22 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		const removeSender = (hasAudioSenders && !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO))
 			|| (hasVideoSenders && !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO))
 
-		if (currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
-			webrtc.webrtc.allowAudio()
-		} else {
+		const hasPublishAudioPermissions = !!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
+		const hasPublishVideoPermissions = !!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)
+
+		if (!hasPublishAudioPermissions) {
+			// If permissions were revoked, disable media devices
 			webrtc.webrtc.disallowAudio()
+		} else if (!webrtc.webrtc.isAudioAllowed()) {
+			// If permissions were just granted and media was not previous allowed
+			// Mute audio to avoid unintentional audio publishing
+			webrtc.webrtc.mute()
 		}
 
-		if (currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO) {
-			webrtc.webrtc.allowVideo()
-		} else {
+		if (!hasPublishVideoPermissions) {
 			webrtc.webrtc.disallowVideo()
+		} else if (!webrtc.webrtc.isVideoAllowed()) {
+			webrtc.webrtc.pauseVideo()
 		}
 
 		if (webrtc.webrtc.isLocalMediaActive()
