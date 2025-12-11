@@ -294,7 +294,7 @@ export class LocalStateBroadcasterMcu extends LocalStateBroadcaster {
 			this._webRtc.sendDataChannelToAll('status', 'videoOn')
 		}
 
-		const name = this._localCallParticipantModel.get('guestName')
+		const name = this._localCallParticipantModel.get('guestName') as string
 		this._webRtc.sendDataChannelToAll('status', 'nickChanged', this._getNickChangedDataChannelMessagePayload(name))
 	}
 
@@ -422,7 +422,7 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 	}
 
 	private _sendCurrentNameTo(peerId: string): void {
-		const name = this._localCallParticipantModel.get('guestName')
+		const name = this._localCallParticipantModel.get('guestName') as string
 
 		this._webRtc.sendDataChannelTo(peerId, 'status', 'nickChanged', this._getNickChangedDataChannelMessagePayload(name))
 		this._webRtc.sendTo(peerId, 'nickChanged', { name })
