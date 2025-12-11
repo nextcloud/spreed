@@ -9,31 +9,25 @@
 		:class="{ 'wrapper--big': isBig }"
 		@mouseover.stop="mouseover = true"
 		@mouseleave.stop="mouseover = false">
-		<TransitionWrapper name="fade">
-			<div v-if="showRaiseHandIndicator" class="status-indicator raiseHandIndicator">
-				<IconHandBackLeft :size="18" fill-color="#ffffff" />
-			</div>
-		</TransitionWrapper>
+		<div v-if="showRaiseHandIndicator" class="status-indicator raiseHandIndicator">
+			<IconHandBackLeft :size="18" fill-color="#ffffff" />
+		</div>
 
 		<div v-if="!isSidebar" class="bottom-bar">
-			<TransitionWrapper name="fade">
-				<div
-					v-show="showParticipantName"
-					class="participant-name"
-					:class="{
-						'participant-name--active': isCurrentlyActive,
-						'participant-name--has-shadow': hasShadow,
-					}">
-					{{ participantName }}
-				</div>
-			</TransitionWrapper>
+			<div
+				v-show="showParticipantName"
+				class="participant-name"
+				:class="{
+					'participant-name--active': isCurrentlyActive,
+					'participant-name--has-shadow': hasShadow,
+				}">
+				{{ participantName }}
+			</div>
 
-			<TransitionWrapper
+			<div
 				v-if="!isScreen"
 				v-show="showVideoOverlay"
-				class="media-indicators"
-				name="fade"
-				group>
+				class="media-indicators">
 				<NcButton
 					v-if="showAudioIndicator"
 					:title="audioButtonTitle"
@@ -79,7 +73,7 @@
 					class="status-indicator iceFailedIndicator">
 					<IconAlertCircleOutline :size="20" />
 				</div>
-			</TransitionWrapper>
+			</div>
 
 			<NcButton
 				v-if="showStopFollowingButton"
@@ -103,7 +97,6 @@ import IconMicrophone from 'vue-material-design-icons/Microphone.vue' // Filled 
 import IconMonitor from 'vue-material-design-icons/Monitor.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import IconVideoOffOutline from 'vue-material-design-icons/VideoOffOutline.vue'
-import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import IconMicrophoneOffOutline from '../../../../img/material-icons/microphone-off-outline.svg?raw'
 import { PARTICIPANT } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
@@ -122,7 +115,6 @@ export default {
 		IconVideoOffOutline,
 		NcButton,
 		NcIconSvgWrapper,
-		TransitionWrapper,
 	},
 
 	inheritAttrs: false,
@@ -351,6 +343,7 @@ export default {
 	align-items: center;
 	gap: var(--default-grid-baseline);
 	width: 100%;
+	min-height: var(--default-clickable-area);
 
 	& .media-indicators {
 		display: flex;
