@@ -94,7 +94,7 @@ import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import Screen from './Screen.vue'
 import VideoBackground from './VideoBackground.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
-import { ATTENDEE, AVATAR } from '../../../constants.ts'
+import { ATTENDEE, AVATAR, PARTICIPANT } from '../../../constants.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import { useGuestNameStore } from '../../../stores/guestName.js'
@@ -456,7 +456,10 @@ export default {
 		},
 
 		hasVideo() {
-			return !this.model.attributes.videoBlocked && this.model.attributes.videoAvailable && this.sharedData.remoteVideoBlocker.isVideoEnabled() && (typeof this.model.attributes.stream === 'object')
+			return !!(this.participant.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)
+				&& !this.model.attributes.videoBlocked
+				&& this.model.attributes.videoAvailable
+				&& this.sharedData.remoteVideoBlocker.isVideoEnabled() && (typeof this.model.attributes.stream === 'object')
 		},
 
 		hasSelectedVideo() {
