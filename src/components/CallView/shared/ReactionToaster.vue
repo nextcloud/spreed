@@ -113,20 +113,24 @@ export default {
 	},
 
 	watch: {
-		callParticipantModels(models) {
-			// subscribe connected models for reaction signals
-			const addedModels = models.filter((model) => !this.registeredModels[model.attributes.peerId])
-			addedModels.forEach((addedModel) => {
-				this.registeredModels[addedModel.attributes.peerId] = addedModel
-				this.registeredModels[addedModel.attributes.peerId].on('reaction', this.handleReaction)
-			})
+		callParticipantModels: {
+			handler(models) {
+				// subscribe connected models for reaction signals
+				const addedModels = models.filter((model) => !this.registeredModels[model.attributes.peerId])
+				addedModels.forEach((addedModel) => {
+					this.registeredModels[addedModel.attributes.peerId] = addedModel
+					this.registeredModels[addedModel.attributes.peerId].on('reaction', this.handleReaction)
+				})
 
-			// unsubscribe disconnected models
-			const removedModelIds = Object.keys(this.registeredModels).filter((registeredModelId) => !models.find((model) => model.attributes.peerId === registeredModelId))
-			removedModelIds.forEach((removedModelId) => {
-				this.registeredModels[removedModelId].off('reaction', this.handleReaction)
-				delete this.registeredModels[removedModelId]
-			})
+				// unsubscribe disconnected models
+				const removedModelIds = Object.keys(this.registeredModels).filter((registeredModelId) => !models.find((model) => model.attributes.peerId === registeredModelId))
+				removedModelIds.forEach((removedModelId) => {
+					this.registeredModels[removedModelId].off('reaction', this.handleReaction)
+					delete this.registeredModels[removedModelId]
+				})
+			},
+
+			immediate: true,
 		},
 	},
 
