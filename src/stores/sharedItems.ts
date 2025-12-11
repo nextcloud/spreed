@@ -5,6 +5,7 @@
 
 import type {
 	ChatMessage,
+	PinnedChatMessage,
 	SharedItems,
 	SharedItemsOverview,
 } from '../types/index.ts'
@@ -23,7 +24,11 @@ import { getItemTypeFromMessage } from '../utils/getItemTypeFromMessage.ts'
 
 type SharedItemType = keyof SharedItemsOverview
 
-type SharedItemsPoolType = Record<string, Record<SharedItemType, Record<number, SharedItems[keyof SharedItems]>>>
+type SharedItemsPoolType = Record<string, {
+	[K: string]: Record<number, SharedItems[keyof SharedItems]>
+}>
+
+type MetaData = PinnedChatMessage['metaData']
 
 /**
  * Store for shared items shown in RightSidebar
@@ -288,11 +293,19 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 	 *
 	 * @param token
 	 */
-	function findMostRecentPinnedMessageId(token: string): number | undefined | null {
-		if (!sharedItemsPool[token][SHARED_ITEM.TYPES.PINNED]) {
+	function findMostRecentPinnedMessageId(token: string): number | null {
+		const pinnedMessages = Object.values(sharedItemsPool[token]?.pinned ?? {})
+		if (!pinnedMessages.length) {
 			return null
 		}
-		return Object.values(sharedItemsPool[token][SHARED_ITEM.TYPES.PINNED]).sort((a, b) => (b.metaData.pinnedAt) - (a.metaData.pinnedAt)).at(0)?.id
+		const { id } = pinnedMessages.reduce<{ id: number | null, pinnedAt: number }>((acc, message) => {
+			const messagePinnedAt = message.metaData!.pinnedAt!
+			if (messagePinnedAt > acc.pinnedAt) {
+				return { id: message.id, pinnedAt: messagePinnedAt }
+			}
+			return acc
+		}, { id: null, pinnedAt: 0 })
+		return id
 	}
 
 	/**
