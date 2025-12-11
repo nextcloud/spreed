@@ -12,7 +12,7 @@ import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { useResizeObserver } from '@vueuse/core'
 import debounce from 'debounce'
-import { computed, onUnmounted, ref, toValue, useTemplateRef, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, toValue, useTemplateRef, watch } from 'vue'
 import { useStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -154,6 +154,10 @@ const debounceAdjustLayout = debounce(adjustLayout, 200)
 
 useResizeObserver(bottomBar, () => {
 	debounceAdjustLayout()
+})
+
+onMounted(() => {
+	adjustLayout()
 })
 
 onUnmounted(() => {
