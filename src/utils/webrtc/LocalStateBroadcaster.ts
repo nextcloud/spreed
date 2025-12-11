@@ -253,7 +253,7 @@ export class LocalStateBroadcasterMcu extends LocalStateBroadcaster {
 			this._sendCurrentStateToAll()
 		})
 
-		const peerId = callParticipantModel.get('peerId')
+		const peerId = callParticipantModel.get('peerId') as string
 
 		this._sendStateWithRepetitionToParticipant.get(peerId)?.destroy()
 
@@ -268,7 +268,7 @@ export class LocalStateBroadcasterMcu extends LocalStateBroadcaster {
 			this._sendStateWithRepetition = null
 		}
 
-		const peerId = callParticipantModel.get('peerId')
+		const peerId = callParticipantModel.get('peerId') as string
 
 		this._sendStateWithRepetitionToParticipant.get(peerId)?.destroy()
 
@@ -366,14 +366,14 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 	}
 
 	protected _handleAddCallParticipantModel(callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModel): void {
-		this._callParticipantModels.set(callParticipantModel.get('peerId'), callParticipantModel)
+		this._callParticipantModels.set(callParticipantModel.get('peerId') as string, callParticipantModel)
 
 		callParticipantModel.on('change:connectionState', this._handleConnectionStateBound)
 		callParticipantModel.on('change:peer', this._handlePeerBound)
 	}
 
 	protected _handleRemoveCallParticipantModel(callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModel): void {
-		this._callParticipantModels.delete(callParticipantModel.get('peerId'))
+		this._callParticipantModels.delete(callParticipantModel.get('peerId') as string)
 
 		callParticipantModel.off('change:connectionState', this._handleConnectionStateBound)
 		callParticipantModel.off('change:peer', this._handlePeerBound)
@@ -382,7 +382,7 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 	private _handleConnectionState(callParticipantModel: CallParticipantModel, connectionState: string): void {
 		if (connectionState === ConnectionState.CONNECTED
 			|| connectionState === ConnectionState.COMPLETED) {
-			this._sendCurrentMediaStateTo(callParticipantModel.get('peerId'))
+			this._sendCurrentMediaStateTo(callParticipantModel.get('peerId') as string)
 
 			callParticipantModel.off('change:connectionState', this._handleConnectionStateBound)
 			callParticipantModel.off('change:peer', this._handlePeerBound)

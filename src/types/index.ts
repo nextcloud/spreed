@@ -246,8 +246,8 @@ export type CallParticipantModel = {
 	on(event: string, handler: (callParticipantModel: CallParticipantModel, ...args: any[]) => void): void
 	off(event: string, handler: (callParticipantModel: CallParticipantModel, ...args: any[]) => void): void
 
-	get(key: string): any
-	set(key: string, value: any): void
+	get(key: string): unknown
+	set(key: string, value: unknown): void
 }
 
 export type LocalCallParticipantModel = {
