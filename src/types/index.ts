@@ -229,8 +229,14 @@ export type callSIPDialOutResponse = ApiResponse<operations['call-sip-dial-out']
 export type CallParticipantCollection = {
 	callParticipantModels: Array<CallParticipantModel>
 
+	/* eslint-disable @typescript-eslint/no-explicit-any --
+	 * Arguments of function types are contravariant in strict mode, so the
+	 * "any" type is required here, as the "unknown" type would prevent
+	 * assigning a function type with narrower argument types.
+	 */
 	on(event: string, handler: (callParticipantCollection: CallParticipantCollection, ...args: any[]) => void): void
 	off(event: string, handler: (callParticipantCollection: CallParticipantCollection, ...args: any[]) => void): void
+	/* eslint-enable @typescript-eslint/no-explicit-any */
 
 	add(options: CallParticipantModelOptions): CallParticipantModel
 	get(peerId: string): CallParticipantModel | undefined
@@ -243,8 +249,14 @@ export type CallParticipantModelOptions = {
 }
 
 export type CallParticipantModel = {
+	/* eslint-disable @typescript-eslint/no-explicit-any --
+	 * Arguments of function types are contravariant in strict mode, so the
+	 * "any" type is required here, as the "unknown" type would prevent
+	 * assigning a function type with narrower argument types.
+	 */
 	on(event: string, handler: (callParticipantModel: CallParticipantModel, ...args: any[]) => void): void
 	off(event: string, handler: (callParticipantModel: CallParticipantModel, ...args: any[]) => void): void
+	/* eslint-enable @typescript-eslint/no-explicit-any */
 
 	get(key: string): unknown
 	set(key: string, value: unknown): void
