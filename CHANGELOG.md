@@ -5,6 +5,55 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.5 – 2025-12-11
+### Changed
+- Update dependencies
+- Update translations
+- Build mechanism was changed from Webpack to RSPack
+
+### Fixed
+- fix(call): Fix low frame rate in the grid layout
+  [#16519](https://github.com/nextcloud/spreed/pull/16519)
+- fix(call): Fix "Stay in call" as primary action in "Leave call"-dialog
+  [#16481](https://github.com/nextcloud/spreed/pull/16481)
+- fix(call): Keep media disabled when reassigning permissions
+  [#16522](https://github.com/nextcloud/spreed/pull/16522)
+- fix(chat): Fix a case where chat-relay would pause and skip messages
+  [#16407](https://github.com/nextcloud/spreed/pull/16407)
+- fix(chat): Correctly handle unsorted reaction details
+  [#16426](https://github.com/nextcloud/spreed/pull/16426)
+- fix(settings): Hide unsupported shortcuts for guests
+  [#16410](https://github.com/nextcloud/spreed/pull/16410)
+- fix(settings): Fix wasm file name in system check
+  [#16395](https://github.com/nextcloud/spreed/pull/16395)
+- fix(settings): Fix default for listable conversation to be off
+  [#16512](https://github.com/nextcloud/spreed/pull/16512)
+- fix(settings): Fix a missing check when configuring Matterbridge
+  [#16524](https://github.com/nextcloud/spreed/pull/16524)
+
+## 21.1.6 – 2025-12-11
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(call): Fix low frame rate in the grid layout
+  [#16389](https://github.com/nextcloud/spreed/pull/16389)
+- fix(call): Keep media disabled when reassigning permissions
+  [#16521](https://github.com/nextcloud/spreed/pull/16521)
+- fix(chat): Fix resetting the cursor to the end of the message when editing
+  [#16300](https://github.com/nextcloud/spreed/pull/16300)
+- fix(chat): Don't show typing indicator when editing a message
+  [#16140](https://github.com/nextcloud/spreed/pull/16140)
+- fix(search): Fix short date style in message search
+  [#16232](https://github.com/nextcloud/spreed/pull/16232)
+- fix(settings): Hide message expiration when not supported by the server
+  [#16317](https://github.com/nextcloud/spreed/pull/16317)
+- fix(settings): Don't transfer ownership of sample conversations
+  [#16177](https://github.com/nextcloud/spreed/pull/16177)
+- fix(settings): Fix a missing check when configuring Matterbridge
+  [#16523](https://github.com/nextcloud/spreed/pull/16523)
+
 ## 22.0.4 – 2025-11-20
 ### Changed
 - Update translations
