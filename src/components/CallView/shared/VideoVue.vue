@@ -13,68 +13,60 @@
 		@mouseover="mouseover = true"
 		@mouseleave="mouseover = false"
 		@click="$emit('clickVideo')">
-		<TransitionWrapper name="fade">
-			<div
-				v-show="showVideo"
-				:class="videoWrapperClass"
-				class="videoWrapper"
-				:style="videoWrapperStyle">
-				<video
-					ref="video"
-					:disablePictureInPicture="!isBig"
-					:class="fitVideo ? 'video--fit' : 'video--fill'"
-					class="video"
-					@playing="updateVideoAspectRatio" />
-				<IconAccountOffOutline
-					v-if="isPresenterOverlay && mouseover"
-					class="presenter-icon__hide"
-					:aria-label="t('spreed', 'Hide presenter video')"
-					:title="t('spreed', 'Hide presenter video')"
-					:size="32"
-					@click="$emit('clickPresenter')" />
-				<NcLoadingIcon
-					v-if="isLoading"
-					:size="avatarSize / 2"
-					class="video-loading" />
+		<div
+			v-show="showVideo"
+			:class="videoWrapperClass"
+			class="videoWrapper"
+			:style="videoWrapperStyle">
+			<video
+				ref="video"
+				:disablePictureInPicture="!isBig"
+				:class="fitVideo ? 'video--fit' : 'video--fill'"
+				class="video"
+				@playing="updateVideoAspectRatio" />
+			<IconAccountOffOutline
+				v-if="isPresenterOverlay && mouseover"
+				class="presenter-icon__hide"
+				:aria-label="t('spreed', 'Hide presenter video')"
+				:title="t('spreed', 'Hide presenter video')"
+				:size="32"
+				@click="$emit('clickPresenter')" />
+			<NcLoadingIcon
+				v-if="isLoading"
+				:size="avatarSize / 2"
+				class="video-loading" />
 
-				<img
-					v-if="screenshotModeUrl && isPresenterOverlay"
-					class="dev-mode-video--presenter"
-					alt="dev-mode-video--presenter"
-					:src="screenshotModeUrl">
-			</div>
-		</TransitionWrapper>
-		<TransitionWrapper name="fade">
-			<ScreenShare
-				v-if="showSharedScreen"
-				:is-big="isBig"
+			<img
+				v-if="screenshotModeUrl && isPresenterOverlay"
+				class="dev-mode-video--presenter"
+				alt="dev-mode-video--presenter"
+				:src="screenshotModeUrl">
+		</div>
+		<ScreenShare
+			v-if="showSharedScreen"
+			:is-big="isBig"
+			:token="token"
+			:call-participant-model="model"
+			:shared-data="sharedData" />
+		<div
+			v-if="showBackgroundAndAvatar"
+			class="avatar-container">
+			<VideoBackground :display-name="displayName" :user="participantUserId" />
+			<AvatarWrapper
+				:id="participantUserId"
 				:token="token"
-				:call-participant-model="model"
-				:shared-data="sharedData" />
-		</TransitionWrapper>
-		<TransitionWrapper name="fade">
-			<div
-				v-if="showBackgroundAndAvatar"
-				class="avatar-container">
-				<VideoBackground :display-name="displayName" :user="participantUserId" />
-				<AvatarWrapper
-					:id="participantUserId"
-					:token="token"
-					:name="displayName"
-					:source="participantActorType"
-					:size="avatarSize"
-					:loading="isLoading"
-					disable-menu
-					disable-tooltip />
-			</div>
-		</TransitionWrapper>
-		<TransitionWrapper name="fade">
-			<div
-				v-if="showPlaceholderForPromoted"
-				class="placeholder-for-promoted">
-				<IconAccountCircleOutline v-if="isPromoted || isSelected" fill-color="#FFFFFF" :size="64" />
-			</div>
-		</TransitionWrapper>
+				:name="displayName"
+				:source="participantActorType"
+				:size="avatarSize"
+				:loading="isLoading"
+				disable-menu
+				disable-tooltip />
+		</div>
+		<div
+			v-if="showPlaceholderForPromoted"
+			class="placeholder-for-promoted">
+			<IconAccountCircleOutline v-if="isPromoted || isSelected" fill-color="#FFFFFF" :size="64" />
+		</div>
 		<div
 			v-if="connectionMessage"
 			:class="connectionMessageClass"
@@ -100,7 +92,6 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconAccountCircleOutline from 'vue-material-design-icons/AccountCircleOutline.vue'
 import IconAccountOffOutline from 'vue-material-design-icons/AccountOffOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
-import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import ScreenShare from './ScreenShare.vue'
 import VideoBackground from './VideoBackground.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
@@ -119,7 +110,6 @@ export default {
 
 	components: {
 		AvatarWrapper,
-		TransitionWrapper,
 		VideoBackground,
 		ScreenShare,
 		VideoBottomBar,
