@@ -5,6 +5,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.6 – 2025-12-11
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(call): Fix low frame rate in the grid layout
+  [#16389](https://github.com/nextcloud/spreed/pull/16389)
+- fix(call): Keep media disabled when reassigning permissions
+  [#16521](https://github.com/nextcloud/spreed/pull/16521)
+- fix(chat): Fix resetting the cursor to the end of the message when editing
+  [#16300](https://github.com/nextcloud/spreed/pull/16300)
+- fix(chat): Don't show typing indicator when editing a message
+  [#16140](https://github.com/nextcloud/spreed/pull/16140)
+- fix(search): Fix short date style in message search
+  [#16232](https://github.com/nextcloud/spreed/pull/16232)
+- fix(settings): Hide message expiration when not supported by the server
+  [#16317](https://github.com/nextcloud/spreed/pull/16317)
+- fix(settings): Don't transfer ownership of sample conversations
+  [#16177](https://github.com/nextcloud/spreed/pull/16177)
+- fix(settings): Fix a missing check when configuring Matterbridge
+  [#16523](https://github.com/nextcloud/spreed/pull/16523)
+
 ## 21.1.5 – 2025-09-18
 ### Changed
 - Update translations
