@@ -26,7 +26,7 @@ To make sure a call can sustain the largest number of participants, make sure th
     - on a desktop/laptop system, a browser like Firefox or Chrome should be used. The WebRTC implementation in other browsers is often sub-par. On a laptop, the power cord should be plugged in - this often results in better CPU performance.
     - on mobile devices, the Android/iOS apps should be used because mobile browsers will run out of computing power quickly.
 
-* all participant disables their video streams.
+* all participants disable their video streams.
 
 
 With this setup, 20 users should be possible in a typical setup.
