@@ -5,7 +5,9 @@
 import { t } from '@nextcloud/l10n'
 import { SHARED_ITEM } from '../../../constants.ts'
 
-export const sharedItemsOrder = [SHARED_ITEM.TYPES.MEDIA,
+export const sharedItemsOrder = [
+	SHARED_ITEM.TYPES.PINNED,
+	SHARED_ITEM.TYPES.MEDIA,
 	SHARED_ITEM.TYPES.FILE,
 	SHARED_ITEM.TYPES.RECORDING,
 	SHARED_ITEM.TYPES.POLL,
@@ -13,11 +15,13 @@ export const sharedItemsOrder = [SHARED_ITEM.TYPES.MEDIA,
 	SHARED_ITEM.TYPES.AUDIO,
 	SHARED_ITEM.TYPES.LOCATION,
 	SHARED_ITEM.TYPES.DECK_CARD,
-	SHARED_ITEM.TYPES.OTHER] as const
+	SHARED_ITEM.TYPES.OTHER,
+] as const
 
-export const sharedItemsWithPreviewLimit = [SHARED_ITEM.TYPES.DECK_CARD, SHARED_ITEM.TYPES.LOCATION, SHARED_ITEM.TYPES.POLL] as const
+export const sharedItemsWithPreviewLimit = [SHARED_ITEM.TYPES.PINNED, SHARED_ITEM.TYPES.DECK_CARD, SHARED_ITEM.TYPES.LOCATION, SHARED_ITEM.TYPES.POLL] as const
 
 export const sharedItemTitle = {
+	[SHARED_ITEM.TYPES.PINNED]: t('spreed', 'Pinned messages'),
 	[SHARED_ITEM.TYPES.MEDIA]: t('spreed', 'Media'),
 	[SHARED_ITEM.TYPES.FILE]: t('spreed', 'Files'),
 	[SHARED_ITEM.TYPES.POLL]: t('spreed', 'Polls'),
@@ -31,6 +35,7 @@ export const sharedItemTitle = {
 } as const
 
 export const sharedItemButtonTitle = {
+	[SHARED_ITEM.TYPES.PINNED]: t('spreed', 'Show all pinned messages'),
 	[SHARED_ITEM.TYPES.MEDIA]: t('spreed', 'Show all media'),
 	[SHARED_ITEM.TYPES.FILE]: t('spreed', 'Show all files'),
 	[SHARED_ITEM.TYPES.POLL]: t('spreed', 'Show all polls'),
