@@ -111,7 +111,7 @@ class MatterbridgeManager {
 		$newBridge = [
 			'enabled' => $enabled,
 			'pid' => $currentBridge['pid'] ?? 0,
-			'parts' => $parts,
+			'parts' => $this->validateParts($parts),
 		];
 
 		$this->notify($room, $userId, $currentBridge, $newBridge);
@@ -335,6 +335,7 @@ class MatterbridgeManager {
 	private function generateConfig(array $bridge): string {
 		$content = '';
 		foreach ($bridge['parts'] as $k => $part) {
+			$k = (int)$k;
 			$type = $part['type'];
 
 			if ($type === 'nctalk') {
@@ -492,6 +493,22 @@ class MatterbridgeManager {
 		}
 
 		return $content;
+	}
+
+	protected function validateParts(array $parts): array {
+		foreach ($parts as $k => $part) {
+			if (!is_numeric($k)) {
+				$this->logger->error('User tried to configure a malicious matterbridge setup');
+				throw new \InvalidArgumentException('Invalid matterbridge parameters');
+			}
+			foreach ($part as $key => $value) {
+				if (preg_match('/["\n]/', $key) || preg_match('/["\n]/', $value)) {
+					$this->logger->error('User tried to configure a malicious matterbridge setup');
+					throw new \InvalidArgumentException('Invalid matterbridge parameters');
+				}
+			}
+		}
+		return $parts;
 	}
 
 	/**
