@@ -33,7 +33,6 @@ export default {
 					'slide-up',
 					'slide-right',
 					'slide-down',
-					'toast',
 					'zoom',
 				].includes(value)
 			},
@@ -153,23 +152,6 @@ export default {
 	}
 }
 
-@mixin toast-rules {
-	&-enter,
-	&-leave-to {
-		opacity: 0;
-	}
-	&-enter-to,
-	&-leave {
-		opacity: 1;
-	}
-	&-enter-active,
-	&-leave-active {
-		transition: $transition-slow;
-		transition-property: opacity;
-		transition-timing-function: linear;
-	}
-}
-
 @mixin zoom-rules {
 	&-enter,
 	&-leave-to {
@@ -207,10 +189,6 @@ export default {
 	@include slide-down-rules;
 }
 
-.toast {
-	@include toast-rules;
-}
-
 .zoom {
 	@include zoom-rules;
 }
@@ -239,10 +217,6 @@ export default {
 		&.slide-down {
 			@include group-rules;
 			@include slide-down-rules;
-		}
-		&.toast {
-			@include group-rules;
-			@include toast-rules;
 		}
 		&.zoom {
 			@include group-rules;

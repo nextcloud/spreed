@@ -4,11 +4,7 @@
 -->
 
 <template>
-	<TransitionWrapper
-		class="toaster"
-		name="toast"
-		tag="ul"
-		group>
+	<ul class="toaster">
 		<li
 			v-for="toast in toasts"
 			:key="toast.seed"
@@ -28,7 +24,7 @@
 				{{ toast.name }}
 			</span>
 		</li>
-	</TransitionWrapper>
+	</ul>
 </template>
 
 <script>
@@ -38,7 +34,6 @@ import { imagePath } from '@nextcloud/router'
 import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
-import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useGuestNameStore } from '../../../stores/guestName.ts'
 
@@ -64,10 +59,6 @@ let nextProcessedTimestamp = 0
 
 export default {
 	name: 'ReactionToaster',
-
-	components: {
-		TransitionWrapper,
-	},
 
 	props: {
 		/**
@@ -296,6 +287,10 @@ export default {
 @keyframes toast-floating {
 	0% {
 		transform: translateY(0);
+		opacity: 0;
+	}
+	5% {
+		transform: translateY(calc(-0.05 * var(--vertical-offset) * 1vh));
 		opacity: 1;
 	}
 	50% {
