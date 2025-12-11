@@ -926,6 +926,7 @@ OC.L10N.register(
     "Unread messages" : "Непрочетени съобщения",
     "New personal note" : "Нова лична бележка",
     "Clear filter" : "Изчстиване на филтър",
+    "App settings" : "Настройки на приложението",
     "Users" : "Потребители",
     "Groups" : "Групи",
     "Open conversations" : "Отворени разговори",
