@@ -291,7 +291,7 @@
 					<template #icon>
 						<IconCogOutline :size="20" />
 					</template>
-					{{ t('spreed', 'Talk settings') }}
+					{{ t('spreed', 'App settings') }}
 				</NcButton>
 			</div>
 		</template>
