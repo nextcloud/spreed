@@ -57,6 +57,11 @@ const reactions = {
 	'😥': 'Concerned.gif',
 }
 
+const ANIMATION_LENGTH = 2_000
+const TOAST_INTERVAL = 500
+// Timestamp of when the next reaction should be shown in UI
+let nextProcessedTimestamp = 0
+
 export default {
 	name: 'ReactionToaster',
 
@@ -101,7 +106,6 @@ export default {
 			registeredModels: {},
 			reactionsQueue: [],
 			intervalId: null,
-			animationLength: 2000,
 			toasts: [],
 		}
 	},
@@ -135,7 +139,7 @@ export default {
 	},
 
 	mounted() {
-		this.intervalId = setInterval(this.processReactionsQueue, this.animationLength / 4)
+		this.intervalId = setInterval(this.processReactionsQueue, TOAST_INTERVAL)
 		subscribe('send-reaction', this.handleOwnReaction)
 	},
 
@@ -155,8 +159,8 @@ export default {
 		},
 
 		handleReaction(model, reaction, isLocalModel = false) {
-			// prevent spamming to queue from a single account
-			if (this.reactionsQueue.some((item) => item.id === model.attributes.peerId)) {
+			// prevent spamming to queue from a single account (unless in debug mode)
+			if (!OC.debug && this.reactionsQueue.some((item) => item.id === model.attributes.peerId)) {
 				return
 			}
 
@@ -177,6 +181,13 @@ export default {
 		},
 
 		processReactionsQueue() {
+			// Prevent spamming with reactions, if tab was suspended
+			const now = Date.now()
+			if (now < nextProcessedTimestamp) {
+				return
+			}
+			nextProcessedTimestamp = now + TOAST_INTERVAL
+
 			if (this.reactionsQueue.length > 0) {
 				// Move reactions from queue to visible array
 				this.toasts.push(this.reactionsQueue.shift())
@@ -184,7 +195,7 @@ export default {
 				// Delete reactions from array after animation ends
 				setTimeout(() => {
 					this.toasts.shift()
-				}, this.animationLength)
+				}, ANIMATION_LENGTH)
 			}
 		},
 
@@ -213,7 +224,7 @@ export default {
 
 			return {
 				'--background-color': `rgb(${color.r}, ${color.g}, ${color.b})`,
-				'--animation-length': `${this.animationLength + 300}ms`,
+				'--animation-length': `${ANIMATION_LENGTH + 300}ms`,
 				'--horizontal-offset': `${10 + 20 * seed}%`,
 				'--vertical-offset': 30 + 5 * seed,
 			}
