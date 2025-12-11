@@ -394,7 +394,7 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 			return
 		}
 
-		this._sendCurrentNameTo(callParticipantModel.get('peerId'))
+		this._sendCurrentNameTo(callParticipantModel.get('peerId') as string)
 	}
 
 	private _sendCurrentMediaStateTo(peerId: string): void {
