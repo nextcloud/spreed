@@ -197,6 +197,17 @@ module.exports = defineConfig((env) => {
 				__IS_DESKTOP__: false,
 				appName: JSON.stringify(appName),
 				appVersion: JSON.stringify(appVersion),
+				// Vue compile time flags
+				// See: https://vuejs.org/api/compile-time-flags.html#compile-time-flags
+				// See: https://github.com/vuejs/core/blob/v3.5.24/packages/vue/README.md#bundler-build-feature-flags
+				// > The build will work without configuring these flags,
+				// > however it is strongly recommended to properly configure them in order to get proper tree-shaking in the final bundle
+				// Unlike Vite plugin, vue-loader does not do this automatically for Webpack
+				// Although documentation says, it is optional, sometimes it breaks with:
+				// ReferenceError: __VUE_PROD_DEVTOOLS__ is not defined
+				__VUE_OPTIONS_API__: true,
+				__VUE_PROD_DEVTOOLS__: false,
+				__VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
 			}),
 
 			new CssExtractRspackPlugin({
