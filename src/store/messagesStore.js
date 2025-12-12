@@ -532,13 +532,21 @@ const actions = {
 				chatExtrasStore.updateThreadTitle(token, message.threadId, message.threadTitle)
 			}
 
-			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.MESSAGE_UNPINNED) {
+			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.MESSAGE_UNPINNED && !message.parent.metaData) {
 				sharedItemsStore.deleteSharedItemFromMessage(token, message.parent.id, SHARED_ITEM.TYPES.PINNED)
-				// Instant update conversation pinnedMessageId
-				const conversation = context.getters.conversation(token)
-				context.dispatch('addConversation', {
-					...conversation,
-					lastPinnedId: sharedItemsStore.findMostRecentPinnedMessageId(token),
+				const latestPinnedId = sharedItemsStore.findMostRecentPinnedMessageId(token)
+				if (latestPinnedId && latestPinnedId === message.parent.id) {
+					context.dispatch('setConversationProperties', {
+						token,
+						properties: {
+							lastPinnedId: latestPinnedId,
+						},
+					})
+				}
+				context.dispatch('updateMessageMetadata', {
+					token,
+					id: message.parent.id,
+					metaData: {},
 				})
 			}
 
@@ -590,6 +598,20 @@ const actions = {
 
 		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.MESSAGE_PINNED && message.parent.metaData) {
 			sharedItemsStore.addSharedItemFromMessage(token, message.parent, SHARED_ITEM.TYPES.PINNED)
+			const latestPinnedId = sharedItemsStore.findMostRecentPinnedMessageId(token)
+			if (latestPinnedId && latestPinnedId === message.parent.id) {
+				context.dispatch('setConversationProperties', {
+					token,
+					properties: {
+						lastPinnedId: message.parent.id,
+					},
+				})
+			}
+			context.dispatch('updateMessageMetadata', {
+				token,
+				id: message.parent.id,
+				metaData: message.parent.metaData,
+			})
 		}
 
 		context.commit('addMessage', { token, message })
