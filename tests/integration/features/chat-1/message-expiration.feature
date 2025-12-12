@@ -73,3 +73,19 @@ Feature: chat-1/message-expiration
       | id   | type | participantType |
       | room | 5    | 1               |
     And user "participant1" set the message expiration to 3 of room "room" with 400 (v4)
+
+  Scenario: Message expiration is forced
+    Given the following "spreed" app config is set
+      | force_message_expiration            | 3600 |
+    And user "participant1" creates room "room 1" (v4)
+      | roomType | 2 |
+      | roomName | room 1 |
+    And user "participant1" set the message expiration to 3 of room "room 1" with 400 (v4)
+    And user "participant1" creates room "room 2" (v4)
+      | roomType | 2 |
+      | roomName | room 2 |
+      | messageExpiration | 3 |
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | name   | type | messageExpiration |
+      | room 1 | 2    | 3600              |
+      | room 2 | 2    | 3600              |

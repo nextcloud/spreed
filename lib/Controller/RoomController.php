@@ -56,6 +56,8 @@ use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
+use OCA\Talk\RoomPresets\Forced;
+use OCA\Talk\RoomPresets\Parameter;
 use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ChecksumVerificationService;
@@ -155,6 +157,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected IURLGenerator $url,
 		protected IL10N $l,
 		protected ThreadService $threadService,
+		protected Forced $forcedParameters,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -623,6 +626,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param ?non-empty-string $avatarColor Background color of the avatar (Only considered when an emoji was provided) (only available with `conversation-creation-all` capability)
 	 * @param array<string, list<string>> $participants List of participants to add grouped by type (only available with `conversation-creation-all` capability)
 	 * @psalm-param TalkInvitationList $participants
+	 * @param ?string $preset Identifier of the preset that was used (only available with `conversation-preset` capability)
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_ACCEPTED, TalkRoomWithInvalidInvitations, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'avatar'|'description'|'invite'|'listable'|'lobby'|'lobby-timer'|'mention-permissions'|'message-expiration'|'name'|'object'|'object-id'|'object-type'|'password'|'permissions'|'read-only'|'recording-consent'|'sip-enabled'|'type', message?: string}, array{}>
 	 *
 	 * 200: Room already existed
@@ -657,6 +661,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		?string $emoji = null,
 		?string $avatarColor = null,
 		array $participants = [],
+		?string $preset = null,
 	): DataResponse {
 		if ($roomType === Room::TYPE_ONE_TO_ONE) {
 			if ($invite === ''
@@ -755,14 +760,14 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$objectId,
 				$password,
 				$readOnly,
-				$listable,
-				$messageExpiration,
+				$this->forcedParameters->forceParameter(Parameter::LISTABLE, $listable),
+				$this->forcedParameters->forceParameter(Parameter::MESSAGE_EXPIRATION, $messageExpiration),
 				$lobbyState,
 				$lobbyTimer,
-				$sipEnabled,
-				$permissions,
+				$this->forcedParameters->forceParameter(Parameter::SIP_ENABLED, $sipEnabled),
+				$this->forcedParameters->forceParameter(Parameter::PERMISSIONS, $permissions),
 				$recordingConsent,
-				$mentionPermissions,
+				$this->forcedParameters->forceParameter(Parameter::MENTION_PERMISSIONS, $mentionPermissions),
 				$description,
 				$emoji,
 				$avatarColor,
@@ -1745,7 +1750,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param 0|1|2 $scope Scope where the room is listable
 	 * @psalm-param Room::LISTABLE_* $scope
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}|array{error: 'forced', forced?: 0|1|2}, array{}>
 	 *
 	 * 200: Made room listable successfully
 	 * 400: Making room listable is not possible
@@ -1757,6 +1762,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setListable(int $scope): DataResponse {
+		/** @var Room::LISTABLE_* $forced */
+		$forced = $this->forcedParameters->getForcedParameter(Parameter::LISTABLE);
+		if ($forced !== null && $forced !== $scope) {
+			return new DataResponse(['error' => 'forced', 'forced' => $forced], Http::STATUS_BAD_REQUEST);
+		}
+
 		try {
 			$this->roomService->setListable($this->room, $scope);
 		} catch (ListableException $e) {
@@ -1771,7 +1782,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param 0|1 $mentionPermissions New mention permissions
 	 * @psalm-param Room::MENTION_PERMISSIONS_* $mentionPermissions
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}|array{error: 'forced', forced?: 0|1}, array{}>
 	 *
 	 * 200: Permissions updated successfully
 	 * 400: Updating permissions is not possible
@@ -1783,6 +1794,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setMentionPermissions(int $mentionPermissions): DataResponse {
+		/** @var Room::MENTION_PERMISSIONS_* $forced */
+		$forced = $this->forcedParameters->getForcedParameter(Parameter::MENTION_PERMISSIONS);
+		if ($forced !== null && $forced !== $mentionPermissions) {
+			return new DataResponse(['error' => 'forced', 'forced' => $forced], Http::STATUS_BAD_REQUEST);
+		}
+
 		try {
 			$this->roomService->setMentionPermissions($this->room, $mentionPermissions);
 		} catch (MentionPermissionsException $e) {
@@ -2669,7 +2686,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param 'call'|'default' $mode Level of the permissions ('call' (removed in Talk 20), 'default')
 	 * @param int<0, 511> $permissions New permissions
 	 * @psalm-param int-mask-of<Attendee::PERMISSIONS_*> $permissions
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'mode'|'type'|'value'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'mode'|'type'|'value'}|array{error: 'forced', forced?: int<0, 511>}, array{}>
 	 *
 	 * 200: Permissions updated successfully
 	 * 400: Updating permissions is not possible
@@ -2684,6 +2701,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 	public function setPermissions(string $mode, int $permissions): DataResponse {
 		if ($mode !== 'default') {
 			return new DataResponse(['error' => 'mode'], Http::STATUS_BAD_REQUEST);
+		}
+
+		/** @var int<0, 511> $forced */
+		$forced = $this->forcedParameters->getForcedParameter(Parameter::PERMISSIONS);
+		if ($forced !== null && $forced !== $permissions) {
+			return new DataResponse(['error' => 'forced', 'forced' => $forced], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
@@ -2703,7 +2726,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param 'set'|'remove'|'add' $method Method of updating permissions ('set', 'remove', 'add')
 	 * @param int<0, 511> $permissions New permissions
 	 * @psalm-param int-mask-of<Attendee::PERMISSIONS_*> $permissions
-	 * @return DataResponse<Http::STATUS_OK, list<TalkParticipant>, array{X-Nextcloud-Has-User-Statuses?: true}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'participant'|'method'|'moderator'|'room-type'|'type'|'value'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkParticipant>, array{X-Nextcloud-Has-User-Statuses?: true}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'participant'|'method'|'moderator'|'room-type'|'type'|'value'}|array{error: 'forced', forced?: int<0, 511>}, array{}>
 	 *
 	 * 200: Permissions updated successfully
 	 * 400: Updating permissions is not possible
@@ -2721,6 +2744,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$targetParticipant = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse(['error' => 'participant'], Http::STATUS_NOT_FOUND);
+		}
+
+		/** @var int<0, 511> $forced */
+		$forced = $this->forcedParameters->getForcedParameter(Parameter::PERMISSIONS);
+		if ($forced !== null && $permissions !== Attendee::PERMISSIONS_DEFAULT && ($forced !== $permissions || $method !== 'set')) {
+			return new DataResponse(['error' => 'forced', 'forced' => $forced], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
@@ -2817,7 +2846,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param 0|1|2 $state New state
 	 * @psalm-param Webinary::SIP_* $state
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, array{error: 'config'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'token'|'type'|'value'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, array{error: 'config'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'token'|'type'|'value'}|array{error: 'forced', forced?: 0|1|2}, array{}>
 	 *
 	 * 200: SIP enabled state updated successfully
 	 * 400: Updating SIP enabled state is not possible
@@ -2843,6 +2872,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if (!$this->talkConfig->isSIPConfigured()) {
 			return new DataResponse(['error' => 'config'], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		/** @var Webinary::SIP_* $forced */
+		$forced = $this->forcedParameters->getForcedParameter(Parameter::SIP_ENABLED);
+		if ($forced !== null && $forced !== $state) {
+			return new DataResponse(['error' => 'forced', 'forced' => $forced], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
@@ -2932,7 +2967,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $seconds New time
 	 * @psalm-param non-negative-int $seconds
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value', forced?: int<0, max>}|array{error: 'forced', forced?: int<0, max>}, array{}>
 	 *
 	 * 200: Message expiration time updated successfully
 	 * 400: Updating message expiration time is not possible
@@ -2944,6 +2979,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setMessageExpiration(int $seconds): DataResponse {
+		/** @var int<0, max> $forced */
+		$forced = $this->forcedParameters->getForcedParameter(Parameter::MESSAGE_EXPIRATION);
+		if ($forced !== null && $forced !== $seconds) {
+			return new DataResponse(['error' => 'forced', 'forced' => $forced], Http::STATUS_BAD_REQUEST);
+		}
+
 		try {
 			$this->roomService->setMessageExpiration($this->room, $seconds);
 		} catch (MessageExpirationException $e) {

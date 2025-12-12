@@ -73,3 +73,22 @@ Feature: conversation-5/sip-dialin
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType | sipEnabled | attendeePin |
       | room | 3    | 1               | 0          |             |
+
+  Scenario: SIP is forced
+    Given the following "spreed" app config is set
+      | sip_bridge_dialin_info | +49-1234-567890 |
+      | sip_bridge_shared_secret | 1234567890abcdef |
+      | sip_bridge_groups | ["group1"] |
+      | force_sip_enabled            | 1 |
+    And user "participant1" creates room "room 1" (v4)
+      | roomType | 2 |
+      | roomName | room 1 |
+    When user "participant1" sets SIP state for room "room 1" to "no pin" with 400 (v4)
+    And user "participant1" creates room "room 2" (v4)
+      | roomType | 2 |
+      | roomName | room 2 |
+      | sipEnabled | 2 |
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | name   | type | sipEnabled |
+      | room 1 | 2    | 1          |
+      | room 2 | 2    | 1          |
