@@ -519,7 +519,7 @@ export default {
 				const mediaFiles = this.sharedItemsStore.sharedItems(this.token).media
 				const list = getRevertedList(mediaFiles)
 				const loadMore = async () => {
-					const { messages } = await this.sharedItemsStore.getSharedItems(this.token, SHARED_ITEM.TYPES.MEDIA)
+					const { messages } = await this.sharedItemsStore.fetchSharedItems(this.token, SHARED_ITEM.TYPES.MEDIA)
 					return getRevertedList(messages)
 				}
 

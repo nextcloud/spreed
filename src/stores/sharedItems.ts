@@ -5,25 +5,36 @@
 
 import type {
 	ChatMessage,
+	PinnedChatMessage,
 	SharedItems,
 	SharedItemsOverview,
 } from '../types/index.ts'
 
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
+import { useStore } from 'vuex'
+import { SHARED_ITEM } from '../constants.ts'
+import {
+	hidePinnedMessage,
+	pinMessage,
+	unpinMessage,
+} from '../services/messagesService.ts'
 import { getSharedItems, getSharedItemsOverview } from '../services/sharedItemsService.ts'
 import { getItemTypeFromMessage } from '../utils/getItemTypeFromMessage.ts'
 
 type SharedItemType = keyof SharedItemsOverview
 
-type SharedItemsPoolType = Record<string, Record<SharedItemType, Record<number, SharedItems[keyof SharedItems]>>>
-
+type SharedItemsPoolType = Record<string, {
+	[K: string]: Record<number, SharedItems[keyof SharedItems]>
+}>
 /**
  * Store for shared items shown in RightSidebar
  */
 export const useSharedItemsStore = defineStore('sharedItems', () => {
 	const sharedItemsPool = reactive<SharedItemsPoolType>({})
 	const overviewLoaded = reactive<Record<string, boolean>>({})
+
+	const store = useStore()
 
 	/**
 	 * Returns shared items for a given conversation token
@@ -77,11 +88,12 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 	 *
 	 * @param token conversation token
 	 * @param message message with shared items
+	 * @param type type of shared item (optional)
 	 */
-	function addSharedItemFromMessage(token: string, message: ChatMessage) {
-		const type = getItemTypeFromMessage(message)
-		checkForExistence(token, type)
-		sharedItemsPool[token][type][message.id] = message
+	function addSharedItemFromMessage(token: string, message: ChatMessage, type?: SharedItemType) {
+		const itemType = type ?? getItemTypeFromMessage(message)
+		checkForExistence(token, itemType)
+		sharedItemsPool[token][itemType][message.id] = message
 	}
 
 	/**
@@ -89,11 +101,24 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 	 *
 	 * @param token conversation token
 	 * @param messageId id of message to be deleted
+	 * @param type type of shared item (optional)
 	 */
-	function deleteSharedItemFromMessage(token: string, messageId: number) {
+	function deleteSharedItemFromMessage(token: string, messageId: number, type?: SharedItemType) {
 		if (!sharedItemsPool[token]) {
 			return
 		}
+
+		if (type) {
+			if (sharedItemsPool[token][type] && sharedItemsPool[token][type][messageId]) {
+				delete sharedItemsPool[token][type][messageId]
+				if (Object.keys(sharedItemsPool[token][type]).length === 0) {
+					delete sharedItemsPool[token][type]
+				}
+			}
+			return
+		}
+
+		// If type is not provided, search in all types
 
 		for (const type of Object.keys(sharedItemsPool[token])) {
 			if (sharedItemsPool[token][type][messageId]) {
@@ -112,7 +137,7 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 	 * @param type type of shared item
 	 * @param messages message with shared items
 	 */
-	function addSharedItemsFromMessages(token: string, type: string, messages: ChatMessage[]) {
+	function addSharedItemsFromMessages(token: string, type: string, messages: ChatMessage[] | PinnedChatMessage[]) {
 		checkForExistence(token, type)
 
 		messages.forEach((message) => {
@@ -197,6 +222,126 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 		}
 	}
 
+	/**
+	 * Pin a message for everyone
+	 *
+	 * @param token
+	 * @param messageId
+	 * @param pinUntil
+	 */
+	async function handlePinMessage(token: string, messageId: number, pinUntil?: number) {
+		try {
+			const response = await pinMessage({ token, messageId, pinUntil })
+			const pinnedMessage = response.data.ocs.data?.parent
+			if (!pinnedMessage || 'deleted' in pinnedMessage) {
+				return
+			}
+			addSharedItemFromMessage(token, pinnedMessage, SHARED_ITEM.TYPES.PINNED)
+			// Instant update conversation lastPinnedId
+			await store.dispatch('setConversationProperties', {
+				token,
+				properties: {
+					lastPinnedId: messageId,
+				},
+			})
+			store.dispatch('updateMessageMetadata', {
+				token,
+				id: messageId,
+				metaData: pinnedMessage.metaData,
+			})
+		} catch (error) {
+			console.error('Error while toggling pin message:', error)
+		}
+	}
+
+	/**
+	 * Find most recent pinned message
+	 *
+	 * @param token
+	 */
+	function findMostRecentPinnedMessageId(token: string): number | undefined | null {
+		const pinnedMessages = Object.values(sharedItemsPool[token]?.pinned ?? {})
+		if (!pinnedMessages.length) {
+			return null
+		}
+		const { id } = pinnedMessages.reduce<{ id: number | null, pinnedAt: number }>((acc, message) => {
+			const messagePinnedAt = message.metaData!.pinnedAt!
+			if (messagePinnedAt > acc.pinnedAt) {
+				return { id: message.id, pinnedAt: messagePinnedAt }
+			}
+			return acc
+		}, { id: null, pinnedAt: 0 })
+		return id
+	}
+
+	/**
+	 * Unpin a message for everyone
+	 *
+	 * @param token
+	 * @param messageId
+	 */
+	async function handleUnpinMessage(token: string, messageId: number) {
+		try {
+			await unpinMessage({ token, messageId })
+			deleteSharedItemFromMessage(token, messageId, SHARED_ITEM.TYPES.PINNED)
+			store.dispatch('updateMessageMetadata', {
+				token,
+				id: messageId,
+				metaData: {},
+			})
+			if (!findMostRecentPinnedMessageId(token)) {
+				return
+			}
+			// Instant update conversation lastPinnedId
+			store.dispatch('setConversationProperties', {
+				token,
+				properties: {
+					lastPinnedId: messageId,
+				},
+			})
+		} catch (error) {
+			console.error('Error while unpinning message:', error)
+		}
+	}
+
+	/**
+	 * fetches pinned messages
+	 *
+	 * @param token
+	 */
+	async function fetchPinnedMessages(token: string) {
+		try {
+			const response = await getSharedItems({ token, objectType: SHARED_ITEM.TYPES.PINNED, limit: 5 })
+			const messages = Object.values(response.data.ocs.data)
+			if (messages.length) {
+				addSharedItemsFromMessages(token, SHARED_ITEM.TYPES.PINNED, messages)
+			}
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	/**
+	 * hide pinned message for self
+	 *
+	 * @param token
+	 * @param messageId
+	 */
+	async function handleHidePinnedMessage(token: string, messageId: number) {
+		try {
+			await hidePinnedMessage({ token, messageId })
+			// Instant update conversation hiddenPinnedId
+			await store.dispatch('setConversationProperties', {
+				token,
+				properties: {
+					hiddenPinnedId: messageId,
+				},
+			})
+		} catch (error) {
+			console.error('Error while hiding pinned message:', error)
+		}
+	}
+
 	return {
 		sharedItemsPool,
 		overviewLoaded,
@@ -205,9 +350,13 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 		addSharedItemsFromOverview,
 		addSharedItemFromMessage,
 		deleteSharedItemFromMessage,
-		addSharedItemsFromMessages,
 		purgeSharedItemsStore,
 		fetchSharedItems,
 		fetchSharedItemsOverview,
+		handlePinMessage,
+		handleUnpinMessage,
+		handleHidePinnedMessage,
+		fetchPinnedMessages,
+		findMostRecentPinnedMessageId,
 	}
 })
