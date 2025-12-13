@@ -53,6 +53,9 @@ use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
+use OCA\Talk\RoomPresets\Parameter;
+use OCA\Talk\RoomPresets\Preset;
+use OCA\Talk\Service\RoomPresetService;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
@@ -153,6 +156,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected IURLGenerator $url,
 		protected IL10N $l,
 		protected ThreadService $threadService,
+		protected RoomPresetService $presetService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -590,7 +594,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite`
 	 * or `$participants` parameter is supported.
 	 *
-	 * @param int $roomType Type of the room
+	 * @param ?int $roomType Type of the room
 	 * @psalm-param Room::TYPE_* $roomType
 	 * @param string $invite User, group, … ID to invite @deprecated Use the `$participants` array instead
 	 * @param string $roomName Name of the room, unless the legacy mode providing `$invite` and `$source` is used, the name must no longer be empty with the `conversation-creation-all` capability (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})
@@ -598,24 +602,24 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param string $objectType Type of the object (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})
 	 * @param string $objectId ID of the object (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})
 	 * @param string $password The room password (only available with `conversation-creation-password` capability) (Ignored if `$roomType` is not {@see Room::TYPE_PUBLIC})
-	 * @param 0|1 $readOnly Read only state of the conversation (Default writable) (only available with `conversation-creation-all` capability)
-	 * @psalm-param Room::READ_* $readOnly
-	 * @param 0|1|2 $listable Scope where the conversation is listable (Default not listable for anyone) (only available with `conversation-creation-all` capability)
-	 * @psalm-param Room::LISTABLE_* $listable
-	 * @param int $messageExpiration Seconds after which messages will disappear, 0 disables expiration (Default 0) (only available with `conversation-creation-all` capability)
-	 * @psalm-param non-negative-int $messageExpiration
-	 * @param 0|1 $lobbyState Lobby state of the conversation (Default lobby is disabled) (only available with `conversation-creation-all` capability)
-	 * @psalm-param Webinary::LOBBY_* $lobbyState
+	 * @param 0|1|null $readOnly Read only state of the conversation (Default writable) (only available with `conversation-creation-all` capability)
+	 * @psalm-param ?Room::READ_* $readOnly
+	 * @param 0|1|2|null $listable Scope where the conversation is listable (Default not listable for anyone) (only available with `conversation-creation-all` capability)
+	 * @psalm-param ?Room::LISTABLE_* $listable
+	 * @param ?int $messageExpiration Seconds after which messages will disappear, 0 disables expiration (Default 0) (only available with `conversation-creation-all` capability)
+	 * @psalm-param ?non-negative-int $messageExpiration
+	 * @param 0|1|null $lobbyState Lobby state of the conversation (Default lobby is disabled) (only available with `conversation-creation-all` capability)
+	 * @psalm-param ?Webinary::LOBBY_* $lobbyState
 	 * @param int|null $lobbyTimer Timer when the lobby will be removed (Default null, will not be disabled automatically) (only available with `conversation-creation-all` capability)
-	 * @psalm-param non-negative-int|null $lobbyTimer
-	 * @param 0|1|2 $sipEnabled Whether SIP dial-in shall be enabled (only available with `conversation-creation-all` capability)
-	 * @psalm-param Webinary::SIP_* $sipEnabled
-	 * @param int<0, 255> $permissions Default permissions for participants (only available with `conversation-creation-all` capability)
-	 * @psalm-param int-mask-of<Attendee::PERMISSIONS_*> $permissions
-	 * @param 0|1 $recordingConsent Whether participants need to agree to a recording before joining a call (only available with `conversation-creation-all` capability)
-	 * @psalm-param RecordingService::CONSENT_REQUIRED_NO|RecordingService::CONSENT_REQUIRED_YES $recordingConsent
-	 * @param 0|1 $mentionPermissions Who can mention at-all in the chat (only available with `conversation-creation-all` capability)
-	 * @psalm-param Room::MENTION_PERMISSIONS_* $mentionPermissions
+	 * @psalm-param ?non-negative-int $lobbyTimer
+	 * @param 0|1|2|null $sipEnabled Whether SIP dial-in shall be enabled (only available with `conversation-creation-all` capability)
+	 * @psalm-param ?Webinary::SIP_* $sipEnabled
+	 * @param int<0, 255>|null $permissions Default permissions for participants (only available with `conversation-creation-all` capability)
+	 * @psalm-param ?int-mask-of<Attendee::PERMISSIONS_*> $permissions
+	 * @param 0|1|null $recordingConsent Whether participants need to agree to a recording before joining a call (only available with `conversation-creation-all` capability)
+	 * @psalm-param RecordingService::CONSENT_REQUIRED_NO|RecordingService::CONSENT_REQUIRED_YES|null $recordingConsent
+	 * @param 0|1|null $mentionPermissions Who can mention at-all in the chat (only available with `conversation-creation-all` capability)
+	 * @psalm-param ?Room::MENTION_PERMISSIONS_* $mentionPermissions
 	 * @param string $description Description for the conversation (limited to 2.000 characters) (only available with `conversation-creation-all` capability)
 	 * @param ?non-empty-string $emoji Emoji for the avatar of the conversation (only available with `conversation-creation-all` capability)
 	 * @param ?non-empty-string $avatarColor Background color of the avatar (Only considered when an emoji was provided) (only available with `conversation-creation-all` capability)
@@ -635,26 +639,27 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v4)',
 	])]
 	public function createRoom(
-		int $roomType = Room::TYPE_GROUP,
+		?int $roomType = null,
 		string $invite = '', /* @deprecated */
 		string $roomName = '',
 		string $source = '', /* @deprecated */
 		string $objectType = '',
 		string $objectId = '',
 		string $password = '',
-		int $readOnly = Room::READ_WRITE,
-		int $listable = Room::LISTABLE_NONE,
-		int $messageExpiration = 0,
-		int $lobbyState = Webinary::LOBBY_NONE,
+		?int $readOnly = null,
+		?int $listable = null,
+		?int $messageExpiration = null,
+		?int $lobbyState = null,
 		?int $lobbyTimer = null,
-		int $sipEnabled = Webinary::SIP_DISABLED,
-		int $permissions = Attendee::PERMISSIONS_DEFAULT,
-		int $recordingConsent = RecordingService::CONSENT_REQUIRED_NO,
-		int $mentionPermissions = Room::MENTION_PERMISSIONS_EVERYONE,
+		?int $sipEnabled = null,
+		?int $permissions = null,
+		?int $recordingConsent = null,
+		?int $mentionPermissions = null,
 		string $description = '',
 		?string $emoji = null,
 		?string $avatarColor = null,
 		array $participants = [],
+		?int $preset = null,
 	): DataResponse {
 		if ($roomType === Room::TYPE_ONE_TO_ONE) {
 			if ($invite === ''
@@ -744,23 +749,26 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$objectId = Room::OBJECT_ID_PHONE_OUTGOING;
 		}
 
+		$selectedPreset = Preset::from($preset ?? 0);
+
+
 		try {
 			$room = $this->roomService->createConversation(
-				$roomType,
+				$this->presetService->getDefaultForPreset($selectedPreset, Parameter::ROOM_TYPE, $roomType),
 				$roomName,
 				$user,
 				$objectType,
 				$objectId,
 				$password,
-				$readOnly,
-				$listable,
-				$messageExpiration,
-				$lobbyState,
+				$this->presetService->getDefaultForPreset($selectedPreset, Parameter::READ_ONLY, $readOnly),
+				$this->presetService->getDefaultForPreset($selectedPreset, Parameter::LISTABLE, $listable),
+				$this->presetService->getDefaultForPreset($selectedPreset, Parameter::MESSAGE_EXPIRATION, $messageExpiration),
+				$this->presetService->getDefaultForPreset($selectedPreset, Parameter::LOBBY_STATE, $lobbyState),
 				$lobbyTimer,
-				$sipEnabled,
-				$permissions,
-				$recordingConsent,
-				$mentionPermissions,
+				$this->presetService->getDefaultForPreset($selectedPreset, Parameter::SIP_ENABLED, $sipEnabled),
+				$this->presetService->getDefaultForPreset($selectedPreset, Parameter::PERMISSIONS, $permissions),
+				$this->presetService->getDefaultForPreset($selectedPreset, Parameter::RECORDING_CONSENT, $recordingConsent),
+				$this->presetService->getDefaultForPreset($selectedPreset, Parameter::MENTION_PERMISSIONS, $mentionPermissions),
 				$description,
 				$emoji,
 				$avatarColor,
