@@ -89,3 +89,20 @@ Feature: chat-1/pinned-messages
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type | lastPinnedId | hiddenPinnedId |
       | room | 3    | EMPTY        | EMPTY          |
+
+  Scenario: Deleting last pinned message
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    When user "participant1" sends message "Message 1" to room "room" with 201
+    When user "participant1" pins message "Message 1" in room "room" with 200
+    When user "participant1" sends message "Message 2" to room "room" with 201
+    When user "participant1" pins message "Message 2" in room "room" with 200
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastPinnedId | hiddenPinnedId |
+      | room | 3    | Message 2    | EMPTY          |
+    When user "participant1" deletes message "Message 2" from room "room" with 200
+    Then user "participant2" is participant of the following rooms (v4)
+      | id   | type | lastPinnedId | hiddenPinnedId |
+      | room | 3    | Message 1    | EMPTY          |
