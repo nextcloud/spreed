@@ -8016,14 +8016,14 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
+        requestBody?: {
             content: {
                 "application/json": {
                     /**
                      * Format: int64
                      * @description Type of the room
                      */
-                    roomType: number;
+                    roomType?: number;
                     /**
                      * @deprecated
                      * @description User, group, … ID to invite Deprecated: Use the `$participants` array instead
@@ -8061,13 +8061,13 @@ export interface operations {
                      * @description Read only state of the conversation (Default writable) (only available with `conversation-creation-all` capability)
                      * @enum {integer}
                      */
-                    readOnly: 0 | 1;
+                    readOnly?: 0 | 1;
                     /**
                      * Format: int64
                      * @description Scope where the conversation is listable (Default not listable for anyone) (only available with `conversation-creation-all` capability)
                      * @enum {integer}
                      */
-                    listable: 0 | 1 | 2;
+                    listable?: 0 | 1 | 2;
                     /**
                      * Format: int64
                      * @description Seconds after which messages will disappear, 0 disables expiration (Default 0) (only available with `conversation-creation-all` capability)
@@ -8079,7 +8079,7 @@ export interface operations {
                      * @description Lobby state of the conversation (Default lobby is disabled) (only available with `conversation-creation-all` capability)
                      * @enum {integer}
                      */
-                    lobbyState: 0 | 1;
+                    lobbyState?: 0 | 1;
                     /**
                      * Format: int64
                      * @description Timer when the lobby will be removed (Default null, will not be disabled automatically) (only available with `conversation-creation-all` capability)
@@ -8091,24 +8091,24 @@ export interface operations {
                      * @description Whether SIP dial-in shall be enabled (only available with `conversation-creation-all` capability)
                      * @enum {integer}
                      */
-                    sipEnabled: 0 | 1 | 2;
+                    sipEnabled?: 0 | 1 | 2;
                     /**
                      * Format: int64
                      * @description Default permissions for participants (only available with `conversation-creation-all` capability)
                      */
-                    permissions: number;
+                    permissions?: number;
                     /**
                      * Format: int64
                      * @description Whether participants need to agree to a recording before joining a call (only available with `conversation-creation-all` capability)
                      * @enum {integer}
                      */
-                    recordingConsent: 0 | 1;
+                    recordingConsent?: 0 | 1;
                     /**
                      * Format: int64
                      * @description Who can mention at-all in the chat (only available with `conversation-creation-all` capability)
                      * @enum {integer}
                      */
-                    mentionPermissions: 0 | 1;
+                    mentionPermissions?: 0 | 1;
                     /**
                      * @description Description for the conversation (limited to 2.000 characters) (only available with `conversation-creation-all` capability)
                      * @default

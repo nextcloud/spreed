@@ -82,16 +82,16 @@
         },
         {
             "name": "nextcloud/openapi-extractor",
-            "version": "v1.8.6",
+            "version": "v1.8.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-releases/openapi-extractor.git",
-                "reference": "3874ffb6817ab5b616a5e909c48c7cd13889cafa"
+                "reference": "230f61925c362779652b0038a1314ce5f931e853"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-releases/openapi-extractor/zipball/3874ffb6817ab5b616a5e909c48c7cd13889cafa",
-                "reference": "3874ffb6817ab5b616a5e909c48c7cd13889cafa",
+                "url": "https://api.github.com/repos/nextcloud-releases/openapi-extractor/zipball/230f61925c362779652b0038a1314ce5f931e853",
+                "reference": "230f61925c362779652b0038a1314ce5f931e853",
                 "shasum": ""
             },
             "require": {
@@ -102,9 +102,9 @@
                 "phpstan/phpdoc-parser": "^2.1"
             },
             "require-dev": {
-                "nextcloud/coding-standard": "^1.2",
+                "nextcloud/coding-standard": "^1.4.0",
                 "nextcloud/ocp": "dev-master",
-                "rector/rector": "^2.0"
+                "rector/rector": "^2.2.8"
             },
             "bin": [
                 "bin/generate-spec",
@@ -123,22 +123,22 @@
             "description": "A tool for extracting OpenAPI specifications from Nextcloud source code",
             "support": {
                 "issues": "https://github.com/nextcloud-releases/openapi-extractor/issues",
-                "source": "https://github.com/nextcloud-releases/openapi-extractor/tree/v1.8.6"
+                "source": "https://github.com/nextcloud-releases/openapi-extractor/tree/v1.8.7"
             },
-            "time": "2025-10-01T13:53:28+00:00"
+            "time": "2025-12-02T09:52:06+00:00"
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.6.1",
+            "version": "v5.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "f103601b29efebd7ff4a1ca7b3eeea9e3336a2a2"
+                "reference": "dca41cd15c2ac9d055ad70dbfd011130757d1f82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/f103601b29efebd7ff4a1ca7b3eeea9e3336a2a2",
-                "reference": "f103601b29efebd7ff4a1ca7b3eeea9e3336a2a2",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/dca41cd15c2ac9d055ad70dbfd011130757d1f82",
+                "reference": "dca41cd15c2ac9d055ad70dbfd011130757d1f82",
                 "shasum": ""
             },
             "require": {
@@ -181,9 +181,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.6.1"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.7.0"
             },
-            "time": "2025-08-13T20:13:15+00:00"
+            "time": "2025-12-06T11:56:16+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",

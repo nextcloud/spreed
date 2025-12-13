@@ -15882,21 +15882,11 @@
                     }
                 ],
                 "requestBody": {
-                    "required": true,
+                    "required": false,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "type": "object",
-                                "required": [
-                                    "roomType",
-                                    "readOnly",
-                                    "listable",
-                                    "lobbyState",
-                                    "sipEnabled",
-                                    "permissions",
-                                    "recordingConsent",
-                                    "mentionPermissions"
-                                ],
                                 "properties": {
                                     "roomType": {
                                         "type": "integer",
