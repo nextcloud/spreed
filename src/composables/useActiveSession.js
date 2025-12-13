@@ -6,6 +6,7 @@
 import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { CONFIG, SESSION } from '../constants.ts'
+import BrowserStorage from '../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { setSessionState } from '../services/participantsService.js'
 import { useTokenStore } from '../stores/token.ts'
@@ -16,6 +17,7 @@ import { useIsInCall } from './useIsInCall.js'
 const INACTIVE_TIME_MS = 3 * 60 * 1000
 
 const experimentalRecoverSession = (getTalkConfig('local', 'experiments', 'enabled') ?? 0) & CONFIG.EXPERIMENTAL.RECOVER_SESSION
+const experimentalInactiveOnBlur = (getTalkConfig('local', 'experiments', 'enabled') ?? 0) & CONFIG.EXPERIMENTAL.SESSION_INACTIVE_ON_BLUR
 
 /**
  * Check whether the current session is active or not:
@@ -123,13 +125,17 @@ export function useActiveSession() {
 			document.body.removeEventListener('mouseenter', handleMouseEnter)
 			document.body.removeEventListener('mouseleave', handleMouseLeave)
 		} else if (type === 'blur') {
-			inactiveTimer.value = setTimeout(() => {
-				setSessionAsInactive()
-			}, INACTIVE_TIME_MS)
+			if (!experimentalInactiveOnBlur || BrowserStorage.getItem('pause-notification-on-blur') === 'yes') {
+				inactiveTimer.value = setTimeout(() => {
+					setSessionAsInactive()
+				}, INACTIVE_TIME_MS)
 
-			// Listen for mouse events to track activity on tab
-			document.body.addEventListener('mouseenter', handleMouseEnter)
-			document.body.addEventListener('mouseleave', handleMouseLeave)
+				// Listen for mouse events to track activity on tab
+				document.body.addEventListener('mouseenter', handleMouseEnter)
+				document.body.addEventListener('mouseleave', handleMouseLeave)
+			} else {
+				setSessionAsInactive()
+			}
 		}
 	}
 
