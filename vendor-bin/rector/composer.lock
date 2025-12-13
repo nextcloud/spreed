@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "478c4d77077e0161c90f98f28e3424d3",
+    "content-hash": "2af3b44064dc62178ca1fea0b1730bf6",
     "packages": [],
     "packages-dev": [
         {
@@ -376,21 +376,21 @@
         },
         {
             "name": "rector/rector",
-            "version": "2.2.10",
+            "version": "2.2.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "2abbf73dc953fdc5a556c0c3d5c47aa4da47d34c"
+                "reference": "894fcd51d6f9a9c8f37fd906e24e2026dcbdcc86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/2abbf73dc953fdc5a556c0c3d5c47aa4da47d34c",
-                "reference": "2abbf73dc953fdc5a556c0c3d5c47aa4da47d34c",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/894fcd51d6f9a9c8f37fd906e24e2026dcbdcc86",
+                "reference": "894fcd51d6f9a9c8f37fd906e24e2026dcbdcc86",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4|^8.0",
-                "phpstan/phpstan": "^2.1.32"
+                "phpstan/phpstan": "^2.1.33"
             },
             "conflict": {
                 "rector/rector-doctrine": "*",
@@ -424,7 +424,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/2.2.10"
+                "source": "https://github.com/rectorphp/rector/tree/2.2.12"
             },
             "funding": [
                 {
@@ -432,7 +432,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-12-01T10:59:13+00:00"
+            "time": "2025-12-08T23:51:40+00:00"
         },
         {
             "name": "webmozart/assert",
