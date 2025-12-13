@@ -4,7 +4,11 @@
 -->
 
 <script setup lang="ts">
-import type { ParticipantSearchResult, Conversation as TypeConversation } from '../../../types/index.ts'
+import type {
+	ParticipantSearchResult,
+	Conversation as TypeConversation,
+	UnifiedSearchResultEntryWithRouterLink,
+} from '../../../types/index.ts'
 
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
@@ -15,6 +19,7 @@ import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconChatPlusOutline from 'vue-material-design-icons/ChatPlusOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
+import SearchMessageItem from '../../RightSidebar/SearchMessages/SearchMessageItem.vue'
 import NavigationHint from '../../UIShared/NavigationHint.vue'
 import ConversationItem from '../ConversationsList/ConversationItem.vue'
 import { ATTENDEE, AVATAR, CONVERSATION } from '../../../constants.ts'
@@ -28,6 +33,7 @@ const props = defineProps<{
 	contactsLoading: boolean
 	searchResultsListedConversations: TypeConversation[]
 	searchResults: ParticipantSearchResult[]
+	searchResultsMessages: UnifiedSearchResultEntryWithRouterLink[]
 }>()
 
 const emit = defineEmits<{
@@ -75,6 +81,7 @@ type VirtualListItem
 	= | { type: 'caption', id: string, name: string }
 		| { type: 'hint', id: string, hint: string }
 		| { type: 'conversation', id: number, object: TypeConversation }
+		| { type: 'message', id: number, object: UnifiedSearchResultEntryWithRouterLink }
 		| { type: 'open_conversation', id: number, object: TypeConversation }
 		| { type: 'action', id: string, name: string, subname: string }
 		| { type: 'user' | 'group' | 'circle' | 'federated', id: string, object: ParticipantSearchResult, icon: Record<string, unknown> }
@@ -110,6 +117,16 @@ const searchResultsVirtual = computed<VirtualListItem[]>(() => {
 		virtualList.push({ type: 'caption', id: 'open_conversation_caption', name: t('spreed', 'Open conversations') })
 		props.searchResultsListedConversations.forEach((item: TypeConversation) => {
 			virtualList.push({ type: 'open_conversation', id: item.id, object: item })
+		})
+	}
+
+	// Add messages section
+	virtualList.push({ type: 'caption', id: 'messages_caption', name: t('spreed', 'Messages') })
+	if (props.searchResultsMessages.length === 0) {
+		virtualList.push({ type: 'hint', id: 'hint_messages', hint: t('spreed', 'No matches found') })
+	} else {
+		props.searchResultsMessages.forEach((item: UnifiedSearchResultEntryWithRouterLink) => {
+			virtualList.push({ type: 'message', id: +item.attributes.messageId, object: item })
 		})
 	}
 
@@ -267,6 +284,19 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 					v-else-if="item.data.type === 'open_conversation'"
 					:item="item.data.object"
 					is-search-result
+					:compact="isCompact"
+					@click="emit('abort-search')" />
+				<SearchMessageItem
+					v-if="item.data.type === 'message'"
+					:ref="`message-${item.data.object.attributes.conversation}`"
+					:message-id="+item.data.object.attributes.messageId"
+					:title="isCompact ? item.data.object.subline : item.data.object.title"
+					:subline="item.data.object.subline"
+					:actor-id="item.data.object.attributes.actorId"
+					:actor-type="item.data.object.attributes.actorType"
+					:token="item.data.object.attributes.conversation"
+					:timestamp="+item.data.object.attributes.timestamp"
+					:to="item.data.object.to"
 					:compact="isCompact"
 					@click="emit('abort-search')" />
 				<NcAppNavigationCaption

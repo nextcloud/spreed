@@ -110,6 +110,15 @@ export type SearchMessagePayload = operationsCore['unified_search-search']['para
 export type UnifiedSearchResultEntry = componentsCore['schemas']['UnifiedSearchResultEntry'] & {
 	attributes: MessageSearchResultAttributes
 }
+export type UnifiedSearchResultEntryWithRouterLink = UnifiedSearchResultEntry & {
+	to: {
+		name: string
+		hash: string
+		params: {
+			token: string
+		}
+	}
+}
 export type UnifiedSearchResponse = ApiResponse<operationsCore['unified_search-search']['responses'][200]['content']['application/json'] & {
 	ocs: {
 		meta: componentsCore['schemas']['OCSMeta']
