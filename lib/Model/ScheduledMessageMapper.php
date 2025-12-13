@@ -123,7 +123,8 @@ class ScheduledMessageMapper extends QBMapper {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->lt('send_at', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE)));
+			->where($query->expr()->lt('send_at', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE)))
+			->orderBy('send_at', 'ASC');
 
 		return $this->findEntities($query);
 	}

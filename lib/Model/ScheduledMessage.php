@@ -75,6 +75,11 @@ class ScheduledMessage extends Entity {
 		return json_decode($this->metaData, true, 512, JSON_THROW_ON_ERROR);
 	}
 
+	public function getThreadTitle(): string {
+		$metaData = $this->getDecodedMetaData();
+		return $metaData[self::METADATA_THREAD_TITLE] ?? '';
+	}
+
 	/**
 	 * @param array{silent: bool, threadId: int, threadTitle?: string, lastEditedTime?: int} $metaData
 	 */
@@ -111,7 +116,7 @@ class ScheduledMessage extends Entity {
 			'messageType' => $this->getMessageType(),
 			'createdAt' => $this->getCreatedAt()->getTimestamp(),
 			'sendAt' => $this->getSendAt()?->getTimestamp() ?? 0,
-			'silent' => $metaData['silent'] ?? false,
+			'silent' => $metaData[self::METADATA_SILENT] ?? false,
 		];
 
 		if ($parent !== null) {

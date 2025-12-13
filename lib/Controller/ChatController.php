@@ -579,7 +579,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$deleted = $this->scheduledMessageManager->deleteMessage(
 			$this->room,
 			$messageId,
-			$this->participant,
+			$this->participant->getAttendee()->getActorType(),
+			$this->participant->getAttendee()->getActorId()
 		);
 
 		if ($deleted === 0) {

@@ -21,6 +21,13 @@ Feature: chat-4/scheduling
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
+    When wait for 3 seconds
+    And run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
+    Then user "participant1" sees the following scheduled messages in room "room" with 200
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | silent |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | hasScheduledMessages |
+      | room | 2    | false                |
 
   Scenario: Schedule a silent message
     When user "participant1" schedules a message to room "room" with 201
@@ -33,6 +40,13 @@ Feature: chat-4/scheduling
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
+    When wait for 4 seconds
+    And run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
+    Then user "participant1" sees the following scheduled messages in room "room" with 200
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | silent |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | hasScheduledMessages |
+      | room | 2    | false                |
 
   Scenario: Schedule a message reply
     When user "participant1" schedules a message to room "room" with 201
@@ -45,6 +59,14 @@ Feature: chat-4/scheduling
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
+    When wait for 6 seconds
+    And run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
+    When wait for 6 seconds
+    Then user "participant1" sees the following scheduled messages in room "room" with 200
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | silent |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | hasScheduledMessages |
+      | room | 2    | false                |
 
   Scenario: Schedule a thread
     When user "participant1" schedules a message to room "room" with 201
@@ -57,6 +79,13 @@ Feature: chat-4/scheduling
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
+    When wait for 3 seconds
+    And run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
+    Then user "participant1" sees the following scheduled messages in room "room" with 200
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | silent |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | hasScheduledMessages |
+      | room | 2    | false                |
 
   Scenario: Schedule a thread reply
     Given user "participant1" sends thread "Thread 1" with message "Message 0" to room "room" with 201
@@ -70,6 +99,13 @@ Feature: chat-4/scheduling
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
+    When wait for 4 seconds
+    And run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
+    Then user "participant1" sees the following scheduled messages in room "room" with 200
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | silent |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | hasScheduledMessages |
+      | room | 2    | false                |
 
   Scenario: Schedule a quoted thread reply
     Given user "participant1" sends thread "Thread 1" with message "Message 0" to room "room" with 201
@@ -84,6 +120,13 @@ Feature: chat-4/scheduling
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | true                 |
+    When wait for 4 seconds
+    And run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
+    Then user "participant1" sees the following scheduled messages in room "room" with 200
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | silent |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | hasScheduledMessages |
+      | room | 2    | false                |
 
   Scenario: Schedule two messages and delete the first
     When user "participant1" schedules a message to room "room" with 201
@@ -112,7 +155,7 @@ Feature: chat-4/scheduling
     Then user "participant1" sees the following scheduled messages in room "room" with 200
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
-      | room | 2    | false                 |
+      | room | 2    | false                |
 
   Scenario: edit a scheduled message
     When user "participant1" schedules a message to room "room" with 201
@@ -147,3 +190,10 @@ Feature: chat-4/scheduling
     Then user "participant1" sees the following scheduled messages in room "room" with 200
       | id               | actorType | actorId      | threadId | parent | message          | messageType | sendAt      | silent |
       | Message 1 edited | users     | participant1 | 0        | null   | Message 1 edited | comment     | 1985514582  | true   |
+    When wait for 4 seconds
+    And run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
+    Then user "participant1" sees the following scheduled messages in room "room" with 200
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | silent |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | hasScheduledMessages |
+      | room | 2    | false                |
