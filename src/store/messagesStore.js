@@ -1380,6 +1380,7 @@ const actions = {
 			return
 		}
 		const chatExtrasStore = useChatExtrasStore()
+		const sharedItemsStore = useSharedItemsStore()
 		const chatStore = useChatStore()
 		const timestamp = convertToUnix(Date.now())
 
@@ -1390,8 +1391,11 @@ const actions = {
 				}
 				context.commit('deleteMessage', { token, id: message.id })
 				chatStore.removeMessagesFromChatBlocks(token, message.id)
+				sharedItemsStore.deleteSharedItemFromMessage(token, message.id)
 			}
 		})
+
+		sharedItemsStore.purgeExpiredSharedItems(token, timestamp)
 	},
 
 	async easeMessageList(context, { token }) {
