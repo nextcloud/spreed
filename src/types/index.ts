@@ -250,10 +250,15 @@ export type File = RichObject<'size' | 'path' | 'link' | 'mimetype' | 'preview-a
 	height: string
 }
 export type ChatMessage = components['schemas']['ChatMessageWithParent']
+/* This supports Snowflake ID */
+export type BigIntChatMessage = Omit<ChatMessage, 'id'> & { id: string }
+
 export type ChatTask = SummarizeChatTask & {
 	fromMessageId: number
 	summary?: string
 }
+
+export type ScheduledMessage = components['schemas']['ScheduledMessage']
 
 export type receiveMessagesParams = operations['chat-receive-messages']['parameters']['query']
 export type receiveMessagesResponse = ApiResponse<operations['chat-receive-messages']['responses'][200]['content']['application/json']>
@@ -275,6 +280,13 @@ export type summarizeChatResponse = ApiResponse<operations['chat-summarize-chat'
 export type SummarizeChatTask = operations['chat-summarize-chat']['responses'][201]['content']['application/json']['ocs']['data']
 export type upcomingRemindersResponse = ApiResponse<operations['chat-get-upcoming-reminders']['responses'][200]['content']['application/json']>
 export type UpcomingReminder = components['schemas']['ChatReminderUpcoming']
+
+export type getScheduledMessagesResponse = ApiResponse<operations['chat-get-scheduled-messages']['responses'][200]['content']['application/json']>
+export type scheduleMessageParams = operations['chat-schedule-message']['requestBody']['content']['application/json']
+export type scheduleMessageResponse = ApiResponse<operations['chat-schedule-message']['responses'][201]['content']['application/json']>
+export type editScheduledMessageParams = operations['chat-edit-scheduled-message']['requestBody']['content']['application/json']
+export type editScheduledMessageResponse = ApiResponse<operations['chat-edit-scheduled-message']['responses'][202]['content']['application/json']>
+export type deleteScheduledMessageResponse = ApiResponse<operations['chat-delete-schedule-message']['responses'][200]['content']['application/json']>
 
 // Threads
 export type Thread = components['schemas']['Thread']

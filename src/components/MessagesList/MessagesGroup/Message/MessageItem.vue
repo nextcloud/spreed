@@ -50,8 +50,14 @@
 				'bottom-side': isSplitViewEnabled && !isShortSimpleMessage && (isSmallMobile || isSidebar),
 				overlay: isSplitViewEnabled && !isShortSimpleMessage && isReactionsMenuOpen && !(isSmallMobile || isSidebar),
 			}">
+			<ScheduledMessageActions
+				v-if="isScheduledMessage && showMessageButtonsBar"
+				v-model:is-action-menu-open="isActionMenuOpen"
+				:message="message"
+				class="message-buttons-bar"
+				@edit="handleEdit" />
 			<MessageButtonsBar
-				v-if="showMessageButtonsBar"
+				v-else-if="showMessageButtonsBar"
 				v-model:is-action-menu-open="isActionMenuOpen"
 				v-model:is-emoji-picker-open="isEmojiPickerOpen"
 				v-model:is-reactions-menu-open="isReactionsMenuOpen"
@@ -91,6 +97,7 @@ import { inject } from 'vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
 import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
+import ScheduledMessageActions from './MessageButtonsBar/ScheduledMessageActions.vue'
 import ContactCard from './MessagePart/ContactCard.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
@@ -117,6 +124,7 @@ export default {
 		MessageForwarder,
 		MessageTranslateDialog,
 		ReactionsWrapper,
+		ScheduledMessageActions,
 	},
 
 	props: {
@@ -182,6 +190,13 @@ export default {
 
 		isDeletedMessage() {
 			return this.message.messageType === MESSAGE.TYPE.COMMENT_DELETED
+		},
+
+		isScheduledMessage() {
+			// FIXME better way to identify scheduled messages?
+			// - Provide from ChatView for all MessageItems?
+			// - Additional internal prop flag?
+			return this.message.referenceId === 'scheduled_message'
 		},
 
 		conversation() {
@@ -269,6 +284,13 @@ export default {
 		},
 
 		readInfo() {
+			if (this.isScheduledMessage) {
+				return {
+					showSilentIcon: this.message.silent,
+					silentIconTitle: t('spreed', 'Will be sent without notification'),
+				}
+			}
+
 			return {
 				showCommonReadIcon: this.showCommonReadIcon,
 				commonReadIconTitle: t('spreed', 'Message read by everyone who shares their reading status'),
@@ -298,6 +320,8 @@ export default {
 
 			return this.message.id === this.message.threadId
 				|| (this.message.threadTitle && this.message.id.toString().startsWith('temp-'))
+				// FIXME properly render scheduled messages as threads
+				|| (this.message.threadTitle && this.message.threadId === -1)
 		},
 
 		isShortSimpleMessage() {
@@ -339,6 +363,7 @@ export default {
 				id: this.message.id,
 				message: this.message.message,
 				messageParameters: this.message.messageParameters,
+				isScheduledMessage: this.isScheduledMessage,
 			})
 		},
 
