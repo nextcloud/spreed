@@ -1043,8 +1043,11 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			return
 		}
 
-		if (webrtc.webrtc.isAudioAllowed() === !!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
-			&& webrtc.webrtc.isVideoAllowed() === !!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)) {
+		const hasPublishAudioPermissions = !!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
+		const hasPublishVideoPermissions = !!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)
+
+		if (webrtc.webrtc.isAudioAllowed() === hasPublishAudioPermissions
+			&& webrtc.webrtc.isVideoAllowed() === hasPublishVideoPermissions) {
 			return
 		}
 
@@ -1061,11 +1064,8 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			hasVideoSenders ||= !!videoSender
 		})
 
-		const removeSender = (hasAudioSenders && !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO))
-			|| (hasVideoSenders && !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO))
-
-		const hasPublishAudioPermissions = !!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
-		const hasPublishVideoPermissions = !!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)
+		const removeSender = (hasAudioSenders && !hasPublishAudioPermissions)
+			|| (hasVideoSenders && !hasPublishVideoPermissions)
 
 		if (!hasPublishAudioPermissions) {
 			// If permissions were revoked, disable media devices
@@ -1083,8 +1083,8 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		}
 
 		if (webrtc.webrtc.isLocalMediaActive()
-			&& !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
-			&& !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)) {
+			&& !hasPublishAudioPermissions
+			&& !hasPublishVideoPermissions) {
 			webrtc.stopLocalVideo()
 
 			// If the MCU is used and there is no sending peer there is no need
@@ -1104,10 +1104,10 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		// reconnection.
 		if (webrtc.webrtc.isLocalMediaActive() && removeSender) {
 			let flags = signaling.getCurrentCallFlags()
-			if (!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)) {
+			if (!hasPublishAudioPermissions) {
 				flags &= ~PARTICIPANT.CALL_FLAG.WITH_AUDIO
 			}
-			if (!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)) {
+			if (!hasPublishVideoPermissions) {
 				flags &= ~PARTICIPANT.CALL_FLAG.WITH_VIDEO
 			}
 
@@ -1132,8 +1132,8 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 
 		// If media is not active but the participant does not have publishing
 		// permissions there is no need to start the media nor reconnect.
-		if (!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
-			&& !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)) {
+		if (!hasPublishAudioPermissions
+			&& !hasPublishVideoPermissions) {
 			return
 		}
 
@@ -1166,8 +1166,8 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		webrtc.on('localMediaError', forceReconnectOnceLocalMediaError)
 
 		const constraints = {
-			audio: currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO,
-			video: currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO,
+			audio: hasPublishAudioPermissions,
+			video: hasPublishVideoPermissions,
 		}
 		webrtc.startLocalVideo(constraints)
 	}

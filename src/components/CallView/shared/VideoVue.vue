@@ -95,7 +95,7 @@ import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ScreenShare from './ScreenShare.vue'
 import VideoBackground from './VideoBackground.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
-import { ATTENDEE, AVATAR, PARTICIPANT } from '../../../constants.ts'
+import { ATTENDEE, AVATAR } from '../../../constants.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import { useGuestNameStore } from '../../../stores/guestName.ts'
@@ -456,8 +456,7 @@ export default {
 		},
 
 		hasVideo() {
-			return !!(this.participant.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)
-				&& !this.model.attributes.videoBlocked
+			return !this.model.attributes.videoBlocked
 				&& this.model.attributes.videoAvailable
 				&& this.sharedData.remoteVideoBlocker.isVideoEnabled() && (typeof this.model.attributes.stream === 'object')
 		},
