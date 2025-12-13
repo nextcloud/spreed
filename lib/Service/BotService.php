@@ -440,6 +440,40 @@ class BotService {
 	}
 
 	/**
+	 * Send Adaptive Card submission webhook to bots
+	 *
+	 * @param Room $room The conversation room
+	 * @param Attendee|null $participant The participant who submitted the card
+	 * @param string $cardId The adaptive card ID
+	 * @param array $values The collected input values
+	 */
+	public function sendAdaptiveCardSubmissionWebhook(Room $room, ?Attendee $participant, string $cardId, array $values): void {
+		// Get all bots with webhook or event features
+		$bots = $this->getBotsForToken($room->getToken(), Bot::FEATURE_WEBHOOK | Bot::FEATURE_EVENT);
+		if (empty($bots)) {
+			return;
+		}
+
+		// Build Activity Streams 2.0 payload for adaptive card submission
+		$body = [
+			'type' => 'adaptivecard_submit',
+			'actor' => $participant ? $this->activityPubHelper->generatePersonFromAttendee($participant) : [
+				'type' => 'Person',
+				'id' => 'guests/unknown',
+				'name' => 'Guest',
+			],
+			'target' => $this->activityPubHelper->generateCollectionFromRoom($room),
+			'card' => [
+				'id' => $cardId,
+				'values' => $values,
+			],
+		];
+
+		$botServers = array_map(static fn (Bot $bot): BotServer => $bot->getBotServer(), $bots);
+		$this->invokeBots($botServers, $room, null, $body);
+	}
+
+	/**
 	 * @throws \InvalidArgumentException
 	 */
 	public function validateBotParameters(string $name, string $secret, string $url, string $description): void {

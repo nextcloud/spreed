@@ -84,7 +84,11 @@ class MessageParser {
 	 *                              mimetype only. This is done to prevent a filesystem setup.
 	 */
 	public function parseMessage(Message $message, bool $allowInaccurate = false): void {
-		$message->setMessage($message->getComment()->getMessage(), []);
+		// Extract message parameters from metadata
+		$metaData = $message->getComment()->getMetaData() ?? [];
+		$messageParameters = $metaData[Message::METADATA_MESSAGE_PARAMETERS] ?? [];
+
+		$message->setMessage($message->getComment()->getMessage(), $messageParameters);
 
 		$verb = $message->getComment()->getVerb();
 		if ($verb === ChatManager::VERB_OBJECT_SHARED) {

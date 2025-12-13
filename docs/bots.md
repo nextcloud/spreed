@@ -413,6 +413,116 @@ Bots can also remove their previous reaction from a message. The same signature/
         + `404 Not Found` When the conversation or message could not be found
         + `429 Too Many Requests` When `401 Unauthenticated` was triggered too often
 
+## Adaptive Cards
+
+🆕 Added in Talk 19 (Nextcloud 29).
+
+Bots can send interactive Adaptive Cards to request structured input from users. Adaptive Cards are platform-agnostic UI snippets defined in JSON that enable rich, interactive experiences.
+
+### Sending an Adaptive Card
+
+Bots send Adaptive Cards in chat messages using the `adaptivecard` message parameter:
+
+```json
+{
+    "message": "Please fill out this form",
+    "parameters": {
+        "adaptivecard": {
+            "type": "adaptivecard",
+            "id": "unique-card-id-123",
+            "bot-name": "Survey Bot",
+            "card": {
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                "type": "AdaptiveCard",
+                "version": "1.5",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": "Quick Feedback",
+                        "size": "Large",
+                        "weight": "Bolder"
+                    },
+                    {
+                        "type": "Input.ChoiceSet",
+                        "id": "rating",
+                        "label": "How would you rate this meeting?",
+                        "isRequired": true,
+                        "choices": [
+                            {"title": "⭐ Poor", "value": "1"},
+                            {"title": "⭐⭐ Fair", "value": "2"},
+                            {"title": "⭐⭐⭐ Good", "value": "3"},
+                            {"title": "⭐⭐⭐⭐ Great", "value": "4"},
+                            {"title": "⭐⭐⭐⭐⭐ Excellent", "value": "5"}
+                        ]
+                    },
+                    {
+                        "type": "Input.Text",
+                        "id": "comments",
+                        "label": "Additional comments (optional)",
+                        "isMultiline": true,
+                        "maxLength": 500
+                    }
+                ],
+                "actions": [
+                    {
+                        "type": "Action.Submit",
+                        "title": "Submit Feedback"
+                    }
+                ]
+            }
+        }
+    }
+}
+```
+
+### Receiving Card Submissions
+
+When a user submits an Adaptive Card, all enabled bots receive a webhook with type `adaptivecard_submit`:
+
+```json
+{
+    "type": "adaptivecard_submit",
+    "actor": {
+        "type": "Person",
+        "id": "users/alice",
+        "name": "Alice Smith"
+    },
+    "target": {
+        "type": "Collection",
+        "id": "token123",
+        "name": "Project Discussion"
+    },
+    "card": {
+        "id": "unique-card-id-123",
+        "values": {
+            "rating": "4",
+            "comments": "Great discussion, very productive!"
+        }
+    }
+}
+```
+
+The webhook uses the same HMAC-SHA256 signature verification as regular bot messages.
+
+### Adaptive Cards Resources
+
+- **Visual Designer**: [https://adaptivecards.io/designer/](https://adaptivecards.io/designer/)
+- **Schema Explorer**: [https://adaptivecards.io/explorer/](https://adaptivecards.io/explorer/)
+- **Official Documentation**: [https://adaptivecards.io/](https://adaptivecards.io/)
+
+Adaptive Cards support various input types (text, date, time, numbers, choice sets, toggles), layout containers (columns, fact sets, tables), images, and action buttons (submit, open URL, show nested cards).
+
+### Nextcloud-Specific Extensions
+
+Talk supports custom actions in the `x-nextcloud` namespace for future extensions:
+
+- `x-nextcloud.startCall` - Initiate a video/audio call
+- `x-nextcloud.shareFile` - Open file picker
+- `x-nextcloud.mentionUser` - Mention a participant
+- `x-nextcloud.createPoll` - Launch poll creator
+
+These are currently placeholders for Phase 3 implementation.
+
 ## Nextcloud apps as a bot
 
 🆕 Added in Talk 21.
@@ -425,10 +535,15 @@ When installing the bot specify `nextcloudapp://$APPID` as the bot URL, together
 
 ## Changelog
 
-### Nextcloud 27.1 / Talk 17.1 - September 2023
-- Initial version
+### Nextcloud 29 / Talk 19 - TBD 2025
+- Added Adaptive Cards support for rich, interactive bot experiences
+- Bots can send cards with forms, buttons, layouts, and interactive elements
+- User submissions sent to bots via `adaptivecard_submit` webhook type
 
 ### Nextcloud 31 / Talk 21 - February 2025
 - Added direct support for Nextcloud apps as bots. A new feature flag `events` which indicates that a bot will utilize the `OCA\Talk\Events\BotInvokeEvent` event listed in [PHP events](events.md#bot-invoke) rather than being invoked via a webhook.
 - Added new feature flag `reaction` which allows to get invoked for added and removed reactions
-- In hooks that are replies the new optional field `object.inReplyTo` contains the actor and content of the parent chat message 
+- In hooks that are replies the new optional field `object.inReplyTo` contains the actor and content of the parent chat message
+
+### Nextcloud 27.1 / Talk 17.1 - September 2023
+- Initial version 

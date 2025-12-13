@@ -71,6 +71,13 @@
 				:reference-limit="1"
 				reference-interactive-opt-in
 				@interact-todo="handleInteraction" />
+
+			<!-- Adaptive Card -->
+			<AdaptiveCardRenderer
+				v-if="hasAdaptiveCard"
+				:card="message.messageParameters.adaptivecard"
+				:token="message.token"
+				:message-id="message.id" />
 		</div>
 
 		<!-- Additional message info-->
@@ -176,6 +183,7 @@ import IconCheckAll from 'vue-material-design-icons/CheckAll.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
+import AdaptiveCardRenderer from './AdaptiveCardRenderer.vue'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import MessageQuote from '../../../../MessageQuote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
@@ -203,6 +211,7 @@ export default {
 	name: 'MessageBody',
 
 	components: {
+		AdaptiveCardRenderer,
 		AvatarWrapper,
 		CallButton,
 		NcButton,
@@ -403,6 +412,10 @@ export default {
 
 		showResultsButton() {
 			return this.message.systemMessage === MESSAGE.SYSTEM_TYPE.POLL_CLOSED
+		},
+
+		hasAdaptiveCard() {
+			return this.message.messageParameters?.adaptivecard?.type === 'adaptivecard'
 		},
 
 		isSingleEmoji() {

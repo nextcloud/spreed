@@ -121,6 +121,7 @@ class BotController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param string $token Conversation token
 	 * @param string $message The message to send
+	 * @param array $parameters Message parameters (e.g., adaptive cards, rich objects)
 	 * @param string $referenceId For the message to be able to later identify it again
 	 * @param int $replyTo Parent id which this message is a reply to
 	 * @param bool $silent If sent silent the chat message will not create any notifications
@@ -138,7 +139,7 @@ class BotController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function sendMessage(string $token, string $message, string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
+	public function sendMessage(string $token, string $message, array $parameters = [], string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
 		if (trim($message) === '') {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
@@ -153,6 +154,36 @@ class BotController extends AEnvironmentAwareOCSController {
 				$response->throttle(['action' => 'bot']);
 			}
 			return $response;
+		}
+
+		// Extract and validate adaptive card parameters
+		$messageParameters = [];
+		if (!empty($parameters)) {
+			// Support both 'object' (ADR spec) and 'adaptivecard' (direct) keys
+			$cardData = $parameters['object'] ?? $parameters['adaptivecard'] ?? null;
+
+			if ($cardData !== null) {
+				// Validate adaptive card structure
+				if (!isset($cardData['type']) || $cardData['type'] !== 'adaptivecard') {
+					return new DataResponse(['error' => 'Invalid adaptive card type'], Http::STATUS_BAD_REQUEST);
+				}
+
+				if (!isset($cardData['id'])) {
+					return new DataResponse(['error' => 'Missing required adaptive card field: id'], Http::STATUS_BAD_REQUEST);
+				}
+
+				if (!isset($cardData['card']) || !is_array($cardData['card'])) {
+					return new DataResponse(['error' => 'Missing or invalid adaptive card field: card'], Http::STATUS_BAD_REQUEST);
+				}
+
+				// Validate card schema basics
+				if (!isset($cardData['card']['type']) || $cardData['card']['type'] !== 'AdaptiveCard') {
+					return new DataResponse(['error' => 'Invalid card schema: type must be AdaptiveCard'], Http::STATUS_BAD_REQUEST);
+				}
+
+				// Store in message parameters
+				$messageParameters['adaptivecard'] = $cardData;
+			}
 		}
 
 		$room = $this->manager->getRoomByToken($token);
@@ -174,7 +205,7 @@ class BotController extends AEnvironmentAwareOCSController {
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
-			$this->chatManager->sendMessage($room, null, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent, rateLimitGuestMentions: false);
+			$this->chatManager->sendMessage($room, null, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent, rateLimitGuestMentions: false, threadId: 0, messageParameters: $messageParameters);
 		} catch (MessageTooLongException) {
 			return new DataResponse(null, Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception) {
