@@ -15,6 +15,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Hook\AfterScenario;
 use Behat\Hook\BeforeScenario;
+use Behat\Hook\BeforeSuite;
 use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
@@ -206,6 +207,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->testingAppWasEnabled[$server] = null;
 			$this->guestsOldWhitelist[$server] = '';
 		}
+	}
+
+	#[BeforeSuite]
+	public static function createPHPUnitConfiguration(): void {
+		(new \PHPUnit\TextUI\Configuration\Builder())->build([]);
 	}
 
 	#[BeforeScenario]
