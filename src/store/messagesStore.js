@@ -479,14 +479,18 @@ const mutations = {
 			return
 		}
 
+		const sharedItemsStore = useSharedItemsStore()
 		const timestamp = convertToUnix(Date.now())
 		const messageIds = Object.keys(state.messages[token])
 		messageIds.forEach((messageId) => {
 			if (state.messages[token][messageId].expirationTimestamp
 				&& timestamp > state.messages[token][messageId].expirationTimestamp) {
 				Vue.delete(state.messages[token], messageId)
+				sharedItemsStore.deleteSharedItemFromMessage(token, +messageId)
 			}
 		})
+
+		sharedItemsStore.purgeExpiredSharedItems(token, timestamp)
 	},
 
 	easeMessageList(state, { token, lastReadMessage }) {

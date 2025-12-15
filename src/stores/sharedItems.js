@@ -158,6 +158,33 @@ export const useSharedItemsStore = defineStore('sharedItems', {
 		},
 
 		/**
+		 *  Purge expired shared items from the store
+		 *
+		 * @param {Token} token conversation token
+		 * @param {number} timestamp current timestamp
+		 */
+		purgeExpiredSharedItems(token, timestamp) {
+			if (!this.sharedItemsPool[token]) {
+				return
+			}
+
+			for (const type of Object.keys(this.sharedItemsPool[token])) {
+				for (const id of Object.keys(this.sharedItemsPool[token][type])) {
+					const message = this.sharedItemsPool[token][type][+id]
+					if (message.expirationTimestamp && message.expirationTimestamp < timestamp) {
+						delete this.sharedItemsPool[token][type][+id]
+					}
+				}
+				if (Object.keys(this.sharedItemsPool[token][type]).length === 0) {
+					delete this.sharedItemsPool[token][type]
+				}
+			}
+			if (Object.keys(this.sharedItemsPool[token]).length === 0) {
+				delete this.sharedItemsPool[token]
+			}
+		},
+
+		/**
 		 * @param {Token} token conversation token
 		 * @param {Type} type type of shared item
 		 */
