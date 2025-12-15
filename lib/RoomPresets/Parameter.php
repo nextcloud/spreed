@@ -9,8 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\RoomPresets;
 
 
-enum Parameter: string
-{
+enum Parameter: string {
 	case ROOM_TYPE = 'roomType';
 	case READ_ONLY = 'readOnly';
 	case LISTABLE = 'listable';

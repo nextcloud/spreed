@@ -9,8 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\RoomPresets;
 
 
-enum Preset: int
-{
+enum Preset: int {
 	case DEFAULT = 0;
 	case WEBINAR = 1;
 	case PRESENTATION = 2;
