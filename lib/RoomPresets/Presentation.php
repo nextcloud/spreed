@@ -13,6 +13,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\RecordingService;
 
 class Presentation implements IPreset {
+	#[\Override]
 	public static function getDefault(Parameter $parameter): ?int {
 		return match ($parameter) {
 			Parameter::MENTION_PERMISSIONS => Room::MENTION_PERMISSIONS_MODERATORS,

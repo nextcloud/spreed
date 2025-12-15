@@ -11,6 +11,7 @@ namespace OCA\Talk\RoomPresets;
 use OCA\Talk\Room;
 
 class Hallway implements IPreset {
+	#[\Override]
 	public static function getDefault(Parameter $parameter): ?int {
 		return match ($parameter) {
 			// Users but no guest users (by default)

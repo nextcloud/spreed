@@ -14,6 +14,7 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Webinary;
 
 class Webinar implements IPreset {
+	#[\Override]
 	public static function getDefault(Parameter $parameter): ?int {
 		return match ($parameter) {
 			Parameter::LOBBY_STATE => Webinary::LOBBY_NON_MODERATORS,

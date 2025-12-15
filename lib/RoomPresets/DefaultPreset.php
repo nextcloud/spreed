@@ -14,6 +14,7 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Webinary;
 
 class DefaultPreset implements IPreset {
+	#[\Override]
 	public static function getDefault(Parameter $parameter): int {
 		return match ($parameter) {
 			Parameter::ROOM_TYPE => Room::TYPE_GROUP,
