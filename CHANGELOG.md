@@ -5,6 +5,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.7 – 2025-12-15
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(chat): Correctly expire shared items in sidebar
+  [#16573](https://github.com/nextcloud/spreed/pull/16573)
+- fix(call): Show video streams of other attendees for guests
+  [#16546](https://github.com/nextcloud/spreed/pull/16546)
+
 ## 21.1.6 – 2025-12-11
 ### Changed
 - Update dependencies
