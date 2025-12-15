@@ -455,8 +455,9 @@ const actions = {
 	 * @param {object} payload payload;
 	 * @param {string} payload.token conversation token;
 	 * @param {object} payload.message message object;
+	 * @param {boolean} [payload.fromRealtime] whether the message comes from realtime (polling or signaling)
 	 */
-	processMessage(context, { token, message }) {
+	processMessage(context, { token, message, fromRealtime = false }) {
 		const sharedItemsStore = useSharedItemsStore()
 		const actorStore = useActorStore()
 		const chatExtrasStore = useChatExtrasStore()
@@ -481,6 +482,22 @@ const actions = {
 			// If parent message is presented in store and is different, we update it
 			const parentInStore = context.getters.message(token, message.parent.id)
 			if (Object.keys(parentInStore).length !== 0 && JSON.stringify(parentInStore) !== JSON.stringify(message.parent)) {
+				if (fromRealtime && !message.parent.reactionsSelf) {
+					// Message object might come from signaling, where we don't relay this field
+					message.parent.reactionsSelf = parentInStore.reactionsSelf ?? []
+
+					if (message.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION
+						&& actorStore.checkIfSelfIsActor(message)
+						&& !message.parent.reactionsSelf.includes(message.message)
+					) {
+						message.parent.reactionsSelf = [...message.parent.reactionsSelf, message.message]
+					} else if (message.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION_REVOKED
+						&& actorStore.checkIfSelfIsActor(message)
+						&& message.parent.reactionsSelf.includes(message.message)
+					) {
+						message.parent.reactionsSelf = message.parent.reactionsSelf.filter((reaction) => reaction !== message.message)
+					}
+				}
 				context.commit('addMessage', { token, message: message.parent })
 			}
 
@@ -632,7 +649,7 @@ const actions = {
 
 		try {
 			const response = await deleteMessage({ token, id })
-			context.dispatch('processMessage', { token, message: response.data.ocs.data })
+			context.dispatch('processMessage', { token, message: response.data.ocs.data, fromRealtime: true })
 			return response.status
 		} catch (error) {
 			// Restore the previous message state
@@ -664,7 +681,7 @@ const actions = {
 				messageId,
 				updatedMessage,
 			})
-			context.dispatch('processMessage', { token, message: response.data.ocs.data })
+			context.dispatch('processMessage', { token, message: response.data.ocs.data, fromRealtime: true })
 			EventBus.emit('editing-message-processing', { messageId, value: false })
 		} catch (error) {
 			console.error(error)
@@ -1086,6 +1103,9 @@ const actions = {
 		let countNewMessages = 0
 		let hasNewMention = conversation.unreadMention
 		let lastMessage = null
+		// Determine if the messages are coming from realtime (polling) or not
+		// Might be falsy for own messages, if send request returns before polling is closed
+		const fromRealtime = !conversation?.lastMessage?.id || lastKnownMessageId >= conversation.lastMessage.id
 		const chatStore = useChatStore()
 		chatStore.processChatBlocks(token, response.data.ocs.data, {
 			mergeBy: +lastKnownMessageId,
@@ -1099,7 +1119,7 @@ const actions = {
 				const guestNameStore = useGuestNameStore()
 				guestNameStore.addGuestName(message, { noUpdate: false })
 			}
-			context.dispatch('processMessage', { token, message })
+			context.dispatch('processMessage', { token, message, fromRealtime })
 			if (!lastMessage || message.id > lastMessage.id) {
 				if (!message.systemMessage) {
 					if (actorId !== message.actorId || actorType !== message.actorType) {
@@ -1249,7 +1269,7 @@ const actions = {
 				chatStore.processChatBlocks(token, [response.data.ocs.data], {
 					mergeBy: conversationLastMessageId,
 				})
-				context.dispatch('processMessage', { token, message: response.data.ocs.data })
+				context.dispatch('processMessage', { token, message: response.data.ocs.data, fromRealtime: true })
 			}
 
 			return response
