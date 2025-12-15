@@ -177,26 +177,39 @@ export default {
 					? this.actorStore.displayName || t('spreed', 'Guest')
 					: this.getParticipantName(model),
 				seed: Math.random(),
+				timestamp: Date.now(),
 			})
 		},
 
 		processReactionsQueue() {
+			if (this.reactionsQueue.length === 0) {
+				return
+			}
+
 			// Prevent spamming with reactions, if tab was suspended
 			const now = Date.now()
 			if (now < nextProcessedTimestamp) {
 				return
 			}
+
+			// Discard reactions, that should have been fired long ago
+			if (this.reactionsQueue.at(0).timestamp < now - 30_000) {
+				this.reactionsQueue = this.reactionsQueue.filter((reaction) => reaction.timestamp >= now - 30_000)
+
+				if (this.reactionsQueue.length === 0) {
+					return
+				}
+			}
+
 			nextProcessedTimestamp = now + TOAST_INTERVAL
 
-			if (this.reactionsQueue.length > 0) {
-				// Move reactions from queue to visible array
-				this.toasts.push(this.reactionsQueue.shift())
+			// Move reactions from queue to visible array
+			this.toasts.push(this.reactionsQueue.shift())
 
-				// Delete reactions from array after animation ends
-				setTimeout(() => {
-					this.toasts.shift()
-				}, ANIMATION_LENGTH)
-			}
+			// Delete reactions from array after animation ends
+			setTimeout(() => {
+				this.toasts.shift()
+			}, ANIMATION_LENGTH)
 		},
 
 		getParticipantName(model) {
