@@ -127,7 +127,7 @@ export default {
 
 		async fetchItems(type) {
 			this.isRequestingMoreItems[this.activeTab] = true
-			const { hasMoreItems } = await this.sharedItemsStore.getSharedItems(this.token, type)
+			const { hasMoreItems } = await this.sharedItemsStore.fetchSharedItems(this.token, type)
 			if (hasMoreItems === false) {
 				this.hasFetchedAllItems[this.activeTab] = true
 			}
