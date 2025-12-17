@@ -12,6 +12,7 @@
 		class="message"
 		:class="{
 			'message--hovered': showMessageButtonsBar,
+			'message--pinned': !isSplitViewEnabled && isPinned,
 			'message--sided': isSplitViewEnabled,
 			'message--small-view': (isSmallMobile || isSidebar) && isSplitViewEnabled,
 		}"
@@ -67,6 +68,13 @@
 				@reply="handleReply"
 				@edit="handleEdit"
 				@delete="handleDelete" />
+			<div
+				v-else-if="isSplitViewEnabled && isPinned"
+				class="icon-pin-highlighted"
+				:title="t('spreed', 'Pinned')"
+				:aria-label="t('spreed', 'Pinned')">
+				<IconPin :size="16" />
+			</div>
 		</div>
 
 		<MessageForwarder
@@ -88,6 +96,7 @@ import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nex
 import { t } from '@nextcloud/l10n'
 import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { inject } from 'vue'
+import IconPin from 'vue-material-design-icons/PinOutline.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
 import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
@@ -117,6 +126,7 @@ export default {
 		MessageForwarder,
 		MessageTranslateDialog,
 		ReactionsWrapper,
+		IconPin,
 	},
 
 	props: {
@@ -308,6 +318,10 @@ export default {
 				&& Object.keys(this.message.reactions).length === 0
 				&& this.message.message.split('\n').length === 1
 		},
+
+		isPinned() {
+			return !!this.message.metaData?.pinnedAt
+		},
 	},
 
 	methods: {
@@ -430,6 +444,16 @@ export default {
 			padding-block-end: var(--default-grid-baseline);
 		}
 
+		.icon-pin-highlighted {
+			display: flex;
+			color: var(--color-main-background);
+			background-color: var(--color-primary-element);
+			border-radius: 50%;
+			margin: calc(var(--default-grid-baseline) + 1px);
+			padding: var(--default-grid-baseline);
+			z-index: 1;
+		}
+
 		&.outgoing {
 			align-self: flex-end;
 
@@ -478,6 +502,13 @@ export default {
 
 	}
 	// END Split view
+
+	&--pinned {
+		color: var(--color-text-light);
+		background-color: var(--color-primary-element-light);
+		border-radius: var(--border-radius-large);
+		margin-bottom: 2px
+	}
 }
 
 .message-body {

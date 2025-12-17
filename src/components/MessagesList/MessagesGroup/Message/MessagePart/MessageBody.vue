@@ -120,11 +120,11 @@
 				class="icon-loading-small message-status"
 				:aria-label="loadingIconTitle" />
 			<div
-				v-else-if="isMessagePinned"
-				class="message-status"
+				v-else-if="!isSplitViewEnabled && isMessagePinned"
+				class="message-status highlighted"
 				:title="t('spreed', 'Pinned')"
 				:aria-label="t('spreed', 'Pinned')">
-				<IconPin :size="iconMessageDeliverySize" />
+				<IconPin :size="14" />
 			</div>
 			<div
 				v-else-if="readInfo?.showCommonReadIcon"
@@ -751,6 +751,7 @@ export default {
 		color: var(--color-text-maxcontrast);
 		font-size: var(--default-font-size);
 		width: $messages-info-width;
+		gap: calc(var(--default-grid-baseline) / 2);
 		padding-inline: calc(2 * var(--default-grid-baseline));
 
 		.date {
@@ -782,9 +783,26 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	position: relative;
 
 	&.retry-option {
 		cursor: pointer;
+	}
+
+	&.highlighted {
+		color: var(--color-main-background);
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 10%;
+			border-radius: 50%;
+			background-color: var(--color-primary-element);
+		}
+
+		:deep(svg) {
+			z-index: 1;
+		}
 	}
 }
 
