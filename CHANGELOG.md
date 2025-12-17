@@ -5,6 +5,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.7 – 2025-12-17
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(chat): fix loading more shared items
+  [#16589](https://github.com/nextcloud/spreed/pull/16589)
+
 ## 22.0.6 – 2025-12-15
 ### Changed
 - Update dependencies
