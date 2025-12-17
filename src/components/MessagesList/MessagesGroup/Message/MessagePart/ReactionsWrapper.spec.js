@@ -31,6 +31,14 @@ vi.mock('../../../../../services/reactionsService', () => ({
 	removeReactionFromMessage: vi.fn(),
 }))
 
+vi.mock('vuex', async () => {
+	const vuex = await vi.importActual('vuex')
+	return {
+		...vuex,
+		useStore: vi.fn(),
+	}
+})
+
 describe('ReactionsWrapper.vue', () => {
 	let reactionsStore
 	let token

@@ -30,10 +30,19 @@ import storeConfig from '../../../../store/storeConfig.js'
 import { useActorStore } from '../../../../stores/actor.ts'
 import { useTokenStore } from '../../../../stores/token.ts'
 
+let store
+
+vi.mock('vuex', async () => {
+	const vuex = await vi.importActual('vuex')
+	return {
+		...vuex,
+		useStore: vi.fn(() => store),
+	}
+})
+
 describe('MessageItem.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let testStoreConfig
-	let store
 	let messageProps
 	let conversationProps
 	let injected

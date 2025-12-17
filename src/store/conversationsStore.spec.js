@@ -77,6 +77,16 @@ vi.mock('../services/BrowserStorage.js', () => ({
 	},
 }))
 
+let store
+
+vi.mock('vuex', async () => {
+	const vuex = await vi.importActual('vuex')
+	return {
+		...vuex,
+		useStore: vi.fn(() => store),
+	}
+})
+
 describe('conversationsStore', () => {
 	const testToken = 'XXTOKENXX'
 	const previousLastMessage = {
@@ -88,7 +98,6 @@ describe('conversationsStore', () => {
 	}
 	let testStoreConfig = null
 	let testConversation
-	let store = null
 	let addParticipantOnceAction = null
 	let actorStore
 	const permissions = PARTICIPANT.PERMISSIONS.MAX_CUSTOM
