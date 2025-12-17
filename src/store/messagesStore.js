@@ -11,6 +11,7 @@ import {
 	CHAT,
 	CONVERSATION,
 	MESSAGE,
+	SHARED_ITEM,
 } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { fetchNoteToSelfConversation } from '../services/conversationsService.ts'
@@ -548,6 +549,12 @@ const actions = {
 				chatExtrasStore.updateThreadTitle(token, message.threadId, message.threadTitle)
 			}
 
+			// Auto unpin system message (for time-limited pins)
+			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.MESSAGE_UNPINNED && !message.parent.metaData) {
+				sharedItemsStore.deleteSharedItemFromMessage(token, message.parent.id, SHARED_ITEM.TYPES.PINNED)
+				sharedItemsStore.updateOtherStoresWithPinInformation({ token, messageId: message.parent.id, action: 'unpin' })
+			}
+
 			// Quit processing
 			context.commit('addMessage', { token, message })
 			return
@@ -591,6 +598,21 @@ const actions = {
 			context.commit('clearMessagesHistory', {
 				token,
 				id: message.id,
+			})
+		}
+
+		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.MESSAGE_UNPINNED && !message.parent?.metaData) {
+			sharedItemsStore.deleteSharedItemFromMessage(token, message.parent.id, SHARED_ITEM.TYPES.PINNED)
+			sharedItemsStore.updateOtherStoresWithPinInformation({ token, messageId: message.parent.id, action: 'unpin' })
+		}
+
+		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.MESSAGE_PINNED && message.parent?.metaData) {
+			sharedItemsStore.addSharedItemFromMessage(token, message.parent, SHARED_ITEM.TYPES.PINNED)
+			sharedItemsStore.updateOtherStoresWithPinInformation({
+				token,
+				messageId: message.parent.id,
+				metaData: message.parent.metaData,
+				action: 'pin',
 			})
 		}
 
@@ -1209,6 +1231,21 @@ const actions = {
 			return true
 		}
 		return false
+	},
+
+	updateMessageMetadata(context, { token, id, metaData }) {
+		const message = context.getters.message(token, id)
+		if (Object.keys(message).length === 0) {
+			return
+		}
+
+		if (Object.keys(metaData).length === 0) {
+			const { metaData: _, ...messageWithoutMeta } = message
+			context.commit('addMessage', { token, message: messageWithoutMeta })
+			return
+		}
+
+		context.commit('addMessage', { token, message: { ...message, metaData } })
 	},
 
 	/**

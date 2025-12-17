@@ -6,13 +6,13 @@
 /** Messages list dimensions:
  * - text max width: ~750px (80 characters per line is recommended by W3C standard)
  * - avatar width: 32px (AVATAR.SIZE.SMALL) + 16px (paddings) = 48px
- * - info width: 8ch(~68px) (timestamp) + 40px (checkmark with paddings) = ~108px
+ * - info width: 8ch(~68px) (timestamp) + 40px (checkmark with paddings) + 2px (gap) = ~108px
  * - list max width: 48px (avatar width) + 1058px (text width with paddings) + ~108px (info width) = ~1214px
  * - input max width: ~1214px (list max width) - 100px (send button) = ~1114px
  */
 $messages-text-max-width: calc(50 * var(--default-font-size));
 $messages-avatar-width: calc(32px + 4 * var(--default-grid-baseline));
-$messages-info-width: calc(8ch + var(--clickable-area-small, 24px) + 4 * var(--default-grid-baseline));
+$messages-info-width: calc(8ch + var(--clickable-area-small, 24px) + 4 * var(--default-grid-baseline) + 2px);
 $messages-list-max-width: calc($messages-avatar-width + $messages-text-max-width + 2 * var(--default-grid-baseline) + $messages-info-width);
 $messages-input-max-width: calc($messages-list-max-width - 100px);
 

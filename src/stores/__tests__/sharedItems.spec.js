@@ -16,6 +16,13 @@ vi.mock('../../services/sharedItemsService', () => ({
 	getSharedItemsOverview: vi.fn(),
 }))
 
+vi.mock('vuex', () => ({
+	useStore: vi.fn(() => ({
+		getters: {},
+		dispatch: vi.fn(),
+	})),
+}))
+
 describe('sharedItemsStore', () => {
 	const token = 'TOKEN'
 	let sharedItemsStore
@@ -135,7 +142,7 @@ describe('sharedItemsStore', () => {
 			expect(getSharedItems).toHaveBeenCalledWith({
 				token,
 				objectType: SHARED_ITEM.TYPES.MEDIA,
-				lastKnownMessageId: 100,
+				lastKnownMessageId: 101,
 				limit: limitGeneral,
 			})
 			expect(sharedItemsStore.sharedItems(token)).toEqual(result)
@@ -156,7 +163,7 @@ describe('sharedItemsStore', () => {
 			expect(getSharedItems).toHaveBeenCalledWith({
 				token,
 				objectType: SHARED_ITEM.TYPES.MEDIA,
-				lastKnownMessageId: 100,
+				lastKnownMessageId: 101,
 				limit: limitGeneral,
 			})
 			expect(output).toEqual({ hasMoreItems: false, messages: [] })

@@ -13,6 +13,9 @@
 		}"
 		@scroll="onScroll"
 		@scrollend="endScroll">
+		<PinnedMessage
+			v-if="showPinnedMessages"
+			class="message__pinned" />
 		<template v-if="isInitialisingMessages">
 			<LoadingPlaceholder
 				type="messages"
@@ -103,6 +106,7 @@ import StaticDateTime from '../UIShared/StaticDateTime.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
+import PinnedMessage from './PinnedMessage/PinnedMessage.vue'
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
 import { useGetMessages } from '../../composables/useGetMessages.ts'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
@@ -133,6 +137,7 @@ export default {
 		NcEmptyContent,
 		NcAssistantButton,
 		NcLoadingIcon,
+		PinnedMessage,
 		StaticDateTime,
 		TransitionWrapper,
 	},
@@ -291,6 +296,10 @@ export default {
 				return false
 			}
 			return (this.conversation.unreadMessages >= summaryThreshold)
+		},
+
+		showPinnedMessages() {
+			return this.conversation?.lastPinnedId && this.conversation.lastPinnedId !== this.conversation.hiddenPinnedId
 		},
 	},
 
@@ -1250,5 +1259,22 @@ export default {
 		font-weight: bold;
 		color: var(--color-main-text);
 	}
+}
+
+.message__pinned ~ .scroller__content > .messages-date {
+	top: calc(var(--default-grid-baseline) * 4 + 53px);
+}
+
+.message__pinned {
+	position: sticky;
+	top: var(--default-grid-baseline);
+	margin-inline: auto;
+	width: 86%;
+	max-width: calc($messages-list-max-width * 0.86);
+	z-index: 3;
+	border-radius: var(--border-radius-container);
+	border: 2px solid var(--color-border);
+	margin-bottom: calc(var(--default-grid-baseline) * 3);
+	background-color: var(--color-main-background);
 }
 </style>

@@ -12,6 +12,7 @@ const locale = getCanonicalLocale()
 
 const absoluteTimeFormat = {
 	shortTime: new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: 'numeric' }), // '8:30 PM'
+	longDateSameYear: new Intl.DateTimeFormat(locale, { month: 'long', day: 'numeric' }), // 'December 13'
 	longDate: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric' }), // 'February 15, 2025'
 	longDateWithTime: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }), // 'February 15, 2025 at 8:30 PM'
 	shortDate: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric' }), // 'Feb 15, 2025'

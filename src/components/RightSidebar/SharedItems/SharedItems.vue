@@ -15,6 +15,10 @@
 				<LocationCard wide v-bind="item.messageParameters.object" />
 			</div>
 
+			<PinnedMessageItem
+				v-else-if="isPinned"
+				:item />
+
 			<DeckCard
 				v-else-if="isDeckCard"
 				wide
@@ -56,6 +60,7 @@ import DeckCard from '../../MessagesList/MessagesGroup/Message/MessagePart/DeckC
 import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import LocationCard from '../../MessagesList/MessagesGroup/Message/MessagePart/LocationCard.vue'
 import PollCard from '../../MessagesList/MessagesGroup/Message/MessagePart/PollCard.vue'
+import PinnedMessageItem from '../PinnedMessages/PinnedMessageItem.vue'
 import { SHARED_ITEM } from '../../../constants.ts'
 
 export default {
@@ -66,6 +71,7 @@ export default {
 		FilePreview,
 		LocationCard,
 		PollCard,
+		PinnedMessageItem,
 	},
 
 	props: {
@@ -120,6 +126,10 @@ export default {
 
 		isMedia() {
 			return this.type === SHARED_ITEM.TYPES.MEDIA
+		},
+
+		isPinned() {
+			return this.type === SHARED_ITEM.TYPES.PINNED
 		},
 
 		hasListLayout() {
