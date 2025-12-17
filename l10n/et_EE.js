@@ -2073,7 +2073,7 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome" : "Palun kasuta mõnda muud veebibrauserit nagu Firefox või Chrome",
     "Error while accessing microphone & camera" : "Viga ligipääsul mikrofonile ja kaamerale",
     "We have detected multiple invalid password attempts from your IP. Therefore your next attempt is throttled up to 30 seconds." : "Me oleme tuvastanud mitu vigast salasõna sisestust sinu ip-aadressilt. Seetõttu kasutame nüüd 30-sekundilist hingamishetke.",
-    "This conversation is password-protected." : "See vestlus on salasõnaga kaitstud",
+    "This conversation is password-protected." : "See vestlus on kaitstud salasõnaga",
     "The password is wrong. Try again." : "Salasõna on vale. Proovi uuesti.",
     "%s Talk on your mobile devices" : "%s Talk sinu nutiseadmes",
     "Join conversations at any time, anywhere, on any device." : "Liitu vestlusega igal ajal, igast asukohast ja igast seadmest.",
