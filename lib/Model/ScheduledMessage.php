@@ -11,13 +11,11 @@ namespace OCA\Talk\Model;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\ResponseDefinitions;
-use OCP\AppFramework\Db\Entity;
+use OCP\AppFramework\Db\SnowflakeAwareEntity;
 use OCP\Comments\MessageTooLongException;
 use OCP\DB\Types;
 
 /**
- * @method string getId()
- * @method void setId(string $id)
  * @method void setRoomId(int $roomId)
  * @method int getRoomId()
  * @method void setActorId(string $actorId)
@@ -38,7 +36,7 @@ use OCP\DB\Types;
  *
  * @psalm-import-type TalkScheduledMessage from ResponseDefinitions
  */
-class ScheduledMessage extends Entity {
+class ScheduledMessage extends SnowflakeAwareEntity {
 	public const METADATA_THREAD_TITLE = 'threadTitle';
 	public const METADATA_THREAD_ID = 'threadId';
 	public const METADATA_SILENT = 'silent';
@@ -109,7 +107,7 @@ class ScheduledMessage extends Entity {
 	public function toArray(string $format, ?Message $parent, ?Thread $thread) : array {
 		$metaData = $this->getDecodedMetaData();
 		$data = [
-			'id' => (string)$this->id,
+			'id' => $this->getId(),
 			'actorId' => $this->getActorId(),
 			'actorType' => $this->getActorType(),
 			'threadId' => $this->getThreadId(),
