@@ -480,6 +480,7 @@ OC.L10N.register(
     "Invalid path selected" : "Đường dẫn đã chọn không hợp lệ",
     "Upload" : "Tải lên",
     "Files" : "Tệp",
+    "24 hours" : "24 tiếng",
     "Reply" : "Trả l",
     "More actions" : "Nhiều hành động hơn",
     "Set reminder" : "Thiết lập nhắc nhở",

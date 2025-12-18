@@ -462,6 +462,8 @@ OC.L10N.register(
     "Invalid path selected" : "Atlasīts nederīgs ceļš",
     "Upload" : "Augšupielādēt",
     "Files" : "Datnes",
+    "24 hours" : "24 stundas",
+    "7 days" : "7 dienas",
     "Message forwarded to \"Note to self\"" : "Ziņojums pārvirzīts uz “Piezīme sev”",
     "Error while forwarding message to \"Note to self\"" : "Kļūda ziņojuma pārvirzīšanas uz “Piezīme sev” laikā",
     "Reply" : "Atbildēt",

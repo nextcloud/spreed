@@ -422,6 +422,7 @@ OC.L10N.register(
     "Blur" : "Difuminar",
     "Upload" : "Cargar",
     "Files" : "Archivos",
+    "24 hours" : "24 horas",
     "Reply" : "Responder",
     "More actions" : "Más acciones",
     "Set reminder" : "Establecer recordatorio",

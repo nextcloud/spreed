@@ -321,6 +321,7 @@ OC.L10N.register(
     "Devices" : "Aparatoj",
     "Upload" : "Alŝuti",
     "Files" : "Dosieroj",
+    "24 hours" : "24 horoj",
     "Reply" : "Respondi",
     "More actions" : "Pliaj agoj",
     "Translate" : "Traduku",

@@ -483,6 +483,7 @@ OC.L10N.register(
     "Invalid path selected" : "הנתיב שנבחר שגוי",
     "Upload" : "העלאה",
     "Files" : "קבצים",
+    "24 hours" : "24 שעות",
     "Reply" : "תגובה",
     "More actions" : "פעולות נוספות",
     "Go to file" : "מעבר לקובץ",
