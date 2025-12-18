@@ -225,6 +225,8 @@ OC.L10N.register(
     "Devices" : "Pajisjet",
     "Upload" : "Ngarkoni",
     "Files" : "Skedarët",
+    "24 hours" : "24 orë",
+    "7 days" : "7 ditë ",
     "Reply" : "Përgjigju",
     "More actions" : "Më tepër veprime ",
     "Translate" : "Përkthe",

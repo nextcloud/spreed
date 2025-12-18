@@ -767,6 +767,8 @@ OC.L10N.register(
     "Invalid path selected" : "Camin seleccionat invalid",
     "Upload" : "Cargament",
     "Files" : "Fichièrs",
+    "24 hours" : "24 oras",
+    "7 days" : "7 jorns",
     "Add a reaction to this message" : "Apondre una reaccion a aqueste messatge",
     "Reply" : "Respondre",
     "More actions" : "Mai d’accions",

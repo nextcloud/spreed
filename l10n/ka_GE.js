@@ -101,6 +101,7 @@ OC.L10N.register(
     "Devices" : "მოწყობილობები",
     "Upload" : "ატვირთვა",
     "Files" : "ფაილები",
+    "24 hours" : "24 საათი",
     "Reply" : "პასუხი",
     "More actions" : "მეტი ქმედება",
     "Translate" : "გადათარგმნეთ",
