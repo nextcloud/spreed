@@ -10,7 +10,6 @@ namespace OCA\Talk\Model;
 
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Db\Entity;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -126,12 +125,5 @@ class ScheduledMessageMapper extends QBMapper {
 			->where($query->expr()->lt('send_at', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE)));
 
 		return $this->findEntities($query);
-	}
-
-	#[\Override]
-	public function insert(Entity $entity): Entity {
-		/** @psalm-suppress InvalidArgument */
-		$entity->setId($this->generator->nextId());
-		return parent::insert($entity);
 	}
 }
