@@ -1116,6 +1116,8 @@ OC.L10N.register(
     "(edited)" : "(수정됨)",
     "The message has expired or has been deleted" : "메시지가 만료되었거나 삭제되었습니다.",
     "Cancel quote" : "인용 취소",
+    "24 hours" : "24시간",
+    "7 days" : "7일",
     "Clear reminder – {timeLocale}" : "알림 지우기 – {timeLocale}",
     "Message text copied to clipboard" : "메시지 텍스트를 클립보드에 복사했습니다.",
     "Message text could not be copied" : "메시지 텍스트를 클립보드에 복사할 수 없습니다.",

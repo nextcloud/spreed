@@ -648,6 +648,7 @@ OC.L10N.register(
     "Blur" : "Blurează",
     "Upload" : "Încărcare",
     "Files" : "Fișiere",
+    "24 hours" : "24 de ore",
     "Clear reminder – {timeLocale}" : "Șterge memento – {timeLocale}",
     "Reply" : "Răspunde",
     "More actions" : "Mai multe acțiuni",

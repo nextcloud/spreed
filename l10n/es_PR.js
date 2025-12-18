@@ -95,6 +95,7 @@ OC.L10N.register(
     "Devices" : "Dispositivos",
     "Upload" : "Cargar",
     "Files" : "Archivos",
+    "24 hours" : "24 horas",
     "Reply" : "Responder",
     "More actions" : "Más acciones",
     "Translate" : "Traducir",

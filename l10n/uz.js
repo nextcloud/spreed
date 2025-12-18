@@ -325,6 +325,7 @@ OC.L10N.register(
     "Select a device" : "Qurilmani tanlang",
     "Upload" : "Yuklash",
     "Files" : "Fayllar",
+    "24 hours" : "24 soat",
     "Reply" : "Javob bering",
     "More actions" : "Ko'proq harakatlar",
     "Translate" : "Tarjima",
