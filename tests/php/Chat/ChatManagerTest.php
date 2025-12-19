@@ -554,7 +554,7 @@ class ChatManagerTest extends TestCase {
 
 		$this->shareManager->expects($this->once())
 			->method('deleteShare')
-			->willReturn($share);
+			->with($share);
 
 		$this->commentsManager->expects($this->once())
 			->method('save')

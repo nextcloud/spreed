@@ -803,7 +803,7 @@ class SystemMessage implements IEventListener {
 	 * @throws ShareNotFound
 	 */
 	protected function getFileFromShare(Room $room, ?Participant $participant, string $shareId, bool $allowInaccurate): array {
-		$share = $this->shareProvider->getShareById((int)$shareId);
+		$share = $this->shareProvider->getShareById($shareId);
 
 		if ($participant && $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 			if ($allowInaccurate) {
