@@ -38,6 +38,8 @@ class Participant {
 	public const PRIVACY_PUBLIC = 0;
 	public const PRIVACY_PRIVATE = 1;
 
+	public const ERROR_SCHEDULED_MESSAGE = -1;
+
 	public function __construct(
 		protected Room $room,
 		protected Attendee $attendee,
@@ -71,7 +73,7 @@ class Participant {
 		return \in_array($participantType, [self::GUEST, self::GUEST_MODERATOR, self::USER_SELF_JOINED], true);
 	}
 
-	public function getHasScheduledMessages(): bool {
+	public function getHasScheduledMessages(): int {
 		return $this->attendee->getHasScheduledMessages();
 	}
 

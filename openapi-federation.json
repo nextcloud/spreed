@@ -1060,7 +1060,8 @@
                         "description": "Required capability: `pinned-messages`"
                     },
                     "hasScheduledMessages": {
-                        "type": "boolean",
+                        "type": "integer",
+                        "format": "int64",
                         "description": "Required capability: `scheduled-messages` (local)"
                     }
                 }

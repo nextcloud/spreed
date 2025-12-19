@@ -67,6 +67,7 @@ trait CommandLineTrait {
 			2 => ['pipe', 'w'],
 		];
 		$process = proc_open('php ' . $serverRootDir . '/console.php ' . $argString, $descriptor, $pipes, $this->ocPath, $env);
+		//		$process = proc_open('sudo -u www-data php ' . $serverRootDir . '/console.php ' . $argString, $descriptor, $pipes, $this->ocPath, $env);
 		$this->lastStdOut = stream_get_contents($pipes[1]);
 		$this->lastStdErr = stream_get_contents($pipes[2]);
 		$this->lastCode = proc_close($process);

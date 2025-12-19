@@ -461,7 +461,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 					ScheduledMessage::METADATA_THREAD_ID => $threadId,
 				]
 			);
-			$this->participantService->setHasScheduledMessages($this->participant, true);
+			$count = $this->scheduledMessageManager->getScheduledMessageCount($this->room, $this->participant);
+			$this->participantService->setHasScheduledMessages($this->participant, $count);
 		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		}
@@ -475,7 +476,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * Required capability: `scheduled-messages`
 	 *
-	 * @param int $messageId The scheduled message id
+	 * @param string $messageId The scheduled message id
 	 * @param string $message The scheduled message to send
 	 * @param int $sendAt When to send the scheduled message
 	 * @param bool $silent If sent silent the scheduled message will not create any notifications
@@ -495,10 +496,10 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/schedule/{messageId}', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
-		'messageId' => '[0-9]{4,30}',
+		'messageId' => '[0-9]+',
 	])]
 	public function editScheduledMessage(
-		int $messageId,
+		string $messageId,
 		string $message,
 		int $sendAt,
 		bool $silent = false,
@@ -527,7 +528,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 				$sendAtDateTime,
 				$threadTitle
 			);
-			$this->participantService->setHasScheduledMessages($this->participant, true);
+			$count = $this->scheduledMessageManager->getScheduledMessageCount($this->room, $this->participant);
+			$this->participantService->setHasScheduledMessages($this->participant, $count);
 		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\InvalidArgumentException) {
@@ -555,7 +557,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * Required capability: `scheduled-messages`
 	 *
-	 * @param int $messageId The scheduled message ud
+	 * @param string $messageId The scheduled message id
 	 * @return DataResponse<Http::STATUS_OK, array{}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'actor'|'message'}, array{}>
 	 *
 	 * 200: Message deleted
@@ -569,9 +571,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/chat/{token}/schedule/{messageId}', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
-		'messageId' => '[0-9]{4,30}',
+		'messageId' => '[0-9]+',
 	])]
-	public function deleteScheduleMessage(int $messageId): DataResponse {
+	public function deleteScheduleMessage(string $messageId): DataResponse {
 		if ($this->participant->isSelfJoinedOrGuest()) {
 			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
 		}
@@ -579,15 +581,16 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$deleted = $this->scheduledMessageManager->deleteMessage(
 			$this->room,
 			$messageId,
-			$this->participant,
+			$this->participant->getAttendee()->getActorType(),
+			$this->participant->getAttendee()->getActorId()
 		);
 
 		if ($deleted === 0) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
 		}
 
-		$hasScheduledMessages = $this->scheduledMessageManager->getScheduledMessageCount($this->room, $this->participant) > 0;
-		$this->participantService->setHasScheduledMessages($this->participant, $hasScheduledMessages);
+		$count = $this->scheduledMessageManager->getScheduledMessageCount($this->room, $this->participant);
+		$this->participantService->setHasScheduledMessages($this->participant, $count);
 		return new DataResponse([], Http::STATUS_OK);
 	}
 

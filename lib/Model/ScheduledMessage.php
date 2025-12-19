@@ -43,6 +43,7 @@ class ScheduledMessage extends Entity {
 	public const METADATA_THREAD_ID = 'threadId';
 	public const METADATA_SILENT = 'silent';
 	public const METADATA_LAST_EDITED_TIME = 'lastEditedTime';
+	public const METADATA_SEND_AT = 'sendAt';
 
 	protected ?int $roomId = 0;
 	protected string $actorId = '';
@@ -69,14 +70,19 @@ class ScheduledMessage extends Entity {
 	}
 
 	/**
-	 * @return array{silent: bool, threadId: int, threadTitle?: string, lastEditedTime?: int}
+	 * @return array{silent: bool, threadId: int, threadTitle?: string, lastEditedTime?: int, sendAt: ?int}
 	 */
 	public function getDecodedMetaData(): array {
 		return json_decode($this->metaData, true, 512, JSON_THROW_ON_ERROR);
 	}
 
+	public function getThreadTitle(): string {
+		$metaData = $this->getDecodedMetaData();
+		return $metaData[self::METADATA_THREAD_TITLE] ?? '';
+	}
+
 	/**
-	 * @param array{silent: bool, threadId: int, threadTitle?: string, lastEditedTime?: int} $metaData
+	 * @param array{silent: bool, threadId: int, threadTitle?: string, lastEditedTime?: int, sendAt: ?int} $metaData
 	 */
 	public function setMetaData(array $metaData): void {
 		$this->metaData = json_encode($metaData, JSON_THROW_ON_ERROR);
@@ -111,7 +117,7 @@ class ScheduledMessage extends Entity {
 			'messageType' => $this->getMessageType(),
 			'createdAt' => $this->getCreatedAt()->getTimestamp(),
 			'sendAt' => $this->getSendAt()?->getTimestamp() ?? 0,
-			'silent' => $metaData['silent'] ?? false,
+			'silent' => $metaData[self::METADATA_SILENT] ?? false,
 		];
 
 		if ($parent !== null) {

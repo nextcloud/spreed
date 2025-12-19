@@ -35,11 +35,11 @@ class ScheduledMessageMapper extends QBMapper {
 	/**
 	 * @throws DoesNotExistException
 	 */
-	public function findById(Room $chat, int $id, string $actorType, string $actorId): ScheduledMessage {
+	public function findById(Room $chat, string $id, string $actorType, string $actorId): ScheduledMessage {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->eq('id', $query->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
+			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
 			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR)));
@@ -68,17 +68,15 @@ class ScheduledMessageMapper extends QBMapper {
 
 	public function getCountByActorAndRoom(Room $chat, string $actorType, string $actorId): int {
 		$query = $this->db->getQueryBuilder();
-		$query->select(['room_id', $query->func()->count('*')])
+		$query->select($query->func()->count('*'))
 			->from($this->getTableName())
 			->where($query->expr()->eq('actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)))
-			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR)))
-			->groupBy('room_id');
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR)));
 
 		$result = $query->executeQuery();
-		$count = $result->rowCount();
+		$count = (int)$result->fetchOne();
 		$result->closeCursor();
-
 		return $count;
 	}
 
@@ -95,15 +93,15 @@ class ScheduledMessageMapper extends QBMapper {
 	public function deleteMessagesByRoom(Room $chat): int {
 		$query = $this->db->getQueryBuilder();
 		$query->delete($this->getTableName())
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR)));
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_INT)));
 		return $query->executeStatement();
 	}
 
-	public function deleteById(Room $chat, int $id, string $actorType, string $actorId): int {
+	public function deleteById(Room $chat, string $id, string $actorType, string $actorId): int {
 		$query = $this->db->getQueryBuilder();
 		$query->delete($this->getTableName())
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($chat->getId(), IQueryBuilder::PARAM_STR)))
-			->andWhere($query->expr()->eq('id', $query->createNamedParameter($id, IQueryBuilder::PARAM_STR)))
+			->andWhere($query->expr()->eq('id', $query->createNamedParameter($id)))
 			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter($actorType, IQueryBuilder::PARAM_STR)))
 			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId, IQueryBuilder::PARAM_STR)));
 
@@ -119,11 +117,11 @@ class ScheduledMessageMapper extends QBMapper {
 		return $query->executeStatement();
 	}
 
-	public function getMessagesDue(\DateTime $dateTime): array {
+	public function getMessagesDue(\DateTimeInterface $dateTime): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->lt('send_at', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE)));
+			->where($query->expr()->lte('send_at', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE)));
 
 		return $this->findEntities($query);
 	}
