@@ -314,7 +314,7 @@ export default {
 			return this.message.message.length <= 20 // FIXME: magic number
 				&& !this.message.parent
 				&& !this.isThreadStarterMessage
-				&& this.message.messageParameters.length === 0
+				&& !this.message.messageParameters.length
 				&& Object.keys(this.message.reactions).length === 0
 				&& this.message.message.split('\n').length === 1
 		},
