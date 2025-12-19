@@ -436,7 +436,7 @@ class RoomShareProvider implements IShareProvider {
 
 		$update->executeStatement();
 
-		return $this->getShareById((int)$share->getId(), $recipient);
+		return $this->getShareById($share->getId(), $recipient);
 	}
 
 	/**
@@ -507,8 +507,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @param Folder $node
 	 * @param bool $reshares Also get the shares where $user is the owner instead of just the shares where $user is the initiator
 	 * @param bool $shallow Whether the method should stop at the first level, or look into sub-folders.
-	 * @return IShare[][]
-	 * @psalm-return array<array-key, non-empty-list<IShare>>
+	 * @return array<int, list<IShare>>
+	 * @psalm-return array<int, non-empty-list<IShare>>
 	 */
 	#[\Override]
 	public function getSharesInFolder($userId, Folder $node, $reshares, $shallow = true): array {
@@ -618,13 +618,14 @@ class RoomShareProvider implements IShareProvider {
 	/**
 	 * Get share by id
 	 *
-	 * @param int $id
+	 * @param string $id
 	 * @param string|null $recipientId
 	 * @return IShare
 	 * @throws ShareNotFound
 	 */
 	#[\Override]
 	public function getShareById($id, $recipientId = null): IShare {
+		$id = (int)$id;
 		if (($recipientId === null) && isset($this->sharesByIdCache[$id])) {
 			$share = $this->sharesByIdCache[$id];
 		} else {
@@ -1167,7 +1168,7 @@ class RoomShareProvider implements IShareProvider {
 	 * Get all the shares in this provider returned as iterable to reduce memory
 	 * overhead
 	 *
-	 * @return iterable
+	 * @return iterable<IShare>
 	 * @since 18.0.0
 	 */
 	#[\Override]
