@@ -1334,6 +1334,7 @@ OC.L10N.register(
     "The message has expired or has been deleted" : "El missatge ha caducat o s'ha suprimit",
     "Cancel quote" : "Cancel·la la menció",
     "24 hours" : "24 hores",
+    "7 days" : "7 dies",
     "Clear reminder – {timeLocale}" : "Esborra el recordatori – {timeLocale}",
     "Edited by {actor}" : "Editat per {actor}",
     "Message text copied to clipboard" : "El text del missatge s'ha copiat al porta-retalls",
