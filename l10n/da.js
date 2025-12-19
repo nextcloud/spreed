@@ -624,6 +624,7 @@ OC.L10N.register(
     "Files" : "Filer",
     "(edited)" : "(redigeret)",
     "24 hours" : "24 timer",
+    "7 days" : "7 dage",
     "Edited by {actor}" : "Redigeret af {actor}",
     "Reply" : "Besvar",
     "More actions" : "Flere handlinger",
