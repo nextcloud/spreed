@@ -1449,6 +1449,7 @@ OC.L10N.register(
     "The message has expired or has been deleted" : "Platnost této zprávy skončila nebo byla smazána",
     "Cancel quote" : "Zrušit citování",
     "24 hours" : "24 hodin",
+    "7 days" : "7 dnů",
     "Clear reminder – {timeLocale}" : "Odstranit připomínku – {timeLocale}",
     "Edited by {actor}" : "Upravil(a) {actor}",
     "Message text copied to clipboard" : "Text zprávy zkopírován do schránky",
