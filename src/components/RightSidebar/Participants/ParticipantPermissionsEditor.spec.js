@@ -69,12 +69,21 @@ describe('ParticipantPermissionsEditor.vue', () => {
 		vi.clearAllMocks()
 	})
 
+	const ComponentStub = {
+		template: '<div><slot /></div>',
+	}
+
 	/**
 	 * @param {object} participant Participant with optional user status data
 	 */
 	const mountParticipantPermissionsEditor = (participant) => {
 		return mount(ParticipantPermissionsEditor, {
-			global: { plugins: [store] },
+			global: {
+				plugins: [store],
+				stubs: {
+					NcModal: ComponentStub,
+				},
+			},
 			props: {
 				participant,
 				token: 'fdslk033',
