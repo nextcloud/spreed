@@ -390,8 +390,8 @@ Feature: chat-4/scheduling
       | message | Message 1 |
       | sendAt  | {NOW}     |
     Then user "participant2" sees the following scheduled messages in room "public" with 404
-    Then user "participant2" is participant of the following rooms (v4)
-      | id     | type | hasScheduledMessages |
+    Then user "participant2" is participant of the following unordered rooms (v4)
+      | name   | type | hasScheduledMessages |
       | room   | 2    | 0                    |
       | public | 3    | 0                    |
 
@@ -456,8 +456,8 @@ Feature: chat-4/scheduling
     Then user "participant1" sees the following scheduled messages in room "public" with 200
       | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt | silent |
       | Message 1 | users     | participant1 | 0        | null   | Message 1 | comment     | {NOW}  | false  |
-    Then user "participant1" is participant of the following rooms (v4)
-      | id     | type | hasScheduledMessages |
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | name   | type | hasScheduledMessages |
       | room   | 2    | 0                    |
       | public | 3    | 1                    |
     When wait for 4 seconds
@@ -480,10 +480,10 @@ Feature: chat-4/scheduling
     Then user "participant1" sees the following scheduled messages in room "one-to-one room" with 200
       | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt | silent |
       | Message 1 | users     | participant1 | 0        | null   | Message 1 | comment     | {NOW}  | false  |
-    Then user "participant1" is participant of the following rooms (v4)
-      | id     | type | hasScheduledMessages |
-      | room   | 2    | 0                    |
-      | one-to-one room | 1    | 1           |
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | name         | type | hasScheduledMessages |
+      | room         | 2    | 0                    |
+      | participant2 | 1    | 1                    |
     When wait for 4 seconds
     And force run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
     Then user "participant1" sees the following scheduled messages in room "room" with 200
@@ -504,10 +504,10 @@ Feature: chat-4/scheduling
     Then user "participant1" sees the following scheduled messages in room "one-to-one room" with 200
       | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt | silent |
       | Message 1 | users     | participant1 | 0        | null   | Message 1 | comment     | {NOW}  | false  |
-    Then user "participant1" is participant of the following rooms (v4)
-      | id     | type | hasScheduledMessages |
-      | room   | 2    | 0                    |
-      | one-to-one room | 1    | 1           |
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | name         | type | hasScheduledMessages |
+      | room         | 2    | 0                    |
+      | participant2 | 1    | 1                    |
     When user "participant2" is deleted
     When wait for 4 seconds
     And force run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
