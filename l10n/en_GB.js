@@ -1449,6 +1449,7 @@ OC.L10N.register(
     "The message has expired or has been deleted" : "The message has expired or has been deleted",
     "Cancel quote" : "Cancel quote",
     "24 hours" : "24 hours",
+    "7 days" : "7 days",
     "Clear reminder – {timeLocale}" : "Clear reminder – {timeLocale}",
     "Edited by {actor}" : "Edited by {actor}",
     "Message text copied to clipboard" : "Message text copied to clipboard",
