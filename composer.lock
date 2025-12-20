@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a266709f260d8544ab981b243476b57",
+    "content-hash": "2105b2181e7b1eba3edbf4d754044364",
     "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
@@ -265,16 +265,16 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v6.11.1",
+            "version": "v7.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "d1e91ecf8c598d073d0995afa8cd5c75c6e19e66"
+                "reference": "81ed59ef42f33a522b5891180df4c743222b8b92"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/d1e91ecf8c598d073d0995afa8cd5c75c6e19e66",
-                "reference": "d1e91ecf8c598d073d0995afa8cd5c75c6e19e66",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/81ed59ef42f33a522b5891180df4c743222b8b92",
+                "reference": "81ed59ef42f33a522b5891180df4c743222b8b92",
                 "shasum": ""
             },
             "require": {
@@ -322,9 +322,9 @@
             ],
             "support": {
                 "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v6.11.1"
+                "source": "https://github.com/firebase/php-jwt/tree/v7.0.1"
             },
-            "time": "2025-04-09T20:32:01+00:00"
+            "time": "2025-12-15T23:11:17+00:00"
         }
     ],
     "packages-dev": [
@@ -591,5 +591,5 @@
     "platform-overrides": {
         "php": "8.2"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }
