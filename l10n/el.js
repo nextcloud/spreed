@@ -1444,6 +1444,7 @@ OC.L10N.register(
     "The message has expired or has been deleted" : "Το μήνυμα έχει λήξει ή έχει διαγραφεί",
     "Cancel quote" : "Ακύρωση παράθεσης",
     "24 hours" : "24 ώρες",
+    "7 days" : "7 ημέρες",
     "Clear reminder – {timeLocale}" : "Εκκαθάριση υπενθύμισης – {timeLocale}",
     "Edited by {actor}" : "Επεξεργάστηκε από {actor}",
     "Message text copied to clipboard" : "Το κείμενο του μηνύματος αντιγράφηκε στο πρόχειρο",
