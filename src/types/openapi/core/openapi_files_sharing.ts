@@ -271,9 +271,9 @@ export type paths = {
         };
         get?: never;
         put?: never;
-        /** Accept a remote share */
+        /** Accept a remote share. */
         post: operations["remote-accept-share"];
-        /** Decline a remote share */
+        /** Decline a remote share. */
         delete: operations["remote-decline-share"];
         options?: never;
         head?: never;
@@ -427,19 +427,18 @@ export type components = {
             itemsperpage?: string;
         };
         RemoteShare: {
-            accepted: boolean;
+            /** Format: int64 */
+            accepted: number;
             /** Format: int64 */
             file_id: number | null;
-            /** Format: int64 */
-            id: number;
+            id: string;
             mimetype: string | null;
             mountpoint: string;
             /** Format: int64 */
             mtime: number | null;
             name: string;
             owner: string;
-            /** Format: int64 */
-            parent: number | null;
+            parent: string | null;
             /** Format: int64 */
             permissions: number | null;
             remote: string;
@@ -1928,7 +1927,7 @@ export interface operations {
             };
             path: {
                 /** @description ID of the share */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -1987,7 +1986,7 @@ export interface operations {
             };
             path: {
                 /** @description ID of the share */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2046,7 +2045,7 @@ export interface operations {
             };
             path: {
                 /** @description ID of the share */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
@@ -2105,7 +2104,7 @@ export interface operations {
             };
             path: {
                 /** @description ID of the share */
-                id: number;
+                id: string;
             };
             cookie?: never;
         };
