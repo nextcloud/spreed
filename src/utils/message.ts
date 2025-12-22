@@ -237,17 +237,31 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
 			// doesn't worth localizing on client side
 			throw new Error()
 		}
-		case MESSAGE.SYSTEM_TYPE.MODERATOR_PROMOTED: {
-			throw new Error()
-		}
-		case MESSAGE.SYSTEM_TYPE.MODERATOR_DEMOTED: {
-			throw new Error()
-		}
+		case MESSAGE.SYSTEM_TYPE.MODERATOR_PROMOTED:
 		case MESSAGE.SYSTEM_TYPE.GUEST_MODERATOR_PROMOTED: {
-			throw new Error()
+			if (selfIsActor(message, conversation.actorId, conversation.actorType)) {
+				return t('spreed', 'You promoted {user} to moderator')
+			} else if (selfIsUser(message, conversation.actorId, conversation.actorType)) {
+				return cliIsActor(message)
+					? t('spreed', 'An administrator promoted you to moderator')
+					: t('spreed', '{actor} promoted you to moderator')
+			}
+			return cliIsActor(message)
+				? t('spreed', 'An administrator promoted {user} to moderator')
+				: t('spreed', '{actor} promoted {user} to moderator')
 		}
+		case MESSAGE.SYSTEM_TYPE.MODERATOR_DEMOTED:
 		case MESSAGE.SYSTEM_TYPE.GUEST_MODERATOR_DEMOTED: {
-			throw new Error()
+			if (selfIsActor(message, conversation.actorId, conversation.actorType)) {
+				return t('spreed', 'You demoted {user} from moderator')
+			} else if (selfIsUser(message, conversation.actorId, conversation.actorType)) {
+				return cliIsActor(message)
+					? t('spreed', 'An administrator demoted you from moderator')
+					: t('spreed', '{actor} demoted you from moderator')
+			}
+			return cliIsActor(message)
+				? t('spreed', 'An administrator demoted {user} from moderator')
+				: t('spreed', '{actor} demoted {user} from moderator')
 		}
 		case MESSAGE.SYSTEM_TYPE.FILE_SHARED: {
 			throw new Error()
