@@ -3,9 +3,72 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { ChatMessage } from '../types/index.ts'
+import type { ChatMessage, Conversation } from '../types/index.ts'
 
-import { ATTENDEE, MESSAGE } from '../constants.ts'
+import { t } from '@nextcloud/l10n'
+import { ATTENDEE, CONVERSATION, MENTION, MESSAGE } from '../constants.ts'
+
+/**
+ * Module augmentation to declare the t function from `@nextcloud/l10n`
+ * (no placeholders should be replaced until it reaches NcRichText)
+ *
+ * @param app - app name ('spreed')
+ * @param text - translated string
+ */
+declare module '@nextcloud/l10n' {
+	export function t(app: string, text: string): string
+}
+
+/**
+ * Returns correct mention type for self actor
+ */
+const SELF_MENTION_TYPE = {
+	[ATTENDEE.ACTOR_TYPE.USERS]: MENTION.TYPE.USER,
+	[ATTENDEE.ACTOR_TYPE.FEDERATED_USERS]: MENTION.TYPE.FEDERATED_USER,
+	[ATTENDEE.ACTOR_TYPE.EMAILS]: MENTION.TYPE.EMAIL,
+	[ATTENDEE.ACTOR_TYPE.GUESTS]: MENTION.TYPE.GUEST,
+} as const
+
+type SelfMentionTypeKey = keyof typeof SELF_MENTION_TYPE
+
+/**
+ * Sync with server-side constant SYSTEM_MESSAGE_TYPE_RELAY in lib/Signaling/Listener.php
+ */
+const SYSTEM_MESSAGE_TYPE_RELAY = [
+	MESSAGE.SYSTEM_TYPE.CALL_STARTED, // 'call_started',
+	MESSAGE.SYSTEM_TYPE.CALL_JOINED, // 'call_joined',
+	MESSAGE.SYSTEM_TYPE.CALL_LEFT, // 'call_left',
+	MESSAGE.SYSTEM_TYPE.CALL_ENDED, // 'call_ended',
+	MESSAGE.SYSTEM_TYPE.CALL_ENDED_EVERYONE, // 'call_ended_everyone',
+	MESSAGE.SYSTEM_TYPE.THREAD_CREATED, // 'thread_created',
+	MESSAGE.SYSTEM_TYPE.THREAD_RENAMED, // 'thread_renamed',
+	MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED, // 'message_deleted',
+	MESSAGE.SYSTEM_TYPE.MESSAGE_EDITED, // 'message_edited',
+	MESSAGE.SYSTEM_TYPE.MODERATOR_PROMOTED, // 'moderator_promoted',
+	MESSAGE.SYSTEM_TYPE.MODERATOR_DEMOTED, // 'moderator_demoted',
+	MESSAGE.SYSTEM_TYPE.GUEST_MODERATOR_PROMOTED, // 'guest_moderator_promoted',
+	MESSAGE.SYSTEM_TYPE.GUEST_MODERATOR_DEMOTED, // 'guest_moderator_demoted',
+	MESSAGE.SYSTEM_TYPE.FILE_SHARED, // 'file_shared',
+	MESSAGE.SYSTEM_TYPE.OBJECT_SHARED, // 'object_shared',
+	MESSAGE.SYSTEM_TYPE.HISTORY_CLEARED, // 'history_cleared',
+	MESSAGE.SYSTEM_TYPE.POLL_VOTED, // 'poll_voted',
+	MESSAGE.SYSTEM_TYPE.POLL_CLOSED, // 'poll_closed',
+	MESSAGE.SYSTEM_TYPE.RECORDING_STARTED, // 'recording_started',
+	MESSAGE.SYSTEM_TYPE.RECORDING_STOPPED, // 'recording_stopped',
+] as const
+
+/**
+ * System messages that aren't necessary to translate
+ */
+const SYSTEM_MESSAGE_TYPE_UNTRANSLATED = [
+	MESSAGE.SYSTEM_TYPE.REACTION,
+	MESSAGE.SYSTEM_TYPE.REACTION_DELETED,
+	MESSAGE.SYSTEM_TYPE.REACTION_REVOKED,
+	MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED,
+	MESSAGE.SYSTEM_TYPE.MESSAGE_EDITED,
+	MESSAGE.SYSTEM_TYPE.THREAD_CREATED,
+	MESSAGE.SYSTEM_TYPE.THREAD_RENAMED,
+] as const
 
 /**
  * System messages that aren't shown separately in the chat
@@ -20,6 +83,82 @@ const SYSTEM_MESSAGE_TYPE_HIDDEN = [
 	MESSAGE.SYSTEM_TYPE.THREAD_CREATED,
 	MESSAGE.SYSTEM_TYPE.THREAD_RENAMED,
 ] as const
+
+/**
+ * Returns whether the actor is CLI (Administrator)
+ *
+ * @param message Chat message
+ */
+function cliIsActor(message: ChatMessage) {
+	return message.messageParameters.actor.id === ATTENDEE.ACTOR_CLI_ID
+		&& message.messageParameters.actor.type === MENTION.TYPE.GUEST
+}
+
+/**
+ * Returns whether the conversation is one-to-one
+ *
+ * @param type conversation type
+ */
+function conversationIsOneToOne(type: number) {
+	return type === CONVERSATION.TYPE.ONE_TO_ONE
+		|| type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+}
+
+/**
+ * Returns whether the call is started silently
+ * FIXME should be coming with the message metadata from HPB
+ *
+ * @param message conversation type
+ */
+function callIsSilent(message: ChatMessage) {
+	return /* $metaData[Message::METADATA_SILENT] */false
+}
+
+/**
+ * Returns correct mention type for self (when guest, id contains a prefix)
+ *
+ * @param actorId user id
+ * @param actorType user type
+ */
+function selfMentionId(actorId: string, actorType: string) {
+	if (actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+		return `${MENTION.TYPE.GUEST}/${actorId}`
+	}
+	return actorId
+}
+
+/**
+ * Returns correct mention type for self ('users' -> 'user', etc.)
+ *
+ * @param actorType user type
+ */
+function selfMentionType(actorType: string) {
+	return SELF_MENTION_TYPE[actorType as SelfMentionTypeKey] ?? MENTION.TYPE.GUEST
+}
+
+/**
+ * Returns whether the actor is current user (You)
+ *
+ * @param message Chat message
+ * @param selfActorId Current user id
+ * @param selfActorType Current user type
+ */
+function selfIsActor(message: ChatMessage, selfActorId: string, selfActorType: string) {
+	return message.messageParameters.actor.id === selfActorId
+		&& message.messageParameters.actor.type === selfMentionType(selfActorType)
+}
+
+/**
+ * Returns whether the affected user is current user (you)
+ *
+ * @param message Chat message
+ * @param selfActorId Current user id
+ * @param selfActorType Current user type
+ */
+function selfIsUser(message: ChatMessage, selfActorId: string, selfActorType: string) {
+	return message.messageParameters.user.id === selfMentionId(selfActorId, selfActorType)
+		&& message.messageParameters.user.type === selfMentionType(selfActorType)
+}
 
 /**
  * Returns whether the given system message should be hidden in the UI
@@ -37,4 +176,78 @@ export function isHiddenSystemMessage(message: ChatMessage): boolean {
 	}
 
 	return SYSTEM_MESSAGE_TYPE_HIDDEN.includes(message.systemMessage)
+}
+
+/**
+ * Returns whether the given system message should be hidden in the UI
+ *
+ * @param message Chat message
+ * @param conversation Current conversation
+ * @return whether the message is hidden in the UI
+ */
+export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Conversation): string {
+	if (SYSTEM_MESSAGE_TYPE_UNTRANSLATED.includes(message.systemMessage)) {
+		// Don't localize hidden system messages, keep original
+		return message.message
+	}
+
+	if (!SYSTEM_MESSAGE_TYPE_RELAY.includes(message.systemMessage)) {
+		// Don't localize non-supported relayed system messages, do polling
+		throw new Error()
+	}
+
+	switch (message.systemMessage) {
+		case MESSAGE.SYSTEM_TYPE.CALL_STARTED: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.CALL_JOINED: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.CALL_LEFT: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.CALL_ENDED: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.CALL_ENDED_EVERYONE: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.MODERATOR_PROMOTED: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.MODERATOR_DEMOTED: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.GUEST_MODERATOR_PROMOTED: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.GUEST_MODERATOR_DEMOTED: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.FILE_SHARED: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.OBJECT_SHARED: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.HISTORY_CLEARED: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.POLL_VOTED: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.POLL_CLOSED: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.RECORDING_STARTED: {
+			throw new Error()
+		}
+		case MESSAGE.SYSTEM_TYPE.RECORDING_STOPPED: {
+			throw new Error()
+		}
+		default: {
+			// Don't localize non-supported relayed system messages, do polling
+			throw new Error()
+		}
+	}
 }
