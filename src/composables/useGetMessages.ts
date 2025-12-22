@@ -231,6 +231,9 @@ export function useGetMessagesProvider() {
 	async function onRouteChange({ from, to }: { from: RouteLocation, to: RouteLocation }) {
 		// Reset blocker for fetching old messages
 		stopFetchingOldMessages.value = false
+		// Reset messages list to default view
+		chatExtrasStore.setShowScheduledMessages(false)
+
 		if (from.name !== 'conversation' || to.name !== 'conversation'
 			|| from.params.token !== to.params.token || typeof to.params.token !== 'string') {
 			// Only handle route changes within the same conversation

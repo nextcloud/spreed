@@ -7,12 +7,16 @@ import type { AxiosRequestConfig } from '@nextcloud/axios'
 import type {
 	clearHistoryResponse,
 	deleteMessageResponse,
+	deleteScheduledMessageResponse,
 	editMessageParams,
 	editMessageResponse,
+	editScheduledMessageParams,
+	editScheduledMessageResponse,
 	getMessageContextParams,
 	getMessageContextResponse,
 	getRecentThreadsParams,
 	getRecentThreadsResponse,
+	getScheduledMessagesResponse,
 	getSubscribedThreadsParams,
 	getSubscribedThreadsResponse,
 	getThreadResponse,
@@ -28,6 +32,8 @@ import type {
 	receiveMessagesResponse,
 	renameThreadParams,
 	renameThreadResponse,
+	scheduleMessageParams,
+	scheduleMessageResponse,
 	setReadMarkerParams,
 	setReadMarkerResponse,
 	setThreadNotificationLevelParams,
@@ -384,13 +390,97 @@ async function renameThread(token: string, threadId: number, threadTitle: string
 	} as renameThreadParams, options)
 }
 
+/**
+ * Get a list of scheduled messages of this user for given conversation
+ *
+ * @param token the conversation token
+ * @param [options] Axios request options
+ */
+async function getScheduledMessages(token: string, options?: AxiosRequestConfig): getScheduledMessagesResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/schedule', { token }), options)
+}
+
+/**
+ * Schedules a new message to be poster
+ *
+ * @param payload The request payload
+ * @param payload.token The conversation token
+ * @param payload.message The message text
+ * @param payload.sendAt The timestamp of when message should be posted
+ * @param payload.replyTo The message id to be replied to
+ * @param payload.silent whether the message should trigger a notifications
+ * @param payload.threadId The thread id to post the message in
+ * @param payload.threadTitle The thread title to set when creating a new thread
+ * @param [options] Axios request options
+ */
+async function scheduleMessage({
+	token,
+	message,
+	sendAt,
+	replyTo,
+	silent,
+	threadId,
+	threadTitle,
+}: scheduleMessageParams & { token: string }, options?: AxiosRequestConfig): scheduleMessageResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/schedule', { token }), {
+		message,
+		sendAt,
+		replyTo,
+		silent,
+		threadId,
+		threadTitle,
+	} as scheduleMessageParams, options)
+}
+
+/**
+ * Edit an already scheduled message
+ *
+ * @param payload The request payload
+ * @param payload.token The conversation token
+ * @param payload.messageId The id of scheduled message
+ * @param payload.message The message text
+ * @param payload.sendAt The timestamp of when message should be posted
+ * @param payload.silent whether the message should trigger a notifications
+ * @param payload.threadTitle The thread title to set when creating a new thread
+ * @param [options] Axios request options
+ */
+async function editScheduledMessage({
+	token,
+	messageId,
+	message,
+	sendAt,
+	silent,
+	threadTitle,
+}: editScheduledMessageParams & { token: string, messageId: string }, options?: AxiosRequestConfig): editScheduledMessageResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/schedule/{messageId}', { token, messageId }), {
+		message,
+		sendAt,
+		silent,
+		threadTitle,
+	} as editScheduledMessageParams, options)
+}
+
+/**
+ * Delete a scheduled message from the queue
+ *
+ * @param token The conversation token
+ * @param messageId The id of scheduled message
+ * @param [options] Axios request options
+ */
+async function deleteScheduledMessage(token: string, messageId: string, options?: AxiosRequestConfig): deleteScheduledMessageResponse {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/schedule/{messageId}', { token, messageId }), options)
+}
+
 export {
 	clearConversationHistory,
 	deleteMessage,
+	deleteScheduledMessage,
 	editMessage,
+	editScheduledMessage,
 	fetchMessages,
 	getMessageContext,
 	getRecentThreadsForConversation,
+	getScheduledMessages,
 	getSingleThreadForConversation,
 	getSubscribedThreads,
 	hidePinnedMessage,
@@ -399,6 +489,7 @@ export {
 	postNewMessage,
 	postRichObjectToConversation,
 	renameThread,
+	scheduleMessage,
 	setConversationUnread,
 	setThreadNotificationLevel,
 	summarizeChat,

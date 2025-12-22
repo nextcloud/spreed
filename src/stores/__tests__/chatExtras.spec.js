@@ -9,6 +9,14 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { EventBus } from '../../services/EventBus.ts'
 import { useChatExtrasStore } from '../chatExtras.ts'
 
+vi.mock('vuex', async () => {
+	const vuex = await vi.importActual('vuex')
+	return {
+		...vuex,
+		useStore: vi.fn(),
+	}
+})
+
 describe('chatExtrasStore', () => {
 	const token = 'TOKEN'
 	let chatExtrasStore

@@ -13,14 +13,14 @@
 		}">
 		<a
 			class="top-bar__icon-wrapper"
-			:class="{ 'top-bar__icon-wrapper--thread': !isInCall && threadId }"
+			:class="{ 'top-bar__icon-wrapper--with-action': showBackAction }"
 			role="button"
 			:tabindex="0"
 			:title="conversationIconLabel"
 			:aria-label="conversationIconLabel"
 			@click="handleClickAvatar">
 			<IconArrowLeft
-				v-show="threadId"
+				v-show="showBackAction"
 				class="top-bar__icon-back bidirectional-icon"
 				:size="20" />
 			<ConversationIcon
@@ -28,13 +28,30 @@
 				:offline="isOffline"
 				:item="conversation"
 				:size="!isSidebar ? AVATAR.SIZE.DEFAULT : AVATAR.SIZE.COMPACT"
-				:disable-menu="false"
+				:disable-menu="showBackAction"
 				show-user-online-status
 				:hide-favorite="false"
 				:hide-call="false" />
 		</a>
 
-		<ThreadHeader v-if="!isInCall && threadId" class="top-bar__wrapper" />
+		<div
+			v-if="!isInCall && chatExtrasStore.showScheduledMessages"
+			class="conversation-header">
+			<IconChevronRight class="bidirectional-icon" :size="20" />
+			<div class="conversation-header__extra-icon">
+				<IconClockOutline :size="20" />
+			</div>
+			<div class="conversation-header__text">
+				<p class="title">
+					{{ t('spreed', 'Scheduled messages') }}
+				</p>
+				<p class="description">
+					{{ scheduledDescriptionLabel }}
+				</p>
+			</div>
+		</div>
+
+		<ThreadHeader v-else-if="!isInCall && threadId" class="top-bar__wrapper" />
 
 		<div
 			v-else
@@ -138,6 +155,8 @@ import NcRichText from '@nextcloud/vue/components/NcRichText'
 import IconAccountMultipleOutline from 'vue-material-design-icons/AccountMultipleOutline.vue'
 import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMultiplePlusOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
+import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import CalendarEventsDialog from '../CalendarEventsDialog.vue'
 import ConversationIcon from '../ConversationIcon.vue'
@@ -181,6 +200,8 @@ export default {
 		IconAccountMultipleOutline,
 		IconAccountMultiplePlusOutline,
 		IconArrowLeft,
+		IconChevronRight,
+		IconClockOutline,
 	},
 
 	props: {
@@ -262,8 +283,20 @@ export default {
 			return !peer || peer.sessionIds.length === 0
 		},
 
+		showBackAction() {
+			return !this.isInCall && (this.chatExtrasStore.showScheduledMessages || !!this.threadId)
+		},
+
+		scheduledDescriptionLabel() {
+			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+				? t('spreed', 'With {displayName}', { displayName: this.conversation.displayName }, { escape: false, sanitize: false })
+				: t('spreed', 'In {conversation}', { conversation: this.conversation.displayName }, { escape: false, sanitize: false })
+		},
+
 		conversationIconLabel() {
-			return this.threadId ? t('spreed', 'Back') : t('spreed', 'Conversation settings')
+			return this.showBackAction
+				? t('spreed', 'Back')
+				: t('spreed', 'Conversation settings')
 		},
 
 		participantsInCall() {
@@ -319,10 +352,15 @@ export default {
 		},
 
 		handleClickAvatar() {
+			if (!this.showBackAction && !this.isOneToOneConversation) {
+				this.openConversationSettings()
+				return
+			}
+
 			if (this.threadId) {
 				this.$router.replace({ query: {}, hash: '' })
-			} else if (!this.isOneToOneConversation) {
-				this.openConversationSettings()
+			} else if (this.chatExtrasStore.showScheduledMessages) {
+				this.chatExtrasStore.setShowScheduledMessages(false)
 			}
 		},
 
@@ -405,7 +443,7 @@ export default {
 		background-color: var(--color-background-darker);
 	}
 
-	&--thread {
+	&--with-action {
 		background-color: var(--color-background-dark);
 		width: calc(var(--default-clickable-area) + 40px); // AVATAR.SIZE.DEFAULT
 		padding-inline-start: var(--default-clickable-area);
@@ -463,8 +501,7 @@ export default {
 		}
 	}
 
-	&__thread-icon {
-		--mixed-color: color-mix(in srgb, var(--color-thread-icon) 10%, var(--color-main-background));
+	&__extra-icon {
 		flex-shrink: 0;
 		width: var(--default-clickable-area);
 		height: var(--default-clickable-area);
@@ -472,8 +509,8 @@ export default {
 		justify-content: center;
 		align-items: center;
 		border-radius: 50%;
-		color: var(--color-thread-icon);
-		background-color: var(--mixed-color, var(--color-background-dark));
+		color: var(--color-primary-element-light-text);
+		background-color: var(--color-primary-element-light);
 	}
 }
 

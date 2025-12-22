@@ -79,9 +79,29 @@
 						:can-cancel="!!parentMessage"
 						:edit-message="!!messageToEdit" />
 				</div>
+
+				<!-- scheduling message hint -->
+				<NcNoteCard
+					v-if="scheduleMessageTime"
+					class="new-message-form__hint new-message-form__hint--scheduled"
+					type="info">
+					<p>{{ scheduleMessageHint }}</p>
+					<NcButton
+						variant="tertiary"
+						size="small"
+						:aria-label="t('spreed', 'Cancel')"
+						:title="t('spreed', 'Cancel')"
+						@click="handleAbortEdit">
+						<template #icon>
+							<IconClose :size="16" />
+						</template>
+					</NcButton>
+				</NcNoteCard>
+
 				<!-- mention editing hint -->
 				<NcNoteCard
 					v-if="showMentionEditHint"
+					class="new-message-form__hint"
 					type="warning"
 					:text="t('spreed', 'Adding a mention will only notify users who did not read the message.')" />
 				<NcTextField
@@ -120,23 +140,94 @@
 
 			<!-- Silent chat -->
 			<NcActions
-				v-if="showSilentToggle"
+				v-if="showSendActions"
 				force-menu
-				:primary="silentChat">
+				:primary="silentChat"
+				@close="submenu = null">
 				<template #icon>
 					<IconBellOffOutline v-if="silentChat" :size="20" />
 				</template>
-				<NcActionButton
-					close-after-click
-					:model-value="silentChat"
-					:description="silentSendInfo"
-					@click="toggleSilentChat">
-					{{ silentSendLabel }}
-					<template #icon>
-						<IconBellOffOutline :size="20" />
-					</template>
-				</NcActionButton>
+				<template v-if="submenu === null">
+					<NcActionButton
+						v-if="supportScheduleMessages && !dialog"
+						key="action-schedule"
+						is-menu
+						@click.stop="submenu = 'schedule'">
+						<template #icon>
+							<IconClockOutline :size="20" />
+						</template>
+						{{ t('spreed', 'Send later') }}
+					</NcActionButton>
+
+					<NcActionButton
+						key="silent-send"
+						close-after-click
+						:model-value="silentChat"
+						:description="silentSendInfo"
+						@click="toggleSilentChat">
+						{{ silentSendLabel }}
+						<template #icon>
+							<IconBellOffOutline :size="20" />
+						</template>
+					</NcActionButton>
+				</template>
+
+				<template v-else-if="submenu === 'schedule'">
+					<NcActionButton
+						key="action-back"
+						:aria-label="t('spreed', 'Back')"
+						@click.stop="submenu = null">
+						<template #icon>
+							<IconArrowLeft class="bidirectional-icon" />
+						</template>
+						{{ t('spreed', 'Back') }}
+					</NcActionButton>
+
+					<NcActionSeparator />
+
+					<NcActionButton
+						v-for="option in getCustomDateOptions()"
+						:key="option.key"
+						:aria-label="option.ariaLabel"
+						close-after-click
+						@click.stop="chatExtrasStore.setScheduleMessageTime(option.timestamp)">
+						{{ option.label }}
+					</NcActionButton>
+
+					<NcActionInput
+						v-model="customScheduleTimestamp"
+						type="datetime-local"
+						:min="new Date()"
+						:label="t('spreed', 'Choose a time')"
+						:step="300"
+						is-native-picker>
+						<template #icon>
+							<IconCalendarClockOutline :size="20" />
+						</template>
+					</NcActionInput>
+
+					<NcActionButton
+						key="custom-time-submit"
+						:disabled="!customScheduleTimestamp"
+						close-after-click
+						@click.stop="chatExtrasStore.setScheduleMessageTime(customScheduleTimestamp.valueOf())">
+						<template #icon>
+							<IconCheck :size="20" />
+						</template>
+						{{ t('spreed', 'Send at custom time') }}
+					</NcActionButton>
+				</template>
 			</NcActions>
+
+			<NcButton
+				v-if="showScheduledMessagesToggle"
+				:variant="showScheduledMessages ? 'secondary' : 'tertiary'"
+				:title="t('spreed', 'Show scheduled messages')"
+				@click="chatExtrasStore.setShowScheduledMessages(!showScheduledMessages)">
+				<template #icon>
+					<IconClockOutline :size="20" />
+				</template>
+			</NcButton>
 
 			<!-- Audio recorder -->
 			<NewMessageAudioRecorder
@@ -173,6 +264,20 @@
 			<!-- Send buttons -->
 			<template v-else>
 				<NcButton
+					v-if="supportScheduleMessages && scheduleMessageTime"
+					:disabled="disabled || !text"
+					variant="tertiary"
+					type="submit"
+					:title="t('spreed', 'Schedule message')"
+					:aria-label="t('spreed', 'Schedule message')"
+					@click="handleSubmit">
+					<template #icon>
+						<IconSendVariantClockOutline :size="20" />
+					</template>
+				</NcButton>
+
+				<NcButton
+					v-else
 					:disabled="disabled"
 					variant="tertiary"
 					type="submit"
@@ -197,25 +302,31 @@
 </template>
 
 <script>
-import { showError, showWarning } from '@nextcloud/dialogs'
+import { showError, showSuccess, showWarning } from '@nextcloud/dialogs'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import debounce from 'debounce'
 import { nextTick, toRefs, useTemplateRef } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionInput from '@nextcloud/vue/components/NcActionInput'
 import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
+import IconCalendarClockOutline from 'vue-material-design-icons/CalendarClockOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
+import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconClose from 'vue-material-design-icons/Close.vue'
 import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconSend from 'vue-material-design-icons/Send.vue' // Filled for better indication
+import IconSendVariantClockOutline from 'vue-material-design-icons/SendVariantClockOutline.vue' // Filled for better indication
 import MessageQuote from '../MessageQuote.vue'
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
 import NewMessageAttachments from './NewMessageAttachments.vue'
@@ -237,7 +348,8 @@ import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useTokenStore } from '../../stores/token.ts'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
-import { ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
+import { convertToUnix, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
+import { getCustomDateOptions } from '../../utils/getCustomDateOptions.ts'
 import {
 	getCurrentSelectionRange,
 	getRangeAtEnd,
@@ -246,11 +358,15 @@ import {
 } from '../../utils/selectionRange.ts'
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
 
+const supportScheduleMessages = hasTalkFeature('local', 'scheduled-messages')
+
 export default {
 	name: 'NewMessage',
 
 	components: {
 		NcActionButton,
+		NcActionInput,
+		NcActionSeparator,
 		NcActions,
 		NcButton,
 		NcEmojiPicker,
@@ -265,12 +381,16 @@ export default {
 		NewMessageTypingIndicator,
 		MessageQuote,
 		// Icons
+		IconArrowLeft,
+		IconCalendarClockOutline,
+		IconClockOutline,
 		IconBellOffOutline,
 		IconCheck,
 		IconClose,
 		IconEmoticonOutline,
 		IconForumOutline,
 		IconSend,
+		IconSendVariantClockOutline,
 	},
 
 	props: {
@@ -345,11 +465,13 @@ export default {
 			settingsStore: useSettingsStore(),
 			tokenStore: useTokenStore(),
 			supportTypingStatus,
+			supportScheduleMessages,
 			autoComplete,
 			userData,
 			threadId,
 			threadTitleInputRef,
 			createTemporaryMessage,
+			convertToUnix,
 		}
 	},
 
@@ -367,6 +489,10 @@ export default {
 			wasTypingWithinInterval: false,
 			debouncedUpdateChatInput: debounce(this.updateChatInput, 200),
 			preservedSelectionRange: null,
+
+			/* Schedule messages feature local state */
+			submenu: null,
+			customScheduleTimestamp: null,
 		}
 	},
 
@@ -389,8 +515,23 @@ export default {
 			return this.isReadOnly || this.noChatPermission || !this.currentConversationIsJoined || this.isRecordingAudio
 		},
 
+		scheduleMessageTime() {
+			return this.chatExtrasStore.scheduleMessageTime
+		},
+
 		disabledEdit() {
-			return this.disabled || this.text === this.messageToEdit.message || this.text === ''
+			if (this.disabled || this.text === '') {
+				return true
+			}
+
+			if (!this.showScheduledMessages) {
+				return this.text === this.messageToEdit.message
+			}
+
+			return this.text === this.messageToEdit.message
+				&& this.scheduleMessageTime === this.messageToEdit.timestamp * 1_000
+				&& this.silentChat === this.messageToEdit.silent
+				&& (!this.threadCreating || this.threadTitle === this.messageToEdit.threadTitle)
 		},
 
 		placeholderText() {
@@ -422,23 +563,31 @@ export default {
 
 		messageToEdit() {
 			const messageToEditId = this.chatExtrasStore.getMessageIdToEdit(this.token)
-			return messageToEditId && this.$store.getters.message(this.token, messageToEditId)
+			if (!messageToEditId) {
+				return undefined
+			}
+			return (this.showScheduledMessages)
+				? this.chatExtrasStore.getScheduledMessage(this.token, messageToEditId)
+				: this.$store.getters.message(this.token, messageToEditId)
 		},
 
 		canShareFiles() {
 			return !this.actorStore.isActorGuest
 				&& !this.conversation.remoteServer // no attachments support in federated conversations
+				&& !this.scheduleMessageTime
 		},
 
 		canUploadFiles() {
 			// TODO attachments should be allowed on both instances?
 			return getTalkConfig(this.token, 'attachments', 'allowed') && this.canShareFiles
 				&& this.settingsStore.attachmentFolderFreeSpace !== 0
+				&& !this.scheduleMessageTime
 		},
 
 		canCreatePoll() {
 			return !this.isOneToOne && !this.noChatPermission
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
+				&& !this.scheduleMessageTime
 		},
 
 		currentConversationIsJoined() {
@@ -472,16 +621,17 @@ export default {
 				: t('spreed', 'Participants will not be notified about new messages')
 		},
 
-		showSilentToggle() {
-			return !this.broadcast && !this.isRecordingAudio && !this.messageToEdit
+		showSendActions() {
+			return !this.broadcast && !this.isRecordingAudio && (!this.messageToEdit || this.showScheduledMessages)
 		},
 
 		showAttachmentsMenu() {
-			return (this.canUploadFiles || this.canShareFiles || this.canCreatePoll) && !this.broadcast && !this.upload && !this.messageToEdit
+			return (this.canUploadFiles || this.canShareFiles || this.canCreatePoll || this.canCreateThread)
+				&& !this.broadcast && !this.upload && !this.messageToEdit
 		},
 
 		showAudioRecorder() {
-			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload && !this.messageToEdit && !this.threadCreating
+			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload && !this.messageToEdit && !this.threadCreating && !this.scheduleMessageTime
 		},
 
 		showTypingStatus() {
@@ -542,6 +692,28 @@ export default {
 		threadCreating() {
 			return this.threadTitle !== undefined
 		},
+
+		showScheduledMessagesToggle() {
+			return this.conversation.hasScheduledMessages
+				&& !this.dialog
+				&& !this.isRecordingAudio
+				&& !this.messageToEdit
+		},
+
+		showScheduledMessages() {
+			return this.chatExtrasStore.showScheduledMessages
+		},
+
+		scheduleMessageHint() {
+			// FIXME use relative date and time (like in StaticDateTime)
+			const datetimeString = new Date(this.scheduleMessageTime).toLocaleString(undefined, {
+				dateStyle: 'medium',
+				timeStyle: 'short',
+			})
+
+			// TRANSLATORS: "... sent tomorrow, <March 18, 2026>"
+			return t('spreed', 'Message will be sent {datetimeString}', { datetimeString })
+		},
 	},
 
 	watch: {
@@ -577,7 +749,17 @@ export default {
 		messageToEdit(newValue) {
 			if (newValue) {
 				this.text = this.chatExtrasStore.getChatEditInput(this.token)
-				this.chatExtrasStore.removeThreadTitle(this.token)
+
+				// Clear thread title when editing a message (unless it's a scheduled thread)
+				if (newValue.threadId !== -1) {
+					this.chatExtrasStore.removeThreadTitle(this.token)
+				}
+
+				if (this.showScheduledMessages) {
+					this.chatExtrasStore.setScheduleMessageTime(newValue.timestamp * 1_000)
+					this.silentChat = newValue.silent
+				}
+
 				if (this.parentMessage) {
 					this.chatExtrasStore.removeParentIdToReply(this.token)
 				}
@@ -589,6 +771,10 @@ export default {
 				// set cursor at the end
 				selectRange(getRangeAtEnd(this.getContenteditable()), this.getContenteditable())
 			})
+		},
+
+		showScheduledMessages() {
+			this.handleAbortEdit()
 		},
 
 		parentMessage(newValue) {
@@ -633,6 +819,20 @@ export default {
 				this.clearSilentState()
 			},
 		},
+
+		submenu(newValue) {
+			if (newValue === 'schedule') {
+				if (this.scheduleMessageTime) {
+					this.customScheduleTimestamp = new Date(this.scheduleMessageTime)
+				} else {
+					const dateInFuture = new Date()
+					dateInFuture.setHours(dateInFuture.getHours() + 1, 0, 0, 0)
+					this.customScheduleTimestamp = dateInFuture
+				}
+			} else {
+				this.customScheduleTimestamp = null
+			}
+		},
 	},
 
 	created() {
@@ -661,6 +861,8 @@ export default {
 
 	methods: {
 		t,
+
+		getCustomDateOptions,
 
 		getContenteditable() {
 			return this.$refs.richContenteditable.$refs.contenteditable
@@ -764,9 +966,16 @@ export default {
 				}
 			}
 
+			if (supportScheduleMessages && this.scheduleMessageTime) {
+				await this.handleScheduleMessage()
+				return
+			}
+
 			// Clear input content from store
 			this.debouncedUpdateChatInput.clear()
 			this.chatExtrasStore.removeChatInput(this.token)
+
+			this.chatExtrasStore.setShowScheduledMessages(false)
 
 			if (this.hasText || (this.dialog && this.upload)) {
 				const temporaryMessagePayload = {
@@ -783,7 +992,6 @@ export default {
 					temporaryMessagePayload.parent = this.parentMessage
 				}
 				if (this.threadCreating) {
-					// Substitute thread title with message text, if missing
 					temporaryMessagePayload.threadTitle = this.threadTitle.trim()
 					temporaryMessagePayload.threadReplies = 0
 					temporaryMessagePayload.isThread = true
@@ -836,12 +1044,25 @@ export default {
 
 		async handleEdit() {
 			try {
-				await this.$store.dispatch('editMessage', {
-					token: this.token,
-					messageId: this.messageToEdit.id,
-					updatedMessage: parseSpecialSymbols(this.text.trim()),
-				})
+				if (this.showScheduledMessages) {
+					await this.chatExtrasStore.editScheduledMessage(this.token, this.messageToEdit.id, {
+						message: parseSpecialSymbols(this.text.trim()),
+						sendAt: convertToUnix(this.scheduleMessageTime),
+						silent: this.silentChat,
+						threadTitle: this.threadTitle,
+					})
+				} else {
+					await this.$store.dispatch('editMessage', {
+						token: this.token,
+						messageId: this.messageToEdit.id,
+						updatedMessage: parseSpecialSymbols(this.text.trim()),
+					})
+				}
+				EventBus.emit('focus-message', { messageId: this.messageToEdit.id })
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+				this.chatExtrasStore.removeThreadTitle(this.token)
+				this.chatExtrasStore.setScheduleMessageTime(null)
+				this.silentChat = false
 				this.resetTypingIndicator()
 				// refocus input as the user might want to type further
 				this.focusInput()
@@ -884,6 +1105,8 @@ export default {
 				})
 			} else {
 				this.chatExtrasStore.removeThreadTitle(this.token)
+				this.chatExtrasStore.removeMessageIdToEdit(this.token)
+				this.chatExtrasStore.setScheduleMessageTime(null)
 			}
 		},
 
@@ -943,7 +1166,7 @@ export default {
 		 * @param {ClipboardEvent} e native paste event
 		 */
 		async handlePastedFiles(e) {
-			if (this.messageToEdit) {
+			if (this.messageToEdit || this.scheduleMessageTime) {
 				return
 			}
 			e.preventDefault()
@@ -1077,6 +1300,9 @@ export default {
 
 		handleAbortEdit() {
 			this.chatExtrasStore.removeMessageIdToEdit(this.token)
+			this.chatExtrasStore.removeThreadTitle(this.token)
+			this.chatExtrasStore.setScheduleMessageTime(null)
+			this.silentChat = false
 		},
 
 		toggleSilentChat() {
@@ -1092,6 +1318,50 @@ export default {
 			// FIXME text that is only one line should be cleared in upstream
 			if ((this.text === '' || this.text === '\n') && this.silentChat && !this.upload) {
 				this.toggleSilentChat()
+			}
+		},
+
+		async handleScheduleMessage() {
+			if (this.dialog && this.upload) {
+				// FIXME handle file upload in scheduled messages
+				return
+			}
+
+			if (this.hasText) {
+				const scheduleMessagePayload = {
+					message: this.text.trim(),
+					sendAt: convertToUnix(this.scheduleMessageTime),
+				}
+
+				if (this.silentChat) {
+					scheduleMessagePayload.silent = true
+				}
+				if (this.threadId) {
+					scheduleMessagePayload.threadId = this.threadId
+				}
+				if (this.parentMessage) {
+					scheduleMessagePayload.replyTo = this.parentMessage.id
+				}
+				if (this.threadCreating) {
+					scheduleMessagePayload.threadTitle = this.threadTitle.trim()
+				}
+
+				try {
+					await this.chatExtrasStore.scheduleMessage(this.token, scheduleMessagePayload)
+
+					// Clear input content from store
+					this.text = ''
+					this.chatExtrasStore.removeThreadTitle(this.token)
+					this.chatExtrasStore.setScheduleMessageTime(null)
+					this.silentChat = false
+					this.chatExtrasStore.removeParentIdToReply(this.token)
+					this.debouncedUpdateChatInput.clear()
+					this.chatExtrasStore.removeChatInput(this.token)
+					this.resetTypingIndicator()
+					showSuccess(t('spreed', 'Message was successfully scheduled'))
+				} catch (error) {
+					showError(t('spreed', 'Error when scheduling the message'))
+				}
 			}
 		},
 	},
@@ -1147,6 +1417,19 @@ export default {
 		margin-block-end: var(--default-grid-baseline);
 		background-color: var(--color-background-hover);
 		border-radius: var(--border-radius-large);
+	}
+
+	&__hint {
+		// Overwrite NcNoteCard styles
+		margin-block: var(--default-grid-baseline) !important;
+
+		&--scheduled > :deep(div) {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: calc(var(--default-grid-baseline) / 2);
+			width: 100%;
+		}
 	}
 
 	&__thread-title {

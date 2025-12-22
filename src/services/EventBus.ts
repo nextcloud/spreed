@@ -29,7 +29,7 @@ export type Events = {
 	'editing-message': void
 	'editing-message-processing': { messageId: number, value: boolean }
 	'focus-chat-input': void
-	'focus-message': { messageId: number, smooth?: boolean, highlight?: boolean }
+	'focus-message': { messageId: number | string, smooth?: boolean, highlight?: boolean }
 	'forbidden-route': { error: string }
 	'joined-conversation': { token: string }
 	'poll-drafts-open': { token: string, selector?: string }

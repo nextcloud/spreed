@@ -256,6 +256,10 @@ export default {
 		 * @return {Array}
 		 */
 		messagesList() {
+			if (this.showScheduledMessages) {
+				return this.chatExtrasStore.getScheduledMessagesList(this.token)
+			}
+
 			return this.chatStore.getMessagesList(this.token, {
 				messageId: this.contextMessageId,
 				threadId: this.threadId,
@@ -287,6 +291,10 @@ export default {
 			return this.$store.getters.conversation(this.token)
 		},
 
+		showScheduledMessages() {
+			return this.chatExtrasStore.showScheduledMessages
+		},
+
 		currentDay() {
 			return convertToUnix(new Date().setHours(0, 0, 0, 0))
 		},
@@ -310,6 +318,15 @@ export default {
 			}
 		},
 
+		async showScheduledMessages(newValue) {
+			if (newValue) {
+				// Show loading placeholder while fetching for the first time
+				this.isInitialisingMessages = this.chatExtrasStore.scheduledMessages[this.token] === undefined
+				await this.chatExtrasStore.fetchScheduledMessages(this.token)
+				this.isInitialisingMessages = false
+			}
+		},
+
 		isInitialisingMessages(newValue, oldValue) {
 			if (oldValue && !newValue) { // switching true -> false
 				this.$nextTick(() => {
@@ -330,7 +347,8 @@ export default {
 			immediate: true,
 			handler(newMessages, oldMessages) {
 				const newGroups = this.prepareMessagesGroups(newMessages)
-				if (!oldMessages || (oldMessages?.length && newMessages.length && newMessages[0].token !== oldMessages?.at(0)?.token)) {
+				if (!oldMessages || (oldMessages?.length && newMessages.length && newMessages[0].token !== oldMessages?.at(0)?.token)
+					|| this.showScheduledMessages) {
 					// messages were just loaded or token has changed, reset the messages
 					this.messagesGroupedByDateByAuthor = newGroups
 				} else {

@@ -4,8 +4,12 @@
  */
 
 import type {
+	BigIntChatMessage,
 	ChatMessage,
 	ChatTask,
+	editScheduledMessageParams,
+	ScheduledMessage,
+	scheduleMessageParams,
 	ThreadInfo,
 } from '../types/index.ts'
 
@@ -14,19 +18,32 @@ import { t } from '@nextcloud/l10n'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+import { useStore } from 'vuex'
 import ConfirmDialog from '../components/UIShared/ConfirmDialog.vue'
 import { PARTICIPANT } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { EventBus } from '../services/EventBus.ts'
 import {
+	deleteScheduledMessage as deleteScheduledMessageApi,
+	editScheduledMessage as editScheduledMessageApi,
 	getRecentThreadsForConversation,
+	getScheduledMessages as getScheduledMessagesApi,
 	getSingleThreadForConversation,
 	getSubscribedThreads,
 	renameThread as renameThreadApi,
+	scheduleMessage as scheduleMessageApi,
 	setThreadNotificationLevel as setThreadNotificationLevelApi,
 	summarizeChat,
 } from '../services/messagesService.ts'
 import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
+import { useActorStore } from './actor.ts'
+
+type InitiateEditingMessagePayload = {
+	token: string
+	id: number | string
+	message: string
+	messageParameters: ChatMessage['messageParameters']
+}
 
 const FOLLOWED_THREADS_FETCH_LIMIT = 100
 const pendingFetchSingleThreadRequests = new Set<number>()
@@ -42,11 +59,17 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	const threadTitle = ref<Record<string, string>>({})
 	const parentToReply = ref<Record<string, number>>({})
 	const chatInput = ref<Record<string, string>>({})
-	const messageIdToEdit = ref<Record<string, number>>({})
+	const messageIdToEdit = ref<Record<string, number | string>>({})
 	const chatEditInput = ref<Record<string, string>>({})
 	const tasksCount = ref(0)
 	const tasksDoneCount = ref(0)
 	const chatSummary = ref<Record<string, Record<number, ChatTask>>>({})
+	const scheduledMessages = ref<Record<string, Record<string, ScheduledMessage>>>({})
+	const scheduleMessageTime = ref<number | null>(null)
+	const showScheduledMessages = ref(false)
+
+	const actorStore = useActorStore()
+	const vuexStore = useStore()
 
 	/**
 	 * Returns known thread information from the store
@@ -118,7 +141,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	 *
 	 * @param token - conversation token
 	 */
-	function getMessageIdToEdit(token: string) {
+	function getMessageIdToEdit(token: string): number | string | undefined {
 		return messageIdToEdit.value[token]
 	}
 
@@ -148,6 +171,47 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	function getChatSummary(token: string) {
 		return Object.values(chatSummary.value[token] ?? {}).map((task) => task.summary).join('\n\n')
 			|| t('spreed', 'Error occurred during a summary generation')
+	}
+
+	/**
+	 * Returns list of scheduled messages (sorted by sendAt, prepared for chat)
+	 *
+	 * @param token - conversation token
+	 */
+	function getScheduledMessagesList(token: string) {
+		return Object.values(scheduledMessages.value[token] ?? {})
+			.sort((a, b) => a.sendAt - b.sendAt)
+			.map((message) => parseScheduledToChatMessage(token, message))
+	}
+
+	/**
+	 * Returns scheduled message by id (prepared for chat)
+	 *
+	 * @param token - conversation token
+	 * @param messageId
+	 */
+	function getScheduledMessage(token: string, messageId: string): BigIntChatMessage | undefined {
+		if (scheduledMessages.value[token]?.[messageId]) {
+			return parseScheduledToChatMessage(token, scheduledMessages.value[token][messageId])
+		}
+	}
+
+	/**
+	 * Sets current timestamp when message will be scheduled to sent
+	 *
+	 * @param value new value
+	 */
+	function setScheduleMessageTime(value: number | null) {
+		scheduleMessageTime.value = value
+	}
+
+	/**
+	 * Sets whether scheduled messages should be shown in chat
+	 *
+	 * @param value new value
+	 */
+	function setShowScheduledMessages(value: boolean) {
+		showScheduledMessages.value = value
 	}
 
 	/**
@@ -482,7 +546,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	 * @param token - conversation token
 	 * @param id The id of message
 	 */
-	function setMessageIdToEdit(token: string, id: number) {
+	function setMessageIdToEdit(token: string, id: number | string) {
 		messageIdToEdit.value[token] = id
 	}
 
@@ -515,7 +579,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	 * @param payload.message - message text
 	 * @param payload.messageParameters - message parameters
 	 */
-	function initiateEditingMessage({ token, id, message, messageParameters }: { token: string, id: number, message: string, messageParameters: ChatMessage['messageParameters'] }) {
+	function initiateEditingMessage({ token, id, message, messageParameters }: InitiateEditingMessagePayload) {
 		setMessageIdToEdit(token, id)
 		const isFileShareOnly = Object.keys(messageParameters ?? {}).some((key) => key.startsWith('file'))
 			&& message === '{file}'
@@ -527,6 +591,9 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 				text: message,
 				parameters: messageParameters,
 			})
+		}
+		if (scheduledMessages.value[token]?.[id] && scheduledMessages.value[token][id].threadId === -1) {
+			setThreadTitle(token, scheduledMessages.value[token][id].threadTitle!)
 		}
 		EventBus.emit('editing-message')
 		EventBus.emit('focus-chat-input')
@@ -609,6 +676,128 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 		}
 	}
 
+	/**
+	 * Converts ScheduledMessage to BigIntChatMessage format (to render in chat)
+	 *
+	 * @param token - conversation token
+	 * @param message - scheduled message object
+	 */
+	function parseScheduledToChatMessage(token: string, message: ScheduledMessage): BigIntChatMessage {
+		return {
+			token,
+			id: message.id,
+			actorId: message.actorId,
+			actorType: message.actorType,
+			actorDisplayName: actorStore.displayName,
+			message: message.message,
+			messageType: message.messageType,
+			referenceId: '',
+			systemMessage: '',
+			isReplyable: false,
+			markdown: true,
+			messageParameters: {},
+			parent: message.parent,
+			reactions: {},
+			timestamp: message.sendAt,
+			expirationTimestamp: 0,
+			threadId: message.threadId,
+			threadTitle: message.threadTitle,
+			isThread: !!message.threadId,
+			silent: message.silent,
+		}
+	}
+
+	/**
+	 * Fetch scheduled messages for given conversation
+	 *
+	 * @param token - conversation token
+	 */
+	async function fetchScheduledMessages(token: string) {
+		try {
+			const response = await getScheduledMessagesApi(token)
+			if (!scheduledMessages.value[token]) {
+				scheduledMessages.value[token] = {}
+			}
+
+			response.data.ocs.data.forEach((message) => {
+				scheduledMessages.value[token][message.id] = message
+			})
+		} catch (e) {
+			console.error('Error while fetching scheduled messages:', e)
+		}
+	}
+
+	/**
+	 * Schedule a message to be posted with given payload
+	 *
+	 * @param token - conversation token
+	 * @param payload - action payload
+	 */
+	async function scheduleMessage(token: string, payload: scheduleMessageParams) {
+		try {
+			const response = await scheduleMessageApi({ token, ...payload })
+			if (!scheduledMessages.value[token]) {
+				scheduledMessages.value[token] = {}
+			}
+			scheduledMessages.value[token][response.data.ocs.data.id] = response.data.ocs.data
+
+			await vuexStore.dispatch('setConversationProperties', {
+				token,
+				properties: {
+					hasScheduledMessages: Object.keys(scheduledMessages.value[token]).length,
+				},
+			})
+		} catch (e) {
+			console.error('Error while scheduling message:', e)
+			throw e
+		}
+	}
+
+	/**
+	 * Edit already scheduled message with given payload
+	 *
+	 * @param token - conversation token
+	 * @param messageId - id of message to edit
+	 * @param payload - action payload
+	 */
+	async function editScheduledMessage(token: string, messageId: string, payload: editScheduledMessageParams) {
+		try {
+			const response = await editScheduledMessageApi({ token, messageId, ...payload })
+			scheduledMessages.value[token][messageId] = response.data.ocs.data
+		} catch (error) {
+			console.error('Error while editing scheduled message:', error)
+			throw error
+		}
+	}
+
+	/**
+	 * Delete already scheduled message
+	 *
+	 * @param token - conversation token
+	 * @param messageId - id of message to delete
+	 */
+	async function deleteScheduledMessage(token: string, messageId: string) {
+		try {
+			await deleteScheduledMessageApi(token, messageId)
+
+			delete scheduledMessages.value[token][messageId]
+
+			const hasScheduledMessages = Object.keys(scheduledMessages.value[token] ?? {}).length
+			await vuexStore.dispatch('setConversationProperties', {
+				token,
+				properties: {
+					hasScheduledMessages,
+				},
+			})
+			// Check if there are any scheduled messages left
+			if (hasScheduledMessages === 0) {
+				setShowScheduledMessages(false)
+			}
+		} catch (e) {
+			console.error('Error while deleting scheduled message:', e)
+		}
+	}
+
 	return {
 		threads,
 		followedThreads,
@@ -622,6 +811,9 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 		tasksCount,
 		tasksDoneCount,
 		chatSummary,
+		scheduledMessages,
+		scheduleMessageTime,
+		showScheduledMessages,
 
 		followedThreadsList,
 
@@ -634,6 +826,8 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 		getChatSummaryTaskQueue,
 		hasChatSummaryTaskRequested,
 		getChatSummary,
+		getScheduledMessagesList,
+		getScheduledMessage,
 
 		addThread,
 		fetchSingleThread,
@@ -662,5 +856,11 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 		requestChatSummary,
 		storeChatSummary,
 		dismissChatSummary,
+		fetchScheduledMessages,
+		scheduleMessage,
+		editScheduledMessage,
+		deleteScheduledMessage,
+		setScheduleMessageTime,
+		setShowScheduledMessages,
 	}
 })

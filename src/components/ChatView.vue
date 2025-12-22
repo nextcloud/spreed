@@ -156,6 +156,7 @@ export default {
 
 		isDragAndDropBlocked() {
 			return this.chatExtrasStore.getMessageIdToEdit(this.token) !== undefined || !this.canUploadFiles
+				|| this.chatExtrasStore.scheduleMessageTime
 		},
 
 		dropHintText() {

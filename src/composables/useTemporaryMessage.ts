@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { PrepareTemporaryMessagePayload } from '../utils/prepareTemporaryMessage.ts'
+import type { RawTemporaryMessagePayload } from '../utils/prepareTemporaryMessage.ts'
 
 import { useActorStore } from '../stores/actor.ts'
 import { prepareTemporaryMessage } from '../utils/prepareTemporaryMessage.ts'
@@ -17,7 +17,7 @@ export function useTemporaryMessage() {
 	/**
 	 * @param payload payload for generating a temporary message
 	 */
-	function createTemporaryMessage(payload: PrepareTemporaryMessagePayload) {
+	function createTemporaryMessage(payload: RawTemporaryMessagePayload) {
 		return prepareTemporaryMessage({
 			...payload,
 			actorId: actorStore.actorId ?? '',
