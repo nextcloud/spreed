@@ -198,18 +198,43 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
 
 	switch (message.systemMessage) {
 		case MESSAGE.SYSTEM_TYPE.CALL_STARTED: {
-			throw new Error()
+			if (callIsSilent(message)) {
+				if (selfIsActor(message, conversation.actorId, conversation.actorType)) {
+					return conversationIsOneToOne(conversation.type)
+						? t('spreed', 'Outgoing silent call')
+						: t('spreed', 'You started a silent call')
+				} else {
+					return conversationIsOneToOne(conversation.type)
+						? t('spreed', 'Incoming silent call')
+						: t('spreed', '{actor} started a silent call')
+				}
+			} else {
+				if (selfIsActor(message, conversation.actorId, conversation.actorType)) {
+					return conversationIsOneToOne(conversation.type)
+						? t('spreed', 'Outgoing call')
+						: t('spreed', 'You started a call')
+				} else {
+					return conversationIsOneToOne(conversation.type)
+						? t('spreed', 'Incoming call')
+						: t('spreed', '{actor} started a call')
+				}
+			}
 		}
 		case MESSAGE.SYSTEM_TYPE.CALL_JOINED: {
-			throw new Error()
+			return selfIsActor(message, conversation.actorId, conversation.actorType)
+				? t('spreed', 'You joined the call')
+				: t('spreed', '{actor} joined the call')
 		}
 		case MESSAGE.SYSTEM_TYPE.CALL_LEFT: {
-			throw new Error()
+			return selfIsActor(message, conversation.actorId, conversation.actorType)
+				? t('spreed', 'You left the call')
+				: t('spreed', '{actor} left the call')
 		}
-		case MESSAGE.SYSTEM_TYPE.CALL_ENDED: {
-			throw new Error()
-		}
+		case MESSAGE.SYSTEM_TYPE.CALL_ENDED:
 		case MESSAGE.SYSTEM_TYPE.CALL_ENDED_EVERYONE: {
+			// Original method #parseCall ~ 150 lines of PHP code
+			// requires to know amount of guests, duration, $maxDurationWasReached
+			// doesn't worth localizing on client side
 			throw new Error()
 		}
 		case MESSAGE.SYSTEM_TYPE.MODERATOR_PROMOTED: {
