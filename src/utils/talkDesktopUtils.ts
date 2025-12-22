@@ -12,3 +12,7 @@ export const messagePleaseReload = IS_DESKTOP
 export const messagePleaseTryToReload = IS_DESKTOP
 	? t('spreed', 'Please try to restart the app.')
 	: t('spreed', 'Please try to reload the page.')
+
+export const messageReload = IS_DESKTOP
+	? t('spreed', 'Restart')
+	: t('spreed', 'Reload')
