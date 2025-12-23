@@ -144,4 +144,4 @@ Features that can be toggled on-off with the `experiments_users` and `experiment
 |-----|-----------|----------------------------------|-----------------------------|-----------------------------------------------------------------------------------------------------------------------------|
 | 1   | Completed | Web 21.1.0<br>Desktop 1.2.2-beta | Web 23.0.0<br>Desktop 2.x.x | Instead of refreshing the participant list repeatingly during calls, the data is generated from received signaling messages |
 | 2   | Completed | Web 21.1.0<br>Desktop 1.2.2      | Web 23.0.0<br>Desktop 2.x.x | Make automatic attempts to recover suspended / expired signaling session to allow join the call without page reload         |
-| 4   | Active    | Web 22.0.3<br>Desktop 2.0.4      | -                           | Send chat messages via the High performance-backend / websocket                                                             |
+| 4   | Completed | Web 22.0.3<br>Desktop 2.0.4      | Web 23.0.0<br>Desktop 2.x.x | Send chat messages via the High performance-backend / websocket                                                             |
