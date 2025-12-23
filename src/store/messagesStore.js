@@ -595,7 +595,7 @@ const actions = {
 		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.HISTORY_CLEARED) {
 			sharedItemsStore.purgeSharedItemsStore(token, message.id)
 			chatExtrasStore.clearThreads(token, message.id)
-			context.commit('clearMessagesHistory', {
+			context.dispatch('clearMessagesHistory', {
 				token,
 				id: message.id,
 			})
