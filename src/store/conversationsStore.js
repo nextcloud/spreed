@@ -537,10 +537,12 @@ const actions = {
 			chatExtrasStore.removeParentIdToReply(token)
 			const reactionsStore = useReactionsStore()
 			reactionsStore.purgeReactionsStore(token)
-			const sharedItemsStore = useSharedItemsStore()
-			sharedItemsStore.purgeSharedItemsStore(token)
-			context.dispatch('purgeMessagesStore', token)
-			return response
+			context.dispatch('processMessage', { token, message: response.data.ocs.data })
+			context.dispatch('updateLastReadMessage', {
+				token,
+				id: response.data.ocs.data.id,
+				updateVisually: true,
+			})
 		} catch (error) {
 			console.error(t('spreed', 'Error while clearing conversation history'), error)
 		}
