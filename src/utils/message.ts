@@ -270,7 +270,9 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
 			throw new Error()
 		}
 		case MESSAGE.SYSTEM_TYPE.HISTORY_CLEARED: {
-			throw new Error()
+			return selfIsActor(message, conversation.actorId, conversation.actorType)
+				? t('spreed', 'You cleared the history of the conversation')
+				: t('spreed', '{actor} cleared the history of the conversation')
 		}
 		case MESSAGE.SYSTEM_TYPE.POLL_VOTED: {
 			throw new Error()
