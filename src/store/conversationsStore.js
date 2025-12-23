@@ -822,7 +822,6 @@ const actions = {
 		if ((lastMessage.actorType !== ATTENDEE.ACTOR_TYPE.BOTS
 			|| lastMessage.actorId === ATTENDEE.CHANGELOG_BOT_ID)
 		&& lastMessage.systemMessage !== 'reaction'
-		&& lastMessage.systemMessage !== 'poll_voted'
 		&& lastMessage.systemMessage !== 'reaction_deleted'
 		&& lastMessage.systemMessage !== 'reaction_revoked'
 		&& lastMessage.systemMessage !== 'message_deleted'

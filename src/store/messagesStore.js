@@ -469,6 +469,11 @@ const actions = {
 					token,
 					pollId: message.messageParameters.poll.id,
 				})
+
+				const conversation = context.getters.conversation(token)
+				if (conversation?.lastMessage?.id && message.id > conversation.lastMessage.id) {
+					context.dispatch('updateConversationLastMessage', { token, lastMessage: message })
+				}
 				// Quit processing
 				context.commit('addMessage', { token, message })
 				return
