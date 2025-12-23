@@ -169,6 +169,8 @@ export const ATTENDEE = {
 	BOT_PREFIX: 'bot-',
 	BRIDGE_BOT_ID: 'bridge-bot',
 
+	ACTOR_CLI_ID: 'cli',
+	ACTOR_SYSTEM_ID: 'system',
 	CHANGELOG_BOT_ID: 'changelog',
 	SAMPLE_BOT_ID: 'sample',
 } as const
