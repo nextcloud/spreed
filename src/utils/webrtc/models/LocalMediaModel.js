@@ -23,12 +23,14 @@ export default function LocalMediaModel() {
 		localStream: null,
 		audioAvailable: false,
 		audioEnabled: false,
+		resumeAudioAfterChange: false,
 		speaking: false,
 		speakingWhileMuted: false,
 		currentVolume: -100,
 		volumeThreshold: -100,
 		videoAvailable: false,
 		videoEnabled: false,
+		resumeVideoAfterChange: false,
 		virtualBackgroundAvailable: false,
 		virtualBackgroundEnabled: false,
 		virtualBackgroundType: null,
@@ -199,6 +201,10 @@ LocalMediaModel.prototype = {
 	_updateMediaAvailability(localStream) {
 		if (localStream && localStream.getAudioTracks().length > 0) {
 			this.set('audioAvailable', true)
+			if (this.get('audioEnabled') === false && this.get('resumeAudioAfterChange')) {
+				localStream.getAudioTracks()[0].enabled = true
+				this.set('resumeAudioAfterChange', false)
+			}
 			this.set('audioEnabled', localStream.getAudioTracks()[0].enabled)
 		} else {
 			this.disableAudio()
@@ -213,6 +219,10 @@ LocalMediaModel.prototype = {
 
 		if (localStream && localStream.getVideoTracks().length > 0) {
 			this.set('videoAvailable', true)
+			if (this.get('videoEnabled') === false && this.get('resumeVideoAfterChange')) {
+				localStream.getVideoTracks()[0].enabled = true
+				this.set('resumeVideoAfterChange', false)
+			}
 			this.set('videoEnabled', localStream.getVideoTracks()[0].enabled)
 		} else {
 			this.disableVideo()
