@@ -539,8 +539,9 @@ const actions = {
 			reactionsStore.purgeReactionsStore(token)
 			const sharedItemsStore = useSharedItemsStore()
 			sharedItemsStore.purgeSharedItemsStore(token)
-			context.dispatch('purgeMessagesStore', token)
-			return response
+			chatExtrasStore.clearThreads(token)
+			context.commit('clearMessagesHistory', { token, id: response.data.ocs.data.id })
+			context.commit('addMessage', { token, message: response.data.ocs.data })
 		} catch (error) {
 			console.error(t('spreed', 'Error while clearing conversation history'), error)
 		}
