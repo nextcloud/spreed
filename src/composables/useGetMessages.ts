@@ -27,6 +27,7 @@ import { EventBus } from '../services/EventBus.ts'
 import { useChatStore } from '../stores/chat.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
+import { tryLocalizeSystemMessage } from '../utils/message.ts'
 import { useGetThreadId } from './useGetThreadId.ts'
 import { useGetToken } from './useGetToken.ts'
 
@@ -630,6 +631,16 @@ export function useGetMessagesProvider() {
 			// Guard: Message is for another conversation
 			// e.g., user switched conversation while messages were in-flight
 			return
+		}
+
+		// Attempt to localize non-system messages
+		if (message.systemMessage !== '' && conversation.value) {
+			try {
+				message.message = tryLocalizeSystemMessage(message, conversation.value)
+			} catch (exception) {
+				tryPollNewMessages()
+				return
+			}
 		}
 
 		// Patch for federated conversations: disable unsupported file shares
