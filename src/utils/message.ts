@@ -275,10 +275,12 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
 				: t('spreed', '{actor} cleared the history of the conversation')
 		}
 		case MESSAGE.SYSTEM_TYPE.POLL_VOTED: {
-			throw new Error()
+			return t('spreed', 'Someone voted on the poll {poll}')
 		}
 		case MESSAGE.SYSTEM_TYPE.POLL_CLOSED: {
-			throw new Error()
+			return selfIsActor(message, conversation.actorId, conversation.actorType)
+				? t('spreed', 'You ended the poll {poll}')
+				: t('spreed', '{actor} ended the poll {poll}')
 		}
 		case MESSAGE.SYSTEM_TYPE.RECORDING_STARTED: {
 			throw new Error()
