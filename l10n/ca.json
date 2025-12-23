@@ -1438,6 +1438,7 @@
     "File upload is not available in this conversation" : "La càrrega de fitxers no està disponible en aquesta conversa",
     "Add emoji" : "Afegeix emoji",
     "Adding a mention will only notify users who did not read the message." : "Afegir una menció només notificarà als usuaris que no hagin llegit el missatge.",
+    "Send later" : "Envia més tard",
     "Cancel editing" : "Cancel·la l'edició",
     "{user} is out of office and might not respond." : "{user} està fora de l'oficina i és possible que no respongui.",
     "Absence period: {startDate} - {endDate}" : "Període d'absència: {startDate} - {endDate}",

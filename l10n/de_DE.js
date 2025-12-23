@@ -1575,6 +1575,7 @@ OC.L10N.register(
     "Add emoji" : "Emoji hinzufügen",
     "Adding a mention will only notify users who did not read the message." : "Hinzufügen einer Erwähnung benachrichtigt nur Benutzer, die die Nachricht noch nicht gelesen haben.",
     "Thread title" : "Thementitel",
+    "Send later" : "Später senden",
     "Cancel editing" : "Bearbeitung abbrechen",
     "{user} is out of office and might not respond." : "{user} ist nicht im Büro und antwortet möglicherweise nicht.",
     "Absence period: {startDate} - {endDate}" : "Abwesenheitszeitraum: {startDate} - {endDate}",

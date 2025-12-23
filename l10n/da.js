@@ -662,6 +662,7 @@ OC.L10N.register(
     "File to share" : "Vælg fil til deling",
     "Add emoji" : "Tilføj emoji",
     "Thread title" : "Trådtitel",
+    "Send later" : "Send senere",
     "Cancel editing" : "Annullér redigering",
     "Share from {nextcloud}" : "Del fra {nextcloud}",
     "Share from Files" : "Del fra Filer",
