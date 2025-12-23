@@ -746,8 +746,12 @@ export default {
 			this.errorTitle = ''
 		},
 
-		messageToEdit(newValue) {
-			if (newValue) {
+		messageToEdit(newValue, oldValue) {
+			if (newValue?.id === oldValue?.id) {
+				// Currently edited message was updated, keep cursor position
+				return
+			} else if (newValue) {
+				// Enter editing mode or editing another message
 				this.text = this.chatExtrasStore.getChatEditInput(this.token)
 
 				// Clear thread title when editing a message (unless it's a scheduled thread)
@@ -764,6 +768,7 @@ export default {
 					this.chatExtrasStore.removeParentIdToReply(this.token)
 				}
 			} else {
+				// Leaving editing mode
 				this.text = this.chatInput
 			}
 
