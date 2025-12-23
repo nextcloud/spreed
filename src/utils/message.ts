@@ -263,10 +263,10 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
 				? t('spreed', 'An administrator demoted {user} from moderator')
 				: t('spreed', '{actor} demoted {user} from moderator')
 		}
-		case MESSAGE.SYSTEM_TYPE.FILE_SHARED: {
-			throw new Error()
-		}
+		case MESSAGE.SYSTEM_TYPE.FILE_SHARED:
 		case MESSAGE.SYSTEM_TYPE.OBJECT_SHARED: {
+			// Backend transforms both 'file_shared' and 'object_shared' to normal chat message,
+			// these should not be received by client
 			throw new Error()
 		}
 		case MESSAGE.SYSTEM_TYPE.HISTORY_CLEARED: {
@@ -283,10 +283,14 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
 				: t('spreed', '{actor} ended the poll {poll}')
 		}
 		case MESSAGE.SYSTEM_TYPE.RECORDING_STARTED: {
-			throw new Error()
+			return selfIsActor(message, conversation.actorId, conversation.actorType)
+				? t('spreed', 'You started the video recording')
+				: t('spreed', '{actor} started the video recording')
 		}
 		case MESSAGE.SYSTEM_TYPE.RECORDING_STOPPED: {
-			throw new Error()
+			return selfIsActor(message, conversation.actorId, conversation.actorType)
+				? t('spreed', 'You stopped the video recording')
+				: t('spreed', '{actor} stopped the video recording')
 		}
 		default: {
 			// Don't localize non-supported relayed system messages, do polling
