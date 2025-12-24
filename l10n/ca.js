@@ -1376,6 +1376,7 @@ OC.L10N.register(
     "Translate to" : "Traduir a",
     "Translating" : "S'està traduint",
     "Copy translated text" : "Copia el text traduït",
+    "Send now" : "Envia ara",
     "Message read by everyone who shares their reading status" : "Missatge llegit per tothom que comparteix el seu estat de lectura",
     "Message sent" : "Missatge enviat",
     "Sent without notification" : "Enviat sense notificació",
