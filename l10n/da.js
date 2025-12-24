@@ -645,6 +645,7 @@ OC.L10N.register(
     "Translate from" : "Oversæt fra",
     "Translate to" : "Oversæt til",
     "Copy translated text" : "Kopiér oversat tekst",
+    "Send now" : "Send nu",
     "Message sent" : "Beskeden blev sendt",
     "Contact" : "Kontakt",
     "Deck Card" : "Opslagskort",

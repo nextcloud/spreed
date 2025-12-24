@@ -1498,6 +1498,7 @@ OC.L10N.register(
     "Translate to" : "Přeložit do",
     "Translating" : "Překládá se",
     "Copy translated text" : "Zkopírovat přeložený text",
+    "Send now" : "Odeslat nyní",
     "Message read by everyone who shares their reading status" : "Všichni, kteří sdílejí oznámení o přečtení, si zprávu přečetli",
     "Message sent" : "Zpráva odeslána",
     "Sent without notification" : "Odeslat bez oznámení",
