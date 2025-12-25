@@ -296,6 +296,12 @@ export default {
 
 		id(value) {
 			this.pollsStore.hidePollToast(value)
+			if (this.pollsStore.scheduledPolls[this.token]?.[value]) {
+				this.pollsStore.getPollData({
+					token: this.token,
+					pollId: value,
+				})
+			}
 		},
 
 		isInCall(value) {
