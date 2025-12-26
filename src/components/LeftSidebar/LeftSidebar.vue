@@ -248,7 +248,7 @@
 					class="scroller"
 					@scroll="debounceHandleScroll" />
 				<NcButton
-					v-if="!showThreadsList && !preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
+					v-if="!showThreadsList && !preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null && !isFiltered"
 					class="unread-mention-button"
 					variant="primary"
 					@click="scrollBottomUnread">
