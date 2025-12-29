@@ -154,7 +154,7 @@ export interface operations {
                      * Format: int64
                      * @description Duration until the link expires
                      */
-                    expirationTime: number;
+                    expirationTime?: number;
                 };
             };
         };
