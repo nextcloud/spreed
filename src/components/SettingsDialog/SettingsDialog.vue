@@ -38,6 +38,10 @@
 					:label="t('spreed', 'Skip device preview before joining a call')"
 					:description="t('spreed', 'Always shown if recording consent is required')"
 					@update:model-value="setHideMediaSettings" />
+				<NcFormBoxSwitch
+					:model-value="settingsStore.noiseSuppression"
+					:label="t('spreed', 'Enable noise suppression')"
+					@update:model-value="toggleNoiseSuppression" />
 			</NcFormBox>
 
 			<NcButton
@@ -399,6 +403,10 @@ export default {
 
 		setHideMediaSettings(newValue) {
 			this.settingsStore.setShowMediaSettings(!newValue)
+		},
+
+		toggleNoiseSuppression(newValue) {
+			this.settingsStore.setNoiseSuppression(newValue)
 		},
 
 		async setBlurVirtualBackgroundEnabled(value) {

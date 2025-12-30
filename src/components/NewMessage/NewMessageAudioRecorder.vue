@@ -55,6 +55,7 @@ import IconClose from 'vue-material-design-icons/Close.vue'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import { useAudioEncoder } from '../../composables/useAudioEncoder.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
+import { useSettingsStore } from '../../stores/settings.ts'
 import {
 	destroyNoiseSuppressionWorklet,
 	processNoiseSuppression,
@@ -82,6 +83,8 @@ export default {
 	emits: ['recording', 'audioFile'],
 
 	setup() {
+		const settingsStore = useSettingsStore()
+
 		const {
 			isMediaRecorderReady,
 			isMediaRecorderLoading,
@@ -90,6 +93,7 @@ export default {
 		} = useAudioEncoder()
 
 		return {
+			settingsStore,
 			token: useGetToken(),
 			isMediaRecorderReady,
 			isMediaRecorderLoading,
@@ -179,7 +183,7 @@ export default {
 			try {
 				this.audioStream = await mediaDevicesManager.getUserMedia({
 					audio: {
-						noiseSuppression: false,
+						noiseSuppression: !this.settingsStore.noiseSuppression,
 					},
 					video: false,
 				})
@@ -197,7 +201,7 @@ export default {
 			// Create a media recorder to capture the stream
 			try {
 				await registerNoiseSuppressionWorklet()
-				const audioStreamProcessed = processNoiseSuppression(this.audioStream, true)
+				const audioStreamProcessed = processNoiseSuppression(this.audioStream, this.settingsStore.noiseSuppression)
 				this.mediaRecorder = new this.MediaRecorder(audioStreamProcessed, {
 					mimeType: 'audio/wav',
 				})
