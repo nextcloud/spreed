@@ -31,6 +31,7 @@ use OCP\Security\ISecureRandom;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
+use OCP\Share\IPartialShareProvider;
 use OCP\Share\IShare;
 use OCP\Share\IShareProvider;
 
@@ -44,7 +45,7 @@ use OCP\Share\IShareProvider;
  * Like in group shares, a recipient can move or delete a share without
  * modifying the share for the other users in the room.
  */
-class RoomShareProvider implements IShareProvider {
+class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 	use TTransactional;
 	// Special share type for user modified room shares
 	public const SHARE_TYPE_USERROOM = 11;
@@ -852,6 +853,68 @@ class RoomShareProvider implements IShareProvider {
 		}
 
 		$shares = $this->resolveSharesForRecipient($shares, $userId, true);
+
+		return $shares;
+	}
+
+	/**
+	 * @param bool $forChildren
+	 * @inheritDoc
+	 */
+	public function getSharedWithByPath(
+		string $userId,
+		int $shareType,
+		string $path,
+		bool $forChildren,
+		int $limit,
+		int $offset,
+	): iterable {
+		/** @var IShare[] $shares */
+		$shares = [];
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->select('s.*', 's2.permissions AS s2_permissions', 's2.file_target AS s2_file_target',
+			'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
+			'f.parent AS f_parent', 'f.name', 'f.mimetype', 'f.mimepart', 'f.size', 'f.mtime', 'f.storage_mtime',
+			'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum'
+		)
+			->selectAlias('st.id', 'storage_string_id')
+			->from('share', 's2')
+			->orderBy('s2.id', 'ASC')
+			->leftJoin('s2', 'filecache', 'f', $qb->expr()->eq('s2.file_source', 'f.fileid'))
+			->leftJoin('s2', 'share', 's', $qb->expr()->eq('s2.parent', 's.id'))
+			->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'))
+			->setFirstResult($offset);
+
+		if ($limit !== -1) {
+			$qb->setMaxResults($limit);
+		}
+
+		$qb->andWhere($qb->expr()->eq('s2.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
+			->andWhere($qb->expr()->eq('s2.share_with', $qb->createNamedParameter($userId)))
+			->andWhere($qb->expr()->neq('s2.uid_initiator', $qb->createNamedParameter($userId)))
+			->andWhere($qb->expr()->neq('s2.uid_owner', $qb->createNamedParameter($userId)));
+
+		if ($forChildren) {
+			$qb->andWhere($qb->expr()->like('s2.file_target', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($path) . '_%')));
+		} else {
+			$qb->andWhere($qb->expr()->eq('s2.file_target', $qb->createNamedParameter($path)));
+		}
+
+		$cursor = $qb->executeQuery();
+		while ($data = $cursor->fetch()) {
+			if (!$this->isAccessibleResult($data)) {
+				continue;
+			}
+
+			$share = $this->createShareObject($data);
+			// patch the parent data with the user-specific changes
+			$share->setPermissions((int)$data['s2_permissions']);
+			$share->setTarget($data['s2_file_target']);
+			$shares[] = $share;
+		}
+		$cursor->closeCursor();
+
+		// todo: check for group membership?
 
 		return $shares;
 	}
