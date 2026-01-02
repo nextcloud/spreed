@@ -15,15 +15,12 @@
 			'message--pinned': !isSplitViewEnabled && isPinned,
 			'message--sided': isSplitViewEnabled,
 			'message--small-view': (isSmallMobile || isSidebar) && isSplitViewEnabled,
+			'message--deleted': isDeletedMessage,
 		}"
 		tabindex="0"
 		@mouseover="handleMouseover"
 		@mouseleave="handleMouseleave">
-		<div
-			:class="{
-				'normal-message-body': !isDeletedMessage && !isSplitViewEnabled,
-			}"
-			class="message-body">
+		<div class="message-body">
 			<MessageBody
 				:rich-parameters="richParameters"
 				:is-deleting="isDeleting"
@@ -426,8 +423,8 @@ export default {
 	--color-primary-element-extra-light: color(from var(--color-primary-element-light) srgb r g b / 0.45);
 	--color-primary-element-extra-light-hover: color(from var(--color-primary-element-light-hover) srgb r g b / 0.45);
 
-	&:hover .normal-message-body,
-	&--hovered .normal-message-body {
+	&:not(.message--deleted):hover > .message-body,
+	&--hovered .normal:not(.message--deleted) > .message-body {
 		background-color: var(--color-background-hover);
 	}
 
@@ -442,13 +439,13 @@ export default {
 	}
 
 	// BEGIN Split view
-	&.outgoing:hover .message-body,
-	&--hovered .message-body {
+	&.outgoing:not(.message--deleted):hover > .message-body,
+	&--hovered.outgoing:not(.message--deleted) > .message-body {
 		background-color: var(--color-primary-light-hover);
 	}
 
-	&.incoming:hover .message-body,
-	&--hovered .message-body {
+	&.incoming:not(.message--deleted):hover > .message-body,
+	&--hovered.incoming:not(.message--deleted) > .message-body {
 		background-color: var(--color-primary-element-extra-light-hover);
 	}
 
