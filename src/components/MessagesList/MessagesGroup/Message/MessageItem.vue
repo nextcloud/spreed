@@ -420,12 +420,9 @@ export default {
 .message {
 	position: relative;
 
-	--color-primary-element-extra-light: color(from var(--color-primary-element-light) srgb r g b / 0.45);
-	--color-primary-element-extra-light-hover: color(from var(--color-primary-element-light-hover) srgb r g b / 0.45);
-
 	&:not(.message--deleted):hover > .message-body,
 	&--hovered .normal:not(.message--deleted) > .message-body {
-		background-color: var(--color-background-hover);
+		background-color: var(--message-body-hover, var(--color-background-hover));
 	}
 
 	&:not(.message--sided) {
@@ -439,35 +436,45 @@ export default {
 	}
 
 	// BEGIN Split view
-	&.outgoing:not(.message--deleted):hover > .message-body,
-	&--hovered.outgoing:not(.message--deleted) > .message-body {
-		background-color: var(--color-primary-light-hover);
-	}
-
-	&.incoming:not(.message--deleted):hover > .message-body,
-	&--hovered.incoming:not(.message--deleted) > .message-body {
-		background-color: var(--color-primary-element-extra-light-hover);
-	}
-
 	&--sided {
+		--buttons-bar-min-width: calc(3 * var(--default-clickable-area) + 2 * var(--default-grid-baseline));
 		width: fit-content;
-		max-width: min(90%, calc(100% - 3 * var(--default-clickable-area) - 2 * var(--default-grid-baseline)));
+		max-width: min(90%, calc(100% - var(--buttons-bar-min-width)));
 
 		&.message--small-view {
 			max-width: 90%;
 		}
 
-		.message-body__scroll.bottom-side {
-			top: unset !important;
-			inset-inline-start: unset !important;
-			bottom: 0;
-			inset-inline-end: 0;
-			padding-block-end: var(--default-grid-baseline);
-			height: fit-content;
-			pointer-events: none;
+		// Shared styles for message bubbles
+		.message-body {
+			border: 1px solid var(--color-primary-element-light-hover);
+			border-block-end-width: 2px;
+		}
 
-			& > * {
-				pointer-events: auto;
+		.message-body__scroll {
+			--overlay-offset: 100%;
+			display: flex;
+			align-items: center;
+			top: 0;
+			padding-inline: var(--default-grid-baseline);
+			min-width: var(--buttons-bar-min-width);
+			height: 100%;
+
+			&.overlay {
+				--overlay-offset: max(100% - var(--default-clickable-area) * 4, var(--default-clickable-area) * 4 - 100%);
+			}
+
+			&.bottom-side {
+				top: unset !important;
+				inset-inline-start: unset !important;
+				bottom: 0;
+				padding-block-end: var(--default-grid-baseline);
+				height: fit-content;
+				pointer-events: none;
+
+				& > * {
+					pointer-events: auto;
+				}
 			}
 		}
 
@@ -489,28 +496,17 @@ export default {
 			}
 
 			.message-body {
+				--message-body-hover: var(--color-primary-light-hover);
 				background-color: var(--color-primary-light);
-				border-radius: var(--border-radius-large)  var(--border-radius-small) var(--border-radius-large) var(--border-radius-large);
-				border: 1px solid var(--color-primary-element-light-hover);
-				border-width: 1px 1px 2px 1px;
+				border-start-end-radius: var(--border-radius-small);
+			}
 
-				&__scroll {
-					display: flex;
-					align-items: center;
-					justify-content: flex-end;
-					inset-inline-end: 100%;
-					top: 0;
-					padding-inline: var(--default-grid-baseline);
-					min-width: calc(3 * var(--default-clickable-area) + 2 * var(--default-grid-baseline));
-					height: 100%;
+			.message-body__scroll {
+				justify-content: flex-end;
+				inset-inline-end: var(--overlay-offset);
 
-					&.overlay {
-						inset-inline-end: max(100% - var(--default-clickable-area) * 4, (100% - var(--default-clickable-area) * 4) * -1);
-					}
-
-					&.bottom-side {
-						inset-inline-end: auto;
-					}
+				&.bottom-side {
+					inset-inline-end: auto;
 				}
 			}
 		}
@@ -519,23 +515,16 @@ export default {
 			align-self: flex-start;
 
 			.message-body {
-				background-color: var(--color-primary-element-extra-light);
-				border-radius: var(--border-radius-small)  var(--border-radius-large) var(--border-radius-large) var(--border-radius-large);
-				border: 1px solid var(--color-primary-element-light-hover);
-				border-width: 1px 1px 2px 1px;
+				--message-body-hover: color(from var(--color-primary-element-light-hover) srgb r g b / 0.45);
+				background-color: color(from var(--color-primary-element-light) srgb r g b / 0.45);
+				border-start-start-radius: var(--border-radius-small);
+			}
 
-				&__scroll {
-					display: flex;
-					align-items: center;
-					inset-inline-start: 100%;
-					top: 0;
-					padding-inline: var(--default-grid-baseline);
-					min-width: calc(3 * var(--default-clickable-area) + 2 * var(--default-grid-baseline));
-					height: 100%;
+			.message-body__scroll {
+				inset-inline-start: var(--overlay-offset);
 
-					&.overlay {
-						inset-inline-start: max(100% - var(--default-clickable-area) * 4, (100% - var(--default-clickable-area) * 4) * -1);
-					}
+				&.bottom-side {
+					inset-inline-end: 0;
 				}
 			}
 		}
