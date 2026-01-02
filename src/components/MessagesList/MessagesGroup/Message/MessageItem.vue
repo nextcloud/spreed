@@ -48,7 +48,7 @@
 		<div
 			class="message-body__scroll"
 			:class="{
-				'bottom-side': isSplitViewEnabled && !isShortSimpleMessage && (isSmallMobile || isSidebar),
+				'bottom-side': isSplitViewEnabled && !isShortSimpleMessage && (isSmallMobile || isSidebar) && (!isPinned || showMessageButtonsBar),
 				overlay: isSplitViewEnabled && !isShortSimpleMessage && isReactionsMenuOpen && !(isSmallMobile || isSidebar),
 			}">
 			<template v-if="showMessageButtonsBar">
@@ -454,7 +454,7 @@ export default {
 
 	&--sided {
 		width: fit-content;
-		max-width: min(90%, calc(100% - 3 * var(--default-clickable-area)));
+		max-width: min(90%, calc(100% - 3 * var(--default-clickable-area) - 2 * var(--default-grid-baseline)));
 
 		&.message--small-view {
 			max-width: 90%;
@@ -466,6 +466,12 @@ export default {
 			bottom: 0;
 			inset-inline-end: 0;
 			padding-block-end: var(--default-grid-baseline);
+			height: fit-content;
+			pointer-events: none;
+
+			& > * {
+				pointer-events: auto;
+			}
 		}
 
 		.icon-pin-highlighted {
@@ -492,12 +498,21 @@ export default {
 				border-width: 1px 1px 2px 1px;
 
 				&__scroll {
+					display: flex;
+					align-items: center;
+					justify-content: flex-end;
 					inset-inline-end: 100%;
-					top: calc(50% - var(--default-clickable-area) / 2);
+					top: 0;
 					padding-inline: var(--default-grid-baseline);
+					min-width: calc(3 * var(--default-clickable-area) + 2 * var(--default-grid-baseline));
+					height: 100%;
 
 					&.overlay {
-						inset-inline-end: max(100% - var(--default-clickable-area) * 6, (100% - var(--default-clickable-area) * 6) * -1);
+						inset-inline-end: max(100% - var(--default-clickable-area) * 4, (100% - var(--default-clickable-area) * 4) * -1);
+					}
+
+					&.bottom-side {
+						inset-inline-end: auto;
 					}
 				}
 			}
@@ -513,12 +528,16 @@ export default {
 				border-width: 1px 1px 2px 1px;
 
 				&__scroll {
+					display: flex;
+					align-items: center;
 					inset-inline-start: 100%;
-					top: calc(50% - var(--default-clickable-area) / 2);
+					top: 0;
 					padding-inline: var(--default-grid-baseline);
+					min-width: calc(3 * var(--default-clickable-area) + 2 * var(--default-grid-baseline));
+					height: 100%;
 
 					&.overlay {
-						inset-inline-start: max(100% - var(--default-clickable-area) * 6, (100% - var(--default-clickable-area) * 6) * -1);
+						inset-inline-start: max(100% - var(--default-clickable-area) * 4, (100% - var(--default-clickable-area) * 4) * -1);
 					}
 				}
 			}
