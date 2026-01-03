@@ -22,12 +22,12 @@
 						'no-audio-available': !isAudioAvailable,
 						'audio-control-button': showDevices,
 					}"
-					:disabled="!isAudioAllowed"
+					:disabled="!isAudioAllowed || resumeAudioAfterChange"
 					@click.stop="toggleAudio">
 					<template #icon>
 						<VolumeIndicator
 							:audio-preview-available="isAudioAvailable"
-							:audio-enabled="showMicrophoneOn"
+							:audio-enabled="showMicrophoneOn || resumeAudioAfterChange"
 							:current-volume="model.attributes.currentVolume"
 							:volume-threshold="model.attributes.volumeThreshold"
 							overlay-muted-color="#888888" />
@@ -178,6 +178,9 @@ export default {
 			unsubscribeFromDevices,
 		} = useDevices()
 
+		/* Flag to smoothly toggle the audio while in call */
+		const resumeAudioAfterChange = ref(false)
+
 		/**
 		 * Check if component is visible and not obstructed by others
 		 *
@@ -204,6 +207,7 @@ export default {
 			updatePreferences,
 			subscribeToDevices,
 			unsubscribeFromDevices,
+			resumeAudioAfterChange,
 		}
 	},
 
@@ -259,6 +263,22 @@ export default {
 		},
 	},
 
+	watch: {
+		isAudioAvailable(newValue) {
+			if (newValue && this.resumeAudioAfterChange) {
+				// New track is available, resume audio
+				this.model.enableAudio()
+				this.resumeAudioAfterChange = false
+			}
+		},
+
+		audioInputId(newValue) {
+			if (!newValue && this.resumeAudioAfterChange) {
+				this.resumeAudioAfterChange = false
+			}
+		},
+	},
+
 	created() {
 		useHotKey('m', this.toggleAudio)
 		useHotKey(' ', this.toggleAudio, { push: true })
@@ -288,6 +308,10 @@ export default {
 		},
 
 		handleAudioInputIdChange(audioInputId) {
+			if (this.showDevices && this.showMicrophoneOn) {
+				// If input was changed from bottom bar while active, it should not be muted after track change
+				this.resumeAudioAfterChange = true
+			}
 			this.audioInputId = audioInputId
 			this.updatePreferences('audioinput')
 		},

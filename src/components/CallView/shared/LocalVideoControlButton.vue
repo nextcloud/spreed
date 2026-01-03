@@ -13,10 +13,10 @@
 				'no-video-available': !isVideoAvailable,
 				'video-control-button': showDevices,
 			}"
-			:disabled="!isVideoAllowed"
+			:disabled="!isVideoAllowed || resumeVideoAfterChange"
 			@click.stop="toggleVideo">
 			<template #icon>
-				<IconVideo v-if="showVideoOn" :size="20" />
+				<IconVideo v-if="showVideoOn || resumeVideoAfterChange" :size="20" />
 				<IconVideoOffOutline v-else :size="20" />
 			</template>
 		</NcButton>
@@ -49,6 +49,7 @@
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
+import { ref } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -113,6 +114,10 @@ export default {
 			subscribeToDevices,
 			unsubscribeFromDevices,
 		} = useDevices()
+
+		/* Flag to smoothly toggle the video while in call */
+		const resumeVideoAfterChange = ref(false)
+
 		return {
 			devices,
 			videoInputId,
@@ -120,6 +125,7 @@ export default {
 			updatePreferences,
 			subscribeToDevices,
 			unsubscribeFromDevices,
+			resumeVideoAfterChange,
 		}
 	},
 
@@ -183,6 +189,22 @@ export default {
 		},
 	},
 
+	watch: {
+		isVideoAvailable(newValue) {
+			if (newValue && this.resumeVideoAfterChange) {
+				// New track is available, resume video
+				this.model.enableVideo()
+				this.resumeVideoAfterChange = false
+			}
+		},
+
+		videoInputId(newValue) {
+			if (!newValue && this.resumeVideoAfterChange) {
+				this.resumeVideoAfterChange = false
+			}
+		},
+	},
+
 	created() {
 		useHotKey('v', this.toggleVideo)
 	},
@@ -211,6 +233,10 @@ export default {
 		},
 
 		handleVideoInputIdChange(videoInputId) {
+			if (this.showDevices && this.showVideoOn) {
+				// If input was changed from bottom bar while active, it should not be muted after track change
+				this.resumeVideoAfterChange = true
+			}
 			this.videoInputId = videoInputId
 			this.updatePreferences('videoinput')
 		},
