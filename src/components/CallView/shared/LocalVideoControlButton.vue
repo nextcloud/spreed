@@ -13,7 +13,7 @@
 				'no-video-available': !isVideoAvailable,
 				'video-control-button': showDevices,
 			}"
-			:disabled="!isVideoAllowed || resumeVideoAfterChange"
+			:disabled="resumeVideoAfterChange"
 			@click.stop="toggleVideo">
 			<template #icon>
 				<IconVideo v-if="showVideoOn || resumeVideoAfterChange" :size="20" />
@@ -220,7 +220,7 @@ export default {
 	methods: {
 		t,
 		toggleVideo() {
-			if (!this.isVideoAvailable) {
+			if (!this.isVideoAllowed || !this.isVideoAvailable) {
 				emit('talk:media-settings:show')
 				return
 			}
