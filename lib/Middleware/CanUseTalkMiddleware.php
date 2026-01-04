@@ -42,11 +42,11 @@ class CanUseTalkMiddleware extends Middleware {
 
 	public const TALK_ANDROID_MIN_VERSION = '15.0.0';
 	public const TALK_ANDROID_MIN_VERSION_RECORDING_CONSENT = '18.0.0';
-	public const TALK_ANDROID_MIN_VERSION_E2EE_CALLS = '22.0.0';
+	public const TALK_ANDROID_MIN_VERSION_E2EE_CALLS = '99.0.0';
 
 	public const TALK_IOS_MIN_VERSION = '15.0.0';
 	public const TALK_IOS_MIN_VERSION_RECORDING_CONSENT = '18.0.0';
-	public const TALK_IOS_MIN_VERSION_E2EE_CALLS = '22.0.0';
+	public const TALK_IOS_MIN_VERSION_E2EE_CALLS = '99.0.0';
 
 
 	public function __construct(
