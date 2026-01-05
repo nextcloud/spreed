@@ -16,7 +16,7 @@ import { useActorStore } from '../../../stores/actor.ts'
 import { useGuestNameStore } from '../../../stores/guestName.ts'
 
 vi.mock('@nextcloud/vue/composables/useIsMobile', () => ({
-	useIsMobile: vi.fn(() => false),
+	useIsSmallMobile: vi.fn(() => false),
 }))
 
 describe('MessagesGroup.vue', () => {

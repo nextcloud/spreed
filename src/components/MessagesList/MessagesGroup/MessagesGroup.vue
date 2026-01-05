@@ -18,7 +18,7 @@
 				:disable-menu="disableMenu"
 				disable-tooltip />
 		</div>
-		<div class="messages__content" :class="{ 'small-view': isMobile || isSidebar }">
+		<div class="messages__content" :class="{ 'small-view': isSmallMobile || isSidebar }">
 			<li v-if="showAuthor" class="messages__author" aria-level="4">
 				{{ actorInfo }}
 			</li>
@@ -41,7 +41,7 @@
 
 <script>
 import { t } from '@nextcloud/l10n'
-import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { computed, inject, toRefs } from 'vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import MessageItem from './Message/MessageItem.vue'
@@ -110,7 +110,7 @@ export default {
 			actorStore: useActorStore(),
 			actorDisplayName,
 			actorInfo,
-			isMobile: useIsMobile(),
+			isSmallMobile: useIsSmallMobile(),
 			isSidebar,
 			isSplitViewEnabled,
 		}
@@ -136,7 +136,7 @@ export default {
 		},
 
 		showAuthor() {
-			return !this.isSplitViewEnabled || !this.isSelfActor || this.isMobile || this.isSidebar
+			return !this.isSplitViewEnabled || !this.isSelfActor || this.isSmallMobile || this.isSidebar
 		},
 	},
 
