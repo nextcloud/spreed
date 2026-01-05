@@ -7,7 +7,7 @@
 	<div class="local-video-control-wrapper">
 		<NcButton
 			:title="videoButtonTitle"
-			:variant="variant"
+			:variant="videoStreamError ? 'error' : variant"
 			:aria-label="videoButtonAriaLabel"
 			:class="{
 				'no-video-available': !isVideoAvailable,
@@ -23,7 +23,7 @@
 
 		<NcActions
 			v-if="showDevices"
-			:disabled="!isVideoAvailable || !isVideoAllowed"
+			:disabled="!isVideoAvailable || !isVideoAllowed || !!videoStreamError"
 			class="video-selector-button"
 			@open="updateDevices">
 			<template #icon>
@@ -109,6 +109,7 @@ export default {
 		const {
 			devices,
 			videoInputId,
+			videoStreamError,
 			updateDevices,
 			updatePreferences,
 			subscribeToDevices,
@@ -121,6 +122,7 @@ export default {
 		return {
 			devices,
 			videoInputId,
+			videoStreamError,
 			updateDevices,
 			updatePreferences,
 			subscribeToDevices,
