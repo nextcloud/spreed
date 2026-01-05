@@ -1,0 +1,50 @@
+name: Sync Fork with Upstream
+on:
+  schedule:
+    - cron: "30 * * * *"
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: "Enable debug logging"
+        required: false
+        default: "false"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 50
+
+      - name: Set up Git user
+        run: |
+          git config --global user.name "Arne Tarara"
+          git config --global user.email "arne@green-coding.io"
+
+      - name: Add remote repository
+        run: |
+          git remote add upstream https://github.com/nextcloud/spreed.git
+          git fetch --depth 50 --no-recurse-submodules --no-tags upstream main
+
+      - name: Check for updates
+        run: |
+          CHANGES=$(git rev-list HEAD..upstream/main --count)
+          if [ "$CHANGES" -gt 0 ]; then
+            echo "Updating fork main branch..."
+            git checkout main
+            git merge upstream/main
+          else
+            echo "No updates from the original repository."
+          fi
+      - name: Merge in new changes from GMT branch
+        run: |
+            git fetch --depth=50 origin green-metrics-tool:green-metrics-tool
+            git merge green-metrics-tool
+      - name: Push
+        run: |
+            git push
