@@ -6,9 +6,11 @@
 <script setup lang="ts">
 import { t } from '@nextcloud/l10n'
 import { computed } from 'vue'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import IconAlertOctagon from 'vue-material-design-icons/AlertOctagon.vue'
+import IconRefresh from 'vue-material-design-icons/Refresh.vue'
 import { useStore } from '../../composables/useStore.js'
 import { messagePleaseTryToReload } from '../../utils/talkDesktopUtils.ts'
 
@@ -46,10 +48,17 @@ const message = computed(() => {
 })
 
 /**
- *
+ * Reset error status in the store
  */
 function clearConnectionFailedError() {
 	store.dispatch('clearConnectionFailed', props.token)
+}
+
+/**
+ * Reload the page to get a valid room object and HPB settings
+ */
+function reloadApp() {
+	window.location.reload()
 }
 
 </script>
@@ -61,6 +70,16 @@ function clearConnectionFailedError() {
 			:description="message">
 			<template #icon>
 				<IconAlertOctagon />
+			</template>
+			<template #action>
+				<NcButton
+					variant="primary"
+					@click="reloadApp">
+					<template #icon>
+						<IconRefresh />
+					</template>
+					{{ t('spreed', 'Reload') }}
+				</NcButton>
 			</template>
 		</NcEmptyContent>
 	</NcModal>
