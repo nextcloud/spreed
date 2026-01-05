@@ -1,0 +1,89 @@
+services:
+  app:
+    build:
+      context: .
+      # args:
+      #   - GIT_REF: __GMT_VAR_NCHASH__
+    image: my-nextcloud:master
+    restart: unless-stopped
+    shm_size: "256m"
+    depends_on:
+      - db
+      # - redis
+    environment:
+      # REDIS_HOST: redis
+      PHP_MEMORY_LIMIT: 512M
+      HOST_URL: http://app
+
+
+    #volumes:
+      # Persist only what should be writable:
+      # - nextcloud_data:/var/www/html/data
+      # - nextcloud_config:/var/www/html/config
+      # - nextcloud_apps:/var/www/html/custom_apps
+      # - nextcloud_theme:/var/www/html/themes
+    # ports:
+    #   - "8080:80" # access at http://localhost:8080
+      #- "8443:443"
+
+  # cron:
+  #   image: my-nextcloud:master
+  #   container_name: nextcloud-cron
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - app
+  #   volumes:
+  #     - nextcloud_data:/var/www/html/data
+  #     - nextcloud_config:/var/www/html/config
+  #     - nextcloud_apps:/var/www/html/custom_apps
+  #     - nextcloud_theme:/var/www/html/themes
+  #   entrypoint: ["/bin/sh","-c"]
+  #   command: >
+  #     'until [ -f /var/www/html/config/config.php ]; do
+  #       echo "Waiting for Nextcloud installation...";
+  #       sleep 5;
+  #     done;
+  #     echo "Nextcloud installed, starting cron loop";
+  #     while true; do
+  #       su -s /bin/sh -c "php -f /var/www/html/cron.php" www-data;
+  #       sleep 300;
+  #     done'
+
+  gcb-playwright:
+    image: greencoding/gcb_playwright:v21
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix # for debugging in non-headless mode
+      # - .:/tmp/repo
+    environment:
+       DISPLAY: ":0" # for debugging in non-headless mode
+    #tty: true              # nice to have for interactive shells
+    #stdin_open: true       # "
+    command: [ "tail", "-f", "/dev/null" ]   # keep container running
+  db:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      MARIADB_AUTO_UPGRADE: "1"
+      MYSQL_ROOT_PASSWORD: supersecretroot
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+      MYSQL_PASSWORD: nextcloud
+    command: ["--transaction-isolation=READ-COMMITTED", "--binlog-format=ROW", "--innodb-read-only-compressed=OFF"]
+    # volumes:
+    #   - db_data:/var/lib/mysql
+
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: nextcloud-redis
+  #   restart: unless-stopped
+  #   command: ["redis-server", "--save", "", "--appendonly", "no"]
+  #   volumes:
+  #     - redis_data:/data
+
+# volumes:
+#   nextcloud_data:
+#   nextcloud_config:
+#   nextcloud_apps:
+#   nextcloud_theme:
+#   db_data:
+#   redis_data:

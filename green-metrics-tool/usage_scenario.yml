@@ -1,0 +1,63 @@
+---
+name: Nextcloud - MariaDB - Install - Firefox
+author: Arne Tarara <arne@green-coding.io> + Didi Hoffmann <didi@green-coding.io>
+description: Installieren des offiziellen Nextcloud Docker containers mit MariaDB Datenbank.
+compose-file: !include compose.yml
+
+services:
+  gcb-playwright:
+    image: greencoding/gcb_playwright:v21
+#    depends_on:
+#      nc:
+#        condition: service_healthy
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix # for debugging in non-headless mode
+    environment:
+       DISPLAY: ":0" # for debugging in non-headless mode
+    setup-commands:
+      - command: pip install dotenv
+
+
+flow:
+  - name: Install Nextcloud
+    container: gcb-playwright
+    commands:
+      - type: console
+        command: python3 /tmp/repo/green-metrics-tool/nextcloud_install.py firefox
+
+  - name: Install Apps
+    container: app
+    commands:
+      - type: console
+        command: |
+          mkdir /var/www/html/apps/spreed/ \
+          && cp -r /tmp/repo/* /var/www/html/apps/spreed/\
+          && chown -R www-data:www-data /var/www/html/apps/spreed/ \
+          && cd /var/www/html/apps/spreed/ \
+          && sudo -u www-data composer install --no-dev \
+          && sudo -u www-data npm ci \
+          && sudo -u www-data make build-js-production \
+          && sudo -u www-data php /var/www/html/occ app:enable spreed
+        shell: bash
+
+  - name: Talk
+    container: gcb-playwright
+    commands:
+      - type: console
+        command: python3 /tmp/repo/green-metrics-tool/nextcloud_talk.py firefox
+        note: Creating event
+        read-notes-stdout: true
+        read-sci-stdout: true
+        log-stdout: true
+        log-stderr: true
+
+  - name: Video
+    container: gcb-playwright
+    commands:
+      - type: console
+        command: python3 /tmp/repo/green-metrics-tool/nextcloud_video.py firefox
+        note: Creating event
+        read-notes-stdout: true
+        read-sci-stdout: true
+        log-stdout: true
+        log-stderr: true
