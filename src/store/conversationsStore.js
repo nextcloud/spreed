@@ -537,10 +537,12 @@ const actions = {
 			chatExtrasStore.removeParentIdToReply(token)
 			const reactionsStore = useReactionsStore()
 			reactionsStore.purgeReactionsStore(token)
-			const sharedItemsStore = useSharedItemsStore()
-			sharedItemsStore.purgeSharedItemsStore(token)
-			context.dispatch('purgeMessagesStore', token)
-			return response
+			context.dispatch('processMessage', { token, message: response.data.ocs.data })
+			context.dispatch('updateLastReadMessage', {
+				token,
+				id: response.data.ocs.data.id,
+				updateVisually: true,
+			})
 		} catch (error) {
 			console.error(t('spreed', 'Error while clearing conversation history'), error)
 		}
@@ -820,7 +822,6 @@ const actions = {
 		if ((lastMessage.actorType !== ATTENDEE.ACTOR_TYPE.BOTS
 			|| lastMessage.actorId === ATTENDEE.CHANGELOG_BOT_ID)
 		&& lastMessage.systemMessage !== 'reaction'
-		&& lastMessage.systemMessage !== 'poll_voted'
 		&& lastMessage.systemMessage !== 'reaction_deleted'
 		&& lastMessage.systemMessage !== 'reaction_revoked'
 		&& lastMessage.systemMessage !== 'message_deleted'

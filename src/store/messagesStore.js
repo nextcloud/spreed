@@ -470,6 +470,11 @@ const actions = {
 					token,
 					pollId: message.messageParameters.poll.id,
 				})
+
+				const conversation = context.getters.conversation(token)
+				if (conversation?.lastMessage?.id && message.id > conversation.lastMessage.id) {
+					context.dispatch('updateConversationLastMessage', { token, lastMessage: message })
+				}
 				// Quit processing
 				context.commit('addMessage', { token, message })
 				return
@@ -595,7 +600,7 @@ const actions = {
 		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.HISTORY_CLEARED) {
 			sharedItemsStore.purgeSharedItemsStore(token, message.id)
 			chatExtrasStore.clearThreads(token, message.id)
-			context.commit('clearMessagesHistory', {
+			context.dispatch('clearMessagesHistory', {
 				token,
 				id: message.id,
 			})
