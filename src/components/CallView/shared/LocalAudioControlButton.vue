@@ -16,7 +16,7 @@
 			<template #trigger>
 				<NcButton
 					:title="audioButtonTitle"
-					:variant="variant"
+					:variant="audioStreamError ? 'error' : variant"
 					:aria-label="audioButtonAriaLabel"
 					:class="{
 						'no-audio-available': !isAudioAvailable,
@@ -41,7 +41,7 @@
 
 		<NcActions
 			v-if="showDevices"
-			:disabled="!isAudioAllowed && !audioOutputSupported"
+			:disabled="!isAudioAllowed && !audioOutputSupported || !!audioStreamError"
 			class="audio-selector-button"
 			:class="{
 				'no-audio-available': !isAudioAvailable,
@@ -176,6 +176,7 @@ export default {
 			devices,
 			audioInputId,
 			audioOutputId,
+			audioStreamError,
 			updateDevices,
 			audioOutputSupported,
 			updatePreferences,
@@ -207,6 +208,7 @@ export default {
 			devices,
 			audioInputId,
 			audioOutputId,
+			audioStreamError,
 			updateDevices,
 			audioOutputSupported,
 			updatePreferences,
