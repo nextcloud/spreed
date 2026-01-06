@@ -1049,6 +1049,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "A beszélgetés nem található, vagy nem csatlakozott",
     "Lobby is still active and you're not a moderator" : "A váró még mindig aktív, és Ön nem moderátor",
     "Connection failed" : "Nem sikerült a kapcsolat",
+    "Reload" : "Újratöltés",
     "{nickName} raised their hand." : "{nickName} felemelte a kezét.",
     "A participant raised their hand." : "Egy résztvevő felemelte a kezét.",
     "Collapse stripe" : "Csík összecsukása",

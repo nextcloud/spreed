@@ -909,6 +909,7 @@
     "Speaker view" : "スピーカービュー",
     "Grid view" : "グリッド表示",
     "This conversation is read-only" : "この会話は読み取り専用です",
+    "Reload" : "再読み込み",
     "{nickName} raised their hand." : "{nickName} が挙手しました",
     "A participant raised their hand." : "参加者が挙手しました",
     "Collapse stripe" : "スレッドを折りたたむ",

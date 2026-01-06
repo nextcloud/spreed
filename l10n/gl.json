@@ -1047,6 +1047,7 @@
     "Conversation not found or not joined" : "Non se atopou a conversa ou non se uniu a ela",
     "Lobby is still active and you're not a moderator" : "O ástrago segue activo e Vde. non é un moderador",
     "Connection failed" : "Produciuse un fallo de conexión",
+    "Reload" : "Volver cargar",
     "{nickName} raised their hand." : "{nickName} ergueu a man.",
     "A participant raised their hand." : "Un participante ergueu a man.",
     "Collapse stripe" : "Contraer pola raia",

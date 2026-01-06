@@ -293,6 +293,7 @@ OC.L10N.register(
     "No results" : "Neniu rezulto",
     "Done" : "Farita",
     "Grid view" : "Krada vido",
+    "Reload" : "Reŝargi",
     "Copy link" : "Kopii ligilon",
     "None" : "Nenio",
     "You" : "Vi",

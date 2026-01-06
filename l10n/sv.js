@@ -1049,6 +1049,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "Konversationen hittades inte eller gick inte att gå med",
     "Lobby is still active and you're not a moderator" : "Lobbyn är fortfarande aktiv och du är inte moderator",
     "Connection failed" : "Anslutningen misslyckades",
+    "Reload" : "Ladda om",
     "{nickName} raised their hand." : "{nickName} räckte upp handen.",
     "A participant raised their hand." : "En deltagare räckte upp handen.",
     "Collapse stripe" : "Minimera fält",

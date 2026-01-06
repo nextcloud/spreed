@@ -1042,6 +1042,7 @@
     "Conversation not found or not joined" : "No se encuentra la conversación, o no se ha unido a ella",
     "Lobby is still active and you're not a moderator" : "La sala de espera sigue activa y Ud. no es un moderador",
     "Connection failed" : "La conexión ha fallado",
+    "Reload" : "Recargar",
     "{nickName} raised their hand." : "{nickName} ha levantado la mano",
     "A participant raised their hand." : "Alguien ha levantado la mano.",
     "Collapse stripe" : "Colapsar franja",

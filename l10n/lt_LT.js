@@ -528,6 +528,7 @@ OC.L10N.register(
     "This conversation is read-only" : "Šis pokalbis yra tik skaitymui",
     "Conversation not found or not joined" : "Pokalbis nerastas arba prie jo neprisijungta",
     "Connection failed" : "Ryšys patyrė nesėkmę",
+    "Reload" : "Įkelti iš naujo",
     "{nickName} raised their hand." : "{nickName} pakėlė ranką.",
     "A participant raised their hand." : "Dalyvis pakėlė ranką.",
     "Previous page of videos" : "Ankstesnis vaizdo įrašų puslapis",

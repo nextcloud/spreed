@@ -1044,6 +1044,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "Mazungumzo hayajapatikana au hayajaunganishwa",
     "Lobby is still active and you're not a moderator" : "Lobby bado inatumika na wewe si msimamizi",
     "Connection failed" : "Muunganisho haukufaulu",
+    "Reload" : "Pakia upya",
     "{nickName} raised their hand." : "{nickName} waliinua mikono yao.",
     "A participant raised their hand." : "Mshiriki aliinua mkono wao.",
     "Collapse stripe" : "Kunja mstari",

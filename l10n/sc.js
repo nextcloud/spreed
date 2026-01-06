@@ -619,6 +619,7 @@ OC.L10N.register(
     "Speaker view" : "Bista de sa persone chi faeddat",
     "Grid view" : "Bisione grìllia",
     "This conversation is read-only" : "Custa resonada est de letura sola",
+    "Reload" : "Torra a carrigare",
     "{nickName} raised their hand." : "{nickName} ant artziadu sa manu",
     "A participant raised their hand." : "Una persona at artziadu sa manu",
     "Collapse stripe" : "Istringhe sa tira",

@@ -1049,6 +1049,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "Görüşme bulunamadı ya da görüşmeye katılınmamış",
     "Lobby is still active and you're not a moderator" : "Giriş hala kullanılıyor ve siz bir sorumlu değilsiniz",
     "Connection failed" : "Bağlantı kurulamadı",
+    "Reload" : "Yeniden yükle",
     "{nickName} raised their hand." : "{nickName} elini kaldırdı.",
     "A participant raised their hand." : "Bir katılımcı elini kaldırdı.",
     "Collapse stripe" : "Şeridi daralt",

@@ -511,6 +511,7 @@ OC.L10N.register(
     "Speaker view" : "Vizualizare vorbitor",
     "Grid view" : "Afișare în grilă",
     "This conversation is read-only" : "Această conversație este read-only",
+    "Reload" : "Reîncarcă",
     "{nickName} raised their hand." : "{nickName} a ridicat mâna.",
     "A participant raised their hand." : "Un participant a ridicat mâna.",
     "Connecting …" : "Se conectează ...",

@@ -1049,6 +1049,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "找不到或未加入對話",
     "Lobby is still active and you're not a moderator" : "大廳仍然活躍，您不是主持人",
     "Connection failed" : "連線失敗",
+    "Reload" : "重新載入",
     "{nickName} raised their hand." : "{nickName} 舉手了。",
     "A participant raised their hand." : "一位參與者舉手了。",
     "Collapse stripe" : "折疊條紋",

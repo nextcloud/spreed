@@ -525,6 +525,7 @@ OC.L10N.register(
     "No results" : "Disoc'h ebet",
     "Done" : "Graet",
     "Grid view" : "Diskwell ar roued",
+    "Reload" : "Adkargañ",
     "Waiting for others to join the call …" : "O c'hortoz ma teuio ar re all er gemenadenn ...",
     "You can invite others in the participant tab of the sidebar" : "Galout a rit kouviañ tud gant an daolenn lodek er verenn gostez",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Galout a rit kouviañ tud en dolenn lodek er varenn gostez pe rannañ al liamm-mañ evit kouviañ anezho !",

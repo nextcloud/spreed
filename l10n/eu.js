@@ -836,6 +836,7 @@ OC.L10N.register(
     "This conversation is read-only" : "Elkarrizketa hau irakurtzeko soilik da",
     "Conversation not found or not joined" : "Elkarrizketa ez da aurkitu edo ez da sartu",
     "Connection failed" : "Konexioak huts egin du",
+    "Reload" : "Birkargatu",
     "{nickName} raised their hand." : "{nickName} eskua jaso du.",
     "A participant raised their hand." : "Parte-hartzaile batek eskua jaso du",
     "Collapse stripe" : "Tolestu marra",

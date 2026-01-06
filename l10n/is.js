@@ -409,6 +409,7 @@ OC.L10N.register(
     "Done" : "Lokið",
     "Grid view" : "Reitasýn",
     "This conversation is read-only" : "This conversation is read-only",
+    "Reload" : "Endurlesa",
     "Connecting …" : "Tengist ...",
     "Waiting for others to join the call …" : "Bíð eftir að fleiri komi inn í símtalið …",
     "You can invite others in the participant tab of the sidebar" : "Þú getur boðið öðrum að taka þátt af þátttakendaflipa hliðarspjaldsins",

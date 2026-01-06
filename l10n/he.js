@@ -415,6 +415,7 @@ OC.L10N.register(
     "Done" : "הסתיים",
     "Speaker view" : "תצוגת דובר",
     "Grid view" : "תצוגת טבלה",
+    "Reload" : "טעינה מחדש",
     "Waiting for others to join the call …" : "בהמתנה לאחרים להצטרף לשיחה…",
     "You can invite others in the participant tab of the sidebar" : "ניתן להזמין אחרים בלשונית המשתתפים בסרגל הצד",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "ניתן להזמין אחרים דרך לשונית המשתפים בסרגל הצד או לשתף את הקישור הזה כדי להזמין אחרים!",

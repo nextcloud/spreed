@@ -1049,6 +1049,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "Konverzace nenalezena nebo jste do ní ještě nevstoupili",
     "Lobby is still active and you're not a moderator" : "Čekárna je pořád aktivní a nejste moderátorem",
     "Connection failed" : "Připojení se nezdařilo",
+    "Reload" : "Načíst znovu",
     "{nickName} raised their hand." : "{nickName} se přihlásil(a) o slovo.",
     "A participant raised their hand." : "Účastník se hlásí.",
     "Collapse stripe" : "Sbalit pruh",
