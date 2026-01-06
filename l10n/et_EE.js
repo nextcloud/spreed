@@ -1016,6 +1016,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "Vestlust ei leidu või sa pole sellega liitunud",
     "Lobby is still active and you're not a moderator" : "Ooteruum on jätkuvalt kasutusel ja sina pole moderaator",
     "Connection failed" : "Ühenduse viga",
+    "Reload" : "Laadi uuesti",
     "{nickName} raised their hand." : "{nickName} andis käega märku.",
     "A participant raised their hand." : "Üks osaleja andis käega märku",
     "Collapse stripe" : "Ahenda riba",

@@ -59,6 +59,7 @@ OC.L10N.register(
     "No results" : "Sin resultados",
     "Done" : "Terminado",
     "Grid view" : "Vista de cuadrícula",
+    "Reload" : "Recargar",
     "Waiting for others to join the call …" : "Esperando a que los demás se unan a la llamada ...",
     "Copy link" : "Copiar enlace",
     "Mute audio" : "Silenciar audio",

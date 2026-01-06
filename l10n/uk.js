@@ -1044,6 +1044,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "Розмова не знайдена або не приєднана",
     "Lobby is still active and you're not a moderator" : "Лобі все ще активне, а ви не є модератором",
     "Connection failed" : "Не вдалося встановити з'єднання",
+    "Reload" : "Перезавантажити",
     "{nickName} raised their hand." : "{nickName} підняв руку.",
     "A participant raised their hand." : "Один з учасників підняв руку.",
     "Collapse stripe" : "Смуга згортання",

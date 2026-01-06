@@ -628,6 +628,7 @@ OC.L10N.register(
     "Speaker view" : "Prikaz govornika",
     "Grid view" : "Prikaz rešetke",
     "This conversation is read-only" : "Ovaj razgovor je samo za čitanje",
+    "Reload" : "Ponovno učitaj",
     "{nickName} raised their hand." : "{nickName} je podigao ruku.",
     "A participant raised their hand." : "Sudionik je podigao ruku.",
     "Collapse stripe" : "Sakrij traku",

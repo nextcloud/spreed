@@ -834,6 +834,7 @@ OC.L10N.register(
     "Speaker view" : "Speaker view",
     "Grid view" : "Grid view",
     "This conversation is read-only" : "This conversation is read-only",
+    "Reload" : "Reload",
     "{nickName} raised their hand." : "{nickName} raised their hand.",
     "A participant raised their hand." : "A participant raised their hand.",
     "Collapse stripe" : "Collapse stripe",

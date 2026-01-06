@@ -1049,6 +1049,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "Níor aimsíodh an comhrá nó níor cuireadh isteach ann é",
     "Lobby is still active and you're not a moderator" : "Tá an stocaireacht fós gníomhach agus ní modhnóir tú",
     "Connection failed" : "Theip ar an gceangal",
+    "Reload" : "Athlódáil",
     "{nickName} raised their hand." : "D'ardaigh {nickName} a lámh.",
     "A participant raised their hand." : "D'ardaigh rannpháirtí a lámh.",
     "Collapse stripe" : "Laghdaigh stríoc",

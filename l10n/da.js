@@ -512,6 +512,7 @@ OC.L10N.register(
     "Raise hand" : "Løft hånden",
     "Lower hand" : "Sænk hånden",
     "Grid view" : "Gittervisning",
+    "Reload" : "Genindlæs",
     "Connecting …" : "Forbinder ...",
     "Waiting for {user} to join the call" : "Venter på at {user} deltager i kaldet",
     "Waiting for others to join the call …" : "Venter på at andre deltager i opkaldet ...",

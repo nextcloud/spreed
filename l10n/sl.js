@@ -840,6 +840,7 @@ OC.L10N.register(
     "Recording consent is required" : "Zahtevano je soglasje za snamenje",
     "This conversation is read-only" : "Ta pogovor je le za branje",
     "Connection failed" : "Povezava je spodletela",
+    "Reload" : "Ponovno naloži",
     "{nickName} raised their hand." : "{nickName} dvigne roko.",
     "A participant raised their hand." : "Udeleženec dvigne roko.",
     "Collapse stripe" : "Skrči polja",

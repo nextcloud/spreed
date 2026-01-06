@@ -988,6 +988,7 @@
     "Conversation not found or not joined" : "No s'ha trobat la conversa o no s'ha unit",
     "Lobby is still active and you're not a moderator" : "El vestíbul encara està actiu i no ets moderador",
     "Connection failed" : "Ha fallat la connexió",
+    "Reload" : "Recarrega",
     "{nickName} raised their hand." : "{nickName} va aixecar la mà.",
     "A participant raised their hand." : "Un participant va aixecar la mà.",
     "Collapse stripe" : "Col·lapse la franja",

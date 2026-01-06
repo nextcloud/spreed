@@ -879,6 +879,7 @@ OC.L10N.register(
     "This conversation is read-only" : "Dit gesprek is alleen-lezen",
     "Conversation not found or not joined" : "Gesprek niet gevonden of aan deelgenomen",
     "Connection failed" : "Verbinding mislukt",
+    "Reload" : "Herladen",
     "{nickName} raised their hand." : "{nickName} stak zijn/haar hand op",
     "A participant raised their hand." : "Een deelnemer stak zijn/haar hand op.",
     "Collapse stripe" : "Inklappen streep",

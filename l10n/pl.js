@@ -1044,6 +1044,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "Nie znaleziono rozmowy lub nie dołączono do niej",
     "Lobby is still active and you're not a moderator" : "Poczekalnia jest nadal aktywna i nie jesteś moderatorem",
     "Connection failed" : "Błąd połączenia",
+    "Reload" : "Przeładuj",
     "{nickName} raised their hand." : "{nickName} podniósł rękę.",
     "A participant raised their hand." : "Uczestnik podniósł rękę.",
     "Collapse stripe" : "Zwiń pasek",
