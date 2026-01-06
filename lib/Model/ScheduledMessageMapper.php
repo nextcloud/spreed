@@ -14,7 +14,7 @@ use OCP\AppFramework\Db\Entity;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
-use OCP\Snowflake\IGenerator;
+use OCP\Snowflake\ISnowflakeGenerator;
 
 /**
  * @method ScheduledMessage mapRowToEntity(array $row)
@@ -27,7 +27,7 @@ use OCP\Snowflake\IGenerator;
 class ScheduledMessageMapper extends QBMapper {
 	public function __construct(
 		IDBConnection $db,
-		protected IGenerator $generator,
+		protected ISnowflakeGenerator $generator,
 	) {
 		parent::__construct($db, 'talk_scheduled_msg', ScheduledMessage::class);
 	}
