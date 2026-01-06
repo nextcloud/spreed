@@ -287,6 +287,7 @@ OC.L10N.register(
     "No results" : "Tidak ada hasil",
     "Done" : "Selesai",
     "Grid view" : "Tampilan kotak",
+    "Reload" : "Muat ulang",
     "Copy link" : "Salin tautan",
     "None" : "Tidak ada",
     "Collapse" : "Tutup",

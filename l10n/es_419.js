@@ -65,6 +65,7 @@ OC.L10N.register(
     "Save" : "Guardar",
     "No results" : "No hay resultados",
     "Grid view" : "Vista de cuadrícula",
+    "Reload" : "Volver a cargar",
     "Waiting for others to join the call …" : "Esperando a que los demás se unan a la llamada ...",
     "You can invite others in the participant tab of the sidebar" : "Puedes invitar a otras personas en la pestaña de participante del menú lateral",
     "Share this link to invite others!" : "¡Comparte esta liga para invitar a otras personas!",

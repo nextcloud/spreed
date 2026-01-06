@@ -638,6 +638,7 @@ OC.L10N.register(
     "Speaker view" : "Puhujan näkymä",
     "Grid view" : "Ruudukkonäkymä",
     "This conversation is read-only" : "Keskustelu on \"vain luku\"-tilassa",
+    "Reload" : "Päivitä",
     "{nickName} raised their hand." : "{nickName} nosti kätensä.",
     "A participant raised their hand." : "Osallistuja nosti kätensä.",
     "Previous page of videos" : "Videoiden edellinen sivu",

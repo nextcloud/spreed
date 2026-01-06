@@ -192,6 +192,7 @@ OC.L10N.register(
     "No results" : "Asnjë rezultat",
     "Done" : "U bë",
     "Grid view" : "Pamje galeri",
+    "Reload" : "Ringarkoje",
     "Waiting for others to join the call …" : "Duke pritur që të tjerët t'i bashkohen thirrjes ...",
     "Copy link" : "Kopjo linkun",
     "Mute audio" : "Mute audio",

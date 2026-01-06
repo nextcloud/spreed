@@ -1047,6 +1047,7 @@
     "Conversation not found or not joined" : "Није пронађен разговор или му нисте приступили",
     "Lobby is still active and you're not a moderator" : "Предсобље је још увек активно и ви нисте модератор",
     "Connection failed" : "Није успело повезивање",
+    "Reload" : "Поново учитај",
     "{nickName} raised their hand." : "{nickName} је подигао руку.",
     "A participant raised their hand." : "Учесник је подигао руку.",
     "Collapse stripe" : "Сажми црту",

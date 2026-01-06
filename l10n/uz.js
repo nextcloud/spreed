@@ -293,6 +293,7 @@ OC.L10N.register(
     "No results" : "Natija yo'q",
     "Done" : "Bajarildi",
     "Grid view" : "To‘r ko‘rinishi",
+    "Reload" : "Qayta yuklash",
     "Copy link" : "Havolani nusxalash",
     "None" : "Yo'q",
     "Favorite" : "Favorite",

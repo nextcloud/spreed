@@ -1049,6 +1049,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "Conversation introuvable ou non jointe",
     "Lobby is still active and you're not a moderator" : "La salle d'attente est toujours active et vous n'êtes pas modérateur",
     "Connection failed" : "Échec de la connexion",
+    "Reload" : "Recharger",
     "{nickName} raised their hand." : "{nickName} a levé la main.",
     "A participant raised their hand." : "Un participant a levé la main.",
     "Collapse stripe" : "Réduire le bandeau",

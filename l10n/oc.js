@@ -607,6 +607,7 @@ OC.L10N.register(
     "Speaker view" : "Vista parlaire",
     "Grid view" : "Vista en grasilha",
     "This conversation is read-only" : "Aquesta conversacion es en lectura sola",
+    "Reload" : "Recargar",
     "{nickName} raised their hand." : "{nickName} a levat la man.",
     "A participant raised their hand." : "Un participant a levat la man.",
     "Previous page of videos" : "Pagina de vidèos precedenta",

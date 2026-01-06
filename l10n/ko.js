@@ -845,6 +845,7 @@ OC.L10N.register(
     "Speaker view" : "말하는 사람 보기",
     "Grid view" : "바둑판식 보기",
     "This conversation is read-only" : "이 대화는 읽기 전용입니다.",
+    "Reload" : "새로 고침",
     "{nickName} raised their hand." : "{nickName}님이 손을 들었습니다.",
     "A participant raised their hand." : "한 참가자가 손을 들었습니다.",
     "Collapse stripe" : "스트라이프 접기",

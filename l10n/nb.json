@@ -873,6 +873,7 @@
     "Recording consent is required" : "Samtykke til opptak kreves",
     "This conversation is read-only" : "Denne samtalen er skrivebeskyttet",
     "Connection failed" : "Tilkobling feilet",
+    "Reload" : "Last på nytt",
     "{nickName} raised their hand." : "{nickName} rakte opp hånden.",
     "A participant raised their hand." : "En deltaker løftet hånden.",
     "Collapse stripe" : "Skjul stripe",

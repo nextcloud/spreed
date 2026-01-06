@@ -1044,6 +1044,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "Η συνομιλία δεν βρέθηκε ή δεν έχετε συμμετάσχει",
     "Lobby is still active and you're not a moderator" : "Η αίθουσα αναμπνής είναι ακόμα ενεργό και δεν είστε συντονιστής",
     "Connection failed" : "Η σύνδεση απέτυχε",
+    "Reload" : "Επαναφόρτωση",
     "{nickName} raised their hand." : "Ο {nickName} σήκωσε το χέρι του.",
     "A participant raised their hand." : "Ένας συμμετέχων σήκωσε το χέρι του.",
     "Collapse stripe" : "Σύμπτυξη λωρίδας",

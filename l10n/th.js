@@ -48,6 +48,7 @@ OC.L10N.register(
     "Save" : "บันทึก",
     "No results" : "ไม่มีผลลัพธ์",
     "Grid view" : "มุมมองแบบตาราง",
+    "Reload" : "โหลดใหม่",
     "Copy link" : "คัดลอกลิงก์",
     "None" : "ไม่มี",
     "Collapse" : "ย่อ",

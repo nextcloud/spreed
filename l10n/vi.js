@@ -360,6 +360,7 @@ OC.L10N.register(
     "Speaker view" : "Chế độ xem người gọi điện",
     "Grid view" : "Xem dạng Lưới",
     "This conversation is read-only" : "Cuộc trò chuyện này ở chế độ chỉ đọc",
+    "Reload" : "Tải lại",
     "{nickName} raised their hand." : "{nickName} giơ tay.",
     "A participant raised their hand." : "Một người tham gia giơ tay.",
     "Collapse stripe" : "Thu gọi sọc",
