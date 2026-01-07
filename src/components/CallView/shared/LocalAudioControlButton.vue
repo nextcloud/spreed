@@ -79,6 +79,23 @@
 					{{ device.label }}
 				</NcActionButton>
 			</template>
+
+			<NcActionSeparator />
+			<NcActionButton
+				v-if="isAudioAllowed"
+				key="advanced-settings"
+				class="audio-selector__action"
+				close-after-click
+				@click="openAdvancedSettings">
+				{{ t('spreed', 'Microphone settings') }}
+			</NcActionButton>
+			<NcActionButton
+				key="media-settings"
+				class="audio-selector__action"
+				close-after-click
+				@click="emit('talk:media-settings:show')">
+				{{ t('spreed', 'Check devices') }}
+			</NcActionButton>
 		</NcActions>
 	</div>
 </template>
@@ -87,6 +104,7 @@
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { onBeforeUnmount, ref, watch } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
@@ -95,6 +113,7 @@ import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
+import AdvancedAudioDialog from '../../MediaSettings/AdvancedAudioDialog.vue'
 import VolumeIndicator from '../../UIShared/VolumeIndicator.vue'
 import { useDevices } from '../../../composables/useDevices.js'
 import { PARTICIPANT } from '../../../constants.ts'
@@ -301,6 +320,8 @@ export default {
 
 	methods: {
 		t,
+		emit,
+
 		toggleAudio() {
 			if (!this.isAudioAllowed || !this.isAudioAvailable) {
 				emit('talk:media-settings:show')
@@ -326,6 +347,12 @@ export default {
 		handleAudioOutputIdChange(audioOutputId) {
 			this.audioOutputId = audioOutputId
 			this.updatePreferences('audiooutput')
+		},
+
+		async openAdvancedSettings() {
+			if (await spawnDialog(AdvancedAudioDialog)) {
+				this.resumeAudioAfterChange = true
+			}
 		},
 	},
 }

@@ -177,6 +177,15 @@
 									<MediaDevicesSpeakerTest :disabled="!!audioStreamError" />
 								</template>
 							</MediaDevicesSelector>
+							<NcButton
+								variant="tertiary"
+								wide
+								@click="openAdvancedSettings">
+								<template #icon>
+									<IconTune :size="20" />
+								</template>
+								{{ t('spreed', 'Microphone settings') }}
+							</NcButton>
 						</template>
 
 						<template #tab-panel:backgrounds>
@@ -229,10 +238,10 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { computed, h, markRaw, ref, useId } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -244,6 +253,7 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconReflectHorizontal from 'vue-material-design-icons/ReflectHorizontal.vue'
+import IconTune from 'vue-material-design-icons/Tune.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import IconVideoOffOutline from 'vue-material-design-icons/VideoOffOutline.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
@@ -251,6 +261,7 @@ import VideoBackground from '../CallView/shared/VideoBackground.vue'
 import SetGuestUsername from '../SetGuestUsername.vue'
 import CallButton from '../TopBar/CallButton.vue'
 import VolumeIndicator from '../UIShared/VolumeIndicator.vue'
+import AdvancedAudioDialog from './AdvancedAudioDialog.vue'
 import MediaDevicesSelector from './MediaDevicesSelector.vue'
 import MediaDevicesSpeakerTest from './MediaDevicesSpeakerTest.vue'
 import MediaSettingsTabs from './MediaSettingsTabs.vue'
@@ -294,6 +305,7 @@ export default {
 		SetGuestUsername,
 		// Icons
 		IconReflectHorizontal,
+		IconTune,
 		IconVideo,
 		IconVideoOffOutline,
 	},
@@ -331,6 +343,7 @@ export default {
 			audioOutputId,
 			videoInputId,
 			audioOutputSupported,
+			updateAudioStream,
 			subscribeToDevices,
 			unsubscribeFromDevices,
 			audioStreamError,
@@ -371,6 +384,7 @@ export default {
 			audioOutputId,
 			videoInputId,
 			audioOutputSupported,
+			updateAudioStream,
 			subscribeToDevices,
 			unsubscribeFromDevices,
 			registerVideoElement,
@@ -889,16 +903,10 @@ export default {
 			this.updatePreferences('videoinput')
 		},
 
-		async toggleStartWithoutMedia(value) {
-			this.mediaLoading = true
-			try {
-				await this.settingsStore.updateStartWithoutMedia(value)
-				showSuccess(t('spreed', 'Your default media state has been saved'))
-			} catch (exception) {
-				showError(t('spreed', 'Error while setting default media state'))
-			} finally {
-				this.mediaLoading = false
-			}
+		async openAdvancedSettings() {
+			await spawnDialog(AdvancedAudioDialog, {
+				container: '.media-settings__settings',
+			})
 		},
 
 		async setBlurVirtualBackgroundEnabled(value) {
