@@ -753,6 +753,7 @@ OC.L10N.register(
     "Speaker view" : "Изглед на високоговорителя",
     "Grid view" : "Решетъчен изглед",
     "This conversation is read-only" : "Този разговор е само за четене",
+    "Reload" : "Презареди",
     "{nickName} raised their hand." : "{nickName} вдигна ръка.",
     "A participant raised their hand." : "Един участник вдигна ръка.",
     "Collapse stripe" : "Свиване на лента",
