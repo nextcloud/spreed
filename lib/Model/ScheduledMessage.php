@@ -11,13 +11,11 @@ namespace OCA\Talk\Model;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\ResponseDefinitions;
-use OCP\AppFramework\Db\Entity;
+use OCP\AppFramework\Db\SnowflakeAwareEntity;
 use OCP\Comments\MessageTooLongException;
 use OCP\DB\Types;
 
 /**
- * @method string getId()
- * @method void setId(string $id)
  * @method void setRoomId(int $roomId)
  * @method int getRoomId()
  * @method void setActorId(string $actorId)
@@ -31,14 +29,12 @@ use OCP\DB\Types;
  * @method string getMessage()
  * @method void setMessageType(string $messageType)
  * @method string getMessageType()
- * @method \DateTime getCreatedAt()
- * @method void setCreatedAt(\DateTime $createdAt)
  * @method void setSendAt(\DateTime|null $sendAt)
  * @method \DateTime|null getSendAt()
  *
  * @psalm-import-type TalkScheduledMessage from ResponseDefinitions
  */
-class ScheduledMessage extends Entity {
+class ScheduledMessage extends SnowflakeAwareEntity {
 	public const METADATA_THREAD_TITLE = 'threadTitle';
 	public const METADATA_THREAD_ID = 'threadId';
 	public const METADATA_SILENT = 'silent';
@@ -53,7 +49,6 @@ class ScheduledMessage extends Entity {
 	protected string $message = '';
 	protected string $messageType = '';
 	protected ?string $metaData = null;
-	protected ?\DateTime $createdAt = null;
 	protected ?\DateTime $sendAt = null;
 
 	public function __construct() {
@@ -66,7 +61,6 @@ class ScheduledMessage extends Entity {
 		$this->addType('messageType', Types::STRING);
 		$this->addType('metaData', Types::TEXT);
 		$this->addType('sendAt', Types::DATETIME);
-		$this->addType('createdAt', Types::DATETIME);
 	}
 
 	/**
@@ -109,13 +103,13 @@ class ScheduledMessage extends Entity {
 	public function toArray(string $format, ?Message $parent, ?Thread $thread) : array {
 		$metaData = $this->getDecodedMetaData();
 		$data = [
-			'id' => (string)$this->id,
+			'id' => (string)$this->getId(),
 			'actorId' => $this->getActorId(),
 			'actorType' => $this->getActorType(),
 			'threadId' => $this->getThreadId(),
 			'message' => $this->getMessage(),
 			'messageType' => $this->getMessageType(),
-			'createdAt' => $this->getCreatedAt()->getTimestamp(),
+			'createdAt' => $this->getCreatedAt()?->getTimestamp() ?? 0,
 			'sendAt' => $this->getSendAt()?->getTimestamp() ?? 0,
 			'silent' => $metaData[self::METADATA_SILENT] ?? false,
 		];

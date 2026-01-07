@@ -64,10 +64,11 @@ class Version23000Date20251105125333 extends SimpleMigrationStep {
 				'notnull' => false,
 				'default' => null,
 			]);
-			$table->addColumn('created_at', Types::DATETIME, [
-				'notnull' => false,
-				'default' => null,
-			]);
+			/** Removed in @see Version23000Date20260107162758 */
+			// $table->addColumn('created_at', Types::DATETIME, [
+			// 'notnull' => false,
+			// 'default' => null,
+			// ]);
 			$table->addColumn('send_at', Types::DATETIME, [
 				'notnull' => false,
 				'default' => null,

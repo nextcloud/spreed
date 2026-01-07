@@ -10,11 +10,9 @@ namespace OCA\Talk\Model;
 
 use OCA\Talk\Room;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Db\Entity;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
-use OCP\Snowflake\IGenerator;
 
 /**
  * @method ScheduledMessage mapRowToEntity(array $row)
@@ -27,7 +25,6 @@ use OCP\Snowflake\IGenerator;
 class ScheduledMessageMapper extends QBMapper {
 	public function __construct(
 		IDBConnection $db,
-		protected IGenerator $generator,
 	) {
 		parent::__construct($db, 'talk_scheduled_msg', ScheduledMessage::class);
 	}
@@ -124,12 +121,5 @@ class ScheduledMessageMapper extends QBMapper {
 			->where($query->expr()->lte('send_at', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE)));
 
 		return $this->findEntities($query);
-	}
-
-	#[\Override]
-	public function insert(Entity $entity): Entity {
-		/** @psalm-suppress InvalidArgument */
-		$entity->setId($this->generator->nextId());
-		return parent::insert($entity);
 	}
 }

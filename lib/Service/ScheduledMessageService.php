@@ -65,7 +65,6 @@ class ScheduledMessageService {
 		}
 		$scheduledMessage->setThreadId($threadId);
 		$scheduledMessage->setMetaData($metadata);
-		$scheduledMessage->setCreatedAt($this->timeFactory->getDateTime());
 
 		$this->scheduledMessageMapper->insert($scheduledMessage);
 
