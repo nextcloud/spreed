@@ -455,25 +455,26 @@ MediaDevicesManager.prototype = {
 	},
 
 	_getUserMediaInternal(constraints) {
-		if (constraints.audio && !constraints.audio.deviceId) {
-			if (this.attributes.audioInputId) {
-				if (!(constraints.audio instanceof Object)) {
+		// Relaxed constraints or deviceId is not specified
+		if (constraints.audio && (constraints.audio === true || !constraints.audio.deviceId)) {
+			if (this.attributes.audioInputId === null) {
+				constraints.audio = false
+			} else if (this.attributes.audioInputId) {
+				if (constraints.audio === true) {
 					constraints.audio = {}
 				}
 				constraints.audio.deviceId = { exact: this.attributes.audioInputId }
-			} else if (this.attributes.audioInputId === null) {
-				constraints.audio = false
 			}
 		}
 
-		if (constraints.video && !constraints.video.deviceId) {
-			if (this.attributes.videoInputId) {
-				if (!(constraints.video instanceof Object)) {
+		if (constraints.video && (constraints.video === true || !constraints.video.deviceId)) {
+			if (this.attributes.videoInputId === null) {
+				constraints.video = false
+			} else if (this.attributes.videoInputId) {
+				if (constraints.video === true) {
 					constraints.video = {}
 				}
 				constraints.video.deviceId = { exact: this.attributes.videoInputId }
-			} else if (this.attributes.videoInputId === null) {
-				constraints.video = false
 			}
 		}
 
