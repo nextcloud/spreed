@@ -798,6 +798,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "Размова не знойдзена або вы да яе не далучыліся",
     "Lobby is still active and you're not a moderator" : "Лобі ўсё яшчэ актыўнае, і вы не мадэратар",
     "Connection failed" : "Не ўдалося злучыцца",
+    "Reload" : "Перазагрузіць",
     "{nickName} raised their hand." : "{nickName} падняў(-ла) руку",
     "A participant raised their hand." : "Удзельнікаў падняў руку.",
     "Collapse stripe" : "Згарнуць паласу",

@@ -992,6 +992,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "المحادثة غير موجودة أو لم يتم الانضمام إليها",
     "Lobby is still active and you're not a moderator" : "صالة الاستقبال مازالت مفتوحة وأنت ليس مُنسِّقَاً",
     "Connection failed" : "تعذّر الاتصال",
+    "Reload" : "إعادة تحميل",
     "{nickName} raised their hand." : "{nickName} رفع يده ",
     "A participant raised their hand." : "رفع مشارك يده. ",
     "Collapse stripe" : "طي الشريط ",

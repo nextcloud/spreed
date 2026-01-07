@@ -547,6 +547,7 @@ OC.L10N.register(
     "Raise hand" : "Alzar la mano",
     "Lower hand" : "Baxar la mano",
     "This conversation is read-only" : "Esta conversación ye namás de llectura",
+    "Reload" : "Volver cargar",
     "{nickName} raised their hand." : "«{nickName}» alzo la mano",
     "A participant raised their hand." : "Un participante alzó la mano.",
     "Previous page of videos" : "Páxina de vídeos anterior",
