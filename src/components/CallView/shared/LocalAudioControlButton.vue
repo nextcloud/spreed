@@ -16,13 +16,13 @@
 			<template #trigger>
 				<NcButton
 					:title="audioButtonTitle"
-					:variant="variant"
+					:variant="audioStreamError ? 'error' : variant"
 					:aria-label="audioButtonAriaLabel"
 					:class="{
 						'no-audio-available': !isAudioAvailable,
 						'audio-control-button': showDevices,
 					}"
-					:disabled="!isAudioAllowed || resumeAudioAfterChange"
+					:disabled="resumeAudioAfterChange"
 					@click.stop="toggleAudio">
 					<template #icon>
 						<VolumeIndicator
@@ -41,26 +41,31 @@
 
 		<NcActions
 			v-if="showDevices"
-			:disabled="!isAudioAvailable || !isAudioAllowed"
+			:disabled="!isAudioAllowed && !audioOutputSupported || !!audioStreamError"
 			class="audio-selector-button"
+			:class="{
+				'no-audio-available': !isAudioAvailable,
+			}"
 			@open="updateDevices">
 			<template #icon>
 				<IconChevronUp :size="16" />
 			</template>
-			<NcActionCaption :name="t('spreed', 'Select a microphone')" />
-			<NcActionButton
-				v-for="device in audioInputDevices"
-				:key="device.deviceId ?? 'none'"
-				class="audio-selector__action"
-				type="radio"
-				:model-value="audioInputId"
-				:value="device.deviceId"
-				:title="device.label"
-				@click="handleAudioInputIdChange(device.deviceId)">
-				{{ device.label }}
-			</NcActionButton>
+			<template v-if="isAudioAllowed">
+				<NcActionCaption :name="t('spreed', 'Select a microphone')" />
+				<NcActionButton
+					v-for="device in audioInputDevices"
+					:key="device.deviceId ?? 'none'"
+					class="audio-selector__action"
+					type="radio"
+					:model-value="audioInputId"
+					:value="device.deviceId"
+					:title="device.label"
+					@click="handleAudioInputIdChange(device.deviceId)">
+					{{ device.label }}
+				</NcActionButton>
+			</template>
+			<NcActionSeparator v-if="isAudioAllowed && audioOutputSupported" />
 			<template v-if="audioOutputSupported">
-				<NcActionSeparator />
 				<NcActionCaption :name="t('spreed', 'Select a speaker')" />
 				<NcActionButton
 					v-for="device in audioOutputDevices"
@@ -171,6 +176,7 @@ export default {
 			devices,
 			audioInputId,
 			audioOutputId,
+			audioStreamError,
 			updateDevices,
 			audioOutputSupported,
 			updatePreferences,
@@ -202,6 +208,7 @@ export default {
 			devices,
 			audioInputId,
 			audioOutputId,
+			audioStreamError,
 			updateDevices,
 			audioOutputSupported,
 			updatePreferences,
@@ -295,7 +302,7 @@ export default {
 	methods: {
 		t,
 		toggleAudio() {
-			if (!this.isAudioAvailable) {
+			if (!this.isAudioAllowed || !this.isAudioAvailable) {
 				emit('talk:media-settings:show')
 				return
 			}

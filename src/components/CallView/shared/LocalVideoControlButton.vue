@@ -7,13 +7,13 @@
 	<div class="local-video-control-wrapper">
 		<NcButton
 			:title="videoButtonTitle"
-			:variant="variant"
+			:variant="videoStreamError ? 'error' : variant"
 			:aria-label="videoButtonAriaLabel"
 			:class="{
 				'no-video-available': !isVideoAvailable,
 				'video-control-button': showDevices,
 			}"
-			:disabled="!isVideoAllowed || resumeVideoAfterChange"
+			:disabled="resumeVideoAfterChange"
 			@click.stop="toggleVideo">
 			<template #icon>
 				<IconVideo v-if="showVideoOn || resumeVideoAfterChange" :size="20" />
@@ -23,7 +23,7 @@
 
 		<NcActions
 			v-if="showDevices"
-			:disabled="!isVideoAvailable || !isVideoAllowed"
+			:disabled="!isVideoAvailable || !isVideoAllowed || !!videoStreamError"
 			class="video-selector-button"
 			@open="updateDevices">
 			<template #icon>
@@ -109,6 +109,7 @@ export default {
 		const {
 			devices,
 			videoInputId,
+			videoStreamError,
 			updateDevices,
 			updatePreferences,
 			subscribeToDevices,
@@ -121,6 +122,7 @@ export default {
 		return {
 			devices,
 			videoInputId,
+			videoStreamError,
 			updateDevices,
 			updatePreferences,
 			subscribeToDevices,
@@ -220,7 +222,7 @@ export default {
 	methods: {
 		t,
 		toggleVideo() {
-			if (!this.isVideoAvailable) {
+			if (!this.isVideoAllowed || !this.isVideoAvailable) {
 				emit('talk:media-settings:show')
 				return
 			}
