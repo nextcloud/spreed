@@ -12,6 +12,7 @@ use OCA\AppAPI\PublicFunctions;
 use OCA\Talk\Exceptions\LiveTranscriptionAppAPIException;
 use OCA\Talk\Exceptions\LiveTranscriptionAppNotEnabledException;
 use OCA\Talk\Exceptions\LiveTranscriptionAppResponseException;
+use OCA\Talk\Exceptions\LiveTranslationNotSupportedException;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\App\IAppManager;
@@ -188,6 +189,99 @@ class LiveTranscriptionService {
 		}
 
 		$this->roomService->setLiveTranscriptionLanguageId($room, $languageId);
+	}
+
+	/**
+	 * Returns the supported translation languages.
+	 *
+	 * The returned array provides a list of origin languages
+	 * ("originLanguages") and a list of target languages ("targetLanguages").
+	 * Any origin language can be translated to any target language.
+	 *
+	 * The origin language list can contain "detect_language" as a special value
+	 * indicating auto-detection support.
+	 *
+	 * @throws LiveTranscriptionAppNotEnabledException if the external app
+	 *                                                 "live_transcription" is
+	 *                                                 not enabled.
+	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
+	 *                                          to the app or the response could
+	 *                                          not be processed.
+	 * @throws LiveTranscriptionAppResponseException if the request itself
+	 *                                               succeeded but the app
+	 *                                               responded with an error.
+	 * @throws LiveTranslationNotSupportedException if live translations are not
+	 *                                              supported.
+	 */
+	public function getAvailableTranslationLanguages(): array {
+		// Target languages can be got from capabilities or directly for a
+		// specific room, but the list should be the same in both cases.
+		$capabilities = $this->getCapabilities();
+
+		if (!isset($capabilities['live_translation'])
+			|| !isset($capabilities['live_translation']['supported_translation_languages'])) {
+			throw new LiveTranslationNotSupportedException();
+		}
+
+		$translationLanguages = $capabilities['live_translation']['supported_translation_languages'];
+
+		if (!is_array($translationLanguages['origin_languages'])) {
+			$this->logger->error('Request to live_transcription (ExApp) failed: list of translation origin languages not found');
+
+			throw new LiveTranscriptionAppAPIException('response-no-origin-language-list');
+		}
+
+		if (!is_array($translationLanguages['target_languages'])) {
+			$this->logger->error('Request to live_transcription (ExApp) failed: list of translation target languages not found');
+
+			throw new LiveTranscriptionAppAPIException('response-no-target-language-list');
+		}
+
+		if (count($translationLanguages['target_languages']) === 0) {
+			$this->logger->error('Request to live_transcription (ExApp) failed: empty list of translation target languages');
+
+			throw new LiveTranscriptionAppAPIException('response-empty-language-list');
+		}
+
+		$translationLanguages['originLanguages'] = $translationLanguages['origin_languages'];
+		$translationLanguages['targetLanguages'] = $translationLanguages['target_languages'];
+		unset($translationLanguages['origin_languages']);
+		unset($translationLanguages['target_languages']);
+
+		return $translationLanguages;
+	}
+
+	/**
+	 * @throws LiveTranscriptionAppNotEnabledException if the external app
+	 *                                                 "live_transcription" is
+	 *                                                 not enabled.
+	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
+	 *                                          to the app or the response could
+	 *                                          not be processed.
+	 * @throws LiveTranscriptionAppResponseException if the request itself
+	 *                                               succeeded but the app
+	 *                                               responded with an error.
+	 */
+	public function setTargetLanguage(Room $room, Participant $participant, ?string $targetLanguageId): void {
+		if ($targetLanguageId === '') {
+			throw new \InvalidArgumentException('Empty target language id');
+		}
+
+		$parameters = [
+			'roomToken' => $room->getToken(),
+			'ncSessionId' => $participant->getSession()->getSessionId(),
+			'langId' => $targetLanguageId,
+		];
+
+		try {
+			$this->requestToExAppLiveTranscription('POST', '/api/v1/translation/set-target-language', $parameters);
+		} catch (LiveTranscriptionAppResponseException $e) {
+			if ($e->getResponse()->getStatusCode() === 550) {
+				throw new LiveTranslationNotSupportedException();
+			}
+
+			throw $e;
+		}
 	}
 
 	/**
