@@ -385,6 +385,20 @@ class Capabilities implements IPublicCapability {
 			return false;
 		}
 
+		// FIXME Getting the capabilities from the live_transcription app causes
+		// the Nextcloud capabilities to be requested, so it enters in a loop.
+		// For now checking whether text2text tasks are supported or not is
+		// directly done here instead (but that does not guarantee that
+		// translations are supported, as an old live_transcription app might be
+		// being used).
+		// $this->getLiveTranslationSupportedFromExAppCapabilities();
+
+		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
+
+		return in_array(TextToTextTranslate::ID, $supportedTaskTypeIds, true);
+	}
+
+	protected function getLiveTranslationSupportedFromExAppCapabilities(): bool {
 		$cacheKey = 'is_live_translation_supported';
 
 		$isLiveTranslationSupported = $this->talkCache->get($cacheKey);
