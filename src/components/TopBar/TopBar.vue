@@ -99,9 +99,6 @@
 
 			<TasksCounter v-if="conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF" />
 
-			<!-- Upcoming meetings -->
-			<CalendarEventsDialog v-if="showCalendarEvents" :token="token" />
-
 			<!-- Call time -->
 			<CallTime
 				v-if="isInCall"
@@ -127,14 +124,17 @@
 				v-else-if="!isSidebar && canExtendOneToOneConversation"
 				:token="token" />
 
+			<!-- Upcoming meetings -->
+			<CalendarEventsDialog v-if="showCalendarEvents" :token="token" />
+
+			<CallButton v-if="!isInCall" shrink-on-mobile />
+
 			<!-- TopBar menu -->
 			<TopBarMenu
 				:token="token"
 				:show-actions="!isSidebar"
 				:is-sidebar="isSidebar"
 				@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
-
-			<CallButton v-if="!isInCall" shrink-on-mobile />
 
 			<!-- Breakout rooms editor -->
 			<BreakoutRoomsEditor
