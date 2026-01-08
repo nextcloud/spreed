@@ -89,7 +89,8 @@
                                     "max-duration",
                                     "blur-virtual-background",
                                     "end-to-end-encryption",
-                                    "live-transcription"
+                                    "live-transcription",
+                                    "live-translation"
                                 ],
                                 "properties": {
                                     "enabled": {
@@ -151,6 +152,9 @@
                                         "type": "boolean"
                                     },
                                     "live-transcription": {
+                                        "type": "boolean"
+                                    },
+                                    "live-translation": {
                                         "type": "boolean"
                                     }
                                 }

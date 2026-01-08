@@ -79,6 +79,29 @@ class LiveTranscriptionService {
 	 *                                               succeeded but the app
 	 *                                               responded with an error.
 	 */
+	public function isLiveTranslationSupported(): bool {
+		// If capabilities are not available live translation is not
+		// available either, as it was introduced after capabilities.
+
+		$capabilities = $this->getCapabilities();
+		if (!isset($capabilities['features'])) {
+			return false;
+		}
+
+		return in_array('live_translation', $capabilities['features'], true);
+	}
+
+	/**
+	 * @throws LiveTranscriptionAppNotEnabledException if the external app
+	 *                                                 "live_transcription" is
+	 *                                                 not enabled.
+	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
+	 *                                          to the app or the response could
+	 *                                          not be processed.
+	 * @throws LiveTranscriptionAppResponseException if the request itself
+	 *                                               succeeded but the app
+	 *                                               responded with an error.
+	 */
 	public function enable(Room $room, Participant $participant): void {
 		$parameters = [
 			'roomToken' => $room->getToken(),
@@ -165,6 +188,51 @@ class LiveTranscriptionService {
 		}
 
 		$this->roomService->setLiveTranscriptionLanguageId($room, $languageId);
+	}
+
+	/**
+	 * Returns the capabilities for the live_transcription app.
+	 *
+	 * If the installed live_transcription app version does not support yet
+	 * capabilities an empty array will be returned. On the other hand, if the
+	 * app is expected to provide capabilities but they are not returned
+	 * LiveTranscriptionAppApiException is thrown instead.
+	 *
+	 * @return array an array with the capabilities.
+	 * @throws LiveTranscriptionAppNotEnabledException if the external app
+	 *                                                 "live_transcription" is
+	 *                                                 not enabled.
+	 * @throws LiveTranscriptionAppAPIException if the request could not be sent
+	 *                                          to the app or the response could
+	 *                                          not be processed.
+	 * @throws LiveTranscriptionAppResponseException if the request itself
+	 *                                               succeeded but the app
+	 *                                               responded with an error.
+	 */
+	private function getCapabilities(): array {
+		try {
+			$capabilities = $this->requestToExAppLiveTranscription('GET', '/capabilities');
+		} catch (LiveTranscriptionAppResponseException $e) {
+			if ($e->getResponse()->getStatusCode() !== 404) {
+				throw $e;
+			}
+
+			return [];
+		}
+
+		if (!is_array($capabilities)) {
+			$this->logger->error('Request to live_transcription (ExApp) failed: capabilities is not an array');
+
+			throw new LiveTranscriptionAppAPIException('response-capabilities-not-array');
+		}
+
+		if (!isset($capabilities['live_transcription'])) {
+			$this->logger->error('Request to live_transcription (ExApp) failed: wrong capabilities structure');
+
+			throw new LiveTranscriptionAppAPIException('response-capabilities-wrong-structure');
+		}
+
+		return $capabilities['live_transcription'];
 	}
 
 	/**
