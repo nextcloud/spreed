@@ -256,8 +256,7 @@ class Capabilities implements IPublicCapability {
 					'max-duration' => $this->appConfig->getAppValueInt('max_call_duration'),
 					'blur-virtual-background' => $this->talkConfig->getBlurVirtualBackground($user?->getUID()),
 					'end-to-end-encryption' => $this->talkConfig->isCallEndToEndEncryptionEnabled(),
-					'live-transcription' => $this->talkConfig->getSignalingMode() === Config::SIGNALING_EXTERNAL
-						&& $this->liveTranscriptionService->isLiveTranscriptionAppEnabled(),
+					'live-transcription' => $this->isLiveTranscriptionSupported(),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
@@ -373,6 +372,11 @@ class Capabilities implements IPublicCapability {
 		return [
 			'spreed' => $capabilities,
 		];
+	}
+
+	protected function isLiveTranscriptionSupported(): bool {
+		return $this->talkConfig->getSignalingMode() === Config::SIGNALING_EXTERNAL
+			&& $this->liveTranscriptionService->isLiveTranscriptionAppEnabled();
 	}
 
 	/**
