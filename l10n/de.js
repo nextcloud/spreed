@@ -1049,7 +1049,7 @@ OC.L10N.register(
     "Conversation not found or not joined" : "Unterhaltung nicht gefunden oder nicht beigetreten",
     "Lobby is still active and you're not a moderator" : "Die Lobby ist weiterhin aktiv und du bist kein Moderator",
     "Connection failed" : "Verbindung fehlgeschlagen",
-    "Reload" : "Aktualisieren",
+    "Reload" : "Neu laden",
     "{nickName} raised their hand." : "{nickName} hat die Hand gehoben.",
     "A participant raised their hand." : "Ein Teilnehmer hat die Hand gehoben",
     "Collapse stripe" : "Streifen einklappen",
