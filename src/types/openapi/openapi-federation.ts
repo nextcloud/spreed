@@ -183,6 +183,7 @@ export type components = {
                     "blur-virtual-background": boolean;
                     "end-to-end-encryption": boolean;
                     "live-transcription": boolean;
+                    "live-translation": boolean;
                 };
                 chat: {
                     /** Format: int64 */

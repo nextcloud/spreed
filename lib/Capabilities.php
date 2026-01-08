@@ -257,6 +257,7 @@ class Capabilities implements IPublicCapability {
 					'blur-virtual-background' => $this->talkConfig->getBlurVirtualBackground($user?->getUID()),
 					'end-to-end-encryption' => $this->talkConfig->isCallEndToEndEncryptionEnabled(),
 					'live-transcription' => $this->isLiveTranscriptionSupported(),
+					'live-translation' => $this->isLiveTranslationSupported(),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
@@ -377,6 +378,29 @@ class Capabilities implements IPublicCapability {
 	protected function isLiveTranscriptionSupported(): bool {
 		return $this->talkConfig->getSignalingMode() === Config::SIGNALING_EXTERNAL
 			&& $this->liveTranscriptionService->isLiveTranscriptionAppEnabled();
+	}
+
+	protected function isLiveTranslationSupported(): bool {
+		if (!$this->isLiveTranscriptionSupported()) {
+			return false;
+		}
+
+		$cacheKey = 'is_live_translation_supported';
+
+		$isLiveTranslationSupported = $this->talkCache->get($cacheKey);
+		if (is_bool($isLiveTranslationSupported)) {
+			return $isLiveTranslationSupported;
+		}
+
+		try {
+			$isLiveTranslationSupported = $this->liveTranscriptionService->isLiveTranslationSupported();
+		} catch (\Exception $e) {
+			$isLiveTranslationSupported = false;
+		}
+
+		$this->talkCache->set($cacheKey, $isLiveTranslationSupported, 300);
+
+		return $isLiveTranslationSupported;
 	}
 
 	/**
