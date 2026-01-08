@@ -37,7 +37,7 @@
 			<InternalSignalingHint />
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 			<div v-if="isMessageExpirationSet && !isOneToOne" class="group-message-expiration">
-				<IconClockOutline :size="16" />
+				<IconDeleteClockOutline :size="16" />
 				<span>{{ t('spreed', 'Message expiration is set to {date}', { date: messageExpirationDate }) }} </span>
 			</div>
 		</template>
@@ -149,8 +149,8 @@ import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconAccountMultipleOutline from 'vue-material-design-icons/AccountMultipleOutline.vue'
-import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
+import IconDeleteClockOutline from 'vue-material-design-icons/DeleteClockOutline.vue'
 import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
@@ -199,7 +199,7 @@ export default {
 		SipSettings,
 		// Icons
 		IconAccountMultipleOutline,
-		IconClockOutline,
+		IconDeleteClockOutline,
 		IconCogOutline,
 		IconDotsCircle,
 		IconInformationOutline,
@@ -507,9 +507,6 @@ export default {
 
 				// Discard notification if the conversation changes or closed
 				this.notifyUnreadMessages(null)
-
-				// FIXME collapse for group conversations until we show anything useful there
-				this.contentModeIndex = this.isOneToOne ? 1 : 0
 			},
 
 			immediate: true,
@@ -536,7 +533,6 @@ export default {
 
 	methods: {
 		t,
-
 		handleUpdateOpen(open) {
 			if (open) {
 				// In call ('Open chat') by default

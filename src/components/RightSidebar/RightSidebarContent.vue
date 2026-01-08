@@ -23,6 +23,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
+import IconDeleteClockOutline from 'vue-material-design-icons/DeleteClockOutline.vue'
 import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 import IconOfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
 import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
@@ -143,7 +144,7 @@ const profileInformation = computed(() => {
 	if (props.isMessageExpirationSet) {
 		fields.push({
 			key: 'message-expiry',
-			icon: IconClockOutline,
+			icon: IconDeleteClockOutline,
 			label: t('spreed', 'Message expiration is set to {date}', { date: props.messageExpirationDate }),
 		})
 	}

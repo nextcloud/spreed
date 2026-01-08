@@ -1883,7 +1883,6 @@
     "Select a region" : "Select a region",
     "Submit" : "Submit",
     "Local time: {time}" : "Local time: {time}",
-    "Message expiration is set to {date}" : "Message expiration is set to {date}",
     "Search …" : "Search …",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Message without mention" : "Message without mention",
