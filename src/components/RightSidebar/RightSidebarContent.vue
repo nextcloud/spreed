@@ -49,6 +49,8 @@ const props = defineProps<{
 	isUser: boolean
 	state: SidebarContentState
 	mode: 'compact' | 'preview' | 'full'
+	isMessageExpirationSet: boolean
+	messageExpirationDate: string
 }>()
 
 const emit = defineEmits<{
@@ -136,6 +138,13 @@ const profileInformation = computed(() => {
 			key: 'organisation',
 			icon: IconOfficeBuildingOutline,
 			label: joinFields(profileInfo.value.organisation, profileInfo.value.address),
+		})
+	}
+	if (props.isMessageExpirationSet) {
+		fields.push({
+			key: 'message-expiry',
+			icon: IconClockOutline,
+			label: t('spreed', 'Message expiration is set to {date}', { date: props.messageExpirationDate }),
 		})
 	}
 
