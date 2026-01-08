@@ -37,7 +37,7 @@ import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 import { ATTENDEE, CONVERSATION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
-import { convertToUnix, ONE_HOUR_IN_MS } from '../utils/formattedTime.ts'
+import { convertToUnix, formatDateTime, getDiffInDays, ONE_HOUR_IN_MS } from '../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
 
 const props = defineProps<{
@@ -75,6 +75,28 @@ const upcomingEvents = computed(() => {
 
 			return { ...event, start, color, href: event.calendarAppUrl ?? undefined }
 		})
+})
+
+const upcomingEventTime = computed(() => {
+	const eventStart = upcomingEvents.value[0]!.start
+
+	if (typeof eventStart === 'string') {
+		// Now
+		return eventStart
+	}
+
+	const diffInDays = getDiffInDays(eventStart)
+
+	if (diffInDays === 0) {
+		// Today
+		return formatDateTime(eventStart, 'shortTime')
+	} else if (diffInDays < 7) {
+		// Within a week
+		return formatDateTime(eventStart, 'shortWeekdayWithTime')
+	}
+
+	const isSameYear = new Date(eventStart).getFullYear() === new Date().getFullYear()
+	return formatDateTime(eventStart, isSameYear ? 'shortDateSameYear' : 'shortDate')
 })
 
 type CalendarOption = { value: string, label: string, color: string }
@@ -349,14 +371,14 @@ async function submitNewMeeting() {
 					class="upcoming-meeting"
 					:title="t('spreed', 'Upcoming meetings')"
 					:aria-label="t('spreed', 'Upcoming meetings')">
-					<template #icon>
-						<IconCalendarBlankOutline :size="20" />
-					</template>
 					<template v-if="upcomingEvents[0] && !isMobile" #default>
-						<span class="upcoming-meeting__header">
-							{{ t('spreed', 'Next meeting') }}
+						{{ t('spreed', 'Meeting') }}
+						<span class="upcoming-meeting__time">
+							{{ upcomingEventTime }}
 						</span>
-						<StaticDateTime :time="upcomingEvents[0].start" calendar />
+					</template>
+					<template v-else #icon>
+						<IconCalendarBlankOutline :size="20" />
 					</template>
 				</NcButton>
 			</template>
@@ -651,19 +673,8 @@ async function submitNewMeeting() {
 }
 
 .upcoming-meeting {
-	// Overwrite default NcButton styles
-	:deep(.button-vue__text) {
-		padding-block: 0;
-		margin: 0;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		line-height: 20px;
+	&__time {
 		font-weight: 400;
-	}
-
-	&__header {
-		font-weight: 500;
 	}
 }
 
