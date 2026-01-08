@@ -869,16 +869,15 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 		/** @var IShare[] $shares */
 		$shares = [];
 		$qb = $this->dbConnection->getQueryBuilder();
-		$qb->select('s.*', 's2.permissions AS s2_permissions', 's2.file_target AS s2_file_target',
+		$qb->select('s.*',
 			'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
 			'f.parent AS f_parent', 'f.name', 'f.mimetype', 'f.mimepart', 'f.size', 'f.mtime', 'f.storage_mtime',
 			'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum'
 		)
 			->selectAlias('st.id', 'storage_string_id')
-			->from('share', 's2')
-			->orderBy('s2.id', 'ASC')
-			->leftJoin('s2', 'filecache', 'f', $qb->expr()->eq('s2.file_source', 'f.fileid'))
-			->leftJoin('s2', 'share', 's', $qb->expr()->eq('s2.parent', 's.id'))
+			->from('share', 's')
+			->orderBy('s.id', 'ASC')
+			->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
 			->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'))
 			->setFirstResult($offset);
 
@@ -886,15 +885,15 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 			$qb->setMaxResults($limit);
 		}
 
-		$qb->andWhere($qb->expr()->eq('s2.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
-			->andWhere($qb->expr()->eq('s2.share_with', $qb->createNamedParameter($userId)))
-			->andWhere($qb->expr()->neq('s2.uid_initiator', $qb->createNamedParameter($userId)))
-			->andWhere($qb->expr()->neq('s2.uid_owner', $qb->createNamedParameter($userId)));
+		$qb->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
+			->andWhere($qb->expr()->eq('s.share_with', $qb->createNamedParameter($userId)))
+			->andWhere($qb->expr()->neq('s.uid_initiator', $qb->createNamedParameter($userId)))
+			->andWhere($qb->expr()->neq('s.uid_owner', $qb->createNamedParameter($userId)));
 
 		if ($forChildren) {
-			$qb->andWhere($qb->expr()->like('s2.file_target', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($path) . '_%')));
+			$qb->andWhere($qb->expr()->like('s.file_target', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($path) . '_%')));
 		} else {
-			$qb->andWhere($qb->expr()->eq('s2.file_target', $qb->createNamedParameter($path)));
+			$qb->andWhere($qb->expr()->eq('s.file_target', $qb->createNamedParameter($path)));
 		}
 
 		$cursor = $qb->executeQuery();
@@ -904,9 +903,6 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 			}
 
 			$share = $this->createShareObject($data);
-			// patch the parent data with the user-specific changes
-			$share->setPermissions((int)$data['s2_permissions']);
-			$share->setTarget($data['s2_file_target']);
 			$shares[] = $share;
 		}
 		$cursor->closeCursor();
