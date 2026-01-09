@@ -5,6 +5,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 23.0.0-beta.1 – 2026-01-09
+### Added
+- Allow moderators to pin messages in a chat
+  [#3390](https://github.com/nextcloud/spreed/issues/3390)
+- Chat is now shown in split view by default
+  [#14944](https://github.com/nextcloud/spreed/issues/14944)
+- Allow users to schedule messages to send at a later time
+  [#3954](https://github.com/nextcloud/spreed/issues/3954)
+- Use hardware acceleration for background blurring when available
+  [#16072](https://github.com/nextcloud/spreed/issues/16072)
+- Allow participants to control noise suppression, echo cancellation and auto gain for their microphone
+  [#3252](https://github.com/nextcloud/spreed/issues/3252)
+- Relay chat messages via the High-performance backend to improve performance and scaling
+  [#624](https://github.com/nextcloud/spreed/issues/624)
+
+### Changed
+- Update dependencies
+- Update translations
+- Require Nextcloud 33 / Hub 26 Winter
+- Enable notifications in group conversations by default for new instances
+  [#16319](https://github.com/nextcloud/spreed/issues/16319)
+
 ## 22.0.7 – 2025-12-17
 ### Changed
 - Update dependencies
