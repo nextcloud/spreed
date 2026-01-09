@@ -23,6 +23,8 @@ type PRIVACY_KEYS = typeof PRIVACY[keyof typeof PRIVACY]
 type LIST_STYLE_OPTIONS = 'two-lines' | 'compact'
 type CHAT_STYLE_OPTIONS = 'split' | 'unified'
 
+const supportChatStyle = getTalkConfig('local', 'chat', 'style') !== undefined
+
 /**
  * Store for shared items shown in RightSidebar
  */
@@ -33,7 +35,7 @@ export const useSettingsStore = defineStore('settings', () => {
 	const startWithoutMedia = ref<boolean | undefined>(getTalkConfig('local', 'call', 'start-without-media'))
 	const blurVirtualBackgroundEnabled = ref<boolean | undefined>(getTalkConfig('local', 'call', 'blur-virtual-background'))
 	const conversationsListStyle = ref<LIST_STYLE_OPTIONS | undefined>(getTalkConfig('local', 'conversations', 'list-style'))
-	const chatStyle = ref<CHAT_STYLE_OPTIONS | undefined>(getTalkConfig('local', 'chat', 'style') ?? 'split')
+	const chatStyle = ref<CHAT_STYLE_OPTIONS | undefined>(supportChatStyle ? (getTalkConfig('local', 'chat', 'style') ?? 'split') : 'unified')
 
 	const attachmentFolder = ref<string>(loadState('spreed', 'attachment_folder', ''))
 	const attachmentFolderFreeSpace = ref<number>(loadState('spreed', 'attachment_folder_free_space', 0))
