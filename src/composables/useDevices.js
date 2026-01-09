@@ -284,6 +284,7 @@ export function useDevices(video, initializeOnMounted) {
 
 		mediaDevicesManager.getUserMedia({ audio: true })
 			.then((stream) => {
+				audioStreamError.value = null
 				if (!initialized) {
 					// The promise was fulfilled once the stream is no
 					// longer needed, so just discard it.
@@ -380,6 +381,7 @@ export function useDevices(video, initializeOnMounted) {
 
 		mediaDevicesManager.getUserMedia({ video: true })
 			.then((stream) => {
+				videoStreamError.value = null
 				if (!initialized) {
 					// The promise was fulfilled once the stream is no
 					// longer needed, so just discard it.
