@@ -782,6 +782,33 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 	}
 
 	/**
+	 * Get shared with the given user
+	 *
+	 * @param string $userId get shares where this user is the recipient
+	 * @param int $shareType
+	 * @param Node|null $node
+	 * @param int $limit The max number of entries returned, -1 for all
+	 * @param int $offset
+	 * @return IShare[]
+	 */
+	#[\Override]
+	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
+		return $this->_getSharedWith($userId, $limit, $offset, $node);
+	}
+
+	#[\Override]
+	public function getSharedWithByPath(
+		string $userId,
+		int $shareType,
+		string $path,
+		bool $forChildren,
+		int $limit,
+		int $offset,
+	): iterable {
+		return $this->_getSharedWith($userId, $limit, $offset, null, $path, $forChildren);
+	}
+
+	/**
 	 * Get received shared for the given user.
 	 * You can optionally provide a node or a path to filter the shares.
 	 */
@@ -866,33 +893,6 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 		$shares = $this->resolveSharesForRecipient($shares, $userId, true);
 
 		return $shares;
-	}
-
-	/**
-	 * Get shared with the given user
-	 *
-	 * @param string $userId get shares where this user is the recipient
-	 * @param int $shareType
-	 * @param Node|null $node
-	 * @param int $limit The max number of entries returned, -1 for all
-	 * @param int $offset
-	 * @return IShare[]
-	 */
-	#[\Override]
-	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
-		return $this->_getSharedWith($userId, $limit, $offset, $node);
-	}
-
-	#[\Override]
-	public function getSharedWithByPath(
-		string $userId,
-		int $shareType,
-		string $path,
-		bool $forChildren,
-		int $limit,
-		int $offset,
-	): iterable {
-		return $this->_getSharedWith($userId, $limit, $offset, null, $path, $forChildren);
 	}
 
 	private function isAccessibleResult(array $data): bool {
