@@ -5,8 +5,8 @@
 
 import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
 import { useStore } from 'vuex'
-import { CONFIG, SESSION } from '../constants.ts'
-import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import { SESSION } from '../constants.ts'
+import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { setSessionState } from '../services/participantsService.js'
 import { useTokenStore } from '../stores/token.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
@@ -14,8 +14,6 @@ import { useGetToken } from './useGetToken.ts'
 import { useIsInCall } from './useIsInCall.js'
 
 const INACTIVE_TIME_MS = 3 * 60 * 1000
-
-const experimentalRecoverSession = (getTalkConfig('local', 'experiments', 'enabled') ?? 0) & CONFIG.EXPERIMENTAL.RECOVER_SESSION
 
 /**
  * Check whether the current session is active or not:
@@ -80,7 +78,7 @@ export function useActiveSession() {
 			console.info('Session has been marked as active')
 		} catch (error) {
 			console.error(error)
-			if (experimentalRecoverSession && error?.response?.status === 404) {
+			if (error?.response?.status === 404) {
 				// In case of 404 - participant did not have a session, block UI to join call
 				tokenStore.updateLastJoinedConversationToken('')
 				// Automatically try to join the conversation again
@@ -106,7 +104,7 @@ export function useActiveSession() {
 			console.info('Session has been marked as inactive')
 		} catch (error) {
 			console.error(error)
-			if (experimentalRecoverSession && error?.response?.status === 404) {
+			if (error?.response?.status === 404) {
 				// In case of 404 - participant did not have a session, block UI to join call
 				tokenStore.updateLastJoinedConversationToken('')
 				// Automatically try to join the conversation again

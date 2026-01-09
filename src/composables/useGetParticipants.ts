@@ -14,16 +14,13 @@ import type {
 import { createSharedComposable } from '@vueuse/core'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useStore } from 'vuex'
-import { CONFIG, CONVERSATION } from '../constants.ts'
-import { getTalkConfig } from '../services/CapabilitiesManager.ts'
+import { CONVERSATION } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useGetToken } from './useGetToken.ts'
 import { useIsInCall } from './useIsInCall.js'
-
-const experimentalUpdateParticipants = (getTalkConfig('local', 'experiments', 'enabled') ?? 0) & CONFIG.EXPERIMENTAL.UPDATE_PARTICIPANTS
 
 let fetchingParticipants = false
 let pendingChanges = true
@@ -57,19 +54,12 @@ function useGetParticipantsComposable(activeTab = ref('participants')) {
 	 */
 	function initialiseGetParticipants() {
 		EventBus.on('joined-conversation', onJoinedConversation)
-		if (experimentalUpdateParticipants) {
-			EventBus.on('signaling-users-in-room', handleUsersUpdated)
-			EventBus.on('signaling-users-joined', handleUsersUpdated)
-			EventBus.on('signaling-users-changed', handleUsersUpdated)
-			EventBus.on('signaling-users-left', handleUsersLeft)
-			EventBus.on('signaling-all-users-changed-in-call-to-disconnected', handleUsersDisconnected)
-			EventBus.on('signaling-participant-list-updated', throttleUpdateParticipants)
-		} else {
-			// FIXME this works only temporary until signaling is fixed to be only on the calls
-			// Then we have to search for another solution. Maybe the room list which we update
-			// periodically gets a hash of all online sessions?
-			EventBus.on('signaling-participant-list-changed', throttleUpdateParticipants)
-		}
+		EventBus.on('signaling-users-in-room', handleUsersUpdated)
+		EventBus.on('signaling-users-joined', handleUsersUpdated)
+		EventBus.on('signaling-users-changed', handleUsersUpdated)
+		EventBus.on('signaling-users-left', handleUsersLeft)
+		EventBus.on('signaling-all-users-changed-in-call-to-disconnected', handleUsersDisconnected)
+		EventBus.on('signaling-participant-list-updated', throttleUpdateParticipants)
 		EventBus.on('signaling-users-changed', checkCurrentUserPermissions)
 	}
 
@@ -94,7 +84,7 @@ function useGetParticipantsComposable(activeTab = ref('participants')) {
 	 * @param payload."0" - users list
 	 */
 	async function checkCurrentUserPermissions([users]: [StandaloneSignalingUpdateSession[]]) {
-		// TODO: move logic to sessionStore once experimental flag is dropped
+		// TODO: move logic to sessionStore
 		const currentUser = users.find((user) => {
 			return user.userId ? user.userId === actorStore.userId : user.actorId === actorStore.actorId
 		})
@@ -151,11 +141,7 @@ function useGetParticipantsComposable(activeTab = ref('participants')) {
 	 * Trigger participants list update upon joining
 	 */
 	async function onJoinedConversation() {
-		if (isOneToOneConversation.value || experimentalUpdateParticipants) {
-			cancelableGetParticipants()
-		} else {
-			nextTick(() => throttleUpdateParticipants())
-		}
+		cancelableGetParticipants()
 	}
 
 	/**
