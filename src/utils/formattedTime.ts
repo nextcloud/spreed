@@ -16,6 +16,7 @@ const absoluteTimeFormat = {
 	longDate: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric' }), // 'February 15, 2025'
 	longDateWithTime: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }), // 'February 15, 2025 at 8:30 PM'
 	shortDate: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric' }), // 'Feb 15, 2025'
+	shortDateSameYear: new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' }), // 'Feb 15'
 	shortDateNumeric: new Intl.DateTimeFormat(locale, { year: 'numeric', month: '2-digit', day: '2-digit' }), // '02/15/2025'
 	shortDateWithTime: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }), // 'Feb 15, 2025, 8:30 PM'
 	shortDateWithTimeSeconds: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' }), // 'Feb 15, 2025, 8:30:00 PM'
