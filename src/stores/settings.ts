@@ -32,6 +32,9 @@ export const useSettingsStore = defineStore('settings', () => {
 	const readStatusPrivacy = ref<PRIVACY_KEYS>(loadState('spreed', 'read_status_privacy', PRIVACY.PRIVATE))
 	const typingStatusPrivacy = ref<PRIVACY_KEYS>(loadState('spreed', 'typing_privacy', PRIVACY.PRIVATE))
 	const showMediaSettings = ref<boolean>(BrowserStorage.getItem('showMediaSettings') !== 'false')
+	const noiseSuppression = ref<boolean>(BrowserStorage.getItem('noiseSuppression') !== 'false')
+	const echoCancellation = ref<boolean>(BrowserStorage.getItem('echoCancellation') !== 'false')
+	const autoGainControl = ref<boolean>(BrowserStorage.getItem('autoGainControl') !== 'false')
 	const startWithoutMedia = ref<boolean | undefined>(getTalkConfig('local', 'call', 'start-without-media'))
 	const blurVirtualBackgroundEnabled = ref<boolean | undefined>(getTalkConfig('local', 'call', 'blur-virtual-background'))
 	const conversationsListStyle = ref<LIST_STYLE_OPTIONS | undefined>(getTalkConfig('local', 'conversations', 'list-style'))
@@ -68,6 +71,36 @@ export const useSettingsStore = defineStore('settings', () => {
 	function setShowMediaSettings(value: boolean) {
 		BrowserStorage.setItem('showMediaSettings', value.toString())
 		showMediaSettings.value = value
+	}
+
+	/**
+	 * Update the noise suppression settings for the user
+	 *
+	 * @param value - new selected state
+	 */
+	function setNoiseSuppression(value: boolean) {
+		BrowserStorage.setItem('noiseSuppression', value.toString())
+		noiseSuppression.value = value
+	}
+
+	/**
+	 * Update the echo cancellation settings for the user
+	 *
+	 * @param value - new selected state
+	 */
+	function setEchoCancellation(value: boolean) {
+		BrowserStorage.setItem('echoCancellation', value.toString())
+		echoCancellation.value = value
+	}
+
+	/**
+	 * Update the auto gain settings for the user
+	 *
+	 * @param value - new selected state
+	 */
+	function setAutoGainControl(value: boolean) {
+		BrowserStorage.setItem('autoGainControl', value.toString())
+		autoGainControl.value = value
 	}
 
 	/**
@@ -124,6 +157,9 @@ export const useSettingsStore = defineStore('settings', () => {
 		readStatusPrivacy,
 		typingStatusPrivacy,
 		showMediaSettings,
+		noiseSuppression,
+		echoCancellation,
+		autoGainControl,
 		startWithoutMedia,
 		blurVirtualBackgroundEnabled,
 		conversationsListStyle,
@@ -134,6 +170,9 @@ export const useSettingsStore = defineStore('settings', () => {
 		updateReadStatusPrivacy,
 		updateTypingStatusPrivacy,
 		setShowMediaSettings,
+		setNoiseSuppression,
+		setEchoCancellation,
+		setAutoGainControl,
 		setBlurVirtualBackgroundEnabled,
 		updateStartWithoutMedia,
 		updateConversationsListStyle,

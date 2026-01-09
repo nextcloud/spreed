@@ -41,6 +41,15 @@
 				@click="handleVideoInputIdChange(device.deviceId)">
 				{{ device.label }}
 			</NcActionButton>
+
+			<NcActionSeparator />
+			<NcActionButton
+				key="media-settings"
+				class="video-selector__action"
+				close-after-click
+				@click="emit('talk:media-settings:show')">
+				{{ t('spreed', 'Check devices') }}
+			</NcActionButton>
 		</NcActions>
 	</div>
 </template>
@@ -53,6 +62,7 @@ import { ref } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
@@ -67,6 +77,7 @@ export default {
 		NcActions,
 		NcActionButton,
 		NcActionCaption,
+		NcActionSeparator,
 		NcButton,
 		IconChevronUp,
 		IconVideo,
@@ -221,6 +232,8 @@ export default {
 
 	methods: {
 		t,
+		emit,
+
 		toggleVideo() {
 			if (!this.isVideoAllowed || !this.isVideoAvailable) {
 				emit('talk:media-settings:show')

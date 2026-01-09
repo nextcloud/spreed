@@ -78,6 +78,10 @@ export default function MediaDevicesManager() {
 		audioInputId: undefined,
 		audioOutputId: undefined,
 		videoInputId: undefined,
+
+		noiseSuppression: BrowserStorage.getItem('noiseSuppression') !== 'false',
+		echoCancellation: BrowserStorage.getItem('echoCancellation') !== 'false',
+		autoGainControl: BrowserStorage.getItem('autoGainControl') !== 'false',
 	})
 
 	/**
@@ -198,7 +202,7 @@ MediaDevicesManager.prototype = {
 		}
 	},
 
-	_updateDevices() {
+	_updateDevices(constraints) {
 		this._pendingEnumerateDevicesPromise = navigator.mediaDevices.enumerateDevices().then((devices) => {
 			const previousAudioInputId = this.attributes.audioInputId
 			const previousAudioOutputId = this.attributes.audioOutputId
@@ -206,6 +210,10 @@ MediaDevicesManager.prototype = {
 			const previousFirstAvailableAudioInputId = getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceAudioInputList)
 			const previousFirstAvailableAudioOutputId = getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceAudioOutputList)
 			const previousFirstAvailableVideoInputId = getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceVideoInputList)
+
+			const previousNoiseSuppression = this.attributes.noiseSuppression
+			const previousEchoCancellation = this.attributes.echoCancellation
+			const previousAutoGainControl = this.attributes.autoGainControl
 
 			const removedDevices = this.attributes.devices.filter((oldDevice) => !devices.find((device) => oldDevice.deviceId === device.deviceId && oldDevice.kind === device.kind))
 			removedDevices.forEach((removedDevice) => {
@@ -240,13 +248,28 @@ MediaDevicesManager.prototype = {
 				deviceIdChanged = true
 			}
 
+			if (constraints?.audio && typeof constraints.audio !== 'boolean') {
+				if ('noiseSuppression' in constraints.audio) {
+					this.attributes.noiseSuppression = constraints.audio.noiseSuppression
+				}
+				if ('echoCancellation' in constraints.audio) {
+					this.attributes.echoCancellation = constraints.audio.echoCancellation
+				}
+				if ('autoGainControl' in constraints.audio) {
+					this.attributes.autoGainControl = constraints.audio.autoGainControl
+				}
+			}
+
 			if (deviceIdChanged) {
 				console.debug(listMediaDevices(this.attributes, this._preferenceAudioInputList, this._preferenceAudioOutputList, this._preferenceVideoInputList))
 			}
 
 			// Trigger change events after all the devices are processed to
 			// prevent change events for intermediate states.
-			if (previousAudioInputId !== this.attributes.audioInputId) {
+			if (previousAudioInputId !== this.attributes.audioInputId
+				|| previousNoiseSuppression !== this.attributes.noiseSuppression
+				|| previousEchoCancellation !== this.attributes.echoCancellation
+				|| previousAutoGainControl !== this.attributes.autoGainControl) {
 				this._trigger('change:audioInputId', [this.attributes.audioInputId])
 			}
 			if (previousAudioOutputId !== this.attributes.audioOutputId) {
@@ -455,25 +478,31 @@ MediaDevicesManager.prototype = {
 	},
 
 	_getUserMediaInternal(constraints) {
-		if (constraints.audio && !constraints.audio.deviceId) {
-			if (this.attributes.audioInputId) {
-				if (!(constraints.audio instanceof Object)) {
+		// Relaxed constraints or deviceId is not specified
+		if (constraints.audio && (constraints.audio === true || !constraints.audio.deviceId)) {
+			if (this.attributes.audioInputId === null) {
+				constraints.audio = false
+			} else {
+				if (constraints.audio === true) {
 					constraints.audio = {}
 				}
-				constraints.audio.deviceId = { exact: this.attributes.audioInputId }
-			} else if (this.attributes.audioInputId === null) {
-				constraints.audio = false
+				if (this.attributes.audioInputId) {
+					constraints.audio.deviceId = { exact: this.attributes.audioInputId }
+				}
+				constraints.audio.noiseSuppression = BrowserStorage.getItem('noiseSuppression') !== 'false'
+				constraints.audio.echoCancellation = BrowserStorage.getItem('echoCancellation') !== 'false'
+				constraints.audio.autoGainControl = BrowserStorage.getItem('autoGainControl') !== 'false'
 			}
 		}
 
-		if (constraints.video && !constraints.video.deviceId) {
-			if (this.attributes.videoInputId) {
-				if (!(constraints.video instanceof Object)) {
+		if (constraints.video && (constraints.video === true || !constraints.video.deviceId)) {
+			if (this.attributes.videoInputId === null) {
+				constraints.video = false
+			} else if (this.attributes.videoInputId) {
+				if (constraints.video === true) {
 					constraints.video = {}
 				}
 				constraints.video.deviceId = { exact: this.attributes.videoInputId }
-			} else if (this.attributes.videoInputId === null) {
-				constraints.video = false
 			}
 		}
 
@@ -490,14 +519,14 @@ MediaDevicesManager.prototype = {
 			// The list of devices is always updated when a stream is started as
 			// that is the only time at which the full device information is
 			// guaranteed to be available.
-			this._updateDevices()
+			this._updateDevices(constraints)
 
 			return stream
 		}).catch((error) => {
 			// The list of devices is also updated in case of failure, as even
 			// if getting the stream failed the permissions may have been
 			// permanently granted.
-			this._updateDevices()
+			this._updateDevices(constraints)
 
 			throw error
 		})
@@ -506,17 +535,25 @@ MediaDevicesManager.prototype = {
 	_stopIncompatibleTracks(constraints) {
 		this._tracks.forEach((track) => {
 			if (constraints.audio && constraints.audio.deviceId && track.kind === 'audio') {
-				const constraintsAudioDeviceId = constraints.audio.deviceId.exact || constraints.audio.deviceId.ideal || constraints.audio.deviceId
+				const compatibleConstraints = {
+					deviceId: constraints.audio.deviceId.exact || constraints.audio.deviceId.ideal || constraints.audio.deviceId,
+					noiseSuppression: constraints.audio.noiseSuppression ?? this.attributes.noiseSuppression,
+					echoCancellation: constraints.audio.echoCancellation ?? this.attributes.echoCancellation,
+					autoGainControl: constraints.audio.autoGainControl ?? this.attributes.autoGainControl,
+				}
+
 				const settings = track.getSettings()
-				if (settings && settings.deviceId !== constraintsAudioDeviceId) {
+				if (settings && Object.keys(compatibleConstraints).some((key) => settings[key] !== compatibleConstraints[key])) {
 					track.stop()
 				}
 			}
 
 			if (constraints.video && constraints.video.deviceId && track.kind === 'video') {
-				const constraintsVideoDeviceId = constraints.video.deviceId.exact || constraints.video.deviceId.ideal || constraints.video.deviceId
+				const compatibleConstraints = {
+					deviceId: constraints.video.deviceId.exact || constraints.video.deviceId.ideal || constraints.video.deviceId,
+				}
 				const settings = track.getSettings()
-				if (settings && settings.deviceId !== constraintsVideoDeviceId) {
+				if (settings && settings.deviceId !== compatibleConstraints.deviceId) {
 					track.stop()
 				}
 			}

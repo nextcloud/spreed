@@ -38,6 +38,13 @@
 					:label="t('spreed', 'Skip device preview before joining a call')"
 					:description="t('spreed', 'Always shown if recording consent is required')"
 					@update:model-value="setHideMediaSettings" />
+				<NcFormBoxButton
+					:label="t('spreed', 'Microphone settings')"
+					@click="openAdvancedSettings">
+					<template #icon>
+						<IconTune :size="20" />
+					</template>
+				</NcFormBoxButton>
 			</NcFormBox>
 
 			<NcButton
@@ -157,6 +164,7 @@ import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import NcAppSettingsDialog from '@nextcloud/vue/components/NcAppSettingsDialog'
 import NcAppSettingsSection from '@nextcloud/vue/components/NcAppSettingsSection'
 import NcAppSettingsShortcutsSection from '@nextcloud/vue/components/NcAppSettingsShortcutsSection'
@@ -169,6 +177,8 @@ import NcHotkeyList from '@nextcloud/vue/components/NcHotkeyList'
 import NcKbd from '@nextcloud/vue/components/NcKbd'
 import IconFolderOpenOutline from 'vue-material-design-icons/FolderOpenOutline.vue'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
+import IconTune from 'vue-material-design-icons/Tune.vue'
+import AdvancedAudioDialog from '../MediaSettings/AdvancedAudioDialog.vue'
 import { CHAT_STYLE, CONVERSATION, PRIVACY } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
@@ -189,6 +199,7 @@ export default {
 	name: 'SettingsDialog',
 
 	components: {
+		IconTune,
 		IconFolderOpenOutline,
 		IconMicrophoneOutline,
 		NcAppSettingsDialog,
@@ -399,6 +410,12 @@ export default {
 
 		setHideMediaSettings(newValue) {
 			this.settingsStore.setShowMediaSettings(!newValue)
+		},
+
+		async openAdvancedSettings() {
+			await spawnDialog(AdvancedAudioDialog, {
+				container: '#devices',
+			})
 		},
 
 		async setBlurVirtualBackgroundEnabled(value) {
