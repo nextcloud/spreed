@@ -100,6 +100,7 @@ appstore:
 	--exclude=/recording \
 	--exclude=/rector.php \
 	--exclude=/redocly.yaml \
+	--exclude=/rspack.config.js \
 	--exclude=/site \
 	--exclude=/src \
 	--exclude=.stylelintignore \
