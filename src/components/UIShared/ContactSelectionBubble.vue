@@ -16,7 +16,10 @@ import { AVATAR } from '../../constants.ts'
 const props = defineProps<{
 	participant: Participant | ParticipantSearchResult
 }>()
-const emit = defineEmits(['update'])
+
+const emit = defineEmits<{
+	update: [participant: Participant | ParticipantSearchResult]
+}>()
 
 // Defines list of locked participants (can not be removed manually
 const lockedParticipants = inject<Ref<(Participant | ParticipantSearchResult)[]>>('lockedParticipants', ref([]))

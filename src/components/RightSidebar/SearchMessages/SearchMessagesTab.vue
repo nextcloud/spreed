@@ -42,8 +42,9 @@ import CancelableRequest from '../../../utils/cancelableRequest.js'
 const props = defineProps<{
 	isActive: boolean
 }>()
+
 const emit = defineEmits<{
-	(event: 'close'): void
+	close: []
 }>()
 
 const searchMessagesTab = ref<HTMLElement | null>(null)

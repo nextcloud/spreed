@@ -46,7 +46,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(event: 'update:state', value: 'threads'): void
+	'update:state': [value: 'threads']
 }>()
 
 const token = useGetToken()

@@ -31,9 +31,9 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(event: 'abort-search'): void
-	(event: 'create-new-conversation', searchText: string): void
-	(event: 'create-and-join-conversation', item: TypeConversation | ParticipantSearchResult): void
+	'abort-search': []
+	'create-new-conversation': [searchText: string]
+	'create-and-join-conversation': [item: TypeConversation | ParticipantSearchResult]
 }>()
 
 const isCirclesEnabled = loadState('spreed', 'circles_enabled')

@@ -10,8 +10,8 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(event: 'after-enter'): void
-	(event: 'after-leave'): void
+	'after-enter': []
+	'after-leave': []
 }>()
 </script>
 

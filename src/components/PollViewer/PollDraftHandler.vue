@@ -56,8 +56,9 @@ const props = defineProps<{
 	editorOpened?: boolean
 	container?: string
 }>()
+
 const emit = defineEmits<{
-	(event: 'close'): void
+	close: []
 }>()
 
 const pollsStore = usePollsStore()
