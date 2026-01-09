@@ -782,17 +782,17 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 	}
 
 	/**
-	 * Get shared with the given user
-	 *
-	 * @param string $userId get shares where this user is the recipient
-	 * @param int $shareType
-	 * @param Node|null $node
-	 * @param int $limit The max number of entries returned, -1 for all
-	 * @param int $offset
-	 * @return IShare[]
+	 * Get received shared for the given user.
+	 * You can optionally provide a node or a path to filter the shares.
 	 */
-	#[\Override]
-	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
+	public function _getSharedWith(
+		string $userId,
+		int $limit,
+		int $offset,
+		?Node $node = null,
+		?string $path = null,
+		?bool $forChildren = false,
+	): array {
 		$allRooms = $this->manager->getRoomTokensWithAttachmentsForUser($userId);
 
 		if (empty($allRooms)) {
@@ -823,6 +823,17 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 			// Filter by node if provided
 			if ($node !== null) {
 				$qb->andWhere($qb->expr()->eq('s.file_source', $qb->createNamedParameter($node->getId())));
+			}
+
+			if ($path !== null) {
+				$qb->leftJoin('s', 'share', 'sc', $qb->expr()->eq('s.parent', 'sc.id'))
+					->andWhere($qb->expr()->eq('sc.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)));
+
+				if ($forChildren) {
+					$qb->andWhere($qb->expr()->like('s.file_target', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($path) . '_%')));
+				} else {
+					$qb->andWhere($qb->expr()->eq('s.file_target', $qb->createNamedParameter($path)));
+				}
 			}
 
 			$qb->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
@@ -857,6 +868,21 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 		return $shares;
 	}
 
+	/**
+	 * Get shared with the given user
+	 *
+	 * @param string $userId get shares where this user is the recipient
+	 * @param int $shareType
+	 * @param Node|null $node
+	 * @param int $limit The max number of entries returned, -1 for all
+	 * @param int $offset
+	 * @return IShare[]
+	 */
+	#[\Override]
+	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
+		return $this->_getSharedWith($userId, $limit, $offset, $node);
+	}
+
 	#[\Override]
 	public function getSharedWithByPath(
 		string $userId,
@@ -866,50 +892,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 		int $limit,
 		int $offset,
 	): iterable {
-		/** @var IShare[] $shares */
-		$shares = [];
-		$qb = $this->dbConnection->getQueryBuilder();
-		$qb->select('s.*',
-			'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
-			'f.parent AS f_parent', 'f.name', 'f.mimetype', 'f.mimepart', 'f.size', 'f.mtime', 'f.storage_mtime',
-			'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum'
-		)
-			->selectAlias('st.id', 'storage_string_id')
-			->from('share', 's')
-			->orderBy('s.id', 'ASC')
-			->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
-			->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'))
-			->setFirstResult($offset);
-
-		if ($limit !== -1) {
-			$qb->setMaxResults($limit);
-		}
-
-		$qb->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
-			->andWhere($qb->expr()->eq('s.share_with', $qb->createNamedParameter($userId)))
-			->andWhere($qb->expr()->neq('s.uid_initiator', $qb->createNamedParameter($userId)))
-			->andWhere($qb->expr()->neq('s.uid_owner', $qb->createNamedParameter($userId)));
-
-		if ($forChildren) {
-			$qb->andWhere($qb->expr()->like('s.file_target', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($path) . '_%')));
-		} else {
-			$qb->andWhere($qb->expr()->eq('s.file_target', $qb->createNamedParameter($path)));
-		}
-
-		$cursor = $qb->executeQuery();
-		while ($data = $cursor->fetch()) {
-			if (!$this->isAccessibleResult($data)) {
-				continue;
-			}
-
-			$share = $this->createShareObject($data);
-			$shares[] = $share;
-		}
-		$cursor->closeCursor();
-
-		// todo: check for group membership?
-
-		return $shares;
+		return $this->_getSharedWith($userId, $limit, $offset, null, $path, $forChildren);
 	}
 
 	private function isAccessibleResult(array $data): bool {
