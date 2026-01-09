@@ -126,7 +126,9 @@
 				<template #icon>
 					<NcIconSvgWrapper :svg="IconPermMediaOutline" :size="20" inline />
 				</template>
-				<SharedItemsTab :active="activeTab === 'shared-items'" @update:state="handleUpdateState" />
+				<SharedItemsTab
+					:active="activeTab === 'shared-items'"
+					@showThreadsTab="handleUpdateState('threads')" />
 			</NcAppSidebarTab>
 		</template>
 	</NcAppSidebar>
