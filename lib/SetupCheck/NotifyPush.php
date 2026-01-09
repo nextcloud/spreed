@@ -36,12 +36,12 @@ class NotifyPush implements ISetupCheck {
 	public function run(): SetupResult {
 		if ($this->appManager->isEnabledForAnyone('notify_push')) {
 			return SetupResult::success(
-				$this->l10n->t('Client Push is installed, this improves the performance of desktop clients.')
+				$this->l10n->t('Client Push is installed, this improves the punctuality of Talk notifications.')
 			);
 		}
 
 		return SetupResult::warning(
-			$this->l10n->t('{notify_push} is not installed, this might lead to performance issues when using desktop clients.'),
+			$this->l10n->t('{notify_push} is not installed. This may lead to delayed Talk notifications.'),
 			'https://github.com/nextcloud/notify_push/blob/main/README.md',
 			[
 				'notify_push' => [
