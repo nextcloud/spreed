@@ -26,6 +26,8 @@
 			<RightSidebarContent
 				ref="sidebarContent"
 				:is-user="!!getUserId"
+				:is-message-expiration-set="isMessageExpirationSet"
+				:message-expiration-date="messageExpirationDate"
 				:mode="CONTENT_MODES[contentModeIndex]"
 				:state="contentState"
 				@update:mode="handleUpdateMode"
@@ -34,6 +36,10 @@
 		<template #description>
 			<InternalSignalingHint />
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
+			<div v-if="isMessageExpirationSet && !isOneToOne" class="group-message-expiration">
+				<IconDeleteClockOutline :size="16" />
+				<span>{{ t('spreed', 'Message expiration is set to {date}', { date: messageExpirationDate }) }} </span>
+			</div>
 		</template>
 		<NcAppSidebarTab
 			v-if="contentState === 'search'"
@@ -135,7 +141,7 @@
 <script>
 import { showMessage } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
+import { getCanonicalLocale, t } from '@nextcloud/l10n'
 import { useEventListener } from '@vueuse/core'
 import { ref } from 'vue'
 import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
@@ -144,6 +150,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconAccountMultipleOutline from 'vue-material-design-icons/AccountMultipleOutline.vue'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
+import IconDeleteClockOutline from 'vue-material-design-icons/DeleteClockOutline.vue'
 import IconDotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
@@ -192,6 +199,7 @@ export default {
 		SipSettings,
 		// Icons
 		IconAccountMultipleOutline,
+		IconDeleteClockOutline,
 		IconCogOutline,
 		IconDotsCircle,
 		IconInformationOutline,
@@ -397,6 +405,21 @@ export default {
 				title: t('spreed', 'Open chat'),
 			}
 		},
+
+		isMessageExpirationSet() {
+			return this.conversation.messageExpiration > 0
+		},
+
+		messageExpirationDate() {
+			const { expirationTimestamp } = this.conversation.lastMessage
+			return new Intl.DateTimeFormat(getCanonicalLocale(), {
+				year: 'numeric',
+				month: 'short',
+				day: '2-digit',
+				hour: '2-digit',
+				minute: '2-digit',
+			}).format(expirationTimestamp * 1000)
+		},
 	},
 
 	watch: {
@@ -484,9 +507,6 @@ export default {
 
 				// Discard notification if the conversation changes or closed
 				this.notifyUnreadMessages(null)
-
-				// FIXME collapse for group conversations until we show anything useful there
-				this.contentModeIndex = this.isOneToOne ? 1 : 0
 			},
 
 			immediate: true,
@@ -513,7 +533,6 @@ export default {
 
 	methods: {
 		t,
-
 		handleUpdateOpen(open) {
 			if (open) {
 				// In call ('Open chat') by default
@@ -627,6 +646,12 @@ export default {
 	border-radius: 8px;
 	background-color: var(--color-primary-element);
 	pointer-events: none;
+}
+
+.group-message-expiration {
+	display: flex;
+	align-items: center;
+	gap: var(--default-grid-baseline);
 }
 </style>
 
