@@ -28,7 +28,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(event: 'click'): void
+	click: []
 }>()
 
 const ariaLabel = computed(() => {

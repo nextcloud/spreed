@@ -44,9 +44,6 @@ const props = defineProps<{
 	token: string
 	container?: string
 }>()
-const emit = defineEmits<{
-	(event: 'close'): void
-}>()
 
 const hideTriggers = (triggers: string[]) => [...triggers, 'click']
 

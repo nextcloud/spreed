@@ -52,8 +52,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(event: 'update:state', value: SidebarContentState): void
-	(event: 'update:mode', value: 'compact' | 'preview' | 'full'): void
+	'update:state': [value: SidebarContentState]
+	'update:mode': [value: 'compact' | 'preview' | 'full']
 }>()
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')

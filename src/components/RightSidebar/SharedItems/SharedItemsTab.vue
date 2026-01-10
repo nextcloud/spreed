@@ -46,7 +46,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(event: 'update:state', value: 'threads'): void
+	showThreadsTab: []
 }>()
 
 const token = useGetToken()
@@ -135,7 +135,7 @@ function openPollDraftHandler() {
 						v-if="hasMoreThreads"
 						variant="tertiary"
 						class="shared-items-tab__more-button shared-items-tab__more-button--threads"
-						@click="emit('update:state', 'threads')">
+						@click="emit('showThreadsTab')">
 						<template #icon>
 							<IconDotsHorizontal :size="24" />
 						</template>

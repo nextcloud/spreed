@@ -149,9 +149,11 @@ const props = defineProps<{
 	canCreatePollDrafts: boolean
 	container?: string
 }>()
+
 const emit = defineEmits<{
-	(event: 'close'): void
+	close: []
 }>()
+
 defineExpose({
 	fillPollEditorFromDraft,
 })

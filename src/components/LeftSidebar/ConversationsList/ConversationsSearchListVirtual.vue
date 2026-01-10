@@ -18,7 +18,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(event: 'select', item: Conversation): void
+	select: [item: Conversation]
 }>()
 
 const itemHeight = AVATAR.SIZE.DEFAULT + 2 * 4 + 2 * 2

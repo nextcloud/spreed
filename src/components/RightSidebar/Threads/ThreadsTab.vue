@@ -14,7 +14,7 @@ import { EventBus } from '../../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../../stores/chatExtras.ts'
 
 const emit = defineEmits<{
-	(event: 'close'): void
+	close: []
 }>()
 
 const chatExtrasStore = useChatExtrasStore()

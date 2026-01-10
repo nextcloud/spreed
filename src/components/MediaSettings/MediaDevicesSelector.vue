@@ -28,8 +28,8 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-	(event: 'refresh'): void
-	(event: 'update:deviceId', value: string | null | undefined): void
+	refresh: []
+	'update:deviceId': [value: string | null]
 }>()
 
 const deviceOptions = computed<NcSelectOption[]>(() => {

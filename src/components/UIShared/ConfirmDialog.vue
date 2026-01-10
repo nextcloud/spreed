@@ -54,7 +54,7 @@ const props = defineProps<NcDialogProps & {
 }>()
 
 const emit = defineEmits<{
-	(event: 'close', value?: unknown): void
+	close: [value?: unknown]
 }>()
 
 const inputValue = ref(props.inputProps?.value ?? '')

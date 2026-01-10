@@ -116,9 +116,9 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(e: 'update:servers', value: InitialState['spreed']['signaling_servers']['servers']): void
-	(e: 'update:secret', value: InitialState['spreed']['signaling_servers']['secret']): void
-	(e: 'update:hideWarning', value: InitialState['spreed']['signaling_servers']['hideWarning']): void
+	'update:servers': [value: InitialState['spreed']['signaling_servers']['servers']]
+	'update:secret': [value: InitialState['spreed']['signaling_servers']['secret']]
+	'update:hideWarning': [value: InitialState['spreed']['signaling_servers']['hideWarning']]
 }>()
 
 const isCacheConfigured = loadState('spreed', 'has_cache_configured')
