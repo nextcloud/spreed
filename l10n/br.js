@@ -579,6 +579,7 @@ OC.L10N.register(
     "Users and groups" : "Implijourienn ha strolladoù",
     "Other sources" : "Orin all",
     "You are currently waiting in the lobby" : "Ho gortoz er sal gortoz emaoc'h",
+    "Dismiss" : "Arrest",
     "Select microphone" : "Choaz ur mikro",
     "No microphone available" : "Mikro ebet kavet",
     "Select camera" : "Choaz ur c'hamera",
@@ -596,7 +597,6 @@ OC.L10N.register(
     "Reply" : "Respont",
     "Go to file" : "Mont d'ar restr",
     "Translate" : "Treiñ",
-    "Dismiss" : "Arrest",
     "Translate to" : "Treiñ e",
     "Create a new group conversation" : "Krouiñ un diviz strollad nevez",
     "Add participants" : "Ouzhpennan tud",
@@ -686,8 +686,6 @@ OC.L10N.register(
     "Error while sharing file" : "Ur fazi a zo bet en ur rannañ ar restr",
     "An error occurred while fetching the participants" : "Ur fazi a zo bet en ur pakañ an tud",
     "Lost connection to signaling server. Trying to reconnect." : "Kenstagadenn gant ar servijour arhent kollet. O klask adkemprenn.",
-    "Establishing signaling connection is taking longer than expected …" : "Lakaat an arhent kenstagañ a zo hiroc'h eget gortozet ...",
-    "Failed to establish signaling connection. Retrying …" : "C'hwitet da lakaat an arhent kemprenn. O klask en dro ...",
     "Please reload the page." : "Mar-plij adkargit ar bajenn",
     "Do not disturb" : "Na rannit ket",
     "Away" : "Pell",
@@ -720,6 +718,8 @@ OC.L10N.register(
     "Choose devices" : "Choazit un ardivink",
     "Sharing your screen only works with Firefox version 52 or newer." : "Rannañ  ho skramm a dro nmetken gant  Firefox stumm 52 pe nevezoc'h.",
     "Screensharing extension is required to share your screen." : "Un astenn rannañ-skramm ez eus ezhomm evit rannañ ho srkamm.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Implijit furcherienn disheñvel evel firefox pe Chrome evit rannañ ho skramm."
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Implijit furcherienn disheñvel evel firefox pe Chrome evit rannañ ho skramm.",
+    "Establishing signaling connection is taking longer than expected …" : "Lakaat an arhent kenstagañ a zo hiroc'h eget gortozet ...",
+    "Failed to establish signaling connection. Retrying …" : "C'hwitet da lakaat an arhent kemprenn. O klask en dro ..."
 },
 "nplurals=5; plural=((n%10 == 1) && (n%100 != 11) && (n%100 !=71) && (n%100 !=91) ? 0 :(n%10 == 2) && (n%100 != 12) && (n%100 !=72) && (n%100 !=92) ? 1 :(n%10 ==3 || n%10==4 || n%10==9) && (n%100 < 10 || n% 100 > 19) && (n%100 < 70 || n%100 > 79) && (n%100 < 90 || n%100 > 99) ? 2 :(n != 0 && n % 1000000 == 0) ? 3 : 4);");

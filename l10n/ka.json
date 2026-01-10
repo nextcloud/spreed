@@ -814,6 +814,7 @@
     "Back" : "Back",
     "Assign" : "Assign",
     "Add participant \"{user}\"" : "Add participant \"{user}\"",
+    "Meeting" : "Meeting",
     "Loading …" : "Loading …",
     "From" : "From",
     "To" : "To",
@@ -926,7 +927,6 @@
     "Participants can join calls, but cannot enable audio nor video nor share screen until a moderator manually grants them permissions." : "Participants can join calls, but cannot enable audio nor video nor share screen until a moderator manually grants them permissions.",
     "Advanced permissions" : "Advanced permissions",
     "Edit permissions" : "Edit permissions",
-    "Meeting" : "Meeting",
     "Conversation settings" : "Conversation settings",
     "Basic Info" : "Basic Info",
     "Personal" : "Personal",
@@ -1062,6 +1062,7 @@
     "The meeting will start soon" : "The meeting will start soon",
     "This meeting is scheduled for {startTime}" : "This meeting is scheduled for {startTime}",
     "You are currently waiting in the lobby" : "You are currently waiting in the lobby",
+    "Dismiss" : "Dismiss",
     "Select microphone" : "Select microphone",
     "No microphone available" : "No microphone available",
     "Select camera" : "Select camera",
@@ -1124,7 +1125,6 @@
     "Choose a conversation to forward the selected message." : "Choose a conversation to forward the selected message.",
     "Error while forwarding message" : "Error while forwarding message",
     "The message has been forwarded to {selectedConversationName}" : "The message has been forwarded to {selectedConversationName}",
-    "Dismiss" : "Dismiss",
     "Go to conversation" : "Go to conversation",
     "The message could not be translated" : "The message could not be translated",
     "Translation copied to clipboard" : "Translation copied to clipboard",
@@ -1580,9 +1580,6 @@
     "The link could not be copied" : "The link could not be copied",
     "Sending signaling message has failed" : "Sending signaling message has failed",
     "Lost connection to signaling server. Trying to reconnect." : "Lost connection to signaling server. Trying to reconnect.",
-    "Establishing signaling connection is taking longer than expected …" : "Establishing signaling connection is taking longer than expected …",
-    "Failed to establish signaling connection. Retrying …" : "Failed to establish signaling connection. Retrying …",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Failed to establish signaling connection. Something might be wrong in the signaling server configuration",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration.",
     "Please reload the page." : "Please reload the page.",
     "Do not disturb" : "Do not disturb",
@@ -1649,6 +1646,9 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Sharing your screen only works with Firefox version 52 or newer.",
     "Screensharing extension is required to share your screen." : "Screensharing extension is required to share your screen.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Please use a different browser like Firefox or Chrome to share your screen.",
-    "You need to close a dialog to toggle full screen" : "You need to close a dialog to toggle full screen"
+    "You need to close a dialog to toggle full screen" : "You need to close a dialog to toggle full screen",
+    "Establishing signaling connection is taking longer than expected …" : "Establishing signaling connection is taking longer than expected …",
+    "Failed to establish signaling connection. Retrying …" : "Failed to establish signaling connection. Retrying …",
+    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Failed to establish signaling connection. Something might be wrong in the signaling server configuration"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }
