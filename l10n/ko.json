@@ -825,6 +825,7 @@
     "Assign" : "배정",
     "Add participant \"{user}\"" : "참가자 \"{user}\" 추가",
     "Now" : "지금",
+    "Meeting" : "회의",
     "Loading …" : "불러오는 중 ...",
     "From" : "보낸사람",
     "To" : "받는사람",
@@ -938,7 +939,6 @@
     "Participants can join calls, but cannot enable audio nor video nor share screen until a moderator manually grants them permissions." : "참가자는 통화에 참가할 수 있지만 중재자가 수동으로 권한을 부여할 때까지 오디오나 영상을 활성화하거나 화면을 공유할 수 없습니다.",
     "Advanced permissions" : "고급 권한",
     "Edit permissions" : "권한 수정",
-    "Meeting" : "회의",
     "Conversation settings" : "대화 설정",
     "Basic Info" : "기본 정보",
     "Personal" : "개인",
@@ -1075,6 +1075,7 @@
     "The meeting will start soon" : "회의가 곧 시작됩니다.",
     "This meeting is scheduled for {startTime}" : "모임이 {startTime}에 예정되었습니다.",
     "You are currently waiting in the lobby" : "대화방 로비에서 대기 중입니다.",
+    "Dismiss" : "무시",
     "Select microphone" : "마이크 선택",
     "No microphone available" : "사용 가능한 마이크 없음",
     "Select camera" : "카메라 선택",
@@ -1144,7 +1145,6 @@
     "Choose a conversation to forward the selected message." : "선택한 메시지를 전달할 대화를 선택하세요.",
     "Error while forwarding message" : "메시지를 전달하는 동안 오류가 발생했습니다.",
     "The message has been forwarded to {selectedConversationName}" : "메시지를 {selectedConversationName}에 전달했습니다.",
-    "Dismiss" : "무시",
     "Go to conversation" : "대화로 이동",
     "The message could not be translated" : "메시지를 번역할 수 없습니다.",
     "Translation copied to clipboard" : "번역을 클립보드로 복사함",
@@ -1554,9 +1554,6 @@
     "The link could not be copied" : "링크를 복사할 수 없습니다.",
     "Sending signaling message has failed" : "시그널링 메시지를 보내지 못했습니다.",
     "Lost connection to signaling server. Trying to reconnect." : "시그널링 서버와의 연결이 끊어졌습니다. 다시 연결하는 중입니다.",
-    "Establishing signaling connection is taking longer than expected …" : "신호 연결을 설정하는 데 예상보다 시간이 오래 걸리고 있습니다 ...",
-    "Failed to establish signaling connection. Retrying …" : "시그널링 연결을 설정하지 못했습니다. 다시 시도 중...",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "신호 연결을 설정하지 못했습니다. 신호 서버 구성에 문제가 있을 수 있습니다.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "시그널링 서버가 이 버전의 Nextcloud와 호환되도록 업데이트 해야 합니다. 관리자에게 연락해주세요.",
     "Please reload the page." : "페이지를 새로 고치십시오.",
     "Do not disturb" : "방해 금지",
@@ -1625,6 +1622,9 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "화면 공유는 Firefox 버전 52 이상에서만 지원합니다.",
     "Screensharing extension is required to share your screen." : "화면 공유를 위한 확장 기능이 필요합니다.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "화면 공유를 사용하려면 Firefox 및 Chrome과 같은 다른 웹 브라우저를 사용하십시오.",
-    "You need to close a dialog to toggle full screen" : "전체화면 전환을 위해 알림창을 닫아야합니다."
+    "You need to close a dialog to toggle full screen" : "전체화면 전환을 위해 알림창을 닫아야합니다.",
+    "Establishing signaling connection is taking longer than expected …" : "신호 연결을 설정하는 데 예상보다 시간이 오래 걸리고 있습니다 ...",
+    "Failed to establish signaling connection. Retrying …" : "시그널링 연결을 설정하지 못했습니다. 다시 시도 중...",
+    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "신호 연결을 설정하지 못했습니다. 신호 서버 구성에 문제가 있을 수 있습니다."
 },"pluralForm" :"nplurals=1; plural=0;"
 }
