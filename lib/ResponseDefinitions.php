@@ -518,6 +518,7 @@ namespace OCA\Talk;
  *             blur-virtual-background: bool,
  *             end-to-end-encryption: bool,
  *             live-transcription: bool,
+ *             live-translation: bool,
  *         },
  *         chat: array{
  *             max-length: int,

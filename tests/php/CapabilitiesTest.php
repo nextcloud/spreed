@@ -158,6 +158,7 @@ class CapabilitiesTest extends TestCase {
 						'blur-virtual-background' => false,
 						'end-to-end-encryption' => false,
 						'live-transcription' => false,
+						'live-translation' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -336,6 +337,7 @@ class CapabilitiesTest extends TestCase {
 						'blur-virtual-background' => false,
 						'end-to-end-encryption' => false,
 						'live-transcription' => false,
+						'live-translation' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
