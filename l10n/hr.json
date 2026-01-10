@@ -611,6 +611,7 @@
     "Cancel" : "Odustani",
     "Back" : "Natrag",
     "Add participant \"{user}\"" : "Dodaj sudionika „{user}”",
+    "Meeting" : "Sastanak",
     "Loading …" : "Učitavanje…",
     "From" : "Od",
     "To" : "Do",
@@ -682,7 +683,6 @@
     "Restricted" : "Ograničeno",
     "Advanced permissions" : "Napredna dopuštenja",
     "Edit permissions" : "Uredi dopuštenja",
-    "Meeting" : "Sastanak",
     "Conversation settings" : "Postavke razgovora",
     "Personal" : "Osobno",
     "Matterbridge" : "Matterbridge",
@@ -762,6 +762,7 @@
     "The meeting will start soon" : "Sastanak počinje uskoro",
     "This meeting is scheduled for {startTime}" : "Sastanak počinje u {startTime}",
     "You are currently waiting in the lobby" : "Trenutno čekate u predvorju",
+    "Dismiss" : "Zanemari",
     "Select microphone" : "Odaberi mikrofon",
     "No microphone available" : "Nema dostupnih mikrofona",
     "Select camera" : "Odaberi kameru",
@@ -789,7 +790,6 @@
     "Choose a conversation to forward the selected message." : "Odaberite razgovor u koji ćete proslijediti odabranu poruku.",
     "Error while forwarding message" : "Pogreška pri prosljeđivanju poruke",
     "The message has been forwarded to {selectedConversationName}" : "Poruka je proslijeđena u {selectedConversationName}",
-    "Dismiss" : "Zanemari",
     "Go to conversation" : "Idi na razgovor",
     "Message read by everyone who shares their reading status" : "Poruku je pročitao svatko tko dijeli status čitanja",
     "Message sent" : "Poruka poslana",
@@ -1028,9 +1028,6 @@
     "Error occurred when sending invitations" : "Došlo je do pogreške pri slanju pozivnica",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome, Opera or Apple Safari." : "Nextcloud Talk ne podržava trenutni preglednik. Preuzmite najnoviju inačicu preglednika Mozilla Firefox, Microsoft Edge, Google Chrome, Opera ili Apple Safari.",
     "Lost connection to signaling server. Trying to reconnect." : "Veza sa signalnim poslužiteljem je prekinuta. Pokušavam se ponovno povezati.",
-    "Establishing signaling connection is taking longer than expected …" : "Uspostavljanje signalne veze traje duže od očekivanog…",
-    "Failed to establish signaling connection. Retrying …" : "Signalna veza nije uspostavljena. Pokušavam ponovo…",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Signalna veza nije uspostavljena. Nešto nije u redu u konfiguraciji signalnog poslužitelja",
     "Please reload the page." : "Ponovno učitajte stranicu.",
     "Do not disturb" : "Ne ometaj",
     "Away" : "Odsutan",
@@ -1076,6 +1073,9 @@
     "Blur background" : "Zamuti pozadinu",
     "Sharing your screen only works with Firefox version 52 or newer." : "Dijeljenje zaslona moguće je samo u pregledniku Firefox, inačice 52 ili novije.",
     "Screensharing extension is required to share your screen." : "Za dijeljenje zaslona potrebno je instalirati proširenje za dijeljenje zaslona.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Koristite se nekim drugim preglednikom za dijeljenje zaslona, primjerice preglednikom Firefox ili Chrome."
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Koristite se nekim drugim preglednikom za dijeljenje zaslona, primjerice preglednikom Firefox ili Chrome.",
+    "Establishing signaling connection is taking longer than expected …" : "Uspostavljanje signalne veze traje duže od očekivanog…",
+    "Failed to establish signaling connection. Retrying …" : "Signalna veza nije uspostavljena. Pokušavam ponovo…",
+    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Signalna veza nije uspostavljena. Nešto nije u redu u konfiguraciji signalnog poslužitelja"
 },"pluralForm" :"nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;"
 }
