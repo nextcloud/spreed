@@ -1,13 +1,10 @@
 import os
 import sys
 import signal
-from time import time_ns
-from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
 
 from helpers.helper_functions import log_note, timeout_handler, user_sleep
 
-load_dotenv()
 
 DOMAIN = os.environ.get('HOST_URL', 'http://app')
 

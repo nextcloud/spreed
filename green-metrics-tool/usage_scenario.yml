@@ -7,26 +7,26 @@ compose-file: !include compose.yml
 services:
   gcb-playwright:
     image: greencoding/gcb_playwright:v21
-#    depends_on:
-#      nc:
-#        condition: service_healthy
+    depends_on:
+      app:
+        condition: service_healthy
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix # for debugging in non-headless mode
     environment:
        DISPLAY: ":0" # for debugging in non-headless mode
-    setup-commands:
-      - command: pip install dotenv
 
 
 flow:
   - name: Install Nextcloud
     container: gcb-playwright
+    hidden: true
     commands:
       - type: console
         command: python3 /tmp/repo/green-metrics-tool/nextcloud_install.py firefox
 
   - name: Install Apps
     container: app
+    hidden: true
     commands:
       - type: console
         command: |

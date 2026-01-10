@@ -65,22 +65,22 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
  && rm composer-setup.php
 
 #COPY nextcloud/ ./
-#RUN git clone --single-branch --depth=1 --branch "$GIT_REF" --recurse-submodules "$NEXTCLOUD_REPO" /usr/src/nextcloud
-RUN set -eux; \
-    git init /usr/src/nextcloud; \
-    cd /usr/src/nextcloud; \
-    git remote add origin "$NEXTCLOUD_REPO"; \
-    if echo "$GIT_REF" | grep -Eq '^[0-9a-f]{7,40}$'; then \
-      # GIT_REF looks like a commit SHA
-      git fetch --depth=1 origin "$GIT_REF"; \
-      git checkout --detach FETCH_HEAD; \
-    else \
-      # GIT_REF is a branch or tag
-      git fetch --depth=1 --tags origin "$GIT_REF"; \
-      git checkout -q "$GIT_REF"; \
-    fi; \
-    # bring in submodules shallowly
-    git submodule update --init --recursive --depth=1
+RUN git clone --single-branch --depth=1 --branch main --recurse-submodules "$NEXTCLOUD_REPO" /usr/src/nextcloud
+# RUN set -eux; \
+#     git init /usr/src/nextcloud; \
+#     cd /usr/src/nextcloud; \
+#     git remote add origin "$NEXTCLOUD_REPO"; \
+#     if echo "$GIT_REF" | grep -Eq '^[0-9a-f]{7,40}$'; then \
+#       # GIT_REF looks like a commit SHA
+#       git fetch --depth=1 origin "$GIT_REF"; \
+#       git checkout --detach FETCH_HEAD; \
+#     else \
+#       # GIT_REF is a branch or tag
+#       git fetch --depth=1 --tags origin "$GIT_REF"; \
+#       git checkout -q "$GIT_REF"; \
+#     fi; \
+#     # bring in submodules shallowly
+#     git submodule update --init --recursive --depth=1
 
 WORKDIR /usr/src/nextcloud
 

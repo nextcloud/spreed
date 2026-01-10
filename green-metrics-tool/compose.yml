@@ -14,7 +14,11 @@ services:
       # REDIS_HOST: redis
       PHP_MEMORY_LIMIT: 512M
       HOST_URL: http://app
-
+    healthcheck:
+      test: curl --fail --silent -k http://app
+      interval: "1h" # effectively turns repeated healthchecks during runtime off
+      start_period: "60s"
+      start_interval: "1s"
 
     #volumes:
       # Persist only what should be writable:
