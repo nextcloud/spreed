@@ -466,7 +466,7 @@ const actions = {
 		if (isHiddenSystemMessage(message)) {
 			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.POLL_VOTED) {
 				const pollsStore = usePollsStore()
-				pollsStore.debounceGetPollData({
+				pollsStore.scheduleGetPollData({
 					token,
 					pollId: message.messageParameters.poll.id,
 				})
@@ -591,7 +591,7 @@ const actions = {
 
 		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.POLL_CLOSED) {
 			const pollsStore = usePollsStore()
-			pollsStore.getPollData({
+			pollsStore.scheduleGetPollData({
 				token,
 				pollId: message.messageParameters.poll.id,
 			})
