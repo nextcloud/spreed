@@ -358,6 +358,8 @@ OC.L10N.register(
     "Other" : "Boshqa",
     "Show all files" : "Barcha fayllarni ko'rsatish",
     "Default" : "Standart",
+    "Group" : "Guruh",
+    "Team" : "Jamoa",
     "Error while sharing file" : "Fayl almashishda xatolik yuz berdi",
     "Error while parsing a PROPFIND error" : "PROPFIND xatosini tahlil qilishda xatolik yuz berdi",
     "Please reload the page." : "Please reload the page.",
