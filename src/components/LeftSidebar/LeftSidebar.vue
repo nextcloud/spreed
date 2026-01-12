@@ -266,6 +266,7 @@
 				:conversations-list="conversationsList"
 				:search-results="searchResults"
 				:search-results-listed-conversations="searchResultsListedConversations"
+				:search-results-messages="searchResultsMessages"
 				@abort-search="abortSearch"
 				@create-new-conversation="createConversation"
 				@create-and-join-conversation="createAndJoinConversation" />
@@ -354,7 +355,10 @@ import {
 	fetchNoteToSelfConversation,
 	searchListedConversations,
 } from '../../services/conversationsService.ts'
-import { autocompleteQuery } from '../../services/coreService.ts'
+import {
+	autocompleteQuery,
+	searchMessagesEverywhere,
+} from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import { useActorStore } from '../../stores/actor.ts'
@@ -477,11 +481,14 @@ export default {
 			searchText: '',
 			searchResults: [],
 			searchResultsListedConversations: [],
+			searchResultsMessages: [],
 			contactsLoading: false,
 			listedConversationsLoading: false,
+			messagesLoading: false,
 			canStartConversations: getTalkConfig('local', 'conversations', 'can-create'),
 			cancelSearchPossibleConversations: () => {},
 			cancelSearchListedConversations: () => {},
+			cancelSearchMessages: () => {},
 			debounceFetchSearchResults: () => {},
 			debounceFetchConversations: () => {},
 			debounceHandleScroll: () => {},
@@ -690,6 +697,9 @@ export default {
 		this.cancelSearchListedConversations()
 		this.cancelSearchListedConversations = null
 
+		this.cancelSearchMessages()
+		this.cancelSearchMessages = null
+
 		if (this.refreshTimer) {
 			clearInterval(this.refreshTimer)
 			this.refreshTimer = null
@@ -814,6 +824,44 @@ export default {
 			}
 		},
 
+		async fetchMessagesEverywhere() {
+			try {
+				this.messagesLoading = true
+
+				this.cancelSearchMessages('canceled')
+				const { request, cancel } = CancelableRequest(searchMessagesEverywhere)
+				this.cancelSearchMessages = cancel
+
+				const response = await request({
+					term: this.searchText,
+					limit: 5,
+				})
+				const data = response?.data?.ocs?.data
+				if (data && data.entries.length > 0) {
+					this.searchResultsMessages = data.entries.map((entry) => {
+						const threadId = (entry.attributes.threadId !== entry.attributes.messageId) ? entry.attributes.threadId : undefined
+
+						return {
+							...entry,
+							to: {
+								name: 'conversation',
+								hash: `#message_${entry.attributes.messageId}`,
+								params: { token: entry.attributes.conversation },
+								query: { threadId },
+							},
+						}
+					})
+				}
+				this.messagesLoading = false
+			} catch (exception) {
+				if (CancelableRequest.isCancel(exception)) {
+					return
+				}
+				console.error('Error searching for messages', exception)
+				showError(t('spreed', 'An error occurred while performing the search'))
+			}
+		},
+
 		async fetchSearchResults() {
 			if (!this.isSearching) {
 				return
@@ -824,7 +872,11 @@ export default {
 			this.showThreadsList = false
 
 			this.resetNavigation()
-			await Promise.all([this.fetchPossibleConversations(), this.fetchListedConversations()])
+			await Promise.all([
+				this.fetchPossibleConversations(),
+				this.fetchListedConversations(),
+				this.fetchMessagesEverywhere(),
+			])
 			this.initializeNavigation()
 		},
 
@@ -889,6 +941,9 @@ export default {
 			}
 			if (this.cancelSearchListedConversations) {
 				this.cancelSearchListedConversations()
+			}
+			if (this.cancelSearchMessages) {
+				this.cancelSearchMessages()
 			}
 		},
 
