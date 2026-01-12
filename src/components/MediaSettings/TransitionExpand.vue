@@ -10,16 +10,16 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(event: 'after-enter'): void
-	(event: 'after-leave'): void
+	afterEnter: []
+	afterLeave: []
 }>()
 </script>
 
 <template>
 	<Transition
 		:name="`expand-${direction}`"
-		@after-enter="emit('after-enter')"
-		@after-leave="emit('after-leave')">
+		@after-enter="emit('afterEnter')"
+		@after-leave="emit('afterLeave')">
 		<div v-show="show" class="expand-wrapper">
 			<div class="expand-wrapper__content">
 				<slot />

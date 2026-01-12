@@ -38,8 +38,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(event: 'update:isActionMenuOpen', value: boolean): void
-	(event: 'edit'): void
+	'update:isActionMenuOpen': [value: boolean]
+	edit: []
 }>()
 
 const getMessagesListScroller = inject('getMessagesListScroller', () => undefined)

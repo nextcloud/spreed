@@ -31,9 +31,9 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(event: 'abort-search'): void
-	(event: 'create-new-conversation', searchText: string): void
-	(event: 'create-and-join-conversation', item: TypeConversation | ParticipantSearchResult): void
+	abortSearch: []
+	createNewConversation: [searchText: string]
+	createAndJoinConversation: [item: TypeConversation | ParticipantSearchResult]
 }>()
 
 const isCirclesEnabled = loadState('spreed', 'circles_enabled')
@@ -249,13 +249,13 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 					:ref="`conversation-${item.data.object.token}`"
 					:item="item.data.object"
 					:compact="isCompact"
-					@click="emit('abort-search')" />
+					@click="emit('abortSearch')" />
 				<NcListItem
 					v-else-if="item.data.type === 'action'"
 					:name="searchText"
 					:compact="isCompact"
 					data-nav-id="conversation_create_new"
-					@click="emit('create-new-conversation', searchText)">
+					@click="emit('createNewConversation', searchText)">
 					<template #icon>
 						<IconChatPlusOutline :size="iconSize" />
 					</template>
@@ -268,7 +268,7 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 					:item="item.data.object"
 					is-search-result
 					:compact="isCompact"
-					@click="emit('abort-search')" />
+					@click="emit('abortSearch')" />
 				<NcAppNavigationCaption
 					v-else-if="item.data.type === 'caption'"
 					:name="item.data.name"
@@ -286,7 +286,7 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 					:data-nav-id="`user_${item.data.id}`"
 					:name="item.data.object.label"
 					:compact="isCompact"
-					@click="emit('create-and-join-conversation', item.data.object)">
+					@click="emit('createAndJoinConversation', item.data.object)">
 					<template #icon>
 						<!-- @vue-expect-error: incomplete props from v-bind -->
 						<AvatarWrapper
@@ -302,7 +302,7 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 					:data-nav-id="`group_${item.data.id}`"
 					:name="item.data.object.label"
 					:compact="isCompact"
-					@click="emit('create-and-join-conversation', item.data.object)">
+					@click="emit('createAndJoinConversation', item.data.object)">
 					<template #icon>
 						<ConversationIcon
 							:key="`group_${item.data.id}`"
@@ -318,7 +318,7 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 					:data-nav-id="`circle_${item.data.id}`"
 					:name="item.data.object.label"
 					:compact="isCompact"
-					@click="emit('create-and-join-conversation', item.data.object)">
+					@click="emit('createAndJoinConversation', item.data.object)">
 					<template #icon>
 						<ConversationIcon
 							:key="`circle_${item.data.id}`"
@@ -334,7 +334,7 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 					:data-nav-id="`federated_${item.data.id}`"
 					:name="item.data.object.label"
 					:compact="isCompact"
-					@click="emit('create-and-join-conversation', item.data.object)">
+					@click="emit('createAndJoinConversation', item.data.object)">
 					<template #icon>
 						<!-- @vue-expect-error: incomplete props from v-bind -->
 						<AvatarWrapper
