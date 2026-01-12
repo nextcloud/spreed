@@ -31,6 +31,7 @@ use OCP\Security\ISecureRandom;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
+use OCP\Share\IPartialShareProvider;
 use OCP\Share\IShare;
 use OCP\Share\IShareProvider;
 
@@ -44,7 +45,7 @@ use OCP\Share\IShareProvider;
  * Like in group shares, a recipient can move or delete a share without
  * modifying the share for the other users in the room.
  */
-class RoomShareProvider implements IShareProvider {
+class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 	use TTransactional;
 	// Special share type for user modified room shares
 	public const SHARE_TYPE_USERROOM = 11;
@@ -792,6 +793,33 @@ class RoomShareProvider implements IShareProvider {
 	 */
 	#[\Override]
 	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
+		return $this->_getSharedWith($userId, $limit, $offset, $node);
+	}
+
+	#[\Override]
+	public function getSharedWithByPath(
+		string $userId,
+		int $shareType,
+		string $path,
+		bool $forChildren,
+		int $limit,
+		int $offset,
+	): iterable {
+		return $this->_getSharedWith($userId, $limit, $offset, null, $path, $forChildren);
+	}
+
+	/**
+	 * Get received shared for the given user.
+	 * You can optionally provide a node or a path to filter the shares.
+	 */
+	private function _getSharedWith(
+		string $userId,
+		int $limit,
+		int $offset,
+		?Node $node = null,
+		?string $path = null,
+		?bool $forChildren = false,
+	): iterable {
 		$allRooms = $this->manager->getRoomTokensWithAttachmentsForUser($userId);
 
 		if (empty($allRooms)) {
@@ -822,6 +850,17 @@ class RoomShareProvider implements IShareProvider {
 			// Filter by node if provided
 			if ($node !== null) {
 				$qb->andWhere($qb->expr()->eq('s.file_source', $qb->createNamedParameter($node->getId())));
+			}
+
+			if ($path !== null) {
+				$qb->leftJoin('s', 'share', 'sc', $qb->expr()->eq('s.parent', 'sc.id'))
+					->andWhere($qb->expr()->eq('sc.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)));
+
+				if ($forChildren) {
+					$qb->andWhere($qb->expr()->like('s.file_target', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($path) . '_%')));
+				} else {
+					$qb->andWhere($qb->expr()->eq('s.file_target', $qb->createNamedParameter($path)));
+				}
 			}
 
 			$qb->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
