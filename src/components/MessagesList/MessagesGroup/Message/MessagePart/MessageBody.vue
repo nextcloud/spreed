@@ -37,9 +37,7 @@
 		<!-- Normal message body content -->
 		<div v-else
 			class="message-main__text markdown-message"
-			:class="{ 'message-highlighted': isNewPollMessage }"
-			@mouseover="handleMarkdownMouseOver"
-			@mouseleave="handleMarkdownMouseLeave">
+			:class="{ 'message-highlighted': isNewPollMessage }">
 			<!-- Replied parent message -->
 			<Quote v-if="message.parent" :message="message.parent" />
 
@@ -54,20 +52,6 @@
 				:reference-limit="1"
 				reference-interactive-opt-in
 				@interact:todo="handleInteraction" />
-
-			<!-- Additional controls -->
-			<NcButton v-if="containsCodeBlocks"
-				v-show="currentCodeBlock !== null"
-				class="message-copy-code"
-				type="tertiary"
-				:aria-label="t('spreed', 'Copy code block')"
-				:title="t('spreed', 'Copy code block')"
-				:style="{ top: copyButtonOffset }"
-				@click="copyCodeBlock">
-				<template #icon>
-					<ContentCopyIcon :size="16" />
-				</template>
-			</NcButton>
 		</div>
 
 		<!-- Additional message info-->
@@ -137,7 +121,6 @@ import IconBellOff from 'vue-material-design-icons/BellOff.vue'
 import CancelIcon from 'vue-material-design-icons/Cancel.vue'
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import CheckAllIcon from 'vue-material-design-icons/CheckAll.vue'
-import ContentCopyIcon from 'vue-material-design-icons/ContentCopy.vue'
 import ReloadIcon from 'vue-material-design-icons/Reload.vue'
 import Quote from '../../../../Quote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
@@ -173,7 +156,6 @@ export default {
 		CancelIcon,
 		CheckIcon,
 		CheckAllIcon,
-		ContentCopyIcon,
 		ReloadIcon,
 	},
 
@@ -225,8 +207,6 @@ export default {
 		return {
 			isEditing: false,
 			showReloadButton: false,
-			currentCodeBlock: null,
-			copyButtonOffset: 0,
 		}
 	},
 
@@ -352,10 +332,6 @@ export default {
 			}
 			return t('spreed', 'You cannot send messages to this conversation at the moment')
 		},
-
-		containsCodeBlocks() {
-			return this.message.message.includes('```')
-		},
 	},
 
 	watch: {
@@ -376,42 +352,6 @@ export default {
 
 	methods: {
 		t,
-
-		getCodeBlocks() {
-			if (!this.containsCodeBlocks) {
-				return null
-			}
-
-			return Array.from(this.$refs.messageMain?.querySelectorAll('pre'))
-		},
-
-		handleMarkdownMouseOver(event) {
-			const codeBlocks = this.getCodeBlocks()
-			if (!codeBlocks) {
-				return
-			}
-			const index = codeBlocks.findIndex((item) => item.contains(event.target))
-			if (index !== -1) {
-				this.currentCodeBlock = index
-				const el = codeBlocks[index]
-				this.copyButtonOffset = `${el.offsetTop}px`
-			}
-		},
-
-		handleMarkdownMouseLeave() {
-			this.currentCodeBlock = null
-			this.copyButtonOffset = 0
-		},
-
-		async copyCodeBlock() {
-			try {
-				const code = this.getCodeBlocks()[this.currentCodeBlock].textContent
-				await navigator.clipboard.writeText(code)
-				showSuccess(t('spreed', 'Code block copied to clipboard'))
-			} catch (error) {
-				showError(t('spreed', 'Code block could not be copied'))
-			}
-		},
 
 		handleRetry() {
 			if (this.sendingErrorCanRetry) {
@@ -525,14 +465,6 @@ export default {
 
 		&.markdown-message {
 			position: relative;
-
-			.message-copy-code {
-				position: absolute;
-				top: 0;
-				inset-inline-end: calc(4px + var(--default-clickable-area));
-				margin-top: 4px;
-				background-color: var(--color-background-dark);
-			}
 
 			:deep(.rich-text--wrapper) {
 				text-align: start;
