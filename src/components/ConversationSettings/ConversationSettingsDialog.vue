@@ -9,6 +9,8 @@
 		:name="t('spreed', 'Conversation settings')"
 		:open.sync="showSettings"
 		show-navigation
+		legacy
+		no-version
 		@update:open="handleUpdateOpen">
 		<NcAppSettingsSection id="basic-info"
 			:name="t('spreed', 'Basic Info')">
