@@ -117,6 +117,24 @@ async function setChatStyle(value: string) {
 }
 
 /**
+ * @param hasUserAccount
+ * @param value
+ */
+async function setLiveTranscriptionTargetLanguageId(hasUserAccount: boolean, value: string) {
+	if (hasUserAccount) {
+		return setUserConfig('spreed', 'live_transcription_target_language_id', value)
+	}
+
+	try {
+		BrowserStorage.setItem('liveTranscriptionTargetLanguageId', value)
+	} catch (exception) {
+		return false
+	}
+
+	return true
+}
+
+/**
  * Set user config using provisioning API
  *
  * @param appId - app id
@@ -134,6 +152,7 @@ export {
 	setBlurVirtualBackground,
 	setChatStyle,
 	setConversationsListStyle,
+	setLiveTranscriptionTargetLanguageId,
 	setPlaySounds,
 	setReadStatusPrivacy,
 	setSIPSettings,

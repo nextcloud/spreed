@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { getCurrentUser } from '@nextcloud/auth'
 import { loadState } from '@nextcloud/initial-state'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
@@ -14,6 +15,7 @@ import {
 	setBlurVirtualBackground,
 	setChatStyle,
 	setConversationsListStyle,
+	setLiveTranscriptionTargetLanguageId,
 	setReadStatusPrivacy,
 	setStartWithoutMedia,
 	setTypingStatusPrivacy,
@@ -24,6 +26,8 @@ type LIST_STYLE_OPTIONS = 'two-lines' | 'compact'
 type CHAT_STYLE_OPTIONS = 'split' | 'unified'
 
 const supportChatStyle = getTalkConfig('local', 'chat', 'style') !== undefined
+
+const hasUserAccount = Boolean(getCurrentUser()?.uid)
 
 /**
  * Store for shared items shown in RightSidebar
@@ -39,6 +43,11 @@ export const useSettingsStore = defineStore('settings', () => {
 	const blurVirtualBackgroundEnabled = ref<boolean | undefined>(getTalkConfig('local', 'call', 'blur-virtual-background'))
 	const conversationsListStyle = ref<LIST_STYLE_OPTIONS | undefined>(getTalkConfig('local', 'conversations', 'list-style'))
 	const chatStyle = ref<CHAT_STYLE_OPTIONS | undefined>(supportChatStyle ? (getTalkConfig('local', 'chat', 'style') ?? 'split') : 'unified')
+
+	const liveTranscriptionTargetLanguageId = ref<string | undefined>(getTalkConfig('local', 'call', 'live-transcription-target-language-id'))
+	if (!hasUserAccount && BrowserStorage.getItem('liveTranscriptionTargetLanguageId') !== null) {
+		liveTranscriptionTargetLanguageId.value = BrowserStorage.getItem('liveTranscriptionTargetLanguageId') as string
+	}
 
 	const attachmentFolder = ref<string>(loadState('spreed', 'attachment_folder', ''))
 	const attachmentFolderFreeSpace = ref<number>(loadState('spreed', 'attachment_folder_free_space', 0))
@@ -153,6 +162,16 @@ export const useSettingsStore = defineStore('settings', () => {
 		chatStyle.value = value
 	}
 
+	/**
+	 * Update the live transcription target language id setting for the user
+	 *
+	 * @param value - new live transcription target language id
+	 */
+	async function updateLiveTranscriptionTargetLanguageId(value: string) {
+		await setLiveTranscriptionTargetLanguageId(hasUserAccount, value)
+		liveTranscriptionTargetLanguageId.value = value
+	}
+
 	return {
 		readStatusPrivacy,
 		typingStatusPrivacy,
@@ -166,6 +185,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		attachmentFolder,
 		attachmentFolderFreeSpace,
 		chatStyle,
+		liveTranscriptionTargetLanguageId,
 
 		updateReadStatusPrivacy,
 		updateTypingStatusPrivacy,
@@ -178,5 +198,6 @@ export const useSettingsStore = defineStore('settings', () => {
 		updateConversationsListStyle,
 		updateAttachmentFolder,
 		updateChatStyle,
+		updateLiveTranscriptionTargetLanguageId,
 	}
 })
