@@ -71,8 +71,8 @@ function onClosing(result?: unknown) {
 		:container="container"
 		size="normal"
 		:buttons="[
-			{ label: t('spreed', 'Dismiss'), variant: 'tertiary', callback: () => undefined },
-			{ label: t('spreed', 'Done'), variant: 'primary', callback: () => true },
+			{ label: t('spreed', 'Cancel'), variant: 'tertiary', callback: () => undefined },
+			{ label: t('spreed', 'Save'), variant: 'primary', callback: () => true },
 		]"
 		close-on-click-outside
 		@closing="onClosing">
