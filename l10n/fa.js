@@ -1532,7 +1532,6 @@ OC.L10N.register(
     "Set reminder for tomorrow" : "Set reminder for tomorrow",
     "Set reminder for this weekend" : "Set reminder for this weekend",
     "Set reminder for next week" : "Set reminder for next week",
-    "Copy code block" : "کپی کردن بلوک کد",
     "Today" : "Today",
     "Yesterday" : "دیروز",
     "_%n day ago_::_%n days ago_" : ["%n روز پیش","%n روز پیش"],

@@ -512,7 +512,6 @@
     "Set reminder for tomorrow" : "Configurar recordatorio para mañana",
     "Set reminder for this weekend" : "Configurar recordatorio para este fin de semana",
     "Set reminder for next week" : "Configurar recordatorio para la próxima semana",
-    "Copy code block" : "Copiar bloque de código",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
