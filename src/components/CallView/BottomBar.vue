@@ -88,11 +88,26 @@ const liveTranscriptionButtonLabel = computed(() => {
 })
 
 const originalLanguageButtonLabel = computed(() => {
-	return t('spreed', 'Original language')
+	const languageId = conversation.value.liveTranscriptionLanguageId || 'en'
+
+	const languageName = liveTranscriptionStore.getLiveTranscriptionLanguages()?.[languageId]?.name ?? languageId
+
+	return t('spreed', 'Original language: {languageName}', {
+		languageName,
+	})
 })
 
 const targetLanguageButtonLabel = computed(() => {
-	return t('spreed', 'Translated language')
+	const languageId = targetLanguageId.value
+	if (!languageId) {
+		return t('spreed', 'Translated language')
+	}
+
+	const languageName = liveTranscriptionStore.getLiveTranscriptionTargetLanguages()?.[languageId]?.name ?? languageId
+
+	return t('spreed', 'Translated language: {languageName}', {
+		languageName,
+	})
 })
 
 const targetLanguageId = computed(() => {
@@ -203,9 +218,10 @@ onUnmounted(() => {
 })
 
 /**
- * Load live transcription translation languages.
+ * Load live transcription and translation languages.
  */
 function handleLiveTranscriptionLanguageSelectorOpen() {
+	liveTranscriptionStore.loadLiveTranscriptionLanguages()
 	liveTranscriptionStore.loadLiveTranscriptionTranslationLanguages()
 }
 
