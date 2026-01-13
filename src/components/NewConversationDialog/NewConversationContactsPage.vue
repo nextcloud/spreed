@@ -83,7 +83,7 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
 import { SHARE } from '../../constants.ts'
 import { autocompleteQuery } from '../../services/coreService.ts'
-import CancelableRequest from '../../utils/cancelableRequest.js'
+import CancelableRequest from '../../utils/CancelableRequest.ts'
 
 export default {
 	name: 'NewConversationContactsPage',

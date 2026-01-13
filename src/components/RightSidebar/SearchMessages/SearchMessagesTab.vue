@@ -37,7 +37,7 @@ import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { ATTENDEE } from '../../../constants.ts'
 import { searchMessages } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
-import CancelableRequest from '../../../utils/cancelableRequest.js'
+import CancelableRequest from '../../../utils/CancelableRequest.ts'
 
 const props = defineProps<{
 	isActive: boolean

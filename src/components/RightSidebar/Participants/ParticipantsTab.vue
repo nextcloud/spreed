@@ -103,7 +103,7 @@ import { autocompleteQuery } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { addParticipant } from '../../../services/participantsService.js'
 import { useSidebarStore } from '../../../stores/sidebar.ts'
-import CancelableRequest from '../../../utils/cancelableRequest.js'
+import CancelableRequest from '../../../utils/CancelableRequest.ts'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
 

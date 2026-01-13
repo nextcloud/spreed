@@ -38,7 +38,7 @@ import { useGuestNameStore } from '../stores/guestName.ts'
 import pinia from '../stores/pinia.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useTokenStore } from '../stores/token.ts'
-import CancelableRequest from '../utils/cancelableRequest.js'
+import CancelableRequest from '../utils/CancelableRequest.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
 import { messagePleaseTryToReload } from '../utils/talkDesktopUtils.ts'
 
