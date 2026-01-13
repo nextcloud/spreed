@@ -196,14 +196,18 @@ async function enableLiveTranscription() {
 	} catch (exception) {
 		showError(t('spreed', 'Error when trying to load the available live transcription languages'))
 
-		return
+		return false
 	}
 
 	try {
 		await callViewStore.enableLiveTranscription(token.value)
 	} catch (error) {
 		showError(t('spreed', 'Failed to enable live transcription'))
+
+		return false
 	}
+
+	return true
 }
 
 /**
