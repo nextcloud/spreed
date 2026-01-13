@@ -298,6 +298,12 @@ export const useChatStore = defineStore('chat', () => {
 	function processChatBlocks(token: string, messages: ChatMessage[], options?: ProcessChatBlocksOptions): void {
 		const threadIdSetsToUpdate: IdMap<Set<number>> = {}
 		const newMessageIdsSet = messages.reduce((acc, message) => {
+			if (message.token !== token) {
+				// FIXME Unresolved issue: https://github.com/nextcloud/spreed/issues/15668#issuecomment-3743283784
+				console.error('processChatBlocks: message token "%s" mismatch called token "%s" \n If you see this, please report issue to developers on Github', message.token, token)
+				return acc
+			}
+
 			acc.add(message.id)
 			if (message.isThread && message.threadId) {
 				if (!threadIdSetsToUpdate[message.threadId]) {
