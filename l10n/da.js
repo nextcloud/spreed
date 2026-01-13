@@ -889,7 +889,6 @@ OC.L10N.register(
     "Set reminder for tomorrow" : "Sæt påmindelse for i morgen",
     "Set reminder for this weekend" : "Sæt påmindelse for denne weekend",
     "Set reminder for next week" : "Sæt påmindelse for næste weekend",
-    "Copy code block" : "Kopiér kodeblok",
     "Today" : "I dag",
     "Yesterday" : "I går",
     "_%n day ago_::_%n days ago_" : ["%n dag siden","%n dage siden"],

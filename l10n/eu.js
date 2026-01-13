@@ -1605,7 +1605,6 @@ OC.L10N.register(
     "Set reminder for tomorrow" : "Ezarri gogorarazpena biharko",
     "Set reminder for this weekend" : "Ezarri gogorarazpena asteburu honetarako",
     "Set reminder for next week" : "Ezarri gogorarazpena hurrengo asterako",
-    "Copy code block" : "Kopiatu kode-blokea",
     "Today" : "Gaur",
     "Yesterday" : "Atzo",
     "A week ago" : "Duela aste bat",

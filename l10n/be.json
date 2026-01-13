@@ -1727,9 +1727,6 @@
     "Set reminder for tomorrow" : "Задаць напамін на заўтра",
     "Set reminder for this weekend" : "Задаць напамін на гэты ўік-энд",
     "Set reminder for next week" : "Задаць напамін на наступны тыдзень",
-    "Code block copied to clipboard" : "Блок кода скапіяваны ў буфер абмену",
-    "Code block could not be copied" : "Не ўдалося скапіяваць блок кода",
-    "Copy code block" : "Скапіяваць блок кода",
     "Today" : "Сёння",
     "Yesterday" : "Учора",
     "A week ago" : "Тыдзень таму",
@@ -1750,7 +1747,6 @@
     "Keyboard shortcuts" : "Спалучэнні клавіш",
     "Speed up your Talk experience with these quick shortcuts." : "Паскорце працу ў Talk з дапамогай спалучэнняў клавіш.",
     "Space bar" : "Прабел",
-    "Talk version: {version}" : "Версія Talk: {version}",
     "Blur background" : "Размытасць фону",
     "Screensharing extension is required to share your screen." : "Для абагульвання экрана патрабуецца пашырэнне для паказу экрана.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Для паказу экрана выкарыстоўвайце іншы браўзер, напрыклад Firefox або Chrome."
