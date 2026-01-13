@@ -64,6 +64,8 @@ export const useLiveTranscriptionStore = defineStore('liveTranscription', {
 				languagesPromise = null
 				this.languages = null
 
+				console.error('Error while getting available live transcription languages', exception)
+
 				throw exception
 			}
 		},
@@ -99,6 +101,8 @@ export const useLiveTranscriptionStore = defineStore('liveTranscription', {
 			} catch (exception) {
 				translationLanguagesPromise = null
 				this.translationLanguages = null
+
+				console.error('Error while getting available live transcription translation languages', exception)
 
 				throw exception
 			}
