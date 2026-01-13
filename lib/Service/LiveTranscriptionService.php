@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use OCA\AppAPI\PublicFunctions;
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Exceptions\LiveTranscriptionAppAPIException;
 use OCA\Talk\Exceptions\LiveTranscriptionAppNotEnabledException;
 use OCA\Talk\Exceptions\LiveTranscriptionAppResponseException;
@@ -17,6 +18,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\App\IAppManager;
 use OCP\IUserManager;
+use OCP\L10N\IFactory;
 use OCP\Server;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -28,6 +30,7 @@ class LiveTranscriptionService {
 		private ?string $userId,
 		private IAppManager $appManager,
 		private IUserManager $userManager,
+		private IFactory $l10nFactory,
 		private RoomService $roomService,
 		protected LoggerInterface $logger,
 	) {
@@ -248,7 +251,36 @@ class LiveTranscriptionService {
 		unset($translationLanguages['origin_languages']);
 		unset($translationLanguages['target_languages']);
 
+		$translationLanguages['defaultTargetLanguageId'] = $this->getDefaultTargetLanguageId($translationLanguages['targetLanguages']);
+
 		return $translationLanguages;
+	}
+
+	private function getDefaultTargetLanguageId(array $targetLanguages): string {
+		if (count($targetLanguages) === 0) {
+			return '';
+		}
+
+		$defaultTargetLanguageId = $this->l10nFactory->findLanguage(Application::APP_ID);
+
+		if (array_key_exists($defaultTargetLanguageId, $targetLanguages)) {
+			return $defaultTargetLanguageId;
+		}
+
+		if (strpos($defaultTargetLanguageId, '_') !== false) {
+			$defaultTargetLanguageId = substr($defaultTargetLanguageId, 0, strpos($defaultTargetLanguageId, '_'));
+
+			if (array_key_exists($defaultTargetLanguageId, $targetLanguages)) {
+				return $defaultTargetLanguageId;
+			}
+		}
+
+		$defaultTargetLanguageId = 'en';
+		if (array_key_exists($defaultTargetLanguageId, $targetLanguages)) {
+			return $defaultTargetLanguageId;
+		}
+
+		return array_key_first($targetLanguages);
 	}
 
 	/**

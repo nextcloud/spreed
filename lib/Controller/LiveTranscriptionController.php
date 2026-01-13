@@ -136,7 +136,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	 * The origin language list can contain "detect_language" as a special value
 	 * indicating auto-detection support.
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{originLanguages: array<string, TalkLiveTranscriptionLanguage>, targetLanguages: array<string, TalkLiveTranscriptionLanguage>}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'app'|'translations'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{originLanguages: array<string, TalkLiveTranscriptionLanguage>, targetLanguages: array<string, TalkLiveTranscriptionLanguage>, defaultTargetLanguageId: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'app'|'translations'}, array{}>
 	 *
 	 * 200: Available languages got successfully
 	 * 400: The external app "live_transcription" is not available or

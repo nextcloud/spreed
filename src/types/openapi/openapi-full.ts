@@ -7241,6 +7241,7 @@ export interface operations {
                                 targetLanguages: {
                                     [key: string]: components["schemas"]["LiveTranscriptionLanguage"];
                                 };
+                                defaultTargetLanguageId: string;
                             };
                         };
                     };

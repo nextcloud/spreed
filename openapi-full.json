@@ -12469,7 +12469,8 @@
                                                     "type": "object",
                                                     "required": [
                                                         "originLanguages",
-                                                        "targetLanguages"
+                                                        "targetLanguages",
+                                                        "defaultTargetLanguageId"
                                                     ],
                                                     "properties": {
                                                         "originLanguages": {
@@ -12483,6 +12484,9 @@
                                                             "additionalProperties": {
                                                                 "$ref": "#/components/schemas/LiveTranscriptionLanguage"
                                                             }
+                                                        },
+                                                        "defaultTargetLanguageId": {
+                                                            "type": "string"
                                                         }
                                                     }
                                                 }
