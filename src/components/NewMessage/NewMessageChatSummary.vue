@@ -138,7 +138,7 @@ function checkScheduledTasks(token: string) {
 			// Task is already finished, checking next one
 			continue
 		}
-		const { request, cancel } = CancelableRequest(getTaskById) as TaskProcessingCancelableRequest
+		const { request, cancel } = CancelableRequest(getTaskById)
 		cancelGetTask[token] = cancel
 
 		getTaskInterval = setInterval(() => {

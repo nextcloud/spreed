@@ -181,7 +181,7 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 		cancelSearchFn()
 		resetNavigation()
 
-		const { request, cancel } = CancelableRequest(searchMessages) as SearchMessageCancelableRequest
+		const { request, cancel } = CancelableRequest(searchMessages)
 		cancelSearchFn = cancel
 
 		if (isNew) {

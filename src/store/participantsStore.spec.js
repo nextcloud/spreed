@@ -548,8 +548,8 @@ describe('participantsStore', () => {
 
 			// Assert
 			expect(fetchParticipants).toHaveBeenCalledTimes(2)
-			expect(fetchParticipants).toHaveBeenNthCalledWith(1, TOKEN, { cancelToken: { promise: expect.anything(), reason: expect.anything() } })
-			expect(fetchParticipants).toHaveBeenNthCalledWith(2, TOKEN, { cancelToken: { promise: expect.anything() } })
+			expect(fetchParticipants).toHaveBeenNthCalledWith(1, TOKEN, { signal: expect.anything() })
+			expect(fetchParticipants).toHaveBeenNthCalledWith(2, TOKEN, { signal: expect.anything() })
 		})
 	})
 
