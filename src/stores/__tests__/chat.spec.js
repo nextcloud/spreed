@@ -59,16 +59,16 @@ describe('chatStore', () => {
 	 */
 
 	const mockMessages = {
-		101: { id: 101, threadId: 101, isThread: true, message: 'Hello' },
-		102: { id: 102, threadId: 102, isThread: false, message: 'World' },
-		103: { id: 103, threadId: 101, isThread: true, message: '!' },
-		104: { id: 104, threadId: 104, isThread: true, message: 'Lorem ipsum' },
-		105: { id: 105, threadId: 105, isThread: false, message: 'dolor sit amet' },
-		106: { id: 106, threadId: 101, isThread: true, message: 'consectetur adipiscing elit' },
-		107: { id: 107, threadId: 104, isThread: true, message: 'Vestibulum quis' },
-		108: { id: 108, threadId: 108, isThread: false, message: 'sed diam nonumy' },
-		109: { id: 109, threadId: 104, isThread: true, message: 'eirmod tempor invidunt' },
-		110: { id: 110, threadId: 110, isThread: false, message: 'ut labore et dolore' },
+		101: { token: TOKEN, id: 101, threadId: 101, isThread: true, message: 'Hello' },
+		102: { token: TOKEN, id: 102, threadId: 102, isThread: false, message: 'World' },
+		103: { token: TOKEN, id: 103, threadId: 101, isThread: true, message: '!' },
+		104: { token: TOKEN, id: 104, threadId: 104, isThread: true, message: 'Lorem ipsum' },
+		105: { token: TOKEN, id: 105, threadId: 105, isThread: false, message: 'dolor sit amet' },
+		106: { token: TOKEN, id: 106, threadId: 101, isThread: true, message: 'consectetur adipiscing elit' },
+		107: { token: TOKEN, id: 107, threadId: 104, isThread: true, message: 'Vestibulum quis' },
+		108: { token: TOKEN, id: 108, threadId: 108, isThread: false, message: 'sed diam nonumy' },
+		109: { token: TOKEN, id: 109, threadId: 104, isThread: true, message: 'eirmod tempor invidunt' },
+		110: { token: TOKEN, id: 110, threadId: 110, isThread: false, message: 'ut labore et dolore' },
 	}
 
 	const chatBlockA = [mockMessages[109], mockMessages[108]]
@@ -150,8 +150,8 @@ describe('chatStore', () => {
 
 		it('returns an empty array if no messages or blocks present', () => {
 			// Arrange
-			vuexStore.dispatch('processMessage', { token: 'token1', message: mockMessages[109] })
-			chatStore.processChatBlocks('token2', [mockMessages[110]])
+			vuexStore.dispatch('processMessage', { token: 'token1', message: { token: 'token1', id: 109, threadId: 104, isThread: true, message: 'eirmod tempor invidunt' } })
+			chatStore.processChatBlocks('token2', [{ token: 'token2', id: 110, threadId: 110, isThread: false, message: 'ut labore et dolore' }])
 
 			// Assert
 			expect(chatStore.getMessagesList('token1')).toEqual([]) // No chat blocks
