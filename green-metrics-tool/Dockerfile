@@ -65,7 +65,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
  && rm composer-setup.php
 
 #COPY nextcloud/ ./
-RUN git clone --single-branch --depth=1 --branch main --recurse-submodules "$NEXTCLOUD_REPO" /usr/src/nextcloud
+RUN git clone --single-branch --depth=1 --branch master --recurse-submodules "$NEXTCLOUD_REPO" /usr/src/nextcloud
 # RUN set -eux; \
 #     git init /usr/src/nextcloud; \
 #     cd /usr/src/nextcloud; \
