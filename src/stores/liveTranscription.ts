@@ -22,9 +22,13 @@ type LiveTranscriptionTranslationLanguages = {
 	defaultTargetLanguageId: string
 }
 type State = {
-	languages: LiveTranscriptionLanguageMap | liveTranscriptionGetAvailableLanguagesResponse | null
-	translationLanguages: LiveTranscriptionTranslationLanguages | liveTranscriptionGetAvailableTranslationLanguagesResponse | null
+	languages: LiveTranscriptionLanguageMap | null
+	translationLanguages: LiveTranscriptionTranslationLanguages | null
 }
+
+let languagesPromise: liveTranscriptionGetAvailableLanguagesResponse | null = null
+let translationLanguagesPromise: liveTranscriptionGetAvailableTranslationLanguagesResponse | null = null
+
 export const useLiveTranscriptionStore = defineStore('liveTranscription', {
 	state: (): State => ({
 		languages: null,
@@ -33,11 +37,7 @@ export const useLiveTranscriptionStore = defineStore('liveTranscription', {
 
 	actions: {
 		getLiveTranscriptionLanguages() {
-			if (!this.languages || this.languages instanceof Promise) {
-				return undefined
-			}
-
-			return this.languages as LiveTranscriptionLanguageMap
+			return this.languages
 		},
 
 		/**
@@ -46,19 +46,22 @@ export const useLiveTranscriptionStore = defineStore('liveTranscription', {
 		 */
 		async loadLiveTranscriptionLanguages() {
 			if (this.languages) {
-				if (this.languages instanceof Promise) {
-					await this.languages
-				}
+				return
+			}
+
+			if (languagesPromise) {
+				await languagesPromise
 
 				return
 			}
 
-			this.languages = getLiveTranscriptionLanguages()
+			languagesPromise = getLiveTranscriptionLanguages()
 
 			try {
-				const response = await this.languages
+				const response = await languagesPromise
 				this.languages = response.data.ocs.data
 			} catch (exception) {
+				languagesPromise = null
 				this.languages = null
 
 				throw exception
@@ -66,19 +69,11 @@ export const useLiveTranscriptionStore = defineStore('liveTranscription', {
 		},
 
 		getLiveTranscriptionTargetLanguages() {
-			if (!this.translationLanguages || this.translationLanguages instanceof Promise) {
-				return undefined
-			}
-
-			return (this.translationLanguages as LiveTranscriptionTranslationLanguages).targetLanguages
+			return this.translationLanguages?.targetLanguages
 		},
 
 		getLiveTranscriptionDefaultTargetLanguageId() {
-			if (!this.translationLanguages || this.translationLanguages instanceof Promise) {
-				return undefined
-			}
-
-			return (this.translationLanguages as LiveTranscriptionTranslationLanguages).defaultTargetLanguageId
+			return this.translationLanguages?.defaultTargetLanguageId
 		},
 
 		/**
@@ -87,19 +82,22 @@ export const useLiveTranscriptionStore = defineStore('liveTranscription', {
 		 */
 		async loadLiveTranscriptionTranslationLanguages() {
 			if (this.translationLanguages) {
-				if (this.translationLanguages instanceof Promise) {
-					await this.translationLanguages
-				}
+				return
+			}
+
+			if (translationLanguagesPromise) {
+				await translationLanguagesPromise
 
 				return
 			}
 
-			this.translationLanguages = getLiveTranscriptionTranslationLanguages()
+			translationLanguagesPromise = getLiveTranscriptionTranslationLanguages()
 
 			try {
-				const response = await this.translationLanguages
+				const response = await translationLanguagesPromise
 				this.translationLanguages = response.data.ocs.data
 			} catch (exception) {
+				translationLanguagesPromise = null
 				this.translationLanguages = null
 
 				throw exception
