@@ -152,6 +152,7 @@ export const mockedCapabilities: Capabilities = {
 				'end-to-end-encryption': false,
 				'live-transcription': false,
 				'live-translation': false,
+				'live-transcription-target-language-id': '',
 			},
 			chat: {
 				'max-length': 32000,

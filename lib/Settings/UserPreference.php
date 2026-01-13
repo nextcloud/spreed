@@ -24,4 +24,6 @@ class UserPreference {
 
 	public const CHAT_STYLE_SPLIT = 'split';
 	public const CHAT_STYLE_UNIFIED = 'unified';
+
+	public const LIVE_TRANSCRIPTION_TARGET_LANGUAGE_ID = 'live_transcription_target_language_id';
 }

@@ -85,6 +85,13 @@ class BeforePreferenceSetEventListener implements IEventListener {
 			return $value === UserPreference::CHAT_STYLE_SPLIT || $value === UserPreference::CHAT_STYLE_UNIFIED;
 		}
 
+		if ($key === UserPreference::LIVE_TRANSCRIPTION_TARGET_LANGUAGE_ID) {
+			// Accept any value, as it will be used for both local and federated
+			// instances and therefore the valid values might change depending
+			// on the instance.
+			return true;
+		}
+
 		return false;
 	}
 

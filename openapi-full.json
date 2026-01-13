@@ -291,7 +291,8 @@
                                     "blur-virtual-background",
                                     "end-to-end-encryption",
                                     "live-transcription",
-                                    "live-translation"
+                                    "live-translation",
+                                    "live-transcription-target-language-id"
                                 ],
                                 "properties": {
                                     "enabled": {
@@ -357,6 +358,9 @@
                                     },
                                     "live-translation": {
                                         "type": "boolean"
+                                    },
+                                    "live-transcription-target-language-id": {
+                                        "type": "string"
                                     }
                                 }
                             },

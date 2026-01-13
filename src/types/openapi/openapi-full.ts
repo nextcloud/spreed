@@ -2474,6 +2474,7 @@ export type components = {
                     "end-to-end-encryption": boolean;
                     "live-transcription": boolean;
                     "live-translation": boolean;
+                    "live-transcription-target-language-id": string;
                 };
                 chat: {
                     /** Format: int64 */

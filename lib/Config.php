@@ -242,6 +242,15 @@ class Config {
 		);
 	}
 
+	public function getLiveTranscriptionTargetLanguageId(?string $userId = null): string {
+		return $this->config->getUserValue(
+			$userId,
+			'spreed',
+			UserPreference::LIVE_TRANSCRIPTION_TARGET_LANGUAGE_ID,
+			''
+		);
+	}
+
 	public function isDisabledForUser(IUser $user): bool {
 		$allowedGroups = $this->getAllowedTalkGroupIds();
 		if (empty($allowedGroups)) {

@@ -171,6 +171,7 @@ class Capabilities implements IPublicCapability {
 			'can-upload-background',
 			'start-without-media',
 			'blur-virtual-background',
+			'live-transcription-target-language-id',
 		],
 		'chat' => [
 			'read-privacy',
@@ -368,6 +369,12 @@ class Capabilities implements IPublicCapability {
 
 		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_EXTERNAL) {
 			$capabilities['features'][] = 'call-end-to-end-encryption';
+		}
+
+		if ($user instanceof IUser) {
+			$capabilities['config']['call']['live-transcription-target-language-id'] = $this->talkConfig->getLiveTranscriptionTargetLanguageId($user->getUID());
+		} else {
+			$capabilities['config']['call']['live-transcription-target-language-id'] = $this->talkConfig->getLiveTranscriptionTargetLanguageId();
 		}
 
 		return [
