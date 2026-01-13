@@ -1254,6 +1254,10 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			return [];
 		}
 
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			return array_map(fn (string $userId): IUser => new LazyUser($userId, $this->userManager), json_decode($room->getName(), true));
+		}
+
 		// Get all user ids for the room
 		$userIds = $this->participantService->getParticipantUserIds($room);
 		return array_map(fn (string $userId): IUser => new LazyUser($userId, $this->userManager), $userIds);
