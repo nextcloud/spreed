@@ -227,6 +227,9 @@ function handleLiveTranscriptionLanguageSelectorOpen() {
 
 /**
  * Toggle live transcriptions.
+ *
+ * Live translations are enabled again if needed when live transcriptions are
+ * toggled on.
  */
 async function toggleLiveTranscription() {
 	if (isLiveTranscriptionLoading.value) {
@@ -237,6 +240,10 @@ async function toggleLiveTranscription() {
 
 	if (!callViewStore.isLiveTranscriptionEnabled) {
 		await enableLiveTranscription()
+
+		if (languageType.value === LanguageType.Target) {
+			await enableLiveTranslation()
+		}
 	} else {
 		await disableLiveTranscription()
 	}
@@ -326,8 +333,6 @@ async function disableLiveTranscription() {
 		// relevant for the user, as the transcript will be no longer visible in
 		// the UI anyway, so no error is shown in that case.
 	}
-
-	languageType.value = LanguageType.Original
 }
 
 /**
