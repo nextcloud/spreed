@@ -605,7 +605,6 @@ OC.L10N.register(
     "Set reminder for tomorrow" : "Setja áminningu fyrir morgundaginn",
     "Set reminder for this weekend" : "Setja áminningu fyrir þessa helgi",
     "Set reminder for next week" : "Setja áminningu fyrir í næstu viku",
-    "Copy code block" : "Afrita kóðablokk",
     "Today" : "Í dag",
     "Yesterday" : "Í gær",
     "_%n day ago_::_%n days ago_" : ["fyrir %n degi síðan","fyrir %n dögum síðan"],
