@@ -11,6 +11,7 @@ import BrowserStorage from '../services/BrowserStorage.js'
 import {
 	disableLiveTranscription,
 	enableLiveTranscription,
+	setLiveTranscriptionTargetLanguage,
 } from '../services/liveTranscriptionService.ts'
 
 type State = {
@@ -183,6 +184,21 @@ export const useCallViewStore = defineStore('callView', {
 				await enableLiveTranscription(token)
 
 				this.isLiveTranscriptionEnabled = true
+			} catch (error) {
+				console.error(error)
+
+				throw error
+			}
+		},
+
+		/**
+		 * @param token
+		 * @param targetLanguageId
+		 * @throws error if live translation target language could not be set.
+		 */
+		async setLiveTranscriptionTargetLanguage(token: string, targetLanguageId: string | null) {
+			try {
+				await setLiveTranscriptionTargetLanguage(token, targetLanguageId)
 			} catch (error) {
 				console.error(error)
 
