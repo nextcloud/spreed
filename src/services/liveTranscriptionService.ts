@@ -7,6 +7,7 @@ import type {
 	liveTranscriptionDisableResponse,
 	liveTranscriptionEnableResponse,
 	liveTranscriptionGetAvailableLanguagesResponse,
+	liveTranscriptionGetAvailableTranslationLanguagesResponse,
 	liveTranscriptionSetLanguageResponse,
 } from '../types/index.ts'
 
@@ -39,6 +40,13 @@ async function getLiveTranscriptionLanguages(): liveTranscriptionGetAvailableLan
 }
 
 /**
+ * Get available translation languages for live transcriptions
+ */
+async function getLiveTranscriptionTranslationLanguages(): liveTranscriptionGetAvailableTranslationLanguagesResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/live-transcription/translation-languages'))
+}
+
+/**
  * Set language for live transcription
  *
  * @param token conversation token
@@ -54,5 +62,6 @@ export {
 	disableLiveTranscription,
 	enableLiveTranscription,
 	getLiveTranscriptionLanguages,
+	getLiveTranscriptionTranslationLanguages,
 	setLiveTranscriptionLanguage,
 }
