@@ -458,6 +458,12 @@ const actions = {
 	 * @param {boolean} [payload.fromRealtime] whether the message comes from realtime (polling or signaling)
 	 */
 	processMessage(context, { token, message, fromRealtime = false }) {
+		if (message.token !== token) {
+			// FIXME Unresolved issue: https://github.com/nextcloud/spreed/issues/15668#issuecomment-3743283784
+			console.error('processMessage: message token "%s" mismatch called token "%s" \n If you see this, please report issue to developers on Github', message.token, token)
+			return
+		}
+
 		const sharedItemsStore = useSharedItemsStore()
 		const actorStore = useActorStore()
 		const chatExtrasStore = useChatExtrasStore()
