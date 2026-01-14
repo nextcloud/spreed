@@ -713,7 +713,7 @@ class RoomShareProvider implements IShareProvider {
 	private function resolveSharesForRecipient(array $shareMap, string $userId, bool $allRoomShares = false): array {
 		$qb = $this->dbConnection->getQueryBuilder();
 
-		$query = $qb->select('*')
+		$query = $qb->select('parent', 'permissions', 'file_target')
 			->from('share')
 
 			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
