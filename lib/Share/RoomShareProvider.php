@@ -859,7 +859,8 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 			if ($path !== null) {
 				$qb->leftJoin('s', 'share', 'sc', $qb->expr()->eq('s.id', 'sc.parent'))
-					->andWhere($qb->expr()->eq('sc.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)));
+					->andWhere($qb->expr()->eq('sc.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
+					->andWhere($qb->expr()->eq('sc.share_with', $qb->createNamedParameter($userId)));
 
 				if ($forChildren) {
 					$qb->andWhere($qb->expr()->like('sc.file_target', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($path) . '_%')));
