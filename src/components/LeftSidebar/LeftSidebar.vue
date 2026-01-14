@@ -299,6 +299,7 @@
 </template>
 
 <script>
+import { isCancel } from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
@@ -363,7 +364,7 @@ import { useFederationStore } from '../../stores/federation.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import { useTokenStore } from '../../stores/token.ts'
-import CancelableRequest from '../../utils/cancelableRequest.js'
+import CancelableRequest from '../../utils/CancelableRequest.ts'
 import { filterConversation, hasCall, hasUnreadMentions, shouldIncludeArchived } from '../../utils/conversation.ts'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
@@ -785,7 +786,7 @@ export default {
 
 				this.contactsLoading = false
 			} catch (exception) {
-				if (CancelableRequest.isCancel(exception)) {
+				if (isCancel(exception)) {
 					return
 				}
 				console.error('Error searching for possible conversations', exception)
@@ -806,7 +807,7 @@ export default {
 				this.searchResultsListedConversations = response.data.ocs.data
 				this.listedConversationsLoading = false
 			} catch (exception) {
-				if (CancelableRequest.isCancel(exception)) {
+				if (isCancel(exception)) {
 					return
 				}
 				console.error('Error searching for open conversations', exception)

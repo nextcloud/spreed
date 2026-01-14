@@ -47,7 +47,7 @@ import {
 import { useActorStore } from './stores/actor.ts'
 import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
-import CancelableRequest from './utils/cancelableRequest.js'
+import CancelableRequest from './utils/CancelableRequest.ts'
 import { signalingKill } from './utils/webrtc/index.js'
 
 export default {

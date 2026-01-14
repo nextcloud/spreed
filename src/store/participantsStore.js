@@ -1,10 +1,12 @@
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
 /**
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { isCancel } from '@nextcloud/axios'
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
@@ -38,7 +40,7 @@ import { useGuestNameStore } from '../stores/guestName.ts'
 import pinia from '../stores/pinia.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useTokenStore } from '../stores/token.ts'
-import CancelableRequest from '../utils/cancelableRequest.js'
+import CancelableRequest from '../utils/CancelableRequest.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
 import { messagePleaseTryToReload } from '../utils/talkDesktopUtils.ts'
 
@@ -735,7 +737,7 @@ const actions = {
 		} catch (exception) {
 			if (exception?.response?.status === 403) {
 				context.dispatch('fetchConversation', { token })
-			} else if (!CancelableRequest.isCancel(exception)) {
+			} else if (!isCancel(exception)) {
 				console.error(exception)
 				showError(t('spreed', 'An error occurred while fetching the participants'))
 			}

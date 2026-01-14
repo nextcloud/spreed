@@ -77,11 +77,12 @@
 </template>
 
 <script>
+import { isCancel } from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
-import { ref, toRefs, useId } from 'vue'
+import { ref, useId } from 'vue'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
@@ -103,7 +104,7 @@ import { autocompleteQuery } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { addParticipant } from '../../../services/participantsService.js'
 import { useSidebarStore } from '../../../stores/sidebar.ts'
-import CancelableRequest from '../../../utils/cancelableRequest.js'
+import CancelableRequest from '../../../utils/CancelableRequest.ts'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
 
@@ -296,7 +297,7 @@ export default {
 					this.initializeNavigation()
 				})
 			} catch (exception) {
-				if (CancelableRequest.isCancel(exception)) {
+				if (isCancel(exception)) {
 					return
 				}
 				console.error(exception)

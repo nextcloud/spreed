@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import axios from '@nextcloud/axios'
+import axios, { isCancel } from '@nextcloud/axios'
 import {
 	showError,
 	showWarning,
@@ -21,7 +21,7 @@ import { pullSignalingMessages } from '../services/signalingService.js'
 import store from '../store/index.js'
 import { useActorStore } from '../stores/actor.ts'
 import pinia from '../stores/pinia.ts'
-import CancelableRequest from './cancelableRequest.js'
+import CancelableRequest from './CancelableRequest.ts'
 import Encryption from './e2ee/encryption.js'
 import { convertToUnix } from './formattedTime.ts'
 import { messagePleaseTryToReload } from './talkDesktopUtils.ts'
@@ -542,7 +542,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 		.catch(function(error) {
 			if (token !== this.currentRoomToken) {
 				// User navigated away in the meantime. Ignore
-			} else if (axios.isCancel(error)) {
+			} else if (isCancel(error)) {
 				console.debug('Pulling messages request was cancelled')
 			} else if (error?.response?.status === 409) {
 				// Participant joined a second time and this session was killed

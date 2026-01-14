@@ -33,7 +33,7 @@ import { useChatStore } from '../stores/chat.ts'
 import { useGuestNameStore } from '../stores/guestName.ts'
 import { useReactionsStore } from '../stores/reactions.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
-import CancelableRequest from '../utils/cancelableRequest.js'
+import CancelableRequest from '../utils/CancelableRequest.ts'
 import messagesStore from './messagesStore.js'
 import storeConfig from './storeConfig.js'
 
@@ -53,7 +53,7 @@ vi.mock('../services/conversationsService', () => ({
 	fetchNoteToSelfConversation: vi.fn(),
 }))
 
-vi.mock('../utils/cancelableRequest')
+vi.mock('../utils/CancelableRequest')
 
 // Test actions with 'chat-read-last' feature
 vi.mock('@nextcloud/capabilities', () => ({

@@ -58,6 +58,7 @@
 <script setup lang="ts">
 import type { ChatTask, TaskProcessingResponse } from '../../types/index.ts'
 
+import { isCancel } from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
@@ -70,7 +71,7 @@ import { useGetToken } from '../../composables/useGetToken.ts'
 import { TASK_PROCESSING } from '../../constants.ts'
 import { deleteTaskById, getTaskById } from '../../services/coreService.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
-import CancelableRequest from '../../utils/cancelableRequest.js'
+import CancelableRequest from '../../utils/CancelableRequest.ts'
 
 type TaskProcessingCancelableRequest = {
 	request: (taskId: number) => TaskProcessingResponse
@@ -138,7 +139,7 @@ function checkScheduledTasks(token: string) {
 			// Task is already finished, checking next one
 			continue
 		}
-		const { request, cancel } = CancelableRequest(getTaskById) as TaskProcessingCancelableRequest
+		const { request, cancel } = CancelableRequest(getTaskById)
 		cancelGetTask[token] = cancel
 
 		getTaskInterval = setInterval(() => {
@@ -188,7 +189,7 @@ async function getTask(token: string, request: TaskProcessingCancelableRequest['
 			}
 		}
 	} catch (error) {
-		if (CancelableRequest.isCancel(error)) {
+		if (isCancel(error)) {
 			return
 		}
 		console.error('Error getting chat summary:', error)
