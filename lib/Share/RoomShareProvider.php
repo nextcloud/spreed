@@ -715,7 +715,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 	private function resolveSharesForRecipient(array $shareMap, string $userId, bool $allRoomShares = false): array {
 		$qb = $this->dbConnection->getQueryBuilder();
 
-		$query = $qb->select('*')
+		$query = $qb->select('parent', 'permissions', 'file_target')
 			->from('share')
 
 			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
@@ -728,7 +728,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 		if ($allRoomShares) {
 			$stmt = $query->executeQuery();
 
-			while ($data = $stmt->fetch()) {
+			while ($data = $stmt->fetchAssociative()) {
 				if (isset($shareMap[$data['parent']])) {
 					$shareMap[$data['parent']]->setPermissions((int)$data['permissions']);
 					$shareMap[$data['parent']]->setTarget($data['file_target']);
@@ -744,7 +744,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 				$query->setParameter('share_ids', $ids, IQueryBuilder::PARAM_INT_ARRAY);
 				$stmt = $query->executeQuery();
 
-				while ($data = $stmt->fetch()) {
+				while ($data = $stmt->fetchAssociative()) {
 					$shareMap[$data['parent']]->setPermissions((int)$data['permissions']);
 					$shareMap[$data['parent']]->setTarget($data['file_target']);
 				}
