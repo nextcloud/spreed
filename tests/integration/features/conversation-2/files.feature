@@ -91,10 +91,7 @@ Feature: conversation/files
     And add user "participant2" to team "team1"
     And user "participant1" shares "welcome.txt" with team "team1" with OCS 100
     When user "participant1" gets the room for path "welcome.txt" with 200 (v1)
-    And user "participant2" gets the DAV properties for "/"
-    # Temporary disabled because it breaks as circles / Teams does not implement
-    # OCP\Share\IShareProviderGetUsers yet.
-    # And user "participant2" gets the room for path "welcome (2).txt" with 200 (v1)
+    And user "participant2" gets the room for path "welcome (2).txt" with 200 (v1)
     Then user "participant1" is not participant of room "file welcome (2).txt room" (v4)
     And user "participant2" is not participant of room "file welcome (2).txt room" (v4)
 
