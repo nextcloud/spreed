@@ -58,6 +58,7 @@
 <script setup lang="ts">
 import type { ChatTask, TaskProcessingResponse } from '../../types/index.ts'
 
+import { isCancel } from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { computed, nextTick, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
@@ -188,7 +189,7 @@ async function getTask(token: string, request: TaskProcessingCancelableRequest['
 			}
 		}
 	} catch (error) {
-		if (CancelableRequest.isCancel(error)) {
+		if (isCancel(error)) {
 			return
 		}
 		console.error('Error getting chat summary:', error)

@@ -15,7 +15,7 @@ import type {
 	Conversation,
 } from '../types/index.ts'
 
-import Axios from '@nextcloud/axios'
+import { isCancel } from '@nextcloud/axios'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { computed, inject, onBeforeUnmount, provide, ref, watch } from 'vue'
@@ -400,7 +400,7 @@ export function useGetMessagesProvider() {
 			})
 			debugTimer.end(`${token} | get context`, 'status 200')
 		} catch (exception) {
-			if (Axios.isCancel(exception)) {
+			if (isCancel(exception)) {
 				console.debug('The request has been canceled', exception)
 				debugTimer.end(`${token} | get context`, 'cancelled')
 				loadingOldMessages.value = false
@@ -449,7 +449,7 @@ export function useGetMessagesProvider() {
 			})
 			debugTimer.end(`${token} | fetch history`, 'status 200')
 		} catch (exception) {
-			if (Axios.isCancel(exception)) {
+			if (isCancel(exception)) {
 				debugTimer.end(`${token} | fetch history`, 'cancelled')
 				console.debug('The request has been canceled', exception)
 			}
@@ -499,7 +499,7 @@ export function useGetMessagesProvider() {
 			})
 			debugTimer.end(`${token} | fetch history (new)`, 'status 200')
 		} catch (exception) {
-			if (Axios.isCancel(exception)) {
+			if (isCancel(exception)) {
 				debugTimer.end(`${token} | fetch history (new)`, 'cancelled')
 				console.debug('The request has been canceled', exception)
 			}
@@ -543,7 +543,7 @@ export function useGetMessagesProvider() {
 			pollingErrorTimeout = 1_000
 			debugTimer.end(`${token} | long polling`, 'status 200')
 		} catch (exception) {
-			if (Axios.isCancel(exception)) {
+			if (isCancel(exception)) {
 				debugTimer.end(`${token} | long polling`, 'cancelled')
 				console.debug('The request has been canceled', exception)
 				return
@@ -659,7 +659,7 @@ export function useGetMessagesProvider() {
 				return message.id > acc ? message.id : acc
 			}, lastMessageIdGivenByServer)
 		} catch (exception) {
-			if (Axios.isCancel(exception)) {
+			if (isCancel(exception)) {
 				console.debug('The request has been canceled', exception)
 			}
 			if (isAxiosErrorResponse(exception) && exception?.response?.status === 304) {

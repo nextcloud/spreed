@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import { isCancel } from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
@@ -238,7 +239,7 @@ export default {
 					this.initializeNavigation()
 				})
 			} catch (exception) {
-				if (CancelableRequest.isCancel(exception)) {
+				if (isCancel(exception)) {
 					return
 				}
 				console.error(exception)

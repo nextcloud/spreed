@@ -299,6 +299,7 @@
 </template>
 
 <script>
+import { isCancel } from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
@@ -785,7 +786,7 @@ export default {
 
 				this.contactsLoading = false
 			} catch (exception) {
-				if (CancelableRequest.isCancel(exception)) {
+				if (isCancel(exception)) {
 					return
 				}
 				console.error('Error searching for possible conversations', exception)
@@ -806,7 +807,7 @@ export default {
 				this.searchResultsListedConversations = response.data.ocs.data
 				this.listedConversationsLoading = false
 			} catch (exception) {
-				if (CancelableRequest.isCancel(exception)) {
+				if (isCancel(exception)) {
 					return
 				}
 				console.error('Error searching for open conversations', exception)

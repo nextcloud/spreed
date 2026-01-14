@@ -13,6 +13,7 @@ import type {
 	UnifiedSearchResultEntry,
 } from '../../../types/index.ts'
 
+import { isCancel } from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
@@ -235,7 +236,7 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 			nextTick(() => initializeNavigation())
 		}
 	} catch (exception) {
-		if (CancelableRequest.isCancel(exception)) {
+		if (isCancel(exception)) {
 			return
 		}
 		console.error('Error searching for messages', exception)

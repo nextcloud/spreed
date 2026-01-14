@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import Axios from '@nextcloud/axios'
+import { isCancel } from '@nextcloud/axios'
 import { PARTICIPANT, PRIVACY, VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
@@ -72,7 +72,7 @@ async function getSignalingSettings(token, options) {
 
 		cancelFetchSignalingSettings = null
 	} catch (exception) {
-		if (Axios.isCancel(exception)) {
+		if (isCancel(exception)) {
 			console.debug('Getting the signaling settings for ' + token + ' was cancelled by a newer getSignalingSettings')
 		} else {
 			console.warn('Failed to get the signaling settings for ' + token)
