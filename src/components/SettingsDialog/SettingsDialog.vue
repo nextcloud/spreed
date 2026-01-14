@@ -159,7 +159,7 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showError } from '@nextcloud/dialogs'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
@@ -337,7 +337,6 @@ export default {
 			this.privacyLoading = true
 			try {
 				await this.settingsStore.updateReadStatusPrivacy(this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC)
-				showSuccess(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting read status privacy'))
 			}
@@ -348,7 +347,6 @@ export default {
 			this.privacyLoading = true
 			try {
 				await this.settingsStore.updateTypingStatusPrivacy(this.typingStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC)
-				showSuccess(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting typing status privacy'))
 			}
@@ -359,7 +357,6 @@ export default {
 			this.appearanceLoading = true
 			try {
 				await this.settingsStore.updateConversationsListStyle(value ? CONVERSATION.LIST_STYLE.COMPACT : CONVERSATION.LIST_STYLE.TWO_LINES)
-				showSuccess(t('spreed', 'Your personal setting has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting personal setting'))
 			}
@@ -370,7 +367,6 @@ export default {
 			this.chatAppearanceLoading = true
 			try {
 				await this.settingsStore.updateChatStyle(value ? CHAT_STYLE.SPLIT : CHAT_STYLE.UNIFIED)
-				showSuccess(t('spreed', 'Your personal setting has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting personal setting'))
 			}
@@ -385,7 +381,6 @@ export default {
 				} catch (e) {
 					showError(t('spreed', 'Failed to save sounds setting'))
 				}
-				showSuccess(t('spreed', 'Sounds setting saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while saving sounds setting'))
 			}
@@ -396,7 +391,6 @@ export default {
 			this.mediaLoading = true
 			try {
 				await this.settingsStore.updateStartWithoutMedia(value)
-				showSuccess(t('spreed', 'Your default media state has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting default media state'))
 			} finally {
