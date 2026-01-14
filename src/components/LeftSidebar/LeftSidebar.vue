@@ -248,7 +248,7 @@
 					class="scroller"
 					@scroll="debounceHandleScroll" />
 				<NcButton
-					v-if="!showThreadsList && !preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null && !isFiltered"
+					v-if="!showThreadsList && !preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null && !filters.includes('mentions')"
 					class="unread-mention-button"
 					variant="primary"
 					@click="scrollBottomUnread">
@@ -746,6 +746,8 @@ export default {
 			this.searchText = ''
 			// Initiate the navigation status
 			this.isNavigating = false
+
+			this.handleUnreadMention()
 		},
 
 		scrollBottomUnread() {
