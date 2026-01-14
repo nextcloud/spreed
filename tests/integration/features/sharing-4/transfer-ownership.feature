@@ -18,11 +18,11 @@ Feature: transfer-ownership
     And share is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /{TALK_PLACEHOLDER}/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/{TALK_PLACEHOLDER}/welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share
@@ -65,11 +65,11 @@ Feature: transfer-ownership
       | displayname_owner      | participant2-displayname |
       | uid_file_owner         | participant3 |
       | displayname_file_owner | participant3-displayname |
-      | path                   | /Talk/welcome (2).txt |
+      | path                   | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome (2).txt |
-      | file_target            | /Talk/welcome (2).txt |
+      | storage_id             | shared::/{TALK_PLACEHOLDER}/welcome (2).txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share
@@ -113,11 +113,11 @@ Feature: transfer-ownership
     And share is returned with
       | uid_owner              | participant2 |
       | displayname_owner      | participant2-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /{TALK_PLACEHOLDER}/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
-      | storage_id             | shared::/Talk/welcome.txt |
-      | file_target            | /Talk/welcome.txt |
+      | storage_id             | shared::/{TALK_PLACEHOLDER}/welcome.txt |
+      | file_target            | /{TALK_PLACEHOLDER}/welcome.txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant2" gets last share

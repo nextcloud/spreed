@@ -1315,7 +1315,11 @@ Feature: get
     And user "participant2" gets the DAV properties for "/"
     And the list of returned files for "participant2" is
       | / |
+      | /Talk/ |
       | /welcome.txt |
+    And user "participant2" gets the DAV properties for "/Talk/"
+    And the list of returned files for "participant2" is
+      | /Talk/ |
 
   Scenario: get files after deleting a received share
     Given user "participant1" creates room "group room" (v4)
@@ -1333,6 +1337,9 @@ Feature: get
     And the list of returned files for "participant1" is
       | / |
       | /welcome.txt |
+    And user "participant2" gets the DAV properties for "/Talk/"
+    And the list of returned files for "participant2" is
+      | /Talk/ |
 
   Scenario: get files after deleting the file of a share
     Given user "participant1" creates room "group room" (v4)
@@ -1347,6 +1354,7 @@ Feature: get
     And user "participant2" gets the DAV properties for "/"
     And the list of returned files for "participant2" is
       | / |
+      | /Talk/ |
       | /welcome.txt |
 
 
