@@ -26,6 +26,7 @@ All notable changes to this project will be documented in this file.
 - Require Nextcloud 33 / Hub 26 Winter
 - Enable notifications in group conversations by default for new instances
   [#16319](https://github.com/nextcloud/spreed/issues/16319)
+- Bots: The `object.name` was set to an empty string for messages with attachments. This was fixed to be `'message'` as for normal messages without any attachments.
 
 ## 22.0.7 – 2025-12-17
 ### Changed

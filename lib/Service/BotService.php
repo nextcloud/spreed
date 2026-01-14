@@ -164,7 +164,7 @@ class BotService {
 		$this->invokeBots($botServers, $event->getRoom(), $event->getComment(), [
 			'type' => 'Activity',
 			'actor' => $this->activityPubHelper->generatePersonFromMessageActor($message),
-			'object' => $this->activityPubHelper->generateNote($event->getComment(), $messageData, $message->getMessageRaw()),
+			'object' => $this->activityPubHelper->generateNote($event->getComment(), $messageData, $message->getMessageRaw() ?: 'message'),
 			'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
 		]);
 	}
