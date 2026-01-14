@@ -9,6 +9,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OC\User\LazyUser;
+use OCA\Files_Sharing\Event\UserShareAccessUpdatedEvent;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
@@ -63,6 +65,7 @@ use OCP\HintException;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IUser;
+use OCP\IUserManager;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\Events\ValidatePasswordPolicyEvent;
 use OCP\Security\IHasher;
@@ -89,6 +92,7 @@ class RoomService {
 		protected LoggerInterface $logger,
 		protected IL10N $l10n,
 		protected IManager $calendarManager,
+		protected IUserManager $userManager,
 	) {
 	}
 
@@ -1440,11 +1444,21 @@ class RoomService {
 			$delete->executeStatement();
 		}
 
+		// Get user ids for clearing the share access cache after deleting
+		$userIds = $this->participantService->getParticipantUserIds($room);
+
 		// Delete attendees
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_attendees')
 			->where($delete->expr()->eq('room_id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$delete->executeStatement();
+
+		// Clear share access cache
+		foreach ($userIds as $userId) {
+			$user = new LazyUser($userId, $this->userManager);
+			$event = new UserShareAccessUpdatedEvent($user);
+			$this->dispatcher->dispatchTyped($event);
+		}
 
 		// Delete room
 		$delete = $this->db->getQueryBuilder();

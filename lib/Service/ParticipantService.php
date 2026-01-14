@@ -8,9 +8,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OC\User\LazyUser;
 use OCA\Circles\CirclesManager;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
+use OCA\Files_Sharing\Event\UserShareAccessUpdatedEvent;
 use OCA\Talk\CachePrefix;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
@@ -676,6 +678,13 @@ class ParticipantService {
 			try {
 				$this->attendeeMapper->insert($attendee);
 
+				// Clear share access cache
+				if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
+					$user = new LazyUser($attendee->getActorId(), $this->userManager);
+					$event = new UserShareAccessUpdatedEvent($user);
+					$this->dispatcher->dispatchTyped($event);
+				}
+
 				if ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
 					$response = $this->backendNotifier->sendRemoteShare((string)$attendee->getId(), $attendee->getAccessToken(), $attendee->getActorId(), $addedBy, 'user', $room, $this->getHighestPermissionAttendee($room));
 					if (!$response) {
@@ -1103,6 +1112,13 @@ class ParticipantService {
 		$this->sessionMapper->deleteByAttendeeId($participant->getAttendee()->getId());
 		$this->attendeeMapper->delete($participant->getAttendee());
 
+		if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			// Clear share access cache
+			$user = new LazyUser($participant->getAttendee()->getActorId(), $this->userManager);
+			$event = new UserShareAccessUpdatedEvent($user);
+			$this->dispatcher->dispatchTyped($event);
+		}
+
 		$event = new AttendeeRemovedEvent($room, $participant->getAttendee(), $reason, $sessions);
 		$this->dispatcher->dispatchTyped($event);
 
@@ -1250,6 +1266,10 @@ class ParticipantService {
 		}
 
 		$this->attendeeMapper->delete($attendee);
+
+		// Clear share access cache
+		$event = new UserShareAccessUpdatedEvent($user);
+		$this->dispatcher->dispatchTyped($event);
 
 		$attendeeEvent = new AttendeeRemovedEvent($room, $attendee, $reason, $sessions);
 		$this->dispatcher->dispatchTyped($attendeeEvent);

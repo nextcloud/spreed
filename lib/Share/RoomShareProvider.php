@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Share;
 
 use OC\Files\Cache\Cache;
+use OC\User\LazyUser;
 use OCA\Talk\Events\BeforeDuplicateShareSentEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -27,6 +28,8 @@ use OCP\Files\IMimeTypeLoader;
 use OCP\Files\Node;
 use OCP\IDBConnection;
 use OCP\IL10N;
+use OCP\IUser;
+use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\Exceptions\ShareNotFound;
@@ -34,6 +37,7 @@ use OCP\Share\IManager as IShareManager;
 use OCP\Share\IPartialShareProvider;
 use OCP\Share\IShare;
 use OCP\Share\IShareProvider;
+use OCP\Share\IShareProviderGetUsers;
 
 /**
  * Share provider for room shares.
@@ -45,7 +49,7 @@ use OCP\Share\IShareProvider;
  * Like in group shares, a recipient can move or delete a share without
  * modifying the share for the other users in the room.
  */
-class RoomShareProvider implements IShareProvider, IPartialShareProvider {
+class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShareProviderGetUsers {
 	use TTransactional;
 	// Special share type for user modified room shares
 	public const SHARE_TYPE_USERROOM = 11;
@@ -66,6 +70,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 		protected ITimeFactory $timeFactory,
 		private IL10N $l,
 		private IMimeTypeLoader $mimeTypeLoader,
+		private IUserManager $userManager,
 	) {
 		$this->sharesByIdCache = new CappedMemoryCache();
 	}
@@ -1229,5 +1234,32 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider {
 			yield $share;
 		}
 		$cursor->closeCursor();
+	}
+
+	#[\Override]
+	public function getUsersForShare(IShare $share): iterable {
+		if ($share->getShareType() === self::SHARE_TYPE_USERROOM) {
+			// User record for a share, user is the shared_with
+			return [new LazyUser($share->getSharedWith(), $this->userManager)];
+		}
+
+		if ($share->getShareType() !== IShare::TYPE_ROOM) {
+			return [];
+		}
+
+		// Room share entry, shared_with is the conversation token
+		try {
+			$room = $this->manager->getRoomByToken($share->getSharedWith());
+		} catch (RoomNotFoundException) {
+			return [];
+		}
+
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			return array_map(fn (string $userId): IUser => new LazyUser($userId, $this->userManager), json_decode($room->getName(), true));
+		}
+
+		// Get all user ids for the room
+		$userIds = $this->participantService->getParticipantUserIds($room);
+		return array_map(fn (string $userId): IUser => new LazyUser($userId, $this->userManager), $userIds);
 	}
 }

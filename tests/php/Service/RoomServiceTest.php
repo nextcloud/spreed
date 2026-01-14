@@ -30,6 +30,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IUser;
+use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Server;
 use OCP\Share\IManager as IShareManager;
@@ -52,6 +53,7 @@ class RoomServiceTest extends TestCase {
 	protected LoggerInterface&MockObject $logger;
 	protected IL10N&MockObject $l10n;
 	protected IManager $calendarManager;
+	protected IUserManager&MockObject $userManager;
 	protected EmojiService $emojiService;
 	protected ?RoomService $service = null;
 
@@ -70,6 +72,7 @@ class RoomServiceTest extends TestCase {
 		$this->l10n = $this->createMock(IL10N::class);
 		$this->emojiService = Server::get(EmojiService::class);
 		$this->calendarManager = $this->createMock(IManager::class);
+		$this->userManager = $this->createMock(IUserManager::class);
 		$this->service = new RoomService(
 			$this->manager,
 			$this->participantService,
@@ -84,6 +87,7 @@ class RoomServiceTest extends TestCase {
 			$this->logger,
 			$this->l10n,
 			$this->calendarManager,
+			$this->userManager,
 		);
 	}
 
@@ -340,6 +344,7 @@ class RoomServiceTest extends TestCase {
 			$this->logger,
 			$this->l10n,
 			$this->calendarManager,
+			$this->userManager,
 		);
 
 		$room = new Room(
