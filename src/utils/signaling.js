@@ -637,6 +637,7 @@ function Standalone(settings, urls) {
 	this.maxReconnectIntervalMs = 16000
 	this.reconnectIntervalMs = this.initialReconnectIntervalMs
 	this.helloResponseErrorCount = 0
+	this.socketErrorCount = 0
 	this.ownSessionJoined = false
 	this.joinedUsers = {}
 	this.rooms = []
@@ -705,6 +706,7 @@ Signaling.Standalone.prototype.connect = function() {
 	window.signalingSocket = this.socket
 	this.socket.onopen = function(event) {
 		console.debug('Connected', event)
+		this.socketErrorCount = 0
 		if (this.signalingConnectionTimeout !== null) {
 			clearTimeout(this.signalingConnectionTimeout)
 			this.signalingConnectionTimeout = null
@@ -712,6 +714,10 @@ Signaling.Standalone.prototype.connect = function() {
 		if (this.signalingConnectionWarning !== null) {
 			this.signalingConnectionWarning.hideToast()
 			this.signalingConnectionWarning = null
+		}
+		if (this.signalingConnectionError !== null) {
+			this.signalingConnectionError.hideToast()
+			this.signalingConnectionError = null
 		}
 		this.reconnectIntervalMs = this.initialReconnectIntervalMs
 		if (this.settings.helloAuthParams['2.0']) {
@@ -730,8 +736,20 @@ Signaling.Standalone.prototype.connect = function() {
 			this.signalingConnectionWarning.hideToast()
 			this.signalingConnectionWarning = null
 		}
-		if (this.signalingConnectionError === null) {
+
+		this.socketErrorCount++
+		if (this.signalingConnectionError === null && this.socketErrorCount < 5) {
 			this.signalingConnectionError = showError(t('spreed', 'Failed to connect. Retrying …'), {
+				timeout: TOAST_PERMANENT_TIMEOUT,
+			})
+		} else if (this.socketErrorCount === 5) {
+			// Switch to a different message as several errors in a row in hello
+			// responses indicate that the signaling server might be unable to
+			// connect to Nextcloud.
+			if (this.signalingConnectionError) {
+				this.signalingConnectionError.hideToast()
+			}
+			this.signalingConnectionError = showError(t('spreed', 'Failed to connect. The signaling server may be set up incorrectly'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		}
