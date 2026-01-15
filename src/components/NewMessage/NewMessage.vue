@@ -142,6 +142,7 @@
 			<NcActions
 				v-if="showSendActions"
 				force-menu
+				:disabled="disabled"
 				:primary="silentChat"
 				@close="submenu = null">
 				<template #icon>
