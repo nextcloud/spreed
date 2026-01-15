@@ -80,11 +80,19 @@ const isLiveTranscriptionSupported = computed(() => getTalkConfig(token.value, '
 const isLiveTranslationSupported = computed(() => getTalkConfig(token.value, 'call', 'live-translation') || false)
 
 const liveTranscriptionButtonLabel = computed(() => {
-	if (callViewStore.isLiveTranscriptionEnabled) {
+	if (callViewStore.isLiveTranscriptionEnabled && languageType.value === LanguageType.Original) {
 		return t('spreed', 'Disable live transcription')
 	}
 
 	return t('spreed', 'Enable live transcription')
+})
+
+const liveTranslationButtonLabel = computed(() => {
+	if (callViewStore.isLiveTranscriptionEnabled && languageType.value === LanguageType.Target) {
+		return t('spreed', 'Disable live translation')
+	}
+
+	return t('spreed', 'Enable live translation')
 })
 
 const originalLanguageButtonLabel = computed(() => {
@@ -231,7 +239,7 @@ function handleLiveTranscriptionLanguageSelectorOpen() {
  * Live translations are enabled again if needed when live transcriptions are
  * toggled on.
  */
-async function toggleLiveTranscription() {
+async function toggleLiveTranscriptionAndTranslation() {
 	if (isLiveTranscriptionLoading.value) {
 		return
 	}
@@ -249,6 +257,46 @@ async function toggleLiveTranscription() {
 	}
 
 	isLiveTranscriptionLoading.value = false
+}
+
+/**
+ * Toggle live transcriptions.
+ */
+async function toggleLiveTranscription() {
+	if (isLiveTranscriptionLoading.value) {
+		return
+	}
+
+	if (callViewStore.isLiveTranscriptionEnabled && languageType.value === LanguageType.Original) {
+		isLiveTranscriptionLoading.value = true
+
+		await disableLiveTranscription()
+
+		isLiveTranscriptionLoading.value = false
+	} else {
+		await switchToOriginalLanguage()
+	}
+}
+
+/**
+ * Toggle live translations.
+ *
+ * Disabling live translations disables live transcriptions as well.
+ */
+async function toggleLiveTranslation() {
+	if (isLiveTranscriptionLoading.value) {
+		return
+	}
+
+	if (callViewStore.isLiveTranscriptionEnabled && languageType.value === LanguageType.Target) {
+		isLiveTranscriptionLoading.value = true
+
+		await disableLiveTranscription()
+
+		isLiveTranscriptionLoading.value = false
+	} else {
+		await switchToTargetLanguage()
+	}
 }
 
 /**
@@ -509,7 +557,7 @@ useHotKey('r', toggleHandRaised)
 					:class="{
 						'translation-button': isLiveTranslationSupported,
 					}"
-					@click="toggleLiveTranscription">
+					@click="toggleLiveTranscriptionAndTranslation">
 					<template #icon>
 						<NcLoadingIcon
 							v-if="isLiveTranscriptionLoading"
@@ -603,21 +651,41 @@ useHotKey('r', toggleHandRaised)
 					v-if="isLiveTranscriptionSupported && hidingList.liveTranscription"
 					:title="liveTranscriptionButtonLabel"
 					:aria-label="liveTranscriptionButtonLabel"
-					:variant="callViewStore.isLiveTranscriptionEnabled ? 'secondary' : 'tertiary'"
+					:variant="(callViewStore.isLiveTranscriptionEnabled && languageType === LanguageType.Target) ? 'secondary' : 'tertiary'"
 					:disabled="isLiveTranscriptionLoading"
 					@click="toggleLiveTranscription">
 					<template #icon>
 						<NcLoadingIcon
-							v-if="isLiveTranscriptionLoading"
+							v-if="isLiveTranscriptionLoading && languageType === LanguageType.Original"
 							:size="20" />
 						<IconSubtitles
-							v-else-if="callViewStore.isLiveTranscriptionEnabled"
+							v-else-if="callViewStore.isLiveTranscriptionEnabled && languageType === LanguageType.Original"
 							:size="20" />
 						<IconSubtitlesOutline
 							v-else
 							:size="20" />
 					</template>
 					{{ liveTranscriptionButtonLabel }}
+				</NcActionButton>
+				<NcActionButton
+					v-if="isLiveTranslationSupported && hidingList.liveTranscription"
+					:title="liveTranslationButtonLabel"
+					:aria-label="liveTranslationButtonLabel"
+					:variant="(callViewStore.isLiveTranscriptionEnabled && languageType === LanguageType.Target) ? 'secondary' : 'tertiary'"
+					:disabled="isLiveTranscriptionLoading"
+					@click="toggleLiveTranslation">
+					<template #icon>
+						<NcLoadingIcon
+							v-if="isLiveTranscriptionLoading && languageType === LanguageType.Target"
+							:size="20" />
+						<IconSubtitles
+							v-else-if="callViewStore.isLiveTranscriptionEnabled && languageType === LanguageType.Target"
+							:size="20" />
+						<IconSubtitlesOutline
+							v-else
+							:size="20" />
+					</template>
+					{{ liveTranslationButtonLabel }}
 				</NcActionButton>
 				<NcActionButton
 					v-if="!isSidebar && hidingList.raiseHand"
