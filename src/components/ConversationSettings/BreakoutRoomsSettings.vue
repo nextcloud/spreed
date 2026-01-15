@@ -30,6 +30,7 @@
 		</div>
 		<!-- Breakout rooms editor -->
 		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
+			container=".breakout-rooms-settings"
 			:token="token"
 			@close="showBreakoutRoomsEditor = false" />
 

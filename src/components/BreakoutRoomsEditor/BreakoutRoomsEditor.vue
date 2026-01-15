@@ -5,6 +5,7 @@
 
 <template>
 	<NcModal :class="{ 'modal-mask__participants-step': isEditingParticipants }"
+		:container="container"
 		:label-id="dialogHeaderId"
 		v-on="$listeners">
 		<div class="breakout-rooms-editor"
@@ -100,6 +101,11 @@ export default {
 		token: {
 			type: String,
 			required: true,
+		},
+
+		container: {
+			type: String,
+			default: 'body',
 		},
 	},
 
