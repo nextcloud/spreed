@@ -5,6 +5,38 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.8 – 2026-01-15
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(chat): Allow getting a single message
+  [#16731](https://github.com/nextcloud/spreed/pull/16731)
+- fix(chat): Don't show chat messages of the old chat when switching to a new chat
+  [#16718](https://github.com/nextcloud/spreed/pull/16718)
+- fix(chat): Don't set the cursor to the end when someone reacts to a message while editing
+  [#16633](https://github.com/nextcloud/spreed/pull/16633)
+- fix(call): Allow selecting a media device after an error occurred
+  [#16701](https://github.com/nextcloud/spreed/pull/16701)
+- fix(call): Allow preparing media devices even when the user has no permissions yet
+  [#16682](https://github.com/nextcloud/spreed/pull/16682)
+- fix(call): Still block mobile clients when call end-to-end encryption is enabled
+  [#16674](https://github.com/nextcloud/spreed/pull/16674)
+
+## 21.1.8 – 2026-01-15
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(chat): Allow getting a single message
+  [#16732](https://github.com/nextcloud/spreed/pull/16732)
+- fix(call): Allow selecting a media device after an error occurred
+  [#16700](https://github.com/nextcloud/spreed/pull/16700)
+- fix(call): Still block mobile clients when call end-to-end encryption is enabled
+  [#16673](https://github.com/nextcloud/spreed/pull/16673)
+
 ## 22.0.7 – 2025-12-17
 ### Changed
 - Update dependencies
