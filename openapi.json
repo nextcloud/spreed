@@ -19729,7 +19729,9 @@
                         "schema": {
                             "type": "integer",
                             "format": "int64",
-                            "default": 100
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 200
                         }
                     },
                     {
@@ -20695,7 +20697,7 @@
                             "type": "integer",
                             "format": "int64",
                             "default": 50,
-                            "minimum": 1,
+                            "minimum": 0,
                             "maximum": 100
                         }
                     },
