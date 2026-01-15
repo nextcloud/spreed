@@ -370,7 +370,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * for the follow-up query.
 	 *
 	 * @param 0|1 $lookIntoFuture Polling for new messages (1) or getting the history of the chat (0)
-	 * @param int $limit Number of chat messages to receive (100 by default, 200 at most)
+	 * @param int<1, 200> $limit Number of chat messages to receive (100 by default, 200 at most)
 	 * @param int $lastKnownMessageId The last known message (serves as offset)
 	 * @psalm-param non-negative-int $lastKnownMessageId
 	 * @param int $lastCommonReadId The last known common read message
@@ -401,7 +401,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		int $includeLastKnown = 0,
 		int $noStatusUpdate = 0,
 		int $markNotificationsAsRead = 1): DataResponse {
-		$limit = min(200, $limit);
+		$limit = min(200, max(1, $limit));
 		$timeout = min(30, $timeout);
 
 		if ($this->room->isFederatedConversation()) {
@@ -739,7 +739,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $messageId The focused message which should be in the "middle" of the returned context
 	 * @psalm-param non-negative-int $messageId
-	 * @param int<1, 100> $limit Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)
+	 * @param int<0, 100> $limit Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)
 	 * @return DataResponse<Http::STATUS_OK, list<TalkChatMessageWithParent>, array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, null, array{}>
 	 *
 	 * 200: Message context returned
@@ -752,7 +752,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	public function getMessageContext(
 		int $messageId,
 		int $limit = 50): DataResponse {
-		$limit = min(100, $limit);
+		$limit = min(100, max(0, $limit));
 
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
@@ -765,9 +765,16 @@ class ChatController extends AEnvironmentAwareOCSController {
 			// Guest in a fully expired chat, no history, just loading the chat from beginning for now
 			$commentsHistory = $commentsFuture = [];
 		} else {
-			$commentsHistory = $this->chatManager->getHistory($this->room, $messageId, $limit, true);
+			// Load at least 1 history entry to get the includeLastKnown
+			$historyLimit = max(1, $limit);
+			$commentsHistory = $this->chatManager->getHistory($this->room, $messageId, $historyLimit, true);
 			$commentsHistory = array_reverse($commentsHistory);
-			$commentsFuture = $this->chatManager->waitForNewMessages($this->room, $messageId, $limit, 0, $currentUser, false);
+			if ($limit === 0) {
+				// No context requested, only the known message
+				$commentsFuture = [];
+			} else {
+				$commentsFuture = $this->chatManager->waitForNewMessages($this->room, $messageId, $limit, 0, $currentUser, false);
+			}
 		}
 
 		return $this->prepareCommentsAsDataResponse(array_merge($commentsHistory, $commentsFuture));
@@ -1404,7 +1411,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function getObjectsSharedInRoomOverview(int $limit = 7): DataResponse {
-		$limit = min(20, $limit);
+		$limit = min(20, max(1, $limit));
 
 		$objectTypes = [
 			Attachment::TYPE_AUDIO,
@@ -1458,7 +1465,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[RequireParticipant]
 	public function getObjectsSharedInRoom(string $objectType, int $lastKnownMessageId = 0, int $limit = 100): DataResponse {
 		$offset = max(0, $lastKnownMessageId);
-		$limit = min(200, $limit);
+		$limit = min(200, max(1, $limit));
 
 		$attachments = $this->attachmentService->getAttachmentsByType($this->room, $objectType, $offset, $limit);
 		$messageIds = array_map(static fn (Attachment $attachment): int => $attachment->getMessageId(), $attachments);
