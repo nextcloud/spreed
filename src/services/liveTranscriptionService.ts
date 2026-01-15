@@ -7,7 +7,9 @@ import type {
 	liveTranscriptionDisableResponse,
 	liveTranscriptionEnableResponse,
 	liveTranscriptionGetAvailableLanguagesResponse,
+	liveTranscriptionGetAvailableTranslationLanguagesResponse,
 	liveTranscriptionSetLanguageResponse,
+	liveTranscriptionSetTargetLanguageResponse,
 } from '../types/index.ts'
 
 import axios from '@nextcloud/axios'
@@ -39,6 +41,13 @@ async function getLiveTranscriptionLanguages(): liveTranscriptionGetAvailableLan
 }
 
 /**
+ * Get available translation languages for live transcriptions
+ */
+async function getLiveTranscriptionTranslationLanguages(): liveTranscriptionGetAvailableTranslationLanguagesResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/live-transcription/translation-languages'))
+}
+
+/**
  * Set language for live transcription
  *
  * @param token conversation token
@@ -50,9 +59,23 @@ async function setLiveTranscriptionLanguage(token: string, languageId: string): 
 	})
 }
 
+/**
+ * Set target language for live translation
+ *
+ * @param token conversation token
+ * @param targetLanguageId the ID of the target language
+ */
+async function setLiveTranscriptionTargetLanguage(token: string, targetLanguageId: string | null): liveTranscriptionSetTargetLanguageResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/live-transcription/{token}/target-language', { token }), {
+		targetLanguageId,
+	})
+}
+
 export {
 	disableLiveTranscription,
 	enableLiveTranscription,
 	getLiveTranscriptionLanguages,
+	getLiveTranscriptionTranslationLanguages,
 	setLiveTranscriptionLanguage,
+	setLiveTranscriptionTargetLanguage,
 }

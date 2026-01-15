@@ -5,28 +5,39 @@
 
 import type {
 	liveTranscriptionGetAvailableLanguagesResponse,
+	liveTranscriptionGetAvailableTranslationLanguagesResponse,
 	LiveTranscriptionLanguage,
 } from '../types/index.ts'
 
 import { defineStore } from 'pinia'
-import { getLiveTranscriptionLanguages } from '../services/liveTranscriptionService.ts'
+import {
+	getLiveTranscriptionLanguages,
+	getLiveTranscriptionTranslationLanguages,
+} from '../services/liveTranscriptionService.ts'
 
 type LiveTranscriptionLanguageMap = { [key: string]: LiveTranscriptionLanguage }
-type State = {
-	languages: LiveTranscriptionLanguageMap | liveTranscriptionGetAvailableLanguagesResponse | null
+type LiveTranscriptionTranslationLanguages = {
+	originLanguages: LiveTranscriptionLanguageMap
+	targetLanguages: LiveTranscriptionLanguageMap
+	defaultTargetLanguageId: string
 }
+type State = {
+	languages: LiveTranscriptionLanguageMap | null
+	translationLanguages: LiveTranscriptionTranslationLanguages | null
+}
+
+let languagesPromise: liveTranscriptionGetAvailableLanguagesResponse | null = null
+let translationLanguagesPromise: liveTranscriptionGetAvailableTranslationLanguagesResponse | null = null
+
 export const useLiveTranscriptionStore = defineStore('liveTranscription', {
 	state: (): State => ({
 		languages: null,
+		translationLanguages: null,
 	}),
 
 	actions: {
 		getLiveTranscriptionLanguages() {
-			if (!this.languages || this.languages instanceof Promise) {
-				return undefined
-			}
-
-			return this.languages as LiveTranscriptionLanguageMap
+			return this.languages
 		},
 
 		/**
@@ -35,20 +46,63 @@ export const useLiveTranscriptionStore = defineStore('liveTranscription', {
 		 */
 		async loadLiveTranscriptionLanguages() {
 			if (this.languages) {
-				if (this.languages instanceof Promise) {
-					await this.languages
-				}
+				return
+			}
+
+			if (languagesPromise) {
+				await languagesPromise
 
 				return
 			}
 
-			this.languages = getLiveTranscriptionLanguages()
+			languagesPromise = getLiveTranscriptionLanguages()
 
 			try {
-				const response = await this.languages
+				const response = await languagesPromise
 				this.languages = response.data.ocs.data
 			} catch (exception) {
+				languagesPromise = null
 				this.languages = null
+
+				console.error('Error while getting available live transcription languages', exception)
+
+				throw exception
+			}
+		},
+
+		getLiveTranscriptionTargetLanguages() {
+			return this.translationLanguages?.targetLanguages
+		},
+
+		getLiveTranscriptionDefaultTargetLanguageId() {
+			return this.translationLanguages?.defaultTargetLanguageId
+		},
+
+		/**
+		 * Fetch the available translation languages for live transcriptions and
+		 * save them in the store.
+		 */
+		async loadLiveTranscriptionTranslationLanguages() {
+			if (this.translationLanguages) {
+				return
+			}
+
+			if (translationLanguagesPromise) {
+				await translationLanguagesPromise
+
+				return
+			}
+
+			translationLanguagesPromise = getLiveTranscriptionTranslationLanguages()
+
+			try {
+				const response = await translationLanguagesPromise
+				this.translationLanguages = response.data.ocs.data
+			} catch (exception) {
+				translationLanguagesPromise = null
+				this.translationLanguages = null
+
+				console.error('Error while getting available live transcription translation languages', exception)
 
 				throw exception
 			}

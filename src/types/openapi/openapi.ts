@@ -785,6 +785,28 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/live-transcription/translation-languages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get available languages for live translations
+         * @description The returned array provides a list of origin languages ("originLanguages") and a list of target languages ("targetLanguages"). Any origin language can be translated to any target language.
+         *     The origin language list can contain "detect_language" as a special value indicating auto-detection support.
+         *     translations are not supported.
+         */
+        get: operations["live_transcription-get-available-translation-languages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/live-transcription/{token}/language": {
         parameters: {
             query?: never;
@@ -796,6 +818,28 @@ export type paths = {
         put?: never;
         /** Set language for live transcriptions */
         post: operations["live_transcription-set-language"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/live-transcription/{token}/target-language": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set target language for live translations
+         * @description Each participant can set the language in which they want to receive the translations.
+         *     Setting the target language is possible only during a call and immediately enables the translations. Translations can be disabled by sending a null value as the language id.
+         *     translations are not supported.
+         */
+        post: operations["live_transcription-set-target-language"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1907,6 +1951,8 @@ export type components = {
                     "blur-virtual-background": boolean;
                     "end-to-end-encryption": boolean;
                     "live-transcription": boolean;
+                    "live-translation": boolean;
+                    "live-transcription-target-language-id": string;
                 };
                 chat: {
                     /** Format: int64 */
@@ -6628,6 +6674,61 @@ export interface operations {
             };
         };
     };
+    "live_transcription-get-available-translation-languages": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Available languages got successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                originLanguages: {
+                                    [key: string]: components["schemas"]["LiveTranscriptionLanguage"];
+                                };
+                                targetLanguages: {
+                                    [key: string]: components["schemas"]["LiveTranscriptionLanguage"];
+                                };
+                                defaultTargetLanguageId: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The external app "live_transcription" is not available or */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "app" | "translations";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
     "live_transcription-set-language": {
         parameters: {
             query?: never;
@@ -6693,6 +6794,61 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "app";
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "live_transcription-set-target-language": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description the ID of the language to set */
+                    targetLanguageId: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Target language set successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description The participant is not in the call. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "app" | "translations" | "in-call";
                             };
                         };
                     };

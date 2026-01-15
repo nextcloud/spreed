@@ -16,8 +16,10 @@ import { computed, onMounted, onUnmounted, ref, toValue, useTemplateRef, watch }
 import { useStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue' // Filled for better indication
@@ -40,6 +42,7 @@ import { useActorStore } from '../../stores/actor.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useCallViewStore } from '../../stores/callView.ts'
 import { useLiveTranscriptionStore } from '../../stores/liveTranscription.ts'
+import { useSettingsStore } from '../../stores/settings.ts'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 
 const { isSidebar = false } = defineProps<{
@@ -55,6 +58,7 @@ const breakoutRoomsStore = useBreakoutRoomsStore()
 const isFullscreen = !isSidebar && useDocumentFullscreen()
 const callViewStore = useCallViewStore()
 const liveTranscriptionStore = useLiveTranscriptionStore()
+const settingsStore = useSettingsStore()
 
 const isLiveTranscriptionLoading = ref(false)
 const bottomBar = useTemplateRef('bottomBar')
@@ -73,14 +77,71 @@ const canModerate = computed(() => [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MOD
 	.includes(conversation.value.participantType))
 
 const isLiveTranscriptionSupported = computed(() => getTalkConfig(token.value, 'call', 'live-transcription') || false)
+const isLiveTranslationSupported = computed(() => getTalkConfig(token.value, 'call', 'live-translation') || false)
 
 const liveTranscriptionButtonLabel = computed(() => {
-	if (!callViewStore.isLiveTranscriptionEnabled) {
-		return t('spreed', 'Enable live transcription')
+	if (callViewStore.isLiveTranscriptionEnabled && languageType.value === LanguageType.Original) {
+		return t('spreed', 'Disable live transcription')
 	}
 
-	return t('spreed', 'Disable live transcription')
+	return t('spreed', 'Enable live transcription')
 })
+
+const liveTranslationButtonLabel = computed(() => {
+	if (callViewStore.isLiveTranscriptionEnabled && languageType.value === LanguageType.Target) {
+		return t('spreed', 'Disable live translation')
+	}
+
+	return t('spreed', 'Enable live translation')
+})
+
+const originalLanguageButtonLabel = computed(() => {
+	const languageId = conversation.value.liveTranscriptionLanguageId || 'en'
+
+	const languageName = liveTranscriptionStore.getLiveTranscriptionLanguages()?.[languageId]?.name ?? languageId
+
+	return t('spreed', 'Original language: {languageName}', {
+		languageName,
+	})
+})
+
+const targetLanguageButtonLabel = computed(() => {
+	const languageId = targetLanguageId.value
+	if (!languageId) {
+		return t('spreed', 'Translated language')
+	}
+
+	const languageName = liveTranscriptionStore.getLiveTranscriptionTargetLanguages()?.[languageId]?.name ?? languageId
+
+	return t('spreed', 'Translated language: {languageName}', {
+		languageName,
+	})
+})
+
+const targetLanguageId = computed(() => {
+	const languageId = settingsStore.liveTranscriptionTargetLanguageId
+
+	if (languageId) {
+		return languageId
+	}
+
+	return liveTranscriptionStore.getLiveTranscriptionDefaultTargetLanguageId()
+})
+
+const targetLanguageAvailable = computed(() => {
+	const liveTranscriptionTargetLanguages = liveTranscriptionStore.getLiveTranscriptionTargetLanguages()
+
+	return targetLanguageId.value
+		&& targetLanguageId.value !== conversation.value.liveTranscriptionLanguageId
+		&& liveTranscriptionTargetLanguages && liveTranscriptionTargetLanguages[targetLanguageId.value]
+})
+
+const LanguageType = {
+	Original: 'original',
+	Target: 'target',
+} as const
+
+const languageType = ref<typeof LanguageType[keyof typeof LanguageType]>(LanguageType.Original)
 
 const isHandRaised = computed(() => localMediaModel.attributes.raisedHand.state === true)
 
@@ -165,9 +226,20 @@ onUnmounted(() => {
 })
 
 /**
- * Toggle live transcriptions.
+ * Load live transcription and translation languages.
  */
-async function toggleLiveTranscription() {
+function handleLiveTranscriptionLanguageSelectorOpen() {
+	liveTranscriptionStore.loadLiveTranscriptionLanguages()
+	liveTranscriptionStore.loadLiveTranscriptionTranslationLanguages()
+}
+
+/**
+ * Toggle live transcriptions.
+ *
+ * Live translations are enabled again if needed when live transcriptions are
+ * toggled on.
+ */
+async function toggleLiveTranscriptionAndTranslation() {
 	if (isLiveTranscriptionLoading.value) {
 		return
 	}
@@ -176,9 +248,97 @@ async function toggleLiveTranscription() {
 
 	if (!callViewStore.isLiveTranscriptionEnabled) {
 		await enableLiveTranscription()
+
+		if (languageType.value === LanguageType.Target) {
+			await enableLiveTranslation()
+		}
 	} else {
 		await disableLiveTranscription()
 	}
+
+	isLiveTranscriptionLoading.value = false
+}
+
+/**
+ * Toggle live transcriptions.
+ */
+async function toggleLiveTranscription() {
+	if (isLiveTranscriptionLoading.value) {
+		return
+	}
+
+	if (callViewStore.isLiveTranscriptionEnabled && languageType.value === LanguageType.Original) {
+		isLiveTranscriptionLoading.value = true
+
+		await disableLiveTranscription()
+
+		isLiveTranscriptionLoading.value = false
+	} else {
+		await switchToOriginalLanguage()
+	}
+}
+
+/**
+ * Toggle live translations.
+ *
+ * Disabling live translations disables live transcriptions as well.
+ */
+async function toggleLiveTranslation() {
+	if (isLiveTranscriptionLoading.value) {
+		return
+	}
+
+	if (callViewStore.isLiveTranscriptionEnabled && languageType.value === LanguageType.Target) {
+		isLiveTranscriptionLoading.value = true
+
+		await disableLiveTranscription()
+
+		isLiveTranscriptionLoading.value = false
+	} else {
+		await switchToTargetLanguage()
+	}
+}
+
+/**
+ * Enable live transcriptions, disabling live translations if they were already
+ * enabled.
+ */
+async function switchToOriginalLanguage() {
+	if (isLiveTranscriptionLoading.value) {
+		return
+	}
+
+	isLiveTranscriptionLoading.value = true
+
+	if (!callViewStore.isLiveTranscriptionEnabled && !(await enableLiveTranscription())) {
+		isLiveTranscriptionLoading.value = false
+
+		return
+	}
+
+	await disableLiveTranslation()
+
+	isLiveTranscriptionLoading.value = false
+}
+
+/**
+ * Enable live translations, enabling live transcriptions first if they were not
+ * enabled yet.
+ */
+async function switchToTargetLanguage() {
+	if (isLiveTranscriptionLoading.value) {
+		return
+	}
+
+	isLiveTranscriptionLoading.value = true
+
+	if (!callViewStore.isLiveTranscriptionEnabled && !(await enableLiveTranscription())) {
+		isLiveTranscriptionLoading.value = false
+
+		return
+	}
+
+	await enableLiveTranslation()
 
 	isLiveTranscriptionLoading.value = false
 }
@@ -196,14 +356,18 @@ async function enableLiveTranscription() {
 	} catch (exception) {
 		showError(t('spreed', 'Error when trying to load the available live transcription languages'))
 
-		return
+		return false
 	}
 
 	try {
 		await callViewStore.enableLiveTranscription(token.value)
 	} catch (error) {
 		showError(t('spreed', 'Failed to enable live transcription'))
+
+		return false
 	}
+
+	return true
 }
 
 /**
@@ -217,6 +381,50 @@ async function disableLiveTranscription() {
 		// relevant for the user, as the transcript will be no longer visible in
 		// the UI anyway, so no error is shown in that case.
 	}
+}
+
+/**
+ * Enable live translations.
+ *
+ * Live transcriptions need to have been enabled first before enabling live
+ * translations.
+ */
+async function enableLiveTranslation() {
+	if (languageType.value === LanguageType.Target) {
+		return
+	}
+
+	try {
+		await callViewStore.setLiveTranscriptionTargetLanguage(token.value, targetLanguageId.value as string)
+	} catch (error) {
+		showError(t('spreed', 'Failed to enable live translations'))
+
+		return
+	}
+
+	languageType.value = LanguageType.Target
+}
+
+/**
+ * Disable live translations.
+ *
+ * This does not disable live transcriptions, so the transcription will continue
+ * in the original language.
+ */
+async function disableLiveTranslation() {
+	if (languageType.value === LanguageType.Original) {
+		return
+	}
+
+	try {
+		await callViewStore.setLiveTranscriptionTargetLanguage(token.value, null)
+	} catch (error) {
+		showError(t('spreed', 'Failed to disable live translations'))
+
+		return
+	}
+
+	languageType.value = LanguageType.Original
 }
 
 let lowerHandDelay = AUTO_LOWER_HAND_THRESHOLD
@@ -338,25 +546,63 @@ useHotKey('r', toggleHandRaised)
 				:supported-reactions="supportedReactions"
 				:local-call-participant-model="localCallParticipantModel" />
 
-			<NcButton
+			<div
 				v-if="isLiveTranscriptionSupported && !hidingList.liveTranscription"
-				:title="liveTranscriptionButtonLabel"
-				:aria-label="liveTranscriptionButtonLabel"
-				:variant="callViewStore.isLiveTranscriptionEnabled ? 'secondary' : 'tertiary'"
-				:disabled="isLiveTranscriptionLoading"
-				@click="toggleLiveTranscription">
-				<template #icon>
-					<NcLoadingIcon
-						v-if="isLiveTranscriptionLoading"
-						:size="20" />
-					<IconSubtitles
-						v-else-if="callViewStore.isLiveTranscriptionEnabled"
-						:size="20" />
-					<IconSubtitlesOutline
-						v-else
-						:size="20" />
-				</template>
-			</NcButton>
+				class="live-transcription-button-wrapper">
+				<NcButton
+					:title="liveTranscriptionButtonLabel"
+					:aria-label="liveTranscriptionButtonLabel"
+					:variant="callViewStore.isLiveTranscriptionEnabled ? 'secondary' : 'tertiary'"
+					:disabled="isLiveTranscriptionLoading"
+					:class="{
+						'translation-button': isLiveTranslationSupported,
+					}"
+					@click="toggleLiveTranscriptionAndTranslation">
+					<template #icon>
+						<NcLoadingIcon
+							v-if="isLiveTranscriptionLoading"
+							:size="20" />
+						<IconSubtitles
+							v-else-if="callViewStore.isLiveTranscriptionEnabled"
+							:size="20" />
+						<IconSubtitlesOutline
+							v-else
+							:size="20" />
+					</template>
+				</NcButton>
+
+				<NcActions
+					v-if="isLiveTranslationSupported"
+					class="language-selector-button"
+					@open="handleLiveTranscriptionLanguageSelectorOpen">
+					<template #icon>
+						<IconChevronUp :size="16" />
+					</template>
+					<NcActionButton
+						class="language-selector__action"
+						type="radio"
+						:disabled="isLiveTranscriptionLoading"
+						:model-value="languageType"
+						:value="LanguageType.Original"
+						:title="originalLanguageButtonLabel"
+						close-after-click
+						@click="switchToOriginalLanguage">
+						{{ originalLanguageButtonLabel }}
+					</NcActionButton>
+					<NcActionSeparator />
+					<NcActionButton
+						class="language-selector__action"
+						type="radio"
+						:disabled="isLiveTranscriptionLoading || !targetLanguageAvailable"
+						:model-value="languageType"
+						:value="LanguageType.Target"
+						:title="targetLanguageButtonLabel"
+						close-after-click
+						@click="switchToTargetLanguage">
+						{{ targetLanguageButtonLabel }}
+					</NcActionButton>
+				</NcActions>
+			</div>
 
 			<NcButton
 				v-if="!isSidebar && !hidingList.raiseHand"
@@ -405,21 +651,41 @@ useHotKey('r', toggleHandRaised)
 					v-if="isLiveTranscriptionSupported && hidingList.liveTranscription"
 					:title="liveTranscriptionButtonLabel"
 					:aria-label="liveTranscriptionButtonLabel"
-					:variant="callViewStore.isLiveTranscriptionEnabled ? 'secondary' : 'tertiary'"
+					:variant="(callViewStore.isLiveTranscriptionEnabled && languageType === LanguageType.Target) ? 'secondary' : 'tertiary'"
 					:disabled="isLiveTranscriptionLoading"
 					@click="toggleLiveTranscription">
 					<template #icon>
 						<NcLoadingIcon
-							v-if="isLiveTranscriptionLoading"
+							v-if="isLiveTranscriptionLoading && languageType === LanguageType.Original"
 							:size="20" />
 						<IconSubtitles
-							v-else-if="callViewStore.isLiveTranscriptionEnabled"
+							v-else-if="callViewStore.isLiveTranscriptionEnabled && languageType === LanguageType.Original"
 							:size="20" />
 						<IconSubtitlesOutline
 							v-else
 							:size="20" />
 					</template>
 					{{ liveTranscriptionButtonLabel }}
+				</NcActionButton>
+				<NcActionButton
+					v-if="isLiveTranslationSupported && hidingList.liveTranscription"
+					:title="liveTranslationButtonLabel"
+					:aria-label="liveTranslationButtonLabel"
+					:variant="(callViewStore.isLiveTranscriptionEnabled && languageType === LanguageType.Target) ? 'secondary' : 'tertiary'"
+					:disabled="isLiveTranscriptionLoading"
+					@click="toggleLiveTranslation">
+					<template #icon>
+						<NcLoadingIcon
+							v-if="isLiveTranscriptionLoading && languageType === LanguageType.Target"
+							:size="20" />
+						<IconSubtitles
+							v-else-if="callViewStore.isLiveTranscriptionEnabled && languageType === LanguageType.Target"
+							:size="20" />
+						<IconSubtitlesOutline
+							v-else
+							:size="20" />
+					</template>
+					{{ liveTranslationButtonLabel }}
 				</NcActionButton>
 				<NcActionButton
 					v-if="!isSidebar && hidingList.raiseHand"
@@ -478,5 +744,50 @@ useHotKey('r', toggleHandRaised)
 	align-items: center;
 	flex-direction: row;
 	gap: 4px;
+}
+
+.live-transcription-button-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 1px;
+
+	// Overwriting NcButton styles
+	.translation-button {
+		border-start-end-radius: 2px;
+		border-end-end-radius: 2px;
+	}
+}
+
+.language-selector-button :deep(.action-item__menutoggle) {
+	--button-size: var(--clickable-area-small);
+	height: var(--default-clickable-area);
+	border-start-start-radius: 2px;
+	border-end-start-radius: 2px;
+}
+
+.language-selector__action {
+	// Overwriting NcActionButton styles
+	:deep(.action-button__longtext) {
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		padding: 0;
+		max-width: 350px;
+	}
+
+	:deep(.action-button__longtext-wrapper) {
+		max-width: 350px;
+	}
+
+	:deep(.action-button__icon) {
+		width: 0;
+		margin-inline-start: calc(var(--default-grid-baseline) * 3);
+	}
+
+	:deep(.action-button > span) {
+		height: var(--default-clickable-area);
+	}
 }
 </style>

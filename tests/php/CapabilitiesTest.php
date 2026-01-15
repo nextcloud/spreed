@@ -109,6 +109,11 @@ class CapabilitiesTest extends TestCase {
 			->with(null)
 			->willReturn('split');
 
+		$this->talkConfig->expects($this->once())
+			->method('getLiveTranscriptionTargetLanguageId')
+			->with(null)
+			->willReturn('');
+
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
 			->willReturnMap([
@@ -158,6 +163,7 @@ class CapabilitiesTest extends TestCase {
 						'blur-virtual-background' => false,
 						'end-to-end-encryption' => false,
 						'live-transcription' => false,
+						'live-translation' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -178,6 +184,7 @@ class CapabilitiesTest extends TestCase {
 							'/img/backgrounds/7_library.jpg',
 							'/img/backgrounds/8_space_station.jpg',
 						],
+						'live-transcription-target-language-id' => '',
 					],
 					'chat' => [
 						'max-length' => 32000,
@@ -221,14 +228,14 @@ class CapabilitiesTest extends TestCase {
 
 	public static function dataGetCapabilitiesUserAllowed(): array {
 		return [
-			[true, false, 'none', true, Participant::PRIVACY_PRIVATE],
-			[false, true, '1 MB', true, Participant::PRIVACY_PUBLIC],
-			[false, true, '0 B', false, Participant::PRIVACY_PUBLIC],
+			[true, false, 'none', true, Participant::PRIVACY_PRIVATE, ''],
+			[false, true, '1 MB', true, Participant::PRIVACY_PUBLIC, 'en'],
+			[false, true, '0 B', false, Participant::PRIVACY_PUBLIC, 'de'],
 		];
 	}
 
 	#[DataProvider('dataGetCapabilitiesUserAllowed')]
-	public function testGetCapabilitiesUserAllowed(bool $isNotAllowed, bool $canCreate, string $quota, bool $canUpload, int $readPrivacy): void {
+	public function testGetCapabilitiesUserAllowed(bool $isNotAllowed, bool $canCreate, string $quota, bool $canUpload, int $readPrivacy, string $liveTranscriptionTargetLanguageId): void {
 		$capabilities = $this->getCapabilities();
 
 		$user = $this->createMock(IUser::class);
@@ -267,6 +274,11 @@ class CapabilitiesTest extends TestCase {
 			->method('getUserReadPrivacy')
 			->with('uid')
 			->willReturn($readPrivacy);
+
+		$this->talkConfig->expects($this->once())
+			->method('getLiveTranscriptionTargetLanguageId')
+			->with('uid')
+			->willReturn($liveTranscriptionTargetLanguageId);
 
 		$this->talkConfig->method('getConversationsListStyle')
 			->willReturn('two-lines');
@@ -336,6 +348,7 @@ class CapabilitiesTest extends TestCase {
 						'blur-virtual-background' => false,
 						'end-to-end-encryption' => false,
 						'live-transcription' => false,
+						'live-translation' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -356,6 +369,7 @@ class CapabilitiesTest extends TestCase {
 							'/img/backgrounds/7_library.jpg',
 							'/img/backgrounds/8_space_station.jpg',
 						],
+						'live-transcription-target-language-id' => $liveTranscriptionTargetLanguageId,
 					],
 					'chat' => [
 						'max-length' => 32000,

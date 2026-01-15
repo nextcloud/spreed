@@ -128,6 +128,15 @@
 			</NcFormBoxButton>
 		</NcAppSettingsSection>
 
+		<NcAppSettingsSection
+			v-if="supportLiveTranslation"
+			id="live_transcription"
+			:name="t('spreed', 'Live transcription')">
+			<NcFormBox v-slot="{ itemClass }">
+				<LiveTranscriptionTargetLanguageSelect :class="itemClass" />
+			</NcFormBox>
+		</NcAppSettingsSection>
+
 		<NcAppSettingsShortcutsSection
 			v-if="!disableKeyboardShortcuts">
 			<NcHotkeyList>
@@ -179,6 +188,7 @@ import IconFolderOpenOutline from 'vue-material-design-icons/FolderOpenOutline.v
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import IconTune from 'vue-material-design-icons/Tune.vue'
 import AdvancedAudioDialog from '../MediaSettings/AdvancedAudioDialog.vue'
+import LiveTranscriptionTargetLanguageSelect from './LiveTranscriptionTargetLanguageSelect.vue'
 import { CHAT_STYLE, CONVERSATION, PRIVACY } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
@@ -194,6 +204,7 @@ const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-m
 const supportConversationsListStyle = getTalkConfig('local', 'conversations', 'list-style') !== undefined
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 const supportChatStyle = getTalkConfig('local', 'chat', 'style') !== undefined
+const supportLiveTranslation = getTalkConfig('local', 'call', 'live-translation') === true
 
 export default {
 	name: 'SettingsDialog',
@@ -202,6 +213,7 @@ export default {
 		IconTune,
 		IconFolderOpenOutline,
 		IconMicrophoneOutline,
+		LiveTranscriptionTargetLanguageSelect,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
 		NcButton,
@@ -231,6 +243,7 @@ export default {
 			supportConversationsListStyle,
 			supportDefaultBlurVirtualBackground,
 			supportChatStyle,
+			supportLiveTranslation,
 			actorStore,
 		}
 	},

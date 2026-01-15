@@ -531,4 +531,6 @@ export type LiveTranscriptionLanguage = components['schemas']['LiveTranscription
 export type liveTranscriptionDisableResponse = ApiResponse<operations['live_transcription-disable']['responses'][200]['content']['application/json']>
 export type liveTranscriptionEnableResponse = ApiResponse<operations['live_transcription-enable']['responses'][200]['content']['application/json']>
 export type liveTranscriptionGetAvailableLanguagesResponse = ApiResponse<operations['live_transcription-get-available-languages']['responses'][200]['content']['application/json']>
+export type liveTranscriptionGetAvailableTranslationLanguagesResponse = ApiResponse<operations['live_transcription-get-available-translation-languages']['responses'][200]['content']['application/json']>
 export type liveTranscriptionSetLanguageResponse = ApiResponse<operations['live_transcription-set-language']['responses'][200]['content']['application/json']>
+export type liveTranscriptionSetTargetLanguageResponse = ApiResponse<operations['live_transcription-set-target-language']['responses'][200]['content']['application/json']>

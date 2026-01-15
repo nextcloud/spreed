@@ -171,6 +171,7 @@ class Capabilities implements IPublicCapability {
 			'can-upload-background',
 			'start-without-media',
 			'blur-virtual-background',
+			'live-transcription-target-language-id',
 		],
 		'chat' => [
 			'read-privacy',
@@ -256,8 +257,8 @@ class Capabilities implements IPublicCapability {
 					'max-duration' => $this->appConfig->getAppValueInt('max_call_duration'),
 					'blur-virtual-background' => $this->talkConfig->getBlurVirtualBackground($user?->getUID()),
 					'end-to-end-encryption' => $this->talkConfig->isCallEndToEndEncryptionEnabled(),
-					'live-transcription' => $this->talkConfig->getSignalingMode() === Config::SIGNALING_EXTERNAL
-						&& $this->liveTranscriptionService->isLiveTranscriptionAppEnabled(),
+					'live-transcription' => $this->isLiveTranscriptionSupported(),
+					'live-translation' => $this->isLiveTranslationSupported(),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
@@ -370,9 +371,57 @@ class Capabilities implements IPublicCapability {
 			$capabilities['features'][] = 'call-end-to-end-encryption';
 		}
 
+		if ($user instanceof IUser) {
+			$capabilities['config']['call']['live-transcription-target-language-id'] = $this->talkConfig->getLiveTranscriptionTargetLanguageId($user->getUID());
+		} else {
+			$capabilities['config']['call']['live-transcription-target-language-id'] = $this->talkConfig->getLiveTranscriptionTargetLanguageId();
+		}
+
 		return [
 			'spreed' => $capabilities,
 		];
+	}
+
+	protected function isLiveTranscriptionSupported(): bool {
+		return $this->talkConfig->getSignalingMode() === Config::SIGNALING_EXTERNAL
+			&& $this->liveTranscriptionService->isLiveTranscriptionAppEnabled();
+	}
+
+	protected function isLiveTranslationSupported(): bool {
+		if (!$this->isLiveTranscriptionSupported()) {
+			return false;
+		}
+
+		// FIXME Getting the capabilities from the live_transcription app causes
+		// the Nextcloud capabilities to be requested, so it enters in a loop.
+		// For now checking whether text2text tasks are supported or not is
+		// directly done here instead (but that does not guarantee that
+		// translations are supported, as an old live_transcription app might be
+		// being used).
+		// $this->getLiveTranslationSupportedFromExAppCapabilities();
+
+		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
+
+		return in_array(TextToTextTranslate::ID, $supportedTaskTypeIds, true);
+	}
+
+	protected function getLiveTranslationSupportedFromExAppCapabilities(): bool {
+		$cacheKey = 'is_live_translation_supported';
+
+		$isLiveTranslationSupported = $this->talkCache->get($cacheKey);
+		if (is_bool($isLiveTranslationSupported)) {
+			return $isLiveTranslationSupported;
+		}
+
+		try {
+			$isLiveTranslationSupported = $this->liveTranscriptionService->isLiveTranslationSupported();
+		} catch (\Exception $e) {
+			$isLiveTranslationSupported = false;
+		}
+
+		$this->talkCache->set($cacheKey, $isLiveTranslationSupported, 300);
+
+		return $isLiveTranslationSupported;
 	}
 
 	/**

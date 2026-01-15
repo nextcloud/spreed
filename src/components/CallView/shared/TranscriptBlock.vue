@@ -183,6 +183,15 @@ export default {
 			return liveTranscriptionLanguages
 		},
 
+		liveTranscriptionTargetLanguages() {
+			const liveTranscriptionTargetLanguages = this.liveTranscriptionStore.getLiveTranscriptionTargetLanguages()
+			if (!liveTranscriptionTargetLanguages) {
+				return {}
+			}
+
+			return liveTranscriptionTargetLanguages
+		},
+
 		chunksWithSeparator() {
 			const chunksWithSeparator = [] as Array<ChunkElementData>
 
@@ -359,6 +368,10 @@ export default {
 
 			if (this.liveTranscriptionLanguages[chunk1.languageId]?.metadata) {
 				return this.liveTranscriptionLanguages[chunk1.languageId].metadata.separator
+			}
+
+			if (this.liveTranscriptionTargetLanguages[chunk1.languageId]?.metadata) {
+				return this.liveTranscriptionTargetLanguages[chunk1.languageId].metadata.separator
 			}
 
 			return ' '

@@ -151,6 +151,8 @@ export const mockedCapabilities: Capabilities = {
 				'blur-virtual-background': false,
 				'end-to-end-encryption': false,
 				'live-transcription': false,
+				'live-translation': false,
+				'live-transcription-target-language-id': '',
 			},
 			chat: {
 				'max-length': 32000,
