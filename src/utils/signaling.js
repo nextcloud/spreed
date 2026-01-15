@@ -866,6 +866,7 @@ Signaling.Standalone.prototype._handleConnectionError = function(type) {
 		this.signalingConnectionError = showError(t('spreed', 'Failed to connect. The signaling server may be set up incorrectly'), {
 			timeout: TOAST_PERMANENT_TIMEOUT,
 		})
+		this._trigger('joinRoomFailed', [this.settings.token])
 	}
 }
 
