@@ -5,6 +5,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.8 – 2026-01-15
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(chat): Allow getting a single message
+  [#16732](https://github.com/nextcloud/spreed/pull/16732)
+- fix(call): Allow selecting a media device after an error occurred
+  [#16700](https://github.com/nextcloud/spreed/pull/16700)
+- fix(call): Still block mobile clients when call end-to-end encryption is enabled
+  [#16673](https://github.com/nextcloud/spreed/pull/16673)
+
 ## 21.1.7 – 2025-12-15
 ### Changed
 - Update dependencies
