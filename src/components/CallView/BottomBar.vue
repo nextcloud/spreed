@@ -80,11 +80,11 @@ const isLiveTranscriptionSupported = computed(() => getTalkConfig(token.value, '
 const isLiveTranslationSupported = computed(() => getTalkConfig(token.value, 'call', 'live-translation') || false)
 
 const liveTranscriptionButtonLabel = computed(() => {
-	if (!callViewStore.isLiveTranscriptionEnabled) {
-		return t('spreed', 'Enable live transcription')
+	if (callViewStore.isLiveTranscriptionEnabled) {
+		return t('spreed', 'Disable live transcription')
 	}
 
-	return t('spreed', 'Disable live transcription')
+	return t('spreed', 'Enable live transcription')
 })
 
 const originalLanguageButtonLabel = computed(() => {
