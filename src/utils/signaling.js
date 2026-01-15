@@ -752,6 +752,7 @@ Signaling.Standalone.prototype.connect = function() {
 			this.signalingConnectionError = showError(t('spreed', 'Failed to connect. The signaling server may be set up incorrectly'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
+			this._trigger('joinRoomFailed', [this.settings.token])
 		}
 		this.reconnect()
 	}.bind(this)
@@ -1100,6 +1101,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 			this.signalingConnectionError = showError(t('spreed', 'Failed to connect. The signaling server may be set up incorrectly'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
+			this._trigger('joinRoomFailed', [this.settings.token])
 		}
 
 		// TODO(fancycode): How should this be handled better?
