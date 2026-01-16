@@ -1443,6 +1443,7 @@ OC.L10N.register(
     "Edit display name" : "Weergavenaam bewerken",
     "Display name (required)" : "Weergavenaam (verplicht)",
     "Save name" : "Naam opslaan",
+    "Default language" : "Standaardtaal",
     "Select location for attachments" : "Selecteer locatie voor bijlagen",
     "Error while setting attachment folder" : "Fout bij instellen map voor bijlagen",
     "Error while setting read status privacy" : "Fout bij instellen lees-status privacy",

@@ -1351,6 +1351,7 @@
     "Display name: {name}" : "표시되는 이름: {name}",
     "Edit display name" : "표시 이름 수정",
     "Save name" : "이름 저장",
+    "Default language" : "기본 언어",
     "Select location for attachments" : "첨부 파일 위치 선택",
     "Error while setting attachment folder" : "첨부 파일 폴더 설정 중 오류 발생",
     "Error while setting read status privacy" : "읽기 상태 개인 정보를 설정하는 중 오류 발생",

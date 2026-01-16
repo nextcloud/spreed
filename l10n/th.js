@@ -89,6 +89,7 @@ OC.L10N.register(
     "Chat" : "แชท",
     "Details" : "รายละเอียด",
     "Load more results" : "โหลดผลลัพธ์เพิ่มเติม",
+    "Default language" : "ภาษาค่าเริ่มต้น",
     "Privacy" : "ความเป็นส่วนตัว",
     "Search" : "ค้นหา",
     "Keep" : "เก็บ",

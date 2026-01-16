@@ -820,6 +820,7 @@ OC.L10N.register(
     "None" : "Няма",
     "Select a microphone" : "Выберыце мікрафон",
     "Select a speaker" : "Выберыце дынамік",
+    "Microphone settings" : "Налады мікрафона",
     "Check devices" : "Праверыць прылады",
     "Access to camera was denied" : "Доступ да камеры забаронены",
     "Error while accessing camera: It is likely in use by another program" : "Памылка доступу да камеры: верагодна, яна выкарыстоўваецца іншай праграмай",

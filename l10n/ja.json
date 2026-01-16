@@ -1515,6 +1515,7 @@
     "Display name: {name}" : "表示名: {name}",
     "Edit display name" : "表示名の編集",
     "Save name" : "名前を保存",
+    "Default language" : "デフォルトの言語",
     "Select location for attachments" : "添付ファイルの場所を選択します",
     "Error while setting attachment folder" : "添付ファイル用フォルダー設定中のエラー",
     "Error while setting read status privacy" : "読み取りステータスのプライバシー設定中にエラーが発生しました",
