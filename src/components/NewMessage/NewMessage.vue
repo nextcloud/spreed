@@ -142,6 +142,7 @@
 			<NcActions
 				v-if="showSendActions"
 				force-menu
+				:disabled="disabled"
 				:primary="silentChat"
 				@close="submenu = null">
 				<template #icon>
@@ -512,7 +513,8 @@ export default {
 		},
 
 		disabled() {
-			return this.isReadOnly || this.noChatPermission || !this.currentConversationIsJoined || this.isRecordingAudio
+			return this.isReadOnly || this.noChatPermission || this.isRecordingAudio
+				|| (!this.currentConversationIsJoined && !this.currentConversationIsJoinedWithoutHPB)
 		},
 
 		scheduleMessageTime() {
@@ -539,7 +541,7 @@ export default {
 				return t('spreed', 'This conversation has been locked')
 			} else if (this.noChatPermission) {
 				return t('spreed', 'No permission to post messages in this conversation')
-			} else if (!this.currentConversationIsJoined) {
+			} else if (!this.currentConversationIsJoined && !this.currentConversationIsJoinedWithoutHPB) {
 				return t('spreed', 'Joining conversation …')
 			} else if (this.silentChat) {
 				return t('spreed', 'Write a message without notification')
@@ -592,6 +594,10 @@ export default {
 
 		currentConversationIsJoined() {
 			return this.tokenStore.currentConversationIsJoined
+		},
+
+		currentConversationIsJoinedWithoutHPB() {
+			return this.tokenStore.currentConversationIsJoinedWithoutHPB
 		},
 
 		currentUploadId() {
@@ -718,6 +724,10 @@ export default {
 
 	watch: {
 		currentConversationIsJoined() {
+			this.focusInput()
+		},
+
+		currentConversationIsJoinedWithoutHPB() {
 			this.focusInput()
 		},
 

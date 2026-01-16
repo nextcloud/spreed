@@ -17,8 +17,15 @@ export const useTokenStore = defineStore('token', () => {
 	 * A in the signaling server.
 	 */
 	const lastJoinedConversationToken = ref<'' | (string & {})>('')
+	/**
+	 * The joining of a room with the signaling server might fail
+	 * for various reasons. We still want to allow basic functionality
+	 * (e.g. chatting and file sharing) which does not depend on it.
+	 */
+	const lastJoinConversationFailed = ref<boolean>(false)
 
 	const currentConversationIsJoined = computed(() => token.value !== '' && lastJoinedConversationToken.value === token.value)
+	const currentConversationIsJoinedWithoutHPB = computed(() => token.value !== '' && lastJoinConversationFailed.value)
 
 	/**
 	 * @param newToken token of active conversation
@@ -43,16 +50,28 @@ export const useTokenStore = defineStore('token', () => {
 	 */
 	function updateLastJoinedConversationToken(newToken: string) {
 		lastJoinedConversationToken.value = newToken
+		// Reset last failed conversation attempt on successful join
+		lastJoinConversationFailed.value = false
+	}
+
+	/**
+	 * @param newValue value of the flag for last joined conversation
+	 */
+	function setLastJoinConversationFailed(newValue: boolean) {
+		lastJoinConversationFailed.value = newValue
 	}
 
 	return {
 		token,
 		fileIdForToken,
 		lastJoinedConversationToken,
+		lastJoinConversationFailed,
 		currentConversationIsJoined,
+		currentConversationIsJoinedWithoutHPB,
 
 		updateToken,
 		updateTokenAndFileIdForToken,
 		updateLastJoinedConversationToken,
+		setLastJoinConversationFailed,
 	}
 })
