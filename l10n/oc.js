@@ -917,6 +917,7 @@ OC.L10N.register(
     "Phone numbers" : "Numèros de telefòn",
     "Display name: {name}" : "Nom d’afichatge : {name}",
     "Save name" : "Enregistrar lo nom",
+    "Default language" : "Lenga per defaut",
     "Select location for attachments" : "Causir un emplaçament per las pèças juntas",
     "Error while setting attachment folder" : "Error pendent la definicion del dossièr de pèça junta",
     "Error while setting read status privacy" : "Error lor de definicion de la confidencialitat de l'estatut",

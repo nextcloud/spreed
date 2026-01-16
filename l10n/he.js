@@ -532,6 +532,7 @@ OC.L10N.register(
     "Projects" : "מיזמים",
     "Link to a conversation" : "קישור לדיון",
     "Select conversation" : "בחירת דיון",
+    "Default language" : "שפת בררת מחדל",
     "Select location for attachments" : "בחירת מיקום לקבצים מצורפים",
     "Notification settings" : "הגדרות התראה",
     "Privacy" : "פרטיות",

@@ -1349,6 +1349,7 @@ OC.L10N.register(
     "Display name: {name}" : "Pantaila-izena: {name}",
     "Edit display name" : "Editatu erakutsiko den izena",
     "Save name" : "Gorde izena",
+    "Default language" : "Hizkuntza lehenetsia",
     "Select location for attachments" : "Hautatu kokalekua eranskinentzat",
     "Error while setting attachment folder" : "Errorea eranskinen karpeta ezartzean",
     "Error while setting read status privacy" : "Errorea irakurtze-egoera pribatutasun ezarpenak konfiguratzean",

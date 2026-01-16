@@ -352,6 +352,7 @@ OC.L10N.register(
     "Load more results" : "Muat lebih banyak hasil",
     "Projects" : "Proyek",
     "Search conversations or users" : "Cari percakapan atau pengguna",
+    "Default language" : "Bahasa bawaan",
     "Notification settings" : "Pengaturan notifikasi",
     "Privacy" : "Privasi",
     "Attachments folder" : "Folder lampiran",

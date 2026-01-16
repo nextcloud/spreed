@@ -859,6 +859,7 @@ OC.L10N.register(
     "Select conversation" : "Избери разговор",
     "Edit display name" : "Иреди име",
     "Save name" : "Зачувај име",
+    "Default language" : "Стандарден јазик",
     "Select location for attachments" : "Избери локација за прилози",
     "Error while setting attachment folder" : "Грешка при поставување на папка за прилози",
     "Error while setting read status privacy" : "Грешка при зачувување на поставките за приватност",

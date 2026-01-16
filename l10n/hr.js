@@ -895,6 +895,7 @@ OC.L10N.register(
     "Link to a conversation" : "Poveznica za sudjelovanje u razgovoru",
     "Search conversations or users" : "Pretraži razgovore ili korisnike",
     "Select conversation" : "Odaberi razgovor",
+    "Default language" : "Zadani jezik",
     "Select location for attachments" : "Odaberite lokaciju privitaka",
     "Error while setting attachment folder" : "Pogreška pri postavljanju mape za privitke",
     "Error while setting read status privacy" : "Pogreška pri postavljanju privatnosti statusa čitanja",

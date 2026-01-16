@@ -733,6 +733,7 @@ OC.L10N.register(
     "Phone numbers" : "Numere de telefon",
     "Display name: {name}" : "Numele afișat: {name}",
     "Save name" : "Salvează numele",
+    "Default language" : "Limba implicită",
     "Select location for attachments" : "Selectați locația atașamentelor",
     "Error while setting attachment folder" : "Eroare la setarea dosarului pentru atașamente",
     "Error while setting read status privacy" : "Eroare la setarea confidențialității statusului de citire",
