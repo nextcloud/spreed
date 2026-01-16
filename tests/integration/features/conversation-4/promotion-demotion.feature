@@ -18,7 +18,7 @@ Feature: conversation-2/promotion-demotion
     When user "participant1" promotes "participant2" in room "room" with 200 (v4)
     Then signaling server received the following requests
       | token | data |
-      | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+      | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true,"comment":[]}}}} |
     # TODO remove handler with "roomModified" in favour of handler with
     # "participantsModified" once the clients no longer expect a
     # "roomModified" message for participant type changes.
