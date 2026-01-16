@@ -582,6 +582,13 @@ namespace OCA\Talk;
  *     sendAt: int,
  *     silent: bool,
  * }
+ *
+ * @psalm-type TalkConversationPreset = {
+ *     // Identifier of the preset, currently known: default, webinar, presentation, hallway
+ *     id: string,
+ *     // Translated name of the preset in user's language
+ *     name: string,
+ * }
  */
 class ResponseDefinitions {
 }

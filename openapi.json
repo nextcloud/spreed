@@ -16092,6 +16092,8 @@
                                     "roomType": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "nullable": true,
+                                        "default": null,
                                         "description": "Type of the room"
                                     },
                                     "invite": {
@@ -16128,7 +16130,8 @@
                                     },
                                     "readOnly": {
                                         "type": "integer",
-                                        "format": "int64",
+                                        "nullable": true,
+                                        "default": null,
                                         "enum": [
                                             0,
                                             1
@@ -16137,7 +16140,8 @@
                                     },
                                     "listable": {
                                         "type": "integer",
-                                        "format": "int64",
+                                        "nullable": true,
+                                        "default": null,
                                         "enum": [
                                             0,
                                             1,
@@ -16148,13 +16152,15 @@
                                     "messageExpiration": {
                                         "type": "integer",
                                         "format": "int64",
-                                        "default": 0,
+                                        "nullable": true,
+                                        "default": null,
                                         "description": "Seconds after which messages will disappear, 0 disables expiration (Default 0) (only available with `conversation-creation-all` capability)",
                                         "minimum": 0
                                     },
                                     "lobbyState": {
                                         "type": "integer",
-                                        "format": "int64",
+                                        "nullable": true,
+                                        "default": null,
                                         "enum": [
                                             0,
                                             1
@@ -16171,7 +16177,8 @@
                                     },
                                     "sipEnabled": {
                                         "type": "integer",
-                                        "format": "int64",
+                                        "nullable": true,
+                                        "default": null,
                                         "enum": [
                                             0,
                                             1,
@@ -16182,13 +16189,16 @@
                                     "permissions": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "nullable": true,
+                                        "default": null,
                                         "description": "Default permissions for participants (only available with `conversation-creation-all` capability)",
                                         "minimum": 0,
                                         "maximum": 255
                                     },
                                     "recordingConsent": {
                                         "type": "integer",
-                                        "format": "int64",
+                                        "nullable": true,
+                                        "default": null,
                                         "enum": [
                                             0,
                                             1
@@ -16197,7 +16207,8 @@
                                     },
                                     "mentionPermissions": {
                                         "type": "integer",
-                                        "format": "int64",
+                                        "nullable": true,
+                                        "default": null,
                                         "enum": [
                                             0,
                                             1
@@ -16227,6 +16238,18 @@
                                         "$ref": "#/components/schemas/InvitationList",
                                         "default": [],
                                         "description": "List of participants to add grouped by type (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "preset": {
+                                        "type": "integer",
+                                        "nullable": true,
+                                        "default": null,
+                                        "enum": [
+                                            0,
+                                            1,
+                                            2,
+                                            3
+                                        ],
+                                        "description": "Which preset should be used for not-given (null) parameters (only available with `conversation-preset` capability)"
                                     }
                                 }
                             }

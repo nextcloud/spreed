@@ -8181,8 +8181,9 @@ export interface operations {
                     /**
                      * Format: int64
                      * @description Type of the room
+                     * @default null
                      */
-                    roomType?: number;
+                    roomType?: number | null;
                     /**
                      * @deprecated
                      * @description User, group, … ID to invite Deprecated: Use the `$participants` array instead
@@ -8216,29 +8217,29 @@ export interface operations {
                      */
                     password?: string;
                     /**
-                     * Format: int64
                      * @description Read only state of the conversation (Default writable) (only available with `conversation-creation-all` capability)
-                     * @enum {integer}
+                     * @default null
+                     * @enum {integer|null}
                      */
-                    readOnly?: 0 | 1;
+                    readOnly?: 0 | 1 | null;
                     /**
-                     * Format: int64
                      * @description Scope where the conversation is listable (Default not listable for anyone) (only available with `conversation-creation-all` capability)
-                     * @enum {integer}
+                     * @default null
+                     * @enum {integer|null}
                      */
-                    listable?: 0 | 1 | 2;
+                    listable?: 0 | 1 | 2 | null;
                     /**
                      * Format: int64
                      * @description Seconds after which messages will disappear, 0 disables expiration (Default 0) (only available with `conversation-creation-all` capability)
-                     * @default 0
+                     * @default null
                      */
-                    messageExpiration?: number;
+                    messageExpiration?: number | null;
                     /**
-                     * Format: int64
                      * @description Lobby state of the conversation (Default lobby is disabled) (only available with `conversation-creation-all` capability)
-                     * @enum {integer}
+                     * @default null
+                     * @enum {integer|null}
                      */
-                    lobbyState?: 0 | 1;
+                    lobbyState?: 0 | 1 | null;
                     /**
                      * Format: int64
                      * @description Timer when the lobby will be removed (Default null, will not be disabled automatically) (only available with `conversation-creation-all` capability)
@@ -8246,28 +8247,29 @@ export interface operations {
                      */
                     lobbyTimer?: number | null;
                     /**
-                     * Format: int64
                      * @description Whether SIP dial-in shall be enabled (only available with `conversation-creation-all` capability)
-                     * @enum {integer}
+                     * @default null
+                     * @enum {integer|null}
                      */
-                    sipEnabled?: 0 | 1 | 2;
+                    sipEnabled?: 0 | 1 | 2 | null;
                     /**
                      * Format: int64
                      * @description Default permissions for participants (only available with `conversation-creation-all` capability)
+                     * @default null
                      */
-                    permissions?: number;
+                    permissions?: number | null;
                     /**
-                     * Format: int64
                      * @description Whether participants need to agree to a recording before joining a call (only available with `conversation-creation-all` capability)
-                     * @enum {integer}
+                     * @default null
+                     * @enum {integer|null}
                      */
-                    recordingConsent?: 0 | 1;
+                    recordingConsent?: 0 | 1 | null;
                     /**
-                     * Format: int64
                      * @description Who can mention at-all in the chat (only available with `conversation-creation-all` capability)
-                     * @enum {integer}
+                     * @default null
+                     * @enum {integer|null}
                      */
-                    mentionPermissions?: 0 | 1;
+                    mentionPermissions?: 0 | 1 | null;
                     /**
                      * @description Description for the conversation (limited to 2.000 characters) (only available with `conversation-creation-all` capability)
                      * @default
@@ -8288,6 +8290,12 @@ export interface operations {
                      * @default []
                      */
                     participants?: components["schemas"]["InvitationList"];
+                    /**
+                     * @description Which preset should be used for not-given (null) parameters (only available with `conversation-preset` capability)
+                     * @default null
+                     * @enum {integer|null}
+                     */
+                    preset?: 0 | 1 | 2 | 3 | null;
                 };
             };
         };
