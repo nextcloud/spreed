@@ -831,6 +831,7 @@ OC.L10N.register(
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Search conversations or users" : "Ieškoti pokalbių ar naudotojų",
     "Phone numbers" : "Telefono numeriai",
+    "Default language" : "Numatytoji kalba",
     "Error while setting attachment folder" : "Klaida nustatant priedų aplanką",
     "Notification settings" : "Pranešimų nustatymai",
     "Privacy" : "Privatumas",

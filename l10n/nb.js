@@ -1462,6 +1462,7 @@ OC.L10N.register(
     "Display name: {name}" : "Visningsnavn: {name}",
     "Edit display name" : "Rediger visningsnavn",
     "Save name" : "Lagre navn",
+    "Default language" : "Standard språk",
     "Select location for attachments" : "Velg plassering for vedlegg",
     "Error while setting attachment folder" : "Feil under angivelse av vedleggsmappe",
     "Error while setting read status privacy" : "Feil under angivelse av personvern for lesestatus",

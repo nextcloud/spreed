@@ -876,6 +876,7 @@ OC.L10N.register(
     "Link to a conversation" : "Collega a una resonada",
     "Search conversations or users" : "Chirca resonadas o utentes",
     "Select conversation" : "Seletziona resonada",
+    "Default language" : "Limba predefinida",
     "Select location for attachments" : "Seletziona sa positzione pro is alligongiados",
     "Error while setting attachment folder" : "Errore in sa cunfiguratzione de sa cartella de is alligongiados",
     "Error while setting read status privacy" : "Errore in sa cunfiguratzione de sa riservadesa de s'istadu de letura",

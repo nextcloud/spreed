@@ -337,6 +337,7 @@ OC.L10N.register(
     "Searching …" : "Serĉado ...",
     "Chat" : "Babili",
     "Details" : "Detaloj",
+    "Default language" : "Defaŭlta lingvo",
     "Privacy" : "Privateco",
     "Search" : "Serĉi",
     "Keep" : "Konservi",

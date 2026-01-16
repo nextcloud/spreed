@@ -459,6 +459,7 @@ OC.L10N.register(
     "Load more results" : "Cargar más resultados",
     "Projects" : "Proyectos",
     "Edit display name" : "Editar el nombre para mostrar",
+    "Default language" : "Idioma predeterminado",
     "Privacy" : "Privacidad",
     "Search" : "Buscar",
     "Screensharing options" : "Opciones de compartir pantalla",

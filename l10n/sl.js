@@ -1371,6 +1371,7 @@ OC.L10N.register(
     "Display name: {name}" : "Prikazano ime: {name}",
     "Edit display name" : "Uredi prikazno ime",
     "Save name" : "Shrani ime",
+    "Default language" : "Privzeti jezik",
     "Select location for attachments" : "Izbor mesta prilog",
     "Error while setting attachment folder" : "Napaka med nastavljanjem mape prilog",
     "Error while setting read status privacy" : "Napaka med nastavljanjem stanja zasebnosti",

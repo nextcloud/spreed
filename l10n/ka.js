@@ -1344,6 +1344,7 @@ OC.L10N.register(
     "Display name: {name}" : "Display name: {name}",
     "Edit display name" : "Edit display name",
     "Save name" : "Save name",
+    "Default language" : "Default language",
     "Select location for attachments" : "Select location for attachments",
     "Error while setting attachment folder" : "Error while setting attachment folder",
     "Error while setting read status privacy" : "Error while setting read status privacy",

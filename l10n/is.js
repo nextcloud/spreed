@@ -542,6 +542,7 @@ OC.L10N.register(
     "Link to a conversation" : "Tengill á samtal",
     "Select conversation" : "Veldu samtal",
     "Edit display name" : "Breyta birtingarnafni",
+    "Default language" : "Sjálfgefið tungumál",
     "Notification settings" : "Stillingar á tilkynningum",
     "Privacy" : "Gagnaleynd",
     "Search" : "Search",

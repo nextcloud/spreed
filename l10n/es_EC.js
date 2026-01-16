@@ -1193,6 +1193,7 @@ OC.L10N.register(
     "Display name: {name}" : "Nombre de visualización: {name}",
     "Edit display name" : "Editar nombre para mostrar",
     "Save name" : "Guardar nombre",
+    "Default language" : "Idioma predeterminado",
     "Select location for attachments" : "Seleccionar ubicación para archivos adjuntos",
     "Error while setting attachment folder" : "Error al configurar la carpeta de archivos adjuntos",
     "Error while setting read status privacy" : "Error al configurar la privacidad del estado de lectura",

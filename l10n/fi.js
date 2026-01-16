@@ -1096,6 +1096,7 @@ OC.L10N.register(
     "Display name: {name}" : "Näyttönimi: {name}",
     "Edit display name" : "Muokkaa näyttönimeä",
     "Save name" : "Tallenna nimi",
+    "Default language" : "Oletuskieli",
     "Select location for attachments" : "Valitse sijainti liitteille",
     "Error while setting attachment folder" : "Virhe asettaessa liitekansiota",
     "Failed to save sounds setting" : "Ääniasetusten tallentaminen epäonnistui",
