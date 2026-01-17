@@ -2208,9 +2208,6 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Le partage d'écran fonctionne uniquement avec la version 52 ou ultérieure de Firefox",
     "Screensharing extension is required to share your screen." : "L’extension \"Screensharing\" est requise pour pouvoir partager votre écran.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Veuillez utiliser un autre navigateur comme Firefox ou Chrome pour pouvoir partager votre écran.",
-    "You need to close a dialog to toggle full screen" : "Vous devez fermer une fenêtre de dialogue pour activer le plein écran",
-    "Establishing signaling connection is taking longer than expected …" : "L'établissement de la connexion prend plus de temps que prévu…",
-    "Failed to establish signaling connection. Retrying …" : "Échec de connexion. Nouvelle tentative…",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Impossible d'établir une connexion de signalement. La configuration du serveur de signalement est peut-être erronée."
+    "You need to close a dialog to toggle full screen" : "Vous devez fermer une fenêtre de dialogue pour activer le plein écran"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

@@ -722,9 +722,6 @@ OC.L10N.register(
     "Space bar" : "Thanh dấu cách",
     "Sharing your screen only works with Firefox version 52 or newer." : "Chia sẻ màn hình của bạn chỉ hoạt động với Firefox phiên bản 52 trở lên.",
     "Screensharing extension is required to share your screen." : "Cần có tiện ích mở rộng để chia sẻ màn hình của bạn.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Vui lòng sử dụng một trình duyệt khác như Firefox hoặc Chrome để chia sẻ màn hình của bạn.",
-    "Establishing signaling connection is taking longer than expected …" : "Việc thiết lập kết nối báo hiệu mất nhiều thời gian hơn dự kiến…",
-    "Failed to establish signaling connection. Retrying …" : "Không thiết lập được kết nối tín hiệu. Đang thử lại…",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Không thiết lập được kết nối tín hiệu. Có thể có gì đó sai trong cấu hình máy chủ báo hiệu"
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Vui lòng sử dụng một trình duyệt khác như Firefox hoặc Chrome để chia sẻ màn hình của bạn."
 },
 "nplurals=1; plural=0;");

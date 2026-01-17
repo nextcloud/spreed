@@ -2159,9 +2159,6 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Η κοινή χρήση της οθόνης σας λειτουργεί μόνο με την έκδοση Firefox 52 ή νεότερη.",
     "Screensharing extension is required to share your screen." : "Το πρόσθετο διαμοιρασμού οθόνης απαιτείται για να διαμοιράσετε την οθόνη σας.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Παρακαλώ χρησιμοποιήστε διαφορετικό φυλλομετρητή όπως ο Firefox ή ο Chrome για να διαμοιάσετε την οθόνη σας.",
-    "You need to close a dialog to toggle full screen" : "Πρέπει να κλείσετε ένα διάλογο για να εναλλάξετε την πλήρη οθόνη",
-    "Establishing signaling connection is taking longer than expected …" : "Η διαδικασία σύνδεσης διαρκεί περισσότερο από το αναμενόμενο ...",
-    "Failed to establish signaling connection. Retrying …" : "Η διαδικασία σύνδεσης απέτυχε. Προσπάθεια ξανά ...",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Αποτυχία δημιουργίας σύνδεσης σηματοδότησης. Κάτι μπορεί να είναι λάθος στη διαμόρφωση του διακομιστή σηματοδότησης"
+    "You need to close a dialog to toggle full screen" : "Πρέπει να κλείσετε ένα διάλογο για να εναλλάξετε την πλήρη οθόνη"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

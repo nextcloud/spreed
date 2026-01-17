@@ -2186,8 +2186,6 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "Ekraanijagamine toimib Firefoxi versioonis 52 või uuemas.",
     "Screensharing extension is required to share your screen." : "Sinu ekraani jagamiseks on vajalik ekraanijagamise lisamoodul.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Oma ekraani jagamiseks palun kasuta mõnda muud veebibrauserit nagu Firefox või Chrome.",
-    "You need to close a dialog to toggle full screen" : "Täisekraanivaate sisse/välja lülitamiseks pead modaalse vaate sulgema",
-    "Failed to establish signaling connection. Retrying …" : "Ei õnnestunud ühendada kõnehõlbustusserveriga. Proovin uuesti…",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Ei õnnestunud ühendada kõnehõlbustusserveriga. Midagi võib tema seadistustes valesti olla."
+    "You need to close a dialog to toggle full screen" : "Täisekraanivaate sisse/välja lülitamiseks pead modaalse vaate sulgema"
 },
 "nplurals=2; plural=(n != 1);");

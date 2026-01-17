@@ -1113,9 +1113,6 @@ OC.L10N.register(
     "Blur background" : "Rèireplan trebol",
     "Sharing your screen only works with Firefox version 52 or newer." : "Lo partiment d’ecran fonciona pas qu’amb Firefox 52 o mai recent.",
     "Screensharing extension is required to share your screen." : "Una extension de partiment d’ecran es requerida per partejar l’ecran.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Volgatz utilizar un navegador diferent coma Firefox o Chrome per partejar l’ecran.",
-    "Establishing signaling connection is taking longer than expected …" : "L’establiment de la connexion de senhalizacion pren mai de temps que previst…",
-    "Failed to establish signaling connection. Retrying …" : "Fracàs de l’establiment de la connexion de senhalizacion. Novèl ensag…",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Fracàs de l’establiment de la connexion de senhalizacion. Quicòm pòt èsser maridament configurat costat servidor."
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Volgatz utilizar un navegador diferent coma Firefox o Chrome per partejar l’ecran."
 },
 "nplurals=2; plural=(n > 1);");

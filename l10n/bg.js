@@ -1144,6 +1144,7 @@ OC.L10N.register(
     "Search conversations or users" : "Търсене на разговори или потребители",
     "Select conversation" : "Избор на разговор",
     "Save name" : "Запиши името",
+    "Default language" : "Стандартен език",
     "Select location for attachments" : "Избор на местоположение за прикачени файлове",
     "Error while setting attachment folder" : "Грешка при настройка на папка за прикачени файлове",
     "Error while setting read status privacy" : "Грешка при задаване на поверителност на състоянието на четене",
@@ -1397,9 +1398,6 @@ OC.L10N.register(
     "Blur background" : "Замъгляване на фона",
     "Sharing your screen only works with Firefox version 52 or newer." : "Споделянето на вашия екран работи само с Firefox версия 52 или по-нова.",
     "Screensharing extension is required to share your screen." : "За споделяне на вашия екран е нужно разширение за споделяне на екрана.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Моля, използвайте друг браузър, като Firefox или Chrome, за да споделите екрана си.",
-    "Establishing signaling connection is taking longer than expected …" : "Установяването на сигнална връзка отнема повече време от очакваното ...",
-    "Failed to establish signaling connection. Retrying …" : "Установяването на сигнална връзка не беше успешно. Повторен опит …",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Установяването на сигнална връзка не бе успешно. Може нещо да не е наред в конфигурацията на сигналния сървър"
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Моля, използвайте друг браузър, като Firefox или Chrome, за да споделите екрана си."
 },
 "nplurals=2; plural=(n != 1);");

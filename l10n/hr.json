@@ -1074,9 +1074,6 @@
     "Blur background" : "Zamuti pozadinu",
     "Sharing your screen only works with Firefox version 52 or newer." : "Dijeljenje zaslona moguće je samo u pregledniku Firefox, inačice 52 ili novije.",
     "Screensharing extension is required to share your screen." : "Za dijeljenje zaslona potrebno je instalirati proširenje za dijeljenje zaslona.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Koristite se nekim drugim preglednikom za dijeljenje zaslona, primjerice preglednikom Firefox ili Chrome.",
-    "Establishing signaling connection is taking longer than expected …" : "Uspostavljanje signalne veze traje duže od očekivanog…",
-    "Failed to establish signaling connection. Retrying …" : "Signalna veza nije uspostavljena. Pokušavam ponovo…",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Signalna veza nije uspostavljena. Nešto nije u redu u konfiguraciji signalnog poslužitelja"
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Koristite se nekim drugim preglednikom za dijeljenje zaslona, primjerice preglednikom Firefox ili Chrome."
 },"pluralForm" :"nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;"
 }

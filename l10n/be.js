@@ -1424,6 +1424,7 @@ OC.L10N.register(
     "Edit display name" : "Рэдагаваць імя для паказу",
     "Display name (required)" : "Імя для паказу (абавязкова)",
     "Save name" : "Захаваць імя",
+    "Default language" : "Прадвызначаная мова",
     "Select location for attachments" : "Выберыце размяшчэнне далучэнняў",
     "Error while setting attachment folder" : "Памылка пры заданні папкі для далучэнняў",
     "Error while setting personal setting" : "Памылка падчас захавання асабістых налад",

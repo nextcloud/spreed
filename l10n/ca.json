@@ -1634,6 +1634,7 @@
     "Display name: {name}" : "Nom de visualització: {name}",
     "Edit display name" : "Edició del nom a mostrar",
     "Save name" : "Desar el nom",
+    "Default language" : "Llengua per defecte",
     "Select location for attachments" : "Seleccioneu la ubicació per als fitxers adjunts",
     "Error while setting attachment folder" : "S'ha produït un error en establir la carpeta de fitxers adjunts",
     "Error while setting read status privacy" : "S'ha produït un error en configurar la privadesa de l'estat de lectura",
@@ -2011,9 +2012,6 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Compartir la pantalla només funciona amb la versió de Firefox 52 o posterior.",
     "Screensharing extension is required to share your screen." : "L'extensió per compartir la pantalla és necessària per compartir la vostra pantalla.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Utilitzeu un navegador diferent com Firefox o Chrome per compartir la vostra pantalla.",
-    "You need to close a dialog to toggle full screen" : "Heu de tancar un diàleg per commutar la pantalla completa",
-    "Establishing signaling connection is taking longer than expected …" : "L'establiment de la connexió de senyalització està trigant més del que s'esperava …",
-    "Failed to establish signaling connection. Retrying …" : "No s'ha pogut establir la connexió de senyalització. Reintentant …",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "No s'ha pogut establir la connexió de senyalització. Pot ser que hi hagi alguna cosa malament a la configuració del servidor de senyalització"
+    "You need to close a dialog to toggle full screen" : "Heu de tancar un diàleg per commutar la pantalla completa"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -2159,9 +2159,6 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "Kushiriki skrini yako hufanya kazi tu na toleo la 52 la Firefox au jipya zaidi.",
     "Screensharing extension is required to share your screen." : "Kiendelezi cha kushiriki skrini kinahitajika ili kushiriki skrini yako.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Tafadhali tumia kivinjari tofauti kama Firefox au Chrome kushiriki skrini yako.",
-    "You need to close a dialog to toggle full screen" : "Unahitaji kufunga kidirisha ili kugeuza skrini nzima",
-    "Establishing signaling connection is taking longer than expected …" : "Kuanzisha muunganisho wa kuashiria kunachukua muda mrefu kuliko ilivyotarajiwa…",
-    "Failed to establish signaling connection. Retrying …" : "Imeshindwa kuanzisha muunganisho wa kuashiria. Inajaribu tena...",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Imeshindwa kuanzisha muunganisho wa kuashiria. Kuna kitu kinaweza kuwa kibaya katika usanidi wa seva ya kuashiria"
+    "You need to close a dialog to toggle full screen" : "Unahitaji kufunga kidirisha ili kugeuza skrini nzima"
 },
 "nplurals=2; plural=(n != 1);");

@@ -1054,9 +1054,6 @@
     "Space bar" : "Istanca de logu",
     "Sharing your screen only works with Firefox version 52 or newer." : "Podes cumpartzire s'ischermu isceti cun Firefox versione 52 o prus noa.",
     "Screensharing extension is required to share your screen." : "Pro cumpartzire s'ischermu serbit un'estensione de Screensharing.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Imprea un'àteru navigadore comente Firefox o Chrome pro cumpartzire s'ischermu.",
-    "Establishing signaling connection is taking longer than expected …" : "Sa creatzione de sa connessione de signalatzione est istentende prus de su tempus prevìdidu ...",
-    "Failed to establish signaling connection. Retrying …" : "No at fatu a creare sa connessione de signalatzione. Torrende a proare ... ",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "No at fatu a creare sa connessione de signalatzione. B'at calicuna cosa isballiada in sa cunfiguratzione de su serbidore de signalatzione"
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Imprea un'àteru navigadore comente Firefox o Chrome pro cumpartzire s'ischermu."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -2159,9 +2159,6 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Udostępnianie ekranu działa tylko w Firefoksie w wersji 52 lub nowszej.",
     "Screensharing extension is required to share your screen." : "Aby udostępnić ekran wymagane jest rozszerzenie do udostępniania ekranu.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Aby udostępnić ekran, użyj innej przeglądarki, takiej jak Firefox lub Chrome.",
-    "You need to close a dialog to toggle full screen" : "Aby przełączyć na pełny ekran, należy zamknąć okno dialogowe",
-    "Establishing signaling connection is taking longer than expected …" : "Nawiązanie połączenia sygnalizacyjnego trwa dłużej niż oczekiwano…",
-    "Failed to establish signaling connection. Retrying …" : "Nie udało się nawiązać połączenia sygnalizacyjnego. Ponawiam…",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Nie udało się nawiązać połączenia sygnalizacyjnego. Coś może być nie tak w konfiguracji serwera sygnalizacyjnego"
+    "You need to close a dialog to toggle full screen" : "Aby przełączyć na pełny ekran, należy zamknąć okno dialogowe"
 },"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"
 }

@@ -1646,9 +1646,6 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "Sharing your screen only works with Firefox version 52 or newer.",
     "Screensharing extension is required to share your screen." : "Screensharing extension is required to share your screen.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Please use a different browser like Firefox or Chrome to share your screen.",
-    "You need to close a dialog to toggle full screen" : "You need to close a dialog to toggle full screen",
-    "Establishing signaling connection is taking longer than expected …" : "Establishing signaling connection is taking longer than expected …",
-    "Failed to establish signaling connection. Retrying …" : "Failed to establish signaling connection. Retrying …",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Failed to establish signaling connection. Something might be wrong in the signaling server configuration"
+    "You need to close a dialog to toggle full screen" : "You need to close a dialog to toggle full screen"
 },
 "nplurals=2; plural=(n!=1);");
