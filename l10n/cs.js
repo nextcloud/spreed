@@ -1788,6 +1788,7 @@ OC.L10N.register(
     "Edit display name" : "Upravit zobrazovaný název",
     "Display name (required)" : "Zobrazované jméno (vyžadováno)",
     "Save name" : "Uložit název",
+    "Default language" : "Výchozí jazyk",
     "Select location for attachments" : "Vyberte umístění pro přílohy",
     "Error while setting attachment folder" : "Chyba při nastavování složky pro přílohy",
     "Error while setting read status privacy" : "Chyba při nastavování oznámení o přečtení",
@@ -2209,9 +2210,6 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "Sdílení vaší obrazovky funguje pouze s verzí prohlížeče Firefox 52 a novější.",
     "Screensharing extension is required to share your screen." : "Ke sdílení vaší obrazovky je vyžadováno rozšíření.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Ke sdílení obrazovky použijte jiný prohlížeč, jako např. Firefox, nebo Chrome.",
-    "You need to close a dialog to toggle full screen" : "Aby bylo možné vypnout/zapnout zobrazení na celou obrazovku, je třeba zavřít dialog",
-    "Establishing signaling connection is taking longer than expected …" : "Navázání spojení pro signalizaci trvá déle než očekáváno …",
-    "Failed to establish signaling connection. Retrying …" : "Nepodařilo se navázat spojení pro signalizaci. Zkouší se znovu …",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Nepodařilo se navázat spojení pro signalizaci. Možná je něco špatně s nastavením signalizace na serveru"
+    "You need to close a dialog to toggle full screen" : "Aby bylo možné vypnout/zapnout zobrazení na celou obrazovku, je třeba zavřít dialog"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

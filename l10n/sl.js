@@ -1650,9 +1650,6 @@ OC.L10N.register(
     "Blur background" : "Motno ozadje",
     "Sharing your screen only works with Firefox version 52 or newer." : "Souporaba zaslona deluje le na različici brskalnika 52 ali višji.",
     "Screensharing extension is required to share your screen." : "Za prikaz zaslona je treba namestiti dodatno razširitev.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Za prikaz zaslona je priporočeno uporabiti brskalnik, kot je Firefox, ali Chrome.",
-    "Establishing signaling connection is taking longer than expected …" : "Vzpostavljanje povezave s signalnim strežnikom traja dlje od pričakovanega ...",
-    "Failed to establish signaling connection. Retrying …" : "Vzpostavljanje povezave s signalnim strežnikom je spodletelo. Izveden bo ponoven poskus ...",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Vzpostavljanje signalne povezave je spodletelo. Najverjetneje je napaka med nastavitvami strežnika."
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Za prikaz zaslona je priporočeno uporabiti brskalnik, kot je Firefox, ali Chrome."
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

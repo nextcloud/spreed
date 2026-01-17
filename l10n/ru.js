@@ -2220,9 +2220,6 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "Трансляция экрана возможна только в Firefox версии 52 или более новой.",
     "Screensharing extension is required to share your screen." : "Для трансляции экрана требуется установка расширения.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Для использования общего доступа к экрану используйте другой браузер, например, Firefox или Chrome.",
-    "You need to close a dialog to toggle full screen" : "Вам нужно закрыть диалоговое окно, чтобы переключиться на полноэкранный режим",
-    "Establishing signaling connection is taking longer than expected …" : "Установка сигнального соединения заняло больше времени чем ожидалось ...",
-    "Failed to establish signaling connection. Retrying …" : "Не удалось установить сигнальное соединение. Повторяю попытку ...",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Не удалось установить сигнальное соединение. Что-то может быть не так в конфигурации сигнального сервера"
+    "You need to close a dialog to toggle full screen" : "Вам нужно закрыть диалоговое окно, чтобы переключиться на полноэкранный режим"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

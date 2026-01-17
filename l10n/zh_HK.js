@@ -2210,9 +2210,6 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "共享螢幕僅適用於 Firefox 52 或更高版本。",
     "Screensharing extension is required to share your screen." : "需要螢幕共享擴展程序才能共享您的螢幕。",
     "Please use a different browser like Firefox or Chrome to share your screen." : "請使用其他瀏覽器（如Firefox或Chrome）共享您的螢幕。",
-    "You need to close a dialog to toggle full screen" : "您需要關閉對話框以切換到全屏",
-    "Establishing signaling connection is taking longer than expected …" : "建立信令連接所花費的時間比預期的要長…",
-    "Failed to establish signaling connection. Retrying …" : "無法建立信令連接。正在重試...",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "無法建立信令連接。信令伺服器配置中可能出了問題"
+    "You need to close a dialog to toggle full screen" : "您需要關閉對話框以切換到全屏"
 },
 "nplurals=1; plural=0;");

@@ -2164,9 +2164,6 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Дељење екрана је подржано само од Фајерфокса верзије 52 и веће.",
     "Screensharing extension is required to share your screen." : "Да бисте делили екран, потребан је додатак за дељење екрана.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Користите други веб читач, као што су Фајерфокс или Хром, да бисте делили екран.",
-    "You need to close a dialog to toggle full screen" : "Да бисте укључили/искључили приказ у пуном екрану, морате да затворите дијалог",
-    "Establishing signaling connection is taking longer than expected …" : "Успостављање везе за сигнализирање траје дуже него што се очекује...",
-    "Failed to establish signaling connection. Retrying …" : "Није успело успостављање везе за сигнализирање. Покушава се поново…",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Није успело успостављање везе за сигнализирање. Можда нешто није у реду са подешавањима сервера за сигнализирање"
+    "You need to close a dialog to toggle full screen" : "Да бисте укључили/искључили приказ у пуном екрану, морате да затворите дијалог"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }

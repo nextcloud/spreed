@@ -1639,6 +1639,7 @@ OC.L10N.register(
     "Display name: {name}" : "اسم العرض: {name}",
     "Edit display name" : "عَدِّل اسم العرض",
     "Save name" : "حفظ الاسم",
+    "Default language" : "اللغة الافتراضية",
     "Select location for attachments" : "اختر مكان المرفقات",
     "Error while setting attachment folder" : "خطأ اثناء تحديد مجلد المرفقات",
     "Error while setting read status privacy" : "حدث خطأ عند تعيين خصوصية قراءة الرسائل ",
@@ -2016,9 +2017,6 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "مشاركة الشاشة يعمل فقط في فايرفوكس الاصدار 52 او اعلى.",
     "Screensharing extension is required to share your screen." : "اكستنشن مشاركة الشاشة مطلوب لمشاركة الشاشة.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "يرجى استخدام متصفح آخر مثل فايرفوكس او كروم لمشاركة الشاشة.",
-    "You need to close a dialog to toggle full screen" : "يجب إغلاق نافذة الحوار ليمكن التبديل إلى وضع ملء الشاشة",
-    "Establishing signaling connection is taking longer than expected …" : "يستغرق إنشاء اتصال التشوير وقتًا أطول من المتوقع ...",
-    "Failed to establish signaling connection. Retrying …" : "فشل في إنشاء التشوير. جارٍ إعادة المحاولة... ",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "فشل في إنشاء التشوير. قد يكون هناك خطأ ما في تكوين خادم التشوير"
+    "You need to close a dialog to toggle full screen" : "يجب إغلاق نافذة الحوار ليمكن التبديل إلى وضع ملء الشاشة"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");

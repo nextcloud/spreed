@@ -1865,9 +1865,6 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "画面共有はFirefox バージョン52以上のみで動作します。",
     "Screensharing extension is required to share your screen." : "画面共有を利用するには画面共有エクステンションが必要です。",
     "Please use a different browser like Firefox or Chrome to share your screen." : "画面共有を利用する場合は、Firefox または Chrome 等の別ブラウザーを使用してください。",
-    "You need to close a dialog to toggle full screen" : "フルスクリーンに切り替えるには、ダイアログを閉じる必要があります",
-    "Establishing signaling connection is taking longer than expected …" : "シグナリング接続の確立に想定以上に時間がかかっています…",
-    "Failed to establish signaling connection. Retrying …" : "シグナリング接続の確立に失敗しました。再試行しています…",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "シグナリング接続の確立に失敗しました。シグナリングサーバーの構成に問題がある可能性があります"
+    "You need to close a dialog to toggle full screen" : "フルスクリーンに切り替えるには、ダイアログを閉じる必要があります"
 },
 "nplurals=1; plural=0;");
