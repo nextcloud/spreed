@@ -2210,9 +2210,6 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "Zdieľanie vašej obrazovky funguje iba s Firefoxom verzie 52 alebo novším.",
     "Screensharing extension is required to share your screen." : "Rozšírenie zdieľanie obrazovky je potrebné pre zdieľanie obrazovky.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Pre zdieľanie vašej obrazovky, použite prosím iný prehliadač, napríklad Firefox alebo Chrome.",
-    "You need to close a dialog to toggle full screen" : "Dialogové okno musíte zavrieť pred prepnutím do celoobrazovkového režimu",
-    "Establishing signaling connection is taking longer than expected …" : "Vytvorenie signalizačného spojenia trvá dlhšie, ako sa očakávalo...",
-    "Failed to establish signaling connection. Retrying …" : "Nepodarilo sa nadviazať signalizačné spojenie. Skúšame…",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Nepodarilo sa nadviazať signalizačné spojenie. V konfigurácii signalizačného servera môže byť niečo zlé"
+    "You need to close a dialog to toggle full screen" : "Dialogové okno musíte zavrieť pred prepnutím do celoobrazovkového režimu"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

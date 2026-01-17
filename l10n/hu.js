@@ -2180,9 +2180,6 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "A képernyőmegosztás a Firefox 52-es vagy újabb verziójától érhető el.",
     "Screensharing extension is required to share your screen." : "A képernyője megosztásához képernyőmegosztó bővítményre van szükség.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "A képernyője megosztásához használjon más böngészőt, például Firefoxot vagy Chrome-ot.",
-    "You need to close a dialog to toggle full screen" : "Be kell zárnia egy párbeszédablakot a teljes képernyő bekapcsolásához",
-    "Establishing signaling connection is taking longer than expected …" : "A jelzőkapcsolat létesítése a vártnál hosszabb időt vesz igénybe…",
-    "Failed to establish signaling connection. Retrying …" : "Nem sikerült létrehozni a jelzőkapcsolatot. Újrapróbálkozás…",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Nem sikerült létrehozni a jelzőkapcsolatot. Valami hibás lehet a jelzőkiszolgáló beállításaiban."
+    "You need to close a dialog to toggle full screen" : "Be kell zárnia egy párbeszédablakot a teljes képernyő bekapcsolásához"
 },
 "nplurals=2; plural=(n != 1);");

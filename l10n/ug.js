@@ -2200,9 +2200,6 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "ئېكرانىڭىزنى ھەمبەھىرلەش پەقەت Firefox نىڭ 52 ياكى يېڭى نەشرى بىلەنلا ئىشلەيدۇ.",
     "Screensharing extension is required to share your screen." : "ئېكراننى ئورتاقلىشىش ئۈچۈن ئېكراننى كېڭەيتىش تەلەپ قىلىنىدۇ.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "ئېكراننى ئورتاقلىشىش ئۈچۈن Firefox ياكى Chrome غا ئوخشاش باشقا توركۆرگۈچ ئىشلىتىڭ.",
-    "You need to close a dialog to toggle full screen" : "تولۇق ئېكراننى ئالماشتۇرۇش ئۈچۈن بىر دىئالوگنى تاقاش كېرەك",
-    "Establishing signaling connection is taking longer than expected …" : "سىگنال ئۇلىنىشى ئورنىتىش مۆلچەردىكىدىن ئۇزۇنراق كېتىۋاتىدۇ…",
-    "Failed to establish signaling connection. Retrying …" : "سىگنال ئۇلىنىشى ئورنىتىلمىدى. قايتا سىناۋاتىدۇ…",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "سىگنال ئۇلىنىشى ئورنىتىلمىدى. سىگنال مۇلازىمېتىر سەپلىمىسىدە خاتالىق بولۇشى مۇمكىن"
+    "You need to close a dialog to toggle full screen" : "تولۇق ئېكراننى ئالماشتۇرۇش ئۈچۈن بىر دىئالوگنى تاقاش كېرەك"
 },
 "nplurals=2; plural=(n != 1);");

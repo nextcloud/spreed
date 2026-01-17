@@ -2218,9 +2218,6 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Compartir pantalla só funciona con Firefox versión 52 ou posterior.",
     "Screensharing extension is required to share your screen." : "Precísase da extensión «Screensharing» para compartir a súa pantalla. ",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Use un navegador diferente como Firefox ou Chrome para compartir a súa pantalla.",
-    "You need to close a dialog to toggle full screen" : "Debe pechar un diálogo para cambiar a pantalla completa.",
-    "Establishing signaling connection is taking longer than expected …" : "Estabelecer unha conexión de sinalización leva máis tempo do agardado…",
-    "Failed to establish signaling connection. Retrying …" : "Produciuse un fallo ao estabelecer a conexión de sinalización. Reintentando…",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Produciuse un fallo ao estabelecer a conexión de sinalización. Pode haber algo mal na configuración do servidor de sinalización"
+    "You need to close a dialog to toggle full screen" : "Debe pechar un diálogo para cambiar a pantalla completa."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

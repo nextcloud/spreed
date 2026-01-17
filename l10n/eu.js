@@ -1628,9 +1628,6 @@ OC.L10N.register(
     "Blur background" : "Lausotu atzeko planoa",
     "Sharing your screen only works with Firefox version 52 or newer." : "Pantaila partekatzeak Firefox 52 edo berriagoekin bakarrik funtzionatzen du.",
     "Screensharing extension is required to share your screen." : "Pantaila partekatu ahal izateko pantailak partekatzeko hedapena behar da.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Pantaila partekatzeko beste nabigatzaile bat erabil ezazu: Firefox edo Chrome.",
-    "Establishing signaling connection is taking longer than expected …" : "Seinalizazio konexioa ezartzea espero baino luzeago jotzen ari da...",
-    "Failed to establish signaling connection. Retrying …" : "Seinalizazio konexioa ezartzeak huts egin du. Berriro saiatzen...",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Seinaleen konexioa ezartzeak huts egin du. Zerbait oker egon daiteke seinaleen zerbitzariaren konfigurazioarekin"
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Pantaila partekatzeko beste nabigatzaile bat erabil ezazu: Firefox edo Chrome."
 },
 "nplurals=2; plural=(n != 1);");

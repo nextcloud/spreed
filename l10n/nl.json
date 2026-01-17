@@ -1684,9 +1684,6 @@
     "Blur background" : "Vervaag achtergrond",
     "Sharing your screen only works with Firefox version 52 or newer." : "Scherm delen werkt alleen met Firefox versie 52 of nieuwer.",
     "Screensharing extension is required to share your screen." : "Om je scherm te delen, heb je de schermdelen-extensie nodig.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Gebruik een andere browser, zoals Firefox of Chrome om je scherm te delen.",
-    "Establishing signaling connection is taking longer than expected …" : "Signaleringsinstellingen verkrijgen kost langer dan verwacht...",
-    "Failed to establish signaling connection. Retrying …" : "Kon signaleringsinstellingen niet verkrijgen. Nieuwe poging...",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Kon signaleringsinstellingen niet verkrijgen. De configuratie van de signaleringsserver kan onjuist zijn."
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Gebruik een andere browser, zoals Firefox of Chrome om je scherm te delen."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

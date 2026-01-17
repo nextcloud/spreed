@@ -1440,9 +1440,6 @@
     "Blur background" : "Desenfocar fondo",
     "Sharing your screen only works with Firefox version 52 or newer." : "Compartir la pantalla sólo funciona con Firefox versión 52 o superior. ",
     "Screensharing extension is required to share your screen." : "Se requiere de la extenisón de compartir pantalla para compartir tu pantalla. ",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor usa un navegador diferente como Firefox o Chrome para compartir tu pantalla.",
-    "Establishing signaling connection is taking longer than expected …" : "Establecer la conexión de señalización está tardando más de lo esperado …",
-    "Failed to establish signaling connection. Retrying …" : "La conexión de señalización falló. Reintentando …",
-    "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "La conexión de señalización falló. Algo puede estar mal en la configuración del servidor de señalización"
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor usa un navegador diferente como Firefox o Chrome para compartir tu pantalla."
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
