@@ -103,7 +103,6 @@
 				<BreakoutRoomsParticipantsEditor
 					:token="mainToken"
 					:breakout-rooms="breakoutRooms"
-					:is-creating-rooms="false"
 					@close="closeParticipantsEditor" />
 			</div>
 		</NcModal>
