@@ -306,6 +306,7 @@ OC.L10N.register(
     "Restricted" : "Terbatas",
     "Personal" : "Pribadi",
     "_%n hour_::_%n hours_" : ["%n jam"],
+    "_%n day_::_%n days_" : ["%n hari"],
     "Password protection" : "Password protection",
     "Edit" : "Sunting",
     "Delete" : "Hapus",
