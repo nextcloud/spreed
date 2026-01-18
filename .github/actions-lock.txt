@@ -10,7 +10,7 @@ d1898b1290d50f874d8092ebda6ee5e1 dependabot-approve-merge.yml
 10aa665a1d44214681d450f495c64b1e lint-php-cs.yml
 0aa2ea77ebe63ea6f9a8a068eeda6b56 lint-php.yml
 ecc3837168cd56bcfed602d48d1ec62e lint-stylelint.yml
-3e3175e4952a376d60689110aa0c2771 node-test.yml
+8c5eaa94d9b27a234e93cc0a931a3e0e node-test.yml
 9f8a0f7b4d6e6212fc62263ba92d6c88 node.yml
 364d3748f485e4396e8bd5c10436ffab openapi.yml
 e903ac1234923756dabd0fa2e8deab99 phpunit-mariadb.yml
@@ -22,5 +22,5 @@ da384ce3c502c4db682fe9def63cbac0 phpunit-mysql.yml
 d7cf735c67e59ca0c943dae96b436d64 psalm.yml
 1ed6482c19f2825139a077870ef7a38c reuse.yml
 800d5b188aa885626cf4169fa2dfea9e update-nextcloud-ocp-approve-merge.yml
-28a598fdceba85422dd05d48b6a27022 update-nextcloud-ocp.yml
+43ad17165ffe7b396b69afb4cfd799be update-nextcloud-ocp.yml
 48c2c657b87747c9faeb589bcce08923 update-stable-titles.yml
