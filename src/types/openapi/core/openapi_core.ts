@@ -75,6 +75,26 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/core/getapppassword-onetime": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get app password with one-time password
+         * @description This endpoint requires password confirmation
+         */
+        get: operations["app_password-get-app-password-with-one-time-password"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/core/autocomplete/get": {
         parameters: {
             query?: never;
@@ -1060,6 +1080,7 @@ export type components = {
                     locale: string;
                     timezone: string;
                 };
+                "can-create-app-token"?: boolean;
             };
         };
         Collection: {
@@ -1217,6 +1238,7 @@ export type components = {
             endedAt: number | null;
             allowCleanup: boolean;
             includeWatermark: boolean;
+            userFacingErrorMessage: string | null;
         };
         TaskProcessingTaskType: {
             name: string;
@@ -1581,6 +1603,65 @@ export interface operations {
                 };
             };
             /** @description Password confirmation failed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "app_password-get-app-password-with-one-time-password": {
+        parameters: {
+            query?: never;
+            header: {
+                "user-agent"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description App password returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                apppassword: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Creating app password is not allowed */
             403: {
                 headers: {
                     [name: string]: unknown;
