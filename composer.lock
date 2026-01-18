@@ -265,16 +265,16 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v7.0.1",
+            "version": "v7.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "81ed59ef42f33a522b5891180df4c743222b8b92"
+                "reference": "5645b43af647b6947daac1d0f659dd1fbe8d3b65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/81ed59ef42f33a522b5891180df4c743222b8b92",
-                "reference": "81ed59ef42f33a522b5891180df4c743222b8b92",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/5645b43af647b6947daac1d0f659dd1fbe8d3b65",
+                "reference": "5645b43af647b6947daac1d0f659dd1fbe8d3b65",
                 "shasum": ""
             },
             "require": {
@@ -322,9 +322,9 @@
             ],
             "support": {
                 "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v7.0.1"
+                "source": "https://github.com/firebase/php-jwt/tree/v7.0.2"
             },
-            "time": "2025-12-15T23:11:17+00:00"
+            "time": "2025-12-16T22:17:28+00:00"
         }
     ],
     "packages-dev": [
@@ -591,5 +591,5 @@
     "platform-overrides": {
         "php": "8.2"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }
