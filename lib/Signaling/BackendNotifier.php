@@ -156,14 +156,14 @@ class BackendNotifier {
 				$userIds[] = $attendee->getActorId();
 			}
 		}
+		if (empty($userIds)) {
+			return;
+		}
 		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'invite',
 			'invite' => [
 				'userids' => $userIds,
-				// TODO(fancycode): We should try to get rid of 'alluserids' and
-				// find a better way to notify existing users to update the room.
-				'alluserids' => $this->participantService->getParticipantUserIdsAndFederatedUserCloudIds($room),
 				'properties' => $this->roomPropertiesHelper->getPropertiesForSignaling($room, '', false),
 			],
 		]);
@@ -184,22 +184,20 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomsDisinvited(Room $room, array $attendees): void {
-		$allUserIds = $this->participantService->getParticipantUserIdsAndFederatedUserCloudIds($room);
-		sort($allUserIds);
 		$userIds = [];
 		foreach ($attendees as $attendee) {
 			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 				$userIds[] = $attendee->getActorId();
 			}
 		}
+		if (empty($userIds)) {
+			return;
+		}
 		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'disinvite',
 			'disinvite' => [
 				'userids' => $userIds,
-				// TODO(fancycode): We should try to get rid of 'alluserids' and
-				// find a better way to notify existing users to update the room.
-				'alluserids' => $allUserIds,
 				'properties' => $this->roomPropertiesHelper->getPropertiesForSignaling($room, '', false),
 			],
 		]);
@@ -220,16 +218,11 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomSessionsRemoved(Room $room, array $sessionIds): void {
-		$allUserIds = $this->participantService->getParticipantUserIdsAndFederatedUserCloudIds($room);
-		sort($allUserIds);
 		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'disinvite',
 			'disinvite' => [
 				'sessionids' => $sessionIds,
-				// TODO(fancycode): We should try to get rid of 'alluserids' and
-				// find a better way to notify existing users to update the room.
-				'alluserids' => $allUserIds,
 				'properties' => $this->roomPropertiesHelper->getPropertiesForSignaling($room, '', false),
 			],
 		]);
@@ -253,10 +246,6 @@ class BackendNotifier {
 		$this->backendRequest($room, [
 			'type' => 'update',
 			'update' => [
-				// Message not sent for federated users, as they will receive
-				// the message from their federated Nextcloud server once the
-				// property change is propagated.
-				'userids' => $this->participantService->getParticipantUserIds($room),
 				'properties' => $this->roomPropertiesHelper->getPropertiesForSignaling($room, ''),
 			],
 		]);
@@ -272,16 +261,13 @@ class BackendNotifier {
 	 * The given room has been deleted.
 	 *
 	 * @param Room $room
-	 * @param string[] $userIds
 	 * @throws \Exception
 	 */
-	public function roomDeleted(Room $room, array $userIds): void {
+	public function roomDeleted(Room $room): void {
 		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'delete',
-			'delete' => [
-				'userids' => $userIds,
-			],
+			'delete' => new \stdClass(),
 		]);
 		$duration = microtime(true) - $start;
 		$this->logger->debug('Room deleted: {token} ({duration})', [
@@ -327,7 +313,6 @@ class BackendNotifier {
 	 */
 	public function participantsModified(Room $room, array $sessionIds): void {
 		$changed = [];
-		$users = [];
 		$participants = $this->participantService->getSessionsAndParticipantsForRoom($room);
 		foreach ($participants as $participant) {
 			$attendee = $participant->getAttendee();
@@ -358,7 +343,6 @@ class BackendNotifier {
 				$data['lastPing'] = $session->getLastPing();
 				$data['sessionId'] = $session->getSessionId();
 				$data['participantPermissions'] = $participant->getPermissions();
-				$users[] = $data;
 
 				if (\in_array($session->getSessionId(), $sessionIds, true)) {
 					$data['permissions'] = [];
@@ -376,17 +360,17 @@ class BackendNotifier {
 					}
 					$changed[] = $data;
 				}
-			} else {
-				$users[] = $data;
 			}
 		}
 
+		if (empty($changed)) {
+			return;
+		}
 		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'participants',
 			'participants' => [
 				'changed' => $changed,
-				'users' => $users
 			],
 		]);
 		$duration = microtime(true) - $start;
@@ -415,7 +399,6 @@ class BackendNotifier {
 			];
 		} else {
 			$changed = [];
-			$users = [];
 
 			$participants = $this->participantService->getParticipantsForAllSessions($room);
 			foreach ($participants as $participant) {
@@ -446,19 +429,17 @@ class BackendNotifier {
 					$data['userId'] = $attendee->getActorId();
 				}
 
-				if ($session->getInCall() !== Participant::FLAG_DISCONNECTED) {
-					$users[] = $data;
-				}
-
 				if (\in_array($session->getSessionId(), $sessionIds, true)) {
 					$changed[] = $data;
 				}
 			}
 
+			if (empty($changed)) {
+				return;
+			}
 			$data = [
 				'incall' => $flags,
 				'changed' => $changed,
-				'users' => $users,
 			];
 		}
 
