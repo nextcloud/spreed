@@ -19,7 +19,7 @@ Feature: callapi/recording
     Then signaling server received the following requests
       | token | data |
       | room1 | {"type":"message","message":{"data":{"type":"recording","recording":{"status":3}}}} |
-      | room1 | {"type":"update","update":{"userids":["participant1"],"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":{"date":"ACTIVE_SINCE()","timezone_type":3,"timezone":"UTC"},"sip-enabled":0,"description":""}}} |
+      | room1 | {"type":"update","update":{"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":{"date":"ACTIVE_SINCE()","timezone_type":3,"timezone":"UTC"},"sip-enabled":0,"description":""}}} |
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 3             |
@@ -48,7 +48,7 @@ Feature: callapi/recording
       | token | data |
       | room1 | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true,"comment":[]}}}} |
       | room1 | {"type":"message","message":{"data":{"type":"recording","recording":{"status":0}}}} |
-      | room1 | {"type":"update","update":{"userids":["participant1"],"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":{"date":"ACTIVE_SINCE()","timezone_type":3,"timezone":"UTC"},"sip-enabled":0,"description":""}}} |
+      | room1 | {"type":"update","update":{"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":{"date":"ACTIVE_SINCE()","timezone_type":3,"timezone":"UTC"},"sip-enabled":0,"description":""}}} |
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
       | room1 | users     | participant1 | participant1-displayname | recording_stopped    |

@@ -103,7 +103,7 @@ Feature: conversation-2/remove-participant
     Then signaling server received the following requests
       | token | data |
       | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
-      | room  | {"type":"disinvite","disinvite":{"userids":["participant1"],"alluserids":["participant2"],"properties":{"name":"Private conversation","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"participant-list":"refresh"}}} |
+      | room  | {"type":"disinvite","disinvite":{"userids":["participant1"],"properties":{"name":"Private conversation","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"participant-list":"refresh"}}} |
     And user "participant1" is not participant of room "room" (v4)
     And user "participant2" adds user "participant3" to room "room" with 200 (v4)
     And user "participant2" promotes "participant3" in room "room" with 200 (v4)

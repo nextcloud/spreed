@@ -263,7 +263,7 @@ class Listener implements IEventListener {
 
 	protected function notifyBeforeRoomDeleted(BeforeRoomDeletedEvent $event): void {
 		$room = $event->getRoom();
-		$this->externalSignaling->roomDeleted($room, $this->participantService->getParticipantUserIds($room));
+		$this->externalSignaling->roomDeleted($room);
 	}
 
 	protected function notifyGuestsCleanedUp(GuestsCleanedUpEvent $event): void {

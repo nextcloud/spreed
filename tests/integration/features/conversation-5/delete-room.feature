@@ -18,7 +18,7 @@ Feature: conversation/delete-room
     When user "participant1" deletes room "room" with 200 (v4)
     Then signaling server received the following requests
       | token | data |
-      | room  | {"type":"delete","delete":{"userids":["participant1"]}} |
+      | room  | {"type":"delete","delete":{}} |
     Then user "participant1" is not participant of room "room" (v4)
 
   Scenario: Moderator deletes

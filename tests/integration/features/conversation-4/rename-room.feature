@@ -26,7 +26,7 @@ Feature: conversation-2/rename-room
     Then signaling server received the following requests
       | token | data |
       | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
-      | room  | {"type":"update","update":{"userids":["participant1","participant2"],"properties":{"name":"Private conversation","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | room  | {"type":"update","update":{"properties":{"name":"Private conversation","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
 
   Scenario: User renames
     Given user "participant1" creates room "room" (v4)

@@ -225,13 +225,9 @@ class ListenerTest extends TestCase {
 			$room
 		);
 
-		$this->participantService->method('getParticipantUserIds')
-			->with($room)
-			->willReturn(['user1', 'user2']);
-
 		$this->backendNotifier->expects($this->once())
 			->method('roomDeleted')
-			->with($room, ['user1', 'user2']);
+			->with($room);
 
 		$this->listener->handle($event);
 	}

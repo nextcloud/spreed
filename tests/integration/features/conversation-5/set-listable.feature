@@ -38,7 +38,7 @@ Feature: conversation-2/set-listable
     Then signaling server received the following requests
       | token | data |
       | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
-      | room  | {"type":"update","update":{"userids":["creator","moderator","regular-user"],"properties":{"name":"room","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":2,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | room  | {"type":"update","update":{"properties":{"name":"room","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":2,"active-since":null,"sip-enabled":0,"description":""}}} |
     When user "creator" promotes "moderator" in room "room" with 200 (v4)
     And user "user-guest@example.com" joins room "room" with 200 (v4)
     And user "guest" joins room "room" with 200 (v4)
@@ -47,7 +47,7 @@ Feature: conversation-2/set-listable
     Then signaling server received the following requests
       | token | data |
       | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
-      | room  | {"type":"update","update":{"userids":["creator","moderator","regular-user","user-guest@example.com"],"properties":{"name":"Private conversation","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | room  | {"type":"update","update":{"properties":{"name":"Private conversation","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
     And user "regular-user" allows listing room "room" for "users" with 403 (v4)
     And user "user-guest@example.com" allows listing room "room" for "users" with 403 (v4)
     And user "guest" allows listing room "room" for "users" with 401 (v4)

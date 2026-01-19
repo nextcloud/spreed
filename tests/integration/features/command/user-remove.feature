@@ -85,14 +85,14 @@ Feature: command/user-remove
     And invoking occ with "talk:user:remove --user participant2"
     Then signaling server received the following requests
       | token | data |
-      | room  | {"type":"disinvite","disinvite":{"userids":["participant2"],"alluserids":["participant1"],"properties":{"name":"Private conversation","type":1,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"participant-list":"refresh"}}} |
+      | room  | {"type":"disinvite","disinvite":{"userids":["participant2"],"properties":{"name":"Private conversation","type":1,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"participant-list":"refresh"}}} |
       # Type changed
-      | room  | {"type":"update","update":{"userids":["participant1"],"properties":{"name":"Private conversation","type":5,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | room  | {"type":"update","update":{"properties":{"name":"Private conversation","type":5,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
       # Name changed
-      | room  | {"type":"update","update":{"userids":["participant1"],"properties":{"name":"Private conversation","type":5,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | room  | {"type":"update","update":{"properties":{"name":"Private conversation","type":5,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
       | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
       # Read only changed
-      | room  | {"type":"update","update":{"userids":["participant1"],"properties":{"name":"Private conversation","type":5,"lobby-state":0,"lobby-timer":null,"read-only":1,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | room  | {"type":"update","update":{"properties":{"name":"Private conversation","type":5,"lobby-state":0,"lobby-timer":null,"read-only":1,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
     And the command output contains the text "Users successfully removed from all rooms"
     Then the command was successful
     And user "participant2" is participant of the following rooms (v4)

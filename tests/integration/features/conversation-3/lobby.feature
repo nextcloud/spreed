@@ -19,13 +19,13 @@ Feature: conversation/lobby
     Then signaling server received the following requests
       | token | data |
       | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
-      | room  | {"type":"update","update":{"userids":["participant1","participant2","participant3"],"properties":{"name":"Private conversation","type":2,"lobby-state":1,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | room  | {"type":"update","update":{"properties":{"name":"Private conversation","type":2,"lobby-state":1,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
     And reset signaling server requests
     And user "participant1" sets lobby state for room "room" to "no lobby" with 200 (v4)
     Then signaling server received the following requests
       | token | data |
       | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
-      | room  | {"type":"update","update":{"userids":["participant1","participant2","participant3"],"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
+      | room  | {"type":"update","update":{"properties":{"name":"Private conversation","type":2,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
     And user "participant2" sets lobby state for room "room" to "non moderators" with 200 (v4)
     And user "participant2" sets lobby state for room "room" to "no lobby" with 200 (v4)
     And user "participant3" sets lobby state for room "room" to "non moderators" with 403 (v4)
