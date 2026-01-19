@@ -448,7 +448,6 @@ export default {
 		// Shared styles for message bubbles
 		.message-body {
 			border: 1px solid var(--color-primary-element-light-hover);
-			border-block-end-width: 2px;
 		}
 
 		.message-body__scroll {
