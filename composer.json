@@ -19,7 +19,12 @@
 	"scripts": {
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
 		"cs:fix": "php-cs-fixer fix",
-		"lint": "find . -name \\*.php -not -path './vendor/*' -not -path './vendor-bin/*' -not -path './lib/Vendor/*' -not -path './build/*' -not -path './tests/integration/vendor/*' -print0 | xargs -0 -n1 php -l",
+		"lint": [
+			"@lint-8.2-or-earlier",
+			"@lint-8.3-or-later"
+		],
+		"lint-8.2-or-earlier": "[ $(php -r \"echo PHP_VERSION_ID;\") -ge 80300 ] || find . -type f -name '*.php' -not -path './vendor/*' -not -path './vendor-bin/*' -not -path './lib/Vendor/*' -not -path './build/*' -not -path './tests/integration/vendor/*' -not -path 'tests/stubs/*' -print0 | xargs -0 -n1 -P$(nproc) php -l",
+		"lint-8.3-or-later": "[ $(php -r \"echo PHP_VERSION_ID;\") -lt 80300 ] || find . -type f -name '*.php' -not -path './vendor/*' -not -path './vendor-bin/*' -not -path './lib/Vendor/*' -not -path './build/*' -not -path './tests/integration/vendor/*' -not -path 'tests/stubs/*' -print0 | xargs -0 -n200 -P$(nproc) php -l",
 		"openapi": "generate-spec && (npm run typescript:generate || echo 'Please manually regenerate the typescript OpenAPI models')",
 		"rector:check": "rector --dry-run",
 		"rector:fix": "rector",
