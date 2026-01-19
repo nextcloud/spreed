@@ -12,7 +12,7 @@ OC.L10N.register(
     "_%n other_::_%n others_" : ["%nінший","%nінших","%n інших","%n інших"],
     "{actor} invited you to {call}" : "{actor} запросив вас на {call}",
     "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "Вас запросили на <strong>розмову</strong> або <strong>вам подзвонили</strong>",
-    "Other activities" : "Інша активність",
+    "Other activities" : "Інші події",
     "Talk" : "Розмови",
     "Guest" : "Гість",
     "## Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "## Ласкаво просимо до Nextcloud Talk!\nУ цій розмові ви дізнаєтесь про нові функції, доступні в Nextcloud Talk.",
