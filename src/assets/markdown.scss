@@ -4,11 +4,6 @@
  */
 
 @mixin markdown {
-	// Overwrite core styles, otherwise h4 is lesser than default font-size
-	h4 {
-		font-size: 100%;
-	}
-
 	em {
 		font-style: italic;
 	}
@@ -28,7 +23,9 @@
 		opacity: 1 !important;
 	}
 
+	&:has(table),
 	div:has(table) {
+		width: 100%;
 		overflow-x: auto;
 	}
 

@@ -137,6 +137,5 @@ export default {
 
 .audio-player {
 	margin: 12px 0;
-	width: 100%;
 }
 </style>
