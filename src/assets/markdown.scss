@@ -23,7 +23,9 @@
 		opacity: 1 !important;
 	}
 
+	&:has(table),
 	div:has(table) {
+		width: 100%;
 		overflow-x: auto;
 	}
 
