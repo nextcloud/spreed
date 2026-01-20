@@ -691,7 +691,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 			actorDisplayName: actorStore.displayName,
 			message: message.message,
 			messageType: message.messageType,
-			referenceId: '',
+			referenceId: 'scheduled-' + message.id,
 			systemMessage: '',
 			isReplyable: false,
 			markdown: true,

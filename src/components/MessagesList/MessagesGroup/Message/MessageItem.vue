@@ -194,8 +194,12 @@ export default {
 	},
 
 	computed: {
+		isScheduledMessage() {
+			return this.message.referenceId?.startsWith('scheduled-')
+		},
+
 		isTemporary() {
-			return this.message.timestamp === 0
+			return !this.isScheduledMessage && this.message.timestamp === 0
 		},
 
 		isDeletedMessage() {

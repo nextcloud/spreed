@@ -22,10 +22,12 @@ import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconCalendarClockOutline from 'vue-material-design-icons/CalendarClockOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconSendOutline from 'vue-material-design-icons/SendOutline.vue'
 import IconSendVariantClockOutline from 'vue-material-design-icons/SendVariantClockOutline.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
+import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
 import { useTemporaryMessage } from '../../../../../composables/useTemporaryMessage.ts'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
@@ -47,11 +49,14 @@ const getMessagesListScroller = inject('getMessagesListScroller', () => undefine
 const router = useRouter()
 const chatExtrasStore = useChatExtrasStore()
 const vuexStore = useStore()
+const threadId = useGetThreadId()
 
 const { createTemporaryMessage } = useTemporaryMessage()
 
 const submenu = ref<'schedule' | null>(null)
 const customScheduleTimestamp = ref(new Date(props.message.timestamp * 1000))
+
+const isThreadReply = computed(() => (props.message.threadId ?? 0) > 0)
 
 const messageDateTime = computed(() => {
 	return formatDateTime(props.message.timestamp * 1000, 'shortDateWithTime')
@@ -94,7 +99,7 @@ async function handleSubmit() {
 		silent: props.message.silent,
 	}
 
-	if ((props.message.threadId ?? 0) > 0) {
+	if (isThreadReply.value) {
 		temporaryMessagePayload.threadId = props.message.threadId
 		temporaryMessagePayload.isThread = true
 	}
@@ -180,6 +185,18 @@ function onMenuClose() {
 					</template>
 					{{ t('spreed', 'Send now') }}
 				</NcActionButton>
+
+				<template v-if="isThreadReply">
+					<NcActionSeparator />
+					<NcActionButton
+						close-after-click
+						@click="threadId = message.threadId!">
+						<template #icon>
+							<IconForumOutline :size="20" />
+						</template>
+						{{ t('spreed', 'Go to thread') }}
+					</NcActionButton>
+				</template>
 
 				<NcActionSeparator />
 
