@@ -241,7 +241,7 @@
 
 			<NcButton
 				v-if="!isSidebar && showScheduledMessagesToggle"
-				:variant="showScheduledMessages ? 'secondary' : 'tertiary'"
+				:variant="showScheduledMessagesToggleVariant"
 				:title="t('spreed', 'Show scheduled messages')"
 				@click="chatExtrasStore.setShowScheduledMessages(!showScheduledMessages)">
 				<template #icon>
@@ -728,6 +728,13 @@ export default {
 				&& !this.messageToEdit
 		},
 
+		showScheduledMessagesToggleVariant() {
+			if (this.conversation.hasScheduledMessages === -1) {
+				return 'error'
+			}
+			return this.showScheduledMessages ? 'secondary' : 'tertiary'
+		},
+
 		showScheduledMessages() {
 			return this.chatExtrasStore.showScheduledMessages
 		},
@@ -1101,7 +1108,11 @@ export default {
 				this.focusInput()
 			} catch {
 				this.$emit('dismiss')
-				showError(t('spreed', 'The message could not be edited'))
+				if (this.showScheduledMessages) {
+					showError(t('spreed', 'Error when scheduling the message'))
+				} else {
+					showError(t('spreed', 'The message could not be edited'))
+				}
 			}
 		},
 
