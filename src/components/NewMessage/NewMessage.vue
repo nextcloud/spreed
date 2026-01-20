@@ -660,6 +660,11 @@ export default {
 		},
 
 		showMentionEditHint() {
+			if (this.scheduleMessageTime) {
+				// Do not show hint for scheduled messages, as no notifications yet created
+				return false
+			}
+
 			const mentionPattern = /(^|\s)@/
 			return mentionPattern.test(this.chatEditInput)
 		},
