@@ -207,6 +207,9 @@ export default {
 		},
 
 		conversation() {
+			if (this.message.token === '') {
+				return this.$store.getters.dummyConversation
+			}
 			return this.$store.getters.conversation(this.message.token)
 		},
 
