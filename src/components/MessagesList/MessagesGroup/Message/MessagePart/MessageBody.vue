@@ -573,7 +573,8 @@ export default {
 	grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
 	grid-row-gap: var(--default-grid-baseline);
 
-	.message-main__thread-title {
+	& .message-main__thread-title,
+	&--sided .message-main__thread-title {
 		grid-column: 1 / -1;
 		grid-row: 1;
 	}
