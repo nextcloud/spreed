@@ -7,10 +7,14 @@
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-import { computed, ref } from 'vue'
+import { computed, provide, ref } from 'vue'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import NcFormBox from '@nextcloud/vue/components/NcFormBox'
 import NcFormBoxButton from '@nextcloud/vue/components/NcFormBoxButton'
 import NcFormBoxSwitch from '@nextcloud/vue/components/NcFormBoxSwitch'
+import NcFormGroup from '@nextcloud/vue/components/NcFormGroup'
+import MessagesGroup from '../MessagesList/MessagesGroup/MessagesGroup.vue'
+import { mockedChatMessages } from '../../__mocks__/messages.ts'
 import { CHAT_STYLE, CONVERSATION } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
@@ -34,6 +38,21 @@ const isGuest = computed(() => !actorStore.userId)
 const conversationsListStyle = computed(() => settingsStore.conversationsListStyle !== CONVERSATION.LIST_STYLE.TWO_LINES)
 const chatSplitViewEnabled = computed(() => settingsStore.chatStyle === CHAT_STYLE.SPLIT)
 const shouldPlaySounds = computed(() => soundsStore.shouldPlaySounds)
+
+// Mock messages for chat appearance preview in settings
+const mockMessageIncoming = mockedChatMessages.appearance1
+const mockMessageOutgoing = computed(() => ({
+	...mockedChatMessages.appearance2,
+	actorType: actorStore.actorType,
+	actorId: actorStore.actorId,
+	actorDisplayName: actorStore.displayName,
+	message: chatSplitViewEnabled.value
+		// TRANSLATORS fake message to show chat appearance in settings
+		? t('spreed', 'I picked message bubbles')
+		// TRANSLATORS fake message to show chat appearance in settings
+		: t('spreed', 'I picked list style'),
+}))
+provide('messagesList:isSplitViewEnabled', chatSplitViewEnabled)
 
 /**
  * Change personal setting for conversations list style
@@ -89,13 +108,30 @@ async function togglePlaySounds(value: boolean) {
 			:label="t('spreed', 'Compact conversations list')"
 			:disabled="appearanceLoading"
 			@update:model-value="toggleConversationsListStyle" />
-		<NcFormBoxSwitch
-			v-if="supportChatStyle"
-			:model-value="chatSplitViewEnabled"
-			:label="t('spreed', 'Show your chat in split view')"
-			:disabled="chatAppearanceLoading"
-			@update:model-value="toggleChatStyle" />
 	</NcFormBox>
+
+	<NcFormGroup
+		v-if="supportChatStyle"
+		:label="t('spreed', 'Chat appearance')">
+		<ul class="messages-list-mock">
+			<MessagesGroup token="" :messages="[mockMessageIncoming]" />
+			<MessagesGroup token="" :messages="[mockMessageOutgoing]" />
+		</ul>
+		<NcFormBox row>
+			<NcButton
+				:disabled="chatAppearanceLoading"
+				:pressed="!chatSplitViewEnabled"
+				@click="toggleChatStyle(false)">
+				{{ t('spreed', 'Messages list') }}
+			</NcButton>
+			<NcButton
+				:disabled="chatAppearanceLoading"
+				:pressed="chatSplitViewEnabled"
+				@click="toggleChatStyle(true)">
+				{{ t('spreed', 'Message bubbles') }}
+			</NcButton>
+		</NcFormBox>
+	</NcFormGroup>
 
 	<NcFormBox>
 		<NcFormBoxSwitch
@@ -112,3 +148,12 @@ async function togglePlaySounds(value: boolean) {
 			target="_blank" />
 	</NcFormBox>
 </template>
+
+<style lang="scss" scoped>
+.messages-list-mock {
+	list-style: none;
+	pointer-events: none;
+	cursor: default;
+	transform: scale(0.9);
+}
+</style>
