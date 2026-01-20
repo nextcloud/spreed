@@ -18,6 +18,12 @@
 			<IconForumOutline :size="16" />
 			{{ threadTitle }}
 		</p>
+		<p
+			v-else-if="isScheduledMessage && isThreadReply"
+			class="message-main__thread-title">
+			<IconArrowLeftTop class="bidirectional-icon" :size="16" />
+			{{ t('spreed', 'Reply to thread "{threadTitle}"', { threadTitle }) }}
+		</p>
 		<!-- System or deleted message body content -->
 		<div
 			v-if="isSystemMessage || isDeletedMessage"
@@ -332,6 +338,10 @@ export default {
 			return [MESSAGE.SYSTEM_TYPE.CALL_ENDED, MESSAGE.SYSTEM_TYPE.CALL_ENDED_EVERYONE].includes(this.message.systemMessage)
 		},
 
+		isScheduledMessage() {
+			return this.message.referenceId?.startsWith('scheduled-')
+		},
+
 		isThreadStarterMessage() {
 			if (this.threadId || !this.message.isThread) {
 				return false
@@ -339,8 +349,11 @@ export default {
 
 			return this.message.id === this.message.threadId
 				|| (this.message.threadTitle && this.message.id.toString().startsWith('temp-'))
-				// FIXME properly render scheduled messages as threads
-				|| (this.message.threadTitle && this.message.threadId === -1)
+				|| (this.isScheduledMessage && this.message.threadTitle && this.message.threadId === -1)
+		},
+
+		isThreadReply() {
+			return this.message.isThread && this.message.id !== this.message.threadId
 		},
 
 		threadInfo() {
@@ -385,7 +398,7 @@ export default {
 		},
 
 		isTemporary() {
-			return this.message.timestamp === 0
+			return !this.isScheduledMessage && this.message.timestamp === 0
 		},
 
 		hideDate() {
