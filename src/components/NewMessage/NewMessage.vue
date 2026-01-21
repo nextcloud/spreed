@@ -158,6 +158,17 @@
 						</template>
 						{{ t('spreed', 'Send later') }}
 					</NcActionButton>
+					<NcActionButton
+						v-if="isSidebar && showScheduledMessagesToggle"
+						type="checkbox"
+						:model-value="showScheduledMessages"
+						close-after-click
+						@click="chatExtrasStore.setShowScheduledMessages(!showScheduledMessages)">
+						<template #icon>
+							<IconClockOutline :size="20" />
+						</template>
+						{{ t('spreed', 'Show scheduled messages') }}
+					</NcActionButton>
 
 					<NcActionButton
 						key="silent-send"
@@ -220,7 +231,7 @@
 			</NcActions>
 
 			<NcButton
-				v-if="showScheduledMessagesToggle"
+				v-if="!isSidebar && showScheduledMessagesToggle"
 				:variant="showScheduledMessages ? 'secondary' : 'tertiary'"
 				:title="t('spreed', 'Show scheduled messages')"
 				@click="chatExtrasStore.setShowScheduledMessages(!showScheduledMessages)">
@@ -307,7 +318,7 @@ import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import debounce from 'debounce'
-import { nextTick, toRefs, useTemplateRef } from 'vue'
+import { inject, nextTick, toRefs, useTemplateRef } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionInput from '@nextcloud/vue/components/NcActionInput'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -457,6 +468,8 @@ export default {
 
 		const threadTitleInputRef = useTemplateRef('threadTitleInputRef')
 
+		const isSidebar = inject('chatView:isSidebar', false)
+
 		return {
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
@@ -472,6 +485,7 @@ export default {
 			threadTitleInputRef,
 			createTemporaryMessage,
 			convertToUnix,
+			isSidebar,
 		}
 	},
 
