@@ -73,7 +73,7 @@
 			class="connection-message">
 			{{ connectionMessage }}
 		</div>
-		<slot v-if="!hideBottomBar" name="bottom-bar">
+		<slot v-if="!hideBottomBar" name="bottomBar">
 			<VideoBottomBar
 				:hasShadow="hasVideo"
 				:participantName="participantName"
