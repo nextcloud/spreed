@@ -14,7 +14,7 @@
 				{{ t('spreed', 'Breakout rooms are not allowed in public conversations.') }}
 			</p>
 			<NcCheckboxRadioSwitch
-				:model-value="isSharedPublicly"
+				:modelValue="isSharedPublicly"
 				:disabled="hasBreakoutRooms || isSaving"
 				type="switch"
 				aria-describedby="link_share_settings_hint"
@@ -25,7 +25,7 @@
 			<template v-if="isSharedPublicly">
 				<NcCheckboxRadioSwitch
 					v-if="!forcePasswordProtection"
-					:model-value="isPasswordProtectionChecked"
+					:modelValue="isPasswordProtectionChecked"
 					:disabled="isSaving"
 					type="switch"
 					aria-describedby="link_share_settings_password_hint"
@@ -51,10 +51,10 @@
 						ref="passwordField"
 						v-model="password"
 						autocomplete="new-password"
-						check-password-strength
+						checkPasswordStrength
 						:disabled="isSaving"
 						class="password-form__input-field"
-						label-visible
+						labelVisible
 						:label="t('spreed', 'Enter new password')"
 						@valid="isValid = true"
 						@invalid="isValid = false" />

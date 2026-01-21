@@ -6,7 +6,7 @@
 <template>
 	<NcDialog
 		:name="dialogName"
-		:close-on-click-outside="!isFilled"
+		:closeOnClickOutside="!isFilled"
 		:container="container"
 		@update:open="emit('close')">
 		<NcButton
@@ -33,14 +33,14 @@
 				type="file"
 				class="hidden-visually"
 				@change="importPoll">
-			<NcActions v-if="supportPollDrafts" force-menu>
-				<NcActionButton v-if="props.canCreatePollDrafts && !isOpenedFromDraft" close-after-click @click="openPollDraftHandler">
+			<NcActions v-if="supportPollDrafts" forceMenu>
+				<NcActionButton v-if="props.canCreatePollDrafts && !isOpenedFromDraft" closeAfterClick @click="openPollDraftHandler">
 					<template #icon>
 						<IconFileEditOutline :size="20" />
 					</template>
 					{{ t('spreed', 'Browse poll drafts') }}
 				</NcActionButton>
-				<NcActionButton close-after-click @click="triggerImport">
+				<NcActionButton closeAfterClick @click="triggerImport">
 					<template #icon>
 						<NcIconSvgWrapper :svg="IconFileUpload" :size="20" />
 					</template>
@@ -93,7 +93,7 @@
 			</NcCheckboxRadioSwitch>
 		</div>
 		<template #actions>
-			<NcActions v-if="supportPollDrafts" force-menu>
+			<NcActions v-if="supportPollDrafts" forceMenu>
 				<NcActionButton v-if="props.canCreatePollDrafts && !editingDraftId" :disabled="!isFilled" @click="createPollDraft">
 					<template #icon>
 						<IconFileEditOutline :size="20" />

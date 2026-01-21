@@ -7,7 +7,7 @@
 	<NcDialog
 		ref="dialog"
 		:name="dialogTitle"
-		close-on-click-outside
+		closeOnClickOutside
 		size="normal"
 		@update:open="$emit('close')">
 		<NewMessage

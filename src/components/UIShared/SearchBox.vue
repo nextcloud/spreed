@@ -10,10 +10,10 @@
 		:aria-label="placeholderText"
 		:aria-describedby="ariaDescribedby"
 		:placeholder="placeholderText"
-		:show-trailing-button="isFocused"
-		:trailing-button-label="cancelSearchLabel"
+		:showTrailingButton="isFocused"
+		:trailingButtonLabel="cancelSearchLabel"
 		class="search-box"
-		label-outside
+		labelOutside
 		@focus="handleFocus"
 		@blur="handleBlur"
 		@trailing-button-click="abortSearch"

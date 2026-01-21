@@ -14,8 +14,8 @@
 				type="text"
 				class="set-contacts__form-input"
 				:label="textFieldLabel"
-				:show-trailing-button="isSearching"
-				:trailing-button-label="cancelSearchLabel"
+				:showTrailingButton="isSearching"
+				:trailingButtonLabel="cancelSearchLabel"
 				@trailing-button-click="abortSearch"
 				@input="handleInput">
 				<template #icon>
@@ -49,18 +49,18 @@
 		<!-- Search results -->
 		<SelectPhoneNumber
 			v-if="canModerateSipDialOut"
-			v-model:participant-phone-item="participantPhoneItem"
+			v-model:participantPhoneItem="participantPhoneItem"
 			:name="t('spreed', 'Add a phone number')"
 			:value="searchText"
 			@select="addParticipantPhone" />
 		<ParticipantsSearchResults
-			:search-results="searchResults"
-			:contacts-loading="contactsLoading"
-			:no-results="noResults"
+			:searchResults="searchResults"
+			:contactsLoading="contactsLoading"
+			:noResults="noResults"
 			scrollable
-			:show-search-hints="!onlyUsers"
+			:showSearchHints="!onlyUsers"
 			:token="token"
-			:only-users="onlyUsers"
+			:onlyUsers="onlyUsers"
 			@click="updateSelectedParticipants"
 			@click-search-hint="focusInput" />
 	</div>

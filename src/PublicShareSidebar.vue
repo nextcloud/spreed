@@ -21,15 +21,15 @@
 				</NcButton>
 			</div>
 			<template v-else>
-				<TopBar v-if="isInCall" is-in-call is-sidebar />
-				<CallView v-if="isInCall" :token="token" is-sidebar />
+				<TopBar v-if="isInCall" isInCall isSidebar />
+				<CallView v-if="isInCall" :token="token" isSidebar />
 				<InternalSignalingHint />
 				<CallButton v-if="!isInCall" class="call-button" />
 				<CallFailedDialog v-if="connectionFailed" :token="token" />
 				<RouterView />
 				<PollManager />
 				<PollViewer />
-				<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
+				<MediaSettings v-model:recordingConsentGiven="recordingConsentGiven" />
 			</template>
 		</aside>
 	</TransitionWrapper>

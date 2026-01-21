@@ -35,7 +35,7 @@
 				:key="device.deviceId ?? 'none'"
 				class="video-selector__action"
 				type="radio"
-				:model-value="videoInputId"
+				:modelValue="videoInputId"
 				:value="device.deviceId"
 				:title="device.label"
 				@click="handleVideoInputIdChange(device.deviceId)">
@@ -46,7 +46,7 @@
 			<NcActionButton
 				key="media-settings"
 				class="video-selector__action"
-				close-after-click
+				closeAfterClick
 				@click="emit('talk:media-settings:show')">
 				{{ t('spreed', 'Check devices') }}
 			</NcActionButton>

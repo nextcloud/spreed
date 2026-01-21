@@ -8,7 +8,7 @@
 		:name="t('spreed', 'Create and share a new file')"
 		size="large"
 		class="templates-picker"
-		close-on-click-outside
+		closeOnClickOutside
 		@update:open="closeModal">
 		<form
 			class="templates-picker__form"
@@ -19,7 +19,7 @@
 				ref="textField"
 				v-model="newFileTitle"
 				:error="!!newFileError"
-				:helper-text="newFileError"
+				:helperText="newFileError"
 				:label="t('spreed', 'Name of the new file')"
 				:placeholder="newFileTitle" />
 
@@ -31,8 +31,8 @@
 					:checked="checked === template.fileid"
 					:fileid="template.fileid"
 					:filename="template.filename"
-					:preview-url="template.previewUrl"
-					:has-preview="template.hasPreview"
+					:previewUrl="template.previewUrl"
+					:hasPreview="template.hasPreview"
 					:mime="template.mime"
 					:ratio="fileTemplate.ratio"
 					@check="onCheck" />

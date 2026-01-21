@@ -7,7 +7,7 @@
 	<NcPopover
 		id="dial-popover"
 		ref="popover"
-		popover-base-class="dial-popover"
+		popoverBaseClass="dial-popover"
 		:container="container"
 		@show="prefillCode">
 		<template #trigger>
@@ -32,7 +32,7 @@
 				v-model="region"
 				class="dial-panel__select"
 				:options="options"
-				:append-to-body="false"
+				:appendToBody="false"
 				:clearable="false"
 				:aria-label-combobox="t('spreed', 'Select a region')"
 				:placeholder="t('spreed', 'Select a region')"

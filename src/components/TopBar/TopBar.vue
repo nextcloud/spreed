@@ -28,10 +28,10 @@
 				:offline="isOffline"
 				:item="conversation"
 				:size="!isSidebar ? AVATAR.SIZE.DEFAULT : AVATAR.SIZE.COMPACT"
-				:disable-menu="showBackAction"
-				show-user-online-status
-				:hide-favorite="false"
-				:hide-call="false" />
+				:disableMenu="showBackAction"
+				showUserOnlineStatus
+				:hideFavorite="false"
+				:hideCall="false" />
 		</a>
 
 		<div
@@ -76,10 +76,10 @@
 					</p>
 					<NcPopover
 						v-if="conversation.description"
-						no-focus-trap
+						noFocusTrap
 						:delay="500"
 						:boundary="boundaryElement"
-						:popper-triggers="['hover']"
+						:popperTriggers="['hover']"
 						:triggers="['hover']">
 						<template #trigger="{ attrs }">
 							<p
@@ -92,7 +92,7 @@
 						<NcRichText
 							class="description__popover"
 							:text="conversation.description"
-							use-extended-markdown />
+							useExtendedMarkdown />
 					</NcPopover>
 				</div>
 			</a>
@@ -127,13 +127,13 @@
 			<!-- Upcoming meetings -->
 			<CalendarEventsDialog v-if="showCalendarEvents" :token="token" />
 
-			<CallButton v-if="!isInCall" shrink-on-mobile />
+			<CallButton v-if="!isInCall" shrinkOnMobile />
 
 			<!-- TopBar menu -->
 			<TopBarMenu
 				:token="token"
-				:show-actions="!isSidebar"
-				:is-sidebar="isSidebar"
+				:showActions="!isSidebar"
+				:isSidebar="isSidebar"
 				@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
 
 			<!-- Breakout rooms editor -->

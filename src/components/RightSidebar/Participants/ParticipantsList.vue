@@ -11,7 +11,7 @@
 			:key="generateKey(item)"
 			v-model:checked="selectedParticipants"
 			:participant="item"
-			:show-user-status="showUserStatus"
+			:showUserStatus="showUserStatus"
 			@click-participant="handleClickParticipant" />
 		<LoadingPlaceholder v-if="loading" type="participants" :count="dummyParticipants" />
 	</ul>

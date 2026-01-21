@@ -34,7 +34,7 @@
 				<span v-if="isPlayable && !smallPreview" class="play-video-button">
 					<IconPlayCircleOutline
 						:size="48"
-						fill-color="#ffffff" />
+						fillColor="#ffffff" />
 				</span>
 				<NcProgressBar
 					v-if="showUploadProgress"

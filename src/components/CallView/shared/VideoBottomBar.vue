@@ -10,7 +10,7 @@
 		@mouseover.stop="mouseover = true"
 		@mouseleave.stop="mouseover = false">
 		<div v-if="showRaiseHandIndicator" class="status-indicator raiseHandIndicator">
-			<IconHandBackLeft :size="18" fill-color="#ffffff" />
+			<IconHandBackLeft :size="18" fillColor="#ffffff" />
 		</div>
 
 		<div v-if="!isSidebar" class="bottom-bar">
