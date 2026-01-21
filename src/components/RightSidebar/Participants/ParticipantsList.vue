@@ -12,7 +12,7 @@
 			v-model:checked="selectedParticipants"
 			:participant="item"
 			:showUserStatus="showUserStatus"
-			@click-participant="handleClickParticipant" />
+			@clickParticipant="handleClickParticipant" />
 		<LoadingPlaceholder v-if="loading" type="participants" :count="dummyParticipants" />
 	</ul>
 </template>

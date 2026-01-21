@@ -108,7 +108,7 @@ function handleTabsAfterClosed() {
 		<TransitionExpand
 			:show="isOpen"
 			direction="vertical"
-			@after-leave="handleTabsAfterClosed">
+			@afterLeave="handleTabsAfterClosed">
 			<div class="tab-panels-container">
 				<div
 					v-for="tab in tabs"

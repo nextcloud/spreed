@@ -134,7 +134,7 @@
 				:token="token"
 				:showActions="!isSidebar"
 				:isSidebar="isSidebar"
-				@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
+				@openBreakoutRoomsEditor="showBreakoutRoomsEditor = true" />
 
 			<!-- Breakout rooms editor -->
 			<BreakoutRoomsEditor

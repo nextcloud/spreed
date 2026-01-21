@@ -17,7 +17,7 @@
 					:previousMessageId="getPrevMessageId(messagesCollapsed.messages.at(0))"
 					:lastCollapsedMessageId="messagesCollapsed.lastId"
 					:message="createCombinedSystemMessage(messagesCollapsed)"
-					@toggle-combined-system-message="toggleCollapsed(messagesCollapsed)" />
+					@toggleCombinedSystemMessage="toggleCollapsed(messagesCollapsed)" />
 			</ul>
 			<ul
 				v-show="messagesCollapsed.messages?.length === 1 || !messagesCollapsed.collapsed"

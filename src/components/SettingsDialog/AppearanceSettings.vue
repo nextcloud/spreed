@@ -107,7 +107,7 @@ async function togglePlaySounds(value: boolean) {
 			:modelValue="conversationsListStyle"
 			:label="t('spreed', 'Compact conversations list')"
 			:disabled="appearanceLoading"
-			@update:model-value="toggleConversationsListStyle" />
+			@update:modelValue="toggleConversationsListStyle" />
 	</NcFormBox>
 
 	<NcFormGroup
@@ -139,7 +139,7 @@ async function togglePlaySounds(value: boolean) {
 			:label="t('spreed', 'Play sounds when participants join or leave a call')"
 			:description="t('spreed', 'Currently not available on iPhone and iPad due to technical restrictions by the manufacturer')"
 			:disabled="playSoundsLoading"
-			@update:model-value="togglePlaySounds" />
+			@update:modelValue="togglePlaySounds" />
 		<NcFormBoxButton
 			v-if="!isGuest"
 			:label="t('spreed', 'Notification settings')"

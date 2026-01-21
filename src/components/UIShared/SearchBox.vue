@@ -16,7 +16,7 @@
 		labelOutside
 		@focus="handleFocus"
 		@blur="handleBlur"
-		@trailing-button-click="abortSearch"
+		@trailingButtonClick="abortSearch"
 		@keydown.esc="abortSearch">
 		<template #icon>
 			<IconMagnify :size="16" />

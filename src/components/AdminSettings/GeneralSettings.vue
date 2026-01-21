@@ -22,7 +22,7 @@
 			trackBy="value"
 			noWrap
 			:disabled="loading || loadingDefaultGroupNotification"
-			@update:model-value="saveDefaultGroupNotification" />
+			@update:modelValue="saveDefaultGroupNotification" />
 
 		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
 
@@ -30,7 +30,7 @@
 			:modelValue="isConversationsFilesChecked"
 			:disabled="loading || loadingConversationsFiles"
 			type="switch"
-			@update:model-value="saveConversationsFiles">
+			@update:modelValue="saveConversationsFiles">
 			{{ t('spreed', 'Allow conversations on files') }}
 		</NcCheckboxRadioSwitch>
 
@@ -38,7 +38,7 @@
 			:modelValue="isConversationsFilesPublicSharesChecked"
 			:disabled="loading || loadingConversationsFiles || !isConversationsFilesChecked"
 			type="switch"
-			@update:model-value="saveConversationsFilesPublicShares">
+			@update:modelValue="saveConversationsFilesPublicShares">
 			{{ t('spreed', 'Allow conversations on public shares for files') }}
 		</NcCheckboxRadioSwitch>
 
@@ -52,7 +52,7 @@
 				v-model="isE2EECallsEnabled"
 				type="switch"
 				:disabled="loading || !canEnableE2EECalls"
-				@update:model-value="updateE2EECallsEnabled">
+				@update:modelValue="updateE2EECallsEnabled">
 				{{ t('spreed', 'Enable encryption') }}
 			</NcCheckboxRadioSwitch>
 

@@ -128,7 +128,7 @@
 				</template>
 				<SharedItemsTab
 					:active="activeTab === 'shared-items'"
-					@show-threads-tab="handleUpdateState('threads')" />
+					@showThreadsTab="handleUpdateState('threads')" />
 			</NcAppSidebarTab>
 		</template>
 	</NcAppSidebar>

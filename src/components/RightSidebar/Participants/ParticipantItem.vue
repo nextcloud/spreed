@@ -78,7 +78,7 @@
 						:disabled="disabled"
 						container="#tab-participants"
 						dialing
-						@dial-type="dialType" />
+						@dialType="dialType" />
 				</template>
 			</template>
 

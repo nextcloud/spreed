@@ -77,7 +77,7 @@
 					:roomNumber="amount"
 					@close="$emit('close')"
 					@back="isEditingParticipants = false"
-					@create-rooms="handleCreateRooms" />
+					@createRooms="handleCreateRooms" />
 			</template>
 		</div>
 	</NcModal>

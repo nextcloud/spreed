@@ -81,17 +81,17 @@ function onClosing(result?: unknown) {
 				:modelValue="settingsStore.noiseSuppression"
 				:label="noiseSuppressionLabel"
 				:description="noiseSuppressionDescription"
-				@update:model-value="settingsStore.setNoiseSuppression" />
+				@update:modelValue="settingsStore.setNoiseSuppression" />
 			<NcFormBoxSwitch
 				:modelValue="settingsStore.echoCancellation"
 				:label="echoCancellationLabel"
 				:description="echoCancellationDescription"
-				@update:model-value="settingsStore.setEchoCancellation" />
+				@update:modelValue="settingsStore.setEchoCancellation" />
 			<NcFormBoxSwitch
 				:modelValue="settingsStore.autoGainControl"
 				:label="autoGainControlLabel"
 				:description="autoGainControlDescription"
-				@update:model-value="settingsStore.setAutoGainControl" />
+				@update:modelValue="settingsStore.setAutoGainControl" />
 		</NcFormBox>
 	</NcDialog>
 </template>

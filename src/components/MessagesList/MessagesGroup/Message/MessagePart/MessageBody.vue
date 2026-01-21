@@ -76,7 +76,7 @@
 				:useExtendedMarkdown="message.markdown"
 				:referenceLimit="1"
 				referenceInteractiveOptIn
-				@interact-todo="handleInteraction" />
+				@interactTodo="handleInteraction" />
 		</div>
 
 		<!-- Additional message info-->

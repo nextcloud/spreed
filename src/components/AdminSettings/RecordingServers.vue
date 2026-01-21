@@ -30,7 +30,7 @@
 					v-model:verify="servers[index].verify"
 					:index="index"
 					:loading="loading"
-					@remove-server="removeServer"
+					@removeServer="removeServer"
 					@update:server="debounceUpdateServers"
 					@update:verify="debounceUpdateServers" />
 			</TransitionWrapper>
@@ -56,7 +56,7 @@
 				:placeholder="t('spreed', 'Shared secret')"
 				:label="t('spreed', 'Shared secret')"
 				labelVisible
-				@update:model-value="debounceUpdateServers" />
+				@update:modelValue="debounceUpdateServers" />
 
 			<template v-if="servers.length && recordingConsentCapability">
 				<h3>{{ t('spreed', 'Recording consent') }}</h3>
@@ -68,7 +68,7 @@
 						name="recording-consent"
 						type="radio"
 						:disabled="loading"
-						@update:model-value="setRecordingConsent">
+						@update:modelValue="setRecordingConsent">
 						{{ level.label }}
 					</NcCheckboxRadioSwitch>
 
@@ -87,7 +87,7 @@
 					v-model="recordingTranscriptionEnabled"
 					type="switch"
 					:disabled="loading"
-					@update:model-value="setRecordingTranscription">
+					@update:modelValue="setRecordingTranscription">
 					{{ t('spreed', 'Automatically transcribe call recordings with a transcription provider') }}
 				</NcCheckboxRadioSwitch>
 
@@ -95,7 +95,7 @@
 					v-model="recordingSummaryEnabled"
 					type="switch"
 					:disabled="loading"
-					@update:model-value="setRecordingSummary">
+					@update:modelValue="setRecordingSummary">
 					{{ t('spreed', 'Automatically summarize call recordings with transcription and summary providers') }}
 				</NcCheckboxRadioSwitch>
 			</template>

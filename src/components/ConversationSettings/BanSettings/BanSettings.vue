@@ -27,7 +27,7 @@
 						v-for="ban in banList"
 						:key="ban.id"
 						:ban="ban"
-						@unban-participant="handleUnban(ban.id)" />
+						@unbanParticipant="handleUnban(ban.id)" />
 				</ul>
 
 				<NcEmptyContent v-else>

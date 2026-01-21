@@ -78,7 +78,7 @@
 				:hasShadow="hasVideo"
 				:participantName="participantName"
 				v-bind="$props"
-				@bottom-bar-hover="handleHoverEvent" />
+				@bottomBarHover="handleHoverEvent" />
 		</slot>
 	</div>
 </template>

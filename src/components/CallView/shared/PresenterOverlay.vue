@@ -25,7 +25,7 @@
 				isPresenterOverlay
 				unSelectable
 				hideBottomBar
-				@click-presenter="$emit('click')" />
+				@clickPresenter="$emit('click')" />
 			<VideoVue
 				v-else
 				:token="token"
@@ -36,7 +36,7 @@
 				isPresenterOverlay
 				unSelectable
 				hideBottomBar
-				@click-presenter="$emit('click')" />
+				@clickPresenter="$emit('click')" />
 		</VueDraggableResizable>
 
 		<!-- presenter button when presenter overlay is collapsed -->
