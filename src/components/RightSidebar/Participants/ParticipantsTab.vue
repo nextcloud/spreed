@@ -16,7 +16,7 @@
 				:aria-describedby="showSearchBoxDescription ? searchBoxDescriptionId : undefined"
 				@input="handleInput"
 				@keydown.enter="addParticipants(participantPhoneItem)"
-				@abort-search="abortSearch" />
+				@abortSearch="abortSearch" />
 			<div
 				v-if="showSearchBoxDescription"
 				:id="searchBoxDescriptionId"

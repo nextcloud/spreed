@@ -25,9 +25,9 @@
 					v-model:password="password"
 					v-model:listable="listable"
 					class="new-group-conversation__content"
-					@handle-enter="handleEnter"
-					@avatar-edited="setIsAvatarEdited"
-					@is-password-valid="setIsPasswordValid" />
+					@handleEnter="handleEnter"
+					@avatarEdited="setIsAvatarEdited"
+					@isPasswordValid="setIsPasswordValid" />
 
 				<!-- Second page -->
 				<NewConversationContactsPage

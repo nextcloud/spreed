@@ -67,7 +67,7 @@
 							isGrid
 							unSelectable
 							hideBottomBar
-							@click-video="maximize">
+							@clickVideo="maximize">
 							<template #bottom-bar />
 						</VideoVue>
 

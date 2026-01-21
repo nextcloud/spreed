@@ -122,7 +122,7 @@ const isSensitive = computed({
 			:disabled="loading.level"
 			name="notification_level"
 			type="radio"
-			@update:model-value="setNotificationLevel">
+			@update:modelValue="setNotificationLevel">
 			<span class="radio-button">
 				<component :is="level.icon" :size="20" />
 				{{ level.label }}

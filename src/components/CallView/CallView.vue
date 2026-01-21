@@ -77,7 +77,7 @@
 						isBig
 						:isOneToOne="isOneToOne"
 						:isSidebar="isSidebar"
-						@force-promote-video="forcePromotedModel = $event" />
+						@forcePromoteVideo="forcePromotedModel = $event" />
 					<!-- presenter overlay -->
 					<PresenterOverlay
 						v-if="shouldShowPresenterOverlay"
@@ -117,8 +117,8 @@
 					:localCallParticipantModel="localCallParticipantModel"
 					:sharedDatas="sharedDatas"
 					v-bind="$attrs"
-					@select-video="handleSelectVideo"
-					@click-local-video="handleClickLocalVideo" />
+					@selectVideo="handleSelectVideo"
+					@clickLocalVideo="handleClickLocalVideo" />
 
 				<ReactionToaster
 					v-if="supportedReactions?.length"
@@ -144,7 +144,7 @@
 					:localMediaModel="localMediaModel"
 					:localCallParticipantModel="localCallParticipantModel"
 					:isSidebar="isSidebar"
-					@click-video="handleClickLocalVideo" />
+					@clickVideo="handleClickLocalVideo" />
 			</div>
 
 			<BottomBar v-if="!isRecording" :isSidebar="isSidebar" />

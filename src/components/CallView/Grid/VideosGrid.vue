@@ -62,7 +62,7 @@
 								:isPromoted="sharedDatas[callParticipantModel.attributes.peerId].promoted"
 								:isSelected="isSelected(callParticipantModel)"
 								:sharedData="sharedDatas[callParticipantModel.attributes.peerId]"
-								@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
+								@clickVideo="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 						</template>
 						<!-- VideosGrid developer mode -->
 						<template v-if="devMode">
@@ -92,7 +92,7 @@
 							:token="token"
 							:localMediaModel="localMediaModel"
 							:localCallParticipantModel="localCallParticipantModel"
-							@click-video="handleClickLocalVideo" />
+							@clickVideo="handleClickLocalVideo" />
 					</div>
 					<NcButton
 						v-if="hasNextPage && gridWidth > 0"
@@ -118,7 +118,7 @@
 					:token="token"
 					:localMediaModel="localMediaModel"
 					:localCallParticipantModel="localCallParticipantModel"
-					@click-video="handleClickLocalVideo" />
+					@clickVideo="handleClickLocalVideo" />
 
 				<template v-if="devMode">
 					<NcButton

@@ -14,7 +14,7 @@
 				:modelValue="hasLobbyEnabled"
 				type="switch"
 				:disabled="isLobbyStateLoading"
-				@update:model-value="toggleLobby">
+				@update:modelValue="toggleLobby">
 				{{ t('spreed', 'Enable lobby, restricting the conversation to moderators') }}
 			</NcCheckboxRadioSwitch>
 		</div>

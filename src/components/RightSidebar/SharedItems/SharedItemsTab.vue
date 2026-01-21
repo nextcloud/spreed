@@ -181,7 +181,7 @@ function openPollDraftHandler() {
 				class="related-resources"
 				providerId="talk"
 				:itemId="conversation.token"
-				@has-resources="(value: boolean) => hasRelatedResources = value" />
+				@hasResources="(value: boolean) => hasRelatedResources = value" />
 
 			<!-- Shared from "Projects" app -->
 			<template v-if="projectsEnabled">

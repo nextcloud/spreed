@@ -36,7 +36,7 @@
 				:conversation="newConversation"
 				controlled
 				editable
-				@avatar-edited="$emit('avatarEdited', $event)" />
+				@avatarEdited="$emit('avatarEdited', $event)" />
 		</template>
 
 		<label class="new-group-conversation__label">

@@ -35,7 +35,7 @@
 				trackBy="id"
 				label="displayname"
 				noWrap
-				@search-change="debounceSearchGroup" />
+				@searchChange="debounceSearchGroup" />
 			<NcButton
 				variant="primary"
 				:disabled="loading"
@@ -61,7 +61,7 @@
 				trackBy="id"
 				label="displayname"
 				noWrap
-				@search-change="debounceSearchGroup" />
+				@searchChange="debounceSearchGroup" />
 			<NcButton
 				variant="primary"
 				:disabled="loading"
@@ -82,7 +82,7 @@
 				:clearable="false"
 				noWrap
 				:disabled="loading || loadingStartCalls"
-				@update:model-value="saveStartCalls" />
+				@update:modelValue="saveStartCalls" />
 		</div>
 		<p>
 			<em>{{ t('spreed', 'When a call has started, everyone with access to the conversation can join the call.') }}</em>

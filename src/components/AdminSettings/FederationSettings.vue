@@ -18,7 +18,7 @@
 			:modelValue="isFederationEnabled"
 			:disabled="loading"
 			type="switch"
-			@update:model-value="saveFederationEnabled">
+			@update:modelValue="saveFederationEnabled">
 			{{ t('spreed', 'Enable Federation in Talk app') }}
 		</NcCheckboxRadioSwitch>
 
@@ -29,7 +29,7 @@
 				:modelValue="isFederationIncomingEnabled"
 				:disabled="loading"
 				type="switch"
-				@update:model-value="saveFederationIncomingEnabled">
+				@update:modelValue="saveFederationIncomingEnabled">
 				{{ t('spreed', 'Allow users to be invited to federated conversations') }}
 			</NcCheckboxRadioSwitch>
 
@@ -37,7 +37,7 @@
 				:modelValue="isFederationOutgoingEnabled"
 				:disabled="loading"
 				type="switch"
-				@update:model-value="saveFederationOutgoingEnabled">
+				@update:modelValue="saveFederationOutgoingEnabled">
 				{{ t('spreed', 'Allow users to invite federated users into conversation') }}
 			</NcCheckboxRadioSwitch>
 
@@ -45,7 +45,7 @@
 				:modelValue="isFederationOnlyTrustedServersEnabled"
 				:disabled="loading"
 				type="switch"
-				@update:model-value="saveFederationOnlyTrustedServersEnabled">
+				@update:modelValue="saveFederationOnlyTrustedServersEnabled">
 				{{ t('spreed', 'Only allow to federate with trusted servers') }}
 			</NcCheckboxRadioSwitch>
 			<!-- eslint-disable-next-line vue/no-v-html -->
@@ -76,7 +76,7 @@
 					trackBy="id"
 					label="displayname"
 					noWrap
-					@search-change="debounceSearchGroup" />
+					@searchChange="debounceSearchGroup" />
 
 				<NcButton
 					variant="primary"

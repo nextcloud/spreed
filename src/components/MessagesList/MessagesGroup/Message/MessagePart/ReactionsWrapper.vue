@@ -18,7 +18,7 @@
 			noFocusTrap
 			:triggers="['hover']"
 			:popperTriggers="['hover']"
-			@after-show="fetchReactions">
+			@afterShow="fetchReactions">
 			<template #trigger>
 				<NcButton
 					:variant="userHasReacted(reaction) ? 'primary' : 'secondary'"
@@ -67,8 +67,8 @@
 			v-if="canReact && showControls"
 			:perLine="5"
 			@select="handleReactionClick"
-			@after-show="emitEmojiPickerStatus"
-			@after-hide="emitEmojiPickerStatus">
+			@afterShow="emitEmojiPickerStatus"
+			@afterHide="emitEmojiPickerStatus">
 			<NcButton
 				size="small"
 				class="reaction-button--trigger"

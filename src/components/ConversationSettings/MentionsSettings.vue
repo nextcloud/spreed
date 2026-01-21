@@ -9,7 +9,7 @@
 			:modelValue="mentionPermissions === MENTION_PERMISSIONS.EVERYONE"
 			:disabled="isMentionPermissionsLoading"
 			type="switch"
-			@update:model-value="toggleMentionPermissions">
+			@update:modelValue="toggleMentionPermissions">
 			{{ t('spreed', 'Allow participants to mention @all') }}
 		</NcCheckboxRadioSwitch>
 	</div>

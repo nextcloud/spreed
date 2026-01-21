@@ -26,18 +26,18 @@
 					:modelValue="startWithoutMediaEnabled"
 					:label="t('spreed', 'Turn camera and microphone off by default')"
 					:disabled="mediaLoading"
-					@update:model-value="toggleStartWithoutMedia" />
+					@update:modelValue="toggleStartWithoutMedia" />
 				<NcFormBoxSwitch
 					v-if="supportDefaultBlurVirtualBackground"
 					:modelValue="settingsStore.blurVirtualBackgroundEnabled"
 					:label="t('spreed', 'Blur camera background by default')"
-					@update:model-value="setBlurVirtualBackgroundEnabled" />
+					@update:modelValue="setBlurVirtualBackgroundEnabled" />
 				<NcFormBoxSwitch
 					v-if="!isGuest"
 					:modelValue="hideMediaSettings"
 					:label="t('spreed', 'Skip device preview before joining a call')"
 					:description="t('spreed', 'Always shown if recording consent is required')"
-					@update:model-value="setHideMediaSettings" />
+					@update:modelValue="setHideMediaSettings" />
 				<NcFormBoxButton
 					:label="t('spreed', 'Microphone settings')"
 					@click="openAdvancedSettings">
@@ -74,14 +74,14 @@
 					:label="t('spreed', 'Send read receipts')"
 					:description="t('spreed', 'When off, all read statuses will be hidden')"
 					:disabled="privacyLoading"
-					@update:model-value="toggleReadStatusPrivacy" />
+					@update:modelValue="toggleReadStatusPrivacy" />
 				<NcFormBoxSwitch
 					v-if="supportTypingStatus"
 					:modelValue="typingStatusPrivacyIsPublic"
 					:label="t('spreed', 'Share typing status')"
 					:description="t('spreed', 'When off, all typing indicators will be hidden')"
 					:disabled="privacyLoading"
-					@update:model-value="toggleTypingStatusPrivacy" />
+					@update:modelValue="toggleTypingStatusPrivacy" />
 			</NcFormBox>
 		</NcAppSettingsSection>
 
