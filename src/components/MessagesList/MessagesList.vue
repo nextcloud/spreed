@@ -48,7 +48,14 @@
 				class="scroller__content"
 				:class="{ 'has-sticky': dateTimestamp === stickyDate }">
 				<li :key="`${currentDay}_${dateTimestamp}`" class="messages-date">
+					<ScheduledDateTime
+						v-if="showScheduledMessages"
+						:time="dateTimestamp * 1000"
+						class="messages-date__text"
+						role="heading"
+						aria-level="3" />
 					<StaticDateTime
+						v-else
 						:time="dateTimestamp * 1000"
 						class="messages-date__text"
 						role="heading"
@@ -102,6 +109,7 @@ import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
+import ScheduledDateTime from '../UIShared/ScheduledDateTime.vue'
 import StaticDateTime from '../UIShared/StaticDateTime.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
@@ -139,6 +147,7 @@ export default {
 		NcLoadingIcon,
 		PinnedMessage,
 		StaticDateTime,
+		ScheduledDateTime,
 		TransitionWrapper,
 	},
 
