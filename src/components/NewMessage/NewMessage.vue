@@ -44,10 +44,13 @@
 			<div class="new-message-form__input">
 				<NewMessageAbsenceInfo
 					v-if="!dialog && userAbsence"
+					class="new-message-form__note-content"
 					:user-absence="userAbsence"
 					:display-name="conversation.displayName" />
 
-				<NewMessageChatSummary v-if="!dialog && showChatSummary" />
+				<NewMessageChatSummary
+					v-if="!dialog && showChatSummary"
+					class="new-message-form__note-content" />
 
 				<div class="new-message-form__emoji-picker">
 					<NcEmojiPicker
@@ -1130,10 +1133,19 @@ export default {
 		width: calc(var(--app-sidebar-width) - 2 * var(--default-grid-baseline));
 	}
 
+	.new-message-form__input > .new-message-form__note-content {
+		width: calc(var(--app-sidebar-width) - 2 * var(--default-grid-baseline));
+		margin-inline: 0 !important;
+	}
+
 	.new-message-form__attachments + .new-message-form__input > .new-message-form__hint,
 	.new-message-form__attachments + .new-message-form__input > .new-message-form__quote,
 	.new-message-form__attachments + .new-message-form__input > .new-message-form__thread-title {
 		margin-inline-start: calc(-1 * var(--default-clickable-area) - var(--default-grid-baseline));
+	}
+
+	.new-message-form__attachments + .new-message-form__input > .new-message-form__note-content {
+		margin-inline-start: calc(-1 * var(--default-clickable-area) - var(--default-grid-baseline)) !important;
 	}
 }
 
