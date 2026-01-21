@@ -564,11 +564,13 @@ export default {
 			objectMap.modelsWithVideoEnabled = this.getOrderedTiles(videoTilesMap, this.promotedHistoryMask)
 			objectMap.modelsWithAudioOnly = this.getOrderedTiles(audioTilesMap, this.promotedHistoryMask)
 
-			return [...objectMap.modelsWithScreenshare,
+			return [
+				...objectMap.modelsWithScreenshare,
 				...objectMap.modelsTempPromoted,
 				...objectMap.modelsWithVideoEnabled,
 				...objectMap.modelsWithAudioOnly,
-				...objectMap.modelsWithNoPermissions]
+				...objectMap.modelsWithNoPermissions,
+			]
 		},
 
 		speakers() {

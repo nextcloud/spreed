@@ -30,7 +30,8 @@ describe('mediaDevicePreferences', () => {
 	const audioOutputDeviceA = { deviceId: 'da7890123456', groupId: 'ga7890123456', kind: 'audiooutput', label: 'Audio Output Device A' }
 	const audioOutputDeviceB = { deviceId: 'db7890123456', groupId: 'gb7890123456', kind: 'audiooutput', label: 'Audio Output Device B' }
 
-	const allDevices = [audioInputDeviceDefault,
+	const allDevices = [
+		audioInputDeviceDefault,
 		audioInputDeviceA,
 		audioInputDeviceB,
 		videoInputDeviceDefault,
@@ -38,7 +39,8 @@ describe('mediaDevicePreferences', () => {
 		videoInputDeviceB,
 		audioOutputDeviceDefault,
 		audioOutputDeviceA,
-		audioOutputDeviceB]
+		audioOutputDeviceB,
+	]
 	const audioInputPreferenceList = [audioInputDeviceDefault, audioInputDeviceA, audioInputDeviceB]
 	const audioOutputPreferenceList = [audioOutputDeviceDefault, audioOutputDeviceA, audioOutputDeviceB]
 	const videoInputPreferenceList = [videoInputDeviceDefault, videoInputDeviceA, videoInputDeviceB]
