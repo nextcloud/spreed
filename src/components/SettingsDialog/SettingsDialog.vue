@@ -61,35 +61,7 @@
 		<NcAppSettingsSection
 			id="talk_appearance"
 			:name="t('spreed', 'Appearance & Sounds')">
-			<NcFormBox>
-				<NcFormBoxSwitch
-					v-if="!isGuest && supportConversationsListStyle"
-					:model-value="conversationsListStyle"
-					:label="t('spreed', 'Compact conversations list')"
-					:disabled="appearanceLoading"
-					@update:model-value="toggleConversationsListStyle" />
-				<NcFormBoxSwitch
-					v-if="supportChatStyle"
-					:model-value="chatSplitViewEnabled"
-					:label="t('spreed', 'Show your chat in split view')"
-					:disabled="chatAppearanceLoading"
-					@update:model-value="toggleChatStyle" />
-			</NcFormBox>
-
-			<NcFormBox>
-				<NcFormBoxSwitch
-					:model-value="shouldPlaySounds"
-					:label="t('spreed', 'Play sounds when participants join or leave a call')"
-					:description="t('spreed', 'Currently not available on iPhone and iPad due to technical restrictions by the manufacturer')"
-					:disabled="playSoundsLoading"
-					@update:model-value="togglePlaySounds" />
-				<NcFormBoxButton
-					v-if="!isGuest"
-					:label="t('spreed', 'Notification settings')"
-					:description="t('spreed', 'Sounds for chat and call notifications')"
-					:href="settingsUrl"
-					target="_blank" />
-			</NcFormBox>
+			<AppearanceSettings />
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection
@@ -188,22 +160,19 @@ import IconFolderOpenOutline from 'vue-material-design-icons/FolderOpenOutline.v
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import IconTune from 'vue-material-design-icons/Tune.vue'
 import AdvancedAudioDialog from '../MediaSettings/AdvancedAudioDialog.vue'
+import AppearanceSettings from './AppearanceSettings.vue'
 import LiveTranscriptionTargetLanguageSelect from './LiveTranscriptionTargetLanguageSelect.vue'
 import { CHAT_STYLE, CONVERSATION, PRIVACY } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useCustomSettings } from '../../services/SettingsAPI.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
-import { useSoundsStore } from '../../stores/sounds.js'
 
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
-const settingsUrl = generateUrl('/settings/user/notifications')
 
 const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !== undefined
 const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
-const supportConversationsListStyle = getTalkConfig('local', 'conversations', 'list-style') !== undefined
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
-const supportChatStyle = getTalkConfig('local', 'chat', 'style') !== undefined
 const supportLiveTranslation = getTalkConfig('local', 'call', 'live-translation') === true
 
 export default {
@@ -213,6 +182,7 @@ export default {
 		IconTune,
 		IconFolderOpenOutline,
 		IconMicrophoneOutline,
+		AppearanceSettings,
 		LiveTranscriptionTargetLanguageSelect,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
@@ -229,20 +199,15 @@ export default {
 	setup() {
 		const actorStore = useActorStore()
 		const settingsStore = useSettingsStore()
-		const soundsStore = useSoundsStore()
 		const { customSettingsSections } = useCustomSettings()
 
 		return {
 			disableKeyboardShortcuts,
-			settingsUrl,
 			settingsStore,
-			soundsStore,
 			supportTypingStatus,
 			customSettingsSections,
 			supportStartWithoutMedia,
-			supportConversationsListStyle,
 			supportDefaultBlurVirtualBackground,
-			supportChatStyle,
 			supportLiveTranslation,
 			actorStore,
 		}
@@ -252,19 +217,12 @@ export default {
 		return {
 			showSettings: false,
 			attachmentFolderLoading: true,
-			chatAppearanceLoading: false,
-			appearanceLoading: false,
 			privacyLoading: false,
-			playSoundsLoading: false,
 			mediaLoading: false,
 		}
 	},
 
 	computed: {
-		shouldPlaySounds() {
-			return this.soundsStore.shouldPlaySounds
-		},
-
 		attachmentFolder() {
 			return this.settingsStore.attachmentFolder
 		},
@@ -285,16 +243,8 @@ export default {
 			return this.settingsStore.startWithoutMedia
 		},
 
-		conversationsListStyle() {
-			return this.settingsStore.conversationsListStyle !== CONVERSATION.LIST_STYLE.TWO_LINES
-		},
-
 		hideMediaSettings() {
 			return !this.settingsStore.showMediaSettings
-		},
-
-		chatSplitViewEnabled() {
-			return this.settingsStore.chatStyle === CHAT_STYLE.SPLIT
 		},
 	},
 
@@ -364,40 +314,6 @@ export default {
 				showError(t('spreed', 'Error while setting typing status privacy'))
 			}
 			this.privacyLoading = false
-		},
-
-		async toggleConversationsListStyle(value) {
-			this.appearanceLoading = true
-			try {
-				await this.settingsStore.updateConversationsListStyle(value ? CONVERSATION.LIST_STYLE.COMPACT : CONVERSATION.LIST_STYLE.TWO_LINES)
-			} catch (exception) {
-				showError(t('spreed', 'Error while setting personal setting'))
-			}
-			this.appearanceLoading = false
-		},
-
-		async toggleChatStyle(value) {
-			this.chatAppearanceLoading = true
-			try {
-				await this.settingsStore.updateChatStyle(value ? CHAT_STYLE.SPLIT : CHAT_STYLE.UNIFIED)
-			} catch (exception) {
-				showError(t('spreed', 'Error while setting personal setting'))
-			}
-			this.chatAppearanceLoading = false
-		},
-
-		async togglePlaySounds() {
-			this.playSoundsLoading = true
-			try {
-				try {
-					await this.soundsStore.setShouldPlaySounds(!this.shouldPlaySounds)
-				} catch (e) {
-					showError(t('spreed', 'Failed to save sounds setting'))
-				}
-			} catch (exception) {
-				showError(t('spreed', 'Error while saving sounds setting'))
-			}
-			this.playSoundsLoading = false
 		},
 
 		async toggleStartWithoutMedia(value) {

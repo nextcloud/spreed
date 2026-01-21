@@ -53,7 +53,12 @@ export function useMessageInfo(item: MaybeRef<ChatMessage | undefined> = undefin
 	// Get the conversation
 	const store = useStore()
 	const actorStore = useActorStore()
-	const conversation = computed<Conversation | undefined>(() => store.getters.conversation(message.value?.token))
+	const conversation = computed<Conversation | undefined>(() => {
+		if (message.value?.token === '') {
+			return store.getters.dummyConversation
+		}
+		return store.getters.conversation(message.value?.token)
+	})
 	const currentActorId = actorStore.actorId
 	const currentActorType = actorStore.actorType
 	// If the conversation or message is not available, return false
