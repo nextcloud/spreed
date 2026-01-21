@@ -35,7 +35,7 @@
 				trackBy="id"
 				label="displayname"
 				noWrap
-				@searchChange="debounceSearchGroup" />
+				@search="debounceSearchGroup" />
 			<NcButton
 				variant="primary"
 				:disabled="loading"
@@ -61,7 +61,7 @@
 				trackBy="id"
 				label="displayname"
 				noWrap
-				@searchChange="debounceSearchGroup" />
+				@search="debounceSearchGroup" />
 			<NcButton
 				variant="primary"
 				:disabled="loading"
