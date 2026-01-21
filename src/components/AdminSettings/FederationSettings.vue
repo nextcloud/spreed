@@ -76,7 +76,7 @@
 					trackBy="id"
 					label="displayname"
 					noWrap
-					@searchChange="debounceSearchGroup" />
+					@search="debounceSearchGroup" />
 
 				<NcButton
 					variant="primary"
