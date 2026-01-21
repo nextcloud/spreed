@@ -50,6 +50,11 @@ class Manager {
 
 		$room = $this->roomManager->getChangelogRoom($userId);
 
+		if ($hasReceivedLog === 0) {
+			// Only post the last 3 entries
+			$logs = array_slice($logs, -3);
+		}
+
 		foreach ($logs as $key => $changelog) {
 			if ($key < $hasReceivedLog || $changelog === '') {
 				continue;
@@ -152,6 +157,9 @@ class Manager {
 			$this->l->t('## New in Talk %s', ['22']) . "\n"
 			. $this->l->t('- Use threads to keep your chat and discussions organized') . "\n"
 			. $this->l->t('- Live transcriptions now available during the call (requires the live-transcription ExApp and the High-performance backend)') . "\n",
+			$this->l->t('## New in Talk %s', ['23']) . "\n"
+			. $this->l->t('- Moderators can now pin messages so they are kept at the top') . "\n"
+			. $this->l->t('- Schedule a message to send it at a later time') . "\n",
 		];
 	}
 }
