@@ -545,7 +545,9 @@ Feature: chat-4/scheduling
     When user "participant1" sets permissions for "participant2" in room "room" to "C" with 200 (v4)
     And wait for 4 seconds
     And force run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
-    Then user "participant2" sees the following scheduled messages in room "room" with 403
+    Then user "participant2" sees the following scheduled messages in room "room" with 200
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt | silent |
+      | Message 1 | users     | participant2 | 0        | null   | Message 1 | comment     | 0      | false  |
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | -1                   |
