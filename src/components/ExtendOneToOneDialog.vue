@@ -74,7 +74,7 @@ async function extendOneToOneConversation() {
 <template>
 	<NcPopover
 		:container="container"
-		popup-role="dialog">
+		popupRole="dialog">
 		<template #trigger>
 			<NcButton
 				variant="tertiary"
@@ -91,10 +91,10 @@ async function extendOneToOneConversation() {
 					{{ t('spreed', 'Start a group conversation') }}
 				</h5>
 				<NewConversationContactsPage
-					v-model:selected-participants="selectedParticipants"
+					v-model:selectedParticipants="selectedParticipants"
 					class="start-group__contacts"
 					:token="token"
-					only-users />
+					onlyUsers />
 				<NcButton
 					class="start-group__action"
 					variant="primary"

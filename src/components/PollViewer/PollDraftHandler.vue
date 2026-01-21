@@ -9,7 +9,7 @@
 		:name="t('spreed', 'Poll drafts')"
 		:container="container"
 		size="normal"
-		close-on-click-outside
+		closeOnClickOutside
 		@update:open="emit('close')">
 		<EmptyView
 			v-if="!pollDrafts.length"

@@ -19,8 +19,8 @@
 		<div class="grid">
 			<NcSelect
 				v-model="allowedGroups"
-				input-id="allow_groups_use_talk"
-				:input-label="t('spreed', 'Limit using Talk')"
+				inputId="allow_groups_use_talk"
+				:inputLabel="t('spreed', 'Limit using Talk')"
 				name="allow_groups_use_talk"
 				class="form__select"
 				:options="groups"
@@ -28,13 +28,13 @@
 				:disabled="loading"
 				:multiple="true"
 				:searchable="true"
-				:tag-width="60"
+				:tagWidth="60"
 				:loading="loadingGroups"
-				:show-no-options="false"
-				keep-open
-				track-by="id"
+				:showNoOptions="false"
+				keepOpen
+				trackBy="id"
 				label="displayname"
-				no-wrap
+				noWrap
 				@search-change="debounceSearchGroup" />
 			<NcButton
 				variant="primary"
@@ -45,8 +45,8 @@
 
 			<NcSelect
 				v-model="canStartConversations"
-				input-id="allow_groups_start_conversation"
-				:input-label="t('spreed', 'Limit creating a public and group conversation')"
+				inputId="allow_groups_start_conversation"
+				:inputLabel="t('spreed', 'Limit creating a public and group conversation')"
 				name="allow_groups_start_conversation"
 				class="form__select"
 				:options="groups"
@@ -54,13 +54,13 @@
 				:disabled="loading"
 				:multiple="true"
 				:searchable="true"
-				:tag-width="60"
+				:tagWidth="60"
 				:loading="loadingGroups"
-				:show-no-options="false"
-				keep-open
-				track-by="id"
+				:showNoOptions="false"
+				keepOpen
+				trackBy="id"
 				label="displayname"
-				no-wrap
+				noWrap
 				@search-change="debounceSearchGroup" />
 			<NcButton
 				variant="primary"
@@ -71,16 +71,16 @@
 
 			<NcSelect
 				v-model="startCalls"
-				input-id="start_calls"
-				:input-label="t('spreed', 'Limit starting a call')"
+				inputId="start_calls"
+				:inputLabel="t('spreed', 'Limit starting a call')"
 				name="allow_groups_start_calls"
 				class="form__select"
 				:options="startCallOptions"
 				:placeholder="t('spreed', 'Limit starting calls')"
 				label="label"
-				track-by="value"
+				trackBy="value"
 				:clearable="false"
-				no-wrap
+				noWrap
 				:disabled="loading || loadingStartCalls"
 				@update:model-value="saveStartCalls" />
 		</div>

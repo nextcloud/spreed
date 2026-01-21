@@ -153,10 +153,10 @@ function onMenuClose() {
 		</NcButton>
 		<NcActions
 			v-else
-			force-menu
+			forceMenu
 			open
 			placement="bottom-end"
-			:boundaries-element="getMessagesListScroller()"
+			:boundariesElement="getMessagesListScroller()"
 			@close="onMenuClose">
 			<template v-if="submenu === null">
 				<!-- Message timestamp -->
@@ -169,7 +169,7 @@ function onMenuClose() {
 
 				<NcActionButton
 					key="set-schedule-menu"
-					is-menu
+					isMenu
 					@click.stop="submenu = 'schedule'">
 					<template #icon>
 						<IconAlarm :size="20" />
@@ -178,7 +178,7 @@ function onMenuClose() {
 				</NcActionButton>
 				<NcActionButton
 					key="send-message"
-					close-after-click
+					closeAfterClick
 					@click.stop="handleSubmit">
 					<template #icon>
 						<IconSendOutline :size="20" />
@@ -189,7 +189,7 @@ function onMenuClose() {
 				<template v-if="isThreadReply">
 					<NcActionSeparator />
 					<NcActionButton
-						close-after-click
+						closeAfterClick
 						@click="threadId = message.threadId!">
 						<template #icon>
 							<IconForumOutline :size="20" />
@@ -202,7 +202,7 @@ function onMenuClose() {
 
 				<NcActionButton
 					key="edit-message"
-					close-after-click
+					closeAfterClick
 					@click.stop="handleEdit">
 					<template #icon>
 						<IconPencilOutline :size="20" />
@@ -211,7 +211,7 @@ function onMenuClose() {
 				</NcActionButton>
 				<NcActionButton
 					key="delete-message"
-					close-after-click
+					closeAfterClick
 					@click.stop="handleDelete">
 					<template #icon>
 						<IconTrashCanOutline :size="20" />
@@ -237,7 +237,7 @@ function onMenuClose() {
 					v-for="option in getCustomDateOptions()"
 					:key="option.key"
 					:aria-label="option.ariaLabel"
-					close-after-click
+					closeAfterClick
 					@click.stop="handleReschedule(option.timestamp)">
 					{{ option.label }}
 				</NcActionButton>
@@ -248,7 +248,7 @@ function onMenuClose() {
 					:min="new Date()"
 					:label="t('spreed', 'Choose a time')"
 					:step="300"
-					is-native-picker>
+					isNativePicker>
 					<template #icon>
 						<IconCalendarClockOutline :size="20" />
 					</template>
@@ -257,7 +257,7 @@ function onMenuClose() {
 				<NcActionButton
 					key="custom-time-submit"
 					:disabled="!customScheduleTimestamp"
-					close-after-click
+					closeAfterClick
 					@click.stop="handleReschedule(customScheduleTimestamp.valueOf())">
 					<template #icon>
 						<IconCheck :size="20" />

@@ -5,12 +5,12 @@
 
 <template>
 	<NcModal
-		no-close
-		:label-id="dialogHeaderId"
+		noClose
+		:labelId="dialogHeaderId"
 		size="small">
 		<div class="modal__content">
 			<div class="conversation-information">
-				<ConversationIcon :item="conversation" hide-user-status />
+				<ConversationIcon :item="conversation" hideUserStatus />
 				<h2 :id="dialogHeaderId" class="nc-dialog-alike-header">
 					{{ conversationDisplayName }}
 				</h2>
@@ -25,8 +25,8 @@
 				v-model="guestUserName"
 				:placeholder="t('spreed', 'Guest')"
 				class="username-form__input"
-				:show-trailing-button="false"
-				label-outside
+				:showTrailingButton="false"
+				labelOutside
 				@keydown.enter="handleChooseUserName" />
 
 			<NcButton

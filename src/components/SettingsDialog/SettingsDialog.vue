@@ -7,7 +7,7 @@
 	<NcAppSettingsDialog
 		v-model:open="showSettings"
 		:name="t('spreed', 'App settings')"
-		show-navigation>
+		showNavigation>
 		<!-- Custom settings sections registered via OCA.Talk.Settings -->
 		<NcAppSettingsSection
 			v-for="{ id, name, element } in customSettingsSections"
@@ -23,18 +23,18 @@
 			<NcFormBox>
 				<NcFormBoxSwitch
 					v-if="supportStartWithoutMedia"
-					:model-value="startWithoutMediaEnabled"
+					:modelValue="startWithoutMediaEnabled"
 					:label="t('spreed', 'Turn camera and microphone off by default')"
 					:disabled="mediaLoading"
 					@update:model-value="toggleStartWithoutMedia" />
 				<NcFormBoxSwitch
 					v-if="supportDefaultBlurVirtualBackground"
-					:model-value="settingsStore.blurVirtualBackgroundEnabled"
+					:modelValue="settingsStore.blurVirtualBackgroundEnabled"
 					:label="t('spreed', 'Blur camera background by default')"
 					@update:model-value="setBlurVirtualBackgroundEnabled" />
 				<NcFormBoxSwitch
 					v-if="!isGuest"
-					:model-value="hideMediaSettings"
+					:modelValue="hideMediaSettings"
 					:label="t('spreed', 'Skip device preview before joining a call')"
 					:description="t('spreed', 'Always shown if recording consent is required')"
 					@update:model-value="setHideMediaSettings" />
@@ -70,14 +70,14 @@
 			:name="t('spreed', 'Privacy')">
 			<NcFormBox>
 				<NcFormBoxSwitch
-					:model-value="readStatusPrivacyIsPublic"
+					:modelValue="readStatusPrivacyIsPublic"
 					:label="t('spreed', 'Send read receipts')"
 					:description="t('spreed', 'When off, all read statuses will be hidden')"
 					:disabled="privacyLoading"
 					@update:model-value="toggleReadStatusPrivacy" />
 				<NcFormBoxSwitch
 					v-if="supportTypingStatus"
-					:model-value="typingStatusPrivacyIsPublic"
+					:modelValue="typingStatusPrivacyIsPublic"
 					:label="t('spreed', 'Share typing status')"
 					:description="t('spreed', 'When off, all typing indicators will be hidden')"
 					:disabled="privacyLoading"
@@ -92,7 +92,7 @@
 			<NcFormBoxButton
 				:label="t('spreed', 'Attachments folder')"
 				:description="attachmentFolder"
-				inverted-accent
+				invertedAccent
 				@click="showFilePicker">
 				<template #icon>
 					<IconFolderOpenOutline :size="20" />

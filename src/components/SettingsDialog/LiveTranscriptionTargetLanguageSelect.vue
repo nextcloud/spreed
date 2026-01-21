@@ -115,7 +115,7 @@ async function changeLanguage(language: LanguageOption) {
 	<NcSelect
 		v-model="selectedOption"
 		class="live_transcription_settings_target_language_id"
-		:input-label="t('spreed', 'Set language used to show the transcriptions')"
+		:inputLabel="t('spreed', 'Set language used to show the transcriptions')"
 		:placeholder="placeholder"
 		:options="languageOptions"
 		:disabled="!languageOptions.length || loadLanguagesFailed || languageBeingChanged"

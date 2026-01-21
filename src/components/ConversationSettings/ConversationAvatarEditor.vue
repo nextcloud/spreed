@@ -18,7 +18,7 @@
 					v-else-if="!loading"
 					:item="conversation"
 					:size="AVATAR.SIZE.EXTRA_LARGE"
-					hide-user-status />
+					hideUserStatus />
 				<div v-else class="icon-loading" />
 			</div>
 			<VueCropper
@@ -30,7 +30,7 @@
 				<div class="avatar__buttons">
 					<!-- Set emoji as avatar -->
 					<template v-if="!showCropper">
-						<NcEmojiPicker :per-line="5" container="#vue-avatar-section" @select="setEmoji">
+						<NcEmojiPicker :perLine="5" container="#vue-avatar-section" @select="setEmoji">
 							<NcButton
 								:title="t('spreed', 'Set emoji as conversation picture')"
 								:aria-label="t('spreed', 'Set emoji as conversation picture')">
@@ -42,7 +42,7 @@
 						<NcColorPicker
 							v-if="emojiAvatar"
 							v-model="backgroundColor"
-							advanced-fields
+							advancedFields
 							container="#vue-avatar-section">
 							<NcButton
 								:title="t('spreed', 'Set background color for conversation picture')"

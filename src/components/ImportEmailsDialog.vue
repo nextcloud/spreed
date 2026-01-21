@@ -112,7 +112,7 @@ async function submitList(file: File | null) {
 		class="import-list"
 		:name="t('spreed', 'Import email participants')"
 		size="normal"
-		close-on-click-outside
+		closeOnClickOutside
 		:container="container"
 		@update:open="emit('close')">
 		<!--native file picker, hidden -->
@@ -127,7 +127,7 @@ async function submitList(file: File | null) {
 		<div class="import-list__wrapper">
 			<NcTextField
 				class="import-list__input"
-				:model-value="importedFile?.name ?? ''"
+				:modelValue="importedFile?.name ?? ''"
 				:placeholder="t('spreed', 'Import a file')"
 				disabled />
 			<NcButton class="import-list__button" @click="triggerImport">

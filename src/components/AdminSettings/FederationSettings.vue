@@ -15,7 +15,7 @@
 		</p>
 
 		<NcCheckboxRadioSwitch
-			:model-value="isFederationEnabled"
+			:modelValue="isFederationEnabled"
 			:disabled="loading"
 			type="switch"
 			@update:model-value="saveFederationEnabled">
@@ -26,7 +26,7 @@
 			<h3>{{ t('spreed', 'Permissions') }}</h3>
 
 			<NcCheckboxRadioSwitch
-				:model-value="isFederationIncomingEnabled"
+				:modelValue="isFederationIncomingEnabled"
 				:disabled="loading"
 				type="switch"
 				@update:model-value="saveFederationIncomingEnabled">
@@ -34,7 +34,7 @@
 			</NcCheckboxRadioSwitch>
 
 			<NcCheckboxRadioSwitch
-				:model-value="isFederationOutgoingEnabled"
+				:modelValue="isFederationOutgoingEnabled"
 				:disabled="loading"
 				type="switch"
 				@update:model-value="saveFederationOutgoingEnabled">
@@ -42,7 +42,7 @@
 			</NcCheckboxRadioSwitch>
 
 			<NcCheckboxRadioSwitch
-				:model-value="isFederationOnlyTrustedServersEnabled"
+				:modelValue="isFederationOnlyTrustedServersEnabled"
 				:disabled="loading"
 				type="switch"
 				@update:model-value="saveFederationOnlyTrustedServersEnabled">
@@ -60,8 +60,8 @@
 			<div class="form">
 				<NcSelect
 					v-model="allowedGroups"
-					input-id="allow_groups_invite_federated"
-					:input-label="t('spreed', 'Groups allowed to invite federated users')"
+					inputId="allow_groups_invite_federated"
+					:inputLabel="t('spreed', 'Groups allowed to invite federated users')"
 					name="allow_groups_invite_federated"
 					class="form__select"
 					:options="groups"
@@ -69,13 +69,13 @@
 					:disabled="loading"
 					multiple
 					searchable
-					:tag-width="60"
+					:tagWidth="60"
 					:loading="loadingGroups"
-					:show-no-options="false"
-					keep-open
-					track-by="id"
+					:showNoOptions="false"
+					keepOpen
+					trackBy="id"
 					label="displayname"
-					no-wrap
+					noWrap
 					@search-change="debounceSearchGroup" />
 
 				<NcButton

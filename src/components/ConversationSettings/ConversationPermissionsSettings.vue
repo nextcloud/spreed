@@ -73,10 +73,10 @@
 		</div>
 		<PermissionEditor
 			v-if="showPermissionsEditor"
-			:conversation-name="conversationName"
+			:conversationName="conversationName"
 			:permissions="conversationPermissions"
 			:loading="loading"
-			nested-container=".conversation-permissions-editor"
+			nestedContainer=".conversation-permissions-editor"
 			@close="handleClosePermissionsEditor"
 			@submit="handleSubmitPermissions" />
 	</div>

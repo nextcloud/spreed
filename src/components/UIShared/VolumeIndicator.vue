@@ -11,7 +11,7 @@
 		<span
 			class="volume-indicator volume-indicator-primary"
 			:style="{ height: iconPrimaryHeight + 'px' }">
-			<IconMicrophone v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
+			<IconMicrophone v-if="audioEnabled" :size="size" :fillColor="primaryColor" />
 			<NcIconSvgWrapper
 				v-else
 				inline
@@ -25,7 +25,7 @@
 			class="volume-indicator volume-indicator-overlay"
 			:class="{ 'volume-indicator-overlay-mute': !audioEnabled }"
 			:style="{ height: iconOverlayHeight + 'px' }">
-			<IconMicrophone v-if="audioEnabled" :size="size" :fill-color="overlayColor" />
+			<IconMicrophone v-if="audioEnabled" :size="size" :fillColor="overlayColor" />
 			<NcIconSvgWrapper
 				v-else
 				inline

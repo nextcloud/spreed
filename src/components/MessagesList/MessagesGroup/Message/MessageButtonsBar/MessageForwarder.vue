@@ -9,10 +9,10 @@
 		message to -->
 		<RoomSelector
 			v-if="!showForwardedConfirmation"
-			show-postable-only
-			allow-federation
-			:dialog-title="dialogTitle"
-			:dialog-subtitle="dialogSubtitle"
+			showPostableOnly
+			allowFederation
+			:dialogTitle="dialogTitle"
+			:dialogSubtitle="dialogSubtitle"
 			@select="setSelectedConversationToken"
 			@close="handleClose" />
 
@@ -22,7 +22,7 @@
 		<NcDialog
 			v-else
 			:name="dialogTitle"
-			close-on-click-outside
+			closeOnClickOutside
 			@update:open="handleClose">
 			<NcEmptyContent :description="t('spreed', 'The message has been forwarded to {selectedConversationName}', { selectedConversationName })">
 				<template #icon>

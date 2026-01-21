@@ -40,7 +40,7 @@
 					v-show="parts.length > 0"
 					class="enable-switch-line">
 					<NcCheckboxRadioSwitch
-						:model-value="enabled"
+						:modelValue="enabled"
 						type="switch"
 						@update:model-value="onEnabled">
 						{{ t('spreed', 'Enable bridge') }}
@@ -61,9 +61,9 @@
 						:name="t('spreed', 'Log content')"
 						size="normal"
 						container=".matterbridge-settings"
-						close-on-click-outside>
+						closeOnClickOutside>
 						<NcTextArea
-							:model-value="processLog"
+							:modelValue="processLog"
 							class="log-content"
 							:label="t('spreed', 'Log content')"
 							:rows="29"

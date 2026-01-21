@@ -30,10 +30,10 @@
 					:text="conversation.description"
 					dir="auto"
 					autolink
-					use-extended-markdown />
+					useExtendedMarkdown />
 			</div>
 		</div>
-		<MediaSettings :is-dialog="false" />
+		<MediaSettings :isDialog="false" />
 	</div>
 </template>
 

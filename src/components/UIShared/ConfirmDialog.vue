@@ -100,7 +100,7 @@ function onSubmit(value: string) {
 				v-model="inputValue"
 				:label="inputProps.label"
 				:disabled="inputProps.disabled"
-				:show-trailing-button="inputProps.showTrailingButton"
+				:showTrailingButton="inputProps.showTrailingButton"
 				@keydown.enter="onSubmit(inputValue)" />
 		</template>
 	</NcDialog>

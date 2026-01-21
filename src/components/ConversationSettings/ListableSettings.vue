@@ -6,7 +6,7 @@
 <template>
 	<div v-if="canModerate">
 		<NcCheckboxRadioSwitch
-			:model-value="listable !== LISTABLE.NONE"
+			:modelValue="listable !== LISTABLE.NONE"
 			:disabled="isListableLoading"
 			type="switch"
 			@update:model-value="toggleListableUsers">
@@ -15,7 +15,7 @@
 		<NcCheckboxRadioSwitch
 			v-if="listable !== LISTABLE.NONE && isGuestsAccountsEnabled"
 			class="additional-top-margin"
-			:model-value="listable === LISTABLE.ALL"
+			:modelValue="listable === LISTABLE.ALL"
 			:disabled="isListableLoading"
 			type="switch"
 			@update:model-value="toggleListableGuests">

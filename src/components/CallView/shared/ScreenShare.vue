@@ -17,11 +17,11 @@
 		<VideoBottomBar
 			v-if="isBig"
 			:token="token"
-			:shared-data="sharedData"
-			is-big
-			is-screen
+			:sharedData="sharedData"
+			isBig
+			isScreen
 			:model="model"
-			:participant-name="remoteParticipantName" />
+			:participantName="remoteParticipantName" />
 	</div>
 </template>
 

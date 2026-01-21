@@ -51,11 +51,11 @@
 				v-model="secret"
 				class="form__textfield additional-top-margin"
 				name="recording_secret"
-				as-text
+				asText
 				:disabled="loading"
 				:placeholder="t('spreed', 'Shared secret')"
 				:label="t('spreed', 'Shared secret')"
-				label-visible
+				labelVisible
 				@update:model-value="debounceUpdateServers" />
 
 			<template v-if="servers.length && recordingConsentCapability">
