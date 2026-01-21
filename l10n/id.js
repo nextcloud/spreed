@@ -317,6 +317,7 @@ OC.L10N.register(
     "_%n day_::_%n days_" : ["%n hari"],
     "Password protection" : "Password protection",
     "Set a password" : "Tetapkan kata sandi",
+    "Invalid language" : "Bahasa tidak valid",
     "Edit" : "Sunting",
     "Delete" : "Hapus",
     "Notifications" : "Pemberitahuan",
