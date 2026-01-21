@@ -352,7 +352,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
-	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/chat/{token}/schedule', requirements: [
 		'apiVersion' => '(v1)',
@@ -566,7 +565,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
 	#[RequireLoggedInParticipant]
-	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
 	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/chat/{token}/schedule/{messageId}', requirements: [
 		'apiVersion' => '(v1)',
