@@ -173,7 +173,7 @@
 								:deviceId="audioOutputId"
 								@refresh="updateDevices"
 								@update:deviceId="handleAudioOutputIdChange">
-								<template #extra-action>
+								<template #extraAction>
 									<MediaDevicesSpeakerTest :disabled="!!audioStreamError" />
 								</template>
 							</MediaDevicesSelector>

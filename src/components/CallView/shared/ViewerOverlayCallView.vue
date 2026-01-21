@@ -68,7 +68,7 @@
 							unSelectable
 							hideBottomBar
 							@clickVideo="maximize">
-							<template #bottom-bar />
+							<template #bottomBar />
 						</VideoVue>
 
 						<EmptyCallView v-else isSmall />
