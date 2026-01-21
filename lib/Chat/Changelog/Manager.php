@@ -50,6 +50,11 @@ class Manager {
 
 		$room = $this->roomManager->getChangelogRoom($userId);
 
+		if ($hasReceivedLog === 0) {
+			// Only post the last 3 entries
+			$logs = array_slice($logs, -3);
+		}
+
 		foreach ($logs as $key => $changelog) {
 			if ($key < $hasReceivedLog || $changelog === '') {
 				continue;
