@@ -179,9 +179,7 @@ export function useConversationInfo({
 			}
 		}
 
-		if ([CONVERSATION.TYPE.ONE_TO_ONE,
-			CONVERSATION.TYPE.ONE_TO_ONE_FORMER,
-			CONVERSATION.TYPE.CHANGELOG].includes(item.value.type)) {
+		if ([CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER, CONVERSATION.TYPE.CHANGELOG].includes(item.value.type)) {
 			return {
 				actor: null,
 				icon: getMessageIcon(lastMessage.value),
