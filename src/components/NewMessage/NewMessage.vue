@@ -4,7 +4,9 @@
 -->
 
 <template>
-	<div class="wrapper">
+	<div
+		class="wrapper"
+		:class="{ 'wrapper--narrow': isSidebar }">
 		<NewMessageTypingIndicator
 			v-if="showTypingStatus"
 			:token="token" />
@@ -26,6 +28,7 @@
 			<!-- Attachments menu -->
 			<NewMessageAttachments
 				v-if="showAttachmentsMenu"
+				class="new-message-form__attachments"
 				:token="token"
 				:disabled="disabled"
 				:can-upload-files="canUploadFiles"
@@ -73,6 +76,7 @@
 						</template>
 					</NcButton>
 				</div>
+
 				<div v-if="parentMessage || messageToEdit" class="new-message-form__quote">
 					<MessageQuote
 						:message="messageToEdit ?? parentMessage"
@@ -104,6 +108,7 @@
 					class="new-message-form__hint"
 					type="warning"
 					:text="t('spreed', 'Adding a mention will only notify users who did not read the message.')" />
+
 				<NcTextField
 					v-if="threadCreating"
 					ref="threadTitleInputRef"
@@ -115,6 +120,7 @@
 					:title="errorTitle"
 					show-trailing-button
 					@trailing-button-click="setCreateThread(false)" />
+
 				<NcRichContenteditable
 					ref="richContenteditable"
 					:key="container"
@@ -1393,6 +1399,22 @@ export default {
 .wrapper {
 	padding: calc(var(--default-grid-baseline) * 2);
 	min-height: calc(var(--default-clickable-area) + var(--default-grid-baseline) * 2);
+}
+
+.wrapper--narrow {
+	padding: var(--default-grid-baseline);
+
+	.new-message-form__input > .new-message-form__hint,
+	.new-message-form__input > .new-message-form__quote,
+	.new-message-form__input > .new-message-form__thread-title {
+		width: calc(var(--app-sidebar-width) - 2 * var(--default-grid-baseline));
+	}
+
+	.new-message-form__attachments + .new-message-form__input > .new-message-form__hint,
+	.new-message-form__attachments + .new-message-form__input > .new-message-form__quote,
+	.new-message-form__attachments + .new-message-form__input > .new-message-form__thread-title {
+		margin-inline-start: calc(-1 * var(--default-clickable-area) - var(--default-grid-baseline));
+	}
 }
 
 .new-message-form {
