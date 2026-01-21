@@ -119,7 +119,7 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 			:disabled="!enabled || !deviceOptionsAvailable"
 			@open="$emit('refresh')" />
 
-		<slot name="extra-action" />
+		<slot name="extraAction" />
 	</div>
 </template>
 
