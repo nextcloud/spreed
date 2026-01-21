@@ -171,6 +171,8 @@ export default {
 @use '../../assets/variables' as *;
 
 .absence-reminder {
+	position: relative;
+
 	// Override NcNoteCard styles
 	margin: 0 calc(var(--default-grid-baseline) * 4) calc(var(--default-grid-baseline) * 2) !important;
 	padding: calc(var(--default-grid-baseline) * 2) !important;
