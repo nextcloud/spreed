@@ -24,7 +24,7 @@ Feature: create
     And share is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
-      | path                   | /Talk/welcome.txt |
+      | path                   | /{TALK_PLACEHOLDER}/welcome.txt |
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | shared::/Talk/welcome.txt |
