@@ -5,7 +5,7 @@
 
 import { getCSPNonce } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
-import { createApp, reactive } from 'vue'
+import { defineCustomElement, reactive } from 'vue'
 import FilesSidebarTabApp from './FilesSidebarTabApp.vue'
 import { createMemoryRouter } from './router/router.ts'
 import store from './store/index.js'
@@ -33,11 +33,16 @@ const router = createMemoryRouter()
  *
  */
 function newTab() {
-	return createApp(FilesSidebarTabApp)
-		.use(store)
-		.use(pinia)
-		.use(router)
-		.use(NextcloudGlobalsVuePlugin)
+	return defineCustomElement(FilesSidebarTabApp, {
+		shadowRoot: false,
+		configureApp(app) {
+			app
+				.use(store)
+				.use(pinia)
+				.use(router)
+				.use(NextcloudGlobalsVuePlugin)
+		},
+	})
 }
 
 if (!window.OCA.Talk) {
