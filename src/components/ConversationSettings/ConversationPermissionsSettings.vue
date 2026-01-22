@@ -184,14 +184,14 @@ export default {
 					token: this.token,
 					permissions,
 				})
-				showSuccess(t('spreed', 'Default permissions modified for {conversationName}', { conversationName: this.conversationName }))
+				showSuccess(t('spreed', 'Default permissions modified for {conversationName}', { conversationName: this.conversationName }, { escape: false, sanitize: false }))
 
 				// Modify the radio buttons value
 				this.radioValue = this.getPermissionRadioValue(permissions)
 				this.showPermissionsEditor = false
 			} catch (error) {
 				console.debug(error)
-				showError(t('spreed', 'Could not modify default permissions for {conversationName}', { conversationName: this.conversationName }))
+				showError(t('spreed', 'Could not modify default permissions for {conversationName}', { conversationName: this.conversationName }, { escape: false, sanitize: false }))
 
 				// Go back to the previous radio value
 				this.radioValue = this.getPermissionRadioValue(this.conversationPermissions)
