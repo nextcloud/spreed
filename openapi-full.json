@@ -1976,6 +1976,11 @@
                     },
                     "silent": {
                         "type": "boolean"
+                    },
+                    "originalSendAt": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Set only if sending failed to persist the original timestamp and expose it"
                     }
                 }
             },

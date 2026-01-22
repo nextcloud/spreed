@@ -118,6 +118,10 @@ class ScheduledMessage extends SnowflakeAwareEntity {
 			$data['parent'] = $parent->toArray($format, $thread);
 		}
 
+		if (isset($metaData[self::METADATA_SEND_AT])) {
+			$data['originalSendAt'] = $metaData[self::METADATA_SEND_AT];
+		}
+
 		if ($thread !== null) {
 			$data['threadTitle'] = $thread->getName();
 		} elseif (isset($metaData[self::METADATA_THREAD_TITLE]) && $this->getThreadId() === Thread::THREAD_CREATE) {
