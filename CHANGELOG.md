@@ -5,6 +5,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 23.0.0-rc.1 – 2026-01-22
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(chat): Polishing of message bubbles
+  [#16760](https://github.com/nextcloud/spreed/pull/16760)
+  [#16763](https://github.com/nextcloud/spreed/pull/16763)
+- fix(chat): Polishing of scheduled messages
+  [#16764](https://github.com/nextcloud/spreed/pull/16764)
+  [#16790](https://github.com/nextcloud/spreed/pull/16790)
+- fix(chat): Fix chat infos in sidebar layout
+  [#16782](https://github.com/nextcloud/spreed/pull/16782)
+- fix(chat): Correctly post replies and threads when sharing files
+  [#16819](https://github.com/nextcloud/spreed/pull/16819)
+
 ## 23.0.0-beta.2 – 2026-01-15
 ### Added
 - Live translations in call
