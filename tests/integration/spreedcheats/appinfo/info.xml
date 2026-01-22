@@ -11,13 +11,13 @@
 
 	<licence>AGPL</licence>
 	<author>Joas Schilling</author>
-	<version>23.0.0</version>
+	<version>24.0.0</version>
 
 	<types>
 		<logging/>
 	</types>
 
 	<dependencies>
-		<nextcloud min-version="33" max-version="33" />
+		<nextcloud min-version="34" max-version="34" />
 	</dependencies>
 </info>
