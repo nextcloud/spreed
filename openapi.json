@@ -2122,7 +2122,8 @@
             "ThreadAttendee": {
                 "type": "object",
                 "required": [
-                    "notificationLevel"
+                    "notificationLevel",
+                    "subscribed"
                 ],
                 "properties": {
                     "notificationLevel": {
@@ -2134,6 +2135,9 @@
                             2,
                             3
                         ]
+                    },
+                    "subscribed": {
+                        "type": "boolean"
                     }
                 }
             },
