@@ -4,7 +4,9 @@
 -->
 
 <template>
-	<div class="wrapper">
+	<div
+		class="wrapper"
+		:class="{ 'wrapper--narrow': isSidebar }">
 		<NewMessageTypingIndicator
 			v-if="showTypingStatus"
 			:token="token" />
@@ -26,6 +28,7 @@
 			<!-- Attachments menu -->
 			<NewMessageAttachments
 				v-if="showAttachmentsMenu"
+				class="new-message-form__attachments"
 				:token="token"
 				:disabled="disabled"
 				:can-upload-files="canUploadFiles"
@@ -41,10 +44,13 @@
 			<div class="new-message-form__input">
 				<NewMessageAbsenceInfo
 					v-if="!dialog && userAbsence"
+					class="new-message-form__note-content"
 					:user-absence="userAbsence"
 					:display-name="conversation.displayName" />
 
-				<NewMessageChatSummary v-if="!dialog && showChatSummary" />
+				<NewMessageChatSummary
+					v-if="!dialog && showChatSummary"
+					class="new-message-form__note-content" />
 
 				<div class="new-message-form__emoji-picker">
 					<NcEmojiPicker
@@ -73,6 +79,7 @@
 						</template>
 					</NcButton>
 				</div>
+
 				<div v-if="parentMessage || messageToEdit" class="new-message-form__quote">
 					<MessageQuote
 						:message="messageToEdit ?? parentMessage"
@@ -82,8 +89,10 @@
 				<!-- mention editing hint -->
 				<NcNoteCard
 					v-if="showMentionEditHint"
+					class="new-message-form__hint"
 					type="warning"
 					:text="t('spreed', 'Adding a mention will only notify users who did not read the message.')" />
+
 				<NcTextField
 					v-if="threadCreating"
 					ref="threadTitleInputRef"
@@ -95,6 +104,7 @@
 					:title="errorTitle"
 					show-trailing-button
 					@trailing-button-click="setCreateThread(false)" />
+
 				<NcRichContenteditable
 					ref="richContenteditable"
 					:key="container"
@@ -202,7 +212,7 @@ import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import debounce from 'debounce'
-import { nextTick, toRefs, useTemplateRef } from 'vue'
+import { inject, nextTick, toRefs, useTemplateRef } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -337,6 +347,8 @@ export default {
 
 		const threadTitleInputRef = useTemplateRef('threadTitleInputRef')
 
+		const isSidebar = inject('chatView:isSidebar', false)
+
 		return {
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
@@ -350,6 +362,7 @@ export default {
 			threadId,
 			threadTitleInputRef,
 			createTemporaryMessage,
+			isSidebar,
 		}
 	},
 
@@ -1109,6 +1122,31 @@ export default {
 .wrapper {
 	padding: calc(var(--default-grid-baseline) * 2);
 	min-height: calc(var(--default-clickable-area) + var(--default-grid-baseline) * 2);
+}
+
+.wrapper--narrow {
+	padding: var(--default-grid-baseline);
+
+	.new-message-form__input > .new-message-form__hint,
+	.new-message-form__input > .new-message-form__quote,
+	.new-message-form__input > .new-message-form__thread-title {
+		width: calc(var(--app-sidebar-width) - 2 * var(--default-grid-baseline));
+	}
+
+	.new-message-form__input > .new-message-form__note-content {
+		width: calc(var(--app-sidebar-width) - 2 * var(--default-grid-baseline));
+		margin-inline: 0 !important;
+	}
+
+	.new-message-form__attachments + .new-message-form__input > .new-message-form__hint,
+	.new-message-form__attachments + .new-message-form__input > .new-message-form__quote,
+	.new-message-form__attachments + .new-message-form__input > .new-message-form__thread-title {
+		margin-inline-start: calc(-1 * var(--default-clickable-area) - var(--default-grid-baseline));
+	}
+
+	.new-message-form__attachments + .new-message-form__input > .new-message-form__note-content {
+		margin-inline-start: calc(-1 * var(--default-clickable-area) - var(--default-grid-baseline)) !important;
+	}
 }
 
 .new-message-form {
