@@ -68,7 +68,7 @@
     "mitt": "^3.0.1",
     "mockconsole": "0.0.1",
     "panzoom": "^9.4.3",
-    "pinia": "^3.0.3",
+    "pinia": "^3.0.4",
     "ua-parser-js": "^2.0.7",
     "util": "^0.12.5",
     "uuid": "^13.0.0",
