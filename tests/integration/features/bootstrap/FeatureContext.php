@@ -2071,6 +2071,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$row['id'] = self::$textToMessageId[$row['message']];
 			if ($row['sendAt'] !== '0') {
 				$row['sendAt'] = self::$messageIdToTimestamp[$row['id']];
+			} else {
+				$row['originalSendAt'] = self::$messageIdToTimestamp[$row['id']];
 			}
 			$row['silent'] = $row['silent'] === 'true';
 			if ($row['threadId'] === '-1') {

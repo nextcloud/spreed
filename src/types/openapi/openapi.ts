@@ -2536,6 +2536,11 @@ export type components = {
             /** Format: int64 */
             sendAt: number;
             silent: boolean;
+            /**
+             * Format: int64
+             * @description Set only if sending failed to persist the original timestamp and expose it
+             */
+            originalSendAt?: number;
         };
         SignalingFederationSettings: {
             server: string;
