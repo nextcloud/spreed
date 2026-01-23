@@ -356,8 +356,7 @@ class RoomService {
 			throw new DefaultPermissionsException(DefaultPermissionsException::REASON_BREAKOUT_ROOM);
 		}
 
-		if ($permissions < 0 || $permissions > 255) {
-			// Do not allow manual changing the permissions in breakout rooms
+		if ($permissions < Attendee::PERMISSIONS_DEFAULT || $permissions > Attendee::PERMISSIONS_MAX_CUSTOM) {
 			throw new DefaultPermissionsException(DefaultPermissionsException::REASON_VALUE);
 		}
 

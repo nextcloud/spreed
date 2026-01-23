@@ -56,7 +56,7 @@ class ReactionController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
-	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequirePermission(permission: RequirePermission::REACT)]
 	#[RequireReadWriteConversation]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/reaction/{token}/{messageId}', requirements: [
@@ -108,7 +108,7 @@ class ReactionController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
-	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequirePermission(permission: RequirePermission::REACT)]
 	#[RequireReadWriteConversation]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
 	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/reaction/{token}/{messageId}', requirements: [

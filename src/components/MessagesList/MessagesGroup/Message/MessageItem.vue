@@ -317,7 +317,7 @@ export default {
 
 		canReact() {
 			return this.conversation.readOnly !== CONVERSATION.STATE.READ_ONLY
-				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
+				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.REACT) !== 0
 				&& this.message.messageType !== MESSAGE.TYPE.COMMAND
 				&& this.message.messageType !== MESSAGE.TYPE.COMMENT_DELETED
 		},

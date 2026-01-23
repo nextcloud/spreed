@@ -99,6 +99,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		'V' => 32, // PERMISSIONS_PUBLISH_VIDEO
 		'P' => 64, // PERMISSIONS_PUBLISH_SCREEN
 		'M' => 128, // PERMISSIONS_CHAT
+		'R' => 256, // PERMISSIONS_REACT
 	];
 
 	protected ?string $currentUser = null;

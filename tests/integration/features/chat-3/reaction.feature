@@ -39,7 +39,7 @@ Feature: chat-2/reaction
       | room | users     | participant1 | participant1-displayname | user_added |
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
-  Scenario: React to message fails without chat permission
+  Scenario: React to message fails without react permission
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -53,8 +53,8 @@ Feature: chat-2/reaction
       | room | users     | participant2 | participant2-displayname | reaction |
       | room | users     | participant1 | participant1-displayname | user_added |
       | room | users     | participant1 | participant1-displayname | conversation_created |
-    # Removing chat permission only
-    Then user "participant1" sets permissions for "participant2" in room "room" to "CSJLAVP" with 200 (v4)
+    # Removing react permission only (keeping chat permission)
+    Then user "participant1" sets permissions for "participant2" in room "room" to "CSJLAVPM" with 200 (v4)
     When user "participant2" delete react with "👍" on message "Message 1" to room "room" with 403
     And user "participant2" react with "💙" on message "Message 1" to room "room" with 403
     And user "participant1" sees the following system messages in room "room" with 200

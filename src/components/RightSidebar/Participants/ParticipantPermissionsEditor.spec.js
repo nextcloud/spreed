@@ -99,7 +99,8 @@ describe('ParticipantPermissionsEditor.vue', () => {
 			const permissionsMap = [
 				{ label: 'Start a call', value: !!(permissions & PARTICIPANT.PERMISSIONS.CALL_START) },
 				{ label: 'Skip the lobby', value: !!(permissions & PARTICIPANT.PERMISSIONS.LOBBY_IGNORE) },
-				{ label: 'Can post messages and reactions', value: !!(permissions & PARTICIPANT.PERMISSIONS.CHAT) },
+				{ label: 'Can post messages', value: !!(permissions & PARTICIPANT.PERMISSIONS.CHAT) },
+				{ label: 'Can add reactions', value: !!(permissions & PARTICIPANT.PERMISSIONS.REACT) },
 				{ label: 'Enable the microphone', value: !!(permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) },
 				{ label: 'Enable the camera', value: !!(permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO) },
 				{ label: 'Share the screen', value: !!(permissions & PARTICIPANT.PERMISSIONS.PUBLISH_SCREEN) },

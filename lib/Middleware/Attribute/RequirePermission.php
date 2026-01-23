@@ -19,6 +19,7 @@ use OCA\Talk\Middleware\InjectionMiddleware;
 class RequirePermission {
 
 	public const CHAT = 'chat';
+	public const REACT = 'react';
 	public const START_CALL = 'call-start';
 
 	public function __construct(

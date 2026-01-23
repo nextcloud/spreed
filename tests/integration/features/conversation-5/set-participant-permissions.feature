@@ -19,12 +19,12 @@ Feature: conversation-2/set-publishing-permissions
     And user "moderator" sets permissions for "moderator" in room "one-to-one room" to "S" with 400 (v4)
     Then user "owner" sees the following attendees in room "one-to-one room" with 200 (v4)
       | actorType  | actorId   | permissions |
-      | users      | owner     | SJLAVPM     |
-      | users      | moderator | SJLAVPM     |
+      | users      | owner     | SJLAVPMR    |
+      | users      | moderator | SJLAVPMR    |
     And user "moderator" sees the following attendees in room "one-to-one room" with 200 (v4)
       | actorType  | actorId   | permissions |
-      | users      | owner     | SJLAVPM     |
-      | users      | moderator | SJLAVPM     |
+      | users      | owner     | SJLAVPMR    |
+      | users      | moderator | SJLAVPMR    |
 
   Scenario: owner can set permissions in group room
     Given user "owner" creates room "group room" (v4)
@@ -39,18 +39,18 @@ Feature: conversation-2/set-publishing-permissions
     And user "owner" sets permissions for "invited user" in room "group room" to "S" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVPM     |
-      | users      | moderator    | SJLAVPM     |
+      | users      | owner        | SJLAVPMR    |
+      | users      | moderator    | SJLAVPMR    |
       | users      | invited user | CS          |
     And user "moderator" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVPM     |
-      | users      | moderator    | SJLAVPM     |
+      | users      | owner        | SJLAVPMR    |
+      | users      | moderator    | SJLAVPMR    |
       | users      | invited user | CS          |
     And user "invited user" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVPM     |
-      | users      | moderator    | SJLAVPM     |
+      | users      | owner        | SJLAVPMR    |
+      | users      | moderator    | SJLAVPMR    |
       | users      | invited user | CS          |
 
   Scenario: moderator can set permissions in group room
@@ -66,18 +66,18 @@ Feature: conversation-2/set-publishing-permissions
     And user "owner" sets permissions for "invited user" in room "group room" to "S" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVPM     |
-      | users      | moderator    | SJLAVPM     |
+      | users      | owner        | SJLAVPMR    |
+      | users      | moderator    | SJLAVPMR    |
       | users      | invited user | CS          |
     And user "moderator" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVPM     |
-      | users      | moderator    | SJLAVPM     |
+      | users      | owner        | SJLAVPMR    |
+      | users      | moderator    | SJLAVPMR    |
       | users      | invited user | CS          |
     And user "invited user" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVPM     |
-      | users      | moderator    | SJLAVPM     |
+      | users      | owner        | SJLAVPMR    |
+      | users      | moderator    | SJLAVPMR    |
       | users      | invited user | CS          |
 
   Scenario: others can not set permissions in group room
@@ -101,19 +101,19 @@ Feature: conversation-2/set-publishing-permissions
     And user "guest not joined" sets permissions for "invited user" in room "group room" to "S" with 404 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVPM     |
-      | users      | moderator    | SJLAVPM     |
-      | users      | invited user | SJAVPM      |
+      | users      | owner        | SJLAVPMR    |
+      | users      | moderator    | SJLAVPMR    |
+      | users      | invited user | SJAVPMR     |
     And user "moderator" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVPM     |
-      | users      | moderator    | SJLAVPM     |
-      | users      | invited user | SJAVPM      |
+      | users      | owner        | SJLAVPMR    |
+      | users      | moderator    | SJLAVPMR    |
+      | users      | invited user | SJAVPMR     |
     And user "invited user" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVPM     |
-      | users      | moderator    | SJLAVPM     |
-      | users      | invited user | SJAVPM      |
+      | users      | owner        | SJLAVPMR    |
+      | users      | moderator    | SJLAVPMR    |
+      | users      | invited user | SJAVPMR     |
 
   Scenario: owner can set permissions in public room
     Given user "owner" creates room "public room" (v4)
@@ -135,43 +135,43 @@ Feature: conversation-2/set-publishing-permissions
     And user "owner" sets permissions for "guest" in room "public room" to "S" with 200 (v4)
     Then user "owner" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
     And user "moderator" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
     And user "invited user" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
     And user "not invited but joined user" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
     And user "guest moderator" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
 
   Scenario: moderator can set permissions in public room
@@ -194,43 +194,43 @@ Feature: conversation-2/set-publishing-permissions
     And user "moderator" sets permissions for "guest" in room "public room" to "S" with 200 (v4)
     Then user "owner" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
     And user "moderator" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
     And user "invited user" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
     And user "not invited but joined user" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
     And user "guest moderator" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
     # Guests can not fetch the participant list
 
@@ -255,43 +255,43 @@ Feature: conversation-2/set-publishing-permissions
     And user "guest moderator" sets permissions for "guest" in room "public room" to "S" with 200 (v4)
     Then user "owner" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
     And user "moderator" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
     And user "invited user" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
     And user "not invited but joined user" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
     And user "guest moderator" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
       | users      | invited user                | CS          |
       | users      | not invited but joined user | CS          |
-      | guests     | "guest moderator"           | SJLAVPM     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
       | guests     | "guest"                     | CS          |
     # Guests can not fetch the participant list
 
@@ -341,44 +341,44 @@ Feature: conversation-2/set-publishing-permissions
     And user "guest not joined" sets permissions for "guest" in room "public room" to "S" with 404 (v4)
     Then user "owner" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
-      | users      | invited user                | SJAVPM      |
-      | users      | not invited but joined user | SJAVPM      |
-      | guests     | "guest moderator"           | SJLAVPM     |
-      | guests     | "guest"                     | SJAVPM      |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
+      | users      | invited user                | SJAVPMR     |
+      | users      | not invited but joined user | SJAVPMR     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
+      | guests     | "guest"                     | SJAVPMR     |
     And user "moderator" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
-      | users      | invited user                | SJAVPM      |
-      | users      | not invited but joined user | SJAVPM      |
-      | guests     | "guest moderator"           | SJLAVPM     |
-      | guests     | "guest"                     | SJAVPM      |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
+      | users      | invited user                | SJAVPMR     |
+      | users      | not invited but joined user | SJAVPMR     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
+      | guests     | "guest"                     | SJAVPMR     |
     And user "invited user" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
-      | users      | invited user                | SJAVPM      |
-      | users      | not invited but joined user | SJAVPM      |
-      | guests     | "guest moderator"           | SJLAVPM     |
-      | guests     | "guest"                     | SJAVPM      |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
+      | users      | invited user                | SJAVPMR     |
+      | users      | not invited but joined user | SJAVPMR     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
+      | guests     | "guest"                     | SJAVPMR     |
     And user "not invited but joined user" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
-      | users      | invited user                | SJAVPM      |
-      | users      | not invited but joined user | SJAVPM      |
-      | guests     | "guest moderator"           | SJLAVPM     |
-      | guests     | "guest"                     | SJAVPM      |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
+      | users      | invited user                | SJAVPMR     |
+      | users      | not invited but joined user | SJAVPMR     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
+      | guests     | "guest"                     | SJAVPMR     |
     And user "guest moderator" sees the following attendees in room "public room" with 200 (v4)
       | actorType  | actorId                     | permissions |
-      | users      | owner                       | SJLAVPM     |
-      | users      | moderator                   | SJLAVPM     |
-      | users      | invited user                | SJAVPM      |
-      | users      | not invited but joined user | SJAVPM      |
-      | guests     | "guest moderator"           | SJLAVPM     |
-      | guests     | "guest"                     | SJAVPM      |
+      | users      | owner                       | SJLAVPMR    |
+      | users      | moderator                   | SJLAVPMR    |
+      | users      | invited user                | SJAVPMR     |
+      | users      | not invited but joined user | SJAVPMR     |
+      | guests     | "guest moderator"           | SJLAVPMR    |
+      | guests     | "guest"                     | SJAVPMR     |
     # Guests can not fetch the participant list
 
   Scenario: participants can not set permissions in room for a share
@@ -405,14 +405,14 @@ Feature: conversation-2/set-publishing-permissions
     And user "guest" sets permissions for "guest" in room "file last share room" to "S" with 403 (v4)
     Then user "owner of file" sees the following attendees in room "file last share room" with 200 (v4)
       | actorType  | actorId                  | permissions |
-      | users      | owner of file            | SJAVPM      |
-      | users      | user with access to file | SJAVPM      |
-      | guests     | "guest"                  | SJAVPM      |
+      | users      | owner of file            | SJAVPMR     |
+      | users      | user with access to file | SJAVPMR     |
+      | guests     | "guest"                  | SJAVPMR     |
     And user "user with access to file" sees the following attendees in room "file last share room" with 200 (v4)
       | actorType  | actorId                  | permissions |
-      | users      | owner of file            | SJAVPM      |
-      | users      | user with access to file | SJAVPM      |
-      | guests     | "guest"                  | SJAVPM      |
+      | users      | owner of file            | SJAVPMR     |
+      | users      | user with access to file | SJAVPMR     |
+      | guests     | "guest"                  | SJAVPMR     |
 
   # This does not make much sense, but there is no real need to block it either.
   Scenario: owner can set permissions in a password request room
@@ -430,5 +430,5 @@ Feature: conversation-2/set-publishing-permissions
     And user "owner of file" sets permissions for "guest" in room "password request for last share room" to "S" with 200 (v4)
     Then user "owner of file" sees the following attendees in room "password request for last share room" with 200 (v4)
       | actorType  | actorId       | permissions |
-      | users      | owner of file | SJLAVPM     |
+      | users      | owner of file | SJLAVPMR    |
       | guests     | "guest"       | CS          |
