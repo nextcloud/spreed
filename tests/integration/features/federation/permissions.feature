@@ -40,7 +40,7 @@ Feature: federation/permissions
       | CS          | CS                  |
     Then user "participant3" is participant of room "LOCAL::room" (v4)
       | permissions | attendeePermissions |
-      | SJAVPM      | D                  |
+      | SJAVPMR     | D                  |
 
   Scenario: set default permissions
     Given user "participant1" creates room "room" (v4)
