@@ -58,7 +58,7 @@ class Version3003Date20180718133519 extends SimpleMigrationStep {
 			->where($update->expr()->eq('id', $update->createParameter('room')));
 
 		$query = $this->connection->getQueryBuilder();
-		$query->selectAlias($query->createFunction('MAX(' . $query->getColumnName('id') . ')'), 'message')
+		$query->selectAlias($query->func()->max('id'), 'message')
 			->addSelect('object_id')
 			->from('comments')
 			->where($query->expr()->eq('object_type', $query->createNamedParameter('chat')))
