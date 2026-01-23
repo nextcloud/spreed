@@ -19,6 +19,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 24
         + `200 OK` Reaction already exists
         + `201 Created` User reacted with a new reaction
         + `400 Bad Request` In case of no reaction support, message out of reactions context or any other error
+        + `403 Forbidden` When the participant does not have the required permission to react (see attendee permission `256`)
         + `404 Not Found` When the conversation or message to react could not be found for the participant
 
     - Data:
@@ -45,8 +46,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 24
 
 * Response:
     - Status code:
-        + `201 Created`
+        + `200 OK`
         + `400 Bad Request` In case of no reaction support, message out of reactions context or any other error
+        + `403 Forbidden` When the participant does not have the required permission to react (see attendee permission `256`)
         + `404 Not Found` When the conversation or message to react or reaction could not be found for the participant
 
     - Data:
