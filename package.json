@@ -72,7 +72,7 @@
     "ua-parser-js": "^2.0.8",
     "util": "^0.12.5",
     "uuid": "^13.0.0",
-    "vue": "^3.5.17",
+    "vue": "^3.5.27",
     "vue-cropperjs": "^5.0.0",
     "vue-draggable-resizable": "^3.0.0",
     "vue-material-design-icons": "^5.3.1",
