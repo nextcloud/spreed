@@ -60,7 +60,7 @@ class Version3003Date20180718112436 extends SimpleMigrationStep {
 
 		$query = $this->connection->getQueryBuilder();
 		$query->select('object_id')
-			->selectAlias($query->createFunction('MAX(' . $query->getColumnName('creation_timestamp') . ')'), 'last_activity')
+			->selectAlias($query->func()->max('creation_timestamp'), 'last_activity')
 			->from('comments')
 			->where($query->expr()->eq('object_type', $query->createNamedParameter('chat')))
 			->groupBy('object_id');

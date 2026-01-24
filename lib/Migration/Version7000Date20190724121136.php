@@ -63,7 +63,7 @@ class Version7000Date20190724121136 extends SimpleMigrationStep {
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('m.user_id', 'm.object_id')
-			->selectAlias($query->createFunction('MAX(' . $query->getColumnName('c.id') . ')'), 'last_comment')
+			->selectAlias($query->func()->max('c.id'), 'last_comment')
 			->from('comments_read_markers', 'm')
 			->leftJoin('m', 'comments', 'c', $query->expr()->andX(
 				$query->expr()->eq('c.object_id', 'm.object_id'),
