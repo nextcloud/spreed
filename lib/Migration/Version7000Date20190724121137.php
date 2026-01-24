@@ -33,7 +33,7 @@ class Version7000Date20190724121137 extends SimpleMigrationStep {
 	public function preSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('p.user_id', 'p.room_id')
-			->selectAlias($query->createFunction('MAX(' . $query->getColumnName('c.id') . ')'), 'last_mention_message')
+			->selectAlias($query->func()->max('c.id'), 'last_mention_message')
 			->from('talk_participants', 'p')
 			->leftJoin('p', 'comments', 'c', $query->expr()->andX(
 				$query->expr()->eq('c.object_id', $query->expr()->castColumn('p.room_id', IQueryBuilder::PARAM_STR)),

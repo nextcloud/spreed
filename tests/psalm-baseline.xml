@@ -97,11 +97,6 @@
       <code><![CDATA[private]]></code>
     </UndefinedClass>
   </file>
-  <file src="lib/Migration/Version2001Date20170707115443.php">
-    <InvalidArrayAccess>
-      <code><![CDATA[$return['num_rooms']]]></code>
-    </InvalidArrayAccess>
-  </file>
   <file src="lib/Model/Poll.php">
     <LessSpecificReturnStatement>
       <code><![CDATA[[
