@@ -334,16 +334,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "0992cfc56e143a27b3b8311cf69cad83e7956beb"
+                "reference": "1a1974cfc226905262265686f83b003faecf6645"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/0992cfc56e143a27b3b8311cf69cad83e7956beb",
-                "reference": "0992cfc56e143a27b3b8311cf69cad83e7956beb",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/1a1974cfc226905262265686f83b003faecf6645",
+                "reference": "1a1974cfc226905262265686f83b003faecf6645",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.1 || ~8.2 || ~8.3 || ~8.4",
+                "php": "~8.1 || ~8.2 || ~8.3 || ~8.4 || ~8.5",
                 "psr/clock": "^1.0",
                 "psr/container": "^2.0.2",
                 "psr/event-dispatcher": "^1.0",
@@ -353,7 +353,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "33.0.0-dev"
+                    "dev-master": "34.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -375,7 +375,7 @@
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
                 "source": "https://github.com/nextcloud-deps/ocp/tree/master"
             },
-            "time": "2026-01-21T00:58:31+00:00"
+            "time": "2026-01-24T00:55:47+00:00"
         },
         {
             "name": "psr/clock",
@@ -591,5 +591,5 @@
     "platform-overrides": {
         "php": "8.2"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
