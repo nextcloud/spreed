@@ -239,7 +239,7 @@ function setIsTextMoreThanOneLine() {
 </script>
 
 <style lang="scss" scoped>
-@use '../../assets/variables' as *;
+@use '../../assets/variables.scss' as *;
 
 .chat-summary {
 	margin-block: 0 calc(var(--default-grid-baseline) * 2);
