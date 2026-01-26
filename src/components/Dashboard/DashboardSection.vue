@@ -37,8 +37,8 @@ const isMobile = useIsMobile()
 			<h3 class="dashboard-section__title">
 				{{ title }}
 			</h3>
-			<span class="dashboard-section__subtitle">{{ subtitle }}</span>
-			<span class="dashboard-section__description">{{ description }}</span>
+			<span v-if="subtitle" class="dashboard-section__subtitle">{{ subtitle }}</span>
+			<span v-if="description" class="dashboard-section__description">{{ description }}</span>
 			<slot name="list" />
 			<div v-if="$slots.action" class="dashboard-section__action">
 				<slot name="action" />
