@@ -78,6 +78,7 @@ class Capabilities implements IPublicCapability {
 		'rich-object-delete',
 		'unified-search',
 		'chat-permission',
+		'react-permission',
 		'silent-send',
 		'silent-call',
 		'send-call-notification',
