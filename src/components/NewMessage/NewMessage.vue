@@ -925,7 +925,14 @@ export default {
 					throw new Error(t('files', 'Invalid path selected'))
 				}
 				this.focusInput()
-				this.$store.dispatch('shareFile', { token: this.token, path })
+
+				const talkMetaData = JSON.stringify(Object.assign(
+					this.threadId ? { threadId: this.threadId } : {},
+					this.parentMessage?.id ? { replyTo: this.parentMessage?.id } : {},
+				))
+				this.chatExtrasStore.removeParentIdToReply(this.token)
+
+				this.$store.dispatch('shareFile', { token: this.token, path, talkMetaData })
 			})
 		},
 
