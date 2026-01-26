@@ -1137,7 +1137,7 @@ class SystemMessage implements IEventListener {
 		try {
 			$participant = $this->participantService->getParticipantByActor($room, $actorType, $actorId);
 			$name = $participant->getAttendee()->getDisplayName();
-			if ($name === '' && $actorType === Attendee::ACTOR_EMAILS) {
+			if ($name === '' && $actorType === Attendee::ACTOR_EMAILS && !preg_match('/^[0-9a-f]{64}$/', $actorId)) {
 				$name = $actorId;
 			} elseif ($name === '') {
 				return $this->l->t('Guest');

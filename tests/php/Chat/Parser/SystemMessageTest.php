@@ -1253,6 +1253,10 @@ class SystemMessageTest extends TestCase {
 		return [
 			[Attendee::ACTOR_GUESTS, sha1('name'), 'name', 'name (guest)'],
 			[Attendee::ACTOR_GUESTS, sha1('name'), '', 'Guest'],
+			[Attendee::ACTOR_GUESTS, hash('sha256', 'name'), 'name', 'name (guest)'],
+			[Attendee::ACTOR_GUESTS, hash('sha256', 'name'), '', 'Guest'],
+			[Attendee::ACTOR_EMAILS, hash('sha256', 'test@test.tld'), 'name', 'name (guest)'],
+			[Attendee::ACTOR_EMAILS, hash('sha256', 'test@test.tld'), '', 'Guest'],
 			[Attendee::ACTOR_EMAILS, 'test@test.tld', 'name', 'name (guest)'],
 			[Attendee::ACTOR_EMAILS, 'test@test.tld', '', 'test@test.tld (guest)'],
 		];
