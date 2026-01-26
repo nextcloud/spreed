@@ -207,7 +207,7 @@ export default {
 		margin-bottom: 16px;
 		font-weight: bold;
 		white-space: normal;
-		word-wrap: anywhere;
+		overflow-wrap: anywhere;
 
 		&--draft {
 			gap: var(--default-grid-baseline);

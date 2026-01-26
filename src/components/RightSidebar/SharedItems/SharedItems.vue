@@ -143,7 +143,7 @@ export default {
 .shared-items {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	grid-gap: var(--default-grid-baseline);
+	gap: var(--default-grid-baseline);
 	margin: auto;
 
 	&__media {

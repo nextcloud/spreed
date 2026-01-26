@@ -90,7 +90,7 @@ export default {
 	}
 
 	&__hint {
-		word-wrap: break-word;
+		overflow-wrap: break-word;
 		color: var(--color-text-maxcontrast);
 		margin-bottom: 4px;
 	}
