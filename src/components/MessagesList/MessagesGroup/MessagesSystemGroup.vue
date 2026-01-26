@@ -235,7 +235,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use '../../../assets/variables' as *;
+@use '../../../assets/variables.scss' as *;
 
 .messages-group__system {
 	display: flex;

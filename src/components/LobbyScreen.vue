@@ -101,8 +101,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use '../assets/variables' as *;
-@use '../assets/markdown' as *;
+@use '../assets/variables.scss' as *;
+@use '../assets/markdown.scss' as *;
 
 .lobby {
 	display: flex;

@@ -84,7 +84,7 @@ header.app-sidebar-header.hidden-by-call > div:not(.talk-sidebar-callview), {
 </style>
 
 <style lang="scss" scoped>
-@use '../assets/variables' as *;
+@use '../assets/variables.scss' as *;
 
 #call-container {
 	position: relative;

@@ -47,7 +47,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use '../../assets/variables' as *;
+@use '../../assets/variables.scss' as *;
 
 // Transition rules (inside mixins to be applied in two places)
 @mixin group-rules {

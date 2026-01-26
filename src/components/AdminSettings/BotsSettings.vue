@@ -165,7 +165,7 @@ export default {
 	&__item {
 		display: grid;
 		grid-template-columns: minmax(50px, 100px) 1fr 2fr minmax(100px, 250px) minmax(50px, 100px);
-		grid-column-gap: 5px;
+		column-gap: 5px;
 
 		&:not(:last-child) {
 			margin-bottom: 10px;

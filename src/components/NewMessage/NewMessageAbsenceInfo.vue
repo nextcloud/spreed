@@ -168,7 +168,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use '../../assets/variables' as *;
+@use '../../assets/variables.scss' as *;
 
 .absence-reminder {
 	position: relative;
@@ -193,7 +193,7 @@ export default {
 
 	&__message {
 		white-space: pre-line;
-		word-wrap: break-word;
+		overflow-wrap: break-word;
 		max-height: 30vh;
 		overflow: auto;
 
