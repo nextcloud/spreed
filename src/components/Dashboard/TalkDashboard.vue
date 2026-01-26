@@ -539,7 +539,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 }
 
 .talk-dashboard__conversations-list {
-	margin: var(--default-grid-baseline) 0;
+	flex-grow: 1;
+	margin-block: var(--default-grid-baseline);
 	line-height: 20px;
 }
 
