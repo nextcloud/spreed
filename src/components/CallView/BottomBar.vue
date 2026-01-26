@@ -535,16 +535,16 @@ useHotKey('r', toggleHandRaised)
 			<TopBarMediaControls
 				:token="token"
 				:model="localMediaModel"
-				:is-sidebar="isSidebar"
-				:hide-virtual-background-shortcut="hidingList.virtualBackground"
-				:local-call-participant-model="localCallParticipantModel" />
+				:isSidebar="isSidebar"
+				:hideVirtualBackgroundShortcut="hidingList.virtualBackground"
+				:localCallParticipantModel="localCallParticipantModel" />
 
 			<!-- Reactions menu -->
 			<ReactionMenu
 				v-if="hasReactionSupport"
 				:token="token"
-				:supported-reactions="supportedReactions"
-				:local-call-participant-model="localCallParticipantModel" />
+				:supportedReactions="supportedReactions"
+				:localCallParticipantModel="localCallParticipantModel" />
 
 			<div
 				v-if="isLiveTranscriptionSupported && !hidingList.liveTranscription"
@@ -582,10 +582,10 @@ useHotKey('r', toggleHandRaised)
 						class="language-selector__action"
 						type="radio"
 						:disabled="isLiveTranscriptionLoading"
-						:model-value="languageType"
+						:modelValue="languageType"
 						:value="LanguageType.Original"
 						:title="originalLanguageButtonLabel"
-						close-after-click
+						closeAfterClick
 						@click="switchToOriginalLanguage">
 						{{ originalLanguageButtonLabel }}
 					</NcActionButton>
@@ -594,10 +594,10 @@ useHotKey('r', toggleHandRaised)
 						class="language-selector__action"
 						type="radio"
 						:disabled="isLiveTranscriptionLoading || !targetLanguageAvailable"
-						:model-value="languageType"
+						:modelValue="languageType"
 						:value="LanguageType.Target"
 						:title="targetLanguageButtonLabel"
-						close-after-click
+						closeAfterClick
 						@click="switchToTargetLanguage">
 						{{ targetLanguageButtonLabel }}
 					</NcActionButton>
@@ -620,7 +620,7 @@ useHotKey('r', toggleHandRaised)
 		</div>
 		<div ref="callButtonWithActions" class="bottom-bar-options call-options">
 			<!-- Collapsed actions -->
-			<NcActions v-if="hasHiddenItems" force-menu>
+			<NcActions v-if="hasHiddenItems" forceMenu>
 				<!-- Fullscreen -->
 				<NcActionButton
 					v-if="!isSidebar && hidingList.fullscreen"
@@ -705,8 +705,8 @@ useHotKey('r', toggleHandRaised)
 
 			<CallButton
 				class="call-button"
-				:hide-text="isSidebar || isMobile"
-				:is-screensharing="!!localMediaModel.attributes.localScreen" />
+				:hideText="isSidebar || isMobile"
+				:isScreensharing="!!localMediaModel.attributes.localScreen" />
 		</div>
 	</div>
 </template>

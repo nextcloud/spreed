@@ -94,7 +94,7 @@
 		<!-- Participants editor -->
 		<NcModal
 			v-if="showParticipantsEditor"
-			:label-id="dialogHeaderId"
+			:labelId="dialogHeaderId"
 			@close="closeParticipantsEditor">
 			<div class="breakout-rooms-actions__editor">
 				<h2 :id="dialogHeaderId" class="nc-dialog-alike-header">
@@ -102,8 +102,8 @@
 				</h2>
 				<BreakoutRoomsParticipantsEditor
 					:token="mainToken"
-					:breakout-rooms="breakoutRooms"
-					:is-creating-rooms="false"
+					:breakoutRooms="breakoutRooms"
+					:isCreatingRooms="false"
 					@close="closeParticipantsEditor" />
 			</div>
 		</NcModal>
@@ -112,7 +112,7 @@
 		<SendMessageDialog
 			v-if="isSendMessageDialogOpened"
 			:token="mainToken"
-			:dialog-title="t('spreed', 'Send a message to all breakout rooms')"
+			:dialogTitle="t('spreed', 'Send a message to all breakout rooms')"
 			:broadcast="true"
 			@submit="broadcastMessage"
 			@close="isSendMessageDialogOpened = false" />

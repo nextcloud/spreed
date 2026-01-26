@@ -115,8 +115,8 @@ function handleActionsMenuOpen(open: boolean) {
 		:name="thread.thread.title"
 		:to="to"
 		:active="active"
-		force-menu
-		@update:menu-open="handleActionsMenuOpen">
+		forceMenu
+		@update:menuOpen="handleActionsMenuOpen">
 		<template #icon>
 			<div
 				class="thread__icon"
@@ -135,7 +135,7 @@ function handleActionsMenuOpen(open: boolean) {
 				<NcActionButton
 					v-if="isModeratorOrOwner"
 					key="rename-thread"
-					close-after-click
+					closeAfterClick
 					@click="renameThreadTitle">
 					<template #icon>
 						<IconPencilOutline :size="20" />
@@ -144,7 +144,7 @@ function handleActionsMenuOpen(open: boolean) {
 				</NcActionButton>
 				<NcActionButton
 					key="show-notifications"
-					is-menu
+					isMenu
 					:description="threadNotificationLabel"
 					@click="submenu = 'notifications'">
 					<template #icon>
@@ -169,7 +169,7 @@ function handleActionsMenuOpen(open: boolean) {
 				<NcActionButton
 					v-for="level in notificationLevels"
 					:key="level.value"
-					:model-value="thread.attendee.notificationLevel.toString()"
+					:modelValue="thread.attendee.notificationLevel.toString()"
 					:value="level.value.toString()"
 					:description="level.description"
 					type="radio"
@@ -190,8 +190,8 @@ function handleActionsMenuOpen(open: boolean) {
 				<NcDateTime
 					:timestamp="lastActivity"
 					:format="timeFormat"
-					:relative-time="false"
-					ignore-seconds />
+					:relativeTime="false"
+					ignoreSeconds />
 			</span>
 		</template>
 	</NcListItem>

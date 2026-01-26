@@ -12,8 +12,8 @@
 		:name="conversation.displayName"
 		:title="conversation.displayName"
 		:class="'active-tab-' + activeTab"
-		:toggle-classes="{ 'chat-button-sidebar-toggle': isInCall }"
-		:toggle-attrs="isInCall ? inCallToggleAttrs : undefined"
+		:toggleClasses="{ 'chat-button-sidebar-toggle': isInCall }"
+		:toggleAttrs="isInCall ? inCallToggleAttrs : undefined"
 		@update:open="handleUpdateOpen"
 		@update:active="handleUpdateActive"
 		@closed="handleClosed">
@@ -25,7 +25,7 @@
 		<template #info>
 			<RightSidebarContent
 				ref="sidebarContent"
-				:is-user="!!getUserId"
+				:isUser="!!getUserId"
 				:mode="CONTENT_MODES[contentModeIndex]"
 				:state="contentState"
 				@update:mode="handleUpdateMode"
@@ -42,7 +42,7 @@
 			:order="0"
 			:name="t('spreed', 'Search messages')">
 			<SearchMessagesTab
-				:is-active="activeTab === 'search-messages'"
+				:isActive="activeTab === 'search-messages'"
 				@close="handleUpdateState('default')" />
 		</NcAppSidebarTab>
 		<NcAppSidebarTab
@@ -63,7 +63,7 @@
 				<template #icon>
 					<IconMessageOutline :size="20" />
 				</template>
-				<ChatView :is-visible="opened" is-sidebar />
+				<ChatView :isVisible="opened" isSidebar />
 			</NcAppSidebarTab>
 			<NcAppSidebarTab
 				v-if="showParticipantsTab"
@@ -76,8 +76,8 @@
 					<IconAccountMultipleOutline :size="20" />
 				</template>
 				<ParticipantsTab
-					:can-search="canSearchParticipants"
-					:can-add="canAddParticipants" />
+					:canSearch="canSearchParticipants"
+					:canAdd="canAddParticipants" />
 			</NcAppSidebarTab>
 			<NcAppSidebarTab
 				v-if="showBreakoutRoomsTab"
@@ -90,9 +90,9 @@
 					<IconDotsCircle :size="20" />
 				</template>
 				<BreakoutRoomsTab
-					:main-token="mainConversationToken"
-					:main-conversation="mainConversation"
-					:is-active="activeTab === 'breakout-rooms'" />
+					:mainToken="mainConversationToken"
+					:mainConversation="mainConversation"
+					:isActive="activeTab === 'breakout-rooms'" />
 			</NcAppSidebarTab>
 			<NcAppSidebarTab
 				v-if="showDetailsTab"
@@ -128,7 +128,7 @@
 				</template>
 				<SharedItemsTab
 					:active="activeTab === 'shared-items'"
-					@show-threads-tab="handleUpdateState('threads')" />
+					@showThreadsTab="handleUpdateState('threads')" />
 			</NcAppSidebarTab>
 		</template>
 	</NcAppSidebar>

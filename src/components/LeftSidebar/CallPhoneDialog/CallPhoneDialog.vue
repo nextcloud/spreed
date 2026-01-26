@@ -9,7 +9,7 @@
 		:name="t('spreed', 'Call a phone number')"
 		class="call-phone"
 		size="normal"
-		close-on-click-outside
+		closeOnClickOutside
 		@update:open="closeModal">
 		<template v-if="!loading">
 			<div class="call-phone__form">
@@ -18,7 +18,7 @@
 					v-model="searchText"
 					class="call-phone__form-input"
 					:label="t('spreed', 'Search participants or phone numbers')"
-					label-visible
+					labelVisible
 					@keydown.enter="createConversation(participantPhoneItem)" />
 				<DialpadPanel
 					v-model:value="searchText"
@@ -27,7 +27,7 @@
 			</div>
 
 			<SelectPhoneNumber
-				v-model:participant-phone-item="participantPhoneItem"
+				v-model:participantPhoneItem="participantPhoneItem"
 				:name="t('spreed', 'Call a phone number')"
 				:value="searchText"
 				@select="createConversation" />

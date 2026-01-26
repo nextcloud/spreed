@@ -8,29 +8,29 @@
 		class="translate-dialog"
 		:name="t('spreed', 'Translate message')"
 		size="large"
-		close-on-click-outside
+		closeOnClickOutside
 		@update:open="$emit('close')">
 		<template v-if="isMounted" #default>
 			<div class="translate-dialog__wrapper">
 				<NcSelect
 					v-model="selectedFrom"
 					class="translate-dialog__select"
-					input-id="from"
+					inputId="from"
 					:aria-label-combobox="t('spreed', 'Source language to translate from')"
 					:placeholder="t('spreed', 'Translate from')"
 					:options="optionsFrom"
-					no-wrap />
+					noWrap />
 
 				<IconArrowRight class="bidirectional-icon" />
 
 				<NcSelect
 					v-model="selectedTo"
 					class="translate-dialog__select"
-					input-id="to"
+					inputId="to"
 					:aria-label-combobox="t('spreed', 'Target language to translate into')"
 					:placeholder="t('spreed', 'Translate to')"
 					:options="optionsTo"
-					no-wrap />
+					noWrap />
 
 				<NcButton
 					variant="primary"
@@ -48,14 +48,14 @@
 				class="translate-dialog__message translate-dialog__message-source"
 				:text="message"
 				:arguments="richParameters"
-				:reference-limit="0" />
+				:referenceLimit="0" />
 
 			<NcRichText
 				v-if="translatedMessage"
 				class="translate-dialog__message translate-dialog__message-translation"
 				:text="translatedMessage"
 				:arguments="richParameters"
-				:reference-limit="0" />
+				:referenceLimit="0" />
 		</template>
 
 		<template v-if="translatedMessage" #actions>

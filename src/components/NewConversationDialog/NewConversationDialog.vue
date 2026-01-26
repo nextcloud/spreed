@@ -9,8 +9,8 @@
 		<NcModal
 			v-show="page !== 2"
 			class="new-group-conversation"
-			:close-on-click-outside="!isFilled"
-			:label-id="dialogHeaderPrepId"
+			:closeOnClickOutside="!isFilled"
+			:labelId="dialogHeaderPrepId"
 			@close="closeModal">
 			<h2 :id="dialogHeaderPrepId" class="new-group-conversation__header nc-dialog-alike-header">
 				{{ t('spreed', 'Create a new group conversation') }}
@@ -21,20 +21,20 @@
 				<NewConversationSetupPage
 					v-show="page === 0"
 					ref="setupPage"
-					v-model:new-conversation="newConversation"
+					v-model:newConversation="newConversation"
 					v-model:password="password"
 					v-model:listable="listable"
 					class="new-group-conversation__content"
-					@handle-enter="handleEnter"
-					@avatar-edited="setIsAvatarEdited"
-					@is-password-valid="setIsPasswordValid" />
+					@handleEnter="handleEnter"
+					@avatarEdited="setIsAvatarEdited"
+					@isPasswordValid="setIsPasswordValid" />
 
 				<!-- Second page -->
 				<NewConversationContactsPage
 					v-if="page === 1"
-					v-model:selected-participants="selectedParticipants"
+					v-model:selectedParticipants="selectedParticipants"
 					class="new-group-conversation__content"
-					:can-moderate-sip-dial-out="canModerateSipDialOut" />
+					:canModerateSipDialOut="canModerateSipDialOut" />
 			</div>
 
 			<!-- Navigation: different buttons with different actions and
@@ -76,7 +76,7 @@
 		<!-- Third page : this is the confirmation page-->
 		<NcModal
 			v-if="page === 2"
-			:label-id="dialogHeaderResId"
+			:labelId="dialogHeaderResId"
 			@close="closeModal">
 			<NcEmptyContent>
 				<template #icon>

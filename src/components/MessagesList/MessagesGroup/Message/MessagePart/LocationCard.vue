@@ -25,7 +25,7 @@
 			<LControlAttribution
 				position="bottomright"
 				:prefix="attribution" />
-			<LMarker :lat-lng="center">
+			<LMarker :latLng="center">
 				<LTooltip
 					:options="{
 						direction: 'top',

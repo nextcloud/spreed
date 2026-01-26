@@ -32,7 +32,7 @@
 				<NcActions
 					v-if="canModerate"
 					:inline="showAssistanceButton ? 1 : 0"
-					:force-menu="!showAssistanceButton">
+					:forceMenu="!showAssistanceButton">
 					<NcActionButton
 						v-if="showAssistanceButton"
 						@click="dismissRequestAssistance">
@@ -51,7 +51,7 @@
 				<!-- Send message dialog -->
 				<SendMessageDialog
 					v-if="isDialogOpened"
-					:dialog-title="dialogTitle"
+					:dialogTitle="dialogTitle"
 					:token="roomToken"
 					@submit="sentMessageToRoom"
 					@close="isDialogOpened = false" />

@@ -11,13 +11,13 @@
 	</h4>
 	<EditableTextField
 		:editable="canFullModerate && !isEventConversation"
-		:initial-text="conversationName"
+		:initialText="conversationName"
 		:editing="isEditingName"
 		:loading="isNameLoading"
 		:placeholder="t('spreed', 'Enter a name for this conversation')"
 		:edit-button-aria-label="t('spreed', 'Edit conversation name')"
-		:max-length="CONVERSATION.MAX_NAME_LENGTH"
-		@submit-text="handleUpdateName"
+		:maxLength="CONVERSATION.MAX_NAME_LENGTH"
+		@submitText="handleUpdateName"
 		@update:editing="handleEditName" />
 	<template v-if="!isOneToOne">
 		<h4 class="app-settings-section__subtitle">
@@ -25,15 +25,15 @@
 		</h4>
 		<EditableTextField
 			:editable="canFullModerate && !isEventConversation"
-			:initial-text="description"
+			:initialText="description"
 			:editing="isEditingDescription"
 			:loading="isDescriptionLoading"
 			:edit-button-aria-label="t('spreed', 'Edit conversation description')"
 			:placeholder="t('spreed', 'Enter a description for this conversation')"
-			:max-length="maxDescriptionLength"
+			:maxLength="maxDescriptionLength"
 			multiline
-			use-markdown
-			@submit-text="handleUpdateDescription"
+			useMarkdown
+			@submitText="handleUpdateDescription"
 			@update:editing="handleEditDescription" />
 	</template>
 	<template v-if="supportsAvatar">

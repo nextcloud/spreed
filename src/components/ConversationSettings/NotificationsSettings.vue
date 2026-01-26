@@ -117,12 +117,12 @@ const isSensitive = computed({
 		<NcCheckboxRadioSwitch
 			v-for="level in notificationLevels"
 			:key="level.value"
-			:model-value="notificationLevel"
+			:modelValue="notificationLevel"
 			:value="level.value.toString()"
 			:disabled="loading.level"
 			name="notification_level"
 			type="radio"
-			@update:model-value="setNotificationLevel">
+			@update:modelValue="setNotificationLevel">
 			<span class="radio-button">
 				<component :is="level.icon" :size="20" />
 				{{ level.label }}

@@ -7,7 +7,7 @@
 	<NcModal
 		v-if="id"
 		size="small"
-		:label-id="dialogHeaderId"
+		:labelId="dialogHeaderId"
 		@close="dismissModal">
 		<div v-if="poll" class="poll-modal">
 			<div class="poll-modal__header">
@@ -81,7 +81,7 @@
 					@click="modalPage = 'voting'">
 					{{ t('spreed', 'Change your vote') }}
 				</NcButton>
-				<NcActions v-if="canEndPoll" force-menu>
+				<NcActions v-if="canEndPoll" forceMenu>
 					<NcActionButton v-if="supportPollDrafts && isModerator" @click="createPollDraft">
 						<template #icon>
 							<IconFileEditOutline :size="20" />
@@ -103,7 +103,7 @@
 				</NcActions>
 			</div>
 			<div v-else-if="supportPollDrafts && selfIsOwnerOrModerator" class="poll-modal__actions">
-				<NcActions force-menu>
+				<NcActions forceMenu>
 					<NcActionButton v-if="isModerator" @click="createPollDraft">
 						<template #icon>
 							<IconFileEditOutline :size="20" />

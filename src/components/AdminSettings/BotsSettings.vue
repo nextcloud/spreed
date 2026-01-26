@@ -40,7 +40,7 @@
 						:title="bot.state_icon_label">
 						<component
 							:is="bot.state_icon_component"
-							:fill-color="bot.state_icon_color" />
+							:fillColor="bot.state_icon_color" />
 					</span>
 				</div>
 				<div class="name bold">
@@ -53,7 +53,7 @@
 					<NcPopover
 						v-if="bot.last_error_message"
 						container="#bots_settings"
-						no-focus-trap>
+						noFocusTrap>
 						<template #trigger>
 							<NcButton variant="error" :aria-label="bot.last_error_message">
 								{{ bot.last_error_date }}

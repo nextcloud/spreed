@@ -132,7 +132,7 @@ onMounted(() => {
 					:id="pinnedMessage.actorId"
 					:name="pinnedMessage.actorDisplayName"
 					:source="pinnedMessage.actorType"
-					disable-menu
+					disableMenu
 					:token="token"
 					:size="AVATAR.SIZE.SMALL" />
 			</template>
@@ -146,7 +146,7 @@ onMounted(() => {
 			</template>
 			<template #actions>
 				<NcActionButton
-					close-after-click
+					closeAfterClick
 					:title="t('spreed', 'Dismiss')"
 					@click.stop="handleHidePinnedMessage">
 					<template #icon>
@@ -156,7 +156,7 @@ onMounted(() => {
 				</NcActionButton>
 				<NcActionButton
 					v-if="isModerator"
-					close-after-click
+					closeAfterClick
 					:title="t('spreed', 'Unpin')"
 					@click.stop="sharedItemsStore.handleUnpinMessage(token, pinnedMessage.id)">
 					<template #icon>

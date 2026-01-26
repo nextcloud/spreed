@@ -49,39 +49,39 @@
 						<ScreenShare
 							v-if="showLocalScreen"
 							:token="token"
-							:local-media-model="localModel"
-							:shared-data="localSharedData" />
+							:localMediaModel="localModel"
+							:sharedData="localSharedData" />
 						<!-- remote screen -->
 						<ScreenShare
 							v-else-if="model && screens[model.attributes.peerId]"
 							:token="token"
-							:call-participant-model="model"
-							:shared-data="sharedData" />
+							:callParticipantModel="model"
+							:sharedData="sharedData" />
 
 						<VideoVue
 							v-else-if="model"
 							class="viewer-overlay__video"
 							:token="token"
 							:model="model"
-							:shared-data="sharedData"
-							is-grid
-							un-selectable
-							hide-bottom-bar
-							@click-video="maximize">
-							<template #bottom-bar />
+							:sharedData="sharedData"
+							isGrid
+							unSelectable
+							hideBottomBar
+							@clickVideo="maximize">
+							<template #bottomBar />
 						</VideoVue>
 
-						<EmptyCallView v-else is-small />
+						<EmptyCallView v-else isSmall />
 
 						<LocalVideo
 							v-if="localModel.attributes.videoEnabled"
 							class="viewer-overlay__local-video"
 							:token="token"
-							:show-controls="false"
-							:local-media-model="localModel"
-							:local-call-participant-model="localCallParticipantModel"
-							is-small
-							un-selectable />
+							:showControls="false"
+							:localMediaModel="localModel"
+							:localCallParticipantModel="localCallParticipantModel"
+							isSmall
+							unSelectable />
 
 						<div class="viewer-overlay__bottom-bar">
 							<LocalAudioControlButton
@@ -90,14 +90,14 @@
 								:conversation="conversation"
 								:model="localModel"
 								variant="secondary"
-								disable-keyboard-shortcuts />
+								disableKeyboardShortcuts />
 							<LocalVideoControlButton
 								class="viewer-overlay__button"
 								:token="token"
 								:conversation="conversation"
 								:model="localModel"
 								variant="secondary"
-								disable-keyboard-shortcuts />
+								disableKeyboardShortcuts />
 						</div>
 					</div>
 				</TransitionWrapper>

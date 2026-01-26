@@ -11,13 +11,13 @@
 			dir="auto"
 			:text="text"
 			autolink
-			:use-extended-markdown="useMarkdown" />
+			:useExtendedMarkdown="useMarkdown" />
 		<NcRichContenteditable
 			v-else
 			ref="richContenteditable"
 			v-model="text"
 			dir="auto"
-			:auto-complete="() => {}"
+			:autoComplete="() => {}"
 			:maxlength="maxLength"
 			:multiline="multiline"
 			:contenteditable="!loading"

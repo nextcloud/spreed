@@ -6,9 +6,9 @@
 <template>
 	<RoomSelector
 		v-if="modal"
-		list-open-conversations
-		show-postable-only
-		:dialog-title="dialogTitle"
+		listOpenConversations
+		showPostableOnly
+		:dialogTitle="dialogTitle"
 		@close="closeModal"
 		@select="openConversation" />
 </template>

@@ -49,7 +49,7 @@
 				v-model:verify="server.verify"
 				:index="index"
 				:loading="loading"
-				@remove-server="removeServer"
+				@removeServer="removeServer"
 				@update:server="debounceUpdateServers"
 				@update:verify="debounceUpdateServers" />
 		</ul>
@@ -71,12 +71,12 @@
 			v-model="secretProxy"
 			class="form__textfield additional-top-margin"
 			name="signaling_secret"
-			as-text
+			asText
 			:disabled="loading"
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
-			label-visible
-			@update:model-value="debounceUpdateServers" />
+			labelVisible
+			@update:modelValue="debounceUpdateServers" />
 
 		<template v-if="!serversProxy.length">
 			<NcCheckboxRadioSwitch
@@ -84,7 +84,7 @@
 				type="switch"
 				class="additional-top-margin"
 				:disabled="loading"
-				@update:model-value="updateHideWarning">
+				@update:modelValue="updateHideWarning">
 				{{ t('spreed', 'Warn about connectivity issues in calls with more than 2 participants') }}
 			</NcCheckboxRadioSwitch>
 		</template>

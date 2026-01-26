@@ -6,7 +6,7 @@
 <template>
 	<NcDialog
 		:name="t('spreed', 'Reactions')"
-		close-on-click-outside
+		closeOnClickOutside
 		@update:open="closeModal">
 		<div class="reactions__modal">
 			<template v-if="Object.keys(reactionsOverview).length > 0">
@@ -35,7 +35,7 @@
 							:name="item.actorDisplayName"
 							:source="item.actorType"
 							:size="AVATAR.SIZE.SMALL"
-							disable-menu />
+							disableMenu />
 						<span class="reactions-item__name">{{ item.actorDisplayNameWithFallback }}</span>
 						<span class="reactions-item__emojis">
 							{{ item.reaction?.join('') ?? reactionFilter }}

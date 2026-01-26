@@ -237,14 +237,14 @@ function handleHeaderClick() {
 		:class="{ ['content--' + mode]: state === 'default' }">
 		<template v-if="state === 'default'">
 			<div v-if="isUser" class="content__actions">
-				<NcActions v-if="profileActions.length" force-menu>
+				<NcActions v-if="profileActions.length" forceMenu>
 					<NcActionLink
 						v-for="action in profileActions"
 						:key="action.id"
 						class="content__profile-action"
 						:icon="action.icon"
 						:href="action.target"
-						close-after-click>
+						closeAfterClick>
 						{{ action.title }}
 					</NcActionLink>
 				</NcActions>

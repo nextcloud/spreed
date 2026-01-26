@@ -15,10 +15,10 @@
 		</p>
 
 		<NcCheckboxRadioSwitch
-			:model-value="isFederationEnabled"
+			:modelValue="isFederationEnabled"
 			:disabled="loading"
 			type="switch"
-			@update:model-value="saveFederationEnabled">
+			@update:modelValue="saveFederationEnabled">
 			{{ t('spreed', 'Enable Federation in Talk app') }}
 		</NcCheckboxRadioSwitch>
 
@@ -26,26 +26,26 @@
 			<h3>{{ t('spreed', 'Permissions') }}</h3>
 
 			<NcCheckboxRadioSwitch
-				:model-value="isFederationIncomingEnabled"
+				:modelValue="isFederationIncomingEnabled"
 				:disabled="loading"
 				type="switch"
-				@update:model-value="saveFederationIncomingEnabled">
+				@update:modelValue="saveFederationIncomingEnabled">
 				{{ t('spreed', 'Allow users to be invited to federated conversations') }}
 			</NcCheckboxRadioSwitch>
 
 			<NcCheckboxRadioSwitch
-				:model-value="isFederationOutgoingEnabled"
+				:modelValue="isFederationOutgoingEnabled"
 				:disabled="loading"
 				type="switch"
-				@update:model-value="saveFederationOutgoingEnabled">
+				@update:modelValue="saveFederationOutgoingEnabled">
 				{{ t('spreed', 'Allow users to invite federated users into conversation') }}
 			</NcCheckboxRadioSwitch>
 
 			<NcCheckboxRadioSwitch
-				:model-value="isFederationOnlyTrustedServersEnabled"
+				:modelValue="isFederationOnlyTrustedServersEnabled"
 				:disabled="loading"
 				type="switch"
-				@update:model-value="saveFederationOnlyTrustedServersEnabled">
+				@update:modelValue="saveFederationOnlyTrustedServersEnabled">
 				{{ t('spreed', 'Only allow to federate with trusted servers') }}
 			</NcCheckboxRadioSwitch>
 			<!-- eslint-disable-next-line vue/no-v-html -->
@@ -60,8 +60,8 @@
 			<div class="form">
 				<NcSelect
 					v-model="allowedGroups"
-					input-id="allow_groups_invite_federated"
-					:input-label="t('spreed', 'Groups allowed to invite federated users')"
+					inputId="allow_groups_invite_federated"
+					:inputLabel="t('spreed', 'Groups allowed to invite federated users')"
 					name="allow_groups_invite_federated"
 					class="form__select"
 					:options="groups"
@@ -69,14 +69,14 @@
 					:disabled="loading"
 					multiple
 					searchable
-					:tag-width="60"
+					:tagWidth="60"
 					:loading="loadingGroups"
-					:show-no-options="false"
-					keep-open
-					track-by="id"
+					:showNoOptions="false"
+					keepOpen
+					trackBy="id"
 					label="displayname"
-					no-wrap
-					@search-change="debounceSearchGroup" />
+					noWrap
+					@search="debounceSearchGroup" />
 
 				<NcButton
 					variant="primary"

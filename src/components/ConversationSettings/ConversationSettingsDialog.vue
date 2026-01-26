@@ -9,16 +9,16 @@
 		:aria-label="t('spreed', 'Conversation settings')"
 		:name="t('spreed', 'Conversation settings')"
 		:open="showSettings"
-		show-navigation
+		showNavigation
 		legacy
-		no-version
+		noVersion
 		@update:open="handleHideSettings">
 		<NcAppSettingsSection
 			id="basic-info"
 			:name="t('spreed', 'Basic Info')">
 			<BasicInfo
 				:conversation="conversation"
-				:can-full-moderate="canFullModerate" />
+				:canFullModerate="canFullModerate" />
 		</NcAppSettingsSection>
 
 		<template v-if="!isBreakoutRoom">
@@ -33,11 +33,11 @@
 			<NcAppSettingsSection
 				id="conversation-settings"
 				:name="selfIsOwnerOrModerator ? t('spreed', 'Moderation') : t('spreed', 'Setup overview')">
-				<ListableSettings v-if="!isNoteToSelf && !isGuest && !isOneToOne" :token="token" :can-moderate="canFullModerate" />
-				<MentionsSettings v-if="!isNoteToSelf && !isOneToOne" :token="token" :can-moderate="canFullModerate" />
-				<LinkShareSettings v-if="!isNoteToSelf" :token="token" :can-moderate="canFullModerate" />
-				<RecordingConsentSettings v-if="!isNoteToSelf && !isOneToOneFormer && recordingConsentAvailable" :token="token" :can-moderate="selfIsOwnerOrModerator" />
-				<ExpirationSettings v-if="!isOneToOneFormer && hasMessageExpirationFeature" :token="token" :can-moderate="selfIsOwnerOrModerator" />
+				<ListableSettings v-if="!isNoteToSelf && !isGuest && !isOneToOne" :token="token" :canModerate="canFullModerate" />
+				<MentionsSettings v-if="!isNoteToSelf && !isOneToOne" :token="token" :canModerate="canFullModerate" />
+				<LinkShareSettings v-if="!isNoteToSelf" :token="token" :canModerate="canFullModerate" />
+				<RecordingConsentSettings v-if="!isNoteToSelf && !isOneToOneFormer && recordingConsentAvailable" :token="token" :canModerate="selfIsOwnerOrModerator" />
+				<ExpirationSettings v-if="!isOneToOneFormer && hasMessageExpirationFeature" :token="token" :canModerate="selfIsOwnerOrModerator" />
 				<BanSettings v-if="supportBanV1 && canFullModerate" :token="token" />
 			</NcAppSettingsSection>
 
@@ -105,15 +105,15 @@
 					</p>
 					<NcCheckboxRadioSwitch
 						type="switch"
-						:model-value="isArchived"
-						@update:model-value="toggleArchiveConversation">
+						:modelValue="isArchived"
+						@update:modelValue="toggleArchiveConversation">
 						{{ t('spreed', 'Archive conversation') }}
 					</NcCheckboxRadioSwitch>
 				</template>
 				<DangerZone
 					:conversation="conversation"
-					:can-leave-conversation="canLeaveConversation"
-					:can-delete-conversation="canDeleteConversation" />
+					:canLeaveConversation="canLeaveConversation"
+					:canDeleteConversation="canDeleteConversation" />
 			</NcAppSettingsSection>
 		</template>
 	</NcAppSettingsDialog>

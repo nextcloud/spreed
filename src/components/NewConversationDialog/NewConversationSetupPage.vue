@@ -11,7 +11,7 @@
 			:placeholder="t('spreed', 'Enter a name for this conversation')"
 			:label="t('spreed', 'Name')"
 			:error="!!nameErrorLabel"
-			label-visible
+			labelVisible
 			@keydown.enter="$emit('handleEnter')" />
 		<span v-if="nameErrorLabel" class="new-group-conversation__error">
 			{{ nameErrorLabel }}
@@ -22,7 +22,7 @@
 			:label="t('spreed', 'Description')"
 			:error="!!descriptionErrorLabel"
 			resize="vertical"
-			label-visible />
+			labelVisible />
 		<span v-if="descriptionErrorLabel" class="new-group-conversation__error">
 			{{ descriptionErrorLabel }}
 		</span>
@@ -36,7 +36,7 @@
 				:conversation="newConversation"
 				controlled
 				editable
-				@avatar-edited="$emit('avatarEdited', $event)" />
+				@avatarEdited="$emit('avatarEdited', $event)" />
 		</template>
 
 		<label class="new-group-conversation__label">
@@ -58,7 +58,7 @@
 				v-if="hasPassword"
 				v-model="passwordValue"
 				autocomplete="new-password"
-				check-password-strength
+				checkPasswordStrength
 				:placeholder="t('spreed', 'Enter password')"
 				:aria-label="t('spreed', 'Enter password')"
 				@valid="$emit('isPasswordValid', true)"

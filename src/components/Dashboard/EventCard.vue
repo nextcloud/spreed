@@ -175,7 +175,7 @@ function handleJoin({ call }: { call: boolean }) {
 		<p class="event-card__date secondary_text">
 			<span>{{ eventDateLabel }}</span>
 			<template v-if="hasCall">
-				<IconVideo :size="20" fill-color="var(--color-border-error)" />
+				<IconVideo :size="20" fillColor="var(--color-border-error)" />
 				<span>{{ elapsedTime }}</span>
 			</template>
 		</p>
@@ -183,11 +183,11 @@ function handleJoin({ call }: { call: boolean }) {
 			<NcChip
 				variant="tertiary"
 				:text="roomLabel"
-				no-close>
+				noClose>
 				<template #icon>
 					<ConversationIcon
 						:item="conversation"
-						hide-user-status
+						hideUserStatus
 						:size="20" />
 				</template>
 			</NcChip>

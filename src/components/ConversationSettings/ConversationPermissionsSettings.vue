@@ -21,7 +21,7 @@
 				value="all"
 				name="permission_radio"
 				type="radio"
-				@update:model-value="handleSubmitPermissions">
+				@update:modelValue="handleSubmitPermissions">
 				{{ t('spreed', 'All permissions') }}
 			</NcCheckboxRadioSwitch>
 			<span v-show="loading && radioValue === 'all'" class="icon-loading-small" />
@@ -38,7 +38,7 @@
 				:disabled="loading"
 				name="permission_radio"
 				type="radio"
-				@update:model-value="handleSubmitPermissions">
+				@update:modelValue="handleSubmitPermissions">
 				{{ t('spreed', 'Restricted') }}
 			</NcCheckboxRadioSwitch>
 			<span v-show="loading && radioValue === 'restricted'" class="icon-loading-small" />
@@ -55,7 +55,7 @@
 				:disabled="loading"
 				name="permission_radio"
 				type="radio"
-				@update:model-value="showPermissionsEditor = true">
+				@update:modelValue="showPermissionsEditor = true">
 				{{ t('spreed', 'Advanced permissions') }}
 			</NcCheckboxRadioSwitch>
 
@@ -73,10 +73,10 @@
 		</div>
 		<PermissionEditor
 			v-if="showPermissionsEditor"
-			:conversation-name="conversationName"
+			:conversationName="conversationName"
 			:permissions="conversationPermissions"
 			:loading="loading"
-			nested-container=".conversation-permissions-editor"
+			nestedContainer=".conversation-permissions-editor"
 			@close="handleClosePermissionsEditor"
 			@submit="handleSubmitPermissions" />
 	</div>

@@ -7,7 +7,7 @@
 	<NcPopover
 		v-model:shown="showPopover"
 		class="call-time"
-		:no-focus-trap="!isShowRecordingControls"
+		:noFocusTrap="!isShowRecordingControls"
 		:triggers="[]">
 		<template #trigger>
 			<NcButton

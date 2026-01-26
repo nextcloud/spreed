@@ -8,10 +8,10 @@
 		<NcPopover
 			ref="popover"
 			:boundary="boundaryElement"
-			:show-triggers="[]"
-			:hide-triggers="['click']"
-			:auto-hide="false"
-			no-focus-trap
+			:showTriggers="[]"
+			:hideTriggers="['click']"
+			:autoHide="false"
+			noFocusTrap
 			:shown="popupShown">
 			<template #trigger>
 				<NcButton
@@ -26,11 +26,11 @@
 					@click.stop="toggleAudio">
 					<template #icon>
 						<VolumeIndicator
-							:audio-preview-available="isAudioAvailable"
-							:audio-enabled="showMicrophoneOn || resumeAudioAfterChange"
-							:current-volume="model.attributes.currentVolume"
-							:volume-threshold="model.attributes.volumeThreshold"
-							overlay-muted-color="#888888" />
+							:audioPreviewAvailable="isAudioAvailable"
+							:audioEnabled="showMicrophoneOn || resumeAudioAfterChange"
+							:currentVolume="model.attributes.currentVolume"
+							:volumeThreshold="model.attributes.volumeThreshold"
+							overlayMutedColor="#888888" />
 					</template>
 				</NcButton>
 			</template>
@@ -57,7 +57,7 @@
 					:key="device.deviceId ?? 'none'"
 					class="audio-selector__action"
 					type="radio"
-					:model-value="audioInputId"
+					:modelValue="audioInputId"
 					:value="device.deviceId"
 					:title="device.label"
 					@click="handleAudioInputIdChange(device.deviceId)">
@@ -72,7 +72,7 @@
 					:key="device.deviceId ?? 'none'"
 					class="audio-selector__action"
 					type="radio"
-					:model-value="audioOutputId"
+					:modelValue="audioOutputId"
 					:value="device.deviceId"
 					:title="device.label"
 					@click="handleAudioOutputIdChange(device.deviceId)">
@@ -85,14 +85,14 @@
 				v-if="isAudioAllowed"
 				key="advanced-settings"
 				class="audio-selector__action"
-				close-after-click
+				closeAfterClick
 				@click="openAdvancedSettings">
 				{{ t('spreed', 'Microphone settings') }}
 			</NcActionButton>
 			<NcActionButton
 				key="media-settings"
 				class="audio-selector__action"
-				close-after-click
+				closeAfterClick
 				@click="emit('talk:media-settings:show')">
 				{{ t('spreed', 'Check devices') }}
 			</NcActionButton>
