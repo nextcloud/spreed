@@ -28,7 +28,7 @@
 				:showTrailingButton="!!guestUserName && !compact"
 				trailingButtonIcon="arrowEnd"
 				:trailingButtonLabel="t('spreed', 'Save name')"
-				@trailing-button-click="!compact ? updateDisplayName() : null"
+				@trailingButtonClick="!compact ? updateDisplayName() : null"
 				@keydown.enter="!compact ? updateDisplayName() : null"
 				@keydown.esc="toggleEdit" />
 		</div>

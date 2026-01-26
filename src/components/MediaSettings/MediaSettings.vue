@@ -35,7 +35,7 @@
 					<NcCheckboxRadioSwitch
 						class="checkbox--warning"
 						:modelValue="recordingConsentGiven"
-						@update:model-value="setRecordingConsentGiven">
+						@update:modelValue="setRecordingConsentGiven">
 						{{ t('spreed', 'Give consent to the recording of this call') }}
 					</NcCheckboxRadioSwitch>
 				</template>
@@ -159,20 +159,20 @@
 								:devices="devices"
 								:deviceId="audioInputId"
 								@refresh="updateDevices"
-								@update:device-id="handleAudioInputIdChange" />
+								@update:deviceId="handleAudioInputIdChange" />
 							<MediaDevicesSelector
 								kind="videoinput"
 								:devices="devices"
 								:deviceId="videoInputId"
 								@refresh="updateDevices"
-								@update:device-id="handleVideoInputIdChange" />
+								@update:deviceId="handleVideoInputIdChange" />
 							<MediaDevicesSelector
 								v-if="audioOutputSupported"
 								kind="audiooutput"
 								:devices="devices"
 								:deviceId="audioOutputId"
 								@refresh="updateDevices"
-								@update:device-id="handleAudioOutputIdChange">
+								@update:deviceId="handleAudioOutputIdChange">
 								<template #extra-action>
 									<MediaDevicesSpeakerTest :disabled="!!audioStreamError" />
 								</template>
@@ -184,7 +184,7 @@
 								class="media-settings__tab"
 								:token="token"
 								:skipBlurVirtualBackground="skipBlurVirtualBackground"
-								@update-background="handleUpdateVirtualBackground" />
+								@updateBackground="handleUpdateVirtualBackground" />
 						</template>
 					</MediaSettingsTabs>
 
@@ -203,7 +203,7 @@
 						v-if="showNotifyCallOption"
 						v-model="notifyCall"
 						class="checkbox"
-						@update:model-value="setNotifyCall">
+						@update:modelValue="setNotifyCall">
 						{{ t('spreed', 'Notify all participants about this call') }}
 					</NcCheckboxRadioSwitch>
 

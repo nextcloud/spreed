@@ -39,7 +39,7 @@
 						:token="token"
 						isUploadEditor
 						:file="file[1].temporaryMessage.messageParameters.file"
-						@remove-file="handleRemoveFileFromSelection" />
+						@removeFile="handleRemoveFileFromSelection" />
 					<NcButton
 						:aria-label="addMoreAriaLabel"
 						variant="tertiary"

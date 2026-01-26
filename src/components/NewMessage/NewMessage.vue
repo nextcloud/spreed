@@ -35,10 +35,10 @@
 				:canShareFiles="canShareFiles"
 				:canCreatePoll="canCreatePoll"
 				:canCreateThread="canCreateThread"
-				@open-file-upload="openFileUploadWindow"
-				@create-thread="setCreateThread"
-				@handle-file-share="showFilePicker"
-				@update-new-file-dialog="updateNewFileDialog" />
+				@openFileUpload="openFileUploadWindow"
+				@createThread="setCreateThread"
+				@handleFileShare="showFilePicker"
+				@updateNewFileDialog="updateNewFileDialog" />
 
 			<!-- Input area -->
 			<div class="new-message-form__input">
@@ -103,7 +103,7 @@
 					:error="!!errorTitle"
 					:title="errorTitle"
 					showTrailingButton
-					@trailing-button-click="setCreateThread(false)" />
+					@trailingButtonClick="setCreateThread(false)" />
 
 				<NcRichContenteditable
 					ref="richContenteditable"
@@ -121,7 +121,7 @@
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
 					@keydown.meta.up="handleEditLastMessage"
-					@update:model-value="handleTyping"
+					@update:modelValue="handleTyping"
 					@paste="handlePastedFiles"
 					@focus="restoreSelectionRange"
 					@blur="preserveSelectionRange"
@@ -153,7 +153,7 @@
 				v-if="showAudioRecorder"
 				:disabled="disabled"
 				@recording="handleRecording"
-				@audio-file="handleAudioFile" />
+				@audioFile="handleAudioFile" />
 
 			<!-- Edit -->
 			<template v-else-if="messageToEdit">

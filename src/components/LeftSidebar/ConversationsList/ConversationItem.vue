@@ -23,7 +23,7 @@
 		forceMenu
 		:compact="compact"
 		@click="onClick"
-		@update:menu-open="handleActionsMenuOpen">
+		@update:menuOpen="handleActionsMenuOpen">
 		<template #icon>
 			<ConversationIcon
 				:key="item.token"

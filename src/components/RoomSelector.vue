@@ -18,7 +18,7 @@
 				class="selector__search"
 				:label="t('spreed', 'Search conversations or users')"
 				:showTrailingButton="searchText !== ''"
-				@trailing-button-click="clearText">
+				@trailingButtonClick="clearText">
 				<template #icon>
 					<Magnify :size="16" />
 				</template>

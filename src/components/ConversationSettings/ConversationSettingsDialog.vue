@@ -106,7 +106,7 @@
 					<NcCheckboxRadioSwitch
 						type="switch"
 						:modelValue="isArchived"
-						@update:model-value="toggleArchiveConversation">
+						@update:modelValue="toggleArchiveConversation">
 						{{ t('spreed', 'Archive conversation') }}
 					</NcCheckboxRadioSwitch>
 				</template>

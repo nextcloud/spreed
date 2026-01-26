@@ -116,7 +116,7 @@ function handleActionsMenuOpen(open: boolean) {
 		:to="to"
 		:active="active"
 		forceMenu
-		@update:menu-open="handleActionsMenuOpen">
+		@update:menuOpen="handleActionsMenuOpen">
 		<template #icon>
 			<div
 				class="thread__icon"

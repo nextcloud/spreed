@@ -16,7 +16,7 @@
 						v-model:isFocused="isFocused"
 						:listRef="[scroller, searchResults]"
 						@input="debounceFetchSearchResults"
-						@abort-search="abortSearch" />
+						@abortSearch="abortSearch" />
 				</div>
 
 				<TransitionWrapper name="radial-reveal">
@@ -266,9 +266,9 @@
 				:conversationsList="conversationsList"
 				:searchResults="searchResults"
 				:searchResultsListedConversations="searchResultsListedConversations"
-				@abort-search="abortSearch"
-				@create-new-conversation="createConversation"
-				@create-and-join-conversation="createAndJoinConversation" />
+				@abortSearch="abortSearch"
+				@createNewConversation="createConversation"
+				@createAndJoinConversation="createAndJoinConversation" />
 		</template>
 
 		<template #footer>

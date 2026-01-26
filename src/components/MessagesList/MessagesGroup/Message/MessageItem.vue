@@ -33,7 +33,7 @@
 					:token="message.token"
 					:canReact="canReact"
 					:showControls="isHovered || isFollowUpEmojiPickerOpen"
-					@emoji-picker-toggled="toggleFollowUpEmojiPicker" />
+					@emojiPickerToggled="toggleFollowUpEmojiPicker" />
 			</MessageBody>
 		</div>
 
@@ -51,7 +51,7 @@
 				:message="message"
 				:previousMessageId="previousMessageId"
 				:readInfo="readInfo"
-				@show-translate-dialog="isTranslateDialogOpen = true"
+				@showTranslateDialog="isTranslateDialogOpen = true"
 				@reply="handleReply"
 				@edit="handleEdit"
 				@delete="handleDelete" />

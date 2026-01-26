@@ -319,8 +319,8 @@
 				:boundary="boundariesElement"
 				placement="auto"
 				@select="handleReactionClick"
-				@after-show="onEmojiPickerOpen"
-				@after-hide="onEmojiPickerClose">
+				@afterShow="onEmojiPickerOpen"
+				@afterHide="onEmojiPickerClose">
 				<NcButton
 					variant="tertiary"
 					:aria-label="t('spreed', 'React with another emoji')">

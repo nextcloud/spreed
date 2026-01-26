@@ -15,7 +15,7 @@
 				type="switch"
 				aria-describedby="sip_settings_hint"
 				:disabled="isSipLoading"
-				@update:model-value="toggleSetting('enable')">
+				@update:modelValue="toggleSetting('enable')">
 				{{ t('spreed', 'Enable phone and SIP dial-in') }}
 			</NcCheckboxRadioSwitch>
 		</div>
@@ -24,7 +24,7 @@
 				:modelValue="noPinRequired"
 				type="switch"
 				:disabled="isSipLoading || !hasSIPEnabled"
-				@update:model-value="toggleSetting('nopin')">
+				@update:modelValue="toggleSetting('nopin')">
 				{{ t('spreed', 'Allow to dial-in without a PIN') }}
 			</NcCheckboxRadioSwitch>
 		</div>

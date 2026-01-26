@@ -457,7 +457,7 @@ async function submitNewMeeting() {
 					{{ t('spreed', 'No other participants to send invitations to.') }}
 				</p>
 				<template v-else>
-					<NcCheckboxRadioSwitch v-model="selectAll" @update:model-value="toggleAll">
+					<NcCheckboxRadioSwitch v-model="selectAll" @update:modelValue="toggleAll">
 						{{ inviteLabel }}
 					</NcCheckboxRadioSwitch>
 					<NcButton v-if="!isOneToOneConversation && !selectAll" variant="tertiary" @click="isSelectorOpen = true">
@@ -498,7 +498,7 @@ async function submitNewMeeting() {
 					class="calendar-meeting__searchbox"
 					isFocused
 					:placeholderText="t('spreed', 'Search participants')"
-					@abort-search="searchText = ''" />
+					@abortSearch="searchText = ''" />
 				<!-- Selected results -->
 				<TransitionWrapper
 					v-if="selectedAttendeeIds.length"

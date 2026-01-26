@@ -16,7 +16,7 @@
 				:label="textFieldLabel"
 				:showTrailingButton="isSearching"
 				:trailingButtonLabel="cancelSearchLabel"
-				@trailing-button-click="abortSearch"
+				@trailingButtonClick="abortSearch"
 				@input="handleInput">
 				<template #icon>
 					<Magnify :size="20" />
@@ -62,7 +62,7 @@
 			:token="token"
 			:onlyUsers="onlyUsers"
 			@click="updateSelectedParticipants"
-			@click-search-hint="focusInput" />
+			@clickSearchHint="focusInput" />
 	</div>
 </template>
 

@@ -18,7 +18,7 @@
 		<NcCheckboxRadioSwitch
 			:modelValue="verify"
 			class="recording-server__checkbox"
-			@update:model-value="updateVerify">
+			@update:modelValue="updateVerify">
 			{{ t('spreed', 'Validate SSL certificate') }}
 		</NcCheckboxRadioSwitch>
 

@@ -17,7 +17,7 @@
 		:placeholder="t('spreed', 'Enter a name for this conversation')"
 		:edit-button-aria-label="t('spreed', 'Edit conversation name')"
 		:maxLength="CONVERSATION.MAX_NAME_LENGTH"
-		@submit-text="handleUpdateName"
+		@submitText="handleUpdateName"
 		@update:editing="handleEditName" />
 	<template v-if="!isOneToOne">
 		<h4 class="app-settings-section__subtitle">
@@ -33,7 +33,7 @@
 			:maxLength="maxDescriptionLength"
 			multiline
 			useMarkdown
-			@submit-text="handleUpdateDescription"
+			@submitText="handleUpdateDescription"
 			@update:editing="handleEditDescription" />
 	</template>
 	<template v-if="supportsAvatar">
