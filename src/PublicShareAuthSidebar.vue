@@ -211,7 +211,7 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-@use './assets/variables' as *;
+@use './assets/variables.scss' as *;
 
 /* Styles based on the NcAppSidebar */
 #talk-sidebar {

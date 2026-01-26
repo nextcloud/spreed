@@ -372,7 +372,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use '../../assets/markdown' as *;
+@use '../../assets/markdown.scss' as *;
 
 .top-bar {
 	--border-width: 1px;

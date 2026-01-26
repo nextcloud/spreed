@@ -392,7 +392,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 </template>
 
 <style lang="scss" scoped>
-@use '../../assets/variables' as *;
+@use '../../assets/variables.scss' as *;
 
 .talk-dashboard-wrapper {
 	padding: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 3);
