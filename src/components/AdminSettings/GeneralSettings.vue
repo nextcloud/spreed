@@ -12,33 +12,33 @@
 		<NcSelect
 			v-model="defaultGroupNotification"
 			class="default-group-notification"
-			input-id="default_group_notification_input"
-			:input-label="t('spreed', 'Default group notification')"
+			inputId="default_group_notification_input"
+			:inputLabel="t('spreed', 'Default group notification')"
 			name="default_group_notification"
 			:options="defaultGroupNotificationOptions"
 			:clearable="false"
 			:placeholder="t('spreed', 'Default group notification for new groups')"
 			label="label"
-			track-by="value"
-			no-wrap
+			trackBy="value"
+			noWrap
 			:disabled="loading || loadingDefaultGroupNotification"
-			@update:model-value="saveDefaultGroupNotification" />
+			@update:modelValue="saveDefaultGroupNotification" />
 
 		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
 
 		<NcCheckboxRadioSwitch
-			:model-value="isConversationsFilesChecked"
+			:modelValue="isConversationsFilesChecked"
 			:disabled="loading || loadingConversationsFiles"
 			type="switch"
-			@update:model-value="saveConversationsFiles">
+			@update:modelValue="saveConversationsFiles">
 			{{ t('spreed', 'Allow conversations on files') }}
 		</NcCheckboxRadioSwitch>
 
 		<NcCheckboxRadioSwitch
-			:model-value="isConversationsFilesPublicSharesChecked"
+			:modelValue="isConversationsFilesPublicSharesChecked"
 			:disabled="loading || loadingConversationsFiles || !isConversationsFilesChecked"
 			type="switch"
-			@update:model-value="saveConversationsFilesPublicShares">
+			@update:modelValue="saveConversationsFilesPublicShares">
 			{{ t('spreed', 'Allow conversations on public shares for files') }}
 		</NcCheckboxRadioSwitch>
 
@@ -52,7 +52,7 @@
 				v-model="isE2EECallsEnabled"
 				type="switch"
 				:disabled="loading || !canEnableE2EECalls"
-				@update:model-value="updateE2EECallsEnabled">
+				@update:modelValue="updateE2EECallsEnabled">
 				{{ t('spreed', 'Enable encryption') }}
 			</NcCheckboxRadioSwitch>
 

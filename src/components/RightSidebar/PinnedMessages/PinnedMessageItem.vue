@@ -92,7 +92,7 @@ function handleClick() {
 		:name="subname"
 		:to="to"
 		:active="false"
-		force-menu
+		forceMenu
 		@click="handleClick">
 		<template #icon>
 			<IconPin :size="AVATAR.SIZE.COMPACT" class="icon-pin" />
@@ -106,7 +106,7 @@ function handleClick() {
 		<template v-if="isModerator" #actions>
 			<NcActionButton
 				key="unpin-message"
-				close-after-click
+				closeAfterClick
 				@click="unpinMessage">
 				<template #icon>
 					<IconPinOff :size="20" />

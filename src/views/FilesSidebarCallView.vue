@@ -71,8 +71,8 @@ function restoreSidebarHeaderContents() {
 <template>
 	<Teleport to="header.app-sidebar-header">
 		<div class="talk-sidebar-callview">
-			<TopBar is-in-call is-sidebar />
-			<CallView :token="token" is-sidebar />
+			<TopBar isInCall isSidebar />
+			<CallView :token="token" isSidebar />
 		</div>
 	</Teleport>
 </template>

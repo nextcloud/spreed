@@ -57,7 +57,7 @@
 		v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
 		class="leave-call leave-call-actions--split"
 		:disabled="loading"
-		:force-name="showButtonText"
+		:forceName="showButtonText"
 		placement="top-end"
 		:aria-label="leaveCallActionsLabel"
 		:inline="1"
@@ -241,11 +241,13 @@ export default {
 		},
 
 		showRecordingWarning() {
-			return [CALL.RECORDING.VIDEO_STARTING,
+			return [
+				CALL.RECORDING.VIDEO_STARTING,
 				CALL.RECORDING.AUDIO_STARTING,
 				CALL.RECORDING.VIDEO,
-				CALL.RECORDING.AUDIO].includes(this.conversation.callRecording)
-				|| this.conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED
+				CALL.RECORDING.AUDIO,
+			].includes(this.conversation.callRecording)
+			|| this.conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED
 		},
 
 		showMediaSettings() {

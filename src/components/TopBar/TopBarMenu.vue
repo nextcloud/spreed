@@ -7,7 +7,7 @@
 	<div class="top-bar-menu">
 		<NcActions
 			v-if="!isSidebar"
-			force-menu
+			forceMenu
 			:title="t('spreed', 'Conversation actions')"
 			:aria-label="t('spreed', 'Conversation actions')"
 			variant="tertiary">
@@ -20,7 +20,7 @@
 				<!-- Moderator actions -->
 				<template v-if="!isOneToOneConversation">
 					<NcActionButton
-						close-after-click
+						closeAfterClick
 						@click="forceMuteOthers">
 						<template #icon>
 							<NcIconSvgWrapper :svg="IconMicrophoneOffOutline" :size="20" />
@@ -33,7 +33,7 @@
 				<template v-if="canModerateRecording">
 					<NcActionButton
 						v-if="!isRecording && !isStartingRecording && isInCall"
-						close-after-click
+						closeAfterClick
 						@click="startRecording">
 						<template #icon>
 							<NcIconSvgWrapper
@@ -44,7 +44,7 @@
 					</NcActionButton>
 					<NcActionButton
 						v-else-if="isStartingRecording && isInCall"
-						close-after-click
+						closeAfterClick
 						@click="stopRecording">
 						<template #icon>
 							<NcLoadingIcon :size="20" />
@@ -53,7 +53,7 @@
 					</NcActionButton>
 					<NcActionButton
 						v-else-if="isRecording && isInCall"
-						close-after-click
+						closeAfterClick
 						@click="stopRecording">
 						<template #icon>
 							<IconStop :size="20" />
@@ -80,7 +80,7 @@
 			<!-- Device settings -->
 			<NcActionButton
 				v-if="isInCall"
-				close-after-click
+				closeAfterClick
 				@click="showMediaSettingsDialog">
 				<template #icon>
 					<IconVideoOutline :size="20" />
@@ -91,7 +91,7 @@
 			<!-- Breakout rooms -->
 			<NcActionButton
 				v-if="canConfigureBreakoutRooms"
-				close-after-click
+				closeAfterClick
 				@click="$emit('openBreakoutRoomsEditor')">
 				<template #icon>
 					<IconDotsCircle :size="20" />
@@ -112,7 +112,7 @@
 			<NcActionButton
 				v-if="!isInCall"
 				:aria-label="t('spreed', 'Toggle full screen')"
-				close-after-click
+				closeAfterClick
 				@click="toggleFullscreen">
 				<template #icon>
 					<IconFullscreen v-if="!isFullscreen" :size="20" />
@@ -123,7 +123,7 @@
 
 			<!-- Conversation settings -->
 			<NcActionButton
-				close-after-click
+				closeAfterClick
 				@click="openConversationSettings">
 				<template #icon>
 					<IconCogOutline :size="20" />

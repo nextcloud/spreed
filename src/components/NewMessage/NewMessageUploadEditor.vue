@@ -8,7 +8,7 @@
 		v-if="showModal"
 		ref="modal"
 		:size="isVoiceMessage ? 'small' : 'normal'"
-		:label-id="dialogHeaderId"
+		:labelId="dialogHeaderId"
 		@close="handleDismiss">
 		<div
 			class="upload-editor"
@@ -37,9 +37,9 @@
 						v-for="file in files"
 						:key="file[1].temporaryMessage.id"
 						:token="token"
-						is-upload-editor
+						isUploadEditor
 						:file="file[1].temporaryMessage.messageParameters.file"
-						@remove-file="handleRemoveFileFromSelection" />
+						@removeFile="handleRemoveFileFromSelection" />
 					<NcButton
 						:aria-label="addMoreAriaLabel"
 						variant="tertiary"
@@ -55,7 +55,7 @@
 			<template v-else>
 				<AudioPlayer
 					:name="voiceMessageName"
-					:local-url="voiceMessageLocalURL" />
+					:localUrl="voiceMessageLocalURL" />
 			</template>
 			<div v-if="!supportMediaCaption" class="upload-editor__actions">
 				<NcButton variant="tertiary" @click="handleDismiss">

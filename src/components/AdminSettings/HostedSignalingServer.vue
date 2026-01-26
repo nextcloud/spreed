@@ -25,7 +25,7 @@
 				placeholder="https://cloud.example.org/"
 				:disabled="loading"
 				:label="t('spreed', 'URL of this Nextcloud instance')"
-				label-visible />
+				labelVisible />
 
 			<NcTextField
 				v-model="hostedHPBFullName"
@@ -34,7 +34,7 @@
 				placeholder="Jane Doe"
 				:disabled="loading"
 				:label="t('spreed', 'Full name of the user requesting the trial')"
-				label-visible />
+				labelVisible />
 
 			<NcTextField
 				v-model="hostedHPBEmail"
@@ -43,12 +43,12 @@
 				placeholder="jane@example.org"
 				:disabled="loading"
 				:label="t('spreed', 'Email of the user')"
-				label-visible />
+				labelVisible />
 
 			<NcSelect
 				v-model="hostedHPBLanguage"
-				input-id="hosted_hpb_language_input"
-				:input-label=" t('spreed', 'Language')"
+				inputId="hosted_hpb_language_input"
+				:inputLabel=" t('spreed', 'Language')"
 				class="form__select"
 				name="hosted_hpb_language"
 				:disabled="loading"
@@ -57,13 +57,13 @@
 				:options="languages"
 				:clearable="false"
 				label="name"
-				track-by="code"
-				no-wrap />
+				trackBy="code"
+				noWrap />
 
 			<NcSelect
 				v-model="hostedHPBCountry"
-				input-id="hosted_hpb_country_input"
-				:input-label=" t('spreed', 'Country')"
+				inputId="hosted_hpb_country_input"
+				:inputLabel=" t('spreed', 'Country')"
 				class="form__select"
 				name="hosted_hpb_country"
 				:disabled="loading"
@@ -72,8 +72,8 @@
 				:options="countries"
 				:clearable="false"
 				label="name"
-				track-by="code"
-				no-wrap />
+				trackBy="code"
+				noWrap />
 
 			<NcButton
 				class="additional-top-margin"

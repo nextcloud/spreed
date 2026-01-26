@@ -31,22 +31,22 @@
 				class="new-message-form__attachments"
 				:token="token"
 				:disabled="disabled"
-				:can-upload-files="canUploadFiles"
-				:can-share-files="canShareFiles"
-				:can-create-poll="canCreatePoll"
-				:can-create-thread="canCreateThread"
-				@open-file-upload="openFileUploadWindow"
-				@create-thread="setCreateThread"
-				@handle-file-share="showFilePicker"
-				@update-new-file-dialog="updateNewFileDialog" />
+				:canUploadFiles="canUploadFiles"
+				:canShareFiles="canShareFiles"
+				:canCreatePoll="canCreatePoll"
+				:canCreateThread="canCreateThread"
+				@openFileUpload="openFileUploadWindow"
+				@createThread="setCreateThread"
+				@handleFileShare="showFilePicker"
+				@updateNewFileDialog="updateNewFileDialog" />
 
 			<!-- Input area -->
 			<div class="new-message-form__input">
 				<NewMessageAbsenceInfo
 					v-if="!dialog && userAbsence"
 					class="new-message-form__note-content"
-					:user-absence="userAbsence"
-					:display-name="conversation.displayName" />
+					:userAbsence="userAbsence"
+					:displayName="conversation.displayName" />
 
 				<NewMessageChatSummary
 					v-if="!dialog && showChatSummary"
@@ -55,8 +55,8 @@
 				<div class="new-message-form__emoji-picker">
 					<NcEmojiPicker
 						v-if="!disabled"
-						keep-open
-						:set-return-focus="getContenteditable"
+						keepOpen
+						:setReturnFocus="getContenteditable"
 						@select="addEmoji">
 						<NcButton
 							:disabled="disabled"
@@ -83,8 +83,8 @@
 				<div v-if="parentMessage || messageToEdit" class="new-message-form__quote">
 					<MessageQuote
 						:message="messageToEdit ?? parentMessage"
-						:can-cancel="!!parentMessage"
-						:edit-message="!!messageToEdit" />
+						:canCancel="!!parentMessage"
+						:editMessage="!!messageToEdit" />
 				</div>
 
 				<!-- scheduling message hint -->
@@ -121,8 +121,8 @@
 					:disabled="disabled"
 					:error="!!errorTitle"
 					:title="errorTitle"
-					show-trailing-button
-					@trailing-button-click="setCreateThread(false)" />
+					showTrailingButton
+					@trailingButtonClick="setCreateThread(false)" />
 
 				<NcRichContenteditable
 					ref="richContenteditable"
@@ -130,17 +130,17 @@
 					v-model="text"
 					:class="{ 'new-message-form__input-rich--required': errorMessage }"
 					:title="errorMessage"
-					:auto-complete="autoComplete"
+					:autoComplete="autoComplete"
 					:disabled="disabled"
-					:user-data="userData"
-					:menu-container="containerElement"
+					:userData="userData"
+					:menuContainer="containerElement"
 					:placeholder="placeholderText"
 					:aria-label="placeholderText"
 					:dir="text ? 'auto' : undefined"
 					@keydown.esc="handleInputEsc"
 					@keydown.ctrl.up="handleEditLastMessage"
 					@keydown.meta.up="handleEditLastMessage"
-					@update:model-value="handleTyping"
+					@update:modelValue="handleTyping"
 					@paste="handlePastedFiles"
 					@focus="restoreSelectionRange"
 					@blur="preserveSelectionRange"
@@ -150,7 +150,7 @@
 			<!-- Silent chat -->
 			<NcActions
 				v-if="showSendActions"
-				force-menu
+				forceMenu
 				:primary="silentChat"
 				@close="submenu = null">
 				<template #icon>
@@ -160,7 +160,7 @@
 					<NcActionButton
 						v-if="supportScheduleMessages && !dialog"
 						key="action-schedule"
-						is-menu
+						isMenu
 						@click.stop="submenu = 'schedule'">
 						<template #icon>
 							<IconClockOutline :size="20" />
@@ -170,8 +170,8 @@
 					<NcActionButton
 						v-if="isSidebar && showScheduledMessagesToggle"
 						type="checkbox"
-						:model-value="showScheduledMessages"
-						close-after-click
+						:modelValue="showScheduledMessages"
+						closeAfterClick
 						@click="chatExtrasStore.setShowScheduledMessages(!showScheduledMessages)">
 						<template #icon>
 							<IconClockOutline :size="20" />
@@ -181,8 +181,8 @@
 
 					<NcActionButton
 						key="silent-send"
-						close-after-click
-						:model-value="silentChat"
+						closeAfterClick
+						:modelValue="silentChat"
 						:description="silentSendInfo"
 						@click="toggleSilentChat">
 						{{ silentSendLabel }}
@@ -209,7 +209,7 @@
 						v-for="option in getCustomDateOptions()"
 						:key="option.key"
 						:aria-label="option.ariaLabel"
-						close-after-click
+						closeAfterClick
 						@click.stop="chatExtrasStore.setScheduleMessageTime(option.timestamp)">
 						{{ option.label }}
 					</NcActionButton>
@@ -220,7 +220,7 @@
 						:min="new Date()"
 						:label="t('spreed', 'Choose a time')"
 						:step="300"
-						is-native-picker>
+						isNativePicker>
 						<template #icon>
 							<IconCalendarClockOutline :size="20" />
 						</template>
@@ -229,7 +229,7 @@
 					<NcActionButton
 						key="custom-time-submit"
 						:disabled="!customScheduleTimestamp"
-						close-after-click
+						closeAfterClick
 						@click.stop="chatExtrasStore.setScheduleMessageTime(customScheduleTimestamp.valueOf())">
 						<template #icon>
 							<IconCheck :size="20" />
@@ -254,7 +254,7 @@
 				v-if="showAudioRecorder"
 				:disabled="disabled"
 				@recording="handleRecording"
-				@audio-file="handleAudioFile" />
+				@audioFile="handleAudioFile" />
 
 			<!-- Edit -->
 			<template v-else-if="messageToEdit">
@@ -316,7 +316,7 @@
 		<NewMessageNewFileDialog
 			v-if="showNewFileDialog !== -1"
 			:token="token"
-			:show-new-file-dialog="showNewFileDialog"
+			:showNewFileDialog="showNewFileDialog"
 			@dismiss="showNewFileDialog = -1" />
 	</div>
 </template>

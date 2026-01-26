@@ -43,7 +43,7 @@
 		<div v-if="!screenshotModeUrl && !localMediaModel.attributes.videoEnabled && !isSidebar" class="avatar-container">
 			<VideoBackground
 				v-if="isGrid || isStripe"
-				:display-name="displayName"
+				:displayName="displayName"
 				:user="userId" />
 			<AvatarWrapper
 				:id="userId"
@@ -52,8 +52,8 @@
 				:source="actorStore.actorType"
 				:size="avatarSize"
 				:loading="isNotConnected"
-				disable-menu
-				disable-tooltip />
+				disableMenu
+				disableTooltip />
 		</div>
 
 		<div class="bottom-bar">

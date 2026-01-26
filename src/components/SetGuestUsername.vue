@@ -25,10 +25,10 @@
 				:placeholder="t('spreed', 'Guest')"
 				class="username-form__input"
 				:label="t('spreed', 'Display name (required)')"
-				:show-trailing-button="!!guestUserName && !compact"
-				trailing-button-icon="arrowEnd"
-				:trailing-button-label="t('spreed', 'Save name')"
-				@trailing-button-click="!compact ? updateDisplayName() : null"
+				:showTrailingButton="!!guestUserName && !compact"
+				trailingButtonIcon="arrowEnd"
+				:trailingButtonLabel="t('spreed', 'Save name')"
+				@trailingButtonClick="!compact ? updateDisplayName() : null"
 				@keydown.enter="!compact ? updateDisplayName() : null"
 				@keydown.esc="toggleEdit" />
 		</div>

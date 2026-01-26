@@ -56,7 +56,7 @@ onMounted(() => {
 	<div class="main-view">
 		<LobbyScreen v-if="isInLobby" />
 		<template v-else>
-			<TopBar :is-in-call="isInCall" />
+			<TopBar :isInCall="isInCall" />
 			<CallView v-if="isInCall" :token="token" />
 			<ChatView v-else />
 			<PollViewer />

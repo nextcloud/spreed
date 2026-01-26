@@ -24,7 +24,7 @@
 				v-model:server="servers[index]"
 				:index="index"
 				:loading="loading"
-				@remove-server="removeServer"
+				@removeServer="removeServer"
 				@update:server="debounceUpdateServers" />
 		</TransitionWrapper>
 

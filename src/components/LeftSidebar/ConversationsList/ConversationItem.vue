@@ -18,25 +18,25 @@
 		:actions-aria-label="t('spreed', 'Conversation actions')"
 		:to="to"
 		:bold="!!item.unreadMessages"
-		:counter-number="item.unreadMessages"
-		:counter-type="counterType"
-		force-menu
+		:counterNumber="item.unreadMessages"
+		:counterType="counterType"
+		forceMenu
 		:compact="compact"
 		@click="onClick"
-		@update:menu-open="handleActionsMenuOpen">
+		@update:menuOpen="handleActionsMenuOpen">
 		<template #icon>
 			<ConversationIcon
 				:key="item.token"
 				:item="item"
-				:hide-favorite="compact"
-				:hide-call="compact"
-				:hide-user-status="item.type !== CONVERSATION.TYPE.ONE_TO_ONE && compact"
-				:show-user-online-status="compact"
+				:hideFavorite="compact"
+				:hideCall="compact"
+				:hideUserStatus="item.type !== CONVERSATION.TYPE.ONE_TO_ONE && compact"
+				:showUserOnlineStatus="compact"
 				:size="compact ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT" />
 		</template>
 		<template #name>
 			<template v-if="compact && iconType">
-				<component :is="iconType.component" :size="15" :fill-color="iconType.color" />
+				<component :is="iconType.component" :size="15" :fillColor="iconType.color" />
 				<span class="hidden-visually">{{ iconType.text }}</span>
 			</template>
 			<span class="text"> {{ item.displayName }} </span>
@@ -63,10 +63,10 @@
 				<NcActionButton
 					v-if="canFavorite"
 					key="toggle-favorite"
-					close-after-click
+					closeAfterClick
 					@click="toggleFavoriteConversation">
 					<template #icon>
-						<IconStar :size="20" :fill-color="!item.isFavorite ? '#FFCC00' : undefined" />
+						<IconStar :size="20" :fillColor="!item.isFavorite ? '#FFCC00' : undefined" />
 					</template>
 					{{ labelFavorite }}
 				</NcActionButton>
@@ -78,7 +78,7 @@
 					{{ t('spreed', 'Copy link') }}
 				</NcActionButton>
 
-				<NcActionButton key="toggle-read" close-after-click @click="toggleReadConversation">
+				<NcActionButton key="toggle-read" closeAfterClick @click="toggleReadConversation">
 					<template #icon>
 						<IconEyeOutline v-if="item.unreadMessages" :size="20" />
 						<IconEyeOffOutline v-else :size="20" />
@@ -88,7 +88,7 @@
 
 				<NcActionButton
 					key="show-notifications"
-					is-menu
+					isMenu
 					@click="submenu = 'notifications'">
 					<template #icon>
 						<IconBellOutline :size="20" />
@@ -96,7 +96,7 @@
 					{{ t('spreed', 'Notifications') }}
 				</NcActionButton>
 
-				<NcActionButton key="show-settings" close-after-click @click="showConversationSettings">
+				<NcActionButton key="show-settings" closeAfterClick @click="showConversationSettings">
 					<template #icon>
 						<IconCogOutline :size="20" />
 					</template>
@@ -106,7 +106,7 @@
 				<NcActionButton
 					v-if="supportsArchive"
 					key="toggle-archive"
-					close-after-click
+					closeAfterClick
 					@click="toggleArchiveConversation">
 					<template #icon>
 						<IconArchiveOutline v-if="!item.isArchived" :size="20" />
@@ -118,7 +118,7 @@
 				<NcActionButton
 					v-if="item.canLeaveConversation"
 					key="leave-conversation"
-					close-after-click
+					closeAfterClick
 					@click="leaveConversation">
 					<template #icon>
 						<IconExitToApp :size="20" />
@@ -129,7 +129,7 @@
 				<NcActionButton
 					v-if="item.canDeleteConversation"
 					key="delete-conversation"
-					close-after-click
+					closeAfterClick
 					class="critical"
 					@click="deleteConversation">
 					<template #icon>
@@ -154,7 +154,7 @@
 				<NcActionButton
 					v-for="level in notificationLevels"
 					:key="level.value"
-					:model-value="notificationLevel"
+					:modelValue="notificationLevel"
 					:value="level.value.toString()"
 					type="radio"
 					@click="setNotificationLevel(level.value)">
@@ -170,7 +170,7 @@
 					<NcActionButton
 						key="notification-calls"
 						type="checkbox"
-						:model-value="notificationCalls"
+						:modelValue="notificationCalls"
 						@click="setNotificationCalls(!notificationCalls)">
 						<template #icon>
 							<IconPhoneRingOutline :size="20" />
@@ -187,7 +187,7 @@
 						key="toggle-important"
 						type="checkbox"
 						:description="labelImportantHint"
-						:model-value="item.isImportant"
+						:modelValue="item.isImportant"
 						@click="toggleImportant(!item.isImportant)">
 						<template #icon>
 							<IconMessageAlertOutline :size="20" />
@@ -199,7 +199,7 @@
 						key="toggle-sensitive"
 						type="checkbox"
 						:description="t('spreed', 'Hide message text')"
-						:model-value="item.isSensitive"
+						:modelValue="item.isSensitive"
 						@click="toggleSensitive(!item.isSensitive)">
 						<template #icon>
 							<IconShieldLockOutline :size="20" />
@@ -211,7 +211,7 @@
 		</template>
 
 		<template v-else-if="item.token" #actions>
-			<NcActionButton key="join-conversation" close-after-click @click="onActionClick">
+			<NcActionButton key="join-conversation" closeAfterClick @click="onActionClick">
 				<template #icon>
 					<IconArrowRight class="bidirectional-icon" :size="20" />
 				</template>

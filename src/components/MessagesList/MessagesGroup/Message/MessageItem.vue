@@ -22,22 +22,22 @@
 		@mouseleave="handleMouseleave">
 		<div class="message-body">
 			<MessageBody
-				:rich-parameters="richParameters"
-				:is-deleting="isDeleting"
-				:has-call="conversation.hasCall"
+				:richParameters="richParameters"
+				:isDeleting="isDeleting"
+				:hasCall="conversation.hasCall"
 				:message="message"
-				:read-info="readInfo"
-				:is-short-simple-message
-				:is-self-actor>
+				:readInfo="readInfo"
+				:isShortSimpleMessage
+				:isSelfActor>
 				<!-- reactions buttons and popover with details -->
 				<ReactionsWrapper
 					v-if="Object.keys(message.reactions).length"
 					:id="message.id"
 					:token="message.token"
-					:can-react="canReact"
-					:show-controls="isHovered || isFollowUpEmojiPickerOpen"
-					:is-self-actor
-					@emoji-picker-toggled="toggleFollowUpEmojiPicker" />
+					:canReact="canReact"
+					:showControls="isHovered || isFollowUpEmojiPickerOpen"
+					:isSelfActor
+					@emojiPickerToggled="toggleFollowUpEmojiPicker" />
 			</MessageBody>
 		</div>
 
@@ -51,25 +51,25 @@
 			<template v-if="showMessageButtonsBar">
 				<ScheduledMessageActions
 					v-if="showScheduledMessages"
-					v-model:is-action-menu-open="isActionMenuOpen"
+					v-model:isActionMenuOpen="isActionMenuOpen"
 					:message="message"
 					class="message-buttons-bar"
 					:class="{ outlined: buttonsBarOutlined }"
 					@edit="handleEdit" />
 				<MessageButtonsBar
 					v-else
-					v-model:is-action-menu-open="isActionMenuOpen"
-					v-model:is-emoji-picker-open="isEmojiPickerOpen"
-					v-model:is-reactions-menu-open="isReactionsMenuOpen"
-					v-model:is-forwarder-open="isForwarderOpen"
+					v-model:isActionMenuOpen="isActionMenuOpen"
+					v-model:isEmojiPickerOpen="isEmojiPickerOpen"
+					v-model:isReactionsMenuOpen="isReactionsMenuOpen"
+					v-model:isForwarderOpen="isForwarderOpen"
 					class="message-buttons-bar"
 					:class="{ outlined: buttonsBarOutlined }"
-					:is-translation-available="isTranslationAvailable"
-					:can-react="canReact"
+					:isTranslationAvailable="isTranslationAvailable"
+					:canReact="canReact"
 					:message="message"
-					:previous-message-id="previousMessageId"
-					:read-info="readInfo"
-					@show-translate-dialog="isTranslateDialogOpen = true"
+					:previousMessageId="previousMessageId"
+					:readInfo="readInfo"
+					@showTranslateDialog="isTranslateDialogOpen = true"
 					@reply="handleReply"
 					@edit="handleEdit"
 					@delete="handleDelete" />
@@ -92,7 +92,7 @@
 		<MessageTranslateDialog
 			v-if="isTranslationAvailable && isTranslateDialogOpen"
 			:message="message.message"
-			:rich-parameters="richParameters"
+			:richParameters="richParameters"
 			@close="isTranslateDialogOpen = false" />
 	</li>
 </template>

@@ -6,18 +6,18 @@
 <template>
 	<div>
 		<NcSelect
-			:model-value="currentRoom"
+			:modelValue="currentRoom"
 			:options="roomOptions"
 			:aria-label-combobox="t('spreed', 'Select a conversation')"
 			label="displayName"
-			@update:model-value="newValue => emitEvents(currentMode.id, newValue.token)" />
+			@update:modelValue="newValue => emitEvents(currentMode.id, newValue.token)" />
 
 		<NcSelect
-			:model-value="currentMode"
+			:modelValue="currentMode"
 			:options="modeOptions"
 			:aria-label-combobox="t('spreed', 'Select a mode')"
 			label="text"
-			@update:model-value="newValue => emitEvents(newValue.id, currentRoom.token)" />
+			@update:modelValue="newValue => emitEvents(newValue.id, currentRoom.token)" />
 	</div>
 </template>
 

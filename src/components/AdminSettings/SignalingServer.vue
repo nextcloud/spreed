@@ -15,9 +15,9 @@
 			:label="t('spreed', 'High-performance backend URL')" />
 
 		<NcCheckboxRadioSwitch
-			:model-value="verify"
+			:modelValue="verify"
 			class="signaling-server__checkbox"
-			@update:model-value="updateVerify">
+			@update:modelValue="updateVerify">
 			{{ t('spreed', 'Validate SSL certificate') }}
 		</NcCheckboxRadioSwitch>
 
@@ -34,9 +34,9 @@
 
 		<span v-if="server" class="test-connection">
 			<NcLoadingIcon v-if="!checked" :size="20" />
-			<IconAlertCircleOutline v-else-if="errorMessage" :size="20" fill-color="var(--color-border-error)" />
-			<IconAlertCircleOutline v-else-if="warningMessage" :size="20" fill-color="var(--color-favorite)" />
-			<IconCheck v-else :size="20" fill-color="var(--color-border-success)" />
+			<IconAlertCircleOutline v-else-if="errorMessage" :size="20" fillColor="var(--color-border-error)" />
+			<IconAlertCircleOutline v-else-if="warningMessage" :size="20" fillColor="var(--color-favorite)" />
+			<IconCheck v-else :size="20" fillColor="var(--color-border-success)" />
 			{{ connectionState }}
 
 			<NcButton

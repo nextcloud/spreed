@@ -11,8 +11,8 @@
 		:class="{ 'participant--offline': isOffline }"
 		:aria-label="participantAriaLabel"
 		:actions-aria-label="participantSettingsAriaLabel"
-		force-display-actions
-		force-menu>
+		forceDisplayActions
+		forceMenu>
 		<!-- Participant's avatar -->
 		<template #icon>
 			<AvatarWrapper
@@ -21,9 +21,9 @@
 				:token="token"
 				:name="computedName"
 				:source="participant.actorType"
-				disable-tooltip
-				:show-user-status="showUserStatus"
-				:preloaded-user-status="preloadedUserStatus"
+				disableTooltip
+				:showUserStatus="showUserStatus"
+				:preloadedUserStatus="preloadedUserStatus"
 				:highlighted="isSpeakingStatusAvailable && isParticipantSpeaking"
 				:offline="isOffline" />
 		</template>
@@ -78,7 +78,7 @@
 						:disabled="disabled"
 						container="#tab-participants"
 						dialing
-						@dial-type="dialType" />
+						@dialType="dialType" />
 				</template>
 			</template>
 
@@ -131,7 +131,7 @@
 			<NcActionButton
 				v-if="canBeDemoted"
 				key="demote-moderator"
-				close-after-click
+				closeAfterClick
 				@click="demoteFromModerator">
 				<template #icon>
 					<IconAccountOutline :size="20" />
@@ -141,7 +141,7 @@
 			<NcActionButton
 				v-else-if="canBePromoted"
 				key="promote-moderator"
-				close-after-click
+				closeAfterClick
 				@click="promoteToModerator">
 				<template #icon>
 					<IconCrownOutline :size="20" />
@@ -151,7 +151,7 @@
 			<NcActionButton
 				v-if="canBeModerated && isEmailActor"
 				key="resend-invitation"
-				close-after-click
+				closeAfterClick
 				@click="resendInvitation">
 				<template #icon>
 					<IconEmailOutline :size="20" />
@@ -161,7 +161,7 @@
 			<NcActionButton
 				v-if="canSendCallNotification"
 				key="send-call-notification"
-				close-after-click
+				closeAfterClick
 				@click="sendCallNotification">
 				<template #icon>
 					<IconBellOutline :size="20" />
@@ -172,7 +172,7 @@
 				<NcActionButton
 					v-if="!conversation.hasCall && !isInCall && !participant.callId"
 					key="dial-out-phone-number"
-					close-after-click
+					closeAfterClick
 					@click="dialOutPhoneNumber">
 					<template #icon>
 						<IconPhoneDialOutline :size="20" />
@@ -183,7 +183,7 @@
 					<NcActionButton
 						v-if="phoneMuteState === 'hold'"
 						key="resume-call-phone-number"
-						close-after-click
+						closeAfterClick
 						@click="unmutePhoneNumber">
 						<template #icon>
 							<IconPhoneInTalkOutline :size="20" />
@@ -193,7 +193,7 @@
 					<template v-else>
 						<NcActionButton
 							key="hold-call-phone-number"
-							close-after-click
+							closeAfterClick
 							@click="holdPhoneNumber">
 							<template #icon>
 								<IconPhonePausedOutline :size="20" />
@@ -203,7 +203,7 @@
 						<NcActionButton
 							v-if="phoneMuteState === 'muted'"
 							key="unmute-call-phone-number"
-							close-after-click
+							closeAfterClick
 							@click="unmutePhoneNumber">
 							<template #icon>
 								<IconMicrophoneOutline :size="20" />
@@ -213,7 +213,7 @@
 						<NcActionButton
 							v-else
 							key="mute-call-phone-number"
-							close-after-click
+							closeAfterClick
 							@click="mutePhoneNumber">
 							<template #icon>
 								<NcIconSvgWrapper :svg="IconMicrophoneOffOutline" :size="20" />
@@ -224,7 +224,7 @@
 				</template>
 				<NcActionButton
 					key="copy-phone-number"
-					close-after-click
+					closeAfterClick
 					@click="copyPhoneNumber">
 					<template #icon>
 						<IconContentCopy :size="20" />
@@ -240,7 +240,7 @@
 				<NcActionButton
 					v-if="hasNonDefaultPermissions"
 					key="reset-permissions"
-					close-after-click
+					closeAfterClick
 					@click="applyDefaultPermissions">
 					<template #icon>
 						<IconLockReset :size="20" />
@@ -249,7 +249,7 @@
 				</NcActionButton>
 				<NcActionButton
 					key="grant-all-permissions"
-					close-after-click
+					closeAfterClick
 					@click="grantAllPermissions">
 					<template #icon>
 						<IconLockOpenVariantOutline :size="20" />
@@ -258,7 +258,7 @@
 				</NcActionButton>
 				<NcActionButton
 					key="remove-all-permissions"
-					close-after-click
+					closeAfterClick
 					@click="removeAllPermissions">
 					<template #icon>
 						<IconLockOutline :size="20" />
@@ -267,7 +267,7 @@
 				</NcActionButton>
 				<NcActionButton
 					key="edit-permissions"
-					close-after-click
+					closeAfterClick
 					@click="permissionsEditor = true">
 					<template #icon>
 						<IconPencilOutline :size="20" />
@@ -283,7 +283,7 @@
 				v-if="canBeModerated"
 				key="remove-participant"
 				class="critical"
-				close-after-click
+				closeAfterClick
 				@click="isRemoveDialogOpen = true">
 				<template #icon>
 					<IconTrashCanOutline :size="20" />
@@ -295,8 +295,8 @@
 		<template #extra>
 			<ParticipantPermissionsEditor
 				v-if="showPermissionsOptions && permissionsEditor"
-				:actor-id="participant.actorId"
-				close-after-click
+				:actorId="participant.actorId"
+				closeAfterClick
 				:participant="participant"
 				:token="token"
 				@close="permissionsEditor = false" />
@@ -319,7 +319,7 @@
 							resize="vertical"
 							:label="t('spreed', 'Internal note (reason to ban)')"
 							:error="!!maxLengthWarning"
-							:helper-text="maxLengthWarning" />
+							:helperText="maxLengthWarning" />
 					</template>
 				</template>
 				<template #actions>

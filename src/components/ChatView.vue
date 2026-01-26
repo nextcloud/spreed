@@ -27,11 +27,11 @@
 			<ThreadHeader v-if="isSidebar && threadId" standalone />
 
 			<MessagesList
-				v-model:is-chat-scrolled-to-bottom="isChatScrolledToBottom"
+				v-model:isChatScrolledToBottom="isChatScrolledToBottom"
 				role="region"
 				:aria-label="t('spreed', 'Conversation messages')"
 				:token="token"
-				:is-visible="isVisible" />
+				:isVisible="isVisible" />
 		</div>
 
 		<div class="scroll-to-bottom">
@@ -54,7 +54,7 @@
 		<NewMessage
 			role="region"
 			:token="token"
-			has-typing-indicator
+			hasTypingIndicator
 			:aria-label="t('spreed', 'Post message')" />
 
 		<!-- File upload dialog -->

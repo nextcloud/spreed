@@ -41,19 +41,19 @@
 				:arguments="richParameters"
 				autolink
 				dir="auto"
-				:reference-limit="0" />
+				:referenceLimit="0" />
 
 			<!-- Additional controls -->
 			<CallButton v-if="showJoinCallButton" class="call-button" />
 			<ConversationActionsShortcut
 				v-else-if="showConversationActionsShortcut"
 				:token="message.token"
-				:object-type="conversation.objectType"
-				:is-highlighted="isLastMessage" />
+				:objectType="conversation.objectType"
+				:isHighlighted="isLastMessage" />
 			<PollCard
 				v-else-if="showResultsButton"
 				:token="message.token"
-				show-as-button
+				showAsButton
 				v-bind="message.messageParameters.poll" />
 		</div>
 
@@ -73,10 +73,10 @@
 				autolink
 				dir="auto"
 				:interactive="message.markdown && isEditable"
-				:use-extended-markdown="message.markdown"
-				:reference-limit="1"
-				reference-interactive-opt-in
-				@interact-todo="handleInteraction" />
+				:useExtendedMarkdown="message.markdown"
+				:referenceLimit="1"
+				referenceInteractiveOptIn
+				@interactTodo="handleInteraction" />
 		</div>
 
 		<!-- Additional message info-->
@@ -92,8 +92,8 @@
 					:name="message.lastEditActorDisplayName"
 					:source="message.lastEditActorType"
 					:size="14"
-					disable-menu
-					disable-tooltip />
+					disableMenu
+					disableTooltip />
 			</span>
 			<span class="date" :class="{ 'date--hidden': hideDate }" :title="messageDate">{{ messageTime }}</span>
 

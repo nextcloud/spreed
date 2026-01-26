@@ -15,10 +15,10 @@
 			v-for="reaction in reactionsSorted"
 			:key="reaction"
 			:delay="200"
-			no-focus-trap
+			noFocusTrap
 			:triggers="['hover']"
-			:popper-triggers="['hover']"
-			@after-show="fetchReactions">
+			:popperTriggers="['hover']"
+			@afterShow="fetchReactions">
 			<template #trigger>
 				<NcButton
 					:variant="userHasReacted(reaction) ? 'primary' : 'secondary'"
@@ -65,10 +65,10 @@
 		<!-- More reactions picker -->
 		<NcEmojiPicker
 			v-if="canReact && showControls"
-			:per-line="5"
+			:perLine="5"
 			@select="handleReactionClick"
-			@after-show="emitEmojiPickerStatus"
-			@after-hide="emitEmojiPickerStatus">
+			@afterShow="emitEmojiPickerStatus"
+			@afterHide="emitEmojiPickerStatus">
 			<NcButton
 				size="small"
 				class="reaction-button--trigger"
@@ -83,8 +83,8 @@
 		<ReactionsList
 			v-if="showAllReactions"
 			:token="token"
-			:detailed-reactions="detailedReactions"
-			:reactions-sorted="reactionsSorted"
+			:detailedReactions="detailedReactions"
+			:reactionsSorted="reactionsSorted"
 			@close="showAllReactions = false" />
 	</div>
 </template>

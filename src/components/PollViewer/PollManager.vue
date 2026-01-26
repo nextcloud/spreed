@@ -83,7 +83,7 @@ function openPollEditor(payload: Events['poll-editor-open']) {
 			v-if="showPollEditor"
 			ref="pollEditorRef"
 			:token="token"
-			:can-create-poll-drafts="canCreatePollDrafts"
+			:canCreatePollDrafts="canCreatePollDrafts"
 			:container="container"
 			@close="showPollEditor = false" />
 		<!-- Poll drafts dialog -->
@@ -91,7 +91,7 @@ function openPollEditor(payload: Events['poll-editor-open']) {
 			v-if="canCreatePollDrafts && showPollDraftHandler"
 			:token="token"
 			:container="container"
-			:editor-opened="showPollEditor"
+			:editorOpened="showPollEditor"
 			@close="showPollDraftHandler = false" />
 	</div>
 </template>

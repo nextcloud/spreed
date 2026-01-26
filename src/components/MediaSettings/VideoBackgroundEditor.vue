@@ -54,7 +54,7 @@
 				<IconCheckBold
 					v-if="selectedBackground === path"
 					:size="40"
-					fill-color="#fff" />
+					fillColor="#fff" />
 			</button>
 		</template>
 		<!--native file picker, hidden -->
