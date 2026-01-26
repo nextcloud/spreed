@@ -170,7 +170,7 @@
 
 	<openmetrics>
 		<exporter>OCA\Talk\OpenMetrics\ActiveCalls</exporter>
-		<exporter>OCA\Talk\OpenMetrics\SessionsInCalls</exporter>
+		<exporter>OCA\Talk\OpenMetrics\InCallSessions</exporter>
 	</openmetrics>
 
 </info>
