@@ -16,7 +16,7 @@ use OCP\OpenMetrics\Metric;
 use OCP\OpenMetrics\MetricType;
 use Override;
 
-class SessionsInCalls implements IMetricFamily {
+class InCallSessions implements IMetricFamily {
 	public function __construct(
 		private MetricsService $metricsService,
 	) {
@@ -24,7 +24,7 @@ class SessionsInCalls implements IMetricFamily {
 
 	#[Override]
 	public function name(): string {
-		return 'talk_sessions_in_calls';
+		return 'talk_in_call_sessions';
 	}
 
 	#[Override]
