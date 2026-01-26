@@ -38,10 +38,10 @@
 			</NcButton>
 			<NcActions
 				v-else
-				force-menu
+				forceMenu
 				open
 				placement="bottom-end"
-				:boundaries-element="boundariesElement"
+				:boundariesElement="boundariesElement"
 				@close="onMenuClose">
 				<template v-if="submenu === null">
 					<!-- Message timestamp -->
@@ -85,7 +85,7 @@
 					<NcActionButton
 						v-if="supportReminders && !isCurrentGuest"
 						key="set-reminder-menu"
-						is-menu
+						isMenu
 						@click.stop="submenu = 'reminder'">
 						<template #icon>
 							<IconAlarm :size="20" />
@@ -95,7 +95,7 @@
 					<NcActionButton
 						v-if="isPrivateReplyable"
 						key="reply-privately"
-						close-after-click
+						closeAfterClick
 						@click.stop="handlePrivateReply">
 						<template #icon>
 							<IconAccountOutline :size="20" />
@@ -106,7 +106,7 @@
 						v-if="isEditable"
 						key="edit-message"
 						:aria-label="t('spreed', 'Edit message')"
-						close-after-click
+						closeAfterClick
 						@click.stop="editMessage">
 						<template #icon>
 							<IconPencilOutline :size="20" />
@@ -116,7 +116,7 @@
 					<NcActionButton
 						v-if="!isFileShareWithoutCaption"
 						key="copy-message"
-						close-after-click
+						closeAfterClick
 						@click.stop="handleCopyMessageText">
 						<template #icon>
 							<IconContentCopy :size="20" />
@@ -125,7 +125,7 @@
 					</NcActionButton>
 					<NcActionButton
 						key="copy-message-link"
-						close-after-click
+						closeAfterClick
 						@click.stop="handleCopyMessageLink">
 						<template #icon>
 							<IconOpenInNew :size="20" />
@@ -134,7 +134,7 @@
 					</NcActionButton>
 					<NcActionButton
 						key="mark-as-unread"
-						close-after-click
+						closeAfterClick
 						@click.stop="handleMarkAsUnread">
 						<template #icon>
 							<IconEyeOffOutline :size="20" />
@@ -153,7 +153,7 @@
 							v-if="!hideDownloadOption"
 							:href="linkToFileDownload"
 							:download="messageFile.name"
-							close-after-click>
+							closeAfterClick>
 							<template #icon>
 								<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
 							</template>
@@ -163,7 +163,7 @@
 					<template v-if="isThreadStarterMessage">
 						<NcActionSeparator />
 						<NcActionButton
-							close-after-click
+							closeAfterClick
 							@click="threadId = message.threadId">
 							<template #icon>
 								<IconForumOutline :size="20" />
@@ -173,7 +173,7 @@
 						<NcActionButton
 							v-if="isModeratorOrOwner"
 							key="edit-thread"
-							close-after-click
+							closeAfterClick
 							@click.stop="renameThread">
 							<template #icon>
 								<IconPencilOutline :size="20" />
@@ -184,7 +184,7 @@
 					<NcActionButton
 						v-if="canForwardMessage && !isInNoteToSelf"
 						key="forward-to-note"
-						close-after-click
+						closeAfterClick
 						@click="forwardToNote">
 						<template #icon>
 							<IconNoteEditOutline :size="20" />
@@ -194,7 +194,7 @@
 					<NcActionButton
 						v-if="canForwardMessage"
 						key="forward-message"
-						close-after-click
+						closeAfterClick
 						@click.stop="openForwarder">
 						<template #icon>
 							<IconArrowRightTop class="bidirectional-icon" :size="20" />
@@ -206,14 +206,14 @@
 						v-for="action in messageActions"
 						:key="action.label"
 						:icon="action.icon"
-						close-after-click
+						closeAfterClick
 						@click="handleMessageAction(action)">
 						{{ action.label }}
 					</NcActionButton>
 					<NcActionButton
 						v-if="isTranslationAvailable && !isFileShareWithoutCaption"
 						key="translate-message"
-						close-after-click
+						closeAfterClick
 						@click.stop="$emit('showTranslateDialog', true)"
 						@close="$emit('showTranslateDialog', false)">
 						<template #icon>
@@ -225,7 +225,7 @@
 						<NcActionSeparator />
 						<NcActionButton
 							key="delete-message"
-							close-after-click
+							closeAfterClick
 							@click.stop="handleDelete">
 							<template #icon>
 								<IconTrashCanOutline :size="20" />
@@ -249,7 +249,7 @@
 					<NcActionButton
 						v-if="currentReminder"
 						key="remove-reminder"
-						close-after-click
+						closeAfterClick
 						@click.stop="removeReminder">
 						<template #icon>
 							<IconCloseCircleOutline :size="20" />
@@ -263,7 +263,7 @@
 						v-for="option in reminderOptions"
 						:key="option.key"
 						:aria-label="option.ariaLabel"
-						close-after-click
+						closeAfterClick
 						@click.stop="setReminder(option.timestamp)">
 						{{ option.label }}
 					</NcActionButton>
@@ -274,7 +274,7 @@
 					<NcActionInput
 						v-model="customReminderDateTime"
 						type="datetime-local"
-						is-native-picker
+						isNativePicker
 						:min="new Date()">
 						<template #icon>
 							<IconCalendarClockOutline :size="20" />
@@ -284,7 +284,7 @@
 					<NcActionButton
 						key="set-reminder"
 						:aria-label="t('spreed', 'Set custom reminder')"
-						close-after-click
+						closeAfterClick
 						@click.stop="setReminder(customReminderTimestamp)">
 						<template #icon>
 							<IconCheck :size="20" />
@@ -319,8 +319,8 @@
 				:boundary="boundariesElement"
 				placement="auto"
 				@select="handleReactionClick"
-				@after-show="onEmojiPickerOpen"
-				@after-hide="onEmojiPickerClose">
+				@afterShow="onEmojiPickerOpen"
+				@afterHide="onEmojiPickerClose">
 				<NcButton
 					variant="tertiary"
 					:aria-label="t('spreed', 'React with another emoji')">

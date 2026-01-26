@@ -8,8 +8,8 @@
 		<NcUserBubble
 			v-if="size"
 			:key="isDarkTheme ? 'dark' : 'light'"
-			:display-name="name"
-			:avatar-image="avatarUrl"
+			:displayName="name"
+			:avatarImage="avatarUrl"
 			:user="id"
 			:size="size"
 			:primary="primary" />

@@ -26,7 +26,7 @@
 				v-model:protocols="servers[index].protocols"
 				:index="index"
 				:loading="loading"
-				@remove-server="removeServer"
+				@removeServer="removeServer"
 				@update:schemes="debounceUpdateServers"
 				@update:server="debounceUpdateServers"
 				@update:secret="debounceUpdateServers"

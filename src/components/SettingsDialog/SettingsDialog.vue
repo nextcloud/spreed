@@ -7,7 +7,7 @@
 	<NcAppSettingsDialog
 		v-model:open="showSettings"
 		:name="t('spreed', 'App settings')"
-		show-navigation>
+		showNavigation>
 		<!-- Custom settings sections registered via OCA.Talk.Settings -->
 		<NcAppSettingsSection
 			v-for="{ id, name, element } in customSettingsSections"
@@ -23,21 +23,21 @@
 			<NcFormBox>
 				<NcFormBoxSwitch
 					v-if="supportStartWithoutMedia"
-					:model-value="startWithoutMediaEnabled"
+					:modelValue="startWithoutMediaEnabled"
 					:label="t('spreed', 'Turn camera and microphone off by default')"
 					:disabled="mediaLoading"
-					@update:model-value="toggleStartWithoutMedia" />
+					@update:modelValue="toggleStartWithoutMedia" />
 				<NcFormBoxSwitch
 					v-if="supportDefaultBlurVirtualBackground"
-					:model-value="settingsStore.blurVirtualBackgroundEnabled"
+					:modelValue="settingsStore.blurVirtualBackgroundEnabled"
 					:label="t('spreed', 'Blur camera background by default')"
-					@update:model-value="setBlurVirtualBackgroundEnabled" />
+					@update:modelValue="setBlurVirtualBackgroundEnabled" />
 				<NcFormBoxSwitch
 					v-if="!isGuest"
-					:model-value="hideMediaSettings"
+					:modelValue="hideMediaSettings"
 					:label="t('spreed', 'Skip device preview before joining a call')"
 					:description="t('spreed', 'Always shown if recording consent is required')"
-					@update:model-value="setHideMediaSettings" />
+					@update:modelValue="setHideMediaSettings" />
 			</NcFormBox>
 
 			<NcButton
@@ -56,18 +56,18 @@
 			:name="t('spreed', 'Appearance & Sounds')">
 			<NcFormBoxSwitch
 				v-if="!isGuest && supportConversationsListStyle"
-				:model-value="conversationsListStyle"
+				:modelValue="conversationsListStyle"
 				:label="t('spreed', 'Compact conversations list')"
 				:disabled="appearanceLoading"
-				@update:model-value="toggleConversationsListStyle" />
+				@update:modelValue="toggleConversationsListStyle" />
 
 			<NcFormBox>
 				<NcFormBoxSwitch
-					:model-value="shouldPlaySounds"
+					:modelValue="shouldPlaySounds"
 					:label="t('spreed', 'Play sounds when participants join or leave a call')"
 					:description="t('spreed', 'Currently not available on iPhone and iPad due to technical restrictions by the manufacturer')"
 					:disabled="playSoundsLoading"
-					@update:model-value="togglePlaySounds" />
+					@update:modelValue="togglePlaySounds" />
 				<NcFormBoxButton
 					v-if="!isGuest"
 					:label="t('spreed', 'Notification settings')"
@@ -83,18 +83,18 @@
 			:name="t('spreed', 'Privacy')">
 			<NcFormBox>
 				<NcFormBoxSwitch
-					:model-value="readStatusPrivacyIsPublic"
+					:modelValue="readStatusPrivacyIsPublic"
 					:label="t('spreed', 'Send read receipts')"
 					:description="t('spreed', 'When off, all read statuses will be hidden')"
 					:disabled="privacyLoading"
-					@update:model-value="toggleReadStatusPrivacy" />
+					@update:modelValue="toggleReadStatusPrivacy" />
 				<NcFormBoxSwitch
 					v-if="supportTypingStatus"
-					:model-value="typingStatusPrivacyIsPublic"
+					:modelValue="typingStatusPrivacyIsPublic"
 					:label="t('spreed', 'Share typing status')"
 					:description="t('spreed', 'When off, all typing indicators will be hidden')"
 					:disabled="privacyLoading"
-					@update:model-value="toggleTypingStatusPrivacy" />
+					@update:modelValue="toggleTypingStatusPrivacy" />
 			</NcFormBox>
 		</NcAppSettingsSection>
 
@@ -105,7 +105,7 @@
 			<NcFormBoxButton
 				:label="t('spreed', 'Attachments folder')"
 				:description="attachmentFolder"
-				inverted-accent
+				invertedAccent
 				@click="showFilePicker">
 				<template #icon>
 					<IconFolderOpenOutline :size="20" />

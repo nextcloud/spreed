@@ -28,10 +28,10 @@
 				:offline="isOffline"
 				:item="conversation"
 				:size="!isSidebar ? AVATAR.SIZE.DEFAULT : AVATAR.SIZE.COMPACT"
-				:disable-menu="false"
-				show-user-online-status
-				:hide-favorite="false"
-				:hide-call="false" />
+				:disableMenu="false"
+				showUserOnlineStatus
+				:hideFavorite="false"
+				:hideCall="false" />
 		</a>
 
 		<ThreadHeader v-if="!isInCall && threadId" class="top-bar__wrapper" />
@@ -59,10 +59,10 @@
 					</p>
 					<NcPopover
 						v-if="conversation.description"
-						no-focus-trap
+						noFocusTrap
 						:delay="500"
 						:boundary="boundaryElement"
-						:popper-triggers="['hover']"
+						:popperTriggers="['hover']"
 						:triggers="['hover']">
 						<template #trigger="{ attrs }">
 							<p
@@ -75,7 +75,7 @@
 						<NcRichText
 							class="description__popover"
 							:text="conversation.description"
-							use-extended-markdown />
+							useExtendedMarkdown />
 					</NcPopover>
 				</div>
 			</a>
@@ -113,11 +113,11 @@
 			<!-- TopBar menu -->
 			<TopBarMenu
 				:token="token"
-				:show-actions="!isSidebar"
-				:is-sidebar="isSidebar"
-				@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
+				:showActions="!isSidebar"
+				:isSidebar="isSidebar"
+				@openBreakoutRoomsEditor="showBreakoutRoomsEditor = true" />
 
-			<CallButton v-if="!isInCall" shrink-on-mobile />
+			<CallButton v-if="!isInCall" shrinkOnMobile />
 
 			<!-- Breakout rooms editor -->
 			<BreakoutRoomsEditor

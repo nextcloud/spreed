@@ -6,7 +6,7 @@
 <template>
 	<NcModal
 		size="large"
-		:label-id="dialogHeaderId"
+		:labelId="dialogHeaderId"
 		@close="$emit('close')">
 		<div class="shared-items-browser">
 			<h2 :id="dialogHeaderId" class="hidden-visually">

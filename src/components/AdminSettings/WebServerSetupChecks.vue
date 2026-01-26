@@ -21,8 +21,8 @@
 					:aria-label="virtualBackgroundAvailableAriaLabel"
 					@click="checkVirtualBackground">
 					<template #icon>
-						<IconAlertCircleOutline v-if="virtualBackgroundAvailable === false" :size="20" fill-color="var(--color-border-error)" />
-						<IconCheck v-else-if="virtualBackgroundAvailable === true" :size="20" fill-color="var(--color-border-success)" />
+						<IconAlertCircleOutline v-if="virtualBackgroundAvailable === false" :size="20" fillColor="var(--color-border-error)" />
+						<IconCheck v-else-if="virtualBackgroundAvailable === true" :size="20" fillColor="var(--color-border-success)" />
 						<NcLoadingIcon v-else :size="20" />
 					</template>
 				</NcButton>

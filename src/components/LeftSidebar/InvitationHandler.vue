@@ -8,7 +8,7 @@
 		v-model:open="modal"
 		:name="t('spreed', 'Pending invitations')"
 		size="normal"
-		close-on-click-outside>
+		closeOnClickOutside>
 		<div class="inbox">
 			<p class="inbox__disclaimer">
 				{{ t('spreed', 'Join conversations from remote Nextcloud servers') }}
@@ -18,7 +18,7 @@
 					v-for="(item, id) in invitations"
 					:key="`invitation_${id}`"
 					class="inbox__item">
-					<ConversationIcon :item="item" hide-user-status />
+					<ConversationIcon :item="item" hideUserStatus />
 					<div class="inbox__item-desc">
 						<span class="inbox__item-desc__name">
 							{{ item.roomName }}
@@ -27,7 +27,7 @@
 							class="inbox__item-desc__subname"
 							:text="t('spreed', 'From {user} at {remoteServer}', { remoteServer: item.remoteServer })"
 							:arguments="getRichParameters(item)"
-							:reference-limit="0" />
+							:referenceLimit="0" />
 					</div>
 					<NcButton
 						variant="tertiary"

@@ -44,14 +44,14 @@
 		</div>
 		<ScreenShare
 			v-if="showSharedScreen"
-			:is-big="isBig"
+			:isBig="isBig"
 			:token="token"
-			:call-participant-model="model"
-			:shared-data="sharedData" />
+			:callParticipantModel="model"
+			:sharedData="sharedData" />
 		<div
 			v-if="showBackgroundAndAvatar"
 			class="avatar-container">
-			<VideoBackground :display-name="displayName" :user="participantUserId" />
+			<VideoBackground :displayName="displayName" :user="participantUserId" />
 			<AvatarWrapper
 				:id="participantUserId"
 				:token="token"
@@ -59,13 +59,13 @@
 				:source="participantActorType"
 				:size="avatarSize"
 				:loading="isLoading"
-				disable-menu
-				disable-tooltip />
+				disableMenu
+				disableTooltip />
 		</div>
 		<div
 			v-if="showPlaceholderForPromoted"
 			class="placeholder-for-promoted">
-			<IconAccountCircleOutline v-if="isPromoted || isSelected" fill-color="#FFFFFF" :size="64" />
+			<IconAccountCircleOutline v-if="isPromoted || isSelected" fillColor="#FFFFFF" :size="64" />
 		</div>
 		<div
 			v-if="connectionMessage"
@@ -73,12 +73,12 @@
 			class="connection-message">
 			{{ connectionMessage }}
 		</div>
-		<slot v-if="!hideBottomBar" name="bottom-bar">
+		<slot v-if="!hideBottomBar" name="bottomBar">
 			<VideoBottomBar
-				:has-shadow="hasVideo"
-				:participant-name="participantName"
+				:hasShadow="hasVideo"
+				:participantName="participantName"
 				v-bind="$props"
-				@bottom-bar-hover="handleHoverEvent" />
+				@bottomBarHover="handleHoverEvent" />
 		</slot>
 	</div>
 </template>

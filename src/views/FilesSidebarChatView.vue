@@ -11,7 +11,7 @@
 		<RouterView class="talk-tab__chat-view" />
 		<PollManager />
 		<PollViewer />
-		<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
+		<MediaSettings v-model:recordingConsentGiven="recordingConsentGiven" />
 	</div>
 </template>
 

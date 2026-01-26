@@ -9,15 +9,15 @@
 		:title="item.displayName"
 		:active="item.token === selectedRoom?.token"
 		:bold="exposeMessagesRef && !!item.unreadMessages"
-		:counter-number="exposeMessagesRef ? item.unreadMessages : 0"
-		:counter-type="counterType"
+		:counterNumber="exposeMessagesRef ? item.unreadMessages : 0"
+		:counterType="counterType"
 		@click="onClick">
 		<template #icon>
 			<ConversationIcon
 				:key="item.token"
 				:item="item"
-				:hide-favorite="!item?.attendeeId"
-				:hide-call="!item?.attendeeId" />
+				:hideFavorite="!item?.attendeeId"
+				:hideCall="!item?.attendeeId" />
 		</template>
 		<template v-if="conversationInformation.message" #subname>
 			<span class="conversation__subname" :title="conversationInformation.title">

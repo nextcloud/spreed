@@ -5,7 +5,8 @@
 import { t } from '@nextcloud/l10n'
 import { SHARED_ITEM } from '../../../constants.ts'
 
-export const sharedItemsOrder = [SHARED_ITEM.TYPES.MEDIA,
+export const sharedItemsOrder = [
+	SHARED_ITEM.TYPES.MEDIA,
 	SHARED_ITEM.TYPES.FILE,
 	SHARED_ITEM.TYPES.RECORDING,
 	SHARED_ITEM.TYPES.POLL,
@@ -13,7 +14,8 @@ export const sharedItemsOrder = [SHARED_ITEM.TYPES.MEDIA,
 	SHARED_ITEM.TYPES.AUDIO,
 	SHARED_ITEM.TYPES.LOCATION,
 	SHARED_ITEM.TYPES.DECK_CARD,
-	SHARED_ITEM.TYPES.OTHER] as const
+	SHARED_ITEM.TYPES.OTHER,
+] as const
 
 export const sharedItemsWithPreviewLimit = [SHARED_ITEM.TYPES.DECK_CARD, SHARED_ITEM.TYPES.LOCATION, SHARED_ITEM.TYPES.POLL] as const
 

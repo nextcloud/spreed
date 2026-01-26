@@ -47,7 +47,7 @@
 					name="sip-dialout-number"
 					:disabled="loading"
 					placeholder="+49123456789"
-					label-outside />
+					labelOutside />
 				<p class="settings-hint additional-top-margin">
 					{{ t('spreed', 'E164 formatted number used as a fallback caller number for outgoing calls') }}
 				</p>
@@ -61,7 +61,7 @@
 					class="form"
 					name="sip-dialout-prefix"
 					:disabled="loading"
-					label-outside />
+					labelOutside />
 				<p class="settings-hint additional-top-margin">
 					{{ t('spreed', 'Prefix to configured user number for outgoing calls (default is `+`)') }}
 				</p>
@@ -69,22 +69,22 @@
 
 			<NcSelect
 				v-model="sipGroups"
-				input-id="sip-group-enabled"
-				:input-label="t('spreed', 'Restrict SIP configuration')"
+				inputId="sip-group-enabled"
+				:inputLabel="t('spreed', 'Restrict SIP configuration')"
 				class="form form__select"
 				:options="groups"
 				:placeholder="t('spreed', 'Enable SIP configuration')"
 				:disabled="loading"
 				:multiple="true"
 				:searchable="true"
-				:tag-width="60"
+				:tagWidth="60"
 				:loading="loadingGroups"
-				:show-no-options="false"
-				keep-open
-				track-by="id"
+				:showNoOptions="false"
+				keepOpen
+				trackBy="id"
 				label="displayname"
-				no-wrap
-				@search-change="debounceSearchGroup" />
+				noWrap
+				@search="debounceSearchGroup" />
 			<p class="settings-hint settings-hint--after-select">
 				{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
 			</p>
@@ -97,10 +97,10 @@
 				v-model="sharedSecret"
 				class="form"
 				name="sip-shared-secret"
-				as-text
+				asText
 				:disabled="loading"
 				:placeholder="t('spreed', 'Shared secret')"
-				label-outside />
+				labelOutside />
 
 			<label for="dial-in-info" class="form__label additional-top-margin">
 				{{ t('spreed', 'Dial-in information') }}

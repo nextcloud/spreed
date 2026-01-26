@@ -13,10 +13,10 @@
 					<SearchBox
 						ref="searchBox"
 						v-model:value="searchText"
-						v-model:is-focused="isFocused"
-						:list-ref="[scroller, searchResults]"
+						v-model:isFocused="isFocused"
+						:listRef="[scroller, searchResults]"
 						@input="debounceFetchSearchResults"
-						@abort-search="abortSearch" />
+						@abortSearch="abortSearch" />
 				</div>
 
 				<TransitionWrapper name="radial-reveal">
@@ -32,9 +32,9 @@
 						<NcActionCaption :name="t('spreed', 'Filter conversations by')" />
 
 						<NcActionButton
-							close-after-click
+							closeAfterClick
 							type="checkbox"
-							:model-value="filters.includes('mentions')"
+							:modelValue="filters.includes('mentions')"
 							@click="handleFilter('mentions')">
 							<template #icon>
 								<IconAt :size="20" />
@@ -43,9 +43,9 @@
 						</NcActionButton>
 
 						<NcActionButton
-							close-after-click
+							closeAfterClick
 							type="checkbox"
-							:model-value="filters.includes('unread')"
+							:modelValue="filters.includes('unread')"
 							@click="handleFilter('unread')">
 							<template #icon>
 								<IconMessageBadgeOutline :size="20" />
@@ -54,9 +54,9 @@
 						</NcActionButton>
 
 						<NcActionButton
-							close-after-click
+							closeAfterClick
 							type="checkbox"
-							:model-value="filters.includes('events')"
+							:modelValue="filters.includes('events')"
 							@click="handleFilter('events')">
 							<template #icon>
 								<IconCalendarBlankOutline :size="20" />
@@ -66,7 +66,7 @@
 
 						<NcActionButton
 							v-if="isFiltered"
-							close-after-click
+							closeAfterClick
 							class="filter-actions__clearbutton"
 							@click="handleFilter(null)">
 							<template #icon>
@@ -88,7 +88,7 @@
 						</template>
 						<NcActionButton
 							v-if="canStartConversations"
-							close-after-click
+							closeAfterClick
 							@click="showModalNewConversation">
 							<template #icon>
 								<IconPlus :size="20" />
@@ -98,7 +98,7 @@
 
 						<NcActionButton
 							v-if="canNoteToSelf && !hasNoteToSelf"
-							close-after-click
+							closeAfterClick
 							@click="restoreNoteToSelfConversation">
 							<template #icon>
 								<IconNoteEditOutline :size="20" />
@@ -107,7 +107,7 @@
 						</NcActionButton>
 
 						<NcActionButton
-							close-after-click
+							closeAfterClick
 							@click="showModalListConversations">
 							<template #icon>
 								<IconFormatListBulleted :size="20" />
@@ -117,7 +117,7 @@
 
 						<NcActionButton
 							v-if="canModerateSipDialOut"
-							close-after-click
+							closeAfterClick
 							@click="showModalCallPhoneDialog">
 							<template #icon>
 								<IconPhoneOutline :size="20" />
@@ -131,7 +131,7 @@
 				<OpenConversationsList ref="openConversationsList" />
 
 				<!-- New Conversation dialog -->
-				<NewConversationDialog ref="newConversationDialog" :can-moderate-sip-dial-out="canModerateSipDialOut" />
+				<NewConversationDialog ref="newConversationDialog" :canModerateSipDialOut="canModerateSipDialOut" />
 
 				<!-- New phone (SIP dial-out) dialog -->
 				<CallPhoneDialog v-if="canModerateSipDialOut" ref="callPhoneDialog" />
@@ -261,14 +261,14 @@
 				v-else
 				ref="searchResults"
 				class="scroller"
-				:search-text="searchText"
-				:contacts-loading="contactsLoading"
-				:conversations-list="conversationsList"
-				:search-results="searchResults"
-				:search-results-listed-conversations="searchResultsListedConversations"
-				@abort-search="abortSearch"
-				@create-new-conversation="createConversation"
-				@create-and-join-conversation="createAndJoinConversation" />
+				:searchText="searchText"
+				:contactsLoading="contactsLoading"
+				:conversationsList="conversationsList"
+				:searchResults="searchResults"
+				:searchResultsListedConversations="searchResultsListedConversations"
+				@abortSearch="abortSearch"
+				@createNewConversation="createConversation"
+				@createAndJoinConversation="createAndJoinConversation" />
 		</template>
 
 		<template #footer>

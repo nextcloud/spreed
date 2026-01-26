@@ -21,19 +21,19 @@
 			}"
 			class="message-body">
 			<MessageBody
-				:rich-parameters="richParameters"
-				:is-deleting="isDeleting"
-				:has-call="conversation.hasCall"
+				:richParameters="richParameters"
+				:isDeleting="isDeleting"
+				:hasCall="conversation.hasCall"
 				:message="message"
-				:read-info="readInfo">
+				:readInfo="readInfo">
 				<!-- reactions buttons and popover with details -->
 				<ReactionsWrapper
 					v-if="Object.keys(message.reactions).length"
 					:id="message.id"
 					:token="message.token"
-					:can-react="canReact"
-					:show-controls="isHovered || isFollowUpEmojiPickerOpen"
-					@emoji-picker-toggled="toggleFollowUpEmojiPicker" />
+					:canReact="canReact"
+					:showControls="isHovered || isFollowUpEmojiPickerOpen"
+					@emojiPickerToggled="toggleFollowUpEmojiPicker" />
 			</MessageBody>
 		</div>
 
@@ -41,17 +41,17 @@
 		<div class="message-body__scroll">
 			<MessageButtonsBar
 				v-if="showMessageButtonsBar"
-				v-model:is-action-menu-open="isActionMenuOpen"
-				v-model:is-emoji-picker-open="isEmojiPickerOpen"
-				v-model:is-reactions-menu-open="isReactionsMenuOpen"
-				v-model:is-forwarder-open="isForwarderOpen"
+				v-model:isActionMenuOpen="isActionMenuOpen"
+				v-model:isEmojiPickerOpen="isEmojiPickerOpen"
+				v-model:isReactionsMenuOpen="isReactionsMenuOpen"
+				v-model:isForwarderOpen="isForwarderOpen"
 				class="message-buttons-bar"
-				:is-translation-available="isTranslationAvailable"
-				:can-react="canReact"
+				:isTranslationAvailable="isTranslationAvailable"
+				:canReact="canReact"
 				:message="message"
-				:previous-message-id="previousMessageId"
-				:read-info="readInfo"
-				@show-translate-dialog="isTranslateDialogOpen = true"
+				:previousMessageId="previousMessageId"
+				:readInfo="readInfo"
+				@showTranslateDialog="isTranslateDialogOpen = true"
 				@reply="handleReply"
 				@edit="handleEdit"
 				@delete="handleDelete" />
@@ -66,7 +66,7 @@
 		<MessageTranslateDialog
 			v-if="isTranslationAvailable && isTranslateDialogOpen"
 			:message="message.message"
-			:rich-parameters="richParameters"
+			:richParameters="richParameters"
 			@close="isTranslateDialogOpen = false" />
 
 		<div
