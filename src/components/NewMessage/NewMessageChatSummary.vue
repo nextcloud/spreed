@@ -276,7 +276,7 @@ function setIsTextMoreThanOneLine() {
 
 	&__message {
 		white-space: pre-line;
-		word-wrap: break-word;
+		overflow-wrap: break-word;
 		max-height: 30vh;
 		overflow: auto;
 
