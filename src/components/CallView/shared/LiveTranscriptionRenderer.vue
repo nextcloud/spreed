@@ -14,7 +14,7 @@
 			:token="token"
 			:model="item.model"
 			:chunks="item.chunks"
-			:right-to-left="item.rightToLeft" />
+			:rightToLeft="item.rightToLeft" />
 	</div>
 </template>
 

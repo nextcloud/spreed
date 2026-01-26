@@ -31,10 +31,10 @@
 				class="new-message-form__attachments"
 				:token="token"
 				:disabled="disabled"
-				:can-upload-files="canUploadFiles"
-				:can-share-files="canShareFiles"
-				:can-create-poll="canCreatePoll"
-				:can-create-thread="canCreateThread"
+				:canUploadFiles="canUploadFiles"
+				:canShareFiles="canShareFiles"
+				:canCreatePoll="canCreatePoll"
+				:canCreateThread="canCreateThread"
 				@open-file-upload="openFileUploadWindow"
 				@create-thread="setCreateThread"
 				@handle-file-share="showFilePicker"
@@ -45,8 +45,8 @@
 				<NewMessageAbsenceInfo
 					v-if="!dialog && userAbsence"
 					class="new-message-form__note-content"
-					:user-absence="userAbsence"
-					:display-name="conversation.displayName" />
+					:userAbsence="userAbsence"
+					:displayName="conversation.displayName" />
 
 				<NewMessageChatSummary
 					v-if="!dialog && showChatSummary"
@@ -55,8 +55,8 @@
 				<div class="new-message-form__emoji-picker">
 					<NcEmojiPicker
 						v-if="!disabled"
-						keep-open
-						:set-return-focus="getContenteditable"
+						keepOpen
+						:setReturnFocus="getContenteditable"
 						@select="addEmoji">
 						<NcButton
 							:disabled="disabled"
@@ -83,8 +83,8 @@
 				<div v-if="parentMessage || messageToEdit" class="new-message-form__quote">
 					<MessageQuote
 						:message="messageToEdit ?? parentMessage"
-						:can-cancel="!!parentMessage"
-						:edit-message="!!messageToEdit" />
+						:canCancel="!!parentMessage"
+						:editMessage="!!messageToEdit" />
 				</div>
 				<!-- mention editing hint -->
 				<NcNoteCard
@@ -102,7 +102,7 @@
 					:disabled="disabled"
 					:error="!!errorTitle"
 					:title="errorTitle"
-					show-trailing-button
+					showTrailingButton
 					@trailing-button-click="setCreateThread(false)" />
 
 				<NcRichContenteditable
@@ -111,10 +111,10 @@
 					v-model="text"
 					:class="{ 'new-message-form__input-rich--required': errorMessage }"
 					:title="errorMessage"
-					:auto-complete="autoComplete"
+					:autoComplete="autoComplete"
 					:disabled="disabled"
-					:user-data="userData"
-					:menu-container="containerElement"
+					:userData="userData"
+					:menuContainer="containerElement"
 					:placeholder="placeholderText"
 					:aria-label="placeholderText"
 					:dir="text ? 'auto' : undefined"
@@ -131,14 +131,14 @@
 			<!-- Silent chat -->
 			<NcActions
 				v-if="showSilentToggle"
-				force-menu
+				forceMenu
 				:primary="silentChat">
 				<template #icon>
 					<IconBellOffOutline v-if="silentChat" :size="20" />
 				</template>
 				<NcActionButton
-					close-after-click
-					:model-value="silentChat"
+					closeAfterClick
+					:modelValue="silentChat"
 					:description="silentSendInfo"
 					@click="toggleSilentChat">
 					{{ silentSendLabel }}
@@ -201,7 +201,7 @@
 		<NewMessageNewFileDialog
 			v-if="showNewFileDialog !== -1"
 			:token="token"
-			:show-new-file-dialog="showNewFileDialog"
+			:showNewFileDialog="showNewFileDialog"
 			@dismiss="showNewFileDialog = -1" />
 	</div>
 </template>

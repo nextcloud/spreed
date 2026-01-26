@@ -11,14 +11,14 @@
 			class="avatar"
 			:user="id"
 			:url="!isFederatedUser ? undefined : avatarUrl"
-			:icon-class="iconClass"
-			:display-name="name"
-			:disable-tooltip="disableTooltip"
-			disable-menu
-			is-no-user
-			:hide-status="!showUserStatus"
-			:verbose-status="false"
-			:preloaded-user-status="preloadedUserStatus ?? {}"
+			:iconClass="iconClass"
+			:displayName="name"
+			:disableTooltip="disableTooltip"
+			disableMenu
+			isNoUser
+			:hideStatus="!showUserStatus"
+			:verboseStatus="false"
+			:preloadedUserStatus="preloadedUserStatus ?? {}"
 			:size="size">
 			<template v-if="characterIcon" #icon>
 				<div class="avatar" :class="characterIconClass">
@@ -30,13 +30,13 @@
 			v-else
 			:key="id + (isDarkTheme ? '-dark' : '-light')"
 			:user="id"
-			:display-name="name"
-			:menu-container="menuContainer"
-			:disable-tooltip="disableTooltip"
-			:disable-menu="disableMenu"
-			:hide-status="!showUserStatus"
-			:verbose-status="!showUserStatusCompact"
-			:preloaded-user-status="preloadedUserStatus"
+			:displayName="name"
+			:menuContainer="menuContainer"
+			:disableTooltip="disableTooltip"
+			:disableMenu="disableMenu"
+			:hideStatus="!showUserStatus"
+			:verboseStatus="!showUserStatusCompact"
+			:preloadedUserStatus="preloadedUserStatus"
 			:size="size" />
 		<!-- Override user status for federated users -->
 		<span

@@ -16,9 +16,9 @@
 					:source="participant.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					condensed
-					:condensed-overlap="8"
-					disable-menu
-					disable-tooltip />
+					:condensedOverlap="8"
+					disableMenu
+					disableTooltip />
 			</div>
 			<!-- eslint-disable-next-line vue/no-v-html -->
 			<p class="indicator__main" v-html="indicatorMessage" />

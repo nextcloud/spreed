@@ -12,20 +12,20 @@
 			<NcTextField
 				ref="stun_server"
 				v-model="stunServer"
-				:input-id="`stun_server_${index}`"
+				:inputId="`stun_server_${index}`"
 				name="stun_server"
 				class="stun-server__input"
 				placeholder="stunserver:port"
 				:disabled="loading"
 				:aria-label="t('spreed', 'STUN server URL')"
-				label-outside />
+				labelOutside />
 		</div>
 
 		<IconAlertCircleOutline
 			v-show="!isValidServer"
 			class="stun-server__alert"
 			:title="t('spreed', 'The server address is invalid')"
-			fill-color="var(--color-border-error)" />
+			fillColor="var(--color-border-error)" />
 
 		<NcButton
 			v-show="!loading"

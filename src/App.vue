@@ -6,13 +6,13 @@
 <template>
 	<NcContent
 		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
-		app-name="talk">
+		appName="talk">
 		<LeftSidebar v-if="getUserId" ref="leftSidebar" />
 		<NcAppContent>
 			<router-view />
 		</NcAppContent>
-		<RightSidebar :is-in-call="isInCall" />
-		<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
+		<RightSidebar :isInCall="isInCall" />
+		<MediaSettings v-model:recordingConsentGiven="recordingConsentGiven" />
 		<SettingsDialog />
 		<ConversationSettingsDialog />
 		<PollManager />

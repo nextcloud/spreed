@@ -110,7 +110,7 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 
 		<NcSelect
 			v-model="deviceSelectedOption"
-			:input-id="`device-selector-${props.kind}`"
+			:inputId="`device-selector-${props.kind}`"
 			:options="deviceOptions"
 			label="label"
 			:aria-label-combobox="t('spreed', 'Select a device')"

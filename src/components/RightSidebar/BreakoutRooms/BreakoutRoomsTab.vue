@@ -7,17 +7,17 @@
 	<div class="breakout-rooms">
 		<!-- Actions -->
 		<BreakoutRoomsActions
-			:main-token="mainToken"
-			:main-conversation="mainConversation"
-			:breakout-rooms="breakoutRooms"
-			:breakout-rooms-configured="breakoutRoomsConfigured" />
+			:mainToken="mainToken"
+			:mainConversation="mainConversation"
+			:breakoutRooms="breakoutRooms"
+			:breakoutRoomsConfigured="breakoutRoomsConfigured" />
 		<!-- Breakout rooms list -->
 		<ul v-if="showBreakoutRoomsList">
 			<BreakoutRoomItem
 				v-for="breakoutRoom in breakoutRooms"
 				:key="breakoutRoom.token"
-				:breakout-room="breakoutRoom"
-				:main-conversation="mainConversation">
+				:breakoutRoom="breakoutRoom"
+				:mainConversation="mainConversation">
 				<ParticipantItem
 					v-for="participant in $store.getters.participantsList(breakoutRoom.token)"
 					:key="participant.actorId"

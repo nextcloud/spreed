@@ -19,7 +19,7 @@
 			v-model:open="modal"
 			:name="t('spreed', 'Banned users')"
 			size="normal"
-			close-on-click-outside
+			closeOnClickOutside
 			container=".conversation-ban__settings">
 			<div class="conversation-ban__content">
 				<ul v-if="banList.length" class="conversation-ban__list">

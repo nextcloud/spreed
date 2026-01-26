@@ -16,7 +16,7 @@
 			</p>
 
 			<NcCheckboxRadioSwitch
-				:model-value="isEnabled"
+				:modelValue="isEnabled"
 				@update:model-value="saveMatterbridgeEnabled">
 				{{ t('spreed', 'Enable Matterbridge integration') }}
 			</NcCheckboxRadioSwitch>

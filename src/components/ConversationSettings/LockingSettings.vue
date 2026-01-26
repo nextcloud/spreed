@@ -14,7 +14,7 @@
 			:text="t('spreed', 'This will also terminate the ongoing call.')" />
 		<div>
 			<NcCheckboxRadioSwitch
-				:model-value="isReadOnly"
+				:modelValue="isReadOnly"
 				type="switch"
 				aria-describedby="moderation_settings_lock_conversation_hint"
 				:disabled="isReadOnlyStateLoading"

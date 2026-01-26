@@ -62,11 +62,11 @@
 				v-if="hasSelected"
 				variant="primary"
 				container=".participants-editor__buttons"
-				:menu-name="t('spreed', 'Assign')">
+				:menuName="t('spreed', 'Assign')">
 				<NcActionButton
 					v-for="(item, index) in assignments"
 					:key="index"
-					close-after-click
+					closeAfterClick
 					@click="assignAttendees(index)">
 					<template #icon>
 						<DotsCircle :size="20" />

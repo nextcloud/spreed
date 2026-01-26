@@ -40,18 +40,18 @@
 			:key="item.token + (isDarkTheme ? '-dark' : '-light')"
 			:size="size"
 			:user="item.name"
-			:disable-menu="disableMenu"
-			:display-name="item.displayName"
-			:preloaded-user-status="preloadedUserStatus"
-			:hide-status="hideUserStatus"
-			:verbose-status="showUserOnlineStatus"
+			:disableMenu="disableMenu"
+			:displayName="item.displayName"
+			:preloadedUserStatus="preloadedUserStatus"
+			:hideStatus="hideUserStatus"
+			:verboseStatus="showUserOnlineStatus"
 			class="conversation-icon__avatar" />
 		<div v-if="showCall" class="overlap-icon">
-			<IconVideo :size="size * 0.5" fill-color="#E9322D" />
+			<IconVideo :size="size * 0.5" fillColor="#E9322D" />
 			<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
 		</div>
 		<div v-else-if="showFavorite" class="overlap-icon">
-			<IconStar :size="size * 0.5" fill-color="#FFCC00" />
+			<IconStar :size="size * 0.5" fillColor="#FFCC00" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
 		</div>
 	</div>

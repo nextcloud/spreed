@@ -47,11 +47,11 @@
 			<NcActionButton
 				v-for="level in notificationLevels"
 				:key="level.value"
-				:model-value="threadNotification.toString()"
+				:modelValue="threadNotification.toString()"
 				:value="level.value.toString()"
 				:description="level.description"
 				type="radio"
-				close-after-click
+				closeAfterClick
 				@click="chatExtrasStore.setThreadNotificationLevel(token, threadId, level.value)">
 				<template #icon>
 					<component :is="notificationLevelIcons[level.value]" :size="20" />
@@ -64,10 +64,10 @@
 			v-if="isModeratorOrOwner"
 			:aria-label="t('spreed', 'Thread actions')"
 			:title="t('spreed', 'Thread actions')"
-			force-menu>
+			forceMenu>
 			<NcActionButton
 				key="rename-thread"
-				close-after-click
+				closeAfterClick
 				@click="renameThreadTitle">
 				<template #icon>
 					<IconPencilOutline :size="20" />

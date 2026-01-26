@@ -88,7 +88,7 @@ function handleResultClick() {
 		:to="to"
 		:active="active"
 		:title="richSubline"
-		force-menu
+		forceMenu
 		@click="handleResultClick">
 		<template #icon>
 			<AvatarWrapper
@@ -96,19 +96,19 @@ function handleResultClick() {
 				:id="actorId"
 				:name="title"
 				:source="actorType"
-				disable-menu
+				disableMenu
 				:token="token" />
 			<ConversationIcon
 				v-else
 				:item="conversation"
-				hide-user-status />
+				hideUserStatus />
 		</template>
 		<template #subname>
 			{{ richSubline }}
 		</template>
 		<template v-if="isReminder" #actions>
 			<NcActionButton
-				close-after-click
+				closeAfterClick
 				@click.stop="dashboardStore.removeReminder(token, messageId)">
 				<template #icon>
 					<CloseCircleOutline :size="20" />
@@ -120,8 +120,8 @@ function handleResultClick() {
 			<NcDateTime
 				:timestamp="timestamp * 1000"
 				class="search-results__date"
-				relative-time="short"
-				ignore-seconds />
+				relativeTime="short"
+				ignoreSeconds />
 		</template>
 	</NcListItem>
 </template>

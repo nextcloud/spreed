@@ -117,7 +117,7 @@ const isSensitive = computed({
 		<NcCheckboxRadioSwitch
 			v-for="level in notificationLevels"
 			:key="level.value"
-			:model-value="notificationLevel"
+			:modelValue="notificationLevel"
 			:value="level.value.toString()"
 			:disabled="loading.level"
 			name="notification_level"

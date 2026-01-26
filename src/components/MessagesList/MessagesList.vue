@@ -57,8 +57,8 @@
 					:key="group.id"
 					:token="token"
 					:messages="group.messages"
-					:previous-message-id="group.previousMessageId"
-					:next-message-id="group.nextMessageId" />
+					:previousMessageId="group.previousMessageId"
+					:nextMessageId="group.nextMessageId" />
 			</ul>
 
 			<TransitionWrapper name="fade">

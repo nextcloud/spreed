@@ -13,8 +13,8 @@
 				:name="actorDisplayName"
 				:source="actorType"
 				:size="AVATAR.SIZE.SMALL"
-				:disable-menu="disableMenu"
-				disable-tooltip />
+				:disableMenu="disableMenu"
+				disableTooltip />
 		</div>
 		<ul class="messages">
 			<li class="messages__author" aria-level="4">
@@ -24,8 +24,8 @@
 				v-for="(message, index) of messages"
 				:key="message.id"
 				:message="message"
-				:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
-				:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId" />
+				:nextMessageId="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
+				:previousMessageId="(index > 0 && messages[index - 1].id) || previousMessageId" />
 		</ul>
 	</li>
 </template>

@@ -16,7 +16,7 @@
 			:label="t('spreed', 'Recording backend URL')" />
 
 		<NcCheckboxRadioSwitch
-			:model-value="verify"
+			:modelValue="verify"
 			class="recording-server__checkbox"
 			@update:model-value="updateVerify">
 			{{ t('spreed', 'Validate SSL certificate') }}
@@ -35,8 +35,8 @@
 
 		<span v-if="server" class="test-connection">
 			<NcLoadingIcon v-if="!checked" :size="20" />
-			<IconAlertCircleOutline v-else-if="errorMessage" :size="20" fill-color="var(--color-border-error)" />
-			<IconCheck v-else :size="20" fill-color="var(--color-border-success)" />
+			<IconAlertCircleOutline v-else-if="errorMessage" :size="20" fillColor="var(--color-border-error)" />
+			<IconCheck v-else :size="20" fillColor="var(--color-border-success)" />
 			{{ connectionState }}
 		</span>
 

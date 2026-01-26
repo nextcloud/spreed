@@ -71,11 +71,11 @@
 			v-model="secretProxy"
 			class="form__textfield additional-top-margin"
 			name="signaling_secret"
-			as-text
+			asText
 			:disabled="loading"
 			:placeholder="t('spreed', 'Shared secret')"
 			:label="t('spreed', 'Shared secret')"
-			label-visible
+			labelVisible
 			@update:model-value="debounceUpdateServers" />
 
 		<template v-if="!serversProxy.length">

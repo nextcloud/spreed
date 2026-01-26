@@ -7,7 +7,7 @@
 	<NcActions
 		ref="attachmentsMenu"
 		:disabled="disabled"
-		:force-menu="true"
+		:forceMenu="true"
 		:aria-label="t('spreed', 'Share files to the conversation')"
 		:aria-haspopup="true">
 		<template #icon>
@@ -16,7 +16,7 @@
 
 		<NcActionButton
 			v-if="canUploadFiles"
-			close-after-click
+			closeAfterClick
 			@click="$emit('openFileUpload')">
 			<template #icon>
 				<NcIconSvgWrapper :svg="IconFileUpload" :size="20" />
@@ -26,7 +26,7 @@
 
 		<template v-if="canShareFiles">
 			<NcActionButton
-				close-after-click
+				closeAfterClick
 				@click="$emit('handleFileShare')">
 				<template #icon>
 					<IconFolder :size="20" />
@@ -37,7 +37,7 @@
 			<NcActionButton
 				v-for="(provider, index) in fileTemplateOptions"
 				:key="index"
-				close-after-click
+				closeAfterClick
 				:icon="provider.iconClass"
 				@click="$emit('updateNewFileDialog', index)">
 				<template v-if="provider.iconSvgInline" #icon>
@@ -49,7 +49,7 @@
 
 		<NcActionButton
 			v-if="canCreatePoll"
-			close-after-click
+			closeAfterClick
 			@click="showPollEditor">
 			<template #icon>
 				<IconPoll :size="20" />
@@ -59,7 +59,7 @@
 
 		<NcActionButton
 			v-if="canCreateThread"
-			close-after-click
+			closeAfterClick
 			@click="$emit('createThread', true)">
 			<template #icon>
 				<IconForumOutline :size="20" />
@@ -68,7 +68,7 @@
 		</NcActionButton>
 
 		<NcActionButton
-			close-after-click
+			closeAfterClick
 			@click="showSmartPicker">
 			<template #icon>
 				<NcIconSvgWrapper :svg="IconSmartPicker" :size="20" />

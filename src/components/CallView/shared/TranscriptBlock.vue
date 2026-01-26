@@ -14,7 +14,7 @@
 				:name="actorDisplayName"
 				:source="actorType"
 				:size="AVATAR.SIZE.SMALL"
-				:disable-menu="true" />
+				:disableMenu="true" />
 		</div>
 		<div class="transcript-block__text">
 			<p class="transcript-block__author">

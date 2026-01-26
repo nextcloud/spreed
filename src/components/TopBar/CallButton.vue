@@ -57,7 +57,7 @@
 		v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
 		class="leave-call leave-call-actions--split"
 		:disabled="loading"
-		:force-name="showButtonText"
+		:forceName="showButtonText"
 		placement="top-end"
 		:aria-label="leaveCallActionsLabel"
 		:inline="1"

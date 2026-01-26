@@ -20,11 +20,11 @@
 				v-if="isLocalPresenter"
 				class="presenter-overlay__video"
 				:token="token"
-				:local-media-model="localMediaModel"
-				:local-call-participant-model="model"
-				is-presenter-overlay
-				un-selectable
-				hide-bottom-bar
+				:localMediaModel="localMediaModel"
+				:localCallParticipantModel="model"
+				isPresenterOverlay
+				unSelectable
+				hideBottomBar
 				@click-presenter="$emit('click')" />
 			<VideoVue
 				v-else
@@ -32,10 +32,10 @@
 				:class="{ dragging: isDragging }"
 				class="presenter-overlay__video"
 				:model="model"
-				:shared-data="sharedData"
-				is-presenter-overlay
-				un-selectable
-				hide-bottom-bar
+				:sharedData="sharedData"
+				isPresenterOverlay
+				unSelectable
+				hideBottomBar
 				@click-presenter="$emit('click')" />
 		</VueDraggableResizable>
 
@@ -48,7 +48,7 @@
 			variant="tertiary-no-background"
 			@click="$emit('click')">
 			<template #icon>
-				<AccountBox fill-color="#ffffff" :size="20" />
+				<AccountBox fillColor="#ffffff" :size="20" />
 			</template>
 		</NcButton>
 	</div>
