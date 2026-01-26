@@ -7,6 +7,7 @@ import { isCancel } from '@nextcloud/axios'
 import { PARTICIPANT, PRIVACY, VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import { EventBus } from '../../services/EventBus.ts'
 import { fetchSignalingSettings } from '../../services/signalingService.js'
 import store from '../../store/index.js'
 import { isSafari } from '../browserCheck.ts'
@@ -220,7 +221,14 @@ function setupWebRtc() {
 async function signalingJoinConversation(token, sessionId) {
 	await connectSignaling(token)
 	if (tokensInSignaling[token]) {
-		await signaling.joinRoom(token, sessionId)
+		try {
+			await signaling.joinRoom(token, sessionId)
+		} catch (error) {
+			// Initial 'signaling.joinRoom' might be in reconnection state
+			// so it returns a previous token after switch
+			EventBus.emit('signaling-join-room-failed', [])
+			throw error
+		}
 	}
 }
 

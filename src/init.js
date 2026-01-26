@@ -58,6 +58,9 @@ window.OCA.Talk.registerParticipantSearchAction = ({ label, callback, show, icon
 EventBus.on('signaling-join-room', ([token]) => {
 	tokenStore.updateLastJoinedConversationToken(token)
 })
+EventBus.on('signaling-join-room-failed', ([token]) => {
+	tokenStore.setLastJoinConversationFailed(true)
+})
 
 EventBus.on('signaling-recording-status-changed', ([token, status]) => {
 	store.dispatch('setConversationProperties', { token, properties: { callRecording: status } })

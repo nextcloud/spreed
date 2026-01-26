@@ -387,6 +387,7 @@ export default {
 
 			if (from.name === 'conversation' && from.params.token !== to.params.token) {
 				this.$store.dispatch('leaveConversation', { token: from.params.token })
+				this.tokenStore.setLastJoinConversationFailed(false)
 			}
 
 			/**
