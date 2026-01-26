@@ -457,10 +457,12 @@ export default {
 		},
 
 		isCurrentlyRecording() {
-			return [CALL.RECORDING.VIDEO_STARTING,
+			return [
+				CALL.RECORDING.VIDEO_STARTING,
 				CALL.RECORDING.AUDIO_STARTING,
 				CALL.RECORDING.VIDEO,
-				CALL.RECORDING.AUDIO].includes(this.conversation.callRecording)
+				CALL.RECORDING.AUDIO,
+			].includes(this.conversation.callRecording)
 		},
 
 		canFullModerate() {

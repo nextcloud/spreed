@@ -10,8 +10,7 @@ import SHA256 from 'crypto-js/sha256.js'
 import { MESSAGE } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 
-export type PrepareTemporaryMessagePayload = Pick<ChatMessage,
-	| 'message'
+export type PrepareTemporaryMessagePayload = Pick<ChatMessage, | 'message'
 	| 'token'
 	| 'actorId'
 	| 'actorType'
@@ -20,15 +19,14 @@ export type PrepareTemporaryMessagePayload = Pick<ChatMessage,
 	| 'threadId'
 	| 'isThread'
 	| 'threadTitle'
-	| 'threadReplies'
-> & {
-	uploadId: string
-	index: number
-	file: File & { newName?: string }
-	localUrl: string
-	messageType?: typeof MESSAGE.TYPE['VOICE_MESSAGE' | 'COMMENT']
-	parent: Omit<ChatMessage, 'parent'>
-}
+	| 'threadReplies'> & {
+		uploadId: string
+		index: number
+		file: File & { newName?: string }
+		localUrl: string
+		messageType?: typeof MESSAGE.TYPE['VOICE_MESSAGE' | 'COMMENT']
+		parent: Omit<ChatMessage, 'parent'>
+	}
 
 /**
  * Creates a temporary message ready to be posted, based

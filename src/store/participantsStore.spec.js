@@ -96,7 +96,8 @@ describe('participantsStore', () => {
 	describe('participant list', () => {
 		test('adds participant', () => {
 			store.dispatch('addParticipant', {
-				token: TOKEN, participant: { attendeeId: 1 },
+				token: TOKEN,
+				participant: { attendeeId: 1 },
 			})
 
 			expect(store.getters.participantsList(TOKEN)).toStrictEqual([
@@ -106,12 +107,14 @@ describe('participantsStore', () => {
 
 		test('adds participant once', () => {
 			store.dispatch('addParticipantOnce', {
-				token: TOKEN, participant: { attendeeId: 1 },
+				token: TOKEN,
+				participant: { attendeeId: 1 },
 			})
 
 			// does not add again
 			store.dispatch('addParticipantOnce', {
-				token: TOKEN, participant: { attendeeId: 1 },
+				token: TOKEN,
+				participant: { attendeeId: 1 },
 			})
 
 			expect(store.getters.participantsList(TOKEN)).toStrictEqual([
@@ -130,7 +133,8 @@ describe('participantsStore', () => {
 
 		test('removes participant', async () => {
 			store.dispatch('addParticipant', {
-				token: TOKEN, participant: { attendeeId: 1 },
+				token: TOKEN,
+				participant: { attendeeId: 1 },
 			})
 
 			removeAttendeeFromConversation.mockResolvedValue()
@@ -147,10 +151,12 @@ describe('participantsStore', () => {
 
 		test('purges participant list', () => {
 			store.dispatch('addParticipant', {
-				token: TOKEN, participant: { attendeeId: 1 },
+				token: TOKEN,
+				participant: { attendeeId: 1 },
 			})
 			store.dispatch('addParticipant', {
-				token: 'token-2', participant: { attendeeId: 2 },
+				token: 'token-2',
+				participant: { attendeeId: 2 },
 			})
 
 			store.dispatch('purgeParticipantsStore', TOKEN)
@@ -822,7 +828,8 @@ describe('participantsStore', () => {
 			testStoreConfig.actions.addConversation = vi.fn().mockImplementation((context) => {
 				// needed for the updateSessionId call which requires this
 				context.dispatch('addParticipantOnce', {
-					token: TOKEN, participant: participantData,
+					token: TOKEN,
+					participant: participantData,
 				})
 			})
 		})

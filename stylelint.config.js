@@ -5,7 +5,8 @@
 const stylelintConfig = require('@nextcloud/stylelint-config')
 
 stylelintConfig.rules['at-rule-no-unknown'] = [
-	true, {
+	true,
+	{
 		ignoreAtRules: ['include', 'mixin', 'use', 'for'],
 	},
 ]
