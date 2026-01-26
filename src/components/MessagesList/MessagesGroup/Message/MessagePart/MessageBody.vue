@@ -573,8 +573,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use '../../../../../assets/markdown' as *;
-@use '../../../../../assets/variables' as *;
+@use '../../../../../assets/markdown.scss' as *;
+@use '../../../../../assets/variables.scss' as *;
 
 .message-main {
 	display: grid;
@@ -584,7 +584,7 @@ export default {
 	min-width: 100%;
 	// Layout 1 (standard view): text and info in two columns
 	grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
-	grid-row-gap: var(--default-grid-baseline);
+	row-gap: var(--default-grid-baseline);
 
 	& .message-main__thread-title,
 	&--sided .message-main__thread-title {

@@ -991,8 +991,8 @@ export default {
 	height: 100%;
 	width: 100%;
 
-	grid-row-gap: var(--grid-gap);
-	grid-column-gap: var(--grid-gap);
+	row-gap: var(--grid-gap);
+	column-gap: var(--grid-gap);
 
 	&.stripe {
 		padding: var(--grid-gap) var(--grid-gap) 0 0;

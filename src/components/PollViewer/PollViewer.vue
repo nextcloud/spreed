@@ -418,7 +418,7 @@ export default {
 		font-weight: bold;
 		font-size: 18px;
 		white-space: normal;
-		word-wrap: anywhere;
+		overflow-wrap: anywhere;
 
 		:deep(.material-design-icon) {
 			margin-bottom: auto;
@@ -434,7 +434,7 @@ export default {
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
-		word-wrap: anywhere;
+		overflow-wrap: anywhere;
 	}
 
 	&__actions {
@@ -456,7 +456,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	gap: calc(4 * var(--default-grid-baseline));
-	word-wrap: anywhere;
+	overflow-wrap: anywhere;
 	margin: 8px 0 20px 0;
 }
 
