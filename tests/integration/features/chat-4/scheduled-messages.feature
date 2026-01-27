@@ -112,8 +112,8 @@ Feature: chat-4/scheduling
     And wait for 4 seconds
     And force run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id        | actorType | actorId      | threadId | parent  | message   | messageType | sendAt | silent |
-      | Message 3 | users     | participant1 | 0        | Message | Message 3 | comment     | 0      | false  |
+      | id        | actorType | actorId      | threadId | parent  | message   | messageType | sendAt | silent | originalSendAt |
+      | Message 3 | users     | participant1 | 0        | Message | Message 3 | comment     | 0      | false  | {NOW}          |
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | -1                   |
@@ -240,8 +240,8 @@ Feature: chat-4/scheduling
     And wait for 4 seconds
     And force run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id        | actorType | actorId      | threadId | parent     | message   | messageType | sendAt | silent |
-      | Message 5 | users     | participant1 | Thread 1 | Thread 1-1 | Message 5 | comment     | 0      | false  |
+      | id        | actorType | actorId      | threadId | parent     | message   | messageType | sendAt | silent | originalSendAt |
+      | Message 5 | users     | participant1 | Thread 1 | Thread 1-1 | Message 5 | comment     | 0      | false  | {NOW}          |
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | -1                   |
@@ -537,8 +537,8 @@ Feature: chat-4/scheduling
       | message | Message 1 |
       | sendAt  | {NOW}     |
     Then user "participant2" sees the following scheduled messages in room "room" with 200
-      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt | silent |
-      | Message 1 | users     | participant2 | 0        | null   | Message 1 | comment     | {NOW}  | false  |
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt | silent | originalSendAt |
+      | Message 1 | users     | participant2 | 0        | null   | Message 1 | comment     | {NOW}  | false  | UNSET          |
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | 1                    |
@@ -546,8 +546,8 @@ Feature: chat-4/scheduling
     And wait for 4 seconds
     And force run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
     Then user "participant2" sees the following scheduled messages in room "room" with 200
-      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt | silent |
-      | Message 1 | users     | participant2 | 0        | null   | Message 1 | comment     | 0      | false  |
+      | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt | silent | originalSendAt |
+      | Message 1 | users     | participant2 | 0        | null   | Message 1 | comment     | 0      | false  | {NOW}          |
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
       | room | 2    | -1                   |
@@ -565,8 +565,8 @@ Feature: chat-4/scheduling
       | message | Message 2 @"TEAM_ID(team)" |
       | sendAt  | {NOW}                      |
     Then user "participant1" sees the following scheduled messages in room "room" with 200
-      | id                       | actorType | actorId      | threadId | parent | message                  | messageType | sendAt | silent |
-      | Message 1 @"group/group" | users     | participant1 | 0        | null   | Message 1 @"group/group" | comment     | {NOW}  | false  |
+      | id                         | actorType | actorId      | threadId | parent | message                    | messageType | sendAt | silent |
+      | Message 1 @"group/group"   | users     | participant1 | 0        | null   | Message 1 @"group/group"   | comment     | {NOW}  | false  |
       | Message 2 @"TEAM_ID(team)" | users     | participant1 | 0        | null   | Message 2 @"TEAM_ID(team)" | comment     | {NOW}  | false  |
     And user "participant1" is participant of the following rooms (v4)
       | id   | type | hasScheduledMessages |
@@ -578,7 +578,7 @@ Feature: chat-4/scheduling
       | id   | type | hasScheduledMessages |
       | room | 2    | 0                    |
     Then user "participant2" sees the following messages in room "room" with 200
-      | room | actorType | actorId      | actorDisplayName         | messageType | message                   | messageParameters                                                                                             |
-      | room | users     | participant1 | participant1-displayname | comment     | Message 2 {mention-team1}  | {"mention-team1":{"type":"circle","id":"TEAM_ID(team)","name":"team","link":"","mention-id":"team\/TEAM_ID(team)"}}      |
-      | room | users     | participant1 | participant1-displayname | comment     | Message 1 {mention-group1} | {"mention-group1":{"type":"user-group","id":"group","name":"group-displayname","mention-id":"group\/group"}} |
-      | room | users     | participant2 | participant2-displayname | comment     | Message                   | []                                                                                                            |
+      | room | actorType | actorId      | actorDisplayName         | messageType | message                    | messageParameters                                                                                                   |
+      | room | users     | participant1 | participant1-displayname | comment     | Message 2 {mention-team1}  | {"mention-team1":{"type":"circle","id":"TEAM_ID(team)","name":"team","link":"","mention-id":"team\/TEAM_ID(team)"}} |
+      | room | users     | participant1 | participant1-displayname | comment     | Message 1 {mention-group1} | {"mention-group1":{"type":"user-group","id":"group","name":"group-displayname","mention-id":"group\/group"}}        |
+      | room | users     | participant2 | participant2-displayname | comment     | Message                    | []                                                                                                                  |
