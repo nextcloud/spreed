@@ -31,7 +31,7 @@ class ChecksumVerificationServiceTest extends TestCase {
 			['', '', '', '', '', false],
 			['1234', '', '', '', 'Invalid random provided', false],
 			[str_repeat('1', 32), '', '', '', 'Invalid checksum provided', false],
-			[str_repeat('1', 32), 'fake', '', '', 'No shared SIP secret provided', false],
+			[str_repeat('1', 32), 'fake', '', '', 'No secret provided', false],
 			[str_repeat('1', 32), 'fake', 'invalid', '', 'Invalid HMAC provided', false],
 			[$validRandom, $validChecksum, $validSecret, $fakeData, '', true],
 		];
