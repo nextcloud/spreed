@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: MIT
+
+name: OpenGrep Full Scan
+
+on: pull_request
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: Scan with OpenGrep
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install OpenGrep
+        run: |
+          # Download the OpenGrep binary
+          release_page=$(curl -s https://api.github.com/repos/opengrep/opengrep/releases/latest)
+          linux_browser_download_link=$(echo $release_page | jq . | grep "/opengrep_manylinux_x86\"" | awk '{print $2}' | sed 's|[\"\,]*||g')
+          echo "Trying to download: $linux_browser_download_link"
+
+          wget $linux_browser_download_link -O opengrep
+
+          # Make the binary executable
+          chmod +x opengrep
+          # Move the binary to a directory in PATH
+          sudo mv opengrep /usr/local/bin/opengrep
+
+      - name: Run OpenGrep with custom rules
+        run: |
+          composer run opengrep-full -- --sarif --sarif-output findings.sarif
+          exit_code=$?
+          if [ $exit_code -ne 0 ]; then
+            echo "::error::OpenGrep found issues in the code. Check the report for details."
+            exit 1
+          fi
+
+      - name: Show potential changes in OpenGrep results
+        if: always()
+        run: git diff --exit-code -- . ':!lib/composer'
+
+      - name: Upload Analysis results to GitHub
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: findings.sarif
