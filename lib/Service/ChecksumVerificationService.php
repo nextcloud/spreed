@@ -41,7 +41,7 @@ class ChecksumVerificationService {
 		}
 
 		if ($secret === '') {
-			throw new UnauthorizedException('No shared SIP secret provided');
+			throw new UnauthorizedException('No secret provided');
 		}
 
 		$hash = hash_hmac('sha256', $random . $data, $secret);
