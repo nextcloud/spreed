@@ -246,7 +246,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	 */
 	private function createShareObject(array $data): IShare {
 		$share = $this->shareManager->newShare();
-		$share->setId($data['id'])
+		$share->setId((string)$data['id'])
 			->setShareType((int)$data['share_type'])
 			->setPermissions((int)$data['permissions'])
 			->setTarget($data['file_target'])
