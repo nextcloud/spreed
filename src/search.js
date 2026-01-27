@@ -34,7 +34,7 @@ function init() {
 				emit('nextcloud:unified-search:add-filter', {
 					id: 'talk-message',
 					payload: conversation,
-					filterUpdateText: t('spreed', 'Search in conversation: {conversation}', { conversation: conversation.displayName }),
+					filterUpdateText: t('spreed', 'Search in conversation: {conversation}', { conversation: conversation.displayName }, { escape: false, sanitize: false }),
 					filterParams: { conversation: conversation.token },
 				})
 			}
