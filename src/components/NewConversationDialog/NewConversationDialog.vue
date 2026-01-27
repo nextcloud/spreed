@@ -230,7 +230,7 @@ export default {
 				}
 				return t('spreed', 'Error while creating the conversation')
 			} else if (this.success && this.isPublic) {
-				return t('spreed', 'All set, the conversation "{conversationName}" was created.', { conversationName: this.conversationName })
+				return t('spreed', 'All set, the conversation "{conversationName}" was created.', { conversationName: this.conversationName }, { escape: false, sanitize: false })
 			}
 			return ''
 		},
