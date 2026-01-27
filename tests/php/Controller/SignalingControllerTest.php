@@ -22,6 +22,7 @@ use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
+use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
@@ -31,7 +32,6 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
@@ -65,6 +65,7 @@ class CustomInputSignalingController extends SignalingController {
 class SignalingControllerTest extends TestCase {
 	protected TalkSession&MockObject $session;
 	protected \OCA\Talk\Signaling\Manager&MockObject $signalingManager;
+	protected IRequest&MockObject $request;
 	protected Manager|MockObject $manager;
 	protected ParticipantService&MockObject $participantService;
 	protected RoomService&MockObject $roomService;
@@ -72,7 +73,7 @@ class SignalingControllerTest extends TestCase {
 	protected Messages&MockObject $messages;
 	protected IUserManager&MockObject $userManager;
 	protected ITimeFactory&MockObject $timeFactory;
-	protected IClientService&MockObject $clientService;
+	protected ChecksumVerificationService $checksumVerificationService;
 	protected IThrottler&MockObject $throttler;
 	protected BanService&MockObject $banService;
 	protected LoggerInterface&MockObject $logger;
@@ -91,13 +92,14 @@ class SignalingControllerTest extends TestCase {
 
 		$this->userId = 'testUser';
 		$this->secureRandom = \OCP\Server::get(ISecureRandom::class);
+		$this->request = $this->createMock(IRequest::class);
 		/** @var MockObject|IAppConfig $appConfig */
 		$appConfig = $this->createMock(IAppConfig::class);
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$groupManager = $this->createMock(IGroupManager::class);
 		$this->serverConfig = \OCP\Server::get(IConfig::class);
 		$this->serverConfig->setAppValue('spreed', 'signaling_servers', json_encode([
-			'secret' => 'MySecretValue',
+			'secret' => 'MySecretValueMySecretValue1234567890',
 		]));
 		$this->serverConfig->setAppValue('spreed', 'signaling_ticket_secret', 'the-app-ticket-secret');
 		$this->serverConfig->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
@@ -114,7 +116,7 @@ class SignalingControllerTest extends TestCase {
 		$this->sessionService = $this->createMock(SessionService::class);
 		$this->messages = $this->createMock(Messages::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
-		$this->clientService = $this->createMock(IClientService::class);
+		$this->checksumVerificationService = new ChecksumVerificationService();
 		$this->banService = $this->createMock(BanService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->authenticator = $this->createMock(Authenticator::class);
@@ -124,7 +126,7 @@ class SignalingControllerTest extends TestCase {
 	private function recreateSignalingController() {
 		$this->controller = new CustomInputSignalingController(
 			'spreed',
-			$this->createMock(IRequest::class),
+			$this->request,
 			$this->config,
 			$this->signalingManager,
 			$this->session,
@@ -137,7 +139,7 @@ class SignalingControllerTest extends TestCase {
 			$this->userManager,
 			$this->dispatcher,
 			$this->timeFactory,
-			$this->clientService,
+			$this->checksumVerificationService,
 			$this->banService,
 			$this->logger,
 			$this->authenticator,
@@ -555,19 +557,24 @@ class SignalingControllerTest extends TestCase {
 		// Test checksum generation / validation with the example from the API documentation.
 		$data = '{"type":"auth","auth":{"version":"1.0","params":{"hello":"world"}}}';
 		$random = 'afb6b872ab03e3376b31bf0af601067222ff7990335ca02d327071b73c0119c6';
-		$checksum = '3c4a69ff328299803ac2879614b707c807b4758cf19450755c60656cac46e3bc';
+		$checksum = '37455eb661e5a4bc81cc7e1b10beb2cf09c30d0161f82ce12afcc108dd76e4f3';
 		$this->assertEquals($checksum, $this->calculateBackendChecksum($data, $random));
 		$this->assertTrue($this->validateBackendRandom($data, $random, $checksum));
 	}
+
+	protected string $checksum = '';
 
 	private function performBackendRequest($data) {
 		if (!is_string($data)) {
 			$data = json_encode($data);
 		}
 		$random = 'afb6b872ab03e3376b31bf0af601067222ff7990335ca02d327071b73c0119c6';
-		$checksum = $this->calculateBackendChecksum($data, $random);
-		$_SERVER['HTTP_SPREED_SIGNALING_RANDOM'] = $random;
-		$_SERVER['HTTP_SPREED_SIGNALING_CHECKSUM'] = $checksum;
+		$this->checksum = $this->calculateBackendChecksum($data, $random);
+		$this->request->method('getHeader')
+			->willReturnCallback(fn ($header): string => match ($header) {
+				'spreed-signaling-random' => $random,
+				'spreed-signaling-checksum' => $this->checksum,
+			});
 		$this->controller->setInputStream($data);
 		return $this->controller->backend();
 	}
@@ -590,8 +597,11 @@ class SignalingControllerTest extends TestCase {
 		$this->controller->setInputStream($data);
 		$random = 'afb6b872ab03e3376b31bf0af601067222ff7990335ca02d327071b73c0119c6';
 		$checksum = $this->calculateBackendChecksum('{"foo": "bar"}', $random);
-		$_SERVER['HTTP_SPREED_SIGNALING_RANDOM'] = $random;
-		$_SERVER['HTTP_SPREED_SIGNALING_CHECKSUM'] = $checksum;
+		$this->request->method('getHeader')
+			->willReturnMap([
+				['spreed-signaling-random', $random],
+				['spreed-signaling-checksum', $checksum],
+			]);
 		$result = $this->controller->backend();
 		$this->assertSame([
 			'type' => 'error',
@@ -605,8 +615,11 @@ class SignalingControllerTest extends TestCase {
 		$this->controller->setInputStream($data);
 		$random = '12345';
 		$checksum = $this->calculateBackendChecksum($data, $random);
-		$_SERVER['HTTP_SPREED_SIGNALING_RANDOM'] = $random;
-		$_SERVER['HTTP_SPREED_SIGNALING_CHECKSUM'] = $checksum;
+		$this->request->method('getHeader')
+			->willReturnMap([
+				['spreed-signaling-random', $random],
+				['spreed-signaling-checksum', $checksum],
+			]);
 		$result = $this->controller->backend();
 		$this->assertSame([
 			'type' => 'error',
