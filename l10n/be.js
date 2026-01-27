@@ -39,6 +39,8 @@ OC.L10N.register(
     "- Add other participants to a one-to-one call to create a new group call on the fly" : "- Дадайце іншых удзельнікаў да індывідуальнага выкліку, каб адразу стварыць новы супольны выклік",
     "- Use threads to keep your chat and discussions organized" : "- Арганізоўвайце чаты і абмеркаванні з дапамогай гутарак",
     "- Live transcriptions now available during the call (requires the live-transcription ExApp and the High-performance backend)" : "- Цяпер падчас выкліку даступна імгненная транскрыпцыя (патрабуецца праграма ExApp для імгненнай транскрыпцыі і высокапрадукцыйны бэкенд)",
+    "- Moderators can now pin messages so they are kept at the top" : "- Цяпер мадэратары могуць замацоўваць паведамленні, якія будуць заўсёды ўверсе старонкі",
+    "- Schedule a message to send it at a later time" : "- Заплануйце адпраўку паведамлення на пазнейшы час",
     "Talk updates ✅" : "Абнаўленні Talk ✅",
     "Reaction deleted by author" : "Рэакцыя выдалена аўтарам",
     "{actor} created the conversation" : "{actor} стварыў(-ла) размову",
