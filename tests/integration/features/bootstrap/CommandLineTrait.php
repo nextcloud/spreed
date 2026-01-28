@@ -35,10 +35,6 @@ trait CommandLineTrait {
 	 * @return int exit code
 	 */
 	public function runOcc(array $args = [], array $env = []): int {
-		// Set UTF-8 locale to ensure that escapeshellarg will not strip
-		// multibyte characters.
-		setlocale(LC_CTYPE, 'C.UTF-8');
-
 		$clearOpcodeCache = in_array($args[0], [
 			'app:disable',
 			'app:enable',
@@ -47,11 +43,7 @@ trait CommandLineTrait {
 			'maintenance:mode',
 		], true);
 
-		$args = array_map(static function (string|int $arg) {
-			return escapeshellarg((string)$arg);
-		}, $args);
 		$args[] = '--no-ansi';
-		$argString = implode(' ', $args);
 
 		if ($this->currentServer === 'REMOTE') {
 			$env['NEXTCLOUD_CONFIG_DIR'] = getenv('NEXTCLOUD_REMOTE_CONFIG_DIR');
@@ -66,7 +58,11 @@ trait CommandLineTrait {
 			1 => ['pipe', 'w'],
 			2 => ['pipe', 'w'],
 		];
-		$process = proc_open('php ' . $serverRootDir . '/console.php ' . $argString, $descriptor, $pipes, $this->ocPath, $env);
+		$command = array_merge([
+			'php',
+			$serverRootDir . '/console.php',
+		], $args);
+		$process = proc_open($command, $descriptor, $pipes, $this->ocPath, $env);
 		//		$process = proc_open('sudo -u www-data php ' . $serverRootDir . '/console.php ' . $argString, $descriptor, $pipes, $this->ocPath, $env);
 		$this->lastStdOut = stream_get_contents($pipes[1]);
 		$this->lastStdErr = stream_get_contents($pipes[2]);
