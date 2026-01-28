@@ -11,13 +11,13 @@
 				<h2>{{ t('spreed', 'This conversation has ended') }}</h2>
 			</div>
 			<template v-else>
-				<TopBar is-in-call is-sidebar />
-				<CallView :token="token" is-sidebar />
+				<TopBar isInCall isSidebar />
+				<CallView :token="token" isSidebar />
 				<InternalSignalingHint />
 				<RouterView />
 				<PollManager />
 				<PollViewer />
-				<MediaSettings v-model:recording-consent-given="recordingConsentGiven" />
+				<MediaSettings v-model:recordingConsentGiven="recordingConsentGiven" />
 			</template>
 		</aside>
 	</TransitionWrapper>
@@ -211,7 +211,7 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-@use './assets/variables' as *;
+@use './assets/variables.scss' as *;
 
 /* Styles based on the NcAppSidebar */
 #talk-sidebar {

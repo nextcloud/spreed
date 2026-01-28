@@ -11,10 +11,10 @@
 				type="warning"
 				:text="t('spreed', 'Enabling the lobby will remove non-moderators from the ongoing call.')" />
 			<NcCheckboxRadioSwitch
-				:model-value="hasLobbyEnabled"
+				:modelValue="hasLobbyEnabled"
 				type="switch"
 				:disabled="isLobbyStateLoading"
-				@update:model-value="toggleLobby">
+				@update:modelValue="toggleLobby">
 				{{ t('spreed', 'Enable lobby, restricting the conversation to moderators') }}
 			</NcCheckboxRadioSwitch>
 		</div>
@@ -30,14 +30,14 @@
 					id="moderation_settings_lobby_timer_field"
 					v-model="lobbyTimer"
 					aria-describedby="moderation_settings_lobby_timer_hint"
-					:default-value="defaultLobbyTimer"
+					:defaultValue="defaultLobbyTimer"
 					:placeholder="t('spreed', 'Start time (optional)')"
 					:disabled="lobbyTimerFieldDisabled"
 					type="datetime"
-					value-type="timestamp"
+					valueType="timestamp"
 					format="yyyy-MM-dd HH:mm"
-					:minute-step="5"
-					:input-class="['mx-input', { focusable: !lobbyTimerFieldDisabled }]"
+					:minuteStep="5"
+					:inputClass="['mx-input', { focusable: !lobbyTimerFieldDisabled }]"
 					v-bind="dateTimePickerAttrs"
 					confirm
 					clearable />

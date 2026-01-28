@@ -20,8 +20,8 @@
 						:source="item.actorType"
 						:size="AVATAR.SIZE.EXTRA_SMALL"
 						condensed
-						disable-menu
-						disable-tooltip />
+						disableMenu
+						disableTooltip />
 				</template>
 			</NcButton>
 		</template>
@@ -36,7 +36,7 @@
 					:name="item.actorDisplayName.trim()"
 					:source="item.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
-					disable-menu />
+					disableMenu />
 				<p class="poll-voters-details__display-name">
 					{{ getDisplayName(item) }}
 				</p>

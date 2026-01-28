@@ -7,7 +7,7 @@
 	<NcModal
 		size="small"
 		:container="nestedContainer"
-		:label-id="dialogHeaderId"
+		:labelId="dialogHeaderId"
 		@close="$emit('close')">
 		<div class="wrapper">
 			<template v-if="!loading">

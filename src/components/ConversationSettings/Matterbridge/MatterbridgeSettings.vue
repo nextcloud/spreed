@@ -26,7 +26,7 @@
 						:aria-label-combobox="t('spreed', 'Messaging systems')"
 						:placeholder="newPartPlaceholder"
 						:options="options"
-						@update:model-value="clickAddPart">
+						@update:modelValue="clickAddPart">
 						<template #option="option">
 							<img
 								class="icon-multiselect-service"
@@ -40,9 +40,9 @@
 					v-show="parts.length > 0"
 					class="enable-switch-line">
 					<NcCheckboxRadioSwitch
-						:model-value="enabled"
+						:modelValue="enabled"
 						type="switch"
-						@update:model-value="onEnabled">
+						@update:modelValue="onEnabled">
 						{{ t('spreed', 'Enable bridge') }}
 						({{ processStateText }})
 					</NcCheckboxRadioSwitch>
@@ -61,9 +61,9 @@
 						:name="t('spreed', 'Log content')"
 						size="normal"
 						container=".matterbridge-settings"
-						close-on-click-outside>
+						closeOnClickOutside>
 						<NcTextArea
-							:model-value="processLog"
+							:modelValue="processLog"
 							class="log-content"
 							:label="t('spreed', 'Log content')"
 							:rows="29"
@@ -82,8 +82,8 @@
 					:editing="part.editing"
 					:editable="!enabled"
 					container=".matterbridge-settings"
-					@edit-clicked="onEditClicked(i)"
-					@delete-part="onDelete(i)" />
+					@editClicked="onEditClicked(i)"
+					@deletePart="onDelete(i)" />
 			</ul>
 		</div>
 	</div>

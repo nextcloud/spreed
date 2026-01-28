@@ -360,9 +360,9 @@ async function submitNewMeeting() {
 	<div v-if="conversation">
 		<NcPopover
 			:container="container"
-			:popper-hide-triggers="hideTriggers"
-			:no-focus-trap="!canScheduleMeeting && upcomingEvents.length === 0"
-			popup-role="dialog">
+			:popperHideTriggers="hideTriggers"
+			:noFocusTrap="!canScheduleMeeting && upcomingEvents.length === 0"
+			popupRole="dialog">
 			<template #trigger>
 				<NcButton
 					class="upcoming-meeting"
@@ -389,7 +389,7 @@ async function submitNewMeeting() {
 							:start="event.start"
 							:href="event.href"
 							:color="event.color"
-							:is-recurring="!!event.recurrenceId" />
+							:isRecurring="!!event.recurrenceId" />
 					</ul>
 				</template>
 				<NcEmptyContent v-else class="calendar-events__empty-content">
@@ -420,17 +420,17 @@ async function submitNewMeeting() {
 				class="calendar-meeting"
 				:name="t('spreed', 'Schedule a meeting')"
 				size="normal"
-				close-on-click-outside
+				closeOnClickOutside
 				:container="container">
 				<NcTextField
 					v-model="newMeetingTitle"
 					:label="t('spreed', 'Meeting title')"
-					label-visible />
+					labelVisible />
 				<NcTextArea
 					v-model="newMeetingDescription"
 					:label="t('spreed', 'Description')"
 					resize="vertical"
-					label-visible />
+					labelVisible />
 				<div class="calendar-meeting__flex-wrapper">
 					<NcDateTimePickerNative
 						id="schedule_meeting_input"
@@ -453,7 +453,7 @@ async function submitNewMeeting() {
 					id="schedule_meeting_select"
 					v-model="selectedCalendar"
 					:options="calendarOptions"
-					:input-label="t('spreed', 'Calendar')">
+					:inputLabel="t('spreed', 'Calendar')">
 					<template #selected-option="option">
 						<span class="calendar-badge" :style="{ backgroundColor: option.color }" />
 						{{ option.label }}
@@ -476,7 +476,7 @@ async function submitNewMeeting() {
 					{{ t('spreed', 'No other participants to send invitations to.') }}
 				</p>
 				<template v-else>
-					<NcCheckboxRadioSwitch v-model="selectAll" @update:model-value="toggleAll">
+					<NcCheckboxRadioSwitch v-model="selectAll" @update:modelValue="toggleAll">
 						{{ inviteLabel }}
 					</NcCheckboxRadioSwitch>
 					<NcButton v-if="!isOneToOneConversation && !selectAll" variant="tertiary" @click="isSelectorOpen = true">
@@ -510,14 +510,14 @@ async function submitNewMeeting() {
 				v-model:open="isSelectorOpen"
 				:name="t('spreed', 'Add attendees')"
 				class="calendar-meeting"
-				close-on-click-outside
+				closeOnClickOutside
 				container="#calendar-meeting">
 				<SearchBox
 					v-model:value="searchText"
 					class="calendar-meeting__searchbox"
-					is-focused
-					:placeholder-text="t('spreed', 'Search participants')"
-					@abort-search="searchText = ''" />
+					isFocused
+					:placeholderText="t('spreed', 'Search participants')"
+					@abortSearch="searchText = ''" />
 				<!-- Selected results -->
 				<TransitionWrapper
 					v-if="selectedAttendeeIds.length"

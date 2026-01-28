@@ -6,7 +6,7 @@
 <template>
 	<NcDialog
 		:name="dialogTitle"
-		close-on-click-outside
+		closeOnClickOutside
 		@update:open="close">
 		<template #default>
 			<p v-if="dialogSubtitle" class="selector__subtitle">
@@ -14,11 +14,11 @@
 			</p>
 			<NcTextField
 				v-model="searchText"
-				trailing-button-icon="close"
+				trailingButtonIcon="close"
 				class="selector__search"
 				:label="t('spreed', 'Search conversations or users')"
-				:show-trailing-button="searchText !== ''"
-				@trailing-button-click="clearText">
+				:showTrailingButton="searchText !== ''"
+				@trailingButtonClick="clearText">
 				<template #icon>
 					<Magnify :size="16" />
 				</template>

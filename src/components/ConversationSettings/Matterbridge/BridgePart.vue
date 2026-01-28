@@ -15,20 +15,20 @@
 				:container="container"
 				:inline="editable ? 1 : 0"
 				placement="bottom">
-				<NcActionButton v-if="editable" close-after-click @click="$emit('editClicked')">
+				<NcActionButton v-if="editable" closeAfterClick @click="$emit('editClicked')">
 					<template #icon>
 						<IconCheck v-if="editing" :size="20" />
 						<IconPencilOutline v-else :size="20" />
 					</template>
 					{{ editing ? t('spreed', 'Save') : t('spreed', 'Edit') }}
 				</NcActionButton>
-				<NcActionLink :href="type.infoTarget" target="_blank" close-after-click>
+				<NcActionLink :href="type.infoTarget" target="_blank" closeAfterClick>
 					<template #icon>
 						<IconInformationOutline :size="20" />
 					</template>
 					{{ t('spreed', 'More information') }}
 				</NcActionLink>
-				<NcActionButton v-if="editable" close-after-click @click="$emit('deletePart')">
+				<NcActionButton v-if="editable" closeAfterClick @click="$emit('deletePart')">
 					<template #icon>
 						<IconTrashCanOutline :size="20" />
 					</template>

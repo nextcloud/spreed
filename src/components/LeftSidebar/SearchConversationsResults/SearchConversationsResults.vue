@@ -266,7 +266,7 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 				<ConversationItem
 					v-else-if="item.data.type === 'open_conversation'"
 					:item="item.data.object"
-					is-search-result
+					isSearchResult
 					:compact="isCompact"
 					@click="emit('abortSearch')" />
 				<NcAppNavigationCaption

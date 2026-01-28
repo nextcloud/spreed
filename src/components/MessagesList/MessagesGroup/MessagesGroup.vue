@@ -15,8 +15,8 @@
 				:name="actorDisplayName"
 				:source="actorType"
 				:size="AVATAR.SIZE.SMALL"
-				:disable-menu="disableMenu"
-				disable-tooltip />
+				:disableMenu="disableMenu"
+				disableTooltip />
 		</div>
 		<div class="messages__content" :class="{ 'small-view': isSmallMobile || isSidebar }">
 			<li v-if="showAuthor" class="messages__author" aria-level="4">
@@ -31,9 +31,9 @@
 						outgoing: isSelfActor && isSplitViewEnabled,
 					}"
 					:message="message"
-					:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
-					:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId"
-					:is-self-actor />
+					:nextMessageId="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
+					:previousMessageId="(index > 0 && messages[index - 1].id) || previousMessageId"
+					:isSelfActor />
 			</ul>
 		</div>
 	</li>
@@ -147,7 +147,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use '../../../assets/variables' as *;
+@use '../../../assets/variables.scss' as *;
 
 .wrapper {
 	position: relative;

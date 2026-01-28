@@ -46,10 +46,10 @@
 			<FilePreview
 				v-else
 				:token="token"
-				:small-preview="!isMedia"
-				:row-layout="!isMedia"
-				:item-type="type"
-				is-shared-items
+				:smallPreview="!isMedia"
+				:rowLayout="!isMedia"
+				:itemType="type"
+				isSharedItems
 				:file="item.messageParameters.file" />
 		</template>
 	</div>
@@ -143,7 +143,7 @@ export default {
 .shared-items {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	grid-gap: var(--default-grid-baseline);
+	gap: var(--default-grid-baseline);
 	margin: auto;
 
 	&__media {

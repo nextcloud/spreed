@@ -11,13 +11,13 @@
 			class="messages-group__system">
 			<ul v-if="messagesCollapsed.messages?.length > 1" class="messages">
 				<SystemMessageItem
-					is-combined-system-message
-					:is-combined-system-message-collapsed="messagesCollapsed.collapsed"
-					:next-message-id="getNextMessageId(messagesCollapsed.messages.at(-1))"
-					:previous-message-id="getPrevMessageId(messagesCollapsed.messages.at(0))"
-					:last-collapsed-message-id="messagesCollapsed.lastId"
+					isCombinedSystemMessage
+					:isCombinedSystemMessageCollapsed="messagesCollapsed.collapsed"
+					:nextMessageId="getNextMessageId(messagesCollapsed.messages.at(-1))"
+					:previousMessageId="getPrevMessageId(messagesCollapsed.messages.at(0))"
+					:lastCollapsedMessageId="messagesCollapsed.lastId"
 					:message="createCombinedSystemMessage(messagesCollapsed)"
-					@toggle-combined-system-message="toggleCollapsed(messagesCollapsed)" />
+					@toggleCombinedSystemMessage="toggleCollapsed(messagesCollapsed)" />
 			</ul>
 			<ul
 				v-show="messagesCollapsed.messages?.length === 1 || !messagesCollapsed.collapsed"
@@ -27,10 +27,10 @@
 					v-for="message in messagesCollapsed.messages"
 					:key="message.id"
 					:message="message"
-					:is-collapsed-system-message="messagesCollapsed.messages?.length > 1"
-					:last-collapsed-message-id="messagesCollapsed.lastId"
-					:next-message-id="getNextMessageId(message)"
-					:previous-message-id="getPrevMessageId(message)" />
+					:isCollapsedSystemMessage="messagesCollapsed.messages?.length > 1"
+					:lastCollapsedMessageId="messagesCollapsed.lastId"
+					:nextMessageId="getNextMessageId(message)"
+					:previousMessageId="getPrevMessageId(message)" />
 			</ul>
 		</div>
 	</li>
@@ -235,7 +235,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use '../../../assets/variables' as *;
+@use '../../../assets/variables.scss' as *;
 
 .messages-group__system {
 	display: flex;

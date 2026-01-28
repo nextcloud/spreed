@@ -32,8 +32,10 @@
 <script>
 import { getCurrentUser } from '@nextcloud/auth'
 import Axios from '@nextcloud/axios'
+import { FileType, getSidebar } from '@nextcloud/files'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
+import { ShareType } from '@nextcloud/sharing'
 import { defineAsyncComponent, defineComponent, h } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import LoadingComponent from './components/LoadingComponent.vue'
@@ -51,7 +53,6 @@ import CancelableRequest from './utils/CancelableRequest.ts'
 import { signalingKill } from './utils/webrtc/index.js'
 
 export default {
-
 	name: 'FilesSidebarTabApp',
 
 	components: {
@@ -68,6 +69,28 @@ export default {
 		NcButton,
 	},
 
+	props: {
+		node: {
+			type: Object, /* @nextcloud/files/INode */
+			required: true,
+		},
+
+		folder: {
+			type: Object, /* @nextcloud/files/IFolder */
+			required: true,
+		},
+
+		view: {
+			type: Object, /* @nextcloud/files/IView */
+			required: true,
+		},
+
+		active: {
+			type: Boolean,
+			required: true,
+		},
+	},
+
 	setup() {
 		return {
 			isInCall: useIsInCall(),
@@ -79,9 +102,6 @@ export default {
 
 	data() {
 		return {
-			// needed for reactivity
-			Talk: OCA.Talk,
-			sidebarState: OCA.Files.Sidebar.state,
 			/**
 			 * Stores the cancel function returned by `cancelablePollNewMessages`,
 			 */
@@ -95,12 +115,8 @@ export default {
 			return this.tokenStore.token
 		},
 
-		fileInfo() {
-			return this.Talk.fileInfo || {}
-		},
-
 		fileId() {
-			return this.fileInfo.id
+			return this.node.fileid
 		},
 
 		fileIdForToken() {
@@ -120,33 +136,26 @@ export default {
 		isInFile() {
 			return this.fileId === this.fileIdForToken
 		},
-
-		isChatTheActiveTab() {
-			// FIXME check for empty active tab is currently needed because the
-			// activeTab is not set when opening the sidebar from the "Details"
-			// action (which opens the first tab, which is the Chat tab).
-			return !this.sidebarState.activeTab || this.sidebarState.activeTab === 'chat'
-		},
 	},
 
 	watch: {
-		fileInfo: {
+		fileId: {
 			immediate: true,
-			handler(fileInfo) {
-				if (this.token && (!fileInfo || fileInfo.id !== this.fileIdForToken)) {
+			handler(fileId) {
+				if (this.token && (fileId !== this.fileIdForToken)) {
 					this.leaveConversation()
 				}
 
-				this.setTalkSidebarSupportedForFile(fileInfo)
+				this.setTalkSidebarSupportedForFile()
 			},
 		},
 
-		isChatTheActiveTab: {
+		active: {
 			immediate: true,
-			handler(isChatTheActiveTab) {
-				this.forceTabsContentStyleWhenChatTabIsActive(isChatTheActiveTab)
+			handler(active) {
+				this.forceTabsContentStyleWhenChatTabIsActive(active)
 				// recheck the file info in case the sharing info was changed
-				this.setTalkSidebarSupportedForFile(this.fileInfo)
+				this.setTalkSidebarSupportedForFile()
 			},
 		},
 	},
@@ -181,6 +190,14 @@ export default {
 				}
 			}
 		})
+	},
+
+	unmounted() {
+		if (this.tokenStore.token) {
+			OCA.Talk.store.dispatch('leaveConversation', { token: this.tokenStore.token })
+		}
+
+		this.tokenStore.updateTokenAndFileIdForToken('', null)
 	},
 
 	methods: {
@@ -287,25 +304,23 @@ export default {
 		 * the current user or by the current user to another user (as a user,
 		 * group...), or if the file is a descendant of a folder that meets
 		 * those conditions.
-		 *
-		 * @param {OCA.Files.FileInfo} fileInfo the FileInfo to check
 		 */
-		async setTalkSidebarSupportedForFile(fileInfo) {
+		async setTalkSidebarSupportedForFile() {
 			this.isTalkSidebarSupportedForFile = undefined
 
-			if (!fileInfo) {
+			if (!this.node) {
 				this.isTalkSidebarSupportedForFile = false
 
 				return
 			}
 
-			if (fileInfo.get('type') === 'dir') {
+			if (this.node.type === FileType.Directory) {
 				this.isTalkSidebarSupportedForFile = false
 
 				return
 			}
 
-			if (fileInfo.get('shareOwnerId')) {
+			if (this.node.attributes?.['share-owner-id']) {
 				// Shared with me
 				// TODO How to check that it is not a remote share? At least for
 				// local shares "shareTypes" is not defined when shared with me.
@@ -314,14 +329,14 @@ export default {
 				return
 			}
 
-			if (!fileInfo.get('shareTypes')) {
+			if (!this.node.attributes?.['share-types']) {
 				// When it is not possible to know whether the Talk sidebar is
 				// supported for a file or not only from the data in the
 				// FileInfo it is necessary to query the server.
 				// FIXME If the file is shared this will create the conversation
 				// if it does not exist yet.
 				try {
-					this.isTalkSidebarSupportedForFile = (await getFileConversation(fileInfo.id)) || false
+					this.isTalkSidebarSupportedForFile = (await getFileConversation(this.node.fileid)) || false
 				} catch (error) {
 					this.isTalkSidebarSupportedForFile = false
 				}
@@ -329,17 +344,17 @@ export default {
 				return
 			}
 
-			const shareTypes = fileInfo.get('shareTypes').filter(function(shareType) {
+			const shareTypes = Object.values(this.node.attributes?.['share-types'] || {}).flat().filter(function(shareType) {
 				// Ensure that shareType is an integer (as in the past shareType
 				// could be an integer or a string depending on whether the
 				// Sharing tab was opened or not).
 				shareType = parseInt(shareType)
-				return shareType === OC.Share.SHARE_TYPE_USER
-					|| shareType === OC.Share.SHARE_TYPE_GROUP
-					|| shareType === OC.Share.SHARE_TYPE_CIRCLE
-					|| shareType === OC.Share.SHARE_TYPE_ROOM
-					|| shareType === OC.Share.SHARE_TYPE_LINK
-					|| shareType === OC.Share.SHARE_TYPE_EMAIL
+				return shareType === ShareType.User
+					|| shareType === ShareType.Group
+					|| shareType === ShareType.Team
+					|| shareType === ShareType.Room
+					|| shareType === ShareType.Link
+					|| shareType === ShareType.Email
 			})
 
 			if (shareTypes.length === 0) {
@@ -349,7 +364,7 @@ export default {
 				// FIXME If the file is shared this will create the conversation
 				// if it does not exist yet.
 				try {
-					this.isTalkSidebarSupportedForFile = (await getFileConversation(fileInfo.id)) || false
+					this.isTalkSidebarSupportedForFile = (await getFileConversation(this.node.fileid)) || false
 				} catch (error) {
 					this.isTalkSidebarSupportedForFile = false
 				}
@@ -361,7 +376,7 @@ export default {
 		},
 
 		openSharingTab() {
-			OCA.Files.Sidebar.setActiveTab('sharing')
+			getSidebar().setActiveTab('sharing')
 		},
 
 		/**
@@ -375,15 +390,12 @@ export default {
 		 * and the screen short; in that case a scroll bar will be shown for the
 		 * sidebar, but even if that looks really bad it is better than an
 		 * unusable chat view.
-		 *
-		 * @param {boolean} isChatTheActiveTab whether the active tab is the
-		 *        chat tab or not.
 		 */
-		forceTabsContentStyleWhenChatTabIsActive(isChatTheActiveTab) {
+		forceTabsContentStyleWhenChatTabIsActive() {
 			const tabs = document.querySelector('.app-sidebar-tabs')
 			const tabsContent = document.querySelector('.app-sidebar-tabs__content')
 
-			if (isChatTheActiveTab) {
+			if (this.active) {
 				this.savedTabsMinHeight = tabs.style.minHeight
 				this.savedTabsOverflow = tabs.style.overflow
 				this.savedTabsContentOverflow = tabsContent.style.overflow

@@ -193,7 +193,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			<div class="talk-dashboard__actions">
 				<NcPopover
 					v-if="canStartConversations"
-					popup-role="dialog">
+					popupRole="dialog">
 					<template #trigger>
 						<NcButton variant="primary">
 							<template #icon>
@@ -269,7 +269,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 							<EventCard
 								v-for="eventRoom in eventRooms"
 								:key="eventRoom.eventLink"
-								:event-room="eventRoom"
+								:eventRoom="eventRoom"
 								class="talk-dashboard__event-card" />
 						</div>
 						<div class="talk-dashboard__event-cards__scroll-indicator">
@@ -356,20 +356,20 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 								<SearchMessageItem
 									v-for="reminder in upcomingReminders"
 									:key="reminder.messageId"
-									:message-id="reminder.messageId"
+									:messageId="reminder.messageId"
 									:title="reminder.actorDisplayName"
 									:subline="reminder.message"
-									:message-parameters="reminder.messageParameters"
+									:messageParameters="reminder.messageParameters"
 									:token="reminder.roomToken"
 									:to="{
 										name: 'conversation',
 										params: { token: reminder.roomToken },
 										hash: `#message_${reminder.messageId}`,
 									}"
-									:actor-id="reminder.actorId"
-									:actor-type="reminder.actorType"
+									:actorId="reminder.actorId"
+									:actorType="reminder.actorType"
 									:timestamp="reminder.reminderTimestamp"
-									is-reminder />
+									isReminder />
 							</ul>
 							<LoadingPlaceholder
 								v-else
@@ -392,7 +392,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 </template>
 
 <style lang="scss" scoped>
-@use '../../assets/variables' as *;
+@use '../../assets/variables.scss' as *;
 
 .talk-dashboard-wrapper {
 	padding: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 3);
@@ -539,7 +539,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 }
 
 .talk-dashboard__conversations-list {
-	margin: var(--default-grid-baseline) 0;
+	flex-grow: 1;
+	margin-block: var(--default-grid-baseline);
 	line-height: 20px;
 }
 

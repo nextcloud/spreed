@@ -74,24 +74,24 @@ function onClosing(result?: unknown) {
 			{ label: t('spreed', 'Cancel'), variant: 'tertiary', callback: () => undefined },
 			{ label: t('spreed', 'Save'), variant: 'primary', callback: () => true },
 		]"
-		close-on-click-outside
+		closeOnClickOutside
 		@closing="onClosing">
 		<NcFormBox>
 			<NcFormBoxSwitch
-				:model-value="settingsStore.noiseSuppression"
+				:modelValue="settingsStore.noiseSuppression"
 				:label="noiseSuppressionLabel"
 				:description="noiseSuppressionDescription"
-				@update:model-value="settingsStore.setNoiseSuppression" />
+				@update:modelValue="settingsStore.setNoiseSuppression" />
 			<NcFormBoxSwitch
-				:model-value="settingsStore.echoCancellation"
+				:modelValue="settingsStore.echoCancellation"
 				:label="echoCancellationLabel"
 				:description="echoCancellationDescription"
-				@update:model-value="settingsStore.setEchoCancellation" />
+				@update:modelValue="settingsStore.setEchoCancellation" />
 			<NcFormBoxSwitch
-				:model-value="settingsStore.autoGainControl"
+				:modelValue="settingsStore.autoGainControl"
 				:label="autoGainControlLabel"
 				:description="autoGainControlDescription"
-				@update:model-value="settingsStore.setAutoGainControl" />
+				@update:modelValue="settingsStore.setAutoGainControl" />
 		</NcFormBox>
 	</NcDialog>
 </template>

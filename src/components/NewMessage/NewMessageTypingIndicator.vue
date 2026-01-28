@@ -16,9 +16,9 @@
 					:source="participant.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					condensed
-					:condensed-overlap="8"
-					disable-menu
-					disable-tooltip />
+					:condensedOverlap="8"
+					disableMenu
+					disableTooltip />
 			</div>
 			<!-- eslint-disable-next-line vue/no-v-html -->
 			<p class="indicator__main" v-html="indicatorMessage" />
@@ -133,7 +133,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use '../../assets/variables' as *;
+@use '../../assets/variables.scss' as *;
 
 .indicator {
 	width: 100%;

@@ -64,12 +64,12 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 
 		$query = $this->db->getQueryBuilder();
 
-		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_rooms')
+		$query->selectAlias($query->func()->count('*'), 'num_rooms')
 			->from('spreedme_rooms');
 		$result = $query->executeQuery();
-		$return = (int)$result->fetch();
+		$row = $result->fetch();
 		$result->closeCursor();
-		$numRooms = (int)$return['num_rooms'];
+		$numRooms = (int)$row['num_rooms'];
 
 		if ($numRooms === 0) {
 			return;

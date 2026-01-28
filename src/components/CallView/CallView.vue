@@ -9,12 +9,12 @@
 			v-if="isViewerOverlay"
 			:token="token"
 			:model="promotedParticipantModel"
-			:shared-data="promotedParticipantModel && sharedDatas[promotedParticipantModel.attributes.peerId]"
+			:sharedData="promotedParticipantModel && sharedDatas[promotedParticipantModel.attributes.peerId]"
 			:screens="screens"
-			:local-shared-data="localSharedData" />
+			:localSharedData="localSharedData" />
 
 		<template v-else>
-			<EmptyCallView v-if="showEmptyCallView" :is-sidebar="isSidebar" />
+			<EmptyCallView v-if="showEmptyCallView" :isSidebar="isSidebar" />
 
 			<div id="videos" :class="{ 'is-sidebar': isSidebar }">
 				<div
@@ -27,25 +27,25 @@
 						:key="`promoted-${selectedVideoPeerId}`"
 						:token="token"
 						:model="selectedCallParticipantModel"
-						:shared-data="sharedDatas[selectedVideoPeerId]"
-						:show-talking-highlight="false"
-						:is-one-to-one="isOneToOne"
-						is-grid
-						is-big
-						fit-video />
+						:sharedData="sharedDatas[selectedVideoPeerId]"
+						:showTalkingHighlight="false"
+						:isOneToOne="isOneToOne"
+						isGrid
+						isBig
+						fitVideo />
 
 					<!-- Local Video Override mode (following own video) -->
 					<LocalVideo
 						v-else-if="showLocalVideo"
 						ref="localVideo"
 						:token="token"
-						:local-media-model="localMediaModel"
-						:local-call-participant-model="localCallParticipantModel"
-						:is-stripe="false"
-						:show-controls="false"
-						:is-sidebar="false"
-						is-big
-						fit-video />
+						:localMediaModel="localMediaModel"
+						:localCallParticipantModel="localCallParticipantModel"
+						:isStripe="false"
+						:showControls="false"
+						:isSidebar="false"
+						isBig
+						fitVideo />
 
 					<!-- Screens -->
 					<!-- Local screen -->
@@ -53,40 +53,40 @@
 						v-else-if="showLocalScreen"
 						key="screen-local"
 						:token="token"
-						:local-media-model="localMediaModel"
-						:shared-data="localSharedData"
-						is-big />
+						:localMediaModel="localMediaModel"
+						:sharedData="localSharedData"
+						isBig />
 					<!-- Remote or selected screen -->
 					<ScreenShare
 						v-else-if="(showRemoteScreen || showSelectedScreen) && shownRemoteScreenCallParticipantModel"
 						:key="`screen-${shownRemoteScreenPeerId}`"
 						:token="token"
-						:call-participant-model="shownRemoteScreenCallParticipantModel"
-						:shared-data="sharedDatas[shownRemoteScreenPeerId]"
-						is-big />
+						:callParticipantModel="shownRemoteScreenCallParticipantModel"
+						:sharedData="sharedDatas[shownRemoteScreenPeerId]"
+						isBig />
 					<!-- Promoted "autopilot" mode -->
 					<VideoVue
 						v-else-if="promotedParticipantModel"
 						:key="`autopilot-${promotedParticipantModel.attributes.peerId}`"
 						:token="token"
 						:model="promotedParticipantModel"
-						:shared-data="sharedDatas[promotedParticipantModel.attributes.peerId]"
-						:show-talking-highlight="false"
-						is-grid
-						fit-video
-						is-big
-						:is-one-to-one="isOneToOne"
-						:is-sidebar="isSidebar"
-						@force-promote-video="forcePromotedModel = $event" />
+						:sharedData="sharedDatas[promotedParticipantModel.attributes.peerId]"
+						:showTalkingHighlight="false"
+						isGrid
+						fitVideo
+						isBig
+						:isOneToOne="isOneToOne"
+						:isSidebar="isSidebar"
+						@forcePromoteVideo="forcePromotedModel = $event" />
 					<!-- presenter overlay -->
 					<PresenterOverlay
 						v-if="shouldShowPresenterOverlay"
 						:token="token"
 						:model="presenterModel"
-						:shared-data="presenterSharedData"
-						:is-local-presenter="showLocalScreen"
-						:local-media-model="localMediaModel"
-						:is-collapsed="!showPresenterOverlay"
+						:sharedData="presenterSharedData"
+						:isLocalPresenter="showLocalScreen"
+						:localMediaModel="localMediaModel"
+						:isCollapsed="!showPresenterOverlay"
 						@click="toggleShowPresenterOverlay" />
 
 					<div
@@ -94,42 +94,42 @@
 						class="dev-mode-video--promoted">
 						<img :alt="placeholderName(6)" :src="placeholderImage(6)">
 						<VideoBottomBar
-							:has-shadow="false"
+							:hasShadow="false"
 							:model="placeholderModel(6)"
-							:shared-data="placeholderSharedData(6)"
+							:sharedData="placeholderSharedData(6)"
 							:token="token"
-							:participant-name="placeholderName(6)"
-							is-big />
+							:participantName="placeholderName(6)"
+							isBig />
 					</div>
 				</div>
 
 				<!-- Stripe or fullscreen grid depending on `isGrid` -->
 				<VideosGrid
 					v-if="!isSidebar"
-					:is-stripe="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
-					:is-recording="isRecording"
+					:isStripe="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
+					:isRecording="isRecording"
 					:token="token"
-					:has-pagination="true"
-					:is-overlap="showFullPage"
-					:call-participant-models="callParticipantModels"
+					:hasPagination="true"
+					:isOverlap="showFullPage"
+					:callParticipantModels="callParticipantModels"
 					:screens="screens"
-					:local-media-model="localMediaModel"
-					:local-call-participant-model="localCallParticipantModel"
-					:shared-datas="sharedDatas"
+					:localMediaModel="localMediaModel"
+					:localCallParticipantModel="localCallParticipantModel"
+					:sharedDatas="sharedDatas"
 					v-bind="$attrs"
-					@select-video="handleSelectVideo"
-					@click-local-video="handleClickLocalVideo" />
+					@selectVideo="handleSelectVideo"
+					@clickLocalVideo="handleClickLocalVideo" />
 
 				<ReactionToaster
 					v-if="supportedReactions?.length"
 					:token="token"
-					:supported-reactions="supportedReactions"
-					:call-participant-models="callParticipantModels" />
+					:supportedReactions="supportedReactions"
+					:callParticipantModels="callParticipantModels" />
 
 				<LiveTranscriptionRenderer
 					v-if="isLiveTranscriptionEnabled"
 					:token="token"
-					:call-participant-models="callParticipantModels" />
+					:callParticipantModels="callParticipantModels" />
 
 				<!-- Local video if sidebar -->
 				<LocalVideo
@@ -137,17 +137,17 @@
 					ref="localVideo"
 					class="local-video"
 					:class="{ 'local-video--sidebar': isSidebar }"
-					:show-controls="false"
-					:fit-video="true"
-					:is-stripe="true"
+					:showControls="false"
+					:fitVideo="true"
+					:isStripe="true"
 					:token="token"
-					:local-media-model="localMediaModel"
-					:local-call-participant-model="localCallParticipantModel"
-					:is-sidebar="isSidebar"
-					@click-video="handleClickLocalVideo" />
+					:localMediaModel="localMediaModel"
+					:localCallParticipantModel="localCallParticipantModel"
+					:isSidebar="isSidebar"
+					@clickVideo="handleClickLocalVideo" />
 			</div>
 
-			<BottomBar v-if="!isRecording" :is-sidebar="isSidebar" />
+			<BottomBar v-if="!isRecording" :isSidebar="isSidebar" />
 		</template>
 	</div>
 </template>
@@ -865,7 +865,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use '../../assets/variables' as *;
+@use '../../assets/variables.scss' as *;
 
 #call-container {
 	width: 100%;

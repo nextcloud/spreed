@@ -68,8 +68,8 @@
 						:is="messagesGroupComponent[group.type]"
 						:token="token"
 						:messages="group.messages"
-						:previous-message-id="group.previousMessageId"
-						:next-message-id="group.nextMessageId" />
+						:previousMessageId="group.previousMessageId"
+						:nextMessageId="group.nextMessageId" />
 					<div
 						v-if="isLastReadMessage(group)"
 						v-intersection-observer="lastReadMessageVisibilityChanged"
@@ -1156,7 +1156,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use '../../assets/variables' as *;
+@use '../../assets/variables.scss' as *;
 
 .scroller {
 	position: relative;

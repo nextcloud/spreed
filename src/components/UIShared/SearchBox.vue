@@ -10,13 +10,13 @@
 		:aria-label="placeholderText"
 		:aria-describedby="ariaDescribedby"
 		:placeholder="placeholderText"
-		:show-trailing-button="isFocused"
-		:trailing-button-label="cancelSearchLabel"
+		:showTrailingButton="isFocused"
+		:trailingButtonLabel="cancelSearchLabel"
 		class="search-box"
-		label-outside
+		labelOutside
 		@focus="handleFocus"
 		@blur="handleBlur"
-		@trailing-button-click="abortSearch"
+		@trailingButtonClick="abortSearch"
 		@keydown.esc="abortSearch">
 		<template #icon>
 			<IconMagnify :size="16" />
@@ -191,14 +191,3 @@ export default {
 	},
 }
 </script>
-
-<style lang="scss" scoped>
-.search-box {
-	:deep(.input-field__input) {
-		&:focus:not([disabled]),&:active:not([disabled]) {
-			box-shadow: unset !important; // Remove the outer white border which is unnecessary here
-		}
-	}
-}
-
-</style>

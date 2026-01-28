@@ -170,7 +170,7 @@ function handleQuoteClick() {
 				:is="simpleQuotedMessageIcon"
 				v-else-if="simpleQuotedMessageIcon"
 				class="quote__preview-image"
-				fill-color="var(--color-text-maxcontrast)"
+				fillColor="var(--color-text-maxcontrast)"
 				:size="34" />
 			<NcLoadingIcon v-if="filePreview && filePreviewLoading" class="quote__preview--loading" />
 		</span>
@@ -189,7 +189,7 @@ function handleQuoteClick() {
 					:name="actorDisplayName"
 					:source="message.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
-					disable-menu />
+					disableMenu />
 				<span class="quote__main-author-info">
 					<span class="quote__main-author-name">
 						{{ actorInfo }}
@@ -220,7 +220,7 @@ function handleQuoteClick() {
 </template>
 
 <style lang="scss" scoped>
-@use '../assets/variables' as *;
+@use '../assets/variables.scss' as *;
 
 .quote {
 	position: relative;

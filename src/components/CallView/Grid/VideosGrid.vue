@@ -15,11 +15,11 @@
 			<template #icon>
 				<IconChevronDown
 					v-if="stripeOpen"
-					fill-color="#ffffff"
+					fillColor="#ffffff"
 					:size="20" />
 				<IconChevronUp
 					v-else
-					fill-color="#ffffff"
+					fillColor="#ffffff"
 					:size="20" />
 			</template>
 		</NcButton>
@@ -35,7 +35,7 @@
 						<template #icon>
 							<IconChevronLeft
 								class="bidirectional-icon"
-								fill-color="#ffffff"
+								fillColor="#ffffff"
 								:size="20" />
 						</template>
 					</NcButton>
@@ -48,21 +48,21 @@
 						@wheel="debounceHandleWheelEvent"
 						@keydown="handleMovement">
 						<template v-if="!devMode && !(isLessThanTwoVideos && isStripe)">
-							<EmptyCallView v-if="videos.length === 0 && !isStripe" class="video" :is-grid="true" />
+							<EmptyCallView v-if="videos.length === 0 && !isStripe" class="video" :isGrid="true" />
 							<VideoVue
 								v-for="callParticipantModel in displayedVideos"
 								:key="callParticipantModel.attributes.peerId"
 								:class="{ video: !isStripe }"
-								:show-video-overlay="showVideoOverlay"
+								:showVideoOverlay="showVideoOverlay"
 								:token="token"
 								:model="callParticipantModel"
-								:is-grid="true"
-								:show-talking-highlight="!isStripe"
-								:is-stripe="isStripe"
-								:is-promoted="sharedDatas[callParticipantModel.attributes.peerId].promoted"
-								:is-selected="isSelected(callParticipantModel)"
-								:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
-								@click-video="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
+								:isGrid="true"
+								:showTalkingHighlight="!isStripe"
+								:isStripe="isStripe"
+								:isPromoted="sharedDatas[callParticipantModel.attributes.peerId].promoted"
+								:isSelected="isSelected(callParticipantModel)"
+								:sharedData="sharedDatas[callParticipantModel.attributes.peerId]"
+								@clickVideo="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
 						</template>
 						<!-- VideosGrid developer mode -->
 						<template v-if="devMode">
@@ -73,11 +73,11 @@
 								:class="{ 'dev-mode-screenshot': screenshotMode }">
 								<img :alt="placeholderName(key)" :src="placeholderImage(key)">
 								<VideoBottomBar
-									:has-shadow="false"
+									:hasShadow="false"
 									:model="placeholderModel(key)"
-									:shared-data="placeholderSharedData(key)"
+									:sharedData="placeholderSharedData(key)"
 									:token="token"
-									:participant-name="placeholderName(key, !screenshotMode)" />
+									:participantName="placeholderName(key, !screenshotMode)" />
 							</div>
 							<h1 v-if="!screenshotMode" class="dev-mode__title">
 								Dev mode on ;-)
@@ -87,12 +87,12 @@
 							v-if="!isStripe && !isRecording"
 							ref="localVideo"
 							class="video"
-							is-grid
-							:fit-video="false"
+							isGrid
+							:fitVideo="false"
 							:token="token"
-							:local-media-model="localMediaModel"
-							:local-call-participant-model="localCallParticipantModel"
-							@click-video="handleClickLocalVideo" />
+							:localMediaModel="localMediaModel"
+							:localCallParticipantModel="localCallParticipantModel"
+							@clickVideo="handleClickLocalVideo" />
 					</div>
 					<NcButton
 						v-if="hasNextPage && gridWidth > 0"
@@ -103,7 +103,7 @@
 						<template #icon>
 							<IconChevronRight
 								class="bidirectional-icon"
-								fill-color="#ffffff"
+								fillColor="#ffffff"
 								:size="20" />
 						</template>
 					</NcButton>
@@ -113,12 +113,12 @@
 					ref="localVideo"
 					class="video"
 					:class="{ 'local-video--highlighted': isLessThanTwoVideos && isStripe }"
-					:is-stripe="true"
-					:show-controls="false"
+					:isStripe="true"
+					:showControls="false"
 					:token="token"
-					:local-media-model="localMediaModel"
-					:local-call-participant-model="localCallParticipantModel"
-					@click-video="handleClickLocalVideo" />
+					:localMediaModel="localMediaModel"
+					:localCallParticipantModel="localCallParticipantModel"
+					@clickVideo="handleClickLocalVideo" />
 
 				<template v-if="devMode">
 					<NcButton
@@ -130,7 +130,7 @@
 							<IconChevronLeft
 								v-if="!screenshotMode"
 								class="bidirectional-icon"
-								fill-color="#00FF41"
+								fillColor="#00FF41"
 								:size="20" />
 						</template>
 					</NcButton>
@@ -564,11 +564,13 @@ export default {
 			objectMap.modelsWithVideoEnabled = this.getOrderedTiles(videoTilesMap, this.promotedHistoryMask)
 			objectMap.modelsWithAudioOnly = this.getOrderedTiles(audioTilesMap, this.promotedHistoryMask)
 
-			return [...objectMap.modelsWithScreenshare,
+			return [
+				...objectMap.modelsWithScreenshare,
 				...objectMap.modelsTempPromoted,
 				...objectMap.modelsWithVideoEnabled,
 				...objectMap.modelsWithAudioOnly,
-				...objectMap.modelsWithNoPermissions]
+				...objectMap.modelsWithNoPermissions,
+			]
 		},
 
 		speakers() {
@@ -991,8 +993,8 @@ export default {
 	height: 100%;
 	width: 100%;
 
-	grid-row-gap: var(--grid-gap);
-	grid-column-gap: var(--grid-gap);
+	row-gap: var(--grid-gap);
+	column-gap: var(--grid-gap);
 
 	&.stripe {
 		padding: var(--grid-gap) var(--grid-gap) 0 0;

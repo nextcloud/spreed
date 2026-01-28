@@ -16,7 +16,7 @@
 			<NcSelect
 				id="moderation_settings_message_expiration"
 				v-model="selectedOption"
-				:input-label="t('spreed', 'Set message expiration')"
+				:inputLabel="t('spreed', 'Set message expiration')"
 				:options="expirationOptions"
 				label="label"
 				:clearable="false" />

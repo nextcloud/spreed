@@ -574,7 +574,7 @@ namespace OCA\Talk;
  *
  * @psalm-type TalkScheduledMessage = array{
  *     // SnowflakeID
- *     id: string,
+ *     id: numeric-string,
  *     actorId: string,
  *     actorType: string,
  *     threadId: int,
@@ -585,6 +585,8 @@ namespace OCA\Talk;
  *     createdAt: int,
  *     sendAt: int,
  *     silent: bool,
+ *     // Set only if sending failed to persist the original timestamp and expose it
+ *     originalSendAt?: int,
  * }
  */
 class ResponseDefinitions {

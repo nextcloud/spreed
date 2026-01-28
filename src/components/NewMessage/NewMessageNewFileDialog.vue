@@ -8,7 +8,7 @@
 		:name="t('spreed', 'Create and share a new file')"
 		size="large"
 		class="templates-picker"
-		close-on-click-outside
+		closeOnClickOutside
 		@update:open="closeModal">
 		<form
 			class="templates-picker__form"
@@ -19,7 +19,7 @@
 				ref="textField"
 				v-model="newFileTitle"
 				:error="!!newFileError"
-				:helper-text="newFileError"
+				:helperText="newFileError"
 				:label="t('spreed', 'Name of the new file')"
 				:placeholder="newFileTitle" />
 
@@ -31,8 +31,8 @@
 					:checked="checked === template.fileid"
 					:fileid="template.fileid"
 					:filename="template.filename"
-					:preview-url="template.previewUrl"
-					:has-preview="template.hasPreview"
+					:previewUrl="template.previewUrl"
+					:hasPreview="template.hasPreview"
 					:mime="template.mime"
 					:ratio="fileTemplate.ratio"
 					@check="onCheck" />
@@ -261,7 +261,7 @@ export default {
 	&__list {
 		margin-top: 20px;
 		display: grid;
-		grid-gap: calc(var(--margin) * 2);
+		gap: calc(var(--margin) * 2);
 		grid-auto-columns: 1fr;
 		// We want maximum 5 columns. Putting 6 as we don't count the grid gap. So it will always be lower than 6
 		max-width: calc(var(--fullwidth) * 6);

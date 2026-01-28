@@ -19,10 +19,10 @@
 			:token="participant.roomToken ?? 'new'"
 			:name="computedName"
 			:source="actorType"
-			disable-menu
-			disable-tooltip
-			:preloaded-user-status="preloadedUserStatus"
-			:show-user-status="showUserStatus" />
+			disableMenu
+			disableTooltip
+			:preloadedUserStatus="preloadedUserStatus"
+			:showUserStatus="showUserStatus" />
 
 		<span class="selectable-participant__content">
 			<span class="selectable-participant__content-name">

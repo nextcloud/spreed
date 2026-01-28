@@ -11,13 +11,13 @@
 			dir="auto"
 			:text="text"
 			autolink
-			:use-extended-markdown="useMarkdown" />
+			:useExtendedMarkdown="useMarkdown" />
 		<NcRichContenteditable
 			v-else
 			ref="richContenteditable"
 			v-model="text"
 			dir="auto"
-			:auto-complete="() => {}"
+			:autoComplete="() => {}"
 			:maxlength="maxLength"
 			:multiline="multiline"
 			:contenteditable="!loading"
@@ -241,8 +241,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use '../../assets/variables' as *;
-@use '../../assets/markdown' as *;
+@use '../../assets/variables.scss' as *;
+@use '../../assets/markdown.scss' as *;
 
 .editable-text-field {
 	display: flex;

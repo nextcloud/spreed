@@ -13,8 +13,8 @@
 				:name="displayName"
 				source="users"
 				:size="AVATAR.SIZE.SMALL"
-				disable-menu
-				disable-tooltip />
+				disableMenu
+				disableTooltip />
 		</template>
 		<p class="absence-reminder__caption">{{ userAbsenceCaption }}</p>
 		<p v-if="userAbsencePeriod">{{ userAbsencePeriod }}</p>
@@ -25,7 +25,7 @@
 				:key="isDarkTheme ? 'dark' : 'light'"
 				class="absence-reminder__replacement__bubble"
 				:title="t('spreed', 'Open conversation')"
-				:display-name="userAbsence.replacementUserDisplayName"
+				:displayName="userAbsence.replacementUserDisplayName"
 				:user="userAbsence.replacementUserId"
 				@click="openConversationWithReplacementUser" />
 		</div>
@@ -168,7 +168,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use '../../assets/variables' as *;
+@use '../../assets/variables.scss' as *;
 
 .absence-reminder {
 	position: relative;
@@ -193,7 +193,7 @@ export default {
 
 	&__message {
 		white-space: pre-line;
-		word-wrap: break-word;
+		overflow-wrap: break-word;
 		max-height: 30vh;
 		overflow: auto;
 

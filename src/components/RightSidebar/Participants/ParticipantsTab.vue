@@ -10,13 +10,13 @@
 				v-if="canSearch"
 				ref="searchBox"
 				v-model:value="searchText"
-				v-model:is-focused="isFocused"
+				v-model:isFocused="isFocused"
 				class="search-form__input"
-				:placeholder-text="searchBoxPlaceholder"
+				:placeholderText="searchBoxPlaceholder"
 				:aria-describedby="showSearchBoxDescription ? searchBoxDescriptionId : undefined"
 				@input="handleInput"
 				@keydown.enter="addParticipants(participantPhoneItem)"
-				@abort-search="abortSearch" />
+				@abortSearch="abortSearch" />
 			<div
 				v-if="showSearchBoxDescription"
 				:id="searchBoxDescriptionId"
@@ -33,7 +33,7 @@
 
 		<SelectPhoneNumber
 			v-if="canAddPhones"
-			v-model:participant-phone-item="participantPhoneItem"
+			v-model:participantPhoneItem="participantPhoneItem"
 			:name="t('spreed', 'Add a phone number')"
 			:value="searchText"
 			@select="addParticipants" />
@@ -66,11 +66,11 @@
 				v-if="canAdd"
 				class="search-results"
 				:token="token"
-				:search-results="searchResults"
-				:only-users="isOneToOneConversation"
-				:contacts-loading="contactsLoading"
-				:no-results="noResults"
-				:search-text="searchText"
+				:searchResults="searchResults"
+				:onlyUsers="isOneToOneConversation"
+				:contactsLoading="contactsLoading"
+				:noResults="noResults"
+				:searchText="searchText"
 				@click="addParticipants" />
 		</div>
 	</div>

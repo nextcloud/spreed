@@ -7,7 +7,7 @@
 	<NcModal
 		v-if="id"
 		size="small"
-		:label-id="dialogHeaderId"
+		:labelId="dialogHeaderId"
 		@close="dismissModal">
 		<div v-if="poll" class="poll-modal">
 			<div class="poll-modal__header">
@@ -81,7 +81,7 @@
 					@click="modalPage = 'voting'">
 					{{ t('spreed', 'Change your vote') }}
 				</NcButton>
-				<NcActions v-if="canEndPoll" force-menu>
+				<NcActions v-if="canEndPoll" forceMenu>
 					<NcActionButton v-if="supportPollDrafts && isModerator" @click="createPollDraft">
 						<template #icon>
 							<IconFileEditOutline :size="20" />
@@ -103,7 +103,7 @@
 				</NcActions>
 			</div>
 			<div v-else-if="supportPollDrafts && selfIsOwnerOrModerator" class="poll-modal__actions">
-				<NcActions force-menu>
+				<NcActions forceMenu>
 					<NcActionButton v-if="isModerator" @click="createPollDraft">
 						<template #icon>
 							<IconFileEditOutline :size="20" />
@@ -418,7 +418,7 @@ export default {
 		font-weight: bold;
 		font-size: 18px;
 		white-space: normal;
-		word-wrap: anywhere;
+		overflow-wrap: anywhere;
 
 		:deep(.material-design-icon) {
 			margin-bottom: auto;
@@ -434,7 +434,7 @@ export default {
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
-		word-wrap: anywhere;
+		overflow-wrap: anywhere;
 	}
 
 	&__actions {
@@ -456,7 +456,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	gap: calc(4 * var(--default-grid-baseline));
-	word-wrap: anywhere;
+	overflow-wrap: anywhere;
 	margin: 8px 0 20px 0;
 }
 

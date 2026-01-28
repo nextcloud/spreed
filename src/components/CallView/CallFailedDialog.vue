@@ -65,7 +65,7 @@ function reloadApp() {
 
 <template>
 	<NcModal
-		:label-id="connectionFailedDialogId"
+		:labelId="connectionFailedDialogId"
 		@close="clearConnectionFailedError">
 		<NcEmptyContent
 			:name="t('spreed', 'Connection failed')"

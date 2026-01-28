@@ -160,7 +160,7 @@ function openPollDraftHandler() {
 					<SharedItems
 						:type="type"
 						:token="token"
-						tab-view
+						tabView
 						:limit="limit(type)"
 						:items="sharedItems[type]" />
 					<NcButton
@@ -179,9 +179,9 @@ function openPollDraftHandler() {
 			<!-- Shared from "Related Resources" app -->
 			<NcRelatedResourcesPanel
 				class="related-resources"
-				provider-id="talk"
-				:item-id="conversation.token"
-				@has-resources="(value: boolean) => hasRelatedResources = value" />
+				providerId="talk"
+				:itemId="conversation.token"
+				@hasResources="(value: boolean) => hasRelatedResources = value" />
 
 			<!-- Shared from "Projects" app -->
 			<template v-if="projectsEnabled">
@@ -191,7 +191,7 @@ function openPollDraftHandler() {
 					:id="token"
 					type="room"
 					:name="conversation.displayName"
-					:is-active="active" />
+					:isActive="active" />
 			</template>
 
 			<!-- No shared content -->
@@ -208,9 +208,9 @@ function openPollDraftHandler() {
 		<!-- Dialog window -->
 		<SharedItemsBrowser
 			v-if="showSharedItemsBrowser"
-			v-model:active-tab="browserActiveTab"
+			v-model:activeTab="browserActiveTab"
 			:token="token"
-			:shared-items="sharedItems"
+			:sharedItems="sharedItems"
 			@close="showSharedItemsBrowser = false" />
 	</div>
 </template>

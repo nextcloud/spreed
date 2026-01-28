@@ -15,8 +15,8 @@
 			:clearable="false"
 			:searchable="false"
 			label="label"
-			track-by="value"
-			no-wrap />
+			trackBy="value"
+			noWrap />
 
 		<NcTextField
 			ref="turn_server"
@@ -33,7 +33,7 @@
 			ref="turn_secret"
 			v-model="turnSecret"
 			name="turn_secret"
-			as-text
+			asText
 			placeholder="secret"
 			class="turn-server__textfield"
 			:disabled="loading"
@@ -49,8 +49,8 @@
 			:clearable="false"
 			:searchable="false"
 			label="label"
-			track-by="value"
-			no-wrap />
+			trackBy="value"
+			noWrap />
 
 		<NcButton
 			v-show="!loading"
@@ -60,8 +60,8 @@
 			@click="testServer">
 			<template #icon>
 				<NcLoadingIcon v-if="testing" :size="20" />
-				<IconAlertCircleOutline v-else-if="testingError" fill-color="var(--color-border-error)" />
-				<IconCheck v-else-if="testingSuccess" fill-color="var(--color-border-success)" />
+				<IconAlertCircleOutline v-else-if="testingError" fillColor="var(--color-border-error)" />
+				<IconCheck v-else-if="testingSuccess" fillColor="var(--color-border-success)" />
 				<IconPulse v-else />
 			</template>
 		</NcButton>
@@ -426,7 +426,7 @@ export default {
 .turn-server {
 	display: grid;
 	grid-template-columns: minmax(100px, 180px) 1fr 1fr minmax(100px, 180px) var(--default-clickable-area) var(--default-clickable-area);
-	grid-column-gap: 4px;
+	column-gap: 4px;
 	align-items: center;
 	margin-bottom: 4px;
 

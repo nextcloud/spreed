@@ -10,8 +10,8 @@
 				:boundary="boundaryElement"
 				:aria-label="qualityWarningAriaLabel"
 				trigger="hover"
-				:auto-hide="false"
-				no-focus-trap
+				:autoHide="false"
+				noFocusTrap
 				:shown="showQualityWarningTooltip">
 				<template #trigger>
 					<NcButton
@@ -21,7 +21,7 @@
 						:aria-label="qualityWarningAriaLabel"
 						@click="mouseover = !mouseover">
 						<template #icon>
-							<IconNetworkStrength2Alert fill-color="#e9322d" :size="20" />
+							<IconNetworkStrength2Alert fillColor="#e9322d" :size="20" />
 						</template>
 					</NcButton>
 				</template>
@@ -51,14 +51,14 @@
 			:token="token"
 			:conversation="conversation"
 			:model="model"
-			:show-devices="!isSidebar"
+			:showDevices="!isSidebar"
 			variant="tertiary" />
 
 		<LocalVideoControlButton
 			:token="token"
 			:conversation="conversation"
 			:model="model"
-			:show-devices="!isSidebar"
+			:showDevices="!isSidebar"
 			variant="tertiary" />
 
 		<NcButton
@@ -81,19 +81,19 @@
 			:aria-label="screenSharingButtonAriaLabel"
 			:class="screenSharingButtonClass"
 			class="app-navigation-entry-utils-menu-button"
-			:boundaries-element="boundaryElement"
+			:boundariesElement="boundaryElement"
 			:disabled="!isScreensharingAllowed">
 			<template #icon>
 				<IconMonitorOff :size="20" />
 			</template>
 			<!-- Actions -->
-			<NcActionButton close-after-click @click="showScreen">
+			<NcActionButton closeAfterClick @click="showScreen">
 				<template #icon>
 					<IconMonitor :size="20" />
 				</template>
 				{{ t('spreed', 'Show your screen') }}
 			</NcActionButton>
-			<NcActionButton close-after-click @click="stopScreen">
+			<NcActionButton closeAfterClick @click="stopScreen">
 				<template #icon>
 					<IconMonitorOff :size="20" />
 				</template>
