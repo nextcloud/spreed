@@ -44,11 +44,11 @@ class CheckHostedSignalingServer extends TimedJob {
 	}
 
 	private function formatTurnSchemes(array $schemes): string {
-		if (in_array('turn', $schemes) && in_array('turns', $schemes)) {
+		if (in_array('turn', $schemes, true) && in_array('turns', $schemes, true)) {
 			return 'turn,turns';
-		} elseif (in_array('turn', $schemes)) {
+		} elseif (in_array('turn', $schemes, true)) {
 			return 'turn';
-		} elseif (in_array('turns', $schemes)) {
+		} elseif (in_array('turns', $schemes, true)) {
 			return 'turns';
 		} else {
 			return 'turn';
@@ -56,11 +56,11 @@ class CheckHostedSignalingServer extends TimedJob {
 	}
 
 	private function formatTurnProtocols(array $protocols): string {
-		if (in_array('udp', $protocols) && in_array('tcp', $protocols)) {
+		if (in_array('udp', $protocols, true) && in_array('tcp', $protocols, true)) {
 			return 'udp,tcp';
-		} elseif (in_array('udp', $protocols)) {
+		} elseif (in_array('udp', $protocols, true)) {
 			return 'udp';
-		} elseif (in_array('tcp', $protocols)) {
+		} elseif (in_array('tcp', $protocols, true)) {
 			return 'tcp';
 		} else {
 			return 'udp';

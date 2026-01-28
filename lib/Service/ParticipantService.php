@@ -1006,7 +1006,7 @@ class ParticipantService {
 		$users = json_decode($room->getName(), true);
 		$participants = $this->getParticipantUserIds($room);
 		if ($enforceUserId !== null) {
-			$missingUsers = !in_array($enforceUserId, $participants) ? [$enforceUserId] : [];
+			$missingUsers = !in_array($enforceUserId, $participants, true) ? [$enforceUserId] : [];
 		} else {
 			$missingUsers = array_diff($users, $participants);
 		}
