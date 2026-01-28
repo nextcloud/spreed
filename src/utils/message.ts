@@ -19,6 +19,13 @@ declare module '@nextcloud/l10n' {
 	export function t(app: string, text: string): string
 }
 
+/** Specific type for chat-relayed system message 'MESSAGE.SYSTEM_TYPE.CALL_STARTED' */
+type ChatMessageCallStarted = ChatMessage & {
+	call?: {
+		silent?: boolean
+	}
+}
+
 /**
  * Returns correct mention type for self actor
  */
@@ -106,12 +113,11 @@ function conversationIsOneToOne(type: number) {
 
 /**
  * Returns whether the call is started silently
- * FIXME should be coming with the message metadata from HPB
  *
  * @param message conversation type
  */
-function callIsSilent(message: ChatMessage) {
-	return /* $metaData[Message::METADATA_SILENT] */false
+function callIsSilent(message: ChatMessageCallStarted) {
+	return message.call?.silent === true
 }
 
 /**
