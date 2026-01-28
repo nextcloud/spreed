@@ -408,7 +408,7 @@ class RecordingService {
 		}
 
 		$extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-		if (!$extension || !in_array($extension, $allowed[$mimeType])) {
+		if (!$extension || !in_array($extension, $allowed[$mimeType], true)) {
 			$this->logger->warning("Uploaded file extensions ($extension) is not allowed for the detected mime type ($mimeType)");
 			throw new InvalidArgumentException('file_extension');
 		}
