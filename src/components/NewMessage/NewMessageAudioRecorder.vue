@@ -311,7 +311,10 @@ export default {
 
 .audio-recorder {
 	display: flex;
-	// Audio record button
+
+	:deep(.button-vue:disabled) {
+		pointer-events: none;
+	}
 
 	&__info {
 		width: 86px;
