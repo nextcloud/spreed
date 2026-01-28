@@ -316,8 +316,9 @@ export default {
 		},
 
 		canReact() {
+			const hasReactPermissions = hasTalkFeature(this.message.token, 'react-permission')
 			// Fall back to CHAT permission when federating with older servers without react-permission capability
-			const permissionToCheck = hasTalkFeature(this.message.token, 'react-permission')
+			const permissionToCheck = hasReactPermissions
 				? PARTICIPANT.PERMISSIONS.REACT
 				: PARTICIPANT.PERMISSIONS.CHAT
 
