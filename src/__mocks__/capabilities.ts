@@ -189,6 +189,10 @@ export const mockedCapabilities: Capabilities = {
 			experiments: {
 				enabled: 0,
 			},
+			permissions: {
+				'max-default': 510,
+				'max-custom': 511,
+			},
 		},
 		'config-local': {
 			attachments: [
