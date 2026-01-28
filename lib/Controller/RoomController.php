@@ -610,7 +610,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @psalm-param non-negative-int|null $lobbyTimer
 	 * @param 0|1|2 $sipEnabled Whether SIP dial-in shall be enabled (only available with `conversation-creation-all` capability)
 	 * @psalm-param Webinary::SIP_* $sipEnabled
-	 * @param int<0, 255> $permissions Default permissions for participants (only available with `conversation-creation-all` capability)
+	 * @param int<0, 511> $permissions Default permissions for participants (only available with `conversation-creation-all` capability)
 	 * @psalm-param int-mask-of<Attendee::PERMISSIONS_*> $permissions
 	 * @param 0|1 $recordingConsent Whether participants need to agree to a recording before joining a call (only available with `conversation-creation-all` capability)
 	 * @psalm-param RecordingService::CONSENT_REQUIRED_NO|RecordingService::CONSENT_REQUIRED_YES $recordingConsent
@@ -2665,7 +2665,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Update the permissions of a room
 	 *
 	 * @param 'call'|'default' $mode Level of the permissions ('call' (removed in Talk 20), 'default')
-	 * @param int<0, 255> $permissions New permissions
+	 * @param int<0, 511> $permissions New permissions
 	 * @psalm-param int-mask-of<Attendee::PERMISSIONS_*> $permissions
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'mode'|'type'|'value'}, array{}>
 	 *
@@ -2699,7 +2699,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param int $attendeeId ID of the attendee
 	 * @psalm-param non-negative-int $attendeeId
 	 * @param 'set'|'remove'|'add' $method Method of updating permissions ('set', 'remove', 'add')
-	 * @param int<0, 255> $permissions New permissions
+	 * @param int<0, 511> $permissions New permissions
 	 * @psalm-param int-mask-of<Attendee::PERMISSIONS_*> $permissions
 	 * @return DataResponse<Http::STATUS_OK, list<TalkParticipant>, array{X-Nextcloud-Has-User-Statuses?: true}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'participant'|'method'|'moderator'|'room-type'|'type'|'value'}, array{}>
 	 *
@@ -2738,7 +2738,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param 'set'|'remove'|'add' $method Method of updating permissions ('set', 'remove', 'add')
 	 * @psalm-param Attendee::PERMISSIONS_MODIFY_* $method
-	 * @param int<0, 255> $permissions New permissions
+	 * @param int<0, 511> $permissions New permissions
 	 * @psalm-param int-mask-of<Attendee::PERMISSIONS_*> $permissions
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, null, array{}>
 	 * @deprecated Call permissions have been removed
