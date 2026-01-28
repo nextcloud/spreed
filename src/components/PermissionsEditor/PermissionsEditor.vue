@@ -252,7 +252,9 @@ export default {
 			this.callStart = Boolean(permissions & PERMISSIONS.CALL_START)
 			this.lobbyIgnore = Boolean(permissions & PERMISSIONS.LOBBY_IGNORE)
 			this.chatMessages = Boolean(permissions & PERMISSIONS.CHAT)
-			this.chatReactions = Boolean(permissions & PERMISSIONS.REACT)
+			this.chatReactions = this.hasReactPermissions
+				? Boolean(permissions & PERMISSIONS.REACT)
+				: Boolean(permissions & PERMISSIONS.CHAT)
 			this.publishAudio = Boolean(permissions & PERMISSIONS.PUBLISH_AUDIO)
 			this.publishVideo = Boolean(permissions & PERMISSIONS.PUBLISH_VIDEO)
 			this.publishScreen = Boolean(permissions & PERMISSIONS.PUBLISH_SCREEN)

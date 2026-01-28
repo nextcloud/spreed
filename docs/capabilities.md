@@ -208,3 +208,5 @@
 
 ## 24
 * `react-permission` - When permission 256 is required to add reactions (previously handled by the chat permission)
+* `config => permissions => max-default` - Maximum value for default permissions (510 with react-permission, 254 without)
+* `config => permissions => max-custom` - Maximum value for custom permissions (511 with react-permission, 255 without)
