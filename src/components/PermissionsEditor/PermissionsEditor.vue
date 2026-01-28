@@ -27,9 +27,10 @@
 					<NcCheckboxRadioSwitch
 						v-model="chatMessages"
 						class="checkbox">
-						{{ t('spreed', 'Can post messages') }}
+						{{ hasReactPermissions ? t('spreed', 'Can post messages') : t('spreed', 'Can post messages and reactions') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch
+						v-if="hasReactPermissions"
 						v-model="chatReactions"
 						class="checkbox">
 						{{ t('spreed', 'Can add reactions') }}
@@ -74,6 +75,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import { PARTICIPANT } from '../../constants.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS
 
@@ -170,6 +172,25 @@ export default {
 			}
 		},
 
+		hasReactPermissions() {
+			// FIXME: token should be passed, but atm we don't have federated moderators,
+			// so can be skipped until refactored
+			return hasTalkFeature('local', 'react-permission')
+		},
+
+		maxDefaultPermission() {
+			// Use API value if available, otherwise compute from constants
+			const apiValue = getTalkConfig('local', 'permissions', 'max-default')
+			if (apiValue !== undefined) {
+				return apiValue
+			}
+			// Fallback for older servers: MAX_DEFAULT minus REACT if capability missing
+			if (this.hasReactPermissions) {
+				return PERMISSIONS.MAX_DEFAULT
+			}
+			return PERMISSIONS.MAX_DEFAULT & ~PERMISSIONS.REACT
+		},
+
 		permissionsWithDefault() {
 			if (this.permissions !== PERMISSIONS.DEFAULT) {
 				return this.permissions
@@ -178,7 +199,7 @@ export default {
 			return loadState(
 				'spreed',
 				'default_permissions',
-				PERMISSIONS.MAX_DEFAULT & ~PERMISSIONS.LOBBY_IGNORE,
+				this.maxDefaultPermission & ~PERMISSIONS.LOBBY_IGNORE,
 			)
 		},
 
@@ -193,7 +214,7 @@ export default {
 				| PERMISSIONS.CALL_JOIN // Currently not handled, just adding it, so that manually selecting all checkboxes goes to the "All" permissions state
 				| (this.lobbyIgnore ? PERMISSIONS.LOBBY_IGNORE : 0)
 				| (this.chatMessages ? PERMISSIONS.CHAT : 0)
-				| (this.chatReactions ? PERMISSIONS.REACT : 0)
+				| ((this.hasReactPermissions && this.chatReactions) ? PERMISSIONS.REACT : 0)
 				| (this.publishAudio ? PERMISSIONS.PUBLISH_AUDIO : 0)
 				| (this.publishVideo ? PERMISSIONS.PUBLISH_VIDEO : 0)
 				| (this.publishScreen ? PERMISSIONS.PUBLISH_SCREEN : 0)
@@ -208,7 +229,7 @@ export default {
 			return (!!(this.permissionsWithDefault & PERMISSIONS.CALL_START)) === this.callStart
 				&& !!(this.permissionsWithDefault & PERMISSIONS.LOBBY_IGNORE) === this.lobbyIgnore
 				&& !!(this.permissionsWithDefault & PERMISSIONS.CHAT) === this.chatMessages
-				&& !!(this.permissionsWithDefault & PERMISSIONS.REACT) === this.chatReactions
+				&& !!(this.permissionsWithDefault & PERMISSIONS.REACT) === (this.hasReactPermissions && this.chatReactions)
 				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_AUDIO) === this.publishAudio
 				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_VIDEO) === this.publishVideo
 				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_SCREEN) === this.publishScreen

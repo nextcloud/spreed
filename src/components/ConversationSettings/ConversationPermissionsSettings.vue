@@ -91,6 +91,7 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import PermissionEditor from '../PermissionsEditor/PermissionsEditor.vue'
 import { PARTICIPANT } from '../../constants.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS
 
@@ -142,6 +143,32 @@ export default {
 		showEditButton() {
 			return this.radioValue === 'advanced' && !this.showPermissionsEditor
 		},
+
+		hasReactPermissions() {
+			return hasTalkFeature(this.token, 'react-permission')
+		},
+
+		maxDefaultPermission() {
+			const apiValue = getTalkConfig(this.token, 'permissions', 'max-default')
+			if (apiValue !== undefined) {
+				return apiValue
+			}
+			if (this.hasReactPermissions) {
+				return PERMISSIONS.MAX_DEFAULT
+			}
+			return PERMISSIONS.MAX_DEFAULT & ~PERMISSIONS.REACT
+		},
+
+		maxCustomPermission() {
+			const apiValue = getTalkConfig(this.token, 'permissions', 'max-custom')
+			if (apiValue !== undefined) {
+				return apiValue
+			}
+			if (this.hasReactPermissions) {
+				return PERMISSIONS.MAX_CUSTOM
+			}
+			return PERMISSIONS.MAX_CUSTOM & ~PERMISSIONS.REACT
+		},
 	},
 
 	mounted() {
@@ -167,7 +194,7 @@ export default {
 			// Compute the permissions value
 			switch (value) {
 				case 'all':
-					permissions = PERMISSIONS.MAX_DEFAULT
+					permissions = this.maxDefaultPermission
 					break
 				case 'restricted':
 					permissions = PERMISSIONS.CALL_JOIN
@@ -207,8 +234,8 @@ export default {
 		 */
 		getPermissionRadioValue(value) {
 			switch (value) {
-				case PERMISSIONS.MAX_DEFAULT:
-				case PERMISSIONS.MAX_CUSTOM:
+				case this.maxDefaultPermission:
+				case this.maxCustomPermission:
 					return 'all'
 				case PERMISSIONS.CALL_JOIN:
 				case PERMISSIONS.CALL_JOIN | PERMISSIONS.CUSTOM:
