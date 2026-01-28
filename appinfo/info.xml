@@ -167,4 +167,10 @@
 			<plugin type="collaborator-search" share-type="SHARE_TYPE_ROOM">OCA\Talk\Collaboration\Collaborators\RoomPlugin</plugin>
 		</plugins>
 	</collaboration>
+
+	<openmetrics>
+		<exporter>OCA\Talk\OpenMetrics\ActiveCalls</exporter>
+		<exporter>OCA\Talk\OpenMetrics\InCallSessions</exporter>
+	</openmetrics>
+
 </info>

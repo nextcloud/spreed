@@ -9,15 +9,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Monitor;
 
 use OC\Core\Command\Base;
-use OCA\Talk\Participant;
-use OCP\IDBConnection;
+use OCA\Talk\Service\MetricsService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class HasActiveCalls extends Base {
 
 	public function __construct(
-		protected IDBConnection $connection,
+		protected MetricsService $metricsService,
 	) {
 		parent::__construct();
 	}
@@ -33,15 +32,7 @@ class HasActiveCalls extends Base {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$query = $this->connection->getQueryBuilder();
-
-		$query->select($query->func()->count('*', 'num_calls'))
-			->from('talk_rooms')
-			->where($query->expr()->isNotNull('active_since'));
-
-		$result = $query->executeQuery();
-		$numCalls = (int)$result->fetchColumn();
-		$result->closeCursor();
+		$numCalls = $this->metricsService->getNumberOfActiveCalls();
 
 		if ($numCalls === 0) {
 			if ($input->getOption('output') === 'plain') {
@@ -53,21 +44,13 @@ class HasActiveCalls extends Base {
 			return 0;
 		}
 
-		$query = $this->connection->getQueryBuilder();
-		$query->select($query->func()->count('*', 'num_participants'))
-			->from('talk_sessions')
-			->where($query->expr()->gt('in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)))
-			->andWhere($query->expr()->gt('last_ping', $query->createNamedParameter(time() - 60)));
+		$numSessions = $this->metricsService->getNumberOfSessionsInCalls();
 
-		$result = $query->executeQuery();
-		$numParticipants = (int)$result->fetchColumn();
-		$result->closeCursor();
-
-
+		// We keep "participants" here, to not break scripting done with that command
 		if ($input->getOption('output') === 'plain') {
-			$output->writeln(sprintf('<error>There are currently %1$d calls in progress with %2$d participants</error>', $numCalls, $numParticipants));
+			$output->writeln(sprintf('<error>There are currently %1$d calls in progress with %2$d participants</error>', $numCalls, $numSessions));
 		} else {
-			$data = ['calls' => $numCalls, 'participants' => $numParticipants];
+			$data = ['calls' => $numCalls, 'participants' => $numSessions];
 			$this->writeArrayInOutputFormat($input, $output, $data);
 		}
 		return 1;
