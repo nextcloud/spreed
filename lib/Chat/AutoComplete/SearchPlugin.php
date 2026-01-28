@@ -52,7 +52,7 @@ class SearchPlugin implements ISearchPlugin {
 	#[\Override]
 	public function search($search, $limit, $offset, ISearchResult $searchResult): bool {
 		if ($this->room->getObjectType() === 'file') {
-			$usersWithFileAccess = $this->util->getUsersWithAccessFile($this->room->getObjectId());
+			$usersWithFileAccess = $this->util->getUsersWithAccessFile($this->room->getObjectId(), $this->userId);
 			if (!empty($usersWithFileAccess)) {
 				$users = [];
 				foreach ($usersWithFileAccess as $userId) {
