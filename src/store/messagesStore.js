@@ -1153,7 +1153,7 @@ const actions = {
 				guestNameStore.addGuestName(message, { noUpdate: false })
 			}
 			context.dispatch('processMessage', { token, message, fromRealtime })
-			if (!lastMessage || message.id > lastMessage.id) {
+			if ((!lastMessage || message.id > lastMessage.id) && !isHiddenSystemMessage(message)) {
 				if (!message.systemMessage) {
 					if (actorId !== message.actorId || actorType !== message.actorType) {
 						countNewMessages++
