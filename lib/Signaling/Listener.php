@@ -42,6 +42,7 @@ use OCA\Talk\Events\SystemMessagesMultipleSentEvent;
 use OCA\Talk\Events\UserJoinedRoomEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\BreakoutRoom;
+use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Poll;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Model\Vote;
@@ -583,6 +584,12 @@ class Listener implements IEventListener {
 		}
 
 		$data['chat']['comment'] = $message->toArray('json', $thread);
+
+		if ($messageType === 'call_started') {
+			$metaData = $comment->getMetaData() ?? [];
+			$silentCall = $metaData[Message::METADATA_SILENT] ?? false;
+			$data['chat']['comment']['call']['silent'] = $silentCall;
+		}
 
 		if ($messageType === 'object_shared' && isset($params['objectType']) && $params['objectType'] === 'talk-poll') {
 			$poll = $this->pollService->getPoll($event->getRoom()->getId(), $params['objectId']);
