@@ -72,6 +72,16 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	const vuexStore = useStore()
 
 	/**
+	 * Returns whether to show pinned message banner in chat
+	 *
+	 * @param token - conversation token
+	 */
+	function hasPinnedMessageShown(token: string) {
+		const conversation = vuexStore.getters.conversation(token)
+		return conversation?.lastPinnedId && conversation.lastPinnedId !== conversation.hiddenPinnedId
+	}
+
+	/**
 	 * Returns known thread information from the store
 	 *
 	 * @param token - conversation token
@@ -814,6 +824,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 		scheduledMessages,
 		scheduleMessageTime,
 		showScheduledMessages,
+		hasPinnedMessageShown,
 
 		followedThreadsList,
 
