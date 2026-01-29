@@ -121,6 +121,12 @@ export type components = {
                     /** Format: int64 */
                     enabled: number;
                 };
+                permissions: {
+                    /** Format: int64 */
+                    "max-default": number;
+                    /** Format: int64 */
+                    "max-custom": number;
+                };
             };
             "config-local": {
                 [key: string]: string[];
