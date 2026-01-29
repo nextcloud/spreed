@@ -204,6 +204,8 @@ class Capabilities implements IPublicCapability {
 		'experiments' => [
 			'enabled',
 		],
+		'permissions' => [
+		],
 	];
 
 	protected ICache $talkCache;
