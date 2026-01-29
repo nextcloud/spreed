@@ -515,6 +515,11 @@ export default {
 					inset-inline-end: auto;
 				}
 			}
+
+			:deep(.quote) {
+				background-color: var(--color-primary-element-light-hover);
+				border: 1px solid var(--color-border-dark);
+			}
 		}
 
 		&.incoming {
@@ -533,6 +538,11 @@ export default {
 				&.bottom-side {
 					inset-inline-end: 0;
 				}
+			}
+
+			:deep(.quote) {
+				background-color: var(--color-background-dark);
+				border: 1px solid var(--color-border-dark);
 			}
 		}
 
