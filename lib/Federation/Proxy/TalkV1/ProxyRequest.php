@@ -13,6 +13,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use OC\Http\Client\Response;
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Config as TalkConfig;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\RemoteClientException;
 use OCA\Talk\Participant;
@@ -33,6 +34,7 @@ class ProxyRequest {
 		protected LoggerInterface $logger,
 		protected IFactory $l10nFactory,
 		protected IUserSession $userSession,
+		protected TalkConfig $talkConfig,
 	) {
 	}
 
@@ -119,6 +121,10 @@ class ProxyRequest {
 		string $url,
 		array $parameters,
 	): IResponse {
+		if (!$this->talkConfig->isFederationEnabled()) {
+			throw new CannotReachRemoteException();
+		}
+
 		$requestOptions = $this->generateDefaultRequestOptions($cloudId, $accessToken);
 		if (!empty($parameters)) {
 			$requestOptions['json'] = $parameters;
