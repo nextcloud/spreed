@@ -5,6 +5,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 23.0.0-rc.2 – 2026-01-29
+### Added
+- feat(openmetrics): Add number of calls and participants to openmetrics
+  [#16874](https://github.com/nextcloud/spreed/pull/16874)
+- feat(chat): Show message expiration in sidebar
+  [#16830](https://github.com/nextcloud/spreed/pull/16830)
+
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(chat): Polishing of message bubbles and pinned messages
+  [#16906](https://github.com/nextcloud/spreed/pull/16906)
+- fix(chat): Fix email guests without a displayname showing a HASH
+  [#16868](https://github.com/nextcloud/spreed/pull/16868)
+- fix(bots): Fix actor information when a reaction was done
+  [#16899](https://github.com/nextcloud/spreed/pull/16899)
+- fix(bots): Fix bot reaction missing in relayed chat messages
+  [#16895](https://github.com/nextcloud/spreed/pull/16895)
+
 ## 23.0.0-rc.1 – 2026-01-22
 ### Changed
 - Update dependencies
