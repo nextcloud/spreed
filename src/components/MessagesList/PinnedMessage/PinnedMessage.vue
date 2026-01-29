@@ -11,9 +11,8 @@ import { useStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconClose from 'vue-material-design-icons/Close.vue'
+import IconPin from 'vue-material-design-icons/Pin.vue'
 import IconPinOff from 'vue-material-design-icons/PinOffOutline.vue'
-import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
-import { AVATAR } from '../../..//constants.ts'
 import { useGetToken } from '../../../composables/useGetToken.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { useActorStore } from '../../../stores/actor.ts'
@@ -121,20 +120,14 @@ onMounted(() => {
 </script>
 
 <template>
-	<div v-if="pinnedMessage">
+	<div v-if="pinnedMessage" class="pin_wrapper">
 		<NcListItem
 			:title="richSubline"
 			:active="false"
 			:to="to"
 			@click="handlePinClick">
 			<template #icon>
-				<AvatarWrapper
-					:id="pinnedMessage.actorId"
-					:name="pinnedMessage.actorDisplayName"
-					:source="pinnedMessage.actorType"
-					disableMenu
-					:token="token"
-					:size="AVATAR.SIZE.SMALL" />
+				<IconPin class="pin-icon" :size="20" />
 			</template>
 			<template #name>
 				<span class="display-name">
@@ -171,6 +164,18 @@ onMounted(() => {
 
 <style scoped lang="scss">
 
+.pin_wrapper:before {
+	content: '';
+    top: 0;
+	height: 100%;
+	width: 8px;
+	background-color: var(--color-primary-element);
+	position: absolute;
+	inset-inline-start: 0;
+	border-radius: var(--border-radius-container) 0 0 var(--border-radius-container);
+	z-index: 1;
+}
+
 .display-name {
 	display: flex;
 	align-items: center;
@@ -184,8 +189,14 @@ onMounted(() => {
 	}
 }
 
+.pin-icon {
+	width: 40px; // AVATAR.SIZE.DEFAULT
+	height: 40px;
+	color: var(--color-primary-element);
+}
+
 :deep(.list-item__wrapper) {
-    padding: 0 !important;
+	padding: 0 !important;
 }
 
 :deep(.list-item-content__name) {
@@ -195,5 +206,9 @@ onMounted(() => {
 	align-items: center;
 	flex-direction: row;
 	gap: 1px;
+}
+
+:deep(.list-item-content__subname) {
+	color: var(--color-main-text) !important;
 }
 </style>
