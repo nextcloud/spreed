@@ -698,6 +698,12 @@ export function useGetMessagesProvider() {
 			}
 		}
 
+		// FIXME Patch for file uploads: messageParameters['file']['path'] and messageParameters['file']['link'] do not match server request
+		if (Object.keys(message.messageParameters ?? {}).some((key) => key.startsWith('file'))) {
+			tryPollNewMessages()
+			return
+		}
+
 		// Patch for federated conversations: disable unsupported file shares
 		if (conversation.value?.remoteServer && Object.keys(message.messageParameters ?? {}).some((key) => key.startsWith('file'))
 			&& [MESSAGE.TYPE.COMMENT, MESSAGE.TYPE.VOICE_MESSAGE, MESSAGE.TYPE.RECORD_VIDEO, MESSAGE.TYPE.RECORD_AUDIO].includes(message.messageType)) {
