@@ -95,11 +95,18 @@
 					disableMenu
 					disableTooltip />
 			</span>
-			<span class="date" :class="{ 'date--hidden': hideDate }" :title="messageDate">{{ messageTime }}</span>
+			<span
+				v-if="!message.sendingFailure && !isScheduledSendingFailure"
+				class="date"
+				:class="{ 'date--hidden': hideDate }"
+				:title="messageDate">
+				{{ messageTime }}
+			</span>
 
 			<!-- Message delivery status indicators -->
+			<!-- FIXME refactor conditions chain -->
 			<div
-				v-if="message.sendingFailure"
+				v-if="message.sendingFailure || isScheduledSendingFailure"
 				:title="sendingErrorIconTitle"
 				class="message-status sending-failed"
 				:class="{ 'retry-option': sendingErrorCanRetry }"
@@ -401,6 +408,10 @@ export default {
 			return !this.isScheduledMessage && this.message.timestamp === 0
 		},
 
+		isScheduledSendingFailure() {
+			return this.isScheduledMessage && this.message.timestamp === 0
+		},
+
 		hideDate() {
 			return this.isTemporary || this.isDeleting || !!this.message.sendingFailure
 		},
@@ -454,6 +465,9 @@ export default {
 		sendingErrorIconTitle() {
 			if (this.sendingErrorCanRetry) {
 				return t('spreed', 'Failed to send the message. Click to try again')
+			}
+			if (this.isScheduledSendingFailure) {
+				return t('spreed', 'Error when scheduling the message')
 			}
 			if (this.message.sendingFailure === 'quota') {
 				return t('spreed', 'Not enough free space to upload file')

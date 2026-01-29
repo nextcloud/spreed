@@ -241,7 +241,7 @@
 
 			<NcButton
 				v-if="!isSidebar && showScheduledMessagesToggle"
-				:variant="showScheduledMessages ? 'secondary' : 'tertiary'"
+				:variant="showScheduledMessagesToggleVariant"
 				:title="t('spreed', 'Show scheduled messages')"
 				@click="chatExtrasStore.setShowScheduledMessages(!showScheduledMessages)">
 				<template #icon>
@@ -285,14 +285,15 @@
 			<template v-else>
 				<NcButton
 					v-if="supportScheduleMessages && scheduleMessageTime"
-					:disabled="disabled || !text"
+					:disabled="disabled || !text || isScheduling"
 					variant="tertiary"
 					type="submit"
 					:title="t('spreed', 'Schedule message')"
 					:aria-label="t('spreed', 'Schedule message')"
 					@click="handleSubmit">
 					<template #icon>
-						<IconSendVariantClockOutline :size="20" />
+						<NcLoadingIcon v-if="isScheduling" :size="20" />
+						<IconSendVariantClockOutline v-else :size="20" />
 					</template>
 				</NcButton>
 
@@ -334,6 +335,7 @@ import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcRichContenteditable from '@nextcloud/vue/components/NcRichContenteditable'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
@@ -390,6 +392,7 @@ export default {
 		NcActions,
 		NcButton,
 		NcEmojiPicker,
+		NcLoadingIcon,
 		NcNoteCard,
 		NcRichContenteditable,
 		NcTextField,
@@ -516,6 +519,7 @@ export default {
 			/* Schedule messages feature local state */
 			submenu: null,
 			customScheduleTimestamp: null,
+			isScheduling: false,
 		}
 	},
 
@@ -726,6 +730,13 @@ export default {
 				&& !this.dialog
 				&& !this.isRecordingAudio
 				&& !this.messageToEdit
+		},
+
+		showScheduledMessagesToggleVariant() {
+			if (this.conversation.hasScheduledMessages === -1) {
+				return 'error'
+			}
+			return this.showScheduledMessages ? 'secondary' : 'tertiary'
 		},
 
 		showScheduledMessages() {
@@ -1101,7 +1112,11 @@ export default {
 				this.focusInput()
 			} catch {
 				this.$emit('dismiss')
-				showError(t('spreed', 'The message could not be edited'))
+				if (this.showScheduledMessages) {
+					showError(t('spreed', 'Error when scheduling the message'))
+				} else {
+					showError(t('spreed', 'The message could not be edited'))
+				}
 			}
 		},
 
@@ -1387,6 +1402,7 @@ export default {
 				}
 
 				try {
+					this.isScheduling = true
 					await this.chatExtrasStore.scheduleMessage(this.token, scheduleMessagePayload)
 
 					// Clear input content from store
@@ -1399,6 +1415,7 @@ export default {
 					this.chatExtrasStore.removeChatInput(this.token)
 					this.resetTypingIndicator()
 					showSuccess(t('spreed', 'Message was successfully scheduled'))
+					this.isScheduling = false
 				} catch (error) {
 					showError(t('spreed', 'Error when scheduling the message'))
 				}

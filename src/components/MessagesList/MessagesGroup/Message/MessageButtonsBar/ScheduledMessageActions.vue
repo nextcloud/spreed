@@ -7,6 +7,7 @@
 import type { BigIntChatMessage } from '../../../../../types/index.ts'
 import type { RawTemporaryMessagePayload } from '../../../../../utils/prepareTemporaryMessage.ts'
 
+import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { computed, inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -29,6 +30,7 @@ import IconSendVariantClockOutline from 'vue-material-design-icons/SendVariantCl
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
 import { useTemporaryMessage } from '../../../../../composables/useTemporaryMessage.ts'
+import { CONVERSATION, PARTICIPANT } from '../../../../../constants.ts'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { convertToUnix, formatDateTime } from '../../../../../utils/formattedTime.ts'
@@ -58,7 +60,19 @@ const customScheduleTimestamp = ref(new Date(props.message.timestamp * 1000))
 
 const isThreadReply = computed(() => (props.message.threadId ?? 0) > 0)
 
+const isScheduledSendingFailure = computed(() => props.message.timestamp === 0)
+
+const noWritePermissions = computed(() => {
+	const conversation = vuexStore.getters.conversation(props.message.token)
+
+	return conversation.readOnly === CONVERSATION.STATE.READ_ONLY || (conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) === 0
+})
+
 const messageDateTime = computed(() => {
+	if (isScheduledSendingFailure.value) {
+		return t('spreed', 'Error when scheduling the message')
+	}
+
 	return formatDateTime(props.message.timestamp * 1000, 'shortDateWithTime')
 })
 
@@ -75,11 +89,15 @@ async function handleEdit() {
  * @param timestamp new scheduled timestamp (in ms)
  */
 async function handleReschedule(timestamp: number) {
-	await chatExtrasStore.editScheduledMessage(props.message.token, props.message.id, {
-		message: props.message.message,
-		sendAt: convertToUnix(timestamp),
-	})
-	EventBus.emit('focus-message', { messageId: props.message.id })
+	try {
+		await chatExtrasStore.editScheduledMessage(props.message.token, props.message.id, {
+			message: props.message.message,
+			sendAt: convertToUnix(timestamp),
+		})
+		EventBus.emit('focus-message', { messageId: props.message.id })
+	} catch (e) {
+		showError(t('spreed', 'Error when scheduling the message'))
+	}
 }
 
 /**
@@ -168,6 +186,7 @@ function onMenuClose() {
 				</NcActionText>
 
 				<NcActionButton
+					v-if="!noWritePermissions"
 					key="set-schedule-menu"
 					isMenu
 					@click.stop="submenu = 'schedule'">
@@ -177,6 +196,7 @@ function onMenuClose() {
 					{{ t('spreed', 'Reschedule') }}
 				</NcActionButton>
 				<NcActionButton
+					v-if="!noWritePermissions"
 					key="send-message"
 					closeAfterClick
 					@click.stop="handleSubmit">
@@ -201,6 +221,7 @@ function onMenuClose() {
 				<NcActionSeparator />
 
 				<NcActionButton
+					v-if="!isScheduledSendingFailure && !noWritePermissions"
 					key="edit-message"
 					closeAfterClick
 					@click.stop="handleEdit">
