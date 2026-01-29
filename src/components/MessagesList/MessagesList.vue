@@ -316,7 +316,7 @@ export default {
 		},
 
 		showPinnedMessages() {
-			return this.conversation?.lastPinnedId && this.conversation.lastPinnedId !== this.conversation.hiddenPinnedId
+			return this.chatExtrasStore.hasPinnedMessageShown(this.token)
 		},
 	},
 
@@ -1294,14 +1294,15 @@ export default {
 
 .message__pinned {
 	position: sticky;
-	top: var(--default-grid-baseline);
+	top: calc(var(--default-grid-baseline) / 4);
 	margin-inline: auto;
-	width: 86%;
-	max-width: calc($messages-list-max-width * 0.86);
+	max-width: min(calc(100% - 2 * var(--default-grid-baseline)), $messages-list-max-width);
 	z-index: 3;
 	border-radius: var(--border-radius-container);
-	border: 2px solid var(--color-border);
+	border: 1px solid var(--color-border-dark);
 	margin-bottom: calc(var(--default-grid-baseline) * 3);
-	background-color: var(--color-main-background);
+	background-color: var(--color-primary-element-light);
+	box-shadow: 0px 0px 5px var(--color-box-shadow);
+	height: $pinned-message-banner-height;
 }
 </style>
