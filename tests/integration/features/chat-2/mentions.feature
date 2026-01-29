@@ -444,6 +444,7 @@ Feature: chat/mentions
       | all          | welcome.txt              | calls  | all          |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant4 | participant4-displayname | users  | participant4 |
       | participant3 | participant3-displayname | users  | participant3 |
       | GUEST_ID     | Guest                    | guests | GUEST_ID     |
     # Guests can not mention users with access to the file that have not joined
@@ -454,6 +455,7 @@ Feature: chat/mentions
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | participant4 | participant4-displayname | users  | participant4 |
       | GUEST_ID     | Guest                    | guests | GUEST_ID     |
 
   Scenario: get matched mentions in a room for a file shared by link
@@ -497,6 +499,7 @@ Feature: chat/mentions
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
+      | participant4 | participant4-displayname | users  | participant4 |
       | participant3 | participant3-displayname | users  | participant3 |
     # Guests can not mention users with access to the file that have not joined
     # the room.
@@ -505,6 +508,7 @@ Feature: chat/mentions
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
       | participant3 | participant3-displayname | users  | participant3 |
+      | participant4 | participant4-displayname | users  | participant4 |
 
   Scenario: get unmatched mentions in a room for a file shared by link
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
