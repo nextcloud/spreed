@@ -515,15 +515,21 @@ export default {
 					inset-inline-end: auto;
 				}
 			}
+
+			:deep(.quote) {
+				background-color: var(--color-primary-element-light-hover);
+				border: 1px solid var(--color-border-dark);
+			}
 		}
 
 		&.incoming {
 			align-self: flex-start;
 
 			.message-body {
-				--message-body-hover: color(from var(--color-primary-element-light-hover) srgb r g b / 0.45);
-				background-color: color(from var(--color-primary-element-light) srgb r g b / 0.45);
+				--message-body-hover: color(from var(--color-background-darker) srgb r g b / 0.45);
+				background-color: color(from var(--color-background-dark) srgb r g b / 0.45);
 				border-start-start-radius: var(--border-radius-small);
+				border-color: var(--color-border);
 			}
 
 			.message-body__scroll {
@@ -532,6 +538,11 @@ export default {
 				&.bottom-side {
 					inset-inline-end: 0;
 				}
+			}
+
+			:deep(.quote) {
+				background-color: var(--color-background-dark);
+				border: 1px solid var(--color-border-dark);
 			}
 		}
 
