@@ -486,9 +486,21 @@ export default {
 
 				// Discard notification if the conversation changes or closed
 				this.notifyUnreadMessages(null)
+
+				if (this.isOneToOne || this.conversation.messageExpiration) {
+					this.contentModeIndex = 1
+				} else {
+					this.contentModeIndex = 0
+				}
 			},
 
 			immediate: true,
+		},
+
+		'conversation.messageExpiration': function(value) {
+			if (value) {
+				this.contentModeIndex = 1
+			}
 		},
 
 		isGuestModerator(newValue) {
