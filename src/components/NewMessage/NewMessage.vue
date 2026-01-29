@@ -1531,11 +1531,6 @@ export default {
 		background-color: var(--color-background-hover) !important;
 	}
 
-	&:disabled,
-	&[aria-disabled="true"] {
-		opacity: .5 !important;
-		pointer-events: none;
-	}
 }
 
 </style>
