@@ -312,10 +312,6 @@ export default {
 .audio-recorder {
 	display: flex;
 
-	:deep(.button-vue:disabled) {
-		pointer-events: none;
-	}
-
 	&__info {
 		width: 86px;
 		display: flex;
