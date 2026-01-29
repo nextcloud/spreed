@@ -91,4 +91,15 @@ class ActivityPubHelper {
 			'name' => $message->getActorDisplayName(),
 		];
 	}
+
+	/**
+	 * @return array{type: 'Person', id: non-falsy-string, name: string}
+	 */
+	public function generatePerson(string $actorType, string $actorId, string $displayName): array {
+		return [
+			'type' => 'Person',
+			'id' => $actorType . '/' . $actorId,
+			'name' => $displayName,
+		];
+	}
 }
