@@ -560,7 +560,7 @@ namespace OCA\Talk;
  *             max-custom: int,
  *         },
  *     },
- *     config-local: array<string, non-empty-list<string>>,
+ *     config-local: array<string, list<string>>,
  *     version: string,
  * }
  *
