@@ -16,6 +16,9 @@ $messages-info-width: calc(8ch + var(--clickable-area-small, 24px) + 4 * var(--d
 $messages-list-max-width: calc($messages-avatar-width + $messages-text-max-width + 2 * var(--default-grid-baseline) + $messages-info-width);
 $messages-input-max-width: calc($messages-list-max-width - 100px);
 
+// Pinned message banner height
+$pinned-message-banner-height: calc(2 * var(--default-font-size) * var(--default-line-height) + 2 * var(--default-grid-baseline));
+
 // background color of call container
 $color-call-background: rgba(0, 0, 0, 0.7);
 
