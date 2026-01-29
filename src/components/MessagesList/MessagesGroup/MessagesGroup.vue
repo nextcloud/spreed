@@ -185,12 +185,6 @@ export default {
 			padding-block-start: 0;
 		}
 	}
-
-	&.incoming {
-		.messages__avatar-wrapper {
-			padding-block-start: 0;
-		}
-	}
 	// END Split view: own messages on the right side
 }
 
