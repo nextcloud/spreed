@@ -33,7 +33,7 @@ Feature: conversation/add-participant
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     Then signaling server received the following requests
       | token | data |
-      | room  | {"type":"invite","invite":{"userids":["participant2"],"alluserids":["participant1","participant2"],"properties":{"name":"Private conversation","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"participant-list":"refresh"}}} |
+      | room  | {"type":"invite","invite":{"userids":["participant2"],"properties":{"name":"Private conversation","type":3,"lobby-state":0,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"participant-list":"refresh"}}} |
       | room  | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
     And user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
