@@ -191,7 +191,7 @@ class BotService {
 
 		$this->invokeBots($botServers, $event->getRoom(), $event->getMessage(), [
 			'type' => 'Like',
-			'actor' => $this->activityPubHelper->generatePersonFromMessageActor($message),
+			'actor' => $this->activityPubHelper->generatePerson($event->getActorType(), $event->getActorId(), $event->getActorDisplayName()),
 			'object' => $this->activityPubHelper->generateNote($event->getMessage(), $messageData, $message->getMessageRaw()),
 			'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
 			'content' => $event->getReaction(),
@@ -220,7 +220,7 @@ class BotService {
 
 		$this->invokeBots($botServers, $event->getRoom(), $event->getMessage(), [
 			'type' => 'Undo',
-			'actor' => $this->activityPubHelper->generatePersonFromMessageActor($message),
+			'actor' => $this->activityPubHelper->generatePerson($event->getActorType(), $event->getActorId(), $event->getActorDisplayName()),
 			'object' => [
 				'type' => 'Like',
 				'actor' => $this->activityPubHelper->generatePersonFromMessageActor($message),
