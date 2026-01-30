@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\LiveTranscriptionService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
@@ -78,6 +79,7 @@ class Capabilities implements IPublicCapability {
 		'rich-object-delete',
 		'unified-search',
 		'chat-permission',
+		'react-permission',
 		'silent-send',
 		'silent-call',
 		'send-call-notification',
@@ -202,6 +204,8 @@ class Capabilities implements IPublicCapability {
 		'experiments' => [
 			'enabled',
 		],
+		'permissions' => [
+		],
 	];
 
 	protected ICache $talkCache;
@@ -293,6 +297,10 @@ class Capabilities implements IPublicCapability {
 				],
 				'experiments' => [
 					'enabled' => max(0, $this->appConfig->getAppValueInt($user instanceof IUser ? 'experiments_users' : 'experiments_guests')),
+				],
+				'permissions' => [
+					'max-default' => Attendee::PERMISSIONS_MAX_DEFAULT,
+					'max-custom' => Attendee::PERMISSIONS_MAX_CUSTOM,
 				],
 			],
 			'config-local' => self::LOCAL_CONFIGS,

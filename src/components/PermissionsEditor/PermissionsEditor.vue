@@ -25,9 +25,15 @@
 						{{ t('spreed', 'Skip the lobby') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch
-						v-model="chatMessagesAndReactions"
+						v-model="chatMessages"
 						class="checkbox">
-						{{ t('spreed', 'Can post messages and reactions') }}
+						{{ hasReactPermissions ? t('spreed', 'Can post messages') : t('spreed', 'Can post messages and reactions') }}
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch
+						v-if="hasReactPermissions"
+						v-model="chatReactions"
+						class="checkbox">
+						{{ t('spreed', 'Can add reactions') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch
 						v-model="publishAudio"
@@ -69,6 +75,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import { PARTICIPANT } from '../../constants.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS
 
@@ -127,8 +134,10 @@ export default {
 		const callStart = ref(false)
 		// Permission to bypass the lobby
 		const lobbyIgnore = ref(false)
-		// Permission to post messages and reactions
-		const chatMessagesAndReactions = ref(false)
+		// Permission to post messages
+		const chatMessages = ref(false)
+		// Permission to add reactions
+		const chatReactions = ref(false)
 		// Permission to enable the microphone
 		const publishAudio = ref(false)
 		// Permission to enable the camera
@@ -140,7 +149,8 @@ export default {
 			dialogHeaderId,
 			callStart,
 			lobbyIgnore,
-			chatMessagesAndReactions,
+			chatMessages,
+			chatReactions,
 			publishAudio,
 			publishVideo,
 			publishScreen,
@@ -162,6 +172,25 @@ export default {
 			}
 		},
 
+		hasReactPermissions() {
+			// FIXME: token should be passed, but atm we don't have federated moderators,
+			// so can be skipped until refactored
+			return hasTalkFeature('local', 'react-permission')
+		},
+
+		maxDefaultPermission() {
+			// Use API value if available, otherwise compute from constants
+			const apiValue = getTalkConfig('local', 'permissions', 'max-default')
+			if (apiValue !== undefined) {
+				return apiValue
+			}
+			// Fallback for older servers: MAX_DEFAULT minus REACT if capability missing
+			if (this.hasReactPermissions) {
+				return PERMISSIONS.MAX_DEFAULT
+			}
+			return PERMISSIONS.MAX_DEFAULT & ~PERMISSIONS.REACT
+		},
+
 		permissionsWithDefault() {
 			if (this.permissions !== PERMISSIONS.DEFAULT) {
 				return this.permissions
@@ -170,7 +199,7 @@ export default {
 			return loadState(
 				'spreed',
 				'default_permissions',
-				PERMISSIONS.MAX_DEFAULT & ~PERMISSIONS.LOBBY_IGNORE,
+				this.maxDefaultPermission & ~PERMISSIONS.LOBBY_IGNORE,
 			)
 		},
 
@@ -184,7 +213,8 @@ export default {
 			return (this.callStart ? PERMISSIONS.CALL_START : 0)
 				| PERMISSIONS.CALL_JOIN // Currently not handled, just adding it, so that manually selecting all checkboxes goes to the "All" permissions state
 				| (this.lobbyIgnore ? PERMISSIONS.LOBBY_IGNORE : 0)
-				| (this.chatMessagesAndReactions ? PERMISSIONS.CHAT : 0)
+				| (this.chatMessages ? PERMISSIONS.CHAT : 0)
+				| ((this.hasReactPermissions && this.chatReactions) ? PERMISSIONS.REACT : 0)
 				| (this.publishAudio ? PERMISSIONS.PUBLISH_AUDIO : 0)
 				| (this.publishVideo ? PERMISSIONS.PUBLISH_VIDEO : 0)
 				| (this.publishScreen ? PERMISSIONS.PUBLISH_SCREEN : 0)
@@ -198,7 +228,8 @@ export default {
 		submitButtonDisabled() {
 			return (!!(this.permissionsWithDefault & PERMISSIONS.CALL_START)) === this.callStart
 				&& !!(this.permissionsWithDefault & PERMISSIONS.LOBBY_IGNORE) === this.lobbyIgnore
-				&& !!(this.permissionsWithDefault & PERMISSIONS.CHAT) === this.chatMessagesAndReactions
+				&& !!(this.permissionsWithDefault & PERMISSIONS.CHAT) === this.chatMessages
+				&& !!(this.permissionsWithDefault & PERMISSIONS.REACT) === (this.hasReactPermissions && this.chatReactions)
 				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_AUDIO) === this.publishAudio
 				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_VIDEO) === this.publishVideo
 				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_SCREEN) === this.publishScreen
@@ -220,7 +251,10 @@ export default {
 		writePermissionsToComponent(permissions) {
 			this.callStart = Boolean(permissions & PERMISSIONS.CALL_START)
 			this.lobbyIgnore = Boolean(permissions & PERMISSIONS.LOBBY_IGNORE)
-			this.chatMessagesAndReactions = Boolean(permissions & PERMISSIONS.CHAT)
+			this.chatMessages = Boolean(permissions & PERMISSIONS.CHAT)
+			if (this.hasReactPermissions) {
+				this.chatReactions = Boolean(permissions & PERMISSIONS.REACT)
+			}
 			this.publishAudio = Boolean(permissions & PERMISSIONS.PUBLISH_AUDIO)
 			this.publishVideo = Boolean(permissions & PERMISSIONS.PUBLISH_VIDEO)
 			this.publishScreen = Boolean(permissions & PERMISSIONS.PUBLISH_SCREEN)

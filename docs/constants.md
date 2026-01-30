@@ -110,7 +110,8 @@
 * `16` Can publish audio stream
 * `32` Can publish video stream
 * `64` Can publish screen sharing stream
-* `128` Can post chat message, share items and do reactions
+* `128` Can post chat message and share items
+* `256` Can add reactions (New in Nextcloud 34, previously handled by the chat permission)
 
 ### Attendee permission modifications
 * `set` - Setting this permission set.

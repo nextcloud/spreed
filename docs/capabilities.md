@@ -205,3 +205,8 @@
 * `scheduled-messages` (local) - Whether a user can schedule messages
 * `config => call => live-translation` - Whether live translation is supported in calls
 * `config => call => live-transcription-target-language-id` (local) - User defined string value with the id of the target language to use for live translations
+
+## 24
+* `react-permission` - When permission 256 is required to add reactions (previously handled by the chat permission)
+* `config => permissions => max-default` - Maximum value for default permissions (510 with react-permission, 254 without)
+* `config => permissions => max-custom` - Maximum value for custom permissions (511 with react-permission, 255 without)

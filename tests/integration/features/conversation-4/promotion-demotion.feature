@@ -46,8 +46,8 @@ Feature: conversation-2/promotion-demotion
     And user "participant1" sets permissions for "participant3" in room "room" to "L" with 200 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | participant1 | SJLAVPM     |
-      | users      | participant2 | SJLAVPM     |
+      | users      | participant1 | SJLAVPMR    |
+      | users      | participant2 | SJLAVPMR    |
       | users      | participant3 | CL           |
     Then user "participant3" is participant of the following rooms (v4)
       | id   | type | participantType |
@@ -58,18 +58,18 @@ Feature: conversation-2/promotion-demotion
       | room | 3    | 2               |
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | participant1 | SJLAVPM     |
-      | users      | participant2 | SJLAVPM     |
-      | users      | participant3 | SJLAVPM     |
+      | users      | participant1 | SJLAVPMR    |
+      | users      | participant2 | SJLAVPMR    |
+      | users      | participant3 | SJLAVPMR    |
     When user "participant2" demotes "participant3" in room "room" with 200 (v4)
     Then user "participant3" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | participant1 | SJLAVPM     |
-      | users      | participant2 | SJLAVPM     |
-      | users      | participant3 | SJAVPM      |
+      | users      | participant1 | SJLAVPMR    |
+      | users      | participant2 | SJLAVPMR    |
+      | users      | participant3 | SJAVPMR     |
 
   Scenario: Moderator promotes self-joined user
     Given user "participant1" creates room "room" (v4)

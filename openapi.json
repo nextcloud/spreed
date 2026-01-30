@@ -214,7 +214,8 @@
                             "federation",
                             "previews",
                             "signaling",
-                            "experiments"
+                            "experiments",
+                            "permissions"
                         ],
                         "properties": {
                             "attachments": {
@@ -476,6 +477,23 @@
                                         "minimum": 0
                                     }
                                 }
+                            },
+                            "permissions": {
+                                "type": "object",
+                                "required": [
+                                    "max-default",
+                                    "max-custom"
+                                ],
+                                "properties": {
+                                    "max-default": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "max-custom": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    }
+                                }
                             }
                         }
                     },
@@ -485,8 +503,7 @@
                             "type": "array",
                             "items": {
                                 "type": "string"
-                            },
-                            "minItems": 1
+                            }
                         }
                     },
                     "version": {
@@ -16189,7 +16206,7 @@
                                         "format": "int64",
                                         "description": "Default permissions for participants (only available with `conversation-creation-all` capability)",
                                         "minimum": 0,
-                                        "maximum": 255
+                                        "maximum": 511
                                     },
                                     "recordingConsent": {
                                         "type": "integer",
@@ -21792,7 +21809,7 @@
                                         "format": "int64",
                                         "description": "New permissions",
                                         "minimum": 0,
-                                        "maximum": 255
+                                        "maximum": 511
                                     }
                                 }
                             }
@@ -21972,7 +21989,7 @@
                                         "format": "int64",
                                         "description": "New permissions",
                                         "minimum": 0,
-                                        "maximum": 255
+                                        "maximum": 511
                                     }
                                 }
                             }
@@ -22239,7 +22256,7 @@
                                         "format": "int64",
                                         "description": "New permissions",
                                         "minimum": 0,
-                                        "maximum": 255
+                                        "maximum": 511
                                     }
                                 }
                             }

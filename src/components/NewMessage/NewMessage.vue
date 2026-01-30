@@ -150,6 +150,7 @@
 			<!-- Silent chat -->
 			<NcActions
 				v-if="showSendActions"
+				:disabled="disabled"
 				forceMenu
 				:primary="silentChat"
 				@close="submenu = null">
@@ -1539,8 +1540,7 @@ export default {
 }
 
 // Override actions styles TODO: upstream this change
-// Targeting two classes for specificity
-:deep(.action-item__menutoggle.action-item__menutoggle--with-icon-slot) {
+:deep(.action-item__menutoggle) {
 	opacity: 1 !important;
 
 	&:hover,
@@ -1548,9 +1548,6 @@ export default {
 		background-color: var(--color-background-hover) !important;
 	}
 
-	&:disabled {
-		opacity: .5 !important;
-	}
 }
 
 </style>

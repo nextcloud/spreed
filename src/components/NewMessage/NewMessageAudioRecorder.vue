@@ -11,7 +11,7 @@
 			:aria-label="startRecordingTitle"
 			:aria-description="isMediaRecorderLoading ? t('spreed', 'Loading …') : undefined"
 			variant="tertiary"
-			:disabled="isMediaRecorderLoading"
+			:disabled="disabled || isMediaRecorderLoading"
 			@click="start">
 			<template #icon>
 				<IconMicrophoneOutline :size="20" />
@@ -311,7 +311,6 @@ export default {
 
 .audio-recorder {
 	display: flex;
-	// Audio record button
 
 	&__info {
 		width: 86px;

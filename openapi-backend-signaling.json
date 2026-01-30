@@ -54,7 +54,8 @@
                             "federation",
                             "previews",
                             "signaling",
-                            "experiments"
+                            "experiments",
+                            "permissions"
                         ],
                         "properties": {
                             "attachments": {
@@ -316,6 +317,23 @@
                                         "minimum": 0
                                     }
                                 }
+                            },
+                            "permissions": {
+                                "type": "object",
+                                "required": [
+                                    "max-default",
+                                    "max-custom"
+                                ],
+                                "properties": {
+                                    "max-default": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "max-custom": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    }
+                                }
                             }
                         }
                     },
@@ -325,8 +343,7 @@
                             "type": "array",
                             "items": {
                                 "type": "string"
-                            },
-                            "minItems": 1
+                            }
                         }
                     },
                     "version": {

@@ -281,7 +281,7 @@ class Config {
 	}
 
 	/**
-	 * @return int<0, 255>
+	 * @return int<0, 511>
 	 * @psalm-return int-mask-of<Attendee::PERMISSIONS_*>
 	 */
 	public function getDefaultPermissions(): int {

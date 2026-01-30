@@ -219,6 +219,10 @@ class CapabilitiesTest extends TestCase {
 					'experiments' => [
 						'enabled' => 0,
 					],
+					'permissions' => [
+						'max-default' => 510,
+						'max-custom' => 511,
+					],
 				],
 				'config-local' => Capabilities::LOCAL_CONFIGS,
 				'version' => '1.2.3',
@@ -403,6 +407,10 @@ class CapabilitiesTest extends TestCase {
 					],
 					'experiments' => [
 						'enabled' => 0,
+					],
+					'permissions' => [
+						'max-default' => 510,
+						'max-custom' => 511,
 					],
 				],
 				'config-local' => Capabilities::LOCAL_CONFIGS,

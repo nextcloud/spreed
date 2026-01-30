@@ -55,6 +55,7 @@ export const mockedCapabilities: Capabilities = {
 			'rich-object-delete',
 			'unified-search',
 			'chat-permission',
+			'react-permission',
 			'silent-send',
 			'silent-call',
 			'send-call-notification',
@@ -187,6 +188,10 @@ export const mockedCapabilities: Capabilities = {
 			},
 			experiments: {
 				enabled: 0,
+			},
+			permissions: {
+				'max-default': 510,
+				'max-custom': 511,
 			},
 		},
 		'config-local': {

@@ -118,7 +118,7 @@ import PollCard from './MessagePart/PollCard.vue'
 import ReactionsWrapper from './MessagePart/ReactionsWrapper.vue'
 import { useGetThreadId } from '../../../../composables/useGetThreadId.ts'
 import { CONVERSATION, MENTION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
-import { getTalkConfig } from '../../../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.ts'
@@ -316,8 +316,14 @@ export default {
 		},
 
 		canReact() {
+			const hasReactPermissions = hasTalkFeature(this.message.token, 'react-permission')
+			// Fall back to CHAT permission when federating with older servers without react-permission capability
+			const permissionToCheck = hasReactPermissions
+				? PARTICIPANT.PERMISSIONS.REACT
+				: PARTICIPANT.PERMISSIONS.CHAT
+
 			return this.conversation.readOnly !== CONVERSATION.STATE.READ_ONLY
-				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
+				&& (this.conversation.permissions & permissionToCheck) !== 0
 				&& this.message.messageType !== MESSAGE.TYPE.COMMAND
 				&& this.message.messageType !== MESSAGE.TYPE.COMMENT_DELETED
 		},
