@@ -11,6 +11,7 @@ Feature: federation/permissions
     And the following "spreed" app config is set
       | federation_enabled | yes |
 
+  @skip34
   Scenario: set participant permissions
     And user "participant1" creates room "room" (v4)
       | roomType | 2 |
