@@ -93,7 +93,7 @@
     "@rspack/plugin-node-polyfill": "^0.5.8",
     "@total-typescript/ts-reset": "^0.6.1",
     "@vitejs/plugin-vue": "^6.0.3",
-    "@vitest/coverage-v8": "^4.0.17",
+    "@vitest/coverage-v8": "^4.0.18",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.8.1",
     "css-loader": "^7.1.2",
