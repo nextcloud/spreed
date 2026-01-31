@@ -11,10 +11,12 @@ namespace OCA\Talk\Federation\Proxy\TalkV1\Controller;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Federation\Proxy\TalkV1\ProxyRequest;
 use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 
@@ -27,6 +29,7 @@ class RoomController {
 	public function __construct(
 		protected ProxyRequest $proxy,
 		protected UserConverter $userConverter,
+		protected ParticipantService $participantService,
 	) {
 	}
 
@@ -91,8 +94,24 @@ class RoomController {
 
 		$headers = ['X-Nextcloud-Talk-Proxy-Hash' => $this->proxy->overwrittenRemoteTalkHash($proxy->getHeader('X-Nextcloud-Talk-Hash'))];
 
-		/** @var TalkRoom[] $data */
+		/** @var TalkRoom $data */
 		$data = $this->proxy->getOCSData($proxy);
+
+		// Heal permissions: The host server is the source of truth for permissions.
+		// If the host returns different permissions than what we have locally,
+		// update the local copy. This handles version mismatches where migrations
+		// on either side may have added/changed permission bits (e.g., REACT permission).
+		if ($statusCode === Http::STATUS_OK
+			&& isset($data['permissions'])
+			&& is_int($data['permissions'])
+			&& $data['permissions'] !== $participant->getAttendee()->getPermissions()) {
+			$this->participantService->updatePermissions(
+				$room,
+				$participant,
+				Attendee::PERMISSIONS_MODIFY_SET,
+				$data['permissions']
+			);
+		}
 
 		$data = $this->userConverter->convertAttendee($room, $data, 'actorType', 'actorId', 'displayName');
 
