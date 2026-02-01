@@ -46,7 +46,10 @@ class CanUseTalkMiddleware extends Middleware {
 
 	public const TALK_IOS_MIN_VERSION = '15.0.0';
 	public const TALK_IOS_MIN_VERSION_RECORDING_CONSENT = '18.0.0';
-	public const TALK_IOS_MIN_VERSION_E2EE_CALLS = '99.0.0';
+
+	// Talk iOS >= 23 handles the configuration flag for E2EE and shows a appropiate message
+	// Support for E2EE on Talk iOS is still pending
+	public const TALK_IOS_MIN_VERSION_E2EE_CALLS = '23.0.0';
 
 
 	public function __construct(
