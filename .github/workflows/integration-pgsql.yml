@@ -97,7 +97,7 @@ jobs:
           persist-credentials: false
           submodules: true
           repository: nextcloud/server
-          ref: ${{ matrix.server-versions }}
+          ref: setup-root-path-children-less-setup-33
 
       - name: Patch version check for nightly PHP
         if: ${{ matrix.php-versions == '8.4' }}
