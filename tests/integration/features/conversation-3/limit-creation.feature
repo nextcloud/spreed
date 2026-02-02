@@ -1,4 +1,4 @@
-Feature: conversation/limit-creation
+Feature: conversation-3/limit-creation
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

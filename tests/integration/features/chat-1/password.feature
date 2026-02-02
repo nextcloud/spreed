@@ -1,4 +1,4 @@
-Feature: chat/password
+Feature: chat-1/password
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

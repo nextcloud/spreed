@@ -1,4 +1,4 @@
-Feature: chat-2/typing-privacy
+Feature: chat-4/typing-privacy
   Background:
     Given user "participant1" exists
   Scenario: User toggles the typing privacy

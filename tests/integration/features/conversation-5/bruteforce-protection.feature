@@ -1,4 +1,4 @@
-Feature: conversation/bruteforce-protection
+Feature: conversation-5/bruteforce-protection
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

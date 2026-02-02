@@ -1,4 +1,4 @@
-Feature: conversation-2/sip-dialout
+Feature: conversation-5/sip-dialout
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

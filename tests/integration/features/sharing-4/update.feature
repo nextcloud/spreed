@@ -1,4 +1,4 @@
-Feature: update
+Feature: sharing-4/update
 
   Background:
     Given user "participant1" exists

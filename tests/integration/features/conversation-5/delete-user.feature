@@ -1,4 +1,4 @@
-Feature: conversation/delete-user
+Feature: conversation-5/delete-user
 
   Background:
     Given user "participant1" exists

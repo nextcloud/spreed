@@ -1,4 +1,4 @@
-Feature: conversation-2/promotion-demotion
+Feature: conversation-4/promotion-demotion
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

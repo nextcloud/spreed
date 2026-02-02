@@ -1,4 +1,4 @@
-Feature: sharees
+Feature: sharing-4/sharees
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

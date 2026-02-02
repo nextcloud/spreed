@@ -1,4 +1,4 @@
-Feature: conversation/ban
+Feature: conversation-1/ban
     Background:
         Given user "participant1" exists
         Given user "participant2" exists

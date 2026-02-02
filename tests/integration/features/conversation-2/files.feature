@@ -1,4 +1,4 @@
-Feature: conversation/files
+Feature: conversation-2/files
 
   Background:
     Given user "participant1" exists

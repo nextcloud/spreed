@@ -1,4 +1,4 @@
-Feature: conversation/join-listable
+Feature: conversation-2/join-listable
   Background:
     Given user "creator" exists
     And user "regular-user" exists

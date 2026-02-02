@@ -1,4 +1,4 @@
-Feature: get
+Feature: sharing-2/get
 
   Background:
     Given user "participant1" exists

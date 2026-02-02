@@ -1,4 +1,4 @@
-Feature: chat-2/reply
+Feature: chat-4/reply
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

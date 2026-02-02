@@ -1,4 +1,4 @@
-Feature: chat/notifications
+Feature: chat-1/notifications
 
   Background:
     Given user "participant1" exists

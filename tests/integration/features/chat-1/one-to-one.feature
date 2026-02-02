@@ -1,4 +1,4 @@
-Feature: chat/one-to-one
+Feature: chat-1/one-to-one
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

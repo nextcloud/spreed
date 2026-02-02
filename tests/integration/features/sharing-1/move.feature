@@ -1,4 +1,4 @@
-Feature: move
+Feature: sharing-1/move
 
   Background:
     Given user "participant1" exists

@@ -1,4 +1,4 @@
-Feature: conversation/invite-email
+Feature: conversation-3/invite-email
   Background:
     Given user "participant1" exists
 

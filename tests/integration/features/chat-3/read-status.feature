@@ -1,4 +1,4 @@
-Feature: chat-2/read-status
+Feature: chat-3/read-status
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

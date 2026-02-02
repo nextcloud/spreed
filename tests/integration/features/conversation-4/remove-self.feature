@@ -1,4 +1,4 @@
-Feature: conversation-2/remove-self
+Feature: conversation-4/remove-self
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

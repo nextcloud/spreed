@@ -1,4 +1,4 @@
-Feature: chat/mentions
+Feature: chat-2/mentions
 
   Background:
     Given user "participant1" exists

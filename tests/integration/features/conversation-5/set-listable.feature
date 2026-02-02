@@ -1,4 +1,4 @@
-Feature: conversation-2/set-listable
+Feature: conversation-5/set-listable
   Background:
     Given user "creator" exists
     Given user "regular-user" exists

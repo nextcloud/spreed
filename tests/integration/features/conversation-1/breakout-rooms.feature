@@ -1,4 +1,4 @@
-Feature: conversation/breakout-rooms
+Feature: conversation-1/breakout-rooms
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

@@ -1,4 +1,4 @@
-Feature: conversation-2/one-to-one
+Feature: conversation-3/one-to-one
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
