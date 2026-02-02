@@ -1,4 +1,4 @@
-Feature: chat-2/public
+Feature: chat-3/public
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

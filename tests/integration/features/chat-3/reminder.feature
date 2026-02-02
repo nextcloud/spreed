@@ -1,4 +1,4 @@
-Feature: chat-2/reminder
+Feature: chat-3/reminder
 
   Background:
     Given user "participant1" exists

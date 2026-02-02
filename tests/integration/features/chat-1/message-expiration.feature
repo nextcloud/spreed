@@ -1,4 +1,4 @@
-Feature: chat/message-expiration
+Feature: chat-1/message-expiration
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

@@ -1,4 +1,4 @@
-Feature: chat-2/unread-messages
+Feature: chat-4/unread-messages
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

@@ -1,4 +1,4 @@
-Feature: conversation/delete-room
+Feature: conversation-5/delete-room
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

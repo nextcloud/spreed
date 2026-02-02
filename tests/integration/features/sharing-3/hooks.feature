@@ -1,4 +1,4 @@
-Feature: hooks
+Feature: sharing-3/hooks
 
   Background:
     Given user "participant1" exists

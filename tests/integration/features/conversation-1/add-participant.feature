@@ -1,4 +1,4 @@
-Feature: conversation/add-participant
+Feature: conversation-1/add-participant
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

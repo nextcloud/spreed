@@ -1,4 +1,4 @@
-Feature: delete
+Feature: sharing-1/delete
 
   Background:
     Given user "participant1" exists

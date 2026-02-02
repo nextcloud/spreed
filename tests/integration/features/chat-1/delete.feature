@@ -1,4 +1,4 @@
-Feature: chat/delete
+Feature: chat-1/delete
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

@@ -1,4 +1,4 @@
-Feature: chat/group-read-only
+Feature: chat-1/group-read-only
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

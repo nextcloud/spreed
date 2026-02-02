@@ -1,4 +1,4 @@
-Feature: chat/note-to-self
+Feature: chat-1/note-to-self
 
   Background:
     Given user "participant1" exists

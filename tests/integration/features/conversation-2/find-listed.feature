@@ -1,4 +1,4 @@
-Feature: conversation/find-listed
+Feature: conversation-2/find-listed
   Background:
     Given user "creator" exists
     And user "regular-user" exists

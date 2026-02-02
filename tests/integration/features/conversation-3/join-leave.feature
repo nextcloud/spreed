@@ -1,4 +1,4 @@
-Feature: conversation/join-leave
+Feature: conversation-3/join-leave
 
   Background:
     Given user "participant1" exists

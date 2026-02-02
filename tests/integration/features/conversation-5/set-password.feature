@@ -1,4 +1,4 @@
-Feature: conversation-2/set-password
+Feature: conversation-5/set-password
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

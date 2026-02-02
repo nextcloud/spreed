@@ -1,4 +1,4 @@
-Feature: transfer-ownership
+Feature: sharing-4/transfer-ownership
 
   Background:
     Given user "participant1" exists

@@ -1,4 +1,4 @@
-Feature: conversation/lobby
+Feature: conversation-3/lobby
 
   Background:
     Given user "participant1" exists

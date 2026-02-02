@@ -1,4 +1,4 @@
-Feature: conversation-2/set-publishing-permissions
+Feature: conversation-5/set-publishing-permissions
   Background:
     Given user "owner" exists
     Given user "moderator" exists

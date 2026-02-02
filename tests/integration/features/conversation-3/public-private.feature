@@ -1,4 +1,4 @@
-Feature: conversation-2/public-private
+Feature: conversation-3/public-private
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

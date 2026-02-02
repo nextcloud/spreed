@@ -1,4 +1,4 @@
-Feature: conversation-2/sip-dialin
+Feature: conversation-5/sip-dialin
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

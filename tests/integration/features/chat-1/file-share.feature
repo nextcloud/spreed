@@ -1,4 +1,4 @@
-Feature: chat/file-share
+Feature: chat-1/file-share
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

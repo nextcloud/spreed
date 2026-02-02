@@ -1,4 +1,4 @@
-Feature: create
+Feature: sharing-1/create
 
   Background:
     Given user "participant1" exists

@@ -1,4 +1,4 @@
-Feature: conversation/avatar
+Feature: conversation-1/avatar
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

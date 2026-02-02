@@ -1,4 +1,4 @@
-Feature: chat-2/reference-id
+Feature: chat-3/reference-id
   Background:
     Given user "participant1" exists
 
