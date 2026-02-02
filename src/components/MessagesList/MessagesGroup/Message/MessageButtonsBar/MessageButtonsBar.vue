@@ -168,7 +168,7 @@
 						closeAfterClick
 						@click.stop="handleMarkAsUnread">
 						<template #icon>
-							<IconEyeOffOutline :size="20" />
+							<IconMessageBadgeOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Mark as unread') }}
 					</NcActionButton>
@@ -442,9 +442,9 @@ import IconCloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-import IconEyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
+import IconMessageBadgeOutline from 'vue-material-design-icons/MessageBadgeOutline.vue'
 import IconNoteEditOutline from 'vue-material-design-icons/NoteEditOutline.vue'
 import IconOpenInNew from 'vue-material-design-icons/OpenInNew.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
@@ -506,7 +506,7 @@ export default {
 		IconDotsHorizontal,
 		IconTrashCanOutline,
 		IconEmoticonOutline,
-		IconEyeOffOutline,
+		IconMessageBadgeOutline,
 		IconFileOutline,
 		IconForumOutline,
 		IconNoteEditOutline,
