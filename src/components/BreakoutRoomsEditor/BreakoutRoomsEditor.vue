@@ -6,6 +6,7 @@
 <template>
 	<NcModal
 		:class="{ 'modal-mask__participants-step': isEditingParticipants }"
+		:container="container"
 		:labelId="dialogHeaderId"
 		@close="$emit('close')">
 		<div
@@ -108,6 +109,11 @@ export default {
 		token: {
 			type: String,
 			required: true,
+		},
+
+		container: {
+			type: String,
+			default: 'body',
 		},
 	},
 
