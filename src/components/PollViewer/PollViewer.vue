@@ -10,15 +10,26 @@
 		:labelId="dialogHeaderId"
 		@close="dismissModal">
 		<div v-if="poll" class="poll-modal">
-			<div class="poll-modal__header">
-				<IconPoll :size="20" />
-				<span :id="dialogHeaderId" role="heading" aria-level="2">
-					{{ name }}
-				</span>
+			<div class="poll-modal__header-wrapper">
+				<div class="poll-modal__status">
+					<IconChartBoxOutline :size="20" />
+					<NcChip
+						:variant="pollChipVariant"
+						noClose>
+						{{ isPollOpen ? t('spreed', 'Open poll') : t('spreed', 'Closed poll') }}
+					</NcChip>
+				</div>
+				<div class="poll-modal__header">
+					<span :id="dialogHeaderId" role="heading" aria-level="2">
+						{{ name }}
+					</span>
+				</div>
+				<div v-if="pollSummaryText" class="poll-modal__summary">
+					<span>
+						{{ pollSummaryText }}
+					</span>
+				</div>
 			</div>
-			<p class="poll-modal__summary">
-				{{ pollSummaryText }}
-			</p>
 
 			<!-- options -->
 			<div v-if="modalPage === 'voting'" class="poll-modal__options">
@@ -66,21 +77,6 @@
 			</div>
 
 			<div v-if="isPollOpen" class="poll-modal__actions">
-				<!-- Submit vote button-->
-				<NcButton
-					v-if="modalPage === 'voting'"
-					variant="primary"
-					:disabled="disabled"
-					@click="submitVote">
-					{{ t('spreed', 'Submit vote') }}
-				</NcButton>
-				<!-- Vote again-->
-				<NcButton
-					v-else
-					variant="secondary"
-					@click="modalPage = 'voting'">
-					{{ t('spreed', 'Change your vote') }}
-				</NcButton>
 				<NcActions v-if="canEndPoll" forceMenu>
 					<NcActionButton v-if="supportPollDrafts && isModerator" @click="createPollDraft">
 						<template #icon>
@@ -101,6 +97,16 @@
 						</template>
 					</NcActionButton>
 				</NcActions>
+				<!-- Submit vote button-->
+				<NcButton
+					variant="primary"
+					:disabled="disabled"
+					@click="submitVote">
+					<template v-if="!selfHasVoted" #icon>
+						<IconCheck :size="20" />
+					</template>
+					{{ !selfHasVoted ? t('spreed', 'Submit') : t('spreed', 'Change your vote') }}
+				</NcButton>
 			</div>
 			<div v-else-if="supportPollDrafts && selfIsOwnerOrModerator" class="poll-modal__actions">
 				<NcActions forceMenu>
@@ -131,14 +137,15 @@ import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcChip from '@nextcloud/vue/components/NcChip'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
+import IconChartBoxOutline from 'vue-material-design-icons/ChartBoxOutline.vue'
 import IconCheck from 'vue-material-design-icons/Check.vue'
 import IconFileEditOutline from 'vue-material-design-icons/FileEditOutline.vue'
 import IconFileLockOutline from 'vue-material-design-icons/FileLockOutline.vue'
-import IconPoll from 'vue-material-design-icons/Poll.vue'
 import PollVotersDetails from './PollVotersDetails.vue'
 import IconFileDownload from '../../../img/material-icons/file-download.svg?raw'
 import { useIsInCall } from '../../composables/useIsInCall.js'
@@ -158,6 +165,7 @@ export default {
 		NcActionButton,
 		NcActionLink,
 		NcCheckboxRadioSwitch,
+		NcChip,
 		NcLoadingIcon,
 		NcModal,
 		NcButton,
@@ -168,7 +176,7 @@ export default {
 		IconCheck,
 		IconFileLockOutline,
 		IconFileEditOutline,
-		IconPoll,
+		IconChartBoxOutline,
 	},
 
 	setup() {
@@ -210,6 +218,7 @@ export default {
 			supportPollDrafts,
 			exportPollURI,
 			exportPollFileName,
+			POLL,
 		}
 	},
 
@@ -245,7 +254,14 @@ export default {
 		},
 
 		disabled() {
-			return this.loading || this.voteToSubmit.length === 0
+			return (this.loading || this.voteToSubmit.length === 0 // no option is selected or it is loading
+				|| (this.selfHasVoted && this.isSameVote)) // user has voted and did not change the vote
+				&& (this.modalPage !== 'results' || !this.isPollPublic) // if results are shown, allow changing vote for public polls
+		},
+
+		isSameVote() {
+			return this.voteToSubmit.length === this.poll?.votedSelf.length
+				&& this.voteToSubmit.every((val) => this.poll?.votedSelf.includes(+val))
 		},
 
 		isModerator() {
@@ -259,18 +275,16 @@ export default {
 
 		pollSummaryText() {
 			if (this.isPollClosed) {
-				return n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', this.poll?.numVoters)
+				return n('spreed', 'Final results • %n vote', 'Final results • %n votes', this.poll?.numVoters)
 			}
 
-			if (this.isPollPublic && (this.selfIsOwnerOrModerator || this.selfHasVoted)) {
-				return n('spreed', 'Open poll • %n vote', 'Open poll • %n votes', this.poll?.numVoters)
+			if (this.selfIsOwnerOrModerator || (this.isPollPublic && this.selfHasVoted)) {
+				return n('spreed', '%n vote', '%n votes', this.poll?.numVoters)
+			} else if (!this.isPollPublic) {
+				return t('spreed', 'Your vote is anonymous')
 			}
 
-			if (!this.isPollPublic && this.selfHasVoted) {
-				return t('spreed', 'Open poll • You voted already')
-			}
-
-			return t('spreed', 'Open poll')
+			return ''
 		},
 
 		canEndPoll() {
@@ -284,6 +298,14 @@ export default {
 		votePercentage() {
 			const votes = Object.keys(Object(this.poll?.options)).map((index) => this.poll?.votes['option-' + index] ?? 0)
 			return calculateVotePercentage(votes, this.poll.numVoters)
+		},
+
+		pollChipVariant() {
+			if (this.isPollOpen) {
+				return this.selfHasVoted ? 'secondary' : 'primary'
+			} else {
+				return 'tertiary'
+			}
 		},
 	},
 
@@ -309,7 +331,7 @@ export default {
 			handler(value) {
 				if (!value) {
 					this.modalPage = ''
-				} else if (this.selfHasVoted || this.isPollClosed) {
+				} else if (this.isPollClosed || (this.isPollPublic && this.selfHasVoted)) {
 					this.modalPage = 'results'
 				} else {
 					this.modalPage = 'voting'
@@ -358,6 +380,11 @@ export default {
 		},
 
 		async submitVote() {
+			if (this.modalPage !== 'voting') {
+				this.modalPage = 'voting'
+				return
+			}
+
 			this.loading = true
 			try {
 				await this.pollsStore.submitVote({
@@ -365,10 +392,11 @@ export default {
 					pollId: this.id,
 					optionIds: this.voteToSubmit.map((element) => +element),
 				})
-				this.modalPage = 'results'
+				if (this.isPollPublic) {
+					this.modalPage = 'results'
+				}
 			} catch (error) {
 				console.error(error)
-				this.modalPage = 'voting'
 			}
 			this.loading = false
 		},
@@ -408,26 +436,32 @@ export default {
 <style lang="scss" scoped>
 .poll-modal {
 	position: relative;
-	padding: 20px;
+	padding: calc(3 * var(--default-grid-baseline));
 
 	&__header {
 		display: flex;
 		align-items: flex-start;
 		gap: 8px;
-		margin-bottom: 8px;
+		margin-block: 8px;
 		font-weight: bold;
 		font-size: 18px;
 		white-space: normal;
 		overflow-wrap: anywhere;
 
-		:deep(.material-design-icon) {
-			margin-bottom: auto;
+		&-wrapper {
+			margin-inline-start: calc( (3 / 2) * var(--default-grid-baseline));
 		}
 	}
 
 	&__summary {
 		color: var(--color-text-maxcontrast);
 		margin-bottom: 16px;
+
+		&-details {
+			display: flex;
+			align-items: center;
+			gap: var(--default-grid-baseline);
+		}
 	}
 
 	&__options {
@@ -441,14 +475,20 @@ export default {
 		position: sticky;
 		bottom: 0;
 		display: flex;
-		justify-content: center;
 		gap: 8px;
 		padding: 8px 0 0;
 		background-color: var(--color-main-background);
+		justify-content: end;
 	}
 
 	&__loading {
 		height: 200px;
+	}
+
+	&__status {
+		display: flex;
+		flex-direction: row;
+		gap: var(--default-grid-baseline);
 	}
 }
 
@@ -463,9 +503,11 @@ export default {
 .results__option {
 	display: flex;
 	flex-direction: column;
+	padding: var(--default-grid-baseline);
+	border-radius: var(--border-radius-large);
 
-	&:not(:last-child) {
-		border-bottom: 1px solid var(--color-border);
+	&:hover {
+		background-color: var(--color-background-hover);
 	}
 
 	&__details {
