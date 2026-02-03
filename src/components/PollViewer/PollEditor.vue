@@ -32,6 +32,7 @@
 				ref="pollImport"
 				type="file"
 				class="hidden-visually"
+				tabindex="-1"
 				@change="importPoll">
 			<NcActions v-if="supportPollDrafts" forceMenu>
 				<NcActionButton v-if="props.canCreatePollDrafts && !isOpenedFromDraft" closeAfterClick @click="openPollDraftHandler">
