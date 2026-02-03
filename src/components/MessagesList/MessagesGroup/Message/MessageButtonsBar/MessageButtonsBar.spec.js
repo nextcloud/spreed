@@ -81,7 +81,7 @@ describe('MessageButtonsBar.vue', () => {
 				commonReadIconTitle: '',
 				sentIconTitle: '',
 			},
-			isTranslationAvailable: false,
+			richParameters: {},
 		}
 	})
 
