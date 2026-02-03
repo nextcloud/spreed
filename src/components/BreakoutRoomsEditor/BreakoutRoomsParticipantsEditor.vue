@@ -55,6 +55,7 @@
 			<NcActions v-if="hasSelected"
 				type="primary"
 				container=".participants-editor__buttons"
+				placement="top"
 				:menu-name="t('spreed', 'Assign')">
 				<NcActionButton v-for="(item, index) in assignments"
 					:key="index"
