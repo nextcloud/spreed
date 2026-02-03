@@ -80,8 +80,8 @@
 
 				<NcActionButton key="toggle-read" closeAfterClick @click="toggleReadConversation">
 					<template #icon>
-						<IconEyeOutline v-if="item.unreadMessages" :size="20" />
-						<IconEyeOffOutline v-else :size="20" />
+						<NcIconSvgWrapper v-if="item.unreadMessages" :svg="IconMarkChatRead" :size="20" />
+						<IconMessageBadgeOutline v-else :size="20" />
 					</template>
 					{{ labelRead }}
 				</NcActionButton>
@@ -241,6 +241,7 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconArchiveOffOutline from 'vue-material-design-icons/ArchiveOffOutline.vue'
 import IconArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
@@ -252,9 +253,8 @@ import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconExitToApp from 'vue-material-design-icons/ExitToApp.vue'
-import IconEyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
-import IconEyeOutline from 'vue-material-design-icons/EyeOutline.vue'
 import IconMessageAlertOutline from 'vue-material-design-icons/MessageAlertOutline.vue'
+import IconMessageBadgeOutline from 'vue-material-design-icons/MessageBadgeOutline.vue'
 import IconPhoneRingOutline from 'vue-material-design-icons/PhoneRingOutline.vue'
 import IconShieldLockOutline from 'vue-material-design-icons/ShieldLockOutline.vue'
 import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better indication
@@ -262,6 +262,7 @@ import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import ConfirmDialog from '../../UIShared/ConfirmDialog.vue'
 import ConversationIcon from './../../ConversationIcon.vue'
+import IconMarkChatRead from '../../../../img/material-icons/mark-chat-read.svg?raw'
 import { useConversationInfo } from '../../../composables/useConversationInfo.ts'
 import { AVATAR, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
@@ -291,9 +292,8 @@ export default {
 		IconContentCopy,
 		IconTrashCanOutline,
 		IconExitToApp,
-		IconEyeOutline,
-		IconEyeOffOutline,
 		IconMessageAlertOutline,
+		IconMessageBadgeOutline,
 		IconPhoneRingOutline,
 		IconShieldLockOutline,
 		IconStar,
@@ -302,6 +302,7 @@ export default {
 		NcActionSeparator,
 		NcButton,
 		NcDialog,
+		NcIconSvgWrapper,
 		NcListItem,
 	},
 
@@ -351,6 +352,7 @@ export default {
 
 		return {
 			AVATAR,
+			IconMarkChatRead,
 			supportsArchive,
 			supportImportantConversations,
 			supportSensitiveConversations,
