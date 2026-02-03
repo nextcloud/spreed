@@ -81,7 +81,7 @@ jobs:
           PUPPETEER_SKIP_DOWNLOAD: true
         run: |
           npm ci
-          npm run typescript:generate-core-types --if-present
+          npm run ts:generate-core-types --if-present
 
       - name: Create Pull Request
         if: steps.checkout.outcome == 'success'
