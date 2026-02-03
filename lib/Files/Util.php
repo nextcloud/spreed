@@ -37,13 +37,12 @@ class Util {
 	 */
 	public function getUsersWithAccessFile(string $fileId): array {
 		if (!isset($this->accessLists[$fileId])) {
-			$nodes = $this->rootFolder->getById((int)$fileId);
+			$node = $this->rootFolder->getFirstNodeById((int)$fileId);
 
-			if (empty($nodes)) {
+			if ($node === null) {
 				return [];
 			}
 
-			$node = array_shift($nodes);
 			$accessList = $this->shareManager->getAccessList($node);
 			$accessList['users'] ??= [];
 			if (!$node->getStorage()->instanceOfStorage(SharedStorage::class)) {
@@ -69,13 +68,12 @@ class Util {
 
 	public function canGuestsAccessFile(string $fileId): bool {
 		if (!isset($this->publicAccessLists[$fileId])) {
-			$nodes = $this->rootFolder->getById((int)$fileId);
+			$node = $this->rootFolder->getFirstNodeById((int)$fileId);
 
-			if (empty($nodes)) {
+			if ($node === null) {
 				return false;
 			}
 
-			$node = array_shift($nodes);
 			$accessList = $this->shareManager->getAccessList($node, false);
 			$this->publicAccessLists[$fileId] = $accessList['public'] ?? false;
 		}
