@@ -64,12 +64,11 @@
 					v-model:isForwarderOpen="isForwarderOpen"
 					class="message-buttons-bar"
 					:class="{ outlined: buttonsBarOutlined }"
-					:isTranslationAvailable="isTranslationAvailable"
 					:canReact="canReact"
 					:message="message"
+					:richParameters="richParameters"
 					:previousMessageId="previousMessageId"
 					:readInfo="readInfo"
-					@showTranslateDialog="isTranslateDialogOpen = true"
 					@reply="handleReply"
 					@edit="handleEdit"
 					@delete="handleDelete" />
@@ -88,12 +87,6 @@
 			:id="message.id"
 			:token="message.token"
 			@close="isForwarderOpen = false" />
-
-		<MessageTranslateDialog
-			v-if="isTranslationAvailable && isTranslateDialogOpen"
-			:message="message.message"
-			:richParameters="richParameters"
-			@close="isTranslateDialogOpen = false" />
 	</li>
 </template>
 
@@ -105,7 +98,6 @@ import { inject } from 'vue'
 import IconPin from 'vue-material-design-icons/PinOutline.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
-import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
 import ScheduledMessageActions from './MessageButtonsBar/ScheduledMessageActions.vue'
 import ContactCard from './MessagePart/ContactCard.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
@@ -118,7 +110,7 @@ import PollCard from './MessagePart/PollCard.vue'
 import ReactionsWrapper from './MessagePart/ReactionsWrapper.vue'
 import { useGetThreadId } from '../../../../composables/useGetThreadId.ts'
 import { CONVERSATION, MENTION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
-import { getTalkConfig, hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
+import { hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.ts'
@@ -131,7 +123,6 @@ export default {
 		MessageBody,
 		MessageButtonsBar,
 		MessageForwarder,
-		MessageTranslateDialog,
 		ReactionsWrapper,
 		ScheduledMessageActions,
 		IconPin,
@@ -159,16 +150,12 @@ export default {
 		},
 	},
 
-	setup(props) {
-		const isTranslationAvailable = getTalkConfig(props.token, 'chat', 'has-translation-providers')
-			// Fallback for the desktop client when connecting to Talk 17
-			?? getTalkConfig(props.token, 'chat', 'translations')?.length > 0
+	setup() {
 		const isSidebar = inject('chatView:isSidebar', false)
 		const threadId = useGetThreadId()
 		const isSplitViewEnabled = inject('messagesList:isSplitViewEnabled', true)
 
 		return {
-			isTranslationAvailable,
 			chatExtrasStore: useChatExtrasStore(),
 			actorStore: useActorStore(),
 			isSmallMobile: useIsSmallMobile(),
@@ -189,7 +176,6 @@ export default {
 			isFollowUpEmojiPickerOpen: false,
 			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
-			isTranslateDialogOpen: false,
 		}
 	},
 
@@ -294,7 +280,7 @@ export default {
 		showMessageButtonsBar() {
 			return !this.isDeletedMessage && !this.isTemporary
 				&& (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isFollowUpEmojiPickerOpen
-					|| this.isReactionsMenuOpen || this.isForwarderOpen || this.isTranslateDialogOpen)
+					|| this.isReactionsMenuOpen || this.isForwarderOpen)
 		},
 
 		readInfo() {
