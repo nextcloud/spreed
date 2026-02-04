@@ -704,6 +704,8 @@ OC.L10N.register(
     "Permanently delete this conversation." : "Trajno izbrišite ovaj razgovor.",
     "Delete chat messages" : "Izbriši razmijenjene poruke",
     "Permanently delete all the messages in this conversation." : "Trajno izbrišite sve poruke u ovom razgovoru.",
+    "_%n day_::_%n days_" : ["%n dan","%n dana","%n dana"],
+    "_%n week_::_%n weeks_" : ["%n tjedan","%n tjedna","%n tjedana"],
     "Password protection" : "Zaštita zaporkom",
     "Set a password" : "Postavi zaporku",
     "Save password" : "Spremi zaporku",
