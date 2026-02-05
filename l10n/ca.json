@@ -734,8 +734,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Avís: Versió en execució: {version}; El servidor no admet totes les funcions d'aquesta versió de Converses, les funcions que falten: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "És molt recomanable configurar una memòria cau quan executeu Nextcloud Converses amb un rerefons d'alt rendiment.",
     "Client Push" : "Client Push",
-    "Client Push is installed, this improves the performance of desktop clients." : "Client Push està instal·lat, això millora el rendiment dels clients d'escriptori.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} no està instal·lat, això pot provocar problemes de rendiment quan s'utilitzen clients d'escriptori.",
     "Recording backend" : "Rerefons de gravació",
     "Using the recording backend requires a High-performance backend." : "L'ús del rerefons de gravació requereix un rerefons d'alt rendiment.",
     "No recording backend configured" : "No s'ha configurat cap rerefons de gravació",
@@ -2012,6 +2010,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Compartir la pantalla només funciona amb la versió de Firefox 52 o posterior.",
     "Screensharing extension is required to share your screen." : "L'extensió per compartir la pantalla és necessària per compartir la vostra pantalla.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Utilitzeu un navegador diferent com Firefox o Chrome per compartir la vostra pantalla.",
-    "You need to close a dialog to toggle full screen" : "Heu de tancar un diàleg per commutar la pantalla completa"
+    "You need to close a dialog to toggle full screen" : "Heu de tancar un diàleg per commutar la pantalla completa",
+    "Client Push is installed, this improves the performance of desktop clients." : "Client Push està instal·lat, això millora el rendiment dels clients d'escriptori.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} no està instal·lat, això pot provocar problemes de rendiment quan s'utilitzen clients d'escriptori."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

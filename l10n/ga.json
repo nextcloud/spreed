@@ -774,8 +774,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Rabhadh: Leagan reatha: {version}; Ní thacaíonn an freastalaí le gach gné den leagan Talk seo, tá gnéithe in easnamh: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Moltar go mór taisce cuimhne a chumrú agus Nextcloud Talk á rith le hInneall Ardfheidhmíochta.",
     "Client Push" : "Brúigh Cliant",
-    "Client Push is installed, this improves the performance of desktop clients." : "Tá Client Push suiteáilte, feabhsaíonn sé seo feidhmíocht na gcliant deisce.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "Níl {notify_push}suiteáilte, d'fhéadfadh fadhbanna feidhmíochta a bheith mar thoradh air seo agus cliaint deisce in úsáid.",
     "Recording backend" : "Inneall taifeadta",
     "Using the recording backend requires a High-performance backend." : "Teastaíonn inneall Ardfheidhmíochta chun an t-inneall taifeadta a úsáid.",
     "No recording backend configured" : "Níl aon inneall taifeadta cumraithe",
@@ -2243,6 +2241,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Ní oibríonn roinnt do scáileán ach le Firefox leagan 52 nó níos nuaí.",
     "Screensharing extension is required to share your screen." : "Tá síneadh comhroinnte scáileáin ag teastáil chun do scáileán a roinnt.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Bain úsáid as brabhsálaí eile cosúil le Firefox nó Chrome chun do scáileán a roinnt le do thoil.",
-    "You need to close a dialog to toggle full screen" : "Ní mór duit dialóg a dhúnadh chun lánscáileán a scoránú"
+    "You need to close a dialog to toggle full screen" : "Ní mór duit dialóg a dhúnadh chun lánscáileán a scoránú",
+    "Client Push is installed, this improves the performance of desktop clients." : "Tá Client Push suiteáilte, feabhsaíonn sé seo feidhmíocht na gcliant deisce.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "Níl {notify_push}suiteáilte, d'fhéadfadh fadhbanna feidhmíochta a bheith mar thoradh air seo agus cliaint deisce in úsáid."
 },"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
 }

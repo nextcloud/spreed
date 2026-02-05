@@ -763,8 +763,6 @@
     "Error: Unknown error occurred" : "Viga: tekkis tundmatu viga",
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Hoiatus: töötav versioon on {version}; server ei toeta kõiki kõnerakenduse funktsionaalsusi, neist on puudu: {features}",
     "Client Push" : "Tõuketeenused kliendile",
-    "Client Push is installed, this improves the performance of desktop clients." : "Tõuketeenused kliendile on paigaldatud ja see parandab töölauaklientide jõudlust.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} pole paigaldatud ja see võib töölauaklientide puhul tekitada jõudlusprobleeme.",
     "Recording backend" : "Salvestuse taustateenus",
     "Using the recording backend requires a High-performance backend." : "Salvestuse funktsionaalsuse kasutamine eeldab serveris suure jõudlusega taustateenuse olemasolu.",
     "No recording backend configured" : "Ühtegi salvestuse taustateenust pole seadistatud",
@@ -2209,6 +2207,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Ekraanijagamine toimib Firefoxi versioonis 52 või uuemas.",
     "Screensharing extension is required to share your screen." : "Sinu ekraani jagamiseks on vajalik ekraanijagamise lisamoodul.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Oma ekraani jagamiseks palun kasuta mõnda muud veebibrauserit nagu Firefox või Chrome.",
-    "You need to close a dialog to toggle full screen" : "Täisekraanivaate sisse/välja lülitamiseks pead modaalse vaate sulgema"
+    "You need to close a dialog to toggle full screen" : "Täisekraanivaate sisse/välja lülitamiseks pead modaalse vaate sulgema",
+    "Client Push is installed, this improves the performance of desktop clients." : "Tõuketeenused kliendile on paigaldatud ja see parandab töölauaklientide jõudlust.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} pole paigaldatud ja see võib töölauaklientide puhul tekitada jõudlusprobleeme."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

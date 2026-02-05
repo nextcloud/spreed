@@ -774,8 +774,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Advertencia: Versión en execución: {versión}; O servidor non admite todas as funcionalidades desta versión de Talk, faltan as funcionalidades: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "É moi recomendábel configurar unha memoria tobo cando se executa Parladoiro de Nextcloud cunha infraestrutura de alto rendemento.",
     "Client Push" : "Notificación automática ao cliente",
-    "Client Push is installed, this improves the performance of desktop clients." : "A notificación automática ao cliente está instalada, isto mellora o rendemento dos clientes de escritorio.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} non está instalada, isto pode levar a problemas de rendemento ao usar clientes de escritorio.",
     "Recording backend" : "Infraestrutura de gravación",
     "Using the recording backend requires a High-performance backend." : "O uso da infraestrutura de gravación precisa dunha infraestrutura de alto rendemento.",
     "No recording backend configured" : "Non hai ningunha infraestrutura de gravación configurada",
@@ -2243,6 +2241,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Compartir pantalla só funciona con Firefox versión 52 ou posterior.",
     "Screensharing extension is required to share your screen." : "Precísase da extensión «Screensharing» para compartir a súa pantalla. ",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Use un navegador diferente como Firefox ou Chrome para compartir a súa pantalla.",
-    "You need to close a dialog to toggle full screen" : "Debe pechar un diálogo para cambiar a pantalla completa."
+    "You need to close a dialog to toggle full screen" : "Debe pechar un diálogo para cambiar a pantalla completa.",
+    "Client Push is installed, this improves the performance of desktop clients." : "A notificación automática ao cliente está instalada, isto mellora o rendemento dos clientes de escritorio.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} non está instalada, isto pode levar a problemas de rendemento ao usar clientes de escritorio."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

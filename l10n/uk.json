@@ -387,12 +387,12 @@
     "Reminder: {user} in conversation {call}" : "Нагадування: {user} в розмові {call}",
     "Reminder: A deleted user in conversation {call}" : "Нагадування: Видалений користувач у розмові {call}",
     "Reminder: {guest} (guest) in conversation {call}" : "Нагадування: {guest} (guest) у розмові {call}",
-    "Reminder: A guest in conversation {call}" : "Нагадування: Гість у розмові {дзвінок}.",
+    "Reminder: A guest in conversation {call}" : "Нагадування: Гість у розмові {call}.",
     "{user} reacted with {reaction} to your private message" : "{user} відреагував(ла) {reaction} на ваше приватне повідомлення",
     "{user} reacted with {reaction} to your message in conversation {call}" : "{user} відреагував {reaction} на ваше повідомлення у розмові {call}",
     "A deleted user reacted with {reaction} to your message in conversation {call}" : "Видалений користувач відреагував {reaction} на ваше повідомлення у розмові {call}",
     "{guest} (guest) reacted with {reaction} to your message in conversation {call}" : "{guest} (guest) відреагував(ла) {reaction} на ваше повідомлення у розмові {call}",
-    "A guest reacted with {reaction} to your message in conversation {call}" : "Гість відреагував {reaction} на ваше повідомлення у розмові {дзвінок}.",
+    "A guest reacted with {reaction} to your message in conversation {call}" : "Гість відреагував {reaction} на ваше повідомлення у розмові {call}.",
     "{user} mentioned you in a private conversation" : "{user} згадав вас у приватній розмові",
     "{user} mentioned group {group} in conversation {call}" : "{user} згадав(ла) групу {group} в розмові {call}",
     "{user} mentioned team {team} in conversation {call}" : "{user} згадували команду {team} у розмові {call}",
@@ -767,8 +767,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Попередження: Поточна версія: {version}; Сервер не підтримує всі можливості цієї версії Talk, відсутні функції: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Наполегливо рекомендується налаштувати кеш пам'яті під час запуску Nextcloud Talk з високопродуктивним бекендом.",
     "Client Push" : "Клієнтський поштовх",
-    "Client Push is installed, this improves the performance of desktop clients." : "Встановлено Client Push, це покращує продуктивність десктопних клієнтів.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} не встановлено, це може призвести до проблем з продуктивністю під час використання десктопних клієнтів.",
     "Recording backend" : "Бекенд для запису",
     "Using the recording backend requires a High-performance backend." : "Використання бекенду для запису вимагає високопродуктивного бекенду.",
     "No recording backend configured" : "Не налаштовано бекенд для запису",
@@ -2159,6 +2157,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Спільний доступ до екрану працює лише у Firefox версії 52 або новішої.",
     "Screensharing extension is required to share your screen." : "Розширення Screensharing необхідне для надання спільного доступу до екрану.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Будь ласка, використовуйте інший браузер, наприклад, Firefox або Chrome, щоб показати свій екран.",
-    "You need to close a dialog to toggle full screen" : "Для перемикання на повноекранний режим потрібно закрити діалогове вікно"
+    "You need to close a dialog to toggle full screen" : "Для перемикання на повноекранний режим потрібно закрити діалогове вікно",
+    "Client Push is installed, this improves the performance of desktop clients." : "Встановлено Client Push, це покращує продуктивність десктопних клієнтів.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} не встановлено, це може призвести до проблем з продуктивністю під час використання десктопних клієнтів."
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);"
 }

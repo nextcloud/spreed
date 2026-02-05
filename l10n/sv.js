@@ -774,8 +774,6 @@ OC.L10N.register(
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Varning: Aktuell version: {version}; Servern stöder inte alla funktioner i denna Talk-version, funktioner saknas: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Det rekommenderas starkt att konfigurera en minnescache när du kör Nextcloud Talk med en High-performance backend.",
     "Client Push" : "Klient-Push",
-    "Client Push is installed, this improves the performance of desktop clients." : "Klient-Push är installerat, detta förbättrar prestandan för skrivbordsklienter.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} är inte installerat, detta kan leda till prestandaproblem vid användning av skrivbordsklienter.",
     "Recording backend" : "Recording backend",
     "Using the recording backend requires a High-performance backend." : "För att kunna använda recording backend krävs en High-performance backend.",
     "No recording backend configured" : "Ingen recording backend konfigurerad",
@@ -2184,6 +2182,8 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "Skärmdelning fungerar endast med Firefox version 52 eller nyare.",
     "Screensharing extension is required to share your screen." : "Skärmdelningstillägg krävs för att dela din skärm.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Vänligen använd en annan webbläsare som t.ex Firefox eller Chrome för att dela din skärm.",
-    "You need to close a dialog to toggle full screen" : "Du måste stänga en dialogruta för att växla fullskärm"
+    "You need to close a dialog to toggle full screen" : "Du måste stänga en dialogruta för att växla fullskärm",
+    "Client Push is installed, this improves the performance of desktop clients." : "Klient-Push är installerat, detta förbättrar prestandan för skrivbordsklienter.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} är inte installerat, detta kan leda till prestandaproblem vid användning av skrivbordsklienter."
 },
 "nplurals=2; plural=(n != 1);");
