@@ -728,10 +728,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param 0|1 $markNotificationsAsRead Set to 0 when notifications should not be marked as read (default 1)
 	 * @param int $threadId Limit the chat message list to a given thread
 	 * @psalm-param non-negative-int $threadId
-	 * @return DataResponse<Http::STATUS_OK, list<TalkChatMessageWithParent>, array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkChatMessageWithParent>, array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, null, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'thread'}, array{}>
 	 *
 	 * 200: Messages returned
 	 * 304: No messages
+	 * 404: Thread not found
 	 */
 	#[FederationSupported]
 	#[PublicPage]
@@ -774,6 +775,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 				$markNotificationsAsRead,
 				// FIXME support threads in federation $threadId,
 			);
+		}
+
+		if ($threadId !== 0) {
+			if (!$this->threadService->validateThread($this->room->getId(), $threadId)) {
+				return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
+			}
 		}
 
 		$session = $this->participant->getSession();
@@ -1104,10 +1111,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param int<0, 100> $limit Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)
 	 * @param int $threadId Limit the chat message list to a given thread
 	 * @psalm-param non-negative-int $threadId
-	 * @return DataResponse<Http::STATUS_OK, list<TalkChatMessageWithParent>, array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<TalkChatMessageWithParent>, array{'X-Chat-Last-Common-Read'?: numeric-string, X-Chat-Last-Given?: numeric-string}>|DataResponse<Http::STATUS_NOT_MODIFIED, null, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'thread'}, array{}>
 	 *
 	 * 200: Message context returned
 	 * 304: No messages
+	 * 404: Thread not found
 	 */
 	#[FederationSupported]
 	#[PublicPage]
@@ -1136,6 +1144,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 				$limit,
 				// FIXME support threads in federation $threadId,
 			);
+		}
+
+		if ($threadId !== 0) {
+			if (!$this->threadService->validateThread($this->room->getId(), $threadId)) {
+				return new DataResponse(['error' => 'thread'], Http::STATUS_NOT_FOUND);
+			}
 		}
 
 		$currentUser = $this->userManager->get($this->userId);
