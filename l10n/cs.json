@@ -774,8 +774,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Varování: provozovaná verze: {version}; Server nepodporuje všechny funkce této verze Talk – chybějící funkce: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Pokud je Nextcloud Talk provozován s podpůrnou vrstvou pro vysoký výkon, je vřele doporučováno nastavit mezipaměť v operační paměti.",
     "Client Push" : "Služba klient Push",
-    "Client Push is installed, this improves the performance of desktop clients." : "Služba klient Push je nainstalovaná a bude zlepšovat výkon klientských aplikací pro počítač.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} není nainstalované – to může vést k problémům s výkonem při používání klientů pro počítač.",
     "Recording backend" : "Podpůrná vrstva pro nahrávání",
     "Using the recording backend requires a High-performance backend." : "Aby bylo možné používat podpůrnou vrstvu pro pořizování nahrávek, je třeba mít vrstvu pro vysoký výkon.",
     "No recording backend configured" : "Nenastavena žádná podpůrná vrstva pro pořizování nahrávek",
@@ -2243,6 +2241,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Sdílení vaší obrazovky funguje pouze s verzí prohlížeče Firefox 52 a novější.",
     "Screensharing extension is required to share your screen." : "Ke sdílení vaší obrazovky je vyžadováno rozšíření.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Ke sdílení obrazovky použijte jiný prohlížeč, jako např. Firefox, nebo Chrome.",
-    "You need to close a dialog to toggle full screen" : "Aby bylo možné vypnout/zapnout zobrazení na celou obrazovku, je třeba zavřít dialog"
+    "You need to close a dialog to toggle full screen" : "Aby bylo možné vypnout/zapnout zobrazení na celou obrazovku, je třeba zavřít dialog",
+    "Client Push is installed, this improves the performance of desktop clients." : "Služba klient Push je nainstalovaná a bude zlepšovat výkon klientských aplikací pro počítač.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} není nainstalované – to může vést k problémům s výkonem při používání klientů pro počítač."
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }

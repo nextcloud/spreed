@@ -768,8 +768,6 @@ OC.L10N.register(
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Avviso: versione in esecuzione: {version}; Il server non supporta tutte le funzionalità di questa versione di Talk, funzionalità mancanti: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Si consiglia vivamente di configurare una cache di memoria quando si esegue Nextcloud Talk con un backend ad alte prestazioni.",
     "Client Push" : "Client Push",
-    "Client Push is installed, this improves the performance of desktop clients." : "Client Push è installato, questo migliora le prestazioni dei client desktop.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} non è installato, ciò potrebbe causare problemi di prestazioni durante l'utilizzo dei client desktop.",
     "Recording backend" : "Backend di registrazione",
     "Using the recording backend requires a High-performance backend." : "L'utilizzo del backend di registrazione richiede un backend ad alte prestazioni.",
     "No recording backend configured" : "Nessun backend di registrazione configurato",
@@ -2163,6 +2161,8 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "La condivisione dello schermo funziona solo con la versione 52 o superiore di Firefox.",
     "Screensharing extension is required to share your screen." : "L'estensione di condivisione dello schermo è richiesta per condividere il tuo schermo.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Utilizza un browser diverso come Firefox o Chrome per condividere il tuo schermo.",
-    "You need to close a dialog to toggle full screen" : "È necessario chiudere una finestra per passare alla modalità a schermo intero"
+    "You need to close a dialog to toggle full screen" : "È necessario chiudere una finestra per passare alla modalità a schermo intero",
+    "Client Push is installed, this improves the performance of desktop clients." : "Client Push è installato, questo migliora le prestazioni dei client desktop.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} non è installato, ciò potrebbe causare problemi di prestazioni durante l'utilizzo dei client desktop."
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

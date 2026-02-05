@@ -776,8 +776,6 @@ OC.L10N.register(
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Upozornenie: Bežiaca verzia: {version}; Server nepodporuje všetky funkcie tejto verzie Talk, chýbajúce funkcie: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Pri spustení Nextcloud Talk s vysokovýkonným backendom sa dôrazne odporúča nakonfigurovať vyrovnávaciu pamäť.",
     "Client Push" : "Client Push",
-    "Client Push is installed, this improves the performance of desktop clients." : "Client Push je nainštalovaný, čím sa zlepšuje výkon desktopových klientov.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} nie je nainštalovaný, čo môže viesť k problémom s výkonom pri používaní desktopových klientov.",
     "Recording backend" : "Backend pre záznam",
     "Using the recording backend requires a High-performance backend." : "Používanie backendu nahrávania vyžaduje vysokovýkonný backend.",
     "No recording backend configured" : "Nie je nakonfigurovaný žiadny backend nahrávania",
@@ -2240,6 +2238,8 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "Zdieľanie vašej obrazovky funguje iba s Firefoxom verzie 52 alebo novším.",
     "Screensharing extension is required to share your screen." : "Rozšírenie zdieľanie obrazovky je potrebné pre zdieľanie obrazovky.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Pre zdieľanie vašej obrazovky, použite prosím iný prehliadač, napríklad Firefox alebo Chrome.",
-    "You need to close a dialog to toggle full screen" : "Dialogové okno musíte zavrieť pred prepnutím do celoobrazovkového režimu"
+    "You need to close a dialog to toggle full screen" : "Dialogové okno musíte zavrieť pred prepnutím do celoobrazovkového režimu",
+    "Client Push is installed, this improves the performance of desktop clients." : "Client Push je nainštalovaný, čím sa zlepšuje výkon desktopových klientov.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} nie je nainštalovaný, čo môže viesť k problémom s výkonom pri používaní desktopových klientov."
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

@@ -772,8 +772,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "ئاگاھلاندۇرۇش: ئىجرا قىلىنىش نۇسخىسى: {version}; مۇلازىمېتىر بۇ سۆھبەت نۇسخىسىنىڭ بارلىق ئىقتىدارلىرىنى قوللىمايدۇ ، يوقاپ كەتكەن ئىقتىدارلار: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Nextcloud Talk نى يۇقىرى ئىقتىدارلىق ئارقا سۇپىدا ئىجرا قىلغاندا ئىچكى ساقلىغۇچنى تەڭشەش تەۋسىيە قىلىنىدۇ.",
     "Client Push" : "خېرىدار ئىتتىرىشى",
-    "Client Push is installed, this improves the performance of desktop clients." : "Client Push ئورنىتىلغان بولۇپ، بۇ ئۈستەل يۈزى خېرىدارلىرىنىڭ ئىقتىدارىنى ياخشىلايدۇ.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} ئورنىتىلمىغان، بۇ ئۈستەل يۈزى خېرىدارلىرىنى ئىشلەتكەندە ئىقتىدار مەسىلىسىنى كەلتۈرۈپ چىقىرىشى مۇمكىن.",
     "Recording backend" : "ئارقا خاتىرىلەش",
     "Using the recording backend requires a High-performance backend." : "خاتىرىلەش ئارقا سۇپىسىنى ئىشلىتىش يۇقىرى ئىقتىدارلىق ئارقا كۆرۈنۈشنى تەلەپ قىلىدۇ.",
     "No recording backend configured" : "ئۈنگە ئېلىش ئارقا سۇپىسى سەپلەنمىگەن",
@@ -2197,6 +2195,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "ئېكرانىڭىزنى ھەمبەھىرلەش پەقەت Firefox نىڭ 52 ياكى يېڭى نەشرى بىلەنلا ئىشلەيدۇ.",
     "Screensharing extension is required to share your screen." : "ئېكراننى ئورتاقلىشىش ئۈچۈن ئېكراننى كېڭەيتىش تەلەپ قىلىنىدۇ.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "ئېكراننى ئورتاقلىشىش ئۈچۈن Firefox ياكى Chrome غا ئوخشاش باشقا توركۆرگۈچ ئىشلىتىڭ.",
-    "You need to close a dialog to toggle full screen" : "تولۇق ئېكراننى ئالماشتۇرۇش ئۈچۈن بىر دىئالوگنى تاقاش كېرەك"
+    "You need to close a dialog to toggle full screen" : "تولۇق ئېكراننى ئالماشتۇرۇش ئۈچۈن بىر دىئالوگنى تاقاش كېرەك",
+    "Client Push is installed, this improves the performance of desktop clients." : "Client Push ئورنىتىلغان بولۇپ، بۇ ئۈستەل يۈزى خېرىدارلىرىنىڭ ئىقتىدارىنى ياخشىلايدۇ.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} ئورنىتىلمىغان، بۇ ئۈستەل يۈزى خېرىدارلىرىنى ئىشلەتكەندە ئىقتىدار مەسىلىسىنى كەلتۈرۈپ چىقىرىشى مۇمكىن."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
