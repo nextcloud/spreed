@@ -1,7 +1,7 @@
 ---
 name: 🚀 Feature request
 about: Suggest an idea for Nextcloud Talk
-labels: 0. Needs triage, enhancement
+labels: Needs triage, enhancement
 ---
 
 <!--- Please keep this note for other contributors -->
