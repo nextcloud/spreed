@@ -772,8 +772,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Упозорење: Верзија која се извршава: {version}; Сервер не подржава све могућности ове Talk верзије, недостају функције: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Када се Nextcloud Talk користи заједно са позадинским механизмом високих перформанси, снажно се препоручује да се подеси кеширање меморије.",
     "Client Push" : "Client Push",
-    "Client Push is installed, this improves the performance of desktop clients." : "Инсталиран је Client Push, ово унапређује перформансе десктоп клијената.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} није инсталирано, можете имати проблема са перформансама када користите десктоп клијенте.",
     "Recording backend" : "Позадински механизам са снимање",
     "Using the recording backend requires a High-performance backend." : "Када се користи позадински механизам за снимање, потребно је да се користи и позадински механизам високих перформанси.",
     "No recording backend configured" : "Није подешен ниједан позадински механизам за снимање",
@@ -2164,6 +2162,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Дељење екрана је подржано само од Фајерфокса верзије 52 и веће.",
     "Screensharing extension is required to share your screen." : "Да бисте делили екран, потребан је додатак за дељење екрана.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Користите други веб читач, као што су Фајерфокс или Хром, да бисте делили екран.",
-    "You need to close a dialog to toggle full screen" : "Да бисте укључили/искључили приказ у пуном екрану, морате да затворите дијалог"
+    "You need to close a dialog to toggle full screen" : "Да бисте укључили/искључили приказ у пуном екрану, морате да затворите дијалог",
+    "Client Push is installed, this improves the performance of desktop clients." : "Инсталиран је Client Push, ово унапређује перформансе десктоп клијената.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} није инсталирано, можете имати проблема са перформансама када користите десктоп клијенте."
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }

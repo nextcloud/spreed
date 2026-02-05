@@ -774,8 +774,6 @@ OC.L10N.register(
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Uyarı: Çalışan sürüm: {version}; Sunucu bu Konuş sürümünün tüm özelliklerini desteklemiyor. Eksik özellikler: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Nextcloud Konuş yüksek başarımlı bir arka yüzde çalıştırılırken, bir bellek ön belleği yapılandırmanız önemle önerilir.",
     "Client Push" : "Client Push",
-    "Client Push is installed, this improves the performance of desktop clients." : "Client Push kuruldu. Bilgisayar istemci yazılımlarının başarımını artırır.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} kurulmamış. Bilgisayar istemci yazılımları kullanılırken başarım sorunları yaşanabilir.",
     "Recording backend" : "Kayıt arka yüzü",
     "Using the recording backend requires a High-performance backend." : "Kayıt arka yüzünün kullanılabilmesi için bir yüksek başarımlı arka yüz gereklidir.",
     "No recording backend configured" : "Herhangi bir kayıt arka yüzü yapılandırılmamış",
@@ -2231,6 +2229,8 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "Ekran paylaşımı yalnızca Firefox 52 ve üzerindeki sürümlerde kullanılabilir.",
     "Screensharing extension is required to share your screen." : "Ekran paylaşımı için ekran paylaşımı eklentisi kurulmuş olmalıdır.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Ekranınızı paylaşabilmek için lütfen Firefox ya da Chrome gibi farklı bir tarayıcı kullanın.",
-    "You need to close a dialog to toggle full screen" : "Tam ekrana geçmek için bir pencereyi kapatmalısınız"
+    "You need to close a dialog to toggle full screen" : "Tam ekrana geçmek için bir pencereyi kapatmalısınız",
+    "Client Push is installed, this improves the performance of desktop clients." : "Client Push kuruldu. Bilgisayar istemci yazılımlarının başarımını artırır.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} kurulmamış. Bilgisayar istemci yazılımları kullanılırken başarım sorunları yaşanabilir."
 },
 "nplurals=2; plural=(n > 1);");

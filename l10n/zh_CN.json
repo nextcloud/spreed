@@ -774,8 +774,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "警告：当前的运行版本为：{version}，此版本的 Talk 中的下列功能不受服务器支持：{features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "强烈推荐在使用高性能后端运行 Nextcloud Talk 时配置内存缓存。",
     "Client Push" : "客户端推送",
-    "Client Push is installed, this improves the performance of desktop clients." : "已安装客户端推送，这提高了桌面客户端的性能。",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "未安装 {notify_push}，这可能会导致使用桌面客户端时出现性能问题。",
     "Recording backend" : "录制后端",
     "Using the recording backend requires a High-performance backend." : "使用录制后端需要高性能后端。",
     "No recording backend configured" : "未配置录制后端",
@@ -2243,6 +2241,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "共享您的屏幕仅适用于Firefox 52或更高版本。",
     "Screensharing extension is required to share your screen." : "屏幕共享扩展需要共享您的屏幕。",
     "Please use a different browser like Firefox or Chrome to share your screen." : "请使用不同的浏览器例如 Firefox 或 Chrome 来共享您的屏幕。",
-    "You need to close a dialog to toggle full screen" : "您需要关闭对话框以切换全屏"
+    "You need to close a dialog to toggle full screen" : "您需要关闭对话框以切换全屏",
+    "Client Push is installed, this improves the performance of desktop clients." : "已安装客户端推送，这提高了桌面客户端的性能。",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "未安装 {notify_push}，这可能会导致使用桌面客户端时出现性能问题。"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

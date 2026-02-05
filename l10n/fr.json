@@ -774,8 +774,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Attention : version actuelle : {version}; Le serveur ne supporte pas toutes les fonctionnalités de cette version de Talk , fonctionnalités manquantes : {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Il est fortement recommandé de configurer un cache mémoire lors de l'exécution de Nextcloud Talk avec un backend haute performance.",
     "Client Push" : "Client Push",
-    "Client Push is installed, this improves the performance of desktop clients." : "Client Push est installé, cela améliore les performances des clients de synchronisation.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} n'est pas installé, cela peut entraîner des problèmes de performances lors de l'utilisation de clients de synchronisation.",
     "Recording backend" : "Moteur d'enregistrement",
     "Using the recording backend requires a High-performance backend." : "L'utilisation d'un serveur d'enregistrement nécessite un serveur haute-performance.",
     "No recording backend configured" : "Aucun serveur d'enregistrement configuré",
@@ -1794,7 +1792,7 @@
     "Either there are no open conversations or you joined all of them." : "Soit il n'y a pas de conversations publiques, soit vous les avez toutes rejointes.",
     "Check spelling or use complete words." : "Vérifier l'orthographe ou utiliser les mots complets.",
     "Search conversations or users" : "Rechercher des conversations ou des utilisateurs",
-    "Select conversation" : "Sélectionnez une conversation",
+    "Select conversation" : "Sélectionnez la conversation",
     "Number length is not valid" : "La longueur du numéro est invalide",
     "Region code is not valid" : "L'indicatif téléphonique est invalide",
     "Number length is too short" : "La longueur du numéro est trop courte",
@@ -2243,6 +2241,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Le partage d'écran fonctionne uniquement avec la version 52 ou ultérieure de Firefox",
     "Screensharing extension is required to share your screen." : "L’extension \"Screensharing\" est requise pour pouvoir partager votre écran.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Veuillez utiliser un autre navigateur comme Firefox ou Chrome pour pouvoir partager votre écran.",
-    "You need to close a dialog to toggle full screen" : "Vous devez fermer une fenêtre de dialogue pour activer le plein écran"
+    "You need to close a dialog to toggle full screen" : "Vous devez fermer une fenêtre de dialogue pour activer le plein écran",
+    "Client Push is installed, this improves the performance of desktop clients." : "Client Push est installé, cela améliore les performances des clients de synchronisation.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} n'est pas installé, cela peut entraîner des problèmes de performances lors de l'utilisation de clients de synchronisation."
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

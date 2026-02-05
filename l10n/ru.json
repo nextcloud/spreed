@@ -774,8 +774,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Внимание: Текущая версия: {version}; Сервер не поддерживает все функции этой версии Talk, недоступные функции: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Настойчиво рекомендуется настроить распределенный кэш для использования Nextcloud Talk совместно с Высокопроизводительным сервером.",
     "Client Push" : "Client Push",
-    "Client Push is installed, this improves the performance of desktop clients." : "«Client Push» установлен, это улучшает производительность настольных ПК-клиентов.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "«{notify_push}»  не установлен, это может привести к проблемам с производительностью при использовании настольных ПК-клиентов.",
     "Recording backend" : "Сервер записи вызовов",
     "Using the recording backend requires a High-performance backend." : "Использование сервера для записи вызовов требует для работы Высокопроизводительный сервер",
     "No recording backend configured" : "Сервер записи вызовов не настроен",
@@ -2241,6 +2239,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Трансляция экрана возможна только в Firefox версии 52 или более новой.",
     "Screensharing extension is required to share your screen." : "Для трансляции экрана требуется установка расширения.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Для использования общего доступа к экрану используйте другой браузер, например, Firefox или Chrome.",
-    "You need to close a dialog to toggle full screen" : "Вам нужно закрыть диалоговое окно, чтобы переключиться на полноэкранный режим"
+    "You need to close a dialog to toggle full screen" : "Вам нужно закрыть диалоговое окно, чтобы переключиться на полноэкранный режим",
+    "Client Push is installed, this improves the performance of desktop clients." : "«Client Push» установлен, это улучшает производительность настольных ПК-клиентов.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "«{notify_push}»  не установлен, это может привести к проблемам с производительностью при использовании настольных ПК-клиентов."
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }

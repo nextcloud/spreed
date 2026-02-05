@@ -772,8 +772,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend.",
     "Client Push" : "Client Push",
-    "Client Push is installed, this improves the performance of desktop clients." : "Client Push is installed, this improves the performance of desktop clients.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} is not installed, this might lead to performance issues when using desktop clients.",
     "Recording backend" : "Recording backend",
     "Using the recording backend requires a High-performance backend." : "Using the recording backend requires a High-performance backend.",
     "No recording backend configured" : "No recording backend configured",
@@ -2178,6 +2176,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Sharing your screen only works with Firefox version 52 or newer.",
     "Screensharing extension is required to share your screen." : "Screensharing extension is required to share your screen.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Please use a different browser like Firefox or Chrome to share your screen.",
-    "You need to close a dialog to toggle full screen" : "You need to close a dialog to toggle full screen"
+    "You need to close a dialog to toggle full screen" : "You need to close a dialog to toggle full screen",
+    "Client Push is installed, this improves the performance of desktop clients." : "Client Push is installed, this improves the performance of desktop clients.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} is not installed, this might lead to performance issues when using desktop clients."
 },"pluralForm" :"nplurals=1; plural=0;"
 }

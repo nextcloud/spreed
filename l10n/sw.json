@@ -767,8 +767,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Onyo: Toleo linaloendeshwa: {version}; Seva haiauni vipengele vyote vya toleo hili la Talk, vinakosa vipengele: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Inapendekezwa sana kusanidi akiba ya kumbukumbu wakati wa kuendesha Nextcloud Talk yenye utendakazi wa hali ya juu.",
     "Client Push" : "Msukumo wa Mteja",
-    "Client Push is installed, this improves the performance of desktop clients." : "Msukumo wa Mteja umewekwa, hii inaboresha utendaji wa wateja wa eneo-kazi.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} haijasakinishwa, hii inaweza kusababisha matatizo ya utendakazi unapotumia wateja wa eneo-kazi.",
     "Recording backend" : "Kurekodi nyuma",
     "Using the recording backend requires a High-performance backend." : "Kutumia mazingira ya nyuma ya kurekodi kunahitaji utendakazi wa hali ya juu.",
     "No recording backend configured" : "Hakuna mandharinyuma ya kurekodi iliyosanidiwa",
@@ -2161,6 +2159,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Kushiriki skrini yako hufanya kazi tu na toleo la 52 la Firefox au jipya zaidi.",
     "Screensharing extension is required to share your screen." : "Kiendelezi cha kushiriki skrini kinahitajika ili kushiriki skrini yako.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Tafadhali tumia kivinjari tofauti kama Firefox au Chrome kushiriki skrini yako.",
-    "You need to close a dialog to toggle full screen" : "Unahitaji kufunga kidirisha ili kugeuza skrini nzima"
+    "You need to close a dialog to toggle full screen" : "Unahitaji kufunga kidirisha ili kugeuza skrini nzima",
+    "Client Push is installed, this improves the performance of desktop clients." : "Msukumo wa Mteja umewekwa, hii inaboresha utendaji wa wateja wa eneo-kazi.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} haijasakinishwa, hii inaweza kusababisha matatizo ya utendakazi unapotumia wateja wa eneo-kazi."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
