@@ -902,15 +902,15 @@ export default {
 
 			const lastReadMessageElement = this.getVisualLastReadMessageElement()
 
-			// first unread message has not been seen yet, so don't move it
-			if (!this.isUnreadMarkerSeen) {
-				return
-			}
-
 			// if we're at bottom of the chat with no more new messages to load, then simply clear the marker
 			if (this.isSticky && this.isChatEndReached) {
 				console.debug('clearLastReadMessage because of isSticky token=' + this.token)
 				this.$store.dispatch('clearLastReadMessage', { token: this.token })
+				return
+			}
+
+			// first unread message has not been seen yet, so don't move it
+			if (!this.isUnreadMarkerSeen) {
 				return
 			}
 
@@ -982,6 +982,11 @@ export default {
 					top: newTop,
 					behavior: options?.smooth ? 'smooth' : 'auto',
 				})
+
+				// If it is a forced scroll to bottom, we need to update the read marker immediately
+				if (options?.force) {
+					this.$store.dispatch('clearLastReadMessage', { token: this.token, updateVisually: true })
+				}
 			})
 		},
 
