@@ -512,6 +512,10 @@ export default {
 				background-color: var(--color-primary-element-light-hover);
 				border: 1px solid var(--color-border-dark);
 			}
+
+			:deep(.file-preview__progress) {
+				inset-inline-start: calc((var(--progress-bar-height) + var(--default-grid-baseline) * 3) * -1)
+			}
 		}
 
 		&.incoming {
