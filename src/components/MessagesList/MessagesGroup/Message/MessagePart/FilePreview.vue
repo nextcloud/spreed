@@ -547,7 +547,6 @@ export default {
 	&:hover,
 	&:focus,
 	&:focus-visible {
-		background-color: var(--color-background-hover);
 		outline: none;
 
 		.remove-file {

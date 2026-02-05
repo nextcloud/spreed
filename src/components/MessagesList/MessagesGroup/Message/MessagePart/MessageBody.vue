@@ -702,6 +702,10 @@ export default {
 		.message-main__text {
 			padding-inline: calc(var(--default-grid-baseline) / 2);
 		}
+
+		.single-emoji {
+			margin-bottom: var(--default-grid-baseline);
+		}
 	}
 
 	// Split view end
