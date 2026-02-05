@@ -7,6 +7,7 @@
 	<NcModal
 		v-if="showModal"
 		ref="modal"
+		:id="dialogMaskId"
 		:size="isVoiceMessage ? 'small' : 'normal'"
 		:labelId="dialogHeaderId"
 		@close="handleDismiss">
@@ -112,11 +113,13 @@ export default {
 	setup() {
 		const modalContainerId = ref(null)
 		const isDraggingOver = ref(false)
-		const dialogHeaderId = `new-message-upload-${useId()}`
+		const dialogMaskId = `new-message-upload-${useId()}`
+		const dialogHeaderId = `new-message-upload-header-${useId()}`
 
 		return {
 			modalContainerId,
 			isDraggingOver,
+			dialogMaskId,
 			dialogHeaderId,
 			token: useGetToken(),
 			threadId: useGetThreadId(),
@@ -173,7 +176,7 @@ export default {
 			if (show) {
 				// Wait for modal content to be rendered
 				await this.$nextTick()
-				this.modalContainerId = `#modal-description-${this.$refs.modal.randId}`
+				this.modalContainerId = `#${this.dialogMaskId}`
 				if (this.supportMediaCaption) {
 					this.$refs.newMessage.focusInput()
 				} else {
