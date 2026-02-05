@@ -573,8 +573,11 @@ Feature: chat-2/mentions
     And user "guest" joins room "file last share room" with 200 (v4)
     And user "participant2" is not participant of room "file last share room" (v4)
     When user "participant3" sends message "hi @participant2" to room "file last share room" with 201
+    And user "participant2" is participant of room "file last share room" (v4)
+    And user "participant2" removes themselves from room "file last share room" with 200 (v4)
+    And user "participant2" is not participant of room "file last share room" (v4)
     And user "guest" sends message "hello @participant2" to room "file last share room" with 201
-    Then user "participant2" is not participant of room "file last share room" (v4)
+    Then user "participant2" is participant of room "file last share room" (v4)
 
   Scenario: mention a participant without access to the file but joined in a room for a file shared by link
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
