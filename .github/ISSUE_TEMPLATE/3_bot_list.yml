@@ -1,7 +1,7 @@
 name: 🤖 Add a Bot
 description: Request to add an existing bot to the docs/bot-list
 title: "🤖 Bot - "
-labels: ["1. to develop", "enhancement", "feature: bots 🤖"]
+labels: ["enhancement", "feature: bots 🤖"]
 assignees:
   - nickvergessen
 body:
