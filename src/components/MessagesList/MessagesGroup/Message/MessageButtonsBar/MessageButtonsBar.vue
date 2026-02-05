@@ -245,8 +245,7 @@
 						v-if="isTranslationAvailable && !isFileShareWithoutCaption"
 						key="translate-message"
 						closeAfterClick
-						@click.stop="$emit('showTranslateDialog', true)"
-						@close="$emit('showTranslateDialog', false)">
+						@click="handleTranslateMessage">
 						<template #icon>
 							<IconTranslate :size="20" />
 						</template>
@@ -414,6 +413,7 @@
 import { getCurrentUser } from '@nextcloud/auth'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { emojiSearch } from '@nextcloud/vue/functions/emoji'
 import { vOnClickOutside as ClickOutside } from '@vueuse/components'
 import { toRefs } from 'vue'
@@ -453,11 +453,12 @@ import IconPin from 'vue-material-design-icons/PinOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import IconTranslate from 'vue-material-design-icons/Translate.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
+import MessageTranslateDialog from './MessageTranslateDialog.vue'
 import IconFileDownload from '../../../../../../img/material-icons/file-download.svg?raw'
 import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.ts'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../constants.ts'
-import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
@@ -567,13 +568,13 @@ export default {
 			required: true,
 		},
 
-		isTranslationAvailable: {
-			type: Boolean,
+		richParameters: {
+			type: Object,
 			required: true,
 		},
 	},
 
-	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'showTranslateDialog', 'reply', 'edit'],
+	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'reply', 'edit'],
 
 	setup(props) {
 		const { message } = toRefs(props)
@@ -598,6 +599,10 @@ export default {
 		const supportThreads = hasTalkFeature(message.value.token, 'threads')
 		const supportPinMessage = hasTalkFeature(message.value.token, 'pinned-messages')
 
+		const isTranslationAvailable = getTalkConfig(message.value.token, 'chat', 'has-translation-providers')
+			// Fallback for the desktop client when connecting to Talk 17
+			?? getTalkConfig(message.value.token, 'chat', 'translations')?.length > 0
+
 		return {
 			IconFileDownload,
 			messageActions,
@@ -612,6 +617,7 @@ export default {
 			isDeleteable,
 			isConversationReadOnly,
 			isConversationModifiable,
+			isTranslationAvailable,
 			actorStore,
 			chatExtrasStore,
 			threadId,
@@ -844,6 +850,13 @@ export default {
 				})
 			}
 			this.closeReactionsMenu()
+		},
+
+		async handleTranslateMessage() {
+			await spawnDialog(MessageTranslateDialog, {
+				message: this.message.message,
+				richParameters: this.richParameters,
+			})
 		},
 
 		handleMessageAction(action) {
