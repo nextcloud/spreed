@@ -5,6 +5,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 23.0.0-rc.3 – 2026-02-05
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- perf(sharing): Improve performance for validating access to file conversations
+  [#16918](https://github.com/nextcloud/spreed/pull/16918)
+  [#16970](https://github.com/nextcloud/spreed/pull/16970)
+- fix(federation): Bail out early when federation is disabled
+  [#16964](https://github.com/nextcloud/spreed/pull/16964)
+- fix(chat): Switch unread/read icon to material design icons
+  [#16972](https://github.com/nextcloud/spreed/pull/16972)
+- fix(chat): Fix mention and emoji autocomplete in the background when typing a caption
+  [#16982](https://github.com/nextcloud/spreed/pull/16982)
+- fix(chat): Fix client response when loading chat
+  [#16985](https://github.com/nextcloud/spreed/pull/16985)
+
 ## 23.0.0-rc.2 – 2026-01-29
 ### Added
 - feat(openmetrics): Add number of calls and participants to openmetrics
