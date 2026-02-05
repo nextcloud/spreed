@@ -772,8 +772,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Figyelmeztetés: futó verzió: {version}; a kiszolgáló nem támogatja a jelenlegi Beszélgetés verzió összes funkcióját, hiányzó funkciók: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Erősen ajánlott, hogy állítson be egy memória-gyorsítótárat, ha a Nextcloud Beszélgetést egy Nagy teljesítményű háttérrendszerrel futtatja.",
     "Client Push" : "Kliensleküldés",
-    "Client Push is installed, this improves the performance of desktop clients." : "A Kliensleküldés nincs telepítve, ez javítaná az asztali kliensek teljesítményét.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "A {notify_push} nincs telepítve, ez teljesítményproblémákhoz vezethet az asztali kliensek használatakor.",
     "Recording backend" : "Felvételi háttérrendszer",
     "Using the recording backend requires a High-performance backend." : "A felvételi háttérrendszerhez szükség van a Nagy teljesítményű háttérrendszerre.",
     "No recording backend configured" : "Nincs felvételi háttérrendszer beállítva",
@@ -2178,6 +2176,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "A képernyőmegosztás a Firefox 52-es vagy újabb verziójától érhető el.",
     "Screensharing extension is required to share your screen." : "A képernyője megosztásához képernyőmegosztó bővítményre van szükség.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "A képernyője megosztásához használjon más böngészőt, például Firefoxot vagy Chrome-ot.",
-    "You need to close a dialog to toggle full screen" : "Be kell zárnia egy párbeszédablakot a teljes képernyő bekapcsolásához"
+    "You need to close a dialog to toggle full screen" : "Be kell zárnia egy párbeszédablakot a teljes képernyő bekapcsolásához",
+    "Client Push is installed, this improves the performance of desktop clients." : "A Kliensleküldés nincs telepítve, ez javítaná az asztali kliensek teljesítményét.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "A {notify_push} nincs telepítve, ez teljesítményproblémákhoz vezethet az asztali kliensek használatakor."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

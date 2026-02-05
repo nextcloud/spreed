@@ -735,8 +735,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "تحذير: الخادوم في الإصدار الذي تعمل عليه: {version}؛ لا يدعم جميع ميزات هذا الإصدار من تطبيق \"المحادثة\" Talk، و هو يفتقد للميزات: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "يوصى بشدة بتهيئة ذاكرة تخزين مؤقت cache عند تشغيل تطبيق \"المحادثة\" Talk في نكست كلاود بواجهة خلفية عالية الأداء .",
     "Client Push" : "دفع المعلومات من جهة العميل Client Push",
-    "Client Push is installed, this improves the performance of desktop clients." : "تمّ تثبيت Client Push دفع المعلومات من جهة العميل؛ هذا سيؤدي لتحسين أداء عملاء سطح المكتب. ",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} غير مُثبَّت. هذا قد يتسبب في مشاكل في الأداء عند استعمال عملاء سطح المكتب.",
     "Recording backend" : "خلفية التسجيل",
     "Using the recording backend requires a High-performance backend." : "لاستعمال تسجيل المحادثات في الخلفية يلزمك خلفية عالية الأداء.",
     "No recording backend configured" : "لاتوجد خلفية عالية الأداء للتسجيل",
@@ -2015,6 +2013,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "مشاركة الشاشة يعمل فقط في فايرفوكس الاصدار 52 او اعلى.",
     "Screensharing extension is required to share your screen." : "اكستنشن مشاركة الشاشة مطلوب لمشاركة الشاشة.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "يرجى استخدام متصفح آخر مثل فايرفوكس او كروم لمشاركة الشاشة.",
-    "You need to close a dialog to toggle full screen" : "يجب إغلاق نافذة الحوار ليمكن التبديل إلى وضع ملء الشاشة"
+    "You need to close a dialog to toggle full screen" : "يجب إغلاق نافذة الحوار ليمكن التبديل إلى وضع ملء الشاشة",
+    "Client Push is installed, this improves the performance of desktop clients." : "تمّ تثبيت Client Push دفع المعلومات من جهة العميل؛ هذا سيؤدي لتحسين أداء عملاء سطح المكتب. ",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} غير مُثبَّت. هذا قد يتسبب في مشاكل في الأداء عند استعمال عملاء سطح المكتب."
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }

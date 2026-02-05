@@ -776,8 +776,6 @@ OC.L10N.register(
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "警告：正在執行的版本：{version}；伺服器不支援此 Talk 版本的所有功能，缺少的功能：{features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "強烈建議在使用高效能後端執行 Nextcloud Talk 時設定記憶體快取。",
     "Client Push" : "客戶端推送",
-    "Client Push is installed, this improves the performance of desktop clients." : "已安裝客戶端推送，這會改善桌面客戶端的效能。",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "尚未安裝 {notify_push}，在使用桌面客戶端時，這可能會導致性能問題。",
     "Recording backend" : "記録後端系統中",
     "Using the recording backend requires a High-performance backend." : "使用錄製後端需要高效能後端。",
     "No recording backend configured" : "未設定錄製後端",
@@ -2245,6 +2243,8 @@ OC.L10N.register(
     "Sharing your screen only works with Firefox version 52 or newer." : "共享螢幕僅適用於 Firefox 52 或更高版本。",
     "Screensharing extension is required to share your screen." : "需要螢幕共享擴展程序才能共享您的螢幕。",
     "Please use a different browser like Firefox or Chrome to share your screen." : "請使用其他瀏覽器（如Firefox或Chrome）共享您的螢幕。",
-    "You need to close a dialog to toggle full screen" : "您需要關閉對話框以切換到全屏"
+    "You need to close a dialog to toggle full screen" : "您需要關閉對話框以切換到全屏",
+    "Client Push is installed, this improves the performance of desktop clients." : "已安裝客戶端推送，這會改善桌面客戶端的效能。",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "尚未安裝 {notify_push}，在使用桌面客戶端時，這可能會導致性能問題。"
 },
 "nplurals=1; plural=0;");

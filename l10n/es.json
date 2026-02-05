@@ -767,8 +767,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Advertencia: Versión en ejecución: {version}; El servidor no soporta todas las características de esta versión de Talk, características que faltan: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Es altamente recomendado que se configure un caché de memoria cuando se ejecuta Nextcloud Talk con un backend de alto rendimiento.",
     "Client Push" : "Client Push",
-    "Client Push is installed, this improves the performance of desktop clients." : "Client Push se encuentra instalado, esto mejorará el rendimiento de los clientes de escritorio.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push}no se encuentra instalado, esto podría conllevar a problemas de rendimiento cuando se utilizan clientes de escritorio.",
     "Recording backend" : "Backend de grabación",
     "Using the recording backend requires a High-performance backend." : "Usar el backend de grabación requiere un backend de alto rendimiento.",
     "No recording backend configured" : "No se ha configurado un backend de grabación",
@@ -2159,6 +2157,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Compartir pantalla solo funciona con Firefox versión 52 o posterior.",
     "Screensharing extension is required to share your screen." : "Se requiere la extensión necesaria para compartir su pantalla.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor use un navegador diferente como Firefox o Chrome para compartir su pantalla.",
-    "You need to close a dialog to toggle full screen" : "Necesita cerrar un diálogo para alternar a pantalla completa"
+    "You need to close a dialog to toggle full screen" : "Necesita cerrar un diálogo para alternar a pantalla completa",
+    "Client Push is installed, this improves the performance of desktop clients." : "Client Push se encuentra instalado, esto mejorará el rendimiento de los clientes de escritorio.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push}no se encuentra instalado, esto podría conllevar a problemas de rendimiento cuando se utilizan clientes de escritorio."
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

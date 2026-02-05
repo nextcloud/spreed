@@ -345,7 +345,6 @@ OC.L10N.register(
     "Zambia" : "Zambija",
     "Zimbabwe" : "Zimbabve",
     "Federation" : "Federācija",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} nav uzstādīts, tas var novest pie veiktspējas sarežģījumiem, kad izmanto darbvirsmas klientus.",
     "Invalid date, date format must be YYYY-MM-DD" : "Nederīgs datums, datuma formātam jābūt YYYY-MM-DD",
     "Conversation not found" : "Saruna nav atrasta",
     "Chat, video & audio-conferencing using WebRTC" : "Video un audio konferences, izmantojot WebRTC",
@@ -570,6 +569,7 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Tastatūras saīsnes",
     "Sharing your screen only works with Firefox version 52 or newer." : "Ekrāna koplietošana darbojas tikai ar Firefox 52. vai jaunāku versiju.",
     "Screensharing extension is required to share your screen." : "Ir nepieciešams ekrāna kopīgošanas paplašinājums, lai kopīgotu savu ekrānu.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Lūgums izmantot citu pārlūku, piemēram, Firefox vai Chrome, lai kopīgotu savu ekrānu."
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Lūgums izmantot citu pārlūku, piemēram, Firefox vai Chrome, lai kopīgotu savu ekrānu.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} nav uzstādīts, tas var novest pie veiktspējas sarežģījumiem, kad izmanto darbvirsmas klientus."
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

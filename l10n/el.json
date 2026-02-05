@@ -767,8 +767,6 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Προειδοποίηση: Έκδοση που εκτελείται: {version}; Ο διακομιστής δεν υποστηρίζει όλες τις λειτουργίες αυτής της έκδοσης Talk, λείπουν λειτουργίες: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Συνιστάται ιδιαίτερα η ρύθμιση μιας μνήμης cache όταν εκτελείτε το Nextcloud Talk με ένα backend υψηλής απόδοσης.",
     "Client Push" : "Client Push",
-    "Client Push is installed, this improves the performance of desktop clients." : "Το Client Push είναι εγκατεστημένο, αυτό βελτιώνει την απόδοση των πελατών επιφάνειας εργασίας.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "Το {notify_push} δεν είναι εγκατεστημένο, αυτό μπορεί να οδηγήσει σε προβλήματα απόδοσης όταν χρησιμοποιούνται πελάτες επιφάνειας εργασίας.",
     "Recording backend" : "Backend εγγραφής",
     "Using the recording backend requires a High-performance backend." : "Η χρήση του backend εγγραφής απαιτεί ένα backend υψηλής απόδοσης.",
     "No recording backend configured" : "Δεν έχει ρυθμιστεί backend εγγραφής",
@@ -2159,6 +2157,8 @@
     "Sharing your screen only works with Firefox version 52 or newer." : "Η κοινή χρήση της οθόνης σας λειτουργεί μόνο με την έκδοση Firefox 52 ή νεότερη.",
     "Screensharing extension is required to share your screen." : "Το πρόσθετο διαμοιρασμού οθόνης απαιτείται για να διαμοιράσετε την οθόνη σας.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Παρακαλώ χρησιμοποιήστε διαφορετικό φυλλομετρητή όπως ο Firefox ή ο Chrome για να διαμοιάσετε την οθόνη σας.",
-    "You need to close a dialog to toggle full screen" : "Πρέπει να κλείσετε ένα διάλογο για να εναλλάξετε την πλήρη οθόνη"
+    "You need to close a dialog to toggle full screen" : "Πρέπει να κλείσετε ένα διάλογο για να εναλλάξετε την πλήρη οθόνη",
+    "Client Push is installed, this improves the performance of desktop clients." : "Το Client Push είναι εγκατεστημένο, αυτό βελτιώνει την απόδοση των πελατών επιφάνειας εργασίας.",
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "Το {notify_push} δεν είναι εγκατεστημένο, αυτό μπορεί να οδηγήσει σε προβλήματα απόδοσης όταν χρησιμοποιούνται πελάτες επιφάνειας εργασίας."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
