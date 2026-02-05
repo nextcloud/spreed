@@ -4605,6 +4605,23 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Thread not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "thread";
+                            };
+                        };
+                    };
+                };
+            };
         };
     };
     "chat-send-message": {
@@ -5470,6 +5487,23 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Thread not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "thread";
+                            };
+                        };
+                    };
+                };
             };
         };
     };
