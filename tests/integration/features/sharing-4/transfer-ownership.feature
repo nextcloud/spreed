@@ -95,7 +95,7 @@ Feature: sharing-4/transfer-ownership
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant3 |
-      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
+      | file_target            | /Talk/welcome (2).txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
 
