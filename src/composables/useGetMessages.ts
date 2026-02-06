@@ -21,8 +21,7 @@ import { t } from '@nextcloud/l10n'
 import { computed, inject, onBeforeUnmount, provide, ref, watch } from 'vue'
 import { START_LOCATION, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { CHAT, CONFIG, MESSAGE } from '../constants.ts'
-import { getTalkConfig } from '../services/CapabilitiesManager.ts'
+import { CHAT, MESSAGE } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useChatStore } from '../stores/chat.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
@@ -44,8 +43,6 @@ type GetMessagesContext = {
 }
 
 const GET_MESSAGES_CONTEXT_KEY: InjectionKey<GetMessagesContext> = Symbol.for('GET_MESSAGES_CONTEXT')
-// TOREMOVE in main branch
-const experimentalChatRelay = (getTalkConfig('local', 'experiments', 'enabled') ?? 0) & CONFIG.EXPERIMENTAL.CHAT_RELAY
 
 /**
  * Check whether caught error is from OCS API
@@ -173,11 +170,9 @@ export function useGetMessagesProvider() {
 	subscribe('networkOnline', handleNetworkOnline)
 	EventBus.on('route-change', onRouteChange)
 	EventBus.on('set-context-id-to-bottom', setContextIdToBottom)
-	if (experimentalChatRelay) {
-		EventBus.on('signaling-message-received', addMessageFromChatRelay)
-		EventBus.on('signaling-supported-features', checkChatRelaySupport)
-		EventBus.on('should-refresh-chat-messages', tryPollNewMessages)
-	}
+	EventBus.on('signaling-message-received', addMessageFromChatRelay)
+	EventBus.on('signaling-supported-features', checkChatRelaySupport)
+	EventBus.on('should-refresh-chat-messages', tryPollNewMessages)
 
 	/** Every 30 seconds we remove expired messages from the store */
 	expirationInterval = setInterval(() => {
@@ -357,9 +352,7 @@ export function useGetMessagesProvider() {
 
 		isInitialisingMessages.value = false
 
-		if (!experimentalChatRelay) {
-			pollNewMessages(token)
-		} else if (chatRelaySupported !== null) {
+		if (chatRelaySupported !== null) {
 			// Case: chat relay is confirmed to be supported / not supported from signaling hello message,
 			// but polling was not immediately triggered (e.g, when received while context request is ongoing)
 			pollNewMessages(token)
