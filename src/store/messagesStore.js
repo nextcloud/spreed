@@ -595,6 +595,36 @@ const actions = {
 			}
 		}
 
+		if ([
+			MESSAGE.SYSTEM_TYPE.CALL_STARTED,
+			MESSAGE.SYSTEM_TYPE.CALL_MISSED,
+			MESSAGE.SYSTEM_TYPE.CALL_ENDED,
+			MESSAGE.SYSTEM_TYPE.CALL_ENDED_EVERYONE,
+		].includes(message.systemMessage)) {
+			const conversation = context.getters.conversation(token)
+			// Overwrite the conversation.hasCall property so people can join
+			// after seeing the message in the chat.
+			if (conversation?.lastMessage && message.id > conversation.lastMessage.id) {
+				context.dispatch('overwriteHasCallByChat', {
+					token,
+					hasCall: message.systemMessage === MESSAGE.SYSTEM_TYPE.CALL_STARTED,
+					lastActivity: message.timestamp,
+				})
+
+				if (message.systemMessage === MESSAGE.SYSTEM_TYPE.CALL_ENDED_EVERYONE
+					&& conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
+					&& !actorStore.checkIfSelfIsActor(message)) {
+					const callViewStore = useCallViewStore()
+					callViewStore.setCallHasJustEnded(message.timestamp)
+
+					context.dispatch('leaveCall', {
+						token,
+						participantIdentifier: actorStore.participantIdentifier,
+					})
+				}
+			}
+		}
+
 		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.POLL_CLOSED) {
 			const pollsStore = usePollsStore()
 			pollsStore.getPollData({
@@ -1166,34 +1196,6 @@ const actions = {
 					}
 				}
 				lastMessage = message
-			}
-
-			// Overwrite the conversation.hasCall property so people can join
-			// after seeing the message in the chat.
-			if (conversation?.lastMessage && message.id > conversation.lastMessage.id) {
-				if ([
-					MESSAGE.SYSTEM_TYPE.CALL_STARTED,
-					MESSAGE.SYSTEM_TYPE.CALL_MISSED,
-					MESSAGE.SYSTEM_TYPE.CALL_ENDED,
-					MESSAGE.SYSTEM_TYPE.CALL_ENDED_EVERYONE,
-				].includes(message.systemMessage)) {
-					context.dispatch('overwriteHasCallByChat', {
-						token,
-						hasCall: message.systemMessage === MESSAGE.SYSTEM_TYPE.CALL_STARTED,
-						lastActivity: message.timestamp,
-					})
-				}
-				if (message.systemMessage === MESSAGE.SYSTEM_TYPE.CALL_ENDED_EVERYONE
-					&& conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
-					&& !actorStore.checkIfSelfIsActor(message)) {
-					const callViewStore = useCallViewStore()
-					callViewStore.setCallHasJustEnded(message.timestamp)
-
-					context.dispatch('leaveCall', {
-						token,
-						participantIdentifier: actorStore.participantIdentifier,
-					})
-				}
 			}
 
 			// in case we encounter an already read message, reset the counter
