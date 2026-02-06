@@ -765,6 +765,8 @@ OC.L10N.register(
     "Error: Unknown error occurred" : "Viga: tekkis tundmatu viga",
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Hoiatus: töötav versioon on {version}; server ei toeta kõiki kõnerakenduse funktsionaalsusi, neist on puudu: {features}",
     "Client Push" : "Tõuketeenused kliendile",
+    "Client Push is installed, this improves the punctuality of Talk notifications." : "Tõuketeenused kliendile on paigaldatud ja see parandab vestlusrakenduste teavituste liikuskiirust.",
+    "{notify_push} is not installed. This may lead to delayed Talk notifications." : "{notify_push} pole paigaldatud ja see võib vestlusrakenduse klientide puhul tekitada viivitusi sõnumite edastamisel.",
     "Recording backend" : "Salvestuse taustateenus",
     "Using the recording backend requires a High-performance backend." : "Salvestuse funktsionaalsuse kasutamine eeldab serveris suure jõudlusega taustateenuse olemasolu.",
     "No recording backend configured" : "Ühtegi salvestuse taustateenust pole seadistatud",
