@@ -265,7 +265,7 @@ class PageController extends Controller {
 		}
 
 		$this->eventDispatcher->dispatchTyped(new LoadAdditionalScriptsEvent());
-		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
+		//$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
 
 		$response = new TemplateResponse($this->appName, 'index', [
 			'app' => Application::APP_ID,
