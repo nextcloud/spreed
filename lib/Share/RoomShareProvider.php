@@ -831,6 +831,8 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			return [];
 		}
 
+		$attachmentFolder = null;
+
 		/** @var IShare[] $shares */
 		$shares = [];
 
@@ -857,11 +859,13 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				$qb->andWhere($qb->expr()->eq('s.file_source', $qb->createNamedParameter($node->getId())));
 			}
 
-			if ($path !== null) {
-				$qb->leftJoin('s', 'share', 'sc', $qb->expr()->eq('s.id', 'sc.parent'))
-					->andWhere($qb->expr()->eq('sc.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
-					->andWhere($qb->expr()->eq('sc.share_with', $qb->createNamedParameter($userId)));
+			$qb->leftJoin('s', 'share', 'sc', $qb->expr()->eq('s.id', 'sc.parent'))
+				->andWhere($qb->expr()->eq('sc.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
+				->andWhere($qb->expr()->eq('sc.share_with', $qb->createNamedParameter($userId)));
+			$qb->selectAlias('sc.file_target', 'sc_file_target')
+				->selectAlias('sc.permissions', 'sc_permissions');
 
+			if ($path !== null) {
 				if ($forChildren) {
 					$qb->andWhere($qb->expr()->like('sc.file_target', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($path) . '_%')));
 				} else {
@@ -892,6 +896,16 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 				$share = $this->createShareObject($data);
 				$shares[$share->getId()] = $share;
+
+				if (array_key_exists('sc_file_target', $data) && $data['sc_file_target'] === null) {
+					if ($attachmentFolder === null) {
+						$talkConfig = \OCP\Server::get(\OCA\Talk\Config::class);
+						$attachmentFolder = $talkConfig->getAttachmentFolder($userId);
+					}
+					$share->setTarget(str_replace(self::TALK_FOLDER_PLACEHOLDER, $attachmentFolder, $share->getTarget()));
+					$share->setPermissions($data['sc_permissions']);
+					$this->move($share, $userId);
+				}
 			}
 			$cursor->closeCursor();
 		}
