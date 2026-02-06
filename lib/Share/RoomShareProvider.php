@@ -843,6 +843,9 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			return [];
 		}
 
+		/** @var ?string $attachmentFolder */
+		$attachmentFolder = null;
+
 		/** @var IShare[] $shares */
 		$shares = [];
 
@@ -869,14 +872,16 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				$qb->andWhere($qb->expr()->eq('s.file_source', $qb->createNamedParameter($node->getId())));
 			}
 
-			if ($path !== null) {
-				$onClause = $qb->expr()->andX(
-					$qb->expr()->eq('sc.parent', 's.id'),
-					$qb->expr()->eq('sc.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)),
-					$qb->expr()->eq('sc.share_with', $qb->createNamedParameter($userId)),
-				);
-				$qb->leftJoin('s', 'share', 'sc', $onClause);
+			$onClause = $qb->expr()->andX(
+				$qb->expr()->eq('sc.parent', 's.id'),
+				$qb->expr()->eq('sc.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)),
+				$qb->expr()->eq('sc.share_with', $qb->createNamedParameter($userId)),
+			);
+			$qb->leftJoin('s', 'share', 'sc', $onClause)
+				->selectAlias('sc.file_target', 'sc_file_target')
+				->selectAlias('sc.permissions', 'sc_permissions');
 
+			if ($path !== null) {
 				$path = str_replace('/' . $userId . '/files', '', $path);
 				$path = rtrim($path, '/');
 
@@ -933,12 +938,21 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				}
 
 				$share = $this->createShareObject($data);
+
+				if (array_key_exists('sc_file_target', $data) && $data['sc_file_target'] === null) {
+					$attachmentFolder ??= $this->config->getAttachmentFolder($userId);
+					$share->setTarget(str_replace(self::TALK_FOLDER_PLACEHOLDER, $attachmentFolder, $share->getTarget()));
+					$share->setPermissions((int)$data['sc_permissions']);
+					$this->move($share, $userId);
+				} else {
+					$share->setTarget($data['sc_file_target']);
+					$share->setPermissions((int)$data['sc_permissions']);
+				}
+
 				$shares[$share->getId()] = $share;
 			}
 			$cursor->closeCursor();
 		}
-
-		$shares = $this->resolveSharesForRecipient($shares, $userId, $path, $forChildren);
 
 		return $shares;
 	}
