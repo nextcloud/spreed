@@ -343,6 +343,17 @@ class InjectionMiddleware extends Middleware {
 			throw new PermissionsException();
 		}
 
+		$room = $controller->getRoom();
+
+		// For federated conversations, skip local permission checks.
+		// The request will be proxied to the host server which will validate
+		// permissions authoritatively. This handles version mismatches where
+		// the local instance may have different permission bits than the host
+		// (e.g., after a migration that adds new permission types like REACT).
+		if ($room instanceof Room && $room->isFederatedConversation()) {
+			return;
+		}
+
 		if ($permission === RequirePermission::CHAT && !($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
 			throw new PermissionsException();
 		}
