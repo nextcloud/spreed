@@ -254,6 +254,10 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 			pendingFetchSingleThreadRequests.add(threadId)
 			const response = await getSingleThreadForConversation(token, threadId)
 			addThread(token, response.data.ocs.data)
+			// FIXME: to be removed when chat relay provides thread data in original message
+			if (response.data.ocs.data.first) {
+				vuexStore.commit('addMessage', { token, message: response.data.ocs.data.first })
+			}
 		} catch (error) {
 			console.error('Error fetching thread:', error)
 		} finally {
