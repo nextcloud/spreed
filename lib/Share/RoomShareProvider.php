@@ -939,7 +939,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 				$share = $this->createShareObject($data);
 
-				if (array_key_exists('sc_file_target', $data) && $data['sc_file_target'] === null) {
+				if ($data['sc_file_target'] === null) {
 					$attachmentFolder ??= $this->config->getAttachmentFolder($userId);
 					$share->setTarget(str_replace(self::TALK_FOLDER_PLACEHOLDER, $attachmentFolder, $share->getTarget()));
 					$share->setPermissions((int)$data['sc_permissions']);
