@@ -350,7 +350,7 @@ Feature: sharing-1/create
       | item_type              | file |
       | mimetype               | text/plain |
       | storage_id             | home::participant2 |
-      | file_target            | /{TALK_PLACEHOLDER}/welcome (2).txt |
+      | file_target            | /Talk/welcome (2).txt |
       | share_with             | group room |
       | share_with_displayname | Group room |
     And user "participant3" gets last share
