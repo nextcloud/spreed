@@ -886,9 +886,9 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				$path = rtrim($path, '/');
 
 				if ($forChildren) {
-					$userAttachmentFolder = $this->config->getAttachmentFolder($userId);
-					$escapedUserAttachmentFolder = preg_quote($userAttachmentFolder, '/');
-					$pathWithPlaceholder = preg_replace("/^$escapedUserAttachmentFolder/", self::TALK_FOLDER_PLACEHOLDER, $path);
+					$attachmentFolder ??= $this->config->getAttachmentFolder($userId);
+					$escapedAttachmentFolder = preg_quote($attachmentFolder, '/');
+					$pathWithPlaceholder = preg_replace("/^$escapedAttachmentFolder/", self::TALK_FOLDER_PLACEHOLDER, $path);
 
 					$childPathTemplate = $this->dbConnection->escapeLikeParameter($path) . '/_%';
 					$childPathTemplatePlaceholder = $this->dbConnection->escapeLikeParameter($pathWithPlaceholder) . '/_%';
