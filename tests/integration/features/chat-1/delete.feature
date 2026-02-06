@@ -201,6 +201,7 @@ Feature: chat-1/delete
     And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
     And user "participant1" sends message "Message 1" to room "room1" with 201
     And user "participant2" sends message "Message 2" to room "room1" with 201
+    And user "participant1" pins message "Message 1" in room "room1" with 200
     Then user "participant1" sees the following messages in room "room1" with 200
       | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters |
       | room1 | users     | participant2 | participant2-displayname | Message 2 | []                |
@@ -215,18 +216,18 @@ Feature: chat-1/delete
       | room1 | users     | participant2 | participant2-displayname | Message 2 | []                |
       | room1 | users     | participant1 | participant1-displayname | Message 1 | []                |
     Then user "participant1" is participant of room "room1" (v4)
-      | unreadMessages | lastReadMessage |
-      | 1              | Message 1       |
+      | unreadMessages | lastReadMessage | lastPinnedId |
+      | 1              | Message 1       | Message 1    |
     Then user "participant2" is participant of room "room1" (v4)
-      | unreadMessages | lastReadMessage |
-      | 0              | Message 2       |
+      | unreadMessages | lastReadMessage | lastPinnedId |
+      | 0              | Message 2       | Message 1    |
     And user "participant1" deletes chat history for room "room1" with 200
     Then user "participant1" is participant of room "room1" (v4)
-      | unreadMessages | lastReadMessage      |
-      | 1              | FIRST_MESSAGE_UNREAD |
+      | unreadMessages | lastReadMessage      | lastPinnedId |
+      | 1              | FIRST_MESSAGE_UNREAD | EMPTY        |
     Then user "participant2" is participant of room "room1" (v4)
-      | unreadMessages | lastReadMessage      |
-      | 1              | FIRST_MESSAGE_UNREAD |
+      | unreadMessages | lastReadMessage      | lastPinnedId |
+      | 1              | FIRST_MESSAGE_UNREAD | EMPTY        |
     Then user "participant1" sees the following messages in room "room1" with 200
       | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters |
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)

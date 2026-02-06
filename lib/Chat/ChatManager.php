@@ -904,6 +904,10 @@ class ChatManager {
 		$this->pollService->deleteByRoomId($chat->getId());
 		$this->threadService->deleteByRoom($chat);
 
+		if ($chat->getLastPinnedId() !== 0) {
+			$this->roomService->setLastPinnedId($chat, 0);
+		}
+
 		return $this->addSystemMessage(
 			$chat,
 			null,
