@@ -55,6 +55,8 @@ use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
+use OCA\Talk\RoomPresets\Parameter;
+use OCA\Talk\RoomPresets\Preset;
 use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ChecksumVerificationService;
@@ -64,6 +66,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PhoneService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomFormatter;
+use OCA\Talk\Service\RoomPresetService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\ThreadService;
@@ -153,6 +156,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected IURLGenerator $url,
 		protected IL10N $l,
 		protected ThreadService $threadService,
+		protected RoomPresetService $presetService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -590,7 +594,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite`
 	 * or `$participants` parameter is supported.
 	 *
-	 * @param int $roomType Type of the room
+	 * @param ?int $roomType Type of the room
 	 * @psalm-param Room::TYPE_* $roomType
 	 * @param string $invite User, group, … ID to invite @deprecated Use the `$participants` array instead
 	 * @param string $roomName Name of the room, unless the legacy mode providing `$invite` and `$source` is used, the name must no longer be empty with the `conversation-creation-all` capability (Ignored if `$roomType` is {@see Room::TYPE_ONE_TO_ONE})
@@ -621,6 +625,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param ?non-empty-string $avatarColor Background color of the avatar (Only considered when an emoji was provided) (only available with `conversation-creation-all` capability)
 	 * @param array<string, list<string>> $participants List of participants to add grouped by type (only available with `conversation-creation-all` capability)
 	 * @psalm-param TalkInvitationList $participants
+	 * @param ?string $preset Identifier of the preset that was used (only available with `conversation-preset` capability)
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_ACCEPTED, TalkRoomWithInvalidInvitations, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'avatar'|'description'|'invite'|'listable'|'lobby'|'lobby-timer'|'mention-permissions'|'message-expiration'|'name'|'object'|'object-id'|'object-type'|'password'|'permissions'|'read-only'|'recording-consent'|'sip-enabled'|'type', message?: string}, array{}>
 	 *
 	 * 200: Room already existed
@@ -655,6 +660,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		?string $emoji = null,
 		?string $avatarColor = null,
 		array $participants = [],
+		?string $preset = null,
 	): DataResponse {
 		if ($roomType === Room::TYPE_ONE_TO_ONE) {
 			if ($invite === ''
