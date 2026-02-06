@@ -774,6 +774,8 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Advertencia: Versión en execución: {versión}; O servidor non admite todas as funcionalidades desta versión de Talk, faltan as funcionalidades: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "É moi recomendábel configurar unha memoria tobo cando se executa Parladoiro de Nextcloud cunha infraestrutura de alto rendemento.",
     "Client Push" : "Notificación automática ao cliente",
+    "Client Push is installed, this improves the punctuality of Talk notifications." : "A notificación automática ao cliente está instalada, isto mellora a puntualidade das notificacións de Parladoiro.",
+    "{notify_push} is not installed. This may lead to delayed Talk notifications." : "{notify_push} non está instalada. Isto pode provocar un atraso nas notificacións de Parladoiro.",
     "Recording backend" : "Infraestrutura de gravación",
     "Using the recording backend requires a High-performance backend." : "O uso da infraestrutura de gravación precisa dunha infraestrutura de alto rendemento.",
     "No recording backend configured" : "Non hai ningunha infraestrutura de gravación configurada",
