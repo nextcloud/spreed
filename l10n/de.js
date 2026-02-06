@@ -776,6 +776,8 @@ OC.L10N.register(
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Achtung: Laufende Version: {version}; Der Server unterstützt nicht alle Funktionen dieser Talk-Version, fehlende Funktionen: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Es wird dringend empfohlen, einen Speichercache zu konfigurieren, wenn Nextcloud Talk mit einem Hochleistungs-Backend ausgeführt wird.",
     "Client Push" : "Client-Push",
+    "Client Push is installed, this improves the punctuality of Talk notifications." : "Client Push ist installiert, dies verbessert die Rechtzeitigkeit von Talk-Benachrichtigungen.",
+    "{notify_push} is not installed. This may lead to delayed Talk notifications." : "{notify_push} ist nicht installiert. Dies kann zu verzögerten Talk-Benachrichtigungen führen.",
     "Recording backend" : "Aufzeichnungs-Backend",
     "Using the recording backend requires a High-performance backend." : "Die Verwendung des Aufzeichnungs-Backends erfordert ein Hochleistungs-Backend.",
     "No recording backend configured" : "Kein Aufzeichnungs-Backend konfiguriert",
