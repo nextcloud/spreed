@@ -1770,7 +1770,7 @@ OC.L10N.register(
     "You have new unread messages in the chat." : "Vous avez des messages non lus dans la discussion.",
     "You have been mentioned in the chat." : "Vous avez été mentionné·e dans la discussion.",
     "Search messages" : "Rechercher des messages",
-    "Chat" : "Discussion instantanée ",
+    "Chat" : "Discussion",
     "Details" : "Details",
     "Shared items" : "Éléments partagés",
     "Search in {name}" : "Rechercher dans {name}",
