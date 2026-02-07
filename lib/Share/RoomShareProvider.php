@@ -903,7 +903,6 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 						$attachmentFolder = $talkConfig->getAttachmentFolder($userId);
 					}
 					$share->setTarget(str_replace(self::TALK_FOLDER_PLACEHOLDER, $attachmentFolder, $share->getTarget()));
-					$share->setPermissions((int)$data['sc_permissions']);
 					$this->move($share, $userId);
 				} else {
 					$share->setTarget($data['sc_file_target']);
