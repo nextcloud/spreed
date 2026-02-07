@@ -774,6 +774,8 @@
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Varování: provozovaná verze: {version}; Server nepodporuje všechny funkce této verze Talk – chybějící funkce: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Pokud je Nextcloud Talk provozován s podpůrnou vrstvou pro vysoký výkon, je vřele doporučováno nastavit mezipaměť v operační paměti.",
     "Client Push" : "Služba klient Push",
+    "Client Push is installed, this improves the punctuality of Talk notifications." : "Služba klient Push je nainstalovaná a bude zlepšovat včasnost doručení notifikací v Talk.",
+    "{notify_push} is not installed. This may lead to delayed Talk notifications." : "{notify_push} není nainstalované. To může vést k prodlevě doručování notifikací z Talk.",
     "Recording backend" : "Podpůrná vrstva pro nahrávání",
     "Using the recording backend requires a High-performance backend." : "Aby bylo možné používat podpůrnou vrstvu pro pořizování nahrávek, je třeba mít vrstvu pro vysoký výkon.",
     "No recording backend configured" : "Nenastavena žádná podpůrná vrstva pro pořizování nahrávek",
