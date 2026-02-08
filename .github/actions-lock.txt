@@ -24,3 +24,4 @@ df57926317dc09c646e15e80aecd4982 phpunit-mariadb.yml
 800d5b188aa885626cf4169fa2dfea9e update-nextcloud-ocp-approve-merge.yml
 aec14bfbb22a09c894e30f624f2d954a update-nextcloud-ocp.yml
 48c2c657b87747c9faeb589bcce08923 update-stable-titles.yml
+24cdc6699b49ea797895e97070395c31 lint-typescript.yml
