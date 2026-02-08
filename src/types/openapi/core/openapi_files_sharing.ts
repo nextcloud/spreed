@@ -368,6 +368,7 @@ export type components = {
                 };
                 /** Format: int64 */
                 default_permissions?: number;
+                exclude_reshare_from_edit?: boolean;
                 federation: {
                     outgoing: boolean;
                     incoming: boolean;
