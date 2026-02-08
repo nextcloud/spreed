@@ -776,6 +776,8 @@ OC.L10N.register(
     "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "警告：正在執行的版本：{version}；伺服器不支援此 Talk 版本的所有功能，缺少的功能：{features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "強烈建議在使用高效能後端執行 Nextcloud Talk 時設定記憶體快取。",
     "Client Push" : "客戶端推送",
+    "Client Push is installed, this improves the punctuality of Talk notifications." : "已安裝客戶端推送，這會改善 Talk 通知的及時性。",
+    "{notify_push} is not installed. This may lead to delayed Talk notifications." : "{notify_push} 未安裝。這可能會導致 Talk 通知延遲。",
     "Recording backend" : "記録後端系統中",
     "Using the recording backend requires a High-performance backend." : "使用錄製後端需要高效能後端。",
     "No recording backend configured" : "未設定錄製後端",
