@@ -198,7 +198,14 @@ export default {
 		},
 
 		videoDevices() {
-			return [...this.devices.filter((device) => device.kind === 'videoinput'), { deviceId: null, label: t('spreed', 'None') }]
+			return [
+				...this.devices.filter((device) => device.kind === 'videoinput')
+					.map((device) => ({
+						deviceId: device.deviceId,
+						label: device.label || device.fallbackLabel,
+					})),
+				{ deviceId: null, label: t('spreed', 'None') },
+			]
 		},
 	},
 
