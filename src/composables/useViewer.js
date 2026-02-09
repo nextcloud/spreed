@@ -105,11 +105,6 @@ export function useViewer(fileAPI) {
 			return false
 		}
 
-		// The Viewer expects a file to be set in the sidebar if the sidebar is open
-		if (sidebarStore.show) {
-			OCA.Files.Sidebar.state.file = path
-		}
-
 		if (isInCall.value) {
 			callViewStore.setIsViewerOverlay(true)
 		}

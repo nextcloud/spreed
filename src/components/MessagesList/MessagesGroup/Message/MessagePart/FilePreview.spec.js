@@ -276,18 +276,9 @@ describe('FilePreview.vue', () => {
 
 		describe('triggering viewer', () => {
 			let oldViewer
-			let oldFiles
 
 			beforeEach(() => {
 				oldViewer = OCA.Viewer
-				oldFiles = OCA.Files
-
-				OCA.Files = {
-					Sidebar: {
-						state: {
-						},
-					},
-				}
 
 				store = createStore(testStoreConfig)
 			})
@@ -296,12 +287,6 @@ describe('FilePreview.vue', () => {
 					OCA.Viewer = oldViewer
 				} else {
 					delete OCA.Viewer
-				}
-
-				if (oldFiles) {
-					OCA.Files = oldFiles
-				} else {
-					delete OCA.Files
 				}
 			})
 
@@ -332,8 +317,6 @@ describe('FilePreview.vue', () => {
 					}],
 					path: '/path/to/test.jpg',
 				}))
-
-				expect(OCA.Files.Sidebar.state.file).toBe('/path/to/test.jpg')
 			})
 
 			test('does not open viewer when clicking if no mime handler available', async () => {
