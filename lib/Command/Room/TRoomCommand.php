@@ -403,7 +403,7 @@ trait TRoomCommand {
 		}
 
 		return array_filter($this->participantService->getParticipantUserIds($room), static function ($userId) use ($context) {
-			return stripos($userId, $context->getCurrentWord()) !== false;
+			return stripos($userId, (string)$context->getCurrentWord()) !== false;
 		});
 	}
 

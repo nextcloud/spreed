@@ -45,7 +45,7 @@ class LockInactiveRooms extends TimedJob {
 		$timestamp = $this->time->getTime() - $interval * 60 * 60 * 24;
 		$time = $this->time->getDateTime('@' . $timestamp);
 		$rooms = $this->roomService->getInactiveRooms($time);
-		array_map(function (Room $room) use ($forceLobby) {
+		array_map(function (Room $room) use ($forceLobby): void {
 			$this->roomService->setReadOnly($room, Room::READ_ONLY);
 			$this->logger->debug("Locking room {$room->getId()} due to inactivity");
 			if ($forceLobby) {

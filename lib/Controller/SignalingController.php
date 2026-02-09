@@ -452,10 +452,10 @@ class SignalingController extends OCSController {
 		$matchingMediaDescriptionIndex = -1;
 
 		for ($i = 0; $i < count($lines); $i++) {
-			if (strpos($lines[$i], 'a=sendrecv') === 0
-				|| strpos($lines[$i], 'a=sendonly') === 0
-				|| strpos($lines[$i], 'a=recvonly') === 0
-				|| strpos($lines[$i], 'a=inactive') === 0) {
+			if (str_starts_with($lines[$i], 'a=sendrecv')
+				|| str_starts_with($lines[$i], 'a=sendonly')
+				|| str_starts_with($lines[$i], 'a=recvonly')
+				|| str_starts_with($lines[$i], 'a=inactive')) {
 				$mediaDirectionIndex = $i;
 
 				if ($mediaDescriptionIndex < 0) {
@@ -465,11 +465,11 @@ class SignalingController extends OCSController {
 				if ($matchingMediaDescriptionIndex >= 0
 					&& $matchingMediaDescriptionIndex >= $mediaDescriptionIndex
 					&& $mediaDirectionIndex > $matchingMediaDescriptionIndex
-					&& (strpos($lines[$mediaDirectionIndex], 'a=sendrecv') === 0
-						|| strpos($lines[$mediaDirectionIndex], 'a=sendonly') === 0)) {
+					&& (str_starts_with($lines[$mediaDirectionIndex], 'a=sendrecv')
+						|| str_starts_with($lines[$mediaDirectionIndex], 'a=sendonly'))) {
 					return true;
 				}
-			} elseif (strpos($lines[$i], 'm=') === 0) {
+			} elseif (str_starts_with($lines[$i], 'm=')) {
 				// No media direction in previous matching media description,
 				// fallback to media direction in the session description or, if
 				// not set, default to "sendrecv".
@@ -477,14 +477,14 @@ class SignalingController extends OCSController {
 					&& $matchingMediaDescriptionIndex >= $mediaDescriptionIndex
 					&& $mediaDirectionIndex < $matchingMediaDescriptionIndex
 					&& ($sessionMediaDirectionIndex < 0
-						|| strpos($lines[$sessionMediaDirectionIndex], 'a=sendrecv') === 0
-						|| strpos($lines[$sessionMediaDirectionIndex], 'a=sendonly') === 0)) {
+						|| str_starts_with($lines[$sessionMediaDirectionIndex], 'a=sendrecv')
+						|| str_starts_with($lines[$sessionMediaDirectionIndex], 'a=sendonly'))) {
 					return true;
 				}
 
 				$mediaDescriptionIndex = $i;
 
-				if (strpos($lines[$i], 'm=' . $media) === 0) {
+				if (str_starts_with($lines[$i], 'm=' . $media)) {
 					$matchingMediaDescriptionIndex = $i;
 				}
 			}
@@ -497,8 +497,8 @@ class SignalingController extends OCSController {
 			&& $matchingMediaDescriptionIndex >= $mediaDescriptionIndex
 			&& $mediaDirectionIndex < $matchingMediaDescriptionIndex
 			&& ($sessionMediaDirectionIndex < 0
-				|| strpos($lines[$sessionMediaDirectionIndex], 'a=sendrecv') === 0
-				|| strpos($lines[$sessionMediaDirectionIndex], 'a=sendonly') === 0)) {
+				|| str_starts_with($lines[$sessionMediaDirectionIndex], 'a=sendrecv')
+				|| str_starts_with($lines[$sessionMediaDirectionIndex], 'a=sendonly'))) {
 			return true;
 		}
 

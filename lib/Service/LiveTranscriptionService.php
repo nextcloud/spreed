@@ -267,7 +267,7 @@ class LiveTranscriptionService {
 			return $defaultTargetLanguageId;
 		}
 
-		if (strpos($defaultTargetLanguageId, '_') !== false) {
+		if (str_contains($defaultTargetLanguageId, '_')) {
 			$defaultTargetLanguageId = substr($defaultTargetLanguageId, 0, strpos($defaultTargetLanguageId, '_'));
 
 			if (array_key_exists($defaultTargetLanguageId, $targetLanguages)) {
@@ -414,7 +414,7 @@ class LiveTranscriptionService {
 		}
 
 		$responseContentType = $response->getHeader('Content-Type');
-		if (strpos($responseContentType, 'application/json') !== false) {
+		if (str_contains($responseContentType, 'application/json')) {
 			$body = $response->getBody();
 			if (!is_string($body)) {
 				$this->logger->error('Request to live_transcription (ExApp) failed: response body is not a string, but content type is application/json', ['response' => $response]);
