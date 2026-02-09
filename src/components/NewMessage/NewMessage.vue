@@ -866,6 +866,7 @@ export default {
 				this.clearTypingInterval()
 				this.checkAbsenceStatus()
 				this.clearSilentState()
+				this.chatExtrasStore.setScheduleMessageTime(null)
 			},
 		},
 
