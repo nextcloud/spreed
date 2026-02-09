@@ -391,6 +391,7 @@ class ChatManager {
 		bool $silent = false,
 		bool $rateLimitGuestMentions = true,
 		int $threadId = 0,
+		string $threadTitle = '',
 	): IComment {
 		if ($chat->isFederatedConversation()) {
 			$e = new MessagingNotAllowedException();
@@ -452,6 +453,7 @@ class ChatManager {
 			$messageId = (int)$comment->getId();
 			if ($threadId === Thread::THREAD_CREATE) {
 				$metadata[Message::METADATA_THREAD_ID] = $messageId;
+				$metadata[Message::METADATA_THREAD_TITLE] = $threadTitle;
 				$comment->setMetaData($metadata);
 				$this->commentsManager->save($comment);
 			} elseif ($threadId !== Thread::THREAD_NONE) {

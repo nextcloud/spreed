@@ -38,6 +38,8 @@ class Message {
 		self::METADATA_PINNED_BY_NAME => 'pinnedActorDisplayName',
 		self::METADATA_PINNED_AT => 'pinnedAt',
 		self::METADATA_PINNED_UNTIL => 'pinnedUntil',
+		self::METADATA_THREAD_ID => 'threadId',
+		self::METADATA_THREAD_TITLE => 'threadTitle',
 	];
 
 	protected bool $visible = true;
