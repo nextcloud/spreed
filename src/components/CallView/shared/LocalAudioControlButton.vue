@@ -281,11 +281,22 @@ export default {
 		},
 
 		audioInputDevices() {
-			return [...this.devices.filter((device) => device.kind === 'audioinput'), { deviceId: null, label: t('spreed', 'None') }]
+			return [
+				...this.devices.filter((device) => device.kind === 'audioinput')
+					.map((device) => ({
+						deviceId: device.deviceId,
+						label: device.label || device.fallbackLabel,
+					})),
+				{ deviceId: null, label: t('spreed', 'None') },
+			]
 		},
 
 		audioOutputDevices() {
 			return this.devices.filter((device) => device.kind === 'audiooutput')
+				.map((device) => ({
+					deviceId: device.deviceId,
+					label: device.label || device.fallbackLabel,
+				}))
 		},
 	},
 
