@@ -958,6 +958,27 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/presets/room": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the list of available presets
+         * @description Required capability: `conversation-presets`
+         *     Presets come with 2 special presets: `forced` and `default`: - The default contains the before "presets" state by default, but administration can set different default values, which will then be preselected, but can still be changed by users. - If a parameter is listed in forced, the value will always be used, independent of the user selection or the value from the preset. So order of applying is: "default" preset > selected preset > user selection > "forced" preset
+         */
+        get: operations["preset-get-presets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/publicshareauth": {
         parameters: {
             query?: never;
@@ -2104,6 +2125,18 @@ export type components = {
             /** Format: int64 */
             reminderTimestamp: number;
             roomToken: string;
+        };
+        ConversationPreset: {
+            /** @description Identifier of the preset, currently known: default, forced, webinar, presentation, hallway */
+            identifier: string;
+            /** @description Translated name of the preset in user's language */
+            name: string;
+            /** @description Translated description of the preset in user's language */
+            description: string;
+            /** @description List of parameters that should be set */
+            parameters: {
+                [key: string]: number;
+            };
         };
         DashboardEvent: {
             calendars: components["schemas"]["DashboardEventCalendar"][];
@@ -7622,6 +7655,50 @@ export interface operations {
             };
         };
     };
+    "preset-get-presets": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully got presets */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ConversationPreset"][];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
     "public_share_auth-create-room": {
         parameters: {
             query?: never;
@@ -8340,6 +8417,11 @@ export interface operations {
                      * @default []
                      */
                     participants?: components["schemas"]["InvitationList"];
+                    /**
+                     * @description Identifier of the preset that was used (only available with `conversation-preset` capability)
+                     * @default null
+                     */
+                    preset?: string | null;
                 };
             };
         };
@@ -9767,6 +9849,14 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "breakout-room" | "type" | "value";
+                            } | {
+                                /** @enum {string} */
+                                error: "forced";
+                                /**
+                                 * Format: int64
+                                 * @enum {integer}
+                                 */
+                                forced?: 0 | 1 | 2;
                             };
                         };
                     };
@@ -9840,6 +9930,14 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "breakout-room" | "type" | "value";
+                            } | {
+                                /** @enum {string} */
+                                error: "forced";
+                                /**
+                                 * Format: int64
+                                 * @enum {integer}
+                                 */
+                                forced?: 0 | 1;
                             };
                         };
                     };
@@ -10600,6 +10698,11 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "breakout-room" | "mode" | "type" | "value";
+                            } | {
+                                /** @enum {string} */
+                                error: "forced";
+                                /** Format: int64 */
+                                forced?: number;
                             };
                         };
                     };
@@ -10669,6 +10772,11 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "participant" | "method" | "moderator" | "room-type" | "type" | "value";
+                            } | {
+                                /** @enum {string} */
+                                error: "forced";
+                                /** Format: int64 */
+                                forced?: number;
                             };
                         };
                     };
@@ -10686,6 +10794,11 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "participant" | "method" | "moderator" | "room-type" | "type" | "value";
+                            } | {
+                                /** @enum {string} */
+                                error: "forced";
+                                /** Format: int64 */
+                                forced?: number;
                             };
                         };
                     };
@@ -10703,6 +10816,11 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "participant" | "method" | "moderator" | "room-type" | "type" | "value";
+                            } | {
+                                /** @enum {string} */
+                                error: "forced";
+                                /** Format: int64 */
+                                forced?: number;
                             };
                         };
                     };
@@ -10901,6 +11019,14 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "breakout-room" | "token" | "type" | "value";
+                            } | {
+                                /** @enum {string} */
+                                error: "forced";
+                                /**
+                                 * Format: int64
+                                 * @enum {integer}
+                                 */
+                                forced?: 0 | 1 | 2;
                             };
                         };
                     };
@@ -11173,6 +11299,13 @@ export interface operations {
                             data: {
                                 /** @enum {string} */
                                 error: "breakout-room" | "type" | "value";
+                                /** Format: int64 */
+                                forced?: number;
+                            } | {
+                                /** @enum {string} */
+                                error: "forced";
+                                /** Format: int64 */
+                                forced?: number;
                             };
                         };
                     };
