@@ -258,7 +258,7 @@ OC.L10N.register(
     "Invalid file provided" : "Ongeldig bestand aangeleverd",
     "Invalid image" : "Afbeelding ongeldig",
     "Unknown filetype" : "Onbekend bestandsformaat",
-    "Talk mentions" : "Talk-vermeldingen",
+    "Talk mentions" : "Talk vermeldingen",
     "More conversations" : "Meer gesprekken",
     "Say hi to your friends and colleagues!" : "Zeg hallo tegen je vrienden en collega's!",
     "No unread mentions" : "Geen ongelezen vermeldingen",
