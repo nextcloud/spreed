@@ -911,7 +911,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$pathSections = explode('/', $data['path'], 2);
 		// FIXME: would not detect rare md5'd home storage case properly
 		if ($pathSections[0] !== 'files'
-			&& (strpos($data['storage_string_id'], 'home::') === 0 || strpos($data['storage_string_id'], 'object::user') === 0)) {
+			&& (str_starts_with($data['storage_string_id'], 'home::') || str_starts_with($data['storage_string_id'], 'object::user'))) {
 			return false;
 		}
 		return true;
