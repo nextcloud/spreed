@@ -153,7 +153,8 @@
 				:disabled="disabled"
 				forceMenu
 				:primary="silentChat"
-				@close="submenu = null">
+				:open="isNcActionsOpen"
+				@close="submenu = null; isNcActionsOpen = false">
 				<template #icon>
 					<IconBellOffOutline v-if="silentChat" :size="20" />
 				</template>
@@ -518,6 +519,7 @@ export default {
 			preservedSelectionRange: null,
 
 			/* Schedule messages feature local state */
+			isNcActionsOpen: false,
 			submenu: null,
 			customScheduleTimestamp: null,
 			isScheduling: false,
@@ -602,20 +604,20 @@ export default {
 		canShareFiles() {
 			return !this.actorStore.isActorGuest
 				&& !this.conversation.remoteServer // no attachments support in federated conversations
-				&& !this.scheduleMessageTime
+				&& !this.scheduleMessageTime && !this.showScheduledMessages
 		},
 
 		canUploadFiles() {
 			// TODO attachments should be allowed on both instances?
 			return getTalkConfig(this.token, 'attachments', 'allowed') && this.canShareFiles
 				&& this.settingsStore.attachmentFolderFreeSpace !== 0
-				&& !this.scheduleMessageTime
+				&& !this.scheduleMessageTime && !this.showScheduledMessages
 		},
 
 		canCreatePoll() {
 			return !this.isOneToOne && !this.noChatPermission
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
-				&& !this.scheduleMessageTime
+				&& !this.scheduleMessageTime && !this.showScheduledMessages
 		},
 
 		currentConversationIsJoined() {
@@ -659,7 +661,9 @@ export default {
 		},
 
 		showAudioRecorder() {
-			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload && !this.messageToEdit && !this.threadCreating && !this.scheduleMessageTime
+			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload
+				&& !this.messageToEdit && !this.threadCreating
+				&& !this.scheduleMessageTime && !this.showScheduledMessages
 		},
 
 		showTypingStatus() {
@@ -862,6 +866,7 @@ export default {
 				this.clearTypingInterval()
 				this.checkAbsenceStatus()
 				this.clearSilentState()
+				this.chatExtrasStore.setScheduleMessageTime(null)
 			},
 		},
 
@@ -1013,6 +1018,13 @@ export default {
 
 			if (supportScheduleMessages && this.scheduleMessageTime) {
 				await this.handleScheduleMessage()
+				return
+			}
+
+			if (supportScheduleMessages && !this.scheduleMessageTime && this.showScheduledMessages) {
+				// Block sending and prompt user to pick a time for scheduling
+				this.submenu = 'schedule'
+				this.isNcActionsOpen = true
 				return
 			}
 
