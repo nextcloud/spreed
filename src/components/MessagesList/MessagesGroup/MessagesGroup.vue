@@ -182,7 +182,6 @@ export default {
 			&.small-view {
 				display: block;
 				padding-inline-end: var(--default-grid-baseline);
-				padding-inline-start: $messages-avatar-width;
 			}
 		}
 

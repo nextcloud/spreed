@@ -45,8 +45,7 @@
 		<div
 			class="message-body__scroll"
 			:class="{
-				'bottom-side': isSplitViewEnabled && !isShortSimpleMessage && (isSmallMobile || isSidebar) && (!isPinned || showMessageButtonsBar),
-				overlay: isSplitViewEnabled && !isShortSimpleMessage && isReactionsMenuOpen && !(isSmallMobile || isSidebar),
+				overlay: isSplitViewEnabled && (!isShortSimpleMessage || (isSmallMobile || isSidebar)) && isReactionsMenuOpen,
 			}">
 			<template v-if="showMessageButtonsBar">
 				<ScheduledMessageActions
@@ -309,7 +308,7 @@ export default {
 
 		buttonsBarOutlined() {
 			return !this.isSplitViewEnabled
-				|| (this.isReactionsMenuOpen || this.isSmallMobile || this.isSidebar)
+				|| this.isReactionsMenuOpen
 		},
 
 		isThreadStarterMessage() {
@@ -434,7 +433,9 @@ export default {
 		max-width: min(90%, calc(100% - var(--buttons-bar-min-width)));
 
 		&.message--small-view {
-			max-width: 90%;
+			max-width: min(90%, calc(100% - var(--buttons-bar-min-width)));
+			// Overwrite sizes for small view
+			--default-clickable-area: var(--clickable-area-small);
 		}
 
 		// Shared styles for message bubbles
@@ -453,19 +454,6 @@ export default {
 
 			&.overlay {
 				--overlay-offset: max(100% - var(--default-clickable-area) * 4, var(--default-clickable-area) * 4 - 100%);
-			}
-
-			&.bottom-side {
-				top: unset !important;
-				inset-inline-start: unset !important;
-				bottom: 0;
-				padding-block-end: var(--default-grid-baseline);
-				height: fit-content;
-				pointer-events: none;
-
-				& > * {
-					pointer-events: auto;
-				}
 			}
 		}
 
@@ -495,10 +483,6 @@ export default {
 			.message-body__scroll {
 				justify-content: flex-end;
 				inset-inline-end: var(--overlay-offset);
-
-				&.bottom-side {
-					inset-inline-end: auto;
-				}
 			}
 
 			:deep(.quote) {
@@ -523,10 +507,6 @@ export default {
 
 			.message-body__scroll {
 				inset-inline-start: var(--overlay-offset);
-
-				&.bottom-side {
-					inset-inline-end: 0;
-				}
 			}
 
 			:deep(.quote) {
