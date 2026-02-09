@@ -188,11 +188,8 @@ class Manager {
 		$optionFeatures = [
 			'dialout',
 			'join-features',
+			'chat-relay',
 		];
-
-		if ($this->talkConfig->hasExperiment(Config::EXPERIMENTAL_CHAT_RELAY)) {
-			$optionFeatures[] = 'chat-relay';
-		}
 
 		return array_values(array_diff($optionFeatures, $features));
 	}
