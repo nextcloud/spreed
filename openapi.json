@@ -670,6 +670,15 @@
                         "type": "integer",
                         "format": "int64",
                         "description": "Timestamp until when the message is pinned. If missing the message is pinned infinitely - Required capability: `pinned-messages`"
+                    },
+                    "threadId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Set when a thread is created with this message. If missing, no thread creation is associated with this message"
+                    },
+                    "threadTitle": {
+                        "type": "string",
+                        "description": "Set when a thread is created with this message. If missing, no thread creation is associated with this message"
                     }
                 }
             },

@@ -115,6 +115,10 @@ namespace OCA\Talk;
  *     pinnedAt?: int,
  *     // Timestamp until when the message is pinned. If missing the message is pinned infinitely - Required capability: `pinned-messages`
  *     pinnedUntil?: int,
+ *     // Set when a thread is created with this message. If missing, no thread creation is associated with this message
+ *     threadId?: int,
+ *     // Set when a thread is created with this message. If missing, no thread creation is associated with this message
+ *     threadTitle?: string,
  * }
  *
  * @psalm-type TalkChatMessage = TalkBaseMessage&array{

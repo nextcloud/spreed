@@ -2593,6 +2593,13 @@ export type components = {
              * @description Timestamp until when the message is pinned. If missing the message is pinned infinitely - Required capability: `pinned-messages`
              */
             pinnedUntil?: number;
+            /**
+             * Format: int64
+             * @description Set when a thread is created with this message. If missing, no thread creation is associated with this message
+             */
+            threadId?: number;
+            /** @description Set when a thread is created with this message. If missing, no thread creation is associated with this message */
+            threadTitle?: string;
         };
         ChatMessageWithParent: components["schemas"]["ChatMessage"] & {
             parent?: components["schemas"]["ChatMessage"] | components["schemas"]["DeletedChatMessage"];
