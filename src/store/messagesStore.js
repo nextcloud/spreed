@@ -486,6 +486,17 @@ const actions = {
 				return
 			}
 
+			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.THREAD_CREATED) {
+				// Fetch thread data in case it doesn't exist in the store yet
+				if (!chatExtrasStore.getThread(token, message.threadId)) {
+					chatExtrasStore.fetchSingleThread(token, message.threadId)
+				}
+			}
+
+			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.THREAD_RENAMED) {
+				chatExtrasStore.updateThreadTitle(token, message.threadId, message.threadTitle)
+			}
+
 			if (!message.parent) {
 				context.commit('addMessage', { token, message })
 				return
@@ -547,17 +558,6 @@ const actions = {
 					.forEach((storedMessage) => {
 						context.commit('addMessage', { token, message: { ...storedMessage, parent: message.parent } })
 					})
-			}
-
-			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.THREAD_CREATED) {
-				// Fetch thread data in case it doesn't exist in the store yet
-				if (!chatExtrasStore.getThread(token, message.threadId)) {
-					chatExtrasStore.fetchSingleThread(token, message.threadId)
-				}
-			}
-
-			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.THREAD_RENAMED) {
-				chatExtrasStore.updateThreadTitle(token, message.threadId, message.threadTitle)
 			}
 
 			// Auto unpin system message (for time-limited pins)
