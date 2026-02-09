@@ -62,14 +62,12 @@ function hasMentionToSelf(context, message) {
 		}
 		if (param.type === 'guest'
 			&& actorStore.isActorGuest
-			&& param.id === ('guest/' + actorStore.actorId)
-		) {
+			&& param.id === ('guest/' + actorStore.actorId)) {
 			return true
 		}
 		if (param.type === 'user'
 			&& actorStore.isActorUser
-			&& param.id === actorStore.userId
-		) {
+			&& param.id === actorStore.userId) {
 			return true
 		}
 	}
@@ -511,13 +509,11 @@ const actions = {
 
 					if (message.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION
 						&& actorStore.checkIfSelfIsActor(message)
-						&& !message.parent.reactionsSelf.includes(message.message)
-					) {
+						&& !message.parent.reactionsSelf.includes(message.message)) {
 						message.parent.reactionsSelf = [...message.parent.reactionsSelf, message.message]
 					} else if (message.systemMessage === MESSAGE.SYSTEM_TYPE.REACTION_REVOKED
 						&& actorStore.checkIfSelfIsActor(message)
-						&& message.parent.reactionsSelf.includes(message.message)
-					) {
+						&& message.parent.reactionsSelf.includes(message.message)) {
 						message.parent.reactionsSelf = message.parent.reactionsSelf.filter((reaction) => reaction !== message.message)
 					}
 				}

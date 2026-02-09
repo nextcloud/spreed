@@ -176,8 +176,7 @@ export function isHiddenSystemMessage(message: ChatMessage): boolean {
 	// System message for auto unpin
 	if (message.systemMessage === MESSAGE.SYSTEM_TYPE.MESSAGE_UNPINNED
 		&& message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
-		&& message.actorId === ATTENDEE.ACTOR_SYSTEM_ID
-	) {
+		&& message.actorId === ATTENDEE.ACTOR_SYSTEM_ID) {
 		return true
 	}
 

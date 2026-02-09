@@ -369,8 +369,7 @@ const actions = {
 				|| oldConversation.statusMessage !== conversation.statusMessage
 				|| oldConversation.statusIcon !== conversation.statusIcon
 				|| oldConversation.statusClearAt !== conversation.statusClearAt
-			)
-		) {
+			)) {
 			emitUserStatusUpdated(conversation)
 			context.commit('updateConversation', conversation)
 			return true
