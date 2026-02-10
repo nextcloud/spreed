@@ -4,7 +4,7 @@
  */
 
 import { getCSPNonce } from '@nextcloud/auth'
-import { emit } from '@nextcloud/event-bus'
+import { emit, subscribe } from '@nextcloud/event-bus'
 import { generateFilePath } from '@nextcloud/router'
 import { createApp, reactive, watch } from 'vue'
 import App from './App.vue'
@@ -43,24 +43,7 @@ const instance = createApp(App, { fileInfo: null })
 
 window.store = store
 
-// Setup OCA.Files.Sidebar to be used by the viewer
-window.OCA.Files = {}
-
-/**
- *
- */
-function Sidebar() {
-	this.state = {
-		file: '',
-	}
-	const sidebarStore = useSidebarStore(pinia)
-	watch(() => sidebarStore.show, (sidebarShown) => {
-		if (!sidebarShown) {
-			this.state.file = ''
-		}
-	})
-}
-
+// Setup Viewer to be used with Talk sidebar
 /**
  *
  * @param sidebarElement
@@ -96,17 +79,16 @@ function waitForSidebarToBeOpen(sidebarElement, resolve) {
 	}
 }
 
-Sidebar.prototype.open = function(path) {
+subscribe('viewer:sidebar:open', (node) => {
+	const sidebarStore = useSidebarStore()
 	// The sidebar is already open, so this can return immediately.
-	if (this.state.file) {
+	if (sidebarStore.show) {
 		emit('files:sidebar:opened')
 
 		return
 	}
 
-	const sidebarStore = useSidebarStore()
 	sidebarStore.showSidebar()
-	this.state.file = path
 
 	const sidebarElement = document.getElementById('app-sidebar') ?? document.getElementById('app-sidebar-vue')
 
@@ -116,18 +98,6 @@ Sidebar.prototype.open = function(path) {
 	return new Promise((resolve, reject) => {
 		waitForSidebarToBeOpen(sidebarElement, resolve)
 	})
-}
-Sidebar.prototype.close = function() {
-	store.dispatch('hideSidebar')
-	this.state.file = ''
-}
-Sidebar.prototype.setFullScreenMode = function(isFullScreen) {
-	// Sidebar style is not changed in Talk when the viewer is opened; this is
-	// needed only for compatibility with OCA.Files.Sidebar interface.
-}
-
-Object.assign(window.OCA.Files, {
-	Sidebar: new Sidebar(),
 })
 
 // make the instance available to global components that might run on the same page

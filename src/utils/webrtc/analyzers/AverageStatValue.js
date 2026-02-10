@@ -72,8 +72,7 @@ AverageStatValue.prototype = {
 
 	add(value) {
 		if ((this._type === STAT_VALUE_TYPE.CUMULATIVE && this._rawValues.length === this._count)
-			|| (this._type === STAT_VALUE_TYPE.RELATIVE && this._rawValues.length >= (this._count - 1))
-		) {
+			|| (this._type === STAT_VALUE_TYPE.RELATIVE && this._rawValues.length >= (this._count - 1))) {
 			this._hasEnoughData = true
 		}
 
