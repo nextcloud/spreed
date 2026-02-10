@@ -36,7 +36,7 @@ const deviceOptions = computed<NcSelectOption[]>(() => {
 	const kindDevices = props.devices.filter((device) => device.kind === props.kind)
 		.map((device) => ({
 			id: device.deviceId,
-			label: device.label ? device.label : device.fallbackLabel,
+			label: device.label || device.fallbackLabel,
 		}))
 	if (props.kind === 'audiooutput') {
 		return kindDevices
