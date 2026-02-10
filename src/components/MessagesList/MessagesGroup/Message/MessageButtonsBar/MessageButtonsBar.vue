@@ -558,6 +558,11 @@ export default {
 			required: true,
 		},
 
+		isThreadStarterMessage: {
+			type: Boolean,
+			default: false,
+		},
+
 		canReact: {
 			type: Boolean,
 			required: true,
@@ -596,7 +601,6 @@ export default {
 			isConversationModifiable,
 		} = useMessageInfo(message)
 		const supportReminders = hasTalkFeature(message.value.token, 'remind-me-later')
-		const supportThreads = hasTalkFeature(message.value.token, 'threads')
 		const supportPinMessage = hasTalkFeature(message.value.token, 'pinned-messages')
 
 		const isTranslationAvailable = getTalkConfig(message.value.token, 'chat', 'has-translation-providers')
@@ -607,7 +611,6 @@ export default {
 			IconFileDownload,
 			messageActions,
 			supportReminders,
-			supportThreads,
 			reactionsStore,
 			isEditable,
 			isCurrentUserOwnMessage,
@@ -738,13 +741,6 @@ export default {
 
 		canReply() {
 			return this.message.isReplyable && !this.isConversationReadOnly && (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
-		},
-
-		isThreadStarterMessage() {
-			return this.supportThreads
-				&& !this.threadId
-				&& this.message.isThread
-				&& this.message.id === this.message.threadId
 		},
 
 		isModerator() {

@@ -28,6 +28,7 @@
 				:message="message"
 				:readInfo="readInfo"
 				:isShortSimpleMessage
+				:isThreadStarterMessage
 				:isSelfActor>
 				<!-- reactions buttons and popover with details -->
 				<ReactionsWrapper
@@ -68,6 +69,7 @@
 					:richParameters="richParameters"
 					:previousMessageId="previousMessageId"
 					:readInfo="readInfo"
+					:isThreadStarterMessage
 					@reply="handleReply"
 					@edit="handleEdit"
 					@delete="handleDelete" />
@@ -109,6 +111,7 @@ import PollCard from './MessagePart/PollCard.vue'
 import ReactionsWrapper from './MessagePart/ReactionsWrapper.vue'
 import { useGetThreadId } from '../../../../composables/useGetThreadId.ts'
 import { CONVERSATION, MENTION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
+import { hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.ts'
@@ -312,14 +315,18 @@ export default {
 		},
 
 		isThreadStarterMessage() {
-			if (this.threadId || !this.message.isThread) {
+			if (!hasTalkFeature(this.message.token, 'threads') || this.threadId) {
+				return false
+			}
+
+			const threadTitle = this.message.threadTitle ?? this.message.metaData?.threadTitle
+			if (!this.message.isThread && !threadTitle) {
 				return false
 			}
 
 			return this.message.id === this.message.threadId
-				|| (this.message.threadTitle && this.message.id.toString().startsWith('temp-'))
-				// FIXME properly render scheduled messages as threads
-				|| (this.message.threadTitle && this.message.threadId === -1)
+				|| this.message.id.toString().startsWith('temp-')
+				|| (this.isScheduledMessage && this.message.threadId === -1)
 		},
 
 		isShortSimpleMessage() {
