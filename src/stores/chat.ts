@@ -80,6 +80,8 @@ export const useChatStore = defineStore('chat', () => {
 	const chatBlocks = reactive<TokenMap<Set<number>[]>>({})
 	const threadBlocks = reactive<TokenIdMap<Set<number>[]>>({})
 
+	const lastGivenByServerMap = reactive<TokenMap<number>>({})
+
 	/**
 	 * Returns list of messages, belonging to current context
 	 *
@@ -259,6 +261,25 @@ export const useChatStore = defineStore('chat', () => {
 			? chatBlocks[token][0]
 			: chatBlocks[token].find((set) => set.has(messageId)) ?? chatBlocks[token][0]
 		return Math.max(...filterNumericIds(contextBlock))
+	}
+
+	/**
+	 * Returns last message id, returned from server response (fallback paired with chat-relay messages
+	 *
+	 * @param token
+	 */
+	function getLastServerResponseId(token: string): number | undefined {
+		return lastGivenByServerMap[token]
+	}
+
+	/**
+	 * Persists last message id, returned from server response, in the store
+	 *
+	 * @param token
+	 * @param messageId
+	 */
+	function setLastServerResponseId(token: string, messageId: number) {
+		lastGivenByServerMap[token] = messageId
 	}
 
 	/**
@@ -577,16 +598,20 @@ export const useChatStore = defineStore('chat', () => {
 	function purgeChatStore(token: string) {
 		delete chatBlocks[token]
 		delete threadBlocks[token]
+		delete lastGivenByServerMap[token]
 	}
 
 	return {
 		chatBlocks,
 		threadBlocks,
+		lastGivenByServerMap,
 
 		getMessagesList,
 		hasMessage,
 		getFirstKnownId,
 		getLastKnownId,
+		getLastServerResponseId,
+		setLastServerResponseId,
 		getNearestKnownContextId,
 		processChatBlocks,
 		addMessageToChatBlocks,
