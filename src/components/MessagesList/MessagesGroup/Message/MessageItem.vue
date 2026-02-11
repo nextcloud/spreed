@@ -331,7 +331,7 @@ export default {
 
 		isShortSimpleMessage() {
 			return this.message.message.length <= 20 // FIXME: magic number
-				&& !this.message.parent
+				&& (!this.message.parent || this.message.parent.id === this.threadId)
 				&& !this.isThreadStarterMessage
 				&& Object.keys(this.message.messageParameters).length === 0
 				&& Object.keys(this.message.reactions).length === 0
