@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\DAV\CalDAV\TimezoneService;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
@@ -100,6 +101,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\Bruteforce\IThrottler;
+use OCP\Server;
 use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
@@ -3104,13 +3106,16 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'email'], Http::STATUS_BAD_REQUEST);
 		}
 
-		$startDate = $this->timeFactory->getDateTime('@' . $start);
+		$timezoneService = Server::get(TimezoneService::class);
+		$userTimezone = $timezoneService->getUserTimezone($user->getUID());
+		$timezone = new \DateTimeZone($userTimezone);
+		$startDate = $this->timeFactory->getDateTime('@' . $start)->setTimezone($timezone);
 		if ($start < $this->timeFactory->getTime()) {
 			return new DataResponse(['error' => 'start'], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($end !== null) {
-			$endDate = $this->timeFactory->getDateTime('@' . $end);
+			$endDate = $this->timeFactory->getDateTime('@' . $end)->setTimezone($timezone);
 			if ($start >= $end) {
 				return new DataResponse(['error' => 'end'], Http::STATUS_BAD_REQUEST);
 			}
