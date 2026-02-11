@@ -304,7 +304,19 @@ class ChatController extends AEnvironmentAwareOCSController {
 		try {
 			$createThread = $replyTo === 0 && $threadId === Thread::THREAD_NONE && $threadTitle !== '';
 			$threadId = $createThread ? Thread::THREAD_CREATE : $threadId;
-			$comment = $this->chatManager->sendMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent, threadId: $threadId);
+			$comment = $this->chatManager->sendMessage(
+				$this->room,
+				$this->participant,
+				$actorType,
+				$actorId,
+				$message,
+				$creationDateTime,
+				$parent,
+				$referenceId,
+				$silent,
+				threadId: $threadId,
+				threadTitle: $threadTitle,
+			);
 			if ($createThread) {
 				$thread = $this->threadService->createThread($this->room, (int)$comment->getId(), $threadTitle);
 				// Add to subscribed threads list
