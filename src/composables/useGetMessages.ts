@@ -472,7 +472,7 @@ export function useGetMessagesProvider() {
 
 		const lastKnownMessageId = payload?.messageId ?? chatStore.getLastKnownId(token, { messageId: contextMessageId.value, threadId: contextThreadId.value })
 		const pollingLastKnownMessageId = chatStore.getLastKnownId(token)
-		if (lastKnownMessageId === pollingLastKnownMessageId) {
+		if (!chatRelaySupported && lastKnownMessageId === pollingLastKnownMessageId) {
 			// Do not make parallel request with polling
 			return
 		}
