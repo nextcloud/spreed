@@ -467,6 +467,8 @@ const actions = {
 		const actorStore = useActorStore()
 		const chatExtrasStore = useChatExtrasStore()
 
+		const conversation = context.getters.conversation(token)
+
 		if (isHiddenSystemMessage(message)) {
 			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.POLL_VOTED) {
 				const pollsStore = usePollsStore()
@@ -475,7 +477,6 @@ const actions = {
 					pollId: message.messageParameters.poll.id,
 				})
 
-				const conversation = context.getters.conversation(token)
 				if (conversation?.lastMessage?.id && message.id > conversation.lastMessage.id) {
 					context.dispatch('updateConversationLastMessage', { token, lastMessage: message })
 				}
@@ -530,7 +531,7 @@ const actions = {
 
 			if ([MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED, MESSAGE.SYSTEM_TYPE.MESSAGE_EDITED].includes(message.systemMessage)) {
 				// update conversation lastMessage, if it was edited or deleted
-				if (message.parent.id === context.getters.conversation(token).lastMessage?.id) {
+				if (message.parent.id === conversation.lastMessage?.id) {
 					context.dispatch('updateConversationLastMessage', { token, lastMessage: message.parent })
 				}
 
@@ -570,17 +571,9 @@ const actions = {
 		if (message.referenceId) {
 			const tempMessages = context.getters.getTemporaryReferences(token, message.referenceId)
 			if (tempMessages.length > 0) {
-				// Replacing temporary placeholder message with server response (text message / file share)
-				const conversation = context.getters.conversation(token)
-				const isOwnMessage = actorStore.checkIfSelfIsActor(message)
-
-				// update lastMessage and lastReadMessage (no await to make it async)
-				// do it conditionally because there could have been more messages appearing concurrently
-				if (conversation?.lastMessage && isOwnMessage && message.id > conversation.lastMessage.id) {
-					context.dispatch('updateConversationLastMessage', { token, lastMessage: message })
-				}
-
-				if (conversation?.lastReadMessage && isOwnMessage && message.id > conversation.lastReadMessage) {
+				if (actorStore.checkIfSelfIsActor(message)
+					&& conversation?.lastReadMessage
+					&& message.id > conversation.lastReadMessage) {
 					context.dispatch('updateLastReadMessage', { token, id: message.id, updateVisually: true })
 				}
 
@@ -591,13 +584,17 @@ const actions = {
 			}
 		}
 
+		// update lastMessage, if larger than existing
+		if (conversation?.lastMessage && message.id > conversation.lastMessage.id) {
+			context.dispatch('updateConversationLastMessage', { token, lastMessage: message })
+		}
+
 		if ([
 			MESSAGE.SYSTEM_TYPE.CALL_STARTED,
 			MESSAGE.SYSTEM_TYPE.CALL_MISSED,
 			MESSAGE.SYSTEM_TYPE.CALL_ENDED,
 			MESSAGE.SYSTEM_TYPE.CALL_ENDED_EVERYONE,
 		].includes(message.systemMessage)) {
-			const conversation = context.getters.conversation(token)
 			// Overwrite the conversation.hasCall property so people can join
 			// after seeing the message in the chat.
 			if (conversation?.lastMessage && message.id > conversation.lastMessage.id) {
@@ -1205,11 +1202,6 @@ const actions = {
 		})
 
 		if (conversation?.lastMessage && lastMessage.id > conversation.lastMessage.id) {
-			context.dispatch('updateConversationLastMessage', {
-				token,
-				lastMessage,
-			})
-
 			// only increase the counter if the conversation store was out of sync with the message list
 			if (countNewMessages > 0) {
 				context.commit('updateUnreadMessages', {
