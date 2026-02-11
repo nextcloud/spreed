@@ -809,6 +809,7 @@ describe('messagesStore', () => {
 		let updateLastCommonReadMessageAction
 		let addGuestNameAction
 		let cancelFunctionMock
+		let conversationMock
 
 		const oldMessagesList = [{
 			id: 98,
@@ -842,6 +843,8 @@ describe('messagesStore', () => {
 			addGuestNameAction = vi.fn()
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
 			guestNameStore.addGuestName = addGuestNameAction
+			conversationMock = vi.fn()
+			testStoreConfig.getters.conversation = vi.fn().mockReturnValue(conversationMock)
 
 			cancelFunctionMock = vi.fn()
 			CancelableRequest.mockImplementation((request) => {
@@ -945,6 +948,7 @@ describe('messagesStore', () => {
 		let updateLastCommonReadMessageAction
 		let addGuestNameAction
 		let cancelFunctionMock
+		let conversationMock
 
 		beforeEach(() => {
 			testStoreConfig = cloneDeep(messagesStore)
@@ -954,6 +958,8 @@ describe('messagesStore', () => {
 			addGuestNameAction = vi.fn()
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
 			guestNameStore.addGuestName = addGuestNameAction
+			conversationMock = vi.fn()
+			testStoreConfig.getters.conversation = vi.fn().mockReturnValue(conversationMock)
 
 			cancelFunctionMock = vi.fn()
 			CancelableRequest.mockImplementation((request) => {
