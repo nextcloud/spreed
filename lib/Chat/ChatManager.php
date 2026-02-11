@@ -392,6 +392,7 @@ class ChatManager {
 		bool $rateLimitGuestMentions = true,
 		int $threadId = 0,
 		string $threadTitle = '',
+		bool $fromScheduledMessage = false,
 	): IComment {
 		if ($chat->isFederatedConversation()) {
 			$e = new MessagingNotAllowedException();
@@ -466,7 +467,7 @@ class ChatManager {
 				}
 			}
 
-			if ($participant instanceof Participant) {
+			if (!$fromScheduledMessage && $participant instanceof Participant) {
 				$this->participantService->updateLastReadMessage($participant, $messageId);
 			}
 
