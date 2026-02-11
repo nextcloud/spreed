@@ -7,9 +7,10 @@ Feature: chat-4/scheduling
       | roomName | room |
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     And user "participant2" sends message "Message" to room "room" with 201
+    Then user "participant1" reads message "Message" in room "room" with 200
     Then user "participant1" is participant of the following rooms (v4)
-      | id   | type | hasScheduledMessages |
-      | room | 2    |0                     |
+      | id   | type | hasScheduledMessages | unreadMessages | lastReadMessage |
+      | room | 2    | 0                    | 0              | Message         |
 
   Scenario: Schedule a message
     When user "participant1" schedules a message to room "room" with 201
@@ -19,14 +20,14 @@ Feature: chat-4/scheduling
       | id        | actorType | actorId      | threadId | parent | message   | messageType | sendAt      | silent |
       | Message 1 | users     | participant1 | 0        | null   | Message 1 | comment     | {NOW}  | false  |
     And user "participant1" is participant of the following rooms (v4)
-      | id   | type | hasScheduledMessages |
-      | room | 2    | 1                    |
+      | id   | type | hasScheduledMessages | unreadMessages | lastReadMessage |
+      | room | 2    | 1                    | 0              | Message         |
     When wait for 4 seconds
     And force run "OCA\Talk\BackgroundJob\SendScheduledMessages" background jobs
     Then user "participant1" sees the following scheduled messages in room "room" with 200
     And user "participant1" is participant of the following rooms (v4)
-      | id   | type | hasScheduledMessages |
-      | room | 2    | 0                    |
+      | id   | type | hasScheduledMessages | unreadMessages | lastReadMessage |
+      | room | 2    | 0                    | 1              | Message         |
     Then user "participant2" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | messageType | message   | messageParameters |
       | room | users     | participant1 | participant1-displayname | comment     | Message 1 | []                |

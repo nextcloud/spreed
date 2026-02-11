@@ -158,7 +158,8 @@ class SendScheduledMessages extends TimedJob {
 				$metaData = $message->getDecodedMetaData();
 				$threadId = $message->getThreadId();
 				$threadTitle = $metaData[ScheduledMessage::METADATA_THREAD_TITLE] ?? null;
-				$comment = $this->chatManager->sendMessage($room,
+				$comment = $this->chatManager->sendMessage(
+					$room,
 					$participant,
 					$message->getActorType(),
 					$message->getActorId(),
@@ -167,7 +168,9 @@ class SendScheduledMessages extends TimedJob {
 					$parent,
 					'',
 					$metaData[ScheduledMessage::METADATA_SILENT] ?? false,
-					threadId: $threadId
+					threadId: $threadId,
+					threadTitle: $threadTitle,
+					fromScheduledMessage: true,
 				);
 				$this->logger->debug('Sent scheduled message ' . $message->getId() . ' to room ' . $message->getRoomId() . ' for ' . $message->getActorType() . ' ' . $message->getActorId());
 				if ($threadId === Thread::THREAD_CREATE && $threadTitle !== '') {
@@ -185,7 +188,7 @@ class SendScheduledMessages extends TimedJob {
 						null,
 						$comment,
 						true,
-						true
+						true,
 					);
 					$this->logger->debug('Created thread ' . $thread->getId() . ' in room ' . $message->getRoomId() . ' for scheduled message ' . $message->getId() . ' for ' . $message->getActorType() . ' ' . $message->getActorId());
 				}
