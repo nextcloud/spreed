@@ -125,7 +125,7 @@
 						<IconReload :size="iconMessageDeliverySize" />
 					</template>
 				</NcButton>
-				<IconAlertCircleOutline v-else :size="iconMessageDeliverySize" />
+				<IconAlertCircleOutline v-else fillColor="var(--color-element-error)" :size="iconMessageDeliverySize" />
 			</div>
 			<div
 				v-else-if="showLoadingIcon"
