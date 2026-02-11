@@ -3,54 +3,35 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-	<div class="video-background" :style="{ 'background-color': backgroundColor }" />
-</template>
+<script setup lang="ts">
+import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 
-<script>
-import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
-
-export default {
-	name: 'VideoBackground',
-
-	props: {
-		displayName: {
-			type: String,
-			default: null,
-		},
-
-		user: {
-			type: String,
-			default: '',
-		},
-	},
-
-	computed: {
-		backgroundColor() {
-			// If the prop is empty. We're not checking for the default value
-			// because the user's displayName might be '?'
-			if (!this.displayName) {
-				return 'var(--color-text-maxcontrast)'
-			} else {
-				const color = usernameToColor(this.displayName)
-				return `rgb(${color.r}, ${color.g}, ${color.b})`
-			}
-		},
-	},
-}
+const isDarkTheme = useIsDarkTheme()
 </script>
 
+<template>
+	<div class="video-background" :class="{ 'dark-theme': isDarkTheme }" />
+</template>
+
 <style lang="scss" scoped>
+
 .video-background {
 	position: absolute;
 	inset-inline-start: 0;
 	top: 0;
 	height: 100%;
 	width: 100%;
+	background-color: rgba(var(--overlay-color), 0.2);
+	background-image: none;
+
+	--overlay-color: 0, 0, 0;
+	&.dark-theme {
+		--overlay-color: 255, 255, 255;
+	}
 
 	&::after {
 		content: ' ';
-		background-color: rgba(0, 0, 0, 0.12);
+		background-color: rgba(var(--overlay-color), 0.12);
 		position: absolute;
 		width: 100%;
 		height: 100%;

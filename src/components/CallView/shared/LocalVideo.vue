@@ -41,10 +41,7 @@
 				class="video-loading" />
 		</div>
 		<div v-if="!screenshotModeUrl && !localMediaModel.attributes.videoEnabled && !isSidebar" class="avatar-container">
-			<VideoBackground
-				v-if="isGrid || isStripe"
-				:displayName="displayName"
-				:user="userId" />
+			<VideoBackground v-if="isGrid || isStripe" />
 			<AvatarWrapper
 				:id="userId"
 				:token="token"

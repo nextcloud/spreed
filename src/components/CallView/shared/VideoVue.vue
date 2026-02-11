@@ -51,7 +51,7 @@
 		<div
 			v-if="showBackgroundAndAvatar"
 			class="avatar-container">
-			<VideoBackground :displayName="displayName" :user="participantUserId" />
+			<VideoBackground />
 			<AvatarWrapper
 				:id="participantUserId"
 				:token="token"
