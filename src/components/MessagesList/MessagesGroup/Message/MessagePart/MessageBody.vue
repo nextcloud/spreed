@@ -275,6 +275,11 @@ export default {
 			default: false,
 		},
 
+		isThreadStarterMessage: {
+			type: Boolean,
+			default: false,
+		},
+
 		isSelfActor: {
 			type: Boolean,
 			default: false,
@@ -349,16 +354,6 @@ export default {
 			return this.message.referenceId?.startsWith('scheduled-')
 		},
 
-		isThreadStarterMessage() {
-			if (this.threadId || !this.message.isThread) {
-				return false
-			}
-
-			return this.message.id === this.message.threadId
-				|| (this.message.threadTitle && this.message.id.toString().startsWith('temp-'))
-				|| (this.isScheduledMessage && this.message.threadTitle && this.message.threadId === -1)
-		},
-
 		isThreadReply() {
 			return this.message.isThread && this.message.id !== this.message.threadId
 		},
@@ -368,7 +363,7 @@ export default {
 		},
 
 		threadTitle() {
-			return this.threadInfo?.thread.title ?? this.message.threadTitle
+			return this.threadInfo?.thread.title ?? this.message.threadTitle ?? this.message.metaData?.threadTitle
 		},
 
 		threadNumReplies() {
