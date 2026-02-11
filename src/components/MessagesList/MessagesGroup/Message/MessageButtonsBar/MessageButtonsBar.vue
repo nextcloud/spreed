@@ -920,6 +920,7 @@ export default {
 
 		closeReactionsMenu() {
 			this.$emit('update:isReactionsMenuOpen', false)
+			this.$emit('update:isEmojiPickerOpen', false)
 		},
 
 		updateFrequentlyUsedEmojis() {
