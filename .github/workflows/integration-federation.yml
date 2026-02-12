@@ -238,6 +238,14 @@ jobs:
         working-directory: remote/apps/${{ env.APP_NAME }}
         run: composer i --no-dev
 
+      - name: Set up notifications production dependencies - Host
+        working-directory: host/apps/notifications
+        run: composer i --no-dev
+
+      - name: Set up notifications production dependencies - Remote
+        working-directory: remote/apps/notifications
+        run: composer i --no-dev
+
       - name: Set up behat dependencies
         working-directory: host/apps/${{ env.APP_NAME }}/tests/integration
         run: composer i
