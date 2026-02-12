@@ -1033,7 +1033,16 @@ export default {
 }
 
 .background-preview {
-	background: linear-gradient(rgba(var(--overlay-color), 0.2), rgba(var(--overlay-color), 0.2)), center / cover no-repeat var(--image-background);
+	overflow: hidden;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), center / cover no-repeat var(--image-background);
+		filter: blur(10px);
+		transform: scale(1.1);
+	}
 }
 
 // Override NcModal styles for large horizontal layout

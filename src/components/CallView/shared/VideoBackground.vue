@@ -21,22 +21,12 @@ const isDarkTheme = useIsDarkTheme()
 	top: 0;
 	height: 100%;
 	width: 100%;
-	background-color: rgba(var(--overlay-color), 0.2);
+	background-color: rgba(var(--overlay-color), 0.3);
 	background-image: none;
 
 	--overlay-color: 0, 0, 0;
 	&.dark-theme {
 		--overlay-color: 255, 255, 255;
-	}
-
-	&::after {
-		content: ' ';
-		background-color: rgba(var(--overlay-color), 0.12);
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		inset-inline-start: 0;
 	}
 }
 </style>
