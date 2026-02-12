@@ -5,6 +5,89 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 23.0.0-rc.4 – 2026-02-12
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(mobile-clients): Fix error message for Talk iOS when end-to-end encryption for calls is enabled
+  [#17001](https://github.com/nextcloud/spreed/pull/17001)
+- fix(chat): Correctly show started threads from messages via chat relay
+  [#16924](https://github.com/nextcloud/spreed/pull/16924)
+  [#17058](https://github.com/nextcloud/spreed/pull/17058)
+  [#17065](https://github.com/nextcloud/spreed/pull/17065)
+- fix(chat): Fix layout of split-view in right sidebar and mobile screens
+  [#17033](https://github.com/nextcloud/spreed/pull/17033)
+- fix(chat): Block sending messages from scheduled messages view to avoid UX confusion
+  [#17034](https://github.com/nextcloud/spreed/pull/17034)
+- fix(chat): Correctly highlight "Call started" messages via chat relay
+  [#17035](https://github.com/nextcloud/spreed/pull/17035)
+- fix(chat): Mark messages that failed sending more obvious
+  [#17054](https://github.com/nextcloud/spreed/pull/17054)
+- fix(chat): Don't mark chat read when a scheduled message is sent
+  [#17056](https://github.com/nextcloud/spreed/pull/17056)
+- fix(chat): Improve unread message marker with chat relay
+  [#17067](https://github.com/nextcloud/spreed/pull/17067)
+- fix(chat): Improve handling when chat relay and long polling are in parallel
+  [#17072](https://github.com/nextcloud/spreed/pull/17072)
+- fix(chat): Reset action menu state after reacting
+  [#17063](https://github.com/nextcloud/spreed/pull/17063)
+- fix(meeting): Add timezone to events created from Talk
+  [#17059](https://github.com/nextcloud/spreed/pull/17059)
+- fix(signaling): Unify request validation for HPB, recording and other services
+  [#17075](https://github.com/nextcloud/spreed/pull/17075)
+- perf(sharing): Implement filter for path in getShares()
+  [#17004](https://github.com/nextcloud/spreed/pull/17004)
+- perf(sharing): Improve performance on mount point name generation
+  [#17048](https://github.com/nextcloud/spreed/pull/17048)
+
+## 22.0.9 – 2026-02-12
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(mobile-clients): Fix error message for Talk iOS when end-to-end encryption for calls is enabled
+  [#17003](https://github.com/nextcloud/spreed/pull/17003)
+- fix(breakout-rooms): Fix managing existing breakout rooms in conversation settings
+  [#16968](https://github.com/nextcloud/spreed/pull/16968)
+- fix(call): Improve new chat messages hint during calls
+  [#16797](https://github.com/nextcloud/spreed/pull/16797)
+- fix(chat): Fix system messages with email-invited guests
+  [#16867](https://github.com/nextcloud/spreed/pull/16867)
+- fix(chat): Respect thread and parent when sharing a file
+  [#16860](https://github.com/nextcloud/spreed/pull/16860)
+- fix(chat): Correctly update last message and unread counter from polling
+  [#16910](https://github.com/nextcloud/spreed/pull/16910)
+- fix(meeting): Add timezone to events created from Talk
+  [#17060](https://github.com/nextcloud/spreed/pull/17060)
+- fix(search): Readd missing input border for search
+  [#16861](https://github.com/nextcloud/spreed/pull/16861)
+- fix(federation): Abort requests early when federation is disabled
+  [#16963](https://github.com/nextcloud/spreed/pull/16963)
+- fix(signaling): Unify request validation for HPB, recording and other services
+  [#17074](https://github.com/nextcloud/spreed/pull/17074)
+- fix(bots): Fix reaction author when notifying bots
+  [#16900](https://github.com/nextcloud/spreed/pull/16900)
+
+## 21.1.9 – 2026-02-12
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(mobile-clients): Fix error message for Talk iOS when end-to-end encryption for calls is enabled
+  [#17002](https://github.com/nextcloud/spreed/pull/17002)
+- fix(breakout-rooms): Fix managing existing breakout rooms in conversation settings
+  [#16967](https://github.com/nextcloud/spreed/pull/16967)
+- fix(chat): Fix system messages with email-invited guests
+  [#16869](https://github.com/nextcloud/spreed/pull/16869)
+- fix(federation): Abort requests early when federation is disabled
+  [#16962](https://github.com/nextcloud/spreed/pull/16962)
+- fix(signaling): Unify request validation for HPB, recording and other services
+  [#17073](https://github.com/nextcloud/spreed/pull/17073)
+
 ## 23.0.0-rc.3 – 2026-02-05
 ### Changed
 - Update dependencies
