@@ -64,9 +64,7 @@
 					<div
 						v-show="!showVideo"
 						class="preview__novideo">
-						<VideoBackground
-							:displayName="displayName"
-							:user="userId" />
+						<VideoBackground class="background-preview" />
 						<AvatarWrapper
 							:id="userId"
 							:token="token"
@@ -1032,6 +1030,19 @@ export default {
 
 .media-settings__recording-warning--mobile {
 	max-width: 450px;
+}
+
+.background-preview {
+	overflow: hidden;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), center / cover no-repeat var(--image-background);
+		filter: blur(10px);
+		transform: scale(1.1);
+	}
 }
 
 // Override NcModal styles for large horizontal layout
