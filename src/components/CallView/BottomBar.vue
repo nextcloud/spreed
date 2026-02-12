@@ -131,8 +131,10 @@ const targetLanguageId = computed(() => {
 const targetLanguageAvailable = computed(() => {
 	const liveTranscriptionTargetLanguages = liveTranscriptionStore.getLiveTranscriptionTargetLanguages()
 
+	const liveTranscriptionLanguageId = conversation.value.liveTranscriptionLanguageId || 'en'
+
 	return targetLanguageId.value
-		&& targetLanguageId.value !== conversation.value.liveTranscriptionLanguageId
+		&& targetLanguageId.value !== liveTranscriptionLanguageId
 		&& liveTranscriptionTargetLanguages && liveTranscriptionTargetLanguages[targetLanguageId.value]
 })
 
@@ -672,7 +674,7 @@ useHotKey('r', toggleHandRaised)
 					:title="liveTranslationButtonLabel"
 					:aria-label="liveTranslationButtonLabel"
 					:variant="(callViewStore.isLiveTranscriptionEnabled && languageType === LanguageType.Target) ? 'secondary' : 'tertiary'"
-					:disabled="isLiveTranscriptionLoading"
+					:disabled="isLiveTranscriptionLoading || !targetLanguageAvailable"
 					@click="toggleLiveTranslation">
 					<template #icon>
 						<NcLoadingIcon
