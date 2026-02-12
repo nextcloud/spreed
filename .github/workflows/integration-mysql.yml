@@ -134,6 +134,10 @@ jobs:
         working-directory: apps/${{ env.APP_NAME }}
         run: composer i --no-dev
 
+      - name: Set up notifications production dependencies
+        working-directory: apps/notifications
+        run: composer i --no-dev
+
       - name: Set up behat dependencies
         working-directory: apps/${{ env.APP_NAME }}/tests/integration
         run: composer i
