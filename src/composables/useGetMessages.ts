@@ -58,7 +58,6 @@ let expirationInterval: NodeJS.Timeout | undefined
 let pollingErrorTimeout = 1_000
 let chatRelaySupported: boolean | null = null
 let fallbackPollInterval: NodeJS.Timeout | undefined
-let lastMessageIdGivenByServer: number | null = null
 
 /**
  * Composable to provide control logic for fetching messages list
@@ -150,7 +149,6 @@ export function useGetMessagesProvider() {
 			if (oldToken && oldToken !== newToken) {
 				store.dispatch('cancelPollNewMessages', { requestId: oldToken })
 				chatRelaySupported = null
-				lastMessageIdGivenByServer = null
 				clearInterval(fallbackPollInterval)
 			}
 
@@ -472,7 +470,7 @@ export function useGetMessagesProvider() {
 
 		const lastKnownMessageId = payload?.messageId ?? chatStore.getLastKnownId(token, { messageId: contextMessageId.value, threadId: contextThreadId.value })
 		const pollingLastKnownMessageId = chatStore.getLastKnownId(token)
-		if (lastKnownMessageId === pollingLastKnownMessageId) {
+		if (!chatRelaySupported && lastKnownMessageId === pollingLastKnownMessageId) {
 			// Do not make parallel request with polling
 			return
 		}
@@ -517,21 +515,25 @@ export function useGetMessagesProvider() {
 			return
 		}
 
+		// If chat was previously opened, and messages were received via chat-relay,
+		// start polling from last received by server message id
+		const lastKnownMessageId = chatStore.getLastServerResponseId(token) ?? chatStore.getLastKnownId(token)
+
 		// Make the request
 		try {
 			debugTimer.start(`${token} | long polling`)
 			// TODO: move polling logic to the store and also cancel timers on cancel
 			const response = await store.dispatch('pollNewMessages', {
 				token,
-				lastKnownMessageId: chatStore.getLastKnownId(token),
+				lastKnownMessageId,
 				requestId: token,
 				timeout: chatRelaySupported ? 0 : undefined,
 			})
 
-			lastMessageIdGivenByServer = response.data.ocs.data
+			chatStore.setLastServerResponseId(token, response.data.ocs.data
 				.reduce((acc: number, message: ChatMessage) => {
 					return message.id > acc ? message.id : acc
-				}, lastMessageIdGivenByServer)
+				}, lastKnownMessageId))
 
 			pollingErrorTimeout = 1_000
 			debugTimer.end(`${token} | long polling`, 'status 200')
@@ -545,7 +547,7 @@ export function useGetMessagesProvider() {
 			if (isAxiosErrorResponse(exception) && exception?.response?.status === 304) {
 				debugTimer.end(`${token} | long polling`, 'status 304')
 				// 304 - Not modified
-				lastMessageIdGivenByServer = chatStore.getLastKnownId(token)
+				chatStore.setLastServerResponseId(token, lastKnownMessageId)
 				// This is not an error, so reset error timeout and poll again
 				pollingErrorTimeout = 1_000
 				clearTimeout(pollingTimeout)
@@ -634,23 +636,25 @@ export function useGetMessagesProvider() {
 	 * Get messages history (fallback for chat-relay).
 	 */
 	async function fallbackPollNewMessages() {
-		if (!lastMessageIdGivenByServer || !currentToken.value) {
+		const token = currentToken.value
+		const lastKnownMessageId = chatStore.getLastServerResponseId(token)
+		if (!lastKnownMessageId || !token) {
 			return
 		}
 
 		// Make the request
 		try {
 			const response = await store.dispatch('fetchMessages', {
-				token: currentToken.value,
-				lastKnownMessageId: lastMessageIdGivenByServer,
+				token,
+				lastKnownMessageId,
 				includeLastKnown: false,
 				lookIntoFuture: CHAT.FETCH_NEW,
 				minimumVisible: 0, // handle as many as server gives
 			})
 
-			lastMessageIdGivenByServer = response.data.ocs.data.reduce((acc: number, message: ChatMessage) => {
+			chatStore.setLastServerResponseId(token, response.data.ocs.data.reduce((acc: number, message: ChatMessage) => {
 				return message.id > acc ? message.id : acc
-			}, lastMessageIdGivenByServer)
+			}, lastKnownMessageId))
 		} catch (exception) {
 			if (isCancel(exception)) {
 				console.debug('The request has been canceled', exception)
