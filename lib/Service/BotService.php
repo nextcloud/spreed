@@ -285,7 +285,7 @@ class BotService {
 								if ($answer['reply'] === true) {
 									$replyTo = $comment;
 								} elseif (is_int($answer['reply'])) {
-									$replyTo = $chatManager->getParentComment($room, (string)$answer['reply']);
+									$replyTo = $chatManager->getParentComment((string)$answer['reply']);
 								}
 								$chatManager->sendMessage(
 									$room,
@@ -294,6 +294,7 @@ class BotService {
 									Attendee::ACTOR_BOT_PREFIX . $bot->getUrlHash(),
 									$answer['message'],
 									$creationDateTime,
+									[],
 									$replyTo,
 									$answer['referenceId'],
 									$answer['silent'],
