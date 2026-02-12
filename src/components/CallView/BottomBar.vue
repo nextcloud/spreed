@@ -674,7 +674,7 @@ useHotKey('r', toggleHandRaised)
 					:title="liveTranslationButtonLabel"
 					:aria-label="liveTranslationButtonLabel"
 					:variant="(callViewStore.isLiveTranscriptionEnabled && languageType === LanguageType.Target) ? 'secondary' : 'tertiary'"
-					:disabled="isLiveTranscriptionLoading"
+					:disabled="isLiveTranscriptionLoading || !targetLanguageAvailable"
 					@click="toggleLiveTranslation">
 					<template #icon>
 						<NcLoadingIcon
