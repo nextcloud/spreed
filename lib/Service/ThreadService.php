@@ -275,37 +275,11 @@ class ThreadService {
 	}
 
 	public function validateThread(int $roomId, int $potentialThreadId): bool {
-		$row = $this->cache->get(self::CACHE_PREFIX . $roomId . '/' . $potentialThreadId);
-		if (!empty($row)) {
+		try {
+			$this->findByThreadId($roomId, $potentialThreadId);
 			return true;
-		}
-
-		if ($row === '') {
+		} catch (DoesNotExistException) {
 			return false;
 		}
-
-		$query = $this->connection->getQueryBuilder();
-		$query->select('id')
-			->from('talk_threads')
-			->where($query->expr()->eq(
-				'id',
-				$query->createNamedParameter($potentialThreadId, IQueryBuilder::PARAM_INT),
-				IQueryBuilder::PARAM_INT)
-			)
-			->andWhere($query->expr()->eq(
-				'room_id',
-				$query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)
-			));
-
-		$result = $query->executeQuery();
-		$row = $result->fetch();
-		$result->closeCursor();
-		if ($row === false) {
-			$this->cache->set(self::CACHE_PREFIX . $roomId . '/' . $potentialThreadId, '', 60 * 15);
-		} else {
-			$this->cache->set(self::CACHE_PREFIX . $roomId . '/' . $potentialThreadId, $row, 60 * 15);
-		}
-
-		return $row !== false;
 	}
 }
