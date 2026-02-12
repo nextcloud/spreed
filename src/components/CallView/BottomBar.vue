@@ -131,8 +131,10 @@ const targetLanguageId = computed(() => {
 const targetLanguageAvailable = computed(() => {
 	const liveTranscriptionTargetLanguages = liveTranscriptionStore.getLiveTranscriptionTargetLanguages()
 
+	const liveTranscriptionLanguageId = conversation.value.liveTranscriptionLanguageId || 'en'
+
 	return targetLanguageId.value
-		&& targetLanguageId.value !== conversation.value.liveTranscriptionLanguageId
+		&& targetLanguageId.value !== liveTranscriptionLanguageId
 		&& liveTranscriptionTargetLanguages && liveTranscriptionTargetLanguages[targetLanguageId.value]
 })
 
