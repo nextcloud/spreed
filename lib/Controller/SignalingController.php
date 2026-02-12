@@ -13,6 +13,7 @@ use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -21,6 +22,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
+use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
@@ -37,7 +39,6 @@ use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Http\Client\IClientService;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
@@ -68,7 +69,7 @@ class SignalingController extends OCSController {
 		private IUserManager $userManager,
 		private IEventDispatcher $dispatcher,
 		private ITimeFactory $timeFactory,
-		private IClientService $clientService,
+		private ChecksumVerificationService $checksumVerificationService,
 		private BanService $banService,
 		private LoggerInterface $logger,
 		protected Authenticator $federationAuthenticator,
@@ -91,17 +92,13 @@ class SignalingController extends OCSController {
 	 */
 	private function validateRecordingBackendRequest(string $data): bool {
 		$random = $this->request->getHeader('talk-recording-random');
-		if (empty($random) || strlen($random) < 32) {
-			$this->logger->debug('Missing random');
-			return false;
-		}
 		$checksum = $this->request->getHeader('talk-recording-checksum');
-		if (empty($checksum)) {
-			$this->logger->debug('Missing checksum');
+		$secret = $this->talkConfig->getRecordingSecret();
+		try {
+			return $this->checksumVerificationService->validateRequest($random, $checksum, $secret, $data);
+		} catch (UnauthorizedException) {
 			return false;
 		}
-		$hash = hash_hmac('sha256', $random . $data, $this->talkConfig->getRecordingSecret());
-		return hash_equals($hash, strtolower($checksum));
 	}
 
 	/**
@@ -685,20 +682,14 @@ class SignalingController extends OCSController {
 	 * @return bool
 	 */
 	private function validateBackendRequest(string $data): bool {
-		if (!isset($_SERVER['HTTP_SPREED_SIGNALING_RANDOM'],
-			$_SERVER['HTTP_SPREED_SIGNALING_CHECKSUM'])) {
+		$random = $this->request->getHeader('spreed-signaling-random');
+		$checksum = $this->request->getHeader('spreed-signaling-checksum');
+		$secret = $this->talkConfig->getSignalingSecret();
+		try {
+			return $this->checksumVerificationService->validateRequest($random, $checksum, $secret, $data);
+		} catch (UnauthorizedException) {
 			return false;
 		}
-		$random = $_SERVER['HTTP_SPREED_SIGNALING_RANDOM'];
-		if (empty($random) || strlen($random) < 32) {
-			return false;
-		}
-		$checksum = $_SERVER['HTTP_SPREED_SIGNALING_CHECKSUM'];
-		if (empty($checksum)) {
-			return false;
-		}
-		$hash = hash_hmac('sha256', $random . $data, $this->talkConfig->getSignalingSecret());
-		return hash_equals($hash, strtolower($checksum));
 	}
 
 	/**

@@ -13,6 +13,7 @@ use InvalidArgumentException;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
@@ -23,6 +24,7 @@ use OCA\Talk\Recording\RecordingStartedRequest;
 use OCA\Talk\Recording\RecordingStoppedRequest;
 use OCA\Talk\Room;
 use OCA\Talk\Service\CertificateService;
+use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
@@ -55,6 +57,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 		private RecordingService $recordingService,
 		private RoomService $roomService,
 		private ITimeFactory $timeFactory,
+		private ChecksumVerificationService $checksumVerificationService,
 		private LoggerInterface $logger,
 	) {
 		parent::__construct($appName, $request);
@@ -150,17 +153,13 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	 */
 	private function validateBackendRequest(string $data): bool {
 		$random = $this->request->getHeader('talk-recording-random');
-		if (empty($random) || strlen($random) < 32) {
-			$this->logger->debug('Missing random');
-			return false;
-		}
 		$checksum = $this->request->getHeader('talk-recording-checksum');
-		if (empty($checksum)) {
-			$this->logger->debug('Missing checksum');
+		$secret = $this->talkConfig->getRecordingSecret();
+		try {
+			return $this->checksumVerificationService->validateRequest($random, $checksum, $secret, $data);
+		} catch (UnauthorizedException) {
 			return false;
 		}
-		$hash = hash_hmac('sha256', $random . $data, $this->talkConfig->getRecordingSecret());
-		return hash_equals($hash, strtolower($checksum));
 	}
 
 	/**
