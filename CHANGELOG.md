@@ -5,6 +5,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.9 – 2026-02-12
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(mobile-clients): Fix error message for Talk iOS when end-to-end encryption for calls is enabled
+  [#17002](https://github.com/nextcloud/spreed/pull/17002)
+- fix(breakout-rooms): Fix managing existing breakout rooms in conversation settings
+  [#16967](https://github.com/nextcloud/spreed/pull/16967)
+- fix(chat): Fix system messages with email-invited guests
+  [#16869](https://github.com/nextcloud/spreed/pull/16869)
+- fix(federation): Abort requests early when federation is disabled
+  [#16962](https://github.com/nextcloud/spreed/pull/16962)
+- fix(signaling): Unify request validation for HPB, recording and other services
+  [#17073](https://github.com/nextcloud/spreed/pull/17073)
+
 ## 21.1.8 – 2026-01-15
 ### Changed
 - Update dependencies
