@@ -506,6 +506,22 @@ class Manager {
 		return $roomTokens;
 	}
 
+	public function isUserAttendeeInRoom(string $userId, string $token): bool {
+		$query = $this->db->getQueryBuilder();
+		$query->select('r.token')
+			->from('talk_rooms', 'r')
+			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->eq('a.room_id', 'r.id'))
+			->where($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
+			->andWhere($query->expr()->eq('r.token', $query->createNamedParameter($token)));
+
+		$result = $query->executeQuery();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		return $row !== false;
+	}
+
 	/**
 	 * Returns rooms that are listable where the current user is not a participant.
 	 *
