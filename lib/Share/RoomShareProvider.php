@@ -924,6 +924,16 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		/** @var IShare[] $shares */
 		$shares = [];
 
+		$path = str_replace('/' . $userId . '/files', '', $path);
+		$path = rtrim($path, '/');
+
+		$attachmentFolder = $this->config->getAttachmentFolder($userId);
+		$escapedAttachmentFolder = preg_quote($attachmentFolder, '/');
+		$pathWithPlaceholder = preg_replace("/^$escapedAttachmentFolder/", self::TALK_FOLDER_PLACEHOLDER, $path);
+
+		$childPathTemplate = $this->dbConnection->escapeLikeParameter($path) . '/_%';
+		$childPathTemplatePlaceholder = $this->dbConnection->escapeLikeParameter($pathWithPlaceholder) . '/_%';
+
 		$chunks = array_chunk($allRooms, 100);
 		foreach ($chunks as $rooms) {
 			$qb = $this->dbConnection->getQueryBuilder();
@@ -951,35 +961,13 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			$qb->selectAlias('sc.file_target', 'sc_file_target')
 				->selectAlias('sc.permissions', 'sc_permissions');
 
-			$path = str_replace('/' . $userId . '/files', '', $path);
-			$path = rtrim($path, '/');
-
-			$attachmentFolder ??= $this->config->getAttachmentFolder($userId);
-			$escapedAttachmentFolder = preg_quote($attachmentFolder, '/');
-			$pathWithPlaceholder = preg_replace("/^$escapedAttachmentFolder/", self::TALK_FOLDER_PLACEHOLDER, $path);
-
-			if ($forChildren) {
-				$childPathTemplate = $this->dbConnection->escapeLikeParameter($path) . '/_%';
-				$childPathTemplatePlaceholder = $this->dbConnection->escapeLikeParameter($pathWithPlaceholder) . '/_%';
-
-				$qb->andWhere(
-					$qb->expr()->like('s.file_target', $qb->createNamedParameter($childPathTemplatePlaceholder, IQueryBuilder::PARAM_STR)),
-					$qb->expr()->orX(
-						$qb->expr()->like('sc.file_target', $qb->createNamedParameter($childPathTemplate, IQueryBuilder::PARAM_STR)),
-						$qb->expr()->isNull('sc.file_target'),
-					),
-				);
-			} else {
-				$nonChildPath = $path === '' ? '/' : $path;
-				$nonChildPathPlaceholder = $pathWithPlaceholder === '' ? '/' : $pathWithPlaceholder;
-				$qb->andWhere(
-					$qb->expr()->eq('s.file_target', $qb->createNamedParameter($nonChildPathPlaceholder, IQueryBuilder::PARAM_STR)),
-					$qb->expr()->orX(
-						$qb->expr()->eq('sc.file_target', $qb->createNamedParameter($nonChildPath, IQueryBuilder::PARAM_STR)),
-						$qb->expr()->isNull('sc.file_target'),
-					),
-				);
-			}
+			$qb->andWhere(
+				$qb->expr()->like('s.file_target', $qb->createNamedParameter($childPathTemplatePlaceholder, IQueryBuilder::PARAM_STR)),
+				$qb->expr()->orX(
+					$qb->expr()->like('sc.file_target', $qb->createNamedParameter($childPathTemplate, IQueryBuilder::PARAM_STR)),
+					$qb->expr()->isNull('sc.file_target'),
+				),
+			);
 
 			$qb->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
 				->andWhere($qb->expr()->in('s.share_with', $qb->createNamedParameter(
@@ -1001,8 +989,6 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 					$offset--;
 					continue;
 				}
-
-				$attachmentFolder ??= $this->config->getAttachmentFolder($userId);
 
 				$data['file_target'] = $data['sc_file_target'] ?? str_replace(self::TALK_FOLDER_PLACEHOLDER, $attachmentFolder, $data['file_target']);
 				$data['permissions'] = $data['sc_permissions'] ?? $data['permissions'];
