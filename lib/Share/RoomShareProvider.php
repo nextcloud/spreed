@@ -940,7 +940,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			$cursor->closeCursor();
 		}
 
-		$shares = $this->resolveSharesForRecipient($shares, $userId, $path, $forChildren, $path === null);
+		$shares = $this->resolveSharesForRecipient($shares, $userId, $path, $forChildren, true);
 
 		return $shares;
 	}
