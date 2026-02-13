@@ -719,7 +719,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	 * @param bool $allRoomShares indicates that the passed in shares are all room shares for the user
 	 * @return list<IShare>
 	 */
-	private function resolveSharesForRecipient(array $shareMap, string $userId, ?string $path = null, bool $forChildren = false, bool $allRoomShares = false): array {
+	private function resolveSharesForRecipient(array $shareMap, string $userId, bool $allRoomShares = false): array {
 		$qb = $this->dbConnection->getQueryBuilder();
 
 		$query = $qb->select('parent', 'permissions', 'file_target')
@@ -732,19 +732,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
 			));
 
-		if ($path !== null || $allRoomShares) {
-			if ($path !== null) {
-				$path = str_replace('/' . $userId . '/files', '', $path);
-				$path = rtrim($path, '/');
-
-				if ($forChildren) {
-					$qb->andWhere($qb->expr()->like('file_target', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($path) . '/_%')));
-				} else {
-					$nonChildPath = $path === '' ? '/' : $path;
-					$qb->andWhere($qb->expr()->eq('file_target', $qb->createNamedParameter($nonChildPath)));
-				}
-			}
-
+		if ($allRoomShares) {
 			$stmt = $query->executeQuery();
 
 			while ($data = $stmt->fetchAssociative()) {
@@ -950,7 +938,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		}
 
 		if ($path === null) {
-			$shares = $this->resolveSharesForRecipient($shares, $userId, $path, $forChildren, true);
+			$shares = $this->resolveSharesForRecipient($shares, $userId, true);
 		}
 
 		return $shares;
