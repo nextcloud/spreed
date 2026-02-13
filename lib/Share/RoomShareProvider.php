@@ -719,7 +719,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	 * @param bool $allRoomShares indicates that the passed in shares are all room shares for the user
 	 * @return list<IShare>
 	 */
-	private function resolveSharesForRecipient(array $shareMap, string $userId, ?string $path = null, bool $forChildren = false, bool $allRoomShares = false): array {
+	private function resolveSharesForRecipient(array $shareMap, string $userId, bool $allRoomShares = false): array {
 		$qb = $this->dbConnection->getQueryBuilder();
 
 		$query = $qb->select('parent', 'permissions', 'file_target')
@@ -732,19 +732,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
 			));
 
-		if ($path !== null || $allRoomShares) {
-			if ($path !== null) {
-				$path = str_replace('/' . $userId . '/files', '', $path);
-				$path = rtrim($path, '/');
-
-				if ($forChildren) {
-					$qb->andWhere($qb->expr()->like('file_target', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($path) . '/_%')));
-				} else {
-					$nonChildPath = $path === '' ? '/' : $path;
-					$qb->andWhere($qb->expr()->eq('file_target', $qb->createNamedParameter($nonChildPath)));
-				}
-			}
-
+		if ($allRoomShares) {
 			$stmt = $query->executeQuery();
 
 			while ($data = $stmt->fetchAssociative()) {
@@ -812,33 +800,6 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	 */
 	#[\Override]
 	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
-		return $this->_getSharedWith($userId, $limit, $offset, $node);
-	}
-
-	#[\Override]
-	public function getSharedWithByPath(
-		string $userId,
-		int $shareType,
-		string $path,
-		bool $forChildren,
-		int $limit,
-		int $offset,
-	): iterable {
-		return $this->_getSharedWith($userId, $limit, $offset, null, $path, $forChildren);
-	}
-
-	/**
-	 * Get received shared for the given user.
-	 * You can optionally provide a node or a path to filter the shares.
-	 */
-	private function _getSharedWith(
-		string $userId,
-		int $limit,
-		int $offset,
-		?Node $node = null,
-		?string $path = null,
-		?bool $forChildren = false,
-	): iterable {
 		$allRooms = $this->manager->getRoomTokensWithAttachmentsForUser($userId);
 
 		if (empty($allRooms)) {
@@ -871,48 +832,6 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				$qb->andWhere($qb->expr()->eq('s.file_source', $qb->createNamedParameter($node->getId())));
 			}
 
-			if ($path !== null) {
-				$onClause = $qb->expr()->andX(
-					$qb->expr()->eq('sc.parent', 's.id'),
-					$qb->expr()->eq('sc.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)),
-					$qb->expr()->eq('sc.share_with', $qb->createNamedParameter($userId)),
-				);
-				$qb->leftJoin('s', 'share', 'sc', $onClause);
-
-				$path = str_replace('/' . $userId . '/files', '', $path);
-				$path = rtrim($path, '/');
-
-				if ($forChildren) {
-					$attachmentFolder ??= $this->config->getAttachmentFolder($userId);
-					$escapedAttachmentFolder = preg_quote($attachmentFolder, '/');
-					$pathWithPlaceholder = preg_replace("/^$escapedAttachmentFolder/", self::TALK_FOLDER_PLACEHOLDER, $path);
-
-					$childPathTemplate = $this->dbConnection->escapeLikeParameter($path) . '/_%';
-					$childPathTemplatePlaceholder = $this->dbConnection->escapeLikeParameter($pathWithPlaceholder) . '/_%';
-
-					$qb->andWhere(
-						$qb->expr()->orX(
-							$qb->expr()->like('sc.file_target', $qb->createNamedParameter($childPathTemplate, IQueryBuilder::PARAM_STR)),
-							$qb->expr()->andX(
-								$qb->expr()->isNull('sc.file_target'),
-								$qb->expr()->like('s.file_target', $qb->createNamedParameter($childPathTemplatePlaceholder, IQueryBuilder::PARAM_STR)),
-							),
-						),
-					);
-				} else {
-					$nonChildPath = $path === '' ? '/' : $path;
-					$qb->andWhere(
-						$qb->expr()->orX(
-							$qb->expr()->eq('sc.file_target', $qb->createNamedParameter($nonChildPath, IQueryBuilder::PARAM_STR)),
-							$qb->expr()->andX(
-								$qb->expr()->isNull('sc.file_target'),
-								$qb->expr()->eq('s.file_target', $qb->createNamedParameter($nonChildPath, IQueryBuilder::PARAM_STR)),
-							),
-						),
-					);
-				}
-			}
-
 			$qb->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
 				->andWhere($qb->expr()->in('s.share_with', $qb->createNamedParameter(
 					$rooms,
@@ -940,7 +859,141 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			$cursor->closeCursor();
 		}
 
-		$shares = $this->resolveSharesForRecipient($shares, $userId, $path, $forChildren, true);
+		$shares = $this->resolveSharesForRecipient($shares, $userId, true);
+
+		return $shares;
+	}
+
+	#[\Override]
+	public function getSharedWithByPath(
+		string $userId,
+		int $shareType,
+		string $path,
+		bool $forChildren,
+		int $limit,
+		int $offset,
+	): iterable {
+		if (str_starts_with($path, '/' . $userId . '/files')) {
+			$path = substr($path, strlen('/' . $userId . '/files'));
+		}
+		$path = rtrim($path, '/');
+
+		if (!$forChildren) {
+			$qb = $this->dbConnection->getQueryBuilder();
+			$qb->select('parent')
+				->from('share')
+				->where($qb->expr()->eq('file_target', $qb->createNamedParameter($path)))
+				->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
+				->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($userId)));
+
+			$result = $qb->executeQuery();
+			$shareId = $result->fetchColumn();
+			$result->closeCursor();
+
+			if ($shareId !== false) {
+				return $this->getSharesByIds([$shareId], $userId);
+			}
+
+			$attachmentFolder = $this->config->getAttachmentFolder($userId);
+			$escapedAttachmentFolder = preg_quote($attachmentFolder, '/');
+			$pathWithPlaceholder = preg_replace("/^$escapedAttachmentFolder/", self::TALK_FOLDER_PLACEHOLDER, $path);
+
+			$qb = $this->dbConnection->getQueryBuilder();
+			$qb->select('id', 'share_with')
+				->from('share')
+				->where($qb->expr()->eq('file_target', $qb->createNamedParameter($pathWithPlaceholder)))
+				->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)));
+
+			$result = $qb->executeQuery();
+			$potentialShare = $result->fetchColumn();
+			$result->closeCursor();
+
+			if ($potentialShare !== false && $this->manager->isUserAttendeeInRoom($userId, $potentialShare['share_with'])) {
+				return $this->getSharesByIds([$potentialShare['id']], $userId);
+			}
+
+			return [];
+		}
+
+		$allRooms = $this->manager->getRoomTokensWithAttachmentsForUser($userId);
+
+		if (empty($allRooms)) {
+			return [];
+		}
+
+		/** @var IShare[] $shares */
+		$shares = [];
+
+		$attachmentFolder = $this->config->getAttachmentFolder($userId);
+		$escapedAttachmentFolder = preg_quote($attachmentFolder, '/');
+		$pathWithPlaceholder = preg_replace("/^$escapedAttachmentFolder/", self::TALK_FOLDER_PLACEHOLDER, $path);
+		$childPathTemplate = $this->dbConnection->escapeLikeParameter($path) . '/_%';
+		$childPathTemplatePlaceholder = $this->dbConnection->escapeLikeParameter($pathWithPlaceholder) . '/_%';
+
+		$chunks = array_chunk($allRooms, 100);
+		foreach ($chunks as $rooms) {
+			$qb = $this->dbConnection->getQueryBuilder();
+			$qb->select('s.*',
+				'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
+				'f.parent AS f_parent', 'f.name', 'f.mimetype', 'f.mimepart', 'f.size', 'f.mtime', 'f.storage_mtime',
+				'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum'
+			)
+				->selectAlias('st.id', 'storage_string_id')
+				->from('share', 's')
+				->orderBy('s.id', 'ASC')
+				->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
+				->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'));
+
+			if ($limit !== -1) {
+				$qb->setMaxResults($limit);
+			}
+
+			$onClause = $qb->expr()->andX(
+				$qb->expr()->eq('sc.parent', 's.id'),
+				$qb->expr()->eq('sc.share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)),
+				$qb->expr()->eq('sc.share_with', $qb->createNamedParameter($userId)),
+			);
+			$qb->leftJoin('s', 'share', 'sc', $onClause);
+			$qb->selectAlias('sc.file_target', 'sc_file_target')
+				->selectAlias('sc.permissions', 'sc_permissions');
+
+			$qb->andWhere(
+				$qb->expr()->like('s.file_target', $qb->createNamedParameter($childPathTemplatePlaceholder, IQueryBuilder::PARAM_STR)),
+				$qb->expr()->orX(
+					$qb->expr()->like('sc.file_target', $qb->createNamedParameter($childPathTemplate, IQueryBuilder::PARAM_STR)),
+					$qb->expr()->isNull('sc.file_target'),
+				),
+			);
+
+			$qb->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
+				->andWhere($qb->expr()->in('s.share_with', $qb->createNamedParameter(
+					$rooms,
+					IQueryBuilder::PARAM_STR_ARRAY
+				)));
+
+			$cursor = $qb->executeQuery();
+			while ($data = $cursor->fetch()) {
+				if ($data['uid_initiator'] === $userId || $data['uid_owner'] === $userId) {
+					continue;
+				}
+
+				if (!$this->isAccessibleResult($data)) {
+					continue;
+				}
+
+				if ($offset > 0) {
+					$offset--;
+					continue;
+				}
+
+				$data['file_target'] = $data['sc_file_target'] ?? str_replace(self::TALK_FOLDER_PLACEHOLDER, $attachmentFolder, $data['file_target']);
+				$data['permissions'] = $data['sc_permissions'] ?? $data['permissions'];
+
+				$share = $this->createShareObject($data);
+				$shares[$share->getId()] = $share;
+			}
+			$cursor->closeCursor();
+		}
 
 		return $shares;
 	}
