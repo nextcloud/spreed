@@ -719,7 +719,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	 * @param bool $allRoomShares indicates that the passed in shares are all room shares for the user
 	 * @return list<IShare>
 	 */
-	private function resolveSharesForRecipient(array $shareMap, string $userId, ?string $path = null, bool $forChildren = false): array {
+	private function resolveSharesForRecipient(array $shareMap, string $userId, $allRoomShares = false, ?string $path = null, bool $forChildren = false): array {
 		$qb = $this->dbConnection->getQueryBuilder();
 
 		$query = $qb->select('parent', 'permissions', 'file_target')
@@ -732,15 +732,17 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
 			));
 
-		if ($path !== null) {
-			$path = str_replace('/' . $userId . '/files', '', $path);
-			$path = rtrim($path, '/');
+		if ($allRoomShares) {
+			if ($path !== null) {
+				$path = str_replace('/' . $userId . '/files', '', $path);
+				$path = rtrim($path, '/');
 
-			if ($forChildren) {
-				$qb->andWhere($qb->expr()->like('file_target', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($path) . '/_%')));
-			} else {
-				$nonChildPath = $path === '' ? '/' : $path;
-				$qb->andWhere($qb->expr()->eq('file_target', $qb->createNamedParameter($nonChildPath)));
+				if ($forChildren) {
+					$qb->andWhere($qb->expr()->like('file_target', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($path) . '/_%')));
+				} else {
+					$nonChildPath = $path === '' ? '/' : $path;
+					$qb->andWhere($qb->expr()->eq('file_target', $qb->createNamedParameter($nonChildPath)));
+				}
 			}
 
 			$stmt = $query->executeQuery();
@@ -938,7 +940,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			$cursor->closeCursor();
 		}
 
-		$shares = $this->resolveSharesForRecipient($shares, $userId, $path, $forChildren);
+		$shares = $this->resolveSharesForRecipient($shares, $userId, true, $path, $forChildren);
 
 		return $shares;
 	}
