@@ -878,6 +878,8 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 					$qb->expr()->eq('sc.share_with', $qb->createNamedParameter($userId)),
 				);
 				$qb->leftJoin('s', 'share', 'sc', $onClause);
+				$qb->selectAlias('sc.file_target', 'sc_file_target')
+					->selectAlias('sc.permissions', 'sc_permissions');
 
 				$path = str_replace('/' . $userId . '/files', '', $path);
 				$path = rtrim($path, '/');
@@ -934,13 +936,22 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 					continue;
 				}
 
+				if ($path !== null) {
+					$attachmentFolder ??= $this->config->getAttachmentFolder($userId);
+
+					$data['file_target'] = $data['sc_file_target'] ?? str_replace(self::TALK_FOLDER_PLACEHOLDER, $attachmentFolder, $data['file_target']);
+					$data['permissions'] = $data['sc_permissions'] ?? $data['permissions'];
+				}
+
 				$share = $this->createShareObject($data);
 				$shares[$share->getId()] = $share;
 			}
 			$cursor->closeCursor();
 		}
 
-		$shares = $this->resolveSharesForRecipient($shares, $userId, $path, $forChildren, true);
+		if ($path === null) {
+			$shares = $this->resolveSharesForRecipient($shares, $userId, $path, $forChildren, true);
+		}
 
 		return $shares;
 	}
