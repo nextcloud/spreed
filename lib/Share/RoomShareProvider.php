@@ -881,24 +881,20 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 					$childPathTemplatePlaceholder = $this->dbConnection->escapeLikeParameter($pathWithPlaceholder) . '/_%';
 
 					$qb->andWhere(
+						$qb->expr()->like('s.file_target', $qb->createNamedParameter($childPathTemplatePlaceholder, IQueryBuilder::PARAM_STR)),
 						$qb->expr()->orX(
 							$qb->expr()->like('sc.file_target', $qb->createNamedParameter($childPathTemplate, IQueryBuilder::PARAM_STR)),
-							$qb->expr()->andX(
-								$qb->expr()->isNull('sc.file_target'),
-								$qb->expr()->like('s.file_target', $qb->createNamedParameter($childPathTemplatePlaceholder, IQueryBuilder::PARAM_STR)),
-							),
+							$qb->expr()->isNull('sc.file_target'),
 						),
 					);
 				} else {
 					$nonChildPath = $path === '' ? '/' : $path;
 					$nonChildPathPlaceholder = $pathWithPlaceholder === '' ? '/' : $pathWithPlaceholder;
 					$qb->andWhere(
+						$qb->expr()->eq('s.file_target', $qb->createNamedParameter($nonChildPathPlaceholder, IQueryBuilder::PARAM_STR)),
 						$qb->expr()->orX(
 							$qb->expr()->eq('sc.file_target', $qb->createNamedParameter($nonChildPath, IQueryBuilder::PARAM_STR)),
-							$qb->expr()->andX(
-								$qb->expr()->isNull('sc.file_target'),
-								$qb->expr()->eq('s.file_target', $qb->createNamedParameter($nonChildPathPlaceholder, IQueryBuilder::PARAM_STR)),
-							),
+							$qb->expr()->isNull('sc.file_target'),
 						),
 					);
 				}
