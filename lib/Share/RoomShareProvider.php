@@ -873,10 +873,12 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		int $limit,
 		int $offset,
 	): iterable {
-		if (!$forChildren) {
-			$path = str_replace('/' . $userId . '/files', '', $path);
-			$path = rtrim($path, '/');
+		if (str_starts_with($path, '/' . $userId . '/files')) {
+			$path = substr($path, strlen('/' . $userId . '/files'));
+		}
+		$path = rtrim($path, '/');
 
+		if (!$forChildren) {
 			$qb = $this->dbConnection->getQueryBuilder();
 			$qb->select('parent')
 				->from('share')
@@ -906,9 +908,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			$potentialShare = $result->fetchColumn();
 			$result->closeCursor();
 
-			$allRooms = $this->manager->getRoomTokensWithAttachmentsForUser($userId);
-
-			if ($potentialShare !== false && in_array($potentialShare['share_with'], $allRooms, true)) {
+			if ($potentialShare !== false && $this->manager->isUserAttendeeInRoom($userId, $potentialShare['share_with'])) {
 				return $this->getSharesByIds([$potentialShare['id']], $userId);
 			}
 
@@ -924,13 +924,9 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		/** @var IShare[] $shares */
 		$shares = [];
 
-		$path = str_replace('/' . $userId . '/files', '', $path);
-		$path = rtrim($path, '/');
-
 		$attachmentFolder = $this->config->getAttachmentFolder($userId);
 		$escapedAttachmentFolder = preg_quote($attachmentFolder, '/');
 		$pathWithPlaceholder = preg_replace("/^$escapedAttachmentFolder/", self::TALK_FOLDER_PLACEHOLDER, $path);
-
 		$childPathTemplate = $this->dbConnection->escapeLikeParameter($path) . '/_%';
 		$childPathTemplatePlaceholder = $this->dbConnection->escapeLikeParameter($pathWithPlaceholder) . '/_%';
 
