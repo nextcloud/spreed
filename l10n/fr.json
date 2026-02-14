@@ -832,7 +832,7 @@
     "Find more bots" : "Chercher d'autres robots",
     "Trusted servers can be configured at {linkstart}Sharing settings page{linkend}." : "Les serveurs de confiance peuvent être configurés sur la {linkstart}page des paramètres de partage{linkend}.",
     "Beta" : "Beta",
-    "Federated chats and calls work already. Attachment handling is coming in a future version." : "Les discussions et appels fédérés sont déjà possibles. La prise en charge des pièces jointes sera présent dans une future version.",
+    "Federated chats and calls work already. Attachment handling is coming in a future version." : "Les discussions et les appels fédérés fonctionnent déjà. La gestion des pièces jointes sera disponible dans une future version.",
     "Enable Federation in Talk app" : "Activer Fédération dans l'app Talk",
     "Permissions" : "Permissions",
     "Allow users to be invited to federated conversations" : "Autoriser les utilisateurs à être invité dans des conversations fédérées",
