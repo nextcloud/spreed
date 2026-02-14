@@ -79,7 +79,7 @@
     "vue-router": "^5.0.2",
     "vue-tsc": "^3.2.4",
     "vuex": "^4.1.0",
-    "webdav": "^5.8.0",
+    "webdav": "^5.9.0",
     "webrtc-adapter": "^9.0.3",
     "webrtcsupport": "^2.2.0",
     "wildemitter": "^1.2.1"
