@@ -102,7 +102,7 @@
     "openapi-typescript": "^7.8.0",
     "regenerator-runtime": "^0.14.1",
     "sass": "^1.94.3",
-    "sass-loader": "^16.0.6",
+    "sass-loader": "^16.0.7",
     "stylelint-use-logical": "^2.1.2",
     "vitest": "^3.2.4",
     "vue-loader": "^17.4.2",
