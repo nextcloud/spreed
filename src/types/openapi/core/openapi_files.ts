@@ -1366,6 +1366,8 @@ export interface operations {
                 path?: string;
                 /** @description The depth of the tree */
                 depth?: number;
+                /** @description Whether to include parent folders in the response */
+                withParents?: boolean;
             };
             header: {
                 /** @description Required to be true for the API request to pass */
