@@ -99,4 +99,3 @@ jobs:
             Auto-generated update of Nextcloud OpenAPI types
           labels: |
             dependencies
-            3. to review

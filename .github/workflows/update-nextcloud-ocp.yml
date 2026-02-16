@@ -125,4 +125,3 @@ jobs:
             Auto-generated update of [nextcloud/ocp](https://github.com/nextcloud-deps/ocp/) dependency
           labels: |
             dependencies
-            3. to review
