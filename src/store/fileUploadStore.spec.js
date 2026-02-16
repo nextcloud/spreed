@@ -14,7 +14,7 @@ import { getDavClient } from '../services/DavClient.ts'
 import { shareFile } from '../services/filesSharingServices.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useSettingsStore } from '../stores/settings.ts'
-import { findUniquePath } from '../utils/fileUpload.js'
+import { findUniquePath } from '../utils/fileUpload.ts'
 import fileUploadStore from './fileUploadStore.js'
 
 const getThreadMock = ref(0)
@@ -25,8 +25,8 @@ vi.mock('../composables/useGetThreadId.ts', () => ({
 vi.mock('../services/DavClient.ts', () => ({
 	getDavClient: vi.fn(),
 }))
-vi.mock('../utils/fileUpload.js', async () => {
-	const fileUpload = await vi.importActual('../utils/fileUpload.js')
+vi.mock('../utils/fileUpload.ts', async () => {
+	const fileUpload = await vi.importActual('../utils/fileUpload.ts')
 	return {
 		...fileUpload,
 		findUniquePath: vi.fn(),

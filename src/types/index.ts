@@ -525,6 +525,26 @@ export type {
 	createFileShareResponse,
 } from './core.ts'
 
+// Files upload helper types
+// FIXME might change or be reworked with fileUploadStore migration
+export type UploadFile = {
+	file: {
+		name: string
+		newName?: string
+		type: string
+		size: number
+		lastModified?: number
+		lastModifiedDate?: Date
+		webkitRelativePath?: string
+	}
+	sharePath?: string
+	status?: string
+	temporaryMessage?: ChatMessage
+	totalSize?: number
+}
+
+export type UploadEntry = [index: string, file: UploadFile]
+
 // Live transcription
 export type LiveTranscriptionLanguage = components['schemas']['LiveTranscriptionLanguage']
 

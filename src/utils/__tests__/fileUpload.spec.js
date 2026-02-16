@@ -12,7 +12,7 @@ import {
 	getFileSuffix,
 	hasDuplicateUploadNames,
 	separateDuplicateUploads,
-} from '../fileUpload.js'
+} from '../fileUpload.ts'
 
 const client = {
 	exists: vi.fn(),
