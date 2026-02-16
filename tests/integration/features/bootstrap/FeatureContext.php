@@ -3027,11 +3027,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$results = $data['entries'];
 
 		if ($expectedCursor !== null) {
-			Assert::assertSame($expectedCursor, $data['cursor']);
+			Assert::assertSame($expectedCursor, $data['cursor'], 'Cursor mismatch');
 		}
 
 		if ($formData === null) {
-			Assert::assertEmpty($results);
+			Assert::assertEmpty($results, 'Result count does not match:' . "\n" . print_r($results, true));
 			return;
 		}
 
@@ -3049,7 +3049,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}, $formData->getHash());
 
 		$count = count($expected);
-		Assert::assertCount($count, $results, 'Result count does not match');
+		Assert::assertCount($count, $results, 'Result count does not match:' . "\n" . print_r($results, true));
 
 		Assert::assertEquals($expected, array_map(static function ($actual) {
 			$compare = [
@@ -3184,8 +3184,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}, $results));
 	}
 
-	#[Then('/^user "([^"]*)" searches for conversations with "([^"]*)"(?: offset "([^"]*)")? limit (\d+)(?: expected cursor "([^"]*)")?$/')]
-	public function userSearchesRooms(string $user, string $search, string $offset, int $limit, string $expectedCursor, ?TableNode $formData = null): void {
+	#[Then('/^user "([^"]*)" searches for conversations with "([^"]*)"(?: offset "([^"]*)")? limit (\d+) expected cursor "([^"]*)"$/')]
+	public function userSearchesRooms(string $user, string $search, string $offset, int $limit, ?string $expectedCursor, ?TableNode $formData = null): void {
 		$searchUrl = '/search/providers/talk-conversations/search?limit=' . $limit;
 		if ($offset && array_key_exists($offset, self::$identifierToToken)) {
 			$searchUrl .= '&cursor=' . self::$identifierToToken[$offset];
@@ -3197,7 +3197,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', $searchUrl);
 		$this->assertStatusCode($this->response, 200);
 
-		if ($expectedCursor !== null) {
+		if ($expectedCursor === 'NULL') {
+			$expectedCursor = null;
+		} else {
 			$expectedCursor = self::$identifierToToken[$expectedCursor] ?? '';
 		}
 

@@ -32,3 +32,25 @@ Feature: conversation-5/search
       | title  | subline | attributes.conversation |
       | Room 5 |         | Room 5                  |
       | Room 6 |         | Room 6                  |
+
+  Scenario: Search for conversations with cyrillic multibyte chars
+    Given user "participant1" creates room "кирилл 1" (v4)
+      | roomType | 2 |
+      | roomName | кирилл 1 |
+    Given user "participant1" creates room "Кирилл 2" (v4)
+      | roomType | 2 |
+      | roomName |Кирилл 2 |
+    And user "participant1" searches for conversations with "ки" limit 3 expected cursor "NULL"
+      | title    | subline | attributes.conversation |
+      | кирилл 1 |         | кирилл 1                |
+      | Кирилл 2 |         | Кирилл 2                |
+    And user "participant1" searches for conversations with "Ки" limit 3 expected cursor "NULL"
+      | title    | subline | attributes.conversation |
+      | кирилл 1 |         | кирилл 1                |
+      | Кирилл 2 |         | Кирилл 2                |
+    And user "participant1" searches for conversations with "Ки" limit 1 expected cursor "кирилл 1"
+      | title    | subline | attributes.conversation |
+      | кирилл 1 |         | кирилл 1                |
+    And user "participant1" searches for conversations with "Ки" offset "кирилл 1" limit 1 expected cursor ""
+      | title    | subline | attributes.conversation |
+      | Кирилл 2 |         | Кирилл 2                |

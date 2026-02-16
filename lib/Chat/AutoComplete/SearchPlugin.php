@@ -182,7 +182,7 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if (strtolower($cloudId) === $search) {
+			if (mb_strtolower($cloudId) === $search) {
 				$exactMatches[] = $this->createResult('federated_user', $cloudId, $displayName);
 				continue;
 			}
@@ -234,12 +234,12 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if (strtolower($groupId) === $search) {
+			if (mb_strtolower($groupId) === $search) {
 				$exactMatches[] = $this->createGroupResult($groupId, $displayName);
 				continue;
 			}
 
-			if (stripos($groupId, $search) !== false) {
+			if (mb_stripos($groupId, $search) !== false) {
 				$matches[] = $this->createGroupResult($groupId, $displayName);
 				continue;
 			}
