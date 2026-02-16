@@ -119,7 +119,7 @@ class SearchPlugin implements ISearchPlugin {
 	 * @param array<string|int, string> $users
 	 */
 	protected function searchUsers(string $search, array $users, ISearchResult $searchResult): void {
-		$search = strtolower($search);
+		$search = mb_strtolower($search);
 
 		$type = new SearchResultType('users');
 
@@ -149,12 +149,12 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if (strtolower($displayName) === $search) {
+			if (mb_strtolower($displayName) === $search) {
 				$exactMatches[] = $this->createResult('user', $userId, $displayName);
 				continue;
 			}
 
-			if (stripos($displayName, $search) !== false) {
+			if (mb_stripos($displayName, $search) !== false) {
 				$matches[] = $this->createResult('user', $userId, $displayName);
 				continue;
 			}
@@ -167,7 +167,7 @@ class SearchPlugin implements ISearchPlugin {
 	 * @param array<string, string> $cloudIds
 	 */
 	protected function searchFederatedUsers(string $search, array $cloudIds, ISearchResult $searchResult): void {
-		$search = strtolower($search);
+		$search = mb_strtolower($search);
 
 		$type = new SearchResultType('federated_users');
 
@@ -182,7 +182,7 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if (strtolower($cloudId) === $search) {
+			if (mb_strtolower($cloudId) === $search) {
 				$exactMatches[] = $this->createResult('federated_user', $cloudId, $displayName);
 				continue;
 			}
@@ -196,12 +196,12 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if (strtolower($displayName) === $search) {
+			if (mb_strtolower($displayName) === $search) {
 				$exactMatches[] = $this->createResult('federated_user', $cloudId, $displayName);
 				continue;
 			}
 
-			if (stripos($displayName, $search) !== false) {
+			if (mb_stripos($displayName, $search) !== false) {
 				$matches[] = $this->createResult('federated_user', $cloudId, $displayName);
 				continue;
 			}
@@ -214,7 +214,7 @@ class SearchPlugin implements ISearchPlugin {
 	 * @param array<string|int, string> $groups
 	 */
 	protected function searchGroups(string $search, array $groups, ISearchResult $searchResult): void {
-		$search = strtolower($search);
+		$search = mb_strtolower($search);
 
 		$type = new SearchResultType('groups');
 
@@ -234,22 +234,22 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if (strtolower($groupId) === $search) {
+			if (mb_strtolower($groupId) === $search) {
 				$exactMatches[] = $this->createGroupResult($groupId, $displayName);
 				continue;
 			}
 
-			if (stripos($groupId, $search) !== false) {
+			if (mb_stripos($groupId, $search) !== false) {
 				$matches[] = $this->createGroupResult($groupId, $displayName);
 				continue;
 			}
 
-			if (strtolower($displayName) === $search) {
+			if (mb_strtolower($displayName) === $search) {
 				$exactMatches[] = $this->createGroupResult($groupId, $displayName);
 				continue;
 			}
 
-			if (stripos($displayName, $search) !== false) {
+			if (mb_stripos($displayName, $search) !== false) {
 				$matches[] = $this->createGroupResult($groupId, $displayName);
 				continue;
 			}
@@ -270,7 +270,7 @@ class SearchPlugin implements ISearchPlugin {
 			return;
 		}
 
-		$search = strtolower($search);
+		$search = mb_strtolower($search);
 		$matches = $exactMatches = [];
 		foreach ($attendees as $attendee) {
 			$name = $attendee->getDisplayName() ?: $this->l->t('Guest');
@@ -279,12 +279,12 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if (strtolower($name) === $search) {
+			if (mb_strtolower($name) === $search) {
 				$exactMatches[] = $this->createGuestResult($attendee->getActorId(), $name);
 				continue;
 			}
 
-			if (stripos($name, $search) !== false) {
+			if (mb_stripos($name, $search) !== false) {
 				$matches[] = $this->createGuestResult($attendee->getActorId(), $name);
 				continue;
 			}
@@ -306,7 +306,7 @@ class SearchPlugin implements ISearchPlugin {
 			return;
 		}
 
-		$search = strtolower($search);
+		$search = mb_strtolower($search);
 		$currentSessionHash = null;
 		if (!$this->userId) {
 			// Best effort: Might not work on guests that reloaded but not worth too much performance impact atm.
@@ -326,12 +326,12 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if (strtolower($displayName) === $search) {
+			if (mb_strtolower($displayName) === $search) {
 				$exactMatches[] = $this->createEmailResult($actorId, $displayName, $attendee->getInvitedCloudId());
 				continue;
 			}
 
-			if (stripos($displayName, $search) !== false) {
+			if (mb_stripos($displayName, $search) !== false) {
 				$matches[] = $this->createEmailResult($actorId, $displayName, $attendee->getInvitedCloudId());
 				continue;
 			}
@@ -350,7 +350,7 @@ class SearchPlugin implements ISearchPlugin {
 	 * @param array<string|int, string> $teams
 	 */
 	protected function searchTeams(string $search, array $teams, ISearchResult $searchResult): void {
-		$search = strtolower($search);
+		$search = mb_strtolower($search);
 
 		$type = new SearchResultType('teams');
 
@@ -380,12 +380,12 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if (strtolower($displayName) === $search) {
+			if (mb_strtolower($displayName) === $search) {
 				$exactMatches[] = $this->createTeamResult($teamId, $displayName);
 				continue;
 			}
 
-			if (stripos($displayName, $search) !== false) {
+			if (mb_stripos($displayName, $search) !== false) {
 				$matches[] = $this->createTeamResult($teamId, $displayName);
 			}
 		}
