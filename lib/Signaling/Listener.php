@@ -616,7 +616,7 @@ class Listener implements IEventListener {
 				'roomToken' => $room->getToken(),
 				'title' => $thread->getName(),
 				'lastMessageId' => $thread->getLastMessageId(),
-				'lastActivity' => $thread->getLastActivity()->getTimestamp(),
+				'lastActivity' => $thread->getLastActivity()?->getTimestamp() ?? 0,
 				'numReplies' => $thread->getNumReplies(),
 			];
 			$data['chat']['comment']['threadInfo']['attendee'] = ['notificationLevel' => 0];
@@ -690,7 +690,7 @@ class Listener implements IEventListener {
 			'referenceId' => '',
 			'reactions' => [],
 			'markdown' => false ,
-			'expirationTimestamp' => $message->getExpirationDateTime()?->getTimestamp(),
+			'expirationTimestamp' => $message->getExpirationDateTime()?->getTimestamp() ?? 0,
 			'threadId' => $threadId,
 		];
 
