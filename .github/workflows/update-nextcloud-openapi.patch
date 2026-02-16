@@ -1,0 +1,9 @@
+diff --git a/.github/workflows/update-nextcloud-openapi.yml b/.github/workflows/update-nextcloud-openapi.yml
+index 8bb2d794c0..2d4befebab 100644
+--- a/.github/workflows/update-nextcloud-openapi.yml
++++ b/.github/workflows/update-nextcloud-openapi.yml
+@@ -99,4 +99,3 @@ jobs:
+             Auto-generated update of Nextcloud OpenAPI types
+           labels: |
+             dependencies
+-            3. to review
