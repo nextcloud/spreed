@@ -66,6 +66,20 @@ Feature: chat-2/mentions
       | all          | room                     | calls  | all          |                   |
       | participant1 | participant1-displayname | users  | participant1 |                   |
 
+  Scenario: Cyrillic lower casing test
+    When user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant4" to room "group room" with 200 (v4)
+    And set display name of user "participant4" to "Кирилл"
+    Then user "participant1" gets the following candidate mentions in room "group room" for "кири" with 200
+      | id           | label  | source | mentionId    | details           |
+      | participant4 | Кирилл | users  | participant4 |                   |
+    And set display name of user "participant4" to "кирилл"
+    Then user "participant1" gets the following candidate mentions in room "group room" for "Кири" with 200
+      | id           | label  | source | mentionId    | details           |
+      | participant4 | кирилл | users  | participant4 |                   |
+
   Scenario: get mentions in a group room
     When user "participant1" creates room "group room" (v4)
       | roomType | 2 |

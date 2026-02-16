@@ -4192,10 +4192,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->createdGroups[$this->currentServer][$group] = $group;
 	}
 
-	#[Given('/^set display name of group "([^"]*)" to "([^"]*)"$/')]
-	public function renameGroup(string $groupId, string $displayName): void {
+	#[Given('/^set display name of (group|user) "([^"]*)" to "([^"]*)"$/')]
+	public function renameGroup(string $entityType, string $entityId, string $displayName): void {
 		$currentUser = $this->setCurrentUser('admin');
-		$this->sendRequest('PUT', '/cloud/groups/' . urlencode($groupId), [
+		$this->sendRequest('PUT', '/cloud/' . $entityType . 's/' . urlencode($entityId), [
 			'key' => 'displayname',
 			'value' => $displayName,
 		]);
