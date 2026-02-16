@@ -103,12 +103,12 @@ class ConversationSearch implements IProvider {
 					'',
 					$room->getName()
 				);
-				if (stripos($otherUserId, $query->getTerm()) === false
-					&& stripos($displayName, $query->getTerm()) === false) {
+				if (mb_stripos($otherUserId, $query->getTerm()) === false
+					&& mb_stripos($displayName, $query->getTerm()) === false) {
 					// Neither name nor displayname (one-to-one) match, skip
 					continue;
 				}
-			} elseif (stripos($room->getName(), $query->getTerm()) === false) {
+			} elseif (mb_stripos($room->getName(), $query->getTerm()) === false) {
 				continue;
 			}
 
@@ -123,10 +123,10 @@ class ConversationSearch implements IProvider {
 
 			$entry->addAttribute('conversation', $room->getToken());
 
-			$result[strtolower($displayName . '#' . $room->getToken())] = $entry;
+			$result[mb_strtolower($displayName . '#' . $room->getToken())] = $entry;
 
 			if ($query->getCursor() === $room->getToken()) {
-				$cursorKey = strtolower($displayName . '#' . $room->getToken());
+				$cursorKey = mb_strtolower($displayName . '#' . $room->getToken());
 			}
 		}
 

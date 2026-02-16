@@ -35,6 +35,7 @@ class RoomPlugin implements ISearchPlugin {
 		if (!is_string($search) || $search === '') {
 			return false;
 		}
+		$search = mb_strtolower($search);
 
 		$userId = $this->userSession->getUser()->getUID();
 
@@ -57,10 +58,10 @@ class RoomPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if (stripos($room->getDisplayName($userId), $search) !== false) {
+			if (mb_stripos($room->getDisplayName($userId), $search) !== false) {
 				$item = $this->roomToSearchResultItem($room, $userId);
 
-				if (strtolower($item['label']) === strtolower($search)) {
+				if (mb_strtolower($item['label']) === mb_strtolower($search)) {
 					$result['exact'][] = $item;
 				} else {
 					$result['wide'][] = $item;
