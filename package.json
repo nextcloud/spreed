@@ -39,7 +39,7 @@
     "@nextcloud/cdav-library": "^2.1.1",
     "@nextcloud/dialogs": "^7.2.0",
     "@nextcloud/event-bus": "^3.3.3",
-    "@nextcloud/files": "^4.0.0-rc.1",
+    "@nextcloud/files": "^4.0.0",
     "@nextcloud/initial-state": "^3.0.0",
     "@nextcloud/l10n": "^3.4.0",
     "@nextcloud/paths": "^3.0.0",
