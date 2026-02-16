@@ -1162,7 +1162,7 @@ class ChatManager {
 	}
 
 	private function searchIsPartOfConversationNameOrAtAll(string $search, string $roomDisplayName): bool {
-		if (stripos($roomDisplayName, $search) !== false) {
+		if (mb_stripos($roomDisplayName, $search) !== false) {
 			return true;
 		}
 		/**
