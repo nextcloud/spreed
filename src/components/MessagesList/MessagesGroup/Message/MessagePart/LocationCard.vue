@@ -26,15 +26,22 @@
 			<LControlAttribution
 				position="bottomright"
 				:prefix="attribution" />
-			<LMarker :latLng="center" />
+			<LMarker :latLng="center">
+				<LIcon
+					:iconSize="[26, 40]"
+					:iconAnchor="[13, 40]"
+					:iconUrl />
+			</LMarker>
 		</LMap>
 	</a>
 </template>
 
 <script>
 import { t } from '@nextcloud/l10n'
+import { imagePath } from '@nextcloud/router'
 import {
 	LControlAttribution,
+	LIcon,
 	LMap,
 	LMarker,
 	LTileLayer,
@@ -45,6 +52,7 @@ export default {
 
 	components: {
 		LControlAttribution,
+		LIcon,
 		LTileLayer,
 		LMap,
 		LMarker,
@@ -105,6 +113,10 @@ export default {
 
 		linkAriaLabel() {
 			return t('spreed', 'Open this location in OpenStreetMap')
+		},
+
+		iconUrl() {
+			return imagePath('spreed', 'icon-marker-openstreetmap.svg')
 		},
 	},
 

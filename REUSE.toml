@@ -84,6 +84,12 @@ SPDX-FileCopyrightText = "Google LLC"
 SPDX-License-Identifier = "CC-BY-4.0"
 
 [[annotations]]
+path = "img/icon-marker-openstreetmap.svg"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "OpenStreetMap"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
 path = "img/bridge-services/discord.svg"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Discord Inc."
