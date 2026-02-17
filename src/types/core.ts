@@ -122,6 +122,7 @@ export type UnifiedSearchResponse = ApiResponse<operationsCore['unified_search-s
 }>
 
 // Files API
+export type FileTemplate = componentsFiles['schemas']['TemplateFileCreatorWithTemplates']
 export type getFileTemplatesListResponse = ApiResponse<operationsFiles['template-list']['responses'][200]['content']['application/json']>
 export type createFileFromTemplateParams = Required<operationsFiles['template-create']>['requestBody']['content']['application/json']
 export type createFileFromTemplateResponse = ApiResponse<operationsFiles['template-create']['responses'][200]['content']['application/json']>

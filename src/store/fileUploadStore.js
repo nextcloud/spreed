@@ -4,7 +4,6 @@
  */
 
 import { showError } from '@nextcloud/dialogs'
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { getUploader } from '@nextcloud/upload'
 import { useTemporaryMessage } from '../composables/useTemporaryMessage.ts'
@@ -12,7 +11,6 @@ import { MESSAGE, SHARED_ITEM } from '../constants.ts'
 import { getDavClient } from '../services/DavClient.ts'
 import { EventBus } from '../services/EventBus.ts'
 import {
-	getFileTemplates,
 	shareFile,
 } from '../services/filesSharingServices.ts'
 import { useActorStore } from '../stores/actor.ts'
@@ -35,8 +33,6 @@ function state() {
 		uploads: {},
 		currentUploadId: undefined,
 		localUrls: {},
-		fileTemplatesInitialised: false,
-		fileTemplates: [],
 	}
 }
 
@@ -88,14 +84,6 @@ const getters = {
 
 	currentUploadId: (state) => {
 		return state.currentUploadId
-	},
-
-	areFileTemplatesInitialised: (state) => {
-		return state.fileTemplatesInitialised
-	},
-
-	fileTemplates: (state) => {
-		return state.fileTemplates
 	},
 }
 
@@ -181,15 +169,6 @@ const mutations = {
 
 	discardUpload(state, { uploadId }) {
 		delete state.uploads[uploadId]
-	},
-
-	storeFilesTemplates(state, templates) {
-		state.fileTemplates = templates
-		state.fileTemplatesInitialised = true
-	},
-
-	markFileTemplatesInitialised(state) {
-		state.fileTemplatesInitialised = true
 	},
 }
 
@@ -556,28 +535,6 @@ const actions = {
 	 */
 	removeFileFromSelection({ commit }, temporaryMessageId) {
 		commit('removeFileFromSelection', temporaryMessageId)
-	},
-
-	async getFileTemplates({ commit, getters }) {
-		if (getters.fileTemplates.length) {
-			console.debug('Skip file templates setup as already done')
-			commit('markFileTemplatesInitialised')
-			return
-		}
-
-		const actorStore = useActorStore()
-		if (actorStore.userId === null) {
-			console.debug('Skip file templates setup for participants that are not logged in')
-			commit('markFileTemplatesInitialised')
-			return
-		}
-
-		try {
-			const response = await getFileTemplates()
-			commit('storeFilesTemplates', response.data.ocs.data)
-		} catch (error) {
-			console.error('An error happened when trying to load the templates', error)
-		}
 	},
 }
 

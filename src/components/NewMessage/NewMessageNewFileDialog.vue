@@ -62,6 +62,7 @@ import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import NewMessageTemplatePreview from './NewMessageTemplatePreview.vue'
+import { useFileTemplates } from '../../composables/useFileTemplates.ts'
 import { useViewer } from '../../composables/useViewer.js'
 import { createNewFile } from '../../services/filesSharingServices.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
@@ -93,9 +94,12 @@ export default {
 
 	setup() {
 		const { openViewer } = useViewer('files')
+		const fileTemplateOptions = useFileTemplates()
+
 		return {
 			openViewer,
 			settingsStore: useSettingsStore(),
+			fileTemplateOptions,
 		}
 	},
 
@@ -109,10 +113,6 @@ export default {
 	},
 
 	computed: {
-		fileTemplateOptions() {
-			return this.$store.getters.fileTemplates
-		},
-
 		fileTemplate() {
 			return this.fileTemplateOptions[this.showNewFileDialog]
 		},
