@@ -325,7 +325,9 @@ export default {
 			if (this.isFileShare && this.message.message !== '{file}') {
 				// Add a new line after file to split content into different paragraphs
 				return '{file}\n\n' + this.message.message
-			} else {
+			} else if (this.isLocationMessageWithName) {
+				return this.message.message + '\n\n' + this.message.messageParameters.object.name
+			} {
 				return this.message.message
 			}
 		},
@@ -344,6 +346,12 @@ export default {
 			}
 
 			return this.isInCall && this.pollsStore.isNewPoll(this.message.messageParameters.object.id)
+		},
+
+		isLocationMessageWithName() {
+			return this.message.messageType === MESSAGE.TYPE.COMMENT
+				&& this.message.messageParameters?.object?.type === 'geo-location'
+				&& this.message.messageParameters?.object?.name
 		},
 
 		isCallEndedMessage() {
