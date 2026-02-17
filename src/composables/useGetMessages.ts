@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { AxiosError } from '@nextcloud/axios'
 import type {
 	ComputedRef,
 	InjectionKey,
@@ -25,6 +24,7 @@ import { CHAT, MESSAGE } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useChatStore } from '../stores/chat.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
+import { isAxiosErrorResponse } from '../types/guards.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { tryLocalizeSystemMessage } from '../utils/message.ts'
 import { useGetThreadId } from './useGetThreadId.ts'
@@ -43,15 +43,6 @@ type GetMessagesContext = {
 }
 
 const GET_MESSAGES_CONTEXT_KEY: InjectionKey<GetMessagesContext> = Symbol.for('GET_MESSAGES_CONTEXT')
-
-/**
- * Check whether caught error is from OCS API
- *
- * @param exception
- */
-function isAxiosErrorResponse(exception: unknown): exception is AxiosError<string> {
-	return exception !== null && typeof exception === 'object' && 'response' in exception
-}
 
 let pollingTimeout: NodeJS.Timeout | undefined
 let expirationInterval: NodeJS.Timeout | undefined

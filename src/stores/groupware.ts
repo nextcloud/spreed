@@ -3,9 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { AxiosError } from '@nextcloud/axios'
 import type {
-	ApiErrorResponse,
 	Conversation,
 	DashboardEvent,
 	DavCalendar,
@@ -32,6 +30,7 @@ import {
 	getUserAbsence,
 	scheduleMeeting,
 } from '../services/groupwareService.ts'
+import { isAxiosErrorResponse } from '../types/guards.ts'
 
 type State = {
 	absence: Record<string, OutOfOfficeResult | null> // TODO check
@@ -84,7 +83,7 @@ export const useGroupwareStore = defineStore('groupware', {
 				this.absence[token] = response.data.ocs.data
 				return this.absence[token]
 			} catch (error) {
-				if ((error as AxiosError)?.response?.status === 404) {
+				if (isAxiosErrorResponse(error) && error.response?.status === 404) {
 					this.absence[token] = null
 					return null
 				}
@@ -179,7 +178,7 @@ export const useGroupwareStore = defineStore('groupware', {
 				const response = await getUserProfile(conversation.name)
 				this.profileInfo[conversation.token] = response.data.ocs.data
 			} catch (error) {
-				if ((error as ApiErrorResponse)?.response?.status === 405) {
+				if (isAxiosErrorResponse(error) && error.response?.status === 405) {
 					// Method does not exist on current server version
 					// Skip further requests
 					this.supportProfileInfo = false

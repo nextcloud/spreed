@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import type { AxiosError } from '@nextcloud/axios'
 import type { AutocompleteResult } from './core.ts'
 import type {
 	components as componentsAdmin,
@@ -28,12 +27,10 @@ type ApiResponseUnwrapped<T> = Promise<{
 	}
 }>
 
-export type ApiErrorResponse<T = null> = AxiosError<{
-	ocs: {
-		meta: components['schemas']['OCSMeta']
-		data: T
-	}
-}>
+// Reverse generic type to extract the data type from ApiResponse
+export type ApiExtractedOcsData<T> = T extends ApiResponse<infer U>
+	? U extends { ocs: { data: infer D } } ? D : never
+	: never
 
 export type TokenMap<T> = Record<string, T>
 export type IdMap<T> = Record<number | string, T>
