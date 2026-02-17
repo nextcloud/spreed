@@ -24,7 +24,7 @@ import {
 	getFileNamePrompt,
 	hasDuplicateUploadNames,
 	separateDuplicateUploads,
-} from '../utils/fileUpload.js'
+} from '../utils/fileUpload.ts'
 import { parseUploadError } from '../utils/propfindErrorParse.ts'
 
 /**

@@ -87,7 +87,7 @@ import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { getDavClient } from '../../services/DavClient.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
-import { findUniquePath } from '../../utils/fileUpload.js'
+import { findUniquePath } from '../../utils/fileUpload.ts'
 
 const predefinedBackgroundLabels = {
 	'1_office': t('spreed', 'Select virtual office background'),
