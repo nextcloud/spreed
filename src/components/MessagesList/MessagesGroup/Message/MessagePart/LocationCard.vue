@@ -10,7 +10,8 @@
 		rel="noopener noreferrer"
 		class="location"
 		:class="{ wide: wide }"
-		:aria-label="linkAriaLabel">
+		:aria-label="linkAriaLabel"
+		:title="name">
 		<LMap
 			:zoom="previewZoom"
 			:center="center"
@@ -26,14 +27,10 @@
 				position="bottomright"
 				:prefix="attribution" />
 			<LMarker :latLng="center">
-				<LTooltip
-					:options="{
-						direction: 'top',
-						permanent: 'true',
-						offset: [-16, -14],
-					}">
-					{{ name }}
-				</LTooltip>
+				<LIcon
+					:iconSize="[26, 40]"
+					:iconAnchor="[13, 40]"
+					:iconUrl />
 			</LMarker>
 		</LMap>
 	</a>
@@ -41,12 +38,13 @@
 
 <script>
 import { t } from '@nextcloud/l10n'
+import { imagePath } from '@nextcloud/router'
 import {
 	LControlAttribution,
+	LIcon,
 	LMap,
 	LMarker,
 	LTileLayer,
-	LTooltip,
 } from '@vue-leaflet/vue-leaflet'
 
 export default {
@@ -54,10 +52,10 @@ export default {
 
 	components: {
 		LControlAttribution,
+		LIcon,
 		LTileLayer,
 		LMap,
 		LMarker,
-		LTooltip,
 	},
 
 	props: {
@@ -116,6 +114,10 @@ export default {
 		linkAriaLabel() {
 			return t('spreed', 'Open this location in OpenStreetMap')
 		},
+
+		iconUrl() {
+			return imagePath('spreed', 'icon-marker-openstreetmap.svg')
+		},
 	},
 
 	methods: {
@@ -133,8 +135,8 @@ export default {
 	white-space: initial;
 	overflow: hidden;
 	border-radius: var(--border-radius-large);
-	height: 300px;
-	max-height: 30vh;
+	height: min(200px, 30vh);
+	min-width: 200px;
 	margin: 4px;
 	transition: outline 0.1s ease-in-out;
 
