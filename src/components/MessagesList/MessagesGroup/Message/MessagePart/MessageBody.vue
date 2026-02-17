@@ -752,6 +752,10 @@ export default {
 				@include markdown;
 			}
 
+			:deep(.rich-text--wrapper p:has(.location)) {
+				overflow: hidden;
+			}
+
 			// FIXME: Should it be in the upstream NcRichText component?
 			// NcRichText is used with dir="auto", so internal text direction may vary
 			// But we want to keep the alignment consistent with the rest of the UI
