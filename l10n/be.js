@@ -1132,7 +1132,7 @@ OC.L10N.register(
     "Video is not available" : "Відэа недаступна",
     "Start recording immediately with the call" : "Пачынаць запіс адразу з выклікам",
     "Notify all participants about this call" : "Апавясціць ўсіх удзельнікаў пра гэты выклік",
-    "Apply settings" : "Ужыць налады",
+    "Apply settings" : "Прымяніць налады",
     "Error while uploading the file" : "Памылка пры запампоўванні файла",
     "Select a file" : "Выберыце файл",
     "Invalid path selected" : "Выбраны памылковы шлях",
