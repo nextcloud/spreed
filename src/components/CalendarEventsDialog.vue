@@ -32,11 +32,11 @@ import SelectableParticipant from './BreakoutRoomsEditor/SelectableParticipant.v
 import CalendarEventSmall from './UIShared/CalendarEventSmall.vue'
 import ContactSelectionBubble from './UIShared/ContactSelectionBubble.vue'
 import SearchBox from './UIShared/SearchBox.vue'
-import StaticDateTime from './UIShared/StaticDateTime.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 import { ATTENDEE, CONVERSATION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
+import { isAxiosErrorResponse } from '../types/guards.ts'
 import { convertToUnix, formatDateTime, getDiffInDays, ONE_HOUR_IN_MS } from '../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
 
@@ -348,8 +348,12 @@ async function submitNewMeeting() {
 		showSuccess(t('spreed', 'Meeting created'))
 		isFormOpen.value = false
 	} catch (error) {
-		// @ts-expect-error Vue: Property response does not exist
-		invalid.value = error?.response?.data?.ocs?.data?.error ?? 'unknown'
+		// scheduleMeetingResponse endpoint with 400 | 401 response
+		if (isAxiosErrorResponse<{ error: string } | null>(error)) {
+			invalid.value = error.response?.data?.ocs?.data?.error ?? 'unknown'
+		} else {
+			invalid.value = 'unknown'
+		}
 	} finally {
 		submitting.value = false
 	}

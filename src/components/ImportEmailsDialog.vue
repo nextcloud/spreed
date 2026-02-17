@@ -4,7 +4,10 @@
 -->
 
 <script setup lang="ts">
-import type { ApiErrorResponse } from '../types/index.ts'
+import type {
+	ApiExtractedOcsData,
+	importEmailsResponse,
+} from '../types/index.ts'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { n, t } from '@nextcloud/l10n'
@@ -16,6 +19,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconFileUpload from '../../img/material-icons/file-upload.svg?raw'
 import { importEmails } from '../services/participantsService.js'
+import { isAxiosErrorResponse } from '../types/guards.ts'
 
 const props = defineProps<{
 	token: string
@@ -80,7 +84,12 @@ async function testList(file: File) {
 		const response = await importEmails(props.token, file, true)
 		uploadResult.value = response.data.ocs.data
 	} catch (error) {
-		uploadResult.value = (error as ApiErrorResponse).response?.data?.ocs?.data ?? null
+		// importEmailsResponse endpoint with 400 | 401 response
+		if (isAxiosErrorResponse<ApiExtractedOcsData<importEmailsResponse> | unknown>(error)) {
+			uploadResult.value = error.response?.data?.ocs?.data ?? null
+		} else {
+			uploadResult.value = null
+		}
 	} finally {
 		loading.value = false
 	}
