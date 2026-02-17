@@ -10,7 +10,8 @@
 		rel="noopener noreferrer"
 		class="location"
 		:class="{ wide: wide }"
-		:aria-label="linkAriaLabel">
+		:aria-label="linkAriaLabel"
+		:title="name">
 		<LMap
 			:zoom="previewZoom"
 			:center="center"
@@ -25,16 +26,7 @@
 			<LControlAttribution
 				position="bottomright"
 				:prefix="attribution" />
-			<LMarker :latLng="center">
-				<LTooltip
-					:options="{
-						direction: 'top',
-						permanent: 'true',
-						offset: [-16, -14],
-					}">
-					{{ name }}
-				</LTooltip>
-			</LMarker>
+			<LMarker :latLng="center" />
 		</LMap>
 	</a>
 </template>
@@ -46,7 +38,6 @@ import {
 	LMap,
 	LMarker,
 	LTileLayer,
-	LTooltip,
 } from '@vue-leaflet/vue-leaflet'
 
 export default {
@@ -57,7 +48,6 @@ export default {
 		LTileLayer,
 		LMap,
 		LMarker,
-		LTooltip,
 	},
 
 	props: {
