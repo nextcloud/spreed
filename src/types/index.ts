@@ -513,6 +513,7 @@ export type {
 export type {
 	createFileFromTemplateParams,
 	createFileFromTemplateResponse,
+	FileTemplate,
 	getFileTemplatesListResponse,
 } from './core.ts'
 

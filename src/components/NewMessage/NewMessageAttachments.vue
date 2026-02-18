@@ -89,6 +89,7 @@ import IconPlus from 'vue-material-design-icons/Plus.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
 import IconFileUpload from '../../../img/material-icons/file-upload.svg?raw'
 import IconSmartPicker from '../../../img/material-icons/smart-picker.svg?raw'
+import { useFileTemplates } from '../../composables/useFileTemplates.ts'
 import { EventBus } from '../../services/EventBus.ts'
 
 export default {
@@ -140,17 +141,16 @@ export default {
 	emits: ['updateNewFileDialog', 'openFileUpload', 'handleFileShare', 'createThread'],
 
 	setup() {
+		const fileTemplateOptions = useFileTemplates()
+
 		return {
+			fileTemplateOptions,
 			IconFileUpload,
 			IconSmartPicker,
 		}
 	},
 
 	computed: {
-		fileTemplateOptions() {
-			return this.$store.getters.fileTemplates
-		},
-
 		shareFromNextcloudLabel() {
 			return IS_DESKTOP
 				? t('spreed', 'Share from {nextcloud}', { nextcloud: OC.theme.productName })

@@ -895,10 +895,6 @@ export default {
 		EventBus.on('upload-discard', this.handleUploadSideEffects)
 		EventBus.on('retry-message', this.handleRetryMessage)
 		EventBus.on('smart-picker-open', this.handleOpenTributeMenu)
-
-		if (!this.$store.getters.areFileTemplatesInitialised) {
-			this.$store.dispatch('getFileTemplates')
-		}
 	},
 
 	beforeUnmount() {
