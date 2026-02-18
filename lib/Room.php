@@ -144,6 +144,7 @@ class Room {
 		private int $mentionPermissions,
 		private string $liveTranscriptionLanguageId,
 		private int $lastPinnedId,
+		private int $attributes,
 	) {
 	}
 
@@ -625,5 +626,13 @@ class Room {
 
 	public function setLastPinnedId(int $lastPinnedId): void {
 		$this->lastPinnedId = $lastPinnedId;
+	}
+
+	public function getAttributes(): int {
+		return $this->attributes;
+	}
+
+	public function setAttributes(int $attributes): void {
+		$this->attributes = $attributes;
 	}
 }

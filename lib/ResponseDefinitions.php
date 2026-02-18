@@ -393,6 +393,7 @@ namespace OCA\Talk;
  *     hiddenPinnedId: int,
  *     // Required capability: `scheduled-messages` (local)
  *     hasScheduledMessages: int,
+ *     attributes: int,
  * }
  *
  * @psalm-type TalkDashboardEventAttachment = array{
