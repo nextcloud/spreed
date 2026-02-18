@@ -905,7 +905,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)));
 
 			$result = $qb->executeQuery();
-			$potentialShare = $result->fetchColumn();
+			$potentialShare = $result->fetch();
 			$result->closeCursor();
 
 			if ($potentialShare !== false && $this->manager->isUserAttendeeInRoom($userId, $potentialShare['share_with'])) {
