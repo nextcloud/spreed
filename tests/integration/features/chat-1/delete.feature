@@ -194,6 +194,36 @@ Feature: chat/delete
       | room1 | users     | participant2 | participant2-displayname | Message deleted by you       | {"actor":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
       | room1 | users     | participant1 | participant1-displayname | Message deleted by author   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
 
+  Scenario: A deleted ping does not mark the conversation as mentioned (if it was the only thing)
+    Given user "participant3" exists
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room1" with 200 (v4)
+    And user "participant1" sends message "Message 1 @participant2 @participant3" to room "room1" with 201
+    And user "participant2" is participant of the following rooms (v4)
+      | id    | type | lastReadMessage | unreadMessages | unreadMention |
+      | room1 | 2    | UNKNOWN_MESSAGE | 1              | 1             |
+    And user "participant3" is participant of the following rooms (v4)
+      | id    | type | lastReadMessage | unreadMessages | unreadMention |
+      | room1 | 2    | UNKNOWN_MESSAGE | 1              | 1             |
+    When user "participant2" reads message "Message 1 @participant2 @participant3" in room "room1" with 200
+    Given user "participant1" sends message "Message 2 @participant2 @participant3" to room "room1" with 201
+    Then user "participant2" is participant of the following rooms (v4)
+      | id    | type | lastReadMessage                       | unreadMessages | unreadMention |
+      | room1 | 2    | Message 1 @participant2 @participant3 | 1              | 1             |
+    Then user "participant3" is participant of the following rooms (v4)
+      | id    | type | lastReadMessage | unreadMessages | unreadMention |
+      | room1 | 2    | UNKNOWN_MESSAGE | 2              | 1             |
+    When user "participant1" deletes message "Message 2 @participant2 @participant3" from room "room1" with 200
+    Then user "participant2" is participant of the following rooms (v4)
+      | id    | type | lastReadMessage                       | unreadMessages | unreadMention |
+      | room1 | 2    | Message 1 @participant2 @participant3 | 0              | 0             |
+    Then user "participant3" is participant of the following rooms (v4)
+      | id    | type | lastReadMessage | unreadMessages | unreadMention |
+      | room1 | 2    | UNKNOWN_MESSAGE | 1              | 1             |
+
   Scenario: Clear chat history as a moderator
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
