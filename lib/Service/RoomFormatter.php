@@ -325,8 +325,8 @@ class RoomFormatter {
 
 				$lastMention = $attendee->getLastMentionMessage();
 				$lastMentionDirect = $attendee->getLastMentionDirect();
-				$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
-				$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
+				$roomData['unreadMention'] = $roomData['unreadMessages'] !== 0 && $lastMention !== 0 && $lastReadMessage < $lastMention;
+				$roomData['unreadMentionDirect'] = $roomData['unreadMessages'] !== 0 && $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
 				$roomData['lastReadMessage'] = $lastReadMessage;
 
 				$roomData['canDeleteConversation'] = $room->getType() !== Room::TYPE_ONE_TO_ONE
