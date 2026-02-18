@@ -125,6 +125,7 @@ class Manager {
 			'mention_permissions' => 0,
 			'transcription_language' => '',
 			'last_pinned_id' => 0,
+			'attributes' => 0,
 		], $data));
 	}
 
@@ -196,6 +197,7 @@ class Manager {
 			(int)$row['mention_permissions'],
 			(string)$row['transcription_language'],
 			(int)$row['last_pinned_id'],
+			(int)$row['attributes'],
 		);
 	}
 

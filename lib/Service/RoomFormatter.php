@@ -159,6 +159,7 @@ class RoomFormatter {
 			'isImportant' => false,
 			'isSensitive' => false,
 			'hasScheduledMessages' => 0,
+			'attributes' => 0,
 		];
 
 		if ($room->isFederatedConversation()) {
@@ -201,6 +202,7 @@ class RoomFormatter {
 				'breakoutRoomStatus' => $room->getBreakoutRoomStatus(),
 				'callStartTime' => $room->getActiveSince() instanceof \DateTimeInterface ? $room->getActiveSince()->getTimestamp() : 0,
 				'callRecording' => $room->getCallRecording(),
+				'attributes' => $room->getAttributes(),
 			]);
 		}
 
@@ -248,6 +250,7 @@ class RoomFormatter {
 			'isSensitive' => $attendee->isSensitive(),
 			'lastPinnedId' => $room->getLastPinnedId(),
 			'hiddenPinnedId' => $attendee->getHiddenPinnedId(),
+			'attributes' => $room->getAttributes(),
 		]);
 
 		if ($room->isFederatedConversation()) {
