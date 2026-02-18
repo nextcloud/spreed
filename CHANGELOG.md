@@ -5,6 +5,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 23.0.1 – 2026-02-18
+### Fixed
+- fix(sharing): Fix type error when a share is loaded before the user loaded all their shares
+  [#17160](https://github.com/nextcloud/spreed/issues/17160)
+
 ## 23.0.0 – 2026-02-18
 ### Added
 - Live translations in call
