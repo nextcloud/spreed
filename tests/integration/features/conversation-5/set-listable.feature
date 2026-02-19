@@ -23,6 +23,7 @@ Feature: conversation-5/set-listable
       | roomName | room |
     Then user "creator" allows listing room "room" for "5" with 400 (v4)
 
+
   Scenario: Only moderators and owners can change listable attribute
     Given signaling server is started
     Given user "creator" creates room "room" (v4)
@@ -69,3 +70,19 @@ Feature: conversation-5/set-listable
     When user "creator" gets the room for path "welcome.txt" with 200 (v1)
     And user "creator" joins room "file welcome.txt room" with 200 (v4)
     Then user "creator" allows listing room "file welcome.txt room" for "all" with 403 (v4)
+
+  Scenario: Listing is forced
+    Given the following "spreed" app config is set
+      | force_listable            | 0 |
+    And user "creator" creates room "room 1" (v4)
+      | roomType | 2 |
+      | roomName | room 1 |
+    Then user "creator" allows listing room "room 1" for "1" with 400 (v4)
+    And user "creator" creates room "room 2" (v4)
+      | roomType | 2 |
+      | roomName | room 2 |
+      | listable | 1 |
+    Then user "creator" is participant of the following unordered rooms (v4)
+      | name   | type | listable |
+      | room 1 | 2    | 0        |
+      | room 2 | 2    | 0        |

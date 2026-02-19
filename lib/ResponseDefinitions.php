@@ -592,6 +592,17 @@ namespace OCA\Talk;
  *     // Set only if sending failed to persist the original timestamp and expose it
  *     originalSendAt?: int,
  * }
+ *
+ * @psalm-type TalkConversationPreset = array{
+ *     // Identifier of the preset, currently known: default, forced, webinar, presentation, hallway
+ *     identifier: string,
+ *     // Translated name of the preset in user's language
+ *     name: string,
+ *     // Translated description of the preset in user's language
+ *     description: string,
+ *     // List of parameters that should be set
+ *     parameters: array<string, int>,
+ * }
  */
 class ResponseDefinitions {
 }

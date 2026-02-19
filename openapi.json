@@ -776,6 +776,37 @@
                     }
                 }
             },
+            "ConversationPreset": {
+                "type": "object",
+                "required": [
+                    "identifier",
+                    "name",
+                    "description",
+                    "parameters"
+                ],
+                "properties": {
+                    "identifier": {
+                        "type": "string",
+                        "description": "Identifier of the preset, currently known: default, forced, webinar, presentation, hallway"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Translated name of the preset in user's language"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Translated description of the preset in user's language"
+                    },
+                    "parameters": {
+                        "type": "object",
+                        "description": "List of parameters that should be set",
+                        "additionalProperties": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                }
+            },
             "DashboardEvent": {
                 "type": "object",
                 "required": [
@@ -14685,6 +14716,111 @@
                 }
             }
         },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/presets/room": {
+            "get": {
+                "operationId": "preset-get-presets",
+                "summary": "Get the list of available presets",
+                "description": "Required capability: `conversation-presets`\nPresets come with 2 special presets: `forced` and `default`: - The default contains the before \"presets\" state by default, but administration can set different default values, which will then be preselected, but can still be changed by users. - If a parameter is listed in forced, the value will always be used, independent of the user selection or the value from the preset. So order of applying is: \"default\" preset > selected preset > user selection > \"forced\" preset",
+                "tags": [
+                    "preset"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully got presets",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/ConversationPreset"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/publicshareauth": {
             "post": {
                 "operationId": "public_share_auth-create-room",
@@ -16340,6 +16476,12 @@
                                         "$ref": "#/components/schemas/InvitationList",
                                         "default": [],
                                         "description": "List of participants to add grouped by type (only available with `conversation-creation-all` capability)"
+                                    },
+                                    "preset": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Identifier of the preset that was used (only available with `conversation-preset` capability)"
                                     }
                                 }
                             }
@@ -19973,20 +20115,47 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "breakout-room",
-                                                                "type",
-                                                                "value"
-                                                            ]
+                                                    "anyOf": [
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "breakout-room",
+                                                                        "type",
+                                                                        "value"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "forced"
+                                                                    ]
+                                                                },
+                                                                "forced": {
+                                                                    "type": "integer",
+                                                                    "format": "int64",
+                                                                    "enum": [
+                                                                        0,
+                                                                        1,
+                                                                        2
+                                                                    ]
+                                                                }
+                                                            }
                                                         }
-                                                    }
+                                                    ]
                                                 }
                                             }
                                         }
@@ -20150,20 +20319,46 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "breakout-room",
-                                                                "type",
-                                                                "value"
-                                                            ]
+                                                    "anyOf": [
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "breakout-room",
+                                                                        "type",
+                                                                        "value"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "forced"
+                                                                    ]
+                                                                },
+                                                                "forced": {
+                                                                    "type": "integer",
+                                                                    "format": "int64",
+                                                                    "enum": [
+                                                                        0,
+                                                                        1
+                                                                    ]
+                                                                }
+                                                            }
                                                         }
-                                                    }
+                                                    ]
                                                 }
                                             }
                                         }
@@ -22006,21 +22201,45 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "breakout-room",
-                                                                "mode",
-                                                                "type",
-                                                                "value"
-                                                            ]
+                                                    "anyOf": [
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "breakout-room",
+                                                                        "mode",
+                                                                        "type",
+                                                                        "value"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "forced"
+                                                                    ]
+                                                                },
+                                                                "forced": {
+                                                                    "type": "integer",
+                                                                    "format": "int64",
+                                                                    "minimum": 0,
+                                                                    "maximum": 511
+                                                                }
+                                                            }
                                                         }
-                                                    }
+                                                    ]
                                                 }
                                             }
                                         }
@@ -22185,23 +22404,47 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "participant",
-                                                                "method",
-                                                                "moderator",
-                                                                "room-type",
-                                                                "type",
-                                                                "value"
-                                                            ]
+                                                    "anyOf": [
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "participant",
+                                                                        "method",
+                                                                        "moderator",
+                                                                        "room-type",
+                                                                        "type",
+                                                                        "value"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "forced"
+                                                                    ]
+                                                                },
+                                                                "forced": {
+                                                                    "type": "integer",
+                                                                    "format": "int64",
+                                                                    "minimum": 0,
+                                                                    "maximum": 511
+                                                                }
+                                                            }
                                                         }
-                                                    }
+                                                    ]
                                                 }
                                             }
                                         }
@@ -22231,23 +22474,47 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "participant",
-                                                                "method",
-                                                                "moderator",
-                                                                "room-type",
-                                                                "type",
-                                                                "value"
-                                                            ]
+                                                    "anyOf": [
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "participant",
+                                                                        "method",
+                                                                        "moderator",
+                                                                        "room-type",
+                                                                        "type",
+                                                                        "value"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "forced"
+                                                                    ]
+                                                                },
+                                                                "forced": {
+                                                                    "type": "integer",
+                                                                    "format": "int64",
+                                                                    "minimum": 0,
+                                                                    "maximum": 511
+                                                                }
+                                                            }
                                                         }
-                                                    }
+                                                    ]
                                                 }
                                             }
                                         }
@@ -22277,23 +22544,47 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "participant",
-                                                                "method",
-                                                                "moderator",
-                                                                "room-type",
-                                                                "type",
-                                                                "value"
-                                                            ]
+                                                    "anyOf": [
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "participant",
+                                                                        "method",
+                                                                        "moderator",
+                                                                        "room-type",
+                                                                        "type",
+                                                                        "value"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "forced"
+                                                                    ]
+                                                                },
+                                                                "forced": {
+                                                                    "type": "integer",
+                                                                    "format": "int64",
+                                                                    "minimum": 0,
+                                                                    "maximum": 511
+                                                                }
+                                                            }
                                                         }
-                                                    }
+                                                    ]
                                                 }
                                             }
                                         }
@@ -22910,21 +23201,48 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "breakout-room",
-                                                                "token",
-                                                                "type",
-                                                                "value"
-                                                            ]
+                                                    "anyOf": [
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "breakout-room",
+                                                                        "token",
+                                                                        "type",
+                                                                        "value"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "forced"
+                                                                    ]
+                                                                },
+                                                                "forced": {
+                                                                    "type": "integer",
+                                                                    "format": "int64",
+                                                                    "enum": [
+                                                                        0,
+                                                                        1,
+                                                                        2
+                                                                    ]
+                                                                }
+                                                            }
                                                         }
-                                                    }
+                                                    ]
                                                 }
                                             }
                                         }
@@ -23431,20 +23749,48 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "error"
-                                                    ],
-                                                    "properties": {
-                                                        "error": {
-                                                            "type": "string",
-                                                            "enum": [
-                                                                "breakout-room",
-                                                                "type",
-                                                                "value"
-                                                            ]
+                                                    "anyOf": [
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "breakout-room",
+                                                                        "type",
+                                                                        "value"
+                                                                    ]
+                                                                },
+                                                                "forced": {
+                                                                    "type": "integer",
+                                                                    "format": "int64",
+                                                                    "minimum": 0
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "error"
+                                                            ],
+                                                            "properties": {
+                                                                "error": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "forced"
+                                                                    ]
+                                                                },
+                                                                "forced": {
+                                                                    "type": "integer",
+                                                                    "format": "int64",
+                                                                    "minimum": 0
+                                                                }
+                                                            }
                                                         }
-                                                    }
+                                                    ]
                                                 }
                                             }
                                         }

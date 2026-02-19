@@ -785,6 +785,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertAttendeeList($identifier, $formData, $attendees);
 	}
 
+	#[Then('/^user "([^"]*)" gets available presets with (200) \((v1)\)$/')]
+	public function userSeesTheFollowingPresets(string $user, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/presets/room');
+		$this->assertStatusCode($this->response, $statusCode);
+		$actual = $this->getDataFromResponse($this->response);
+		$actual = array_map(function (array $preset): array {
+			unset($preset['description']);
+			return $preset;
+		}, $actual);
+
+		if ($formData instanceof TableNode) {
+			$presets = $formData->getColumnsHash();
+			$presets = array_map(function (array $preset): array {
+				$preset['parameters'] = json_decode($preset['parameters'], true);
+				return $preset;
+			}, $presets);
+		} else {
+			$presets = [];
+		}
+
+		Assert::assertEquals($presets, $actual, 'Preset list mismatch: ' . print_r($actual, true));
+	}
+
 	protected function assertAttendeeList(string $identifier, ?TableNode $formData, array $attendees): void {
 		if ($formData instanceof TableNode) {
 			$expectedKeys = array_flip($formData->getRows()[0]);
@@ -3644,6 +3669,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function setAppConfig(string $appId, TableNode $formData): void {
 		$currentUser = $this->setCurrentUser('admin');
 		foreach ($formData->getRows() as $row) {
+			if ($row[0] === 'force_permissions') {
+				$row[1] = $this->mapPermissionsTestInput($row[1]);
+			}
+
 			$this->sendRequest('POST', '/apps/provisioning_api/api/v1/config/apps/' . $appId . '/' . $row[0], [
 				'value' => $row[1],
 			]);

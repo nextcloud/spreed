@@ -91,3 +91,23 @@ Feature: conversation-5/set-publishing-permissions
       | actorType  | actorId      | permissions | attendeePermissions | participantType |
       | users      | owner        | SJLAVPMR    | D                   | 1               |
       | users      | invited user | CLAVPM      | CLAVPM              | 3               |
+
+  Scenario: Permissions are forced
+    Given the following "spreed" app config is set
+      | force_permissions | CJMR |
+    And user "owner" creates room "room 1" (v4)
+      | roomType | 2 |
+      | roomName | room 1 |
+    When user "owner" sets default permissions for room "room 1" to "D" with 400 (v4)
+    When user "owner" sets default permissions for room "room 1" to "CLAVPM" with 400 (v4)
+    And user "owner" adds user "invited user" to room "room 1" with 200 (v4)
+    And user "owner" sets permissions for "invited user" in room "room 1" to "D" with 200 (v4)
+    And user "owner" sets permissions for "invited user" in room "room 1" to "CLAVPM" with 400 (v4)
+    And user "owner" creates room "room 2" (v4)
+      | roomType | 2 |
+      | roomName | room 2 |
+      | permissions | CLAVPM |
+    Then user "owner" is participant of the following unordered rooms (v4)
+      | name   | type | defaultPermissions |
+      | room 1 | 2    | CJMR        |
+      | room 2 | 2    | CJMR        |

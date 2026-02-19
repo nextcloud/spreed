@@ -738,3 +738,19 @@ Feature: chat-2/mentions
       | id           | label                    | source | mentionId    |
       | participant1 | participant1-displayname | users  | participant1 |
       | participant2 | participant2-displayname | users  | participant2 |
+
+  Scenario: Mention permissions are forced
+    Given the following "spreed" app config is set
+      | force_mention_permissions            | 1 |
+    And user "participant1" creates room "room 1" (v4)
+      | roomType | 2 |
+      | roomName | room 1 |
+    When user "participant1" sets mention permissions for room "room 1" to all with 400 (v4)
+    And user "participant1" creates room "room 2" (v4)
+      | roomType | 2 |
+      | roomName | room 2 |
+      | mentionPermissions | 0 |
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | name   | type | mentionPermissions |
+      | room 1 | 2    | 1        |
+      | room 2 | 2    | 1        |
