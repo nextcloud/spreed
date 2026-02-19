@@ -54,10 +54,12 @@ class ConfigTest extends TestCase {
 
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
-		$config
+		/** @var MockObject&IAppConfig $appConfig */
+		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig
 			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']))
+			->method('getAppValueString')
+			->with('stun_servers', json_encode(['stun.nextcloud.com:443']))
 			->willReturn(json_encode($servers));
 		$config
 			->expects($this->once())
@@ -72,10 +74,12 @@ class ConfigTest extends TestCase {
 	public function testGetDefaultStunServer(): void {
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
-		$config
+		/** @var MockObject&IAppConfig $appConfig */
+		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig
 			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']))
+			->method('getAppValueString')
+			->with('stun_servers', json_encode(['stun.nextcloud.com:443']))
 			->willReturn(json_encode([]));
 		$config
 			->expects($this->once())
@@ -90,10 +94,12 @@ class ConfigTest extends TestCase {
 	public function testGetDefaultStunServerNoInternet(): void {
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
-		$config
+		/** @var MockObject&IAppConfig $appConfig */
+		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig
 			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']))
+			->method('getAppValueString')
+			->with('stun_servers', json_encode(['stun.nextcloud.com:443']))
 			->willReturn(json_encode([]));
 		$config
 			->expects($this->once())
@@ -108,10 +114,12 @@ class ConfigTest extends TestCase {
 	public function testGenerateTurnSettings(): void {
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
-		$config
+		/** @var MockObject&IAppConfig $appConfig */
+		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig
 			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'turn_servers', '')
+			->method('getAppValueString')
+			->with('turn_servers', '')
 			->willReturn(json_encode([
 				[
 					// No scheme explicitly given
@@ -140,8 +148,6 @@ class ConfigTest extends TestCase {
 			->method('getTime')
 			->willReturn(1479743025);
 
-		/** @var MockObject|IAppConfig $appConfig */
-		$appConfig = $this->createMock(IAppConfig::class);
 		/** @var MockObject|IGroupManager $groupManager */
 		$groupManager = $this->createMock(IGroupManager::class);
 		/** @var MockObject|IUserManager $userManager */
@@ -160,9 +166,8 @@ class ConfigTest extends TestCase {
 			->willReturn('abcdefghijklmnop');
 		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
 
-		//
 		$settings = $helper->getTurnSettings();
-		$this->assertEquals(3, count($settings));
+		$this->assertCount(3, $settings);
 		$this->assertSame([
 			'schemes' => 'turn',
 			'server' => 'turn.example.org:3478',
@@ -189,29 +194,30 @@ class ConfigTest extends TestCase {
 	public function testGenerateTurnSettingsEmpty(): void {
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
-		$config
+		/** @var MockObject&IAppConfig $appConfig */
+		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig
 			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'turn_servers', '')
+			->method('getAppValueString')
+			->with('turn_servers', '')
 			->willReturn(json_encode([]));
 
 		$helper = $this->createConfig($config);
 
 		$settings = $helper->getTurnSettings();
-		$this->assertEquals(0, count($settings));
+		$this->assertCount(0, $settings);
 	}
 
 	public function testGenerateTurnSettingsEvent(): void {
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
-		$config
-			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'turn_servers', '')
-			->willReturn(json_encode([]));
-
-		/** @var MockObject|IAppConfig $appConfig */
+		/** @var MockObject&IAppConfig $appConfig */
 		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig
+			->expects($this->once())
+			->method('getAppValueString')
+			->with('turn_servers', '')
+			->willReturn(json_encode([]));
 
 		/** @var MockObject|ITimeFactory $timeFactory */
 		$timeFactory = $this->createMock(ITimeFactory::class);
