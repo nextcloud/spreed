@@ -5,10 +5,11 @@
 
 import { t } from '@nextcloud/l10n'
 
-type PROPFINDException = {
+export type PROPFINDException = {
 	response: {
 		text: () => Promise<string>
 	}
+	message: string
 }
 
 /**
