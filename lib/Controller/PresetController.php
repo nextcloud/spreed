@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\ResponseDefinitions;
-use OCA\Talk\RoomPresets\IPreset;
+use OCA\Talk\RoomPresets\APreset;
 use OCA\Talk\Service\RoomPresetFactory;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -52,7 +52,7 @@ class PresetController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 	])]
 	public function getPresets(): DataResponse {
-		$presets = array_values(array_map(static fn (IPreset $preset) => $preset->toArray(), $this->factory->getPresets()));
+		$presets = array_values(array_map(static fn (APreset $preset) => $preset->toArray(), $this->factory->getPresets()));
 		return new DataResponse($presets, Http::STATUS_OK);
 	}
 }

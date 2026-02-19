@@ -8,10 +8,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\RoomPresets\APreset;
 use OCA\Talk\RoomPresets\DefaultPreset;
 use OCA\Talk\RoomPresets\Forced;
 use OCA\Talk\RoomPresets\Hallway;
-use OCA\Talk\RoomPresets\IPreset;
 use OCA\Talk\RoomPresets\Presentation;
 use OCA\Talk\RoomPresets\Webinar;
 use Psr\Container\ContainerExceptionInterface;
@@ -25,7 +25,7 @@ class RoomPresetFactory {
 	}
 
 	/**
-	 * @return array<string, IPreset>
+	 * @return array<string, APreset>
 	 */
 	public function getPresets(): array {
 		$presetClasses = [
@@ -36,11 +36,11 @@ class RoomPresetFactory {
 			Hallway::class,
 		];
 
-		/** @var array<string, IPreset> $presets */
+		/** @var array<string, APreset> $presets */
 		$presets = [];
 		foreach ($presetClasses as $presetClass) {
 			try {
-				/** @var IPreset $preset */
+				/** @var APreset $preset */
 				$preset = \OCP\Server::get($presetClass);
 			} catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
 				$this->logger->error('Could not load preset ' . $presetClass, ['exception' => $e]);

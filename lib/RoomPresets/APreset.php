@@ -8,16 +8,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\RoomPresets;
 
-abstract readonly class APreset implements IPreset {
-	#[\Override]
+abstract readonly class APreset {
 	abstract public function getIdentifier(): string;
 
-	#[\Override]
 	public function getName(): string {
 		return $this->getIdentifier();
 	}
 
-	#[\Override]
 	public function getDescription(): string {
 		return $this->getIdentifier();
 	}
@@ -25,13 +22,11 @@ abstract readonly class APreset implements IPreset {
 	/**
 	 * @return array<string, int>
 	 */
-	#[\Override]
 	abstract public function getParameters(): array;
 
 	/**
 	 * @return array{identifier: string, name: string, description: string, parameters: array<string, int>}
 	 */
-	#[\Override]
 	public function toArray(): array {
 		return [
 			'identifier' => $this->getIdentifier(),

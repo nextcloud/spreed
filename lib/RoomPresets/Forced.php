@@ -42,32 +42,21 @@ readonly class Forced extends APreset {
 
 	public function getForcedParameter(Parameter $parameter): ?int {
 		$configName = self::getConfigNameForParameter($parameter);
-		if ($configName !== null && $this->appConfig->hasAppKey(self::CONFIG_PREFIX_FORCE . $configName)) {
-			return $this->appConfig->getAppValueInt(self::CONFIG_PREFIX_FORCE . $configName);
+		if ($configName !== null && $this->appConfig->hasAppKey($configName)) {
+			return $this->appConfig->getAppValueInt($configName);
 		}
 
 		return null;
 	}
 
 	protected static function getConfigNameForParameter(Parameter $parameter): ?string {
-		if ($parameter === Parameter::LOBBY_STATE
-			|| $parameter === Parameter::READ_ONLY
-			|| $parameter === Parameter::RECORDING_CONSENT
-			|| $parameter === Parameter::ROOM_TYPE) {
-			return null;
-		}
-
-		$parts = preg_split('/(?=[A-Z])/', $parameter->value);
-
-		$configName = '';
-		foreach ($parts as $part) {
-			if ($configName === '') {
-				$configName = $part;
-			} else {
-				$configName .= '_' . lcfirst($part);
-			}
-		}
-
-		return $configName;
+		return match ($parameter) {
+			Parameter::MENTION_PERMISSIONS => self::CONFIG_PREFIX_FORCE . 'mention_permissions',
+			Parameter::PERMISSIONS => self::CONFIG_PREFIX_FORCE . 'permissions',
+			Parameter::SIP_ENABLED => self::CONFIG_PREFIX_FORCE . 'sip_enabled',
+			Parameter::LISTABLE => self::CONFIG_PREFIX_FORCE . 'listable',
+			Parameter::MESSAGE_EXPIRATION => self::CONFIG_PREFIX_FORCE . 'message_expiration',
+			default => null,
+		};
 	}
 }
