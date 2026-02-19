@@ -11,8 +11,8 @@ namespace OCA\Talk\Command\PhoneNumber;
 use OC\Core\Command\Base;
 use OCA\Talk\Model\PhoneNumber;
 use OCA\Talk\Model\PhoneNumberMapper;
+use OCA\Talk\Service\PhoneNumberValidation;
 use OCP\IDBConnection;
-use OCP\IPhoneNumberUtil;
 use OCP\IUser;
 use OCP\IUserManager;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,7 +23,7 @@ class ImportPhoneNumbers extends Base {
 
 	public function __construct(
 		private IUserManager $userManager,
-		private IPhoneNumberUtil $phoneNumberUtil,
+		private PhoneNumberValidation $phoneNumberValidation,
 		private PhoneNumberMapper $mapper,
 		private IDBConnection $db,
 	) {
@@ -72,12 +72,12 @@ class ImportPhoneNumbers extends Base {
 				continue;
 			}
 
-			$phoneNumberStandard = preg_match('/^[0-9]{1,20}$/', $row[0]) ? $row[0] : $this->phoneNumberUtil->convertToStandardFormat($row[0]);
-			if ($phoneNumberStandard === null) {
+			try {
+				$row[0] = $this->phoneNumberValidation->validateNumber($row[0]);
+			} catch (\InvalidArgumentException) {
 				$output->writeln('<error>Not a valid phone number ' . $row[0] . '. The format is invalid.</error>');
 				return self::FAILURE;
 			}
-			$row[0] = $phoneNumberStandard;
 
 			$user = $this->userManager->get($row[1]);
 			if (!$user instanceof IUser) {
