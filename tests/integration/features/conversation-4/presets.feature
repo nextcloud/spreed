@@ -10,7 +10,7 @@ Feature: conversation-4/presets
       | forced       | forced       | []         |
       | webinar      | Webinar      | {"lobbyState":1,"mentionPermissions":1,"permissions":389,"recordingConsent":1,"roomType":3} |
       | presentation | Presentation | {"mentionPermissions":1,"permissions":389,"recordingConsent":1} |
-      | hallway      | Hallway      | {"listable":1,"messageExpiration":3600} |
+      | voiceroom    | Voice room   | {"listable":1,"messageExpiration":3600} |
     And the following "spreed" app config is set
       | force_listable            | 0 |
       | force_message_expiration  | 7200 |
@@ -22,4 +22,26 @@ Feature: conversation-4/presets
       | forced       | forced       | {"listable":0,"messageExpiration":7200,"sipEnabled":1} |
       | webinar      | Webinar      | {"lobbyState":1,"mentionPermissions":1,"permissions":389,"recordingConsent":1,"roomType":3} |
       | presentation | Presentation | {"mentionPermissions":1,"permissions":389,"recordingConsent":1} |
-      | hallway      | Hallway      | {"listable":1,"messageExpiration":3600} |
+      | voiceroom    | Voice room   | {"listable":1,"messageExpiration":3600} |
+
+  Scenario: Create a voice room with preset values
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+      | listable | 1 |
+      | messageExpiration | 3600 |
+      | preset | voiceroom |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | participantType | attributes | messageExpiration | listable |
+      | room | 3    | 1               | 1          | 3600              | 1        |
+
+  Scenario: Create a voice room with overriding default values of the preset
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+      | listable | 0 |
+      | messageExpiration | 1800 |
+      | preset | voiceroom |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | participantType | attributes | messageExpiration | listable |
+      | room | 3    | 1               | 1          | 1800              | 0        |

@@ -1218,6 +1218,7 @@ class Manager {
 		?int $recordingConsent = null,
 		?int $mentionPermissions = null,
 		?string $description = null,
+		?int $attributes = null,
 	): Room {
 		$token = $this->getNewToken();
 		$row = [
@@ -1293,6 +1294,10 @@ class Manager {
 		if ($description !== null) {
 			$insert->setValue('description', $insert->createNamedParameter($description));
 			$row['description'] = $description;
+		}
+		if ($attributes !== null) {
+			$insert->setValue('attributes', $insert->createNamedParameter($attributes, IQueryBuilder::PARAM_INT));
+			$row['attributes'] = $attributes;
 		}
 
 		$insert->executeStatement();

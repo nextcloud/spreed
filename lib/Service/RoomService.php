@@ -54,6 +54,7 @@ use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
+use OCA\Talk\RoomAttributes;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
@@ -157,6 +158,7 @@ class RoomService {
 		string $description = '',
 		?string $emoji = null,
 		?string $avatarColor = null,
+		int $attributes = RoomAttributes::NONE->value,
 		bool $allowInternalTypes = true,
 	): Room {
 		$name = trim($name);
@@ -302,6 +304,7 @@ class RoomService {
 			$recordingConsent,
 			$mentionPermissions,
 			$description,
+			$attributes,
 		);
 
 		if ($emoji !== null) {

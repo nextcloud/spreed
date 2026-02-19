@@ -2562,6 +2562,11 @@ export type components = {
              * @description Required capability: `scheduled-messages` (local)
              */
             hasScheduledMessages: number;
+            /**
+             * Format: int64
+             * @description Bit-flag of enabled attributes of this conversation (only available with capability: `conversation-attributes`)
+             */
+            attributes: number;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
         RoomWithInvalidInvitations: components["schemas"]["Room"] & {

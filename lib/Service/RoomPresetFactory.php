@@ -11,8 +11,8 @@ namespace OCA\Talk\Service;
 use OCA\Talk\RoomPresets\APreset;
 use OCA\Talk\RoomPresets\DefaultPreset;
 use OCA\Talk\RoomPresets\Forced;
-use OCA\Talk\RoomPresets\Hallway;
 use OCA\Talk\RoomPresets\Presentation;
+use OCA\Talk\RoomPresets\VoiceRoom;
 use OCA\Talk\RoomPresets\Webinar;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -33,7 +33,7 @@ class RoomPresetFactory {
 			Forced::class,
 			Webinar::class,
 			Presentation::class,
-			Hallway::class,
+			VoiceRoom::class,
 		];
 
 		/** @var array<string, APreset> $presets */
@@ -46,12 +46,12 @@ class RoomPresetFactory {
 				$this->logger->error('Could not load preset ' . $presetClass, ['exception' => $e]);
 			}
 
-			if (isset($presets[$preset->getIdentifier()])) {
-				$this->logger->error('Duplicate preset identifier ' . $preset->getIdentifier() . ' from ' . $presetClass . ' and ' . get_class($presets[$preset->getIdentifier()]));
+			if (isset($presets[$preset::getIdentifier()])) {
+				$this->logger->error('Duplicate preset identifier ' . $preset::getIdentifier() . ' from ' . $presetClass . ' and ' . get_class($presets[$preset::getIdentifier()]));
 				continue;
 			}
 
-			$presets[$preset->getIdentifier()] = $preset;
+			$presets[$preset::getIdentifier()] = $preset;
 		}
 
 		return $presets;

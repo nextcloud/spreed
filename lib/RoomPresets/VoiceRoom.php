@@ -11,25 +11,25 @@ namespace OCA\Talk\RoomPresets;
 use OCA\Talk\Room;
 use OCP\IL10N;
 
-readonly class Hallway extends APreset {
+readonly class VoiceRoom extends APreset {
 	public function __construct(
 		protected IL10N $l,
 	) {
 	}
 
 	#[\Override]
-	public function getIdentifier(): string {
-		return 'hallway';
+	public static function getIdentifier(): string {
+		return 'voiceroom';
 	}
 
 	#[\Override]
 	public function getName(): string {
-		return $this->l->t('Hallway');
+		return $this->l->t('Voice room');
 	}
 
 	#[\Override]
 	public function getDescription(): string {
-		return $this->l->t('Hallway');
+		return $this->l->t('Voice room');
 	}
 
 	#[\Override]

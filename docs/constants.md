@@ -58,9 +58,11 @@
 * `two-lines` Normal (default) - two-line elements (with display name and last message)
 * `compact` Compact - one-line elements (with display name)
 
-### Chat style
-* `split` Split (default) - chat messages are split into two columns (with different sides per actor)
-* `unified` Unified - chat messages are in a single column
+### Conversation attributes
+Required capability: `conversation-presets`
+
+* `0` None
+* `1` Voice rooms - Join call when joining conversation
 
 ## Participants
 
@@ -156,6 +158,10 @@
 * `2` - Recording consent can be enabled by moderators on conversation level (not allowed on conversation API level, only on config level)
 
 ## Chat
+
+### Chat style
+* `split` Split (default) - chat messages are split into two columns (with different sides per actor)
+* `unified` Unified - chat messages are in a single column
 
 ### Shared item types
 * `audio` - Shared audio file
