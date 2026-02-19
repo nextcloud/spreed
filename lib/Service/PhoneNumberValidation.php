@@ -8,14 +8,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
-use OCA\Talk\Model\PhoneNumber;
-use OCA\Talk\Model\PhoneNumberMapper;
-use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IConfig;
 use OCP\IPhoneNumberUtil;
-use OCP\IUser;
-use OCP\IUserManager;
-use OCP\User\IAvailabilityCoordinator;
 
 class PhoneNumberValidation {
 
