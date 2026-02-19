@@ -384,6 +384,12 @@ class ConfigTest extends TestCase {
 		/** @var MockObject|IUser $user */
 		$user = $this->createMock(IUser::class);
 
+		$appConfig->expects($this->once())->method('getAppValueString')
+			->with('signaling_token_alg')
+			->willReturn($algo);
+		$appConfig->expects($this->once())->method('getAppValueString')
+			->with('signaling_token_privkey_' . strtolower($algo))
+			->willReturn('123456');
 		$now = time();
 		$timeFactory
 			->expects($this->once())
@@ -445,6 +451,12 @@ class ConfigTest extends TestCase {
 		/** @var MockObject|IEventDispatcher $dispatcher */
 		$dispatcher = $this->createMock(IEventDispatcher::class);
 
+		$appConfig->expects($this->once())->method('getAppValueString')
+			->with('signaling_token_alg')
+			->willReturn($algo);
+		$appConfig->expects($this->once())->method('getAppValueString')
+			->with('signaling_token_privkey_' . strtolower($algo))
+			->willReturn('123456');
 		$now = time();
 		$timeFactory
 			->expects($this->once())
