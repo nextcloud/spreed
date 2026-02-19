@@ -393,6 +393,7 @@ namespace OCA\Talk;
  *     hiddenPinnedId: int,
  *     // Required capability: `scheduled-messages` (local)
  *     hasScheduledMessages: int,
+ *     // Bit-flag of enabled attributes of this conversation (only available with capability: `conversation-attributes`)
  *     attributes: int,
  * }
  *
