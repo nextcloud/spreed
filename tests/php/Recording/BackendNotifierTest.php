@@ -74,19 +74,21 @@ class BackendNotifierTest extends TestCase {
 		$config = \OCP\Server::get(IConfig::class);
 		$this->recordingSecret = 'the-recording-secret';
 		$this->baseUrl = 'https://localhost/recording';
-		$config->setAppValue('spreed', 'recording_servers', json_encode([
-			'secret' => $this->recordingSecret,
-			'servers' => [
-				[
-					'server' => $this->baseUrl,
-				],
-			],
-		]));
 
 		$this->secureRandom = \OCP\Server::get(ISecureRandom::class);
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 
 		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig->method('getAppValueArray')
+			->with('recording_servers')
+			->willReturn([
+				'secret' => $this->recordingSecret,
+				'servers' => [
+					[
+						'server' => $this->baseUrl,
+					],
+				],
+			]);
 		$groupManager = $this->createMock(IGroupManager::class);
 		$userManager = $this->createMock(IUserManager::class);
 		$timeFactory = $this->createMock(ITimeFactory::class);
@@ -121,8 +123,6 @@ class BackendNotifierTest extends TestCase {
 	}
 
 	public function tearDown(): void {
-		$config = \OCP\Server::get(IConfig::class);
-		$config->deleteAppValue('spreed', 'recording_servers');
 		parent::tearDown();
 	}
 
