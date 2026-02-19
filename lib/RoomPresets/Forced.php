@@ -19,7 +19,7 @@ readonly class Forced extends APreset {
 	}
 
 	#[\Override]
-	public function getIdentifier(): string {
+	public static function getIdentifier(): string {
 		return 'forced';
 	}
 
