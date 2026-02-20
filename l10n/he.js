@@ -613,17 +613,6 @@ OC.L10N.register(
     "iOS app" : "יישומון ל־iOS",
     "__language_name__" : "עברית",
     "Tasks" : "משימות",
-    "Notes" : "פתקים",
-    "Click the button below to join." : "יש ללחוץ על הכפתור שלהלן כדי להצטרף.",
-    "Today" : "היום",
-    "Yesterday" : "מחר",
-    "_%n day ago_::_%n days ago_" : ["לפני %n יום","לפני %n ימים","לפני %n ימים","לפני %n ימים"],
-    "Choose devices" : "בחירת התקנים",
-    "Appearance" : "מראה",
-    "Performance" : "ביצועים",
-    "Keyboard shortcuts" : "קיצורי מקלדת",
-    "Sharing your screen only works with Firefox version 52 or newer." : "שיתוף מסך עובד עם Firefox בגרסה 52 ומעלה.",
-    "Screensharing extension is required to share your screen." : "נדרשת הרחבה לשיתוף המסך כדי לשתף את המסך.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "נא להשתמש בדפדפן אחר כגון Firefox או Chrome כדי לשתף את המסך שלך."
+    "Notes" : "פתקים"
 },
 "nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;");

@@ -557,19 +557,7 @@ OC.L10N.register(
     "Tasks" : "Uzdevumi",
     "Notes" : "Piezīmes",
     "Reports" : "Atskaites",
-    "%s invited you to a conversation." : "%s uzaicināja Tevi uz sarunu.",
-    "You were invited to a conversation." : "Tu uzaicinājāt uz sarunu.",
-    "Click the button below to join." : "Jāklikšķina uz zemāk esošās pogas, lai pievienotos.",
-    "Join »%s«" : "Pievienoties »%s«",
-    "Set reminder for later today" : "Iestatīt atgādinājumu vēlākam šodien",
-    "Today" : "Šodien",
-    "Yesterday" : "Vakar",
-    "_%n day ago_::_%n days ago_" : ["pirms %n dienām","pirms %n dienas","pirms %n dienām"],
-    "Appearance" : "Izskats",
-    "Keyboard shortcuts" : "Tastatūras saīsnes",
-    "Sharing your screen only works with Firefox version 52 or newer." : "Ekrāna koplietošana darbojas tikai ar Firefox 52. vai jaunāku versiju.",
-    "Screensharing extension is required to share your screen." : "Ir nepieciešams ekrāna kopīgošanas paplašinājums, lai kopīgotu savu ekrānu.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Lūgums izmantot citu pārlūku, piemēram, Firefox vai Chrome, lai kopīgotu savu ekrānu.",
-    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} nav uzstādīts, tas var novest pie veiktspējas sarežģījumiem, kad izmanto darbvirsmas klientus."
+    "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} nav uzstādīts, tas var novest pie veiktspējas sarežģījumiem, kad izmanto darbvirsmas klientus.",
+    "Set reminder for later today" : "Iestatīt atgādinājumu vēlākam šodien"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

@@ -145,13 +145,6 @@ OC.L10N.register(
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
     "__language_name__" : "Español (Latin America)",
-    "Tasks" : "Tareas",
-    "Today" : "Hoy",
-    "Yesterday" : "Ayer",
-    "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
-    "Keyboard shortcuts" : "Atajos del teclado",
-    "Sharing your screen only works with Firefox version 52 or newer." : "Compartir la pantalla sólo funciona con Firefox versión 52 o superior. ",
-    "Screensharing extension is required to share your screen." : "Se requiere de la extenisón de compartir pantalla para compartir tu pantalla. ",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor usa un navegador diferente como Firefox o Chrome para compartir tu pantalla."
+    "Tasks" : "Tareas"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

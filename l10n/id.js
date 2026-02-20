@@ -497,17 +497,9 @@ OC.L10N.register(
     "Notes" : "Catatan",
     "Reports" : "Laporan",
     "Call summary - {title}" : "Ringkasan panggilan - {judul}",
-    "Talk settings" : "Pengaturan Talk",
     "Set reminder for later today" : "Atur pengingat untuk nanti hari ini",
     "Set reminder for tomorrow" : "Atur pengingat untuk besok",
     "Set reminder for this weekend" : "Atur pengingat untuk akhir pekan ini",
-    "Set reminder for next week" : "Atur pengingat untuk minggu depan",
-    "Today" : "Hari ini",
-    "Yesterday" : "Kemarin",
-    "_%n day ago_::_%n days ago_" : ["%n hari yang lalu"],
-    "Choose devices" : "Pilih perangkat",
-    "Appearance" : "Tampilan",
-    "Performance" : "Performa",
-    "Keyboard shortcuts" : "Pintasan keyboard"
+    "Set reminder for next week" : "Atur pengingat untuk minggu depan"
 },
 "nplurals=1; plural=0;");

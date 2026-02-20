@@ -938,25 +938,7 @@
     "__language_name__" : "Tiếng Việt",
     "Tasks" : "Nhiệm vụ",
     "Notes" : "Ghi chú",
-    "%s invited you to a conversation." : "%s đã được mời vào cuộc trò chuyện",
-    "You were invited to a conversation." : "Bạn đã được mời vào cuộc trò chuyện",
-    "Click the button below to join." : "Click vào nút bên dưới để tham gia",
-    "Join »%s«" : "Tham gia »%s«",
-    "Talk settings" : "Cài đặt Talk",
-    "Today" : "Hôm nay",
-    "Yesterday" : "Hôm qua",
     "Your privacy setting has been saved" : "Các thiết lập quyền riêng tư của bạn đã được lưu",
-    "Failed to save sounds setting" : "Không thể lưu cài đặt âm thanh",
-    "Choose devices" : "Chọn thiết bị",
-    "Appearance" : "Ngoại hình",
-    "Share my read-status and show the read-status of others" : "Chia sẻ trạng thái đã đọc của tôi và hiển thị trạng thái đã đọc của những người khác",
-    "Sounds" : "Âm thanh",
-    "Keyboard shortcuts" : "Phím tắt",
-    "Speed up your Talk experience with these quick shortcuts." : "Tăng tốc trải nghiệm Talk của bạn bằng các phím tắt nhanh này.",
-    "Fullscreen the chat or call" : "Toàn màn hình cuộc trò chuyện hoặc cuộc gọi",
-    "Space bar" : "Thanh dấu cách",
-    "Sharing your screen only works with Firefox version 52 or newer." : "Chia sẻ màn hình của bạn chỉ hoạt động với Firefox phiên bản 52 trở lên.",
-    "Screensharing extension is required to share your screen." : "Cần có tiện ích mở rộng để chia sẻ màn hình của bạn.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Vui lòng sử dụng một trình duyệt khác như Firefox hoặc Chrome để chia sẻ màn hình của bạn."
+    "Failed to save sounds setting" : "Không thể lưu cài đặt âm thanh"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
