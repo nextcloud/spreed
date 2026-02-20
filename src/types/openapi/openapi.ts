@@ -1944,6 +1944,7 @@ export type components = {
                     "can-upload-background": boolean;
                     "sip-enabled": boolean;
                     "sip-dialout-enabled": boolean;
+                    "default-phone-region": string;
                     "can-enable-sip": boolean;
                     "start-without-media": boolean;
                     /** Format: int64 */
