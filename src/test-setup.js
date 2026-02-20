@@ -48,6 +48,11 @@ vi.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: vi.fn(() => mockedCapabilities),
 }))
 
+vi.mock('@sapphi-red/web-noise-suppressor', () => ({
+	loadRnnoise: vi.fn(),
+	RnnoiseWorkletNode: vi.fn(),
+}))
+
 HTMLAudioElement.prototype.setSinkId = vi.fn()
 
 window._oc_webroot = '/nc-webroot' // used by getRootUrl() | since @nextcloud/router 2.2.1

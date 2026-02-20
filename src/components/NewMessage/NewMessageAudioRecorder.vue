@@ -55,6 +55,12 @@ import IconClose from 'vue-material-design-icons/Close.vue'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import { useAudioEncoder } from '../../composables/useAudioEncoder.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
+import { useSettingsStore } from '../../stores/settings.ts'
+import {
+	destroyNoiseSuppressionWorklet,
+	processNoiseSuppression,
+	registerNoiseSuppressionWorklet,
+} from '../../utils/supressNoise.ts'
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
 export default {
@@ -77,6 +83,8 @@ export default {
 	emits: ['recording', 'audioFile'],
 
 	setup() {
+		const settingsStore = useSettingsStore()
+
 		const {
 			isMediaRecorderReady,
 			isMediaRecorderLoading,
@@ -85,6 +93,7 @@ export default {
 		} = useAudioEncoder()
 
 		return {
+			settingsStore,
 			token: useGetToken(),
 			isMediaRecorderReady,
 			isMediaRecorderLoading,
@@ -173,7 +182,11 @@ export default {
 			// Create new audio stream
 			try {
 				this.audioStream = await mediaDevicesManager.getUserMedia({
-					audio: true,
+					audio: {
+						noiseSuppression: this.settingsStore.noiseSuppression && !this.settingsStore.noiseSuppressionWithModel,
+						echoCancellation: this.settingsStore.echoCancellation,
+						autoGainControl: this.settingsStore.autoGainControl && !this.settingsStore.noiseSuppressionWithModel,
+					},
 					video: false,
 				})
 			} catch (exception) {
@@ -189,7 +202,9 @@ export default {
 
 			// Create a media recorder to capture the stream
 			try {
-				this.mediaRecorder = new this.MediaRecorder(this.audioStream, {
+				await registerNoiseSuppressionWorklet()
+				const audioStreamProcessed = processNoiseSuppression(this.audioStream, this.settingsStore.noiseSuppressionWithModel)
+				this.mediaRecorder = new this.MediaRecorder(audioStreamProcessed, {
 					mimeType: 'audio/wav',
 				})
 			} catch (exception) {
@@ -243,6 +258,7 @@ export default {
 			this.mediaRecorder.stop()
 			clearInterval(this.recordTimer)
 			this.$emit('recording', false)
+			destroyNoiseSuppressionWorklet()
 		},
 
 		/**
