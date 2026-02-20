@@ -505,22 +505,9 @@
     "Tasks" : "Tareas",
     "Notes" : "Notas",
     "Reports" : "Informes",
-    "%s invited you to a conversation." : "%s te invitó a una conversación",
-    "You were invited to a conversation." : "fuiste invitado a una conversación",
-    "Click the button below to join." : "Haz click en el botón de abajo para unirte.",
-    "Join »%s«" : "Unirse »%s«",
     "Set reminder for later today" : "Configurar recordatorio para hoy, más tarde",
     "Set reminder for tomorrow" : "Configurar recordatorio para mañana",
     "Set reminder for this weekend" : "Configurar recordatorio para este fin de semana",
-    "Set reminder for next week" : "Configurar recordatorio para la próxima semana",
-    "Today" : "Hoy",
-    "Yesterday" : "Ayer",
-    "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
-    "Appearance" : "Apariencia",
-    "Performance" : "Desempeño",
-    "Keyboard shortcuts" : "Atajos del teclado",
-    "Sharing your screen only works with Firefox version 52 or newer." : "Compartir la pantalla sólo funciona con Firefox versión 52 o superior. ",
-    "Screensharing extension is required to share your screen." : "Se requiere de la extenisón de compartir pantalla para compartir tu pantalla. ",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor usa un navegador diferente como Firefox o Chrome para compartir tu pantalla."
+    "Set reminder for next week" : "Configurar recordatorio para la próxima semana"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

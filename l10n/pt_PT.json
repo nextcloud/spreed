@@ -397,16 +397,6 @@
     "__language_name__" : "Português",
     "Tasks" : "Tarefas",
     "Notes" : "Notas",
-    "Reports" : "Relatórios",
-    "Talk settings" : "Definições do Falar",
-    "Today" : "Hoje",
-    "Yesterday" : "Ontem",
-    "_%n day ago_::_%n days ago_" : ["%n dia atrás","%n dias atrás","%n dias atrás"],
-    "Appearance" : "Aspeto",
-    "Performance" : "Performance",
-    "Keyboard shortcuts" : "Atalhos de teclado",
-    "Sharing your screen only works with Firefox version 52 or newer." : "Partilhar o seu ecrã no Firefox apenas funciona com versão 52 ou mais recente. ",
-    "Screensharing extension is required to share your screen." : "Extensão de partilha de ecrã é necessária para partilhar o seu ecrã.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Por favor use um browser diferente como o Firefox ou o Chrome para partilhar o seu ecrã."
+    "Reports" : "Relatórios"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

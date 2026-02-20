@@ -334,9 +334,6 @@ OC.L10N.register(
     "Android app" : "Android-toep",
     "iOS app" : "iOS-toep",
     "__language_name__" : "Afrikaans",
-    "Tasks" : "Take",
-    "Today" : "Vandag",
-    "Yesterday" : "Gister",
-    "Keyboard shortcuts" : "Sneltoetse"
+    "Tasks" : "Take"
 },
 "nplurals=2; plural=(n != 1);");

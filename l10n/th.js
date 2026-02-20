@@ -127,11 +127,6 @@ OC.L10N.register(
     "iOS app" : "แอป iOS",
     "__language_name__" : "ไทย",
     "Tasks" : "งาน",
-    "Notes" : "โน้ต",
-    "Today" : "วันนี้",
-    "Yesterday" : "เมื่อวาน",
-    "_%n day ago_::_%n days ago_" : ["%n วันที่ผ่านมา"],
-    "Appearance" : "ลักษณะที่ปรากฏ",
-    "Keyboard shortcuts" : "แป้นพิมพ์ลัด"
+    "Notes" : "โน้ต"
 },
 "nplurals=1; plural=0;");

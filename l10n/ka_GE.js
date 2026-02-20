@@ -152,13 +152,6 @@ OC.L10N.register(
     "iOS app" : "iOS აპლიკაცია",
     "__language_name__" : "ქართული",
     "Tasks" : "დავალებები",
-    "Notes" : "ჩანაწერები",
-    "Today" : "დღეს",
-    "Yesterday" : "გუშინ",
-    "_%n day ago_::_%n days ago_" : ["%n დღის წინ","%n დღის წინ"],
-    "Keyboard shortcuts" : "კლავიატურის კომბინაციები",
-    "Sharing your screen only works with Firefox version 52 or newer." : "ეკრანის გაზიარება მოქმედია Firefox-ის მხოლოდ 52 ვერსიით ან უფრო ახლით.",
-    "Screensharing extension is required to share your screen." : "ეკრანების გასაზიარებლად საჭიროა გაფართოება.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "ეკრანის გასაზიარებლად გამოიყენეთ სხვა ბრაუზერი, Firefox-ი ან Chrome-ი."
+    "Notes" : "ჩანაწერები"
 },
 "nplurals=2; plural=(n!=1);");
