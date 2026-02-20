@@ -6,34 +6,37 @@
 import { generateRemoteUrl, imagePath } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
 import { mount } from '@vue/test-utils'
-import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { createStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import IconPlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import FilePreview from './FilePreview.vue'
 import router from '../../../../../__mocks__/router.js'
-import storeConfig from '../../../../../store/storeConfig.js'
 import { useActorStore } from '../../../../../stores/actor.ts'
+import { useUploadStore } from '../../../../../stores/upload.ts'
+
+vi.mock('vuex', () => ({
+	createStore: vi.fn(),
+	useStore: vi.fn(() => ({
+		getters: {},
+		dispatch: vi.fn(),
+	})),
+}))
 
 describe('FilePreview.vue', () => {
-	let store
-	let testStoreConfig
 	let props
 	let oldPixelRatio
 	let actorStore
+	let uploadStore
 
 	beforeEach(() => {
 		setActivePinia(createPinia())
 		actorStore = useActorStore()
+		uploadStore = useUploadStore()
 
 		oldPixelRatio = window.devicePixelRatio
-
-		testStoreConfig = cloneDeep(storeConfig)
-		store = createStore(testStoreConfig)
 
 		actorStore.userId = 'current-user-id'
 
@@ -63,7 +66,7 @@ describe('FilePreview.vue', () => {
 	function mountFilePreview() {
 		return mount(FilePreview, {
 			global: {
-				plugins: [router, store],
+				plugins: [router],
 			},
 			props,
 		})
@@ -137,22 +140,29 @@ describe('FilePreview.vue', () => {
 		})
 
 		describe('uploading', () => {
-			const path = '/Talk/path-to-file.png'
-			let getUploadFileMock
-
-			beforeEach(() => {
-				getUploadFileMock = vi.fn(() => ({
-					sharePath: path,
-					status: 'uploading',
-				}))
-				testStoreConfig.modules.fileUploadStore.getters.getUploadFile = () => getUploadFileMock
-				store = createStore(testStoreConfig)
-			})
+			const sharePath = '/Talk/path-to-file.png'
 
 			test('renders progress bar while uploading', async () => {
+				uploadStore.uploads[1000] = {
+					files: {
+						'index-1': {
+							file: {
+								id: 'temp-123',
+								index: 'index-1',
+								uploadId: 1000,
+								localUrl: 'blob:XYZ',
+							},
+							sharePath,
+							status: 'uploading',
+							temporaryMessage: {},
+							totalSize: 0,
+						},
+					},
+				}
+
 				getUploader.mockImplementation(() => ({
 					queue: [{
-						_source: path,
+						_source: sharePath,
 						_uploaded: 85,
 						_size: 100,
 					}],
@@ -173,8 +183,6 @@ describe('FilePreview.vue', () => {
 				const progressEl = wrapper.findComponent(NcProgressBar)
 				expect(progressEl.exists()).toBe(true)
 				expect(progressEl.props('value')).toBe(85)
-
-				expect(getUploadFileMock).toHaveBeenCalledWith(1000, 'index-1')
 			})
 		})
 
@@ -279,8 +287,6 @@ describe('FilePreview.vue', () => {
 
 			beforeEach(() => {
 				oldViewer = OCA.Viewer
-
-				store = createStore(testStoreConfig)
 			})
 			afterEach(() => {
 				if (oldViewer) {

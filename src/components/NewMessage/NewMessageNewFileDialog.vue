@@ -66,6 +66,7 @@ import { useFileTemplates } from '../../composables/useFileTemplates.ts'
 import { useViewer } from '../../composables/useViewer.js'
 import { createNewFile } from '../../services/filesSharingServices.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
+import { useUploadStore } from '../../stores/upload.ts'
 
 export default {
 	name: 'NewMessageNewFileDialog',
@@ -99,6 +100,7 @@ export default {
 		return {
 			openViewer,
 			settingsStore: useSettingsStore(),
+			uploadStore: useUploadStore(),
 			fileTemplateOptions,
 		}
 	},
@@ -225,7 +227,7 @@ export default {
 				return
 			}
 
-			await this.$store.dispatch('shareFile', { token: this.token, path: filePath })
+			await this.uploadStore.shareFile({ token: this.token, path: filePath })
 
 			this.loading = false
 

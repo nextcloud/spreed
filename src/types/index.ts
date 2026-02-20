@@ -526,7 +526,7 @@ export type {
 // Files upload helper types
 // FIXME might change or be reworked with fileUploadStore migration
 export type UploadFile = {
-	file: {
+	file: File & {
 		name: string
 		newName?: string
 		type: string
@@ -537,7 +537,7 @@ export type UploadFile = {
 	}
 	sharePath?: string
 	status?: string
-	temporaryMessage?: ChatMessage
+	temporaryMessage: ChatMessage
 	totalSize?: number
 }
 

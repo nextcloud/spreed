@@ -96,6 +96,7 @@ import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { MESSAGE } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { useUploadStore } from '../../stores/upload.ts'
 
 export default {
 	name: 'NewMessageUploadEditor',
@@ -123,6 +124,7 @@ export default {
 			dialogHeaderId,
 			token: useGetToken(),
 			threadId: useGetThreadId(),
+			uploadStore: useUploadStore(),
 		}
 	},
 
@@ -132,11 +134,11 @@ export default {
 		},
 
 		currentUploadId() {
-			return this.$store.getters.currentUploadId
+			return this.uploadStore.currentUploadId
 		},
 
 		files() {
-			return this.$store.getters.getInitialisedUploads(this.currentUploadId)
+			return this.uploadStore.getInitialisedUploads(this.currentUploadId)
 		},
 
 		showModal() {
@@ -167,7 +169,7 @@ export default {
 		},
 
 		voiceMessageLocalURL() {
-			return this.$store.getters.getLocalUrl(this.firstFile.temporaryMessage.referenceId)
+			return this.uploadStore.getLocalUrl(this.firstFile.temporaryMessage.referenceId)
 		},
 	},
 
@@ -190,11 +192,11 @@ export default {
 		t,
 
 		handleDismiss() {
-			this.$store.dispatch('discardUpload', this.currentUploadId)
+			this.uploadStore.discardUpload(this.currentUploadId)
 		},
 
 		handleLegacyUpload() {
-			this.$store.dispatch('uploadFiles', {
+			this.uploadStore.uploadFiles({
 				token: this.token,
 				uploadId: this.currentUploadId,
 				caption: null,
@@ -205,7 +207,7 @@ export default {
 		async handleUpload({ token, temporaryMessage }) {
 			if (this.files.length) {
 				// Create a share with optional caption
-				await this.$store.dispatch('uploadFiles', {
+				await this.uploadStore.uploadFiles({
 					token,
 					uploadId: this.currentUploadId,
 					caption: temporaryMessage.message,
@@ -217,7 +219,7 @@ export default {
 					},
 				})
 			} else {
-				this.$store.dispatch('discardUpload', this.currentUploadId)
+				this.uploadStore.discardUpload(this.currentUploadId)
 				if (temporaryMessage.message.trim()) {
 					// Proceed as a normal message
 					try {
@@ -239,12 +241,12 @@ export default {
 
 		handleFileInput(event) {
 			const files = Object.values(event.target.files)
-			this.$store.dispatch('initialiseUpload', { files, token: this.token, threadId: this.threadId, uploadId: this.currentUploadId })
+			this.uploadStore.initialiseUpload({ files, token: this.token, threadId: this.threadId, uploadId: this.currentUploadId })
 			this.$refs.fileUploadInput.value = null
 		},
 
 		handleRemoveFileFromSelection(id) {
-			this.$store.dispatch('removeFileFromSelection', id)
+			this.uploadStore.removeFileFromSelection(id)
 		},
 
 		handleDragOver(event) {
@@ -267,7 +269,7 @@ export default {
 			this.isDraggingOver = false
 
 			const files = Object.values(event.dataTransfer.files)
-			this.$store.dispatch('initialiseUpload', { files, token: this.token, threadId: this.threadId, uploadId: this.currentUploadId })
+			this.uploadStore.initialiseUpload({ files, token: this.token, threadId: this.threadId, uploadId: this.currentUploadId })
 		},
 	},
 }

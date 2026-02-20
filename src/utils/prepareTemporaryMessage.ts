@@ -19,7 +19,13 @@ export type RawTemporaryMessagePayload = Pick<ChatMessage, | 'message'
 	| 'isThread'
 	| 'threadTitle'
 	| 'threadReplies'
-	| 'parent'>>
+	| 'parent'>> & {
+		uploadId?: string
+		index?: string
+		file?: File & { newName?: string }
+		localUrl?: string
+		messageType?: typeof MESSAGE.TYPE['VOICE_MESSAGE' | 'COMMENT']
+	}
 
 export type PrepareTemporaryMessagePayload = Pick<ChatMessage, | 'message'
 	| 'token'
@@ -33,11 +39,22 @@ export type PrepareTemporaryMessagePayload = Pick<ChatMessage, | 'message'
 	| 'threadReplies'
 	| 'parent'> & {
 		uploadId?: string
-		index?: number
+		index?: string
 		file?: File & { newName?: string }
 		localUrl?: string
 		messageType?: typeof MESSAGE.TYPE['VOICE_MESSAGE' | 'COMMENT']
 	}
+
+export type TempChatMessageWithFile = Omit<ChatMessage, 'messageParameters'> & {
+	messageParameters: ChatMessage['messageParameters'] & {
+		file: ChatMessage['messageParameters'][string] & {
+			file: File & { newName?: string }
+			uploadId: string
+			index: number
+			localUrl?: string
+		}
+	}
+}
 
 /**
  * Creates a temporary message ready to be posted, based
@@ -78,7 +95,7 @@ export function prepareTemporaryMessage({
 	threadTitle,
 	threadReplies,
 	isThread,
-}: PrepareTemporaryMessagePayload): ChatMessage {
+}: PrepareTemporaryMessagePayload): ChatMessage | TempChatMessageWithFile {
 	const date = new Date()
 	let tempId = 'temp-' + date.getTime()
 	const messageParameters: ChatMessage['messageParameters'] = {}
