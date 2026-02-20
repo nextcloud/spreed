@@ -198,6 +198,9 @@
 * `threads` - Whether the chat supports threads
 * `config => call => live-transcription` - Whether live transcription is supported in calls
 
+## 22.0.10
+* `config => call => default-phone-region` - System value for the default phone region to predict the regional phone numbers
+
 ## 23
 * `pinned-messages` - Whether messages can be pinned
 * `federated-shared-items` - Whether shared items endpoints can be called in a federated conversation
