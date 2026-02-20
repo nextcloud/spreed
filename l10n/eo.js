@@ -359,11 +359,6 @@ OC.L10N.register(
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
     "__language_name__" : "Esperanto",
-    "Tasks" : "Taskoj",
-    "Today" : "Hodiaŭ",
-    "Yesterday" : "Hieraŭ",
-    "_%n day ago_::_%n days ago_" : ["antaŭ %n tago","antaŭ %n tagoj"],
-    "Performance" : "Rendimento",
-    "Keyboard shortcuts" : "Fulmoklavoj"
+    "Tasks" : "Taskoj"
 },
 "nplurals=2; plural=(n != 1);");

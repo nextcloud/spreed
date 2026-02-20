@@ -146,13 +146,6 @@ OC.L10N.register(
     "__language_name__" : "Español (Argentina)",
     "Tasks" : "Tareas",
     "Notes" : "Notas",
-    "Reports" : "Reportes",
-    "Today" : "Hoy",
-    "Yesterday" : "Ayer",
-    "_%n day ago_::_%n days ago_" : ["hace %n día","hace %n días","hace %n días"],
-    "Keyboard shortcuts" : "Atajos de teclado",
-    "Sharing your screen only works with Firefox version 52 or newer." : "Compartir la pantalla sólo funciona con Firefox versión 52 o superior. ",
-    "Screensharing extension is required to share your screen." : "Se requiere de la extenisón de compartir pantalla para compartir su pantalla. ",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Favor de usar un navegador diferente como Firefox o Chrome para compartir su pantalla."
+    "Reports" : "Reportes"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

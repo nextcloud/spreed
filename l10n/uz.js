@@ -372,10 +372,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Parol noto'g'ri. Qayta urinib ko'ring.",
     "Tasks" : "Tasks",
     "Notes" : "Eslatmalar",
-    "Reports" : "Hisobotlar",
-    "Today" : "Today",
-    "Yesterday" : "Kecha",
-    "Appearance" : "Tashqi ko'rinish",
-    "Keyboard shortcuts" : "Klaviatura yorliqlari"
+    "Reports" : "Hisobotlar"
 },
 "nplurals=1; plural=0;");

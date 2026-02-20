@@ -598,22 +598,9 @@ OC.L10N.register(
     "__language_name__" : "Íslenska",
     "Tasks" : "Verkefni",
     "Notes" : "Minnispunktar",
-    "%s invited you to a conversation." : "%s bauð þér að taka þátt í samtali.",
-    "You were invited to a conversation." : "Þér var boðið að taka þátt í samtali.",
-    "Click the button below to join." : "Smelltu á hnappinn hér fyrir neðan til að taka þátt.",
-    "Join »%s«" : "Taka þátt í »%s«",
     "Set reminder for later today" : "Setja áminningu seinna í dag",
     "Set reminder for tomorrow" : "Setja áminningu fyrir morgundaginn",
     "Set reminder for this weekend" : "Setja áminningu fyrir þessa helgi",
-    "Set reminder for next week" : "Setja áminningu fyrir í næstu viku",
-    "Today" : "Í dag",
-    "Yesterday" : "Í gær",
-    "_%n day ago_::_%n days ago_" : ["fyrir %n degi síðan","fyrir %n dögum síðan"],
-    "Appearance" : "Útlit",
-    "Performance" : "Afköst",
-    "Keyboard shortcuts" : "Flýtileiðir á lyklaborði",
-    "Sharing your screen only works with Firefox version 52 or newer." : "Skjádeiling virkar aðeins með Firefox útgáfu 52 eða nýrri.",
-    "Screensharing extension is required to share your screen." : "Það þarf skjádeili-viðaukann til að hægt sé að deila skjánum.",
-    "Please use a different browser like Firefox or Chrome to share your screen." : "Veldu einhvern annan vafra eins og Firefox eða Chrome til að deila skjánum þínum."
+    "Set reminder for next week" : "Setja áminningu fyrir í næstu viku"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

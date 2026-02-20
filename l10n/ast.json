@@ -946,21 +946,7 @@
     "Notes" : "Notes",
     "Reports" : "Informes",
     "Call summary" : "Resume de llamaes",
-    "You were invited to a conversation." : "Convidáronte a una conversación.",
-    "Talk settings" : "Configuración de Talk",
-    "Media settings" : "Configuración multimedia",
-    "Normal call" : "Llamada normal",
-    "Today" : "Güei",
-    "Yesterday" : "Ayeri",
-    "A week ago" : "Hai una selmana",
-    "_%n day ago_::_%n days ago_" : ["Hai %n día","Hai %n díes"],
     "Failed to save sounds setting" : "Nun se pue guardar la configuración de los soníos",
-    "Sounds setting saved" : "Guardóse la configuración de los soníos",
-    "Browse …" : "Restolar…",
-    "Appearance" : "Aspeutu",
-    "Sounds" : "Soníos",
-    "Performance" : "Rindimientu",
-    "Keyboard shortcuts" : "Atayos del tecláu",
-    "Space bar" : "Barra d'espaciu"
+    "Sounds setting saved" : "Guardóse la configuración de los soníos"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
