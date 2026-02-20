@@ -244,6 +244,7 @@
                                     "can-upload-background",
                                     "sip-enabled",
                                     "sip-dialout-enabled",
+                                    "default-phone-region",
                                     "can-enable-sip",
                                     "start-without-media",
                                     "max-duration",
@@ -293,6 +294,9 @@
                                     },
                                     "sip-dialout-enabled": {
                                         "type": "boolean"
+                                    },
+                                    "default-phone-region": {
+                                        "type": "string"
                                     },
                                     "can-enable-sip": {
                                         "type": "boolean"
