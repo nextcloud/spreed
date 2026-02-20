@@ -247,6 +247,7 @@ class Capabilities implements IPublicCapability {
 					'can-upload-background' => false,
 					'sip-enabled' => $this->talkConfig->isSIPConfigured(),
 					'sip-dialout-enabled' => $this->talkConfig->isSIPDialOutEnabled(),
+					'default-phone-region' => $this->serverConfig->getSystemValueString('default_phone_region'),
 					'can-enable-sip' => false,
 					'start-without-media' => $this->talkConfig->getCallsStartWithoutMedia($user?->getUID()),
 					'max-duration' => $this->appConfig->getAppValueInt('max_call_duration'),
