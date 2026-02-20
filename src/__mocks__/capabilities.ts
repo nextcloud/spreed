@@ -145,6 +145,7 @@ export const mockedCapabilities: Capabilities = {
 				'can-upload-background': true,
 				'sip-enabled': true,
 				'sip-dialout-enabled': true,
+				'default-phone-region': '',
 				'can-enable-sip': true,
 				'start-without-media': false,
 				'max-duration': 0,
