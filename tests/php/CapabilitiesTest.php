@@ -157,6 +157,7 @@ class CapabilitiesTest extends TestCase {
 						'can-upload-background' => false,
 						'sip-enabled' => false,
 						'sip-dialout-enabled' => false,
+						'default-phone-region' => '',
 						'can-enable-sip' => false,
 						'start-without-media' => false,
 						'max-duration' => 0,
@@ -316,6 +317,12 @@ class CapabilitiesTest extends TestCase {
 				['summary_threshold', 100, 100],
 			]);
 
+		$this->serverConfig->expects($this->any())
+			->method('getSystemValueString')
+			->willReturnMap([
+				['default_phone_region', '', 'DE'],
+			]);
+
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$data = $capabilities->getCapabilities();
 		$this->assertSame([
@@ -342,6 +349,7 @@ class CapabilitiesTest extends TestCase {
 						'can-upload-background' => $canUpload,
 						'sip-enabled' => false,
 						'sip-dialout-enabled' => false,
+						'default-phone-region' => 'DE',
 						'can-enable-sip' => false,
 						'start-without-media' => false,
 						'max-duration' => 0,
