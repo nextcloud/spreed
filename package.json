@@ -49,7 +49,7 @@
     "@nextcloud/vue": "^9.5.0",
     "@vue-leaflet/vue-leaflet": "^0.10.1",
     "@vueuse/components": "^14.2.0",
-    "@vueuse/core": "^14.2.0",
+    "@vueuse/core": "^14.2.1",
     "@vueuse/router": "^14.2.1",
     "base64-js": "^1.5.1",
     "blurhash": "^2.0.5",
