@@ -4,26 +4,27 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3f7ed2d673d52b7b894cc3e58c1e532c",
+    "content-hash": "e6e7af83af142a45ad0b274197c89f68",
     "packages": [
         {
             "name": "coenjacobs/mozart",
-            "version": "1.0.5",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/coenjacobs/mozart.git",
-                "reference": "deb964ce8d350c5ff6340fef1544b61bc4231410"
+                "reference": "bb96912028e344c271784ad09ee71bd7ba1c7c53"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coenjacobs/mozart/zipball/deb964ce8d350c5ff6340fef1544b61bc4231410",
-                "reference": "deb964ce8d350c5ff6340fef1544b61bc4231410",
+                "url": "https://api.github.com/repos/coenjacobs/mozart/zipball/bb96912028e344c271784ad09ee71bd7ba1c7c53",
+                "reference": "bb96912028e344c271784ad09ee71bd7ba1c7c53",
                 "shasum": ""
             },
             "require": {
                 "league/flysystem": "^3.0",
                 "league/flysystem-local": "^3.0",
                 "netresearch/jsonmapper": "^4.4",
+                "nikic/php-parser": "^4.0 || ^5.0",
                 "php": "^8.1",
                 "symfony/console": "^6.4",
                 "symfony/finder": "^6.4"
@@ -69,7 +70,7 @@
             "description": "Composes all dependencies as a package inside a WordPress plugin",
             "support": {
                 "issues": "https://github.com/coenjacobs/mozart/issues",
-                "source": "https://github.com/coenjacobs/mozart/tree/1.0.5"
+                "source": "https://github.com/coenjacobs/mozart/tree/1.1.0"
             },
             "funding": [
                 {
@@ -77,7 +78,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-06T15:55:30+00:00"
+            "time": "2026-02-12T22:01:36+00:00"
         },
         {
             "name": "league/flysystem",
@@ -317,6 +318,64 @@
                 "source": "https://github.com/cweiske/jsonmapper/tree/v4.5.0"
             },
             "time": "2024-09-08T10:13:13+00:00"
+        },
+        {
+            "name": "nikic/php-parser",
+            "version": "v5.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nikic/PHP-Parser.git",
+                "reference": "dca41cd15c2ac9d055ad70dbfd011130757d1f82"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/dca41cd15c2ac9d055ad70dbfd011130757d1f82",
+                "reference": "dca41cd15c2ac9d055ad70dbfd011130757d1f82",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "ext-json": "*",
+                "ext-tokenizer": "*",
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "ircmaxell/php-yacc": "^0.0.7",
+                "phpunit/phpunit": "^9.0"
+            },
+            "bin": [
+                "bin/php-parse"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PhpParser\\": "lib/PhpParser"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Nikita Popov"
+                }
+            ],
+            "description": "A PHP parser written in PHP",
+            "keywords": [
+                "parser",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/nikic/PHP-Parser/issues",
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.7.0"
+            },
+            "time": "2025-12-06T11:56:16+00:00"
         },
         {
             "name": "psr/container",
