@@ -42,6 +42,7 @@ OC.L10N.register(
     "{user} in {call}" : "{user} di {call}",
     "Open settings" : "Buka pengaturan",
     "error" : "galat",
+    "Presentation" : "Presentasi",
     "{user} in {conversation}" : "{user} di {conversation}",
     "Avatar image is not square" : "Gambar avatar tidak berbentuk persegi",
     "Andorra" : "Andorra",

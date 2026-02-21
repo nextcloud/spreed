@@ -47,6 +47,7 @@ OC.L10N.register(
     "A group call has started in {call}" : "Uma chamada de grupo começou em {call}",
     "Open settings" : "Abrir definições",
     "error" : "erro",
+    "Presentation" : "Apresentação",
     "Conversations" : "Conversações",
     "Messages" : "Mensagens",
     "Avatar image is not square" : "A imagem do avatar não é quadrada.",
