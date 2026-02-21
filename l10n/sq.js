@@ -16,6 +16,7 @@ OC.L10N.register(
     "New message" : "Mesazh i ri",
     "Open settings" : "Hap rregullimet",
     "error" : "gabim",
+    "Presentation" : "Paraqitje",
     "Conversations" : "Bisedat",
     "Avatar image is not square" : "Imazhi avatar nuk është katror",
     "Andorra" : "Andorra",
