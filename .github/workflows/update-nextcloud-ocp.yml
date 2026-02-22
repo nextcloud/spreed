@@ -28,7 +28,6 @@ jobs:
           - ${{ github.event.repository.default_branch }}
           - 'stable33'
           - 'stable32'
-          - 'stable31'
 
     name: update-nextcloud-ocp-${{ matrix.branches }}
 
@@ -125,3 +124,4 @@ jobs:
             Auto-generated update of [nextcloud/ocp](https://github.com/nextcloud-deps/ocp/) dependency
           labels: |
             dependencies
+            3. to review
