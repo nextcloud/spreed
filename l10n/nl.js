@@ -274,6 +274,7 @@ OC.L10N.register(
     "Dial-in information" : "Inbelinformatie",
     "Meeting ID" : "Meeting-ID",
     "Your PIN" : "Jouw PIN",
+    "Talk conversation for event" : "Talk gesprek voor evenement",
     "Password request: %s" : "Wachtwoordverzoek: %s",
     "Private conversation" : "Privégesprek",
     "Deleted user (%s)" : "Verwijderde gebruiker (%s)",
