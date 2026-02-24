@@ -184,8 +184,8 @@ import { useCallViewStore } from '../../../stores/callView.ts'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 
 // Max number of videos per page. `0`, the default value, means no cap
-const videosCap = parseInt(loadState('spreed', 'grid_videos_limit'), 10) || 0
-const videosCapEnforced = loadState('spreed', 'grid_videos_limit_enforced') || false
+const videosCap = parseInt(loadState('spreed', 'grid_videos_limit', 0), 10)
+const videosCapEnforced = loadState('spreed', 'grid_videos_limit_enforced', false) || false
 
 // Align with var(--grid-gap) in CallView
 const GRID_GAP = 8
