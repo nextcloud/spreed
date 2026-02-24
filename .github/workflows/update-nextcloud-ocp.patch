@@ -1,8 +1,8 @@
 diff --git a/.github/workflows/update-nextcloud-ocp.yml b/.github/workflows/update-nextcloud-ocp.yml
-index 3e201e5f00..43156110b1 100644
+index 5dc5f9a596..81d4279c1b 100644
 --- a/.github/workflows/update-nextcloud-ocp.yml
 +++ b/.github/workflows/update-nextcloud-ocp.yml
-@@ -125,4 +125,3 @@ jobs:
+@@ -124,4 +124,3 @@ jobs:
              Auto-generated update of [nextcloud/ocp](https://github.com/nextcloud-deps/ocp/) dependency
            labels: |
              dependencies
