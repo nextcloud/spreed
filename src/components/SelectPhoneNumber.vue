@@ -28,6 +28,9 @@ import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import NavigationHint from './UIShared/NavigationHint.vue'
 import { useLibphonenumber } from '../composables/useLibphonenumber.ts'
 import { ATTENDEE, AVATAR } from '../constants.ts'
+import { getTalkConfig } from '../services/CapabilitiesManager.ts'
+
+const defaultPhoneRegion = getTalkConfig('local', 'call', 'default-phone-region') || undefined
 
 export default {
 	name: 'SelectPhoneNumber',
@@ -75,7 +78,7 @@ export default {
 		 */
 		libPhoneNumber() {
 			return this.isLibphonenumberReady && this.value
-				? this.libphonenumber.parsePhoneNumberFromString(this.value)
+				? this.libphonenumber.parsePhoneNumberFromString(this.value, defaultPhoneRegion)
 				: undefined
 		},
 
@@ -84,7 +87,7 @@ export default {
 				return t('spreed', 'Loading …')
 			}
 
-			switch (this.libphonenumber.validatePhoneNumberLength(this.value)) {
+			switch (this.libphonenumber.validatePhoneNumberLength(this.value, defaultPhoneRegion)) {
 				case 'INVALID_LENGTH': return t('spreed', 'Number length is not valid')
 				case 'INVALID_COUNTRY': return t('spreed', 'Region code is not valid')
 				case 'TOO_SHORT': return t('spreed', 'Number length is too short')

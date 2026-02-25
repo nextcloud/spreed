@@ -516,6 +516,7 @@ namespace OCA\Talk;
  *             can-upload-background: bool,
  *             sip-enabled: bool,
  *             sip-dialout-enabled: bool,
+ *             default-phone-region: string,
  *             can-enable-sip: bool,
  *             start-without-media: bool,
  *             max-duration: int,
