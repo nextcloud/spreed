@@ -3,22 +3,11 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-	<span ref="mention" class="mention">
-		<NcUserBubble
-			v-if="size"
-			:key="isDarkTheme ? 'dark' : 'light'"
-			:displayName="name"
-			:avatarImage="avatarUrl"
-			:user="id"
-			:size="size"
-			:primary="primary" />
-	</span>
-</template>
-
 <script>
+import { generateAvatarUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-import NcUserBubble from '@nextcloud/vue/components/NcUserBubble'
+import { ref } from 'vue'
+import NcChip from '@nextcloud/vue/components/NcChip'
 import { MENTION } from '../../../../../constants.ts'
 import { getConversationAvatarOcsUrl, getUserProxyAvatarOcsUrl } from '../../../../../services/avatarService.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
@@ -27,7 +16,7 @@ export default {
 	name: 'MentionChip',
 
 	components: {
-		NcUserBubble,
+		NcChip,
 	},
 
 	props: {
@@ -58,17 +47,13 @@ export default {
 	},
 
 	setup() {
+		const failed = ref(false)
 		const isDarkTheme = useIsDarkTheme()
 
 		return {
+			failed,
 			isDarkTheme,
 			actorStore: useActorStore(),
-		}
-	},
-
-	data() {
-		return {
-			size: null,
 		}
 	},
 
@@ -89,8 +74,12 @@ export default {
 			return this.type === MENTION.TYPE.GUEST || this.type === MENTION.TYPE.EMAIL
 		},
 
+		isMentionToUser() {
+			return [MENTION.TYPE.USER, MENTION.TYPE.FEDERATED_USER].includes(this.type)
+		},
+
 		isRemoteUser() {
-			return [MENTION.TYPE.USER, MENTION.TYPE.FEDERATED_USER].includes(this.type) && this.server !== ''
+			return this.isMentionToUser && this.server !== ''
 		},
 
 		isCurrentGuest() {
@@ -123,42 +112,83 @@ export default {
 			return this.isTeamMention && this.actorStore.isActorMemberOfTeam(this.id)
 		},
 
-		primary() {
-			return this.isMentionToAll
+		variant() {
+			if (this.isMentionToAll
 				|| this.isCurrentUser
 				|| this.isCurrentUserGroup
 				|| this.isCurrentUserTeam
-				|| (this.isMentionToGuest && this.isCurrentGuest)
+				|| (this.isMentionToGuest && this.isCurrentGuest)) {
+				return 'primary'
+			}
+			return 'tertiary'
 		},
 
-		avatarUrl() {
-			if (this.isRemoteUser) {
-				return this.token
-					? getUserProxyAvatarOcsUrl(this.token, this.id + '@' + this.server, this.isDarkTheme, 64)
-					: 'icon-user-forced-white'
+		imageSource() {
+			if (this.isMentionToUser) {
+				const url = this.isRemoteUser
+					? (this.token ? getUserProxyAvatarOcsUrl(this.token, this.id + '@' + this.server, this.isDarkTheme, 64) : null)
+					: generateAvatarUrl(this.id, { isDarkTheme: this.isDarkTheme, size: 64 })
+				return { url, icon: 'icon-user-forced-white' }
 			} else if (this.isGroupMention) {
-				return 'icon-group-forced-white'
+				return { url: null, icon: 'icon-group-forced-white' }
 			} else if (this.isTeamMention) {
-				return 'icon-team-forced-white'
+				return { url: null, icon: 'icon-team-forced-white' }
 			} else if (this.isMentionToGuest) {
-				return 'icon-user-forced-white'
+				return { url: null, icon: 'icon-user-forced-white' }
 			} else if (!this.isMentionToAll) {
-				return undefined
+				return { url: null, icon: 'icon-user-forced-white' }
 			}
 
-			return getConversationAvatarOcsUrl(this.id, this.isDarkTheme)
+			return { url: getConversationAvatarOcsUrl(this.id, this.isDarkTheme), icon: 'icon-group-forced-white' }
 		},
-	},
-
-	mounted() {
-		this.size = parseInt(window.getComputedStyle(this.$refs.mention).fontSize ?? 15, 10) * 4 / 3
 	},
 }
 </script>
 
+<template>
+	<NcChip
+		:text="name"
+		:variant
+		class="mention-chip"
+		:class="{ 'mention-chip--dark': isDarkTheme }"
+		noClose>
+		<template #icon>
+			<img
+				v-if="!failed && imageSource.url"
+				:key="imageSource.url"
+				:src="imageSource.url"
+				:alt="name"
+				class="mention-chip__icon"
+				@error="failed = true">
+			<span
+				v-else
+				class="mention-chip__icon"
+				:class="[imageSource.icon]" />
+		</template>
+	</NcChip>
+</template>
+
 <style lang="scss" scoped>
-.mention {
-	display: contents;
-	white-space: nowrap;
+.mention-chip {
+	// Overwrite NcChip styles to have inline size from messages text
+	--chip-size: calc(4em / 3) !important;
+	display: inline-flex !important;
+	vertical-align: bottom !important;
+	margin-block-end: 2px !important;
+
+	&__icon {
+		display: block;
+		width: calc(var(--chip-size) - 4px);
+		height: calc(var(--chip-size) - 4px);
+		max-width: 100%;
+		max-height: 100%;
+		border-radius: 50%;
+		background-color: var(--color-text-maxcontrast-default);
+		background-size: calc(var(--chip-size) / 2);
+	}
+
+	&--dark &__icon {
+		background-color: var(--color-background-darker);
+	}
 }
 </style>
