@@ -200,3 +200,6 @@
 
 ## 22.0.3
 * `federated-shared-items` - Whether shared items endpoints can be called in a federated conversation
+
+## 22.0.10
+* `config => call => default-phone-region` - System value for the default phone region to predict the regional phone numbers
