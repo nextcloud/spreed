@@ -53,10 +53,15 @@ type PasswordPolicyCapabilities = {
 		validate: string
 	}
 }
+// From https://github.com/nextcloud/calendar/blob/main/lib/AppInfo/Capabilities.php
+type CalendarCapabilities = {
+	webui: boolean
+}
 
 // Capabilities
 export type Capabilities = {
 	spreed: SpreedCapabilities
+	calendar?: CalendarCapabilities
 	password_policy?: PasswordPolicyCapabilities
 }
 

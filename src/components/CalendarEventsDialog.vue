@@ -35,7 +35,7 @@ import SearchBox from './UIShared/SearchBox.vue'
 import StaticDateTime from './UIShared/StaticDateTime.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 import { ATTENDEE, CONVERSATION } from '../constants.ts'
-import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import { hasTalkFeature, localCapabilities } from '../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
 import { convertToUnix, ONE_HOUR_IN_MS } from '../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
@@ -47,6 +47,8 @@ const props = defineProps<{
 const emit = defineEmits<{
 	(event: 'close'): void
 }>()
+
+const isCalendarEnabled = localCapabilities.calendar?.webui ?? false
 
 const hideTriggers = (triggers: string[]) => [...triggers, 'click']
 
@@ -72,8 +74,9 @@ const upcomingEvents = computed(() => {
 				? (event.start <= now) ? t('spreed', 'Now') : event.start * 1000
 				: ''
 			const color = calendars.value[event.calendarUri]?.color ?? usernameToColor(event.calendarUri).color
+			const href = isCalendarEnabled ? (event.calendarAppUrl ?? undefined) : undefined
 
-			return { ...event, start, color, href: event.calendarAppUrl ?? undefined }
+			return { ...event, start, color, href }
 		})
 })
 

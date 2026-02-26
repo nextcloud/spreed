@@ -28,7 +28,7 @@ import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import DashboardSection from './DashboardSection.vue'
 import EventCard from './EventCard.vue'
 import { CONVERSATION } from '../../constants.ts'
-import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature, localCapabilities } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useDashboardStore } from '../../stores/dashboard.ts'
@@ -41,6 +41,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
+const isCalendarEnabled = localCapabilities.calendar?.webui ?? false
 const isDirectionRTL = isRTL()
 const isMobile = useIsMobile()
 const isSmallMobile = useIsSmallMobile()
@@ -313,6 +314,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					</template>
 					<template #action>
 						<NcButton
+							v-if="isCalendarEnabled"
 							variant="secondary"
 							:href="generateUrl('apps/calendar')"
 							target="_blank">
