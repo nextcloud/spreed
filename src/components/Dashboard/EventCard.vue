@@ -24,6 +24,7 @@ import ConversationIcon from '../ConversationIcon.vue'
 import IconTalk from '../../../img/app-dark.svg?raw'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CONVERSATION } from '../../constants.ts'
+import { localCapabilities } from '../../services/CapabilitiesManager.ts'
 import { formattedTime, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
 type ConversationFromEvent = Pick<Conversation, 'token' | 'type' | 'name' | 'displayName' | 'avatarVersion' | 'callStartTime' | 'hasCall'>
@@ -31,6 +32,9 @@ type ConversationFromEvent = Pick<Conversation, 'token' | 'type' | 'name' | 'dis
 const props = defineProps<{
 	eventRoom: DashboardEventRoom
 }>()
+
+const isCalendarEnabled = localCapabilities.calendar?.webui ?? false
+
 const store = useStore()
 const router = useRouter()
 const isInCall = useIsInCall()
@@ -234,6 +238,7 @@ function handleJoin({ call }: { call: boolean }) {
 				{{ t('spreed', 'View conversation') }}
 			</NcButton>
 			<NcButton
+				v-if="isCalendarEnabled"
 				variant="tertiary"
 				:href="props.eventRoom.eventLink"
 				target="_blank"
