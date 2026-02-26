@@ -127,7 +127,7 @@ class CalDavEventListener implements IEventListener {
 
 		$name = $vevent->SUMMARY?->getValue();
 		if ($name !== null) {
-			$name = strlen($name) > 254 ? substr($name, 0, 254) . "\u{2026}" : $name;
+			$name = strlen($name) > 254 ? substr($name, 0, 254) . "\u{2026}" : trim($name);
 		}
 
 		$description = $vevent->DESCRIPTION?->getValue();
