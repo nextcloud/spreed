@@ -1395,13 +1395,8 @@ class ParticipantService {
 	 */
 	public function sendCallNotificationForAttendee(Room $room, Participant $currentParticipant, int $targetAttendeeId): void {
 		$attendee = $this->attendeeMapper->getById($targetAttendeeId);
-		if ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
-			$target = new Participant($room, $attendee, null);
-			$event = new ParticipantModifiedEvent($room, $target, AParticipantModifiedEvent::PROPERTY_RESEND_CALL, 1);
-			$this->dispatcher->dispatchTyped($event);
-			return;
-		}
-		if ($attendee->getActorType() !== Attendee::ACTOR_USERS) {
+
+		if ($attendee->getActorType() !== Attendee::ACTOR_USERS && $attendee->getActorType() !== Attendee::ACTOR_FEDERATED_USERS) {
 			throw new \InvalidArgumentException('actor-type');
 		}
 
@@ -1409,16 +1404,23 @@ class ParticipantService {
 			throw new DoesNotExistException('Room mismatch');
 		}
 
-		$userStatus = $this->userStatusManager->getUserStatuses([$attendee->getActorId()]);
-		if (isset($userStatus[$attendee->getActorId()]) && $userStatus[$attendee->getActorId()]->getStatus() === IUserStatus::DND) {
-			throw new \InvalidArgumentException('status');
-		}
-
 		$sessions = $this->sessionMapper->findByAttendeeId($targetAttendeeId);
 		foreach ($sessions as $session) {
 			if ($session->getInCall() !== Participant::FLAG_DISCONNECTED) {
 				return;
 			}
+		}
+
+		if ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			$target = new Participant($room, $attendee, null);
+			$event = new ParticipantModifiedEvent($room, $target, AParticipantModifiedEvent::PROPERTY_RESEND_CALL, 1);
+			$this->dispatcher->dispatchTyped($event);
+			return;
+		}
+
+		$userStatus = $this->userStatusManager->getUserStatuses([$attendee->getActorId()]);
+		if (isset($userStatus[$attendee->getActorId()]) && $userStatus[$attendee->getActorId()]->getStatus() === IUserStatus::DND) {
+			throw new \InvalidArgumentException('status');
 		}
 
 		$target = new Participant($room, $attendee, null);
