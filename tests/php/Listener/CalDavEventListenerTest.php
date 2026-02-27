@@ -738,4 +738,76 @@ EOF;
 
 		$this->listener->handle($event);
 	}
+
+	public function testSummaryWithSurroundingWhitespaceGetsTrimmed(): void {
+		$calData = str_replace(
+			'SUMMARY:Test',
+			'SUMMARY:  Test Meeting  ',
+			str_replace('{{{LOCATION}}}', 'http://talk.example.com/call/12345', $this->calData)
+		);
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
+		$room = $this->createMock(Room::class);
+		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
+
+		$this->manager->expects(self::once())
+			->method('getRoomForUserByToken')
+			->willReturn($room);
+		$this->participantService->expects(self::once())
+			->method('getParticipant')
+			->willReturn($this->participant);
+		$this->roomService->expects(self::once())
+			->method('hasExistingCalendarEvents')
+			->willReturn(false);
+		$this->roomService->expects(self::never())
+			->method('resetObject');
+		$this->roomService->expects(self::once())
+			->method('setName')
+			->with($room, 'Test Meeting');
+		$this->timezoneService->expects(self::never())
+			->method('getUserTimezone');
+		$this->timezoneService->expects(self::never())
+			->method('getDefaultTimezone');
+		$this->logger->expects(self::never())
+			->method('debug');
+		$this->logger->expects(self::never())
+			->method('warning');
+
+		$this->listener->handle($event);
+	}
+
+	public function testWhitespaceOnlySummaryBecomesEmptyString(): void {
+		$calData = str_replace(
+			'SUMMARY:Test',
+			'SUMMARY:   ',
+			str_replace('{{{LOCATION}}}', 'http://talk.example.com/call/12345', $this->calData)
+		);
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
+		$room = $this->createMock(Room::class);
+		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
+
+		$this->manager->expects(self::once())
+			->method('getRoomForUserByToken')
+			->willReturn($room);
+		$this->participantService->expects(self::once())
+			->method('getParticipant')
+			->willReturn($this->participant);
+		$this->roomService->expects(self::once())
+			->method('hasExistingCalendarEvents')
+			->willReturn(false);
+		$this->roomService->expects(self::never())
+			->method('resetObject');
+		$this->roomService->expects(self::once())
+			->method('setName')
+			->with($room, '');
+		$this->timezoneService->expects(self::never())
+			->method('getUserTimezone');
+		$this->timezoneService->expects(self::never())
+			->method('getDefaultTimezone');
+		$this->logger->expects(self::never())
+			->method('debug');
+		$this->logger->expects(self::never())
+			->method('warning');
+
+		$this->listener->handle($event);
+	}
 }
