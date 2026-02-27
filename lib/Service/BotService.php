@@ -74,6 +74,7 @@ class BotService {
 			'type' => 'Join',
 			'actor' => $this->activityPubHelper->generateApplicationFromBot($event->getBotServer()),
 			'object' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
+			'published' => $this->timeFactory->getDateTime()->format(DATE_ATOM),
 		]);
 	}
 
@@ -82,6 +83,7 @@ class BotService {
 			'type' => 'Leave',
 			'actor' => $this->activityPubHelper->generateApplicationFromBot($event->getBotServer()),
 			'object' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
+			'published' => $this->timeFactory->getDateTime()->format(DATE_ATOM),
 		]);
 	}
 
@@ -138,6 +140,7 @@ class BotService {
 			'actor' => $this->activityPubHelper->generatePersonFromAttendee($attendee),
 			'object' => $this->activityPubHelper->generateNote($event->getComment(), $messageData, 'message', $inReplyTo),
 			'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
+			'published' => $event->getComment()->getCreationDateTime()->format(DATE_ATOM),
 		]);
 	}
 
@@ -166,6 +169,7 @@ class BotService {
 			'actor' => $this->activityPubHelper->generatePersonFromMessageActor($message),
 			'object' => $this->activityPubHelper->generateNote($event->getComment(), $messageData, $message->getMessageRaw() ?: 'message'),
 			'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
+			'published' => $event->getComment()->getCreationDateTime()->format(DATE_ATOM),
 		]);
 	}
 
@@ -195,6 +199,7 @@ class BotService {
 			'object' => $this->activityPubHelper->generateNote($event->getMessage(), $messageData, $message->getMessageRaw()),
 			'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
 			'content' => $event->getReaction(),
+			'published' => $event->getReactionMessage()?->getCreationDateTime()->format(DATE_ATOM),
 		]);
 	}
 
@@ -229,6 +234,7 @@ class BotService {
 				'content' => $event->getReaction(),
 			],
 			'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
+			'published' => $event->getReactionMessage()?->getCreationDateTime()->format(DATE_ATOM),
 		]);
 	}
 
