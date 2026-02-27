@@ -8,13 +8,26 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCP\IRequest;
 use OCP\ISession;
 
 class TalkSession {
+	public const HEADER_TAB_ID = 'x-nextcloud-talk-session-tab-id';
+	public const HEADER_TAB_ID_REGEX = '/^[a-zA-Z0-9]{64}$/';
+	public const TAB_ID_SEPARATOR = '$';
 
 	public function __construct(
 		protected ISession $session,
+		protected IRequest $request,
 	) {
+	}
+
+	protected function getTabId(): string {
+		$tabId = $this->request->getHeader(self::HEADER_TAB_ID);
+		if (preg_match(self::HEADER_TAB_ID_REGEX, $tabId)) {
+			return self::TAB_ID_SEPARATOR . $tabId;
+		}
+		return '';
 	}
 
 	/**
@@ -96,11 +109,13 @@ class TalkSession {
 	}
 
 	protected function getValue(string $key, string $token): ?string {
+		$token .= $this->getTabId();
 		$values = $this->getValues($key);
 		return $values[$token] ?? null;
 	}
 
 	protected function setValue(string $key, string $token, string $value): void {
+		$token .= $this->getTabId();
 		$reopened = $this->session->reopen();
 
 		$values = $this->getValues($key);
@@ -117,7 +132,18 @@ class TalkSession {
 		$reopened = $this->session->reopen();
 
 		$values = $this->getValues($key);
-		unset($values[$token]);
+		$tabId = $this->getTabId();
+		if ($tabId !== '') {
+			unset($values[$token . $tabId]);
+		} else {
+			// This request does not support tabId, so we need to destroy all related data
+			foreach ($values as $tokenKey => $value) {
+				$tokenKey = (string)$tokenKey;
+				if (str_starts_with($tokenKey, $token)) {
+					unset($values[$tokenKey]);
+				}
+			}
+		}
 		$this->session->set($key, json_encode($values));
 
 		if ($reopened) {

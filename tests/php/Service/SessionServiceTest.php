@@ -13,6 +13,7 @@ use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Service\SessionService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
+use OCP\IRequest;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -23,6 +24,7 @@ class SessionServiceTest extends TestCase {
 	protected ?SessionMapper $sessionMapper = null;
 	protected ISecureRandom&MockObject $secureRandom;
 	protected ITimeFactory&MockObject $timeFactory;
+	protected IRequest&MockObject $request;
 	private ?SessionService $service = null;
 
 	private const RANDOM_254 = '123456789abcdef0123456789abcdef1123456789abcdef2123456789abcdef3123456789abcdef4123456789abcdef5123456789abcdef6123456789abcdef7123456789abcdef8123456789abcdef9123456789abcdefa123456789abcdefb123456789abcdefc123456789abcdefd123456789abcdefe123456789abcde';
@@ -35,11 +37,13 @@ class SessionServiceTest extends TestCase {
 		$this->sessionMapper = \OCP\Server::get(SessionMapper::class);
 		$this->secureRandom = $this->createMock(ISecureRandom::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
+		$this->request = $this->createMock(IRequest::class);
 		$this->service = new SessionService(
 			$this->sessionMapper,
 			\OCP\Server::get(IDBConnection::class),
 			$this->secureRandom,
 			$this->timeFactory,
+			$this->request,
 		);
 	}
 
@@ -144,6 +148,31 @@ class SessionServiceTest extends TestCase {
 		self::assertEquals($random . '#' . $cloudId, $session->getSessionId());
 	}
 
+	public function testExtendSessionIdWithTabId(): void {
+		$attendee = new Attendee();
+		$attendee->setId(42);
+		$attendee->setActorType(Attendee::ACTOR_USERS);
+		$attendee->setActorId('test');
+		$this->attendeeIds[] = $attendee->getId();
+
+		$random = self::RANDOM_254 . 'x';
+
+		$tabId = 'RANDOMSTRINGFORTESTING50ScpCTlpUqD9tOQZUiwPCgj1BcCmiWeuAqolwWx8t';
+		$this->request->method('getHeader')
+			->with('x-nextcloud-talk-session-tab-id')
+			->willReturn($tabId);
+
+		$this->secureRandom->expects($this->once())
+			->method('generate')
+			->with(255)
+			->willReturn($random);
+
+		$session = $this->service->createSessionForAttendee($attendee);
+
+		self::assertEquals(320, strlen($session->getSessionId()));
+		self::assertEquals($random . '$' . $tabId, $session->getSessionId());
+	}
+
 	public function testExtendSessionIdWithMaximumLengthCloudId(): void {
 		$attendee = new Attendee();
 		$attendee->setId(42);
@@ -195,5 +224,37 @@ class SessionServiceTest extends TestCase {
 		self::assertEquals(257, strlen($cloudId));
 		self::assertEquals(512, strlen($session->getSessionId()));
 		self::assertEquals($random . '#' . $trimmedCloudId, $session->getSessionId());
+	}
+
+	public function testExtendSessionIdWithTabIdAndTooLongCloudId(): void {
+		$attendee = new Attendee();
+		$attendee->setId(42);
+		$attendee->setActorType(Attendee::ACTOR_USERS);
+		$attendee->setActorId('test');
+		$this->attendeeIds[] = $attendee->getId();
+
+		$random = self::RANDOM_254 . 'x';
+
+		$tabId = 'RANDOMSTRINGFORTESTING50ScpCTlpUqD9tOQZUiwPCgj1BcCmiWeuAqolwWx8t';
+		$this->request->method('getHeader')
+			->with('x-nextcloud-talk-session-tab-id')
+			->willReturn($tabId);
+
+		$this->secureRandom->expects($this->once())
+			->method('generate')
+			->with(255)
+			->willReturn($random);
+
+		// User ids are 64 characters long at most; total cloud id length needs
+		// to leave room for the '#' joining the ids.
+		$cloudId = 'user123456789abcdef0123456789abcdef1123456789abcdef2123456789abc@server123456789abcdef0123456789abcdef1123456789abcdef2123456789abcdef3123456789abcdef4123456789abcdef5123456789abcdef612345.com';
+		$trimmedCloudId = 'user123456789abcdef0123456789abcdef1123456789abcdef2123456789abc@server123456789abcdef0123456789abcdef1123456789abcdef2123456789abcdef3123456789abcdef4123456789abcdef5123456789abcdef612345.co';
+		$attendee->setInvitedCloudId($cloudId);
+
+		$session = $this->service->createSessionForAttendee($attendee);
+
+		self::assertEquals(192, strlen($cloudId));
+		self::assertEquals(512, strlen($session->getSessionId()));
+		self::assertEquals($random . '$' . $tabId . '#' . $trimmedCloudId, $session->getSessionId());
 	}
 }
