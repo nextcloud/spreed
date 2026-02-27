@@ -63,12 +63,11 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedTalkGroupIds(): array {
-		$groups = $this->appConfig->getAppValueString('allowed_groups');
-		if ($groups === '') {
+		$groups = $this->appConfig->getAppValueArray('allowed_groups');
+		if (empty($groups)) {
 			return [];
 		}
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		return $groups;
 	}
 
 	/**
@@ -101,12 +100,11 @@ class Config {
 	 * @return string[]
 	 */
 	public function getSIPGroups(): array {
-		$groups = $this->appConfig->getAppValueString('sip_bridge_groups');
-		if ($groups === '') {
+		$groups = $this->appConfig->getAppValueArray('sip_bridge_groups');
+		if (empty($groups)) {
 			return [];
 		}
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		return $groups;
 	}
 
 	public function isSIPConfigured(): bool {
@@ -175,13 +173,8 @@ class Config {
 	}
 
 	public function getRecordingServers(): array {
-		$config = $this->appConfig->getAppValueString('recording_servers');
-		if ($config === '') {
-			return [];
-		}
-
-		$recording = json_decode($config, true);
-		if (!is_array($recording) || !isset($recording['servers'])) {
+		$recording = $this->appConfig->getAppValueArray('recording_servers');
+		if (empty($recording) || !isset($recording['servers'])) {
 			return [];
 		}
 
@@ -189,17 +182,12 @@ class Config {
 	}
 
 	public function getRecordingSecret(): string {
-		$config = $this->appConfig->getAppValueString('recording_servers');
-		if ($config === '') {
+		$config = $this->appConfig->getAppValueArray('recording_servers');
+		if (!is_array($config) || !isset($config['secret'])) {
 			return '';
 		}
 
-		$recording = json_decode($config, true);
-		if (!is_array($recording)) {
-			return '';
-		}
-
-		return $recording['secret'];
+		return $config['secret'];
 	}
 
 	public function isRecordingEnabled(): bool {
@@ -277,12 +265,11 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedConversationsGroupIds(): array {
-		$groups = $this->appConfig->getAppValueString('start_conversations');
-		if ($groups === '') {
+		$groups = $this->appConfig->getAppValueArray('start_conversations');
+		if (empty($groups)) {
 			return [];
 		}
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		return $groups;
 	}
 
 	public function isNotAllowedToCreateConversations(IUser $user): bool {
@@ -392,14 +379,9 @@ class Config {
 	 * @return array
 	 */
 	public function getTurnServers(bool $withEvent = true): array {
-		$config = $this->appConfig->getAppValueString('turn_servers');
-		if ($config === '') {
+		$servers = $this->appConfig->getAppValueArray('turn_servers');
+		if (empty($servers)) {
 			return [];
-		}
-
-		$servers = json_decode($config, true);
-		if (empty($servers) || !is_array($servers)) {
-			$servers = [];
 		}
 
 		if ($withEvent) {
@@ -456,7 +438,7 @@ class Config {
 			self::SIGNALING_CLUSTER_CONVERSATION,
 		];
 
-		$mode = $this->config->getAppValue('spreed', 'signaling_mode', null);
+		$mode = $this->appConfig->getAppValueString('signaling_mode');
 		if ($mode === self::SIGNALING_INTERNAL) {
 			return self::SIGNALING_INTERNAL;
 		}
@@ -480,12 +462,8 @@ class Config {
 	 * @return array
 	 */
 	public function getSignalingServers(): array {
-		$config = $this->appConfig->getAppValueString('signaling_servers');
-		if ($config === '') {
-			return [];
-		}
-		$signaling = json_decode($config, true);
-		if (!is_array($signaling) || !isset($signaling['servers'])) {
+		$signaling = $this->appConfig->getAppValueArray('signaling_servers');
+		if (empty($signaling) || !isset($signaling['servers'])) {
 			return [];
 		}
 
@@ -510,7 +488,7 @@ class Config {
 	}
 
 	public function getHideSignalingWarning(): bool {
-		return $this->config->getAppValue('spreed', 'hide_signaling_warning', 'no') === 'yes';
+		return $this->appConfig->getAppValueBool('hide_signaling_warning');
 	}
 
 	/**
@@ -546,7 +524,7 @@ class Config {
 		// TODO(fancycode): Is there a possibility for a race condition?
 		$secret = $this->secureRandom->generate(255);
 		if (empty($userId)) {
-			$this->appConfig->getAppValueString('signaling_ticket_secret', $secret);
+			$this->appConfig->setAppValueString('signaling_ticket_secret', $secret);
 		} else {
 			$this->config->setUserValue($userId, 'spreed', 'signaling_ticket_secret', $secret);
 		}
