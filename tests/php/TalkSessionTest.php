@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php;
 
 use OCA\Talk\TalkSession;
+use OCP\IRequest;
 use OCP\ISession;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -16,13 +17,18 @@ use Test\TestCase;
 
 class TalkSessionTest extends TestCase {
 	protected ISession&MockObject $session;
+	protected IRequest&MockObject $request;
 	protected ?TalkSession $talkSession = null;
 
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->session = $this->createMock(ISession::class);
-		$this->talkSession = new TalkSession($this->session);
+		$this->request = $this->createMock(IRequest::class);
+		$this->talkSession = new TalkSession(
+			$this->session,
+			$this->request,
+		);
 	}
 
 	public static function dataGet(): array {
@@ -90,7 +96,7 @@ class TalkSessionTest extends TestCase {
 			'session is null' => [null, json_encode([])],
 			'corrupted json' => ['{invalid json', json_encode([])],
 			'no data for token' => [json_encode(['t2' => 'd2']), json_encode(['t2' => 'd2'])],
-			'remove data' => [json_encode(['t2' => 'd2', 't1' => 'd1']), json_encode(['t2' => 'd2'])],
+			'remove data' => [json_encode(['t2' => 'd2', 't1' => 'd1', '12345' => 'd3']), json_encode(['t2' => 'd2', '12345' => 'd3'])],
 		];
 	}
 
