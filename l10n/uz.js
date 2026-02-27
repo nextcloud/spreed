@@ -314,6 +314,7 @@ OC.L10N.register(
     "_%n day_::_%n days_" : ["%n kun"],
     "_%n week_::_%n weeks_" : ["%n hafta"],
     "Password protection" : "Parol himoyasi",
+    "Change password" : "Change password",
     "Edit" : "Tahrirlash",
     "Delete" : "O'chirish",
     "Notifications" : "Notifications",

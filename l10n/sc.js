@@ -691,6 +691,7 @@ OC.L10N.register(
     "Permanently delete all the messages in this conversation." : "Cantzella in manera definitiva totu is messàgios in custa resonada.",
     "Password protection" : "Bardiadura de sa crae",
     "Set a password" : "Cunfigura una crae",
+    "Change password" : "Càmbia crae",
     "Enter new password" : "Inserta sa crae noa",
     "Save password" : "Sarva sa crae",
     "Resend invitations" : "Torra a imbiare is invitos",

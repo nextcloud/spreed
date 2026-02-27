@@ -981,6 +981,7 @@ OC.L10N.register(
     "Allow guests to join this conversation via link" : "Dovoli gostom povezovanje v pogovor prek povezave",
     "Password protection" : "Zaščiti z geslom",
     "Set a password" : "Nastavi geslo",
+    "Change password" : "Spremeni geslo",
     "Enter new password" : "Vpis novega gesla",
     "Save password" : "Shrani geslo",
     "Copy password" : "Kopiraj geslo",

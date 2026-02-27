@@ -1206,6 +1206,7 @@ OC.L10N.register(
     "This conversation is password-protected. Guests need password to join" : "This conversation is password-protected. Guests need password to join",
     "Password protection is needed for public conversations" : "Password protection is needed for public conversations",
     "Set a password" : "ຕັ້ງລະຫັດຜ່ານ",
+    "Change password" : "ປ່ຽນລະຫັດຜ່ານ",
     "Enter new password" : "Enter new password",
     "Save password" : "Save password",
     "Copy password" : "Copy password",

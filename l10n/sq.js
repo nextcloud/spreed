@@ -212,6 +212,7 @@ OC.L10N.register(
     "Delete conversation" : "Fshijeni bisedën",
     "Password protection" : "Password protection",
     "Set a password" : "Vendosni një fjalëkalim",
+    "Change password" : "Ndrysho fjalëkalimin",
     "Edit" : "Përpuno",
     "Delete" : "Fshij",
     "Log content" : "Përmbajtja e hyrjes",

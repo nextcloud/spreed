@@ -1205,6 +1205,7 @@ OC.L10N.register(
     "This conversation is password-protected. Guests need password to join" : "Овај разговор је заштићен лозинком. Гости морају да наведу лозинку ако желе да се придруже",
     "Password protection is needed for public conversations" : "За јавне разговоре је обавезна заштита лозинком",
     "Set a password" : "Постави лозинку",
+    "Change password" : "Измени лозинку",
     "Enter new password" : "Унесите нову лозинку",
     "Save password" : "Сачувај лозинку",
     "Copy password" : "Копирај лозинку",

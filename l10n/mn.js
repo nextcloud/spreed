@@ -1199,6 +1199,7 @@ OC.L10N.register(
     "This conversation is password-protected. Guests need password to join" : "Энэ яриа нууц үгээр хамгаалагдсан. Зочид нэгдэхэд нууц үг хэрэгтэй",
     "Password protection is needed for public conversations" : "Нийтийн яриануудад нууц үгээр хамгаалалт шаардлагатай",
     "Set a password" : "Нууц үг тохируулах",
+    "Change password" : "Нууц үг өөрчлөх",
     "Enter new password" : "Шинэ нууц үг оруулах",
     "Save password" : "Нууц үг хадгалах",
     "Copy password" : "Нууц үг хуулах",

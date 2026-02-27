@@ -1217,6 +1217,7 @@ OC.L10N.register(
     "This conversation is password-protected. Guests need password to join" : "Ovaj razgovor je zaštićen lozinkom. Gosti trebaju lozinku za pridruživanje",
     "Password protection is needed for public conversations" : "Za javne razgovore potrebna je zaštita lozinkom",
     "Set a password" : "Postavi lozinku",
+    "Change password" : "Promijeni lozinku",
     "Enter new password" : "Unesite novu lozinku",
     "Save password" : "Spremi zaporku",
     "Copy password" : "Kopiraj lozinku",

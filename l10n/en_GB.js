@@ -1219,6 +1219,7 @@ OC.L10N.register(
     "This conversation is password-protected. Guests need password to join" : "This conversation is password-protected. Guests need password to join",
     "Password protection is needed for public conversations" : "Password protection is needed for public conversations",
     "Set a password" : "Set a password",
+    "Change password" : "Change password",
     "Enter new password" : "Enter new password",
     "Save password" : "Save password",
     "Copy password" : "Copy password",
