@@ -12,6 +12,7 @@ import { reactive } from 'vue'
 import { CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from './constants.ts'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.ts'
+import { setTalkSessionUniqueTabIdHeader } from './services/talkSessionUniqueTabId.ts'
 import store from './store/index.js'
 import { useIntegrationsStore } from './stores/integrations.js'
 import pinia from './stores/pinia.ts'
@@ -106,6 +107,8 @@ function cleanOutdatedBrowserStorageKeys() {
 		}
 	})
 }
+
+setTalkSessionUniqueTabIdHeader()
 
 if (window.requestIdleCallback) {
 	window.requestIdleCallback(() => {
