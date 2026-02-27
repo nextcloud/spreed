@@ -226,7 +226,7 @@ export default {
 		saveStartCalls() {
 			this.loadingStartCalls = true
 
-			OCP.AppConfig.setValue('spreed', 'start_calls', this.startCalls.value, {
+			OCP.AppConfig.setValue('spreed', 'start_calls', String(this.startCalls.value), {
 				success: () => {
 					this.loadingStartCalls = false
 				},
