@@ -288,8 +288,8 @@ class Config {
 	 */
 	public function getDefaultPermissions(): int {
 		// Admin configured default permissions
-		$configurableDefault = $this->appConfig->getAppValueInt('default_permissions');
-		if ($configurableDefault !== 0) {
+		$configurableDefault = $this->appConfig->getAppValueString('default_permissions');
+		if ($configurableDefault !== '') {
 			return min(Attendee::PERMISSIONS_MAX_CUSTOM, max(Attendee::PERMISSIONS_DEFAULT, $configurableDefault));
 		}
 
