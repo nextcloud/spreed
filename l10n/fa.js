@@ -925,6 +925,7 @@ OC.L10N.register(
     "Allow guests to join this conversation via link" : "Allow guests to join this conversation via link",
     "Password protection" : "Password protection",
     "Set a password" : "رمزعبور تنظیم کنید",
+    "Change password" : "تغییر گذرواژه",
     "Enter new password" : "Enter new password",
     "Save password" : "Save password",
     "Resend invitations" : "Resend invitations",

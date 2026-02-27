@@ -448,6 +448,7 @@ OC.L10N.register(
     "_%n day_::_%n days_" : ["יום","יומיים","%n ימים"],
     "Password protection" : "הגנה בססמה",
     "Set a password" : "הגדרת ססמה",
+    "Change password" : "שינוי ססמה",
     "Start time (optional)" : "מועד התחלה (רשות)",
     "Edit" : "עריכה",
     "More information" : "מידע נוסף",

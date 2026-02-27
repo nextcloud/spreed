@@ -1201,6 +1201,7 @@ OC.L10N.register(
     "This conversation is password-protected. Guests need password to join" : "Ця розмова захищена паролем. Гостям потрібен пароль, щоб приєднатися",
     "Password protection is needed for public conversations" : "Захист паролем потрібний для публічних розмов",
     "Set a password" : "Встановити пароль",
+    "Change password" : "Змінити пароль",
     "Enter new password" : "Введіть новий пароль",
     "Save password" : "Зберегти пароль",
     "Copy password" : "Скопіювати пароль",

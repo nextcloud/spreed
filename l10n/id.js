@@ -353,6 +353,7 @@ OC.L10N.register(
     "_%n week_::_%n weeks_" : ["%n minggu"],
     "Password protection" : "Password protection",
     "Set a password" : "Tetapkan kata sandi",
+    "Change password" : "Ubah kata sandi",
     "Invalid language" : "Bahasa tidak valid",
     "Edit" : "Sunting",
     "More information" : "Informasi lebih lanjut",

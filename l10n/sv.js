@@ -1205,6 +1205,7 @@ OC.L10N.register(
     "This conversation is password-protected. Guests need password to join" : "Den här konversationen är lösenordsskyddad. Gäster behöver lösenord för att gå med",
     "Password protection is needed for public conversations" : "Lösenordsskydd krävs för offentliga konversationer",
     "Set a password" : "Sätt ett lösenord",
+    "Change password" : "Byt lösenord",
     "Enter new password" : "Ange nytt lösenord",
     "Save password" : "Spara lösenord",
     "Copy password" : "Kopiera lösenord",

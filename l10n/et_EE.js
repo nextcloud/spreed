@@ -1186,6 +1186,7 @@ OC.L10N.register(
     "This conversation is password-protected. Guests need password to join" : "See vestlus on kaitstud salasõnaga. Külalised vajavad liitumiseks salasõna",
     "Password protection is needed for public conversations" : "Kaitstus salasõnaga on kohustuslik avalike vestluste puhul",
     "Set a password" : "Lisa salasõna",
+    "Change password" : "Muuda salasõna",
     "Enter new password" : "Sisesta uus salasõna",
     "Save password" : "Salvesta salasõna",
     "Copy password" : "Kopeeri salasõna",

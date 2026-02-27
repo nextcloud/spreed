@@ -617,6 +617,7 @@ OC.L10N.register(
     "Allow guests to join this conversation via link" : "Leisti svečiams prisijungti prie šio pokalbio per nuorodą",
     "Password protection" : "Apsauga slaptažodžiu",
     "Set a password" : "Nustatyti slaptažodį",
+    "Change password" : "Keisti slaptažodį",
     "Save password" : "Įrašyti slaptažodį",
     "Copy password" : "Kopijuoti slaptažodį",
     "Guests are allowed to join this conversation via link" : "Svečiams leidžiama prisijungti prie šio pokalbio per nuorodą",

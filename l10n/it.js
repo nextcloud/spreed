@@ -1201,6 +1201,7 @@ OC.L10N.register(
     "This conversation is password-protected. Guests need password to join" : "Questa conversazione è protetta da password. Gli ospiti devono disporre della password per partecipare.",
     "Password protection is needed for public conversations" : "È necessaria la protezione con password per le conversazioni pubbliche",
     "Set a password" : "Imposta una password",
+    "Change password" : "Modifica password",
     "Enter new password" : "Inserisci nuova password",
     "Save password" : "Salva la password",
     "Copy password" : "Copia password",

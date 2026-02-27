@@ -560,6 +560,7 @@ OC.L10N.register(
     "Guest access" : "Gæsteadgang",
     "Password protection" : "Adgangskodebeskyttelse",
     "Set a password" : "Indstil en adgangskode",
+    "Change password" : "Skift adgangskode",
     "Resend invitations" : "Gensend invitationer",
     "Invalid language" : "Ugyldigt sprog",
     "Start time (optional)" : "Starttid (valgfri)",
