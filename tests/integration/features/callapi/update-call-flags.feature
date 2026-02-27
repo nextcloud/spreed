@@ -25,7 +25,7 @@ Feature: callapi/update-call-flags
     And user "owner" joins call "public room" with 200 (v4)
     Then signaling server received the following requests
       | token | data |
-      | public room | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true}}}} |
+      | public room | {"type":"message","message":{"data":{"type":"chat","chat":{"refresh":true,"comment":[]}}}} |
       | public room | {"type":"incall","incall":{"incall":7,"changed":[{"inCall":7,"lastPing":LAST_PING(),"sessionId":"SESSION(owner)","nextcloudSessionId":"SESSION(owner)","participantType":1,"participantPermissions":254,"actorType":"users","actorId":"owner","userId":"owner"}],"users":[{"inCall":7,"lastPing":LAST_PING(),"sessionId":"SESSION(owner)","nextcloudSessionId":"SESSION(owner)","participantType":1,"participantPermissions":254,"actorType":"users","actorId":"owner","userId":"owner"}]}} |
     And reset signaling server requests
     When user "owner" updates call flags in room "public room" to "1" with 200 (v4)

@@ -24,6 +24,7 @@ use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Thread;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Signaling\BackendNotifier;
@@ -51,6 +52,9 @@ class ListenerTest extends TestCase {
 	protected ThreadService&MockObject $threadService;
 	protected Config&MockObject $config;
 	protected IFactory $l10nFactory;
+	protected MockObject&PollService $pollService;
+
+
 
 	public function setUp(): void {
 		parent::setUp();
@@ -76,6 +80,7 @@ class ListenerTest extends TestCase {
 			$this->messageParser,
 			$this->threadService,
 			$this->l10nFactory,
+			$this->pollService,
 		);
 	}
 
@@ -383,6 +388,7 @@ class ListenerTest extends TestCase {
 		$room = $this->createMock(Room::class);
 		$comment = $this->createMock(IComment::class);
 		$comment->method('getVerb')->willReturn(ChatManager::VERB_SYSTEM);
+		$comment->method('getMessage')->willReturn(json_encode(['message' => 'test']));
 
 		$event = new SystemMessageSentEvent(
 			$room,
@@ -401,6 +407,7 @@ class ListenerTest extends TestCase {
 
 		$this->listener->handle($event);
 	}
+
 
 	public function testSystemMessageSentEventSkippingUpdate(): void {
 		$room = $this->createMock(Room::class);
@@ -423,6 +430,7 @@ class ListenerTest extends TestCase {
 		$room = $this->createMock(Room::class);
 		$comment = $this->createMock(IComment::class);
 		$comment->method('getVerb')->willReturn(ChatManager::VERB_SYSTEM);
+		$comment->method('getMessage')->willReturn(json_encode(['message' => 'test']));
 
 		$event = new SystemMessagesMultipleSentEvent(
 			$room,
