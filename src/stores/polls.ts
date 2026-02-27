@@ -30,7 +30,7 @@ type submitVotePayload = { token: string, pollId: string } & Pick<votePollParams
 type State = {
 	polls: Record<string, Record<string, Poll>>
 	drafts: Record<string, Record<string, PollDraft>>
-	debouncedFunctions: Record<string, Record<string, () => void>>
+	scheduledPolls: Record<string, Record<string, boolean>>
 	activePoll: { token: string, id: string, name: string } | null
 	pollToastsQueue: Record<string, ReturnType<typeof showInfo>>
 }
@@ -38,7 +38,7 @@ export const usePollsStore = defineStore('polls', {
 	state: (): State => ({
 		polls: {},
 		drafts: {},
-		debouncedFunctions: {},
+		scheduledPolls: {},
 		activePoll: null,
 		pollToastsQueue: {},
 	}),
@@ -101,6 +101,11 @@ export const usePollsStore = defineStore('polls', {
 			try {
 				const response = await getPollData(token, pollId)
 				this.addPoll({ token, poll: response.data.ocs.data })
+
+				// Unmark the poll as scheduled for update
+				if (this.scheduledPolls[token]?.[pollId]) {
+					delete this.scheduledPolls[token][pollId]
+				}
 			} catch (error) {
 				console.error(error)
 			}
@@ -108,26 +113,21 @@ export const usePollsStore = defineStore('polls', {
 
 		/**
 		 * In order to limit the amount of requests, we cannot get the
-		 * poll data every time someone votes, so we create a debounce
-		 * function for each poll and store it in the pollStore
+		 * poll data every time someone votes, so we schedule an update
+		 * of poll information for the next time user opens a dialog
 		 *
 		 * @param payload The arguments passed to the action
 		 * @param payload.token The token of the conversation
 		 * @param payload.pollId The id of the poll
 		 */
-		debounceGetPollData({ token, pollId }: { token: string, pollId: string }) {
-			if (!this.debouncedFunctions[token]) {
-				this.debouncedFunctions[token] = {}
+		scheduleGetPollData({ token, pollId }: { token: string, pollId: string }) {
+			if (!this.scheduledPolls[token]) {
+				this.scheduledPolls[token] = {}
 			}
-			// Create the debounced function for getting poll data if not exist yet
-			if (!this.debouncedFunctions[token]?.[pollId]) {
-				const debouncedFunction = debounce(async () => {
-					await this.getPollData({ token, pollId })
-				}, 5000)
-				this.debouncedFunctions[token][pollId] = debouncedFunction
+			// Mark the poll as scheduled for update
+			if (!this.scheduledPolls[token]?.[pollId]) {
+				this.scheduledPolls[token][pollId] = true
 			}
-			// Call the debounced function for getting the poll data
-			this.debouncedFunctions[token][pollId]()
 		},
 
 		async createPoll({ token, form, threadId }: { token: string, form: createPollParams, threadId?: number }) {
