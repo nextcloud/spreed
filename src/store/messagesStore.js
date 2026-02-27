@@ -471,14 +471,22 @@ const actions = {
 
 		if (isHiddenSystemMessage(message)) {
 			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.POLL_VOTED) {
-				const pollsStore = usePollsStore()
-				pollsStore.debounceGetPollData({
-					token,
-					pollId: message.messageParameters.poll.id,
-				})
-
-				if (conversation?.lastMessage?.id && message.id > conversation.lastMessage.id) {
-					context.dispatch('updateConversationLastMessage', { token, lastMessage: message })
+				if (fromRealtime) {
+					const pollsStore = usePollsStore()
+					if ('poll' in message && message.poll.id) {
+						pollsStore.addPoll({
+							token,
+							poll: message.poll,
+						})
+					} else {
+						pollsStore.debounceGetPollData({
+							token,
+							pollId: message.messageParameters.poll.id,
+						})
+					}
+						if (conversation?.lastMessage?.id && message.id > conversation.lastMessage.id) {
+						context.dispatch('updateConversationLastMessage', { token, lastMessage: message })
+					}
 				}
 				// Quit processing
 				context.commit('addMessage', { token, message })
@@ -618,12 +626,19 @@ const actions = {
 			}
 		}
 
-		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.POLL_CLOSED) {
+		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.POLL_CLOSED && fromRealtime) {
 			const pollsStore = usePollsStore()
-			pollsStore.getPollData({
-				token,
-				pollId: message.messageParameters.poll.id,
-			})
+			if ('poll' in message && message.poll.id) {
+				pollsStore.addPoll({
+					token,
+					poll: message.poll,
+				})
+			} else {
+				pollsStore.getPollData({
+					token,
+					pollId: message.messageParameters.poll.id,
+				})
+			}
 		}
 
 		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.HISTORY_CLEARED) {
