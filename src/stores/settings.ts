@@ -37,6 +37,7 @@ export const useSettingsStore = defineStore('settings', () => {
 	const typingStatusPrivacy = ref<PRIVACY_KEYS>(loadState('spreed', 'typing_privacy', PRIVACY.PRIVATE))
 	const showMediaSettings = ref<boolean>(BrowserStorage.getItem('showMediaSettings') !== 'false')
 	const noiseSuppression = ref<boolean>(BrowserStorage.getItem('noiseSuppression') !== 'false')
+	const noiseSuppressionWithModel = ref<boolean>(BrowserStorage.getItem('noiseSuppressionWithModel') === 'true')
 	const echoCancellation = ref<boolean>(BrowserStorage.getItem('echoCancellation') !== 'false')
 	const autoGainControl = ref<boolean>(BrowserStorage.getItem('autoGainControl') !== 'false')
 	const startWithoutMedia = ref<boolean | undefined>(getTalkConfig('local', 'call', 'start-without-media'))
@@ -90,6 +91,16 @@ export const useSettingsStore = defineStore('settings', () => {
 	function setNoiseSuppression(value: boolean) {
 		BrowserStorage.setItem('noiseSuppression', value.toString())
 		noiseSuppression.value = value
+	}
+
+	/**
+	 * Update the noise suppression (with model) settings for the user
+	 *
+	 * @param value - new selected state
+	 */
+	function setNoiseSuppressionWithModel(value: boolean) {
+		BrowserStorage.setItem('noiseSuppressionWithModel', value.toString())
+		noiseSuppressionWithModel.value = value
 	}
 
 	/**
@@ -177,6 +188,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		typingStatusPrivacy,
 		showMediaSettings,
 		noiseSuppression,
+		noiseSuppressionWithModel,
 		echoCancellation,
 		autoGainControl,
 		startWithoutMedia,
@@ -191,6 +203,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		updateTypingStatusPrivacy,
 		setShowMediaSettings,
 		setNoiseSuppression,
+		setNoiseSuppressionWithModel,
 		setEchoCancellation,
 		setAutoGainControl,
 		setBlurVirtualBackgroundEnabled,
