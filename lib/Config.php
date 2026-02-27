@@ -183,7 +183,7 @@ class Config {
 
 	public function getRecordingSecret(): string {
 		$config = $this->appConfig->getAppValueArray('recording_servers');
-		if (!is_array($config) || !isset($config['secret'])) {
+		if (!isset($config['secret'])) {
 			return '';
 		}
 
@@ -289,7 +289,7 @@ class Config {
 	public function getDefaultPermissions(): int {
 		// Admin configured default permissions
 		$configurableDefault = $this->appConfig->getAppValueInt('default_permissions');
-		if ($configurableDefault !== '') {
+		if ($configurableDefault !== 0) {
 			return min(Attendee::PERMISSIONS_MAX_CUSTOM, max(Attendee::PERMISSIONS_DEFAULT, $configurableDefault));
 		}
 
