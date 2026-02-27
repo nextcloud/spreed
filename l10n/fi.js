@@ -766,6 +766,7 @@ OC.L10N.register(
     "Allow guests to join this conversation via link" : "Salli vieraiden liittyä tähän keskusteluun linkin kautta",
     "Password protection" : "Salasanasuojaus",
     "Set a password" : "Aseta salasana",
+    "Change password" : "Vaihda salasana",
     "Enter new password" : "Kirjoita uusi salasana",
     "Save password" : "Tallenna salasana",
     "Guests are allowed to join this conversation via link" : "Vieraat voivat liittyä tähän keskusteluun linkin kautta",

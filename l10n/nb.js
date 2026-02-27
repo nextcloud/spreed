@@ -1027,6 +1027,7 @@ OC.L10N.register(
     "Allow guests to join this conversation via link" : "Tillat gjester å delta i denne samtalen via kobling",
     "Password protection" : "Passordbeskyttelse",
     "Set a password" : "Sett et passord",
+    "Change password" : "Endre passord",
     "Enter new password" : "Angi nytt passord",
     "Save password" : "Lagre passord",
     "Guests are allowed to join this conversation via link" : "Gjester kan delta i denne samtalen via kobling",

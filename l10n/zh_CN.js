@@ -1215,6 +1215,7 @@ OC.L10N.register(
     "This conversation is password-protected. Guests need password to join" : "此对话受密码保护，访客需要密码才能加入",
     "Password protection is needed for public conversations" : "公开对话需要密码保护",
     "Set a password" : "设置密码",
+    "Change password" : "修改密码",
     "Enter new password" : "输入新密码",
     "Save password" : "保存密码",
     "Copy password" : "复制密码",

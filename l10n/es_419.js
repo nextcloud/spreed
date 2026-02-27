@@ -84,6 +84,7 @@ OC.L10N.register(
     "Restricted" : "Restringido",
     "Personal" : "Personal",
     "Password protection" : "Protección con contraseña",
+    "Change password" : "Cambiar password",
     "Edit" : "Editar",
     "Delete" : "Borrar",
     "Log content" : "Contenido de bitácoras",

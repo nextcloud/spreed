@@ -664,6 +664,7 @@
     "_%n week_::_%n weeks_" : ["1 недела","%n недели"],
     "Password protection" : "Заштитено со лозинка",
     "Set a password" : "Постави лозинка",
+    "Change password" : "Смени лозинка",
     "Save password" : "Зачувај лозинка",
     "Resend invitations" : "Повторно испратете ги поканите",
     "Start time (optional)" : "Време на почеток (опционално)",

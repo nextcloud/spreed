@@ -1219,6 +1219,7 @@ OC.L10N.register(
     "This conversation is password-protected. Guests need password to join" : "Tato konverzace je chráněna heslem. Hosté pro připojení potřebují heslo",
     "Password protection is needed for public conversations" : "Veřejné konverzace vyžadují heslo",
     "Set a password" : "Nastavit heslo",
+    "Change password" : "Změnit heslo",
     "Enter new password" : "Zadejte nové heslo",
     "Save password" : "Uložit heslo",
     "Copy password" : "Zkopírovat heslo",

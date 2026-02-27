@@ -1060,6 +1060,7 @@ OC.L10N.register(
     "Allow guests to join this conversation via link" : "リンク経由でのこの会話へのゲスト参加を許可",
     "Password protection" : "パスワード保護",
     "Set a password" : "パスワードを設定",
+    "Change password" : "パスワードを変更",
     "Enter new password" : "新しいパスワードを入力",
     "Save password" : "パスードを保存",
     "Copy password" : "パスワードをコピー",

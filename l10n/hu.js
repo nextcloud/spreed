@@ -1205,6 +1205,7 @@ OC.L10N.register(
     "This conversation is password-protected. Guests need password to join" : "Ez a beszélgetés jelszóval védett. A vendégeknek jelszó szükséges a csatlakozáshoz.",
     "Password protection is needed for public conversations" : "Jelszavas védelem szükséges a nyilvános beszélgetésekhez",
     "Set a password" : "Jelszó beállítása",
+    "Change password" : "Jelszó módosítása",
     "Enter new password" : "Adjon meg egy új jelszót",
     "Save password" : "Jelszó mentése",
     "Copy password" : "Jelszó másolása",

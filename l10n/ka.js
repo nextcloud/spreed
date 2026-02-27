@@ -967,6 +967,7 @@ OC.L10N.register(
     "Guest access" : "Guest access",
     "Allow guests to join this conversation via link" : "Allow guests to join this conversation via link",
     "Password protection" : "Password protection",
+    "Change password" : "Change password",
     "Enter new password" : "Enter new password",
     "Save password" : "Save password",
     "Guests are allowed to join this conversation via link" : "Guests are allowed to join this conversation via link",
