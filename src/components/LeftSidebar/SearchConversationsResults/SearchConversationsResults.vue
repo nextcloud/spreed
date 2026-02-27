@@ -36,7 +36,7 @@ const emit = defineEmits<{
 	createAndJoinConversation: [item: TypeConversation | ParticipantSearchResult]
 }>()
 
-const isCirclesEnabled = loadState('spreed', 'circles_enabled')
+const isCirclesEnabled = loadState('spreed', 'circles_enabled', false)
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const settingsStore = useSettingsStore()
 const isCompact = computed(() => settingsStore.conversationsListStyle === CONVERSATION.LIST_STYLE.COMPACT)

@@ -102,7 +102,7 @@ import ParticipantsList from './ParticipantsList.vue'
 import { ATTENDEE } from '../../../constants.ts'
 import { useIntegrationsStore } from '../../../stores/integrations.js'
 
-const isCirclesEnabled = loadState('spreed', 'circles_enabled')
+const isCirclesEnabled = loadState('spreed', 'circles_enabled', false)
 
 export default {
 	name: 'ParticipantsSearchResults',

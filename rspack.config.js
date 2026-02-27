@@ -49,6 +49,7 @@ module.exports = defineConfig((env) => {
 			],
 			'public-share-auth-sidebar': path.join(__dirname, 'src', 'mainPublicShareAuthSidebar.js'),
 			'public-share-sidebar': path.join(__dirname, 'src', 'mainPublicShareSidebar.js'),
+			'floating-call': path.join(__dirname, 'src', 'floatingCallTrigger.ts'),
 			flow: path.join(__dirname, 'src', 'flow.js'),
 			deck: path.join(__dirname, 'src', 'deck.js'),
 			maps: path.join(__dirname, 'src', 'maps.js'),

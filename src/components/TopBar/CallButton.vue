@@ -376,7 +376,7 @@ export default {
 	},
 
 	mounted() {
-		this.callEnabled = loadState('spreed', 'call_enabled')
+		this.callEnabled = loadState('spreed', 'call_enabled', true)
 	},
 
 	methods: {
