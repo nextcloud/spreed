@@ -40,6 +40,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'sip-enabled')
 	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
+const isCallEnabled = getTalkConfig('local', 'call', 'enabled')
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const isCalendarEnabled = localCapabilities.calendar?.webui ?? false
 const isDirectionRTL = isRTL()
@@ -196,7 +197,9 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					v-if="canStartConversations"
 					popupRole="dialog">
 					<template #trigger>
-						<NcButton variant="primary">
+						<NcButton
+							v-if="isCallEnabled"
+							variant="primary">
 							<template #icon>
 								<IconVideoOutline />
 							</template>
@@ -237,7 +240,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 				</NcButton>
 
 				<NcButton
-					v-if="canModerateSipDialOut"
+					v-if="isCallEnabled && canModerateSipDialOut"
 					@click="EventBus.emit('call-phone-dialog:show')">
 					<template #icon>
 						<IconPhoneOutline :size="20" />
