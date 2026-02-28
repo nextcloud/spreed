@@ -13,7 +13,7 @@ const actorStore = useActorStore(pinia)
 /**
  *
  */
-export default function LocalCallParticipantModel() {
+export function LocalCallParticipantModel() {
 	this._superEmitterMixin()
 
 	this.attributes = reactive({
@@ -54,7 +54,7 @@ LocalCallParticipantModel.prototype = {
 		this._webRtc = webRtc
 
 		this.set('peerId', this._webRtc.connection.getSessionId())
-		this.set('guestName', null)
+		this.set('guestName', actorStore.displayName)
 
 		this._webRtc.on('forcedMute', this._handleForcedMuteBound)
 		this._unwatchDisplayNameChange = watch(
@@ -110,8 +110,6 @@ LocalCallParticipantModel.prototype = {
 		}
 
 		this.set('guestName', guestName)
-
-		this._webRtc.webrtc.emit('nickChanged', guestName)
 	},
 
 	setPeerNeeded(peerNeeded) {
