@@ -9,14 +9,14 @@ declare(strict_types=1);
 namespace OCA\Talk\RoomPresets;
 
 abstract readonly class APreset {
-	abstract public function getIdentifier(): string;
+	abstract public static function getIdentifier(): string;
 
 	public function getName(): string {
-		return $this->getIdentifier();
+		return self::getIdentifier();
 	}
 
 	public function getDescription(): string {
-		return $this->getIdentifier();
+		return self::getIdentifier();
 	}
 
 	/**
@@ -29,7 +29,7 @@ abstract readonly class APreset {
 	 */
 	public function toArray(): array {
 		return [
-			'identifier' => $this->getIdentifier(),
+			'identifier' => self::getIdentifier(),
 			'name' => $this->getName(),
 			'description' => $this->getDescription(),
 			'parameters' => $this->getParameters(),

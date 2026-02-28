@@ -125,6 +125,7 @@ class Manager {
 			'mention_permissions' => 0,
 			'transcription_language' => '',
 			'last_pinned_id' => 0,
+			'attributes' => 0,
 		], $data));
 	}
 
@@ -196,6 +197,7 @@ class Manager {
 			(int)$row['mention_permissions'],
 			(string)$row['transcription_language'],
 			(int)$row['last_pinned_id'],
+			(int)$row['attributes'],
 		);
 	}
 
@@ -1216,6 +1218,7 @@ class Manager {
 		?int $recordingConsent = null,
 		?int $mentionPermissions = null,
 		?string $description = null,
+		?int $attributes = null,
 	): Room {
 		$token = $this->getNewToken();
 		$row = [
@@ -1291,6 +1294,10 @@ class Manager {
 		if ($description !== null) {
 			$insert->setValue('description', $insert->createNamedParameter($description));
 			$row['description'] = $description;
+		}
+		if ($attributes !== null) {
+			$insert->setValue('attributes', $insert->createNamedParameter($attributes, IQueryBuilder::PARAM_INT));
+			$row['attributes'] = $attributes;
 		}
 
 		$insert->executeStatement();

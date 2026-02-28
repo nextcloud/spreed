@@ -23,7 +23,7 @@ readonly class DefaultPreset extends APreset {
 	}
 
 	#[\Override]
-	public function getIdentifier(): string {
+	public static function getIdentifier(): string {
 		return 'default';
 	}
 
