@@ -82,7 +82,7 @@ jobs:
 
       - name: Get php version
         id: php-versions
-        uses: icewind1991/nextcloud-version-matrix@58becf3b4bb6dc6cef677b15e2fd8e7d48c0908f # v1.3.1
+        uses: icewind1991/nextcloud-version-matrix@8a7bac6300b2f0f3100088b297995a229558ddba # v1.3.2.3.1.3.2
         with:
           filename: ${{ env.APP_NAME }}/appinfo/info.xml
 
