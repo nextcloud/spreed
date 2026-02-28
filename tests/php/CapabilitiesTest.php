@@ -117,7 +117,6 @@ class CapabilitiesTest extends TestCase {
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
 			->willReturnMap([
-				['spreed', 'has_reference_id', 'no', 'no'],
 				['spreed', 'max-gif-size', '3145728', '200000'],
 				['spreed', 'start_calls', (string)Room::START_CALL_EVERYONE, (string)Room::START_CALL_EVERYONE],
 				['spreed', 'session-ping-limit', '200', '200'],
@@ -297,7 +296,6 @@ class CapabilitiesTest extends TestCase {
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
 			->willReturnMap([
-				['spreed', 'has_reference_id', 'no', 'yes'],
 				['spreed', 'max-gif-size', '3145728', '200000'],
 				['spreed', 'start_calls', (string)Room::START_CALL_EVERYONE, (string)Room::START_CALL_NOONE],
 				['spreed', 'session-ping-limit', '200', '50'],
