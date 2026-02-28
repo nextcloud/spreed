@@ -1541,10 +1541,7 @@ class Manager {
 		$query->selectAlias('c.actor_id', 'comment_actor_id');
 		$query->selectAlias('c.object_type', 'comment_object_type');
 		$query->selectAlias('c.object_id', 'comment_object_id');
-		if ($this->config->getAppValue('spreed', 'has_reference_id', 'no') === 'yes') {
-			// Only try to load the reference_id column when it should be there
-			$query->selectAlias('c.reference_id', 'comment_reference_id');
-		}
+		$query->selectAlias('c.reference_id', 'comment_reference_id');
 		$query->selectAlias('c.creation_timestamp', 'comment_creation_timestamp');
 		$query->selectAlias('c.latest_child_timestamp', 'comment_latest_child_timestamp');
 		$query->selectAlias('c.reactions', 'comment_reactions');
