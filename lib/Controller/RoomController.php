@@ -183,7 +183,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->config->getAppValue('spreed', 'breakout_rooms'),
 			$this->config->getAppValue('spreed', 'federation_enabled'),
 			$this->config->getAppValue('spreed', 'enable_matterbridge'),
-			$this->config->getAppValue('spreed', 'has_reference_id'),
 			$this->config->getAppValue('spreed', 'sip_bridge_groups', '[]'),
 			$this->config->getAppValue('spreed', 'sip_bridge_dialin_info'),
 			$this->config->getAppValue('spreed', 'sip_bridge_shared_secret'),
