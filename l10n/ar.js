@@ -1143,6 +1143,7 @@ OC.L10N.register(
     "This conversation is password-protected. Guests need password to join" : "المحادثة محمية بكلمة مرور. الضيوف محتاجون لكلمة المرور للانضمام",
     "Password protection is needed for public conversations" : "الحماية باستعمال كلمة المرور لازمة في حالة المحادثة العامة",
     "Set a password" : "تعيين كلمة المرور",
+    "Change password" : "تغيير كلمة المرور",
     "Enter new password" : "أدخِل كلمة مرور جديدة",
     "Save password" : "حفظ كلمة المرور",
     "Copy password" : "إنسَخ كلمة المرور",
