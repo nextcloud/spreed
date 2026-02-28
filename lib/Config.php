@@ -63,9 +63,11 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedTalkGroupIds(): array {
-		$groups = $this->config->getAppValue('spreed', 'allowed_groups', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		$groups = $this->appConfig->getAppValueArray('allowed_groups');
+		if (empty($groups)) {
+			return [];
+		}
+		return $groups;
 	}
 
 	/**
@@ -98,9 +100,11 @@ class Config {
 	 * @return string[]
 	 */
 	public function getSIPGroups(): array {
-		$groups = $this->config->getAppValue('spreed', 'sip_bridge_groups', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		$groups = $this->appConfig->getAppValueArray('sip_bridge_groups');
+		if (empty($groups)) {
+			return [];
+		}
+		return $groups;
 	}
 
 	public function isSIPConfigured(): bool {
@@ -113,7 +117,7 @@ class Config {
 	 */
 	public function isFederationEnabled(): bool {
 		// TODO: Set to default true once implementation is complete
-		return $this->config->getAppValue('spreed', 'federation_enabled', 'no') === 'yes';
+		return $this->appConfig->getAppValueBool('federation_enabled');
 	}
 
 	public function isFederationEnabledForUserId(IUser $user): bool {
@@ -127,15 +131,15 @@ class Config {
 	}
 
 	public function isBreakoutRoomsEnabled(): bool {
-		return $this->config->getAppValue('spreed', 'breakout_rooms', 'yes') === 'yes';
+		return $this->appConfig->getAppValueBool('breakout_rooms', true);
 	}
 
 	public function getDialInInfo(): string {
-		return $this->config->getAppValue('spreed', 'sip_bridge_dialin_info');
+		return $this->appConfig->getAppValueString('sip_bridge_dialin_info');
 	}
 
 	public function getSIPSharedSecret(): string {
-		return $this->config->getAppValue('spreed', 'sip_bridge_shared_secret');
+		return $this->appConfig->getAppValueString('sip_bridge_shared_secret');
 	}
 
 	public function canUserEnableSIP(IUser $user): bool {
@@ -165,14 +169,12 @@ class Config {
 	}
 
 	public function isSIPDialOutEnabled(): bool {
-		return $this->config->getAppValue('spreed', 'sip_dialout', 'no') !== 'no';
+		return $this->appConfig->getAppValueBool('sip_dialout');
 	}
 
 	public function getRecordingServers(): array {
-		$config = $this->config->getAppValue('spreed', 'recording_servers');
-		$recording = json_decode($config, true);
-
-		if (!is_array($recording) || !isset($recording['servers'])) {
+		$recording = $this->appConfig->getAppValueArray('recording_servers');
+		if (empty($recording) || !isset($recording['servers'])) {
 			return [];
 		}
 
@@ -180,14 +182,12 @@ class Config {
 	}
 
 	public function getRecordingSecret(): string {
-		$config = $this->config->getAppValue('spreed', 'recording_servers');
-		$recording = json_decode($config, true);
-
-		if (!is_array($recording)) {
+		$config = $this->appConfig->getAppValueArray('recording_servers');
+		if (!isset($config['secret'])) {
 			return '';
 		}
 
-		return $recording['secret'];
+		return $config['secret'];
 	}
 
 	public function isRecordingEnabled(): bool {
@@ -195,7 +195,7 @@ class Config {
 			return false;
 		}
 
-		if ($this->config->getAppValue('spreed', 'call_recording', 'yes') !== 'yes') {
+		if (!$this->appConfig->getAppValueBool('call_recording', true)) {
 			return false;
 		}
 
@@ -226,7 +226,7 @@ class Config {
 	 * @return RecordingService::CONSENT_REQUIRED_*
 	 */
 	public function getRecordingConsentConfig(): int {
-		return match ((int)$this->config->getAppValue('spreed', 'recording_consent', (string)RecordingService::CONSENT_REQUIRED_NO)) {
+		return match ($this->appConfig->getAppValueInt('recording_consent', RecordingService::CONSENT_REQUIRED_NO)) {
 			RecordingService::CONSENT_REQUIRED_YES => RecordingService::CONSENT_REQUIRED_YES,
 			RecordingService::CONSENT_REQUIRED_OPTIONAL => RecordingService::CONSENT_REQUIRED_OPTIONAL,
 			default => RecordingService::CONSENT_REQUIRED_NO,
@@ -265,9 +265,11 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedConversationsGroupIds(): array {
-		$groups = $this->config->getAppValue('spreed', 'start_conversations', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		$groups = $this->appConfig->getAppValueArray('start_conversations');
+		if (empty($groups)) {
+			return [];
+		}
+		return $groups;
 	}
 
 	public function isNotAllowedToCreateConversations(IUser $user): bool {
@@ -286,9 +288,9 @@ class Config {
 	 */
 	public function getDefaultPermissions(): int {
 		// Admin configured default permissions
-		$configurableDefault = $this->config->getAppValue('spreed', 'default_permissions');
+		$configurableDefault = $this->appConfig->getAppValueString('default_permissions');
 		if ($configurableDefault !== '') {
-			return min(Attendee::PERMISSIONS_MAX_CUSTOM, max(Attendee::PERMISSIONS_DEFAULT, (int)$configurableDefault));
+			return min(Attendee::PERMISSIONS_MAX_CUSTOM, max(Attendee::PERMISSIONS_DEFAULT, $configurableDefault));
 		}
 
 		// Falling back to an unrestricted set of permissions, only ignoring the lobby is off
@@ -296,7 +298,7 @@ class Config {
 	}
 
 	public function getAttachmentFolder(string $userId): string {
-		$defaultAttachmentFolder = $this->config->getAppValue('spreed', 'default_attachment_folder', '/Talk');
+		$defaultAttachmentFolder = $this->appConfig->getAppValueString('default_attachment_folder', '/Talk');
 		return $this->config->getUserValue($userId, 'spreed', UserPreference::ATTACHMENT_FOLDER, $defaultAttachmentFolder);
 	}
 
@@ -355,7 +357,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getStunServers(): array {
-		$config = $this->config->getAppValue('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']));
+		$config = $this->appConfig->getAppValueString('stun_servers', json_encode(['stun.nextcloud.com:443']));
 		$servers = json_decode($config, true);
 
 		if (!is_array($servers) || empty($servers)) {
@@ -377,11 +379,9 @@ class Config {
 	 * @return array
 	 */
 	public function getTurnServers(bool $withEvent = true): array {
-		$config = $this->config->getAppValue('spreed', 'turn_servers');
-		$servers = json_decode($config, true);
-
-		if ($servers === null || empty($servers) || !is_array($servers)) {
-			$servers = [];
+		$servers = $this->appConfig->getAppValueArray('turn_servers');
+		if (empty($servers)) {
+			return [];
 		}
 
 		if ($withEvent) {
@@ -428,7 +428,7 @@ class Config {
 			];
 		}
 
-		return $turnSettings;
+		return $turnSettings ?? [];
 	}
 
 	public function getSignalingMode(bool $cleanExternalSignaling = true): string {
@@ -438,7 +438,7 @@ class Config {
 			self::SIGNALING_CLUSTER_CONVERSATION,
 		];
 
-		$mode = $this->config->getAppValue('spreed', 'signaling_mode', null);
+		$mode = $this->appConfig->getAppValueString('signaling_mode');
 		if ($mode === self::SIGNALING_INTERNAL) {
 			return self::SIGNALING_INTERNAL;
 		}
@@ -462,9 +462,8 @@ class Config {
 	 * @return array
 	 */
 	public function getSignalingServers(): array {
-		$config = $this->config->getAppValue('spreed', 'signaling_servers');
-		$signaling = json_decode($config, true);
-		if (!is_array($signaling) || !isset($signaling['servers'])) {
+		$signaling = $this->appConfig->getAppValueArray('signaling_servers');
+		if (empty($signaling) || !isset($signaling['servers'])) {
 			return [];
 		}
 
@@ -475,7 +474,10 @@ class Config {
 	 * @return string
 	 */
 	public function getSignalingSecret(): string {
-		$config = $this->config->getAppValue('spreed', 'signaling_servers');
+		$config = $this->appConfig->getAppValueString('signaling_servers');
+		if ($config === '') {
+			return '';
+		}
 		$signaling = json_decode($config, true);
 
 		if (!is_array($signaling)) {
@@ -486,7 +488,7 @@ class Config {
 	}
 
 	public function getHideSignalingWarning(): bool {
-		return $this->config->getAppValue('spreed', 'hide_signaling_warning', 'no') === 'yes';
+		return $this->appConfig->getAppValueBool('hide_signaling_warning');
 	}
 
 	/**
@@ -510,7 +512,7 @@ class Config {
 	 */
 	private function getSignalingTicketV1(?string $userId): string {
 		if (empty($userId)) {
-			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret');
+			$secret = $this->appConfig->getAppValueString('signaling_ticket_secret');
 		} else {
 			$secret = $this->config->getUserValue($userId, 'spreed', 'signaling_ticket_secret');
 		}
@@ -519,7 +521,7 @@ class Config {
 			// TODO(fancycode): Is there a possibility for a race condition?
 			$secret = $this->secureRandom->generate(255);
 			if (empty($userId)) {
-				$this->config->setAppValue('spreed', 'signaling_ticket_secret', $secret);
+				$this->appConfig->setAppValueString('signaling_ticket_secret', $secret);
 			} else {
 				$this->config->setUserValue($userId, 'spreed', 'signaling_ticket_secret', $secret);
 			}
@@ -535,7 +537,7 @@ class Config {
 	}
 
 	private function ensureSignalingTokenKeys(string $alg): void {
-		$secret = $this->config->getAppValue('spreed', 'signaling_token_privkey_' . strtolower($alg));
+		$secret = $this->appConfig->getAppValueString('signaling_token_privkey_' . strtolower($alg));
 		if ($secret) {
 			return;
 		}
@@ -569,12 +571,12 @@ class Config {
 			throw new \Exception('Unsupported algorithm ' . $alg);
 		}
 
-		$this->config->setAppValue('spreed', 'signaling_token_privkey_' . strtolower($alg), $secret);
-		$this->config->setAppValue('spreed', 'signaling_token_pubkey_' . strtolower($alg), $public);
+		$this->appConfig->setAppValueString('signaling_token_privkey_' . strtolower($alg), $secret);
+		$this->appConfig->setAppValueString('signaling_token_pubkey_' . strtolower($alg), $public);
 	}
 
 	public function getSignalingTokenAlgorithm(): string {
-		return $this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256');
+		return $this->appConfig->getAppValueString('signaling_token_alg', 'ES256');
 	}
 
 	public function getSignalingTokenPrivateKey(?string $alg = null): string {
@@ -583,7 +585,7 @@ class Config {
 		}
 		$this->ensureSignalingTokenKeys($alg);
 
-		return $this->config->getAppValue('spreed', 'signaling_token_privkey_' . strtolower($alg));
+		return $this->appConfig->getAppValueString('signaling_token_privkey_' . strtolower($alg));
 	}
 
 	public function getSignalingTokenPublicKey(?string $alg = null): string {
@@ -592,7 +594,7 @@ class Config {
 		}
 		$this->ensureSignalingTokenKeys($alg);
 
-		return $this->config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($alg));
+		return $this->appConfig->getAppValueString('signaling_token_pubkey_' . strtolower($alg));
 	}
 
 	public function deriveSignalingTokenPublicKey(string $privateKey, string $alg): string {
@@ -678,8 +680,7 @@ class Config {
 
 		$alg = $this->getSignalingTokenAlgorithm();
 		$secret = $this->getSignalingTokenPrivateKey($alg);
-		$token = JWT::encode($data, $secret, $alg);
-		return $token;
+		return JWT::encode($data, $secret, $alg);
 	}
 
 	/**
@@ -689,7 +690,7 @@ class Config {
 	 */
 	public function validateSignalingTicket(?string $userId, string $ticket): bool {
 		if (empty($userId)) {
-			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret');
+			$secret = $this->appConfig->getAppValueString('signaling_ticket_secret');
 		} else {
 			$secret = $this->config->getUserValue($userId, 'spreed', 'signaling_ticket_secret');
 		}
@@ -710,11 +711,11 @@ class Config {
 	}
 
 	public function getGridVideosLimit(): int {
-		return (int)$this->config->getAppValue('spreed', 'grid_videos_limit', '19'); // 5*4 - self
+		return $this->appConfig->getAppValueInt('grid_videos_limit', 19); // 5*4 - self
 	}
 
 	public function getGridVideosLimitEnforced(): bool {
-		return $this->config->getAppValue('spreed', 'grid_videos_limit_enforced', 'no') === 'yes';
+		return $this->appConfig->getAppValueBool('grid_videos_limit_enforced');
 	}
 
 	/**

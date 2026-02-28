@@ -80,6 +80,7 @@ class SignalingControllerTest extends TestCase {
 	protected Authenticator&MockObject $authenticator;
 	protected IDBConnection $dbConnection;
 	protected IConfig $serverConfig;
+	protected IAppConfig $appConfig;
 	protected ?Config $config = null;
 	protected ?string $userId = null;
 	protected ?ISecureRandom $secureRandom = null;
@@ -95,13 +96,17 @@ class SignalingControllerTest extends TestCase {
 		$this->request = $this->createMock(IRequest::class);
 		/** @var MockObject|IAppConfig $appConfig */
 		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig->method('getAppValueString')->willReturnCallback(function (string $key): string {
+			return match ($key) {
+				'signaling_servers' => json_encode(['secret' => 'MySecretValueMySecretValue1234567890']),
+				'signaling_ticket_secret' => 'the-app-ticket-secret',
+				default => '',
+			};
+		});
+		$this->appConfig = $appConfig;
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$groupManager = $this->createMock(IGroupManager::class);
 		$this->serverConfig = \OCP\Server::get(IConfig::class);
-		$this->serverConfig->setAppValue('spreed', 'signaling_servers', json_encode([
-			'secret' => 'MySecretValueMySecretValue1234567890',
-		]));
-		$this->serverConfig->setAppValue('spreed', 'signaling_ticket_secret', 'the-app-ticket-secret');
 		$this->serverConfig->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->dispatcher = \OCP\Server::get(IEventDispatcher::class);
