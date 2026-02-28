@@ -953,6 +953,7 @@ OC.L10N.register(
     "This conversation is password-protected. Guests need password to join" : "Гэта размова абаронена паролем. Гасцям патрэбен пароль для далучэння.",
     "Password protection is needed for public conversations" : "Публічным размовам патрэбна абарона паролем",
     "Set a password" : "Задайце пароль",
+    "Change password" : "Змяніць пароль",
     "Enter new password" : "Увядзіце новы пароль",
     "Save password" : "Захаваць пароль",
     "Copy password" : "Скапіяваць пароль",

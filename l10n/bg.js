@@ -868,6 +868,7 @@ OC.L10N.register(
     "Allow guests to join this conversation via link" : "Разрешаване на гостите да се присъединят към този разговор чрез връзка",
     "Password protection" : "Password protection",
     "Set a password" : "Задаване на парола",
+    "Change password" : "Промяна на парола",
     "Enter new password" : "Въвеждане на нова парола",
     "Save password" : "Запиши паролата",
     "Resend invitations" : "Повторно изпращане на покани",

@@ -611,6 +611,7 @@ OC.L10N.register(
     "Error when trying to set message expiration" : "Hebo un error al tentar d'afitar la caducidá de los mensaxes",
     "Message expiration" : "Caducidá de los mensaxes",
     "Password protection" : "Proteición con contraseña",
+    "Change password" : "Camudar la contraseña",
     "Enter new password" : "Introduz una contraseña nueva",
     "Save password" : "Guardar la contraseña",
     "This conversation is open to registered users" : "Esta conversación ta abierta a los usuarios rexistraos",
