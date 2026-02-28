@@ -6,6 +6,6 @@
 		"sort-packages": true
 	},
 	"require": {
-		"coenjacobs/mozart": "^1.1.0"
+		"coenjacobs/mozart": "^1.1.1"
 	}
 }
