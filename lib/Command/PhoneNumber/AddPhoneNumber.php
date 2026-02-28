@@ -11,8 +11,8 @@ namespace OCA\Talk\Command\PhoneNumber;
 use OC\Core\Command\Base;
 use OCA\Talk\Model\PhoneNumber;
 use OCA\Talk\Model\PhoneNumberMapper;
+use OCA\Talk\Service\PhoneNumberValidation;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\IPhoneNumberUtil;
 use OCP\IUser;
 use OCP\IUserManager;
 use Symfony\Component\Console\Input\InputArgument;
@@ -24,7 +24,7 @@ class AddPhoneNumber extends Base {
 
 	public function __construct(
 		private IUserManager $userManager,
-		private IPhoneNumberUtil $phoneNumberUtil,
+		private PhoneNumberValidation $phoneNumberValidation,
 		private PhoneNumberMapper $mapper,
 	) {
 		parent::__construct();
@@ -66,12 +66,12 @@ class AddPhoneNumber extends Base {
 		}
 		$userId = $user->getUID();
 
-		$phoneNumberStandard = preg_match('/^[0-9]{1,20}$/', $phoneNumber) ? $phoneNumber : $this->phoneNumberUtil->convertToStandardFormat($phoneNumber);
-		if ($phoneNumberStandard === null) {
+		try {
+			$phoneNumber = $this->phoneNumberValidation->validateNumber($phoneNumber);
+		} catch (\InvalidArgumentException) {
 			$output->writeln('<error>Not a valid phone number ' . $phoneNumber . '. The format is invalid.</error>');
 			return self::FAILURE;
 		}
-		$phoneNumber = $phoneNumberStandard;
 
 		try {
 			$entry = $this->mapper->findByPhoneNumber($phoneNumber);
