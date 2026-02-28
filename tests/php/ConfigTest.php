@@ -214,11 +214,6 @@ class ConfigTest extends TestCase {
 		$config = $this->createMock(IConfig::class);
 		/** @var MockObject&IAppConfig $appConfig */
 		$appConfig = $this->createMock(IAppConfig::class);
-		$appConfig
-			->expects($this->once())
-			->method('getAppValueArray')
-			->with('turn_servers')
-			->willReturn([]);
 
 		/** @var MockObject&ITimeFactory $timeFactory */
 		$timeFactory = $this->createMock(ITimeFactory::class);
@@ -254,7 +249,11 @@ class ConfigTest extends TestCase {
 				'protocols' => 'tcp',
 			],
 		];
-
+		$appConfig
+			->expects($this->once())
+			->method('getAppValueArray')
+			->with('turn_servers')
+			->willReturn($servers);
 		$dispatcher->addServiceListener(BeforeTurnServersGetEvent::class, GetTurnServerListener::class);
 
 		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);

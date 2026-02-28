@@ -516,17 +516,15 @@ class Config {
 		} else {
 			$secret = $this->config->getUserValue($userId, 'spreed', 'signaling_ticket_secret');
 		}
-		if (!empty($secret)) {
-			return $secret;
-		}
-
-		// Create secret lazily on first access.
-		// TODO(fancycode): Is there a possibility for a race condition?
-		$secret = $this->secureRandom->generate(255);
-		if (empty($userId)) {
-			$this->appConfig->setAppValueString('signaling_ticket_secret', $secret);
-		} else {
-			$this->config->setUserValue($userId, 'spreed', 'signaling_ticket_secret', $secret);
+		if (empty($secret)) {
+			// Create secret lazily on first access.
+			// TODO(fancycode): Is there a possibility for a race condition?
+			$secret = $this->secureRandom->generate(255);
+			if (empty($userId)) {
+				$this->appConfig->setAppValueString('signaling_ticket_secret', $secret);
+			} else {
+				$this->config->setUserValue($userId, 'spreed', 'signaling_ticket_secret', $secret);
+			}
 		}
 
 		// Format is "random:timestamp:userid:checksum" and "checksum" is the
