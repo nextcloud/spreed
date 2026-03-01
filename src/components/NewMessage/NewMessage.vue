@@ -84,6 +84,7 @@
 					<MessageQuote
 						:message="messageToEdit ?? parentMessage"
 						:canCancel="!!parentMessage"
+						:isPrivateReply="isReplyFromAnotherConversation"
 						:editMessage="!!messageToEdit" />
 				</div>
 
@@ -588,9 +589,18 @@ export default {
 			return this.silentChat ? t('spreed', 'Send message silently') : t('spreed', 'Send message')
 		},
 
+		parentConversationToken() {
+			return this.chatExtrasStore.getPrivateReplyParentToken()
+		},
+
+		isReplyFromAnotherConversation() {
+			return this.parentConversationToken !== this.token
+		},
+
 		parentMessage() {
-			const parentId = this.chatExtrasStore.getParentIdToReply(this.token)
-			return parentId && this.$store.getters.message(this.token, parentId)
+			const parentToken = this.isReplyFromAnotherConversation ? this.parentConversationToken : this.token
+			const parentId = this.chatExtrasStore.getParentIdToReply(parentToken)
+			return parentId && this.$store.getters.message(parentToken, parentId)
 		},
 
 		messageToEdit() {

@@ -459,6 +459,7 @@ import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.ts'
 import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
+import { EventBus } from '../../../../../services/EventBus.ts'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
@@ -802,7 +803,18 @@ export default {
 		async handlePrivateReply() {
 			// open the 1:1 conversation
 			const conversation = await this.$store.dispatch('createOneToOneConversation', this.message.actorId)
-			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
+
+			this.chatExtrasStore.setParentIdToReply({
+				token: this.message.token,
+				id: this.message.id,
+			})
+			this.chatExtrasStore.setPrivateReplyParentToken({
+				token: this.message.token,
+			})
+			EventBus.emit('focus-chat-input')
+			this.$router
+				.push({ name: 'conversation', params: { token: conversation.token } })
+				.catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
 		async handleCopyMessageText() {

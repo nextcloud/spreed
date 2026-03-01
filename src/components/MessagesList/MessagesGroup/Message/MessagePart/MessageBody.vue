@@ -63,7 +63,7 @@
 			class="message-main__text markdown-message"
 			:class="{ 'message-highlighted': isNewPollMessage }">
 			<!-- Replied parent message -->
-			<MessageQuote v-if="showQuote" :message="message.parent" />
+			<MessageQuote v-if="showQuote" :is-private-reply="message.token !== message.parent.token" :message="message.parent" />
 
 			<!-- Message content / text -->
 			<NcRichText

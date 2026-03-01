@@ -163,7 +163,7 @@ class BotController extends AEnvironmentAwareOCSController {
 		$parent = null;
 		if ($replyTo !== 0) {
 			try {
-				$parent = $this->chatManager->getParentComment($room, (string)$replyTo);
+				$parent = $this->chatManager->getParentComment((string)$replyTo);
 			} catch (NotFoundException $e) {
 				// Someone is trying to reply cross-rooms or to a non-existing message
 				return new DataResponse(null, Http::STATUS_BAD_REQUEST);
@@ -174,7 +174,7 @@ class BotController extends AEnvironmentAwareOCSController {
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
-			$this->chatManager->sendMessage($room, null, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent, rateLimitGuestMentions: false);
+			$this->chatManager->sendMessage($room, null, $actorType, $actorId, $message, $creationDateTime, [], $parent, $referenceId, $silent, rateLimitGuestMentions: false);
 		} catch (MessageTooLongException) {
 			return new DataResponse(null, Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception) {

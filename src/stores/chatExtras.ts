@@ -58,6 +58,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	const allFollowedThreadsReceived = ref(false)
 	const threadTitle = ref<Record<string, string>>({})
 	const parentToReply = ref<Record<string, number>>({})
+	const privateReply = ref<Record<string, string>>({})
 	const chatInput = ref<Record<string, string>>({})
 	const messageIdToEdit = ref<Record<string, number | string>>({})
 	const chatEditInput = ref<Record<string, string>>({})
@@ -135,6 +136,14 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 		if (parentToReply.value[token]) {
 			return parentToReply.value[token]
 		}
+	}
+
+	/**
+	 * Returns parent conversation token for private reply
+	 *
+	 */
+	function getPrivateReplyParentToken(): string | undefined {
+		return privateReply.value.parentToken
 	}
 
 	/**
@@ -502,6 +511,16 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	}
 
 	/**
+	 * Add a private reply parent conversation token to the store
+	 *
+	 * @param payload action payload
+	 * @param payload.token - conversation token
+	 */
+	function setPrivateReplyParentToken({ token}: { token: string }) {
+		privateReply.value.parentToken = token
+	}
+
+	/**
 	 * Removes a reply message id from the store
 	 * (after posting message or dismissing the operation)
 	 *
@@ -836,6 +855,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 		getThreadsList,
 		getThreadTitle,
 		getParentIdToReply,
+		getPrivateReplyParentToken,
 		getChatEditInput,
 		getMessageIdToEdit,
 		getChatSummaryTaskQueue,
@@ -858,6 +878,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 		setThreadTitle,
 		removeThreadTitle,
 		setParentIdToReply,
+		setPrivateReplyParentToken,
 		removeParentIdToReply,
 		restoreChatInput,
 		setChatInput,

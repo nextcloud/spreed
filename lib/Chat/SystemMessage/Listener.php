@@ -526,8 +526,9 @@ class Listener implements IEventListener {
 
 		if ($parent === null && $replyTo !== null) {
 			try {
-				$parentComment = $this->chatManager->getParentComment($room, (string)$replyTo);
-				$parentMessage = $this->messageParser->createMessage($room, $participant, $parentComment, $this->l);
+				$parentComment = $this->chatManager->getParentComment((string)$replyTo);
+				$targetParentRoom = $this->manager->getRoomById((int)$parentComment->getObjectId());
+				$parentMessage = $this->messageParser->createMessage($targetParentRoom, $participant, $parentComment, $this->l);
 				$this->messageParser->parseMessage($parentMessage, true);
 				if ($parentMessage->isReplyable()) {
 					$parent = $parentComment;
