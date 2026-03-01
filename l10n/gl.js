@@ -1586,7 +1586,7 @@ OC.L10N.register(
     "No permission to post messages in this conversation" : "Non ten permiso para publicar mensaxes nesta conversa",
     "Joining conversation …" : "Uníndose á conversa…",
     "Write a message without notification" : "Escribir unha mensaxe sen notificación",
-    "Create a thread silently" : "Crear un fío de xeito silencioso",
+    "Create a thread silently" : "Crear un fío de xeito silandeiro",
     "Create a thread" : "Crear un fío",
     "Send message silently" : "Enviar unha mensaxe silandeira",
     "Send message" : "Enviar a mensaxe",
