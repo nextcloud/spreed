@@ -299,7 +299,7 @@ async function getCapabilities() {
 	const fetchOptions = {
 		headers: {
 			'OCS-ApiRequest': true,
-			'Accept': 'json',
+			'Accept': 'application/json',
 		},
 	}
 
@@ -355,7 +355,7 @@ async function getSignalingSettings(user, appToken, token) {
 	const fetchOptions = {
 		headers: {
 			'OCS-ApiRequest': true,
-			'Accept': 'json',
+			'Accept': 'application/json',
 		},
 	}
 
@@ -518,7 +518,7 @@ class Signaling extends EventTarget {
 		const fetchOptions = {
 			headers: {
 				'OCS-ApiRequest': true,
-				'Accept': 'json',
+				'Accept': 'application/json',
 			},
 			method: 'POST',
 		}
@@ -544,7 +544,7 @@ class Signaling extends EventTarget {
 		const fetchOptions = {
 			headers: {
 				'OCS-ApiRequest': true,
-				'Accept': 'json',
+				'Accept': 'application/json',
 			},
 			method: 'POST',
 			body: new URLSearchParams({
@@ -564,7 +564,7 @@ class Signaling extends EventTarget {
 		const fetchOptions = {
 			headers: {
 				'OCS-ApiRequest': true,
-				'Accept': 'json',
+				'Accept': 'application/json',
 			},
 			method: 'DELETE',
 		}
@@ -580,7 +580,7 @@ class Signaling extends EventTarget {
 		const fetchOptions = {
 			headers: {
 				'OCS-ApiRequest': true,
-				'Accept': 'json',
+				'Accept': 'application/json',
 			},
 			method: 'DELETE',
 		}
