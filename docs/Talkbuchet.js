@@ -623,7 +623,16 @@ class Peer {
 			const candidate = event.candidate
 
 			if (candidate) {
-				this.send('candidate', candidate)
+				// Retain legacy data structure for compatibility with
+				// mobile clients.
+				const expandedCandidate = {
+					candidate: {
+						candidate: candidate.candidate,
+						sdpMid: candidate.sdpMid,
+						sdpMLineIndex: candidate.sdpMLineIndex,
+					},
+				}
+				this.send('candidate', expandedCandidate)
 			}
 		}
 
