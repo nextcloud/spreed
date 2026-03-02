@@ -132,6 +132,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	private array $guestsAppWasEnabled = [];
 	private array $testingAppWasEnabled = [];
+	private array $passwordPolicyAppWasEnabled = [];
 	private array $taskProcessingProviderPreference = [];
 
 	private array $guestsOldWhitelist = [];
@@ -208,6 +209,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->changedConfigs[$server] = [];
 			$this->guestsAppWasEnabled[$server] = null;
 			$this->testingAppWasEnabled[$server] = null;
+			$this->passwordPolicyAppWasEnabled[$server] = null;
 			$this->guestsOldWhitelist[$server] = '';
 		}
 	}
@@ -3869,6 +3871,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
+	#[Given('/^password policy app is (enabled|disabled)$/')]
+	public function setPasswordPolicyAppState(string $state): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendRequest('GET', '/cloud/apps?filter=enabled');
+		$this->assertStatusCode($this->response, 200);
+		$data = $this->getDataFromResponse($this->response);
+		$this->passwordPolicyAppWasEnabled[$this->currentServer] = in_array('password_policy', $data['apps'], true);
+
+		if ($state === 'enabled') {
+			$this->runOcc(['app:enable', 'password_policy', '--force']);
+		} else {
+			$this->sendRequest('DELETE', '/cloud/apps/password_policy');
+		}
+
+		$this->setCurrentUser($currentUser);
+	}
+
 	#[BeforeScenario]
 	#[AfterScenario]
 	public function resetSpreedAppData(): void {
@@ -3931,19 +3950,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 
 			$currentUser = $this->setCurrentUser('admin');
-
 			if ($this->taskProcessingProviderPreference[$server]) {
 				$this->runOcc(['config:app:set', 'core', 'ai.taskprocessing_provider_preferences', '--value', $this->taskProcessingProviderPreference[$server]]);
 			} else {
 				$this->runOcc(['config:app:delete', 'core', 'ai.taskprocessing_provider_preferences']);
 			}
 
-			// restore app's enabled state
 			$this->sendRequest($this->testingAppWasEnabled[$server] ? 'POST' : 'DELETE', '/cloud/apps/testing');
-
 			$this->setCurrentUser($currentUser);
-
 			$this->testingAppWasEnabled[$server] = null;
+		}
+
+		foreach (['LOCAL', 'REMOTE'] as $server) {
+			$this->usingServer($server);
+			if ($this->passwordPolicyAppWasEnabled[$server] === null) {
+				continue;
+			}
+
+			$currentUser = $this->setCurrentUser('admin');
+			if ($this->passwordPolicyAppWasEnabled[$server]) {
+				$this->runOcc(['app:enable', 'password_policy', '--force']);
+			} else {
+				$this->sendRequest('DELETE', '/cloud/apps/password_policy');
+			}
+			$this->setCurrentUser($currentUser);
+			$this->passwordPolicyAppWasEnabled[$server] = null;
 		}
 	}
 
