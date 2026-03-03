@@ -20,7 +20,7 @@ export function LocalCallParticipantModel() {
 		peerId: null,
 		peer: null,
 		screenPeer: null,
-		guestName: null,
+		name: null,
 		peerNeeded: false,
 		connectionState: null,
 	})
@@ -54,12 +54,12 @@ LocalCallParticipantModel.prototype = {
 		this._webRtc = webRtc
 
 		this.set('peerId', this._webRtc.connection.getSessionId())
-		this.set('guestName', actorStore.displayName)
+		this.set('name', actorStore.displayName)
 
 		this._webRtc.on('forcedMute', this._handleForcedMuteBound)
 		this._unwatchDisplayNameChange = watch(
 			() => actorStore.displayName,
-			this.setGuestName.bind(this),
+			this.setName.bind(this),
 		)
 	},
 
@@ -104,14 +104,14 @@ LocalCallParticipantModel.prototype = {
 		this.set('screenPeer', screenPeer)
 	},
 
-	setGuestName(guestName) {
+	setName(name) {
 		if (!this._webRtc) {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		this.set('guestName', guestName)
+		this.set('name', name)
 
-		this._webRtc.webrtc.emit('nickChanged', guestName)
+		this._webRtc.webrtc.emit('nickChanged', name)
 	},
 
 	setPeerNeeded(peerNeeded) {
