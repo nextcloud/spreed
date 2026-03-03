@@ -510,7 +510,7 @@ class MatterbridgeManager {
 					continue;
 				}
 
-				if (!is_string($key) || !is_string($value) || preg_match('/["\n]/', $key) || preg_match('/["\n]/', $value)) {
+				if (!is_string($key) || !is_string($value) || preg_match('/["\n\r]/', $key) || preg_match('/["\n\r]/', $value)) {
 					$this->logger->error('User tried to configure a malicious matterbridge setup');
 					throw new \InvalidArgumentException('Invalid matterbridge parameters');
 				}
