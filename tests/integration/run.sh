@@ -9,6 +9,7 @@ APP_NAME=spreed
 NOTIFICATIONS_BRANCH="master"
 GUESTS_BRANCH="main"
 CIRCLES_BRANCH="master"
+PASSWORD_POLICY_BRANCH="master"
 
 APP_INTEGRATION_DIR=$PWD
 ROOT_DIR=${APP_INTEGRATION_DIR}/../../../..
@@ -139,6 +140,8 @@ fi
 occ_host app:getpath notifications || (cd ../../../ && git clone --depth 1 --branch ${NOTIFICATIONS_BRANCH} https://github.com/nextcloud/notifications)
 occ_host app:getpath guests || (cd ../../../ && git clone --depth 1 --branch ${GUESTS_BRANCH} https://github.com/nextcloud/guests)
 occ_host app:getpath circles || (cd ../../../ && git clone --depth 1 --branch ${CIRCLES_BRANCH} https://github.com/nextcloud/circles)
+# password_policy is available but not globally enabled; enabled/disabled per-scenario in tests
+occ_host app:getpath password_policy || (cd ../../../ && git clone --depth 1 --branch ${PASSWORD_POLICY_BRANCH} https://github.com/nextcloud/password_policy)
 
 for OCC in occ_host occ_remote; do
 	${OCC} app:enable spreed || exit 1
@@ -147,6 +150,9 @@ for OCC in occ_host occ_remote; do
 	${OCC} app:enable --force notifications || exit 1
 	${OCC} app:enable --force guests || exit 1
 	${OCC} app:enable --force circles || exit 1
+	# Explicitly disable password_policy so it starts inactive; individual
+	# scenarios enable it via "Given password policy app is enabled"
+	${OCC} app:disable password_policy
 
 	${OCC} app:list | grep spreed
 	${OCC} app:list | grep talk_webhook_demo

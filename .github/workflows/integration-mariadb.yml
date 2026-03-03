@@ -58,6 +58,7 @@ jobs:
         guests-versions: ['main']
         circles-versions: ['master']
         notifications-versions: ['master']
+        password-policy-versions: ['master']
 
     services:
       mariadb:
@@ -112,6 +113,14 @@ jobs:
           path: apps/notifications
           ref: ${{ matrix.notifications-versions }}
 
+      - name: Checkout password_policy app
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+          repository: nextcloud/password_policy
+          path: apps/password_policy
+          ref: ${{ matrix.password-policy-versions }}
+
       - name: Set up php ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2.36.0
         with:
@@ -156,6 +165,7 @@ jobs:
           ./occ app:enable --force circles
           ./occ app:enable --force guests
           ./occ app:enable --force notifications
+          ./occ app:disable password_policy
 
       - name: Run integration
         working-directory: apps/${{ env.APP_NAME }}/tests/integration
