@@ -66,7 +66,12 @@ export const usePollsStore = defineStore('polls', {
 			if (!this.polls[token]) {
 				this.polls[token] = {}
 			}
-			this.polls[token][poll.id] = poll
+
+			if (this.polls[token][poll.id]) {
+				this.polls[token][poll.id] = { ...this.polls[token][poll.id], ...poll }
+			} else {
+				this.polls[token][poll.id] = poll
+			}
 		},
 
 		addPollDraft({ token, draft }: { token: string, draft: PollDraft }) {
