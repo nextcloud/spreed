@@ -1913,7 +1913,7 @@ OC.L10N.register(
     "Open Calendar" : "Ouvrir Agenda",
     "Remove participant {name}" : "Retirer le participant nommé {name}",
     "Would you like to delete this conversation?" : "Souhaitez-vous supprimer cette conversation ?",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Cette conversation va être automatiquement supprimée pour tout le monde après {expirationDurationFormatted} d'inactivité.",
+    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Cette conversation va être automatiquement supprimée pour tout le monde {expirationDurationFormatted} d'inactivité.",
     "Are you sure you want to delete this conversation?" : "Êtes-vous sûr de vouloir supprimer cette conversation ?",
     "Delete now" : "Supprimer maintenant",
     "Keep" : "Conserver",
