@@ -58,6 +58,10 @@
 * `two-lines` Normal (default) - two-line elements (with display name and last message)
 * `compact` Compact - one-line elements (with display name)
 
+### Chat style
+* `split` Split (default) - chat messages are split into two columns (with different sides per actor)
+* `unified` Unified - chat messages are in a single column
+
 ## Participants
 
 ### Participant types
