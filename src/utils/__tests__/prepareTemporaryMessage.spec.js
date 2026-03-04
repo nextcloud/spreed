@@ -88,7 +88,7 @@ describe('prepareTemporaryMessage', () => {
 
 	const audioFile = {
 		type: 'audio/wav',
-		name: 'Talk recording from 2020-01-01 20-00-00.wav',
+		name: 'Voice message 2020-01-01 20-00-00 (Note to self).wav',
 	}
 	const audioFilePayload = {
 		...defaultPayload,
@@ -110,7 +110,7 @@ describe('prepareTemporaryMessage', () => {
 				file: audioFile,
 				mimetype: 'audio/wav',
 				id: expect.stringMatching(/^temp-1577908800000-upload-id-1-0\.[0-9]*$/),
-				name: 'Talk recording from 2020-01-01 20-00-00.wav',
+				name: 'Voice message 2020-01-01 20-00-00 (Note to self).wav',
 				uploadId: 'upload-id-1',
 				localUrl: 'local-url://original-name.txt',
 				index: 'upload-index-1',
