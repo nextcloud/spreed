@@ -50,7 +50,7 @@ const mockMessageOutgoing = computed(() => ({
 		// TRANSLATORS fake message to show chat appearance in settings
 		? t('spreed', 'I picked message bubbles')
 		// TRANSLATORS fake message to show chat appearance in settings
-		: t('spreed', 'I picked list style'),
+		: t('spreed', 'I picked the list style'),
 }))
 provide('messagesList:isSplitViewEnabled', chatSplitViewEnabled)
 
