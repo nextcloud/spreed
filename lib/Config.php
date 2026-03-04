@@ -749,7 +749,7 @@ class Config {
 	}
 
 	/**
-	 * User setting for conversations list style
+	 * User setting falling back to admin defined app config
 	 *
 	 * @param ?string $userId
 	 * @return UserPreference::CONVERSATION_LIST_STYLE_*
@@ -760,18 +760,23 @@ class Config {
 				$userId,
 				'spreed',
 				UserPreference::CONVERSATIONS_LIST_STYLE,
-				UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES
 			);
 
 			if (in_array($userSetting, [UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, UserPreference::CONVERSATION_LIST_STYLE_COMPACT], true)) {
 				return $userSetting;
 			}
 		}
+
+		$appSetting = $this->appConfig->getAppValueString(UserPreference::CONVERSATIONS_LIST_STYLE);
+		if (in_array($appSetting, [UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, UserPreference::CONVERSATION_LIST_STYLE_COMPACT], true)) {
+			return $appSetting;
+		}
+
 		return UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES;
 	}
 
 	/**
-	 * User setting for chat style
+	 * User setting falling back to admin defined app config
 	 *
 	 * @param ?string $userId
 	 * @return UserPreference::CHAT_STYLE_*
@@ -782,13 +787,18 @@ class Config {
 				$userId,
 				'spreed',
 				UserPreference::CHAT_STYLE,
-				UserPreference::CHAT_STYLE_SPLIT
 			);
 
 			if (in_array($userSetting, [UserPreference::CHAT_STYLE_SPLIT, UserPreference::CHAT_STYLE_UNIFIED], true)) {
 				return $userSetting;
 			}
 		}
+
+		$appSetting = $this->appConfig->getAppValueString(UserPreference::CHAT_STYLE);
+		if (in_array($appSetting, [UserPreference::CHAT_STYLE_SPLIT, UserPreference::CHAT_STYLE_UNIFIED], true)) {
+			return $appSetting;
+		}
+
 		return UserPreference::CHAT_STYLE_SPLIT;
 	}
 
