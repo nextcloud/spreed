@@ -100,7 +100,6 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
@@ -119,6 +118,7 @@ import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { callSIPDialOut } from '../../services/callsService.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
@@ -376,7 +376,7 @@ export default {
 	},
 
 	mounted() {
-		this.callEnabled = loadState('spreed', 'call_enabled')
+		this.callEnabled = getTalkConfig(this.token, 'call', 'enabled')
 	},
 
 	methods: {
