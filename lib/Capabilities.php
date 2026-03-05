@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCA\Guests\UserBackend;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\LiveTranscriptionService;
@@ -247,7 +248,7 @@ class Capabilities implements IPublicCapability {
 			'features-local' => self::LOCAL_FEATURES,
 			'config' => [
 				'attachments' => [
-					'allowed' => $user instanceof IUser,
+					'allowed' => $user instanceof IUser && $user->getBackendClassName() !== UserBackend::class,
 					// 'folder' => string,
 				],
 				'call' => [

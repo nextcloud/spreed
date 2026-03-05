@@ -56,48 +56,9 @@ trait TInitialState {
 
 	protected function publishInitialStateForUser(IUser $user, IRootFolder $rootFolder, IAppManager $appManager): void {
 		$this->publishInitialStateShared();
-
-		$attachmentFolder = $this->talkConfig->getAttachmentFolder($user->getUID());
-		$freeSpace = 0;
-
-		if ($attachmentFolder) {
-			try {
-				$userFolder = $rootFolder->getUserFolder($user->getUID());
-
-				try {
-					try {
-						$folder = $userFolder->get($attachmentFolder);
-						if ($folder->isShared()) {
-							$this->logger->error('Talk attachment folder for user {userId} is set to a shared folder. Resetting to their root.', [
-								'userId' => $user->getUID(),
-							]);
-							throw new NotPermittedException('Folder is shared');
-						}
-					} catch (NotFoundException $e) {
-						$folder = $userFolder->newFolder($attachmentFolder);
-					}
-
-					$freeSpace = $folder->getFreeSpace();
-				} catch (NotPermittedException $e) {
-					$this->serverConfig->setUserValue($user->getUID(), 'spreed', UserPreference::ATTACHMENT_FOLDER, '/');
-					$freeSpace = $userFolder->getFreeSpace();
-				}
-			} catch (NoUserException $e) {
-			}
-		}
-
-		$this->initialState->provideInitialState(
-			'attachment_folder_free_space',
-			$freeSpace
-		);
 	}
 
 	protected function publishInitialStateForGuest(): void {
 		$this->publishInitialStateShared();
-
-		$this->initialState->provideInitialState(
-			'attachment_folder_free_space',
-			''
-		);
 	}
 }

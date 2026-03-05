@@ -34,8 +34,6 @@ describe('settingsStore', () => {
 				return PRIVACY.PUBLIC
 			} else if (key === 'attachment_folder') {
 				return '/Talk'
-			} else if (key === 'attachment_folder_free_space') {
-				return 1024
 			}
 			return fallback
 		})
@@ -52,7 +50,6 @@ describe('settingsStore', () => {
 		settingsStore.blurVirtualBackgroundEnabled = false
 		settingsStore.conversationsListStyle = 'two-lines'
 		settingsStore.attachmentFolder = '/Talk'
-		settingsStore.attachmentFolderFreeSpace = 1024
 	})
 
 	describe('reading and typing statuses', () => {
@@ -99,7 +96,6 @@ describe('settingsStore', () => {
 		it('shows correct loaded values for statuses', () => {
 			// Assert
 			expect(settingsStore.attachmentFolder).toBe('/Talk')
-			expect(settingsStore.attachmentFolderFreeSpace).toBe(1024)
 		})
 
 		it('updates values correctly', async () => {

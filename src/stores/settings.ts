@@ -51,9 +51,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		liveTranscriptionTargetLanguageId.value = BrowserStorage.getItem('liveTranscriptionTargetLanguageId') as string
 	}
 
-	// getTalkConfig('local', 'attachments', 'folder')
-	const attachmentFolder = ref<string>(loadState('spreed', 'attachment_folder', ''))
-	const attachmentFolderFreeSpace = ref<number>(loadState('spreed', 'attachment_folder_free_space', 0))
+	const attachmentFolder = ref<string>(getTalkConfig('local', 'attachments', 'folder') ?? '')
 
 	/**
 	 * Update the read status privacy for the user
@@ -186,7 +184,6 @@ export const useSettingsStore = defineStore('settings', () => {
 		blurVirtualBackgroundEnabled,
 		conversationsListStyle,
 		attachmentFolder,
-		attachmentFolderFreeSpace,
 		chatStyle,
 		liveTranscriptionTargetLanguageId,
 
