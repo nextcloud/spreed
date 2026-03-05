@@ -270,6 +270,8 @@ class Capabilities implements IPublicCapability {
 					'live-transcription' => $this->isLiveTranscriptionSupported(),
 					'live-translation' => $this->isLiveTranslationSupported(),
 					'play-sounds' => $this->talkConfig->getPlaySoundsForUser($user),
+					'grid-limit' => $this->talkConfig->getGridVideosLimit(),
+					'grid-limit-enforced' => $this->talkConfig->getGridVideosLimitEnforced(),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
