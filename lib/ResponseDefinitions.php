@@ -567,6 +567,10 @@ namespace OCA\Talk;
  *         experiments: array{
  *             enabled: non-negative-int,
  *         },
+ *         'feature-hints': array{
+ *             current: positive-int,
+ *             hidden: non-negative-int,
+ *         },
  *         permissions: array{
  *             max-default: int,
  *             max-custom: int,

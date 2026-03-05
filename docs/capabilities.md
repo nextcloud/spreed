@@ -220,3 +220,5 @@
 * `config => call => play-sounds` (local) - Whether the user has sounds enabled for calls (falls back to admin default for guests)
 * `config => call => grid-limit` (local) - Suggested gird size for all participants
 * `config => call => grid-limit-enforced` (local) - Whether the limit is hard enforced for all participants
+* `config => feature-hints => current` (local) - The current feature hint count that should be sent to the app config to hide all current feature hints
+* `config => feature-hints => hidden` (local) - Number of the last hint the administration has hidden via the app config
