@@ -179,9 +179,9 @@ import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
 import { PARTICIPANT } from '../../../constants.ts'
+import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
-import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 
 // Max number of videos per page. `0`, the default value, means no cap
