@@ -94,16 +94,6 @@ trait TInitialState {
 		);
 
 		$this->initialState->provideInitialState(
-			'circles_enabled',
-			$appManager->isEnabledForUser('circles', $user)
-		);
-
-		$this->initialState->provideInitialState(
-			'guests_accounts_enabled',
-			$appManager->isEnabledForUser('guests', $user)
-		);
-
-		$this->initialState->provideInitialState(
 			'read_status_privacy',
 			$this->talkConfig->getUserReadPrivacy($user->getUID())
 		);
@@ -178,11 +168,6 @@ trait TInitialState {
 
 		$this->initialState->provideInitialState(
 			'start_conversations',
-			false
-		);
-
-		$this->initialState->provideInitialState(
-			'circles_enabled',
 			false
 		);
 

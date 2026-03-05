@@ -37,6 +37,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import { CONVERSATION } from '../../constants.ts'
+import { hasServerAppCapabilities } from '../../services/CapabilitiesManager.ts'
 
 export default {
 	name: 'ListableSettings',
@@ -69,7 +70,7 @@ export default {
 			listable: null,
 			isListableLoading: false,
 			lastNotification: null,
-			isGuestsAccountsEnabled: loadState('spreed', 'guests_accounts_enabled'),
+			isGuestsAccountsEnabled: hasServerAppCapabilities('guests'),
 			LISTABLE: CONVERSATION.LISTABLE,
 		}
 	},

@@ -99,6 +99,17 @@ export function getTalkConfig<
 }
 
 /**
+ * Check whether the app has capabilities published
+ *
+ * @param appId The app ID to look for
+ */
+export function hasServerAppCapabilities<
+	T extends keyof Capabilities,
+>(appId: T): boolean {
+	return appId in localCapabilities
+}
+
+/**
  * Returns capability for specified token (if already matches from one of remote servers)
  *
  * @param token token of the conversation

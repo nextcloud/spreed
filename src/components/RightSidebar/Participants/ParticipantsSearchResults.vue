@@ -100,9 +100,10 @@ import IconAccountSearchOutline from 'vue-material-design-icons/AccountSearchOut
 import NavigationHint from '../../UIShared/NavigationHint.vue'
 import ParticipantsList from './ParticipantsList.vue'
 import { ATTENDEE } from '../../../constants.ts'
+import { hasServerAppCapabilities } from '../../../services/CapabilitiesManager.ts'
 import { useIntegrationsStore } from '../../../stores/integrations.js'
 
-const isCirclesEnabled = loadState('spreed', 'circles_enabled')
+const isCirclesEnabled = hasServerAppCapabilities('circles')
 
 export default {
 	name: 'ParticipantsSearchResults',
