@@ -151,11 +151,6 @@ trait TInitialState {
 			'attachment_folder_free_space',
 			$freeSpace
 		);
-
-		$this->initialState->provideInitialState(
-			'enable_matterbridge',
-			$this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1'
-		);
 	}
 
 	protected function publishInitialStateForGuest(): void {
@@ -184,11 +179,6 @@ trait TInitialState {
 		$this->initialState->provideInitialState(
 			'attachment_folder_free_space',
 			''
-		);
-
-		$this->initialState->provideInitialState(
-			'enable_matterbridge',
-			false
 		);
 
 		$this->initialState->provideInitialState(

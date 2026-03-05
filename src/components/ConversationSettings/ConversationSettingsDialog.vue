@@ -121,7 +121,6 @@
 
 <script>
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { ref } from 'vue'
 import NcAppSettingsDialog from '@nextcloud/vue/components/NcAppSettingsDialog'
@@ -148,7 +147,8 @@ import { CALL, CONFIG, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 
-const matterbridgeEnabled = loadState('spreed', 'enable_matterbridge')
+// FIXME Should use remote not local
+const matterbridgeEnabled = getTalkConfig('local', 'chat', 'matterbridge-enabled')
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 
 export default {
