@@ -69,11 +69,6 @@ trait TInitialState {
 		$this->publishInitialStateShared();
 
 		$this->initialState->provideInitialState(
-			'start_conversations',
-			!$this->talkConfig->isNotAllowedToCreateConversations($user)
-		);
-
-		$this->initialState->provideInitialState(
 			'play_sounds',
 			$this->userConfig->getValueBool($user->getUID(), Application::APP_ID, UserPreference::PLAY_SOUNDS),
 		);
@@ -124,12 +119,6 @@ trait TInitialState {
 
 	protected function publishInitialStateForGuest(): void {
 		$this->publishInitialStateShared();
-
-		$this->initialState->provideInitialState(
-			'start_conversations',
-			false
-		);
-
 
 		$this->initialState->provideInitialState(
 			'attachment_folder_free_space',
