@@ -208,7 +208,6 @@ export default {
 				return permissionsWithoutLobbyIgnore
 			}
 			return permissionsWithoutLobbyIgnore & ~PERMISSIONS.REACT
-
 		},
 
 		/**

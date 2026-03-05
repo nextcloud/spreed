@@ -84,16 +84,6 @@ trait TInitialState {
 		);
 
 		$this->initialState->provideInitialState(
-			'read_status_privacy',
-			$this->talkConfig->getUserReadPrivacy($user->getUID())
-		);
-
-		$this->initialState->provideInitialState(
-			'typing_privacy',
-			$this->talkConfig->getUserTypingPrivacy($user->getUID())
-		);
-
-		$this->initialState->provideInitialState(
 			'play_sounds',
 			$this->userConfig->getValueBool($user->getUID(), Application::APP_ID, UserPreference::PLAY_SOUNDS),
 		);
@@ -129,18 +119,12 @@ trait TInitialState {
 
 					$freeSpace = $folder->getFreeSpace();
 				} catch (NotPermittedException $e) {
-					$attachmentFolder = '/';
 					$this->serverConfig->setUserValue($user->getUID(), 'spreed', UserPreference::ATTACHMENT_FOLDER, '/');
 					$freeSpace = $userFolder->getFreeSpace();
 				}
 			} catch (NoUserException $e) {
 			}
 		}
-
-		$this->initialState->provideInitialState(
-			'attachment_folder',
-			$attachmentFolder
-		);
 
 		$this->initialState->provideInitialState(
 			'attachment_folder_free_space',
@@ -156,20 +140,6 @@ trait TInitialState {
 			false
 		);
 
-		$this->initialState->provideInitialState(
-			'read_status_privacy',
-			Participant::PRIVACY_PUBLIC
-		);
-
-		$this->initialState->provideInitialState(
-			'typing_privacy',
-			Participant::PRIVACY_PUBLIC
-		);
-
-		$this->initialState->provideInitialState(
-			'attachment_folder',
-			''
-		);
 
 		$this->initialState->provideInitialState(
 			'attachment_folder_free_space',

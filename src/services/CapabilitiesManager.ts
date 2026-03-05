@@ -103,10 +103,8 @@ export function getTalkConfig<
  *
  * @param appId The app ID to look for
  */
-export function hasServerAppCapabilities<
-	T extends keyof Capabilities,
->(appId: T): boolean {
-	return appId in localCapabilities
+export function hasServerAppCapabilities(appId: keyof Capabilities): boolean {
+	return Object.hasOwn(localCapabilities, appId)
 }
 
 /**
