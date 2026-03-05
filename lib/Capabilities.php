@@ -206,6 +206,7 @@ class Capabilities implements IPublicCapability {
 		],
 		'signaling' => [
 			'session-ping-limit',
+			'mode',
 			'hello-v2-token-key',
 		],
 		'experiments' => [
