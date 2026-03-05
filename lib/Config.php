@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Events\BeforeTurnServersGetEvent;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Model\Attendee;
@@ -16,6 +17,7 @@ use OCA\Talk\Settings\UserPreference;
 use OCA\Talk\Vendor\Firebase\JWT\JWT;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IGroupManager;
@@ -50,6 +52,7 @@ class Config {
 	public function __construct(
 		protected IConfig $config,
 		protected IAppConfig $appConfig,
+		protected IUserConfig $userConfig,
 		private ISecureRandom $secureRandom,
 		private IGroupManager $groupManager,
 		private IUserManager $userManager,
@@ -832,6 +835,13 @@ class Config {
 
 		// TODO Default value will be set to true, once all mobile clients support it.
 		return $this->appConfig->getAppValueBool('call_end_to_end_encryption');
+	}
+
+	public function getPlaySoundsForUser(?IUser $user): bool {
+		if (!$user instanceof IUser) {
+			return $this->getPlaySoundsDefaultForGuests();
+		}
+		return $this->userConfig->getValueBool($user->getUID(), Application::APP_ID, UserPreference::PLAY_SOUNDS);
 	}
 
 	public function getPlaySoundsDefaultForGuests(): bool {

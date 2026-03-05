@@ -269,6 +269,7 @@ class Capabilities implements IPublicCapability {
 					'end-to-end-encryption' => $this->talkConfig->isCallEndToEndEncryptionEnabled(),
 					'live-transcription' => $this->isLiveTranscriptionSupported(),
 					'live-translation' => $this->isLiveTranslationSupported(),
+					'play-sounds' => $this->talkConfig->getPlaySoundsForUser($user),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,

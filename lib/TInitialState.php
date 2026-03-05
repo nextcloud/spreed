@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OC\User\NoUserException;
-use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Settings\UserPreference;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IInitialState;
@@ -69,11 +68,6 @@ trait TInitialState {
 		$this->publishInitialStateShared();
 
 		$this->initialState->provideInitialState(
-			'play_sounds',
-			$this->userConfig->getValueBool($user->getUID(), Application::APP_ID, UserPreference::PLAY_SOUNDS),
-		);
-
-		$this->initialState->provideInitialState(
 			'force_enable_blur_filter',
 			$this->serverConfig->getUserValue($user->getUID(), 'theming', 'force_enable_blur_filter', ''));
 
@@ -123,11 +117,6 @@ trait TInitialState {
 		$this->initialState->provideInitialState(
 			'attachment_folder_free_space',
 			''
-		);
-
-		$this->initialState->provideInitialState(
-			'play_sounds',
-			$this->talkConfig->getPlaySoundsDefaultForGuests()
 		);
 	}
 }
