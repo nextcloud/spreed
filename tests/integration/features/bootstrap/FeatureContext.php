@@ -3876,19 +3876,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	#[Given('/^password policy app is (enabled|disabled)$/')]
 	public function setPasswordPolicyAppState(string $state): void {
-		$currentUser = $this->setCurrentUser('admin');
-		$this->sendRequest('GET', '/cloud/apps?filter=enabled');
-		$this->assertStatusCode($this->response, 200);
-		$data = $this->getDataFromResponse($this->response);
-		$this->passwordPolicyAppWasEnabled[$this->currentServer] = in_array('password_policy', $data['apps'], true);
+		if (!isset($this->passwordPolicyAppWasEnabled[$this->currentServer])) {
+			$this->runOcc(['app:list', '--enabled', '--output=json']);
+			$this->theCommandWasSuccessful();
+			$output = json_decode($this->getLastStdOut(), true, flags: JSON_THROW_ON_ERROR);
+			$this->passwordPolicyAppWasEnabled[$this->currentServer] = isset($output['enabled']['password_policy']);
+		}
 
 		if ($state === 'enabled') {
 			$this->runOcc(['app:enable', 'password_policy', '--force']);
 		} else {
-			$this->sendRequest('DELETE', '/cloud/apps/password_policy');
+			$this->runOcc(['app:disable', 'password_policy']);
 		}
-
-		$this->setCurrentUser($currentUser);
 	}
 
 	#[BeforeScenario]
@@ -3965,19 +3964,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		foreach (['LOCAL', 'REMOTE'] as $server) {
-			$this->usingServer($server);
-			if ($this->passwordPolicyAppWasEnabled[$server] === null) {
+			if (!isset($this->passwordPolicyAppWasEnabled[$server])) {
 				continue;
 			}
 
-			$currentUser = $this->setCurrentUser('admin');
+			$this->usingServer($server);
 			if ($this->passwordPolicyAppWasEnabled[$server]) {
 				$this->runOcc(['app:enable', 'password_policy', '--force']);
 			} else {
-				$this->sendRequest('DELETE', '/cloud/apps/password_policy');
+				$this->runOcc(['app:disable', 'password_policy']);
 			}
-			$this->setCurrentUser($currentUser);
-			$this->passwordPolicyAppWasEnabled[$server] = null;
+			unset($this->passwordPolicyAppWasEnabled[$server]);
 		}
 	}
 
