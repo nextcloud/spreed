@@ -68,10 +68,6 @@ trait TInitialState {
 		$this->publishInitialStateShared();
 
 		$this->initialState->provideInitialState(
-			'force_enable_blur_filter',
-			$this->serverConfig->getUserValue($user->getUID(), 'theming', 'force_enable_blur_filter', ''));
-
-		$this->initialState->provideInitialState(
 			'user_group_ids',
 			$this->groupManager->getUserGroupIds($user)
 		);
