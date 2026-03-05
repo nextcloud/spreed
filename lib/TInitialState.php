@@ -63,11 +63,6 @@ trait TInitialState {
 			'grid_videos_limit_enforced',
 			$this->talkConfig->getGridVideosLimitEnforced()
 		);
-
-		$this->initialState->provideInitialState(
-			'federation_enabled',
-			$this->talkConfig->isFederationEnabled()
-		);
 	}
 
 	protected function publishInitialStateForUser(IUser $user, IRootFolder $rootFolder, IAppManager $appManager): void {
