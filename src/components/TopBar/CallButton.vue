@@ -118,7 +118,7 @@ import { useGetToken } from '../../composables/useGetToken.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { callSIPDialOut } from '../../services/callsService.ts'
-import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
@@ -376,7 +376,7 @@ export default {
 	},
 
 	mounted() {
-		this.callEnabled = loadState('spreed', 'call_enabled')
+		this.callEnabled = getTalkConfig(this.token, 'call', 'enabled')
 	},
 
 	methods: {
