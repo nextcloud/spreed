@@ -47,6 +47,7 @@ class SelectHelper {
 			$alias . 'mention_permissions',
 			$alias . 'transcription_language',
 			$alias . 'last_pinned_id',
+			$alias . 'attributes',
 		])->selectAlias($alias . 'id', 'r_id');
 	}
 

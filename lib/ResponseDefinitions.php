@@ -393,6 +393,8 @@ namespace OCA\Talk;
  *     hiddenPinnedId: int,
  *     // Required capability: `scheduled-messages` (local)
  *     hasScheduledMessages: int,
+ *     // Bit-flag of enabled attributes of this conversation (only available with capability: `conversation-attributes`). See [attributes list](https://nextcloud-talk.readthedocs.io/en/latest/constants/#conversation-attributes) for details
+ *     attributes: int,
  * }
  *
  * @psalm-type TalkDashboardEventAttachment = array{

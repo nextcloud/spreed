@@ -56,8 +56,10 @@ use OCA\Talk\Model\Thread;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
+use OCA\Talk\RoomAttributes;
 use OCA\Talk\RoomPresets\Forced;
 use OCA\Talk\RoomPresets\Parameter;
+use OCA\Talk\RoomPresets\VoiceRoom;
 use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ChecksumVerificationService;
@@ -750,6 +752,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$objectId = Room::OBJECT_ID_PHONE_OUTGOING;
 		}
 
+		$attributes = RoomAttributes::NONE->value;
+		if ($preset === VoiceRoom::getIdentifier()) {
+			$attributes |= RoomAttributes::VOICE_ROOM->value;
+		}
+
 		try {
 			$room = $this->roomService->createConversation(
 				$roomType,
@@ -770,6 +777,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$description,
 				$emoji,
 				$avatarColor,
+				attributes: $attributes,
 				allowInternalTypes: false,
 			);
 		} catch (CreationException $e) {

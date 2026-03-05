@@ -617,6 +617,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($expectedRoom['objectType'])) {
 					$data['objectType'] = $room['objectType'];
 				}
+				if (!empty($expectedRoom['attributes'])) {
+					$data['attributes'] = (int)$room['attributes'];
+				}
 				return $data;
 			}, $rooms, $expected));
 	}
