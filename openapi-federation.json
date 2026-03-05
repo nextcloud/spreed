@@ -98,6 +98,7 @@
                             "previews",
                             "signaling",
                             "experiments",
+                            "feature-hints",
                             "permissions"
                         ],
                         "properties": {
@@ -385,6 +386,25 @@
                                 ],
                                 "properties": {
                                     "enabled": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "minimum": 0
+                                    }
+                                }
+                            },
+                            "feature-hints": {
+                                "type": "object",
+                                "required": [
+                                    "current",
+                                    "hidden"
+                                ],
+                                "properties": {
+                                    "current": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "minimum": 1
+                                    },
+                                    "hidden": {
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 0
