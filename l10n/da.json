@@ -648,8 +648,9 @@
     "Contact" : "Kontakt",
     "Deck Card" : "Opslagskort",
     "_%n reply_::_%n replies_" : ["%n svar","%n svar"],
-    "Poll" : "Afstemning",
+    "You voted" : "Du stemte",
     "Edit poll draft" : "Redigér afstemningskladde",
+    "Poll" : "Afstemning",
     "No messages" : "Ingen beskeder",
     "Unpin" : "Frigør",
     "Create a new group conversation" : "Opret en ny gruppesamtale",
@@ -682,8 +683,8 @@
     "Settings" : "Indstillinger",
     "Anonymous poll" : "Anonym afstemning",
     "Multiple answers" : "Multiple svar",
-    "Submit vote" : "Afgiv stemme",
     "End poll" : "Afslut afstemning",
+    "Submit" : "Tilføj",
     "Calls without High-performance backend can cause connectivity issues and high load on devices. {linkstart}Learn more{linkend}" : "Opkald uden højtydende backend kan forårsage forbindelsesproblemer og høj belastning af enheder. {linkstart}Få flere oplysninger{linkend}",
     "Talk setup incomplete" : "Snak opsætningen er ufuldstændig",
     "Settings for participant \"{user}\"" : "Indstillinger for deltager \"{user}\"",
@@ -768,7 +769,6 @@
     "Delete now" : "Slet nu",
     "Keep" : "Behold",
     "Select a region" : "Vælg en region",
-    "Submit" : "Tilføj",
     "Local time: {time}" : "Lokal tid: {time}",
     "Search …" : "Søg ...",
     "Message without mention" : "Besked som ikke omtaler nogen",
@@ -882,6 +882,7 @@
     "Set reminder for tomorrow" : "Sæt påmindelse for i morgen",
     "Set reminder for this weekend" : "Sæt påmindelse for denne weekend",
     "Set reminder for next week" : "Sæt påmindelse for næste weekend",
+    "Submit vote" : "Afgiv stemme",
     "Your personal setting has been saved" : "Din personlige indstilling er blevet gemt"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
