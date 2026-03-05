@@ -67,11 +67,6 @@ trait TInitialState {
 	protected function publishInitialStateForUser(IUser $user, IRootFolder $rootFolder, IAppManager $appManager): void {
 		$this->publishInitialStateShared();
 
-		$this->initialState->provideInitialState(
-			'user_group_ids',
-			$this->groupManager->getUserGroupIds($user)
-		);
-
 		$attachmentFolder = $this->talkConfig->getAttachmentFolder($user->getUID());
 		$freeSpace = 0;
 

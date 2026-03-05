@@ -28,6 +28,7 @@ export const useActorStore = defineStore('actor', () => {
 	const actorId = ref<string | null>(null)
 	const actorType = ref<string | null>(null)
 	const displayName = ref<string>('')
+	// FIXME Once needed please load from /ocs/v2.php/cloud/users => groups like in https://github.com/nextcloud/talk-desktop/blob/main/src/shared/ocs.service.js#L37
 	const actorGroups = ref<string[]>(loadState('spreed', 'user_group_ids', []))
 	const actorTeams = ref<string[]>([])
 
