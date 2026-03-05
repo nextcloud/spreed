@@ -949,7 +949,7 @@ export default {
 				// you are not currently active in, will not be removed anymore,
 				// as there is no signaling message about it when the internal
 				// signaling is used.
-				if (loadState('spreed', 'signaling_mode') !== 'internal') {
+				if (getTalkConfig('local', 'signaling', 'mode') !== 'internal') {
 					if (response?.headers && response.headers['x-nextcloud-talk-modified-before']) {
 						this.roomListModifiedBefore = response.headers['x-nextcloud-talk-modified-before']
 					}

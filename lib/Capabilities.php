@@ -304,6 +304,7 @@ class Capabilities implements IPublicCapability {
 				],
 				'signaling' => [
 					'session-ping-limit' => max(0, (int)$this->serverConfig->getAppValue('spreed', 'session-ping-limit', '200')),
+					'mode' => $this->talkConfig->getSignalingMode(),
 					// 'hello-v2-token-key' => string,
 				],
 				'experiments' => [
