@@ -34,14 +34,6 @@ trait TInitialState {
 	protected LoggerInterface $logger;
 
 	protected function publishInitialStateShared(): void {
-		$signalingMode = $this->talkConfig->getSignalingMode();
-		if ($signalingMode === Config::SIGNALING_CLUSTER_CONVERSATION
-			&& !$this->memcacheFactory->isAvailable()) {
-			throw new HintException(
-				'High-performance backend clustering is only supported with a distributed cache!'
-			);
-		}
-
 		$this->initialState->provideInitialState(
 			'signaling_mode',
 			$this->talkConfig->getSignalingMode()
