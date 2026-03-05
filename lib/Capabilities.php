@@ -207,6 +207,9 @@ class Capabilities implements IPublicCapability {
 			'enabled',
 		],
 		'permissions' => [
+			'max-default',
+			'max-custom',
+			'default',
 		],
 	];
 
@@ -304,6 +307,7 @@ class Capabilities implements IPublicCapability {
 				'permissions' => [
 					'max-default' => Attendee::PERMISSIONS_MAX_DEFAULT,
 					'max-custom' => Attendee::PERMISSIONS_MAX_CUSTOM,
+					'default' => $this->talkConfig->getDefaultPermissions(),
 				],
 			],
 			'config-local' => self::LOCAL_CONFIGS,
