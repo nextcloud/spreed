@@ -162,9 +162,4 @@
       <code><![CDATA[Cache]]></code>
     </UndefinedClass>
   </file>
-  <file src="lib/TInitialState.php">
-    <UndefinedClass>
-      <code><![CDATA[NoUserException]]></code>
-    </UndefinedClass>
-  </file>
 </files>

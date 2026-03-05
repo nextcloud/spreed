@@ -14,6 +14,7 @@ use OCA\Talk\Vendor\Firebase\JWT\JWT;
 use OCA\Talk\Vendor\Firebase\JWT\Key;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IGroupManager;
@@ -29,6 +30,8 @@ class ConfigTest extends TestCase {
 	private function createConfig(IConfig $config) {
 		/** @var MockObject|IAppConfig $appConfig */
 		$appConfig = $this->createMock(IAppConfig::class);
+		/** @var MockObject|IUserConfig $appConfig */
+		$userConfig = $this->createMock(IUserConfig::class);
 		/** @var MockObject|ITimeFactory $timeFactory */
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		/** @var MockObject|ISecureRandom $secureRandom */
@@ -42,7 +45,7 @@ class ConfigTest extends TestCase {
 		/** @var MockObject|IEventDispatcher $dispatcher */
 		$dispatcher = $this->createMock(IEventDispatcher::class);
 
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
 		return $helper;
 	}
 
@@ -142,6 +145,8 @@ class ConfigTest extends TestCase {
 
 		/** @var MockObject|IAppConfig $appConfig */
 		$appConfig = $this->createMock(IAppConfig::class);
+		/** @var MockObject|IUserConfig $appConfig */
+		$userConfig = $this->createMock(IUserConfig::class);
 		/** @var MockObject|IGroupManager $groupManager */
 		$groupManager = $this->createMock(IGroupManager::class);
 		/** @var MockObject|IUserManager $userManager */
@@ -158,7 +163,7 @@ class ConfigTest extends TestCase {
 			->method('generate')
 			->with(16)
 			->willReturn('abcdefghijklmnop');
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
 
 		//
 		$settings = $helper->getTurnSettings();
@@ -212,7 +217,8 @@ class ConfigTest extends TestCase {
 
 		/** @var MockObject|IAppConfig $appConfig */
 		$appConfig = $this->createMock(IAppConfig::class);
-
+		/** @var MockObject|IUserConfig $appConfig */
+		$userConfig = $this->createMock(IUserConfig::class);
 		/** @var MockObject|ITimeFactory $timeFactory */
 		$timeFactory = $this->createMock(ITimeFactory::class);
 
@@ -250,7 +256,7 @@ class ConfigTest extends TestCase {
 
 		$dispatcher->addServiceListener(BeforeTurnServersGetEvent::class, GetTurnServerListener::class);
 
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
 
 		$settings = $helper->getTurnSettings();
 		$this->assertSame($servers, $settings);
@@ -363,6 +369,8 @@ class ConfigTest extends TestCase {
 		$config = \OCP\Server::get(IConfig::class);
 		/** @var MockObject|IAppConfig $appConfig */
 		$appConfig = $this->createMock(IAppConfig::class);
+		/** @var MockObject|IUserConfig $appConfig */
+		$userConfig = $this->createMock(IUserConfig::class);
 		/** @var MockObject|ITimeFactory $timeFactory */
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		/** @var MockObject|ISecureRandom $secureRandom */
@@ -402,7 +410,7 @@ class ConfigTest extends TestCase {
 			->method('getDisplayName')
 			->willReturn('Jane Doe');
 
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
 
 		$config->setAppValue('spreed', 'signaling_token_alg', $algo);
 		// Make sure new keys are generated.
@@ -426,6 +434,8 @@ class ConfigTest extends TestCase {
 		$config = \OCP\Server::get(IConfig::class);
 		/** @var MockObject|IAppConfig $appConfig */
 		$appConfig = $this->createMock(IAppConfig::class);
+		/** @var MockObject|IUserConfig $appConfig */
+		$userConfig = $this->createMock(IUserConfig::class);
 		/** @var MockObject|ITimeFactory $timeFactory */
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		/** @var MockObject|ISecureRandom $secureRandom */
@@ -450,7 +460,7 @@ class ConfigTest extends TestCase {
 			->with('')
 			->willReturn('https://domain.invalid/nextcloud');
 
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
 
 		$config->setAppValue('spreed', 'signaling_token_alg', $algo);
 		// Make sure new keys are generated.

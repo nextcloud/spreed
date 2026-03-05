@@ -177,6 +177,9 @@ class Capabilities implements IPublicCapability {
 			'start-without-media',
 			'blur-virtual-background',
 			'live-transcription-target-language-id',
+			'play-sounds',
+			'grid-limit',
+			'grid-limit-enforced',
 		],
 		'chat' => [
 			'read-privacy',
@@ -185,6 +188,7 @@ class Capabilities implements IPublicCapability {
 			'typing-privacy',
 			'summary-threshold',
 			'style',
+			'matterbridge-enabled',
 		],
 		'conversations' => [
 			'can-create',
@@ -208,9 +212,6 @@ class Capabilities implements IPublicCapability {
 			'enabled',
 		],
 		'permissions' => [
-			'max-default',
-			'max-custom',
-			'default',
 		],
 	];
 

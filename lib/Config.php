@@ -434,6 +434,9 @@ class Config {
 		return $turnSettings;
 	}
 
+	/**
+	 * @psalm-return self::SIGNALING_INTERNAL|self::SIGNALING_EXTERNAL|self::SIGNALING_CLUSTER_CONVERSATION
+	 */
 	public function getSignalingMode(bool $cleanExternalSignaling = true): string {
 		$validModes = [
 			self::SIGNALING_INTERNAL,
@@ -455,7 +458,7 @@ class Config {
 			return self::SIGNALING_EXTERNAL;
 		}
 
-		return \in_array($mode, $validModes) ? $mode : self::SIGNALING_EXTERNAL;
+		return $mode === self::SIGNALING_CLUSTER_CONVERSATION ? $mode : self::SIGNALING_EXTERNAL;
 	}
 
 	/**

@@ -22,6 +22,7 @@ use OCA\Talk\TalkSession;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
@@ -87,12 +88,13 @@ class BackendNotifierTest extends TestCase {
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 
 		$appConfig = $this->createMock(IAppConfig::class);
+		$userConfig = $this->createMock(IUserConfig::class);
 		$groupManager = $this->createMock(IGroupManager::class);
 		$userManager = $this->createMock(IUserManager::class);
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$dispatcher = \OCP\Server::get(IEventDispatcher::class);
 
-		$this->config = new Config($config, $appConfig, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $timeFactory, $dispatcher);
+		$this->config = new Config($config, $appConfig, $userConfig, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $timeFactory, $dispatcher);
 
 		$this->recreateBackendNotifier();
 

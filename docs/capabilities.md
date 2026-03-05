@@ -213,4 +213,10 @@
 * `react-permission` - When permission 256 is required to add reactions (previously handled by the chat permission)
 * `config => permissions => max-default` - Maximum value for default permissions (510 with react-permission, 254 without)
 * `config => permissions => max-custom` - Maximum value for custom permissions (511 with react-permission, 255 without)
+* `config => permissions => default` - The admin configured default permissions
 * `conversation-presets` (local) - Whether conversation presets endpoint is available and should be used by clients
+* `config => chat => matterbridge-enabled` (local) - Whether matterbridge is installed on the server and can be configured for conversations
+* `config => signaling => mode` (local) - Signaling mode (external with High-performance backend, internal otherwise)
+* `config => call => play-sounds` (local) - Whether the user has sounds enabled for calls (falls back to admin default for guests)
+* `config => call => grid-limit` (local) - Suggested gird size for all participants
+* `config => call => grid-limit-enforced` (local) - Whether the limit is hard enforced for all participants
