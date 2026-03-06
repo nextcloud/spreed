@@ -34,10 +34,12 @@ use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\HintException;
+use OCP\IGroupManager;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -63,8 +65,10 @@ class PageController extends Controller {
 		private RoomService $roomService,
 		private IURLGenerator $url,
 		private INotificationManager $notificationManager,
+		protected IInitialState $initialState,
 		private IThrottler $throttler,
 		protected Config $talkConfig,
+		protected IGroupManager $groupManager,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -234,6 +238,11 @@ class PageController extends Controller {
 				return $this->redirectToConversation($data['token']);
 			}
 		}
+
+		$this->initialState->provideInitialState(
+			'user_group_ids',
+			$this->groupManager->getUserGroupIds($user)
+		);
 
 		if (class_exists(LoadViewer::class)) {
 			$this->eventDispatcher->dispatchTyped(new LoadViewer());
