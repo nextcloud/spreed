@@ -343,6 +343,22 @@ class InjectionMiddleware extends Middleware {
 			throw new PermissionsException();
 		}
 
+		$room = $controller->getRoom();
+
+		/**
+		 * This handles version mismatches where the local instance may have different
+		 * permission bits than the host (e.g., after a migration that adds new permission types like REACT).
+		 *
+		 * - REACT to CHAT fallback introduced with Nextcloud 34, can be dropped once Nextcloud 33 can not be federated with
+		 */
+		if ($permission === RequirePermission::REACT
+			&& !($participant->getPermissions() & Attendee::PERMISSIONS_REACT)
+			&& ($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)
+			&& $room?->isFederatedConversation()) {
+			// Allow reacting with chat permission for now, in case the host server does not have split permissions yet.
+			return;
+		}
+
 		if ($permission === RequirePermission::CHAT && !($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
 			throw new PermissionsException();
 		}
