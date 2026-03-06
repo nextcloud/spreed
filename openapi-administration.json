@@ -31,18 +31,22 @@
                 "properties": {
                     "description": {
                         "type": "string",
-                        "nullable": true
+                        "nullable": true,
+                        "description": "A longer description of the bot helping moderators to decide if they want to enable this bot"
                     },
                     "id": {
                         "type": "integer",
-                        "format": "int64"
+                        "format": "int64",
+                        "description": "Unique numeric identifier of the bot on this server"
                     },
                     "name": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Display name of the bot shown as author when it posts a message or reaction"
                     },
                     "state": {
                         "type": "integer",
-                        "format": "int64"
+                        "format": "int64",
+                        "description": "One of the [Bot states](https://nextcloud-talk.readthedocs.io/en/latest/constants#bot-states)"
                     }
                 }
             },
@@ -64,24 +68,30 @@
                         "properties": {
                             "error_count": {
                                 "type": "integer",
-                                "format": "int64"
+                                "format": "int64",
+                                "description": "Number of consecutive errors"
                             },
                             "features": {
                                 "type": "integer",
-                                "format": "int64"
+                                "format": "int64",
+                                "description": "Feature flags for the bot (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#bot-features))"
                             },
                             "last_error_date": {
                                 "type": "integer",
-                                "format": "int64"
+                                "format": "int64",
+                                "description": "UNIX timestamp of the last error"
                             },
                             "last_error_message": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "The last exception message or error response information when trying to reach the bot"
                             },
                             "url": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "URL endpoint that is triggered by this bot"
                             },
                             "url_hash": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "Hash of the URL prefixed with `bot-` serves as `actorId`"
                             }
                         }
                     }
@@ -99,6 +109,7 @@
                 "properties": {
                     "features": {
                         "type": "array",
+                        "description": "List of features available on the server",
                         "items": {
                             "type": "string"
                         },
@@ -106,6 +117,7 @@
                     },
                     "features-local": {
                         "type": "array",
+                        "description": "List of features only available locally (not for federated conversations)",
                         "items": {
                             "type": "string"
                         },
@@ -132,10 +144,12 @@
                                 ],
                                 "properties": {
                                     "allowed": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether file sharing is allowed in conversations"
                                     },
                                     "folder": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "User's attachment folder (only available for logged in users)"
                                     }
                                 }
                             },
@@ -167,20 +181,25 @@
                                 ],
                                 "properties": {
                                     "enabled": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether calls are enabled"
                                     },
                                     "breakout-rooms": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether breakout rooms are enabled"
                                     },
                                     "recording": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether call recording is enabled"
                                     },
                                     "recording-consent": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Whether recording consent is required (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#recording-consent-required))"
                                     },
                                     "supported-reactions": {
                                         "type": "array",
+                                        "description": "List of supported reaction emojis during calls",
                                         "items": {
                                             "type": "string"
                                         }
@@ -200,51 +219,66 @@
                                         }
                                     },
                                     "can-upload-background": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether the user can upload custom virtual backgrounds"
                                     },
                                     "sip-enabled": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether SIP is enabled on the server"
                                     },
                                     "sip-dialout-enabled": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether SIP dial-out is enabled on the server"
                                     },
                                     "default-phone-region": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "Default phone region of the server"
                                     },
                                     "can-enable-sip": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether the user can enable SIP for conversations"
                                     },
                                     "start-without-media": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether calls start without media by default"
                                     },
                                     "max-duration": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Maximum duration of a call in seconds, `0` means unlimited"
                                     },
                                     "blur-virtual-background": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether the blur virtual background is available"
                                     },
                                     "end-to-end-encryption": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether end-to-end encryption is available"
                                     },
                                     "live-transcription": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether live transcription is available"
                                     },
                                     "live-translation": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether live translation is available"
                                     },
                                     "live-transcription-target-language-id": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "The default target language for live transcription"
                                     },
                                     "play-sounds": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether to play sounds for call events"
                                     },
                                     "grid-limit": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Maximum number of participants shown in the grid view"
                                     },
                                     "grid-limit-enforced": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether the grid limit is enforced by the server"
                                     }
                                 }
                             },
@@ -263,25 +297,31 @@
                                 "properties": {
                                     "max-length": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Maximum length of a chat message"
                                     },
                                     "read-privacy": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Read privacy setting for the user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-read-status-privacy))"
                                     },
                                     "has-translation-providers": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether translation providers are available"
                                     },
                                     "has-translation-task-providers": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether translation task providers are available"
                                     },
                                     "typing-privacy": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Typing privacy setting for the user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-typing-privacy))"
                                     },
                                     "summary-threshold": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "description": "Minimum number of chat messages before a summary can be generated",
                                         "minimum": 1
                                     },
                                     "style": {
@@ -289,10 +329,12 @@
                                         "enum": [
                                             "split",
                                             "unified"
-                                        ]
+                                        ],
+                                        "description": "Chat message rendering style (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#chat-style))"
                                     },
                                     "matterbridge-enabled": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether Matterbridge is enabled"
                                     }
                                 }
                             },
@@ -309,36 +351,43 @@
                                 ],
                                 "properties": {
                                     "can-create": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether the user can create conversations"
                                     },
                                     "force-passwords": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether passwords are enforced for public conversations"
                                     },
                                     "list-style": {
                                         "type": "string",
                                         "enum": [
                                             "two-lines",
                                             "compact"
-                                        ]
+                                        ],
+                                        "description": "Conversation list style (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-list-style))"
                                     },
                                     "description-length": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "description": "Maximum length of a conversation description",
                                         "minimum": 1
                                     },
                                     "retention-event": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "description": "Retention period for event conversations in seconds, `0` means no retention",
                                         "minimum": 0
                                     },
                                     "retention-phone": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "description": "Retention period for phone conversations in seconds, `0` means no retention",
                                         "minimum": 0
                                     },
                                     "retention-instant-meetings": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "description": "Retention period for instant meetings in seconds, `0` means no retention",
                                         "minimum": 0
                                     }
                                 }
@@ -353,16 +402,20 @@
                                 ],
                                 "properties": {
                                     "enabled": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether federation is enabled"
                                     },
                                     "incoming-enabled": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether incoming federation is enabled"
                                     },
                                     "outgoing-enabled": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether outgoing federation is enabled"
                                     },
                                     "only-trusted-servers": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether only trusted servers are allowed for federation"
                                     }
                                 }
                             },
@@ -374,7 +427,8 @@
                                 "properties": {
                                     "max-gif-size": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Maximum GIF file size in bytes for previews"
                                     }
                                 }
                             },
@@ -387,7 +441,8 @@
                                 "properties": {
                                     "session-ping-limit": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Maximum number of sessions that can be pinged in a single request"
                                     },
                                     "mode": {
                                         "type": "string",
@@ -395,10 +450,12 @@
                                             "internal",
                                             "external",
                                             "conversation_cluster"
-                                        ]
+                                        ],
+                                        "description": "Signaling mode (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#signaling-modes))"
                                     },
                                     "hello-v2-token-key": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "Public key for hello v2 authentication"
                                     }
                                 }
                             },
@@ -411,6 +468,7 @@
                                     "enabled": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "description": "Bit-flag of enabled experiments",
                                         "minimum": 0
                                     }
                                 }
@@ -425,15 +483,18 @@
                                 "properties": {
                                     "max-default": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Maximum default permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))"
                                     },
                                     "max-custom": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Maximum custom permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))"
                                     },
                                     "default": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Server default permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))"
                                     }
                                 }
                             }
@@ -441,6 +502,7 @@
                     },
                     "config-local": {
                         "type": "object",
+                        "description": "Map of config keys that are only available locally (not for federated conversations)",
                         "additionalProperties": {
                             "type": "array",
                             "items": {
@@ -449,7 +511,8 @@
                         }
                     },
                     "version": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Version of the Talk app"
                     }
                 }
             },
