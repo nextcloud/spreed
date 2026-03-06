@@ -150,8 +150,7 @@ export default {
 		},
 
 		canUploadFiles() {
-			return getTalkConfig(this.token, 'attachments', 'allowed') && this.actorStore.userId
-				&& this.settingsStore.attachmentFolderFreeSpace !== 0
+			return getTalkConfig(this.token, 'attachments', 'allowed')
 				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT)
 				&& !this.conversation.remoteServer // no attachments support in federated conversations
 		},

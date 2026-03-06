@@ -178,14 +178,15 @@ import EmptyCallView from '../shared/EmptyCallView.vue'
 import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
-import { ATTENDEE, PARTICIPANT } from '../../../constants.ts'
+import { PARTICIPANT } from '../../../constants.ts'
+import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 
 // Max number of videos per page. `0`, the default value, means no cap
-const videosCap = parseInt(loadState('spreed', 'grid_videos_limit'), 10) || 0
-const videosCapEnforced = loadState('spreed', 'grid_videos_limit_enforced') || false
+const videosCap = getTalkConfig('local', 'call', 'grid-limit') || 0
+const videosCapEnforced = getTalkConfig('local', 'call', 'grid-limit-enforced')
 
 // Align with var(--grid-gap) in CallView
 const GRID_GAP = 8

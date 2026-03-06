@@ -68,7 +68,6 @@
 </template>
 
 <script>
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { ref, useId } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -196,11 +195,19 @@ export default {
 				return this.permissions
 			}
 
-			return loadState(
-				'spreed',
-				'default_permissions',
-				this.maxDefaultPermission & ~PERMISSIONS.LOBBY_IGNORE,
-			)
+			// Use API value if available, otherwise compute from constants
+			const apiValue = getTalkConfig('local', 'permissions', 'default')
+			if (apiValue !== undefined) {
+				return apiValue
+			}
+
+			const permissionsWithoutLobbyIgnore = PERMISSIONS.MAX_DEFAULT & ~PERMISSIONS.LOBBY_IGNORE
+
+			// Fallback for older servers: MAX_DEFAULT minus REACT if capability missing
+			if (this.hasReactPermissions) {
+				return permissionsWithoutLobbyIgnore
+			}
+			return permissionsWithoutLobbyIgnore & ~PERMISSIONS.REACT
 		},
 
 		/**

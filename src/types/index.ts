@@ -60,10 +60,22 @@ type CalendarCapabilities = {
 	webui: boolean
 }
 
+// From https://github.com/nextcloud/circles/blob/master/lib/AppInfo/Capabilities.php
+type CirclesCapabilities = {
+	version: string
+}
+
+// From https://github.com/nextcloud/guests/blob/master/lib/AppInfo/Capabilities.php
+type GuestsCapabilities = {
+	enabled: boolean
+}
+
 // Capabilities
 export type Capabilities = {
 	spreed: SpreedCapabilities
 	calendar?: CalendarCapabilities
+	circles?: CirclesCapabilities
+	guests?: GuestsCapabilities
 	password_policy?: PasswordPolicyCapabilities
 }
 

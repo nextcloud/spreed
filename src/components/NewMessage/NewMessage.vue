@@ -611,8 +611,8 @@ export default {
 
 		canUploadFiles() {
 			// TODO attachments should be allowed on both instances?
-			return getTalkConfig(this.token, 'attachments', 'allowed') && this.canShareFiles
-				&& this.settingsStore.attachmentFolderFreeSpace !== 0
+			return getTalkConfig(this.token, 'attachments', 'allowed')
+				&& this.canShareFiles
 				&& !this.scheduleMessageTime && !this.showScheduledMessages
 		},
 

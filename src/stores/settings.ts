@@ -22,6 +22,7 @@ import {
 } from '../services/settingsService.ts'
 
 type PRIVACY_KEYS = typeof PRIVACY[keyof typeof PRIVACY]
+type TALK_CONFIG_PRIVACY = PRIVACY_KEYS | undefined
 type LIST_STYLE_OPTIONS = 'two-lines' | 'compact'
 type CHAT_STYLE_OPTIONS = 'split' | 'unified'
 
@@ -33,8 +34,9 @@ const hasUserAccount = Boolean(getCurrentUser()?.uid)
  * Store for shared items shown in RightSidebar
  */
 export const useSettingsStore = defineStore('settings', () => {
-	const readStatusPrivacy = ref<PRIVACY_KEYS>(loadState('spreed', 'read_status_privacy', PRIVACY.PRIVATE))
-	const typingStatusPrivacy = ref<PRIVACY_KEYS>(loadState('spreed', 'typing_privacy', PRIVACY.PRIVATE))
+	// Fallback to private if the config value is not found
+	const readStatusPrivacy = ref<PRIVACY_KEYS>(getTalkConfig('local', 'chat', 'read-privacy') as TALK_CONFIG_PRIVACY ?? PRIVACY.PRIVATE)
+	const typingStatusPrivacy = ref<PRIVACY_KEYS>(getTalkConfig('local', 'chat', 'typing-privacy') as TALK_CONFIG_PRIVACY ?? PRIVACY.PRIVATE)
 	const showMediaSettings = ref<boolean>(BrowserStorage.getItem('showMediaSettings') !== 'false')
 	const noiseSuppression = ref<boolean>(BrowserStorage.getItem('noiseSuppression') !== 'false')
 	const echoCancellation = ref<boolean>(BrowserStorage.getItem('echoCancellation') !== 'false')
@@ -49,8 +51,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		liveTranscriptionTargetLanguageId.value = BrowserStorage.getItem('liveTranscriptionTargetLanguageId') as string
 	}
 
-	const attachmentFolder = ref<string>(loadState('spreed', 'attachment_folder', ''))
-	const attachmentFolderFreeSpace = ref<number>(loadState('spreed', 'attachment_folder_free_space', 0))
+	const attachmentFolder = ref<string>(getTalkConfig('local', 'attachments', 'folder') ?? '')
 
 	/**
 	 * Update the read status privacy for the user
@@ -183,7 +184,6 @@ export const useSettingsStore = defineStore('settings', () => {
 		blurVirtualBackgroundEnabled,
 		conversationsListStyle,
 		attachmentFolder,
-		attachmentFolderFreeSpace,
 		chatStyle,
 		liveTranscriptionTargetLanguageId,
 

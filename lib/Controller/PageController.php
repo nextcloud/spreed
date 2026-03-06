@@ -19,9 +19,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
-use OCA\Talk\TInitialState;
 use OCA\Viewer\Event\LoadViewer;
-use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
@@ -39,12 +37,8 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
-use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Files\IRootFolder;
 use OCP\HintException;
-use OCP\ICacheFactory;
-use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IRequest;
 use OCP\IURLGenerator;
@@ -57,8 +51,6 @@ use SensitiveParameter;
 
 #[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 class PageController extends Controller {
-	use TInitialState;
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
@@ -67,29 +59,18 @@ class PageController extends Controller {
 		private TalkSession $talkSession,
 		private IUserSession $userSession,
 		private ?string $userId,
-		LoggerInterface $logger,
+		protected LoggerInterface $logger,
 		private Manager $manager,
 		private ParticipantService $participantService,
 		private RoomService $roomService,
 		private IURLGenerator $url,
 		private INotificationManager $notificationManager,
-		private IAppManager $appManager,
-		IInitialState $initialState,
-		ICacheFactory $memcacheFactory,
-		private IRootFolder $rootFolder,
+		protected IInitialState $initialState,
 		private IThrottler $throttler,
-		Config $talkConfig,
-		IConfig $serverConfig,
-		protected IUserConfig $userConfig,
-		IGroupManager $groupManager,
+		protected Config $talkConfig,
+		protected IGroupManager $groupManager,
 	) {
 		parent::__construct($appName, $request);
-		$this->logger = $logger;
-		$this->initialState = $initialState;
-		$this->memcacheFactory = $memcacheFactory;
-		$this->talkConfig = $talkConfig;
-		$this->serverConfig = $serverConfig;
-		$this->groupManager = $groupManager;
 	}
 
 	/**
@@ -258,7 +239,10 @@ class PageController extends Controller {
 			}
 		}
 
-		$this->publishInitialStateForUser($user, $this->rootFolder, $this->appManager);
+		$this->initialState->provideInitialState(
+			'user_group_ids',
+			$this->groupManager->getUserGroupIds($user)
+		);
 
 		if (class_exists(LoadViewer::class)) {
 			$this->eventDispatcher->dispatchTyped(new LoadViewer());
@@ -330,8 +314,6 @@ class PageController extends Controller {
 		if (class_exists(LoadViewer::class)) {
 			$this->eventDispatcher->dispatchTyped(new LoadViewer());
 		}
-
-		$this->publishInitialStateForGuest();
 
 		$this->eventDispatcher->dispatchTyped(new LoadAdditionalScriptsEvent());
 		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
@@ -422,7 +404,6 @@ class PageController extends Controller {
 			}
 		}
 
-		$this->publishInitialStateForGuest();
 		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
 
 		$response = new PublicTemplateResponse($this->appName, 'index', [
@@ -482,7 +463,6 @@ class PageController extends Controller {
 			return $response;
 		}
 
-		$this->publishInitialStateForGuest();
 		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
 
 		$response = new PublicTemplateResponse($this->appName, 'index', [

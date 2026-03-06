@@ -6,7 +6,6 @@
 <script setup lang="ts">
 import type { ParticipantSearchResult, Conversation as TypeConversation } from '../../../types/index.ts'
 
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { useVirtualList } from '@vueuse/core'
 import { computed } from 'vue'
@@ -18,7 +17,7 @@ import ConversationIcon from '../../ConversationIcon.vue'
 import NavigationHint from '../../UIShared/NavigationHint.vue'
 import ConversationItem from '../ConversationsList/ConversationItem.vue'
 import { ATTENDEE, AVATAR, CONVERSATION } from '../../../constants.ts'
-import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasServerAppCapabilities } from '../../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../../stores/settings.ts'
 import { getPreloadedUserStatus } from '../../../utils/userStatus.ts'
 
@@ -36,7 +35,7 @@ const emit = defineEmits<{
 	createAndJoinConversation: [item: TypeConversation | ParticipantSearchResult]
 }>()
 
-const isCirclesEnabled = loadState('spreed', 'circles_enabled')
+const isCirclesEnabled = hasServerAppCapabilities('circles')
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const settingsStore = useSettingsStore()
 const isCompact = computed(() => settingsStore.conversationsListStyle === CONVERSATION.LIST_STYLE.COMPACT)

@@ -4,10 +4,10 @@
  */
 
 import { getCurrentUser } from '@nextcloud/auth'
-import { loadState } from '@nextcloud/initial-state'
 import { generateFilePath } from '@nextcloud/router'
 import { defineStore } from 'pinia'
 import BrowserStorage from '../services/BrowserStorage.js'
+import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { setPlaySounds } from '../services/settingsService.ts'
 
 const hasUserAccount = Boolean(getCurrentUser()?.uid)
@@ -16,12 +16,12 @@ const hasUserAccount = Boolean(getCurrentUser()?.uid)
  */
 let shouldPlaySounds = false
 if (hasUserAccount) {
-	shouldPlaySounds = loadState('spreed', 'play_sounds', false)
+	shouldPlaySounds = getTalkConfig('local', 'call', 'play-sounds')
 } else {
 	if (BrowserStorage.getItem('play_sounds')) {
 		shouldPlaySounds = BrowserStorage.getItem('play_sounds') !== 'no'
 	} else {
-		shouldPlaySounds = loadState('spreed', 'play_sounds', false)
+		shouldPlaySounds = getTalkConfig('local', 'call', 'play-sounds')
 	}
 }
 

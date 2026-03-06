@@ -99,6 +99,15 @@ export function getTalkConfig<
 }
 
 /**
+ * Check whether the app has capabilities published
+ *
+ * @param appId The app ID to look for
+ */
+export function hasServerAppCapabilities(appId: keyof Capabilities): boolean {
+	return Object.hasOwn(localCapabilities, appId)
+}
+
+/**
  * Returns capability for specified token (if already matches from one of remote servers)
  *
  * @param token token of the conversation

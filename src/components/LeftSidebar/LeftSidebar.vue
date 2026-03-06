@@ -302,7 +302,6 @@
 import { isCancel } from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import debounce from 'debounce'
@@ -949,7 +948,7 @@ export default {
 				// you are not currently active in, will not be removed anymore,
 				// as there is no signaling message about it when the internal
 				// signaling is used.
-				if (loadState('spreed', 'signaling_mode') !== 'internal') {
+				if (getTalkConfig('local', 'signaling', 'mode') !== 'internal') {
 					if (response?.headers && response.headers['x-nextcloud-talk-modified-before']) {
 						this.roomListModifiedBefore = response.headers['x-nextcloud-talk-modified-before']
 					}

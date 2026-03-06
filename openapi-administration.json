@@ -160,7 +160,10 @@
                                     "end-to-end-encryption",
                                     "live-transcription",
                                     "live-translation",
-                                    "live-transcription-target-language-id"
+                                    "live-transcription-target-language-id",
+                                    "play-sounds",
+                                    "grid-limit",
+                                    "grid-limit-enforced"
                                 ],
                                 "properties": {
                                     "enabled": {
@@ -232,6 +235,16 @@
                                     },
                                     "live-transcription-target-language-id": {
                                         "type": "string"
+                                    },
+                                    "play-sounds": {
+                                        "type": "boolean"
+                                    },
+                                    "grid-limit": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "grid-limit-enforced": {
+                                        "type": "boolean"
                                     }
                                 }
                             },
@@ -244,7 +257,8 @@
                                     "has-translation-task-providers",
                                     "typing-privacy",
                                     "summary-threshold",
-                                    "style"
+                                    "style",
+                                    "matterbridge-enabled"
                                 ],
                                 "properties": {
                                     "max-length": {
@@ -276,6 +290,9 @@
                                             "split",
                                             "unified"
                                         ]
+                                    },
+                                    "matterbridge-enabled": {
+                                        "type": "boolean"
                                     }
                                 }
                             },
@@ -364,12 +381,21 @@
                             "signaling": {
                                 "type": "object",
                                 "required": [
-                                    "session-ping-limit"
+                                    "session-ping-limit",
+                                    "mode"
                                 ],
                                 "properties": {
                                     "session-ping-limit": {
                                         "type": "integer",
                                         "format": "int64"
+                                    },
+                                    "mode": {
+                                        "type": "string",
+                                        "enum": [
+                                            "internal",
+                                            "external",
+                                            "conversation_cluster"
+                                        ]
                                     },
                                     "hello-v2-token-key": {
                                         "type": "string"
@@ -393,7 +419,8 @@
                                 "type": "object",
                                 "required": [
                                     "max-default",
-                                    "max-custom"
+                                    "max-custom",
+                                    "default"
                                 ],
                                 "properties": {
                                     "max-default": {
@@ -401,6 +428,10 @@
                                         "format": "int64"
                                     },
                                     "max-custom": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "default": {
                                         "type": "integer",
                                         "format": "int64"
                                     }
