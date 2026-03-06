@@ -453,7 +453,6 @@ OC.L10N.register(
     "The certificate of {host} expired" : "Certifikat za {host} je istekao",
     "Contact via Talk" : "Kontaktirajte putem aplikacije Talk",
     "Open Talk" : "Otvori Talk",
-    "Hallway" : "Hodnik",
     "Presentation" : "Prezentacija",
     "Webinar" : "Webinar",
     "Conversations" : "Razgovori",

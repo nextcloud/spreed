@@ -1400,6 +1400,7 @@
     "You cannot send messages to this conversation at the moment" : "لا يمكنك إرسال الرسائل لهذه المحادثة حاليًا ",
     "Could not update the message" : "تعذّر تحديث الرسالة",
     "_Poll draft • %n option_::_Poll draft • %n options_" : ["مسودة الاستبيان • %n خيارات","مسودة الاستبيان • %n خيار","مسودة الاستبيان • %n خيارات","مسودة الاستبيان • %n خيارات","مسودة الاستبيان • %n خيارات","مسودة الاستبيان • %n خيارات"],
+    "_%n vote_::_%n votes_" : ["%n أصوات","%n صوت","%n أصوات","%n أصوات","%n أصوات","%n أصوات"],
     "Edit poll draft" : "تحرير مُسوَّدة التصويت",
     "Delete poll draft" : "حذف مسودة الاستبيان",
     "Poll" : "استبيان",

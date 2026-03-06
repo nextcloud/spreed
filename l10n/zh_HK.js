@@ -453,7 +453,6 @@ OC.L10N.register(
     "The certificate of {host} expired" : "{host} 的證書已過期",
     "Contact via Talk" : "透過 Talk 聯絡",
     "Open Talk" : "開啟 Talk",
-    "Hallway" : "交流大堂",
     "Presentation" : "簡報",
     "Webinar" : "網絡研討會",
     "Conversations" : "對話",

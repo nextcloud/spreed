@@ -1229,6 +1229,7 @@ OC.L10N.register(
     "Could not update the message" : "Не атрымалася абнавіць паведамленне",
     "Reply to thread \"{threadTitle}\"" : "Адказаць у гутарцы \"{threadTitle}\"",
     "_Poll draft • %n option_::_Poll draft • %n options_" : ["Чарнавік апытання • %n варыянты","Чарнавік апытання • %n варыянты","Чарнавік апытання • %n варыянтаў","Чарнавік апытання • %n варыянтаў"],
+    "_%n vote_::_%n votes_" : ["%n голас","%n галасы","%n галасоў","%n галасоў"],
     "Edit poll draft" : "Рэдагаваць чарнавік апытання",
     "Delete poll draft" : "Выдаліць чарнавік апытання",
     "Poll" : "Апытанне",

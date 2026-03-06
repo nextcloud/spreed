@@ -452,7 +452,6 @@ OC.L10N.register(
     "The certificate of {host} expired" : "{host}-ийн сертификат дууссан",
     "Contact via Talk" : "Talk-аар холбогдох",
     "Open Talk" : "Talk нээх",
-    "Hallway" : "Коридор",
     "Presentation" : "Танилцуулга",
     "Webinar" : "Вебинар",
     "Conversations" : "Яриа",
