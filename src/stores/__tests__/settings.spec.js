@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { loadState } from '@nextcloud/initial-state'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import {
 	setAttachmentFolder,
 	setReadStatusPrivacy,
@@ -21,6 +21,9 @@ vi.mock('../../services/settingsService', () => ({
 	setTypingStatusPrivacy: vi.fn(),
 	setAttachmentFolder: vi.fn(),
 }))
+vi.mock('../../services/CapabilitiesManager', () => ({
+	getTalkConfig: vi.fn(),
+}))
 
 vi.spyOn(BrowserStorage, 'getItem')
 vi.spyOn(BrowserStorage, 'setItem')
@@ -29,13 +32,13 @@ describe('settingsStore', () => {
 	let settingsStore
 
 	beforeEach(() => {
-		loadState.mockImplementation((app, key, fallback) => {
-			if (key === 'read_status_privacy' || key === 'typing_privacy') {
+		getTalkConfig.mockImplementation((token, key1, key2) => {
+			if (key2 === 'read-privacy' || key2 === 'typing-privacy') {
 				return PRIVACY.PUBLIC
-			} else if (key === 'attachment_folder') {
+			} else if (key2 === 'folder') {
 				return '/Talk'
 			}
-			return fallback
+			return undefined
 		})
 		setActivePinia(createPinia())
 		settingsStore = useSettingsStore()
