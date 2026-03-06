@@ -999,6 +999,8 @@
     "Not enough free space to upload file" : "Няма достатъчно свободно място за качване на файл",
     "You are not allowed to share files" : "Нямате право да споделяте файлове",
     "You cannot send messages to this conversation at the moment" : "В момента не можете да изпращате съобщения до този разговор",
+    "You voted" : "Вие гласувахте",
+    "_%n vote_::_%n votes_" : ["%nгласувания ","%n гласувания"],
     "Poll" : "Анкета",
     "See results" : "Вижте резултатите",
     "No permission to post reactions in this conversation" : "Няма зададено право за публикуване на реакции в този разговор",

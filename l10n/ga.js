@@ -453,7 +453,6 @@ OC.L10N.register(
     "The certificate of {host} expired" : "Chuaigh teastas {host} in éag",
     "Contact via Talk" : "Déan teagmháil trí Talk",
     "Open Talk" : "Caint Oscailte",
-    "Hallway" : "Halla",
     "Presentation" : "Cur i láthair",
     "Webinar" : "webinar",
     "Conversations" : "Comhráite",

@@ -651,6 +651,7 @@ OC.L10N.register(
     "Deck Card" : "Opslagskort",
     "_%n reply_::_%n replies_" : ["%n svar","%n svar"],
     "You voted" : "Du stemte",
+    "_%n vote_::_%n votes_" : ["%n stemme","%n stemmer"],
     "Edit poll draft" : "Redigér afstemningskladde",
     "Poll" : "Afstemning",
     "No messages" : "Ingen beskeder",
