@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\SpreedCheats\Controller;
 
 use OCA\SpreedCheats\Calendar\EventGenerator;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
@@ -29,6 +30,7 @@ class ApiController extends OCSController {
 		IRequest $request,
 		protected IDBConnection $db,
 		private IManager $calendarManager,
+		private IAppManager $appManager,
 		private ?string $userId,
 	) {
 		parent::__construct($appName, $request);
@@ -128,6 +130,7 @@ class ApiController extends OCSController {
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('calendarobjects_props')->executeStatement();
 
+		$this->appManager->disableApp('password_policy');
 
 		return new DataResponse();
 	}
