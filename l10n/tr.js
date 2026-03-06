@@ -453,7 +453,6 @@ OC.L10N.register(
     "The certificate of {host} expired" : "{host} sertifikasının geçerlilik süresi doldu",
     "Contact via Talk" : "Konuş ile görüşün",
     "Open Talk" : "Konuş uygulamasını aç",
-    "Hallway" : "Koridor",
     "Presentation" : "Sunum",
     "Webinar" : "İnternet sunumu",
     "Conversations" : "Görüşmeler",

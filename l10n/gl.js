@@ -453,7 +453,6 @@ OC.L10N.register(
     "The certificate of {host} expired" : "Caducou o certificado de {host}",
     "Contact via Talk" : "Contacte mediante Parladoiro",
     "Open Talk" : "Abrir Parladoiro",
-    "Hallway" : "Corredor",
     "Presentation" : "Presentación",
     "Webinar" : "Seminario web",
     "Conversations" : "Conversas",
