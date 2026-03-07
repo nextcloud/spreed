@@ -215,10 +215,12 @@ export default {
 
 /* Styles based on the NcAppSidebar */
 #talk-sidebar {
-	position: relative;
+	position: absolute;
+	top: 0;
+	inset-inline-end: 0;
 	flex-shrink: 0;
 	width: clamp(300px, 27vw, 500px);
-	height: 100%;
+	height: 100vh;
 
 	background: var(--color-main-background);
 	border-inline-start: 1px solid var(--color-border);
