@@ -454,6 +454,7 @@ OC.L10N.register(
     "Contact via Talk" : "Über Talk kontaktieren",
     "Open Talk" : "Talk öffnen",
     "Presentation" : "Präsentation",
+    "Voice room" : "Sprachraum",
     "Webinar" : "Webinar",
     "Conversations" : "Unterhaltungen",
     "Messages in current conversation" : "Nachrichten in der aktuellen Unterhaltung",
