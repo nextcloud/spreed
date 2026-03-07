@@ -161,7 +161,7 @@ Required capability: `conversation-presets`
 
 ### Chat style
 * `split` Split (default) - chat messages are split into two columns (with different sides per actor)
-* `unified` Unified - chat messages are in a single column
+* `unified` Unified - chat messages are displayed in a single column
 
 ### Shared item types
 * `audio` - Shared audio file
