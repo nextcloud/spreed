@@ -212,6 +212,10 @@ class Capabilities implements IPublicCapability {
 		'experiments' => [
 			'enabled',
 		],
+		'feature-hints' => [
+			'current',
+			'hidden',
+		],
 		'permissions' => [
 		],
 	];
@@ -311,6 +315,10 @@ class Capabilities implements IPublicCapability {
 				],
 				'experiments' => [
 					'enabled' => max(0, $this->appConfig->getAppValueInt($user instanceof IUser ? 'experiments_users' : 'experiments_guests')),
+				],
+				'feature-hints' => [
+					'current' => Config::FEATURE_HINT,
+					'hidden' => max(0, $this->appConfig->getAppValueInt('feature_hints_hidden')),
 				],
 				'permissions' => [
 					'max-default' => Attendee::PERMISSIONS_MAX_DEFAULT,
