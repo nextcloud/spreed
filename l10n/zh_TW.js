@@ -454,6 +454,7 @@ OC.L10N.register(
     "Contact via Talk" : "透過 Talk 連結",
     "Open Talk" : "開啟 Talk",
     "Presentation" : "簡報",
+    "Voice room" : "語音聊天室",
     "Webinar" : "網路研討會",
     "Conversations" : "對話",
     "Messages in current conversation" : "目前對話中的訊息",
