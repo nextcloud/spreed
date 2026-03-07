@@ -278,17 +278,24 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'actor'], Http::STATUS_NOT_FOUND);
 		}
 
-		$parent = $parentMessage = null;
+		$parent = $parentMessage = $parentMessageMetaInfo = null;
 		if ($replyTo !== 0) {
 			try {
-				$parent = $this->chatManager->getParentComment($this->room, (string)$replyTo);
+				$parent = $this->chatManager->getParentComment((string)$replyTo);
+				$targetParentRoom = $this->manager->getRoomById((int)$parent->getObjectId());	
 			} catch (NotFoundException $e) {
 				// Someone is trying to reply cross-rooms or to a non-existing message
 				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
 			}
 
-			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
+			$parentMessage = $this->messageParser->createMessage($targetParentRoom, $this->participant, $parent, $this->l);
 			$this->messageParser->parseMessage($parentMessage);
+			$parentMessageMetaInfo = [
+				'conversationName' => $targetParentRoom->getName(),
+				'poster' => $this->userManager->getDisplayName($parentMessage->getActorId()),
+				'isPrivateReplyFromAnotherConvo' => $targetParentRoom->getId() !== $this->room->getId(),
+				'messageBody' => $this->richTextFormatter->richToParsed($parentMessage->getMessage(), $parentMessage->getMessageParameters()),
+			];
 			if (!$parentMessage->isReplyable()) {
 				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
 			}
@@ -311,6 +318,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 				$actorId,
 				$message,
 				$creationDateTime,
+				$parentMessageMetaInfo ?? [],
 				$parent,
 				$referenceId,
 				$silent,
@@ -437,13 +445,15 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$parent = $parentMessage = null;
 		if ($replyTo !== 0) {
 			try {
-				$parent = $this->chatManager->getParentComment($this->room, (string)$replyTo);
+				$parent = $this->chatManager->getParentComment((string)$replyTo);
+				$targetParentRoom = $this->manager->getRoomById((int)$parent->getObjectId());
+					
 			} catch (NotFoundException $e) {
-				// Someone is trying to reply cross-rooms or to a non-existing message
+				// Someone is trying to a non-existing message
 				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
 			}
 
-			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
+			$parentMessage = $this->messageParser->createMessage($targetParentRoom, $this->participant, $parent, $this->l);
 			$this->messageParser->parseMessage($parentMessage);
 			if (!$parentMessage->isReplyable()) {
 				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
@@ -552,8 +562,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$parentMessage = null;
 		if ($scheduledMessage->getParentId() !== null) {
 			try {
-				$parent = $this->chatManager->getParentComment($this->room, (string)$scheduledMessage->getParentId());
-				$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
+				$parent = $this->chatManager->getParentComment((string)$scheduledMessage->getParentId());
+				$targetParentRoom = $this->manager->getRoomById((int)$parent->getObjectId());	
+				$parentMessage = $this->messageParser->createMessage($targetParentRoom, $this->participant, $parent, $this->l);
 				$this->messageParser->parseMessage($parentMessage);
 			} catch (NotFoundException) {
 			}
@@ -1058,8 +1069,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 			// Parent was not skipped due to visibility, so we need to manually grab it.
 			if (!isset($commentIdToIndex[$parentId])) {
 				try {
-					$comment = $this->chatManager->getParentComment($this->room, $parentId);
-					$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
+					$comment = $this->chatManager->getParentComment((string)$parentId);
+					$targetParentRoom = $this->manager->getRoomById((int)$comment->getObjectId());
+					$message = $this->messageParser->createMessage($targetParentRoom, $this->participant, $comment, $this->l);
 					$this->messageParser->parseMessage($message);
 
 					if ($message->getVisibility()) {

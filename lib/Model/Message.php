@@ -25,6 +25,9 @@ class Message {
 	public const METADATA_SILENT = 'silent';
 	public const METADATA_CAN_MENTION_ALL = 'can_mention_all';
 	public const METADATA_THREAD_ID = 'thread_id';
+	public const METADATA_PARENT_CONVERSATION_NAME = 'parent_conversation_name';
+	public const METADATA_PARENT_POSTER = 'parent_poster';
+	public const METADATA_PARENT_MESSAGE_BODY = 'parent_message_body';
 	public const METADATA_THREAD_TITLE = 'thread_title';
 	public const METADATA_PINNED_BY_TYPE = 'pinned_by_type';
 	public const METADATA_PINNED_BY_ID = 'pinned_by_id';

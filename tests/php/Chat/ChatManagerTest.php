@@ -276,7 +276,7 @@ class ChatManagerTest extends TestCase {
 
 		$participant = $this->createMock(Participant::class);
 
-		$return = $this->chatManager->sendMessage($chat, $participant, 'users', $userId, $message, $creationDateTime, $replyTo, $referenceId, false);
+		$return = $this->chatManager->sendMessage($chat, $participant, 'users', $userId, $message, $creationDateTime, [], $replyTo, $referenceId, false);
 
 		$this->assertCommentEquals($commentExpected, $return);
 	}

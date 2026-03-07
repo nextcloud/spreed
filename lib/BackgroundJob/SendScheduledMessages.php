@@ -23,7 +23,9 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ScheduledMessageService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Webinary;
+use OCP\IUserManager;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\RichObjectStrings\IRichTextFormatter;
 use OCP\BackgroundJob\TimedJob;
 use OCP\Comments\MessageTooLongException;
 use OCP\Comments\NotFoundException;
@@ -45,6 +47,8 @@ class SendScheduledMessages extends TimedJob {
 		private readonly ThreadService $threadService,
 		private readonly IL10n $l10n,
 		private readonly LoggerInterface $logger,
+		private IUserManager $userManager,
+		private IRichTextFormatter $richTextFormatter,
 		ITimeFactory $time,
 	) {
 		// Every minute
@@ -122,11 +126,19 @@ class SendScheduledMessages extends TimedJob {
 				continue;
 			}
 
-			$parent = $parentMessage = null;
+			$parent = $parentMessage = $parentMessageMetaInfo = null;
 			if ($message->getParentId() !== 0 && $message->getParentId() !== null) {
 				try {
-					$parent = $this->chatManager->getParentComment($room, (string)$message->getParentId());
-					$parentMessage = $this->messageParser->createMessage($room, $participant, $parent, $this->l10n);
+					$parent = $this->chatManager->getParentComment((string)$message->getParentId());
+					$targetParentRoom = $this->manager->getRoomById((int)$parent->getObjectId());	
+					
+					$parentMessage = $this->messageParser->createMessage($targetParentRoom, $participant, $parent, $this->l10n);
+					$parentMessageMetaInfo = [
+						'conversationName' => $targetParentRoom->getName(),
+						'poster' => $this->userManager->getDisplayName($parentMessage->getActorId()),
+						'isPrivateReplyFromAnotherConvo' => $targetParentRoom->getId() !== $room->getId(),
+						'messageBody' => $this->richTextFormatter->richToParsed($parentMessage->getMessage(), $parentMessage->getMessageParameters()),
+					];
 					$this->messageParser->parseMessage($parentMessage);
 					if (!$parentMessage->isReplyable()) {
 						$parentMessageId = $message->getParentId() ?? 0;
@@ -165,6 +177,7 @@ class SendScheduledMessages extends TimedJob {
 					$message->getActorId(),
 					$message->getMessage(),
 					$this->time->getDateTime(),
+					$parentMessageMetaInfo ?? [],
 					$parent,
 					'',
 					$metaData[ScheduledMessage::METADATA_SILENT] ?? false,

@@ -386,6 +386,7 @@ class ChatManager {
 		string $actorId,
 		string $message,
 		\DateTime $creationDateTime,
+		array $parentMessageMetaInfo = [],
 		?IComment $replyTo = null,
 		string $referenceId = '',
 		bool $silent = false,
@@ -442,6 +443,12 @@ class ChatManager {
 		}
 		if ($threadId !== Thread::THREAD_NONE) {
 			$metadata[Message::METADATA_THREAD_ID] = $threadId;
+		}
+		// store meta for parent info incase of private reply
+		if ($parentMessageMetaInfo && count(array_keys($parentMessageMetaInfo)) > 0 && $parentMessageMetaInfo["isPrivateReplyFromAnotherConvo"] == true) {
+			$metadata[Message::METADATA_PARENT_CONVERSATION_NAME] = $parentMessageMetaInfo["conversationName"];
+			$metadata[Message::METADATA_PARENT_POSTER] = $parentMessageMetaInfo["poster"];
+			$metadata[Message::METADATA_PARENT_MESSAGE_BODY] = $parentMessageMetaInfo["messageBody"];
 		}
 		$comment->setMetaData($metadata);
 
@@ -924,10 +931,10 @@ class ChatManager {
 	 * @return IComment
 	 * @throws NotFoundException
 	 */
-	public function getParentComment(Room $chat, string $parentId): IComment {
+	public function getParentComment(string $parentId): IComment {
 		$comment = $this->commentsManager->get($parentId);
 
-		if ($comment->getObjectType() !== 'chat' || $comment->getObjectId() !== (string)$chat->getId()) {
+		if ($comment->getObjectType() !== 'chat') {
 			throw new NotFoundException('Parent not found in the right context');
 		}
 

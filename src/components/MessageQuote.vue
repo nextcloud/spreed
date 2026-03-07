@@ -10,6 +10,7 @@ import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { computed, ref, toRef } from 'vue'
 import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconClose from 'vue-material-design-icons/Close.vue'
@@ -25,16 +26,19 @@ import { parseToSimpleMessage } from '../utils/textParse.ts'
 
 type DeletedParentMessage = Pick<ChatMessage, 'id' | 'deleted'>
 
-const { message, canCancel = false, editMessage = false } = defineProps<{
+const { message, canCancel = false, isPrivateReply = false, editMessage = false } = defineProps<{
 	/** The quoted message object */
 	message: ChatMessage | DeletedParentMessage
 	/** Whether to show remove / cancel action */
 	canCancel?: boolean
 	/** Whether to show edit actions */
 	editMessage?: boolean
+	/** Whether the message was a private reply from another convo */
+	isPrivateReply?: boolean
 }>()
 
 const route = useRoute()
+const store = useStore()
 const actorStore = useActorStore()
 const chatExtrasStore = useChatExtrasStore()
 
@@ -52,7 +56,7 @@ const hash = computed(() => '#message_' + message.id)
 
 const component = computed(() => canCancel
 	? { tag: 'div', link: undefined }
-	: { tag: 'router-link', link: { query: route.query, hash: hash.value } })
+	: { tag: 'router-link', link: { query: route.query, hash: hash.value, name: 'conversation', params: { token: message.token } } })
 
 const isOwnMessageQuoted = computed(() => isExistingMessage(message) ? actorStore.checkIfSelfIsActor(message) : false)
 
@@ -73,6 +77,8 @@ const filePreview = computed(() => {
 		return undefined
 	}
 })
+
+const actorConvoName = computed(() => store.getters.conversation(message.token).name)
 
 const simpleQuotedMessageIcon = computed(() => isExistingMessage(message) ? getMessageIcon(message) : null)
 
@@ -190,9 +196,12 @@ function handleQuoteClick() {
 					:source="message.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disableMenu />
-				<span class="quote__main-author-info">
+				<span class="quote__main-author-info" :class="{ 'no-ellipsis': isPrivateReply }">
 					<span class="quote__main-author-name">
 						{{ actorInfo }}
+					</span>
+					<span v-if="isPrivateReply">
+						&nbsp;•&nbsp; {{ actorConvoName }}
 					</span>
 					{{ editLabel }}
 				</span>
@@ -200,7 +209,8 @@ function handleQuoteClick() {
 			<span
 				role="blockquote"
 				dir="auto"
-				class="quote__main-text">
+				class="quote__main-text"
+				:class="{ 'break-new-line': isPrivateReply }">
 				{{ shortenedQuoteMessage }}
 			</span>
 		</span>
@@ -297,6 +307,11 @@ function handleQuoteClick() {
 		flex-grow: 1;
 		overflow: hidden;
 
+		&:has(.break-new-line) {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
 		&-author {
 			display: flex;
 			align-items: center;
@@ -307,6 +322,10 @@ function handleQuoteClick() {
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
+				 &.no-ellipsis {
+					overflow: visible;
+					text-overflow: unset;
+				}
 			}
 
 			&-name {
@@ -321,6 +340,11 @@ function handleQuoteClick() {
 			overflow: hidden;
 			text-align: start;
 			max-width: 100%;
+			&.break-new-line {
+				white-space: normal;
+				overflow: visible;
+				text-overflow: unset;
+			}
 		}
 	}
 
