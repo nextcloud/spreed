@@ -131,146 +131,280 @@ export type webhooks = Record<string, never>;
 export type components = {
     schemas: {
         BaseMessage: {
+            /** @description Display name of the message author (can be empty for type `deleted_users` and `guests`) */
             actorDisplayName: string;
+            /** @description Actor id of the message author */
             actorId: string;
+            /** @description See [Constants - Actor types of chat messages](https://nextcloud-talk.readthedocs.io/en/latest/constants#actor-types-of-chat-messages) */
             actorType: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Unix time stamp when the message expires and should be removed from the clients UI without further note or warning (only available with `message-expiration` capability)
+             */
             expirationTimestamp: number;
+            /** @description Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706)) */
             message: string;
+            /** @description Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706)) */
             messageParameters: {
                 [key: string]: components["schemas"]["RichObjectParameter"];
             };
+            /** @description Currently known types are `comment`, `comment_deleted`, `system` and `command` */
             messageType: string;
+            /** @description Empty for normal chat message or the type of the system message (untranslated) */
             systemMessage: string;
         };
         Capabilities: {
+            /** @description List of features available on the server */
             features: string[];
+            /** @description List of features only available locally (not for federated conversations) */
             "features-local": string[];
             config: {
                 attachments: {
+                    /** @description Whether file sharing is allowed in conversations */
                     allowed: boolean;
+                    /** @description User's attachment folder (only available for logged in users) */
                     folder?: string;
                 };
                 call: {
+                    /** @description Whether calls are enabled */
                     enabled: boolean;
+                    /** @description Whether breakout rooms are enabled */
                     "breakout-rooms": boolean;
+                    /** @description Whether call recording is enabled */
                     recording: boolean;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Whether recording consent is required (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#recording-consent-required))
+                     */
                     "recording-consent": number;
+                    /** @description List of supported reaction emojis during calls */
                     "supported-reactions": string[];
                     /** @description List of file names relative to the spreed/img/backgrounds/ web path, e.g. `2_home.jpg` */
                     "predefined-backgrounds": string[];
                     /** @description List of file paths relative to the server web root with leading slash, e.g. `/apps/spreed/img/backgrounds/2_home.jpg` */
                     "predefined-backgrounds-v2": string[];
+                    /** @description Whether the user can upload custom virtual backgrounds */
                     "can-upload-background": boolean;
+                    /** @description Whether SIP is enabled on the server */
                     "sip-enabled": boolean;
+                    /** @description Whether SIP dial-out is enabled on the server */
                     "sip-dialout-enabled": boolean;
+                    /** @description Default phone region of the server */
                     "default-phone-region": string;
+                    /** @description Whether the user can enable SIP for conversations */
                     "can-enable-sip": boolean;
+                    /** @description Whether calls start without media by default */
                     "start-without-media": boolean;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum duration of a call in seconds, `0` means unlimited
+                     */
                     "max-duration": number;
+                    /** @description Whether the blur virtual background is available */
                     "blur-virtual-background": boolean;
+                    /** @description Whether end-to-end encryption is available */
                     "end-to-end-encryption": boolean;
+                    /** @description Whether live transcription is available */
                     "live-transcription": boolean;
+                    /** @description Whether live translation is available */
                     "live-translation": boolean;
+                    /** @description The default target language for live transcription */
                     "live-transcription-target-language-id": string;
+                    /** @description Whether to play sounds for call events */
                     "play-sounds": boolean;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum number of participants shown in the grid view
+                     */
                     "grid-limit": number;
+                    /** @description Whether the grid limit is enforced by the server */
                     "grid-limit-enforced": boolean;
                 };
                 chat: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum length of a chat message
+                     */
                     "max-length": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Read privacy setting for the user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-read-status-privacy))
+                     */
                     "read-privacy": number;
+                    /** @description Whether translation providers are available */
                     "has-translation-providers": boolean;
+                    /** @description Whether translation task providers are available */
                     "has-translation-task-providers": boolean;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Typing privacy setting for the user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-typing-privacy))
+                     */
                     "typing-privacy": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Minimum number of chat messages before a summary can be generated
+                     */
                     "summary-threshold": number;
-                    /** @enum {string} */
+                    /**
+                     * @description Chat message rendering style (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#chat-style))
+                     * @enum {string}
+                     */
                     style: "split" | "unified";
+                    /** @description Whether Matterbridge is enabled */
                     "matterbridge-enabled": boolean;
                 };
                 conversations: {
+                    /** @description Whether the user can create conversations */
                     "can-create": boolean;
+                    /** @description Whether passwords are enforced for public conversations */
                     "force-passwords": boolean;
-                    /** @enum {string} */
+                    /**
+                     * @description Conversation list style (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-list-style))
+                     * @enum {string}
+                     */
                     "list-style": "two-lines" | "compact";
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum length of a conversation description
+                     */
                     "description-length": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Retention period for event conversations in seconds, `0` means no retention
+                     */
                     "retention-event": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Retention period for phone conversations in seconds, `0` means no retention
+                     */
                     "retention-phone": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Retention period for instant meetings in seconds, `0` means no retention
+                     */
                     "retention-instant-meetings": number;
                 };
                 federation: {
+                    /** @description Whether federation is enabled */
                     enabled: boolean;
+                    /** @description Whether incoming federation is enabled */
                     "incoming-enabled": boolean;
+                    /** @description Whether outgoing federation is enabled */
                     "outgoing-enabled": boolean;
+                    /** @description Whether only trusted servers are allowed for federation */
                     "only-trusted-servers": boolean;
                 };
                 previews: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum GIF file size in bytes for previews
+                     */
                     "max-gif-size": number;
                 };
                 signaling: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum number of sessions that can be pinged in a single request
+                     */
                     "session-ping-limit": number;
-                    /** @enum {string} */
+                    /**
+                     * @description Signaling mode (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#signaling-modes))
+                     * @enum {string}
+                     */
                     mode: "internal" | "external" | "conversation_cluster";
+                    /** @description Public key for hello v2 authentication */
                     "hello-v2-token-key"?: string;
                 };
                 experiments: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Bit-flag of enabled experiments
+                     */
                     enabled: number;
                 };
                 permissions: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum default permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))
+                     */
                     "max-default": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum custom permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))
+                     */
                     "max-custom": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Server default permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))
+                     */
                     default: number;
                 };
             };
+            /** @description Map of config keys that are only available locally (not for federated conversations) */
             "config-local": {
                 [key: string]: string[];
             };
+            /** @description Version of the Talk app */
             version: string;
         };
         ChatMessage: components["schemas"]["BaseMessage"] & {
-            /** @enum {boolean} */
+            /**
+             * @description Set to `true` when the message was deleted
+             * @enum {boolean}
+             */
             deleted?: true;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description ID of the comment
+             */
             id: number;
+            /** @description True if the user can post a reply to this message (only available with `chat-replies` capability) */
             isReplyable: boolean;
+            /** @description Whether the message should be rendered as markdown or shown as plain text */
             markdown: boolean;
+            /** @description An array map with relation between reaction emoji and total count of reactions with this emoji */
             reactions: {
                 [key: string]: number;
             };
+            /** @description When the user reacted this is the list of emojis the user reacted with */
             reactionsSelf?: string[];
+            /** @description A reference string that was given while posting the message to be able to identify a sent message again (only available with `chat-reference-id` capability) */
             referenceId: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Timestamp in seconds and UTC time zone
+             */
             timestamp: number;
+            /** @description Conversation token */
             token: string;
+            /** @description Display name of the last editing author (only available with `edit-messages` capability and when the message was actually edited) */
             lastEditActorDisplayName?: string;
+            /** @description Actor id of the last editing author (only available with `edit-messages` capability and when the message was actually edited) */
             lastEditActorId?: string;
+            /** @description Actor type of the last editing author - See [Constants - Actor types of chat messages](https://nextcloud-talk.readthedocs.io/en/latest/constants#actor-types-of-chat-messages) (only available with `edit-messages` capability and when the message was actually edited) */
             lastEditActorType?: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Unix time stamp when the message was last edited (only available with `edit-messages` capability and when the message was actually edited)
+             */
             lastEditTimestamp?: number;
+            /** @description Whether the message was sent silently (only available with `silent-send-state` capability) */
             silent?: boolean;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Thread ID if this message is part of a thread
+             */
             threadId?: number;
+            /** @description Whether this message is the root of a thread */
             isThread?: boolean;
+            /** @description Title of the thread if this message is the root of a thread */
             threadTitle?: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Number of replies in the thread if this message is the root of a thread
+             */
             threadReplies?: number;
+            /** @description Additional metadata of the message */
             metaData?: components["schemas"]["ChatMessageMetaData"];
         };
         ChatMessageMetaData: {
@@ -310,39 +444,78 @@ export type components = {
             spreed?: components["schemas"]["Capabilities"];
         };
         RichObjectParameter: {
+            /** @description Object type (see [Rich Object String](https://github.com/nextcloud/server/issues/1706)) */
             type: string;
+            /** @description Object id */
             id: string;
+            /** @description Visible name */
             name: string;
+            /** @description Server URL for federated users */
             server?: string;
+            /** @description URL of the object */
             link?: string;
-            /** @enum {string} */
+            /**
+             * @description Type of the call
+             * @enum {string}
+             */
             "call-type"?: "one2one" | "group" | "public";
+            /** @description URL of the icon */
             "icon-url"?: string;
+            /** @description ID of a message that this object refers to */
             "message-id"?: string;
+            /** @description Name of the Deck board */
             boardname?: string;
+            /** @description Name of the Deck stack */
             stackname?: string;
+            /** @description File size in bytes */
             size?: string;
+            /** @description Path of the file */
             path?: string;
+            /** @description Mimetype of the file */
             mimetype?: string;
-            /** @enum {string} */
+            /**
+             * @description Whether a preview is available for the file
+             * @enum {string}
+             */
             "preview-available"?: "yes" | "no";
-            /** @enum {string} */
+            /**
+             * @description Whether the download should be hidden for the file
+             * @enum {string}
+             */
             "hide-download"?: "yes" | "no";
+            /** @description Modification time of the file as UNIX timestamp */
             mtime?: string;
+            /** @description Latitude of a location */
             latitude?: string;
+            /** @description Longitude of a location */
             longitude?: string;
+            /** @description Description of the object */
             description?: string;
+            /** @description URL of a thumbnail */
             thumb?: string;
+            /** @description Website URL */
             website?: string;
-            /** @enum {string} */
+            /**
+             * @description Visibility of the object
+             * @enum {string}
+             */
             visibility?: "0" | "1";
-            /** @enum {string} */
+            /**
+             * @description Whether the object is assignable
+             * @enum {string}
+             */
             assignable?: "0" | "1";
+            /** @description Conversation token */
             conversation?: string;
+            /** @description ETag of the object for caching */
             etag?: string;
+            /** @description Permissions for the file */
             permissions?: string;
+            /** @description Width of the object (e.g. image, video) */
             width?: string;
+            /** @description Height of the object (e.g. image, video) */
             height?: string;
+            /** @description Blurhash of the image */
             blurhash?: string;
         };
         Room: {
@@ -420,7 +593,7 @@ export type components = {
             hasPassword: boolean;
             /**
              * Format: int64
-             * @description Numeric identifier of the conversation
+             * @description Identifier of the conversation
              */
             id: number;
             /** @description Flag if the conversation has a custom avatar (only available with `avatar` capability) */
@@ -451,7 +624,7 @@ export type components = {
             lastReadMessage: number;
             /**
              * Format: int64
-             * @description Listable scope for the room (only available with `listable-rooms` capability)
+             * @description Listable scope for the room (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#listable-scope)) (only available with `listable-rooms` capability)
              */
             listable: number;
             /** @description ID of the language to use for live transcriptions in the room, */
@@ -479,7 +652,10 @@ export type components = {
             messageExpiration: number;
             /** @description Name of the conversation (can also be empty) */
             name: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description The call notification level for the user (see [Participant call notification levels](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-call-notification-levels))
+             */
             notificationCalls: number;
             /**
              * Format: int64
@@ -492,12 +668,12 @@ export type components = {
             objectType: string;
             /**
              * Format: int64
-             * @description "In call" flags of the user's session making the request (only available with `in-call-flags` capability)
+             * @description "In call" flags of the user's session making the request (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-in-call-flag)) (only available with `in-call-flags` capability)
              */
             participantFlags: number;
             /**
              * Format: int64
-             * @description Permissions level of the current user
+             * @description Permissions level of the current user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-types))
              */
             participantType: number;
             /**
@@ -507,7 +683,7 @@ export type components = {
             permissions: number;
             /**
              * Format: int64
-             * @description Read-only state for the current user (only available with `read-only-rooms` capability)
+             * @description Read-only state for the current user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#read-only-states)) (only available with `read-only-rooms` capability)
              */
             readOnly: number;
             /**
@@ -524,16 +700,16 @@ export type components = {
              * @description SIP enable status (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#sip-states))
              */
             sipEnabled: number;
-            /** @description Optional: Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status */
+            /** @description Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status */
             status?: string;
             /**
              * Format: int64
-             * @description Optional: Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status
+             * @description Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status
              */
             statusClearAt?: number | null;
-            /** @description Optional: Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status */
+            /** @description Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status */
             statusIcon?: string | null;
-            /** @description Optional: Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status */
+            /** @description Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status */
             statusMessage?: string | null;
             /** @description Token identifier of the conversation which is used for further interaction */
             token: string;
