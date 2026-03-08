@@ -1802,6 +1802,7 @@ OC.L10N.register(
     "_{done} of %n task_::_{done} of %n tasks_" : ["{done} di %n attività","{done} di %n attività","{done} di %n attività"],
     "Add participants to this call" : "Aggiungi partecipanti a questa chiamata",
     "_%n participant in call_::_%n participants in call_" : ["%n partecipante in chiamata","%n partecipanti in chiamata ","%n partecipanti in chiamata"],
+    "Scheduled messages" : "Messaggi programmati",
     "You are not allowed to enable screensharing" : "Non sei autorizzato ad abilitare la condivisione dello schermo",
     "No screensharing" : "Nessuna condivisione dello schermo",
     "Screensharing options" : "Opzioni di condivisione dello schermo",

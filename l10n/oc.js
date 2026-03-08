@@ -666,6 +666,7 @@ OC.L10N.register(
     "Enter a description for this conversation" : "Picatz una descripcion per aquesta conversacion",
     "Picture" : "Imatge",
     "Disable" : "Desactivar",
+    "Enable" : "Activar",
     "Choose your conversation picture" : "Causissètz un imatge de conversacion",
     "Choose" : "Causir",
     "Set picture" : "Definir l'imatge",
