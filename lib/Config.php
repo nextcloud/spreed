@@ -40,6 +40,11 @@ class Config {
 	public const SIGNALING_TICKET_V2 = 2;
 
 	/**
+	 * 1. Call recording, …
+	 */
+	public const FEATURE_HINT = 1;
+
+	/**
 	 * Currently limiting to 1k users because the user_status API would yield
 	 * an error on Oracle otherwise. Clients should use a virtual scrolling
 	 * mechanism so the data should not be a problem nowadays

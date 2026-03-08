@@ -195,6 +195,10 @@ export const mockedCapabilities: Capabilities = {
 			experiments: {
 				enabled: 0,
 			},
+			'feature-hints': {
+				current: 1,
+				hidden: 0,
+			},
 			permissions: {
 				'max-default': 510,
 				'max-custom': 511,
@@ -240,6 +244,10 @@ export const mockedCapabilities: Capabilities = {
 			],
 			experiments: [
 				'enabled',
+			],
+			'feature-hints': [
+				'current',
+				'hidden',
 			],
 		},
 		version: '20.0.0-dev.0',

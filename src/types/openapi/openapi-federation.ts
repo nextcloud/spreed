@@ -333,6 +333,12 @@ export type components = {
                      */
                     enabled: number;
                 };
+                "feature-hints": {
+                    /** Format: int64 */
+                    current: number;
+                    /** Format: int64 */
+                    hidden: number;
+                };
                 permissions: {
                     /**
                      * Format: int64

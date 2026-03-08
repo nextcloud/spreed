@@ -139,6 +139,7 @@ class CapabilitiesTest extends TestCase {
 				['retention_instant_meetings', 1, 1],
 				['experiments_guests', 0, 0],
 				['summary_threshold', 100, 100],
+				['feature_hints_hidden', 0, 999],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
@@ -231,6 +232,10 @@ class CapabilitiesTest extends TestCase {
 					],
 					'experiments' => [
 						'enabled' => 0,
+					],
+					'feature-hints' => [
+						'current' => 1,
+						'hidden' => 999,
 					],
 					'permissions' => [
 						'max-default' => 510,
@@ -339,6 +344,7 @@ class CapabilitiesTest extends TestCase {
 				['retention_instant_meetings', 1, 1],
 				['experiments_users', 0, 0],
 				['summary_threshold', 100, 100],
+				['feature_hints_hidden', 0, 1],
 			]);
 
 		$this->serverConfig->expects($this->any())
@@ -440,6 +446,10 @@ class CapabilitiesTest extends TestCase {
 					],
 					'experiments' => [
 						'enabled' => 0,
+					],
+					'feature-hints' => [
+						'current' => 1,
+						'hidden' => 1,
 					],
 					'permissions' => [
 						'max-default' => 510,

@@ -842,6 +842,10 @@ namespace OCA\Talk;
  *             // Bit-flag of enabled experiments
  *             enabled: non-negative-int,
  *         },
+ *         'feature-hints': array{
+ *             current: positive-int,
+ *             hidden: non-negative-int,
+ *         },
  *         permissions: array{
  *             // Maximum default permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))
  *             max-default: int,

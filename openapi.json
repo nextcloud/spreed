@@ -244,6 +244,7 @@
                             "previews",
                             "signaling",
                             "experiments",
+                            "feature-hints",
                             "permissions"
                         ],
                         "properties": {
@@ -579,6 +580,25 @@
                                         "type": "integer",
                                         "format": "int64",
                                         "description": "Bit-flag of enabled experiments",
+                                        "minimum": 0
+                                    }
+                                }
+                            },
+                            "feature-hints": {
+                                "type": "object",
+                                "required": [
+                                    "current",
+                                    "hidden"
+                                ],
+                                "properties": {
+                                    "current": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "minimum": 1
+                                    },
+                                    "hidden": {
+                                        "type": "integer",
+                                        "format": "int64",
                                         "minimum": 0
                                     }
                                 }
