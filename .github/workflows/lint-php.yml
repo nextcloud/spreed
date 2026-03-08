@@ -21,7 +21,8 @@ jobs:
   matrix:
     runs-on: ubuntu-latest-low
     outputs:
-      php-versions: ${{ steps.versions.outputs.php-versions }}
+      php-min: ${{ steps.versions.outputs.php-min }}
+      php-max: ${{ steps.versions.outputs.php-max }}
     steps:
       - name: Checkout app
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -37,7 +38,7 @@ jobs:
     needs: matrix
     strategy:
       matrix:
-        php-versions: ${{fromJson(needs.matrix.outputs.php-versions)}}
+        php-versions: ['${{ needs.matrix.outputs.php-min }}', '${{ needs.matrix.outputs.php-max }}']
 
     name: php-lint
 
