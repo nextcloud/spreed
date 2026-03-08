@@ -34,32 +34,40 @@
                 ],
                 "properties": {
                     "actorDisplayName": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Display name of the message author (can be empty for type `deleted_users` and `guests`)"
                     },
                     "actorId": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Actor id of the message author"
                     },
                     "actorType": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "See [Constants - Actor types of chat messages](https://nextcloud-talk.readthedocs.io/en/latest/constants#actor-types-of-chat-messages)"
                     },
                     "expirationTimestamp": {
                         "type": "integer",
-                        "format": "int64"
+                        "format": "int64",
+                        "description": "Unix time stamp when the message expires and should be removed from the clients UI without further note or warning (only available with `message-expiration` capability)"
                     },
                     "message": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))"
                     },
                     "messageParameters": {
                         "type": "object",
+                        "description": "Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))",
                         "additionalProperties": {
                             "$ref": "#/components/schemas/RichObjectParameter"
                         }
                     },
                     "messageType": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Currently known types are `comment`, `comment_deleted`, `system` and `command`"
                     },
                     "systemMessage": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Empty for normal chat message or the type of the system message (untranslated)"
                     }
                 }
             },
@@ -75,6 +83,7 @@
                 "properties": {
                     "features": {
                         "type": "array",
+                        "description": "List of features available on the server",
                         "items": {
                             "type": "string"
                         },
@@ -82,6 +91,7 @@
                     },
                     "features-local": {
                         "type": "array",
+                        "description": "List of features only available locally (not for federated conversations)",
                         "items": {
                             "type": "string"
                         },
@@ -108,10 +118,12 @@
                                 ],
                                 "properties": {
                                     "allowed": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether file sharing is allowed in conversations"
                                     },
                                     "folder": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "User's attachment folder (only available for logged in users)"
                                     }
                                 }
                             },
@@ -143,20 +155,25 @@
                                 ],
                                 "properties": {
                                     "enabled": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether calls are enabled"
                                     },
                                     "breakout-rooms": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether breakout rooms are enabled"
                                     },
                                     "recording": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether call recording is enabled"
                                     },
                                     "recording-consent": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Whether recording consent is required (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#recording-consent-required))"
                                     },
                                     "supported-reactions": {
                                         "type": "array",
+                                        "description": "List of supported reaction emojis during calls",
                                         "items": {
                                             "type": "string"
                                         }
@@ -176,51 +193,66 @@
                                         }
                                     },
                                     "can-upload-background": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether the user can upload custom virtual backgrounds"
                                     },
                                     "sip-enabled": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether SIP is enabled on the server"
                                     },
                                     "sip-dialout-enabled": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether SIP dial-out is enabled on the server"
                                     },
                                     "default-phone-region": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "Default phone region of the server"
                                     },
                                     "can-enable-sip": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether the user can enable SIP for conversations"
                                     },
                                     "start-without-media": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether calls start without media by default"
                                     },
                                     "max-duration": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Maximum duration of a call in seconds, `0` means unlimited"
                                     },
                                     "blur-virtual-background": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether the blur virtual background is available"
                                     },
                                     "end-to-end-encryption": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether end-to-end encryption is available"
                                     },
                                     "live-transcription": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether live transcription is available"
                                     },
                                     "live-translation": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether live translation is available"
                                     },
                                     "live-transcription-target-language-id": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "The default target language for live transcription"
                                     },
                                     "play-sounds": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether to play sounds for call events"
                                     },
                                     "grid-limit": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Maximum number of participants shown in the grid view"
                                     },
                                     "grid-limit-enforced": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether the grid limit is enforced by the server"
                                     }
                                 }
                             },
@@ -239,25 +271,31 @@
                                 "properties": {
                                     "max-length": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Maximum length of a chat message"
                                     },
                                     "read-privacy": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Read privacy setting for the user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-read-status-privacy))"
                                     },
                                     "has-translation-providers": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether translation providers are available"
                                     },
                                     "has-translation-task-providers": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether translation task providers are available"
                                     },
                                     "typing-privacy": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Typing privacy setting for the user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-typing-privacy))"
                                     },
                                     "summary-threshold": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "description": "Minimum number of chat messages before a summary can be generated",
                                         "minimum": 1
                                     },
                                     "style": {
@@ -265,10 +303,12 @@
                                         "enum": [
                                             "split",
                                             "unified"
-                                        ]
+                                        ],
+                                        "description": "Chat message rendering style (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#chat-style))"
                                     },
                                     "matterbridge-enabled": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether Matterbridge is enabled"
                                     }
                                 }
                             },
@@ -285,36 +325,43 @@
                                 ],
                                 "properties": {
                                     "can-create": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether the user can create conversations"
                                     },
                                     "force-passwords": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether passwords are enforced for public conversations"
                                     },
                                     "list-style": {
                                         "type": "string",
                                         "enum": [
                                             "two-lines",
                                             "compact"
-                                        ]
+                                        ],
+                                        "description": "Conversation list style (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-list-style))"
                                     },
                                     "description-length": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "description": "Maximum length of a conversation description",
                                         "minimum": 1
                                     },
                                     "retention-event": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "description": "Retention period for event conversations in seconds, `0` means no retention",
                                         "minimum": 0
                                     },
                                     "retention-phone": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "description": "Retention period for phone conversations in seconds, `0` means no retention",
                                         "minimum": 0
                                     },
                                     "retention-instant-meetings": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "description": "Retention period for instant meetings in seconds, `0` means no retention",
                                         "minimum": 0
                                     }
                                 }
@@ -329,16 +376,20 @@
                                 ],
                                 "properties": {
                                     "enabled": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether federation is enabled"
                                     },
                                     "incoming-enabled": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether incoming federation is enabled"
                                     },
                                     "outgoing-enabled": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether outgoing federation is enabled"
                                     },
                                     "only-trusted-servers": {
-                                        "type": "boolean"
+                                        "type": "boolean",
+                                        "description": "Whether only trusted servers are allowed for federation"
                                     }
                                 }
                             },
@@ -350,7 +401,8 @@
                                 "properties": {
                                     "max-gif-size": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Maximum GIF file size in bytes for previews"
                                     }
                                 }
                             },
@@ -363,7 +415,8 @@
                                 "properties": {
                                     "session-ping-limit": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Maximum number of sessions that can be pinged in a single request"
                                     },
                                     "mode": {
                                         "type": "string",
@@ -371,10 +424,12 @@
                                             "internal",
                                             "external",
                                             "conversation_cluster"
-                                        ]
+                                        ],
+                                        "description": "Signaling mode (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#signaling-modes))"
                                     },
                                     "hello-v2-token-key": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "description": "Public key for hello v2 authentication"
                                     }
                                 }
                             },
@@ -387,6 +442,7 @@
                                     "enabled": {
                                         "type": "integer",
                                         "format": "int64",
+                                        "description": "Bit-flag of enabled experiments",
                                         "minimum": 0
                                     }
                                 }
@@ -401,15 +457,18 @@
                                 "properties": {
                                     "max-default": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Maximum default permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))"
                                     },
                                     "max-custom": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Maximum custom permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))"
                                     },
                                     "default": {
                                         "type": "integer",
-                                        "format": "int64"
+                                        "format": "int64",
+                                        "description": "Server default permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))"
                                     }
                                 }
                             }
@@ -417,6 +476,7 @@
                     },
                     "config-local": {
                         "type": "object",
+                        "description": "Map of config keys that are only available locally (not for federated conversations)",
                         "additionalProperties": {
                             "type": "array",
                             "items": {
@@ -425,7 +485,8 @@
                         }
                     },
                     "version": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Version of the Talk app"
                     }
                 }
             },
@@ -450,20 +511,25 @@
                                 "type": "boolean",
                                 "enum": [
                                     true
-                                ]
+                                ],
+                                "description": "Set to `true` when the message was deleted"
                             },
                             "id": {
                                 "type": "integer",
-                                "format": "int64"
+                                "format": "int64",
+                                "description": "ID of the comment"
                             },
                             "isReplyable": {
-                                "type": "boolean"
+                                "type": "boolean",
+                                "description": "True if the user can post a reply to this message (only available with `chat-replies` capability)"
                             },
                             "markdown": {
-                                "type": "boolean"
+                                "type": "boolean",
+                                "description": "Whether the message should be rendered as markdown or shown as plain text"
                             },
                             "reactions": {
                                 "type": "object",
+                                "description": "An array map with relation between reaction emoji and total count of reactions with this emoji",
                                 "additionalProperties": {
                                     "type": "integer",
                                     "format": "int64"
@@ -471,52 +537,66 @@
                             },
                             "reactionsSelf": {
                                 "type": "array",
+                                "description": "When the user reacted this is the list of emojis the user reacted with",
                                 "items": {
                                     "type": "string"
                                 }
                             },
                             "referenceId": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "A reference string that was given while posting the message to be able to identify a sent message again (only available with `chat-reference-id` capability)"
                             },
                             "timestamp": {
                                 "type": "integer",
-                                "format": "int64"
+                                "format": "int64",
+                                "description": "Timestamp in seconds and UTC time zone"
                             },
                             "token": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "Conversation token"
                             },
                             "lastEditActorDisplayName": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "Display name of the last editing author (only available with `edit-messages` capability and when the message was actually edited)"
                             },
                             "lastEditActorId": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "Actor id of the last editing author (only available with `edit-messages` capability and when the message was actually edited)"
                             },
                             "lastEditActorType": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "Actor type of the last editing author - See [Constants - Actor types of chat messages](https://nextcloud-talk.readthedocs.io/en/latest/constants#actor-types-of-chat-messages) (only available with `edit-messages` capability and when the message was actually edited)"
                             },
                             "lastEditTimestamp": {
                                 "type": "integer",
-                                "format": "int64"
+                                "format": "int64",
+                                "description": "Unix time stamp when the message was last edited (only available with `edit-messages` capability and when the message was actually edited)"
                             },
                             "silent": {
-                                "type": "boolean"
+                                "type": "boolean",
+                                "description": "Whether the message was sent silently (only available with `silent-send-state` capability)"
                             },
                             "threadId": {
                                 "type": "integer",
-                                "format": "int64"
+                                "format": "int64",
+                                "description": "Thread ID if this message is part of a thread"
                             },
                             "isThread": {
-                                "type": "boolean"
+                                "type": "boolean",
+                                "description": "Whether this message is the root of a thread"
                             },
                             "threadTitle": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "Title of the thread if this message is the root of a thread"
                             },
                             "threadReplies": {
                                 "type": "integer",
-                                "format": "int64"
+                                "format": "int64",
+                                "description": "Number of replies in the thread if this message is the root of a thread"
                             },
                             "metaData": {
-                                "$ref": "#/components/schemas/ChatMessageMetaData"
+                                "$ref": "#/components/schemas/ChatMessageMetaData",
+                                "description": "Additional metadata of the message"
                             }
                         }
                     }
@@ -602,19 +682,24 @@
                 ],
                 "properties": {
                     "type": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Object type (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))"
                     },
                     "id": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Object id"
                     },
                     "name": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Visible name"
                     },
                     "server": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Server URL for federated users"
                     },
                     "link": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "URL of the object"
                     },
                     "call-type": {
                         "type": "string",
@@ -622,92 +707,116 @@
                             "one2one",
                             "group",
                             "public"
-                        ]
+                        ],
+                        "description": "Type of the call"
                     },
                     "icon-url": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "URL of the icon"
                     },
                     "message-id": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "ID of a message that this object refers to"
                     },
                     "boardname": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Name of the Deck board"
                     },
                     "stackname": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Name of the Deck stack"
                     },
                     "size": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "File size in bytes"
                     },
                     "path": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Path of the file"
                     },
                     "mimetype": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Mimetype of the file"
                     },
                     "preview-available": {
                         "type": "string",
                         "enum": [
                             "yes",
                             "no"
-                        ]
+                        ],
+                        "description": "Whether a preview is available for the file"
                     },
                     "hide-download": {
                         "type": "string",
                         "enum": [
                             "yes",
                             "no"
-                        ]
+                        ],
+                        "description": "Whether the download should be hidden for the file"
                     },
                     "mtime": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Modification time of the file as UNIX timestamp"
                     },
                     "latitude": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Latitude of a location"
                     },
                     "longitude": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Longitude of a location"
                     },
                     "description": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Description of the object"
                     },
                     "thumb": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "URL of a thumbnail"
                     },
                     "website": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Website URL"
                     },
                     "visibility": {
                         "type": "string",
                         "enum": [
                             "0",
                             "1"
-                        ]
+                        ],
+                        "description": "Visibility of the object"
                     },
                     "assignable": {
                         "type": "string",
                         "enum": [
                             "0",
                             "1"
-                        ]
+                        ],
+                        "description": "Whether the object is assignable"
                     },
                     "conversation": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Conversation token"
                     },
                     "etag": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "ETag of the object for caching"
                     },
                     "permissions": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Permissions for the file"
                     },
                     "width": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Width of the object (e.g. image, video)"
                     },
                     "height": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Height of the object (e.g. image, video)"
                     },
                     "blurhash": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Blurhash of the image"
                     }
                 }
             },
@@ -883,7 +992,7 @@
                     "id": {
                         "type": "integer",
                         "format": "int64",
-                        "description": "Numeric identifier of the conversation"
+                        "description": "Identifier of the conversation"
                     },
                     "isCustomAvatar": {
                         "type": "boolean",
@@ -920,7 +1029,7 @@
                     "listable": {
                         "type": "integer",
                         "format": "int64",
-                        "description": "Listable scope for the room (only available with `listable-rooms` capability)"
+                        "description": "Listable scope for the room (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#listable-scope)) (only available with `listable-rooms` capability)"
                     },
                     "liveTranscriptionLanguageId": {
                         "type": "string",
@@ -956,7 +1065,8 @@
                     },
                     "notificationCalls": {
                         "type": "integer",
-                        "format": "int64"
+                        "format": "int64",
+                        "description": "The call notification level for the user (see [Participant call notification levels](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-call-notification-levels))"
                     },
                     "notificationLevel": {
                         "type": "integer",
@@ -974,12 +1084,12 @@
                     "participantFlags": {
                         "type": "integer",
                         "format": "int64",
-                        "description": "\"In call\" flags of the user's session making the request (only available with `in-call-flags` capability)"
+                        "description": "\"In call\" flags of the user's session making the request (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-in-call-flag)) (only available with `in-call-flags` capability)"
                     },
                     "participantType": {
                         "type": "integer",
                         "format": "int64",
-                        "description": "Permissions level of the current user"
+                        "description": "Permissions level of the current user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-types))"
                     },
                     "permissions": {
                         "type": "integer",
@@ -989,7 +1099,7 @@
                     "readOnly": {
                         "type": "integer",
                         "format": "int64",
-                        "description": "Read-only state for the current user (only available with `read-only-rooms` capability)"
+                        "description": "Read-only state for the current user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#read-only-states)) (only available with `read-only-rooms` capability)"
                     },
                     "recordingConsent": {
                         "type": "integer",
@@ -1013,23 +1123,23 @@
                     },
                     "status": {
                         "type": "string",
-                        "description": "Optional: Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status"
+                        "description": "Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status"
                     },
                     "statusClearAt": {
                         "type": "integer",
                         "format": "int64",
                         "nullable": true,
-                        "description": "Optional: Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status"
+                        "description": "Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status"
                     },
                     "statusIcon": {
                         "type": "string",
                         "nullable": true,
-                        "description": "Optional: Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status"
+                        "description": "Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status"
                     },
                     "statusMessage": {
                         "type": "string",
                         "nullable": true,
-                        "description": "Optional: Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status"
+                        "description": "Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status"
                     },
                     "token": {
                         "type": "string",
