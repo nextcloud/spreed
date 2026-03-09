@@ -737,22 +737,7 @@ Signaling.Standalone.prototype.connect = function() {
 			this.signalingConnectionWarning = null
 		}
 
-		this.socketErrorCount++
-		if (this.signalingConnectionError === null && this.socketErrorCount < 5) {
-			this.signalingConnectionError = showError(t('spreed', 'Failed to connect. Retrying …'), {
-				timeout: TOAST_PERMANENT_TIMEOUT,
-			})
-		} else if (this.socketErrorCount === 5) {
-			// Switch to a different message as several errors in a row in hello
-			// responses indicate that the signaling server might be unable to
-			// connect to Nextcloud.
-			if (this.signalingConnectionError) {
-				this.signalingConnectionError.hideToast()
-			}
-			this.signalingConnectionError = showError(t('spreed', 'Failed to connect. The signaling server may be set up incorrectly'), {
-				timeout: TOAST_PERMANENT_TIMEOUT,
-			})
-		}
+		this._handleConnectionError('socket')
 		this.reconnect()
 	}.bind(this)
 	this.socket.onclose = function(event) {
@@ -852,6 +837,36 @@ Signaling.Standalone.prototype.connect = function() {
 		}
 		this._trigger('onAfterReceiveMessage', [data])
 	}.bind(this)
+}
+
+Signaling.Standalone.prototype._handleConnectionError = function(type) {
+	let errorCount
+	if (type === 'socket') {
+		this.socketErrorCount++
+		errorCount = this.socketErrorCount
+	} else if (type === 'hello') {
+		this.helloResponseErrorCount++
+		errorCount = this.helloResponseErrorCount
+	} else {
+		// Type is not provided, do not process the error
+		return
+	}
+
+	if (this.signalingConnectionError === null && errorCount < 5) {
+		this.signalingConnectionError = showError(t('spreed', 'Failed to connect. Retrying …'), {
+			timeout: TOAST_PERMANENT_TIMEOUT,
+		})
+	} else if (errorCount === 5) {
+		// Switch to a different message as several errors in a row in hello
+		// responses indicate that the signaling server might be unable to
+		// connect to Nextcloud.
+		if (this.signalingConnectionError) {
+			this.signalingConnectionError.hideToast()
+		}
+		this.signalingConnectionError = showError(t('spreed', 'Failed to connect. The signaling server may be set up incorrectly'), {
+			timeout: TOAST_PERMANENT_TIMEOUT,
+		})
+	}
 }
 
 Signaling.Standalone.prototype.welcomeReceived = function(data) {
@@ -1084,23 +1099,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 			return
 		}
 
-		this.helloResponseErrorCount++
-
-		if (this.signalingConnectionError === null && this.helloResponseErrorCount < 5) {
-			this.signalingConnectionError = showError(t('spreed', 'Failed to connect. Retrying …'), {
-				timeout: TOAST_PERMANENT_TIMEOUT,
-			})
-		} else if (this.helloResponseErrorCount === 5) {
-			// Switch to a different message as several errors in a row in hello
-			// responses indicate that the signaling server might be unable to
-			// connect to Nextcloud.
-			if (this.signalingConnectionError) {
-				this.signalingConnectionError.hideToast()
-			}
-			this.signalingConnectionError = showError(t('spreed', 'Failed to connect. The signaling server may be set up incorrectly'), {
-				timeout: TOAST_PERMANENT_TIMEOUT,
-			})
-		}
+		this._handleConnectionError('hello')
 
 		// TODO(fancycode): How should this be handled better?
 		const url = this._getBackendUrl()
