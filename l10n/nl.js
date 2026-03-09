@@ -988,6 +988,7 @@ OC.L10N.register(
     "Personal" : "Persoonlijk",
     "Moderation" : "Beheer",
     "Setup overview" : "Instellingenoverzicht",
+    "Live transcription" : "Live transcriptie",
     "Breakout Rooms" : "Aparte vergaderruimtes",
     "Matterbridge" : "Matterbridge",
     "Bots" : "Bots",
