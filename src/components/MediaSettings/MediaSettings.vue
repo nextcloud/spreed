@@ -616,11 +616,11 @@ export default {
 				this.notifyCall = BrowserStorage.getItem('silentCall_' + this.token) !== 'true'
 
 				// Set virtual background depending on BrowserStorage's settings
-				if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
-					if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
+				if (BrowserStorage.getItem('virtualBackgroundEnabled') === 'true') {
+					if (BrowserStorage.getItem('virtualBackgroundType') === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
 						this.blurVirtualBackground()
-					} else if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
-						this.setVirtualBackgroundImage(BrowserStorage.getItem('virtualBackgroundUrl_' + this.token))
+					} else if (BrowserStorage.getItem('virtualBackgroundType') === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+						this.setVirtualBackgroundImage(BrowserStorage.getItem('virtualBackgroundUrl'))
 					}
 				} else if (this.blurVirtualBackgroundEnabled && !this.skipBlurVirtualBackground) {
 					// Fall back to global blur background setting
@@ -651,7 +651,7 @@ export default {
 
 		isInCall(value) {
 			if (value) {
-				const virtualBackgroundEnabled = BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true'
+				const virtualBackgroundEnabled = BrowserStorage.getItem('virtualBackgroundEnabled') === 'true'
 				// Apply global blur background setting
 				if (this.blurVirtualBackgroundEnabled && !this.skipBlurVirtualBackground && !virtualBackgroundEnabled) {
 					this.blurBackground(true)
@@ -821,7 +821,7 @@ export default {
 			if (this.isInCall) {
 				localMediaModel.disableVirtualBackground()
 			} else {
-				BrowserStorage.removeItem('virtualBackgroundEnabled_' + this.token)
+				BrowserStorage.removeItem('virtualBackgroundEnabled')
 			}
 		},
 
@@ -847,9 +847,9 @@ export default {
 				localMediaModel.setVirtualBackgroundBlur(VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT, globalBlurVirtualBackground)
 			} else if (!globalBlurVirtualBackground) {
 				this.skipBlurVirtualBackground = true
-				BrowserStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
-				BrowserStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
-				BrowserStorage.setItem('virtualBackgroundBlurStrength_' + this.token, VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
+				BrowserStorage.setItem('virtualBackgroundEnabled', 'true')
+				BrowserStorage.setItem('virtualBackgroundType', VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
+				BrowserStorage.setItem('virtualBackgroundBlurStrength', VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
 			}
 		},
 
@@ -876,9 +876,9 @@ export default {
 				localMediaModel.enableVirtualBackground()
 				localMediaModel.setVirtualBackgroundImage(background)
 			} else {
-				BrowserStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
-				BrowserStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
-				BrowserStorage.setItem('virtualBackgroundUrl_' + this.token, background)
+				BrowserStorage.setItem('virtualBackgroundEnabled', 'true')
+				BrowserStorage.setItem('virtualBackgroundType', VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
+				BrowserStorage.setItem('virtualBackgroundUrl', background)
 			}
 		},
 
