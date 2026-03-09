@@ -100,7 +100,7 @@ export const useTalkHashStore = defineStore('talkHash', {
 		checkMaintenanceMode(response) {
 			if (response?.status === 503 && !this.maintenanceWarningToast) {
 				this.maintenanceWarningToast = showError(
-					t('spreed', 'Nextcloud is in maintenance mode.') + '\n' + messagePleaseReload,
+					t('spreed', 'The server is in maintenance mode.') + '\n' + messagePleaseReload,
 					{ timeout: TOAST_PERMANENT_TIMEOUT },
 				)
 			}
@@ -121,7 +121,7 @@ export const useTalkHashStore = defineStore('talkHash', {
 		 * Show a toast message when Talk Federation requires rejoining
 		 */
 		showTalkProxyHashDirtyToast() {
-			this.proxyHashDirtyToast = showError(t('spreed', 'Nextcloud Talk Federation was updated.') + '\n' + messagePleaseReload, {
+			this.proxyHashDirtyToast = showError(t('spreed', 'Federated server was updated.') + '\n' + messagePleaseReload, {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			})
 		},
