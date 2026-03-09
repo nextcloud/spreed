@@ -18,7 +18,6 @@ import './init.js'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
 import 'leaflet-defaulticon-compatibility'
-import './assets/publicshareauth.css'
 
 // CSP config for webpack dynamic chunk loading
 __webpack_nonce__ = getCSPNonce()
@@ -30,77 +29,32 @@ __webpack_nonce__ = getCSPNonce()
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 
 /**
- * Wraps all the body contents in its own container.
- *
- * The root element of the layout needs to be flex, but the body element can not
- * be in order to properly place the autocompletion panel using an absolute
- * position.
- */
-function wrapBody() {
-	const bodyElement = document.querySelector('body')
-	const bodyWrapperElement = document.createElement('div')
-
-	while (bodyElement.childNodes.length) {
-		bodyWrapperElement.appendChild(bodyElement.childNodes[0])
-	}
-
-	while (bodyElement.classList.length) {
-		bodyWrapperElement.classList.add(bodyElement.classList.item(0))
-		bodyElement.classList.remove(bodyElement.classList.item(0))
-	}
-
-	bodyWrapperElement.setAttribute('id', bodyElement.getAttribute('id'))
-	bodyElement.removeAttribute('id')
-
-	bodyElement.appendChild(bodyWrapperElement)
-}
-
-/**
- *
+ * Add mount containers for 'Request password' button and Talk sidebar
  */
 function adjustLayout() {
-	const contentElement = document.createElement('div')
-	contentElement.setAttribute('id', 'content')
-	document.querySelector('body').appendChild(contentElement)
-
-	contentElement.appendChild(document.querySelector('.wrapper'))
-	contentElement.appendChild(document.querySelector('footer'))
-
 	const requestPasswordElement = document.createElement('div')
-	requestPasswordElement.setAttribute('id', 'request-password')
-	document.querySelector('.guest-box').appendChild(requestPasswordElement)
+	requestPasswordElement.setAttribute('id', 'talk-public-share-auth')
+	document.getElementById('guest-content-vue').appendChild(requestPasswordElement)
 
 	const talkSidebarElement = document.createElement('div')
-	talkSidebarElement.setAttribute('id', 'talk-sidebar')
-	document.querySelector('body').appendChild(talkSidebarElement)
-
-	wrapBody()
-
-	document.querySelector('body').classList.add('talk-sidebar-enabled')
+	talkSidebarElement.setAttribute('id', 'talk-public-share-auth-sidebar')
+	document.body.appendChild(talkSidebarElement)
 }
 
 adjustLayout()
 
-/**
- *
- */
-function getShareToken() {
-	const shareTokenElement = document.getElementById('sharingToken')
-	return shareTokenElement.value
-}
-
 const router = createMemoryRouter()
 
-createApp(PublicShareAuthRequestPasswordButton, { shareToken: getShareToken() })
+createApp(PublicShareAuthRequestPasswordButton)
 	.use(pinia)
 	.use(store)
 	.use(router)
 	.use(NextcloudGlobalsVuePlugin)
-	.mount('#request-password')
+	.mount('#talk-public-share-auth')
 
 createApp(PublicShareAuthSidebar)
 	.use(pinia)
 	.use(store)
 	.use(router)
 	.use(NextcloudGlobalsVuePlugin)
-	.mount(document.querySelector('#talk-sidebar'))
+	.mount('#talk-public-share-auth-sidebar')
