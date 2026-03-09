@@ -208,3 +208,13 @@
 * `scheduled-messages` (local) - Whether a user can schedule messages
 * `config => call => live-translation` - Whether live translation is supported in calls
 * `config => call => live-transcription-target-language-id` (local) - User defined string value with the id of the target language to use for live translations
+
+## 23.0.2
+* `config => permissions => max-default` - Maximum value for default permissions (510 with react-permission, 254 without)
+* `config => permissions => max-custom` - Maximum value for custom permissions (511 with react-permission, 255 without)
+* `config => permissions => default` - The admin configured default permissions
+* `config => chat => matterbridge-enabled` (local) - Whether matterbridge is installed on the server and can be configured for conversations
+* `config => signaling => mode` (local) - Signaling mode (external with High-performance backend, internal otherwise)
+* `config => call => play-sounds` (local) - Whether the user has sounds enabled for calls (falls back to admin default for guests)
+* `config => call => grid-limit` (local) - Suggested gird size for all participants
+* `config => call => grid-limit-enforced` (local) - Whether the limit is hard enforced for all participants
