@@ -1173,7 +1173,7 @@ Signaling.Standalone.prototype.joinRoom = function(token, sessionId) {
 		}
 
 		if (this._pendingJoinRoomPromise) {
-			this._pendingJoinRoomPromise.reject()
+			this._pendingJoinRoomPromise.reject('cancelled')
 		}
 
 		let pendingJoinRoomPromiseResolve
