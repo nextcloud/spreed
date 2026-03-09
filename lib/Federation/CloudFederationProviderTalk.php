@@ -165,7 +165,11 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 			} elseif (!str_starts_with($localCloudId, $shareWithUser->getUID() . '@')) {
 				// Fix the user ID as we also return it via the cloud federation api response in Nextcloud 30+
 				$cloudId = $this->cloudIdManager->resolveCloudId($localCloudId);
-				$localCloudId = $shareWithUser->getUID() . '@' . $cloudId->getRemote();
+				$localRemote = $cloudId->getRemote();
+				if (str_starts_with($localRemote, 'https://')) {
+					$localRemote = substr($localRemote, 8);
+				}
+				$localCloudId = $shareWithUser->getUID() . '@' . $localRemote;
 			}
 
 			if ($this->config->isDisabledForUser($shareWithUser)) {
