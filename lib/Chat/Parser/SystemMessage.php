@@ -519,7 +519,12 @@ class SystemMessage implements IEventListener {
 			}
 		} elseif ($message === 'file_shared') {
 			try {
-				$parsedParameters['file'] = $this->getFileFromShare($room, $participant, $parameters['share'], $allowInaccurate);
+				if (isset($parameters['file'])) {
+					$ownerUid = $chatMessage->getComment()->getActorId();
+					$parsedParameters['file'] = $this->getFileFromNodeId($room, $participant, (int)$parameters['file'], $ownerUid);
+				} else {
+					$parsedParameters['file'] = $this->getFileFromShare($room, $participant, $parameters['share'], $allowInaccurate);
+				}
 				$parsedMessage = '{file}';
 				$metaData = $parameters['metaData'] ?? [];
 				if (isset($metaData['messageType'])) {
@@ -802,6 +807,106 @@ class SystemMessage implements IEventListener {
 	 * @throws NotFoundException
 	 * @throws ShareNotFound
 	 */
+	/**
+	 * Build the file parameter array for a node-based file_shared message.
+	 *
+	 * Used when a file was uploaded to a conversation folder that is already
+	 * shared with the room at folder-level (no per-file TYPE_ROOM share exists).
+	 *
+	 * @throws NotFoundException when the file cannot be found
+	 */
+	protected function getFileFromNodeId(Room $room, ?Participant $participant, int $nodeId, string $ownerUid): array {
+		if ($participant && $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			$viewerUid = $participant->getAttendee()->getActorId();
+			$userFolder = $this->rootFolder->getUserFolder($viewerUid);
+			$nodes = $userFolder->getById($nodeId);
+
+			if (empty($nodes)) {
+				\OC_Util::tearDownFS();
+				\OC_Util::setupFS($viewerUid);
+				$nodes = $userFolder->getById($nodeId);
+			}
+
+			if (empty($nodes)) {
+				throw new NotFoundException('File not found');
+			}
+
+			/** @var Node $node */
+			$node = reset($nodes);
+			$fullPath = $node->getPath();
+			$pathSegments = explode('/', $fullPath, 4);
+			$path = $pathSegments[3] ?? $node->getName();
+			$url = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', ['fileid' => $nodeId]);
+		} elseif ($participant && $room->getType() !== Room::TYPE_PUBLIC && $participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			throw new NotFoundException('File not accessible for federated users');
+		} else {
+			// Guest or public-page access: look up via the owner's file system
+			$ownerFolder = $this->rootFolder->getUserFolder($ownerUid);
+			$nodes = $ownerFolder->getById($nodeId);
+			if (empty($nodes)) {
+				throw new NotFoundException('File not found');
+			}
+			/** @var Node $node */
+			$node = reset($nodes);
+			$path = $node->getName();
+			$url = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', ['fileid' => $nodeId]);
+		}
+
+		$name = $node->getName();
+		$size = $node->getSize();
+		$fileId = $node->getId();
+
+		if ($node instanceof FileInfo) {
+			$isPreviewAvailable = $this->previewManager->isAvailable($node);
+		} else {
+			$isPreviewAvailable = $size > 0 && $this->previewManager->isMimeSupported($node->getMimeType());
+		}
+
+		$data = [
+			'type' => 'file',
+			'id' => (string)$fileId,
+			'name' => $name,
+			'size' => (string)$size,
+			'path' => $path,
+			'link' => $url,
+			'etag' => $node->getEtag(),
+			'permissions' => (string)$node->getPermissions(),
+			'mimetype' => $node->getMimeType(),
+			'preview-available' => $isPreviewAvailable ? 'yes' : 'no',
+			'hide-download' => 'no',
+		];
+
+		if ($isPreviewAvailable && str_starts_with($node->getMimeType(), 'image/')) {
+			try {
+				$sizeMetadata = $this->metadataCache->getImageMetadataForFileId($fileId);
+				if (isset($sizeMetadata['width'], $sizeMetadata['height'])) {
+					$data['width'] = (string)$sizeMetadata['width'];
+					$data['height'] = (string)$sizeMetadata['height'];
+				}
+
+				if (isset($sizeMetadata['blurhash'])) {
+					$data['blurhash'] = $sizeMetadata['blurhash'];
+				}
+			} catch (FilesMetadataNotFoundException) {
+			}
+		}
+
+		if ($node instanceof FileInfo && $node->getMimeType() === 'text/vcard') {
+			$vCard = $node->getContent();
+			$vObject = Reader::read($vCard);
+			if (!empty($vObject->FN)) {
+				$data['contact-name'] = (string)$vObject->FN;
+			}
+			$photo = $this->photoCache->getPhotoFromVObject($vObject);
+			if ($photo) {
+				$data['contact-photo-mimetype'] = $photo['Content-Type'];
+				$data['contact-photo'] = base64_encode($photo['body']);
+			}
+		}
+
+		return $data;
+	}
+
 	protected function getFileFromShare(Room $room, ?Participant $participant, string $shareId, bool $allowInaccurate): array {
 		$share = $this->shareProvider->getShareById($shareId);
 

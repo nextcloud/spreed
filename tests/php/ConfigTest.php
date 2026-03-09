@@ -9,6 +9,7 @@ namespace OCA\Talk\Tests\php;
 
 use OCA\Talk\Config;
 use OCA\Talk\Events\BeforeTurnServersGetEvent;
+use OCA\Talk\Room;
 use OCA\Talk\Tests\php\Mocks\GetTurnServerListener;
 use OCA\Talk\Vendor\Firebase\JWT\JWT;
 use OCA\Talk\Vendor\Firebase\JWT\Key;
@@ -16,6 +17,7 @@ use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IFilenameValidator;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -27,7 +29,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class ConfigTest extends TestCase {
-	private function createConfig(IConfig $config) {
+	private function createConfig(IConfig $config, ?IFilenameValidator $filenameValidator = null, ?IUserManager $userManagerOverride = null): Config {
 		/** @var MockObject|IAppConfig $appConfig */
 		$appConfig = $this->createMock(IAppConfig::class);
 		/** @var MockObject|IUserConfig $appConfig */
@@ -39,14 +41,18 @@ class ConfigTest extends TestCase {
 		/** @var MockObject|IGroupManager $groupManager */
 		$groupManager = $this->createMock(IGroupManager::class);
 		/** @var MockObject|IUserManager $userManager */
-		$userManager = $this->createMock(IUserManager::class);
+		$userManager = $userManagerOverride ?? $this->createMock(IUserManager::class);
 		/** @var MockObject|IURLGenerator $urlGenerator */
 		$urlGenerator = $this->createMock(IURLGenerator::class);
 		/** @var MockObject|IEventDispatcher $dispatcher */
 		$dispatcher = $this->createMock(IEventDispatcher::class);
+		if ($filenameValidator === null) {
+			/** @var MockObject|IFilenameValidator $filenameValidator */
+			$filenameValidator = $this->createMock(IFilenameValidator::class);
+			$filenameValidator->method('sanitizeFilename')->willReturnArgument(0);
+		}
 
-		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
-		return $helper;
+		return new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher, $filenameValidator);
 	}
 
 	public function testGetStunServers(): void {
@@ -163,7 +169,9 @@ class ConfigTest extends TestCase {
 			->method('generate')
 			->with(16)
 			->willReturn('abcdefghijklmnop');
-		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		/** @var MockObject|IFilenameValidator $filenameValidator */
+		$filenameValidator = $this->createMock(IFilenameValidator::class);
+		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher, $filenameValidator);
 
 		//
 		$settings = $helper->getTurnSettings();
@@ -256,7 +264,9 @@ class ConfigTest extends TestCase {
 
 		$dispatcher->addServiceListener(BeforeTurnServersGetEvent::class, GetTurnServerListener::class);
 
-		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		/** @var MockObject|IFilenameValidator $filenameValidator */
+		$filenameValidator = $this->createMock(IFilenameValidator::class);
+		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher, $filenameValidator);
 
 		$settings = $helper->getTurnSettings();
 		$this->assertSame($servers, $settings);
@@ -410,7 +420,9 @@ class ConfigTest extends TestCase {
 			->method('getDisplayName')
 			->willReturn('Jane Doe');
 
-		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		/** @var MockObject|IFilenameValidator $filenameValidator */
+		$filenameValidator = $this->createMock(IFilenameValidator::class);
+		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher, $filenameValidator);
 
 		$config->setAppValue('spreed', 'signaling_token_alg', $algo);
 		// Make sure new keys are generated.
@@ -460,7 +472,9 @@ class ConfigTest extends TestCase {
 			->with('')
 			->willReturn('https://domain.invalid/nextcloud');
 
-		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		/** @var MockObject|IFilenameValidator $filenameValidator */
+		$filenameValidator = $this->createMock(IFilenameValidator::class);
+		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher, $filenameValidator);
 
 		$config->setAppValue('spreed', 'signaling_token_alg', $algo);
 		// Make sure new keys are generated.
@@ -474,5 +488,107 @@ class ConfigTest extends TestCase {
 
 		$this->assertEquals($now, $decoded->iat);
 		$this->assertEquals('https://domain.invalid/nextcloud', $decoded->iss);
+	}
+
+	// -- Conversation folder name sanitization --
+
+	public static function dataGetConversationFolderName(): array {
+		return [
+			'plain name is unchanged' => ['Group Chat', 'Group Chat'],
+			'forward slash replaced with space' => ['Group/Chat', 'Group Chat'],
+			'backslash replaced with space' => ['Group\\Chat', 'Group Chat'],
+			'null byte replaced with space' => ["Group\x00Chat", 'Group Chat'],
+			'control char 0x01 replaced with space' => ["Group\x01Chat", 'Group Chat'],
+			'leading and trailing whitespace trimmed' => ['  Group Chat  ', 'Group Chat'],
+			'name of exactly 64 chars kept as-is' => [str_repeat('A', 64), str_repeat('A', 64)],
+			'name of 65 chars truncated to 64' => [str_repeat('A', 65), str_repeat('A', 64)],
+			'name of only control chars becomes empty string' => ["\x01\x02", ''],
+		];
+	}
+
+	#[DataProvider('dataGetConversationFolderName')]
+	public function testGetConversationFolderName(string $displayName, string $expectedClean): void {
+		/** @var MockObject|IConfig $config */
+		$config = $this->createMock(IConfig::class);
+		/** @var MockObject|Room $room */
+		$room = $this->createMock(Room::class);
+		$room->method('getDisplayName')->with('user1')->willReturn($displayName);
+		$room->method('getToken')->willReturn('abcd1234');
+		/** @var MockObject|IFilenameValidator $filenameValidator */
+		$filenameValidator = $this->createMock(IFilenameValidator::class);
+		$filenameValidator->method('sanitizeFilename')
+			->willReturnCallback(static function (string $name, ?string $replacement = null): string {
+				return str_replace(['/', '\\'], $replacement ?? '', $name);
+			});
+
+		$helper = $this->createConfig($config, $filenameValidator);
+		$this->assertSame($expectedClean . '-abcd1234', $helper->getConversationFolderName($room, 'user1'));
+	}
+
+	public function testGetConversationFolderNameFallbackWhenSpaceIsForbidden(): void {
+		/** @var MockObject|IConfig $config */
+		$config = $this->createMock(IConfig::class);
+		/** @var MockObject|Room $room */
+		$room = $this->createMock(Room::class);
+		$room->method('getDisplayName')->with('user1')->willReturn('Group/Chat\\Room');
+		$room->method('getToken')->willReturn('abcd1234');
+		/** @var MockObject|IFilenameValidator $filenameValidator */
+		$filenameValidator = $this->createMock(IFilenameValidator::class);
+		$filenameValidator->method('sanitizeFilename')
+			->willThrowException(new \InvalidArgumentException('Space is a forbidden character'));
+
+		$helper = $this->createConfig($config, $filenameValidator);
+		// Fallback strips '/' and '\' without replacement
+		$this->assertSame('GroupChatRoom-abcd1234', $helper->getConversationFolderName($room, 'user1'));
+	}
+
+	// -- Conversation subfolder name sanitization and prefix-capping --
+
+	public static function dataGetConversationSubfolderName(): array {
+		return [
+			'short uid with normal display name' => ['alice', 'Alice Smith', 'Alice Smith-alice'],
+			'forward slash in display name replaced with space' => ['alice', 'Alice/Smith', 'Alice Smith-alice'],
+			'backslash in display name replaced with space' => ['alice', 'Alice\\Smith', 'Alice Smith-alice'],
+			'control char in display name replaced with space' => ['alice', "Alice\x01Smith", 'Alice Smith-alice'],
+			'leading and trailing whitespace in display name trimmed' => ['alice', '  Alice  ', 'Alice-alice'],
+			'empty display name falls back to uid only' => ['alice', '', 'alice'],
+			'display name of only control chars falls back to uid' => ['alice', "\x01\x02", 'alice'],
+			'uid of 47 chars gets full 16-char prefix' => [
+				str_repeat('u', 47),
+				'Hello',
+				'Hello-' . str_repeat('u', 47),
+			],
+			'uid of 48 chars prefix capped to 15 chars' => [
+				str_repeat('u', 48),
+				str_repeat('A', 20),
+				str_repeat('A', 15) . '-' . str_repeat('u', 48),
+			],
+			'uid of 63 chars gets no prefix' => [str_repeat('u', 63), 'Alice', str_repeat('u', 63)],
+			'uid of 100 chars gets no prefix' => [str_repeat('u', 100), 'Alice', str_repeat('u', 100)],
+		];
+	}
+
+	#[DataProvider('dataGetConversationSubfolderName')]
+	public function testGetConversationSubfolderName(string $userId, string $displayName, string $expected): void {
+		/** @var MockObject|IConfig $config */
+		$config = $this->createMock(IConfig::class);
+		/** @var MockObject|IFilenameValidator $filenameValidator */
+		$filenameValidator = $this->createMock(IFilenameValidator::class);
+		$filenameValidator->method('sanitizeFilename')
+			->willReturnCallback(static function (string $name, ?string $replacement = null): string {
+				return str_replace(['/', '\\'], $replacement ?? '', $name);
+			});
+		/** @var MockObject|IUserManager $userManager */
+		$userManager = $this->createMock(IUserManager::class);
+		$prefixLen = min(16, max(0, 63 - strlen($userId)));
+		if ($prefixLen > 0) {
+			/** @var MockObject|IUser $user */
+			$user = $this->createMock(IUser::class);
+			$user->method('getDisplayName')->willReturn($displayName);
+			$userManager->method('get')->with($userId)->willReturn($user);
+		}
+
+		$helper = $this->createConfig($config, $filenameValidator, $userManager);
+		$this->assertSame($expected, $helper->getConversationSubfolderName($userId));
 	}
 }

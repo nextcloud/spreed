@@ -28,6 +28,7 @@ use OCP\Collaboration\Reference\IReferenceManager;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IRootFolder;
 use OCP\ICacheFactory;
 use OCP\IDBConnection;
 use OCP\IL10N;
@@ -62,6 +63,7 @@ class ChatManagerTest extends TestCase {
 	protected ILimiter&MockObject $rateLimiter;
 	protected IRequest&MockObject $request;
 	protected IJobList&MockObject $jobList;
+	protected IRootFolder&MockObject $rootFolder;
 	protected LoggerInterface&MockObject $logger;
 	protected IL10N&MockObject $l;
 	protected ?ChatManager $chatManager = null;
@@ -84,6 +86,7 @@ class ChatManagerTest extends TestCase {
 		$this->referenceManager = $this->createMock(IReferenceManager::class);
 		$this->rateLimiter = $this->createMock(ILimiter::class);
 		$this->jobList = $this->createMock(IJobList::class);
+		$this->rootFolder = $this->createMock(IRootFolder::class);
 		$this->request = $this->createMock(IRequest::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
@@ -125,6 +128,7 @@ class ChatManagerTest extends TestCase {
 					$this->rateLimiter,
 					$this->request,
 					$this->jobList,
+					$this->rootFolder,
 					$this->l,
 					$this->logger,
 				])
@@ -151,6 +155,7 @@ class ChatManagerTest extends TestCase {
 			$this->rateLimiter,
 			$this->request,
 			$this->jobList,
+			$this->rootFolder,
 			$this->l,
 			$this->logger,
 		);
@@ -830,6 +835,13 @@ class ChatManagerTest extends TestCase {
 			[json_encode(['parameters' => ['share' => []]]), false],
 			[json_encode(['parameters' => ['share' => 0]]), false],
 			[json_encode(['parameters' => ['share' => 1]]), true],
+			// Node-based file references (parameters['file'])
+			[json_encode(['parameters' => ['file' => null]]), false],
+			[json_encode(['parameters' => ['file' => '']]), false],
+			[json_encode(['parameters' => ['file' => []]]), false],
+			[json_encode(['parameters' => ['file' => 0]]), false],
+			[json_encode(['parameters' => ['file' => '42']]), true],
+			[json_encode(['parameters' => ['file' => 42]]), true],
 		];
 	}
 
@@ -847,8 +859,12 @@ class ChatManagerTest extends TestCase {
 					->with('notExists')
 					->willThrowException(new ShareNotFound());
 			}
-		}
-		if (count($list) !== $expectedCount) {
+			if (isset($messageDecoded['parameters']['file']) && !empty($messageDecoded['parameters']['file'])) {
+				$node = $this->createMock(\OCP\Files\Node::class);
+				$this->rootFolder->method('getById')
+					->with((int)$messageDecoded['parameters']['file'])
+					->willReturn([$node]);
+			}
 		}
 		$result = $this->chatManager->filterCommentsWithNonExistingFiles($list);
 		$this->assertCount($expectedCount, $result);
@@ -860,6 +876,8 @@ class ChatManagerTest extends TestCase {
 			[[json_encode(['parameters' => ['not a shared file']])], 1],
 			[[json_encode(['parameters' => ['share' => 'notExists']])], 0],
 			[[json_encode(['parameters' => ['share' => 1]])], 1],
+			// Node-based file references: file exists
+			[[json_encode(['parameters' => ['file' => '42']])], 1],
 		];
 	}
 }

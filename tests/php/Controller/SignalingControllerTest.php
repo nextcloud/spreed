@@ -33,6 +33,7 @@ use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IFilenameValidator;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
@@ -107,7 +108,9 @@ class SignalingControllerTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->dispatcher = \OCP\Server::get(IEventDispatcher::class);
 		$urlGenerator = $this->createMock(IURLGenerator::class);
-		$this->config = new Config($this->serverConfig, $appConfig, $this->createMock(IUserConfig::class), $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher);
+		/** @var MockObject|IFilenameValidator $filenameValidator */
+		$filenameValidator = $this->createMock(IFilenameValidator::class);
+		$this->config = new Config($this->serverConfig, $appConfig, $this->createMock(IUserConfig::class), $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher, $filenameValidator);
 		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OCP\Server::get(IDBConnection::class);
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);

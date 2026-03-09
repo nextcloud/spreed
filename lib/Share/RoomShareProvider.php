@@ -1221,6 +1221,56 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	}
 
 	/**
+	 * Update file_target for all TYPE_ROOM shares in a room by replacing
+	 * a path segment. Used when a conversation folder is renamed.
+	 *
+	 * Not part of IShareProvider API, but needed by
+	 * OCA\Talk\Listener\ConversationFolderListener
+	 */
+	public function updateShareTargetsInRoom(string $roomToken, string $oldFolderName, string $newFolderName): void {
+		$this->cleanSharesByIdCache();
+
+		$oldSegment = '/' . $oldFolderName . '/';
+		$newSegment = '/' . $newFolderName . '/';
+
+		$update = $this->dbConnection->getQueryBuilder();
+		$update->update('share')
+			->set('file_target', $update->createFunction(
+				'REPLACE(' . $update->getColumnName('file_target') . ', '
+				. $update->createNamedParameter($oldSegment) . ', '
+				. $update->createNamedParameter($newSegment) . ')'
+			))
+			->where($update->expr()->eq('share_type', $update->createNamedParameter(IShare::TYPE_ROOM)))
+			->andWhere($update->expr()->eq('share_with', $update->createNamedParameter($roomToken)))
+			->andWhere($update->expr()->like('file_target', $update->createNamedParameter(
+				'%' . $this->dbConnection->escapeLikeParameter($oldSegment) . '%'
+			)))
+			->executeStatement();
+
+		// Also update user-modified room shares (SHARE_TYPE_USERROOM) that
+		// reference the same room token via their parent shares.
+		$sub = $this->dbConnection->getQueryBuilder();
+		$sub->select('id')
+			->from('share')
+			->where($sub->expr()->eq('share_type', $sub->createNamedParameter(IShare::TYPE_ROOM)))
+			->andWhere($sub->expr()->eq('share_with', $sub->createNamedParameter($roomToken)));
+
+		$update2 = $this->dbConnection->getQueryBuilder();
+		$update2->update('share')
+			->set('file_target', $update2->createFunction(
+				'REPLACE(' . $update2->getColumnName('file_target') . ', '
+				. $update2->createNamedParameter($oldSegment) . ', '
+				. $update2->createNamedParameter($newSegment) . ')'
+			))
+			->where($update2->expr()->eq('share_type', $update2->createNamedParameter(self::SHARE_TYPE_USERROOM)))
+			->andWhere($update2->expr()->in('parent', $update2->createFunction($sub->getSQL())))
+			->andWhere($update2->expr()->like('file_target', $update2->createNamedParameter(
+				'%' . $this->dbConnection->escapeLikeParameter($oldSegment) . '%'
+			)))
+			->executeStatement();
+	}
+
+	/**
 	 * Delete all shares in a room, or only those from the given user.
 	 *
 	 * When a user is given all their shares are removed, both own shares and

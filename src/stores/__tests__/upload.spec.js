@@ -8,7 +8,7 @@ import { getUploader } from '@nextcloud/upload'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { getDavClient } from '../../services/DavClient.ts'
-import { shareFile } from '../../services/filesSharingServices.ts'
+import { shareConversationFile, shareFile } from '../../services/filesSharingServices.ts'
 import { findUniquePath } from '../../utils/fileUpload.ts'
 import { useActorStore } from '../actor.ts'
 import { useSettingsStore } from '../settings.ts'
@@ -33,6 +33,7 @@ vi.mock('../../utils/fileUpload.ts', async () => {
 	}
 })
 vi.mock('../../services/filesSharingServices.ts', () => ({
+	shareConversationFile: vi.fn(),
 	shareFile: vi.fn(),
 }))
 
@@ -146,7 +147,7 @@ describe('fileUploadStore', () => {
 			const referenceId = uploadStore.getUploadsArray('upload-id1')[0][1].temporaryMessage.referenceId
 			findUniquePath.mockResolvedValueOnce({ uniquePath: uniqueFileName, suffix: 1 })
 			uploadMock.mockResolvedValue()
-			shareFile.mockResolvedValue()
+			shareConversationFile.mockResolvedValue()
 
 			await uploadStore.uploadFiles({ token: 'XXTOKENXX', uploadId: 'upload-id1', caption: 'text-caption', options: { silent: true } })
 
@@ -156,13 +157,14 @@ describe('fileUploadStore', () => {
 			expect(uploadMock).toHaveBeenCalledTimes(1)
 			expect(uploadMock).toHaveBeenCalledWith(uniqueFileName, file)
 
-			expect(shareFile).toHaveBeenCalledTimes(1)
-			expect(shareFile).toHaveBeenCalledWith({
-				path: uniqueFileName,
-				shareWith: 'XXTOKENXX',
+			expect(shareConversationFile).toHaveBeenCalledTimes(1)
+			expect(shareConversationFile).toHaveBeenCalledWith({
+				token: 'XXTOKENXX',
+				filePath: uniqueFileName,
 				referenceId,
 				talkMetaData: '{"caption":"text-caption","silent":true}',
 			})
+			expect(shareFile).not.toHaveBeenCalled()
 
 			expect(vuexStoreDispatch).toHaveBeenCalledWith('addTemporaryMessage', expect.anything())
 			expect(uploadStore.currentUploadId).not.toBeDefined()
@@ -194,9 +196,9 @@ describe('fileUploadStore', () => {
 			findUniquePath
 				.mockResolvedValueOnce({ uniquePath: '/Talk/' + files[0].name + 'uniq', suffix: 1 })
 				.mockResolvedValueOnce({ uniquePath: '/Talk/' + files[1].name + 'uniq', suffix: 1 })
-			shareFile
-				.mockResolvedValueOnce({ data: { ocs: { data: { id: '1' } } } })
-				.mockResolvedValueOnce({ data: { ocs: { data: { id: '2' } } } })
+			shareConversationFile
+				.mockResolvedValueOnce()
+				.mockResolvedValueOnce()
 
 			await uploadStore.uploadFiles({ token: 'XXTOKENXX', uploadId: 'upload-id1', caption: 'text-caption', options: { silent: false } })
 
@@ -208,19 +210,20 @@ describe('fileUploadStore', () => {
 			}
 			const referenceIds = uploadStore.getUploadsArray('upload-id1').map((entry) => entry[1].temporaryMessage.referenceId)
 
-			expect(shareFile).toHaveBeenCalledTimes(2)
-			expect(shareFile).toHaveBeenNthCalledWith(1, {
-				path: '/Talk/' + files[0].name + 'uniq',
-				shareWith: 'XXTOKENXX',
+			expect(shareConversationFile).toHaveBeenCalledTimes(2)
+			expect(shareConversationFile).toHaveBeenNthCalledWith(1, {
+				token: 'XXTOKENXX',
+				filePath: '/Talk/' + files[0].name + 'uniq',
 				referenceId: referenceIds[0],
 				talkMetaData: '{}',
 			})
-			expect(shareFile).toHaveBeenNthCalledWith(2, {
-				path: '/Talk/' + files[1].name + 'uniq',
-				shareWith: 'XXTOKENXX',
+			expect(shareConversationFile).toHaveBeenNthCalledWith(2, {
+				token: 'XXTOKENXX',
+				filePath: '/Talk/' + files[1].name + 'uniq',
 				referenceId: referenceIds[1],
 				talkMetaData: '{"caption":"text-caption"}',
 			})
+			expect(shareFile).not.toHaveBeenCalled()
 
 			expect(vuexStoreDispatch).toHaveBeenNthCalledWith(1, 'addTemporaryMessage', expect.anything())
 			expect(vuexStoreDispatch).toHaveBeenNthCalledWith(2, 'addTemporaryMessage', expect.anything())
@@ -254,6 +257,7 @@ describe('fileUploadStore', () => {
 
 			expect(uploadMock).toHaveBeenCalledTimes(1)
 			expect(shareFile).not.toHaveBeenCalled()
+			expect(shareConversationFile).not.toHaveBeenCalled()
 
 			expect(vuexStoreDispatch).toHaveBeenCalledTimes(2)
 			expect(vuexStoreDispatch).toHaveBeenNthCalledWith(1, 'addTemporaryMessage', expect.anything())
@@ -284,8 +288,8 @@ describe('fileUploadStore', () => {
 			})
 
 			findUniquePath
-				.mockResolvedValueOnce('/Talk/' + files[0].name + 'uniq')
-			shareFile.mockRejectedValueOnce({
+				.mockResolvedValueOnce({ uniquePath: '/Talk/' + files[0].name + 'uniq', suffix: 1 })
+			shareConversationFile.mockRejectedValueOnce({
 				response: {
 					status: 403,
 				},
@@ -294,7 +298,8 @@ describe('fileUploadStore', () => {
 			await uploadStore.uploadFiles({ token: 'XXTOKENXX', uploadId: 'upload-id1', options: { silent: false } })
 
 			expect(uploadMock).toHaveBeenCalledTimes(1)
-			expect(shareFile).toHaveBeenCalledTimes(1)
+			expect(shareConversationFile).toHaveBeenCalledTimes(1)
+			expect(shareFile).not.toHaveBeenCalled()
 
 			expect(vuexStoreDispatch).toHaveBeenCalledTimes(2)
 			expect(vuexStoreDispatch).toHaveBeenNthCalledWith(1, 'addTemporaryMessage', expect.anything())
@@ -306,6 +311,38 @@ describe('fileUploadStore', () => {
 			})
 			expect(showError).toHaveBeenCalled()
 			expect(console.error).toHaveBeenCalled()
+		})
+
+		test('uses shareFile for files outside the attachment folder', async () => {
+			const file = {
+				name: 'pngimage.png',
+				type: 'image/png',
+				size: 123,
+				lastModified: Date.UTC(2021, 3, 27, 15, 30, 0),
+			}
+
+			uploadStore.initialiseUpload({
+				uploadId: 'upload-id1',
+				token: 'XXTOKENXX',
+				files: [file],
+			})
+
+			const externalPath = '/SomeOtherFolder/' + file.name
+			const referenceId = uploadStore.getUploadsArray('upload-id1')[0][1].temporaryMessage.referenceId
+			findUniquePath.mockResolvedValueOnce({ uniquePath: externalPath, suffix: 0 })
+			uploadMock.mockResolvedValue()
+			shareFile.mockResolvedValue()
+
+			await uploadStore.uploadFiles({ token: 'XXTOKENXX', uploadId: 'upload-id1', options: { silent: false } })
+
+			expect(shareFile).toHaveBeenCalledTimes(1)
+			expect(shareFile).toHaveBeenCalledWith({
+				path: externalPath,
+				shareWith: 'XXTOKENXX',
+				referenceId,
+				talkMetaData: '{}',
+			})
+			expect(shareConversationFile).not.toHaveBeenCalled()
 		})
 
 		test('removes file from selection', async () => {

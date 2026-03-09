@@ -43,6 +43,7 @@ use OCP\Comments\IComment;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\Files\Folder;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\ISession;
@@ -346,6 +347,12 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		// Folder shares are created automatically by the system (conversation attachment
+		// folders) and must not inherit the room's message-expiration policy.
+		if ($share->getNode() instanceof Folder) {
+			return;
+		}
+
 		$room = $this->manager->getRoomByToken($share->getSharedWith());
 
 		$messageExpiration = $room->getMessageExpiration();
@@ -362,6 +369,12 @@ class Listener implements IEventListener {
 		$share = $event->getShare();
 
 		if ($share->getShareType() !== IShare::TYPE_ROOM) {
+			return;
+		}
+
+		// Folder shares are created automatically by the system (conversation attachment
+		// folders) and must not produce a file_shared chat message or signaling event.
+		if ($share->getNode() instanceof Folder) {
 			return;
 		}
 

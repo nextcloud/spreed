@@ -19,6 +19,7 @@ use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IFilenameValidator;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -64,6 +65,7 @@ class Config {
 		private IURLGenerator $urlGenerator,
 		protected ITimeFactory $timeFactory,
 		private IEventDispatcher $dispatcher,
+		private IFilenameValidator $filenameValidator,
 	) {
 	}
 
@@ -306,6 +308,84 @@ class Config {
 	public function getAttachmentFolder(string $userId): string {
 		$defaultAttachmentFolder = $this->config->getAppValue('spreed', 'default_attachment_folder', '/Talk');
 		return $this->config->getUserValue($userId, 'spreed', UserPreference::ATTACHMENT_FOLDER, $defaultAttachmentFolder);
+	}
+
+	/**
+	 * Returns the per-conversation subfolder name: "<displayName trimmed>-<token>"
+	 * The display name is sanitized via IFilenameValidator to replace any characters
+	 * that are forbidden on the current server (including admin-configured ones).
+	 * Space is used as the replacement character to match the frontend behaviour.
+	 */
+	public function getConversationFolderName(Room $room, string $userId): string {
+		return $this->buildConversationFolderName($room->getDisplayName($userId), $room->getToken());
+	}
+
+	public function buildConversationFolderName(string $displayName, string $token): string {
+		$sanitized = $this->sanitizeDisplayName($displayName, 64);
+		return $sanitized . '-' . $token;
+	}
+
+	/**
+	 * Returns the per-user subfolder name within a conversation folder.
+	 *
+	 * Format: "<displayNamePrefix>-<userId>" where the prefix is up to 16 characters
+	 * of the user's sanitized display name. To keep the segment under 64 characters on
+	 * all filesystems (Windows MAX_PATH in particular), the prefix length is reduced
+	 * when the userId is long: prefixLen = min(16, max(0, 63 - strlen($userId))).
+	 * If the userId is 63+ characters the prefix is omitted entirely (no regression
+	 * vs. the previous "<userId>" only format).
+	 */
+	public function getConversationSubfolderName(string $userId): string {
+		$prefixLen = min(16, max(0, 63 - strlen($userId)));
+		if ($prefixLen > 0) {
+			$user = $this->userManager->get($userId);
+			$displayName = $user !== null ? $user->getDisplayName() : '';
+			$prefix = $this->sanitizeDisplayName($displayName, $prefixLen);
+			if ($prefix !== '') {
+				return $prefix . '-' . $userId;
+			}
+		}
+		return $userId;
+	}
+
+	/**
+	 * Sanitizes a display name for use as (part of) a filesystem folder name.
+	 *
+	 * Uses IFilenameValidator::sanitizeFilename with space as the replacement
+	 * character so that the result is consistent with the frontend, which also
+	 * replaces forbidden characters with spaces. Falls back to a manual strip of
+	 * the always-forbidden characters in the unlikely event that space itself is
+	 * configured as forbidden.
+	 *
+	 * @param string $name Raw display name
+	 * @param int $maxChars Maximum number of characters to keep (mb_substr)
+	 */
+	private function sanitizeDisplayName(string $name, int $maxChars): string {
+		$name = trim($name);
+		try {
+			$name = $this->filenameValidator->sanitizeFilename($name, ' ');
+		} catch (\InvalidArgumentException) {
+			// Space is a forbidden character in this installation's configuration.
+			// Fall back to stripping the always-forbidden characters manually.
+			$name = str_replace(['/', '\\'], '', $name);
+		}
+		// sanitizeFilename replaces explicitly listed forbidden characters but does NOT
+		// handle control characters (chr 0–31); those are only rejected by validateFilename
+		// via FILTER_FLAG_STRIP_LOW. Replace them with spaces here so the result matches
+		// the frontend regex /[/\\\x00-\x1f]/g which uses space as the replacement.
+		$name = (string)preg_replace('/[\x00-\x1f]/', ' ', $name);
+		return trim(mb_substr(trim($name), 0, $maxChars));
+	}
+
+	/**
+	 * Returns the path (relative to the user's file root) of the per-user
+	 * upload folder for a conversation:
+	 *   <attachmentFolder>/<conversationFolderName>/<subfolderName>
+	 */
+	public function getConversationUploadFolder(string $userId, Room $room): string {
+		return $this->getAttachmentFolder($userId)
+			. '/' . $this->getConversationFolderName($room, $userId)
+			. '/' . $this->getConversationSubfolderName($userId);
 	}
 
 	/**

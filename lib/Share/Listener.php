@@ -45,7 +45,22 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		$target = RoomShareProvider::TALK_FOLDER_PLACEHOLDER . '/' . $share->getNode()->getName();
+		// For conversation folder shares the target must include the conversation
+		// folder segment (e.g. "/{TALK_PLACEHOLDER}/Group room-abc12345/alice").
+		// Extract the path relative to the attachment folder from the node's
+		// internal path: "<userId>/files/<attachmentFolder>/<relative...>"
+		$relativePath = $share->getNode()->getName();
+		$ownerUid = $share->getShareOwner();
+		if ($ownerUid !== null) {
+			$attachmentFolder = ltrim($this->config->getAttachmentFolder($ownerUid), '/');
+			$internalPath = $share->getNode()->getPath();
+			$prefix = '/' . $ownerUid . '/files/' . $attachmentFolder . '/';
+			if (str_starts_with($internalPath, $prefix)) {
+				$relativePath = substr($internalPath, strlen($prefix));
+			}
+		}
+
+		$target = RoomShareProvider::TALK_FOLDER_PLACEHOLDER . '/' . $relativePath;
 		$target = Filesystem::normalizePath($target);
 		$share->setTarget($target);
 	}
@@ -58,10 +73,13 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($event->getParent() === RoomShareProvider::TALK_FOLDER_PLACEHOLDER) {
-			$parent = $this->config->getAttachmentFolder($event->getUser()->getUID());
+		$parent = $event->getParent();
+		$placeholder = RoomShareProvider::TALK_FOLDER_PLACEHOLDER;
+		if ($parent === $placeholder || str_starts_with($parent, $placeholder . '/')) {
+			$attachmentFolder = $this->config->getAttachmentFolder($event->getUser()->getUID());
+			$newParent = $attachmentFolder . substr($parent, strlen($placeholder));
 			$event->setCreateParent(true);
-			$event->setParent($parent);
+			$event->setParent($newParent);
 		}
 	}
 

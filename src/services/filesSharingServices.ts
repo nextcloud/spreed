@@ -34,6 +34,25 @@ async function shareFile({ path, shareWith, referenceId, talkMetaData }: createF
 }
 
 /**
+ * Post a file from a conversation attachment folder as a chat message.
+ * The file must already be accessible via a folder-level TYPE_ROOM share;
+ * no additional per-file share is created.
+ *
+ * @param payload The function payload
+ * @param payload.token The conversation's token
+ * @param payload.filePath The file path relative to the user's root directory
+ * @param payload.referenceId A reference id to recognize the message later
+ * @param payload.talkMetaData The metadata JSON-encoded object
+ */
+async function shareConversationFile({ token, filePath, referenceId, talkMetaData }: { token: string, filePath: string, referenceId: string, talkMetaData: string }): Promise<void> {
+	await axios.post(generateOcsUrl('apps/spreed/api/v1/room/{token}/file', { token }), {
+		filePath,
+		referenceId,
+		talkMetaData,
+	})
+}
+
+/**
  * List the available file templates to create per app
  */
 async function getFileTemplates(): getFileTemplatesListResponse {
@@ -59,5 +78,6 @@ async function createNewFile({ filePath, templatePath, templateType }: createFil
 export {
 	createNewFile,
 	getFileTemplates,
+	shareConversationFile,
 	shareFile,
 }

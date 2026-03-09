@@ -42,6 +42,7 @@ use OCP\Comments\IComment;
 use OCP\Comments\MessageTooLongException;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IRootFolder;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IDBConnection;
@@ -126,6 +127,7 @@ class ChatManager {
 		protected ILimiter $rateLimiter,
 		protected IRequest $request,
 		protected IJobList $jobList,
+		protected IRootFolder $rootFolder,
 		protected IL10N $l,
 		protected LoggerInterface $logger,
 	) {
@@ -1323,6 +1325,14 @@ class ChatManager {
 
 	public function fileOfMessageExists(string $message): bool {
 		$parameters = $this->getParametersFromMessage($message);
+		if (!empty($parameters['file'])) {
+			try {
+				$nodes = $this->rootFolder->getById((int)$parameters['file']);
+				return !empty($nodes);
+			} catch (\Exception) {
+				return false;
+			}
+		}
 		try {
 			$this->shareProvider->getShareById($parameters['share']);
 		} catch (ShareNotFound $e) {
@@ -1333,7 +1343,7 @@ class ChatManager {
 
 	public function isSharedFile(string $message): bool {
 		$parameters = $this->getParametersFromMessage($message);
-		return !empty($parameters['share']);
+		return !empty($parameters['share']) || !empty($parameters['file']);
 	}
 
 	protected function getParametersFromMessage(string $message): array {
