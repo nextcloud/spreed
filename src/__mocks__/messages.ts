@@ -17,7 +17,7 @@ export const mockedChatMessages: Record<string, ChatMessage> = {
 		actorDisplayName: t('spreed', 'Another user'),
 		timestamp: 1768826595,
 		// TRANSLATORS fake message to show chat appearance in settings
-		message: t('spreed', 'Hey! Are you using Talk in list style or with message bubbles?'),
+		message: t('spreed', 'Hey! Are you using the list style or message bubbles?'),
 		messageParameters: {},
 		systemMessage: '',
 		messageType: 'comment',
@@ -35,7 +35,7 @@ export const mockedChatMessages: Record<string, ChatMessage> = {
 		actorId: 'deleted_users',
 		actorDisplayName: t('spreed', 'Another user'),
 		timestamp: 1768826627,
-		message: t('spreed', 'I picked list style'),
+		message: t('spreed', 'I picked the list style'),
 		messageParameters: {},
 		systemMessage: '',
 		messageType: 'comment',
