@@ -8,6 +8,7 @@ import util from 'util'
 import WildEmitter from 'wildemitter'
 import BlackVideoEnforcer from '../../media/pipeline/BlackVideoEnforcer.js'
 import MediaDevicesSource from '../../media/pipeline/MediaDevicesSource.js'
+import NoiseSuppressor from '../../media/pipeline/NoiseSuppressor.js'
 import SpeakingMonitor from '../../media/pipeline/SpeakingMonitor.js'
 import TrackConstrainer from '../../media/pipeline/TrackConstrainer.js'
 import TrackEnabler from '../../media/pipeline/TrackEnabler.js'
@@ -55,6 +56,8 @@ export default function LocalMedia(opts) {
 	this._audioTrackEnabler = new TrackEnabler()
 	this._videoTrackEnabler = new TrackEnabler()
 
+	this._noiseSuppressor = new NoiseSuppressor()
+
 	this._videoTrackConstrainer = new TrackConstrainer()
 
 	this._virtualBackground = new VirtualBackground()
@@ -99,9 +102,11 @@ export default function LocalMedia(opts) {
 	this._mediaDevicesSource.connectTrackSink('audio', this._audioTrackEnabler)
 	this._mediaDevicesSource.connectTrackSink('video', this._videoTrackEnabler)
 
-	this._audioTrackEnabler.connectTrackSink('default', this._speakingMonitor)
-	this._audioTrackEnabler.connectTrackSink('default', this._trackToStream, 'audio')
-	this._audioTrackEnabler.connectTrackSink('default', this._trackToSentStream, 'audio')
+	this._audioTrackEnabler.connectTrackSink('default', this._noiseSuppressor)
+
+	this._noiseSuppressor.connectTrackSink('default', this._speakingMonitor)
+	this._noiseSuppressor.connectTrackSink('default', this._trackToStream, 'audio')
+	this._noiseSuppressor.connectTrackSink('default', this._trackToSentStream, 'audio')
 
 	this._videoTrackEnabler.connectTrackSink('default', this._videoTrackConstrainer)
 
@@ -390,6 +395,16 @@ LocalMedia.prototype.pauseVideo = function() {
 LocalMedia.prototype.resumeVideo = function() {
 	this._setVideoEnabled(true)
 	this.emit('videoOn')
+}
+
+LocalMedia.prototype.enableNoiseSuppression = function() {
+	this._noiseSuppressor.setEnabled(true)
+	this.emit('noiseSuppressionOn')
+}
+
+LocalMedia.prototype.disableNoiseSuppression = function() {
+	this._noiseSuppressor.setEnabled(false)
+	this.emit('noiseSuppressionOff')
 }
 
 LocalMedia.prototype.enableVirtualBackground = function() {
