@@ -2569,7 +2569,7 @@
                                     "type": "string"
                                 },
                                 "credential": {
-                                    "type": "object"
+                                    "type": "string"
                                 }
                             }
                         }
