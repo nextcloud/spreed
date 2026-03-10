@@ -80,6 +80,7 @@ export default function MediaDevicesManager() {
 		videoInputId: undefined,
 
 		noiseSuppression: BrowserStorage.getItem('noiseSuppression') !== 'false',
+		noiseSuppressionWithModel: BrowserStorage.getItem('noiseSuppressionWithModel') === 'true',
 		echoCancellation: BrowserStorage.getItem('echoCancellation') !== 'false',
 		autoGainControl: BrowserStorage.getItem('autoGainControl') !== 'false',
 	})
@@ -212,6 +213,7 @@ MediaDevicesManager.prototype = {
 			const previousFirstAvailableVideoInputId = getFirstAvailableMediaDevice(this.attributes.devices, this._preferenceVideoInputList)
 
 			const previousNoiseSuppression = this.attributes.noiseSuppression
+			const previousNoiseSuppressionWithModel = this.attributes.noiseSuppressionWithModel
 			const previousEchoCancellation = this.attributes.echoCancellation
 			const previousAutoGainControl = this.attributes.autoGainControl
 
@@ -268,6 +270,7 @@ MediaDevicesManager.prototype = {
 			// prevent change events for intermediate states.
 			if (previousAudioInputId !== this.attributes.audioInputId
 				|| previousNoiseSuppression !== this.attributes.noiseSuppression
+				|| previousNoiseSuppressionWithModel !== this.attributes.noiseSuppressionWithModel
 				|| previousEchoCancellation !== this.attributes.echoCancellation
 				|| previousAutoGainControl !== this.attributes.autoGainControl) {
 				this._trigger('change:audioInputId', [this.attributes.audioInputId])
@@ -492,6 +495,11 @@ MediaDevicesManager.prototype = {
 				constraints.audio.noiseSuppression = BrowserStorage.getItem('noiseSuppression') !== 'false'
 				constraints.audio.echoCancellation = BrowserStorage.getItem('echoCancellation') !== 'false'
 				constraints.audio.autoGainControl = BrowserStorage.getItem('autoGainControl') !== 'false'
+				if (BrowserStorage.getItem('noiseSuppressionWithModel') === 'true') {
+					// Disable browser native noise suppression and auto gain, as they're replaced with processing node
+					constraints.audio.noiseSuppression = false
+					constraints.audio.autoGainControl = false
+				}
 			}
 		}
 
