@@ -11,6 +11,7 @@ namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
 use OCA\Talk\Room;
+use OCA\Talk\RoomAttributes;
 use OCP\Files\IAppData;
 use OCP\Files\IFilenameValidator;
 use OCP\Files\NotFoundException;
@@ -273,6 +274,9 @@ class AvatarService {
 		}
 		if ($room->isFederatedConversation()) {
 			return __DIR__ . '/../../img/icon-conversation-federation-' . $colorTone . '.svg';
+		}
+		if (($room->getAttributes() & RoomAttributes::VOICE_ROOM->value) === RoomAttributes::VOICE_ROOM->value) {
+			return __DIR__ . '/../../img/icon-voice-room-' . $colorTone . '.svg';
 		}
 		if ($room->getType() === Room::TYPE_PUBLIC) {
 			return __DIR__ . '/../../img/icon-conversation-public-' . $colorTone . '.svg';

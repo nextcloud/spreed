@@ -79,6 +79,17 @@ export const CONVERSATION = {
 		MODERATORS: 2,
 	},
 
+	ATTRIBUTE: {
+		NONE: 0,
+		VOICE_ROOM: 1,
+	},
+
+	PRESET: {
+		DEFAULT: 'default',
+		VOICE_ROOM: 'voiceroom',
+		PRESENTATION: 'presentation',
+	},
+
 	STATE: {
 		READ_WRITE: 0,
 		READ_ONLY: 1,
