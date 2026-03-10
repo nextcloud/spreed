@@ -47,6 +47,7 @@
     "@nextcloud/sharing": "^0.4.0",
     "@nextcloud/upload": "^2.0.0-rc.0",
     "@nextcloud/vue": "^9.5.0",
+    "@sapphi-red/web-noise-suppressor": "^0.3.5",
     "@vue-leaflet/vue-leaflet": "^0.10.1",
     "@vueuse/components": "^14.2.1",
     "@vueuse/core": "^14.2.0",
