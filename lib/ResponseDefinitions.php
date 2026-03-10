@@ -688,7 +688,7 @@ namespace OCA\Talk;
  *     // Authentication ticket for the signaling server
  *     ticket: string,
  *     // TURN servers
- *     turnservers: list<array{urls: list<string>, username: string, credential: mixed}>,
+ *     turnservers: list<array{urls: list<string>, username: string, credential: string}>,
  *     // User id of the current user
  *     userId: ?string,
  * }
