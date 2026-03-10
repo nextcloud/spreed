@@ -68,7 +68,7 @@
 
 			<!-- Breakout rooms -->
 			<NcAppSettingsSection
-				v-if="canConfigureBreakoutRooms"
+				v-if="canConfigureBreakoutRooms && !isVoiceRoom"
 				id="breakout-rooms"
 				:name="t('spreed', 'Breakout Rooms')">
 				<BreakoutRoomsSettings :token="token" />
@@ -285,6 +285,10 @@ export default {
 
 		hasMessageExpirationFeature() {
 			return hasTalkFeature(this.token, 'message-expiration')
+		},
+
+		isVoiceRoom() {
+			return this.conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM
 		},
 	},
 
