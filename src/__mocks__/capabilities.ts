@@ -154,6 +154,9 @@ export const mockedCapabilities: Capabilities = {
 				'live-transcription': false,
 				'live-translation': false,
 				'live-transcription-target-language-id': '',
+				'play-sounds': true,
+				'grid-limit': 0,
+				'grid-limit-enforced': false,
 			},
 			chat: {
 				'max-length': 32000,
@@ -163,6 +166,7 @@ export const mockedCapabilities: Capabilities = {
 				'typing-privacy': 0,
 				'summary-threshold': 100,
 				style: 'split',
+				'matterbridge-enabled': false,
 			},
 			conversations: {
 				'can-create': true,
@@ -185,9 +189,15 @@ export const mockedCapabilities: Capabilities = {
 			signaling: {
 				'session-ping-limit': 200,
 				'hello-v2-token-key': '123',
+				mode: 'internal',
 			},
 			experiments: {
 				enabled: 0,
+			},
+			permissions: {
+				'max-default': 510,
+				'max-custom': 511,
+				default: 502,
 			},
 		},
 		'config-local': {
