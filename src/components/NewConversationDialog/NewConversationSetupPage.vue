@@ -65,6 +65,17 @@
 				@invalid="$emit('isPasswordValid', false)" />
 		</div>
 		<ListableSettings v-model="listableValue" />
+		<label class="new-group-conversation__label">
+			{{ t('spreed', 'Conversation presets') }}
+		</label>
+		<NcCheckboxRadioSwitch
+			v-model="isVoiceRoom"
+			type="switch">
+			{{ t('spreed', 'Voice room') }}
+			<template #description>
+				{{ t('spreed', 'Participants can only join the call and send messages while they are in the call. It is ideal for casual catch-ups or spontaneous meetings.') }}
+			</template>
+		</NcCheckboxRadioSwitch>
 	</div>
 </template>
 
@@ -172,6 +183,19 @@ export default {
 				} else {
 					this.updateNewConversation({ type: CONVERSATION.TYPE.GROUP, hasPassword: false })
 				}
+			},
+		},
+
+		isVoiceRoom: {
+			get() {
+				return Boolean((this.newConversation.attributes ?? CONVERSATION.ATTRIBUTE.NONE) & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+			},
+
+			set(value) {
+				const attributes = value
+					? (this.newConversation.attributes ?? CONVERSATION.ATTRIBUTE.NONE) | CONVERSATION.ATTRIBUTE.VOICE_ROOM
+					: (this.newConversation.attributes ?? CONVERSATION.ATTRIBUTE.NONE) & ~CONVERSATION.ATTRIBUTE.VOICE_ROOM
+				this.updateNewConversation({ attributes })
 			},
 		},
 

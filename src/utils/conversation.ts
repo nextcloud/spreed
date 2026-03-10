@@ -132,6 +132,9 @@ export function filterConversation(conversation: Conversation, filters: Filter[]
 export function getFallbackIconClass(conversation: Conversation, forceFallback: boolean): string | undefined {
 	if (conversation.isDummyConversation) {
 		// Prevent a 404 when trying to load an avatar before the conversation data is actually loaded
+		if (conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM) {
+			return 'icon-voice-room'
+		}
 		return conversation.type === CONVERSATION.TYPE.PUBLIC ? 'icon-public' : 'icon-contacts'
 	}
 

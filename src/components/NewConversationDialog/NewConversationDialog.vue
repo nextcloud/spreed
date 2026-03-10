@@ -310,7 +310,7 @@ export default {
 						avatar.file = await this.$refs.setupPage.$refs.conversationAvatar.getPictureFormData()
 					}
 				}
-
+				const preset = this.newConversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM ? CONVERSATION.PRESET.VOICE_ROOM : undefined
 				const conversation = await this.$store.dispatch('createGroupConversation', {
 					roomName: this.conversationName,
 					roomType: this.isPublic ? CONVERSATION.TYPE.PUBLIC : CONVERSATION.TYPE.GROUP,
@@ -319,6 +319,7 @@ export default {
 					listable: this.listable,
 					participants: this.selectedParticipants,
 					avatar,
+					preset,
 				})
 				this.newConversation.token = conversation.token
 			} catch (exception) {
