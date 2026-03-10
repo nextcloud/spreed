@@ -262,6 +262,9 @@
     "Zimbabwe" : "Zimbabve",
     "Federation" : "Jamg'arma",
     "It is highly recommended to configure \"memcache.locking\" when Talk Federation is enabled." : "Jamg'armaning muloqot moduli yoqilgan bo'lsa, \"memcache.locking\" ni sozlash tavsiya etiladi.",
+    "The password is wrong. Try again." : "Parol noto'g'ri. Qayta urinib ko'ring.",
+    "Password" : "Password",
+    "Submit" : "Submit",
     "Everyone" : "Everyone",
     "Save changes" : "Save changes",
     "Saving …" : "Saqlanmoqda...",
@@ -339,7 +342,6 @@
     "Upload from device" : "Qurilmadan yuklash",
     "Send" : "Send",
     "Settings" : "Sozlamalar",
-    "Submit" : "Submit",
     "Remove participant" : "Ishtirokchini olib tashlash",
     "Remove" : "O'chirish",
     "Searching …" : "Qidirilmoqda …",
@@ -353,7 +355,6 @@
     "Notification settings" : "Bildirishnoma sozlamalari",
     "Search" : "Qidirish",
     "Select a region" : "Hududni tanlang",
-    "Password" : "Password",
     "Login" : "Login",
     "Client ID" : "Mijoz identifikatori",
     "Audio" : "Audio",
@@ -362,15 +363,14 @@
     "Default" : "Standart",
     "Group" : "Guruh",
     "Team" : "Jamoa",
-    "Nextcloud Talk Federation was updated." : "Nextcloud Talkda jamg'arma yangilandi.",
     "Error while sharing file" : "Fayl almashishda xatolik yuz berdi",
     "Error while parsing a PROPFIND error" : "PROPFIND xatosini tahlil qilishda xatolik yuz berdi",
     "Please reload the page." : "Please reload the page.",
     "Do not disturb" : "Do not disturb",
     "Away" : "Away",
-    "The password is wrong. Try again." : "Parol noto'g'ri. Qayta urinib ko'ring.",
     "Tasks" : "Tasks",
     "Notes" : "Eslatmalar",
-    "Reports" : "Hisobotlar"
+    "Reports" : "Hisobotlar",
+    "Nextcloud Talk Federation was updated." : "Nextcloud Talkda jamg'arma yangilandi."
 },"pluralForm" :"nplurals=1; plural=0;"
 }

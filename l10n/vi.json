@@ -485,8 +485,11 @@
     "Share this file with others to discuss it" : "Chia sẻ tệp này với những người khác để thảo luận về nó",
     "Share this file" : "Chia sẻ tệp này",
     "Join conversation" : "Tham gia cuộc trò chuyện",
-    "Request password" : "Yêu cầu mật khẩu",
+    "The password is wrong. Try again." : "Sai mật khẩu. Thử lại.",
+    "Password" : "Mật khẩu",
+    "Submit" : "Gửi đi",
     "Error requesting the password." : "Lỗi khi đang yêu cầu mật khẩu.",
+    "Request password" : "Yêu cầu mật khẩu",
     "This conversation has ended" : "Cuộc trò chuyện này đã kết thúc",
     "Everyone" : "Tất cả mọi người",
     "Users and moderators" : "Người dùng và người kiểm duyệt",
@@ -756,7 +759,6 @@
     "Add more files" : "Thêm nhiều tập tin",
     "Send" : "Gửi",
     "Settings" : "Thiết lập",
-    "Submit" : "Gửi đi",
     "Disable lobby" : "Vô hiệu hóa sảnh đợi",
     "Settings for participant \"{user}\"" : "Cài đặt cho người tham gia \"{user}\"",
     "Participant \"{user}\"" : "Người tham gia \"{user}\"",
@@ -837,7 +839,6 @@
     "The conversation does not exist" : "Cuộc trò chuyện không tồn tại",
     "Join a conversation or start a new one!" : "Tham gia một cuộc trò chuyện hoặc bắt đầu một cuộc trò chuyện mới!",
     "Duplicate session" : "Phiên trùng lặp",
-    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Bạn đã tham gia cuộc trò chuyện trong một cửa sổ hoặc thiết bị khác. Điều này hiện không được vWorkspace Talk hỗ trợ nên phiên này đã bị đóng.",
     "Join a conversation or start a new one" : "Tham gia cuộc trò chuyện hoặc bắt đầu một cuộc trò chuyện mới",
     "Nextcloud URL" : "vWorkspace URL",
     "Nextcloud user" : "Người dùng vWorkspace",
@@ -852,7 +853,6 @@
     "Team name" : "Tên nhóm",
     "Channel name" : "Tên kênh",
     "Rocket.Chat server URL" : "URL máy chủ Rocket.Chat",
-    "Password" : "Mật khẩu",
     "Rocket.Chat channel" : "Kênh Rocket.Chat",
     "Zulip server URL" : "URL máy chủ Zulip",
     "Bot user name" : "Tên người dùng bot",
@@ -931,7 +931,6 @@
     "WebRTC is not supported in your browser" : "WebRTC không được hỗ trợ trong trình duyệt của bạn",
     "Please use a different browser like Firefox or Chrome" : "Vui lòng sử dụng một trình duyệt khác như Firefox hoặc Chrome",
     "Error while accessing microphone & camera" : "Lỗi khi truy cập micrô và máy ảnh",
-    "The password is wrong. Try again." : "Sai mật khẩu. Thử lại.",
     "%s Talk on your mobile devices" : "%sNói chuyện trên thiết bị di động của bạn ",
     "Join conversations at any time, anywhere, on any device." : "Tham gia các cuộc trò chuyện mọi lúc, mọi nơi, trên mọi thiết bị.",
     "Android app" : "Ứng dụng Android",
@@ -940,6 +939,7 @@
     "Tasks" : "Nhiệm vụ",
     "Notes" : "Ghi chú",
     "Your privacy setting has been saved" : "Các thiết lập quyền riêng tư của bạn đã được lưu",
-    "Failed to save sounds setting" : "Không thể lưu cài đặt âm thanh"
+    "Failed to save sounds setting" : "Không thể lưu cài đặt âm thanh",
+    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Bạn đã tham gia cuộc trò chuyện trong một cửa sổ hoặc thiết bị khác. Điều này hiện không được vWorkspace Talk hỗ trợ nên phiên này đã bị đóng."
 },"pluralForm" :"nplurals=1; plural=0;"
 }
