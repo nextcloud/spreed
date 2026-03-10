@@ -319,6 +319,7 @@ export default {
 					listable: this.listable,
 					participants: this.selectedParticipants,
 					avatar,
+					preset: this.newConversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM ? 'voiceroom' : undefined,
 				})
 				this.newConversation.token = conversation.token
 			} catch (exception) {

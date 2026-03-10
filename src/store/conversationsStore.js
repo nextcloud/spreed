@@ -1099,6 +1099,7 @@ const actions = {
 	 * @param {number} [payload.listable] whether a conversation is opened to registered users
 	 * @param {Array} [payload.participants] list of participants
 	 * @param {object} [payload.avatar] avatar object: { emoji, color } | { file }
+	 * @param payload.preset
 	 * @return {object} new conversation object
 	 */
 	async createGroupConversation(context, {
@@ -1111,6 +1112,7 @@ const actions = {
 		listable,
 		participants,
 		avatar,
+		preset,
 	}) {
 		if (roomType === CONVERSATION.TYPE.PUBLIC && forcePasswordProtection && !password) {
 			throw new Error('password_required')
@@ -1144,6 +1146,7 @@ const actions = {
 					emoji: avatar?.emoji,
 					avatarColor: avatar?.color,
 					participants: participantsMap,
+					preset,
 				})
 			} else {
 				response = await createLegacyConversation({
