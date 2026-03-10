@@ -29,7 +29,8 @@
 				role="img"
 				aria-hidden="false"
 				:aria-label="conversationType.label">
-				<component :is="conversationType.icon" :size="size * 0.3" />
+				<NcIconSvgWrapper v-if="conversationType.svg" :svg="conversationType.svg" :size="size * 0.3" />
+				<component :is="conversationType.icon" v-else-if="conversationType.icon" :size="size * 0.3" />
 			</span>
 		</template>
 		<!-- NcAvatar doesn't fully support props update and works only for 1 user -->
@@ -62,10 +63,12 @@ import { t } from '@nextcloud/l10n'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { ref } from 'vue'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconLink from 'vue-material-design-icons/Link.vue'
 import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better indication
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import IconWeb from 'vue-material-design-icons/Web.vue'
+import IconVoiceRoom from '../../img/icon-voice-room.svg?raw'
 import { AVATAR, CONVERSATION } from '../constants.ts'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
@@ -81,6 +84,7 @@ export default {
 		IconStar,
 		IconVideo,
 		NcAvatar,
+		NcIconSvgWrapper,
 	},
 
 	props: {
@@ -200,6 +204,8 @@ export default {
 				return { key: 'federated', icon: IconWeb, label: t('spreed', 'Federated conversation') }
 			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
 				return { key: 'public', icon: IconLink, label: t('spreed', 'Public conversation') }
+			} else if (this.item.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM) {
+				return { key: 'voice_room', svg: IconVoiceRoom, label: t('spreed', 'Voice room') }
 			}
 			return null
 		},
@@ -273,6 +279,12 @@ export default {
 
 .offline {
 	opacity: .4;
+}
+
+:deep(.icon-vue) {
+	min-width: 0 !important;
+	min-height: 0 !important;
+
 }
 
 </style>
