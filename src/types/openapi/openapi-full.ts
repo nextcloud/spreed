@@ -2336,6 +2336,10 @@ export type components = {
                     "blur-virtual-background": boolean;
                     "end-to-end-encryption": boolean;
                     "live-transcription": boolean;
+                    "play-sounds": boolean;
+                    /** Format: int64 */
+                    "grid-limit": number;
+                    "grid-limit-enforced": boolean;
                 };
                 chat: {
                     /** Format: int64 */
@@ -2348,6 +2352,7 @@ export type components = {
                     "typing-privacy": number;
                     /** Format: int64 */
                     "summary-threshold": number;
+                    "matterbridge-enabled": boolean;
                 };
                 conversations: {
                     "can-create": boolean;
@@ -2376,11 +2381,21 @@ export type components = {
                 signaling: {
                     /** Format: int64 */
                     "session-ping-limit": number;
+                    /** @enum {string} */
+                    mode: "internal" | "external" | "conversation_cluster";
                     "hello-v2-token-key"?: string;
                 };
                 experiments: {
                     /** Format: int64 */
                     enabled: number;
+                };
+                permissions: {
+                    /** Format: int64 */
+                    "max-default": number;
+                    /** Format: int64 */
+                    "max-custom": number;
+                    /** Format: int64 */
+                    default: number;
                 };
             };
             "config-local": {
