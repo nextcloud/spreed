@@ -1249,13 +1249,16 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 		// Also update user-modified room shares (SHARE_TYPE_USERROOM) that
 		// reference the same room token via their parent shares.
+		// NOTE: Named parameters must be created on $update2 (the outer query),
+		// because $sub->getSQL() is embedded as raw SQL and its parameters are
+		// not transferred to the outer query builder.
+		$update2 = $this->dbConnection->getQueryBuilder();
 		$sub = $this->dbConnection->getQueryBuilder();
 		$sub->select('id')
 			->from('share')
-			->where($sub->expr()->eq('share_type', $sub->createNamedParameter(IShare::TYPE_ROOM)))
-			->andWhere($sub->expr()->eq('share_with', $sub->createNamedParameter($roomToken)));
+			->where($sub->expr()->eq('share_type', $update2->createNamedParameter(IShare::TYPE_ROOM)))
+			->andWhere($sub->expr()->eq('share_with', $update2->createNamedParameter($roomToken)));
 
-		$update2 = $this->dbConnection->getQueryBuilder();
 		$update2->update('share')
 			->set('file_target', $update2->createFunction(
 				'REPLACE(' . $update2->getColumnName('file_target') . ', '

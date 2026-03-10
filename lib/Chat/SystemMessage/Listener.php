@@ -372,17 +372,17 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		// Folder shares are created automatically by the system (conversation attachment
-		// folders) and must not produce a file_shared chat message or signaling event.
-		if ($share->getNode() instanceof Folder) {
-			return;
-		}
-
 		if (strtolower($this->request->getParam('_route')) === 'ocs.spreed.recording.sharetochat') {
 			return;
 		}
 		$room = $this->manager->getRoomByToken($share->getSharedWith());
 		$this->participantService->ensureOneToOneRoomIsFilled($room);
+
+		// Folder shares are created automatically by the system (conversation attachment
+		// folders) and must not produce a file_shared chat message or signaling event.
+		if ($share->getNode() instanceof Folder) {
+			return;
+		}
 
 		$metaData = $this->request->getParam('talkMetaData') ?? '';
 		$metaData = json_decode($metaData, true);

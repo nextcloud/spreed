@@ -10,7 +10,6 @@ namespace OCA\Talk\Listener;
 
 use OCA\Talk\Config as TalkConfig;
 use OCA\Talk\Events\ARoomModifiedEvent;
-use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -30,17 +29,17 @@ use OCP\Share\IShare;
 use Psr\Log\LoggerInterface;
 
 /**
- * Handles three events:
+ * Handles two events:
  *
- * 1. AttendeesAddedEvent — proactively creates the per-user conversation
- *    folder hierarchy when a user joins or is added to a room.
- *
- * 2. RoomModifiedEvent (name change) — renames existing conversation folders
+ * 1. RoomModifiedEvent (name change) — renames existing conversation folders
  *    for all user participants and updates share targets in the database.
  *
- * 3. NodeCreatedEvent — auto-shares the innermost subfolder with the room
- *    when it is created (either proactively by this listener or later by
- *    the frontend via WebDAV MKCOL).
+ * 2. NodeCreatedEvent — auto-shares the innermost subfolder with the room
+ *    when it is created by the frontend via WebDAV MKCOL.
+ *
+ * Folder creation is lazy: the per-user conversation folder hierarchy is
+ * only created when the user (or frontend) explicitly creates the folder,
+ * not when the user joins the room.
  *
  * @template-implements IEventListener<Event>
  */
@@ -58,39 +57,20 @@ class ConversationFolderListener implements IEventListener {
 
 	#[\Override]
 	public function handle(Event $event): void {
-		if ($event instanceof AttendeesAddedEvent) {
-			$this->handleAttendeesAdded($event);
-		} elseif ($event instanceof RoomModifiedEvent) {
-			$this->handleRoomModified($event);
-		} elseif ($event instanceof NodeCreatedEvent) {
-			$node = $event->getNode();
-			if ($node instanceof Folder) {
-				$this->processCreatedFolder($node);
+		try {
+			if ($event instanceof RoomModifiedEvent) {
+				$this->handleRoomModified($event);
+			} elseif ($event instanceof NodeCreatedEvent) {
+				$node = $event->getNode();
+				if ($node instanceof Folder) {
+					$this->processCreatedFolder($node);
+				}
 			}
-		}
-	}
-
-	/**
-	 * When users are added to a group or public room, create their
-	 * per-conversation upload folder. The NodeCreatedEvent fired by
-	 * the folder creation will trigger processCreatedFolder() which
-	 * creates the TYPE_ROOM share.
-	 */
-	private function handleAttendeesAdded(AttendeesAddedEvent $event): void {
-		$room = $event->getRoom();
-
-		// Only create folders for group and public rooms
-		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
-			return;
-		}
-
-		foreach ($event->getAttendees() as $attendee) {
-			if ($attendee->getActorType() !== Attendee::ACTOR_USERS) {
-				continue;
-			}
-
-			$userId = $attendee->getActorId();
-			$this->ensureConversationFolder($userId, $room);
+		} catch (\Exception $e) {
+			$this->logger->error('Error in ConversationFolderListener: {error}', [
+				'error' => $e->getMessage(),
+				'exception' => $e,
+			]);
 		}
 	}
 
@@ -162,51 +142,6 @@ class ConversationFolderListener implements IEventListener {
 				'userId' => $userId,
 				'error' => $e->getMessage(),
 			]);
-		}
-	}
-
-	/**
-	 * Create the folder hierarchy <attachmentFolder>/<convFolderName>/<subfolderName>
-	 * for a user in a room. Silently ignores errors (folder may already exist,
-	 * or the user's storage may not be available yet).
-	 */
-	private function ensureConversationFolder(string $userId, Room $room): void {
-		try {
-			$userFolder = $this->rootFolder->getUserFolder($userId);
-		} catch (\Exception $e) {
-			$this->logger->debug('Could not get user folder for {userId}: {error}', [
-				'userId' => $userId,
-				'error' => $e->getMessage(),
-			]);
-			return;
-		}
-
-		$attachmentFolder = ltrim($this->talkConfig->getAttachmentFolder($userId), '/');
-		$convFolderName = $this->talkConfig->getConversationFolderName($room, $userId);
-		$subfolderName = $this->talkConfig->getConversationSubfolderName($userId);
-
-		$segments = [$attachmentFolder, $convFolderName, $subfolderName];
-		$current = $userFolder;
-		foreach ($segments as $segment) {
-			try {
-				$node = $current->get($segment);
-				if (!($node instanceof Folder)) {
-					// A file exists where we need a folder — can't proceed
-					return;
-				}
-				$current = $node;
-			} catch (NotFoundException) {
-				try {
-					$current = $current->newFolder($segment);
-				} catch (\Exception $e) {
-					$this->logger->debug('Could not create folder {segment} for {userId}: {error}', [
-						'segment' => $segment,
-						'userId' => $current->getPath() . '/' . $segment,
-						'error' => $e->getMessage(),
-					]);
-					return;
-				}
-			}
 		}
 	}
 

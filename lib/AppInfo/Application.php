@@ -266,7 +266,6 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(RoomModifiedEvent::class, ResourceListener::class);
 
 		// Sharing listeners
-		$context->registerEventListener(AttendeesAddedEvent::class, ConversationFolderListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, ConversationFolderListener::class);
 		$context->registerEventListener(NodeCreatedEvent::class, ConversationFolderListener::class);
 		$context->registerEventListener(BeforeShareCreatedEvent::class, ShareListener::class, 1000);

@@ -97,7 +97,7 @@ class BackendNotifierTest extends TestCase {
 
 		/** @var MockObject|IFilenameValidator $filenameValidator */
 		$filenameValidator = $this->createMock(IFilenameValidator::class);
-		$helper = new Config($config, $appConfig, $userConfig, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $timeFactory, $dispatcher, $filenameValidator);
+		$this->config = new Config($config, $appConfig, $userConfig, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $timeFactory, $dispatcher, $filenameValidator);
 
 		$this->recreateBackendNotifier();
 
