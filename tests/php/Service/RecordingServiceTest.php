@@ -37,6 +37,7 @@ use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Notification\IManager;
 use OCP\Share\IManager as ShareManager;
+use OCP\SystemTag\ISystemTagObjectMapper;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -59,6 +60,7 @@ class RecordingServiceTest extends TestCase {
 	protected LoggerInterface&MockObject $logger;
 	protected BackendNotifier&MockObject $backendNotifier;
 	protected ITaskProcessingManager&MockObject $taskProcessingManager;
+	protected ISystemTagObjectMapper&MockObject $systemTagMapper;
 	protected IFactory&MockObject $l10nFactory;
 	protected IUserManager&MockObject $userManager;
 	protected RecordingService $recordingService;
@@ -81,6 +83,7 @@ class RecordingServiceTest extends TestCase {
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->backendNotifier = $this->createMock(BackendNotifier::class);
 		$this->taskProcessingManager = $this->createMock(ITaskProcessingManager::class);
+		$this->systemTagMapper = $this->createMock(ISystemTagObjectMapper::class);
 		$this->l10nFactory = $this->createMock(IFactory::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 
@@ -100,6 +103,7 @@ class RecordingServiceTest extends TestCase {
 			$this->logger,
 			$this->backendNotifier,
 			$this->taskProcessingManager,
+			$this->systemTagMapper,
 			$this->l10nFactory,
 			$this->userManager,
 		);
