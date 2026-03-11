@@ -269,10 +269,10 @@ export default {
 
 				const enableAudio = !BrowserStorage.getItem('audioDisabled_' + this.token)
 				const enableVideo = !BrowserStorage.getItem('videoDisabled_' + this.token)
-				const enableVirtualBackground = !!BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token)
-				const virtualBackgroundType = BrowserStorage.getItem('virtualBackgroundType_' + this.token)
-				const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength_' + this.token)
-				const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl_' + this.token)
+				const enableVirtualBackground = !!BrowserStorage.getItem('virtualBackgroundEnabled')
+				const virtualBackgroundType = BrowserStorage.getItem('virtualBackgroundType')
+				const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength')
+				const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl')
 
 				// Fetch conversation object, if it's not known yet to the client
 				if (!this.$store.getters.conversation(params.token)) {
@@ -301,24 +301,24 @@ export default {
 						BrowserStorage.setItem('videoDisabled_' + token, 'true')
 					}
 					if (enableVirtualBackground) {
-						BrowserStorage.setItem('virtualBackgroundEnabled_' + token, 'true')
+						BrowserStorage.setItem('virtualBackgroundEnabled', 'true')
 					} else {
-						BrowserStorage.removeItem('virtualBackgroundEnabled_' + token)
+						BrowserStorage.removeItem('virtualBackgroundEnabled')
 					}
 					if (virtualBackgroundType) {
-						BrowserStorage.setItem('virtualBackgroundType_' + token, virtualBackgroundType)
+						BrowserStorage.setItem('virtualBackgroundType', virtualBackgroundType)
 					} else {
-						BrowserStorage.removeItem('virtualBackgroundType_' + token)
+						BrowserStorage.removeItem('virtualBackgroundType')
 					}
 					if (virtualBackgroundBlurStrength) {
-						BrowserStorage.setItem('virtualBackgroundBlurStrength' + token, virtualBackgroundBlurStrength)
+						BrowserStorage.setItem('virtualBackgroundBlurStrength', virtualBackgroundBlurStrength)
 					} else {
-						BrowserStorage.removeItem('virtualBackgroundBlurStrength' + token)
+						BrowserStorage.removeItem('virtualBackgroundBlurStrength')
 					}
 					if (virtualBackgroundUrl) {
-						BrowserStorage.setItem('virtualBackgroundUrl_' + token, virtualBackgroundUrl)
+						BrowserStorage.setItem('virtualBackgroundUrl', virtualBackgroundUrl)
 					} else {
-						BrowserStorage.removeItem('virtualBackgroundUrl_' + token)
+						BrowserStorage.removeItem('virtualBackgroundUrl')
 					}
 
 					const conversation = this.$store.getters.conversation(token)
