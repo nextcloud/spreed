@@ -91,7 +91,6 @@ function migrateDirectLocalStorageToNextcloudBrowserStorage() {
 }
 /**
  * Clean up some deprecated (no longer in use) keys from @nextcloud/browser-storage
- * REMOVE: in stable 33+
  */
 function cleanOutdatedBrowserStorageKeys() {
 	const deprecatedKeys = [
@@ -99,6 +98,12 @@ function cleanOutdatedBrowserStorageKeys() {
 		'devicesPreferred', // Migration to audioInputDevicePreferred|videoInputDevicePreferred
 		'audioInputDevicePreferred', // Not needed anymore
 		'videoInputDevicePreferred', // Not needed anymore
+
+		// Talk 33
+		'virtualBackgroundBlurStrength_', // Migration from conversation level to Talk level settings
+		'virtualBackgroundEnabled_', // Migration from conversation level to Talk level settings
+		'virtualBackgroundType_', // Migration from conversation level to Talk level settings
+		'virtualBackgroundUrl_', // Migration from conversation level to Talk level settings
 	].map((key) => BrowserStorage.scopeKey(key)) // FIXME upstream: this is a private method
 
 	Object.keys(localStorage).forEach((key) => {

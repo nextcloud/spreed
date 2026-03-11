@@ -382,7 +382,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		BrowserStorage.setItem('virtualBackgroundEnabled_' + this.get('token'), 'true')
+		BrowserStorage.setItem('virtualBackgroundEnabled', 'true')
 
 		this._webRtc.enableVirtualBackground()
 	},
@@ -397,9 +397,9 @@ LocalMediaModel.prototype = {
 		}
 
 		if (!globalBlurVirtualBackground) {
-			BrowserStorage.setItem('virtualBackgroundType_' + this.get('token'), VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
-			BrowserStorage.setItem('virtualBackgroundBlurStrength_' + this.get('token'), blurStrength)
-			BrowserStorage.removeItem('virtualBackgroundUrl_' + this.get('token'))
+			BrowserStorage.setItem('virtualBackgroundType', VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
+			BrowserStorage.setItem('virtualBackgroundBlurStrength', blurStrength)
+			BrowserStorage.removeItem('virtualBackgroundUrl')
 		}
 
 		this._webRtc.setVirtualBackground({
@@ -413,9 +413,9 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		BrowserStorage.setItem('virtualBackgroundType_' + this.get('token'), VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
-		BrowserStorage.setItem('virtualBackgroundUrl_' + this.get('token'), imageUrl)
-		BrowserStorage.removeItem('virtualBackgroundBlurStrength_' + this.get('token'))
+		BrowserStorage.setItem('virtualBackgroundType', VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
+		BrowserStorage.setItem('virtualBackgroundUrl', imageUrl)
+		BrowserStorage.removeItem('virtualBackgroundBlurStrength')
 
 		this._webRtc.setVirtualBackground({
 			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE,
@@ -428,9 +428,9 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		BrowserStorage.setItem('virtualBackgroundType_' + this.get('token'), VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO)
-		BrowserStorage.setItem('virtualBackgroundUrl_' + this.get('token'), videoUrl)
-		BrowserStorage.removeItem('virtualBackgroundBlurStrength_' + this.get('token'))
+		BrowserStorage.setItem('virtualBackgroundType', VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO)
+		BrowserStorage.setItem('virtualBackgroundUrl', videoUrl)
+		BrowserStorage.removeItem('virtualBackgroundBlurStrength')
 
 		this._webRtc.setVirtualBackground({
 			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO,
@@ -443,7 +443,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		BrowserStorage.removeItem('virtualBackgroundEnabled_' + this.get('token'))
+		BrowserStorage.removeItem('virtualBackgroundEnabled')
 
 		this._webRtc.disableVirtualBackground()
 	},

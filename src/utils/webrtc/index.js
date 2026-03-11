@@ -264,10 +264,10 @@ async function signalingJoinCall(token, flags, silent, recordingConsent, silentF
 			// it should be saved now.
 			const enableAudio = !BrowserStorage.getItem('audioDisabled_' + token)
 			const enableVideo = !BrowserStorage.getItem('videoDisabled_' + token)
-			const enableVirtualBackground = !!BrowserStorage.getItem('virtualBackgroundEnabled_' + token)
-			const virtualBackgroundType = BrowserStorage.getItem('virtualBackgroundType_' + token)
-			const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength_' + token)
-			const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl_' + token)
+			const enableVirtualBackground = !!BrowserStorage.getItem('virtualBackgroundEnabled')
+			const virtualBackgroundType = BrowserStorage.getItem('virtualBackgroundType')
+			const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength')
+			const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl')
 
 			localMediaModel.set('token', token)
 
