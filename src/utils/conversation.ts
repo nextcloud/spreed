@@ -151,6 +151,8 @@ export function getFallbackIconClass(conversation: Conversation, forceFallback: 
 			return 'icon-event'
 		} else if (conversation.objectType === CONVERSATION.OBJECT_TYPE.CIRCLES) {
 			return 'icon-team'
+		} else if (conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM) {
+			return 'icon-voice-room'
 		} else if (conversation.type === CONVERSATION.TYPE.CHANGELOG) {
 			return 'icon-changelog'
 		} else if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {

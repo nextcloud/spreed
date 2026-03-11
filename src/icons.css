@@ -113,6 +113,17 @@
 	background-image: url(../img/changelog.svg);
 }
 
+.app-talk .icon-voice-room,
+.modal-mask .icon-voice-room,
+.v-popper__popper .icon-voice-room,
+.talk-sidebar-callview .icon-voice-room,
+#talk-panel .icon-voice-room,
+#talk-sidebar .icon-voice-room,
+#call-container .icon-voice-room,
+.talkChatTab .icon-voice-room {
+	background-image: url(../img/icon-voice-room-white.svg);
+}
+
 /* The tribute panel is a direct child of the body, so it is not affected by
  * .app-Talk rules above.
  * "forced-white" needs to be included in the class name as the Avatar does
