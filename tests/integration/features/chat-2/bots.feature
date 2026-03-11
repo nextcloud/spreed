@@ -22,7 +22,7 @@ Feature: chat-2/bots
 
   Scenario: Simple Webhook Demo bot run
     # Populate default options again
-    And invoking occ with "app:disable talk_webhook_demo"
+    Given invoking occ with "app:disable talk_webhook_demo"
     And the command was successful
     And invoking occ with "app:enable talk_webhook_demo"
     And the command was successful
@@ -130,6 +130,29 @@ Feature: chat-2/bots
     Given invoking occ with "talk:bot:list room-name:room"
     And the command was successful
     And the command output is empty
+
+  Scenario: Webhook bot creates a thread
+    Given invoking occ with "app:disable talk_webhook_demo"
+    And the command was successful
+    Given invoking occ with "app:enable talk_webhook_demo"
+    And the command was successful
+    And invoking occ with "talk:bot:list"
+    And the command was successful
+    And the command output contains the text "Webhook Demo"
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And read bot ids from OCC
+    And setup bot "Webhook Demo" for room "room" via OCC
+    And user "participant1" sends message "/thread Thread1 Message1" to room "room" with 201
+    And wait for 2 seconds
+    Then user "participant1" sees the following messages in room "room" with 200
+      | room | actorType | actorId           | actorDisplayName         | message                  | messageParameters | threadTitle | threadReplies |
+      | room | bots      | BOT(Webhook Demo) | Webhook Demo (Bot)       | Message1                 | []                | Thread1     | 0             |
+      | room | users     | participant1      | participant1-displayname | /thread Thread1 Message1 | []                |             |               |
+    Then user "participant1" sees the following recent threads in room "room" with 200
+      | t.id     | t.title | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | Message1 | Thread1 | 0            | 0             | 0                   | Message1     | 0           |
 
   Scenario: Registering a bot with invalid parameters
     When invoking occ with "talk:bot:install  S3CR3T U"
