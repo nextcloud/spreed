@@ -333,12 +333,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "4d2dc6df2f6aef41a7791dac3ffb07068210ca1d"
+                "reference": "b0e4d6e517a192db3360319b25d4f3439c1f1094"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/4d2dc6df2f6aef41a7791dac3ffb07068210ca1d",
-                "reference": "4d2dc6df2f6aef41a7791dac3ffb07068210ca1d",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/b0e4d6e517a192db3360319b25d4f3439c1f1094",
+                "reference": "b0e4d6e517a192db3360319b25d4f3439c1f1094",
                 "shasum": ""
             },
             "require": {
@@ -374,7 +374,7 @@
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
                 "source": "https://github.com/nextcloud-deps/ocp/tree/master"
             },
-            "time": "2026-02-27T01:06:47+00:00"
+            "time": "2026-03-11T09:02:54+00:00"
         },
         {
             "name": "psr/clock",
