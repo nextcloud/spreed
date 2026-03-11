@@ -300,6 +300,17 @@ export interface operations {
                      * @default false
                      */
                     silent?: boolean;
+                    /**
+                     * @description Only supported when not replying, when given will create a thread (requires `threads` capability)
+                     * @default
+                     */
+                    threadTitle?: string;
+                    /**
+                     * Format: int64
+                     * @description Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
+                     * @default 0
+                     */
+                    threadId?: number;
                 };
             };
         };
