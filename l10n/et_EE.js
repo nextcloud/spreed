@@ -1776,7 +1776,6 @@ OC.L10N.register(
     "Display name (required)" : "Kuvatav nimii (nõutav)",
     "Save name" : "Salvesta nimi",
     "I picked message bubbles" : "Ma valisin jutumullid",
-    "I picked list style" : "Ma valisin loendi",
     "Error while setting personal setting" : "Viga isikliku seadistuste salvestamisel",
     "Error while saving sounds setting" : "Viga helide seadistuste salvestamisel",
     "Compact conversations list" : "Vestluste kompaktne loend",
@@ -1902,7 +1901,6 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Liitu vestlusega või alusta uut",
     "Error while joining the conversation" : "Viga vestlusega liitumisel",
     "Another user" : "Muu kasutaja",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Hei! Kas sa kasutad vestlusrakendust loendivaates või jutumullide vaates?",
     "Nextcloud URL" : "Nextcloudi võrguaadress",
     "Nextcloud user" : "Nextcloudi kasutaja",
     "User password" : "Kasutaja salasõna",
@@ -2168,6 +2166,8 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Sa liitusid selle vestlusega muus aknas või seadmes. Selline võimalus pole hetkel Nextcloudi kõnerakenduses toetatud ja seega sessioon sai suletud.",
     "Nextcloud Talk was updated." : "Nextcloud Talk on uuendatud.",
     "Nextcloud is in maintenance mode." : "Nextcloud on hooldusrežiimis.",
-    "Nextcloud Talk Federation was updated." : "Nextcloud Talk liitpilves on uuendatud."
+    "Nextcloud Talk Federation was updated." : "Nextcloud Talk liitpilves on uuendatud.",
+    "I picked list style" : "Ma valisin loendi",
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Hei! Kas sa kasutad vestlusrakendust loendivaates või jutumullide vaates?"
 },
 "nplurals=2; plural=(n != 1);");

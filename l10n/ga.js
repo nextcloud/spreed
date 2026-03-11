@@ -1817,7 +1817,6 @@ OC.L10N.register(
     "Display name (required)" : "Ainm taispeána (riachtanach)",
     "Save name" : "Sábháil ainm",
     "I picked message bubbles" : "Roghnaigh mé boilgeoga teachtaireachta",
-    "I picked list style" : "Roghnaigh mé stíl liosta",
     "Error while setting personal setting" : "Earráid agus socrú pearsanta á shocrú",
     "Error while saving sounds setting" : "Earráid agus socrú fuaimeanna á sábháil",
     "Compact conversations list" : "Liosta comhráite dlúth",
@@ -1943,7 +1942,6 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Glac páirt i gcomhrá nó cuir tús le ceann nua",
     "Error while joining the conversation" : "Earráid agus tú páirteach sa chomhrá",
     "Another user" : "Úsáideoir eile",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Haigh! An bhfuil tú ag úsáid Talk i stíl liosta nó le boilgeoga teachtaireachta?",
     "Nextcloud URL" : "URL Nextcloud",
     "Nextcloud user" : "Úsáideoir Nextcloud",
     "User password" : "Pasfhocal úsáideora",
@@ -2210,6 +2208,8 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Chuaigh tú isteach sa chomhrá i bhfuinneog nó gléas eile. Ní thacaíonn Nextcloud Talk leis seo faoi láthair mar sin dúnadh an seisiún seo.",
     "Nextcloud Talk was updated." : "Nuashonraíodh Nextcloud Talk.",
     "Nextcloud is in maintenance mode." : "Tá Nextcloud i mód cothabhála.",
-    "Nextcloud Talk Federation was updated." : "Nuashonraíodh Cónaidhm Nextcloud Talk."
+    "Nextcloud Talk Federation was updated." : "Nuashonraíodh Cónaidhm Nextcloud Talk.",
+    "I picked list style" : "Roghnaigh mé stíl liosta",
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Haigh! An bhfuil tú ag úsáid Talk i stíl liosta nó le boilgeoga teachtaireachta?"
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");
