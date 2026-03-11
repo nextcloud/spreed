@@ -1807,7 +1807,6 @@
     "Display name (required)" : "Display name (obligatoire)",
     "Save name" : "Sauvegarder le nom",
     "I picked message bubbles" : "J'ai choisi des bulles de message",
-    "I picked list style" : "J'ai choisi le style liste",
     "Error while setting personal setting" : "Erreur lors de la prise en compte de vos paramètres personnels",
     "Error while saving sounds setting" : "Erreur lors de l'enregistrement des paramètres audio",
     "Compact conversations list" : "Liste compacte des conversations",
@@ -1933,7 +1932,6 @@
     "Join a conversation or start a new one" : "Rejoignez une conversation ou démarrez-en une nouvelle",
     "Error while joining the conversation" : "Erreur lors de l’intégration à la conversation",
     "Another user" : "Autre utilisateur",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Hé ! Utilisez-vous Talk en mode liste ou avec des bulles de message ?",
     "Nextcloud URL" : "URL Nextcloud",
     "Nextcloud user" : "Utilisateur Nextcloud",
     "User password" : "Mot de passe utilisateur",
@@ -2200,6 +2198,8 @@
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Vous avez déjà ouvert une conversation dans une autre fenêtre ou sur un autre périphérique. Ce n'est pas supporté pour l'instant dans Nextcloud Talk, votre session a été fermée. ",
     "Nextcloud Talk was updated." : "Nextcloud Talk a été mis à jour.",
     "Nextcloud is in maintenance mode." : "Nextcloud est en mode maintenance.",
-    "Nextcloud Talk Federation was updated." : "La fédération Nextcloud Talk a été mise à jour."
+    "Nextcloud Talk Federation was updated." : "La fédération Nextcloud Talk a été mise à jour.",
+    "I picked list style" : "J'ai choisi le style liste",
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Hé ! Utilisez-vous Talk en mode liste ou avec des bulles de message ?"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

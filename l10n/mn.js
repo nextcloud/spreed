@@ -1773,7 +1773,6 @@ OC.L10N.register(
     "Display name (required)" : "Дэлгэцийн нэр (шаардлагатай)",
     "Save name" : "Нэр хадгалах",
     "I picked message bubbles" : "Би зурвасын бөмбөлгийг сонгосон",
-    "I picked list style" : "Би жагсаалт хэлбэрийг сонгосон",
     "Error while setting personal setting" : "Хувийн тохиргоог тохируулахад алдаа гарлаа",
     "Error while saving sounds setting" : "Дууны тохиргоог хадгалахад алдаа гарлаа",
     "Compact conversations list" : "Нягт ярианы жагсаалт",
@@ -1898,7 +1897,6 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Яриад нэгдэх эсвэл шинийг эхлүүлнэ үү",
     "Error while joining the conversation" : "Яриад нэгдэхэд алдаа гарлаа",
     "Another user" : "Өөр хэрэглэгч",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Сайн уу! Та Talk-ыг жагсаалт хэлбэрээр ашиглаж байна уу, эсвэл зурвасын бөмбөлгөөр үү?",
     "Nextcloud URL" : "Nextcloud URL",
     "Nextcloud user" : "Nextcloud хэрэглэгч",
     "User password" : "Хэрэглэгчийн нууц үг",
@@ -2154,6 +2152,8 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Та өөр цонх эсвэл төхөөрөмжөөс яриад нэгдсэн. Nextcloud Talk одоогоор үүнийг дэмждэггүй тул энэ сессийг хаасан.",
     "Nextcloud Talk was updated." : "Nextcloud Talk шинэчлэгдлээ.",
     "Nextcloud is in maintenance mode." : "Nextcloud засвар үйлчилгээний горимд байна.",
-    "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation шинэчлэгдлээ."
+    "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation шинэчлэгдлээ.",
+    "I picked list style" : "Би жагсаалт хэлбэрийг сонгосон",
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Сайн уу! Та Talk-ыг жагсаалт хэлбэрээр ашиглаж байна уу, эсвэл зурвасын бөмбөлгөөр үү?"
 },
 "nplurals=2; plural=(n != 1);");

@@ -1807,7 +1807,6 @@ OC.L10N.register(
     "Display name (required)" : "显示名称（必填）",
     "Save name" : "保存名称",
     "I picked message bubbles" : "我选了消息气泡",
-    "I picked list style" : "我择了列表样式",
     "Error while setting personal setting" : "设置个人设置时出错",
     "Error while saving sounds setting" : "保存声音设置时出错",
     "Compact conversations list" : "紧凑的对话列表",
@@ -1933,7 +1932,6 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "加入一个对话或开始新对话",
     "Error while joining the conversation" : "加入对话时出错",
     "Another user" : "其他用户",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "嘿！您是使用列表样式还是有消息气泡的 Talk？",
     "Nextcloud URL" : "Nextcloud URL ",
     "Nextcloud user" : "Nextcloud 用户",
     "User password" : "使用密码",
@@ -2200,6 +2198,8 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "你在另一个窗口或设备上加入了对话。Nextcloud通话应用目前不支持这么做，所以这个会话被关闭了。",
     "Nextcloud Talk was updated." : "Nextcloud Talk 已更新。",
     "Nextcloud is in maintenance mode." : "Nextcloud 处于维护模式。",
-    "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation 已更新。"
+    "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation 已更新。",
+    "I picked list style" : "我择了列表样式",
+    "Hey! Are you using Talk in list style or with message bubbles?" : "嘿！您是使用列表样式还是有消息气泡的 Talk？"
 },
 "nplurals=1; plural=0;");
