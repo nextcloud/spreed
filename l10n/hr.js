@@ -1809,7 +1809,6 @@ OC.L10N.register(
     "Display name (required)" : "Prikazano ime (obvezno)",
     "Save name" : "Spremi ime",
     "I picked message bubbles" : "Odabrao sam oblačiće poruka",
-    "I picked list style" : "Odabrao sam stil popisa",
     "Error while setting personal setting" : "Pogreška pri postavljanju osobne postavke",
     "Error while saving sounds setting" : "Pogreška pri spremanju postavke zvukova",
     "Compact conversations list" : "Kompaktni popis razgovora",
@@ -1935,7 +1934,6 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Pridružite se razgovoru ili započnite novi",
     "Error while joining the conversation" : "Pogreška pri pridruživanju razgovoru",
     "Another user" : "Drugi korisnik",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Koristite li Talk u prikazu popisa ili s oblačićima poruka?",
     "Nextcloud URL" : "Nextcloud URL",
     "Nextcloud user" : "Nextcloud korisnik",
     "User password" : "Korisnička lozinka",
@@ -2202,6 +2200,8 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Pridružili ste se razgovoru u drugom prozoru ili na drugom uređaju. Nextcloud Talk trenutačno ne podržava tu radnju pa je ova sesija zatvorena.",
     "Nextcloud Talk was updated." : "Nextcloud Talk je ažuriran.",
     "Nextcloud is in maintenance mode." : "Nextcloud je u načinu održavanja.",
-    "Nextcloud Talk Federation was updated." : "Nextcloud Talk udruženje je ažurirano."
+    "Nextcloud Talk Federation was updated." : "Nextcloud Talk udruženje je ažurirano.",
+    "I picked list style" : "Odabrao sam stil popisa",
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Koristite li Talk u prikazu popisa ili s oblačićima poruka?"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

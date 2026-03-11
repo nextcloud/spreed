@@ -1809,7 +1809,6 @@ OC.L10N.register(
     "Display name (required)" : "Zobrazované meno (povinné)",
     "Save name" : "Uložiť meno",
     "I picked message bubbles" : "Vybral/a som si správy v bublinách",
-    "I picked list style" : "Vybral/a som si štýl zoznamu",
     "Error while setting personal setting" : "Chyba pri nastavovaní osobného nastavenia",
     "Error while saving sounds setting" : "Chyba pri ukladaní nastavenia zvuku",
     "Compact conversations list" : "Zoznam kompaktných rozhovorov",
@@ -1935,7 +1934,6 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Pripojte sa k rozhovoru alebo začnite nový",
     "Error while joining the conversation" : "Chyba pri pripájaní sa ku konverzácii",
     "Another user" : "Iný používateľ",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Ahoj! Používaš Talk v zoznamovom štýle alebo s bublinami správ?",
     "Nextcloud URL" : "Nextcloud URL",
     "Nextcloud user" : "Používateľ Nextcloud",
     "User password" : "Heslo používateľa",
@@ -2202,6 +2200,8 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Pripojili ste sa k rozhovoru v inom okne alebo zariadení. Nextcloud Talk /Rozhovor/ v súčasnosti túto možnosť nepodporuje, preto bolo sedenie ukončené.",
     "Nextcloud Talk was updated." : "Nextcloud Talk bol aktualizovaný.",
     "Nextcloud is in maintenance mode." : "Nextcloud je v režime údržby.",
-    "Nextcloud Talk Federation was updated." : "Federácia Nextcloud Talk bola aktualizovaná."
+    "Nextcloud Talk Federation was updated." : "Federácia Nextcloud Talk bola aktualizovaná.",
+    "I picked list style" : "Vybral/a som si štýl zoznamu",
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Ahoj! Používaš Talk v zoznamovom štýle alebo s bublinami správ?"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

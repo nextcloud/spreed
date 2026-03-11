@@ -1805,7 +1805,6 @@ OC.L10N.register(
     "Display name (required)" : "Отображаемое имя (обязательно)",
     "Save name" : "Сохранить имя",
     "I picked message bubbles" : "Я выбираю пузыри сообщений",
-    "I picked list style" : "Я выбираю в стиле списка",
     "Error while setting personal setting" : "Ошибка при сохранении персональных параметров",
     "Error while saving sounds setting" : "Не удалось сохранить параметры звука",
     "Compact conversations list" : "Компактный список обсуждений",
@@ -1931,7 +1930,6 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Присоединитесь к обсуждению или начните новое",
     "Error while joining the conversation" : "Ошибка при присоединении к обсуждению",
     "Another user" : "Другой пользователь",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Привет! Ты используешь чат в Конференциях в стиле списка или пузырей?",
     "Nextcloud URL" : "Адрес сервера Nextcloud",
     "Nextcloud user" : "Имя пользователя Nextcloud",
     "User password" : "Пароль пользователя",
@@ -2198,6 +2196,8 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Вы подключены к обсуждению в другом окне или устройстве. Данная возможность не поддерживается Nextcloud Talk в настоящее время, поэтому данная сессия будет закрыта.",
     "Nextcloud Talk was updated." : "Nextcloud Talk был обновлен.",
     "Nextcloud is in maintenance mode." : "Сервер находится в режиме обслуживания.",
-    "Nextcloud Talk Federation was updated." : "Nextcloud Talk Федерация была обновлена."
+    "Nextcloud Talk Federation was updated." : "Nextcloud Talk Федерация была обновлена.",
+    "I picked list style" : "Я выбираю в стиле списка",
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Привет! Ты используешь чат в Конференциях в стиле списка или пузырей?"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

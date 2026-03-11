@@ -1810,7 +1810,6 @@ OC.L10N.register(
     "Display name (required)" : "Nome para amosar (necesario)",
     "Save name" : "Gardar o nome",
     "I picked message bubbles" : "Escollín globos de mensaxe",
-    "I picked list style" : "Escollín o estilo de lista",
     "Error while setting personal setting" : "Produciuse un erro ao gardar o axuste persoal",
     "Error while saving sounds setting" : "Produciuse un erro ao gardar os axustes de son",
     "Compact conversations list" : "Lista compacta de conversas",
@@ -1936,7 +1935,6 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Únase a unha conversa ou inicie unha nova",
     "Error while joining the conversation" : "Produciuse un erro ao unirse á conversa",
     "Another user" : "Outro usuario",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Ei! Estás a usar Parladoiro en formato de lista ou con globos de mensaxe?",
     "Nextcloud URL" : "URL de Nextcloud",
     "Nextcloud user" : "Usuario de Nextcloud",
     "User password" : "Contrasinal do usuario",
@@ -2203,6 +2201,8 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Uniuse á conversa noutra xanela ou dispositivo. Isto non é compatíbel actualmente con Parladoiro de Nextcloud polo que esta sesión pechouse.",
     "Nextcloud Talk was updated." : "Parladoiro de Nextcloud foi actualizada",
     "Nextcloud is in maintenance mode." : "Nextcloud está en modo de mantemento.",
-    "Nextcloud Talk Federation was updated." : "Foi actualizada a federación de Parladoiro de Nextcloud"
+    "Nextcloud Talk Federation was updated." : "Foi actualizada a federación de Parladoiro de Nextcloud",
+    "I picked list style" : "Escollín o estilo de lista",
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Ei! Estás a usar Parladoiro en formato de lista ou con globos de mensaxe?"
 },
 "nplurals=2; plural=(n != 1);");

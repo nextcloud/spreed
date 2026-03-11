@@ -1810,7 +1810,6 @@ OC.L10N.register(
     "Display name (required)" : "Wymagana nazwa wyświetlana",
     "Save name" : "Zapisz nazwę",
     "I picked message bubbles" : "Wybrałem dymki wiadomości",
-    "I picked list style" : "Wybrałem widok listy",
     "Error while setting personal setting" : "Błąd podczas ustawiania ustawień osobistych",
     "Error while saving sounds setting" : "Błąd podczas zapisywania ustawień dźwięków",
     "Compact conversations list" : "Kompaktowa lista rozmów",
@@ -1936,7 +1935,6 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Dołącz do rozmowy lub rozpocznij nową",
     "Error while joining the conversation" : "Błąd podczas dołączania do rozmowy",
     "Another user" : "Inny użytkownik",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Korzystasz z Talk w widoku listy czy z dymkami wiadomości?",
     "Nextcloud URL" : "Adres URL Nextcloud",
     "Nextcloud user" : "Użytkownik Nextcloud",
     "User password" : "Hasło użytkownika",
@@ -2203,6 +2201,8 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Dołączyłeś do rozmowy w innym oknie lub urządzeniu. Ta sesja została zamknięta, ponieważ nie jest obecnie obsługiwana przez Nextcloud Talk.",
     "Nextcloud Talk was updated." : "Zaktualizowano Nextcloud Talk.",
     "Nextcloud is in maintenance mode." : "Nextcloud jest w trybie konserwacji.",
-    "Nextcloud Talk Federation was updated." : "Zaktualizowano Nextcloud Talk Federation."
+    "Nextcloud Talk Federation was updated." : "Zaktualizowano Nextcloud Talk Federation.",
+    "I picked list style" : "Wybrałem widok listy",
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Korzystasz z Talk w widoku listy czy z dymkami wiadomości?"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

@@ -1817,7 +1817,6 @@ OC.L10N.register(
     "Display name (required)" : "Görüntülenecek ad (zorunlu)",
     "Save name" : "Adı kaydet",
     "I picked message bubbles" : "İleti balonlarını seçtim",
-    "I picked list style" : "Liste biçemini seçtim",
     "Error while setting personal setting" : "Kişisel ayarlarınız kaydedilirken sorun çıktı",
     "Error while saving sounds setting" : "Ses ayarları kaydedilirken sorun çıktı",
     "Compact conversations list" : "Küçük görüşmeler listesi",
@@ -1943,7 +1942,6 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Bir görüşmeye katılın ya da yeni bir görüşme başlatın",
     "Error while joining the conversation" : "Görüşmeye katılırken sorun çıktı",
     "Another user" : "Başka bir kullanıcı",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Talk görünümü liste olarak mı ileti balonları olarak mı kullanıyorsunuz?",
     "Nextcloud URL" : "Nextcloud adresi",
     "Nextcloud user" : "Nextcloud kullanıcısı",
     "User password" : "Kullanıcı parolası",
@@ -2210,6 +2208,8 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Görüşmeye başka bir pencereden ya da aygıttan da katılmışsınız. Nextcloud Konuş henüz bu özelliği desteklemediği için bu oturum kapatılacak.",
     "Nextcloud Talk was updated." : "Nextcloud Konuş güncellenmiş.",
     "Nextcloud is in maintenance mode." : "Nextcloud bakım kipinde.",
-    "Nextcloud Talk Federation was updated." : "Nextcloud Konuş birliği güncellenmiş."
+    "Nextcloud Talk Federation was updated." : "Nextcloud Konuş birliği güncellenmiş.",
+    "I picked list style" : "Liste biçemini seçtim",
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Talk görünümü liste olarak mı ileti balonları olarak mı kullanıyorsunuz?"
 },
 "nplurals=2; plural=(n > 1);");
