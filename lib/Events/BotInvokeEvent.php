@@ -105,7 +105,7 @@ use OCP\EventDispatcher\Event;
 class BotInvokeEvent extends Event {
 	/** @var list<string> */
 	protected array $reactions = [];
-	/** @var list<array{message: string, referenceId: string, reply: bool|int, silent: bool}> */
+	/** @var list<array{message: string, referenceId: string, reply: bool|int, thread: bool, threadTitle: ?string, silent: bool}> */
 	protected array $answers = [];
 
 	/**
@@ -140,17 +140,19 @@ class BotInvokeEvent extends Event {
 		return $this->reactions;
 	}
 
-	public function addAnswer(string $message, bool|int $reply = false, bool $silent = false, string $referenceId = ''): void {
+	public function addAnswer(string $message, bool|int $reply = false, bool $silent = false, string $referenceId = '', bool $thread = false, ?string $threadTitle = null): void {
 		$this->answers[] = [
 			'message' => $message,
 			'referenceId' => $referenceId,
 			'reply' => $reply,
+			'thread' => $thread,
+			'threadTitle' => $threadTitle,
 			'silent' => $silent,
 		];
 	}
 
 	/**
-	 * @return list<array{message: string, referenceId: string, reply: bool|int, silent: bool}>
+	 * @return list<array{message: string, referenceId: string, reply: bool|int, thread: bool, threadTitle: ?string, silent: bool}>
 	 */
 	public function getAnswers(): array {
 		return $this->answers;
