@@ -34,6 +34,7 @@ use OCP\L10N\IFactory;
 use OCP\Notification\IManager;
 use OCP\Share\IManager as ShareManager;
 use OCP\Share\IShare;
+use OCP\SystemTag\ISystemTagObjectMapper;
 use OCP\TaskProcessing\Exception\Exception;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\Task;
@@ -80,6 +81,7 @@ class RecordingService {
 		protected LoggerInterface $logger,
 		protected BackendNotifier $backendNotifier,
 		protected ITaskProcessingManager $taskProcessingManager,
+		protected ISystemTagObjectMapper $systemTagMapper,
 		protected IFactory $l10nFactory,
 		protected IUserManager $userManager,
 	) {
@@ -239,6 +241,7 @@ class RecordingService {
 					$transcriptFileName,
 					$output . "\n\n$warning\n",
 				);
+				$this->systemTagMapper->assignGeneratedByAITag((string)$fileNode->getId(), 'files');
 				$this->notifyStoredTranscript($room, $participant, $fileNode, $aiTask);
 			} catch (NoUserException) {
 				throw new InvalidArgumentException('owner_invalid');
