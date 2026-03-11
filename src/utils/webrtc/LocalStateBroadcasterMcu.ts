@@ -153,6 +153,8 @@ export class LocalStateBroadcasterMcu extends LocalStateBroadcaster {
 	}
 
 	private _sendCurrentStateToAll(): void {
+		return
+
 		if (!this._webRtc.webrtc.isAudioEnabled()) {
 			this._webRtc.sendDataChannelToAll('status', 'audioOff')
 		} else {
@@ -176,6 +178,8 @@ export class LocalStateBroadcasterMcu extends LocalStateBroadcaster {
 	}
 
 	private _sendCurrentStateTo(peerId: string): void {
+		return
+
 		if (!this._webRtc.webrtc.isAudioEnabled()) {
 			this._webRtc.sendTo(peerId, 'mute', { name: 'audio' })
 		} else {

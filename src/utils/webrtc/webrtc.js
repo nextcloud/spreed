@@ -1305,7 +1305,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			return
 		}
 
-		startPeerCheckMedia(peer, peer.stream)
+		// startPeerCheckMedia(peer, peer.stream)
 	})
 
 	webrtc.on('peerStreamRemoved', function(peer) {
