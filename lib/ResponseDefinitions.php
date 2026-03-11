@@ -525,6 +525,9 @@ namespace OCA\Talk;
  *             live-transcription: bool,
  *             live-translation: bool,
  *             live-transcription-target-language-id: string,
+ *             play-sounds: bool,
+ *             grid-limit: int,
+ *             grid-limit-enforced: bool,
  *         },
  *         chat: array{
  *             max-length: int,
@@ -534,6 +537,7 @@ namespace OCA\Talk;
  *             typing-privacy: int,
  *             summary-threshold: positive-int,
  *             style: 'split'|'unified',
+ *             matterbridge-enabled: bool,
  *         },
  *         conversations: array{
  *             can-create: bool,
@@ -555,13 +559,19 @@ namespace OCA\Talk;
  *         },
  *         signaling: array{
  *             session-ping-limit: int,
+ *             mode: 'internal'|'external'|'conversation_cluster',
  *             hello-v2-token-key?: string,
  *         },
  *         experiments: array{
  *             enabled: non-negative-int,
  *         },
+ *         permissions: array{
+ *             max-default: int,
+ *             max-custom: int,
+ *             default: int,
+ *         },
  *     },
- *     config-local: array<string, non-empty-list<string>>,
+ *     config-local: array<string, list<string>>,
  *     version: string,
  * }
  *

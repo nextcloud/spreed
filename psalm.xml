@@ -84,6 +84,7 @@
 		<file name="tests/stubs/oca_dav_caldav_timezoneservice.php" />
 		<file name="tests/stubs/oca_files_events.php" />
 		<file name="tests/stubs/oca_files_sharing_events.php" />
+		<file name="tests/stubs/oca_guests.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ClientException.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ConnectException.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ServerException.php" />

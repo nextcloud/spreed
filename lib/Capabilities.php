@@ -8,7 +8,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCA\Guests\UserBackend;
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\LiveTranscriptionService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
@@ -172,6 +174,9 @@ class Capabilities implements IPublicCapability {
 			'start-without-media',
 			'blur-virtual-background',
 			'live-transcription-target-language-id',
+			'play-sounds',
+			'grid-limit',
+			'grid-limit-enforced',
 		],
 		'chat' => [
 			'read-privacy',
@@ -180,6 +185,7 @@ class Capabilities implements IPublicCapability {
 			'typing-privacy',
 			'summary-threshold',
 			'style',
+			'matterbridge-enabled',
 		],
 		'conversations' => [
 			'can-create',
@@ -198,9 +204,12 @@ class Capabilities implements IPublicCapability {
 		'signaling' => [
 			'session-ping-limit',
 			'hello-v2-token-key',
+			'mode',
 		],
 		'experiments' => [
 			'enabled',
+		],
+		'permissions' => [
 		],
 	];
 
@@ -238,7 +247,7 @@ class Capabilities implements IPublicCapability {
 			'features-local' => self::LOCAL_FEATURES,
 			'config' => [
 				'attachments' => [
-					'allowed' => $user instanceof IUser,
+					'allowed' => $user instanceof IUser && $user->getBackendClassName() !== UserBackend::class,
 					// 'folder' => string,
 				],
 				'call' => [
@@ -260,6 +269,9 @@ class Capabilities implements IPublicCapability {
 					'end-to-end-encryption' => $this->talkConfig->isCallEndToEndEncryptionEnabled(),
 					'live-transcription' => $this->isLiveTranscriptionSupported(),
 					'live-translation' => $this->isLiveTranslationSupported(),
+					'play-sounds' => $this->talkConfig->getPlaySoundsForUser($user),
+					'grid-limit' => $this->talkConfig->getGridVideosLimit(),
+					'grid-limit-enforced' => $this->talkConfig->getGridVideosLimitEnforced(),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
@@ -269,6 +281,7 @@ class Capabilities implements IPublicCapability {
 					'typing-privacy' => Participant::PRIVACY_PUBLIC,
 					'summary-threshold' => max(1, $this->appConfig->getAppValueInt('summary_threshold', 100)),
 					'style' => $this->talkConfig->getChatStyle($user?->getUID()),
+					'matterbridge-enabled' => $user instanceof IUser && $this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1',
 				],
 				'conversations' => [
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user),
@@ -290,10 +303,16 @@ class Capabilities implements IPublicCapability {
 				],
 				'signaling' => [
 					'session-ping-limit' => max(0, (int)$this->serverConfig->getAppValue('spreed', 'session-ping-limit', '200')),
+					'mode' => $this->talkConfig->getSignalingMode(),
 					// 'hello-v2-token-key' => string,
 				],
 				'experiments' => [
 					'enabled' => max(0, $this->appConfig->getAppValueInt($user instanceof IUser ? 'experiments_users' : 'experiments_guests')),
+				],
+				'permissions' => [
+					'max-default' => Attendee::PERMISSIONS_MAX_DEFAULT,
+					'max-custom' => Attendee::PERMISSIONS_MAX_CUSTOM,
+					'default' => $this->talkConfig->getDefaultPermissions(),
 				],
 			],
 			'config-local' => self::LOCAL_CONFIGS,

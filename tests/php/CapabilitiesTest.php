@@ -109,6 +109,14 @@ class CapabilitiesTest extends TestCase {
 			->with(null)
 			->willReturn('split');
 
+		$this->talkConfig->expects($this->any())
+			->method('getSignalingMode')
+			->willReturn('internal');
+
+		$this->talkConfig->expects($this->any())
+			->method('getDefaultPermissions')
+			->willReturn(246);
+
 		$this->talkConfig->expects($this->once())
 			->method('getLiveTranscriptionTargetLanguageId')
 			->with(null)
@@ -164,6 +172,9 @@ class CapabilitiesTest extends TestCase {
 						'end-to-end-encryption' => false,
 						'live-transcription' => false,
 						'live-translation' => false,
+						'play-sounds' => false,
+						'grid-limit' => 0,
+						'grid-limit-enforced' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -194,6 +205,7 @@ class CapabilitiesTest extends TestCase {
 						'typing-privacy' => 0,
 						'summary-threshold' => 100,
 						'style' => 'split',
+						'matterbridge-enabled' => false,
 					],
 					'conversations' => [
 						'can-create' => false,
@@ -215,9 +227,15 @@ class CapabilitiesTest extends TestCase {
 					],
 					'signaling' => [
 						'session-ping-limit' => 200,
+						'mode' => 'internal',
 					],
 					'experiments' => [
 						'enabled' => 0,
+					],
+					'permissions' => [
+						'max-default' => 254,
+						'max-custom' => 255,
+						'default' => 246,
 					],
 				],
 				'config-local' => Capabilities::LOCAL_CONFIGS,
@@ -264,6 +282,14 @@ class CapabilitiesTest extends TestCase {
 			->method('getChatStyle')
 			->with('uid')
 			->willReturn('split');
+
+		$this->talkConfig->expects($this->any())
+			->method('getSignalingMode')
+			->willReturn('internal');
+
+		$this->talkConfig->expects($this->any())
+			->method('getDefaultPermissions')
+			->willReturn(246);
 
 		$this->talkConfig->expects($this->once())
 			->method('isNotAllowedToCreateConversations')
@@ -355,6 +381,9 @@ class CapabilitiesTest extends TestCase {
 						'end-to-end-encryption' => false,
 						'live-transcription' => false,
 						'live-translation' => false,
+						'play-sounds' => false,
+						'grid-limit' => 0,
+						'grid-limit-enforced' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -385,6 +414,7 @@ class CapabilitiesTest extends TestCase {
 						'typing-privacy' => 0,
 						'summary-threshold' => 100,
 						'style' => 'split',
+						'matterbridge-enabled' => false,
 					],
 					'conversations' => [
 						'can-create' => $canCreate,
@@ -406,9 +436,15 @@ class CapabilitiesTest extends TestCase {
 					],
 					'signaling' => [
 						'session-ping-limit' => 50,
+						'mode' => 'internal',
 					],
 					'experiments' => [
 						'enabled' => 0,
+					],
+					'permissions' => [
+						'max-default' => 254,
+						'max-custom' => 255,
+						'default' => 246,
 					],
 				],
 				'config-local' => Capabilities::LOCAL_CONFIGS,
