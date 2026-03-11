@@ -15,7 +15,6 @@
     "dev": "rspack build --env development",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "opengrep": "opengrep --opengrep-ignore-pattern=noopengrep --error --exclude '*.php' --exclude 'docs' --include '*.vue' --include '*.js' --include '*.ts' --exclude-rule 'javascript.vue.security.audit.xss.templates.avoid-v-html.avoid-v-html' --exclude-rule 'javascript.lang.security.detect-insecure-websocket.detect-insecure-websocket'",
     "serve": "NODE_ENV=development rspack serve",
     "stylelint": "stylelint \"src/**/*.scss\" \"src/**/*.vue\"",
     "stylelint:fix": "stylelint \"src/**/*.scss\" \"src/**/*.vue\" --fix",
