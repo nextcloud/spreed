@@ -53,6 +53,8 @@ class BotService {
 	public function __construct(
 		protected BotServerMapper $botServerMapper,
 		protected BotConversationMapper $botConversationMapper,
+		protected ThreadService $threadService,
+		protected ChatManager $chatManager,
 		protected IClientService $clientService,
 		protected IConfig $serverConfig,
 		protected IUserSession $userSession,
@@ -288,12 +290,19 @@ class BotService {
 							$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 							try {
 								$replyTo = null;
+								$threadId = 0;
+								$threadTitle = '';
 								if ($answer['reply'] === true) {
 									$replyTo = $comment;
 								} elseif (is_int($answer['reply'])) {
 									$replyTo = $chatManager->getParentComment($room, (string)$answer['reply']);
+								} elseif ($answer['thread'] === true) {
+									$threadId = (int)$comment->getTopmostParentId() ?: (int)$comment->getId();
+								} elseif ($answer['threadTitle'] !== null) {
+									$threadTitle = $answer['threadTitle'];
 								}
-								$chatManager->sendMessage(
+
+								$botComment = $chatManager->sendMessage(
 									$room,
 									null,
 									Attendee::ACTOR_BOTS,
@@ -303,8 +312,28 @@ class BotService {
 									$replyTo,
 									$answer['referenceId'],
 									$answer['silent'],
-									rateLimitGuestMentions: false
+									rateLimitGuestMentions: false,
+									threadId: $threadId,
+									threadTitle: $threadTitle,
 								);
+
+								if ($threadTitle !== '') {
+									$thread = $this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
+
+									$this->chatManager->addSystemMessage(
+										$room,
+										null,
+										Attendee::ACTOR_BOTS,
+										Attendee::ACTOR_BOT_PREFIX . $bot->getUrlHash(),
+										json_encode(['message' => 'thread_created', 'parameters' => ['thread' => (int)$botComment->getId(), 'title' => $thread->getName()]]),
+										$this->timeFactory->getDateTime(),
+										false,
+										null,
+										$botComment,
+										true,
+										true
+									);
+								}
 							} catch (\Exception $e) {
 								$this->logger->error('Error while trying to answer as a bot: ' . $e->getMessage(), ['exception' => $e]);
 							}
