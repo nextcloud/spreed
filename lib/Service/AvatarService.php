@@ -57,7 +57,6 @@ class AvatarService {
 		}
 
 		$content = file_get_contents($file['tmp_name']);
-		// noopengrep: php.lang.security.unlink-use.unlink-use
 		unlink($file['tmp_name']);
 		$image = new \OCP\Image();
 		$image->loadFromData($content);
