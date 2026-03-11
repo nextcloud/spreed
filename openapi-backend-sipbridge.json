@@ -97,7 +97,8 @@
                             "federation",
                             "previews",
                             "signaling",
-                            "experiments"
+                            "experiments",
+                            "permissions"
                         ],
                         "properties": {
                             "attachments": {
@@ -133,7 +134,10 @@
                                     "max-duration",
                                     "blur-virtual-background",
                                     "end-to-end-encryption",
-                                    "live-transcription"
+                                    "live-transcription",
+                                    "play-sounds",
+                                    "grid-limit",
+                                    "grid-limit-enforced"
                                 ],
                                 "properties": {
                                     "enabled": {
@@ -199,6 +203,16 @@
                                     },
                                     "live-transcription": {
                                         "type": "boolean"
+                                    },
+                                    "play-sounds": {
+                                        "type": "boolean"
+                                    },
+                                    "grid-limit": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "grid-limit-enforced": {
+                                        "type": "boolean"
                                     }
                                 }
                             },
@@ -210,7 +224,8 @@
                                     "has-translation-providers",
                                     "has-translation-task-providers",
                                     "typing-privacy",
-                                    "summary-threshold"
+                                    "summary-threshold",
+                                    "matterbridge-enabled"
                                 ],
                                 "properties": {
                                     "max-length": {
@@ -235,6 +250,9 @@
                                         "type": "integer",
                                         "format": "int64",
                                         "minimum": 1
+                                    },
+                                    "matterbridge-enabled": {
+                                        "type": "boolean"
                                     }
                                 }
                             },
@@ -323,12 +341,21 @@
                             "signaling": {
                                 "type": "object",
                                 "required": [
-                                    "session-ping-limit"
+                                    "session-ping-limit",
+                                    "mode"
                                 ],
                                 "properties": {
                                     "session-ping-limit": {
                                         "type": "integer",
                                         "format": "int64"
+                                    },
+                                    "mode": {
+                                        "type": "string",
+                                        "enum": [
+                                            "internal",
+                                            "external",
+                                            "conversation_cluster"
+                                        ]
                                     },
                                     "hello-v2-token-key": {
                                         "type": "string"
@@ -347,6 +374,28 @@
                                         "minimum": 0
                                     }
                                 }
+                            },
+                            "permissions": {
+                                "type": "object",
+                                "required": [
+                                    "max-default",
+                                    "max-custom",
+                                    "default"
+                                ],
+                                "properties": {
+                                    "max-default": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "max-custom": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "default": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    }
+                                }
                             }
                         }
                     },
@@ -356,8 +405,7 @@
                             "type": "array",
                             "items": {
                                 "type": "string"
-                            },
-                            "minItems": 1
+                            }
                         }
                     },
                     "version": {

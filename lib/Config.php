@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Events\BeforeTurnServersGetEvent;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Model\Attendee;
@@ -16,6 +17,7 @@ use OCA\Talk\Settings\UserPreference;
 use OCA\Talk\Vendor\Firebase\JWT\JWT;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IGroupManager;
@@ -52,6 +54,7 @@ class Config {
 	public function __construct(
 		protected IConfig $config,
 		protected IAppConfig $appConfig,
+		protected IUserConfig $userConfig,
 		private ISecureRandom $secureRandom,
 		private IGroupManager $groupManager,
 		private IUserManager $userManager,
@@ -424,6 +427,9 @@ class Config {
 		return $turnSettings;
 	}
 
+	/**
+	 * @psalm-return self::SIGNALING_INTERNAL|self::SIGNALING_EXTERNAL|self::SIGNALING_CLUSTER_CONVERSATION
+	 */
 	public function getSignalingMode(bool $cleanExternalSignaling = true): string {
 		$validModes = [
 			self::SIGNALING_INTERNAL,
@@ -445,7 +451,7 @@ class Config {
 			return self::SIGNALING_EXTERNAL;
 		}
 
-		return \in_array($mode, $validModes) ? $mode : self::SIGNALING_EXTERNAL;
+		return $mode === self::SIGNALING_CLUSTER_CONVERSATION ? $mode : self::SIGNALING_EXTERNAL;
 	}
 
 	/**
@@ -802,6 +808,13 @@ class Config {
 			)
 			& self::EXPERIMENT_CHAT_RELAY;
 		return $isEnabled === self::EXPERIMENT_CHAT_RELAY;
+	}
+
+	public function getPlaySoundsForUser(?IUser $user): bool {
+		if (!$user instanceof IUser) {
+			return $this->getPlaySoundsDefaultForGuests();
+		}
+		return $this->userConfig->getValueBool($user->getUID(), Application::APP_ID, UserPreference::PLAY_SOUNDS);
 	}
 
 	public function getPlaySoundsDefaultForGuests(): bool {

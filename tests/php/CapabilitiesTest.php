@@ -123,6 +123,14 @@ class CapabilitiesTest extends TestCase {
 				['summary_threshold', 100, 100],
 			]);
 
+		$this->talkConfig->expects($this->any())
+			->method('getSignalingMode')
+			->willReturn('internal');
+
+		$this->talkConfig->expects($this->any())
+			->method('getDefaultPermissions')
+			->willReturn(246);
+
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$this->assertSame([
 			'spreed' => [
@@ -153,6 +161,9 @@ class CapabilitiesTest extends TestCase {
 						'blur-virtual-background' => false,
 						'end-to-end-encryption' => false,
 						'live-transcription' => false,
+						'play-sounds' => false,
+						'grid-limit' => 0,
+						'grid-limit-enforced' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -181,6 +192,7 @@ class CapabilitiesTest extends TestCase {
 						'has-translation-task-providers' => false,
 						'typing-privacy' => 0,
 						'summary-threshold' => 100,
+						'matterbridge-enabled' => false,
 					],
 					'conversations' => [
 						'can-create' => false,
@@ -202,9 +214,15 @@ class CapabilitiesTest extends TestCase {
 					],
 					'signaling' => [
 						'session-ping-limit' => 200,
+						'mode' => 'internal',
 					],
 					'experiments' => [
 						'enabled' => 0,
+					],
+					'permissions' => [
+						'max-default' => 254,
+						'max-custom' => 255,
+						'default' => 246,
 					],
 				],
 				'config-local' => Capabilities::LOCAL_CONFIGS,
@@ -298,6 +316,14 @@ class CapabilitiesTest extends TestCase {
 				['default_phone_region', '', 'DE'],
 			]);
 
+		$this->talkConfig->expects($this->any())
+			->method('getSignalingMode')
+			->willReturn('internal');
+
+		$this->talkConfig->expects($this->any())
+			->method('getDefaultPermissions')
+			->willReturn(246);
+
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$data = $capabilities->getCapabilities();
 		$this->assertSame([
@@ -331,6 +357,9 @@ class CapabilitiesTest extends TestCase {
 						'blur-virtual-background' => false,
 						'end-to-end-encryption' => false,
 						'live-transcription' => false,
+						'play-sounds' => false,
+						'grid-limit' => 0,
+						'grid-limit-enforced' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -359,6 +388,7 @@ class CapabilitiesTest extends TestCase {
 						'has-translation-task-providers' => false,
 						'typing-privacy' => 0,
 						'summary-threshold' => 100,
+						'matterbridge-enabled' => false,
 					],
 					'conversations' => [
 						'can-create' => $canCreate,
@@ -380,9 +410,15 @@ class CapabilitiesTest extends TestCase {
 					],
 					'signaling' => [
 						'session-ping-limit' => 50,
+						'mode' => 'internal',
 					],
 					'experiments' => [
 						'enabled' => 0,
+					],
+					'permissions' => [
+						'max-default' => 254,
+						'max-custom' => 255,
+						'default' => 246,
 					],
 				],
 				'config-local' => Capabilities::LOCAL_CONFIGS,
