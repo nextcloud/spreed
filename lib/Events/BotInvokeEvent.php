@@ -41,6 +41,7 @@ use OCP\EventDispatcher\Event;
  *         content: non-empty-string,
  *         mediaType: 'text/markdown'|'text/plain',
  *         inReplyTo?: ChatMessageParentData,
+ *         threadId?: int,
  *     },
  *     target: array{
  *         type: 'Collection',

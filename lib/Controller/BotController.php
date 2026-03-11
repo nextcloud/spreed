@@ -25,11 +25,13 @@ use OCA\Talk\Model\BotConversation;
 use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BotServer;
 use OCA\Talk\Model\BotServerMapper;
+use OCA\Talk\Model\Thread;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BotService;
 use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\ThreadService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -63,6 +65,7 @@ class BotController extends AEnvironmentAwareOCSController {
 		protected BotService $botService,
 		protected Manager $manager,
 		protected ReactionManager $reactionManager,
+		protected ThreadService $threadService,
 		protected LoggerInterface $logger,
 		private IEventDispatcher $dispatcher,
 	) {
@@ -124,6 +127,8 @@ class BotController extends AEnvironmentAwareOCSController {
 	 * @param string $referenceId For the message to be able to later identify it again
 	 * @param int $replyTo Parent id which this message is a reply to
 	 * @param bool $silent If sent silent the chat message will not create any notifications
+	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
+	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
 	 * @return DataResponse<Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, null, array{}>
 	 *
 	 * 201: Message sent successfully
@@ -138,7 +143,7 @@ class BotController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function sendMessage(string $token, string $message, string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
+	public function sendMessage(string $token, string $message, string $referenceId = '', int $replyTo = 0, bool $silent = false, string $threadTitle = '', int $threadId = 0): DataResponse {
 		if (trim($message) === '') {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
@@ -168,13 +173,36 @@ class BotController extends AEnvironmentAwareOCSController {
 				// Someone is trying to reply cross-rooms or to a non-existing message
 				return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 			}
+		} elseif ($threadId !== Thread::THREAD_NONE && $threadId !== Thread::THREAD_CREATE) {
+			if (!$this->threadService->validateThread($room->getId(), $threadId)) {
+				return new DataResponse(null, Http::STATUS_BAD_REQUEST);
+			}
 		}
 
 		$this->participantService->ensureOneToOneRoomIsFilled($room);
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
-			$this->chatManager->sendMessage($room, null, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent, rateLimitGuestMentions: false);
+			$createThread = $replyTo === 0 && $threadId === Thread::THREAD_NONE && $threadTitle !== '';
+			$threadId = $createThread ? Thread::THREAD_CREATE : $threadId;
+			$comment = $this->chatManager->sendMessage($room, null, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent, false, $threadId, $threadTitle);
+			if ($createThread) {
+				$thread = $this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
+
+				$this->chatManager->addSystemMessage(
+					$room,
+					null,
+					$actorType,
+					$actorId,
+					json_encode(['message' => 'thread_created', 'parameters' => ['thread' => (int)$comment->getId(), 'title' => $thread->getName()]]),
+					$this->timeFactory->getDateTime(),
+					false,
+					null,
+					$comment,
+					true,
+					true
+				);
+			}
 		} catch (MessageTooLongException) {
 			return new DataResponse(null, Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception) {

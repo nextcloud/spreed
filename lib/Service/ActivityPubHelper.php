@@ -13,6 +13,7 @@ use OCA\Talk\Events\BotInvokeEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BotServer;
 use OCA\Talk\Model\Message;
+use OCA\Talk\Model\Thread;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
 
@@ -47,7 +48,7 @@ class ActivityPubHelper {
 
 	/**
 	 * @psalm-param ?ChatMessageParentData $inReplyTo
-	 * @psalm-return NoteType&array{inReplyTo?: ChatMessageParentData}
+	 * @psalm-return NoteType&array{inReplyTo?: ChatMessageParentData, threadId?: int}
 	 */
 	public function generateNote(IComment $comment, array $messageData, string $messageType, ?array $inReplyTo = null): array {
 		/** @var string $content */
@@ -65,6 +66,11 @@ class ActivityPubHelper {
 		];
 		if ($inReplyTo !== null) {
 			$note['inReplyTo'] = $inReplyTo;
+		}
+		$metadata = $comment->getMetaData() ?? [];
+		$threadId = $metadata[Message::METADATA_THREAD_ID] ?? Thread::THREAD_NONE;
+		if ($threadId !== Thread::THREAD_NONE) {
+			$note['threadId'] = (int)$threadId;
 		}
 		return $note;
 	}
