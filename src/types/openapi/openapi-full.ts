@@ -3633,7 +3633,7 @@ export type components = {
             turnservers: {
                 urls: string[];
                 username: string;
-                credential: Record<string, never>;
+                credential: string;
             }[];
             /** @description User id of the current user */
             userId: string | null;
