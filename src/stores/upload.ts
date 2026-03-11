@@ -18,10 +18,11 @@ import { defineStore } from 'pinia'
 import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useTemporaryMessage } from '../composables/useTemporaryMessage.ts'
-import { MESSAGE, SHARED_ITEM } from '../constants.ts'
+import { CONVERSATION, MESSAGE, SHARED_ITEM } from '../constants.ts'
 import { getDavClient } from '../services/DavClient.ts'
 import { EventBus } from '../services/EventBus.ts'
 import {
+	postAttachment as postAttachmentApi,
 	shareFile as shareFileApi,
 } from '../services/filesSharingServices.ts'
 import { isAxiosErrorResponse } from '../types/guards.ts'
@@ -341,6 +342,63 @@ export const useUploadStore = defineStore('upload', () => {
 	}
 
 	/**
+	 * Lazily create the per-conversation attachment subfolder hierarchy via
+	 * WebDAV MKCOL and return the folder path (relative to the user's home root).
+	 *
+	 * Structure: <attachmentFolder>/<ConvName>-<token>/<DisplayPrefix>-<uid>/
+	 *
+	 * The MKCOL of the innermost subfolder triggers a NodeCreatedEvent on the
+	 * backend, which automatically creates a TYPE_ROOM share on that folder so
+	 * all room members can access it.
+	 *
+	 * @param token The conversation token
+	 * @returns The subfolder path (relative to user home root, no leading slash)
+	 */
+	async function ensureConversationFolder(token: string): Promise<string> {
+		const conversation = vuexStore.getters.conversation(token)
+		const displayName: string = conversation?.displayName ?? ''
+
+		// Sanitize display name: replace /, \, and ASCII control chars with space.
+		// eslint-disable-next-line no-control-regex
+		let cleanName = displayName.replace(/[/\\\x00-\x1f]/g, ' ').trim()
+		// Trim to 64 Unicode code points (matching Config::sanitizeDisplayName).
+		cleanName = [...cleanName].slice(0, 64).join('').trimEnd()
+		const convFolderName = cleanName + '-' + token
+
+		// Compute subfolder name: "<displayPrefix>-<uid>" or just "<uid>".
+		const uid = actorStore.userId ?? ''
+		const prefixLen = Math.min(16, Math.max(0, 63 - uid.length))
+		let subfolderName = uid
+		if (prefixLen > 0) {
+			// eslint-disable-next-line no-control-regex
+			let subPrefix = actorStore.displayName.replace(/[/\\\x00-\x1f]/g, ' ').trim()
+			subPrefix = [...subPrefix].slice(0, prefixLen).join('').trimEnd()
+			if (subPrefix) {
+				subfolderName = subPrefix + '-' + uid
+			}
+		}
+
+		const baseFolder = settingsStore.attachmentFolder
+		const convPath = baseFolder + '/' + convFolderName
+		const subPath = convPath + '/' + subfolderName
+
+		const client = getDavClient()
+		const userRoot = '/files/' + uid
+
+		for (const segment of [baseFolder, convPath, subPath]) {
+			try {
+				await client.createDirectory(userRoot + segment)
+			} catch {
+				// Directory already exists — ignore.
+			}
+		}
+
+		// Return the path relative to the user root (no leading slash), which
+		// is the format used by prepareUploadPaths.
+		return subPath.replace(/^\//, '')
+	}
+
+	/**
 	 * Uploads the files to the root directory of the user
 	 *
 	 * @param payload the wrapping object
@@ -372,11 +430,21 @@ export const useUploadStore = defineStore('upload', () => {
 			EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
 		}
 
-		await prepareUploadPaths({ token, uploadId })
+		// For group and public rooms, lazily create the per-conversation subfolder
+		// and use it as the upload target.  The MKCOL triggers the backend to
+		// create a folder-level TYPE_ROOM share automatically.
+		const conversation = vuexStore.getters.conversation(token)
+		const useConversationFolder = conversation
+			&& [CONVERSATION.TYPE.GROUP, CONVERSATION.TYPE.PUBLIC].includes(conversation.type)
+		const conversationFolderPath = useConversationFolder
+			? await ensureConversationFolder(token)
+			: null
+
+		await prepareUploadPaths({ token, uploadId, conversationFolderPath })
 
 		await processUpload({ token, uploadId })
 
-		await shareFiles({ token, uploadId, lastIndex, caption, options })
+		await shareFiles({ token, uploadId, lastIndex, caption, options, conversationFolderPath })
 
 		EventBus.emit('upload-finished')
 	}
@@ -387,8 +455,11 @@ export const useUploadStore = defineStore('upload', () => {
 	 * @param payload the wrapping object
 	 * @param payload.token The conversation token
 	 * @param payload.uploadId unique identifier
+	 * @param payload.conversationFolderPath Optional per-conversation subfolder path
+	 *        (relative to user root, no leading slash). When provided, files are
+	 *        uploaded there instead of directly into the attachment folder.
 	 */
-	async function prepareUploadPaths({ token, uploadId }: { token: string, uploadId: string }) {
+	async function prepareUploadPaths({ token, uploadId, conversationFolderPath }: { token: string, uploadId: string, conversationFolderPath?: string | null }) {
 		const client = getDavClient()
 		const userRoot = '/files/' + actorStore.userId
 
@@ -398,8 +469,11 @@ export const useUploadStore = defineStore('upload', () => {
 		const performPropFind = async (uploadEntry: UploadEntry) => {
 			const [index, uploadedFile] = uploadEntry
 			const fileName = (uploadedFile.file.newName || uploadedFile.file.name)
-			// Candidate rest of the path
-			const path = settingsStore.attachmentFolder + '/' + fileName
+			// Candidate rest of the path — use conversation subfolder if available.
+			const basePath = conversationFolderPath
+				? '/' + conversationFolderPath
+				: settingsStore.attachmentFolder
+			const path = basePath + '/' + fileName
 
 			try {
 				// Check if previous propfind attempt was stored
@@ -497,8 +571,10 @@ export const useUploadStore = defineStore('upload', () => {
 	 * @param payload.lastIndex The index of last uploaded file
 	 * @param payload.caption The text caption to the media
 	 * @param payload.options The share options
+	 * @param payload.conversationFolderPath Optional per-conversation subfolder path.
+	 *        When provided, files are posted via postAttachment (no per-file share).
 	 */
-	async function shareFiles({ token, uploadId, lastIndex, caption, options }: UploadFilesPayload & { lastIndex: string }) {
+	async function shareFiles({ token, uploadId, lastIndex, caption, options, conversationFolderPath }: UploadFilesPayload & { lastIndex: string, conversationFolderPath?: string | null }) {
 		const shares = getShareableFiles(uploadId)
 		for await (const share of shares) {
 			if (!share) {
@@ -516,7 +592,56 @@ export const useUploadStore = defineStore('upload', () => {
 				options?.parent ? { replyTo: options.parent.id } : {},
 			))
 
-			await shareFile({ token, path: shareableFile.sharePath!, index, uploadId, id, referenceId, talkMetaData })
+			if (conversationFolderPath) {
+				// File is in a conversation subfolder covered by a folder-level
+				// TYPE_ROOM share — post it as a chat message without a per-file share.
+				await postFile({ token, path: shareableFile.sharePath!, index, uploadId, id, referenceId, talkMetaData })
+			} else {
+				await shareFile({ token, path: shareableFile.sharePath!, index, uploadId, id, referenceId, talkMetaData })
+			}
+		}
+	}
+
+	/**
+	 * Posts a file from a conversation subfolder as a chat message via the
+	 * dedicated Talk endpoint (no per-file TYPE_ROOM share is created).
+	 *
+	 * @param payload the wrapping object
+	 * @param payload.token The conversation token
+	 * @param payload.path The file path from the user's root directory
+	 * @param payload.index The index of uploaded file
+	 * @param payload.uploadId unique identifier
+	 * @param payload.id Id of temporary message
+	 * @param payload.referenceId A reference id to recognize the message later
+	 * @param payload.talkMetaData The metadata JSON-encoded object
+	 */
+	async function postFile({ token, path, index, uploadId, id, referenceId, talkMetaData }: { token: string, path: string, index: string, uploadId: string, id: number, referenceId: string, talkMetaData: string }) {
+		try {
+			if (uploadId) {
+				markFileAsSharing({ uploadId, index })
+			}
+
+			// The path from prepareUploadPaths has a leading slash; strip it.
+			const filePath = path.replace(/^\//, '')
+			await postAttachmentApi({ token, filePath, referenceId, talkMetaData })
+
+			if (uploadId) {
+				markFileAsShared({ uploadId, index })
+			}
+		} catch (error) {
+			console.error('Error while posting conversation folder file: ', error)
+
+			if (isAxiosErrorResponse(error) && error.response?.status === 403) {
+				showError(t('spreed', 'You are not allowed to share files'))
+			} else if (isAxiosErrorResponse(error) && error.response?.data?.ocs?.meta?.message) {
+				showError(error.response.data.ocs.meta.message)
+			} else {
+				showError(t('spreed', 'Error while sharing file'))
+			}
+
+			if (uploadId) {
+				vuexStore.dispatch('markTemporaryMessageAsFailed', { token, id, uploadId, reason: 'failed-share' })
+			}
 		}
 	}
 
@@ -609,10 +734,12 @@ export const useUploadStore = defineStore('upload', () => {
 		initialiseUpload,
 		discardUpload,
 		uploadFiles,
+		ensureConversationFolder,
 		prepareUploadPaths,
 		processUpload,
 		shareFiles,
 		shareFile,
+		postFile,
 		retryUploadFiles,
 	}
 })

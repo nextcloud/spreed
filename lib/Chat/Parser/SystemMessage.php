@@ -519,7 +519,13 @@ class SystemMessage implements IEventListener {
 			}
 		} elseif ($message === 'file_shared') {
 			try {
-				$parsedParameters['file'] = $this->getFileFromShare($room, $participant, $parameters['share'], $allowInaccurate);
+				if (isset($parameters['share'])) {
+					$parsedParameters['file'] = $this->getFileFromShare($room, $participant, $parameters['share'], $allowInaccurate);
+				} elseif (isset($parameters['fileId'])) {
+					$parsedParameters['file'] = $this->getFileFromNodeId($room, $participant, (int)$parameters['fileId']);
+				} else {
+					throw new \InvalidArgumentException('No share or fileId in file_shared message');
+				}
 				$parsedMessage = '{file}';
 				$metaData = $parameters['metaData'] ?? [];
 				if (isset($metaData['messageType'])) {
@@ -795,6 +801,85 @@ class SystemMessage implements IEventListener {
 		$chatMessage->getComment()->setReactions([]);
 
 		$chatMessage->setMessage($parsedMessage, $parsedParameters, $message);
+	}
+
+	/**
+	 * Build the same file-metadata array as getFileFromShare() but starting
+	 * from a node ID rather than a share ID.
+	 *
+	 * Files posted via the conversation-folder mechanism are accessible to room
+	 * members through the folder-level TYPE_ROOM share, so
+	 * userFolder->getById() will find them via the share mount.
+	 *
+	 * @throws NotFoundException
+	 * @throws ShareNotFound
+	 */
+	protected function getFileFromNodeId(Room $room, ?Participant $participant, int $nodeId): array {
+		if ($participant && $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			$uid = $participant->getAttendee()->getActorId();
+			$userFolder = $this->rootFolder->getUserFolder($uid);
+
+			$node = $userFolder->getFirstNodeById($nodeId);
+			if (!$node instanceof Node) {
+				\OC_Util::tearDownFS();
+				\OC_Util::setupFS($uid);
+				$nodes = $userFolder->getById($nodeId);
+				if (empty($nodes)) {
+					throw new NotFoundException('File node ' . $nodeId . ' not found for user ' . $uid);
+				}
+				$node = reset($nodes);
+			}
+
+			$fullPath = $node->getPath();
+			$pathSegments = explode('/', $fullPath, 4);
+			$name = $node->getName();
+			$size = $node->getSize();
+			$path = $pathSegments[3] ?? $name;
+
+			$url = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', [
+				'fileid' => $node->getId(),
+			]);
+		} elseif ($participant && $room->getType() !== Room::TYPE_PUBLIC && $participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			throw new ShareNotFound();
+		} else {
+			// Guest / public room path: load via the owner's root folder.
+			// Without a per-file share we cannot look up a share token, so
+			// guests will see the file as unavailable.
+			throw new ShareNotFound();
+		}
+
+		$fileId = $node->getId();
+		$isPreviewAvailable = $size > 0 && $this->previewManager->isMimeSupported($node->getMimeType());
+
+		$data = [
+			'type' => 'file',
+			'id' => (string)$fileId,
+			'name' => $name,
+			'size' => (string)$size,
+			'path' => $path,
+			'link' => $url,
+			'etag' => $node->getEtag(),
+			'permissions' => (string)$node->getPermissions(),
+			'mimetype' => $node->getMimeType(),
+			'preview-available' => $isPreviewAvailable ? 'yes' : 'no',
+			'hide-download' => 'no',
+		];
+
+		if ($isPreviewAvailable && str_starts_with($node->getMimeType(), 'image/')) {
+			try {
+				$sizeMetadata = $this->metadataCache->getImageMetadataForFileId($fileId);
+				if (isset($sizeMetadata['width'], $sizeMetadata['height'])) {
+					$data['width'] = (string)$sizeMetadata['width'];
+					$data['height'] = (string)$sizeMetadata['height'];
+				}
+				if (isset($sizeMetadata['blurhash'])) {
+					$data['blurhash'] = $sizeMetadata['blurhash'];
+				}
+			} catch (\OCP\FilesMetadata\Exceptions\FilesMetadataNotFoundException) {
+			}
+		}
+
+		return $data;
 	}
 
 	/**

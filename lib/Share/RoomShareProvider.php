@@ -1335,6 +1335,32 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	}
 
 	#[\Override]
+	/**
+	 * Update the file_target column for all TYPE_ROOM shares belonging to a
+	 * room whose conversation folder has been renamed.
+	 *
+	 * The targets are stored as "/{TALK_PLACEHOLDER}/<convFolder>/<subFolder>".
+	 * When the room display name changes the <convFolder> segment changes too,
+	 * so we replace the old segment with the new one for every affected share.
+	 */
+	public function updateShareTargetsInRoom(string $token, string $oldFolderName, string $newFolderName): void {
+		$oldPrefix = self::TALK_FOLDER_PLACEHOLDER . '/' . $oldFolderName . '/';
+		$newPrefix = self::TALK_FOLDER_PLACEHOLDER . '/' . $newFolderName . '/';
+
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->update('share')
+			->set('file_target', $qb->func()->concat(
+				$qb->createNamedParameter($newPrefix),
+				$qb->func()->substring('file_target', $qb->createNamedParameter(strlen($oldPrefix) + 1, IQueryBuilder::PARAM_INT))
+			))
+			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
+			->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($token)))
+			->andWhere($qb->expr()->like('file_target', $qb->createNamedParameter(
+				$this->dbConnection->escapeLikeParameter($oldPrefix) . '%'
+			)));
+		$qb->executeStatement();
+	}
+
 	public function getUsersForShare(IShare $share): iterable {
 		if ($share->getShareType() === self::SHARE_TYPE_USERROOM) {
 			// User record for a share, user is the shared_with

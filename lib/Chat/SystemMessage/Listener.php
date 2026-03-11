@@ -43,6 +43,7 @@ use OCP\Comments\IComment;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\Files\FileInfo;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\ISession;
@@ -346,6 +347,12 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		// Folder-level conversation shares must not be expired with messages;
+		// they are access-control structures, not individual file postings.
+		if ($share->getNode()->getType() === FileInfo::TYPE_FOLDER) {
+			return;
+		}
+
 		$room = $this->manager->getRoomByToken($share->getSharedWith());
 
 		$messageExpiration = $room->getMessageExpiration();
@@ -370,6 +377,13 @@ class Listener implements IEventListener {
 		}
 		$room = $this->manager->getRoomByToken($share->getSharedWith());
 		$this->participantService->ensureOneToOneRoomIsFilled($room);
+
+		// Folder-level conversation shares are silent — they create no chat
+		// message; file postings are handled through the dedicated endpoint.
+		// ensureOneToOneRoomIsFilled must run first so attendees are persisted.
+		if ($share->getNode()->getType() === FileInfo::TYPE_FOLDER) {
+			return;
+		}
 
 		$metaData = $this->request->getParam('talkMetaData') ?? '';
 		$metaData = json_decode($metaData, true);

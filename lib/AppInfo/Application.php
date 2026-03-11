@@ -90,6 +90,7 @@ use OCA\Talk\Listener\CalDavEventListener;
 use OCA\Talk\Listener\CircleDeletedListener;
 use OCA\Talk\Listener\CircleEditedListener;
 use OCA\Talk\Listener\CircleMembershipListener;
+use OCA\Talk\Listener\ConversationFolderListener;
 use OCA\Talk\Listener\CSPListener;
 use OCA\Talk\Listener\DisplayNameListener;
 use OCA\Talk\Listener\FeaturePolicyListener;
@@ -145,6 +146,7 @@ use OCP\DB\Events\AddMissingIndicesEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudFederationProvider;
 use OCP\Federation\ICloudFederationProviderManager;
+use OCP\Files\Events\Node\NodeCreatedEvent;
 use OCP\Group\Events\GroupChangedEvent;
 use OCP\Group\Events\GroupDeletedEvent;
 use OCP\Group\Events\UserAddedEvent;
@@ -267,6 +269,10 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeShareCreatedEvent::class, ShareListener::class, 1000);
 		$context->registerEventListener(VerifyMountPointEvent::class, ShareListener::class, 1000);
 		$context->registerEventListener(RoomDeletedEvent::class, ShareListener::class);
+
+		// Conversation folder listeners (lazy per-conversation attachment folders)
+		$context->registerEventListener(NodeCreatedEvent::class, ConversationFolderListener::class);
+		$context->registerEventListener(RoomModifiedEvent::class, ConversationFolderListener::class);
 
 		// Group and Circles listeners
 		$context->registerEventListener(GroupDeletedEvent::class, GroupDeletedListener::class);
