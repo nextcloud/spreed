@@ -56,20 +56,20 @@ class ConversationFolderListener implements IEventListener {
 
 	#[\Override]
 	public function handle(Event $event): void {
-		try {
-			if ($event instanceof NodeCreatedEvent) {
-				$node = $event->getNode();
-				if ($node instanceof Folder) {
-					$this->processCreatedFolder($node);
-				}
-			} elseif ($event instanceof RoomModifiedEvent) {
-				$this->handleRoomModified($event);
+		if ($event instanceof NodeCreatedEvent) {
+			$node = $event->getNode();
+			if ($node instanceof Folder) {
+				$this->processCreatedFolder($node);
 			}
-		} catch (\Exception $e) {
-			$this->logger->error('ConversationFolderListener error: {error}', [
-				'error' => $e->getMessage(),
-				'exception' => $e,
-			]);
+		} elseif ($event instanceof RoomModifiedEvent) {
+			try {
+				$this->handleRoomModified($event);
+			} catch (\Exception $e) {
+				$this->logger->error('ConversationFolderListener: room rename failed: {error}', [
+					'error' => $e->getMessage(),
+					'exception' => $e,
+				]);
+			}
 		}
 	}
 
@@ -225,12 +225,6 @@ class ConversationFolderListener implements IEventListener {
 			->setPermissions(Constants::PERMISSION_READ)
 			->setMailSend(false);
 
-		try {
-			$this->shareManager->createShare($share);
-		} catch (\Exception $e) {
-			$this->logger->warning('ConversationFolderListener: share creation failed: {error}', [
-				'error' => $e->getMessage(),
-			]);
-		}
+		$this->shareManager->createShare($share);
 	}
 }
