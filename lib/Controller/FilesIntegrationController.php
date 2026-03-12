@@ -37,6 +37,7 @@ use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\ISession;
@@ -64,6 +65,7 @@ class FilesIntegrationController extends OCSController {
 		private ParticipantService $participantService,
 		private ChatManager $chatManager,
 		private ITimeFactory $timeFactory,
+		private IDBConnection $db,
 		private IL10N $l,
 	) {
 		parent::__construct($appName, $request);
@@ -322,7 +324,7 @@ class FilesIntegrationController extends OCSController {
 		$attachmentPrefix = implode('/', array_slice($pathParts, 0, $count - 3));
 
 		$validAttachmentFolder = $attachmentPrefix === $attachmentFolderBase;
-		$validConvFolder = str_ends_with($convFolderSegment, '-' . $token);
+		$validConvFolder = $convFolderSegment === $this->talkConfig->buildConversationFolderName($room->getName(), $token);
 		$validSubfolder = $subFolderSegment === $uid || str_ends_with($subFolderSegment, '-' . $uid);
 
 		if (!$validAttachmentFolder || !$validConvFolder || !$validSubfolder) {
@@ -330,25 +332,35 @@ class FilesIntegrationController extends OCSController {
 		}
 
 		// Ensure the folder-level TYPE_ROOM share exists; create it lazily if not.
+		// The check and create are wrapped in a transaction to avoid a race
+		// condition where two concurrent requests both observe no share and
+		// both attempt to create one.
 		$parentFolder = $node->getParent();
-		$folderShares = $this->shareManager->getSharesBy($uid, IShare::TYPE_ROOM, $parentFolder, false, 50);
-		$hasRoomShare = false;
-		foreach ($folderShares as $folderShare) {
-			if ($folderShare->getSharedWith() === $token) {
-				$hasRoomShare = true;
-				break;
+		$this->db->beginTransaction();
+		try {
+			$folderShares = $this->shareManager->getSharesBy($uid, IShare::TYPE_ROOM, $parentFolder, false, 50);
+			$hasRoomShare = false;
+			foreach ($folderShares as $folderShare) {
+				if ($folderShare->getSharedWith() === $token) {
+					$hasRoomShare = true;
+					break;
+				}
 			}
-		}
-		if (!$hasRoomShare) {
-			$share = $this->shareManager->newShare();
-			$share->setNode($parentFolder)
-				->setShareType(IShare::TYPE_ROOM)
-				->setSharedBy($uid)
-				->setShareOwner($uid)
-				->setSharedWith($token)
-				->setPermissions(Constants::PERMISSION_READ)
-				->setMailSend(false);
-			$this->shareManager->createShare($share);
+			if (!$hasRoomShare) {
+				$share = $this->shareManager->newShare();
+				$share->setNode($parentFolder)
+					->setShareType(IShare::TYPE_ROOM)
+					->setSharedBy($uid)
+					->setShareOwner($uid)
+					->setSharedWith($token)
+					->setPermissions(Constants::PERMISSION_READ)
+					->setMailSend(false);
+				$this->shareManager->createShare($share);
+			}
+			$this->db->commit();
+		} catch (\Exception $e) {
+			$this->db->rollBack();
+			throw $e;
 		}
 
 		// Parse talkMetaData for caption, messageType, silent, replyTo, threadId.
