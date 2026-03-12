@@ -420,12 +420,10 @@ describe('fileUploadStore', () => {
 
 				// File is posted via Talk attachment endpoint, not shared via OCS
 				expect(postAttachment).toHaveBeenCalledTimes(1)
-				expect(postAttachment).toHaveBeenCalledWith(
-					expect.objectContaining({
-						token: TOKEN,
-						filePath: uniqueFileName.replace(/^\//, ''),
-					}),
-				)
+				expect(postAttachment).toHaveBeenCalledWith(expect.objectContaining({
+					token: TOKEN,
+					filePath: uniqueFileName.replace(/^\//, ''),
+				}))
 				expect(shareFile).not.toHaveBeenCalled()
 			})
 

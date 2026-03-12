@@ -357,7 +357,7 @@ class Config {
 	 */
 	private function sanitizeDisplayName(string $name, int $maxChars): string {
 		// phpcs:ignore -- control characters are intentional
-		$name = preg_replace('/[\/\\\x00-\x1f]+/', ' ', $name);
+		$name = preg_replace('/[\x00-\x1f\/\\\\]+/', ' ', $name);
 		$name = trim((string)$name);
 		if (mb_strlen($name) > $maxChars) {
 			$name = trim(mb_substr($name, 0, $maxChars));
