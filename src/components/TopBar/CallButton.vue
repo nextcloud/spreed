@@ -310,7 +310,7 @@ export default {
 
 		startCallTitle() {
 			if (this.isNextcloudTalkHashDirty) {
-				return t('spreed', 'Nextcloud Talk was updated, you cannot start or join a call.') + ' ' + messagePleaseReload
+				return t('spreed', 'The server was updated, you cannot start or join a call.') + ' ' + messagePleaseReload
 			}
 
 			if (this.callViewStore.callHasJustEnded) {
