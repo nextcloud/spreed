@@ -39,7 +39,6 @@ export default class NoiseSuppressor extends TrackSinkSource {
 		this._addOutputTrackSlot()
 
 		this._enabled = false
-		this._audioEnabled = true
 		this.noiseSuppressionConsumer = null
 	}
 
@@ -62,30 +61,39 @@ export default class NoiseSuppressor extends TrackSinkSource {
 		}
 
 		const track = this.getInputTrack('default')
-		this._handleInputTrack('default', track)
+		this._handleInputTrack('default', track) // todo
 	}
 
+	/**
+	_startEffect() {
+		init
+		set output
+	}
+
+	_stopEffect() {
+		timeout
+		destroy
+		set output
+	}
+		**/
+
 	_handleInputTrack(trackId, track) {
-		if (track) {
-			this._audioEnabled = track.enabled
-		}
 		if (!this._enabled || !track) {
 			this._setOutputTrack('default', track)
 			return
 		}
 
+		const isOriginalTrackEnabled = track.enabled
+
 		const inputStream = new MediaStream([track])
-		const processedStream = processNoiseSuppression(inputStream, true)
+		const processedStream = processNoiseSuppression(inputStream, this._enabled)
 		const processedTrack = processedStream.getAudioTracks()[0]
-		processedTrack.enabled = this._audioEnabled
+		processedTrack.enabled = isOriginalTrackEnabled // todo
 
 		this._setOutputTrack('default', processedTrack)
 	}
 
 	_handleInputTrackEnabled(trackId, enabled) {
-		if (enabled !== this._audioEnabled) {
-			this._audioEnabled = enabled
-			this._setOutputTrackEnabled('default', enabled)
-		}
+		this._setOutputTrackEnabled('default', enabled)
 	}
 }
