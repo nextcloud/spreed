@@ -88,7 +88,7 @@ class ConversationFolderListenerTest extends TestCase {
 	 * Configure mocks for the happy-path case:
 	 *   /uid/files/Talk/<roomName>-<token>/<prefix>-<uid>/
 	 *
-	 * @return array{Folder&MockObject, IShare&MockObject}
+	 * @return array{Folder&MockObject}
 	 */
 	private function setUpValidSubfolder(
 		string $uid = 'user1',
@@ -110,11 +110,7 @@ class ConversationFolderListenerTest extends TestCase {
 		$room->method('getName')->willReturn($roomName);
 		$this->manager->method('getRoomForUserByToken')->with($token, $uid)->willReturn($room);
 
-		$share = $this->shareMock();
-		$this->shareManager->method('getSharesBy')->willReturn([]);
-		$this->shareManager->method('newShare')->willReturn($share);
-
-		return [$folder, $share];
+		return [$folder];
 	}
 
 	private function nodeCreatedEvent(Folder|File $node): NodeCreatedEvent&MockObject {
@@ -128,7 +124,10 @@ class ConversationFolderListenerTest extends TestCase {
 	// -------------------------------------------------------------------------
 
 	public function testShareCreatedForValidGroupRoomSubfolder(): void {
-		[$folder, $share] = $this->setUpValidSubfolder();
+		[$folder] = $this->setUpValidSubfolder();
+		$share = $this->shareMock();
+		$this->shareManager->method('getSharesBy')->willReturn([]);
+		$this->shareManager->method('newShare')->willReturn($share);
 
 		$this->shareManager->expects($this->once())->method('createShare')->with($share);
 
@@ -136,7 +135,10 @@ class ConversationFolderListenerTest extends TestCase {
 	}
 
 	public function testShareCreatedForValidPublicRoomSubfolder(): void {
-		[$folder, $share] = $this->setUpValidSubfolder(roomType: Room::TYPE_PUBLIC);
+		[$folder] = $this->setUpValidSubfolder(roomType: Room::TYPE_PUBLIC);
+		$share = $this->shareMock();
+		$this->shareManager->method('getSharesBy')->willReturn([]);
+		$this->shareManager->method('newShare')->willReturn($share);
 
 		$this->shareManager->expects($this->once())->method('createShare')->with($share);
 
@@ -174,6 +176,9 @@ class ConversationFolderListenerTest extends TestCase {
 
 	public function testShareCreationExceptionPropagates(): void {
 		[$folder] = $this->setUpValidSubfolder();
+		$share = $this->shareMock();
+		$this->shareManager->method('getSharesBy')->willReturn([]);
+		$this->shareManager->method('newShare')->willReturn($share);
 
 		$this->shareManager->method('createShare')
 			->willThrowException(new \RuntimeException('DB write failed'));
