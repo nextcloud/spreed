@@ -821,12 +821,11 @@ class SystemMessage implements IEventListener {
 
 			$node = $userFolder->getFirstNodeById($nodeId);
 			if (!$node instanceof Node) {
-				\OC_Util::tearDownFS();
-				\OC_Util::setupFS($uid);
 				$nodes = $userFolder->getById($nodeId);
 				if (empty($nodes)) {
 					throw new NotFoundException('File node ' . $nodeId . ' not found for user ' . $uid);
 				}
+				/** @var Node $node */
 				$node = reset($nodes);
 			}
 
@@ -911,7 +910,9 @@ class SystemMessage implements IEventListener {
 					// FIXME This should be much more sensible, e.g.
 					// 1. Only be executed on "Waiting for new messages"
 					// 2. Once per request
+					/** @psalm-suppress UndefinedClass */
 					\OC_Util::tearDownFS();
+					/** @psalm-suppress UndefinedClass */
 					\OC_Util::setupFS($participant->getAttendee()->getActorId());
 					$userNodes = $userFolder->getById($share->getNodeId());
 
