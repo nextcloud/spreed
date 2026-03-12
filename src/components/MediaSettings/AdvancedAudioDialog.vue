@@ -23,6 +23,10 @@ const emit = defineEmits<{
 const noiseSuppressionLabel = t('spreed', 'Enable noise suppression')
 const noiseSuppressionDescription = t('spreed', 'Reduce background noises for better voice quality')
 
+// TRANSLATORS Microphone setting to reduce background noises for better voice quality
+const noiseSuppressionWithModelLabel = t('spreed', 'Enhanced noise suppression')
+const noiseSuppressionWithModelDescription = t('spreed', 'Use "{modelName}" real-time noise suppression algorithm', { modelName: 'RNNoise' })
+
 // TRANSLATORS Microphone setting to minimize echo effect from own surrounding
 const echoCancellationLabel = t('spreed', 'Enable echo cancellation')
 const echoCancellationDescription = t('spreed', 'Minimize echo effect from own surrounding')
@@ -37,6 +41,7 @@ const { audioPreviewAvailable, updateAudioStream } = useDevices()
 
 const originalState = {
 	noiseSuppression: settingsStore.noiseSuppression,
+	noiseSuppressionWithModel: settingsStore.noiseSuppressionWithModel,
 	echoCancellation: settingsStore.echoCancellation,
 	autoGainControl: settingsStore.autoGainControl,
 } as const
@@ -50,10 +55,12 @@ function onClosing(result?: unknown) {
 	if (!result) {
 		// Revert changes
 		settingsStore.setNoiseSuppression(originalState.noiseSuppression)
+		settingsStore.setNoiseSuppressionWithModel(originalState.noiseSuppressionWithModel)
 		settingsStore.setEchoCancellation(originalState.echoCancellation)
 		settingsStore.setAutoGainControl(originalState.autoGainControl)
 	} else if (audioPreviewAvailable.value && (
 		originalState.noiseSuppression !== settingsStore.noiseSuppression
+		|| originalState.noiseSuppressionWithModel !== settingsStore.noiseSuppressionWithModel
 		|| originalState.echoCancellation !== settingsStore.echoCancellation
 		|| originalState.autoGainControl !== settingsStore.autoGainControl
 	)) {
@@ -83,14 +90,21 @@ function onClosing(result?: unknown) {
 				:description="noiseSuppressionDescription"
 				@update:modelValue="settingsStore.setNoiseSuppression" />
 			<NcFormBoxSwitch
+				:modelValue="settingsStore.noiseSuppression && settingsStore.noiseSuppressionWithModel"
+				:label="noiseSuppressionWithModelLabel"
+				:description="noiseSuppressionWithModelDescription"
+				:disabled="!settingsStore.noiseSuppression"
+				@update:modelValue="settingsStore.setNoiseSuppressionWithModel" />
+			<NcFormBoxSwitch
 				:modelValue="settingsStore.echoCancellation"
 				:label="echoCancellationLabel"
 				:description="echoCancellationDescription"
 				@update:modelValue="settingsStore.setEchoCancellation" />
 			<NcFormBoxSwitch
-				:modelValue="settingsStore.autoGainControl"
+				:modelValue="!(settingsStore.noiseSuppression && settingsStore.noiseSuppressionWithModel) && settingsStore.autoGainControl"
 				:label="autoGainControlLabel"
 				:description="autoGainControlDescription"
+				:disabled="settingsStore.noiseSuppression && settingsStore.noiseSuppressionWithModel"
 				@update:modelValue="settingsStore.setAutoGainControl" />
 		</NcFormBox>
 	</NcDialog>
