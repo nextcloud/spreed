@@ -1039,9 +1039,7 @@
     "No results" : "Sin resultados",
     "Done" : "Listo",
     "Disable live transcription" : "Deshabilitar transcripción en vivo",
-    "Enable live transcription" : "Habilitar transcripción en vivo",
     "Disable live translation" : "Desactivar traducción en vivo",
-    "Enable live translation" : "Activar traducción en vivo",
     "Raise hand" : "Levantar la mano",
     "Raise hand (R)" : "Levantar mano (R)",
     "Lower hand" : "Bajar la mano",
@@ -1544,7 +1542,6 @@
     "Show or collapse system messages" : "Expandir o contraer mensajes del sistema",
     "No messages" : "No hay mensajes",
     "All messages have expired or have been deleted." : "Todos los mensajes han expirado o han sido eliminados.",
-    "Generate summary" : "Generar resumen",
     "{author} (pinned by you)" : "{author} (fijado por ti)",
     "Unpin" : "No fijar",
     "Cancel search" : "Cancelar búsqueda",
@@ -2111,12 +2108,14 @@
     "Client Push is installed, this improves the performance of desktop clients." : "Client Push se encuentra instalado, esto mejorará el rendimiento de los clientes de escritorio.",
     "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push}no se encuentra instalado, esto podría conllevar a problemas de rendimiento cuando se utilizan clientes de escritorio.",
     "Next meeting" : "Siguiente reunión",
+    "Enable live transcription" : "Habilitar transcripción en vivo",
     "Join conversations from remote Nextcloud servers" : "Unirse a conversaciones de servidores Nextcloud remotos",
     "Your default media state has been saved" : "Se ha guardado el estado predeterminado de sus dispositivos",
     "Set reminder for later today" : "Establecer recordatorio para hoy, más tarde",
     "Set reminder for tomorrow" : "Establecer recordatorio para mañana",
     "Set reminder for this weekend" : "Establecer recordatorio para este fin de semana",
     "Set reminder for next week" : "Establecer recordatorio para la semana que viene",
+    "Generate summary" : "Generar resumen",
     "Open poll • You voted already" : "Encuesta abierta ・ Ya ha votado",
     "Open poll • Click to vote" : "Encuesta abierta ・ Haga clic para votar",
     "Poll • Ended" : "Votación ・ Finalizada",
@@ -2132,6 +2131,7 @@
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Te has unido a la conversación en otra ventana o dispositivo. Nextcloud Talk no soporta esto en la actualidad, por lo que se ha cerrado esta sesión.",
     "Nextcloud Talk was updated." : "Se ha actualizado Nextcloud Talk.",
     "Nextcloud is in maintenance mode." : "Nextcloud está en modo mantenimiento.",
-    "Nextcloud Talk Federation was updated." : "Se ha actualizado la federación de Nextcloud Talk."
+    "Nextcloud Talk Federation was updated." : "Se ha actualizado la federación de Nextcloud Talk.",
+    "Enable live translation" : "Activar traducción en vivo"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
