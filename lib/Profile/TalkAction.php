@@ -87,6 +87,6 @@ class TalkAction implements ILinkAction {
 			return null;
 		}
 
-		return $this->urlGenerator->linkToRouteAbsolute('spreed.Page.index') . '?callUser=' . $this->targetUser->getUID();
+		return $this->urlGenerator->linkToRouteAbsolute('spreed.Page.meetUser', ['user' => $this->targetUser->getUID()]);
 	}
 }

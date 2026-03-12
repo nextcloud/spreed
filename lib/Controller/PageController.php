@@ -34,7 +34,6 @@ use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\AppFramework\Http\TooManyRequestsResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
@@ -46,12 +45,9 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
-use OCP\L10N\IFactory;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Profile\IProfileManager;
 use OCP\Security\Bruteforce\IThrottler;
-use OCP\Security\RateLimiting\ILimiter;
-use OCP\Security\RateLimiting\IRateLimitExceededException;
 use Psr\Log\LoggerInterface;
 use SensitiveParameter;
 
@@ -77,8 +73,6 @@ class PageController extends Controller {
 		protected IGroupManager $groupManager,
 		protected IUserManager $userManager,
 		protected IProfileManager $profileManager,
-		protected ILimiter $limiter,
-		protected IFactory $l10nFactory,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -132,12 +126,6 @@ class PageController extends Controller {
 		return $this->pageHandler();
 	}
 
-	/**
-	 * @param string $token
-	 * @param string $callUser
-	 * @return TemplateResponse|RedirectResponse|TooManyRequestsResponse
-	 * @throws HintException
-	 */
 	#[NoCSRFRequired]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
@@ -145,42 +133,48 @@ class PageController extends Controller {
 	#[FrontpageRoute(verb: 'GET', url: '/')]
 	public function index(string $token = '', string $callUser = ''): Response {
 		if ($callUser !== '') {
+			$user = $this->userSession->getUser();
+			if (!$user instanceof IUser) {
+				return new RedirectResponse($this->url->linkToRoute('spreed.Page.meetUser', ['user' => $callUser]));
+			}
 			$token = '';
 		}
 		return $this->pageHandler($token, $callUser);
 	}
 
-	/**
-	 * @throws \InvalidArgumentException
-	 */
-	protected function createContactRequestRoom(string $targetUserId): Room {
-		$user = $this->userManager->get($targetUserId);
-		if (!$user instanceof IUser) {
-			throw new \InvalidArgumentException('user');
+	#[NoCSRFRequired]
+	#[PublicPage]
+	#[BruteForceProtection(action: 'callUser')]
+	#[FrontpageRoute(verb: 'GET', url: '/meet/{user}', root: '')]
+	public function meetUser(string $user): Response {
+		$loggedInUser = $this->userSession->getUser();
+		if ($loggedInUser instanceof IUser) {
+			$response = $this->api->createRoom(Room::TYPE_ONE_TO_ONE, $user);
+			if ($response->getStatus() === Http::STATUS_OK
+				|| $response->getStatus() === Http::STATUS_CREATED) {
+				$data = $response->getData();
+				return $this->redirectToConversation($data['token']);
+			}
+			return new RedirectResponse($this->url->linkToRoute('spreed.Page.index'));
 		}
 
-		if ($this->talkConfig->isNotAllowedToCreateConversations($user)) {
-			throw new \InvalidArgumentException('config');
+		$targetUser = $this->userManager->get($user);
+		if (!$targetUser instanceof IUser
+			|| $this->talkConfig->isNotAllowedToCreateConversations($targetUser)
+			|| !$this->profileManager->isProfileFieldVisible('talk', $targetUser, null)) {
+			$response = new TemplateResponse('core', '404', [], TemplateResponse::RENDER_AS_GUEST);
+			$response->throttle(['action' => 'callUser', 'callUser' => $user]);
+			return $response;
 		}
 
-		if (!$this->profileManager->isProfileFieldVisible('talk', $user, null)) {
-			throw new \InvalidArgumentException('profile');
-		}
+		$this->initialState->provideInitialState('meet_target_user_id', $user);
+		$this->initialState->provideInitialState('meet_target_display_name', $targetUser->getDisplayName());
 
-		$l = $this->l10nFactory->get('spreed', $this->l10nFactory->getUserLanguage($user));
-
-		return $this->roomService->createConversation(
-			Room::TYPE_PUBLIC,
-			$l->t('Contact request'),
-			$user,
-		);
+		return new TemplateResponse($this->appName, 'meet', [], TemplateResponse::RENDER_AS_GUEST);
 	}
 
 	/**
-	 * @param string $token
-	 * @param string $callUser
-	 * @param string $password
-	 * @return TemplateResponse|RedirectResponse|TooManyRequestsResponse
+	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
 	protected function pageHandler(
@@ -194,28 +188,6 @@ class PageController extends Controller {
 		$bruteForceToken = $token;
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
-			if ($token === '') {
-				try {
-					$this->limiter->registerAnonRequest(
-						'create-anonymous-conversation',
-						5, // Five conversations
-						60 * 60, // Per hour
-						$this->request->getRemoteAddress(),
-					);
-				} catch (IRateLimitExceededException) {
-					return new TooManyRequestsResponse();
-				}
-
-				try {
-					$room = $this->createContactRequestRoom($callUser);
-				} catch (\InvalidArgumentException) {
-					$response = new TemplateResponse('core', '404-profile', [], TemplateResponse::RENDER_AS_GUEST);
-					$response->throttle(['action' => 'callUser', 'callUser' => $callUser]);
-					return $response;
-				}
-
-				return $this->redirectToConversation($room->getToken());
-			}
 			return $this->guestEnterRoom($token, $password, $email, $accessToken);
 		}
 
@@ -341,7 +313,6 @@ class PageController extends Controller {
 	}
 
 	/**
-	 * @param string $token
 	 * @return TemplateResponse|NotFoundResponse
 	 */
 	#[NoCSRFRequired]

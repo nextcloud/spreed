@@ -10,6 +10,7 @@ namespace OCA\Talk\Controller;
 
 use OCA\DAV\CalDAV\TimezoneService;
 use OCA\Talk\Capabilities;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
@@ -104,7 +105,11 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\L10N\IFactory;
+use OCP\Profile\IProfileManager;
 use OCP\Security\Bruteforce\IThrottler;
+use OCP\Security\RateLimiting\ILimiter;
+use OCP\Security\RateLimiting\IRateLimitExceededException;
 use OCP\Server;
 use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
@@ -160,6 +165,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected IL10N $l,
 		protected ThreadService $threadService,
 		protected Forced $forcedParameters,
+		protected IProfileManager $profileManager,
+		protected ILimiter $limiter,
+		protected IFactory $l10nFactory,
+		protected ChatManager $chatManager,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -853,6 +862,86 @@ class RoomController extends AEnvironmentAwareOCSController {
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse(['error' => 'invite'], Http::STATUS_FORBIDDEN);
 		}
+	}
+
+	/**
+	 * Create a meet room for a guest reaching out to a user via their public profile
+	 *
+	 * @param string $targetUserId ID of the user to contact
+	 * @param string $message Initial chat message posted in the conversation
+	 * @param string $displayName Guest display name
+	 * @return DataResponse<Http::STATUS_CREATED, array{token: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_FORBIDDEN|Http::STATUS_TOO_MANY_REQUESTS, null, array{}>
+	 *
+	 * 201: Room created successfully
+	 * 403: Not allowed to create conversations
+	 * 404: User not found or profile not visible
+	 * 429: Rate limit exceeded
+	 */
+	#[PublicPage]
+	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/meet/{targetUserId}', requirements: [
+		'apiVersion' => '(v4)',
+	])]
+	public function createMeetRoom(string $targetUserId, string $message = '', string $displayName = ''): DataResponse {
+		try {
+			$this->limiter->registerAnonRequest(
+				'create-anonymous-conversation',
+				5,
+				60 * 60,
+				$this->request->getRemoteAddress(),
+			);
+		} catch (IRateLimitExceededException) {
+			return new DataResponse(null, Http::STATUS_TOO_MANY_REQUESTS);
+		}
+
+		$user = $this->userManager->get($targetUserId);
+		if (!$user instanceof IUser) {
+			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+			$response->throttle(['action' => 'talkRoomToken']);
+			return $response;
+		}
+
+		if ($this->talkConfig->isNotAllowedToCreateConversations($user)) {
+			return new DataResponse(null, Http::STATUS_FORBIDDEN);
+		}
+
+		if (!$this->profileManager->isProfileFieldVisible('talk', $user, null)) {
+			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+			$response->throttle(['action' => 'talkRoomToken']);
+			return $response;
+		}
+
+		$l = $this->l10nFactory->get('spreed', $this->l10nFactory->getUserLanguage($user));
+
+		$trimmedDisplayName = trim($displayName);
+		if ($trimmedDisplayName !== '') {
+			$roomName = $l->t('Contact request from %s', [$trimmedDisplayName]);
+		} else {
+			$roomName = $l->t('Contact request');
+		}
+
+		$room = $this->roomService->createConversation(
+			Room::TYPE_PUBLIC,
+			$roomName,
+			$user,
+			lobbyState: Webinary::LOBBY_NON_MODERATORS,
+		);
+
+		$message = trim($message);
+		if ($message !== '') {
+			$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, '', true, null, trim($displayName) ?: null);
+			$this->chatManager->sendMessage(
+				$room,
+				$participant,
+				Attendee::ACTOR_GUESTS,
+				$participant->getAttendee()->getActorId(),
+				$message,
+				$this->timeFactory->getDateTime(),
+			);
+			$this->participantService->leaveRoomAsSession($room, $participant);
+		}
+
+		return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 	}
 
 	/**
