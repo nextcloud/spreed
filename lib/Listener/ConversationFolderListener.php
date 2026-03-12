@@ -159,6 +159,13 @@ class ConversationFolderListener implements IEventListener {
 		}
 		$ownerUid = substr($path, 1, $firstSlash - 1);
 
+		// Verify the uid parsed from the path matches the node's actual owner
+		// to guard against any path-parsing inconsistency being exploited.
+		$owner = $folder->getOwner();
+		if ($owner === null || $owner->getUID() !== $ownerUid) {
+			return;
+		}
+
 		// Build expected prefix and reject anything outside it.
 		// getAttachmentFolder() returns e.g. "/Talk" (with leading slash).
 		$attachmentFolder = $this->talkConfig->getAttachmentFolder($ownerUid);

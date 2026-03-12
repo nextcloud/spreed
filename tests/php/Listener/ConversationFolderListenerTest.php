@@ -14,7 +14,6 @@ use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Listener\ConversationFolderListener;
 use OCA\Talk\Manager;
-use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Room;
 use OCA\Talk\Share\RoomShareProvider;
@@ -22,6 +21,7 @@ use OCP\Files\Events\Node\NodeCreatedEvent;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
+use OCP\IUser;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -64,10 +64,15 @@ class ConversationFolderListenerTest extends TestCase {
 	// Helpers
 	// -------------------------------------------------------------------------
 
-	/** Build a Folder mock with a fixed path. */
-	private function folderWithPath(string $path): Folder&MockObject {
+	/** Build a Folder mock with a fixed path and optional owner uid. */
+	private function folderWithPath(string $path, ?string $ownerUid = null): Folder&MockObject {
 		$folder = $this->createMock(Folder::class);
 		$folder->method('getPath')->willReturn($path);
+		if ($ownerUid !== null) {
+			$owner = $this->createMock(IUser::class);
+			$owner->method('getUID')->willReturn($ownerUid);
+			$folder->method('getOwner')->willReturn($owner);
+		}
 		return $folder;
 	}
 
@@ -100,7 +105,7 @@ class ConversationFolderListenerTest extends TestCase {
 		$subfolder = 'dis-' . $uid;
 		$path = '/' . $uid . '/files/Talk/' . $convFolder . '/' . $subfolder;
 
-		$folder = $this->folderWithPath($path);
+		$folder = $this->folderWithPath($path, $uid);
 
 		$this->talkConfig->method('getAttachmentFolder')->with($uid)->willReturn('/Talk');
 		$this->talkConfig->method('buildConversationFolderName')->with($roomName, $token)->willReturn($convFolder);
@@ -153,7 +158,7 @@ class ConversationFolderListenerTest extends TestCase {
 		$convFolder = $roomName . '-' . $token;
 		$path = '/' . $uid . '/files/Talk/' . $convFolder . '/' . $uid;
 
-		$folder = $this->folderWithPath($path);
+		$folder = $this->folderWithPath($path, $uid);
 		$this->talkConfig->method('getAttachmentFolder')->with($uid)->willReturn('/Talk');
 		$this->talkConfig->method('buildConversationFolderName')->with($roomName, $token)->willReturn($convFolder);
 
@@ -194,7 +199,7 @@ class ConversationFolderListenerTest extends TestCase {
 	// -------------------------------------------------------------------------
 
 	public function testFolderOutsideAttachmentFolderIsIgnored(): void {
-		$folder = $this->folderWithPath('/user1/files/Documents/somefolder/sub');
+		$folder = $this->folderWithPath('/user1/files/Documents/somefolder/sub', 'user1');
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->shareManager->expects($this->never())->method('createShare');
 
@@ -204,7 +209,7 @@ class ConversationFolderListenerTest extends TestCase {
 	public function testConvFolderLevelIsIgnored(): void {
 		// Only one segment after the prefix — this is the conversation folder
 		// itself, not a user subfolder. No share should be created.
-		$folder = $this->folderWithPath('/user1/files/Talk/Group room-TOKEN');
+		$folder = $this->folderWithPath('/user1/files/Talk/Group room-TOKEN', 'user1');
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->shareManager->expects($this->never())->method('createShare');
 
@@ -213,7 +218,7 @@ class ConversationFolderListenerTest extends TestCase {
 
 	public function testFolderTooDeepIsIgnored(): void {
 		// Three segments after the prefix — deeper than expected.
-		$folder = $this->folderWithPath('/user1/files/Talk/Group room-TOKEN/dis-user1/deep');
+		$folder = $this->folderWithPath('/user1/files/Talk/Group room-TOKEN/dis-user1/deep', 'user1');
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->shareManager->expects($this->never())->method('createShare');
 
@@ -222,7 +227,7 @@ class ConversationFolderListenerTest extends TestCase {
 
 	public function testSubfolderNameNotMatchingUidIsIgnored(): void {
 		// Subfolder does not end with the owner's uid.
-		$folder = $this->folderWithPath('/user1/files/Talk/Group room-TOKEN/someone-else');
+		$folder = $this->folderWithPath('/user1/files/Talk/Group room-TOKEN/someone-else', 'user1');
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->shareManager->expects($this->never())->method('createShare');
 
@@ -231,7 +236,7 @@ class ConversationFolderListenerTest extends TestCase {
 
 	public function testConvFolderWithoutDashIsIgnored(): void {
 		// Cannot extract a token — conv folder has no dash.
-		$folder = $this->folderWithPath('/user1/files/Talk/NODASH/dis-user1');
+		$folder = $this->folderWithPath('/user1/files/Talk/NODASH/dis-user1', 'user1');
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->shareManager->expects($this->never())->method('createShare');
 
@@ -239,7 +244,7 @@ class ConversationFolderListenerTest extends TestCase {
 	}
 
 	public function testRoomNotFoundIsIgnored(): void {
-		$folder = $this->folderWithPath('/user1/files/Talk/Group room-TOKEN/dis-user1');
+		$folder = $this->folderWithPath('/user1/files/Talk/Group room-TOKEN/dis-user1', 'user1');
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->manager->method('getRoomForUserByToken')
 			->willThrowException(new RoomNotFoundException());
@@ -259,7 +264,7 @@ class ConversationFolderListenerTest extends TestCase {
 		// Room was renamed — folder name no longer matches what Talk would generate.
 		$uid = 'user1';
 		$token = 'TOKEN';
-		$folder = $this->folderWithPath('/' . $uid . '/files/Talk/Old name-' . $token . '/dis-' . $uid);
+		$folder = $this->folderWithPath('/' . $uid . '/files/Talk/Old name-' . $token . '/dis-' . $uid, $uid);
 		$this->talkConfig->method('getAttachmentFolder')->with($uid)->willReturn('/Talk');
 		$this->talkConfig->method('buildConversationFolderName')
 			->with('New name', $token)->willReturn('New name-' . $token);
@@ -279,6 +284,25 @@ class ConversationFolderListenerTest extends TestCase {
 
 		$this->shareManager->method('getSharesBy')
 			->willReturn([$this->createMock(IShare::class)]);
+		$this->shareManager->expects($this->never())->method('createShare');
+
+		$this->listener->handle($this->nodeCreatedEvent($folder));
+	}
+
+	public function testNullOwnerIsIgnored(): void {
+		// getOwner() returns null — no share should be created.
+		$folder = $this->folderWithPath('/user1/files/Talk/Group room-TOKEN/dis-user1');
+		// ownerUid not passed → getOwner() returns null by default
+		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
+		$this->shareManager->expects($this->never())->method('createShare');
+
+		$this->listener->handle($this->nodeCreatedEvent($folder));
+	}
+
+	public function testOwnerUidMismatchIsIgnored(): void {
+		// getOwner() returns a different uid than what the path implies.
+		$folder = $this->folderWithPath('/user1/files/Talk/Group room-TOKEN/dis-user1', 'other-user');
+		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->shareManager->expects($this->never())->method('createShare');
 
 		$this->listener->handle($this->nodeCreatedEvent($folder));
