@@ -1334,7 +1334,6 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$cursor->closeCursor();
 	}
 
-	#[\Override]
 	/**
 	 * Update the file_target column for all TYPE_ROOM shares belonging to a
 	 * room whose conversation folder has been renamed.
@@ -1361,6 +1360,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$qb->executeStatement();
 	}
 
+	#[\Override]
 	public function getUsersForShare(IShare $share): iterable {
 		if ($share->getShareType() === self::SHARE_TYPE_USERROOM) {
 			// User record for a share, user is the shared_with

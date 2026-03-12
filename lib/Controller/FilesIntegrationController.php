@@ -254,8 +254,7 @@ class FilesIntegrationController extends OCSController {
 	 *                         (e.g. "Talk/Group Chat-abc123/Alice-alice/photo.jpg")
 	 * @param string $referenceId Client-generated reference ID for the message
 	 * @param string $talkMetaData JSON-encoded metadata (caption, messageType, silent, …)
-	 * @return DataResponse<Http::STATUS_OK, array{}, array{}>
-	 *                                                         |DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_UNPROCESSABLE_ENTITY, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_UNPROCESSABLE_ENTITY, array{error: string}, array{}>
 	 *
 	 * 200: File posted as chat message
 	 * 400: Rooms not allowed for file shares
@@ -314,9 +313,13 @@ class FilesIntegrationController extends OCSController {
 		$pathParts = explode('/', ltrim($filePath, '/'));
 		// Must have at least 4 parts: attachmentFolder / convFolder / subfolder / filename
 		// (attachmentFolder may itself be multi-level, so count from the end)
-		$convFolderSegment = $pathParts[count($pathParts) - 3] ?? '';
-		$subFolderSegment = $pathParts[count($pathParts) - 2] ?? '';
-		$attachmentPrefix = implode('/', array_slice($pathParts, 0, count($pathParts) - 3));
+		$count = count($pathParts);
+		if ($count < 4) {
+			return new DataResponse(['error' => $this->l->t('File is not inside a conversation folder shared with this room')], Http::STATUS_UNPROCESSABLE_ENTITY);
+		}
+		$convFolderSegment = $pathParts[$count - 3];
+		$subFolderSegment = $pathParts[$count - 2];
+		$attachmentPrefix = implode('/', array_slice($pathParts, 0, $count - 3));
 
 		$validAttachmentFolder = $attachmentPrefix === $attachmentFolderBase;
 		$validConvFolder = str_ends_with($convFolderSegment, '-' . $token);
