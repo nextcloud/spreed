@@ -15,8 +15,11 @@
   </file>
   <file src="lib/Chat/Parser/SystemMessage.php">
     <UndefinedClass>
-      <code><![CDATA[\OC_Util]]></code>
+      <code><![CDATA[Reader]]></code>
     </UndefinedClass>
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[getContent]]></code>
+    </UndefinedInterfaceMethod>
   </file>
   <file src="lib/Command/PhoneNumber/AddPhoneNumber.php">
     <UndefinedConstant>
