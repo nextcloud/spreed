@@ -71,7 +71,7 @@ jobs:
       - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
         # Skip if no package.json
         if: ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
 
@@ -172,7 +172,7 @@ jobs:
           tar -xvf ${{ env.APP_NAME }}.tar.gz
           cd ../../../
           # Setting up keys
-          echo '${{ secrets.APP_PRIVATE_KEY }}' > ${{ env.APP_NAME }}.key
+          echo '${{ secrets.APP_PRIVATE_KEY }}' > ${{ env.APP_NAME }}.key # zizmor: ignore[secrets-outside-env]
           wget --quiet "https://github.com/nextcloud/app-certificate-requests/raw/master/${{ env.APP_NAME }}/${{ env.APP_NAME }}.crt"
           # Signing
           php nextcloud/occ integrity:sign-app --privateKey=../${{ env.APP_NAME }}.key --certificate=../${{ env.APP_NAME }}.crt --path=../${{ env.APP_NAME }}/build/artifacts/${{ env.APP_NAME }}
@@ -194,6 +194,6 @@ jobs:
         uses: nextcloud-releases/nextcloud-appstore-push-action@a011fe619bcf6e77ddebc96f9908e1af4071b9c1 # v1.0.3
         with:
           app_name: ${{ env.APP_NAME }}
-          appstore_token: ${{ secrets.APPSTORE_TOKEN }}
+          appstore_token: ${{ secrets.APPSTORE_TOKEN }} # zizmor: ignore[secrets-outside-env]
           download_url: ${{ steps.attach_to_release.outputs.browser_download_url }}
-          app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          app_private_key: ${{ secrets.APP_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
