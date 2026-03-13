@@ -345,6 +345,7 @@ export default {
 				} else {
 					this.modalPage = 'voting'
 				}
+				this.setVoteData()
 			},
 		},
 	},
