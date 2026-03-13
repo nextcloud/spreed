@@ -88,7 +88,7 @@ jobs:
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
           path: apps/${{ env.APP_NAME }}
-          token: ${{ secrets.COMMAND_BOT_PAT }}
+          token: ${{ secrets.COMMAND_BOT_PAT }} # zizmor: ignore[secrets-outside-env]
           commit-message: 'chore(ts): update OpenAPI types from core'
           committer: GitHub <noreply@github.com>
           author: nextcloud-command <nextcloud-command@users.noreply.github.com>
