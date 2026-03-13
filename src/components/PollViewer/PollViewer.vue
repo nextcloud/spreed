@@ -112,7 +112,7 @@
 				<NcButton
 					v-if="selfHasVoted"
 					variant="secondary"
-					:disabled="disabled"
+					:disabled="loading || !voteToSubmit.length"
 					@click="withdrawVote">
 					{{ t('spreed', 'Withdraw vote') }}
 				</NcButton>
@@ -394,7 +394,7 @@ export default {
 		},
 
 		async submitVote() {
-			// Go to voting incase of changing the vote
+			// Go to voting in case of changing the vote
 			if (this.modalPage !== 'voting' && this.voteToSubmit.length) {
 				this.modalPage = 'voting'
 				return
@@ -470,10 +470,6 @@ export default {
 		}
 	}
 
-	&__actions {
-		flex-wrap: wrap
-	}
-
 	&__summary {
 		color: var(--color-text-maxcontrast);
 		margin-bottom: 16px;
@@ -496,6 +492,7 @@ export default {
 		position: sticky;
 		bottom: 0;
 		display: flex;
+		flex-wrap: wrap;
 		gap: 8px;
 		padding: 8px 0 0;
 		background-color: var(--color-main-background);
