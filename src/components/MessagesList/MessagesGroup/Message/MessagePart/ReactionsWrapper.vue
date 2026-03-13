@@ -97,6 +97,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
+import { emojiAddRecent } from '@nextcloud/vue/functions/emoji'
 import IconEmoticonPlusOutline from 'vue-material-design-icons/EmoticonPlusOutline.vue'
 import IconHeartOutline from 'vue-material-design-icons/HeartOutline.vue'
 import ReactionsList from './ReactionsList.vue'
@@ -242,6 +243,8 @@ export default {
 					messageId: this.id,
 					selectedEmoji: clickedEmoji,
 				})
+				// Update value in frequently used emoji
+				emojiAddRecent(clickedEmoji)
 			} else {
 				this.reactionsStore.removeReactionFromMessage({
 					token: this.token,
