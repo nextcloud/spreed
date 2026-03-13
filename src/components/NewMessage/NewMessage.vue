@@ -1235,7 +1235,6 @@ export default {
 			if (this.messageToEdit || this.scheduleMessageTime) {
 				return
 			}
-			e.preventDefault()
 			// Prevent a new call of this.handleFiles if already called
 			if (this.clipboardTimeStamp === e.timeStamp) {
 				return
