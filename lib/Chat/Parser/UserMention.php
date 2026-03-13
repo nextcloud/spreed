@@ -138,7 +138,7 @@ class UserMention implements IEventListener {
 			// index of the mentions of that type.
 			$mentionParameterId = 'mention-' . str_replace('_', '-', $mention['type']) . $mentionTypeCount[$mention['type']];
 
-			$message = str_replace('@"' . $search . '"', '{' . $mentionParameterId . '}', $message);
+			$message = $this->replaceOutsideCode($message, '@"' . $search . '"', '{' . $mentionParameterId . '}');
 			if (!str_contains($search, ' ')
 				&& !str_starts_with($search, 'guest/')
 				&& !str_starts_with($search, 'email/')
@@ -147,7 +147,7 @@ class UserMention implements IEventListener {
 				 && !str_starts_with($search, 'team/')
 				// && !str_starts_with($search, 'federated_team/')
 				&& !str_starts_with($search, 'federated_user/')) {
-				$message = str_replace('@' . $search, '{' . $mentionParameterId . '}', $message);
+				$message = $this->replaceOutsideCode($message, '@' . $search, '{' . $mentionParameterId . '}');
 			}
 
 			if ($mention['type'] === 'call') {
@@ -252,6 +252,16 @@ class UserMention implements IEventListener {
 		}
 
 		$chatMessage->setMessage($message, $messageParameters);
+	}
+
+	/**
+	 * Replace mentions only outside of markdown code blocks and inline code.
+	 */
+	protected function replaceOutsideCode(string $message, string $search, string $replacement): string {
+		$pattern = '/^```.*?^```|^~~~.*?^~~~|`[^`\n]*`|' . preg_quote($search, '/') . '/sm';
+		return preg_replace_callback($pattern, static function (array $match) use ($search, $replacement): string {
+			return ($match[0] === $search) ? $replacement : $match[0];
+		}, $message);
 	}
 
 	/**
