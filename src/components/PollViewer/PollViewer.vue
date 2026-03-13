@@ -107,6 +107,15 @@
 					</template>
 					{{ !selfHasVoted ? t('spreed', 'Submit') : t('spreed', 'Change your vote') }}
 				</NcButton>
+
+				<!-- Withdraw vote button-->
+				<NcButton
+					v-if="selfHasVoted"
+					variant="secondary"
+					:disabled="loading || !voteToSubmit.length"
+					@click="withdrawVote">
+					{{ t('spreed', 'Withdraw vote') }}
+				</NcButton>
 			</div>
 			<div v-else-if="supportPollDrafts && selfIsOwnerOrModerator" class="poll-modal__actions">
 				<NcActions forceMenu>
@@ -336,6 +345,7 @@ export default {
 				} else {
 					this.modalPage = 'voting'
 				}
+				this.setVoteData()
 			},
 		},
 	},
@@ -374,13 +384,19 @@ export default {
 			this.pollsStore.addPollToast({ token, message })
 		},
 
+		withdrawVote() {
+			this.voteToSubmit = []
+			this.submitVote()
+		},
+
 		dismissModal() {
 			this.pollsStore.removeActivePoll()
 			this.voteToSubmit = []
 		},
 
 		async submitVote() {
-			if (this.modalPage !== 'voting') {
+			// Go to voting in case of changing the vote
+			if (this.modalPage !== 'voting' && this.voteToSubmit.length) {
 				this.modalPage = 'voting'
 				return
 			}
@@ -392,7 +408,9 @@ export default {
 					pollId: this.id,
 					optionIds: this.voteToSubmit.map((element) => +element),
 				})
-				if (this.isPollPublic) {
+				if (!this.voteToSubmit.length) {
+					this.modalPage = 'voting'
+				} else if (this.isPollPublic) {
 					this.modalPage = 'results'
 				}
 			} catch (error) {
@@ -475,6 +493,7 @@ export default {
 		position: sticky;
 		bottom: 0;
 		display: flex;
+		flex-wrap: wrap;
 		gap: 8px;
 		padding: 8px 0 0;
 		background-color: var(--color-main-background);
