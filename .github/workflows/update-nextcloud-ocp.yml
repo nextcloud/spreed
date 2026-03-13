@@ -113,7 +113,7 @@ jobs:
         if: steps.checkout.outcome == 'success'
         uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v8.1.0
         with:
-          token: ${{ secrets.COMMAND_BOT_PAT }}
+          token: ${{ secrets.COMMAND_BOT_PAT }} # zizmor: ignore[secrets-outside-env]
           commit-message: 'chore(dev-deps): Bump nextcloud/ocp package'
           committer: GitHub <noreply@github.com>
           author: nextcloud-command <nextcloud-command@users.noreply.github.com>
@@ -124,3 +124,4 @@ jobs:
             Auto-generated update of [nextcloud/ocp](https://github.com/nextcloud-deps/ocp/) dependency
           labels: |
             dependencies
+            3. to review

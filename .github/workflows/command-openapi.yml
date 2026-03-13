@@ -59,7 +59,7 @@ jobs:
       - name: Add reaction on start
         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         with:
-          token: ${{ secrets.COMMAND_BOT_PAT }}
+          token: ${{ secrets.COMMAND_BOT_PAT }} # zizmor: ignore[secrets-outside-env]
           repository: ${{ github.event.repository.full_name }}
           comment-id: ${{ github.event.comment.id }}
           reactions: '+1'
@@ -86,7 +86,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         if: failure()
         with:
-          token: ${{ secrets.COMMAND_BOT_PAT }}
+          token: ${{ secrets.COMMAND_BOT_PAT }} # zizmor: ignore[secrets-outside-env]
           repository: ${{ github.event.repository.full_name }}
           comment-id: ${{ github.event.comment.id }}
           reactions: '-1'
@@ -107,7 +107,7 @@ jobs:
         with:
           # Needed to allow force push later
           persist-credentials: true
-          token: ${{ secrets.COMMAND_BOT_PAT }}
+          token: ${{ secrets.COMMAND_BOT_PAT }} # zizmor: ignore[secrets-outside-env]
           fetch-depth: 0
           ref: ${{ needs.init.outputs.head_ref }}
 
@@ -193,7 +193,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         if: failure()
         with:
-          token: ${{ secrets.COMMAND_BOT_PAT }}
+          token: ${{ secrets.COMMAND_BOT_PAT }} # zizmor: ignore[secrets-outside-env]
           repository: ${{ github.event.repository.full_name }}
           comment-id: ${{ github.event.comment.id }}
           reactions: '-1'
