@@ -155,6 +155,7 @@ async function getMessageContext({ token, messageId, threadId, limit = 50 }: Get
  * @param payload.silent whether the message should trigger a notifications
  * @param payload.threadId The thread id to post the message in
  * @param payload.threadTitle The thread title to set when creating a new thread
+ * @param payload.replyToToken The replyTo conversation token
  * @param [options] Axios request options
  */
 async function postNewMessage({
@@ -166,12 +167,14 @@ async function postNewMessage({
 	silent,
 	threadId,
 	threadTitle,
+	replyToToken,
 }: postNewMessageParams & { token: string }, options?: AxiosRequestConfig): postNewMessageResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), {
 		message,
 		actorDisplayName,
 		referenceId,
 		replyTo,
+		replyToToken,
 		silent,
 		threadId,
 		threadTitle,
@@ -411,6 +414,7 @@ async function getScheduledMessages(token: string, options?: AxiosRequestConfig)
  * @param payload.silent whether the message should trigger a notifications
  * @param payload.threadId The thread id to post the message in
  * @param payload.threadTitle The thread title to set when creating a new thread
+ * @param payload.replyToToken The replyTo conversation token
  * @param [options] Axios request options
  */
 async function scheduleMessage({
@@ -421,11 +425,13 @@ async function scheduleMessage({
 	silent,
 	threadId,
 	threadTitle,
+	replyToToken,
 }: scheduleMessageParams & { token: string }, options?: AxiosRequestConfig): scheduleMessageResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/schedule', { token }), {
 		message,
 		sendAt,
 		replyTo,
+		replyToToken,
 		silent,
 		threadId,
 		threadTitle,
