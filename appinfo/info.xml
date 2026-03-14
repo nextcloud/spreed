@@ -62,7 +62,7 @@
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/main/docs/video-verfication.png</screenshot>
 
 	<dependencies>
-		<nextcloud min-version="33" max-version="33" />
+		<nextcloud min-version="34" max-version="34" />
 	</dependencies>
 
 	<background-jobs>
