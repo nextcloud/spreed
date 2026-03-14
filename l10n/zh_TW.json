@@ -1416,6 +1416,8 @@
     "You are currently waiting in the lobby" : "您目前正在大廳等候",
     "Enable noise suppression" : "啟用雜訊抑制",
     "Reduce background noises for better voice quality" : "降低背景雜音，改善語音品質",
+    "Enhanced noise suppression" : "強化雜訊抑制",
+    "Use \"{modelName}\" real-time noise suppression algorithm" : "使用「{modelName}」即時雜訊抑制演算法",
     "Enable echo cancellation" : "啟用迴音消除",
     "Minimize echo effect from own surrounding" : "盡量減少自身周圍環境造成的迴音效應",
     "Enable auto gain control" : "啟用自動增益控制",

@@ -1418,6 +1418,8 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "Você está atualmente esperando na sala de espera",
     "Enable noise suppression" : "Ativar supressão de ruído",
     "Reduce background noises for better voice quality" : "Reduza os ruídos de fundo para obter uma melhor qualidade de voz",
+    "Enhanced noise suppression" : "Supressão de ruído aprimorada",
+    "Use \"{modelName}\" real-time noise suppression algorithm" : "Use o algoritmo de supressão de ruído em tempo real \"{modelName}\"",
     "Enable echo cancellation" : "Ativar cancelamento de eco",
     "Minimize echo effect from own surrounding" : "Minimize o efeito de eco do próprio ambiente",
     "Enable auto gain control" : "Ativar controle automático de ganho",
