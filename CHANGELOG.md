@@ -5,13 +5,6 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
-### Added
-- Allow users to organize conversations into custom sections with drag-and-drop reordering
-  [#12025](https://github.com/nextcloud/spreed/issues/12025)
-- Add sort options for conversations: recent activity, alphabetical, and groups first
-  [#12025](https://github.com/nextcloud/spreed/issues/12025)
-
 ## 23.0.1 – 2026-02-18
 ### Fixed
 - fix(sharing): Fix type error when a share is loaded before the user loaded all their shares
