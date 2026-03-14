@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "777731a814fbdd895b5b3cce688e16e8",
+    "content-hash": "1b6794c9d269b40cb3a7d55bc31ccc60",
     "packages": [
         {
             "name": "coenjacobs/mozart",
-            "version": "1.1.2",
+            "version": "1.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/coenjacobs/mozart.git",
-                "reference": "9c07eee7a7696d940714be60a1a8d85547261ae5"
+                "reference": "0c69d123cb4b12948ecd959a801bbc459726cd56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coenjacobs/mozart/zipball/9c07eee7a7696d940714be60a1a8d85547261ae5",
-                "reference": "9c07eee7a7696d940714be60a1a8d85547261ae5",
+                "url": "https://api.github.com/repos/coenjacobs/mozart/zipball/0c69d123cb4b12948ecd959a801bbc459726cd56",
+                "reference": "0c69d123cb4b12948ecd959a801bbc459726cd56",
                 "shasum": ""
             },
             "require": {
@@ -70,7 +70,7 @@
             "description": "Composes all dependencies as a package inside a WordPress plugin",
             "support": {
                 "issues": "https://github.com/coenjacobs/mozart/issues",
-                "source": "https://github.com/coenjacobs/mozart/tree/1.1.2"
+                "source": "https://github.com/coenjacobs/mozart/tree/1.1.3"
             },
             "funding": [
                 {
@@ -78,7 +78,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-24T15:54:23+00:00"
+            "time": "2026-03-04T08:57:17+00:00"
         },
         {
             "name": "league/flysystem",
