@@ -10,13 +10,38 @@ import { useVirtualList } from '@vueuse/core'
 import { computed, toRef } from 'vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 import ConversationItem from './ConversationItem.vue'
+import ConversationSectionHeader from './ConversationSectionHeader.vue'
 import { AVATAR } from '../../../constants.ts'
 
+export type SectionHeaderItem = {
+	_type: 'section-header'
+	id: string
+	name: string
+	sectionId: number | string
+	collapsed: boolean
+	unreadCount: number
+}
+
+export type ListItem = Conversation | SectionHeaderItem
+
 const props = defineProps<{
-	conversations: Conversation[]
+	conversations: ListItem[]
 	loading?: boolean
 	compact?: boolean
 }>()
+
+const emit = defineEmits<{
+	(e: 'toggleSectionCollapsed', sectionId: number | string): void
+}>()
+
+/**
+ * Type guard to check if a list item is a section header
+ *
+ * @param item The list item to check
+ */
+function isSectionHeader(item: ListItem): item is SectionHeaderItem {
+	return '_type' in item && item._type === 'section-header'
+}
 
 /**
  * Consider:
@@ -26,7 +51,7 @@ const props = defineProps<{
  */
 const itemHeight = computed(() => props.compact ? 28 + 2 * 2 : AVATAR.SIZE.DEFAULT + 2 * 4 + 2 * 2)
 
-const { list, containerProps, wrapperProps } = useVirtualList<Conversation>(toRef(() => props.conversations), {
+const { list, containerProps, wrapperProps } = useVirtualList<ListItem>(toRef(() => props.conversations), {
 	itemHeight: () => itemHeight.value,
 	overscan: 10,
 })
@@ -98,10 +123,19 @@ function scrollToItem(index: number) {
  * @param token - token of conversation to scroll to
  */
 function scrollToConversation(token: string) {
-	const index = props.conversations.findIndex((conversation) => conversation.token === token)
+	const index = props.conversations.findIndex((item) => !isSectionHeader(item) && item.token === token)
 	if (index !== -1) {
 		scrollToItem(index)
 	}
+}
+
+/**
+ * Handle toggling section collapsed state
+ *
+ * @param sectionId The section ID to toggle
+ */
+function handleToggleCollapsed(sectionId: number | string) {
+	emit('toggleSectionCollapsed', sectionId)
 }
 
 defineExpose({
@@ -121,11 +155,19 @@ defineExpose({
 		<ul
 			v-else
 			:style="wrapperProps.style">
-			<ConversationItem
-				v-for="item in list"
-				:key="item.data.id"
-				:item="item.data"
-				:compact />
+			<template v-for="item in list" :key="item.data._type === 'section-header' ? item.data.id : item.data.id">
+				<ConversationSectionHeader
+					v-if="item.data._type === 'section-header'"
+					:name="item.data.name"
+					:sectionId="item.data.sectionId"
+					:collapsed="item.data.collapsed"
+					:unreadCount="item.data.unreadCount"
+					@toggleCollapsed="handleToggleCollapsed" />
+				<ConversationItem
+					v-else
+					:item="item.data"
+					:compact />
+			</template>
 		</ul>
 	</li>
 </template>

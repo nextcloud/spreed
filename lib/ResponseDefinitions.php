@@ -12,6 +12,13 @@ namespace OCA\Talk;
 /**
  * @psalm-type TalkActorTypes = 'users'|'groups'|'guests'|'emails'|'circles'|'bridged'|'bots'|'federated_users'|'phones'
  *
+ * @psalm-type TalkConversationSection = array{
+ *     id: int,
+ *     name: string,
+ *     sortOrder: int,
+ *     collapsed: bool,
+ * }
+ *
  * @psalm-type TalkBan = array{
  *     // Identifier of the ban
  *     id: int,
@@ -554,6 +561,8 @@ namespace OCA\Talk;
  *     isImportant: bool,
  *     // Required capability: `sensitive-conversations`
  *     isSensitive: bool,
+ *     // ID of the custom section this conversation belongs to (only available with `conversation-sections` capability)
+ *     sectionId: ?int,
  *     // Required capability: `pinned-messages`
  *     lastPinnedId: int,
  *     // Required capability: `pinned-messages`

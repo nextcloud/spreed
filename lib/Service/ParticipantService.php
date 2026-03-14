@@ -326,6 +326,13 @@ class ParticipantService {
 		$this->attendeeMapper->update($attendee);
 	}
 
+	public function assignConversationToSection(Participant $participant, ?int $sectionId): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setSectionId($sectionId);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
 	/**
 	 * @param Participant $participant
 	 */

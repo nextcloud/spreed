@@ -54,6 +54,7 @@ import {
 	unarchiveConversation,
 	unbindConversationFromObject,
 } from '../services/conversationsService.ts'
+import { assignConversationToSection } from '../services/conversationSectionsService.ts'
 import { setLiveTranscriptionLanguage } from '../services/liveTranscriptionService.ts'
 import {
 	clearConversationHistory,
@@ -131,13 +132,15 @@ function state() {
 		conversations: {
 		},
 		conversationsInitialised: false,
+		sortMode: BrowserStorage.getItem('sortMode') || CONVERSATION.SORT_MODE.ACTIVITY,
 	}
 }
 
 const getters = {
 	conversations: (state) => state.conversations,
+	sortMode: (state) => state.sortMode,
 	/**
-	 * List of all conversations sorted by isFavorite and lastActivity without breakout rooms
+	 * List of all conversations sorted by isFavorite and the selected sort mode without breakout rooms
 	 *
 	 * @param {object} state state
 	 * @return {object[]} sorted conversations list
@@ -146,11 +149,27 @@ const getters = {
 		return Object.values(state.conversations)
 			// Filter out breakout rooms
 			.filter((conversation) => conversation.objectType !== CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
-			// Sort by isFavorite and lastActivity
 			.sort((conversation1, conversation2) => {
+				// Favorites always first
 				if (conversation1.isFavorite !== conversation2.isFavorite) {
 					return conversation1.isFavorite ? -1 : 1
 				}
+
+				if (state.sortMode === CONVERSATION.SORT_MODE.ALPHABETICAL) {
+					return (conversation1.displayName || '').localeCompare(conversation2.displayName || '')
+				}
+
+				if (state.sortMode === CONVERSATION.SORT_MODE.TYPE_FIRST) {
+					// Group conversations (type 2, 3) before 1-to-1 (type 1, 5)
+					const isGroup1 = conversation1.type === CONVERSATION.TYPE.GROUP || conversation1.type === CONVERSATION.TYPE.PUBLIC
+					const isGroup2 = conversation2.type === CONVERSATION.TYPE.GROUP || conversation2.type === CONVERSATION.TYPE.PUBLIC
+					if (isGroup1 !== isGroup2) {
+						return isGroup1 ? -1 : 1
+					}
+					return conversation2.lastActivity - conversation1.lastActivity
+				}
+
+				// Default: sort by last activity
 				return conversation2.lastActivity - conversation1.lastActivity
 			})
 	},
@@ -231,6 +250,10 @@ const mutations = {
 		delete state.conversations[token]
 	},
 
+	setSortMode(state, sortMode) {
+		state.sortMode = sortMode
+	},
+
 	setConversationDescription(state, { token, description }) {
 		state.conversations[token].description = description
 	},
@@ -297,6 +320,17 @@ const mutations = {
 }
 
 const actions = {
+	/**
+	 * Set the sort mode for the conversation list
+	 *
+	 * @param {object} context default store context;
+	 * @param {string} sortMode the sort mode ('activity', 'alphabetical', 'type-first');
+	 */
+	setSortMode(context, sortMode) {
+		context.commit('setSortMode', sortMode)
+		BrowserStorage.setItem('sortMode', sortMode)
+	},
+
 	/**
 	 * Add a conversation to the store and index the displayName
 	 *
@@ -608,6 +642,19 @@ const actions = {
 			context.commit('addConversation', response.data.ocs.data)
 		} catch (error) {
 			console.error('Error while changing the conversation archived status: ', error)
+		}
+	},
+
+	async assignToSection(context, { token, sectionId }) {
+		if (!context.getters.conversations[token]) {
+			return
+		}
+
+		try {
+			const response = await assignConversationToSection(token, sectionId)
+			context.commit('addConversation', response.data.ocs.data)
+		} catch (error) {
+			console.error('Error while assigning conversation to section: ', error)
 		}
 	},
 
