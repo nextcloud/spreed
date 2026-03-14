@@ -414,29 +414,31 @@ export type components = {
             metaData?: components["schemas"]["ChatMessageMetaData"];
         };
         ChatMessageMetaData: {
-            /** @description Actor type of the attendee that pinned the message - Required capability: `pinned-messages` */
             pinnedActorType?: string;
-            /** @description Actor ID of the attendee that pinned the message - Required capability: `pinned-messages` */
             pinnedActorId?: string;
-            /** @description Display name of the attendee that pinned the message - Required capability: `pinned-messages` */
             pinnedActorDisplayName?: string;
-            /**
-             * Format: int64
-             * @description Timestamp when the message was pinned - Required capability: `pinned-messages`
-             */
+            /** Format: int64 */
             pinnedAt?: number;
-            /**
-             * Format: int64
-             * @description Timestamp until when the message is pinned. If missing the message is pinned infinitely - Required capability: `pinned-messages`
-             */
+            /** Format: int64 */
             pinnedUntil?: number;
+            /** Format: int64 */
+            threadId?: number;
+            threadTitle?: string;
             /**
              * Format: int64
-             * @description Set when a thread is created with this message. If missing, no thread creation is associated with this message
+             * @description Private reply snapshot fields
              */
-            threadId?: number;
-            /** @description Set when a thread is created with this message. If missing, no thread creation is associated with this message */
-            threadTitle?: string;
+            parentMessageId?: number;
+            parentConversationToken?: string;
+            parentConversationName?: string;
+            parentActorDisplayName?: string;
+            parentMessage?: string;
+            parentMessageParameters?: {
+                [key: string]: Record<string, never>;
+            };
+            parentMessageType?: string;
+            /** Format: int64 */
+            parentTimestamp?: number;
         };
         ChatProxyMessage: components["schemas"]["BaseMessage"];
         OCSMeta: {

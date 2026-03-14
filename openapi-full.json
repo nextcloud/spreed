@@ -860,35 +860,58 @@
                 "type": "object",
                 "properties": {
                     "pinnedActorType": {
-                        "type": "string",
-                        "description": "Actor type of the attendee that pinned the message - Required capability: `pinned-messages`"
+                        "type": "string"
                     },
                     "pinnedActorId": {
-                        "type": "string",
-                        "description": "Actor ID of the attendee that pinned the message - Required capability: `pinned-messages`"
+                        "type": "string"
                     },
                     "pinnedActorDisplayName": {
-                        "type": "string",
-                        "description": "Display name of the attendee that pinned the message - Required capability: `pinned-messages`"
+                        "type": "string"
                     },
                     "pinnedAt": {
                         "type": "integer",
-                        "format": "int64",
-                        "description": "Timestamp when the message was pinned - Required capability: `pinned-messages`"
+                        "format": "int64"
                     },
                     "pinnedUntil": {
                         "type": "integer",
-                        "format": "int64",
-                        "description": "Timestamp until when the message is pinned. If missing the message is pinned infinitely - Required capability: `pinned-messages`"
+                        "format": "int64"
                     },
                     "threadId": {
                         "type": "integer",
-                        "format": "int64",
-                        "description": "Set when a thread is created with this message. If missing, no thread creation is associated with this message"
+                        "format": "int64"
                     },
                     "threadTitle": {
-                        "type": "string",
-                        "description": "Set when a thread is created with this message. If missing, no thread creation is associated with this message"
+                        "type": "string"
+                    },
+                    "parentMessageId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Private reply snapshot fields"
+                    },
+                    "parentConversationToken": {
+                        "type": "string"
+                    },
+                    "parentConversationName": {
+                        "type": "string"
+                    },
+                    "parentActorDisplayName": {
+                        "type": "string"
+                    },
+                    "parentMessage": {
+                        "type": "string"
+                    },
+                    "parentMessageParameters": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object"
+                        }
+                    },
+                    "parentMessageType": {
+                        "type": "string"
+                    },
+                    "parentTimestamp": {
+                        "type": "integer",
+                        "format": "int64"
                     }
                 }
             },
@@ -7443,6 +7466,11 @@
                                         "description": "Parent id which this message is a reply to",
                                         "minimum": 0
                                     },
+                                    "replyToToken": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Parent token to which reply is initiated"
+                                    },
                                     "silent": {
                                         "type": "boolean",
                                         "default": false,
@@ -8356,6 +8384,11 @@
                                         "default": 0,
                                         "description": "Parent id which this scheduled message is a reply to",
                                         "minimum": 0
+                                    },
+                                    "replyToToken": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Parent token to which reply is initiated"
                                     },
                                     "silent": {
                                         "type": "boolean",
