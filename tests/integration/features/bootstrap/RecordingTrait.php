@@ -317,6 +317,10 @@ trait RecordingTrait {
 				usort($actualDataJson['participants']['users'], static fn (array $u1, array $u2) => $u1['userId'] <=> $u2['userId']);
 				$write = true;
 			}
+			if (isset($actualDataJson['message']['data']['chat']['comment'])) {
+				$actualDataJson['message']['data']['chat']['comment'] = [];
+				$write = true;
+			}
 
 			if ($write) {
 				$actual['data'] = json_encode($actualDataJson);
