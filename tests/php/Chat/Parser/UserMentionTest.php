@@ -615,4 +615,136 @@ class UserMentionTest extends TestCase {
 		$this->assertEquals('Mention to {mention-guest1}, and again {mention-guest1}', $chatMessage->getMessage());
 		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
 	}
+
+	public static function dataCodeBlockMention(): array {
+		return [
+			['@testUser'],
+			['Hello @testUser'],
+			['Hello @testUser bye'],
+			['@testUser bye'],
+		];
+	}
+
+	#[DataProvider(methodName: 'dataCodeBlockMention')]
+	public function testGetRichMessageWithMentionInInlineCode(string $codeBlock): void {
+		$mentions = [
+			['type' => 'user', 'id' => 'testUser'],
+		];
+		$comment = $this->newComment($mentions);
+
+		$this->commentsManager->expects($this->once())
+			->method('resolveDisplayName')
+			->with('user', 'testUser')
+			->willReturn('testUser display name');
+
+		$this->userManager->expects($this->once())
+			->method('getDisplayName')
+			->with('testUser')
+			->willReturn('testUser display name');
+
+		/** @var Room&MockObject $room */
+		$room = $this->createMock(Room::class);
+		/** @var Participant&MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N&MockObject $l */
+		$l = $this->createMock(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Mention @testUser but not `' . $codeBlock . '` in inline code', []);
+
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
+
+		$expectedMessageParameters = [
+			'mention-user1' => [
+				'type' => 'user',
+				'id' => 'testUser',
+				'name' => 'testUser display name',
+				'mention-id' => 'testUser',
+			]
+		];
+
+		$this->assertEquals('Mention {mention-user1} but not `' . $codeBlock . '` in inline code', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
+	}
+
+	#[DataProvider(methodName: 'dataCodeBlockMention')]
+	public function testGetRichMessageWithMentionInFencedCodeBlock(string $codeBlock): void {
+		$mentions = [
+			['type' => 'user', 'id' => 'testUser'],
+		];
+		$comment = $this->newComment($mentions);
+
+		$this->commentsManager->expects($this->once())
+			->method('resolveDisplayName')
+			->with('user', 'testUser')
+			->willReturn('testUser display name');
+
+		$this->userManager->expects($this->once())
+			->method('getDisplayName')
+			->with('testUser')
+			->willReturn('testUser display name');
+
+		/** @var Room&MockObject $room */
+		$room = $this->createMock(Room::class);
+		/** @var Participant&MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N&MockObject $l */
+		$l = $this->createMock(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage("Mention @testUser but not\n```\n" . $codeBlock . "\n```\nin code block", []);
+
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
+
+		$expectedMessageParameters = [
+			'mention-user1' => [
+				'type' => 'user',
+				'id' => 'testUser',
+				'name' => 'testUser display name',
+				'mention-id' => 'testUser',
+			]
+		];
+
+		$this->assertEquals("Mention {mention-user1} but not\n```\n" . $codeBlock . "\n```\nin code block", $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
+	}
+
+	#[DataProvider(methodName: 'dataCodeBlockMention')]
+	public function testGetRichMessageWithMentionOnlyInCodeBlock(string $codeBlock): void {
+		$mentions = [
+			['type' => 'user', 'id' => 'testUser'],
+		];
+		$comment = $this->newComment($mentions);
+
+		$this->commentsManager->expects($this->once())
+			->method('resolveDisplayName')
+			->with('user', 'testUser')
+			->willReturn('testUser display name');
+
+		$this->userManager->expects($this->once())
+			->method('getDisplayName')
+			->with('testUser')
+			->willReturn('testUser display name');
+
+		/** @var Room&MockObject $room */
+		$room = $this->createMock(Room::class);
+		/** @var Participant&MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N&MockObject $l */
+		$l = $this->createMock(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Only in code `' . $codeBlock . '`', []);
+
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
+
+		$expectedMessageParameters = [
+			'mention-user1' => [
+				'type' => 'user',
+				'id' => 'testUser',
+				'name' => 'testUser display name',
+				'mention-id' => 'testUser',
+			]
+		];
+
+		$this->assertEquals('Only in code `' . $codeBlock . '`', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
+	}
 }
