@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
-use OCP\AppFramework\Db\Entity;
+use OCP\AppFramework\Db\SnowflakeAwareEntity;
 use OCP\DB\Types;
 
 /**
@@ -22,7 +22,7 @@ use OCP\DB\Types;
  * @method void setCollapsed(bool $collapsed)
  * @method bool isCollapsed()
  */
-class ConversationSection extends Entity {
+class ConversationSection extends SnowflakeAwareEntity {
 	protected string $userId = '';
 	protected string $name = '';
 	protected int $sortOrder = 0;

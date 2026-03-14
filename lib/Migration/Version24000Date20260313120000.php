@@ -31,8 +31,9 @@ class Version24000Date20260313120000 extends SimpleMigrationStep {
 		if (!$schema->hasTable('talk_conversation_sections')) {
 			$table = $schema->createTable('talk_conversation_sections');
 			$table->addColumn('id', Types::BIGINT, [
-				'autoincrement' => true,
 				'notnull' => true,
+				'unsigned' => true,
+				'length' => 20,
 			]);
 			$table->addColumn('user_id', Types::STRING, [
 				'notnull' => true,
@@ -51,7 +52,7 @@ class Version24000Date20260313120000 extends SimpleMigrationStep {
 				'default' => 0,
 			]);
 			$table->setPrimaryKey(['id']);
-			$table->addIndex(['user_id'], 'idx_tcs_user_id');
+			$table->addIndex(['user_id'], 'tcs_user_id');
 		}
 
 		$attendeesTable = $schema->getTable('talk_attendees');
