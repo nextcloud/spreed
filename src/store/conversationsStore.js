@@ -21,6 +21,7 @@ import {
 } from '../services/avatarService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import { assignConversationToSection } from '../services/conversationSectionsService.ts'
 import {
 	addToFavorites,
 	archiveConversation,
@@ -54,7 +55,6 @@ import {
 	unarchiveConversation,
 	unbindConversationFromObject,
 } from '../services/conversationsService.ts'
-import { assignConversationToSection } from '../services/conversationSectionsService.ts'
 import { setLiveTranscriptionLanguage } from '../services/liveTranscriptionService.ts'
 import {
 	clearConversationHistory,

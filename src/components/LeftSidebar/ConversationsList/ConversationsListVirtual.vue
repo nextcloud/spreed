@@ -165,7 +165,7 @@ defineExpose({
 					@toggleCollapsed="handleToggleCollapsed" />
 				<ConversationItem
 					v-else
-					:item="(item.data as Conversation)"
+					:item="item.data as Conversation"
 					:compact />
 			</template>
 		</ul>

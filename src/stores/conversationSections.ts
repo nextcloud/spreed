@@ -3,17 +3,18 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { ConversationSection } from '../services/conversationSectionsService.ts'
+
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { ConversationSection } from '../services/conversationSectionsService.ts'
-import {
-	fetchSections as fetchSectionsApi,
-	createSection as createSectionApi,
-	updateSection as updateSectionApi,
-	deleteSection as deleteSectionApi,
-	reorderSections as reorderSectionsApi,
-} from '../services/conversationSectionsService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
+import {
+	createSection as createSectionApi,
+	deleteSection as deleteSectionApi,
+	fetchSections as fetchSectionsApi,
+	reorderSections as reorderSectionsApi,
+	updateSection as updateSectionApi,
+} from '../services/conversationSectionsService.ts'
 
 export const useConversationSectionsStore = defineStore('conversationSections', () => {
 	const sections = ref<Record<number, ConversationSection>>({})
@@ -23,10 +24,18 @@ export const useConversationSectionsStore = defineStore('conversationSections', 
 		return Object.values(sections.value).sort((a, b) => a.sortOrder - b.sortOrder)
 	})
 
+	/**
+	 * Get a section by its ID
+	 *
+	 * @param id Section ID
+	 */
 	function sectionById(id: number): ConversationSection | undefined {
 		return sections.value[id]
 	}
 
+	/**
+	 * Fetch all conversation sections from the server
+	 */
 	async function fetchSections() {
 		try {
 			const response = await fetchSectionsApi()
@@ -47,6 +56,11 @@ export const useConversationSectionsStore = defineStore('conversationSections', 
 		}
 	}
 
+	/**
+	 * Create a new conversation section
+	 *
+	 * @param name Name of the section
+	 */
 	async function createSection(name: string) {
 		try {
 			const response = await createSectionApi(name)
@@ -59,6 +73,12 @@ export const useConversationSectionsStore = defineStore('conversationSections', 
 		}
 	}
 
+	/**
+	 * Update the name of a conversation section
+	 *
+	 * @param sectionId ID of the section
+	 * @param name New name for the section
+	 */
 	async function updateSectionName(sectionId: number, name: string) {
 		try {
 			const response = await updateSectionApi(sectionId, name)
@@ -71,6 +91,11 @@ export const useConversationSectionsStore = defineStore('conversationSections', 
 		}
 	}
 
+	/**
+	 * Remove a conversation section
+	 *
+	 * @param sectionId ID of the section to remove
+	 */
 	async function removeSection(sectionId: number) {
 		try {
 			await deleteSectionApi(sectionId)
@@ -81,6 +106,11 @@ export const useConversationSectionsStore = defineStore('conversationSections', 
 		}
 	}
 
+	/**
+	 * Reorder conversation sections
+	 *
+	 * @param orderedIds Ordered list of section IDs
+	 */
 	async function reorderSections(orderedIds: number[]) {
 		try {
 			const response = await reorderSectionsApi(orderedIds)
@@ -96,6 +126,11 @@ export const useConversationSectionsStore = defineStore('conversationSections', 
 		}
 	}
 
+	/**
+	 * Toggle the collapsed state of a section
+	 *
+	 * @param sectionId ID of the section to toggle
+	 */
 	function toggleCollapsed(sectionId: number) {
 		const section = sections.value[sectionId]
 		if (section) {
