@@ -45,8 +45,22 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		$target = RoomShareProvider::TALK_FOLDER_PLACEHOLDER . '/' . $share->getNode()->getName();
-		$target = Filesystem::normalizePath($target);
+		// For shares of nodes that live inside the user's attachment subfolder
+		// hierarchy (e.g. /Talk/<ConvFolder>/<UserSubfolder>) we want the full
+		// relative path in the target so that recipients see the correct mount
+		// point under their own attachment folder.
+		$ownerUid = $share->getShareOwner();
+		$relativePath = $share->getNode()->getName();
+		if ($ownerUid !== null) {
+			$attachmentFolder = ltrim($this->config->getAttachmentFolder($ownerUid), '/');
+			$internalPath = $share->getNode()->getPath();
+			$prefix = '/' . $ownerUid . '/files/' . $attachmentFolder . '/';
+			if (str_starts_with($internalPath, $prefix)) {
+				$relativePath = substr($internalPath, strlen($prefix));
+			}
+		}
+
+		$target = Filesystem::normalizePath(RoomShareProvider::TALK_FOLDER_PLACEHOLDER . '/' . $relativePath);
 		$share->setTarget($target);
 	}
 
@@ -58,10 +72,17 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($event->getParent() === RoomShareProvider::TALK_FOLDER_PLACEHOLDER) {
-			$parent = $this->config->getAttachmentFolder($event->getUser()->getUID());
+		$parent = $event->getParent();
+		$placeholder = RoomShareProvider::TALK_FOLDER_PLACEHOLDER;
+
+		// Handle both the flat case (parent === placeholder) and the nested
+		// case (parent starts with placeholder + '/') so that intermediate
+		// conversation folders are resolved and created for recipients.
+		if ($parent === $placeholder || str_starts_with($parent, $placeholder . '/')) {
+			$rest = substr($parent, strlen($placeholder)); // '' or '/<ConvFolder>'
+			$resolvedParent = $this->config->getAttachmentFolder($event->getUser()->getUID()) . $rest;
 			$event->setCreateParent(true);
-			$event->setParent($parent);
+			$event->setParent($resolvedParent);
 		}
 	}
 

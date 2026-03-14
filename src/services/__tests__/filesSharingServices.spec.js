@@ -6,7 +6,7 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { afterEach, describe, expect, test, vi } from 'vitest'
-import { shareFile } from '../filesSharingServices.ts'
+import { postAttachment, shareFile } from '../filesSharingServices.ts'
 
 vi.mock('@nextcloud/axios', () => ({
 	default: {
@@ -34,6 +34,26 @@ describe('filesSharingServices', () => {
 				shareWith: 'XXTOKENXX',
 				path: 'path/to/file',
 				referenceId: 'the-reference-id',
+			},
+		)
+	})
+
+	test('postAttachment calls the Talk attachment API endpoint', async () => {
+		axios.post.mockResolvedValue({})
+
+		await postAttachment({
+			token: 'XXTOKENXX',
+			filePath: 'Talk/My Room-XXTOKENXX/Current User-current-user/test.txt',
+			referenceId: 'the-reference-id',
+			talkMetaData: '{"caption":"hello"}',
+		})
+
+		expect(axios.post).toHaveBeenCalledWith(
+			generateOcsUrl('apps/spreed/api/v1/room/{token}/attachment', { token: 'XXTOKENXX' }),
+			{
+				filePath: 'Talk/My Room-XXTOKENXX/Current User-current-user/test.txt',
+				referenceId: 'the-reference-id',
+				talkMetaData: '{"caption":"hello"}',
 			},
 		)
 	})

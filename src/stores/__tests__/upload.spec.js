@@ -8,16 +8,19 @@ import { getUploader } from '@nextcloud/upload'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { getDavClient } from '../../services/DavClient.ts'
-import { shareFile } from '../../services/filesSharingServices.ts'
+import { postAttachment, shareFile } from '../../services/filesSharingServices.ts'
 import { findUniquePath } from '../../utils/fileUpload.ts'
 import { useActorStore } from '../actor.ts'
 import { useSettingsStore } from '../settings.ts'
 import { useUploadStore } from '../upload.ts'
 
+// conversationGetter must be defined before vi.mock so the factory can close over it.
+// Vitest evaluates the factory lazily (after module-level init), so this works.
+const conversationGetter = vi.fn().mockReturnValue(null)
 const vuexStoreDispatch = vi.fn()
 vi.mock('vuex', () => ({
 	useStore: vi.fn(() => ({
-		getters: {},
+		getters: { conversation: conversationGetter },
 		dispatch: vuexStoreDispatch,
 	})),
 }))
@@ -33,6 +36,7 @@ vi.mock('../../utils/fileUpload.ts', async () => {
 	}
 })
 vi.mock('../../services/filesSharingServices.ts', () => ({
+	postAttachment: vi.fn(),
 	shareFile: vi.fn(),
 }))
 
@@ -63,6 +67,7 @@ describe('fileUploadStore', () => {
 	describe('uploading', () => {
 		const uploadMock = vi.fn()
 		const client = {
+			createDirectory: vi.fn().mockResolvedValue(undefined),
 			exists: vi.fn(),
 		}
 
@@ -70,6 +75,8 @@ describe('fileUploadStore', () => {
 			getDavClient.mockReturnValue(client)
 			getUploader.mockReturnValue({ upload: uploadMock })
 			console.error = vi.fn()
+			// Default: ONE_TO_ONE room — no conversation folder used
+			conversationGetter.mockReturnValue({ type: 1, displayName: 'Direct message' })
 		})
 
 		afterEach(() => {
@@ -367,6 +374,115 @@ describe('fileUploadStore', () => {
 			expect(uploads).toStrictEqual([])
 
 			expect(uploadStore.currentUploadId).not.toBeDefined()
+		})
+
+		describe('conversation folder (group/public rooms)', () => {
+			const TOKEN = 'XXTOKENXX'
+
+			beforeEach(() => {
+				uploadMock.mockResolvedValue()
+				postAttachment.mockResolvedValue()
+			})
+
+			test('creates conversation subfolder and posts via postAttachment for a group room', async () => {
+				conversationGetter.mockReturnValue({ type: 2, displayName: 'My Room' })
+
+				const file = {
+					name: 'pngimage.png',
+					type: 'image/png',
+					size: 123,
+					lastModified: Date.UTC(2021, 3, 27, 15, 30, 0),
+				}
+
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [file] })
+
+				// uid = 'current-user' (len 12), prefixLen = min(16, 63-12) = 16
+				// subPrefix = 'Current User' (12 chars < 16), subfolderName = 'Current User-current-user'
+				const convFolderName = 'My Room-' + TOKEN
+				const subfolderName = 'Current User-current-user'
+				const uniqueFileName = '/Talk/' + convFolderName + '/' + subfolderName + '/' + file.name
+				findUniquePath.mockResolvedValueOnce({ uniquePath: uniqueFileName, suffix: 1 })
+
+				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', options: { silent: false } })
+
+				// Conversation subfolders must be created via DAV MKCOL
+				expect(client.createDirectory).toHaveBeenCalledWith('/files/current-user/Talk')
+				expect(client.createDirectory).toHaveBeenCalledWith('/files/current-user/Talk/' + convFolderName)
+				expect(client.createDirectory).toHaveBeenCalledWith('/files/current-user/Talk/' + convFolderName + '/' + subfolderName)
+
+				// File must be looked up inside the conversation subfolder
+				expect(findUniquePath).toHaveBeenCalledWith(
+					client,
+					'/files/current-user',
+					'/Talk/' + convFolderName + '/' + subfolderName + '/' + file.name,
+					undefined,
+				)
+
+				// File is posted via Talk attachment endpoint, not shared via OCS
+				expect(postAttachment).toHaveBeenCalledTimes(1)
+				expect(postAttachment).toHaveBeenCalledWith(expect.objectContaining({
+					token: TOKEN,
+					filePath: uniqueFileName.replace(/^\//, ''),
+				}))
+				expect(shareFile).not.toHaveBeenCalled()
+			})
+
+			test('sanitizes slash in room name to space for conversation folder', async () => {
+				conversationGetter.mockReturnValue({ type: 2, displayName: 'Team/Chat' })
+
+				const file = { name: 'test.txt', type: 'text/plain', size: 10, lastModified: 0 }
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [file] })
+
+				// '/' is replaced by ' ', trimmed → 'Team Chat'
+				const convFolderName = 'Team Chat-' + TOKEN
+				const subfolderName = 'Current User-current-user'
+				findUniquePath.mockResolvedValueOnce({
+					uniquePath: '/Talk/' + convFolderName + '/' + subfolderName + '/' + file.name,
+					suffix: 1,
+				})
+
+				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', options: { silent: false } })
+
+				expect(client.createDirectory).toHaveBeenCalledWith('/files/current-user/Talk/' + convFolderName)
+			})
+
+			test('hyphen in room name does not confuse token extraction in folder name', async () => {
+				conversationGetter.mockReturnValue({ type: 3, displayName: 'My-Group' })
+
+				const file = { name: 'test.txt', type: 'text/plain', size: 10, lastModified: 0 }
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [file] })
+
+				// Hyphen in room name is preserved; the token is simply appended with '-'
+				const convFolderName = 'My-Group-' + TOKEN
+				const subfolderName = 'Current User-current-user'
+				findUniquePath.mockResolvedValueOnce({
+					uniquePath: '/Talk/' + convFolderName + '/' + subfolderName + '/' + file.name,
+					suffix: 1,
+				})
+
+				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', options: { silent: false } })
+
+				expect(client.createDirectory).toHaveBeenCalledWith('/files/current-user/Talk/' + convFolderName)
+			})
+
+			test('truncates long room name to 64 Unicode code points in folder name', async () => {
+				const longName = 'A'.repeat(70)
+				conversationGetter.mockReturnValue({ type: 2, displayName: longName })
+
+				const file = { name: 'test.txt', type: 'text/plain', size: 10, lastModified: 0 }
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [file] })
+
+				const convFolderName = 'A'.repeat(64) + '-' + TOKEN
+				const subfolderName = 'Current User-current-user'
+				findUniquePath.mockResolvedValueOnce({
+					uniquePath: '/Talk/' + convFolderName + '/' + subfolderName + '/' + file.name,
+					suffix: 1,
+				})
+
+				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', options: { silent: false } })
+
+				expect(client.createDirectory).toHaveBeenCalledWith('/files/current-user/Talk/' + convFolderName)
+			})
 		})
 
 		test('autorenames files using timestamps when requested', () => {

@@ -8,10 +8,16 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Config as TalkConfig;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Files\Util;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Message;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
@@ -24,9 +30,14 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Constants;
 use OCP\Files\FileInfo;
+use OCP\Files\Folder;
+use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\ISession;
@@ -34,6 +45,7 @@ use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
+use OCP\Share\IShare;
 
 class FilesIntegrationController extends OCSController {
 
@@ -48,6 +60,12 @@ class FilesIntegrationController extends OCSController {
 		private TalkSession $talkSession,
 		private Util $util,
 		private IConfig $config,
+		private TalkConfig $talkConfig,
+		private IRootFolder $rootFolder,
+		private ParticipantService $participantService,
+		private ChatManager $chatManager,
+		private ITimeFactory $timeFactory,
+		private IDBConnection $db,
 		private IL10N $l,
 	) {
 		parent::__construct($appName, $request);
@@ -222,5 +240,182 @@ class FilesIntegrationController extends OCSController {
 			'userId' => $currentUserId,
 			'userDisplayName' => $currentUserDisplayName,
 		]);
+	}
+
+	/**
+	 * Post a file from a conversation attachment folder as a chat message.
+	 *
+	 * The file must already be inside the caller's conversation subfolder,
+	 * which is shared with the room via a folder-level TYPE_ROOM share created
+	 * automatically by ConversationFolderListener when the subfolder was first
+	 * created via WebDAV MKCOL.  This endpoint creates the chat message without
+	 * adding a redundant per-file share, keeping the Share Overview clean.
+	 *
+	 * @param string $token Room token
+	 * @param string $filePath Path of the file relative to the user's home root
+	 *                         (e.g. "Talk/Group Chat-abc123/Alice-alice/photo.jpg")
+	 * @param string $referenceId Client-generated reference ID for the message
+	 * @param string $talkMetaData JSON-encoded metadata (caption, messageType, silent, …)
+	 * @return DataResponse<Http::STATUS_OK, array{}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_UNPROCESSABLE_ENTITY, array{error: string}, array{}>
+	 *
+	 * 200: File posted as chat message
+	 * 400: Rooms not allowed for file shares
+	 * 403: User is not a participant or lacks chat permission
+	 * 404: Room or file not found
+	 * 422: File is not inside the expected conversation subfolder for this room
+	 */
+	#[NoAdminRequired]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/attachment', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]+',
+	])]
+	public function postAttachmentToRoom(string $token, string $filePath, string $referenceId, string $talkMetaData = ''): DataResponse {
+		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1') {
+			return new DataResponse(['error' => $this->l->t('Rooms not allowed for file shares')], Http::STATUS_BAD_REQUEST);
+		}
+
+		$currentUser = $this->userSession->getUser();
+		if (!$currentUser instanceof IUser) {
+			return new DataResponse(['error' => $this->l->t('User not logged in')], Http::STATUS_FORBIDDEN);
+		}
+		$uid = $currentUser->getUID();
+
+		// Verify the room exists.
+		try {
+			$room = $this->manager->getRoomByToken($token);
+		} catch (RoomNotFoundException) {
+			return new DataResponse(['error' => $this->l->t('Conversation not found')], Http::STATUS_NOT_FOUND);
+		}
+
+		// Verify the caller is a participant with chat permissions.
+		try {
+			$participant = $this->participantService->getParticipant($room, $uid, false);
+		} catch (ParticipantNotFoundException) {
+			return new DataResponse(['error' => $this->l->t('Not a participant')], Http::STATUS_FORBIDDEN);
+		}
+		if (!($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
+			return new DataResponse(['error' => $this->l->t('No chat permission')], Http::STATUS_FORBIDDEN);
+		}
+
+		// Look up the file in the caller's file tree.
+		try {
+			$userFolder = $this->rootFolder->getUserFolder($uid);
+			$node = $userFolder->get($filePath);
+		} catch (NotFoundException) {
+			return new DataResponse(['error' => $this->l->t('File not found')], Http::STATUS_NOT_FOUND);
+		}
+		if ($node->getType() !== FileInfo::TYPE_FILE) {
+			return new DataResponse(['error' => $this->l->t('Path must point to a file')], Http::STATUS_BAD_REQUEST);
+		}
+
+		// Validate the file is inside a properly structured conversation subfolder for this room.
+		// Expected structure (relative to user home): <attachmentFolder>/<anything>-<token>/<anything>-<uid>/<file>
+		// We validate structurally so display-name lookups (which may be empty in this context) are not needed.
+		$attachmentFolderBase = ltrim($this->talkConfig->getAttachmentFolder($uid), '/');
+		$pathParts = explode('/', ltrim($filePath, '/'));
+		// Must have at least 4 parts: attachmentFolder / convFolder / subfolder / filename
+		// (attachmentFolder may itself be multi-level, so count from the end)
+		$count = count($pathParts);
+		if ($count < 4) {
+			return new DataResponse(['error' => $this->l->t('File is not inside a conversation folder shared with this room')], Http::STATUS_UNPROCESSABLE_ENTITY);
+		}
+		$convFolderSegment = $pathParts[$count - 3];
+		$subFolderSegment = $pathParts[$count - 2];
+		$attachmentPrefix = implode('/', array_slice($pathParts, 0, $count - 3));
+
+		$validAttachmentFolder = $attachmentPrefix === $attachmentFolderBase;
+		$validConvFolder = $convFolderSegment === $this->talkConfig->buildConversationFolderName($room->getName(), $token);
+		$validSubfolder = $subFolderSegment === $uid || str_ends_with($subFolderSegment, '-' . $uid);
+
+		if (!$validAttachmentFolder || !$validConvFolder || !$validSubfolder) {
+			return new DataResponse(['error' => $this->l->t('File is not inside a conversation folder shared with this room')], Http::STATUS_UNPROCESSABLE_ENTITY);
+		}
+
+		// Ensure the folder-level TYPE_ROOM share exists; create it lazily if not.
+		// The check and create are wrapped in a transaction to avoid a race
+		// condition where two concurrent requests both observe no share and
+		// both attempt to create one.
+		$parentFolder = $node->getParent();
+		$this->db->beginTransaction();
+		try {
+			$folderShares = $this->shareManager->getSharesBy($uid, IShare::TYPE_ROOM, $parentFolder, false, 50);
+			$hasRoomShare = false;
+			foreach ($folderShares as $folderShare) {
+				if ($folderShare->getSharedWith() === $token) {
+					$hasRoomShare = true;
+					break;
+				}
+			}
+			if (!$hasRoomShare) {
+				$share = $this->shareManager->newShare();
+				$share->setNode($parentFolder)
+					->setShareType(IShare::TYPE_ROOM)
+					->setSharedBy($uid)
+					->setShareOwner($uid)
+					->setSharedWith($token)
+					->setPermissions(Constants::PERMISSION_READ)
+					->setMailSend(false);
+				$this->shareManager->createShare($share);
+			}
+			$this->db->commit();
+		} catch (\Exception $e) {
+			$this->db->rollBack();
+			throw $e;
+		}
+
+		// Parse talkMetaData for caption, messageType, silent, replyTo, threadId.
+		$metaData = json_decode($talkMetaData, true);
+		$metaData = is_array($metaData) ? $metaData : [];
+
+		// Validate and sanitize messageType.
+		if (isset($metaData['messageType']) && $metaData['messageType'] === ChatManager::VERB_VOICE_MESSAGE) {
+			$mime = $node->getMimeType();
+			if ($mime !== 'audio/mpeg' && $mime !== 'audio/wav') {
+				unset($metaData['messageType']);
+			}
+		}
+		$metaData['mimeType'] = $node->getMimeType();
+
+		if (isset($metaData['caption'])) {
+			if (is_string($metaData['caption']) && trim($metaData['caption']) !== '') {
+				$metaData['caption'] = trim($metaData['caption']);
+			} else {
+				unset($metaData['caption']);
+			}
+		}
+
+		$silent = (bool)($metaData[Message::METADATA_SILENT] ?? false);
+		$replyToId = isset($metaData['replyTo']) ? (int)$metaData['replyTo'] : null;
+		$threadId = isset($metaData['threadId']) ? (int)$metaData['threadId'] : 0;
+		unset($metaData['replyTo'], $metaData['threadId'], $metaData[Message::METADATA_SILENT]);
+
+		$replyToComment = null;
+		if ($replyToId !== null) {
+			try {
+				$replyToComment = $this->chatManager->getComment($room, (string)$replyToId);
+			} catch (\Exception) {
+				// Invalid replyTo — ignore.
+			}
+		}
+
+		// Create the file_shared system message referencing the file by node ID.
+		// The parameters use 'fileId' instead of 'share' so no per-file TYPE_ROOM
+		// share is needed; access is controlled by the folder-level share.
+		$this->chatManager->addSystemMessage(
+			$room,
+			$participant,
+			Attendee::ACTOR_USERS,
+			$uid,
+			json_encode(['message' => 'file_shared', 'parameters' => ['fileId' => (string)$node->getId(), 'metaData' => $metaData]]),
+			$this->timeFactory->getDateTime(),
+			true,
+			$referenceId !== '' ? $referenceId : null,
+			$replyToComment,
+			false,
+			$silent,
+			$threadId,
+		);
+
+		return new DataResponse([], Http::STATUS_OK);
 	}
 }

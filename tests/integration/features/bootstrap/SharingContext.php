@@ -54,6 +54,72 @@ class SharingContext implements Context {
 		$this->theHTTPStatusCodeShouldBe(201);
 	}
 
+	/**
+	 * Creates the 3-level conversation folder hierarchy:
+	 *   Talk/<ConvFolderName>/<UserSubfolder>
+	 * The Talk/ root is created first (ignoring 405 if it already exists).
+	 */
+	#[Given('/^user "([^"]*)" creates conversation folder for room "([^"]*)" with name "([^"]*)"$/')]
+	public function userCreatesConversationFolderForRoom(string $user, string $room, string $displayName): void {
+		$this->currentUser = $user;
+
+		$subfolderPath = $this->getConversationSubfolderRelativePath($user, $displayName, $room);
+		$parts = explode('/', $subfolderPath); // ['Talk', '<convFolder>', '<userSubfolder>']
+
+		// Talk/ root — may already exist in the container, so ignore 405
+		$this->sendingToDav('MKCOL', "/$user/$parts[0]/");
+
+		// Talk/<convFolder>/
+		$this->sendingToDav('MKCOL', "/$user/$parts[0]/$parts[1]/");
+		$this->theHTTPStatusCodeShouldBe(201);
+
+		// Talk/<convFolder>/<userSubfolder>/
+		$this->sendingToDav('MKCOL', "/$user/$subfolderPath/");
+		$this->theHTTPStatusCodeShouldBe(201);
+	}
+
+	#[Given('/^user "([^"]*)" uploads file "([^"]*)" with content "([^"]*)" to conversation folder for room "([^"]*)" with name "([^"]*)"$/')]
+	public function userUploadsFileToConversationFolder(string $user, string $filename, string $content, string $room, string $displayName): void {
+		$this->currentUser = $user;
+
+		$subfolderPath = $this->getConversationSubfolderRelativePath($user, $displayName, $room);
+		$this->sendingToDav('PUT', "/$user/$subfolderPath/$filename", null, $content);
+		$this->theHTTPStatusCodeShouldBe(201);
+	}
+
+	#[When('/^user "([^"]*)" posts file "([^"]*)" from conversation folder of room "([^"]*)" with name "([^"]*)" with (\d+) \(v1\)$/')]
+	public function userPostsFileFromConversationFolder(string $user, string $filename, string $room, string $displayName, int $statusCode, ?TableNode $body = null): void {
+		$this->currentUser = $user;
+
+		$subfolderPath = $this->getConversationSubfolderRelativePath($user, $displayName, $room);
+		$filePath = $subfolderPath . '/' . $filename;
+		$token = FeatureContext::getTokenForIdentifier($room);
+
+		$talkMetaData = [];
+		if ($body instanceof TableNode) {
+			foreach ($body->getRowsHash() as $key => $value) {
+				if ($key === 'talkMetaData.replyTo' || $key === 'talkMetaData.threadId') {
+					$value = FeatureContext::getMessageIdForText($value);
+				}
+				if (str_starts_with($key, 'talkMetaData.')) {
+					$talkMetaData[substr($key, 13)] = $value;
+				}
+			}
+		}
+
+		$this->sendingToTalkAttachmentEndpoint($token, $filePath, $talkMetaData);
+		$this->theHTTPStatusCodeShouldBe($statusCode);
+	}
+
+	#[When('/^user "([^"]*)" posts file "([^"]*)" from their home to room "([^"]*)" with (\d+) \(v1\)$/')]
+	public function userPostsFileFromHomeToRoom(string $user, string $filename, string $room, int $statusCode): void {
+		$this->currentUser = $user;
+
+		$token = FeatureContext::getTokenForIdentifier($room);
+		$this->sendingToTalkAttachmentEndpoint($token, $filename, []);
+		$this->theHTTPStatusCodeShouldBe($statusCode);
+	}
+
 	#[Given('user :user moves file :source to :destination')]
 	public function userMovesFileTo(string $user, string $source, string $destination): void {
 		$this->currentUser = $user;
@@ -843,5 +909,79 @@ class SharingContext implements Context {
 			$sharees[] = [$element['label'], $element['value']['shareType'], $element['value']['shareWith']];
 		}
 		return $sharees;
+	}
+
+	// -------------------------------------------------------------------------
+	// Conversation-folder helpers (lazy per-conversation attachment subfolders)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Mirrors TalkConfig::sanitizeDisplayName().
+	 */
+	private function sanitizeDisplayName(string $name, int $maxChars): string {
+		$name = (string)preg_replace('/[\/\\\\\x00-\x1f]+/', ' ', $name);
+		$name = trim($name);
+		if (mb_strlen($name) > $maxChars) {
+			$name = trim(mb_substr($name, 0, $maxChars));
+		}
+		return $name;
+	}
+
+	/**
+	 * Mirrors TalkConfig::buildConversationFolderName().
+	 */
+	private function buildConversationFolderName(string $displayName, string $token): string {
+		return $this->sanitizeDisplayName($displayName, 64) . '-' . $token;
+	}
+
+	/**
+	 * Mirrors TalkConfig::getConversationSubfolderName().
+	 * In integration tests display names follow the pattern "{uid}-displayname".
+	 */
+	private function buildConversationSubfolderName(string $uid): string {
+		$displayName = $uid . '-displayname';
+		$prefixLen = min(16, max(0, 63 - strlen($uid)));
+		if ($prefixLen > 0) {
+			$prefix = $this->sanitizeDisplayName($displayName, $prefixLen);
+			if ($prefix !== '') {
+				return $prefix . '-' . $uid;
+			}
+		}
+		return $uid;
+	}
+
+	/**
+	 * Returns the path of the user's conversation subfolder relative to their
+	 * home root, e.g. "Talk/Group room-<token>/participant1-dis-participant1".
+	 */
+	private function getConversationSubfolderRelativePath(string $user, string $roomDisplayName, string $roomIdentifier): string {
+		$token = FeatureContext::getTokenForIdentifier($roomIdentifier);
+		$convFolderName = $this->buildConversationFolderName($roomDisplayName, $token);
+		$subfolderName = $this->buildConversationSubfolderName($user);
+		return 'Talk/' . $convFolderName . '/' . $subfolderName;
+	}
+
+	/**
+	 * POST to the Talk attachment endpoint (OCS v2).
+	 */
+	private function sendingToTalkAttachmentEndpoint(string $token, string $filePath, array $talkMetaData): void {
+		$fullUrl = $this->baseUrl . 'ocs/v2.php/apps/spreed/api/v1/room/' . $token . '/attachment';
+		$client = new Client();
+		$options = [
+			'auth' => [$this->currentUser, $this->regularUserPassword],
+			'headers' => ['OCS_APIREQUEST' => 'true'],
+			'form_params' => [
+				'filePath' => $filePath,
+				'referenceId' => '',
+				'talkMetaData' => !empty($talkMetaData) ? json_encode($talkMetaData) : '',
+			],
+		];
+		try {
+			$this->response = $client->request('POST', $fullUrl, $options);
+			$this->responseBody = null;
+		} catch (GuzzleHttp\Exception\ClientException $ex) {
+			$this->response = $ex->getResponse();
+			$this->responseBody = null;
+		}
 	}
 }

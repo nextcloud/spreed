@@ -309,6 +309,63 @@ class Config {
 	}
 
 	/**
+	 * Returns the per-conversation folder name: "<sanitizedDisplayName>-<token>"
+	 * The display name is sanitized and trimmed to 64 characters.
+	 */
+	public function getConversationFolderName(Room $room, string $userId): string {
+		return $this->buildConversationFolderName($room->getDisplayName($userId), $room->getToken());
+	}
+
+	public function buildConversationFolderName(string $displayName, string $token): string {
+		return $this->sanitizeDisplayName($displayName, 64) . '-' . $token;
+	}
+
+	/**
+	 * Returns the per-user subfolder name within a conversation folder.
+	 *
+	 * Format: "<displayPrefix>-<uid>" where the prefix length is capped so that
+	 * the total segment length stays under 64 characters on all filesystems.
+	 * If the uid is 63+ characters, the prefix is omitted.
+	 */
+	public function getConversationSubfolderName(string $userId): string {
+		$user = $this->userManager->get($userId);
+		$displayName = $user !== null ? $user->getDisplayName() : '';
+		return $this->buildConversationSubfolderName($userId, $displayName);
+	}
+
+	/**
+	 * Builds the per-user subfolder name from a pre-fetched display name.
+	 * Use this when the caller already holds the IUser object (e.g. the current
+	 * user from IUserSession) to avoid an extra IUserManager::get() lookup.
+	 */
+	public function buildConversationSubfolderName(string $userId, string $displayName): string {
+		$prefixLen = min(16, max(0, 63 - strlen($userId)));
+		if ($prefixLen > 0) {
+			$prefix = $this->sanitizeDisplayName($displayName, $prefixLen);
+			if ($prefix !== '') {
+				return $prefix . '-' . $userId;
+			}
+		}
+		return $userId;
+	}
+
+	/**
+	 * Sanitizes a display name for use as (part of) a filesystem folder name.
+	 *
+	 * Replaces forward slash, backslash, and ASCII control characters (U+0000–U+001F)
+	 * with a space, trims whitespace, then truncates to $maxChars Unicode code points.
+	 */
+	private function sanitizeDisplayName(string $name, int $maxChars): string {
+		// phpcs:ignore -- control characters are intentional
+		$name = preg_replace('/[\x00-\x1f\/\\\\]+/', ' ', $name);
+		$name = trim((string)$name);
+		if (mb_strlen($name) > $maxChars) {
+			$name = trim(mb_substr($name, 0, $maxChars));
+		}
+		return $name;
+	}
+
+	/**
 	 * @return string[]
 	 */
 	public function getAllServerUrlsForCSP(): array {

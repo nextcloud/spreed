@@ -1054,6 +1054,218 @@ class SystemMessageTest extends TestCase {
 		self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23', false]);
 	}
 
+	public function testGetFileFromNodeIdForUser(): void {
+		$room = $this->createMock(Room::class);
+
+		$node = $this->createMock(Node::class);
+		$node->expects($this->exactly(2))
+			->method('getId')
+			->willReturn(42);
+		$node->expects($this->once())
+			->method('getName')
+			->willReturn('photo.jpg');
+		$node->expects($this->once())
+			->method('getPath')
+			->willReturn('/alice/files/Talk/Room-TOKEN/Alice-alice/photo.jpg');
+		$node->expects($this->once())
+			->method('getSize')
+			->willReturn(12345);
+		$node->expects($this->once())
+			->method('getEtag')
+			->willReturn(md5('etag'));
+		$node->expects($this->once())
+			->method('getPermissions')
+			->willReturn(27);
+		$node->expects($this->atLeastOnce())
+			->method('getMimeType')
+			->willReturn('image/jpeg');
+
+		$userFolder = $this->createMock(Folder::class);
+		$userFolder->expects($this->once())
+			->method('getFirstNodeById')
+			->with(42)
+			->willReturn($node);
+		$userFolder->expects($this->never())
+			->method('getById');
+
+		$this->rootFolder->expects($this->once())
+			->method('getUserFolder')
+			->with('alice')
+			->willReturn($userFolder);
+
+		$this->previewManager->expects($this->once())
+			->method('isMimeSupported')
+			->with('image/jpeg')
+			->willReturn(true);
+		$this->previewManager->expects($this->never())
+			->method('isAvailable');
+
+		$this->filesMetadataCache->expects($this->once())
+			->method('getImageMetadataForFileId')
+			->with(42)
+			->willReturn([]);
+
+		$this->url->expects($this->once())
+			->method('linkToRouteAbsolute')
+			->with('files.viewcontroller.showFile', ['fileid' => 42])
+			->willReturn('absolute-link');
+
+		$participant = $this->createMock(Participant::class);
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'users',
+			'actor_id' => 'alice',
+		]);
+		$participant->expects($this->any())
+			->method('getAttendee')
+			->willReturn($attendee);
+
+		$parser = $this->getParser();
+		$this->assertSame([
+			'type' => 'file',
+			'id' => '42',
+			'name' => 'photo.jpg',
+			'size' => '12345',
+			'path' => 'Talk/Room-TOKEN/Alice-alice/photo.jpg',
+			'link' => 'absolute-link',
+			'etag' => md5('etag'),
+			'permissions' => '27',
+			'mimetype' => 'image/jpeg',
+			'preview-available' => 'yes',
+			'hide-download' => 'no',
+		], self::invokePrivate($parser, 'getFileFromNodeId', [$room, $participant, 42]));
+	}
+
+	public function testGetFileFromNodeIdFallbackToGetById(): void {
+		$room = $this->createMock(Room::class);
+
+		$node = $this->createMock(Node::class);
+		$node->expects($this->exactly(2))
+			->method('getId')
+			->willReturn(42);
+		$node->expects($this->once())
+			->method('getName')
+			->willReturn('doc.txt');
+		$node->expects($this->once())
+			->method('getPath')
+			->willReturn('/alice/files/Talk/Room-TOKEN/Alice-alice/doc.txt');
+		$node->expects($this->once())
+			->method('getSize')
+			->willReturn(100);
+		$node->expects($this->once())
+			->method('getEtag')
+			->willReturn(md5('etag2'));
+		$node->expects($this->once())
+			->method('getPermissions')
+			->willReturn(1);
+		$node->expects($this->atLeastOnce())
+			->method('getMimeType')
+			->willReturn('text/plain');
+
+		$userFolder = $this->createMock(Folder::class);
+		$userFolder->expects($this->once())
+			->method('getFirstNodeById')
+			->with(42)
+			->willReturn(null);
+		$userFolder->expects($this->once())
+			->method('getById')
+			->with(42)
+			->willReturn([$node]);
+
+		$this->rootFolder->expects($this->once())
+			->method('getUserFolder')
+			->with('alice')
+			->willReturn($userFolder);
+
+		$this->previewManager->expects($this->once())
+			->method('isMimeSupported')
+			->with('text/plain')
+			->willReturn(false);
+
+		$this->filesMetadataCache->expects($this->never())
+			->method('getImageMetadataForFileId');
+
+		$this->url->expects($this->once())
+			->method('linkToRouteAbsolute')
+			->with('files.viewcontroller.showFile', ['fileid' => 42])
+			->willReturn('absolute-link-2');
+
+		$participant = $this->createMock(Participant::class);
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'users',
+			'actor_id' => 'alice',
+		]);
+		$participant->expects($this->any())
+			->method('getAttendee')
+			->willReturn($attendee);
+
+		$parser = $this->getParser();
+		$this->assertSame([
+			'type' => 'file',
+			'id' => '42',
+			'name' => 'doc.txt',
+			'size' => '100',
+			'path' => 'Talk/Room-TOKEN/Alice-alice/doc.txt',
+			'link' => 'absolute-link-2',
+			'etag' => md5('etag2'),
+			'permissions' => '1',
+			'mimetype' => 'text/plain',
+			'preview-available' => 'no',
+			'hide-download' => 'no',
+		], self::invokePrivate($parser, 'getFileFromNodeId', [$room, $participant, 42]));
+	}
+
+	public function testGetFileFromNodeIdThrowsWhenNotFound(): void {
+		$room = $this->createMock(Room::class);
+
+		$userFolder = $this->createMock(Folder::class);
+		$userFolder->expects($this->once())
+			->method('getFirstNodeById')
+			->with(42)
+			->willReturn(null);
+		$userFolder->expects($this->once())
+			->method('getById')
+			->with(42)
+			->willReturn([]);
+
+		$this->rootFolder->expects($this->once())
+			->method('getUserFolder')
+			->with('alice')
+			->willReturn($userFolder);
+
+		$participant = $this->createMock(Participant::class);
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'users',
+			'actor_id' => 'alice',
+		]);
+		$participant->expects($this->any())
+			->method('getAttendee')
+			->willReturn($attendee);
+
+		$parser = $this->getParser();
+		$this->expectException(NotFoundException::class);
+		self::invokePrivate($parser, 'getFileFromNodeId', [$room, $participant, 42]);
+	}
+
+	public function testGetFileFromNodeIdThrowsForGuest(): void {
+		$room = $this->createMock(Room::class);
+
+		$participant = $this->createMock(Participant::class);
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'guests',
+			'actor_id' => 'guest-hash',
+		]);
+		$participant->expects($this->any())
+			->method('getAttendee')
+			->willReturn($attendee);
+
+		$this->rootFolder->expects($this->never())
+			->method('getUserFolder');
+
+		$parser = $this->getParser();
+		$this->expectException(ShareNotFound::class);
+		self::invokePrivate($parser, 'getFileFromNodeId', [$room, $participant, 42]);
+	}
+
 	public static function dataGetActor(): array {
 		return [
 			['users', [], ['user'], ['user']],

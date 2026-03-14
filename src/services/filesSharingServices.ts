@@ -14,6 +14,13 @@ import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { SHARE } from '../constants.ts'
 
+type PostAttachmentParams = {
+	token: string
+	filePath: string
+	referenceId: string
+	talkMetaData: string
+}
+
 /**
  * Appends a file as a message to the messages list
  *
@@ -56,8 +63,30 @@ async function createNewFile({ filePath, templatePath, templateType }: createFil
 	} as createFileFromTemplateParams)
 }
 
+/**
+ * Post a file from a conversation attachment subfolder as a chat message.
+ *
+ * Unlike shareFile(), this does not create a per-file TYPE_ROOM share.
+ * Access is controlled by the folder-level share that was automatically
+ * created when the conversation subfolder was first created via WebDAV MKCOL.
+ *
+ * @param payload The function payload
+ * @param payload.token The conversation token
+ * @param payload.filePath File path relative to the user's home root
+ * @param payload.referenceId Client reference ID for the chat message
+ * @param payload.talkMetaData JSON-encoded metadata (caption, messageType, silent, …)
+ */
+async function postAttachment({ token, filePath, referenceId, talkMetaData }: PostAttachmentParams): Promise<void> {
+	await axios.post(generateOcsUrl('apps/spreed/api/v1/room/{token}/attachment', { token }), {
+		filePath,
+		referenceId,
+		talkMetaData,
+	})
+}
+
 export {
 	createNewFile,
 	getFileTemplates,
+	postAttachment,
 	shareFile,
 }
