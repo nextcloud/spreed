@@ -34,11 +34,12 @@ class ConversationSectionMapper extends QBMapper {
 		return $this->findEntities($qb);
 	}
 
-	public function findById(int $id): ConversationSection {
+	public function findById(int $id, string $userId): ConversationSection {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)));
 
 		return $this->findEntity($qb);
 	}
@@ -59,11 +60,13 @@ class ConversationSectionMapper extends QBMapper {
 	/**
 	 * Clear section_id from all attendees when a section is deleted
 	 */
-	public function clearSectionFromAttendees(int $sectionId): void {
+	public function clearSectionFromAttendees(int $sectionId, string $userId): void {
 		$qb = $this->db->getQueryBuilder();
 		$qb->update('talk_attendees')
 			->set('section_id', $qb->createNamedParameter(null, IQueryBuilder::PARAM_NULL))
-			->where($qb->expr()->eq('section_id', $qb->createNamedParameter($sectionId, IQueryBuilder::PARAM_INT)));
+			->where($qb->expr()->eq('section_id', $qb->createNamedParameter($sectionId, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('actor_type', $qb->createNamedParameter('users')))
+			->andWhere($qb->expr()->eq('actor_id', $qb->createNamedParameter($userId)));
 
 		$qb->executeStatement();
 	}

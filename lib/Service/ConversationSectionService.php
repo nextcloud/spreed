@@ -26,8 +26,8 @@ class ConversationSectionService {
 		return $this->mapper->findByUserId($userId);
 	}
 
-	public function getSection(int $sectionId): ConversationSection {
-		return $this->mapper->findById($sectionId);
+	public function getSection(int $sectionId, string $userId): ConversationSection {
+		return $this->mapper->findById($sectionId, $userId);
 	}
 
 	public function createSection(string $userId, string $name): ConversationSection {
@@ -46,11 +46,7 @@ class ConversationSectionService {
 	 * @throws DoesNotExistException
 	 */
 	public function updateSection(int $sectionId, string $userId, string $name): ConversationSection {
-		$section = $this->mapper->findById($sectionId);
-		if ($section->getUserId() !== $userId) {
-			throw new DoesNotExistException('Section not found');
-		}
-
+		$section = $this->mapper->findById($sectionId, $userId);
 		$section->setName($name);
 		return $this->mapper->update($section);
 	}
@@ -59,12 +55,8 @@ class ConversationSectionService {
 	 * @throws DoesNotExistException
 	 */
 	public function deleteSection(int $sectionId, string $userId): void {
-		$section = $this->mapper->findById($sectionId);
-		if ($section->getUserId() !== $userId) {
-			throw new DoesNotExistException('Section not found');
-		}
-
-		$this->mapper->clearSectionFromAttendees($sectionId);
+		$section = $this->mapper->findById($sectionId, $userId);
+		$this->mapper->clearSectionFromAttendees($sectionId, $userId);
 		$this->mapper->delete($section);
 	}
 
@@ -95,11 +87,7 @@ class ConversationSectionService {
 	 * @throws DoesNotExistException
 	 */
 	public function toggleCollapsed(int $sectionId, string $userId): ConversationSection {
-		$section = $this->mapper->findById($sectionId);
-		if ($section->getUserId() !== $userId) {
-			throw new DoesNotExistException('Section not found');
-		}
-
+		$section = $this->mapper->findById($sectionId, $userId);
 		$section->setCollapsed(!$section->isCollapsed());
 		return $this->mapper->update($section);
 	}
