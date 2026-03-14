@@ -155,17 +155,17 @@ defineExpose({
 		<ul
 			v-else
 			:style="wrapperProps.style">
-			<template v-for="item in list" :key="item.data._type === 'section-header' ? item.data.id : item.data.id">
+			<template v-for="item in list" :key="item.data.id">
 				<ConversationSectionHeader
-					v-if="item.data._type === 'section-header'"
-					:name="item.data.name"
-					:sectionId="item.data.sectionId"
-					:collapsed="item.data.collapsed"
-					:unreadCount="item.data.unreadCount"
+					v-if="isSectionHeader(item.data)"
+					:name="(item.data as SectionHeaderItem).name"
+					:sectionId="(item.data as SectionHeaderItem).sectionId"
+					:collapsed="(item.data as SectionHeaderItem).collapsed"
+					:unreadCount="(item.data as SectionHeaderItem).unreadCount"
 					@toggleCollapsed="handleToggleCollapsed" />
 				<ConversationItem
 					v-else
-					:item="item.data"
+					:item="(item.data as Conversation)"
 					:compact />
 			</template>
 		</ul>
