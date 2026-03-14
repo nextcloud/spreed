@@ -10,6 +10,7 @@ import NcFormBox from '@nextcloud/vue/components/NcFormBox'
 import NcFormBoxSwitch from '@nextcloud/vue/components/NcFormBoxSwitch'
 import { useDevices } from '../../composables/useDevices.js'
 import { useSettingsStore } from '../../stores/settings.ts'
+import { localMediaModel } from '../../utils/webrtc/index.js'
 
 const props = defineProps<{
 	container?: string
@@ -66,6 +67,14 @@ function onClosing(result?: unknown) {
 	)) {
 		// Apply changes to audio stream
 		updateAudioStream(true)
+
+		if (localMediaModel.getWebRtc()) {
+			if (settingsStore.noiseSuppressionWithModel) {
+				localMediaModel.enableNoiseSuppression()
+			} else {
+				localMediaModel.disableNoiseSuppression()
+			}
+		}
 	}
 
 	emit('close', result)
