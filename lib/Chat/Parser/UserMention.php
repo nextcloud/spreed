@@ -261,7 +261,7 @@ class UserMention implements IEventListener {
 		$pattern = '/^```.*?^```|^~~~.*?^~~~|`[^`\n]*`|' . preg_quote($search, '/') . '/sm';
 		return preg_replace_callback($pattern, static function (array $match) use ($search, $replacement): string {
 			return ($match[0] === $search) ? $replacement : $match[0];
-		}, $message);
+		}, $message) ?? $message;
 	}
 
 	/**
