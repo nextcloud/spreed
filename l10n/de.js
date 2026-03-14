@@ -1418,6 +1418,8 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "Du wartest derzeit in der Lobby",
     "Enable noise suppression" : "Geräuschunterdrückung aktivieren",
     "Reduce background noises for better voice quality" : "Hintergrundgeräusche für eine bessere Sprachqualität reduzieren",
+    "Enhanced noise suppression" : "Verbesserte Geräuschunterdrückung",
+    "Use \"{modelName}\" real-time noise suppression algorithm" : "Den Algorithmus \"{modelName}\" zur Echtzeit-Rauschunterdrückung verwenden",
     "Enable echo cancellation" : "Echounterdrückung aktivieren",
     "Minimize echo effect from own surrounding" : "Echoeffekt aus der eigenen Umgebung minimieren",
     "Enable auto gain control" : "Regelung der automatischen Verstärkung aktivieren",
