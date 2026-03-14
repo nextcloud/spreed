@@ -176,20 +176,22 @@ namespace OCA\Talk;
  *  }
  *
  * @psalm-type TalkChatMessageMetaData = array{
- *     // Actor type of the attendee that pinned the message - Required capability: `pinned-messages`
  *     pinnedActorType?: string,
- *     // Actor ID of the attendee that pinned the message - Required capability: `pinned-messages`
  *     pinnedActorId?: string,
- *     // Display name of the attendee that pinned the message - Required capability: `pinned-messages`
  *     pinnedActorDisplayName?: string,
- *     // Timestamp when the message was pinned - Required capability: `pinned-messages`
  *     pinnedAt?: int,
- *     // Timestamp until when the message is pinned. If missing the message is pinned infinitely - Required capability: `pinned-messages`
  *     pinnedUntil?: int,
- *     // Set when a thread is created with this message. If missing, no thread creation is associated with this message
  *     threadId?: int,
- *     // Set when a thread is created with this message. If missing, no thread creation is associated with this message
  *     threadTitle?: string,
+ *     // Private reply snapshot fields
+ *     parentMessageId?: int,
+ *     parentConversationToken?: string,
+ *     parentConversationName?: string,
+ *     parentActorDisplayName?: string,
+ *     parentMessage?: string,
+ *     parentMessageParameters?: array<string, mixed>,
+ *     parentMessageType?: string,
+ *     parentTimestamp?: int,
  * }
  *
  * @psalm-type TalkChatMessage = TalkBaseMessage&array{

@@ -85,6 +85,7 @@ class ChatManager {
 	public const VERB_VOICE_MESSAGE = 'voice-message';
 	public const VERB_RECORD_AUDIO = 'record-audio';
 	public const VERB_RECORD_VIDEO = 'record-video';
+	public const VERB_PRIVATE_REPLY = 'private_reply';
 
 	/**
 	 * Last read message ID of -1 is set on the attendee table as default.
@@ -393,6 +394,8 @@ class ChatManager {
 		int $threadId = 0,
 		string $threadTitle = '',
 		bool $fromScheduledMessage = false,
+		string $verb = self::VERB_MESSAGE,
+		array $extraMetaData = [],
 	): IComment {
 		if ($chat->isFederatedConversation()) {
 			$e = new MessagingNotAllowedException();
@@ -405,7 +408,7 @@ class ChatManager {
 		$comment->setCreationDateTime($creationDateTime);
 		// A verb ('comment', 'like'...) must be provided to be able to save a
 		// comment
-		$comment->setVerb(self::VERB_MESSAGE);
+		$comment->setVerb($verb);
 
 		if ($replyTo instanceof IComment) {
 			$comment->setParentId($replyTo->getId());
@@ -443,7 +446,7 @@ class ChatManager {
 		if ($threadId !== Thread::THREAD_NONE) {
 			$metadata[Message::METADATA_THREAD_ID] = $threadId;
 		}
-		$comment->setMetaData($metadata);
+		$comment->setMetaData(array_merge($metadata, $extraMetaData));
 
 		$event = new BeforeChatMessageSentEvent($chat, $comment, $participant, $silent, $replyTo);
 		$this->dispatcher->dispatchTyped($event);

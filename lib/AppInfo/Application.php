@@ -23,6 +23,7 @@ use OCA\Talk\Chat\Parser\Changelog;
 use OCA\Talk\Chat\Parser\ReactionParser;
 use OCA\Talk\Chat\Parser\SystemMessage;
 use OCA\Talk\Chat\Parser\UserMention;
+use OCA\Talk\Chat\Parser\PrivateReply;
 use OCA\Talk\Chat\SystemMessage\Listener as SystemMessageListener;
 use OCA\Talk\Collaboration\Collaborators\Listener as CollaboratorsListener;
 use OCA\Talk\Collaboration\Reference\ReferenceInvalidationListener;
@@ -235,6 +236,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(MessageParseEvent::class, Changelog::class, -75);
 		$context->registerEventListener(MessageParseEvent::class, ReactionParser::class);
 		$context->registerEventListener(MessageParseEvent::class, SystemMessage::class);
+		$context->registerEventListener(MessageParseEvent::class, PrivateReply::class);
 		$context->registerEventListener(MessageParseEvent::class, SystemMessage::class, 9999);
 		$context->registerEventListener(MessageParseEvent::class, UserMention::class, -100);
 
