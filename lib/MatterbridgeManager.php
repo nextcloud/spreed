@@ -502,7 +502,7 @@ class MatterbridgeManager {
 				throw new \InvalidArgumentException('Invalid matterbridge parameters');
 			}
 			foreach ($part as $key => $value) {
-				if (preg_match('/["\n]/', $key) || preg_match('/["\n]/', $value)) {
+				if (preg_match('/["\n]/', $key) || preg_match('/["\n]/', (string)$value)) {
 					$this->logger->error('User tried to configure a malicious matterbridge setup');
 					throw new \InvalidArgumentException('Invalid matterbridge parameters');
 				}
