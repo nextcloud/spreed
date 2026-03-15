@@ -785,6 +785,11 @@ export type components = {
             isSensitive: boolean;
             /**
              * Format: int64
+             * @description ID of the custom section this conversation belongs to (only available with `conversation-sections` capability)
+             */
+            sectionId: number | null;
+            /**
+             * Format: int64
              * @description Required capability: `pinned-messages`
              */
             lastPinnedId: number;

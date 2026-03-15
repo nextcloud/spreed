@@ -116,6 +116,17 @@
 				</NcActionButton>
 
 				<NcActionButton
+					v-if="supportSections && sectionsStore.sortedSections.length > 0 && !item.isFavorite && !item.isArchived"
+					key="show-sections"
+					isMenu
+					@click="submenu = 'sections'">
+					<template #icon>
+						<IconTagMultipleOutline :size="20" />
+					</template>
+					{{ t('spreed', 'Move to section') }}
+				</NcActionButton>
+
+				<NcActionButton
 					v-if="item.canLeaveConversation"
 					key="leave-conversation"
 					closeAfterClick
@@ -208,6 +219,46 @@
 					</NcActionButton>
 				</template>
 			</template>
+			<template v-else-if="submenu === 'sections'">
+				<NcActionButton
+					key="action-back-sections"
+					:aria-label="t('spreed', 'Back')"
+					@click.stop="submenu = null">
+					<template #icon>
+						<IconArrowLeft class="bidirectional-icon" :size="20" />
+					</template>
+					{{ t('spreed', 'Back') }}
+				</NcActionButton>
+
+				<NcActionButton
+					key="no-section"
+					:modelValue="currentSectionValue"
+					value="none"
+					type="radio"
+					closeAfterClick
+					@click="assignToSection(null)">
+					<template #icon>
+						<IconMinusCircleOutline :size="20" />
+					</template>
+					{{ t('spreed', 'No section') }}
+				</NcActionButton>
+
+				<NcActionSeparator />
+
+				<NcActionButton
+					v-for="section in sectionsStore.sortedSections"
+					:key="'section-' + section.id"
+					:modelValue="currentSectionValue"
+					:value="section.id.toString()"
+					type="radio"
+					closeAfterClick
+					@click="assignToSection(section.id)">
+					<template #icon>
+						<IconTagMultipleOutline :size="20" />
+					</template>
+					{{ section.name }}
+				</NcActionButton>
+			</template>
 		</template>
 
 		<template v-else-if="item.token" #actions>
@@ -255,9 +306,11 @@ import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconExitToApp from 'vue-material-design-icons/ExitToApp.vue'
 import IconMessageAlertOutline from 'vue-material-design-icons/MessageAlertOutline.vue'
 import IconMessageBadgeOutline from 'vue-material-design-icons/MessageBadgeOutline.vue'
+import IconMinusCircleOutline from 'vue-material-design-icons/MinusCircleOutline.vue'
 import IconPhoneRingOutline from 'vue-material-design-icons/PhoneRingOutline.vue'
 import IconShieldLockOutline from 'vue-material-design-icons/ShieldLockOutline.vue'
 import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better indication
+import IconTagMultipleOutline from 'vue-material-design-icons/TagMultipleOutline.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import ConfirmDialog from '../../UIShared/ConfirmDialog.vue'
@@ -266,11 +319,13 @@ import IconMarkChatRead from '../../../../img/material-icons/mark-chat-read.svg?
 import { useConversationInfo } from '../../../composables/useConversationInfo.ts'
 import { AVATAR, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
+import { useConversationSectionsStore } from '../../../stores/conversationSections.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const supportImportantConversations = hasTalkFeature('local', 'important-conversations')
 const supportSensitiveConversations = hasTalkFeature('local', 'sensitive-conversations')
+const supportSections = hasTalkFeature('local', 'conversation-sections')
 
 const notificationLevels = [
 	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages'), icon: IconBellRingOutline },
@@ -297,6 +352,8 @@ export default {
 		IconPhoneRingOutline,
 		IconShieldLockOutline,
 		IconStar,
+		IconMinusCircleOutline,
+		IconTagMultipleOutline,
 		IconVideo,
 		NcActionButton,
 		NcActionSeparator,
@@ -350,12 +407,16 @@ export default {
 		const { item, isSearchResult } = toRefs(props)
 		const { counterType, conversationInformation } = useConversationInfo({ item, isSearchResult })
 
+		const sectionsStore = useConversationSectionsStore()
+
 		return {
 			AVATAR,
 			IconMarkChatRead,
 			supportsArchive,
 			supportImportantConversations,
 			supportSensitiveConversations,
+			supportSections,
+			sectionsStore,
 			submenu,
 			isDarkTheme,
 			counterType,
@@ -400,6 +461,10 @@ export default {
 
 		notificationLevel() {
 			return this.item.notificationLevel.toString()
+		},
+
+		currentSectionValue() {
+			return this.item.sectionId ? this.item.sectionId.toString() : 'none'
 		},
 
 		notificationCalls() {
@@ -536,6 +601,13 @@ export default {
 
 		async toggleArchiveConversation() {
 			this.$store.dispatch('toggleArchive', this.item)
+		},
+
+		async assignToSection(sectionId) {
+			this.$store.dispatch('assignToSection', {
+				token: this.item.token,
+				sectionId,
+			})
 		},
 
 		/**

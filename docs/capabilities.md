@@ -210,6 +210,8 @@
 * `config => call => live-transcription-target-language-id` (local) - User defined string value with the id of the target language to use for live translations
 
 ## 24
+* `conversation-sections` (local) - Whether the user can create custom sections to organize conversations in the sidebar
+* `config => conversations => sort-mode` (local) - User selected sort mode for conversations (`activity`, `alphabetical`, or `type-first`)
 * `react-permission` - When permission 256 is required to add reactions (previously handled by the chat permission)
 * `config => permissions => max-default` - Maximum value for default permissions (510 with react-permission, 254 without)
 * `config => permissions => max-custom` - Maximum value for custom permissions (511 with react-permission, 255 without)

@@ -23,6 +23,14 @@ import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 vi.mock('../../services/conversationsService', () => ({
 	searchListedConversations: vi.fn(),
 }))
+vi.mock('../../services/conversationSectionsService', () => ({
+	fetchSections: vi.fn().mockResolvedValue({ data: [] }),
+	createSection: vi.fn(),
+	updateSection: vi.fn(),
+	deleteSection: vi.fn(),
+	reorderSections: vi.fn(),
+	assignConversationToSection: vi.fn(),
+}))
 vi.mock('../../services/coreService', () => ({
 	autocompleteQuery: vi.fn(),
 }))

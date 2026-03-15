@@ -77,6 +77,53 @@
 					</NcActions>
 				</TransitionWrapper>
 
+				<!-- Sort options -->
+				<TransitionWrapper name="radial-reveal">
+					<NcActions
+						v-show="searchText === ''"
+						:variant="sortMode !== 'activity' ? 'secondary' : 'tertiary'"
+						class="sort-options"
+						:class="{ 'hidden-visually': isSearching }">
+						<template #icon>
+							<IconSortVariant :size="20" />
+						</template>
+						<NcActionCaption :name="t('spreed', 'Sort conversations by')" />
+
+						<NcActionButton
+							closeAfterClick
+							type="radio"
+							:modelValue="sortMode === 'activity'"
+							@click="handleSortMode('activity')">
+							<template #icon>
+								<IconClockOutline :size="20" />
+							</template>
+							{{ t('spreed', 'Recent activity') }}
+						</NcActionButton>
+
+						<NcActionButton
+							closeAfterClick
+							type="radio"
+							:modelValue="sortMode === 'alphabetical'"
+							@click="handleSortMode('alphabetical')">
+							<template #icon>
+								<IconSortAlphabeticalAscending :size="20" />
+							</template>
+							{{ t('spreed', 'Alphabetical') }}
+						</NcActionButton>
+
+						<NcActionButton
+							closeAfterClick
+							type="radio"
+							:modelValue="sortMode === 'type-first'"
+							@click="handleSortMode('type-first')">
+							<template #icon>
+								<IconAccountGroupOutline :size="20" />
+							</template>
+							{{ t('spreed', 'Groups first') }}
+						</NcActionButton>
+					</NcActions>
+				</TransitionWrapper>
+
 				<!-- Actions -->
 				<TransitionWrapper name="radial-reveal">
 					<NcActions
@@ -246,7 +293,8 @@
 					:loading="!conversationsInitialised"
 					:compact="isCompact"
 					class="scroller"
-					@scroll="debounceHandleScroll" />
+					@scroll="debounceHandleScroll"
+					@toggleSectionCollapsed="handleToggleSectionCollapsed" />
 				<NcButton
 					v-if="!showThreadsList && !preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null && !filters.includes('mentions')"
 					class="unread-mention-button"
@@ -287,6 +335,17 @@
 					</span>
 				</NcButton>
 
+				<NcButton
+					v-if="!showArchived && !showThreadsList"
+					variant="tertiary"
+					wide
+					@click="showManageSections = true">
+					<template #icon>
+						<IconTagMultipleOutline :size="20" />
+					</template>
+					{{ t('spreed', 'Manage sections') }}
+				</NcButton>
+
 				<NcButton variant="tertiary" wide @click="showSettings">
 					<template #icon>
 						<IconCogOutline :size="20" />
@@ -295,6 +354,10 @@
 				</NcButton>
 			</div>
 		</template>
+
+		<ManageSectionsDialog
+			v-if="showManageSections"
+			@close="showManageSections = false" />
 	</NcAppNavigation>
 </template>
 
@@ -317,12 +380,14 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcChip from '@nextcloud/vue/components/NcChip'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import IconAccountGroupOutline from 'vue-material-design-icons/AccountGroupOutline.vue'
 import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMultiplePlusOutline.vue'
 import IconArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconAt from 'vue-material-design-icons/At.vue'
 import IconCalendarBlankOutline from 'vue-material-design-icons/CalendarBlankOutline.vue'
 import IconChatPlusOutline from 'vue-material-design-icons/ChatPlusOutline.vue'
+import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconFilterOutline from 'vue-material-design-icons/FilterOutline.vue'
 import IconFilterRemoveOutline from 'vue-material-design-icons/FilterRemoveOutline.vue'
@@ -334,6 +399,9 @@ import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import IconNoteEditOutline from 'vue-material-design-icons/NoteEditOutline.vue'
 import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
+import IconSortAlphabeticalAscending from 'vue-material-design-icons/SortAlphabeticalAscending.vue'
+import IconSortVariant from 'vue-material-design-icons/SortVariant.vue'
+import IconTagMultipleOutline from 'vue-material-design-icons/TagMultipleOutline.vue'
 import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
 import ThreadItem from '../RightSidebar/Threads/ThreadItem.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
@@ -342,6 +410,7 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import CallPhoneDialog from './CallPhoneDialog/CallPhoneDialog.vue'
 import ConversationsListVirtual from './ConversationsList/ConversationsListVirtual.vue'
 import InvitationHandler from './InvitationHandler.vue'
+import ManageSectionsDialog from './ManageSectionsDialog.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
 import SearchConversationsResults from './SearchConversationsResults/SearchConversationsResults.vue'
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
@@ -359,6 +428,7 @@ import { EventBus } from '../../services/EventBus.ts'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import { useActorStore } from '../../stores/actor.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
+import { useConversationSectionsStore } from '../../stores/conversationSections.ts'
 import { useFederationStore } from '../../stores/federation.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useTalkHashStore } from '../../stores/talkHash.js'
@@ -428,6 +498,12 @@ export default {
 		IconCogOutline,
 		IconFormatListBulleted,
 		IconNoteEditOutline,
+		IconSortVariant,
+		IconSortAlphabeticalAscending,
+		IconClockOutline,
+		IconAccountGroupOutline,
+		IconTagMultipleOutline,
+		ManageSectionsDialog,
 		NcEmptyContent,
 	},
 
@@ -443,6 +519,7 @@ export default {
 		const federationStore = useFederationStore()
 		const talkHashStore = useTalkHashStore()
 		const settingsStore = useSettingsStore()
+		const sectionsStore = useConversationSectionsStore()
 		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox)
 		const isMobile = useIsMobile()
 
@@ -469,6 +546,7 @@ export default {
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
 			tokenStore: useTokenStore(),
+			sectionsStore,
 		}
 	},
 
@@ -498,10 +576,17 @@ export default {
 			isFocused: false,
 			isNavigating: false,
 			fallbackConversationToken: null,
+			showManageSections: false,
+			favoritesCollapsed: BrowserStorage.getItem('section_collapsed_favorites') === 'true',
+			otherCollapsed: BrowserStorage.getItem('section_collapsed_other') === 'true',
 		}
 	},
 
 	computed: {
+		sortMode() {
+			return this.$store.getters.sortMode
+		},
+
 		conversationsList() {
 			return this.$store.getters.conversationsList
 		},
@@ -541,21 +626,89 @@ export default {
 		},
 
 		filteredConversationsList() {
+			let conversations
 			if (this.isFocused) {
-				return this.conversationsList.filter((conversation) => shouldIncludeArchived(conversation, this.showArchived))
+				conversations = this.conversationsList.filter((conversation) => shouldIncludeArchived(conversation, this.showArchived))
+			} else {
+				let validConversationsCount = 0
+				const filteredConversations = this.conversationsList.filter((conversation) => {
+					const conversationIsValid = filterConversation(conversation, this.filters)
+					if (conversationIsValid) {
+						validConversationsCount++
+					}
+					return shouldIncludeArchived(conversation, this.showArchived)
+						&& (conversationIsValid || hasCall(conversation) || conversation.token === this.token)
+				})
+				// return empty if it only includes the current conversation without any flags
+				conversations = validConversationsCount === 0 && !this.isNavigating ? [] : filteredConversations
 			}
 
-			let validConversationsCount = 0
-			const filteredConversations = this.conversationsList.filter((conversation) => {
-				const conversationIsValid = filterConversation(conversation, this.filters)
-				if (conversationIsValid) {
-					validConversationsCount++
+			// If no sections or showing archived, return plain list
+			const sections = this.sectionsStore.sortedSections
+			if (sections.length === 0 || this.showArchived) {
+				return conversations
+			}
+
+			// Group conversations by section
+			const favoriteConversations = conversations.filter((c) => c.isFavorite)
+			const sectionedConversations = conversations.filter((c) => !c.isFavorite && c.sectionId)
+			const unsectionedConversations = conversations.filter((c) => !c.isFavorite && !c.sectionId)
+
+			const result = []
+
+			// Favorites section (built-in)
+			if (favoriteConversations.length > 0) {
+				result.push({
+					_type: 'section-header',
+					id: 'section-favorites',
+					name: t('spreed', 'Favorites'),
+					sectionId: 'favorites',
+					collapsed: this.favoritesCollapsed,
+					unreadCount: favoriteConversations.reduce((sum, c) => sum + (c.unreadMessages || 0), 0),
+				})
+				if (!this.favoritesCollapsed) {
+					result.push(...favoriteConversations)
 				}
-				return shouldIncludeArchived(conversation, this.showArchived)
-					&& (conversationIsValid || hasCall(conversation) || conversation.token === this.token)
-			})
-			// return empty if it only includes the current conversation without any flags
-			return validConversationsCount === 0 && !this.isNavigating ? [] : filteredConversations
+			}
+
+			// Custom sections
+			for (const section of sections) {
+				const sectionConvs = sectionedConversations.filter((c) => c.sectionId === section.id)
+				if (sectionConvs.length === 0 && this.isFiltered) {
+					continue // Hide empty sections when filtering
+				}
+
+				const unreadCount = sectionConvs.reduce((sum, c) => sum + (c.unreadMessages || 0), 0)
+				result.push({
+					_type: 'section-header',
+					id: `section-${section.id}`,
+					name: section.name,
+					sectionId: section.id,
+					collapsed: section.collapsed,
+					unreadCount,
+				})
+
+				if (!section.collapsed) {
+					result.push(...sectionConvs)
+				}
+			}
+
+			// Unsectioned conversations
+			if (unsectionedConversations.length > 0) {
+				result.push({
+					_type: 'section-header',
+					id: 'section-other',
+					name: t('spreed', 'Other'),
+					sectionId: 'other',
+					collapsed: this.otherCollapsed,
+					unreadCount: unsectionedConversations.reduce((sum, c) => sum + (c.unreadMessages || 0), 0),
+				})
+				if (!this.otherCollapsed) {
+					result.push(...unsectionedConversations)
+				}
+			}
+
+			return result
 		},
 
 		followedThreads() {
@@ -664,6 +817,9 @@ export default {
 		this.debounceFetchConversations = debounce(this.fetchConversations, 3000)
 		this.debounceHandleScroll = debounce(this.handleScroll, 50)
 
+		// Fetch conversation sections
+		this.sectionsStore.fetchSections()
+
 		EventBus.on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.once('conversations-received', this.handleConversationsReceived)
 		EventBus.on('route-change', this.onRouteChange)
@@ -716,6 +872,22 @@ export default {
 
 		showInvitationHandler() {
 			this.$refs.invitationHandler.showModal()
+		},
+
+		handleSortMode(sortMode) {
+			this.$store.dispatch('setSortMode', sortMode)
+		},
+
+		handleToggleSectionCollapsed(sectionId) {
+			if (sectionId === 'favorites') {
+				this.favoritesCollapsed = !this.favoritesCollapsed
+				BrowserStorage.setItem('section_collapsed_favorites', String(this.favoritesCollapsed))
+			} else if (sectionId === 'other') {
+				this.otherCollapsed = !this.otherCollapsed
+				BrowserStorage.setItem('section_collapsed_other', String(this.otherCollapsed))
+			} else if (typeof sectionId === 'number') {
+				this.sectionsStore.toggleCollapsed(sectionId)
+			}
 		},
 
 		handleFilter(filter) {
@@ -1098,6 +1270,12 @@ export default {
 	.filters {
 		position: absolute;
 		top: 0;
+		inset-inline-end: calc((var(--default-grid-baseline) + var(--default-clickable-area)) * 2);
+	}
+
+	.sort-options {
+		position: absolute;
+		top: 0;
 		inset-inline-end: calc(var(--default-grid-baseline) + var(--default-clickable-area));
 	}
 
@@ -1157,7 +1335,7 @@ export default {
 	transition: all 0.15s ease;
 	z-index: 1;
 	// TODO replace with NcAppNavigationSearch
-	width: calc(100% - (var(--default-grid-baseline) + var(--default-clickable-area)) * 2);
+	width: calc(100% - (var(--default-grid-baseline) + var(--default-clickable-area)) * 3);
 	display: flex;
 
 	&--expanded {
@@ -1179,8 +1357,8 @@ export default {
 .left-sidebar__settings-button-container {
 	display: flex;
 	flex-direction: column;
-	gap: var(--default-grid-baseline);
-	padding: calc(2 * var(--default-grid-baseline));
+	gap: 0;
+	padding: var(--default-grid-baseline, 4px) 0;
 }
 
 .left-sidebar__settings-button-bubble {

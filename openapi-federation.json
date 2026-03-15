@@ -962,6 +962,7 @@
                     "isArchived",
                     "isImportant",
                     "isSensitive",
+                    "sectionId",
                     "lastPinnedId",
                     "hiddenPinnedId",
                     "hasScheduledMessages",
@@ -1259,6 +1260,12 @@
                     "isSensitive": {
                         "type": "boolean",
                         "description": "Required capability: `sensitive-conversations`"
+                    },
+                    "sectionId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true,
+                        "description": "ID of the custom section this conversation belongs to (only available with `conversation-sections` capability)"
                     },
                     "lastPinnedId": {
                         "type": "integer",
