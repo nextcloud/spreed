@@ -51,6 +51,37 @@ Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
 
 ---
 
+## 💙 Contribution Guidelines
+
+### ⚙️ 🖌️ Code contributions
+For general information please see the [guidelines for contributing](https://github.com/nextcloud/spreed/blob/main/.github/contributing.md) to this repository.
+
+#### ✨ AI submissions / 🚛 Big submissions
+Please be mindful when sending AI generated pull requests. Especially with larger features that result in thousands of changed or added lines maintainers have to review.
+We respectfully ask you to discuss your plan with us in the issue beforehand, to avoid too many discussions in the review process.
+It also makes sense to split your work into multiple smaller chunks. We appreciate if you …
+
+- … check if your whole contribution can be divided into separate functioning PRs. The lesser change per PR is made, the faster it can get fully reviewed and merged
+- … split backend vs. frontend changes in different commits or even different pull requests, as they require different expertise on reviewing
+- … splitting any chores and artefacts recompile into separate commits (e.g. regenerating OpenAPI, adding npm or composer dependencies, …)
+- …, when possible, split changes into meaningful commits (e.g. if feature is implemented in three logical steps, make it in three commits)
+- … address review changes in separate fixup! commits, that simplify the review process as we don't have to go through a single big diff and a rewritten history all the time. It can be squashed later
+
+### 🔣 Translations
+There is no need to manually modify translation files in `/l10n`, it is handled automatically by a separate service (where contributors can also help with translating strings extracted from the app).
+
+- Feel free to contribute translations directly via [Transifex](https://explore.transifex.com/nextcloud/).
+- Translations are synced from there on a nightly basis.
+
+### 📚 Documentation
+
+- Developer and admin related documentation is written in the markdown files in the [docs/](https://github.com/nextcloud/spreed/tree/main/docs) directory.
+  Install mkdocs locally: `apt install mkdocs mkdocs-bootstrap` and run `mkdocs serve` afterwards to see your changes live locally.
+- User documentation source code is available in the general [documentation repository](https://github.com/nextcloud/documentation/tree/master/user_manual/talk).
+  See the ReadMe.md file there for build instructions.
+
+---
+
 ## 🚧 Development Setup
 
 1. Simply clone this repository into the `apps` folder of your Nextcloud development instance.
@@ -130,7 +161,3 @@ This is only off close to releases of the server, to allow easier finishing of f
 * `💔 Backlog` - The **backlog** milestone is assigned to all remaining issues
 
 You can always pick a task of any milestone, and we will help you to get it into the assigned milestone or also an earlier one if time permits. It's just a matter of having an overview and better visibility what we think should be worked on, but it's not exclusive.
-
-### 💙 Contribution Guidelines
-
-For more information please see the [guidelines for contributing](https://github.com/nextcloud/spreed/blob/main/.github/contributing.md) to this repository.
