@@ -1545,15 +1545,4 @@ export default {
 	}
 }
 
-// Override actions styles TODO: upstream this change
-:deep(.action-item__menutoggle) {
-	opacity: 1 !important;
-
-	&:hover,
-	&:focus {
-		background-color: var(--color-background-hover) !important;
-	}
-
-}
-
 </style>
