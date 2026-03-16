@@ -385,7 +385,7 @@
 				:key="emoji"
 				variant="tertiary"
 				:aria-label="t('spreed', 'React with {emoji}', { emoji })"
-				@click="handleReactionClick(emoji)">
+				@click="handleReactionClick(emoji, true)">
 				<template #icon>
 					<span>{{ emoji }}</span>
 				</template>
@@ -414,7 +414,7 @@ import { getCurrentUser } from '@nextcloud/auth'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
-import { emojiSearch } from '@nextcloud/vue/functions/emoji'
+import { emojiAddRecent, emojiSearch } from '@nextcloud/vue/functions/emoji'
 import { vOnClickOutside as ClickOutside } from '@vueuse/components'
 import { toRefs } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
@@ -829,7 +829,7 @@ export default {
 			})
 		},
 
-		handleReactionClick(selectedEmoji) {
+		handleReactionClick(selectedEmoji, updateFrequentlyUsed = false) {
 			// Add reaction only if user hasn't reacted yet
 			if (!this.message.reactionsSelf?.includes(selectedEmoji)) {
 				this.reactionsStore.addReactionToMessage({
@@ -837,6 +837,11 @@ export default {
 					messageId: this.message.id,
 					selectedEmoji,
 				})
+
+				if (updateFrequentlyUsed) {
+					// Manually update value in frequently used emoji (not from EmojiPicker)
+					emojiAddRecent(selectedEmoji)
+				}
 			} else {
 				console.debug('user has already reacted, removing reaction')
 				this.reactionsStore.removeReactionFromMessage({
