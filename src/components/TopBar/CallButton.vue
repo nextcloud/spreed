@@ -100,7 +100,6 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
@@ -118,7 +117,7 @@ import { useGetToken } from '../../composables/useGetToken.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { callSIPDialOut } from '../../services/callsService.ts'
-import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
@@ -222,7 +221,6 @@ export default {
 	data() {
 		return {
 			loading: false,
-			callEnabled: false,
 		}
 	},
 
@@ -329,7 +327,7 @@ export default {
 		},
 
 		showStartCallButton() {
-			return this.callEnabled
+			return getTalkConfig(this.token, 'call', 'enabled')
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 				&& this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 				&& (!this.conversation.remoteServer || hasTalkFeature(this.token, 'federation-v2'))
@@ -373,10 +371,6 @@ export default {
 			this.callViewStore.resetCallHasJustEnded()
 			this.talkHashStore.resetTalkProxyHashDirty(oldValue)
 		},
-	},
-
-	mounted() {
-		this.callEnabled = loadState('spreed', 'call_enabled')
 	},
 
 	methods: {
