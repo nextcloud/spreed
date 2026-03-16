@@ -1237,7 +1237,6 @@ export default {
 			if (this.messageToEdit || this.scheduleMessageTime) {
 				return
 			}
-			e.preventDefault()
 			// Prevent a new call of this.handleFiles if already called
 			if (this.clipboardTimeStamp === e.timeStamp) {
 				return
@@ -1247,9 +1246,6 @@ export default {
 			const content = fetchClipboardContent(e)
 			if (content.kind === 'file') {
 				this.handleFiles(content.files, true)
-			} else {
-				// FIXME NcRichContenteditable prevents trigger input event on pasting text
-				this.handleTyping()
 			}
 		},
 
@@ -1548,22 +1544,6 @@ export default {
 		opacity: 1;
 		// good looking on dark AND white bg
 		background-color: rgba(127, 127, 127, .25);
-	}
-}
-
-// Override actions styles TODO: upstream this change
-:deep(.action-item__menutoggle) {
-	opacity: 1 !important;
-
-	&:hover,
-	&:focus {
-		background-color: var(--color-background-hover) !important;
-	}
-
-	&:disabled,
-	&[aria-disabled="true"] {
-		opacity: .5 !important;
-		pointer-events: none;
 	}
 }
 
