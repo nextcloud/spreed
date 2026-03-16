@@ -1547,20 +1547,4 @@ export default {
 	}
 }
 
-// Override actions styles TODO: upstream this change
-:deep(.action-item__menutoggle) {
-	opacity: 1 !important;
-
-	&:hover,
-	&:focus {
-		background-color: var(--color-background-hover) !important;
-	}
-
-	&:disabled,
-	&[aria-disabled="true"] {
-		opacity: .5 !important;
-		pointer-events: none;
-	}
-}
-
 </style>
