@@ -117,9 +117,15 @@ export function processNoiseSuppression(stream: MediaStream, enabled = false): M
 export function processRnnoise(stream: MediaStream): MediaStream {
 	try {
 		const mediaStreamAudioSource = audioContext!.createMediaStreamSource(stream)
+		const outputGainNode = audioContext!.createGain()
 		const mediaStreamAudioDestinationNode = audioContext!.createMediaStreamDestination()
+
+		// Gain node configuration (to increase the output of processed track)
+		outputGainNode.gain.value = 2
+
 		mediaStreamAudioSource.connect(rnnoiseWorklet!)
-		rnnoiseWorklet!.connect(mediaStreamAudioDestinationNode)
+		rnnoiseWorklet!.connect(outputGainNode)
+		outputGainNode.connect(mediaStreamAudioDestinationNode)
 
 		const processedAudioTrack = mediaStreamAudioDestinationNode.stream.getAudioTracks()[0]
 		if (!processedAudioTrack) {
