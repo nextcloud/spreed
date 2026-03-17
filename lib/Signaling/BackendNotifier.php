@@ -264,7 +264,7 @@ class BackendNotifier {
 		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'delete',
-			'delete' => (object)[],
+			'delete' => new \stdClass(),
 		]);
 		$duration = microtime(true) - $start;
 		$this->logger->debug('Room deleted: {token} ({duration})', [
