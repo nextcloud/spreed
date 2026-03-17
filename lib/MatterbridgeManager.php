@@ -26,6 +26,7 @@ use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
+use OCP\Security\IRemoteHostValidator;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
@@ -49,6 +50,7 @@ class MatterbridgeManager {
 		private IAvatarManager $avatarManager,
 		private LoggerInterface $logger,
 		private ITimeFactory $timeFactory,
+		private IRemoteHostValidator $hostValidator,
 	) {
 	}
 
@@ -501,8 +503,59 @@ class MatterbridgeManager {
 				$this->logger->error('User tried to configure a malicious matterbridge setup');
 				throw new \InvalidArgumentException('Invalid matterbridge parameters');
 			}
+
+			/**
+			 * Applicable:
+			 * - irc: Server="irc.freenode.net:6667"
+			 * - mattermost: Server="yourmattermostserver.domain" (do not prefix it with http or https)
+			 * - matrix: Server="https://matrix.org"
+			 * - rocketchat: Server="https://yourrocketchatserver.domain.com:443"
+			 * - xmpp: Server="jabber.example.com:5222"
+			 * - zulip: Server="https://yourserver.zulipchat.com"
+			 *
+			 * Maybe applicable:
+			 * - nctalk: If it's not the same server as the current one
+			 *
+			 * Not applicable:
+			 * - discord: If you want to bridge https://discord.com/channels/AAAA/BBBB, then this should be AAAA.
+			 */
+			if (in_array($part['type'], ['irc', 'mattermost', 'matrix', 'rocketchat', 'xmpp', 'zulip'], true)) {
+				$tempServer = str_starts_with($part['server'], 'https://') ? $part['server'] : ('https://' . $part['server']);
+				$host = parse_url($tempServer, PHP_URL_HOST);
+				if ($host === null || !$this->hostValidator->isValid($host)) {
+					$this->logger->error('User tried to configure a malicious matterbridge setup');
+					throw new \InvalidArgumentException('Invalid matterbridge parameters');
+				}
+			} elseif ($part['type'] === 'nctalk') {
+				$host = parse_url($part['server'], PHP_URL_HOST);
+				$currentDomain = $this->urlGenerator->getAbsoluteURL('/');
+				$currentHost = parse_url($currentDomain, PHP_URL_HOST);
+
+				if ($host === null || ($host !== $currentHost && !$this->hostValidator->isValid($host))) {
+					$this->logger->error('User tried to configure a malicious matterbridge setup');
+					throw new \InvalidArgumentException('Invalid matterbridge parameters');
+				}
+
+				if ($host === $currentHost && !$this->hostValidator->isValid($host)) {
+					$port = parse_url($part['server'], PHP_URL_PORT);
+					$currentPort = parse_url($currentDomain, PHP_URL_PORT);
+					if ($port !== $currentPort) {
+						$this->logger->error('User tried to configure a malicious matterbridge setup');
+						throw new \InvalidArgumentException('Invalid matterbridge parameters');
+					}
+				}
+			}
+
 			foreach ($part as $key => $value) {
-				if (preg_match('/["\n]/', $key) || preg_match('/["\n]/', $value)) {
+				if (in_array($key, ['editing', 'skiptls', 'usesasl', 'usetls'], true)) {
+					if (!is_bool($value)) {
+						$this->logger->error('User tried to configure a malicious matterbridge setup');
+						throw new \InvalidArgumentException('Invalid matterbridge parameters');
+					}
+					continue;
+				}
+
+				if (!is_string($key) || !is_string($value) || preg_match('/["\n\r]/', $key) || preg_match('/["\n\r]/', $value)) {
 					$this->logger->error('User tried to configure a malicious matterbridge setup');
 					throw new \InvalidArgumentException('Invalid matterbridge parameters');
 				}
