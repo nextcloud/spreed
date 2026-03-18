@@ -10,6 +10,7 @@ namespace OCA\Talk\Command\Turn;
 
 use OC\Core\Command\Base;
 use OCP\IConfig;
+use OCP\Security\ISecureRandom;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -19,6 +20,7 @@ class Add extends Base {
 
 	public function __construct(
 		private IConfig $config,
+		private ISecureRandom $secureRandom,
 	) {
 		parent::__construct();
 	}
@@ -83,7 +85,7 @@ class Add extends Base {
 			return 1;
 		}
 		if ($generate) {
-			$secret = $this->getUniqueSecret();
+			$secret = $this->secureRandom->generate(128);
 		}
 		if (stripos($server, 'https://') === 0) {
 			$server = substr($server, 8);
@@ -122,9 +124,5 @@ class Add extends Base {
 		$this->config->setAppValue('spreed', 'turn_servers', json_encode($servers));
 		$output->writeln('<info>Added ' . $server . '.</info>');
 		return 0;
-	}
-
-	protected function getUniqueSecret(): string {
-		return sha1(uniqid('', true));
 	}
 }

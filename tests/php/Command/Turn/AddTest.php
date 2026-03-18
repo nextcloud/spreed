@@ -9,6 +9,7 @@ namespace OCA\Talk\Tests\php\Command\Turn;
 
 use OCA\Talk\Command\Turn\Add;
 use OCP\IConfig;
+use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,6 +17,7 @@ use Test\TestCase;
 
 class AddTest extends TestCase {
 	protected IConfig&MockObject $config;
+	protected ISecureRandom&MockObject $secureRandom;
 	protected InputInterface&MockObject $input;
 	protected OutputInterface&MockObject $output;
 	protected Add $command;
@@ -24,8 +26,9 @@ class AddTest extends TestCase {
 		parent::setUp();
 
 		$this->config = $this->createMock(IConfig::class);
+		$this->secureRandom = $this->createMock(ISecureRandom::class);
 
-		$this->command = new Add($this->config);
+		$this->command = new Add($this->config, $this->secureRandom);
 
 		$this->input = $this->createMock(InputInterface::class);
 		$this->output = $this->createMock(OutputInterface::class);
@@ -113,13 +116,9 @@ class AddTest extends TestCase {
 				throw new \Exception();
 			});
 
-		$command = $this->getMockBuilder(Add::class)
-			->onlyMethods(['getUniqueSecret'])
-			->setConstructorArgs([$this->config])
-			->getMock();
-		$command->expects($this->once())
-			->method('getUniqueSecret')
-			->willReturn('my-generaeted-test-secret');
+		$this->secureRandom->expects($this->once())
+			->method('generate')
+			->willReturn('O2vWVFk5QRdJ/9clK4XIHbkxYXvVe6ySggANw4TG/B/HCtFzpi7v4GVNB/6wUZvA13v2EN4WgDk+gjATk9zhhc7B6FzxLNWOlQFBADg2aYHb+Ozse2BABDk3VUHCR+W9');
 		$this->config->method('getAppValue')
 			->with('spreed', 'turn_servers')
 			->willReturn(json_encode([]));
@@ -132,7 +131,7 @@ class AddTest extends TestCase {
 					[
 						'schemes' => 'turn,turns',
 						'server' => 'turn.test.com',
-						'secret' => 'my-generaeted-test-secret',
+						'secret' => 'O2vWVFk5QRdJ/9clK4XIHbkxYXvVe6ySggANw4TG/B/HCtFzpi7v4GVNB/6wUZvA13v2EN4WgDk+gjATk9zhhc7B6FzxLNWOlQFBADg2aYHb+Ozse2BABDk3VUHCR+W9',
 						'protocols' => 'udp,tcp'
 					]
 				]))
@@ -141,7 +140,7 @@ class AddTest extends TestCase {
 			->method('writeln')
 			->with($this->equalTo('<info>Added turn.test.com.</info>'));
 
-		self::invokePrivate($command, 'execute', [$this->input, $this->output]);
+		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
 
 	public function testSecretAndGenerateSecretOptions(): void {
