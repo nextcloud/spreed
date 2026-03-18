@@ -26,6 +26,9 @@ jobs:
   auto-approve-merge:
     if: github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'renovate[bot]'
     runs-on: ubuntu-latest-low
+    env:
+      ALLOW_MINOR: false
+      IGNORE_PATTERN: '(webrtc-adapter|\@nextcloud\/vue)'
     permissions:
       # for hmarr/auto-approve-action to approve PRs
       pull-requests: write
@@ -39,20 +42,41 @@ jobs:
           echo 'Can not approve PRs from forks'
           exit 1
 
-      - uses: mdecoleman/pr-branch-name@55795d86b4566d300d237883103f052125cc7508 # v3.0.0
-        id: branchname
+      - name: Dependabot metadata
+        if: github.event.pull_request.user.login == 'dependabot[bot]'
+        id: metadata
+        uses: dependabot/fetch-metadata@21025c705c08248db411dc16f3619e6b5f9ea21a # v2.5.0
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check allowed dependency update
+        if: github.event.pull_request.user.login == 'dependabot[bot]'
+        id: validate
+        env:
+          IGNORE_PATTERN: ${{ env.IGNORE_PATTERN }}
+          DEPENDENCY_NAMES: ${{ steps.metadata.outputs.dependency-names }}
+        run: |
+          if [[ -z ${IGNORE_PATTERN} ]]; then
+              echo "ignore=false" >> "$GITHUB_OUTPUT"
+          elif [[ -z ${DEPENDENCY_NAMES} ]]; then
+              echo "ignore=false" >> "$GITHUB_OUTPUT"
+          elif [[ ${DEPENDENCY_NAMES} =~ ${IGNORE_PATTERN} ]]; then
+              echo "ignore=true" >> "$GITHUB_OUTPUT"
+          fi
 
       # GitHub actions bot approve
       - uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
-        if: startsWith(steps.branchname.outputs.branch, 'dependabot/') && contains(steps.branchname.outputs.branch, '/webrtc-adapter-') != true && contains(steps.branchname.outputs.branch, '/nextcloud/vue-') != true
+        if: ${{ github.event.pull_request.user.login == 'dependabot[bot]'
+            && steps.validate.outputs.ignore != 'true'
+            && ((env.ALLOW_MINOR && steps.metadata.outputs.update-type == 'version-update:semver-minor')
+                || steps.metadata.outputs.update-type == 'version-update:semver-patch')
+          }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       # Enable GitHub auto merge
       - name: Auto merge
         uses: alexwilson/enable-github-automerge-action@56e3117d1ae1540309dc8f7a9f2825bc3c5f06ff # v2.0.0
-        if: startsWith(steps.branchname.outputs.branch, 'dependabot/') && contains(steps.branchname.outputs.branch, '/webrtc-adapter-') != true && contains(steps.branchname.outputs.branch, '/nextcloud/vue-') != true
+        if: github.event.pull_request.user.login == 'dependabot[bot]'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
