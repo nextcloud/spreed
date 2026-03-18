@@ -179,16 +179,19 @@ class ChatController extends AEnvironmentAwareOCSController {
 				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
 			}
 
-			$parentMessageMetaData = [
-				'parentMessageId' => $replyTo,
-				'parentConversationToken' => $replyToToken,
-				'parentConversationName' => $targetParentRoom->getName(),
-				'parentActorDisplayName' => $originalParentMessage->getActorDisplayName(),
-				'parentMessage' => $originalParentMessage->getMessage(),
-				'parentMessageType' => $originalParentMessage->getMessageType(),
-				'parentMessageParameters' => $originalParentMessage->getMessageParameters(),
-				'parentTimestamp' => $parent->getCreationDateTime()->getTimestamp(),
+			$originalMessageData = $originalParentMessage->toArray('json', null);
+			$originalMessageData['threadId'] = Thread::THREAD_NONE;
+			$originalMessageData['reactions'] = new \stdClass();
+			$originalMessageData['messageType'] = $originalParentMessage->getMessageType();
+
+			$extraMetaData = [
+				'replyToMessageId' => $replyTo,
+				'replyToConversationToken' => $replyToToken,
+				'replyToConversationName' => $targetParentRoom->getName(),
+				'replyToActorDisplayName' => $originalParentMessage->getActorDisplayName(),
 			];
+			$originalMessageData['metaData'] = array_merge($originalMessageData['metaData'] ?? [], $extraMetaData);
+
 			// Create a link message for the private reply
 			$copiedParent = $this->chatManager->sendMessage(
 				$this->room,
@@ -201,7 +204,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 				'',
 				true,
 				verb: ChatManager::VERB_PRIVATE_REPLY,
-				extraMetaData: $parentMessageMetaData
+				extraMetaData: [
+					'originalMessage' => $originalMessageData,
+				],
 			);
 
 			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $copiedParent, $this->l);
@@ -513,7 +518,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		$parent = $parentMessage = null;
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
-	
+
 		if ($replyTo !== 0) {
 			[$actorType, $actorId] = $this->getActorInfo();
 			$resolvedReplyTo = $this->resolveReplyTo($replyTo, $replyToToken, $actorType, $actorId, $creationDateTime);
@@ -1752,11 +1757,14 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	private function buildPrivateReplyParentSnapshot(IComment $comment): array {
-		return [
-			'id' => (int)$comment->getId(),
-			'messageType' => ChatManager::VERB_PRIVATE_REPLY,
-			'metaData' => $comment->getMetaData() ?? [],
-		];
+		$metaData = $comment->getMetaData() ?? [];
+		$message = $metaData['originalMessage'];
+		$message['id'] = (int)$comment->getId();
+		$message['token'] = $comment->getObjectId();
+		unset($metaData['originalMessage']);
+		$message['metaData'] = array_merge($metaData, $message['metaData']);
+
+		return $message;
 	}
 
 	/**
