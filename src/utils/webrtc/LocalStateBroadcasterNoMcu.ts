@@ -67,7 +67,7 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 
 		this._callParticipantModels.forEach((callParticipantModel) => {
 			callParticipantModel.off('change:connectionState', this._handleConnectionStateBound)
-			callParticipantModel.off('change:peer', this._handlePeerBound)
+			callParticipantModel.off('set:peer', this._handlePeerBound)
 		})
 	}
 
@@ -75,14 +75,14 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 		this._callParticipantModels.set(callParticipantModel.get('peerId') as string, callParticipantModel)
 
 		callParticipantModel.on('change:connectionState', this._handleConnectionStateBound)
-		callParticipantModel.on('change:peer', this._handlePeerBound)
+		callParticipantModel.on('set:peer', this._handlePeerBound)
 	}
 
 	protected _handleRemoveCallParticipantModel(callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModel): void {
 		this._callParticipantModels.delete(callParticipantModel.get('peerId') as string)
 
 		callParticipantModel.off('change:connectionState', this._handleConnectionStateBound)
-		callParticipantModel.off('change:peer', this._handlePeerBound)
+		callParticipantModel.off('set:peer', this._handlePeerBound)
 	}
 
 	private _handleConnectionState(callParticipantModel: CallParticipantModel, connectionState: string): void {
@@ -91,7 +91,7 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 			this._sendCurrentMediaStateTo(callParticipantModel.get('peerId') as string)
 
 			callParticipantModel.off('change:connectionState', this._handleConnectionStateBound)
-			callParticipantModel.off('change:peer', this._handlePeerBound)
+			callParticipantModel.off('set:peer', this._handlePeerBound)
 		}
 	}
 
