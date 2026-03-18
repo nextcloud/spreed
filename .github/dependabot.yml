@@ -94,6 +94,7 @@ updates:
     prefix: "build"
     include: "scope"
   versioning-strategy: "increase"
+  open-pull-requests-limit: 10
   schedule:
     interval: weekly
     day: saturday
@@ -111,6 +112,7 @@ updates:
     prefix: "build"
     include: "scope"
   versioning-strategy: "increase"
+  open-pull-requests-limit: 10
   schedule:
     interval: weekly
     day: saturday
@@ -118,7 +120,7 @@ updates:
     timezone: Europe/Berlin
   ignore:
     - dependency-name: "*"
-      update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      update-types: ["version-update:semver-major"]
   cooldown:
     default-days: 4
     exclude:
@@ -131,6 +133,7 @@ updates:
     prefix: "build"
     include: "scope"
   versioning-strategy: "increase"
+  open-pull-requests-limit: 10
   schedule:
     interval: weekly
     day: saturday
@@ -138,7 +141,7 @@ updates:
     timezone: Europe/Berlin
   ignore:
     - dependency-name: "*"
-      update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      update-types: ["version-update:semver-major"]
   cooldown:
     default-days: 4
     exclude:
