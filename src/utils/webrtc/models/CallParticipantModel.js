@@ -109,12 +109,24 @@ CallParticipantModel.prototype = {
 
 	set(key, value) {
 		if (this.attributes[key] === value) {
+			// FIXME Special case to detect when a null peer was set; "peer"
+			// attribute should be initialized instead to "undefined" and
+			// clients should listen to "change:" as for other attributes.
+			if (key === 'peer') {
+				this._trigger('set:' + key, [value])
+			}
+
 			return
 		}
 
 		this.attributes[key] = value
 
 		this._trigger('change:' + key, [value])
+
+		// FIXME Special case to detect when a null peer was set; see above.
+		if (key === 'peer') {
+			this._trigger('set:' + key, [value])
+		}
 	},
 
 	_handlePeerStreamAdded(peer) {
