@@ -1315,6 +1315,7 @@ Feature: get
     And user "participant2" gets the DAV properties for "/"
     And the list of returned files for "participant2" is
       | / |
+      | /Talk/ |
       | /welcome.txt |
 
   Scenario: get files after deleting a received share
@@ -1347,6 +1348,7 @@ Feature: get
     And user "participant2" gets the DAV properties for "/"
     And the list of returned files for "participant2" is
       | / |
+      | /Talk/ |
       | /welcome.txt |
 
 
