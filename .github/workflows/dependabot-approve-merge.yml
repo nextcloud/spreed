@@ -65,10 +65,12 @@ jobs:
           fi
 
       # GitHub actions bot approve
-      - uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
+      - name: Auto approve
+        id: auto_approve
+        uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
         if: ${{ github.event.pull_request.user.login == 'dependabot[bot]'
             && steps.validate.outputs.ignore != 'true'
-            && ((env.ALLOW_MINOR && steps.metadata.outputs.update-type == 'version-update:semver-minor')
+            && ((fromJSON(env.ALLOW_MINOR) && steps.metadata.outputs.update-type == 'version-update:semver-minor')
                 || steps.metadata.outputs.update-type == 'version-update:semver-patch')
           }}
         with:
@@ -77,6 +79,6 @@ jobs:
       # Enable GitHub auto merge
       - name: Auto merge
         uses: alexwilson/enable-github-automerge-action@56e3117d1ae1540309dc8f7a9f2825bc3c5f06ff # v2.0.0
-        if: github.event.pull_request.user.login == 'dependabot[bot]'
+        if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && steps.auto_approve.conclusion == 'success' }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
