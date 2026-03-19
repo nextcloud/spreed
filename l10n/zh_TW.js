@@ -1925,6 +1925,7 @@ OC.L10N.register(
     "Open Calendar" : "開啟日曆",
     "Remove participant {name}" : "移除參與者 {name}",
     "Would you like to delete this conversation?" : "您想要刪除此對話嗎？",
+    "_This conversation will be automatically deleted for everyone after %n day of inactivity._::_This conversation will be automatically deleted for everyone after %n days of inactivity._" : ["此對話將在 %n 天內不活躍的情況下自動為所有人刪除。"],
     "Are you sure you want to delete this conversation?" : "您確定您想要刪除此對話嗎？",
     "Delete now" : "立刻刪除",
     "Keep" : "保留",

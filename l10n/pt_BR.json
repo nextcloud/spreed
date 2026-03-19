@@ -1923,6 +1923,7 @@
     "Open Calendar" : "Abrir Calendário",
     "Remove participant {name}" : "Remover participante {name}",
     "Would you like to delete this conversation?" : "Você gostaria de excluir esta conversa?",
+    "_This conversation will be automatically deleted for everyone after %n day of inactivity._::_This conversation will be automatically deleted for everyone after %n days of inactivity._" : ["Esta conversa será automaticamente excluída para todos após %n dia de inatividade.","Esta conversa será automaticamente excluída para todos após %n de dias de inatividade.","Esta conversa será automaticamente excluída para todos após %n dias de inatividade."],
     "Are you sure you want to delete this conversation?" : "Tem certeza de que deseja excluir esta conversa?",
     "Delete now" : "Excluir agora",
     "Keep" : "Manter",
