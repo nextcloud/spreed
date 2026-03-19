@@ -4,9 +4,9 @@
  */
 
 import {
-	destroyNoiseSuppressionWorklet,
 	processNoiseSuppression,
 	registerNoiseSuppressionWorklet,
+	unregisterNoiseSuppressionWorklet,
 } from '../../suppressNoise.ts'
 import TrackSinkSource from './TrackSinkSource.js'
 
@@ -98,15 +98,11 @@ export default class NoiseSuppressor extends TrackSinkSource {
 						this._noiseSuppressionRegistrationPromise = null
 						this._noiseSuppressionConsumer = consumer
 
-						if (this._enabled) {
+						if (consumer && this._enabled) {
 							this._startEffect()
 						} else {
 							this._stopEffect()
 						}
-					})
-					.catch((error) => {
-						this._noiseSuppressionRegistrationPromise = null
-						console.error(error)
 					})
 			}
 
@@ -126,7 +122,7 @@ export default class NoiseSuppressor extends TrackSinkSource {
 		if (!this._stopTimer) {
 			this._stopTimer = setTimeout(async () => {
 				if (this._noiseSuppressionConsumer) {
-					await destroyNoiseSuppressionWorklet(this._noiseSuppressionConsumer)
+					await unregisterNoiseSuppressionWorklet(this._noiseSuppressionConsumer)
 					this._noiseSuppressionConsumer = null
 				}
 				this._stopTimer = null
