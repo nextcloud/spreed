@@ -5,6 +5,36 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.10 – 2026-03-19
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(bots): Support threads for bots
+  [#17345](https://github.com/nextcloud/spreed/pull/17345)
+- fix(call): Hide call button from dashboard when calls are disabled
+  [#17317](https://github.com/nextcloud/spreed/pull/17317)
+- fix(call): Prefix typed phone number with configured prefix if needed
+  [#17207](https://github.com/nextcloud/spreed/pull/17207)
+- fix(chat): Improve rendering of markdown in mention bubbles
+  [#17211](https://github.com/nextcloud/spreed/pull/17211)
+- fix(conversation): Allow to change the password of a conversation without disabling it
+  [#17221](https://github.com/nextcloud/spreed/pull/17221)
+- fix(federation): Fix federation when using the email instead of the user ID
+  [#17312](https://github.com/nextcloud/spreed/pull/17312)
+- fix(search): Fix conversation and user search with unicode characters
+  [#17143](https://github.com/nextcloud/spreed/pull/17143)
+- fix(settings): Don't discard hosted High-performance backend account when 401 is returned
+  [#17384](https://github.com/nextcloud/spreed/pull/17384)
+- fix(settings): Expose more initial state data as capabilities
+  [#17341](https://github.com/nextcloud/spreed/pull/17341)
+  [#17216](https://github.com/nextcloud/spreed/pull/17216)
+- fix(settings): Fix problem when editing some matterbridge components that have boolean fields
+  [#17391](https://github.com/nextcloud/spreed/pull/17391)
+- fix(settings): Create a stronger/longer turn secret when --generate-secret option is used
+  [#17397](https://github.com/nextcloud/spreed/pull/17397)
+
 ## 22.0.9 – 2026-02-12
 ### Changed
 - Update dependencies
