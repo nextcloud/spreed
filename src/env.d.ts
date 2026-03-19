@@ -49,4 +49,33 @@ declare global {
 	let __webpack_public_path__: string
 }
 
+// Augment models with the public methods added to their prototype by the
+// EmitterMixin.
+/* eslint-disable @typescript-eslint/no-explicit-any --
+ * Arguments of function types are contravariant in strict mode, so the
+ * "any" type is required here, as the "unknown" type would prevent
+ * assigning a function type with narrower argument types.
+ */
+declare module './utils/webrtc/models/CallParticipantCollection.js' {
+	interface CallParticipantCollection {
+		on(event: string, handler: (callParticipantCollection: CallParticipantCollection, ...args: any[]) => void): void
+		off(event: string, handler: (callParticipantCollection: CallParticipantCollection, ...args: any[]) => void): void
+	}
+}
+
+declare module './utils/webrtc/models/CallParticipantModel.js' {
+	interface CallParticipantModel {
+		on(event: string, handler: (callParticipantModel: CallParticipantModel, ...args: any[]) => void): void
+		off(event: string, handler: (callParticipantModel: CallParticipantModel, ...args: any[]) => void): void
+	}
+}
+
+declare module './utils/webrtc/models/LocalCallParticipantModel.js' {
+	interface LocalCallParticipantModel {
+		on(event: string, handler: (localCallParticipantModel: LocalCallParticipantModel, ...args: any[]) => void): void
+		off(event: string, handler: (localCallParticipantModel: LocalCallParticipantModel, ...args: any[]) => void): void
+	}
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
 export {}

@@ -13,7 +13,7 @@ import EmitterMixin from '../../EmitterMixin.js'
 /**
  *
  */
-export default function LocalMediaModel() {
+export function LocalMediaModel() {
 	this._superEmitterMixin()
 
 	this._tokenStore = useTokenStore(pinia)
