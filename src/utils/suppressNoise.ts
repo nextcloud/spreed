@@ -22,6 +22,10 @@ export async function registerNoiseSuppressionWorklet(): Promise<symbol | null> 
 	workletConsumers.add(consumer)
 
 	if (audioContext && rnnoiseWorklet) {
+		if (audioContext.state === 'suspended') {
+			await audioContext.resume()
+		}
+
 		// Already registered
 		return consumer
 	}
@@ -46,6 +50,10 @@ export async function registerNoiseSuppressionWorklet(): Promise<symbol | null> 
 			wasmBinary: rnnoiseWasmBinary,
 			maxChannels: 2,
 		})
+
+		if (audioContext.state === 'suspended') {
+			await audioContext.resume()
+		}
 
 		return consumer
 	} catch (error) {
