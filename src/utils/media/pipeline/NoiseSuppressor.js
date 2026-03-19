@@ -86,7 +86,7 @@ export default class NoiseSuppressor extends TrackSinkSource {
 		const track = this.getInputTrack()
 		this._audioEnabled = track?.enabled ?? false
 		if (!track) {
-			this._setOutputTrack('default', track)
+			this._stopEffect()
 			return
 		}
 
@@ -115,7 +115,7 @@ export default class NoiseSuppressor extends TrackSinkSource {
 		}
 
 		const inputStream = new MediaStream([track])
-		const processedStream = processNoiseSuppression(inputStream, true)
+		const processedStream = processNoiseSuppression(inputStream, this._noiseSuppressionConsumer, true)
 		const processedTrack = processedStream.getAudioTracks()[0]
 		processedTrack.enabled = this._audioEnabled
 

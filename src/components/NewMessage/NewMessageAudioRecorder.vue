@@ -208,7 +208,7 @@ export default {
 				if (this.settingsStore.noiseSuppressionWithModel) {
 					this.noiseSuppressionConsumer = await registerNoiseSuppressionWorklet()
 				}
-				const audioStreamProcessed = processNoiseSuppression(this.audioStream, this.settingsStore.noiseSuppressionWithModel)
+				const audioStreamProcessed = processNoiseSuppression(this.audioStream, this.noiseSuppressionConsumer, this.settingsStore.noiseSuppressionWithModel)
 				this.mediaRecorder = new this.MediaRecorder(audioStreamProcessed, {
 					mimeType: 'audio/wav',
 				})
