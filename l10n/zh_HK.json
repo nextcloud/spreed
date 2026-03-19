@@ -1923,6 +1923,7 @@
     "Open Calendar" : "打開日曆",
     "Remove participant {name}" : "移除參與者 {name}",
     "Would you like to delete this conversation?" : "您想要刪除此對話嗎？",
+    "_This conversation will be automatically deleted for everyone after %n day of inactivity._::_This conversation will be automatically deleted for everyone after %n days of inactivity._" : ["此對話在閒置 %n 天後將會自動為所有人刪除"],
     "Are you sure you want to delete this conversation?" : "您確定您想要刪除此對話嗎？",
     "Delete now" : "立刻刪除",
     "Keep" : "保留",
