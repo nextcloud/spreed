@@ -5,6 +5,27 @@
 // @flow
 
 /**
+ * Number of horizontal + vertical blur iterations applied.
+ * Larger value - stronger blur effect. Low GPU impact.
+ */
+const DEFAULT_BLUR_PASSES = 3
+/**
+ * Spatial radius of the bilateral filter.
+ * Larger value - smoother mask over a wider area, softer edges. High GPU impact.
+ */
+const SIGMA_SPACE = 10
+/**
+ * Range sensitivity of the bilateral filter.
+ * Larger value: more smoothing across edges. Low GPU impact.
+ */
+const SIGMA_COLOR = 0.15
+/**
+ * Sampling stride scale for the bilateral kernel.
+ * Larger value - faster processing, rougher mask refinement. High GPU impact.
+ */
+const SPARSITY_FACTOR = 0.66
+
+/**
  * WebGL-based compositor for background effects.
  * Incorporates joint bilateral filtering and multi-pass blur for improved quality.
  *
@@ -264,8 +285,6 @@ export default class WebGLCompositor {
 		this.blitSamplerLoc = null
 
 		// --- Default parameters ---
-		this.sigmaSpace = 10.0
-		this.sigmaColor = 0.15
 		this.coverage = [0.45, 0.75]
 		this.lightWrapping = 0.3
 		this.progressBarColor = [0, 0.4, 0.62, 1] // Nextcloud default primary color (#00679E)
@@ -468,11 +487,10 @@ export default class WebGLCompositor {
 		// Calculate filter parameters
 		const texelWidth = 1 / width
 		const texelHeight = 1 / height
-		const kSparsityFactor = 0.66
-		const step = Math.max(1, Math.sqrt(this.sigmaSpace) * kSparsityFactor)
-		const radius = this.sigmaSpace
+		const step = Math.max(1, Math.sqrt(SIGMA_SPACE) * SPARSITY_FACTOR)
+		const radius = SIGMA_SPACE
 		const offset = step > 1 ? step * 0.5 : 0
-		const sigmaTexel = Math.max(texelWidth, texelHeight) * this.sigmaSpace
+		const sigmaTexel = Math.max(texelWidth, texelHeight) * SIGMA_SPACE
 
 		// Set uniforms
 		gl.uniform1i(gl.getUniformLocation(this.progBilateral, 'u_inputFrame'), 0)
@@ -482,7 +500,7 @@ export default class WebGLCompositor {
 		gl.uniform1f(gl.getUniformLocation(this.progBilateral, 'u_radius'), radius)
 		gl.uniform1f(gl.getUniformLocation(this.progBilateral, 'u_offset'), offset)
 		gl.uniform1f(gl.getUniformLocation(this.progBilateral, 'u_sigmaTexel'), sigmaTexel)
-		gl.uniform1f(gl.getUniformLocation(this.progBilateral, 'u_sigmaColor'), this.sigmaColor)
+		gl.uniform1f(gl.getUniformLocation(this.progBilateral, 'u_sigmaColor'), SIGMA_COLOR)
 
 		// Bind textures
 		gl.activeTexture(gl.TEXTURE0)
@@ -532,8 +550,7 @@ export default class WebGLCompositor {
 		gl.activeTexture(gl.TEXTURE1)
 		gl.bindTexture(gl.TEXTURE_2D, this.texMaskFiltered)
 
-		// Apply 3 blur passes
-		for (let i = 0; i < 3; i++) {
+		for (let i = 0; i < DEFAULT_BLUR_PASSES; i++) {
 			// Horizontal pass
 			gl.uniform2f(gl.getUniformLocation(this.progBlur, 'u_texelSize'), 0, texelHeight)
 			gl.bindFramebuffer(gl.FRAMEBUFFER, this.fboBlur1)
