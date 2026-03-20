@@ -17,6 +17,9 @@ import WebGLCompositor from './WebGLCompositor.js'
 // Cache MediaPipe resources to avoid loading them multiple times.
 let _WasmFileset = null
 
+const DEFAULT_FRAME_RATE = 30
+const MAX_SEGMENTATION_FRAME_RATE = 25
+
 /**
  * Represents a modified MediaStream that applies virtual background effects
  * (blur, image, video, or video stream) using MediaPipe segmentation.
@@ -82,6 +85,9 @@ export default class VideoStreamBackgroundEffect {
 		this._inputVideoElement = document.createElement('video')
 		this._bgChanged = false
 		this._prevBgMode = null
+		this._frameRate = DEFAULT_FRAME_RATE
+		this._runInferenceInterval = 1000 / MAX_SEGMENTATION_FRAME_RATE
+		this._lastInferenceTime = 0
 	}
 
 	/**
@@ -185,6 +191,19 @@ export default class VideoStreamBackgroundEffect {
 	}
 
 	/**
+	 * Update the input frame rate and derive the rate of segmentation read from it.
+	 *
+	 * @private
+	 * @param {number|string} frameRate - Input frame rate from track settings.
+	 * @return {void}
+	 */
+	_updateFrameRate(frameRate) {
+		const parsedFrameRate = parseInt(frameRate, 10)
+		this._frameRate = !Number.isNaN(parsedFrameRate) ? parsedFrameRate : DEFAULT_FRAME_RATE
+		this._runInferenceInterval = 1000 / Math.min(this._frameRate, MAX_SEGMENTATION_FRAME_RATE)
+	}
+
+	/**
 	 * Process MediaPipe segmentation result and update internal mask.
 	 *
 	 * @private
@@ -274,9 +293,16 @@ export default class VideoStreamBackgroundEffect {
 			this._frameId = this._lastFrameId
 		}
 
-		// Run inference if ready
-		if (this._loaded && this._frameId === this._lastFrameId) {
+		const now = performance.now()
+
+		// Run inference if ready and enough time passed since last _runInference() call
+		// Otherwise, reuse the mask from previous segmentation read
+		if (
+			this._loaded && this._frameId === this._lastFrameId
+			&& now - this._lastInferenceTime >= this._runInferenceInterval
+		) {
 			this._frameId++
+			this._lastInferenceTime = now
 			this._runInference().catch((e) => console.error(e))
 		} else if (this._useWebGL) {
 			this.runPostProcessing()
@@ -605,7 +631,7 @@ export default class VideoStreamBackgroundEffect {
 		const { height, frameRate, width }
 			= firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
 
-		this._frameRate = parseInt(frameRate, 10)
+		this._updateFrameRate(frameRate)
 
 		this._outputCanvasElement.width = parseInt(width, 10)
 		this._outputCanvasElement.height = parseInt(height, 10)
@@ -643,6 +669,7 @@ export default class VideoStreamBackgroundEffect {
 
 		this._frameId = -1
 		this._lastFrameId = -1
+		this._lastInferenceTime = 0
 
 		this._bgChanged = true
 
@@ -661,7 +688,7 @@ export default class VideoStreamBackgroundEffect {
 		const { frameRate }
 			= firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
 
-		this._frameRate = parseInt(frameRate, 10)
+		this._updateFrameRate(frameRate)
 
 		this._outputStream.getVideoTracks()[0].applyConstraints({ frameRate: this._frameRate }).catch((error) => {
 			console.error('Frame rate could not be adjusted in background effect', error)
@@ -669,6 +696,7 @@ export default class VideoStreamBackgroundEffect {
 
 		this._frameId = -1
 		this._lastFrameId = -1
+		this._lastInferenceTime = 0
 	}
 
 	/**
