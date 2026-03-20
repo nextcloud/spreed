@@ -417,13 +417,12 @@ export default class VideoStreamBackgroundEffect {
 		const backgroundBlurValue = this._options.virtualBackground.blurValue * scaledBlurFactor
 		const edgesBlurValue = (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE ? 4 : 8) * scaledBlurFactor
 
-		if (!this._outputCanvasElement.width
-			|| !this._outputCanvasElement.height) {
-			return
+		// Update canvas size only when changed / unset
+		if (this._outputCanvasElement.width !== width
+			|| this._outputCanvasElement.height !== height) {
+			this._outputCanvasElement.width = width
+			this._outputCanvasElement.height = height
 		}
-
-		this._outputCanvasElement.width = width
-		this._outputCanvasElement.height = height
 
 		if (this._useWebGL) {
 			if (!this._glFx) {
