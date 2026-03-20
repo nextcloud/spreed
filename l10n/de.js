@@ -1925,7 +1925,7 @@ OC.L10N.register(
     "Open Calendar" : "Kalender öffnen",
     "Remove participant {name}" : "Teilnehmer {name} entfernen",
     "Would you like to delete this conversation?" : "Soll diese Unterhaltung gelöscht werden?",
-    "_This conversation will be automatically deleted for everyone after %n day of inactivity._::_This conversation will be automatically deleted for everyone after %n days of inactivity._" : ["Diese Unterhaltung wird für alle bei Inaktivität in %n Tag gelöscht","Diese Unterhaltung wird für alle bei Inaktivität in %n Tagen gelöscht"],
+    "_This conversation will be automatically deleted for everyone after %n day of inactivity._::_This conversation will be automatically deleted for everyone after %n days of inactivity._" : ["Diese Unterhaltung wird nach %n Tag Inaktivität für alle gelöscht","Diese Unterhaltung wird nach %n Tagen Inaktivität für alle gelöscht"],
     "Are you sure you want to delete this conversation?" : "Soll diese Unterhaltung gelöscht werden?",
     "Delete now" : "Jetzt löschen",
     "Keep" : "Behalten",
