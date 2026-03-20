@@ -4,26 +4,7 @@
  */
 // @flow
 
-/**
- * Number of horizontal + vertical blur iterations applied.
- * Larger value - stronger blur effect. Low GPU impact.
- */
-const DEFAULT_BLUR_PASSES = 3
-/**
- * Spatial radius of the bilateral filter.
- * Larger value - smoother mask over a wider area, softer edges. High GPU impact.
- */
-const SIGMA_SPACE = 5
-/**
- * Range sensitivity of the bilateral filter.
- * Larger value: more smoothing across edges. Low GPU impact.
- */
-const SIGMA_COLOR = 0.15
-/**
- * Sampling stride scale for the bilateral kernel.
- * Larger value - faster processing, rougher mask refinement. High GPU impact.
- */
-const SPARSITY_FACTOR = 1
+import { virtualBackgroundDebugConfig } from './runtimeConfig.js'
 
 /**
  * WebGL-based compositor for background effects.
@@ -487,10 +468,10 @@ export default class WebGLCompositor {
 		// Calculate filter parameters
 		const texelWidth = 1 / width
 		const texelHeight = 1 / height
-		const step = Math.max(1, Math.sqrt(SIGMA_SPACE) * SPARSITY_FACTOR)
-		const radius = SIGMA_SPACE
+		const step = Math.max(1, Math.sqrt(virtualBackgroundDebugConfig.SIGMA_SPACE) * virtualBackgroundDebugConfig.SPARSITY_FACTOR)
+		const radius = virtualBackgroundDebugConfig.SIGMA_SPACE
 		const offset = step > 1 ? step * 0.5 : 0
-		const sigmaTexel = Math.max(texelWidth, texelHeight) * SIGMA_SPACE
+		const sigmaTexel = Math.max(texelWidth, texelHeight) * virtualBackgroundDebugConfig.SIGMA_SPACE
 
 		// Set uniforms
 		gl.uniform1i(gl.getUniformLocation(this.progBilateral, 'u_inputFrame'), 0)
@@ -500,7 +481,7 @@ export default class WebGLCompositor {
 		gl.uniform1f(gl.getUniformLocation(this.progBilateral, 'u_radius'), radius)
 		gl.uniform1f(gl.getUniformLocation(this.progBilateral, 'u_offset'), offset)
 		gl.uniform1f(gl.getUniformLocation(this.progBilateral, 'u_sigmaTexel'), sigmaTexel)
-		gl.uniform1f(gl.getUniformLocation(this.progBilateral, 'u_sigmaColor'), SIGMA_COLOR)
+		gl.uniform1f(gl.getUniformLocation(this.progBilateral, 'u_sigmaColor'), virtualBackgroundDebugConfig.SIGMA_COLOR)
 
 		// Bind textures
 		gl.activeTexture(gl.TEXTURE0)
@@ -550,7 +531,7 @@ export default class WebGLCompositor {
 		gl.activeTexture(gl.TEXTURE1)
 		gl.bindTexture(gl.TEXTURE_2D, this.texMaskFiltered)
 
-		for (let i = 0; i < DEFAULT_BLUR_PASSES; i++) {
+		for (let i = 0; i < virtualBackgroundDebugConfig.DEFAULT_BLUR_PASSES; i++) {
 			// Horizontal pass
 			gl.uniform2f(gl.getUniformLocation(this.progBlur, 'u_texelSize'), 0, texelHeight)
 			gl.bindFramebuffer(gl.FRAMEBUFFER, this.fboBlur1)

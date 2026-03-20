@@ -13,12 +13,10 @@ import {
 	timerWorkerScript,
 } from './TimerWorker.js'
 import WebGLCompositor from './WebGLCompositor.js'
+import { DEFAULT_VIRTUAL_BACKGROUND_DEBUG_CONFIG, virtualBackgroundDebugConfig } from './runtimeConfig.js'
 
 // Cache MediaPipe resources to avoid loading them multiple times.
 let _WasmFileset = null
-
-const DEFAULT_FRAME_RATE = 30
-const MAX_SEGMENTATION_FRAME_RATE = 25
 
 /**
  * Represents a modified MediaStream that applies virtual background effects
@@ -85,8 +83,9 @@ export default class VideoStreamBackgroundEffect {
 		this._inputVideoElement = document.createElement('video')
 		this._bgChanged = false
 		this._prevBgMode = null
-		this._frameRate = DEFAULT_FRAME_RATE
-		this._runInferenceInterval = 1000 / MAX_SEGMENTATION_FRAME_RATE
+		this._inputTrackFrameRate = null
+		this._frameRate = virtualBackgroundDebugConfig.DEFAULT_FRAME_RATE
+		this._runInferenceInterval = 1000 / Math.min(this._frameRate, virtualBackgroundDebugConfig.MAX_SEGMENTATION_FRAME_RATE)
 		this._lastInferenceTime = 0
 	}
 
@@ -197,10 +196,46 @@ export default class VideoStreamBackgroundEffect {
 	 * @param {number|string} frameRate - Input frame rate from track settings.
 	 * @return {void}
 	 */
-	_updateFrameRate(frameRate) {
+	_resolveFrameRate(frameRate) {
+		const configuredFrameRate = virtualBackgroundDebugConfig.DEFAULT_FRAME_RATE
 		const parsedFrameRate = parseInt(frameRate, 10)
-		this._frameRate = !Number.isNaN(parsedFrameRate) ? parsedFrameRate : DEFAULT_FRAME_RATE
-		this._runInferenceInterval = 1000 / Math.min(this._frameRate, MAX_SEGMENTATION_FRAME_RATE)
+
+		if (Number.isNaN(parsedFrameRate)) {
+			return configuredFrameRate
+		}
+
+		if (configuredFrameRate === DEFAULT_VIRTUAL_BACKGROUND_DEBUG_CONFIG.DEFAULT_FRAME_RATE) {
+			return parsedFrameRate
+		}
+
+		return Math.min(parsedFrameRate, configuredFrameRate)
+	}
+
+	_syncFrameRateConfig() {
+		const nextFrameRate = this._resolveFrameRate(this._inputTrackFrameRate)
+		const nextRunInferenceInterval = 1000 / Math.min(nextFrameRate, virtualBackgroundDebugConfig.MAX_SEGMENTATION_FRAME_RATE)
+		const didFrameRateChange = this._frameRate !== nextFrameRate
+
+		this._frameRate = nextFrameRate
+		this._runInferenceInterval = nextRunInferenceInterval
+
+		if (!didFrameRateChange || !this._outputStream) {
+			return
+		}
+
+		const outputTrack = this._outputStream.getVideoTracks()[0]
+		if (!outputTrack) {
+			return
+		}
+
+		outputTrack.applyConstraints({ frameRate: this._frameRate }).catch((error) => {
+			console.error('Frame rate could not be adjusted in background effect', error)
+		})
+	}
+
+	_updateFrameRate(frameRate) {
+		this._inputTrackFrameRate = frameRate
+		this._syncFrameRateConfig()
 	}
 
 	/**
@@ -292,6 +327,8 @@ export default class VideoStreamBackgroundEffect {
 			console.debug('Fixing frame id, this should not happen', this._frameId, this._lastFrameId)
 			this._frameId = this._lastFrameId
 		}
+
+		this._syncFrameRateConfig()
 
 		const now = performance.now()
 
@@ -689,10 +726,6 @@ export default class VideoStreamBackgroundEffect {
 			= firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints()
 
 		this._updateFrameRate(frameRate)
-
-		this._outputStream.getVideoTracks()[0].applyConstraints({ frameRate: this._frameRate }).catch((error) => {
-			console.error('Frame rate could not be adjusted in background effect', error)
-		})
 
 		this._frameId = -1
 		this._lastFrameId = -1
