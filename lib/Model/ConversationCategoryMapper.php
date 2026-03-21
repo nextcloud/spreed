@@ -73,6 +73,7 @@ class ConversationCategoryMapper extends QBMapper {
 
 		$result = $qb->executeQuery();
 		while ($row = $result->fetch()) {
+			/** @var list<string|int> $categoryIds */
 			$categoryIds = json_decode($row['category_ids'], true) ?? [];
 			$categoryIds = array_values(array_filter($categoryIds, fn ($id) => (string)$id !== $categoryIdStr));
 
