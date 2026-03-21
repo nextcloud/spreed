@@ -2217,7 +2217,6 @@
     "Failed to save sounds setting" : "聲音設定儲存失敗",
     "Sounds setting saved" : "聲音設置已保存",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Nextcloud Talk 已更新，您無法開始或加入通話。",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "{expirationDurationFormatted} 沒有活動的每個人都會自動刪除此對話。",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "您在另一個窗口或裝置中加入了對話。Nextcloud Talk 目前不支持此功能，因此該節，時段已關閉。",
     "Nextcloud Talk was updated." : "Nextcloud 已更新。",
     "Nextcloud is in maintenance mode." : "Nextcloud 處於維護模式。",

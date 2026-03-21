@@ -2161,7 +2161,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Ei õnnestu salvestada helide seadistusi",
     "Sounds setting saved" : "Helide seadistused on salvestatud",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Nextcloud Talk on uuendatud, sa ei saa helistada ega kõnega liituda.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "See vestlus kustub automaatselt kõigi osalejate jaoks, kui siin pole olnud tegevust {expirationDurationFormatted}.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Sa liitusid selle vestlusega muus aknas või seadmes. Selline võimalus pole hetkel Nextcloudi kõnerakenduses toetatud ja seega sessioon sai suletud.",
     "Nextcloud Talk was updated." : "Nextcloud Talk on uuendatud.",
     "Nextcloud is in maintenance mode." : "Nextcloud on hooldusrežiimis.",

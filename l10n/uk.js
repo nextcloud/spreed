@@ -2112,7 +2112,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Не вдалося зберегти налаштування звуків",
     "Sounds setting saved" : "Налаштування звуків збережено",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Nextcloud Talk оновлено, ви не можете розпочати або приєднатися до виклику.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Ця розмова буде автоматично видалена для всіх {expirationDurationFormatted} бездіяльних.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Ви приєдналися до розмови в іншому вікні або на іншому пристрої. Наразі Nextcloud Talk не підтримує таку функцію, тому ця сесія була закрита.",
     "Nextcloud Talk was updated." : "Оновлений Nextcloud Talk.",
     "Nextcloud is in maintenance mode." : "Nextcloud знаходиться в режимі технічного обслуговування.",

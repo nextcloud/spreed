@@ -2219,7 +2219,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Spremanje postavki zvukova nije uspjelo",
     "Sounds setting saved" : "Postavka zvukova je spremljena",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Nextcloud Talk je ažuriran; ne možete pokrenuti ni pridružiti se pozivu.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Ovaj će razgovor biti automatski izbrisan za sve nakon {expirationDurationFormatted} neaktivnosti.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Pridružili ste se razgovoru u drugom prozoru ili na drugom uređaju. Nextcloud Talk trenutačno ne podržava tu radnju pa je ova sesija zatvorena.",
     "Nextcloud Talk was updated." : "Nextcloud Talk je ažuriran.",
     "Nextcloud is in maintenance mode." : "Nextcloud je u načinu održavanja.",

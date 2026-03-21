@@ -2196,7 +2196,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Produciuse un fallo ao gardar os axustes de son",
     "Sounds setting saved" : "Gardáronse os axustes de son",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Parladoiro de Nextcloud foi actualizada, non pode comezar nin unirse a unha chamada.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Esta conversa eliminarase automaticamente para todos aos {expirationDurationFormatted} días sen actividade.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Uniuse á conversa noutra xanela ou dispositivo. Isto non é compatíbel actualmente con Parladoiro de Nextcloud polo que esta sesión pechouse.",
     "Nextcloud Talk was updated." : "Parladoiro de Nextcloud foi actualizada",
     "Nextcloud is in maintenance mode." : "Nextcloud está en modo de mantemento.",

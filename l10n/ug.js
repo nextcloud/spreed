@@ -2150,7 +2150,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "ئاۋاز تەڭشىكىنى ساقلىيالمىدى",
     "Sounds setting saved" : "ئاۋاز تەڭشىكى ساقلاندى",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Nextcloud Talk يېڭىلاندى ، سىز پاراڭنى باشلىيالمايسىز ياكى قاتنىشالمايسىز.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "بۇ سۆھبەت {expirationDurationFormatted} پائالىيىتى بولمىغان بارلىق كىشىلەر ئۈچۈن ئاپتوماتىك ئۆچۈرۈلىدۇ.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "سىز باشقا كۆزنەك ياكى ئۈسكۈنىدە سۆھبەتكە قاتناشتىڭىز. بۇنى Nextcloud Talk قوللىمايدۇ ، شۇڭا بۇ يىغىن يېپىلدى.",
     "Nextcloud Talk was updated." : "Nextcloud پاراڭ يېڭىلاندى.",
     "Nextcloud is in maintenance mode." : "Nextcloud ئاسراش ھالىتىدە",
