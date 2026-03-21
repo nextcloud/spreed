@@ -74,7 +74,7 @@ class ConversationCategoryMapper extends QBMapper {
 		$result = $qb->executeQuery();
 		while ($row = $result->fetch()) {
 			$categoryIds = json_decode($row['category_ids'], true) ?? [];
-			$categoryIds = array_filter($categoryIds, fn($id) => (string)$id !== $categoryIdStr);
+			$categoryIds = array_values(array_filter($categoryIds, fn ($id) => (string)$id !== $categoryIdStr));
 
 			$updateQb = $this->db->getQueryBuilder();
 			$updateQb->update('talk_attendees')

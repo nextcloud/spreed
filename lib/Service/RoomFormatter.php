@@ -249,7 +249,7 @@ class RoomFormatter {
 			'isArchived' => $attendee->isArchived(),
 			'isImportant' => $attendee->isImportant(),
 			'isSensitive' => $attendee->isSensitive(),
-			'categoryIds' => array_map('strval', json_decode($attendee->getCategoryIds() ?? '[]', true)),
+			'categoryIds' => array_values(array_map('strval', json_decode($attendee->getCategoryIds() ?? '[]', true))),
 			'lastPinnedId' => $room->getLastPinnedId(),
 			'hiddenPinnedId' => $attendee->getHiddenPinnedId(),
 			'attributes' => $room->getAttributes(),
