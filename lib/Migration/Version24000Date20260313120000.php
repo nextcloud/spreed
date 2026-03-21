@@ -28,8 +28,8 @@ class Version24000Date20260313120000 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('talk_conversation_sections')) {
-			$table = $schema->createTable('talk_conversation_sections');
+		if (!$schema->hasTable('talk_conversation_categories')) {
+			$table = $schema->createTable('talk_conversation_categories');
 			$table->addColumn('id', Types::BIGINT, [
 				'notnull' => true,
 				'unsigned' => true,
@@ -56,8 +56,8 @@ class Version24000Date20260313120000 extends SimpleMigrationStep {
 		}
 
 		$attendeesTable = $schema->getTable('talk_attendees');
-		if (!$attendeesTable->hasColumn('section_id')) {
-			$attendeesTable->addColumn('section_id', Types::BIGINT, [
+		if (!$attendeesTable->hasColumn('category_ids')) {
+			$attendeesTable->addColumn('category_ids', Types::TEXT, [
 				'notnull' => false,
 				'default' => null,
 			]);

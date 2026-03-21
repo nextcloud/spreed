@@ -172,6 +172,10 @@ export type components = {
                      * @description Retention period for instant meetings in seconds, `0` means no retention
                      */
                     "retention-instant-meetings": number;
+                    /** @description User selected sort order for conversations */
+                    "sort-order": string;
+                    /** @description User selected grouping mode for conversations */
+                    "group-mode": string;
                 };
                 federation: {
                     /** @description Whether federation is enabled */

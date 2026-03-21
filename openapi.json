@@ -458,7 +458,9 @@
                                     "description-length",
                                     "retention-event",
                                     "retention-phone",
-                                    "retention-instant-meetings"
+                                    "retention-instant-meetings",
+                                    "sort-order",
+                                    "group-mode"
                                 ],
                                 "properties": {
                                     "can-create": {
@@ -500,6 +502,14 @@
                                         "format": "int64",
                                         "description": "Retention period for instant meetings in seconds, `0` means no retention",
                                         "minimum": 0
+                                    },
+                                    "sort-order": {
+                                        "type": "string",
+                                        "description": "User selected sort order for conversations"
+                                    },
+                                    "group-mode": {
+                                        "type": "string",
+                                        "description": "User selected grouping mode for conversations"
                                     }
                                 }
                             },
@@ -951,6 +961,31 @@
                     }
                 }
             },
+            "ConversationCategory": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "sortOrder",
+                    "collapsed"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "sortOrder": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "collapsed": {
+                        "type": "boolean"
+                    }
+                }
+            },
             "ConversationPreset": {
                 "type": "object",
                 "required": [
@@ -979,31 +1014,6 @@
                             "type": "integer",
                             "format": "int64"
                         }
-                    }
-                }
-            },
-            "ConversationSection": {
-                "type": "object",
-                "required": [
-                    "id",
-                    "name",
-                    "sortOrder",
-                    "collapsed"
-                ],
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "name": {
-                        "type": "string"
-                    },
-                    "sortOrder": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "collapsed": {
-                        "type": "boolean"
                     }
                 }
             },
@@ -1859,7 +1869,7 @@
                     "isArchived",
                     "isImportant",
                     "isSensitive",
-                    "sectionId",
+                    "categoryIds",
                     "lastPinnedId",
                     "hiddenPinnedId",
                     "hasScheduledMessages",
@@ -2158,11 +2168,12 @@
                         "type": "boolean",
                         "description": "Required capability: `sensitive-conversations`"
                     },
-                    "sectionId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "nullable": true,
-                        "description": "ID of the custom section this conversation belongs to (only available with `conversation-sections` capability)"
+                    "categoryIds": {
+                        "type": "array",
+                        "description": "IDs of the custom categories this conversation belongs to (only available with `conversation-categories` capability)",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "lastPinnedId": {
                         "type": "integer",
@@ -11961,13 +11972,13 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/sections": {
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/categories": {
             "get": {
-                "operationId": "conversation_section-get-sections",
-                "summary": "Get all conversation sections for the current user",
-                "description": "Required capability: `conversation-sections`",
+                "operationId": "conversation_category-get-categories",
+                "summary": "Get all conversation categories for the current user",
+                "description": "Required capability: `conversation-categories`",
                 "tags": [
-                    "conversation_section"
+                    "conversation_category"
                 ],
                 "security": [
                     {
@@ -12003,7 +12014,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Sections returned",
+                        "description": "Categories returned",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -12025,7 +12036,7 @@
                                                 "data": {
                                                     "type": "array",
                                                     "items": {
-                                                        "$ref": "#/components/schemas/ConversationSection"
+                                                        "$ref": "#/components/schemas/ConversationCategory"
                                                     }
                                                 }
                                             }
@@ -12066,11 +12077,11 @@
                 }
             },
             "post": {
-                "operationId": "conversation_section-create-section",
-                "summary": "Create a new conversation section",
-                "description": "Required capability: `conversation-sections`",
+                "operationId": "conversation_category-create-category",
+                "summary": "Create a new conversation category",
+                "description": "Required capability: `conversation-categories`",
                 "tags": [
-                    "conversation_section"
+                    "conversation_category"
                 ],
                 "security": [
                     {
@@ -12092,7 +12103,7 @@
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "description": "Name of the section"
+                                        "description": "Name of the category"
                                     }
                                 }
                             }
@@ -12125,7 +12136,7 @@
                 ],
                 "responses": {
                     "201": {
-                        "description": "Section created",
+                        "description": "Category created",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -12145,7 +12156,7 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "$ref": "#/components/schemas/ConversationSection"
+                                                    "$ref": "#/components/schemas/ConversationCategory"
                                                 }
                                             }
                                         }
@@ -12185,13 +12196,13 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/sections/{sectionId}": {
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/categories/{categoryId}": {
             "put": {
-                "operationId": "conversation_section-update-section",
-                "summary": "Update a conversation section",
-                "description": "Required capability: `conversation-sections`",
+                "operationId": "conversation_category-update-category",
+                "summary": "Update a conversation category",
+                "description": "Required capability: `conversation-categories`",
                 "tags": [
-                    "conversation_section"
+                    "conversation_category"
                 ],
                 "security": [
                     {
@@ -12213,7 +12224,7 @@
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "description": "New name for the section"
+                                        "description": "New name for the category"
                                     }
                                 }
                             }
@@ -12234,9 +12245,9 @@
                         }
                     },
                     {
-                        "name": "sectionId",
+                        "name": "categoryId",
                         "in": "path",
-                        "description": "ID of the section",
+                        "description": "ID of the category",
                         "required": true,
                         "schema": {
                             "type": "integer",
@@ -12256,7 +12267,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Section updated",
+                        "description": "Category updated",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -12276,7 +12287,7 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "$ref": "#/components/schemas/ConversationSection"
+                                                    "$ref": "#/components/schemas/ConversationCategory"
                                                 }
                                             }
                                         }
@@ -12286,7 +12297,7 @@
                         }
                     },
                     "404": {
-                        "description": "Section not found",
+                        "description": "Category not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -12346,11 +12357,11 @@
                 }
             },
             "delete": {
-                "operationId": "conversation_section-delete-section",
-                "summary": "Delete a conversation section",
-                "description": "Required capability: `conversation-sections`",
+                "operationId": "conversation_category-delete-category",
+                "summary": "Delete a conversation category",
+                "description": "Required capability: `conversation-categories`",
                 "tags": [
-                    "conversation_section"
+                    "conversation_category"
                 ],
                 "security": [
                     {
@@ -12374,9 +12385,9 @@
                         }
                     },
                     {
-                        "name": "sectionId",
+                        "name": "categoryId",
                         "in": "path",
-                        "description": "ID of the section",
+                        "description": "ID of the category",
                         "required": true,
                         "schema": {
                             "type": "integer",
@@ -12396,7 +12407,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Section deleted",
+                        "description": "Category deleted",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -12426,7 +12437,7 @@
                         }
                     },
                     "404": {
-                        "description": "Section not found",
+                        "description": "Category not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -12486,13 +12497,13 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/sections/reorder": {
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/categories/reorder": {
             "put": {
-                "operationId": "conversation_section-reorder-sections",
-                "summary": "Reorder conversation sections",
-                "description": "Required capability: `conversation-sections`",
+                "operationId": "conversation_category-reorder-categories",
+                "summary": "Reorder conversation categories",
+                "description": "Required capability: `conversation-categories`",
                 "tags": [
-                    "conversation_section"
+                    "conversation_category"
                 ],
                 "security": [
                     {
@@ -12514,7 +12525,7 @@
                                 "properties": {
                                     "orderedIds": {
                                         "type": "array",
-                                        "description": "Ordered list of section IDs",
+                                        "description": "Ordered list of category IDs",
                                         "items": {
                                             "type": "integer",
                                             "format": "int64"
@@ -12551,7 +12562,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Sections reordered",
+                        "description": "Categories reordered",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -12573,7 +12584,7 @@
                                                 "data": {
                                                     "type": "array",
                                                     "items": {
-                                                        "$ref": "#/components/schemas/ConversationSection"
+                                                        "$ref": "#/components/schemas/ConversationCategory"
                                                     }
                                                 }
                                             }
@@ -21789,11 +21800,11 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/section": {
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/category": {
             "post": {
-                "operationId": "room-assign-to-section",
-                "summary": "Assign a conversation to a section",
-                "description": "Required capability: `conversation-sections`",
+                "operationId": "room-assign-to-category",
+                "summary": "Assign a conversation category",
+                "description": "Required capability: `conversation-categories`",
                 "tags": [
                     "room"
                 ],
@@ -21812,12 +21823,12 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "sectionId": {
+                                    "categoryId": {
                                         "type": "integer",
                                         "format": "int64",
                                         "nullable": true,
                                         "default": null,
-                                        "description": "ID of the section, or null to unassign"
+                                        "description": "ID of the category, or null to unassign"
                                     }
                                 }
                             }
@@ -21859,7 +21870,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Conversation section updated",
+                        "description": "Conversation category updated",
                         "content": {
                             "application/json": {
                                 "schema": {

@@ -25,5 +25,13 @@ class UserPreference {
 	public const CHAT_STYLE_SPLIT = 'split';
 	public const CHAT_STYLE_UNIFIED = 'unified';
 
+	public const CONVERSATIONS_SORT_ORDER = 'conversations_sort_order';
+	public const CONVERSATIONS_SORT_ORDER_ACTIVITY = 'activity';
+	public const CONVERSATIONS_SORT_ORDER_ALPHABETICAL = 'alphabetical';
+
+	public const CONVERSATIONS_GROUP_MODE = 'conversations_group_mode';
+	public const CONVERSATIONS_GROUP_MODE_NONE = 'none';
+	public const CONVERSATIONS_GROUP_MODE_TYPE_FIRST = 'type-first';
+
 	public const LIVE_TRANSCRIPTION_TARGET_LANGUAGE_ID = 'live_transcription_target_language_id';
 }

@@ -9,20 +9,22 @@ import type { Conversation } from '../../../types/index.ts'
 import { useVirtualList } from '@vueuse/core'
 import { computed, toRef } from 'vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
+import ConversationCategoryHeader from './ConversationCategoryHeader.vue'
 import ConversationItem from './ConversationItem.vue'
-import ConversationSectionHeader from './ConversationSectionHeader.vue'
 import { AVATAR } from '../../../constants.ts'
 
-export type SectionHeaderItem = {
-	_type: 'section-header'
+export type CategoryHeaderItem = {
+	_type: 'category-header'
 	id: string
 	name: string
-	sectionId: number | string
+	categoryId: number | string
 	collapsed: boolean
 	unreadCount: number
+	isFirst?: boolean
+	isLast?: boolean
 }
 
-export type ListItem = Conversation | SectionHeaderItem
+export type ListItem = Conversation | CategoryHeaderItem
 
 const props = defineProps<{
 	conversations: ListItem[]
@@ -31,16 +33,20 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(e: 'toggleSectionCollapsed', sectionId: number | string): void
+	(e: 'toggleCategoryCollapsed', categoryId: number | string): void
+	(e: 'renameCategory', payload: { categoryId: number, name: string }): void
+	(e: 'moveCategoryUp', categoryId: number): void
+	(e: 'moveCategoryDown', categoryId: number): void
+	(e: 'deleteCategory', categoryId: number): void
 }>()
 
 /**
- * Type guard to check if a list item is a section header
+ * Type guard to check if a list item is a category header
  *
  * @param item The list item to check
  */
-function isSectionHeader(item: ListItem): item is SectionHeaderItem {
-	return '_type' in item && item._type === 'section-header'
+function isCategoryHeader(item: ListItem): item is CategoryHeaderItem {
+	return '_type' in item && item._type === 'category-header'
 }
 
 /**
@@ -123,19 +129,57 @@ function scrollToItem(index: number) {
  * @param token - token of conversation to scroll to
  */
 function scrollToConversation(token: string) {
-	const index = props.conversations.findIndex((item) => !isSectionHeader(item) && item.token === token)
+	const index = props.conversations.findIndex((item) => !isCategoryHeader(item) && item.token === token)
 	if (index !== -1) {
 		scrollToItem(index)
 	}
 }
 
 /**
- * Handle toggling section collapsed state
+ * Handle toggling category collapsed state
  *
- * @param sectionId The section ID to toggle
+ * @param categoryId The category ID to toggle
  */
-function handleToggleCollapsed(sectionId: number | string) {
-	emit('toggleSectionCollapsed', sectionId)
+function handleToggleCollapsed(categoryId: number | string) {
+	emit('toggleCategoryCollapsed', categoryId)
+}
+
+/**
+ * Handle renaming a category
+ *
+ * @param payload Object with categoryId and new name
+ * @param payload.categoryId
+ * @param payload.name
+ */
+function handleRenameCategory(payload: { categoryId: number, name: string }) {
+	emit('renameCategory', payload)
+}
+
+/**
+ * Handle moving a category up
+ *
+ * @param categoryId The category ID to move
+ */
+function handleMoveCategoryUp(categoryId: number) {
+	emit('moveCategoryUp', categoryId)
+}
+
+/**
+ * Handle moving a category down
+ *
+ * @param categoryId The category ID to move
+ */
+function handleMoveCategoryDown(categoryId: number) {
+	emit('moveCategoryDown', categoryId)
+}
+
+/**
+ * Handle deleting a category
+ *
+ * @param categoryId The category ID to delete
+ */
+function handleDeleteCategory(categoryId: number) {
+	emit('deleteCategory', categoryId)
 }
 
 defineExpose({
@@ -156,13 +200,19 @@ defineExpose({
 			v-else
 			:style="wrapperProps.style">
 			<template v-for="item in list" :key="item.data.id">
-				<ConversationSectionHeader
-					v-if="isSectionHeader(item.data)"
-					:name="(item.data as SectionHeaderItem).name"
-					:sectionId="(item.data as SectionHeaderItem).sectionId"
-					:collapsed="(item.data as SectionHeaderItem).collapsed"
-					:unreadCount="(item.data as SectionHeaderItem).unreadCount"
-					@toggleCollapsed="handleToggleCollapsed" />
+				<ConversationCategoryHeader
+					v-if="isCategoryHeader(item.data)"
+					:name="(item.data as CategoryHeaderItem).name"
+					:categoryId="(item.data as CategoryHeaderItem).categoryId"
+					:collapsed="(item.data as CategoryHeaderItem).collapsed"
+					:unreadCount="(item.data as CategoryHeaderItem).unreadCount"
+					:isFirst="(item.data as CategoryHeaderItem).isFirst ?? false"
+					:isLast="(item.data as CategoryHeaderItem).isLast ?? false"
+					@toggleCollapsed="handleToggleCollapsed"
+					@renameCategory="handleRenameCategory"
+					@moveCategoryUp="handleMoveCategoryUp"
+					@moveCategoryDown="handleMoveCategoryDown"
+					@deleteCategory="handleDeleteCategory" />
 				<ConversationItem
 					v-else
 					:item="item.data as Conversation"

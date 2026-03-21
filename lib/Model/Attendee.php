@@ -46,8 +46,8 @@ use OCP\DB\Types;
  * @method bool isImportant()
  * @method void setSensitive(bool $sensitive)
  * @method bool isSensitive()
- * @method void setSectionId(?int $sectionId)
- * @method ?int getSectionId()
+ * @method void setCategoryIds(?string $categoryIds)
+ * @method ?string getCategoryIds()
  * @internal
  * @method int getPermissions()
  * @method void setAccessToken(string $accessToken)
@@ -150,7 +150,7 @@ class Attendee extends Entity {
 	protected bool $hasUnreadThreads = false;
 	protected bool $hasUnreadThreadMentions = false;
 	protected bool $hasUnreadThreadDirects = false;
-	protected ?int $sectionId = null;
+	protected ?string $categoryIds = null;
 	protected int $hiddenPinnedId = 0;
 	protected int $hasScheduledMessages = 0;
 
@@ -184,7 +184,7 @@ class Attendee extends Entity {
 		$this->addType('hasUnreadThreads', Types::BOOLEAN);
 		$this->addType('hasUnreadThreadMentions', Types::BOOLEAN);
 		$this->addType('hasUnreadThreadDirects', Types::BOOLEAN);
-		$this->addType('sectionId', Types::BIGINT);
+		$this->addType('categoryIds', Types::STRING);
 		$this->addType('hiddenPinnedId', Types::BIGINT);
 		$this->addType('hasScheduledMessages', Types::INTEGER);
 

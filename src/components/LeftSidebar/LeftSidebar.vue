@@ -20,14 +20,15 @@
 				</div>
 
 				<TransitionWrapper name="radial-reveal">
-					<!-- Filters -->
 					<NcActions
 						v-show="searchText === ''"
-						:variant="isFiltered ? 'secondary' : 'tertiary'"
-						class="filters"
-						:class="{ 'hidden-visually': isSearching }">
+						ref="filtersAndSort"
+						:variant="isFiltered || sortOrder !== 'activity' || groupMode !== 'none' ? 'secondary' : 'tertiary'"
+						class="filters-and-sort"
+						:class="{ 'hidden-visually': isSearching }"
+						@close="isCreatingCategory = false">
 						<template #icon>
-							<IconFilterOutline :size="20" />
+							<IconFilterCogOutline :size="20" />
 						</template>
 						<NcActionCaption :name="t('spreed', 'Filter conversations by')" />
 
@@ -74,26 +75,16 @@
 							</template>
 							{{ t('spreed', 'Clear filters') }}
 						</NcActionButton>
-					</NcActions>
-				</TransitionWrapper>
 
-				<!-- Sort options -->
-				<TransitionWrapper name="radial-reveal">
-					<NcActions
-						v-show="searchText === ''"
-						:variant="sortMode !== 'activity' ? 'secondary' : 'tertiary'"
-						class="sort-options"
-						:class="{ 'hidden-visually': isSearching }">
-						<template #icon>
-							<IconSortVariant :size="20" />
-						</template>
+						<NcActionSeparator />
+
 						<NcActionCaption :name="t('spreed', 'Sort conversations by')" />
 
 						<NcActionButton
 							closeAfterClick
 							type="radio"
-							:modelValue="sortMode === 'activity'"
-							@click="handleSortMode('activity')">
+							:modelValue="sortOrder === 'activity'"
+							@click="handleSortOrder('activity')">
 							<template #icon>
 								<IconClockOutline :size="20" />
 							</template>
@@ -103,23 +94,46 @@
 						<NcActionButton
 							closeAfterClick
 							type="radio"
-							:modelValue="sortMode === 'alphabetical'"
-							@click="handleSortMode('alphabetical')">
+							:modelValue="sortOrder === 'alphabetical'"
+							@click="handleSortOrder('alphabetical')">
 							<template #icon>
 								<IconSortAlphabeticalAscending :size="20" />
 							</template>
 							{{ t('spreed', 'Alphabetical') }}
 						</NcActionButton>
 
+						<NcActionSeparator />
+
+						<NcActionCaption :name="t('spreed', 'Group conversations')" />
+
 						<NcActionButton
 							closeAfterClick
-							type="radio"
-							:modelValue="sortMode === 'type-first'"
-							@click="handleSortMode('type-first')">
+							type="checkbox"
+							:modelValue="groupMode === 'type-first'"
+							@click="handleGroupMode(groupMode === 'type-first' ? 'none' : 'type-first')">
 							<template #icon>
 								<IconAccountGroupOutline :size="20" />
 							</template>
 							{{ t('spreed', 'Groups first') }}
+						</NcActionButton>
+
+						<NcActionSeparator />
+
+						<NcActionInput
+							v-if="isCreatingCategory"
+							:label="t('spreed', 'Category name')"
+							@submit="handleCreateCategory">
+							<template #icon>
+								<IconTagMultipleOutline :size="20" />
+							</template>
+						</NcActionInput>
+						<NcActionButton
+							v-else
+							@click="isCreatingCategory = true">
+							<template #icon>
+								<IconPlus :size="20" />
+							</template>
+							{{ t('spreed', 'New category') }}
 						</NcActionButton>
 					</NcActions>
 				</TransitionWrapper>
@@ -294,7 +308,11 @@
 					:compact="isCompact"
 					class="scroller"
 					@scroll="debounceHandleScroll"
-					@toggleSectionCollapsed="handleToggleSectionCollapsed" />
+					@toggleCategoryCollapsed="handleToggleCategoryCollapsed"
+					@renameCategory="handleRenameCategory"
+					@moveCategoryUp="handleMoveCategoryUp"
+					@moveCategoryDown="handleMoveCategoryDown"
+					@deleteCategory="handleDeleteCategory" />
 				<NcButton
 					v-if="!showThreadsList && !preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null && !filters.includes('mentions')"
 					class="unread-mention-button"
@@ -335,17 +353,6 @@
 					</span>
 				</NcButton>
 
-				<NcButton
-					v-if="!showArchived && !showThreadsList"
-					variant="tertiary"
-					wide
-					@click="showManageSections = true">
-					<template #icon>
-						<IconTagMultipleOutline :size="20" />
-					</template>
-					{{ t('spreed', 'Manage sections') }}
-				</NcButton>
-
 				<NcButton variant="tertiary" wide @click="showSettings">
 					<template #icon>
 						<IconCogOutline :size="20" />
@@ -354,10 +361,6 @@
 				</NcButton>
 			</div>
 		</template>
-
-		<ManageSectionsDialog
-			v-if="showManageSections"
-			@close="showManageSections = false" />
 	</NcAppNavigation>
 </template>
 
@@ -367,12 +370,15 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import debounce from 'debounce'
 import { ref } from 'vue'
 import { START_LOCATION } from 'vue-router'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
+import NcActionInput from '@nextcloud/vue/components/NcActionInput'
 import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
@@ -389,7 +395,7 @@ import IconCalendarBlankOutline from 'vue-material-design-icons/CalendarBlankOut
 import IconChatPlusOutline from 'vue-material-design-icons/ChatPlusOutline.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
-import IconFilterOutline from 'vue-material-design-icons/FilterOutline.vue'
+import IconFilterCogOutline from 'vue-material-design-icons/FilterCogOutline.vue'
 import IconFilterRemoveOutline from 'vue-material-design-icons/FilterRemoveOutline.vue'
 import IconFormatListBulleted from 'vue-material-design-icons/FormatListBulleted.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
@@ -400,17 +406,16 @@ import IconNoteEditOutline from 'vue-material-design-icons/NoteEditOutline.vue'
 import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import IconSortAlphabeticalAscending from 'vue-material-design-icons/SortAlphabeticalAscending.vue'
-import IconSortVariant from 'vue-material-design-icons/SortVariant.vue'
 import IconTagMultipleOutline from 'vue-material-design-icons/TagMultipleOutline.vue'
 import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
 import ThreadItem from '../RightSidebar/Threads/ThreadItem.vue'
+import ConfirmDialog from '../UIShared/ConfirmDialog.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import SearchBox from '../UIShared/SearchBox.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import CallPhoneDialog from './CallPhoneDialog/CallPhoneDialog.vue'
 import ConversationsListVirtual from './ConversationsList/ConversationsListVirtual.vue'
 import InvitationHandler from './InvitationHandler.vue'
-import ManageSectionsDialog from './ManageSectionsDialog.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
 import SearchConversationsResults from './SearchConversationsResults/SearchConversationsResults.vue'
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
@@ -428,7 +433,7 @@ import { EventBus } from '../../services/EventBus.ts'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import { useActorStore } from '../../stores/actor.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
-import { useConversationSectionsStore } from '../../stores/conversationSections.ts'
+import { useConversationCategoriesStore } from '../../stores/conversationCategories.ts'
 import { useFederationStore } from '../../stores/federation.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useTalkHashStore } from '../../stores/talkHash.js'
@@ -477,6 +482,8 @@ export default {
 		NcActions,
 		NcActionButton,
 		NcActionCaption,
+		NcActionInput,
+		NcActionSeparator,
 		TransitionWrapper,
 		ConversationsListVirtual,
 		SearchConversationsResults,
@@ -485,7 +492,7 @@ export default {
 		IconAt,
 		IconMessageBadgeOutline,
 		IconMessageOutline,
-		IconFilterOutline,
+		IconFilterCogOutline,
 		IconFilterRemoveOutline,
 		IconArchiveOutline,
 		IconArrowLeft,
@@ -498,12 +505,10 @@ export default {
 		IconCogOutline,
 		IconFormatListBulleted,
 		IconNoteEditOutline,
-		IconSortVariant,
 		IconSortAlphabeticalAscending,
+		IconTagMultipleOutline,
 		IconClockOutline,
 		IconAccountGroupOutline,
-		IconTagMultipleOutline,
-		ManageSectionsDialog,
 		NcEmptyContent,
 	},
 
@@ -519,7 +524,7 @@ export default {
 		const federationStore = useFederationStore()
 		const talkHashStore = useTalkHashStore()
 		const settingsStore = useSettingsStore()
-		const sectionsStore = useConversationSectionsStore()
+		const categoriesStore = useConversationCategoriesStore()
 		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox)
 		const isMobile = useIsMobile()
 
@@ -546,7 +551,7 @@ export default {
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
 			tokenStore: useTokenStore(),
-			sectionsStore,
+			categoriesStore,
 		}
 	},
 
@@ -576,15 +581,19 @@ export default {
 			isFocused: false,
 			isNavigating: false,
 			fallbackConversationToken: null,
-			showManageSections: false,
-			favoritesCollapsed: BrowserStorage.getItem('section_collapsed_favorites') === 'true',
-			otherCollapsed: BrowserStorage.getItem('section_collapsed_other') === 'true',
+			isCreatingCategory: false,
+			favoritesCollapsed: BrowserStorage.getItem('category_collapsed_favorites') === 'true',
+			otherCollapsed: BrowserStorage.getItem('category_collapsed_other') === 'true',
 		}
 	},
 
 	computed: {
-		sortMode() {
-			return this.$store.getters.sortMode
+		sortOrder() {
+			return this.settingsStore.sortOrder
+		},
+
+		groupMode() {
+			return this.settingsStore.groupMode
 		},
 
 		conversationsList() {
@@ -643,26 +652,26 @@ export default {
 				conversations = validConversationsCount === 0 && !this.isNavigating ? [] : filteredConversations
 			}
 
-			// If no sections or showing archived, return plain list
-			const sections = this.sectionsStore.sortedSections
-			if (sections.length === 0 || this.showArchived) {
+			// If no categories or showing archived, return plain list
+			const categories = this.categoriesStore.sortedCategories
+			if (categories.length === 0 || this.showArchived) {
 				return conversations
 			}
 
-			// Group conversations by section
+			// Group conversations by category
 			const favoriteConversations = conversations.filter((c) => c.isFavorite)
-			const sectionedConversations = conversations.filter((c) => !c.isFavorite && c.sectionId)
-			const unsectionedConversations = conversations.filter((c) => !c.isFavorite && !c.sectionId)
+			const categorizedConversations = conversations.filter((c) => !c.isFavorite && c.categoryIds?.length > 0)
+			const uncategorizedConversations = conversations.filter((c) => !c.isFavorite && (!c.categoryIds || c.categoryIds.length === 0))
 
 			const result = []
 
-			// Favorites section (built-in)
+			// Favorites category (built-in)
 			if (favoriteConversations.length > 0) {
 				result.push({
-					_type: 'section-header',
-					id: 'section-favorites',
+					_type: 'category-header',
+					id: 'category-favorites',
 					name: t('spreed', 'Favorites'),
-					sectionId: 'favorites',
+					categoryId: 'favorites',
 					collapsed: this.favoritesCollapsed,
 					unreadCount: favoriteConversations.reduce((sum, c) => sum + (c.unreadMessages || 0), 0),
 				})
@@ -671,40 +680,43 @@ export default {
 				}
 			}
 
-			// Custom sections
-			for (const section of sections) {
-				const sectionConvs = sectionedConversations.filter((c) => c.sectionId === section.id)
-				if (sectionConvs.length === 0 && this.isFiltered) {
-					continue // Hide empty sections when filtering
+			// Custom categories
+			for (let i = 0; i < categories.length; i++) {
+				const category = categories[i]
+				const categoryConvs = categorizedConversations.filter((c) => c.categoryIds.includes(String(category.id)))
+				if (categoryConvs.length === 0 && this.isFiltered) {
+					continue // Hide empty categories when filtering
 				}
 
-				const unreadCount = sectionConvs.reduce((sum, c) => sum + (c.unreadMessages || 0), 0)
+				const unreadCount = categoryConvs.reduce((sum, c) => sum + (c.unreadMessages || 0), 0)
 				result.push({
-					_type: 'section-header',
-					id: `section-${section.id}`,
-					name: section.name,
-					sectionId: section.id,
-					collapsed: section.collapsed,
+					_type: 'category-header',
+					id: `category-${category.id}`,
+					name: category.name,
+					categoryId: category.id,
+					collapsed: category.collapsed,
 					unreadCount,
+					isFirst: i === 0,
+					isLast: i === categories.length - 1,
 				})
 
-				if (!section.collapsed) {
-					result.push(...sectionConvs)
+				if (!category.collapsed) {
+					result.push(...categoryConvs)
 				}
 			}
 
-			// Unsectioned conversations
-			if (unsectionedConversations.length > 0) {
+			// Uncategorized conversations
+			if (uncategorizedConversations.length > 0) {
 				result.push({
-					_type: 'section-header',
-					id: 'section-other',
+					_type: 'category-header',
+					id: 'category-other',
 					name: t('spreed', 'Other'),
-					sectionId: 'other',
+					categoryId: 'other',
 					collapsed: this.otherCollapsed,
-					unreadCount: unsectionedConversations.reduce((sum, c) => sum + (c.unreadMessages || 0), 0),
+					unreadCount: uncategorizedConversations.reduce((sum, c) => sum + (c.unreadMessages || 0), 0),
 				})
 				if (!this.otherCollapsed) {
-					result.push(...unsectionedConversations)
+					result.push(...uncategorizedConversations)
 				}
 			}
 
@@ -817,8 +829,8 @@ export default {
 		this.debounceFetchConversations = debounce(this.fetchConversations, 3000)
 		this.debounceHandleScroll = debounce(this.handleScroll, 50)
 
-		// Fetch conversation sections
-		this.sectionsStore.fetchSections()
+		// Fetch conversation categories
+		this.categoriesStore.fetchCategories()
 
 		EventBus.on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.once('conversations-received', this.handleConversationsReceived)
@@ -874,19 +886,107 @@ export default {
 			this.$refs.invitationHandler.showModal()
 		},
 
-		handleSortMode(sortMode) {
-			this.$store.dispatch('setSortMode', sortMode)
+		handleSortOrder(sortOrder) {
+			this.settingsStore.updateSortOrder(sortOrder)
 		},
 
-		handleToggleSectionCollapsed(sectionId) {
-			if (sectionId === 'favorites') {
+		handleGroupMode(groupMode) {
+			this.settingsStore.updateGroupMode(groupMode)
+		},
+
+		async handleCreateCategory(event) {
+			const name = event.target?.[0]?.value?.trim() || ''
+			if (!name) {
+				return
+			}
+			try {
+				await this.categoriesStore.createCategory(name)
+			} catch (error) {
+				console.error('Failed to create category:', error)
+			}
+			this.isCreatingCategory = false
+			this.$refs.filtersAndSort?.closeMenu?.()
+		},
+
+		handleToggleCategoryCollapsed(categoryId) {
+			if (categoryId === 'favorites') {
 				this.favoritesCollapsed = !this.favoritesCollapsed
-				BrowserStorage.setItem('section_collapsed_favorites', String(this.favoritesCollapsed))
-			} else if (sectionId === 'other') {
+				BrowserStorage.setItem('category_collapsed_favorites', String(this.favoritesCollapsed))
+			} else if (categoryId === 'other') {
 				this.otherCollapsed = !this.otherCollapsed
-				BrowserStorage.setItem('section_collapsed_other', String(this.otherCollapsed))
-			} else if (typeof sectionId === 'number') {
-				this.sectionsStore.toggleCollapsed(sectionId)
+				BrowserStorage.setItem('category_collapsed_other', String(this.otherCollapsed))
+			} else {
+				this.categoriesStore.toggleCollapsed(categoryId)
+			}
+		},
+
+		async handleRenameCategory({ categoryId, name }) {
+			try {
+				await this.categoriesStore.updateCategoryName(categoryId, name)
+			} catch (error) {
+				showError(t('spreed', 'Error renaming category'))
+			}
+		},
+
+		async handleMoveCategoryUp(categoryId) {
+			const sorted = this.categoriesStore.sortedCategories
+			const index = sorted.findIndex((c) => c.id === categoryId)
+			if (index <= 0) {
+				return
+			}
+			const orderedIds = sorted.map((c) => c.id)
+			// Swap with previous
+			;[orderedIds[index - 1], orderedIds[index]] = [orderedIds[index], orderedIds[index - 1]]
+			try {
+				await this.categoriesStore.reorderCategories(orderedIds)
+			} catch (error) {
+				showError(t('spreed', 'Error reordering categories'))
+			}
+		},
+
+		async handleMoveCategoryDown(categoryId) {
+			const sorted = this.categoriesStore.sortedCategories
+			const index = sorted.findIndex((c) => c.id === categoryId)
+			if (index === -1 || index >= sorted.length - 1) {
+				return
+			}
+			const orderedIds = sorted.map((c) => c.id)
+			// Swap with next
+			;[orderedIds[index], orderedIds[index + 1]] = [orderedIds[index + 1], orderedIds[index]]
+			try {
+				await this.categoriesStore.reorderCategories(orderedIds)
+			} catch (error) {
+				showError(t('spreed', 'Error reordering categories'))
+			}
+		},
+
+		async handleDeleteCategory(categoryId) {
+			const category = this.categoriesStore.categoryById(categoryId)
+			const categoryName = category?.name ?? t('spreed', 'this category')
+
+			const confirmed = await spawnDialog(ConfirmDialog, {
+				name: t('spreed', 'Delete category'),
+				message: t('spreed', 'Do you really want to delete "{name}"? Conversations in this category will be moved to "Other".', { name: categoryName }),
+				buttons: [
+					{ label: t('spreed', 'Cancel'), variant: 'tertiary', callback: () => undefined },
+					{ label: t('spreed', 'Delete'), variant: 'error', callback: () => true },
+				],
+			})
+
+			if (!confirmed) {
+				return
+			}
+			try {
+				await this.categoriesStore.removeCategory(categoryId)
+				// Remove the deleted category ID from all conversations in the Vuex store
+				const categoryIdStr = String(categoryId)
+				for (const conversation of this.conversationsList) {
+					if (conversation.categoryIds?.includes(categoryIdStr)) {
+						conversation.categoryIds = conversation.categoryIds.filter((id) => id !== categoryIdStr)
+					}
+				}
+			} catch (error) {
+				showError(t('spreed', 'Error deleting category'))
 			}
 		},
 
@@ -1267,13 +1367,7 @@ export default {
 	margin: calc(var(--default-grid-baseline) * 2);
 	align-items: center;
 
-	.filters {
-		position: absolute;
-		top: 0;
-		inset-inline-end: calc((var(--default-grid-baseline) + var(--default-clickable-area)) * 2);
-	}
-
-	.sort-options {
+	.filters-and-sort {
 		position: absolute;
 		top: 0;
 		inset-inline-end: calc(var(--default-grid-baseline) + var(--default-clickable-area));

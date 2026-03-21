@@ -7,14 +7,16 @@ import { getCurrentUser } from '@nextcloud/auth'
 import { loadState } from '@nextcloud/initial-state'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { PRIVACY } from '../constants.ts'
+import { CONVERSATION, PRIVACY } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import {
 	setAttachmentFolder,
 	setBlurVirtualBackground,
 	setChatStyle,
+	setConversationsGroupMode,
 	setConversationsListStyle,
+	setConversationsSortOrder,
 	setLiveTranscriptionTargetLanguageId,
 	setReadStatusPrivacy,
 	setStartWithoutMedia,
@@ -51,6 +53,9 @@ export const useSettingsStore = defineStore('settings', () => {
 	if (!hasUserAccount && BrowserStorage.getItem('liveTranscriptionTargetLanguageId') !== null) {
 		liveTranscriptionTargetLanguageId.value = BrowserStorage.getItem('liveTranscriptionTargetLanguageId') as string
 	}
+
+	const sortOrder = ref<string>(getTalkConfig('local', 'conversations', 'sort-order') ?? CONVERSATION.SORT_ORDER.ACTIVITY)
+	const groupMode = ref<string>(getTalkConfig('local', 'conversations', 'group-mode') ?? CONVERSATION.GROUP_MODE.NONE)
 
 	const attachmentFolder = ref<string>(getTalkConfig('local', 'attachments', 'folder') ?? '')
 
@@ -184,6 +189,26 @@ export const useSettingsStore = defineStore('settings', () => {
 		liveTranscriptionTargetLanguageId.value = value
 	}
 
+	/**
+	 * Update the sort order for the conversation list
+	 *
+	 * @param value - the sort order ('activity', 'alphabetical')
+	 */
+	async function updateSortOrder(value: string) {
+		await setConversationsSortOrder(value)
+		sortOrder.value = value
+	}
+
+	/**
+	 * Update the group mode for the conversation list
+	 *
+	 * @param value - the group mode ('none', 'type-first')
+	 */
+	async function updateGroupMode(value: string) {
+		await setConversationsGroupMode(value)
+		groupMode.value = value
+	}
+
 	return {
 		readStatusPrivacy,
 		typingStatusPrivacy,
@@ -197,8 +222,12 @@ export const useSettingsStore = defineStore('settings', () => {
 		conversationsListStyle,
 		attachmentFolder,
 		chatStyle,
+		sortOrder,
+		groupMode,
 		liveTranscriptionTargetLanguageId,
 
+		updateSortOrder,
+		updateGroupMode,
 		updateReadStatusPrivacy,
 		updateTypingStatusPrivacy,
 		setShowMediaSettings,

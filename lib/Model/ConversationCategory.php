@@ -22,7 +22,7 @@ use OCP\DB\Types;
  * @method void setCollapsed(bool $collapsed)
  * @method bool isCollapsed()
  */
-class ConversationSection extends SnowflakeAwareEntity {
+class ConversationCategory extends SnowflakeAwareEntity {
 	protected string $userId = '';
 	protected string $name = '';
 	protected int $sortOrder = 0;

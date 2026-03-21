@@ -348,7 +348,9 @@
                                     "description-length",
                                     "retention-event",
                                     "retention-phone",
-                                    "retention-instant-meetings"
+                                    "retention-instant-meetings",
+                                    "sort-order",
+                                    "group-mode"
                                 ],
                                 "properties": {
                                     "can-create": {
@@ -390,6 +392,14 @@
                                         "format": "int64",
                                         "description": "Retention period for instant meetings in seconds, `0` means no retention",
                                         "minimum": 0
+                                    },
+                                    "sort-order": {
+                                        "type": "string",
+                                        "description": "User selected sort order for conversations"
+                                    },
+                                    "group-mode": {
+                                        "type": "string",
+                                        "description": "User selected grouping mode for conversations"
                                     }
                                 }
                             },

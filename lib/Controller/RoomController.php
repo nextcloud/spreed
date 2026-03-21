@@ -1889,24 +1889,24 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * Assign a conversation to a section
+	 * Assign a conversation category
 	 *
-	 * Required capability: `conversation-sections`
+	 * Required capability: `conversation-categories`
 	 *
-	 * @param int|null $sectionId ID of the section, or null to unassign
+	 * @param int|null $categoryId ID of the category, or null to unassign
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
 	 *
-	 * 200: Conversation section updated
+	 * 200: Conversation category updated
 	 */
 	#[NoAdminRequired]
 	#[FederationSupported]
 	#[RequireLoggedInParticipant]
-	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/section', requirements: [
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/category', requirements: [
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function assignToSection(?int $sectionId = null): DataResponse {
-		$this->participantService->assignConversationToSection($this->participant, $sectionId);
+	public function assignToCategory(?int $categoryId = null): DataResponse {
+		$this->participantService->assignConversationToCategory($this->participant, $categoryId);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
 

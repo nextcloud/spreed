@@ -283,6 +283,10 @@ export type components = {
                      * @description Retention period for instant meetings in seconds, `0` means no retention
                      */
                     "retention-instant-meetings": number;
+                    /** @description User selected sort order for conversations */
+                    "sort-order": string;
+                    /** @description User selected grouping mode for conversations */
+                    "group-mode": string;
                 };
                 federation: {
                     /** @description Whether federation is enabled */
@@ -739,11 +743,8 @@ export type components = {
             isImportant: boolean;
             /** @description Required capability: `sensitive-conversations` */
             isSensitive: boolean;
-            /**
-             * Format: int64
-             * @description ID of the custom section this conversation belongs to (only available with `conversation-sections` capability)
-             */
-            sectionId: number | null;
+            /** @description IDs of the custom categories this conversation belongs to (only available with `conversation-categories` capability) */
+            categoryIds: string[];
             /**
              * Format: int64
              * @description Required capability: `pinned-messages`

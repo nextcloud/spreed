@@ -23,13 +23,13 @@ import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 vi.mock('../../services/conversationsService', () => ({
 	searchListedConversations: vi.fn(),
 }))
-vi.mock('../../services/conversationSectionsService', () => ({
-	fetchSections: vi.fn().mockResolvedValue({ data: [] }),
-	createSection: vi.fn(),
-	updateSection: vi.fn(),
-	deleteSection: vi.fn(),
-	reorderSections: vi.fn(),
-	assignConversationToSection: vi.fn(),
+vi.mock('../../services/conversationCategoriesService', () => ({
+	fetchCategories: vi.fn().mockResolvedValue({ data: [] }),
+	createCategory: vi.fn(),
+	updateCategory: vi.fn(),
+	deleteCategory: vi.fn(),
+	reorderCategories: vi.fn(),
+	assignConversationToCategory: vi.fn(),
 }))
 vi.mock('../../services/coreService', () => ({
 	autocompleteQuery: vi.fn(),

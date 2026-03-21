@@ -116,14 +116,14 @@
 				</NcActionButton>
 
 				<NcActionButton
-					v-if="supportSections && sectionsStore.sortedSections.length > 0 && !item.isFavorite && !item.isArchived"
-					key="show-sections"
+					v-if="supportCategories && categoriesStore.sortedCategories.length > 0 && !item.isFavorite && !item.isArchived"
+					key="show-categories"
 					isMenu
-					@click="submenu = 'sections'">
+					@click="submenu = 'categories'">
 					<template #icon>
 						<IconTagMultipleOutline :size="20" />
 					</template>
-					{{ t('spreed', 'Move to section') }}
+					{{ t('spreed', 'Move to category') }}
 				</NcActionButton>
 
 				<NcActionButton
@@ -219,9 +219,9 @@
 					</NcActionButton>
 				</template>
 			</template>
-			<template v-else-if="submenu === 'sections'">
+			<template v-else-if="submenu === 'categories'">
 				<NcActionButton
-					key="action-back-sections"
+					key="action-back-categories"
 					:aria-label="t('spreed', 'Back')"
 					@click.stop="submenu = null">
 					<template #icon>
@@ -231,32 +231,28 @@
 				</NcActionButton>
 
 				<NcActionButton
-					key="no-section"
-					:modelValue="currentSectionValue"
-					value="none"
-					type="radio"
+					key="no-category"
 					closeAfterClick
-					@click="assignToSection(null)">
+					type="radio"
+					:modelValue="!currentCategoryId"
+					@click="assignToCategory(null)">
 					<template #icon>
 						<IconMinusCircleOutline :size="20" />
 					</template>
-					{{ t('spreed', 'No section') }}
+					{{ t('spreed', 'No category') }}
 				</NcActionButton>
 
-				<NcActionSeparator />
-
 				<NcActionButton
-					v-for="section in sectionsStore.sortedSections"
-					:key="'section-' + section.id"
-					:modelValue="currentSectionValue"
-					:value="section.id.toString()"
-					type="radio"
+					v-for="category in categoriesStore.sortedCategories"
+					:key="'category-' + category.id"
 					closeAfterClick
-					@click="assignToSection(section.id)">
+					type="radio"
+					:modelValue="currentCategoryId === String(category.id)"
+					@click="assignToCategory(category.id)">
 					<template #icon>
 						<IconTagMultipleOutline :size="20" />
 					</template>
-					{{ section.name }}
+					{{ category.name }}
 				</NcActionButton>
 			</template>
 		</template>
@@ -319,13 +315,13 @@ import IconMarkChatRead from '../../../../img/material-icons/mark-chat-read.svg?
 import { useConversationInfo } from '../../../composables/useConversationInfo.ts'
 import { AVATAR, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
-import { useConversationSectionsStore } from '../../../stores/conversationSections.ts'
+import { useConversationCategoriesStore } from '../../../stores/conversationCategories.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const supportImportantConversations = hasTalkFeature('local', 'important-conversations')
 const supportSensitiveConversations = hasTalkFeature('local', 'sensitive-conversations')
-const supportSections = hasTalkFeature('local', 'conversation-sections')
+const supportCategories = hasTalkFeature('local', 'conversation-categories')
 
 const notificationLevels = [
 	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages'), icon: IconBellRingOutline },
@@ -407,7 +403,7 @@ export default {
 		const { item, isSearchResult } = toRefs(props)
 		const { counterType, conversationInformation } = useConversationInfo({ item, isSearchResult })
 
-		const sectionsStore = useConversationSectionsStore()
+		const categoriesStore = useConversationCategoriesStore()
 
 		return {
 			AVATAR,
@@ -415,8 +411,8 @@ export default {
 			supportsArchive,
 			supportImportantConversations,
 			supportSensitiveConversations,
-			supportSections,
-			sectionsStore,
+			supportCategories,
+			categoriesStore,
 			submenu,
 			isDarkTheme,
 			counterType,
@@ -463,8 +459,9 @@ export default {
 			return this.item.notificationLevel.toString()
 		},
 
-		currentSectionValue() {
-			return this.item.sectionId ? this.item.sectionId.toString() : 'none'
+		currentCategoryId() {
+			const ids = this.item.categoryIds || []
+			return ids.length > 0 ? String(ids[0]) : null
 		},
 
 		notificationCalls() {
@@ -603,10 +600,10 @@ export default {
 			this.$store.dispatch('toggleArchive', this.item)
 		},
 
-		async assignToSection(sectionId) {
-			this.$store.dispatch('assignToSection', {
+		async assignToCategory(categoryId) {
+			this.$store.dispatch('assignToCategory', {
 				token: this.item.token,
-				sectionId,
+				categoryId,
 			})
 		},
 

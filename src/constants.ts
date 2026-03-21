@@ -146,9 +146,13 @@ export const CONVERSATION = {
 		COMPACT: 'compact',
 	},
 
-	SORT_MODE: {
+	SORT_ORDER: {
 		ACTIVITY: 'activity',
 		ALPHABETICAL: 'alphabetical',
+	},
+
+	GROUP_MODE: {
+		NONE: 'none',
 		TYPE_FIRST: 'type-first',
 	},
 

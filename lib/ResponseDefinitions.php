@@ -12,7 +12,7 @@ namespace OCA\Talk;
 /**
  * @psalm-type TalkActorTypes = 'users'|'groups'|'guests'|'emails'|'circles'|'bridged'|'bots'|'federated_users'|'phones'
  *
- * @psalm-type TalkConversationSection = array{
+ * @psalm-type TalkConversationCategory = array{
  *     id: int,
  *     name: string,
  *     sortOrder: int,
@@ -561,8 +561,8 @@ namespace OCA\Talk;
  *     isImportant: bool,
  *     // Required capability: `sensitive-conversations`
  *     isSensitive: bool,
- *     // ID of the custom section this conversation belongs to (only available with `conversation-sections` capability)
- *     sectionId: ?int,
+ *     // IDs of the custom categories this conversation belongs to (only available with `conversation-categories` capability)
+ *     categoryIds: list<string>,
  *     // Required capability: `pinned-messages`
  *     lastPinnedId: int,
  *     // Required capability: `pinned-messages`
@@ -824,6 +824,10 @@ namespace OCA\Talk;
  *             retention-phone: non-negative-int,
  *             // Retention period for instant meetings in seconds, `0` means no retention
  *             retention-instant-meetings: non-negative-int,
+ *             // User selected sort order for conversations
+ *             sort-order: string,
+ *             // User selected grouping mode for conversations
+ *             group-mode: string,
  *         },
  *         federation: array{
  *             // Whether federation is enabled

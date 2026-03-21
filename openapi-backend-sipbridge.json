@@ -322,7 +322,9 @@
                                     "description-length",
                                     "retention-event",
                                     "retention-phone",
-                                    "retention-instant-meetings"
+                                    "retention-instant-meetings",
+                                    "sort-order",
+                                    "group-mode"
                                 ],
                                 "properties": {
                                     "can-create": {
@@ -364,6 +366,14 @@
                                         "format": "int64",
                                         "description": "Retention period for instant meetings in seconds, `0` means no retention",
                                         "minimum": 0
+                                    },
+                                    "sort-order": {
+                                        "type": "string",
+                                        "description": "User selected sort order for conversations"
+                                    },
+                                    "group-mode": {
+                                        "type": "string",
+                                        "description": "User selected grouping mode for conversations"
                                     }
                                 }
                             },
@@ -897,7 +907,7 @@
                     "isArchived",
                     "isImportant",
                     "isSensitive",
-                    "sectionId",
+                    "categoryIds",
                     "lastPinnedId",
                     "hiddenPinnedId",
                     "hasScheduledMessages",
@@ -1196,11 +1206,12 @@
                         "type": "boolean",
                         "description": "Required capability: `sensitive-conversations`"
                     },
-                    "sectionId": {
-                        "type": "integer",
-                        "format": "int64",
-                        "nullable": true,
-                        "description": "ID of the custom section this conversation belongs to (only available with `conversation-sections` capability)"
+                    "categoryIds": {
+                        "type": "array",
+                        "description": "IDs of the custom categories this conversation belongs to (only available with `conversation-categories` capability)",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "lastPinnedId": {
                         "type": "integer",

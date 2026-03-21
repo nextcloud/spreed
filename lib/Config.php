@@ -814,6 +814,50 @@ class Config {
 	}
 
 	/**
+	 * User setting for conversations sort order
+	 *
+	 * @param ?string $userId
+	 * @return UserPreference::CONVERSATIONS_SORT_ORDER_*
+	 */
+	public function getConversationsSortOrder(?string $userId): string {
+		if ($userId !== null) {
+			$userSetting = $this->config->getUserValue(
+				$userId,
+				'spreed',
+				UserPreference::CONVERSATIONS_SORT_ORDER,
+			);
+
+			if (in_array($userSetting, [UserPreference::CONVERSATIONS_SORT_ORDER_ACTIVITY, UserPreference::CONVERSATIONS_SORT_ORDER_ALPHABETICAL], true)) {
+				return $userSetting;
+			}
+		}
+
+		return UserPreference::CONVERSATIONS_SORT_ORDER_ACTIVITY;
+	}
+
+	/**
+	 * User setting for conversations group mode
+	 *
+	 * @param ?string $userId
+	 * @return UserPreference::CONVERSATIONS_GROUP_MODE_*
+	 */
+	public function getConversationsGroupMode(?string $userId): string {
+		if ($userId !== null) {
+			$userSetting = $this->config->getUserValue(
+				$userId,
+				'spreed',
+				UserPreference::CONVERSATIONS_GROUP_MODE,
+			);
+
+			if (in_array($userSetting, [UserPreference::CONVERSATIONS_GROUP_MODE_NONE, UserPreference::CONVERSATIONS_GROUP_MODE_TYPE_FIRST], true)) {
+				return $userSetting;
+			}
+		}
+
+		return UserPreference::CONVERSATIONS_GROUP_MODE_NONE;
+	}
+
+	/**
 	 * User setting falling back to admin defined app config
 	 */
 	public function getInactiveLockTime(): int {

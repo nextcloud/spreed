@@ -131,7 +131,7 @@ class Capabilities implements IPublicCapability {
 		'federated-shared-items',
 		'scheduled-messages',
 		'conversation-presets',
-		'conversation-sections',
+		'conversation-categories',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -164,7 +164,7 @@ class Capabilities implements IPublicCapability {
 		'sensitive-conversations',
 		'scheduled-messages',
 		'conversation-presets',
-		'conversation-sections',
+		'conversation-categories',
 	];
 
 	public const LOCAL_CONFIGS = [
@@ -195,6 +195,8 @@ class Capabilities implements IPublicCapability {
 		'conversations' => [
 			'can-create',
 			'list-style',
+			'sort-order',
+			'group-mode',
 			'description-length',
 		],
 		'federation' => [
@@ -296,6 +298,8 @@ class Capabilities implements IPublicCapability {
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user),
 					'force-passwords' => $this->talkConfig->isPasswordEnforced(),
 					'list-style' => $this->talkConfig->getConversationsListStyle($user?->getUID()),
+					'sort-order' => $this->talkConfig->getConversationsSortOrder($user?->getUID()),
+					'group-mode' => $this->talkConfig->getConversationsGroupMode($user?->getUID()),
 					'description-length' => Room::DESCRIPTION_MAXIMUM_LENGTH,
 					'retention-event' => max(0, $this->appConfig->getAppValueInt('retention_event_rooms', 28)),
 					'retention-phone' => max(0, $this->appConfig->getAppValueInt('retention_phone_rooms', 7)),

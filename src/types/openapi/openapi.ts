@@ -688,7 +688,7 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/sections": {
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/categories": {
         parameters: {
             query?: never;
             header?: never;
@@ -696,23 +696,23 @@ export type paths = {
             cookie?: never;
         };
         /**
-         * Get all conversation sections for the current user
-         * @description Required capability: `conversation-sections`
+         * Get all conversation categories for the current user
+         * @description Required capability: `conversation-categories`
          */
-        get: operations["conversation_section-get-sections"];
+        get: operations["conversation_category-get-categories"];
         put?: never;
         /**
-         * Create a new conversation section
-         * @description Required capability: `conversation-sections`
+         * Create a new conversation category
+         * @description Required capability: `conversation-categories`
          */
-        post: operations["conversation_section-create-section"];
+        post: operations["conversation_category-create-category"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/sections/{sectionId}": {
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/categories/{categoryId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -721,22 +721,22 @@ export type paths = {
         };
         get?: never;
         /**
-         * Update a conversation section
-         * @description Required capability: `conversation-sections`
+         * Update a conversation category
+         * @description Required capability: `conversation-categories`
          */
-        put: operations["conversation_section-update-section"];
+        put: operations["conversation_category-update-category"];
         post?: never;
         /**
-         * Delete a conversation section
-         * @description Required capability: `conversation-sections`
+         * Delete a conversation category
+         * @description Required capability: `conversation-categories`
          */
-        delete: operations["conversation_section-delete-section"];
+        delete: operations["conversation_category-delete-category"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/sections/reorder": {
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/categories/reorder": {
         parameters: {
             query?: never;
             header?: never;
@@ -745,10 +745,10 @@ export type paths = {
         };
         get?: never;
         /**
-         * Reorder conversation sections
-         * @description Required capability: `conversation-sections`
+         * Reorder conversation categories
+         * @description Required capability: `conversation-categories`
          */
-        put: operations["conversation_section-reorder-sections"];
+        put: operations["conversation_category-reorder-categories"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1507,7 +1507,7 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/section": {
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/category": {
         parameters: {
             query?: never;
             header?: never;
@@ -1517,10 +1517,10 @@ export type paths = {
         get?: never;
         put?: never;
         /**
-         * Assign a conversation to a section
-         * @description Required capability: `conversation-sections`
+         * Assign a conversation category
+         * @description Required capability: `conversation-categories`
          */
-        post: operations["room-assign-to-section"];
+        post: operations["room-assign-to-category"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2200,6 +2200,10 @@ export type components = {
                      * @description Retention period for instant meetings in seconds, `0` means no retention
                      */
                     "retention-instant-meetings": number;
+                    /** @description User selected sort order for conversations */
+                    "sort-order": string;
+                    /** @description User selected grouping mode for conversations */
+                    "group-mode": string;
                 };
                 federation: {
                     /** @description Whether federation is enabled */
@@ -2424,6 +2428,14 @@ export type components = {
             /** @description Conversation token */
             roomToken: string;
         };
+        ConversationCategory: {
+            /** Format: int64 */
+            id: number;
+            name: string;
+            /** Format: int64 */
+            sortOrder: number;
+            collapsed: boolean;
+        };
         ConversationPreset: {
             /** @description Identifier of the preset, currently known: default, forced, webinar, presentation, hallway */
             identifier: string;
@@ -2435,14 +2447,6 @@ export type components = {
             parameters: {
                 [key: string]: number;
             };
-        };
-        ConversationSection: {
-            /** Format: int64 */
-            id: number;
-            name: string;
-            /** Format: int64 */
-            sortOrder: number;
-            collapsed: boolean;
         };
         DashboardEvent: {
             /** @description List of calendars this event belongs to */
@@ -3025,11 +3029,8 @@ export type components = {
             isImportant: boolean;
             /** @description Required capability: `sensitive-conversations` */
             isSensitive: boolean;
-            /**
-             * Format: int64
-             * @description ID of the custom section this conversation belongs to (only available with `conversation-sections` capability)
-             */
-            sectionId: number | null;
+            /** @description IDs of the custom categories this conversation belongs to (only available with `conversation-categories` capability) */
+            categoryIds: string[];
             /**
              * Format: int64
              * @description Required capability: `pinned-messages`
@@ -6963,7 +6964,7 @@ export interface operations {
             };
         };
     };
-    "conversation_section-get-sections": {
+    "conversation_category-get-categories": {
         parameters: {
             query?: never;
             header: {
@@ -6977,7 +6978,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Sections returned */
+            /** @description Categories returned */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -6986,7 +6987,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ConversationSection"][];
+                            data: components["schemas"]["ConversationCategory"][];
                         };
                     };
                 };
@@ -7007,7 +7008,7 @@ export interface operations {
             };
         };
     };
-    "conversation_section-create-section": {
+    "conversation_category-create-category": {
         parameters: {
             query?: never;
             header: {
@@ -7022,13 +7023,13 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** @description Name of the section */
+                    /** @description Name of the category */
                     name: string;
                 };
             };
         };
         responses: {
-            /** @description Section created */
+            /** @description Category created */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -7037,7 +7038,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ConversationSection"];
+                            data: components["schemas"]["ConversationCategory"];
                         };
                     };
                 };
@@ -7058,7 +7059,7 @@ export interface operations {
             };
         };
     };
-    "conversation_section-update-section": {
+    "conversation_category-update-category": {
         parameters: {
             query?: never;
             header: {
@@ -7067,21 +7068,21 @@ export interface operations {
             };
             path: {
                 apiVersion: "v4";
-                /** @description ID of the section */
-                sectionId: number;
+                /** @description ID of the category */
+                categoryId: number;
             };
             cookie?: never;
         };
         requestBody: {
             content: {
                 "application/json": {
-                    /** @description New name for the section */
+                    /** @description New name for the category */
                     name: string;
                 };
             };
         };
         responses: {
-            /** @description Section updated */
+            /** @description Category updated */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -7090,7 +7091,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ConversationSection"];
+                            data: components["schemas"]["ConversationCategory"];
                         };
                     };
                 };
@@ -7109,7 +7110,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Section not found */
+            /** @description Category not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -7125,7 +7126,7 @@ export interface operations {
             };
         };
     };
-    "conversation_section-delete-section": {
+    "conversation_category-delete-category": {
         parameters: {
             query?: never;
             header: {
@@ -7134,14 +7135,14 @@ export interface operations {
             };
             path: {
                 apiVersion: "v4";
-                /** @description ID of the section */
-                sectionId: number;
+                /** @description ID of the category */
+                categoryId: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Section deleted */
+            /** @description Category deleted */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -7169,7 +7170,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Section not found */
+            /** @description Category not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -7185,7 +7186,7 @@ export interface operations {
             };
         };
     };
-    "conversation_section-reorder-sections": {
+    "conversation_category-reorder-categories": {
         parameters: {
             query?: never;
             header: {
@@ -7200,13 +7201,13 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    /** @description Ordered list of section IDs */
+                    /** @description Ordered list of category IDs */
                     orderedIds: number[];
                 };
             };
         };
         responses: {
-            /** @description Sections reordered */
+            /** @description Categories reordered */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -7215,7 +7216,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["ConversationSection"][];
+                            data: components["schemas"]["ConversationCategory"][];
                         };
                     };
                 };
@@ -10933,7 +10934,7 @@ export interface operations {
             };
         };
     };
-    "room-assign-to-section": {
+    "room-assign-to-category": {
         parameters: {
             query?: never;
             header: {
@@ -10951,15 +10952,15 @@ export interface operations {
                 "application/json": {
                     /**
                      * Format: int64
-                     * @description ID of the section, or null to unassign
+                     * @description ID of the category, or null to unassign
                      * @default null
                      */
-                    sectionId?: number | null;
+                    categoryId?: number | null;
                 };
             };
         };
         responses: {
-            /** @description Conversation section updated */
+            /** @description Conversation category updated */
             200: {
                 headers: {
                     [name: string]: unknown;
