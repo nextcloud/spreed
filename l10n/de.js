@@ -2219,7 +2219,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Toneinstellungen konnten nicht gespeichert werden",
     "Sounds setting saved" : "Toneinstellung gespeichert",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Nextcloud Talk wurde aktualisiert. Du kannst keinen Anruf starten oder beitreten.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Diese Unterhaltung wird für alle {expirationDurationFormatted} Inaktivität automatisch gelöscht.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Du bist der Unterhaltung in einem anderen Fenster oder Gerät beigetreten. Dies wird derzeit von Nextcloud Talk nicht unterstützt, daher wurde diese Sitzung geschlossen.",
     "Nextcloud Talk was updated." : "Nextcloud Talk wurde aktualisiert.",
     "Nextcloud is in maintenance mode." : "Nextcloud befindet sich im Wartungsmodus.",

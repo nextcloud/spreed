@@ -2115,7 +2115,6 @@
     "Failed to save sounds setting" : "Није успело чување поставки звукова",
     "Sounds setting saved" : "Сачуване су поставке звукова",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Nextcloud Talk је ажуриран, не можете да започнете или да се придружите позиву.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Овај разговор ће се аутоматски обрисати за све након {expirationDurationFormatted} неактивности.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Приступили сте разговору у другом прозору или на другом уређају. Nextcloud Talk то тренутно не подржава, па је ова сесија затворена.",
     "Nextcloud Talk was updated." : "Nextcloud talk је ажуриран.",
     "Nextcloud is in maintenance mode." : "Nextcloud је у режиму одржавања.",

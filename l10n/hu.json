@@ -2129,7 +2129,6 @@
     "Failed to save sounds setting" : "Nem sikerült menteni a hangbeállításokat",
     "Sounds setting saved" : "Hangbeállítás mentve",
     "Nextcloud Talk was updated, you cannot start or join a call." : "A Nextcloud Beszélgetés frissítve lett, nem indíthat vagy csatlakozhat híváshoz.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Ez a beszélgetés {expirationDurationFormatted} tétlenség után automatikusan törölve lesz mindenki számára.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Csatlakozott a beszélgetéshez egy másik ablakban vagy eszközön. Ezt a Nextcloud Beszélgetés jelenleg nem támogatja, ezért ezt a munkamenetet lezárták.",
     "Nextcloud Talk was updated." : "A Nextcloud Beszélgetés frissítve lett.",
     "Nextcloud is in maintenance mode." : "A Nextcloud karbantartási módban van.",

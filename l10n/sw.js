@@ -2120,7 +2120,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Imeshindwa kuhifadhi mpangilio wa sauti",
     "Sounds setting saved" : "Mipangilio ya sauti imehifadhiwa",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Nextcloud Talk ilisasishwa, huwezi kuanzisha au kujiunga na simu.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Mazungumzo haya yatafutwa kiotomatiki kwa kila mtu {expirationDurationFormatted} asiye na shughuli.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Ulijiunga kwenye mazungumzo kwenye dirisha au kifaa kingine. Hii kwa sasa haitumiki na Nextcloud Talk kwa hivyo kipindi hiki kilifungwa.",
     "Nextcloud Talk was updated." : "Nextcloud Talk imesasishwa.",
     "Nextcloud is in maintenance mode." : "Nextcloud iko katika hali ya matengenezo.",

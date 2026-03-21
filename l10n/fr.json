@@ -2193,7 +2193,6 @@
     "Failed to save sounds setting" : "Impossible d'enregistrer les paramètres audio",
     "Sounds setting saved" : "Paramètres audio enregistrés",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Nextcloud Talk a été mis à jour, vous ne pouvez pas démarrer ou rejoindre un appel.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Cette conversation va être automatiquement supprimée pour tout le monde {expirationDurationFormatted} d'inactivité.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Vous avez déjà ouvert une conversation dans une autre fenêtre ou sur un autre périphérique. Ce n'est pas supporté pour l'instant dans Nextcloud Talk, votre session a été fermée. ",
     "Nextcloud Talk was updated." : "Nextcloud Talk a été mis à jour.",
     "Nextcloud is in maintenance mode." : "Nextcloud est en mode maintenance.",

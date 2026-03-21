@@ -2127,7 +2127,6 @@
     "Failed to save sounds setting" : "Fallo al guardar la configuración de sonidos",
     "Sounds setting saved" : "Confuguración de sonidos guardada",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Se ha actualizado Nextcloud Talk, no puede iniciar o unirse a una llamada.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Esta conversación se eliminará automáticamente para todos tras {expirationDurationFormatted} días sin actividad.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Te has unido a la conversación en otra ventana o dispositivo. Nextcloud Talk no soporta esto en la actualidad, por lo que se ha cerrado esta sesión.",
     "Nextcloud Talk was updated." : "Se ha actualizado Nextcloud Talk.",
     "Nextcloud is in maintenance mode." : "Nextcloud está en modo mantenimiento.",

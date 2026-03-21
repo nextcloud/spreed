@@ -2147,7 +2147,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Дууны тохиргоог хадгалж чадсангүй",
     "Sounds setting saved" : "Дууны тохиргоо хадгалагдлаа",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Nextcloud Talk шинэчлэгдсэн, та дуудлага эхлүүлэх эсвэл нэгдэх боломжгүй.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Энэ яриа идэвхгүй байсан {expirationDurationFormatted}-ийн дараа бүгдэд автоматаар устгагдана.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Та өөр цонх эсвэл төхөөрөмжөөс яриад нэгдсэн. Nextcloud Talk одоогоор үүнийг дэмждэггүй тул энэ сессийг хаасан.",
     "Nextcloud Talk was updated." : "Nextcloud Talk шинэчлэгдлээ.",
     "Nextcloud is in maintenance mode." : "Nextcloud засвар үйлчилгээний горимд байна.",
