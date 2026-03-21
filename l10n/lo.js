@@ -2131,7 +2131,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Failed to save sounds setting",
     "Sounds setting saved" : "Sounds setting saved",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Nextcloud Talk was updated, you cannot start or join a call.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed.",
     "Nextcloud Talk was updated." : "Nextcloud Talk was updated.",
     "Nextcloud is in maintenance mode." : "Nextcloud is in maintenance mode.",

@@ -2132,7 +2132,6 @@
     "Failed to save sounds setting" : "Det gick inte att spara ljudinställningen",
     "Sounds setting saved" : "Ljudinställningen sparad",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Nextcloud Talk har uppdaterats, du kan inte starta eller gå med i ett samtal.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Den här konversationen kommer automatiskt att tas bort för alla {expirationDurationFormatted} om ingen aktivitet sker.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Du gick med i konversationen i ett annat fönster eller en annan enhet. Detta stöds för närvarande inte av Nextcloud Talk så denna session stängdes.",
     "Nextcloud Talk was updated." : "Nextcloud Talk har uppdaterats.",
     "Nextcloud is in maintenance mode." : "Nextcloud är i underhållsläge.",

@@ -2193,7 +2193,6 @@
     "Failed to save sounds setting" : "Nepodarilo sa uložiť nastavenie zvukov",
     "Sounds setting saved" : "Nastavenie zvukov uložené",
     "Nextcloud Talk was updated, you cannot start or join a call." : "Nextcloud Talk bol aktualizovaný, nemôžete začať alebo pripojiť hovor.",
-    "This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity." : "Táto konverzácia bude automaticky vymazaná pre všetkých po {expirationDurationFormatted} neaktivity.",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Pripojili ste sa k rozhovoru v inom okne alebo zariadení. Nextcloud Talk /Rozhovor/ v súčasnosti túto možnosť nepodporuje, preto bolo sedenie ukončené.",
     "Nextcloud Talk was updated." : "Nextcloud Talk bol aktualizovaný.",
     "Nextcloud is in maintenance mode." : "Nextcloud je v režime údržby.",
