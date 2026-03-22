@@ -77,7 +77,7 @@
     "vue-draggable-resizable": "^3.0.0",
     "vue-material-design-icons": "^5.3.1",
     "vue-router": "^4.6.4",
-    "vue-tsc": "^3.0.10",
+    "vue-tsc": "^3.2.5",
     "vuex": "^4.1.0",
     "webdav": "^5.9.0",
     "webrtc-adapter": "^9.0.4",
