@@ -1923,6 +1923,7 @@
     "Open Calendar" : "Oscail Féilire",
     "Remove participant {name}" : "Bain rannpháirtí {name}",
     "Would you like to delete this conversation?" : "Ar mhaith leat an comhrá seo a scriosadh?",
+    "_This conversation will be automatically deleted for everyone after %n day of inactivity._::_This conversation will be automatically deleted for everyone after %n days of inactivity._" : ["Scriosfar an comhrá seo go huathoibríoch do gach duine tar éis %n lá neamhghníomhaíochta.","Scriosfar an comhrá seo go huathoibríoch do gach duine tar éis %n lá neamhghníomhaíochta.","Scriosfar an comhrá seo go huathoibríoch do gach duine tar éis %n lá neamhghníomhaíochta.","Scriosfar an comhrá seo go huathoibríoch do gach duine tar éis %n lá neamhghníomhaíochta.","Scriosfar an comhrá seo go huathoibríoch do gach duine tar éis %n lá neamhghníomhaíochta."],
     "Are you sure you want to delete this conversation?" : "An bhfuil tú cinnte gur mian leat an comhrá seo a scriosadh?",
     "Delete now" : "Scrios anois",
     "Keep" : "Coinnigh",
