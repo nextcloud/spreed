@@ -41,10 +41,7 @@ watch(isInLobby, (isInLobby) => {
 
 onMounted(() => {
 	watchEffect(() => {
-		if (route.hash === '#direct-call') {
-			emit('talk:media-settings:show', '')
-			router.replace({ hash: '' })
-		} else if (route.hash === '#settings') {
+		if (route.hash === '#settings') {
 			emit('show-conversation-settings', { token: props.token })
 			router.replace({ hash: '' })
 		}

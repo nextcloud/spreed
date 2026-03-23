@@ -373,6 +373,17 @@ export default {
 		},
 	},
 
+	mounted() {
+		if (this.$route && this.$route.hash === '#direct-call' && !this.isMediaSettings) {
+			this.$router.replace({ hash: '' })
+			if (this.startCallButtonDisabled) {
+				emit('talk:media-settings:show')
+			} else {
+				this.handleClick()
+			}
+		}
+	},
+
 	methods: {
 		t,
 		isParticipantTypeModerator(participantType) {
