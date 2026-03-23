@@ -162,6 +162,8 @@ jobs:
         env:
           DB_PORT: 4444
         run: |
+          wget https://github.com/nextcloud/server/pull/59160.diff
+          patch -p1 < 59160.diff
           mkdir data
           ./occ maintenance:install --verbose --database=pgsql --database-name=nextcloud --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=root --database-pass=rootpassword --admin-user admin --admin-pass admin
           ./occ config:system:set debug --value=true --type=boolean
