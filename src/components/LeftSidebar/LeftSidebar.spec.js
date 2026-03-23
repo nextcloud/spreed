@@ -17,19 +17,19 @@ import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import storeConfig from '../../store/storeConfig.js'
 import { useActorStore } from '../../stores/actor.ts'
-import { findNcActionButton, findNcButton } from '../../test-helpers.js'
+import { findNcActionButton, findNcButton, generateOCSResponse } from '../../test-helpers.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
 vi.mock('../../services/conversationsService', () => ({
 	searchListedConversations: vi.fn(),
 }))
 vi.mock('../../services/conversationCategoriesService', () => ({
-	fetchCategories: vi.fn().mockResolvedValue({ data: [] }),
+	fetchCategories: vi.fn(() => generateOCSResponse({ payload: [] })),
 	createCategory: vi.fn(),
 	updateCategory: vi.fn(),
 	deleteCategory: vi.fn(),
 	reorderCategories: vi.fn(),
-	assignConversationToCategory: vi.fn(),
+	assignConversationToCategories: vi.fn(),
 }))
 vi.mock('../../services/coreService', () => ({
 	autocompleteQuery: vi.fn(),

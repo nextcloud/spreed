@@ -6,37 +6,37 @@
 <template>
 	<NcAppNavigationItem
 		class="category-header"
-		:name="name"
+		:name="item.name"
 		allowCollapse
-		:open="!collapsed"
+		:open="!item.collapsed"
 		:forceMenu="isUserCategory"
-		@update:open="toggleCollapsed">
+		@update:open="categoriesStore.toggleCollapsed(item.categoryId)">
 		<!-- Invisible child to trigger the collapse chevron -->
 		<li class="category-header__spacer" />
 		<template #counter>
-			<NcCounterBubble v-if="unreadCount > 0" :count="unreadCount" />
+			<NcCounterBubble v-if="item.unreadCount > 0" :count="item.unreadCount" />
 		</template>
 		<template v-if="isUserCategory" #actions>
-			<NcActionButton closeAfterClick @click="$emit('renameCategory', { categoryId, name })">
+			<NcActionButton closeAfterClick @click="categoriesStore.updateCategoryName(item.categoryId, item.name)">
 				<template #icon>
 					<IconPencil :size="20" />
 				</template>
 				{{ t('spreed', 'Rename category') }}
 			</NcActionButton>
-			<NcActionButton closeAfterClick :disabled="isFirst" @click="$emit('moveCategoryUp', categoryId)">
+			<NcActionButton closeAfterClick :disabled="item.isFirst" @click="categoriesStore.moveCategoryUp(item.categoryId)">
 				<template #icon>
 					<IconArrowUp :size="20" />
 				</template>
 				{{ t('spreed', 'Move up') }}
 			</NcActionButton>
-			<NcActionButton closeAfterClick :disabled="isLast" @click="$emit('moveCategoryDown', categoryId)">
+			<NcActionButton closeAfterClick :disabled="item.isLast" @click="categoriesStore.moveCategoryDown(item.categoryId)">
 				<template #icon>
 					<IconArrowDown :size="20" />
 				</template>
 				{{ t('spreed', 'Move down') }}
 			</NcActionButton>
 			<NcActionSeparator />
-			<NcActionButton closeAfterClick class="critical" @click="$emit('deleteCategory', categoryId)">
+			<NcActionButton closeAfterClick class="critical" @click="handleDeleteCategory">
 				<template #icon>
 					<IconDelete :size="20" />
 				</template>
@@ -48,6 +48,7 @@
 
 <script>
 import { t } from '@nextcloud/l10n'
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
@@ -56,6 +57,8 @@ import IconArrowDown from 'vue-material-design-icons/ArrowDown.vue'
 import IconArrowUp from 'vue-material-design-icons/ArrowUp.vue'
 import IconDelete from 'vue-material-design-icons/Delete.vue'
 import IconPencil from 'vue-material-design-icons/Pencil.vue'
+import ConfirmDialog from '../../UIShared/ConfirmDialog.vue'
+import { useConversationCategoriesStore } from '../../../stores/conversationCategories.ts'
 
 export default {
 	name: 'ConversationCategoryHeader',
@@ -72,50 +75,50 @@ export default {
 	},
 
 	props: {
-		name: {
-			type: String,
+		item: {
+			type: Object,
 			required: true,
-		},
-
-		categoryId: {
-			type: [Number, String],
-			required: true,
-		},
-
-		collapsed: {
-			type: Boolean,
-			default: false,
-		},
-
-		unreadCount: {
-			type: Number,
-			default: 0,
-		},
-
-		isFirst: {
-			type: Boolean,
-			default: false,
-		},
-
-		isLast: {
-			type: Boolean,
-			default: false,
 		},
 	},
 
-	emits: ['toggleCollapsed', 'renameCategory', 'moveCategoryUp', 'moveCategoryDown', 'deleteCategory'],
+	setup() {
+		return {
+			categoriesStore: useConversationCategoriesStore(),
+		}
+	},
 
 	computed: {
 		isUserCategory() {
-			return this.categoryId !== 'favorites' && this.categoryId !== 'other'
+			return this.item.categoryId !== 'favorites' && this.item.categoryId !== 'other'
 		},
 	},
 
 	methods: {
 		t,
 
-		toggleCollapsed() {
-			this.$emit('toggleCollapsed', this.categoryId)
+		async handleDeleteCategory() {
+			const confirmed = await spawnDialog(ConfirmDialog, {
+				name: t('spreed', 'Delete category'),
+				message: t('spreed', 'Do you really want to delete "{name}"? Conversations in this category will be moved to "Other".', { name: this.item.name }),
+				buttons: [
+					{ label: t('spreed', 'Cancel'), variant: 'tertiary', callback: () => undefined },
+					{ label: t('spreed', 'Delete'), variant: 'error', callback: () => true },
+				],
+			})
+
+			if (!confirmed) {
+				return
+			}
+
+			await this.categoriesStore.removeCategory(this.item.categoryId)
+			// Remove the deleted category ID from all conversations in the Vuex store
+			const categoryIdStr = String(this.item.categoryId)
+			const conversations = this.$store.getters.conversationsList
+			for (const conversation of conversations) {
+				if (conversation.categoryIds?.includes(categoryIdStr)) {
+					conversation.categoryIds = conversation.categoryIds.filter((id) => id !== categoryIdStr)
+				}
+			}
 		},
 	},
 }

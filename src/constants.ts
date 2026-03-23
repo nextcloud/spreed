@@ -153,7 +153,8 @@ export const CONVERSATION = {
 
 	GROUP_MODE: {
 		NONE: 'none',
-		TYPE_FIRST: 'type-first',
+		GROUPS_FIRST: 'group-first',
+		PRIVATE_FIRST: 'private-first',
 	},
 
 	MAX_NAME_LENGTH: 255,

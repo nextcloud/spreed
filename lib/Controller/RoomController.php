@@ -1893,10 +1893,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * Required capability: `conversation-categories`
 	 *
-	 * @param int|null $categoryId ID of the category, or null to unassign
+	 * @param list<string> $categoryIds IDs of categories to assign (empty array to unassign all)
 	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
 	 *
-	 * 200: Conversation category updated
+	 * 200: Conversation categories updated
 	 */
 	#[NoAdminRequired]
 	#[FederationSupported]
@@ -1905,8 +1905,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function assignToCategory(?int $categoryId = null): DataResponse {
-		$this->participantService->assignConversationToCategory($this->participant, $categoryId);
+	public function assignToCategory(array $categoryIds = []): DataResponse {
+		$this->participantService->assignConversationToCategories($this->participant, $categoryIds);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
 

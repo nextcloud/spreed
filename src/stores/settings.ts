@@ -202,7 +202,7 @@ export const useSettingsStore = defineStore('settings', () => {
 	/**
 	 * Update the group mode for the conversation list
 	 *
-	 * @param value - the group mode ('none', 'type-first')
+	 * @param value - the group mode ('none', 'group-first', 'private-first')
 	 */
 	async function updateGroupMode(value: string) {
 		await setConversationsGroupMode(value)

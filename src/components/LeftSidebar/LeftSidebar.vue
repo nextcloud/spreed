@@ -24,7 +24,7 @@
 						v-show="searchText === ''"
 						ref="filtersAndSort"
 						:variant="isFiltered || sortOrder !== 'activity' || groupMode !== 'none' ? 'secondary' : 'tertiary'"
-						class="filters-and-sort"
+						class="filters"
 						:class="{ 'hidden-visually': isSearching }"
 						@close="isCreatingCategory = false">
 						<template #icon>
@@ -109,12 +109,23 @@
 						<NcActionButton
 							closeAfterClick
 							type="checkbox"
-							:modelValue="groupMode === 'type-first'"
-							@click="handleGroupMode(groupMode === 'type-first' ? 'none' : 'type-first')">
+							:modelValue="groupMode === 'group-first'"
+							@click="handleGroupMode(groupMode === 'group-first' ? 'none' : 'group-first')">
 							<template #icon>
 								<IconAccountGroupOutline :size="20" />
 							</template>
 							{{ t('spreed', 'Groups first') }}
+						</NcActionButton>
+
+						<NcActionButton
+							closeAfterClick
+							type="checkbox"
+							:modelValue="groupMode === 'private-first'"
+							@click="handleGroupMode(groupMode === 'private-first' ? 'none' : 'private-first')">
+							<template #icon>
+								<IconAccountOutline :size="20" />
+							</template>
+							{{ t('spreed', 'Private first') }}
 						</NcActionButton>
 
 						<NcActionSeparator />
@@ -307,12 +318,7 @@
 					:loading="!conversationsInitialised"
 					:compact="isCompact"
 					class="scroller"
-					@scroll="debounceHandleScroll"
-					@toggleCategoryCollapsed="handleToggleCategoryCollapsed"
-					@renameCategory="handleRenameCategory"
-					@moveCategoryUp="handleMoveCategoryUp"
-					@moveCategoryDown="handleMoveCategoryDown"
-					@deleteCategory="handleDeleteCategory" />
+					@scroll="debounceHandleScroll" />
 				<NcButton
 					v-if="!showThreadsList && !preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null && !filters.includes('mentions')"
 					class="unread-mention-button"
@@ -370,7 +376,6 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
-import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import debounce from 'debounce'
 import { ref } from 'vue'
 import { START_LOCATION } from 'vue-router'
@@ -388,6 +393,7 @@ import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import IconAccountGroupOutline from 'vue-material-design-icons/AccountGroupOutline.vue'
 import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMultiplePlusOutline.vue'
+import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconAt from 'vue-material-design-icons/At.vue'
@@ -409,7 +415,6 @@ import IconSortAlphabeticalAscending from 'vue-material-design-icons/SortAlphabe
 import IconTagMultipleOutline from 'vue-material-design-icons/TagMultipleOutline.vue'
 import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
 import ThreadItem from '../RightSidebar/Threads/ThreadItem.vue'
-import ConfirmDialog from '../UIShared/ConfirmDialog.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import SearchBox from '../UIShared/SearchBox.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
@@ -509,6 +514,7 @@ export default {
 		IconTagMultipleOutline,
 		IconClockOutline,
 		IconAccountGroupOutline,
+		IconAccountOutline,
 		NcEmptyContent,
 	},
 
@@ -582,8 +588,6 @@ export default {
 			isNavigating: false,
 			fallbackConversationToken: null,
 			isCreatingCategory: false,
-			favoritesCollapsed: BrowserStorage.getItem('category_collapsed_favorites') === 'true',
-			otherCollapsed: BrowserStorage.getItem('category_collapsed_other') === 'true',
 		}
 	},
 
@@ -597,7 +601,38 @@ export default {
 		},
 
 		conversationsList() {
-			return this.$store.getters.conversationsList
+			return [...this.$store.getters.conversationsList].sort((conversation1, conversation2) => {
+				// Favorites always first
+				if (conversation1.isFavorite !== conversation2.isFavorite) {
+					return conversation1.isFavorite ? -1 : 1
+				}
+
+				// Group mode: groups first
+				if (this.groupMode === CONVERSATION.GROUP_MODE.GROUPS_FIRST) {
+					const isGroup1 = conversation1.type === CONVERSATION.TYPE.GROUP || conversation1.type === CONVERSATION.TYPE.PUBLIC
+					const isGroup2 = conversation2.type === CONVERSATION.TYPE.GROUP || conversation2.type === CONVERSATION.TYPE.PUBLIC
+					if (isGroup1 !== isGroup2) {
+						return isGroup1 ? -1 : 1
+					}
+				}
+
+				// Group mode: private first
+				if (this.groupMode === CONVERSATION.GROUP_MODE.PRIVATE_FIRST) {
+					const isPrivate1 = conversation1.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation1.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+					const isPrivate2 = conversation2.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation2.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+					if (isPrivate1 !== isPrivate2) {
+						return isPrivate1 ? -1 : 1
+					}
+				}
+
+				// Sort order
+				if (this.sortOrder === CONVERSATION.SORT_ORDER.ALPHABETICAL) {
+					return (conversation1.displayName || '').localeCompare(conversation2.displayName || '')
+				}
+
+				// Default: activity (most recent first)
+				return conversation2.lastActivity - conversation1.lastActivity
+			})
 		},
 
 		emptyContentLabel() {
@@ -666,16 +701,17 @@ export default {
 			const result = []
 
 			// Favorites category (built-in)
+			const favoritesCollapsed = this.categoriesStore.isCollapsed('favorites')
 			if (favoriteConversations.length > 0) {
 				result.push({
 					_type: 'category-header',
 					id: 'category-favorites',
 					name: t('spreed', 'Favorites'),
 					categoryId: 'favorites',
-					collapsed: this.favoritesCollapsed,
+					collapsed: favoritesCollapsed,
 					unreadCount: favoriteConversations.reduce((sum, c) => sum + (c.unreadMessages || 0), 0),
 				})
-				if (!this.favoritesCollapsed) {
+				if (!favoritesCollapsed) {
 					result.push(...favoriteConversations)
 				}
 			}
@@ -706,16 +742,17 @@ export default {
 			}
 
 			// Uncategorized conversations
+			const otherCollapsed = this.categoriesStore.isCollapsed('other')
 			if (uncategorizedConversations.length > 0) {
 				result.push({
 					_type: 'category-header',
 					id: 'category-other',
 					name: t('spreed', 'Other'),
 					categoryId: 'other',
-					collapsed: this.otherCollapsed,
+					collapsed: otherCollapsed,
 					unreadCount: uncategorizedConversations.reduce((sum, c) => sum + (c.unreadMessages || 0), 0),
 				})
-				if (!this.otherCollapsed) {
+				if (!otherCollapsed) {
 					result.push(...uncategorizedConversations)
 				}
 			}
@@ -906,88 +943,6 @@ export default {
 			}
 			this.isCreatingCategory = false
 			this.$refs.filtersAndSort?.closeMenu?.()
-		},
-
-		handleToggleCategoryCollapsed(categoryId) {
-			if (categoryId === 'favorites') {
-				this.favoritesCollapsed = !this.favoritesCollapsed
-				BrowserStorage.setItem('category_collapsed_favorites', String(this.favoritesCollapsed))
-			} else if (categoryId === 'other') {
-				this.otherCollapsed = !this.otherCollapsed
-				BrowserStorage.setItem('category_collapsed_other', String(this.otherCollapsed))
-			} else {
-				this.categoriesStore.toggleCollapsed(categoryId)
-			}
-		},
-
-		async handleRenameCategory({ categoryId, name }) {
-			try {
-				await this.categoriesStore.updateCategoryName(categoryId, name)
-			} catch (error) {
-				showError(t('spreed', 'Error renaming category'))
-			}
-		},
-
-		async handleMoveCategoryUp(categoryId) {
-			const sorted = this.categoriesStore.sortedCategories
-			const index = sorted.findIndex((c) => c.id === categoryId)
-			if (index <= 0) {
-				return
-			}
-			const orderedIds = sorted.map((c) => c.id)
-			// Swap with previous
-			;[orderedIds[index - 1], orderedIds[index]] = [orderedIds[index], orderedIds[index - 1]]
-			try {
-				await this.categoriesStore.reorderCategories(orderedIds)
-			} catch (error) {
-				showError(t('spreed', 'Error reordering categories'))
-			}
-		},
-
-		async handleMoveCategoryDown(categoryId) {
-			const sorted = this.categoriesStore.sortedCategories
-			const index = sorted.findIndex((c) => c.id === categoryId)
-			if (index === -1 || index >= sorted.length - 1) {
-				return
-			}
-			const orderedIds = sorted.map((c) => c.id)
-			// Swap with next
-			;[orderedIds[index], orderedIds[index + 1]] = [orderedIds[index + 1], orderedIds[index]]
-			try {
-				await this.categoriesStore.reorderCategories(orderedIds)
-			} catch (error) {
-				showError(t('spreed', 'Error reordering categories'))
-			}
-		},
-
-		async handleDeleteCategory(categoryId) {
-			const category = this.categoriesStore.categoryById(categoryId)
-			const categoryName = category?.name ?? t('spreed', 'this category')
-
-			const confirmed = await spawnDialog(ConfirmDialog, {
-				name: t('spreed', 'Delete category'),
-				message: t('spreed', 'Do you really want to delete "{name}"? Conversations in this category will be moved to "Other".', { name: categoryName }),
-				buttons: [
-					{ label: t('spreed', 'Cancel'), variant: 'tertiary', callback: () => undefined },
-					{ label: t('spreed', 'Delete'), variant: 'error', callback: () => true },
-				],
-			})
-
-			if (!confirmed) {
-				return
-			}
-			try {
-				await this.categoriesStore.removeCategory(categoryId)
-				// Remove the deleted category ID from all conversations in the Vuex store
-				const categoryIdStr = String(categoryId)
-				for (const conversation of this.conversationsList) {
-					if (conversation.categoryIds?.includes(categoryIdStr)) {
-						conversation.categoryIds = conversation.categoryIds.filter((id) => id !== categoryIdStr)
-					}
-				}
-			} catch (error) {
-				showError(t('spreed', 'Error deleting category'))
-			}
 		},
 
 		handleFilter(filter) {
@@ -1367,7 +1322,7 @@ export default {
 	margin: calc(var(--default-grid-baseline) * 2);
 	align-items: center;
 
-	.filters-and-sort {
+	.filters {
 		position: absolute;
 		top: 0;
 		inset-inline-end: calc(var(--default-grid-baseline) + var(--default-clickable-area));
@@ -1451,8 +1406,8 @@ export default {
 .left-sidebar__settings-button-container {
 	display: flex;
 	flex-direction: column;
-	gap: 0;
-	padding: var(--default-grid-baseline, 4px) 0;
+	gap: var(--default-grid-baseline);
+	padding: calc(2 * var(--default-grid-baseline));
 }
 
 .left-sidebar__settings-button-bubble {

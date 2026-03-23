@@ -13,10 +13,10 @@ namespace OCA\Talk;
  * @psalm-type TalkActorTypes = 'users'|'groups'|'guests'|'emails'|'circles'|'bridged'|'bots'|'federated_users'|'phones'
  *
  * @psalm-type TalkConversationCategory = array{
- *     id: int,
+ *     // SnowflakeID
+ *     id: numeric-string,
  *     name: string,
  *     sortOrder: int,
- *     collapsed: bool,
  * }
  *
  * @psalm-type TalkBan = array{

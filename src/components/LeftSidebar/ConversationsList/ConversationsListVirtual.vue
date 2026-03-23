@@ -32,14 +32,6 @@ const props = defineProps<{
 	compact?: boolean
 }>()
 
-const emit = defineEmits<{
-	(e: 'toggleCategoryCollapsed', categoryId: number | string): void
-	(e: 'renameCategory', payload: { categoryId: number, name: string }): void
-	(e: 'moveCategoryUp', categoryId: number): void
-	(e: 'moveCategoryDown', categoryId: number): void
-	(e: 'deleteCategory', categoryId: number): void
-}>()
-
 /**
  * Type guard to check if a list item is a category header
  *
@@ -135,53 +127,6 @@ function scrollToConversation(token: string) {
 	}
 }
 
-/**
- * Handle toggling category collapsed state
- *
- * @param categoryId The category ID to toggle
- */
-function handleToggleCollapsed(categoryId: number | string) {
-	emit('toggleCategoryCollapsed', categoryId)
-}
-
-/**
- * Handle renaming a category
- *
- * @param payload Object with categoryId and new name
- * @param payload.categoryId
- * @param payload.name
- */
-function handleRenameCategory(payload: { categoryId: number, name: string }) {
-	emit('renameCategory', payload)
-}
-
-/**
- * Handle moving a category up
- *
- * @param categoryId The category ID to move
- */
-function handleMoveCategoryUp(categoryId: number) {
-	emit('moveCategoryUp', categoryId)
-}
-
-/**
- * Handle moving a category down
- *
- * @param categoryId The category ID to move
- */
-function handleMoveCategoryDown(categoryId: number) {
-	emit('moveCategoryDown', categoryId)
-}
-
-/**
- * Handle deleting a category
- *
- * @param categoryId The category ID to delete
- */
-function handleDeleteCategory(categoryId: number) {
-	emit('deleteCategory', categoryId)
-}
-
 defineExpose({
 	getFirstItemInViewportIndex,
 	getLastItemInViewportIndex,
@@ -202,17 +147,7 @@ defineExpose({
 			<template v-for="item in list" :key="item.data.id">
 				<ConversationCategoryHeader
 					v-if="isCategoryHeader(item.data)"
-					:name="(item.data as CategoryHeaderItem).name"
-					:categoryId="(item.data as CategoryHeaderItem).categoryId"
-					:collapsed="(item.data as CategoryHeaderItem).collapsed"
-					:unreadCount="(item.data as CategoryHeaderItem).unreadCount"
-					:isFirst="(item.data as CategoryHeaderItem).isFirst ?? false"
-					:isLast="(item.data as CategoryHeaderItem).isLast ?? false"
-					@toggleCollapsed="handleToggleCollapsed"
-					@renameCategory="handleRenameCategory"
-					@moveCategoryUp="handleMoveCategoryUp"
-					@moveCategoryDown="handleMoveCategoryDown"
-					@deleteCategory="handleDeleteCategory" />
+					:item="item.data as CategoryHeaderItem" />
 				<ConversationItem
 					v-else
 					:item="item.data as Conversation"

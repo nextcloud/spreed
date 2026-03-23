@@ -21,7 +21,7 @@ import {
 } from '../services/avatarService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
-import { assignConversationToCategory } from '../services/conversationCategoriesService.ts'
+import { assignConversationToCategories } from '../services/conversationCategoriesService.ts'
 import {
 	addToFavorites,
 	archiveConversation,
@@ -73,7 +73,6 @@ import { useFederationStore } from '../stores/federation.ts'
 import { useGroupwareStore } from '../stores/groupware.ts'
 import pinia from '../stores/pinia.ts'
 import { useReactionsStore } from '../stores/reactions.js'
-import { useSettingsStore } from '../stores/settings.ts'
 import { useSharedItemsStore } from '../stores/sharedItems.ts'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import { useTokenStore } from '../stores/token.ts'
@@ -139,37 +138,16 @@ function state() {
 const getters = {
 	conversations: (state) => state.conversations,
 	/**
-	 * List of all conversations sorted by isFavorite and the selected sort order / group mode without breakout rooms
+	 * List of all conversations without breakout rooms, sorted by most recent activity
 	 *
 	 * @param {object} state state
-	 * @return {object[]} sorted conversations list
+	 * @return {object[]} conversations list sorted by activity
 	 */
 	conversationsList: (state) => {
-		const settingsStore = useSettingsStore(pinia)
 		return Object.values(state.conversations)
 			// Filter out breakout rooms
 			.filter((conversation) => conversation.objectType !== CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 			.sort((conversation1, conversation2) => {
-				// Favorites always first
-				if (conversation1.isFavorite !== conversation2.isFavorite) {
-					return conversation1.isFavorite ? -1 : 1
-				}
-
-				// Group mode: type-first
-				if (settingsStore.groupMode === CONVERSATION.GROUP_MODE.TYPE_FIRST) {
-					const isGroup1 = conversation1.type === CONVERSATION.TYPE.GROUP || conversation1.type === CONVERSATION.TYPE.PUBLIC
-					const isGroup2 = conversation2.type === CONVERSATION.TYPE.GROUP || conversation2.type === CONVERSATION.TYPE.PUBLIC
-					if (isGroup1 !== isGroup2) {
-						return isGroup1 ? -1 : 1
-					}
-				}
-
-				// Sort order
-				if (settingsStore.sortOrder === CONVERSATION.SORT_ORDER.ALPHABETICAL) {
-					return (conversation1.displayName || '').localeCompare(conversation2.displayName || '')
-				}
-
-				// Default: activity (most recent first)
 				return conversation2.lastActivity - conversation1.lastActivity
 			})
 	},
@@ -630,16 +608,16 @@ const actions = {
 		}
 	},
 
-	async assignToCategory(context, { token, categoryId }) {
+	async assignToCategories(context, { token, categoryIds }) {
 		if (!context.getters.conversations[token]) {
 			return
 		}
 
 		try {
-			const response = await assignConversationToCategory(token, categoryId)
+			const response = await assignConversationToCategories(token, categoryIds)
 			context.commit('addConversation', response.data.ocs.data)
 		} catch (error) {
-			console.error('Error while assigning conversation to category: ', error)
+			console.error('Error while assigning conversation to categories: ', error)
 		}
 	},
 

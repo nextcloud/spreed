@@ -116,14 +116,14 @@
 				</NcActionButton>
 
 				<NcActionButton
-					v-if="supportCategories && categoriesStore.sortedCategories.length > 0 && !item.isFavorite && !item.isArchived"
+					v-if="supportCategories"
 					key="show-categories"
 					isMenu
 					@click="submenu = 'categories'">
 					<template #icon>
 						<IconTagMultipleOutline :size="20" />
 					</template>
-					{{ t('spreed', 'Move to category') }}
+					{{ t('spreed', 'Categories') }}
 				</NcActionButton>
 
 				<NcActionButton
@@ -233,22 +233,19 @@
 				<NcActionButton
 					key="no-category"
 					closeAfterClick
-					type="radio"
-					:modelValue="!currentCategoryId"
-					@click="assignToCategory(null)">
+					@click="assignToCategories([])">
 					<template #icon>
 						<IconMinusCircleOutline :size="20" />
 					</template>
-					{{ t('spreed', 'No category') }}
+					{{ t('spreed', 'Remove all categories') }}
 				</NcActionButton>
 
 				<NcActionButton
 					v-for="category in categoriesStore.sortedCategories"
 					:key="'category-' + category.id"
-					closeAfterClick
-					type="radio"
-					:modelValue="currentCategoryId === String(category.id)"
-					@click="assignToCategory(category.id)">
+					type="checkbox"
+					:modelValue="isCategoryAssigned(String(category.id))"
+					@click="toggleCategory(String(category.id))">
 					<template #icon>
 						<IconTagMultipleOutline :size="20" />
 					</template>
@@ -459,9 +456,8 @@ export default {
 			return this.item.notificationLevel.toString()
 		},
 
-		currentCategoryId() {
-			const ids = this.item.categoryIds || []
-			return ids.length > 0 ? String(ids[0]) : null
+		currentCategoryIds() {
+			return (this.item.categoryIds || []).map(String)
 		},
 
 		notificationCalls() {
@@ -600,10 +596,21 @@ export default {
 			this.$store.dispatch('toggleArchive', this.item)
 		},
 
-		async assignToCategory(categoryId) {
-			this.$store.dispatch('assignToCategory', {
+		isCategoryAssigned(categoryId) {
+			return this.currentCategoryIds.includes(categoryId)
+		},
+
+		async toggleCategory(categoryId) {
+			const newIds = this.isCategoryAssigned(categoryId)
+				? this.currentCategoryIds.filter((id) => id !== categoryId)
+				: [...this.currentCategoryIds, categoryId]
+			this.assignToCategories(newIds)
+		},
+
+		async assignToCategories(categoryIds) {
+			this.$store.dispatch('assignToCategories', {
 				token: this.item.token,
-				categoryId,
+				categoryIds,
 			})
 		},
 
