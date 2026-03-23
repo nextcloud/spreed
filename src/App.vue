@@ -56,6 +56,7 @@ import { CONVERSATION, PARTICIPANT } from './constants.ts'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.ts'
 import { leaveConversationSync } from './services/participantsService.js'
+import SessionStorage from './services/SessionStorage.js'
 import { useActorStore } from './stores/actor.ts'
 import { useCallViewStore } from './stores/callView.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
@@ -540,7 +541,12 @@ export default {
 					previousParticipants.push(conversation.name)
 				}
 
-				EventBus.once('joined-conversation', async ({ token }) => {
+				// Remove previous listener to prevent stacking on rapid token changes
+				if (this._joinCallHandler) {
+					EventBus.off('joined-conversation', this._joinCallHandler)
+				}
+
+				this._joinCallHandler = async ({ token }) => {
 					if (this.token !== token) {
 						return
 					}
@@ -603,7 +609,14 @@ export default {
 					await this.$store.dispatch('joinCall', payload)
 
 					this.callViewStore.setForceCallView(false)
-				})
+				}
+
+				const currentJoinedToken = SessionStorage.getItem('joined_conversation')
+				if (currentJoinedToken === this.token) {
+					this._joinCallHandler({ token: this.token })
+				} else {
+					EventBus.once('joined-conversation', this._joinCallHandler)
+				}
 			}
 		},
 	},
