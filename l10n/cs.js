@@ -1128,7 +1128,7 @@ OC.L10N.register(
     "Federated conversation" : "Federovaná konverzace",
     "Public conversation" : "Veřejná konverzace",
     "Favorite" : "Oblíbený",
-    "Banned users" : "VYloučení uživatelé",
+    "Banned users" : "Vyloučení uživatelé",
     "Manage the list of banned users in this conversation." : "Spravovat seznam vyloučených uživatelů v této konverzaci.",
     "Manage bans" : "Spravovat vyloučení",
     "No banned users" : "Žádní vyloučení uživatelé",
