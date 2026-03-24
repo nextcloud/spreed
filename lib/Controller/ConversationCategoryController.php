@@ -146,10 +146,9 @@ class ConversationCategoryController extends OCSController {
 	 */
 	protected function formatCategory(ConversationCategory $category): array {
 		return [
-			'id' => $category->getId(),
+			'id' => (string)$category->getId(),
 			'name' => $category->getName(),
 			'sortOrder' => $category->getSortOrder(),
-			'collapsed' => $category->isCollapsed(),
 		];
 	}
 }

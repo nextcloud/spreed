@@ -1013,13 +1013,12 @@
                 "required": [
                     "id",
                     "name",
-                    "sortOrder",
-                    "collapsed"
+                    "sortOrder"
                 ],
                 "properties": {
                     "id": {
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "description": "SnowflakeID"
                     },
                     "name": {
                         "type": "string"
@@ -1027,9 +1026,6 @@
                     "sortOrder": {
                         "type": "integer",
                         "format": "int64"
-                    },
-                    "collapsed": {
-                        "type": "boolean"
                     }
                 }
             },
@@ -21935,12 +21931,13 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "categoryId": {
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "nullable": true,
-                                        "default": null,
-                                        "description": "ID of the category, or null to unassign"
+                                    "categoryIds": {
+                                        "type": "array",
+                                        "default": [],
+                                        "description": "IDs of categories to assign (empty array to unassign all)",
+                                        "items": {
+                                            "type": "string"
+                                        }
                                     }
                                 }
                             }
@@ -21982,7 +21979,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Conversation category updated",
+                        "description": "Conversation categories updated",
                         "content": {
                             "application/json": {
                                 "schema": {

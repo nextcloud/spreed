@@ -2963,12 +2963,11 @@ export type components = {
             roomToken: string;
         };
         ConversationCategory: {
-            /** Format: int64 */
-            id: number;
+            /** @description SnowflakeID */
+            id: string;
             name: string;
             /** Format: int64 */
             sortOrder: number;
-            collapsed: boolean;
         };
         ConversationPreset: {
             /** @description Identifier of the preset, currently known: default, forced, webinar, presentation, hallway */
@@ -11518,16 +11517,15 @@ export interface operations {
             content: {
                 "application/json": {
                     /**
-                     * Format: int64
-                     * @description ID of the category, or null to unassign
-                     * @default null
+                     * @description IDs of categories to assign (empty array to unassign all)
+                     * @default []
                      */
-                    categoryId?: number | null;
+                    categoryIds?: string[];
                 };
             };
         };
         responses: {
-            /** @description Conversation category updated */
+            /** @description Conversation categories updated */
             200: {
                 headers: {
                     [name: string]: unknown;

@@ -168,8 +168,15 @@ describe('LeftSidebar.vue', () => {
 			const normalConversationsList = conversationsList.filter((conversation) => !conversation.isArchived)
 			const conversationListItems = wrapper.findAll('.conversation')
 			expect(conversationListItems).toHaveLength(normalConversationsList.length)
-			expect(conversationListItems.at(0).text()).toContain(normalConversationsList[0].displayName)
-			expect(conversationListItems.at(1).text()).toContain(normalConversationsList[1].displayName)
+			// Favorites are sorted first, then by lastActivity descending
+			const sorted = [...normalConversationsList].sort((a, b) => {
+				if (a.isFavorite !== b.isFavorite) {
+					return a.isFavorite ? -1 : 1
+				}
+				return b.lastActivity - a.lastActivity
+			})
+			expect(conversationListItems.at(0).text()).toContain(sorted[0].displayName)
+			expect(conversationListItems.at(1).text()).toContain(sorted[1].displayName)
 
 			expect(conversationsReceivedEvent).toHaveBeenCalled()
 		})

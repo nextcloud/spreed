@@ -32,7 +32,7 @@ async function createCategory(name: string) {
  * @param categoryId ID of the category
  * @param name New name for the category
  */
-async function updateCategory(categoryId: number, name: string) {
+async function updateCategory(categoryId: string, name: string) {
 	return axios.put(generateOcsUrl('apps/spreed/api/v4/categories/{categoryId}', { categoryId }), { name })
 }
 
@@ -41,7 +41,7 @@ async function updateCategory(categoryId: number, name: string) {
  *
  * @param categoryId ID of the category to delete
  */
-async function deleteCategory(categoryId: number) {
+async function deleteCategory(categoryId: string) {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v4/categories/{categoryId}', { categoryId }))
 }
 
@@ -50,7 +50,7 @@ async function deleteCategory(categoryId: number) {
  *
  * @param orderedIds Ordered list of category IDs
  */
-async function reorderCategories(orderedIds: number[]) {
+async function reorderCategories(orderedIds: string[]) {
 	return axios.put(generateOcsUrl('apps/spreed/api/v4/categories/reorder'), { orderedIds })
 }
 

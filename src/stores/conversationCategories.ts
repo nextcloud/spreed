@@ -101,7 +101,7 @@ export const useConversationCategoriesStore = defineStore('conversationCategorie
 	 * @param categoryId ID of the category
 	 * @param name New name for the category
 	 */
-	async function updateCategoryName(categoryId: number, name: string) {
+	async function updateCategoryName(categoryId: string, name: string) {
 		try {
 			const response = await updateCategoryApi(categoryId, name)
 			const category = response.data.ocs.data
@@ -120,7 +120,7 @@ export const useConversationCategoriesStore = defineStore('conversationCategorie
 	 *
 	 * @param categoryId ID of the category to remove
 	 */
-	async function removeCategory(categoryId: number) {
+	async function removeCategory(categoryId: string) {
 		try {
 			await deleteCategoryApi(categoryId)
 			delete categories[categoryId]
@@ -136,7 +136,7 @@ export const useConversationCategoriesStore = defineStore('conversationCategorie
 	 *
 	 * @param orderedIds Ordered list of category IDs
 	 */
-	async function reorderCategories(orderedIds: number[]) {
+	async function reorderCategories(orderedIds: string[]) {
 		try {
 			const response = await reorderCategoriesApi(orderedIds)
 			const data = response.data.ocs.data
@@ -161,14 +161,14 @@ export const useConversationCategoriesStore = defineStore('conversationCategorie
 	 *
 	 * @param categoryId ID of the category to toggle
 	 */
-	function toggleCollapsed(categoryId: number | string) {
+	function toggleCollapsed(categoryId: string) {
 		const key = String(categoryId)
 		const category = categories[key]
 		if (category) {
 			category.collapsed = !category.collapsed
 		} else {
 			// Built-in categories (favorites, other) - create a synthetic entry
-			categories[key] = { id: key as unknown as number, name: key, sortOrder: 0, collapsed: true }
+			categories[key] = { id: key, name: key, sortOrder: 0, collapsed: true }
 		}
 		persistCategories(categories)
 	}
@@ -178,7 +178,7 @@ export const useConversationCategoriesStore = defineStore('conversationCategorie
 	 *
 	 * @param categoryId ID of the category to check
 	 */
-	function isCollapsed(categoryId: number | string): boolean {
+	function isCollapsed(categoryId: string): boolean {
 		return categories[String(categoryId)]?.collapsed ?? false
 	}
 
@@ -187,7 +187,7 @@ export const useConversationCategoriesStore = defineStore('conversationCategorie
 	 *
 	 * @param categoryId ID of the category to move
 	 */
-	async function moveCategoryUp(categoryId: number) {
+	async function moveCategoryUp(categoryId: string) {
 		const sorted = sortedCategories.value
 		const index = sorted.findIndex((c) => c.id === categoryId)
 		if (index <= 0) {
@@ -203,7 +203,7 @@ export const useConversationCategoriesStore = defineStore('conversationCategorie
 	 *
 	 * @param categoryId ID of the category to move
 	 */
-	async function moveCategoryDown(categoryId: number) {
+	async function moveCategoryDown(categoryId: string) {
 		const sorted = sortedCategories.value
 		const index = sorted.findIndex((c) => c.id === categoryId)
 		if (index === -1 || index >= sorted.length - 1) {
