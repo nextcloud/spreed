@@ -817,7 +817,11 @@ export default {
 		},
 
 		handleCopyMessageLink() {
-			copyConversationLinkToClipboard(this.message.token, this.message.id)
+			if (this.message.isThread && this.message.id !== this.message.threadId) {
+				copyConversationLinkToClipboard(this.message.token, this.message.id, this.message.threadId)
+			} else {
+				copyConversationLinkToClipboard(this.message.token, this.message.id)
+			}
 		},
 
 		async handleMarkAsUnread() {
