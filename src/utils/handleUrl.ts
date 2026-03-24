@@ -29,8 +29,13 @@ export function generateAbsoluteUrl(url: string, params?: object, options: UrlOp
  *
  * @param token - Conversation token
  * @param [messageId] - messageId for message in conversation link
+ * @param [threadId] - threadId for message in conversation link
  */
-export function generateFullConversationLink(token: string, messageId?: string): string {
+export function generateFullConversationLink(token: string, messageId?: string, threadId?: string): string {
+	if (threadId && messageId) {
+		return generateAbsoluteUrl('/call/{token}?threadId={threadId}#message_{messageId}', { token, messageId, threadId })
+	}
+
 	return messageId !== undefined
 		? generateAbsoluteUrl('/call/{token}#message_{messageId}', { token, messageId })
 		: generateAbsoluteUrl('/call/{token}', { token })
@@ -41,11 +46,16 @@ export function generateFullConversationLink(token: string, messageId?: string):
  *
  * @param token - conversation token
  * @param [messageId] - messageId for message in conversation link
+ * @param [threadId] - threadId for message in conversation link
  */
-export async function copyConversationLinkToClipboard(token: string, messageId?: string) {
+export async function copyConversationLinkToClipboard(token: string, messageId?: string, threadId?: string) {
 	try {
-		await navigator.clipboard.writeText(generateFullConversationLink(token, messageId))
-		showSuccess(t('spreed', 'Conversation link copied to clipboard'))
+		await navigator.clipboard.writeText(generateFullConversationLink(token, messageId, threadId))
+		if (messageId) {
+			showSuccess(t('spreed', 'Message link copied to clipboard'))
+		} else {
+			showSuccess(t('spreed', 'Conversation link copied to clipboard'))
+		}
 	} catch (error) {
 		showError(t('spreed', 'The link could not be copied'))
 	}
