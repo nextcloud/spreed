@@ -156,9 +156,11 @@ class SignalingController extends OCSController {
 				$this->federationAuthenticator->authenticated($room, $participant);
 			} elseif ($token !== '') {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId);
-			} else {
-				// FIXME Soft-fail for legacy support in mobile apps
+			} elseif ($this->userId !== null) {
+				// Mobile clients and admin setup check use the neutral point
 				$room = null;
+			} else {
+				throw new RoomNotFoundException();
 			}
 		} catch (RoomNotFoundException|ParticipantNotFoundException) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
