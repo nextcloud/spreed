@@ -240,9 +240,9 @@
 				</template>
 				<ConversationsListVirtual
 					v-else
-					v-show="filteredConversationsList.length > 0"
+					v-show="sortedConversationsList.length > 0"
 					ref="scroller"
-					:conversations="filteredConversationsList"
+					:conversations="sortedConversationsList"
 					:loading="!conversationsInitialised"
 					:compact="isCompact"
 					class="scroller"
@@ -504,6 +504,16 @@ export default {
 	computed: {
 		conversationsList() {
 			return this.$store.getters.conversationsList
+		},
+
+		sortedConversationsList() {
+			return this.filteredConversationsList.slice()
+				.sort((conversation1, conversation2) => {
+					if (conversation1.isFavorite !== conversation2.isFavorite) {
+						return conversation1.isFavorite ? -1 : 1
+					}
+					return conversation2.lastActivity - conversation1.lastActivity
+				})
 		},
 
 		emptyContentLabel() {

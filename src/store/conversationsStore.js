@@ -137,22 +137,15 @@ function state() {
 const getters = {
 	conversations: (state) => state.conversations,
 	/**
-	 * List of all conversations sorted by isFavorite and lastActivity without breakout rooms
+	 * List of all conversations without breakout rooms
 	 *
 	 * @param {object} state state
-	 * @return {object[]} sorted conversations list
+	 * @return {object[]} conversations list
 	 */
 	conversationsList: (state) => {
 		return Object.values(state.conversations)
 			// Filter out breakout rooms
 			.filter((conversation) => conversation.objectType !== CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
-			// Sort by isFavorite and lastActivity
-			.sort((conversation1, conversation2) => {
-				if (conversation1.isFavorite !== conversation2.isFavorite) {
-					return conversation1.isFavorite ? -1 : 1
-				}
-				return conversation2.lastActivity - conversation1.lastActivity
-			})
 	},
 	/**
 	 * List of all archived conversations sorted

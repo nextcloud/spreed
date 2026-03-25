@@ -158,6 +158,12 @@ describe('LeftSidebar.vue', () => {
 			await flushPromises()
 
 			const normalConversationsList = conversationsList.filter((conversation) => !conversation.isArchived)
+				.sort((a, b) => {
+					if (a.isFavorite !== b.isFavorite) {
+						return a.isFavorite ? -1 : 1
+					}
+					return b.lastActivity - a.lastActivity
+				})
 			const conversationListItems = wrapper.findAll('.conversation')
 			expect(conversationListItems).toHaveLength(normalConversationsList.length)
 			expect(conversationListItems.at(0).text()).toContain(normalConversationsList[0].displayName)
