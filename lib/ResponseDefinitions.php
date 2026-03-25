@@ -432,7 +432,7 @@ namespace OCA\Talk;
  *
  * @psalm-type TalkSignalingSettings = array{
  *     federation: TalkSignalingFederationSettings|null,
- *     helloAuthParams: array{
+ *     helloAuthParams?: array{
  *         "1.0": array{
  *             userid: ?string,
  *             ticket: string,
@@ -446,7 +446,7 @@ namespace OCA\Talk;
  *     signalingMode: string,
  *     sipDialinInfo: string,
  *     stunservers: list<array{urls: list<string>}>,
- *     ticket: string,
+ *     ticket?: string,
  *     turnservers: list<array{urls: list<string>, username: string, credential: mixed}>,
  *     userId: ?string,
  * }
