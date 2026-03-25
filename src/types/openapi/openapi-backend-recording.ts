@@ -172,6 +172,16 @@ export type components = {
                      * @description Retention period for instant meetings in seconds, `0` means no retention
                      */
                     "retention-instant-meetings": number;
+                    /**
+                     * @description User selected sort order for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-sort-options))
+                     * @enum {string}
+                     */
+                    "sort-order": "activity" | "alphabetical";
+                    /**
+                     * @description User selected grouping mode for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-group-mode))
+                     * @enum {string}
+                     */
+                    "group-mode": "none" | "group-first" | "private-first";
                 };
                 federation: {
                     /** @description Whether federation is enabled */
