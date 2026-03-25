@@ -1571,6 +1571,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "Jutri – {timeLocale}",
     "This weekend – {timeLocale}" : "Ta teden – {timeLocale}",
     "Next week – {timeLocale}" : "Naslednji teden – {timeLocale}",
+    "Message link copied to clipboard" : "Povezava sporočila je kopirana v odložišče.",
     "Conversation link copied to clipboard" : "Povezava do pogovora je kopirana v odložišče.",
     "The link could not be copied" : "Povezave ni mogoče kopirati.",
     "Sending signaling message has failed" : "Pošiljanje signalnega sporočila je spodletelo.",

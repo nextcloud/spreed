@@ -2153,6 +2153,7 @@ OC.L10N.register(
     "Set time for this weekend" : "Bu hafta sonu için ayarla",
     "Next week – {timeLocale}" : "Sonraki hafta – {timeLocale}",
     "Set time for next week" : "Gelecek hafta için ayarla",
+    "Message link copied to clipboard" : "İleti bağlantısı panoya kopyalandı",
     "Conversation link copied to clipboard" : "Görüşme bağlantısı panoya kopyalandı",
     "The link could not be copied" : "Bağlantı kopyalanamadı",
     "Error while parsing a PROPFIND error" : "PROPFIND hatası işlenirken sorun çıktı",

@@ -2130,6 +2130,7 @@ OC.L10N.register(
     "Set time for this weekend" : "Definir a hora para este fin de semana",
     "Next week – {timeLocale}" : "Semana seguinte – {timeLocale}",
     "Set time for next week" : "Definir a hora para a semana seguinte",
+    "Message link copied to clipboard" : "A ligazón da mensaxe foi copiada no portapapeis",
     "Conversation link copied to clipboard" : "A ligazón da conversa foi copiada no portapapeis",
     "The link could not be copied" : "Non foi posíbel copiar a ligazón.",
     "Error while parsing a PROPFIND error" : "Produciuse un erro ao analizar un erro PROPFIND",

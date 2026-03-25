@@ -2127,6 +2127,7 @@
     "Set time for this weekend" : "Sélectionner l'horaire pour ce week-end",
     "Next week – {timeLocale}" : "Semaine prochaine – {timeLocale}",
     "Set time for next week" : "Sélectionner l'horaire pour la semaine prochaine",
+    "Message link copied to clipboard" : "Le lien vers le message a été copié dans le presse-papier",
     "Conversation link copied to clipboard" : "Lien de la conversation copié dans le presse-papier",
     "The link could not be copied" : "Le lien n'a pas pu être copié",
     "Error while parsing a PROPFIND error" : "Erreur lors de l'analyse d'une erreur PROPFIND",

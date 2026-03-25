@@ -2054,6 +2054,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "Сутра – {timeLocale}",
     "This weekend – {timeLocale}" : "Овог викенда – {timeLocale}",
     "Next week – {timeLocale}" : "Наредна недеља – {timeLocale}",
+    "Message link copied to clipboard" : "Линк на поруку је копиран у клипборд",
     "Conversation link copied to clipboard" : "Линк на разговор је копиран у клипборд",
     "The link could not be copied" : "Линк није могао да се копира",
     "Error while parsing a PROPFIND error" : "Грешка приликом парсирања PROPFIND грешке",
