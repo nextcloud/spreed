@@ -137,4 +137,3 @@ jobs:
             ${{ env.SUMMARY }}
           labels: |
             dependencies
-            3. to review
