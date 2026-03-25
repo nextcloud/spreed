@@ -674,7 +674,7 @@ namespace OCA\Talk;
  *     // Federation signaling settings, or null if not federated
  *     federation: TalkSignalingFederationSettings|null,
  *     // Authentication parameters for the hello request
- *     helloAuthParams: array{
+ *     helloAuthParams?: array{
  *         "1.0": array{
  *             userid: ?string,
  *             ticket: string,
@@ -694,7 +694,7 @@ namespace OCA\Talk;
  *     // STUN servers
  *     stunservers: list<array{urls: list<string>}>,
  *     // Authentication ticket for the signaling server
- *     ticket: string,
+ *     ticket?: string,
  *     // TURN servers
  *     turnservers: list<array{urls: list<string>, username: string, credential: string}>,
  *     // User id of the current user
