@@ -1545,6 +1545,7 @@
     "Tomorrow – {timeLocale}" : "Bihar – {timeLocale}",
     "This weekend – {timeLocale}" : "Hurrengo asteburua – {timeLocale}",
     "Next week – {timeLocale}" : "Hurrengo astea – {timeLocale}",
+    "Message link copied to clipboard" : "Mezuaren esteka arbelera kopiatu da",
     "Conversation link copied to clipboard" : "Elkarrizketaren esteka arbelera kopiatu da",
     "The link could not be copied" : "Ezin izan da esteka kopiatu",
     "Error while parsing a PROPFIND error" : "Errore bat gertatu da PROPFIND errore bat analizatzean",

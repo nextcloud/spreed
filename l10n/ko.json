@@ -1551,6 +1551,7 @@
     "Tomorrow – {timeLocale}" : "내일 – {timeLocale}",
     "This weekend – {timeLocale}" : "이번 주말 – {timeLocale}",
     "Next week – {timeLocale}" : "다음주 – {timeLocale}",
+    "Message link copied to clipboard" : "메시지 링크가 클립보드에 복사되었습니다.",
     "Conversation link copied to clipboard" : "대화 링크가 클립보드에 복사되었습니다.",
     "The link could not be copied" : "링크를 복사할 수 없습니다.",
     "Sending signaling message has failed" : "시그널링 메시지를 보내지 못했습니다.",

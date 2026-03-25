@@ -1915,6 +1915,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "غداً – {timeLocale}",
     "This weekend – {timeLocale}" : "نهاية هذا الأسبوع – {timeLocale}",
     "Next week – {timeLocale}" : "الأسبوع القادم – {timeLocale}",
+    "Message link copied to clipboard" : "تمّ نسخ رابط الرسالة إلى الحافظة",
     "Conversation link copied to clipboard" : "تمّ نسخ رابط المحادثة إلى الحافظة",
     "The link could not be copied" : "لا يمكن نسخ الرابط",
     "Error while parsing a PROPFIND error" : "حدث خطأ أثناء تحليل PROFIND",

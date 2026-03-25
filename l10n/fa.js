@@ -1477,6 +1477,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "Tomorrow – {timeLocale}",
     "This weekend – {timeLocale}" : "This weekend – {timeLocale}",
     "Next week – {timeLocale}" : "Next week – {timeLocale}",
+    "Message link copied to clipboard" : "Message link copied to clipboard",
     "Conversation link copied to clipboard" : "Conversation link copied to clipboard",
     "The link could not be copied" : "The link could not be copied",
     "Sending signaling message has failed" : "Sending signaling message has failed",

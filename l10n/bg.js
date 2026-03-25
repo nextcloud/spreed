@@ -1336,6 +1336,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "Утре - {timeLocale}",
     "This weekend – {timeLocale}" : "Този уикенд - {timeLocale}",
     "Next week – {timeLocale}" : "Следващата седмица - {timeLocale}",
+    "Message link copied to clipboard" : "Връзката към съобщението е копирана в клипборда",
     "Conversation link copied to clipboard" : "Връзката към разговора е копирана в клипборда",
     "The link could not be copied" : "Връзката не можа да бъде копирана",
     "Error while parsing a PROPFIND error" : "Грешка при синтактичния анализ на грешка в PROPFIND",

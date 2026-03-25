@@ -855,6 +855,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "Mâine – {timeLocale}",
     "This weekend – {timeLocale}" : "În acest weekend – {timeLocale}",
     "Next week – {timeLocale}" : "Săptămâna viitoare– {timeLocale}",
+    "Message link copied to clipboard" : "Linkul mesajului a fost copiat",
     "Conversation link copied to clipboard" : "Linkul conversației a fost copiat",
     "The link could not be copied" : "Linkul nu s-a putut copia",
     "Please reload the page." : "Te rugăm să reîncarci pagina.",

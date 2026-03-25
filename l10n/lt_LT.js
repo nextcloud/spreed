@@ -929,6 +929,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "Rytoj – {timeLocale}",
     "This weekend – {timeLocale}" : "Šį savaitgalį – {timeLocale}",
     "Next week – {timeLocale}" : "Kitą savaitę – {timeLocale}",
+    "Message link copied to clipboard" : "Žinutės nuoroda nukopijuota į iškarpinę",
     "Conversation link copied to clipboard" : "Pokalbio nuoroda nukopijuota į iškarpinę",
     "The link could not be copied" : "Nepavyko nukopijuoti nuorodos",
     "Please reload the page." : "Prašome įkelti puslapį iš naujo.",

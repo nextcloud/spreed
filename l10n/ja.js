@@ -1779,6 +1779,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "明日 – {timeLocale}",
     "This weekend – {timeLocale}" : "今週末 – {timeLocale}",
     "Next week – {timeLocale}" : "来週 – {timeLocale}",
+    "Message link copied to clipboard" : "メッセージリンクがクリップボードにコピーされました",
     "Conversation link copied to clipboard" : "会話リンクをクリップボードにコピーしました",
     "The link could not be copied" : "リンクをコピーできませんでした",
     "Sending signaling message has failed" : "シグナリングメッセージの送信に失敗しました",

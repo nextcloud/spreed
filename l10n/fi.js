@@ -1289,6 +1289,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "Huomenna – {timeLocale}",
     "This weekend – {timeLocale}" : "Tämä viikonloppu – {timeLocale}",
     "Next week – {timeLocale}" : "Ensi viikko – {timeLocale}",
+    "Message link copied to clipboard" : "Viestin linkki kopioitu leikepöydälle",
     "Conversation link copied to clipboard" : "Keskustelulinkki kopioitu leikepöydälle",
     "The link could not be copied" : "Linkkiä ei voitu kopioida",
     "Please reload the page." : "Päivitä sivu.",

@@ -2049,6 +2049,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "Завтра - {timeLocale}",
     "This weekend – {timeLocale}" : "На цих вихідних - {timeLocale}",
     "Next week – {timeLocale}" : "Наступного тижня - {timeLocale}",
+    "Message link copied to clipboard" : "Посилання на повідомлення скопійовано в буфер обміну",
     "Conversation link copied to clipboard" : "Посилання на розмову скопійовано до буфера обміну",
     "The link could not be copied" : "Посилання не вдалося скопіювати",
     "Error while parsing a PROPFIND error" : "Помилка під час обробки помилки PROPFIND",

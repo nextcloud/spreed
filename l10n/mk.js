@@ -976,6 +976,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "Утре – {timeLocale}",
     "This weekend – {timeLocale}" : "Овој викенд – {timeLocale}",
     "Next week – {timeLocale}" : "Следна недела – {timeLocale}",
+    "Message link copied to clipboard" : "Линкот до пораката е копиран во клипборд",
     "Conversation link copied to clipboard" : "Линк до разговорот е копиран во клипборд",
     "Error while parsing a PROPFIND error" : "Грешка при обработка на PROPFIND грешката",
     "Please reload the page." : "Превчитајте ја страницата.",
