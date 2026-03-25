@@ -27,7 +27,7 @@
 						class="filters"
 						:class="{ 'hidden-visually': isSearching }">
 						<template #icon>
-							<IconFilterOutline :size="20" />
+							<IconFilterCogOutline :size="20" />
 						</template>
 						<NcActionCaption :name="t('spreed', 'Filter conversations by')" />
 
@@ -74,6 +74,74 @@
 							</template>
 							{{ t('spreed', 'Clear filters') }}
 						</NcActionButton>
+
+						<template v-if="supportSortOrder">
+							<NcActionSeparator />
+
+							<NcActionCaption :name="SORT_LABELS.SORTBY_HEADER" />
+
+							<NcActionButton
+								closeAfterClick
+								type="radio"
+								:value="CONVERSATION.SORT_ORDER.ACTIVITY"
+								:modelValue="sortOrder"
+								@update:modelValue="handleSortOrder">
+								<template #icon>
+									<IconClockOutline :size="20" />
+								</template>
+								{{ SORT_LABELS.SORTBY_ACTIVITY }}
+							</NcActionButton>
+
+							<NcActionButton
+								closeAfterClick
+								type="radio"
+								:value="CONVERSATION.SORT_ORDER.ALPHABETICAL"
+								:modelValue="sortOrder"
+								@update:modelValue="handleSortOrder">
+								<template #icon>
+									<IconSortAlphabeticalAscending :size="20" />
+								</template>
+								{{ SORT_LABELS.SORTBY_ALPHABET }}
+							</NcActionButton>
+
+							<NcActionSeparator />
+
+							<NcActionButton
+								closeAfterClick
+								type="radio"
+								:value="CONVERSATION.GROUP_MODE.NONE"
+								:modelValue="groupMode"
+								@update:modelValue="handleGroupMode">
+								<template #icon>
+									<IconFormatListBulleted :size="20" />
+								</template>
+								{{ SORT_LABELS.GROUPBY_NONE }}
+							</NcActionButton>
+
+							<NcActionButton
+								closeAfterClick
+								type="radio"
+								:value="CONVERSATION.GROUP_MODE.PRIVATE_FIRST"
+								:modelValue="groupMode"
+								@update:modelValue="handleGroupMode">
+								<template #icon>
+									<IconAccountOutline :size="20" />
+								</template>
+								{{ SORT_LABELS.GROUPBY_PRIVATE_FIRST }}
+							</NcActionButton>
+
+							<NcActionButton
+								closeAfterClick
+								type="radio"
+								:value="CONVERSATION.GROUP_MODE.GROUP_FIRST"
+								:modelValue="groupMode"
+								@update:modelValue="handleGroupMode">
+								<template #icon>
+									<IconAccountMultipleOutline :size="20" />
+								</template>
+								{{ SORT_LABELS.GROUPBY_GROUP_FIRST }}
+							</NcActionButton>
+						</template>
 					</NcActions>
 				</TransitionWrapper>
 
@@ -310,6 +378,7 @@ import { START_LOCATION } from 'vue-router'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
@@ -317,14 +386,17 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcChip from '@nextcloud/vue/components/NcChip'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import IconAccountMultipleOutline from 'vue-material-design-icons/AccountMultipleOutline.vue'
 import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMultiplePlusOutline.vue'
+import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconArchiveOutline from 'vue-material-design-icons/ArchiveOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconAt from 'vue-material-design-icons/At.vue'
 import IconCalendarBlankOutline from 'vue-material-design-icons/CalendarBlankOutline.vue'
 import IconChatPlusOutline from 'vue-material-design-icons/ChatPlusOutline.vue'
+import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
-import IconFilterOutline from 'vue-material-design-icons/FilterOutline.vue'
+import IconFilterCogOutline from 'vue-material-design-icons/FilterCogOutline.vue'
 import IconFilterRemoveOutline from 'vue-material-design-icons/FilterRemoveOutline.vue'
 import IconFormatListBulleted from 'vue-material-design-icons/FormatListBulleted.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
@@ -334,6 +406,7 @@ import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import IconNoteEditOutline from 'vue-material-design-icons/NoteEditOutline.vue'
 import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
+import IconSortAlphabeticalAscending from 'vue-material-design-icons/SortAlphabeticalAscending.vue'
 import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
 import ThreadItem from '../RightSidebar/Threads/ThreadItem.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
@@ -375,6 +448,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 const canNoteToSelf = hasTalkFeature('local', 'note-to-self')
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const supportThreads = hasTalkFeature('local', 'threads')
+const supportSortOrder = getTalkConfig('local', 'conversations', 'sort-order') !== undefined
 
 // TRANSLATORS The main home view
 const HOME_BUTTON_LABEL = t('spreed', 'Home')
@@ -383,6 +457,21 @@ const FILTER_LABELS = {
 	mentions: t('spreed', 'Mentions'),
 	events: t('spreed', 'Meetings'),
 	default: '',
+}
+const SORT_LABELS = {
+	// TRANSLATORS Navigation actions: sort conversations by recent activity / sort alphabetically
+	SORTBY_HEADER: t('spreed', 'Sort conversations'),
+	// TRANSLATORS Navigation actions: sort conversations by recent activity / sort alphabetically
+	SORTBY_ACTIVITY: t('spreed', 'By recent activity'),
+	// TRANSLATORS Navigation actions: sort conversations by recent activity / sort alphabetically
+	SORTBY_ALPHABET: t('spreed', 'Alphabetically'),
+
+	// TRANSLATORS Navigation actions: arrange list by putting private or group conversations on top
+	GROUPBY_NONE: t('spreed', 'Do not group by type'),
+	// TRANSLATORS Navigation actions: arrange list by putting private or group conversations on top
+	GROUPBY_PRIVATE_FIRST: t('spreed', 'Show private ones first'),
+	// TRANSLATORS Navigation actions: arrange list by putting private or group conversations on top
+	GROUPBY_GROUP_FIRST: t('spreed', 'Show group ones first'),
 }
 
 let actualizeDataTimeout = null
@@ -407,6 +496,8 @@ export default {
 		NcActions,
 		NcActionButton,
 		NcActionCaption,
+		NcActionSeparator,
+		NcEmptyContent,
 		TransitionWrapper,
 		ConversationsListVirtual,
 		SearchConversationsResults,
@@ -415,7 +506,7 @@ export default {
 		IconAt,
 		IconMessageBadgeOutline,
 		IconMessageOutline,
-		IconFilterOutline,
+		IconFilterCogOutline,
 		IconFilterRemoveOutline,
 		IconArchiveOutline,
 		IconArrowLeft,
@@ -428,7 +519,10 @@ export default {
 		IconCogOutline,
 		IconFormatListBulleted,
 		IconNoteEditOutline,
-		NcEmptyContent,
+		IconSortAlphabeticalAscending,
+		IconClockOutline,
+		IconAccountMultipleOutline,
+		IconAccountOutline,
 	},
 
 	setup() {
@@ -461,11 +555,14 @@ export default {
 			canNoteToSelf,
 			supportsArchive,
 			supportThreads,
+			supportSortOrder,
 			showArchived,
 			showThreadsList,
 			settingsStore,
+			CONVERSATION,
 			HOME_BUTTON_LABEL,
 			FILTER_LABELS,
+			SORT_LABELS,
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
 			tokenStore: useTokenStore(),
@@ -502,6 +599,14 @@ export default {
 	},
 
 	computed: {
+		sortOrder() {
+			return this.settingsStore.sortOrder
+		},
+
+		groupMode() {
+			return this.settingsStore.groupMode
+		},
+
 		conversationsList() {
 			return this.$store.getters.conversationsList
 		},
@@ -509,9 +614,32 @@ export default {
 		sortedConversationsList() {
 			return this.filteredConversationsList.slice()
 				.sort((conversation1, conversation2) => {
+					// Favorites always first
 					if (conversation1.isFavorite !== conversation2.isFavorite) {
 						return conversation1.isFavorite ? -1 : 1
 					}
+
+					if (this.groupMode !== CONVERSATION.GROUP_MODE.NONE) {
+						const isOneToOne1 = [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(conversation1.type)
+						const isOneToOne2 = [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(conversation2.type)
+
+						if (isOneToOne1 !== isOneToOne2) {
+							if (this.groupMode === CONVERSATION.GROUP_MODE.GROUP_FIRST) {
+								// Group mode: groups first
+								return isOneToOne1 ? 1 : -1
+							} else if (this.groupMode === CONVERSATION.GROUP_MODE.PRIVATE_FIRST) {
+								// Group mode: private first
+								return isOneToOne1 ? -1 : 1
+							}
+						}
+					}
+
+					// Sort order: by alphabet A->Z
+					if (this.sortOrder === CONVERSATION.SORT_ORDER.ALPHABETICAL) {
+						return (conversation1.displayName).localeCompare(conversation2.displayName)
+					}
+
+					// Default (legacy) sort order: by recent activity
 					return conversation2.lastActivity - conversation1.lastActivity
 				})
 		},
@@ -726,6 +854,14 @@ export default {
 
 		showInvitationHandler() {
 			this.$refs.invitationHandler.showModal()
+		},
+
+		handleSortOrder(newValue) {
+			this.settingsStore.updateSortOrder(newValue)
+		},
+
+		handleGroupMode(newValue) {
+			this.settingsStore.updateGroupMode(newValue)
 		},
 
 		handleFilter(filter) {
