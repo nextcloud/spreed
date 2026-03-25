@@ -7,7 +7,20 @@
 	<ul v-if="value">
 		<NcAppNavigationCaption :name="t('spreed', 'Phone numbers')" />
 		<NavigationHint v-if="errorHint" :hint="errorHint" />
-		<template v-if="libPhoneNumber">
+		<template v-if="hintAddPhones && libPhoneNumber">
+			<NcListItem :name="name" @click="selectPhoneNumber">
+				<template #icon>
+					<IconPhoneOutline :size="AVATAR.SIZE.DEFAULT" fillColor="var(--color-text-maxcontrast)" />
+				</template>
+				<template #name>
+					<em>{{ participantPhoneItem.phoneNumber }}</em>
+				</template>
+				<template #subname>
+					{{ t('spreed', 'SIP backend is not installed') }}
+				</template>
+			</NcListItem>
+		</template>
+		<template v-else-if="libPhoneNumber">
 			<NcListItem :name="name" @click="selectPhoneNumber">
 				<template #icon>
 					<IconPhoneOutline :size="AVATAR.SIZE.DEFAULT" />
@@ -56,6 +69,11 @@ export default {
 		participantPhoneItem: {
 			type: Object,
 			required: true,
+		},
+
+		hintAddPhones: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -118,6 +136,10 @@ export default {
 	methods: {
 		t,
 		selectPhoneNumber() {
+			if (this.hintAddPhones) {
+				return
+			}
+
 			this.$emit('select', this.participantPhoneItem)
 		},
 	},

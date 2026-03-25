@@ -234,7 +234,7 @@ class CapabilitiesTest extends TestCase {
 						'enabled' => 0,
 					],
 					'feature-hints' => [
-						'current' => 1,
+						'current' => 34,
 						'hidden' => 999,
 					],
 					'permissions' => [
@@ -448,7 +448,7 @@ class CapabilitiesTest extends TestCase {
 						'enabled' => 0,
 					],
 					'feature-hints' => [
-						'current' => 1,
+						'current' => 34,
 						'hidden' => 1,
 					],
 					'permissions' => [
