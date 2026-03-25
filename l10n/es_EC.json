@@ -1374,6 +1374,7 @@
     "Not enough free space to upload file \"{fileName}\"" : "No hay suficiente espacio libre para cargar el archivo \"{fileName}\"",
     "Error while sharing file" : "Error al compartir el archivo",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome, Opera or Apple Safari." : "El navegador que estás utilizando no es completamente compatible con Nextcloud Talk. Utiliza la última versión de Mozilla Firefox, Microsoft Edge, Google Chrome, Opera o Apple Safari.",
+    "Message link copied to clipboard" : "Enlace del mensaje copiado al portapapeles",
     "Conversation link copied to clipboard" : "Enlace de la conversación copiado al portapapeles",
     "The link could not be copied" : "No se pudo copiar el enlace",
     "Sending signaling message has failed" : "La entrega del mensaje de señalización ha fallado",

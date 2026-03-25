@@ -2066,6 +2066,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "Mañana – {timeLocale}",
     "This weekend – {timeLocale}" : "Este fin de semana – {timeLocale}",
     "Next week – {timeLocale}" : "Próxima semana – {timeLocale}",
+    "Message link copied to clipboard" : "Link del mensaje copiado al portapapeles.",
     "Conversation link copied to clipboard" : "Enlace de la conversación copiado al portapapeles.",
     "The link could not be copied" : "No se pudo copiar el enlace",
     "Error while parsing a PROPFIND error" : "Error al analizar un error PROPFIND",

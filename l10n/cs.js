@@ -2153,6 +2153,7 @@ OC.L10N.register(
     "Set time for this weekend" : "Nastavit čas na tento víkend",
     "Next week – {timeLocale}" : "Příští týden – {timeLocale}",
     "Set time for next week" : "Nastavit čas na příští týden",
+    "Message link copied to clipboard" : "Odkaz na zprávu zkopírován do schránky",
     "Conversation link copied to clipboard" : "Odkaz na konverzaci zkopírován do schránky",
     "The link could not be copied" : "Odkaz se nepodařilo zkopírovat",
     "Error while parsing a PROPFIND error" : "Chyba při zpracovávání PROPFIND chyby",

@@ -2153,6 +2153,7 @@ OC.L10N.register(
     "Set time for this weekend" : "設定本週末的時間",
     "Next week – {timeLocale}" : "下星期 – {timeLocale}",
     "Set time for next week" : "設定下星期的時間",
+    "Message link copied to clipboard" : "訊息連結已複製到剪貼板",
     "Conversation link copied to clipboard" : "對話連結已複製到剪貼板",
     "The link could not be copied" : "連結無法複製",
     "Error while parsing a PROPFIND error" : "解析 PROPFIND 錯誤時發生錯誤",

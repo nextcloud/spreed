@@ -1690,6 +1690,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "Morgen - {timeLocale}",
     "This weekend – {timeLocale}" : "Dit weekend - {timeLocale}",
     "Next week – {timeLocale}" : "Volgende week - {timeLocale}",
+    "Message link copied to clipboard" : "Bericht-link naar klembord gekopieerd",
     "Conversation link copied to clipboard" : "Gespreks-link naar klembord gekopieerd",
     "The link could not be copied" : "De link kon niet gekopieerd worden",
     "Lost connection to signaling server. Trying to reconnect." : "Verbinding met signaleringsserver verbroken. Ik probeer opnieuw verbinding te maken.",

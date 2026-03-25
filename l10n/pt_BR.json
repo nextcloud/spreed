@@ -2151,6 +2151,7 @@
     "Set time for this weekend" : "Definir um horário para este fim de semana",
     "Next week – {timeLocale}" : "Próxima semana – {timeLocale}",
     "Set time for next week" : "Definir um horário para a semana que vem",
+    "Message link copied to clipboard" : "Link da mensagem copiado para a área de transferência",
     "Conversation link copied to clipboard" : "Link da conversa copiado para a área de transferência",
     "The link could not be copied" : "O link não pôde ser copiado",
     "Error while parsing a PROPFIND error" : "Erro ao analisar um erro PROPFIND",

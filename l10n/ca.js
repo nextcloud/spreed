@@ -1911,6 +1911,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "Demà: {timeLocale}",
     "This weekend – {timeLocale}" : "Aquest cap de setmana: {timeLocale}",
     "Next week – {timeLocale}" : "La setmana següent: {timeLocale}",
+    "Message link copied to clipboard" : "S'ha copiat l'enllaç del missatge al porta-retalls",
     "Conversation link copied to clipboard" : "L'enllaç de la conversa s'ha copiat al porta-retalls",
     "The link could not be copied" : "No s'ha pogut copiar l'enllaç",
     "Error while parsing a PROPFIND error" : "S'ha produït un error en analitzar un error PROPFIND",

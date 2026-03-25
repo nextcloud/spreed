@@ -2068,6 +2068,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "Holnap – {timeLocale}",
     "This weekend – {timeLocale}" : "Ez a hétvége – {timeLocale}",
     "Next week – {timeLocale}" : "Következő hét – {timeLocale}",
+    "Message link copied to clipboard" : "Az üzenet hivatkozása a vágólapra másolva",
     "Conversation link copied to clipboard" : "A beszélgetési hivatkozás vágólapra másolva",
     "The link could not be copied" : "A hivatkozást nem lehetett másolni",
     "Error while parsing a PROPFIND error" : "Hiba történt a PROPFIND hiba feldolgozása során",
