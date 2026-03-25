@@ -4,17 +4,18 @@
  */
 
 import { getCurrentUser } from '@nextcloud/auth'
-import { loadState } from '@nextcloud/initial-state'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { PRIVACY } from '../constants.ts'
+import { CHAT_STYLE, CONVERSATION, PRIVACY } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import {
 	setAttachmentFolder,
 	setBlurVirtualBackground,
 	setChatStyle,
+	setConversationsGroupMode,
 	setConversationsListStyle,
+	setConversationsSortOrder,
 	setLiveTranscriptionTargetLanguageId,
 	setReadStatusPrivacy,
 	setStartWithoutMedia,
@@ -23,8 +24,10 @@ import {
 
 type PRIVACY_KEYS = typeof PRIVACY[keyof typeof PRIVACY]
 type TALK_CONFIG_PRIVACY = PRIVACY_KEYS | undefined
-type LIST_STYLE_OPTIONS = 'two-lines' | 'compact'
-type CHAT_STYLE_OPTIONS = 'split' | 'unified'
+type CHAT_STYLE_OPTIONS = typeof CHAT_STYLE[keyof typeof CHAT_STYLE]
+type LIST_STYLE_OPTIONS = typeof CONVERSATION.LIST_STYLE[keyof typeof CONVERSATION.LIST_STYLE]
+type SORT_ORDER_OPTIONS = typeof CONVERSATION.SORT_ORDER[keyof typeof CONVERSATION.SORT_ORDER]
+type GROUP_MODE_OPTIONS = typeof CONVERSATION.GROUP_MODE[keyof typeof CONVERSATION.GROUP_MODE]
 
 const supportChatStyle = getTalkConfig('local', 'chat', 'style') !== undefined
 
@@ -45,7 +48,9 @@ export const useSettingsStore = defineStore('settings', () => {
 	const startWithoutMedia = ref<boolean | undefined>(getTalkConfig('local', 'call', 'start-without-media'))
 	const blurVirtualBackgroundEnabled = ref<boolean | undefined>(getTalkConfig('local', 'call', 'blur-virtual-background'))
 	const conversationsListStyle = ref<LIST_STYLE_OPTIONS | undefined>(getTalkConfig('local', 'conversations', 'list-style'))
-	const chatStyle = ref<CHAT_STYLE_OPTIONS | undefined>(supportChatStyle ? (getTalkConfig('local', 'chat', 'style') ?? 'split') : 'unified')
+	const chatStyle = ref<CHAT_STYLE_OPTIONS>(supportChatStyle ? (getTalkConfig('local', 'chat', 'style') ?? CHAT_STYLE.SPLIT) : CHAT_STYLE.UNIFIED)
+	const sortOrder = ref<SORT_ORDER_OPTIONS>(getTalkConfig('local', 'conversations', 'sort-order') ?? CONVERSATION.SORT_ORDER.ACTIVITY)
+	const groupMode = ref<GROUP_MODE_OPTIONS>(getTalkConfig('local', 'conversations', 'group-mode') ?? CONVERSATION.GROUP_MODE.NONE)
 
 	const liveTranscriptionTargetLanguageId = ref<string | undefined>(getTalkConfig('local', 'call', 'live-transcription-target-language-id'))
 	if (!hasUserAccount && BrowserStorage.getItem('liveTranscriptionTargetLanguageId') !== null) {
@@ -184,6 +189,26 @@ export const useSettingsStore = defineStore('settings', () => {
 		liveTranscriptionTargetLanguageId.value = value
 	}
 
+	/**
+	 * Update the sort order for the conversation list
+	 *
+	 * @param value - the sort order ('activity', 'alphabetical')
+	 */
+	async function updateSortOrder(value: SORT_ORDER_OPTIONS) {
+		await setConversationsSortOrder(value)
+		sortOrder.value = value
+	}
+
+	/**
+	 * Update the group mode for the conversation list
+	 *
+	 * @param value - the group mode ('none', 'group-first', 'private-first')
+	 */
+	async function updateGroupMode(value: GROUP_MODE_OPTIONS) {
+		await setConversationsGroupMode(value)
+		groupMode.value = value
+	}
+
 	return {
 		readStatusPrivacy,
 		typingStatusPrivacy,
@@ -197,8 +222,12 @@ export const useSettingsStore = defineStore('settings', () => {
 		conversationsListStyle,
 		attachmentFolder,
 		chatStyle,
+		sortOrder,
+		groupMode,
 		liveTranscriptionTargetLanguageId,
 
+		updateSortOrder,
+		updateGroupMode,
 		updateReadStatusPrivacy,
 		updateTypingStatusPrivacy,
 		setShowMediaSettings,
