@@ -1,8 +1,13 @@
-# This workflow will update all workflow templates
+# This workflow is provided via the organization template repository
+#
+# https://github.com/nextcloud/.github
+# https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
 #
 # SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
 # SPDX-License-Identifier: MIT
 
+# This workflow will update all workflow templates
+# Additionally it will reapply `workflow.yml.patch` files after syncing and only then commit the result
 name: Update workflows
 on:
   workflow_dispatch:
