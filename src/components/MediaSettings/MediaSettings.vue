@@ -205,6 +205,13 @@
 						class="checkbox">
 						{{ t('spreed', 'Start recording immediately with the call') }}
 					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch
+						v-else-if="hintRecordingOption"
+						:description="t('spreed', 'Recording backend is not installed')"
+						disabled
+						class="checkbox">
+						{{ t('spreed', 'Start recording immediately with the call') }}
+					</NcCheckboxRadioSwitch>
 					<!-- Notify call option-->
 					<NcCheckboxRadioSwitch
 						v-if="showNotifyCallOption"
@@ -271,7 +278,10 @@ import { useGetToken } from '../../composables/useGetToken.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, AVATAR, CALL, CONFIG, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
-import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import {
+	getTalkConfig,
+	showTalkFeatureHint,
+} from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useGuestNameStore } from '../../stores/guestName.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
@@ -514,6 +524,10 @@ export default {
 
 		showStartRecordingOption() {
 			return !this.hasCall && this.canModerateRecording && this.isBeforeJoinCall
+		},
+
+		hintRecordingOption() {
+			return !this.hasCall && this.canFullModerate && !(getTalkConfig(this.token, 'call', 'recording') || false) && this.isBeforeJoinCall && showTalkFeatureHint(34)
 		},
 
 		showUpdateChangesButton() {

@@ -61,6 +61,18 @@
 						{{ t('spreed', 'Stop recording') }}
 					</NcActionButton>
 				</template>
+				<template v-else-if="hintRecording">
+					<NcActionButton
+						disabled
+						:description="t('spreed', 'Recording backend is not installed')">
+						<template #icon>
+							<NcIconSvgWrapper
+								:svg="IconScreenRecordOutline"
+								:size="20" />
+						</template>
+						{{ t('spreed', 'Start recording') }}
+					</NcActionButton>
+				</template>
 
 				<NcActionSeparator v-if="!isOneToOneConversation || canModerateRecording" />
 			</template>
@@ -174,7 +186,11 @@ import {
 } from '../../composables/useDocumentFullscreen.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
-import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import {
+	getTalkConfig,
+	hasTalkFeature,
+	showTalkFeatureHint,
+} from '../../services/CapabilitiesManager.ts'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 
@@ -282,6 +298,10 @@ export default {
 
 		canModerateRecording() {
 			return getTalkConfig(this.token, 'call', 'recording') || false
+		},
+
+		hintRecording() {
+			return !this.canModerateRecording && showTalkFeatureHint(34)
 		},
 
 		canConfigureBreakoutRooms() {

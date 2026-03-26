@@ -42,7 +42,7 @@ class Config {
 	/**
 	 * 1. Call recording, …
 	 */
-	public const FEATURE_HINT = 1;
+	public const FEATURE_HINT = 34;
 
 	/**
 	 * Currently limiting to 1k users because the user_status API would yield

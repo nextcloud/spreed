@@ -124,6 +124,15 @@
 							</template>
 							{{ t('spreed', 'Call a phone number') }}
 						</NcActionButton>
+						<NcActionButton
+							v-else-if="hintSipDialOut"
+							disabled
+							:description="t('spreed', 'SIP backend is not installed')">
+							<template #icon>
+								<IconPhoneOutline :size="20" />
+							</template>
+							{{ t('spreed', 'Call a phone number') }}
+						</NcActionButton>
 					</NcActions>
 				</TransitionWrapper>
 
@@ -348,7 +357,11 @@ import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { ATTENDEE, CONVERSATION } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
-import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import {
+	getTalkConfig,
+	hasTalkFeature,
+	showTalkFeatureHint,
+} from '../../services/CapabilitiesManager.ts'
 import {
 	createLegacyConversation,
 	fetchNoteToSelfConversation,
@@ -372,6 +385,7 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'sip-enabled')
 	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
+const hintSipDialOut = !canModerateSipDialOut && showTalkFeatureHint(34)
 const canNoteToSelf = hasTalkFeature('local', 'note-to-self')
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const supportThreads = hasTalkFeature('local', 'threads')
@@ -458,6 +472,7 @@ export default {
 			talkHashStore,
 			isMobile,
 			canModerateSipDialOut,
+			hintSipDialOut,
 			canNoteToSelf,
 			supportsArchive,
 			supportThreads,

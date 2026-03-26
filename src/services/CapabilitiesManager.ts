@@ -99,6 +99,16 @@ export function getTalkConfig<
 }
 
 /**
+ * Check whether the feature hint should be shown
+ *
+ * @param featureHint FEATURE_HINT threshold according to lib/Config.php (e.g. Nextcloud version when hint or feature was introduced)
+ */
+export function showTalkFeatureHint(featureHint: number): boolean {
+	return (getTalkConfig('local', 'feature-hints', 'current') ?? 0) >= featureHint
+		&& (getTalkConfig('local', 'feature-hints', 'hidden') ?? 0) < featureHint
+}
+
+/**
  * Check whether the app has capabilities published
  *
  * @param appId The app ID to look for

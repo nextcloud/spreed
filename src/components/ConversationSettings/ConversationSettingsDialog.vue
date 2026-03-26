@@ -65,6 +65,17 @@
 				:name="t('spreed', 'Live transcription')">
 				<LiveTranscriptionSettings :token="token" />
 			</NcAppSettingsSection>
+			<NcAppSettingsSection
+				v-else-if="hintLiveTranscription"
+				id="live-transcription"
+				:name="t('spreed', 'Live transcription')">
+				<NcCheckboxRadioSwitch
+					:description="t('spreed', 'Live transcriptions app is not installed')"
+					type="switch"
+					disabled>
+					{{ t('spreed', 'Enable live transcription') }}
+				</NcCheckboxRadioSwitch>
+			</NcAppSettingsSection>
 
 			<!-- Breakout rooms -->
 			<NcAppSettingsSection
@@ -144,7 +155,11 @@ import NotificationsSettings from './NotificationsSettings.vue'
 import RecordingConsentSettings from './RecordingConsentSettings.vue'
 import SipSettings from './SipSettings.vue'
 import { CALL, CONFIG, CONVERSATION, PARTICIPANT } from '../../constants.ts'
-import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import {
+	getTalkConfig,
+	hasTalkFeature,
+	showTalkFeatureHint,
+} from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 
 // FIXME Should use remote not local
@@ -265,6 +280,12 @@ export default {
 		canConfigureLiveTranscription() {
 			return this.isLiveTranscriptionSupported
 				&& this.selfIsOwnerOrModerator
+		},
+
+		hintLiveTranscription() {
+			return !this.isLiveTranscriptionSupported
+				&& this.selfIsOwnerOrModerator
+				&& showTalkFeatureHint(34)
 		},
 
 		canConfigureBreakoutRooms() {

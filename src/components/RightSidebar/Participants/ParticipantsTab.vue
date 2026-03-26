@@ -29,6 +29,10 @@
 				v-if="canAddPhones"
 				v-model:value="searchText"
 				@submit="addParticipants(participantPhoneItem)" />
+			<DialpadPanel
+				v-else-if="hintAddPhones"
+				:title="t('spreed', 'SIP backend is not installed')"
+				disabled />
 		</div>
 
 		<SelectPhoneNumber
@@ -72,6 +76,14 @@
 				:noResults="noResults"
 				:searchText="searchText"
 				@click="addParticipants" />
+
+			<SelectPhoneNumber
+				v-if="hintAddPhones"
+				v-model:participantPhoneItem="participantPhoneItem"
+				:name="t('spreed', 'Add a phone number')"
+				:value="searchText"
+				:hintAddPhones="true"
+				@select="addParticipants" />
 		</div>
 	</div>
 </template>
@@ -99,7 +111,11 @@ import { useGetToken } from '../../../composables/useGetToken.ts'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { useSortParticipants } from '../../../composables/useSortParticipants.js'
 import { ATTENDEE, CONVERSATION } from '../../../constants.ts'
-import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
+import {
+	getTalkConfig,
+	hasTalkFeature,
+	showTalkFeatureHint,
+} from '../../../services/CapabilitiesManager.ts'
 import { autocompleteQuery } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import { addParticipant } from '../../../services/participantsService.js'
@@ -225,6 +241,14 @@ export default {
 				&& getTalkConfig(this.token, 'call', 'sip-dialout-enabled')
 				&& getTalkConfig(this.token, 'call', 'can-enable-sip')
 			return canModerateSipDialOut && this.conversation.canEnableSIP
+		},
+
+		hintAddPhones() {
+			const canModerateSipDialOut = hasTalkFeature(this.token, 'sip-support-dialout')
+				&& getTalkConfig(this.token, 'call', 'sip-enabled')
+				&& getTalkConfig(this.token, 'call', 'sip-dialout-enabled')
+				&& getTalkConfig(this.token, 'call', 'can-enable-sip')
+			return !canModerateSipDialOut && showTalkFeatureHint(34)
 		},
 
 		isSearching() {
