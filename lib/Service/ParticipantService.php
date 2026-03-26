@@ -328,6 +328,23 @@ class ParticipantService {
 
 	/**
 	 * @param Participant $participant
+	 * @param list<string> $categoryIds
+	 */
+	public function assignConversationToCategories(Participant $participant, array $categoryIds): void {
+		$attendee = $participant->getAttendee();
+
+		if (empty($categoryIds)) {
+			$attendee->setCategoryIds(null);
+		} else {
+			$attendee->setCategoryIds(json_encode($categoryIds));
+		}
+
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
+	/**
+	 * @param Participant $participant
 	 */
 	public function markConversationAsImportant(Participant $participant): void {
 		$attendee = $participant->getAttendee();

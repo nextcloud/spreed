@@ -12,6 +12,15 @@ namespace OCA\Talk;
 /**
  * @psalm-type TalkActorTypes = 'users'|'groups'|'guests'|'emails'|'circles'|'bridged'|'bots'|'federated_users'|'phones'
  *
+ * @psalm-type TalkConversationCategory = array{
+ *     // SnowflakeID
+ *     id: numeric-string,
+ *     name: string,
+ *     sortOrder: int,
+ *     collapsed: bool,
+ *     type: 'custom'|'favorites'|'other',
+ * }
+ *
  * @psalm-type TalkBan = array{
  *     // Identifier of the ban
  *     id: int,
@@ -554,6 +563,8 @@ namespace OCA\Talk;
  *     isImportant: bool,
  *     // Required capability: `sensitive-conversations`
  *     isSensitive: bool,
+ *     // IDs of the custom categories this conversation belongs to (only available with `conversation-categories` capability)
+ *     categoryIds: list<string>,
  *     // Required capability: `pinned-messages`
  *     lastPinnedId: int,
  *     // Required capability: `pinned-messages`
