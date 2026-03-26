@@ -102,6 +102,11 @@ export const mockedCapabilities: Capabilities = {
 			'upcoming-reminders',
 			'sensitive-conversations',
 			'threads',
+			'pinned-messages',
+			'federated-shared-items',
+			'scheduled-messages',
+			'conversation-presets',
+			'conversation-categories',
 			// Conditional features
 			'message-expiration',
 			'reactions',
@@ -129,6 +134,9 @@ export const mockedCapabilities: Capabilities = {
 			'mutual-calendar-events',
 			'upcoming-reminders',
 			'sensitive-conversations',
+			'scheduled-messages',
+			'conversation-presets',
+			'conversation-categories',
 		],
 		config: {
 			attachments: {

@@ -6,17 +6,137 @@
 <script setup lang="ts">
 import type { Conversation } from '../../../types/index.ts'
 
+import { t } from '@nextcloud/l10n'
 import { useVirtualList } from '@vueuse/core'
 import { computed, toRef } from 'vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
+import ConversationCategoryHeader from './ConversationCategoryHeader.vue'
 import ConversationItem from './ConversationItem.vue'
 import { AVATAR } from '../../../constants.ts'
+import { useConversationCategoriesStore } from '../../../stores/conversationCategories.ts'
+import { hasUnreadMentions } from '../../../utils/conversation.ts'
+
+export type CategoryHeaderItem = {
+	_type: 'category-header'
+	id: string
+	name: string
+	categoryId: number | string
+	collapsed: boolean
+	unreadCount: number
+	isFirst?: boolean
+	isLast?: boolean
+}
+
+export type ListItem = (Conversation | CategoryHeaderItem) & { _key?: string }
 
 const props = defineProps<{
 	conversations: Conversation[]
 	loading?: boolean
 	compact?: boolean
+	/**
+	 * When true, conversations are split into category sections defined by the server.
+	 * Requires hasCustomCategories to be true; otherwise renders a plain list.
+	 */
+	showCategories?: boolean
+	/**
+	 * When true, empty custom categories are hidden (used when a search filter is active).
+	 */
+	isFiltered?: boolean
 }>()
+
+const categoriesStore = useConversationCategoriesStore()
+
+/**
+ * Type guard to check if a list item is a category header
+ *
+ * @param item The list item to check
+ */
+function isCategoryHeader(item: ListItem): item is CategoryHeaderItem {
+	return '_type' in item && item._type === 'category-header'
+}
+
+/**
+ * Build the flat list that is fed to the virtual scroller.
+ * When showCategories is true and custom categories exist, conversations are interspersed
+ * with category-header sentinel items so the virtual list can render section headers.
+ */
+const listItems = computed<ListItem[]>(() => {
+	if (!props.showCategories || !categoriesStore.hasCustomCategories) {
+		return props.conversations
+	}
+
+	const hasCategorizedConversations = props.conversations.some((c) => !c.isFavorite && c.categoryIds && c.categoryIds.length > 0)
+	if (!hasCategorizedConversations) {
+		return props.conversations
+	}
+
+	const categories = categoriesStore.sortedCategories
+	const favoriteConversations = props.conversations.filter((c) => c.isFavorite)
+	const categorizedConversations = props.conversations.filter((c) => !c.isFavorite && c.categoryIds?.length > 0)
+	const uncategorizedConversations = props.conversations.filter((c) => !c.isFavorite && (!c.categoryIds || c.categoryIds.length === 0))
+
+	const result: ListItem[] = []
+
+	for (let i = 0; i < categories.length; i++) {
+		const category = categories[i]
+
+		if (category.type === 'favorites') {
+			if (favoriteConversations.length === 0) {
+				continue
+			}
+			result.push({
+				_type: 'category-header',
+				id: 'category-favorites',
+				name: t('spreed', 'Favorites'),
+				categoryId: 'favorites',
+				collapsed: category.collapsed,
+				unreadCount: favoriteConversations.reduce((sum, c) => sum + (c.unreadMessages || 0), 0),
+				isFirst: i === 0,
+				isLast: i === categories.length - 1,
+			})
+			if (!category.collapsed) {
+				result.push(...favoriteConversations)
+			}
+		} else if (category.type === 'other') {
+			if (uncategorizedConversations.length === 0) {
+				continue
+			}
+			result.push({
+				_type: 'category-header',
+				id: 'category-other',
+				name: t('spreed', 'Other'),
+				categoryId: 'other',
+				collapsed: category.collapsed,
+				unreadCount: uncategorizedConversations.reduce((sum, c) => sum + (c.unreadMessages || 0), 0),
+				isFirst: i === 0,
+				isLast: i === categories.length - 1,
+			})
+			if (!category.collapsed) {
+				result.push(...uncategorizedConversations)
+			}
+		} else {
+			const categoryConvs = categorizedConversations.filter((c) => c.categoryIds.includes(String(category.id)))
+			if (categoryConvs.length === 0) {
+				continue
+			}
+			result.push({
+				_type: 'category-header',
+				id: `category-${category.id}`,
+				name: category.name,
+				categoryId: category.id,
+				collapsed: category.collapsed,
+				unreadCount: categoryConvs.reduce((sum, c) => sum + (c.unreadMessages || 0), 0),
+				isFirst: i === 0,
+				isLast: i === categories.length - 1,
+			})
+			if (!category.collapsed) {
+				result.push(...categoryConvs.map((conv) => ({ ...conv, _key: `${category.id}:${conv.token}` })))
+			}
+		}
+	}
+
+	return result
+})
 
 /**
  * Consider:
@@ -26,7 +146,7 @@ const props = defineProps<{
  */
 const itemHeight = computed(() => props.compact ? 28 + 2 * 2 : AVATAR.SIZE.DEFAULT + 2 * 4 + 2 * 2)
 
-const { list, containerProps, wrapperProps } = useVirtualList<Conversation>(toRef(() => props.conversations), {
+const { list, containerProps, wrapperProps } = useVirtualList<ListItem>(toRef(() => listItems.value), {
 	itemHeight: () => itemHeight.value,
 	overscan: 10,
 })
@@ -98,10 +218,25 @@ function scrollToItem(index: number) {
  * @param token - token of conversation to scroll to
  */
 function scrollToConversation(token: string) {
-	const index = props.conversations.findIndex((conversation) => conversation.token === token)
+	const index = listItems.value.findIndex((item) => !isCategoryHeader(item) && item.token === token)
 	if (index !== -1) {
 		scrollToItem(index)
 	}
+}
+
+/**
+ * Find the virtual-list index of the last conversation below the viewport that has unread mentions.
+ * Returns null if none is found.
+ */
+function findLastUnreadMentionBelowViewportIndex(): number | null {
+	const lastVisible = getLastItemInViewportIndex()
+	for (let i = listItems.value.length - 1; i > lastVisible; i--) {
+		const item = listItems.value[i]
+		if (!isCategoryHeader(item) && hasUnreadMentions(item)) {
+			return i
+		}
+	}
+	return null
 }
 
 defineExpose({
@@ -109,6 +244,7 @@ defineExpose({
 	getLastItemInViewportIndex,
 	scrollToItem,
 	scrollToConversation,
+	findLastUnreadMentionBelowViewportIndex,
 })
 </script>
 
@@ -121,11 +257,15 @@ defineExpose({
 		<ul
 			v-else
 			:style="wrapperProps.style">
-			<ConversationItem
-				v-for="item in list"
-				:key="item.data.id"
-				:item="item.data"
-				:compact />
+			<template v-for="item in list" :key="item.data._key ?? item.data.id">
+				<ConversationCategoryHeader
+					v-if="isCategoryHeader(item.data)"
+					:item="item.data as CategoryHeaderItem" />
+				<ConversationItem
+					v-else
+					:item="item.data as Conversation"
+					:compact />
+			</template>
 		</ul>
 	</li>
 </template>

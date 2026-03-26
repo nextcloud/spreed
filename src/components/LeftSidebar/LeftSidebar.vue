@@ -23,6 +23,7 @@
 					<!-- Filters -->
 					<NcActions
 						v-show="searchText === ''"
+						ref="filtersAndSort"
 						:variant="isFiltered ? 'secondary' : 'tertiary'"
 						class="filters"
 						:class="{ 'hidden-visually': isSearching }">
@@ -322,6 +323,8 @@
 					:conversations="sortedConversationsList"
 					:loading="!conversationsInitialised"
 					:compact="isCompact"
+					:showCategories="!showArchived"
+					:isFiltered="isFiltered"
 					class="scroller"
 					@scroll="debounceHandleScroll" />
 				<NcButton
@@ -445,6 +448,7 @@ import { EventBus } from '../../services/EventBus.ts'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import { useActorStore } from '../../stores/actor.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
+import { useConversationCategoriesStore } from '../../stores/conversationCategories.ts'
 import { useFederationStore } from '../../stores/federation.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useTalkHashStore } from '../../stores/talkHash.js'
@@ -551,6 +555,7 @@ export default {
 		const federationStore = useFederationStore()
 		const talkHashStore = useTalkHashStore()
 		const settingsStore = useSettingsStore()
+		const categoriesStore = useConversationCategoriesStore()
 		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox)
 		const isMobile = useIsMobile()
 
@@ -581,6 +586,7 @@ export default {
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
 			tokenStore: useTokenStore(),
+			categoriesStore,
 		}
 	},
 
@@ -694,21 +700,24 @@ export default {
 		},
 
 		filteredConversationsList() {
+			let conversations
 			if (this.isFocused) {
-				return this.conversationsList.filter((conversation) => shouldIncludeArchived(conversation, this.showArchived))
+				conversations = this.conversationsList.filter((conversation) => shouldIncludeArchived(conversation, this.showArchived))
+			} else {
+				let validConversationsCount = 0
+				const filteredConversations = this.conversationsList.filter((conversation) => {
+					const conversationIsValid = filterConversation(conversation, this.filters)
+					if (conversationIsValid) {
+						validConversationsCount++
+					}
+					return shouldIncludeArchived(conversation, this.showArchived)
+						&& (conversationIsValid || hasCall(conversation) || conversation.token === this.token)
+				})
+				// return empty if it only includes the current conversation without any flags
+				conversations = validConversationsCount === 0 && !this.isNavigating ? [] : filteredConversations
 			}
 
-			let validConversationsCount = 0
-			const filteredConversations = this.conversationsList.filter((conversation) => {
-				const conversationIsValid = filterConversation(conversation, this.filters)
-				if (conversationIsValid) {
-					validConversationsCount++
-				}
-				return shouldIncludeArchived(conversation, this.showArchived)
-					&& (conversationIsValid || hasCall(conversation) || conversation.token === this.token)
-			})
-			// return empty if it only includes the current conversation without any flags
-			return validConversationsCount === 0 && !this.isNavigating ? [] : filteredConversations
+			return conversations
 		},
 
 		followedThreads() {
@@ -816,6 +825,9 @@ export default {
 		this.debounceFetchSearchResults = debounce(this.fetchSearchResults, 250)
 		this.debounceFetchConversations = debounce(this.fetchConversations, 3000)
 		this.debounceHandleScroll = debounce(this.handleScroll, 50)
+
+		// Fetch conversation categories
+		this.categoriesStore.fetchCategories()
 
 		EventBus.on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.once('conversations-received', this.handleConversationsReceived)
@@ -1159,14 +1171,11 @@ export default {
 		async handleUnreadMention() {
 			await this.$nextTick()
 
-			this.lastUnreadMentionBelowViewportIndex = null
-			const lastConversationInViewport = this.$refs.scroller.getLastItemInViewportIndex()
-			for (let i = this.filteredConversationsList.length - 1; i > lastConversationInViewport; i--) {
-				if (hasUnreadMentions(this.filteredConversationsList[i])) {
-					this.lastUnreadMentionBelowViewportIndex = i
-					return
-				}
+			if (!this.$refs.scroller) {
+				this.lastUnreadMentionBelowViewportIndex = null
+				return
 			}
+			this.lastUnreadMentionBelowViewportIndex = this.$refs.scroller.findLastUnreadMentionBelowViewportIndex()
 		},
 
 		async scrollToConversation(token) {
