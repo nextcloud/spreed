@@ -74,6 +74,11 @@ export function useJoinCall() {
 		shouldStartRecording = false,
 	} = {}) {
 		const conversation = vuexStore.getters.conversation(token)
+		if (!actorStore.participantIdentifier.sessionId || conversation.attendeeId !== actorStore.participantIdentifier.attendeeId) {
+			console.error('Trying to join call without having joined the conversation')
+			return
+		}
+
 		const isPhoneRoom = isConversationPhoneRoom(conversation)
 
 		// Define flags to join with (just call / with audio / with video)
