@@ -117,6 +117,22 @@ async function setChatStyle(value: string) {
 }
 
 /**
+ *
+ * @param value
+ */
+async function setConversationsSortOrder(value: string) {
+	return setUserConfig('spreed', 'conversations_sort_order', value)
+}
+
+/**
+ *
+ * @param value
+ */
+async function setConversationsGroupMode(value: string) {
+	return setUserConfig('spreed', 'conversations_group_mode', value)
+}
+
+/**
  * @param hasUserAccount
  * @param value
  */
@@ -151,7 +167,9 @@ export {
 	setAttachmentFolder,
 	setBlurVirtualBackground,
 	setChatStyle,
+	setConversationsGroupMode,
 	setConversationsListStyle,
+	setConversationsSortOrder,
 	setLiveTranscriptionTargetLanguageId,
 	setPlaySounds,
 	setReadStatusPrivacy,

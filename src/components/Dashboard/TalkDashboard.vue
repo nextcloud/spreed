@@ -3,6 +3,8 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script lang="ts" setup>
+import type { Conversation } from '../../types/index.ts'
+
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { isRTL, t } from '@nextcloud/l10n'
@@ -123,7 +125,11 @@ const resizeObserver = new ResizeObserver(() => {
 })
 
 const conversationsInitialised = computed(() => store.getters.conversationsInitialised)
-const filteredConversations = computed(() => store.getters.conversationsList.filter(hasUnreadMentions))
+const filteredConversations = computed(() => {
+	return (store.getters.conversationsList as Conversation[])
+		.filter(hasUnreadMentions)
+		.sort((conversation1, conversation2) => conversation2.lastActivity - conversation1.lastActivity)
+})
 
 /**
  * Creates a new group conversation and navigates to the conversation page.

@@ -58,6 +58,19 @@
 * `two-lines` Normal (default) - two-line elements (with display name and last message)
 * `compact` Compact - one-line elements (with display name)
 
+### Conversations sort options
+Required capability: `config => conversations => sort-order`
+
+* `activity` (default) - Conversations are ordered by last chat or call activity
+* `alphabetical` - Conversations are ordered by the display name
+
+### Conversations group mode
+Required capability: `config => conversations => group-mode`
+
+* `none` (default) - Conversations are not grouped by type
+* `group-first` - Conversations are grouped and group (and public) conversations shown first
+* `private-first` - Conversations are grouped and private (one-to-one) conversations shown first
+
 ### Conversation attributes
 Required capability: `conversation-presets`
 
