@@ -1707,6 +1707,7 @@ OC.L10N.register(
     "Tomorrow – {timeLocale}" : "Заўтра – {timeLocale}",
     "This weekend – {timeLocale}" : "У гэты ўік-энд – {timeLocale}",
     "Next week – {timeLocale}" : "На наступным тыдні – {timeLocale}",
+    "Message link copied to clipboard" : "Спасылка на паведамленне скапіявана ў буфер абмену",
     "Conversation link copied to clipboard" : "Спасылка на размову скапіявана ў буфер абмену",
     "The link could not be copied" : "Не ўдалося скапіяваць спасылку ",
     "Failed to connect. Retrying …" : "Не атрымалася злучыцца. Паўторная спроба…",
