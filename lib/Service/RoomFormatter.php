@@ -373,7 +373,9 @@ class RoomFormatter {
 			return $roomData;
 		}
 
-		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->serverConfig);
+		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->serverConfig)
+			|| ($room->getType() === Room::TYPE_PUBLIC
+				&& $room->getObjectType() === Room::OBJECT_TYPE_VIDEO_VERIFICATION);
 
 		// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
