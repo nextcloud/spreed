@@ -1052,6 +1052,7 @@ OC.L10N.register(
     "Conversation actions" : "Conversation actions",
     "Home" : "მთავარი",
     "Unread" : "Unread",
+    "Alphabetically" : "Alphabetically",
     "No matches found" : "No matches found",
     "No conversations found" : "No conversations found",
     "You have no unread mentions." : "You have no unread mentions.",

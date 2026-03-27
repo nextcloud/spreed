@@ -99,6 +99,7 @@ OC.L10N.register(
     "Remove from favorites" : "რჩეულებიდან ამოშლა",
     "Add to favorites" : "რჩეულებში დამატება",
     "Home" : "სახლი",
+    "Alphabetically" : "ანბანის მიხედვით",
     "Users" : "მომხმარებლები",
     "Groups" : "ჯგუფები",
     "Devices" : "მოწყობილობები",

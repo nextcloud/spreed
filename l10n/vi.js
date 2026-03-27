@@ -696,6 +696,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Bạn cần chọn người kiểm duyệt mới trước khi có thể rời khỏi cuộc trò chuyện.",
     "Conversation actions" : "Hoạt động cuộc trò chuyện",
     "Home" : "Trang nhà",
+    "Alphabetically" : "Theo bảng chữ cái",
     "No conversations found" : "Không tìm thấy cuộc trò chuyện nào",
     "An error occurred while performing the search" : "Đã xảy ra lỗi khi thực hiện tìm kiếm",
     "Conversation list" : "Danh sách cuộc trò chuyện",

@@ -453,6 +453,7 @@ OC.L10N.register(
     "Add to favorites" : "Pievienot izlasei",
     "You need to promote a new moderator before you can leave the conversation." : "Ir nepieciešams iecelt jaunu satura pārraudzītāju, lai Tu varētu pamest sarunu.",
     "Home" : "Sākums",
+    "Alphabetically" : "Alfabētiskā secībā",
     "You have no unread mentions." : "Nav nelasītu pieminēšanu.",
     "Clear filter" : "Notīrīt atlasi",
     "App settings" : "Lietotnes iestatījumi",

@@ -374,6 +374,7 @@ OC.L10N.register(
     "Add to favorites" : "Tambah ke favorit",
     "Home" : "Beranda",
     "Unread" : "Belum dibaca",
+    "Alphabetically" : "Secara alfabet",
     "Unread messages" : "Pesan belum dibaca",
     "Clear filters" : "Hapus filter",
     "Threads" : "Utas",

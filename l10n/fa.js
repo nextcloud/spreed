@@ -989,6 +989,7 @@ OC.L10N.register(
     "Conversation actions" : "Conversation actions",
     "Home" : "خانه",
     "Unread" : "خوانده‌نشده",
+    "Alphabetically" : "الفبایی",
     "No matches found" : "جستجو حاصلی دربرنداشت",
     "No conversations found" : "No conversations found",
     "An error occurred while performing the search" : "An error occurred while performing the search",

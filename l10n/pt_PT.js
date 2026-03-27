@@ -319,6 +319,7 @@ OC.L10N.register(
     "Remove from favorites" : "Remover de favoritos",
     "Add to favorites" : "Adicionar aos favoritos",
     "Home" : "Início",
+    "Alphabetically" : "Alfabeticamente",
     "Clear filter" : "Limpar filtro",
     "Users" : "Utilizadores",
     "Groups" : "Grupos",

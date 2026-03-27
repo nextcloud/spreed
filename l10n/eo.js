@@ -320,6 +320,7 @@ OC.L10N.register(
     "Remove from favorites" : "Forigi el pliŝataĵoj",
     "Add to favorites" : "Aldoni al pliŝataĵoj",
     "Home" : "Hejmo",
+    "Alphabetically" : "Alfabete",
     "Users" : "Uzantoj",
     "Groups" : "Grupoj",
     "Devices" : "Aparatoj",

@@ -415,6 +415,7 @@ OC.L10N.register(
     "Add to favorites" : "Agregar a favoritos",
     "Home" : "Inicio",
     "Unread" : "No leído",
+    "Alphabetically" : "Alfabéticamente",
     "Clear filter" : "Limpiar filtro",
     "Users" : " Usuarios",
     "Groups" : "Grupos",

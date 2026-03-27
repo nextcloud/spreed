@@ -658,6 +658,7 @@ OC.L10N.register(
     "No pending invitations" : "Nun hai nenguna invitación pendiente",
     "Home" : "Aniciu",
     "Unread" : "Ensin lleer",
+    "Alphabetically" : "Alfabéticamente",
     "No matches found" : "Nun s'atopó nenguna coincidencia",
     "No conversations found" : "Nun s'atopó nenguna conversación",
     "You have no unread mentions." : "Nun tienes nenguna mención ensin lleer.",

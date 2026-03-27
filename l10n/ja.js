@@ -1196,6 +1196,7 @@ OC.L10N.register(
     "No pending invitations" : "保留中の招待はありません",
     "Home" : "ホーム",
     "Unread" : "未読",
+    "Alphabetically" : "アルファベット順",
     "No matches found" : "一致するものが見つかりません。",
     "No conversations found" : "会話が見つかりません",
     "You have no unread mentions." : "未読のメンションはありません。",

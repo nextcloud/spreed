@@ -1065,6 +1065,7 @@ OC.L10N.register(
     "No pending invitations" : "Ez duzu gonbidapenik zain",
     "Home" : "Etxea",
     "Unread" : "Irakurri gabe",
+    "Alphabetically" : "Alfabetikoki",
     "No matches found" : "Ez dira emaitzarik aurkitu",
     "No conversations found" : "Ez da elkarrizketarik aurkitu",
     "An error occurred while performing the search" : "Errore bat gertatu da bilaketa egitean",
