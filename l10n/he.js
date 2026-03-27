@@ -473,6 +473,7 @@ OC.L10N.register(
     "Add to favorites" : "הוספה למועדפים",
     "Home" : "בית",
     "Unread" : "לא נקרא",
+    "Alphabetically" : "בסדר האלף-בית",
     "No matches found" : "לא נמצאו התאמות",
     "An error occurred while performing the search" : "אירעה שגיאה בעת ביצוע החיפוש",
     "Unread messages" : "הודעות שלא נקראו",

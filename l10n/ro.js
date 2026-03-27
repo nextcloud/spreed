@@ -630,6 +630,7 @@ OC.L10N.register(
     "Add to favorites" : "Adăugați la favorite",
     "Conversation actions" : "Acțiuni conversație",
     "Unread" : "Necitit",
+    "Alphabetically" : "Alfabetic",
     "No matches found" : "Nicio potrivire",
     "No conversations found" : "Nu sunt conversații",
     "You have no unread mentions." : "Nu aveți menționări necitite.",

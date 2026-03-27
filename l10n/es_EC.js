@@ -948,6 +948,7 @@ OC.L10N.register(
     "Conversation actions" : "Acciones de la conversación",
     "Home" : "Inicio",
     "Unread" : "No leído",
+    "Alphabetically" : "Alfabéticamente",
     "No matches found" : "No se encontraron coincidencias",
     "No conversations found" : "No se encontraron conversaciones",
     "An error occurred while performing the search" : "Se produjo un error al realizar la búsqueda",

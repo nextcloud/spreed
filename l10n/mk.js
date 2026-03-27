@@ -695,6 +695,7 @@ OC.L10N.register(
     "Conversation actions" : "Дејства за разговорот",
     "Home" : "Дома",
     "Unread" : "Непрочитана",
+    "Alphabetically" : "Азбучно",
     "No matches found" : "Не се пронајдени совпаѓања",
     "No conversations found" : "Нема пронајдено разговори",
     "An error occurred while performing the search" : "Настана грешка при обидот за пребарување",

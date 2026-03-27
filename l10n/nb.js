@@ -1128,6 +1128,7 @@ OC.L10N.register(
     "No pending invitations" : "Ingen ventende invitasjoner",
     "Home" : "Hjem",
     "Unread" : "Ulest",
+    "Alphabetically" : "Alfabetisk",
     "No matches found" : "Ingen treff funnet",
     "No conversations found" : "Ingen samtaler funnet",
     "You have no unread mentions." : "Du har ingen uleste nevner",

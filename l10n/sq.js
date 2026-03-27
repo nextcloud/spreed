@@ -226,6 +226,7 @@ OC.L10N.register(
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Shtoje tek të parapëlqyerat",
     "Home" : "Kryefaqja",
+    "Alphabetically" : "Alfabetikisht",
     "Users" : "Përdoruesit",
     "Groups" : "Grupet",
     "Devices" : "Pajisjet",

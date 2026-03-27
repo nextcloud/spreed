@@ -671,6 +671,7 @@ OC.L10N.register(
     "Decline invitation" : "Atmesti pakvietimą",
     "Accept invitation" : "Priimti pakvietimą",
     "Home" : "Namai",
+    "Alphabetically" : "Pagal abėcėlę",
     "No matches found" : "Nerasta jokių atitikmenų",
     "No conversations found" : "Pokalbių nerasta",
     "You have no unread messages." : "Jūs neturite neskaitytų žinučių.",

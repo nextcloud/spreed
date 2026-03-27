@@ -928,6 +928,7 @@ OC.L10N.register(
     "Conversation actions" : "Действия при разговор",
     "Home" : "Начало",
     "Unread" : "Непрочетено",
+    "Alphabetically" : "По азбучен ред",
     "No matches found" : "Няма намерени съвпадения",
     "No conversations found" : "Няма намерени разговори",
     "An error occurred while performing the search" : "Възникна грешка при извършване на търсенето",

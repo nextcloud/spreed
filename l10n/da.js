@@ -598,6 +598,7 @@ OC.L10N.register(
     "No pending invitations" : "Ingen afventende invitationer",
     "Home" : "Hjem",
     "Unread" : "Ulæst",
+    "Alphabetically" : "Alfabetisk",
     "You have no archived conversations." : "Du har ingen arkiverede samtaler.",
     "You have no unread mentions." : "Du har ingen ulæste omtaler",
     "An error occurred while performing the search" : "Der opstod en fejl under søgningen",
