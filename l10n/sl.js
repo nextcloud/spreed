@@ -1063,6 +1063,7 @@ OC.L10N.register(
     "Unread" : "Neprebrano",
     "Mentions" : "Omembe",
     "Meetings" : "Srečanja",
+    "Alphabetically" : "Abecedno",
     "No matches found" : "Ni najdenih zadetkov",
     "No conversations found" : "Pogovora ni mogoče najti",
     "You have no unread mentions." : "Ni neodgovorjenih omemb.",

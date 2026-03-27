@@ -841,6 +841,7 @@ OC.L10N.register(
     "No pending invitations" : "Ei odottavia kutsuja",
     "Home" : "Koti",
     "Unread" : "Lukematon",
+    "Alphabetically" : "Aakkosjärjestys",
     "No followed threads" : "Ei seurattuja keskusteluketjuja",
     "No matches found" : "Ei tuloksia",
     "No conversations found" : "Keskusteluja ei löytynyt",

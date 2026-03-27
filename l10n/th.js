@@ -81,6 +81,7 @@ OC.L10N.register(
     "Remove from favorites" : "เอาออกจากรายการโปรด",
     "Add to favorites" : "เพิ่มในรายการโปรด",
     "Home" : "หน้าหลัก",
+    "Alphabetically" : "ตัวอักษร",
     "Users" : "ผู้ใช้",
     "Groups" : "กลุ่ม",
     "Devices" : "อุปกรณ์",

@@ -1260,6 +1260,7 @@ OC.L10N.register(
     "No pending invitations" : "No hi ha cap invitació pendent",
     "Home" : "Casa",
     "Unread" : "Per llegir",
+    "Alphabetically" : "Alfabèticament",
     "No matches found" : "No s'ha trobat cap coincidència",
     "No conversations found" : "No s'han trobat converses",
     "You have no archived conversations." : "No tens converses arxivades.",

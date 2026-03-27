@@ -741,6 +741,7 @@ OC.L10N.register(
     "Conversation actions" : "Atziones de is resonadas",
     "Home" : "Pàgina printzipale",
     "Unread" : "De lèghere",
+    "Alphabetically" : "Òrdine alfabèticu",
     "No matches found" : "Peruna currispondèntzia agatada",
     "No conversations found" : "Peruna resonada agatada",
     "An error occurred while performing the search" : "B'at àpidu un'errore in sa chirca",

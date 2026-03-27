@@ -1070,6 +1070,7 @@ OC.L10N.register(
     "Conversation actions" : "대화 작업",
     "Home" : "집",
     "Unread" : "읽지 않음",
+    "Alphabetically" : "가나다순",
     "No matches found" : "일치하는 항목 없음",
     "No conversations found" : "대화를 찾을 수 없습니다.",
     "You have no unread mentions." : "읽지 않은 언급이 없습니다.",

@@ -1187,6 +1187,7 @@ OC.L10N.register(
     "Home" : "Startpagina",
     "Unread" : "Ongelezen",
     "Meetings" : "Vergaderingen",
+    "Alphabetically" : "Alfabetisch",
     "No matches found" : "Geen overeenkomsten gevonden.",
     "No conversations found" : "Geen gesprekken gevonden",
     "You have no archived conversations." : "Je hebt geen gearchiveerde gesprekken.",

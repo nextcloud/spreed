@@ -1264,6 +1264,7 @@ OC.L10N.register(
     "No pending invitations" : "لا توجد دعوات معلقة",
     "Home" : "الرئيسية",
     "Unread" : "غير مقروء",
+    "Alphabetically" : "أبجديا",
     "No matches found" : "لم يٌمكن إيجاد أي تطابقات",
     "No conversations found" : "لم يتم العثور على المحادثات ",
     "You have no archived conversations." : "ليس لديك أي محادثات مؤرشفة.",
