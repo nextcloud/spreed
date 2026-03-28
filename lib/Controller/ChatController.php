@@ -144,6 +144,84 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * @return array{parent: IComment, parentMessage: Message}|DataResponse
+	 */
+	private function resolveReplyTo(int $replyTo, string $replyToToken, string $actorType, string $actorId, \DateTime $creationDateTime): array|DataResponse {
+		$isPrivateReplyFromAnotherConvo = $replyToToken != '';
+
+		try {
+			$targetParentRoom = $isPrivateReplyFromAnotherConvo ? $this->manager->getRoomByToken($replyToToken) : $this->room;
+			$parent = $this->chatManager->getParentComment($targetParentRoom, (string)$replyTo);
+		} catch (NotFoundException $e) {
+			return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($isPrivateReplyFromAnotherConvo) {
+			$isOneToOneRoom = $this->room->getType() === Room::TYPE_ONE_TO_ONE;
+			if (!$isOneToOneRoom) {
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+			}
+
+			$parentActorId = $parent->getActorId();
+			$parentActorType = $parent->getActorType();
+			// Validate if the members are part of the convo
+			try {
+				$this->participantService->getParticipantByActor($targetParentRoom, $actorType, $actorId);
+				$this->participantService->getParticipantByActor($targetParentRoom, $parentActorType, $parentActorId);
+			} catch (ParticipantNotFoundException $e) {
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_FORBIDDEN);
+			}
+
+			$originalParentMessage = $this->messageParser->createMessage($targetParentRoom, $this->participant, $parent, $this->l);
+			$this->messageParser->parseMessage($originalParentMessage);
+
+			if (!$originalParentMessage->isReplyable()) {
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+			}
+
+			$originalMessageData = $originalParentMessage->toArray('json', null);
+			$originalMessageData['threadId'] = Thread::THREAD_NONE;
+			$originalMessageData['reactions'] = new \stdClass();
+			$originalMessageData['messageType'] = $originalParentMessage->getMessageType();
+
+			$extraMetaData = [
+				'replyToMessageId' => $replyTo,
+				'replyToConversationToken' => $replyToToken,
+				'replyToConversationName' => $targetParentRoom->getName(),
+				'replyToActorDisplayName' => $originalParentMessage->getActorDisplayName(),
+			];
+			$originalMessageData['metaData'] = array_merge($originalMessageData['metaData'] ?? [], $extraMetaData);
+			// Create a link message for the private reply
+			$copiedParent = $this->chatManager->sendMessage(
+				$this->room,
+				$this->participant,
+				$parentActorType,
+				$parentActorId,
+				ChatManager::VERB_PRIVATE_REPLY,
+				$creationDateTime,
+				null,
+				'',
+				true,
+				verb: ChatManager::VERB_PRIVATE_REPLY,
+				extraMetaData: [
+					'originalMessage' => $originalMessageData,
+				],
+			);
+
+			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $copiedParent, $this->l);
+			$this->messageParser->parseMessage($parentMessage);
+		} else {
+			$parentMessage = $this->messageParser->createMessage($targetParentRoom, $this->participant, $parent, $this->l);
+			$this->messageParser->parseMessage($parentMessage);
+
+			if (!$parentMessage->isReplyable()) {
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+			}
+		}
+
+		return ['parent' => $isPrivateReplyFromAnotherConvo ? $copiedParent : $parent, 'parentMessage' => $parentMessage];
+	}
+	/**
 	 * @return list{0: Attendee::ACTOR_*, 1: string}
 	 */
 	protected function getActorInfo(string $actorDisplayName = ''): array {
@@ -219,7 +297,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 		$data = $chatMessage->toArray($this->getResponseFormat(), $thread);
 		if ($parentMessage instanceof Message) {
-			$data['parent'] = $parentMessage->toArray($this->getResponseFormat(), $thread);
+			$parentComment = $parentMessage->getComment();
+			if ($parentComment->getVerb() === ChatManager::VERB_PRIVATE_REPLY && $parentComment->getParentId() === '0') {
+				$data['parent'] = $this->buildPrivateReplyParentSnapshot($parentComment);
+			} else {
+				$data['parent'] = $parentMessage->toArray($this->getResponseFormat(), $thread);
+			}
 		}
 
 		$headers = [];
@@ -240,6 +323,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param string $referenceId for the message to be able to later identify it again
 	 * @param int $replyTo Parent id which this message is a reply to
 	 * @psalm-param non-negative-int $replyTo
+	 * @param string $replyToToken Parent token to which reply is initiated
 	 * @param bool $silent If sent silent the chat message will not create any notifications
 	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
 	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
@@ -262,7 +346,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, bool $silent = false, string $threadTitle = '', int $threadId = 0): DataResponse {
+	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, string $replyToToken = '', bool $silent = false, string $threadTitle = '', int $threadId = 0): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
@@ -279,19 +363,15 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		$parent = $parentMessage = null;
-		if ($replyTo !== 0) {
-			try {
-				$parent = $this->chatManager->getParentComment($this->room, (string)$replyTo);
-			} catch (NotFoundException $e) {
-				// Someone is trying to reply cross-rooms or to a non-existing message
-				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
-			}
+		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
-			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
-			$this->messageParser->parseMessage($parentMessage);
-			if (!$parentMessage->isReplyable()) {
-				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+		if ($replyTo !== 0) {
+			$resolvedReplyTo = $this->resolveReplyTo($replyTo, $replyToToken, $actorType, $actorId, $creationDateTime);
+			if ($resolvedReplyTo instanceof DataResponse) {
+				return $resolvedReplyTo;
 			}
+			$parent = $resolvedReplyTo['parent'];
+			$parentMessage = $resolvedReplyTo['parentMessage'];
 		} elseif ($threadId !== 0) {
 			if (!$this->threadService->validateThread($this->room->getId(), $threadId)) {
 				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
@@ -299,7 +379,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
-		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
 			$createThread = $replyTo === 0 && $threadId === Thread::THREAD_NONE && $threadTitle !== '';
@@ -435,19 +514,16 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		$parent = $parentMessage = null;
-		if ($replyTo !== 0) {
-			try {
-				$parent = $this->chatManager->getParentComment($this->room, (string)$replyTo);
-			} catch (NotFoundException $e) {
-				// Someone is trying to reply cross-rooms or to a non-existing message
-				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
-			}
+		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
-			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
-			$this->messageParser->parseMessage($parentMessage);
-			if (!$parentMessage->isReplyable()) {
-				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+		if ($replyTo !== 0) {
+			[$actorType, $actorId] = $this->getActorInfo();
+			$resolvedReplyTo = $this->resolveReplyTo($replyTo, '', $actorType, $actorId, $creationDateTime);
+			if ($resolvedReplyTo instanceof DataResponse) {
+				return $resolvedReplyTo;
 			}
+			$parent = $resolvedReplyTo['parent'];
+			$parentMessage = $resolvedReplyTo['parentMessage'];
 		}
 
 		if ($threadId !== 0 && !$this->threadService->validateThread($this->room->getId(), $threadId)) {
@@ -1069,6 +1145,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 						continue;
 					}
 
+					if ($comment->getVerb() === ChatManager::VERB_PRIVATE_REPLY && $comment->getParentId() === '0') {
+						$loadedParents[$parentId] = $this->buildPrivateReplyParentSnapshot($comment);
+						$messages[$commentKey]['parent'] = $loadedParents[$parentId];
+						continue;
+					}
+
 					$expireDate = $message->getComment()->getExpireDate();
 					if ($expireDate instanceof \DateTime && $expireDate < $now) {
 						$commentIdToIndex[$id] = null;
@@ -1669,6 +1751,16 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		return new DataResponse($resultData, Http::STATUS_OK);
+	}
+
+	private function buildPrivateReplyParentSnapshot(IComment $comment): array {
+		$metaData = $comment->getMetaData() ?? [];
+		$message = $metaData['originalMessage'];
+		$message['id'] = (int)$comment->getId();
+		unset($metaData['originalMessage']);
+		$message['metaData'] = array_merge($metaData, $message['metaData'] ?? []);
+
+		return $message;
 	}
 
 	/**

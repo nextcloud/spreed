@@ -190,6 +190,14 @@ namespace OCA\Talk;
  *     threadId?: int,
  *     // Set when a thread is created with this message. If missing, no thread creation is associated with this message
  *     threadTitle?: string,
+ *     // Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message id
+ *     replyToMessageId?: int,
+ *     // Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation token.
+ *     replyToConversationToken?: string,
+ *     // Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation name
+ *     replyToConversationName?: string,
+ *     // Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's actor display name
+ *     replyToActorDisplayName?: string,
  * }
  *
  * @psalm-type TalkChatMessage = TalkBaseMessage&array{
