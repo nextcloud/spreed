@@ -115,6 +115,16 @@ export function prepareTemporaryMessage({
 		}
 	}
 
+	if (parent && 'token' in parent && parent.token !== token) {
+		parent = {
+			...parent,
+			metaData: {
+				...('metaData' in parent ? parent.metaData : {}),
+				replyToConversationToken: parent.token,
+			},
+		}
+	}
+
 	return {
 		// @ts-expect-error: type 'string' is not assignable to type 'number'
 		id: tempId,
