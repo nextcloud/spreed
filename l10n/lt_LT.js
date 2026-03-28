@@ -882,6 +882,7 @@ OC.L10N.register(
     "Nextcloud URL" : "Nextcloud URL",
     "Nextcloud user" : "Nextcloud naudotojas",
     "User password" : "Naudotojo slaptažodis",
+    "Talk conversation" : "\"Talk\" pokalbis",
     "Matrix server URL" : "Matrix serverio URL",
     "User" : "Naudotojas",
     "Matrix channel" : "Matrix kanalas",
