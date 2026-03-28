@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eeff476f565fd1bee7bb72339f5b625a",
+    "content-hash": "74dd414e979a995af63fe8df33b4e894",
     "packages": [
         {
             "name": "coenjacobs/mozart",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/coenjacobs/mozart.git",
-                "reference": "5c37bd4f50afb44e30193bdc479f348b65ef078d"
+                "reference": "da0c85919b15f2f5db9b0a0a84e5536bcf73a188"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coenjacobs/mozart/zipball/5c37bd4f50afb44e30193bdc479f348b65ef078d",
-                "reference": "5c37bd4f50afb44e30193bdc479f348b65ef078d",
+                "url": "https://api.github.com/repos/coenjacobs/mozart/zipball/da0c85919b15f2f5db9b0a0a84e5536bcf73a188",
+                "reference": "da0c85919b15f2f5db9b0a0a84e5536bcf73a188",
                 "shasum": ""
             },
             "require": {
@@ -63,7 +63,7 @@
             "description": "Composes all dependencies as a package inside a WordPress plugin",
             "support": {
                 "issues": "https://github.com/coenjacobs/mozart/issues",
-                "source": "https://github.com/coenjacobs/mozart/tree/1.2.0"
+                "source": "https://github.com/coenjacobs/mozart/tree/1.2.1"
             },
             "funding": [
                 {
@@ -71,7 +71,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-12T12:42:38+00:00"
+            "time": "2026-03-19T14:48:53+00:00"
         },
         {
             "name": "composer/class-map-generator",
@@ -223,16 +223,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "3.32.0",
+            "version": "3.33.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "254b1595b16b22dbddaaef9ed6ca9fdac4956725"
+                "reference": "570b8871e0ce693764434b29154c54b434905350"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/254b1595b16b22dbddaaef9ed6ca9fdac4956725",
-                "reference": "254b1595b16b22dbddaaef9ed6ca9fdac4956725",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/570b8871e0ce693764434b29154c54b434905350",
+                "reference": "570b8871e0ce693764434b29154c54b434905350",
                 "shasum": ""
             },
             "require": {
@@ -300,9 +300,9 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/3.32.0"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.33.0"
             },
-            "time": "2026-02-25T17:01:41+00:00"
+            "time": "2026-03-25T07:59:30+00:00"
         },
         {
             "name": "league/flysystem-local",
