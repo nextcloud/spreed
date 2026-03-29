@@ -10,7 +10,7 @@ d1898b1290d50f874d8092ebda6ee5e1 dependabot-approve-merge.yml
 ccd8a55c60e35b84becb0f7005ce1286 lint-php-cs.yml
 5dcc3187a9460cb62a455235cbdb3562 lint-php.yml
 cf229fbf443d2f7a303f22eb92745811 lint-stylelint.yml
-60026021683ac33c213be172fa211038 node-test.yml
+25b053c8cd26fa5f0aba439c8f823c17 node-test.yml
 c965845a0def7b39d872e47e93dd1139 node.yml
 8f9392d540ab25f702d078b9eac13799 openapi.yml
 238e1da112e5f2aaa69c3f7ec9f4ebfa phpunit-mariadb.yml
