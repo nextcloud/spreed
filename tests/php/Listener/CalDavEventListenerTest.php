@@ -163,6 +163,37 @@ EOD;
 		$this->listener->handle($event);
 	}
 
+	public function testIsCalendarEventNoEventInVObject(): void {
+		$calData = <<<EOD
+BEGIN:VCALENDAR
+PRODID:-//IDN nextcloud.com//Something fancy//EN
+CALSCALE:GREGORIAN
+VERSION:2.0
+BEGIN:VTIMEZONE
+TZID:Europe/Paris
+X-LIC-LOCATION:Europe/Paris
+END:VTIMEZONE
+BEGIN:VTODO
+CREATED:20250310T171800Z
+DTSTAMP:20250310T171819Z
+LAST-MODIFIED:20250310T171819Z
+UID:4d336aa1-a29e-4015-b1dd-98e1dae802db
+DTSTART;TZID=Europe/Vienna:20250314T100000
+DUE;TZID=Europe/Vienna:20250314T110000
+STATUS:CONFIRMED
+SUMMARY:Test
+END:VTODO
+END:VCALENDAR
+EOD;
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
+
+		$this->logger->expects(self::once())
+			->method('debug')
+			->with('Calendar object is not an event, skipping for calendar event integration');
+
+		$this->listener->handle($event);
+	}
+
 	public function testIsCalendarEventNoData(): void {
 		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], []);
 

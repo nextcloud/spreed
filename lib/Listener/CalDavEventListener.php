@@ -69,7 +69,7 @@ class CalDavEventListener implements IEventListener {
 		}
 
 		if (!str_contains($calData, 'LOCATION:')) {
-			$this->logger->debug('No location for the even, skipping for calendar event integration');
+			$this->logger->debug('No location for the event, skipping for calendar event integration');
 			return;
 		}
 
@@ -81,6 +81,13 @@ class CalDavEventListener implements IEventListener {
 		}
 
 		$vevent = $vobject->VEVENT;
+
+		// Calendar objects can also be VTODO or VJOURNAL for instance
+		if ($vevent === null) {
+			$this->logger->debug('Calendar object is not an event, skipping for calendar event integration');
+			return;
+		}
+
 		// Check if the location is set and if the location string contains a call url
 		$location = $vevent->LOCATION?->getValue();
 		if ($location === null || !str_contains($location, '/call/')) {
