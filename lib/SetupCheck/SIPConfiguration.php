@@ -53,7 +53,7 @@ class SIPConfiguration implements ISetupCheck {
 			)));
 
 		$result = $query->executeQuery();
-		$invalidNumbers = $result->fetchFirstColumn();
+		$invalidNumbers = $result->fetchAll(\PDO::FETCH_COLUMN);
 		$result->closeCursor();
 
 		if (!empty($invalidNumbers)) {
