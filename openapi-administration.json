@@ -141,7 +141,8 @@
                             "attachments": {
                                 "type": "object",
                                 "required": [
-                                    "allowed"
+                                    "allowed",
+                                    "conversation-subfolders"
                                 ],
                                 "properties": {
                                     "allowed": {
@@ -151,6 +152,10 @@
                                     "folder": {
                                         "type": "string",
                                         "description": "User's attachment folder (only available for logged in users)"
+                                    },
+                                    "conversation-subfolders": {
+                                        "type": "boolean",
+                                        "description": "Whether per-conversation subfolders are used for attachments"
                                     }
                                 }
                             },

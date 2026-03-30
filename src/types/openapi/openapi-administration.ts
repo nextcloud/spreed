@@ -239,6 +239,8 @@ export type components = {
                     allowed: boolean;
                     /** @description User's attachment folder (only available for logged in users) */
                     folder?: string;
+                    /** @description Whether per-conversation subfolders are used for attachments */
+                    "conversation-subfolders": boolean;
                 };
                 call: {
                     /** @description Whether calls are enabled */

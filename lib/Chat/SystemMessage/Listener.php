@@ -117,7 +117,36 @@ class Listener implements IEventListener {
 		} elseif ($event instanceof BeforeShareCreatedEvent) {
 			$this->setShareExpiration($event);
 		} elseif ($event instanceof BeforeDuplicateShareSentEvent || $event instanceof ShareCreatedEvent) {
-			$this->fixMimeTypeOfVoiceMessage($event);
+			$share = $event->getShare();
+			if ($share->getShareType() !== IShare::TYPE_ROOM) {
+				return;
+			}
+
+			$route = strtolower($this->request->getParam('_route') ?? '');
+
+			// Recording endpoint posts its own system message; skip the generic one.
+			if ($route === 'ocs.spreed.recording.sharetochat') {
+				return;
+			}
+
+			// Probe only creates the folder share for access control and never
+			// posts a message, so ensureOneToOneRoomIsFilled is not needed here —
+			// it will run when the actual chat message is posted.
+			if ($route === 'ocs.spreed.chat.probeattachmentfolder') {
+				return;
+			}
+
+			$room = $this->manager->getRoomByToken($share->getSharedWith());
+			// ensureOneToOneRoomIsFilled must run so attendees are persisted.
+			$this->participantService->ensureOneToOneRoomIsFilled($room);
+
+			// Attachment endpoint posts its own file_shared message by node ID;
+			// the folder-level TYPE_ROOM share it creates here is only for access control.
+			if ($route === 'ocs.spreed.chat.postattachmenttoroom') {
+				return;
+			}
+
+			$this->fixMimeTypeOfVoiceMessage($event, $room);
 		}
 	}
 
@@ -346,6 +375,14 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		// The attachment and probe endpoints create a folder-level TYPE_ROOM share
+		// purely for access control — it must not be given a message-expiration date.
+		$route = strtolower($this->request->getParam('_route') ?? '');
+		if ($route === 'ocs.spreed.chat.postattachmenttoroom'
+			|| $route === 'ocs.spreed.chat.probeattachmentfolder') {
+			return;
+		}
+
 		$room = $this->manager->getRoomByToken($share->getSharedWith());
 
 		$messageExpiration = $room->getMessageExpiration();
@@ -358,18 +395,8 @@ class Listener implements IEventListener {
 		$share->setExpirationDate($dateTime);
 	}
 
-	protected function fixMimeTypeOfVoiceMessage(ShareCreatedEvent|BeforeDuplicateShareSentEvent $event): void {
+	protected function fixMimeTypeOfVoiceMessage(ShareCreatedEvent|BeforeDuplicateShareSentEvent $event, Room $room): void {
 		$share = $event->getShare();
-
-		if ($share->getShareType() !== IShare::TYPE_ROOM) {
-			return;
-		}
-
-		if (strtolower($this->request->getParam('_route')) === 'ocs.spreed.recording.sharetochat') {
-			return;
-		}
-		$room = $this->manager->getRoomByToken($share->getSharedWith());
-		$this->participantService->ensureOneToOneRoomIsFilled($room);
 
 		$metaData = $this->request->getParam('talkMetaData') ?? '';
 		$metaData = json_decode($metaData, true);
