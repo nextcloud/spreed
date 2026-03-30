@@ -313,6 +313,9 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 
 	#[\Override]
 	public function getSupportedSearchProviderIds(): array {
+		if ($this->userId === null) {
+			return [];
+		}
 		return ['talk-conversations'];
 	}
 }
