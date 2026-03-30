@@ -111,6 +111,10 @@ class CapabilitiesTest extends TestCase {
 			->willReturn(false);
 
 		$this->talkConfig->expects($this->once())
+			->method('isConversationSubfoldersEnabled')
+			->willReturn(false);
+
+		$this->talkConfig->expects($this->once())
 			->method('getChatStyle')
 			->with(null)
 			->willReturn('split');
@@ -161,6 +165,7 @@ class CapabilitiesTest extends TestCase {
 				'config' => [
 					'attachments' => [
 						'allowed' => false,
+						'conversation-subfolders' => false,
 					],
 					'call' => [
 						'enabled' => true,
@@ -287,6 +292,10 @@ class CapabilitiesTest extends TestCase {
 			->willReturn(true);
 
 		$this->talkConfig->expects($this->once())
+			->method('isConversationSubfoldersEnabled')
+			->willReturn(true);
+
+		$this->talkConfig->expects($this->once())
 			->method('getAttachmentFolder')
 			->with('uid')
 			->willReturn('/Talk');
@@ -382,6 +391,7 @@ class CapabilitiesTest extends TestCase {
 				'config' => [
 					'attachments' => [
 						'allowed' => true,
+						'conversation-subfolders' => true,
 						'folder' => '/Talk',
 					],
 					'call' => [

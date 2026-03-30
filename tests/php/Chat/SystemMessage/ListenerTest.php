@@ -14,6 +14,7 @@ use OCA\Talk\Chat\SystemMessage\Listener;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\ARoomModifiedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
+use OCA\Talk\Events\BeforeDuplicateShareSentEvent;
 use OCA\Talk\Events\ParticipantModifiedEvent;
 use OCA\Talk\Events\RoomModifiedEvent;
 use OCA\Talk\Manager;
@@ -26,11 +27,14 @@ use OCA\Talk\TalkSession;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\Node;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Share\Events\ShareCreatedEvent;
+use OCP\Share\IShare;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -640,5 +644,140 @@ class ListenerTest extends TestCase {
 		}
 
 		self::invokePrivate($this->listener, 'handle', [$event]);
+	}
+
+	// -------------------------------------------------------------------------
+	// handle() — file share notification routing (ShareCreatedEvent path)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Build a Listener whose request mock returns the given route for _route
+	 * and DUMMY_REFERENCE_ID for referenceId (matching setUp behaviour).
+	 */
+	private function makeListenerWithRoute(string $route): Listener {
+		$request = $this->createMock(IRequest::class);
+		$request->method('getParam')->willReturnMap([
+			['_route', null, $route],
+			['referenceId', null, self::DUMMY_REFERENCE_ID],
+			['talkMetaData', null, ''],
+		]);
+
+		$l = $this->createMock(IL10N::class);
+		$l->method('t')->willReturnCallback(fn ($s, $a) => vsprintf($s, $a));
+
+		return new Listener(
+			$request,
+			$this->chatManager,
+			$this->talkSession,
+			$this->session,
+			$this->userSession,
+			$this->timeFactory,
+			$this->manager,
+			$this->participantService,
+			$this->messageParser,
+			$this->threadService,
+			$l,
+			$this->logger,
+		);
+	}
+
+	private function makeShareMock(int $shareType, string $sharedWith, string $mimeType = 'image/png'): IShare&MockObject {
+		$node = $this->createMock(Node::class);
+		$node->method('getMimeType')->willReturn($mimeType);
+
+		$share = $this->createMock(IShare::class);
+		$share->method('getShareType')->willReturn($shareType);
+		$share->method('getSharedWith')->willReturn($sharedWith);
+		$share->method('getNode')->willReturn($node);
+		$share->method('getId')->willReturn('42');
+		return $share;
+	}
+
+	public function testFixMimeTypeSkippedForAttachmentRoute(): void {
+		$share = $this->makeShareMock(IShare::TYPE_ROOM, 'roomtoken');
+		$room = $this->createMock(Room::class);
+		$this->manager->method('getRoomByToken')->with('roomtoken')->willReturn($room);
+
+		// ensureOneToOneRoomIsFilled runs for post (attendees must be persisted),
+		// but not for probe (the actual message post will do it later).
+		$this->participantService->expects($this->once())->method('ensureOneToOneRoomIsFilled')->with($room);
+		$this->chatManager->expects($this->never())->method('addSystemMessage');
+
+		$listener = $this->makeListenerWithRoute('ocs.spreed.chat.postattachmenttoroom');
+		self::invokePrivate($listener, 'handle', [new ShareCreatedEvent($share)]);
+	}
+
+	public function testFixMimeTypeSkippedForProbeRoute(): void {
+		$share = $this->makeShareMock(IShare::TYPE_ROOM, 'roomtoken');
+
+		// Probe returns before getRoomByToken — ensureOneToOneRoomIsFilled must NOT run.
+		$this->manager->expects($this->never())->method('getRoomByToken');
+		$this->participantService->expects($this->never())->method('ensureOneToOneRoomIsFilled');
+		$this->chatManager->expects($this->never())->method('addSystemMessage');
+
+		$listener = $this->makeListenerWithRoute('ocs.spreed.chat.probeattachmentfolder');
+		self::invokePrivate($listener, 'handle', [new ShareCreatedEvent($share)]);
+	}
+
+	public function testFixMimeTypeSkippedForShareToChatRoute(): void {
+		$share = $this->makeShareMock(IShare::TYPE_ROOM, 'roomtoken');
+
+		// sharetochat returns before getRoomByToken is reached
+		$this->manager->expects($this->never())->method('getRoomByToken');
+		$this->chatManager->expects($this->never())->method('addSystemMessage');
+
+		$listener = $this->makeListenerWithRoute('ocs.spreed.recording.sharetochat');
+		self::invokePrivate($listener, 'handle', [new ShareCreatedEvent($share)]);
+	}
+
+	public function testFixMimeTypeSkippedForNonRoomShare(): void {
+		$share = $this->makeShareMock(IShare::TYPE_USER, 'alice');
+
+		$this->chatManager->expects($this->never())->method('addSystemMessage');
+
+		$listener = $this->makeListenerWithRoute('');
+		self::invokePrivate($listener, 'handle', [new ShareCreatedEvent($share)]);
+	}
+
+	public function testFixMimeTypeTriggersForRegularFileShare(): void {
+		$share = $this->makeShareMock(IShare::TYPE_ROOM, 'roomtoken', 'image/png');
+		$room = $this->createMock(Room::class);
+		$this->manager->method('getRoomByToken')->with('roomtoken')->willReturn($room);
+		$this->mockLoggedInUser('alice');
+
+		$this->chatManager->expects($this->once())->method('addSystemMessage');
+
+		$listener = $this->makeListenerWithRoute('ocs.spreed.filesintegration.getroombyfileid');
+		self::invokePrivate($listener, 'handle', [new ShareCreatedEvent($share)]);
+	}
+
+	/**
+	 * Regression: before the fix, folder shares via any route were silenced.
+	 * Now only the attachment-endpoint route is silenced; regular folder shares
+	 * (e.g. a user sharing their Documents folder to a room) must still post a
+	 * file_shared system message.
+	 */
+	public function testFixMimeTypeTriggersForRegularFolderShare(): void {
+		$share = $this->makeShareMock(IShare::TYPE_ROOM, 'roomtoken', 'httpd/unix-directory');
+		$room = $this->createMock(Room::class);
+		$this->manager->method('getRoomByToken')->with('roomtoken')->willReturn($room);
+		$this->mockLoggedInUser('alice');
+
+		$this->chatManager->expects($this->once())->method('addSystemMessage');
+
+		$listener = $this->makeListenerWithRoute('ocs.spreed.filesintegration.getroombyfileid');
+		self::invokePrivate($listener, 'handle', [new ShareCreatedEvent($share)]);
+	}
+
+	public function testFixMimeTypeSkippedForAttachmentRouteWithDuplicateEvent(): void {
+		$share = $this->makeShareMock(IShare::TYPE_ROOM, 'roomtoken');
+		$room = $this->createMock(Room::class);
+		$this->manager->method('getRoomByToken')->with('roomtoken')->willReturn($room);
+
+		$this->participantService->expects($this->once())->method('ensureOneToOneRoomIsFilled')->with($room);
+		$this->chatManager->expects($this->never())->method('addSystemMessage');
+
+		$listener = $this->makeListenerWithRoute('ocs.spreed.chat.postattachmenttoroom');
+		self::invokePrivate($listener, 'handle', [new BeforeDuplicateShareSentEvent($share)]);
 	}
 }

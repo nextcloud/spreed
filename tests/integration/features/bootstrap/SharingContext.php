@@ -25,6 +25,8 @@ class SharingContext implements Context {
 	private array $adminUser;
 	private string $regularUserPassword;
 	private ?\SimpleXMLElement $lastCreatedShareData = null;
+	/** @var array<string, string> Draft folder paths returned by the probe endpoint, keyed by "{user}|{token}". */
+	private array $draftFolderByUserToken = [];
 
 	public function __construct(string $baseUrl, array $admin, string $regularUserPassword) {
 		$this->baseUrl = $baseUrl;
@@ -52,6 +54,147 @@ class SharingContext implements Context {
 		$this->sendingToDav('MKCOL', $url);
 
 		$this->theHTTPStatusCodeShouldBe(201);
+	}
+
+	#[Given('/^user "([^"]*)" uploads file "([^"]*)" with content "([^"]*)" to conversation folder for room "([^"]*)" with name "([^"]*)"$/')]
+	public function userUploadsFileToConversationFolder(string $user, string $filename, string $content, string $room, string $displayName): void {
+		$this->currentUser = $user;
+
+		// $displayName is no longer needed: the probe endpoint creates the folder
+		// hierarchy server-side and returns the Draft path the client should
+		// upload into. The parameter is kept so the existing Gherkin steps still
+		// match without rewriting every scenario.
+		unset($displayName);
+
+		$token = FeatureContext::getTokenForIdentifier($room);
+		$draftPath = $this->ensureDraftFolderViaProbe($user, $token);
+
+		$this->sendingToDav('PUT', "/$user/$draftPath/$filename", null, $content);
+		$this->theHTTPStatusCodeShouldBe(201);
+	}
+
+	#[When('/^user "([^"]*)" posts file "([^"]*)" from conversation folder of room "([^"]*)" with name "([^"]*)" with (\d+) \(v1\)$/')]
+	public function userPostsFileFromConversationFolder(string $user, string $filename, string $room, string $displayName, int $statusCode, ?TableNode $body = null): void {
+		$this->currentUser = $user;
+		unset($displayName); // see userUploadsFileToConversationFolder
+
+		$token = FeatureContext::getTokenForIdentifier($room);
+		$draftPath = $this->ensureDraftFolderViaProbe($user, $token);
+		$filePath = $draftPath . '/' . $filename;
+
+		$talkMetaData = [];
+		if ($body instanceof TableNode) {
+			foreach ($body->getRowsHash() as $key => $value) {
+				if ($key === 'talkMetaData.replyTo' || $key === 'talkMetaData.threadId') {
+					$value = FeatureContext::getMessageIdForText($value);
+				}
+				if (str_starts_with($key, 'talkMetaData.')) {
+					$talkMetaData[substr($key, 13)] = $value;
+				}
+			}
+		}
+
+		$this->sendingToTalkAttachmentEndpoint($token, $filePath, $talkMetaData);
+		$this->theHTTPStatusCodeShouldBe($statusCode);
+	}
+
+	#[When('/^user "([^"]*)" posts file "([^"]*)" from their home to room "([^"]*)" with (\d+) \(v1\)$/')]
+	public function userPostsFileFromHomeToRoom(string $user, string $filename, string $room, int $statusCode): void {
+		$this->currentUser = $user;
+
+		$token = FeatureContext::getTokenForIdentifier($room);
+		$this->sendingToTalkAttachmentEndpoint($token, $filename, []);
+		$this->theHTTPStatusCodeShouldBe($statusCode);
+	}
+
+	/**
+	 * Post a file that was uploaded under a temporary name, passing the desired
+	 * final name via `fileName` so the backend renames it with conflict resolution.
+	 */
+	#[When('/^user "([^"]*)" posts temp file "([^"]*)" with name "([^"]*)" from conversation folder of room "([^"]*)" with name "([^"]*)" with (\d+) \(v1\)$/')]
+	public function userPostsTempFileWithDesiredName(string $user, string $tempFileName, string $desiredName, string $room, string $displayName, int $statusCode): void {
+		$this->currentUser = $user;
+		unset($displayName); // see userUploadsFileToConversationFolder
+
+		$token = FeatureContext::getTokenForIdentifier($room);
+		$draftPath = $this->ensureDraftFolderViaProbe($user, $token);
+		$filePath = $draftPath . '/' . $tempFileName;
+		$this->sendingToTalkAttachmentEndpoint($token, $filePath, [], $desiredName);
+		$this->theHTTPStatusCodeShouldBe($statusCode);
+	}
+
+	/**
+	 * Call the probe endpoint for a room and store the response.
+	 * $fileNames is a comma-separated list of desired filenames.
+	 */
+	#[When('/^user "([^"]*)" probes attachment folder for room "([^"]*)" with files "([^"]*)" with (\d+) \(v1\)$/')]
+	public function userProbesAttachmentFolder(string $user, string $room, string $fileNamesCsv, int $statusCode): void {
+		$this->currentUser = $user;
+		$token = FeatureContext::getTokenForIdentifier($room);
+		$fileNames = array_map('trim', explode(',', $fileNamesCsv));
+		$this->sendingToTalkAttachmentFolderProbe($token, $fileNames);
+		$this->theHTTPStatusCodeShouldBe($statusCode);
+	}
+
+	/**
+	 * Assert that the probe response folder path matches a REGEXP.
+	 */
+	#[Then('/^the probe response folder matches "([^"]*)"$/')]
+	public function theProbeFolderMatches(string $pattern): void {
+		$body = $this->response->getBody();
+		$body->rewind();
+		$data = json_decode($body->getContents(), true);
+		$folder = $data['ocs']['data']['folder'] ?? '';
+		\PHPUnit\Framework\Assert::assertMatchesRegularExpression($pattern, $folder, 'Probe folder path did not match expected pattern');
+	}
+
+	/**
+	 * Assert that the probe response renames map contains a specific entry.
+	 */
+	#[Then('/^the probe response renames "([^"]*)" to "([^"]*)"$/')]
+	public function theProbeResponseRenames(string $from, string $to): void {
+		$body = $this->response->getBody();
+		$body->rewind();
+		$data = json_decode($body->getContents(), true);
+		$renames = $data['ocs']['data']['renames'] ?? [];
+
+		foreach ($renames as $rename) {
+			if (isset($rename[$from]) && $rename[$from] === $to) {
+				return;
+			}
+		}
+
+		throw new \RuntimeException(sprintf(
+			'Expected probe renames to contain "%s" => "%s", but got: %s',
+			$from,
+			$to,
+			json_encode($renames),
+		));
+	}
+
+	/**
+	 * Assert that the last attachment response contains a specific rename mapping.
+	 * The OCS data is expected to contain renames: [{"$from": "$to"}].
+	 */
+	#[Then('/^the last attachment response renames "([^"]*)" to "([^"]*)"$/')]
+	public function theLastAttachmentResponseRenames(string $from, string $to): void {
+		$body = $this->response->getBody();
+		$body->rewind();
+		$data = json_decode($body->getContents(), true);
+		$renames = $data['ocs']['data']['renames'] ?? [];
+
+		foreach ($renames as $rename) {
+			if (isset($rename[$from]) && $rename[$from] === $to) {
+				return;
+			}
+		}
+
+		throw new \RuntimeException(sprintf(
+			'Expected renames to contain "%s" => "%s", but got: %s',
+			$from,
+			$to,
+			json_encode($renames),
+		));
 	}
 
 	#[Given('user :user moves file :source to :destination')]
@@ -843,5 +986,95 @@ class SharingContext implements Context {
 			$sharees[] = [$element['label'], $element['value']['shareType'], $element['value']['shareWith']];
 		}
 		return $sharees;
+	}
+
+	// -------------------------------------------------------------------------
+	// Conversation-folder helpers (lazy per-conversation attachment subfolders)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Call the probe endpoint to lazily create (and share) the conversation
+	 * folder hierarchy for $user/$token, then return the Draft folder path the
+	 * client should upload into. Result is cached per (user, token) so repeated
+	 * uploads in the same scenario don't issue redundant probes.
+	 */
+	private function ensureDraftFolderViaProbe(string $user, string $token): string {
+		$cacheKey = $user . '|' . $token;
+		if (isset($this->draftFolderByUserToken[$cacheKey])) {
+			return $this->draftFolderByUserToken[$cacheKey];
+		}
+
+		$previousUser = $this->currentUser;
+		$this->currentUser = $user;
+		$this->sendingToTalkAttachmentFolderProbe($token, []);
+		$this->currentUser = $previousUser;
+
+		\PHPUnit\Framework\Assert::assertSame(
+			200,
+			$this->response->getStatusCode(),
+			'Probe call to prepare the draft folder failed for ' . $cacheKey,
+		);
+
+		$body = $this->response->getBody();
+		$body->rewind();
+		$data = json_decode($body->getContents(), true);
+		$folder = $data['ocs']['data']['folder'] ?? null;
+		if (!is_string($folder) || $folder === '') {
+			throw new \RuntimeException('Probe response did not contain a draft folder path');
+		}
+
+		$this->draftFolderByUserToken[$cacheKey] = $folder;
+		return $folder;
+	}
+
+	/**
+	 * POST to the Talk attachment folder probe endpoint (OCS v2).
+	 *
+	 * @param list<string> $fileNames
+	 */
+	private function sendingToTalkAttachmentFolderProbe(string $token, array $fileNames): void {
+		$fullUrl = $this->baseUrl . 'ocs/v2.php/apps/spreed/api/v1/chat/' . $token . '/attachment/folder?format=json';
+		$client = new Client();
+		$formParams = [];
+		foreach ($fileNames as $i => $name) {
+			$formParams['fileNames[' . $i . ']'] = $name;
+		}
+		$options = [
+			'auth' => [$this->currentUser, $this->regularUserPassword],
+			'headers' => ['OCS_APIREQUEST' => 'true'],
+			'form_params' => $formParams,
+		];
+		try {
+			$this->response = $client->request('POST', $fullUrl, $options);
+			$this->responseBody = null;
+		} catch (GuzzleHttp\Exception\RequestException $ex) {
+			$this->response = $ex->getResponse();
+			$this->responseBody = null;
+		}
+	}
+
+	/**
+	 * POST to the Talk attachment endpoint (OCS v2).
+	 */
+	private function sendingToTalkAttachmentEndpoint(string $token, string $filePath, array $talkMetaData, string $fileName = ''): void {
+		$fullUrl = $this->baseUrl . 'ocs/v2.php/apps/spreed/api/v1/chat/' . $token . '/attachment?format=json';
+		$client = new Client();
+		$options = [
+			'auth' => [$this->currentUser, $this->regularUserPassword],
+			'headers' => ['OCS_APIREQUEST' => 'true'],
+			'form_params' => [
+				'filePath' => $filePath,
+				'fileName' => $fileName,
+				'referenceId' => '',
+				'talkMetaData' => !empty($talkMetaData) ? json_encode($talkMetaData) : '',
+			],
+		];
+		try {
+			$this->response = $client->request('POST', $fullUrl, $options);
+			$this->responseBody = null;
+		} catch (GuzzleHttp\Exception\RequestException $ex) {
+			$this->response = $ex->getResponse();
+			$this->responseBody = null;
+		}
 	}
 }

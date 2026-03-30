@@ -13,6 +13,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Chat\ReactionManager;
+use OCA\Talk\Config;
 use OCA\Talk\Controller\ChatController;
 use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
@@ -25,6 +26,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\BotService;
+use OCA\Talk\Service\ConversationFolderService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\ReminderService;
@@ -92,6 +94,8 @@ class ChatControllerTest extends TestCase {
 	private ITaskProcessingManager&MockObject $taskProcessingManager;
 	private IAppConfig&MockObject $appConfig;
 	private LoggerInterface&MockObject $logger;
+	private ConversationFolderService&MockObject $conversationFolderService;
+	private Config&MockObject $talkConfig;
 
 	protected Room&MockObject $room;
 
@@ -138,6 +142,8 @@ class ChatControllerTest extends TestCase {
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->scheduledMessageService = $this->createMock(ScheduledMessageService::class);
+		$this->conversationFolderService = $this->createMock(ConversationFolderService::class);
+		$this->talkConfig = $this->createMock(Config::class);
 
 		$this->room = $this->createMock(Room::class);
 
@@ -190,6 +196,8 @@ class ChatControllerTest extends TestCase {
 			$this->appConfig,
 			$this->logger,
 			$this->scheduledMessageService,
+			$this->conversationFolderService,
+			$this->talkConfig,
 		);
 	}
 
