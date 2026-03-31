@@ -2299,6 +2299,30 @@ export type components = {
             threadId?: number;
             /** @description Set when a thread is created with this message. If missing, no thread creation is associated with this message */
             threadTitle?: string;
+            /**
+             * Format: int64
+             * @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message id
+             */
+            parentMessageId?: number;
+            /** @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation token. */
+            parentConversationToken?: string;
+            /** @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation name */
+            parentConversationName?: string;
+            /** @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message's actor display name */
+            parentActorDisplayName?: string;
+            /** @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message original body */
+            parentMessage?: string;
+            /** @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message paremeters */
+            parentMessageParameters?: {
+                [key: string]: Record<string, never>;
+            };
+            /** @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message type */
+            parentMessageType?: string;
+            /**
+             * Format: int64
+             * @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message timestamp
+             */
+            parentTimestamp?: number;
         };
         ChatMessageWithParent: components["schemas"]["ChatMessage"] & {
             parent?: components["schemas"]["ChatMessage"] | components["schemas"]["DeletedChatMessage"];
@@ -5165,6 +5189,11 @@ export interface operations {
                      */
                     replyTo?: number;
                     /**
+                     * @description Parent token to which reply is initiated
+                     * @default
+                     */
+                    replyToToken?: string;
+                    /**
                      * @description If sent silent the chat message will not create any notifications
                      * @default false
                      */
@@ -5431,6 +5460,11 @@ export interface operations {
                      * @default 0
                      */
                     replyTo?: number;
+                    /**
+                     * @description Parent token to which reply is initiated
+                     * @default
+                     */
+                    replyToToken?: string;
                     /**
                      * @description If sent silent the scheduled message will not create any notifications when sent
                      * @default false

@@ -8,8 +8,9 @@ import type { ChatMessage } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
-import { computed, ref, toRef } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconClose from 'vue-material-design-icons/Close.vue'
@@ -24,10 +25,17 @@ import { getMessageIcon } from '../utils/getMessageIcon.ts'
 import { parseToSimpleMessage } from '../utils/textParse.ts'
 
 type DeletedParentMessage = Pick<ChatMessage, 'id' | 'deleted'>
+type PrivateReplyParentMessage = Pick<ChatMessage, 'id' | 'messageType'> & {
+	actorDisplayName: string
+	message: string
+	messageParameters: ChatMessage['messageParameters']
+	token: string
+	conversationName: string
+}
 
-const { message, canCancel = false, editMessage = false } = defineProps<{
+const { message: rawMessage, canCancel = false, editMessage = false } = defineProps<{
 	/** The quoted message object */
-	message: ChatMessage | DeletedParentMessage
+	message: ChatMessage | DeletedParentMessage | PrivateReplyParentMessage
 	/** Whether to show remove / cancel action */
 	canCancel?: boolean
 	/** Whether to show edit actions */
@@ -35,8 +43,39 @@ const { message, canCancel = false, editMessage = false } = defineProps<{
 }>()
 
 const route = useRoute()
+const store = useStore()
 const actorStore = useActorStore()
 const chatExtrasStore = useChatExtrasStore()
+
+const isPrivateReply = computed(() => {
+	// from `MessageBody`
+	if (isExistingMessage(rawMessage) && rawMessage.messageType === 'private_reply') {
+		return true
+	}
+	// from `NewMessage`
+	if (canCancel) {
+		const parentConversationToken = chatExtrasStore.getPrivateReplyParentToken()
+		return !!parentConversationToken
+	}
+	return false
+})
+
+// Resolve the message: unwrap metaData for private_reply (MessageBody path), otherwise use as-is
+const message = computed<ChatMessage | DeletedParentMessage | PrivateReplyParentMessage>(() => {
+	if (!isPrivateReply.value || !isExistingMessage(rawMessage) || rawMessage.messageType !== 'private_reply') {
+		return rawMessage
+	}
+	const meta = rawMessage.metaData ?? {}
+	return {
+		id: meta.parentMessageId ?? 0,
+		actorDisplayName: meta.parentActorDisplayName ?? '',
+		message: meta.parentMessage ?? '',
+		messageType: meta.parentMessageType ?? '',
+		messageParameters: meta.parentMessageParameters ?? {},
+		token: meta.parentConversationToken ?? '',
+		conversationName: meta.parentConversationName ?? '',
+	}
+})
 
 const {
 	isFileShare,
@@ -44,26 +83,38 @@ const {
 	remoteServer,
 	actorDisplayName,
 	actorDisplayNameWithFallback,
-} = useMessageInfo(isExistingMessage(message) ? toRef(() => message) : undefined)
+} = useMessageInfo(computed(() => isExistingMessage(message.value) ? message.value : undefined))
 
 const actorInfo = computed(() => [actorDisplayNameWithFallback.value, remoteServer.value].filter((value) => value).join(' '))
 
-const hash = computed(() => '#message_' + message.id)
+const hash = computed(() => '#message_' + message.value.id)
 
 const component = computed(() => canCancel
 	? { tag: 'div', link: undefined }
-	: { tag: 'router-link', link: { query: route.query, hash: hash.value } })
+	: { tag: 'router-link', link: { query: route.query, hash: hash.value, name: 'conversation', params: { token: message.value.token } } })
 
-const isOwnMessageQuoted = computed(() => isExistingMessage(message) ? actorStore.checkIfSelfIsActor(message) : false)
+const isOwnMessageQuoted = computed(() => isExistingMessage(message.value) ? actorStore.checkIfSelfIsActor(message.value) : false)
+
+const actorConvoName = computed(() => {
+	// MessageBody path: conversationName is on the resolved message
+	if (isPrivateReply.value && 'conversationName' in message.value) {
+		return message.value.conversationName
+	}
+	// NewMessage path: look up conversation name from store using message token
+	if (isPrivateReply.value && isExistingMessage(message.value)) {
+		return store.getters.conversation(message.value.token)?.name ?? ''
+	}
+	return ''
+})
 
 const filePreviewLoading = ref(true)
 const filePreviewFailed = ref(false)
 const filePreview = computed(() => {
-	if (!isExistingMessage(message) || !isFileShare || filePreviewFailed.value) {
+	if (!isExistingMessage(message.value) || !isFileShare.value || filePreviewFailed.value) {
 		return undefined
 	}
 
-	const fileData = Object.values(message.messageParameters).find((param) => param.type === 'file' && param['preview-available'] === 'yes')
+	const fileData = Object.values(message.value.messageParameters).find((param) => param.type === 'file' && param['preview-available'] === 'yes')
 	if (fileData) {
 		return {
 			alt: fileData.name,
@@ -74,12 +125,12 @@ const filePreview = computed(() => {
 	}
 })
 
-const simpleQuotedMessageIcon = computed(() => isExistingMessage(message) ? getMessageIcon(message) : null)
+const simpleQuotedMessageIcon = computed(() => isExistingMessage(message.value) ? getMessageIcon(message.value) : null)
 
 const editLabel = computed(() => {
 	if (editMessage) {
 		return t('spreed', '(editing)')
-	} else if (isExistingMessage(message) && message.lastEditTimestamp) {
+	} else if (isExistingMessage(message.value) && message.value.lastEditTimestamp) {
 		return t('spreed', '(edited)')
 	}
 	return ''
@@ -93,10 +144,10 @@ const editLabel = computed(() => {
  * @return A simple message to show below the conversation name
  */
 const simpleQuotedMessage = computed(() => {
-	if (!isExistingMessage(message)) {
+	if (!isExistingMessage(message.value)) {
 		return t('spreed', 'The message has expired or has been deleted')
 	} else {
-		return parseToSimpleMessage(message.message, message.messageParameters)
+		return parseToSimpleMessage(message.value.message, message.value.messageParameters)
 	}
 })
 
@@ -123,14 +174,14 @@ function isExistingMessage(message: ChatMessage | DeletedParentMessage): message
  * Abort replying / editing process
  */
 function handleAbort() {
-	if (!isExistingMessage(message)) {
+	if (!isExistingMessage(message.value)) {
 		return
 	}
 
 	if (editMessage) {
-		chatExtrasStore.removeMessageIdToEdit(message.token)
+		chatExtrasStore.removeMessageIdToEdit(message.value.token)
 	} else {
-		chatExtrasStore.removeParentIdToReply(message.token)
+		chatExtrasStore.removeParentIdToReply(message.value.token)
 	}
 	EventBus.emit('focus-chat-input')
 }
@@ -145,7 +196,7 @@ function handleQuoteClick() {
 
 	if (route.hash === hash.value) {
 		// Already on this message route, just trigger highlight
-		EventBus.emit('focus-message', { messageId: message.id })
+		EventBus.emit('focus-message', { messageId: message.value.id })
 	}
 }
 </script>
@@ -190,9 +241,12 @@ function handleQuoteClick() {
 					:source="message.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disableMenu />
-				<span class="quote__main-author-info">
+				<span class="quote__main-author-info" :class="{ 'no-ellipsis': isPrivateReply }">
 					<span class="quote__main-author-name">
 						{{ actorInfo }}
+					</span>
+					<span v-if="isPrivateReply">
+						&nbsp;•&nbsp; {{ actorConvoName }}
 					</span>
 					{{ editLabel }}
 				</span>
@@ -200,7 +254,8 @@ function handleQuoteClick() {
 			<span
 				role="blockquote"
 				dir="auto"
-				class="quote__main-text">
+				class="quote__main-text"
+				:class="{ 'break-new-line': isPrivateReply }">
 				{{ shortenedQuoteMessage }}
 			</span>
 		</span>
@@ -297,6 +352,11 @@ function handleQuoteClick() {
 		flex-grow: 1;
 		overflow: hidden;
 
+		&:has(.break-new-line) {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
 		&-author {
 			display: flex;
 			align-items: center;
@@ -307,6 +367,10 @@ function handleQuoteClick() {
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
+				 &.no-ellipsis {
+					overflow: visible;
+					text-overflow: unset;
+				}
 			}
 
 			&-name {
@@ -321,6 +385,11 @@ function handleQuoteClick() {
 			overflow: hidden;
 			text-align: start;
 			max-width: 100%;
+			&.break-new-line {
+				white-space: normal;
+				overflow: visible;
+				text-overflow: unset;
+			}
 		}
 	}
 

@@ -447,6 +447,30 @@ export type components = {
             threadId?: number;
             /** @description Set when a thread is created with this message. If missing, no thread creation is associated with this message */
             threadTitle?: string;
+            /**
+             * Format: int64
+             * @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message id
+             */
+            parentMessageId?: number;
+            /** @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation token. */
+            parentConversationToken?: string;
+            /** @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation name */
+            parentConversationName?: string;
+            /** @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message's actor display name */
+            parentActorDisplayName?: string;
+            /** @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message original body */
+            parentMessage?: string;
+            /** @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message paremeters */
+            parentMessageParameters?: {
+                [key: string]: Record<string, never>;
+            };
+            /** @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message type */
+            parentMessageType?: string;
+            /**
+             * Format: int64
+             * @description Set exclusively when a message in a convo is private replied on a 1-1 room. Represents the parent message timestamp
+             */
+            parentTimestamp?: number;
         };
         ChatProxyMessage: components["schemas"]["BaseMessage"];
         OCSMeta: {

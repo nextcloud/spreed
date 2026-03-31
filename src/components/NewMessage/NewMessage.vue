@@ -588,9 +588,18 @@ export default {
 			return this.silentChat ? t('spreed', 'Send message silently') : t('spreed', 'Send message')
 		},
 
+		parentConversationToken() {
+			return this.chatExtrasStore.getPrivateReplyParentToken()
+		},
+
+		isPrivateReply() {
+			return !!this.parentConversationToken && this.parentConversationToken !== this.token
+		},
+
 		parentMessage() {
-			const parentId = this.chatExtrasStore.getParentIdToReply(this.token)
-			return parentId && this.$store.getters.message(this.token, parentId)
+			const parentToken = this.isPrivateReply ? this.parentConversationToken : this.token
+			const parentId = this.chatExtrasStore.getParentIdToReply(parentToken)
+			return parentId && this.$store.getters.message(parentToken, parentId)
 		},
 
 		messageToEdit() {
@@ -811,7 +820,8 @@ export default {
 				}
 
 				if (this.parentMessage) {
-					this.chatExtrasStore.removeParentIdToReply(this.token)
+					const parentToken = this.isPrivateReply ? this.parentConversationToken : this.token
+					this.chatExtrasStore.removeParentIdToReply(parentToken)
 				}
 			} else {
 				// Leaving editing mode
@@ -1061,7 +1071,8 @@ export default {
 				// Scrolls the message list to the last added message
 				EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
 				// Also remove the message to be replied for this conversation
-				this.chatExtrasStore.removeParentIdToReply(this.token)
+				const parentToken = this.isPrivateReply ? this.parentConversationToken : this.token
+				this.chatExtrasStore.removeParentIdToReply(parentToken)
 
 				this.dialog
 					? await this.submitMessage(this.token, temporaryMessage)
@@ -1074,6 +1085,9 @@ export default {
 		async postMessage(token, temporaryMessage) {
 			try {
 				await this.$store.dispatch('postNewMessage', { token, temporaryMessage })
+				if (this.isPrivateReply) {
+					this.chatExtrasStore.removePrivateReplyParentToken()
+				}
 			} catch (e) {
 				console.error(e)
 			}
@@ -1157,7 +1171,8 @@ export default {
 		setCreateThread(value) {
 			if (value) {
 				this.chatExtrasStore.setThreadTitle(this.token, '')
-				this.chatExtrasStore.removeParentIdToReply(this.token)
+				const parentToken = this.isPrivateReply ? this.parentConversationToken : this.token
+				this.chatExtrasStore.removeParentIdToReply(parentToken)
 				this.chatExtrasStore.removeMessageIdToEdit(this.token)
 				this.$nextTick(() => {
 					this.threadTitleInputRef.focus()
@@ -1194,7 +1209,8 @@ export default {
 					this.threadId ? { threadId: this.threadId } : {},
 					this.parentMessage?.id ? { replyTo: this.parentMessage?.id } : {},
 				))
-				this.chatExtrasStore.removeParentIdToReply(this.token)
+				const parentToken = this.isPrivateReply ? this.parentConversationToken : this.token
+				this.chatExtraStore.removeParentIdToReply(parentToken)
 
 				this.uploadStore.shareFile({ token: this.token, path, talkMetaData })
 			})
@@ -1407,6 +1423,9 @@ export default {
 				if (this.threadCreating) {
 					scheduleMessagePayload.threadTitle = this.threadTitle.trim()
 				}
+				if (this.isPrivateReply) {
+					scheduleMessagePayload.replyToToken = this.parentConversationToken
+				}
 
 				try {
 					this.isScheduling = true
@@ -1417,7 +1436,8 @@ export default {
 					this.chatExtrasStore.removeThreadTitle(this.token)
 					this.chatExtrasStore.setScheduleMessageTime(null)
 					this.silentChat = false
-					this.chatExtrasStore.removeParentIdToReply(this.token)
+					const parentToken = this.isPrivateReply ? this.parentConversationToken : this.token
+					this.chatExtrasStore.removeParentIdToReply(parentToken)
 					this.debouncedUpdateChatInput.clear()
 					this.chatExtrasStore.removeChatInput(this.token)
 					this.resetTypingIndicator()
