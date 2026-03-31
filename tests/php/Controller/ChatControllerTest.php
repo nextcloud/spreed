@@ -375,6 +375,9 @@ class ChatControllerTest extends TestCase {
 			->willReturn($parent);
 
 		$parentMessage = $this->createMock(Message::class);
+		$parentMessage->expects($this->any())
+			->method('getComment')
+			->willReturn($parent);
 		$parentMessage->expects($this->once())
 			->method('isReplyable')
 			->willReturn(true);
@@ -396,6 +399,9 @@ class ChatControllerTest extends TestCase {
 			]);
 
 		$chatMessage = $this->createMock(Message::class);
+		$chatMessage->expects($this->any())
+			->method('getComment')
+			->willReturn($comment);
 		$chatMessage->expects($this->once())
 			->method('getVisibility')
 			->willReturn(true);
