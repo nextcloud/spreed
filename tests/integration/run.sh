@@ -103,6 +103,7 @@ MAIN_OVERWRITE_CLI_URL=$(occ_host config:system:get overwrite.cli.url)
 MAIN_SKELETON_DIR=$(occ_host config:system:get skeletondirectory)
 occ_host config:system:set overwrite.cli.url --value "http://localhost:8080/"
 occ_host config:app:set dav enableDefaultContact --value false --type boolean
+occ_host config:app:set guests hash_user_ids --value false --type boolean
 if [[ "$MAIN_SKELETON_DIR" != "" ]]; then
 	echo "Resetting custom skeletondirectory so that tests pass"
 	occ_host config:system:delete skeletondirectory
@@ -112,6 +113,7 @@ REAL_FEDERATED_OVERWRITE_CLI_URL=$(occ_remote config:system:get overwrite.cli.ur
 REAL_FEDERATED_SKELETON_DIR=$(occ_remote config:system:get skeletondirectory)
 occ_remote config:system:set overwrite.cli.url --value "$TEST_REMOTE_URL"
 occ_remote config:app:set dav enableDefaultContact --value false --type boolean
+occ_remote config:app:set guests hash_user_ids --value false --type boolean
 if [[ "$REAL_FEDERATED_SKELETON_DIR" != "" ]]; then
 	echo "Resetting custom skeletondirectory so that tests pass"
 	occ_remote config:system:delete skeletondirectory
