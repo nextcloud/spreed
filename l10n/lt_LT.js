@@ -823,6 +823,7 @@ OC.L10N.register(
     "Share from Files" : "Bendrinti iš failų",
     "Upload from device" : "Įkelti iš įrenginio",
     "Create new poll" : "Sukurti naują apklausą",
+    "Smart picker" : "\"Smart picker\"",
     "Microphone either not available or disabled in settings" : "Mikrofonas arba neprieinamas, arba išjungtas nustatymuose",
     "New file" : "Naujas failas",
     "Blank" : "Tuščia",
