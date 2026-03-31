@@ -97,6 +97,14 @@ export function useConversationInfo({
 		return getDisplayNameWithFallback(lastMessage.value.actorDisplayName, lastMessage.value.actorType, true)
 	})
 
+	const fullLastChatMessageAuthor = computed(() => {
+		if (!exposeMessages || !hasLastMessage.value || lastMessage.value.systemMessage.length) {
+			return ''
+		}
+
+		return getDisplayNameWithFallback(lastMessage.value.actorDisplayName, lastMessage.value.actorType)
+	})
+
 	const conversationInformation = computed(() => {
 		// temporary item while joining, only for Conversation component
 		if (isSearchResult.value === false && !item.value.actorId) {
@@ -194,7 +202,7 @@ export function useConversationInfo({
 			icon: getMessageIcon(lastMessage.value),
 			message: simpleLastChatMessage.value,
 			title: t('spreed', '{actor}: {lastMessage}', {
-				actor: shortLastChatMessageAuthor.value,
+				actor: fullLastChatMessageAuthor.value,
 				lastMessage: simpleLastChatMessage.value,
 			}, { escape: false, sanitize: false }).slice(0, TITLE_MAX_LENGTH),
 		}
