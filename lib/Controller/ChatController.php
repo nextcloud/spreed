@@ -144,22 +144,24 @@ class ChatController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * @return array{parent: IComment, parentMessage: Message}|DataResponse
+	 * @return array{parent: IComment, parentMessage: Message}
+	 * @throws \InvalidArgumentException When a 400 should be thrown
+	 * @throws \DomainException When a 403 should be thrown
 	 */
-	private function resolveReplyTo(int $replyTo, string $replyToToken, string $actorType, string $actorId, \DateTime $creationDateTime): array|DataResponse {
+	private function resolveReplyTo(int $replyTo, string $replyToToken, string $actorType, string $actorId, \DateTime $creationDateTime): array {
 		$isPrivateReplyFromAnotherConvo = $replyToToken != '';
 
 		try {
 			$targetParentRoom = $isPrivateReplyFromAnotherConvo ? $this->manager->getRoomByToken($replyToToken) : $this->room;
 			$parent = $this->chatManager->getParentComment($targetParentRoom, (string)$replyTo);
 		} catch (NotFoundException $e) {
-			return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+			throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($isPrivateReplyFromAnotherConvo) {
 			$isOneToOneRoom = $this->room->getType() === Room::TYPE_ONE_TO_ONE;
 			if (!$isOneToOneRoom) {
-				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+				throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
 			}
 
 			$parentActorId = $parent->getActorId();
@@ -169,14 +171,14 @@ class ChatController extends AEnvironmentAwareOCSController {
 				$this->participantService->getParticipantByActor($targetParentRoom, $actorType, $actorId);
 				$this->participantService->getParticipantByActor($targetParentRoom, $parentActorType, $parentActorId);
 			} catch (ParticipantNotFoundException $e) {
-				return new DataResponse(['error' => 'reply-to'], Http::STATUS_FORBIDDEN);
+				throw new \DomainException('reply-to', Http::STATUS_FORBIDDEN);
 			}
 
 			$originalParentMessage = $this->messageParser->createMessage($targetParentRoom, $this->participant, $parent, $this->l);
 			$this->messageParser->parseMessage($originalParentMessage);
 
 			if (!$originalParentMessage->isReplyable()) {
-				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+				throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
 			}
 
 			$originalMessageData = $originalParentMessage->toArray('json', null);
@@ -215,7 +217,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			$this->messageParser->parseMessage($parentMessage);
 
 			if (!$parentMessage->isReplyable()) {
-				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+				throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
 			}
 		}
 
@@ -327,10 +329,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param bool $silent If sent silent the chat message will not create any notifications
 	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
 	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
-	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
 	 *
 	 * 201: Message sent successfully
 	 * 400: Sending message is not possible
+	 * 403: When trying to cross reference wrongly on a reply-private
 	 * 404: Actor not found
 	 * 413: Message too long
 	 * 429: Mention rate limit exceeded (guests only)
@@ -366,9 +369,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		if ($replyTo !== 0) {
-			$resolvedReplyTo = $this->resolveReplyTo($replyTo, $replyToToken, $actorType, $actorId, $creationDateTime);
-			if ($resolvedReplyTo instanceof DataResponse) {
-				return $resolvedReplyTo;
+			try {
+				$resolvedReplyTo = $this->resolveReplyTo($replyTo, $replyToToken, $actorType, $actorId, $creationDateTime);
+			} catch (\InvalidArgumentException) {
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+			} catch (\DomainException) {
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_FORBIDDEN);
 			}
 			$parent = $resolvedReplyTo['parent'];
 			$parentMessage = $resolvedReplyTo['parentMessage'];
@@ -477,10 +483,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param bool $silent If sent silent the scheduled message will not create any notifications when sent
 	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
 	 * @param int $threadId Thread id without quoting a specific message (requires `threads` capability)
-	 * @return DataResponse<Http::STATUS_CREATED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'message'|'reply-to'|'send-at'}, array{}>|DataResponse<Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: 'message'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'actor'}, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'message'|'reply-to'|'send-at'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'reply-to'}, array{}>|DataResponse<Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: 'message'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'actor'}, array{}>
 	 *
 	 * 201: Message scheduled successfully
 	 * 400: Scheduling the message is not possible
+	 * 403: When trying to cross reference wrongly on a reply-private
 	 * 404: Actor not found
 	 * 413: Message too long
 	 */
@@ -518,9 +525,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		if ($replyTo !== 0) {
 			[$actorType, $actorId] = $this->getActorInfo();
-			$resolvedReplyTo = $this->resolveReplyTo($replyTo, '', $actorType, $actorId, $creationDateTime);
-			if ($resolvedReplyTo instanceof DataResponse) {
-				return $resolvedReplyTo;
+			try {
+				$resolvedReplyTo = $this->resolveReplyTo($replyTo, '', $actorType, $actorId, $creationDateTime);
+			} catch (\InvalidArgumentException) {
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+			} catch (\DomainException) {
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_FORBIDDEN);
 			}
 			$parent = $resolvedReplyTo['parent'];
 			$parentMessage = $resolvedReplyTo['parentMessage'];
