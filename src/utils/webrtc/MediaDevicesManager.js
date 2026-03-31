@@ -12,6 +12,7 @@ import {
 	populateMediaDevicesPreferences,
 	promoteMediaDevice,
 } from '../../services/mediaDevicePreferences.ts'
+import { isSafari } from '../browserCheck.ts'
 import EmitterMixin from '../EmitterMixin.js'
 
 /**
@@ -489,9 +490,12 @@ MediaDevicesManager.prototype = {
 				if (this.attributes.audioInputId) {
 					constraints.audio.deviceId = { exact: this.attributes.audioInputId }
 				}
-				constraints.audio.noiseSuppression = BrowserStorage.getItem('noiseSuppression') !== 'false'
+				if (!isSafari) {
+					// Safari does not support noiseSuppression and autoGainControl constraints
+					constraints.audio.noiseSuppression = BrowserStorage.getItem('noiseSuppression') !== 'false'
+					constraints.audio.autoGainControl = BrowserStorage.getItem('autoGainControl') !== 'false'
+				}
 				constraints.audio.echoCancellation = BrowserStorage.getItem('echoCancellation') !== 'false'
-				constraints.audio.autoGainControl = BrowserStorage.getItem('autoGainControl') !== 'false'
 			}
 		}
 
@@ -537,13 +541,17 @@ MediaDevicesManager.prototype = {
 			if (constraints.audio && constraints.audio.deviceId && track.kind === 'audio') {
 				const compatibleConstraints = {
 					deviceId: constraints.audio.deviceId.exact || constraints.audio.deviceId.ideal || constraints.audio.deviceId,
-					noiseSuppression: constraints.audio.noiseSuppression ?? this.attributes.noiseSuppression,
 					echoCancellation: constraints.audio.echoCancellation ?? this.attributes.echoCancellation,
-					autoGainControl: constraints.audio.autoGainControl ?? this.attributes.autoGainControl,
+				}
+				if (!isSafari) {
+					// Safari does not support noiseSuppression and autoGainControl constraints
+					compatibleConstraints.noiseSuppression = constraints.audio.noiseSuppression ?? this.attributes.noiseSuppression
+					compatibleConstraints.autoGainControl = constraints.audio.autoGainControl ?? this.attributes.autoGainControl
 				}
 
 				const settings = track.getSettings()
 				if (settings && Object.keys(compatibleConstraints).some((key) => settings[key] !== compatibleConstraints[key])) {
+					console.debug('[MediaDevicesManager]: Stopping incompatible track: ', { track, compatibleConstraints, settings })
 					track.stop()
 				}
 			}
