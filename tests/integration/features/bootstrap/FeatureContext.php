@@ -2752,6 +2752,28 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
+	#[Then('/^user "([^"]*)" sends private reply ("[^"]*"|\'[^\']*\') on message ("[^"]*"|\'[^\']*\') from room "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userSendsPrivateReplyToRoom(string $user, string $reply, string $message, string $sourceIdentifier, string $targetIdentifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$reply = substr($reply, 1, -1);
+		$message = substr($message, 1, -1);
+
+		$replyTo = self::$textToMessageId[$message];
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$targetIdentifier],
+			new TableNode([['message', $reply], ['replyTo', $replyTo], ['replyToToken', self::$identifierToToken[$sourceIdentifier]]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
+
+		$response = $this->getDataFromResponse($this->response);
+		if (isset($response['id'])) {
+			self::$textToMessageId[$reply] = $response['id'];
+			self::$messageIdToText[$response['id']] = $reply;
+		}
+	}
+
 	#[Then('next message request has the following parameters set')]
 	public function setChatParametersForNextRequest(?TableNode $formData = null): void {
 		$parameters = [];
@@ -2907,6 +2929,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				static fn (string $field): bool => str_starts_with($field, 'metaData.')
 			)
 		);
+		$includeParentMetaDataKeys = array_map(
+			static fn (string $field): string => substr($field, strlen('parentMetaData.')),
+			array_filter(
+				$formData->getRow(0),
+				static fn (string $field): bool => str_starts_with($field, 'parentMetaData.')
+			)
+		);
 
 		$expected = $formData->getHash();
 		$count = count($expected);
@@ -2983,9 +3012,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$messages[$i]['threadReplies'] = null;
 				}
 			}
+
+			if (!empty($includeParentMetaDataKeys)) {
+				foreach ($includeParentMetaDataKeys as $key) {
+					if ($key === 'replyToMessageId' && isset($expected[$i]['parentMetaData.' . $key])) {
+						$expected[$i]['parentMetaData.' . $key] = self::$textToMessageId[$expected[$i]['parentMetaData.' . $key]];
+					} elseif ($key === 'replyToConversationToken' && isset($expected[$i]['parentMetaData.' . $key])) {
+						$expected[$i]['parentMetaData.' . $key] = self::$identifierToToken[$expected[$i]['parentMetaData.' . $key]];
+					}
+				}
+			}
 		}
 
-		Assert::assertEquals($expected, array_map(function ($message, $expected) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf, $includeLastEdit, $includeMessageType, $includeThreadTitle, $includeThreadReplies, $includeMetaDataKeys) {
+		Assert::assertEquals($expected, array_map(function ($message, $expected) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf, $includeLastEdit, $includeMessageType, $includeThreadTitle, $includeThreadReplies, $includeMetaDataKeys, $includeParentMetaDataKeys) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],
@@ -3038,13 +3077,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 			if (!empty($includeMetaDataKeys)) {
 				$metaData = $message['metaData'] ?? [];
-				var_dump($message['message'], $metaData);
 				foreach ($includeMetaDataKeys as $key) {
 					$data['metaData.' . $key] = $metaData[$key] ?? 'UNSET';
 					$expectedValue = $expected['metaData.' . $key];
 					if ($expectedValue === 'NUMERIC' && is_numeric($data['metaData.' . $key])) {
 						$data['metaData.' . $key] = $expectedValue;
 					}
+				}
+			}
+
+			if (!empty($includeParentMetaDataKeys)) {
+				$parentMetaData = $message['parent']['metaData'] ?? [];
+				foreach ($includeParentMetaDataKeys as $key) {
+					$data['parentMetaData.' . $key] = $parentMetaData[$key] ?? 'UNSET';
 				}
 			}
 
