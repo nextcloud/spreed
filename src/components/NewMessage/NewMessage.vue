@@ -160,7 +160,7 @@
 				</template>
 				<template v-if="submenu === null">
 					<NcActionButton
-						v-if="supportScheduleMessages && !dialog"
+						v-if="supportScheduleMessages && !dialog && !isPrivateReply"
 						key="action-schedule"
 						isMenu
 						@click.stop="submenu = 'schedule'">
@@ -588,9 +588,21 @@ export default {
 			return this.silentChat ? t('spreed', 'Send message silently') : t('spreed', 'Send message')
 		},
 
+		parentConversationToken() {
+			return this.chatExtrasStore.privateReply[this.token]
+		},
+
+		isPrivateReply() {
+			return !!this.parentConversationToken && this.parentConversationToken !== this.token
+		},
+
+		parentToken() {
+			return this.isPrivateReply ? this.parentConversationToken : this.token
+		},
+
 		parentMessage() {
 			const parentId = this.chatExtrasStore.getParentIdToReply(this.token)
-			return parentId && this.$store.getters.message(this.token, parentId)
+			return parentId && this.$store.getters.message(this.parentToken, parentId)
 		},
 
 		messageToEdit() {
@@ -790,6 +802,12 @@ export default {
 
 		threadTitle(newValue) {
 			this.errorTitle = ''
+		},
+
+		isPrivateReply(newValue) {
+			if (newValue && this.scheduleMessageTime) {
+				this.chatExtrasStore.setScheduleMessageTime(null)
+			}
 		},
 
 		messageToEdit(newValue, oldValue) {
@@ -1014,7 +1032,7 @@ export default {
 				}
 			}
 
-			if (supportScheduleMessages && this.scheduleMessageTime) {
+			if (supportScheduleMessages && this.scheduleMessageTime && !this.isPrivateReply) {
 				await this.handleScheduleMessage()
 				return
 			}

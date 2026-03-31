@@ -802,7 +802,19 @@ export default {
 		async handlePrivateReply() {
 			// open the 1:1 conversation
 			const conversation = await this.$store.dispatch('createOneToOneConversation', this.message.actorId)
-			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			if (hasTalkFeature(conversation.token, 'private-reply') && hasTalkFeature(this.message.token, 'private-reply')) {
+				this.chatExtrasStore.setParentIdToReply({
+					token: conversation.token,
+					id: this.message.id,
+				})
+				this.chatExtrasStore.setPrivateReplyParentToken({
+					token: conversation.token,
+					parentToken: this.message.token,
+				})
+			}
+			this.$router
+				.push({ name: 'conversation', params: { token: conversation.token } })
+				.catch((err) => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
 		async handleCopyMessageText() {

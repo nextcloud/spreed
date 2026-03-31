@@ -535,7 +535,16 @@ class Listener implements IEventListener {
 		if ($parent !== null) {
 			$parentMessage = $this->messageParser->createMessage($event->getRoom(), null, $parent, $l10n);
 			$this->messageParser->parseMessage($parentMessage);
-			$data['chat']['comment']['parent'] = $parentMessage->toArray('json', $thread);
+			if ($parent->getVerb() === ChatManager::VERB_PRIVATE_REPLY && $parent->getParentId() === '0') {
+				$metaData = $parent->getMetaData() ?? [];
+				$parentSnapshot = $metaData['originalMessage'];
+				$parentSnapshot['id'] = (int)$parent->getId();
+				unset($metaData['originalMessage']);
+				$parentSnapshot['metaData'] = array_merge($metaData, $parentSnapshot['metaData'] ?? []);
+				$data['chat']['comment']['parent'] = $parentSnapshot;
+			} else {
+				$data['chat']['comment']['parent'] = $parentMessage->toArray('json', $thread);
+			}
 		}
 
 		$this->externalSignaling->sendRoomMessage($room, $data);

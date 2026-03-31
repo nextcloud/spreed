@@ -861,6 +861,23 @@
                     "threadTitle": {
                         "type": "string",
                         "description": "Set when a thread is created with this message. If missing, no thread creation is associated with this message"
+                    },
+                    "replyToMessageId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message id"
+                    },
+                    "replyToConversationToken": {
+                        "type": "string",
+                        "description": "Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation token."
+                    },
+                    "replyToConversationName": {
+                        "type": "string",
+                        "description": "Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation name"
+                    },
+                    "replyToActorDisplayName": {
+                        "type": "string",
+                        "description": "Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's actor display name"
                     }
                 }
             },
@@ -7350,6 +7367,11 @@
                                         "description": "Parent id which this message is a reply to",
                                         "minimum": 0
                                     },
+                                    "replyToToken": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Parent token to which reply is initiated"
+                                    },
                                     "silent": {
                                         "type": "boolean",
                                         "default": false,
@@ -7457,6 +7479,44 @@
                     },
                     "400": {
                         "description": "Sending message is not possible",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "When trying to cross reference wrongly on a reply-private",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -8381,6 +8441,47 @@
                                                                 "message",
                                                                 "reply-to",
                                                                 "send-at"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "When trying to cross reference wrongly on a reply-private",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "reply-to"
                                                             ]
                                                         }
                                                     }

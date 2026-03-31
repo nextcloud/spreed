@@ -7,6 +7,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { ref } from 'vue'
 import { createStore } from 'vuex'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -39,6 +40,11 @@ vi.mock('vuex', async () => {
 		useStore: vi.fn(() => store),
 	}
 })
+
+vi.mock('@vueuse/router', () => ({
+	useRouteParams: vi.fn(() => ref('XXTOKENXX')),
+	useRouteQuery: vi.fn(),
+}))
 
 describe('MessageItem.vue', () => {
 	const TOKEN = 'XXTOKENXX'

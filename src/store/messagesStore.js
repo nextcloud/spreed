@@ -1296,16 +1296,18 @@ const actions = {
 				? conversation.lastMessage.id
 				: chatStore.getLastKnownId(token, { threadId: temporaryMessage.threadId })
 
-			const response = await request({
+			const requestPayload = {
 				token,
 				message: temporaryMessage.message,
 				actorDisplayName: temporaryMessage.actorDisplayName,
 				referenceId: temporaryMessage.referenceId,
 				replyTo: temporaryMessage.parent?.id,
+				replyToToken: temporaryMessage.parent?.metaData?.replyToConversationToken,
 				threadId: temporaryMessage.threadId,
 				silent: temporaryMessage.silent,
 				threadTitle: temporaryMessage.threadTitle,
-			}, options)
+			}
+			const response = await request(requestPayload, options)
 			clearTimeout(timeout)
 			context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: null })
 

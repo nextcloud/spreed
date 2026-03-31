@@ -168,6 +168,7 @@ class Message {
 			&& $this->getMessageType() !== ChatManager::VERB_COMMAND
 			&& $this->getMessageType() !== ChatManager::VERB_MESSAGE_DELETED
 			&& $this->getMessageType() !== ChatManager::VERB_REACTION
+			&& $this->getMessageType() !== ChatManager::VERB_PRIVATE_REPLY
 			&& $this->getMessageType() !== ChatManager::VERB_REACTION_DELETED
 			&& \in_array($this->getActorType(), [
 				Attendee::ACTOR_USERS,

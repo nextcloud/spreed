@@ -2833,6 +2833,17 @@ export type components = {
             threadId?: number;
             /** @description Set when a thread is created with this message. If missing, no thread creation is associated with this message */
             threadTitle?: string;
+            /**
+             * Format: int64
+             * @description Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message id
+             */
+            replyToMessageId?: number;
+            /** @description Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation token. */
+            replyToConversationToken?: string;
+            /** @description Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation name */
+            replyToConversationName?: string;
+            /** @description Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's actor display name */
+            replyToActorDisplayName?: string;
         };
         ChatMessageWithParent: components["schemas"]["ChatMessage"] & {
             parent?: components["schemas"]["ChatMessage"] | components["schemas"]["DeletedChatMessage"];
@@ -5732,6 +5743,11 @@ export interface operations {
                      */
                     replyTo?: number;
                     /**
+                     * @description Parent token to which reply is initiated
+                     * @default
+                     */
+                    replyToToken?: string;
+                    /**
                      * @description If sent silent the chat message will not create any notifications
                      * @default false
                      */
@@ -5768,6 +5784,22 @@ export interface operations {
             };
             /** @description Sending message is not possible */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description When trying to cross reference wrongly on a reply-private */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6059,6 +6091,23 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description When trying to cross reference wrongly on a reply-private */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "reply-to";
+                            };
                         };
                     };
                 };

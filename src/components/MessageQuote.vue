@@ -10,11 +10,13 @@ import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { computed, ref, toRef } from 'vue'
 import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconClose from 'vue-material-design-icons/Close.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
+import { useGetToken } from '../composables/useGetToken.ts'
 import { useMessageInfo } from '../composables/useMessageInfo.ts'
 import { AVATAR } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
@@ -35,8 +37,20 @@ const { message, canCancel = false, editMessage = false } = defineProps<{
 }>()
 
 const route = useRoute()
+const store = useStore()
 const actorStore = useActorStore()
 const chatExtrasStore = useChatExtrasStore()
+const currentToken = useGetToken()
+
+const isPrivateReply = computed(() => {
+	if (isExistingMessage(message) && (message.metaData?.replyToConversationToken ?? '').length > 0) {
+		return true
+	}
+	if (canCancel) {
+		return !!chatExtrasStore.privateReply[currentToken.value]
+	}
+	return false
+})
 
 const {
 	isFileShare,
@@ -46,15 +60,46 @@ const {
 	actorDisplayNameWithFallback,
 } = useMessageInfo(isExistingMessage(message) ? toRef(() => message) : undefined)
 
+const targetToken = computed(() => {
+	if (!isExistingMessage(message)) {
+		return currentToken.value
+	}
+	return message.metaData?.replyToConversationToken
+		?? message.token
+})
 const actorInfo = computed(() => [actorDisplayNameWithFallback.value, remoteServer.value].filter((value) => value).join(' '))
 
 const hash = computed(() => '#message_' + message.id)
 
-const component = computed(() => canCancel
-	? { tag: 'div', link: undefined }
-	: { tag: 'router-link', link: { query: route.query, hash: hash.value } })
+const component = computed(() => {
+	if (!isExistingMessage(message) || canCancel) {
+		return { tag: 'div', link: undefined }
+	}
+
+	return {
+		tag: 'router-link',
+		link: {
+			query: {
+				threadId: message.metaData?.threadId ?? route.query.threadId,
+			},
+			hash: hash.value,
+			name: 'conversation',
+			params: {
+				token: targetToken.value,
+			},
+		},
+	}
+})
 
 const isOwnMessageQuoted = computed(() => isExistingMessage(message) ? actorStore.checkIfSelfIsActor(message) : false)
+
+const actorConvoName = computed(() => {
+	if (!isPrivateReply.value || !isExistingMessage(message)) {
+		return ''
+	}
+	return message.metaData?.replyToConversationName
+		?? store.getters.conversation(targetToken.value)?.name ?? ''
+})
 
 const filePreviewLoading = ref(true)
 const filePreviewFailed = ref(false)
@@ -130,7 +175,7 @@ function handleAbort() {
 	if (editMessage) {
 		chatExtrasStore.removeMessageIdToEdit(message.token)
 	} else {
-		chatExtrasStore.removeParentIdToReply(message.token)
+		chatExtrasStore.removeParentIdToReply(currentToken.value)
 	}
 	EventBus.emit('focus-chat-input')
 }
@@ -190,9 +235,12 @@ function handleQuoteClick() {
 					:source="message.actorType"
 					:size="AVATAR.SIZE.EXTRA_SMALL"
 					disableMenu />
-				<span class="quote__main-author-info">
+				<span class="quote__main-author-info" :class="{ 'no-ellipsis': isPrivateReply }">
 					<span class="quote__main-author-name">
 						{{ actorInfo }}
+					</span>
+					<span v-if="actorConvoName" class="quote__main-conversation-name">
+						{{ actorConvoName }}
 					</span>
 					{{ editLabel }}
 				</span>
@@ -200,7 +248,8 @@ function handleQuoteClick() {
 			<span
 				role="blockquote"
 				dir="auto"
-				class="quote__main-text">
+				class="quote__main-text"
+				:class="{ 'break-new-line': isPrivateReply }">
 				{{ shortenedQuoteMessage }}
 			</span>
 		</span>
@@ -297,6 +346,11 @@ function handleQuoteClick() {
 		flex-grow: 1;
 		overflow: hidden;
 
+		&:has(.break-new-line) {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
 		&-author {
 			display: flex;
 			align-items: center;
@@ -307,6 +361,10 @@ function handleQuoteClick() {
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
+				 &.no-ellipsis {
+					overflow: visible;
+					text-overflow: unset;
+				}
 			}
 
 			&-name {
@@ -321,6 +379,17 @@ function handleQuoteClick() {
 			overflow: hidden;
 			text-align: start;
 			max-width: 100%;
+			&.break-new-line {
+				white-space: normal;
+				overflow: visible;
+				text-overflow: unset;
+			}
+		}
+
+		&-conversation-name {
+			&::before {
+				content: ' • ';
+			}
 		}
 	}
 
