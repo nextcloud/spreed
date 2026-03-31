@@ -646,3 +646,17 @@ export type liveTranscriptionGetAvailableLanguagesResponse = ApiResponse<operati
 export type liveTranscriptionGetAvailableTranslationLanguagesResponse = ApiResponse<operations['live_transcription-get-available-translation-languages']['responses'][200]['content']['application/json']>
 export type liveTranscriptionSetLanguageResponse = ApiResponse<operations['live_transcription-set-language']['responses'][200]['content']['application/json']>
 export type liveTranscriptionSetTargetLanguageResponse = ApiResponse<operations['live_transcription-set-target-language']['responses'][200]['content']['application/json']>
+
+// Conversation categories
+export type fetchCategoriesResponse = ApiResponse<operations['conversation_category-get-categories']['responses'][200]['content']['application/json']>
+export type createCategoryParams = Required<operations['conversation_category-create-category']>['requestBody']['content']['application/json']
+export type createCategoryResponse = ApiResponse<operations['conversation_category-create-category']['responses'][201]['content']['application/json']>
+export type updateCategoryParams = Required<operations['conversation_category-update-category']>['requestBody']['content']['application/json']
+export type updateCategoryResponse = ApiResponse<operations['conversation_category-update-category']['responses'][200]['content']['application/json']>
+export type deleteCategoryResponse = ApiResponse<operations['conversation_category-delete-category']['responses'][200]['content']['application/json']>
+export type reorderCategoriesParams = Required<operations['conversation_category-reorder-categories']>['requestBody']['content']['application/json']
+export type reorderCategoriesResponse = ApiResponse<operations['conversation_category-reorder-categories']['responses'][200]['content']['application/json']>
+export type updateCategoryCollapsedParams = Required<operations['conversation_category-update-category-collapsed']>['requestBody']['content']['application/json']
+export type updateCategoryCollapsedResponse = ApiResponse<operations['conversation_category-update-category-collapsed']['responses'][200]['content']['application/json']>
+export type assignConversationToCategoriesParams = NonNullable<operations['room-assign-to-category']['requestBody']>['content']['application/json']
+export type assignConversationToCategoriesResponse = ApiResponse<operations['room-assign-to-category']['responses'][200]['content']['application/json']>

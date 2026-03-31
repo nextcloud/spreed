@@ -224,3 +224,4 @@
 * `config => feature-hints => hidden` (local) - Number of the last hint the administration has hidden via the app config
 * `config => conversations => sort-order` (local) - User selected sort order for conversations (`activity` or `alphabetical`)
 * `config => conversations => group-mode` (local) - User selected grouping mode for conversations (`none`, `group-first` or `private-first`)
+* `conversation-categories` (local) - Whether the user can create custom categories to organize conversations in the sidebar

@@ -21,6 +21,7 @@ import {
 } from '../services/avatarService.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import { assignConversationToCategories } from '../services/conversationCategoriesService.ts'
 import {
 	addToFavorites,
 	archiveConversation,
@@ -601,6 +602,19 @@ const actions = {
 			context.commit('addConversation', response.data.ocs.data)
 		} catch (error) {
 			console.error('Error while changing the conversation archived status: ', error)
+		}
+	},
+
+	async assignToCategories(context, { token, categoryIds }) {
+		if (!context.getters.conversations[token]) {
+			return
+		}
+
+		try {
+			const response = await assignConversationToCategories(token, categoryIds)
+			context.commit('addConversation', response.data.ocs.data)
+		} catch (error) {
+			console.error('Error while assigning conversation to categories: ', error)
 		}
 	},
 

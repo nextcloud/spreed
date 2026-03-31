@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: CC0-1.0
 /js/*.js binary
 /js/*.js.map binary
-/openapi*.json binary
-/src/types/openapi/openapi*.ts binary
+/openapi*.json binary linguist-generated=true
+/src/types/openapi/openapi*.ts binary linguist-generated=true
 /src/types/openapi/openapi-full.ts text diff
 /openapi-full.json text diff

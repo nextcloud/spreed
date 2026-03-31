@@ -1889,6 +1889,28 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * Assign a conversation category
+	 *
+	 * Required capability: `conversation-categories`
+	 *
+	 * @param list<string> $categoryIds IDs of categories to assign (empty array to unassign all)
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 *
+	 * 200: Conversation categories updated
+	 */
+	#[NoAdminRequired]
+	#[FederationSupported]
+	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/category', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function assignToCategory(array $categoryIds = []): DataResponse {
+		$this->participantService->assignConversationToCategories($this->participant, $categoryIds);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
 	 * Mark a conversation as important (still sending notifications while on DND)
 	 *
 	 * Required capability: `important-conversations`

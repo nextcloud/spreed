@@ -981,6 +981,7 @@
                     "isArchived",
                     "isImportant",
                     "isSensitive",
+                    "categoryIds",
                     "lastPinnedId",
                     "hiddenPinnedId",
                     "hasScheduledMessages",
@@ -1278,6 +1279,13 @@
                     "isSensitive": {
                         "type": "boolean",
                         "description": "Required capability: `sensitive-conversations`"
+                    },
+                    "categoryIds": {
+                        "type": "array",
+                        "description": "IDs of the custom categories this conversation belongs to (only available with `conversation-categories` capability)",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "lastPinnedId": {
                         "type": "integer",

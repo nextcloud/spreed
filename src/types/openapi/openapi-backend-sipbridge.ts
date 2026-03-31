@@ -749,6 +749,8 @@ export type components = {
             isImportant: boolean;
             /** @description Required capability: `sensitive-conversations` */
             isSensitive: boolean;
+            /** @description IDs of the custom categories this conversation belongs to (only available with `conversation-categories` capability) */
+            categoryIds: string[];
             /**
              * Format: int64
              * @description Required capability: `pinned-messages`
