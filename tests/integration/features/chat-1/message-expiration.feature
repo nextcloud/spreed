@@ -60,6 +60,27 @@ Feature: chat/message-expiration
     And user "participant1" gets last share
     And the OCS status code should be 404
 
+  Scenario: Expire call related system messages
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3     |
+      | roomName | room2 |
+    And user "participant1" set the message expiration to 3 of room "room" with 200 (v4)
+    Then user "participant1" joins room "room" with 200 (v4)
+    Then user "participant1" joins call "room" with 200 (v4)
+      | flags | 1 |
+    Then user "participant1" leaves room "room" with 200 (v4)
+    And user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage              |
+      | room | guests    | system       |                          | call_ended                 |
+      | room | users     | participant1 | participant1-displayname | call_left                  |
+      | room | users     | participant1 | participant1-displayname | call_started               |
+      | room | users     | participant1 | participant1-displayname | message_expiration_enabled |
+      | room | users     | participant1 | participant1-displayname | conversation_created       |
+    And wait for 3 seconds
+    And user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+
   Scenario: Cannot set message expiration in a former one to one room
     Given user "participant1" creates room "room" (v4)
       | roomType | 1 |
