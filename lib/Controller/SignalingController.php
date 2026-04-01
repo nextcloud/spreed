@@ -389,17 +389,20 @@ class SignalingController extends OCSController {
 					}
 					$decodedMessage['from'] = $message['sessionId'];
 
-					if ($decodedMessage['type'] === 'control') {
-						$room = $this->manager->getRoomForSession($this->userId, $message['sessionId']);
-						$participant = $this->participantService->getParticipantBySession($room, $message['sessionId']);
+					$room = $this->manager->getRoomForSession($this->userId, $message['sessionId']);
+					$participant = $this->participantService->getParticipantBySession($room, $message['sessionId']);
+					try {
+						$this->participantService->getParticipantBySession($room, $decodedMessage['to']);
+					} catch (ParticipantNotFoundException) {
+						break;
+					}
 
+
+					if ($decodedMessage['type'] === 'control') {
 						if (!$participant->hasModeratorPermissions(false)) {
 							break;
 						}
 					} elseif ($decodedMessage['type'] === 'offer' || $decodedMessage['type'] === 'answer') {
-						$room = $this->manager->getRoomForSession($this->userId, $message['sessionId']);
-						$participant = $this->participantService->getParticipantBySession($room, $message['sessionId']);
-
 						if (!($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_AUDIO) && $decodedMessage['roomType'] === 'video'
 								&& $this->isTryingToPublishMedia($decodedMessage['payload']['sdp'], 'audio')) {
 							break;
