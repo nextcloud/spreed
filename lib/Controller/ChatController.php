@@ -166,6 +166,10 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 			$parentActorId = $parent->getActorId();
 			$parentActorType = $parent->getActorType();
+			if ($parentActorType === $actorType && $parentActorId === $actorId) {
+				throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
+			}
+
 			// Validate if the members are part of the convo
 			try {
 				$this->participantService->getParticipantByActor($targetParentRoom, $actorType, $actorId);
