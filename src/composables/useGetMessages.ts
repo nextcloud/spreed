@@ -61,7 +61,8 @@ export function useGetMessagesProvider() {
 
 	const currentToken = useGetToken()
 	const contextThreadId = useGetThreadId()
-	const conversation = computed<Conversation | undefined>(() => store.getters.conversation(currentToken.value))
+	/** Conversation object by currentToken ref. If required in an async context, store getter should be used instead */
+	const currentConversation = computed<Conversation | undefined>(() => store.getters.conversation(currentToken.value))
 	const isInLobby = computed<boolean>(() => store.getters.isInLobby)
 
 	const contextMessageId = ref<number>(0)
@@ -74,11 +75,11 @@ export function useGetMessagesProvider() {
 	 * Returns whether the current participant is a participant of current conversation.
 	 */
 	const isParticipant = computed<boolean>(() => {
-		if (!conversation.value) {
+		if (!currentConversation.value) {
 			return false
 		}
 
-		return !!store.getters.findParticipant(currentToken.value, conversation.value)?.attendeeId
+		return !!store.getters.findParticipant(currentToken.value, currentConversation.value)?.attendeeId
 	})
 
 	const isChatBeginningReached = computed(() => {
@@ -110,8 +111,8 @@ export function useGetMessagesProvider() {
 			}
 		}
 
-		if (conversation.value?.lastMessage && 'id' in conversation.value.lastMessage) {
-			return conversation.value.lastMessage.id
+		if (currentConversation.value?.lastMessage && 'id' in currentConversation.value.lastMessage) {
+			return currentConversation.value.lastMessage.id
 		}
 
 		// Federated conversations do not provide lastMessage.id, fallback to last known message
@@ -119,8 +120,7 @@ export function useGetMessagesProvider() {
 	})
 
 	const isChatEndReached = computed(() => {
-		const conversation = store.getters.conversation(currentToken.value) as Conversation | undefined
-		if (!conversation || !conversation.lastMessage) {
+		if (!currentConversation.value || !currentConversation.value.lastMessage) {
 			// Do not block attempts to fetch new messages inside each block
 			return false
 		}
@@ -235,12 +235,13 @@ export function useGetMessagesProvider() {
 			// the hash is non-empty, need to focus/highlight another message
 			contextMessageId.value = focusMessageId
 		} else {
+			const conversation: Conversation | undefined = store.getters.conversation(to.params.token)
 			// try to focus last read message first, otherwise scroll to last known message in the most recent block store
-			const hasLastReadMessageInContextBelow = conversation.value?.lastReadMessage && conversation.value.lastReadMessage > contextMessageId.value
-				&& (!contextThreadId.value || chatStore.hasMessage(to.params.token, { messageId: conversation.value.lastReadMessage, threadId: contextThreadId.value }))
+			const hasLastReadMessageInContextBelow = conversation?.lastReadMessage && conversation.lastReadMessage > contextMessageId.value
+				&& (!contextThreadId.value || chatStore.hasMessage(to.params.token, { messageId: conversation.lastReadMessage, threadId: contextThreadId.value }))
 
 			contextMessageId.value = hasLastReadMessageInContextBelow
-				? conversation.value.lastReadMessage
+				? conversation.lastReadMessage
 				: conversationLastMessageId.value
 		}
 
@@ -306,9 +307,9 @@ export function useGetMessagesProvider() {
 
 		// Start from message hash or unread marker
 		const focusMessageId = getMessageIdFromHash(route.hash)
-		contextMessageId.value = focusMessageId !== null ? focusMessageId : conversation.value!.lastReadMessage
+		contextMessageId.value = focusMessageId !== null ? focusMessageId : currentConversation.value!.lastReadMessage
 
-		store.dispatch('setVisualLastReadMessageId', { token, id: conversation.value!.lastReadMessage })
+		store.dispatch('setVisualLastReadMessageId', { token, id: currentConversation.value!.lastReadMessage })
 
 		if (!chatStore.chatBlocks[token]) {
 			try {
@@ -322,18 +323,20 @@ export function useGetMessagesProvider() {
 				console.debug(exception)
 			}
 
+			// Checking after server response, compare to actual conversation in store
+			const conversation: Conversation | undefined = store.getters.conversation(token)
 			// If last message is not present in the initial context,
 			// add it as most recent chat block to start long polling from it
-			if (conversation.value?.lastMessage && 'id' in conversation.value.lastMessage
-				&& !chatStore.hasMessage(token, { messageId: conversation.value.lastMessage.id })) {
-				await store.dispatch('processMessage', { token, message: conversation.value.lastMessage })
-				chatStore.processChatBlocks(token, [conversation.value.lastMessage])
+			if (conversation?.lastMessage && 'id' in conversation.lastMessage
+				&& !chatStore.hasMessage(token, { messageId: conversation.lastMessage.id })) {
+				await store.dispatch('processMessage', { token, message: conversation.lastMessage })
+				chatStore.processChatBlocks(token, [conversation.lastMessage])
 			}
 
 			// Fallback for sensitive and federated conversations: if there is still no chat block created,
 			// ensure polling starts at least from the last read message by the user
 			if (!chatStore.chatBlocks[token]) {
-				chatStore.chatBlocks[token] = [new Set([conversation.value!.lastReadMessage])]
+				chatStore.chatBlocks[token] = [new Set([conversation!.lastReadMessage])]
 			}
 		} else {
 			await checkContextAndFocusMessage(token, contextMessageId.value, contextThreadId.value, focusMessageId !== null)
@@ -676,10 +679,11 @@ export function useGetMessagesProvider() {
 			return
 		}
 
+		const conversation: Conversation | undefined = store.getters.conversation(token)
 		// Attempt to localize non-system messages
-		if (message.systemMessage !== '' && conversation.value) {
+		if (message.systemMessage !== '' && conversation) {
 			try {
-				message.message = tryLocalizeSystemMessage(message, conversation.value)
+				message.message = tryLocalizeSystemMessage(message, conversation)
 			} catch (exception) {
 				tryPollNewMessages()
 				return
@@ -693,7 +697,7 @@ export function useGetMessagesProvider() {
 		}
 
 		// Patch for federated conversations: disable unsupported file shares
-		if (conversation.value?.remoteServer && Object.keys(message.messageParameters ?? {}).some((key) => key.startsWith('file'))
+		if (conversation?.remoteServer && Object.keys(message.messageParameters ?? {}).some((key) => key.startsWith('file'))
 			&& [MESSAGE.TYPE.COMMENT, MESSAGE.TYPE.VOICE_MESSAGE, MESSAGE.TYPE.RECORD_VIDEO, MESSAGE.TYPE.RECORD_AUDIO].includes(message.messageType)) {
 			message.message = '*' + t('spreed', 'File shares are currently not supported in federated conversations') + '*'
 			delete message.messageParameters.file
