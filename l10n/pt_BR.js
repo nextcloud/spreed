@@ -786,6 +786,7 @@ OC.L10N.register(
     "No recording backend configured" : "Nenhum back-end de gravação configurado",
     "SIP configuration" : "Configuração SIP",
     "Using the SIP functionality requires a High-performance backend." : "O uso da funcionalidade SIP requer um back-end de alto desempenho.",
+    "Assigned Talk phone numbers must not start with + or 0. Please remove or update the following numbers:\n{list}" : "Os números de telefone atribuídos ao Talk não devem começar com + ou 0. Remova ou atualize os seguintes números:\n{list}",
     "No SIP backend configured" : "Nenhum back-end SIP configurado",
     "Invalid date, date format must be YYYY-MM-DD" : "Data inválida, o formato deve ser YYYY-MM-DD",
     "Conversation not found" : "Conversa não encontrada",

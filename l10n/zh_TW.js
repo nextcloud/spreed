@@ -786,6 +786,7 @@ OC.L10N.register(
     "No recording backend configured" : "未設定錄製後端",
     "SIP configuration" : "SIP 組態",
     "Using the SIP functionality requires a High-performance backend." : "使用 SIP 功能需要高效能後端。",
+    "Assigned Talk phone numbers must not start with + or 0. Please remove or update the following numbers:\n{list}" : "分配的 Talk 電話號碼不得以 + 或 0 開頭。請移除或更新以下號碼：\n{list}",
     "No SIP backend configured" : "未設定 SIP 後端",
     "Invalid date, date format must be YYYY-MM-DD" : "無效的日期，需為 YYYY-MM-DD 格式",
     "Conversation not found" : "找不到對話",
