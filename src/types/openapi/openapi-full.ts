@@ -3627,7 +3627,7 @@ export type components = {
             /** @description Federation signaling settings, or null if not federated */
             federation: components["schemas"]["SignalingFederationSettings"] | null;
             /** @description Authentication parameters for the hello request */
-            helloAuthParams: {
+            helloAuthParams?: {
                 "1.0": {
                     userid: string | null;
                     ticket: string;
@@ -3649,7 +3649,7 @@ export type components = {
                 urls: string[];
             }[];
             /** @description Authentication ticket for the signaling server */
-            ticket: string;
+            ticket?: string;
             /** @description TURN servers */
             turnservers: {
                 urls: string[];
