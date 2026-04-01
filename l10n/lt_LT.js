@@ -756,6 +756,7 @@ OC.L10N.register(
     "Apply settings" : "Taikyti nustatymus",
     "Select a file" : "Pasirinkti failą",
     "Invalid path selected" : "Pasirinktas neteisingas kelias",
+    "Blur" : "Suliejimas",
     "Upload" : "Įkelti",
     "Files" : "Failai",
     "24 hours" : "24 valandos",
