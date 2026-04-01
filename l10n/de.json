@@ -784,6 +784,7 @@
     "No recording backend configured" : "Kein Aufzeichnungs-Backend konfiguriert",
     "SIP configuration" : "SIP-Konfiguration",
     "Using the SIP functionality requires a High-performance backend." : "Die Nutzung der SIP-Funktionalität erfordert ein Hochleistungs-Backend.",
+    "Assigned Talk phone numbers must not start with + or 0. Please remove or update the following numbers:\n{list}" : "Zugewiesene Talk-Telefonnummern dürfen nicht mit + oder 0 beginnen. Bitte die folgenden Nummern entfernen oder aktualisieren:\n{list}",
     "No SIP backend configured" : "Kein SIP-Backend konfiguriert",
     "Invalid date, date format must be YYYY-MM-DD" : "Ungültiges Datum, Zulässiges Datumsformat: JJJJ-MM-TT",
     "Conversation not found" : "Unterhaltung nicht gefunden",
