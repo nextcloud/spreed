@@ -1867,13 +1867,11 @@
                 "type": "object",
                 "required": [
                     "federation",
-                    "helloAuthParams",
                     "hideWarning",
                     "server",
                     "signalingMode",
                     "sipDialinInfo",
                     "stunservers",
-                    "ticket",
                     "turnservers",
                     "userId"
                 ],
