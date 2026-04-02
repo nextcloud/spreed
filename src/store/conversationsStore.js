@@ -109,6 +109,13 @@ const DUMMY_CONVERSATION = {
 }
 
 /**
+ * FIXME use IndexedDB for storing data (with proper offline-support)
+ * localStorage has a limit of information it can store per browser page.
+ * If exceeded (1000+ conversations for a user), do not cache conversations list
+ */
+let isLocalStorageQuotaExceeded = false
+
+/**
  * Emit global event for user status update with the status from a 1-1 conversation
  *
  * @param {object} conversation - a 1-1 conversation
@@ -493,14 +500,29 @@ const actions = {
 	 * @param {object} context default store context
 	 */
 	cacheConversations(context) {
+		if (isLocalStorageQuotaExceeded) {
+			// Ignore caching to BrowserStorage
+			return
+		}
+
 		const conversations = context.getters.conversationsList
 		if (!conversations.length) {
 			return
 		}
 
-		const serializedConversations = JSON.stringify(conversations)
-		BrowserStorage.setItem('cachedConversations', serializedConversations)
-		console.debug(`Conversations were saved to BrowserStorage. Estimated object size: ${(serializedConversations.length / 1024).toFixed(2)} kB`)
+		try {
+			const serializedConversations = JSON.stringify(conversations)
+			BrowserStorage.setItem('cachedConversations', serializedConversations)
+			console.debug(`Conversations were saved to BrowserStorage. Estimated object size: ${(serializedConversations.length / 1024).toFixed(2)} kB`)
+		} catch (error) {
+			if (error.name === 'QuotaExceededError') {
+				console.error('Too many conversations to cache, disabling: ', error)
+				isLocalStorageQuotaExceeded = true
+				BrowserStorage.removeItem('cachedConversations')
+			} else {
+				console.error('Error while caching conversations: ', error)
+			}
+		}
 	},
 
 	/**
