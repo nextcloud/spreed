@@ -48,6 +48,10 @@ export default class NoiseSuppressor extends TrackSinkSource {
 		this._noiseSuppressionConsumer = null
 		/** Pending registration promise to keep _startEffect synchronous */
 		this._noiseSuppressionRegistrationPromise = null
+		/** Input stream */
+		this._inputStream = null
+		/** Output stream */
+		this._outputStream = null
 	}
 
 	setEnabled(enabled) {
@@ -110,9 +114,9 @@ export default class NoiseSuppressor extends TrackSinkSource {
 			return
 		}
 
-		const inputStream = new MediaStream([track])
-		const processedStream = processNoiseSuppression(inputStream, this._noiseSuppressionConsumer, true)
-		const processedTrack = processedStream.getAudioTracks()[0]
+		this._inputStream = new MediaStream([track])
+		this._outputStream = processNoiseSuppression(this._inputStream, this._noiseSuppressionConsumer, true)
+		const processedTrack = this._outputStream.getAudioTracks()[0]
 		processedTrack.enabled = this._audioEnabled
 
 		this._setOutputTrack('default', processedTrack)
@@ -131,5 +135,11 @@ export default class NoiseSuppressor extends TrackSinkSource {
 
 		const track = this.getInputTrack()
 		this._setOutputTrack('default', track)
+		this._inputStream = null
+		this._outputStream?.getTracks().forEach((track) => {
+			this._disableRemoveTrackWhenEnded(track)
+			track.stop()
+		})
+		this._outputStream = null
 	}
 }
