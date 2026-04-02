@@ -13,7 +13,7 @@ const DEFAULT_BLUR_PASSES = 3
  * Spatial radius of the bilateral filter.
  * Larger value - smoother mask over a wider area, softer edges. High GPU impact.
  */
-const SIGMA_SPACE = 10
+const SIGMA_SPACE = 5
 /**
  * Range sensitivity of the bilateral filter.
  * Larger value: more smoothing across edges. Low GPU impact.
@@ -23,7 +23,7 @@ const SIGMA_COLOR = 0.15
  * Sampling stride scale for the bilateral kernel.
  * Larger value - faster processing, rougher mask refinement. High GPU impact.
  */
-const SPARSITY_FACTOR = 0.66
+const SPARSITY_FACTOR = 1
 
 /**
  * WebGL-based compositor for background effects.
