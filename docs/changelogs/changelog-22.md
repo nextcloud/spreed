@@ -5,6 +5,31 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.11 – 2026-04-02
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(chat): Keep thread information when copying link of a message
+  [#17478](https://github.com/nextcloud/spreed/pull/17478)
+- fix(call): Fix unneeded signaling messages when sending initial state
+  [#17407](https://github.com/nextcloud/spreed/pull/17407)
+- fix(conversation): Improve translation string for automatic deletion of conversations
+  [#17411](https://github.com/nextcloud/spreed/pull/17411)
+- fix(meeting): Don't log a PHP error when a todo item is edited
+  [#17547](https://github.com/nextcloud/spreed/pull/17547)
+- fix(phone): Improve phone number input validation of OCC commands
+  [#17551](https://github.com/nextcloud/spreed/pull/17551)
+- fix(video-verification): Fix video-verification when "Start call" is limited to moderators
+  [#17504](https://github.com/nextcloud/spreed/pull/17504)
+- fix(signaling): Check recipient room with internal signaling
+  [#17579](https://github.com/nextcloud/spreed/pull/17579)
+- fix(signaling): Limit signaling support without conversation-token
+  [#17587](https://github.com/nextcloud/spreed/pull/17587)
+- fix(signaling): Expect nonce on request when setting up hosted signaling server
+  [#17582](https://github.com/nextcloud/spreed/pull/17582)
+
 ## 22.0.10 – 2026-03-19
 ### Changed
 - Update dependencies
