@@ -149,9 +149,11 @@ class SignalingController extends OCSController {
 				$this->federationAuthenticator->authenticated($room, $participant);
 			} elseif ($token !== '') {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId);
-			} else {
-				// FIXME Soft-fail for legacy support in mobile apps
+			} elseif ($this->userId !== null) {
+				// Mobile clients and admin setup check use the neutral point
 				$room = null;
+			} else {
+				throw new RoomNotFoundException();
 			}
 		} catch (RoomNotFoundException|ParticipantNotFoundException) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
@@ -201,29 +203,33 @@ class SignalingController extends OCSController {
 		$signalingMode = $this->talkConfig->getSignalingMode();
 		$signaling = $this->signalingManager->getSignalingServerLinkForConversation($room);
 
-		$helloAuthParams20UserId = $isTalkFederation ? null : $this->userId;
-		$helloAuthParams20CloudId = $isTalkFederation ? $this->federationAuthenticator->getCloudId() : null;
-		$helloAuthParams = [
-			'1.0' => [
-				'userid' => $this->userId,
-				'ticket' => $this->talkConfig->getSignalingTicket(Config::SIGNALING_TICKET_V1, $this->userId),
-			],
-			'2.0' => [
-				'token' => $this->talkConfig->getSignalingTicket(Config::SIGNALING_TICKET_V2, $helloAuthParams20UserId, $helloAuthParams20CloudId),
-			],
-		];
 		$data = [
 			'signalingMode' => $signalingMode,
 			'userId' => $this->userId,
 			'hideWarning' => $signaling !== '' || $this->talkConfig->getHideSignalingWarning(),
 			'server' => $signaling,
-			'ticket' => $helloAuthParams['1.0']['ticket'],
-			'helloAuthParams' => $helloAuthParams,
 			'federation' => $this->getFederationSettings($room),
 			'stunservers' => $stun,
 			'turnservers' => $turn,
 			'sipDialinInfo' => $this->talkConfig->isSIPConfigured() ? $this->talkConfig->getDialInInfo() : '',
 		];
+
+		if ($signalingMode !== Config::SIGNALING_INTERNAL) {
+			$helloAuthParams20UserId = $isTalkFederation ? null : $this->userId;
+			$helloAuthParams20CloudId = $isTalkFederation ? $this->federationAuthenticator->getCloudId() : null;
+			$helloAuthParams = [
+				'1.0' => [
+					'userid' => $this->userId,
+					'ticket' => $this->talkConfig->getSignalingTicket(Config::SIGNALING_TICKET_V1, $this->userId),
+				],
+				'2.0' => [
+					'token' => $this->talkConfig->getSignalingTicket(Config::SIGNALING_TICKET_V2, $helloAuthParams20UserId, $helloAuthParams20CloudId),
+				],
+			];
+
+			$data['ticket'] = $helloAuthParams['1.0']['ticket'];
+			$data['helloAuthParams'] = $helloAuthParams;
+		}
 
 		return new DataResponse($data);
 	}
