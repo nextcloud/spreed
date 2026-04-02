@@ -8,63 +8,87 @@ import { loadRnnoise, RnnoiseWorkletNode } from '@sapphi-red/web-noise-suppresso
 let audioContext: AudioContext | null = null
 let rnnoiseWorklet: RnnoiseWorkletNode | null = null
 const workletConsumers = new Set<symbol>()
+const workletCleanupCallbackMap = new Map<symbol, () => void>()
 
 /**
  * Creates and registers global RNNoiseWorkletNode and AudioContext.
  *
  * @returns A promise that resolves with a unique symbol
  * representing the consumer. This symbol must be passed to
- * `destroyNoiseSuppressionWorklet` when the consumer is done.
+ * `unregisterNoiseSuppressionWorklet` when the consumer is done.
  */
-export async function registerNoiseSuppressionWorklet(): Promise<symbol> {
+export async function registerNoiseSuppressionWorklet(): Promise<symbol | null> {
 	const consumer = Symbol('noise-suppression-consumer')
 	workletConsumers.add(consumer)
 
 	if (audioContext && rnnoiseWorklet) {
+		if (audioContext.state === 'suspended') {
+			await audioContext.resume()
+		}
+
 		// Already registered
 		return consumer
 	}
 
-	audioContext = new AudioContext()
-	const rnnoiseWasmBinary = await loadRnnoise({
-		url: new URL(
-			'../../node_modules/@sapphi-red/web-noise-suppressor/dist/rnnoise.wasm',
+	try {
+		audioContext = new AudioContext()
+		const rnnoiseWasmBinary = await loadRnnoise({
+			url: new URL(
+				'../../node_modules/@sapphi-red/web-noise-suppressor/dist/rnnoise.wasm',
+				import.meta.url,
+			).pathname,
+			simdUrl: new URL(
+				'../../node_modules/@sapphi-red/web-noise-suppressor/dist/rnnoise_simd.wasm',
+				import.meta.url,
+			).pathname,
+		})
+		await audioContext.audioWorklet.addModule(new URL(
+			'../../node_modules/@sapphi-red/web-noise-suppressor/dist/rnnoise/workletProcessor.js',
 			import.meta.url,
-		).pathname,
-		simdUrl: new URL(
-			'../../node_modules/@sapphi-red/web-noise-suppressor/dist/rnnoise_simd.wasm',
-			import.meta.url,
-		).pathname,
-	})
-	await audioContext.audioWorklet.addModule(new URL(
-		'../../node_modules/@sapphi-red/web-noise-suppressor/dist/rnnoise/workletProcessor.js',
-		import.meta.url,
-	).pathname)
-	rnnoiseWorklet = new RnnoiseWorkletNode(audioContext, {
-		wasmBinary: rnnoiseWasmBinary,
-		maxChannels: 2,
-	})
+		).pathname)
+		rnnoiseWorklet = new RnnoiseWorkletNode(audioContext, {
+			wasmBinary: rnnoiseWasmBinary,
+			maxChannels: 2,
+		})
 
-	return consumer
+		if (audioContext.state === 'suspended') {
+			await audioContext.resume()
+		}
+
+		return consumer
+	} catch (error) {
+		console.error('Error initializing RNNoiseWorklet:', error)
+		await destroyNoiseSuppressionWorklet()
+		workletConsumers.delete(consumer)
+		return null
+	}
 }
 
 /**
- * Destroys the global RNNoiseWorkletNode and AudioContext
+ * Unregister consumer from the global RNNoiseWorkletNode and AudioContext
  * if there are no other worklet consumers left.
  *
  * @param consumer The symbol returned by `registerNoiseSuppressionWorklet`.
  */
-export async function destroyNoiseSuppressionWorklet(consumer: symbol) {
+export async function unregisterNoiseSuppressionWorklet(consumer: symbol) {
 	if (!workletConsumers.has(consumer)) {
 		return
 	}
 
+	cleanupNoiseSuppressionWorklet(consumer)
 	workletConsumers.delete(consumer)
 
 	if (workletConsumers.size > 0) {
 		return
+	} else {
+		await destroyNoiseSuppressionWorklet()
 	}
+}
 
+/**
+ * Destroys the global RNNoiseWorkletNode and AudioContext
+ */
+export async function destroyNoiseSuppressionWorklet() {
 	if (rnnoiseWorklet) {
 		try {
 			rnnoiseWorklet?.disconnect()
@@ -89,9 +113,10 @@ export async function destroyNoiseSuppressionWorklet(consumer: symbol) {
  * Requires that RNNoiseWorklet has been asynchronously registered beforehand.
  *
  * @param stream - MediaStream to process
+ * @param consumer - Unique consumer id returned by `registerNoiseSuppressionWorklet`
  * @param enabled - Whether noise suppression is enabled
  */
-export function processNoiseSuppression(stream: MediaStream, enabled = false): MediaStream {
+export function processNoiseSuppression(stream: MediaStream, consumer: symbol | null, enabled = false): MediaStream {
 	if (!enabled) {
 		// No noise suppression requested; return the original stream
 		return stream
@@ -102,24 +127,32 @@ export function processNoiseSuppression(stream: MediaStream, enabled = false): M
 		return stream
 	}
 
-	if (!audioContext || !rnnoiseWorklet) {
+	if (!audioContext || !rnnoiseWorklet || !consumer) {
 		return stream
 	}
 
-	return processRnnoise(stream)
+	cleanupNoiseSuppressionWorklet(consumer)
+	return processRnnoise(stream, consumer)
 }
 
 /**
  * Connects the RNNoiseWorklet to the given MediaStream and returns a new MediaStream with noise suppression applied.
  *
  * @param stream - MediaStream to process
+ * @param consumer - Unique consumer id returned by `registerNoiseSuppressionWorklet`
  */
-export function processRnnoise(stream: MediaStream): MediaStream {
+export function processRnnoise(stream: MediaStream, consumer: symbol): MediaStream {
 	try {
 		const mediaStreamAudioSource = audioContext!.createMediaStreamSource(stream)
+		const outputGainNode = audioContext!.createGain()
 		const mediaStreamAudioDestinationNode = audioContext!.createMediaStreamDestination()
+
+		// Gain node configuration (to increase the output of processed track)
+		outputGainNode.gain.value = 2
+
 		mediaStreamAudioSource.connect(rnnoiseWorklet!)
-		rnnoiseWorklet!.connect(mediaStreamAudioDestinationNode)
+		rnnoiseWorklet!.connect(outputGainNode)
+		outputGainNode.connect(mediaStreamAudioDestinationNode)
 
 		const processedAudioTrack = mediaStreamAudioDestinationNode.stream.getAudioTracks()[0]
 		if (!processedAudioTrack) {
@@ -131,9 +164,33 @@ export function processRnnoise(stream: MediaStream): MediaStream {
 			stream.removeTrack(track)
 		}
 		stream.addTrack(processedAudioTrack)
+
+		workletCleanupCallbackMap.set(consumer, () => {
+			try {
+				mediaStreamAudioSource.disconnect(rnnoiseWorklet!)
+				rnnoiseWorklet!.disconnect(outputGainNode)
+				outputGainNode.disconnect(mediaStreamAudioDestinationNode)
+				mediaStreamAudioDestinationNode.disconnect()
+			} catch (error) {
+				console.error(error)
+			}
+			processedAudioTrack.stop()
+		})
 	} catch (error) {
 		console.error('Error processing noise suppression:', error)
 	}
 
 	return stream
+}
+
+/**
+ * Cleans up the processing nodes currently associated with a consumer.
+ *
+ * @param consumer - Unique consumer id returned by `registerNoiseSuppressionWorklet`
+ */
+function cleanupNoiseSuppressionWorklet(consumer: symbol) {
+	if (workletCleanupCallbackMap.has(consumer)) {
+		workletCleanupCallbackMap.get(consumer)!()
+		workletCleanupCallbackMap.delete(consumer)
+	}
 }

@@ -57,9 +57,9 @@ import { useAudioEncoder } from '../../composables/useAudioEncoder.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import {
-	destroyNoiseSuppressionWorklet,
 	processNoiseSuppression,
 	registerNoiseSuppressionWorklet,
+	unregisterNoiseSuppressionWorklet,
 } from '../../utils/suppressNoise.ts'
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
@@ -208,7 +208,7 @@ export default {
 				if (this.settingsStore.noiseSuppressionWithModel) {
 					this.noiseSuppressionConsumer = await registerNoiseSuppressionWorklet()
 				}
-				const audioStreamProcessed = processNoiseSuppression(this.audioStream, this.settingsStore.noiseSuppressionWithModel)
+				const audioStreamProcessed = processNoiseSuppression(this.audioStream, this.noiseSuppressionConsumer, this.settingsStore.noiseSuppressionWithModel)
 				this.mediaRecorder = new this.MediaRecorder(audioStreamProcessed, {
 					mimeType: 'audio/wav',
 				})
@@ -264,7 +264,7 @@ export default {
 			clearInterval(this.recordTimer)
 			this.$emit('recording', false)
 			if (this.noiseSuppressionConsumer) {
-				destroyNoiseSuppressionWorklet(this.noiseSuppressionConsumer)
+				unregisterNoiseSuppressionWorklet(this.noiseSuppressionConsumer)
 				this.noiseSuppressionConsumer = null
 			}
 		},
