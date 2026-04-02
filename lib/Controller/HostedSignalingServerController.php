@@ -14,8 +14,10 @@ use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
 use OCA\Talk\Exceptions\HostedSignalingServerInputException;
 use OCA\Talk\Service\HostedSignalingServerService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\Http\Client\IClientService;
@@ -41,25 +43,41 @@ class HostedSignalingServerController extends OCSController {
 	/**
 	 * Get the authentication credentials
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{nonce: string}, array{}>|DataResponse<Http::STATUS_PRECONDITION_FAILED, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{nonce: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, null, array{}>
 	 *
 	 * 200: Authentication credentials returned
+	 * 403: Provided nonce is wrong
 	 * 412: Getting authentication credentials is not possible
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 	#[PublicPage]
+	#[BruteForceProtection(action: 'hosted-hpb-nonce')]
+	#[RequestHeader(name: 'x-account-service-nonce', description: 'Random string provided to the hostedsignalingserver entity, so it can verify that it was requested')]
 	public function auth(): DataResponse {
+		$sentNonce = $this->request->getHeader('x-account-service-nonce');
+		if ($sentNonce === '') {
+			$response = new DataResponse(null, Http::STATUS_FORBIDDEN);
+			$response->throttle();
+			return $response;
+		}
+
 		$storedNonce = $this->config->getAppValue('spreed', 'hosted-signaling-server-nonce', '');
+		if ($storedNonce === '') {
+			return new DataResponse(null, Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		if (!hash_equals($storedNonce, $sentNonce)) {
+			$response = new DataResponse(null, Http::STATUS_FORBIDDEN);
+			$response->throttle();
+			return $response;
+		}
+
 		// reset nonce after one request
 		$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
 
-		if ($storedNonce !== '') {
-			return new DataResponse([
-				'nonce' => $storedNonce,
-			]);
-		}
-
-		return new DataResponse(null, Http::STATUS_PRECONDITION_FAILED);
+		return new DataResponse([
+			'nonce' => $storedNonce,
+		]);
 	}
 
 	/**
