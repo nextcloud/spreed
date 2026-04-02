@@ -2589,7 +2589,7 @@ export type components = {
         };
         SignalingSettings: {
             federation: components["schemas"]["SignalingFederationSettings"] | null;
-            helloAuthParams: {
+            helloAuthParams?: {
                 "1.0": {
                     userid: string | null;
                     ticket: string;
@@ -2605,7 +2605,7 @@ export type components = {
             stunservers: {
                 urls: string[];
             }[];
-            ticket: string;
+            ticket?: string;
             turnservers: {
                 urls: string[];
                 username: string;
