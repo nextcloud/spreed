@@ -5,6 +5,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.10 – 2026-04-02
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(signaling): Check recipient room with internal signaling
+  [#17578](https://github.com/nextcloud/spreed/pull/17578)
+- fix(signaling): Limit signaling support without conversation-token
+  [#17588](https://github.com/nextcloud/spreed/pull/17588)
+- fix(signaling): Expect nonce on request when setting up hosted signaling server
+  [#17581](https://github.com/nextcloud/spreed/pull/17581)
+
 ## 21.1.9 – 2026-02-12
 ### Changed
 - Update dependencies
