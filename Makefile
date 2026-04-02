@@ -117,6 +117,9 @@ appstore:
 	--exclude=webpack.common.config.js \
 	--exclude=webpack.config.js \
 	$(project_dir)/  $(sign_dir)/$(app_name)
+	@if [ -f $(project_dir)/docs/changelogs/changelog-$(firstword $(subst ., ,$(version))).md ]; then \
+		cp $(project_dir)/docs/changelogs/changelog-$(firstword $(subst ., ,$(version))).md $(sign_dir)/$(app_name)/CHANGELOG.md; \
+	fi
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
 		echo "Signing app files…"; \
 		php ../../occ integrity:sign-app \
