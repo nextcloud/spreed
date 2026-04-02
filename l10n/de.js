@@ -2159,7 +2159,7 @@ OC.L10N.register(
     "_%n minute _::_%n minutes_" : ["%n Minute","%n Minuten"],
     "In {hours} and {minutes}" : "In {hours} und {minutes}",
     "_In %n minute_::_In %n minutes_" : ["In %n Minute","In %n Minuten"],
-    "Later today – {timeLocale}" : "Später am Tag – {timeLocale}",
+    "Later today – {timeLocale}" : "Später heute – {timeLocale}",
     "Set time for later today" : "Zeit für später heute einstellen",
     "Tomorrow – {timeLocale}" : "Morgen – {timeLocale}",
     "Set time for tomorrow" : "Zeit für morgen einstellen",
