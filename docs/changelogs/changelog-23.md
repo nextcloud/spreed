@@ -5,6 +5,35 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 23.0.3 – 2026-04-02
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(call): Fix regression with microphone options in Safari
+  [#17566](https://github.com/nextcloud/spreed/pull/17566)
+- fix(call): Improve GPU performance when virtual background is used
+  [#17596](https://github.com/nextcloud/spreed/pull/17596)
+- fix(chat): Keep thread information when copying link of a message
+  [#17479](https://github.com/nextcloud/spreed/pull/17479)
+- fix(conversation): Show full name of author on last message hover
+  [#17562](https://github.com/nextcloud/spreed/pull/17562)
+- fix(conversation): Improve translation string for automatic deletion of conversations
+  [#17410](https://github.com/nextcloud/spreed/pull/17410)
+- fix(meeting): Don't log a PHP error when a todo item is edited
+  [#17548](https://github.com/nextcloud/spreed/pull/17548)
+- fix(phone): Improve phone number input validation of OCC commands
+  [#17550](https://github.com/nextcloud/spreed/pull/17550)
+- fix(video-verification): Fix video-verification when "Start call" is limited to moderators
+  [#17505](https://github.com/nextcloud/spreed/pull/17505)
+- fix(signaling): Check recipient room with internal signaling
+  [#17580](https://github.com/nextcloud/spreed/pull/17580)
+- fix(signaling): Limit signaling support without conversation-token
+  [#17586](https://github.com/nextcloud/spreed/pull/17586)
+- fix(signaling): Expect nonce on request when setting up hosted signaling server
+  [#17583](https://github.com/nextcloud/spreed/pull/17583)
+
 ## 23.0.2 – 2026-03-19
 ### Changed
 - Update dependencies
