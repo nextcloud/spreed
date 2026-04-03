@@ -137,6 +137,7 @@ const NEW_CONVERSATION = {
 	hasPassword: false,
 	type: CONVERSATION.TYPE.GROUP,
 	isDummyConversation: true,
+	attributes: CONVERSATION.ATTRIBUTE.NONE,
 }
 const maxDescriptionLength = getTalkConfig('local', 'conversations', 'description-length') || 500
 export default {

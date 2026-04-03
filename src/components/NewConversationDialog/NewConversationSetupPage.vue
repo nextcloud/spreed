@@ -28,7 +28,7 @@
 		</span>
 
 		<template v-if="supportsAvatar">
-			<label class="avatar-editor__label">
+			<label class="new-group-conversation__label">
 				{{ t('spreed', 'Picture') }}
 			</label>
 			<ConversationAvatarEditor
@@ -38,6 +38,25 @@
 				editable
 				@avatarEdited="$emit('avatarEdited', $event)" />
 		</template>
+
+		<label class="new-group-conversation__label">
+			{{ t('spreed', 'Conversation type') }}
+		</label>
+		<div class="conversation-type-selector">
+			<div
+				v-for="option in conversationTypeOptions"
+				:key="option.value"
+				class="conversation-type-selector__option"
+				:class="[{ 'conversation-type-selector__option--active': conversationType === option.value }]"
+				@click="conversationType = option.value">
+				<span class="conversation-type-selector__header">
+					<NcIconSvgWrapper v-if="option.svg" :svg="option.svg" :size="20" />
+					<component :is="option.icon" v-else-if="option.icon" :size="20" />
+					<span class="conversation-type-selector__label">{{ option.label }}</span>
+				</span>
+				<span class="conversation-type-selector__description">{{ option.description }}</span>
+			</div>
+		</div>
 
 		<label class="new-group-conversation__label">
 			{{ t('spreed', 'Conversation visibility') }}
@@ -65,28 +84,20 @@
 				@invalid="$emit('isPasswordValid', false)" />
 		</div>
 		<ListableSettings v-model="listableValue" />
-		<label class="new-group-conversation__label">
-			{{ t('spreed', 'Conversation presets') }}
-		</label>
-		<NcCheckboxRadioSwitch
-			v-model="isVoiceRoom"
-			type="switch">
-			{{ t('spreed', 'Voice room') }}
-			<template #description>
-				{{ t('spreed', 'Participants can only join the call and send messages while they are in the call. It is ideal for casual catch-ups or spontaneous meetings.') }}
-			</template>
-		</NcCheckboxRadioSwitch>
 	</div>
 </template>
 
 <script>
 import { t } from '@nextcloud/l10n'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import ConversationAvatarEditor from '../ConversationSettings/ConversationAvatarEditor.vue'
 import ListableSettings from '../ConversationSettings/ListableSettings.vue'
+import iconVoiceRoom from '../../../img/icon-voice-room.svg?raw'
 import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import generatePassword from '../../utils/generatePassword.ts'
@@ -105,6 +116,7 @@ export default {
 		NcPasswordField,
 		NcTextArea,
 		NcTextField,
+		NcIconSvgWrapper,
 	},
 
 	props: {
@@ -128,6 +140,7 @@ export default {
 
 	setup() {
 		return {
+			CONVERSATION,
 			supportsAvatar,
 			forcePasswordProtection,
 		}
@@ -186,15 +199,39 @@ export default {
 			},
 		},
 
-		isVoiceRoom: {
+		conversationTypeOptions() {
+			return [
+				{
+					value: CONVERSATION.PRESET.DEFAULT,
+					icon: IconForumOutline,
+					label: t('spreed', 'Default'),
+					description: t('spreed', 'Send messages, create threads, and start voice and video calls.'),
+				},
+				{
+					value: CONVERSATION.PRESET.VOICE_ROOM,
+					svg: iconVoiceRoom,
+					label: t('spreed', 'Voice room'),
+					description: t('spreed', 'Directly join the call, ideal for catch-ups or spontaneous meetings. Participants can only send messages while in a call.'),
+				},
+			]
+		},
+
+		conversationType: {
 			get() {
-				return Boolean((this.newConversation.attributes ?? CONVERSATION.ATTRIBUTE.NONE) & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+				const attributes = this.newConversation.attributes
+				if (attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM) {
+					return CONVERSATION.PRESET.VOICE_ROOM
+				}
+				return CONVERSATION.PRESET.DEFAULT
 			},
 
-			set(value) {
-				const attributes = value
-					? (this.newConversation.attributes ?? CONVERSATION.ATTRIBUTE.NONE) | CONVERSATION.ATTRIBUTE.VOICE_ROOM
-					: (this.newConversation.attributes ?? CONVERSATION.ATTRIBUTE.NONE) & ~CONVERSATION.ATTRIBUTE.VOICE_ROOM
+			set(preset) {
+				let attributes = this.newConversation.attributes
+				if (preset === CONVERSATION.PRESET.VOICE_ROOM) {
+					attributes |= CONVERSATION.ATTRIBUTE.VOICE_ROOM
+				} else {
+					attributes &= ~CONVERSATION.ATTRIBUTE.VOICE_ROOM
+				}
 				this.updateNewConversation({ attributes })
 			},
 		},
@@ -263,10 +300,54 @@ export default {
 		display: block;
 		margin-top: 10px;
 		padding: 4px 0;
+		font-weight: bold;
 	}
 
 	&__error {
 		color: var(--color-text-error);
+	}
+}
+
+.conversation-type-selector {
+	display: flex;
+	gap: var(--default-grid-baseline);
+
+	&__option {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
+		padding: calc(var(--default-grid-baseline) * 2);
+		border: 2px solid var(--color-border);
+		border-radius: var(--border-radius-large);
+		background: none;
+		cursor: pointer;
+		text-align: start;
+
+		&:hover {
+			background: var(--color-background-hover);
+		}
+
+		&--active {
+			border-color: var(--color-primary-element);
+		}
+	}
+
+	&__header {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		height: var(--default-clickable-area);
+	}
+
+	&__label {
+		font-weight: bold;
+	}
+
+	&__description {
+		color: var(--color-text-maxcontrast);
+		font-size: small;
 	}
 }
 </style>
