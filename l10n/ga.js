@@ -786,6 +786,7 @@ OC.L10N.register(
     "No recording backend configured" : "Níl aon inneall taifeadta cumraithe",
     "SIP configuration" : "Cumraíocht SIP",
     "Using the SIP functionality requires a High-performance backend." : "Teastaíonn inneall Ardfheidhmíochta chun feidhmiúlacht SIP a úsáid.",
+    "Assigned Talk phone numbers must not start with + or 0. Please remove or update the following numbers:\n{list}" : "Ní féidir uimhreacha gutháin Sannta Comhrá a thosú le + ná 0. Bain nó nuashonraigh na huimhreacha seo a leanas le do thoil:\n{list}",
     "No SIP backend configured" : "Níl aon inneall SIP cumraithe",
     "Invalid date, date format must be YYYY-MM-DD" : "Dáta neamhbhailí, caithfidh formáid an dáta a bheith BBBB-MM-DD",
     "Conversation not found" : "Comhrá gan aimsiú",
