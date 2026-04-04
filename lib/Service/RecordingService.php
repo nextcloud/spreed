@@ -52,6 +52,7 @@ class RecordingService {
 	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
 		'audio/ogg' => ['ogg'],
 		'video/ogg' => ['ogv'],
+		'video/mp4' => ['mp4'],
 		'video/webm' => ['webm'],
 		'video/x-matroska' => ['mkv'],
 	];
