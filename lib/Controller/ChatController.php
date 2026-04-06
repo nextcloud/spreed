@@ -1201,8 +1201,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, TalkChatReminder, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error?: string}, array{}>
 	 *
 	 * 200: Reminder returned
-	 * 404: No reminder found
-	 * 404: Message not found
+	 * 404: No reminder found or message not found
 	 */
 	#[FederationSupported]
 	#[NoAdminRequired]
