@@ -6927,7 +6927,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Message not found */
+            /** @description No reminder found or message not found */
             404: {
                 headers: {
                     [name: string]: unknown;

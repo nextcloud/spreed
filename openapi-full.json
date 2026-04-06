@@ -10828,7 +10828,7 @@
                         }
                     },
                     "404": {
-                        "description": "Message not found",
+                        "description": "No reminder found or message not found",
                         "content": {
                             "application/json": {
                                 "schema": {
