@@ -60,6 +60,18 @@ SPDX-FileCopyrightText = "2019-2022 The MediaPipe Authors"
 SPDX-License-Identifier = "Apache-2.0"
 
 [[annotations]]
+path = ["src/utils/wasm/BBBA-mapi.wasm", "src/utils/wasm/BBBA-nosimd-mapi.wasm", "src/utils/wasm/BBBA-mapi.js", "src/utils/wasm/BBBA-nosimd-mapi.js"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025-2026 Klaus Scheuermann"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = "src/utils/wasm/mapi-proc.js"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025-2026 Filipe Coelho <falktx@falktx.com>"
+SPDX-License-Identifier = "ISC"
+
+[[annotations]]
 path = ["img/app.svg", "img/app-dark.png", "img/app-dark.svg", "img/changelog.svg", "img/favicon.ico", "img/favicon.png", "img/favicon.svg", "img/favicon-mask.svg", "img/favicon-touch.png", "img/favicon-touch.svg"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Nextcloud GmbH <https://nextcloud.com/trademarks/>"

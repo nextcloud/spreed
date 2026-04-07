@@ -82,6 +82,7 @@ export default class NoiseSuppressor extends TrackSinkSource {
 	}
 
 	_startEffect() {
+		console.log(0)
 		if (this._stopTimer) {
 			clearTimeout(this._stopTimer)
 			this._stopTimer = null
@@ -94,6 +95,7 @@ export default class NoiseSuppressor extends TrackSinkSource {
 			return
 		}
 
+		console.log(10)
 		if (!this._noiseSuppressionConsumer) {
 			// Start initializing the worklet if not already in progress. While waiting, set default track as an output.
 			if (!this._noiseSuppressionRegistrationPromise) {
@@ -114,11 +116,13 @@ export default class NoiseSuppressor extends TrackSinkSource {
 			return
 		}
 
+		console.log(20)
 		this._inputStream = new MediaStream([track])
 		this._outputStream = processNoiseSuppression(this._inputStream, this._noiseSuppressionConsumer, true)
 		const processedTrack = this._outputStream.getAudioTracks()[0]
 		processedTrack.enabled = this._audioEnabled
 
+		console.log(30)
 		this._setOutputTrack('default', processedTrack)
 	}
 

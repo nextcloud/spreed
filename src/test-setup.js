@@ -48,10 +48,11 @@ vi.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: vi.fn(() => mockedCapabilities),
 }))
 
-vi.mock('@sapphi-red/web-noise-suppressor', () => ({
-	loadRnnoise: vi.fn(),
-	RnnoiseWorkletNode: vi.fn(),
-}))
+vi.mock('./utils/wasm/BBBA-mapi.wasm', () => ({ default: '/mock/BBBA-mapi.wasm' }))
+vi.mock('./utils/wasm/BBBA-nosimd-mapi.wasm', () => ({ default: '/mock/BBBA-nosimd-mapi.wasm' }))
+vi.mock('./utils/wasm/BBBA-mapi.js?raw', () => ({ default: '' }))
+vi.mock('./utils/wasm/BBBA-nosimd-mapi.js?raw', () => ({ default: '' }))
+vi.mock('./utils/wasm/mapi-proc.js?raw', () => ({ default: '' }))
 
 HTMLAudioElement.prototype.setSinkId = vi.fn()
 
