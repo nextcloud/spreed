@@ -851,7 +851,7 @@
     "End-to-end encrypted calls" : "Κρυπτογραφημένες κλήσεις end-to-end",
     "Enable encryption" : "Ενεργοποίηση κρυπτογράφησης",
     "End-to-end encrypted calls with a configured SIP bridge require a newer version of the High-performance backend and SIP bridge." : "Οι κρυπτογραφημένες κλήσεις end-to-end με ρυθμισμένη γέφυρα SIP απαιτούν νεότερη έκδοση του backend υψηλής απόδοσης και της γέφυρας SIP.",
-    "Mobile clients do not support end-to-end encrypted calls at the moment." : "Οι κινητοί πελάτες δεν υποστηρίζουν κρυπτογραφημένες κλήσεις από άκρο σε άκρο προς το παρόν.",
+    "Mobile clients do not support end-to-end encrypted calls at the moment." : "Οι εφαρμογές για κινητές συσκευές προς το παρόν δεν υποστηρίζουν κρυπτογραφημένες κλήσεις από άκρο σε άκρο.",
     "By clicking the button above the information in the form is sent to the servers of Struktur AG. You can find further information at {linkstart}spreed.eu{linkend}." : "Κάνοντας κλικ στο κουμπί πάνω από τις πληροφορίες στη φόρμα γίνεται αποστολή στους διακομιστές της Struktur AG. Μπορείτε να βρείτε περισσότερες πληροφορίες στη διεύθυνση {linkstart}spreed.eu{linkend}.",
     "Pending" : "Εκκρεμεί",
     "Error" : "Σφάλμα",
