@@ -129,8 +129,7 @@ export const useChatStore = defineStore('chat', () => {
 				// - completely deleted (expired) message
 				// - thread message in general view (apart from the topmost one)
 				if (message && !isHiddenSystemMessage(message)
-					&& checkIfBelongsToContext(message, threadId)
-				) {
+					&& checkIfBelongsToContext(message, threadId)) {
 					acc.push(message)
 				}
 				return acc

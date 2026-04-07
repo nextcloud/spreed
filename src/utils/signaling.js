@@ -1122,8 +1122,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 			|| !this.hasFeature('incall-all') // Talk v15
 			|| (!this.hasFeature('switchto') && hasTalkFeature('local', 'breakout-rooms-v1')) // Talk v16
 			|| (!this.hasFeature('federation') && hasTalkFeature('local', 'federation-v2')) // Talk v20
-		)
-	) {
+		)) {
 		showError(
 			t('spreed', 'The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration.'),
 			{
