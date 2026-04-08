@@ -121,7 +121,7 @@
 #talk-sidebar .icon-voice-room,
 #call-container .icon-voice-room,
 .talkChatTab .icon-voice-room {
-	background-image: url(../img/icon-voice-room-white.svg);
+	background-image: url(../img/material-icons/volume-high-outline.svg);
 }
 
 /* The tribute panel is a direct child of the body, so it is not affected by

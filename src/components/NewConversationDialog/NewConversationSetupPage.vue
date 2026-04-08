@@ -99,7 +99,7 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import ConversationAvatarEditor from '../ConversationSettings/ConversationAvatarEditor.vue'
 import ListableSettings from '../ConversationSettings/ListableSettings.vue'
-import iconVoiceRoom from '../../../img/icon-voice-room.svg?raw'
+import IconVolumeHighOutline from '../../../img/material-icons/volume-high-outline.svg?raw'
 import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
@@ -111,7 +111,7 @@ const maxDescriptionLength = getTalkConfig('local', 'conversations', 'descriptio
 
 const presetIcons = {
 	[CONVERSATION.PRESET.DEFAULT]: { icon: IconForumOutline },
-	[CONVERSATION.PRESET.VOICE_ROOM]: { svg: iconVoiceRoom },
+	[CONVERSATION.PRESET.VOICE_ROOM]: { svg: IconVolumeHighOutline },
 }
 export default {
 
