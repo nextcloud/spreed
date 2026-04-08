@@ -27,6 +27,7 @@ use OCA\Talk\Model\BotServer;
 use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -67,6 +68,7 @@ class BotService {
 		protected LoggerInterface $logger,
 		protected ICertificateManager $certificateManager,
 		protected IEventDispatcher $dispatcher,
+		protected IAppManager $appManager,
 	) {
 		$this->activityPubHelper = new ActivityPubHelper();
 	}
@@ -487,5 +489,15 @@ class BotService {
 		if (strlen($description) > 4000) {
 			throw new \InvalidArgumentException('The provided description is too long (max. 4000 chars)');
 		}
+	}
+
+	public function isAppForBotEnabled(BotServer $bot): bool {
+		if (!str_starts_with($bot->getUrl(), Bot::URL_APP_PREFIX)) {
+			return true;
+		}
+
+		$url = substr($bot->getUrl(), strlen(Bot::URL_APP_PREFIX));
+		[$appId] = explode('/', $url, 2);
+		return $this->appManager->isEnabledForAnyone($appId);
 	}
 }
