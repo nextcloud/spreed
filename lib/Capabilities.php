@@ -170,6 +170,7 @@ class Capabilities implements IPublicCapability {
 		'attachments' => [
 			'allowed',
 			'folder',
+			'conversation-subfolders',
 		],
 		'call' => [
 			'predefined-backgrounds',
@@ -259,6 +260,7 @@ class Capabilities implements IPublicCapability {
 				'attachments' => [
 					'allowed' => $user instanceof IUser && $user->getBackendClassName() !== UserBackend::class,
 					// 'folder' => string,
+					'conversation-subfolders' => $this->talkConfig->isConversationSubfoldersEnabled(),
 				],
 				'call' => [
 					'enabled' => ((int)$this->serverConfig->getAppValue('spreed', 'start_calls', (string)Room::START_CALL_EVERYONE)) !== Room::START_CALL_NOONE,

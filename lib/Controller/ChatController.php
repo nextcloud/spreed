@@ -15,6 +15,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Chat\ReactionManager;
+use OCA\Talk\Config;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ChatSummaryException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -44,6 +45,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\BotService;
+use OCA\Talk\Service\ConversationFolderService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\ReminderService;
@@ -69,6 +71,9 @@ use OCP\Comments\IComment;
 use OCP\Comments\MessageTooLongException;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\FileInfo;
+use OCP\Files\NotEnoughSpaceException;
+use OCP\Files\NotFoundException as FileNotFoundException;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
@@ -139,6 +144,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 		protected IAppConfig $appConfig,
 		protected LoggerInterface $logger,
 		protected ScheduledMessageService $scheduledMessageManager,
+		private ConversationFolderService $conversationFolderService,
+		private Config $talkConfig,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -2378,5 +2385,210 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		// We want "federated_user/admin@example.tld" so we have to strip off the trailing "s" from the type "federated_users"
 		return substr($type, 0, -1) . '/' . $id;
+	}
+
+	/**
+	 * Prepare the conversation attachment folder and probe filename conflicts
+	 *
+	 * Creates the caller's conversation subfolder (and the room share) if not
+	 * yet present, then creates or returns a Draft folder for staging uploads.
+	 * Simulates the rename-on-conflict logic for each requested filename without
+	 * requiring the files to already exist.
+	 *
+	 * The returned `folder` is the Draft path — a staging area that is NOT shared
+	 * with the room, so other participants cannot see in-progress uploads or files
+	 * from aborted messages.  Files are moved into the shared subfolder atomically
+	 * when the attachment endpoint is called.
+	 *
+	 * Recommended client flow:
+	 * 1. Call this endpoint to obtain the Draft folder path and predicted final names.
+	 * 2. Display the predicted names as accessibility placeholders immediately.
+	 * 3. Upload each file to a random temporary name (e.g. a UUID) inside the
+	 *    returned Draft folder — do NOT upload to the predicted final name.
+	 * 4. Call the attachment endpoint with the temp path as `filePath` and the
+	 *    original desired name as `fileName`.  The server moves the file from Draft
+	 *    into the shared subfolder, resolves any conflicts, and posts the message.
+	 *
+	 * @param list<string> $fileNames Desired filenames to probe
+	 * @return DataResponse<Http::STATUS_OK, array{folder: string, renames: list<array<string, string>>}, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_INSUFFICIENT_STORAGE|Http::STATUS_NOT_IMPLEMENTED, array{error: string}, array{}>
+	 *
+	 * 200: Draft folder path and rename map returned
+	 * 500: Could not prepare the conversation folder
+	 * 501: Conversation subfolders feature is disabled
+	 * 507: User storage quota exceeded
+	 */
+	#[NoAdminRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/attachment/folder', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function probeAttachmentFolder(array $fileNames = []): DataResponse {
+		if (!$this->talkConfig->isConversationSubfoldersEnabled()) {
+			return new DataResponse(['error' => $this->l->t('Conversation subfolders are disabled')], Http::STATUS_NOT_IMPLEMENTED);
+		}
+
+		/** @var string $uid — non-null, guaranteed by RequireLoggedInParticipant */
+		$uid = $this->userId;
+
+		try {
+			$subfolder = $this->conversationFolderService->getOrCreateSubfolder($uid, $this->room);
+			$draftFolder = $this->conversationFolderService->getOrCreateDraftFolder($subfolder);
+		} catch (NotEnoughSpaceException) {
+			return new DataResponse(['error' => $this->l->t('Storage quota exceeded')], Http::STATUS_INSUFFICIENT_STORAGE);
+		} catch (\Exception $e) {
+			$this->logger->error('probeAttachmentFolder: failed to prepare conversation folder: {error}', [
+				'error' => $e->getMessage(),
+				'exception' => $e,
+			]);
+			return new DataResponse(['error' => $this->l->t('Could not prepare conversation folder')], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+		// Return the Draft path — conflicts are checked against the shared subfolder
+		// (the final destination), not the Draft folder itself.
+		$folderPath = $this->conversationFolderService->getRelativePath($uid, $draftFolder);
+		$renames = $this->conversationFolderService->probeFilenames($subfolder, $fileNames);
+
+		return new DataResponse(['folder' => $folderPath, 'renames' => $renames]);
+	}
+
+	/**
+	 * Post a file from the conversation Draft folder as a chat message
+	 *
+	 * The file must be inside the Draft folder returned by the probe endpoint.
+	 * This endpoint moves the file from Draft into the shared conversation
+	 * subfolder (resolving any name conflicts), creates the chat message, and
+	 * returns the actual final filename.  The subfolder is shared with the room
+	 * via a folder-level TYPE_ROOM share — no per-file share is created, keeping
+	 * the Share Overview clean.
+	 *
+	 * @param string $filePath Path of the file relative to the user's home root
+	 *                         (e.g. "Talk/Group Chat-abc123/Draft/uuid.jpg")
+	 * @param string $referenceId Client-generated reference ID for the message
+	 * @param string $talkMetaData JSON-encoded metadata (caption, messageType, silent, …)
+	 * @param string $fileName Desired final file name; the service resolves conflicts
+	 *                         by appending " (1)", " (2)", … if already taken
+	 * @return DataResponse<Http::STATUS_OK, array{renames: list<array<string, string>>}, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_UNPROCESSABLE_ENTITY|Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_INSUFFICIENT_STORAGE|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_IMPLEMENTED, array{error: string}, array{}>
+	 *
+	 * 200: File moved from Draft and posted as chat message
+	 * 400: Path does not point to a file
+	 * 404: File not found
+	 * 422: File is not inside the conversation Draft folder for this room
+	 * 500: Could not prepare the conversation folder
+	 * 501: Conversation subfolders feature is disabled
+	 * 507: User storage quota exceeded
+	 */
+	#[NoAdminRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/attachment', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function postAttachmentToRoom(string $filePath, string $referenceId, string $talkMetaData = '', string $fileName = ''): DataResponse {
+		if (!$this->talkConfig->isConversationSubfoldersEnabled()) {
+			return new DataResponse(['error' => $this->l->t('Conversation subfolders are disabled')], Http::STATUS_NOT_IMPLEMENTED);
+		}
+
+		/** @var string $uid — non-null, guaranteed by RequireLoggedInParticipant */
+		$uid = $this->userId;
+
+		// Ensure the user's conversation subfolder exists and is shared with
+		// the room.  The service creates the full folder hierarchy if missing.
+		try {
+			$subfolder = $this->conversationFolderService->getOrCreateSubfolder($uid, $this->room);
+			$draftFolder = $this->conversationFolderService->getOrCreateDraftFolder($subfolder);
+		} catch (NotEnoughSpaceException) {
+			return new DataResponse(['error' => $this->l->t('Storage quota exceeded')], Http::STATUS_INSUFFICIENT_STORAGE);
+		} catch (\Exception $e) {
+			$this->logger->error('postAttachmentToRoom: failed to prepare conversation folder: {error}', [
+				'error' => $e->getMessage(),
+				'exception' => $e,
+			]);
+			return new DataResponse(['error' => $this->l->t('Could not prepare conversation folder')], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+		// Look up the file in the caller's file tree.
+		try {
+			$node = $this->conversationFolderService->getFileNode($uid, $filePath);
+		} catch (FileNotFoundException) {
+			return new DataResponse(['error' => $this->l->t('File not found')], Http::STATUS_NOT_FOUND);
+		}
+		if ($node->getType() !== FileInfo::TYPE_FILE) {
+			return new DataResponse(['error' => $this->l->t('Path must point to a file')], Http::STATUS_BAD_REQUEST);
+		}
+
+		// Verify the file is inside the Draft folder for this conversation.
+		if ($node->getParent()->getId() !== $draftFolder->getId()) {
+			return new DataResponse(['error' => $this->l->t('File is not inside the conversation draft folder for this room')], Http::STATUS_UNPROCESSABLE_ENTITY);
+		}
+
+		// Move the file from Draft into the shared subfolder, resolving any name
+		// conflicts by appending " (1)", " (2)", … to the base name.
+		$desiredName = $fileName !== '' ? $fileName : $node->getName();
+		$result = $this->conversationFolderService->finalizeUploadedFile($subfolder, $node, $desiredName);
+		$renameFrom = $result['from'];
+		$renameTo = $result['to'];
+		$node = $result['node'];
+
+		// Parse talkMetaData for caption, messageType, silent, replyTo, threadId.
+		$metaData = json_decode($talkMetaData, true);
+		$metaData = is_array($metaData) ? $metaData : [];
+
+		// Validate and sanitize messageType.
+		if (isset($metaData['messageType']) && $metaData['messageType'] === ChatManager::VERB_VOICE_MESSAGE) {
+			$mime = $node->getMimeType();
+			if ($mime !== 'audio/mpeg' && $mime !== 'audio/wav') {
+				unset($metaData['messageType']);
+			}
+		}
+		$metaData['mimeType'] = $node->getMimeType();
+
+		if (isset($metaData['caption'])) {
+			if (is_string($metaData['caption']) && trim($metaData['caption']) !== '') {
+				$metaData['caption'] = trim($metaData['caption']);
+			} else {
+				unset($metaData['caption']);
+			}
+		}
+
+		$silent = (bool)($metaData[Message::METADATA_SILENT] ?? false);
+		$replyToId = isset($metaData['replyTo']) ? (int)$metaData['replyTo'] : null;
+		$threadId = isset($metaData['threadId']) ? (int)$metaData['threadId'] : 0;
+		unset($metaData['replyTo'], $metaData['threadId'], $metaData[Message::METADATA_SILENT]);
+
+		$replyToComment = null;
+		if ($replyToId !== null) {
+			try {
+				$replyToComment = $this->chatManager->getComment($this->room, (string)$replyToId);
+			} catch (\Exception) {
+				// Invalid replyTo — ignore.
+			}
+		}
+
+		// Create the file_shared system message referencing the file by node ID.
+		// The parameters use 'fileId' instead of 'share' so no per-file TYPE_ROOM
+		// share is needed; access is controlled by the folder-level share.
+		$this->chatManager->addSystemMessage(
+			$this->room,
+			$this->participant,
+			Attendee::ACTOR_USERS,
+			$uid,
+			json_encode(['message' => 'file_shared', 'parameters' => ['fileId' => (string)$node->getId(), 'metaData' => $metaData]]),
+			$this->timeFactory->getDateTime(),
+			true,
+			$referenceId !== '' ? $referenceId : null,
+			$replyToComment,
+			false,
+			$silent,
+			$threadId,
+		);
+
+		return new DataResponse(['renames' => [[$renameFrom => $renameTo]]], Http::STATUS_OK);
 	}
 }

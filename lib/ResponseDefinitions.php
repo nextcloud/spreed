@@ -743,6 +743,8 @@ namespace OCA\Talk;
  *             allowed: bool,
  *             // User's attachment folder (only available for logged in users)
  *             folder?: string,
+ *             // Whether per-conversation subfolders are used for attachments
+ *             'conversation-subfolders': bool,
  *         },
  *         call: array{
  *             // Whether calls are enabled

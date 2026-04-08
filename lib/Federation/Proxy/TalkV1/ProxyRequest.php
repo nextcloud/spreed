@@ -59,6 +59,9 @@ class ProxyRequest {
 					'conversations' => [
 						'list-style',
 					],
+					'attachments' => [
+						'conversation-subfolders' => $this->talkConfig->isConversationSubfoldersEnabled(),
+					],
 				],
 			]
 		]));

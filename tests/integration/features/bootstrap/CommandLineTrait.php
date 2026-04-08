@@ -43,6 +43,11 @@ trait CommandLineTrait {
 			'maintenance:mode',
 		], true);
 
+		$clearAppConfigCache = in_array($args[0], [
+			'config:app:delete',
+			'config:app:set',
+		], true);
+
 		$args[] = '--no-ansi';
 
 		if ($this->currentServer === 'REMOTE') {
@@ -76,6 +81,20 @@ trait CommandLineTrait {
 				$client->request('GET', $this->remoteServerUrl . 'apps/testing/clean_opcode_cache.php');
 			} else {
 				$client->request('GET', $this->localServerUrl . 'apps/testing/clean_opcode_cache.php');
+			}
+		}
+
+		if ($clearAppConfigCache) {
+			// config:app:set/delete writes to DB but NC caches app config in APCu
+			// (web-server process APCu ≠ CLI APCu), so we must also flush the
+			// APCu data cache via an HTTP request to make the web server pick up
+			// the new value on the very next request.
+			$client = new GuzzleHttp\Client();
+
+			if ($this->currentServer === 'REMOTE') {
+				$client->request('GET', $this->remoteServerUrl . 'apps/testing/clean_apcu_cache.php');
+			} else {
+				$client->request('GET', $this->localServerUrl . 'apps/testing/clean_apcu_cache.php');
 			}
 		}
 

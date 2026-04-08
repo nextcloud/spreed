@@ -225,3 +225,4 @@
 * `config => conversations => sort-order` (local) - User selected sort order for conversations (`activity` or `alphabetical`)
 * `config => conversations => group-mode` (local) - User selected grouping mode for conversations (`none`, `group-first` or `private-first`)
 * `private-reply` - Whether clients can link the original message to a private reply in one-to-one conversations
+* `config => attachments => conversation-subfolders` (local) - Whether per-conversation subfolders are used for Talk attachments; when `true` files must be uploaded to `Talk/<ConversationName>-<token>/<DisplayName>-<uid>/` before calling the attachment endpoint

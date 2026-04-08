@@ -519,7 +519,13 @@ class SystemMessage implements IEventListener {
 			}
 		} elseif ($message === 'file_shared') {
 			try {
-				$parsedParameters['file'] = $this->getFileFromShare($room, $participant, $parameters['share'], $allowInaccurate);
+				if (isset($parameters['share'])) {
+					$parsedParameters['file'] = $this->getFileFromShare($room, $participant, $parameters['share'], $allowInaccurate);
+				} elseif (isset($parameters['fileId'])) {
+					$parsedParameters['file'] = $this->getFileFromNodeId($room, $participant, (int)$parameters['fileId'], $allowInaccurate);
+				} else {
+					throw new \InvalidArgumentException('No share or fileId in file_shared message');
+				}
 				$parsedMessage = '{file}';
 				$metaData = $parameters['metaData'] ?? [];
 				if (isset($metaData['messageType'])) {
@@ -798,6 +804,94 @@ class SystemMessage implements IEventListener {
 	}
 
 	/**
+	 * Build the same file-metadata array as getFileFromShare() but starting
+	 * from a node ID rather than a share ID.
+	 *
+	 * Files posted via the conversation-folder mechanism are accessible to room
+	 * members through the folder-level TYPE_ROOM share, so
+	 * userFolder->getFirstNodeById() will find them via the share mount.
+	 *
+	 * @throws NotFoundException
+	 * @throws ShareNotFound
+	 */
+	protected function getFileFromNodeId(Room $room, ?Participant $participant, int $nodeId, bool $allowInaccurate = false): array {
+		if ($participant && $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			if ($allowInaccurate) {
+				// Lightweight lookup: search the filecache directly without setting up the user
+				// filesystem, mirroring getFileFromShare()'s use of getNodeCacheEntry().
+				// Path is intentionally inaccurate (filename only) — callers that need the full
+				// relative path must pass $allowInaccurate = false.
+				$node = $this->rootFolder->getFirstNodeById($nodeId);
+				if (!$node instanceof Node) {
+					throw new NotFoundException('File node ' . $nodeId . ' not found');
+				}
+
+				$name = $node->getName();
+				$size = $node->getSize();
+				$path = $name;
+			} else {
+				$uid = $participant->getAttendee()->getActorId();
+				$userFolder = $this->rootFolder->getUserFolder($uid);
+
+				$node = $userFolder->getFirstNodeById($nodeId);
+				if (!$node instanceof Node) {
+					throw new NotFoundException('File node ' . $nodeId . ' not found for user ' . $uid);
+				}
+
+				$fullPath = $node->getPath();
+				$pathSegments = explode('/', $fullPath, 4);
+				$name = $node->getName();
+				$size = $node->getSize();
+				$path = $pathSegments[3] ?? $name;
+			}
+
+			$url = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', [
+				'fileid' => $node->getId(),
+			]);
+		} elseif ($participant && $room->getType() !== Room::TYPE_PUBLIC && $participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			throw new ShareNotFound();
+		} else {
+			// Guest / public room path: load via the owner's root folder.
+			// Without a per-file share we cannot look up a share token, so
+			// guests will see the file as unavailable.
+			throw new ShareNotFound();
+		}
+
+		$fileId = $node->getId();
+		$isPreviewAvailable = $size > 0 && $this->previewManager->isMimeSupported($node->getMimeType());
+
+		$data = [
+			'type' => 'file',
+			'id' => (string)$fileId,
+			'name' => $name,
+			'size' => (string)$size,
+			'path' => $path,
+			'link' => $url,
+			'etag' => $node->getEtag(),
+			'permissions' => (string)$node->getPermissions(),
+			'mimetype' => $node->getMimeType(),
+			'preview-available' => $isPreviewAvailable ? 'yes' : 'no',
+			'hide-download' => 'no',
+		];
+
+		if ($isPreviewAvailable && str_starts_with($node->getMimeType(), 'image/')) {
+			try {
+				$sizeMetadata = $this->metadataCache->getImageMetadataForFileId($fileId);
+				if (isset($sizeMetadata['width'], $sizeMetadata['height'])) {
+					$data['width'] = (string)$sizeMetadata['width'];
+					$data['height'] = (string)$sizeMetadata['height'];
+				}
+				if (isset($sizeMetadata['blurhash'])) {
+					$data['blurhash'] = $sizeMetadata['blurhash'];
+				}
+			} catch (\OCP\FilesMetadata\Exceptions\FilesMetadataNotFoundException) {
+			}
+		}
+
+		return $data;
+	}
+
+	/**
 	 * @throws InvalidPathException
 	 * @throws NotFoundException
 	 * @throws ShareNotFound
@@ -826,7 +920,9 @@ class SystemMessage implements IEventListener {
 					// FIXME This should be much more sensible, e.g.
 					// 1. Only be executed on "Waiting for new messages"
 					// 2. Once per request
+					/** @psalm-suppress UndefinedClass */
 					\OC_Util::tearDownFS();
+					/** @psalm-suppress UndefinedClass */
 					\OC_Util::setupFS($participant->getAttendee()->getActorId());
 					$userNodes = $userFolder->getById($share->getNodeId());
 
