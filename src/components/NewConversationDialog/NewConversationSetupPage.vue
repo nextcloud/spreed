@@ -39,24 +39,26 @@
 				@avatarEdited="$emit('avatarEdited', $event)" />
 		</template>
 
-		<label class="new-group-conversation__label">
-			{{ t('spreed', 'Conversation type') }}
-		</label>
-		<div class="conversation-type-selector">
-			<div
-				v-for="option in conversationTypeOptions"
-				:key="option.value"
-				class="conversation-type-selector__option"
-				:class="[{ 'conversation-type-selector__option--active': conversationType === option.value }]"
-				@click="conversationType = option.value">
-				<span class="conversation-type-selector__header">
-					<NcIconSvgWrapper v-if="option.svg" :svg="option.svg" :size="20" />
-					<component :is="option.icon" v-else-if="option.icon" :size="20" />
-					<span class="conversation-type-selector__label">{{ option.label }}</span>
-				</span>
-				<span class="conversation-type-selector__description">{{ option.description }}</span>
+		<template v-if="conversationTypeOptions.length > 0">
+			<label class="new-group-conversation__label">
+				{{ t('spreed', 'Conversation type') }}
+			</label>
+			<div class="conversation-type-selector">
+				<button
+					v-for="option in conversationTypeOptions"
+					:key="option.value"
+					class="conversation-type-selector__option"
+					:class="[{ 'conversation-type-selector__option--active': conversationType === option.value }]"
+					@click="conversationType = option.value">
+					<span class="conversation-type-selector__header">
+						<NcIconSvgWrapper v-if="option.svg" :svg="option.svg" :size="20" />
+						<component :is="option.icon" v-else-if="option.icon" :size="20" />
+						<span class="conversation-type-selector__label">{{ option.label }}</span>
+					</span>
+					<span class="conversation-type-selector__description">{{ option.description }}</span>
+				</button>
 			</div>
-		</div>
+		</template>
 
 		<label class="new-group-conversation__label">
 			{{ t('spreed', 'Conversation visibility') }}
@@ -100,11 +102,17 @@ import ListableSettings from '../ConversationSettings/ListableSettings.vue'
 import iconVoiceRoom from '../../../img/icon-voice-room.svg?raw'
 import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { useSettingsStore } from '../../stores/settings.ts'
 import generatePassword from '../../utils/generatePassword.ts'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
 const forcePasswordProtection = getTalkConfig('local', 'conversations', 'force-passwords')
 const maxDescriptionLength = getTalkConfig('local', 'conversations', 'description-length') || 500
+
+const presetIcons = {
+	[CONVERSATION.PRESET.DEFAULT]: { icon: IconForumOutline },
+	[CONVERSATION.PRESET.VOICE_ROOM]: { svg: iconVoiceRoom },
+}
 export default {
 
 	name: 'NewConversationSetupPage',
@@ -139,10 +147,12 @@ export default {
 	emits: ['update:newConversation', 'update:password', 'update:listable', 'avatarEdited', 'handleEnter', 'isPasswordValid'],
 
 	setup() {
+		const settingsStore = useSettingsStore()
 		return {
 			CONVERSATION,
 			supportsAvatar,
 			forcePasswordProtection,
+			settingsStore,
 		}
 	},
 
@@ -200,20 +210,14 @@ export default {
 		},
 
 		conversationTypeOptions() {
-			return [
-				{
-					value: CONVERSATION.PRESET.DEFAULT,
-					icon: IconForumOutline,
-					label: t('spreed', 'Default'),
-					description: t('spreed', 'Send messages, create threads, and start voice and video calls.'),
-				},
-				{
-					value: CONVERSATION.PRESET.VOICE_ROOM,
-					svg: iconVoiceRoom,
-					label: t('spreed', 'Voice room'),
-					description: t('spreed', 'Directly join the call, ideal for catch-ups or spontaneous meetings. Participants can only send messages while in a call.'),
-				},
-			]
+			return this.settingsStore.presets
+				.filter((preset) => preset.identifier in presetIcons)
+				.map((preset) => ({
+					value: preset.identifier,
+					label: preset.name,
+					description: preset.description,
+					...presetIcons[preset.identifier],
+				}))
 		},
 
 		conversationType: {
@@ -268,6 +272,10 @@ export default {
 				this.$emit('update:listable', value)
 			},
 		},
+	},
+
+	async created() {
+		await this.settingsStore.fetchPresets()
 	},
 
 	methods: {
@@ -348,6 +356,7 @@ export default {
 	&__description {
 		color: var(--color-text-maxcontrast);
 		font-size: small;
+		font-weight: normal;
 	}
 }
 </style>

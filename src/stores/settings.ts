@@ -3,12 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { ConversationPreset } from '../types/index.ts'
+
 import { getCurrentUser } from '@nextcloud/auth'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { CHAT_STYLE, CONVERSATION, PRIVACY } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
-import { getTalkConfig } from '../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import { getPresets } from '../services/conversationsService.ts'
 import {
 	setAttachmentFolder,
 	setBlurVirtualBackground,
@@ -58,6 +61,7 @@ export const useSettingsStore = defineStore('settings', () => {
 	}
 
 	const attachmentFolder = ref<string>(getTalkConfig('local', 'attachments', 'folder') ?? '')
+	const presets = ref<ConversationPreset[]>([])
 
 	/**
 	 * Update the read status privacy for the user
@@ -209,6 +213,17 @@ export const useSettingsStore = defineStore('settings', () => {
 		groupMode.value = value
 	}
 
+	/**
+	 * Fetch and store the list of available room presets (only once).
+	 */
+	async function fetchPresets() {
+		if (presets.value.length > 0 || !hasTalkFeature('local', 'conversation-presets')) {
+			return
+		}
+		const response = await getPresets()
+		presets.value = response.data.ocs.data
+	}
+
 	return {
 		readStatusPrivacy,
 		typingStatusPrivacy,
@@ -225,7 +240,9 @@ export const useSettingsStore = defineStore('settings', () => {
 		sortOrder,
 		groupMode,
 		liveTranscriptionTargetLanguageId,
+		presets,
 
+		fetchPresets,
 		updateSortOrder,
 		updateGroupMode,
 		updateReadStatusPrivacy,

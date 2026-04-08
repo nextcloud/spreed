@@ -29,7 +29,7 @@ readonly class VoiceRoom extends APreset {
 
 	#[\Override]
 	public function getDescription(): string {
-		return $this->l->t('Voice room');
+		return $this->l->t('Directly join the call, ideal for catch-ups or spontaneous meetings.');
 	}
 
 	#[\Override]
