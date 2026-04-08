@@ -386,6 +386,7 @@ OC.L10N.register(
     "Other" : "Outro",
     "Default" : "Predefinida",
     "Group" : "Grupo",
+    "Team" : "Grupo",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Error while sharing file" : "Erro ao partilhar ficheiro",
     "Please reload the page." : "Por favor, recarregue a página.",

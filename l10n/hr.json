@@ -784,6 +784,7 @@
     "No recording backend configured" : "Nije konfiguriran pozadinski sustav za snimanje",
     "SIP configuration" : "Konfiguracija SIP-a",
     "Using the SIP functionality requires a High-performance backend." : "Korištenje SIP funkcionalnosti zahtijeva visokoučinkoviti pozadinski sustav.",
+    "Assigned Talk phone numbers must not start with + or 0. Please remove or update the following numbers:\n{list}" : "Dodijeljeni telefonski brojevi za Talk ne smiju započinjati s + ili 0. Uklonite ili ažurirajte sljedeće brojeve:\n{list}",
     "No SIP backend configured" : "Nije konfiguriran SIP pozadinski sustav",
     "Invalid date, date format must be YYYY-MM-DD" : "Nevažeći datum, oblik datuma mora biti GGGG-MM-DD",
     "Conversation not found" : "Razgovor nije pronađen",
