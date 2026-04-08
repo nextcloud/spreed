@@ -130,13 +130,13 @@ class ConversationSearch implements IProvider {
 			}
 		}
 
+		ksort($result);
 		if (count($result) <= $query->getLimit()) {
 			return SearchResult::complete(
 				$this->l->t('Conversations'),
 				array_values($result),
 			);
 		}
-		ksort($result);
 
 		$newCursorWithName = '#';
 		if ($cursorKey) {
