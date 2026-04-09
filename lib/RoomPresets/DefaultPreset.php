@@ -13,13 +13,25 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Services\IAppConfig;
+use OCP\IL10N;
 
 readonly class DefaultPreset extends APreset {
 	public const CONFIG_PREFIX_DEFAULT = 'default_';
 
 	public function __construct(
 		protected IAppConfig $appConfig,
+		protected IL10N $l,
 	) {
+	}
+
+	#[\Override]
+	public function getName(): string {
+		return $this->l->t('Default');
+	}
+
+	#[\Override]
+	public function getDescription(): string {
+		return $this->l->t('Send messages, create threads, and start voice and video calls.');
 	}
 
 	#[\Override]

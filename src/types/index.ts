@@ -563,6 +563,10 @@ export type {
 	UserProfileResponse,
 } from './core.ts'
 
+// Presets
+export type ConversationPreset = components['schemas']['ConversationPreset']
+export type getPresetsResponse = ApiResponse<operations['preset-get-presets']['responses'][200]['content']['application/json']>
+
 // Settings
 export type setSipSettingsParams = Required<operationsAdmin['settings-setsip-settings']>['requestBody']['content']['application/json']
 export type setSipSettingsResponse = ApiResponse<operationsAdmin['settings-setsip-settings']['responses'][200]['content']['application/json']>
