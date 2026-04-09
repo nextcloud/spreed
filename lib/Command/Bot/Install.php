@@ -92,6 +92,14 @@ class Install extends Base {
 			$featureFlags = Bot::FEATURE_WEBHOOK + Bot::FEATURE_RESPONSE;
 		}
 
+		if ($featureFlags & Bot::FEATURE_EVENT
+			&& ($featureFlags & Bot::FEATURE_WEBHOOK
+				|| $featureFlags & Bot::FEATURE_RESPONSE
+				|| $featureFlags & Bot::FEATURE_REACTION)) {
+			$output->writeln('<error>Bots with feature "event" can not support "webhook", "response" or "reaction" feature. They are mutual exclusive</error>');
+			return 1;
+		}
+
 		try {
 			$this->botService->validateBotParameters($name, $secret, $url, $description);
 		} catch (\InvalidArgumentException $e) {
