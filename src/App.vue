@@ -264,93 +264,7 @@ export default {
 		})
 
 		EventBus.on('switch-to-conversation', async (params) => {
-			if (this.isInCall) {
-				this.callViewStore.setForceCallView(true)
-
-				const enableAudio = !BrowserStorage.getItem('audioDisabled_' + this.token)
-				const enableVideo = !BrowserStorage.getItem('videoDisabled_' + this.token)
-				const enableVirtualBackground = !!BrowserStorage.getItem('virtualBackgroundEnabled')
-				const virtualBackgroundType = BrowserStorage.getItem('virtualBackgroundType')
-				const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength')
-				const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl')
-
-				// Fetch conversation object, if it's not known yet to the client
-				if (!this.$store.getters.conversation(params.token)) {
-					await this.fetchSingleConversation(params.token)
-				}
-
-				const conversation = this.$store.getters.conversation(this.token)
-				const previousParticipants = []
-				if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE) {
-					previousParticipants.push(conversation.name)
-				}
-
-				EventBus.once('joined-conversation', async ({ token }) => {
-					if (params.token !== token) {
-						return
-					}
-
-					if (enableAudio) {
-						BrowserStorage.removeItem('audioDisabled_' + token)
-					} else {
-						BrowserStorage.setItem('audioDisabled_' + token, 'true')
-					}
-					if (enableVideo) {
-						BrowserStorage.removeItem('videoDisabled_' + token)
-					} else {
-						BrowserStorage.setItem('videoDisabled_' + token, 'true')
-					}
-					if (enableVirtualBackground) {
-						BrowserStorage.setItem('virtualBackgroundEnabled', 'true')
-					} else {
-						BrowserStorage.removeItem('virtualBackgroundEnabled')
-					}
-					if (virtualBackgroundType) {
-						BrowserStorage.setItem('virtualBackgroundType', virtualBackgroundType)
-					} else {
-						BrowserStorage.removeItem('virtualBackgroundType')
-					}
-					if (virtualBackgroundBlurStrength) {
-						BrowserStorage.setItem('virtualBackgroundBlurStrength', virtualBackgroundBlurStrength)
-					} else {
-						BrowserStorage.removeItem('virtualBackgroundBlurStrength')
-					}
-					if (virtualBackgroundUrl) {
-						BrowserStorage.setItem('virtualBackgroundUrl', virtualBackgroundUrl)
-					} else {
-						BrowserStorage.removeItem('virtualBackgroundUrl')
-					}
-
-					const conversation = this.$store.getters.conversation(token)
-
-					let flags = PARTICIPANT.CALL_FLAG.IN_CALL
-					if (conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
-						flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
-					}
-					if (conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO) {
-						flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
-					}
-
-					const payload = {
-						token: params.token,
-						participantIdentifier: this.actorStore.participantIdentifier,
-						flags,
-						silent: true,
-						recordingConsent: this.recordingConsentGiven,
-					}
-
-					if (conversation.objectType === CONVERSATION.OBJECT_TYPE.EXTENDED) {
-						payload.silent = false
-						if (previousParticipants.length) {
-							payload.silentFor = previousParticipants
-						}
-					}
-
-					await this.$store.dispatch('joinCall', payload)
-
-					this.callViewStore.setForceCallView(false)
-				})
-			}
+			this.joinCallAutomatically()
 
 			this.skipLeaveWarning = true
 			this.$router.push({ name: 'conversation', params: { token: params.token } })
@@ -568,6 +482,95 @@ export default {
 		openRoot() {
 			if (this.$route.name !== 'root' && !this.isInCall) {
 				this.$router.push({ name: 'root' })
+			}
+		},
+
+		async joinCallAutomatically() {
+			if (this.isInCall) {
+				this.callViewStore.setForceCallView(true)
+
+				const enableAudio = !BrowserStorage.getItem('audioDisabled_' + this.token)
+				const enableVideo = !BrowserStorage.getItem('videoDisabled_' + this.token)
+				const enableVirtualBackground = !!BrowserStorage.getItem('virtualBackgroundEnabled')
+				const virtualBackgroundType = BrowserStorage.getItem('virtualBackgroundType')
+				const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength')
+				const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl')
+
+				// Fetch conversation object, if it's not known yet to the client
+				if (!this.$store.getters.conversation(this.token)) {
+					await this.fetchSingleConversation(this.token)
+				}
+
+				const conversation = this.$store.getters.conversation(this.token)
+				const previousParticipants = []
+				if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE) {
+					previousParticipants.push(conversation.name)
+				}
+
+				EventBus.once('joined-conversation', async ({ token }) => {
+					if (this.token !== token) {
+						return
+					}
+					if (enableAudio) {
+						BrowserStorage.removeItem('audioDisabled_' + token)
+					} else {
+						BrowserStorage.setItem('audioDisabled_' + token, 'true')
+					}
+					if (enableVideo) {
+						BrowserStorage.removeItem('videoDisabled_' + token)
+					} else {
+						BrowserStorage.setItem('videoDisabled_' + token, 'true')
+					}
+					if (enableVirtualBackground) {
+						BrowserStorage.setItem('virtualBackgroundEnabled', 'true')
+					} else {
+						BrowserStorage.removeItem('virtualBackgroundEnabled')
+					}
+					if (virtualBackgroundType) {
+						BrowserStorage.setItem('virtualBackgroundType', virtualBackgroundType)
+					} else {
+						BrowserStorage.removeItem('virtualBackgroundType')
+					}
+					if (virtualBackgroundBlurStrength) {
+						BrowserStorage.setItem('virtualBackgroundBlurStrength', virtualBackgroundBlurStrength)
+					} else {
+						BrowserStorage.removeItem('virtualBackgroundBlurStrength')
+					}
+					if (virtualBackgroundUrl) {
+						BrowserStorage.setItem('virtualBackgroundUrl', virtualBackgroundUrl)
+					} else {
+						BrowserStorage.removeItem('virtualBackgroundUrl')
+					}
+
+					const conversation = this.$store.getters.conversation(token)
+
+					let flags = PARTICIPANT.CALL_FLAG.IN_CALL
+					if (conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
+						flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
+					}
+					if (conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO) {
+						flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
+					}
+
+					const payload = {
+						token: this.token,
+						participantIdentifier: this.actorStore.participantIdentifier,
+						flags,
+						silent: true,
+						recordingConsent: this.recordingConsentGiven,
+					}
+
+					if (conversation.objectType === CONVERSATION.OBJECT_TYPE.EXTENDED) {
+						payload.silent = false
+						if (previousParticipants.length) {
+							payload.silentFor = previousParticipants
+						}
+					}
+
+					await this.$store.dispatch('joinCall', payload)
+
+					this.callViewStore.setForceCallView(false)
+				})
 			}
 		},
 	},
