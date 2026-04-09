@@ -299,6 +299,8 @@ OC.L10N.register(
     "Talk conversations" : "对话",
     "Talk to %s" : "和 %s 对话",
     "An error occurred. Please contact your administrator." : "发生了一个错误。请联系你的管理员。",
+    "Storage quota exceeded" : "超出存储限额",
+    "File not found" : "文件未找到",
     "File is not shared, or shared but not with the user" : "文件未分享，或没有分享给用户",
     "No account available to delete." : "没有可删除的账号。",
     "Password needs to be set" : "需要设置密码",

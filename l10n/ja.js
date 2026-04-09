@@ -264,6 +264,8 @@ OC.L10N.register(
     "Talk conversations" : "会話",
     "Talk to %s" : "%s と通話",
     "An error occurred. Please contact your administrator." : "エラーが発生しました。管理者に連絡してください。",
+    "Storage quota exceeded" : "ストレージの割り当てを超過しました",
+    "File not found" : "ファイルが見つかりません",
     "File is not shared, or shared but not with the user" : "ファイルが共有されていないか、対象ユーザーを除いて共有されています",
     "No account available to delete." : "削除するアカウントがありません。",
     "No image file provided" : "画像ファイルが提供されていません",

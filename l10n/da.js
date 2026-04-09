@@ -143,6 +143,7 @@ OC.L10N.register(
     "%s (guest)" : "%s (gæst)",
     "Talk conversations" : "Snak samtaler",
     "Talk to %s" : "Snak med %s",
+    "Storage quota exceeded" : "Lagringskvote overskredet",
     "File is not shared, or shared but not with the user" : "Filen er ikke delt, eller den er delt men ikke med brugeren",
     "File is too big" : "Filen er for stor",
     "Invalid file provided" : "Der er angivet en ugyldig fil",

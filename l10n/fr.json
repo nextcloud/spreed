@@ -297,6 +297,8 @@
     "Talk conversations" : "Conversations orales",
     "Talk to %s" : "Discuter avec %s",
     "An error occurred. Please contact your administrator." : "Une erreur est survenue. Merci de contacter votre administrateur.",
+    "Storage quota exceeded" : "Quota de stockage dépassé",
+    "File not found" : "Fichier non trouvé",
     "File is not shared, or shared but not with the user" : "Le fichier n'est pas partagé, ou partagé mais pas avec cet utilisateur",
     "No account available to delete." : "Aucun compte disponible à supprimer",
     "Password needs to be set" : "Le mot de passe doit être défini",

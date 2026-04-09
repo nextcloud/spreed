@@ -297,6 +297,8 @@
     "Talk conversations" : "Talk 對話",
     "Talk to %s" : "與 %s 通話",
     "An error occurred. Please contact your administrator." : "發生錯誤，請聯絡管理員。",
+    "Storage quota exceeded" : "超過儲存空間配額",
+    "File not found" : "找不到檔案",
     "File is not shared, or shared but not with the user" : "檔案未分享，或未與用戶分享",
     "No account available to delete." : "沒有可刪除的帳戶。",
     "Password needs to be set" : "需要設定密碼",

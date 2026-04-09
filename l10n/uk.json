@@ -290,6 +290,8 @@
     "Talk conversations" : "Розмови",
     "Talk to %s" : "Спілкуватися з %s",
     "An error occurred. Please contact your administrator." : "Виникла помилка. Будь ласка, зверніться до вашого адміністратора.",
+    "Storage quota exceeded" : "Перевищено дозволений обсяг даних для збереження",
+    "File not found" : "Файл не знайдено",
     "File is not shared, or shared but not with the user" : "До файлу не надано спільний доступ або надано, але не користувачеві",
     "No account available to delete." : "Обліковий запис недоступний для видалення.",
     "Password needs to be set" : "Необхідно встановити пароль",

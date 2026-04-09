@@ -9,6 +9,7 @@ OC.L10N.register(
     "System" : "Sistemo",
     "Talk conversations" : "Buŝaj konversacioj",
     "Talk to %s" : "Paroli al %s",
+    "File not found" : "Netrovita dosiero",
     "File is too big" : "Dosiero tro grandas",
     "Invalid file provided" : "Nevalida dosiero provizita",
     "Invalid image" : "Nevalida bildo",

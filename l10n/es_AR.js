@@ -7,6 +7,8 @@ OC.L10N.register(
     "Message deleted by author" : "Mensaje eliminado por el autor",
     "Administration" : "Administración",
     "System" : "Sistema",
+    "Storage quota exceeded" : "Se excedió la cuota de almacenamiento",
+    "File not found" : "Archivo no encontrado",
     "File is too big" : "El archivo es demasiado grande.",
     "Invalid file provided" : "Archivo proporcionado inválido",
     "Invalid image" : "Imagen inválida",

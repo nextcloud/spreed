@@ -293,6 +293,8 @@
     "Talk conversations" : "Vestlused kõnerakenduses Talk",
     "Talk to %s" : "Suhtle: %s",
     "An error occurred. Please contact your administrator." : "Tekkis viga. Palun võta ühendust oma peakasutajaga.",
+    "Storage quota exceeded" : "Andmeruumi kvoot on ületatud",
+    "File not found" : "Faili ei leidu",
     "File is not shared, or shared but not with the user" : "Faili kas pole jagatud või kui on jagatud, siis mitte selle kasutajaga",
     "No account available to delete." : "Pole kasutajakontot, mida kustutada.",
     "Password needs to be set" : "Salasõna peab olema lisatud",

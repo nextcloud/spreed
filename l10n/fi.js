@@ -180,6 +180,8 @@ OC.L10N.register(
     "Message of a deleted user in {conversation}" : "Poistetun käyttäjän viesti keskustelussa {conversation}",
     "Talk conversations" : "Talk-keskustelut",
     "An error occurred. Please contact your administrator." : "Tapahtui virhe. Ole yhteydessä ylläpitäjään.",
+    "Storage quota exceeded" : "Tallennustilan kiintiö täynnä",
+    "File not found" : "Tiedostoa ei löytynyt",
     "File is not shared, or shared but not with the user" : "Tiedosto ei ole jaettu, tai jaettu mutta ei kyseisen käyttäjän kanssa",
     "No image file provided" : "Kuvatiedostoa ei määritetty",
     "File is too big" : "Tiedosto on liian suuri",

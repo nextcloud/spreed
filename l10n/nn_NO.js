@@ -5,6 +5,7 @@ OC.L10N.register(
     "Guest" : "Gjest",
     "Administration" : "Administrasjon",
     "System" : "System",
+    "File not found" : "Fann ikkje fila",
     "File is too big" : "Fila er for stor",
     "Invalid file provided" : "Ugyldig fil",
     "Invalid image" : "Ugyldig bilete",

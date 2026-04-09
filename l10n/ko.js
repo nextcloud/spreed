@@ -239,6 +239,8 @@ OC.L10N.register(
     "Talk conversations" : "토크 대화 목록",
     "Talk to %s" : "%s 님과 대화",
     "An error occurred. Please contact your administrator." : "오류가 발생했습니다. 관리자에게 연락해 주세요.",
+    "Storage quota exceeded" : "저장소 할당량 초과됨",
+    "File not found" : "파일을 찾을 수 없음",
     "File is not shared, or shared but not with the user" : "파일을 공유하지 않았거나, 사용자에게 공유하지 않았습니다.",
     "No account available to delete." : "삭제할 수 있는 계정이 없습니다.",
     "No image file provided" : "이미지 파일을 제공 받지 않음",

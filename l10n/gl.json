@@ -297,6 +297,8 @@
     "Talk conversations" : "Conversas no Parladoiro",
     "Talk to %s" : "Parladoiro con %s",
     "An error occurred. Please contact your administrator." : "Produciuse un erro. Póñase en contacto cua administración desta instancia.",
+    "Storage quota exceeded" : "Superouse a cota de almacenamento",
+    "File not found" : "Non se atopou o ficheiro",
     "File is not shared, or shared but not with the user" : "O ficheiro non está compartido, ou compartido, pero non co usuario",
     "No account available to delete." : "Non hai conta dispoñíbel para eliminar.",
     "Password needs to be set" : "É necesario definir o contrasinal",
