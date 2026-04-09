@@ -114,10 +114,10 @@ export async function destroyNoiseSuppressionWorklet() {
  *
  * @param stream - MediaStream to process
  * @param consumer - Unique consumer id returned by `registerNoiseSuppressionWorklet`
- * @param enabled - Whether noise suppression is enabled
+ * @param model - Noise suppression model name to be used (null for disabling)
  */
-export function processNoiseSuppression(stream: MediaStream, consumer: symbol | null, enabled = false): MediaStream {
-	if (!enabled) {
+export function processNoiseSuppression(stream: MediaStream, consumer: symbol | null, model: string | null = null): MediaStream {
+	if (!model || model === 'none') {
 		// No noise suppression requested; return the original stream
 		return stream
 	}
@@ -132,7 +132,13 @@ export function processNoiseSuppression(stream: MediaStream, consumer: symbol | 
 	}
 
 	cleanupNoiseSuppressionWorklet(consumer)
-	return processRnnoise(stream, consumer)
+
+	if (model === 'rnnoise') {
+		return processRnnoise(stream, consumer)
+	} else {
+		// TODO for another model implementation
+		return stream
+	}
 }
 
 /**

@@ -262,7 +262,7 @@ async function signalingJoinCall(token, flags, silent, recordingConsent, silentF
 
 			// The previous state might be wiped after the media is started, so
 			// it should be saved now.
-			const noiseSuppressionWithModel = BrowserStorage.getItem('noiseSuppressionWithModel') === 'true'
+			const noiseSuppressionWithModel = BrowserStorage.getItem('noiseSuppressionWithModel')
 			const enableAudio = !BrowserStorage.getItem('audioDisabled_' + token)
 			const enableVideo = !BrowserStorage.getItem('videoDisabled_' + token)
 			const enableVirtualBackground = !!BrowserStorage.getItem('virtualBackgroundEnabled')

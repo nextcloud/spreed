@@ -81,7 +81,7 @@ export default function MediaDevicesManager() {
 		videoInputId: undefined,
 
 		noiseSuppression: BrowserStorage.getItem('noiseSuppression') !== 'false',
-		noiseSuppressionWithModel: BrowserStorage.getItem('noiseSuppressionWithModel') === 'true',
+		noiseSuppressionWithModel: BrowserStorage.getItem('noiseSuppressionWithModel'),
 		echoCancellation: BrowserStorage.getItem('echoCancellation') !== 'false',
 		autoGainControl: BrowserStorage.getItem('autoGainControl') !== 'false',
 	})
@@ -498,7 +498,7 @@ MediaDevicesManager.prototype = {
 					constraints.audio.noiseSuppression = BrowserStorage.getItem('noiseSuppression') !== 'false'
 					constraints.audio.autoGainControl = BrowserStorage.getItem('autoGainControl') !== 'false'
 
-					if (BrowserStorage.getItem('noiseSuppressionWithModel') === 'true') {
+					if (BrowserStorage.getItem('noiseSuppressionWithModel')) {
 						// Disable browser native noise suppression, as it's replaced with processing node
 						constraints.audio.noiseSuppression = false
 					}
