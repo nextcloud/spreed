@@ -84,7 +84,7 @@ import NcRichText from '@nextcloud/vue/components/NcRichText'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import { getTranslationLanguages, translateText } from '../../../../../services/translationService.js'
+import { getTranslationLanguages, translateText } from '../../../../../services/translationService.ts'
 
 export default {
 	name: 'MessageTranslateDialog',
