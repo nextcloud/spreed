@@ -99,32 +99,6 @@
 						</template>
 					</NcActionButton>
 				</NcActions>
-				<NcActions v-if="modalPage === 'results' && selfIsOwnerOrModerator" forceMenu>
-					<NcActionButton @click="downloadAsImage('png')">
-						<template #icon>
-							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
-						</template>
-						{{ t('spreed', 'Download as image (PNG)') }}
-					</NcActionButton>
-					<NcActionButton @click="downloadAsImage('svg')">
-						<template #icon>
-							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
-						</template>
-						{{ t('spreed', 'Download as image (SVG)') }}
-					</NcActionButton>
-					<NcActionButton @click="downloadAsSpreadsheet('xlsx')">
-						<template #icon>
-							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
-						</template>
-						{{ t('spreed', 'Download spreadsheet (XLSX)') }}
-					</NcActionButton>
-					<NcActionButton @click="downloadAsSpreadsheet('ods')">
-						<template #icon>
-							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
-						</template>
-						{{ t('spreed', 'Download spreadsheet (ODS)') }}
-					</NcActionButton>
-				</NcActions>
 				<!-- Submit vote button-->
 				<NcButton
 					variant="primary"
@@ -146,45 +120,45 @@
 				</NcButton>
 			</div>
 			<div v-else-if="selfIsOwnerOrModerator" class="poll-modal__actions">
-				<NcActions v-if="supportPollDrafts" forceMenu>
-					<NcActionButton v-if="isModerator" @click="createPollDraft">
+				<NcActions forceMenu>
+					<NcActionButton v-if="supportPollDrafts && isModerator" @click="createPollDraft">
 						<template #icon>
 							<IconFileEditOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Save as draft') }}
 					</NcActionButton>
-					<NcActionLink :href="exportPollURI" :download="exportPollFileName">
+					<NcActionLink v-if="supportPollDrafts" :href="exportPollURI" :download="exportPollFileName">
 						<template #icon>
 							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
 						</template>
 						{{ t('spreed', 'Export draft to file') }}
 					</NcActionLink>
-				</NcActions>
-				<NcActions v-if="modalPage === 'results'" forceMenu>
-					<NcActionButton @click="downloadAsImage('png')">
-						<template #icon>
-							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
-						</template>
-						{{ t('spreed', 'Download as image (PNG)') }}
-					</NcActionButton>
-					<NcActionButton @click="downloadAsImage('svg')">
-						<template #icon>
-							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
-						</template>
-						{{ t('spreed', 'Download as image (SVG)') }}
-					</NcActionButton>
-					<NcActionButton @click="downloadAsSpreadsheet('xlsx')">
-						<template #icon>
-							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
-						</template>
-						{{ t('spreed', 'Download spreadsheet (XLSX)') }}
-					</NcActionButton>
-					<NcActionButton @click="downloadAsSpreadsheet('ods')">
-						<template #icon>
-							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
-						</template>
-						{{ t('spreed', 'Download spreadsheet (ODS)') }}
-					</NcActionButton>
+					<template v-if="isPollClosed">
+						<NcActionButton @click="downloadAsImage('png')">
+							<template #icon>
+								<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+							</template>
+							{{ t('spreed', 'Download results as image (PNG)') }}
+						</NcActionButton>
+						<NcActionButton @click="downloadAsImage('svg')">
+							<template #icon>
+								<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+							</template>
+							{{ t('spreed', 'Download results as image (SVG)') }}
+						</NcActionButton>
+						<NcActionButton @click="downloadAsSpreadsheet('xlsx')">
+							<template #icon>
+								<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+							</template>
+							{{ t('spreed', 'Download results as spreadsheet (XLSX)') }}
+						</NcActionButton>
+						<NcActionButton @click="downloadAsSpreadsheet('ods')">
+							<template #icon>
+								<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+							</template>
+							{{ t('spreed', 'Download results as spreadsheet (ODS)') }}
+						</NcActionButton>
+					</template>
 				</NcActions>
 			</div>
 		</div>
@@ -502,13 +476,14 @@ export default {
 			}
 			const filename = this.exportPollFileName
 			try {
+				const options = { skipFonts: true }
 				if (format === 'png') {
 					const { toPng } = await import('html-to-image')
-					const dataUrl = await toPng(node, { pixelRatio: 2 })
+					const dataUrl = await toPng(node, { ...options, pixelRatio: 2 })
 					downloadDataURL(dataUrl, filename + '.png')
 				} else {
 					const { toSvg } = await import('html-to-image')
-					const dataUrl = await toSvg(node)
+					const dataUrl = await toSvg(node, options)
 					downloadDataURL(dataUrl, filename + '.svg')
 				}
 			} catch (error) {
