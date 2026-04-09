@@ -415,6 +415,7 @@ export const BOT = {
 		DISABLED: 0,
 		ENABLED: 1,
 		NO_SETUP: 2,
+		UNAVAILABLE: 3,
 	},
 } as const
 

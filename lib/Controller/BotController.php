@@ -44,6 +44,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\MessageTooLongException;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IL10N;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
@@ -65,6 +66,7 @@ class BotController extends AEnvironmentAwareOCSController {
 		protected Manager $manager,
 		protected ReactionManager $reactionManager,
 		protected ThreadService $threadService,
+		protected IL10N $l,
 		protected LoggerInterface $logger,
 		private IEventDispatcher $dispatcher,
 	) {
@@ -328,6 +330,14 @@ class BotController extends AEnvironmentAwareOCSController {
 		foreach ($bots as $bot) {
 			$botData = $bot->jsonSerialize();
 			unset($botData['secret']);
+
+			if (!$this->botService->isAppForBotEnabled($bot)) {
+				$botData['state'] = Bot::STATE_UNAVAILABLE;
+				$botData['error_count'] = 1;
+				$botData['last_error_date'] = $this->timeFactory->getTime();
+				$botData['last_error_message'] = $this->l->t('App disabled');
+			}
+
 			$data[] = $botData;
 		}
 
@@ -352,6 +362,15 @@ class BotController extends AEnvironmentAwareOCSController {
 		$bots = $this->botServerMapper->getAllBots();
 		foreach ($bots as $bot) {
 			$botData = $this->formatBot($bot, in_array($bot->getId(), $alreadyInstalled, true));
+
+			if (!$this->botService->isAppForBotEnabled($bot)) {
+				if ($botData['state'] !== Bot::STATE_DISABLED) {
+					$botData['state'] = Bot::STATE_UNAVAILABLE;
+				} else {
+					continue;
+				}
+			}
+
 			if ($botData !== null) {
 				$data[] = $botData;
 			}
@@ -387,7 +406,7 @@ class BotController extends AEnvironmentAwareOCSController {
 			], Http::STATUS_BAD_REQUEST);
 		}
 
-		if ($bot->getState() !== Bot::STATE_ENABLED) {
+		if ($bot->getState() !== Bot::STATE_ENABLED || !$this->botService->isAppForBotEnabled($bot)) {
 			return new DataResponse([
 				'error' => 'bot',
 			], Http::STATUS_BAD_REQUEST);
