@@ -14,6 +14,7 @@ OC.L10N.register(
     "Message deleted by author" : "Xabar muallif tomonidan o'chirildi",
     "Deleted user" : "Deleted user",
     "System" : "System",
+    "File not found" : "Fayl topilmadi",
     "File is too big" : "File is too big",
     "Invalid file provided" : "Invalid file provided",
     "Invalid image" : "Invalid image",

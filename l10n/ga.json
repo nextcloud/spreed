@@ -297,6 +297,8 @@
     "Talk conversations" : "Déan comhráite",
     "Talk to %s" : "Labhair le %s",
     "An error occurred. Please contact your administrator." : "Tharla earráid. Déan teagmháil le do riarthóir le do thoil.",
+    "Storage quota exceeded" : "Sáraíodh an cuóta stórála",
+    "File not found" : "Comhad gan aimsiú",
     "File is not shared, or shared but not with the user" : "Níl an comhad roinnte, nó roinnte ach ní leis an úsáideoir",
     "No account available to delete." : "Níl aon chuntas ar fáil le scriosadh.",
     "Password needs to be set" : "Ní mór pasfhocal a shocrú",

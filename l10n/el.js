@@ -292,6 +292,7 @@ OC.L10N.register(
     "Talk conversations" : "Συνομιλίες με Talk",
     "Talk to %s" : "Talk σε %s",
     "An error occurred. Please contact your administrator." : "Παρουσιάστηκε σφάλμα. Παρακαλώ επικοινωνήστε με τον διαχειριστή σας.",
+    "File not found" : "Το αρχείο δεν βρέθηκε",
     "File is not shared, or shared but not with the user" : "Το αρχείο δεν είναι κοινόχρηστο, ή δεν μοιράζεται με τον χρήστη",
     "No account available to delete." : "Δεν υπάρχει διαθέσιμος λογαριασμός για διαγραφή.",
     "Password needs to be set" : "Απαιτείται ορισμός συνθηματικού",

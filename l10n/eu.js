@@ -244,6 +244,8 @@ OC.L10N.register(
     "Talk conversations" : "Talk elkarrizketak",
     "Talk to %s" : "Hitz egin %s erabiltzailearekin",
     "An error occurred. Please contact your administrator." : "Errore bat gertatu da. Jarri zure administratzailearekin harremanetan mesedez.",
+    "Storage quota exceeded" : "Biltegiratze kuota gainditu da",
+    "File not found" : "Ez da fitxategia aurkitu",
     "File is not shared, or shared but not with the user" : "Fitxategia ez dago partekatua, edo partekatu da baina ez erabiltzailearekin",
     "No account available to delete." : "Ez dago konturik eskuragarri ezabatzeko.",
     "No image file provided" : "Ez da irudi fitxategirik eman",

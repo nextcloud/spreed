@@ -297,6 +297,8 @@
     "Talk conversations" : "Обсуждения",
     "Talk to %s" : "Начать обсуждение с %s",
     "An error occurred. Please contact your administrator." : "Произошла ошибка. Пожалуйста, свяжитесь с администратором.",
+    "Storage quota exceeded" : "Превышена квота хранилища",
+    "File not found" : "Файл не найден",
     "File is not shared, or shared but not with the user" : "Файл не имеет общего доступа, либо имеет, но не с пользователем",
     "No account available to delete." : "Отсутствуют учётные записи, которые возможно удалить.",
     "Password needs to be set" : "Необходимо установить пароль",

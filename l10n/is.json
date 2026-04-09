@@ -59,6 +59,8 @@
     "%s (guest)" : "%s (gestur)",
     "Talk conversations" : "Samtöl",
     "Talk to %s" : "Tala við %s",
+    "Storage quota exceeded" : "Geymslukvóti er uppurinn",
+    "File not found" : "Skrá finnst ekki",
     "File is not shared, or shared but not with the user" : "Skránni er ekki deilt, eða henni er deilt en ekki með notandanum",
     "File is too big" : "Skrá er of stór",
     "Invalid file provided" : "Ógild skrá gefin",

@@ -124,6 +124,7 @@ OC.L10N.register(
     "Talk conversations" : "Conversații",
     "Talk to %s" : "Conversați cu %s",
     "An error occurred. Please contact your administrator." : "A apărut o eroare. Contactați administratorul.",
+    "File not found" : "Fișierul nu a fost găsit",
     "File is not shared, or shared but not with the user" : "Fișierul nu este partajat sau nu este partajat cu utilizatorul",
     "No image file provided" : "Nu s-a furnizat un fișier de imagine",
     "File is too big" : "Fișierul este prea mare",

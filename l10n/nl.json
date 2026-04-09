@@ -252,6 +252,8 @@
     "Talk conversations" : "Talk gesprekken",
     "Talk to %s" : "Spreek met %s",
     "An error occurred. Please contact your administrator." : "Er is een fout opgetreden. Neem contact op met de beheerder a.u.b.",
+    "Storage quota exceeded" : "Opslagquotum overschreden",
+    "File not found" : "Bestand niet gevonden",
     "File is not shared, or shared but not with the user" : "Bestand is niet gedeeld, of wel gedeeld maar niet met de gebruiker",
     "No account available to delete." : "Geen account beschikbaar om te verwijderen.",
     "Password needs to be set" : "Wachtwoord moet ingesteld worden",

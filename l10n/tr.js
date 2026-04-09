@@ -299,6 +299,8 @@ OC.L10N.register(
     "Talk conversations" : "Konuş görüşmeleri",
     "Talk to %s" : "%s ile Konuş",
     "An error occurred. Please contact your administrator." : "Bir sorun çıktı. Lütfen BT yöneticiniz ile görüşün.",
+    "Storage quota exceeded" : "Depolama sınırına ulaşıldı",
+    "File not found" : "Dosya bulunamadı",
     "File is not shared, or shared but not with the user" : "Dosya paylaşılmamış ya da paylaşılmış ancak kullanıcı ile değil.",
     "No account available to delete." : "Silinebilecek bir hesap yok.",
     "Password needs to be set" : "Parola ayarlanmalıdır",
