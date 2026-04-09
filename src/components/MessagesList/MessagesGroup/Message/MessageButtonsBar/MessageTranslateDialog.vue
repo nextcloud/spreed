@@ -203,7 +203,13 @@ export default {
 		},
 	},
 
-	async created() {
+	async mounted() {
+		this.$nextTick(() => {
+			// FIXME trick to avoid focusTrap() from activating on NcSelect
+			// REMOVE: if we add a fix to disable initial focus in NcModal upstream
+			this.isMounted = true
+		})
+
 		try {
 			const response = await getTranslationLanguages()
 			this.availableLanguages = response.data.ocs.data.languages
@@ -217,20 +223,12 @@ export default {
 		if (this.supportDetectLanguage) {
 			this.selectedFrom = DETECT_LANGUAGE_OPTION
 		}
-	},
 
-	mounted() {
 		this.selectedTo = this.optionsTo.find((language) => language.id === this.userLanguage) || null
 
 		if (this.selectedTo) {
 			this.translateMessage()
 		}
-
-		this.$nextTick(() => {
-			// FIXME trick to avoid focusTrap() from activating on NcSelect
-			// REMOVE: if we add a fix to disable initial focus in NcModal upstream
-			this.isMounted = true
-		})
 	},
 
 	methods: {
