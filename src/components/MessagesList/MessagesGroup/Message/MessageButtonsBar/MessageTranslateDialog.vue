@@ -86,6 +86,8 @@ import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import { getTranslationLanguages, translateText } from '../../../../../services/translationService.ts'
 
+const DETECT_LANGUAGE_OPTION = { id: null, label: t('spreed', 'Detect language') }
+
 export default {
 	name: 'MessageTranslateDialog',
 
@@ -119,6 +121,7 @@ export default {
 		return {
 			isMounted: false,
 			availableLanguages: null,
+			supportDetectLanguage: false,
 			selectedFrom: null,
 			selectedTo: null,
 			isLoading: false,
@@ -168,12 +171,16 @@ export default {
 		},
 
 		optionsFrom() {
-			return this.selectedTo?.id
+			const languages = this.selectedTo?.id
 				? this.translationTree[this.selectedTo?.id]?.sources
 				: Object.values(this.sourceTree).map((model) => ({
 						id: model.id,
 						label: model.label,
 					}))
+
+			return this.supportDetectLanguage
+				? [DETECT_LANGUAGE_OPTION, ...languages]
+				: languages
 		},
 
 		optionsTo() {
@@ -197,8 +204,19 @@ export default {
 	},
 
 	async created() {
-		const response = await getTranslationLanguages()
-		this.availableLanguages = response.data.ocs.data.languages
+		try {
+			const response = await getTranslationLanguages()
+			this.availableLanguages = response.data.ocs.data.languages
+			this.supportDetectLanguage = response.data.ocs.data.languageDetection ?? false
+		} catch (error) {
+			console.error('Error while trying to get translation languages', error)
+			this.availableLanguages = null
+			this.supportDetectLanguage = false
+		}
+
+		if (this.supportDetectLanguage) {
+			this.selectedFrom = DETECT_LANGUAGE_OPTION
+		}
 	},
 
 	mounted() {
