@@ -159,6 +159,14 @@ export default {
 		currentConversation() {
 			return this.$store.getters.conversation(this.token)
 		},
+
+		isVoiceRoom() {
+			return Boolean(this.currentConversation?.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+		},
+
+		voiceRoomIdentifier() {
+			return [this.token, this.isVoiceRoom]
+		},
 	},
 
 	watch: {
@@ -174,6 +182,30 @@ export default {
 			if (!this.isBreakoutRoomsNavigation(oldValue, newValue)) {
 				this.recordingConsentGiven = false
 			}
+		},
+
+		voiceRoomIdentifier: {
+			immediate: true,
+			handler(newValue, oldValue = []) {
+				const [newToken, newIsVoiceRoom] = newValue
+				const [oldToken, oldIsVoiceRoom] = oldValue
+
+				if (!newIsVoiceRoom && oldIsVoiceRoom && newToken !== oldToken) {
+					this.callViewStore.setForceCallView(false)
+				}
+
+				if (oldIsVoiceRoom && newToken !== oldToken) {
+					this.callViewStore.setSelectedVideoPeerId(null)
+					this.$store.dispatch('leaveCall', {
+						token: oldToken,
+						participantIdentifier: this.actorStore.participantIdentifier,
+					})
+				}
+
+				if (newIsVoiceRoom && newToken) {
+					this.joinCallAutomatically()
+				}
+			},
 		},
 
 		isInCall: {
@@ -350,8 +382,9 @@ export default {
 			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
 				// Navigating within the same conversation
 				beforeRouteChangeListener(to, from, next)
-			} else if (!this.warnLeaving || this.skipLeaveWarning) {
+			} else if (!this.warnLeaving || this.skipLeaveWarning || this.isVoiceRoom) {
 				// Safe to navigate
+				// Note: voice rooms are intended to be left without confirmation.
 				beforeRouteChangeListener(to, from, next)
 			} else {
 				spawnDialog(ConfirmDialog, {
@@ -486,7 +519,7 @@ export default {
 		},
 
 		async joinCallAutomatically() {
-			if (this.isInCall) {
+			if (this.isInCall || this.isVoiceRoom) {
 				this.callViewStore.setForceCallView(true)
 
 				const enableAudio = !BrowserStorage.getItem('audioDisabled_' + this.token)

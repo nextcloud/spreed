@@ -39,7 +39,7 @@
 		</template>
 	</NcButton>
 	<NcButton
-		v-else-if="showLeaveCallButton && !canEndForAll && !isBreakoutRoom"
+		v-else-if="showLeaveCallButton && (!canEndForAll || isVoiceRoom) && !isBreakoutRoom"
 		:aria-label="leaveCallLabel"
 		class="leave-call"
 		:variant="isScreensharing ? 'tertiary' : 'error'"
@@ -88,7 +88,7 @@
 				{{ leaveCallLabel }}
 			</template>
 		</NcActionButton>
-		<NcActionButton v-if="canEndForAll" @click="leaveCall(true)">
+		<NcActionButton v-if="canEndForAll && !isVoiceRoom" @click="leaveCall(true)">
 			<template #icon>
 				<IconPhoneOffOutline :size="20" />
 			</template>
@@ -364,6 +364,10 @@ export default {
 			}
 			return this.isBreakoutRoom ? 'primary' : 'error'
 		},
+
+		isVoiceRoom() {
+			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+		},
 	},
 
 	watch: {
@@ -428,6 +432,12 @@ export default {
 				console.info('End meeting for everyone')
 			} else {
 				console.info('Leaving call')
+			}
+
+			if (this.isVoiceRoom) {
+				this.$router.push({ name: 'root' })
+				// Call ending is handled in App.vue
+				return
 			}
 
 			// Remove selected participant
