@@ -134,29 +134,31 @@
 						{{ t('spreed', 'Export draft to file') }}
 					</NcActionLink>
 					<template v-if="isPollClosed">
+						<NcActionSeparator />
+						<NcActionCaption :name="t('spreed', 'Download results as')" />
 						<NcActionButton @click="downloadAsImage('png')">
 							<template #icon>
 								<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
 							</template>
-							{{ t('spreed', 'Download results as image (PNG)') }}
+							{{ t('spreed', 'PNG') }}
 						</NcActionButton>
 						<NcActionButton @click="downloadAsImage('svg')">
 							<template #icon>
 								<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
 							</template>
-							{{ t('spreed', 'Download results as image (SVG)') }}
+							{{ t('spreed', 'SVG') }}
 						</NcActionButton>
 						<NcActionButton @click="downloadAsSpreadsheet('xlsx')">
 							<template #icon>
 								<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
 							</template>
-							{{ t('spreed', 'Download results as spreadsheet (XLSX)') }}
+							{{ t('spreed', 'XLSX') }}
 						</NcActionButton>
 						<NcActionButton @click="downloadAsSpreadsheet('ods')">
 							<template #icon>
 								<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
 							</template>
-							{{ t('spreed', 'Download results as spreadsheet (ODS)') }}
+							{{ t('spreed', 'ODS') }}
 						</NcActionButton>
 					</template>
 				</NcActions>
@@ -170,7 +172,9 @@
 import { n, t } from '@nextcloud/l10n'
 import { computed, ref, useId } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
+import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
@@ -201,7 +205,9 @@ export default {
 	components: {
 		NcActions,
 		NcActionButton,
+		NcActionCaption,
 		NcActionLink,
+		NcActionSeparator,
 		NcCheckboxRadioSwitch,
 		NcChip,
 		NcLoadingIcon,
@@ -476,7 +482,16 @@ export default {
 			}
 			const filename = this.exportPollFileName
 			try {
-				const options = { skipFonts: true }
+				// Use theme background color instead of transparent background
+				const backgroundColor = getComputedStyle(document.documentElement)
+					.getPropertyValue('--color-main-background').trim() || '#ffffff'
+
+				// Avoid webfont stylesheet traversal: some global stylesheet hrefs are relative and break URL parsing.
+				const options = {
+					skipFonts: true,
+					fontEmbedCSS: '/* poll export: fonts intentionally not embedded */',
+					backgroundColor,
+				}
 				if (format === 'png') {
 					const { toPng } = await import('html-to-image')
 					const dataUrl = await toPng(node, { ...options, pixelRatio: 2 })
@@ -514,6 +529,10 @@ export default {
 .poll-modal {
 	position: relative;
 	padding: calc(3 * var(--default-grid-baseline));
+
+	&__capture-area {
+		padding: calc(4 * var(--default-grid-baseline));
+	}
 
 	&__header {
 		display: flex;
