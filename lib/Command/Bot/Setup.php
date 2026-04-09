@@ -16,6 +16,7 @@ use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\BotConversation;
 use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BotServerMapper;
+use OCA\Talk\Service\BotService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\Exception;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -28,6 +29,7 @@ class Setup extends Base {
 		private Manager $roomManager,
 		private BotServerMapper $botServerMapper,
 		private BotConversationMapper $botConversationMapper,
+		private BotService $botService,
 		private IEventDispatcher $dispatcher,
 	) {
 		parent::__construct();
@@ -60,6 +62,11 @@ class Setup extends Base {
 			$botServer = $this->botServerMapper->findById($botId);
 		} catch (DoesNotExistException) {
 			$output->writeln('<error>Bot could not be found by id: ' . $botId . '</error>');
+			return 1;
+		}
+
+		if (!$this->botService->isAppForBotEnabled($botServer)) {
+			$output->writeln('<error>Bot app is disabled: ' . $botServer->getUrl() . '</error>');
 			return 1;
 		}
 
