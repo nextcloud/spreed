@@ -71,6 +71,7 @@ function Base(settings) {
 	this.signalingConnectionTimeout = null
 	this.signalingConnectionWarning = null
 	this.signalingConnectionError = null
+	this.maxStreamBits = 1048576
 }
 
 Signaling.Base = Base
@@ -1297,6 +1298,13 @@ Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 	}
 
 	this._rejoinRoomAfterInvalidSession = null
+
+	// Apply room-specific max bitrate
+	const totalBps = data.room?.bandwidth?.maxstreambitrate
+	if (totalBps && typeof totalBps === 'number' && totalBps > 0) {
+		this.maxStreamBits = totalBps
+	}
+
 	this.signalingRoomJoined = token
 	if (this.pendingJoinCall && token === this.pendingJoinCall.token) {
 		const pendingJoinCallResolve = this.pendingJoinCall.resolve
