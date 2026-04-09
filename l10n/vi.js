@@ -138,6 +138,7 @@ OC.L10N.register(
     "System" : "Hệ thống",
     "%s (guest)" : "%s (khách mời)",
     "Talk to %s" : "Trò chuyện với %s",
+    "File not found" : "Không tìm thấy tập tin",
     "File is not shared, or shared but not with the user" : "Tệp này không được chia sẻ, hoạc được chia sẻ nhưng không phải với người dùng này",
     "No account available to delete." : "Không có tài khoản nào để xóa",
     "No image file provided" : "Không có tệp ảnh nào được cung cấp",

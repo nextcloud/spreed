@@ -230,6 +230,8 @@ OC.L10N.register(
     "Talk conversations" : "Talk conversations",
     "Talk to %s" : "Talk to %s",
     "An error occurred. Please contact your administrator." : "An error occurred. Please contact your administrator.",
+    "Storage quota exceeded" : "Storage quota exceeded",
+    "File not found" : "File not found",
     "File is not shared, or shared but not with the user" : "File is not shared, or shared but not with the user",
     "No account available to delete." : "No account available to delete.",
     "No image file provided" : "No image file provided",

@@ -292,6 +292,8 @@ OC.L10N.register(
     "Talk conversations" : "Conversazioni di Talk",
     "Talk to %s" : "Parla con %s",
     "An error occurred. Please contact your administrator." : "Si è verificato un errore. Per favore, contatta il tuo amministratore.",
+    "Storage quota exceeded" : "Quota di archiviazione superata",
+    "File not found" : "File non trovato",
     "File is not shared, or shared but not with the user" : "Il file non è condiviso, o condiviso ma non con l'utente",
     "No account available to delete." : "Nessun account disponibile da eliminare.",
     "Password needs to be set" : "Bisogna impostare una password",

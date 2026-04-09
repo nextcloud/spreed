@@ -299,6 +299,7 @@ OC.L10N.register(
     "Talk conversations" : "Konverzace v Talk",
     "Talk to %s" : "Talk s %s",
     "An error occurred. Please contact your administrator." : "Došlo k chybě. Obraťte se na svého správce.",
+    "Storage quota exceeded" : "Kvóta úložiště překročena",
     "File is not shared, or shared but not with the user" : "Soubor není sdílen, nebo je sdílený s jiným uživatelem",
     "No account available to delete." : "Není k dispozici žádný účet pro smazání.",
     "Password needs to be set" : "Je třeba nastavit heslo",

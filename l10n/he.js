@@ -67,6 +67,7 @@ OC.L10N.register(
     "Administration" : "ניהול",
     "System" : "מערכת",
     "Talk conversations" : "דיוני שיח",
+    "File not found" : "קובץ לא נמצא",
     "File is too big" : "הקובץ גדול מדי",
     "Invalid file provided" : "הקובץ שסופק שגוי",
     "Invalid image" : "תמונה לא חוקית",

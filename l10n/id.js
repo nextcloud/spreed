@@ -26,6 +26,8 @@ OC.L10N.register(
     "Administration" : "Administrasi",
     "System" : "Sistem",
     "Talk to %s" : "Chat dengan %s",
+    "Storage quota exceeded" : "Kuota penyimpanan terlampaui",
+    "File not found" : "File tidak ditemukan",
     "File is too big" : "Berkas terlalu besar",
     "Invalid file provided" : "Berkas tidak valid",
     "Invalid image" : "Gambar tidak valid",

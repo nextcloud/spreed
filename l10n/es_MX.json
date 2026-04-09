@@ -71,6 +71,8 @@
     "%s (guest)" : "%s (invitado)",
     "Talk conversations" : "Conversaciones de Talk",
     "Talk to %s" : "Hablar con %s",
+    "Storage quota exceeded" : "Se excedió la cuota de almacenamiento",
+    "File not found" : "Archivo no encontrado",
     "File is not shared, or shared but not with the user" : "Archivo no compartido, o compartido pero no con el usuario.",
     "File is too big" : "El archivo es demasiado grande",
     "Invalid file provided" : "Se proporcionó un archivo invalido",

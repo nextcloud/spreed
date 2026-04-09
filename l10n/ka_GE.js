@@ -15,6 +15,7 @@ OC.L10N.register(
     "Administration" : "ადმინისტრაცია",
     "System" : "სისტემა",
     "Talk to %s" : "საუბარი მომხმარებელთან %s",
+    "File not found" : "ფაილი ვერ იქნა ნაპოვნი",
     "File is too big" : "ფაილი ზედმეტად დიდია",
     "Invalid file provided" : "არასწორი ფაილი",
     "Invalid image" : "არასწორი სურათი",

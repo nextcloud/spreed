@@ -19,6 +19,7 @@ OC.L10N.register(
     "Administration" : "Administración",
     "System" : "Sistema",
     "Talk to %s" : "Hablar con %s",
+    "File not found" : "Archivo no encontrado",
     "File is too big" : "El archivo es demasiado grande.",
     "Invalid file provided" : "Archivo proporcionado inválido",
     "Invalid image" : "Imagen inválida",

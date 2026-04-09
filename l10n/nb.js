@@ -258,6 +258,8 @@ OC.L10N.register(
     "Talk conversations" : "Talk-samtaler",
     "Talk to %s" : "Snakk med %s",
     "An error occurred. Please contact your administrator." : "Det oppstod en feil, vennligst kontakt administratoren din.",
+    "Storage quota exceeded" : "Overskredet lagringskvote",
+    "File not found" : "Finner ikke filen",
     "File is not shared, or shared but not with the user" : "Filen er ikke delt, eller delt, men ikke med brukeren",
     "No account available to delete." : "Ingen konto tilgjengelig for sletting.",
     "No image file provided" : "Ingen bildefil angitt",

@@ -147,6 +147,8 @@ OC.L10N.register(
     "{actor} ended the call (Duration {duration})" : "{actor} užbaigė skambutį (Trukmė {duration})",
     "Talk to %s" : "Kalbėti su %s",
     "An error occurred. Please contact your administrator." : "Įvyko klaida. Susisiekite su administratoriumi.",
+    "Storage quota exceeded" : "Viršyta saugyklos kvota",
+    "File not found" : "Failas nerastas",
     "File is not shared, or shared but not with the user" : "Failas nėra bendrinamas arba yra bendrinamas, tačiau ne su naudotoju",
     "No account available to delete." : "Nėra ištrynimui prieinamos paskyros.",
     "Password needs to be set" : "Turi būti nustatytas slaptažodis",

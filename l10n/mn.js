@@ -298,6 +298,7 @@ OC.L10N.register(
     "Talk conversations" : "Talk яриа",
     "Talk to %s" : "%s-тай ярих",
     "An error occurred. Please contact your administrator." : "Алдаа гарлаа. Администратортайгаа холбогдоно уу.",
+    "File not found" : "–§–∞–π–ª –æ–ª–¥—Å–æ–Ω–≥“Ø–π",
     "File is not shared, or shared but not with the user" : "Файл хуваалцаагүй эсвэл хуваалцсан боловч хэрэглэгчтэй биш",
     "No account available to delete." : "Устгах бүртгэл байхгүй.",
     "Password needs to be set" : "Нууц үг тохируулах шаардлагатай",

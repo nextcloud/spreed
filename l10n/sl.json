@@ -248,6 +248,7 @@
     "Talk conversations" : "Pogovori Talk",
     "Talk to %s" : "Pogovor: %s",
     "An error occurred. Please contact your administrator." : "Prišlo je do napake. Stopite v stik s skrbnikom sistema.",
+    "File not found" : "Datoteke ni mogoče najti",
     "File is not shared, or shared but not with the user" : "Datoteka ni v uporabi, ali pa ni v uporabi z uporabnikom",
     "No account available to delete." : "Ni računa za brisanje.",
     "Password needs to be set" : "Nastaviti je treba geslo",

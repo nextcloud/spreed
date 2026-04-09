@@ -297,6 +297,8 @@ OC.L10N.register(
     "Talk conversations" : "Talk-konversationer",
     "Talk to %s" : "Chatta med %s",
     "An error occurred. Please contact your administrator." : "Ett fel har uppstått. Vänligen kontakta din administratör.",
+    "Storage quota exceeded" : "Lagringskvot överskriden",
+    "File not found" : "Filen kunde inte hittas",
     "File is not shared, or shared but not with the user" : "Filen delas inte eller delas men inte med användaren",
     "No account available to delete." : "Inget konto tillgängligt för att ta bort.",
     "Password needs to be set" : "Lösenord måste ställas in",

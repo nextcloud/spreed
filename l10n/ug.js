@@ -297,6 +297,8 @@ OC.L10N.register(
     "Talk conversations" : "پاراڭلىشىش",
     "Talk to %s" : "%s بىلەن پاراڭلىشىڭ",
     "An error occurred. Please contact your administrator." : "خاتالىق كۆرۈلدى. باشقۇرغۇچىڭىز بىلەن ئالاقىلىشىڭ.",
+    "Storage quota exceeded" : "ساقلاش نورمىسى ئېشىپ كەتتى",
+    "File not found" : "ھۆججەت تېپىلمىدى",
     "File is not shared, or shared but not with the user" : "ھۆججەت ئورتاقلاشمايدۇ ، ھەمبەھىرلەنمەيدۇ ، ئەمما ئىشلەتكۈچى بىلەن ئورتاقلاشمايدۇ",
     "No account available to delete." : "ئۆچۈرگىلى بولىدىغان ھېسابات يوق.",
     "Password needs to be set" : "پارول ئورنىتىلىشى كېرەك",

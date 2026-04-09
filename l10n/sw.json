@@ -290,6 +290,8 @@
     "Talk conversations" : "Mazungumzo ya Talk",
     "Talk to %s" : "Talk kwa %s",
     "An error occurred. Please contact your administrator." : "Hitilafu imetokea. Tafadhali wasiliana na msimamizi wako.",
+    "Storage quota exceeded" : "Kiasi cha hifadhi kimepitwa",
+    "File not found" : "Faili halipatikani",
     "File is not shared, or shared but not with the user" : "Faili haijashirikiwa, au kushirikiwa lakini sio na mtumiaji",
     "No account available to delete." : "Hakuna akaunti inayopatikana ya kufuta.",
     "Password needs to be set" : "Nenosiri linahitaji kuwekwa",

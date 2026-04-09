@@ -297,6 +297,8 @@ OC.L10N.register(
     "Talk conversations" : "Talk разговори",
     "Talk to %s" : "Причај са %s",
     "An error occurred. Please contact your administrator." : "Дошло је до грешке. Молимо вас да се обратите свом администратору.",
+    "Storage quota exceeded" : "Прекорачена је квота за складиште",
+    "File not found" : "Фајл није нађен",
     "File is not shared, or shared but not with the user" : "Фајл није дељен, или је дељен али не са корисником",
     "No account available to delete." : "Нема налога који треба да се обрише.",
     "Password needs to be set" : "Потребно је да се постави лозинка",

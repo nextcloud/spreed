@@ -299,6 +299,8 @@ OC.L10N.register(
     "Talk conversations" : "Beszélgetések",
     "Talk to %s" : "Beszélgetés vele: %s",
     "An error occurred. Please contact your administrator." : "Hiba történt. Lépjen kapcsolatba a rendszergazdával.",
+    "Storage quota exceeded" : "Tárhelykvóta túllépve",
+    "File not found" : "A fájl nem található",
     "File is not shared, or shared but not with the user" : "A fájl nincs megosztva, vagy meg van, de nem a felhasználóval",
     "No account available to delete." : "Nincs törölhető fiók.",
     "Password needs to be set" : "A jelszót meg kell adni",
