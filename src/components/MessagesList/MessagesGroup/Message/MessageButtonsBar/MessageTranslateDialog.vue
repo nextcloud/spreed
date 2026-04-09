@@ -32,7 +32,7 @@
 					:options="optionsTo"
 					noWrap />
 
-				<NcButton
+				<NcAssistantButton
 					variant="primary"
 					:disabled="isLoading"
 					class="translate-dialog__button"
@@ -41,7 +41,7 @@
 						<NcLoadingIcon />
 					</template>
 					{{ isLoading ? t('spreed', 'Translating') : t('spreed', 'Translate') }}
-				</NcButton>
+				</NcAssistantButton>
 			</div>
 
 			<NcRichText
@@ -56,6 +56,10 @@
 				:text="translatedMessage"
 				:arguments="richParameters"
 				:referenceLimit="0" />
+
+			<div v-if="translatedMessage" class="translate-dialog__ai-note">
+				{{ t('spreed', 'This translation is AI generated and may contain mistakes.') }}
+			</div>
 		</template>
 
 		<template v-if="translatedMessage" #actions>
@@ -72,6 +76,7 @@
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import NcAssistantButton from '@nextcloud/vue/components/NcAssistantButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
@@ -85,6 +90,7 @@ export default {
 	name: 'MessageTranslateDialog',
 
 	components: {
+		NcAssistantButton,
 		NcButton,
 		NcDialog,
 		NcLoadingIcon,
@@ -280,6 +286,10 @@ export default {
 		&-translation {
 			border: 2px solid var(--color-primary-element);
 		}
+	}
+
+	&__ai-note {
+		color: var(--color-text-maxcontrast);
 	}
 }
 </style>
