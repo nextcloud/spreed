@@ -482,9 +482,9 @@ export default {
 			}
 			const filename = this.exportPollFileName
 			try {
-				// Use theme background color instead of transparent background
-				const backgroundColor = getComputedStyle(document.documentElement)
-					.getPropertyValue('--color-main-background').trim() || '#ffffff'
+				// Use theme background color from the actual node being captured
+				const backgroundColor = getComputedStyle(node)
+					.getPropertyValue('background-color') || '#ffffff'
 
 				// Avoid webfont stylesheet traversal: some global stylesheet hrefs are relative and break URL parsing.
 				const options = {
@@ -532,6 +532,7 @@ export default {
 
 	&__capture-area {
 		padding: calc(4 * var(--default-grid-baseline));
+		background-color: var(--color-main-background);
 	}
 
 	&__header {
