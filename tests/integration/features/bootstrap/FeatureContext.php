@@ -2525,6 +2525,29 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertPollEquals($expected, $response);
 	}
 
+	#[Then('/^user "([^"]*)" exports poll "([^"]*)" from room "([^"]*)" as "(xlsx|ods)" with (\d+)(?: \((v1)\))?$/')]
+	public function userExportsPollFromRoom(string $user, string $question, string $identifier, string $format, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question] . '/export/' . $format);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== 200) {
+			return;
+		}
+
+		$body = $this->response->getBody()->getContents();
+		Assert::assertNotEmpty($body, 'Export response body should not be empty');
+
+		// Verify it's a valid ZIP file (both XLSX and ODS are ZIP-based)
+		$tempFile = tempnam(sys_get_temp_dir(), 'poll_export_test_');
+		file_put_contents($tempFile, $body);
+		$zip = new \ZipArchive();
+		$result = $zip->open($tempFile);
+		Assert::assertTrue($result === true, 'Exported file should be a valid ZIP archive');
+		$zip->close();
+		unlink($tempFile);
+	}
+
 	protected function assertPollEquals(array $expected, array $response): void {
 		if (isset($expected['details'])) {
 			$response['details'] = array_map(static function (array $detail): array {

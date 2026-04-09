@@ -10,69 +10,71 @@
 		:labelId="dialogHeaderId"
 		@close="dismissModal">
 		<div v-if="poll" class="poll-modal">
-			<div class="poll-modal__header-wrapper">
-				<div class="poll-modal__status">
-					<IconChartBoxOutline :size="20" />
-					<NcChip
-						:variant="pollChipVariant"
-						noClose>
-						{{ isPollOpen ? t('spreed', 'Open poll') : t('spreed', 'Closed poll') }}
-					</NcChip>
-				</div>
-				<div class="poll-modal__header">
-					<span :id="dialogHeaderId" role="heading" aria-level="2">
-						{{ name }}
-					</span>
-				</div>
-				<div v-if="pollSummaryText" class="poll-modal__summary">
-					<span>
-						{{ pollSummaryText }}
-					</span>
-				</div>
-			</div>
-
-			<!-- options -->
-			<div v-if="modalPage === 'voting'" class="poll-modal__options">
-				<NcCheckboxRadioSwitch
-					v-for="(option, index) in poll.options"
-					:key="'option-' + index"
-					v-model="checked"
-					:value="index.toString()"
-					:type="isMultipleAnswers ? 'checkbox' : 'radio'"
-					name="answerType">
-					{{ option }}
-				</NcCheckboxRadioSwitch>
-			</div>
-
-			<!-- results -->
-			<div v-else-if="modalPage === 'results'" class="results__options">
-				<div
-					v-for="(option, index) in poll.options"
-					:key="index"
-					class="results__option">
-					<div class="results__option-title">
-						<p>{{ option }}</p>
-						<p v-if="hasVotesToDisplay" class="percentage">
-							{{ votePercentage[index] + '%' }}
-						</p>
+			<div ref="pollResultsRef" class="poll-modal__capture-area">
+				<div class="poll-modal__header-wrapper">
+					<div class="poll-modal__status">
+						<IconChartBoxOutline :size="20" />
+						<NcChip
+							:variant="pollChipVariant"
+							noClose>
+							{{ isPollOpen ? t('spreed', 'Open poll') : t('spreed', 'Closed poll') }}
+						</NcChip>
 					</div>
+					<div class="poll-modal__header">
+						<span :id="dialogHeaderId" role="heading" aria-level="2">
+							{{ name }}
+						</span>
+					</div>
+					<div v-if="pollSummaryText" class="poll-modal__summary">
+						<span>
+							{{ pollSummaryText }}
+						</span>
+					</div>
+				</div>
+
+				<!-- options -->
+				<div v-if="modalPage === 'voting'" class="poll-modal__options">
+					<NcCheckboxRadioSwitch
+						v-for="(option, index) in poll.options"
+						:key="'option-' + index"
+						v-model="checked"
+						:value="index.toString()"
+						:type="isMultipleAnswers ? 'checkbox' : 'radio'"
+						name="answerType">
+						{{ option }}
+					</NcCheckboxRadioSwitch>
+				</div>
+
+				<!-- results -->
+				<div v-else-if="modalPage === 'results'" class="results__options">
 					<div
-						v-if="getFilteredDetails(index).length > 0 || selfHasVotedOption(index)"
-						class="results__option__details">
-						<PollVotersDetails
-							v-if="poll.details"
-							:token="token"
-							:details="getFilteredDetails(index)" />
-						<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
-							<IconCheck :size="16" />
-							{{ t('spreed', 'You voted for this option') }}
-						</p>
+						v-for="(option, index) in poll.options"
+						:key="index"
+						class="results__option">
+						<div class="results__option-title">
+							<p>{{ option }}</p>
+							<p v-if="hasVotesToDisplay" class="percentage">
+								{{ votePercentage[index] + '%' }}
+							</p>
+						</div>
+						<div
+							v-if="getFilteredDetails(index).length > 0 || selfHasVotedOption(index)"
+							class="results__option__details">
+							<PollVotersDetails
+								v-if="poll.details"
+								:token="token"
+								:details="getFilteredDetails(index)" />
+							<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
+								<IconCheck :size="16" />
+								{{ t('spreed', 'You voted for this option') }}
+							</p>
+						</div>
+						<NcProgressBar
+							v-if="hasVotesToDisplay"
+							class="results__option-progress"
+							:value="votePercentage[index]"
+							size="medium" />
 					</div>
-					<NcProgressBar
-						v-if="hasVotesToDisplay"
-						class="results__option-progress"
-						:value="votePercentage[index]"
-						size="medium" />
 				</div>
 			</div>
 
@@ -97,6 +99,32 @@
 						</template>
 					</NcActionButton>
 				</NcActions>
+				<NcActions v-if="modalPage === 'results' && selfIsOwnerOrModerator" forceMenu>
+					<NcActionButton @click="downloadAsImage('png')">
+						<template #icon>
+							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+						</template>
+						{{ t('spreed', 'Download as image (PNG)') }}
+					</NcActionButton>
+					<NcActionButton @click="downloadAsImage('svg')">
+						<template #icon>
+							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+						</template>
+						{{ t('spreed', 'Download as image (SVG)') }}
+					</NcActionButton>
+					<NcActionButton @click="downloadAsSpreadsheet('xlsx')">
+						<template #icon>
+							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+						</template>
+						{{ t('spreed', 'Download spreadsheet (XLSX)') }}
+					</NcActionButton>
+					<NcActionButton @click="downloadAsSpreadsheet('ods')">
+						<template #icon>
+							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+						</template>
+						{{ t('spreed', 'Download spreadsheet (ODS)') }}
+					</NcActionButton>
+				</NcActions>
 				<!-- Submit vote button-->
 				<NcButton
 					variant="primary"
@@ -117,8 +145,8 @@
 					{{ t('spreed', 'Withdraw vote') }}
 				</NcButton>
 			</div>
-			<div v-else-if="supportPollDrafts && selfIsOwnerOrModerator" class="poll-modal__actions">
-				<NcActions forceMenu>
+			<div v-else-if="selfIsOwnerOrModerator" class="poll-modal__actions">
+				<NcActions v-if="supportPollDrafts" forceMenu>
 					<NcActionButton v-if="isModerator" @click="createPollDraft">
 						<template #icon>
 							<IconFileEditOutline :size="20" />
@@ -131,6 +159,32 @@
 						</template>
 						{{ t('spreed', 'Export draft to file') }}
 					</NcActionLink>
+				</NcActions>
+				<NcActions v-if="modalPage === 'results'" forceMenu>
+					<NcActionButton @click="downloadAsImage('png')">
+						<template #icon>
+							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+						</template>
+						{{ t('spreed', 'Download as image (PNG)') }}
+					</NcActionButton>
+					<NcActionButton @click="downloadAsImage('svg')">
+						<template #icon>
+							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+						</template>
+						{{ t('spreed', 'Download as image (SVG)') }}
+					</NcActionButton>
+					<NcActionButton @click="downloadAsSpreadsheet('xlsx')">
+						<template #icon>
+							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+						</template>
+						{{ t('spreed', 'Download spreadsheet (XLSX)') }}
+					</NcActionButton>
+					<NcActionButton @click="downloadAsSpreadsheet('ods')">
+						<template #icon>
+							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+						</template>
+						{{ t('spreed', 'Download spreadsheet (ODS)') }}
+					</NcActionButton>
 				</NcActions>
 			</div>
 		</div>
@@ -164,7 +218,8 @@ import { EventBus } from '../../services/EventBus.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { usePollsStore } from '../../stores/polls.ts'
 import { calculateVotePercentage } from '../../utils/calculateVotePercentage.ts'
-import { convertToJSONDataURI } from '../../utils/fileDownload.ts'
+import { exportPoll } from '../../services/pollService.ts'
+import { convertToJSONDataURI, downloadDataURL } from '../../utils/fileDownload.ts'
 
 export default {
 	name: 'PollViewer',
@@ -438,6 +493,35 @@ export default {
 				token: this.token,
 				form: this.poll,
 			})
+		},
+
+		async downloadAsImage(format) {
+			const node = this.$refs.pollResultsRef
+			if (!node) {
+				return
+			}
+			const filename = this.exportPollFileName
+			try {
+				if (format === 'png') {
+					const { toPng } = await import('html-to-image')
+					const dataUrl = await toPng(node, { pixelRatio: 2 })
+					downloadDataURL(dataUrl, filename + '.png')
+				} else {
+					const { toSvg } = await import('html-to-image')
+					const dataUrl = await toSvg(node)
+					downloadDataURL(dataUrl, filename + '.svg')
+				}
+			} catch (error) {
+				console.error('Error downloading poll as image:', error)
+			}
+		},
+
+		async downloadAsSpreadsheet(format) {
+			try {
+				await exportPoll(this.token, this.id, format)
+			} catch (error) {
+				console.error('Error downloading poll spreadsheet:', error)
+			}
 		},
 
 		selfHasVotedOption(index) {

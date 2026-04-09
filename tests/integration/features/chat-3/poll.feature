@@ -969,3 +969,111 @@ Feature: chat-3/poll
       | room | actorType     | actorId      | systemMessage        | message                          | silent | messageParameters |
       | room | users         | participant1 | user_added           | You added {user}                 | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"user":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
       | room | users         | participant1 | conversation_created | You created the conversation     | !ISSET | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
+
+  Scenario: Export a closed public poll as spreadsheet
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    When user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    When user "participant1" creates a poll in room "room" with 201
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+    Then user "participant1" votes for options "[0]" on poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"option-0":1}   |
+      | numVoters  | 1 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
+      | status     | open |
+      | votedSelf  | [0] |
+    Then user "participant2" votes for options "[1]" on poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"option-0":1,"option-1":1}   |
+      | numVoters  | 2 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
+      | status     | open |
+      | votedSelf  | [1] |
+    Then user "participant1" closes poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"option-0":1,"option-1":1}   |
+      | numVoters  | 2 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
+      | status     | closed |
+      | votedSelf  | [0] |
+      | details    | [{"actorType":"users","actorId":"participant1","actorDisplayName":"participant1-displayname","optionId":0},{"actorType":"users","actorId":"participant2","actorDisplayName":"participant2-displayname","optionId":1}] |
+    # Moderator (participant1) can export as xlsx and ods
+    Then user "participant1" exports poll "What is the question?" from room "room" as "xlsx" with 200
+    Then user "participant1" exports poll "What is the question?" from room "room" as "ods" with 200
+    # Non-moderator non-owner (participant2) cannot export
+    Then user "participant2" exports poll "What is the question?" from room "room" as "xlsx" with 403
+
+  Scenario: Export permission for poll owner who is not moderator
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    When user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    When user "participant2" creates a poll in room "room" with 201
+      | question   | Owner poll |
+      | options    | ["A","B"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+    Then user "participant2" votes for options "[0]" on poll "Owner poll" in room "room" with 200
+      | id         | POLL_ID(Owner poll) |
+      | question   | Owner poll |
+      | options    | ["A","B"] |
+      | votes      | {"option-0":1} |
+      | numVoters  | 1 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant2 |
+      | actorDisplayName    | participant2-displayname |
+      | status     | open |
+      | votedSelf  | [0] |
+    Then user "participant1" closes poll "Owner poll" in room "room" with 200
+      | id         | POLL_ID(Owner poll) |
+      | question   | Owner poll |
+      | options    | ["A","B"] |
+      | votes      | {"option-0":1} |
+      | numVoters  | 1 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant2 |
+      | actorDisplayName    | participant2-displayname |
+      | status     | closed |
+      | votedSelf  | not voted |
+      | details    | [{"actorType":"users","actorId":"participant2","actorDisplayName":"participant2-displayname","optionId":0}] |
+    # Poll owner (participant2) can export even though not moderator
+    Then user "participant2" exports poll "Owner poll" from room "room" as "xlsx" with 200
+
+  Scenario: Cannot export a draft poll
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    When user "participant1" creates a poll in room "room" with 200
+      | question   | Draft question |
+      | options    | ["X","Y"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | draft      | 1 |
+    Then user "participant1" exports poll "Draft question" from room "room" as "xlsx" with 404

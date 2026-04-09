@@ -24,6 +24,7 @@ use OCA\Talk\Model\Vote;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
+use OCA\Talk\Service\PollExportService;
 use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\ThreadService;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -31,6 +32,8 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\RequestHeader;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
@@ -47,6 +50,7 @@ class PollController extends AEnvironmentAwareOCSController {
 		IRequest $request,
 		protected ChatManager $chatManager,
 		protected PollService $pollService,
+		protected PollExportService $pollExportService,
 		protected AttachmentService $attachmentService,
 		protected ThreadService $threadService,
 		protected ITimeFactory $timeFactory,
@@ -464,6 +468,69 @@ class PollController extends AEnvironmentAwareOCSController {
 		$votedSelf = $this->pollService->getVotesForActor($this->participant, $poll);
 
 		return new DataResponse($this->renderPoll($poll, $votedSelf, $detailedVotes));
+	}
+
+	/**
+	 * Export poll results as a spreadsheet
+	 *
+	 * @param int $pollId ID of the poll
+	 * @psalm-param non-negative-int $pollId
+	 * @param 'xlsx'|'ods' $format Export format
+	 * @return DataDownloadResponse<Http::STATUS_OK, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'|'application/vnd.oasis.opendocument.spreadsheet', array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: string}, array{}>
+	 *
+	 * 200: Poll exported successfully
+	 * 403: Missing permissions to export poll
+	 * 404: Poll not found
+	 */
+	#[PublicPage]
+	#[NoCSRFRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/poll/{token}/{pollId}/export/{format}', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+		'pollId' => '\d+',
+		'format' => '(xlsx|ods)',
+	])]
+	public function exportPoll(int $pollId, string $format): DataDownloadResponse|DataResponse {
+		try {
+			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
+		} catch (DoesNotExistException) {
+			return new DataResponse(['error' => 'poll'], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($poll->getStatus() === Poll::STATUS_DRAFT) {
+			return new DataResponse(['error' => 'poll'], Http::STATUS_NOT_FOUND);
+		}
+
+		// Only moderators and the poll author can export
+		if (!$this->participant->hasModeratorPermissions()
+			&& ($poll->getActorType() !== $this->participant->getAttendee()->getActorType()
+				|| $poll->getActorId() !== $this->participant->getAttendee()->getActorId())) {
+			return new DataResponse(['error' => 'permission'], Http::STATUS_FORBIDDEN);
+		}
+
+		$detailedVotes = [];
+		if ($poll->getResultMode() === Poll::MODE_PUBLIC && $poll->getStatus() === Poll::STATUS_CLOSED) {
+			$detailedVotes = $this->pollService->getVotes($poll);
+		}
+
+		$content = $this->pollExportService->exportToSpreadsheet($poll, $detailedVotes, $format);
+
+		// Sanitize filename
+		$cleanedRoomName = preg_replace('/[\/\\\\:*?"<>|\- ]+/', '-', $this->room->getName());
+		$cleanedRoomName = substr($cleanedRoomName, 0, 100);
+		$cleanedQuestion = preg_replace('/[\/\\\\:*?"<>|\- ]+/', '-', $poll->getQuestion());
+		$cleanedQuestion = substr($cleanedQuestion, 0, 50);
+
+		$date = $this->timeFactory->getDateTime()->format('Y-m-d');
+		$fileName = $cleanedRoomName . ' - Poll - ' . $cleanedQuestion . ' - ' . $date . '.' . $format;
+
+		$mimeType = $format === 'ods'
+			? 'application/vnd.oasis.opendocument.spreadsheet'
+			: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+		return new DataDownloadResponse($content, $fileName, $mimeType);
 	}
 
 	/**
