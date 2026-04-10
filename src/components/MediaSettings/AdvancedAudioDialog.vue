@@ -10,6 +10,7 @@ import NcFormBox from '@nextcloud/vue/components/NcFormBox'
 import NcFormBoxSwitch from '@nextcloud/vue/components/NcFormBoxSwitch'
 import { useDevices } from '../../composables/useDevices.js'
 import { useSettingsStore } from '../../stores/settings.ts'
+import { isSafari } from '../../utils/browserCheck.ts'
 
 const props = defineProps<{
 	container?: string
@@ -78,6 +79,7 @@ function onClosing(result?: unknown) {
 		@closing="onClosing">
 		<NcFormBox>
 			<NcFormBoxSwitch
+				v-if="!isSafari"
 				:modelValue="settingsStore.noiseSuppression"
 				:label="noiseSuppressionLabel"
 				:description="noiseSuppressionDescription"
@@ -88,6 +90,7 @@ function onClosing(result?: unknown) {
 				:description="echoCancellationDescription"
 				@update:modelValue="settingsStore.setEchoCancellation" />
 			<NcFormBoxSwitch
+				v-if="!isSafari"
 				:modelValue="settingsStore.autoGainControl"
 				:label="autoGainControlLabel"
 				:description="autoGainControlDescription"

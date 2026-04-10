@@ -20,6 +20,7 @@ import {
 	setStartWithoutMedia,
 	setTypingStatusPrivacy,
 } from '../services/settingsService.ts'
+import { isSafari } from '../utils/browserCheck.ts'
 
 type PRIVACY_KEYS = typeof PRIVACY[keyof typeof PRIVACY]
 type LIST_STYLE_OPTIONS = 'two-lines' | 'compact'
@@ -36,9 +37,9 @@ export const useSettingsStore = defineStore('settings', () => {
 	const readStatusPrivacy = ref<PRIVACY_KEYS>(loadState('spreed', 'read_status_privacy', PRIVACY.PRIVATE))
 	const typingStatusPrivacy = ref<PRIVACY_KEYS>(loadState('spreed', 'typing_privacy', PRIVACY.PRIVATE))
 	const showMediaSettings = ref<boolean>(BrowserStorage.getItem('showMediaSettings') !== 'false')
-	const noiseSuppression = ref<boolean>(BrowserStorage.getItem('noiseSuppression') !== 'false')
+	const noiseSuppression = ref<boolean>(BrowserStorage.getItem('noiseSuppression') !== 'false' && !isSafari)
 	const echoCancellation = ref<boolean>(BrowserStorage.getItem('echoCancellation') !== 'false')
-	const autoGainControl = ref<boolean>(BrowserStorage.getItem('autoGainControl') !== 'false')
+	const autoGainControl = ref<boolean>(BrowserStorage.getItem('autoGainControl') !== 'false' && !isSafari)
 	const startWithoutMedia = ref<boolean | undefined>(getTalkConfig('local', 'call', 'start-without-media'))
 	const blurVirtualBackgroundEnabled = ref<boolean | undefined>(getTalkConfig('local', 'call', 'blur-virtual-background'))
 	const conversationsListStyle = ref<LIST_STYLE_OPTIONS | undefined>(getTalkConfig('local', 'conversations', 'list-style'))
