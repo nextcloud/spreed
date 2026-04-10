@@ -110,10 +110,9 @@ function onClosing(result?: unknown) {
 				:description="echoCancellationDescription"
 				@update:modelValue="settingsStore.setEchoCancellation" />
 			<NcFormBoxSwitch
-				:modelValue="!(settingsStore.noiseSuppression && settingsStore.noiseSuppressionWithModel) && settingsStore.autoGainControl"
+				:modelValue="settingsStore.autoGainControl"
 				:label="autoGainControlLabel"
 				:description="autoGainControlDescription"
-				:disabled="settingsStore.noiseSuppression && settingsStore.noiseSuppressionWithModel"
 				@update:modelValue="settingsStore.setAutoGainControl" />
 		</NcFormBox>
 	</NcDialog>

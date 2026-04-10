@@ -499,9 +499,8 @@ MediaDevicesManager.prototype = {
 					constraints.audio.autoGainControl = BrowserStorage.getItem('autoGainControl') !== 'false'
 
 					if (BrowserStorage.getItem('noiseSuppressionWithModel') === 'true') {
-						// Disable browser native noise suppression and auto gain, as they're replaced with processing node
+						// Disable browser native noise suppression, as it's replaced with processing node
 						constraints.audio.noiseSuppression = false
-						constraints.audio.autoGainControl = false
 					}
 				}
 				constraints.audio.echoCancellation = BrowserStorage.getItem('echoCancellation') !== 'false'

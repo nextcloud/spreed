@@ -144,15 +144,10 @@ export function processNoiseSuppression(stream: MediaStream, consumer: symbol | 
 export function processRnnoise(stream: MediaStream, consumer: symbol): MediaStream {
 	try {
 		const mediaStreamAudioSource = audioContext!.createMediaStreamSource(stream)
-		const outputGainNode = audioContext!.createGain()
 		const mediaStreamAudioDestinationNode = audioContext!.createMediaStreamDestination()
 
-		// Gain node configuration (to increase the output of processed track)
-		outputGainNode.gain.value = 2
-
 		mediaStreamAudioSource.connect(rnnoiseWorklet!)
-		rnnoiseWorklet!.connect(outputGainNode)
-		outputGainNode.connect(mediaStreamAudioDestinationNode)
+		rnnoiseWorklet!.connect(mediaStreamAudioDestinationNode)
 
 		const processedAudioTrack = mediaStreamAudioDestinationNode.stream.getAudioTracks()[0]
 		if (!processedAudioTrack) {
@@ -168,8 +163,7 @@ export function processRnnoise(stream: MediaStream, consumer: symbol): MediaStre
 		workletCleanupCallbackMap.set(consumer, () => {
 			try {
 				mediaStreamAudioSource.disconnect(rnnoiseWorklet!)
-				rnnoiseWorklet!.disconnect(outputGainNode)
-				outputGainNode.disconnect(mediaStreamAudioDestinationNode)
+				rnnoiseWorklet!.disconnect(mediaStreamAudioDestinationNode)
 				mediaStreamAudioDestinationNode.disconnect()
 			} catch (error) {
 				console.error(error)
