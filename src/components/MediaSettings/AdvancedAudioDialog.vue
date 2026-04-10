@@ -5,9 +5,12 @@
 
 <script setup lang="ts">
 import { t } from '@nextcloud/l10n'
+import { computed } from 'vue'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcFormBox from '@nextcloud/vue/components/NcFormBox'
 import NcFormBoxSwitch from '@nextcloud/vue/components/NcFormBoxSwitch'
+import NcRadioGroup from '@nextcloud/vue/components/NcRadioGroup'
+import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import { useDevices } from '../../composables/useDevices.js'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { localMediaModel } from '../../utils/webrtc/index.js'
@@ -23,10 +26,14 @@ const emit = defineEmits<{
 // TRANSLATORS Microphone setting to reduce background noises for better voice quality
 const noiseSuppressionLabel = t('spreed', 'Enable noise suppression')
 const noiseSuppressionDescription = t('spreed', 'Reduce background noises for better voice quality')
-
-// TRANSLATORS Microphone setting to reduce background noises for better voice quality
-const noiseSuppressionWithModelLabel = t('spreed', 'Enhanced noise suppression')
-const noiseSuppressionWithModelDescription = t('spreed', 'Use "{modelName}" real-time noise suppression algorithm', { modelName: 'RNNoise' })
+// TRANSLATORS Noise suppression disabled
+const noiseSuppressionLevelLabelNo = t('spreed', 'Off')
+// TRANSLATORS Low/Medium/High noise suppression level
+const noiseSuppressionLevelLabelLow = t('spreed', 'Low')
+// TRANSLATORS Low/Medium/High noise suppression level
+const noiseSuppressionLevelLabelMedium = t('spreed', 'Medium')
+// TRANSLATORS Low/Medium/High noise suppression level
+const noiseSuppressionLevelLabelHigh = t('spreed', 'High')
 
 // TRANSLATORS Microphone setting to minimize echo effect from own surrounding
 const echoCancellationLabel = t('spreed', 'Enable echo cancellation')
@@ -39,6 +46,46 @@ const autoGainControlDescription = t('spreed', 'Dynamically adjust microphone vo
 const settingsStore = useSettingsStore()
 
 const { audioPreviewAvailable, updateAudioStream } = useDevices()
+
+const noiseSuppressionLevel = computed(() => {
+	if (!settingsStore.noiseSuppression && settingsStore.noiseSuppressionWithModel === 'none') {
+		return 'disabled'
+	}
+	if (settingsStore.noiseSuppression && settingsStore.noiseSuppressionWithModel === 'none') {
+		return 'builtin'
+	}
+	return settingsStore.noiseSuppressionWithModel
+})
+
+/**
+ *
+ * @param value
+ */
+function setNoiseSuppressionLevel(value: string) {
+	switch (value) {
+		case 'disabled': {
+			settingsStore.setNoiseSuppression(false)
+			settingsStore.setNoiseSuppressionWithModel('none')
+			break
+		}
+		case 'builtin': {
+			settingsStore.setNoiseSuppression(true)
+			settingsStore.setNoiseSuppressionWithModel('none')
+			break
+		}
+		case 'rnnoise': {
+			settingsStore.setNoiseSuppression(false)
+			settingsStore.setNoiseSuppressionWithModel('rnnoise')
+			break
+		}
+		default: {
+			// TODO for another model implementation
+			settingsStore.setNoiseSuppression(false)
+			settingsStore.setNoiseSuppressionWithModel('none')
+			break
+		}
+	}
+}
 
 const originalState = {
 	noiseSuppression: settingsStore.noiseSuppression,
@@ -92,18 +139,19 @@ function onClosing(result?: unknown) {
 		]"
 		closeOnClickOutside
 		@closing="onClosing">
+		<NcRadioGroup
+			class="audio-dialog__radiogroup"
+			:label="noiseSuppressionLabel"
+			:description="noiseSuppressionDescription"
+			:modelValue="noiseSuppressionLevel"
+			@update:modelValue="setNoiseSuppressionLevel">
+			<NcRadioGroupButton :label="noiseSuppressionLevelLabelNo" value="disabled" />
+			<NcRadioGroupButton :label="noiseSuppressionLevelLabelLow" value="builtin" />
+			<NcRadioGroupButton :label="noiseSuppressionLevelLabelMedium" value="rnnoise" />
+			<!-- <NcRadioGroupButton :label="noiseSuppressionLevelLabelHigh" value="todo" /> -->
+		</NcRadioGroup>
+
 		<NcFormBox>
-			<NcFormBoxSwitch
-				:modelValue="settingsStore.noiseSuppression"
-				:label="noiseSuppressionLabel"
-				:description="noiseSuppressionDescription"
-				@update:modelValue="settingsStore.setNoiseSuppression" />
-			<NcFormBoxSwitch
-				:modelValue="settingsStore.noiseSuppression && settingsStore.noiseSuppressionWithModel"
-				:label="noiseSuppressionWithModelLabel"
-				:description="noiseSuppressionWithModelDescription"
-				:disabled="!settingsStore.noiseSuppression"
-				@update:modelValue="settingsStore.setNoiseSuppressionWithModel" />
 			<NcFormBoxSwitch
 				:modelValue="settingsStore.echoCancellation"
 				:label="echoCancellationLabel"
@@ -117,3 +165,11 @@ function onClosing(result?: unknown) {
 		</NcFormBox>
 	</NcDialog>
 </template>
+
+<style scoped lang="scss">
+.audio-dialog {
+	&__radiogroup {
+		margin-block-end: var(--default-grid-baseline);
+	}
+}
+</style>
