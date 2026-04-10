@@ -69,7 +69,7 @@ jobs:
           - 'sharing-3'
           - 'sharing-4'
         php-versions: ['8.4']
-        server-versions: ['stable33']
+        server-versions: ['revert-59172-revert-58894-stable33-authoritative-share']
         guests-versions: ['main']
         circles-versions: ['stable33']
         notifications-versions: ['stable33']
