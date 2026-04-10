@@ -287,6 +287,7 @@ export default {
 		window.addEventListener('unload', () => {
 			console.info('Navigating away, leaving conversation')
 			if (this.token) {
+				SessionStorage.removeItem('joined_conversation')
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
 				signalingKill()
