@@ -607,6 +607,13 @@ export type {
 	UnifiedSearchResultEntry,
 } from './core.ts'
 
+// Translation API
+export type {
+	TranslationGetLanguagesResponse,
+	TranslationTranslateParams,
+	TranslationTranslateResponse,
+} from './core.ts'
+
 // Files API
 export type {
 	createFileFromTemplateParams,

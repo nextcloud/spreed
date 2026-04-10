@@ -79,6 +79,11 @@ export type UpcomingEventsResponse = ApiResponse<operationsDav['upcoming_events-
 export type UserPreferencesParams = Required<operationsProv['preferences-set-preference']>['requestBody']['content']['application/json']
 export type UserPreferencesResponse = ApiResponse<operationsProv['preferences-set-preference']['responses'][200]['content']['application/json']>
 
+// Translation API
+export type TranslationGetLanguagesResponse = ApiResponse<operationsCore['translation_api-languages']['responses'][200]['content']['application/json']>
+export type TranslationTranslateParams = Required<operationsCore['translation_api-translate']>['requestBody']['content']['application/json']
+export type TranslationTranslateResponse = ApiResponse<operationsCore['translation_api-translate']['responses'][200]['content']['application/json']>
+
 // Task Processing API
 export type TaskProcessingResponse = ApiResponse<operationsCore['task_processing_api-get-task']['responses'][200]['content']['application/json']>
 
