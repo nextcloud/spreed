@@ -13,6 +13,7 @@ import NcRadioGroup from '@nextcloud/vue/components/NcRadioGroup'
 import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import { useDevices } from '../../composables/useDevices.js'
 import { useSettingsStore } from '../../stores/settings.ts'
+import { isSafari } from '../../utils/browserCheck.ts'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 
 const props = defineProps<{
@@ -146,7 +147,7 @@ function onClosing(result?: unknown) {
 			:modelValue="noiseSuppressionLevel"
 			@update:modelValue="setNoiseSuppressionLevel">
 			<NcRadioGroupButton :label="noiseSuppressionLevelLabelNo" value="disabled" />
-			<NcRadioGroupButton :label="noiseSuppressionLevelLabelLow" value="builtin" />
+			<NcRadioGroupButton v-if="!isSafari" :label="noiseSuppressionLevelLabelLow" value="builtin" />
 			<NcRadioGroupButton :label="noiseSuppressionLevelLabelMedium" value="rnnoise" />
 			<!-- <NcRadioGroupButton :label="noiseSuppressionLevelLabelHigh" value="todo" /> -->
 		</NcRadioGroup>
@@ -158,6 +159,7 @@ function onClosing(result?: unknown) {
 				:description="echoCancellationDescription"
 				@update:modelValue="settingsStore.setEchoCancellation" />
 			<NcFormBoxSwitch
+				v-if="!isSafari"
 				:modelValue="settingsStore.autoGainControl"
 				:label="autoGainControlLabel"
 				:description="autoGainControlDescription"
