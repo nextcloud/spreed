@@ -60,7 +60,7 @@ class Listener implements IEventListener {
 
 		if ($event->getParent() === RoomShareProvider::TALK_FOLDER_PLACEHOLDER) {
 			if (method_exists($event, 'getUser')) {
-				$userId = $event->getUser();
+				$userId = $event->getUser()->getUID();
 			} else {
 				$view = $event->getView();
 				// If we fail to get the owner of the view from the cache,
