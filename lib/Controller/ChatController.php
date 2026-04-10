@@ -156,32 +156,45 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @throws \DomainException When a 403 should be thrown
 	 */
 	private function resolveReplyTo(int $replyTo, string $replyToToken, string $actorType, string $actorId, \DateTime $creationDateTime): array {
-		$isPrivateReplyFromAnotherConvo = $replyToToken != '';
+		$isPrivateReplyFromAnotherConvo = $replyToToken !== '';
 
 		try {
 			$targetParentRoom = $isPrivateReplyFromAnotherConvo ? $this->manager->getRoomByToken($replyToToken) : $this->room;
 			$parent = $this->chatManager->getParentComment($targetParentRoom, (string)$replyTo);
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($isPrivateReplyFromAnotherConvo) {
-			$isOneToOneRoom = $this->room->getType() === Room::TYPE_ONE_TO_ONE;
-			if (!$isOneToOneRoom) {
+			if ($this->room->getType() !== Room::TYPE_ONE_TO_ONE) {
 				throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
 			}
 
 			$parentActorId = $parent->getActorId();
 			$parentActorType = $parent->getActorType();
-			if ($parentActorType === $actorType && $parentActorId === $actorId) {
+			if ($parentActorType !== Attendee::ACTOR_USERS
+				|| $actorType !== Attendee::ACTOR_USERS) {
+				// Quoted actor or quoting actor is not a user
 				throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
 			}
 
-			// Validate if the members are part of the convo
+			if ($parentActorId === $actorId) {
+				// Don't allow reply-private on own messages
+				throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
+			}
+
+			$users = [$actorId, $parentActorId];
+			sort($users);
+			$name = json_encode($users);
+			if ($name !== $this->room->getName()) {
+				// Target conversation is not the one-to-one between both users (actor and parent actor).
+				throw new \DomainException('reply-to', Http::STATUS_FORBIDDEN);
+			}
+
 			try {
 				$this->participantService->getParticipantByActor($targetParentRoom, $actorType, $actorId);
 				$this->participantService->getParticipantByActor($targetParentRoom, $parentActorType, $parentActorId);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				throw new \DomainException('reply-to', Http::STATUS_FORBIDDEN);
 			}
 
