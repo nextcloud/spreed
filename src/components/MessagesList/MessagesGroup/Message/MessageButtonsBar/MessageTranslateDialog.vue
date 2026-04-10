@@ -16,6 +16,8 @@
 					v-model="selectedFrom"
 					class="translate-dialog__select"
 					inputId="from"
+					:disabled="isLoading"
+					:clearable="false"
 					:aria-label-combobox="t('spreed', 'Source language to translate from')"
 					:placeholder="t('spreed', 'Translate from')"
 					:options="optionsFrom"
@@ -27,6 +29,8 @@
 					v-model="selectedTo"
 					class="translate-dialog__select"
 					inputId="to"
+					:disabled="isLoading"
+					:clearable="false"
 					:aria-label-combobox="t('spreed', 'Target language to translate into')"
 					:placeholder="t('spreed', 'Translate to')"
 					:options="optionsTo"
@@ -34,13 +38,10 @@
 
 				<NcAssistantButton
 					variant="primary"
-					:disabled="isLoading"
+					:disabled="disabled"
 					class="translate-dialog__button"
 					@click="handleTranslate">
-					<template v-if="isLoading" #icon>
-						<NcLoadingIcon />
-					</template>
-					{{ isLoading ? t('spreed', 'Translating') : t('spreed', 'Translate') }}
+					{{ isTranslating ? t('spreed', 'Translating') : t('spreed', 'Translate') }}
 				</NcAssistantButton>
 			</div>
 
@@ -79,12 +80,13 @@ import { t } from '@nextcloud/l10n'
 import NcAssistantButton from '@nextcloud/vue/components/NcAssistantButton'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import { getTranslationLanguages, translateText } from '../../../../../services/translationService.js'
+import { getTranslationLanguages, translateText } from '../../../../../services/translationService.ts'
+
+const DETECT_LANGUAGE_OPTION = { id: null, label: t('spreed', 'Detect language') }
 
 export default {
 	name: 'MessageTranslateDialog',
@@ -93,7 +95,6 @@ export default {
 		NcAssistantButton,
 		NcButton,
 		NcDialog,
-		NcLoadingIcon,
 		NcRichText,
 		NcSelect,
 		// Icons
@@ -119,9 +120,11 @@ export default {
 		return {
 			isMounted: false,
 			availableLanguages: null,
+			supportDetectLanguage: false,
 			selectedFrom: null,
 			selectedTo: null,
 			isLoading: false,
+			isTranslating: false,
 			translatedMessage: '',
 		}
 	},
@@ -168,12 +171,16 @@ export default {
 		},
 
 		optionsFrom() {
-			return this.selectedTo?.id
+			const languages = this.selectedTo?.id
 				? this.translationTree[this.selectedTo?.id]?.sources
 				: Object.values(this.sourceTree).map((model) => ({
 						id: model.id,
 						label: model.label,
 					}))
+
+			return this.supportDetectLanguage
+				? [DETECT_LANGUAGE_OPTION, ...languages]
+				: languages
 		},
 
 		optionsTo() {
@@ -183,6 +190,12 @@ export default {
 						id: model.id,
 						label: model.label,
 					}))
+		},
+
+		disabled() {
+			return this.isLoading || this.isTranslating
+				|| (!this.supportDetectLanguage && this.selectedFrom === null)
+				|| this.selectedTo === null
 		},
 	},
 
@@ -196,23 +209,35 @@ export default {
 		},
 	},
 
-	async created() {
-		const response = await getTranslationLanguages()
-		this.availableLanguages = response.data.ocs.data.languages
-	},
-
-	mounted() {
-		this.selectedTo = this.optionsTo.find((language) => language.id === this.userLanguage) || null
-
-		if (this.selectedTo) {
-			this.translateMessage()
-		}
-
+	async mounted() {
 		this.$nextTick(() => {
 			// FIXME trick to avoid focusTrap() from activating on NcSelect
 			// REMOVE: if we add a fix to disable initial focus in NcModal upstream
 			this.isMounted = true
 		})
+
+		try {
+			this.isLoading = true
+			const response = await getTranslationLanguages()
+			this.availableLanguages = response.data.ocs.data.languages
+			this.supportDetectLanguage = response.data.ocs.data.languageDetection ?? false
+		} catch (error) {
+			console.error('Error while trying to get translation languages', error)
+			this.availableLanguages = null
+			this.supportDetectLanguage = false
+		} finally {
+			this.isLoading = false
+		}
+
+		if (this.supportDetectLanguage) {
+			this.selectedFrom = DETECT_LANGUAGE_OPTION
+		}
+
+		this.selectedTo = this.optionsTo.find((language) => language.id === this.userLanguage) || null
+
+		if (this.selectedTo) {
+			this.translateMessage()
+		}
 	},
 
 	methods: {
@@ -223,14 +248,14 @@ export default {
 
 		async translateMessage(sourceLanguage = null) {
 			try {
-				this.isLoading = true
+				this.isTranslating = true
 				const response = await translateText(this.message, sourceLanguage, this.selectedTo?.id)
 				this.translatedMessage = response.data.ocs.data.text
 			} catch (error) {
 				console.error(error)
 				showError(error.response?.data?.ocs?.data?.message ?? t('spreed', 'The message could not be translated'))
 			} finally {
-				this.isLoading = false
+				this.isTranslating = false
 			}
 		},
 
