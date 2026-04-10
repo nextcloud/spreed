@@ -2,6 +2,7 @@ OC.L10N.register(
     "spreed",
     {
     "Guest" : "Gas",
+    "File not found" : "Lêer nie gevind nie",
     "File is too big" : "Lêer is te groot",
     "Invalid file provided" : "Ongeldige lêer verskaf",
     "Invalid image" : "Ongeldige beeld",
@@ -11,6 +12,7 @@ OC.L10N.register(
     "New message" : "Nuwe boodskap",
     "Open settings" : "Open instellings",
     "error" : "fout",
+    "Default" : "Verstek",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Verenigde Arabiese Emirate",
     "Afghanistan" : "Afghanistan",
@@ -327,7 +329,6 @@ OC.L10N.register(
     "Media" : "Media",
     "Audio" : "Oudio",
     "Other" : "Ander",
-    "Default" : "Verstek",
     "Group" : "Groep",
     "Please reload the page." : "Herlaai asseblief die bladsy.",
     "Do not disturb" : "Moenie pla nie",
