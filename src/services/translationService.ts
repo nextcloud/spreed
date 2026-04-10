@@ -3,6 +3,13 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { AxiosRequestConfig } from '@nextcloud/axios'
+import type {
+	TranslationGetLanguagesResponse,
+	TranslationTranslateParams,
+	TranslationTranslateResponse,
+} from '../types/index.ts'
+
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
@@ -10,7 +17,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  *
  * @param options
  */
-async function getTranslationLanguages(options) {
+async function getTranslationLanguages(options?: AxiosRequestConfig): TranslationGetLanguagesResponse {
 	return axios.get(generateOcsUrl('/translation/languages'), options)
 }
 
@@ -21,7 +28,12 @@ async function getTranslationLanguages(options) {
  * @param toLanguage
  * @param options
  */
-async function translateText(text, fromLanguage, toLanguage, options) {
+async function translateText(
+	text: TranslationTranslateParams['text'],
+	fromLanguage: TranslationTranslateParams['fromLanguage'],
+	toLanguage: TranslationTranslateParams['toLanguage'],
+	options?: AxiosRequestConfig,
+): TranslationTranslateResponse {
 	return axios.post(generateOcsUrl('/translation/translate'), {
 		text,
 		fromLanguage,

@@ -25,7 +25,7 @@ import {
 import {
 	getTranslationLanguages,
 	translateText,
-} from '../translationService.js'
+} from '../translationService.ts'
 
 vi.mock('@nextcloud/axios', () => ({
 	default: {
