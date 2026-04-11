@@ -1535,6 +1535,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Cuireadh an teachtaireacht ar aghaidh chuig {selectedConversationName}",
     "Dismiss" : "Díbhe",
     "Go to conversation" : "Téigh chuig comhrá",
+    "Detect language" : "Braith teanga",
     "The message could not be translated" : "Níorbh fhéidir an teachtaireacht a aistriú",
     "Translation copied to clipboard" : "Cóipeáladh an t-aistriúchán chuig an ngearrthaisce",
     "Translation could not be copied" : "Níorbh fhéidir an t-aistriúchán a chóipeáil",

@@ -1535,6 +1535,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Az üzenet továbbításra került ide: {selectedConversationName}",
     "Dismiss" : "Mellőzés",
     "Go to conversation" : "Ugrás a beszélgetéshez",
+    "Detect language" : "Nyelv észlelése",
     "The message could not be translated" : "Az üzenetet nem sikerült lefordítani",
     "Translation copied to clipboard" : "A fordítás a vágólapra másolva",
     "Translation could not be copied" : "A fordítást nem lehetett másolni",

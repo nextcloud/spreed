@@ -1535,6 +1535,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "訊息已轉發至 {selectedConversationName}",
     "Dismiss" : "撤銷",
     "Go to conversation" : "前往對話",
+    "Detect language" : "檢測語言",
     "The message could not be translated" : "無法翻譯訊息",
     "Translation copied to clipboard" : "翻譯已複製到剪貼簿",
     "Translation could not be copied" : "無法複製翻譯",

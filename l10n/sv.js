@@ -1490,6 +1490,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Meddelandet har vidarebefordrats till {selectedConversationName}",
     "Dismiss" : "Avfärda",
     "Go to conversation" : "Gå till konversation",
+    "Detect language" : "Upptäck språk",
     "The message could not be translated" : "Meddelandet kunde inte översättas",
     "Translation copied to clipboard" : "Översättningen har kopierats till urklipp",
     "Translation could not be copied" : "Översättningen kunde inte kopieras",

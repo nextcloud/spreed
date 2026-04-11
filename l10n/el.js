@@ -1484,6 +1484,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Το μήνυμα έχει προωθηθεί στο {selectedConversationName}",
     "Dismiss" : "Αποδέσμευση",
     "Go to conversation" : "Μετάβαση στη συνομιλία",
+    "Detect language" : "Ανίχνευση γλώσσας",
     "The message could not be translated" : "Δεν ήταν δυνατή η μετάφραση του μηνύματος",
     "Translation copied to clipboard" : "Η μετάφραση αντιγράφηκε στο πρόχειρο",
     "Translation could not be copied" : "Δεν ήταν δυνατή η αντιγραφή της μετάφρασης",

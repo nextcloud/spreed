@@ -1517,6 +1517,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Le message a été transféré sur {selectedConversationName}",
     "Dismiss" : "Rejeter",
     "Go to conversation" : "Aller à la conversation",
+    "Detect language" : "Détecter la langue",
     "The message could not be translated" : "Le message n'a pas pu être traduit",
     "Translation copied to clipboard" : "Traduction copiée dans le presse-papier",
     "Translation could not be copied" : "La traduction n'a pas pu être copiée",

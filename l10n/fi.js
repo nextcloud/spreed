@@ -939,6 +939,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Viesti on lähetetty edelleen keskusteluun {selectedConversationName}",
     "Dismiss" : "Hylkää",
     "Go to conversation" : "Mene keskusteluun",
+    "Detect language" : "Havaitse kieli",
     "The message could not be translated" : "Viestiä ei voitu kääntää",
     "Translation copied to clipboard" : "Käännös kopioitu leikepöydälle",
     "Translation could not be copied" : "Käännöstä ei voitu kopioida",

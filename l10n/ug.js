@@ -1500,6 +1500,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "بۇ ئۇچۇر {selectedConversationName} غا يوللاندى",
     "Dismiss" : "خىزمەتتىن ھەيدەش",
     "Go to conversation" : "سۆھبەتكە بېرىڭ",
+    "Detect language" : "تىلنى ئېنىقلاش",
     "The message could not be translated" : "بۇ ئۇچۇرنى تەرجىمە قىلىشقا بولمىدى",
     "Translation copied to clipboard" : "تەرجىمە تاختىسىغا كۆچۈرۈلگەن",
     "Translation could not be copied" : "تەرجىمىنى كۆچۈرگىلى بولمىدى",

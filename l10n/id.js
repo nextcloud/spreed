@@ -403,6 +403,7 @@ OC.L10N.register(
     "Set custom reminder" : "Tetapkan pengingat kustom",
     "React with {emoji}" : "Bereaksi dengan {emoji}",
     "Dismiss" : "Batal",
+    "Detect language" : "Deteksi bahasa",
     "The message could not be translated" : "Pesan tidak dapat diterjemahkan",
     "Translation copied to clipboard" : "Terjemahan disalin ke papan klip",
     "Translation could not be copied" : "Terjemahan tidak dapat disalin",

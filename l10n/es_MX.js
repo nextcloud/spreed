@@ -437,6 +437,7 @@ OC.L10N.register(
     "Set reminder" : "Establecer recordatorio",
     "Translate" : "Traducir",
     "Dismiss" : "Descartar",
+    "Detect language" : "Detectar idioma",
     "Translate from" : "Traducir desde",
     "Send now" : "Enviar ahora",
     "Contact" : "Contacto",

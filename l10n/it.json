@@ -1485,6 +1485,7 @@
     "The message has been forwarded to {selectedConversationName}" : "Il messaggio è stato inoltrato a {selectedConversationName}",
     "Dismiss" : "Annulla",
     "Go to conversation" : "Vai alla conversazione",
+    "Detect language" : "Rileva lingua",
     "The message could not be translated" : "Questo messaggio non può essere tradotto",
     "Translation copied to clipboard" : "Traduzione copiata negli appunti",
     "Translation could not be copied" : "Impossibile copiare la traduzione",

@@ -1498,6 +1498,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "El mensaje ha sido reenviado a {selectedConversationName}",
     "Dismiss" : "Descartar",
     "Go to conversation" : "Ir a la conversación",
+    "Detect language" : "Detectar idioma",
     "The message could not be translated" : "El mensaje no pudo ser traducido",
     "Translation copied to clipboard" : "La traducción se copió al portapapeles",
     "Translation could not be copied" : "La traducción no pudo ser copiada",

@@ -1491,6 +1491,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "The message has been forwarded to {selectedConversationName}",
     "Dismiss" : "ຍົກເລີກ",
     "Go to conversation" : "Go to conversation",
+    "Detect language" : "ກວດສອບພາສາ",
     "The message could not be translated" : "The message could not be translated",
     "Translation copied to clipboard" : "Translation copied to clipboard",
     "Translation could not be copied" : "Translation could not be copied",
