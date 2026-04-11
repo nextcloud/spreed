@@ -1489,6 +1489,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Ujumbe umetumwa kwa {selectedConversationName}",
     "Dismiss" : "Ondoa",
     "Go to conversation" : "Nenda kwenye mazungumzo",
+    "Detect language" : "Lugha iliyotambuliwa",
     "The message could not be translated" : "Ujumbe haukuweza kutafsiriwa",
     "Translation copied to clipboard" : "Tafsiri imenakiliwa kwenye ubao wa kunakili",
     "Translation could not be copied" : "Tafsiri haikuweza kunakiliwa",

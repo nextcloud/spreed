@@ -649,6 +649,7 @@ OC.L10N.register(
     "Error while forwarding message" : "Der opstod en fejl ved videresendelse af beskeden.",
     "The message has been forwarded to {selectedConversationName}" : "Beskeden er videresendt til {selectedConversationName}",
     "Dismiss" : "Afvis",
+    "Detect language" : "Detekter sprog",
     "Translate from" : "Oversæt fra",
     "Translate to" : "Oversæt til",
     "Copy translated text" : "Kopiér oversat tekst",

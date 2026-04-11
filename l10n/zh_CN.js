@@ -1523,6 +1523,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "已转发此消息至{selectedConversationName}",
     "Dismiss" : "关闭",
     "Go to conversation" : "转到对话",
+    "Detect language" : "检测语言",
     "The message could not be translated" : "无法翻译信息",
     "Translation copied to clipboard" : "翻译已复制到剪贴板",
     "Translation could not be copied" : "无法复制翻译。",

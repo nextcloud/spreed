@@ -500,6 +500,7 @@ OC.L10N.register(
     "Go to file" : "Fara í skrá",
     "Translate" : "Þýða",
     "Dismiss" : "Hafna",
+    "Detect language" : "Greina tungumál",
     "The message could not be translated" : "Ekki var hægt að þýða skilaboðin",
     "Translation copied to clipboard" : "Þýðing afrituð á klippispjald",
     "Translation could not be copied" : "Ekki tókst að afrita þýðinguna",

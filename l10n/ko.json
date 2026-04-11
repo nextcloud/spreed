@@ -1163,6 +1163,7 @@
     "The message has been forwarded to {selectedConversationName}" : "메시지를 {selectedConversationName}에 전달했습니다.",
     "Dismiss" : "무시",
     "Go to conversation" : "대화로 이동",
+    "Detect language" : "언어 감지",
     "The message could not be translated" : "메시지를 번역할 수 없습니다.",
     "Translation copied to clipboard" : "번역을 클립보드로 복사함",
     "Translation could not be copied" : "번역을 복사할 수 없습니다.",

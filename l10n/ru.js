@@ -1535,6 +1535,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Сообщение переслано в {selectedConversationName}",
     "Dismiss" : "Отклонить",
     "Go to conversation" : "Перейти в обсуждение",
+    "Detect language" : "Определить язык",
     "The message could not be translated" : "Сообщение не может быть переведено",
     "Translation copied to clipboard" : "Перевод скопирован в буфер обмена",
     "Translation could not be copied" : "Не удалось скопировать перевод",

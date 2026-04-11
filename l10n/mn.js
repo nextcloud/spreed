@@ -1491,6 +1491,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Мессеж {selectedConversationName} руу дамжуулагдлаа",
     "Dismiss" : "–ê—Ä–∏–ª–≥–∞—Ö",
     "Go to conversation" : "Яриа руу очих",
+    "Detect language" : "Хэл илрүүлэх",
     "The message could not be translated" : "Мессежийг орчуулж чадсангүй",
     "Translation copied to clipboard" : "Орчуулга санах ойд хуулагдлаа",
     "Translation could not be copied" : "Орчуулгыг хуулж чадсангүй",

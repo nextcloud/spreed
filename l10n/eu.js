@@ -1153,6 +1153,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Mezua {selectedConversationName}(e)ra birbidali da",
     "Dismiss" : "Baztertu",
     "Go to conversation" : "Joan elkarrizketara",
+    "Detect language" : "Detektatu hizkuntza",
     "The message could not be translated" : "Ezin izan da mezu hau itzuli",
     "Translation copied to clipboard" : "Itzulpena arbelera kopiatu da",
     "Translation could not be copied" : "Ezin izan da itzulpena kopiatu",

@@ -786,6 +786,7 @@ OC.L10N.register(
     "React with another emoji" : "Reaguoti kita šypsenėle",
     "Error while forwarding message" : "Klaida persiunčiant žinutę",
     "Dismiss" : "Atmesti",
+    "Detect language" : "Aptikti kalbą",
     "The message could not be translated" : "Nepavyko išversti laiško",
     "Translation copied to clipboard" : "Vertimas nukopijuotas į iškarpinę",
     "Translation could not be copied" : "Nepavyko nukopijuoti vertimo",

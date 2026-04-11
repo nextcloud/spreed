@@ -1523,6 +1523,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "İleti {selectedConversationName} üzerine iletildi",
     "Dismiss" : "Yok say",
     "Go to conversation" : "Görüşmeye git",
+    "Detect language" : "Dili algıla",
     "The message could not be translated" : "İleti çevrilemedi",
     "Translation copied to clipboard" : "Çeviri panoya kopyalandı",
     "Translation could not be copied" : "Çeviri kopyalanamadı",

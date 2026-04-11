@@ -1305,6 +1305,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Het bericht is doorgestuurd naar {selectedConversationName}",
     "Dismiss" : "Weigeren",
     "Go to conversation" : "Ga naar gesprek",
+    "Detect language" : "Detecteer taal",
     "The message could not be translated" : "Het bericht kon niet vertaald worden",
     "Translation copied to clipboard" : "Vertaling gekopieerd naar klembord",
     "Translation could not be copied" : "Vertaling kon niet gekopieerd worden",
