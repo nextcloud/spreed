@@ -1235,6 +1235,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Meldingen er videresendt til {selectedConversationName}",
     "Dismiss" : "Forkast",
     "Go to conversation" : "Gå til samtale",
+    "Detect language" : "Oppdag språk",
     "The message could not be translated" : "Meldingen kan ikke oversettes",
     "Translation copied to clipboard" : "Oversettelsen kopier til utklippstavlen",
     "Translation could not be copied" : "Oversettelsen kunne ikke kopieres",

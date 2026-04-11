@@ -1298,6 +1298,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "メッセージは{selectedConversationName}に転送されました",
     "Dismiss" : "閉じる",
     "Go to conversation" : "会話へ行く",
+    "Detect language" : "言語を検出する",
     "The message could not be translated" : "メッセージは翻訳できませんでした",
     "Translation copied to clipboard" : "翻訳をクリップボードにコピーしました",
     "Translation could not be copied" : "翻訳をコピーできませんでした",

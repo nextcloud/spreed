@@ -1160,6 +1160,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Sporočilo je posredovano v pogovor {selectedConversationName}",
     "Dismiss" : "Opusti",
     "Go to conversation" : "Pojdi na pogovor",
+    "Detect language" : "Zaznava jezika",
     "The message could not be translated" : "Sporočila ni mogoče prevesti",
     "Translation copied to clipboard" : "Prevod je kopiran v odložišče",
     "Translation could not be copied" : "Prevoda ni mogoče kopirati!",

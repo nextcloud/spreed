@@ -240,6 +240,7 @@ OC.L10N.register(
     "Message of a deleted user in {conversation}" : "Паведамленне выдаленага карыстальніка ў {conversation}",
     "Talk conversations" : "Размовы ў Talk",
     "An error occurred. Please contact your administrator." : "Узнікла памылка. Звярніцеся да адміністратара.",
+    "App disabled" : "Праграма адключана",
     "Storage quota exceeded" : "Квота сховішча перавышана",
     "File not found" : "Файл не знойдзены",
     "File is not shared, or shared but not with the user" : "Файл не абагулены, або абагулены, але не з карыстальнікам",

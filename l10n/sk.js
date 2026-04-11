@@ -1516,6 +1516,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Správa bola preposlaná na adresu {selectedConversationName}",
     "Dismiss" : "Zatvoriť",
     "Go to conversation" : "Prejisť na konverzáciu",
+    "Detect language" : "Zistiť jazyk",
     "The message could not be translated" : "Správa sa nedala preložiť",
     "Translation copied to clipboard" : "Preklad skopírovaný do schránky",
     "Translation could not be copied" : "Preklad sa nepodarilo skopírovať",

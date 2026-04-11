@@ -1485,6 +1485,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "See sõnum on edastatud vestlusesse „{selectedConversationName}“",
     "Dismiss" : "Jäta vahele",
     "Go to conversation" : "Mine vestluse juurde",
+    "Detect language" : "Tuvasta keel",
     "The message could not be translated" : "E-kirja tõlkimine ei õnnestunud",
     "Translation copied to clipboard" : "Tõlge on kopeeritud lõikelauale",
     "Translation could not be copied" : "Tõlke kopeerimine ei õnnestunud",
