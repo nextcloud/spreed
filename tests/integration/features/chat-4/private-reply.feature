@@ -194,3 +194,14 @@ Feature: chat-4/private-reply
     Then user "participant2" sees the following messages in room "one-to-one room" with 200
       | room            | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage    |
       | one-to-one room | users     | participant2 | participant2-displayname | Private Reply | []                | Original Message |
+
+  Scenario: user can not send a private reply from a group room to one-to-one room other than the author
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | invite   | attendees1 |
+    And user "participant2" creates room "one-to-one room" (v4)
+      | roomType | 1 |
+      | invite   | participant3 |
+    And user "participant2" joins room "one-to-one room" with 200 (v4)
+    And user "participant1" sends message "Original Message" to room "group room" with 201
+    When user "participant2" sends private reply "Private Response" on message "Original Message" from room "group room" to room "one-to-one room" with 403
