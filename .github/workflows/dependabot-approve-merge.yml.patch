@@ -1,5 +1,5 @@
 diff --git a/.github/workflows/dependabot-approve-merge.yml b/.github/workflows/dependabot-approve-merge.yml
-index e1d0b9b2f9..db5bea8bd7 100644
+index e4fa4e58ff..a1127d8826 100644
 --- a/.github/workflows/dependabot-approve-merge.yml
 +++ b/.github/workflows/dependabot-approve-merge.yml
 @@ -26,6 +26,9 @@ jobs:
@@ -12,7 +12,7 @@ index e1d0b9b2f9..db5bea8bd7 100644
      permissions:
        # for hmarr/auto-approve-action to approve PRs
        pull-requests: write
-@@ -39,20 +42,41 @@ jobs:
+@@ -42,20 +42,43 @@ jobs:
            echo 'Can not approve PRs from forks'
            exit 1
 
@@ -42,20 +42,23 @@ index e1d0b9b2f9..db5bea8bd7 100644
 +          fi
 
        # GitHub actions bot approve
-       - uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
--        if: startsWith(steps.branchname.outputs.branch, 'dependabot/') && contains(steps.branchname.outputs.branch, '/webrtc-adapter-') != true && contains(steps.branchname.outputs.branch, '/nextcloud/vue-') != true
+-      - uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
+-        if: startsWith(steps.branchname.outputs.branch, 'dependabot/')
++      - name: Auto approve
++        id: auto_approve
++        uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
 +        if: ${{ github.event.pull_request.user.login == 'dependabot[bot]'
 +            && steps.validate.outputs.ignore != 'true'
-+            && ((env.ALLOW_MINOR && steps.metadata.outputs.update-type == 'version-update:semver-minor')
++            && ((fromJSON(env.ALLOW_MINOR) && steps.metadata.outputs.update-type == 'version-update:semver-minor')
 +                || steps.metadata.outputs.update-type == 'version-update:semver-patch')
-+          }}
++            }}
          with:
            github-token: ${{ secrets.GITHUB_TOKEN }}
 
        # Enable GitHub auto merge
        - name: Auto merge
          uses: alexwilson/enable-github-automerge-action@56e3117d1ae1540309dc8f7a9f2825bc3c5f06ff # v2.0.0
--        if: startsWith(steps.branchname.outputs.branch, 'dependabot/') && contains(steps.branchname.outputs.branch, '/webrtc-adapter-') != true && contains(steps.branchname.outputs.branch, '/nextcloud/vue-') != true
-+        if: github.event.pull_request.user.login == 'dependabot[bot]'
+-        if: startsWith(steps.branchname.outputs.branch, 'dependabot/')
++        if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && steps.auto_approve.conclusion == 'success' }}
          with:
            github-token: ${{ secrets.GITHUB_TOKEN }}
