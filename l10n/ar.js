@@ -1377,6 +1377,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "تمت إعادة توجيه الرسالة إلى {selectedConversationName}",
     "Dismiss" : "الغاء",
     "Go to conversation" : "ذهاب إلى المحادثة",
+    "Detect language" : "إكتشف اللغة",
     "The message could not be translated" : "لا يمكن ترجمة الرسالة",
     "Translation copied to clipboard" : "تمّ نسخ الترجمة إلى الحافظة",
     "Translation could not be copied" : "تعذّر نسخ الترجمة",
