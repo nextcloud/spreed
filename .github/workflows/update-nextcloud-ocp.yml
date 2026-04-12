@@ -62,10 +62,30 @@ jobs:
         if: steps.checkout.outcome == 'success'
         run: composer install
 
-      - name: Composer update nextcloud/ocp # zizmor: ignore[template-injection]
+      - name: Check composer bin for nextcloud/ocp exists
+        id: check_composer_bin
+        uses: andstor/file-existence-action@558493d6c74bf472d87c84eab196434afc2fa029 # v3.1.0
+        with:
+          files: vendor-bin/nextcloud-ocp/composer.json
+
+      - name: Composer update nextcloud/ocp
         id: update_branch
-        if: ${{ steps.checkout.outcome == 'success' && matrix.branches != 'main' }}
-        run: composer require --dev 'nextcloud/ocp:dev-${{ matrix.branches }}'
+        env:
+          USE_COMPOSER_BIN: ${{ steps.check_composer_bin.outputs.files_exists }}
+          BRANCH_NAME: ${{ matrix.branches }}
+        run: |
+          COMPOSER_CMD='composer'
+          if [[ "$USE_COMPOSER_BIN" == 'true' ]]; then
+            COMPOSER_CMD='composer bin nextcloud-ocp'
+          fi
+
+          PACKAGE_VERSION="nextcloud/ocp:dev-$BRANCH_NAME"
+          if [[ "$BRANCH_NAME" == 'main' ]]; then
+            PACKAGE_VERSION='nextcloud/ocp:dev-master'
+          fi
+
+          echo $COMPOSER_CMD require --dev $PACKAGE_VERSION
+          $COMPOSER_CMD require --dev $PACKAGE_VERSION
 
       - name: Raise on issue on failure
         uses: dacbd/create-issue-action@cdb57ab6ff8862aa09fee2be6ba77a59581921c2 # v2.0.0
@@ -74,40 +94,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: 'Failed to update nextcloud/ocp package on branch ${{ matrix.branches }}'
           body: 'Please check the output of the GitHub action and manually resolve the issues<br>${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}<br>${{ steps.codeowners.outputs.codeowners }}'
-
-      - name: Composer update nextcloud/ocp
-        id: update_main
-        if: ${{ steps.checkout.outcome == 'success' && matrix.branches == 'main' }}
-        run: composer require --dev nextcloud/ocp:dev-master
-
-      - name: Raise on issue on failure
-        uses: dacbd/create-issue-action@cdb57ab6ff8862aa09fee2be6ba77a59581921c2 # v2.0.0
-        if: ${{ steps.checkout.outcome == 'success' && failure() && steps.update_main.conclusion == 'failure' }}
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: 'Failed to update nextcloud/ocp package on branch ${{ matrix.branches }}'
-          body: 'Please check the output of the GitHub action and manually resolve the issues<br>${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}<br>${{ steps.codeowners.outputs.codeowners }}'
-
-      - name: Reset checkout 3rdparty
-        if: steps.checkout.outcome == 'success'
-        run: |
-          git clean -f 3rdparty
-          git checkout 3rdparty
-        continue-on-error: true
-
-      - name: Reset checkout vendor
-        if: steps.checkout.outcome == 'success'
-        run: |
-          git clean -f vendor
-          git checkout vendor
-        continue-on-error: true
-
-      - name: Reset checkout vendor-bin
-        if: steps.checkout.outcome == 'success'
-        run: |
-          git clean -f vendor-bin
-          git checkout vendor-bin
-        continue-on-error: true
 
       - name: Create Pull Request
         if: steps.checkout.outcome == 'success'
@@ -120,6 +106,11 @@ jobs:
           signoff: true
           branch: 'automated/noid/${{ matrix.branches }}-update-nextcloud-ocp'
           title: '[${{ matrix.branches }}] Update nextcloud/ocp dependency'
+          add-path: |
+            composer.json
+            composer.lock
+            vendor-bin/nextcloud-ocp/composer.json
+            vendor-bin/nextcloud-ocp/composer.lock
           body: |
             Auto-generated update of [nextcloud/ocp](https://github.com/nextcloud-deps/ocp/) dependency
           labels: |
