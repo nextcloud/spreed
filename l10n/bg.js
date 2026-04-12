@@ -990,6 +990,7 @@ OC.L10N.register(
     "The message has been forwarded to {selectedConversationName}" : "Съобщението е препратено до {selectedConversationName}",
     "Dismiss" : "Отхвърляне",
     "Go to conversation" : "Отиване на разговор",
+    "Detect language" : "Разпознаване на език",
     "Send now" : "Изпратете сега",
     "Message read by everyone who shares their reading status" : "Съобщение, прочетено от всеки, който споделя статуса си на четене",
     "Message sent" : "Съобщението е изпратено",
