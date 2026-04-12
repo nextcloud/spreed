@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   auto-approve-merge:
-    if: github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'renovate[bot]'
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest-low
     env:
       ALLOW_MINOR: false
@@ -72,7 +72,7 @@ jobs:
             && steps.validate.outputs.ignore != 'true'
             && ((fromJSON(env.ALLOW_MINOR) && steps.metadata.outputs.update-type == 'version-update:semver-minor')
                 || steps.metadata.outputs.update-type == 'version-update:semver-patch')
-          }}
+            }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
