@@ -212,6 +212,7 @@ export const mockedCapabilities: Capabilities = {
 			attachments: [
 				'allowed',
 				'folder',
+				'conversation-subfolders',
 			],
 			call: [
 				'predefined-backgrounds',
