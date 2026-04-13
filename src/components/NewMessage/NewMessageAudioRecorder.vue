@@ -188,7 +188,7 @@ export default {
 					audio: {
 						noiseSuppression: this.settingsStore.noiseSuppression && !this.settingsStore.noiseSuppressionWithModel,
 						echoCancellation: this.settingsStore.echoCancellation,
-						autoGainControl: this.settingsStore.autoGainControl && !this.settingsStore.noiseSuppressionWithModel,
+						autoGainControl: this.settingsStore.autoGainControl,
 					},
 					video: false,
 				})

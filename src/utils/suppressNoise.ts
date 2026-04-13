@@ -114,10 +114,10 @@ export async function destroyNoiseSuppressionWorklet() {
  *
  * @param stream - MediaStream to process
  * @param consumer - Unique consumer id returned by `registerNoiseSuppressionWorklet`
- * @param enabled - Whether noise suppression is enabled
+ * @param model - Noise suppression model name to be used (null for disabling)
  */
-export function processNoiseSuppression(stream: MediaStream, consumer: symbol | null, enabled = false): MediaStream {
-	if (!enabled) {
+export function processNoiseSuppression(stream: MediaStream, consumer: symbol | null, model: string | null = null): MediaStream {
+	if (!model || model === 'none') {
 		// No noise suppression requested; return the original stream
 		return stream
 	}
@@ -132,7 +132,13 @@ export function processNoiseSuppression(stream: MediaStream, consumer: symbol | 
 	}
 
 	cleanupNoiseSuppressionWorklet(consumer)
-	return processRnnoise(stream, consumer)
+
+	if (model === 'rnnoise') {
+		return processRnnoise(stream, consumer)
+	} else {
+		// TODO for another model implementation
+		return stream
+	}
 }
 
 /**
@@ -144,15 +150,10 @@ export function processNoiseSuppression(stream: MediaStream, consumer: symbol | 
 export function processRnnoise(stream: MediaStream, consumer: symbol): MediaStream {
 	try {
 		const mediaStreamAudioSource = audioContext!.createMediaStreamSource(stream)
-		const outputGainNode = audioContext!.createGain()
 		const mediaStreamAudioDestinationNode = audioContext!.createMediaStreamDestination()
 
-		// Gain node configuration (to increase the output of processed track)
-		outputGainNode.gain.value = 2
-
 		mediaStreamAudioSource.connect(rnnoiseWorklet!)
-		rnnoiseWorklet!.connect(outputGainNode)
-		outputGainNode.connect(mediaStreamAudioDestinationNode)
+		rnnoiseWorklet!.connect(mediaStreamAudioDestinationNode)
 
 		const processedAudioTrack = mediaStreamAudioDestinationNode.stream.getAudioTracks()[0]
 		if (!processedAudioTrack) {
@@ -168,8 +169,7 @@ export function processRnnoise(stream: MediaStream, consumer: symbol): MediaStre
 		workletCleanupCallbackMap.set(consumer, () => {
 			try {
 				mediaStreamAudioSource.disconnect(rnnoiseWorklet!)
-				rnnoiseWorklet!.disconnect(outputGainNode)
-				outputGainNode.disconnect(mediaStreamAudioDestinationNode)
+				rnnoiseWorklet!.disconnect(mediaStreamAudioDestinationNode)
 				mediaStreamAudioDestinationNode.disconnect()
 			} catch (error) {
 				console.error(error)
