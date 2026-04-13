@@ -184,6 +184,9 @@ export default {
 				} else {
 					this.$refs.submitButton.$el.focus()
 				}
+			} else {
+				// Reset internal state on modal unmounting to correctly attach tribute
+				this.modalContainerId = null
 			}
 		},
 	},
