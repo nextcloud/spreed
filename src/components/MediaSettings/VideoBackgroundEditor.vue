@@ -67,6 +67,24 @@
 			tabindex="-1"
 			aria-hidden="true"
 			@change="handleFileInput">
+		<div class="background-editor__debug-controls">
+			<label
+				v-for="control in debugControls"
+				:key="control.key"
+				class="background-editor__debug-control">
+				<span class="background-editor__debug-control-header">
+					<span>{{ control.label }}</span>
+					<span>{{ formatDebugConfigValue(control.key) }}</span>
+				</span>
+				<input
+					:min="control.min"
+					:max="control.max"
+					:step="control.step"
+					:value="debugConfigValues[control.key]"
+					type="range"
+					@input="handleDebugConfigInput(control.key, $event.target.value)">
+			</label>
+		</div>
 	</div>
 </template>
 
@@ -88,6 +106,7 @@ import { getDavClient } from '../../services/DavClient.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { findUniquePath } from '../../utils/fileUpload.ts'
+import { VIRTUAL_BACKGROUND_DEBUG_CONFIG_RANGES, virtualBackgroundDebugConfig, setVirtualBackgroundDebugConfigValue } from '../../utils/media/effects/virtual-background/runtimeConfig.js'
 
 const predefinedBackgroundLabels = {
 	'1_office': t('spreed', 'Select virtual office background'),
@@ -98,6 +117,24 @@ const predefinedBackgroundLabels = {
 	'6_theater': t('spreed', 'Select virtual theater background'),
 	'7_library': t('spreed', 'Select virtual library background'),
 	'8_space_station': t('spreed', 'Select virtual space station background'),
+}
+
+const virtualBackgroundDebugControlLabels = {
+	DEFAULT_BLUR_PASSES: t('spreed', 'Blur passes'),
+	SIGMA_SPACE: t('spreed', 'Sigma space'),
+	SIGMA_COLOR: t('spreed', 'Sigma color'),
+	SPARSITY_FACTOR: t('spreed', 'Sparsity factor'),
+	DEFAULT_FRAME_RATE: t('spreed', 'Default frame rate'),
+	MAX_SEGMENTATION_FRAME_RATE: t('spreed', 'Max segmentation frame rate'),
+}
+
+const virtualBackgroundDebugControlFractionDigits = {
+	DEFAULT_BLUR_PASSES: 0,
+	SIGMA_SPACE: 1,
+	SIGMA_COLOR: 2,
+	SPARSITY_FACTOR: 2,
+	DEFAULT_FRAME_RATE: 0,
+	MAX_SEGMENTATION_FRAME_RATE: 0,
 }
 
 export default {
@@ -139,6 +176,7 @@ export default {
 	data() {
 		return {
 			selectedBackground: undefined,
+			debugConfigValues: { ...virtualBackgroundDebugConfig },
 		}
 	},
 
@@ -161,6 +199,15 @@ export default {
 
 		relativeBackgroundsFolderPath() {
 			return this.settingsStore.attachmentFolder + '/Backgrounds'
+		},
+
+		debugControls() {
+			return Object.entries(VIRTUAL_BACKGROUND_DEBUG_CONFIG_RANGES).map(([key, range]) => ({
+				key,
+				label: virtualBackgroundDebugControlLabels[key],
+				fractionDigits: virtualBackgroundDebugControlFractionDigits[key],
+				...range,
+			}))
 		},
 	},
 
@@ -268,6 +315,17 @@ export default {
 			this.handleSelectBackground(previewURL)
 		},
 
+		handleDebugConfigInput(key, value) {
+			this.debugConfigValues[key] = setVirtualBackgroundDebugConfigValue(key, value)
+		},
+
+		formatDebugConfigValue(key) {
+			const value = this.debugConfigValues[key]
+			const fractionDigits = virtualBackgroundDebugControlFractionDigits[key]
+
+			return fractionDigits > 0 ? value.toFixed(fractionDigits) : String(value)
+		},
+
 		loadBackground() {
 			// Set virtual background depending on browser storage's settings
 			if (BrowserStorage.getItem('virtualBackgroundEnabled') === 'true') {
@@ -304,6 +362,24 @@ export default {
 	margin-top: calc(var(--default-grid-baseline) * 2);
 	max-height: calc(var(--background-button-height) * 3 + var(--default-grid-baseline) * 4);
 	overflow-y: auto;
+
+	&__debug-controls {
+		grid-column: 1 / -1;
+		display: grid;
+		gap: calc(var(--default-grid-baseline) * 2);
+	}
+
+	&__debug-control {
+		display: grid;
+		gap: var(--default-grid-baseline);
+	}
+
+	&__debug-control-header {
+		display: flex;
+		justify-content: space-between;
+		gap: calc(var(--default-grid-baseline) * 2);
+		font-size: 12px;
+	}
 
 	&__element {
 		border: none;

@@ -14,6 +14,7 @@ import store from './store/index.js'
 import pinia from './stores/pinia.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
 import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
+import { exposeVirtualBackgroundDebugConfig } from './utils/media/effects/virtual-background/runtimeConfig.js'
 
 import './init.js'
 // Leaflet icon patch
@@ -104,6 +105,7 @@ subscribe('viewer:sidebar:open', (node) => {
 if (!window.OCA.Talk) {
 	window.OCA.Talk = reactive({})
 }
+exposeVirtualBackgroundDebugConfig(window.OCA.Talk)
 OCA.Talk.instance = instance
 OCA.Talk.Settings = SettingsAPI
 
