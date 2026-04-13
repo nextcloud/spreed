@@ -24,7 +24,37 @@ function convertToJSONDataURI(payload: object): string {
 	return convertToDataURI(JSON.stringify(payload, null, 2), 'application/json;charset=utf-8')
 }
 
+/**
+ * Triggers a file download from a Data URL
+ *
+ * @param dataUrl the data URL to download
+ * @param filename the filename for the downloaded file
+ */
+function downloadDataURL(dataUrl: string, filename: string): void {
+	const a = document.createElement('a')
+	a.href = dataUrl
+	a.download = filename
+	a.click()
+}
+
+/**
+ * Triggers a file download from a Blob
+ *
+ * @param blob the blob to download
+ * @param filename the filename for the downloaded file
+ */
+function downloadBlob(blob: Blob, filename: string): void {
+	const url = URL.createObjectURL(blob)
+	const a = document.createElement('a')
+	a.href = url
+	a.download = filename
+	a.click()
+	URL.revokeObjectURL(url)
+}
+
 export {
 	convertToDataURI,
 	convertToJSONDataURI,
+	downloadDataURL,
+	downloadBlob,
 }

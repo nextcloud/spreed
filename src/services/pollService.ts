@@ -18,7 +18,9 @@ import type {
 } from '../types/index.ts'
 
 import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
+import { generateOcsUrl, generateUrl } from '@nextcloud/router'
+
+import { downloadBlob } from '../utils/fileDownload.ts'
 
 type createPollPayload = { token: string } & createPollParams
 type updatePollDraftPayload = { token: string, pollId: number } & updatePollDraftParams
@@ -120,11 +122,37 @@ async function deletePollDraft(token: string, pollId: string): deletePollDraftRe
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/poll/{token}/{pollId}', { token, pollId }))
 }
 
+/**
+ * Export poll results as a spreadsheet file
+ *
+ * @param token The conversation token
+ * @param pollId Id of the poll
+ * @param format The export format ('xlsx' or 'ods')
+ */
+async function exportPoll(token: string, pollId: number, format: 'xlsx' | 'ods'): Promise<void> {
+	const response = await axios.get(
+		generateOcsUrl('apps/spreed/api/v1/poll/{token}/{pollId}/export/{format}', { token, pollId, format }),
+		{ responseType: 'blob' },
+	)
+
+	const contentDisposition = response.headers['content-disposition'] as string | undefined
+	let filename = `poll.${format}`
+	if (contentDisposition) {
+		const match = contentDisposition.match(/filename="?([^";\n]+)"?/)
+		if (match?.[1]) {
+			filename = match[1]
+		}
+	}
+
+	downloadBlob(response.data as Blob, filename)
+}
+
 export {
 	createPoll,
 	createPollDraft,
 	deletePollDraft,
 	endPoll,
+	exportPoll,
 	getPollData,
 	getPollDrafts,
 	submitVote,
