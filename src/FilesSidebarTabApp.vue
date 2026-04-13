@@ -46,6 +46,7 @@ import { getFileConversation } from './services/filesIntegrationServices.ts'
 import {
 	leaveConversationSync,
 } from './services/participantsService.js'
+import SessionStorage from './services/SessionStorage.js'
 import { useActorStore } from './stores/actor.ts'
 import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
@@ -182,6 +183,7 @@ export default {
 		window.addEventListener('unload', () => {
 			console.info('Navigating away, leaving conversation')
 			if (this.token) {
+				SessionStorage.removeItem('joined_conversation')
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
 				signalingKill()

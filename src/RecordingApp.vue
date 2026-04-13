@@ -8,6 +8,7 @@ import { onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import CallView from './components/CallView/CallView.vue'
 import { useGetToken } from './composables/useGetToken.ts'
+import SessionStorage from './services/SessionStorage.js'
 import { useSoundsStore } from './stores/sounds.js'
 import { useTokenStore } from './stores/token.ts'
 import { signalingKill } from './utils/webrtc/index.js'
@@ -31,6 +32,7 @@ onBeforeMount(async () => {
 	window.addEventListener('unload', () => {
 		console.info('Navigating away, leaving conversation')
 		if (token.value) {
+			SessionStorage.removeItem('joined_conversation')
 			// We have to do this synchronously, because in unload and
 			// beforeunload Promises, async and await are prohibited.
 			signalingKill()
