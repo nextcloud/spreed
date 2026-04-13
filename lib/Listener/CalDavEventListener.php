@@ -178,7 +178,7 @@ class CalDavEventListener implements IEventListener {
 
 
 		// So we can unset names & descriptions in case the user deleted them
-		$this->roomService->setName($room, $name ?? $this->l10n->t('Talk conversation for event'));
+		$this->roomService->setName($room, $name ?? $this->l10n->t('Meeting conversation'));
 		$this->roomService->setDescription($room, $description ?? '');
 
 		/** @var DateTime $start */

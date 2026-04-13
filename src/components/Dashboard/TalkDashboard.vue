@@ -317,7 +317,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					wide
 					:title="t('spreed', 'Schedule meetings')"
 					:subtitle="t('spreed', 'You don\'t have any upcoming meetings')"
-					:description="t('spreed', 'Schedule a meeting from your calendar. A Talk conversation needs to be set as location to show up here')">
+					:description="t('spreed', 'Calendar events with a conversation link as the location are shown here')">
 					<template #image>
 						<img :src="imagePath('spreed', 'dashboard/meetings.png')">
 					</template>
