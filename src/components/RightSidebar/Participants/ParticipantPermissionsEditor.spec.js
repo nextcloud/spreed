@@ -25,7 +25,6 @@ function getPermissionCheckboxes(wrapper) {
 }
 
 describe('ParticipantPermissionsEditor.vue', () => {
-	let conversation
 	let participant
 	let store
 	let testStoreConfig
@@ -56,10 +55,8 @@ describe('ParticipantPermissionsEditor.vue', () => {
 		}
 
 		tokenStore.token = 'XXTOKENXX'
-		const conversationGetterMock = vi.fn().mockReturnValue(conversation)
-
 		testStoreConfig = cloneDeep(storeConfig)
-		testStoreConfig.modules.conversationsStore.getters.conversation = () => conversationGetterMock
+		testStoreConfig.modules.conversationsStore.getters.conversation = vi.fn()
 		// Add a mock function for the action and see if its called and with which arguments
 		testStoreConfig.modules.participantsStore.actions.setPermissions = vi.fn()
 		store = createStore(testStoreConfig)

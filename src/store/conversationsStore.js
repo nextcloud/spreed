@@ -376,8 +376,7 @@ const actions = {
 				|| oldConversation.statusMessage !== conversation.statusMessage
 				|| oldConversation.statusIcon !== conversation.statusIcon
 				|| oldConversation.statusClearAt !== conversation.statusClearAt
-			)
-		) {
+			)) {
 			emitUserStatusUpdated(conversation)
 			context.commit('updateConversation', conversation)
 			return true
@@ -1303,7 +1302,7 @@ const actions = {
 			context.commit('addConversation', conversation)
 			showSuccess(t('spreed', 'Conversation picture set'))
 		} catch (error) {
-			throw new Error(error.response?.data?.ocs?.data?.message ?? error.message)
+			throw new Error(error.response?.data?.ocs?.data?.message ?? error.message, { cause: error })
 		}
 	},
 
@@ -1314,7 +1313,7 @@ const actions = {
 			context.commit('addConversation', conversation)
 			showSuccess(t('spreed', 'Conversation picture set'))
 		} catch (error) {
-			throw new Error(error.response?.data?.ocs?.data?.message ?? error.message)
+			throw new Error(error.response?.data?.ocs?.data?.message ?? error.message, { cause: error })
 		}
 	},
 

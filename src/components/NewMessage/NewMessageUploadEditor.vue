@@ -6,8 +6,8 @@
 <template>
 	<NcModal
 		v-if="showModal"
-		ref="modal"
 		:id="dialogMaskId"
+		ref="modal"
 		:size="isVoiceMessage ? 'small' : 'normal'"
 		:labelId="dialogHeaderId"
 		@close="handleDismiss">
