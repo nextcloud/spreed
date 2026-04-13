@@ -1164,6 +1164,48 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
+	#[Then('/^user "([^"]*)" sets the Talk profile visibility to "([^"]*)"$/')]
+	public function userSetsTalkProfileVisibility(string $user, string $visibility): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('PUT', '/profile/' . $user, [
+			'paramId' => 'talk',
+			'visibility' => $visibility,
+		]);
+		$this->assertStatusCode($this->response, 200);
+	}
+
+	#[Then('/^guest creates meet room "([^"]*)" for "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function guestCreatesMeetRoom(string $identifier, string $targetUserId, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
+		$body = [];
+		if ($formData instanceof TableNode) {
+			$body = $formData->getRowsHash();
+		}
+
+		$this->setCurrentUser(null);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/meet/' . $targetUserId, $body);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode === 201) {
+			$response = $this->getDataFromResponse($this->response);
+			self::$identifierToToken[$identifier] = $response['token'];
+			self::$tokenToIdentifier[$response['token']] = $identifier;
+
+			// If a message was sent, register the guest actor ID for message assertions
+			if (!empty($body['message'])) {
+				$this->setCurrentUser($targetUserId);
+				$this->sendRequest('GET', '/apps/spreed/api/v1/chat/' . $response['token'] . '?lookIntoFuture=0');
+				$messages = $this->getDataFromResponse($this->response);
+				foreach ($messages as $message) {
+					if ($message['actorType'] === 'guests' && $message['systemMessage'] === '') {
+						self::$sessionIdToUser[$message['actorId']] = 'MEET_GUEST_ACTOR_ID';
+						break;
+					}
+				}
+				$this->setCurrentUser(null);
+			}
+		}
+	}
+
 	#[Then('/^user "([^"]*)" tries to create room with (\d+) \((v4)\)$/')]
 	public function userTriesToCreateRoom(string $user, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
