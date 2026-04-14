@@ -79,6 +79,7 @@
     "vue-router": "^5.0.4",
     "vue-tsc": "^3.2.6",
     "vuex": "^4.1.0",
+    "wasm-check": "^2.1.2",
     "webdav": "^5.8.0",
     "webrtc-adapter": "^9.0.4",
     "webrtcsupport": "^2.2.0",
@@ -105,8 +106,7 @@
     "sass-loader": "^16.0.7",
     "typescript": "^5.9.3",
     "vitest": "^4.0.9",
-    "vue-loader": "^17.4.2",
-    "wasm-check": "^2.1.2"
+    "vue-loader": "^17.4.2"
   },
   "engines": {
     "node": "^24.0.0",
