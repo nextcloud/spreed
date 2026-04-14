@@ -15,7 +15,6 @@ import type {
 	getListedConversationsParams,
 	getListedConversationsResponse,
 	getNoteToSelfConversationResponse,
-	getPresetsResponse,
 	getSingleConversationResponse,
 	legacyCreateConversationParams,
 	makeConversationPrivateResponse,
@@ -428,13 +427,6 @@ async function setMessageExpiration(token: string, seconds: setConversationMessa
 	} as setConversationMessageExpirationParams)
 }
 
-/**
- * Get the list of available room presets
- */
-async function getPresets(): getPresetsResponse {
-	return axios.get(generateOcsUrl('apps/spreed/api/v1/presets/room'))
-}
-
 export {
 	addToFavorites,
 	archiveConversation,
@@ -447,7 +439,6 @@ export {
 	fetchConversation,
 	fetchConversations,
 	fetchNoteToSelfConversation,
-	getPresets,
 	makeConversationPrivate,
 	makeConversationPublic,
 	makeLegacyConversationPublic,

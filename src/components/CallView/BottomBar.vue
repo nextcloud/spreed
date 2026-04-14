@@ -36,7 +36,7 @@ import {
 	useDocumentFullscreen,
 } from '../../composables/useDocumentFullscreen.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
-import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.ts'
+import { CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import {
 	getTalkConfig,
 	showTalkFeatureHint,
@@ -71,8 +71,6 @@ const isMobile = useIsMobile()
 const conversation = computed(() => {
 	return store.getters.conversation(token.value) || store.getters.dummyConversation
 })
-const isGuestActor = computed(() => actorStore.actorType === ATTENDEE.ACTOR_TYPE.GUESTS)
-const isVoiceRoom = computed(() => Boolean(conversation.value.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM))
 
 const supportedReactions = computed(() => getTalkConfig(token.value, 'call', 'supported-reactions') || [])
 
@@ -764,7 +762,6 @@ useHotKey('r', toggleHandRaised)
 			</NcActions>
 
 			<CallButton
-				v-show="!(isVoiceRoom && isGuestActor)"
 				class="call-button"
 				:hideText="isSidebar || isMobile"
 				:isScreensharing="!!localMediaModel.attributes.localScreen" />

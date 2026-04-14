@@ -60,14 +60,12 @@
 <script>
 import { t } from '@nextcloud/l10n'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-import { h, ref } from 'vue'
+import { ref } from 'vue'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconLink from 'vue-material-design-icons/Link.vue'
 import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better indication
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import IconWeb from 'vue-material-design-icons/Web.vue'
-import IconVolumeHighOutline from '../../img/material-icons/volume-high-outline.svg?raw'
 import { AVATAR, CONVERSATION } from '../constants.ts'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
@@ -202,8 +200,6 @@ export default {
 				return { key: 'federated', icon: IconWeb, label: t('spreed', 'Federated conversation') }
 			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
 				return { key: 'public', icon: IconLink, label: t('spreed', 'Public conversation') }
-			} else if (this.item.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM) {
-				return { key: 'voice_room', icon: h(NcIconSvgWrapper, { svg: IconVolumeHighOutline }), label: t('spreed', 'Voice room') }
 			}
 			return null
 		},
@@ -277,11 +273,6 @@ export default {
 
 .offline {
 	opacity: .4;
-}
-
-.conversation-icon :deep(.icon-vue) {
-	min-width: 0 !important;
-	min-height: 0 !important;
 }
 
 </style>

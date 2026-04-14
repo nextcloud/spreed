@@ -289,8 +289,7 @@ export default {
 		},
 
 		canConfigureBreakoutRooms() {
-			return !this.isVoiceRoom
-				&& this.canFullModerate
+			return this.canFullModerate
 				&& (getTalkConfig(this.token, 'call', 'breakout-rooms') || false)
 				&& this.conversation.type === CONVERSATION.TYPE.GROUP
 		},
@@ -307,10 +306,6 @@ export default {
 
 		hasMessageExpirationFeature() {
 			return hasTalkFeature(this.token, 'message-expiration')
-		},
-
-		isVoiceRoom() {
-			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
 		},
 	},
 
