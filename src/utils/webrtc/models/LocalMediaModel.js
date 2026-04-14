@@ -377,20 +377,6 @@ LocalMediaModel.prototype = {
 		this._webRtc.pauseVideo()
 	},
 
-	enableNoiseSuppression() {
-		if (!this._webRtc) {
-			throw new Error('WebRtc not initialized yet')
-		}
-		this._webRtc.webrtc.enableNoiseSuppression()
-	},
-
-	disableNoiseSuppression() {
-		if (!this._webRtc) {
-			throw new Error('WebRtc not initialized yet')
-		}
-		this._webRtc.webrtc.disableNoiseSuppression()
-	},
-
 	enableVirtualBackground() {
 		if (!this._webRtc) {
 			throw new Error('WebRtc not initialized yet')
