@@ -77,7 +77,6 @@
     "vue-draggable-resizable": "^3.0.0",
     "vue-material-design-icons": "^5.3.1",
     "vue-router": "^5.0.4",
-    "vue-tsc": "^3.2.6",
     "vuex": "^4.1.0",
     "wasm-check": "^2.1.2",
     "webdav": "^5.8.0",
@@ -106,7 +105,8 @@
     "sass-loader": "^16.0.7",
     "typescript": "^5.9.3",
     "vitest": "^4.0.9",
-    "vue-loader": "^17.4.2"
+    "vue-loader": "^17.4.2",
+    "vue-tsc": "^3.2.6"
   },
   "engines": {
     "node": "^24.0.0",
