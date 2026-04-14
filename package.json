@@ -53,6 +53,7 @@
     "@vueuse/router": "^14.2.1",
     "base64-js": "^1.5.1",
     "blurhash": "^2.0.5",
+    "cropperjs": "^1.6.2",
     "crypto-js": "^4.2.0",
     "debounce": "^3.0.0",
     "emoji-regex": "^10.6.0",
@@ -77,8 +78,8 @@
     "vue-draggable-resizable": "^3.0.0",
     "vue-material-design-icons": "^5.3.1",
     "vue-router": "^5.0.4",
-    "vue-tsc": "^3.2.6",
     "vuex": "^4.1.0",
+    "wasm-check": "^2.1.2",
     "webdav": "^5.8.0",
     "webrtc-adapter": "^9.0.4",
     "webrtcsupport": "^2.2.0",
@@ -106,7 +107,7 @@
     "typescript": "^5.9.3",
     "vitest": "^4.0.9",
     "vue-loader": "^17.4.2",
-    "wasm-check": "^2.1.2"
+    "vue-tsc": "^3.2.6"
   },
   "engines": {
     "node": "^24.0.0",
