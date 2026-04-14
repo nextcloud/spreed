@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Federation;
 
 use Exception;
-use NCU\Federation\ISignedCloudFederationProvider;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\CachePrefix;
@@ -49,6 +48,7 @@ use OCP\Federation\Exceptions\ProviderCouldNotAddShareException;
 use OCP\Federation\ICloudFederationProvider;
 use OCP\Federation\ICloudFederationShare;
 use OCP\Federation\ICloudIdManager;
+use OCP\Federation\ISignedCloudFederationProvider;
 use OCP\HintException;
 use OCP\ICache;
 use OCP\ICacheFactory;
