@@ -1363,6 +1363,36 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
+	#[Then('/^user "([^"]*)" forges a request for user "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function userExitsRoomWithAForgedInvalidRequest(string $user1, string $user2, string $identifier, int $statusCode, string $apiVersion): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendRequest('DELETE', '/apps/spreedcheats/forged/federation/active', [
+			'token' => self::$identifierToToken[$identifier],
+			'actingUser' => $user1,
+			'targetUser' => $user2,
+		]);
+
+		$this->assertStatusCode($this->response, 200);
+		$data = $this->getDataFromResponse($this->response);
+		$this->setCurrentUser(null);
+
+		$currentServer = $this->currentServer;
+		$this->usingServer($currentServer === 'LOCAL' ? 'REMOTE' : 'LOCAL');
+
+		[, $hostIdentifier] = explode('::', $identifier);
+		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$hostIdentifier] . '/federation/active', [
+			'sessionId' => $data['session']['session_id'],
+		], [
+			'x-nextcloud-federation' => 'true',
+		], [
+			'auth' => [urlencode($data['access']['invited_cloud_id']), $data['access']['access_token']],
+		]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$this->setCurrentUser($currentUser);
+		$this->usingServer($currentServer);
+	}
+
 	#[Then('/^user "([^"]*)" removes themselves from room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userLeavesRoom(string $user, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
