@@ -55,7 +55,7 @@
 				<div class="new-message-form__emoji-picker">
 					<NcEmojiPicker
 						v-if="!disabled"
-						keepOpen
+						:closeOnSelect="false"
 						:setReturnFocus="getContenteditable"
 						@select="addEmoji">
 						<NcButton
