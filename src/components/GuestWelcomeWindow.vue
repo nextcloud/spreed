@@ -166,6 +166,6 @@ export default {
 
 .separator {
     margin: calc(var(--default-grid-baseline) * 3) 0 var(--default-grid-baseline);
-    border-top: 1px solid;
+    border-top: 1px solid var(--color-border-dark);
 }
 </style>
