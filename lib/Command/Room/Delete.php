@@ -46,8 +46,8 @@ class Delete extends Base {
 			return 1;
 		}
 
-		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
-			$output->writeln('<error>Room is no group call.</error>');
+		if (in_array($room->getType(), [Room::TYPE_ONE_TO_ONE], true)) {
+			$output->writeln('<error>Room is a private (1 to 1) conversation.</error>');
 			return 1;
 		}
 
