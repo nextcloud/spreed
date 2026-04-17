@@ -38,6 +38,7 @@ use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
+use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -67,6 +68,7 @@ class SignalingControllerTest extends TestCase {
 	protected TalkSession&MockObject $session;
 	protected \OCA\Talk\Signaling\Manager&MockObject $signalingManager;
 	protected IRequest&MockObject $request;
+	protected ISession&MockObject $serverSession;
 	protected Manager|MockObject $manager;
 	protected ParticipantService&MockObject $participantService;
 	protected RoomService&MockObject $roomService;
@@ -108,6 +110,7 @@ class SignalingControllerTest extends TestCase {
 		$this->dispatcher = \OCP\Server::get(IEventDispatcher::class);
 		$urlGenerator = $this->createMock(IURLGenerator::class);
 		$this->config = new Config($this->serverConfig, $appConfig, $this->createMock(IUserConfig::class), $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher);
+		$this->serverSession = $this->createMock(ISession::class);
 		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OCP\Server::get(IDBConnection::class);
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
@@ -130,6 +133,7 @@ class SignalingControllerTest extends TestCase {
 			$this->request,
 			$this->config,
 			$this->signalingManager,
+			$this->serverSession,
 			$this->session,
 			$this->manager,
 			$this->participantService,
