@@ -41,6 +41,7 @@ use OCP\DB\Exception;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
 use OCP\IRequest;
+use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
@@ -59,6 +60,7 @@ class SignalingController extends OCSController {
 		IRequest $request,
 		private Config $talkConfig,
 		private \OCA\Talk\Signaling\Manager $signalingManager,
+		private ISession $serverSession,
 		private TalkSession $session,
 		private Manager $manager,
 		private ParticipantService $participantService,
@@ -132,6 +134,9 @@ class SignalingController extends OCSController {
 			}
 
 			$isRecordingRequest = true;
+		} elseif ($this->serverSession->get('app_api') === true) {
+			// Live transcription ex-app
+			$isRecordingRequest = true;
 		}
 
 		$isTalkFederation = $this->federationAuthenticator->isFederationRequest();
@@ -156,8 +161,9 @@ class SignalingController extends OCSController {
 				$this->federationAuthenticator->authenticated($room, $participant);
 			} elseif ($token !== '') {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId);
-			} elseif ($this->userId !== null) {
+			} elseif ($this->userId !== null || $isRecordingRequest) {
 				// Mobile clients and admin setup check use the neutral point
+				// Same for live-transcription
 				$room = null;
 			} else {
 				throw new RoomNotFoundException();
