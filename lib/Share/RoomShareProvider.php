@@ -958,10 +958,12 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				->selectAlias('sc.permissions', 'sc_permissions');
 
 			$qb->andWhere(
-				$qb->expr()->like('s.file_target', $qb->createNamedParameter($childPathTemplatePlaceholder, IQueryBuilder::PARAM_STR)),
 				$qb->expr()->orX(
+					$qb->expr()->andX(
+						$qb->expr()->like('s.file_target', $qb->createNamedParameter($childPathTemplatePlaceholder, IQueryBuilder::PARAM_STR)),
+						$qb->expr()->isNull('sc.file_target'),
+					),
 					$qb->expr()->like('sc.file_target', $qb->createNamedParameter($childPathTemplate, IQueryBuilder::PARAM_STR)),
-					$qb->expr()->isNull('sc.file_target'),
 				),
 			);
 

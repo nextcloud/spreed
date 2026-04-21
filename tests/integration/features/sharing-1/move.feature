@@ -269,3 +269,24 @@ Feature: move
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant3" moves file "/Talk/welcome.txt" to "/test/renamed.txt"
     Then the HTTP status code should be "403"
+
+  Scenario: move received share to a subfolder
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "group room" with 200 (v4)
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    When user "participant3" gets the DAV properties for "/Talk"
+    Then the list of returned files for "participant3" is
+      | /Talk/ |
+      | /Talk/welcome.txt |
+    When user "participant3" creates folder "/Talk/test"
+    And user "participant3" moves file "/Talk/welcome.txt" to "/Talk/test/renamed.txt"
+    Then the HTTP status code should be "201"
+    # Trigger a full fs setup to ensure the mounts are refreshed
+    And user "participant3" gets the DAV properties for "/"
+    When user "participant3" gets the DAV properties for "/Talk/test"
+    Then the list of returned files for "participant3" is
+      | /Talk/test/ |
+      | /Talk/test/renamed.txt |
