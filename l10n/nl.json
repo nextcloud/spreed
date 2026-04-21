@@ -1700,6 +1700,7 @@
     "Message link copied to clipboard" : "Bericht-link naar klembord gekopieerd",
     "Conversation link copied to clipboard" : "Gespreks-link naar klembord gekopieerd",
     "The link could not be copied" : "De link kon niet gekopieerd worden",
+    "Error while parsing a PROPFIND error" : "Fout tijdens het analyseren van een PROPFIND fout",
     "Lost connection to signaling server. Trying to reconnect." : "Verbinding met signaleringsserver verbroken. Ik probeer opnieuw verbinding te maken.",
     "Please reload the page." : "Herlaad deze pagina.",
     "Do not disturb" : "Niet storen",
