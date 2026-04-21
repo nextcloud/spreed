@@ -1596,6 +1596,7 @@ OC.L10N.register(
     "Create a new group conversation" : "Vytvořit novou skupinovou konverzaci",
     "Add participants" : "Přidat účastníky",
     "Maximum length exceeded ({maxlength} characters)" : "Překročena nejvyšší umožněná délka ({maxlength} znaků)",
+    "Conversation type" : "Typ konverzace",
     "Conversation visibility" : "Viditelnost konverzace",
     "Allow guests to join via link" : "Umožnit hostům, připojit se přes odkaz.",
     "Enter password" : "Zadejte heslo",
