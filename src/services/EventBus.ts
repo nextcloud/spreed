@@ -45,6 +45,7 @@ export type Events = {
 	'signaling-join-call': [string, number]
 	'signaling-join-call-failed': [string, { meta: components['schemas']['OCSMeta'], data: { error: string } }]
 	'signaling-join-room': [string]
+	'signaling-join-room-failed': [string]
 	'signaling-participant-list-changed': void
 	'signaling-participant-list-updated': void
 	'signaling-recording-status-changed': [string, number]

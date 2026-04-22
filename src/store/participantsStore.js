@@ -1081,6 +1081,9 @@ const actions = {
 				}
 			} else if (error?.response?.status === 403 && error?.response?.data?.ocs?.data?.error === 'ban') {
 				EventBus.emit('forbidden-route', error.response.data.ocs.data)
+			} else if (error === 'cancelled') {
+				 // Ignore
+				console.log(error)
 			} else {
 				console.error(error)
 				showError(t('spreed', 'Failed to join the conversation.') + '\n' + messagePleaseTryToReload)
