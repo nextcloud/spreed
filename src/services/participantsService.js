@@ -66,16 +66,11 @@ async function rejoinConversation(token) {
  * @param {string} token The conversation token;
  */
 async function leaveConversation(token) {
-	try {
-		// FIXME Signaling should not be synchronous
-		await signalingLeaveConversation(token)
+	// FIXME Signaling should not be synchronous
+	await signalingLeaveConversation(token)
 
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/active', { token }))
-		return response
-	} catch (error) {
-		console.debug(error)
-		// FIXME: should throw
-	}
+	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/participants/active', { token }))
+	return response
 }
 
 /**
