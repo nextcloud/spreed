@@ -355,7 +355,7 @@ function mungeSdpForSimulcasting(sdp) {
 }
 /* eslint-enable */
 
-Peer.prototype.offer = function(options) {
+Peer.prototype.offer = async function(options) {
 	const sendVideo = this.sendVideoIfAvailable && this.type !== 'screen'
 	if (sendVideo && this.enableSimulcast && adapter.browserDetails.browser === 'firefox') {
 		console.debug('Enabling Simulcasting for Firefox (RID)')
@@ -386,7 +386,11 @@ Peer.prototype.offer = function(options) {
 					scaleResolutionDownBy: 4,
 				},
 			]
-			sender.setParameters(parameters)
+			try {
+				await sender.setParameters(parameters)
+			} catch (error) {
+				console.warn('Failed to set simulcast parameters in Firefox', error)
+			}
 		}
 	}
 	this.pc.createOffer(options).then(function(offer) {
