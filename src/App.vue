@@ -387,7 +387,8 @@ export default {
 			}
 
 			if (from.name === 'conversation' && from.params.token !== to.params.token) {
-				this.$store.dispatch('leaveConversation', { token: from.params.token })
+				// Await to properly close session / leave call before joining another one
+				await this.$store.dispatch('leaveConversation', { token: from.params.token })
 			}
 
 			/**
