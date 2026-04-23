@@ -485,6 +485,22 @@ class RoomService {
 		}
 	}
 
+	public function resolveOneToOneName(Room $room, string $currentName): void {
+		if ($currentName === '') {
+			$users = $this->participantService->getParticipantUserIds($room);
+			sort($users);
+			$this->setName($room, json_encode($users), '');
+		} elseif (!str_starts_with($currentName, '["')) {
+			// Legacy format: plain string (other user's ID), not a JSON array
+			$users = $this->participantService->getParticipantUserIds($room);
+			if (count($users) !== 2) {
+				$users[] = $currentName;
+			}
+			sort($users);
+			$this->setName($room, json_encode($users), '');
+		}
+	}
+
 	/**
 	 * @throws NameException
 	 */

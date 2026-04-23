@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -244,29 +243,9 @@ class Room {
 	}
 
 	public function getName(): string {
-		if ($this->type === self::TYPE_ONE_TO_ONE) {
-			if ($this->name === '') {
-				// TODO use DI
-				$participantService = Server::get(ParticipantService::class);
-				// Fill the room name with the participants for 1-to-1 conversations
-				$users = $participantService->getParticipantUserIds($this);
-				sort($users);
-				/** @var RoomService $roomService */
-				$roomService = Server::get(RoomService::class);
-				$roomService->setName($this, json_encode($users), '');
-			} elseif (!str_starts_with($this->name, '["')) {
-				// TODO use DI
-				$participantService = Server::get(ParticipantService::class);
-				// Not the json array, but the old fallback when someone left
-				$users = $participantService->getParticipantUserIds($this);
-				if (count($users) !== 2) {
-					$users[] = $this->name;
-				}
-				sort($users);
-				/** @var RoomService $roomService */
-				$roomService = Server::get(RoomService::class);
-				$roomService->setName($this, json_encode($users), '');
-			}
+		if ($this->type === self::TYPE_ONE_TO_ONE && !str_starts_with($this->name, '["')) {
+			// TODO use DI
+			Server::get(RoomService::class)->resolveOneToOneName($this, $this->name);
 		}
 		return $this->name;
 	}
