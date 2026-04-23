@@ -1282,6 +1282,12 @@ Signaling.Standalone.prototype.joinCall = function(token, flags, silent, recordi
 Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 	console.debug('Joined', data, token)
 	this.signalingRoomJoined = token
+	if (data.room && data.room.bandwidth && data.room.bandwidth.maxstreambitrate) {
+		const totalBps = data.room.bandwidth.maxstreambitrate
+		if (typeof totalBps === 'number' && totalBps > 0) {
+			this.maxStreamBits = totalBps
+		}
+	}
 	if (this.pendingJoinCall && token === this.pendingJoinCall.token) {
 		const pendingJoinCallResolve = this.pendingJoinCall.resolve
 		const pendingJoinCallReject = this.pendingJoinCall.reject
