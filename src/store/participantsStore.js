@@ -1101,10 +1101,6 @@ const actions = {
 	 * @param {string} data.token - conversation token.
 	 */
 	async leaveConversation(context, { token }) {
-		if (SessionStorage.getItem('joined_conversation') === token) {
-			// Drop token from SessionStorage to not consider a room joined anymore
-			SessionStorage.removeItem('joined_conversation')
-		}
 		const actorStore = useActorStore()
 		if (context.getters.isInCall(token)) {
 			await context.dispatch('leaveCall', {
@@ -1113,7 +1109,15 @@ const actions = {
 			})
 		}
 
-		await leaveConversation(token)
+		try {
+			await leaveConversation(token)
+			if (SessionStorage.getItem('joined_conversation') === token) {
+				// Drop token from SessionStorage to not consider a room joined anymore
+				SessionStorage.removeItem('joined_conversation')
+			}
+		} catch (error) {
+			console.error('Error while leaving conversation:', error)
+		}
 	},
 
 	/**
