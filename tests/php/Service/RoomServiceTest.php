@@ -390,4 +390,44 @@ class RoomServiceTest extends TestCase {
 		$this->assertSame($verificationResult, ['result' => false, 'url' => 'https://test']);
 		$this->assertSame('passy', $room->getPassword());
 	}
+
+	public function testSetActiveSinceNoOpWhenFlagsUnchanged(): void {
+		$since = new \DateTime();
+		$room = $this->createMock(Room::class);
+		$room->method('getActiveSince')->willReturn($since);
+		$room->method('getCallFlag')->willReturn(Participant::FLAG_WITH_VIDEO);
+		$room->expects($this->never())->method('setActiveSince');
+		$room->expects($this->never())->method('setCallFlag');
+
+		$result = $this->service->setActiveSince($room, null, $since, Participant::FLAG_WITH_VIDEO, false);
+
+		$this->assertFalse($result);
+	}
+
+	public function testSetActiveSinceUpgradesCallFlagOnly(): void {
+		$since = new \DateTime();
+		$room = $this->createMock(Room::class);
+		$room->method('getActiveSince')->willReturn($since);
+		$room->method('getCallFlag')->willReturn(Participant::FLAG_IN_CALL);
+		$room->method('getId')->willReturn(0);
+		$room->expects($this->never())->method('setActiveSince');
+		$room->expects($this->once())->method('setCallFlag')
+			->with(Participant::FLAG_IN_CALL | Participant::FLAG_WITH_VIDEO);
+
+		$result = $this->service->setActiveSince($room, null, $since, Participant::FLAG_WITH_VIDEO, false);
+
+		$this->assertFalse($result);
+	}
+
+	public function testSetActiveSinceSetsActiveSinceAndCallFlagOnFreshCall(): void {
+		$since = new \DateTime();
+		$room = $this->createMock(Room::class);
+		$room->method('getActiveSince')->willReturn(null);
+		$room->method('getCallFlag')->willReturn(Participant::FLAG_DISCONNECTED);
+		$room->method('getId')->willReturn(0);
+		$room->expects($this->once())->method('setActiveSince')->with($since);
+		$room->expects($this->once())->method('setCallFlag')->with(Participant::FLAG_WITH_VIDEO);
+
+		$this->service->setActiveSince($room, null, $since, Participant::FLAG_WITH_VIDEO, false);
+	}
 }
