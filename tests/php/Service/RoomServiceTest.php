@@ -312,6 +312,41 @@ class RoomServiceTest extends TestCase {
 		$this->assertSame($expected, $this->service->prepareConversationName($input));
 	}
 
+	public function testValidateLobbyTimerDoesNothingWithNullTimer(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getLobbyTimer')->willReturn(null);
+		$room->expects($this->never())->method('setLobbyState');
+
+		$this->service->validateLobbyTimer($room);
+	}
+
+	public function testValidateLobbyTimerDoesNothingWithFutureTimer(): void {
+		$future = new \DateTime('+1 hour');
+		$this->timeFactory->method('getDateTime')->willReturn(new \DateTime());
+
+		$room = $this->createMock(Room::class);
+		$room->method('getLobbyTimer')->willReturn($future);
+		$room->expects($this->never())->method('setLobbyState');
+
+		$this->service->validateLobbyTimer($room);
+	}
+
+	public function testValidateLobbyTimerResetsLobbyWhenExpired(): void {
+		$past = new \DateTime('-1 hour');
+		$this->timeFactory->method('getDateTime')->willReturn(new \DateTime());
+
+		$room = $this->createMock(Room::class);
+		$room->method('getLobbyTimer')->willReturn($past);
+		$room->method('getLobbyState')->willReturn(Webinary::LOBBY_NON_MODERATORS);
+		$room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$room->method('getObjectType')->willReturn('');
+		$room->method('getId')->willReturn(0);
+		$room->expects($this->once())->method('setLobbyState')->with(Webinary::LOBBY_NONE);
+		$room->expects($this->once())->method('setLobbyTimer')->with(null);
+
+		$this->service->validateLobbyTimer($room);
+	}
+
 	public function testVerifyPassword(): void {
 		$dispatcher = new EventDispatcher(
 			new \Symfony\Component\EventDispatcher\EventDispatcher(),
@@ -348,7 +383,6 @@ class RoomServiceTest extends TestCase {
 		);
 
 		$room = new Room(
-			$this->createMock(ITimeFactory::class),
 			1,
 			Room::TYPE_PUBLIC,
 			Room::READ_WRITE,

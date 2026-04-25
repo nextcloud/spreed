@@ -41,6 +41,7 @@ class RoomFormatter {
 		protected IAppConfig $appConfig,
 		protected AvatarService $avatarService,
 		protected ParticipantService $participantService,
+		protected RoomService $roomService,
 		protected ChatManager $chatManager,
 		protected MessageParser $messageParser,
 		protected IConfig $serverConfig,
@@ -173,6 +174,8 @@ class RoomFormatter {
 		} else {
 			$lastActivity = 0;
 		}
+
+		$this->roomService->validateLobbyTimer($room);
 
 		$lobbyTimer = $room->getLobbyTimer();
 		if ($lobbyTimer instanceof \DateTimeInterface) {

@@ -10,6 +10,7 @@ namespace OCA\Talk\Tests\php\Signaling;
 
 use OCA\Talk\Events\BeforeSignalingRoomPropertiesSentEvent;
 use OCA\Talk\Room;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\Signaling\RoomPropertiesHelper;
 use OCA\Talk\Webinary;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -18,12 +19,14 @@ use Test\TestCase;
 
 class RoomPropertiesHelperTest extends TestCase {
 	private IEventDispatcher&MockObject $dispatcher;
+	private RoomService&MockObject $roomService;
 	private RoomPropertiesHelper $helper;
 
 	public function setUp(): void {
 		parent::setUp();
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
-		$this->helper = new RoomPropertiesHelper($this->dispatcher);
+		$this->roomService = $this->createMock(RoomService::class);
+		$this->helper = new RoomPropertiesHelper($this->dispatcher, $this->roomService);
 	}
 
 	private function createRoomMock(string $displayName = 'Room name'): Room&MockObject {
@@ -99,5 +102,15 @@ class RoomPropertiesHelperTest extends TestCase {
 
 		$this->assertInstanceOf(BeforeSignalingRoomPropertiesSentEvent::class, $capturedEvent);
 		$this->assertSame('bob', $capturedEvent->getUserId());
+	}
+
+	public function testGetPropertiesForSignalingCallsValidateLobbyTimer(): void {
+		$room = $this->createRoomMock();
+
+		$this->roomService->expects($this->once())
+			->method('validateLobbyTimer')
+			->with($room);
+
+		$this->helper->getPropertiesForSignaling($room, 'alice');
 	}
 }
