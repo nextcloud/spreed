@@ -19,7 +19,7 @@
     "Invalid image" : "Invalid image",
     "Unknown filetype" : "Unknown filetype",
     "Description" : "Tavsif",
-    "Talk conversation for event" : "Tadbir uchun suhbat",
+    "Meeting" : "Uchrashuv",
     "Accept" : "Qabul qiling",
     "Decline" : "Rad etish",
     "Reminder" : "Eslatma",
@@ -296,7 +296,6 @@
     "Cancel" : "Bekor qilish",
     "Back" : "Orqaga",
     "Now" : "Hozir",
-    "Meeting" : "Uchrashuv",
     "Loading …" : "Yuklanmoqda…",
     "From" : "Dan",
     "To" : "Gacha",
@@ -382,6 +381,7 @@
     "Tasks" : "Tasks",
     "Notes" : "Eslatmalar",
     "Reports" : "Hisobotlar",
+    "Talk conversation for event" : "Tadbir uchun suhbat",
     "Nextcloud Talk Federation was updated." : "Nextcloud Talkda jamg'arma yangilandi."
 },"pluralForm" :"nplurals=1; plural=0;"
 }

@@ -21,7 +21,7 @@ OC.L10N.register(
     "Invalid image" : "Invalid image",
     "Unknown filetype" : "Unknown filetype",
     "Description" : "Tavsif",
-    "Talk conversation for event" : "Tadbir uchun suhbat",
+    "Meeting" : "Uchrashuv",
     "Accept" : "Qabul qiling",
     "Decline" : "Rad etish",
     "Reminder" : "Eslatma",
@@ -298,7 +298,6 @@ OC.L10N.register(
     "Cancel" : "Bekor qilish",
     "Back" : "Orqaga",
     "Now" : "Hozir",
-    "Meeting" : "Uchrashuv",
     "Loading …" : "Yuklanmoqda…",
     "From" : "Dan",
     "To" : "Gacha",
@@ -384,6 +383,7 @@ OC.L10N.register(
     "Tasks" : "Tasks",
     "Notes" : "Eslatmalar",
     "Reports" : "Hisobotlar",
+    "Talk conversation for event" : "Tadbir uchun suhbat",
     "Nextcloud Talk Federation was updated." : "Nextcloud Talkda jamg'arma yangilandi."
 },
 "nplurals=1; plural=0;");
