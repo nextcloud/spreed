@@ -430,4 +430,19 @@ class RoomServiceTest extends TestCase {
 
 		$this->service->setActiveSince($room, null, $since, Participant::FLAG_WITH_VIDEO, false);
 	}
+
+	public function testSetActiveSinceMergesExistingFlagOnFreshCall(): void {
+		// Verifies that flag merging (previously $this->callFlag |= $callFlag in Room)
+		// is preserved after moving to $callFlag |= $oldCallFlag in RoomService.
+		$since = new \DateTime();
+		$room = $this->createMock(Room::class);
+		$room->method('getActiveSince')->willReturn(null);
+		$room->method('getCallFlag')->willReturn(Participant::FLAG_IN_CALL);
+		$room->method('getId')->willReturn(0);
+		$room->expects($this->once())->method('setActiveSince')->with($since);
+		$room->expects($this->once())->method('setCallFlag')
+			->with(Participant::FLAG_IN_CALL | Participant::FLAG_WITH_VIDEO);
+
+		$this->service->setActiveSince($room, null, $since, Participant::FLAG_WITH_VIDEO, false);
+	}
 }
