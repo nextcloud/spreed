@@ -141,6 +141,7 @@ class Capabilities implements IPublicCapability {
 		'announcement-preset',
 		'promote-demote-owner',
 		'matrix-rooms',
+		'mute-conversations',
 	];
 
 	public const CONDITIONAL_FEATURES = [
