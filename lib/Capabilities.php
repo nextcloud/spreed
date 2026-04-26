@@ -132,6 +132,7 @@ class Capabilities implements IPublicCapability {
 		'scheduled-messages',
 		'conversation-presets',
 		'private-reply',
+		'mute-conversations',
 	];
 
 	public const CONDITIONAL_FEATURES = [

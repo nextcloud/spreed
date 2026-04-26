@@ -382,6 +382,13 @@ class ParticipantService {
 		$this->attendeeMapper->update($attendee);
 	}
 
+	public function setMuteUntil(Participant $participant, \DateTime $muteUntil): void {
+		$attendee = $participant->getAttendee();
+		$attendee->setMuteUntil($muteUntil);
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
 	/**
 	 * @param RoomService $roomService
 	 * @param Room $room
@@ -512,6 +519,7 @@ class ParticipantService {
 			$attendee->setParticipantType(Participant::GUEST);
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setLastReadMessage($lastMessage);
+			$attendee->setMuteUntil((new \DateTime())->setTimestamp(0));
 
 			if ($displayName !== null && $displayName !== '') {
 				$attendee->setDisplayName($displayName);
@@ -667,6 +675,7 @@ class ParticipantService {
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setLastReadMessage($participant['lastReadMessage'] ?? $lastMessage);
 			$attendee->setReadPrivacy($readPrivacy);
+			$attendee->setMuteUntil((new \DateTime())->setTimestamp(0));
 			$attendees[] = $attendee;
 		}
 
@@ -825,6 +834,7 @@ class ParticipantService {
 			$attendee->setParticipantType(Participant::USER);
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
+			$attendee->setMuteUntil((new \DateTime())->setTimestamp(0));
 			$this->attendeeMapper->insert($attendee);
 
 			$attendeeEvent = new AttendeesAddedEvent($room, [$attendee]);
@@ -963,6 +973,7 @@ class ParticipantService {
 			$attendee->setParticipantType(Participant::USER);
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
+			$attendee->setMuteUntil((new \DateTime())->setTimestamp(0));
 			$this->attendeeMapper->insert($attendee);
 
 			$attendeeEvent = new AttendeesAddedEvent($room, [$attendee]);
@@ -1002,6 +1013,7 @@ class ParticipantService {
 
 		$attendee->setParticipantType(Participant::GUEST);
 		$attendee->setLastReadMessage($lastMessage);
+		$attendee->setMuteUntil((new \DateTime())->setTimestamp(0));
 		$this->attendeeMapper->insert($attendee);
 		// FIXME handle duplicate invites gracefully
 
@@ -2058,6 +2070,7 @@ class ParticipantService {
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
 			->andWhere($query->expr()->eq('a.notification_calls', $query->createNamedParameter(Participant::NOTIFY_CALLS_ON)))
+			->andWhere($query->expr()->lte('a.mute_until', $query->createNamedParameter($this->timeFactory->getDateTime(), IQueryBuilder::PARAM_DATETIME_MUTABLE)))
 			->andWhere($query->expr()->isNull('s.in_call'));
 
 		if ($room->getLobbyState() !== Webinary::LOBBY_NONE) {

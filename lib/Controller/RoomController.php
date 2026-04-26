@@ -3238,4 +3238,55 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		return new DataResponse(null, Http::STATUS_OK);
 	}
+
+	/**
+	 * Mute all notifications in a conversation until a specific time.
+	 * Does not alter notification settings for the attendee.
+	 *
+	 * Required capability: `mute-conversations`
+	 *
+	 * @param int $muteUntil Unix timestamp until notifications are muted
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 *
+	 * 200: Conversation muted
+	 */
+	#[NoAdminRequired]
+	#[FederationSupported]
+	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/mute', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function muteConversation(int $muteUntil): DataResponse {
+		$muteUntilDateTime = $this->timeFactory->getDateTime('@' . $muteUntil);
+		$muteUntilDateTime->setTimezone(new \DateTimeZone('UTC'));
+
+		$this->participantService->setMuteUntil($this->participant, $muteUntilDateTime);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
+	 * Unmute all notifications in a conversation, when they were muted before.
+	 * Does not alter notification settings for the attendee.
+	 *
+	 * Required capability: `mute-conversations`
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 *
+	 * 200: Conversation unmuted
+	 */
+	#[NoAdminRequired]
+	#[FederationSupported]
+	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/mute', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function unmuteConversation(): DataResponse {
+		$muteUntilDateTime = new \DateTime();
+		$muteUntilDateTime->setTimestamp(0);
+
+		$this->participantService->setMuteUntil($this->participant, $muteUntilDateTime);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
 }

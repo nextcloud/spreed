@@ -692,6 +692,10 @@ class Notifier {
 				return self::PRIORITY_NONE;
 			}
 
+			if ($attendee->getMuteUntil() >= $this->timeFactory->getDateTime()) {
+				return self::PRIORITY_NONE;
+			}
+
 			$notificationLevel = $attendee->getNotificationLevel();
 			$threadId = (int)$comment->getTopmostParentId();
 			if ($threadId !== 0) {
@@ -765,6 +769,10 @@ class Notifier {
 
 		if ($participant->getSession()?->getLastPing() >= $this->timeFactory->getTime() - Session::SESSION_TIMEOUT) {
 			// User is online
+			return self::PRIORITY_NONE;
+		}
+
+		if ($participant->getAttendee()->getMuteUntil() >= $this->timeFactory->getDateTime()) {
 			return self::PRIORITY_NONE;
 		}
 
