@@ -11,6 +11,7 @@ namespace OC\Authentication\Token {
 
 	interface IToken extends \JsonSerializable {
 		public const TEMPORARY_TOKEN = 0;
+		public const PERMANENT_TOKEN = 1;
 		public const DO_NOT_REMEMBER = 0;
 
 	}
