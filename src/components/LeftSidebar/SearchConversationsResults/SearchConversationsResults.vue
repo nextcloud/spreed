@@ -25,7 +25,7 @@ import { getPreloadedUserStatus } from '../../../utils/userStatus.ts'
 const props = defineProps<{
 	searchText: string
 	conversationsList: TypeConversation[]
-	contactsLoading: boolean
+	searchResultsLoading: boolean
 	searchResultsListedConversations: TypeConversation[]
 	searchResults: ParticipantSearchResult[]
 }>()
@@ -103,6 +103,13 @@ const searchResultsVirtual = computed<VirtualListItem[]>(() => {
 	// Add "New Conversation" option if allowed
 	if (canStartConversations) {
 		virtualList.push({ type: 'action', id: 'new_conversation', name: props.searchText, subname: t('spreed', 'New private conversation') })
+	}
+
+	// Add 'Loading' message if there are no results received from the server yet
+	if (props.searchResultsLoading && !props.searchResultsListedConversations.length && !props.searchResults.length) {
+		virtualList.push({ type: 'caption', id: 'loading_results_caption', name: t('spreed', 'Other sources') })
+		virtualList.push({ type: 'hint', id: 'loading_results_hint', hint: t('spreed', 'Loading …') })
+		return virtualList
 	}
 
 	// Add open conversations section if any
@@ -186,11 +193,6 @@ function iconData(item: ParticipantSearchResult) {
 	}
 }
 
-const hasSourcesWithoutResults = computed(() => {
-	return !searchResultsVirtual.value.some((item) => item.type === 'user' || item.type === 'group'
-		|| (item.type === 'circle' && isCirclesEnabled))
-})
-
 /**
  * Generate the message for the "No results" section
  *
@@ -221,10 +223,6 @@ function sourcesWithoutResults(list: SubListType): string {
 	}
 }
 
-const footerMargin = computed(() => {
-	return isCompact.value ? '0' : '18px' // 54px (item height) - 36px (current height)
-})
-
 const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.SIZE.DEFAULT)
 </script>
 
@@ -233,13 +231,7 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 		:ref="containerProps.ref"
 		:style="containerProps.style"
 		@scroll="containerProps.onScroll">
-		<NavigationHint
-			v-if="contactsLoading && !hasSourcesWithoutResults"
-			:style="{ marginBlockStart: footerMargin }"
-			tabindex="-1"
-			:hint="t('spreed', 'Loading …')" />
 		<ul
-			v-else
 			:style="wrapperProps.style">
 			<template
 				v-for="item in list"
