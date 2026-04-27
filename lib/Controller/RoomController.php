@@ -2936,13 +2936,17 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$loginname = $this->serverSession->get('loginname');
 			$token = $this->random->generate(72, ISecureRandom::CHAR_UPPER . ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
 
+			// PERMANENT_TOKEN needs to be used here to successfully create calendar events. Token will invalidated directly afterwards.
+			// Ref: https://github.com/nextcloud/server/pull/59758
+			// In Talk 22+ we are using the server provided API `createInCalendar` from ICalendarEventBuilder.
+			// TODO: Since `createInCalendar` is Nextcloud 31+, we can use it here as well?
 			$this->authTokenProvider->generateToken(
 				$token,
 				$user->getUID(),
 				$loginname,
 				null,
 				'Nextcloud Spreed Calendar Integration',
-				IToken::TEMPORARY_TOKEN,
+				IToken::PERMANENT_TOKEN,
 				IToken::DO_NOT_REMEMBER
 			);
 		} catch (\Exception $e) {
