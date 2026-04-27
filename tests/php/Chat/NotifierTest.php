@@ -178,8 +178,8 @@ class NotifierTest extends TestCase {
 		}
 
 		$current = 1234567;
-		$this->timeFactory->method('getDateTime')
-			->willReturn(new \DateTime('@' . $current));
+		$this->timeFactory->method('getTime')
+			->willReturn($current);
 
 		$room = $this->getRoom();
 		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
@@ -230,14 +230,11 @@ class NotifierTest extends TestCase {
 			'mute_until' => $muteUntil,
 		]);
 		$current = 1234567;
-		$this->timeFactory->method('getDateTime')
-			->willReturn(new \DateTime('@' . $current));
+		$this->timeFactory->method('getTime')
+			->willReturn($current);
 
 		$session = null;
 		if ($sessionAge !== null) {
-			$this->timeFactory->method('getTime')
-				->willReturn($current);
-
 			$session = Session::fromRow([
 				'last_ping' => $current - $sessionAge,
 			]);

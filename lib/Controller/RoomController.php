@@ -3259,7 +3259,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function muteConversation(int $muteUntil): DataResponse {
-		if ($muteUntil <= $this->timeFactory->getDateTime()->getTimestamp()) {
+		if ($muteUntil <= $this->timeFactory->getTime()) {
 			return new DataResponse(['error' => 'mute-until'], Http::STATUS_BAD_REQUEST);
 		}
 

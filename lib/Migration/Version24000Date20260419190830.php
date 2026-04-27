@@ -31,9 +31,8 @@ class Version24000Date20260419190830 extends SimpleMigrationStep {
 
 		$table = $schema->getTable('talk_attendees');
 		if (!$table->hasColumn('mute_until')) {
-			$table->addColumn('mute_until', Types::INTEGER, [
+			$table->addColumn('mute_until', Types::BIGINT, [
 				'notnull' => true,
-				'length' => 11,
 				'default' => 0,
 			]);
 		}

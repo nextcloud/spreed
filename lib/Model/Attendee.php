@@ -186,7 +186,7 @@ class Attendee extends Entity {
 		$this->addType('hasUnreadThreadDirects', Types::BOOLEAN);
 		$this->addType('hiddenPinnedId', Types::BIGINT);
 		$this->addType('hasScheduledMessages', Types::INTEGER);
-		$this->addType('muteUntil', Types::INTEGER);
+		$this->addType('muteUntil', Types::BIGINT);
 	}
 
 	public function getDisplayName(): string {
