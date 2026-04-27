@@ -104,7 +104,7 @@
     "regenerator-runtime": "^0.14.1",
     "sass": "^1.99.0",
     "sass-loader": "^16.0.7",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.4",
     "vue-loader": "^17.4.2",
     "vue-tsc": "^3.2.7"
