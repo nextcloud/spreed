@@ -111,10 +111,10 @@ export default {
 	},
 
 	setup() {
-		const modalContainerId = ref(null)
 		const isDraggingOver = ref(false)
 		const dialogMaskId = `new-message-upload-${useId()}`
 		const dialogHeaderId = `new-message-upload-header-${useId()}`
+		const modalContainerId = '#' + dialogMaskId
 
 		return {
 			modalContainerId,
@@ -176,7 +176,6 @@ export default {
 			if (show) {
 				// Wait for modal content to be rendered
 				await this.$nextTick()
-				this.modalContainerId = `#${this.dialogMaskId}`
 				if (this.supportMediaCaption) {
 					this.$refs.newMessage.focusInput()
 				} else {
