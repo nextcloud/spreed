@@ -2197,7 +2197,7 @@
                     "muteUntil": {
                         "type": "integer",
                         "format": "int64",
-                        "description": "Required capability: `mute-conversations`"
+                        "description": "Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving notifications"
                     }
                 }
             },
@@ -25573,6 +25573,47 @@
                                                 },
                                                 "data": {
                                                     "$ref": "#/components/schemas/Room"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Timestamp is in the past",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "mute-until"
+                                                            ]
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }

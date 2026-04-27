@@ -227,7 +227,7 @@ class NotifierTest extends TestCase {
 			'actor_type' => $actorType,
 			'actor_id' => $actorId,
 			'important' => $isImportant,
-			'mute_until' => '@' . $muteUntil,
+			'mute_until' => $muteUntil,
 		]);
 		$current = 1234567;
 		$this->timeFactory->method('getDateTime')

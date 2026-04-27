@@ -1260,7 +1260,7 @@
                     "muteUntil": {
                         "type": "integer",
                         "format": "int64",
-                        "description": "Required capability: `mute-conversations`"
+                        "description": "Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving notifications"
                     }
                 }
             },

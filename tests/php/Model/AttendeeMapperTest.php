@@ -356,7 +356,6 @@ class AttendeeMapperTest extends TestCase {
 			$attendee->setActorId($attendeeData['actor_id']);
 			$attendee->setParticipantType($attendeeData['participant_type']);
 			$attendee->setPermissions($attendeeData['permissions']);
-			$attendee->setMuteUntil((new \DateTime)->setTimestamp(0));
 			$this->attendeeMapper->insert($attendee);
 		}
 

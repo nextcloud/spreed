@@ -3246,9 +3246,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Required capability: `mute-conversations`
 	 *
 	 * @param int $muteUntil Unix timestamp until notifications are muted
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'mute-until'}, array{}>
 	 *
 	 * 200: Conversation muted
+	 * 400: Timestamp is in the past
 	 */
 	#[NoAdminRequired]
 	#[FederationSupported]
@@ -3258,10 +3259,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function muteConversation(int $muteUntil): DataResponse {
-		$muteUntilDateTime = $this->timeFactory->getDateTime('@' . $muteUntil);
-		$muteUntilDateTime->setTimezone(new \DateTimeZone('UTC'));
+		if ($muteUntil <= $this->timeFactory->getDateTime()->getTimestamp()) {
+			return new DataResponse(['error' => 'mute-until'], Http::STATUS_BAD_REQUEST);
+		}
 
-		$this->participantService->setMuteUntil($this->participant, $muteUntilDateTime);
+		$this->participantService->setMuteUntil($this->participant, $muteUntil);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
 
@@ -3283,10 +3285,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function unmuteConversation(): DataResponse {
-		$muteUntilDateTime = new \DateTime();
-		$muteUntilDateTime->setTimestamp(0);
-
-		$this->participantService->setMuteUntil($this->participant, $muteUntilDateTime);
+		$this->participantService->setMuteUntil($this->participant, 0);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
 }

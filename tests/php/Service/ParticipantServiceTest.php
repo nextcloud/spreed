@@ -113,7 +113,6 @@ class ParticipantServiceTest extends TestCase {
 		$attendee->setActorId('test');
 		$attendee->setRoomId(123456789);
 		$attendee->setNotificationLevel(Participant::NOTIFY_MENTION);
-		$attendee->setMuteUntil((new \DateTime)->setTimestamp(0));
 		$this->attendeeMapper->insert($attendee);
 
 		$session1 = new Session();

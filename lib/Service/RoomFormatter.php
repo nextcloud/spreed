@@ -252,7 +252,7 @@ class RoomFormatter {
 			'lastPinnedId' => $room->getLastPinnedId(),
 			'hiddenPinnedId' => $attendee->getHiddenPinnedId(),
 			'attributes' => $room->getAttributes(),
-			'muteUntil' => max($attendee->getMuteUntil()->getTimestamp(), 0),
+			'muteUntil' => $attendee->getMuteUntil(),
 		]);
 
 		if ($room->isFederatedConversation()) {

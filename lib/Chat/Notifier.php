@@ -692,7 +692,7 @@ class Notifier {
 				return self::PRIORITY_NONE;
 			}
 
-			if ($attendee->getMuteUntil() >= $this->timeFactory->getDateTime()) {
+			if ($attendee->getMuteUntil() >= $this->timeFactory->getDateTime()->getTimestamp()) {
 				return self::PRIORITY_NONE;
 			}
 
@@ -772,7 +772,7 @@ class Notifier {
 			return self::PRIORITY_NONE;
 		}
 
-		if ($participant->getAttendee()->getMuteUntil() >= $this->timeFactory->getDateTime()) {
+		if ($participant->getAttendee()->getMuteUntil() >= $this->timeFactory->getDateTime()->getTimestamp()) {
 			return self::PRIORITY_NONE;
 		}
 

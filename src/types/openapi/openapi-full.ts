@@ -3607,7 +3607,7 @@ export type components = {
             attributes: number;
             /**
              * Format: int64
-             * @description Required capability: `mute-conversations`
+             * @description Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving notifications
              */
             muteUntil: number;
         };
@@ -12997,6 +12997,23 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Timestamp is in the past */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "mute-until";
+                            };
                         };
                     };
                 };

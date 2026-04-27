@@ -828,7 +828,7 @@ export type components = {
             attributes: number;
             /**
              * Format: int64
-             * @description Required capability: `mute-conversations`
+             * @description Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving notifications
              */
             muteUntil: number;
         };
