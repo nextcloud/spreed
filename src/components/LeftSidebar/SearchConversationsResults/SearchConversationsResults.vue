@@ -25,7 +25,7 @@ import { getPreloadedUserStatus } from '../../../utils/userStatus.ts'
 const props = defineProps<{
 	searchText: string
 	conversationsList: TypeConversation[]
-	contactsLoading: boolean
+	searchResultsLoading: boolean
 	searchResultsListedConversations: TypeConversation[]
 	searchResults: ParticipantSearchResult[]
 }>()
