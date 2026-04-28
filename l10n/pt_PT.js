@@ -348,6 +348,7 @@ OC.L10N.register(
     "New file" : "Ficheiro novo",
     "Send" : "Enviar",
     "Settings" : "Definições",
+    "Results" : "Resultados",
     "moderator" : "moderador",
     "guest" : "convidado",
     "Remove participant" : "Remover participante",

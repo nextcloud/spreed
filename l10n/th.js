@@ -100,6 +100,7 @@ OC.L10N.register(
     "Blank" : "ว่าง",
     "Send" : "ส่ง",
     "Settings" : "การตั้งค่า",
+    "Results" : "ผลลัพธ์",
     "bot" : "บอต",
     "guest" : "ผู้เยี่ยมชม",
     "Remove" : "ลบออก",

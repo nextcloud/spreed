@@ -352,6 +352,7 @@ OC.L10N.register(
     "Upload from device" : "Qurilmadan yuklash",
     "Send" : "Send",
     "Settings" : "Sozlamalar",
+    "Results" : "Natijalar",
     "Remove participant" : "Ishtirokchini olib tashlash",
     "Remove" : "O'chirish",
     "Searching …" : "Qidirilmoqda …",
