@@ -484,6 +484,7 @@ OC.L10N.register(
     "Add more files" : "Pievienot vairāk datņu",
     "Send" : "Sūtīt",
     "Settings" : "Iestatījumi",
+    "Results" : "Rezultāti",
     "moderator" : "satura pārraudzītājs",
     "guest" : "viesis",
     "Remove participant" : "Noņemt dalībnieku",

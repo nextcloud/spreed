@@ -454,6 +454,7 @@ OC.L10N.register(
     "Send" : "Enviar",
     "Create poll" : "Crear encuesta",
     "Settings" : "Configuraciones ",
+    "Results" : "Resultados",
     "moderator" : "moderador",
     "guest" : "invitado",
     "Remove participant" : "Eliminar participante",

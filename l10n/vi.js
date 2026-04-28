@@ -764,6 +764,7 @@ OC.L10N.register(
     "Add more files" : "Thêm nhiều tập tin",
     "Send" : "Gửi",
     "Settings" : "Thiết lập",
+    "Results" : "Kết quả",
     "Disable lobby" : "Vô hiệu hóa sảnh đợi",
     "Settings for participant \"{user}\"" : "Cài đặt cho người tham gia \"{user}\"",
     "Participant \"{user}\"" : "Người tham gia \"{user}\"",

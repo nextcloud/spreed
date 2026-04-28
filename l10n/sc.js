@@ -841,6 +841,7 @@ OC.L10N.register(
     "Send" : "Imbia",
     "Settings" : "Cunfiguratzione",
     "Anonymous poll" : "Sondàgiu anònimu",
+    "Results" : "Resurtados",
     "Disable lobby" : "Disativa intrada",
     "Settings for participant \"{user}\"" : "Cunfiguratzione pro partetzipante \"{user}\"",
     "Participant \"{user}\"" : "Partetzipante \"{user}\"",

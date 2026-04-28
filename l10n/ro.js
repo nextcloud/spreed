@@ -687,6 +687,7 @@ OC.L10N.register(
     "Send" : "Trimite",
     "Question" : "Întrebare",
     "Settings" : "Setări",
+    "Results" : "Rezultate",
     "Settings for participant \"{user}\"" : "Setări pentru  participant \"{user}\"",
     "guest" : "invitat",
     "Ringing …" : "Apel …",
