@@ -945,12 +945,13 @@ export default {
 	position: absolute;
 	inset-inline-end: 0;
 	bottom: 0;
-	width: 300px;
-	height: 250px;
+	width: fit-content;
+	max-width: 300px;
+	max-height: 250px;
 
 	&--sidebar {
-		width: 150px;
-		height: 100px;
+		max-width: 150px;
+		max-height: 100px;
 		bottom: var(--bottom-bar-height);
 		margin: var(--default-grid-baseline);
 	}
