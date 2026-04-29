@@ -62,7 +62,17 @@
 			variant="tertiary" />
 
 		<NcButton
-			v-if="!hideVirtualBackgroundShortcut"
+			v-if="isSidebar"
+			:aria-label="t('spreed', 'Check devices')"
+			:title="t('spreed', 'Check devices')"
+			variant="tertiary"
+			@click.stop="emit('talk:media-settings:show', 'device-check')">
+			<template #icon>
+				<IconCogOutline :size="20" />
+			</template>
+		</NcButton>
+		<NcButton
+			v-else-if="!hideVirtualBackgroundShortcut"
 			:aria-label="t('spreed', 'Select virtual background')"
 			:title="t('spreed', 'Select virtual background')"
 			variant="tertiary"
@@ -118,12 +128,12 @@
 import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
-import escapeHtml from 'escape-html'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
+import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
 import IconMonitor from 'vue-material-design-icons/Monitor.vue'
 import IconMonitorOff from 'vue-material-design-icons/MonitorOff.vue'
 import IconMonitorShare from 'vue-material-design-icons/MonitorShare.vue'
@@ -149,6 +159,7 @@ export default {
 		NcIconSvgWrapper,
 		NcPopover,
 		// Icons
+		IconCogOutline,
 		IconMonitor,
 		IconMonitorOff,
 		IconMonitorShare,

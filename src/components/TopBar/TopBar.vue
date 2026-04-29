@@ -131,9 +131,8 @@
 
 			<!-- TopBar menu -->
 			<TopBarMenu
+				v-if="!isSidebar"
 				:token="token"
-				:showActions="!isSidebar"
-				:isSidebar="isSidebar"
 				@openBreakoutRoomsEditor="showBreakoutRoomsEditor = true" />
 
 			<!-- Breakout rooms editor -->
