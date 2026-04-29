@@ -882,6 +882,8 @@ export default {
 	--top-bar-height: 51px;
 	--wrapper-padding: calc(var(--default-grid-baseline) * 2.5);
 	--bottom-bar-height: calc(var(--default-clickable-area) + var(--wrapper-padding) * 2);
+	// For sidebar integrations: show container in a 16/9 proportion (+ top/bottom bar) based on the sidebar width
+	--sidebar-container-height: calc(56.25% + var(--top-bar-height) + var(--bottom-bar-height));
 
 	&.call-container__blurred {
 		backdrop-filter: blur(25px);

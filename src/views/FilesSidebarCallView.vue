@@ -92,15 +92,13 @@ header.app-sidebar-header.hidden-by-call > div:not(.talk-sidebar-callview), {
 	/* Prevent shadows of videos from leaking on other elements. */
 	overflow: hidden;
 
-	/* Show the call container in a 16/9 proportion based on the sidebar
-	 * width. */
-	padding-bottom: 56.25%;
-	max-height: 56.25%;
+	padding-bottom: var(--sidebar-container-height, 56.25%);
+	max-height: var(--sidebar-container-height, 56.25%);
 }
 
 .call-loading{
-	padding-bottom: 56.25%;
-	max-height: 56.25%;
+	padding-bottom: var(--sidebar-container-height, 56.25%);
+	max-height: var(--sidebar-container-height, 56.25%);
 	background-color: $color-call-background;
 }
 </style>

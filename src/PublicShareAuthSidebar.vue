@@ -11,8 +11,10 @@
 				<h2>{{ t('spreed', 'This conversation has ended') }}</h2>
 			</div>
 			<template v-else>
-				<TopBar isInCall isSidebar />
-				<CallView :token="token" isSidebar />
+				<div class="talk-sidebar-callview">
+					<TopBar isInCall isSidebar />
+					<CallView :token="token" isSidebar />
+				</div>
 				<InternalSignalingHint />
 				<RouterView />
 				<PollManager />
@@ -247,13 +249,11 @@ export default {
 	& #call-container {
 		position: relative;
 
-		flex-grow: 1;
-
 		/* Prevent shadows of videos from leaking on other elements. */
 		overflow: hidden;
 
-		/* Distribute available height between call container and chat view. */
-		height: 40%;
+		padding-bottom: var(--sidebar-container-height, 56.25%);
+		max-height: var(--sidebar-container-height, 56.25%);
 
 		/* Ensure that the background will be black also in voice only calls. */
 		background-color: $color-call-background;
