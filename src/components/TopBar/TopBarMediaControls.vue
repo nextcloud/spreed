@@ -73,7 +73,7 @@
 		</NcButton>
 
 		<NcActions
-			v-if="!isSidebar && isScreensharing"
+			v-if="isScreensharing"
 			id="screensharing-button"
 			v-model:open="screenSharingMenuOpen"
 			:title="screenSharingButtonTitle"
@@ -101,7 +101,7 @@
 			</NcActionButton>
 		</NcActions>
 		<NcButton
-			v-else-if="!isSidebar"
+			v-else
 			:title="screenSharingButtonTitle"
 			variant="tertiary"
 			:aria-label="screenSharingButtonAriaLabel"

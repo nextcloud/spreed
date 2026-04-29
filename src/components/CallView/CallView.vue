@@ -395,6 +395,11 @@ export default {
 		},
 
 		shouldShowPresenterOverlay() {
+			if (this.isSidebar) {
+				// Do not overload small video tile
+				return false
+			}
+
 			return (this.showLocalScreen && this.hasLocalVideo)
 				|| ((this.showRemoteScreen || this.showSelectedScreen)
 					&& (this.shownRemoteScreenCallParticipantModel?.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)))
