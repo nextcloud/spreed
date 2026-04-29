@@ -189,7 +189,7 @@ const changeViewLabel = computed(() => {
 		: t('spreed', 'Grid view')
 })
 
-const showCallLayoutSwitch = computed(() => !callViewStore.isEmptyCallView)
+const showCallLayoutSwitch = computed(() => !isSidebar && !callViewStore.isEmptyCallView)
 const isGrid = computed(() => callViewStore.isGrid)
 const userIsInBreakoutRoomAndInCall = computed(() => conversation.value.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 
@@ -198,8 +198,8 @@ type CollapsibleButtons = Record<typeof COLLAPSIBLE_BUTTONS[number], boolean>
 const isActionAvailableMask = computed<CollapsibleButtons>(() => ({
 	fullscreen: !isSidebar,
 	callLayout: showCallLayoutSwitch.value,
-	raiseHand: true,
-	liveTranscription: isLiveTranscriptionSupported.value,
+	raiseHand: !isSidebar,
+	liveTranscription: !isSidebar && isLiveTranscriptionSupported.value,
 	virtualBackground: !isSidebar,
 }))
 const hidingList = ref<CollapsibleButtons>({ ...isActionAvailableMask.value })
@@ -562,13 +562,13 @@ useHotKey('r', toggleHandRaised)
 
 			<!-- Reactions menu -->
 			<ReactionMenu
-				v-if="hasReactionSupport"
+				v-if="!isSidebar && hasReactionSupport"
 				:token="token"
 				:supportedReactions="supportedReactions"
 				:localCallParticipantModel="localCallParticipantModel" />
 
 			<div
-				v-if="isLiveTranscriptionSupported && !hidingList.liveTranscription"
+				v-if="!isSidebar && isLiveTranscriptionSupported && !hidingList.liveTranscription"
 				class="live-transcription-button-wrapper">
 				<NcButton
 					:title="liveTranscriptionButtonLabel"
@@ -650,7 +650,7 @@ useHotKey('r', toggleHandRaised)
 				</NcActions>
 			</div>
 			<div
-				v-else-if="hintTranscriptionSupported"
+				v-else-if="!isSidebar && hintTranscriptionSupported"
 				class="live-transcription-button-wrapper">
 				<NcButton
 					:title="hintTranscriptionButtonLabel"
