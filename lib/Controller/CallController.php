@@ -188,7 +188,7 @@ class CallController extends AEnvironmentAwareOCSController {
 		fseek($output, 0);
 
 		// Clean the room name
-		$cleanedRoomName = preg_replace('/[\/\\:*?"<>|\- ]+/', '-', $this->room->getName());
+		$cleanedRoomName = preg_replace('/[\/\\\\:*?"<>|\- ]+/', '-', $this->room->getName());
 		// Limit to a reasonable length
 		$cleanedRoomName = substr($cleanedRoomName, 0, 100);
 
