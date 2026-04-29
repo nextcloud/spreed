@@ -1006,7 +1006,8 @@
                     "lastPinnedId",
                     "hiddenPinnedId",
                     "hasScheduledMessages",
-                    "attributes"
+                    "attributes",
+                    "muteUntil"
                 ],
                 "properties": {
                     "actorId": {
@@ -1320,6 +1321,11 @@
                         "type": "integer",
                         "format": "int64",
                         "description": "Bit-flag of enabled attributes of this conversation (only available with capability: `conversation-attributes`). See [attributes list](https://nextcloud-talk.readthedocs.io/en/latest/constants/#conversation-attributes) for details"
+                    },
+                    "muteUntil": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving notifications"
                     }
                 }
             },

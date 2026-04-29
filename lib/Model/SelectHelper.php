@@ -114,6 +114,7 @@ class SelectHelper {
 			$alias . 'has_unread_thread_directs',
 			$alias . 'hidden_pinned_id',
 			$alias . 'has_scheduled_messages',
+			$alias . 'mute_until',
 		])->selectAlias($alias . 'id', 'a_id');
 	}
 

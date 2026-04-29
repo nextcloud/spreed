@@ -74,6 +74,8 @@ use OCP\DB\Types;
  * @method int getHiddenPinnedId()
  * @method void setHasScheduledMessages(int $scheduledMessages)
  * @method int getHasScheduledMessages()
+ * @method void setMuteUntil(int $muteUntil)
+ * @method int getMuteUntil()
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';
@@ -150,6 +152,7 @@ class Attendee extends Entity {
 	protected bool $hasUnreadThreadDirects = false;
 	protected int $hiddenPinnedId = 0;
 	protected int $hasScheduledMessages = 0;
+	protected int $muteUntil = 0;
 
 	public function __construct() {
 		$this->addType('roomId', Types::BIGINT);
@@ -183,7 +186,7 @@ class Attendee extends Entity {
 		$this->addType('hasUnreadThreadDirects', Types::BOOLEAN);
 		$this->addType('hiddenPinnedId', Types::BIGINT);
 		$this->addType('hasScheduledMessages', Types::INTEGER);
-
+		$this->addType('muteUntil', Types::BIGINT);
 	}
 
 	public function getDisplayName(): string {

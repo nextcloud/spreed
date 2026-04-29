@@ -160,6 +160,7 @@ class RoomFormatter {
 			'isSensitive' => false,
 			'hasScheduledMessages' => 0,
 			'attributes' => 0,
+			'muteUntil' => 0,
 		];
 
 		if ($room->isFederatedConversation()) {
@@ -251,6 +252,7 @@ class RoomFormatter {
 			'lastPinnedId' => $room->getLastPinnedId(),
 			'hiddenPinnedId' => $attendee->getHiddenPinnedId(),
 			'attributes' => $room->getAttributes(),
+			'muteUntil' => $attendee->getMuteUntil(),
 		]);
 
 		if ($room->isFederatedConversation()) {

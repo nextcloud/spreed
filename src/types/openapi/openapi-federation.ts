@@ -826,6 +826,11 @@ export type components = {
              * @description Bit-flag of enabled attributes of this conversation (only available with capability: `conversation-attributes`). See [attributes list](https://nextcloud-talk.readthedocs.io/en/latest/constants/#conversation-attributes) for details
              */
             attributes: number;
+            /**
+             * Format: int64
+             * @description Required capability: `mute-conversations`. Timestamp until the conversation is muted, i.e. not receiving notifications
+             */
+            muteUntil: number;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
     };
