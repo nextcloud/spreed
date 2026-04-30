@@ -58,6 +58,12 @@
 					<span class="conversation-type-selector__description">{{ option.description }}</span>
 				</button>
 			</div>
+			<p v-if="presetHiddenParameters.length" class="conversation-type-selector__summary">
+				<span>{{ t('spreed', 'Default parameters are: {parameters}', { parameters: presetHiddenParameters.join(', ') }) }}</span>
+				<span>
+					{{ t('spreed', 'These settings can be changed once the conversation is created.') }}
+				</span>
+			</p>
 		</template>
 
 		<label class="new-group-conversation__label">
@@ -90,7 +96,7 @@
 </template>
 
 <script>
-import { t } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
@@ -112,6 +118,59 @@ const maxDescriptionLength = getTalkConfig('local', 'conversations', 'descriptio
 const presetIcons = {
 	[CONVERSATION.PRESET.DEFAULT]: { icon: IconForumOutline },
 	[CONVERSATION.PRESET.VOICE_ROOM]: { svg: IconVolumeHighOutline },
+}
+
+/**
+ *
+ * @param seconds
+ */
+function formatExpiration(seconds) {
+	if (seconds === 3600) {
+		return n('spreed', 'Messages disappear after %n hour', 'Messages disappear after %n hours', 1)
+	}
+	if (seconds === 28800) {
+		return n('spreed', 'Messages disappear after %n hour', 'Messages disappear after %n hours', 8)
+	}
+	if (seconds === 86400) {
+		return n('spreed', 'Messages disappear after %n day', 'Messages disappear after %n days', 1)
+	}
+	if (seconds === 604800) {
+		return n('spreed', 'Messages disappear after %n week', 'Messages disappear after %n weeks', 1)
+	}
+	if (seconds === 2419200) {
+		return n('spreed', 'Messages disappear after %n week', 'Messages disappear after %n weeks', 4)
+	}
+	return t('spreed', 'Messages disappear after {seconds} seconds', { seconds })
+}
+
+/**
+ *
+ * @param key
+ * @param value
+ */
+function formatHiddenParameter(key, value) {
+	switch (key) {
+		case 'messageExpiration':
+			return value > 0 ? formatExpiration(value) : null
+		case 'readOnly':
+			return value === 1 ? t('spreed', 'Read-only conversation') : null
+		case 'lobbyState':
+			return value === 1 ? t('spreed', 'Lobby enabled for non-moderators') : null
+		case 'recordingConsent':
+			return value === 1 ? t('spreed', 'Recording consent required before joining a call') : null
+		case 'sipEnabled':
+			if (value === 1) {
+				return t('spreed', 'SIP dial-in enabled')
+			}
+			if (value === 2) {
+				return t('spreed', 'SIP dial-in enabled without PIN')
+			}
+			return null
+		case 'mentionPermissions':
+			return value === 1 ? t('spreed', 'Only moderators can mention @all') : null
+		default:
+			return null
+	}
 }
 export default {
 
@@ -218,6 +277,21 @@ export default {
 					description: preset.description,
 					...presetIcons[preset.identifier],
 				}))
+		},
+
+		presetHiddenParameters() {
+			const preset = this.settingsStore.presets.find((p) => p.identifier === this.conversationType)
+			if (!preset) {
+				return []
+			}
+			const labels = []
+			for (const [key, value] of Object.entries(preset.parameters)) {
+				const label = formatHiddenParameter(key, value)
+				if (label) {
+					labels.push(label)
+				}
+			}
+			return labels
 		},
 
 		conversationType: {
@@ -388,6 +462,15 @@ export default {
 		color: var(--color-text-maxcontrast);
 		font-size: small;
 		font-weight: normal;
+	}
+
+	&__summary {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		margin-top: var(--default-grid-baseline);
+		color: var(--color-text-maxcontrast);
+		font-size: small;
 	}
 }
 </style>
