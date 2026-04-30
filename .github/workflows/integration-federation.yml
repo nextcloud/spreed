@@ -56,7 +56,7 @@ jobs:
             host-db: 'oci'
             host-server-versions: 'stable31'
             host-spreed-versions: ${{ github.event.pull_request.head.sha }}
-            host-guests-versions: 'main'
+            host-guests-versions: 'stable-4.6'
             host-circles-versions: 'stable31'
             host-notifications-versions: 'stable31'
             remote-db: 'mysql'
@@ -70,7 +70,7 @@ jobs:
             host-db: 'pgsql'
             host-server-versions: 'stable31'
             host-spreed-versions: ${{ github.event.pull_request.head.sha }}
-            host-guests-versions: 'main'
+            host-guests-versions: 'stable-4.6'
             host-circles-versions: 'stable31'
             host-notifications-versions: 'stable31'
             remote-db: 'mysql'
@@ -90,7 +90,7 @@ jobs:
             remote-db: 'mysql'
             remote-server-versions: 'stable31'
             remote-spreed-versions: ${{ github.event.pull_request.head.sha }}
-            remote-guests-versions: 'main'
+            remote-guests-versions: 'stable-4.6'
             remote-circles-versions: 'stable31'
             remote-notifications-versions: 'stable31'
 
