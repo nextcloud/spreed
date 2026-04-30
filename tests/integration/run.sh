@@ -158,6 +158,8 @@ for CONFIG_DIR in $MAIN_SERVER_CONFIG_DIR $REAL_FEDERATED_SERVER_CONFIG_DIR; do
 	${ROOT_DIR}/occ config:system:set debug --value true --type bool
 	# Use faster password hashing
 	${ROOT_DIR}/occ config:system:set hashing_default_password --value=true --type=bool
+	# Guests app email as user id
+	${ROOT_DIR}/occ config:app:set guests hash_user_ids --value false --type boolean
 done
 
 # Restore default config dir to local server in case it is used from the tests
