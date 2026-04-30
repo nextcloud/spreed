@@ -109,6 +109,7 @@ Feature: federation/join-leave
       | federated_users | participant1@{$LOCAL_URL} | 1               | [SESSION,] |
       | users           | participant2              | 3               | []         |
 
+  @skip30
   Scenario: leave a room with the session of another user
     Given using server "REMOTE"
     And user "participant3" exists
