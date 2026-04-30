@@ -108,3 +108,52 @@ Feature: federation/join-leave
       | actorType       | actorId                   | participantType | sessionIds |
       | federated_users | participant1@{$LOCAL_URL} | 1               | [SESSION,] |
       | users           | participant2              | 3               | []         |
+
+  Scenario: leave a room with the session of another user
+    Given using server "REMOTE"
+    And user "participant3" exists
+    And using server "LOCAL"
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds federated_user "participant3" to room "room" with 200 (v4)
+    And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@LOCAL | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
+    And user "participant3" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@LOCAL | participant1-displayname |
+    And user "participant3" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
+    And user "participant2" joins room "LOCAL::room" with 200 (v4)
+    And user "participant3" joins room "LOCAL::room" with 200 (v4)
+    And using server "LOCAL"
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType       | actorId                    | participantType | sessionIds                            |
+      | users           | participant1               | 1               | []                                    |
+      | federated_users | participant2@{$REMOTE_URL} | 3               | [SESSION#participant2@{$REMOTE_URL},] |
+      | federated_users | participant3@{$REMOTE_URL} | 3               | [SESSION#participant3@{$REMOTE_URL},] |
+    And using server "REMOTE"
+    And user "participant2" sees the following attendees in room "LOCAL::room" with 200 (v4)
+      | actorType       | actorId                    | participantType | sessionIds                            |
+      | federated_users | participant1@{$LOCAL_URL}  | 1               | []                                    |
+      | users           | participant2               | 3               | [SESSION#participant2@{$REMOTE_URL},] |
+      | users           | participant3               | 3               | [SESSION#participant3@{$REMOTE_URL},] |
+    When user "participant2" forges a request for user "participant3" to room "LOCAL::room" with 404 (v4)
+    And user "participant2" sees the following attendees in room "LOCAL::room" with 200 (v4)
+      | actorType       | actorId                    | participantType | sessionIds                            |
+      | federated_users | participant1@{$LOCAL_URL}  | 1               | []                                    |
+      | users           | participant2               | 3               | [SESSION#participant2@{$REMOTE_URL},] |
+      | users           | participant3               | 3               | [SESSION#participant3@{$REMOTE_URL},] |
+    Then using server "LOCAL"
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType       | actorId                    | participantType | sessionIds                            |
+      | users           | participant1               | 1               | []                                    |
+      | federated_users | participant2@{$REMOTE_URL} | 3               | [SESSION#participant2@{$REMOTE_URL},] |
+      | federated_users | participant3@{$REMOTE_URL} | 3               | [SESSION#participant3@{$REMOTE_URL},] |
