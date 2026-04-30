@@ -114,10 +114,11 @@ import generatePassword from '../../utils/generatePassword.ts'
 const supportsAvatar = hasTalkFeature('local', 'avatar')
 const forcePasswordProtection = getTalkConfig('local', 'conversations', 'force-passwords')
 const maxDescriptionLength = getTalkConfig('local', 'conversations', 'description-length') || 500
+const callsEnabled = getTalkConfig('local', 'call', 'enabled') !== false
 
 const presetIcons = {
 	[CONVERSATION.PRESET.DEFAULT]: { icon: IconForumOutline },
-	[CONVERSATION.PRESET.VOICE_ROOM]: { svg: IconVolumeHighOutline },
+	...(callsEnabled ? { [CONVERSATION.PRESET.VOICE_ROOM]: { svg: IconVolumeHighOutline } } : {}),
 }
 
 /**
