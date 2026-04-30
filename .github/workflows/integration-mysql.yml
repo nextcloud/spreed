@@ -55,9 +55,10 @@ jobs:
         test-suite: ['callapi', 'chat-1', 'chat-2', 'chat-3', 'chat-4', 'command', 'conversation-1', 'conversation-2', 'conversation-3', 'conversation-4', 'conversation-5', 'federation', 'integration', 'sharing-1', 'sharing-2', 'sharing-3', 'sharing-4']
         php-versions: ['8.2']
         server-versions: ['stable30']
-        guests-versions: ['main']
+        guests-versions: ['stable-4.6']
         circles-versions: ['stable30']
         notifications-versions: ['stable30']
+        csb-versions: ['stable30']
 
     services:
       mysql:
@@ -106,6 +107,13 @@ jobs:
           repository: nextcloud/notifications
           path: apps/notifications
           ref: ${{ matrix.notifications-versions }}
+
+      - name: Checkout call_summary_bot app
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        with:
+          repository: nextcloud/call_summary_bot
+          path: apps/call_summary_bot
+          ref: ${{ matrix.csb-versions }}
 
       - name: Set up php ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@2e947f1f6932d141d076ca441d0e1e881775e95b # v2
