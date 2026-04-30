@@ -58,6 +58,7 @@ jobs:
         guests-versions: ['stable-4.6']
         circles-versions: ['stable30']
         notifications-versions: ['stable30']
+        csb-versions: ['stable30']
 
     services:
       oracle:
@@ -118,6 +119,13 @@ jobs:
           repository: nextcloud/notifications
           path: apps/notifications
           ref: ${{ matrix.notifications-versions }}
+
+      - name: Checkout call_summary_bot app
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        with:
+          repository: nextcloud/call_summary_bot
+          path: apps/call_summary_bot
+          ref: ${{ matrix.csb-versions }}
 
       - name: Set up php ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@2e947f1f6932d141d076ca441d0e1e881775e95b # v2
