@@ -236,7 +236,7 @@ export default {
 				} else {
 					attributes &= ~CONVERSATION.ATTRIBUTE.VOICE_ROOM
 				}
-				this.updateNewConversation({ attributes })
+				this.applyPresetParameters(preset, attributes)
 			},
 		},
 
@@ -283,6 +283,37 @@ export default {
 		// Inner method to update parent object
 		updateNewConversation(data) {
 			this.$emit('update:newConversation', { ...this.newConversation, ...data })
+		},
+
+		applyPresetParameters(preset, attributes) {
+			const parameters = this.settingsStore.presets.find((p) => p.identifier === preset)?.parameters ?? {}
+
+			const update = { attributes }
+			let nextListable = this.listable
+
+			for (const [key, value] of Object.entries(parameters)) {
+				if (key === 'listable') {
+					nextListable = value
+				} else if (key === 'roomType') {
+					update.type = value
+					if (value !== CONVERSATION.TYPE.PUBLIC) {
+						update.hasPassword = false
+					} else if (forcePasswordProtection) {
+						update.hasPassword = true
+					}
+				} else {
+					update[key] = value
+				}
+			}
+
+			this.updateNewConversation(update)
+
+			if (nextListable !== this.listable) {
+				this.$emit('update:listable', nextListable)
+			}
+			if (update.type && update.type !== CONVERSATION.TYPE.PUBLIC) {
+				this.$emit('update:password', '')
+			}
 		},
 	},
 }

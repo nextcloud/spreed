@@ -1126,9 +1126,17 @@ const actions = {
 	 * @param {string} [payload.password] password for a public conversation
 	 * @param {string} [payload.description] description for a new conversation
 	 * @param {number} [payload.listable] whether a conversation is opened to registered users
+	 * @param {number} [payload.messageExpiration] message expiration time for the conversation
+	 * @param {boolean} [payload.readOnly] whether the conversation is read-only
+	 * @param {string} [payload.lobbyState] lobby state for the conversation
+	 * @param {number} [payload.lobbyTimer] lobby timer for the conversation
+	 * @param {boolean} [payload.recordingConsent] whether recording consent is required
+	 * @param {boolean} [payload.sipEnabled] whether SIP is enabled
+	 * @param {object} [payload.permissions] permissions for the conversation
+	 * @param {object} [payload.mentionPermissions] mention permissions for the conversation
 	 * @param {Array} [payload.participants] list of participants
 	 * @param {object} [payload.avatar] avatar object: { emoji, color } | { file }
-	 * @param payload.preset
+	 * @param {string} [payload.preset] preset for the conversation
 	 * @return {object} new conversation object
 	 */
 	async createGroupConversation(context, {
@@ -1139,6 +1147,14 @@ const actions = {
 		password,
 		description,
 		listable,
+		messageExpiration,
+		readOnly,
+		lobbyState,
+		lobbyTimer,
+		recordingConsent,
+		sipEnabled,
+		permissions,
+		mentionPermissions,
 		participants,
 		avatar,
 		preset,
@@ -1172,6 +1188,14 @@ const actions = {
 					password,
 					description,
 					listable,
+					messageExpiration,
+					readOnly,
+					lobbyState,
+					lobbyTimer,
+					recordingConsent,
+					sipEnabled,
+					permissions,
+					mentionPermissions,
 					emoji: avatar?.emoji,
 					avatarColor: avatar?.color,
 					participants: participantsMap,
