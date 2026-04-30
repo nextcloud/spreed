@@ -86,9 +86,12 @@ const searchResultsVirtual = computed<VirtualListItem[]>(() => {
 	// Normalize strings for search (remove diacritics and case, e.g. 'Jérôme' -> 'jerome')
 	const normalizer = (rawString: string) => rawString.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 
-	const lowerSearchText = normalizer(props.searchText)
-	const searchResultsConversationList = props.conversationsList.filter((conversation) => normalizer(conversation.displayName).includes(lowerSearchText)
-		|| normalizer(conversation.name).includes(lowerSearchText))
+	const searchTerms = normalizer(props.searchText).split(/\s+/).filter(Boolean)
+	const searchResultsConversationList = props.conversationsList.filter((conversation) => {
+		const displayName = normalizer(conversation.displayName)
+		const name = normalizer(conversation.name)
+		return searchTerms.every((term) => displayName.includes(term) || name.includes(term))
+	})
 
 	// Add conversations section
 	virtualList.push({ type: 'caption', id: 'conversations_caption', name: t('spreed', 'Conversations') })
