@@ -2552,6 +2552,16 @@ class RoomController extends AEnvironmentAwareOCSController {
 					$room,
 					$sessionId,
 				);
+
+				if (
+					$participant->getAttendee()->getActorType() !== Attendee::ACTOR_FEDERATED_USERS
+					|| $participant->getAttendee()->getActorId() !== $this->federationAuthenticator->getCloudId()
+					|| !hash_equals($participant->getAttendee()->getAccessToken(), $this->federationAuthenticator->getAccessToken())
+				) {
+					$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+					$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
+					return $response;
+				}
 				$this->federationAuthenticator->authenticated($room, $participant);
 			}
 
