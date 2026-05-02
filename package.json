@@ -95,7 +95,7 @@
     "@total-typescript/ts-reset": "^0.6.1",
     "@vitejs/plugin-vue": "^6.0.6",
     "@vitest/coverage-v8": "^4.1.4",
-    "@vue/test-utils": "^2.4.6",
+    "@vue/test-utils": "^2.4.9",
     "@vue/tsconfig": "^0.9.1",
     "css-loader": "^7.1.4",
     "globals": "^17.5.0",
