@@ -5,8 +5,9 @@
 
 import { FileType, getSidebar } from '@nextcloud/files'
 import IconTalk from '../img/app-dark.svg?raw'
+import { initializeTalkOnce } from './init.js'
 
-import './init.js'
+initializeTalkOnce()
 
 const TAB_TAG_NAME = 'talk-files_sidebar_tab'
 

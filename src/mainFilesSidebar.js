@@ -7,12 +7,13 @@ import { getCSPNonce } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
 import { defineCustomElement, reactive } from 'vue'
 import FilesSidebarTabApp from './FilesSidebarTabApp.vue'
+import { initializeTalk } from './init.js'
 import { createMemoryRouter } from './router/router.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
 import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
-import './init.js'
+initializeTalk()
 
 // CSP config for webpack dynamic chunk loading
 __webpack_nonce__ = getCSPNonce()
