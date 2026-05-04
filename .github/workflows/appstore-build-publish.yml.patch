@@ -1,0 +1,13 @@
+diff --git a/.github/workflows/appstore-build-publish.yml b/.github/workflows/appstore-build-publish.yml
+index 31086eaf2f..16834c4893 100644
+--- a/.github/workflows/appstore-build-publish.yml
++++ b/.github/workflows/appstore-build-publish.yml
+@@ -138,7 +138,7 @@ jobs:
+         if: steps.krankerl.outputs.files_exists != 'true'
+         run: |
+           cd ${{ env.APP_NAME }}
+-          make appstore
++          make appstore version=${{ env.APP_VERSION }}
+ 
+       - name: Check server download link for ${{ fromJSON(steps.appinfo.outputs.result).nextcloud.min-version }}
+         run: |
