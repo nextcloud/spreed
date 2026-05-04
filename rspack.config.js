@@ -186,6 +186,16 @@ module.exports = defineConfig((env) => {
 			],
 		},
 
+		node: {
+			// Default value is 'warn-mock' which replaces these variables with '' and '/', warning about the usage
+			// These variables are not used in the source code
+			// But the are mentioned in the @matrix-org/olm as a fallback for Node.js environment (unused in browser environment)
+			// Disabling mock completely to remove the warnings
+			// May fail in runtime if the variables are used (they should not be used)
+			__filename: false,
+			__dirname: false,
+		},
+
 		plugins: [
 			new ProgressPlugin(),
 
@@ -227,5 +237,15 @@ module.exports = defineConfig((env) => {
 		},
 
 		cache: true,
+
+		ignoreWarnings: [
+			// @mediapipe/tasks-vision starting 0.10.35 has `import(s.toString())` in the source which cannot be resolved
+			// It is safe to ignore
+			// This is neither used nor exported in the package
+			{
+				module: /@mediapipe\/tasks-vision/,
+				message: /Critical dependency: the request of a dependency is an expression/,
+			},
+		],
 	}
 })
