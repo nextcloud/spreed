@@ -29,6 +29,7 @@ use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
+use OCP\AppFramework\Http\FeaturePolicy;
 use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
@@ -273,7 +274,21 @@ class PageController extends Controller {
 			$csp->addAllowedConnectDomain($server);
 		}
 
+		foreach ($this->talkConfig->getExternalCallServiceFrameOrigins() as $frameOrigin) {
+			$csp->addAllowedFrameDomain($frameOrigin);
+		}
+
 		$response->setContentSecurityPolicy($csp);
+
+		$featurePolicy = new FeaturePolicy();
+		$featurePolicy->addAllowedCameraDomain('\'self\'');
+		$featurePolicy->addAllowedMicrophoneDomain('\'self\'');
+		foreach ($this->talkConfig->getExternalCallServiceFrameOrigins() as $frameOrigin) {
+			$featurePolicy->addAllowedCameraDomain($frameOrigin);
+			$featurePolicy->addAllowedMicrophoneDomain($frameOrigin);
+		}
+		$response->setFeaturePolicy($featurePolicy);
+
 		if ($throttle) {
 			// Logged-in user tried to access a chat they can not access
 			$this->logger->debug('User "' . ($this->userId ?? 'ANONYMOUS') . '" throttled for accessing "' . $bruteForceToken . '"', ['app' => 'spreed-bfp']);
@@ -339,7 +354,20 @@ class PageController extends Controller {
 		foreach ($this->talkConfig->getAllServerUrlsForCSP() as $server) {
 			$csp->addAllowedConnectDomain($server);
 		}
+
+		foreach ($this->talkConfig->getExternalCallServiceFrameOrigins() as $frameOrigin) {
+			$csp->addAllowedFrameDomain($frameOrigin);
+		}
 		$response->setContentSecurityPolicy($csp);
+
+		$featurePolicy = new FeaturePolicy();
+		$featurePolicy->addAllowedCameraDomain('\'self\'');
+		$featurePolicy->addAllowedMicrophoneDomain('\'self\'');
+		foreach ($this->talkConfig->getExternalCallServiceFrameOrigins() as $frameOrigin) {
+			$featurePolicy->addAllowedCameraDomain($frameOrigin);
+			$featurePolicy->addAllowedMicrophoneDomain($frameOrigin);
+		}
+		$response->setFeaturePolicy($featurePolicy);
 
 		return $response;
 	}
@@ -427,7 +455,21 @@ class PageController extends Controller {
 		foreach ($this->talkConfig->getAllServerUrlsForCSP() as $server) {
 			$csp->addAllowedConnectDomain($server);
 		}
+
+		foreach ($this->talkConfig->getExternalCallServiceFrameOrigins() as $frameOrigin) {
+			$csp->addAllowedFrameDomain($frameOrigin);
+		}
 		$response->setContentSecurityPolicy($csp);
+
+		$featurePolicy = new FeaturePolicy();
+		$featurePolicy->addAllowedCameraDomain('\'self\'');
+		$featurePolicy->addAllowedMicrophoneDomain('\'self\'');
+		foreach ($this->talkConfig->getExternalCallServiceFrameOrigins() as $frameOrigin) {
+			$featurePolicy->addAllowedCameraDomain($frameOrigin);
+			$featurePolicy->addAllowedMicrophoneDomain($frameOrigin);
+		}
+		$response->setFeaturePolicy($featurePolicy);
+
 		return $response;
 	}
 
@@ -486,7 +528,21 @@ class PageController extends Controller {
 		foreach ($this->talkConfig->getAllServerUrlsForCSP() as $server) {
 			$csp->addAllowedConnectDomain($server);
 		}
+
+		foreach ($this->talkConfig->getExternalCallServiceFrameOrigins() as $frameOrigin) {
+			$csp->addAllowedFrameDomain($frameOrigin);
+		}
 		$response->setContentSecurityPolicy($csp);
+
+		$featurePolicy = new FeaturePolicy();
+		$featurePolicy->addAllowedCameraDomain('\'self\'');
+		$featurePolicy->addAllowedMicrophoneDomain('\'self\'');
+		foreach ($this->talkConfig->getExternalCallServiceFrameOrigins() as $frameOrigin) {
+			$featurePolicy->addAllowedCameraDomain($frameOrigin);
+			$featurePolicy->addAllowedMicrophoneDomain($frameOrigin);
+		}
+		$response->setFeaturePolicy($featurePolicy);
+
 		return $response;
 	}
 

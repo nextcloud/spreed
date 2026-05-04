@@ -400,6 +400,11 @@ class Config {
 			$urls[] = $this->getWebSocketDomainForSignalingServer($server['server']);
 		}
 
+		$callServiceOrigin = $this->getExternalCallServiceOrigin();
+		if ($callServiceOrigin !== null) {
+			$urls[] = $callServiceOrigin;
+		}
+
 		return array_filter($urls);
 	}
 
@@ -509,6 +514,77 @@ class Config {
 		}
 
 		return $turnSettings;
+	}
+
+	public function getExternalCallService(): ?string {
+		$callService = $this->appConfig->getAppValueString('external_call_service');
+		if (!str_starts_with($callService, 'https://') && !str_starts_with($callService, 'http://')) {
+			return null;
+		}
+		return rtrim($callService, '/');
+	}
+
+	public function getExternalCallServiceOrigin(): ?string {
+		$callService = $this->getExternalCallService();
+		if ($callService === null) {
+			return null;
+		}
+
+		$parts = parse_url($callService);
+		if (!isset($parts['scheme'], $parts['host'])) {
+			return null;
+		}
+
+		$origin = $parts['scheme'] . '://' . $parts['host'];
+		if (isset($parts['port'])) {
+			$origin .= ':' . $parts['port'];
+		}
+		return $origin;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getExternalCallServiceFrameOrigins(): array {
+		return $this->appConfig->getAppValueArray('external_call_service_frame_origins');
+	}
+
+	/**
+	 * Minimum length of the external call service shared secret. Shorter
+	 * secrets are not considered configured to improve security.
+	 */
+	protected const EXTERNAL_CALL_SERVICE_SECRET_MIN_LENGTH = 64;
+
+	public function getExternalCallServiceSharedSecret(): string {
+		$secret = $this->appConfig->getAppValueString('external_call_service_shared_secret');
+
+		if ($secret !== '' && strlen($secret) < self::EXTERNAL_CALL_SERVICE_SECRET_MIN_LENGTH) {
+			throw new \InvalidArgumentException('Invalid external call service secret length');
+		}
+
+		return $secret;
+	}
+
+	public function getExternalCallServiceAuthUser(): string {
+		return $this->appConfig->getAppValueString('external_call_service_auth_user');
+	}
+
+	public function getExternalCallServiceAuthPassword(): string {
+		return $this->appConfig->getAppValueString('external_call_service_auth_password');
+	}
+
+	public function getExternalCallServiceIFrameResponseField(): string {
+		return $this->appConfig->getAppValueString('external_call_service_iframe_field');
+	}
+
+	/**
+	 * Whether the external call service is configured to authenticate requests
+	 * via the `x-nextcloud-talk-external-service` header. Requires the service
+	 * URL to be set and the shared secret to have a minimum length.
+	 */
+	public function isExternalCallServiceConfigured(): bool {
+		return $this->getExternalCallService() !== null
+			&& $this->getExternalCallServiceSharedSecret() !== '';
 	}
 
 	/**
