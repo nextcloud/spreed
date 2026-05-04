@@ -116,7 +116,9 @@ appstore:
 	--exclude=webpack.config.js \
 	$(project_dir)/  $(sign_dir)/$(app_name)
 	@if [ -f $(project_dir)/docs/changelogs/changelog-$(firstword $(subst ., ,$(version))).md ]; then \
-		cp $(project_dir)/docs/changelogs/changelog-$(firstword $(subst ., ,$(version))).md $(sign_dir)/$(app_name)/CHANGELOG.md; \
+		cp -v $(project_dir)/docs/changelogs/changelog-$(firstword $(subst ., ,$(version))).md $(sign_dir)/$(app_name)/CHANGELOG.md; \
+	else \
+		echo "changelog-$(firstword $(subst ., ,$(version))).md not found"; \
 	fi
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
 		echo "Signing app files…"; \
