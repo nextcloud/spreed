@@ -550,11 +550,20 @@ class Manager {
 			->orderBy('r.id', 'ASC');
 
 		if ($term !== '') {
-			$query->andWhere(
-				$query->expr()->iLike('name', $query->createNamedParameter(
-					'%' . $this->db->escapeLikeParameter($term) . '%'
-				))
-			);
+			// Allow fuzzy search
+			$terms = explode(' ', $term);
+			foreach ($terms as $searchTerm) {
+				$searchTerm = trim($searchTerm);
+				if ($searchTerm === '') {
+					continue;
+				}
+
+				$query->andWhere(
+					$query->expr()->iLike('name', $query->createNamedParameter(
+						'%' . $this->db->escapeLikeParameter($searchTerm) . '%'
+					))
+				);
+			}
 		}
 
 		$result = $query->executeQuery();
