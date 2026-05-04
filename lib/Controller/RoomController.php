@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use GuzzleHttp\Exception\ClientException;
 use OCA\DAV\CalDAV\TimezoneService;
 use OCA\Talk\Authenticator;
 use OCA\Talk\Capabilities;
@@ -96,6 +97,7 @@ use OCP\Calendar\IManager as ICalendarManager;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
+use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
@@ -105,6 +107,7 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\Bruteforce\IThrottler;
 use OCP\Server;
 use OCP\User\Events\UserLiveStatusEvent;
@@ -576,6 +579,18 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * Authenticate an external call service request via the
+	 * `x-nextcloud-talk-external-service` header.
+	 */
+	private function validateExternalCallServiceRequest(string $providedSecret): bool {
+		if (!$this->talkConfig->isExternalCallServiceConfigured()) {
+			return false;
+		}
+
+		return hash_equals($this->talkConfig->getExternalCallServiceSharedSecret(), $providedSecret);
+	}
+
+	/**
 	 * @return TalkRoom
 	 */
 	protected function formatRoom(
@@ -613,6 +628,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite`
 	 * or `$participants` parameter is supported.
 	 *
+	 * The endpoint can also be used unauthenticated by an external call service
+	 * by sending the configured shared secret in the
+	 * `x-nextcloud-talk-external-service` header. In that case the `$owner`
+	 * parameter is required and will be used as the actor and conversation
+	 * owner.
+	 *
 	 * @param int $roomType Type of the room
 	 * @psalm-param Room::TYPE_* $roomType
 	 * @param string $invite User, group, … ID to invite @deprecated Use the `$participants` array instead
@@ -644,17 +665,21 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param ?non-empty-string $avatarColor Background color of the avatar (Only considered when an emoji was provided) (only available with `conversation-creation-all` capability)
 	 * @param array<string, list<string>> $participants List of participants to add grouped by type (only available with `conversation-creation-all` capability)
 	 * @psalm-param TalkInvitationList $participants
+	 * @param string $owner User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated via the `x-nextcloud-talk-external-service` header, otherwise ignored.
 	 * @param ?string $preset Identifier of the preset that was used (only available with `conversation-preset` capability)
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_ACCEPTED, TalkRoomWithInvalidInvitations, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'avatar'|'description'|'invite'|'listable'|'lobby'|'lobby-timer'|'mention-permissions'|'message-expiration'|'name'|'object'|'object-id'|'object-type'|'password'|'permissions'|'preset'|'read-only'|'recording-consent'|'sip-enabled'|'type', message?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_ACCEPTED, TalkRoomWithInvalidInvitations, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'avatar'|'description'|'invite'|'listable'|'lobby'|'lobby-timer'|'mention-permissions'|'message-expiration'|'name'|'object'|'object-id'|'object-type'|'owner'|'password'|'permissions'|'preset'|'read-only'|'recording-consent'|'sip-enabled'|'type', message?: string}, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED, array{error: 'auth'}, array{}>
 	 *
 	 * 200: Room already existed
 	 * 201: Room created successfully
 	 * 202: Room created successfully but not all participants could be added
 	 * 400: Room type invalid or missing or invalid password
+	 * 401: Request not authenticated (missing user session or invalid external call service secret)
 	 * 403: Missing permissions to create room
 	 * 404: User, group or other target to invite was not found
 	 */
-	#[NoAdminRequired]
+	#[PublicPage]
+	#[BruteForceProtection(action: 'talkExternalCallServiceSecret')]
+	#[RequestHeader(name: 'x-nextcloud-talk-external-service', description: 'Shared secret used by the external call service to authenticate when creating a conversation on behalf of a user', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room', requirements: [
 		'apiVersion' => '(v4)',
 	])]
@@ -679,8 +704,44 @@ class RoomController extends AEnvironmentAwareOCSController {
 		?string $emoji = null,
 		?string $avatarColor = null,
 		array $participants = [],
+		string $owner = '',
 		?string $preset = null,
 	): DataResponse {
+		$externalServiceHeader = $this->request->getHeader('x-nextcloud-talk-external-service');
+		if ($externalServiceHeader !== '') {
+			if (!$this->validateExternalCallServiceRequest($externalServiceHeader)) {
+				$response = new DataResponse(['error' => 'auth'], Http::STATUS_UNAUTHORIZED);
+				$response->throttle(['action' => 'talkExternalCallServiceSecret']);
+				return $response;
+			}
+
+			if ($owner === '') {
+				return new DataResponse(['error' => 'owner'], Http::STATUS_BAD_REQUEST);
+			}
+
+			$actorUserId = $owner;
+
+			if (!in_array($roomType, [
+				Room::TYPE_GROUP,
+				Room::TYPE_PUBLIC,
+			], true)) {
+				return new DataResponse(['error' => CreationException::REASON_OBJECT_TYPE], Http::STATUS_BAD_REQUEST);
+			}
+			$allowInternalTypes = true;
+		} else {
+			if ($this->userId === null) {
+				return new DataResponse(['error' => 'auth'], Http::STATUS_UNAUTHORIZED);
+			}
+
+			$actorUserId = $this->userId;
+			$allowInternalTypes = false;
+		}
+
+		$user = $this->userManager->get($actorUserId);
+		if (!$user instanceof IUser) {
+			return new DataResponse(['error' => 'owner'], Http::STATUS_NOT_FOUND);
+		}
+
 		if ($roomType === Room::TYPE_ONE_TO_ONE) {
 			if ($invite === ''
 				&& isset($participants['users'][0])
@@ -691,16 +752,13 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return $this->createOneToOneRoom($invite);
 		}
 
-		/** @var IUser $user */
-		$user = $this->userManager->get($this->userId);
-
 		/** @var ?Room $oldRoom */
 		$oldRoom = null;
 		if ($objectType === Room::OBJECT_TYPE_EXTENDED_CONVERSATION && $objectId !== '') {
 			try {
-				$oldRoom = $this->manager->getRoomForUserByToken($objectId, $this->userId);
+				$oldRoom = $this->manager->getRoomForUserByToken($objectId, $actorUserId);
 				// Don't allow to extend unjoined public conversations
-				$this->participantService->getParticipant($oldRoom, $this->userId, false);
+				$this->participantService->getParticipant($oldRoom, $actorUserId, false);
 			} catch (RoomNotFoundException|ParticipantNotFoundException) {
 				return new DataResponse(['error' => CreationException::REASON_OBJECT], Http::STATUS_BAD_REQUEST);
 			}
@@ -734,7 +792,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$roomName = $this->roomService->prepareConversationName($invite ?: '---');
 			if ($source === 'circles') {
 				try {
-					$circle = $this->participantService->getCircle($invite, $this->userId);
+					$circle = $this->participantService->getCircle($invite, $actorUserId);
 					$roomName = $this->roomService->prepareConversationName($circle->getName());
 				} catch (\Exception) {
 				}
@@ -798,7 +856,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$emoji,
 				$avatarColor,
 				attributes: $attributes,
-				allowInternalTypes: false,
+				allowInternalTypes: $allowInternalTypes,
 			);
 		} catch (CreationException $e) {
 			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
@@ -816,10 +874,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		if (!$invitationList->hasInvalidInvitations()) {
-			return new DataResponse($this->formatRoom($room, $this->participantService->getParticipant($room, $this->userId, false)), Http::STATUS_CREATED);
+			return new DataResponse($this->formatRoom($room, $this->participantService->getParticipant($room, $actorUserId, false)), Http::STATUS_CREATED);
 		}
 
-		$data = $this->formatRoom($room, $this->participantService->getParticipant($room, $this->userId, false));
+		$data = $this->formatRoom($room, $this->participantService->getParticipant($room, $actorUserId, false));
 		$data['invalidParticipants'] = $invitationList->getInvalidList();
 
 		return new DataResponse($data, Http::STATUS_ACCEPTED);
@@ -2087,9 +2145,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param string $token Token of the room
 	 * @param string $password Password of the room
 	 * @param bool $force Create a new session if necessary
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Nextcloud-Talk-Proxy-Hash?: string}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'ban'|'password'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_CONFLICT, array{sessionId: string, inCall: int, lastPing: int}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{X-Nextcloud-Talk-Proxy-Hash?: string}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'field'|'response'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'ban'|'password'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_CONFLICT, array{sessionId: string, inCall: int, lastPing: int}, array{}>
 	 *
 	 * 200: Room joined successfully
+	 * 400: Bad request when the external call access check failed
 	 * 403: Joining room is not allowed
 	 * 404: Room not found
 	 * 409: Session already exists
@@ -2130,6 +2189,25 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse([
 				'error' => 'ban',
 			], Http::STATUS_FORBIDDEN);
+		}
+
+		if ($this->talkConfig->isExternalCallServiceConfigured()
+			&& $room->getObjectType() === Room::OBJECT_TYPE_EXTERNAL_CALL) {
+			$response = $this->requestExternalCallUrlFromService($room, $this->userId);
+			if ($response['status'] === Http::STATUS_FORBIDDEN) {
+				if ($this->userId !== null) {
+					$this->participantService->removeUser($room, $this->userManager->get($this->userId), AAttendeeRemovedEvent::REASON_REMOVED);
+
+					$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+						'Removed former user "%s" from conversation "%s" [%s] due to external call policy',
+						[$this->userId, $room->getToken(), $room->getObjectId()],
+					));
+				}
+				return new DataResponse(['error' => 'ban'], Http::STATUS_FORBIDDEN);
+			}
+			if ($response['status'] === Http::STATUS_BAD_REQUEST) {
+				return new DataResponse(['error' => $response['error']], Http::STATUS_BAD_REQUEST);
+			}
 		}
 
 		/** @var Participant|null $previousSession */
@@ -3375,5 +3453,103 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		return new DataResponse(null, Http::STATUS_OK);
+	}
+
+	/**
+	 * Get the URL of the call if done with an external call service
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array{url: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'field'|'response'|'server'|'type'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, null, array{}>
+	 *
+	 * 200: URL returned successfully
+	 * 400: Request was invalid, wrong conversation type or no service configured
+	 * 403: Participant is not allowed to join the call
+	 */
+	#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
+	#[PublicPage]
+	#[RequireParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/external-call', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function getExternalCallUrl(): DataResponse {
+		if (!$this->talkConfig->isExternalCallServiceConfigured()) {
+			return new DataResponse(['error' => 'server'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->room->getObjectType() !== Room::OBJECT_TYPE_EXTERNAL_CALL) {
+			return new DataResponse(['error' => 'type'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$response = $this->requestExternalCallUrlFromService($this->room, $this->userId);
+		if ($response['status'] === Http::STATUS_FORBIDDEN) {
+			$this->participantService->removeAttendee($this->room, $this->participant, AAttendeeRemovedEvent::REASON_REMOVED);
+			$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+				'Removed former %s "%s" from conversation "%s" [%s] due to external call policy',
+				[$this->participant->getAttendee()->getActorType(), $this->participant->getAttendee()->getActorId(), $this->room->getToken(), $this->room->getObjectId()],
+			));
+			return new DataResponse(null, Http::STATUS_FORBIDDEN);
+		}
+		if ($response['status'] === Http::STATUS_BAD_REQUEST) {
+			return new DataResponse(['error' => $response['error']], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse(['url' => $response['url']]);
+	}
+
+	/**
+	 * @return array{url?: string, error?: 'response'|'field', status: 200|400|403}
+	 */
+	private function requestExternalCallUrlFromService(Room $room, ?string $userId): array {
+		$options = [
+			'headers' => [
+				'Accept' => 'application/json',
+			],
+		];
+
+		if ($this->talkConfig->getExternalCallServiceAuthUser()) {
+			$options['auth'] = [
+				urlencode($this->talkConfig->getExternalCallServiceAuthUser()),
+				$this->talkConfig->getExternalCallServiceAuthPassword(),
+			];
+		}
+
+		if ($userId !== null) {
+			$options['headers']['x-nextcloud-user-id'] = $userId;
+		}
+
+		$serviceRequestUrl = str_replace(
+			'{meetingId}',
+			$room->getObjectId(),
+			$this->talkConfig->getExternalCallService()
+		);
+
+		$clientService = \OCP\Server::get(IClientService::class);
+		$client = $clientService->newClient();
+		try {
+			$response = $client->get($serviceRequestUrl, $options);
+		} catch (ClientException $e) {
+			if ($e->getResponse()->getStatusCode() === Http::STATUS_FORBIDDEN) {
+				return ['status' => Http::STATUS_FORBIDDEN];
+			}
+
+			return ['error' => 'response', 'status' => Http::STATUS_BAD_REQUEST];
+		} catch (\Throwable $e) {
+			return ['error' => 'response', 'status' => Http::STATUS_BAD_REQUEST];
+		}
+
+		$responseBody = (string)$response->getBody();
+
+		$responseField = $this->talkConfig->getExternalCallServiceIFrameResponseField();
+		$url = null;
+		if ($responseField !== '') {
+			$data = (array)json_decode($responseBody, true, flags: JSON_THROW_ON_ERROR);
+			$url = $data[$responseField] ?? null;
+		}
+
+		if ($url === null || $url === '') {
+			return ['error' => 'field', 'status' => Http::STATUS_BAD_REQUEST];
+		}
+
+		return ['url' => $url, 'status' => Http::STATUS_OK];
 	}
 }

@@ -187,6 +187,7 @@ class Capabilities implements IPublicCapability {
 			'play-sounds',
 			'grid-limit',
 			'grid-limit-enforced',
+			'external-call-service',
 		],
 		'chat' => [
 			'read-privacy',
@@ -418,6 +419,11 @@ class Capabilities implements IPublicCapability {
 			$capabilities['config']['call']['live-transcription-target-language-id'] = $this->talkConfig->getLiveTranscriptionTargetLanguageId($user->getUID());
 		} else {
 			$capabilities['config']['call']['live-transcription-target-language-id'] = $this->talkConfig->getLiveTranscriptionTargetLanguageId();
+		}
+
+		$callService = $this->talkConfig->getExternalCallService();
+		if ($callService !== null) {
+			$capabilities['config']['call']['external-call-service'] = $callService;
 		}
 
 		return [
