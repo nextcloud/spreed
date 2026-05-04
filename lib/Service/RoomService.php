@@ -201,6 +201,10 @@ class RoomService {
 			$objectTypes[] = Room::OBJECT_TYPE_VIDEO_VERIFICATION;
 		}
 
+		if ($this->config->getExternalCallService()) {
+			$objectTypes[] = Room::OBJECT_TYPE_EXTERNAL_CALL;
+		}
+
 		if (!in_array($objectType, $objectTypes, true)) {
 			throw new CreationException(CreationException::REASON_OBJECT_TYPE);
 		}

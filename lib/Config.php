@@ -314,6 +314,11 @@ class Config {
 			$urls[] = $this->getWebSocketDomainForSignalingServer($server['server']);
 		}
 
+		$callServiceOrigin = $this->getExternalCallServiceOrigin();
+		if ($callServiceOrigin !== null) {
+			$urls[] = $callServiceOrigin;
+		}
+
 		return array_filter($urls);
 	}
 
@@ -425,6 +430,39 @@ class Config {
 		}
 
 		return $turnSettings;
+	}
+
+	public function getExternalCallService(): ?string {
+		$callService = $this->appConfig->getAppValueString('external_call_service');
+		if (!str_starts_with($callService, 'https://')) {
+			return null;
+		}
+		return rtrim($callService, '/') . '/';
+	}
+
+	public function getExternalCallServiceOrigin(): ?string {
+		$callService = $this->getExternalCallService();
+		if ($callService === null) {
+			return null;
+		}
+
+		$parts = parse_url($callService);
+		if (!isset($parts['scheme'], $parts['host'])) {
+			return null;
+		}
+
+		$origin = $parts['scheme'] . '://' . $parts['host'];
+		if (isset($parts['port'])) {
+			$origin .= ':' . $parts['port'];
+		}
+		return $origin;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getExternalCallServiceFrameOrigins(): array {
+		return $this->appConfig->getAppValueArray('external_call_service_frame_origins');
 	}
 
 	/**

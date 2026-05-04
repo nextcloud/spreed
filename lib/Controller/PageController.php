@@ -277,6 +277,10 @@ class PageController extends Controller {
 			$csp->addAllowedConnectDomain($server);
 		}
 
+		foreach ($this->talkConfig->getExternalCallServiceFrameOrigins() as $frameOrigin) {
+			$csp->addAllowedFrameDomain($frameOrigin);
+		}
+
 		$response->setContentSecurityPolicy($csp);
 		if ($throttle) {
 			// Logged-in user tried to access a chat they can not access
@@ -341,6 +345,10 @@ class PageController extends Controller {
 		$csp->addAllowedConnectDomain("'self'");
 		foreach ($this->talkConfig->getAllServerUrlsForCSP() as $server) {
 			$csp->addAllowedConnectDomain($server);
+		}
+
+		foreach ($this->talkConfig->getExternalCallServiceFrameOrigins() as $frameOrigin) {
+			$csp->addAllowedFrameDomain($frameOrigin);
 		}
 		$response->setContentSecurityPolicy($csp);
 
@@ -431,6 +439,10 @@ class PageController extends Controller {
 		foreach ($this->talkConfig->getAllServerUrlsForCSP() as $server) {
 			$csp->addAllowedConnectDomain($server);
 		}
+
+		foreach ($this->talkConfig->getExternalCallServiceFrameOrigins() as $frameOrigin) {
+			$csp->addAllowedFrameDomain($frameOrigin);
+		}
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}
@@ -490,6 +502,10 @@ class PageController extends Controller {
 		$csp->addAllowedConnectDomain("'self'");
 		foreach ($this->talkConfig->getAllServerUrlsForCSP() as $server) {
 			$csp->addAllowedConnectDomain($server);
+		}
+
+		foreach ($this->talkConfig->getExternalCallServiceFrameOrigins() as $frameOrigin) {
+			$csp->addAllowedFrameDomain($frameOrigin);
 		}
 		$response->setContentSecurityPolicy($csp);
 		return $response;
