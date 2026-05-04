@@ -138,7 +138,7 @@ jobs:
         if: steps.krankerl.outputs.files_exists != 'true'
         run: |
           cd ${{ env.APP_NAME }}
-          make appstore version=${{ env.APP_VERSION }}
+          make appstore version=${{ fromJSON(steps.app-version.outputs.result).version }}
 
       - name: Check server download link for ${{ fromJSON(steps.appinfo.outputs.result).nextcloud.min-version }}
         run: |

@@ -7,7 +7,7 @@ index 31086eaf2f..16834c4893 100644
          run: |
            cd ${{ env.APP_NAME }}
 -          make appstore
-+          make appstore version=${{ env.APP_VERSION }}
- 
++          make appstore version=${{ fromJSON(steps.app-version.outputs.result).version }}
+
        - name: Check server download link for ${{ fromJSON(steps.appinfo.outputs.result).nextcloud.min-version }}
          run: |
