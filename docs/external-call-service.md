@@ -14,14 +14,15 @@ Nextcloud Talk can delegate in-browser calls to a third-party video conferencing
 
 All settings are set with `occ config:app:set spreed`:
 
-| Config key | Expected value | Description |
-|---|---|---|
-| `start_calls` | `3` | Disables Nextcloud Talk's built-in calls so the external service button is shown instead |
-| `external_call_service` | `https://pcs.example.tld/nextcloud/meeting/{meetingId}` | URL of the external service endpoint. `{meetingId}` is replaced with the conversation's `objectId` when Talk makes the request |
-| `external_call_service_frame_origins` | `["https://service.example.tld","https://service2.example.tld"]` | JSON array of scheme+host(+port) origins that may be loaded in the iframe. Added to `Content-Security-Policy: frame-src` and the `Permissions-Policy` for camera/microphone |
-| `external_call_service_shared_secret` | random string | Shared secret used for two purposes: as the HTTP Basic Auth password when Talk calls the external service, and as the bearer token when the external service calls Talk. Minimum 64 characters, `a-zA-Z0-9` recommended |
-| `external_call_service_auth_user` | `nextcloud` | HTTP Basic Auth username used when Talk calls the external service |
-| `external_call_service_iframe_field` | `iframeUrl` | JSON field name in the external service response that contains the iframe URL |
+| Config key                            | Expected value                                                   | Description                                                                                                                                                                                                             |
+|---------------------------------------|------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `start_calls`                         | `3`                                                              | Disables Nextcloud Talk's built-in calls so the external service button is shown instead                                                                                                                                |
+| `external_call_service`               | `https://pcs.example.tld/nextcloud/meeting/{meetingId}`          | URL of the external service endpoint. `{meetingId}` is replaced with the conversation's `objectId` when Talk makes the request                                                                                          |
+| `external_call_service_frame_origins` | `["https://service.example.tld","https://service2.example.tld"]` | JSON array of scheme+host(+port) origins that may be loaded in the iframe. Added to `Content-Security-Policy: frame-src` and the `Permissions-Policy` for camera/microphone                                             |
+| `external_call_service_shared_secret` | *random string*                                                  | Shared secret used for two purposes: as the HTTP Basic Auth password when Talk calls the external service, and as the bearer token when the external service calls Talk. Minimum 64 characters, `a-zA-Z0-9` recommended |
+| `external_call_service_auth_user`     | `nextcloud`                                                      | HTTP Basic Auth username used when Talk calls the external service                                                                                                                                                      |
+| `external_call_service_auth_password` | *random string*                                                  | HTTP Basic Auth password used when Talk calls the external service                                                                                                                                                      |
+| `external_call_service_iframe_field`  | `iframeUrl`                                                      | JSON field name in the external service response that contains the iframe URL                                                                                                                                           |
 
 ### Sample setup commands
 
@@ -29,8 +30,9 @@ All settings are set with `occ config:app:set spreed`:
 occ config:app:set spreed start_calls --value '3'
 occ config:app:set spreed external_call_service --value 'https://pcs.example.tld/nextcloud/meeting/{meetingId}'
 occ config:app:set spreed external_call_service_frame_origins --value '["https://service.example.tld","https://service2.example.tld"]' --type array
-occ config:app:set spreed external_call_service_shared_secret --value 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+occ config:app:set spreed external_call_service_shared_secret --sensitive --value 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 occ config:app:set spreed external_call_service_auth_user --value 'nextcloud'
+occ config:app:set spreed external_call_service_auth_password --sensitive --value 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
 occ config:app:set spreed external_call_service_iframe_field --value 'iframeUrl'
 ```
 
@@ -68,24 +70,24 @@ Only `roomType = 2` (group) and `roomType = 3` (public) are allowed when using t
 
 ### Request headers
 
-| Header | Value |
-|---|---|
+| Header                              | Value                    |
+|-------------------------------------|--------------------------|
 | `x-nextcloud-talk-external-service` | Configured shared secret |
-| `OCS-APIRequest` | `true` |
-| `Content-Type` | `application/json` |
+| `OCS-APIRequest`                    | `true`                   |
+| `Content-Type`                      | `application/json`       |
 
 ### Request body (additional field)
 
-| Field | Type | Description |
-|---|---|---|
-| `owner` | string | Nextcloud user ID to act as and make owner of the new conversation. Required when using `x-nextcloud-talk-external-service` authentication |
+| Field    | Type    | Description                                                                                                                                |
+|----------|---------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| `owner`  | string  | Nextcloud user ID to act as and make owner of the new conversation. Required when using `x-nextcloud-talk-external-service` authentication |
 
 ### Response codes
 
-| Status | Meaning |
-|---|---|
-| `201 Created` | Room created successfully |
-| `400 Bad Request` | Missing or invalid parameter (`error` field names the offending parameter, e.g. `owner`, `type`) |
+| Status             | Meaning                                                                                                                                |
+|--------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| `201 Created`      | Room created successfully                                                                                                              |
+| `400 Bad Request`  | Missing or invalid parameter (`error` field names the offending parameter, e.g. `owner`, `type`)                                       |
 | `401 Unauthorized` | Missing or invalid `x-nextcloud-talk-external-service` secret (also returned when no user session is present and the header is absent) |
 
 Requests with an invalid secret are brute-force protected (`talkExternalCallServiceSecret` action).
@@ -116,10 +118,10 @@ window.parent.postMessage({ type: '<event>' }, targetOrigin)
 
 ### Supported event types
 
-| `type` | When to send | Effect in Talk |
-|---|---|---|
-| `externalCallJoined` | The local user has successfully joined the call in the external service | Reserved for future side-effects (e.g. updating call presence, user status) |
-| `externalCallLeft` | The local user has left or ended the call | Unmounts the iframe and returns Talk to the chat view |
+| `type`                | When to send                                                            | Effect in Talk                                                              |
+|-----------------------|-------------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| `externalCallJoined`  | The local user has successfully joined the call in the external service | Reserved for future side-effects (e.g. updating call presence, user status) |
+| `externalCallLeft`    | The local user has left or ended the call                               | Unmounts the iframe and returns Talk to the chat view                       |
 
 ### Example (inside the iframe page)
 
