@@ -150,12 +150,6 @@
       <code><![CDATA[$this->rooms]]></code>
     </InvalidPropertyAssignmentValue>
   </file>
-  <file src="lib/OCP/TalkBackend.php">
-    <MissingOverrideAttribute>
-      <code><![CDATA[public function isAllowedToCreateConversations(): bool {]]></code>
-      <code><![CDATA[public function isEnabledForUser(): bool {]]></code>
-    </MissingOverrideAttribute>
-  </file>
   <file src="lib/PublicShare/TemplateLoader.php">
     <UndefinedClass>
       <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
