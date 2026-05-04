@@ -237,5 +237,15 @@ module.exports = defineConfig((env) => {
 		},
 
 		cache: true,
+
+		ignoreWarnings: [
+			// @mediapipe/tasks-vision starting 0.10.35 has `import(s.toString())` in the source which cannot be resolved
+			// It is safe to ignore
+			// This is neither used nor exported in the package
+			{
+				module: /@mediapipe\/tasks-vision/,
+				message: /Critical dependency: the request of a dependency is an expression/,
+			},
+		],
 	}
 })
