@@ -8,7 +8,6 @@ OC.L10N.register(
     "Administration" : "Administrado",
     "System" : "Sistemo",
     "Talk conversations" : "Buŝaj konversacioj",
-    "Talk to %s" : "Paroli al %s",
     "File not found" : "Netrovita dosiero",
     "File is too big" : "Dosiero tro grandas",
     "Invalid file provided" : "Nevalida dosiero provizita",
@@ -366,6 +365,7 @@ OC.L10N.register(
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
     "__language_name__" : "Esperanto",
-    "Tasks" : "Taskoj"
+    "Tasks" : "Taskoj",
+    "Talk to %s" : "Paroli al %s"
 },
 "nplurals=2; plural=(n != 1);");

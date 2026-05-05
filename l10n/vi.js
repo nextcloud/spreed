@@ -137,7 +137,6 @@ OC.L10N.register(
     "Administration" : "Quản trị viên",
     "System" : "Hệ thống",
     "%s (guest)" : "%s (khách mời)",
-    "Talk to %s" : "Trò chuyện với %s",
     "File not found" : "Không tìm thấy tập tin",
     "File is not shared, or shared but not with the user" : "Tệp này không được chia sẻ, hoạc được chia sẻ nhưng không phải với người dùng này",
     "No account available to delete." : "Không có tài khoản nào để xóa",
@@ -948,6 +947,7 @@ OC.L10N.register(
     "__language_name__" : "Tiếng Việt",
     "Tasks" : "Nhiệm vụ",
     "Notes" : "Ghi chú",
+    "Talk to %s" : "Trò chuyện với %s",
     "Your privacy setting has been saved" : "Các thiết lập quyền riêng tư của bạn đã được lưu",
     "Failed to save sounds setting" : "Không thể lưu cài đặt âm thanh",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Bạn đã tham gia cuộc trò chuyện trong một cửa sổ hoặc thiết bị khác. Điều này hiện không được vWorkspace Talk hỗ trợ nên phiên này đã bị đóng."
