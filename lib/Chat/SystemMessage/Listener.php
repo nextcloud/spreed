@@ -32,6 +32,7 @@ use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\RoomAttributes;
 use OCA\Talk\Service\NoteToSelfService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SampleConversationsService;
@@ -156,7 +157,8 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($this->participantService->hasActiveSessionsInCall($event->getRoom())) {
+		$isVoiceRoom = $event->getRoom()->getAttributes() & RoomAttributes::VOICE_ROOM->value;
+		if ($isVoiceRoom || $this->participantService->hasActiveSessionsInCall($event->getRoom())) {
 			$this->sendSystemMessage($event->getRoom(), 'call_joined', [], $event->getParticipant());
 		} else {
 			$silent = $event->getDetail(AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT) ?? false;

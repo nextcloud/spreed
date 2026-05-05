@@ -17,6 +17,7 @@ use OCA\Talk\Events\CallEndedForEveryoneEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\RoomAttributes;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
@@ -65,6 +66,11 @@ class Listener implements IEventListener {
 	 */
 	protected function generateCallActivity(ACallEndedEvent $event): void {
 		$room = $event->getRoom();
+		$isVoiceRoom = $room->getAttributes() & RoomAttributes::VOICE_ROOM->value;
+		if ($isVoiceRoom) {
+			return;
+		}
+
 		$actor = $event->getActor();
 		$activeSince = $event->getOldValue();
 

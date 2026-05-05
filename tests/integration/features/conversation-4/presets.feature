@@ -34,6 +34,17 @@ Feature: conversation-4/presets
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType | attributes | messageExpiration | listable |
       | room | 3    | 1               | 1          | 3600              | 1        |
+    # No start call message and no call_ended message
+    Then user "participant1" joins room "room" with 200 (v4)
+    Then user "participant1" joins call "room" with 200 (v4)
+      | flags | 1 |
+    Then user "participant1" leaves call "room" with 200 (v4)
+    Then user "participant1" leaves room "room" with 200 (v4)
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room | users     | participant1 | participant1-displayname | call_left            |
+      | room | users     | participant1 | participant1-displayname | call_joined          |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Create a voice room with overriding default values of the preset
     Given user "participant1" creates room "room" (v4)
