@@ -16,6 +16,7 @@ use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IFilenameValidator;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -44,8 +45,10 @@ class ConfigTest extends TestCase {
 		$urlGenerator = $this->createMock(IURLGenerator::class);
 		/** @var MockObject|IEventDispatcher $dispatcher */
 		$dispatcher = $this->createMock(IEventDispatcher::class);
+		/** @var MockObject|IFilenameValidator $filenameValidator */
+		$filenameValidator = $this->createMock(IFilenameValidator::class);
 
-		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher, $filenameValidator);
 		return $helper;
 	}
 
@@ -155,6 +158,8 @@ class ConfigTest extends TestCase {
 		$urlGenerator = $this->createMock(IURLGenerator::class);
 		/** @var MockObject|IEventDispatcher $dispatcher */
 		$dispatcher = $this->createMock(IEventDispatcher::class);
+		/** @var MockObject|IFilenameValidator $filenameValidator */
+		$filenameValidator = $this->createMock(IFilenameValidator::class);
 
 		/** @var MockObject|ISecureRandom $secureRandom */
 		$secureRandom = $this->createMock(ISecureRandom::class);
@@ -163,7 +168,7 @@ class ConfigTest extends TestCase {
 			->method('generate')
 			->with(16)
 			->willReturn('abcdefghijklmnop');
-		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher, $filenameValidator);
 
 		//
 		$settings = $helper->getTurnSettings();
@@ -236,6 +241,8 @@ class ConfigTest extends TestCase {
 
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = \OCP\Server::get(IEventDispatcher::class);
+		/** @var MockObject|IFilenameValidator $filenameValidator */
+		$filenameValidator = $this->createMock(IFilenameValidator::class);
 
 		$servers = [
 			[
@@ -256,7 +263,7 @@ class ConfigTest extends TestCase {
 
 		$dispatcher->addServiceListener(BeforeTurnServersGetEvent::class, GetTurnServerListener::class);
 
-		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher, $filenameValidator);
 
 		$settings = $helper->getTurnSettings();
 		$this->assertSame($servers, $settings);
@@ -383,6 +390,8 @@ class ConfigTest extends TestCase {
 		$urlGenerator = $this->createMock(IURLGenerator::class);
 		/** @var MockObject|IEventDispatcher $dispatcher */
 		$dispatcher = $this->createMock(IEventDispatcher::class);
+		/** @var MockObject|IFilenameValidator $filenameValidator */
+		$filenameValidator = $this->createMock(IFilenameValidator::class);
 		/** @var MockObject|IUser $user */
 		$user = $this->createMock(IUser::class);
 
@@ -410,7 +419,7 @@ class ConfigTest extends TestCase {
 			->method('getDisplayName')
 			->willReturn('Jane Doe');
 
-		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher, $filenameValidator);
 
 		$config->setAppValue('spreed', 'signaling_token_alg', $algo);
 		// Make sure new keys are generated.
@@ -448,6 +457,8 @@ class ConfigTest extends TestCase {
 		$urlGenerator = $this->createMock(IURLGenerator::class);
 		/** @var MockObject|IEventDispatcher $dispatcher */
 		$dispatcher = $this->createMock(IEventDispatcher::class);
+		/** @var MockObject|IFilenameValidator $filenameValidator */
+		$filenameValidator = $this->createMock(IFilenameValidator::class);
 
 		$now = time();
 		$timeFactory
@@ -460,7 +471,7 @@ class ConfigTest extends TestCase {
 			->with('')
 			->willReturn('https://domain.invalid/nextcloud');
 
-		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = new Config($config, $appConfig, $userConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher, $filenameValidator);
 
 		$config->setAppValue('spreed', 'signaling_token_alg', $algo);
 		// Make sure new keys are generated.

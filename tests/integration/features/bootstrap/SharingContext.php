@@ -128,12 +128,27 @@ class SharingContext implements Context {
 	 * $fileNames is a comma-separated list of desired filenames.
 	 */
 	#[When('/^user "([^"]*)" probes attachment folder for room "([^"]*)" with files "([^"]*)" with (\d+) \(v1\)$/')]
-	public function userProbesAttachmentFolder(string $user, string $room, string $fileNamesCsv, int $statusCode): void {
+	public function userProbesAttachmentFolder(string $user, string $room, string $fileNamesCsv, int $statusCode, ?TableNode $tableNode): void {
 		$this->currentUser = $user;
 		$token = FeatureContext::getTokenForIdentifier($room);
 		$fileNames = array_map('trim', explode(',', $fileNamesCsv));
 		$this->sendingToTalkAttachmentFolderProbe($token, $fileNames);
 		$this->theHTTPStatusCodeShouldBe($statusCode);
+
+		if ($statusCode === 200 && $tableNode !== null) {
+			$content = $this->response->getBody()->getContents();
+			$data = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
+			$renames = $data['ocs']['data']['renames'];
+			$expected = [];
+			foreach ($tableNode->getRowsHash() as $key => $value) {
+				$expected[] = [$key => $value];
+			}
+			\PHPUnit\Framework\Assert::assertEquals(
+				$expected,
+				$renames,
+				'Expected rename list of probe does not match'
+			);
+		}
 	}
 
 	/**
