@@ -256,7 +256,6 @@ class BackendNotifier {
 	 * The given room has been deleted.
 	 *
 	 * @param Room $room
-	 * @param string[] $userIds
 	 * @throws \Exception
 	 */
 	public function roomDeleted(Room $room): void {
