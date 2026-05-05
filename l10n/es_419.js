@@ -15,7 +15,6 @@ OC.L10N.register(
     "Guest" : "Invitado",
     "Administration" : "Administración",
     "System" : "Sistema",
-    "Talk to %s" : "Hablar con %s",
     "File not found" : "Archivo no encontrado",
     "File is too big" : "El archivo es demasiado grande.",
     "Invalid file provided" : "Archivo proporcionado inválido",
@@ -151,6 +150,7 @@ OC.L10N.register(
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
     "__language_name__" : "Español (Latin America)",
-    "Tasks" : "Tareas"
+    "Tasks" : "Tareas",
+    "Talk to %s" : "Hablar con %s"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

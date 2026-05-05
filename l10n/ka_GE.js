@@ -14,7 +14,6 @@ OC.L10N.register(
     "Guest" : "სტუმარი",
     "Administration" : "ადმინისტრაცია",
     "System" : "სისტემა",
-    "Talk to %s" : "საუბარი მომხმარებელთან %s",
     "File not found" : "ფაილი ვერ იქნა ნაპოვნი",
     "File is too big" : "ფაილი ზედმეტად დიდია",
     "Invalid file provided" : "არასწორი ფაილი",
@@ -158,6 +157,7 @@ OC.L10N.register(
     "iOS app" : "iOS აპლიკაცია",
     "__language_name__" : "ქართული",
     "Tasks" : "დავალებები",
-    "Notes" : "ჩანაწერები"
+    "Notes" : "ჩანაწერები",
+    "Talk to %s" : "საუბარი მომხმარებელთან %s"
 },
 "nplurals=2; plural=(n!=1);");

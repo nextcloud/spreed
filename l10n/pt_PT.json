@@ -28,7 +28,7 @@
     "Administration" : "Administração",
     "System" : "Sistema",
     "Talk conversations" : "Conversas no Talk",
-    "Talk to %s" : "Falar com %s",
+    "Call %s" : "Ligar a %s",
     "File not found" : "Ficheiro não encontrado",
     "File is too big" : "O ficheiro é demasiado grande",
     "Invalid file provided" : "Fornecido ficheiro inválido",
@@ -306,8 +306,6 @@
     "Personal" : "Pessoal",
     "Leave conversation" : "Sair da conversação",
     "Delete conversation" : "Eliminar conversação",
-    "_%n hour_::_%n hours_" : ["%n hora","%n horas","%n horas"],
-    "_%n day_::_%n days_" : ["%n dia","%n dias","%n dias"],
     "Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation." : "As mensagens de chat podem expirar após um determinado período. Nota: os ficheiros partilhados no chat não serão eliminados para o proprietário, mas deixarão de ser partilhados na conversa.",
     "Password protection" : "Protegido por palavra-passe",
     "Set a password" : "Definir uma palavra-passe",
@@ -394,6 +392,8 @@
     "Team" : "Grupo",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Error while sharing file" : "Erro ao partilhar ficheiro",
+    "_%n hour_::_%n hours_" : ["%n hora","%n horas","%n horas"],
+    "_%n day_::_%n days_" : ["%n dia","%n dias","%n dias"],
     "Please reload the page." : "Por favor, recarregue a página.",
     "Do not disturb" : "Não incomodar",
     "Away" : "Ausente",
@@ -407,6 +407,7 @@
     "__language_name__" : "Português",
     "Tasks" : "Tarefas",
     "Notes" : "Notas",
-    "Reports" : "Relatórios"
+    "Reports" : "Relatórios",
+    "Talk to %s" : "Falar com %s"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
