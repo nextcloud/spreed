@@ -147,6 +147,7 @@ export const CONVERSATION = {
 		BREAKOUT_ROOM: 'room',
 		EXTENDED: 'extended_conversation',
 		INSTANT_MEETING: 'instant_meeting',
+		EXTERNAL_CALL: 'external_call',
 		DEFAULT: '',
 	},
 
