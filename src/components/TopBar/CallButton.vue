@@ -98,9 +98,11 @@
 </template>
 
 <script>
+import axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
+import { generateOcsUrl } from '@nextcloud/router'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -241,6 +243,12 @@ export default {
 			return !this.hideText && (!this.isMobile || !this.shrinkOnMobile)
 		},
 
+		hasExternalCallService() {
+			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.EXTERNAL_CALL
+				&& !getTalkConfig('local', 'call', 'enabled')
+				&& getTalkConfig('local', 'call', 'external-call-service')
+		},
+
 		showRecordingWarning() {
 			return [
 				CALL.RECORDING.VIDEO_STARTING,
@@ -273,7 +281,7 @@ export default {
 		startCallButtonDisabled() {
 			return this.disabled
 				|| (this.callViewStore.callHasJustEnded && !this.hasCall)
-				|| (!this.conversation.canStartCall && !this.hasCall)
+				|| (!this.conversation.canStartCall && !this.hasExternalCallService && !this.hasCall)
 				|| this.isInLobby
 				|| this.conversation.readOnly
 				|| this.isNextcloudTalkHashDirty
@@ -330,7 +338,7 @@ export default {
 		},
 
 		showStartCallButton() {
-			return getTalkConfig(this.token, 'call', 'enabled')
+			return (getTalkConfig(this.token, 'call', 'enabled') || this.hasExternalCallService)
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 				&& this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 				&& (!this.conversation.remoteServer || hasTalkFeature(this.token, 'federation-v2'))
@@ -425,6 +433,12 @@ export default {
 		},
 
 		handleClick() {
+			if (this.hasExternalCallService) {
+				// Another service is in charge, trigger iframe rendering in MainView
+				this.handleExternalCall()
+				return
+			}
+
 			// Create audio objects as a result of a user interaction to allow playing sounds in Safari
 			this.soundsStore.initAudioObjects()
 
@@ -437,6 +451,32 @@ export default {
 				emit('talk:media-settings:show')
 			} else {
 				this.handleJoinCall()
+			}
+		},
+
+		async handleExternalCall() {
+			try {
+				this.loading = true
+				const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/external-call', { token: this.token }))
+
+				// Check for successful response (200, 302, 303)
+				if ([200, 302, 303].includes(response.status)) {
+					const callUrl = response.data.ocs.data.url
+					if (callUrl) {
+						this.callViewStore.setExternalCallServiceUrl(callUrl)
+					}
+					this.callViewStore.setForceCallView(true)
+				}
+			} catch (error) {
+				if (error.response?.status === 403) {
+					this.skipLeaveWarning = true
+					this.$router.push({ name: 'forbidden' })
+					return
+				}
+				console.error('Failed to initialize external call service:', error)
+				showError(t('spreed', 'Connection failed'))
+			} finally {
+				this.loading = false
 			}
 		},
 

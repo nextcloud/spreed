@@ -4,6 +4,7 @@
 -->
 <script lang="ts" setup>
 import type { WatchStopHandle } from 'vue'
+import type { Conversation } from '../types/index.ts'
 
 import { emit } from '@nextcloud/event-bus'
 import { computed, onMounted, onUnmounted, watch, watchEffect } from 'vue'
@@ -12,6 +13,7 @@ import { useStore } from 'vuex'
 import CallFailedDialog from '../components/CallView/CallFailedDialog.vue'
 import CallView from '../components/CallView/CallView.vue'
 import ChatView from '../components/ChatView.vue'
+import ExternalCallView from '../components/ExternalCallView.vue'
 import LobbyScreen from '../components/LobbyScreen.vue'
 import PollViewer from '../components/PollViewer/PollViewer.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
@@ -19,6 +21,7 @@ import { useIsInCall } from '../composables/useIsInCall.js'
 import { useJoinCall } from '../composables/useJoinCall.ts'
 import { watchJoinedConversation } from '../composables/useJoinedConversation.ts'
 import { CALL, CONVERSATION } from '../constants.ts'
+import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useSettingsStore } from '../stores/settings.ts'
 
@@ -49,6 +52,12 @@ function stopWatchingJoinedConversation() {
 const isInLobby = computed(() => store.getters.isInLobby)
 const connectionFailed = computed(() => store.getters.connectionFailed(props.token))
 const isVoiceRoom = computed(() => Boolean(store.getters.conversation(props.token)?.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM))
+const isInExternalCall = computed(() => {
+	const conversation = store.getters.conversation(props.token) as Conversation | undefined
+	return conversation?.objectType === CONVERSATION.OBJECT_TYPE.EXTERNAL_CALL && isInCall.value
+		&& !getTalkConfig('local', 'call', 'enabled')
+		&& getTalkConfig('local', 'call', 'external-call-service')
+})
 
 watch([() => props.token, isVoiceRoom], ([newToken, newIsVoiceRoom]) => {
 	// Release a stale joined-conversation listener when navigating away
@@ -132,8 +141,9 @@ function handleDirectCall(routeToken: string) {
 	<div class="main-view">
 		<LobbyScreen v-if="isInLobby" />
 		<template v-else>
-			<TopBar :isInCall="isInCall" />
-			<CallView v-if="isInCall" :token="token" />
+			<TopBar v-if="!isInExternalCall" :isInCall="isInCall" />
+			<ExternalCallView v-if="isInExternalCall" :token="token" />
+			<CallView v-else-if="isInCall" :token="token" />
 			<ChatView v-else />
 			<PollViewer />
 			<CallFailedDialog v-if="connectionFailed" :token="token" />
