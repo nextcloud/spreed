@@ -238,6 +238,12 @@ export default {
 			return !this.hideText && (!this.isMobile || !this.shrinkOnMobile)
 		},
 
+		hasExternalCallService() {
+			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.EXTERNAL_CALL
+				&& !getTalkConfig('local', 'call', 'enabled')
+				&& getTalkConfig('local', 'call', 'external-call-service')
+		},
+
 		showRecordingWarning() {
 			return [
 				CALL.RECORDING.VIDEO_STARTING,
@@ -270,7 +276,7 @@ export default {
 		startCallButtonDisabled() {
 			return this.disabled
 				|| (this.callViewStore.callHasJustEnded && !this.hasCall)
-				|| (!this.conversation.canStartCall && !this.hasCall)
+				|| (!this.conversation.canStartCall && !this.hasExternalCallService && !this.hasCall)
 				|| this.isInLobby
 				|| this.conversation.readOnly
 				|| this.isNextcloudTalkHashDirty
@@ -327,7 +333,7 @@ export default {
 		},
 
 		showStartCallButton() {
-			return getTalkConfig(this.token, 'call', 'enabled')
+			return (getTalkConfig(this.token, 'call', 'enabled') || this.hasExternalCallService)
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 				&& this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 				&& (!this.conversation.remoteServer || hasTalkFeature(this.token, 'federation-v2'))
@@ -449,6 +455,12 @@ export default {
 		},
 
 		handleClick() {
+			if (this.hasExternalCallService) {
+				// Another service is in charge, trigger iframe rendering in MainView
+				this.handleExternalCall()
+				return
+			}
+
 			// Create audio objects as a result of a user interaction to allow playing sounds in Safari
 			this.soundsStore.initAudioObjects()
 
@@ -464,6 +476,10 @@ export default {
 				emit('talk:media-settings:hide')
 				this.joinCall()
 			}
+		},
+
+		async handleExternalCall() {
+			this.callViewStore.setForceCallView(true)
 		},
 
 		async switchToParentRoom() {
