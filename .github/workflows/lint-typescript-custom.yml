@@ -40,13 +40,11 @@ jobs:
               - '**.ts'
               - '**.vue'
 
-  typecheck:
+  test:
     runs-on: ubuntu-latest
 
     needs: changes
     if: needs.changes.outputs.src != 'false'
-
-    name: NPM typecheck
 
     steps:
       - name: Checkout
@@ -71,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest-low
     needs: [changes, typecheck]
 
-    name: typecheck
+    name: typescript-summary
 
     steps:
       - name: Summary status
