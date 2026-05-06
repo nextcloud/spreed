@@ -56,12 +56,14 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
 import DeckCard from '../../MessagesList/MessagesGroup/Message/MessagePart/DeckCard.vue'
 import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
-import LocationCard from '../../MessagesList/MessagesGroup/Message/MessagePart/LocationCard.vue'
 import PollCard from '../../MessagesList/MessagesGroup/Message/MessagePart/PollCard.vue'
 import PinnedMessageItem from '../PinnedMessages/PinnedMessageItem.vue'
 import { SHARED_ITEM } from '../../../constants.ts'
+
+const LocationCard = defineAsyncComponent(() => import('../../MessagesList/MessagesGroup/Message/MessagePart/LocationCard.vue'))
 
 export default {
 	name: 'SharedItems',
