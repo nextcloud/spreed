@@ -128,7 +128,7 @@ class SharingContext implements Context {
 	 * $fileNames is a comma-separated list of desired filenames.
 	 */
 	#[When('/^user "([^"]*)" probes attachment folder for room "([^"]*)" with files "([^"]*)" with (\d+) \(v1\)$/')]
-	public function userProbesAttachmentFolder(string $user, string $room, string $fileNamesCsv, int $statusCode, ?TableNode $tableNode): void {
+	public function userProbesAttachmentFolder(string $user, string $room, string $fileNamesCsv, int $statusCode, ?TableNode $tableNode = null): void {
 		$this->currentUser = $user;
 		$token = FeatureContext::getTokenForIdentifier($room);
 		$fileNames = array_map('trim', explode(',', $fileNamesCsv));
