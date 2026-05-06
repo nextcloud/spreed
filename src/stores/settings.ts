@@ -231,13 +231,7 @@ export const useSettingsStore = defineStore('settings', () => {
 	}
 
 	const EXCLUDED_PRESETS = new Set([CONVERSATION.PRESET.FORCED]) // Should not be shown in UI
-	const HIDDEN_PRESETS = new Set<string>([])
-	const callsEnabled = getTalkConfig('local', 'call', 'enabled') !== false
-	if (!callsEnabled) {
-		HIDDEN_PRESETS.add(CONVERSATION.PRESET.VOICE_ROOM)
-	}
-
-	const visiblePresets = computed(() => presets.value.filter((preset) => !HIDDEN_PRESETS.has(preset.identifier) && !EXCLUDED_PRESETS.has(preset.identifier)))
+	const visiblePresets = computed(() => presets.value.filter((preset) => !EXCLUDED_PRESETS.has(preset.identifier)))
 
 	return {
 		readStatusPrivacy,

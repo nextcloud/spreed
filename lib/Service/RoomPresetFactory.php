@@ -8,18 +8,21 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\Room;
 use OCA\Talk\RoomPresets\APreset;
 use OCA\Talk\RoomPresets\DefaultPreset;
 use OCA\Talk\RoomPresets\Forced;
 use OCA\Talk\RoomPresets\Presentation;
 use OCA\Talk\RoomPresets\VoiceRoom;
 use OCA\Talk\RoomPresets\Webinar;
+use OCP\AppFramework\Services\IAppConfig;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 
 class RoomPresetFactory {
 	public function __construct(
+		protected IAppConfig $appConfig,
 		protected LoggerInterface $logger,
 	) {
 	}
@@ -33,8 +36,11 @@ class RoomPresetFactory {
 			Forced::class,
 			Webinar::class,
 			Presentation::class,
-			VoiceRoom::class,
 		];
+
+		if ($this->appConfig->getAppValueInt('start_calls', Room::START_CALL_EVERYONE) !== Room::START_CALL_NOONE) {
+			$presetClasses[] = VoiceRoom::class;
+		}
 
 		/** @var array<string, APreset> $presets */
 		$presets = [];
