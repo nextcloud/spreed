@@ -297,6 +297,7 @@ OC.L10N.register(
     "Message of {user}" : "Zpráva uživatele {user}",
     "Message of a deleted user in {conversation}" : "Zpráva smazaného uživatele v {conversation}",
     "Talk conversations" : "Konverzace v Talk",
+    "Call %s" : "Zavolat %s",
     "An error occurred. Please contact your administrator." : "Došlo k chybě. Obraťte se na svého správce.",
     "Storage quota exceeded" : "Kvóta úložiště překročena",
     "File not found" : "Soubor nenalezen",

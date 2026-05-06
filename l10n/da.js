@@ -142,6 +142,7 @@ OC.L10N.register(
     "System" : "System",
     "%s (guest)" : "%s (gæst)",
     "Talk conversations" : "Snak samtaler",
+    "Call %s" : "Ring op %s",
     "Storage quota exceeded" : "Lagringskvote overskredet",
     "File not found" : "Filen blev ikke fundet",
     "File is not shared, or shared but not with the user" : "Filen er ikke delt, eller den er delt men ikke med brugeren",

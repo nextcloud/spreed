@@ -279,6 +279,7 @@ OC.L10N.register(
     "Message of {user}" : "Missatge de {user}",
     "Message of a deleted user in {conversation}" : "Missatge d'un usuari suprimit a {conversation}",
     "Talk conversations" : "Converses",
+    "Call %s" : "Truca a %s",
     "An error occurred. Please contact your administrator." : "Hi ha hagut un error. Poseu-vos en contacte amb el vostre administrador.",
     "File not found" : "No s'ha trobat el fitxer",
     "File is not shared, or shared but not with the user" : "El fitxer no és compartit, o ho és però no amb l'usuari",
