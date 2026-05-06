@@ -769,7 +769,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$readOnly,
 				$this->forcedParameters->forceParameter(Parameter::LISTABLE, $listable),
 				$this->forcedParameters->forceParameter(Parameter::MESSAGE_EXPIRATION, $messageExpiration),
-				$lobbyState,
+				$this->forcedParameters->forceParameter(Parameter::LOBBY_STATE, $lobbyState),
 				$lobbyTimer,
 				$this->forcedParameters->forceParameter(Parameter::SIP_ENABLED, $sipEnabled),
 				$this->forcedParameters->forceParameter(Parameter::PERMISSIONS, $permissions),
