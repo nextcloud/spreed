@@ -52,6 +52,7 @@ import { useHashCheck } from './composables/useHashCheck.js'
 import { useInterceptNotifications } from './composables/useInterceptNotifications.ts'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { watchJoinedConversation } from './composables/useJoinedConversation.ts'
+import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { CONVERSATION, PARTICIPANT } from './constants.ts'
 import BrowserStorage from './services/BrowserStorage.js'
@@ -96,6 +97,8 @@ export default {
 		useGetMessagesProvider()
 		// Intercept some notifications and handle them in the Talk app
 		useInterceptNotifications()
+		// Register recording status sync from signaling message
+		useRecordingStatusSync()
 		// Add provided value to check if we're in the main app or plugin
 		provide('Talk:isMainApp', true)
 		useDocumentFullscreen()

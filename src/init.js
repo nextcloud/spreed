@@ -5,17 +5,11 @@
 
 /** The purpose of this file is to wrap the logic shared by the different Talk entry points */
 
-import { showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
 import { reactive } from 'vue'
-import { CALL, PARTICIPANT } from './constants.ts'
 import BrowserStorage from './services/BrowserStorage.js'
-import { EventBus } from './services/EventBus.ts'
 import { setTalkSessionUniqueTabIdHeader } from './services/talkSessionUniqueTabId.ts'
-import store from './store/index.js'
 import { useIntegrationsStore } from './stores/integrations.js'
 import pinia from './stores/pinia.ts'
-import { useTokenStore } from './stores/token.ts'
 import { isSafari } from './utils/browserCheck.ts'
 
 import '@nextcloud/dialogs/style.css'
@@ -38,7 +32,6 @@ export function initializeTalkOnce() {
  */
 export function initializeTalk() {
 	registerPublicApi()
-	registerGlobalEvents()
 	setTalkSessionUniqueTabIdHeader()
 	if (!storageMigrated) {
 		migrateBrowserStorageOnce()
@@ -83,36 +76,6 @@ function registerPublicApi() {
 		const integrationsStore = useIntegrationsStore(pinia)
 		integrationsStore.addParticipantSearchAction(participantSearchAction)
 	}
-}
-
-/**
- * Register EventBus listeners for global events
- * FIXME extract to composable and integrate in apps
- */
-function registerGlobalEvents() {
-	const tokenStore = useTokenStore(pinia)
-
-	EventBus.on('signaling-join-room', ([token]) => {
-		tokenStore.updateLastJoinedConversationToken(token)
-	})
-
-	EventBus.on('signaling-recording-status-changed', ([token, status]) => {
-		store.dispatch('setConversationProperties', { token, properties: { callRecording: status } })
-
-		if (status !== CALL.RECORDING.FAILED) {
-			return
-		}
-
-		if (!store.getters.isInCall(tokenStore.token)) {
-			return
-		}
-
-		const conversation = store.getters.conversation(tokenStore.token)
-		if (conversation?.participantType === PARTICIPANT.TYPE.OWNER
-			|| conversation?.participantType === PARTICIPANT.TYPE.MODERATOR) {
-			showError(t('spreed', 'The recording failed. Please contact your administrator.'))
-		}
-	})
 }
 
 /**

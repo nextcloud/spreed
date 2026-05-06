@@ -37,6 +37,7 @@ import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
 import { useGetMessagesProvider } from './composables/useGetMessages.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
+import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
 import {
@@ -65,6 +66,7 @@ export default {
 	setup() {
 		useHashCheck()
 		useGetMessagesProvider()
+		useRecordingStatusSync()
 
 		return {
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),

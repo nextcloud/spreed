@@ -53,6 +53,7 @@ import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
 import { useGetMessagesProvider } from './composables/useGetMessages.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
+import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
 import { getPublicShareConversationData } from './services/filesIntegrationServices.ts'
@@ -97,6 +98,7 @@ export default {
 	setup() {
 		useHashCheck()
 		useGetMessagesProvider()
+		useRecordingStatusSync()
 
 		return {
 			isInCall: useIsInCall(),

@@ -40,6 +40,7 @@ import { defineAsyncComponent, defineComponent, h } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import LoadingComponent from './components/LoadingComponent.vue'
 import { useIsInCall } from './composables/useIsInCall.js'
+import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
 import { getFileConversation } from './services/filesIntegrationServices.ts'
@@ -93,6 +94,8 @@ export default {
 	},
 
 	setup() {
+		useRecordingStatusSync()
+
 		return {
 			isInCall: useIsInCall(),
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
