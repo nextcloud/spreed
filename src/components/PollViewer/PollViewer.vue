@@ -10,69 +10,71 @@
 		:labelId="dialogHeaderId"
 		@close="dismissModal">
 		<div v-if="poll" class="poll-modal">
-			<div class="poll-modal__header-wrapper">
-				<div class="poll-modal__status">
-					<IconChartBoxOutline :size="20" />
-					<NcChip
-						:variant="pollChipVariant"
-						noClose>
-						{{ isPollOpen ? t('spreed', 'Open poll') : t('spreed', 'Closed poll') }}
-					</NcChip>
-				</div>
-				<div class="poll-modal__header">
-					<span :id="dialogHeaderId" role="heading" aria-level="2">
-						{{ name }}
-					</span>
-				</div>
-				<div v-if="pollSummaryText" class="poll-modal__summary">
-					<span>
-						{{ pollSummaryText }}
-					</span>
-				</div>
-			</div>
-
-			<!-- options -->
-			<div v-if="modalPage === 'voting'" class="poll-modal__options">
-				<NcCheckboxRadioSwitch
-					v-for="(option, index) in poll.options"
-					:key="'option-' + index"
-					v-model="checked"
-					:value="index.toString()"
-					:type="isMultipleAnswers ? 'checkbox' : 'radio'"
-					name="answerType">
-					{{ option }}
-				</NcCheckboxRadioSwitch>
-			</div>
-
-			<!-- results -->
-			<div v-else-if="modalPage === 'results'" class="results__options">
-				<div
-					v-for="(option, index) in poll.options"
-					:key="index"
-					class="results__option">
-					<div class="results__option-title">
-						<p>{{ option }}</p>
-						<p v-if="hasVotesToDisplay" class="percentage">
-							{{ votePercentage[index] + '%' }}
-						</p>
+			<div class="poll-modal__capture-area">
+				<div class="poll-modal__header-wrapper">
+					<div class="poll-modal__status">
+						<IconChartBoxOutline :size="20" />
+						<NcChip
+							:variant="pollChipVariant"
+							noClose>
+							{{ isPollOpen ? t('spreed', 'Open poll') : t('spreed', 'Closed poll') }}
+						</NcChip>
 					</div>
+					<div class="poll-modal__header">
+						<span :id="dialogHeaderId" role="heading" aria-level="2">
+							{{ name }}
+						</span>
+					</div>
+					<div v-if="pollSummaryText" class="poll-modal__summary">
+						<span>
+							{{ pollSummaryText }}
+						</span>
+					</div>
+				</div>
+
+				<!-- options -->
+				<div v-if="modalPage === 'voting'" class="poll-modal__options">
+					<NcCheckboxRadioSwitch
+						v-for="(option, index) in poll.options"
+						:key="'option-' + index"
+						v-model="checked"
+						:value="index.toString()"
+						:type="isMultipleAnswers ? 'checkbox' : 'radio'"
+						name="answerType">
+						{{ option }}
+					</NcCheckboxRadioSwitch>
+				</div>
+
+				<!-- results -->
+				<div v-else-if="modalPage === 'results'" class="results__options">
 					<div
-						v-if="getFilteredDetails(index).length > 0 || selfHasVotedOption(index)"
-						class="results__option__details">
-						<PollVotersDetails
-							v-if="poll.details"
-							:token="token"
-							:details="getFilteredDetails(index)" />
-						<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
-							<IconCheck :size="16" />
-							{{ t('spreed', 'You voted for this option') }}
-						</p>
+						v-for="(option, index) in poll.options"
+						:key="index"
+						class="results__option">
+						<div class="results__option-title">
+							<p>{{ option }}</p>
+							<p v-if="hasVotesToDisplay" class="percentage">
+								{{ votePercentage[index] + '%' }}
+							</p>
+						</div>
+						<div
+							v-if="getFilteredDetails(index).length > 0 || selfHasVotedOption(index)"
+							class="results__option__details">
+							<PollVotersDetails
+								v-if="poll.details"
+								:token="token"
+								:details="getFilteredDetails(index)" />
+							<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
+								<IconCheck :size="16" />
+								{{ t('spreed', 'You voted for this option') }}
+							</p>
+						</div>
+						<NcProgressBar
+							v-if="hasVotesToDisplay"
+							class="results__option-progress"
+							:value="votePercentage[index]"
+							size="medium" />
 					</div>
-					<NcProgressBar
-						v-if="hasVotesToDisplay"
-						class="results__option-progress"
-						:value="votePercentage[index]"
-						size="medium" />
 				</div>
 			</div>
 
@@ -117,20 +119,34 @@
 					{{ t('spreed', 'Withdraw vote') }}
 				</NcButton>
 			</div>
-			<div v-else-if="supportPollDrafts && selfIsOwnerOrModerator" class="poll-modal__actions">
+			<div v-else-if="selfIsOwnerOrModerator" class="poll-modal__actions">
 				<NcActions forceMenu>
-					<NcActionButton v-if="isModerator" @click="createPollDraft">
+					<NcActionButton v-if="supportPollDrafts && isModerator" @click="createPollDraft">
 						<template #icon>
 							<IconFileEditOutline :size="20" />
 						</template>
 						{{ t('spreed', 'Save as draft') }}
 					</NcActionButton>
-					<NcActionLink :href="exportPollURI" :download="exportPollFileName">
+					<NcActionLink v-if="supportPollDrafts" :href="exportPollURI" :download="exportPollFileName">
 						<template #icon>
 							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
 						</template>
 						{{ t('spreed', 'Export draft to file') }}
 					</NcActionLink>
+					<NcActionSeparator v-if="isPollClosed" />
+					<NcActionCaption v-if="isPollClosed" :name="t('spreed', 'Results')" />
+					<NcActionButton v-if="isPollClosed" closeAfterClick @click="downloadAsSpreadsheet('ods')">
+						<template #icon>
+							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+						</template>
+						{{ t('spreed', 'Download as spreadsheet') }}
+					</NcActionButton>
+					<NcActionButton v-if="isPollClosed" closeAfterClick @click="downloadAsSpreadsheet('csv')">
+						<template #icon>
+							<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+						</template>
+						{{ t('spreed', 'Download as CSV') }}
+					</NcActionButton>
 				</NcActions>
 			</div>
 		</div>
@@ -142,8 +158,10 @@
 import { n, t } from '@nextcloud/l10n'
 import { computed, ref, useId } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActionLink from '@nextcloud/vue/components/NcActionLink'
 import NcActions from '@nextcloud/vue/components/NcActions'
+import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcChip from '@nextcloud/vue/components/NcChip'
@@ -161,6 +179,7 @@ import { useIsInCall } from '../../composables/useIsInCall.js'
 import { POLL } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
+import { exportPoll } from '../../services/pollService.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { usePollsStore } from '../../stores/polls.ts'
 import { calculateVotePercentage } from '../../utils/calculateVotePercentage.ts'
@@ -172,7 +191,9 @@ export default {
 	components: {
 		NcActions,
 		NcActionButton,
+		NcActionCaption,
 		NcActionLink,
+		NcActionSeparator,
 		NcCheckboxRadioSwitch,
 		NcChip,
 		NcLoadingIcon,
@@ -287,9 +308,12 @@ export default {
 				return n('spreed', 'Final results • %n vote', 'Final results • %n votes', this.poll?.numVoters)
 			}
 
-			if (this.selfIsOwnerOrModerator || (this.isPollPublic && this.selfHasVoted)) {
+			if ((this.selfIsOwnerOrModerator || this.selfHasVoted) && this.isPollPublic) {
 				return n('spreed', '%n vote', '%n votes', this.poll?.numVoters)
 			} else if (!this.isPollPublic) {
+				if (this.selfIsOwnerOrModerator) {
+					return n('spreed', '%n vote • Your vote is anonymous', '%n votes • Your vote is anonymous', this.poll?.numVoters)
+				}
 				return t('spreed', 'Your vote is anonymous')
 			}
 
@@ -440,6 +464,14 @@ export default {
 			})
 		},
 
+		async downloadAsSpreadsheet(format) {
+			try {
+				await exportPoll(this.token, this.id, format)
+			} catch (error) {
+				console.error('Error downloading poll spreadsheet:', error)
+			}
+		},
+
 		selfHasVotedOption(index) {
 			return this.poll?.votedSelf.includes(index)
 		},
@@ -455,6 +487,11 @@ export default {
 .poll-modal {
 	position: relative;
 	padding: calc(3 * var(--default-grid-baseline));
+
+	&__capture-area {
+		padding: calc(4 * var(--default-grid-baseline));
+		background-color: var(--color-main-background);
+	}
 
 	&__header {
 		display: flex;

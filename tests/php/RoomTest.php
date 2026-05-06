@@ -14,19 +14,17 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Webinary;
-use OCP\AppFramework\Utility\ITimeFactory;
 use Test\TestCase;
 
 class RoomTest extends TestCase {
-	private function createRoom(): Room {
+	private function createRoom(?\DateTime $lobbyTimer = null, int $lobbyState = Webinary::LOBBY_NONE): Room {
 		return new Room(
-			$this->createMock(ITimeFactory::class),
 			1,
 			Room::TYPE_GROUP,
 			Room::READ_WRITE,
 			Room::LISTABLE_NONE,
 			0,
-			Webinary::LOBBY_NONE,
+			$lobbyState,
 			Webinary::SIP_DISABLED,
 			null,
 			'token',
@@ -42,7 +40,7 @@ class RoomTest extends TestCase {
 			null,
 			0,
 			null,
-			null,
+			$lobbyTimer,
 			'',
 			'',
 			BreakoutRoom::MODE_NOT_CONFIGURED,
@@ -55,6 +53,19 @@ class RoomTest extends TestCase {
 			0,
 			0,
 		);
+	}
+
+	public function testGetLobbyStateIsPure(): void {
+		$room = $this->createRoom(null, Webinary::LOBBY_NON_MODERATORS);
+		$this->assertSame(Webinary::LOBBY_NON_MODERATORS, $room->getLobbyState());
+		$this->assertSame(Webinary::LOBBY_NON_MODERATORS, $room->getLobbyState());
+	}
+
+	public function testGetLobbyTimerIsPure(): void {
+		$timer = new \DateTime('+1 hour');
+		$room = $this->createRoom($timer);
+		$this->assertEquals($timer, $room->getLobbyTimer());
+		$this->assertEquals($timer, $room->getLobbyTimer());
 	}
 
 	public function testSetActiveSinceSetsValue(): void {

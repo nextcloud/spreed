@@ -237,9 +237,7 @@ class RoomPluginTest extends TestCase {
 			->method('addResultSet')
 			->with(
 				$this->callback(
-					function (SearchResultType $searchResultType) {
-						return $searchResultType->getLabel() === 'rooms';
-					}
+					static fn (SearchResultType $searchResultType) => $searchResultType->getLabel() === 'rooms'
 				),
 				$expectedMatches,
 				$expectedMatchesExact

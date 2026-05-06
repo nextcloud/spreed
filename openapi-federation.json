@@ -1003,6 +1003,7 @@
                     "isArchived",
                     "isImportant",
                     "isSensitive",
+                    "tagIds",
                     "lastPinnedId",
                     "hiddenPinnedId",
                     "hasScheduledMessages",
@@ -1300,6 +1301,13 @@
                     "isSensitive": {
                         "type": "boolean",
                         "description": "Required capability: `sensitive-conversations`"
+                    },
+                    "tagIds": {
+                        "type": "array",
+                        "description": "IDs of the custom tags this conversation is marked with (only available with `conversation-tags` capability)",
+                        "items": {
+                            "type": "string"
+                        }
                     },
                     "lastPinnedId": {
                         "type": "integer",

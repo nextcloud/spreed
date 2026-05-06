@@ -59,14 +59,15 @@ class CircleMembershipListener extends AMembershipListener {
 	}
 
 	protected function addingCircleMemberEvent(AddingCircleMemberEvent $event): void {
-		$roomsForTargetCircle = $this->manager->getRoomsForActor(Attendee::ACTOR_CIRCLES, $event->getCircle()->getSingleId());
+		$circle = $event->getCircle();
+		$roomsForTargetCircle = $this->manager->getRoomsForActor(Attendee::ACTOR_CIRCLES, $circle->getSingleId());
 		$roomsToAdd = [];
 		foreach ($roomsForTargetCircle as $room) {
 			$roomsToAdd[$room->getId()] = $room;
 		}
 
 		// Check nested circles
-		$memberships = $event->getCircle()->getMemberships();
+		$memberships = $circle->getMemberships();
 		foreach ($memberships as $membership) {
 			$parentId = $membership->getCircleId();
 			$parentRooms = $this->manager->getRoomsForActor(Attendee::ACTOR_CIRCLES, $parentId);
@@ -91,7 +92,7 @@ class CircleMembershipListener extends AMembershipListener {
 		// Get all (nested) memberships in the added $newMember as a flat list
 		$userMembers = $basedOnCircle->getInheritedMembers();
 
-		$invitedBy = $newMember->getInvitedBy();
+		$invitedBy = $circle->hasInitiator() ? $circle->getInitiator() : $newMember->getInvitedBy();
 		if ($invitedBy->getUserType() === Member::TYPE_USER && $invitedBy->getUserId() !== '') {
 			$this->session->set('talk-overwrite-actor-id', $invitedBy->getUserId());
 			$this->session->set('talk-overwrite-actor-displayname', $invitedBy->getDisplayName());
@@ -159,7 +160,7 @@ class CircleMembershipListener extends AMembershipListener {
 			return;
 		}
 
-		$removedBy = $removedMember->getInvitedBy();
+		$removedBy = $circle->hasInitiator() ? $circle->getInitiator() : $removedMember->getInvitedBy();
 		if ($removedBy->getUserType() === Member::TYPE_USER && $removedBy->getUserId() !== '') {
 			$this->session->set('talk-overwrite-actor-id', $removedBy->getUserId());
 			$this->session->set('talk-overwrite-actor-displayname', $removedBy->getDisplayName());

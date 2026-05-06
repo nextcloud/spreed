@@ -557,7 +557,7 @@ export default {
 
 				const previousConversation = this.$store.getters.conversation(prevToken)
 				const previousParticipants = []
-				if (previousConversation.type === CONVERSATION.TYPE.ONE_TO_ONE) {
+				if (previousConversation?.type === CONVERSATION.TYPE.ONE_TO_ONE) {
 					previousParticipants.push(previousConversation.name)
 				}
 

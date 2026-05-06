@@ -47,9 +47,7 @@ class Sorter implements ISorter {
 				$context['itemId'],
 				ChatManager::VERB_MESSAGE,
 				$type,
-				array_map(function (array $suggestion) {
-					return $suggestion['value']['shareWith'];
-				}, $byType));
+				array_map(fn (array $suggestion) => $suggestion['value']['shareWith'], $byType));
 
 			$search = $context['search'];
 			$selfUserId = $context['selfUserId'] ?? null;

@@ -138,9 +138,7 @@ class ScheduledMessageService {
 			return [];
 		}
 
-		$commentIds = array_filter(array_map(static function (array $result) {
-			return $result['parent_id'];
-		}, $result));
+		$commentIds = array_filter(array_map(static fn (array $result) => $result['parent_id'], $result));
 		try {
 			$comments = $this->commentsManager->getCommentsById($commentIds);
 		} catch (Exception) {

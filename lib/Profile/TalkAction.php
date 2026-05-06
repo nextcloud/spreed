@@ -54,11 +54,12 @@ class TalkAction implements ILinkAction {
 		if (!$visitingUser || $visitingUser === $this->targetUser) {
 			return $this->l->t('Open Talk');
 		}
-		return $this->l->t('Talk to %s', [$this->targetUser->getDisplayName()]);
+		return $this->l->t('Chat with %s', [$this->targetUser->getDisplayName()]);
 	}
 
 	#[\Override]
 	public function getPriority(): int {
+		// prioritize actions, low order ones are shown on top
 		return 10;
 	}
 

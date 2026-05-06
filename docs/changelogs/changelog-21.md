@@ -5,6 +5,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 21.1.11 – 2026-04-30
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(calendar): Fix calendar meeting integration after a session related change in server
+  [#17818](https://github.com/nextcloud/spreed/pull/17818)
+- fix(federation): Check session id when leaving a conversation
+  [#17866](https://github.com/nextcloud/spreed/pull/17866)
+
 ## 21.1.10 – 2026-04-02
 ### Changed
 - Update dependencies

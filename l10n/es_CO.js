@@ -18,7 +18,6 @@ OC.L10N.register(
     "Message deleted by author" : "Mensaje borrado por el autor",
     "Administration" : "Administración",
     "System" : "Sistema",
-    "Talk to %s" : "Hablar con %s",
     "File not found" : "Archivo no encontrado",
     "File is too big" : "El archivo es demasiado grande.",
     "Invalid file provided" : "Archivo proporcionado inválido",
@@ -36,6 +35,8 @@ OC.L10N.register(
     "Default" : "Predeterminado",
     "Conversations" : "Conversaciones",
     "Avatar image is not square" : "La imagen del avatar no es un cuadrado",
+    "Favorites" : "Favoritos",
+    "Other" : "Otro",
     "Federation" : "Federación",
     "Invalid date, date format must be YYYY-MM-DD" : "La fecha es inválida, por favor sigue el formato AAAA-MM-DD",
     "Leave call" : "Dejar la llamada",
@@ -108,6 +109,7 @@ OC.L10N.register(
     "Log in" : "Ingresar",
     "Remove from favorites" : "Eliminar de favoritos",
     "Add to favorites" : "Agregar a tus favoritos",
+    "Tags" : "Etiquetas",
     "Home" : "Inicio",
     "Alphabetically" : "Alfabéticamente",
     "Users" : "Usuarios",
@@ -153,7 +155,6 @@ OC.L10N.register(
     "Media" : "Medios de comunicación",
     "Polls" : "Encuestas",
     "Audio" : "Audio",
-    "Other" : "Otro",
     "Group" : "Grupo",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Please reload the page." : "Por favor vuelve a cargar la página.",
@@ -169,6 +170,7 @@ OC.L10N.register(
     "iOS app" : "Aplicación iOS",
     "__language_name__" : "Español (Colombia)",
     "Tasks" : "Tareas",
-    "Notes" : "Notas"
+    "Notes" : "Notas",
+    "Talk to %s" : "Hablar con %s"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

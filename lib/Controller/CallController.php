@@ -26,6 +26,7 @@ use OCA\Talk\Model\PhoneNumberMapper;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
+use OCA\Talk\RoomAttributes;
 use OCA\Talk\Service\ConsentService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
@@ -188,7 +189,7 @@ class CallController extends AEnvironmentAwareOCSController {
 		fseek($output, 0);
 
 		// Clean the room name
-		$cleanedRoomName = preg_replace('/[\/\\:*?"<>|\- ]+/', '-', $this->room->getName());
+		$cleanedRoomName = preg_replace('/[\/\\\\:*?"<>|\- ]+/', '-', $this->room->getName());
 		// Limit to a reasonable length
 		$cleanedRoomName = substr($cleanedRoomName, 0, 100);
 
@@ -275,6 +276,10 @@ class CallController extends AEnvironmentAwareOCSController {
 
 			return $response;
 		}
+
+		// Force silent join for voice rooms
+		$silent = $silent || ($this->room->getAttributes() & RoomAttributes::VOICE_ROOM->value);
+
 
 		try {
 			$this->participantService->changeInCall($this->room, $this->participant, $flags, silent: $silent, lastJoinedCall: $lastJoinedCall->getTimestamp());

@@ -186,9 +186,9 @@ export default {
 			try {
 				this.audioStream = await mediaDevicesManager.getUserMedia({
 					audio: {
-						noiseSuppression: this.settingsStore.noiseSuppression && !this.settingsStore.noiseSuppressionWithModel,
+						noiseSuppression: this.settingsStore.noiseSuppression && this.settingsStore.noiseSuppressionWithModel === 'none',
 						echoCancellation: this.settingsStore.echoCancellation,
-						autoGainControl: this.settingsStore.autoGainControl && !this.settingsStore.noiseSuppressionWithModel,
+						autoGainControl: this.settingsStore.autoGainControl,
 					},
 					video: false,
 				})
@@ -205,7 +205,7 @@ export default {
 
 			// Create a media recorder to capture the stream
 			try {
-				if (this.settingsStore.noiseSuppressionWithModel) {
+				if (this.settingsStore.noiseSuppressionWithModel !== 'none') {
 					this.noiseSuppressionConsumer = await registerNoiseSuppressionWorklet()
 				}
 				const audioStreamProcessed = processNoiseSuppression(this.audioStream, this.noiseSuppressionConsumer, this.settingsStore.noiseSuppressionWithModel)

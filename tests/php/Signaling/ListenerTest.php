@@ -47,7 +47,7 @@ class ListenerTest extends TestCase {
 	protected ParticipantService&MockObject $participantService;
 	protected SessionService&MockObject $sessionService;
 	protected ITimeFactory&MockObject $timeFactory;
-	protected ?Listener $listener;
+	protected ?Listener $listener = null;
 	protected MessageParser&MockObject $messageParser;
 	protected ThreadService&MockObject $threadService;
 	protected IFactory $l10nFactory;

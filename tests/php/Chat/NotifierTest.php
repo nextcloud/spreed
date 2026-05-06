@@ -47,9 +47,7 @@ class NotifierTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->userManager
 			->method('userExists')
-			->willReturnCallback(function ($userId) {
-				return $userId !== 'unknownUser';
-			});
+			->willReturnCallback(fn ($userId) => $userId !== 'unknownUser');
 		$this->groupManager = $this->createMock(IGroupManager::class);
 
 		$this->participantService = $this->createMock(ParticipantService::class);

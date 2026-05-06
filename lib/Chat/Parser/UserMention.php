@@ -95,9 +95,7 @@ class UserMention implements IEventListener {
 		$comment->setMessage($originalCommentMessage, ChatManager::MAX_CHAT_LENGTH);
 
 		// TODO This can be removed once getMentions() returns sorted results (Nextcloud 21+)
-		usort($mentions, static function (array $m1, array $m2) {
-			return mb_strlen($m2['id']) <=> mb_strlen($m1['id']);
-		});
+		usort($mentions, static fn (array $m1, array $m2) => mb_strlen($m2['id']) <=> mb_strlen($m1['id']));
 
 		$metadata = $comment->getMetaData() ?? [];
 		foreach ($mentions as $mention) {
@@ -259,9 +257,7 @@ class UserMention implements IEventListener {
 	 */
 	protected function replaceOutsideCode(string $message, string $search, string $replacement): string {
 		$pattern = '/^```.*?^```|^~~~.*?^~~~|`[^`\n]*`|' . preg_quote($search, '/') . '/sm';
-		return preg_replace_callback($pattern, static function (array $match) use ($search, $replacement): string {
-			return ($match[0] === $search) ? $replacement : $match[0];
-		}, $message) ?? $message;
+		return preg_replace_callback($pattern, static fn (array $match): string => ($match[0] === $search) ? $replacement : $match[0], $message) ?? $message;
 	}
 
 	/**

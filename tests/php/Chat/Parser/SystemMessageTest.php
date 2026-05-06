@@ -82,9 +82,7 @@ class SystemMessageTest extends TestCase {
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->method('t')
-			->willReturnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
 		$this->l->method('n')
 			->willReturnCallback(function (string $singular, string $plural, int $count, array $parameters = []) {
 				$text = $count === 1 ? $singular : $plural;
@@ -1939,9 +1937,7 @@ class SystemMessageTest extends TestCase {
 
 		$parser->expects($this->any())
 			->method('getUser')
-			->willReturnCallback(function ($user) {
-				return ['data' => $user];
-			});
+			->willReturnCallback(fn ($user) => ['data' => $user]);
 
 		// Prepend the actor
 		$expected[1]['actor'] = $actor;

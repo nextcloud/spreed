@@ -10,7 +10,7 @@ import type {
 	UserProfileData,
 } from '../../types/index.ts'
 
-import { n, t } from '@nextcloud/l10n'
+import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { computed, ref, watch } from 'vue'
@@ -34,7 +34,7 @@ import { getConversationAvatarOcsUrl } from '../../services/avatarService.ts'
 import { hasTalkFeature, localCapabilities } from '../../services/CapabilitiesManager.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { getFallbackIconClass } from '../../utils/conversation.ts'
-import { convertToUnix } from '../../utils/formattedTime.ts'
+import { convertToUnix, messageExpirationOptions } from '../../utils/formattedTime.ts'
 
 type MutualEvent = {
 	uri: DashboardEvent['eventLink']
@@ -88,19 +88,11 @@ const isMessageExpirationSet = computed(() => {
 	return conversation.value.messageExpiration > 0
 })
 
-const defaultExpirationOptions: Record<number, string> = {
-	3600: n('spreed', '%n hour', '%n hours', 1),
-	28800: n('spreed', '%n hour', '%n hours', 8),
-	86400: n('spreed', '%n day', '%n days', 1),
-	604800: n('spreed', '%n week', '%n weeks', 1),
-	2419200: n('spreed', '%n week', '%n weeks', 4),
-	0: t('spreed', 'Off'),
-}
-
 const messageExpirationDuration = computed(() => {
 	const { messageExpiration } = conversation.value
 
-	return defaultExpirationOptions[messageExpiration] ?? t('spreed', 'Custom expiration time')
+	return messageExpirationOptions.find((option) => option.id === messageExpiration)?.label
+		?? t('spreed', 'Custom expiration time')
 })
 
 const sidebarTitle = computed(() => {

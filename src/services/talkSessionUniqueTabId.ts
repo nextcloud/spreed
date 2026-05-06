@@ -38,6 +38,12 @@ function generateRandomId(length = 64): string {
  * - on tab duplication (FIXME would need to generate a new id in this case, maybe detect with BroadcastChannel API)
  */
 export function setTalkSessionUniqueTabIdHeader() {
+	const forceNewTabId = SessionStorage.getItem('force-new-talk-session-tab-id') === 'true'
+	if (forceNewTabId) {
+		// FIXME Clear SessionStorage (was duplicated from parent tab)
+		SessionStorage.clear()
+	}
+
 	let tabId = SessionStorage.getItem(X_NEXTCLOUD_TALK_SESSION_TAB_ID)
 	if (!tabId) {
 		tabId = generateRandomId(64)

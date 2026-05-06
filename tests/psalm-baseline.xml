@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.15.1@28dc127af1b5aecd52314f6f645bafc10d0e11f9">
+<files psalm-version="6.16.1@f1f5de594dc76faf8784e02d3dc4716c91c6f6ac">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass>
       <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
@@ -149,6 +149,12 @@
       <code><![CDATA[$this->rooms]]></code>
       <code><![CDATA[$this->rooms]]></code>
     </InvalidPropertyAssignmentValue>
+  </file>
+  <file src="lib/OCP/TalkBackend.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function isAllowedToCreateConversations(): bool {]]></code>
+      <code><![CDATA[public function isEnabledForUser(): bool {]]></code>
+    </MissingOverrideAttribute>
   </file>
   <file src="lib/PublicShare/TemplateLoader.php">
     <UndefinedClass>

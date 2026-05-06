@@ -1219,10 +1219,8 @@ class ChatManager {
 	public function getMessagesForRoomById(Room $chat, array $commentIds): array {
 		$comments = $this->commentsManager->getCommentsById(array_map('strval', $commentIds));
 
-		$comments = array_filter($comments, static function (IComment $comment) use ($chat) {
-			return $comment->getObjectType() === 'chat'
-				&& (int)$comment->getObjectId() === $chat->getId();
-		});
+		$comments = array_filter($comments, static fn (IComment $comment) => $comment->getObjectType() === 'chat'
+				&& (int)$comment->getObjectId() === $chat->getId());
 
 		return $comments;
 	}

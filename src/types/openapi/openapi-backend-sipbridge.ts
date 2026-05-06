@@ -762,6 +762,8 @@ export type components = {
             isImportant: boolean;
             /** @description Required capability: `sensitive-conversations` */
             isSensitive: boolean;
+            /** @description IDs of the custom tags this conversation is marked with (only available with `conversation-tags` capability) */
+            tagIds: string[];
             /**
              * Format: int64
              * @description Required capability: `pinned-messages`

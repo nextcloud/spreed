@@ -68,10 +68,10 @@ abstract class AMembershipListener implements IEventListener {
 			}
 		}
 
-		return array_filter($rooms, static function (Room $room) use ($furtherMemberships) {
+		return array_filter($rooms,
 			// Only delete from rooms where the user is not member via another group
-			return !isset($furtherMemberships[$room->getId()]);
-		});
+			static fn (Room $room) => !isset($furtherMemberships[$room->getId()])
+		);
 	}
 
 	protected function filterRoomsWithOtherCircleMemberships(array $rooms, IUser $user): array {
@@ -97,9 +97,9 @@ abstract class AMembershipListener implements IEventListener {
 			}
 		}
 
-		return array_filter($rooms, static function (Room $room) use ($furtherMemberships) {
+		return array_filter($rooms,
 			// Only delete from rooms where the user is not member via another group
-			return !isset($furtherMemberships[$room->getId()]);
-		});
+			static fn (Room $room) => !isset($furtherMemberships[$room->getId()])
+		);
 	}
 }

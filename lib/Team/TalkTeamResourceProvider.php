@@ -60,15 +60,13 @@ class TalkTeamResourceProvider implements ITeamResourceProvider {
 	#[\Override]
 	public function getSharedWith(string $teamId): array {
 		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_CIRCLES, $teamId);
-		return array_map(function (Room $room) {
-			return new TeamResource(
-				$this,
-				$room->getToken(),
-				$room->getName(),
-				$this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
-				iconURL: $this->avatarService->getAvatarUrl($room),
-			);
-		}, $rooms);
+		return array_map(fn (Room $room) => new TeamResource(
+			$this,
+			$room->getToken(),
+			$room->getName(),
+			$this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
+			iconURL: $this->avatarService->getAvatarUrl($room),
+		), $rooms);
 	}
 
 	/**
@@ -93,9 +91,7 @@ class TalkTeamResourceProvider implements ITeamResourceProvider {
 		try {
 			$room = $this->manager->getRoomByToken($resourceId);
 			$participants = $this->participantService->getParticipantsByActorType($room, Attendee::ACTOR_CIRCLES);
-			return array_map(function (Participant $participant) {
-				return $participant->getAttendee()->getActorId();
-			}, $participants);
+			return array_map(fn (Participant $participant) => $participant->getAttendee()->getActorId(), $participants);
 		} catch (RoomNotFoundException) {
 		}
 

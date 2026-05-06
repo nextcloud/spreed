@@ -7,7 +7,7 @@ import type { ConversationPreset } from '../types/index.ts'
 
 import { getCurrentUser } from '@nextcloud/auth'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { CHAT_STYLE, CONVERSATION, PRIVACY } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
@@ -24,6 +24,7 @@ import {
 	setStartWithoutMedia,
 	setTypingStatusPrivacy,
 } from '../services/settingsService.ts'
+import { isSafari } from '../utils/browserCheck.ts'
 
 type PRIVACY_KEYS = typeof PRIVACY[keyof typeof PRIVACY]
 type TALK_CONFIG_PRIVACY = PRIVACY_KEYS | undefined
@@ -44,10 +45,10 @@ export const useSettingsStore = defineStore('settings', () => {
 	const readStatusPrivacy = ref<PRIVACY_KEYS>(getTalkConfig('local', 'chat', 'read-privacy') as TALK_CONFIG_PRIVACY ?? PRIVACY.PRIVATE)
 	const typingStatusPrivacy = ref<PRIVACY_KEYS>(getTalkConfig('local', 'chat', 'typing-privacy') as TALK_CONFIG_PRIVACY ?? PRIVACY.PRIVATE)
 	const showMediaSettings = ref<boolean>(BrowserStorage.getItem('showMediaSettings') !== 'false')
-	const noiseSuppression = ref<boolean>(BrowserStorage.getItem('noiseSuppression') !== 'false')
-	const noiseSuppressionWithModel = ref<boolean>(BrowserStorage.getItem('noiseSuppressionWithModel') === 'true')
+	const noiseSuppression = ref<boolean>(BrowserStorage.getItem('noiseSuppression') !== 'false' && !isSafari)
+	const noiseSuppressionWithModel = ref<'none' | 'rnnoise' | (string & {})>(BrowserStorage.getItem('noiseSuppressionWithModel') ?? 'none')
 	const echoCancellation = ref<boolean>(BrowserStorage.getItem('echoCancellation') !== 'false')
-	const autoGainControl = ref<boolean>(BrowserStorage.getItem('autoGainControl') !== 'false')
+	const autoGainControl = ref<boolean>(BrowserStorage.getItem('autoGainControl') !== 'false' && !isSafari)
 	const startWithoutMedia = ref<boolean | undefined>(getTalkConfig('local', 'call', 'start-without-media'))
 	const blurVirtualBackgroundEnabled = ref<boolean | undefined>(getTalkConfig('local', 'call', 'blur-virtual-background'))
 	const conversationsListStyle = ref<LIST_STYLE_OPTIONS | undefined>(getTalkConfig('local', 'conversations', 'list-style'))
@@ -105,11 +106,16 @@ export const useSettingsStore = defineStore('settings', () => {
 
 	/**
 	 * Update the noise suppression (with model) settings for the user
+	 * BrowserStorage simply removes an entry instead of storing a string `'none'`, so it's `null` on read from local storage
 	 *
 	 * @param value - new selected state
 	 */
-	function setNoiseSuppressionWithModel(value: boolean) {
-		BrowserStorage.setItem('noiseSuppressionWithModel', value.toString())
+	function setNoiseSuppressionWithModel(value: 'none' | 'rnnoise' | (string & {})) {
+		if (value !== 'none') {
+			BrowserStorage.setItem('noiseSuppressionWithModel', value)
+		} else {
+			BrowserStorage.removeItem('noiseSuppressionWithModel')
+		}
 		noiseSuppressionWithModel.value = value
 	}
 
@@ -224,6 +230,9 @@ export const useSettingsStore = defineStore('settings', () => {
 		presets.value = response.data.ocs.data
 	}
 
+	const EXCLUDED_PRESETS = new Set([CONVERSATION.PRESET.FORCED]) // Should not be shown in UI
+	const visiblePresets = computed(() => presets.value.filter((preset) => !EXCLUDED_PRESETS.has(preset.identifier)))
+
 	return {
 		readStatusPrivacy,
 		typingStatusPrivacy,
@@ -241,6 +250,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		groupMode,
 		liveTranscriptionTargetLanguageId,
 		presets,
+		visiblePresets,
 
 		fetchPresets,
 		updateSortOrder,

@@ -22,7 +22,7 @@ import { LocalCallParticipantModel } from './models/LocalCallParticipantModel.js
 import { LocalMediaModel } from './models/LocalMediaModel.js'
 import SentVideoQualityThrottler from './SentVideoQualityThrottler.js'
 import SpeakingStatusHandler from './SpeakingStatusHandler.js'
-import initWebRtc from './webrtc.js'
+import { destroyWebRtc, initWebRtc } from './webrtc.js'
 
 import './shims/MediaStream.js'
 import './shims/MediaStreamTrack.js'
@@ -265,7 +265,7 @@ async function signalingJoinCall(token, flags, silent, recordingConsent, silentF
 
 			// The previous state might be wiped after the media is started, so
 			// it should be saved now.
-			const noiseSuppressionWithModel = BrowserStorage.getItem('noiseSuppressionWithModel') === 'true'
+			const noiseSuppressionWithModel = !!BrowserStorage.getItem('noiseSuppressionWithModel')
 			const enableAudio = options?.audioOn ?? !BrowserStorage.getItem('audioDisabled_' + token)
 			const enableVideo = options?.videoOn ?? !BrowserStorage.getItem('videoDisabled_' + token)
 			const enableVirtualBackground = !!BrowserStorage.getItem('virtualBackgroundEnabled')
@@ -500,6 +500,18 @@ async function signalingLeaveConversation(token) {
 function signalingKill() {
 	if (signaling) {
 		signaling.disconnect()
+		signaling = null
+	}
+}
+
+/**
+ * Immediately kill the WebRTC instance synchronously
+ * This should be called only in the unload handler
+ */
+function signalingWebRtcKill() {
+	if (webRtc) {
+		destroyWebRtc()
+		webRtc = null
 	}
 }
 
@@ -538,4 +550,5 @@ export {
 	signalingLeaveConversation,
 	signalingSendCallMessage,
 	signalingSetTyping,
+	signalingWebRtcKill,
 }

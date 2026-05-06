@@ -47,9 +47,7 @@ class Delete extends Base {
 		}
 		$count = count($signaling['servers']);
 		// remove all occurrences of $server
-		$servers = array_filter($signaling['servers'], function ($s) use ($server) {
-			return $s['server'] !== $server;
-		});
+		$servers = array_filter($signaling['servers'], fn ($s) => $s['server'] !== $server);
 		$signaling['servers'] = array_values($servers); // reindex
 
 		$this->config->setAppValue('spreed', 'signaling_servers', json_encode($signaling));

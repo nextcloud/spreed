@@ -666,3 +666,19 @@ export type PostAttachmentFolderResponse = ApiResponse<operations['chat-post-att
 
 export type ProbeAttachmentFolderParams = Required<operations['chat-probe-attachment-folder']>['requestBody']['content']['application/json']
 export type ProbeAttachmentFolderResponse = ApiResponse<operations['chat-probe-attachment-folder']['responses'][200]['content']['application/json']>
+
+// Conversation tags
+export type ConversationTag = components['schemas']['ConversationTag']
+
+export type fetchTagsResponse = ApiResponse<operations['conversation_tag-get-tags']['responses'][200]['content']['application/json']>
+export type createTagParams = Required<operations['conversation_tag-create-tag']>['requestBody']['content']['application/json']
+export type createTagResponse = ApiResponse<operations['conversation_tag-create-tag']['responses'][201]['content']['application/json']>
+export type updateTagParams = Required<operations['conversation_tag-update-tag']>['requestBody']['content']['application/json']
+export type updateTagResponse = ApiResponse<operations['conversation_tag-update-tag']['responses'][200]['content']['application/json']>
+export type deleteTagResponse = ApiResponse<operations['conversation_tag-delete-tag']['responses'][200]['content']['application/json']>
+export type reorderTagsParams = Required<operations['conversation_tag-reorder-tags']>['requestBody']['content']['application/json']
+export type reorderTagsResponse = ApiResponse<operations['conversation_tag-reorder-tags']['responses'][200]['content']['application/json']>
+export type updateTagCollapsedParams = Required<operations['conversation_tag-update-tag-collapsed']>['requestBody']['content']['application/json']
+export type updateTagCollapsedResponse = ApiResponse<operations['conversation_tag-update-tag-collapsed']['responses'][200]['content']['application/json']>
+export type assignConversationToTagsParams = Required<operations['room-assign-tags']>['requestBody']['content']['application/json']
+export type assignConversationToTagsResponse = ApiResponse<operations['room-assign-tags']['responses'][200]['content']['application/json']>

@@ -55,6 +55,7 @@ readonly class Forced extends APreset {
 			Parameter::PERMISSIONS => self::CONFIG_PREFIX_FORCE . 'permissions',
 			Parameter::SIP_ENABLED => self::CONFIG_PREFIX_FORCE . 'sip_enabled',
 			Parameter::LISTABLE => self::CONFIG_PREFIX_FORCE . 'listable',
+			Parameter::LOBBY_STATE => self::CONFIG_PREFIX_FORCE . 'lobby_state',
 			Parameter::MESSAGE_EXPIRATION => self::CONFIG_PREFIX_FORCE . 'message_expiration',
 			default => null,
 		};

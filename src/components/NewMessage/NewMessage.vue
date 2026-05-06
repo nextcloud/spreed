@@ -126,14 +126,13 @@
 
 				<NcRichContenteditable
 					ref="richContenteditable"
-					:key="container"
 					v-model="text"
 					:class="{ 'new-message-form__input-rich--required': errorMessage }"
 					:title="errorMessage"
 					:autoComplete="autoComplete"
 					:disabled="disabled"
 					:userData="userData"
-					:menuContainer="containerElement"
+					:menuContainer="container"
 					:placeholder="placeholderText"
 					:aria-label="placeholderText"
 					:dir="text ? 'auto' : undefined"
@@ -644,10 +643,6 @@ export default {
 
 		hasText() {
 			return this.text.trim() !== ''
-		},
-
-		containerElement() {
-			return document.querySelector(this.container)
 		},
 
 		isOneToOne() {

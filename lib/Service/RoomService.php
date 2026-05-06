@@ -494,7 +494,7 @@ class RoomService {
 		}
 
 		$newName = trim($newName);
-		$oldName = $oldName ?? $room->getName();
+		$oldName ??= $room->getName();
 		if ($newName === $oldName) {
 			return;
 		}
@@ -529,8 +529,15 @@ class RoomService {
 	 * @param bool $dispatchEvents (Only skip if the room is created in the same PHP request)
 	 * @throws LobbyException
 	 */
+	public function validateLobbyTimer(Room $room): void {
+		$lobbyTimer = $room->getLobbyTimer();
+		if ($lobbyTimer !== null && $lobbyTimer < $this->timeFactory->getDateTime()) {
+			$this->setLobby($room, Webinary::LOBBY_NONE, null, true);
+		}
+	}
+
 	public function setLobby(Room $room, int $newState, ?\DateTime $dateTime, bool $timerReached = false, bool $dispatchEvents = true): void {
-		$oldState = $room->getLobbyState(false);
+		$oldState = $room->getLobbyState();
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
 			throw new LobbyException(LobbyException::REASON_TYPE);
@@ -1346,7 +1353,7 @@ class RoomService {
 			$this->setLastActivity($local, $lastActivity);
 			$changed[] = ARoomSyncedEvent::PROPERTY_LAST_ACTIVITY;
 		}
-		if (isset($host['lobbyState'], $host['lobbyTimer']) && ($host['lobbyState'] !== $local->getLobbyState(false) || $host['lobbyTimer'] !== ((int)$local->getLobbyTimer(false)?->getTimestamp()))) {
+		if (isset($host['lobbyState'], $host['lobbyTimer']) && ($host['lobbyState'] !== $local->getLobbyState() || $host['lobbyTimer'] !== ((int)$local->getLobbyTimer()?->getTimestamp()))) {
 			$hostTimer = $host['lobbyTimer'] === 0 ? null : $this->timeFactory->getDateTime('@' . $host['lobbyTimer']);
 			try {
 				$this->setLobby($local, $host['lobbyState'], $hostTimer);

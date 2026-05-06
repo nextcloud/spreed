@@ -9,7 +9,7 @@
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { reactive } from 'vue'
-import { CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from './constants.ts'
+import { CALL, PARTICIPANT } from './constants.ts'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.ts'
 import { setTalkSessionUniqueTabIdHeader } from './services/talkSessionUniqueTabId.ts'
@@ -17,6 +17,7 @@ import store from './store/index.js'
 import { useIntegrationsStore } from './stores/integrations.js'
 import pinia from './stores/pinia.ts'
 import { useTokenStore } from './stores/token.ts'
+import { isSafari } from './utils/browserCheck.ts'
 
 import '@nextcloud/dialogs/style.css'
 
@@ -111,6 +112,11 @@ function cleanOutdatedBrowserStorageKeys() {
 			localStorage.removeItem(key)
 		}
 	})
+
+	if (isSafari) {
+		BrowserStorage.removeItem('noiseSuppression') // Not supported by Safari browsers
+		BrowserStorage.removeItem('autoGainControl') // Not supported by Safari browsers
+	}
 }
 
 setTalkSessionUniqueTabIdHeader()

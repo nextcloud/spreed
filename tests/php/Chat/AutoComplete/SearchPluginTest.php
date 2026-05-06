@@ -51,9 +51,7 @@ class SearchPluginTest extends TestCase {
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
 	}
 
 	/**
@@ -182,9 +180,7 @@ class SearchPluginTest extends TestCase {
 
 		$plugin = $this->getPlugin(['createResult']);
 		$plugin->method('createResult')
-			->willReturnCallback(function ($type, $uid, $name) {
-				return [$uid => $name];
-			});
+			->willReturnCallback(fn ($type, $uid, $name) => [$uid => $name]);
 
 		self::invokePrivate($plugin, 'searchUsers', [$search, $users, $result]);
 	}
@@ -217,9 +213,7 @@ class SearchPluginTest extends TestCase {
 		$plugin = $this->getPlugin(['createGuestResult']);
 		$plugin->expects($this->any())
 			->method('createGuestResult')
-			->willReturnCallback(function ($hash, $name) {
-				return [$hash => $name];
-			});
+			->willReturnCallback(fn ($hash, $name) => [$hash => $name]);
 
 		self::invokePrivate($plugin, 'searchGuests', [$search, $attendees, $result]);
 	}
@@ -294,15 +288,13 @@ class SearchPluginTest extends TestCase {
 		$plugin = $this->getPlugin(['createGroupResult']);
 		$plugin->expects($this->any())
 			->method('createGroupResult')
-			->willReturnCallback(function ($groupId) {
-				return [
-					'label' => $groupId,
-					'value' => [
-						'shareType' => 'group',
-						'shareWith' => 'group/' . $groupId,
-					],
-				];
-			});
+			->willReturnCallback(fn ($groupId) => [
+				'label' => $groupId,
+				'value' => [
+					'shareType' => 'group',
+					'shareWith' => 'group/' . $groupId,
+				],
+			]);
 		$searchResult = new SearchResult();
 		self::invokePrivate($plugin, 'searchGroups', [$search, $groups, $searchResult]);
 		$actual = $searchResult->asArray();

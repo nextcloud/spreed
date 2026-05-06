@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import BrowserStorage from '../../../services/BrowserStorage.js'
 import {
 	processNoiseSuppression,
 	registerNoiseSuppressionWorklet,
@@ -115,7 +116,8 @@ export default class NoiseSuppressor extends TrackSinkSource {
 		}
 
 		this._inputStream = new MediaStream([track])
-		this._outputStream = processNoiseSuppression(this._inputStream, this._noiseSuppressionConsumer, true)
+		const model = BrowserStorage.getItem('noiseSuppressionWithModel')
+		this._outputStream = processNoiseSuppression(this._inputStream, this._noiseSuppressionConsumer, model)
 		const processedTrack = this._outputStream.getAudioTracks()[0]
 		processedTrack.enabled = this._audioEnabled
 

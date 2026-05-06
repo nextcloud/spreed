@@ -89,6 +89,7 @@ export const CONVERSATION = {
 		FORCED: 'forced',
 		VOICE_ROOM: 'voiceroom',
 		PRESENTATION: 'presentation',
+		WEBINAR: 'webinar',
 	},
 
 	STATE: {

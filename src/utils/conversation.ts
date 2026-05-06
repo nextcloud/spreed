@@ -1,11 +1,14 @@
-import type { Conversation, EventTimeRange } from '../types/index.ts'
-
-import { CONVERSATION, PARTICIPANT } from '../constants.ts'
-import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 /**
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import type { MaybeRef } from 'vue'
+import type { Conversation, EventTimeRange } from '../types/index.ts'
+
+import { toValue } from 'vue'
+import { CONVERSATION, PARTICIPANT } from '../constants.ts'
+import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { ONE_HOUR_IN_MS } from './formattedTime.ts'
 
 type Filter = 'unread' | 'mentions' | 'events'
@@ -185,4 +188,48 @@ export function getFallbackIconClass(conversation: Conversation, forceFallback: 
 
 	// Fall-through for other conversation suggestions to user-avatar handling
 	return undefined
+}
+
+/**
+ * Sort list of conversation according to given group/order arguments (e.g. based on user preferences)
+ *
+ * @param list - Conversations list
+ * @param groupMode - User selected grouping mode for conversations
+ * @param sortOrder - User selected sort order for conversations
+ */
+export function sortConversationsList(
+	list: MaybeRef<Conversation[]>,
+	groupMode: typeof CONVERSATION.GROUP_MODE[keyof typeof CONVERSATION.GROUP_MODE],
+	sortOrder: typeof CONVERSATION.SORT_ORDER[keyof typeof CONVERSATION.SORT_ORDER],
+) {
+	return toValue(list).slice()
+		.sort((conversation1, conversation2) => {
+			// Favorites always first
+			if (conversation1.isFavorite !== conversation2.isFavorite) {
+				return conversation1.isFavorite ? -1 : 1
+			}
+
+			if (groupMode !== CONVERSATION.GROUP_MODE.NONE) {
+				const isOneToOne1 = [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(conversation1.type)
+				const isOneToOne2 = [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(conversation2.type)
+
+				if (isOneToOne1 !== isOneToOne2) {
+					if (groupMode === CONVERSATION.GROUP_MODE.GROUP_FIRST) {
+						// Group mode: groups first
+						return isOneToOne1 ? 1 : -1
+					} else if (groupMode === CONVERSATION.GROUP_MODE.PRIVATE_FIRST) {
+						// Group mode: private first
+						return isOneToOne1 ? -1 : 1
+					}
+				}
+			}
+
+			// Sort order: by alphabet A->Z
+			if (sortOrder === CONVERSATION.SORT_ORDER.ALPHABETICAL) {
+				return (conversation1.displayName).localeCompare(conversation2.displayName)
+			}
+
+			// Default (legacy) sort order: by recent activity
+			return conversation2.lastActivity - conversation1.lastActivity
+		})
 }

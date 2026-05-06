@@ -12,6 +12,7 @@ use OCA\Talk\Config as TalkConfig;
 use OCA\Talk\Room;
 use OCP\Constants;
 use OCP\Files\Folder;
+use OCP\Files\IFilenameValidator;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotEnoughSpaceException;
@@ -35,6 +36,7 @@ class ConversationFolderService {
 		private TalkConfig $talkConfig,
 		private IRootFolder $rootFolder,
 		private IShareManager $shareManager,
+		private IFilenameValidator $filenameValidator,
 		private LoggerInterface $logger,
 	) {
 	}
@@ -202,6 +204,7 @@ class ConversationFolderService {
 	 * @param list<string> $reserved
 	 */
 	private function findUniqueNameForProbe(Folder $folder, string $desiredName, array $reserved): string {
+		$desiredName = $this->filenameValidator->sanitizeFilename($desiredName);
 		if (!$this->isProbeNameTaken($folder, $desiredName, $reserved)) {
 			return $desiredName;
 		}

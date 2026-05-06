@@ -354,7 +354,7 @@ class BotService {
 	 *                    #param string|null $jsonBody
 	 */
 	protected function sendAsyncRequest(BotServer $botServer, array $body, ?string $jsonBody = null): void {
-		$jsonBody = $jsonBody ?? json_encode($body, JSON_THROW_ON_ERROR);
+		$jsonBody ??= json_encode($body, JSON_THROW_ON_ERROR);
 
 		$random = $this->secureRandom->generate(64);
 		$hash = hash_hmac('sha256', $random . $jsonBody, $botServer->getSecret());

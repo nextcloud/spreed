@@ -56,9 +56,7 @@ class Delete extends Base {
 
 		$count = count($servers);
 		// remove all occurrences which match $schemes, $server and $protocols
-		$servers = array_filter($servers, function ($s) use ($schemes, $server, $protocols) {
-			return $s['schemes'] !== $schemes || $s['server'] !== $server || $s['protocols'] !== $protocols;
-		});
+		$servers = array_filter($servers, fn ($s) => $s['schemes'] !== $schemes || $s['server'] !== $server || $s['protocols'] !== $protocols);
 		$servers = array_values($servers); // reindex
 
 		$this->config->setAppValue('spreed', 'turn_servers', json_encode($servers));

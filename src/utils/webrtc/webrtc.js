@@ -437,7 +437,7 @@ function usersInCallChanged(signaling, users) {
  * @param {object} _callParticipantCollection Collection with participants
  * @param {object} _localCallParticipantModel The local participant
  */
-export default function initWebRtc(signaling, _callParticipantCollection, _localCallParticipantModel) {
+export function initWebRtc(signaling, _callParticipantCollection, _localCallParticipantModel) {
 	callParticipantCollection = _callParticipantCollection
 	localCallParticipantModel = _localCallParticipantModel
 
@@ -1626,4 +1626,15 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	})
 
 	return webrtc
+}
+
+/**
+ * Destroy the WebRTC instance and clean up resources
+ */
+export function destroyWebRtc() {
+	if (webrtc) {
+		webrtc.leaveCall()
+		webrtc.disconnect()
+		webrtc = null
+	}
 }

@@ -12,6 +12,19 @@ namespace OCA\Talk;
 /**
  * @psalm-type TalkActorTypes = 'users'|'groups'|'guests'|'emails'|'circles'|'bridged'|'bots'|'federated_users'|'phones'
  *
+ * @psalm-type TalkConversationTag = array{
+ *     // SnowflakeID
+ *     id: numeric-string,
+ *     // Display name
+ *     name: string,
+ *     // Sort order from 0 (top) to higher (bottom)
+ *     sortOrder: int,
+ *     // Whether the tag list should be open or collapsed
+ *     collapsed: bool,
+ *     // favorites and other are special tags and have a fixed sorting position
+ *     type: 'custom'|'favorites'|'other',
+ * }
+ *
  * @psalm-type TalkBan = array{
  *     // Identifier of the ban
  *     id: int,
@@ -562,6 +575,8 @@ namespace OCA\Talk;
  *     isImportant: bool,
  *     // Required capability: `sensitive-conversations`
  *     isSensitive: bool,
+ *     // IDs of the custom tags this conversation is marked with (only available with `conversation-tags` capability)
+ *     tagIds: list<string>,
  *     // Required capability: `pinned-messages`
  *     lastPinnedId: int,
  *     // Required capability: `pinned-messages`

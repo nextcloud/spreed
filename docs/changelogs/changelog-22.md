@@ -5,6 +5,39 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.12 – 2026-04-30
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(bots): Hide bots from apps when their app is disabled
+  [#17668](https://github.com/nextcloud/spreed/pull/17668)
+- fix(bots): Don't soft-fail when creating incompatible bots
+  [#17665](https://github.com/nextcloud/spreed/pull/17665)
+- fix(calendar): Make appointment conversations meetings so they expire after the appointment
+  [#17646](https://github.com/nextcloud/spreed/pull/17646)
+- fix(call): Fix joining the conversation with breakout rooms or extending 1-1
+  [#17785](https://github.com/nextcloud/spreed/pull/17785)
+  [#17710](https://github.com/nextcloud/spreed/pull/17710)
+  [#17779](https://github.com/nextcloud/spreed/pull/17779)
+- fix(chat): Improve "language detection" option in the translation dialogue
+  [#17677](https://github.com/nextcloud/spreed/pull/17677)
+- fix(commands): Correctly exclude only 1-1 from managing via occ
+  [#17740](https://github.com/nextcloud/spreed/pull/17740)
+- fix(conversation): Show filtered conversations right away when searching
+  [#17841](https://github.com/nextcloud/spreed/pull/17841)
+- fix(conversation): Make conversation order consistent when searching
+  [#17658](https://github.com/nextcloud/spreed/pull/17658)
+- fix(conversation): Gracefully handle cases when the conversation list is too big for the browser storage
+  [#17650](https://github.com/nextcloud/spreed/pull/17650)
+- fix(federation): Check session id when leaving a conversation
+  [#17867](https://github.com/nextcloud/spreed/pull/17867)
+- fix(recording): Allow MP4 as recording mimetype
+  [#17648](https://github.com/nextcloud/spreed/pull/17648)
+- fix(transcriptions): Fix live transcription app getting the signaling settings
+  [#17739](https://github.com/nextcloud/spreed/pull/17739)
+
 ## 22.0.11 – 2026-04-02
 ### Changed
 - Update dependencies

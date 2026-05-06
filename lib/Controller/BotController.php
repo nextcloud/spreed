@@ -376,9 +376,7 @@ class BotController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function listBots(): DataResponse {
-		$alreadyInstalled = array_map(static function (BotConversation $bot): int {
-			return $bot->getBotId();
-		}, $this->botConversationMapper->findForToken($this->room->getToken()));
+		$alreadyInstalled = array_map(static fn (BotConversation $bot): int => $bot->getBotId(), $this->botConversationMapper->findForToken($this->room->getToken()));
 
 		$data = [];
 		$bots = $this->botServerMapper->getAllBots();
@@ -439,9 +437,7 @@ class BotController extends AEnvironmentAwareOCSController {
 			], Http::STATUS_BAD_REQUEST);
 		}
 
-		$alreadyInstalled = array_map(static function (BotConversation $bot): int {
-			return $bot->getBotId();
-		}, $this->botConversationMapper->findForToken($this->room->getToken()));
+		$alreadyInstalled = array_map(static fn (BotConversation $bot): int => $bot->getBotId(), $this->botConversationMapper->findForToken($this->room->getToken()));
 
 		if (in_array($botId, $alreadyInstalled)) {
 			return new DataResponse($this->formatBot($bot, true), Http::STATUS_OK);

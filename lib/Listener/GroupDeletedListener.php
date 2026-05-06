@@ -55,9 +55,7 @@ class GroupDeletedListener implements IEventListener {
 		$array = json_decode($json, true);
 		$gids = \is_array($array) ? $array : [];
 
-		$gids = array_filter($gids, static function ($gid) use ($removeGroupId) {
-			return $gid !== $removeGroupId;
-		});
+		$gids = array_filter($gids, static fn ($gid) => $gid !== $removeGroupId);
 
 		$this->config->setAppValue('spreed', $configKey, json_encode($gids));
 	}

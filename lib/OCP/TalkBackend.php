@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\OCP;
 
+use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
@@ -16,6 +17,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\IURLGenerator;
+use OCP\IUserSession;
 use OCP\Talk\IConversation;
 use OCP\Talk\IConversationOptions;
 use OCP\Talk\ITalkBackend;
@@ -27,6 +29,8 @@ class TalkBackend implements ITalkBackend {
 		protected ParticipantService $participantService,
 		protected RoomService $roomService,
 		protected IURLGenerator $url,
+		protected IUserSession $userSession,
+		protected Config $config,
 	) {
 	}
 
@@ -67,5 +71,22 @@ class TalkBackend implements ITalkBackend {
 	public function deleteConversation(string $id): void {
 		$room = $this->manager->getRoomByToken($id);
 		$this->roomService->deleteRoom($room);
+	}
+
+	public function isAllowedToCreateConversations(): bool {
+		$user = $this->userSession->getUser();
+		if ($user === null) {
+			return false;
+		}
+
+		return !$this->config->isNotAllowedToCreateConversations($user);
+	}
+
+	public function isEnabledForUser(): bool {
+		$user = $this->userSession->getUser();
+		if ($user === null) {
+			return false;
+		}
+		return !$this->config->isDisabledForUser($user);
 	}
 }

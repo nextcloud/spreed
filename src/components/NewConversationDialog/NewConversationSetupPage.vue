@@ -48,8 +48,8 @@
 					v-for="option in conversationTypeOptions"
 					:key="option.value"
 					class="conversation-type-selector__option"
-					:class="[{ 'conversation-type-selector__option--active': conversationType === option.value }]"
-					@click="conversationType = option.value">
+					:class="[{ 'conversation-type-selector__option--active': preset === option.value }]"
+					@click="preset = option.value">
 					<span class="conversation-type-selector__header">
 						<NcIconSvgWrapper v-if="option.svg" :svg="option.svg" :size="20" />
 						<component :is="option.icon" v-else-if="option.icon" :size="20" />
@@ -59,6 +59,15 @@
 				</button>
 			</div>
 		</template>
+		<div v-if="presetHiddenParameters.length" class="conversation-type-selector__summary">
+			<span>{{ t('spreed', 'Default parameters are:') }}</span>
+			<ul class="conversation-type-selector__summary-list">
+				<li v-for="parameter in presetHiddenParameters" :key="parameter">
+					{{ parameter }}
+				</li>
+			</ul>
+			<span>{{ t('spreed', 'These settings can be changed once the conversation is created.') }}</span>
+		</div>
 
 		<label class="new-group-conversation__label">
 			{{ t('spreed', 'Conversation visibility') }}
@@ -97,12 +106,15 @@ import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
+import IconMonitorAccount from 'vue-material-design-icons/MonitorAccount.vue'
+import IconPresentation from 'vue-material-design-icons/Presentation.vue'
 import ConversationAvatarEditor from '../ConversationSettings/ConversationAvatarEditor.vue'
 import ListableSettings from '../ConversationSettings/ListableSettings.vue'
 import IconVolumeHighOutline from '../../../img/material-icons/volume-high-outline.svg?raw'
 import { CONVERSATION } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
+import { messageExpirationOptions } from '../../utils/formattedTime.ts'
 import generatePassword from '../../utils/generatePassword.ts'
 
 const supportsAvatar = hasTalkFeature('local', 'avatar')
@@ -112,6 +124,51 @@ const maxDescriptionLength = getTalkConfig('local', 'conversations', 'descriptio
 const presetIcons = {
 	[CONVERSATION.PRESET.DEFAULT]: { icon: IconForumOutline },
 	[CONVERSATION.PRESET.VOICE_ROOM]: { svg: IconVolumeHighOutline },
+	[CONVERSATION.PRESET.PRESENTATION]: { icon: IconPresentation },
+	[CONVERSATION.PRESET.WEBINAR]: { icon: IconMonitorAccount },
+}
+
+/**
+ *
+ * @param seconds
+ */
+function formatExpiration(seconds) {
+	const duration = messageExpirationOptions.find((option) => option.id === seconds)?.label
+		?? t('spreed', 'Custom expiration time')
+	return t('spreed', 'Message expiration set: {duration}', { duration })
+}
+
+/**
+ *
+ * @param key
+ * @param value
+ */
+function formatHiddenParameter(key, value) {
+	switch (key) {
+		case 'messageExpiration':
+			return value > 0 ? formatExpiration(value) : null
+		case 'readOnly':
+			return value === 1 ? t('spreed', 'This conversation is read-only') : null
+		case 'lobbyState':
+			return value === 1 ? t('spreed', 'Enable lobby, restricting the conversation to moderators') : null
+		case 'recordingConsent':
+			return value === 1 ? t('spreed', 'Require recording consent before joining call in this conversation') : null
+		case 'sipEnabled':
+			if (value === 1) {
+				return t('spreed', 'Enable phone and SIP dial-in')
+			}
+			if (value === 2) {
+				return [
+					t('spreed', 'Enable phone and SIP dial-in'),
+					t('spreed', 'Allow to dial-in without a PIN'),
+				]
+			}
+			return null
+		case 'mentionPermissions':
+			return value === 1 ? t('spreed', 'Only moderators are allowed to mention @all') : null
+		default:
+			return null
+	}
 }
 export default {
 
@@ -210,8 +267,7 @@ export default {
 		},
 
 		conversationTypeOptions() {
-			return this.settingsStore.presets
-				.filter((preset) => preset.identifier in presetIcons)
+			return this.settingsStore.visiblePresets
 				.map((preset) => ({
 					value: preset.identifier,
 					label: preset.name,
@@ -220,23 +276,32 @@ export default {
 				}))
 		},
 
-		conversationType: {
-			get() {
-				const attributes = this.newConversation.attributes
-				if (attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM) {
-					return CONVERSATION.PRESET.VOICE_ROOM
+		presetHiddenParameters() {
+			const preset = this.settingsStore.presets.find((p) => p.identifier === this.preset)
+			if (!preset) {
+				return []
+			}
+			const forcedParameters = { ...this.settingsStore.presets.find((p) => p.identifier === CONVERSATION.PRESET.FORCED)?.parameters }
+			const labels = []
+			for (const [key, value] of Object.entries(preset.parameters)) {
+				if (key in forcedParameters) {
+					continue
 				}
-				return CONVERSATION.PRESET.DEFAULT
+				const label = formatHiddenParameter(key, value)
+				if (label) {
+					labels.push(...(Array.isArray(label) ? label : [label]))
+				}
+			}
+			return labels
+		},
+
+		preset: {
+			get() {
+				return this.newConversation.preset ?? CONVERSATION.PRESET.DEFAULT
 			},
 
 			set(preset) {
-				let attributes = this.newConversation.attributes
-				if (preset === CONVERSATION.PRESET.VOICE_ROOM) {
-					attributes |= CONVERSATION.ATTRIBUTE.VOICE_ROOM
-				} else {
-					attributes &= ~CONVERSATION.ATTRIBUTE.VOICE_ROOM
-				}
-				this.updateNewConversation({ attributes })
+				this.applyPresetParameters(preset)
 			},
 		},
 
@@ -284,6 +349,44 @@ export default {
 		updateNewConversation(data) {
 			this.$emit('update:newConversation', { ...this.newConversation, ...data })
 		},
+
+		applyPresetParameters(preset) {
+			const parameters = this.settingsStore.presets.find((p) => p.identifier === preset)?.parameters ?? {}
+
+			let attributes = this.newConversation.attributes
+			if (preset === CONVERSATION.PRESET.VOICE_ROOM) {
+				attributes |= CONVERSATION.ATTRIBUTE.VOICE_ROOM
+			} else {
+				attributes &= ~CONVERSATION.ATTRIBUTE.VOICE_ROOM
+			}
+
+			const update = { attributes, preset }
+			let nextListable = this.listable
+
+			for (const [key, value] of Object.entries(parameters)) {
+				if (key === 'listable') {
+					nextListable = value
+				} else if (key === 'roomType') {
+					update.type = value
+					if (value !== CONVERSATION.TYPE.PUBLIC) {
+						update.hasPassword = false
+					} else if (forcePasswordProtection) {
+						update.hasPassword = true
+					}
+				} else {
+					update[key] = value
+				}
+			}
+
+			this.updateNewConversation(update)
+
+			if (nextListable !== this.listable) {
+				this.$emit('update:listable', nextListable)
+			}
+			if (update.type && update.type !== CONVERSATION.TYPE.PUBLIC) {
+				this.$emit('update:password', '')
+			}
+		},
 	},
 }
 </script>
@@ -293,7 +396,7 @@ export default {
 	&__wrapper {
 		display: flex;
 		gap: var(--default-grid-baseline);
-		align-items: flex-start;
+		align-items: flex-end;
 
 		.checkbox__label {
 			white-space: nowrap;
@@ -317,11 +420,10 @@ export default {
 }
 
 .conversation-type-selector {
-	display: flex;
-	gap: var(--default-grid-baseline);
+	display: grid;
+	grid-template-columns: repeat(2, minmax(200px, 1fr));
 
 	&__option {
-		flex: 1;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
@@ -340,6 +442,10 @@ export default {
 		&--active {
 			border-color: var(--color-primary-element);
 		}
+
+		&:only-child {
+			grid-column: 1 / -1; // span a single card
+		}
 	}
 
 	&__header {
@@ -357,6 +463,18 @@ export default {
 		color: var(--color-text-maxcontrast);
 		font-size: small;
 		font-weight: normal;
+	}
+
+	&__summary {
+		margin-top: var(--default-grid-baseline);
+		color: var(--color-text-maxcontrast);
+		font-size: small;
+	}
+
+	&__summary-list {
+		margin: 0;
+		padding-inline-start: calc(var(--default-grid-baseline) * 5);
+		list-style: disc;
 	}
 }
 </style>

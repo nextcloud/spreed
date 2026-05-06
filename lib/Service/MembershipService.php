@@ -47,9 +47,7 @@ class MembershipService {
 	 */
 	protected function filterUsersWithOtherGroupMemberships(Room $room, array $users): array {
 		$groupAttendees = $this->attendeeMapper->getActorsByType($room->getId(), Attendee::ACTOR_GROUPS);
-		$groupIds = array_map(static function (Attendee $attendee) {
-			return $attendee->getActorId();
-		}, $groupAttendees);
+		$groupIds = array_map(static fn (Attendee $attendee) => $attendee->getActorId(), $groupAttendees);
 
 		if (empty($groupIds)) {
 			return $users;
@@ -78,9 +76,7 @@ class MembershipService {
 		}
 
 		$circleAttendees = $this->attendeeMapper->getActorsByType($room->getId(), Attendee::ACTOR_CIRCLES);
-		$circleIds = array_map(static function (Attendee $attendee) {
-			return $attendee->getActorId();
-		}, $circleAttendees);
+		$circleIds = array_map(static fn (Attendee $attendee) => $attendee->getActorId(), $circleAttendees);
 
 		if (empty($circleIds)) {
 			return $users;
@@ -91,9 +87,7 @@ class MembershipService {
 			// Only delete users when the user is not member via another circle
 			$federatedUser = $circlesManager->getFederatedUser($user->getUID(), Member::TYPE_USER);
 			$memberships = $federatedUser->getMemberships();
-			$userCircles = array_map(static function (Membership $membership) {
-				return $membership->getCircleId();
-			}, $memberships);
+			$userCircles = array_map(static fn (Membership $membership) => $membership->getCircleId(), $memberships);
 			return empty(array_intersect($userCircles, $circleIds));
 		});
 	}

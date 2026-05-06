@@ -211,9 +211,7 @@ class UserMentionTest extends TestCase {
 
 		$this->commentsManager->expects($this->exactly(2))
 			->method('resolveDisplayName')
-			->willReturnCallback(function ($type, $id) {
-				return $id . ' display name';
-			});
+			->willReturnCallback(fn ($type, $id) => $id . ' display name');
 
 		$this->userManager->expects($this->exactly(2))
 			->method('getDisplayName')
@@ -506,9 +504,7 @@ class UserMentionTest extends TestCase {
 			->willThrowException(new ParticipantNotFoundException());
 		$this->l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
 
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @"guest/123456"', []);
@@ -546,9 +542,7 @@ class UserMentionTest extends TestCase {
 			->willThrowException(new ParticipantNotFoundException());
 		$this->l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
 
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @"guest/123456", and again @"guest/123456"', []);
@@ -594,9 +588,7 @@ class UserMentionTest extends TestCase {
 			->willReturn($participant);
 		$this->l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
 
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @"guest/abcdef", and again @"guest/abcdef"', []);

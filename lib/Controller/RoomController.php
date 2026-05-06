@@ -63,6 +63,7 @@ use OCA\Talk\RoomPresets\VoiceRoom;
 use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ChecksumVerificationService;
+use OCA\Talk\Service\ConversationTagService;
 use OCA\Talk\Service\InvitationService;
 use OCA\Talk\Service\NoteToSelfService;
 use OCA\Talk\Service\ParticipantService;
@@ -159,6 +160,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		protected IURLGenerator $url,
 		protected IL10N $l,
 		protected ThreadService $threadService,
+		protected ConversationTagService $conversationTagService,
 		protected Forced $forcedParameters,
 	) {
 		parent::__construct($appName, $request);
@@ -282,9 +284,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		$readPrivacy = $this->talkConfig->getUserReadPrivacy($this->userId);
 		if ($readPrivacy === Participant::PRIVACY_PUBLIC) {
-			$roomIds = array_map(static function (Room $room) {
-				return $room->getId();
-			}, $rooms);
+			$roomIds = array_map(static fn (Room $room) => $room->getId(), $rooms);
 			$this->commonReadMessages = $this->participantService->getLastCommonReadChatMessageForMultipleRooms($roomIds);
 		}
 
@@ -629,7 +629,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param array<string, list<string>> $participants List of participants to add grouped by type (only available with `conversation-creation-all` capability)
 	 * @psalm-param TalkInvitationList $participants
 	 * @param ?string $preset Identifier of the preset that was used (only available with `conversation-preset` capability)
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_ACCEPTED, TalkRoomWithInvalidInvitations, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'avatar'|'description'|'invite'|'listable'|'lobby'|'lobby-timer'|'mention-permissions'|'message-expiration'|'name'|'object'|'object-id'|'object-type'|'password'|'permissions'|'read-only'|'recording-consent'|'sip-enabled'|'type', message?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_ACCEPTED, TalkRoomWithInvalidInvitations, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'avatar'|'description'|'invite'|'listable'|'lobby'|'lobby-timer'|'mention-permissions'|'message-expiration'|'name'|'object'|'object-id'|'object-type'|'password'|'permissions'|'preset'|'read-only'|'recording-consent'|'sip-enabled'|'type', message?: string}, array{}>
 	 *
 	 * 200: Room already existed
 	 * 201: Room created successfully
@@ -755,6 +755,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		$attributes = RoomAttributes::NONE->value;
 		if ($preset === VoiceRoom::getIdentifier()) {
+			if ($this->appConfig->getAppValueInt('start_calls', Room::START_CALL_EVERYONE) === Room::START_CALL_NOONE) {
+				return new DataResponse(['error' => 'preset'], Http::STATUS_NOT_FOUND);
+			}
 			$attributes |= RoomAttributes::VOICE_ROOM->value;
 		}
 
@@ -769,7 +772,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$readOnly,
 				$this->forcedParameters->forceParameter(Parameter::LISTABLE, $listable),
 				$this->forcedParameters->forceParameter(Parameter::MESSAGE_EXPIRATION, $messageExpiration),
-				$lobbyState,
+				$this->forcedParameters->forceParameter(Parameter::LOBBY_STATE, $lobbyState),
 				$lobbyTimer,
 				$this->forcedParameters->forceParameter(Parameter::SIP_ENABLED, $sipEnabled),
 				$this->forcedParameters->forceParameter(Parameter::PERMISSIONS, $permissions),
@@ -1889,6 +1892,29 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * Assign conversation tags
+	 *
+	 * Required capability: `conversation-tags`
+	 *
+	 * @param list<string> $tagIds IDs of tags to assign (empty array to unassign all)
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 *
+	 * 200: Conversation tags updated
+	 */
+	#[NoAdminRequired]
+	#[FederationSupported]
+	#[RequireLoggedInParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/tags', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function assignTags(array $tagIds = []): DataResponse {
+		$tagIds = $this->conversationTagService->validateTagIdsForUser($this->participant->getAttendee()->getActorId(), $tagIds);
+		$this->participantService->assignConversationToTags($this->participant, $tagIds);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
 	 * Mark a conversation as important (still sending notifications while on DND)
 	 *
 	 * Required capability: `important-conversations`
@@ -2578,6 +2604,16 @@ class RoomController extends AEnvironmentAwareOCSController {
 					$room,
 					$sessionId,
 				);
+
+				if (
+					$participant->getAttendee()->getActorType() !== Attendee::ACTOR_FEDERATED_USERS
+					|| $participant->getAttendee()->getActorId() !== $this->federationAuthenticator->getCloudId()
+					|| !hash_equals($participant->getAttendee()->getAccessToken(), $this->federationAuthenticator->getAccessToken())
+				) {
+					$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+					$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
+					return $response;
+				}
 				$this->federationAuthenticator->authenticated($room, $participant);
 			}
 

@@ -190,13 +190,9 @@ class CalendarIntegrationService {
 			return $events;
 		}
 
-		usort($events, static function (Event $a, Event $b) {
-			return $a->getStart() - $b->getStart();
-		});
+		usort($events, static fn (Event $a, Event $b) => $a->getStart() - $b->getStart());
 
-		return array_map(static function (Event $event) {
-			return $event->jsonSerialize();
-		}, array_slice($events, 0, 10));
+		return array_map(static fn (Event $event) => $event->jsonSerialize(), array_slice($events, 0, 10));
 	}
 
 	/**
@@ -215,9 +211,7 @@ class CalendarIntegrationService {
 			throw new InvalidRoomException();
 		}
 
-		$participants = array_filter($userIds, static function (string $participantId) use ($userId) {
-			return $participantId !== $userId;
-		});
+		$participants = array_filter($userIds, static fn (string $participantId) => $participantId !== $userId);
 
 		if (count($participants) !== 1) {
 			throw new InvalidRoomException();
@@ -346,12 +340,8 @@ class CalendarIntegrationService {
 			return $events;
 		}
 
-		usort($events, static function (Event $a, Event $b) {
-			return $a->getStart() - $b->getStart();
-		});
+		usort($events, static fn (Event $a, Event $b) => $a->getStart() - $b->getStart());
 
-		return array_map(static function (Event $event) {
-			return $event->jsonSerialize();
-		}, array_slice($events, 0, 3));
+		return array_map(static fn (Event $event) => $event->jsonSerialize(), array_slice($events, 0, 3));
 	}
 }

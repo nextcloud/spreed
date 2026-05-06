@@ -156,9 +156,7 @@ class Notifier {
 	 * @psalm-return array<int, array{id: string, type: string, reason: string, sourceId?: string, attendee?: Attendee}>
 	 */
 	private function addMentionAllToList(Room $chat, array $list, ?Participant $participant = null): array {
-		$usersToNotify = array_filter($list, static function (array $entry): bool {
-			return $entry['type'] !== Attendee::ACTOR_USERS || $entry['id'] !== 'all';
-		});
+		$usersToNotify = array_filter($list, static fn (array $entry): bool => $entry['type'] !== Attendee::ACTOR_USERS || $entry['id'] !== 'all');
 
 		if (count($list) === count($usersToNotify)) {
 			return $usersToNotify;
@@ -169,9 +167,7 @@ class Notifier {
 
 		$attendees = $this->participantService->getActorsByType($chat, Attendee::ACTOR_USERS);
 		foreach ($attendees as $attendee) {
-			$alreadyAddedToNotify = array_filter($list, static function ($user) use ($attendee): bool {
-				return $user['id'] === $attendee->getActorId();
-			});
+			$alreadyAddedToNotify = array_filter($list, static fn ($user): bool => $user['id'] === $attendee->getActorId());
 			if (!empty($alreadyAddedToNotify)) {
 				continue;
 			}
@@ -451,9 +447,7 @@ class Notifier {
 	 */
 	public function getMentionedUserIds(IComment $comment): array {
 		$mentionedUsers = $this->getMentionedUsers($comment);
-		return array_map(static function ($mentionedUser) {
-			return $mentionedUser['id'];
-		}, $mentionedUsers);
+		return array_map(static fn ($mentionedUser) => $mentionedUser['id'], $mentionedUsers);
 	}
 
 	/**
@@ -464,9 +458,7 @@ class Notifier {
 	 */
 	public function getMentionedCloudIds(IComment $comment): array {
 		$mentionedFederatedUsers = $this->getMentionedFederatedUsers($comment);
-		return array_map(static function ($mentionedUser) {
-			return $mentionedUser['id'];
-		}, $mentionedFederatedUsers);
+		return array_map(static fn ($mentionedUser) => $mentionedUser['id'], $mentionedFederatedUsers);
 	}
 
 	/**

@@ -87,9 +87,7 @@ class ListenerTest extends TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function ($string, $args) {
-				return vsprintf($string, $args);
-			});
+			->willReturnCallback(fn ($string, $args) => vsprintf($string, $args));
 
 		$this->handlers = [];
 

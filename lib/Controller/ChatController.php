@@ -2343,9 +2343,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		if ($this->userId !== null
 			&& $includeStatus
 			&& $this->appManager->isEnabledForUser('user_status')) {
-			$userIds = array_filter(array_map(static function (array $userResult) {
-				return $userResult['value']['shareWith'];
-			}, $results['users']));
+			$userIds = array_filter(array_map(static fn (array $userResult) => $userResult['value']['shareWith'], $results['users']));
 
 			$statuses = $this->statusManager->getUserStatuses($userIds);
 		}

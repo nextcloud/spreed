@@ -50,9 +50,7 @@ class ListBots extends Base {
 		$token = $input->getArgument('token');
 
 		if ($token) {
-			$botIds = array_map(static function (BotConversation $bot): int {
-				return $bot->getBotId();
-			}, $this->botConversationMapper->findForToken($token));
+			$botIds = array_map(static fn (BotConversation $bot): int => $bot->getBotId(), $this->botConversationMapper->findForToken($token));
 		}
 
 		$data = [];

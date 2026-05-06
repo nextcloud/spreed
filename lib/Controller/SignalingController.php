@@ -567,9 +567,7 @@ class SignalingController extends OCSController {
 			// Query all messages and send them to the user
 			$data = $this->messages->getAndDeleteMessages($sessionId);
 			$messageCount = count($data);
-			$data = array_filter($data, function ($message) {
-				return $message['data'] !== 'refresh-participant-list';
-			});
+			$data = array_filter($data, fn ($message) => $message['data'] !== 'refresh-participant-list');
 
 			// Make sure the array is a json array not a json object,
 			// because the index list has a gap

@@ -435,9 +435,7 @@ class AdminSettings implements ISettings {
 		}
 		$languages['commonLanguages'] = array_values($languages['commonLanguages']);
 		// TODO maybe filter out languages with an _
-		usort($countries, function (array $a, array $b) {
-			return strcmp($a['name'], $b['name']);
-		});
+		usort($countries, fn (array $a, array $b) => strcmp($a['name'], $b['name']));
 		$this->initialState->provideInitialState('hosted_signaling_server_language_data', [
 			'languages' => $languages,
 			'countries' => $countries,
@@ -481,9 +479,7 @@ class AdminSettings implements ISettings {
 		}
 
 		if (count($gids) !== count($groups)) {
-			$gids = array_map(static function (array $group) {
-				return $group['id'];
-			}, $groups);
+			$gids = array_map(static fn (array $group) => $group['id'], $groups);
 			$this->serverConfig->setAppValue('spreed', $configKey, json_encode($gids));
 		}
 

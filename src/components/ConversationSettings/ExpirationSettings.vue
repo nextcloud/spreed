@@ -33,8 +33,9 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { n, t } from '@nextcloud/l10n'
+import { t } from '@nextcloud/l10n'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
+import { messageExpirationOptions } from '../../utils/formattedTime.ts'
 
 export default {
 	name: 'ExpirationSettings',
@@ -55,26 +56,13 @@ export default {
 		},
 	},
 
-	data() {
-		return {
-			defaultExpirationOptions: [
-				{ id: 3600, label: n('spreed', '%n hour', '%n hours', 1) },
-				{ id: 28800, label: n('spreed', '%n hour', '%n hours', 8) },
-				{ id: 86400, label: n('spreed', '%n day', '%n days', 1) },
-				{ id: 604800, label: n('spreed', '%n week', '%n weeks', 1) },
-				{ id: 2419200, label: n('spreed', '%n week', '%n weeks', 4) },
-				{ id: 0, label: t('spreed', 'Off') },
-			],
-		}
-	},
-
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
 		expirationOptions() {
-			const expirationOptions = [...this.defaultExpirationOptions]
+			const expirationOptions = [...messageExpirationOptions]
 
 			if (!expirationOptions.some((option) => option.id === this.conversation.messageExpiration)) {
 				expirationOptions.push({ id: this.conversation.messageExpiration, label: t('spreed', 'Custom expiration time') })
@@ -98,7 +86,6 @@ export default {
 
 	methods: {
 		t,
-		n,
 		async changeExpiration(expiration) {
 			try {
 				await this.$store.dispatch('setMessageExpiration', {

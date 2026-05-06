@@ -16,10 +16,6 @@ import { useSidebarStore } from './stores/sidebar.ts'
 import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 import './init.js'
-// Leaflet icon patch
-import 'leaflet/dist/leaflet.css'
-import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
-import 'leaflet-defaulticon-compatibility'
 
 if (!IS_DESKTOP) {
 	// CSP config for webpack dynamic chunk loading
@@ -40,8 +36,6 @@ const instance = createApp(App, { fileInfo: null })
 	.use(router)
 	.use(NextcloudGlobalsVuePlugin)
 	.mount('#content')
-
-window.store = store
 
 // Setup Viewer to be used with Talk sidebar
 /**

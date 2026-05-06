@@ -19,6 +19,7 @@ use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IFilenameValidator;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -64,6 +65,7 @@ class Config {
 		private IURLGenerator $urlGenerator,
 		protected ITimeFactory $timeFactory,
 		private IEventDispatcher $dispatcher,
+		private IFilenameValidator $filenameValidator,
 	) {
 	}
 
@@ -370,10 +372,11 @@ class Config {
 		// phpcs:ignore -- control characters are intentional
 		$name = preg_replace('/[\x00-\x1f\/\\\\]+/', ' ', $name);
 		$name = trim((string)$name);
+		$name = $this->filenameValidator->sanitizeFilename($name, '_');
 		if (mb_strlen($name) > $maxChars) {
 			$name = trim(mb_substr($name, 0, $maxChars));
 		}
-		return $name;
+		return rtrim($name, '_-');
 	}
 
 	/**
@@ -439,9 +442,7 @@ class Config {
 		}
 
 		if (!$this->config->getSystemValueBool('has_internet_connection', true)) {
-			$servers = array_filter($servers, static function ($server) {
-				return $server !== 'stun.nextcloud.com:443';
-			});
+			$servers = array_filter($servers, static fn ($server) => $server !== 'stun.nextcloud.com:443');
 		}
 
 		return $servers;

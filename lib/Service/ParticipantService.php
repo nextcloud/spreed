@@ -328,6 +328,23 @@ class ParticipantService {
 
 	/**
 	 * @param Participant $participant
+	 * @param list<string> $tagIds
+	 */
+	public function assignConversationToTags(Participant $participant, array $tagIds): void {
+		$attendee = $participant->getAttendee();
+
+		if (empty($tagIds)) {
+			$attendee->setTagIds(null);
+		} else {
+			$attendee->setTagIds(json_encode($tagIds));
+		}
+
+		$attendee->setLastAttendeeActivity($this->timeFactory->getTime());
+		$this->attendeeMapper->update($attendee);
+	}
+
+	/**
+	 * @param Participant $participant
 	 */
 	public function markConversationAsImportant(Participant $participant): void {
 		$attendee = $participant->getAttendee();
@@ -886,9 +903,7 @@ class ParticipantService {
 		}
 
 		$members = $circle->getInheritedMembers();
-		return array_filter($members, static function (Member $member) {
-			return $member->getUserType() === Member::TYPE_USER;
-		});
+		return array_filter($members, static fn (Member $member) => $member->getUserType() === Member::TYPE_USER);
 	}
 
 	/**
@@ -2029,9 +2044,7 @@ class ParticipantService {
 		}
 		$attendees = $this->attendeeMapper->getActorsByTypes($room->getId(), $actorTypes, $maxLastJoinedTimestamp);
 
-		return array_map(static function (Attendee $attendee) {
-			return $attendee->getActorId();
-		}, $attendees);
+		return array_map(static fn (Attendee $attendee) => $attendee->getActorId(), $attendees);
 	}
 
 	public function getActorsCountByType(Room $room, string $actorType, int $maxLastJoined): int {

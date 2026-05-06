@@ -27,7 +27,7 @@
 		"lint-8.3-or-later": "[ $(php -r \"echo PHP_VERSION_ID;\") -lt 80300 ] || find . -type f -name '*.php' -not -path './vendor/*' -not -path './vendor-bin/*' -not -path './lib/Vendor/*' -not -path './build/*' -not -path './tests/integration/vendor/*' -not -path 'tests/stubs/*' -print0 | xargs -0 -n200 -P$(nproc) php -l",
 		"openapi": "generate-spec && (npm run ts:generate || echo 'Please manually regenerate the typescript OpenAPI models')",
 		"rector:check": "rector --dry-run",
-		"rector:fix": "rector",
+		"rector:fix": "rector && php-cs-fixer fix",
 		"psalm": "psalm --no-cache --threads=$(nproc)",
 		"psalm:dev": "@psalm",
 		"psalm:update-baseline": "psalm --threads=1 --update-baseline --set-baseline=tests/psalm-baseline.xml",

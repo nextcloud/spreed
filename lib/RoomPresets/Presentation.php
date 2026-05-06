@@ -31,7 +31,7 @@ readonly class Presentation extends APreset {
 
 	#[\Override]
 	public function getDescription(): string {
-		return $this->l->t('Presentation');
+		return $this->l->t('Restricted conversation for internal presentations.');
 	}
 
 	#[\Override]

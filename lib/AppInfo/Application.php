@@ -83,6 +83,7 @@ use OCA\Talk\Federation\Proxy\TalkV1\Notifier\ParticipantModifiedListener as Tal
 use OCA\Talk\Federation\Proxy\TalkV1\Notifier\RoomModifiedListener as TalkV1RoomModifiedListener;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
+use OCA\Talk\FloatingCall\FloatingCallPluginLoader;
 use OCA\Talk\Flow\RegisterOperationsListener;
 use OCA\Talk\Listener\AddMissingIndicesListener;
 use OCA\Talk\Listener\BeforeUserLoggedOutListener;
@@ -109,6 +110,7 @@ use OCA\Talk\Notification\Listener as NotificationListener;
 use OCA\Talk\Notification\Notifier;
 use OCA\Talk\OCP\TalkBackend;
 use OCA\Talk\Profile\TalkAction;
+use OCA\Talk\Profile\TalkCallAction;
 use OCA\Talk\PublicShare\TemplateLoader as PublicShareTemplateLoader;
 use OCA\Talk\PublicShareAuth\Listener as PublicShareAuthListener;
 use OCA\Talk\PublicShareAuth\TemplateLoader as PublicShareAuthTemplateLoader;
@@ -192,6 +194,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AddFeaturePolicyEvent::class, FeaturePolicyListener::class);
 		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, UnifiedSearchCSSLoader::class);
 		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, DeckPluginLoader::class);
+		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, FloatingCallPluginLoader::class);
 		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, MapsPluginLoader::class);
 		$context->registerEventListener(\OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent::class, UnifiedSearchFilterPlugin::class);
 		$context->registerEventListener(RegisterOperationsEvent::class, RegisterOperationsListener::class);
@@ -372,6 +375,7 @@ class Application extends App implements IBootstrap {
 		$context->registerNotifierService(Notifier::class);
 
 		$context->registerProfileLinkAction(TalkAction::class);
+		$context->registerProfileLinkAction(TalkCallAction::class);
 
 		$context->registerReferenceProvider(TalkReferenceProvider::class);
 

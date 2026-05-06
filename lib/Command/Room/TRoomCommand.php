@@ -356,9 +356,7 @@ trait TRoomCommand {
 	}
 
 	protected function completeTokenValues(CompletionContext $context): array {
-		return array_map(function (Room $room) {
-			return $room->getToken();
-		}, $this->manager->searchRoomsByToken($context->getCurrentWord()));
+		return array_map(fn (Room $room) => $room->getToken(), $this->manager->searchRoomsByToken($context->getCurrentWord()));
 	}
 
 	protected function completeUserValues(CompletionContext $context): array {
@@ -371,9 +369,7 @@ trait TRoomCommand {
 	}
 
 	protected function completeGroupValues(CompletionContext $context): array {
-		return array_map(function (IGroup $group) {
-			return $group->getGID();
-		}, $this->groupManager->search($context->getCurrentWord()));
+		return array_map(fn (IGroup $group) => $group->getGID(), $this->groupManager->search($context->getCurrentWord()));
 	}
 
 	protected function completeParticipantValues(CompletionContext $context): array {
@@ -402,9 +398,7 @@ trait TRoomCommand {
 			return [];
 		}
 
-		return array_filter($this->participantService->getParticipantUserIds($room), static function ($userId) use ($context) {
-			return stripos($userId, (string)$context->getCurrentWord()) !== false;
-		});
+		return array_filter($this->participantService->getParticipantUserIds($room), static fn ($userId) => stripos($userId, (string)$context->getCurrentWord()) !== false);
 	}
 
 	protected function setMessageExpiration(Room $room, int $seconds): void {

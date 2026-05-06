@@ -11,7 +11,6 @@ namespace OCA\Talk;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
-use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Server;
 
@@ -100,7 +99,6 @@ class Room {
 	 * @psalm-param self::MENTION_PERMISSIONS_* $mentionPermissions
 	 */
 	public function __construct(
-		private ITimeFactory $timeFactory,
 		private int $id,
 		private int $type,
 		private int $readOnly,
@@ -192,10 +190,7 @@ class Room {
 		$this->messageExpiration = $messageExpiration;
 	}
 
-	public function getLobbyState(bool $validateTime = true): int {
-		if ($validateTime) {
-			$this->validateTimer();
-		}
+	public function getLobbyState(): int {
 		return $this->lobbyState;
 	}
 
@@ -203,23 +198,12 @@ class Room {
 		$this->lobbyState = $lobbyState;
 	}
 
-	public function getLobbyTimer(bool $validateTime = true): ?\DateTime {
-		if ($validateTime) {
-			$this->validateTimer();
-		}
+	public function getLobbyTimer(): ?\DateTime {
 		return $this->lobbyTimer;
 	}
 
 	public function setLobbyTimer(?\DateTime $lobbyTimer): void {
 		$this->lobbyTimer = $lobbyTimer;
-	}
-
-	protected function validateTimer(): void {
-		if ($this->lobbyTimer !== null && $this->lobbyTimer < $this->timeFactory->getDateTime()) {
-			/** @var RoomService $roomService */
-			$roomService = Server::get(RoomService::class);
-			$roomService->setLobby($this, Webinary::LOBBY_NONE, null, true);
-		}
 	}
 
 	public function getSIPEnabled(): int {

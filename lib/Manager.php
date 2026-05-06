@@ -159,7 +159,6 @@ class Manager {
 		}
 
 		return new Room(
-			$this->timeFactory,
 			(int)$row['r_id'],
 			(int)$row['type'],
 			(int)$row['read_only'],
@@ -547,11 +546,20 @@ class Manager {
 			->orderBy('r.id', 'ASC');
 
 		if ($term !== '') {
-			$query->andWhere(
-				$query->expr()->iLike('name', $query->createNamedParameter(
-					'%' . $this->db->escapeLikeParameter($term) . '%'
-				))
-			);
+			// Allow fuzzy search
+			$terms = explode(' ', $term);
+			foreach ($terms as $searchTerm) {
+				$searchTerm = trim($searchTerm);
+				if ($searchTerm === '') {
+					continue;
+				}
+
+				$query->andWhere(
+					$query->expr()->iLike('name', $query->createNamedParameter(
+						'%' . $this->db->escapeLikeParameter($searchTerm) . '%'
+					))
+				);
+			}
 		}
 
 		$result = $query->executeQuery();

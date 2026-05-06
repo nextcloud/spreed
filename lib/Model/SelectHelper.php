@@ -109,6 +109,7 @@ class SelectHelper {
 			$alias . 'archived',
 			$alias . 'important',
 			$alias . 'sensitive',
+			$alias . 'tag_ids',
 			$alias . 'has_unread_threads',
 			$alias . 'has_unread_thread_mentions',
 			$alias . 'has_unread_thread_directs',

@@ -64,6 +64,15 @@ function formattedTime(time: number, condensed: boolean = false): string {
 	].filter((num) => !!num).join(condensed ? ':' : ' : ')
 }
 
+const messageExpirationOptions: { id: number, label: string }[] = [
+	{ id: 3600, label: n('spreed', '%n hour', '%n hours', 1) },
+	{ id: 28800, label: n('spreed', '%n hour', '%n hours', 8) },
+	{ id: 86400, label: n('spreed', '%n day', '%n days', 1) },
+	{ id: 604800, label: n('spreed', '%n week', '%n weeks', 1) },
+	{ id: 2419200, label: n('spreed', '%n week', '%n weeks', 4) },
+	{ id: 0, label: t('spreed', 'Off') },
+]
+
 /**
  * Calculates the future relative time string given the time (ms)
  *
@@ -162,6 +171,7 @@ export {
 	futureRelativeTime,
 	getDiffInDays,
 	getRelativeDay,
+	messageExpirationOptions,
 	ONE_DAY_IN_MS,
 	ONE_HOUR_IN_MS,
 }

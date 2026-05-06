@@ -50,9 +50,7 @@ class Util {
 				// The file is not a shared file,
 				// let's check the accesslist for mount points of groupfolders and external storages
 				$mountsForFile = $this->userMountCache->getMountsForFileId($fileId);
-				$affectedUserIds = array_map(function (ICachedMountInfo $mount) {
-					return $mount->getUser()->getUID();
-				}, $mountsForFile);
+				$affectedUserIds = array_map(fn (ICachedMountInfo $mount) => $mount->getUser()->getUID(), $mountsForFile);
 
 				$accessList['users'] = array_unique(array_merge($affectedUserIds, $accessList['users']));
 			}
@@ -108,9 +106,7 @@ class Util {
 		$userFolder = $this->rootFolder->getUserFolder($userId);
 		$nodes = $userFolder->getById((int)$fileId);
 
-		$nodes = array_filter($nodes, static function (Node $node) {
-			return $node->getType() === FileInfo::TYPE_FILE;
-		});
+		$nodes = array_filter($nodes, static fn (Node $node) => $node->getType() === FileInfo::TYPE_FILE);
 
 		if (empty($nodes)) {
 			return null;

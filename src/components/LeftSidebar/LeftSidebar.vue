@@ -6,272 +6,285 @@
 <template>
 	<NcAppNavigation ref="leftSidebar" :aria-label="t('spreed', 'Conversation list')">
 		<template #search>
-			<div class="new-conversation">
-				<div
-					class="conversations-search"
-					:class="{ 'conversations-search--expanded': isSearching }">
-					<SearchBox
-						ref="searchBox"
-						v-model:value="searchText"
-						v-model:isFocused="isFocused"
-						:listRef="[scroller, searchResults]"
-						@input="debounceFetchSearchResults"
-						@abortSearch="abortSearch" />
+			<div class="navigation-top">
+				<div class="navigation-buttons-container">
+					<div class="new-conversation">
+						<div
+							class="conversations-search"
+							:class="{ 'conversations-search--expanded': isSearching }">
+							<SearchBox
+								ref="searchBox"
+								v-model:value="searchText"
+								v-model:isFocused="isFocused"
+								:listRef="[scroller, searchResults]"
+								@input="debounceFetchSearchResults"
+								@abortSearch="abortSearch" />
+						</div>
+
+						<TransitionWrapper name="radial-reveal">
+							<!-- Filters -->
+							<NcActions
+								v-show="searchText === ''"
+								:variant="isFiltered ? 'secondary' : 'tertiary'"
+								class="filters"
+								:class="{ 'hidden-visually': isSearching }">
+								<template #icon>
+									<IconFilterCogOutline :size="20" />
+								</template>
+								<NcActionCaption :name="t('spreed', 'Filter conversations by')" />
+
+								<NcActionButton
+									closeAfterClick
+									type="checkbox"
+									:modelValue="filters.includes('mentions')"
+									@click="handleFilter('mentions')">
+									<template #icon>
+										<IconAt :size="20" />
+									</template>
+									{{ t('spreed', 'Unread mentions') }}
+								</NcActionButton>
+
+								<NcActionButton
+									closeAfterClick
+									type="checkbox"
+									:modelValue="filters.includes('unread')"
+									@click="handleFilter('unread')">
+									<template #icon>
+										<IconMessageBadgeOutline :size="20" />
+									</template>
+									{{ t('spreed', 'Unread messages') }}
+								</NcActionButton>
+
+								<NcActionButton
+									closeAfterClick
+									type="checkbox"
+									:modelValue="filters.includes('events')"
+									@click="handleFilter('events')">
+									<template #icon>
+										<IconCalendarBlankOutline :size="20" />
+									</template>
+									{{ t('spreed', 'Meeting conversations') }}
+								</NcActionButton>
+
+								<NcActionButton
+									v-if="isFiltered"
+									closeAfterClick
+									class="filter-actions__clearbutton"
+									@click="handleFilter(null)">
+									<template #icon>
+										<IconFilterRemoveOutline :size="20" />
+									</template>
+									{{ t('spreed', 'Clear filters') }}
+								</NcActionButton>
+
+								<template v-if="supportSortOrder">
+									<NcActionSeparator />
+
+									<NcActionCaption :name="SORT_LABELS.SORTBY_HEADER" />
+
+									<NcActionButton
+										closeAfterClick
+										type="radio"
+										:value="CONVERSATION.SORT_ORDER.ACTIVITY"
+										:modelValue="sortOrder"
+										@update:modelValue="handleSortOrder">
+										<template #icon>
+											<IconClockOutline :size="20" />
+										</template>
+										{{ SORT_LABELS.SORTBY_ACTIVITY }}
+									</NcActionButton>
+
+									<NcActionButton
+										closeAfterClick
+										type="radio"
+										:value="CONVERSATION.SORT_ORDER.ALPHABETICAL"
+										:modelValue="sortOrder"
+										@update:modelValue="handleSortOrder">
+										<template #icon>
+											<IconSortAlphabeticalAscending :size="20" />
+										</template>
+										{{ SORT_LABELS.SORTBY_ALPHABET }}
+									</NcActionButton>
+
+									<NcActionSeparator />
+
+									<NcActionButton
+										closeAfterClick
+										type="radio"
+										:value="CONVERSATION.GROUP_MODE.NONE"
+										:modelValue="groupMode"
+										@update:modelValue="handleGroupMode">
+										<template #icon>
+											<IconFormatListBulleted :size="20" />
+										</template>
+										{{ SORT_LABELS.GROUPBY_NONE }}
+									</NcActionButton>
+
+									<NcActionButton
+										closeAfterClick
+										type="radio"
+										:value="CONVERSATION.GROUP_MODE.PRIVATE_FIRST"
+										:modelValue="groupMode"
+										@update:modelValue="handleGroupMode">
+										<template #icon>
+											<IconAccountOutline :size="20" />
+										</template>
+										{{ SORT_LABELS.GROUPBY_PRIVATE_FIRST }}
+									</NcActionButton>
+
+									<NcActionButton
+										closeAfterClick
+										type="radio"
+										:value="CONVERSATION.GROUP_MODE.GROUP_FIRST"
+										:modelValue="groupMode"
+										@update:modelValue="handleGroupMode">
+										<template #icon>
+											<IconAccountMultipleOutline :size="20" />
+										</template>
+										{{ SORT_LABELS.GROUPBY_GROUP_FIRST }}
+									</NcActionButton>
+								</template>
+							</NcActions>
+						</TransitionWrapper>
+
+						<!-- Actions -->
+						<TransitionWrapper name="radial-reveal">
+							<NcActions
+								v-show="searchText === ''"
+								class="actions"
+								:class="{ 'hidden-visually': isSearching }">
+								<template #icon>
+									<IconChatPlusOutline :size="20" />
+								</template>
+								<NcActionButton
+									v-if="canStartConversations"
+									closeAfterClick
+									@click="showModalNewConversation">
+									<template #icon>
+										<IconPlus :size="20" />
+									</template>
+									{{ t('spreed', 'Create a new conversation') }}
+								</NcActionButton>
+
+								<NcActionButton
+									v-if="canNoteToSelf && !hasNoteToSelf"
+									closeAfterClick
+									@click="restoreNoteToSelfConversation">
+									<template #icon>
+										<IconNoteEditOutline :size="20" />
+									</template>
+									{{ t('spreed', 'New personal note') }}
+								</NcActionButton>
+
+								<NcActionButton
+									closeAfterClick
+									@click="showModalListConversations">
+									<template #icon>
+										<IconFormatListBulleted :size="20" />
+									</template>
+									{{ t('spreed', 'Join open conversations') }}
+								</NcActionButton>
+
+								<NcActionButton
+									v-if="canModerateSipDialOut"
+									closeAfterClick
+									@click="showModalCallPhoneDialog">
+									<template #icon>
+										<IconPhoneOutline :size="20" />
+									</template>
+									{{ t('spreed', 'Call a phone number') }}
+								</NcActionButton>
+								<NcActionButton
+									v-else-if="hintSipDialOut"
+									disabled
+									:description="t('spreed', 'SIP backend is not installed')">
+									<template #icon>
+										<IconPhoneOutline :size="20" />
+									</template>
+									{{ t('spreed', 'Call a phone number') }}
+								</NcActionButton>
+							</NcActions>
+						</TransitionWrapper>
+
+						<!-- All open conversations list -->
+						<OpenConversationsList ref="openConversationsList" />
+
+						<!-- New Conversation dialog -->
+						<NewConversationDialog ref="newConversationDialog" :canModerateSipDialOut="canModerateSipDialOut" />
+
+						<!-- New phone (SIP dial-out) dialog -->
+						<CallPhoneDialog v-if="canModerateSipDialOut" ref="callPhoneDialog" />
+
+						<!-- New Pending Invitations dialog -->
+						<InvitationHandler v-if="pendingInvitationsCount" ref="invitationHandler" />
+					</div>
+					<TransitionWrapper
+						v-if="filters.length"
+						class="conversations__filters"
+						name="zoom"
+						tag="div"
+						group>
+						<NcChip
+							v-for="filter in filters"
+							:key="filter"
+							:text="FILTER_LABELS[filter]"
+							@close="handleFilter(filter)" />
+					</TransitionWrapper>
 				</div>
 
-				<TransitionWrapper name="radial-reveal">
-					<!-- Filters -->
-					<NcActions
-						v-show="searchText === ''"
-						:variant="isFiltered ? 'secondary' : 'tertiary'"
-						class="filters"
-						:class="{ 'hidden-visually': isSearching }">
+				<div v-if="!isSearching" class="navigation-buttons-container">
+					<LeftSidebarButton
+						:to="{ name: 'root' }"
+						:active="$route.name === 'root'"
+						@click="refreshTalkDashboard">
 						<template #icon>
-							<IconFilterCogOutline :size="20" />
+							<IconHomeOutline :size="20" />
 						</template>
-						<NcActionCaption :name="t('spreed', 'Filter conversations by')" />
-
-						<NcActionButton
-							closeAfterClick
-							type="checkbox"
-							:modelValue="filters.includes('mentions')"
-							@click="handleFilter('mentions')">
+						{{ HOME_BUTTON_LABEL }}
+					</LeftSidebarButton>
+					<template v-if="showArchived || showThreadsList">
+						<LeftSidebarButton @click="handleBackToConversations">
 							<template #icon>
-								<IconAt :size="20" />
+								<IconArrowLeft class="bidirectional-icon" :size="20" />
 							</template>
-							{{ t('spreed', 'Unread mentions') }}
-						</NcActionButton>
-
-						<NcActionButton
-							closeAfterClick
-							type="checkbox"
-							:modelValue="filters.includes('unread')"
-							@click="handleFilter('unread')">
-							<template #icon>
-								<IconMessageBadgeOutline :size="20" />
-							</template>
-							{{ t('spreed', 'Unread messages') }}
-						</NcActionButton>
-
-						<NcActionButton
-							closeAfterClick
-							type="checkbox"
-							:modelValue="filters.includes('events')"
-							@click="handleFilter('events')">
-							<template #icon>
-								<IconCalendarBlankOutline :size="20" />
-							</template>
-							{{ t('spreed', 'Meeting conversations') }}
-						</NcActionButton>
-
-						<NcActionButton
-							v-if="isFiltered"
-							closeAfterClick
-							class="filter-actions__clearbutton"
-							@click="handleFilter(null)">
-							<template #icon>
-								<IconFilterRemoveOutline :size="20" />
-							</template>
-							{{ t('spreed', 'Clear filters') }}
-						</NcActionButton>
-
-						<template v-if="supportSortOrder">
-							<NcActionSeparator />
-
-							<NcActionCaption :name="SORT_LABELS.SORTBY_HEADER" />
-
-							<NcActionButton
-								closeAfterClick
-								type="radio"
-								:value="CONVERSATION.SORT_ORDER.ACTIVITY"
-								:modelValue="sortOrder"
-								@update:modelValue="handleSortOrder">
-								<template #icon>
-									<IconClockOutline :size="20" />
-								</template>
-								{{ SORT_LABELS.SORTBY_ACTIVITY }}
-							</NcActionButton>
-
-							<NcActionButton
-								closeAfterClick
-								type="radio"
-								:value="CONVERSATION.SORT_ORDER.ALPHABETICAL"
-								:modelValue="sortOrder"
-								@update:modelValue="handleSortOrder">
-								<template #icon>
-									<IconSortAlphabeticalAscending :size="20" />
-								</template>
-								{{ SORT_LABELS.SORTBY_ALPHABET }}
-							</NcActionButton>
-
-							<NcActionSeparator />
-
-							<NcActionButton
-								closeAfterClick
-								type="radio"
-								:value="CONVERSATION.GROUP_MODE.NONE"
-								:modelValue="groupMode"
-								@update:modelValue="handleGroupMode">
-								<template #icon>
-									<IconFormatListBulleted :size="20" />
-								</template>
-								{{ SORT_LABELS.GROUPBY_NONE }}
-							</NcActionButton>
-
-							<NcActionButton
-								closeAfterClick
-								type="radio"
-								:value="CONVERSATION.GROUP_MODE.PRIVATE_FIRST"
-								:modelValue="groupMode"
-								@update:modelValue="handleGroupMode">
-								<template #icon>
-									<IconAccountOutline :size="20" />
-								</template>
-								{{ SORT_LABELS.GROUPBY_PRIVATE_FIRST }}
-							</NcActionButton>
-
-							<NcActionButton
-								closeAfterClick
-								type="radio"
-								:value="CONVERSATION.GROUP_MODE.GROUP_FIRST"
-								:modelValue="groupMode"
-								@update:modelValue="handleGroupMode">
-								<template #icon>
-									<IconAccountMultipleOutline :size="20" />
-								</template>
-								{{ SORT_LABELS.GROUPBY_GROUP_FIRST }}
-							</NcActionButton>
-						</template>
-					</NcActions>
-				</TransitionWrapper>
-
-				<!-- Actions -->
-				<TransitionWrapper name="radial-reveal">
-					<NcActions
-						v-show="searchText === ''"
-						class="actions"
-						:class="{ 'hidden-visually': isSearching }">
-						<template #icon>
-							<IconChatPlusOutline :size="20" />
-						</template>
-						<NcActionButton
-							v-if="canStartConversations"
-							closeAfterClick
-							@click="showModalNewConversation">
-							<template #icon>
-								<IconPlus :size="20" />
-							</template>
-							{{ t('spreed', 'Create a new conversation') }}
-						</NcActionButton>
-
-						<NcActionButton
-							v-if="canNoteToSelf && !hasNoteToSelf"
-							closeAfterClick
-							@click="restoreNoteToSelfConversation">
-							<template #icon>
-								<IconNoteEditOutline :size="20" />
-							</template>
-							{{ t('spreed', 'New personal note') }}
-						</NcActionButton>
-
-						<NcActionButton
-							closeAfterClick
-							@click="showModalListConversations">
-							<template #icon>
-								<IconFormatListBulleted :size="20" />
-							</template>
-							{{ t('spreed', 'Join open conversations') }}
-						</NcActionButton>
-
-						<NcActionButton
-							v-if="canModerateSipDialOut"
-							closeAfterClick
-							@click="showModalCallPhoneDialog">
-							<template #icon>
-								<IconPhoneOutline :size="20" />
-							</template>
-							{{ t('spreed', 'Call a phone number') }}
-						</NcActionButton>
-						<NcActionButton
-							v-else-if="hintSipDialOut"
-							disabled
-							:description="t('spreed', 'SIP backend is not installed')">
-							<template #icon>
-								<IconPhoneOutline :size="20" />
-							</template>
-							{{ t('spreed', 'Call a phone number') }}
-						</NcActionButton>
-					</NcActions>
-				</TransitionWrapper>
-
-				<!-- All open conversations list -->
-				<OpenConversationsList ref="openConversationsList" />
-
-				<!-- New Conversation dialog -->
-				<NewConversationDialog ref="newConversationDialog" :canModerateSipDialOut="canModerateSipDialOut" />
-
-				<!-- New phone (SIP dial-out) dialog -->
-				<CallPhoneDialog v-if="canModerateSipDialOut" ref="callPhoneDialog" />
-
-				<!-- New Pending Invitations dialog -->
-				<InvitationHandler v-if="pendingInvitationsCount" ref="invitationHandler" />
-			</div>
-			<TransitionWrapper
-				class="conversations__filters"
-				name="zoom"
-				tag="div"
-				group>
-				<NcChip
-					v-for="filter in filters"
-					:key="filter"
-					:text="FILTER_LABELS[filter]"
-					@close="handleFilter(filter)" />
-			</TransitionWrapper>
-			<template v-if="!isSearching">
-				<NcAppNavigationItem
-					class="navigation-item"
-					:to="{ name: 'root' }"
-					:name="HOME_BUTTON_LABEL"
-					@click="refreshTalkDashboard">
-					<template #icon>
-						<IconHomeOutline :size="20" />
+							{{ t('spreed', 'Back to conversations') }}
+						</LeftSidebarButton>
 					</template>
-				</NcAppNavigationItem>
-				<template v-if="showArchived || showThreadsList">
-					<NcAppNavigationItem
-						class="navigation-item"
-						:name="t('spreed', 'Back to conversations')"
-						@click.prevent="handleBackToConversations">
+					<LeftSidebarButton
+						v-else-if="supportThreads && !showThreadsList && !isSearching && !isFiltered"
+						@click="handleShowThreadsList">
 						<template #icon>
-							<IconArrowLeft class="bidirectional-icon" :size="20" />
+							<IconForumOutline :size="20" />
 						</template>
-					</NcAppNavigationItem>
-					<NcAppNavigationCaption
+						{{ t('spreed', 'Threads') }}
+					</LeftSidebarButton>
+					<LeftSidebarButton
+						v-if="pendingInvitationsCount && !isSearching && !showArchived && !showThreadsList"
+						@click="showInvitationHandler">
+						<template #icon>
+							<IconAccountMultiplePlusOutline :size="20" />
+						</template>
+						{{ t('spreed', 'Pending invitations') }}
+						<template #badge>
+							<NcCounterBubble type="highlighted" :count="pendingInvitationsCount" />
+						</template>
+					</LeftSidebarButton>
+				</div>
+
+				<div v-if="!isSearching" class="navigation-buttons-container" :class="{ 'hidden-visually': !showArchived && !showThreadsList }">
+					<div
+						:id="LIST_HEADING_ID"
 						class="navigation-caption"
-						:name="showArchived ? t('spreed', 'Archived conversations') : t('spreed', 'Threads')" />
-				</template>
-				<NcAppNavigationItem
-					v-else-if="supportThreads && !showThreadsList && !isSearching && !isFiltered"
-					class="navigation-item"
-					:name="t('spreed', 'Threads')"
-					@click.prevent="handleShowThreadsList">
-					<template #icon>
-						<IconForumOutline :size="20" />
-					</template>
-				</NcAppNavigationItem>
-				<NcAppNavigationItem
-					v-if="pendingInvitationsCount && !isSearching && !showArchived && !showThreadsList"
-					class="navigation-item"
-					:name="t('spreed', 'Pending invitations')"
-					@click.prevent="showInvitationHandler">
-					<template #icon>
-						<IconAccountMultiplePlusOutline :size="20" />
-					</template>
-					<template #counter>
-						<NcCounterBubble type="highlighted" :count="pendingInvitationsCount" />
-					</template>
-				</NcAppNavigationItem>
-			</template>
+						role="heading"
+						aria-level="3">
+						{{
+							showArchived && t('spreed', 'Archived conversations')
+								|| showThreadsList && t('spreed', 'Threads')
+								|| t('spreed', 'Conversations')
+						}}
+					</div>
+				</div>
+			</div>
 		</template>
 
 		<template #list>
@@ -299,29 +312,32 @@
 				</NcEmptyContent>
 				<template v-if="showThreadsList">
 					<LoadingPlaceholder v-if="!followedThreadsInitialised" type="conversations" />
-					<ul v-else class="threads-tab__list">
+					<ul v-else class="threads-tab__list" :aria-labelledby="LIST_HEADING_ID">
 						<ThreadItem
 							v-for="thread of followedThreads"
 							:key="`thread_${thread.thread.id}`"
 							:thread="thread" />
-						<NcAppNavigationItem
-							v-if="!allFollowedThreadsReceived"
-							class="navigation-item"
-							:name="t('spreed', 'Show more threads')"
-							@click.prevent="loadMoreFollowedThreads">
+					</ul>
+					<div v-if="!allFollowedThreadsReceived" class="navigation-buttons-container">
+						<LeftSidebarButton
+							:compact="false /* ThreadItem-s are never compact */"
+							@click="loadMoreFollowedThreads">
 							<template #icon>
 								<IconForumOutline :size="20" />
 							</template>
-						</NcAppNavigationItem>
-					</ul>
+							{{ t('spreed', 'Show more threads') }}
+						</LeftSidebarButton>
+					</div>
 				</template>
 				<ConversationsListVirtual
 					v-else
 					v-show="sortedConversationsList.length > 0"
 					ref="scroller"
+					:listAriaLabelledBy="LIST_HEADING_ID"
 					:conversations="sortedConversationsList"
 					:loading="!conversationsInitialised"
 					:compact="isCompact"
+					:showTags="supportTags && !showArchived"
 					class="scroller"
 					@scroll="debounceHandleScroll" />
 				<NcButton
@@ -339,7 +355,7 @@
 				ref="searchResults"
 				class="scroller"
 				:searchText="searchText"
-				:contactsLoading="contactsLoading"
+				:searchResultsLoading="searchResultsLoading"
 				:conversationsList="conversationsList"
 				:searchResults="searchResults"
 				:searchResultsListedConversations="searchResultsListedConversations"
@@ -349,27 +365,30 @@
 		</template>
 
 		<template #footer>
-			<div class="left-sidebar__settings-button-container">
-				<NcButton
-					v-if="supportsArchive && !isSearching && !showArchived && !showThreadsList && archivedConversationsList.length"
-					variant="tertiary"
-					wide
-					@click="showArchived = true; showThreadsList = false">
-					<template #icon>
-						<IconArchiveOutline :size="20" />
-					</template>
-					{{ t('spreed', 'Archived conversations') }}
-					<span v-if="showArchivedConversationsBubble" class="left-sidebar__settings-button-bubble">
-						⬤
-					</span>
-				</NcButton>
+			<div class="navigation-bottom">
+				<div class="navigation-buttons-container">
+					<LeftSidebarButton
+						v-if="supportsArchive && !isSearching && !showArchived && !showThreadsList && archivedConversationsList.length"
+						@click="showArchived = true; showThreadsList = false">
+						<template #icon>
+							<IconArchiveOutline :size="20" />
+						</template>
+						{{ t('spreed', 'Archived conversations') }}
+						<template #badge>
+							<span v-if="showArchivedConversationsBubble" class="archived-conversations-bubble">
+								⬤
+							</span>
+						</template>
+					</LeftSidebarButton>
 
-				<NcButton variant="tertiary" wide @click="showSettings">
-					<template #icon>
-						<IconCogOutline :size="20" />
-					</template>
-					{{ t('spreed', 'App settings') }}
-				</NcButton>
+					<LeftSidebarButton
+						@click="showSettings">
+						<template #icon>
+							<IconCogOutline :size="20" />
+						</template>
+						{{ t('spreed', 'App settings') }}
+					</LeftSidebarButton>
+				</div>
 			</div>
 		</template>
 	</NcAppNavigation>
@@ -389,7 +408,6 @@ import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
-import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcChip from '@nextcloud/vue/components/NcChip'
@@ -424,6 +442,7 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import CallPhoneDialog from './CallPhoneDialog/CallPhoneDialog.vue'
 import ConversationsListVirtual from './ConversationsList/ConversationsListVirtual.vue'
 import InvitationHandler from './InvitationHandler.vue'
+import LeftSidebarButton from './LeftSidebarButton.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
 import SearchConversationsResults from './SearchConversationsResults/SearchConversationsResults.vue'
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
@@ -445,12 +464,19 @@ import { EventBus } from '../../services/EventBus.ts'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import { useActorStore } from '../../stores/actor.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
+import { useConversationTagsStore } from '../../stores/conversationTags.ts'
 import { useFederationStore } from '../../stores/federation.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import { useTokenStore } from '../../stores/token.ts'
 import CancelableRequest from '../../utils/CancelableRequest.ts'
-import { filterConversation, hasCall, hasUnreadMentions, shouldIncludeArchived } from '../../utils/conversation.ts'
+import {
+	filterConversation,
+	hasCall,
+	hasUnreadMentions,
+	shouldIncludeArchived,
+	sortConversationsList,
+} from '../../utils/conversation.ts'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
@@ -463,6 +489,7 @@ const canNoteToSelf = hasTalkFeature('local', 'note-to-self')
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const supportThreads = hasTalkFeature('local', 'threads')
 const supportSortOrder = getTalkConfig('local', 'conversations', 'sort-order') !== undefined
+const supportTags = hasTalkFeature('local', 'conversation-tags')
 
 // TRANSLATORS The main home view
 const HOME_BUTTON_LABEL = t('spreed', 'Home')
@@ -499,8 +526,6 @@ export default {
 		CallPhoneDialog,
 		InvitationHandler,
 		NcAppNavigation,
-		NcAppNavigationCaption,
-		NcAppNavigationItem,
 		NcButton,
 		NcCounterBubble,
 		NcChip,
@@ -515,6 +540,7 @@ export default {
 		TransitionWrapper,
 		ConversationsListVirtual,
 		SearchConversationsResults,
+		LeftSidebarButton,
 		// Icons
 		IconAccountMultiplePlusOutline,
 		IconAt,
@@ -551,8 +577,11 @@ export default {
 		const federationStore = useFederationStore()
 		const talkHashStore = useTalkHashStore()
 		const settingsStore = useSettingsStore()
+		const tagsStore = useConversationTagsStore()
 		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox)
 		const isMobile = useIsMobile()
+
+		const LIST_HEADING_ID = 'left-sidebar-list-heading'
 
 		return {
 			token: useGetToken(),
@@ -571,6 +600,7 @@ export default {
 			supportsArchive,
 			supportThreads,
 			supportSortOrder,
+			supportTags,
 			showArchived,
 			showThreadsList,
 			settingsStore,
@@ -578,9 +608,11 @@ export default {
 			HOME_BUTTON_LABEL,
 			FILTER_LABELS,
 			SORT_LABELS,
+			LIST_HEADING_ID,
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
 			tokenStore: useTokenStore(),
+			tagsStore,
 		}
 	},
 
@@ -589,8 +621,7 @@ export default {
 			searchText: '',
 			searchResults: [],
 			searchResultsListedConversations: [],
-			contactsLoading: false,
-			listedConversationsLoading: false,
+			searchResultsLoading: true,
 			canStartConversations: getTalkConfig('local', 'conversations', 'can-create'),
 			cancelSearchPossibleConversations: () => {},
 			cancelSearchListedConversations: () => {},
@@ -627,36 +658,7 @@ export default {
 		},
 
 		sortedConversationsList() {
-			return this.filteredConversationsList.slice()
-				.sort((conversation1, conversation2) => {
-					// Favorites always first
-					if (conversation1.isFavorite !== conversation2.isFavorite) {
-						return conversation1.isFavorite ? -1 : 1
-					}
-
-					if (this.groupMode !== CONVERSATION.GROUP_MODE.NONE) {
-						const isOneToOne1 = [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(conversation1.type)
-						const isOneToOne2 = [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(conversation2.type)
-
-						if (isOneToOne1 !== isOneToOne2) {
-							if (this.groupMode === CONVERSATION.GROUP_MODE.GROUP_FIRST) {
-								// Group mode: groups first
-								return isOneToOne1 ? 1 : -1
-							} else if (this.groupMode === CONVERSATION.GROUP_MODE.PRIVATE_FIRST) {
-								// Group mode: private first
-								return isOneToOne1 ? -1 : 1
-							}
-						}
-					}
-
-					// Sort order: by alphabet A->Z
-					if (this.sortOrder === CONVERSATION.SORT_ORDER.ALPHABETICAL) {
-						return (conversation1.displayName).localeCompare(conversation2.displayName)
-					}
-
-					// Default (legacy) sort order: by recent activity
-					return conversation2.lastActivity - conversation1.lastActivity
-				})
+			return sortConversationsList(this.filteredConversationsList, this.groupMode, this.sortOrder)
 		},
 
 		emptyContentLabel() {
@@ -817,6 +819,11 @@ export default {
 		this.debounceFetchConversations = debounce(this.fetchConversations, 3000)
 		this.debounceHandleScroll = debounce(this.handleScroll, 50)
 
+		if (supportTags) {
+			// Fetch conversation tags
+			this.tagsStore.fetchTags()
+		}
+
 		EventBus.on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.once('conversations-received', this.handleConversationsReceived)
 		EventBus.on('route-change', this.onRouteChange)
@@ -921,8 +928,6 @@ export default {
 		},
 
 		async fetchPossibleConversations() {
-			this.contactsLoading = true
-
 			try {
 				// FIXME: move to conversationsStore
 				this.cancelSearchPossibleConversations('canceled')
@@ -945,8 +950,6 @@ export default {
 				this.searchResults = response?.data?.ocs?.data.filter((match) => {
 					return !(match.source === ATTENDEE.ACTOR_TYPE.USERS && oneToOneMap.includes(match.id))
 				}) ?? []
-
-				this.contactsLoading = false
 			} catch (exception) {
 				if (isCancel(exception)) {
 					return
@@ -958,8 +961,6 @@ export default {
 
 		async fetchListedConversations() {
 			try {
-				this.listedConversationsLoading = true
-
 				// FIXME: move to conversationsStore
 				this.cancelSearchListedConversations('canceled')
 				const { request, cancel } = CancelableRequest(searchListedConversations)
@@ -967,7 +968,6 @@ export default {
 
 				const response = await request(this.searchText)
 				this.searchResultsListedConversations = response.data.ocs.data
-				this.listedConversationsLoading = false
 			} catch (exception) {
 				if (isCancel(exception)) {
 					return
@@ -987,7 +987,9 @@ export default {
 			this.showThreadsList = false
 
 			this.resetNavigation()
+			this.searchResultsLoading = true
 			await Promise.all([this.fetchPossibleConversations(), this.fetchListedConversations()])
+			this.searchResultsLoading = false
 			this.initializeNavigation()
 		},
 
@@ -1250,10 +1252,28 @@ export default {
 	line-height: 20px;
 }
 
+.navigation-top {
+	display: flex;
+	flex-direction: column;
+	gap: calc(2 * var(--default-grid-baseline));
+	padding-block: calc(2 * var(--default-grid-baseline)) var(--default-grid-baseline);
+}
+
+.navigation-bottom {
+	padding-block: var(--default-grid-baseline) calc(2 * var(--default-grid-baseline));
+}
+
+.navigation-buttons-container {
+	display: flex;
+	flex-direction: column;
+	gap: var(--default-grid-baseline);
+	// Inline with NcAppNavigation list
+	padding-inline: calc(2 * var(--default-grid-baseline));
+}
+
 .new-conversation {
 	position: relative;
 	display: flex;
-	margin: calc(var(--default-grid-baseline) * 2);
 	align-items: center;
 
 	.filters {
@@ -1270,38 +1290,15 @@ export default {
 }
 
 .navigation-caption {
-	margin-block: var(--default-grid-baseline) !important;
-	margin-inline-start: calc(var(--default-grid-baseline) * 2);
-
-	:deep(.app-navigation-caption__name) {
-		margin: 0;
-	}
-}
-
-.navigation-item {
-	padding-inline: calc(var(--default-grid-baseline) * 2);
-	margin-block: var(--default-grid-baseline);
-
-	:deep(.app-navigation-entry-link) {
-		padding-inline-start: var(--default-grid-baseline);
-	}
-
-	:deep(.app-navigation-entry-icon) {
-		flex: 0 0 40px !important; // AVATAR.SIZE.DEFAULT
-	}
-
-	:deep(.app-navigation-entry__name) {
-		padding-inline-start: calc(2 * var(--default-grid-baseline));
-		font-weight: 500;
-	}
+	display: flex;
+	align-items: center;
+	padding-inline: var(--default-grid-baseline);
+	height: var(--default-clickable-area);
+	font-weight: bold;
 }
 
 .threads-tab__list {
 	padding-inline: var(--default-grid-baseline);
-
-	& > .navigation-item {
-		padding-inline: var(--default-grid-baseline);
-	}
 }
 
 .unread-mention-button {
@@ -1334,17 +1331,9 @@ export default {
 	display: flex;
 	flex-wrap: wrap;
 	gap: var(--default-grid-baseline);
-	margin: var(--default-grid-baseline) calc(var(--default-grid-baseline) * 2);
 }
 
-.left-sidebar__settings-button-container {
-	display: flex;
-	flex-direction: column;
-	gap: var(--default-grid-baseline);
-	padding: calc(2 * var(--default-grid-baseline));
-}
-
-.left-sidebar__settings-button-bubble {
+.archived-conversations-bubble {
 	margin-inline: var(--default-grid-baseline);
 	color: var(--color-primary-element);
 }
