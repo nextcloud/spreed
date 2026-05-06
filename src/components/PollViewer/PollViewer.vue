@@ -266,8 +266,12 @@ export default {
 				return n('spreed', 'Open poll • %n vote', 'Open poll • %n votes', this.poll?.numVoters)
 			}
 
+			if (!this.isPollPublic && this.selfIsOwnerOrModerator) {
+				return n('spreed', 'Open poll • %n vote • Your vote is anonymous', 'Open poll • %n votes • Your vote is anonymous', this.poll?.numVoters)
+			}
+
 			if (!this.isPollPublic && this.selfHasVoted) {
-				return t('spreed', 'Open poll • You voted already')
+				return t('spreed', 'Open poll • You voted already • Your vote is anonymous')
 			}
 
 			return t('spreed', 'Open poll')
