@@ -14,6 +14,7 @@ use OCA\Talk\Service\ConversationFolderService;
 use OCP\Constants;
 use OCP\Files\FileInfo;
 use OCP\Files\Folder;
+use OCP\Files\IFilenameValidator;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotEnoughSpaceException;
@@ -29,6 +30,7 @@ class ConversationFolderServiceTest extends TestCase {
 	protected TalkConfig&MockObject $talkConfig;
 	protected IRootFolder&MockObject $rootFolder;
 	protected IShareManager&MockObject $shareManager;
+	protected IFilenameValidator&MockObject $filenameValidator;
 	protected LoggerInterface&MockObject $logger;
 	protected ConversationFolderService $service;
 
@@ -38,12 +40,14 @@ class ConversationFolderServiceTest extends TestCase {
 		$this->talkConfig = $this->createMock(TalkConfig::class);
 		$this->rootFolder = $this->createMock(IRootFolder::class);
 		$this->shareManager = $this->createMock(IShareManager::class);
+		$this->filenameValidator = $this->createMock(IFilenameValidator::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 
 		$this->service = new ConversationFolderService(
 			$this->talkConfig,
 			$this->rootFolder,
 			$this->shareManager,
+			$this->filenameValidator,
 			$this->logger,
 		);
 	}

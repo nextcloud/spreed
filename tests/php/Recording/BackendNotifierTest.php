@@ -24,6 +24,7 @@ use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IFilenameValidator;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -94,7 +95,7 @@ class BackendNotifierTest extends TestCase {
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$dispatcher = \OCP\Server::get(IEventDispatcher::class);
 
-		$this->config = new Config($config, $appConfig, $userConfig, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $timeFactory, $dispatcher);
+		$this->config = new Config($config, $appConfig, $userConfig, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $timeFactory, $dispatcher, $this->createMock(IFilenameValidator::class));
 
 		$this->recreateBackendNotifier();
 

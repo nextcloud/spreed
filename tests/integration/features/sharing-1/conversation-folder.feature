@@ -177,3 +177,23 @@ Feature: sharing-1/conversation-folder
     And user "participant1" posts file "photo.jpg" from conversation folder of room "group room" with name "Group room" with 200 (v1)
     When user "participant1" probes attachment folder for room "group room" with files "photo.jpg" with 200 (v1)
     Then the probe response renames "photo.jpg" to "photo (1).jpg"
+
+  Scenario: Probe sanitizes user display name when windows compatible filenames are enforced
+    Given windows compatible filenames are enabled
+    And user "participant3" exists
+    And set display name of user "participant3" to "J<o>e"
+    And user "participant3" creates room "one-to-one room" (v4)
+      | roomType | 1            |
+      | invite   | participant1 |
+    When user "participant3" probes attachment folder for room "one-to-one room" with files "rep<o>rt.txt,nul.txt,rep:o:rt.txt" with 200 (v1)
+      | rep<o>rt.txt | rep_o_rt.txt |
+      | nul.txt | nul (renamed).txt |
+      | rep:o:rt.txt | rep_o_rt (1).txt |
+    And user "participant3" uploads file "rep_o_rt.txt" with content "Hello!" to conversation folder for room "one-to-one room" with name "participant1-displayname"
+    And user "participant3" posts file "rep_o_rt.txt" from conversation folder of room "one-to-one room" with name "participant1-displayname" with 200 (v1)
+    Then user "participant1" gets all received shares
+    And share is returned with
+      | uid_owner   | participant3                              |
+      | item_type   | folder                                    |
+      | path        | REGEXP /^\/Talk\/.+\/J_o_e-participant3$/ |
+      | permissions | 1                                         |

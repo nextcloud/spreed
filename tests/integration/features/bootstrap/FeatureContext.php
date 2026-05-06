@@ -130,6 +130,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	protected bool $changedBruteforceSetting = false;
 
+	private array $changedWindowsCompatibleFilenames = ['LOCAL' => false, 'REMOTE' => false];
+
 	private ?SharingContext $sharingContext;
 
 	private array $guestsAppWasEnabled = [];
@@ -3812,6 +3814,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
+	#[Given('/^windows compatible filenames are (enabled|disabled)$/')]
+	public function setWindowsCompatibleFilenames(string $action): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendRequest('POST', '/apps/files/api/v1/filenames/windows-compatibility', [
+			'enabled' => $action === 'enabled' ? '1' : '0',
+		]);
+		$this->assertStatusCode($this->response, 200);
+		$this->changedWindowsCompatibleFilenames[$this->currentServer] = true;
+		$this->setCurrentUser($currentUser);
+	}
+
 	#[Given('/^(enable|disable) query\.log$/')]
 	public function toggleQueryLog(string $enable): void {
 		if ($enable === 'enable') {
@@ -4014,6 +4027,24 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		} else {
 			$this->runOcc(['app:disable', 'password_policy']);
 		}
+	}
+
+	#[BeforeScenario]
+	#[AfterScenario]
+	public function resetWindowsCompatibleFilenames(): void {
+		foreach (['LOCAL', 'REMOTE'] as $server) {
+			if (!$this->changedWindowsCompatibleFilenames[$server]) {
+				continue;
+			}
+			$this->usingServer($server);
+			$currentUser = $this->setCurrentUser('admin');
+			$this->sendRequest('POST', '/apps/files/api/v1/filenames/windows-compatibility', [
+				'enabled' => '0',
+			]);
+			$this->setCurrentUser($currentUser);
+			$this->changedWindowsCompatibleFilenames[$server] = false;
+		}
+		$this->usingServer('LOCAL');
 	}
 
 	#[BeforeScenario]
