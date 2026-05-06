@@ -25,6 +25,7 @@ type State = {
 	selectedVideoPeerId: string | null
 	callEndedTimeout: NodeJS.Timeout | number | undefined
 	isLiveTranscriptionEnabled: boolean
+	externalCallServiceUrl: string | null
 }
 
 type CallViewModePayload = {
@@ -47,6 +48,7 @@ export const useCallViewStore = defineStore('callView', {
 		selectedVideoPeerId: null,
 		callEndedTimeout: undefined,
 		isLiveTranscriptionEnabled: false,
+		externalCallServiceUrl: null,
 	}),
 
 	getters: {
@@ -56,6 +58,10 @@ export const useCallViewStore = defineStore('callView', {
 	actions: {
 		setForceCallView(value: boolean) {
 			this.forceCallView = value
+		},
+
+		setExternalCallServiceUrl(url: string | null) {
+			this.externalCallServiceUrl = url
 		},
 
 		setIsViewerOverlay(value: boolean) {

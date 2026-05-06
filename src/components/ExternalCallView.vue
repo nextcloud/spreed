@@ -4,19 +4,33 @@
 -->
 
 <script setup lang="ts">
-import { onBeforeUnmount } from 'vue'
+import { computed, onBeforeUnmount } from 'vue'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
+import { useActorStore } from '../stores/actor.ts'
 import { useCallViewStore } from '../stores/callView.ts'
 
 const { token } = defineProps<{
 	token: string
 }>()
 
+const actorStore = useActorStore()
 const callViewStore = useCallViewStore()
 
-const externalCallServiceUrl = getTalkConfig('local', 'call', 'external-call-service') ?? ''
+const externalCallServiceUrl = computed(() => {
+	if (callViewStore.externalCallServiceUrl) {
+		return callViewStore.externalCallServiceUrl
+	}
+
+	// Fallback to provided URL by the config
+	const url = new URL(getTalkConfig('local', 'call', 'external-call-service')!)
+	url.searchParams.set('room', token)
+	url.searchParams.set('userId', actorStore.actorId!)
+
+	return url.toString()
+})
 
 onBeforeUnmount(() => {
+	callViewStore.setExternalCallServiceUrl(null)
 	callViewStore.setForceCallView(false)
 })
 </script>

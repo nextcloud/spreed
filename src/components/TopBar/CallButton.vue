@@ -98,6 +98,7 @@
 </template>
 
 <script>
+import axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
@@ -479,7 +480,28 @@ export default {
 		},
 
 		async handleExternalCall() {
-			this.callViewStore.setForceCallView(true)
+			try {
+				this.loading = true
+				const externalServiceUrl = getTalkConfig(this.token, 'call', 'external-call-service')
+				const response = await axios.post(externalServiceUrl, {
+					room: this.token,
+					userId: this.actorStore.userId ?? this.actorStore.actorId,
+				})
+
+				// Check for successful response (200, 302, 303)
+				if ([200, 302, 303].includes(response.status)) {
+					const callUrl = response.data || response.headers.location
+					if (callUrl) {
+						this.callViewStore.setExternalCallServiceUrl(callUrl)
+					}
+					this.callViewStore.setForceCallView(true)
+				}
+			} catch (error) {
+				console.error('Failed to initialize external call service:', error)
+				showError(t('spreed', 'Connection failed'))
+			} finally {
+				this.loading = false
+			}
 		},
 
 		async switchToParentRoom() {
