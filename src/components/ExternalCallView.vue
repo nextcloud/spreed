@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount } from 'vue'
+import { computed, onBeforeUnmount, onMounted, useTemplateRef } from 'vue'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useCallViewStore } from '../stores/callView.ts'
@@ -15,6 +15,9 @@ const { token } = defineProps<{
 
 const actorStore = useActorStore()
 const callViewStore = useCallViewStore()
+
+const externalWrapper = useTemplateRef<HTMLDivElement>('externalWrapper')
+let externalWrapperObserver: MutationObserver
 
 const externalCallServiceUrl = computed(() => {
 	if (callViewStore.externalCallServiceUrl) {
@@ -29,14 +32,34 @@ const externalCallServiceUrl = computed(() => {
 	return url.toString()
 })
 
-onBeforeUnmount(() => {
+onMounted(() => {
+	externalWrapperObserver = new MutationObserver(() => {
+		const iframe = externalWrapper.value!.querySelector('iframe')
+		if (!iframe) {
+			onIframeRemoved()
+			externalWrapperObserver.disconnect()
+		}
+	})
+
+	externalWrapperObserver.observe(externalWrapper.value!, { childList: true, subtree: true })
+})
+
+onBeforeUnmount(onIframeRemoved)
+
+/**
+ * Handle cleanup after iframe is unmounted / removed:
+ * - by navigating to other room (warnLeaving to leave call)
+ * - by 3rd-party destroying an iframe (e.g. with `iframe.parentNode.removeChild(iframe)`)
+ */
+function onIframeRemoved() {
+	externalWrapperObserver?.disconnect()
 	callViewStore.setExternalCallServiceUrl(null)
 	callViewStore.setForceCallView(false)
-})
+}
 </script>
 
 <template>
-	<div class="external-call-view">
+	<div ref="externalWrapper" class="external-call-view">
 		<iframe
 			:src="externalCallServiceUrl"
 			title="External Call Service"
