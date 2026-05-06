@@ -422,10 +422,11 @@ describe('fileUploadStore', () => {
 				expect(client.createDirectory).not.toHaveBeenCalled()
 				expect(findUniquePath).not.toHaveBeenCalled()
 
-				// File is uploaded under a temp name inside the Draft folder.
+				// File is uploaded under a random UUID temp name inside the Draft folder.
 				expect(uploadMock).toHaveBeenCalledTimes(1)
 				const uploadedPath = uploadMock.mock.calls[0][0]
-				expect(uploadedPath).toMatch(new RegExp('^/' + DRAFT_PATH + '/upload-id1-.*-' + file.name + '$'))
+				const uuidRe = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+				expect(uploadedPath).toMatch(new RegExp('^/' + DRAFT_PATH + '/' + uuidRe + '$'))
 
 				// File is posted via the Talk attachment endpoint with the
 				// original name for rename-on-conflict on the backend.
@@ -433,7 +434,7 @@ describe('fileUploadStore', () => {
 				expect(postAttachment).toHaveBeenCalledWith(expect.objectContaining({
 					token: TOKEN,
 					fileName: file.name,
-					filePath: expect.stringMatching(new RegExp('^' + DRAFT_PATH + '/upload-id1-.*-' + file.name + '$')),
+					filePath: expect.stringMatching(new RegExp('^' + DRAFT_PATH + '/' + uuidRe + '$')),
 				}))
 				expect(shareFile).not.toHaveBeenCalled()
 			})
