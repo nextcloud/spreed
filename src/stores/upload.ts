@@ -460,11 +460,11 @@ export const useUploadStore = defineStore('upload', () => {
 	async function prepareUploadPaths({ token, uploadId }: { token: string, uploadId: string }) {
 		const draftFolderPath = uploads[uploadId]?.draftFolderPath
 		if (draftFolderPath) {
-			// Assign a guaranteed-unique temp name; the backend resolves the
-			// final name and any conflicts when postAttachment is called.
-			for (const [index, uploadedFile] of getInitialisedUploads(uploadId)) {
-				const fileName = uploadedFile.file.newName || uploadedFile.file.name
-				const tempName = `${uploadId}-${index}-${fileName}`
+			// Upload to a random temp name inside the Draft folder; the backend
+			// resolves the final name (and any conflicts) when postAttachment
+			// moves the file out of Draft.
+			for (const [index] of getInitialisedUploads(uploadId)) {
+				const tempName = crypto.randomUUID()
 				markFileAsPendingUpload({ uploadId, index, sharePath: '/' + draftFolderPath + '/' + tempName })
 			}
 			return
