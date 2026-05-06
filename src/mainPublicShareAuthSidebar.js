@@ -14,10 +14,6 @@ import pinia from './stores/pinia.ts'
 import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 import './init.js'
-// Leaflet icon patch
-import 'leaflet/dist/leaflet.css'
-import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
-import 'leaflet-defaulticon-compatibility'
 
 // CSP config for webpack dynamic chunk loading
 __webpack_nonce__ = getCSPNonce()
