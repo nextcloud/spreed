@@ -239,6 +239,7 @@ OC.L10N.register(
     "Message of {user}" : "Паведамленне карыстальніка {user}",
     "Message of a deleted user in {conversation}" : "Паведамленне выдаленага карыстальніка ў {conversation}",
     "Talk conversations" : "Размовы ў Talk",
+    "Call %s" : "Выклікаць %s",
     "An error occurred. Please contact your administrator." : "Узнікла памылка. Звярніцеся да адміністратара.",
     "App disabled" : "Праграма адключана",
     "Storage quota exceeded" : "Квота сховішча перавышана",

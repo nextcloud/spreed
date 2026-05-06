@@ -280,6 +280,7 @@ OC.L10N.register(
     "Message of {user}" : "رسالة من {user}",
     "Message of a deleted user in {conversation}" : "رسالة من مستخدِم محذوف في {conversation}",
     "Talk conversations" : "محادثات",
+    "Call %s" : "إتصل بـ%s",
     "An error occurred. Please contact your administrator." : "حدث خطأٌ. يرجى الاتصال بمسؤول النظام.",
     "Storage quota exceeded" : "الحصة التخزينية تمّ استنفاذها",
     "File not found" : "تعذر العثور على الملف",

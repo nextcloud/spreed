@@ -199,6 +199,7 @@ OC.L10N.register(
     "Message of {user}" : "Съобщение на {user}",
     "Message of a deleted user in {conversation}" : "Съобщение на изтрит потребител в {conversation}",
     "Talk conversations" : "Talk разговори",
+    "Call %s" : "Обаждане %s",
     "An error occurred. Please contact your administrator." : "Възникна грешка. Моля, свържете се с вашия администратор.",
     "File not found" : "Файлът не е намерен",
     "File is not shared, or shared but not with the user" : "Файлът не се споделя или се споделя, но не и с потребителя",
