@@ -95,7 +95,7 @@
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
-import { inject } from 'vue'
+import { defineAsyncComponent, inject } from 'vue'
 import IconPin from 'vue-material-design-icons/PinOutline.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
@@ -104,7 +104,6 @@ import ContactCard from './MessagePart/ContactCard.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
-import LocationCard from './MessagePart/LocationCard.vue'
 import MentionChip from './MessagePart/MentionChip.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
 import PollCard from './MessagePart/PollCard.vue'
@@ -116,6 +115,8 @@ import { EventBus } from '../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.ts'
 import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.ts'
+
+const LocationCard = defineAsyncComponent(() => import('./MessagePart/LocationCard.vue'))
 
 export default {
 	name: 'MessageItem',
