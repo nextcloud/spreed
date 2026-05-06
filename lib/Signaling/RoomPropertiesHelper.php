@@ -10,16 +10,20 @@ namespace OCA\Talk\Signaling;
 
 use OCA\Talk\Events\BeforeSignalingRoomPropertiesSentEvent;
 use OCA\Talk\Room;
+use OCA\Talk\Service\RoomService;
 use OCP\EventDispatcher\IEventDispatcher;
 
 class RoomPropertiesHelper {
 
 	public function __construct(
 		private IEventDispatcher $dispatcher,
+		private RoomService $roomService,
 	) {
 	}
 
 	public function getPropertiesForSignaling(Room $room, string $userId, bool $roomModified = true): array {
+		$this->roomService->validateLobbyTimer($room);
+
 		$properties = [
 			'name' => $room->getDisplayName($userId),
 			'type' => $room->getType(),

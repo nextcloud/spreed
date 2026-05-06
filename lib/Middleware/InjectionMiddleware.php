@@ -40,6 +40,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Controller;
@@ -70,6 +71,7 @@ class InjectionMiddleware extends Middleware {
 		protected InvitationMapper $invitationMapper,
 		protected Authenticator $federationAuthenticator,
 		protected BanService $banService,
+		protected RoomService $roomService,
 		protected LoggerInterface $logger,
 		protected ?string $userId,
 	) {
@@ -387,7 +389,11 @@ class InjectionMiddleware extends Middleware {
 		}
 
 		$room = $controller->getRoom();
-		if (!$room instanceof Room || $room->getLobbyState() !== Webinary::LOBBY_NONE) {
+		if (!$room instanceof Room) {
+			throw new LobbyException();
+		}
+		$this->roomService->validateLobbyTimer($room);
+		if ($room->getLobbyState() !== Webinary::LOBBY_NONE) {
 			throw new LobbyException();
 		}
 	}
