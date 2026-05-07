@@ -21,7 +21,7 @@ import SessionStorage from './services/SessionStorage.js'
 import { useActorStore } from './stores/actor.ts'
 import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
-import { signalingKill } from './utils/webrtc/index.js'
+import { signalingKill, signalingWebRtcKill } from './utils/webrtc/index.js'
 
 let fetchCurrentConversationIntervalId
 
@@ -93,18 +93,13 @@ export default {
 		isInFile() {
 			return this.fileId === this.fileIdForToken
 		},
+
+		warnLeaving() {
+			return !this.isLeavingAfterSessionIssue && this.isInCall
+		},
 	},
 
 	watch: {
-		fileId: {
-			immediate: true,
-			handler(fileId) {
-				if (this.token && (fileId !== this.fileIdForToken)) {
-					this.leaveConversation()
-				}
-			},
-		},
-
 		active: {
 			immediate: true,
 			handler(active) {
@@ -118,29 +113,29 @@ export default {
 		this.tokenStore.updateTokenAndFileIdForToken(this.token, this.node.fileid)
 		this.joinConversation()
 
-		window.addEventListener('unload', () => {
-			console.info('Navigating away, leaving conversation')
-			if (this.token) {
-				SessionStorage.removeItem('joined_conversation')
-				// We have to do this synchronously, because in unload and beforeunload
-				// Promises, async and await are prohibited.
-				signalingKill()
-				if (!this.isLeavingAfterSessionIssue) {
-					leaveConversationSync(this.token)
-				}
-			}
-		})
+		window.addEventListener('beforeunload', this.preventUnload)
+		window.addEventListener('unload', this.syncLeaveConversation)
+	},
+
+	async beforeUnmount() {
+		EventBus.off('should-refresh-conversations', this.fetchCurrentConversation)
+		EventBus.off('signaling-participant-list-changed', this.fetchCurrentConversation)
+
+		window.clearInterval(fetchCurrentConversationIntervalId)
+		fetchCurrentConversationIntervalId = null
+
+		try {
+			await this.$store.dispatch('leaveConversation', { token: this.token })
+		} catch (error) {
+			console.error(error)
+		}
+
+		window.removeEventListener('beforeunload', this.preventUnload)
+		window.removeEventListener('unload', this.syncLeaveConversation)
+		this.syncLeaveConversation()
 	},
 
 	unmounted() {
-		if (this.tokenStore.token) {
-			this.$store.dispatch('leaveConversation', { token: this.tokenStore.token })
-		}
-
-		this.tokenStore.updateTokenAndFileIdForToken('', null)
-
-		clearTimeout(fetchCurrentConversationIntervalId)
-		fetchCurrentConversationIntervalId = null
 	},
 
 	methods: {
@@ -187,22 +182,35 @@ export default {
 			}
 		},
 
-		leaveConversation() {
-			EventBus.off('should-refresh-conversations', this.fetchCurrentConversation)
-			EventBus.off('signaling-participant-list-changed', this.fetchCurrentConversation)
-			window.clearInterval(fetchCurrentConversationIntervalId)
-
-			this.$store.dispatch('leaveConversation', { token: this.token })
-
-			this.tokenStore.updateTokenAndFileIdForToken('', null)
-		},
-
 		async fetchCurrentConversation() {
 			if (!this.token) {
 				return
 			}
 
 			await this.$store.dispatch('fetchConversation', { token: this.token })
+		},
+
+		syncLeaveConversation() {
+			console.info('Navigating away, leaving conversation')
+			if (this.token) {
+				this.tokenStore.updateTokenAndFileIdForToken('', null)
+				SessionStorage.removeItem('joined_conversation')
+				// We have to do this synchronously, because in unload and beforeunload
+				// Promises, async and await are prohibited.
+				signalingKill()
+				signalingWebRtcKill()
+				if (!this.isLeavingAfterSessionIssue) {
+					leaveConversationSync(this.token)
+				}
+			}
+		},
+
+		preventUnload(event) {
+			if (!this.warnLeaving) {
+				return
+			}
+
+			event.preventDefault()
 		},
 
 		/**

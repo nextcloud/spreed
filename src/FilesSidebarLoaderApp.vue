@@ -4,6 +4,7 @@
 -->
 
 <script setup lang="ts">
+import { showWarning } from '@nextcloud/dialogs'
 import { type INode } from '@nextcloud/files'
 import { FileType, getSidebar } from '@nextcloud/files'
 import { t } from '@nextcloud/l10n'
@@ -30,10 +31,13 @@ const isTalkSidebarSupportedForFile = ref<boolean | undefined>(undefined)
 const token = ref<string>()
 const isTalkSidebarMounted = ref<boolean>(false)
 
+const isOtherTalkInstanceMounted = ref<boolean>(false)
+checkOtherTalkInstanceMounted()
+
 watch(() => props.active, (active) => {
 	if (active) {
 		setTalkSidebarSupportedForFile()
-	} else {
+	} else if (isTalkSidebarMounted.value) {
 		window.OCA.Talk.unmountInstance?.()
 		isTalkSidebarMounted.value = false
 	}
@@ -100,6 +104,12 @@ async function setTalkSidebarSupportedForFile() {
  */
 async function joinConversation() {
 	try {
+		if (checkOtherTalkInstanceMounted()) {
+			// Fallback, should be prevented by isOtherTalkInstanceMounted
+			showWarning(t('spreed', 'Duplicate session'))
+			return
+		}
+
 		if (!token.value) {
 			token.value = (await getFileConversation(props.node.fileid!)).data.ocs.data.token || ''
 		}
@@ -112,6 +122,14 @@ async function joinConversation() {
 	} catch (error) {
 		console.error('Failed to load Talk integration:', error)
 	}
+}
+
+/**
+ * Check if other Talk instance is active on a page (e.g. floating call)
+ */
+function checkOtherTalkInstanceMounted() {
+	isOtherTalkInstanceMounted.value = !!window.OCA.Talk
+	return isOtherTalkInstanceMounted.value
 }
 
 /**
@@ -154,6 +172,7 @@ function openSharingTab() {
 				<NcButton
 					v-if="isTalkSidebarSupportedForFile === true"
 					variant="primary"
+					:disabled="isOtherTalkInstanceMounted"
 					@click="joinConversation">
 					<template #icon>
 						<IconMessageOutline :size="20" />
