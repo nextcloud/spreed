@@ -66,10 +66,6 @@ declare global {
 				registerParticipantSearchAction?: () => void
 				gridDebugInformation?: () => void
 				gridDevModeEnable?: () => void
-
-				fetchCurrentConversationIntervalId?: NodeJS.Timeout | undefined
-				fetchCurrentConversationWrapper?: () => Promise<void>
-				fetchCurrentConversationBound?: () => Promise<void>
 			}
 
 			/** Public API */
