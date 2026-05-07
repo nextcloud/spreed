@@ -22,6 +22,7 @@ import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import CallTime from './components/TopBar/CallTime.vue'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
+import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { PARTICIPANT, SIGNALING } from './constants.ts'
 import { getTalkConfig } from './services/CapabilitiesManager.ts'
@@ -43,6 +44,7 @@ const props = defineProps<{
 const vuexStore = useStore()
 const router = useRouter()
 useHashCheck()
+useRecordingStatusSync()
 
 const isInCall = useIsInCall()
 const isLeavingAfterSessionIssue = useSessionIssueHandler()

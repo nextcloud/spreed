@@ -8,12 +8,13 @@ import { generateFilePath } from '@nextcloud/router'
 import { createApp } from 'vue'
 import PublicShareAuthRequestPasswordButton from './PublicShareAuthRequestPasswordButton.vue'
 import PublicShareAuthSidebar from './PublicShareAuthSidebar.vue'
+import { initializeTalkOnce } from './init.js'
 import { createMemoryRouter } from './router/router.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
 import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
-import './init.js'
+initializeTalkOnce()
 
 // CSP config for webpack dynamic chunk loading
 __webpack_nonce__ = getCSPNonce()

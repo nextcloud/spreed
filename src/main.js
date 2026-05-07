@@ -8,6 +8,7 @@ import { emit, subscribe } from '@nextcloud/event-bus'
 import { generateFilePath } from '@nextcloud/router'
 import { createApp, reactive, watch } from 'vue'
 import App from './App.vue'
+import { initializeTalkOnce } from './init.js'
 import { createTalkRouter } from './router/router.ts'
 import { SettingsAPI } from './services/SettingsAPI.ts'
 import store from './store/index.js'
@@ -15,7 +16,7 @@ import pinia from './stores/pinia.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
 import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
-import './init.js'
+initializeTalkOnce()
 
 if (!IS_DESKTOP) {
 	// CSP config for webpack dynamic chunk loading

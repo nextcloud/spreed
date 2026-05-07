@@ -4,7 +4,8 @@
  */
 
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, onScopeDispose, ref } from 'vue'
+import { EventBus } from '../services/EventBus.ts'
 
 export const useTokenStore = defineStore('token', () => {
 	const token = ref<'' | (string & {})>('')
@@ -19,6 +20,22 @@ export const useTokenStore = defineStore('token', () => {
 	const lastJoinedConversationToken = ref<'' | (string & {})>('')
 
 	const currentConversationIsJoined = computed(() => token.value !== '' && lastJoinedConversationToken.value === token.value)
+
+	EventBus.on('signaling-join-room', handleSignalingJoinRoom)
+
+	onScopeDispose(() => {
+		EventBus.off('signaling-join-room', handleSignalingJoinRoom)
+	})
+
+	/**
+	 * Handle signaling 'joinRoom' event
+	 *
+	 * @param payload
+	 * @param payload."0" - conversation token
+	 */
+	function handleSignalingJoinRoom([token]: [string]) {
+		updateLastJoinedConversationToken(token)
+	}
 
 	/**
 	 * @param newToken token of active conversation

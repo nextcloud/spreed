@@ -7,13 +7,14 @@ import type { Conversation } from './types/index.ts'
 
 import { createApp, defineAsyncComponent, reactive } from 'vue'
 import { CONVERSATION } from './constants.ts'
+import { initializeTalk } from './init.js'
 import { createMemoryRouter } from './router/router.ts'
 import { createConversation } from './services/conversationsService.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
 import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
-import './init.js'
+initializeTalk()
 
 /**
  * Initializes the floating container on the page

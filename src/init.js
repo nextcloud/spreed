@@ -3,93 +3,81 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-// The purpose of this file is to wrap the logic shared by the different talk
-// entry points
+/** The purpose of this file is to wrap the logic shared by the different Talk entry points */
 
-import { showError } from '@nextcloud/dialogs'
-import { t } from '@nextcloud/l10n'
 import { reactive } from 'vue'
-import { CALL, PARTICIPANT } from './constants.ts'
 import BrowserStorage from './services/BrowserStorage.js'
-import { EventBus } from './services/EventBus.ts'
 import { setTalkSessionUniqueTabIdHeader } from './services/talkSessionUniqueTabId.ts'
-import store from './store/index.js'
 import { useIntegrationsStore } from './stores/integrations.js'
 import pinia from './stores/pinia.ts'
-import { useTokenStore } from './stores/token.ts'
 import { isSafari } from './utils/browserCheck.ts'
 
 import '@nextcloud/dialogs/style.css'
 
-if (!window.OCA.Talk) {
-	window.OCA.Talk = reactive({})
-}
-
-const integrationsStore = useIntegrationsStore(pinia)
-const tokenStore = useTokenStore(pinia)
+let appInitialized = false
+let storageMigrated = false
 
 /**
- * Frontend message API for adding actions to talk messages.
- *
- * @param {object} data the wrapping object;
- * @param {string} data.label the action label.
- * @param {Function} data.callback the callback function. This function will receive
- * the messageAPIData object as a parameter and be triggered by a click on the
- * action.
- * @param {string} data.icon the action label. E.g. "icon-reply"
+ * Initializes the talk application surroundings. Skip if was initialized already.
+ * Valid for Talk main/recording/public sidebars, that are not repeatedly mounted and destroyed on page.
  */
-window.OCA.Talk.registerMessageAction = ({ label, callback, icon }) => {
-	const messageAction = {
-		label,
-		callback,
-		icon,
+export function initializeTalkOnce() {
+	if (!appInitialized) {
+		initializeTalk()
 	}
-	integrationsStore.addMessageAction(messageAction)
 }
-
-window.OCA.Talk.registerParticipantSearchAction = ({ label, callback, show, icon }) => {
-	const participantSearchAction = {
-		label,
-		callback,
-		show,
-		icon,
-	}
-	integrationsStore.addParticipantSearchAction(participantSearchAction)
-}
-
-EventBus.on('signaling-join-room', ([token]) => {
-	tokenStore.updateLastJoinedConversationToken(token)
-})
-
-EventBus.on('signaling-recording-status-changed', ([token, status]) => {
-	store.dispatch('setConversationProperties', { token, properties: { callRecording: status } })
-
-	if (status !== CALL.RECORDING.FAILED) {
-		return
-	}
-
-	if (!store.getters.isInCall(tokenStore.token)) {
-		return
-	}
-
-	const conversation = store.getters.conversation(tokenStore.token)
-	if (conversation?.participantType === PARTICIPANT.TYPE.OWNER
-		|| conversation?.participantType === PARTICIPANT.TYPE.MODERATOR) {
-		showError(t('spreed', 'The recording failed. Please contact your administrator.'))
-	}
-})
 
 /**
- * Migrate localStorage to @nextcloud/browser-storage
- *
- * We assume migration is done from now on, so we remove the migration flag
- * REMOVE: in stable 33+
+ * Initializes the talk application surroundings.
  */
-function migrateDirectLocalStorageToNextcloudBrowserStorage() {
-	if (BrowserStorage.getItem('localStorageMigrated')) {
-		BrowserStorage.removeItem('localStorageMigrated')
+export function initializeTalk() {
+	registerPublicApi()
+	setTalkSessionUniqueTabIdHeader()
+	if (!storageMigrated) {
+		migrateBrowserStorageOnce()
+	}
+	appInitialized = true
+}
+
+/**
+ * Ensures window.OCA.Talk object existing and registers public API for integrations
+ */
+function registerPublicApi() {
+	if (!window.OCA.Talk) {
+		window.OCA.Talk = reactive({})
+	}
+
+	/**
+	 * Frontend message API for adding actions to talk messages.
+	 *
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.label the action label.
+	 * @param {Function} data.callback the callback function. This function will receive
+	 * the messageAPIData object as a parameter and be triggered by a click on the action.
+	 * @param {string} data.icon the action label. E.g. "icon-reply"
+	 */
+	window.OCA.Talk.registerMessageAction = ({ label, callback, icon }) => {
+		const messageAction = {
+			label,
+			callback,
+			icon,
+		}
+		const integrationsStore = useIntegrationsStore(pinia)
+		integrationsStore.addMessageAction(messageAction)
+	}
+
+	window.OCA.Talk.registerParticipantSearchAction = ({ label, callback, show, icon }) => {
+		const participantSearchAction = {
+			label,
+			callback,
+			show,
+			icon,
+		}
+		const integrationsStore = useIntegrationsStore(pinia)
+		integrationsStore.addParticipantSearchAction(participantSearchAction)
 	}
 }
+
 /**
  * Clean up some deprecated (no longer in use) keys from @nextcloud/browser-storage
  */
@@ -119,15 +107,18 @@ function cleanOutdatedBrowserStorageKeys() {
 	}
 }
 
-setTalkSessionUniqueTabIdHeader()
-
-if (window.requestIdleCallback) {
-	window.requestIdleCallback(() => {
-		migrateDirectLocalStorageToNextcloudBrowserStorage()
+/**
+ * Migrate and clean up outdated BrowserStorage keys. Skip if was initialized already.
+ */
+function migrateBrowserStorageOnce() {
+	if (window.requestIdleCallback) {
+		window.requestIdleCallback(() => {
+			cleanOutdatedBrowserStorageKeys()
+			storageMigrated = true
+		})
+	} else {
+		// Fallback for Safari
 		cleanOutdatedBrowserStorageKeys()
-	})
-} else {
-	// Fallback for Safari
-	migrateDirectLocalStorageToNextcloudBrowserStorage()
-	cleanOutdatedBrowserStorageKeys()
+		storageMigrated = true
+	}
 }
