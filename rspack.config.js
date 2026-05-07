@@ -44,10 +44,7 @@ module.exports = defineConfig((env) => {
 			collections: path.join(__dirname, 'src', 'collections.js'),
 			main: path.join(__dirname, 'src', 'main.js'),
 			recording: path.join(__dirname, 'src', 'mainRecording.js'),
-			'files-sidebar': [
-				path.join(__dirname, 'src', 'mainFilesSidebar.js'),
-				path.join(__dirname, 'src', 'mainFilesSidebarLoader.js'),
-			],
+			'files-sidebar': path.join(__dirname, 'src', 'mainFilesSidebarLoader.js'),
 			'public-share-auth-form': path.join(__dirname, 'src', 'publicShareAuthForm.ts'),
 			'public-share-auth-sidebar': path.join(__dirname, 'src', 'mainPublicShareAuthSidebar.js'),
 			'public-share-sidebar': path.join(__dirname, 'src', 'mainPublicShareSidebar.js'),
