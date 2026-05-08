@@ -49,7 +49,7 @@ class Calls extends Base {
 
 		$data = [];
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$key = (string)$row['token'];
 			if ($input->getOption('output') === Base::OUTPUT_FORMAT_PLAIN) {
 				$key = '"' . $key . '"';

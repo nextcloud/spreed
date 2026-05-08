@@ -56,7 +56,7 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 		$result = $query->executeQuery();
 
 		$output->startProgress();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$output->advance();
 
 			$token = $this->getNewToken($entropy, $chars);

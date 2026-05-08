@@ -68,7 +68,7 @@ class Version11000Date20200922161218 extends SimpleMigrationStep {
 		$query->select('id', 'json_values')
 			->from('talk_bridges');
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$bridges[] = [
 				'id' => $row['id'],
 				'json_values' => $row['json_values'],

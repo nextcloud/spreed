@@ -118,7 +118,7 @@ class Version14000Date20220330141647 extends SimpleMigrationStep {
 
 		$attachments = $sharesWithoutMimetype = [];
 		$result = $select->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$attachment = [
 				'room_id' => (int)$row['object_id'],
 				'message_id' => (int)$row['id'],
@@ -209,7 +209,7 @@ class Version14000Date20220330141647 extends SimpleMigrationStep {
 			->leftJoin('f', 'mimetypes', 'm', $query->expr()->eq('f.mimetype', 'm.id'))
 			->where($query->expr()->in('s.id', $query->createNamedParameter($shareIds, IQueryBuilder::PARAM_INT_ARRAY)));
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$mimetype[$row['id']] = $row['mimetype'];
 		}
 		$result->closeCursor();

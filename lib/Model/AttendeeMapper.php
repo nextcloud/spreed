@@ -168,7 +168,7 @@ class AttendeeMapper extends QBMapper {
 		}
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		return (int)($row['num_actors'] ?? 0);

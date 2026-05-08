@@ -57,7 +57,7 @@ class ScheduledMessageMapper extends QBMapper {
 			->orderBy('s.send_at', 'ASC');
 
 		$cursor = $query->executeQuery();
-		$result = $cursor->fetchAll();
+		$result = $cursor->fetchAllAssociative();
 		$cursor->closeCursor();
 
 		return $result;

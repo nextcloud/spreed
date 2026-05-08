@@ -161,7 +161,7 @@ class MatterbridgeManager {
 			->where($query->expr()->eq('enabled', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$bridge = [
 				'enabled' => (bool)$row['enabled'],
 				'pid' => (int)$row['pid'],
@@ -798,7 +798,7 @@ class MatterbridgeManager {
 			->andWhere($query->expr()->gt('pid', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$expectedPidList[] = (int)$row['pid'];
 		}
 		$result->closeCursor();
@@ -914,7 +914,7 @@ class MatterbridgeManager {
 		$enabled = false;
 		$pid = 0;
 		$jsonValues = '[]';
-		if ($row = $result->fetch()) {
+		if ($row = $result->fetchAssociative()) {
 			$pid = (int)$row['pid'];
 			$enabled = ((int)$row['enabled'] === 1);
 			$jsonValues = $row['json_values'];

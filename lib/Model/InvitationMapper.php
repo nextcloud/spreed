@@ -144,7 +144,7 @@ class InvitationMapper extends QBMapper {
 			->where($qb->expr()->eq('local_room_id', $qb->createNamedParameter($room->getId())));
 
 		$result = $qb->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		return (int)($row['num_invitations'] ?? 0);

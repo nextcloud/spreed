@@ -230,7 +230,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)));
 
 		$cursor = $qb->executeQuery();
-		$data = $cursor->fetch();
+		$data = $cursor->fetchAssociative();
 		$cursor->closeCursor();
 
 		if ($data === false) {
@@ -377,7 +377,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			))
 			->executeQuery();
 
-		$data = $stmt->fetch();
+		$data = $stmt->fetchAssociative();
 		$stmt->closeCursor();
 
 		if ($data === false) {
@@ -426,7 +426,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				$qb->expr()->eq('id', $qb->createNamedParameter($share->getId()))
 			);
 		$cursor = $qb->executeQuery();
-		$data = $cursor->fetch();
+		$data = $cursor->fetchAssociative();
 		$cursor->closeCursor();
 
 		$originalPermission = $data['permissions'];
@@ -476,7 +476,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->setMaxResults(1)
 			->executeQuery();
 
-		$data = $stmt->fetch();
+		$data = $stmt->fetchAssociative();
 		$stmt->closeCursor();
 
 		if ($data === false) {
@@ -561,7 +561,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 		$cursor = $qb->executeQuery();
 		$shares = [];
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$shares[$data['fileid']][] = $this->createShareObject($data);
 		}
 		$cursor->closeCursor();
@@ -615,7 +615,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 		$cursor = $qb->executeQuery();
 		$shares = [];
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$shares[] = $this->createShareObject($data);
 		}
 		$cursor->closeCursor();
@@ -687,7 +687,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		 * the share refers to a deleted file.)
 		 */
 		$shares = [];
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$id = $data['id'];
 			if ($this->isAccessibleResult($data)) {
 				$share = $this->createShareObject($data);
@@ -780,7 +780,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->executeQuery();
 
 		$shares = [];
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$shares[] = $this->createShareObject($data);
 		}
 		$cursor->closeCursor();
@@ -839,7 +839,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				)));
 
 			$cursor = $qb->executeQuery();
-			while ($data = $cursor->fetch()) {
+			while ($data = $cursor->fetchAssociative()) {
 				if ($data['uid_initiator'] === $userId || $data['uid_owner'] === $userId) {
 					continue;
 				}
@@ -905,7 +905,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)));
 
 			$result = $qb->executeQuery();
-			$potentialShare = $result->fetch();
+			$potentialShare = $result->fetchAssociative();
 			$result->closeCursor();
 
 			if ($potentialShare !== false && $this->manager->isUserAttendeeInRoom($userId, $potentialShare['share_with'])) {
@@ -983,7 +983,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				)));
 
 			$cursor = $qb->executeQuery();
-			while ($data = $cursor->fetch()) {
+			while ($data = $cursor->fetchAssociative()) {
 				if ($data['uid_initiator'] === $userId || $data['uid_owner'] === $userId) {
 					continue;
 				}
@@ -1044,7 +1044,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->andWhere($qb->expr()->eq('token', $qb->createNamedParameter($token)))
 			->executeQuery();
 
-		$data = $cursor->fetch();
+		$data = $cursor->fetchAssociative();
 
 		if ($data === false) {
 			throw new ShareNotFound();
@@ -1134,7 +1134,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$cursor = $qb->executeQuery();
 
 		$users = [];
-		while ($row = $cursor->fetch()) {
+		while ($row = $cursor->fetchAssociative()) {
 			$type = (int)$row['share_type'];
 			if ($type === IShare::TYPE_ROOM) {
 				$roomToken = $row['share_with'];
@@ -1223,7 +1223,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->orderBy('id', 'ASC');
 
 		$cursor = $qb->executeQuery();
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$children[] = $this->createShareObject($data);
 		}
 		$cursor->closeCursor();
@@ -1259,7 +1259,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 		$cursor = $qb->executeQuery();
 		$ids = [];
-		while ($row = $cursor->fetch()) {
+		while ($row = $cursor->fetchAssociative()) {
 			$ids[] = (int)$row['id'];
 		}
 		$cursor->closeCursor();
@@ -1299,7 +1299,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 			$cursor = $query->executeQuery();
 			$ids = [];
-			while ($row = $cursor->fetch()) {
+			while ($row = $cursor->fetchAssociative()) {
 				$ids[] = (int)$row['id'];
 			}
 			$cursor->closeCursor();
@@ -1337,7 +1337,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			);
 
 		$cursor = $qb->executeQuery();
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$share = $this->createShareObject($data);
 
 			yield $share;

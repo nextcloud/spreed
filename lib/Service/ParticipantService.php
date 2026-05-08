@@ -1307,7 +1307,7 @@ class ParticipantService {
 
 		$sessionTableIds = [];
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$sessionTableIds[] = (int)$row['s_id'];
 		}
 		$result->closeCursor();
@@ -1326,7 +1326,7 @@ class ParticipantService {
 		$attendeeIds = [];
 		$attendees = [];
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			if ($row['display_name'] !== '' && $row['display_name'] !== null) {
 				// Keep guests with a non-empty display name, so we can still
 				// render the guest display name on chat messages.
@@ -1641,7 +1641,7 @@ class ParticipantService {
 			->andWhere($query->expr()->eq('read_privacy', $query->createNamedParameter(Participant::PRIVACY_PUBLIC, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		return (int)($row['last_common_read_message'] ?? 0);
@@ -1668,7 +1668,7 @@ class ParticipantService {
 		foreach ($chunks as $chunk) {
 			$query->setParameter('roomIds', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
 			$result = $query->executeQuery();
-			while ($row = $result->fetch()) {
+			while ($row = $result->fetchAssociative()) {
 				$commonReads[(int)$row['room_id']] = (int)$row['last_common_read_message'];
 			}
 			$result->closeCursor();
@@ -1829,7 +1829,7 @@ class ParticipantService {
 			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)));
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if ($row === false) {
@@ -1976,7 +1976,7 @@ class ParticipantService {
 	protected function getParticipantsForRoomsFromQuery(IQueryBuilder $query, array $rooms): array {
 		$participants = [];
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$room = $rooms[(int)$row['room_id']] ?? null;
 			if ($room === null) {
 				continue;
@@ -2001,7 +2001,7 @@ class ParticipantService {
 	 */
 	protected function getParticipantFromQuery(IQueryBuilder $query, Room $room): Participant {
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if ($row === false) {
@@ -2095,7 +2095,7 @@ class ParticipantService {
 
 		$users = [];
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$users[$row['actor_id']] = (bool)$row['important'];
 		}
 		$result->closeCursor();
@@ -2154,7 +2154,7 @@ class ParticipantService {
 			->andWhere($query->expr()->isNotNull('s.id'))
 			->setMaxResults(1);
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		return (bool)$row;
@@ -2205,7 +2205,7 @@ class ParticipantService {
 			->andWhere($query->expr()->gte('s.last_ping', $query->createNamedParameter($this->timeFactory->getTime() - Session::SESSION_TIMEOUT, IQueryBuilder::PARAM_INT)))
 			->setMaxResults(1);
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		return (bool)$row;

@@ -67,7 +67,7 @@ class Manager {
 		$query->from('talk_rooms', 'r');
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			if ($row['token'] === null) {
 				// FIXME Temporary solution for the Talk6 release
 				continue;
@@ -242,7 +242,7 @@ class Manager {
 			->where($query->expr()->isNotNull('r.assigned_hpb'));
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$room = $this->createRoomObject($row);
 			if (!$this->participantService->hasActiveSessions($room)) {
 				Server::get(RoomService::class)->setAssignedSignalingServer($room, null);
@@ -277,7 +277,7 @@ class Manager {
 		$result = $query->executeQuery();
 
 		$rooms = [];
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			if ($row['token'] === null) {
 				// FIXME Temporary solution for the Talk6 release
 				continue;
@@ -304,7 +304,7 @@ class Manager {
 		$result = $query->executeQuery();
 
 		$rooms = [];
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$rooms[] = $this->createRoomObject($row);
 		}
 		$result->closeCursor();
@@ -328,7 +328,7 @@ class Manager {
 		$result = $query->executeQuery();
 
 		$rooms = [];
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$rooms[] = $this->createRoomObject($row);
 		}
 		$result->closeCursor();
@@ -384,7 +384,7 @@ class Manager {
 
 		$result = $query->executeQuery();
 		$rooms = [];
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			if ($row['token'] === null) {
 				// FIXME Temporary solution for the Talk6 release
 				continue;
@@ -417,7 +417,7 @@ class Manager {
 
 		$result = $query->executeQuery();
 		$rooms = [];
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			if ($row['token'] === null) {
 				// FIXME Temporary solution for the Talk6 release
 				continue;
@@ -482,7 +482,7 @@ class Manager {
 
 		$result = $query->executeQuery();
 		$roomTokens = [];
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			if ($row['token'] === null) {
 				// FIXME Temporary solution for the Talk6 release
 				continue;
@@ -505,7 +505,7 @@ class Manager {
 			->andWhere($query->expr()->eq('r.token', $query->createNamedParameter($token)));
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		return $row !== false;
@@ -557,7 +557,7 @@ class Manager {
 
 		$result = $query->executeQuery();
 		$rooms = [];
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$room = $this->createRoomObject($row);
 			$rooms[] = $room;
 		}
@@ -593,7 +593,7 @@ class Manager {
 		}
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if ($row === false) {
@@ -642,7 +642,7 @@ class Manager {
 
 		$result = $query->executeQuery();
 		$rooms = [];
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			if ($row['token'] === null) {
 				continue;
 			}
@@ -705,7 +705,7 @@ class Manager {
 		}
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if ($row === false) {
@@ -756,7 +756,7 @@ class Manager {
 			->where($query->expr()->eq('r.id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if ($row === false) {
@@ -804,7 +804,7 @@ class Manager {
 		}
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if ($row === false) {
@@ -885,7 +885,7 @@ class Manager {
 		}
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if ($row === false) {
@@ -933,7 +933,7 @@ class Manager {
 
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if ($row === false) {
@@ -964,7 +964,7 @@ class Manager {
 			->orderBy('r.id', 'ASC');
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if ($row === false) {
@@ -996,7 +996,7 @@ class Manager {
 
 		$result = $query->executeQuery();
 		$rooms = [];
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$room = $this->createRoomObject($row);
 			$rooms[] = $room;
 		}
@@ -1025,7 +1025,7 @@ class Manager {
 		$result = $query->executeQuery();
 
 		$rooms = [];
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			if ($row['token'] === null) {
 				// FIXME Temporary solution for the Talk6 release
 				continue;
@@ -1051,7 +1051,7 @@ class Manager {
 
 		$result = $query->executeQuery();
 		$rooms = [];
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$room = $this->createRoomObject($row);
 			$rooms[$room->getToken()] = $room;
 		}
@@ -1083,7 +1083,7 @@ class Manager {
 			->setMaxResults(1);
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if ($row === false || !$row['r_id']) {
@@ -1136,7 +1136,7 @@ class Manager {
 			->andWhere($query->expr()->eq('r.name', $query->createNamedParameter($name)));
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if ($row === false) {
@@ -1166,7 +1166,7 @@ class Manager {
 			->andWhere($query->expr()->eq('r.name', $query->createNamedParameter($userId)));
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if ($row === false) {
@@ -1519,7 +1519,7 @@ class Manager {
 
 		$query->setParameter('token', $token);
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if (is_array($row)) {

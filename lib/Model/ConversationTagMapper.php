@@ -58,7 +58,7 @@ class ConversationTagMapper extends QBMapper {
 			->andWhere($qb->expr()->eq('a.actor_id', $qb->createNamedParameter($userId)));
 
 		$result = $qb->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			/** @var list<string|int> $tagIds */
 			$tagIds = json_decode((string)$row['tag_ids'], true) ?? [];
 			$tagIds = array_values(array_filter($tagIds, fn ($id) => (string)$id !== $tagId));

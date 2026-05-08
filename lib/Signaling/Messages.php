@@ -118,7 +118,7 @@ class Messages {
 		$this->atomic(function () use (&$messages, $query, $delete): void {
 			$result = $query->executeQuery();
 
-			while ($row = $result->fetch()) {
+			while ($row = $result->fetchAssociative()) {
 				$messages[] = ['type' => 'message', 'data' => $row['message']];
 			}
 			$result->closeCursor();

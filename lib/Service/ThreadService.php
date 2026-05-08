@@ -165,7 +165,7 @@ class ThreadService {
 
 		$results = [];
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$roomId = (int)$row['room_id'];
 			$results[$roomId][] = [
 				'thread' => Thread::createFromRow($row),

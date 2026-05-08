@@ -81,7 +81,7 @@ class AgeChatMessages extends Base {
 			->andWhere($query->expr()->eq('object_id', $query->createNamedParameter($room->getId())));
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$creationTimestamp = new \DateTime($row['creation_timestamp']);
 			$creationTimestamp->sub(new \DateInterval('PT' . $hours . 'H'));
 
