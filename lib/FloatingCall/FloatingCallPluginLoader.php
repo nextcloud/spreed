@@ -43,7 +43,8 @@ class FloatingCallPluginLoader implements IEventListener {
 			&& $this->appConfig->getAppValueInt('start_calls') !== Room::START_CALL_NOONE
 		) {
 			Util::addScript('spreed', 'talk-floating-call');
-			Util::addStyle('spreed', 'talk-floating-call');
+			// Styles are loaded asynchronously, initially no CSS file is bundled
+			// Util::addStyle('spreed', 'talk-floating-call');
 		}
 	}
 }
