@@ -6,12 +6,12 @@
 <script setup lang="ts">
 import { onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import CallView from './components/CallView/CallView.vue'
-import { useGetToken } from './composables/useGetToken.ts'
-import SessionStorage from './services/SessionStorage.js'
-import { useSoundsStore } from './stores/sounds.js'
-import { useTokenStore } from './stores/token.ts'
-import { signalingKill } from './utils/webrtc/index.js'
+import CallView from '../../components/CallView/CallView.vue'
+import { useGetToken } from '../../composables/useGetToken.ts'
+import SessionStorage from '../../services/SessionStorage.js'
+import { useSoundsStore } from '../../stores/sounds.js'
+import { useTokenStore } from '../../stores/token.ts'
+import { signalingKill } from '../../utils/webrtc/index.js'
 
 const router = useRouter()
 const route = useRoute()

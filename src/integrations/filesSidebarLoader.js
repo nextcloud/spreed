@@ -7,7 +7,7 @@ import { getCSPNonce } from '@nextcloud/auth'
 import { FileType, getSidebar } from '@nextcloud/files'
 import { generateFilePath } from '@nextcloud/router'
 import { defineAsyncComponent, defineCustomElement } from 'vue'
-import IconTalk from '../img/app-dark.svg?raw'
+import IconTalk from '../../img/app-dark.svg?raw'
 
 // CSP config for webpack dynamic chunk loading
 __webpack_nonce__ = getCSPNonce()
@@ -20,7 +20,7 @@ __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 
 const TAB_TAG_NAME = 'talk-files_sidebar_tab'
 
-const FilesSidebarLoaderApp = defineAsyncComponent(() => import('./FilesSidebarLoaderApp.vue'))
+const FilesSidebarLoaderApp = defineAsyncComponent(() => import('./FilesSidebar/FilesSidebarLoaderApp.vue'))
 
 getSidebar()?.registerTab({
 	id: 'chat',

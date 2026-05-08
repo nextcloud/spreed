@@ -6,7 +6,7 @@
 import { getCSPNonce } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
 import { createApp } from 'vue'
-import PublicShareAuthForm from './PublicShareAuthForm.vue'
+import TalkPasswordProtectedAuthForm from './TalkPasswordProtected/TalkPasswordProtectedAuthForm.vue'
 
 __webpack_nonce__ = getCSPNonce()
 // Correct the root of the app for chunk loading
@@ -15,5 +15,5 @@ __webpack_nonce__ = getCSPNonce()
 // We do not want the index.php since we're loading files
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 
-createApp(PublicShareAuthForm)
+createApp(TalkPasswordProtectedAuthForm)
 	.mount('#talk-guest-auth')

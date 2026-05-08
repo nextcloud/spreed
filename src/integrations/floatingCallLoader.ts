@@ -57,7 +57,7 @@ function handleClick(event: PointerEvent) {
 		return
 	}
 
-	import('./mainFloatingCall.ts')
+	import('./FloatingCall/floatingCall.ts')
 		.then((module) => {
 			module.handleStartFloatingCall(url)
 		}).catch((err) => {

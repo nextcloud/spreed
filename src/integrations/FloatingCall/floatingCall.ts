@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { Conversation } from './types/index.ts'
+import type { Conversation } from '../../types/index.ts'
 
 import { createApp, defineAsyncComponent, reactive } from 'vue'
-import { CONVERSATION } from './constants.ts'
-import { initializeTalk } from './init.js'
-import { createMemoryRouter } from './router/router.ts'
-import { createConversation } from './services/conversationsService.ts'
-import store from './store/index.js'
-import pinia from './stores/pinia.ts'
+import { CONVERSATION } from '../../constants.ts'
+import { createMemoryRouter } from '../../router/router.ts'
+import { createConversation } from '../../services/conversationsService.ts'
+import store from '../../store/index.js'
+import pinia from '../../stores/pinia.ts'
+import { initializeTalk } from '../../utils/init.js'
 
 initializeTalk()
 

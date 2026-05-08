@@ -6,11 +6,11 @@
 /** The purpose of this file is to wrap the logic shared by the different Talk entry points */
 
 import { reactive } from 'vue'
-import BrowserStorage from './services/BrowserStorage.js'
-import { setTalkSessionUniqueTabIdHeader } from './services/talkSessionUniqueTabId.ts'
-import { useIntegrationsStore } from './stores/integrations.js'
-import pinia from './stores/pinia.ts'
-import { isSafari } from './utils/browserCheck.ts'
+import BrowserStorage from '../services/BrowserStorage.js'
+import { setTalkSessionUniqueTabIdHeader } from '../services/talkSessionUniqueTabId.ts'
+import { useIntegrationsStore } from '../stores/integrations.js'
+import pinia from '../stores/pinia.ts'
+import { isSafari } from './browserCheck.ts'
 
 import '@nextcloud/dialogs/style.css'
 

@@ -4,7 +4,7 @@
  */
 
 import { createApp } from 'vue'
-import AdminSettings from './views/AdminSettings.vue'
+import AdminSettings from './AdminSettingsApp.vue'
 
 import '@nextcloud/dialogs/style.css'
 import './assets/admin-settings.css'

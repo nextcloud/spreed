@@ -6,12 +6,12 @@
 import { getCSPNonce } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
 import { createApp } from 'vue'
-import PublicShareAuthRequestPasswordButton from './PublicShareAuthRequestPasswordButton.vue'
-import PublicShareAuthSidebar from './PublicShareAuthSidebar.vue'
-import { initializeTalkOnce } from './init.js'
-import { createMemoryRouter } from './router/router.ts'
-import store from './store/index.js'
-import pinia from './stores/pinia.ts'
+import FilesPublicShareAuthRequestPasswordButton from './FilesPublicShare/FilesPublicShareAuthRequestPasswordButton.vue'
+import FilesPublicShareAuthSidebar from './FilesPublicShare/FilesPublicShareAuthSidebar.vue'
+import { createMemoryRouter } from '../router/router.ts'
+import store from '../store/index.js'
+import pinia from '../stores/pinia.ts'
+import { initializeTalkOnce } from '../utils/init.js'
 
 initializeTalkOnce()
 
@@ -41,13 +41,13 @@ adjustLayout()
 
 const router = createMemoryRouter()
 
-createApp(PublicShareAuthRequestPasswordButton)
+createApp(FilesPublicShareAuthRequestPasswordButton)
 	.use(pinia)
 	.use(store)
 	.use(router)
 	.mount('#talk-public-share-auth')
 
-createApp(PublicShareAuthSidebar)
+createApp(FilesPublicShareAuthSidebar)
 	.use(pinia)
 	.use(store)
 	.use(router)

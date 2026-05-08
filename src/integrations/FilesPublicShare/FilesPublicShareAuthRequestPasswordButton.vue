@@ -11,10 +11,10 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
-import IconTalkApp from '../img/app.svg?raw'
-import { getPublicShareAuthConversationToken } from './services/filesIntegrationServices.ts'
-import { useTokenStore } from './stores/token.ts'
-import { checkBrowser } from './utils/browserCheck.ts'
+import IconTalkApp from '../../../img/app.svg?raw'
+import { getPublicShareAuthConversationToken } from '../../services/filesIntegrationServices.ts'
+import { useTokenStore } from '../../stores/token.ts'
+import { checkBrowser } from '../../utils/browserCheck.ts'
 
 const tokenStore = useTokenStore()
 
