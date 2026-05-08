@@ -14,7 +14,6 @@ import { SettingsAPI } from './services/SettingsAPI.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
-import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 initializeTalkOnce()
 
@@ -35,7 +34,6 @@ const instance = createApp(App, { fileInfo: null })
 	.use(store)
 	.use(pinia)
 	.use(router)
-	.use(NextcloudGlobalsVuePlugin)
 	.mount('#content')
 
 // Setup Viewer to be used with Talk sidebar

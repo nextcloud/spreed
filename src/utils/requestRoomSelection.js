@@ -5,7 +5,6 @@
 
 import { createApp, defineAsyncComponent } from 'vue'
 import pinia from '../stores/pinia.ts'
-import { NextcloudGlobalsVuePlugin } from './NextcloudGlobalsVuePlugin.js'
 
 /**
  *
@@ -35,7 +34,7 @@ export function requestRoomSelection(containerId, roomSelectorProps) {
 				app.unmount()
 				resolve(conversation)
 			},
-		}).use(pinia).use(NextcloudGlobalsVuePlugin)
+		}).use(pinia)
 		app.mount(container)
 	})
 }

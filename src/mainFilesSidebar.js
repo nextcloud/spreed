@@ -9,7 +9,6 @@ import { initializeTalk } from './init.js'
 import { createMemoryRouter } from './router/router.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
-import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 /**
  * Mount a Talk integration app
@@ -27,7 +26,6 @@ export function mountApp(container, rootProps, token) {
 		.use(store)
 		.use(pinia)
 		.use(router)
-		.use(NextcloudGlobalsVuePlugin)
 
 	window.OCA.Talk.instance = instance
 	window.OCA.Talk.unmountInstance = function() {

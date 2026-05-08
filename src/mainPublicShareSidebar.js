@@ -13,7 +13,6 @@ import { initializeTalkOnce } from './init.js'
 import { createMemoryRouter } from './router/router.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
-import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 initializeTalkOnce()
 
@@ -76,7 +75,6 @@ function addTalkSidebar() {
 		.use(pinia)
 		.use(store)
 		.use(router)
-		.use(NextcloudGlobalsVuePlugin)
 		.mount(document.querySelector('#talk-sidebar'))
 }
 
