@@ -466,6 +466,32 @@ class Config {
 	}
 
 	/**
+	 * Minimum length of the external call service shared secret. Shorter
+	 * secrets are not considered configured to improve security.
+	 */
+	protected const EXTERNAL_CALL_SERVICE_SECRET_MIN_LENGTH = 64;
+
+	public function getExternalCallServiceSharedSecret(): string {
+		$secret = $this->appConfig->getAppValueString('external_call_service_shared_secret');
+
+		if ($secret !== '' && strlen($secret) < self::EXTERNAL_CALL_SERVICE_SECRET_MIN_LENGTH) {
+			throw new \InvalidArgumentException('Invalid external call serivce secret length');
+		}
+
+		return $secret;
+	}
+
+	/**
+	 * Whether the external call service is configured to authenticate requests
+	 * via the `x-nextcloud-talk-external-service` header. Requires the service
+	 * URL to be set and the shared secret to have a minimum length.
+	 */
+	public function isExternalCallServiceConfigured(): bool {
+		return $this->getExternalCallService() !== ''
+			&& $this->getExternalCallServiceSharedSecret() !== '';
+	}
+
+	/**
 	 * @psalm-return self::SIGNALING_INTERNAL|self::SIGNALING_EXTERNAL|self::SIGNALING_CLUSTER_CONVERSATION
 	 */
 	public function getSignalingMode(bool $cleanExternalSignaling = true): string {

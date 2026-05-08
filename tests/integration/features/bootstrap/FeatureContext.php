@@ -1115,6 +1115,35 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
+	#[Then('/^external call service creates room "([^"]*)" with secret "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function externalCallServiceCreatesRoom(string $identifier, string $secret, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
+		$body = $formData ? $formData->getRowsHash() : [];
+		if (isset($body['roomName']) && $body['roomName'] === 'IDENTIFIER') {
+			$body['roomName'] = $identifier;
+		}
+		if (isset($body['permissions'])) {
+			$body['permissions'] = $this->mapPermissionsTestInput($body['permissions']);
+		}
+
+		$headers = [];
+		if ($secret !== '') {
+			$headers = [
+				'x-nextcloud-talk-external-service' => $secret,
+			];
+		}
+
+		$this->setCurrentUser(null);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body, $headers);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode === 201) {
+			$response = $this->getDataFromResponse($this->response);
+			self::$identifierToToken[$identifier] = $response['token'];
+			self::$identifierToId[$identifier] = $response['id'];
+			self::$tokenToIdentifier[$response['token']] = $identifier;
+		}
+	}
+
 	#[Then('/^user "([^"]*)" gets the room for path "([^"]*)" with (\d+) \((v1)\)$/')]
 	public function userGetsTheRoomForPath(string $user, string $path, int $statusCode, string $apiVersion): void {
 		$fileId = $this->getFileIdForPath($user, $path);
