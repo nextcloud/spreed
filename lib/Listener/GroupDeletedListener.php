@@ -21,7 +21,6 @@ use OCP\IConfig;
  * @template-implements IEventListener<Event>
  */
 class GroupDeletedListener implements IEventListener {
-
 	public function __construct(
 		private readonly IConfig $config,
 		private readonly Manager $manager,

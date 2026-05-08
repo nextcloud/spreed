@@ -24,7 +24,7 @@ use Override;
  */
 class Version22000Date20250803160923 extends SimpleMigrationStep {
 	public function __construct(
-		protected IDBConnection $db,
+		private readonly IDBConnection $db,
 	) {
 	}
 

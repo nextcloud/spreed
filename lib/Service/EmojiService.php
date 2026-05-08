@@ -13,7 +13,7 @@ use OCP\IEmojiHelper;
 class EmojiService {
 
 	public function __construct(
-		protected IEmojiHelper $emojiHelper,
+		private readonly IEmojiHelper $emojiHelper,
 	) {
 	}
 

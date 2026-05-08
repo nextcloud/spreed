@@ -41,10 +41,10 @@ use OCP\IUserManager;
 class Listener implements IEventListener {
 
 	public function __construct(
-		protected Util $util,
-		protected ParticipantService $participantService,
-		protected IUserManager $userManager,
-		protected TalkSession $talkSession,
+		private readonly Util $util,
+		private readonly ParticipantService $participantService,
+		private readonly IUserManager $userManager,
+		private readonly TalkSession $talkSession,
 	) {
 	}
 

@@ -16,7 +16,6 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
-use OCA\Talk\Service\RoomService;
 use OCP\IUserManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,8 +23,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class TransferOwnership extends Base {
-	private readonly RoomService $roomService;
-
 	public function __construct(
 		private readonly ParticipantService $participantService,
 		private readonly Manager $manager,

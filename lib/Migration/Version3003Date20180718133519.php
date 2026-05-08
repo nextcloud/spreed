@@ -16,7 +16,7 @@ use OCP\Migration\SimpleMigrationStep;
 class Version3003Date20180718133519 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IDBConnection $connection,
+		private readonly IDBConnection $connection,
 	) {
 	}
 

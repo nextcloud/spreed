@@ -21,9 +21,9 @@ use OCP\Share\IShare;
 class RoomPlugin implements ISearchPlugin {
 
 	public function __construct(
-		protected Manager $manager,
-		protected ParticipantService $participantService,
-		protected IUserSession $userSession,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly IUserSession $userSession,
 	) {
 	}
 

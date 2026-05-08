@@ -23,9 +23,9 @@ class CertificateController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected CertificateService $certificateService,
-		protected IL10N $l,
-		protected LoggerInterface $logger,
+		private readonly CertificateService $certificateService,
+		private readonly IL10N $l,
+		private readonly LoggerInterface $logger,
 	) {
 		parent::__construct($appName, $request);
 	}

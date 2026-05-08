@@ -14,7 +14,6 @@ use OCA\Talk\Model\BotConversation;
 use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Service\BotService;
-use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,7 +24,6 @@ class ListBots extends Base {
 		private readonly BotConversationMapper $botConversationMapper,
 		private readonly BotServerMapper $botServerMapper,
 		private readonly BotService $botService,
-		private readonly IAppManager $appManager,
 		private readonly ITimeFactory $timeFactory,
 	) {
 		parent::__construct();

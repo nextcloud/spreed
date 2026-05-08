@@ -20,9 +20,9 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 	protected array $tokens;
 
 	public function __construct(
-		protected IDBConnection $connection,
-		protected IConfig $config,
-		protected ISecureRandom $secureRandom,
+		private readonly IDBConnection $connection,
+		private readonly IConfig $config,
+		private readonly ISecureRandom $secureRandom,
 	) {
 		$this->tokens = [];
 	}

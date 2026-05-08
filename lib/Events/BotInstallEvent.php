@@ -13,11 +13,11 @@ use OCP\EventDispatcher\Event;
 
 class BotInstallEvent extends Event {
 	public function __construct(
-		protected string $name,
-		protected string $secret,
-		protected string $url,
-		protected string $description = '',
-		protected ?int $features = null,
+		private readonly string $name,
+		private readonly string $secret,
+		private readonly string $url,
+		private readonly string $description = '',
+		private readonly ?int $features = null,
 	) {
 		parent::__construct();
 	}

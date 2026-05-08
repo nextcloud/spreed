@@ -13,7 +13,7 @@ use OCA\Talk\Room;
 class FederatedUserJoinedRoomEvent extends ARoomEvent {
 	public function __construct(
 		Room $room,
-		protected string $cloudId,
+		private readonly string $cloudId,
 	) {
 		parent::__construct($room);
 	}

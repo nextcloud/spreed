@@ -34,19 +34,19 @@ use Psr\Log\LoggerInterface;
 
 class GuestManager {
 	public function __construct(
-		protected Config $talkConfig,
-		protected IEmailValidator $emailValidator,
-		protected IMailer $mailer,
-		protected Defaults $defaults,
-		protected IUserSession $userSession,
-		protected ParticipantService $participantService,
-		protected PollService $pollService,
-		protected RoomService $roomService,
-		protected IURLGenerator $url,
-		protected IL10N $l,
-		protected IEventDispatcher $dispatcher,
-		protected LoggerInterface $logger,
-		protected IDateTimeZone $dateTimeZone,
+		private readonly Config $talkConfig,
+		private readonly IEmailValidator $emailValidator,
+		private readonly IMailer $mailer,
+		private readonly Defaults $defaults,
+		private readonly IUserSession $userSession,
+		private readonly ParticipantService $participantService,
+		private readonly PollService $pollService,
+		private readonly RoomService $roomService,
+		private readonly IURLGenerator $url,
+		private readonly IL10N $l,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly LoggerInterface $logger,
+		private readonly IDateTimeZone $dateTimeZone,
 	) {
 	}
 

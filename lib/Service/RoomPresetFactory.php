@@ -22,8 +22,8 @@ use Psr\Log\LoggerInterface;
 
 class RoomPresetFactory {
 	public function __construct(
-		protected IAppConfig $appConfig,
-		protected LoggerInterface $logger,
+		private readonly IAppConfig $appConfig,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 

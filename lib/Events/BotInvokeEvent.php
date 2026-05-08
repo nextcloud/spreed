@@ -112,8 +112,8 @@ class BotInvokeEvent extends Event {
 	 * @param InvocationData $message
 	 */
 	public function __construct(
-		protected string $botUrl,
-		protected array $message,
+		private readonly string $botUrl,
+		private readonly array $message,
 	) {
 		parent::__construct();
 	}

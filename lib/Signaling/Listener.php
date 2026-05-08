@@ -104,17 +104,17 @@ class Listener implements IEventListener {
 	protected bool $pauseRoomModifiedListener = false;
 
 	public function __construct(
-		protected Config $talkConfig,
-		protected Messages $internalSignaling,
-		protected BackendNotifier $externalSignaling,
-		protected Manager $manager,
-		protected ParticipantService $participantService,
-		protected SessionService $sessionService,
-		protected ITimeFactory $timeFactory,
-		protected MessageParser $messageParser,
-		protected ThreadService $threadService,
-		protected IFactory $l10nFactory,
-		protected PollService $pollService,
+		private readonly Config $talkConfig,
+		private readonly Messages $internalSignaling,
+		private readonly BackendNotifier $externalSignaling,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly SessionService $sessionService,
+		private readonly ITimeFactory $timeFactory,
+		private readonly MessageParser $messageParser,
+		private readonly ThreadService $threadService,
+		private readonly IFactory $l10nFactory,
+		private readonly PollService $pollService,
 	) {
 	}
 

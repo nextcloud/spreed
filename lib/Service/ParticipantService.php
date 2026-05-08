@@ -69,7 +69,6 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
 use OCP\ICacheFactory;
-use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroup;
 use OCP\IGroupManager;
@@ -89,13 +88,12 @@ class ParticipantService {
 	protected array $sessionCache;
 
 	public function __construct(
-		protected IConfig $serverConfig,
-		protected Config $talkConfig,
-		protected AttendeeMapper $attendeeMapper,
-		protected SessionMapper $sessionMapper,
-		protected SessionService $sessionService,
+		private readonly Config $talkConfig,
+		private readonly AttendeeMapper $attendeeMapper,
+		private readonly SessionMapper $sessionMapper,
+		private readonly SessionService $sessionService,
 		private readonly ISecureRandom $secureRandom,
-		protected IDBConnection $connection,
+		private readonly IDBConnection $connection,
 		private readonly IEventDispatcher $dispatcher,
 		private readonly IUserManager $userManager,
 		private readonly ICloudIdManager $cloudIdManager,

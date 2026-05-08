@@ -22,11 +22,11 @@ class GuestImportException extends \Exception {
 	 * @param non-negative-int|null $duplicates
 	 */
 	public function __construct(
-		protected readonly string $reason,
-		protected readonly ?string $errorMessage = null,
-		protected readonly ?array $invalidLines = null,
-		protected readonly ?int $invites = null,
-		protected readonly ?int $duplicates = null,
+		private readonly string $reason,
+		private readonly ?string $errorMessage = null,
+		private readonly ?array $invalidLines = null,
+		private readonly ?int $invites = null,
+		private readonly ?int $duplicates = null,
 	) {
 		parent::__construct($reason);
 	}

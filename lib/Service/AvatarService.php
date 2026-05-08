@@ -13,7 +13,6 @@ use InvalidArgumentException;
 use OCA\Talk\Room;
 use OCA\Talk\RoomAttributes;
 use OCP\Files\IAppData;
-use OCP\Files\IFilenameValidator;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\InMemoryFile;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -37,7 +36,6 @@ class AvatarService {
 		private readonly RoomService $roomService,
 		private readonly IAvatarManager $avatarManager,
 		private readonly EmojiService $emojiService,
-		private readonly IFilenameValidator $filenameValidator,
 	) {
 	}
 

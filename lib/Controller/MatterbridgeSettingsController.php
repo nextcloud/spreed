@@ -23,7 +23,7 @@ class MatterbridgeSettingsController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected MatterbridgeManager $bridgeManager,
+		private readonly MatterbridgeManager $bridgeManager,
 	) {
 		parent::__construct($appName, $request);
 	}

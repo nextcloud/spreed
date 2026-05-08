@@ -41,8 +41,8 @@ use OCP\EventDispatcher\IEventListener;
  */
 class Listener implements IEventListener {
 	public function __construct(
-		protected ParticipantService $participantService,
-		protected RoomService $roomService,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
 	) {
 	}
 

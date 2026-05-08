@@ -28,12 +28,12 @@ use OCP\Share\IShare;
 class ShareAPIController {
 
 	public function __construct(
-		protected string $userId,
-		protected Manager $manager,
-		protected ParticipantService $participantService,
-		protected ITimeFactory $timeFactory,
-		protected IL10N $l,
-		protected IURLGenerator $urlGenerator,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IL10N $l,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly string $userId,
 	) {
 	}
 

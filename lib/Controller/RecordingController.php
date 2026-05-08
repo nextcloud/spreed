@@ -48,7 +48,6 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private readonly ?string $userId,
 		private readonly Config $talkConfig,
 		private readonly IClientService $clientService,
 		private readonly Manager $manager,
@@ -59,6 +58,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 		private readonly ITimeFactory $timeFactory,
 		private readonly ChecksumVerificationService $checksumVerificationService,
 		private readonly LoggerInterface $logger,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}

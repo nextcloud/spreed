@@ -45,7 +45,6 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\Bruteforce\IThrottler;
-use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -1385,7 +1384,6 @@ class SignalingControllerTest extends TestCase {
 			$this->createMock(TalkSession::class),
 			$dispatcher,
 			$this->timeFactory,
-			$this->createMock(IHasher::class),
 			$this->createMock(IL10N::class),
 			$this->authenticator,
 		);

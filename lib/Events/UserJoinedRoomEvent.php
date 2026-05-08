@@ -15,8 +15,8 @@ use OCP\IUser;
 class UserJoinedRoomEvent extends ARoomEvent {
 	public function __construct(
 		Room $room,
-		protected IUser $user,
-		protected Participant $participant,
+		private readonly IUser $user,
+		private readonly Participant $participant,
 	) {
 		parent::__construct($room);
 	}

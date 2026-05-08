@@ -22,10 +22,9 @@ use OCP\IConfig;
  * @template-implements IEventListener<Event>
  */
 class RestrictStartingCalls implements IEventListener {
-
 	public function __construct(
-		protected IConfig $serverConfig,
-		protected ParticipantService $participantService,
+		private readonly IConfig $serverConfig,
+		private readonly ParticipantService $participantService,
 	) {
 	}
 

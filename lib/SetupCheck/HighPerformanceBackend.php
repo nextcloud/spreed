@@ -21,13 +21,13 @@ use Psr\Log\LoggerInterface;
 
 class HighPerformanceBackend implements ISetupCheck {
 	public function __construct(
-		protected readonly Config $talkConfig,
-		protected readonly ICacheFactory $cacheFactory,
-		protected readonly IURLGenerator $urlGenerator,
-		protected readonly IL10N $l,
-		protected readonly Manager $signalManager,
-		protected readonly IRegistry $subscription,
-		protected readonly LoggerInterface $logger,
+		private readonly Config $talkConfig,
+		private readonly ICacheFactory $cacheFactory,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly IL10N $l,
+		private readonly Manager $signalManager,
+		private readonly IRegistry $subscription,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 

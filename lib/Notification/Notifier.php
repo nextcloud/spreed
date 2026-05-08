@@ -18,7 +18,6 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Federation\FederationManager;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BotServerMapper;
@@ -46,7 +45,6 @@ use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 use OCP\Notification\UnknownNotificationException;
-use OCP\RichObjectStrings\Definitions;
 use OCP\Server;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
@@ -66,31 +64,28 @@ class Notifier implements INotifier {
 	protected array $circleLinks = [];
 
 	public function __construct(
-		protected IFactory $lFactory,
-		protected IURLGenerator $url,
-		protected Config $config,
-		protected IAppManager $appManager,
-		protected IUserManager $userManager,
-		protected IGroupManager $groupManager,
-		protected GuestManager $guestManager,
+		private readonly IFactory $lFactory,
+		private readonly IURLGenerator $url,
+		private readonly Config $config,
+		private readonly IAppManager $appManager,
+		private readonly IUserManager $userManager,
+		private readonly IGroupManager $groupManager,
 		private readonly IShareManager $shareManager,
-		protected Manager $manager,
-		protected ParticipantService $participantService,
-		protected AvatarService $avatarService,
-		protected INotificationManager $notificationManager,
-		protected CommentsManager $commentManager,
-		protected ProxyCacheMessageMapper $proxyCacheMessageMapper,
-		protected MessageParser $messageParser,
-		protected IRootFolder $rootFolder,
-		protected ITimeFactory $timeFactory,
-		protected Definitions $definitions,
-		protected AddressHandler $addressHandler,
-		protected BotServerMapper $botServerMapper,
-		protected FederationManager $federationManager,
-		protected ICloudIdManager $cloudIdManager,
-		protected LoggerInterface $logger,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly AvatarService $avatarService,
+		private readonly INotificationManager $notificationManager,
+		private readonly CommentsManager $commentManager,
+		private readonly ProxyCacheMessageMapper $proxyCacheMessageMapper,
+		private readonly MessageParser $messageParser,
+		private readonly IRootFolder $rootFolder,
+		private readonly ITimeFactory $timeFactory,
+		private readonly AddressHandler $addressHandler,
+		private readonly BotServerMapper $botServerMapper,
+		private readonly FederationManager $federationManager,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly LoggerInterface $logger,
 	) {
-		$this->commentManager = $commentManager;
 	}
 
 	/**

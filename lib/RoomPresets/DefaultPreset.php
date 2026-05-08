@@ -19,8 +19,8 @@ readonly class DefaultPreset extends APreset {
 	public const CONFIG_PREFIX_DEFAULT = 'default_';
 
 	public function __construct(
-		protected IAppConfig $appConfig,
-		protected IL10N $l,
+		private IAppConfig $appConfig,
+		private IL10N $l,
 	) {
 	}
 

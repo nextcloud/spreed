@@ -36,8 +36,8 @@ class ReactionManager {
 		private readonly IL10N $l,
 		private readonly MessageParser $messageParser,
 		private readonly Notifier $notifier,
-		protected IEventDispatcher $dispatcher,
-		protected ITimeFactory $timeFactory,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly ITimeFactory $timeFactory,
 	) {
 	}
 

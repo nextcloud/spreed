@@ -58,17 +58,17 @@ class PageController extends Controller {
 		private readonly RoomController $api,
 		private readonly TalkSession $talkSession,
 		private readonly IUserSession $userSession,
-		private readonly ?string $userId,
-		protected LoggerInterface $logger,
+		private readonly LoggerInterface $logger,
 		private readonly Manager $manager,
 		private readonly ParticipantService $participantService,
 		private readonly RoomService $roomService,
 		private readonly IURLGenerator $url,
 		private readonly INotificationManager $notificationManager,
-		protected IInitialState $initialState,
+		private readonly IInitialState $initialState,
 		private readonly IThrottler $throttler,
-		protected Config $talkConfig,
-		protected IGroupManager $groupManager,
+		private readonly Config $talkConfig,
+		private readonly IGroupManager $groupManager,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}

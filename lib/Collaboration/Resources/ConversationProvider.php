@@ -25,11 +25,11 @@ use OCP\IUserSession;
 class ConversationProvider implements IProvider {
 
 	public function __construct(
-		protected Manager $manager,
-		protected AvatarService $avatarService,
-		protected ParticipantService $participantService,
-		protected IUserSession $userSession,
-		protected IURLGenerator $urlGenerator,
+		private readonly Manager $manager,
+		private readonly AvatarService $avatarService,
+		private readonly ParticipantService $participantService,
+		private readonly IUserSession $userSession,
+		private readonly IURLGenerator $urlGenerator,
 	) {
 	}
 

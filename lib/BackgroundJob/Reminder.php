@@ -16,7 +16,7 @@ use OCP\BackgroundJob\TimedJob;
 class Reminder extends TimedJob {
 	public function __construct(
 		ITimeFactory $time,
-		protected ReminderService $reminderService,
+		private readonly ReminderService $reminderService,
 	) {
 		parent::__construct($time);
 		// Every minute

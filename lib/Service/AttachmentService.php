@@ -18,7 +18,7 @@ use OCP\Comments\IComment;
 class AttachmentService {
 
 	public function __construct(
-		public AttachmentMapper $attachmentMapper,
+		private readonly AttachmentMapper $attachmentMapper,
 	) {
 	}
 

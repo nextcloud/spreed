@@ -13,7 +13,6 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\Parser\SystemMessage;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Federation\Authenticator;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Session;
@@ -50,7 +49,6 @@ class SystemMessageTest extends TestCase {
 	protected IAppConfig&MockObject $appConfig;
 	protected IUserManager&MockObject $userManager;
 	protected IGroupManager&MockObject $groupManager;
-	protected GuestManager&MockObject $guestManager;
 	protected ParticipantService&MockObject $participantService;
 	protected IPreviewManager&MockObject $previewManager;
 	protected RoomShareProvider&MockObject $shareProvider;
@@ -69,7 +67,6 @@ class SystemMessageTest extends TestCase {
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
-		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->previewManager = $this->createMock(IPreviewManager::class);
 		$this->shareProvider = $this->createMock(RoomShareProvider::class);
@@ -101,7 +98,6 @@ class SystemMessageTest extends TestCase {
 					$this->appConfig,
 					$this->userManager,
 					$this->groupManager,
-					$this->guestManager,
 					$this->participantService,
 					$this->previewManager,
 					$this->shareProvider,
@@ -122,7 +118,6 @@ class SystemMessageTest extends TestCase {
 			$this->appConfig,
 			$this->userManager,
 			$this->groupManager,
-			$this->guestManager,
 			$this->participantService,
 			$this->previewManager,
 			$this->shareProvider,
@@ -1531,12 +1526,12 @@ class SystemMessageTest extends TestCase {
 		self::invokePrivate($parser, 'groupNames', [$cache]);
 
 		if (!$cacheHit) {
-			$parser->expects(self::once())
+			$parser->expects($this->once())
 				->method('getDisplayNameGroup')
 				->with($gid)
 				->willReturn($name);
 		} else {
-			$parser->expects(self::never())
+			$parser->expects($this->never())
 				->method('getDisplayNameGroup');
 		}
 

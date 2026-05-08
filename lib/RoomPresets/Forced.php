@@ -14,7 +14,7 @@ readonly class Forced extends APreset {
 	public const CONFIG_PREFIX_FORCE = 'force_';
 
 	public function __construct(
-		protected IAppConfig $appConfig,
+		private IAppConfig $appConfig,
 	) {
 	}
 

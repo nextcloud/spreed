@@ -17,7 +17,6 @@ use OCA\Talk\Exceptions\LiveTranslationNotSupportedException;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\App\IAppManager;
-use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Server;
 use Psr\Container\ContainerExceptionInterface;
@@ -29,10 +28,9 @@ class LiveTranscriptionService {
 	public function __construct(
 		private readonly ?string $userId,
 		private readonly IAppManager $appManager,
-		private readonly IUserManager $userManager,
 		private readonly IFactory $l10nFactory,
 		private readonly RoomService $roomService,
-		protected LoggerInterface $logger,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 

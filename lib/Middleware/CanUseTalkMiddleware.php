@@ -53,12 +53,12 @@ class CanUseTalkMiddleware extends Middleware {
 
 
 	public function __construct(
-		protected IUserSession $userSession,
-		protected IGroupManager $groupManager,
-		protected Config $talkConfig,
-		protected IConfig $serverConfig,
-		protected IRequest $request,
-		protected IURLGenerator $url,
+		private readonly IUserSession $userSession,
+		private readonly IGroupManager $groupManager,
+		private readonly Config $talkConfig,
+		private readonly IConfig $serverConfig,
+		private readonly IRequest $request,
+		private readonly IURLGenerator $url,
 	) {
 	}
 

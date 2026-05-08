@@ -20,9 +20,9 @@ class Messages {
 	use TTransactional;
 
 	public function __construct(
-		protected IDBConnection $db,
-		protected ParticipantService $participantService,
-		protected ITimeFactory $timeFactory,
+		private readonly IDBConnection $db,
+		private readonly ParticipantService $participantService,
+		private readonly ITimeFactory $timeFactory,
 	) {
 	}
 

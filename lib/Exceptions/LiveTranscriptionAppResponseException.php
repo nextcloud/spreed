@@ -14,7 +14,7 @@ class LiveTranscriptionAppResponseException extends \Exception {
 
 	public function __construct(
 		string $message,
-		protected IResponse $response,
+		private readonly IResponse $response,
 	) {
 		parent::__construct($message);
 	}

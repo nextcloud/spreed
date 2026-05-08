@@ -21,9 +21,9 @@ use OCP\Federation\ICloudIdManager;
  */
 class BeforeRoomDeletedListener implements IEventListener {
 	public function __construct(
-		protected BackendNotifier $backendNotifier,
-		protected ParticipantService $participantService,
-		protected ICloudIdManager $cloudIdManager,
+		private readonly BackendNotifier $backendNotifier,
+		private readonly ParticipantService $participantService,
+		private readonly ICloudIdManager $cloudIdManager,
 	) {
 	}
 

@@ -56,7 +56,7 @@ class CallController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected Manager $manager,
+		private readonly Manager $manager,
 		private readonly ConsentService $consentService,
 		private readonly ParticipantService $participantService,
 		private readonly PhoneNumberMapper $phoneNumberMapper,
@@ -66,7 +66,7 @@ class CallController extends AEnvironmentAwareOCSController {
 		private readonly IConfig $serverConfig,
 		private readonly IAppConfig $appConfig,
 		private readonly Config $talkConfig,
-		protected Authenticator $federationAuthenticator,
+		private readonly Authenticator $federationAuthenticator,
 		private readonly SIPDialOutService $dialOutService,
 	) {
 		parent::__construct($appName, $request);

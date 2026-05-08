@@ -31,8 +31,8 @@ class ConversationTagController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected ConversationTagService $tagService,
-		protected ?string $userId,
+		private readonly ConversationTagService $tagService,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}

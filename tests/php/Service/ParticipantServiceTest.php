@@ -24,7 +24,6 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
 use OCP\ICacheFactory;
-use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IUserManager;
@@ -37,7 +36,6 @@ use Test\TestCase;
 
 #[Group('DB')]
 class ParticipantServiceTest extends TestCase {
-	protected IConfig&MockObject $serverConfig;
 	protected Config&MockObject $talkConfig;
 	protected ?AttendeeMapper $attendeeMapper = null;
 	protected ?SessionMapper $sessionMapper = null;
@@ -59,7 +57,6 @@ class ParticipantServiceTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->attendeeMapper = new AttendeeMapper(\OCP\Server::get(IDBConnection::class));
 		$this->sessionMapper = new SessionMapper(\OCP\Server::get(IDBConnection::class));
@@ -76,7 +73,6 @@ class ParticipantServiceTest extends TestCase {
 		$this->userStatusManager = $this->createMock(IManager::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->service = new ParticipantService(
-			$this->serverConfig,
 			$this->talkConfig,
 			$this->attendeeMapper,
 			$this->sessionMapper,

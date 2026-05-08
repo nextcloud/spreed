@@ -75,7 +75,7 @@ class SignalingController extends OCSController {
 		private readonly ChecksumVerificationService $checksumVerificationService,
 		private readonly BanService $banService,
 		private readonly LoggerInterface $logger,
-		protected Authenticator $federationAuthenticator,
+		private readonly Authenticator $federationAuthenticator,
 		private readonly RoomPropertiesHelper $roomPropertiesHelper,
 		private readonly ?string $userId,
 	) {

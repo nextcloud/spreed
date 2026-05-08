@@ -12,7 +12,6 @@ use DateTime;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Ban;
 use OCA\Talk\Model\BanMapper;
@@ -28,14 +27,13 @@ use Psr\Log\LoggerInterface;
 class BanService {
 
 	public function __construct(
-		protected BanMapper $banMapper,
-		protected Manager $manager,
-		protected ParticipantService $participantService,
-		protected IUserManager $userManager,
-		protected TalkSession $talkSession,
-		protected IRequest $request,
-		protected LoggerInterface $logger,
-		protected IFactory $ipFactory,
+		private readonly BanMapper $banMapper,
+		private readonly ParticipantService $participantService,
+		private readonly IUserManager $userManager,
+		private readonly TalkSession $talkSession,
+		private readonly IRequest $request,
+		private readonly LoggerInterface $logger,
+		private readonly IFactory $ipFactory,
 	) {
 	}
 

@@ -40,9 +40,9 @@ class AdminSettings implements ISettings {
 		private readonly IGroupManager $groupManager,
 		private readonly MatterbridgeManager $bridgeManager,
 		private readonly IRegistry $subscription,
-		IUserSession $userSession,
 		private readonly IL10N $l10n,
 		private readonly IFactory $l10nFactory,
+		IUserSession $userSession,
 	) {
 		$this->currentUser = $userSession->getUser();
 	}

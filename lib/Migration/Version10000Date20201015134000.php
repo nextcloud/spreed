@@ -28,8 +28,8 @@ use OCP\Migration\SimpleMigrationStep;
 class Version10000Date20201015134000 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IDBConnection $connection,
-		protected ITimeFactory $timeFactory,
+		private readonly IDBConnection $connection,
+		private readonly ITimeFactory $timeFactory,
 	) {
 	}
 

@@ -23,7 +23,6 @@ use OCA\Talk\Model\Poll;
 use OCA\Talk\Model\Vote;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
-use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\PollExportService;
 use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\ThreadService;
@@ -48,14 +47,13 @@ class PollController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected ChatManager $chatManager,
-		protected PollService $pollService,
-		protected PollExportService $pollExportService,
-		protected AttachmentService $attachmentService,
-		protected ThreadService $threadService,
-		protected ITimeFactory $timeFactory,
-		protected LoggerInterface $logger,
-		protected IL10N $l,
+		private readonly ChatManager $chatManager,
+		private readonly PollService $pollService,
+		private readonly PollExportService $pollExportService,
+		private readonly ThreadService $threadService,
+		private readonly ITimeFactory $timeFactory,
+		private readonly LoggerInterface $logger,
+		private readonly IL10N $l,
 	) {
 		parent::__construct($appName, $request);
 	}

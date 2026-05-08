@@ -15,7 +15,6 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
-use OCP\Files\IFilenameValidator;
 use OCP\IAvatarManager;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -29,7 +28,6 @@ class TempAvatarController extends OCSController {
 		private readonly IAvatarManager $avatarManager,
 		private readonly IL10N $l,
 		private readonly LoggerInterface $logger,
-		private readonly IFilenameValidator $filenameValidator,
 		private readonly string $userId,
 	) {
 		parent::__construct($appName, $request);

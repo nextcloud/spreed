@@ -35,11 +35,11 @@ class ChatController {
 	protected ?ICache $proxyCacheMessages;
 
 	public function __construct(
-		protected ProxyRequest $proxy,
-		protected UserConverter $userConverter,
-		protected ParticipantService $participantService,
-		protected RoomFormatter $roomFormatter,
-		protected Notifier $notifier,
+		private readonly ProxyRequest $proxy,
+		private readonly UserConverter $userConverter,
+		private readonly ParticipantService $participantService,
+		private readonly RoomFormatter $roomFormatter,
+		private readonly Notifier $notifier,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->proxyCacheMessages = $cacheFactory->isAvailable() ? $cacheFactory->createDistributed(CachePrefix::FEDERATED_PCM) : null;

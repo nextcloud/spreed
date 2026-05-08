@@ -21,14 +21,14 @@ use OCP\Security\ISecureRandom;
 
 class NoteToSelfService {
 	public function __construct(
-		protected IConfig $config,
-		protected IUserManager $userManager,
-		protected Manager $manager,
-		protected RoomService $roomService,
-		protected AvatarService $avatarService,
-		protected ParticipantService $participantService,
-		protected ISecureRandom $secureRandom,
-		protected IL10N $l,
+		private readonly IConfig $config,
+		private readonly IUserManager $userManager,
+		private readonly Manager $manager,
+		private readonly RoomService $roomService,
+		private readonly AvatarService $avatarService,
+		private readonly ParticipantService $participantService,
+		private readonly ISecureRandom $secureRandom,
+		private readonly IL10N $l,
 	) {
 	}
 

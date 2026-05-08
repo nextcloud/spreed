@@ -57,11 +57,11 @@ class Message {
 	protected array $metaData = [];
 
 	public function __construct(
-		protected Room $room,
-		protected ?Participant $participant,
-		protected ?IComment $comment,
-		protected IL10N $l,
-		protected ?ProxyCacheMessage $proxy = null,
+		private readonly Room $room,
+		private readonly ?Participant $participant,
+		private readonly ?IComment $comment,
+		private readonly IL10N $l,
+		private readonly ?ProxyCacheMessage $proxy = null,
 	) {
 	}
 

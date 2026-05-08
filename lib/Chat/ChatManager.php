@@ -105,8 +105,8 @@ class ChatManager {
 	 */
 	public const UNREAD_FIRST_MESSAGE = -2;
 
-	protected ICache $cache;
-	protected ICache $unreadCountCache;
+	private readonly ICache $cache;
+	private readonly ICache $unreadCountCache;
 
 	public function __construct(
 		private readonly CommentsManager $commentsManager,
@@ -118,17 +118,17 @@ class ChatManager {
 		private readonly ParticipantService $participantService,
 		private readonly RoomService $roomService,
 		private readonly PollService $pollService,
-		protected ThreadService $threadService,
+		private readonly ThreadService $threadService,
 		private readonly Notifier $notifier,
 		ICacheFactory $cacheFactory,
-		protected ITimeFactory $timeFactory,
-		protected AttachmentService $attachmentService,
-		protected IReferenceManager $referenceManager,
-		protected ILimiter $rateLimiter,
-		protected IRequest $request,
-		protected IJobList $jobList,
-		protected IL10N $l,
-		protected LoggerInterface $logger,
+		private readonly ITimeFactory $timeFactory,
+		private readonly AttachmentService $attachmentService,
+		private readonly IReferenceManager $referenceManager,
+		private readonly ILimiter $rateLimiter,
+		private readonly IRequest $request,
+		private readonly IJobList $jobList,
+		private readonly IL10N $l,
+		private readonly LoggerInterface $logger,
 	) {
 		$this->cache = $cacheFactory->createDistributed(CachePrefix::CHAT_LAST_MESSAGE_ID);
 		$this->unreadCountCache = $cacheFactory->createDistributed(CachePrefix::CHAT_UNREAD_COUNT);

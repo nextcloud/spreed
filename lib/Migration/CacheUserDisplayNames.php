@@ -18,8 +18,8 @@ use OCP\Migration\IRepairStep;
 class CacheUserDisplayNames implements IRepairStep {
 
 	public function __construct(
-		protected IDBConnection $connection,
-		protected IUserManager $userManager,
+		private readonly IDBConnection $connection,
+		private readonly IUserManager $userManager,
 	) {
 	}
 

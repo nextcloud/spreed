@@ -60,18 +60,18 @@ use Psr\Log\LoggerInterface;
 class Listener implements IEventListener {
 
 	public function __construct(
-		protected IRequest $request,
-		protected ChatManager $chatManager,
-		protected TalkSession $talkSession,
-		protected ISession $session,
-		protected IUserSession $userSession,
-		protected ITimeFactory $timeFactory,
-		protected Manager $manager,
-		protected ParticipantService $participantService,
-		protected MessageParser $messageParser,
-		protected ThreadService $threadService,
-		protected IL10N $l,
-		protected LoggerInterface $logger,
+		private readonly IRequest $request,
+		private readonly ChatManager $chatManager,
+		private readonly TalkSession $talkSession,
+		private readonly ISession $session,
+		private readonly IUserSession $userSession,
+		private readonly ITimeFactory $timeFactory,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly MessageParser $messageParser,
+		private readonly ThreadService $threadService,
+		private readonly IL10N $l,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 

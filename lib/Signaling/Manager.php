@@ -25,15 +25,15 @@ use OCP\IConfig;
 class Manager {
 	public const FEATURE_HEADER = 'X-Spreed-Signaling-Features';
 
-	protected ICache $cache;
+	private readonly ICache $cache;
 
 	public function __construct(
-		protected IConfig $serverConfig,
-		protected Config $talkConfig,
-		protected RoomService $roomService,
-		protected ITimeFactory $timeFactory,
-		protected IClientService $clientService,
-		protected CertificateService $certificateService,
+		private readonly IConfig $serverConfig,
+		private readonly Config $talkConfig,
+		private readonly RoomService $roomService,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IClientService $clientService,
+		private readonly CertificateService $certificateService,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->cache = $cacheFactory->createDistributed(CachePrefix::SIGNALING_ASSIGNED_SERVER);

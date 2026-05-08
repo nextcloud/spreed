@@ -56,14 +56,14 @@ class Config {
 	protected array $canEnableSIP = [];
 
 	public function __construct(
-		protected IConfig $config,
-		protected IAppConfig $appConfig,
-		protected IUserConfig $userConfig,
+		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
+		private readonly IUserConfig $userConfig,
 		private readonly ISecureRandom $secureRandom,
 		private readonly IGroupManager $groupManager,
 		private readonly IUserManager $userManager,
 		private readonly IURLGenerator $urlGenerator,
-		protected ITimeFactory $timeFactory,
+		private readonly ITimeFactory $timeFactory,
 		private readonly IEventDispatcher $dispatcher,
 		private readonly IFilenameValidator $filenameValidator,
 	) {

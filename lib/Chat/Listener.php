@@ -19,8 +19,8 @@ use OCP\EventDispatcher\IEventListener;
  */
 class Listener implements IEventListener {
 	public function __construct(
-		protected ChatManager $chatManager,
-		protected ScheduledMessageService $scheduledMessageService,
+		private readonly ChatManager $chatManager,
+		private readonly ScheduledMessageService $scheduledMessageService,
 	) {
 	}
 

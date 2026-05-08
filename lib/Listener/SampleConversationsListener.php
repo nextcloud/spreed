@@ -18,7 +18,7 @@ use OCP\EventDispatcher\IEventListener;
  */
 class SampleConversationsListener implements IEventListener {
 	public function __construct(
-		protected SampleConversationsService $service,
+		private readonly SampleConversationsService $service,
 	) {
 	}
 

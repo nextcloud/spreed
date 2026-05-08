@@ -15,7 +15,6 @@ use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Events\OverwritePublicSharePropertiesEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Federation\Authenticator;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
@@ -71,20 +70,19 @@ class SystemMessage implements IEventListener {
 	protected array $currentFederatedUserDetails = [];
 
 	public function __construct(
-		protected IAppConfig $appConfig,
-		protected IUserManager $userManager,
-		protected IGroupManager $groupManager,
-		protected GuestManager $guestManager,
-		protected ParticipantService $participantService,
-		protected IPreviewManager $previewManager,
-		protected RoomShareProvider $shareProvider,
-		protected PhotoCache $photoCache,
-		protected IRootFolder $rootFolder,
-		protected ICloudIdManager $cloudIdManager,
-		protected IURLGenerator $url,
-		protected FilesMetadataCache $metadataCache,
-		protected Authenticator $federationAuthenticator,
-		protected IEventDispatcher $dispatcher,
+		private readonly IAppConfig $appConfig,
+		private readonly IUserManager $userManager,
+		private readonly IGroupManager $groupManager,
+		private readonly ParticipantService $participantService,
+		private readonly IPreviewManager $previewManager,
+		private readonly RoomShareProvider $shareProvider,
+		private readonly PhotoCache $photoCache,
+		private readonly IRootFolder $rootFolder,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly IURLGenerator $url,
+		private readonly FilesMetadataCache $metadataCache,
+		private readonly Authenticator $federationAuthenticator,
+		private readonly IEventDispatcher $dispatcher,
 	) {
 	}
 

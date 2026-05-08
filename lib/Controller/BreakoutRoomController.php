@@ -31,10 +31,10 @@ class BreakoutRoomController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected BreakoutRoomService $breakoutRoomService,
-		protected ParticipantService $participantService,
-		protected RoomFormatter $roomFormatter,
-		protected ?string $userId,
+		private readonly BreakoutRoomService $breakoutRoomService,
+		private readonly ParticipantService $participantService,
+		private readonly RoomFormatter $roomFormatter,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}

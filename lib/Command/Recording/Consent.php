@@ -21,8 +21,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Consent extends Base {
 
 	public function __construct(
-		protected Manager $roomManager,
-		protected ConsentService $consentService,
+		private readonly Manager $roomManager,
+		private readonly ConsentService $consentService,
 	) {
 		parent::__construct();
 	}

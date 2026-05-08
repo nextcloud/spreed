@@ -17,8 +17,8 @@ use OCP\Share\IShare;
  */
 class Preloader {
 	public function __construct(
-		protected RoomShareProvider $shareProvider,
-		protected FilesMetadataCache $filesMetadataCache,
+		private readonly RoomShareProvider $shareProvider,
+		private readonly FilesMetadataCache $filesMetadataCache,
 	) {
 	}
 

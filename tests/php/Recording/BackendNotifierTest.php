@@ -33,7 +33,6 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -117,7 +116,6 @@ class BackendNotifierTest extends TestCase {
 			$this->createMock(TalkSession::class),
 			$dispatcher,
 			$timeFactory,
-			$this->createMock(IHasher::class),
 			$this->createMock(IL10N::class),
 			$this->createMock(Authenticator::class),
 		);

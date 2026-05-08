@@ -20,7 +20,6 @@ use OCA\Talk\Service\ConsentService;
 use OCA\Talk\Service\RecordingService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\Files\IRootFolder;
 use OCP\TaskProcessing\Events\AbstractTaskProcessingEvent;
 use OCP\TaskProcessing\Events\TaskFailedEvent;
 use OCP\TaskProcessing\Events\TaskSuccessfulEvent;
@@ -31,10 +30,9 @@ use Psr\Log\LoggerInterface;
  */
 class Listener implements IEventListener {
 	public function __construct(
-		protected RecordingService $recordingService,
-		protected ConsentService $consentService,
-		protected IRootFolder $rootFolder,
-		protected LoggerInterface $logger,
+		private readonly RecordingService $recordingService,
+		private readonly ConsentService $consentService,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 

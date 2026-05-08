@@ -36,10 +36,10 @@ class MessageParser {
 	protected array $botNames = [];
 
 	public function __construct(
-		protected IEventDispatcher $dispatcher,
-		protected IUserManager $userManager,
-		protected ParticipantService $participantService,
-		protected BotService $botService,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly IUserManager $userManager,
+		private readonly ParticipantService $participantService,
+		private readonly BotService $botService,
 	) {
 	}
 

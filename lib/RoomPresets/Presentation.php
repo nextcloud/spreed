@@ -15,7 +15,7 @@ use OCP\IL10N;
 
 readonly class Presentation extends APreset {
 	public function __construct(
-		protected IL10N $l,
+		private IL10N $l,
 	) {
 	}
 

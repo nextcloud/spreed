@@ -20,8 +20,8 @@ use OCP\Migration\IRepairStep;
  */
 class RegenerateSignalingKeys implements IRepairStep {
 	public function __construct(
-		protected IAppConfig $appConfig,
-		protected Config $talkConfig,
+		private readonly IAppConfig $appConfig,
+		private readonly Config $talkConfig,
 	) {
 	}
 

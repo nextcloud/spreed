@@ -15,7 +15,7 @@ class BotDisabledEvent extends ARoomEvent {
 
 	public function __construct(
 		Room $room,
-		protected BotServer $botServer,
+		private readonly BotServer $botServer,
 	) {
 		parent::__construct($room);
 	}

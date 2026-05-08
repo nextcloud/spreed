@@ -18,7 +18,7 @@ use OCA\Talk\Middleware\InjectionMiddleware;
 #[Attribute(Attribute::TARGET_METHOD)]
 class RequireFederatedParticipant extends RequireParticipant {
 	public function __construct(
-		protected ?string $sessionIdParameter = 'sessionId',
+		private readonly ?string $sessionIdParameter = 'sessionId',
 	) {
 	}
 

@@ -19,7 +19,7 @@ class FederationRestrictionException extends \InvalidArgumentException {
 	 * @param self::REASON_* $reason
 	 */
 	public function __construct(
-		protected readonly string $reason,
+		private readonly string $reason,
 	) {
 		parent::__construct($this->reason);
 	}

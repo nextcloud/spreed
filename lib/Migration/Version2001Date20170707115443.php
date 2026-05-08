@@ -20,8 +20,8 @@ use OCP\Migration\SimpleMigrationStep;
 class Version2001Date20170707115443 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IDBConnection $db,
-		protected IConfig $config,
+		private readonly IDBConnection $db,
+		private readonly IConfig $config,
 	) {
 	}
 

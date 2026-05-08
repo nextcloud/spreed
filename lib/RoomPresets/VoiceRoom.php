@@ -13,7 +13,7 @@ use OCP\IL10N;
 
 readonly class VoiceRoom extends APreset {
 	public function __construct(
-		protected IL10N $l,
+		private IL10N $l,
 	) {
 	}
 

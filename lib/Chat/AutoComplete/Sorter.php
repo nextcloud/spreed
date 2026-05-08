@@ -14,7 +14,7 @@ use OCP\Collaboration\AutoComplete\ISorter;
 
 class Sorter implements ISorter {
 	public function __construct(
-		protected CommentsManager $commentsManager,
+		private readonly CommentsManager $commentsManager,
 	) {
 	}
 

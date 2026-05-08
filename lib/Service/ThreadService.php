@@ -28,11 +28,11 @@ class ThreadService {
 	private readonly ICache $cache;
 	private const CACHE_PREFIX = 'thread/';
 	public function __construct(
-		protected IDBConnection $connection,
-		protected ThreadMapper $threadMapper,
-		protected ThreadAttendeeMapper $threadAttendeeMapper,
-		protected ITimeFactory $timeFactory,
-		protected ICacheFactory $cacheFactory,
+		private readonly IDBConnection $connection,
+		private readonly ThreadMapper $threadMapper,
+		private readonly ThreadAttendeeMapper $threadAttendeeMapper,
+		private readonly ITimeFactory $timeFactory,
+		private readonly ICacheFactory $cacheFactory,
 	) {
 		$this->cache = $this->cacheFactory->createDistributed('talk.threads');
 	}

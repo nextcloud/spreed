@@ -37,7 +37,6 @@ use OCP\Http\Client\IResponse;
 use OCP\ICertificateManager;
 use OCP\IConfig;
 use OCP\ISession;
-use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
@@ -52,23 +51,22 @@ class BotService {
 	private readonly ActivityPubHelper $activityPubHelper;
 
 	public function __construct(
-		protected BotServerMapper $botServerMapper,
-		protected BotConversationMapper $botConversationMapper,
-		protected ThreadService $threadService,
-		protected ChatManager $chatManager,
-		protected IClientService $clientService,
-		protected IConfig $serverConfig,
-		protected IUserSession $userSession,
-		protected TalkSession $talkSession,
-		protected ISession $session,
-		protected ISecureRandom $secureRandom,
-		protected IURLGenerator $urlGenerator,
-		protected IFactory $l10nFactory,
-		protected ITimeFactory $timeFactory,
-		protected LoggerInterface $logger,
-		protected ICertificateManager $certificateManager,
-		protected IEventDispatcher $dispatcher,
-		protected IAppManager $appManager,
+		private readonly BotServerMapper $botServerMapper,
+		private readonly BotConversationMapper $botConversationMapper,
+		private readonly ThreadService $threadService,
+		private readonly ChatManager $chatManager,
+		private readonly IClientService $clientService,
+		private readonly IConfig $serverConfig,
+		private readonly IUserSession $userSession,
+		private readonly TalkSession $talkSession,
+		private readonly ISession $session,
+		private readonly ISecureRandom $secureRandom,
+		private readonly IFactory $l10nFactory,
+		private readonly ITimeFactory $timeFactory,
+		private readonly LoggerInterface $logger,
+		private readonly ICertificateManager $certificateManager,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly IAppManager $appManager,
 	) {
 		$this->activityPubHelper = new ActivityPubHelper();
 	}

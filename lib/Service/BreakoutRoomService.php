@@ -21,21 +21,19 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\Notification\IManager as INotificationManager;
 
 class BreakoutRoomService {
 	public function __construct(
-		protected Config $config,
-		protected Manager $manager,
-		protected RoomService $roomService,
-		protected ParticipantService $participantService,
-		protected ChatManager $chatManager,
-		protected INotificationManager $notificationManager,
-		protected ITimeFactory $timeFactory,
-		protected IEventDispatcher $dispatcher,
-		protected IL10N $l,
+		private readonly Config $config,
+		private readonly Manager $manager,
+		private readonly RoomService $roomService,
+		private readonly ParticipantService $participantService,
+		private readonly ChatManager $chatManager,
+		private readonly INotificationManager $notificationManager,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IL10N $l,
 	) {
 	}
 

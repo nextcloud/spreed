@@ -27,9 +27,9 @@ use Psr\Log\LoggerInterface;
  */
 class BeforePreferenceSetEventListener implements IEventListener {
 	public function __construct(
-		protected IRootFolder $rootFolder,
-		protected ParticipantService $participantService,
-		protected LoggerInterface $logger,
+		private readonly IRootFolder $rootFolder,
+		private readonly ParticipantService $participantService,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 

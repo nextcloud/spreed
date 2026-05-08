@@ -52,7 +52,6 @@ use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
-use OCP\Federation\ICloudIdManager;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\Security\Bruteforce\IThrottler;
@@ -61,19 +60,18 @@ use Psr\Log\LoggerInterface;
 
 class InjectionMiddleware extends Middleware {
 	public function __construct(
-		protected IRequest $request,
-		protected ParticipantService $participantService,
-		protected TalkSession $talkSession,
-		protected Manager $manager,
-		protected ICloudIdManager $cloudIdManager,
-		protected IThrottler $throttler,
-		protected IURLGenerator $url,
-		protected InvitationMapper $invitationMapper,
-		protected Authenticator $federationAuthenticator,
-		protected BanService $banService,
-		protected RoomService $roomService,
-		protected LoggerInterface $logger,
-		protected ?string $userId,
+		private readonly IRequest $request,
+		private readonly ParticipantService $participantService,
+		private readonly TalkSession $talkSession,
+		private readonly Manager $manager,
+		private readonly IThrottler $throttler,
+		private readonly IURLGenerator $url,
+		private readonly InvitationMapper $invitationMapper,
+		private readonly Authenticator $federationAuthenticator,
+		private readonly BanService $banService,
+		private readonly RoomService $roomService,
+		private readonly LoggerInterface $logger,
+		private readonly ?string $userId,
 	) {
 	}
 

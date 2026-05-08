@@ -19,7 +19,7 @@ class FilesMetadataCache {
 	protected array $filesSizeData = [];
 
 	public function __construct(
-		protected IFilesMetadataManager $filesMetadataManager,
+		private readonly IFilesMetadataManager $filesMetadataManager,
 	) {
 	}
 

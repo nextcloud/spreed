@@ -17,7 +17,6 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
-use OCP\AppFramework\Services\IAppConfig;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
 use OCP\IURLGenerator;
@@ -28,7 +27,6 @@ class BackendNotifier {
 
 	public function __construct(
 		private readonly Config $config,
-		private readonly IAppConfig $appConfig,
 		private readonly LoggerInterface $logger,
 		private readonly IClientService $clientService,
 		private readonly ISecureRandom $secureRandom,

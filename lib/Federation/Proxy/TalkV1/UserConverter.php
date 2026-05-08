@@ -29,8 +29,8 @@ class UserConverter {
 	protected array $participantsPerRoom = [];
 
 	public function __construct(
-		protected ParticipantService $participantService,
-		protected AvatarService $avatarService,
+		private readonly ParticipantService $participantService,
+		private readonly AvatarService $avatarService,
 	) {
 	}
 

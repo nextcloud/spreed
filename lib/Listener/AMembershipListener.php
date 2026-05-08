@@ -32,12 +32,12 @@ use Psr\Log\LoggerInterface;
 abstract class AMembershipListener implements IEventListener {
 
 	public function __construct(
-		protected Manager $manager,
-		protected IAppManager $appManager,
-		protected IGroupManager $groupManager,
-		protected ParticipantService $participantService,
-		protected BanService $banService,
-		protected LoggerInterface $logger,
+		protected readonly Manager $manager,
+		protected readonly IAppManager $appManager,
+		protected readonly IGroupManager $groupManager,
+		protected readonly ParticipantService $participantService,
+		protected readonly BanService $banService,
+		protected readonly LoggerInterface $logger,
 	) {
 	}
 
@@ -76,7 +76,7 @@ abstract class AMembershipListener implements IEventListener {
 
 	protected function filterRoomsWithOtherCircleMemberships(array $rooms, IUser $user): array {
 		if (!$this->appManager->isEnabledForUser('circles', $user)) {
-			Server::get(LoggerInterface::class)->debug('Circles not enabled', ['app' => 'spreed']);
+			$this->logger->debug('Circles not enabled', ['app' => 'spreed']);
 			return $rooms;
 		}
 

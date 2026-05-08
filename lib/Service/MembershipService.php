@@ -23,9 +23,9 @@ use Psr\Log\LoggerInterface;
 class MembershipService {
 
 	public function __construct(
-		protected IAppManager $appManager,
-		protected IGroupManager $groupManager,
-		protected AttendeeMapper $attendeeMapper,
+		private readonly IAppManager $appManager,
+		private readonly IGroupManager $groupManager,
+		private readonly AttendeeMapper $attendeeMapper,
 	) {
 	}
 

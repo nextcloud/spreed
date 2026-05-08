@@ -35,32 +35,29 @@ use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
 use SensitiveParameter;
 
 class Manager {
 	public function __construct(
-		protected IDBConnection $db,
-		protected IConfig $config,
-		protected Config $talkConfig,
-		protected IAppManager $appManager,
-		protected AttendeeMapper $attendeeMapper,
-		protected SessionMapper $sessionMapper,
-		protected ParticipantService $participantService,
-		protected ISecureRandom $secureRandom,
-		protected IUserManager $userManager,
-		protected IGroupManager $groupManager,
-		protected CommentsManager $commentsManager,
-		protected TalkSession $talkSession,
-		protected IEventDispatcher $dispatcher,
-		protected ITimeFactory $timeFactory,
-		protected IHasher $hasher,
-		protected IL10N $l,
-		protected Authenticator $federationAuthenticator,
+		private readonly IDBConnection $db,
+		private readonly IConfig $config,
+		private readonly Config $talkConfig,
+		private readonly IAppManager $appManager,
+		private readonly AttendeeMapper $attendeeMapper,
+		private readonly SessionMapper $sessionMapper,
+		private readonly ParticipantService $participantService,
+		private readonly ISecureRandom $secureRandom,
+		private readonly IUserManager $userManager,
+		private readonly IGroupManager $groupManager,
+		private readonly CommentsManager $commentsManager,
+		private readonly TalkSession $talkSession,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IL10N $l,
+		private readonly Authenticator $federationAuthenticator,
 	) {
-		$this->commentsManager = $commentsManager;
 	}
 
 	public function forAllRooms(callable $callback): void {

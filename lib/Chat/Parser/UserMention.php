@@ -12,7 +12,6 @@ use OCA\Circles\CirclesManager;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Room;
@@ -40,15 +39,14 @@ class UserMention implements IEventListener {
 	protected array $circleLinks = [];
 
 	public function __construct(
-		protected IAppManager $appManager,
-		protected ICommentsManager $commentsManager,
-		protected IUserManager $userManager,
-		protected IGroupManager $groupManager,
-		protected GuestManager $guestManager,
-		protected AvatarService $avatarService,
-		protected ICloudIdManager $cloudIdManager,
-		protected ParticipantService $participantService,
-		protected IL10N $l,
+		private readonly IAppManager $appManager,
+		private readonly ICommentsManager $commentsManager,
+		private readonly IUserManager $userManager,
+		private readonly IGroupManager $groupManager,
+		private readonly AvatarService $avatarService,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly ParticipantService $participantService,
+		private readonly IL10N $l,
 	) {
 	}
 

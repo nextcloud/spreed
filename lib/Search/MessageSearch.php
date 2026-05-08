@@ -43,16 +43,16 @@ class MessageSearch implements IProvider, IFilteringProvider {
 	protected bool $isConversationFiltered = false;
 
 	public function __construct(
-		protected RoomManager $roomManager,
-		protected ParticipantService $participantService,
-		protected ChatManager $chatManager,
-		protected MessageParser $messageParser,
-		protected ITimeFactory $timeFactory,
-		protected IURLGenerator $url,
-		protected IL10N $l,
-		protected Config $talkConfig,
-		protected IUserSession $userSession,
-		protected ThreadService $threadService,
+		protected readonly RoomManager $roomManager,
+		protected readonly ParticipantService $participantService,
+		protected readonly ChatManager $chatManager,
+		protected readonly MessageParser $messageParser,
+		protected readonly ITimeFactory $timeFactory,
+		protected readonly IURLGenerator $url,
+		protected readonly IL10N $l,
+		protected readonly Config $talkConfig,
+		protected readonly IUserSession $userSession,
+		protected readonly ThreadService $threadService,
 	) {
 	}
 

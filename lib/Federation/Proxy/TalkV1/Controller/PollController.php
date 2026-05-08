@@ -26,9 +26,9 @@ use Psr\Log\LoggerInterface;
  */
 class PollController {
 	public function __construct(
-		protected ProxyRequest $proxy,
-		protected UserConverter $userConverter,
-		protected LoggerInterface $logger,
+		private readonly ProxyRequest $proxy,
+		private readonly UserConverter $userConverter,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 

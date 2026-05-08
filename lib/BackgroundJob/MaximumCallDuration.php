@@ -17,11 +17,11 @@ use OCP\BackgroundJob\TimedJob;
 
 class MaximumCallDuration extends TimedJob {
 	public function __construct(
+		ITimeFactory $time,
 		private readonly IAppConfig $appConfig,
 		private readonly Manager $manager,
 		private readonly RoomService $roomService,
 		private readonly ParticipantService $participantService,
-		ITimeFactory $time,
 	) {
 		parent::__construct($time);
 

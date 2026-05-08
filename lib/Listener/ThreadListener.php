@@ -19,7 +19,7 @@ use OCP\EventDispatcher\IEventListener;
  */
 class ThreadListener implements IEventListener {
 	public function __construct(
-		protected readonly ThreadService $threadService,
+		private readonly ThreadService $threadService,
 	) {
 	}
 

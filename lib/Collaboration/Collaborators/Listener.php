@@ -34,12 +34,12 @@ class Listener implements IEventListener {
 	protected ?Room $room = null;
 
 	public function __construct(
-		protected Manager $manager,
-		protected IUserManager $userManager,
-		protected ParticipantService $participantService,
-		protected Config $config,
-		protected TalkSession $talkSession,
-		protected ?string $userId,
+		private readonly Manager $manager,
+		private readonly IUserManager $userManager,
+		private readonly ParticipantService $participantService,
+		private readonly Config $config,
+		private readonly TalkSession $talkSession,
+		private readonly ?string $userId,
 	) {
 	}
 

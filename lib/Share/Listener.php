@@ -25,9 +25,9 @@ use OCP\Share\IShare;
 class Listener implements IEventListener {
 
 	public function __construct(
-		protected Config $config,
-		protected Manager $manager,
-		protected RoomShareProvider $roomShareProvider,
+		private readonly Config $config,
+		private readonly Manager $manager,
+		private readonly RoomShareProvider $roomShareProvider,
 	) {
 	}
 

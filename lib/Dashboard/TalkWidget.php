@@ -44,18 +44,18 @@ use OCP\Util;
 class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidget, IConditionalWidget, IReloadableWidget {
 
 	public function __construct(
-		protected IUserSession $userSession,
-		protected Config $talkConfig,
-		protected IURLGenerator $url,
-		protected IL10N $l10n,
-		protected Manager $manager,
-		protected AvatarService $avatarService,
-		protected ParticipantService $participantService,
-		protected MessageParser $messageParser,
-		protected ChatManager $chatManager,
-		protected ProxyCacheMessageService $pcmService,
-		protected IEventDispatcher $dispatcher,
-		protected ITimeFactory $timeFactory,
+		private readonly IUserSession $userSession,
+		private readonly Config $talkConfig,
+		private readonly IURLGenerator $url,
+		private readonly IL10N $l10n,
+		private readonly Manager $manager,
+		private readonly AvatarService $avatarService,
+		private readonly ParticipantService $participantService,
+		private readonly MessageParser $messageParser,
+		private readonly ChatManager $chatManager,
+		private readonly ProxyCacheMessageService $pcmService,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly ITimeFactory $timeFactory,
 	) {
 	}
 

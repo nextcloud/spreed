@@ -61,18 +61,18 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	private CappedMemoryCache $sharesByIdCache;
 
 	public function __construct(
-		private IDBConnection $dbConnection,
-		private ISecureRandom $secureRandom,
-		private IShareManager $shareManager,
-		private IEventDispatcher $dispatcher,
-		private Manager $manager,
-		private ParticipantService $participantService,
-		protected RoomService $roomService,
-		protected ITimeFactory $timeFactory,
-		private IL10N $l,
-		private IMimeTypeLoader $mimeTypeLoader,
-		private IUserManager $userManager,
-		protected Config $config,
+		private readonly IDBConnection $dbConnection,
+		private readonly ISecureRandom $secureRandom,
+		private readonly IShareManager $shareManager,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IL10N $l,
+		private readonly IMimeTypeLoader $mimeTypeLoader,
+		private readonly IUserManager $userManager,
+		private readonly Config $config,
 	) {
 		$this->sharesByIdCache = new CappedMemoryCache();
 	}

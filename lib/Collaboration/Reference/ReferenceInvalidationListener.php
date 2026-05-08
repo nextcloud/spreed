@@ -23,7 +23,7 @@ use OCP\EventDispatcher\IEventListener;
 class ReferenceInvalidationListener implements IEventListener {
 
 	public function __construct(
-		protected IReferenceManager $referenceManager,
+		private readonly IReferenceManager $referenceManager,
 	) {
 	}
 

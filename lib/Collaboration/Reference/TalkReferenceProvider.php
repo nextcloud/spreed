@@ -36,15 +36,15 @@ use OCP\IURLGenerator;
 class TalkReferenceProvider extends ADiscoverableReferenceProvider implements ISearchableReferenceProvider {
 
 	public function __construct(
-		protected IURLGenerator $urlGenerator,
-		protected Manager $roomManager,
-		protected ParticipantService $participantService,
-		protected ChatManager $chatManager,
-		protected ProxyCacheMessageMapper $proxyCacheMessageMapper,
-		protected AvatarService $avatarService,
-		protected MessageParser $messageParser,
-		protected IL10N $l,
-		protected ?string $userId,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly Manager $roomManager,
+		private readonly ParticipantService $participantService,
+		private readonly ChatManager $chatManager,
+		private readonly ProxyCacheMessageMapper $proxyCacheMessageMapper,
+		private readonly AvatarService $avatarService,
+		private readonly MessageParser $messageParser,
+		private readonly IL10N $l,
+		private readonly ?string $userId,
 	) {
 	}
 

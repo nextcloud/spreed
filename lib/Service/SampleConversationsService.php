@@ -10,7 +10,6 @@ namespace OCA\Talk\Service;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\ReactionManager;
-use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCP\AppFramework\Services\IAppConfig;
@@ -24,27 +23,23 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
-use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
 class SampleConversationsService {
 	public function __construct(
-		protected IConfig $config,
-		protected IAppConfig $appConfig,
-		protected IUserManager $userManager,
-		protected Manager $manager,
-		protected ChatManager $chatManager,
-		protected ReactionManager $reactionManager,
-		protected RoomService $roomService,
-		protected AvatarService $avatarService,
-		protected ParticipantService $participantService,
-		protected ISecureRandom $secureRandom,
-		protected IRootFolder $rootFolder,
-		protected IURLGenerator $url,
-		protected ITimeFactory $timeFactory,
-		protected IFactory $l10nFactory,
-		protected IL10N $l,
-		protected LoggerInterface $logger,
+		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
+		private readonly IUserManager $userManager,
+		private readonly ChatManager $chatManager,
+		private readonly ReactionManager $reactionManager,
+		private readonly RoomService $roomService,
+		private readonly AvatarService $avatarService,
+		private readonly IRootFolder $rootFolder,
+		private readonly IURLGenerator $url,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IFactory $l10nFactory,
+		private readonly IL10N $l,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 

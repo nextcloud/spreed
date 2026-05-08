@@ -29,12 +29,12 @@ use SensitiveParameter;
 
 class ProxyRequest {
 	public function __construct(
-		protected IConfig $config,
-		protected IClientService $clientService,
-		protected LoggerInterface $logger,
-		protected IFactory $l10nFactory,
-		protected IUserSession $userSession,
-		protected TalkConfig $talkConfig,
+		private readonly IConfig $config,
+		private readonly IClientService $clientService,
+		private readonly LoggerInterface $logger,
+		private readonly IFactory $l10nFactory,
+		private readonly IUserSession $userSession,
+		private readonly TalkConfig $talkConfig,
 	) {
 	}
 

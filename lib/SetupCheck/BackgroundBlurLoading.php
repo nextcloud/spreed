@@ -24,7 +24,7 @@ class BackgroundBlurLoading implements ISetupCheck {
 	use CheckServerResponseTrait;
 
 	public function __construct(
-		protected IL10N $l10n,
+		private readonly IL10N $l10n,
 		protected IConfig $config,
 		protected IURLGenerator $urlGenerator,
 		protected IClientService $clientService,
