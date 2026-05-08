@@ -5,11 +5,9 @@
 
 import { createApp } from 'vue'
 import AdminSettings from './views/AdminSettings.vue'
-import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 import '@nextcloud/dialogs/style.css'
 import './assets/admin-settings.css'
 
 export default createApp(AdminSettings)
-	.use(NextcloudGlobalsVuePlugin)
 	.mount('#admin_settings')

@@ -7,7 +7,6 @@ import { getCSPNonce } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
 import { createApp } from 'vue'
 import PublicShareAuthForm from './PublicShareAuthForm.vue'
-import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 __webpack_nonce__ = getCSPNonce()
 // Correct the root of the app for chunk loading
@@ -17,5 +16,4 @@ __webpack_nonce__ = getCSPNonce()
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 
 createApp(PublicShareAuthForm)
-	.use(NextcloudGlobalsVuePlugin)
 	.mount('#talk-guest-auth')

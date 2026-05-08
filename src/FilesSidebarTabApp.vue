@@ -3,72 +3,34 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<div class="talkChatTab">
-		<div v-if="isTalkSidebarSupportedForFile === undefined" class="emptycontent ui-not-ready-placeholder">
-			<div class="icon icon-loading" />
-		</div>
-		<div v-else-if="!isTalkSidebarSupportedForFile" class="emptycontent file-not-shared">
-			<div class="icon icon-talk" />
-			<h2>{{ t('spreed', 'Discuss this file') }}</h2>
-			<p>{{ t('spreed', 'Share this file with others to discuss it') }}</p>
-			<NcButton variant="primary" @click="openSharingTab">
-				{{ t('spreed', 'Share this file') }}
-			</NcButton>
-		</div>
-		<div v-else-if="isTalkSidebarSupportedForFile && !token" class="emptycontent room-not-joined">
-			<div class="icon icon-talk" />
-			<h2>{{ t('spreed', 'Discuss this file') }}</h2>
-			<NcButton variant="primary" @click="joinConversation">
-				{{ t('spreed', 'Join conversation') }}
-			</NcButton>
-		</div>
-		<template v-else>
-			<FilesSidebarCallView v-if="isInFile && isInCall" />
-			<FilesSidebarChatView />
-		</template>
-	</div>
+	<FilesSidebarCallView v-if="isInFile && isInCall" />
+	<FilesSidebarChatView />
 </template>
 
 <script>
 import { getCurrentUser } from '@nextcloud/auth'
-import Axios from '@nextcloud/axios'
-import { FileType, getSidebar } from '@nextcloud/files'
 import { loadState } from '@nextcloud/initial-state'
-import { t } from '@nextcloud/l10n'
-import { ShareType } from '@nextcloud/sharing'
-import { defineAsyncComponent, defineComponent, h } from 'vue'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import LoadingComponent from './components/LoadingComponent.vue'
+import FilesSidebarCallView from './views/FilesSidebarCallView.vue'
+import FilesSidebarChatView from './views/FilesSidebarChatView.vue'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
-import { getFileConversation } from './services/filesIntegrationServices.ts'
-import {
-	leaveConversationSync,
-} from './services/participantsService.js'
+import { leaveConversationSync } from './services/participantsService.js'
 import SessionStorage from './services/SessionStorage.js'
 import { useActorStore } from './stores/actor.ts'
 import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
-import CancelableRequest from './utils/CancelableRequest.ts'
-import { signalingKill } from './utils/webrtc/index.js'
+import { signalingKill, signalingWebRtcKill } from './utils/webrtc/index.js'
+
+let fetchCurrentConversationIntervalId
 
 export default {
 	name: 'FilesSidebarTabApp',
 
 	components: {
-		FilesSidebarChatView: defineAsyncComponent({
-			loader: () => import(/* webpackChunkName: "files-sidebar-tab-chunk" */'./views/FilesSidebarChatView.vue'),
-			loadingComponent: defineComponent(() => h(LoadingComponent, { class: 'tab-loading' })),
-		}),
-
-		FilesSidebarCallView: defineAsyncComponent({
-			loader: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./views/FilesSidebarCallView.vue'),
-			loadingComponent: defineComponent(() => h(LoadingComponent, { class: 'tab-loading' })),
-		}),
-
-		NcButton,
+		FilesSidebarCallView,
+		FilesSidebarChatView,
 	},
 
 	props: {
@@ -91,6 +53,11 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+
+		token: {
+			type: String,
+			required: true,
+		},
 	},
 
 	setup() {
@@ -104,21 +71,7 @@ export default {
 		}
 	},
 
-	data() {
-		return {
-			/**
-			 * Stores the cancel function returned by `cancelablePollNewMessages`,
-			 */
-			cancelGetFileConversation: () => {},
-			isTalkSidebarSupportedForFile: undefined,
-		}
-	},
-
 	computed: {
-		token() {
-			return this.tokenStore.token
-		},
-
 		fileId() {
 			return this.node.fileid
 		},
@@ -140,82 +93,55 @@ export default {
 		isInFile() {
 			return this.fileId === this.fileIdForToken
 		},
+
+		warnLeaving() {
+			return !this.isLeavingAfterSessionIssue && this.isInCall
+		},
 	},
 
 	watch: {
-		fileId: {
-			immediate: true,
-			handler(fileId) {
-				if (this.token && (fileId !== this.fileIdForToken)) {
-					this.leaveConversation()
-				}
-
-				this.setTalkSidebarSupportedForFile()
-			},
-		},
-
 		active: {
 			immediate: true,
 			handler(active) {
 				this.forceTabsContentStyleWhenChatTabIsActive(active)
-				// recheck the file info in case the sharing info was changed
-				this.setTalkSidebarSupportedForFile()
 			},
 		},
 	},
 
-	created() {
-		// The fetchCurrentConversation event handler/callback is started and
-		// stopped from different FilesSidebarTabApp instances, so it needs to
-		// be stored in a common place. Moreover, as the bound method would be
-		// overriden when a new instance is created the one used as handler is
-		// a wrapper that calls the latest bound method. This makes possible to
-		// register and unregister it from different instances.
-		if (!OCA.Talk.fetchCurrentConversationWrapper) {
-			OCA.Talk.fetchCurrentConversationWrapper = function() {
-				OCA.Talk.fetchCurrentConversationBound()
-			}
-		}
-
-		OCA.Talk.fetchCurrentConversationBound = this.fetchCurrentConversation.bind(this)
-	},
-
 	beforeMount() {
 		this.actorStore.setCurrentUser(getCurrentUser())
+		this.tokenStore.updateTokenAndFileIdForToken(this.token, this.node.fileid)
+		this.joinConversation()
 
-		window.addEventListener('unload', () => {
-			console.info('Navigating away, leaving conversation')
-			if (this.token) {
-				SessionStorage.removeItem('joined_conversation')
-				// We have to do this synchronously, because in unload and beforeunload
-				// Promises, async and await are prohibited.
-				signalingKill()
-				if (!this.isLeavingAfterSessionIssue) {
-					leaveConversationSync(this.token)
-				}
-			}
-		})
+		window.addEventListener('beforeunload', this.preventUnload)
+		window.addEventListener('unload', this.syncLeaveConversation)
+	},
+
+	async beforeUnmount() {
+		EventBus.off('should-refresh-conversations', this.fetchCurrentConversation)
+		EventBus.off('signaling-participant-list-changed', this.fetchCurrentConversation)
+
+		window.clearInterval(fetchCurrentConversationIntervalId)
+		fetchCurrentConversationIntervalId = null
+
+		try {
+			await this.$store.dispatch('leaveConversation', { token: this.token })
+		} catch (error) {
+			console.error(error)
+		}
+
+		window.removeEventListener('beforeunload', this.preventUnload)
+		window.removeEventListener('unload', this.syncLeaveConversation)
+		this.syncLeaveConversation()
 	},
 
 	unmounted() {
-		if (this.tokenStore.token) {
-			OCA.Talk.store.dispatch('leaveConversation', { token: this.tokenStore.token })
-		}
-
-		this.tokenStore.updateTokenAndFileIdForToken('', null)
 	},
 
 	methods: {
 		t,
 		async joinConversation() {
 			checkBrowser()
-
-			try {
-				await this.getFileConversation()
-			} catch (error) {
-				console.debug('Could not get file conversation. Is it a file and shared?')
-				return
-			}
 
 			// TODO: move to store under a special action ?
 
@@ -245,44 +171,14 @@ export default {
 			// "inCall" flag (which is locally updated when joining and leaving
 			// a call) is currently used.
 			if (loadState('spreed', 'signaling_mode') !== 'internal') {
-				EventBus.on('should-refresh-conversations', OCA.Talk.fetchCurrentConversationWrapper)
-				EventBus.on('signaling-participant-list-changed', OCA.Talk.fetchCurrentConversationWrapper)
+				EventBus.on('should-refresh-conversations', this.fetchCurrentConversation)
+				EventBus.on('signaling-participant-list-changed', this.fetchCurrentConversation)
 			} else {
 				// The "should-refresh-conversations" event is triggered only when
 				// the external signaling server is used; when the internal
 				// signaling server is used periodic polling has to be used
 				// instead.
-				OCA.Talk.fetchCurrentConversationIntervalId = window.setInterval(OCA.Talk.fetchCurrentConversationWrapper, 30000)
-			}
-		},
-
-		leaveConversation() {
-			EventBus.off('should-refresh-conversations', OCA.Talk.fetchCurrentConversationWrapper)
-			EventBus.off('signaling-participant-list-changed', OCA.Talk.fetchCurrentConversationWrapper)
-			window.clearInterval(OCA.Talk.fetchCurrentConversationIntervalId)
-
-			this.$store.dispatch('leaveConversation', { token: this.token })
-
-			this.tokenStore.updateTokenAndFileIdForToken('', null)
-		},
-
-		async getFileConversation() {
-			// Clear previous requests if there's one pending
-			this.cancelGetFileConversation('canceled')
-			// Get a new cancelable request function and cancel function pair
-			const { request, cancel } = CancelableRequest(getFileConversation)
-			// Assign the new cancel function to our data value
-			this.cancelGetFileConversation = cancel
-			// Make the request
-			try {
-				const response = await request(this.fileId)
-				this.tokenStore.updateTokenAndFileIdForToken(response.data.ocs.data.token, this.fileId)
-			} catch (exception) {
-				if (Axios.isCancel(exception)) {
-					console.debug('The request has been canceled', exception)
-				} else {
-					throw exception
-				}
+				fetchCurrentConversationIntervalId = window.setInterval(this.fetchCurrentConversation, 30000)
 			}
 		},
 
@@ -294,94 +190,27 @@ export default {
 			await this.$store.dispatch('fetchConversation', { token: this.token })
 		},
 
-		/**
-		 * Sets whether the Talk sidebar is supported for the file or not.
-		 *
-		 * In some cases it is not possible to know if the Talk sidebar is
-		 * supported for the file or not just from the data in the FileInfo (for
-		 * example, for files in a folder shared by the current user). Due to
-		 * that this function is asynchronous; isTalkSidebarSupportedForFile
-		 * will be set as soon as possible (in some cases, immediately) with
-		 * either true or false, depending on whether the Talk sidebar is
-		 * supported for the file or not.
-		 *
-		 * The Talk sidebar is supported for a file if the file is shared with
-		 * the current user or by the current user to another user (as a user,
-		 * group...), or if the file is a descendant of a folder that meets
-		 * those conditions.
-		 */
-		async setTalkSidebarSupportedForFile() {
-			this.isTalkSidebarSupportedForFile = undefined
-
-			if (!this.node) {
-				this.isTalkSidebarSupportedForFile = false
-
-				return
-			}
-
-			if (this.node.type === FileType.Directory) {
-				this.isTalkSidebarSupportedForFile = false
-
-				return
-			}
-
-			if (this.node.attributes?.['share-owner-id']) {
-				// Shared with me
-				// TODO How to check that it is not a remote share? At least for
-				// local shares "shareTypes" is not defined when shared with me.
-				this.isTalkSidebarSupportedForFile = true
-
-				return
-			}
-
-			if (!this.node.attributes?.['share-types']) {
-				// When it is not possible to know whether the Talk sidebar is
-				// supported for a file or not only from the data in the
-				// FileInfo it is necessary to query the server.
-				// FIXME If the file is shared this will create the conversation
-				// if it does not exist yet.
-				try {
-					this.isTalkSidebarSupportedForFile = (await getFileConversation(this.node.fileid)) || false
-				} catch (error) {
-					this.isTalkSidebarSupportedForFile = false
+		syncLeaveConversation() {
+			console.info('Navigating away, leaving conversation')
+			if (this.token) {
+				this.tokenStore.updateTokenAndFileIdForToken('', null)
+				SessionStorage.removeItem('joined_conversation')
+				// We have to do this synchronously, because in unload and beforeunload
+				// Promises, async and await are prohibited.
+				signalingKill()
+				signalingWebRtcKill()
+				if (!this.isLeavingAfterSessionIssue) {
+					leaveConversationSync(this.token)
 				}
-
-				return
 			}
-
-			const shareTypes = Object.values(this.node.attributes?.['share-types'] || {}).flat().filter(function(shareType) {
-				// Ensure that shareType is an integer (as in the past shareType
-				// could be an integer or a string depending on whether the
-				// Sharing tab was opened or not).
-				shareType = parseInt(shareType)
-				return shareType === ShareType.User
-					|| shareType === ShareType.Group
-					|| shareType === ShareType.Team
-					|| shareType === ShareType.Room
-					|| shareType === ShareType.Link
-					|| shareType === ShareType.Email
-			})
-
-			if (shareTypes.length === 0) {
-				// When it is not possible to know whether the Talk sidebar is
-				// supported for a file or not only from the data in the
-				// FileInfo it is necessary to query the server.
-				// FIXME If the file is shared this will create the conversation
-				// if it does not exist yet.
-				try {
-					this.isTalkSidebarSupportedForFile = (await getFileConversation(this.node.fileid)) || false
-				} catch (error) {
-					this.isTalkSidebarSupportedForFile = false
-				}
-
-				return
-			}
-
-			this.isTalkSidebarSupportedForFile = true
 		},
 
-		openSharingTab() {
-			getSidebar().setActiveTab('sharing')
+		preventUnload(event) {
+			if (!this.warnLeaving) {
+				return
+			}
+
+			event.preventDefault()
 		},
 
 		/**
@@ -434,32 +263,5 @@ body .modal-wrapper h2.nc-dialog-alike-header {
 	line-height: var(--default-clickable-area);
 	overflow-wrap: break-word;
 	margin-block: 0 12px;
-}
-</style>
-
-<style scoped>
-.talkChatTab {
-	height: 100%;
-
-	display: flex;
-	flex-grow: 1;
-	flex-direction: column;
-}
-
-.emptycontent {
-	/* Override default top margin set in server and center vertically
-	 * instead. */
-	margin-top: unset;
-
-	height: 100%;
-
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-}
-
-.tab-loading {
-	height: 100%;
 }
 </style>

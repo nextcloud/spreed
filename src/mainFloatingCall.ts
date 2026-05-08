@@ -12,7 +12,6 @@ import { createMemoryRouter } from './router/router.ts'
 import { createConversation } from './services/conversationsService.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
-import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 initializeTalk()
 
@@ -50,7 +49,6 @@ export async function handleStartFloatingCall(url: URL) {
 			.use(pinia)
 			.use(store)
 			.use(router)
-			.use(NextcloudGlobalsVuePlugin)
 		window.OCA.Talk.instance = instance
 		window.OCA.Talk.unmountInstance = function() {
 			instance.unmount()

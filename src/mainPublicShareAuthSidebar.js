@@ -12,7 +12,6 @@ import { initializeTalkOnce } from './init.js'
 import { createMemoryRouter } from './router/router.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
-import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
 initializeTalkOnce()
 
@@ -46,12 +45,10 @@ createApp(PublicShareAuthRequestPasswordButton)
 	.use(pinia)
 	.use(store)
 	.use(router)
-	.use(NextcloudGlobalsVuePlugin)
 	.mount('#talk-public-share-auth')
 
 createApp(PublicShareAuthSidebar)
 	.use(pinia)
 	.use(store)
 	.use(router)
-	.use(NextcloudGlobalsVuePlugin)
 	.mount('#talk-public-share-auth-sidebar')

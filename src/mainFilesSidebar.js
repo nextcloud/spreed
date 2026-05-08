@@ -3,50 +3,37 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { getCSPNonce } from '@nextcloud/auth'
-import { generateFilePath } from '@nextcloud/router'
-import { defineCustomElement, reactive } from 'vue'
+import { createApp } from 'vue'
 import FilesSidebarTabApp from './FilesSidebarTabApp.vue'
 import { initializeTalk } from './init.js'
 import { createMemoryRouter } from './router/router.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
-import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
-
-initializeTalk()
-
-// CSP config for webpack dynamic chunk loading
-__webpack_nonce__ = getCSPNonce()
-
-// Correct the root of the app for chunk loading
-// OC.linkTo matches the apps folders
-// OC.generateUrl ensure the index.php (or not)
-// We do not want the index.php since we're loading files
-__webpack_public_path__ = generateFilePath('spreed', '', 'js/')
-
-const router = createMemoryRouter()
 
 /**
+ * Mount a Talk integration app
  *
+ * @param container - selector or ref to mount to
+ * @param rootProps - Sidebar props
+ * @param token - conversation token
  */
-function newTab() {
-	return defineCustomElement(FilesSidebarTabApp, {
-		shadowRoot: false,
-		configureApp(app) {
-			app
-				.use(store)
-				.use(pinia)
-				.use(router)
-				.use(NextcloudGlobalsVuePlugin)
-		},
-	})
-}
+export function mountApp(container, rootProps, token) {
+	initializeTalk()
 
-if (!window.OCA.Talk) {
-	window.OCA.Talk = reactive({})
+	const router = createMemoryRouter()
+
+	const instance = createApp(FilesSidebarTabApp, { ...rootProps, token })
+		.use(store)
+		.use(pinia)
+		.use(router)
+
+	window.OCA.Talk.instance = instance
+	window.OCA.Talk.unmountInstance = function() {
+		instance.unmount()
+		delete window.OCA.Talk.instance
+		delete window.OCA.Talk.unmountInstance
+		delete window.OCA.Talk
+	}
+
+	instance.mount(container)
 }
-Object.assign(window.OCA.Talk, {
-	fileInfo: null,
-	newTab,
-	store,
-})

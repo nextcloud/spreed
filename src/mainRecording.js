@@ -11,7 +11,6 @@ import RecordingApp from './RecordingApp.vue'
 import { createTalkRouter } from './router/router.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
-import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 import {
 	signalingGetSettingsForRecording,
 	signalingJoinCallForRecording,
@@ -39,7 +38,6 @@ const instance = createApp(RecordingApp)
 	.use(pinia)
 	.use(store)
 	.use(router)
-	.use(NextcloudGlobalsVuePlugin)
 	.mount('#content')
 
 // make the instance available to global components that might run on the same page
