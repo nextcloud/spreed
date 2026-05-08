@@ -23,9 +23,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class AddPhoneNumber extends Base {
 
 	public function __construct(
-		private IUserManager $userManager,
-		private PhoneNumberValidation $phoneNumberValidation,
-		private PhoneNumberMapper $mapper,
+		private readonly IUserManager $userManager,
+		private readonly PhoneNumberValidation $phoneNumberValidation,
+		private readonly PhoneNumberMapper $mapper,
 	) {
 		parent::__construct();
 	}

@@ -50,7 +50,7 @@ class Version2000Date20171026140256 extends SimpleMigrationStep {
 		while ($row = $result->fetch()) {
 			$output->advance();
 
-			if (strlen($row['name']) !== 12 || $this->groupManager->groupExists($row['name'])) {
+			if (strlen((string)$row['name']) !== 12 || $this->groupManager->groupExists($row['name'])) {
 				continue;
 			}
 

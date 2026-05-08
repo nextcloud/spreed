@@ -52,7 +52,7 @@ class ConversationTagController extends OCSController {
 	])]
 	public function getTags(): DataResponse {
 		$tags = $this->tagService->getTags($this->userId);
-		return new DataResponse(array_map([$this, 'formatTag'], $tags));
+		return new DataResponse(array_map($this->formatTag(...), $tags));
 	}
 
 	/**
@@ -157,7 +157,7 @@ class ConversationTagController extends OCSController {
 	public function reorderTags(array $orderedIds): DataResponse {
 		$this->tagService->reorderTags($this->userId, $orderedIds);
 		$tags = $this->tagService->getTags($this->userId);
-		return new DataResponse(array_map([$this, 'formatTag'], $tags));
+		return new DataResponse(array_map($this->formatTag(...), $tags));
 	}
 
 	/**

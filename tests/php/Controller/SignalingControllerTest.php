@@ -545,18 +545,18 @@ class SignalingControllerTest extends TestCase {
 	}
 
 	private function validateBackendRandom($data, $random, $checksum) {
-		if (empty($random) || strlen($random) < 32) {
+		if (empty($random) || strlen((string)$random) < 32) {
 			return false;
 		}
 		if (empty($checksum)) {
 			return false;
 		}
 		$hash = hash_hmac('sha256', $random . $data, $this->config->getSignalingSecret());
-		return hash_equals($hash, strtolower($checksum));
+		return hash_equals($hash, strtolower((string)$checksum));
 	}
 
 	private function calculateBackendChecksum($data, $random) {
-		if (empty($random) || strlen($random) < 32) {
+		if (empty($random) || strlen((string)$random) < 32) {
 			return false;
 		}
 		$hash = hash_hmac('sha256', $random . $data, $this->config->getSignalingSecret());

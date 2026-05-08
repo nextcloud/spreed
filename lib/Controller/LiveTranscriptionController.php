@@ -30,7 +30,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private LiveTranscriptionService $liveTranscriptionService,
+		private readonly LiveTranscriptionService $liveTranscriptionService,
 	) {
 		parent::__construct($appName, $request);
 	}

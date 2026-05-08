@@ -22,11 +22,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ListBots extends Base {
 	public function __construct(
-		private BotConversationMapper $botConversationMapper,
-		private BotServerMapper $botServerMapper,
-		private BotService $botService,
-		private IAppManager $appManager,
-		private ITimeFactory $timeFactory,
+		private readonly BotConversationMapper $botConversationMapper,
+		private readonly BotServerMapper $botServerMapper,
+		private readonly BotService $botService,
+		private readonly IAppManager $appManager,
+		private readonly ITimeFactory $timeFactory,
 	) {
 		parent::__construct();
 	}

@@ -99,7 +99,7 @@ class Room {
 	 * @psalm-param self::MENTION_PERMISSIONS_* $mentionPermissions
 	 */
 	public function __construct(
-		private int $id,
+		private readonly int $id,
 		private int $type,
 		private int $readOnly,
 		private int $listable,
@@ -107,13 +107,13 @@ class Room {
 		private int $lobbyState,
 		private int $sipEnabled,
 		private ?int $assignedSignalingServer,
-		private string $token,
+		private readonly string $token,
 		private string $name,
 		private string $description,
 		private string $password,
 		private string $avatar,
-		private string $remoteServer,
-		private string $remoteToken,
+		private readonly string $remoteServer,
+		private readonly string $remoteToken,
 		private int $defaultPermissions,
 		private int $callFlag,
 		private ?\DateTime $activeSince,

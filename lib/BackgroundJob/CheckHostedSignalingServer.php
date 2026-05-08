@@ -27,13 +27,13 @@ class CheckHostedSignalingServer extends TimedJob {
 
 	public function __construct(
 		ITimeFactory $timeFactory,
-		private HostedSignalingServerService $hostedSignalingServerService,
-		private IConfig $config,
-		private IManager $notificationManager,
-		private IGroupManager $groupManager,
-		private IURLGenerator $urlGenerator,
-		private LoggerInterface $logger,
-		private Config $talkConfig,
+		private readonly HostedSignalingServerService $hostedSignalingServerService,
+		private readonly IConfig $config,
+		private readonly IManager $notificationManager,
+		private readonly IGroupManager $groupManager,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly LoggerInterface $logger,
+		private readonly Config $talkConfig,
 	) {
 		parent::__construct($timeFactory);
 

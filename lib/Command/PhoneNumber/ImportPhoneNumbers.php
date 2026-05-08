@@ -22,10 +22,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ImportPhoneNumbers extends Base {
 
 	public function __construct(
-		private IUserManager $userManager,
-		private PhoneNumberValidation $phoneNumberValidation,
-		private PhoneNumberMapper $mapper,
-		private IDBConnection $db,
+		private readonly IUserManager $userManager,
+		private readonly PhoneNumberValidation $phoneNumberValidation,
+		private readonly PhoneNumberMapper $mapper,
+		private readonly IDBConnection $db,
 	) {
 		parent::__construct();
 	}

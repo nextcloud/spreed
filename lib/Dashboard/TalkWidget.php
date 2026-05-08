@@ -177,7 +177,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 				&& $this->chatManager->getUnreadCount($room, $attendee->getLastReadMessage()) > 0;
 		});
 
-		uasort($rooms, [$this, 'sortRooms']);
+		uasort($rooms, $this->sortRooms(...));
 
 		$rooms = array_slice($rooms, 0, $limit);
 
@@ -248,7 +248,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			$roomsToReturn = $mentions;
 		}
 
-		uasort($roomsToReturn, [$this, 'sortRooms']);
+		uasort($roomsToReturn, $this->sortRooms(...));
 		$roomsToReturn = array_slice($roomsToReturn, 0, $limit);
 
 		$result = [];

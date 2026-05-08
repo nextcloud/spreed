@@ -25,10 +25,10 @@ class Util {
 	private array $publicAccessLists = [];
 
 	public function __construct(
-		private IRootFolder $rootFolder,
-		private ISession $session,
-		private IShareManager $shareManager,
-		private IUserMountCache $userMountCache,
+		private readonly IRootFolder $rootFolder,
+		private readonly ISession $session,
+		private readonly IShareManager $shareManager,
+		private readonly IUserMountCache $userMountCache,
 	) {
 	}
 

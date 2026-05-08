@@ -15,7 +15,7 @@ use OCP\Settings\ISettings;
 class Personal implements ISettings {
 
 	public function __construct(
-		private IConfig $config,
+		private readonly IConfig $config,
 	) {
 	}
 

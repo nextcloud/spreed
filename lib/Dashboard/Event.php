@@ -145,7 +145,7 @@ class Event implements \JsonSerializable {
 			}
 
 			// Calendar emails start with 'mailto:'
-			if (substr($attendee[0], 7) === $email) {
+			if (substr((string)$attendee[0], 7) === $email) {
 				return true;
 			}
 		}
@@ -156,7 +156,7 @@ class Event implements \JsonSerializable {
 
 	public function isOrganizer(array $organizer, string $email): bool {
 		// Calendar emails start with 'mailto:'
-		return substr($organizer[0], 7) === $email;
+		return substr((string)$organizer[0], 7) === $email;
 	}
 
 	/**

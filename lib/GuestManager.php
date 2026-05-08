@@ -102,9 +102,9 @@ class GuestManager {
 
 		$emailKey = $nameKey = null;
 		foreach ($details as $key => $header) {
-			if (strtolower($header) === 'email') {
+			if (strtolower((string)$header) === 'email') {
 				$emailKey = $key;
-			} elseif (strtolower($header) === 'name') {
+			} elseif (strtolower((string)$header) === 'name') {
 				$nameKey = $key;
 			}
 		}

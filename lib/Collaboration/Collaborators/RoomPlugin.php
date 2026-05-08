@@ -61,7 +61,7 @@ class RoomPlugin implements ISearchPlugin {
 			if (mb_stripos($room->getDisplayName($userId), $search) !== false) {
 				$item = $this->roomToSearchResultItem($room, $userId);
 
-				if (mb_strtolower($item['label']) === mb_strtolower($search)) {
+				if (mb_strtolower((string)$item['label']) === mb_strtolower($search)) {
 					$result['exact'][] = $item;
 				} else {
 					$result['wide'][] = $item;

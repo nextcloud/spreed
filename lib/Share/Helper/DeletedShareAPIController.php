@@ -22,8 +22,8 @@ use OCP\Share\IShare;
 class DeletedShareAPIController {
 
 	public function __construct(
-		private string $userId,
-		private Manager $manager,
+		private readonly string $userId,
+		private readonly Manager $manager,
 	) {
 	}
 

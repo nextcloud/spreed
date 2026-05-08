@@ -67,7 +67,7 @@ class MessageParser {
 		);
 
 		try {
-			$metaData = json_decode($proxy->getMetaData(), true, flags: JSON_THROW_ON_ERROR);
+			$metaData = json_decode((string)$proxy->getMetaData(), true, flags: JSON_THROW_ON_ERROR);
 			if (is_array($metaData)) {
 				$metaData = $this->addPinnedActorDisplayNameInfo($message, $metaData);
 				$message->setMetaData($metaData);

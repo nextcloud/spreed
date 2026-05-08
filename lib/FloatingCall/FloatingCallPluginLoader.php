@@ -22,8 +22,8 @@ use OCP\Util;
 class FloatingCallPluginLoader implements IEventListener {
 
 	public function __construct(
-		private IRequest $request,
-		private IAppConfig $appConfig,
+		private readonly IRequest $request,
+		private readonly IAppConfig $appConfig,
 	) {
 	}
 

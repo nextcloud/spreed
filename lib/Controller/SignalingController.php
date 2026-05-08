@@ -59,25 +59,25 @@ class SignalingController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private Config $talkConfig,
-		private \OCA\Talk\Signaling\Manager $signalingManager,
-		private ISession $serverSession,
-		private TalkSession $session,
-		private Manager $manager,
-		private ParticipantService $participantService,
-		private RoomService $roomService,
-		private SessionService $sessionService,
-		private IDBConnection $dbConnection,
-		private Messages $messages,
-		private IUserManager $userManager,
-		private IEventDispatcher $dispatcher,
-		private ITimeFactory $timeFactory,
-		private ChecksumVerificationService $checksumVerificationService,
-		private BanService $banService,
-		private LoggerInterface $logger,
+		private readonly Config $talkConfig,
+		private readonly \OCA\Talk\Signaling\Manager $signalingManager,
+		private readonly ISession $serverSession,
+		private readonly TalkSession $session,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
+		private readonly SessionService $sessionService,
+		private readonly IDBConnection $dbConnection,
+		private readonly Messages $messages,
+		private readonly IUserManager $userManager,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly ITimeFactory $timeFactory,
+		private readonly ChecksumVerificationService $checksumVerificationService,
+		private readonly BanService $banService,
+		private readonly LoggerInterface $logger,
 		protected Authenticator $federationAuthenticator,
-		private RoomPropertiesHelper $roomPropertiesHelper,
-		private ?string $userId,
+		private readonly RoomPropertiesHelper $roomPropertiesHelper,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -200,8 +200,8 @@ class SignalingController extends OCSController {
 			}
 
 			$turnUrls = [];
-			$schemes = explode(',', $turnServer['schemes']);
-			$protocols = explode(',', $turnServer['protocols']);
+			$schemes = explode(',', (string)$turnServer['schemes']);
+			$protocols = explode(',', (string)$turnServer['protocols']);
 			foreach ($schemes as $scheme) {
 				foreach ($protocols as $proto) {
 					$turnUrls[] = $scheme . ':' . $turnServer['server'] . '?transport=' . $proto;

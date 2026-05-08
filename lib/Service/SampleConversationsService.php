@@ -139,7 +139,7 @@ In the conversation menu, you can access various settings to manage your convers
 
 		$previous = null;
 		foreach ($messages as $message) {
-			$message = trim($message);
+			$message = trim((string)$message);
 			$replyTo = '';
 			if (str_starts_with($message, '{REPLY}')) {
 				$message = trim(str_replace('{REPLY}', '', $message));
@@ -163,7 +163,7 @@ In the conversation menu, you can access various settings to manage your convers
 			if (str_contains($message, '{REACTION:')) {
 				preg_match_all('/{REACTION:([^}]*)}/', $message, $matches);
 				$reactions = $matches[1];
-				$message = trim(preg_replace('/{REACTION:([^}]*)}/', '', $message));
+				$message = trim((string)preg_replace('/{REACTION:([^}]*)}/', '', $message));
 			}
 
 			$previous = $this->chatManager->postSampleMessage($room, $message, $replyTo);

@@ -22,11 +22,11 @@ use OCP\Teams\TeamResource;
 
 class TalkTeamResourceProvider implements ITeamResourceProvider {
 	public function __construct(
-		private ParticipantService $participantService,
-		private Manager $manager,
-		private AvatarService $avatarService,
-		private IL10N $l10n,
-		private IURLGenerator $urlGenerator,
+		private readonly ParticipantService $participantService,
+		private readonly Manager $manager,
+		private readonly AvatarService $avatarService,
+		private readonly IL10N $l10n,
+		private readonly IURLGenerator $urlGenerator,
 	) {
 	}
 

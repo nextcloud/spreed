@@ -25,9 +25,9 @@ use OCP\User\Events\BeforeUserLoggedOutEvent;
 class BeforeUserLoggedOutListener implements IEventListener {
 
 	public function __construct(
-		private Manager $manager,
-		private ParticipantService $participantService,
-		private TalkSession $talkSession,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly TalkSession $talkSession,
 	) {
 	}
 

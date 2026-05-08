@@ -59,13 +59,13 @@ class Config {
 		protected IConfig $config,
 		protected IAppConfig $appConfig,
 		protected IUserConfig $userConfig,
-		private ISecureRandom $secureRandom,
-		private IGroupManager $groupManager,
-		private IUserManager $userManager,
-		private IURLGenerator $urlGenerator,
+		private readonly ISecureRandom $secureRandom,
+		private readonly IGroupManager $groupManager,
+		private readonly IUserManager $userManager,
+		private readonly IURLGenerator $urlGenerator,
 		protected ITimeFactory $timeFactory,
-		private IEventDispatcher $dispatcher,
-		private IFilenameValidator $filenameValidator,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly IFilenameValidator $filenameValidator,
 	) {
 	}
 
@@ -494,7 +494,7 @@ class Config {
 
 		foreach ($servers as $server) {
 			$u = $server['username'] ?? $username;
-			$password = $server['password'] ?? base64_encode(hash_hmac('sha1', $u, $server['secret'], true));
+			$password = $server['password'] ?? base64_encode(hash_hmac('sha1', (string)$u, (string)$server['secret'], true));
 
 			$turnSettings[] = [
 				'schemes' => $server['schemes'],

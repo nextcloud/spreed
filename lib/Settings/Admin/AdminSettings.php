@@ -32,17 +32,17 @@ class AdminSettings implements ISettings {
 	private ?IUser $currentUser = null;
 
 	public function __construct(
-		private Config $talkConfig,
-		private IConfig $serverConfig,
-		private IAppConfig $appConfig,
-		private IInitialState $initialState,
-		private ICacheFactory $memcacheFactory,
-		private IGroupManager $groupManager,
-		private MatterbridgeManager $bridgeManager,
-		private IRegistry $subscription,
+		private readonly Config $talkConfig,
+		private readonly IConfig $serverConfig,
+		private readonly IAppConfig $appConfig,
+		private readonly IInitialState $initialState,
+		private readonly ICacheFactory $memcacheFactory,
+		private readonly IGroupManager $groupManager,
+		private readonly MatterbridgeManager $bridgeManager,
+		private readonly IRegistry $subscription,
 		IUserSession $userSession,
-		private IL10N $l10n,
-		private IFactory $l10nFactory,
+		private readonly IL10N $l10n,
+		private readonly IFactory $l10nFactory,
 	) {
 		$this->currentUser = $userSession->getUser();
 	}

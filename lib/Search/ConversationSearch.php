@@ -172,7 +172,7 @@ class ConversationSearch implements IProvider {
 		// but the array key is `display name#token`, so we split by the #
 		// and get the last part which is the token.
 		// If it's empty, there is no cursor for a next page
-		$parts = explode('#', $newCursorWithName);
+		$parts = explode('#', (string)$newCursorWithName);
 		$newCursor = end($parts);
 
 		return SearchResult::paginated(

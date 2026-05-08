@@ -141,7 +141,7 @@ class ListenerTest extends TestCase {
 			'actorId' => 'alice_actor',
 			'participantType' => Participant::USER,
 		]];
-		$attendees = array_map(static fn (array $participant) => Attendee::fromParams($participant), $participants);
+		$attendees = array_map(Attendee::fromParams(...), $participants);
 		$event = new AttendeesAddedEvent($room, $attendees);
 
 		$this->chatManager->expects($this->never())
@@ -221,7 +221,7 @@ class ListenerTest extends TestCase {
 		$room->method('getType')->willReturn($roomType);
 		$room->method('getObjectType')->willReturn($objectType);
 
-		$attendees = array_map(static fn (array $participant) => Attendee::fromParams($participant), $participants);
+		$attendees = array_map(Attendee::fromParams(...), $participants);
 
 		// TODO: add all cases
 		$event = new AttendeesAddedEvent($room, $attendees);

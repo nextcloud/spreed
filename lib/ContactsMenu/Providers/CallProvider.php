@@ -23,12 +23,12 @@ use OCP\IUserManager;
 class CallProvider implements IProvider {
 
 	public function __construct(
-		private IActionFactory $actionFactory,
-		private IURLGenerator $urlGenerator,
-		private IL10N $l10n,
-		private IUserManager $userManager,
-		private Config $config,
-		private IAppConfig $appConfig,
+		private readonly IActionFactory $actionFactory,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly IL10N $l10n,
+		private readonly IUserManager $userManager,
+		private readonly Config $config,
+		private readonly IAppConfig $appConfig,
 	) {
 	}
 

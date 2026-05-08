@@ -394,10 +394,10 @@ class Application extends App implements IBootstrap {
 
 	#[\Override]
 	public function boot(IBootContext $context): void {
-		$context->injectFn([$this, 'registerCollaborationResourceProvider']);
-		$context->injectFn([$this, 'registerClientLinks']);
-		$context->injectFn([$this, 'registerNavigationLink']);
-		$context->injectFn([$this, 'registerCloudFederationProviderManager']);
+		$context->injectFn($this->registerCollaborationResourceProvider(...));
+		$context->injectFn($this->registerClientLinks(...));
+		$context->injectFn($this->registerNavigationLink(...));
+		$context->injectFn($this->registerCloudFederationProviderManager(...));
 	}
 
 	public function registerCollaborationResourceProvider(IProviderManager $resourceManager, IEventDispatcher $dispatcher): void {

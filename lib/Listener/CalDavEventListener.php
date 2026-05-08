@@ -33,12 +33,12 @@ use Sabre\VObject\Reader;
 class CalDavEventListener implements IEventListener {
 
 	public function __construct(
-		private Manager $manager,
-		private RoomService $roomService,
-		private LoggerInterface $logger,
-		private TimezoneService $timezoneService,
-		private ParticipantService $participantService,
-		private IL10N $l10n,
+		private readonly Manager $manager,
+		private readonly RoomService $roomService,
+		private readonly LoggerInterface $logger,
+		private readonly TimezoneService $timezoneService,
+		private readonly ParticipantService $participantService,
+		private readonly IL10N $l10n,
 	) {
 
 	}
@@ -61,7 +61,7 @@ class CalDavEventListener implements IEventListener {
 		}
 
 		// The principal uri is in the format 'principals/users/<userId>'
-		$userId = substr($principaluri, 17);
+		$userId = substr((string)$principaluri, 17);
 
 		$calData = $event->getObjectData()['calendardata'] ?? null;
 		if (!$calData) {
@@ -69,7 +69,7 @@ class CalDavEventListener implements IEventListener {
 			return;
 		}
 
-		if (!str_contains($calData, 'LOCATION:')) {
+		if (!str_contains((string)$calData, 'LOCATION:')) {
 			$this->logger->debug('No location for the event, skipping for calendar event integration');
 			return;
 		}

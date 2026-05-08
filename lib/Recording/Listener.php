@@ -68,14 +68,14 @@ class Listener implements IEventListener {
 
 		// 'call/transcription/' . $room->getToken()
 		$customId = $task->getCustomId();
-		if (str_starts_with($customId, 'call/transcription/')) {
+		if (str_starts_with((string)$customId, 'call/transcription/')) {
 			$aiType = 'transcript';
-			$roomToken = substr($customId, strlen('call/transcription/'));
+			$roomToken = substr((string)$customId, strlen('call/transcription/'));
 
 			$fileId = (int)($task->getInput()['input'] ?? null);
-		} elseif (str_starts_with($customId, 'call/summary/')) {
+		} elseif (str_starts_with((string)$customId, 'call/summary/')) {
 			$aiType = 'summary';
-			[$roomToken, $fileId] = explode('/', substr($customId, strlen('call/summary/')));
+			[$roomToken, $fileId] = explode('/', substr((string)$customId, strlen('call/summary/')));
 			$fileId = (int)$fileId;
 		} else {
 			return;

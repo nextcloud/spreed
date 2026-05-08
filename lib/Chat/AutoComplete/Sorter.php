@@ -62,11 +62,11 @@ class Sorter implements ISorter {
 
 				if ($search) {
 					// If the user searched for "Dani" we make sure "Daniel" comes before "Madani"
-					if (stripos($a['label'], $search) === 0) {
-						if (stripos($b['label'], $search) !== 0) {
+					if (stripos((string)$a['label'], $search) === 0) {
+						if (stripos((string)$b['label'], $search) !== 0) {
 							return -1;
 						}
-					} elseif (stripos($b['label'], $search) === 0) {
+					} elseif (stripos((string)$b['label'], $search) === 0) {
 						return 1;
 					}
 				}

@@ -34,7 +34,7 @@ class ReactionController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private ReactionManager $reactionManager,
+		private readonly ReactionManager $reactionManager,
 	) {
 		parent::__construct($appName, $request);
 	}

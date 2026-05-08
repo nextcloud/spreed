@@ -24,12 +24,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class TransferOwnership extends Base {
-	private RoomService $roomService;
+	private readonly RoomService $roomService;
 
 	public function __construct(
-		private ParticipantService $participantService,
-		private Manager $manager,
-		private IUserManager $userManager,
+		private readonly ParticipantService $participantService,
+		private readonly Manager $manager,
+		private readonly IUserManager $userManager,
 	) {
 		parent::__construct();
 	}

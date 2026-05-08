@@ -22,10 +22,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Remove extends Base {
 	public function __construct(
-		private BotConversationMapper $botConversationMapper,
-		private BotServerMapper $botServerMapper,
-		private IEventDispatcher $dispatcher,
-		private Manager $roomManager,
+		private readonly BotConversationMapper $botConversationMapper,
+		private readonly BotServerMapper $botServerMapper,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly Manager $roomManager,
 	) {
 		parent::__construct();
 	}

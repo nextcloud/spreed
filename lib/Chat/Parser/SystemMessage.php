@@ -1088,7 +1088,7 @@ class SystemMessage implements IEventListener {
 			$photo = $this->photoCache->getPhotoFromVObject($vObject);
 			if ($photo) {
 				$data['contact-photo-mimetype'] = $photo['Content-Type'];
-				$data['contact-photo'] = base64_encode($photo['body']);
+				$data['contact-photo'] = base64_encode((string)$photo['body']);
 			}
 		}
 

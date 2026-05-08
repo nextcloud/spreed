@@ -33,11 +33,11 @@ use Psr\Log\LoggerInterface;
  */
 class ConversationFolderService {
 	public function __construct(
-		private TalkConfig $talkConfig,
-		private IRootFolder $rootFolder,
-		private IShareManager $shareManager,
-		private IFilenameValidator $filenameValidator,
-		private LoggerInterface $logger,
+		private readonly TalkConfig $talkConfig,
+		private readonly IRootFolder $rootFolder,
+		private readonly IShareManager $shareManager,
+		private readonly IFilenameValidator $filenameValidator,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 
@@ -144,7 +144,7 @@ class ConversationFolderService {
 	 */
 	public function getRelativePath(string $userId, Folder $folder): string {
 		$userFolder = $this->rootFolder->getUserFolder($userId);
-		return ltrim($userFolder->getRelativePath($folder->getPath()), '/');
+		return ltrim((string)$userFolder->getRelativePath($folder->getPath()), '/');
 	}
 
 	/**

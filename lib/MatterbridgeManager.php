@@ -38,19 +38,19 @@ class MatterbridgeManager {
 	public const BRIDGE_BOT_USERID = 'bridge-bot';
 
 	public function __construct(
-		private IDBConnection $db,
-		private IConfig $config,
-		private IURLGenerator $urlGenerator,
-		private IUserManager $userManager,
-		private Manager $manager,
-		private ParticipantService $participantService,
-		private ChatManager $chatManager,
-		private IAuthTokenProvider $tokenProvider,
-		private ISecureRandom $random,
-		private IAvatarManager $avatarManager,
-		private LoggerInterface $logger,
-		private ITimeFactory $timeFactory,
-		private IRemoteHostValidator $hostValidator,
+		private readonly IDBConnection $db,
+		private readonly IConfig $config,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly IUserManager $userManager,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly ChatManager $chatManager,
+		private readonly IAuthTokenProvider $tokenProvider,
+		private readonly ISecureRandom $random,
+		private readonly IAvatarManager $avatarManager,
+		private readonly LoggerInterface $logger,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IRemoteHostValidator $hostValidator,
 	) {
 	}
 
@@ -165,7 +165,7 @@ class MatterbridgeManager {
 			$bridge = [
 				'enabled' => (bool)$row['enabled'],
 				'pid' => (int)$row['pid'],
-				'parts' => json_decode($row['json_values'], true),
+				'parts' => json_decode((string)$row['json_values'], true),
 			];
 			try {
 				$room = $this->manager->getRoomById((int)$row['room_id']);
@@ -360,7 +360,7 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat="[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'mattermost') {
 				// remove protocol from server URL
-				if (preg_match('/^https?:/', $part['server'])) {
+				if (preg_match('/^https?:/', (string)$part['server'])) {
 					$part['server'] = $this->cleanUrl($part['server']);
 				}
 				$content .= sprintf('[%s]', $type) . "\n";
@@ -388,7 +388,7 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'rocketchat') {
 				// include # in channel
-				if (!str_starts_with($part['channel'], '#')) {
+				if (!str_starts_with((string)$part['channel'], '#')) {
 					$bridge['parts'][$k]['channel'] = '#' . $part['channel'];
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
@@ -402,8 +402,8 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'slack') {
 				// do not include # in channel
-				if (str_starts_with($part['channel'], '#')) {
-					$bridge['parts'][$k]['channel'] = ltrim($part['channel'], '#');
+				if (str_starts_with((string)$part['channel'], '#')) {
+					$bridge['parts'][$k]['channel'] = ltrim((string)$part['channel'], '#');
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
@@ -411,8 +411,8 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'discord') {
 				// do not include # in channel
-				if (str_starts_with($part['channel'], '#')) {
-					$bridge['parts'][$k]['channel'] = ltrim($part['channel'], '#');
+				if (str_starts_with((string)$part['channel'], '#')) {
+					$bridge['parts'][$k]['channel'] = ltrim((string)$part['channel'], '#');
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
@@ -432,7 +432,7 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'irc') {
 				// include # in channel
-				if (!str_starts_with($part['channel'], '#')) {
+				if (!str_starts_with((string)$part['channel'], '#')) {
 					$bridge['parts'][$k]['channel'] = '#' . $part['channel'];
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
@@ -520,14 +520,14 @@ class MatterbridgeManager {
 			 * - discord: If you want to bridge https://discord.com/channels/AAAA/BBBB, then this should be AAAA.
 			 */
 			if (in_array($part['type'], ['irc', 'mattermost', 'matrix', 'rocketchat', 'xmpp', 'zulip'], true)) {
-				$tempServer = str_starts_with($part['server'], 'https://') ? $part['server'] : ('https://' . $part['server']);
-				$host = parse_url($tempServer, PHP_URL_HOST);
+				$tempServer = str_starts_with((string)$part['server'], 'https://') ? $part['server'] : ('https://' . $part['server']);
+				$host = parse_url((string)$tempServer, PHP_URL_HOST);
 				if ($host === null || !$this->hostValidator->isValid($host)) {
 					$this->logger->error('User tried to configure a malicious matterbridge setup');
 					throw new \InvalidArgumentException('Invalid matterbridge parameters');
 				}
 			} elseif ($part['type'] === 'nctalk') {
-				$host = parse_url($part['server'], PHP_URL_HOST);
+				$host = parse_url((string)$part['server'], PHP_URL_HOST);
 				$currentDomain = $this->urlGenerator->getAbsoluteURL('/');
 				$currentHost = parse_url($currentDomain, PHP_URL_HOST);
 
@@ -537,7 +537,7 @@ class MatterbridgeManager {
 				}
 
 				if ($host === $currentHost && !$this->hostValidator->isValid($host)) {
-					$port = parse_url($part['server'], PHP_URL_PORT);
+					$port = parse_url((string)$part['server'], PHP_URL_PORT);
 					$currentPort = parse_url($currentDomain, PHP_URL_PORT);
 					if ($port !== $currentPort) {
 						$this->logger->error('User tried to configure a malicious matterbridge setup');
@@ -766,7 +766,7 @@ class MatterbridgeManager {
 		$cmd = 'ps x -o user,pid,args';
 		$cmdResult = $this->runCommand($cmd);
 		if ($cmdResult && $cmdResult['return_code'] === 0) {
-			$lines = explode("\n", $cmdResult['stdout']);
+			$lines = explode("\n", (string)$cmdResult['stdout']);
 			foreach ($lines as $l) {
 				if (preg_match('/matterbridge/i', $l)) {
 					$items = preg_split('/\s+/', $l);
@@ -836,7 +836,7 @@ class MatterbridgeManager {
 			$cmd = 'ps x -o user,pid,args';
 			$cmdResult = $this->runCommand($cmd);
 			if ($cmdResult && $cmdResult['return_code'] === 0) {
-				$lines = explode("\n", $cmdResult['stdout']);
+				$lines = explode("\n", (string)$cmdResult['stdout']);
 				foreach ($lines as $l) {
 					$items = preg_split('/\s+/', $l);
 					if (count($items) > 1 && is_numeric($items[1])) {

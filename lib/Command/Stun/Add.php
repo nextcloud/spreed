@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Add extends Base {
 
 	public function __construct(
-		private IConfig $config,
+		private readonly IConfig $config,
 	) {
 		parent::__construct();
 	}

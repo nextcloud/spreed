@@ -11,11 +11,11 @@ namespace OCA\Talk\DataObjects;
 class RegisterAccountData {
 
 	public function __construct(
-		private string $url,
-		private string $name,
-		private string $email,
-		private string $language,
-		private string $country,
+		private readonly string $url,
+		private readonly string $name,
+		private readonly string $email,
+		private readonly string $language,
+		private readonly string $country,
 	) {
 	}
 

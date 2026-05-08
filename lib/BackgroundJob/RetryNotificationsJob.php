@@ -17,7 +17,7 @@ use OCP\BackgroundJob\TimedJob;
  */
 class RetryNotificationsJob extends TimedJob {
 	public function __construct(
-		private BackendNotifier $backendNotifier,
+		private readonly BackendNotifier $backendNotifier,
 		ITimeFactory $timeFactory,
 	) {
 		parent::__construct($timeFactory);

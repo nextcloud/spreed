@@ -26,11 +26,11 @@ class TempAvatarController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private IAvatarManager $avatarManager,
-		private IL10N $l,
-		private LoggerInterface $logger,
-		private IFilenameValidator $filenameValidator,
-		private string $userId,
+		private readonly IAvatarManager $avatarManager,
+		private readonly IL10N $l,
+		private readonly LoggerInterface $logger,
+		private readonly IFilenameValidator $filenameValidator,
+		private readonly string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}

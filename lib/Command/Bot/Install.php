@@ -22,8 +22,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Install extends Base {
 	public function __construct(
-		private BotService $botService,
-		private BotServerMapper $botServerMapper,
+		private readonly BotService $botService,
+		private readonly BotServerMapper $botServerMapper,
 	) {
 		parent::__construct();
 	}

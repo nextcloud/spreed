@@ -23,9 +23,9 @@ use OCP\User\Events\UserChangedEvent;
 class DisplayNameListener implements IEventListener {
 
 	public function __construct(
-		private ParticipantService $participantService,
-		private PollService $pollService,
-		private BanService $banService,
+		private readonly ParticipantService $participantService,
+		private readonly PollService $pollService,
+		private readonly BanService $banService,
 	) {
 	}
 

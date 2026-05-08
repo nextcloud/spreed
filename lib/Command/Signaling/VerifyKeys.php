@@ -18,8 +18,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class VerifyKeys extends Base {
 
 	public function __construct(
-		private IConfig $config,
-		private Config $talkConfig,
+		private readonly IConfig $config,
+		private readonly Config $talkConfig,
 	) {
 		parent::__construct();
 	}

@@ -60,7 +60,7 @@ class ConversationTagMapper extends QBMapper {
 		$result = $qb->executeQuery();
 		while ($row = $result->fetch()) {
 			/** @var list<string|int> $tagIds */
-			$tagIds = json_decode($row['tag_ids'], true) ?? [];
+			$tagIds = json_decode((string)$row['tag_ids'], true) ?? [];
 			$tagIds = array_values(array_filter($tagIds, fn ($id) => (string)$id !== $tagId));
 
 			$updateQb = $this->db->getQueryBuilder();

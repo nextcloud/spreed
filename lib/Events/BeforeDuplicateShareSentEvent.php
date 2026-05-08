@@ -14,7 +14,7 @@ use OCP\Share\IShare;
 
 class BeforeDuplicateShareSentEvent extends Event {
 	public function __construct(
-		private IShare $share,
+		private readonly IShare $share,
 	) {
 		parent::__construct();
 	}

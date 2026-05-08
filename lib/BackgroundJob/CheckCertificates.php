@@ -109,7 +109,7 @@ class CheckCertificates extends TimedJob {
 
 		foreach ($turnServers as $turnServer) {
 			// Only check server which support the 'turns' protocol
-			if (!str_contains($turnServer['schemes'], 'turns')) {
+			if (!str_contains((string)$turnServer['schemes'], 'turns')) {
 				continue;
 			}
 

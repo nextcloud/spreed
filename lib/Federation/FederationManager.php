@@ -50,15 +50,15 @@ class FederationManager {
 	public const TOKEN_LENGTH = 64;
 
 	public function __construct(
-		private Manager $manager,
-		private ParticipantService $participantService,
-		private RoomService $roomService,
-		private InvitationMapper $invitationMapper,
-		private AttendeeMapper $attendeeMapper,
-		private BackendNotifier $backendNotifier,
-		private IManager $notificationManager,
-		private ICloudIdManager $cloudIdManager,
-		private RestrictionValidator $restrictionValidator,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
+		private readonly InvitationMapper $invitationMapper,
+		private readonly AttendeeMapper $attendeeMapper,
+		private readonly BackendNotifier $backendNotifier,
+		private readonly IManager $notificationManager,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly RestrictionValidator $restrictionValidator,
 	) {
 	}
 

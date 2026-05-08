@@ -50,7 +50,7 @@ class Manager {
 			throw new \OutOfBoundsException();
 		}
 
-		$url = rtrim($signalingServers[$serverId]['server'], '/');
+		$url = rtrim((string)$signalingServers[$serverId]['server'], '/');
 		$url = strtolower($url);
 
 		if (str_starts_with($url, 'wss://')) {
@@ -169,7 +169,7 @@ class Manager {
 	public function isCompatibleSignalingServer(IResponse $response): bool {
 		$featureHeader = $response->getHeader(self::FEATURE_HEADER);
 		$features = explode(',', $featureHeader);
-		$features = array_map('trim', $features);
+		$features = array_map(trim(...), $features);
 		return in_array('audio-video-permissions', $features, true)
 			&& in_array('federation', $features, true)
 			&& in_array('incall-all', $features, true)
@@ -183,7 +183,7 @@ class Manager {
 	public function getSignalingServerMissingFeatures(IResponse $response): array {
 		$featureHeader = $response->getHeader(self::FEATURE_HEADER);
 		$features = explode(',', $featureHeader);
-		$features = array_map('trim', $features);
+		$features = array_map(trim(...), $features);
 
 		$optionFeatures = [
 			'dialout',

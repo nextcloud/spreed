@@ -24,11 +24,11 @@ use Psr\Log\LoggerInterface;
 class BackendNotifier {
 
 	public function __construct(
-		private Config $config,
-		private LoggerInterface $logger,
-		private IClientService $clientService,
-		private ISecureRandom $secureRandom,
-		private IURLGenerator $urlGenerator,
+		private readonly Config $config,
+		private readonly LoggerInterface $logger,
+		private readonly IClientService $clientService,
+		private readonly ISecureRandom $secureRandom,
+		private readonly IURLGenerator $urlGenerator,
 	) {
 	}
 
@@ -83,7 +83,7 @@ class BackendNotifier {
 		// account to ensure that all the "stop" requests are sent to the same
 		// server that received the "start" request.
 		$recording = $recordingServers[0];
-		$recording['server'] = rtrim($recording['server'], '/');
+		$recording['server'] = rtrim((string)$recording['server'], '/');
 
 		$url = '/api/v1/room/' . $room->getToken();
 		$url = $recording['server'] . $url;

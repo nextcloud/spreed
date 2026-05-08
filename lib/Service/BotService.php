@@ -49,7 +49,7 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type InvocationData from BotInvokeEvent
  */
 class BotService {
-	private ActivityPubHelper $activityPubHelper;
+	private readonly ActivityPubHelper $activityPubHelper;
 
 	public function __construct(
 		protected BotServerMapper $botServerMapper,

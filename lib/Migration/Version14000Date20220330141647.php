@@ -129,7 +129,7 @@ class Version14000Date20220330141647 extends SimpleMigrationStep {
 			$datetime = new \DateTime($row['creation_timestamp']);
 			$attachment['message_time'] = $datetime->getTimestamp();
 
-			$message = json_decode($row['message'], true);
+			$message = json_decode((string)$row['message'], true);
 			$messageType = $message['message'] ?? '';
 			$parameters = $message['parameters'] ?? [];
 
@@ -148,9 +148,9 @@ class Version14000Date20220330141647 extends SimpleMigrationStep {
 
 				if ($messageType === 'voice-message') {
 					$attachment['object_type'] = Attachment::TYPE_VOICE;
-				} elseif (str_starts_with($mimetype, 'audio/')) {
+				} elseif (str_starts_with((string)$mimetype, 'audio/')) {
 					$attachment['object_type'] = Attachment::TYPE_AUDIO;
-				} elseif (str_starts_with($mimetype, 'image/') || str_starts_with($mimetype, 'video/')) {
+				} elseif (str_starts_with((string)$mimetype, 'image/') || str_starts_with((string)$mimetype, 'video/')) {
 					$attachment['object_type'] = Attachment::TYPE_MEDIA;
 				} else {
 					if ($mimetype === '' && isset($parameters['share'])) {
@@ -174,9 +174,9 @@ class Version14000Date20220330141647 extends SimpleMigrationStep {
 				continue;
 			}
 
-			if (str_starts_with($mimetype, 'audio/')) {
+			if (str_starts_with((string)$mimetype, 'audio/')) {
 				$attachments[$sharesWithoutMimetype[$shareId]]['object_type'] = Attachment::TYPE_AUDIO;
-			} elseif (str_starts_with($mimetype, 'image/') || str_starts_with($mimetype, 'video/')) {
+			} elseif (str_starts_with((string)$mimetype, 'image/') || str_starts_with((string)$mimetype, 'video/')) {
 				$attachments[$sharesWithoutMimetype[$shareId]]['object_type'] = Attachment::TYPE_MEDIA;
 			}
 		}

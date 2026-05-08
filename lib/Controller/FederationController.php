@@ -34,10 +34,10 @@ use OCP\IUserSession;
 class FederationController extends OCSController {
 	public function __construct(
 		IRequest $request,
-		private FederationManager $federationManager,
-		private Manager $talkManager,
-		private IUserSession $userSession,
-		private RoomFormatter $roomFormatter,
+		private readonly FederationManager $federationManager,
+		private readonly Manager $talkManager,
+		private readonly IUserSession $userSession,
+		private readonly RoomFormatter $roomFormatter,
 	) {
 		parent::__construct(Application::APP_ID, $request);
 	}
@@ -150,7 +150,7 @@ class FederationController extends OCSController {
 		$invitations = $this->federationManager->getRemoteRoomShares($user);
 
 		/** @var list<TalkFederationInvite> $data */
-		$data = array_values(array_filter(array_map([$this, 'enrichInvite'], $invitations)));
+		$data = array_values(array_filter(array_map($this->enrichInvite(...), $invitations)));
 
 		return new DataResponse($data);
 	}

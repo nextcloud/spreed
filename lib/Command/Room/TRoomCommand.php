@@ -398,7 +398,7 @@ trait TRoomCommand {
 			return [];
 		}
 
-		return array_filter($this->participantService->getParticipantUserIds($room), static fn ($userId) => stripos($userId, (string)$context->getCurrentWord()) !== false);
+		return array_filter($this->participantService->getParticipantUserIds($room), static fn ($userId) => stripos((string)$userId, (string)$context->getCurrentWord()) !== false);
 	}
 
 	protected function setMessageExpiration(Room $room, int $seconds): void {

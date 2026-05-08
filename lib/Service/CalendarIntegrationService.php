@@ -29,15 +29,15 @@ use Psr\Log\LoggerInterface;
  */
 class CalendarIntegrationService {
 	public function __construct(
-		private Manager $manager,
-		private IManager $calendarManager,
-		private ITimeFactory $timeFactory,
-		private LoggerInterface $logger,
-		private RoomService $roomService,
-		private IDateTimeZone $dateTimeZone,
-		private AvatarService $avatarService,
-		private IURLGenerator $urlGenerator,
-		private IUserManager $userManager,
+		private readonly Manager $manager,
+		private readonly IManager $calendarManager,
+		private readonly ITimeFactory $timeFactory,
+		private readonly LoggerInterface $logger,
+		private readonly RoomService $roomService,
+		private readonly IDateTimeZone $dateTimeZone,
+		private readonly AvatarService $avatarService,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly IUserManager $userManager,
 	) {
 
 	}

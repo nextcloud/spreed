@@ -34,8 +34,8 @@ class CircleMembershipListener extends AMembershipListener {
 		ParticipantService $participantService,
 		BanService $banService,
 		LoggerInterface $logger,
-		private IUserManager $userManager,
-		private ISession $session,
+		private readonly IUserManager $userManager,
+		private readonly ISession $session,
 	) {
 		parent::__construct(
 			$manager,

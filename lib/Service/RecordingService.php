@@ -138,7 +138,7 @@ class RecordingService {
 
 		$resource = $this->getResourceFromFileArray($file, $room, $participant);
 
-		$fileName = basename($file['name']);
+		$fileName = basename((string)$file['name']);
 		$fileRealPath = realpath($file['tmp_name']);
 
 		$this->validateFileFormat($fileName, $fileRealPath);

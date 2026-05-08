@@ -27,11 +27,11 @@ use Psr\Log\LoggerInterface;
 class LiveTranscriptionService {
 
 	public function __construct(
-		private ?string $userId,
-		private IAppManager $appManager,
-		private IUserManager $userManager,
-		private IFactory $l10nFactory,
-		private RoomService $roomService,
+		private readonly ?string $userId,
+		private readonly IAppManager $appManager,
+		private readonly IUserManager $userManager,
+		private readonly IFactory $l10nFactory,
+		private readonly RoomService $roomService,
 		protected LoggerInterface $logger,
 	) {
 	}
@@ -414,7 +414,7 @@ class LiveTranscriptionService {
 		}
 
 		$responseContentType = $response->getHeader('Content-Type');
-		if (str_contains($responseContentType, 'application/json')) {
+		if (str_contains((string)$responseContentType, 'application/json')) {
 			$body = $response->getBody();
 			if (!is_string($body)) {
 				$this->logger->error('Request to live_transcription (ExApp) failed: response body is not a string, but content type is application/json', ['response' => $response]);

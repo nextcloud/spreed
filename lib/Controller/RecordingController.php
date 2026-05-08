@@ -48,17 +48,17 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private ?string $userId,
-		private Config $talkConfig,
-		private IClientService $clientService,
-		private Manager $manager,
-		private CertificateService $certificateService,
-		private ParticipantService $participantService,
-		private RecordingService $recordingService,
-		private RoomService $roomService,
-		private ITimeFactory $timeFactory,
-		private ChecksumVerificationService $checksumVerificationService,
-		private LoggerInterface $logger,
+		private readonly ?string $userId,
+		private readonly Config $talkConfig,
+		private readonly IClientService $clientService,
+		private readonly Manager $manager,
+		private readonly CertificateService $certificateService,
+		private readonly ParticipantService $participantService,
+		private readonly RecordingService $recordingService,
+		private readonly RoomService $roomService,
+		private readonly ITimeFactory $timeFactory,
+		private readonly ChecksumVerificationService $checksumVerificationService,
+		private readonly LoggerInterface $logger,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -84,7 +84,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
-		$url = rtrim($recordingServers[$serverId]['server'], '/');
+		$url = rtrim((string)$recordingServers[$serverId]['server'], '/');
 		$url = strtolower($url);
 
 		$verifyServer = (bool)$recordingServers[$serverId]['verify'];

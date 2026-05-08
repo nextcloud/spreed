@@ -31,11 +31,11 @@ use OCP\PreConditionNotMetException;
 class ReactionManager {
 
 	public function __construct(
-		private ChatManager $chatManager,
-		private CommentsManager $commentsManager,
-		private IL10N $l,
-		private MessageParser $messageParser,
-		private Notifier $notifier,
+		private readonly ChatManager $chatManager,
+		private readonly CommentsManager $commentsManager,
+		private readonly IL10N $l,
+		private readonly MessageParser $messageParser,
+		private readonly Notifier $notifier,
 		protected IEventDispatcher $dispatcher,
 		protected ITimeFactory $timeFactory,
 	) {

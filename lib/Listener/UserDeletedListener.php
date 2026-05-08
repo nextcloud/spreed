@@ -23,10 +23,10 @@ use OCP\User\Events\UserDeletedEvent;
 class UserDeletedListener implements IEventListener {
 
 	public function __construct(
-		private Manager $manager,
-		private PollService $pollService,
-		private ConsentService $consentService,
-		private ScheduledMessageService $messageManager,
+		private readonly Manager $manager,
+		private readonly PollService $pollService,
+		private readonly ConsentService $consentService,
+		private readonly ScheduledMessageService $messageManager,
 	) {
 	}
 

@@ -18,8 +18,8 @@ class ExpireChatMessages extends TimedJob {
 
 	public function __construct(
 		ITimeFactory $timeFactory,
-		private ChatManager $chatManager,
-		private ProxyCacheMessageService $pcmService,
+		private readonly ChatManager $chatManager,
+		private readonly ProxyCacheMessageService $pcmService,
 	) {
 		parent::__construct($timeFactory);
 

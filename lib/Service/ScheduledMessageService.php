@@ -150,8 +150,8 @@ class ScheduledMessageService {
 			$parent = $thread = null;
 			$entity = [];
 			foreach ($row as $field => $value) {
-				if (str_starts_with($field, 'th_')) {
-					$thread[substr($field, 3)] = $value;
+				if (str_starts_with((string)$field, 'th_')) {
+					$thread[substr((string)$field, 3)] = $value;
 					continue;
 				}
 				$entity[$field] = $value;

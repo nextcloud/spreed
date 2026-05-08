@@ -88,7 +88,7 @@ class Version11000Date20200922161218 extends SimpleMigrationStep {
 			->where($update->expr()->eq('id', $update->createParameter('id')));
 
 		foreach ($bridges as $bridge) {
-			$values = json_decode($bridge['json_values'], true);
+			$values = json_decode((string)$bridge['json_values'], true);
 			if (isset($values['pid'], $values['enabled'])) {
 				$intEnabled = $values['enabled'] ? 1 : 0;
 				$newValues = $values['parts'] ?: [];

@@ -30,14 +30,14 @@ class AvatarService {
 	public const THEMING_BRIGHT_BACKGROUND = '6B6B6B';
 
 	public function __construct(
-		private IAppData $appData,
-		private IL10N $l,
-		private IURLGenerator $url,
-		private ISecureRandom $random,
-		private RoomService $roomService,
-		private IAvatarManager $avatarManager,
-		private EmojiService $emojiService,
-		private IFilenameValidator $filenameValidator,
+		private readonly IAppData $appData,
+		private readonly IL10N $l,
+		private readonly IURLGenerator $url,
+		private readonly ISecureRandom $random,
+		private readonly RoomService $roomService,
+		private readonly IAvatarManager $avatarManager,
+		private readonly EmojiService $emojiService,
+		private readonly IFilenameValidator $filenameValidator,
 	) {
 	}
 

@@ -26,11 +26,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Setup extends Base {
 	public function __construct(
-		private Manager $roomManager,
-		private BotServerMapper $botServerMapper,
-		private BotConversationMapper $botConversationMapper,
-		private BotService $botService,
-		private IEventDispatcher $dispatcher,
+		private readonly Manager $roomManager,
+		private readonly BotServerMapper $botServerMapper,
+		private readonly BotConversationMapper $botConversationMapper,
+		private readonly BotService $botService,
+		private readonly IEventDispatcher $dispatcher,
 	) {
 		parent::__construct();
 	}

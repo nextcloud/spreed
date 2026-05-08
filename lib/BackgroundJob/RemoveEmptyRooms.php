@@ -47,7 +47,7 @@ class RemoveEmptyRooms extends TimedJob {
 
 	#[\Override]
 	protected function run($argument): void {
-		$this->manager->forAllRooms([$this, 'callback']);
+		$this->manager->forAllRooms($this->callback(...));
 
 		if ($this->numDeletedRooms) {
 			$this->logger->info('Deleted {numDeletedRooms} rooms because they were empty', [

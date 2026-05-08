@@ -319,7 +319,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				continue;
 			}
 
-			$params = json_decode($row['subjectparams'], true);
+			$params = json_decode((string)$row['subjectparams'], true);
 
 			if (!isset($params['room'])) {
 				$delete
@@ -367,7 +367,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 		}
 
 		while ($row = $result->fetch()) {
-			$params = json_decode($row['subjectparams'], true);
+			$params = json_decode((string)$row['subjectparams'], true);
 
 			if (!isset($params['room']) || !isset($roomIdMap[(int)$params['room']])) {
 				$delete

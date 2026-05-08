@@ -519,9 +519,9 @@ class PollController extends AEnvironmentAwareOCSController {
 
 		// Sanitize filename
 		$cleanedRoomName = preg_replace('/[\/\\\\:*?"<>|\- ]+/', '-', $this->room->getName());
-		$cleanedRoomName = mb_substr($cleanedRoomName, 0, 100);
+		$cleanedRoomName = mb_substr((string)$cleanedRoomName, 0, 100);
 		$cleanedQuestion = preg_replace('/[\/\\\\:*?"<>|\- ]+/', '-', $poll->getQuestion());
-		$cleanedQuestion = mb_substr($cleanedQuestion, 0, 50);
+		$cleanedQuestion = mb_substr((string)$cleanedQuestion, 0, 50);
 
 		$date = $this->timeFactory->getDateTime()->format('Y-m-d');
 		$fileName = $cleanedRoomName . ' - ' . $this->l->t('Poll') . ' - ' . $cleanedQuestion . ' - ' . $date . '.' . $format;

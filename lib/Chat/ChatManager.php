@@ -109,17 +109,17 @@ class ChatManager {
 	protected ICache $unreadCountCache;
 
 	public function __construct(
-		private CommentsManager $commentsManager,
-		private IEventDispatcher $dispatcher,
-		private IDBConnection $connection,
-		private INotificationManager $notificationManager,
-		private IManager $shareManager,
-		private RoomShareProvider $shareProvider,
-		private ParticipantService $participantService,
-		private RoomService $roomService,
-		private PollService $pollService,
+		private readonly CommentsManager $commentsManager,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly IDBConnection $connection,
+		private readonly INotificationManager $notificationManager,
+		private readonly IManager $shareManager,
+		private readonly RoomShareProvider $shareProvider,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
+		private readonly PollService $pollService,
 		protected ThreadService $threadService,
-		private Notifier $notifier,
+		private readonly Notifier $notifier,
 		ICacheFactory $cacheFactory,
 		protected ITimeFactory $timeFactory,
 		protected AttachmentService $attachmentService,
@@ -477,7 +477,7 @@ class ChatManager {
 			// Update last_message
 			if ($comment->getActorType() !== Attendee::ACTOR_BOTS
 				|| $comment->getActorId() === Attendee::ACTOR_ID_CHANGELOG
-				|| str_starts_with($comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)) {
+				|| str_starts_with((string)$comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)) {
 				$this->roomService->setLastMessage($chat, $comment);
 				$this->unreadCountCache->clear($chat->getId() . '-');
 			} else {
@@ -730,12 +730,12 @@ class ChatManager {
 		$this->referenceManager->invalidateCache($chat->getToken());
 
 		if (!$wasSilent) {
-			$removedMentions = empty($mentionsAfter) ? $mentionsBefore : array_udiff($mentionsBefore, $mentionsAfter, [$this, 'compareMention']);
-			$addedMentions = empty($mentionsBefore) ? $mentionsAfter : array_udiff($mentionsAfter, $mentionsBefore, [$this, 'compareMention']);
+			$removedMentions = empty($mentionsAfter) ? $mentionsBefore : array_udiff($mentionsBefore, $mentionsAfter, $this->compareMention(...));
+			$addedMentions = empty($mentionsBefore) ? $mentionsAfter : array_udiff($mentionsAfter, $mentionsBefore, $this->compareMention(...));
 
 			if (!empty($removedMentions)) {
 				$usersToNotifyAfter = $this->notifier->getUsersToNotify($chat, $comment, []);
-				$removedUsersMentioned = array_udiff($usersToNotifyBefore, $usersToNotifyAfter, [$this, 'compareMention']);
+				$removedUsersMentioned = array_udiff($usersToNotifyBefore, $usersToNotifyAfter, $this->compareMention(...));
 				$userIds = array_column($removedUsersMentioned, 'id');
 				$this->notifier->removeMentionNotificationAfterEdit($chat, $comment, $userIds);
 			}
@@ -1217,7 +1217,7 @@ class ChatManager {
 	 * @return IComment[]
 	 */
 	public function getMessagesForRoomById(Room $chat, array $commentIds): array {
-		$comments = $this->commentsManager->getCommentsById(array_map('strval', $commentIds));
+		$comments = $this->commentsManager->getCommentsById(array_map(strval(...), $commentIds));
 
 		$comments = array_filter($comments, static fn (IComment $comment) => $comment->getObjectType() === 'chat'
 				&& (int)$comment->getObjectId() === $chat->getId());
@@ -1232,7 +1232,7 @@ class ChatManager {
 	 * @return array<int, IComment> Key is the message id
 	 */
 	public function getMessagesById(array $commentIds): array {
-		return $this->commentsManager->getCommentsById(array_map('strval', $commentIds));
+		return $this->commentsManager->getCommentsById(array_map(strval(...), $commentIds));
 	}
 
 	/**

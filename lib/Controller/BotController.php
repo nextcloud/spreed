@@ -69,7 +69,7 @@ class BotController extends AEnvironmentAwareOCSController {
 		protected ThreadService $threadService,
 		protected IL10N $l,
 		protected LoggerInterface $logger,
-		private IEventDispatcher $dispatcher,
+		private readonly IEventDispatcher $dispatcher,
 	) {
 		parent::__construct($appName, $request);
 	}

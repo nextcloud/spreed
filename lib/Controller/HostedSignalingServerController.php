@@ -36,7 +36,7 @@ class HostedSignalingServerController extends OCSController {
 		protected IL10N $l10n,
 		protected IConfig $config,
 		protected LoggerInterface $logger,
-		private HostedSignalingServerService $hostedSignalingServerService,
+		private readonly HostedSignalingServerService $hostedSignalingServerService,
 	) {
 		parent::__construct($appName, $request);
 	}

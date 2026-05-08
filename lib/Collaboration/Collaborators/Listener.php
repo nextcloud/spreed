@@ -68,17 +68,17 @@ class Listener implements IEventListener {
 		}
 
 		if (!empty($results['groups'])) {
-			$results['groups'] = array_filter($results['groups'], [$this, 'filterBlockedGroupResult']);
+			$results['groups'] = array_filter($results['groups'], $this->filterBlockedGroupResult(...));
 		}
 		if (!empty($results['exact']['groups'])) {
-			$results['exact']['groups'] = array_filter($results['exact']['groups'], [$this, 'filterBlockedGroupResult']);
+			$results['exact']['groups'] = array_filter($results['exact']['groups'], $this->filterBlockedGroupResult(...));
 		}
 
 		if (!empty($results['users'])) {
-			$results['users'] = array_filter($results['users'], [$this, 'filterBlockedUserResult']);
+			$results['users'] = array_filter($results['users'], $this->filterBlockedUserResult(...));
 		}
 		if (!empty($results['exact']['users'])) {
-			$results['exact']['users'] = array_filter($results['exact']['users'], [$this, 'filterBlockedUserResult']);
+			$results['exact']['users'] = array_filter($results['exact']['users'], $this->filterBlockedUserResult(...));
 		}
 
 		return $results;
@@ -95,10 +95,10 @@ class Listener implements IEventListener {
 
 	protected function filterBridgeBot(array $results): array {
 		if (!empty($results['users'])) {
-			$results['users'] = array_filter($results['users'], [$this, 'filterBridgeBotUserResult']);
+			$results['users'] = array_filter($results['users'], $this->filterBridgeBotUserResult(...));
 		}
 		if (!empty($results['exact']['users'])) {
-			$results['exact']['users'] = array_filter($results['exact']['users'], [$this, 'filterBridgeBotUserResult']);
+			$results['exact']['users'] = array_filter($results['exact']['users'], $this->filterBridgeBotUserResult(...));
 		}
 
 		return $results;
@@ -122,24 +122,24 @@ class Listener implements IEventListener {
 		}
 
 		if (!empty($results['groups'])) {
-			$results['groups'] = array_filter($results['groups'], [$this, 'filterParticipantGroupResult']);
+			$results['groups'] = array_filter($results['groups'], $this->filterParticipantGroupResult(...));
 		}
 		if (!empty($results['exact']['groups'])) {
-			$results['exact']['groups'] = array_filter($results['exact']['groups'], [$this, 'filterParticipantGroupResult']);
+			$results['exact']['groups'] = array_filter($results['exact']['groups'], $this->filterParticipantGroupResult(...));
 		}
 
 		if (!empty($results['users'])) {
-			$results['users'] = array_filter($results['users'], [$this, 'filterParticipantUserResult']);
+			$results['users'] = array_filter($results['users'], $this->filterParticipantUserResult(...));
 		}
 		if (!empty($results['exact']['users'])) {
-			$results['exact']['users'] = array_filter($results['exact']['users'], [$this, 'filterParticipantUserResult']);
+			$results['exact']['users'] = array_filter($results['exact']['users'], $this->filterParticipantUserResult(...));
 		}
 
 		if (!empty($results['circles'])) {
-			$results['circles'] = array_filter($results['circles'], [$this, 'filterParticipantTeamResult']);
+			$results['circles'] = array_filter($results['circles'], $this->filterParticipantTeamResult(...));
 		}
 		if (!empty($results['exact']['circles'])) {
-			$results['exact']['circles'] = array_filter($results['exact']['circles'], [$this, 'filterParticipantTeamResult']);
+			$results['exact']['circles'] = array_filter($results['exact']['circles'], $this->filterParticipantTeamResult(...));
 		}
 
 		return $results;

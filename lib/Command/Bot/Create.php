@@ -23,9 +23,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Create extends Base {
 	public function __construct(
-		private BotService $botService,
-		private BotServerMapper $botServerMapper,
-		private ISecureRandom $secureRandom,
+		private readonly BotService $botService,
+		private readonly BotServerMapper $botServerMapper,
+		private readonly ISecureRandom $secureRandom,
 	) {
 		parent::__construct();
 	}

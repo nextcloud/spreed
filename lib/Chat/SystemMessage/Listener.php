@@ -401,7 +401,7 @@ class Listener implements IEventListener {
 		$share = $event->getShare();
 
 		$metaData = $this->request->getParam('talkMetaData') ?? '';
-		$metaData = json_decode($metaData, true);
+		$metaData = json_decode((string)$metaData, true);
 		$metaData = is_array($metaData) ? $metaData : [];
 
 		if (isset($metaData['messageType']) && $metaData['messageType'] === ChatManager::VERB_VOICE_MESSAGE) {

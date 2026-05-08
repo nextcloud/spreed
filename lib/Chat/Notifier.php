@@ -40,14 +40,14 @@ class Notifier {
 	public const PRIORITY_IMPORTANT = 2;
 
 	public function __construct(
-		private INotificationManager $notificationManager,
-		private IUserManager $userManager,
-		private IGroupManager $groupManager,
-		private ParticipantService $participantService,
-		private ThreadService $threadService,
-		private IConfig $config,
-		private ITimeFactory $timeFactory,
-		private Util $util,
+		private readonly INotificationManager $notificationManager,
+		private readonly IUserManager $userManager,
+		private readonly IGroupManager $groupManager,
+		private readonly ParticipantService $participantService,
+		private readonly ThreadService $threadService,
+		private readonly IConfig $config,
+		private readonly ITimeFactory $timeFactory,
+		private readonly Util $util,
 	) {
 	}
 

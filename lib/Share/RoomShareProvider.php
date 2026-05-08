@@ -931,7 +931,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		// In 1-on-1 rooms the conversation folder name differs per user
 		// (each side sees the other's display name). The TYPE_ROOM share
 		// stores the sharer's folder name, so match by token instead.
-		if (preg_match('/-([a-z0-9]{4,30})$/', $pathWithPlaceholder, $m)) {
+		if (preg_match('/-([a-z0-9]{4,30})$/', (string)$pathWithPlaceholder, $m)) {
 			$escapedPlaceholder = $this->dbConnection->escapeLikeParameter(self::TALK_FOLDER_PLACEHOLDER);
 			$escapedToken = $this->dbConnection->escapeLikeParameter($m[1]);
 			$childPathTemplatePlaceholder = $escapedPlaceholder . '/%-' . $escapedToken . '/_%';
@@ -1019,7 +1019,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$pathSections = explode('/', $data['path'], 2);
 		// FIXME: would not detect rare md5'd home storage case properly
 		if ($pathSections[0] !== 'files'
-			&& (str_starts_with($data['storage_string_id'], 'home::') || str_starts_with($data['storage_string_id'], 'object::user'))) {
+			&& (str_starts_with((string)$data['storage_string_id'], 'home::') || str_starts_with((string)$data['storage_string_id'], 'object::user'))) {
 			return false;
 		}
 		return true;
@@ -1158,7 +1158,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$cursor->closeCursor();
 
 		if ($currentAccess === true) {
-			$users = array_map([$this, 'filterSharesOfUser'], $users);
+			$users = array_map($this->filterSharesOfUser(...), $users);
 			$users = array_filter($users);
 		} else {
 			$users = array_keys($users);
@@ -1190,7 +1190,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$best = [];
 		$bestDepth = 0;
 		foreach ($shares as $id => $share) {
-			$depth = substr_count($share['file_target'], '/');
+			$depth = substr_count((string)$share['file_target'], '/');
 			if (empty($best) || $depth < $bestDepth) {
 				$bestDepth = $depth;
 				$best = [
