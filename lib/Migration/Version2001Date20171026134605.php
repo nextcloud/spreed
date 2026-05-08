@@ -261,7 +261,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 
 		try {
 			$result = $query->executeQuery();
-		} catch (TableNotFoundException $e) {
+		} catch (TableNotFoundException) {
 			return;
 		}
 

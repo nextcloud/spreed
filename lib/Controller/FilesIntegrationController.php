@@ -111,7 +111,7 @@ class FilesIntegrationController extends OCSController {
 
 		try {
 			$room = $this->manager->getRoomByObject('file', $fileId);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			$name = $node->getName();
 			$name = $this->roomService->prepareConversationName($name);
 			$room = $this->roomService->createConversation(
@@ -181,7 +181,7 @@ class FilesIntegrationController extends OCSController {
 					throw new ShareNotFound();
 				}
 			}
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $shareToken, 'action' => 'shareinfo']);
 			return $response;

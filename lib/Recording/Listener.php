@@ -53,7 +53,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		match (get_class($event)) {
+		match ($event::class) {
 			RoomDeletedEvent::class => $this->roomDeleted($event),
 			CallEndedEvent::class,
 			CallEndedForEveryoneEvent::class => $this->endRecordingOnCallEnd($event),

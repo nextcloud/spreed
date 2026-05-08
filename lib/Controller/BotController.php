@@ -171,7 +171,7 @@ class BotController extends AEnvironmentAwareOCSController {
 		if ($replyTo !== 0) {
 			try {
 				$parent = $this->chatManager->getParentComment($room, (string)$replyTo);
-			} catch (NotFoundException $e) {
+			} catch (NotFoundException) {
 				// Someone is trying to reply cross-rooms or to a non-existing message
 				return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 			}

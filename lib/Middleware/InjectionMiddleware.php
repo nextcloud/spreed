@@ -262,7 +262,7 @@ class InjectionMiddleware extends Middleware {
 				try {
 					$participant = $this->participantService->getParticipantBySession($room, $sessionId);
 					$controller->setParticipant($participant);
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					// ignore and fall back in case a concurrent request might have
 					// invalidated the session
 				}

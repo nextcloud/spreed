@@ -89,7 +89,7 @@ class Util {
 				}
 			}
 			return true;
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			return false;
 		}
 	}

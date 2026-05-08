@@ -166,7 +166,7 @@ class UserMention implements IEventListener {
 				try {
 					$participant = $this->participantService->getParticipantByActor($chatMessage->getRoom(), Attendee::ACTOR_GUESTS, substr($mention['id'], strlen('guest/')));
 					$displayName = $participant->getAttendee()->getDisplayName() ?: $this->l->t('Guest');
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					$displayName = $this->l->t('Guest');
 				}
 
@@ -230,7 +230,7 @@ class UserMention implements IEventListener {
 			} else {
 				try {
 					$displayName = $this->commentsManager->resolveDisplayName($mention['type'], $mention['id']);
-				} catch (\OutOfBoundsException $e) {
+				} catch (\OutOfBoundsException) {
 					// There is no registered display name resolver for the mention
 					// type, so the client decides what to display.
 					$displayName = '';
@@ -266,18 +266,14 @@ class UserMention implements IEventListener {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function getRoomType(Room $room): string {
-		switch ($room->getType()) {
-			case Room::TYPE_ONE_TO_ONE:
-			case Room::TYPE_ONE_TO_ONE_FORMER:
-			case Room::TYPE_NOTE_TO_SELF:
-				return 'one2one';
-			case Room::TYPE_GROUP:
-				return 'group';
-			case Room::TYPE_PUBLIC:
-				return 'public';
-			default:
-				throw new \InvalidArgumentException('Unknown room type');
-		}
+		return match ($room->getType()) {
+			Room::TYPE_ONE_TO_ONE,
+			Room::TYPE_ONE_TO_ONE_FORMER => 'one2one',
+			Room::TYPE_GROUP,
+			Room::TYPE_NOTE_TO_SELF => 'group',
+			Room::TYPE_PUBLIC => 'public',
+			default => throw new \InvalidArgumentException('Unknown room type'),
+		};
 	}
 
 	protected function getCircle(string $circleId): array {

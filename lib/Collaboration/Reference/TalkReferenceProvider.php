@@ -113,7 +113,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 			$reference = new Reference($referenceText);
 			try {
 				$this->fetchReference($reference);
-			} catch (RoomNotFoundException|ParticipantNotFoundException $e) {
+			} catch (RoomNotFoundException|ParticipantNotFoundException) {
 				$reference->setRichObject('call', null);
 				$reference->setAccessible(false);
 			}
@@ -139,7 +139,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 		$room = $this->roomManager->getRoomForUserByToken($referenceMatch['token'], $this->userId);
 		try {
 			$participant = $this->participantService->getParticipant($room, $this->userId);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			$participant = null;
 		}
 
@@ -266,17 +266,13 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 	}
 
 	protected function getRoomType(Room $room): string {
-		switch ($room->getType()) {
-			case Room::TYPE_ONE_TO_ONE:
-			case Room::TYPE_ONE_TO_ONE_FORMER:
-				return 'one2one';
-			case Room::TYPE_GROUP:
-				return 'group';
-			case Room::TYPE_PUBLIC:
-				return 'public';
-			default:
-				return 'unknown';
-		}
+		return match ($room->getType()) {
+			Room::TYPE_ONE_TO_ONE,
+			Room::TYPE_ONE_TO_ONE_FORMER => 'one2one',
+			Room::TYPE_GROUP => 'group',
+			Room::TYPE_PUBLIC => 'public',
+			default => 'unknown',
+		};
 	}
 
 	/**

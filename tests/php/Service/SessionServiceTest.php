@@ -51,7 +51,7 @@ class SessionServiceTest extends TestCase {
 		foreach ($this->attendeeIds as $attendeeId) {
 			try {
 				$this->sessionMapper->deleteByAttendeeId($attendeeId);
-			} catch (DoesNotExistException $exception) {
+			} catch (DoesNotExistException) {
 			}
 		}
 

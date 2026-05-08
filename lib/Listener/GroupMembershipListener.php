@@ -47,7 +47,7 @@ class GroupMembershipListener extends AMembershipListener {
 				if ($participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
 					$this->participantService->updateParticipantType($room, $participant, Participant::USER);
 				}
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				$this->participantService->addUsers($room, [[
 					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $user->getUID(),

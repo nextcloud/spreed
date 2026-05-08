@@ -132,7 +132,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 			}
 
 			return new DataResponse($data);
-		} catch (ConnectException $e) {
+		} catch (ConnectException) {
 			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
 		} catch (\Exception $e) {
 			return new DataResponse(['error' => (string)$e->getCode()], Http::STATUS_INTERNAL_SERVER_ERROR);
@@ -285,7 +285,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			$this->logger->debug('Failed to get room {token}', [
 				'token' => $token,
 				'app' => 'spreed-recording',
@@ -305,7 +305,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 			}
 
 			$participant = $this->participantService->getParticipantByActor($room, $actor['type'], $actor['id']);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			$participant = null;
 		}
 

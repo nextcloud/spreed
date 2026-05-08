@@ -118,7 +118,7 @@ class TransferOwnership extends Base {
 					);
 					$modified++;
 				}
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				$this->participantService->addUsers($room, [
 					[
 						'actorType' => Attendee::ACTOR_USERS,

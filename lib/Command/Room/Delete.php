@@ -36,7 +36,7 @@ class Delete extends Base {
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			$output->writeln('<error>Room not found.</error>');
 			return 1;
 		}
@@ -59,11 +59,9 @@ class Delete extends Base {
 
 	#[\Override]
 	public function completeArgumentValues($argumentName, CompletionContext $context) {
-		switch ($argumentName) {
-			case 'token':
-				return $this->completeTokenValues($context);
-		}
-
-		return parent::completeArgumentValues($argumentName, $context);
+		return match ($argumentName) {
+			'token' => $this->completeTokenValues($context),
+			default => parent::completeArgumentValues($argumentName, $context),
+		};
 	}
 }

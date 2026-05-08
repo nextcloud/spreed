@@ -111,7 +111,7 @@ class BreakoutRoomController extends AEnvironmentAwareOCSController {
 	public function broadcastChatMessage(string $message): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->broadcastChatMessage($this->room, $this->participant, $message);
-		} catch (MessageTooLongException $e) {
+		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
@@ -299,7 +299,7 @@ class BreakoutRoomController extends AEnvironmentAwareOCSController {
 					false,
 					true
 				);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 			}
 		}
 		return $return;

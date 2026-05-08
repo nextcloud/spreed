@@ -200,22 +200,15 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 		if (!is_numeric($providerId)) {
 			throw new BadRequestException(['providerId']);
 		}
-		switch ($notificationType) {
-			case FederationManager::NOTIFICATION_SHARE_ACCEPTED:
-				return $this->shareAccepted((int)$providerId, $notification);
-			case FederationManager::NOTIFICATION_SHARE_DECLINED:
-				return $this->shareDeclined((int)$providerId, $notification);
-			case FederationManager::NOTIFICATION_SHARE_UNSHARED:
-				return $this->shareUnshared((int)$providerId, $notification);
-			case FederationManager::NOTIFICATION_PARTICIPANT_MODIFIED:
-				return $this->participantModified((int)$providerId, $notification);
-			case FederationManager::NOTIFICATION_ROOM_MODIFIED:
-				return $this->roomModified((int)$providerId, $notification);
-			case FederationManager::NOTIFICATION_MESSAGE_POSTED:
-				return $this->messagePosted((int)$providerId, $notification);
-		}
-
-		throw new BadRequestException([$notificationType]);
+		return match ($notificationType) {
+			FederationManager::NOTIFICATION_SHARE_ACCEPTED => $this->shareAccepted((int)$providerId, $notification),
+			FederationManager::NOTIFICATION_SHARE_DECLINED => $this->shareDeclined((int)$providerId, $notification),
+			FederationManager::NOTIFICATION_SHARE_UNSHARED => $this->shareUnshared((int)$providerId, $notification),
+			FederationManager::NOTIFICATION_PARTICIPANT_MODIFIED => $this->participantModified((int)$providerId, $notification),
+			FederationManager::NOTIFICATION_ROOM_MODIFIED => $this->roomModified((int)$providerId, $notification),
+			FederationManager::NOTIFICATION_MESSAGE_POSTED => $this->messagePosted((int)$providerId, $notification),
+			default => throw new BadRequestException([$notificationType]),
+		};
 	}
 
 	/**
@@ -327,7 +320,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 
 		try {
 			$participant = $this->participantService->getParticipant($room, $invite->getUserId());
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 

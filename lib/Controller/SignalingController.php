@@ -283,25 +283,21 @@ class SignalingController extends OCSController {
 		}
 
 		$message = json_decode($json, true);
-		switch ($message['type'] ?? '') {
-			case 'auth':
-				// Query authentication information about a user.
-				return $this->backendAuth($message['auth']);
-			case 'room':
-				// Query information about a room.
-				return $this->backendRoom($message['room']);
-			case 'ping':
-				// Ping sessions connected to a room.
-				return $this->backendPing($message['ping']);
-			default:
-				return new DataResponse([
-					'type' => 'error',
-					'error' => [
-						'code' => 'unknown_type',
-						'message' => 'The given type ' . json_encode($message) . ' is not supported.',
-					],
-				]);
-		}
+		return match ($message['type'] ?? '') {
+			// Query authentication information about a user.
+			'auth' => $this->backendAuth($message['auth']),
+			// Query information about a room.
+			'room' => $this->backendRoom($message['room']),
+			// Ping sessions connected to a room.
+			'ping' => $this->backendPing($message['ping']),
+			default => new DataResponse([
+				'type' => 'error',
+				'error' => [
+					'code' => 'unknown_type',
+					'message' => 'The given type ' . json_encode($message) . ' is not supported.',
+				],
+			]),
+		};
 	}
 
 	/**
@@ -314,7 +310,7 @@ class SignalingController extends OCSController {
 
 		try {
 			$participant = $this->participantService->getParticipant($room, $this->userId);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return null;
 		}
 
@@ -613,10 +609,10 @@ class SignalingController extends OCSController {
 
 				// Session was killed, make the UI redirect to an error
 				return new DataResponse($data, Http::STATUS_CONFLICT);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				// User removed from conversation, bye!
 				return new DataResponse($data, Http::STATUS_NOT_FOUND);
-			} catch (RoomNotFoundException $e) {
+			} catch (RoomNotFoundException) {
 				// Complete conversation was killed, bye!
 				return new DataResponse($data, Http::STATUS_NOT_FOUND);
 			}
@@ -787,7 +783,7 @@ class SignalingController extends OCSController {
 		if ($actorId !== null && $actorType !== null) {
 			try {
 				$room = $this->manager->getRoomByActor($token, $actorType, $actorId);
-			} catch (RoomNotFoundException $e) {
+			} catch (RoomNotFoundException) {
 				$this->logger->debug('Failed to get room {token} by actor {actorType}/{actorId}', [
 					'token' => $token,
 					'actorType' => $actorType ?? 'null',
@@ -807,27 +803,27 @@ class SignalingController extends OCSController {
 			if ($sessionId) {
 				try {
 					$participant = $this->participantService->getParticipantBySession($room, $sessionId);
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					if ($action === 'join') {
 						// If the user joins the session might not be known to the server yet.
 						// In this case we load by actor information and use the session id as new session.
 						try {
 							$participant = $this->participantService->getParticipantByActor($room, $actorType, $actorId);
-						} catch (ParticipantNotFoundException $e) {
+						} catch (ParticipantNotFoundException) {
 						}
 					}
 				}
 			} else {
 				try {
 					$participant = $this->participantService->getParticipantByActor($room, $actorType, $actorId);
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 				}
 			}
 		} else {
 			try {
 				// FIXME Don't preload with the user as that misses the session, kinda meh.
 				$room = $this->manager->getRoomByToken($token);
-			} catch (RoomNotFoundException $e) {
+			} catch (RoomNotFoundException) {
 				$this->logger->debug('Failed to get room by token {token}', [
 					'token' => $token,
 					'app' => 'spreed-hpb',
@@ -845,13 +841,13 @@ class SignalingController extends OCSController {
 			if ($sessionId) {
 				try {
 					$participant = $this->participantService->getParticipantBySession($room, $sessionId);
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 				}
 			} elseif (!empty($userId)) {
 				// User trying to join room.
 				try {
 					$participant = $this->participantService->getParticipant($room, $userId, false);
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 				}
 			}
 		}
@@ -876,7 +872,7 @@ class SignalingController extends OCSController {
 			if ($sessionId && !$participant->getSession() instanceof Session) {
 				try {
 					$session = $this->sessionService->createSessionForAttendee($participant->getAttendee(), $sessionId);
-				} catch (Exception $e) {
+				} catch (Exception) {
 					return new DataResponse([
 						'type' => 'error',
 						'error' => [

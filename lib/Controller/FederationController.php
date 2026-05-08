@@ -81,7 +81,7 @@ class FederationController extends OCSController {
 			$participant = $this->federationManager->acceptRemoteRoomShare($user, $id);
 		} catch (CannotReachRemoteException) {
 			return new DataResponse(['error' => 'remote'], Http::STATUS_GONE);
-		} catch (UnauthorizedException $e) {
+		} catch (UnauthorizedException) {
 			return new DataResponse(['error' => 'user'], Http::STATUS_NOT_FOUND);
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], $e->getMessage() === 'invitation' ? Http::STATUS_NOT_FOUND : Http::STATUS_BAD_REQUEST);
@@ -120,7 +120,7 @@ class FederationController extends OCSController {
 		}
 		try {
 			$this->federationManager->rejectRemoteRoomShare($user, $id);
-		} catch (UnauthorizedException $e) {
+		} catch (UnauthorizedException) {
 			return new DataResponse(['error' => 'user'], Http::STATUS_NOT_FOUND);
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], $e->getMessage() === 'invitation' ? Http::STATUS_NOT_FOUND : Http::STATUS_BAD_REQUEST);

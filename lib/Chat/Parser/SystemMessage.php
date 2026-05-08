@@ -98,7 +98,7 @@ class SystemMessage implements IEventListener {
 			try {
 				$this->parseMessage($event->getMessage(), $event->allowInaccurate());
 				// Disabled so we can parse mentions in captions: $event->stopPropagation();
-			} catch (\OutOfBoundsException $e) {
+			} catch (\OutOfBoundsException) {
 				// Unknown message, ignore
 			}
 		} elseif ($event->getMessage()->getMessageType() === ChatManager::VERB_MESSAGE_DELETED) {
@@ -1141,7 +1141,7 @@ class SystemMessage implements IEventListener {
 		if (!isset($this->displayNames[$uid])) {
 			try {
 				$this->displayNames[$uid] = $this->getDisplayName($uid);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				$this->displayNames[$uid] = null;
 			}
 		}
@@ -1265,7 +1265,7 @@ class SystemMessage implements IEventListener {
 
 			$this->circleNames[$circleId] = $circle->getDisplayName();
 			$this->circleLinks[$circleId] = $circle->getUrl();
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			$circlesManager->stopSession();
 		}
 	}
@@ -1308,7 +1308,7 @@ class SystemMessage implements IEventListener {
 				return $this->l->t('Guest');
 			}
 			return $this->l->t('%s (guest)', [$name]);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return $this->l->t('Guest');
 		}
 	}

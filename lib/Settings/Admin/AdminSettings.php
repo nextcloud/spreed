@@ -102,7 +102,7 @@ class AdminSettings implements ISettings {
 			if ($version === '') {
 				$error = 'binary';
 			}
-		} catch (WrongPermissionsException $e) {
+		} catch (WrongPermissionsException) {
 			$version = '';
 			$error = 'binary_permissions';
 		}
@@ -494,7 +494,7 @@ class AdminSettings implements ISettings {
 		$output = [];
 		try {
 			@exec('apachectl -V | grep MPM', $output, $returnCode);
-		} catch (\Throwable $e) {
+		} catch (\Throwable) {
 			return 'unknown';
 		}
 

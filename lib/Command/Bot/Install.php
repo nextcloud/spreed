@@ -129,7 +129,7 @@ class Install extends Base {
 				$output->writeln('<error>Bot with the same secret is already registered</error>');
 				return 3;
 			} else {
-				$output->writeln('<error>' . get_class($e) . ': ' . $e->getMessage() . '</error>');
+				$output->writeln('<error>' . $e::class . ': ' . $e->getMessage() . '</error>');
 				return 1;
 			}
 		}

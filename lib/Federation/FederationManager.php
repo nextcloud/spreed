@@ -161,7 +161,7 @@ class FederationManager {
 	public function acceptRemoteRoomShare(IUser $user, int $shareId): Participant {
 		try {
 			$invitation = $this->invitationMapper->getInvitationById($shareId);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			throw new \InvalidArgumentException('invitation');
 		}
 		if ($invitation->getUserId() !== $user->getUID()) {
@@ -221,7 +221,7 @@ class FederationManager {
 	public function rejectRemoteRoomShare(IUser $user, int $shareId): void {
 		try {
 			$invitation = $this->invitationMapper->getInvitationById($shareId);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			throw new \InvalidArgumentException('invitation');
 		}
 
@@ -243,7 +243,7 @@ class FederationManager {
 	public function rejectByRemoveSelf(Room $room, string $userId): void {
 		try {
 			$invitation = $this->invitationMapper->getInvitationForUserByLocalRoom($room, $userId);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			throw new \InvalidArgumentException('invitation');
 		}
 

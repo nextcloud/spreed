@@ -140,12 +140,12 @@ class AvatarService {
 	private function getAvatarFolder(string $token): ISimpleFolder {
 		try {
 			$folder = $this->appData->getFolder('room-avatar');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			$folder = $this->appData->newFolder('room-avatar');
 		}
 		try {
 			$avatarFolder = $folder->getFolder($token);
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			$avatarFolder = $folder->newFolder($token);
 		}
 		return $avatarFolder;
@@ -190,7 +190,7 @@ class AvatarService {
 
 					return $file;
 				}
-			} catch (NotFoundException $e) {
+			} catch (NotFoundException) {
 			}
 		}
 
@@ -294,7 +294,7 @@ class AvatarService {
 			$avatarFolder = $folder->getFolder($room->getToken());
 			$avatarFolder->delete();
 			$this->roomService->setAvatar($room, '');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 		}
 	}
 

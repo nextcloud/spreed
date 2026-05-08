@@ -101,7 +101,7 @@ class ParticipantServiceTest extends TestCase {
 			$attendee = $this->attendeeMapper->findByActor(123456789, Attendee::ACTOR_USERS, 'test');
 			$this->sessionMapper->deleteByAttendeeId($attendee->getId());
 			$this->attendeeMapper->delete($attendee);
-		} catch (DoesNotExistException $exception) {
+		} catch (DoesNotExistException) {
 		}
 
 		parent::tearDown();

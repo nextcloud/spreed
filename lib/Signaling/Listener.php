@@ -128,7 +128,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function handleInternalSignaling(Event $event): void {
-		match (get_class($event)) {
+		match ($event::class) {
 			BeforeSessionLeftRoomEvent::class,
 			BeforeAttendeeRemovedEvent::class,
 			GuestJoinedRoomEvent::class,
@@ -167,7 +167,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function handleExternalSignaling(Event $event): void {
-		match (get_class($event)) {
+		match ($event::class) {
 			RoomModifiedEvent::class,
 			LobbyModifiedEvent::class => $this->notifyRoomModified($event),
 			RoomExtendedEvent::class => $this->notifyRoomExtended($event),

@@ -53,7 +53,7 @@ class RoomPresetFactory {
 			}
 
 			if (isset($presets[$preset::getIdentifier()])) {
-				$this->logger->error('Duplicate preset identifier ' . $preset::getIdentifier() . ' from ' . $presetClass . ' and ' . get_class($presets[$preset::getIdentifier()]));
+				$this->logger->error('Duplicate preset identifier ' . $preset::getIdentifier() . ' from ' . $presetClass . ' and ' . $presets[$preset::getIdentifier()]::class);
 				continue;
 			}
 

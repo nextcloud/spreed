@@ -48,7 +48,7 @@ class MatterbridgeSettingsController extends OCSController {
 					'error' => 'binary',
 				], Http::STATUS_BAD_REQUEST);
 			}
-		} catch (WrongPermissionsException $e) {
+		} catch (WrongPermissionsException) {
 			return new DataResponse([
 				'error' => 'binary_permissions',
 			], Http::STATUS_BAD_REQUEST);

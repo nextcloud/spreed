@@ -391,7 +391,7 @@ class BotService {
 			$this->logger->error('Bot error occurred, increasing error count', ['exception' => $exception]);
 			$botServer->setErrorCount($botServer->getErrorCount() + 1);
 			$botServer->setLastErrorDate($this->timeFactory->now());
-			$botServer->setLastErrorMessage(get_class($exception) . ': ' . $exception->getMessage());
+			$botServer->setLastErrorMessage($exception::class . ': ' . $exception->getMessage());
 			$this->botServerMapper->update($botServer);
 		});
 	}

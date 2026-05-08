@@ -321,7 +321,7 @@ class GuestManager {
 
 			$event = new EmailInvitationSentEvent($room, $participant->getAttendee());
 			$this->dispatcher->dispatchTyped($event);
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 		}
 	}
 }

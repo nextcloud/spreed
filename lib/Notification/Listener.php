@@ -57,7 +57,7 @@ class Listener implements IEventListener {
 
 	#[\Override]
 	public function handle(Event $event): void {
-		match (get_class($event)) {
+		match ($event::class) {
 			CallNotificationSendEvent::class => $this->sendCallNotification($event->getRoom(), $event->getActor()?->getAttendee(), $event->getTarget()->getAttendee()),
 			AttendeesAddedEvent::class => $this->generateInvitation($event->getRoom(), $event->getAttendees()),
 			UserJoinedRoomEvent::class => $this->handleUserJoinedRoomEvent($event),

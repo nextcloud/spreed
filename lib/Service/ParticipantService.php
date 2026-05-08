@@ -168,7 +168,7 @@ class ParticipantService {
 							$this->updateParticipantType($breakoutRoom, $breakoutRoomParticipant, Participant::MODERATOR);
 						}
 					}
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					if ($promotedToModerator) {
 						// Add participant as a moderator when they were not in the room already
 						$this->addUsers($breakoutRoom, [
@@ -420,7 +420,7 @@ class ParticipantService {
 
 		try {
 			$attendee = $this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_USERS, $user->getUID());
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			// queried here to avoid loop deps
 			$manager = Server::get(Manager::class);
 			$isListableByUser = $manager->isRoomListableByUser($room, $user->getUID());
@@ -477,7 +477,7 @@ class ParticipantService {
 		try {
 			$participant = $this->getParticipantByActor($room, $actorType, $actorId);
 			$attendee = $participant->getAttendee();
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			// shouldn't happen unless some code called joinRoom without previous checks
 			throw new UnauthorizedException('Participant is not allowed to join');
 		}
@@ -833,7 +833,7 @@ class ParticipantService {
 
 		try {
 			$this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_GROUPS, $group->getGID());
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			$attendee = new Attendee();
 			$attendee->setRoomId($room->getId());
 			$attendee->setActorType(Attendee::ACTOR_GROUPS);
@@ -865,14 +865,14 @@ class ParticipantService {
 			$circlesManager = Server::get(CirclesManager::class);
 			$federatedUser = $circlesManager->getFederatedUser($userId, Member::TYPE_USER);
 			$federatedUser->getLink($circleId);
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			throw new ParticipantNotFoundException('Circle not found or not a member');
 		}
 
 		$circlesManager->startSession($federatedUser);
 		try {
 			return $circlesManager->getCircle($circleId);
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 		} finally {
 			$circlesManager->stopSession();
 		}
@@ -969,7 +969,7 @@ class ParticipantService {
 
 		try {
 			$this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_CIRCLES, $circle->getSingleId());
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			$attendee = new Attendee();
 			$attendee->setRoomId($room->getId());
 			$attendee->setActorType(Attendee::ACTOR_CIRCLES);
@@ -1176,7 +1176,7 @@ class ParticipantService {
 					$this->removeAttendee($room, $participant, $reason, true);
 					$attendees[] = $participant->getAttendee();
 				}
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 			}
 		}
 
@@ -1190,7 +1190,7 @@ class ParticipantService {
 			$circlesManager->startSuperSession();
 			$circle = $circlesManager->getCircle($removedCircleParticipant->getAttendee()->getActorId());
 			$circlesManager->stopSession();
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			// Circles not enabled
 			return;
 		}
@@ -1199,7 +1199,7 @@ class ParticipantService {
 		try {
 			$circle = $circlesManager->getCircle($removedCircleParticipant->getAttendee()->getActorId());
 			$circlesManager->stopSession();
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			$circlesManager->stopSession();
 			return;
 		}
@@ -1239,7 +1239,7 @@ class ParticipantService {
 					$this->removeAttendee($room, $participant, $reason, true);
 					$attendees[] = $participant->getAttendee();
 				}
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 			}
 		}
 
@@ -1253,7 +1253,7 @@ class ParticipantService {
 	public function removeUser(Room $room, IUser $user, string $reason): void {
 		try {
 			$participant = $this->getParticipant($room, $user->getUID(), false);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return;
 		}
 

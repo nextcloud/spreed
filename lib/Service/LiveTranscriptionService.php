@@ -41,7 +41,7 @@ class LiveTranscriptionService {
 			if ($appApiPublicFunctions === null) {
 				$appApiPublicFunctions = $this->getAppApiPublicFunctions();
 			}
-		} catch (LiveTranscriptionAppAPIException $e) {
+		} catch (LiveTranscriptionAppAPIException) {
 			return false;
 		}
 
@@ -65,7 +65,7 @@ class LiveTranscriptionService {
 
 		try {
 			$appApiPublicFunctions = Server::get(PublicFunctions::class);
-		} catch (ContainerExceptionInterface|NotFoundExceptionInterface $e) {
+		} catch (ContainerExceptionInterface|NotFoundExceptionInterface) {
 			throw new LiveTranscriptionAppAPIException('app-api-functions');
 		}
 
@@ -440,7 +440,7 @@ class LiveTranscriptionService {
 			if (is_array($decodedBody) && isset($decodedBody['error'])) {
 				$exceptionMessage .= ': ' . $decodedBody['error'];
 			}
-			throw new LiveTranscriptionAppResponseException($exceptionMessage, 0, null, $response);
+			throw new LiveTranscriptionAppResponseException($exceptionMessage, $response);
 		}
 
 		return $decodedBody;

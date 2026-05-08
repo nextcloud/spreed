@@ -274,7 +274,7 @@ class ChatManager {
 
 			$event = new SystemMessageSentEvent($chat, $comment, silent: $silent, parent: $replyTo, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
 			$this->dispatcher->dispatchTyped($event);
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 		}
 		$this->cache->remove($chat->getToken());
 		if ($threadId !== 0) {
@@ -319,7 +319,7 @@ class ChatManager {
 
 			$event = new SystemMessageSentEvent($chat, $comment);
 			$this->dispatcher->dispatchTyped($event);
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 		}
 		$this->cache->remove($chat->getToken());
 		if ($threadId !== 0) {
@@ -363,7 +363,7 @@ class ChatManager {
 
 			$event = new SystemMessageSentEvent($chat, $comment);
 			$this->dispatcher->dispatchTyped($event);
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 		}
 		$this->cache->remove($chat->getToken());
 		if ($threadId !== 0) {
@@ -510,7 +510,7 @@ class ChatManager {
 
 			$event = new ChatMessageSentEvent($chat, $comment, $participant, $silent, $replyTo);
 			$this->dispatcher->dispatchTyped($event);
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 		}
 		$this->cache->remove($chat->getToken());
 		if ($threadId !== Thread::THREAD_NONE) {
@@ -577,7 +577,7 @@ class ChatManager {
 
 		try {
 			$poll = $this->pollService->getPoll($room->getId(), (int)$messageData['parameters']['objectId']);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			return;
 		}
 
@@ -1326,7 +1326,7 @@ class ChatManager {
 		$parameters = $this->getParametersFromMessage($message);
 		try {
 			$this->shareProvider->getShareById($parameters['share']);
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			return false;
 		}
 		return true;

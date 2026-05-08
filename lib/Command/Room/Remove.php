@@ -70,14 +70,10 @@ class Remove extends Base {
 
 	#[\Override]
 	public function completeArgumentValues($argumentName, CompletionContext $context) {
-		switch ($argumentName) {
-			case 'token':
-				return $this->completeTokenValues($context);
-
-			case 'participant':
-				return $this->completeParticipantValues($context);
-		}
-
-		return parent::completeArgumentValues($argumentName, $context);
+		return match ($argumentName) {
+			'token' => $this->completeTokenValues($context),
+			'participant' => $this->completeParticipantValues($context),
+			default => parent::completeArgumentValues($argumentName, $context),
+		};
 	}
 }

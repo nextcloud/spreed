@@ -105,7 +105,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	public function create(IShare $share): IShare {
 		try {
 			$room = $this->manager->getRoomByToken($share->getSharedWith(), $share->getSharedBy());
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			throw new GenericShareException('Room not found', $this->l->t('Conversation not found'), 404);
 		}
 
@@ -119,7 +119,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 		try {
 			$participant = $this->participantService->getParticipant($room, $share->getSharedBy(), false);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			// If the sharer is not a participant of the room even if the room
 			// exists the error is still "Room not found".
 			throw new GenericShareException('Room not found', $this->l->t('Conversation not found'), 404);
@@ -1053,7 +1053,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$roomToken = $data['share_with'];
 		try {
 			$room = $this->manager->getRoomByToken($roomToken);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			throw new ShareNotFound();
 		}
 
@@ -1140,7 +1140,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				$roomToken = $row['share_with'];
 				try {
 					$room = $this->manager->getRoomByToken($roomToken);
-				} catch (RoomNotFoundException $e) {
+				} catch (RoomNotFoundException) {
 					continue;
 				}
 

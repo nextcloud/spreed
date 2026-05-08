@@ -508,7 +508,7 @@ class CallController extends AEnvironmentAwareOCSController {
 
 		try {
 			$this->participantService->updateCallFlags($this->room, $this->participant, $flags);
-		} catch (\Exception $exception) {
+		} catch (\Exception) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 

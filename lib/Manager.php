@@ -24,7 +24,6 @@ use OCA\Talk\Service\RoomService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
-use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -42,9 +41,6 @@ use OCP\Server;
 use SensitiveParameter;
 
 class Manager {
-
-	protected ICommentsManager $commentsManager;
-
 	public function __construct(
 		protected IDBConnection $db,
 		protected IConfig $config,
@@ -56,7 +52,7 @@ class Manager {
 		protected ISecureRandom $secureRandom,
 		protected IUserManager $userManager,
 		protected IGroupManager $groupManager,
-		CommentsManager $commentsManager,
+		protected CommentsManager $commentsManager,
 		protected TalkSession $talkSession,
 		protected IEventDispatcher $dispatcher,
 		protected ITimeFactory $timeFactory,
@@ -236,7 +232,7 @@ class Manager {
 	public function loadLastCommentInfo(int $id): ?IComment {
 		try {
 			return $this->commentsManager->get((string)$id);
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			return null;
 		}
 	}
@@ -1193,7 +1189,7 @@ class Manager {
 
 		try {
 			$this->participantService->getParticipant($room, $userId, false);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			$user = $this->userManager->get($userId);
 			$this->participantService->addUsers($room, [[
 				'actorType' => Attendee::ACTOR_USERS,
@@ -1412,7 +1408,7 @@ class Manager {
 				} else {
 					$this->participantService->getParticipant($room, $userId, false);
 				}
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				// Do not leak the name of rooms the user is not a part of
 				return $this->l->t('Private conversation');
 			}
@@ -1484,7 +1480,7 @@ class Manager {
 					throw new \OutOfBoundsException('Reserved word');
 				}
 				return $token;
-			} catch (\OutOfBoundsException $e) {
+			} catch (\OutOfBoundsException) {
 				$i++;
 				if ($entropy >= 30 || $i >= 999) {
 					// Max entropy of 30

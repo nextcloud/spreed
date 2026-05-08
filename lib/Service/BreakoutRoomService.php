@@ -481,7 +481,7 @@ class BreakoutRoomService {
 						AAttendeeRemovedEvent::REASON_LEFT
 					);
 				}
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				if ($targetToken === $breakoutRoom->getToken()) {
 					// Join the target breakout room
 					$this->participantService->addUsers(
@@ -529,7 +529,7 @@ class BreakoutRoomService {
 						$participant->getAttendee()->getActorId()
 					);
 					$rooms[] = $breakoutRoom;
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					// Skip this room
 				}
 			}
@@ -562,7 +562,7 @@ class BreakoutRoomService {
 				}
 
 				$this->participantService->removeAttendee($breakoutRoom, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				// Skip this room
 			}
 		}

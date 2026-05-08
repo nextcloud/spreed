@@ -60,7 +60,7 @@ class ReactionManager {
 				$reaction
 			);
 			throw new ReactionAlreadyExistsException();
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 		}
 
 		/** @var IComment $comment */

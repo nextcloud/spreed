@@ -221,7 +221,7 @@ class Manager {
 		try {
 			$serverId = random_int(0, count($servers) - 1);
 			return $servers[$serverId];
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			return $servers[0];
 		}
 	}
@@ -236,7 +236,7 @@ class Manager {
 
 		try {
 			$serverIdToAssign = random_int(0, count($servers) - 1);
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			$serverIdToAssign = 0;
 		}
 

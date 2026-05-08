@@ -41,7 +41,7 @@ class DeletedShareAPIController {
 
 		try {
 			$room = $this->manager->getRoomByToken($share->getSharedWith(), $this->userId);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			return $result;
 		}
 

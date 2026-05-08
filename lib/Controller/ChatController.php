@@ -764,7 +764,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		try {
 			$this->richObjectValidator->validate('{object}', ['object' => $data]);
-		} catch (InvalidObjectExeption $e) {
+		} catch (InvalidObjectExeption) {
 			return new DataResponse(['error' => 'object'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -796,9 +796,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		try {
 			$comment = $this->chatManager->addSystemMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, true, $referenceId, threadId: $threadId);
-		} catch (MessageTooLongException $e) {
+		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1195,7 +1195,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 						'id' => (int)$parentId,
 						'deleted' => true,
 					];
-				} catch (NotFoundException $e) {
+				} catch (NotFoundException) {
 				}
 			}
 

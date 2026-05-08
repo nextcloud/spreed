@@ -54,7 +54,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		match (get_class($event)) {
+		match ($event::class) {
 			CallEndedEvent::class,
 			CallEndedForEveryoneEvent::class => $this->generateCallActivity($event),
 			AttendeesAddedEvent::class => $this->generateInvitationActivity($event->getRoom(), $event->getAttendees()),

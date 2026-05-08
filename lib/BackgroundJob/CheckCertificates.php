@@ -74,7 +74,7 @@ class CheckCertificates extends TimedJob {
 				$notification->setUser($uid);
 				$this->notificationManager->notify($notification);
 			}
-		} catch (\InvalidArgumentException $e) {
+		} catch (\InvalidArgumentException) {
 			return;
 		}
 	}

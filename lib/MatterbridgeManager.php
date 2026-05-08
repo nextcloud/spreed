@@ -169,7 +169,7 @@ class MatterbridgeManager {
 			];
 			try {
 				$room = $this->manager->getRoomById((int)$row['room_id']);
-			} catch (RoomNotFoundException $e) {
+			} catch (RoomNotFoundException) {
 				continue;
 			}
 			$this->checkBridge($room, $bridge);
@@ -267,7 +267,7 @@ class MatterbridgeManager {
 			if (!$isBridgeEnabled) {
 				$this->participantService->removeUser($room, $botUser, AAttendeeRemovedEvent::REASON_REMOVED);
 			}
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			if ($isBridgeEnabled) {
 				$this->participantService->addUsers($room, [[
 					'actorType' => Attendee::ACTOR_USERS,
@@ -847,7 +847,7 @@ class MatterbridgeManager {
 					}
 				}
 			}
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 		}
 		return false;
 	}

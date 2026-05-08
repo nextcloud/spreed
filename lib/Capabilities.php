@@ -455,7 +455,7 @@ class Capabilities implements IPublicCapability {
 
 		try {
 			$isLiveTranslationSupported = $this->liveTranscriptionService->isLiveTranslationSupported();
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			$isLiveTranslationSupported = false;
 		}
 

@@ -328,7 +328,7 @@ class Notifier {
 
 		try {
 			$participant = $this->participantService->getParticipant($chat, $comment->getActorId(), false);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return;
 		}
 
@@ -548,7 +548,7 @@ class Notifier {
 
 			try {
 				$this->participantService->getParticipantByActor($chat, Attendee::ACTOR_GROUPS, $group->getGID());
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				continue;
 			}
 
@@ -709,7 +709,7 @@ class Notifier {
 				return self::PRIORITY_IMPORTANT;
 			}
 			return self::PRIORITY_NORMAL;
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			if ($room->getObjectType() === 'file' && $this->util->canUserAccessFile($room->getObjectId(), $userId)) {
 				// Users are added on mentions in file-rooms,
 				// so they can see the room in their room list and

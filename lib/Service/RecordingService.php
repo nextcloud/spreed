@@ -120,7 +120,7 @@ class RecordingService {
 
 		try {
 			$this->backendNotifier->stop($room, $participant);
-		} catch (RecordingNotFoundException $e) {
+		} catch (RecordingNotFoundException) {
 			// If the recording to be stopped is not known to the recording
 			// server it will never notify that the recording was stopped, so
 			// the status needs to be explicitly changed here.
@@ -435,13 +435,13 @@ class RecordingService {
 
 				$this->serverConfig->setUserValue($owner, 'spreed', UserPreference::ATTACHMENT_FOLDER, '/');
 			}
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			/** @var Folder */
 			$recordingRootFolder = $userFolder->newFolder($recordingRootFolderName);
 		}
 		try {
 			$recordingFolder = $recordingRootFolder->get($token);
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			$recordingFolder = $recordingRootFolder->newFolder($token);
 		}
 		return $recordingFolder;
@@ -517,7 +517,7 @@ class RecordingService {
 			$files = $userFolder->getById($fileId);
 			/** @var \OCP\Files\File $file */
 			$file = array_shift($files);
-		} catch (\Throwable $th) {
+		} catch (\Throwable) {
 			throw new InvalidArgumentException('file');
 		}
 

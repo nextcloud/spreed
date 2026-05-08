@@ -80,7 +80,7 @@ class NoteToSelfService {
 
 		try {
 			$this->config->setUserValue($user->getUID(), 'spreed', 'note_to_self', (string)$room->getId(), (string)$previousValue);
-		} catch (PreConditionNotMetException $e) {
+		} catch (PreConditionNotMetException) {
 			// This process didn't win the race for creating the conversation, so fetch the other one
 			$this->roomService->deleteRoom($room);
 

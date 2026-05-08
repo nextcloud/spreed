@@ -102,7 +102,7 @@ class Setup extends Base {
 					$output->writeln('<error>Bot is already set up for the conversation ' . $token . '</error>');
 					$returnCode = 3;
 				} else {
-					$output->writeln('<error>' . get_class($e) . ': ' . $e->getMessage() . '</error>');
+					$output->writeln('<error>' . $e::class . ': ' . $e->getMessage() . '</error>');
 					$returnCode = 4;
 				}
 			}

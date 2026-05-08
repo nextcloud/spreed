@@ -50,7 +50,7 @@ class Listener implements IEventListener {
 
 	#[\Override]
 	public function handle(Event $event): void {
-		match (get_class($event)) {
+		match ($event::class) {
 			BeforeUserJoinedRoomEvent::class => $this->beforeUserJoinedRoomEvent($event),
 			BeforeGuestJoinedRoomEvent::class => $this->beforeGuestJoinedRoomEvent($event),
 		};
@@ -129,7 +129,7 @@ class Listener implements IEventListener {
 
 		try {
 			$this->participantService->getParticipant($room, $userId, false);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			$user = $this->userManager->get($userId);
 
 			$this->participantService->addUsers($room, [[

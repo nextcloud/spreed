@@ -159,7 +159,7 @@ class Listener implements IEventListener {
 				return true;
 			}
 			return false;
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return true;
 		}
 	}
@@ -170,7 +170,7 @@ class Listener implements IEventListener {
 		try {
 			$this->participantService->getParticipantByActor($this->room, Attendee::ACTOR_GROUPS, $groupId);
 			return false;
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return true;
 		}
 	}
@@ -181,7 +181,7 @@ class Listener implements IEventListener {
 		try {
 			$this->participantService->getParticipantByActor($this->room, Attendee::ACTOR_CIRCLES, $circleId);
 			return false;
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return true;
 		}
 	}
