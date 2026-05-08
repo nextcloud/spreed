@@ -395,6 +395,11 @@ export default {
 		},
 
 		shouldShowPresenterOverlay() {
+			if (this.isSidebar) {
+				// Do not overload small video tile
+				return false
+			}
+
 			return (this.showLocalScreen && this.hasLocalVideo)
 				|| ((this.showRemoteScreen || this.showSelectedScreen)
 					&& (this.shownRemoteScreenCallParticipantModel?.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)))
@@ -877,6 +882,8 @@ export default {
 	--top-bar-height: 51px;
 	--wrapper-padding: calc(var(--default-grid-baseline) * 2.5);
 	--bottom-bar-height: calc(var(--default-clickable-area) + var(--wrapper-padding) * 2);
+	// For sidebar integrations: show container in a 16/9 proportion (+ top/bottom bar) based on the sidebar width
+	--sidebar-container-height: calc(56.25% + var(--top-bar-height) + var(--bottom-bar-height));
 
 	&.call-container__blurred {
 		backdrop-filter: blur(25px);
@@ -945,12 +952,13 @@ export default {
 	position: absolute;
 	inset-inline-end: 0;
 	bottom: 0;
-	width: 300px;
-	height: 250px;
+	width: fit-content;
+	max-width: 300px;
+	max-height: 250px;
 
 	&--sidebar {
-		width: 150px;
-		height: 100px;
+		max-width: 150px;
+		max-height: 100px;
 		bottom: var(--bottom-bar-height);
 		margin: var(--default-grid-baseline);
 	}
