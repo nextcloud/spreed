@@ -21,7 +21,7 @@ use OCP\AppFramework\Http\DataResponse;
  */
 class SignalingController {
 	public function __construct(
-		protected ProxyRequest $proxy,
+		private readonly ProxyRequest $proxy,
 	) {
 	}
 

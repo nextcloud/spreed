@@ -26,8 +26,8 @@ use OCP\Util;
  */
 class TemplateLoader implements IEventListener {
 	public function __construct(
-		protected IInitialState $initialState,
-		protected Config $talkConfig,
+		private readonly IInitialState $initialState,
+		private readonly Config $talkConfig,
 	) {
 	}
 

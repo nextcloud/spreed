@@ -41,14 +41,14 @@ use OCP\EventDispatcher\IEventListener;
  */
 class Listener implements IEventListener {
 	public function __construct(
-		protected ParticipantService $participantService,
-		protected RoomService $roomService,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
 	) {
 	}
 
 	#[\Override]
 	public function handle(Event $event): void {
-		match (get_class($event)) {
+		match ($event::class) {
 			BeforeUserJoinedRoomEvent::class => $this->preventExtraUsersFromJoining($event->getRoom(), $event->getUser()->getUID()),
 			BeforeGuestJoinedRoomEvent::class => $this->preventExtraGuestsFromJoining($event->getRoom()),
 			BeforeAttendeesAddedEvent::class => $this->preventExtraUsersFromBeingAdded($event->getRoom(), $event->getAttendees()),

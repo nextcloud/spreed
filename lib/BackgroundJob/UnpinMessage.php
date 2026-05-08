@@ -22,10 +22,10 @@ use OCP\Comments\NotFoundException;
 class UnpinMessage extends QueuedJob {
 	public function __construct(
 		ITimeFactory $time,
-		protected Manager $manager,
-		protected ChatManager $chatManager,
-		protected AttachmentService $attachmentService,
-		protected RoomService $roomService,
+		private readonly Manager $manager,
+		private readonly ChatManager $chatManager,
+		private readonly AttachmentService $attachmentService,
+		private readonly RoomService $roomService,
 	) {
 		parent::__construct($time);
 	}

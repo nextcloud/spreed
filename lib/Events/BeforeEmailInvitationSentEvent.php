@@ -15,7 +15,7 @@ class BeforeEmailInvitationSentEvent extends ARoomEvent {
 
 	public function __construct(
 		Room $room,
-		protected Attendee $attendee,
+		private readonly Attendee $attendee,
 	) {
 		parent::__construct($room);
 	}

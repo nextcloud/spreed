@@ -18,7 +18,7 @@ use Override;
 
 class ActiveCalls implements IMetricFamily {
 	public function __construct(
-		private MetricsService $metricsService,
+		private readonly MetricsService $metricsService,
 	) {
 	}
 

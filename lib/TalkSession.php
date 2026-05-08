@@ -17,8 +17,8 @@ class TalkSession {
 	public const TAB_ID_SEPARATOR = '$';
 
 	public function __construct(
-		protected ISession $session,
-		protected IRequest $request,
+		private readonly ISession $session,
+		private readonly IRequest $request,
 	) {
 	}
 

@@ -21,8 +21,8 @@ use Psr\Log\LoggerInterface;
 class SIPDialOutService {
 
 	public function __construct(
-		protected BackendNotifier $backendNotifier,
-		protected LoggerInterface $logger,
+		private readonly BackendNotifier $backendNotifier,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 

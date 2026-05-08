@@ -16,7 +16,6 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
-use OCA\Talk\Service\RoomService;
 use OCP\IUserManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,12 +23,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class TransferOwnership extends Base {
-	private RoomService $roomService;
-
 	public function __construct(
-		private ParticipantService $participantService,
-		private Manager $manager,
-		private IUserManager $userManager,
+		private readonly ParticipantService $participantService,
+		private readonly Manager $manager,
+		private readonly IUserManager $userManager,
 	) {
 		parent::__construct();
 	}
@@ -118,7 +115,7 @@ class TransferOwnership extends Base {
 					);
 					$modified++;
 				}
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				$this->participantService->addUsers($room, [
 					[
 						'actorType' => Attendee::ACTOR_USERS,

@@ -13,7 +13,7 @@ use OCA\Talk\Room;
 class RoomExtendedEvent extends ARoomEvent {
 	public function __construct(
 		Room $oldRoom,
-		protected Room $newRoom,
+		private readonly Room $newRoom,
 	) {
 		parent::__construct($oldRoom);
 	}

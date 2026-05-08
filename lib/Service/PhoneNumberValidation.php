@@ -14,8 +14,8 @@ use OCP\IPhoneNumberUtil;
 class PhoneNumberValidation {
 
 	public function __construct(
-		protected IPhoneNumberUtil $phoneNumberUtil,
-		protected IConfig $config,
+		private readonly IPhoneNumberUtil $phoneNumberUtil,
+		private readonly IConfig $config,
 	) {
 	}
 

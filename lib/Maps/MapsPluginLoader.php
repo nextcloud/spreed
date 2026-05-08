@@ -23,9 +23,9 @@ use OCP\Util;
 class MapsPluginLoader implements IEventListener {
 
 	public function __construct(
-		protected IRequest $request,
-		protected Config $talkConfig,
-		protected IUserSession $userSession,
+		private readonly IRequest $request,
+		private readonly Config $talkConfig,
+		private readonly IUserSession $userSession,
 	) {
 	}
 

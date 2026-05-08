@@ -33,7 +33,7 @@ class CommentsManager extends Manager {
 	 * @throws Exception
 	 */
 	public function getCommentsById(array $ids): array {
-		$commentIds = array_map('intval', $ids);
+		$commentIds = array_map(intval(...), $ids);
 
 		$query = $this->dbConn->getQueryBuilder();
 		$query->select('*')
@@ -225,7 +225,7 @@ class CommentsManager extends Manager {
 	 * @psalm-return array<int, string[]>
 	 */
 	public function retrieveReactionsByActor(string $actorType, string $actorId, array $messageIds): array {
-		$commentIds = array_map('intval', $messageIds);
+		$commentIds = array_map(intval(...), $messageIds);
 
 		$query = $this->dbConn->getQueryBuilder();
 		$query->select('*')

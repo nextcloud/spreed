@@ -17,7 +17,6 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
-use OCP\AppFramework\Services\IAppConfig;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
 use OCP\IURLGenerator;
@@ -27,15 +26,14 @@ use Psr\Log\LoggerInterface;
 class BackendNotifier {
 
 	public function __construct(
-		private Config $config,
-		private IAppConfig $appConfig,
-		private LoggerInterface $logger,
-		private IClientService $clientService,
-		private ISecureRandom $secureRandom,
-		private Manager $signalingManager,
-		private ParticipantService $participantService,
-		private IURLGenerator $urlGenerator,
-		private RoomPropertiesHelper $roomPropertiesHelper,
+		private readonly Config $config,
+		private readonly LoggerInterface $logger,
+		private readonly IClientService $clientService,
+		private readonly ISecureRandom $secureRandom,
+		private readonly Manager $signalingManager,
+		private readonly ParticipantService $participantService,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly RoomPropertiesHelper $roomPropertiesHelper,
 	) {
 	}
 
@@ -104,7 +102,7 @@ class BackendNotifier {
 
 		// FIXME some need to go to all HPBs, but that doesn't scale, so bad luck for now :(
 		$signaling = $this->signalingManager->getSignalingServerForConversation($room);
-		$signaling['server'] = rtrim($signaling['server'], '/');
+		$signaling['server'] = rtrim((string)$signaling['server'], '/');
 
 		$url = '/api/v1/room/' . $room->getToken();
 		$url = $signaling['server'] . $url;

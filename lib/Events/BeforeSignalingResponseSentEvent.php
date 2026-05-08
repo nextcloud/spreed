@@ -16,8 +16,8 @@ class BeforeSignalingResponseSentEvent extends ARoomEvent {
 
 	public function __construct(
 		Room $room,
-		protected Participant $participant,
-		protected string $action,
+		private readonly Participant $participant,
+		private readonly string $action,
 	) {
 		parent::__construct($room);
 	}

@@ -14,7 +14,7 @@ use OCP\Migration\SimpleMigrationStep;
 class Version2001Date20170929092606 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IConfig $config,
+		private readonly IConfig $config,
 	) {
 	}
 

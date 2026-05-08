@@ -22,8 +22,8 @@ use OCP\EventDispatcher\IEventListener;
 class CircleDeletedListener implements IEventListener {
 
 	public function __construct(
-		private Manager $manager,
-		private ParticipantService $participantService,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
 	) {
 	}
 

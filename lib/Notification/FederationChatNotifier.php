@@ -23,10 +23,10 @@ use OCP\Notification\INotification;
 
 class FederationChatNotifier {
 	public function __construct(
-		protected IAppConfig $appConfig,
-		protected IManager $notificationManager,
-		protected UserConverter $userConverter,
-		protected ThreadService $threadService,
+		private readonly IAppConfig $appConfig,
+		private readonly IManager $notificationManager,
+		private readonly UserConverter $userConverter,
+		private readonly ThreadService $threadService,
 	) {
 	}
 

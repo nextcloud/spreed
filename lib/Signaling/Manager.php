@@ -25,15 +25,15 @@ use OCP\IConfig;
 class Manager {
 	public const FEATURE_HEADER = 'X-Spreed-Signaling-Features';
 
-	protected ICache $cache;
+	private readonly ICache $cache;
 
 	public function __construct(
-		protected IConfig $serverConfig,
-		protected Config $talkConfig,
-		protected RoomService $roomService,
-		protected ITimeFactory $timeFactory,
-		protected IClientService $clientService,
-		protected CertificateService $certificateService,
+		private readonly IConfig $serverConfig,
+		private readonly Config $talkConfig,
+		private readonly RoomService $roomService,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IClientService $clientService,
+		private readonly CertificateService $certificateService,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->cache = $cacheFactory->createDistributed(CachePrefix::SIGNALING_ASSIGNED_SERVER);
@@ -50,7 +50,7 @@ class Manager {
 			throw new \OutOfBoundsException();
 		}
 
-		$url = rtrim($signalingServers[$serverId]['server'], '/');
+		$url = rtrim((string)$signalingServers[$serverId]['server'], '/');
 		$url = strtolower($url);
 
 		if (str_starts_with($url, 'wss://')) {
@@ -169,7 +169,7 @@ class Manager {
 	public function isCompatibleSignalingServer(IResponse $response): bool {
 		$featureHeader = $response->getHeader(self::FEATURE_HEADER);
 		$features = explode(',', $featureHeader);
-		$features = array_map('trim', $features);
+		$features = array_map(trim(...), $features);
 		return in_array('audio-video-permissions', $features, true)
 			&& in_array('federation', $features, true)
 			&& in_array('incall-all', $features, true)
@@ -183,7 +183,7 @@ class Manager {
 	public function getSignalingServerMissingFeatures(IResponse $response): array {
 		$featureHeader = $response->getHeader(self::FEATURE_HEADER);
 		$features = explode(',', $featureHeader);
-		$features = array_map('trim', $features);
+		$features = array_map(trim(...), $features);
 
 		$optionFeatures = [
 			'dialout',
@@ -221,7 +221,7 @@ class Manager {
 		try {
 			$serverId = random_int(0, count($servers) - 1);
 			return $servers[$serverId];
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			return $servers[0];
 		}
 	}
@@ -236,7 +236,7 @@ class Manager {
 
 		try {
 			$serverIdToAssign = random_int(0, count($servers) - 1);
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			$serverIdToAssign = 0;
 		}
 

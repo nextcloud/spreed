@@ -30,8 +30,8 @@ class ConversationTagService {
 	public const MAX_TAG_NAME_LENGTH = 250;
 
 	public function __construct(
-		private ConversationTagMapper $mapper,
-		private IL10N $l,
+		private readonly ConversationTagMapper $mapper,
+		private readonly IL10N $l,
 	) {
 	}
 

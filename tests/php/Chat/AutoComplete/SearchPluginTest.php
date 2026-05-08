@@ -10,15 +10,12 @@ namespace OCA\Talk\Tests\php\Chat\AutoComplete;
 
 use OC\Collaboration\Collaborators\SearchResult;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Files\Util;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
-use OCA\Talk\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\IL10N;
 use OCP\IUser;
@@ -29,11 +26,8 @@ use Test\TestCase;
 
 class SearchPluginTest extends TestCase {
 	protected IUserManager&MockObject $userManager;
-	protected GuestManager&MockObject $guestManager;
-	protected TalkSession&MockObject $talkSession;
 	protected ParticipantService&MockObject $participantService;
 	protected Util&MockObject $util;
-	protected Authenticator&MockObject $federationAuthenticator;
 	protected IL10N&MockObject $l;
 	protected ?string $userId = null;
 	protected SearchPlugin $plugin;
@@ -42,11 +36,8 @@ class SearchPluginTest extends TestCase {
 		parent::setUp();
 
 		$this->userManager = $this->createMock(IUserManager::class);
-		$this->guestManager = $this->createMock(GuestManager::class);
-		$this->talkSession = $this->createMock(TalkSession::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->util = $this->createMock(Util::class);
-		$this->federationAuthenticator = $this->createMock(Authenticator::class);
 		$this->userId = 'current';
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->expects($this->any())
@@ -62,26 +53,20 @@ class SearchPluginTest extends TestCase {
 		if (empty($methods)) {
 			return new SearchPlugin(
 				$this->userManager,
-				$this->guestManager,
-				$this->talkSession,
 				$this->participantService,
 				$this->util,
-				$this->userId,
 				$this->l,
-				$this->federationAuthenticator,
+				$this->userId,
 			);
 		}
 
 		return $this->getMockBuilder(SearchPlugin::class)
 			->setConstructorArgs([
 				$this->userManager,
-				$this->guestManager,
-				$this->talkSession,
 				$this->participantService,
 				$this->util,
-				$this->userId,
 				$this->l,
-				$this->federationAuthenticator,
+				$this->userId,
 			])
 			->onlyMethods($methods)
 			->getMock();

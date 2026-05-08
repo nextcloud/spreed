@@ -14,7 +14,7 @@ use OCP\IUser;
 class BeforeUserJoinedRoomEvent extends ABeforeJoinedRoomEvent {
 	public function __construct(
 		Room $room,
-		protected IUser $user,
+		private readonly IUser $user,
 		string $password,
 		bool $passedPasswordProtection,
 	) {

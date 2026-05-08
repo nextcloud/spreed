@@ -33,10 +33,8 @@ use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\NotFoundException;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\IRequest;
-use Psr\Log\LoggerInterface;
 
 /**
  * @psalm-import-type TalkThreadInfo from ResponseDefinitions
@@ -45,17 +43,15 @@ class ThreadController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected Manager $manager,
-		protected ChatManager $chatManager,
-		protected Preloader $sharePreloader,
-		protected MessageParser $messageParser,
-		protected ParticipantService $participantService,
-		protected ThreadService $threadService,
-		protected ITimeFactory $timeFactory,
-		protected IL10N $l,
-		protected IEventDispatcher $eventDispatcher,
-		protected LoggerInterface $logger,
-		protected ?string $userId,
+		private readonly Manager $manager,
+		private readonly ChatManager $chatManager,
+		private readonly Preloader $sharePreloader,
+		private readonly MessageParser $messageParser,
+		private readonly ParticipantService $participantService,
+		private readonly ThreadService $threadService,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IL10N $l,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}

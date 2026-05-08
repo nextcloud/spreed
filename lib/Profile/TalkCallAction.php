@@ -23,11 +23,11 @@ class TalkCallAction implements ILinkAction {
 	private ?IUser $targetUser = null;
 
 	public function __construct(
-		private Config $config,
-		private IAppConfig $appConfig,
-		private IL10N $l,
-		private IURLGenerator $urlGenerator,
-		private IUserSession $userSession,
+		private readonly Config $config,
+		private readonly IAppConfig $appConfig,
+		private readonly IL10N $l,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly IUserSession $userSession,
 	) {
 	}
 

@@ -19,8 +19,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Add extends Base {
 
 	public function __construct(
-		private IConfig $config,
-		private ISecureRandom $secureRandom,
+		private readonly IConfig $config,
+		private readonly ISecureRandom $secureRandom,
 	) {
 		parent::__construct();
 	}

@@ -25,12 +25,12 @@ use OCP\Search\SearchResultEntry;
 class ConversationSearch implements IProvider {
 
 	public function __construct(
-		protected AvatarService $avatarService,
-		protected Manager $manager,
-		protected IURLGenerator $url,
-		protected IL10N $l,
-		protected Config $talkConfig,
-		protected IUserSession $userSession,
+		private readonly AvatarService $avatarService,
+		private readonly Manager $manager,
+		private readonly IURLGenerator $url,
+		private readonly IL10N $l,
+		private readonly Config $talkConfig,
+		private readonly IUserSession $userSession,
 	) {
 	}
 
@@ -172,7 +172,7 @@ class ConversationSearch implements IProvider {
 		// but the array key is `display name#token`, so we split by the #
 		// and get the last part which is the token.
 		// If it's empty, there is no cursor for a next page
-		$parts = explode('#', $newCursorWithName);
+		$parts = explode('#', (string)$newCursorWithName);
 		$newCursor = end($parts);
 
 		return SearchResult::paginated(

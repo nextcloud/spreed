@@ -67,7 +67,7 @@ class ScheduledMessage extends SnowflakeAwareEntity {
 	 * @return array{silent: bool, threadId: int, threadTitle?: string, lastEditedTime?: int, sendAt: ?int}
 	 */
 	public function getDecodedMetaData(): array {
-		return json_decode($this->metaData, true, 512, JSON_THROW_ON_ERROR);
+		return json_decode((string)$this->metaData, true, 512, JSON_THROW_ON_ERROR);
 	}
 
 	public function getThreadTitle(): string {

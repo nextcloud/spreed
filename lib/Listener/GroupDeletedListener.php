@@ -21,11 +21,10 @@ use OCP\IConfig;
  * @template-implements IEventListener<Event>
  */
 class GroupDeletedListener implements IEventListener {
-
 	public function __construct(
-		private IConfig $config,
-		private Manager $manager,
-		private ParticipantService $participantService,
+		private readonly IConfig $config,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
 	) {
 	}
 

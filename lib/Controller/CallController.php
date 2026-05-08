@@ -56,18 +56,18 @@ class CallController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected Manager $manager,
-		private ConsentService $consentService,
-		private ParticipantService $participantService,
-		private PhoneNumberMapper $phoneNumberMapper,
-		private RoomService $roomService,
-		private IUserManager $userManager,
-		private ITimeFactory $timeFactory,
-		private IConfig $serverConfig,
-		private IAppConfig $appConfig,
-		private Config $talkConfig,
-		protected Authenticator $federationAuthenticator,
-		private SIPDialOutService $dialOutService,
+		private readonly Manager $manager,
+		private readonly ConsentService $consentService,
+		private readonly ParticipantService $participantService,
+		private readonly PhoneNumberMapper $phoneNumberMapper,
+		private readonly RoomService $roomService,
+		private readonly IUserManager $userManager,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IConfig $serverConfig,
+		private readonly IAppConfig $appConfig,
+		private readonly Config $talkConfig,
+		private readonly Authenticator $federationAuthenticator,
+		private readonly SIPDialOutService $dialOutService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -178,7 +178,7 @@ class CallController extends AEnvironmentAwareOCSController {
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 				$email = $this->userManager->get($participant->getAttendee()->getActorId())?->getEMailAddress() ?? '';
 			}
-			fputcsv($output, array_map([$this, 'escapeFormulae'], [
+			fputcsv($output, array_map($this->escapeFormulae(...), [
 				$participant->getAttendee()->getDisplayName(),
 				$email,
 				$participant->getAttendee()->getActorType(),
@@ -191,7 +191,7 @@ class CallController extends AEnvironmentAwareOCSController {
 		// Clean the room name
 		$cleanedRoomName = preg_replace('/[\/\\\\:*?"<>|\- ]+/', '-', $this->room->getName());
 		// Limit to a reasonable length
-		$cleanedRoomName = substr($cleanedRoomName, 0, 100);
+		$cleanedRoomName = substr((string)$cleanedRoomName, 0, 100);
 
 		$timezone = 'UTC';
 		if ($this->participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
@@ -508,7 +508,7 @@ class CallController extends AEnvironmentAwareOCSController {
 
 		try {
 			$this->participantService->updateCallFlags($this->room, $this->participant, $flags);
-		} catch (\Exception $exception) {
+		} catch (\Exception) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 

@@ -33,7 +33,6 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -117,7 +116,6 @@ class BackendNotifierTest extends TestCase {
 			$this->createMock(TalkSession::class),
 			$dispatcher,
 			$timeFactory,
-			$this->createMock(IHasher::class),
 			$this->createMock(IL10N::class),
 			$this->createMock(Authenticator::class),
 		);
@@ -140,10 +138,10 @@ class BackendNotifierTest extends TestCase {
 	}
 
 	private function calculateBackendChecksum($data, $random) {
-		if (empty($random) || strlen($random) < 32) {
+		if (empty($random) || strlen((string)$random) < 32) {
 			return false;
 		}
-		return hash_hmac('sha256', $random . $data, $this->recordingSecret);
+		return hash_hmac('sha256', $random . $data, (string)$this->recordingSecret);
 	}
 
 	private function validateBackendRequest($expectedUrl, $request) {
@@ -163,7 +161,7 @@ class BackendNotifierTest extends TestCase {
 
 		$requests = $this->backendNotifier->getRequests();
 		$requests = array_filter($requests, fn ($request) => $request['url'] === $expectedUrl);
-		$bodies = array_map(fn ($request) => json_decode($this->validateBackendRequest($expectedUrl, $request), true), $requests);
+		$bodies = array_map(fn ($request) => json_decode((string)$this->validateBackendRequest($expectedUrl, $request), true), $requests);
 
 		$bodies = array_filter($bodies, fn (array $body) => $body['type'] === $message['type']);
 

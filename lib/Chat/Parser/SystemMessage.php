@@ -15,7 +15,6 @@ use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Events\OverwritePublicSharePropertiesEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Federation\Authenticator;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
@@ -71,20 +70,19 @@ class SystemMessage implements IEventListener {
 	protected array $currentFederatedUserDetails = [];
 
 	public function __construct(
-		protected IAppConfig $appConfig,
-		protected IUserManager $userManager,
-		protected IGroupManager $groupManager,
-		protected GuestManager $guestManager,
-		protected ParticipantService $participantService,
-		protected IPreviewManager $previewManager,
-		protected RoomShareProvider $shareProvider,
-		protected PhotoCache $photoCache,
-		protected IRootFolder $rootFolder,
-		protected ICloudIdManager $cloudIdManager,
-		protected IURLGenerator $url,
-		protected FilesMetadataCache $metadataCache,
-		protected Authenticator $federationAuthenticator,
-		protected IEventDispatcher $dispatcher,
+		private readonly IAppConfig $appConfig,
+		private readonly IUserManager $userManager,
+		private readonly IGroupManager $groupManager,
+		private readonly ParticipantService $participantService,
+		private readonly IPreviewManager $previewManager,
+		private readonly RoomShareProvider $shareProvider,
+		private readonly PhotoCache $photoCache,
+		private readonly IRootFolder $rootFolder,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly IURLGenerator $url,
+		private readonly FilesMetadataCache $metadataCache,
+		private readonly Authenticator $federationAuthenticator,
+		private readonly IEventDispatcher $dispatcher,
 	) {
 	}
 
@@ -98,7 +96,7 @@ class SystemMessage implements IEventListener {
 			try {
 				$this->parseMessage($event->getMessage(), $event->allowInaccurate());
 				// Disabled so we can parse mentions in captions: $event->stopPropagation();
-			} catch (\OutOfBoundsException $e) {
+			} catch (\OutOfBoundsException) {
 				// Unknown message, ignore
 			}
 		} elseif ($event->getMessage()->getMessageType() === ChatManager::VERB_MESSAGE_DELETED) {
@@ -1088,7 +1086,7 @@ class SystemMessage implements IEventListener {
 			$photo = $this->photoCache->getPhotoFromVObject($vObject);
 			if ($photo) {
 				$data['contact-photo-mimetype'] = $photo['Content-Type'];
-				$data['contact-photo'] = base64_encode($photo['body']);
+				$data['contact-photo'] = base64_encode((string)$photo['body']);
 			}
 		}
 
@@ -1141,7 +1139,7 @@ class SystemMessage implements IEventListener {
 		if (!isset($this->displayNames[$uid])) {
 			try {
 				$this->displayNames[$uid] = $this->getDisplayName($uid);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				$this->displayNames[$uid] = null;
 			}
 		}
@@ -1265,7 +1263,7 @@ class SystemMessage implements IEventListener {
 
 			$this->circleNames[$circleId] = $circle->getDisplayName();
 			$this->circleLinks[$circleId] = $circle->getUrl();
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			$circlesManager->stopSession();
 		}
 	}
@@ -1308,7 +1306,7 @@ class SystemMessage implements IEventListener {
 				return $this->l->t('Guest');
 			}
 			return $this->l->t('%s (guest)', [$name]);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return $this->l->t('Guest');
 		}
 	}

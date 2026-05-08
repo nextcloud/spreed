@@ -31,12 +31,12 @@ use Psr\Log\LoggerInterface;
 class ScheduledMessageService {
 	public function __construct(
 		private readonly ScheduledMessageMapper $scheduledMessageMapper,
-		protected ThreadService $threadService,
-		protected ITimeFactory $timeFactory,
-		protected IL10N $l,
-		protected LoggerInterface $logger,
-		protected CommentsManager $commentsManager,
-		protected MessageParser $messageParser,
+		private readonly ThreadService $threadService,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IL10N $l,
+		private readonly LoggerInterface $logger,
+		private readonly CommentsManager $commentsManager,
+		private readonly MessageParser $messageParser,
 	) {
 	}
 
@@ -150,8 +150,8 @@ class ScheduledMessageService {
 			$parent = $thread = null;
 			$entity = [];
 			foreach ($row as $field => $value) {
-				if (str_starts_with($field, 'th_')) {
-					$thread[substr($field, 3)] = $value;
+				if (str_starts_with((string)$field, 'th_')) {
+					$thread[substr((string)$field, 3)] = $value;
 					continue;
 				}
 				$entity[$field] = $value;

@@ -17,8 +17,8 @@ class PasswordException extends \InvalidArgumentException {
 	 * @param self::REASON_* $reason
 	 */
 	public function __construct(
-		protected string $reason,
-		protected string $hint = '',
+		private readonly string $reason,
+		private readonly string $hint = '',
 	) {
 		parent::__construct($reason);
 	}

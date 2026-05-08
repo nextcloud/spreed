@@ -18,9 +18,9 @@ class ClearResourceAccessCache implements IRepairStep {
 	protected const INVALIDATIONS = 1;
 
 	public function __construct(
-		protected IConfig $config,
-		protected IManager $manager,
-		protected ConversationProvider $provider,
+		private readonly IConfig $config,
+		private readonly IManager $manager,
+		private readonly ConversationProvider $provider,
 	) {
 	}
 

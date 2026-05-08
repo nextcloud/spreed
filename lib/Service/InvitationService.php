@@ -26,16 +26,16 @@ use OCP\Mail\IEmailValidator;
 
 class InvitationService {
 	public function __construct(
-		protected IAppManager $appManager,
-		protected ICloudIdManager $cloudIdManager,
-		protected IGroupManager $groupManager,
-		protected IPhoneNumberUtil $phoneNumberUtil,
-		protected IUserManager $userManager,
-		protected FederationManager $federationManager,
-		protected ParticipantService $participantService,
-		protected IConfig $serverConfig,
-		protected Config $talkConfig,
-		protected IEmailValidator $emailValidator,
+		private readonly IAppManager $appManager,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly IGroupManager $groupManager,
+		private readonly IPhoneNumberUtil $phoneNumberUtil,
+		private readonly IUserManager $userManager,
+		private readonly FederationManager $federationManager,
+		private readonly ParticipantService $participantService,
+		private readonly IConfig $serverConfig,
+		private readonly Config $talkConfig,
+		private readonly IEmailValidator $emailValidator,
 	) {
 	}
 

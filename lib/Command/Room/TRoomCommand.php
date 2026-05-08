@@ -90,7 +90,7 @@ trait TRoomCommand {
 	protected function setRoomDescription(Room $room, string $description): void {
 		try {
 			$this->roomService->setDescription($room, $description);
-		} catch (DescriptionException $e) {
+		} catch (DescriptionException) {
 			throw new InvalidArgumentException('Invalid room description.');
 		}
 	}
@@ -183,7 +183,7 @@ trait TRoomCommand {
 	protected function setRoomOwner(Room $room, string $userId): void {
 		try {
 			$participant = $this->participantService->getParticipant($room, $userId, false);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 		}
 
@@ -264,7 +264,7 @@ trait TRoomCommand {
 
 				// nothing to do, user is a participant already
 				continue;
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				// we expect the user not to be a participant yet
 			}
 
@@ -289,7 +289,7 @@ trait TRoomCommand {
 		foreach ($userIds as $userId) {
 			try {
 				$this->participantService->getParticipant($room, $userId, false);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 			}
 
@@ -316,7 +316,7 @@ trait TRoomCommand {
 
 			try {
 				$participant = $this->participantService->getParticipant($room, $userId, false);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 			}
 
@@ -341,7 +341,7 @@ trait TRoomCommand {
 		foreach ($userIds as $userId) {
 			try {
 				$participant = $this->participantService->getParticipant($room, $userId, false);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 			}
 
@@ -394,11 +394,11 @@ trait TRoomCommand {
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			return [];
 		}
 
-		return array_filter($this->participantService->getParticipantUserIds($room), static fn ($userId) => stripos($userId, (string)$context->getCurrentWord()) !== false);
+		return array_filter($this->participantService->getParticipantUserIds($room), static fn ($userId) => stripos((string)$userId, (string)$context->getCurrentWord()) !== false);
 	}
 
 	protected function setMessageExpiration(Room $room, int $seconds): void {

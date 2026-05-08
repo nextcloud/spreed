@@ -22,8 +22,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Install extends Base {
 	public function __construct(
-		private BotService $botService,
-		private BotServerMapper $botServerMapper,
+		private readonly BotService $botService,
+		private readonly BotServerMapper $botServerMapper,
 	) {
 		parent::__construct();
 	}
@@ -129,7 +129,7 @@ class Install extends Base {
 				$output->writeln('<error>Bot with the same secret is already registered</error>');
 				return 3;
 			} else {
-				$output->writeln('<error>' . get_class($e) . ': ' . $e->getMessage() . '</error>');
+				$output->writeln('<error>' . $e::class . ': ' . $e->getMessage() . '</error>');
 				return 1;
 			}
 		}

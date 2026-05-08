@@ -19,8 +19,6 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\RoomAttributes;
 use OCA\Talk\Service\ParticipantService;
-use OCA\Talk\Service\RecordingService;
-use OCA\Talk\Service\RoomService;
 use OCP\Activity\Exceptions\InvalidValueException;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -36,15 +34,13 @@ use Psr\Log\LoggerInterface;
 class Listener implements IEventListener {
 
 	public function __construct(
-		protected IManager $activityManager,
-		protected IUserSession $userSession,
-		protected ChatManager $chatManager,
-		protected ParticipantService $participantService,
-		protected RoomService $roomService,
-		protected RecordingService $recordingService,
-		protected LoggerInterface $logger,
-		protected ITimeFactory $timeFactory,
-		protected Setting $setting,
+		private readonly IManager $activityManager,
+		private readonly IUserSession $userSession,
+		private readonly ChatManager $chatManager,
+		private readonly ParticipantService $participantService,
+		private readonly LoggerInterface $logger,
+		private readonly ITimeFactory $timeFactory,
+		private readonly Setting $setting,
 	) {
 	}
 
@@ -54,7 +50,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		match (get_class($event)) {
+		match ($event::class) {
 			CallEndedEvent::class,
 			CallEndedForEveryoneEvent::class => $this->generateCallActivity($event),
 			AttendeesAddedEvent::class => $this->generateInvitationActivity($event->getRoom(), $event->getAttendees()),

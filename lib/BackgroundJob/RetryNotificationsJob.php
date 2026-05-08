@@ -17,10 +17,10 @@ use OCP\BackgroundJob\TimedJob;
  */
 class RetryNotificationsJob extends TimedJob {
 	public function __construct(
-		private BackendNotifier $backendNotifier,
-		ITimeFactory $timeFactory,
+		ITimeFactory $time,
+		private readonly BackendNotifier $backendNotifier,
 	) {
-		parent::__construct($timeFactory);
+		parent::__construct($time);
 
 		// Every time the jobs run
 		$this->setInterval(1);

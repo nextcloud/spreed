@@ -50,15 +50,15 @@ class FederationManager {
 	public const TOKEN_LENGTH = 64;
 
 	public function __construct(
-		private Manager $manager,
-		private ParticipantService $participantService,
-		private RoomService $roomService,
-		private InvitationMapper $invitationMapper,
-		private AttendeeMapper $attendeeMapper,
-		private BackendNotifier $backendNotifier,
-		private IManager $notificationManager,
-		private ICloudIdManager $cloudIdManager,
-		private RestrictionValidator $restrictionValidator,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
+		private readonly InvitationMapper $invitationMapper,
+		private readonly AttendeeMapper $attendeeMapper,
+		private readonly BackendNotifier $backendNotifier,
+		private readonly IManager $notificationManager,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly RestrictionValidator $restrictionValidator,
 	) {
 	}
 
@@ -161,7 +161,7 @@ class FederationManager {
 	public function acceptRemoteRoomShare(IUser $user, int $shareId): Participant {
 		try {
 			$invitation = $this->invitationMapper->getInvitationById($shareId);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			throw new \InvalidArgumentException('invitation');
 		}
 		if ($invitation->getUserId() !== $user->getUID()) {
@@ -221,7 +221,7 @@ class FederationManager {
 	public function rejectRemoteRoomShare(IUser $user, int $shareId): void {
 		try {
 			$invitation = $this->invitationMapper->getInvitationById($shareId);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			throw new \InvalidArgumentException('invitation');
 		}
 
@@ -243,7 +243,7 @@ class FederationManager {
 	public function rejectByRemoveSelf(Room $room, string $userId): void {
 		try {
 			$invitation = $this->invitationMapper->getInvitationForUserByLocalRoom($room, $userId);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			throw new \InvalidArgumentException('invitation');
 		}
 

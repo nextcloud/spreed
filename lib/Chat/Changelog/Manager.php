@@ -10,21 +10,17 @@ namespace OCA\Talk\Chat\Changelog;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Manager as RoomManager;
-use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
-use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\PreConditionNotMetException;
 
 class Manager {
 
 	public function __construct(
-		protected IConfig $config,
-		protected IDBConnection $connection,
-		protected RoomManager $roomManager,
-		protected ChatManager $chatManager,
-		protected ITimeFactory $timeFactory,
-		protected IL10N $l,
+		private readonly IConfig $config,
+		private readonly RoomManager $roomManager,
+		private readonly ChatManager $chatManager,
+		private readonly IL10N $l,
 	) {
 	}
 

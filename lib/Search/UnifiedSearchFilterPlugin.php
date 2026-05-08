@@ -21,8 +21,8 @@ use OCP\Util;
 class UnifiedSearchFilterPlugin implements IEventListener {
 
 	public function __construct(
-		protected Config $talkConfig,
-		protected IUserSession $userSession,
+		private readonly Config $talkConfig,
+		private readonly IUserSession $userSession,
 	) {
 	}
 

@@ -181,7 +181,7 @@ class ChatManagerTest extends TestCase {
 			if ($key === 'id') {
 				$value = (string)$value;
 			}
-			$comment->method('get' . ucfirst($key))->willReturn($value);
+			$comment->method('get' . ucfirst((string)$key))->willReturn($value);
 		}
 
 		return $comment;
@@ -843,7 +843,7 @@ class ChatManagerTest extends TestCase {
 			$list[$key] = $this->createMock(IComment::class);
 			$list[$key]->method('getMessage')
 				->willReturn($message);
-			$messageDecoded = json_decode($message, true);
+			$messageDecoded = json_decode((string)$message, true);
 			if (isset($messageDecoded['parameters']['share']) && $messageDecoded['parameters']['share'] === 'notExists') {
 				$this->shareProvider->expects($this->once())
 					->method('getShareById')

@@ -9,32 +9,23 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Federation\Proxy\TalkV1\Controller;
 
-use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Federation\Proxy\TalkV1\ProxyRequest;
 use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
-use OCA\Talk\Service\ParticipantService;
-use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\ICacheFactory;
 
 /**
  * @psalm-import-type TalkThreadInfo from ResponseDefinitions
  * @psalm-import-type TalkRoom from ResponseDefinitions
  */
 class ThreadController {
-
 	public function __construct(
-		protected ProxyRequest $proxy,
-		protected UserConverter $userConverter,
-		protected ParticipantService $participantService,
-		protected RoomFormatter $roomFormatter,
-		protected Notifier $notifier,
-		ICacheFactory $cacheFactory,
+		private readonly ProxyRequest $proxy,
+		private readonly UserConverter $userConverter,
 	) {
 	}
 

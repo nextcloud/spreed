@@ -23,9 +23,9 @@ use OCP\IDBConnection;
 class PollService {
 
 	public function __construct(
-		protected IDBConnection $connection,
-		protected PollMapper $pollMapper,
-		protected VoteMapper $voteMapper,
+		private readonly IDBConnection $connection,
+		private readonly PollMapper $pollMapper,
+		private readonly VoteMapper $voteMapper,
 	) {
 	}
 

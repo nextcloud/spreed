@@ -17,8 +17,8 @@ use OCP\SetupCheck\SetupResult;
 class NotifyPush implements ISetupCheck {
 
 	public function __construct(
-		protected IL10N $l10n,
-		protected IAppManager $appManager,
+		private readonly IL10N $l10n,
+		private readonly IAppManager $appManager,
 	) {
 	}
 

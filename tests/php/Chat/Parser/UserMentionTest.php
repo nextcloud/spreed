@@ -10,7 +10,6 @@ namespace OCA\Talk\Tests\php\Chat\Parser;
 
 use OCA\Talk\Chat\Parser\UserMention;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
@@ -34,7 +33,6 @@ class UserMentionTest extends TestCase {
 	protected ICommentsManager&MockObject $commentsManager;
 	protected IUserManager&MockObject $userManager;
 	protected IGroupManager&MockObject $groupManager;
-	protected GuestManager&MockObject $guestManager;
 	protected AvatarService&MockObject $avatarService;
 	protected ICloudIdManager&MockObject $cloudIdManager;
 	protected ParticipantService&MockObject $participantService;
@@ -49,7 +47,6 @@ class UserMentionTest extends TestCase {
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
-		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
@@ -60,7 +57,6 @@ class UserMentionTest extends TestCase {
 			$this->commentsManager,
 			$this->userManager,
 			$this->groupManager,
-			$this->guestManager,
 			$this->avatarService,
 			$this->cloudIdManager,
 			$this->participantService,

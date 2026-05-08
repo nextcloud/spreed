@@ -21,7 +21,6 @@ use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
-use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -32,11 +31,10 @@ class HostedSignalingServerController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected IClientService $clientService,
-		protected IL10N $l10n,
-		protected IConfig $config,
-		protected LoggerInterface $logger,
-		private HostedSignalingServerService $hostedSignalingServerService,
+		private readonly IL10N $l10n,
+		private readonly IConfig $config,
+		private readonly LoggerInterface $logger,
+		private readonly HostedSignalingServerService $hostedSignalingServerService,
 	) {
 		parent::__construct($appName, $request);
 	}

@@ -17,7 +17,7 @@ class RoomPasswordVerifyEvent extends ARoomEvent {
 
 	public function __construct(
 		Room $room,
-		protected string $password,
+		private readonly string $password,
 	) {
 		parent::__construct($room);
 	}

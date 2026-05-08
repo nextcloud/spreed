@@ -15,8 +15,8 @@ use OCP\SetupCheck\SetupResult;
 
 class RecordingBackend implements ISetupCheck {
 	public function __construct(
-		protected readonly Config $talkConfig,
-		protected readonly IL10N $l,
+		private readonly Config $talkConfig,
+		private readonly IL10N $l,
 	) {
 	}
 

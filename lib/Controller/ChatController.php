@@ -108,44 +108,44 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 	public function __construct(
 		string $appName,
-		private ?string $userId,
+		private readonly ?string $userId,
 		IRequest $request,
-		private IUserManager $userManager,
-		private IAppManager $appManager,
-		private ChatManager $chatManager,
-		protected Manager $manager,
-		private RoomFormatter $roomFormatter,
-		private ReactionManager $reactionManager,
-		private ParticipantService $participantService,
-		private SessionService $sessionService,
-		protected AttachmentService $attachmentService,
-		protected AvatarService $avatarService,
-		protected ReminderService $reminderService,
-		protected ThreadService $threadService,
-		private GuestManager $guestManager,
-		private MessageParser $messageParser,
-		protected Preloader $sharePreloader,
-		private IManager $autoCompleteManager,
-		private IUserStatusManager $statusManager,
-		protected MatterbridgeManager $matterbridgeManager,
-		protected BotService $botService,
-		private SearchPlugin $searchPlugin,
-		private ISearchResult $searchResult,
-		protected ITimeFactory $timeFactory,
-		protected IEventDispatcher $eventDispatcher,
-		protected IValidator $richObjectValidator,
-		protected ITrustedDomainHelper $trustedDomainHelper,
-		private IL10N $l,
-		protected Authenticator $federationAuthenticator,
-		protected ProxyCacheMessageService $pcmService,
-		protected Notifier $notifier,
-		protected IRichTextFormatter $richTextFormatter,
-		protected ITaskProcessingManager $taskProcessingManager,
-		protected IAppConfig $appConfig,
-		protected LoggerInterface $logger,
-		protected ScheduledMessageService $scheduledMessageManager,
-		private ConversationFolderService $conversationFolderService,
-		private Config $talkConfig,
+		private readonly IUserManager $userManager,
+		private readonly IAppManager $appManager,
+		private readonly ChatManager $chatManager,
+		private readonly Manager $manager,
+		private readonly RoomFormatter $roomFormatter,
+		private readonly ReactionManager $reactionManager,
+		private readonly ParticipantService $participantService,
+		private readonly SessionService $sessionService,
+		private readonly AttachmentService $attachmentService,
+		private readonly AvatarService $avatarService,
+		private readonly ReminderService $reminderService,
+		private readonly ThreadService $threadService,
+		private readonly GuestManager $guestManager,
+		private readonly MessageParser $messageParser,
+		private readonly Preloader $sharePreloader,
+		private readonly IManager $autoCompleteManager,
+		private readonly IUserStatusManager $statusManager,
+		private readonly MatterbridgeManager $matterbridgeManager,
+		private readonly BotService $botService,
+		private readonly SearchPlugin $searchPlugin,
+		private readonly ISearchResult $searchResult,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IEventDispatcher $eventDispatcher,
+		private readonly IValidator $richObjectValidator,
+		private readonly ITrustedDomainHelper $trustedDomainHelper,
+		private readonly IL10N $l,
+		private readonly Authenticator $federationAuthenticator,
+		private readonly ProxyCacheMessageService $pcmService,
+		private readonly Notifier $notifier,
+		private readonly IRichTextFormatter $richTextFormatter,
+		private readonly ITaskProcessingManager $taskProcessingManager,
+		private readonly IAppConfig $appConfig,
+		private readonly LoggerInterface $logger,
+		private readonly ScheduledMessageService $scheduledMessageManager,
+		private readonly ConversationFolderService $conversationFolderService,
+		private readonly Config $talkConfig,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -764,7 +764,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		try {
 			$this->richObjectValidator->validate('{object}', ['object' => $data]);
-		} catch (InvalidObjectExeption $e) {
+		} catch (InvalidObjectExeption) {
 			return new DataResponse(['error' => 'object'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -796,9 +796,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		try {
 			$comment = $this->chatManager->addSystemMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, true, $referenceId, threadId: $threadId);
-		} catch (MessageTooLongException $e) {
+		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1195,7 +1195,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 						'id' => (int)$parentId,
 						'deleted' => true,
 					];
-				} catch (NotFoundException $e) {
+				} catch (NotFoundException) {
 				}
 			}
 

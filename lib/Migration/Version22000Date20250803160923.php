@@ -24,7 +24,7 @@ use Override;
  */
 class Version22000Date20250803160923 extends SimpleMigrationStep {
 	public function __construct(
-		protected IDBConnection $db,
+		private readonly IDBConnection $db,
 	) {
 	}
 
@@ -66,7 +66,7 @@ class Version22000Date20250803160923 extends SimpleMigrationStep {
 
 		$tokens = [];
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$tokens[] = $row['share_with'];
 		}
 		$result->closeCursor();

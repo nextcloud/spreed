@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Calls extends Base {
 
 	public function __construct(
-		protected IDBConnection $connection,
+		private readonly IDBConnection $connection,
 	) {
 		parent::__construct();
 	}
@@ -49,7 +49,7 @@ class Calls extends Base {
 
 		$data = [];
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$key = (string)$row['token'];
 			if ($input->getOption('output') === Base::OUTPUT_FORMAT_PLAIN) {
 				$key = '"' . $key . '"';

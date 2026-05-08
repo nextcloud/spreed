@@ -27,9 +27,9 @@ use OCP\AppFramework\Http\DataResponse;
  */
 class RoomController {
 	public function __construct(
-		protected ProxyRequest $proxy,
-		protected UserConverter $userConverter,
-		protected ParticipantService $participantService,
+		private readonly ProxyRequest $proxy,
+		private readonly UserConverter $userConverter,
+		private readonly ParticipantService $participantService,
 	) {
 	}
 

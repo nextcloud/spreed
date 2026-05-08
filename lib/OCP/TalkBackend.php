@@ -25,12 +25,12 @@ use OCP\Talk\ITalkBackend;
 class TalkBackend implements ITalkBackend {
 
 	public function __construct(
-		protected Manager $manager,
-		protected ParticipantService $participantService,
-		protected RoomService $roomService,
-		protected IURLGenerator $url,
-		protected IUserSession $userSession,
-		protected Config $config,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
+		private readonly IURLGenerator $url,
+		private readonly IUserSession $userSession,
+		private readonly Config $config,
 	) {
 	}
 

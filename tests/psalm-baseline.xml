@@ -10,7 +10,7 @@
   </file>
   <file src="lib/Capabilities.php">
     <DeprecatedInterface>
-      <code><![CDATA[protected]]></code>
+      <code><![CDATA[private]]></code>
     </DeprecatedInterface>
   </file>
   <file src="lib/Chat/CommentsManager.php">

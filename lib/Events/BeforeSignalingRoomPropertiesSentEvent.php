@@ -14,8 +14,8 @@ class BeforeSignalingRoomPropertiesSentEvent extends ARoomEvent {
 
 	public function __construct(
 		Room $room,
-		protected ?string $userId,
-		protected array $properties,
+		private readonly ?string $userId,
+		private array $properties,
 	) {
 		parent::__construct($room);
 	}

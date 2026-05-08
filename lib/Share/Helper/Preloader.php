@@ -17,8 +17,8 @@ use OCP\Share\IShare;
  */
 class Preloader {
 	public function __construct(
-		protected RoomShareProvider $shareProvider,
-		protected FilesMetadataCache $filesMetadataCache,
+		private readonly RoomShareProvider $shareProvider,
+		private readonly FilesMetadataCache $filesMetadataCache,
 	) {
 	}
 
@@ -36,7 +36,7 @@ class Preloader {
 			$verb = $comment->getVerb();
 			if ($verb === 'object_shared') {
 				$message = $comment->getMessage();
-				$data = json_decode($message, true);
+				$data = json_decode((string)$message, true);
 				if (isset($data['parameters']['share'])) {
 					$shareIds[] = $data['parameters']['share'];
 				}

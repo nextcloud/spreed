@@ -28,8 +28,8 @@ class CallNotificationController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected ParticipantService $participantService,
-		protected ?string $userId,
+		private readonly ParticipantService $participantService,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}

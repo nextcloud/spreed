@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\Exceptions\ImpossibleToKillException;
-use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\ResponseDefinitions;
@@ -29,10 +28,9 @@ class MatterbridgeController extends AEnvironmentAwareOCSController {
 
 	public function __construct(
 		string $appName,
-		protected ?string $userId,
 		IRequest $request,
-		protected Manager $manager,
-		protected MatterbridgeManager $bridgeManager,
+		private readonly MatterbridgeManager $bridgeManager,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}

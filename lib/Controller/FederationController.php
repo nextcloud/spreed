@@ -34,10 +34,10 @@ use OCP\IUserSession;
 class FederationController extends OCSController {
 	public function __construct(
 		IRequest $request,
-		private FederationManager $federationManager,
-		private Manager $talkManager,
-		private IUserSession $userSession,
-		private RoomFormatter $roomFormatter,
+		private readonly FederationManager $federationManager,
+		private readonly Manager $talkManager,
+		private readonly IUserSession $userSession,
+		private readonly RoomFormatter $roomFormatter,
 	) {
 		parent::__construct(Application::APP_ID, $request);
 	}
@@ -81,7 +81,7 @@ class FederationController extends OCSController {
 			$participant = $this->federationManager->acceptRemoteRoomShare($user, $id);
 		} catch (CannotReachRemoteException) {
 			return new DataResponse(['error' => 'remote'], Http::STATUS_GONE);
-		} catch (UnauthorizedException $e) {
+		} catch (UnauthorizedException) {
 			return new DataResponse(['error' => 'user'], Http::STATUS_NOT_FOUND);
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], $e->getMessage() === 'invitation' ? Http::STATUS_NOT_FOUND : Http::STATUS_BAD_REQUEST);
@@ -120,7 +120,7 @@ class FederationController extends OCSController {
 		}
 		try {
 			$this->federationManager->rejectRemoteRoomShare($user, $id);
-		} catch (UnauthorizedException $e) {
+		} catch (UnauthorizedException) {
 			return new DataResponse(['error' => 'user'], Http::STATUS_NOT_FOUND);
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], $e->getMessage() === 'invitation' ? Http::STATUS_NOT_FOUND : Http::STATUS_BAD_REQUEST);
@@ -150,7 +150,7 @@ class FederationController extends OCSController {
 		$invitations = $this->federationManager->getRemoteRoomShares($user);
 
 		/** @var list<TalkFederationInvite> $data */
-		$data = array_values(array_filter(array_map([$this, 'enrichInvite'], $invitations)));
+		$data = array_values(array_filter(array_map($this->enrichInvite(...), $invitations)));
 
 		return new DataResponse($data);
 	}

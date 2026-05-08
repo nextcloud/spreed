@@ -34,10 +34,10 @@ use Psr\Log\LoggerInterface;
  */
 class BotListener implements IEventListener {
 	public function __construct(
-		protected BotServerMapper $botServerMapper,
-		protected BotConversationMapper $botConversationMapper,
-		protected BotService $botService,
-		protected LoggerInterface $logger,
+		private readonly BotServerMapper $botServerMapper,
+		private readonly BotConversationMapper $botConversationMapper,
+		private readonly BotService $botService,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 

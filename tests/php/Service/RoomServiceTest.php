@@ -24,7 +24,6 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\IJobList;
 use OCP\Calendar\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
@@ -49,7 +48,6 @@ class RoomServiceTest extends TestCase {
 	protected Config&MockObject $config;
 	protected IHasher&MockObject $hasher;
 	protected IEventDispatcher&MockObject $dispatcher;
-	protected IJobList&MockObject $jobList;
 	protected LoggerInterface&MockObject $logger;
 	protected IL10N&MockObject $l10n;
 	protected IManager $calendarManager;
@@ -67,7 +65,6 @@ class RoomServiceTest extends TestCase {
 		$this->config = $this->createMock(Config::class);
 		$this->hasher = $this->createMock(IHasher::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
-		$this->jobList = $this->createMock(IJobList::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->l10n = $this->createMock(IL10N::class);
 		$this->emojiService = Server::get(EmojiService::class);
@@ -82,7 +79,6 @@ class RoomServiceTest extends TestCase {
 			$this->config,
 			$this->hasher,
 			$this->dispatcher,
-			$this->jobList,
 			$this->emojiService,
 			$this->logger,
 			$this->l10n,
@@ -374,7 +370,6 @@ class RoomServiceTest extends TestCase {
 			$this->config,
 			$this->hasher,
 			$dispatcher,
-			$this->jobList,
 			$this->emojiService,
 			$this->logger,
 			$this->l10n,

@@ -21,9 +21,9 @@ use OCP\Share\IShare;
 class RoomPlugin implements ISearchPlugin {
 
 	public function __construct(
-		protected Manager $manager,
-		protected ParticipantService $participantService,
-		protected IUserSession $userSession,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly IUserSession $userSession,
 	) {
 	}
 
@@ -61,7 +61,7 @@ class RoomPlugin implements ISearchPlugin {
 			if (mb_stripos($room->getDisplayName($userId), $search) !== false) {
 				$item = $this->roomToSearchResultItem($room, $userId);
 
-				if (mb_strtolower($item['label']) === mb_strtolower($search)) {
+				if (mb_strtolower((string)$item['label']) === mb_strtolower($search)) {
 					$result['exact'][] = $item;
 				} else {
 					$result['wide'][] = $item;

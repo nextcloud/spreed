@@ -34,8 +34,8 @@ class CircleMembershipListener extends AMembershipListener {
 		ParticipantService $participantService,
 		BanService $banService,
 		LoggerInterface $logger,
-		private IUserManager $userManager,
-		private ISession $session,
+		private readonly IUserManager $userManager,
+		private readonly ISession $session,
 	) {
 		parent::__construct(
 			$manager,
@@ -135,7 +135,7 @@ class CircleMembershipListener extends AMembershipListener {
 				if ($participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
 					$this->participantService->updateParticipantType($room, $participant, Participant::USER);
 				}
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				$this->participantService->addUsers($room, [[
 					'actorType' => Attendee::ACTOR_USERS,
 					'actorId' => $member->getUserId(),

@@ -17,9 +17,9 @@ class CallEndedForEveryoneEvent extends ACallEndedForEveryoneEvent {
 		?Participant $actor,
 		\DateTime $oldActiveSince,
 		/** @var string[] */
-		protected array $sessionIds = [],
+		private readonly array $sessionIds = [],
 		/** @var string[] */
-		protected array $userIds = [],
+		private readonly array $userIds = [],
 	) {
 		parent::__construct(
 			$room,

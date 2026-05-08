@@ -20,8 +20,8 @@ use OCP\Migration\SimpleMigrationStep;
 class Version2001Date20171026134605 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IDBConnection $connection,
-		protected IConfig $config,
+		private readonly IDBConnection $connection,
+		private readonly IConfig $config,
 	) {
 	}
 
@@ -174,7 +174,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			->from('spreedme_rooms');
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$insert
 				->setParameter('name', $row['name'])
 				->setParameter('token', $row['token'])
@@ -219,7 +219,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			->from('spreedme_room_participants');
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			if (!isset($roomIdMap[(int)$row['roomId']])) {
 				continue;
 			}
@@ -261,11 +261,11 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 
 		try {
 			$result = $query->executeQuery();
-		} catch (TableNotFoundException $e) {
+		} catch (TableNotFoundException) {
 			return;
 		}
 
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			if (!isset($roomIdMap[(int)$row['object_id']])) {
 				$delete
 					->setParameter('id', (int)$row['notification_id'])
@@ -310,7 +310,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			return;
 		}
 
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			if (!isset($roomIdMap[(int)$row['object_id']])) {
 				$delete
 					->setParameter('id', (int)$row['activity_id'])
@@ -319,7 +319,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				continue;
 			}
 
-			$params = json_decode($row['subjectparams'], true);
+			$params = json_decode((string)$row['subjectparams'], true);
 
 			if (!isset($params['room'])) {
 				$delete
@@ -366,8 +366,8 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			return;
 		}
 
-		while ($row = $result->fetch()) {
-			$params = json_decode($row['subjectparams'], true);
+		while ($row = $result->fetchAssociative()) {
+			$params = json_decode((string)$row['subjectparams'], true);
 
 			if (!isset($params['room']) || !isset($roomIdMap[(int)$params['room']])) {
 				$delete

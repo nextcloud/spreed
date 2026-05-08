@@ -54,21 +54,21 @@ class PageController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private IEventDispatcher $eventDispatcher,
-		private RoomController $api,
-		private TalkSession $talkSession,
-		private IUserSession $userSession,
-		private ?string $userId,
-		protected LoggerInterface $logger,
-		private Manager $manager,
-		private ParticipantService $participantService,
-		private RoomService $roomService,
-		private IURLGenerator $url,
-		private INotificationManager $notificationManager,
-		protected IInitialState $initialState,
-		private IThrottler $throttler,
-		protected Config $talkConfig,
-		protected IGroupManager $groupManager,
+		private readonly IEventDispatcher $eventDispatcher,
+		private readonly RoomController $api,
+		private readonly TalkSession $talkSession,
+		private readonly IUserSession $userSession,
+		private readonly LoggerInterface $logger,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
+		private readonly IURLGenerator $url,
+		private readonly INotificationManager $notificationManager,
+		private readonly IInitialState $initialState,
+		private readonly IThrottler $throttler,
+		private readonly Config $talkConfig,
+		private readonly IGroupManager $groupManager,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -187,7 +187,7 @@ class PageController extends Controller {
 				if ($room->getType() !== Room::TYPE_PUBLIC) {
 					$this->manager->getRoomForUser($room->getId(), $this->userId);
 				}
-			} catch (RoomNotFoundException $e) {
+			} catch (RoomNotFoundException) {
 				// Room not found, redirect to main page
 				$token = '';
 				$throttle = true;
@@ -198,7 +198,7 @@ class PageController extends Controller {
 				try {
 					$participant = $this->participantService->getParticipant($room, $this->userId, false);
 					$requirePassword = $participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED;
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					$requirePassword = true;
 				}
 
@@ -296,7 +296,7 @@ class PageController extends Controller {
 	public function recording(string $token): Response {
 		try {
 			$room = $this->manager->getRoomByToken($token);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			$response = new NotFoundResponse();
 			$this->logger->debug('Recording "' . ($this->userId ?? 'ANONYMOUS') . '" throttled for accessing "' . $token . '"', ['app' => 'spreed-bfp']);
 			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
@@ -367,7 +367,7 @@ class PageController extends Controller {
 			if ($room->getType() !== Room::TYPE_PUBLIC) {
 				throw new RoomNotFoundException();
 			}
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			$redirectUrl = $this->url->linkToRoute('spreed.Page.index');
 			if ($token) {
 				$redirectUrl = $this->url->linkToRoute('spreed.Page.showCall', ['token' => $token]);
@@ -505,7 +505,7 @@ class PageController extends Controller {
 					throw new RoomNotFoundException();
 				}
 				return new RedirectResponse($this->url->linkToRoute('spreed.Page.showCall', ['token' => $token]));
-			} catch (RoomNotFoundException $e) {
+			} catch (RoomNotFoundException) {
 				return new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
 					'redirect_url' => $this->url->linkToRoute('spreed.Page.showCall', ['token' => $token]),
 				]));

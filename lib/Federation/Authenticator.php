@@ -24,8 +24,8 @@ class Authenticator {
 	protected ?Participant $participant = null;
 
 	public function __construct(
-		protected IRequest $request,
-		protected ICloudIdManager $cloudIdManager,
+		private readonly IRequest $request,
+		private readonly ICloudIdManager $cloudIdManager,
 	) {
 	}
 

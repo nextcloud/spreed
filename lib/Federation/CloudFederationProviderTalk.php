@@ -64,26 +64,26 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 	protected ?ICache $proxyCacheMessages;
 
 	public function __construct(
-		private ICloudIdManager $cloudIdManager,
-		private IUserManager $userManager,
-		private AddressHandler $addressHandler,
-		private FederationManager $federationManager,
-		private Config $config,
-		private IAppConfig $appConfig,
-		private INotificationManager $notificationManager,
-		private ParticipantService $participantService,
-		private RoomService $roomService,
-		private AttendeeMapper $attendeeMapper,
-		private InvitationMapper $invitationMapper,
-		private Manager $manager,
-		private ISession $session,
-		private IEventDispatcher $dispatcher,
-		private LoggerInterface $logger,
-		private ProxyCacheMessageMapper $proxyCacheMessageMapper,
-		private ProxyCacheMessageService $pcmService,
-		private FederationChatNotifier $federationChatNotifier,
-		private UserConverter $userConverter,
-		private ITimeFactory $timeFactory,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly IUserManager $userManager,
+		private readonly AddressHandler $addressHandler,
+		private readonly FederationManager $federationManager,
+		private readonly Config $config,
+		private readonly IAppConfig $appConfig,
+		private readonly INotificationManager $notificationManager,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
+		private readonly AttendeeMapper $attendeeMapper,
+		private readonly InvitationMapper $invitationMapper,
+		private readonly Manager $manager,
+		private readonly ISession $session,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly LoggerInterface $logger,
+		private readonly ProxyCacheMessageMapper $proxyCacheMessageMapper,
+		private readonly ProxyCacheMessageService $pcmService,
+		private readonly FederationChatNotifier $federationChatNotifier,
+		private readonly UserConverter $userConverter,
+		private readonly ITimeFactory $timeFactory,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->proxyCacheMessages = $cacheFactory->isAvailable() ? $cacheFactory->createDistributed(CachePrefix::FEDERATED_PCM) : null;
@@ -162,7 +162,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 			if ($shareWithUser === null) {
 				$this->logger->debug('Received a federation invite for user that could not be found');
 				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
-			} elseif (!str_starts_with($localCloudId, $shareWithUser->getUID() . '@')) {
+			} elseif (!str_starts_with((string)$localCloudId, $shareWithUser->getUID() . '@')) {
 				// Fix the user ID as we also return it via the cloud federation api response in Nextcloud 30+
 				$cloudId = $this->cloudIdManager->resolveCloudId($localCloudId);
 				$localRemote = $cloudId->getRemote();
@@ -200,22 +200,15 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 		if (!is_numeric($providerId)) {
 			throw new BadRequestException(['providerId']);
 		}
-		switch ($notificationType) {
-			case FederationManager::NOTIFICATION_SHARE_ACCEPTED:
-				return $this->shareAccepted((int)$providerId, $notification);
-			case FederationManager::NOTIFICATION_SHARE_DECLINED:
-				return $this->shareDeclined((int)$providerId, $notification);
-			case FederationManager::NOTIFICATION_SHARE_UNSHARED:
-				return $this->shareUnshared((int)$providerId, $notification);
-			case FederationManager::NOTIFICATION_PARTICIPANT_MODIFIED:
-				return $this->participantModified((int)$providerId, $notification);
-			case FederationManager::NOTIFICATION_ROOM_MODIFIED:
-				return $this->roomModified((int)$providerId, $notification);
-			case FederationManager::NOTIFICATION_MESSAGE_POSTED:
-				return $this->messagePosted((int)$providerId, $notification);
-		}
-
-		throw new BadRequestException([$notificationType]);
+		return match ($notificationType) {
+			FederationManager::NOTIFICATION_SHARE_ACCEPTED => $this->shareAccepted((int)$providerId, $notification),
+			FederationManager::NOTIFICATION_SHARE_DECLINED => $this->shareDeclined((int)$providerId, $notification),
+			FederationManager::NOTIFICATION_SHARE_UNSHARED => $this->shareUnshared((int)$providerId, $notification),
+			FederationManager::NOTIFICATION_PARTICIPANT_MODIFIED => $this->participantModified((int)$providerId, $notification),
+			FederationManager::NOTIFICATION_ROOM_MODIFIED => $this->roomModified((int)$providerId, $notification),
+			FederationManager::NOTIFICATION_MESSAGE_POSTED => $this->messagePosted((int)$providerId, $notification),
+			default => throw new BadRequestException([$notificationType]),
+		};
 	}
 
 	/**
@@ -327,7 +320,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 
 		try {
 			$participant = $this->participantService->getParticipant($room, $invite->getUserId());
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			throw new ShareNotFound(FederationManager::OCM_RESOURCE_NOT_FOUND);
 		}
 
@@ -693,8 +686,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 		array $payload,
 	): string {
 		$remoteServerUrl = $payload['remoteServerUrl'];
-		if (str_starts_with($remoteServerUrl, 'https://')) {
-			$remoteServerUrl = substr($remoteServerUrl, strlen('https://'));
+		if (str_starts_with((string)$remoteServerUrl, 'https://')) {
+			$remoteServerUrl = substr((string)$remoteServerUrl, strlen('https://'));
 		}
 
 		try {

@@ -18,8 +18,8 @@ use OCP\Migration\IRepairStep;
 class CacheUserDisplayNames implements IRepairStep {
 
 	public function __construct(
-		protected IDBConnection $connection,
-		protected IUserManager $userManager,
+		private readonly IDBConnection $connection,
+		private readonly IUserManager $userManager,
 	) {
 	}
 
@@ -44,7 +44,7 @@ class CacheUserDisplayNames implements IRepairStep {
 			->groupBy('actor_id');
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$user = $this->userManager->get($row['actor_id']);
 			if (!$user instanceof IUser) {
 				continue;

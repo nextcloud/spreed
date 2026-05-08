@@ -21,10 +21,10 @@ class TalkAction implements ILinkAction {
 	private ?IUser $targetUser = null;
 
 	public function __construct(
-		private Config $config,
-		private IL10N $l,
-		private IURLGenerator $urlGenerator,
-		private IUserSession $userSession,
+		private readonly Config $config,
+		private readonly IL10N $l,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly IUserSession $userSession,
 	) {
 	}
 

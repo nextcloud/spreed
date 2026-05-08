@@ -16,7 +16,7 @@ class RoomSyncedEvent extends ARoomSyncedEvent {
 	 */
 	public function __construct(
 		Room $room,
-		protected array $properties,
+		private readonly array $properties,
 	) {
 		parent::__construct($room);
 	}

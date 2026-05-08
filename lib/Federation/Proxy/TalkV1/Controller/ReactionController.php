@@ -21,8 +21,8 @@ use OCP\AppFramework\Http\DataResponse;
  */
 class ReactionController {
 	public function __construct(
-		protected ProxyRequest $proxy,
-		protected UserConverter $userConverter,
+		private readonly ProxyRequest $proxy,
+		private readonly UserConverter $userConverter,
 	) {
 	}
 

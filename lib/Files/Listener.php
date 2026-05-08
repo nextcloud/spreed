@@ -41,16 +41,16 @@ use OCP\IUserManager;
 class Listener implements IEventListener {
 
 	public function __construct(
-		protected Util $util,
-		protected ParticipantService $participantService,
-		protected IUserManager $userManager,
-		protected TalkSession $talkSession,
+		private readonly Util $util,
+		private readonly ParticipantService $participantService,
+		private readonly IUserManager $userManager,
+		private readonly TalkSession $talkSession,
 	) {
 	}
 
 	#[\Override]
 	public function handle(Event $event): void {
-		match (get_class($event)) {
+		match ($event::class) {
 			BeforeUserJoinedRoomEvent::class => $this->beforeUserJoinedRoomEvent($event),
 			BeforeGuestJoinedRoomEvent::class => $this->beforeGuestJoinedRoomEvent($event),
 		};
@@ -129,7 +129,7 @@ class Listener implements IEventListener {
 
 		try {
 			$this->participantService->getParticipant($room, $userId, false);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			$user = $this->userManager->get($userId);
 
 			$this->participantService->addUsers($room, [[

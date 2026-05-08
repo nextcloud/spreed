@@ -12,7 +12,6 @@ use OCA\Circles\CirclesManager;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Room;
@@ -40,15 +39,14 @@ class UserMention implements IEventListener {
 	protected array $circleLinks = [];
 
 	public function __construct(
-		protected IAppManager $appManager,
-		protected ICommentsManager $commentsManager,
-		protected IUserManager $userManager,
-		protected IGroupManager $groupManager,
-		protected GuestManager $guestManager,
-		protected AvatarService $avatarService,
-		protected ICloudIdManager $cloudIdManager,
-		protected ParticipantService $participantService,
-		protected IL10N $l,
+		private readonly IAppManager $appManager,
+		private readonly ICommentsManager $commentsManager,
+		private readonly IUserManager $userManager,
+		private readonly IGroupManager $groupManager,
+		private readonly AvatarService $avatarService,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly ParticipantService $participantService,
+		private readonly IL10N $l,
 	) {
 	}
 
@@ -166,7 +164,7 @@ class UserMention implements IEventListener {
 				try {
 					$participant = $this->participantService->getParticipantByActor($chatMessage->getRoom(), Attendee::ACTOR_GUESTS, substr($mention['id'], strlen('guest/')));
 					$displayName = $participant->getAttendee()->getDisplayName() ?: $this->l->t('Guest');
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					$displayName = $this->l->t('Guest');
 				}
 
@@ -230,7 +228,7 @@ class UserMention implements IEventListener {
 			} else {
 				try {
 					$displayName = $this->commentsManager->resolveDisplayName($mention['type'], $mention['id']);
-				} catch (\OutOfBoundsException $e) {
+				} catch (\OutOfBoundsException) {
 					// There is no registered display name resolver for the mention
 					// type, so the client decides what to display.
 					$displayName = '';
@@ -266,18 +264,14 @@ class UserMention implements IEventListener {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function getRoomType(Room $room): string {
-		switch ($room->getType()) {
-			case Room::TYPE_ONE_TO_ONE:
-			case Room::TYPE_ONE_TO_ONE_FORMER:
-			case Room::TYPE_NOTE_TO_SELF:
-				return 'one2one';
-			case Room::TYPE_GROUP:
-				return 'group';
-			case Room::TYPE_PUBLIC:
-				return 'public';
-			default:
-				throw new \InvalidArgumentException('Unknown room type');
-		}
+		return match ($room->getType()) {
+			Room::TYPE_ONE_TO_ONE,
+			Room::TYPE_ONE_TO_ONE_FORMER => 'one2one',
+			Room::TYPE_GROUP,
+			Room::TYPE_NOTE_TO_SELF => 'group',
+			Room::TYPE_PUBLIC => 'public',
+			default => throw new \InvalidArgumentException('Unknown room type'),
+		};
 	}
 
 	protected function getCircle(string $circleId): array {

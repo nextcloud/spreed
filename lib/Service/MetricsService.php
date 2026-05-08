@@ -11,13 +11,11 @@ namespace OCA\Talk\Service;
 
 use OCA\Talk\Participant;
 use OCP\IDBConnection;
-use Psr\Log\LoggerInterface;
 
 class MetricsService {
 
 	public function __construct(
-		protected LoggerInterface $logger,
-		protected IDBConnection $connection,
+		private readonly IDBConnection $connection,
 	) {
 	}
 

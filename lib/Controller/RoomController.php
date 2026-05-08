@@ -124,44 +124,44 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 	public function __construct(
 		string $appName,
-		protected ?string $userId,
 		IRequest $request,
-		protected IAppManager $appManager,
-		protected TalkSession $session,
-		protected IUserManager $userManager,
-		protected IGroupManager $groupManager,
-		protected Manager $manager,
-		protected RoomService $roomService,
-		protected BreakoutRoomService $breakoutRoomService,
-		protected NoteToSelfService $noteToSelfService,
-		protected InvitationService $invitationService,
-		protected ParticipantService $participantService,
-		protected SessionService $sessionService,
-		protected GuestManager $guestManager,
-		protected IUserStatusManager $statusManager,
-		protected ICalendarManager $calendarManager,
-		protected IEventDispatcher $dispatcher,
-		protected ITimeFactory $timeFactory,
-		protected ChecksumVerificationService $checksumVerificationService,
-		protected RoomFormatter $roomFormatter,
-		protected Preloader $sharePreloader,
-		protected IConfig $config,
-		protected IAppConfig $appConfig,
-		protected Config $talkConfig,
-		protected ICloudIdManager $cloudIdManager,
-		protected IPhoneNumberUtil $phoneNumberUtil,
-		protected PhoneService $phoneService,
-		protected IThrottler $throttler,
-		protected LoggerInterface $logger,
-		protected Authenticator $federationAuthenticator,
-		protected Capabilities $capabilities,
-		protected FederationManager $federationManager,
-		protected BanService $banService,
-		protected IURLGenerator $url,
-		protected IL10N $l,
-		protected ThreadService $threadService,
-		protected ConversationTagService $conversationTagService,
-		protected Forced $forcedParameters,
+		private readonly IAppManager $appManager,
+		private readonly TalkSession $session,
+		private readonly IUserManager $userManager,
+		private readonly IGroupManager $groupManager,
+		private readonly Manager $manager,
+		private readonly RoomService $roomService,
+		private readonly BreakoutRoomService $breakoutRoomService,
+		private readonly NoteToSelfService $noteToSelfService,
+		private readonly InvitationService $invitationService,
+		private readonly ParticipantService $participantService,
+		private readonly SessionService $sessionService,
+		private readonly GuestManager $guestManager,
+		private readonly IUserStatusManager $statusManager,
+		private readonly ICalendarManager $calendarManager,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly ITimeFactory $timeFactory,
+		private readonly ChecksumVerificationService $checksumVerificationService,
+		private readonly RoomFormatter $roomFormatter,
+		private readonly Preloader $sharePreloader,
+		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
+		private readonly Config $talkConfig,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly IPhoneNumberUtil $phoneNumberUtil,
+		private readonly PhoneService $phoneService,
+		private readonly IThrottler $throttler,
+		private readonly LoggerInterface $logger,
+		private readonly Authenticator $federationAuthenticator,
+		private readonly Capabilities $capabilities,
+		private readonly FederationManager $federationManager,
+		private readonly BanService $banService,
+		private readonly IURLGenerator $url,
+		private readonly IL10N $l,
+		private readonly ThreadService $threadService,
+		private readonly ConversationTagService $conversationTagService,
+		private readonly Forced $forcedParameters,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -327,7 +327,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 					thread: $threads[$room->getId()] ?? null,
 					isThreadInfoComplete: true,
 				);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				// for example in case the room was deleted concurrently,
 				// the user is not a participant anymore
 			}
@@ -399,7 +399,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		foreach ($rooms as $room) {
 			try {
 				$participant = $this->participantService->getParticipant($room, $this->userId);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				$participant = null;
 			}
 
@@ -436,7 +436,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	public function getSingleRoom(string $token): DataResponse {
 		try {
 			$isSIPBridgeRequest = $this->validateSIPBridgeRequest($token);
-		} catch (UnauthorizedException $e) {
+		} catch (UnauthorizedException) {
 			/**
 			 * A hack to fix type collision
 			 * @var DataResponse<Http::STATUS_UNAUTHORIZED, null, array{}> $response
@@ -461,10 +461,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 				try {
 					$participant = $this->participantService->getParticipant($room, $this->userId, $sessionId);
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					try {
 						$participant = $this->participantService->getParticipantBySession($room, $sessionId);
-					} catch (ParticipantNotFoundException $e) {
+					} catch (ParticipantNotFoundException) {
 					}
 				}
 			} else {
@@ -841,7 +841,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$this->formatRoom($room, $this->participantService->getParticipant($room, $currentUser->getUID(), false)),
 				Http::STATUS_OK
 			);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 		}
 
 		try {
@@ -850,10 +850,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$this->formatRoom($room, $this->participantService->getParticipant($room, $currentUser->getUID(), false)),
 				Http::STATUS_CREATED
 			);
-		} catch (\InvalidArgumentException $e) {
+		} catch (\InvalidArgumentException) {
 			// Same current and target user
 			return new DataResponse(['error' => 'invite'], Http::STATUS_FORBIDDEN);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			return new DataResponse(['error' => 'invite'], Http::STATUS_FORBIDDEN);
 		}
 	}
@@ -1542,7 +1542,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		// add the remaining users in batch
 		try {
 			$this->participantService->addUsers($this->room, $participantsToAdd, $addedBy);
-		} catch (CannotReachRemoteException $e) {
+		} catch (CannotReachRemoteException) {
 			return new DataResponse(['error' => 'reach-remote'], Http::STATUS_NOT_FOUND);
 		}
 
@@ -1635,7 +1635,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	public function removeAttendeeFromRoom(int $attendeeId): DataResponse {
 		try {
 			$targetParticipant = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return new DataResponse(['error' => 'participant'], Http::STATUS_NOT_FOUND);
 		}
 
@@ -2051,7 +2051,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 					$previousParticipant = $this->participantService->getParticipantBySession($room, $sessionId);
 				}
 				$previousSession = $previousParticipant->getSession();
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 			}
 
 			if ($previousSession instanceof Session && $previousSession->getSessionId() === $sessionId) {
@@ -2094,7 +2094,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				if ($authenticatedEmailGuest !== null && $previousParticipant === null) {
 					try {
 						$previousParticipant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_EMAILS, $authenticatedEmailGuest);
-					} catch (ParticipantNotFoundException $e) {
+					} catch (ParticipantNotFoundException) {
 					}
 				}
 				$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, $password, $result['result'], $previousParticipant);
@@ -2266,7 +2266,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		try {
 			$participant = $this->participantService->getParticipantByPin($this->room, $pin);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
@@ -2424,7 +2424,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$response->throttle(['action' => 'talkSipBridgeSecret']);
 				return $response;
 			}
-		} catch (UnauthorizedException $e) {
+		} catch (UnauthorizedException) {
 			$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'talkSipBridgeSecret']);
 			return $response;
@@ -2473,7 +2473,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				$response->throttle(['action' => 'talkSipBridgeSecret']);
 				return $response;
 			}
-		} catch (UnauthorizedException $e) {
+		} catch (UnauthorizedException) {
 			$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
 			$response->throttle(['action' => 'talkSipBridgeSecret']);
 			return $response;
@@ -2680,7 +2680,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	protected function changeParticipantType(int $attendeeId, bool $promote): DataResponse {
 		try {
 			$targetParticipant = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
@@ -2855,7 +2855,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			try {
 				$timerDateTime = $this->timeFactory->getDateTime('@' . $timer);
 				$timerDateTime->setTimezone(new \DateTimeZone('UTC'));
-			} catch (\Exception $e) {
+			} catch (\Exception) {
 				return new DataResponse(['error' => LobbyException::REASON_VALUE], Http::STATUS_BAD_REQUEST);
 			}
 		}
@@ -2989,7 +2989,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if ($attendeeId !== null) {
 			try {
 				$participants[] = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				return new DataResponse(null, Http::STATUS_NOT_FOUND);
 			}
 		} else {

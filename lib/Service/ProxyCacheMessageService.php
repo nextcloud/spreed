@@ -27,9 +27,9 @@ use Psr\Log\LoggerInterface;
  */
 class ProxyCacheMessageService {
 	public function __construct(
-		protected ProxyCacheMessageMapper $mapper,
-		protected LoggerInterface $logger,
-		protected ITimeFactory $timeFactory,
+		private readonly ProxyCacheMessageMapper $mapper,
+		private readonly LoggerInterface $logger,
+		private readonly ITimeFactory $timeFactory,
 	) {
 	}
 

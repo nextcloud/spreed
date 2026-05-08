@@ -24,7 +24,7 @@ use OCP\EventDispatcher\IEventListener;
  */
 class Listener implements IEventListener {
 	public function __construct(
-		protected IManager $resourceManager,
+		private readonly IManager $resourceManager,
 	) {
 	}
 

@@ -12,7 +12,7 @@ namespace OCA\Talk\Exceptions;
 class DialOutFailedException extends \RuntimeException {
 	public function __construct(
 		string $errorCode,
-		protected string $readableError,
+		private readonly string $readableError,
 	) {
 		parent::__construct($errorCode);
 	}

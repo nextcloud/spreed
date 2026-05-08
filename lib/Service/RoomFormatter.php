@@ -10,7 +10,6 @@ namespace OCA\Talk\Service;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
-use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Session;
@@ -37,23 +36,22 @@ use OCP\UserStatus\IUserStatus;
  */
 class RoomFormatter {
 	public function __construct(
-		protected Config $talkConfig,
-		protected IAppConfig $appConfig,
-		protected AvatarService $avatarService,
-		protected ParticipantService $participantService,
-		protected RoomService $roomService,
-		protected ChatManager $chatManager,
-		protected MessageParser $messageParser,
-		protected IConfig $serverConfig,
-		protected ITimeFactory $timeFactory,
-		protected IAppManager $appManager,
-		protected IManager $userStatusManager,
-		protected IUserManager $userManager,
-		protected ProxyCacheMessageService $pcmService,
-		protected UserConverter $userConverter,
-		protected IL10N $l10n,
-		protected ?string $userId,
-		protected ThreadService $threadService,
+		private readonly Config $talkConfig,
+		private readonly IAppConfig $appConfig,
+		private readonly AvatarService $avatarService,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
+		private readonly ChatManager $chatManager,
+		private readonly MessageParser $messageParser,
+		private readonly IConfig $serverConfig,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IAppManager $appManager,
+		private readonly IManager $userStatusManager,
+		private readonly IUserManager $userManager,
+		private readonly ProxyCacheMessageService $pcmService,
+		private readonly IL10N $l10n,
+		private readonly ThreadService $threadService,
+		private readonly ?string $userId,
 	) {
 	}
 
@@ -252,7 +250,7 @@ class RoomFormatter {
 			'isArchived' => $attendee->isArchived(),
 			'isImportant' => $attendee->isImportant(),
 			'isSensitive' => $attendee->isSensitive(),
-			'tagIds' => array_values(array_map('strval', json_decode($attendee->getTagIds() ?? '[]', true))),
+			'tagIds' => array_values(array_map(strval(...), json_decode($attendee->getTagIds() ?? '[]', true))),
 			'lastPinnedId' => $room->getLastPinnedId(),
 			'hiddenPinnedId' => $attendee->getHiddenPinnedId(),
 			'attributes' => $room->getAttributes(),

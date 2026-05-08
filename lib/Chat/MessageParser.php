@@ -36,10 +36,10 @@ class MessageParser {
 	protected array $botNames = [];
 
 	public function __construct(
-		protected IEventDispatcher $dispatcher,
-		protected IUserManager $userManager,
-		protected ParticipantService $participantService,
-		protected BotService $botService,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly IUserManager $userManager,
+		private readonly ParticipantService $participantService,
+		private readonly BotService $botService,
 	) {
 	}
 
@@ -67,7 +67,7 @@ class MessageParser {
 		);
 
 		try {
-			$metaData = json_decode($proxy->getMetaData(), true, flags: JSON_THROW_ON_ERROR);
+			$metaData = json_decode((string)$proxy->getMetaData(), true, flags: JSON_THROW_ON_ERROR);
 			if (is_array($metaData)) {
 				$metaData = $this->addPinnedActorDisplayNameInfo($message, $metaData);
 				$message->setMetaData($metaData);

@@ -25,11 +25,11 @@ use OCP\IUserSession;
 class ConversationProvider implements IProvider {
 
 	public function __construct(
-		protected Manager $manager,
-		protected AvatarService $avatarService,
-		protected ParticipantService $participantService,
-		protected IUserSession $userSession,
-		protected IURLGenerator $urlGenerator,
+		private readonly Manager $manager,
+		private readonly AvatarService $avatarService,
+		private readonly ParticipantService $participantService,
+		private readonly IUserSession $userSession,
+		private readonly IURLGenerator $urlGenerator,
 	) {
 	}
 
@@ -56,7 +56,7 @@ class ConversationProvider implements IProvider {
 				'iconUrl' => $iconURL,
 				'link' => $this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()])
 			];
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			throw new ResourceException('Conversation not found');
 		}
 	}
@@ -78,9 +78,9 @@ class ConversationProvider implements IProvider {
 			// before they can do anything with the room.
 			$participant = $this->participantService->getParticipant($room, $userId, false);
 			return $participant->getAttendee()->getParticipantType() !== Participant::USER_SELF_JOINED;
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			throw new ResourceException('Conversation not found');
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			throw new ResourceException('Participant not found');
 		}
 	}
@@ -96,16 +96,12 @@ class ConversationProvider implements IProvider {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function getRoomType(Room $room): string {
-		switch ($room->getType()) {
-			case Room::TYPE_ONE_TO_ONE:
-			case Room::TYPE_ONE_TO_ONE_FORMER:
-				return 'one2one';
-			case Room::TYPE_GROUP:
-				return 'group';
-			case Room::TYPE_PUBLIC:
-				return 'public';
-			default:
-				throw new \InvalidArgumentException('Unknown room type');
-		}
+		return match ($room->getType()) {
+			Room::TYPE_ONE_TO_ONE,
+			Room::TYPE_ONE_TO_ONE_FORMER => 'one2one',
+			Room::TYPE_GROUP => 'group',
+			Room::TYPE_PUBLIC => 'public',
+			default => throw new \InvalidArgumentException('Unknown room type'),
+		};
 	}
 }

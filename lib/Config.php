@@ -56,16 +56,16 @@ class Config {
 	protected array $canEnableSIP = [];
 
 	public function __construct(
-		protected IConfig $config,
-		protected IAppConfig $appConfig,
-		protected IUserConfig $userConfig,
-		private ISecureRandom $secureRandom,
-		private IGroupManager $groupManager,
-		private IUserManager $userManager,
-		private IURLGenerator $urlGenerator,
-		protected ITimeFactory $timeFactory,
-		private IEventDispatcher $dispatcher,
-		private IFilenameValidator $filenameValidator,
+		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
+		private readonly IUserConfig $userConfig,
+		private readonly ISecureRandom $secureRandom,
+		private readonly IGroupManager $groupManager,
+		private readonly IUserManager $userManager,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly IFilenameValidator $filenameValidator,
 	) {
 	}
 
@@ -494,7 +494,7 @@ class Config {
 
 		foreach ($servers as $server) {
 			$u = $server['username'] ?? $username;
-			$password = $server['password'] ?? base64_encode(hash_hmac('sha1', $u, $server['secret'], true));
+			$password = $server['password'] ?? base64_encode(hash_hmac('sha1', (string)$u, (string)$server['secret'], true));
 
 			$turnSettings[] = [
 				'schemes' => $server['schemes'],
@@ -575,13 +575,10 @@ class Config {
 	 * @return string
 	 */
 	public function getSignalingTicket(int $version, ?string $userId, ?string $cloudId = null): string {
-		switch ($version) {
-			case self::SIGNALING_TICKET_V2:
-				return $this->getSignalingTicketV2($userId, $cloudId);
-			case self::SIGNALING_TICKET_V1:
-			default:
-				return $this->getSignalingTicketV1($userId);
-		}
+		return match ($version) {
+			self::SIGNALING_TICKET_V2 => $this->getSignalingTicketV2($userId, $cloudId),
+			default => $this->getSignalingTicketV1($userId),
+		};
 	}
 
 	/**

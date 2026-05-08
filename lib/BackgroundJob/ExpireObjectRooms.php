@@ -21,10 +21,10 @@ class ExpireObjectRooms extends TimedJob {
 
 	public function __construct(
 		ITimeFactory $timeFactory,
-		protected Manager $manager,
-		protected RoomService $roomService,
-		protected LoggerInterface $logger,
-		protected IAppConfig $appConfig,
+		private readonly Manager $manager,
+		private readonly RoomService $roomService,
+		private readonly LoggerInterface $logger,
+		private readonly IAppConfig $appConfig,
 	) {
 		parent::__construct($timeFactory);
 		$this->setInterval(60 * 60);

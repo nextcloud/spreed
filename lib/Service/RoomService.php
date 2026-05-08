@@ -57,7 +57,6 @@ use OCA\Talk\Room;
 use OCA\Talk\RoomAttributes;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\IJobList;
 use OCP\Calendar\IManager;
 use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -80,20 +79,19 @@ use Psr\Log\LoggerInterface;
 class RoomService {
 
 	public function __construct(
-		protected Manager $manager,
-		protected ParticipantService $participantService,
-		protected IDBConnection $db,
-		protected ITimeFactory $timeFactory,
-		protected IShareManager $shareManager,
-		protected Config $config,
-		protected IHasher $hasher,
-		protected IEventDispatcher $dispatcher,
-		protected IJobList $jobList,
-		protected EmojiService $emojiService,
-		protected LoggerInterface $logger,
-		protected IL10N $l10n,
-		protected IManager $calendarManager,
-		protected IUserManager $userManager,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly IDBConnection $db,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IShareManager $shareManager,
+		private readonly Config $config,
+		private readonly IHasher $hasher,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly EmojiService $emojiService,
+		private readonly LoggerInterface $logger,
+		private readonly IL10N $l10n,
+		private readonly IManager $calendarManager,
+		private readonly IUserManager $userManager,
 	) {
 	}
 

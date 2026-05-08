@@ -23,11 +23,11 @@ use OCP\Security\ISecureRandom;
 class SessionService {
 
 	public function __construct(
-		protected SessionMapper $sessionMapper,
-		protected IDBConnection $connection,
-		protected ISecureRandom $secureRandom,
-		protected ITimeFactory $timeFactory,
-		protected IRequest $request,
+		private readonly SessionMapper $sessionMapper,
+		private readonly IDBConnection $connection,
+		private readonly ISecureRandom $secureRandom,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IRequest $request,
 	) {
 	}
 

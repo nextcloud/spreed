@@ -20,7 +20,7 @@ use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 class CSPListener implements IEventListener {
 
 	public function __construct(
-		private Config $config,
+		private readonly Config $config,
 	) {
 	}
 

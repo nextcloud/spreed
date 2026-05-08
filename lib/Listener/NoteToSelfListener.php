@@ -18,7 +18,7 @@ use OCP\EventDispatcher\IEventListener;
  */
 class NoteToSelfListener implements IEventListener {
 	public function __construct(
-		protected NoteToSelfService $service,
+		private readonly NoteToSelfService $service,
 	) {
 	}
 

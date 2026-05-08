@@ -226,18 +226,18 @@ class Capabilities implements IPublicCapability {
 		],
 	];
 
-	protected ICache $talkCache;
+	private readonly ICache $talkCache;
 
 	public function __construct(
-		protected IConfig $serverConfig,
-		protected Config $talkConfig,
-		protected IAppConfig $appConfig,
-		protected ICommentsManager $commentsManager,
-		protected IUserSession $userSession,
-		protected IAppManager $appManager,
-		protected ITranslationManager $translationManager,
-		protected ITaskProcessingManager $taskProcessingManager,
-		protected LiveTranscriptionService $liveTranscriptionService,
+		private readonly IConfig $serverConfig,
+		private readonly Config $talkConfig,
+		private readonly IAppConfig $appConfig,
+		private readonly ICommentsManager $commentsManager,
+		private readonly IUserSession $userSession,
+		private readonly IAppManager $appManager,
+		private readonly ITranslationManager $translationManager,
+		private readonly ITaskProcessingManager $taskProcessingManager,
+		private readonly LiveTranscriptionService $liveTranscriptionService,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->talkCache = $cacheFactory->createLocal('talk::');
@@ -455,7 +455,7 @@ class Capabilities implements IPublicCapability {
 
 		try {
 			$isLiveTranslationSupported = $this->liveTranscriptionService->isLiveTranslationSupported();
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			$isLiveTranslationSupported = false;
 		}
 

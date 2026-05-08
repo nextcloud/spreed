@@ -16,8 +16,8 @@ use OCP\EventDispatcher\IEventDispatcher;
 class RoomPropertiesHelper {
 
 	public function __construct(
-		private IEventDispatcher $dispatcher,
-		private RoomService $roomService,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly RoomService $roomService,
 	) {
 	}
 

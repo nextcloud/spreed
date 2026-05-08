@@ -18,9 +18,9 @@ use OCP\User\IAvailabilityCoordinator;
 class PhoneService {
 
 	public function __construct(
-		protected IUserManager $userManager,
-		protected IAvailabilityCoordinator $availabilityCoordinator,
-		protected PhoneNumberMapper $mapper,
+		private readonly IUserManager $userManager,
+		private readonly IAvailabilityCoordinator $availabilityCoordinator,
+		private readonly PhoneNumberMapper $mapper,
 	) {
 	}
 

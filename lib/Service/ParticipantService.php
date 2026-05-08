@@ -69,7 +69,6 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
 use OCP\ICacheFactory;
-use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroup;
 use OCP\IGroupManager;
@@ -89,23 +88,22 @@ class ParticipantService {
 	protected array $sessionCache;
 
 	public function __construct(
-		protected IConfig $serverConfig,
-		protected Config $talkConfig,
-		protected AttendeeMapper $attendeeMapper,
-		protected SessionMapper $sessionMapper,
-		protected SessionService $sessionService,
-		private ISecureRandom $secureRandom,
-		protected IDBConnection $connection,
-		private IEventDispatcher $dispatcher,
-		private IUserManager $userManager,
-		private ICloudIdManager $cloudIdManager,
-		private IGroupManager $groupManager,
-		private MembershipService $membershipService,
-		private BackendNotifier $backendNotifier,
-		private ITimeFactory $timeFactory,
-		private ICacheFactory $cacheFactory,
-		private IUserStatusManager $userStatusManager,
-		private LoggerInterface $logger,
+		private readonly Config $talkConfig,
+		private readonly AttendeeMapper $attendeeMapper,
+		private readonly SessionMapper $sessionMapper,
+		private readonly SessionService $sessionService,
+		private readonly ISecureRandom $secureRandom,
+		private readonly IDBConnection $connection,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly IUserManager $userManager,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly IGroupManager $groupManager,
+		private readonly MembershipService $membershipService,
+		private readonly BackendNotifier $backendNotifier,
+		private readonly ITimeFactory $timeFactory,
+		private readonly ICacheFactory $cacheFactory,
+		private readonly IUserStatusManager $userStatusManager,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 
@@ -168,7 +166,7 @@ class ParticipantService {
 							$this->updateParticipantType($breakoutRoom, $breakoutRoomParticipant, Participant::MODERATOR);
 						}
 					}
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					if ($promotedToModerator) {
 						// Add participant as a moderator when they were not in the room already
 						$this->addUsers($breakoutRoom, [
@@ -420,7 +418,7 @@ class ParticipantService {
 
 		try {
 			$attendee = $this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_USERS, $user->getUID());
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			// queried here to avoid loop deps
 			$manager = Server::get(Manager::class);
 			$isListableByUser = $manager->isRoomListableByUser($room, $user->getUID());
@@ -477,7 +475,7 @@ class ParticipantService {
 		try {
 			$participant = $this->getParticipantByActor($room, $actorType, $actorId);
 			$attendee = $participant->getAttendee();
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			// shouldn't happen unless some code called joinRoom without previous checks
 			throw new UnauthorizedException('Participant is not allowed to join');
 		}
@@ -833,7 +831,7 @@ class ParticipantService {
 
 		try {
 			$this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_GROUPS, $group->getGID());
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			$attendee = new Attendee();
 			$attendee->setRoomId($room->getId());
 			$attendee->setActorType(Attendee::ACTOR_GROUPS);
@@ -865,14 +863,14 @@ class ParticipantService {
 			$circlesManager = Server::get(CirclesManager::class);
 			$federatedUser = $circlesManager->getFederatedUser($userId, Member::TYPE_USER);
 			$federatedUser->getLink($circleId);
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			throw new ParticipantNotFoundException('Circle not found or not a member');
 		}
 
 		$circlesManager->startSession($federatedUser);
 		try {
 			return $circlesManager->getCircle($circleId);
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 		} finally {
 			$circlesManager->stopSession();
 		}
@@ -969,7 +967,7 @@ class ParticipantService {
 
 		try {
 			$this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_CIRCLES, $circle->getSingleId());
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			$attendee = new Attendee();
 			$attendee->setRoomId($room->getId());
 			$attendee->setActorType(Attendee::ACTOR_CIRCLES);
@@ -1176,7 +1174,7 @@ class ParticipantService {
 					$this->removeAttendee($room, $participant, $reason, true);
 					$attendees[] = $participant->getAttendee();
 				}
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 			}
 		}
 
@@ -1190,7 +1188,7 @@ class ParticipantService {
 			$circlesManager->startSuperSession();
 			$circle = $circlesManager->getCircle($removedCircleParticipant->getAttendee()->getActorId());
 			$circlesManager->stopSession();
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			// Circles not enabled
 			return;
 		}
@@ -1199,7 +1197,7 @@ class ParticipantService {
 		try {
 			$circle = $circlesManager->getCircle($removedCircleParticipant->getAttendee()->getActorId());
 			$circlesManager->stopSession();
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			$circlesManager->stopSession();
 			return;
 		}
@@ -1239,7 +1237,7 @@ class ParticipantService {
 					$this->removeAttendee($room, $participant, $reason, true);
 					$attendees[] = $participant->getAttendee();
 				}
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 			}
 		}
 
@@ -1253,7 +1251,7 @@ class ParticipantService {
 	public function removeUser(Room $room, IUser $user, string $reason): void {
 		try {
 			$participant = $this->getParticipant($room, $user->getUID(), false);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return;
 		}
 
@@ -1309,7 +1307,7 @@ class ParticipantService {
 
 		$sessionTableIds = [];
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$sessionTableIds[] = (int)$row['s_id'];
 		}
 		$result->closeCursor();
@@ -1328,7 +1326,7 @@ class ParticipantService {
 		$attendeeIds = [];
 		$attendees = [];
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			if ($row['display_name'] !== '' && $row['display_name'] !== null) {
 				// Keep guests with a non-empty display name, so we can still
 				// render the guest display name on chat messages.
@@ -1643,7 +1641,7 @@ class ParticipantService {
 			->andWhere($query->expr()->eq('read_privacy', $query->createNamedParameter(Participant::PRIVACY_PUBLIC, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		return (int)($row['last_common_read_message'] ?? 0);
@@ -1670,7 +1668,7 @@ class ParticipantService {
 		foreach ($chunks as $chunk) {
 			$query->setParameter('roomIds', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
 			$result = $query->executeQuery();
-			while ($row = $result->fetch()) {
+			while ($row = $result->fetchAssociative()) {
 				$commonReads[(int)$row['room_id']] = (int)$row['last_common_read_message'];
 			}
 			$result->closeCursor();
@@ -1831,7 +1829,7 @@ class ParticipantService {
 			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)));
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if ($row === false) {
@@ -1978,7 +1976,7 @@ class ParticipantService {
 	protected function getParticipantsForRoomsFromQuery(IQueryBuilder $query, array $rooms): array {
 		$participants = [];
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$room = $rooms[(int)$row['room_id']] ?? null;
 			if ($room === null) {
 				continue;
@@ -2003,7 +2001,7 @@ class ParticipantService {
 	 */
 	protected function getParticipantFromQuery(IQueryBuilder $query, Room $room): Participant {
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if ($row === false) {
@@ -2097,7 +2095,7 @@ class ParticipantService {
 
 		$users = [];
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$users[$row['actor_id']] = (bool)$row['important'];
 		}
 		$result->closeCursor();
@@ -2156,7 +2154,7 @@ class ParticipantService {
 			->andWhere($query->expr()->isNotNull('s.id'))
 			->setMaxResults(1);
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		return (bool)$row;
@@ -2207,7 +2205,7 @@ class ParticipantService {
 			->andWhere($query->expr()->gte('s.last_ping', $query->createNamedParameter($this->timeFactory->getTime() - Session::SESSION_TIMEOUT, IQueryBuilder::PARAM_INT)))
 			->setMaxResults(1);
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		return (bool)$row;

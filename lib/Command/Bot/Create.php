@@ -23,9 +23,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Create extends Base {
 	public function __construct(
-		private BotService $botService,
-		private BotServerMapper $botServerMapper,
-		private ISecureRandom $secureRandom,
+		private readonly BotService $botService,
+		private readonly BotServerMapper $botServerMapper,
+		private readonly ISecureRandom $secureRandom,
 	) {
 		parent::__construct();
 	}
@@ -99,7 +99,7 @@ class Create extends Base {
 				$output->writeln('<error>Bot with the same secret is already registered</error>');
 				return 3;
 			} else {
-				$output->writeln('<error>' . get_class($e) . ': ' . $e->getMessage() . '</error>');
+				$output->writeln('<error>' . $e::class . ': ' . $e->getMessage() . '</error>');
 				return 1;
 			}
 		}

@@ -52,7 +52,6 @@ use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
-use OCP\Federation\ICloudIdManager;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\Security\Bruteforce\IThrottler;
@@ -61,19 +60,18 @@ use Psr\Log\LoggerInterface;
 
 class InjectionMiddleware extends Middleware {
 	public function __construct(
-		protected IRequest $request,
-		protected ParticipantService $participantService,
-		protected TalkSession $talkSession,
-		protected Manager $manager,
-		protected ICloudIdManager $cloudIdManager,
-		protected IThrottler $throttler,
-		protected IURLGenerator $url,
-		protected InvitationMapper $invitationMapper,
-		protected Authenticator $federationAuthenticator,
-		protected BanService $banService,
-		protected RoomService $roomService,
-		protected LoggerInterface $logger,
-		protected ?string $userId,
+		private readonly IRequest $request,
+		private readonly ParticipantService $participantService,
+		private readonly TalkSession $talkSession,
+		private readonly Manager $manager,
+		private readonly IThrottler $throttler,
+		private readonly IURLGenerator $url,
+		private readonly InvitationMapper $invitationMapper,
+		private readonly Authenticator $federationAuthenticator,
+		private readonly BanService $banService,
+		private readonly RoomService $roomService,
+		private readonly LoggerInterface $logger,
+		private readonly ?string $userId,
 	) {
 	}
 
@@ -96,7 +94,7 @@ class InjectionMiddleware extends Middleware {
 		$reflectionMethod = new \ReflectionMethod($controller, $methodName);
 
 		$apiVersion = $this->request->getParam('apiVersion');
-		$controller->setAPIVersion((int)substr($apiVersion, 1));
+		$controller->setAPIVersion((int)substr((string)$apiVersion, 1));
 
 		if (!empty($reflectionMethod->getAttributes(AllowWithoutParticipantWhenPendingInvitation::class))) {
 			try {
@@ -262,7 +260,7 @@ class InjectionMiddleware extends Middleware {
 				try {
 					$participant = $this->participantService->getParticipantBySession($room, $sessionId);
 					$controller->setParticipant($participant);
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					// ignore and fall back in case a concurrent request might have
 					// invalidated the session
 				}

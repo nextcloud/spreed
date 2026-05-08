@@ -43,13 +43,13 @@ class AvatarController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected RoomFormatter $roomFormatter,
-		protected AvatarService $avatarService,
-		protected IUserSession $userSession,
-		protected IL10N $l,
-		protected LoggerInterface $logger,
-		protected ICloudIdManager $cloudIdManager,
-		protected IAvatarManager $avatarManager,
+		private readonly RoomFormatter $roomFormatter,
+		private readonly AvatarService $avatarService,
+		private readonly IUserSession $userSession,
+		private readonly IL10N $l,
+		private readonly LoggerInterface $logger,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly IAvatarManager $avatarManager,
 	) {
 		parent::__construct($appName, $request);
 	}

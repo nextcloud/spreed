@@ -16,7 +16,7 @@ use OCP\Migration\SimpleMigrationStep;
 class Version3003Date20180718133519 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IDBConnection $connection,
+		private readonly IDBConnection $connection,
 	) {
 	}
 
@@ -65,7 +65,7 @@ class Version3003Date20180718133519 extends SimpleMigrationStep {
 			->groupBy('object_id');
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$update->setParameter('message', $row['message'])
 				->setParameter('room', $row['object_id']);
 			$update->executeStatement();

@@ -17,8 +17,8 @@ use OCP\AppFramework\Utility\ITimeFactory;
 
 class ConsentService {
 	public function __construct(
-		protected ITimeFactory $timeFactory,
-		protected ConsentMapper $consentMapper,
+		private readonly ITimeFactory $timeFactory,
+		private readonly ConsentMapper $consentMapper,
 	) {
 	}
 

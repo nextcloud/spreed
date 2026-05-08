@@ -38,8 +38,8 @@ class Bot {
 	];
 
 	public function __construct(
-		protected BotServer $botServer,
-		protected BotConversation $botConversation,
+		private readonly BotServer $botServer,
+		private readonly BotConversation $botConversation,
 	) {
 	}
 

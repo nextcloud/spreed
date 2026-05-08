@@ -22,7 +22,7 @@ class ExpireSignalingMessage extends TimedJob {
 
 	public function __construct(
 		ITimeFactory $timeFactory,
-		protected Messages $messages,
+		private readonly Messages $messages,
 	) {
 		parent::__construct($timeFactory);
 

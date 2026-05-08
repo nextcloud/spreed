@@ -38,12 +38,12 @@ class Operation implements IOperation {
 	];
 
 	public function __construct(
-		protected IL10N $l,
-		protected IURLGenerator $urlGenerator,
-		protected TalkManager $talkManager,
-		protected ParticipantService $participantService,
-		protected IUserSession $session,
-		protected ChatManager $chatManager,
+		private readonly IL10N $l,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly TalkManager $talkManager,
+		private readonly ParticipantService $participantService,
+		private readonly IUserSession $session,
+		private readonly ChatManager $chatManager,
 	) {
 	}
 

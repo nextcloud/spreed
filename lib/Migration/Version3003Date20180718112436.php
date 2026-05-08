@@ -17,7 +17,7 @@ use OCP\Migration\SimpleMigrationStep;
 class Version3003Date20180718112436 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IDBConnection $connection,
+		private readonly IDBConnection $connection,
 	) {
 	}
 
@@ -66,7 +66,7 @@ class Version3003Date20180718112436 extends SimpleMigrationStep {
 			->groupBy('object_id');
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$lastActivity = new \DateTime($row['last_activity']);
 			$update->setParameter('activity', $lastActivity, IQueryBuilder::PARAM_DATETIME_MUTABLE)
 				->setParameter('room', $row['object_id']);
