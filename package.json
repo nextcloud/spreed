@@ -48,7 +48,7 @@
     "@nextcloud/vue": "^9.7.0",
     "@sapphi-red/web-noise-suppressor": "^0.3.5",
     "@vue-leaflet/vue-leaflet": "^0.10.1",
-    "@vueuse/components": "^14.2.1",
+    "@vueuse/components": "^14.3.0",
     "@vueuse/core": "^14.3.0",
     "@vueuse/router": "^14.2.1",
     "base64-js": "^1.5.1",
