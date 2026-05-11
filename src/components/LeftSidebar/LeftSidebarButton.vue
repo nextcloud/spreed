@@ -31,7 +31,8 @@ const iconSize = computed(() => (isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.
 <template>
 	<NcButton
 		class="left-sidebar-button"
-		:variant="active ? 'primary' : 'tertiary'"
+		:class="{ 'left-sidebar-button--active': active }"
+		:variant="active ? 'secondary' : 'tertiary'"
 		alignment="start"
 		wide>
 		<template #icon>
@@ -48,6 +49,8 @@ const iconSize = computed(() => (isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.
 
 <style lang="scss" scoped>
 .left-sidebar-button {
+	position: relative;
+
 	// Align the padding with navigation items and list items
 	// TODO: make it s public variable or add a way to customize content without having the pre-defined padding
 	--button-padding: calc(var(--default-grid-baseline) - 1px /* transparent border */);
@@ -62,6 +65,19 @@ const iconSize = computed(() => (isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.
 	:deep(.button-vue__text) {
 		flex: 1 0 auto;
 	}
+}
+
+// Copy from: nextcloud-vue/src/components/NcAppNavigationItem/NcAppNavigationItem.scss
+// TODO: Either add this variant to NcButton or support buttons and customization in NcAppNavigationItem
+.left-sidebar-button--active:before {
+	content: '';
+	position: absolute;
+	inset-block: calc(var(--default-grid-baseline) * 2);
+	inset-inline-start: 0;
+	width: 3px;
+	background-color: var(--color-primary-element);
+	border-radius: 999px;
+	animation: nc-nav-stripe-in var(--animation-quick) ease-out;
 }
 
 .left-sidebar-button__content {
