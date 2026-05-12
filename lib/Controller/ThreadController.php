@@ -121,7 +121,7 @@ class ThreadController extends AEnvironmentAwareOCSController {
 			}
 		}
 
-		// Sort by last activity again
+		// Sort by last message activity again
 		usort($threads, static function (Thread $a, Thread $b): int {
 			if ($b->getLastActivity() === $a->getLastActivity()) {
 				return $b->getId() <=> $a->getId();
