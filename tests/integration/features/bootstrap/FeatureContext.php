@@ -173,6 +173,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	public function getAttendeeId(string $type, string $id, string $room, ?string $user = null): int {
+		if ($type === 'emails' && str_contains($id, '@')) {
+			$id = hash('sha256', $id);
+		}
+
 		if ($type === 'federated_users') {
 			if (!str_contains($id, '@')) {
 				$id .= '@' . $this->remoteServerUrl;
@@ -1363,17 +1367,45 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	#[Then('/^user "([^"]*)" views call-URL of room "([^"]*)" with (\d+)$/')]
 	public function userViewsCallURL(string $user, string $identifier, int $statusCode, ?TableNode $formData = null): void {
+		$queryParams = [];
+		$assertions = [];
+		if ($formData instanceof TableNode) {
+			foreach ($formData->getRows() as $row) {
+				if (count($row) === 2) {
+					$queryParams[$row[0]] = $row[1];
+				} else {
+					$assertions[] = $row[0];
+				}
+			}
+		}
+
+		$token = self::$identifierToToken[$identifier] ?? $identifier;
+
+		if (isset($queryParams['email']) && !isset($queryParams['access'])) {
+			$previousUser = $this->setCurrentUser('admin');
+			$this->sendRequest('GET', '/apps/spreedcheats/email/access?' . http_build_query([
+				'token' => $token,
+				'email' => $queryParams['email'],
+			]));
+			$this->assertStatusCode($this->response, 200);
+			$data = $this->getDataFromResponse($this->response);
+			$queryParams['access'] = $data['access_token'];
+			$this->setCurrentUser($previousUser);
+		}
+
 		$this->setCurrentUser($user);
-		$this->sendFrontpageRequest(
-			'GET', '/call/' . (self::$identifierToToken[$identifier] ?? $identifier)
-		);
+		$url = '/call/' . $token;
+		if (!empty($queryParams)) {
+			$url .= '?' . http_build_query($queryParams);
+		}
+		$this->sendFrontpageRequest('GET', $url);
 
 		$this->assertStatusCode($this->response, $statusCode);
 
-		if ($formData instanceof TableNode) {
+		if (!empty($assertions)) {
 			$content = $this->response->getBody()->getContents();
-			foreach ($formData->getRows() as $line) {
-				Assert::assertStringContainsString($line[0], $content);
+			foreach ($assertions as $assertion) {
+				Assert::assertStringContainsString($assertion, $content);
 			}
 		}
 	}
