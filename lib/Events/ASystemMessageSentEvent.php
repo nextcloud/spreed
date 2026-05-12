@@ -19,7 +19,7 @@ abstract class ASystemMessageSentEvent extends AMessageSentEvent {
 		?Participant $participant = null,
 		bool $silent = false,
 		?IComment $parent = null,
-		protected bool $skipLastActivityUpdate = false,
+		protected bool $skipLastActivityUpdate = true,
 	) {
 		parent::__construct(
 			$room,
