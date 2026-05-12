@@ -63,11 +63,15 @@ class TalkSession {
 	}
 
 	public function getAuthedEmailActorIdForRoom(string $token): ?string {
-		return $this->getValue('spreed-authed-email', $token);
+		return $this->getValue('spreed-authed-email', $token, false);
 	}
 
 	public function setAuthedEmailActorIdForRoom(string $token, string $actorId): void {
-		$this->setValue('spreed-authed-email', $token, $actorId);
+		$this->setValue('spreed-authed-email', $token, $actorId, false);
+	}
+
+	public function removeAuthedEmailActorIdForRoom(string $token): void {
+		$this->removeValue('spreed-authed-email', $token, false);
 	}
 
 	public function getFileShareTokenForRoom(string $roomToken): ?string {
@@ -108,14 +112,14 @@ class TalkSession {
 		return $values;
 	}
 
-	protected function getValue(string $key, string $token): ?string {
-		$token .= $this->getTabId();
+	protected function getValue(string $key, string $token, bool $useTabId = true): ?string {
+		$token .= $useTabId ? $this->getTabId() : '';
 		$values = $this->getValues($key);
 		return $values[$token] ?? null;
 	}
 
-	protected function setValue(string $key, string $token, string $value): void {
-		$token .= $this->getTabId();
+	protected function setValue(string $key, string $token, string $value, bool $useTabId = true): void {
+		$token .= $useTabId ? $this->getTabId() : '';
 		$reopened = $this->session->reopen();
 
 		$values = $this->getValues($key);
@@ -128,11 +132,11 @@ class TalkSession {
 		}
 	}
 
-	protected function removeValue(string $key, string $token): void {
+	protected function removeValue(string $key, string $token, bool $useTabId = true): void {
 		$reopened = $this->session->reopen();
 
 		$values = $this->getValues($key);
-		$tabId = $this->getTabId();
+		$tabId = $useTabId ? $this->getTabId() : '';
 		if ($tabId !== '') {
 			unset($values[$token . $tabId]);
 		} else {
