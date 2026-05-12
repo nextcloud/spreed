@@ -10,4 +10,5 @@ namespace OCA\Talk\Events;
 
 abstract class ARoomSyncedEvent extends ARoomEvent {
 	public const PROPERTY_LAST_ACTIVITY = 'lastActivity';
+	public const PROPERTY_LAST_METADATA_ACTIVITY = 'lastMetadataActivity';
 }

@@ -117,6 +117,7 @@ class Room {
 		private int $callFlag,
 		private ?\DateTime $activeSince,
 		private ?\DateTime $lastActivity,
+		private ?\DateTime $lastMetadataActivity,
 		private int $lastMessageId,
 		private ?IComment $lastMessage,
 		private ?\DateTime $lobbyTimer,
@@ -292,6 +293,13 @@ class Room {
 
 	public function setLastActivity(\DateTime $now): void {
 		$this->lastActivity = $now;
+	}
+	public function getLastMetadataActivity(): ?\DateTime {
+		return $this->lastMetadataActivity;
+	}
+
+	public function setLastMetadataActivity(\DateTime $now): void {
+		$this->lastMetadataActivity = $now;
 	}
 
 	public function getLastMessageId(): int {
