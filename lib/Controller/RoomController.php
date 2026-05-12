@@ -455,10 +455,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 				try {
 					$participant = $this->participantService->getParticipant($room, $this->userId, $sessionId);
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					try {
 						$participant = $this->participantService->getParticipantBySession($room, $sessionId);
-					} catch (ParticipantNotFoundException $e) {
+					} catch (ParticipantNotFoundException) {
 					}
 				}
 			} else {
