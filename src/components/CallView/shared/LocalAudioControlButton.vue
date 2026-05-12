@@ -201,6 +201,7 @@ export default {
 			updatePreferences,
 			subscribeToDevices,
 			unsubscribeFromDevices,
+			updateSubscriptionPermissions,
 		} = useDevices()
 
 		/* Flag to smoothly toggle the audio while in call */
@@ -233,6 +234,7 @@ export default {
 			updatePreferences,
 			subscribeToDevices,
 			unsubscribeFromDevices,
+			updateSubscriptionPermissions,
 			resumeAudioAfterChange,
 		}
 	},
@@ -314,6 +316,10 @@ export default {
 				this.resumeAudioAfterChange = false
 			}
 		},
+
+		'conversation.permissions': function(newValue, oldValue) {
+			this.updateSubscriptionPermissions(oldValue, newValue)
+		},
 	},
 
 	created() {
@@ -322,11 +328,11 @@ export default {
 	},
 
 	mounted() {
-		this.subscribeToDevices()
+		this.subscribeToDevices(this.conversation.permissions)
 	},
 
 	beforeUnmount() {
-		this.unsubscribeFromDevices()
+		this.unsubscribeFromDevices(this.conversation.permissions)
 	},
 
 	methods: {

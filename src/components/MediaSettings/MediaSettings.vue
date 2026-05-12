@@ -597,7 +597,7 @@ export default {
 	watch: {
 		show(newValue) {
 			if (newValue) {
-				this.subscribeToDevices()
+				this.subscribeToDevices(PARTICIPANT.PERMISSIONS.MAX_DEFAULT)
 				this.$nextTick(() => {
 					this.registerVideoElement(this.video)
 				})
@@ -629,7 +629,7 @@ export default {
 					this.clearVirtualBackground()
 				}
 			} else {
-				this.unsubscribeFromDevices()
+				this.unsubscribeFromDevices(PARTICIPANT.PERMISSIONS.MAX_DEFAULT)
 			}
 		},
 
