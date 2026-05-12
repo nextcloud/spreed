@@ -30,6 +30,7 @@ class SelectHelper {
 			$alias . 'default_permissions',
 			$alias . 'call_flag',
 			$alias . 'last_activity',
+			$alias . 'last_metadata_activity',
 			$alias . 'last_message',
 			$alias . 'lobby_timer',
 			$alias . 'object_type',
@@ -61,6 +62,7 @@ class SelectHelper {
 				->selectAlias($alias . 'last_message_id', 'th_last_message_id')
 				->selectAlias($alias . 'num_replies', 'th_num_replies')
 				->selectAlias($alias . 'last_activity', 'th_last_activity')
+				->selectAlias($alias . 'last_metadata_activity', 'th_last_metadata_activity')
 				->selectAlias($alias . 'name', 'th_name')
 				->selectAlias($alias . 'id', 'th_id');
 			return;
@@ -71,6 +73,7 @@ class SelectHelper {
 			$alias . 'last_message_id',
 			$alias . 'num_replies',
 			$alias . 'last_activity',
+			$alias . 'last_metadata_activity',
 			$alias . 'name',
 		])->selectAlias($alias . 'id', 'th_id');
 

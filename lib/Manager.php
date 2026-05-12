@@ -104,6 +104,7 @@ class Manager {
 			'call_flag' => 0,
 			'active_since' => null,
 			'last_activity' => null,
+			'last_metadata_activity' => null,
 			'last_message' => 0,
 			'comment_id' => null,
 			'lobby_timer' => null,
@@ -134,6 +135,10 @@ class Manager {
 		$lastActivity = null;
 		if (!empty($row['last_activity'])) {
 			$lastActivity = $this->timeFactory->getDateTime($row['last_activity']);
+		}
+		$lastMetadataActivity = null;
+		if (!empty($row['last_metadata_activity'])) {
+			$lastMetadataActivity = $this->timeFactory->getDateTime($row['last_metadata_activity']);
 		}
 
 		$lobbyTimer = null;
@@ -171,6 +176,7 @@ class Manager {
 			(int)$row['call_flag'],
 			$activeSince,
 			$lastActivity,
+			$lastMetadataActivity,
 			(int)$row['last_message'],
 			$lastMessage,
 			$lobbyTimer,
@@ -321,6 +327,7 @@ class Manager {
 		$helper->selectRoomsTable($query);
 		$query->from('talk_rooms', 'r')
 			->andWhere($query->expr()->lte('r.last_activity', $query->createNamedParameter($inactiveSince, IQueryBuilder::PARAM_DATETIME_MUTABLE)))
+			->andWhere($query->expr()->lte('r.last_metadata_activity', $query->createNamedParameter($inactiveSince, IQueryBuilder::PARAM_DATETIME_MUTABLE)))
 			->andWhere($query->expr()->neq('r.read_only', $query->createNamedParameter(Room::READ_ONLY, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->in('r.type', $query->createNamedParameter([Room::TYPE_PUBLIC, Room::TYPE_GROUP], IQueryBuilder::PARAM_INT_ARRAY)))
 			->andWhere($query->expr()->emptyString('remoteServer'))

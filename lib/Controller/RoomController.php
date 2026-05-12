@@ -274,6 +274,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 					// Include rooms which had activity
 					return true;
 				}
+				if ($room->getLastMetadataActivity() && $room->getLastMetadataActivity()->getTimestamp() >= $modifiedSince) {
+					// Include rooms which had metadata activity
+					return true;
+				}
 
 				// Include rooms where only attendee level things changed,
 				// e.g. favorite, read-marker update, notification setting

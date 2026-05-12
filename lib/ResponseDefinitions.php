@@ -503,8 +503,10 @@ namespace OCA\Talk;
  *     isCustomAvatar: bool,
  *     // Flag if the conversation is favorited by the user
  *     isFavorite: bool,
- *     // Timestamp of the last activity in the conversation, in seconds and UTC time zone
+ *     // Timestamp of the last message activity in the conversation, in seconds and UTC time zone
  *     lastActivity: int,
+ *     // Timestamp of the last activity (metadata, not messages) in the conversation, in seconds and UTC time zone
+ *     lastMetadataActivity: int
  *     // ID of the last message read by every user that has read privacy set to public in a room. When the user themself has it set to private the value is `0` (only available with `chat-read-status` capability)
  *     lastCommonReadMessage: int,
  * 	   // Last message in a conversation if available, otherwise empty. **Note:** Even when given the message will not contain the `parent` or `reactionsSelf` attribute due to performance reasons
@@ -725,8 +727,9 @@ namespace OCA\Talk;
  *     title: string,
  *     // ID of the last message in the thread
  *     lastMessageId: non-negative-int,
- *     // UNIX timestamp of the last activity in the thread
+ *     // UNIX timestamp of the last message activity in the thread
  *     lastActivity: non-negative-int,
+ *	   // UNIX timestamp of the last metadata, not message, activity in the thread
  *     // Number of replies in the thread
  *     numReplies: non-negative-int,
  * }
