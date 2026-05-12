@@ -10,11 +10,11 @@ namespace OCA\Talk\Chat\Parser;
 
 use OCA\Circles\CirclesManager;
 use OCA\DAV\CardDAV\PhotoCache;
+use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Events\OverwritePublicSharePropertiesEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;

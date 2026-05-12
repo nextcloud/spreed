@@ -8,13 +8,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Middleware;
 
+use OCA\Talk\Authenticator;
 use OCA\Talk\Controller\AEnvironmentAwareOCSController;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\PermissionsException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Attribute\AllowWithoutParticipantWhenPendingInvitation;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
@@ -220,7 +220,7 @@ class InjectionMiddleware extends Middleware {
 		bool $requireFederationWhenNotLoggedIn = false,
 		?string $sessionIdParameter = null,
 	): void {
-		if ($requireFederationWhenNotLoggedIn && $this->userId === null && !$this->federationAuthenticator->isFederationRequest()) {
+		if ($requireFederationWhenNotLoggedIn && $this->userId === null && !$this->federationAuthenticator->isAuthenticatedRequest()) {
 			throw new ParticipantNotFoundException();
 		}
 
@@ -232,7 +232,30 @@ class InjectionMiddleware extends Middleware {
 		$sessionId = null;
 		if (!$room instanceof Room) {
 			$token = $this->request->getParam('token');
-			if (!$this->federationAuthenticator->isFederationRequest()) {
+			if ($this->userId === null && $this->federationAuthenticator->isAuthenticatedEmailGuest()) {
+				$room = $this->manager->getRoomByToken($token);
+
+				// After joinRoom() the email guest owns a regular spreed-session for the room.
+				// Prefer the session lookup so the resolved Participant carries its Session
+				// (joinCall/chat/etc. require it). Sanity-check that the session actually
+				// belongs to the authenticated email attendee.
+				$sessionId = $this->talkSession->getSessionForRoom($token);
+				if ($sessionId !== null) {
+					$participant = $this->participantService->getParticipantBySession($room, $sessionId);
+					$attendee = $participant->getAttendee();
+					if ($attendee->getActorType() !== Attendee::ACTOR_EMAILS
+						|| $attendee->getActorId() !== $this->federationAuthenticator->getActorId()) {
+						throw new ParticipantNotFoundException();
+					}
+				} else {
+					// No session yet (e.g. between landing on the page and joining); trust the
+					// session-stored actor id only as long as the email attendee still exists.
+					$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_EMAILS, $this->federationAuthenticator->getActorId());
+				}
+
+				$this->federationAuthenticator->authenticated($room, $participant);
+				$controller->setParticipant($participant);
+			} elseif (!$this->federationAuthenticator->isFederationRequest()) {
 				$sessionId = $this->talkSession->getSessionForRoom($token);
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 			} else {

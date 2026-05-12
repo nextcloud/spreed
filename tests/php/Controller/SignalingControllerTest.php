@@ -8,13 +8,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Controller;
 
+use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Controller\SignalingController;
 use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;

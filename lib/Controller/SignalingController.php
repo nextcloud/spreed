@@ -8,13 +8,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Authenticator;
 use OCA\Talk\Config;
 use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
@@ -159,6 +159,14 @@ class SignalingController extends OCSController {
 					$room,
 					Attendee::ACTOR_FEDERATED_USERS,
 					$this->federationAuthenticator->getCloudId()
+				);
+				$this->federationAuthenticator->authenticated($room, $participant);
+			} elseif ($token !== '' && $this->userId === null && $this->federationAuthenticator->isAuthenticatedEmailGuest()) {
+				$room = $this->manager->getRoomByToken($token);
+				$participant = $this->participantService->getParticipantByActor(
+					$room,
+					Attendee::ACTOR_EMAILS,
+					$this->federationAuthenticator->getActorId(),
 				);
 				$this->federationAuthenticator->authenticated($room, $participant);
 			} elseif ($token !== '') {
@@ -600,11 +608,21 @@ class SignalingController extends OCSController {
 
 			// Was the session killed or the complete conversation?
 			try {
-				$room = $this->manager->getRoomForUserByToken($token, $this->userId);
-				if ($this->userId) {
-					// For logged in users we check if they are still part of the public conversation,
-					// if not they were removed instead of having a conflict.
-					$this->participantService->getParticipant($room, $this->userId, false);
+				if ($this->userId === null && $this->federationAuthenticator->isAuthenticatedEmailGuest()) {
+					$room = $this->manager->getRoomByToken($token);
+					// Verify the email attendee still exists; otherwise treat as removed.
+					$this->participantService->getParticipantByActor(
+						$room,
+						Attendee::ACTOR_EMAILS,
+						$this->federationAuthenticator->getActorId(),
+					);
+				} else {
+					$room = $this->manager->getRoomForUserByToken($token, $this->userId);
+					if ($this->userId) {
+						// For logged in users we check if they are still part of the public conversation,
+						// if not they were removed instead of having a conflict.
+						$this->participantService->getParticipant($room, $this->userId, false);
+					}
 				}
 
 				// Session was killed, make the UI redirect to an error

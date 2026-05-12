@@ -13,7 +13,6 @@ use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\RoomCreatedEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
@@ -1110,7 +1109,11 @@ class Manager {
 		$this->participantService->cacheParticipant($room, $participant);
 		$room->setParticipant($row['actor_id'], $participant);
 
-		if ($room->getType() === Room::TYPE_PUBLIC || !in_array($participant->getAttendee()->getParticipantType(), [Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], true)) {
+		if ($room->getType() === Room::TYPE_PUBLIC
+			|| $row['actor_type'] === Attendee::ACTOR_EMAILS
+			|| !in_array($participant->getAttendee()->getParticipantType(), [Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], true)) {
+			// Email attendees were directly invited via their email address;
+			// the attendee row itself is the authorization to access the room.
 			return $room;
 		}
 

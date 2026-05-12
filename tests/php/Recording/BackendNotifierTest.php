@@ -8,9 +8,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Recording;
 
+use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\SessionMapper;

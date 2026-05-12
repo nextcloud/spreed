@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
@@ -19,7 +20,6 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ChatSummaryException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
@@ -251,8 +251,8 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @return list{0: Attendee::ACTOR_*, 1: string}
 	 */
 	protected function getActorInfo(string $actorDisplayName = ''): array {
-		$remoteCloudId = $this->federationAuthenticator->getCloudId();
-		if ($remoteCloudId !== '') {
+		if ($this->federationAuthenticator->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			$remoteCloudId = $this->federationAuthenticator->getActorId();
 			if ($actorDisplayName) {
 				$this->participantService->updateDisplayNameForActor(Attendee::ACTOR_FEDERATED_USERS, $remoteCloudId, $actorDisplayName);
 			}

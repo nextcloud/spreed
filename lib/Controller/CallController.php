@@ -8,10 +8,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Authenticator;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\DialOutFailedException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
 use OCA\Talk\Middleware\Attribute\RequireCallEnabled;

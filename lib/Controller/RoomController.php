@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\DAV\CalDAV\TimezoneService;
+use OCA\Talk\Authenticator;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
@@ -36,7 +37,6 @@ use OCA\Talk\Exceptions\RoomProperty\RecordingConsentException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Exceptions\RoomProperty\TypeException;
 use OCA\Talk\Exceptions\UnauthorizedException;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Federation\Proxy\TalkV1\ProxyRequest;
 use OCA\Talk\GuestManager;
@@ -456,15 +456,32 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$isTalkFederation = $this->request->getHeader('x-nextcloud-federation');
 
 			if (!$isTalkFederation) {
-				$sessionId = $this->session->getSessionForRoom($token);
-				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId, $includeLastMessage, $isSIPBridgeRequest);
-
-				try {
-					$participant = $this->participantService->getParticipant($room, $this->userId, $sessionId);
-				} catch (ParticipantNotFoundException) {
+				if ($this->userId === null && $this->federationAuthenticator->isAuthenticatedEmailGuest()) {
+					// Authenticated email guest: the user/public-room check in
+					// getRoomForUserByToken() would reject non-public rooms, so
+					// trust the session-stored actor id and require the email
+					// attendee to still exist.
+					$room = $this->manager->getRoomByToken($token);
 					try {
-						$participant = $this->participantService->getParticipantBySession($room, $sessionId);
+						$participant = $this->participantService->getParticipantByActor(
+							$room,
+							Attendee::ACTOR_EMAILS,
+							$this->federationAuthenticator->getActorId(),
+						);
 					} catch (ParticipantNotFoundException) {
+						throw new RoomNotFoundException();
+					}
+				} else {
+					$sessionId = $this->session->getSessionForRoom($token);
+					$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId, $includeLastMessage, $isSIPBridgeRequest);
+
+					try {
+						$participant = $this->participantService->getParticipant($room, $this->userId, $sessionId);
+					} catch (ParticipantNotFoundException) {
+						try {
+							$participant = $this->participantService->getParticipantBySession($room, $sessionId);
+						} catch (ParticipantNotFoundException) {
+						}
 					}
 				}
 			} else {
@@ -2013,9 +2030,20 @@ class RoomController extends AEnvironmentAwareOCSController {
 	])]
 	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
 		$sessionId = $this->session->getSessionForRoom($token);
+		$authenticatedEmailGuest = null;
+		if ($this->userId === null && $this->federationAuthenticator->isAuthenticatedEmailGuest()) {
+			$authenticatedEmailGuest = $this->federationAuthenticator->getActorId();
+		}
+
 		try {
-			// The participant is just joining, so enforce to not load any session
-			$room = $this->manager->getRoomForUserByToken($token, $this->userId, null);
+			// The participant is just joining, so enforce to not load any session.
+			// Authenticated email guests bypass the user/public-room access check;
+			// the email attendee lookup below is the trust anchor instead.
+			if ($authenticatedEmailGuest !== null) {
+				$room = $this->manager->getRoomByToken($token);
+			} else {
+				$room = $this->manager->getRoomForUserByToken($token, $this->userId, null);
+			}
 		} catch (RoomNotFoundException $e) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
@@ -2065,8 +2093,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 			}
 		}
 
-		$authenticatedEmailGuest = $this->session->getAuthedEmailActorIdForRoom($token);
-
 		$headers = [];
 		if ($authenticatedEmailGuest !== null || $room->isFederatedConversation()
 			|| ($previousParticipant instanceof Participant && $previousParticipant->isGuest())) {
@@ -2088,6 +2114,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 					try {
 						$previousParticipant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_EMAILS, $authenticatedEmailGuest);
 					} catch (ParticipantNotFoundException) {
+						// Stale spreed-authed-email session: the email attendee was
+						// removed (e.g. by a moderator) since the invite link was opened.
+						$this->session->removeAuthedEmailActorIdForRoom($token);
+						$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
+						$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
+						return $response;
 					}
 				}
 				$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, $password, $result['result'], $previousParticipant);
@@ -2537,7 +2569,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$this->session->removeSessionForRoom($token);
 
 		try {
-			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
+			if ($this->userId === null && $this->federationAuthenticator->isAuthenticatedEmailGuest()) {
+				$room = $this->manager->getRoomByToken($token);
+			} else {
+				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
+			}
 			$participant = $this->participantService->getParticipantBySession($room, $sessionId);
 
 			if ($room->isFederatedConversation()) {
