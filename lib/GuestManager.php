@@ -220,27 +220,28 @@ class GuestManager {
 
 		$user = $this->userSession->getUser();
 		$invitee = $user instanceof IUser ? $user->getDisplayName() : '';
+		$roomName = $room->getDisplayName('', true);
 
 		$template = $this->mailer->createEMailTemplate('Talk.InviteByEmail', [
 			'invitee' => $invitee,
-			'roomName' => $room->getDisplayName(''),
+			'roomName' => $roomName,
 			'roomLink' => $link,
 			'email' => $email,
 			'pin' => $pin,
 		]);
 
 		if ($user instanceof IUser) {
-			$subject = $this->l->t('%1$s invited you to conversation "%2$s".', [$user->getDisplayName(), $room->getDisplayName('')]);
+			$subject = $this->l->t('%1$s invited you to conversation "%2$s".', [$user->getDisplayName(), $roomName]);
 			$message->setFrom([Util::getDefaultEmailAddress('no-reply') => $user->getDisplayName()]);
 		} else {
-			$subject = $this->l->t('You were invited to conversation "%s".', $room->getDisplayName(''));
+			$subject = $this->l->t('You were invited to conversation "%s".', $roomName);
 			$message->setFrom([Util::getDefaultEmailAddress('no-reply') => $this->defaults->getName()]);
 		}
 
 		$template->setSubject($subject);
 		$template->addHeader();
 		$template->addHeading(
-			htmlspecialchars($room->getDisplayName('')),
+			htmlspecialchars($roomName),
 			$this->l->t('Conversation invitation')
 		);
 		$template->addBodyText(
@@ -296,7 +297,7 @@ class GuestManager {
 				$this->l->t('Click the link below to join the lobby now.')
 			);
 			$template->addBodyButton(
-				$this->l->t('Join lobby for "%s"', [$room->getDisplayName('')]),
+				$this->l->t('Join lobby for "%s"', [$roomName]),
 				$link
 			);
 		} else {
@@ -306,7 +307,7 @@ class GuestManager {
 				$this->l->t('Click the link below to join the conversation now.')
 			);
 			$template->addBodyButton(
-				$this->l->t('Join "%s"', [$room->getDisplayName('')]),
+				$this->l->t('Join "%s"', [$roomName]),
 				$link
 			);
 		}
