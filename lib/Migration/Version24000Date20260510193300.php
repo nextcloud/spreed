@@ -42,8 +42,17 @@ class Version24000Date20260510193300 extends SimpleMigrationStep {
 			$table->addColumn('last_metadata_activity', Types::DATETIME, [
 				'notnull' => false,
 			]);
-			$table->addIndex(['last_metadata_activity'], 'talkthread_lastmetadataactive');
+			$table->addIndex(['last_metadata_activity'], 'talkroom_lastmetadataactive');
 
+		}
+		
+		$table = $schema->getTable('talk_threads');
+
+		if (!$table->hasColumn('last_metadata_activity')) {
+			$table->addColumn('last_metadata_activity', Types::DATETIME, [
+				'notnull' => false,
+			]);
+			$table->addIndex(['last_metadata_activity'], 'talkthread_lastmetadataactive');
 		}
 
 		return $schema;
@@ -56,10 +65,14 @@ class Version24000Date20260510193300 extends SimpleMigrationStep {
 	 */
 	#[Override]
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) : void {
-	   $update = $this->connection->getQueryBuilder();
-	   $update->update('talk_rooms')
-               ->set('last_metadata_activity', 'last_activity');
-       $update->executeStatement();
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('last_metadata_activity', 'last_activity');
+		$update->executeStatement();
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_threads')
+			->set('last_metadata_activity', 'last_activity');
+		$update->executeStatement();
 	}	
 
 }
