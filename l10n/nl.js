@@ -52,6 +52,7 @@ OC.L10N.register(
     "- Emojis can now be autocompleted by typing a \":\"" : "- Emoji's kunnen nu automatisch worden aangevuld door een \":\" te typen",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- Koppel verschillende items met behulp van de nieuwe Smart Picker door een \"/\" te typen",
     "- Moderators can now create breakout rooms (requires the High-performance backend)" : "- Moderators kunnen nu breakout rooms creëeren (High-performance backend is noodzakelijk)",
+    "- Calls can now be recorded (requires the High-performance backend)" : "Gesprekken kunnen nu worden opgenomen (vereist High-performance backend)",
     "- Messages can now be edited by logged-in authors and moderators for 6 hours" : "- Berichten kunnen nu worden aangepast door ingelogde auteurs en moderators tot maximaal 6 uur.",
     "- Moderators can now ban accounts and guests to prevent them from rejoining a conversation" : "- Moderators kunnen nu accounts en gasten verbannen om te voorkomen dat ze terug komen in een gesprek.",
     "- Schedule a meeting into your calendar from within a conversation" : "- Plan een vergadering in je eigen agenda vanuit het gesprek",
