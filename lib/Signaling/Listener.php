@@ -555,7 +555,7 @@ class Listener implements IEventListener {
 		$messageType = $messageDecoded['message'] ?? '';
 
 		if ($event->shouldSkipLastActivityUpdate() === true
-			&& !in_array($messageType, ['message_deleted', 'message_edited', 'thread_created', 'thread_renamed'], true)
+			&& !in_array($messageType, ['message_deleted', 'message_edited', 'thread_created', 'thread_renamed', 'user_added', 'user_removed', 'moderator_promoted', 'moderator_demoted'], true)
 		) {
 			return;
 		}

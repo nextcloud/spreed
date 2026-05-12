@@ -738,9 +738,16 @@ class ParticipantService {
 		$this->dispatcher->dispatchTyped($event);
 
 		$lastMessage = $event->getLastMessage();
-		if ($lastMessage instanceof IComment) {
+		// TODO: is there any better getter / way to access message type?
+		$lastMessageType = json_decode($lastMessage->getMessage(), true)['message'] ?? '';
+		if ($lastMessage instanceof IComment || !in_array($lastMessageType, ['user_added', 'user_removed', 'moderator_promoted', 'moderator_demoted'], true)) {
+			// do not update the room message to the status message, so the conversion / thread will not be bumped by activity to the top
+			// left to do is to update the last message in the preview in the room list, without bumping it up.
+		} elseif ($lastMessage instanceof IComment) {
 			$this->updateRoomLastMessage($room, $lastMessage);
 		}
+		$now = $this->timeFactory->getDateTime();
+		$room->setLastMetadataActivity($now);
 
 		return $attendees;
 	}
@@ -748,14 +755,16 @@ class ParticipantService {
 	protected function updateRoomLastMessage(Room $room, IComment $message): void {
 		/** @var RoomService $roomService */
 		$roomService = Server::get(RoomService::class);
-		$roomService->setLastMessage($room, $message);
+		$roomService->setLastMessageInfo($room, (int)$message->getId(), $message->getCreationDateTime());
+		$now = $this->timeFactory->getDateTime();
+		$room->setLastMetadataActivity($now);
 
 		$lastMessageCache = $this->cacheFactory->createDistributed(CachePrefix::CHAT_LAST_MESSAGE_ID);
 		$lastMessageCache->remove($room->getToken());
 		$unreadCountCache = $this->cacheFactory->createDistributed(CachePrefix::CHAT_UNREAD_COUNT);
 		$unreadCountCache->clear($room->getId() . '-');
 
-		$event = new SystemMessagesMultipleSentEvent($room, $message);
+		$event = new SystemMessagesMultipleSentEvent($room, $message, skipLastActivityUpdate: true);
 		$this->dispatcher->dispatchTyped($event);
 	}
 
@@ -1254,6 +1263,9 @@ class ParticipantService {
 		} catch (ParticipantNotFoundException) {
 			return;
 		}
+
+		$now = $this->timeFactory->getDateTime();
+		$room->setLastMetadataActivity($now);
 
 		$attendee = $participant->getAttendee();
 		$sessions = $this->sessionService->getAllSessionsForAttendee($attendee);
