@@ -1280,7 +1280,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 		}
 
-		$currentUser = $this->userManager->get($this->userId);
+		$currentUser = $this->userId !== null ? $this->userManager->getExistingUser($this->userId) : null;
 		if ($messageId === 0) {
 			// Guest in a fully expired chat, no history, just loading the chat from beginning for now
 			$commentsHistory = $commentsFuture = [];

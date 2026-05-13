@@ -241,11 +241,16 @@ class InjectionMiddleware extends Middleware {
 				// belongs to the authenticated email attendee.
 				$sessionId = $this->talkSession->getSessionForRoom($token);
 				if ($sessionId !== null) {
-					$participant = $this->participantService->getParticipantBySession($room, $sessionId);
-					$attendee = $participant->getAttendee();
-					if ($attendee->getActorType() !== Attendee::ACTOR_EMAILS
-						|| $attendee->getActorId() !== $this->federationAuthenticator->getActorId()) {
-						throw new ParticipantNotFoundException();
+					try {
+						$participant = $this->participantService->getParticipantBySession($room, $sessionId);
+						$attendee = $participant->getAttendee();
+						if ($attendee->getActorType() !== Attendee::ACTOR_EMAILS
+							|| $attendee->getActorId() !== $this->federationAuthenticator->getActorId()) {
+							throw new ParticipantNotFoundException('3');
+						}
+					} catch (ParticipantNotFoundException) {
+						// Guest might be reloading so the session has the old Talk session while the join happens in parallel
+						$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_EMAILS, $this->federationAuthenticator->getActorId());
 					}
 				} else {
 					// No session yet (e.g. between landing on the page and joining); trust the
