@@ -8,6 +8,11 @@
       <code><![CDATA[EditingCircleEvent]]></code>
     </UndefinedClass>
   </file>
+  <file src="lib/Authenticator.php">
+    <NoInterfaceProperties>
+      <code><![CDATA[$this->request->server]]></code>
+    </NoInterfaceProperties>
+  </file>
   <file src="lib/Capabilities.php">
     <DeprecatedInterface>
       <code><![CDATA[private]]></code>
@@ -81,11 +86,6 @@
       <code><![CDATA[$e]]></code>
       <code><![CDATA[NotSquareException]]></code>
     </UndefinedClass>
-  </file>
-  <file src="lib/Federation/Authenticator.php">
-    <NoInterfaceProperties>
-      <code><![CDATA[$this->request->server]]></code>
-    </NoInterfaceProperties>
   </file>
   <file src="lib/Files/Util.php">
     <InvalidArgument>

@@ -9,10 +9,10 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Chat\Parser;
 
 use OCA\DAV\CardDAV\PhotoCache;
+use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\Parser\SystemMessage;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Session;

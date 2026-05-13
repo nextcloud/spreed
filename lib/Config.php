@@ -10,7 +10,6 @@ namespace OCA\Talk;
 
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Events\BeforeTurnServersGetEvent;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Settings\UserPreference;

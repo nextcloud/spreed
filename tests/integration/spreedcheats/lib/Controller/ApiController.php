@@ -215,6 +215,28 @@ class ApiController extends OCSController {
 		return new DataResponse();
 	}
 
+	public function emailAccessToken(string $token, string $email): DataResponse {
+		$query = $this->db->getQueryBuilder();
+		$query->select('a.access_token')
+			->from('talk_rooms', 'r')
+			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+				$query->expr()->eq('a.room_id', 'r.id'),
+				$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_EMAILS)),
+				$query->expr()->eq('a.actor_id', $query->createNamedParameter(hash('sha256', $email))),
+			))
+			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
+
+		$result = $query->executeQuery();
+		$accessToken = $result->fetchOne();
+		$result->closeCursor();
+
+		if (!$accessToken) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+		}
+
+		return new DataResponse(['access_token' => $accessToken]);
+	}
+
 	public function forgedFederationLeave(string $token, string $actingUser, string $targetUser): DataResponse {
 		$query = $this->db->getQueryBuilder();
 		$query->select('id')
