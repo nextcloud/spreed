@@ -5,6 +5,30 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.0.0-rc.1 – 2026-05-13
+### Added
+- feat(email): Allow email guests without public link
+  [#13609](https://github.com/nextcloud/spreed/issues/13609)
+- feat(preset): Allow to force the lobby
+  [#17935](https://github.com/nextcloud/spreed/issues/17935)
+
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(navigation): adjust active "Home" link to the new design
+  [#17932](https://github.com/nextcloud/spreed/issues/17932)
+- fix(sidebar): rework call UI in Talk integrations
+  [#17860](https://github.com/nextcloud/spreed/issues/17860)
+- fix(files-sidebar): reduce initial loading size of Files sidebar
+  [#11551](https://github.com/nextcloud/spreed/issues/11551)
+- fix(sharing): Fix probe attachment call for windows compatible filenames
+  [#17925](https://github.com/nextcloud/spreed/issues/17925)
+- fix(voice-rooms): Hide preset when calls are disabled
+  [#17933](https://github.com/nextcloud/spreed/issues/17933)
+
+
 ## 24.0.0-beta.1 – 2026-05-04
 ### Added
 - Call from anywhere - Integration of calls into the avatar menu
