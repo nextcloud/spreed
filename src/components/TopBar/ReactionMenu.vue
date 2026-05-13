@@ -3,6 +3,63 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
+<script setup lang="ts">
+import type { LocalCallParticipantModel } from '../../types/index.ts'
+
+import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
+import { computed } from 'vue'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActionButtonGroup from '@nextcloud/vue/components/NcActionButtonGroup'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+
+const props = defineProps<{
+	/* The conversation token */
+	token: string
+	/* Signaling participant model */
+	localCallParticipantModel: LocalCallParticipantModel
+	/* Supported reactions */
+	supportedReactions: string[]
+}>()
+
+let throttleTimer: NodeJS.Timeout | undefined
+
+const reactionsInSingleRow = computed(() => Math.ceil(props.supportedReactions.length / 2))
+
+/**
+ * Throttle reaction sending from a single use (to 1 reaction every 2 seconds)
+ *
+ * @param reaction emoji character to send
+ */
+function throttledSendReaction(reaction: string) {
+	if (throttleTimer) {
+		return
+	}
+
+	sendReaction(reaction)
+	throttleTimer = setTimeout(() => {
+		throttleTimer = undefined
+	}, 2_000)
+}
+
+/**
+ * Relay reaction via WebRTC and render on sender screen
+ *
+ * @param reaction emoji character to send
+ */
+function sendReaction(reaction: string) {
+	// send reaction to other participants
+	props.localCallParticipantModel.sendReaction(reaction)
+
+	// show reaction to yourself
+	emit('send-reaction', {
+		model: props.localCallParticipantModel,
+		reaction,
+	})
+}
+</script>
+
 <template>
 	<NcActions
 		variant="tertiary"
@@ -29,90 +86,6 @@
 		</NcActionButtonGroup>
 	</NcActions>
 </template>
-
-<script>
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActionButtonGroup from '@nextcloud/vue/components/NcActionButtonGroup'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import IconEmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-
-export default {
-	name: 'ReactionMenu',
-
-	components: {
-		NcActions,
-		NcActionButton,
-		NcActionButtonGroup,
-		IconEmoticonOutline,
-	},
-
-	props: {
-		/**
-		 * The conversation token
-		 */
-		token: {
-			type: String,
-			required: true,
-		},
-
-		/**
-		 * Signalling participant model
-		 */
-		localCallParticipantModel: {
-			type: Object,
-			required: true,
-		},
-
-		/**
-		 * Supported reactions
-		 */
-		supportedReactions: {
-			type: Array,
-			validator: (prop) => prop.every((e) => typeof e === 'string'),
-			required: true,
-		},
-	},
-
-	data() {
-		return {
-			throttleTimer: null,
-		}
-	},
-
-	computed: {
-		reactionsInSingleRow() {
-			return Math.ceil(this.supportedReactions.length / 2)
-		},
-	},
-
-	methods: {
-		t,
-		throttledSendReaction(reaction) {
-			if (this.throttleTimer) {
-				return
-			}
-
-			this.sendReaction(reaction)
-			this.throttleTimer = setTimeout(() => {
-				this.throttleTimer = null
-			}, 2000)
-		},
-
-		sendReaction(reaction) {
-			// send reaction to other participants
-			this.localCallParticipantModel.sendReaction(reaction)
-
-			// show reaction to yourself
-			emit('send-reaction', {
-				model: this.localCallParticipantModel,
-				reaction,
-			})
-		},
-	},
-}
-</script>
 
 <style lang="scss" scoped>
 .reaction {

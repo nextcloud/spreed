@@ -293,6 +293,14 @@ export type LocalCallParticipantModel = {
 
 	get(key: string): unknown
 	set(key: string, value: unknown): void
+
+	setWebRtc(webRtc: WebRtc): void
+	setPeerId(peerId: string): void
+	setPeer(peer: unknown | null): void
+	setPeerNeeded(peerNeeded: boolean): void
+	setScreenPeer(screenPeer: unknown | null): void
+	setName(name: string): void
+	sendReaction(reaction: string): void
 }
 
 export type Signaling = {
