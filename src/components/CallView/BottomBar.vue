@@ -8,11 +8,10 @@ import {
 	showError,
 } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { useResizeObserver } from '@vueuse/core'
 import debounce from 'debounce'
-import { computed, onMounted, onUnmounted, ref, toValue, useTemplateRef, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, toValue, useTemplateRef } from 'vue'
 import { useStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -22,8 +21,6 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
-import IconHandBackLeft from 'vue-material-design-icons/HandBackLeft.vue' // Filled for better indication
-import IconHandBackLeftOutline from 'vue-material-design-icons/HandBackLeftOutline.vue'
 import IconSubtitles from 'vue-material-design-icons/Subtitles.vue'
 import IconSubtitlesOutline from 'vue-material-design-icons/SubtitlesOutline.vue'
 import IconViewGalleryOutline from 'vue-material-design-icons/ViewGalleryOutline.vue'
@@ -36,13 +33,12 @@ import {
 	useDocumentFullscreen,
 } from '../../composables/useDocumentFullscreen.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
-import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.ts'
+import { ATTENDEE, CONVERSATION } from '../../constants.ts'
 import {
 	getTalkConfig,
 	showTalkFeatureHint,
 } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
-import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useCallViewStore } from '../../stores/callView.ts'
 import { useLiveTranscriptionStore } from '../../stores/liveTranscription.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
@@ -51,13 +47,10 @@ import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/i
 const { isSidebar = false } = defineProps<{
 	isSidebar: boolean
 }>()
-const AUTO_LOWER_HAND_THRESHOLD = 3000
-const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 
 const store = useStore()
 const token = useGetToken()
 const actorStore = useActorStore()
-const breakoutRoomsStore = useBreakoutRoomsStore()
 const isFullscreen = !isSidebar && useDocumentFullscreen()
 const callViewStore = useCallViewStore()
 const liveTranscriptionStore = useLiveTranscriptionStore()
@@ -73,13 +66,6 @@ const conversation = computed(() => {
 })
 const isGuestActor = computed(() => actorStore.actorType === ATTENDEE.ACTOR_TYPE.GUESTS)
 const isVoiceRoom = computed(() => Boolean(conversation.value.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM))
-
-const supportedReactions = computed(() => getTalkConfig(token.value, 'call', 'supported-reactions') || [])
-
-const hasReactionSupport = computed(() => supportedReactions.value && supportedReactions.value.length > 0)
-
-const canModerate = computed(() => [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
-	.includes(conversation.value.participantType))
 
 const isLiveTranscriptionSupported = computed(() => getTalkConfig(token.value, 'call', 'live-transcription') || false)
 const hintTranscriptionSupported = computed(() => !isLiveTranscriptionSupported.value && showTalkFeatureHint(34))
@@ -164,19 +150,6 @@ const LanguageType = {
 
 const languageType = ref<typeof LanguageType[keyof typeof LanguageType]>(LanguageType.Original)
 
-const isHandRaised = computed(() => localMediaModel.attributes.raisedHand.state === true)
-
-const raiseHandButtonLabel = computed(() => {
-	if (!isHandRaised.value) {
-		return disableKeyboardShortcuts
-			? t('spreed', 'Raise hand')
-			: t('spreed', 'Raise hand (R)')
-	}
-	return disableKeyboardShortcuts
-		? t('spreed', 'Lower hand')
-		: t('spreed', 'Lower hand (R)')
-})
-
 const fullscreenLabel = computed(() => {
 	return toValue(isFullscreen)
 		? t('spreed', 'Exit full screen (F)')
@@ -191,14 +164,12 @@ const changeViewLabel = computed(() => {
 
 const showCallLayoutSwitch = computed(() => !isSidebar && !callViewStore.isEmptyCallView)
 const isGrid = computed(() => callViewStore.isGrid)
-const userIsInBreakoutRoomAndInCall = computed(() => conversation.value.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 
-const COLLAPSIBLE_BUTTONS = ['virtualBackground', 'liveTranscription', 'raiseHand', 'callLayout', 'fullscreen'] as const
+const COLLAPSIBLE_BUTTONS = ['virtualBackground', 'liveTranscription', 'callLayout', 'fullscreen'] as const
 type CollapsibleButtons = Record<typeof COLLAPSIBLE_BUTTONS[number], boolean>
 const isActionAvailableMask = computed<CollapsibleButtons>(() => ({
 	fullscreen: !isSidebar,
 	callLayout: showCallLayoutSwitch.value,
-	raiseHand: !isSidebar,
 	liveTranscription: !isSidebar && isLiveTranscriptionSupported.value,
 	virtualBackground: !isSidebar,
 }))
@@ -448,68 +419,6 @@ async function disableLiveTranslation() {
 	languageType.value = LanguageType.Original
 }
 
-let lowerHandDelay = AUTO_LOWER_HAND_THRESHOLD
-let speakingTimestamp: number | null = null
-let lowerHandTimeout: ReturnType<typeof setTimeout> | null = null
-
-// Hand raising functionality
-/**
- * Toggle the hand raised state for the local media model and update the store.
- * If the user is in a breakout room, it also handles the request for assistance.
- */
-function toggleHandRaised() {
-	const newState = !isHandRaised.value
-	localMediaModel.toggleHandRaised(newState)
-	store.dispatch('setParticipantHandRaised', {
-		sessionId: actorStore.sessionId,
-		raisedHand: localMediaModel.attributes.raisedHand,
-	})
-
-	// Handle breakout room assistance requests
-	if (userIsInBreakoutRoomAndInCall.value && !canModerate.value) {
-		const hasRaisedHands = Object.keys(store.getters.participantRaisedHandList)
-			.filter((sessionId) => sessionId !== actorStore.sessionId)
-			.length !== 0
-
-		if (hasRaisedHands) {
-			return // Assistance is already requested by someone in the room
-		}
-
-		const hasAssistanceRequested = conversation.value.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED
-		if (newState && !hasAssistanceRequested) {
-			breakoutRoomsStore.requestAssistance(token.value)
-		} else if (!newState && hasAssistanceRequested) {
-			breakoutRoomsStore.dismissRequestAssistance(token.value)
-		}
-	}
-}
-
-// Auto-lower hand when speaking
-watch(() => localMediaModel.attributes.speaking, (speaking) => {
-	if (lowerHandTimeout !== null && !speaking) {
-		lowerHandDelay = Math.max(0, lowerHandDelay - (Date.now() - speakingTimestamp!))
-		clearTimeout(lowerHandTimeout)
-		lowerHandTimeout = null
-		return
-	}
-
-	// User is not speaking OR timeout is already running OR hand is not raised
-	if (!speaking || lowerHandTimeout !== null || !isHandRaised.value) {
-		return
-	}
-
-	speakingTimestamp = Date.now()
-	lowerHandTimeout = setTimeout(() => {
-		lowerHandTimeout = null
-		speakingTimestamp = null
-		lowerHandDelay = AUTO_LOWER_HAND_THRESHOLD
-
-		if (isHandRaised.value) {
-			toggleHandRaised()
-		}
-	}, lowerHandDelay)
-})
-
 /**
  * Switches the call view mode between grid and speaker view.
  */
@@ -517,9 +426,6 @@ function changeView() {
 	callViewStore.setCallViewMode({ token: token.value, isGrid: !isGrid.value, clearLast: false })
 	callViewStore.setSelectedVideoPeerId(null)
 }
-
-// Keyboard shortcuts
-useHotKey('r', toggleHandRaised)
 </script>
 
 <template>
@@ -562,9 +468,9 @@ useHotKey('r', toggleHandRaised)
 
 			<!-- Reactions menu -->
 			<ReactionMenu
-				v-if="!isSidebar && hasReactionSupport"
+				v-if="!isSidebar"
 				:token="token"
-				:supportedReactions="supportedReactions"
+				:localMediaModel="localMediaModel"
 				:localCallParticipantModel="localCallParticipantModel" />
 
 			<div
@@ -663,20 +569,6 @@ useHotKey('r', toggleHandRaised)
 					</template>
 				</NcButton>
 			</div>
-
-			<NcButton
-				v-if="!isSidebar && !hidingList.raiseHand"
-				:title="raiseHandButtonLabel"
-				:aria-label="raiseHandButtonLabel"
-				:variant="isHandRaised ? 'secondary' : 'tertiary'"
-				@click="toggleHandRaised">
-				<!-- The following icon is much bigger than all the others
-					so we reduce its size -->
-				<template #icon>
-					<IconHandBackLeft v-if="isHandRaised" :size="18" />
-					<IconHandBackLeftOutline v-else :size="18" />
-				</template>
-			</NcButton>
 		</div>
 		<div ref="callButtonWithActions" class="bottom-bar-options call-options">
 			<!-- Collapsed actions -->
@@ -746,20 +638,6 @@ useHotKey('r', toggleHandRaised)
 							:size="20" />
 					</template>
 					{{ liveTranslationButtonLabel }}
-				</NcActionButton>
-				<NcActionButton
-					v-if="!isSidebar && hidingList.raiseHand"
-					:title="raiseHandButtonLabel"
-					:aria-label="raiseHandButtonLabel"
-					:variant="isHandRaised ? 'secondary' : 'tertiary'"
-					@click="toggleHandRaised">
-					<!-- The following icon is much bigger than all the others
-						so we reduce its size -->
-					<template #icon>
-						<IconHandBackLeft v-if="isHandRaised" :size="18" />
-						<IconHandBackLeftOutline v-else :size="18" />
-					</template>
-					{{ raiseHandButtonLabel }}
 				</NcActionButton>
 			</NcActions>
 
