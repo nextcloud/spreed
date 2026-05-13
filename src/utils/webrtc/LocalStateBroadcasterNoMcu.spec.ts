@@ -4,7 +4,9 @@
  */
 
 import type {
+	CallParticipantCollection as CallParticipantCollectionType,
 	InternalWebRtc,
+	LocalCallParticipantModel as LocalCallParticipantModelType,
 	WebRtc,
 } from '../../types/index.ts'
 
@@ -43,8 +45,8 @@ class PeerMock {
 describe('LocalStateBroadcasterNoMcu', () => {
 	let webRtc: WebRtc
 	let internalWebRtc: InternalWebRtc
-	let callParticipantCollection: CallParticipantCollection
-	let localCallParticipantModel: LocalCallParticipantModel
+	let callParticipantCollection: CallParticipantCollectionType
+	let localCallParticipantModel: LocalCallParticipantModelType
 
 	let localStateBroadcasterNoMcu: LocalStateBroadcasterNoMcu
 
