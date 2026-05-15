@@ -156,6 +156,11 @@ class Manager {
 			$this->l->t('## New in Talk %s', ['23']) . "\n"
 			. $this->l->t('- Moderators can now pin messages so they are kept at the top') . "\n"
 			. $this->l->t('- Schedule a message to send it at a later time') . "\n",
+			$this->l->t('## New in Talk %s', ['24']) . "\n"
+			. $this->l->t('- Conversation tags, grouping and sorting to organize the conversation list') . "\n"
+			. $this->l->t('- Voice-rooms to connect spontaneously') . "\n"
+			. $this->l->t('- Presets for quick conversation configuration during creation') . "\n"
+			. $this->l->t('- Direct calls from profile menus for calls within other apps') . "\n",
 		];
 	}
 }
