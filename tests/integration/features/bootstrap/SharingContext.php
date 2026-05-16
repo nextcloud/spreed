@@ -697,6 +697,8 @@ class SharingContext implements Context {
 				$expectedHrefs[] = '/remote.php/dav/files/' . $user . (string)$row[0];
 			}
 		}
+		sort($hrefs);
+		sort($expectedHrefs);
 
 		\PHPUnit\Framework\Assert::assertEquals($expectedHrefs, $hrefs);
 	}
