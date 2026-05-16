@@ -7,15 +7,8 @@ on:
   pull_request:
     paths:
       - '.github/workflows/**'
-      - 'appinfo/**'
-      - 'lib/**'
-      - 'templates/**'
-      - 'tests/**'
-      - 'vendor/**'
-      - 'vendor-bin/**'
-      - '.php-cs-fixer.dist.php'
-      - 'composer.json'
-      - 'composer.lock'
+      - 'docs/commands.md'
+      - 'lib/Command/**'
 
 permissions:
   contents: read
@@ -25,13 +18,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  matrix:
+    runs-on: ubuntu-latest-low
+    outputs:
+      php-version: ${{ steps.versions.outputs.php-available-list }}
+      server-max: ${{ steps.versions.outputs.branches-max-list }}
+    steps:
+      - name: Checkout app
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Get version matrix
+        id: versions
+        uses: icewind1991/nextcloud-version-matrix@8a7bac6300b2f0f3100088b297995a229558ddba # v1.3.2
+
   occ-commands:
     runs-on: ubuntu-latest
 
+    needs: [matrix]
+
     strategy:
       matrix:
-        php-versions: ['8.2']
-        server-versions: ['master']
+        php-versions: ${{ fromJson(needs.matrix.outputs.php-version) }}
+        server-versions: ${{ fromJson(needs.matrix.outputs.server-max) }}
 
     steps:
       - name: Set app env
