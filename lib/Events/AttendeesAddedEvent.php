@@ -21,13 +21,17 @@ class AttendeesAddedEvent extends AttendeesEvent {
 	public function __construct(
 		Room $room,
 		array $attendees,
-		private readonly bool $skipLastMessageUpdate = true,
+		private bool $skipLastMessageUpdate = true,
 	) {
 		parent::__construct($room, $attendees);
 	}
 
 	public function shouldSkipLastMessageUpdate(): bool {
 		return $this->skipLastMessageUpdate;
+	}
+
+	public function setShouldSkipLastActivityUpdate(bool $pShouldSkipLastActivityUpdate) {
+		$this->shouldSkipLastMessageUpdate = $pShouldSkipLastActivityUpdate;
 	}
 
 	public function setLastMessage(IComment $lastMessage): void {
