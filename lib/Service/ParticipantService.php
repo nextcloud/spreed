@@ -737,14 +737,17 @@ class ParticipantService {
 		$event = new AttendeesAddedEvent($room, $attendees, true);
 		$this->dispatcher->dispatchTyped($event);
 
-		$lastMessage = $event->getLastMessage();
-		// TODO: is there any better getter / way to access message type?
-		$lastMessageType = json_decode($lastMessage->getMessage(), true)['message'] ?? '';
-		if ($lastMessage instanceof IComment || !in_array($lastMessageType, ['user_added', 'user_removed', 'moderator_promoted', 'moderator_demoted'], true)) {
-			// do not update the room message to the status message, so the conversion / thread will not be bumped by activity to the top
-			// left to do is to update the last message in the preview in the room list, without bumping it up.
-		} elseif ($lastMessage instanceof IComment) {
-			$this->updateRoomLastMessage($room, $lastMessage);
+		// getLastMessage doesn't exist for all event types, e.g. room creation
+		if (($event->getLastMessage() ?? null) !== null) {
+			$lastMessage = $event->getLastMessage();
+			// TODO: is there any better getter / way to access message type?
+			$lastMessageType = json_decode($lastMessage->getMessage(), true)['message'] ?? '';
+			if ($lastMessage instanceof IComment || !in_array($lastMessageType, ['user_added', 'user_removed', 'moderator_promoted', 'moderator_demoted'], true)) {
+				// do not update the room message to the status message, so the conversion / thread will not be bumped by activity to the top
+				// left to do is to update the last message in the preview in the room list, without bumping it up.
+			} elseif ($lastMessage instanceof IComment) {
+				$this->updateRoomLastMessage($room, $lastMessage);
+			}
 		}
 		$now = $this->timeFactory->getDateTime();
 		$room->setLastMetadataActivity($now);
