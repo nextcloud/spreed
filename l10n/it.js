@@ -1152,7 +1152,7 @@ OC.L10N.register(
     "Upload conversation picture" : "Carica immagine della conversazione",
     "Choose conversation picture from files" : "Scegli icona della conversazione dai file",
     "Remove conversation picture" : "Rimuove icona della conversazione",
-    "The file must be a PNG or JPG" : "Il file deve essere una PNG o JPG",
+    "The file must be a PNG or JPG" : "Il file deve essere PNG o JPG",
     "Set picture" : "Imposta icona",
     "Default permissions modified for {conversationName}" : "Permessi predefiniti modificati per {conversationName}",
     "Could not modify default permissions for {conversationName}" : "Impossibile modificare i permessi predefiniti per {conversationName}",
