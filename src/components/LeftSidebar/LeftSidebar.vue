@@ -752,7 +752,7 @@ export default {
 		},
 
 		showEmptyContent() {
-			return (this.conversationsInitialised && !this.filteredConversationsList.length)
+			return (this.conversationsInitialised && !this.sortedConversationsList.length)
 				|| (this.showThreadsList && this.followedThreadsInitialised && !this.followedThreads.length)
 		},
 	},
@@ -1163,8 +1163,8 @@ export default {
 
 			this.lastUnreadMentionBelowViewportIndex = null
 			const lastConversationInViewport = this.$refs.scroller.getLastItemInViewportIndex()
-			for (let i = this.filteredConversationsList.length - 1; i > lastConversationInViewport; i--) {
-				if (hasUnreadMentions(this.filteredConversationsList[i])) {
+			for (let i = this.sortedConversationsList.length - 1; i > lastConversationInViewport; i--) {
+				if (hasUnreadMentions(this.sortedConversationsList[i])) {
 					this.lastUnreadMentionBelowViewportIndex = i
 					return
 				}
