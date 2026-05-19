@@ -3224,7 +3224,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		$timezoneService = Server::get(TimezoneService::class);
-		$userTimezone = $timezoneService->getUserTimezone($user->getUID());
+		$userTimezone = $timezoneService->getUserTimezone($user->getUID()) ?? $timezoneService->getDefaultTimezone();
 		$timezone = new \DateTimeZone($userTimezone);
 		$startDate = $this->timeFactory->getDateTime('@' . $start)->setTimezone($timezone);
 		if ($start < $this->timeFactory->getTime()) {
@@ -3295,12 +3295,88 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$eventBuilder->createInCalendar($calendar);
+			$icsString = $eventBuilder->toIcs();
+			// ICalendarEventBuilder does not emit a VTIMEZONE component, so iTIP invite emails
+			// would reference an unresolved TZID and some clients (e.g. Grommunio) misinterpret
+			// the time (RFC 5545 §3.2.19 requires VTIMEZONE for each TZID).
+			if (str_contains($icsString, ';TZID=')) {
+				$vtimezone = self::buildVTimezoneBlock($timezone, $startDate);
+				$icsString = str_replace("BEGIN:VEVENT\r\n", $vtimezone . "BEGIN:VEVENT\r\n", $icsString);
+			}
+			preg_match('/^UID:(.+)$/m', $icsString, $matches);
+			$uid = trim($matches[1] ?? '');
+			$calendar->createFromString($uid . '.ics', $icsString);
 		} catch (\InvalidArgumentException|CalendarException $e) {
 			$this->logger->debug('Failed to get calendar to schedule a meeting', ['exception' => $e]);
 			return new DataResponse(['error' => 'calendar'], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse(null, Http::STATUS_OK);
+	}
+
+	/**
+	 * Builds a raw VTIMEZONE ICS block for $tz using PHP's timezone transition data
+	 * anchored on $referenceDate, so the chosen transitions are stable for a fixed event date.
+	 * UTC-equivalent zones produce no output (their datetimes use the 'Z' suffix instead).
+	 */
+	private static function buildVTimezoneBlock(\DateTimeZone $tz, \DateTimeInterface $referenceDate): string {
+		$anchorTs = $referenceDate->getTimestamp();
+		$transitions = $tz->getTransitions($anchorTs - 86400 * 365, $anchorTs + 86400 * 365 * 2);
+
+		$tzid = $tz->getName();
+		$ics = "BEGIN:VTIMEZONE\r\nTZID:$tzid\r\n";
+
+		if (!is_array($transitions) || count($transitions) < 2) {
+			// Flat timezone — single STANDARD component.
+			$offset = $tz->getOffset(new \DateTimeImmutable('@' . $anchorTs));
+			$offsetStr = self::formatVTimezoneOffset($offset);
+			$abbr = (new \DateTimeImmutable('@' . $anchorTs))->setTimezone($tz)->format('T');
+			$ics .= "BEGIN:STANDARD\r\nDTSTART:19700101T000000\r\n"
+				. "TZOFFSETFROM:$offsetStr\r\nTZOFFSETTO:$offsetStr\r\nTZNAME:$abbr\r\nEND:STANDARD\r\n";
+		} else {
+			$daylightData = null;
+			$standardData = null;
+			for ($i = 1, $n = count($transitions); $i < $n; $i++) {
+				$prev = $transitions[$i - 1];
+				$curr = $transitions[$i];
+				// Local clock time at transition = UTC timestamp + offset-before-transition.
+				$dtstart = gmdate('Ymd\THis', $curr['ts'] + $prev['offset']);
+				if ($curr['isdst'] && $daylightData === null) {
+					$daylightData = ['dtstart' => $dtstart, 'from' => $prev['offset'], 'to' => $curr['offset'], 'abbr' => $curr['abbr']];
+				} elseif (!$curr['isdst'] && $standardData === null) {
+					$standardData = ['dtstart' => $dtstart, 'from' => $prev['offset'], 'to' => $curr['offset'], 'abbr' => $curr['abbr']];
+				}
+				if ($daylightData !== null && $standardData !== null) {
+					break;
+				}
+			}
+
+			if ($daylightData !== null) {
+				$ics .= "BEGIN:DAYLIGHT\r\nDTSTART:{$daylightData['dtstart']}\r\n"
+					. 'TZOFFSETFROM:' . self::formatVTimezoneOffset($daylightData['from']) . "\r\n"
+					. 'TZOFFSETTO:' . self::formatVTimezoneOffset($daylightData['to']) . "\r\n"
+					. "TZNAME:{$daylightData['abbr']}\r\nEND:DAYLIGHT\r\n";
+			}
+			if ($standardData !== null) {
+				$ics .= "BEGIN:STANDARD\r\nDTSTART:{$standardData['dtstart']}\r\n"
+					. 'TZOFFSETFROM:' . self::formatVTimezoneOffset($standardData['from']) . "\r\n"
+					. 'TZOFFSETTO:' . self::formatVTimezoneOffset($standardData['to']) . "\r\n"
+					. "TZNAME:{$standardData['abbr']}\r\nEND:STANDARD\r\n";
+			} elseif ($daylightData === null) {
+				// No transitions found in window — emit a minimal flat STANDARD.
+				$offset = $tz->getOffset(new \DateTimeImmutable('@' . $anchorTs));
+				$offsetStr = self::formatVTimezoneOffset($offset);
+				$ics .= "BEGIN:STANDARD\r\nDTSTART:19700101T000000\r\n"
+					. "TZOFFSETFROM:$offsetStr\r\nTZOFFSETTO:$offsetStr\r\nEND:STANDARD\r\n";
+			}
+		}
+
+		return $ics . "END:VTIMEZONE\r\n";
+	}
+
+	private static function formatVTimezoneOffset(int $seconds): string {
+		$sign = $seconds < 0 ? '-' : '+';
+		$abs = abs($seconds);
+		return sprintf('%s%02d%02d', $sign, intdiv($abs, 3600), intdiv($abs % 3600, 60));
 	}
 }

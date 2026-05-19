@@ -5451,6 +5451,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param array $dashboardEvents
 	 * @param TableNode $formData
 	 */
+	#[When('/^user "([^"]*)" schedules a meeting in room "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function userSchedulesMeeting(string $user, string $identifier, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$params = [
+			'calendarUri' => 'personal',
+			'start' => time() + 3600,
+			'end' => time() + 7200,
+		];
+		if ($formData !== null) {
+			foreach ($formData->getRowsHash() as $key => $value) {
+				if ($key === 'start' || $key === 'end') {
+					$params[$key] = time() + (int)$value;
+				} else {
+					$params[$key] = $value;
+				}
+			}
+		}
+		$this->sendRequest(
+			'POST',
+			'/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/meeting',
+			$params
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
 	private function assertDashboardData(array $dashboardEvents, TableNode $formData) : void {
 		Assert::assertCount(count($formData->getHash()), $dashboardEvents, 'Event count does not match');
 
