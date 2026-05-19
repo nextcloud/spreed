@@ -628,6 +628,7 @@ export default {
 			debounceFetchSearchResults: () => {},
 			debounceFetchConversations: () => {},
 			debounceHandleScroll: () => {},
+			debounceComputeLastUnreadMention: () => {},
 			refreshTimer: null,
 			/**
 			 * @type {number|null}
@@ -659,6 +660,16 @@ export default {
 
 		sortedConversationsList() {
 			return sortConversationsList(this.filteredConversationsList, this.groupMode, this.sortOrder)
+		},
+
+		unreadMentionIndices() {
+			const indices = []
+			for (let i = 0; i < this.sortedConversationsList.length; i++) {
+				if (hasUnreadMentions(this.sortedConversationsList[i])) {
+					indices.push(i)
+				}
+			}
+			return indices
 		},
 
 		emptyContentLabel() {
@@ -770,6 +781,10 @@ export default {
 				this.chatExtrasStore.fetchFollowedThreadsList()
 			}
 		},
+
+		unreadMentionIndices() {
+			this.debounceComputeLastUnreadMention()
+		},
 	},
 
 	beforeMount() {
@@ -818,6 +833,7 @@ export default {
 		this.debounceFetchSearchResults = debounce(this.fetchSearchResults, 250)
 		this.debounceFetchConversations = debounce(this.fetchConversations, 3000)
 		this.debounceHandleScroll = debounce(this.handleScroll, 50)
+		this.debounceComputeLastUnreadMention = debounce(this.computeLastUnreadMention, 300)
 
 		if (supportTags) {
 			// Fetch conversation tags
@@ -836,6 +852,7 @@ export default {
 		this.debounceFetchSearchResults.clear?.()
 		this.debounceFetchConversations.clear?.()
 		this.debounceHandleScroll.clear?.()
+		this.debounceComputeLastUnreadMention.clear?.()
 
 		EventBus.off('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.off('conversations-received', this.handleConversationsReceived)
@@ -914,17 +931,12 @@ export default {
 			this.searchText = ''
 			// Initiate the navigation status
 			this.isNavigating = false
-
-			this.handleUnreadMention()
 		},
 
 		scrollBottomUnread() {
 			this.preventFindingUnread = true
 			this.$refs.scroller.scrollToItem(this.lastUnreadMentionBelowViewportIndex)
-			setTimeout(() => {
-				this.handleUnreadMention()
-				this.preventFindingUnread = false
-			}, 500)
+			this.debounceComputeLastUnreadMention()
 		},
 
 		async fetchPossibleConversations() {
@@ -1142,33 +1154,36 @@ export default {
 		},
 
 		handleConversationsReceived() {
-			this.handleUnreadMention()
 			if (this.$route.params.token) {
 				this.showArchived = this.$store.getters.conversation(this.$route.params.token)?.isArchived ?? false
 				this.scrollToConversation(this.$route.params.token)
 			}
 		},
 
-		// Checks whether the conversations list is scrolled all the way to the top
-		// or not
 		handleScroll() {
-			this.handleUnreadMention()
+			this.debounceComputeLastUnreadMention()
 		},
 
 		/**
-		 * Find position of the last unread conversation below viewport
+		 * Find position of the last unread conversation below viewport.
+		 * Iterates only over indices with unread mentions (cached via the
+		 * unreadMentionIndices computed) instead of the full list.
 		 */
-		async handleUnreadMention() {
-			await this.$nextTick()
-
-			this.lastUnreadMentionBelowViewportIndex = null
-			const lastConversationInViewport = this.$refs.scroller.getLastItemInViewportIndex()
-			for (let i = this.sortedConversationsList.length - 1; i > lastConversationInViewport; i--) {
-				if (hasUnreadMentions(this.sortedConversationsList[i])) {
-					this.lastUnreadMentionBelowViewportIndex = i
+		computeLastUnreadMention() {
+			if (!this.$refs.scroller) {
+				this.lastUnreadMentionBelowViewportIndex = null
+				return
+			}
+			const lastInViewport = this.$refs.scroller.getLastItemInViewportIndex()
+			const indices = this.unreadMentionIndices
+			for (let j = indices.length - 1; j >= 0; j--) {
+				if (indices[j] > lastInViewport) {
+					this.lastUnreadMentionBelowViewportIndex = indices[j]
 					return
 				}
 			}
+			this.lastUnreadMentionBelowViewportIndex = null
+			this.preventFindingUnread = false
 		},
 
 		async scrollToConversation(token) {
