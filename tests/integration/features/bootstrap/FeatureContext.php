@@ -1846,8 +1846,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
-
-
 	#[Then('/^user "([^"]*)" (promotes|demotes) "([^"]*)" in room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userPromoteDemoteInRoom(string $user, string $isPromotion, string $participant, string $identifier, int $statusCode, string $apiVersion): void {
 		if ($participant === 'stranger') {
@@ -3325,7 +3323,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 
-
 		$count = count($formData->getHash());
 		Assert::assertCount($count, $results, 'Result count does not match');
 		$tokenInResult = false;
@@ -3436,7 +3433,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			return $message;
 		}, $formData->getHash());
-
 
 		Assert::assertCount(count($expected), $messages, 'Message count does not match:' . "\n" . json_encode($messages, JSON_PRETTY_PRINT));
 		Assert::assertEquals($expected, array_map(function ($message, $expected) {
@@ -3768,7 +3764,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'GET', '/cloud/capabilities'
 		);
 
-
 		$data = $this->getDataFromResponse($this->response);
 		$capabilities = $data['capabilities'];
 
@@ -3795,7 +3790,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest(
 			'GET', '/apps/spreed/api/v4/room/' . self::$identifierToToken[$identifier] . '/capabilities'
 		);
-
 
 		$capabilities = $this->getDataFromResponse($this->response);
 
@@ -4867,7 +4861,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$secret = $data['secret'];
 		unset($data['secret']);
 
-
 		if ($action === 'message') {
 			$url = '/message';
 			$toSign = $data['message'];
@@ -4887,7 +4880,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'X-Nextcloud-Talk-Bot-Random' => $random,
 			'X-Nextcloud-Talk-Bot-Signature' => $hash,
 		];
-
 
 		$this->sendRequest(
 			$sends === 'sends' ? 'POST' : 'DELETE',
@@ -5445,7 +5437,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->assertDashboardData($data, $formData);
 	}
-
 
 	/**
 	 * @param array $dashboardEvents

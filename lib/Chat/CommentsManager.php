@@ -216,7 +216,6 @@ class CommentsManager extends Manager {
 		return $comments;
 	}
 
-
 	/**
 	 * @param string $actorType
 	 * @param string $actorId

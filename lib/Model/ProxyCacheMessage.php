@@ -50,7 +50,6 @@ class ProxyCacheMessage extends Entity implements \JsonSerializable {
 	public const METADATA_REPLY_TO_ACTOR_ID = 'replyToActorId';
 	public const METADATA_REPLY_TO_MESSAGE_ID = 'replyToMessageId';
 
-
 	protected string $localToken = '';
 	protected string $remoteServerUrl = '';
 	protected string $remoteToken = '';

@@ -112,7 +112,6 @@ class ApiController extends OCSController {
 			))
 			->executeStatement();
 
-
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('preferences')
 			->where($delete->expr()->in('configkey', $delete->createNamedParameter(['changelog', 'note_to_self', 'samples_created'], IQueryBuilder::PARAM_STR_ARRAY)))
@@ -169,7 +168,6 @@ class ApiController extends OCSController {
 			$update->set('object_id', $update->createNamedParameter(implode('#', $eventConversationObjectId)));
 		}
 		$update->executeStatement();
-
 
 		$update = $this->db->getQueryBuilder();
 		$update->update('comments')

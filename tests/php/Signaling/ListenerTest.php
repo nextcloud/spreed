@@ -53,8 +53,6 @@ class ListenerTest extends TestCase {
 	protected IFactory $l10nFactory;
 	protected MockObject&PollService $pollService;
 
-
-
 	public function setUp(): void {
 		parent::setUp();
 
@@ -397,7 +395,6 @@ class ListenerTest extends TestCase {
 
 		$this->listener->handle($event);
 	}
-
 
 	public function testSystemMessageSentEventSkippingUpdate(): void {
 		$room = $this->createMock(Room::class);

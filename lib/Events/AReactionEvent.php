@@ -32,7 +32,6 @@ abstract class AReactionEvent extends ARoomEvent {
 		return $this->reactionMessage;
 	}
 
-
 	public function getActorType(): string {
 		return $this->actorType;
 	}

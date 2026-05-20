@@ -115,7 +115,6 @@ class AvatarService {
 			throw new InvalidArgumentException($this->l->t('Unknown filetype'));
 		}
 
-
 		$token = $room->getToken();
 		$avatarFolder = $this->getAvatarFolder($token);
 

@@ -2314,7 +2314,6 @@ class ParticipantService {
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId())))
 			->setMaxResults(1);
 
-
 		return $this->getParticipantFromQuery($query, $room);
 	}
 

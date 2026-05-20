@@ -14,7 +14,6 @@ class RoomPasswordVerifyEvent extends ARoomEvent {
 	protected ?bool $isPasswordValid = null;
 	protected string $redirectUrl = '';
 
-
 	public function __construct(
 		Room $room,
 		private readonly string $password,

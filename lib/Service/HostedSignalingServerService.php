@@ -325,7 +325,6 @@ class HostedSignalingServerService {
 			$body = $response->getBody();
 			$this->logger->error('Getting the account information failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body);
 
-
 			$message = $this->l10n->t('Something unexpected happened.');
 			throw new HostedSignalingServerAPIException($message, $status);
 		}
@@ -478,7 +477,6 @@ class HostedSignalingServerService {
 		if ($status !== Http::STATUS_NO_CONTENT) {
 			$body = $response->getBody();
 			$this->logger->error('Deleting the hosted signaling server account failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body);
-
 
 			$message = $this->l10n->t('Something unexpected happened.');
 			throw new HostedSignalingServerAPIException($message, $status);

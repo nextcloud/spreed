@@ -117,7 +117,6 @@ class HostedSignalingServerController extends OCSController {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
-
 		return new DataResponse($accountInfo);
 	}
 

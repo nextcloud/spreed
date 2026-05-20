@@ -158,7 +158,6 @@ class SearchPluginTest extends TestCase {
 	public function testSearchUsers(string $search, array $users, array $expected, array $expectedExact): void {
 		$result = $this->createMock(ISearchResult::class);
 
-
 		$result->expects($this->once())
 			->method('addResultSet')
 			->with($this->anything(), $expected, $expectedExact);
@@ -240,7 +239,6 @@ class SearchPluginTest extends TestCase {
 		$plugin = $this->getPlugin();
 		$this->assertEquals($expected, self::invokePrivate($plugin, 'createResult', [$type, $uid, $name]));
 	}
-
 
 	public static function dataCreateGuestResult(): array {
 		return [

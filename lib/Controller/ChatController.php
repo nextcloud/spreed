@@ -1858,7 +1858,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$systemMessage = $this->messageParser->createMessage($this->room, $this->participant, $systemMessageComment, $this->l);
 		$this->messageParser->parseMessage($systemMessage);
 
-
 		$data = $systemMessage->toArray($this->getResponseFormat(), null);
 
 		$bridge = $this->matterbridgeManager->getBridgeOfRoom($this->room);
@@ -2354,7 +2353,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		return new DataResponse($results);
 	}
-
 
 	/**
 	 * @param array $results

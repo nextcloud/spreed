@@ -785,7 +785,6 @@ class Manager {
 				$query->expr()->eq('a.room_id', 'r.id')
 			));
 
-
 		if ($serverUrl === null) {
 			$query->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
 		} else {
@@ -929,7 +928,6 @@ class Manager {
 				->where($query->expr()->eq('r.remote_token', $query->createNamedParameter($token)))
 				->andWhere($query->expr()->eq('r.remote_server', $query->createNamedParameter($serverUrl)));
 		}
-
 
 		$result = $query->executeQuery();
 		$row = $result->fetchAssociative();

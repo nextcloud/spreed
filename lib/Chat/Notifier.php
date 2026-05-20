@@ -183,7 +183,6 @@ class Notifier {
 		return $usersToNotify;
 	}
 
-
 	/**
 	 * Notifies the author that wrote the comment which was replied to
 	 *

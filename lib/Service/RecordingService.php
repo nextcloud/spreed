@@ -463,7 +463,6 @@ class RecordingService {
 		$this->notificationManager->notify($notification);
 	}
 
-
 	/**
 	 * @param 'transcript'|'summary' $aiType
 	 */

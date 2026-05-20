@@ -74,7 +74,6 @@ class SelectHelper {
 			$alias . 'name',
 		])->selectAlias($alias . 'id', 'th_id');
 
-
 	}
 
 	public function selectAttendeesTable(IQueryBuilder $query, string $alias = 'a'): void {
