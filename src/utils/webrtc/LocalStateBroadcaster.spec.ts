@@ -4,8 +4,10 @@
  */
 
 import type {
+	CallParticipantCollection as CallParticipantCollectionType,
 	CallParticipantModel as CallParticipantModelType,
 	InternalWebRtc,
+	LocalCallParticipantModel as LocalCallParticipantModelType,
 	WebRtc,
 } from '../../types/index.ts'
 
@@ -23,11 +25,11 @@ import { CallParticipantCollection } from './models/CallParticipantCollection.js
 import { LocalCallParticipantModel } from './models/LocalCallParticipantModel.js'
 
 class BaseLocalStateBroadcaster extends LocalStateBroadcaster {
-	protected _handleAddCallParticipantModel(callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModelType): void {
+	protected _handleAddCallParticipantModel(callParticipantCollection: CallParticipantCollectionType, callParticipantModel: CallParticipantModelType): void {
 		// Not used in base class tests
 	}
 
-	protected _handleRemoveCallParticipantModel(callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModelType): void {
+	protected _handleRemoveCallParticipantModel(callParticipantCollection: CallParticipantCollectionType, callParticipantModel: CallParticipantModelType): void {
 		// Not used in base class tests
 	}
 }
@@ -35,8 +37,8 @@ class BaseLocalStateBroadcaster extends LocalStateBroadcaster {
 describe('LocalStateBroadcaster', () => {
 	let webRtc: WebRtc
 	let internalWebRtc: InternalWebRtc
-	let callParticipantCollection: CallParticipantCollection
-	let localCallParticipantModel: LocalCallParticipantModel
+	let callParticipantCollection: CallParticipantCollectionType
+	let localCallParticipantModel: LocalCallParticipantModelType
 
 	let localStateBroadcaster: LocalStateBroadcaster
 

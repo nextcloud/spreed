@@ -4,7 +4,9 @@
  */
 
 import type {
+	CallParticipantCollection as CallParticipantCollectionType,
 	InternalWebRtc,
+	LocalCallParticipantModel as LocalCallParticipantModelType,
 	WebRtc,
 } from '../../types/index.ts'
 
@@ -24,8 +26,8 @@ import { LocalCallParticipantModel } from './models/LocalCallParticipantModel.js
 describe('LocalStateBroadcasterMcu', () => {
 	let webRtc: WebRtc
 	let internalWebRtc: InternalWebRtc
-	let callParticipantCollection: CallParticipantCollection
-	let localCallParticipantModel: LocalCallParticipantModel
+	let callParticipantCollection: CallParticipantCollectionType
+	let localCallParticipantModel: LocalCallParticipantModelType
 
 	let localStateBroadcasterMcu: LocalStateBroadcasterMcu
 
