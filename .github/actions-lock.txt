@@ -3,7 +3,7 @@
 43851fd8e1125e1083be704056616c9a appstore-build-publish.yml
 d42c24e161cb75a6394cb8bd347b9467 block-unconventional-commits.yml
 779a27fda482f862faafbc191753d32a command-openapi.yml
-d00c282925ce19918cc26ec0827d9726 dependabot-approve-merge.yml
+cbffe424c47647a2e375f96f25b67af9 dependabot-approve-merge.yml
 2581a67c5bcdcd570427e6d51db767d7 fixup.yml
 7bcfba381bfb7c28d9ef6a7d55ac937b lint-eslint.yml
 80a58e5584612def0e751fcfb7669814 lint-info-xml.yml
