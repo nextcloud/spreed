@@ -63,7 +63,6 @@ class AdminSettings implements ISettings {
 		$this->initRecording();
 		$this->initSIPBridge();
 
-
 		Util::addScript('spreed', 'talk-admin-settings');
 		Util::addStyle('spreed', 'talk-admin-settings');
 

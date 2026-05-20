@@ -280,7 +280,6 @@ class CallController extends AEnvironmentAwareOCSController {
 		// Force silent join for voice rooms
 		$silent = $silent || ($this->room->getAttributes() & RoomAttributes::VOICE_ROOM->value);
 
-
 		try {
 			$this->participantService->changeInCall($this->room, $this->participant, $flags, silent: $silent, lastJoinedCall: $lastJoinedCall->getTimestamp());
 			$this->roomService->setActiveSince($this->room, $this->participant, $lastJoinedCall, $flags, silent: $silent, silentFor: $silentFor);

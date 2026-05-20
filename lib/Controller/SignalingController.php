@@ -415,7 +415,6 @@ class SignalingController extends OCSController {
 						break;
 					}
 
-
 					if ($decodedMessage['type'] === 'control') {
 						if (!$participant->hasModeratorPermissions(false)) {
 							break;

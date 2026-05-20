@@ -21,7 +21,6 @@ use Test\TestCase;
 class AttendeeMapperTest extends TestCase {
 	protected ?AttendeeMapper $attendeeMapper = null;
 
-
 	public function setUp(): void {
 		parent::setUp();
 

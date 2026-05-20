@@ -113,7 +113,6 @@ class Add extends Base {
 			}
 		}
 
-
 		$servers[] = [
 			'schemes' => $schemes,
 			'server' => $server,

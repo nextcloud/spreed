@@ -140,7 +140,6 @@ class ThreadController {
 		return new DataResponse($data, Http::STATUS_OK);
 	}
 
-
 	/**
 	 * @see \OCA\Talk\Controller\ThreadController::setNotificationLevel()
 	 *

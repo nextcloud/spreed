@@ -153,7 +153,6 @@ class Event implements \JsonSerializable {
 		return false;
 	}
 
-
 	public function isOrganizer(array $organizer, string $email): bool {
 		// Calendar emails start with 'mailto:'
 		return substr((string)$organizer[0], 7) === $email;

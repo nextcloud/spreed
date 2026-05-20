@@ -111,7 +111,6 @@ class ReactionController {
 		return new DataResponse($this->formatReactions($format, $data), $statusCode);
 	}
 
-
 	/**
 	 * Get a list of reactions for a message
 	 *
