@@ -1360,7 +1360,6 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-
 	public function testLeaveRoomWithOldSession(): void {
 		// Make sure that leaving a user with an old session id doesn't remove
 		// the current user from the room if they re-joined in the meantime.

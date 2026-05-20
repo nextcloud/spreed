@@ -98,7 +98,6 @@ class FilesIntegrationController extends OCSController {
 			throw new OCSException($this->l->t('File is not shared, or shared but not with the user'), Http::STATUS_UNAUTHORIZED);
 		}
 
-
 		$node = $this->util->getAnyNodeOfFileAccessibleByUser($fileId, $currentUser->getUID());
 		if ($node === null) {
 			throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));

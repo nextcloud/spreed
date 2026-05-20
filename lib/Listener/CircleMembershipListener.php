@@ -79,7 +79,6 @@ class CircleMembershipListener extends AMembershipListener {
 			}
 		}
 
-
 		if (empty($roomsToAdd)) {
 			// The circle is not in any room => bye!
 			return;

@@ -406,7 +406,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$return[] = $this->formatRoom($room, $participant, null, false, true, true);
 		}
 
-
 		return new DataResponse($return);
 	}
 

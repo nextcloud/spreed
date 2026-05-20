@@ -48,7 +48,6 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 	) {
 	}
 
-
 	#[\Override]
 	public function matchReference(string $referenceText): bool {
 		return $this->getTalkAppLinkToken($referenceText) !== null;
@@ -157,7 +156,6 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 			|| $this->roomManager->isRoomListableByUser($room, $this->userId)) {
 			$description = $room->getDescription();
 		}
-
 
 		/**
 		 * If linking to a comment and the user is already a participant

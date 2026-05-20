@@ -113,7 +113,6 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 			$table->addIndex(['actor_type', 'actor_id'], 'ta_actor');
 		}
 
-
 		if (!$schema->hasTable('talk_sessions')) {
 			$table = $schema->createTable('talk_sessions');
 
@@ -183,7 +182,6 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 			->from('talk_participants')
 			->where($query->expr()->neq('user_id', $query->createNamedParameter('')))
 			->andWhere($query->expr()->isNotNull('user_id'));
-
 
 		$result = $query->executeQuery();
 		while ($row = $result->fetchAssociative()) {

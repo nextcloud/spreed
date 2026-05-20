@@ -6,6 +6,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\Listener;
 
 use OCA\DAV\CalDAV\TimezoneService;
@@ -175,7 +176,6 @@ class CalDavEventListener implements IEventListener {
 			$this->roomService->setReadOnly($room, Room::READ_ONLY);
 			return;
 		}
-
 
 		// So we can unset names & descriptions in case the user deleted them
 		$this->roomService->setName($room, $name ?? $this->l10n->t('Meeting'));

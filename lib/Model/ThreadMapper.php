@@ -88,10 +88,8 @@ class ThreadMapper extends QBMapper {
 			$threads[] = $this->findEntities($query);
 		}
 
-
 		return array_merge(...$threads);
 	}
-
 
 	/**
 	 * @param int<1, 50> $limit

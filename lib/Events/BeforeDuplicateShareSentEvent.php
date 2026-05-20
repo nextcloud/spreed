@@ -6,7 +6,6 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-
 namespace OCA\Talk\Events;
 
 use OCP\EventDispatcher\Event;
@@ -18,7 +17,6 @@ class BeforeDuplicateShareSentEvent extends Event {
 	) {
 		parent::__construct();
 	}
-
 
 	public function getShare(): IShare {
 		return $this->share;

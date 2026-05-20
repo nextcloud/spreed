@@ -319,7 +319,6 @@ class RoomService {
 			]], null);
 		}
 		return $room;
-
 	}
 
 	public function prepareConversationName(string $objectName): string {
@@ -336,7 +335,6 @@ class RoomService {
 				return true;
 			} catch (InvalidArgumentException) {
 				return false;
-
 			}
 		}
 		return false;

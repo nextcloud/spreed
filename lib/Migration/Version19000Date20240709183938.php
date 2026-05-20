@@ -25,7 +25,6 @@ class Version19000Date20240709183938 extends SimpleMigrationStep {
 	) {
 	}
 
-
 	/**
 	 * @param IOutput $output
 	 * @param Closure(): ISchemaWrapper $schemaClosure

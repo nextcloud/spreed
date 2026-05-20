@@ -24,7 +24,6 @@ class CallNotificationController extends OCSController {
 	public const CASE_MISSED_CALL = 2;
 	public const CASE_PARTICIPANT_JOINED = 3;
 
-
 	public function __construct(
 		string $appName,
 		IRequest $request,

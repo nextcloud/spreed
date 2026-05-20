@@ -132,7 +132,6 @@ class PollController {
 		return new DataResponse($data);
 	}
 
-
 	/**
 	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'poll'|'question'|'room'}, array{}>
 	 * @throws CannotReachRemoteException

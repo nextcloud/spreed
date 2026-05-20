@@ -77,7 +77,6 @@ class ThreadService {
 			throw $e;
 		}
 		return $thread;
-
 	}
 
 	/**

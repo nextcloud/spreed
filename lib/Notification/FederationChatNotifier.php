@@ -61,7 +61,6 @@ class FederationChatNotifier {
 			return;
 		}
 
-
 		$notificationLevel = $participant->getAttendee()->getNotificationLevel();
 		if ($threadId !== null) {
 			$threadAttendees = $this->threadService->findAttendeeByThreadIds($participant->getAttendee(), [$threadId]);

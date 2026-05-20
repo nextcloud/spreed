@@ -131,7 +131,6 @@ class ChatController {
 		int $markNotificationsAsRead): DataResponse {
 		$cacheKey = sha1(json_encode([$room->getRemoteServer(), $room->getRemoteToken()]));
 
-
 		if ($lookIntoFuture && $markNotificationsAsRead && $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 			$this->notifier->markMentionNotificationsRead($room, $participant->getAttendee()->getActorId());
 		}

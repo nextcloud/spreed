@@ -172,7 +172,6 @@ class FederationManager {
 			throw new \InvalidArgumentException('state');
 		}
 
-
 		$cloudId = $this->cloudIdManager->getCloudId($user->getUID(), null);
 
 		// Add user to the room
