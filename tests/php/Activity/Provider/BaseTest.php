@@ -77,7 +77,6 @@ class BaseTest extends TestCase {
 			->getMock();
 	}
 
-
 	public static function dataPreParse(): array {
 		return [
 			['other',  false,  true,  true],

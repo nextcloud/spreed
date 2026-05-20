@@ -169,7 +169,6 @@ class BreakoutRoomService {
 			$this->addOthersToBreakoutRooms($breakoutRooms, $map);
 		}
 
-
 		return $breakoutRooms;
 	}
 

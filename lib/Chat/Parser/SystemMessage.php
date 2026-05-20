@@ -66,7 +66,6 @@ class SystemMessage implements IEventListener {
 	/** @var array<string, array<string, string>> */
 	protected array $phoneNames = [];
 
-
 	protected array $currentFederatedUserDetails = [];
 
 	public function __construct(
@@ -1353,7 +1352,6 @@ class SystemMessage implements IEventListener {
 			'call_tried',
 		];
 	}
-
 
 	protected function parseCall(Room $room, string $message, array $parameters, array $params): array {
 		$actorIsSystem = $params['actor']['type'] === 'guest' && $params['actor']['id'] === 'guest/' . Attendee::ACTOR_ID_SYSTEM;

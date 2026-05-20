@@ -68,7 +68,6 @@ class Version19000Date20240312105627 extends SimpleMigrationStep {
 			'notnull' => true,
 		]);
 
-
 		$table->setPrimaryKey(['id']);
 		$table->addIndex(['next_retry'], 'talk_retry_ocm_next');
 

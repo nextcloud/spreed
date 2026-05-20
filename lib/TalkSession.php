@@ -126,7 +126,6 @@ class TalkSession {
 		$values[$token] = $value;
 		$this->session->set($key, json_encode($values));
 
-
 		if ($reopened) {
 			$this->session->close();
 		}

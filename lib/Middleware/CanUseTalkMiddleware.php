@@ -51,7 +51,6 @@ class CanUseTalkMiddleware extends Middleware {
 	// Support for E2EE on Talk iOS is still pending
 	public const TALK_IOS_MIN_VERSION_E2EE_CALLS = '23.0.0';
 
-
 	public function __construct(
 		private readonly IUserSession $userSession,
 		private readonly IGroupManager $groupManager,

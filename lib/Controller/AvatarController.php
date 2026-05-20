@@ -344,7 +344,6 @@ class AvatarController extends AEnvironmentAwareOCSController {
 		);
 		$response->cacheFor(60 * 15, false, true);
 		return $response;
-
 	}
 
 	/**

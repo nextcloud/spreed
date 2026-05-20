@@ -53,7 +53,6 @@ class ParticipantServiceTest extends TestCase {
 	private ?ParticipantService $service = null;
 	protected LoggerInterface&MockObject $logger;
 
-
 	public function setUp(): void {
 		parent::setUp();
 

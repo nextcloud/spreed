@@ -56,7 +56,6 @@ class Room {
 	public const RECORDING_AUDIO_STARTING = 4;
 	public const RECORDING_FAILED = 5;
 
-
 	public const READ_WRITE = 0;
 	public const READ_ONLY = 1;
 

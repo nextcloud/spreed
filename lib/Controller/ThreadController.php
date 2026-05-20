@@ -87,7 +87,6 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		return new DataResponse($list);
 	}
 
-
 	/**
 	 * Get subscribed threads for a user
 	 *
@@ -374,7 +373,6 @@ class ThreadController extends AEnvironmentAwareOCSController {
 		], true)) {
 			return new DataResponse(['error' => 'level'], Http::STATUS_BAD_REQUEST);
 		}
-
 
 		try {
 			$thread = $this->threadService->findByThreadId($this->room->getId(), $messageId);
