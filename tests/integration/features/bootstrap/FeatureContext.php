@@ -1250,6 +1250,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
+	#[Then('/^user "([^"]*)" has file at path "([^"]*)"$/')]
+	public function userHasFileAtPath(string $user, string $path): void {
+		$this->setCurrentUser($user);
+		$path = $this->resolveRoomTokenInString($path);
+		$headers = ['Depth' => 0];
+		$this->sendingToDav('PROPFIND', "/$user/$path", $headers);
+		$this->assertStatusCode($this->response, 207);
+	}
+
+	#[Then('/^user "([^"]*)" has no file at path "([^"]*)"$/')]
+	public function userHasNoFileAtPath(string $user, string $path): void {
+		$this->setCurrentUser($user);
+		$path = $this->resolveRoomTokenInString($path);
+		$headers = ['Depth' => 0];
+		$this->sendingToDav('PROPFIND', "/$user/$path", $headers);
+		$this->assertStatusCode($this->response, 404);
+	}
+
+	private function resolveRoomTokenInString(string $value): string {
+		return preg_replace_callback('/ROOM\(([^)]+)\)/', static function (array $m): string {
+			return self::$identifierToToken[$m[1]] ?? $m[0];
+		}, $value);
+	}
+
 	#[Then('/^user "([^"]*)" gets the room for last share with (\d+) \((v1)\)$/')]
 	public function userGetsTheRoomForLastShare(string $user, int $statusCode, string $apiVersion): void {
 		$shareToken = $this->sharingContext->getLastShareToken();

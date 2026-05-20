@@ -60,7 +60,16 @@ class Listener implements IEventListener {
 			$internalPath = $share->getNode()->getPath();
 			$prefix = '/' . $ownerUid . '/files/' . $attachmentFolder . '/';
 			if (str_starts_with($internalPath, $prefix)) {
-				$relativePath = substr($internalPath, strlen($prefix));
+				$candidate = substr($internalPath, strlen($prefix));
+				// Only keep the full relative path when the file sits inside a
+				// conversation subfolder (first segment is "<name>-<token>").
+				// Other subdirectories (e.g. Recording/<token>/) are not part of
+				// the conversation subfolder hierarchy and must fall back to the
+				// flat filename so that recipients see the file at Talk/<filename>.
+				$firstSegment = explode('/', $candidate, 2)[0];
+				if (preg_match('/-[a-z0-9]{4,30}$/', $firstSegment)) {
+					$relativePath = $candidate;
+				}
 			}
 		}
 
