@@ -55,12 +55,25 @@ class Listener implements IEventListener {
 		// point under their own attachment folder.
 		$ownerUid = $share->getShareOwner();
 		$relativePath = $share->getNode()->getName();
-		if ($this->config->isConversationSubfoldersEnabled() && $ownerUid !== null) {
+		if ($share->getShareType() === IShare::TYPE_ROOM && $this->config->isConversationSubfoldersEnabled() && $ownerUid !== null) {
 			$attachmentFolder = ltrim($this->config->getAttachmentFolder($ownerUid), '/');
 			$internalPath = $share->getNode()->getPath();
 			$prefix = '/' . $ownerUid . '/files/' . $attachmentFolder . '/';
 			if (str_starts_with($internalPath, $prefix)) {
-				$relativePath = substr($internalPath, strlen($prefix));
+				$candidate = substr($internalPath, strlen($prefix));
+				// Only keep the full relative path when the file sits inside a
+				// user subfolder (first segment is "<name>-<userid>") inside the
+				// conversation subfolder (first segment is "<name>-<token>").
+				// Other subdirectories (e.g. Recording/<token>/) are not part of
+				// the conversation subfolder hierarchy and must fall back to the
+				// flat filename so that recipients see the file at Talk/<filename>.
+				$segments = explode('/', $candidate, 3);
+				$potentialConversationFolder = $segments[0];
+				$potentialUserFolder = $segments[1] ?? '';
+				if (str_ends_with($potentialConversationFolder, '-' . $share->getSharedWith())
+					&& str_ends_with($potentialUserFolder, '-' . $share->getShareOwner())) {
+					$relativePath = $candidate;
+				}
 			}
 		}
 
