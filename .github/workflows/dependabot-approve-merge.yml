@@ -42,27 +42,43 @@ jobs:
           echo 'Can not approve PRs from forks'
           exit 1
 
-      - uses: mdecoleman/pr-branch-name@55795d86b4566d300d237883103f052125cc7508 # v3.0.0
-        id: branchname
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Dependabot metadata
+        if: github.event.pull_request.user.login == 'dependabot[bot]'
         id: metadata
         uses: dependabot/fetch-metadata@ffa630c65fa7e0ecfa0625b5ceda64399aea1b36 # v3.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: GitHub actions bot approve
-        if: startsWith(steps.branchname.outputs.branch, 'dependabot/')
-        run: gh pr review --approve "$PR_URL"
+      - name: Check allowed dependency update
+        if: github.event.pull_request.user.login == 'dependabot[bot]'
+        id: validate
         env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IGNORE_PATTERN: ${{ env.IGNORE_PATTERN }}
+          DEPENDENCY_NAMES: ${{ steps.metadata.outputs.dependency-names }}
+        run: |
+          if [[ -z ${IGNORE_PATTERN} ]]; then
+              echo "ignore=false" >> "$GITHUB_OUTPUT"
+          elif [[ -z ${DEPENDENCY_NAMES} ]]; then
+              echo "ignore=false" >> "$GITHUB_OUTPUT"
+          elif [[ ${DEPENDENCY_NAMES} =~ ${IGNORE_PATTERN} ]]; then
+              echo "ignore=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # GitHub actions bot approve
+      - name: Auto approve
+        id: auto_approve
+        uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
+        if: ${{ github.event.pull_request.user.login == 'dependabot[bot]'
+            && steps.validate.outputs.ignore != 'true'
+            && ((fromJSON(env.ALLOW_MINOR) && steps.metadata.outputs.update-type == 'version-update:semver-minor')
+                || steps.metadata.outputs.update-type == 'version-update:semver-patch')
+            }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       # Enable GitHub auto merge
       - name: Auto merge
         uses: alexwilson/enable-github-automerge-action@56e3117d1ae1540309dc8f7a9f2825bc3c5f06ff # 2.0.0
-        if: startsWith(steps.branchname.outputs.branch, 'dependabot/') && (github.event.action == 'opened' || github.event.action == 'reopened') && (steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor')
+        if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && steps.auto_approve.conclusion == 'success' }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
