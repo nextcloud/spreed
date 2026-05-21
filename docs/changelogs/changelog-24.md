@@ -5,6 +5,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.0.0-rc.2 – 2026-05-21
+### Added
+- feat(call): Move "Raise hand" in call reactions menu
+  [#18046](https://github.com/nextcloud/spreed/issues/18046)
+
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(recording): fix recipient share path for normal shares when conversation subfolders is used
+  [#18051](https://github.com/nextcloud/spreed/issues/18051)
+- fix(tags): Move created tags before "Others" when "Others" is the last tag
+  [#18050](https://github.com/nextcloud/spreed/issues/18050)
+- fix(tags): collapse tag groups by clicking on header
+  [#18050](https://github.com/nextcloud/spreed/issues/18050)
+
 ## 24.0.0-rc.1 – 2026-05-13
 ### Added
 - feat(email): Allow email guests without public link
