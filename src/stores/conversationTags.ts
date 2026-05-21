@@ -75,6 +75,11 @@ export const useConversationTagsStore = defineStore('conversationTags', () => {
 	async function createTag(name: string) {
 		const response = await createTagApi(name)
 		const tag = response.data.ocs.data
+		// Mirror backend logic: if Other's sortOrder collides with the new tag's, bump it by 1.
+		const otherTag = Object.values(tags).find((t) => t.type === 'other')
+		if (otherTag && otherTag.sortOrder === tag.sortOrder) {
+			otherTag.sortOrder += 1
+		}
 		tags[tag.id] = tag
 		return tag
 	}

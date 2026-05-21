@@ -43,6 +43,14 @@ const favoritesTag = {
 	collapsed: false,
 }
 
+const otherTag = {
+	id: 'other',
+	name: 'Other',
+	type: 'other',
+	sortOrder: 2,
+	collapsed: false,
+}
+
 const customTagOne = {
 	id: 'tag-1',
 	name: 'Alpha',
@@ -115,6 +123,7 @@ describe('conversationTagsStore', () => {
 	})
 
 	it('creates a tag and persists it', async () => {
+		BrowserStorage.getItem.mockReturnValueOnce(JSON.stringify([favoritesTag, otherTag]))
 		conversationTagsStore = useConversationTagsStore()
 		createTagApi.mockResolvedValue(generateOCSResponse({ payload: customTagOne }))
 
@@ -123,8 +132,9 @@ describe('conversationTagsStore', () => {
 
 		expect(createTagApi).toHaveBeenCalledWith(customTagOne.name)
 		expect(tag).toEqual(customTagOne)
-		expect(conversationTagsStore.tags[customTagOne.id]).toEqual(customTagOne)
-		expect(getPersistedTags()).toEqual([customTagOne])
+		// Other's sortOrder bumped from 2 to 3, so new tag (2) appears before Other (3)
+		expect(conversationTagsStore.sortedTags.map((t) => t.id)).toEqual([favoritesTag.id, customTagOne.id, otherTag.id])
+		expect(conversationTagsStore.tags[otherTag.id].sortOrder).toBe(3)
 	})
 
 	it('updates a tag name', async () => {
