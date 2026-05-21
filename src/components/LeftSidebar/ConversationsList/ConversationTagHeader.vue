@@ -94,6 +94,7 @@ async function handleDeleteTag() {
 		allowCollapse
 		:open="!item.collapsed"
 		:forceMenu="isCustomTag"
+		@click="tagsStore.toggleCollapsed(item.id)"
 		@update:open="tagsStore.toggleCollapsed(item.id)">
 		<!-- Invisible child to trigger the collapse chevron -->
 		<li class="tag-header__spacer" />
