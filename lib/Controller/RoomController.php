@@ -3053,23 +3053,41 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function getExternalCallUrl(): DataResponse {
+		if (!$this->talkConfig->isExternalCallServiceConfigured()) {
+			return new DataResponse(['error' => 'other'], Http::STATUS_BAD_REQUEST);
+		}
+
 		if ($this->room->getObjectType() !== Room::OBJECT_TYPE_EXTERNAL_CALL) {
 			return new DataResponse(['error' => 'type'], Http::STATUS_BAD_REQUEST);
 		}
 
-		$options = [];
-		if ($this->participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
-			$options['auth'] = [urlencode($this->participant->getAttendee()->getActorId())];
+		$options = [
+			'headers' => [
+				'Accept' => 'application/json',
+			],
+		];
+
+		if ($this->talkConfig->getExternalCallServiceAuthUser()) {
+			$options['auth'] = [
+				urlencode($this->talkConfig->getExternalCallServiceAuthUser()),
+				$this->talkConfig->getExternalCallServiceSharedSecret(),
+			];
 		}
+
+		if ($this->participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			$options['headers']['x-nextcloud-user-id'] = $this->participant->getAttendee()->getActorId();
+		}
+
+		$serviceRequestUrl = str_replace(
+			'{meetingId}',
+			$this->room->getObjectId(),
+			$this->talkConfig->getExternalCallService()
+		);
 
 		$clientService = \OCP\Server::get(IClientService::class);
 		$client = $clientService->newClient();
-
 		try {
-			$response = $client->post(
-				$this->appConfig->getAppValueString('external_call_service'),
-				$options
-			);
+			$response = $client->post($serviceRequestUrl, $options);
 		} catch (ClientException) {
 			return new DataResponse(['error' => 'other'], Http::STATUS_BAD_REQUEST);
 		}

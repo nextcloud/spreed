@@ -481,6 +481,10 @@ class Config {
 		return $secret;
 	}
 
+	public function getExternalCallServiceAuthUser(): string {
+		return $this->appConfig->getAppValueString('external_call_service_auth_user', 'nextcloud');
+	}
+
 	/**
 	 * Whether the external call service is configured to authenticate requests
 	 * via the `x-nextcloud-talk-external-service` header. Requires the service
