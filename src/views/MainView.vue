@@ -17,6 +17,7 @@ import LobbyScreen from '../components/LobbyScreen.vue'
 import PollViewer from '../components/PollViewer/PollViewer.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
 import { useIsInCall } from '../composables/useIsInCall.js'
+import { CONVERSATION } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { useActorStore } from '../stores/actor.ts'
 

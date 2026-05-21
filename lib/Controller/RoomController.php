@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use GuzzleHttp\Exception\ClientException;
 use OCA\Circles\Model\Circle;
 use OCA\DAV\CalDAV\TimezoneService;
 use OCA\Talk\Capabilities;
@@ -76,6 +77,7 @@ use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
@@ -91,6 +93,7 @@ use OCP\Calendar\IManager as ICalendarManager;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
+use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
@@ -3032,5 +3035,55 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 
 		return new DataResponse(null, Http::STATUS_OK);
+	}
+
+	/**
+	 * Update the description of a room
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array{url: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'type'|'other'}, array{}>
+	 *
+	 * 200: Description updated successfully
+	 * 400: Updating description is not possible
+	 */
+	#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
+	#[PublicPage]
+	#[RequireParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/external-call', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function getExternalCallUrl(): DataResponse {
+		if ($this->room->getObjectType() !== Room::OBJECT_TYPE_EXTERNAL_CALL) {
+			return new DataResponse(['error' => 'type'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$options = [];
+		if ($this->participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			$options['auth'] = [urlencode($this->participant->getAttendee()->getActorId())];
+		}
+
+		$clientService = \OCP\Server::get(IClientService::class);
+		$client = $clientService->newClient();
+
+		try {
+			$response = $client->post(
+				$this->appConfig->getAppValueString('external_call_service'),
+				$options
+			);
+		} catch (ClientException) {
+			return new DataResponse(['error' => 'other'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$responseBody = (string)$response->getBody();
+		$data = (array)json_decode($responseBody, true, flags: JSON_THROW_ON_ERROR);
+		$url = $data['url'] ?? null;
+
+		if ($url === null || $url === '') {
+			return new DataResponse(['error' => 'other'], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse([
+			'url' => $url,
+		]);
 	}
 }

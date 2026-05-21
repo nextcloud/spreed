@@ -129,6 +129,7 @@ import { useTalkHashStore } from '../../stores/talkHash.js'
 import { useTokenStore } from '../../stores/token.ts'
 import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.ts'
 import { messagePleaseReload } from '../../utils/talkDesktopUtils.ts'
+import {generateOcsUrl} from "@nextcloud/router";
 
 export default {
 	name: 'CallButton',
@@ -482,15 +483,11 @@ export default {
 		async handleExternalCall() {
 			try {
 				this.loading = true
-				const externalServiceUrl = getTalkConfig(this.token, 'call', 'external-call-service')
-				const response = await axios.post(externalServiceUrl, {
-					room: this.token,
-					userId: this.actorStore.userId ?? this.actorStore.actorId,
-				})
+				const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/external-call', { token: this.token }))
 
 				// Check for successful response (200, 302, 303)
 				if ([200, 302, 303].includes(response.status)) {
-					const callUrl = response.data || response.headers.location
+					const callUrl = response.data.ocs.data.url
 					if (callUrl) {
 						this.callViewStore.setExternalCallServiceUrl(callUrl)
 					}
