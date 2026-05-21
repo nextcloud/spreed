@@ -30,7 +30,7 @@ jobs:
       ALLOW_MINOR: false
       IGNORE_PATTERN: '(webrtc-adapter|\@nextcloud\/vue)'
     permissions:
-      # for hmarr/auto-approve-action to approve PRs
+      # for auto-approve step to work
       pull-requests: write
       # for alexwilson/enable-github-automerge-action to approve PRs
       contents: write
@@ -45,7 +45,7 @@ jobs:
       - name: Dependabot metadata
         if: github.event.pull_request.user.login == 'dependabot[bot]'
         id: metadata
-        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+        uses: dependabot/fetch-metadata@ffa630c65fa7e0ecfa0625b5ceda64399aea1b36 # v3.0.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -78,7 +78,7 @@ jobs:
 
       # Enable GitHub auto merge
       - name: Auto merge
-        uses: alexwilson/enable-github-automerge-action@56e3117d1ae1540309dc8f7a9f2825bc3c5f06ff # v2.0.0
+        uses: alexwilson/enable-github-automerge-action@56e3117d1ae1540309dc8f7a9f2825bc3c5f06ff # 2.0.0
         if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && steps.auto_approve.conclusion == 'success' }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
