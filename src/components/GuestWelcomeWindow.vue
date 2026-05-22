@@ -44,7 +44,7 @@
 
 			<p class="login-info">
 				{{ t('spreed', 'Do you already have an account?') }}
-				<a :href="getLoginUrl()">
+				<a class="login-info__link" :href="getLoginUrl()">
 					{{ t('spreed', 'Log in') }}
 				</a>
 			</p>
