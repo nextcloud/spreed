@@ -59,7 +59,7 @@
 								:isGrid="true"
 								:showTalkingHighlight="!isStripe"
 								:isStripe="isStripe"
-								:isPromoted="sharedDatas[callParticipantModel.attributes.peerId].promoted"
+								:isPromoted="sharedDatas[callParticipantModel.attributes.peerId].promoted && !(isStripe && screens.length)"
 								:isSelected="isSelected(callParticipantModel)"
 								:sharedData="sharedDatas[callParticipantModel.attributes.peerId]"
 								@clickVideo="handleClickVideo($event, callParticipantModel.attributes.peerId)" />
