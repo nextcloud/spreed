@@ -553,18 +553,30 @@ class Notifier implements INotifier {
 			}
 		} elseif ($subjectParameters['userType'] === Attendee::ACTOR_FEDERATED_USERS) {
 			try {
-				$cloudId = $this->cloudIdManager->resolveCloudId($message->getActorId());
+				if (isset($subjectParameters['userId']) && $subjectParameters['userId'] !== $message->getActorId()) {
+					$cloudId = $this->cloudIdManager->resolveCloudId($subjectParameters['userId']);
+					try {
+						$reactionUser = $this->participantService->getParticipantByActor($message->getRoom(), Attendee::ACTOR_FEDERATED_USERS, $subjectParameters['userId']);
+						$displayName = $reactionUser->getAttendee()->getDisplayName();
+					} catch (ParticipantNotFoundException) {
+						$displayName = $cloudId->getDisplayId();
+					}
+				} else {
+					$cloudId = $this->cloudIdManager->resolveCloudId($message->getActorId());
+					$displayName = $message->getActorDisplayName();
+				}
+
 				$richSubjectUser = [
 					'type' => 'user',
 					'id' => $cloudId->getUser(),
-					'name' => $message->getActorDisplayName(),
+					'name' => $displayName,
 					'server' => $cloudId->getRemote(),
 				];
 			} catch (\InvalidArgumentException) {
 				$richSubjectUser = [
 					'type' => 'highlight',
-					'id' => $message->getActorId(),
-					'name' => $message->getActorId(),
+					'id' => $subjectParameters['userId'] ?? $message->getActorId(),
+					'name' => $subjectParameters['userId'] ?? $message->getActorId(),
 				];
 			}
 		} elseif ($subjectParameters['userType'] === Attendee::ACTOR_BOTS) {
