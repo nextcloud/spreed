@@ -490,8 +490,47 @@ Feature: federation/chat
     # Join and leave to clear the invite notification
     Given user "participant2" joins room "LOCAL::room" with 200 (v4)
     Given user "participant2" leaves room "LOCAL::room" with 200 (v4)
+    When user "participant2" sets notifications to all for room "LOCAL::room" (v4)
     And user "participant2" sends message "Message 1" to room "LOCAL::room" with 201
     And using server "LOCAL"
+    And user "participant1" react with "🚀" on message "Message 1" to room "room" with 201
+      | actorType       | actorId                  | actorDisplayName         | reaction |
+      | users           | participant1             | participant1-displayname | 🚀       |
+    And using server "REMOTE"
+    # Currently reaction notifications are not supported in federation
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id                | subject                                                                | message     |
+    And user "participant2" react with "🚀" on message "Message 1" to room "LOCAL::room" with 201
+      | actorType       | actorId                   | actorDisplayName         | reaction |
+      | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | 🚀       |
+      | users           | participant2              | participant2-displayname | 🚀       |
+    And using server "LOCAL"
+    And user "participant1" retrieve reactions "all" of message "Message 1" in room "room" with 200
+      | actorType       | actorId                    | actorDisplayName         | reaction |
+      | users           | participant1               | participant1-displayname | 🚀       |
+      | federated_users | participant2@{$REMOTE_URL} | participant2-displayname | 🚀       |
+
+  Scenario: Reaction on chat messages as federated user
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds federated_user "participant2" to room "room" with 200 (v4)
+    When user "participant1" sets notifications to all for room "room" (v4)
+    And using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+      | remoteServerUrl | remoteToken | state | inviterCloudId     | inviterDisplayName       |
+      | LOCAL           | room        | 0     | participant1@LOCAL | participant1-displayname |
+    And user "participant2" accepts invite to room "room" of server "LOCAL" with 200 (v1)
+      | id          | name | type | remoteServer | remoteToken |
+      | LOCAL::room | room | 2    | LOCAL        | room        |
+    Then user "participant2" is participant of the following rooms (v4)
+      | id          | type |
+      | LOCAL::room | 2    |
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "LOCAL::room" with 200 (v4)
+    Given user "participant2" leaves room "LOCAL::room" with 200 (v4)
+    And using server "LOCAL"
+    And user "participant1" sends message "Message 1" to room "room" with 201
     And user "participant1" react with "🚀" on message "Message 1" to room "room" with 201
       | actorType       | actorId                  | actorDisplayName         | reaction |
       | users           | participant1             | participant1-displayname | 🚀       |
@@ -501,6 +540,9 @@ Feature: federation/chat
       | federated_users | participant1@{$LOCAL_URL} | participant1-displayname | 🚀       |
       | users           | participant2              | participant2-displayname | 🚀       |
     And using server "LOCAL"
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id      | subject                                                                       | message   |
+      | spreed | chat        | room/Message 1 | participant2-displayname reacted with 🚀 to your message in conversation room | Message 1 |
     And user "participant1" retrieve reactions "all" of message "Message 1" in room "room" with 200
       | actorType       | actorId                    | actorDisplayName         | reaction |
       | users           | participant1               | participant1-displayname | 🚀       |
