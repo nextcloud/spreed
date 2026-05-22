@@ -8,18 +8,19 @@
 		<!-- eslint-disable-next-line vue/no-v-html -->
 		<h3 v-if="!compact" v-html="displayNameLabel" />
 
-		<NcButton
-			v-if="!isEditingUsername && !compact"
-			@click="toggleEdit">
-			{{ t('spreed', 'Edit display name') }}
-			<template #icon>
-				<IconPencilOutline :size="20" />
-			</template>
-		</NcButton>
-
-		<div v-else class="username-form__display-name">
+		<div class="username-form__display-name">
 			<IconAccountOutline class="username-form__display-name-icon" :size="20" />
+
+			<NcButton
+				v-if="!isEditingUsername && !compact"
+				@click="toggleEdit">
+				{{ t('spreed', 'Edit display name') }}
+				<template #icon>
+					<IconPencilOutline :size="20" />
+				</template>
+			</NcButton>
 			<NcTextField
+				v-else
 				ref="usernameInput"
 				v-model="guestUserName"
 				:placeholder="t('spreed', 'Guest')"
@@ -33,15 +34,12 @@
 				@keydown.esc="toggleEdit" />
 		</div>
 
-		<div class="login-info">
-			<span> {{ t('spreed', 'Do you already have an account?') }}</span>
-			<NcButton
-				class="login-info__button"
-				variant="secondary"
-				:href="loginUrl">
+		<p class="login-info">
+			{{ t('spreed', 'Do you already have an account?') }}
+			<a class="login-info__link" :href="loginUrl">
 				{{ t('spreed', 'Log in') }}
-			</NcButton>
-		</div>
+			</a>
+		</p>
 	</div>
 </template>
 
@@ -167,14 +165,11 @@ function toggleEdit() {
 }
 
 .login-info {
-	display: flex;
-	align-items: center;
-	gap: calc(var(--default-grid-baseline) * 2);
 	padding: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 2) 0;
 	margin-inline-start: calc(var(--default-grid-baseline) + 20px); // 20px for checkbox alignment
 
-	&__button {
-		flex-shrink: 0;
+	&__link {
+		text-decoration: underline;
 	}
 }
 
