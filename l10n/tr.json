@@ -2282,6 +2282,9 @@
     "Nextcloud is in maintenance mode." : "Nextcloud bakım kipinde.",
     "Nextcloud Talk Federation was updated." : "Nextcloud Konuş birliği güncellenmiş.",
     "Enable live translation" : "Canlı çeviriyi aç",
+    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Açık anket • %n oy • Oyunuz anonimdir","Açık anket • %n oy • Oyunuz anonimdir"],
+    "Open poll • You voted already • Your vote is anonymous" : "Açık anket • Zaten oy vermişsiniz • Oyunuz anonimdir",
+    "Open poll • Your vote is anonymous" : "Açık anket • Oyunuz anonimdir",
     "I picked list style" : "Liste biçemini seçtim",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Talk görünümü liste olarak mı ileti balonları olarak mı kullanıyorsunuz?"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"

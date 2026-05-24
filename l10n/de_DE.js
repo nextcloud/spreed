@@ -2284,6 +2284,9 @@ OC.L10N.register(
     "Nextcloud is in maintenance mode." : "Nextcloud befindet sich im Wartungsmodus.",
     "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation wurde aktualisiert.",
     "Enable live translation" : "Live-Übersetzung aktivieren",
+    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Offene Umfrage • %n Stimme • Ihre Stimme ist anonym","Offene Umfrage • %n Stimmen • Ihre Stimme ist anonym"],
+    "Open poll • You voted already • Your vote is anonymous" : "Offene Umfrage • Sie haben bereits abgestimmt • Ihre Stimme ist anonym",
+    "Open poll • Your vote is anonymous" : "Offene Umfrage • Ihre Stimme ist anonym.",
     "I picked list style" : "Ich habe den Listenstil ausgewählt",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hey! Verwenden Sie Talk im Listenstil oder mit Sprechblasen?"
 },
