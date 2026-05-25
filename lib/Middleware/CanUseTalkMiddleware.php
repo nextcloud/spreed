@@ -91,6 +91,12 @@ class CanUseTalkMiddleware extends Middleware {
 				return;
 			}
 
+			if ($methodName === 'getSettings'
+				&& $controller instanceof SignalingController
+				&& $this->groupManager->isAdmin($user->getUID())) {
+				return;
+			}
+
 			if ($controller instanceof HostedSignalingServerController
 				&& $this->groupManager->isAdmin($user->getUID())) {
 				return;
