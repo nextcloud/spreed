@@ -22,7 +22,7 @@
 <script>
 import { getCurrentUser } from '@nextcloud/auth'
 import { showError } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
@@ -54,13 +54,14 @@ import { useIsInCall } from './composables/useIsInCall.js'
 import { watchJoinedConversation } from './composables/useJoinedConversation.ts'
 import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
-import { CONVERSATION, PARTICIPANT } from './constants.ts'
+import { CALL, CONVERSATION, PARTICIPANT } from './constants.ts'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.ts'
 import { leaveConversationSync } from './services/participantsService.js'
 import SessionStorage from './services/SessionStorage.js'
 import { useActorStore } from './stores/actor.ts'
 import { useCallViewStore } from './stores/callView.ts'
+import { useSettingsStore } from './stores/settings.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
 import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
@@ -112,6 +113,7 @@ export default {
 			isNextcloudTalkHashDirty: useHashCheck(),
 			supportSessionState: useActiveSession(),
 			callViewStore: useCallViewStore(),
+			settingsStore: useSettingsStore(),
 			sidebarStore: useSidebarStore(),
 			actorStore: useActorStore(),
 		}
@@ -284,6 +286,8 @@ export default {
 		window.removeEventListener('beforeunload', this.preventUnload)
 		stopWatchingJoinedConversation()
 
+		unsubscribe('talk:media-settings:dismissed', this.handleMediaSettingsDismissed)
+
 		EventBus.off('joined-conversation')
 		EventBus.off('switch-to-conversation')
 		EventBus.off('conversations-received')
@@ -346,6 +350,8 @@ export default {
 		EventBus.on('forbidden-route', (params) => {
 			this.$router.push({ name: 'forbidden' })
 		})
+
+		subscribe('talk:media-settings:dismissed', this.handleMediaSettingsDismissed)
 
 		const beforeRouteChangeListener = async (to, from, next) => {
 			if (this.isNextcloudTalkHashDirty) {
@@ -542,8 +548,49 @@ export default {
 			}
 		},
 
+		handleMediaSettingsDismissed() {
+			// If the user dismisses the device-preview dialog for a voice room
+			// without joining, leave the room — voice rooms are call-only.
+			if (this.isVoiceRoom && !this.isInCall) {
+				this.skipLeaveWarning = true
+				this.$router.push({ name: 'root' })
+			}
+		},
+
 		async joinCallAutomatically(targetToken, prevToken = this.token) {
 			if (this.isInCall || this.isVoiceRoom) {
+				// Fetch conversation object, if it's not known yet to the client
+				if (!this.$store.getters.conversation(targetToken)) {
+					await this.fetchSingleConversation(targetToken)
+				}
+				const targetConversation = this.$store.getters.conversation(targetToken)
+				const targetIsVoiceRoom = Boolean(targetConversation?.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+				const showRecordingWarning = targetConversation && ([
+					CALL.RECORDING.VIDEO_STARTING,
+					CALL.RECORDING.AUDIO_STARTING,
+					CALL.RECORDING.VIDEO,
+					CALL.RECORDING.AUDIO,
+				].includes(targetConversation.callRecording)
+				|| targetConversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED)
+
+				// Voice rooms: show MediaSettings device check before joining,
+				// unless user opted-out or globally configured to start without media.
+				const shouldShowMediaSettingsForVoiceRoom = targetIsVoiceRoom
+					&& !this.isInCall
+					&& !this.settingsStore.startWithoutMedia
+					&& (this.settingsStore.showMediaSettings || showRecordingWarning)
+
+				if (shouldShowMediaSettingsForVoiceRoom) {
+					stopWatchingJoinedConversation()
+					watchedJoinedConversationToken = targetToken
+					unwatchJoinedConversation = watchJoinedConversation(targetToken, () => {
+						stopWatchingJoinedConversation()
+						// MediaSettings' own CallButton (isMediaSettings) handles the actual joinCall
+						emit('talk:media-settings:show')
+					}, { immediate: true })
+					return
+				}
+
 				this.callViewStore.setForceCallView(true)
 
 				const enableAudio = !BrowserStorage.getItem('audioDisabled_' + prevToken)
@@ -552,11 +599,6 @@ export default {
 				const virtualBackgroundType = BrowserStorage.getItem('virtualBackgroundType')
 				const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength')
 				const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl')
-
-				// Fetch conversation object, if it's not known yet to the client
-				if (!this.$store.getters.conversation(targetToken)) {
-					await this.fetchSingleConversation(targetToken)
-				}
 
 				const previousConversation = this.$store.getters.conversation(prevToken)
 				const previousParticipants = []

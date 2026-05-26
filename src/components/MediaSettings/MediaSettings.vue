@@ -9,7 +9,8 @@
 		v-if="show"
 		:size="isDialog ? 'large' : undefined"
 		:labelId="isDialog ? dialogHeaderId : undefined"
-		@close="close">
+		:noClose="hideCloseButton"
+		@close="handleDialogClose">
 		<div class="media-settings">
 			<h2
 				v-if="isDialog"
@@ -243,7 +244,7 @@
 </template>
 
 <script>
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
@@ -276,7 +277,7 @@ import IconBackground from '../../../img/material-icons/replace-background.svg?r
 import { useDevices } from '../../composables/useDevices.js'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { ATTENDEE, AVATAR, CALL, CONFIG, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.ts'
+import { ATTENDEE, AVATAR, CALL, CONFIG, CONVERSATION, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import {
 	getTalkConfig,
@@ -436,6 +437,16 @@ export default {
 
 		isGuest() {
 			return !this.userId && this.actorStore.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
+		},
+
+		isVoiceRoom() {
+			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+		},
+
+		hideCloseButton() {
+			// Guests in a voice room must commit to joining via the device check
+			// — there is nothing else for them to interact with in the room.
+			return this.isGuest && this.isVoiceRoom && this.isBeforeJoinCall
 		},
 
 		userId() {
@@ -711,6 +722,15 @@ export default {
 
 	methods: {
 		t,
+		handleDialogClose() {
+			// User dismissed the dialog (X button, escape, click outside) without joining.
+			// Differs from join (talk:media-settings:hide) and from Apply settings.
+			if (this.isBeforeJoinCall) {
+				emit('talk:media-settings:dismissed', undefined)
+			}
+			this.close()
+		},
+
 		showMediaSettings(page) {
 			this.show = true
 			if (page === 'video-verification') {

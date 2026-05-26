@@ -15,6 +15,7 @@ declare module '@nextcloud/event-bus' {
 		// MediaSettings
 		'talk:media-settings:hide': void
 		'talk:media-settings:show': void | 'video-verification' | 'device-check' | 'backgrounds'
+		'talk:media-settings:dismissed': void
 		// ConversationSettingsDialog
 		'show-conversation-settings': { token: string }
 		'hide-conversation-settings': void
