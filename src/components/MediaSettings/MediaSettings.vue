@@ -9,7 +9,8 @@
 		v-if="show"
 		:size="isDialog ? 'large' : undefined"
 		:labelId="isDialog ? dialogHeaderId : undefined"
-		@close="close">
+		:noClose="hideCloseButton"
+		@close="handleDialogClose">
 		<div class="media-settings">
 			<h2
 				v-if="isDialog"
@@ -39,6 +40,11 @@
 						{{ t('spreed', 'Give consent to the recording of this call') }}
 					</NcCheckboxRadioSwitch>
 				</template>
+			</NcNoteCard>
+			<NcNoteCard
+				v-if="isBeforeJoinCall && isVoiceRoom"
+				type="info">
+				{{ t('spreed', 'You can only join a voice room via a call.') }}
 			</NcNoteCard>
 			<div class="media-settings__content" :class="{ 'media-settings__content--mobile': isMobile }">
 				<!-- Preview -->
@@ -276,7 +282,7 @@ import IconBackground from '../../../img/material-icons/replace-background.svg?r
 import { useDevices } from '../../composables/useDevices.js'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { ATTENDEE, AVATAR, CALL, CONFIG, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.ts'
+import { ATTENDEE, AVATAR, CALL, CONFIG, CONVERSATION, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import {
 	getTalkConfig,
@@ -438,6 +444,15 @@ export default {
 			return !this.userId && this.actorStore.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
 		},
 
+		isVoiceRoom() {
+			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+		},
+
+		hideCloseButton() {
+			// Guests don't have Home dashboard so no rooting possible
+			return this.isGuest && this.isVoiceRoom && this.isBeforeJoinCall
+		},
+
 		userId() {
 			return this.actorStore.userId
 		},
@@ -519,7 +534,7 @@ export default {
 
 		showNotifyCallOption() {
 			return !this.hasCall && !this.isPublicShareAuthSidebar
-				&& this.isBeforeJoinCall
+				&& this.isBeforeJoinCall && !this.isVoiceRoom
 		},
 
 		showStartRecordingOption() {
@@ -711,6 +726,13 @@ export default {
 
 	methods: {
 		t,
+		handleDialogClose() {
+			if (this.isBeforeJoinCall && this.isVoiceRoom && !this.isGuest) {
+				this.$router?.push({ name: 'root' })
+			}
+			this.close()
+		},
+
 		showMediaSettings(page) {
 			this.show = true
 			if (page === 'video-verification') {
