@@ -36,12 +36,16 @@
 		</template>
 		<template #name>
 			<template v-if="compact && iconType">
-				<component :is="iconType.component" :size="15" :fillColor="iconType.color" />
+				<component
+					:is="iconType.component"
+					class="conversation--compact-icon-type"
+					:size="15"
+					:fillColor="iconType.color" />
 				<span class="hidden-visually">{{ iconType.text }}</span>
 			</template>
 			<span class="text"> {{ item.displayName }} </span>
 		</template>
-		<template v-if="!compact && !item.isSensitive" #subname>
+		<template v-if="!compact && !item.isSensitive && !isVoiceRoom" #subname>
 			<span class="conversation__subname" :title="conversationInformation.title">
 				<span
 					v-if="conversationInformation.actor"
@@ -292,7 +296,7 @@ import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
-import { ref, toRefs } from 'vue'
+import { h, ref, toRefs } from 'vue'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
@@ -324,6 +328,7 @@ import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better
 import ConfirmDialog from '../../UIShared/ConfirmDialog.vue'
 import ConversationIcon from './../../ConversationIcon.vue'
 import IconMarkChatRead from '../../../../img/material-icons/mark-chat-read.svg?raw'
+import IconVolumeHighOutline from '../../../../img/material-icons/volume-high-outline.svg?raw'
 import { useConversationInfo } from '../../../composables/useConversationInfo.ts'
 import { AVATAR, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
@@ -486,6 +491,10 @@ export default {
 				&& (!this.item.remoteServer || hasTalkFeature(this.item.token, 'federation-v2'))
 		},
 
+		isVoiceRoom() {
+			return !!(this.item.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+		},
+
 		iconType() {
 			if (this.item.hasCall) {
 				return {
@@ -498,6 +507,12 @@ export default {
 					component: IconStar,
 					color: this.isDarkTheme ? '#FFCC00' : 'currentColor',
 					text: t('spreed', 'Favorite'),
+				}
+			} else if (this.isVoiceRoom) {
+				return {
+					component: h(NcIconSvgWrapper, { svg: IconVolumeHighOutline }),
+					color: this.isDarkTheme ? '#FFCC00' : 'currentColor',
+					text: t('spreed', 'Voice room'),
 				}
 			}
 			return null
@@ -757,6 +772,10 @@ export default {
 			&:deep(.list-item-content__name) {
 				font-weight: 400;
 			}
+		}
+		&-icon-type {
+			min-width: 15px !important; // For svg wrapper overwrite
+			min-height: 15px !important;
 		}
 
 	}
