@@ -2284,6 +2284,9 @@ OC.L10N.register(
     "Nextcloud is in maintenance mode." : "Nextcloud veikia techninės priežiūros režimu.",
     "Nextcloud Talk Federation was updated." : "Atnaujinta Nextcloud „Pokalbiai“ federacija.",
     "Enable live translation" : "Įjungti vertimą realiuoju laiku",
+    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Atvira apklausa • %n balsas • Jūsų balsas anonimiškas","Atvira apklausa • %n balsai • Jūsų balsas anonimiškas","Atvira apklausa • %n balsų • Jūsų balsas anonimiškas","Atvira apklausa • %n balsų • Jūsų balsas anonimiškas"],
+    "Open poll • You voted already • Your vote is anonymous" : "Atidaryti apklausą • Jūs jau balsavote • Jūsų balsas anonimiškas",
+    "Open poll • Your vote is anonymous" : "Atvira apklausa • Jūsų balsas anonimiškas",
     "I picked list style" : "Pasirinkau sąrašo stilių",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Ei! Ar naudojate „Pokalbius“ sąrašo stiliumi, ar su žinučių burbulais?"
 },
