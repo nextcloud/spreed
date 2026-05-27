@@ -109,7 +109,7 @@
     "typescript": "^5.9.3",
     "vitest": "^4.1.6",
     "vue-loader": "^17.4.2",
-    "vue-tsc": "^3.2.8"
+    "vue-tsc": "^3.3.0"
   },
   "engines": {
     "node": "^24.0.0",
