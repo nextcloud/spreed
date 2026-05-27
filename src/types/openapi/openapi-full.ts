@@ -13668,6 +13668,10 @@ export interface operations {
                 "talk-recording-random"?: string;
                 /** @description Checksum over the request body to verify authenticity from the recording backend */
                 "talk-recording-checksum"?: string;
+                /** @description Random seed used to generate the request checksum */
+                "talk-sipbridge-random"?: string;
+                /** @description Checksum over the room token to verify authenticity from the SIP bridge */
+                "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
