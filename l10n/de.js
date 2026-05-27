@@ -2286,7 +2286,7 @@ OC.L10N.register(
     "Enable live translation" : "Live-Übersetzung aktivieren",
     "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Offene Umfrage • %n Stimme • Deine Stimme ist anonym","Offene Umfrage • %n Stimmen • Deine Stimme ist anonym"],
     "Open poll • You voted already • Your vote is anonymous" : "Offene Umfrage • Du hast bereits abgestimmt • Deine Stimme ist anonym",
-    "Open poll • Your vote is anonymous" : "Offene Umfrage • Deine Stimme ist anonym.",
+    "Open poll • Your vote is anonymous" : "Offene Umfrage • Deine Stimme ist anonym",
     "I picked list style" : "Ich habe den Listenstil ausgewählt",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hey! Verwendest du Talk im Listenstil oder mit Sprechblasen?"
 },
