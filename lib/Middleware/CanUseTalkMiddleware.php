@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Middleware;
 
 use OCA\Talk\Config;
+use OCA\Talk\Controller\BotController;
 use OCA\Talk\Controller\HostedSignalingServerController;
 use OCA\Talk\Controller\RecordingController;
 use OCA\Talk\Controller\SignalingController;
@@ -97,6 +98,12 @@ class CanUseTalkMiddleware extends Middleware {
 			}
 
 			if ($controller instanceof HostedSignalingServerController
+				&& $this->groupManager->isAdmin($user->getUID())) {
+				return;
+			}
+
+			if ($methodName === 'adminListBots'
+				&& $controller instanceof BotController
 				&& $this->groupManager->isAdmin($user->getUID())) {
 				return;
 			}
