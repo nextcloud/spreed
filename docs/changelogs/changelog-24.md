@@ -5,6 +5,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.0.0-rc.3 – 2026-05-28
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(call): Render other user's video while screensharing
+  [#18065](https://github.com/nextcloud/spreed/pull/18065)
+- fix(notifications): Fix name in reaction notification for federated users
+  [#18068](https://github.com/nextcloud/spreed/pull/18068)
+- fix(admin): Allow accessing admin settings in limited Talk configuration environment
+  [#18127](https://github.com/nextcloud/spreed/pull/18127)
+- fix(sipbridge): Authenticate internal request from SIP Bridge
+  [#18119](https://github.com/nextcloud/spreed/pull/18119)
+- fix(conversation): Refresh list on disinvite event
+  [#18132](https://github.com/nextcloud/spreed/pull/18132)
+- fix(chat): Fix email guests name caching
+  [#18136](https://github.com/nextcloud/spreed/pull/18136)
+- fix(conversations): Adjust logic for 'Unread mentions' navigation
+  [#18134](https://github.com/nextcloud/spreed/pull/18134)
+- fix(call): Respect participant permissions for hardware access
+  [#18137](https://github.com/nextcloud/spreed/pull/18137)
+
 ## 24.0.0-rc.2 – 2026-05-21
 ### Added
 - feat(call): Move "Raise hand" in call reactions menu
