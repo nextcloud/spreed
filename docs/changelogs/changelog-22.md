@@ -5,6 +5,25 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.13 – 2026-05-28
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(call): Render other user's video while screensharing
+  [#18063](https://github.com/nextcloud/spreed/pull/18063)
+- fix(notifications): Fix name in reaction notification for federated users
+  [#18066](https://github.com/nextcloud/spreed/pull/18066)
+- fix(admin): Allow accessing admin settings in limited Talk configuration environment
+  [#18125](https://github.com/nextcloud/spreed/pull/18125)
+- fix(sipbridge): Authenticate internal request from SIP Bridge
+  [#18117](https://github.com/nextcloud/spreed/pull/18117)
+- fix(conversation): Refresh list on disinvite event
+  [#18130](https://github.com/nextcloud/spreed/pull/18130)
+- fix(chat): Fix email guests name caching
+  [#18135](https://github.com/nextcloud/spreed/pull/18135)
+
 ## 22.0.12 – 2026-04-30
 ### Changed
 - Update dependencies
