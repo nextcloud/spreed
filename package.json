@@ -107,7 +107,7 @@
     "sass": "^1.99.0",
     "sass-loader": "^16.0.8",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.6",
+    "vitest": "^4.1.7",
     "vue-loader": "^17.4.2",
     "vue-tsc": "^3.3.1"
   },
