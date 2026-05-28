@@ -5,6 +5,31 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 23.0.5 – 2026-05-28
+### Changed
+- Fuzzy conversation search
+  [#17897](https://github.com/nextcloud/spreed/pull/17897)
+- Better indication of anonymous polls in UI
+  [#17927](https://github.com/nextcloud/spreed/pull/17927)
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(call): Render other user's video while screensharing
+  [#18064](https://github.com/nextcloud/spreed/pull/18064)
+- fix(notifications): Fix name in reaction notification for federated users
+  [#18067](https://github.com/nextcloud/spreed/pull/18067)
+- fix(admin): Allow accessing admin settings in limited Talk configuration environment
+  [#18126](https://github.com/nextcloud/spreed/pull/18126)
+- fix(sipbridge): Authenticate internal request from SIP Bridge
+  [#18118](https://github.com/nextcloud/spreed/pull/18118)
+- fix(conversation): Refresh list on disinvite event 
+  [#18131](https://github.com/nextcloud/spreed/pull/18131)
+- fix(chat): Fix email guests name caching 
+  [#18136](https://github.com/nextcloud/spreed/pull/18136)
+- fix(call): Respect participant permissions for hardware access
+  [#17980](https://github.com/nextcloud/spreed/pull/17980)
+
 ## 23.0.4 – 2026-04-30
 ### Changed
 - Update dependencies
