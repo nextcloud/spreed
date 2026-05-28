@@ -2135,7 +2135,7 @@
     "Share to conversation" : "Bendrinkite pokalbyje",
     "In conversation" : "Pokalbyje",
     "Search in conversation: {conversation}" : "Ieškoti pokalbyje: {conversation}",
-    "Your requests are throttled at the moment due to brute force protection" : "Jūsų užklausos šiuo metu yra blokuojamos dėl „brute force“ apsaugos.",
+    "Your requests are throttled at the moment due to brute force protection" : "Jūsų užklausos šiuo metu yra blokuojamos dėl aklosios jėgos atakų apsaugos.",
     "Error while clearing conversation history" : "Klaida išvalant pokalbio istoriją",
     "Error occurred while allowing guests" : "Klaida bandant leisti svečių prieigą",
     "Error occurred while disallowing guests" : "Klaida bandant uždrausti svečių prieigą",
