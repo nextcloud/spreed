@@ -70,7 +70,7 @@
     "mockconsole": "0.0.1",
     "panzoom": "^9.4.4",
     "pinia": "^3.0.3",
-    "ua-parser-js": "^2.0.9",
+    "ua-parser-js": "^2.0.10",
     "util": "^0.12.5",
     "uuid": "^14.0.0",
     "vue": "^3.5.17",
