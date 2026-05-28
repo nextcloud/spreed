@@ -1505,7 +1505,9 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 				EventBus.emit('deleted-session-detected')
 				break
 			}
-		// eslint-disable-next-line no-fallthrough
+
+			EventBus.emit('should-refresh-conversations', { all: true })
+			break
 		default:
 			console.debug('Room list event', data)
 			EventBus.emit('should-refresh-conversations')
