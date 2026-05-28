@@ -971,7 +971,7 @@ const actions = {
 
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach((message) => {
-			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+			if ([ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(message.actorType)) {
 				// update guest display names cache
 				const guestNameStore = useGuestNameStore()
 				guestNameStore.addGuestName(message, { noUpdate: true })
@@ -1060,7 +1060,7 @@ const actions = {
 
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach((message) => {
-			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+			if ([ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(message.actorType)) {
 				// update guest display names cache
 				const guestNameStore = useGuestNameStore()
 				guestNameStore.addGuestName(message, { noUpdate: true })
@@ -1183,7 +1183,7 @@ const actions = {
 		})
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach((message) => {
-			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+			if ([ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(message.actorType)) {
 				// update guest display names cache,
 				// force in case the display name has changed since
 				// the last fetch
