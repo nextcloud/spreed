@@ -21,11 +21,12 @@ import { t } from '@nextcloud/l10n'
 import { computed, inject, onBeforeUnmount, provide, ref, watch } from 'vue'
 import { START_LOCATION, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { CHAT, CONFIG, MESSAGE } from '../constants.ts'
+import { ATTENDEE, CHAT, CONFIG, MESSAGE } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useChatStore } from '../stores/chat.ts'
 import { useChatExtrasStore } from '../stores/chatExtras.ts'
+import { useGuestNameStore } from '../stores/guestName.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { useGetThreadId } from './useGetThreadId.ts'
 import { useGetToken } from './useGetToken.ts'
@@ -68,6 +69,7 @@ export function useGetMessagesProvider() {
 	const route = useRoute()
 	const chatStore = useChatStore()
 	const chatExtrasStore = useChatExtrasStore()
+	const guestNameStore = useGuestNameStore()
 
 	const currentToken = useGetToken()
 	const contextThreadId = useGetThreadId()
@@ -630,6 +632,13 @@ export function useGetMessagesProvider() {
 			// Guard: Message is for another conversation
 			// e.g., user switched conversation while messages were in-flight
 			return
+		}
+
+		if ([ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(message.actorType)) {
+			// update guest display names cache
+			// force in case the display name has changed since
+			// the last fetch
+			guestNameStore.addGuestName(message, { noUpdate: false })
 		}
 
 		const conversation: Conversation | undefined = store.getters.conversation(token)
