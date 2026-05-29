@@ -2284,6 +2284,9 @@ OC.L10N.register(
     "Nextcloud is in maintenance mode." : "Сервер находится в режиме обслуживания.",
     "Nextcloud Talk Federation was updated." : "Nextcloud Talk Федерация была обновлена.",
     "Enable live translation" : "Включить онлайн-перевод",
+    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Открытый опрос • %n голос • Ваш голос анонимен","Открытый опрос • %n голоса • Ваш голос анонимен","Открытый опрос • %n голосов • Ваш голос анонимен","Открытый опрос • %n голосов • Ваш голос анонимен"],
+    "Open poll • You voted already • Your vote is anonymous" : "Открытый опрос • Вы уже проголосовали • Ваш голос анонимен",
+    "Open poll • Your vote is anonymous" : "Открытый опрос • Ваш голос анонимен",
     "I picked list style" : "Я выбираю в стиле списка",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Привет! Ты используешь чат в Конференциях в стиле списка или пузырей?"
 },
