@@ -105,7 +105,7 @@
     "openapi-typescript": "^7.13.0",
     "regenerator-runtime": "^0.14.1",
     "sass": "^1.100.0",
-    "sass-loader": "^16.0.8",
+    "sass-loader": "^17.0.0",
     "typescript": "^5.9.3",
     "vitest": "^4.1.7",
     "vue-loader": "^17.4.2",
