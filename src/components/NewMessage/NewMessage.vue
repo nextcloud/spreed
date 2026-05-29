@@ -364,6 +364,7 @@ import { CONVERSATION, MESSAGE, PARTICIPANT, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
+import { setTyping } from '../../services/participantsService.js'
 import { useActorStore } from '../../stores/actor.ts'
 import { useChatStore } from '../../stores/chat.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
@@ -937,12 +938,12 @@ export default {
 
 			if (!this.typingInterval) {
 				// Send first signal after first keystroke
-				this.$store.dispatch('sendTypingSignal', { typing: true })
+				this.sendTypingSignal(true)
 
 				// Continuously send signals with 10s interval if still typing
 				this.typingInterval = setInterval(() => {
 					if (this.wasTypingWithinInterval) {
-						this.$store.dispatch('sendTypingSignal', { typing: true })
+						this.sendTypingSignal(true)
 						this.wasTypingWithinInterval = false
 					} else {
 						this.clearTypingInterval()
@@ -960,9 +961,15 @@ export default {
 		},
 
 		resetTypingIndicator() {
-			this.$store.dispatch('sendTypingSignal', { typing: false })
+			this.sendTypingSignal(false)
 			if (this.typingInterval) {
 				this.clearTypingInterval()
+			}
+		},
+
+		async sendTypingSignal(isTyping) {
+			if (this.currentConversationIsJoined) {
+				await setTyping(isTyping)
 			}
 		},
 

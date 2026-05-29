@@ -30,7 +30,6 @@ import {
 	resendInvitations,
 	sendCallNotification,
 	setPermissions,
-	setTyping,
 } from '../services/participantsService.js'
 import SessionStorage from '../services/SessionStorage.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
@@ -82,8 +81,6 @@ function state() {
 		},
 		connectionFailed: {
 		},
-		typing: {
-		},
 		speaking: {
 		},
 		// TODO: moved from callViewStore, separate to callExtras (with typing + speaking)
@@ -128,56 +125,6 @@ const getters = {
 			return Object.values(state.attendees[token])
 		}
 		return []
-	},
-
-	/**
-	 * Gets the array of external session ids.
-	 *
-	 * @param {object} state - the state object.
-	 * @return {Array} the typing session IDs array.
-	 */
-	externalTypingSignals: (state) => (token) => {
-		if (!state.typing[token]) {
-			return []
-		}
-		const actorStore = useActorStore()
-		return Object.keys(state.typing[token]).filter((sessionId) => actorStore.sessionId !== sessionId)
-	},
-
-	/**
-	 * Gets the array of external session ids.
-	 *
-	 * @param {object} state - the state object.
-	 * @return {boolean} the typing status of actor.
-	 */
-	actorIsTyping: (state) => {
-		if (!state.typing[tokenStore.token]) {
-			return false
-		}
-		const actorStore = useActorStore()
-		return Object.keys(state.typing[tokenStore.token]).some((sessionId) => actorStore.sessionId === sessionId)
-	},
-
-	/**
-	 * Gets the participants array filtered to include only those that are
-	 * currently typing.
-	 *
-	 * @param {object} state - the state object.
-	 * @param {object} getters - the getters object.
-	 * @return {Array} the participants array (for registered users only).
-	 */
-	participantsListTyping: (state, getters) => (token) => {
-		if (!getters.externalTypingSignals(token).length) {
-			return []
-		}
-
-		const actorStore = useActorStore()
-		return getters.participantsList(token).filter((attendee) => {
-			// Check if participant's sessionId matches with any of sessionIds from signaling...
-			return getters.externalTypingSignals(token).some((sessionId) => attendee.sessionIds.includes(sessionId))
-				// ... and it's not the participant with same actorType and actorId as yourself
-				&& !actorStore.checkIfSelfIsActor(attendee)
-		})
 	},
 
 	/**
@@ -390,41 +337,6 @@ const mutations = {
 			if (!Object.keys(state.connecting[token]).length) {
 				delete state.connecting[token]
 			}
-		}
-	},
-
-	/**
-	 * Sets the typing status of a participant in a conversation.
-	 *
-	 * Note that "updateParticipant" should not be called to add a "typing"
-	 * property to an existing participant, as the participant would be reset
-	 * when the participants are purged whenever they are fetched again.
-	 * Similarly, "addParticipant" can not be called either to add a participant
-	 * if it was not fetched yet but the signaling reported it as being typing,
-	 * as the attendeeId would be unknown.
-	 *
-	 * @param {object} state - current store state.
-	 * @param {object} data - the wrapping object.
-	 * @param {string} data.token - the conversation that the participant is
-	 *        typing in.
-	 * @param {string} data.sessionId - the Nextcloud session ID of the
-	 *        participant.
-	 * @param {boolean} data.typing - whether the participant is typing or not.
-	 * @param {number} data.expirationTimeout - id of timeout to watch for received signal expiration.
-	 */
-	setTyping(state, { token, sessionId, typing, expirationTimeout }) {
-		if (!state.typing[token]) {
-			state.typing[token] = {}
-		}
-
-		if (state.typing[token][sessionId]) {
-			clearTimeout(state.typing[token][sessionId].expirationTimeout)
-		}
-
-		if (typing) {
-			state.typing[token][sessionId] = { expirationTimeout }
-		} else {
-			delete state.typing[token][sessionId]
 		}
 	},
 
@@ -1191,26 +1103,6 @@ const actions = {
 			attendeePermissions: permissions,
 		}
 		context.commit('updateParticipant', { token, attendeeId, updatedData })
-	},
-
-	async sendTypingSignal(context, { typing }) {
-		if (!tokenStore.currentConversationIsJoined) {
-			return
-		}
-
-		await setTyping(typing)
-	},
-
-	async setTyping(context, { token, sessionId, typing }) {
-		if (!typing) {
-			context.commit('setTyping', { token, sessionId, typing: false })
-		} else {
-			const expirationTimeout = setTimeout(() => {
-				// If updated 'typing' signal doesn't come in last 15s, remove it from store
-				context.commit('setTyping', { token, sessionId, typing: false })
-			}, 15000)
-			context.commit('setTyping', { token, sessionId, typing: true, expirationTimeout })
-		}
 	},
 
 	setSpeaking(context, { attendeeId, speaking }) {

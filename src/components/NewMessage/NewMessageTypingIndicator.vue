@@ -33,6 +33,7 @@ import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import { AVATAR } from '../../constants.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useGuestNameStore } from '../../stores/guestName.ts'
+import { useSignalingStateStore } from '../../stores/signalingState.ts'
 
 export default {
 	name: 'NewMessageTypingIndicator',
@@ -50,9 +51,11 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
+		const signalingStateStore = useSignalingStateStore()
 		return {
 			AVATAR,
 			guestNameStore,
+			signalingStateStore,
 			actorStore: useActorStore(),
 		}
 	},
@@ -63,11 +66,23 @@ export default {
 		},
 
 		externalTypingSignals() {
-			return this.$store.getters.externalTypingSignals(this.token)
+			return this.signalingStateStore.externalTypingSignals(this.token)
 		},
 
+		/**
+		 * Get list of participants filtered to include only those that are currently typing
+		 */
 		typingParticipants() {
-			return this.$store.getters.participantsListTyping(this.token)
+			if (!this.externalTypingSignals.length) {
+				return []
+			}
+
+			return this.$store.getters.participantsList(this.token).filter((attendee) => {
+				// Check if participant's sessionId matches with any of sessionIds from signaling...
+				return this.externalTypingSignals.some((sessionId) => attendee.sessionIds.includes(sessionId))
+					// ... and it's not the participant with same actorType and actorId as yourself
+					&& !this.actorStore.checkIfSelfIsActor(attendee)
+			})
 		},
 
 		visibleParticipants() {
