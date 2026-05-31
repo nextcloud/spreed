@@ -2284,6 +2284,9 @@ OC.L10N.register(
     "Nextcloud is in maintenance mode." : "Nextcloud 處於維護模式。",
     "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation 已更新。",
     "Enable live translation" : "啟用即時翻譯",
+    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["開放投票 • %n 票 • 您的投票是匿名的"],
+    "Open poll • You voted already • Your vote is anonymous" : "開放投票 • 您已投票 • 您的投票是匿名的",
+    "Open poll • Your vote is anonymous" : "開放投票 • 您的投票是匿名的",
     "I picked list style" : "已選擇清單樣式",
     "Hey! Are you using Talk in list style or with message bubbles?" : "你目前在 Talk 中使用列表顯示還是訊息氣泡顯示？"
 },
