@@ -360,7 +360,7 @@ import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import { useChatMentions } from '../../composables/useChatMentions.ts'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useTemporaryMessage } from '../../composables/useTemporaryMessage.ts'
-import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.ts'
+import { CONVERSATION, MESSAGE, PARTICIPANT, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
@@ -1333,12 +1333,17 @@ export default {
 				return
 			}
 
+			const messagesList = this.showScheduledMessages
+				? this.chatExtrasStore.getScheduledMessagesList(this.token)
+				: this.chatStore.getMessagesList(this.token, {
+						threadId: this.threadId,
+					})
 			// last message within 24 hours
-			const lastMessageByCurrentUser = this.chatStore.getMessagesList(this.token, {
-				threadId: this.threadId,
-			}).findLast((message) => {
-				return this.actorStore.checkIfSelfIsActor(message)
-					&& !message.isTemporary && !message.systemMessage
+			const lastMessageByCurrentUser = messagesList.findLast((message) => {
+				return this.actorStore.checkIfSelfIsActor(message) // From same actor
+					&& message.messageType !== MESSAGE.TYPE.COMMENT_DELETED // Not deleted
+					&& message.timestamp !== 0 // Not temporary
+					&& !message.systemMessage // Not system message
 					&& (Date.now() - message.timestamp * 1000 < ONE_DAY_IN_MS)
 			})
 
