@@ -20,6 +20,12 @@ dev-setup: clean-dev npm-init build-dev
 
 production-setup: clean-dev npm-init build-production
 
+validate-release:
+	./docs/validate-release.sh --dry-run $(BRANCHES)
+
+prepare-changelog:
+	./docs/validate-release.sh --prepare-changelog $(BRANCHES)
+
 release: appstore create-tag
 
 build-dev: composer-install-dev build-js
