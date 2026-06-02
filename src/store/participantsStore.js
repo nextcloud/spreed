@@ -4,12 +4,12 @@
  */
 
 import { isCancel } from '@nextcloud/axios'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
-import { ATTENDEE, PARTICIPANT } from '../constants.ts'
+import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { banActor } from '../services/banService.ts'
 import {
 	joinCall,
@@ -1250,13 +1250,34 @@ const actions = {
 		context.commit('setPhoneState', { callid })
 	},
 
-	processTransientCallStatus(context, { value }) {
+	async processTransientCallStatus(context, { value }) {
 		context.commit('setPhoneState', { callid: value.callid, value })
 
 		if (value.status === 'cleared' || value.status === 'rejected') {
 			setTimeout(() => {
 				context.commit('deletePhoneState', value.callid)
 			}, 5000)
+		}
+
+		// Special handling for dial-out rooms, if a call was rejected
+		if (value.status === 'rejected') {
+			const conversation = context.rootGetters.conversation(tokenStore.token)
+			const isConversationPhoneRoom = [
+				CONVERSATION.OBJECT_TYPE.PHONE_LEGACY,
+				CONVERSATION.OBJECT_TYPE.PHONE_PERSISTENT,
+				CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY,
+			].includes(conversation.objectType)
+			&& conversation.objectId === CONVERSATION.OBJECT_ID.PHONE_OUTGOING
+
+			if (isConversationPhoneRoom) {
+				const actorStore = useActorStore()
+				await context.dispatch('leaveCall', {
+					token: tokenStore.token,
+					participantIdentifier: actorStore.participantIdentifier,
+					all: true,
+				})
+				showInfo(t('spreed', 'Call rejected'))
+			}
 		}
 	},
 
