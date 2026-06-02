@@ -5,6 +5,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 23.0.6 – 2026-06-02
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(chat): Fix hotkeys handling for editing chat messages
+  [#18188](https://github.com/nextcloud/spreed/pull/18188)
+- fix(sipbridge): End dial-out calls if rejected by recipient
+  [#18192](https://github.com/nextcloud/spreed/pull/18192)
+
 ## 23.0.5 – 2026-05-28
 ### Changed
 - Fuzzy conversation search
