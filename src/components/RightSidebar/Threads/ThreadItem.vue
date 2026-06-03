@@ -239,8 +239,7 @@ function handleActionsMenuOpen(open: boolean) {
 	}
 
 	&.list-item__wrapper--active .thread__details-replies {
-		color: var(--color-primary-element-text);
-		background-color: transparent;
+		background-color: var(--color-primary-element-light-hover);
 	}
 }
 </style>
