@@ -658,6 +658,8 @@ export default {
 					this.clearVirtualBackground()
 				}
 			} else {
+				// Disable virtual background when closing
+				this.clearVirtualBackground()
 				this.unsubscribeFromDevices(PARTICIPANT.PERMISSIONS.MAX_DEFAULT)
 			}
 		},
