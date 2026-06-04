@@ -876,21 +876,12 @@ export default {
 	width: 100%;
 	height: 100%;
 	background-color: $color-call-background;
-	// Default value has changed since v29.0.4: 'blur(25px)' => 'none'
-	backdrop-filter: var(--filter-background-blur);
 	--grid-gap: calc(var(--default-grid-baseline) * 2);
 	--top-bar-height: 51px;
 	--wrapper-padding: calc(var(--default-grid-baseline) * 2.5);
 	--bottom-bar-height: calc(var(--default-clickable-area) + var(--wrapper-padding) * 2);
 	// For sidebar integrations: show container in a 16/9 proportion (+ top/bottom bar) based on the sidebar width
 	--sidebar-container-height: calc(56.25% + var(--top-bar-height) + var(--bottom-bar-height));
-
-	&.call-container__blurred {
-		backdrop-filter: blur(25px);
-	}
-	&.call-container__non-blurred {
-		backdrop-filter: none;
-	}
 }
 
 #videos {
