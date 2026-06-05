@@ -806,6 +806,8 @@ namespace OCA\Talk;
  *             grid-limit: int,
  *             // Whether the grid limit is enforced by the server
  *             grid-limit-enforced: bool,
+ *             // Recording layout ('grid' or 'speaker')
+ *             recording-layout: string,
  *         },
  *         chat: array{
  *             // Maximum length of a chat message

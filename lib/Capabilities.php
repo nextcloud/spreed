@@ -184,6 +184,7 @@ class Capabilities implements IPublicCapability {
 			'play-sounds',
 			'grid-limit',
 			'grid-limit-enforced',
+			'recording-layout',
 		],
 		'chat' => [
 			'read-privacy',
@@ -286,6 +287,7 @@ class Capabilities implements IPublicCapability {
 					'play-sounds' => $this->talkConfig->getPlaySoundsForUser($user),
 					'grid-limit' => $this->talkConfig->getGridVideosLimit(),
 					'grid-limit-enforced' => $this->talkConfig->getGridVideosLimitEnforced(),
+					'recording-layout' => $this->talkConfig->getRecordingLayout(),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,

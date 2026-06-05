@@ -187,6 +187,7 @@ class CapabilitiesTest extends TestCase {
 						'play-sounds' => false,
 						'grid-limit' => 0,
 						'grid-limit-enforced' => false,
+						'recording-layout' => 'speaker',
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -414,6 +415,7 @@ class CapabilitiesTest extends TestCase {
 						'play-sounds' => false,
 						'grid-limit' => 0,
 						'grid-limit-enforced' => false,
+						'recording-layout' => 'speaker',
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',

@@ -255,6 +255,11 @@ class Config {
 		);
 	}
 
+	public function getRecordingLayout(): string {
+		$value = $this->config->getAppValue('spreed', 'recording_layout', 'speaker');
+		return in_array($value, ['grid', 'speaker'], true) ? $value : 'speaker';
+	}
+
 	public function getLiveTranscriptionTargetLanguageId(?string $userId = null): string {
 		return $this->config->getUserValue(
 			$userId,
