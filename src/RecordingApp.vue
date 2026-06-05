@@ -8,7 +8,9 @@ import { onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import CallView from './components/CallView/CallView.vue'
 import { useGetToken } from './composables/useGetToken.ts'
+import { getTalkConfig } from './services/CapabilitiesManager.ts'
 import SessionStorage from './services/SessionStorage.js'
+import { useCallViewStore } from './stores/callView.ts'
 import { useSoundsStore } from './stores/sounds.js'
 import { useTokenStore } from './stores/token.ts'
 import { signalingKill } from './utils/webrtc/index.js'
@@ -19,12 +21,15 @@ const route = useRoute()
 const soundsStore = useSoundsStore()
 const token = useGetToken()
 const tokenStore = useTokenStore()
+const callViewStore = useCallViewStore()
 
 onBeforeMount(async () => {
 	await router.isReady()
 	if (route.name === 'recording') {
 		tokenStore.updateToken(route.params.token as string)
 		await soundsStore.setShouldPlaySounds(false)
+		const isGridLayout = getTalkConfig(token.value, 'call', 'recording-layout') === 'grid'
+		callViewStore.setCallViewMode({ token: token.value, isGrid: isGridLayout, isStripeOpen: false })
 	}
 
 	// This should not be strictly needed, as the recording server is

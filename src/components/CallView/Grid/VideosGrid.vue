@@ -457,9 +457,13 @@ export default {
 
 		// Number of grid slots at any given moment
 		// The local video always takes one slot if the grid view is not shown
-		// as a stripe.
+		// as a stripe. In recording mode the local video is not shown, so all
+		// slots are available for remote participants.
 		slots() {
-			return this.isStripe ? this.rows * this.columns : this.rows * this.columns - 1
+			if (this.isStripe || this.isRecording) {
+				return this.rows * this.columns
+			}
+			return this.rows * this.columns - 1
 		},
 
 		// Grid pages at any given moment
@@ -776,7 +780,7 @@ export default {
 
 			let currentColumns = this.columns
 			let currentRows = this.rows
-			let currentSlots = this.isStripe ? currentColumns * currentRows : currentColumns * currentRows - 1
+			let currentSlots = this.isStripe || this.isRecording ? currentColumns * currentRows : currentColumns * currentRows - 1
 
 			// Run this code only if we don't have an 'overflow' of videos. If the
 			// videos are populating the grid, there's no point in shrinking it.
@@ -809,7 +813,7 @@ export default {
 						currentColumns--
 					}
 
-					currentSlots = this.isStripe ? currentColumns * currentRows : currentColumns * currentRows - 1
+					currentSlots = this.isStripe || this.isRecording ? currentColumns * currentRows : currentColumns * currentRows - 1
 
 					// Check that there are still enough slots available
 					if (numberOfVideos > currentSlots) {
@@ -822,7 +826,7 @@ export default {
 						currentRows--
 					}
 
-					currentSlots = this.isStripe ? currentColumns * currentRows : currentColumns * currentRows - 1
+					currentSlots = this.isStripe || this.isRecording ? currentColumns * currentRows : currentColumns * currentRows - 1
 
 					// Check that there are still enough slots available
 					if (numberOfVideos > currentSlots) {
