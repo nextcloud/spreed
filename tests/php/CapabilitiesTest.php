@@ -132,6 +132,10 @@ class CapabilitiesTest extends TestCase {
 			->with(null)
 			->willReturn('');
 
+		$this->talkConfig->expects($this->any())
+			->method('getRecordingLayout')
+			->willReturn('speaker');
+
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
 			->willReturnMap([
@@ -337,6 +341,10 @@ class CapabilitiesTest extends TestCase {
 		$this->talkConfig->expects($this->any())
 			->method('getDefaultPermissions')
 			->willReturn(502);
+
+		$this->talkConfig->expects($this->any())
+			->method('getRecordingLayout')
+			->willReturn('speaker');
 
 		$user->method('getQuota')
 			->willReturn($quota);

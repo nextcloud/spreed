@@ -230,6 +230,7 @@ export const mockedCapabilities: Capabilities = {
 				'can-upload-background',
 				'start-without-media',
 				'blur-virtual-background',
+				'recording-layout',
 			],
 			chat: [
 				'read-privacy',
