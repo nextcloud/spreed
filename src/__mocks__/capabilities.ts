@@ -168,6 +168,7 @@ export const mockedCapabilities: Capabilities = {
 				'play-sounds': true,
 				'grid-limit': 0,
 				'grid-limit-enforced': false,
+				'recording-layout': 'speaker',
 			},
 			chat: {
 				'max-length': 32000,

@@ -293,7 +293,8 @@
                                     "live-transcription-target-language-id",
                                     "play-sounds",
                                     "grid-limit",
-                                    "grid-limit-enforced"
+                                    "grid-limit-enforced",
+                                    "recording-layout"
                                 ],
                                 "properties": {
                                     "enabled": {
@@ -395,6 +396,10 @@
                                     "grid-limit-enforced": {
                                         "type": "boolean",
                                         "description": "Whether the grid limit is enforced by the server"
+                                    },
+                                    "recording-layout": {
+                                        "type": "string",
+                                        "description": "Recording layout ('grid' or 'speaker')"
                                     }
                                 }
                             },

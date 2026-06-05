@@ -2217,6 +2217,8 @@ export type components = {
                     "grid-limit": number;
                     /** @description Whether the grid limit is enforced by the server */
                     "grid-limit-enforced": boolean;
+                    /** @description Recording layout ('grid' or 'speaker') */
+                    "recording-layout": string;
                 };
                 chat: {
                     /**
