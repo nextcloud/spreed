@@ -3,10 +3,22 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { CONVERSATION } from '../constants.ts'
+import store from '../store/index.js'
 import pinia from '../stores/pinia.ts'
 import { useSoundsStore } from '../stores/sounds.js'
+import { useTokenStore } from '../stores/token.ts'
 
 const soundsStore = useSoundsStore(pinia)
+const tokenStore = useTokenStore(pinia)
+
+/**
+ * Checks if the current conversation is a voice room.
+ */
+function isVoiceRoom() {
+	const conversation = store.getters.conversation(tokenStore.token)
+	return Boolean(conversation?.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+}
 
 export const Sounds = {
 	BLOCK_SOUND_TIMEOUT: 3000,
@@ -24,7 +36,7 @@ export const Sounds = {
 	},
 
 	async playWaiting() {
-		if (!soundsStore.shouldPlaySounds) {
+		if (!soundsStore.shouldPlaySounds || isVoiceRoom()) {
 			return
 		}
 
