@@ -29,6 +29,7 @@ use OCA\Talk\Service\SessionService;
 use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -1442,5 +1443,84 @@ class SignalingControllerTest extends TestCase {
 		// ...will keep the new session id in the database.
 		$participant = $participantService->getParticipant($room, $this->userId, $newSessionId);
 		$this->assertEquals($newSessionId, $participant->getSession()->getSessionId());
+	}
+
+	private const SIP_BRIDGE_SECRET = 'MySIPSecretValueMySIPSecretValue1234';
+
+	private function sipBridgeChecksum(string $data, string $random): string {
+		return hash_hmac('sha256', $random . $data, self::SIP_BRIDGE_SECRET);
+	}
+
+	private function setUpSIPBridgeConfig(): void {
+		$this->config = $this->createMock(Config::class);
+		$this->config->method('getSIPSharedSecret')->willReturn(self::SIP_BRIDGE_SECRET);
+		$this->userId = null;
+		$this->recreateSignalingController();
+	}
+
+	public function testGetSettingsUnauthenticatedWithoutToken(): void {
+		$this->userId = null;
+		$this->recreateSignalingController();
+
+		$this->request->method('getHeader')->willReturn('');
+
+		$result = $this->controller->getSettings();
+		$this->assertSame(Http::STATUS_NOT_FOUND, $result->getStatus());
+	}
+
+	public function testGetSettingsSIPBridgeInvalidChecksum(): void {
+		$this->setUpSIPBridgeConfig();
+
+		$random = 'afb6b872ab03e3376b31bf0af601067222ff7990335ca02d327071b73c0119c6';
+		$this->request->method('getHeader')
+			->willReturnCallback(fn (string $header): string => match ($header) {
+				'Talk-SIPBridge-Random' => $random,
+				'Talk-SIPBridge-Checksum' => 'invalid-checksum',
+				default => '',
+			});
+
+		$result = $this->controller->getSettings();
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $result->getStatus());
+	}
+
+	public function testGetSettingsSIPBridgeShortRandom(): void {
+		$this->setUpSIPBridgeConfig();
+
+		$random = 'tooshort';
+		$checksum = $this->sipBridgeChecksum('', $random);
+		$this->request->method('getHeader')
+			->willReturnCallback(fn (string $header): string => match ($header) {
+				'Talk-SIPBridge-Random' => $random,
+				'Talk-SIPBridge-Checksum' => $checksum,
+				default => '',
+			});
+
+		$result = $this->controller->getSettings();
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $result->getStatus());
+	}
+
+	public function testGetSettingsSIPBridgeValidNoToken(): void {
+		$this->config = $this->createMock(Config::class);
+		$this->config->method('getSIPSharedSecret')->willReturn(self::SIP_BRIDGE_SECRET);
+		$this->config->method('getStunServers')->willReturn([]);
+		$this->config->method('getTurnSettings')->willReturn([]);
+		$this->config->method('getSignalingMode')->willReturn(Config::SIGNALING_INTERNAL);
+		$this->config->method('getHideSignalingWarning')->willReturn(false);
+		$this->config->method('isSIPConfigured')->willReturn(false);
+		$this->signalingManager->method('getSignalingServerLinkForConversation')->willReturn('');
+		$this->userId = null;
+		$this->recreateSignalingController();
+
+		$random = 'afb6b872ab03e3376b31bf0af601067222ff7990335ca02d327071b73c0119c6';
+		$checksum = $this->sipBridgeChecksum('', $random);
+		$this->request->method('getHeader')
+			->willReturnCallback(fn (string $header): string => match ($header) {
+				'Talk-SIPBridge-Random' => $random,
+				'Talk-SIPBridge-Checksum' => $checksum,
+				default => '',
+			});
+
+		$result = $this->controller->getSettings();
+		$this->assertSame(Http::STATUS_OK, $result->getStatus());
 	}
 }

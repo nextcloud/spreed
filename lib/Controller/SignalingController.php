@@ -100,6 +100,28 @@ class SignalingController extends OCSController {
 	}
 
 	/**
+	 * Check if the current request is coming from an allowed SIP bridge.
+	 *
+	 * The bridge sends the custom header "Talk-SIPBridge-Random" containing
+	 * at least 32 bytes random data, and the header "Talk-SIPBridge-Checksum",
+	 * which is the SHA256-HMAC of the random data and the room token,
+	 * calculated with the shared secret from the configuration.
+	 *
+	 * @param string $data Room token (or empty string when no token is present)
+	 * @return bool
+	 */
+	private function validateSIPBridgeRequest(string $data): bool {
+		$random = $this->request->getHeader('Talk-SIPBridge-Random');
+		$checksum = $this->request->getHeader('Talk-SIPBridge-Checksum');
+		$secret = $this->talkConfig->getSIPSharedSecret();
+		try {
+			return $this->checksumVerificationService->validateRequest($random, $checksum, $secret, $data);
+		} catch (UnauthorizedException) {
+			return false;
+		}
+	}
+
+	/**
 	 * Get the signaling settings
 	 *
 	 * @param string $token Token of the room
@@ -112,10 +134,12 @@ class SignalingController extends OCSController {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
+	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[BruteForceProtection(action: 'talkFederationAccess')]
 	#[OpenAPI(tags: ['internal_signaling', 'external_signaling'])]
 	public function getSettings(string $token = ''): DataResponse {
 		$isRecordingRequest = false;
+		$isSIPBridgeRequest = false;
 
 		if (!empty($this->request->getHeader('Talk-Recording-Random')) || !empty($this->request->getHeader('Talk-Recording-Checksum'))) {
 			if (!$this->validateRecordingBackendRequest('')) {
@@ -125,6 +149,14 @@ class SignalingController extends OCSController {
 			}
 
 			$isRecordingRequest = true;
+		} elseif (!empty($this->request->getHeader('Talk-SIPBridge-Random')) || !empty($this->request->getHeader('Talk-SIPBridge-Checksum'))) {
+			if (!$this->validateSIPBridgeRequest($token)) {
+				$response = new DataResponse(null, Http::STATUS_UNAUTHORIZED);
+				$response->throttle(['action' => 'talkSipBridgeSecret']);
+				return $response;
+			}
+
+			$isSIPBridgeRequest = true;
 		}
 
 		$isTalkFederation = $this->federationAuthenticator->isFederationRequest();
@@ -149,8 +181,9 @@ class SignalingController extends OCSController {
 				$this->federationAuthenticator->authenticated($room, $participant);
 			} elseif ($token !== '') {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId);
-			} elseif ($this->userId !== null) {
+			} elseif ($this->userId !== null || $isSIPBridgeRequest) {
 				// Mobile clients and admin setup check use the neutral point
+				// Same for SIP bridge
 				$room = null;
 			} else {
 				throw new RoomNotFoundException();
