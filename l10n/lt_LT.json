@@ -789,7 +789,7 @@
     "High-performance backend not configured correctly" : "Didelio našumo posistemė netinkamai sukonfigūruota",
     "Error: Cannot connect to server" : "Klaida: Nepavyksta prisijungti prie serverio",
     "Error: Server did not respond with proper JSON" : "Klaida: serveris neatsakė tinkamu JSON failu",
-    "Error: Certificate expired" : "Klaida: Liudijimas nebegalioja",
+    "Error: Certificate expired" : "Klaida: Sertifikatas nebegalioja",
     "Error: System times of Nextcloud server and High-performance backend server are out of sync. Please make sure that both servers are connected to a time-server or manually synchronize their time." : "Klaida: „Nextcloud“ serverio ir didelio našumo serverio sistemos laikai nesutampa. Įsitikinkite, kad abu serveriai yra prijungti prie laiko serverio, arba sinchronizuokite jų laiką rankiniu būdu.",
     "Could not get version" : "Nepavyko gauti versijos",
     "Error: Running version: {version}; Server needs to be updated to be compatible with this version of Talk" : "Klaida: Veikia versija: {version}; Serverį reikia atnaujinti, kad jis būtų suderinamas su šia „Pokalbiai“ versija",
