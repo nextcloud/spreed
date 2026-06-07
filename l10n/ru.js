@@ -1489,6 +1489,7 @@ OC.L10N.register(
     "The call might be recorded." : "Вызов может быть записан.",
     "The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call." : "Запись может включать ваш голос, видео с камеры и трансляцию экрана. Прежде чем присоединиться к вызову, требуется ваше согласие.",
     "Give consent to the recording of this call" : "Дать согласие на запись этого вызова",
+    "You can only join a voice room via a call." : "Вы можете присоединиться к голосовой комнате только посредством звонка.",
     "Show more info" : "Показать больше",
     "Audio is not available" : "Аудио недоступно",
     "Video is not available" : "Видео недоступно",
