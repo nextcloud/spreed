@@ -1489,6 +1489,7 @@ OC.L10N.register(
     "The call might be recorded." : "A chamada pode ser gravada.",
     "The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call." : "A gravação pode incluir sua voz, vídeo da câmera e compartilhamento de tela. Seu consentimento é necessário antes de entrar na chamada.",
     "Give consent to the recording of this call" : "Dê consentimento para a gravação desta chamada",
+    "You can only join a voice room via a call." : "Você só pode entrar em uma sala de voz por meio de uma chamada.",
     "Show more info" : "Mostrar mais informações",
     "Audio is not available" : "Áudio não está disponível",
     "Video is not available" : "Vídeo não está disponível",

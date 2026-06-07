@@ -1468,6 +1468,7 @@
     "The call might be recorded." : "Kõne võib olla salvestatud.",
     "The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call." : "Salvestuses võib olla kuulda sinu häält, pilti sinu kaamerast ja ekraanivaatest. Enne kõnega liitumist on vajalik sinu nõusolek.",
     "Give consent to the recording of this call" : "Nõustu selle kõne salvestamisega",
+    "You can only join a voice room via a call." : "Sa võid nüüd kõnepõhise jututoaga liituda helistades.",
     "Show more info" : "Näita lisateavet",
     "Audio is not available" : "Heliedastus pole saadaval",
     "Video is not available" : "Videoedastus pole saadaval",

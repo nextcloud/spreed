@@ -1020,6 +1020,7 @@ OC.L10N.register(
     "No microphone available" : "No microphone available",
     "Select camera" : "Select camera",
     "No camera available" : "No camera available",
+    "Select a device" : "یک دستگاه را انتخاب کنید",
     "Test" : "Test",
     "Devices" : "Devices",
     "Backgrounds" : "Backgrounds",
