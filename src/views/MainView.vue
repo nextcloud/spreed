@@ -48,6 +48,17 @@ function stopWatchingJoinedConversation() {
 
 const isInLobby = computed(() => store.getters.isInLobby)
 const connectionFailed = computed(() => store.getters.connectionFailed(props.token))
+const isVoiceRoom = computed(() => Boolean(store.getters.conversation(props.token)?.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM))
+
+watch([() => props.token, isVoiceRoom], ([newToken, newIsVoiceRoom]) => {
+	// Release a stale joined-conversation listener when navigating away
+	if (watchedJoinedConversationToken && watchedJoinedConversationToken !== newToken) {
+		stopWatchingJoinedConversation()
+	}
+	if (newIsVoiceRoom && newToken) {
+		handleDirectCall(newToken)
+	}
+}, { immediate: true })
 
 watch(isInLobby, (isInLobby) => {
 	// User is now blocked by the lobby
@@ -56,12 +67,6 @@ watch(isInLobby, (isInLobby) => {
 			token: props.token,
 			participantIdentifier: actorStore.participantIdentifier,
 		})
-	}
-})
-
-watch(() => props.token, (newToken) => {
-	if (watchedJoinedConversationToken && watchedJoinedConversationToken !== newToken) {
-		stopWatchingJoinedConversation()
 	}
 })
 

@@ -176,14 +176,6 @@ export default {
 		currentConversation() {
 			return this.$store.getters.conversation(this.token)
 		},
-
-		isVoiceRoom() {
-			return Boolean(this.currentConversation?.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
-		},
-
-		voiceRoomIdentifier() {
-			return [this.token, this.isVoiceRoom]
-		},
 	},
 
 	watch: {
@@ -203,30 +195,6 @@ export default {
 			if (watchedJoinedConversationToken && watchedJoinedConversationToken !== newValue) {
 				stopWatchingJoinedConversation()
 			}
-		},
-
-		voiceRoomIdentifier: {
-			immediate: true,
-			handler(newValue, oldValue = []) {
-				const [newToken, newIsVoiceRoom] = newValue
-				const [oldToken, oldIsVoiceRoom] = oldValue
-
-				if (!newIsVoiceRoom && oldIsVoiceRoom && newToken !== oldToken) {
-					this.callViewStore.setForceCallView(false)
-				}
-
-				if (oldIsVoiceRoom && newToken !== oldToken) {
-					this.callViewStore.setSelectedVideoPeerId(null)
-					this.$store.dispatch('leaveCall', {
-						token: oldToken,
-						participantIdentifier: this.actorStore.participantIdentifier,
-					})
-				}
-
-				if (newIsVoiceRoom && newToken) {
-					this.joinCallAutomatically(newToken, oldToken)
-				}
-			},
 		},
 
 		isInCall: {
@@ -406,7 +374,7 @@ export default {
 			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
 				// Navigating within the same conversation
 				beforeRouteChangeListener(to, from, next)
-			} else if (!this.warnLeaving || this.skipLeaveWarning || this.isVoiceRoom) {
+			} else if (!this.warnLeaving || this.skipLeaveWarning || this.isVoiceRoom(from.params.token)) {
 				// Safe to navigate
 				// Note: voice rooms are intended to be left without confirmation.
 				beforeRouteChangeListener(to, from, next)
@@ -450,8 +418,13 @@ export default {
 			this.fetchSingleConversation(this.token)
 		},
 
+		isVoiceRoom(token) {
+			const conversation = this.$store.getters.conversation(token)
+			return Boolean(conversation?.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+		},
+
 		preventUnload(event) {
-			if (!this.warnLeaving && !this.isSendingMessages) {
+			if ((!this.warnLeaving && !this.isSendingMessages) || this.isVoiceRoom(this.token)) {
 				return
 			}
 
@@ -543,7 +516,7 @@ export default {
 		},
 
 		async joinCallAutomatically(targetToken, prevToken = this.token) {
-			if (this.isInCall || this.isVoiceRoom) {
+			if (this.isInCall) {
 				this.callViewStore.setForceCallView(true)
 
 				const enableAudio = !BrowserStorage.getItem('audioDisabled_' + prevToken)

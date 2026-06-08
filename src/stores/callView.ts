@@ -75,6 +75,9 @@ export const useCallViewStore = defineStore('callView', {
 			if (!conversation) {
 				return
 			}
+			// Start every call with a clean selection, so a stale peer id
+			// from a previous call is not carried over
+			this.setSelectedVideoPeerId(null)
 			const gridPreference = BrowserStorage.getItem(`callprefs-${conversation.token}-isgrid`)
 			const isGrid = gridPreference === null
 				// not defined yet, default to grid view for group/public calls, otherwise speaker view
