@@ -20,9 +20,9 @@ import {
 	unpinMessage,
 } from '../services/messagesService.ts'
 import { getSharedItems, getSharedItemsOverview } from '../services/sharedItemsService.ts'
-import { getItemTypeFromMessage } from '../utils/getItemTypeFromMessage.ts'
+import { getItemTypeFromMessage, isValidSharedItem } from '../utils/getItemTypeFromMessage.ts'
 
-type SharedItemType = keyof SharedItemsOverview
+type SharedItemType = typeof SHARED_ITEM.TYPES[keyof typeof SHARED_ITEM.TYPES] | (string & {})
 
 type SharedItemsPoolType = Record<string, {
 	[K: string]: Record<number, SharedItems[keyof SharedItems]>
@@ -78,7 +78,9 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 			if (Object.keys(data[type]).length) {
 				checkForExistence(token, type)
 				for (const message of data[type]) {
-					sharedItemsPool[token][type][message.id] = message
+					if (isValidSharedItem(type, message)) {
+						sharedItemsPool[token][type][message.id] = message
+					}
 				}
 			}
 		}
@@ -96,7 +98,9 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 	function addSharedItemFromMessage(token: string, message: ChatMessage, type?: SharedItemType) {
 		const itemType = type ?? getItemTypeFromMessage(message)
 		checkForExistence(token, itemType)
-		sharedItemsPool[token][itemType][message.id] = message
+		if (isValidSharedItem(itemType, message)) {
+			sharedItemsPool[token][itemType][message.id] = message
+		}
 	}
 
 	/**
@@ -135,7 +139,9 @@ export const useSharedItemsStore = defineStore('sharedItems', () => {
 		checkForExistence(token, type)
 
 		messages.forEach((message) => {
-			sharedItemsPool[token][type][message.id] = message
+			if (isValidSharedItem(type, message)) {
+				sharedItemsPool[token][type][message.id] = message
+			}
 		})
 	}
 
