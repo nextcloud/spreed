@@ -15,6 +15,10 @@ use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 
 class CommentsManager extends Manager {
+	public function removeFromCache(int|string $id): void {
+		$this->uncache((string)$id);
+	}
+
 	/**
 	 * @param array $data
 	 * @return IComment

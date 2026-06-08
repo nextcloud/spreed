@@ -41,7 +41,7 @@ class ChatGenerator {
 	private const BURST_CHANCE_PERCENT = 40;
 	private const BURST_MAX = 5;
 	private const REPLY_CHANCE_PERCENT = 25;
-	private const REPLY_WINDOW = 10;
+	private const REPLY_WINDOW = 100;
 	private const SHORT_PERCENT = 60;
 	private const MEDIUM_PERCENT = 30;
 	private const SILENT_PERCENT = 5;

@@ -10,6 +10,7 @@ namespace OCA\Talk\Command\Developer;
 
 use OC\Core\Command\Base;
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Developer\ChatGenerator;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
@@ -35,6 +36,7 @@ class GenerateChats extends Base {
 		private readonly RoomService $roomService,
 		private readonly ParticipantService $participantService,
 		private readonly ChatManager $chatManager,
+		private readonly CommentsManager $commentsManager,
 		private readonly IUserManager $userManager,
 		private readonly IGroupManager $groupManager,
 	) {
@@ -289,6 +291,8 @@ class GenerateChats extends Base {
 			} catch (\Throwable $e) {
 				$output->writeln('<comment>  failed to post message ' . $index . ': ' . $e->getMessage() . '</comment>');
 			}
+
+			$this->commentsManager->removeFromCache($posted[$index]->getId());
 		}
 		return $count;
 	}
