@@ -5,6 +5,7 @@
 <!--    When we had "stable32.1" the replacement was "32.1" -->
 <!-- 3. Replace "TX" with the Talk major version e.g. "22" for "stable32" -->
 <!-- 4. Replace CASE SENSITIVE "X" with the Nextcloud stable branch number e.g. "32" for "stable32" -->
+<!-- 5. Replace the "💚" milestone emoji with the one used for the major version (it varies per major) and keep it identical in every block -->
 
 Get branches/versions to release from https://github.com/nextcloud/spreed/milestones
 
@@ -96,11 +97,38 @@ Start with the **oldest** version here, so the appstore and github releases show
     - [ ] Publish release
 - [ ] Check that the GitHub Action started: https://github.com/nextcloud-releases/spreed/actions
 - [ ] Rename milestone `💚 Next Patch (X)` to `vX.Y.Z` in https://github.com/nextcloud/spreed/milestones
+    ```sh
+    gh api repos/nextcloud/spreed/milestones --paginate --jq \
+        '.[] | select(.title == "💚 Next Patch (X)") | .number' \
+        | xargs -I{} gh api --method PATCH repos/nextcloud/spreed/milestones/{} -f title="vX.Y.Z"
+    ```
     Unless last release of the stable branch:
-    - [ ] Create a follow up milestone for `💚 Next Patch (X)` (Due date in ~4 weeks, ~1 week for beta/RC)
+    - [ ] Create a follow-up milestone for `💚 Next Patch (X)` (Due date in ~4 weeks, ~1 week for beta/RC)
+        ```sh
+        # Adjust the due date (UTC) before running
+        gh api --method POST repos/nextcloud/spreed/milestones \
+            -f title="💚 Next Patch (X)" -f due_on="YYYY-MM-DDT00:00:00Z"
+        ```
     - [ ] Move all open issues from milestone `vX.Y.Z` to `💚 Next Patch (X)`: https://github.com/nextcloud/spreed/issues?q=is%3Aissue%20state%3Aopen%20milestone%3AvX.Y.Z
+        ```sh
+        for n in $(gh issue list --repo nextcloud/spreed --state open --limit 500 \
+            --milestone "vX.Y.Z" --json number --jq '.[].number'); do
+            gh issue edit "$n" --repo nextcloud/spreed --milestone "💚 Next Patch (X)"
+        done
+        ```
     - [ ] Move all open PRs from milestone `vX.Y.Z` to `💚 Next Patch (X)`: https://github.com/nextcloud/spreed/pulls?q=is%3Apr%20state%3Aopen%20milestone%3AvX.Y.Z
+        ```sh
+        for n in $(gh pr list --repo nextcloud/spreed --state open --limit 500 \
+            --search 'milestone:"vX.Y.Z"' --json number --jq '.[].number'); do
+            gh pr edit "$n" --repo nextcloud/spreed --milestone "💚 Next Patch (X)"
+        done
+        ```
 - [ ] Close the `vX.Y.Z` milestone
+    ```sh
+    gh api repos/nextcloud/spreed/milestones --paginate --jq \
+        '.[] | select(.title == "vX.Y.Z") | .number' \
+        | xargs -I{} gh api --method PATCH repos/nextcloud/spreed/milestones/{} -f state=closed
+    ```
 - [ ] Ensure that the GitHub Action finished successfully: https://github.com/nextcloud-releases/spreed/actions
 
 ## 🛣️ Conclude
