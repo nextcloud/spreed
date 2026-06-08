@@ -12,7 +12,6 @@ Feature: federation/permissions
       | federation_enabled | yes |
 
   @skip34
-  @skip35
   Scenario: set participant permissions
     And user "participant1" creates room "room" (v4)
       | roomType | 2 |
