@@ -5,6 +5,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.0.0 – 2026-06-08
+### Added
+- Call from anywhere - Integration of calls into the avatar menu
+- Permanent call rooms
+- Advanced noise suppression
+- Performance improvements in attachments handling
+- Tagging, sorting and grouping options for conversations
+- Allow email guests without public link
+
+### Changed
+- Update dependencies
+- Update translations
+- Require Nextcloud 34 / Hub 26 Spring
+- Move "Raise hand" in call reactions menu
+- Improved private reply show the quote now as well
+- Split chat permissions to allow reactions without chat messages
+
 ## 24.0.0-rc.4 – 2026-06-02
 ### Changed
 - Update dependencies
@@ -88,7 +105,7 @@ All notable changes to this project will be documented in this file.
   [#15417](https://github.com/nextcloud/spreed/issues/15417)
 - Advanced noise suppression
   [#17147](https://github.com/nextcloud/spreed/issues/17147)
-- Attachment grouping per conversation
+- Performance improvements in attachments handling
   [#4340](https://github.com/nextcloud/spreed/issues/4340)
 - Tagging, sorting and grouping options for conversations
   [#12025](https://github.com/nextcloud/spreed/issues/12025)
