@@ -39,7 +39,7 @@ class Encryption {
 	/**
 	 * Check if the current browser supports encryption.
 	 *
-	 * @return {boolean} Returns true if supported and throws an error otherwise.
+	 * @return {Promise<boolean>} Returns true if supported and throws an error otherwise.
 	 * @async
 	 */
 	static async isSupported() {

@@ -1003,7 +1003,7 @@ Signaling.Standalone.prototype._getBackendUrl = function(baseURL = undefined) {
 	return generateOcsUrl('apps/spreed/api/v3/signaling/backend', {}, { baseURL })
 }
 
-Signaling.Standalone.prototype.sendHello = function() {
+Signaling.Standalone.prototype.sendHello = async function() {
 	if (this.resumeId) {
 		console.debug('Trying to resume session', this.sessionId)
 		const msg = {
@@ -1027,33 +1027,36 @@ Signaling.Standalone.prototype.sendHello = function() {
 		helloVersion = '1.0'
 	}
 	const features = ['chat-relay']
-	Encryption.isSupported()
-		.then(() => {
-			features.push('encryption')
-		})
-		.catch(() => {
-			// Ignore any errors.
-		})
-		.finally(() => {
-			const msg = {
-				type: 'hello',
-				hello: {
-					version: helloVersion,
-					auth: {
-						url,
-						params: this.settings.helloAuthParams[helloVersion],
-					},
-				},
+
+	try {
+		if (Encryption.isEnabled()) {
+			const isSupported = await Encryption.isSupported()
+			if (isSupported) {
+				features.push('encryption')
 			}
-			if (features.length > 0) {
-				msg.hello.features = features
-			}
-			if (this.settings.helloAuthParams.internal) {
-				msg.hello.auth.type = 'internal'
-				msg.hello.auth.params = this.settings.helloAuthParams.internal
-			}
-			this.doSend(msg, this.helloResponseReceived.bind(this))
-		})
+		}
+	} catch (error) {
+		// Ignore any errors.
+	}
+
+	const msg = {
+		type: 'hello',
+		hello: {
+			version: helloVersion,
+			auth: {
+				url,
+				params: this.settings.helloAuthParams[helloVersion],
+			},
+		},
+	}
+	if (features.length > 0) {
+		msg.hello.features = features
+	}
+	if (this.settings.helloAuthParams.internal) {
+		msg.hello.auth.type = 'internal'
+		msg.hello.auth.params = this.settings.helloAuthParams.internal
+	}
+	this.doSend(msg, this.helloResponseReceived.bind(this))
 }
 
 Signaling.Standalone.prototype.helloResponseReceived = function(data) {
