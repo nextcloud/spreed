@@ -1489,6 +1489,7 @@ OC.L10N.register(
     "The call might be recorded." : "Seans go ndéanfar an glao a thaifeadadh.",
     "The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call." : "Seans go gcuimseodh an taifeadadh do ghuth, físeáin ó cheamara, agus comhroinnt scáileáin. Tá do thoiliú ag teastáil sula nglacann tú páirt sa ghlao.",
     "Give consent to the recording of this call" : "Toiliú le taifeadadh an ghlao seo",
+    "You can only join a voice room via a call." : "Ní féidir leat dul isteach i seomra gutha ach trí ghlao.",
     "Show more info" : "Taispeáin tuilleadh eolais",
     "Audio is not available" : "Níl fuaim ar fáil",
     "Video is not available" : "Níl físeán ar fáil",
