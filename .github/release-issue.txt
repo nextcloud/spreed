@@ -1,0 +1,108 @@
+<!-- CASE SENSITIVE replace the following strings in the template -->
+<!-- 1. Replace "X.Y.Z" with the version number e.g. "22.1.4" -->
+<!--    Replace "X.Y.[Z-1]" with the previous version number e.g. "22.1.3" -->
+<!-- 2. Replace "stableX.Y" with the TALK minor branch name e.g. "stable32" -->
+<!--    When we had "stable32.1" the replacement was "32.1" -->
+<!-- 3. Replace "TX" with the Talk major version e.g. "22" for "stable32" -->
+<!-- 4. Replace CASE SENSITIVE "X" with the Nextcloud stable branch number e.g. "32" for "stable32" -->
+
+Get branches/versions to release from https://github.com/nextcloud/spreed/milestones
+
+## 💺 Preparation
+
+- [ ] Check there are no pending backports:
+    - [ ] https://github.com/nextcloud/spreed/labels/backport-request
+- [ ] Check all milestones don't have priority issues still open
+    - [ ] <!-- Add link to all milestones that will be released here -->
+- [ ] Check there are no important PRs open against the branch
+    - [ ] https://github.com/nextcloud/spreed/pulls?q=is%3Apr+is%3Aopen+base%3AstableX.Y
+- [ ] On first RC of a major release
+    - [ ] Create `New in Talk TX` entries in the `Talk updates ✅` conversation
+    - [ ] Create a test package and check if a new development file needs to be added to the packaging exclude list in `Makefile`
+    ```sh
+    make appstore
+    ```
+    - [ ] Make sure the GDPR document is updated for new database tables/columns
+    - [ ] Make sure dependabot.yml is sending patch updates to the stable branch
+- [ ] Create a PR against main branch `CHANGELOG.md` with the changelog of all milestones that are subject to the release
+    <!-- name suggestion: chore(release): Changelog for X.Y.Z -->
+    - [ ] <!-- Add link to PR here -->
+- [ ] Merge the PR
+
+## 🚀 vX.Y.Z
+Start with the **oldest** version here, so the appstore and github releases show the newest version as "Last release"
+
+<!--    In case there is no minor branch, skip steps with stableX.Y -->
+- [ ] 🛑 When releasing from a `stableX.Y` branch make sure to:
+    - [ ] Adjust the branch checkout below
+    - [ ] Copy the `l10n/` folder from `stableX` and commit it
+- [ ] Backport the changelog
+    - [ ] <!-- Add link to PR here -->
+    - [ ] Remove changelog entries in  `CHANGELOG.md` of higher versions
+    - [ ] Bump the version in `appinfo/info.xml`
+    - [ ] Bump the version in `package.json`.  The following command will return a new version name, make sure it matches what you expect:
+        ```sh
+        # Make sure the printed version matches the info.xml version
+        npm version --no-git-tag-version $(xmllint --xpath '/info/version/text()' appinfo/info.xml)
+        ```
+- [ ] Merge the backport
+- [ ] Make sure you pull the latest stable branch:
+    ```sh
+    git checkout stableX.Y
+    git pull origin stableX.Y
+    ```
+- [ ] Clean the dev instance and update all dependencies with the lock file versions and build the production javascript:
+    ```sh
+    make production-setup
+    # On 24 and older versions run:
+    # make dev-setup build-js-production
+    ```
+- [ ] Do a quick smoke test by starting a call with:
+    - [ ] Chrome
+    - [ ] Edge
+    - [ ] Firefox
+    - [ ] Safari
+    - [ ] Desktop client (Talk 16+)
+    - [ ] Android app
+    - [ ] iOS app
+- [ ] Create tag (note that the leading `v` in `vX.Y.Z` will be automatically added to the tag)
+    ```sh
+    make create-tag version=$(xmllint --xpath '/info/version/text()' appinfo/info.xml)
+    ```
+- [ ] Push the git tag to https://github.com/nextcloud-releases/spreed
+    ```sh
+    git push releases v$(xmllint --xpath '/info/version/text()' appinfo/info.xml)
+    ```
+    Make sure you have access rights to the remote repository, and it is set up on your machine:
+    ```sh
+    git remote add releases git@github.com:nextcloud-releases/spreed.git
+    ```
+- [ ] Prepare a (pre-)release in https://github.com/nextcloud/spreed/releases/new?tag=vX.Y.Z
+    - [ ] Make sure that chosen tag is vX.Y.Z, target is stableX.Y, and previous tag is vX.Y.[Z-1]
+    - [ ] Add the respective `CHANGELOG.md` section from merged PR
+    - [ ] Use the **Generate release notes** button and wrap the output result into
+        ```
+        ## What's Changed
+
+        <details>
+        	<!-- insert the output here -->
+        </details>
+        ```
+    - [ ] Set as a pre-release / as the latest release
+    - [ ] Publish release
+- [ ] Prepare a (pre-)release in https://github.com/nextcloud-releases/spreed/releases/new?tag=vX.Y.Z
+    - [ ] Copy the full content from the release description of the previous step
+    - [ ] Set as a pre-release / as the latest release
+    - [ ] Publish release
+- [ ] Check that the GitHub Action started: https://github.com/nextcloud-releases/spreed/actions
+- [ ] Rename milestone `💚 Next Patch (X)` to `vX.Y.Z` in https://github.com/nextcloud/spreed/milestones
+    Unless last release of the stable branch:
+    - [ ] Create a follow up milestone for `💚 Next Patch (X)` (Due date in ~4 weeks, ~1 week for beta/RC)
+    - [ ] Move all open issues from milestone `vX.Y.Z` to `💚 Next Patch (X)`: https://github.com/nextcloud/spreed/issues?q=is%3Aissue%20state%3Aopen%20milestone%3AvX.Y.Z
+    - [ ] Move all open PRs from milestone `vX.Y.Z` to `💚 Next Patch (X)`: https://github.com/nextcloud/spreed/pulls?q=is%3Apr%20state%3Aopen%20milestone%3AvX.Y.Z
+- [ ] Close the `vX.Y.Z` milestone
+- [ ] Ensure that the GitHub Action finished successfully: https://github.com/nextcloud-releases/spreed/actions
+
+## 🛣️ Conclude
+- [ ] In case there were security issues fixed ping the security team
+- [ ] Post the changelog in [💬 Talk team public 👥](https://cloud.nextcloud.com/call/c7fz9qpr)
