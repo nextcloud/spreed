@@ -112,7 +112,7 @@ class GuestManager {
 		if ($emailKey === null) {
 			throw new GuestImportException(
 				GuestImportException::REASON_HEADER_EMAIL,
-				$this->l->t('Missing email field in header line'),
+				$this->l->t('Missing %s field in header line', ['"email"']),
 			);
 		}
 
