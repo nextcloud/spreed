@@ -350,6 +350,7 @@ OC.L10N.register(
     "Send message" : "Enviar mensagem",
     "File to share" : "Ficheiro a partilhar",
     "New file" : "Ficheiro novo",
+    "Blank" : "Vazio",
     "Send" : "Enviar",
     "Settings" : "Definições",
     "Results" : "Resultados",
