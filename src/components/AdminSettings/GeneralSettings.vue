@@ -167,7 +167,7 @@ export default {
 		saveDefaultGroupNotification() {
 			this.loadingDefaultGroupNotification = true
 
-			OCP.AppConfig.setValue('spreed', 'default_group_notification', this.defaultGroupNotification.value, {
+			OCP.AppConfig.setValue('spreed', 'default_group_notification', String(this.defaultGroupNotification.value), {
 				success: () => {
 					this.loadingDefaultGroupNotification = false
 				},

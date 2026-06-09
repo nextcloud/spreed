@@ -76,6 +76,8 @@ export type UpcomingEvent = componentsDav['schemas']['UpcomingEvent'] & {
 export type UpcomingEventsResponse = ApiResponse<operationsDav['upcoming_events-get-events']['responses'][200]['content']['application/json']>
 
 // Provisioning API
+export type AppConfigSetValueParams = Required<operationsProv['app_config-set-value']>['requestBody']['content']['application/json']
+export type AppConfigSetValueResponse = ApiResponse<operationsProv['app_config-set-value']['responses'][200]['content']['application/json']>
 export type UserPreferencesParams = Required<operationsProv['preferences-set-preference']>['requestBody']['content']['application/json']
 export type UserPreferencesResponse = ApiResponse<operationsProv['preferences-set-preference']['responses'][200]['content']['application/json']>
 
