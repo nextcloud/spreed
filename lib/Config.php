@@ -255,6 +255,10 @@ class Config {
 	}
 
 	public function isDisabledForUser(IUser $user): bool {
+		if ($user->getUID() === MatterbridgeManager::BRIDGE_BOT_USERID) {
+			return false;
+		}
+
 		$allowedGroups = $this->getAllowedTalkGroupIds();
 		if (empty($allowedGroups)) {
 			return false;
