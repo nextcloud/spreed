@@ -1489,6 +1489,7 @@ OC.L10N.register(
     "The call might be recorded." : "通話可能會被錄製。",
     "The recording might include your voice, video from camera, and screen share. Your consent is required before joining the call." : "錄製可能包含您的聲音、來自攝影機的影像與螢幕分享。在加入通話前，需要獲得您的同意。",
     "Give consent to the recording of this call" : "對此通話的錄製給予同意",
+    "You can only join a voice room via a call." : "您僅能透過通話加入語音聊天室。",
     "Show more info" : "顯示更多資訊",
     "Audio is not available" : "音訊不可用",
     "Video is not available" : "視訊不可用",
