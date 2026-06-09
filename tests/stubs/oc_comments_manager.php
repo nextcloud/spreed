@@ -21,6 +21,9 @@ class Manager implements \OCP\Comments\ICommentsManager {
 	protected function cache(IComment $comment): void {
 	}
 
+	protected function uncache($id): void {
+	}
+
 	public function get($id) {
 		// TODO: Implement get() method.
 	}

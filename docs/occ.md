@@ -125,6 +125,29 @@ Uninstall a bot from the server
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | `'plain'` |
 | `--url` | The URL of the bot (required when no ID is given, ignored otherwise) | yes | yes | no | *Required* |
 
+## talk:developer:generate-chats
+
+Seed-based generator for demo conversations with mixed users, groups, replies and message length variation (debug mode only)
+
+### Usage
+
+* `talk:developer:generate-chats [--seed SEED] [--rooms ROOMS] [--min-messages MIN-MESSAGES] [--max-messages MAX-MESSAGES] [--days DAYS] [--public-ratio PUBLIC-RATIO] [--one-to-one-ratio ONE-TO-ONE-RATIO] [--users USERS] [--groups GROUPS] [--user-pool-size USER-POOL-SIZE] [--group-pool-size GROUP-POOL-SIZE] [--main-user MAIN-USER]`
+
+| Options | Description | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|---|
+| `--seed` | Integer seed; two developers with the same seed and user/group pool produce identical conversation structure and content. Defaults to the current unix timestamp. | yes | yes | no | *Required* |
+| `--rooms` | Number of rooms to create | yes | yes | no | *Required* |
+| `--min-messages` | Minimum messages per room | yes | yes | no | *Required* |
+| `--max-messages` | Maximum messages per room | yes | yes | no | *Required* |
+| `--days` | Upper bound on the longest pause between messages, in days (rare day-break gap; most gaps stay under 5 minutes) | yes | yes | no | *Required* |
+| `--public-ratio` | Share of generated rooms that are public (0..1) | yes | yes | no | *Required* |
+| `--one-to-one-ratio` | Share of generated rooms that are one-to-one (0..1) | yes | yes | no | *Required* |
+| `--users` | Comma-separated user IDs to draw from (overrides auto-pick) | yes | yes | no | *Required* |
+| `--groups` | Comma-separated group IDs to draw from (overrides auto-pick) | yes | yes | no | *Required* |
+| `--user-pool-size` | Cap on distinct users used across all rooms (excludes --main-user) | yes | yes | no | *Required* |
+| `--group-pool-size` | Cap on distinct groups used across all rooms | yes | yes | no | *Required* |
+| `--main-user` | User added to every room as owner and used as the partner in every one-to-one | yes | yes | no | *Required* |
+
 ## talk:monitor:calls
 
 Prints a list with conversations that have an active call as well as their participant count
