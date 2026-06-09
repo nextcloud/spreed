@@ -397,6 +397,20 @@ async function signalingJoinCallForRecording(token, settings, internalClientAuth
 
 	await signalingIsConnected(signaling)
 
+	// Set up E2EE for recording server
+	// Copied from connectSignaling()
+	if (Encryption.isEnabled()) {
+		let supported
+		try {
+			supported = await Encryption.isSupported()
+		} catch (e) {
+			console.error('Encryption is not supported', e)
+		}
+		if (supported) {
+			encryption = new Encryption(signaling)
+		}
+	}
+
 	// The default call flags for internal clients include audio, so they must
 	// be downgraded to just "in call" to prevent other participants from trying
 	// to connect to the recording participant.
