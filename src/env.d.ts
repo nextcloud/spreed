@@ -18,7 +18,7 @@ declare global {
 
 	const OCP: {
 		AppConfig: {
-			setValue: (app: string, key: string, value: string | number | boolean, options?: { success?: () => void, error?: () => void }) => void
+			setValue: (app: string, key: string, value: string, options?: { success?: () => void, error?: () => void }) => Promise<void>
 		}
 		Accessibility: {
 			disableKeyboardShortcuts: () => boolean
