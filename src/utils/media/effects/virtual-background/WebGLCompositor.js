@@ -278,12 +278,6 @@ export default class WebGLCompositor {
 		this.fboBlur1 = gl.createFramebuffer()
 		this.fboBlur2 = gl.createFramebuffer()
 
-		// --- Blit variables, lazy loaded ---
-		this.progBlit = null
-		this.blitBuf = null
-		this.blitPosLoc = null
-		this.blitSamplerLoc = null
-
 		// --- Default parameters ---
 		this.coverage = [0.45, 0.75]
 		this.lightWrapping = 0.3
@@ -363,75 +357,23 @@ export default class WebGLCompositor {
 	}
 
 	/**
-	 * Initialize shaders and buffers for blitting textures.
+	 * Upload a grayscale segmentation mask into the mask texture.
 	 *
 	 * @private
-	 * @param {WebGLRenderingContext} gl - GL context.
+	 * @param {object} mask - The mask object.
+	 * @param {Uint8Array} mask.data - Mask values (0-255).
+	 * @param {number} mask.width - Mask width.
+	 * @param {number} mask.height - Mask height.
 	 * @return {void}
 	 */
-	_initBlitResources(gl) {
-		if (this.progBlit) {
-			return
-		}
+	_uploadMaskData(mask) {
+		const gl = this.gl
 
-		const blitVS = `
-		attribute vec2 a_pos;
-		varying vec2 v_uv;
-		void main() {
-		  v_uv = (a_pos + 1.0) * 0.5;
-		  gl_Position = vec4(a_pos, 0.0, 1.0);
-		}`
-		const blitFS = `
-		precision mediump float;
-		varying vec2 v_uv;
-		uniform sampler2D u_tex;
-		void main() {
-		  gl_FragColor = texture2D(u_tex, v_uv);
-		}`
-
-		this.progBlit = this._linkProgram(gl, blitVS, blitFS)
-
-		this.blitBuf = gl.createBuffer()
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.blitBuf)
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, -1, 1, 1, -1, 1]), gl.STATIC_DRAW)
-
-		this.blitPosLoc = gl.getAttribLocation(this.progBlit, 'a_pos')
-		this.blitSamplerLoc = gl.getUniformLocation(this.progBlit, 'u_tex')
-	}
-
-	/**
-	 * Copy a MediaPipe mask texture into a canvas.
-	 *
-	 * @private
-	 * @param {object} mask - MediaPipe mask object with canvas + getAsWebGLTexture().
-	 * @return {void}
-	 */
-	_blitTextureToCanvas(mask) {
-		const gl = mask.canvas.getContext('webgl2')
-		if (!gl) {
-			console.error('Could not get WebGL context from mask canvas.')
-			return
-		}
-		this._initBlitResources(gl)
-
-		const texture = mask.getAsWebGLTexture()
-		const { width, height } = mask
-
-		gl.useProgram(this.progBlit)
-
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.blitBuf)
-		gl.enableVertexAttribArray(this.blitPosLoc)
-		gl.vertexAttribPointer(this.blitPosLoc, 2, gl.FLOAT, false, 0, 0)
-
-		gl.activeTexture(gl.TEXTURE0)
-		gl.bindTexture(gl.TEXTURE_2D, texture)
-		gl.uniform1i(this.blitSamplerLoc, 0)
-
-		gl.bindFramebuffer(gl.FRAMEBUFFER, null)
-		gl.viewport(0, 0, width, height)
-		gl.clearColor(0, 0, 0, 0)
-		gl.clear(gl.COLOR_BUFFER_BIT)
-		gl.drawArrays(gl.TRIANGLES, 0, 6)
+		gl.bindTexture(gl.TEXTURE_2D, this.texMask)
+		gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false)
+		gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8, mask.width, mask.height, 0, gl.RED, gl.UNSIGNED_BYTE, mask.data)
+		gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4)
 	}
 
 	/**
@@ -672,7 +614,7 @@ export default class WebGLCompositor {
 	 *
 	 * @param {object} opts - Rendering options.
 	 * @param {HTMLVideoElement} opts.videoEl - Foreground video element.
-	 * @param {object} [opts.mask] - Segmentation mask object.
+	 * @param {object} [opts.mask] - Grayscale segmentation mask ({data: Uint8Array, width, height}).
 	 * @param {HTMLImageElement|HTMLVideoElement|HTMLCanvasElement} [opts.bgSource] - Background source.
 	 * @param {number} opts.mode - Mode (0 = background source, 1 = blur).
 	 * @param {number} opts.outW - Output width.
@@ -724,8 +666,7 @@ export default class WebGLCompositor {
 
 		// Upload and process mask
 		if (mask) {
-			this._blitTextureToCanvas(mask)
-			this._upload(this.texMask, mask.canvas, { flipY: true })
+			this._uploadMaskData(mask)
 		}
 
 		// Upload background if in image mode
@@ -829,8 +770,8 @@ export default class WebGLCompositor {
 		// Clear references
 		this.texFrame = this.texMask = this.texMaskFiltered = null
 		this.texBg = this.texBlurred1 = this.texBlurred2 = null
-		this.positionBuffer = this.texCoordBuffer = this.blitBuf = null
-		this.progBilateral = this.progBlur = this.progBlend = this.progBlit = null
+		this.positionBuffer = this.texCoordBuffer = null
+		this.progBilateral = this.progBlur = this.progBlend = null
 		this.fboMask = this.fboBlur1 = this.fboBlur2 = null
 		this.vertexArray = null
 	}

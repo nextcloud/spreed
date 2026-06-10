@@ -3,9 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { FilesetResolver, ImageSegmenter } from '@mediapipe/tasks-vision'
-import { generateFilePath } from '@nextcloud/router'
 import { VIRTUAL_BACKGROUND } from '../../../../constants.ts'
+import { createSegmenter } from './Segmenter.js'
 import {
 	CLEAR_TIMEOUT,
 	SET_TIMEOUT,
@@ -13,9 +12,6 @@ import {
 	timerWorkerScript,
 } from './TimerWorker.js'
 import WebGLCompositor from './WebGLCompositor.js'
-
-// Cache MediaPipe resources to avoid loading them multiple times.
-let _WasmFileset = null
 
 /**
  * Throttle coefficient for _runInference method.
@@ -71,7 +67,17 @@ export default class VideoStreamBackgroundEffect {
 
 		this._inferenceRunning = false
 
-		this._initMediaPipe().catch((e) => console.error(e))
+		this._segmenter = createSegmenter()
+		this._segmenter.init()
+			.then(() => {
+				this._loaded = true
+				this._loadPromiseResolve()
+			})
+			.catch((error) => {
+				console.error('MediaPipe Tasks initialization failed:', error)
+				this._loadFailed = true
+				this._loadPromiseReject(error)
+			})
 
 		// Bind event handler so it is only bound once for every instance.
 		this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this)
@@ -90,69 +96,6 @@ export default class VideoStreamBackgroundEffect {
 		this._inputVideoElement = document.createElement('video')
 		this._bgChanged = false
 		this._prevBgMode = null
-	}
-
-	/**
-	 * Initialize MediaPipe segmentation model.
-	 *
-	 * @private
-	 * @return {Promise<void>}
-	 */
-	async _initMediaPipe() {
-		try {
-			/**
-			 * Creates a fileset for the MediaPipe Vision tasks (object with paths to binaries)
-			 * Checks inside, if SIMD is supported to load the appropriate fileset
-			 */
-			if (!_WasmFileset) {
-				if (await FilesetResolver.isSimdSupported()) {
-					_WasmFileset = {
-						wasmLoaderPath: new URL(
-							'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_internal.js',
-							import.meta.url,
-						).pathname,
-						wasmBinaryPath: new URL(
-							'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_internal.wasm',
-							import.meta.url,
-						).pathname,
-					}
-				} else {
-					_WasmFileset = {
-						wasmLoaderPath: new URL(
-							'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_nosimd_internal.js',
-							import.meta.url,
-						).pathname,
-						wasmBinaryPath: new URL(
-							'../../../../../node_modules/@mediapipe/tasks-vision/wasm/vision_wasm_nosimd_internal.wasm',
-							import.meta.url,
-						).pathname,
-					}
-				}
-			}
-
-			/**
-			 * Loads binaries and create an image segmentation TaskRunner
-			 */
-			this._imageSegmenter = await ImageSegmenter.createFromOptions(_WasmFileset, {
-				baseOptions: {
-					modelAssetPath: new URL(
-						'./vendor/models/selfie_segmenter.tflite',
-						import.meta.url,
-					).pathname,
-					delegate: 'GPU',
-				},
-				runningMode: 'VIDEO',
-				outputCategoryMask: false,
-				outputConfidenceMasks: true,
-			})
-
-			this._loaded = true
-			this._loadPromiseResolve()
-		} catch (error) {
-			console.error('MediaPipe Tasks initialization failed:', error)
-			this._loadFailed = true
-			this._loadPromiseReject(error)
-		}
 	}
 
 	/**
@@ -184,56 +127,49 @@ export default class VideoStreamBackgroundEffect {
 	 * @return {Promise<void>}
 	 */
 	async _runInference() {
-		if (!this._running || !this._imageSegmenter || !this._loaded) {
+		if (!this._running || !this._loaded) {
 			this._inferenceRunning = false
 			return
 		}
 
-		let segmentationResult
+		const video = this._inputVideoElement
+		if (video.readyState < 2 || !video.videoWidth || !video.videoHeight) {
+			this._inferenceRunning = false
+			return
+		}
+
 		try {
-			segmentationResult = await this._imageSegmenter.segmentForVideo(
-				this._inputVideoElement,
-				performance.now(),
-			)
+			const timestampMs = performance.now()
+			// Downscale to the model size already on capture, so only a small
+			// bitmap is transferred to the worker
+			const frame = typeof createImageBitmap === 'function'
+				? await createImageBitmap(video, { resizeWidth: this._options.width, resizeHeight: this._options.height })
+				: video
+
+			// The segmenter takes ownership of the frame and closes it
+			const mask = await this._segmenter.segment(frame, timestampMs)
 
 			// Effect might have been stopped while inferencing
-			if (this._running && segmentationResult.confidenceMasks && segmentationResult.confidenceMasks.length > 0) {
-				this._processSegmentationResult(segmentationResult)
+			if (this._running && mask) {
+				this._processSegmentationResult(mask)
 			}
 		} finally {
-			if (segmentationResult?.categoryMask) {
-				segmentationResult.categoryMask.close()
-			}
-
-			if (segmentationResult?.confidenceMasks?.length) {
-				segmentationResult.confidenceMasks.forEach((mask) => {
-					// The mask cached in _lastMask is kept for the next postProcessing
-					if (mask === this._lastMask) {
-						return
-					}
-					mask.close()
-				})
-			}
-
 			this._inferenceRunning = false
 		}
 	}
 
 	/**
-	 * Process MediaPipe segmentation result and update internal mask.
+	 * Process the segmentation mask and update internal state.
 	 *
 	 * @private
-	 * @param {object} segmentationResult - The segmentation result from MediaPipe.
+	 * @param {object} mask - The grayscale mask from the segmenter.
+	 * @param {Uint8Array} mask.data - Mask values (0-255).
+	 * @param {number} mask.width - Mask width.
+	 * @param {number} mask.height - Mask height.
 	 * @return {void}
 	 */
-	_processSegmentationResult(segmentationResult) {
-		const confidenceMasks = segmentationResult.confidenceMasks
-		if (!confidenceMasks || confidenceMasks.length === 0) {
-			return
-		}
-
-		const mask = confidenceMasks[0]
-		const maskData = !this._useWebGL ? mask.getAsFloat32Array() : mask
+	_processSegmentationResult(mask) {
+		const maskData = mask.data
 		const maskWidth = mask.width
 		const maskHeight = mask.height
 
@@ -261,8 +197,7 @@ export default class VideoStreamBackgroundEffect {
 				this._maskHeight = maskHeight
 			}
 			for (let i = 0; i < maskData.length; i++) {
-				const v = Math.min(1.0, Math.max(0.0, maskData[i])) // clamp
-				const gray = Math.round(v * 255)
+				const gray = maskData[i]
 				const idx = i * 4
 				this._tempImageData.data[idx] = gray
 				this._tempImageData.data[idx + 1] = gray
@@ -293,10 +228,7 @@ export default class VideoStreamBackgroundEffect {
 			// Update segmentation mask canvas
 			this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0)
 		} else {
-			if (this._lastMask) {
-				this._lastMask.close()
-			}
-			this._lastMask = maskData
+			this._lastMask = mask
 		}
 	}
 
@@ -734,10 +666,7 @@ export default class VideoStreamBackgroundEffect {
 			this._glFx = null
 		}
 
-		if (this._lastMask) {
-			this._lastMask.close()
-			this._lastMask = null
-		}
+		this._lastMask = null
 
 		this._segmentationMask = null
 		this._segmentationMaskCanvas = null
@@ -753,7 +682,6 @@ export default class VideoStreamBackgroundEffect {
 	 */
 	destroy() {
 		this.stopEffect()
-		this._imageSegmenter?.close()
-		this._imageSegmenter = null
+		this._segmenter.destroy()
 	}
 }
