@@ -67,17 +67,7 @@ export default class VideoStreamBackgroundEffect {
 
 		this._inferenceRunning = false
 
-		this._segmenter = createSegmenter()
-		this._segmenter.init()
-			.then(() => {
-				this._loaded = true
-				this._loadPromiseResolve()
-			})
-			.catch((error) => {
-				console.error('MediaPipe Tasks initialization failed:', error)
-				this._loadFailed = true
-				this._loadPromiseReject(error)
-			})
+		this._initSegmenter()
 
 		// Bind event handler so it is only bound once for every instance.
 		this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this)
@@ -96,6 +86,32 @@ export default class VideoStreamBackgroundEffect {
 		this._inputVideoElement = document.createElement('video')
 		this._bgChanged = false
 		this._prevBgMode = null
+	}
+
+	/**
+	 * Create and initialize the segmenter.
+	 *
+	 * Called from the constructor and again from startEffect() to revive the
+	 * effect after destroy() (e.g. when local media is restarted).
+	 * Resolving or rejecting an already settled load promise is a no-op.
+	 *
+	 * @private
+	 * @return {void}
+	 */
+	_initSegmenter() {
+		this._loaded = false
+
+		this._segmenter = createSegmenter()
+		this._segmenter.init()
+			.then(() => {
+				this._loaded = true
+				this._loadPromiseResolve()
+			})
+			.catch((error) => {
+				console.error('MediaPipe Tasks initialization failed:', error)
+				this._loadFailed = true
+				this._loadPromiseReject(error)
+			})
 	}
 
 	/**
@@ -570,6 +586,10 @@ export default class VideoStreamBackgroundEffect {
 	startEffect(stream) {
 		this._running = true
 
+		if (!this._segmenter) {
+			this._initSegmenter()
+		}
+
 		this._stream = stream
 		this._maskFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Blur effect worker' })
 		this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer
@@ -682,6 +702,7 @@ export default class VideoStreamBackgroundEffect {
 	 */
 	destroy() {
 		this.stopEffect()
-		this._segmenter.destroy()
+		this._segmenter?.destroy()
+		this._segmenter = null
 	}
 }

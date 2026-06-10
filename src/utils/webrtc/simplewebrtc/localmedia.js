@@ -278,8 +278,9 @@ LocalMedia.prototype.stop = function() {
 	this.stopStream()
 	this.stopScreenShare()
 
-	// TODO: resources are not released after leaving the call in simplewebrtc
-	// this._virtualBackground.destroy()
+	// Releases the segmenter worker; the effect is revived internally if
+	// local media is started again on this instance.
+	this._virtualBackground.destroy()
 
 	this._localMediaActive = false
 }

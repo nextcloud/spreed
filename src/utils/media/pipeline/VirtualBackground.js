@@ -309,10 +309,11 @@ export default class VirtualBackground extends TrackSinkSource {
 
 	/**
 	 * Destroys the VirtualBackground instance and releases all resources.
+	 *
+	 * The effect is revived internally if the node is used again afterwards.
 	 */
 	destroy() {
 		this._stopEffect()
-		this._videoStreamBackgroundEffect.destroy()
-		this._videoStreamBackgroundEffect = null
+		this._videoStreamBackgroundEffect?.destroy()
 	}
 }
