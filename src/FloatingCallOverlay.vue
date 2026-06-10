@@ -94,6 +94,7 @@ onBeforeUnmount(() => {
 	EventBus.off('signaling-participant-list-changed', fetchCurrentConversation)
 	fetchCurrentConversationIntervalId = undefined
 	window.removeEventListener('beforeunload', preventUnload)
+	window.removeEventListener('unload', syncLeaveConversation)
 	syncLeaveConversation()
 })
 
