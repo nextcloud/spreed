@@ -18,6 +18,12 @@ import WebGLCompositor from './WebGLCompositor.js'
 let _WasmFileset = null
 
 /**
+ * Throttle coefficient for _runInference method.
+ * Every Nth frame will be inferenced (mask calculation)
+ */
+const INFERENCE_THROTTLE_RATE = 1
+
+/**
  * Represents a modified MediaStream that applies virtual background effects
  * (blur, image, video, or video stream) using MediaPipe segmentation.
  *
@@ -62,6 +68,8 @@ export default class VideoStreamBackgroundEffect {
 		this._useWebGL = this._options.webGL
 
 		this._segmentationPixelCount = this._options.width * this._options.height
+
+		this._inferenceRunning = false
 
 		this._initMediaPipe().catch((e) => console.error(e))
 
@@ -148,13 +156,36 @@ export default class VideoStreamBackgroundEffect {
 	}
 
 	/**
+	 * Start inference if not already running.
+	 * Deferred to next microtask to not block rendering.
+	 *
+	 * @private
+	 * @return {void}
+	 */
+	_queueInference() {
+		if (this._inferenceRunning) {
+			return
+		}
+
+		this._inferenceRunning = true
+		Promise.resolve()
+			.then(() => this._runInference())
+			.catch((error) => {
+				console.error('MediaPipe inference failed:', error)
+				this._inferenceRunning = false
+			})
+	}
+
+	/**
 	 * Run segmentation inference on the current video frame.
+	 * Update cached mask when done.
 	 *
 	 * @private
 	 * @return {Promise<void>}
 	 */
 	async _runInference() {
-		if (!this._imageSegmenter || !this._loaded) {
+		if (!this._running || !this._imageSegmenter || !this._loaded) {
+			this._inferenceRunning = false
 			return
 		}
 
@@ -165,22 +196,26 @@ export default class VideoStreamBackgroundEffect {
 				performance.now(),
 			)
 
-			if (segmentationResult.confidenceMasks && segmentationResult.confidenceMasks.length > 0) {
+			// Effect might have been stopped while inferencing
+			if (this._running && segmentationResult.confidenceMasks && segmentationResult.confidenceMasks.length > 0) {
 				this._processSegmentationResult(segmentationResult)
 			}
-
-			this.runPostProcessing()
-			this._lastFrameId = this._frameId
-		} catch (error) {
-			console.error('MediaPipe inference failed:', error)
 		} finally {
 			if (segmentationResult?.categoryMask) {
 				segmentationResult.categoryMask.close()
 			}
 
 			if (segmentationResult?.confidenceMasks?.length) {
-				segmentationResult.confidenceMasks.forEach((mask) => mask.close())
+				segmentationResult.confidenceMasks.forEach((mask) => {
+					// The mask cached in _lastMask is kept for the next postProcessing
+					if (mask === this._lastMask) {
+						return
+					}
+					mask.close()
+				})
 			}
+
+			this._inferenceRunning = false
 		}
 	}
 
@@ -258,6 +293,9 @@ export default class VideoStreamBackgroundEffect {
 			// Update segmentation mask canvas
 			this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0)
 		} else {
+			if (this._lastMask) {
+				this._lastMask.close()
+			}
 			this._lastMask = maskData
 		}
 	}
@@ -269,18 +307,15 @@ export default class VideoStreamBackgroundEffect {
 	 * @return {void}
 	 */
 	_renderMask() {
-		if (this._frameId < this._lastFrameId) {
-			console.debug('Fixing frame id, this should not happen', this._frameId, this._lastFrameId)
-			this._frameId = this._lastFrameId
+		// Run inference if ready
+		if (this._loaded) {
+			this._frameId++
+			if (this._frameId % INFERENCE_THROTTLE_RATE === 0) {
+				this._queueInference()
+			}
 		}
 
-		// Run inference if ready
-		if (this._loaded && this._frameId === this._lastFrameId) {
-			this._frameId++
-			this._runInference().catch((e) => console.error(e))
-		} else if (this._useWebGL) {
-			this.runPostProcessing()
-		}
+		this.runPostProcessing()
 
 		// Schedule next frame
 		this._maskFrameTimerWorker.postMessage({
@@ -643,7 +678,6 @@ export default class VideoStreamBackgroundEffect {
 		}
 
 		this._frameId = -1
-		this._lastFrameId = -1
 
 		this._bgChanged = true
 
@@ -669,7 +703,6 @@ export default class VideoStreamBackgroundEffect {
 		})
 
 		this._frameId = -1
-		this._lastFrameId = -1
 	}
 
 	/**
@@ -695,6 +728,11 @@ export default class VideoStreamBackgroundEffect {
 		if (this._glFx) {
 			this._glFx.dispose()
 			this._glFx = null
+		}
+
+		if (this._lastMask) {
+			this._lastMask.close()
+			this._lastMask = null
 		}
 
 		this._segmentationMask = null
