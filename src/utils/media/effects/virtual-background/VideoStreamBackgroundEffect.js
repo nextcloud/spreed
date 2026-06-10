@@ -457,8 +457,12 @@ export default class VideoStreamBackgroundEffect {
 			return
 		}
 
-		this._outputCanvasElement.width = width
-		this._outputCanvasElement.height = height
+		// Assigning canvas dimensions clears the canvas and reallocates its
+		// buffer even if values are unchanged, so only set them on change.
+		if (this._outputCanvasElement.width !== width || this._outputCanvasElement.height !== height) {
+			this._outputCanvasElement.width = width
+			this._outputCanvasElement.height = height
+		}
 
 		if (this._useWebGL) {
 			if (!this._glFx) {
