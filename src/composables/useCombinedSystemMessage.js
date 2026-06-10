@@ -4,7 +4,6 @@
  */
 
 import { n, t } from '@nextcloud/l10n'
-import cloneDeep from 'lodash/cloneDeep.js'
 import { useStore } from 'vuex'
 import { useActorStore } from '../stores/actor.ts'
 
@@ -46,7 +45,7 @@ export function useCombinedSystemMessage() {
 	 * @return {object}
 	 */
 	function createCombinedSystemMessage({ id, messages, type, collapsed }) {
-		const combinedMessage = cloneDeep(messages[0])
+		const combinedMessage = structuredClone(messages[0])
 		combinedMessage.id = messages[0].id + '_combined'
 
 		// Handle cases when users reconnected to the call
