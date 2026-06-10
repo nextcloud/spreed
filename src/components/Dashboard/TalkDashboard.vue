@@ -221,6 +221,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 						<NcInputField
 							id="room-name"
 							v-model="conversationName"
+							@keyup.enter="startMeeting"
 							:placeholder="t('spreed', 'Meeting')" />
 						<NcButton
 							variant="primary"
