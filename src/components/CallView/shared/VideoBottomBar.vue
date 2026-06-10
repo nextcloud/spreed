@@ -262,7 +262,8 @@ export default {
 				return this.showVideoOverlay
 			}
 
-			return !this.model.attributes.videoAvailable || this.isRemoteVideoBlocked || this.showVideoOverlay || this.isPromoted || this.isCurrentlyActive
+			return !this.model.attributes.videoAvailable || this.isRemoteVideoBlocked
+				|| this.showVideoOverlay || this.isPromoted || this.isCurrentlyActive
 		},
 
 		// Moderator rights
