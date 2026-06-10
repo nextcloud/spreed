@@ -4,7 +4,11 @@
 -->
 
 <template>
-	<div id="call-container">
+	<div
+		id="call-container"
+		@mousemove="debounceHandleMovement"
+		@keydown="debounceHandleMovement"
+		@mouseleave="hideOverlay">
 		<ViewerOverlayCallView
 			v-if="isViewerOverlay"
 			:token="token"
@@ -54,6 +58,7 @@
 						key="screen-local"
 						:token="token"
 						:localMediaModel="localMediaModel"
+						:showVideoOverlay="showVideoOverlay"
 						:sharedData="localSharedData"
 						isBig />
 					<!-- Remote or selected screen -->
@@ -62,6 +67,7 @@
 						:key="`screen-${shownRemoteScreenPeerId}`"
 						:token="token"
 						:callParticipantModel="shownRemoteScreenCallParticipantModel"
+						:showVideoOverlay="showVideoOverlay"
 						:sharedData="sharedDatas[shownRemoteScreenPeerId]"
 						isBig />
 					<!-- Promoted "autopilot" mode -->
@@ -115,6 +121,7 @@
 					:screens="screens"
 					:localMediaModel="localMediaModel"
 					:localCallParticipantModel="localCallParticipantModel"
+					:showVideoOverlay="showVideoOverlay"
 					:sharedDatas="sharedDatas"
 					v-bind="$attrs"
 					@selectVideo="handleSelectVideo"
@@ -259,6 +266,11 @@ export default {
 			showPresenterOverlay: true,
 			debounceFetchPeers: () => {},
 			forcePromotedModel: null,
+			// Videos controls and name
+			showVideoOverlay: true,
+			// Timer for the videos bottom bar
+			showVideoOverlayTimer: null,
+			debounceHandleMovement: () => {},
 		}
 	},
 
@@ -518,6 +530,8 @@ export default {
 		this.debounceFetchPeers = debounce(this.fetchPeers, 1500)
 		EventBus.on('refresh-peer-list', this.debounceFetchPeers)
 
+		this.debounceHandleMovement = debounce(this.handleMovement, 100, { immediate: true })
+
 		callParticipantCollection.on('remove', this._lowerHandWhenParticipantLeaves)
 
 		subscribe('switch-screen-to-id', this._switchScreenToId)
@@ -525,12 +539,18 @@ export default {
 
 	beforeUnmount() {
 		this.debounceFetchPeers.clear?.()
+		this.debounceHandleMovement.clear?.()
 		this.callViewStore.setIsEmptyCallView(true)
 		EventBus.off('refresh-peer-list', this.debounceFetchPeers)
 
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
 
 		unsubscribe('switch-screen-to-id', this._switchScreenToId)
+
+		if (this.showVideoOverlayTimer !== null) {
+			clearTimeout(this.showVideoOverlayTimer)
+			this.showVideoOverlayTimer = null
+		}
 	},
 
 	methods: {
@@ -836,6 +856,24 @@ export default {
 			}
 		},
 
+		handleMovement() {
+			if (this.showVideoOverlayTimer !== null) {
+				clearTimeout(this.showVideoOverlayTimer)
+			}
+			this.showVideoOverlay = true
+			this.showVideoOverlayTimer = setTimeout(() => {
+				this.showVideoOverlay = false
+				this.showVideoOverlayTimer = null
+			}, 5000)
+		},
+
+		hideOverlay() {
+			if (this.showVideoOverlayTimer !== null) {
+				clearTimeout(this.showVideoOverlayTimer)
+				this.showVideoOverlayTimer = null
+			}
+			this.showVideoOverlay = false
+		},
 	},
 }
 </script>

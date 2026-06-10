@@ -15,11 +15,11 @@
 
 		<div v-if="!isSidebar" class="bottom-bar">
 			<div
-				v-show="showParticipantName"
 				class="participant-name"
 				:class="{
 					'participant-name--active': isCurrentlyActive,
 					'participant-name--has-shadow': hasShadow,
+					'participant-name--hidden': !showParticipantName,
 				}">
 				{{ participantName }}
 			</div>
@@ -258,8 +258,11 @@ export default {
 		},
 
 		showParticipantName() {
-			return !this.model.attributes.videoAvailable || this.isRemoteVideoBlocked
-				|| this.showVideoOverlay || this.isPromoted || this.isCurrentlyActive
+			if (this.isScreen) {
+				return this.showVideoOverlay
+			}
+
+			return !this.model.attributes.videoAvailable || this.isRemoteVideoBlocked || this.showVideoOverlay || this.isPromoted || this.isCurrentlyActive
 		},
 
 		// Moderator rights
@@ -286,6 +289,7 @@ export default {
 
 	methods: {
 		t,
+
 		forceMute() {
 			this.model.forceMute()
 		},
@@ -369,11 +373,18 @@ export default {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+	opacity: 1;
+	transition: opacity var(--animation-slow) ease;
+
 	&--active {
 		font-weight: bold;
 	}
 	&--has-shadow {
 		text-shadow: 0 0 4px rgba(0, 0, 0, .8);
+	}
+	&--hidden {
+		opacity: 0;
+		pointer-events: none;
 	}
 }
 

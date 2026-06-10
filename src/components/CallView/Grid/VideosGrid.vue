@@ -44,9 +44,7 @@
 						class="grid"
 						:class="{ stripe: isStripe }"
 						:style="gridStyle"
-						@mousemove="handleMovement"
-						@wheel="debounceHandleWheelEvent"
-						@keydown="handleMovement">
+						@wheel="debounceHandleWheelEvent">
 						<template v-if="!devMode && !(isLessThanTwoVideos && isStripe)">
 							<EmptyCallView v-if="videos.length === 0 && !isStripe" class="video" :isGrid="true" />
 							<VideoVue
@@ -273,6 +271,11 @@ export default {
 			type: Array,
 			default: () => [],
 		},
+
+		showVideoOverlay: {
+			type: Boolean,
+			default: true,
+		},
 	},
 
 	emits: ['selectVideo', 'clickLocalVideo'],
@@ -305,10 +308,6 @@ export default {
 			rows: 0,
 			// The current page
 			currentPage: 0,
-			// Videos controls and name
-			showVideoOverlay: true,
-			// Timer for the videos bottom bar
-			showVideoOverlayTimer: null,
 			resizeObserver: null,
 			debounceMakeGrid: () => {},
 			debounceHandleWheelEvent: () => {},
@@ -865,21 +864,6 @@ export default {
 
 		handleClickStripeCollapse() {
 			this.callViewStore.setCallViewMode({ token: this.token, isStripeOpen: !this.stripeOpen, clearLast: false })
-		},
-
-		handleMovement() {
-			// TODO: debounce this
-			this.setTimerForUiControls()
-		},
-
-		setTimerForUiControls() {
-			if (this.showVideoOverlayTimer !== null) {
-				clearTimeout(this.showVideoOverlayTimer)
-			}
-			this.showVideoOverlay = true
-			this.showVideoOverlayTimer = setTimeout(() => {
-				this.showVideoOverlay = false
-			}, 5000)
 		},
 
 		handleClickVideo(event, peerId) {

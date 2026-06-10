@@ -167,7 +167,7 @@ describe('VideoBottomBar.vue', () => {
 				componentProps.showVideoOverlay = false
 				const wrapper = mountVideoBottomBar(componentProps)
 				const participantName = wrapper.find('.participant-name')
-				expect(participantName.isVisible()).toBeFalsy()
+				expect(participantName.classes()).toContain('participant-name--hidden')
 			})
 		})
 
