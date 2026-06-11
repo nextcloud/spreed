@@ -276,4 +276,8 @@ class FederationManager {
 	public function getNumberOfInvitations(Room $room): int {
 		return $this->invitationMapper->countInvitationsForLocalRoom($room);
 	}
+
+	public function deleteInvitationsForUser(string $userId): void {
+		$this->invitationMapper->deleteInvitationsForUser($userId);
+	}
 }
