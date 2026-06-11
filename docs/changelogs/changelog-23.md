@@ -5,6 +5,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 23.0.7 – 2026-06-11
+
+### Changed
+- [stable33] fix(dashboard): start meeting on enter key
+  [#18284](https://github.com/nextcloud/spreed/pull/18284)
+- [stable33] fix(shared-items): validate entries before storing
+  [#18283](https://github.com/nextcloud/spreed/pull/18283)
+- [stable33] fix(admin): ensure to send string value to Provisioning API
+  [#18280](https://github.com/nextcloud/spreed/pull/18280)
+- [stable33] fix(import): Remove samples from translations to avoid translations
+  [#18274](https://github.com/nextcloud/spreed/pull/18274)
+- [stable33] fix(matterbridge): Always allow Talk usage for the matterbridge bot user
+  [#18272](https://github.com/nextcloud/spreed/pull/18272)
+- [stable33] fix(recording): allow to record E2EE calls
+  [#18267](https://github.com/nextcloud/spreed/pull/18267)
+- [stable33] Fix missing conversation name in invitation email
+  [#18261](https://github.com/nextcloud/spreed/pull/18261)
+- [stable33] ci(integration): Run tests still against stable34 as next version
+  [#18256](https://github.com/nextcloud/spreed/pull/18256)
+
 ## 23.0.6 – 2026-06-02
 ### Changed
 - Update dependencies
