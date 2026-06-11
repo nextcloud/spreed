@@ -5,6 +5,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.14 – 2026-06-11
+
+### Changed
+- [stable32] fix(matterbridge): Always allow Talk usage for the matterbridge bot user
+  [#18271](https://github.com/nextcloud/spreed/pull/18271)
+- [stable32] Fix missing conversation name in invitation email
+  [#18270](https://github.com/nextcloud/spreed/pull/18270)
+- [stable32] fix(recording): allow to record E2EE calls
+  [#18266](https://github.com/nextcloud/spreed/pull/18266)
+
 ## 22.0.13 – 2026-05-28
 ### Changed
 - Update dependencies
