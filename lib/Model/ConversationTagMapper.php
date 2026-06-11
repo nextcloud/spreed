@@ -74,4 +74,11 @@ class ConversationTagMapper extends QBMapper {
 		}
 		$result->closeCursor();
 	}
+
+	public function deleteAllByUserId(string $userId): void {
+		$query = $this->db->getQueryBuilder();
+		$query->delete('talk_conversation_tags')
+			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)));
+		$query->executeStatement();
+	}
 }

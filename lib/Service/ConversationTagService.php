@@ -178,6 +178,10 @@ class ConversationTagService {
 		$this->mapper->delete($tag);
 	}
 
+	public function deleteAllTagsByUserId(string $userId): void {
+		$this->mapper->deleteAllByUserId($userId);
+	}
+
 	/**
 	 * Trim the caller-supplied name, enforce non-empty and the MAX_TAG_NAME_LENGTH cap.
 	 *
