@@ -744,7 +744,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 			$stmt->closeCursor();
 		} else {
-			$chunks = array_chunk($shareMap, 1000, true);
+			$chunks = array_chunk($shareMap, IQueryBuilder::MAX_IN_PARAMETERS, true);
 			$query->andWhere($qb->expr()->in('parent', $qb->createParameter('share_ids')));
 			foreach ($chunks as $chunk) {
 				$ids = array_keys($chunk);
@@ -809,7 +809,8 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		/** @var IShare[] $shares */
 		$shares = [];
 
-		$chunks = array_chunk($allRooms, 100);
+		$chunkSize = min(100, IQueryBuilder::MAX_IN_PARAMETERS);
+		$chunks = array_chunk($allRooms, $chunkSize);
 		foreach ($chunks as $rooms) {
 			$qb = $this->dbConnection->getQueryBuilder();
 			$qb->select('s.*',
@@ -939,7 +940,8 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			$childPathTemplatePlaceholder = $this->dbConnection->escapeLikeParameter($pathWithPlaceholder) . '/_%';
 		}
 
-		$chunks = array_chunk($allRooms, 100);
+		$chunkSize = min(100, IQueryBuilder::MAX_IN_PARAMETERS);
+		$chunks = array_chunk($allRooms, $chunkSize);
 		foreach ($chunks as $rooms) {
 			$qb = $this->dbConnection->getQueryBuilder();
 			$qb->select('s.*',
@@ -1270,7 +1272,8 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				->where($delete->expr()->eq('share_type', $delete->createNamedParameter(self::SHARE_TYPE_USERROOM)))
 				->andWhere($delete->expr()->in('parent', $delete->createParameter('ids')));
 
-			$chunks = array_chunk($ids, 100);
+			$chunkSize = min(100, IQueryBuilder::MAX_IN_PARAMETERS);
+			$chunks = array_chunk($ids, $chunkSize);
 			foreach ($chunks as $chunk) {
 				$delete->setParameter('ids', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
 				$delete->executeStatement();
@@ -1305,7 +1308,8 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			$cursor->closeCursor();
 
 			if (!empty($ids)) {
-				$chunks = array_chunk($ids, 100);
+				$chunkSize = min(100, IQueryBuilder::MAX_IN_PARAMETERS);
+				$chunks = array_chunk($ids, $chunkSize);
 				foreach ($chunks as $chunk) {
 					$delete->delete('share')
 						->where($delete->expr()->eq('share_type', $delete->createNamedParameter(self::SHARE_TYPE_USERROOM)))
