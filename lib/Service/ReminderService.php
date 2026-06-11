@@ -77,6 +77,10 @@ class ReminderService {
 		}
 	}
 
+	public function deleteAllRemindersForUser(string $userId, ?string $token = null): void {
+		$this->reminderMapper->deleteAllRemindersForUser($userId, $token);
+	}
+
 	public function executeReminders(\DateTime $executeBefore): void {
 		$reminders = $this->reminderMapper->findRemindersToExecute($executeBefore);
 
