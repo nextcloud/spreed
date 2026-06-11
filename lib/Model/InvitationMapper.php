@@ -118,6 +118,13 @@ class InvitationMapper extends QBMapper {
 		return $count;
 	}
 
+	public function deleteInvitationsForUser(string $userId): void {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)));
+		$query->executeStatement();
+	}
+
 	/**
 	 * @throws DoesNotExistException
 	 */
