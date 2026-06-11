@@ -5,6 +5,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.0.1 – 2026-06-11
+
+### Changed
+- [stable34] fix(dashboard): start meeting on enter key
+  [#18285](https://github.com/nextcloud/spreed/pull/18285)
+- [stable34] fix(shared-items): validate entries before storing
+  [#18282](https://github.com/nextcloud/spreed/pull/18282)
+- [stable34] fix(admin): ensure to send string value to Provisioning API
+  [#18281](https://github.com/nextcloud/spreed/pull/18281)
+- [stable34] perf(frontend): replace `lodash` with `es-toolkit`
+  [#18279](https://github.com/nextcloud/spreed/pull/18279)
+- [stable34] fix(import): Remove samples from translations to avoid translations
+  [#18275](https://github.com/nextcloud/spreed/pull/18275)
+- [stable34] fix(matterbridge): Always allow Talk usage for the matterbridge bot user
+  [#18273](https://github.com/nextcloud/spreed/pull/18273)
+- [stable34] fix(recording): allow to record E2EE calls
+  [#18268](https://github.com/nextcloud/spreed/pull/18268)
+
 ## 24.0.0 – 2026-06-08
 ### Added
 - Call from anywhere - Integration of calls into the avatar menu
