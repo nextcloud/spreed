@@ -79,7 +79,7 @@ class ThreadMapper extends QBMapper {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName());
-		foreach (array_chunk($threadIds, 1000) as $ids) {
+		foreach (array_chunk($threadIds, IQueryBuilder::MAX_IN_PARAMETERS) as $ids) {
 			$query->where($query->expr()->in(
 				'id',
 				$query->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY),

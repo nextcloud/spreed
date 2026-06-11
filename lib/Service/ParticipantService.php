@@ -1664,7 +1664,7 @@ class ParticipantService {
 			->andWhere($query->expr()->eq('read_privacy', $query->createNamedParameter(Participant::PRIVACY_PUBLIC, IQueryBuilder::PARAM_INT)))
 			->groupBy('room_id');
 
-		$chunks = array_chunk($roomIds, 1000);
+		$chunks = array_chunk($roomIds, IQueryBuilder::MAX_IN_PARAMETERS);
 		foreach ($chunks as $chunk) {
 			$query->setParameter('roomIds', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
 			$result = $query->executeQuery();

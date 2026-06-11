@@ -72,7 +72,7 @@ class Version22000Date20250803160923 extends SimpleMigrationStep {
 		$result->closeCursor();
 
 		// Update current conversations with the correct flag
-		$chunks = array_chunk($tokens, 1000);
+		$chunks = array_chunk($tokens, IQueryBuilder::MAX_IN_PARAMETERS);
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			/** Can not use @see \OCA\Talk\Model\Attachment::ATTACHMENTS_ATLEAST_ONE during update */
