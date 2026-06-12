@@ -21,8 +21,8 @@
 			isBig
 			isScreen
 			:model="model"
-			:participantName="remoteParticipantName"
-			:showVideoOverlay="showVideoOverlay" />
+			:showVideoOverlay="showVideoOverlay"
+			:participantName="remoteParticipantName" />
 	</div>
 </template>
 

@@ -864,7 +864,7 @@ export default {
 			this.showVideoOverlayTimer = setTimeout(() => {
 				this.showVideoOverlay = false
 				this.showVideoOverlayTimer = null
-			}, 5000)
+			}, 5_000)
 		},
 
 		hideOverlay() {
