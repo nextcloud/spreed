@@ -22,12 +22,18 @@ type SpeakingPayload = {
 	isSpeaking: boolean
 }
 
+type RaisedHandState = {
+	state: boolean
+	timestamp: number | null
+}
+
 /**
  * Store for participant activity used in chat and call (typing, speaking, raised hands)
  */
 export const useParticipantActivityStore = defineStore('participantActivity', () => {
 	const typing = reactive<Record<string, Record<string, TypingState>>>({})
 	const speaking = reactive<Record<string, SpeakingState>>({})
+	const raisedHands = reactive<Record<string, RaisedHandState>>({})
 
 	let speakingInterval: ReturnType<typeof setInterval> | null = null
 
@@ -189,6 +195,48 @@ export const useParticipantActivityStore = defineStore('participantActivity', ()
 		}
 	}
 
+	/**
+	 * Get the raised hand state for the first matching sessionId.
+	 *
+	 * @param sessionIds - list of session IDs to look up
+	 */
+	function getParticipantRaisedHand(sessionIds: string[]): RaisedHandState {
+		for (const sessionId of sessionIds) {
+			if (raisedHands[sessionId]) {
+				// note: only the raised states are stored, so no need to confirm
+				return raisedHands[sessionId]
+			}
+		}
+		return { state: false, timestamp: null }
+	}
+
+	/**
+	 * Set or clear the raised hand state for a participant.
+	 *
+	 * @param payload - the wrapping object.
+	 * @param payload.sessionId - the Nextcloud session ID of the participant.
+	 * @param payload.raisedHand - the raised hand state, or false to lower the hand.
+	 */
+	function setParticipantHandRaised({ sessionId, raisedHand }: { sessionId: string, raisedHand: RaisedHandState | false }) {
+		if (!sessionId) {
+			throw new Error('Missing or empty sessionId argument in call to setParticipantHandRaised')
+		}
+		if (raisedHand && raisedHand.state) {
+			raisedHands[sessionId] = raisedHand
+		} else {
+			delete raisedHands[sessionId]
+		}
+	}
+
+	/**
+	 * Clear all raised hand states (called when leaving a call).
+	 */
+	function purgeRaisedHandsState() {
+		for (const sessionId in raisedHands) {
+			delete raisedHands[sessionId]
+		}
+	}
+
 	return {
 		typing,
 		externalTypingSignals,
@@ -199,5 +247,10 @@ export const useParticipantActivityStore = defineStore('participantActivity', ()
 		getParticipantSpeakingInformation,
 		setSpeaking,
 		purgeSpeakingState,
+
+		raisedHands,
+		getParticipantRaisedHand,
+		setParticipantHandRaised,
+		purgeRaisedHandsState,
 	}
 })

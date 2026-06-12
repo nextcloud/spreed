@@ -597,7 +597,7 @@ export default {
 				return false
 			}
 
-			const raisedState = this.$store.getters.getParticipantRaisedHand(this.participant.sessionIds)
+			const raisedState = this.participantActivityStore.getParticipantRaisedHand(this.participant.sessionIds)
 			return raisedState.state
 		},
 

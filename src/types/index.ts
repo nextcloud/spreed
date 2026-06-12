@@ -319,7 +319,7 @@ export interface LocalMediaModel extends SuperEmittedMixin<LocalMediaModel> {
 		virtualBackgroundUrl: string | null
 		localScreen: unknown | null
 		token: string
-		raisedHand: { state: boolean, timestamp: Date }
+		raisedHand: { state: boolean, timestamp: number | null }
 	}
 
 	get(key: string): unknown

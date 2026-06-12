@@ -22,6 +22,7 @@ import { CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
+import { useParticipantActivityStore } from '../../stores/participantActivity.ts'
 
 const props = defineProps<{
 	/* The conversation token */
@@ -34,6 +35,7 @@ const props = defineProps<{
 
 const actorStore = useActorStore()
 const breakoutRoomsStore = useBreakoutRoomsStore()
+const participantActivityStore = useParticipantActivityStore()
 const vuexStore = useStore()
 
 const AUTO_LOWER_HAND_THRESHOLD = 3_000
@@ -108,14 +110,14 @@ function sendReaction(reaction: string) {
 function toggleHandRaised() {
 	const newState = !isHandRaised.value
 	props.localMediaModel.toggleHandRaised(newState)
-	vuexStore.dispatch('setParticipantHandRaised', {
-		sessionId: actorStore.sessionId,
+	participantActivityStore.setParticipantHandRaised({
+		sessionId: actorStore.sessionId!,
 		raisedHand: props.localMediaModel.attributes.raisedHand,
 	})
 
 	// Handle breakout room assistance requests
 	if (userIsInBreakoutRoomAndInCall.value && !canModerate.value) {
-		const hasRaisedHands = Object.keys(vuexStore.getters.participantRaisedHandList)
+		const hasRaisedHands = Object.keys(participantActivityStore.raisedHands)
 			.filter((sessionId) => sessionId !== actorStore.sessionId)
 			.length !== 0
 

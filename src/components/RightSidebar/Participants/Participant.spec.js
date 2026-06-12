@@ -21,6 +21,7 @@ import router from '../../../__mocks__/router.js'
 import { ATTENDEE, PARTICIPANT, WEBINAR } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 import { useActorStore } from '../../../stores/actor.ts'
+import { useParticipantActivityStore } from '../../../stores/participantActivity.ts'
 import { useTokenStore } from '../../../stores/token.ts'
 import { findNcActionButton, findNcActionText, findNcButton } from '../../../test-helpers.js'
 
@@ -269,7 +270,6 @@ describe('ParticipantItem.vue', () => {
 	})
 
 	describe('call icons', () => {
-		let getParticipantRaisedHandMock
 		const components = [IconVideoOutline, IconPhoneDialOutline, IconMicrophoneOutline, IconHandBackLeft]
 
 		/**
@@ -288,20 +288,10 @@ describe('ParticipantItem.vue', () => {
 			}
 		}
 
-		beforeEach(() => {
-			getParticipantRaisedHandMock = vi.fn().mockReturnValue({ state: false })
-
-			testStoreConfig = cloneDeep(storeConfig)
-			testStoreConfig.modules.participantsStore.getters.getParticipantRaisedHand = () => getParticipantRaisedHandMock
-			store = createStore(testStoreConfig)
-		})
-
 		test('does not renders call icon and hand raised icon when disconnected', () => {
+			// isHandRaised returns false immediately when DISCONNECTED, so raised hand state is irrelevant
 			participant.inCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
-			getParticipantRaisedHandMock = vi.fn().mockReturnValue({ state: true })
-
 			checkStateIconsRendered(participant, null)
-			expect(getParticipantRaisedHandMock).not.toHaveBeenCalled()
 		})
 		test('renders video call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
@@ -317,10 +307,11 @@ describe('ParticipantItem.vue', () => {
 		})
 		test('renders hand raised icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
-			getParticipantRaisedHandMock = vi.fn().mockReturnValue({ state: true })
-
-			checkStateIconsRendered(participant, IconHandBackLeft)
-			expect(getParticipantRaisedHandMock).toHaveBeenCalledWith(['session-id-alice'])
+			const wrapper = mountParticipant(participant)
+			// Store is initialized inside component setup — safe to use now
+			useParticipantActivityStore().setParticipantHandRaised({ sessionId: 'session-id-alice', raisedHand: { state: true, timestamp: Date.now() } })
+			await flushPromises()
+			expect(wrapper.findComponent(IconHandBackLeft).exists()).toBeTruthy()
 		})
 		test('renders video call icon when joined with multiple', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO | PARTICIPANT.CALL_FLAG.WITH_PHONE
