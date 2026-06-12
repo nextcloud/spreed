@@ -101,6 +101,7 @@ CallParticipantModel.prototype = {
 		this._webRtc.off('channelMessage', this._handleChannelMessageBound)
 		this._webRtc.off('raisedHand', this._handleRaisedHandBound)
 		this._webRtc.off('reaction', this._handleReactionBound)
+		this._webRtc.off('transcript', this._handleTranscriptBound)
 	},
 
 	get(key) {
