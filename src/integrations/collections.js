@@ -5,7 +5,7 @@
 
 import { getCSPNonce } from '@nextcloud/auth'
 import { t } from '@nextcloud/l10n'
-import { requestRoomSelection } from './utils/requestRoomSelection.js'
+import { requestRoomSelection } from '../utils/requestRoomSelection.js'
 
 __webpack_nonce__ = getCSPNonce()
 // eslint-disable-next-line

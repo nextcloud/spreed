@@ -7,15 +7,15 @@
 import { getCSPNonce } from '@nextcloud/auth'
 import { generateFilePath } from '@nextcloud/router'
 import { createApp, reactive } from 'vue'
-import RecordingApp from './RecordingApp.vue'
-import { createTalkRouter } from './router/router.ts'
-import store from './store/index.js'
-import pinia from './stores/pinia.ts'
+import RecordingApp from './Recording/RecordingApp.vue'
+import { createTalkRouter } from '../router/router.ts'
+import store from '../store/index.js'
+import pinia from '../stores/pinia.ts'
 import {
 	signalingGetSettingsForRecording,
 	signalingJoinCallForRecording,
 	signalingKill,
-} from './utils/webrtc/index.js'
+} from '../utils/webrtc/index.js'
 
 import '@nextcloud/dialogs/style.css'
 

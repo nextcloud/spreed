@@ -5,10 +5,10 @@
 
 import { createApp } from 'vue'
 import FilesSidebarTabApp from './FilesSidebarTabApp.vue'
-import { initializeTalk } from './init.js'
-import { createMemoryRouter } from './router/router.ts'
-import store from './store/index.js'
-import pinia from './stores/pinia.ts'
+import { createMemoryRouter } from '../../router/router.ts'
+import store from '../../store/index.js'
+import pinia from '../../stores/pinia.ts'
+import { initializeTalk } from '../../utils/init.js'
 
 /**
  * Mount a Talk integration app

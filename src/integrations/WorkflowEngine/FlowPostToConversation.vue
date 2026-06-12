@@ -26,8 +26,8 @@ import axios from '@nextcloud/axios'
 import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
-import { CONVERSATION, FLOW, PARTICIPANT } from '../constants.ts'
-import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import { CONVERSATION, FLOW, PARTICIPANT } from '../../constants.ts'
+import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 const supportFederationV1 = hasTalkFeature('local', 'federation-v1')
 

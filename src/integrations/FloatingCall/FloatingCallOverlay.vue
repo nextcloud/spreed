@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import type { Conversation } from './types/index.ts'
+import type { Conversation } from '../../types/index.ts'
 
 import { getCurrentUser } from '@nextcloud/auth'
 import { showError } from '@nextcloud/dialogs'
@@ -16,26 +16,26 @@ import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconDragHorizontal from 'vue-material-design-icons/DragHorizontal.vue'
 import IconOpenInNew from 'vue-material-design-icons/OpenInNew.vue'
-import CallFailedDialog from './components/CallView/CallFailedDialog.vue'
-import CallView from './components/CallView/CallView.vue'
-import MediaSettings from './components/MediaSettings/MediaSettings.vue'
-import CallTime from './components/TopBar/CallTime.vue'
-import { useHashCheck } from './composables/useHashCheck.js'
-import { useIsInCall } from './composables/useIsInCall.js'
-import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
-import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
-import { PARTICIPANT, SIGNALING } from './constants.ts'
-import { getTalkConfig } from './services/CapabilitiesManager.ts'
-import { EventBus } from './services/EventBus.ts'
+import CallFailedDialog from '../../components/CallView/CallFailedDialog.vue'
+import CallView from '../../components/CallView/CallView.vue'
+import MediaSettings from '../../components/MediaSettings/MediaSettings.vue'
+import CallTime from '../../components/TopBar/CallTime.vue'
+import { useHashCheck } from '../../composables/useHashCheck.js'
+import { useIsInCall } from '../../composables/useIsInCall.js'
+import { useRecordingStatusSync } from '../../composables/useRecordingStatusSync.ts'
+import { useSessionIssueHandler } from '../../composables/useSessionIssueHandler.ts'
+import { PARTICIPANT, SIGNALING } from '../../constants.ts'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import { EventBus } from '../../services/EventBus.ts'
 import {
 	leaveConversationSync,
-} from './services/participantsService.js'
-import SessionStorage from './services/SessionStorage.js'
-import { useActorStore } from './stores/actor.ts'
-import { useTokenStore } from './stores/token.ts'
-import { checkBrowser } from './utils/browserCheck.ts'
-import { generateAbsoluteUrl } from './utils/handleUrl.ts'
-import { signalingKill, signalingWebRtcKill } from './utils/webrtc/index.js'
+} from '../../services/participantsService.js'
+import SessionStorage from '../../services/SessionStorage.js'
+import { useActorStore } from '../../stores/actor.ts'
+import { useTokenStore } from '../../stores/token.ts'
+import { checkBrowser } from '../../utils/browserCheck.ts'
+import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
+import { signalingKill, signalingWebRtcKill } from '../../utils/webrtc/index.js'
 
 const props = defineProps<{
 	token: string
@@ -289,7 +289,7 @@ async function fetchCurrentConversation() {
 </template>
 
 <style lang="scss" scoped>
-@use './assets/variables.scss' as *;
+@use '../../assets/variables.scss' as *;
 
 .floating-call__container {
 	position: fixed;

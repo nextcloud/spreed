@@ -16,8 +16,8 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import IconShareVariant from 'vue-material-design-icons/ShareVariant.vue'
-import IconTalk from '../img/app-dark.svg?raw'
-import { getFileConversation } from './services/filesIntegrationServices.ts'
+import IconTalk from '../../../img/app-dark.svg?raw'
+import { getFileConversation } from '../../services/filesIntegrationServices.ts'
 
 const props = defineProps<{
 	node: INode
@@ -114,7 +114,7 @@ async function joinConversation() {
 			token.value = (await getFileConversation(props.node.fileid!)).data.ocs.data.token || ''
 		}
 
-		import('./mainFilesSidebar.js')
+		import('./filesSidebar.js')
 			.then((module) => {
 				module.mountApp(appContainer.value, props, token.value)
 				isTalkSidebarMounted.value = true

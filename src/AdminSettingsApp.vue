@@ -4,23 +4,23 @@
 -->
 
 <script setup lang="ts">
-import type { InitialState } from '../types/index.ts'
+import type { InitialState } from './types/index.ts'
 
 import { loadState } from '@nextcloud/initial-state'
 import { computed, ref } from 'vue'
-import AllowedGroups from '../components/AdminSettings/AllowedGroups.vue'
-import BotsSettings from '../components/AdminSettings/BotsSettings.vue'
-import FederationSettings from '../components/AdminSettings/FederationSettings.vue'
-import GeneralSettings from '../components/AdminSettings/GeneralSettings.vue'
-import HostedSignalingServer from '../components/AdminSettings/HostedSignalingServer.vue'
-import MatterbridgeIntegration from '../components/AdminSettings/MatterbridgeIntegration.vue'
-import RecordingServers from '../components/AdminSettings/RecordingServers.vue'
-import SignalingServers from '../components/AdminSettings/SignalingServers.vue'
-import SIPBridge from '../components/AdminSettings/SIPBridge.vue'
-import StunServers from '../components/AdminSettings/StunServers.vue'
-import TurnServers from '../components/AdminSettings/TurnServers.vue'
-import WebServerSetupChecks from '../components/AdminSettings/WebServerSetupChecks.vue'
-import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import AllowedGroups from './components/AdminSettings/AllowedGroups.vue'
+import BotsSettings from './components/AdminSettings/BotsSettings.vue'
+import FederationSettings from './components/AdminSettings/FederationSettings.vue'
+import GeneralSettings from './components/AdminSettings/GeneralSettings.vue'
+import HostedSignalingServer from './components/AdminSettings/HostedSignalingServer.vue'
+import MatterbridgeIntegration from './components/AdminSettings/MatterbridgeIntegration.vue'
+import RecordingServers from './components/AdminSettings/RecordingServers.vue'
+import SignalingServers from './components/AdminSettings/SignalingServers.vue'
+import SIPBridge from './components/AdminSettings/SIPBridge.vue'
+import StunServers from './components/AdminSettings/StunServers.vue'
+import TurnServers from './components/AdminSettings/TurnServers.vue'
+import WebServerSetupChecks from './components/AdminSettings/WebServerSetupChecks.vue'
+import { hasTalkFeature } from './services/CapabilitiesManager.ts'
 
 const hasValidSubscription = loadState<InitialState['spreed']['has_valid_subscription']>('spreed', 'has_valid_subscription')
 

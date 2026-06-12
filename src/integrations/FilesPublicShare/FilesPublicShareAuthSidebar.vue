@@ -30,30 +30,30 @@ import { getCurrentUser, getGuestNickname } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-import CallView from './components/CallView/CallView.vue'
-import MediaSettings from './components/MediaSettings/MediaSettings.vue'
-import PollManager from './components/PollViewer/PollManager.vue'
-import PollViewer from './components/PollViewer/PollViewer.vue'
-import InternalSignalingHint from './components/RightSidebar/InternalSignalingHint.vue'
-import TopBar from './components/TopBar/TopBar.vue'
-import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
-import { useGetMessagesProvider } from './composables/useGetMessages.ts'
-import { useHashCheck } from './composables/useHashCheck.js'
-import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
-import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
-import { EventBus } from './services/EventBus.ts'
+import CallView from '../../components/CallView/CallView.vue'
+import MediaSettings from '../../components/MediaSettings/MediaSettings.vue'
+import PollManager from '../../components/PollViewer/PollManager.vue'
+import PollViewer from '../../components/PollViewer/PollViewer.vue'
+import InternalSignalingHint from '../../components/RightSidebar/InternalSignalingHint.vue'
+import TopBar from '../../components/TopBar/TopBar.vue'
+import TransitionWrapper from '../../components/UIShared/TransitionWrapper.vue'
+import { useGetMessagesProvider } from '../../composables/useGetMessages.ts'
+import { useHashCheck } from '../../composables/useHashCheck.js'
+import { useRecordingStatusSync } from '../../composables/useRecordingStatusSync.ts'
+import { useSessionIssueHandler } from '../../composables/useSessionIssueHandler.ts'
+import { EventBus } from '../../services/EventBus.ts'
 import {
 	leaveConversationSync,
 	setGuestUserName,
-} from './services/participantsService.js'
-import SessionStorage from './services/SessionStorage.js'
-import { useActorStore } from './stores/actor.ts'
-import { useTokenStore } from './stores/token.ts'
-import { signalingKill } from './utils/webrtc/index.js'
+} from '../../services/participantsService.js'
+import SessionStorage from '../../services/SessionStorage.js'
+import { useActorStore } from '../../stores/actor.ts'
+import { useTokenStore } from '../../stores/token.ts'
+import { signalingKill } from '../../utils/webrtc/index.js'
 
 export default {
 
-	name: 'PublicShareAuthSidebar',
+	name: 'FilesPublicShareAuthSidebar',
 
 	components: {
 		InternalSignalingHint,
@@ -217,7 +217,7 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-@use './assets/variables.scss' as *;
+@use '../../assets/variables.scss' as *;
 
 /* Styles based on the NcAppSidebar */
 #talk-sidebar {

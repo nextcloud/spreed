@@ -40,19 +40,22 @@ module.exports = defineConfig((env) => {
 		devtool: isDev ? 'cheap-source-map' : 'source-map',
 
 		entry: {
-			'admin-settings': path.join(__dirname, 'src', 'mainAdminSettings.js'),
-			collections: path.join(__dirname, 'src', 'collections.js'),
+			// Main app entry point (path is used by Talk Desktop)
 			main: path.join(__dirname, 'src', 'main.js'),
-			recording: path.join(__dirname, 'src', 'mainRecording.js'),
-			'files-sidebar': path.join(__dirname, 'src', 'mainFilesSidebarLoader.js'),
-			'public-share-auth-form': path.join(__dirname, 'src', 'publicShareAuthForm.ts'),
-			'public-share-auth-sidebar': path.join(__dirname, 'src', 'mainPublicShareAuthSidebar.js'),
-			'public-share-sidebar': path.join(__dirname, 'src', 'mainPublicShareSidebar.js'),
-			'floating-call': path.join(__dirname, 'src', 'mainFloatingCallTrigger.ts'),
-			flow: path.join(__dirname, 'src', 'flow.js'),
-			deck: path.join(__dirname, 'src', 'deck.js'),
-			maps: path.join(__dirname, 'src', 'maps.js'),
-			search: path.join(__dirname, 'src', 'search.js'),
+			'admin-settings': path.join(__dirname, 'src', 'mainAdminSettings.js'),
+			// Integration apps entry points
+			collections: path.join(__dirname, 'src', 'integrations', 'collections.js'),
+			recording: path.join(__dirname, 'src', 'integrations', 'recording.js'),
+			'files-sidebar': path.join(__dirname, 'src', 'integrations', 'filesSidebarLoader.js'),
+			'public-share-auth-form': path.join(__dirname, 'src', 'integrations', 'talkPasswordProtectedAuthForm.ts'),
+			'public-share-auth-sidebar': path.join(__dirname, 'src', 'integrations', 'filesPublicShareAuthSidebar.js'),
+			'public-share-sidebar': path.join(__dirname, 'src', 'integrations', 'filesPublicShareSidebar.js'),
+			'floating-call': path.join(__dirname, 'src', 'integrations', 'floatingCallLoader.ts'),
+			flow: path.join(__dirname, 'src', 'integrations', 'flow.js'),
+			deck: path.join(__dirname, 'src', 'integrations', 'deck.js'),
+			maps: path.join(__dirname, 'src', 'integrations', 'maps.js'),
+			search: path.join(__dirname, 'src', 'integrations', 'search.js'),
+			// Styles entry point (path is used by Talk Desktop)
 			icons: path.join(__dirname, 'src', 'icons.css'),
 		},
 
