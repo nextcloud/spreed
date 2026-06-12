@@ -136,7 +136,7 @@ class SearchPluginTest extends TestCase {
 
 	public static function dataSearchUsers(): array {
 		return [
-			['test', [], [], [], []],
+			['test', [], [], []],
 			['test', [
 				'current' => 'test',
 				'foo' => '',
