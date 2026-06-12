@@ -385,6 +385,7 @@ import {
 } from '../../../services/callsService.ts'
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../stores/actor.ts'
+import { useParticipantActivityStore } from '../../../stores/participantActivity.ts'
 import { formattedTime } from '../../../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 import { readableNumber } from '../../../utils/readableNumber.ts'
@@ -446,11 +447,14 @@ export default {
 	},
 
 	setup() {
+		const participantActivityStore = useParticipantActivityStore()
+
 		return {
 			IconMicrophoneOffOutline,
 			isInCall: useIsInCall(),
 			actorStore: useActorStore(),
 			token: useGetToken(),
+			participantActivityStore,
 		}
 	},
 
@@ -620,11 +624,11 @@ export default {
 		},
 
 		participantSpeakingInformation() {
-			return this.$store.getters.getParticipantSpeakingInformation(this.attendeeId)
+			return this.participantActivityStore.getParticipantSpeakingInformation(this.attendeeId)
 		},
 
 		isParticipantSpeaking() {
-			return this.participantSpeakingInformation?.speaking
+			return this.participantSpeakingInformation?.isSpeaking
 		},
 
 		attendeePin() {

@@ -11,11 +11,25 @@ type TypingState = {
 	expirationTimeout: ReturnType<typeof setTimeout>
 }
 
+type SpeakingState = {
+	isSpeaking: boolean
+	lastTimestamp: number
+	totalCountedTime: number
+}
+
+type SpeakingPayload = {
+	attendeeId: number
+	isSpeaking: boolean
+}
+
 /**
  * Store for participant activity used in chat and call (typing, speaking, raised hands)
  */
 export const useParticipantActivityStore = defineStore('participantActivity', () => {
 	const typing = reactive<Record<string, Record<string, TypingState>>>({})
+	const speaking = reactive<Record<string, SpeakingState>>({})
+
+	let speakingInterval: ReturnType<typeof setInterval> | null = null
 
 	const actorStore = useActorStore()
 
@@ -79,9 +93,111 @@ export const useParticipantActivityStore = defineStore('participantActivity', ()
 		}
 	}
 
+	/**
+	 * Gets the speaking information for the participant.
+	 *
+	 * @param attendeeId - attendee's ID for the participant in conversation.
+	 */
+	function getParticipantSpeakingInformation(attendeeId: SpeakingPayload['attendeeId']) {
+		return speaking[attendeeId]
+	}
+
+	/**
+	 * Update speaking information for a participant.
+	 *
+	 * @param data - the wrapping object.
+	 * @param data.attendeeId - the attendee ID of the participant in conversation.
+	 * @param data.isSpeaking - whether the participant is speaking or not
+	 */
+	function updateTimeSpeaking({ attendeeId, isSpeaking }: SpeakingPayload) {
+		if (!speaking[attendeeId]) {
+			return
+		}
+
+		const currentTimestamp = Date.now()
+		const currentSpeakingState = speaking[attendeeId].isSpeaking
+
+		if (!currentSpeakingState && !isSpeaking) {
+			// false -> false, no updates
+			return
+		}
+
+		if (currentSpeakingState) {
+			// true -> false / true -> true, participant is still speaking or finished to speak, update total time
+			speaking[attendeeId].totalCountedTime += (currentTimestamp - speaking[attendeeId].lastTimestamp)
+		}
+
+		// false -> true / true -> false / true -> true, update timestamp of last check / signal
+		speaking[attendeeId].lastTimestamp = currentTimestamp
+	}
+
+	/**
+	 * Sets the speaking status of a participant in a conversation / call.
+	 *
+	 * Note that "updateParticipant" should not be called to add a "speaking"
+	 * property to an existing participant, as the participant would be reset
+	 * when the participants are purged whenever they are fetched again.
+	 * Similarly, "addParticipant" can not be called either to add a participant
+	 * if it was not fetched yet but the call model reported it as being
+	 * speaking, as the attendeeId would be unknown.
+	 *
+	 * @param data - the wrapping object.
+	 * @param data.attendeeId - the attendee ID of the participant in conversation.
+	 * @param data.isSpeaking - whether the participant is speaking or not
+	 */
+	function setSpeaking({ attendeeId, isSpeaking }: SpeakingPayload) {
+		// We should update time before speaking state, to be able to check previous state
+		updateTimeSpeaking({ attendeeId, isSpeaking })
+		// create a dummy object for current call
+		if (!speaking[attendeeId]) {
+			speaking[attendeeId] = { isSpeaking, lastTimestamp: Date.now(), totalCountedTime: 0 }
+		}
+		speaking[attendeeId].isSpeaking = isSpeaking
+
+		if (!speakingInterval && isSpeaking) {
+			speakingInterval = setInterval(updateIntervalTimeSpeaking, 1000)
+		}
+	}
+
+	/**
+	 * Update speaking time for all currently speaking attendees.
+	 */
+	function updateIntervalTimeSpeaking() {
+		if (!speakingInterval) {
+			return
+		}
+
+		for (const attendeeId in speaking) {
+			if (speaking[attendeeId].isSpeaking) {
+				updateTimeSpeaking({ attendeeId: +attendeeId, isSpeaking: true })
+			}
+		}
+	}
+
+	/**
+	 * Purge the speaking information for recent call when local participant leaves call
+	 * (including cases when the call ends for everyone).
+	 */
+	function purgeSpeakingState() {
+		for (const attendeeId in speaking) {
+			delete speaking[attendeeId]
+		}
+
+		if (speakingInterval) {
+			clearInterval(speakingInterval)
+			speakingInterval = null
+		}
+	}
+
 	return {
+		typing,
 		externalTypingSignals,
 		isSelfActorTyping,
 		setTyping,
+
+		speaking,
+		getParticipantSpeakingInformation,
+		setSpeaking,
+		purgeSpeakingState,
 	}
 })
