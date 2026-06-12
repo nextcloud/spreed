@@ -29,6 +29,7 @@ use OCP\Federation\ICloudIdManager;
 use OCP\Files\Folder;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
+use OCP\Files\ISetupManager;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\IGroup;
@@ -54,6 +55,7 @@ class SystemMessageTest extends TestCase {
 	protected RoomShareProvider&MockObject $shareProvider;
 	protected PhotoCache&MockObject $photoCache;
 	protected IRootFolder&MockObject $rootFolder;
+	protected ISetupManager&MockObject $setupManager;
 	protected IURLGenerator&MockObject $url;
 	protected ICloudIdManager&MockObject $cloudIdManager;
 	protected FilesMetadataCache&MockObject $filesMetadataCache;
@@ -72,6 +74,7 @@ class SystemMessageTest extends TestCase {
 		$this->shareProvider = $this->createMock(RoomShareProvider::class);
 		$this->photoCache = $this->createMock(PhotoCache::class);
 		$this->rootFolder = $this->createMock(IRootFolder::class);
+		$this->setupManager = $this->createMock(ISetupManager::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->filesMetadataCache = $this->createMock(FilesMetadataCache::class);
@@ -103,6 +106,7 @@ class SystemMessageTest extends TestCase {
 					$this->shareProvider,
 					$this->photoCache,
 					$this->rootFolder,
+					$this->setupManager,
 					$this->cloudIdManager,
 					$this->url,
 					$this->filesMetadataCache,
@@ -123,6 +127,7 @@ class SystemMessageTest extends TestCase {
 			$this->shareProvider,
 			$this->photoCache,
 			$this->rootFolder,
+			$this->setupManager,
 			$this->cloudIdManager,
 			$this->url,
 			$this->filesMetadataCache,
