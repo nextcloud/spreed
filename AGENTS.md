@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 # AGENTS.md — Nextcloud Talk (spreed)
 
 Guidance for AI coding agents working in this repository. The PHP backend lives in
@@ -35,13 +39,64 @@ All contributions generated or assisted by this agent must fully comply with:
 - PHP **8.2+**, Nextcloud server **35** (`appinfo/info.xml`). Code must stay portable
   across MariaDB, MySQL, PostgreSQL, SQLite, and Oracle — migrations, query-builder
   usage, and tests alike.
+- Setup: `composer i` and `npm ci`. Frontend builds: `npm run build` (production),
+  `npm run dev` / `npm run watch` (development).
 - `lib/Vendor/` is third-party code bundled via Mozart (`cuyz/valinor`,
   `firebase/php-jwt`). **Never edit or analyze it as project code.**
+- `l10n/` is generated from Transifex (the `fix(l10n): Update translations from
+  Transifex` commits). **Never hand-edit translation files.**
 - Checks: `composer cs:fix` (php-cs-fixer, Nextcloud coding standard),
   `composer psalm` (level 4, baseline in `tests/psalm-baseline.xml`),
   `composer rector:check`, `composer lint`.
 - OpenAPI: controller docblocks/psalm types in `lib/ResponseDefinitions.php` feed
-  `composer openapi`; regenerate after changing API signatures or responses.
+  `composer openapi`, which also regenerates the TypeScript types. Regenerate after
+  adding/removing/renaming a route, changing a controller method signature or its
+  `@param`/`@return`/psalm-shape annotations, changing a response shape in
+  `ResponseDefinitions.php`, or adding/removing an HTTP status code from a return
+  type. CI fails if the generated spec or `src/types/openapi/` is stale.
+
+## Running tests
+
+- PHP unit tests (PHPUnit, `tests/php/`): `composer run test:unit`. Single file:
+  `composer run test:unit -- tests/php/Service/AvatarServiceTest.php`; filter:
+  `composer run test:unit -- --filter="testMethodName"`.
+- `tests/php/bootstrap.php` requires `../../../../lib/base.php`: the suite only runs
+  when this repo lives at `<nextcloud-server>/apps/spreed` inside a configured server
+  checkout. **If you cannot run a test suite, say so explicitly rather than claiming
+  it passes** — `composer lint` and `composer psalm` work standalone and catch a lot.
+- Integration tests (Behat, `tests/integration/`): `tests/integration/run.sh` against
+  a configured local server, or `tests/integration/run-docker.sh` for a containerized
+  run.
+- Frontend tests: `npm run test` (vitest); single file via `npm run test -- <path>`.
+
+## License headers
+
+Every new file needs an SPDX header. Use `AGPL-3.0-or-later` — never
+`AGPL-3.0-only`:
+
+```php
+/**
+ * SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+```
+
+Adapt the comment style to the file type; files that cannot carry a header (e.g.
+binary assets) are covered via `REUSE.toml`. CI enforces REUSE compliance.
+
+## Git workflow
+
+- Do **not** commit or push unless explicitly asked. Leave changes in the working
+  directory, summarize what changed and why, and suggest a commit message.
+- Never commit on or push to `main` — use a descriptive feature branch following the
+  existing `type/issue-or-noid/short-description` pattern (e.g.
+  `fix/12345/handle-mcu-disconnect`, `chore/noid/start-agents-md`), not generated
+  names like `agent-xxxx`.
+- Commit messages follow Conventional Commits with a component scope, matching the
+  existing history: `feat(chat): …`, `fix(call): …`, `fix(api): …`,
+  `fix(settings): …`.
+- Backports to stable branches are done by the backport bot via a
+  `/backport to stable-X.Y` comment on the merged PR — don't cherry-pick manually.
 
 ## Conventions to follow (and the drift to avoid)
 
@@ -66,6 +121,12 @@ patterns, **new code must use the modern one** listed first.
   `lib/Model/SelectHelper.php`. Adding a Room/Participant column means touching the
   migration, `SelectHelper`, `Manager` hydration, and the constructor **in lockstep**.
 - Query builder only; no raw SQL outside migrations.
+- Build query-builder queries **outside** loops: use `$qb->createParameter('x')` as a
+  placeholder and `$qb->setParameter('x', $value, IQueryBuilder::PARAM_*)` inside the
+  loop. Chunk `IN ()` lists with `array_chunk(..., IQueryBuilder::MAX_IN_PARAMETERS)`
+  for Oracle compatibility (see `lib/Model/ThreadMapper.php:82`); accumulate chunk
+  results in an array and `array_merge(...$results)` once after the loop, never
+  inside it.
 
 ### Services & responsibility split
 - Reads/lookups: `lib/Manager.php`. Writes/mutations + event dispatch:
@@ -239,6 +300,9 @@ has two patterns, **new code must use the modern one** listed first.
   only for brand exceptions. Avoid new `:deep()` overrides of `@nextcloud/vue`
   internals — the existing ~174 are a breakage hotspot on library bumps; prefer
   component props/slots or an upstream issue.
+- Spacing and dimensions use the standard variables too — no magic numbers; use
+  `calc(x * var(--default-grid-baseline))` when finer control is needed. Reference:
+  https://docs.nextcloud.com/server/latest/developer_manual/html_css_design/css.html
 
 ### Call layer (WebRTC/signaling)
 - `src/utils/webrtc/simplewebrtc/`, `src/utils/webrtc/models/`,
