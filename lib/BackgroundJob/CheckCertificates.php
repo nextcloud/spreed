@@ -11,6 +11,7 @@ namespace OCA\Talk\BackgroundJob;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
 use OCA\Talk\Service\CertificateService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
@@ -26,6 +27,7 @@ class CheckCertificates extends TimedJob {
 		protected ITimeFactory $timeFactory,
 		protected IGroupManager $groupManager,
 		protected IManager $notificationManager,
+		protected IAppConfig $appConfig,
 		protected LoggerInterface $logger,
 	) {
 		parent::__construct($timeFactory);
@@ -91,7 +93,9 @@ class CheckCertificates extends TimedJob {
 			return;
 		}
 
-		if ($expirationInDays < 10) {
+		$expirationWarningLimit = $this->appConfig->getAppValueInt('certificate_expiration_days', 10);
+		$expirationWarningLimit = min(365, max(0, $expirationWarningLimit));
+		if ($expirationInDays < $expirationWarningLimit) {
 			$this->logger->warning('Certificate of ' . $host . ' expires in less than ' . $expirationInDays . ' days');
 
 			$this->createNotifications($host, $expirationInDays);
