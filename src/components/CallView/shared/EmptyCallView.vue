@@ -110,10 +110,6 @@ export default {
 					|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY)
 		},
 
-		conversationDisplayName() {
-			return this.conversation && this.conversation.displayName
-		},
-
 		canInviteOthers() {
 			return this.conversation && (
 				this.conversation.participantType === PARTICIPANT.TYPE.OWNER
@@ -143,7 +139,8 @@ export default {
 				return t('spreed', 'Calling …')
 			}
 			if (this.isOneToOneConversation) {
-				return t('spreed', 'Waiting for {user} to join the call', { user: this.conversationDisplayName })
+				// Rendered via Vue text interpolation - avoid double escaping to correctly render special characters
+				return t('spreed', 'Waiting for {user} to join the call', { user: this.conversation.displayName }, { escape: false })
 			}
 			return t('spreed', 'Waiting for others to join the call …')
 		},
