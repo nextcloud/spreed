@@ -60,6 +60,7 @@ class CustomInputSignalingController extends SignalingController {
 		$this->inputStream = $data;
 	}
 
+	#[\Override]
 	protected function getInputStream(): string {
 		return $this->inputStream;
 	}
@@ -1451,7 +1452,7 @@ class SignalingControllerTest extends TestCase {
 		$this->assertEquals($newSessionId, $participant->getSession()->getSessionId());
 	}
 
-	private const SIP_BRIDGE_SECRET = 'MySIPSecretValueMySIPSecretValue1234';
+	private const string SIP_BRIDGE_SECRET = 'MySIPSecretValueMySIPSecretValue1234';
 
 	private function sipBridgeChecksum(string $data, string $random): string {
 		return hash_hmac('sha256', $random . $data, self::SIP_BRIDGE_SECRET);

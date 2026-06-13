@@ -26,7 +26,7 @@ use OCP\IDBConnection;
 class ThreadService {
 
 	private readonly ICache $cache;
-	private const CACHE_PREFIX = 'thread/';
+	private const string CACHE_PREFIX = 'thread/';
 	public function __construct(
 		private readonly IDBConnection $connection,
 		private readonly ThreadMapper $threadMapper,

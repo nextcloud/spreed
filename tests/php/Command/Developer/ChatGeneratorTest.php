@@ -13,8 +13,8 @@ use OCA\Talk\Room;
 use Test\TestCase;
 
 class ChatGeneratorTest extends TestCase {
-	private const USERS = ['alice', 'bob', 'carol', 'dave', 'eve', 'frank', 'grace', 'heidi'];
-	private const GROUPS = ['backend', 'frontend', 'qa'];
+	private const array USERS = ['alice', 'bob', 'carol', 'dave', 'eve', 'frank', 'grace', 'heidi'];
+	private const array GROUPS = ['backend', 'frontend', 'qa'];
 
 	public function testSameSeedYieldsIdenticalPlan(): void {
 		$first = (new ChatGenerator(12345))->planRooms(self::USERS, self::GROUPS, 5, 5, 50, 14, 0.2, 0.3);

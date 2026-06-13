@@ -19,7 +19,7 @@ return RectorConfig::configure()
 		__DIR__ . '/tests/php',
 	])
 	->withSkipPath(__DIR__ . '/lib/Vendor')
-	->withPhpSets(php82: true)
+	->withPhpSets(php83: true)
 	->withSets([
 		PHPUnitSetList::PHPUNIT_120,
 		NextcloudSets::NEXTCLOUD_34,
