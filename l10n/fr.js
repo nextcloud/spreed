@@ -482,7 +482,7 @@ OC.L10N.register(
     "Avatar image is not square" : "L'image d'avatar n'est pas carré",
     "Room {number}" : "Salle {number}",
     "Favorites" : "Favoris",
-    "Other" : "Autre",
+    "Other" : "Autres",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "La requête de période d'essai a échouée car le serveur d'essai est injoignable. Merci d'essayer plus tard. ",
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "Il y a un problème d'authentification de cette instance. Il est possible qu'elle ne soit pas accessible depuis l'extérieur pour vérifier son URL.",
     "Something unexpected happened." : "Quelque chose d’inattendu est survenu.",
