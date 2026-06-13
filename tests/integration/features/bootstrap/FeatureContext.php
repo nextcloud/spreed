@@ -104,7 +104,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		'R' => 256, // PERMISSIONS_REACT
 	];
 
-	protected ?string $currentUser = null;
+	protected string $currentUser = '';
 
 	private ?ResponseInterface $response;
 
@@ -1230,7 +1230,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$options = [];
 		if ($this->currentUser === 'admin') {
 			$options['auth'] = 'admin';
-		} elseif ($this->currentUser !== null) {
+		} elseif ($this->currentUser !== '') {
 			$options['auth'] = [$this->currentUser, self::TEST_PASSWORD];
 		}
 		$options['headers'] = [
@@ -1487,7 +1487,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->assertStatusCode($this->response, 200);
 		$data = $this->getDataFromResponse($this->response);
-		$this->setCurrentUser(null);
+		$this->setCurrentUser('');
 
 		$currentServer = $this->currentServer;
 		$this->usingServer($currentServer === 'LOCAL' ? 'REMOTE' : 'LOCAL');
@@ -4166,7 +4166,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 
 	#[Given('/^as user "([^"]*)"$/')]
-	public function setCurrentUser(?string $user): ?string {
+	public function setCurrentUser(string $user): string {
 		$oldUser = $this->currentUser;
 		$this->currentUser = $user;
 		return $oldUser;
@@ -4855,7 +4855,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	#[Then('/^Bot "([^"]*)" (sends|removes) a (message|reaction) for room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function botSendsRequest(string $botName, string $sends, string $action, string $identifier, int $status, string $apiVersion, TableNode $body): void {
-		$currentUser = $this->setCurrentUser(null);
+		$currentUser = $this->setCurrentUser('');
 
 		$data = $body->getRowsHash();
 		$secret = $data['secret'];
@@ -5309,7 +5309,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$options = array_merge($options, ['cookies' => $this->getUserCookieJar($this->currentUser)]);
 		if ($this->currentUser === 'admin') {
 			$options['auth'] = ['admin', 'admin'];
-		} elseif ($this->currentUser !== null && !str_starts_with($this->currentUser, 'guest')) {
+		} elseif ($this->currentUser !== '' && !str_starts_with($this->currentUser, 'guest')) {
 			$options['auth'] = [$this->currentUser, self::TEST_PASSWORD];
 		}
 		if ($body instanceof TableNode) {

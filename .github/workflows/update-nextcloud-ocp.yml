@@ -41,11 +41,11 @@ jobs:
           submodules: true
         continue-on-error: true
 
-      - name: Set up php8.2
+      - name: Set up php8.3
         if: steps.checkout.outcome == 'success'
         uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
         with:
-          php-version: 8.2
+          php-version: 8.3
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
           extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, sqlite, pdo_sqlite
           coverage: none
