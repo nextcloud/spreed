@@ -77,7 +77,6 @@
     "vue-draggable-resizable": "^3.0.0",
     "vue-material-design-icons": "^5.3.1",
     "vue-router": "^4.6.4",
-    "vue-tsc": "^3.3.3",
     "vuex": "^4.1.0",
     "webdav": "^5.10.0",
     "webrtc-adapter": "^9.0.5",
@@ -106,6 +105,7 @@
     "stylelint-use-logical": "^2.1.3",
     "vitest": "^3.2.4",
     "vue-loader": "^17.4.2",
+    "vue-tsc": "^3.3.5",
     "wasm-check": "^2.1.2"
   },
   "engines": {
