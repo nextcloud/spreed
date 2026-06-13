@@ -36,7 +36,7 @@ jobs:
         run: grep 'phpVersion="${{ steps.versions.outputs.php-min }}' psalm.xml
 
       - name: Set up php${{ steps.versions.outputs.php-available }}
-        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: ${{ steps.versions.outputs.php-available }}
           extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, sqlite, pdo_sqlite
