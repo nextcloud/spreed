@@ -124,7 +124,7 @@ class RoomServiceTest extends TestCase {
 		$user2->method('getUID')
 			->willReturn('uid2');
 
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->participantService->expects($this->once())
 			->method('ensureOneToOneRoomIsFilled')
 			->with($room);
@@ -154,7 +154,7 @@ class RoomServiceTest extends TestCase {
 			->method('currentUserCanEnumerateTargetUser')
 			->willReturn(true);
 
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->participantService->expects($this->once())
 			->method('addUsers')
 			->with($room, [[
@@ -254,7 +254,7 @@ class RoomServiceTest extends TestCase {
 
 	#[DataProvider('dataCreateConversation')]
 	public function testCreateConversation(int $type, string $name, string $ownerId, string $objectType, string $objectId, string $password): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		if ($ownerId !== '') {
 			$owner = $this->createMock(IUser::class);

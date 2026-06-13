@@ -531,7 +531,7 @@ class CapabilitiesTest extends TestCase {
 	public function testGetCapabilitiesUserDisallowed(): void {
 		$capabilities = $this->getCapabilities();
 
-		$user = $this->createMock(IUser::class);
+		$user = $this->createStub(IUser::class);
 		$this->userSession->expects($this->once())
 			->method('getUser')
 			->willReturn($user);

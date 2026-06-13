@@ -576,7 +576,7 @@ class SystemMessageTest extends TestCase {
 			});
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$parser = $this->getParser(['getActorFromComment', 'getUser', 'getRemoteUser', 'getGroup', 'getGuest', 'parseCall', 'getFileFromShare', 'getFileFromNodeId']);
 		$parser->expects($this->once())
@@ -686,10 +686,10 @@ class SystemMessageTest extends TestCase {
 	#[DataProvider('dataParseMessageThrows')]
 	public function testParseMessageThrows(?string $return): void {
 		/** @var IComment&MockObject $comment */
-		$comment = $this->createMock(IComment::class);
+		$comment = $this->createStub(IComment::class);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$parser = $this->getParser(['getActorFromComment']);
 		$parser->expects($this->any())
@@ -698,7 +698,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn(['id' => 'actor', 'type' => 'user']);
 
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		$chatMessage = new Message($room, $participant, $comment, $this->l);
 		$chatMessage->setMessage($return, []);
 
@@ -707,7 +707,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareForGuest(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$node = $this->createMock(Node::class);
 		$node->expects($this->once())
 			->method('getId')
@@ -758,7 +758,7 @@ class SystemMessageTest extends TestCase {
 			->with(54)
 			->willReturn(['width' => 1234, 'height' => 4567]);
 
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$parser = $this->getParser();
 		$this->assertSame([
@@ -779,7 +779,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareForGuestWithBlurhash(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$node = $this->createMock(Node::class);
 		$node->expects($this->once())
 			->method('getId')
@@ -834,7 +834,7 @@ class SystemMessageTest extends TestCase {
 				'blurhash' => 'LEHV9uae2yk8pyo0adR*.7kCMdnj'
 			]);
 
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$parser = $this->getParser();
 
@@ -857,7 +857,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareForOwner(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$node = $this->createMock(Node::class);
 		$node->expects($this->exactly(2))
 			->method('getId')
@@ -935,7 +935,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareForRecipient(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->any())
 			->method('getNodeId')
@@ -1021,7 +1021,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareForRecipientThrows(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->any())
 			->method('getNodeId')
@@ -1065,7 +1065,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareThrows(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->shareProvider->expects($this->once())
 			->method('getShareById')
 			->with('23')
@@ -1085,7 +1085,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromNodeIdForUser(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$node = $this->createMock(Node::class);
 		$node->expects($this->exactly(2))
@@ -1166,7 +1166,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromNodeIdThrowsWhenNotFound(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$userFolder = $this->createMock(Folder::class);
 		$userFolder->expects($this->once())
@@ -1398,7 +1398,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromNodeIdWithoutParticipantNotFound(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$this->rootFolder->expects($this->once())
 			->method('getFirstNodeById')
@@ -1420,7 +1420,7 @@ class SystemMessageTest extends TestCase {
 	#[DataProvider('dataGetActor')]
 	public function testGetActor(string $actorType, array $guestData, array $userData, array $expected): void {
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$chatMessage = $this->createMock(IComment::class);
 		$chatMessage->expects($this->once())
@@ -1581,7 +1581,7 @@ class SystemMessageTest extends TestCase {
 	#[DataProvider('dataGetGuest')]
 	public function testGetGuest(string $attendeeType, string $actorId, string $expected): void {
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$parser = $this->getParser(['getGuestName']);
 		$parser->expects($this->once())
@@ -1621,7 +1621,7 @@ class SystemMessageTest extends TestCase {
 	#[DataProvider('dataGetGuestName')]
 	public function testGetGuestName(string $actorType, string $actorId, string $attendeeName, string $expected): void {
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$attendee = Attendee::fromParams([
 			'displayName' => $attendeeName,
@@ -1645,7 +1645,7 @@ class SystemMessageTest extends TestCase {
 		$actorId = sha1('name');
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$this->participantService->method('getParticipantByActor')
 			->with($room, Attendee::ACTOR_GUESTS, $actorId)
@@ -1919,7 +1919,7 @@ class SystemMessageTest extends TestCase {
 
 	#[DataProvider('dataParseCall')]
 	public function testParseCall(string $message, array $parameters, array $actor, array $expected): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$parser = $this->getParser(['getDuration', 'getUser']);
 		$parser->expects($this->once())
 			->method('getDuration')

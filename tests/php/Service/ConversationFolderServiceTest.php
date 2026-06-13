@@ -104,7 +104,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userFolder = $this->makeUserFolderMock(FileInfo::SPACE_UNLIMITED);
 		$attachmentNode = $this->createMock(Folder::class);
 		$convFolder = $this->createMock(Folder::class);
-		$subfolder = $this->createMock(Folder::class);
+		$subfolder = $this->createStub(Folder::class);
 
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->talkConfig->method('getConversationFolderName')->willReturn('Room-tok0a');
@@ -128,7 +128,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userFolder = $this->makeUserFolderMock(FileInfo::SPACE_NOT_COMPUTED);
 		$attachmentNode = $this->createMock(Folder::class);
 		$convFolder = $this->createMock(Folder::class);
-		$subfolder = $this->createMock(Folder::class);
+		$subfolder = $this->createStub(Folder::class);
 
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->talkConfig->method('getConversationFolderName')->willReturn('Room-tok0b');
@@ -151,7 +151,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userFolder = $this->makeUserFolderMock(1024 * 1024); // 1 MB free
 		$attachmentNode = $this->createMock(Folder::class);
 		$convFolder = $this->createMock(Folder::class);
-		$subfolder = $this->createMock(Folder::class);
+		$subfolder = $this->createStub(Folder::class);
 
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->talkConfig->method('getConversationFolderName')->willReturn('Room-tok0c');
@@ -175,7 +175,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$room = $this->makeRoom('tok1');
 		$userId = 'alice';
 
-		$subfolder = $this->createMock(Folder::class);
+		$subfolder = $this->createStub(Folder::class);
 		$convFolder = $this->createMock(Folder::class);
 		$attachmentNode = $this->createMock(Folder::class);
 		$userFolder = $this->makeUserFolderMock();
@@ -203,7 +203,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userFolder = $this->makeUserFolderMock();
 		$attachmentNode = $this->createMock(Folder::class);
 		$convFolder = $this->createMock(Folder::class);
-		$subfolder = $this->createMock(Folder::class);
+		$subfolder = $this->createStub(Folder::class);
 
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('Talk');
 		$this->talkConfig->method('getConversationFolderName')->willReturn('Room-tok2');
@@ -231,7 +231,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userFolder = $this->makeUserFolderMock();
 		$attachmentNode = $this->createMock(Folder::class);
 		$convFolder = $this->createMock(Folder::class);
-		$subfolder = $this->createMock(Folder::class);
+		$subfolder = $this->createStub(Folder::class);
 
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->talkConfig->method('getConversationFolderName')->willReturn('Room-tok3');
@@ -259,7 +259,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userFolder = $this->makeUserFolderMock();
 		$attachmentNode = $this->createMock(Folder::class);
 		$convFolder = $this->createMock(Folder::class);
-		$subfolder = $this->createMock(Folder::class);
+		$subfolder = $this->createStub(Folder::class);
 
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->talkConfig->method('getConversationFolderName')->willReturn('Room-tok4');
@@ -288,7 +288,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userId = 'alice';
 
 		$userFolder = $this->makeUserFolderMock();
-		$fileNode = $this->createMock(Node::class); // not a Folder
+		$fileNode = $this->createStub(Node::class); // not a Folder
 
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->talkConfig->method('getConversationFolderName')->willReturn('My Room-abc123');
@@ -307,7 +307,7 @@ class ConversationFolderServiceTest extends TestCase {
 
 		$userFolder = $this->makeUserFolderMock();
 		$attachmentNode = $this->createMock(Folder::class);
-		$fileNode = $this->createMock(Node::class); // not a Folder
+		$fileNode = $this->createStub(Node::class); // not a Folder
 
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->talkConfig->method('getConversationFolderName')->willReturn('My Room-abc123');
@@ -328,7 +328,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userFolder = $this->makeUserFolderMock();
 		$attachmentNode = $this->createMock(Folder::class);
 		$convFolder = $this->createMock(Folder::class);
-		$fileNode = $this->createMock(Node::class); // not a Folder
+		$fileNode = $this->createStub(Node::class); // not a Folder
 
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->talkConfig->method('getConversationFolderName')->willReturn('My Room-abc123');
@@ -354,7 +354,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userFolder = $this->makeUserFolderMock();
 		$attachmentNode = $this->createMock(Folder::class);
 		$convFolder = $this->createMock(Folder::class);
-		$subfolder = $this->createMock(Folder::class);
+		$subfolder = $this->createStub(Folder::class);
 
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->talkConfig->method('getConversationFolderName')->willReturn('Room-tok5');
@@ -386,7 +386,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userFolder = $this->makeUserFolderMock();
 		$attachmentNode = $this->createMock(Folder::class);
 		$convFolder = $this->createMock(Folder::class);
-		$subfolder = $this->createMock(Folder::class);
+		$subfolder = $this->createStub(Folder::class);
 
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->talkConfig->method('getConversationFolderName')->willReturn('Room-tok6');
@@ -414,7 +414,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userFolder = $this->makeUserFolderMock();
 		$attachmentNode = $this->createMock(Folder::class);
 		$convFolder = $this->createMock(Folder::class);
-		$subfolder = $this->createMock(Folder::class);
+		$subfolder = $this->createStub(Folder::class);
 
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->talkConfig->method('getConversationFolderName')->willReturn('Room-tok6b');
@@ -447,7 +447,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userFolder = $this->makeUserFolderMock();
 		$attachmentNode = $this->createMock(Folder::class);
 		$convFolder = $this->createMock(Folder::class);
-		$subfolder = $this->createMock(Folder::class);
+		$subfolder = $this->createStub(Folder::class);
 
 		$this->talkConfig->method('getAttachmentFolder')->willReturn('/Talk');
 		$this->talkConfig->method('getConversationFolderName')->willReturn('Room-tok7');
@@ -481,7 +481,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$filePath = 'Talk/Room-tok/Alice-alice/test.txt';
 
 		$userFolder = $this->createMock(Folder::class);
-		$node = $this->createMock(Node::class);
+		$node = $this->createStub(Node::class);
 
 		$this->rootFolder->method('getUserFolder')->with($userId)->willReturn($userFolder);
 		$userFolder->method('get')->with($filePath)->willReturn($node);
@@ -531,7 +531,7 @@ class ConversationFolderServiceTest extends TestCase {
 	public function testGetOrCreateDraftFolderReturnsExistingDraft(): void {
 		$convFolder = $this->createMock(Folder::class);
 		$subfolder = $this->createMock(Folder::class);
-		$draftFolder = $this->createMock(Folder::class);
+		$draftFolder = $this->createStub(Folder::class);
 
 		$subfolder->method('getParent')->willReturn($convFolder);
 		$convFolder->method('get')->with('Draft')->willReturn($draftFolder);
@@ -543,7 +543,7 @@ class ConversationFolderServiceTest extends TestCase {
 	public function testGetOrCreateDraftFolderCreatesWhenMissing(): void {
 		$convFolder = $this->createMock(Folder::class);
 		$subfolder = $this->createMock(Folder::class);
-		$draftFolder = $this->createMock(Folder::class);
+		$draftFolder = $this->createStub(Folder::class);
 
 		$subfolder->method('getParent')->willReturn($convFolder);
 		$convFolder->method('get')->with('Draft')->willThrowException(new NotFoundException('Draft'));
@@ -556,7 +556,7 @@ class ConversationFolderServiceTest extends TestCase {
 	public function testGetOrCreateDraftFolderThrowsWhenDraftIsFile(): void {
 		$convFolder = $this->createMock(Folder::class);
 		$subfolder = $this->createMock(Folder::class);
-		$fileNode = $this->createMock(Node::class); // not a Folder
+		$fileNode = $this->createStub(Node::class); // not a Folder
 
 		$subfolder->method('getParent')->willReturn($convFolder);
 		$convFolder->method('get')->with('Draft')->willReturn($fileNode);

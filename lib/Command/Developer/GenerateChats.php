@@ -352,7 +352,7 @@ class GenerateChats extends Base {
 	 */
 	private function resolveUserPool(mixed $override, OutputInterface $output): ?array {
 		if (is_string($override) && $override !== '') {
-			$ids = array_values(array_filter(array_map('trim', explode(',', $override)), static fn (string $s): bool => $s !== ''));
+			$ids = array_values(array_filter(array_map(trim(...), explode(',', $override)), static fn (string $s): bool => $s !== ''));
 			foreach ($ids as $id) {
 				if (!$this->userManager->userExists($id)) {
 					$output->writeln('<error>Unknown user: ' . $id . '</error>');
@@ -378,7 +378,7 @@ class GenerateChats extends Base {
 	 */
 	private function resolveGroupPool(mixed $override, OutputInterface $output): ?array {
 		if (is_string($override) && $override !== '') {
-			$ids = array_values(array_filter(array_map('trim', explode(',', $override)), static fn (string $s): bool => $s !== ''));
+			$ids = array_values(array_filter(array_map(trim(...), explode(',', $override)), static fn (string $s): bool => $s !== ''));
 			foreach ($ids as $id) {
 				if ($this->groupManager->get($id) === null) {
 					$output->writeln('<error>Unknown group: ' . $id . '</error>');

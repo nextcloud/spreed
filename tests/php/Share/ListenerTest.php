@@ -99,7 +99,7 @@ class ListenerTest extends TestCase {
 		$share = $this->makeShare(IShare::TYPE_ROOM, $token);
 		$user = $this->makeUser('bob');
 
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->config->method('isConversationSubfoldersEnabled')->willReturn(true);
 		$this->manager->method('getRoomByToken')->with($token)->willReturn($room);
 		$this->config->method('getAttachmentFolder')->with('bob')->willReturn('/Talk');
@@ -134,7 +134,7 @@ class ListenerTest extends TestCase {
 		$share = $this->makeShare(IShare::TYPE_ROOM, $token);
 		$bob = $this->makeUser('bob');
 
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->config->method('isConversationSubfoldersEnabled')->willReturn(true);
 		$this->manager->method('getRoomByToken')->with($token)->willReturn($room);
 		$this->config->method('getAttachmentFolder')->with('bob')->willReturn('/Talk');
@@ -164,7 +164,7 @@ class ListenerTest extends TestCase {
 		$share = $this->makeShare(IShare::TYPE_ROOM, $token);
 		$user = $this->makeUser('carol');
 
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->config->method('isConversationSubfoldersEnabled')->willReturn(true);
 		$this->manager->method('getRoomByToken')->with($token)->willReturn($room);
 		$this->config->method('getAttachmentFolder')->with('carol')->willReturn('/Talk');

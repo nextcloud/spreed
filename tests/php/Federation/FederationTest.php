@@ -141,7 +141,7 @@ class FederationTest extends TestCase {
 	}
 
 	public function testSendRemoteShareWithOwner(): void {
-		$cloudShare = $this->createMock(ICloudFederationShare::class);
+		$cloudShare = $this->createStub(ICloudFederationShare::class);
 
 		$providerId = '3';
 		$token = 'abcdefghijklmno';

@@ -118,7 +118,7 @@ class ListenerTest extends TestCase {
 
 	#[DataProvider('dataRoomModified')]
 	public function testRoomModified(string $property, mixed $newValue, mixed $oldValue): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$event = new RoomModifiedEvent(
 			$room,
@@ -183,7 +183,7 @@ class ListenerTest extends TestCase {
 
 	#[DataProvider('dataRoomLobbyModified')]
 	public function testRoomLobbyModified(int $newValue, int $oldValue, ?\DateTime $lobbyTimer, bool $timerReached): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$event = new LobbyModifiedEvent(
 			$room,
@@ -200,7 +200,7 @@ class ListenerTest extends TestCase {
 	}
 
 	public function testRoomLobbyRemoved(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$event = new LobbyModifiedEvent(
 			$room,
@@ -217,7 +217,7 @@ class ListenerTest extends TestCase {
 	}
 
 	public function testRoomDelete(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$event = new BeforeRoomDeletedEvent(
 			$room
@@ -235,7 +235,7 @@ class ListenerTest extends TestCase {
 	}
 
 	public function testGuestsCleanedUpEvent(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$event = new GuestsCleanedUpEvent(
 			$room
@@ -293,7 +293,7 @@ class ListenerTest extends TestCase {
 			'toArray' => [],
 			'getMessageId' => 123,
 		]);
-		$l10n = $this->createMock(IL10N::class);
+		$l10n = $this->createStub(IL10N::class);
 
 		$event = new ChatMessageSentEvent(
 			$room,
@@ -337,8 +337,8 @@ class ListenerTest extends TestCase {
 			'getMessageId' => 123,
 		]);
 
-		$l10n = $this->createMock(IL10N::class);
-		$thread = $this->createMock(Thread::class);
+		$l10n = $this->createStub(IL10N::class);
+		$thread = $this->createStub(Thread::class);
 
 		$event = new ChatMessageSentEvent(
 			$room,
@@ -373,7 +373,7 @@ class ListenerTest extends TestCase {
 	}
 
 	public function testSystemMessageSentEvent(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$comment = $this->createMock(IComment::class);
 		$comment->method('getVerb')->willReturn(ChatManager::VERB_SYSTEM);
 		$comment->method('getMessage')->willReturn(json_encode(['message' => 'test']));
@@ -397,7 +397,7 @@ class ListenerTest extends TestCase {
 	}
 
 	public function testSystemMessageSentEventSkippingUpdate(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$comment = $this->createMock(IComment::class);
 		$comment->method('getMessage')->willReturn(json_encode(['message' => 'test']));
 
@@ -414,7 +414,7 @@ class ListenerTest extends TestCase {
 	}
 
 	public function testSystemMessagesMultipleSentEvent(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$comment = $this->createMock(IComment::class);
 		$comment->method('getVerb')->willReturn(ChatManager::VERB_SYSTEM);
 		$comment->method('getMessage')->willReturn(json_encode(['message' => 'test']));

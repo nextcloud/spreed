@@ -53,8 +53,7 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type TalkSignalingSettings from ResponseDefinitions
  */
 class SignalingController extends OCSController {
-	/** @var int */
-	private const PULL_MESSAGES_TIMEOUT = 30;
+	private const int PULL_MESSAGES_TIMEOUT = 30;
 
 	public function __construct(
 		string $appName,

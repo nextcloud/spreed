@@ -35,25 +35,25 @@ use Random\Randomizer;
  * }
  */
 class ChatGenerator {
-	private const PARTICIPANTS_PER_ROOM_MIN = 3;
-	private const PARTICIPANTS_PER_ROOM_MAX = 8;
-	private const GROUPS_PER_ROOM_MAX = 2;
-	private const BURST_CHANCE_PERCENT = 40;
-	private const BURST_MAX = 5;
-	private const REPLY_CHANCE_PERCENT = 25;
-	private const REPLY_WINDOW = 100;
-	private const SHORT_PERCENT = 60;
-	private const MEDIUM_PERCENT = 30;
-	private const SILENT_PERCENT = 5;
+	private const int PARTICIPANTS_PER_ROOM_MIN = 3;
+	private const int PARTICIPANTS_PER_ROOM_MAX = 8;
+	private const int GROUPS_PER_ROOM_MAX = 2;
+	private const int BURST_CHANCE_PERCENT = 40;
+	private const int BURST_MAX = 5;
+	private const int REPLY_CHANCE_PERCENT = 25;
+	private const int REPLY_WINDOW = 100;
+	private const int SHORT_PERCENT = 60;
+	private const int MEDIUM_PERCENT = 30;
+	private const int SILENT_PERCENT = 5;
 
-	private const ROOM_NAMES = [
+	private const array ROOM_NAMES = [
 		'Hamster lounge', 'Beagle pack', 'Aquarium chat', 'Bunny burrow',
 		'Reptile room', 'Cat tower', 'Parrot perch', 'Puppy playpen',
 		'Ferret nest', 'Guinea pig pen', 'Turtle pond', 'Goldfish bowl',
 		'Hedgehog hideout', 'Gecko corner', 'Pony paddock', 'Chinchilla dust bath',
 	];
 
-	private const SHORT = [
+	private const array SHORT = [
 		'pet pet pet', 'fed already', 'growing so fast!', 'so fluffy', 'boop',
 		'🐾', 'treats time', 'nom nom', 'scritches', 'she\'s huge now', 'snoozing',
 		'moar food', 'good boy', 'such floof', 'sleepy', 'wagging like crazy',
@@ -64,7 +64,7 @@ class ChatGenerator {
 
 	// Medium messages target ~150–300 characters: paragraph-length thoughts that sit between the
 	// one-liner SHORT pool and the long-form LONG pool.
-	private const MEDIUM = [
+	private const array MEDIUM = [
 		'She gained almost 200g this week and the vet wants me to start the adult kibble already, but she still inhales the puppy food like every meal is her last. Going to do a slow transition over the weekend and see how the tummy handles it.',
 		'Anyone know a chew toy that actually survives more than a day with a beagle? The "indestructible" rubber one lasted six hours and the antler chew has chips out of it after three. Running out of ideas before she starts on the furniture again.',
 		'Mine has refused the new food brand entirely for three days straight. I have tried mixing it with the old food, warming it up, adding a bit of broth — she just gives me a look like I have personally betrayed her trust and walks away from the bowl.',
@@ -84,7 +84,7 @@ class ChatGenerator {
 
 	// Long messages target roughly 2000–3000 characters — multi-paragraph care notes that read like
 	// real long-form chat posts about feeding, growth and bonding.
-	private const LONG = [
+	private const array LONG = [
 		"## Six month growth journal\n\nWhen we picked her up at eight weeks she fit comfortably in a shoebox and slept about twenty hours a day. I started a little spreadsheet because the vet asked us to track weight weekly for the first six months, and I figured I would record other things too while I was at it. Here is the summary now that we are at month six and the early-growth chaos is finally settling down.\n\n### Weight curve\n\n- Week 8: 1.8 kg, basically a hamster with floppy ears\n- Week 10: 2.6 kg, started chewing furniture corners\n- Week 12: 4.1 kg, ate her first sock, learned her name\n- Week 14: 5.4 kg, growth spurts felt almost daily\n- Week 16: 7.5 kg, climbed onto the couch unassisted for the first time\n- Week 18: 8.9 kg, energy peak, demanded three walks a day\n- Week 20: 10.3 kg, terror of all houseplants\n- Week 22: 11.8 kg, suddenly calmer for hours at a time\n- Week 24: 13.0 kg, currently in the floofy sleepy phase\n\n### Food story\n\nStarted on the breeder's recommended puppy formula and stuck with it for the first six weeks. We switched to a slightly higher-protein blend after she went through a phase of constant hunger that the previous food was not keeping up with. The transition took five days of careful mixing, with one short day of mild tummy issues in the middle. She has been on the new formula ever since and the coat has actually improved noticeably — shinier, less shedding, fewer little dry patches on the belly.\n\nShe now eats three meals a day at 6:30am, 12:30pm, and 6:30pm. The midday meal is the smallest because she has the lowest activity around that time. We will likely consolidate to two meals a day around month nine on the vet's advice, but for now three keeps her stable and stops the begging behaviour that ramps up if any single meal is too small.\n\n### Pets and affection\n\nThe most surprising thing has been how dramatically she has changed in how she accepts physical affection. As a tiny puppy she squirmed away from belly contact and would only tolerate quick head pats before wriggling free. By month four she would actively seek out scratches under the chin and along the chest. By month six she is a complete floof who flops onto her back the moment you sit down anywhere near her on the rug.\n\nWill probably stop tracking weight weekly soon and switch to monthly. Vet says we are right on the breed-typical curve and the only thing to keep an eye on is making sure the calorie intake adjusts as the growth rate slows down. Ping {x} if you want the actual spreadsheet — it has a fun little projection chart that has been within 5% accurate for the last two months.",
 		"Been experimenting with feeding times for the last three weeks and wanted to write up what actually worked for our food-obsessed pup, since a few people have asked.\n\nOriginal schedule was 7am, noon, 6pm — same portions all three meals, which sounds reasonable on paper. The problem was that she would inhale the morning meal in under a minute, then beg constantly until lunch, then beg again from about 2pm until dinner. The vet flagged this pattern as a sign the portions were unbalanced relative to her actual activity level throughout the day. She was getting the same fuel for the slowest part of her day (mid-afternoon nap) as for the busiest (morning walk and play).\n\n### New schedule\n\n- 6:30am: small meal, just enough to take the edge off before the morning walk\n- 11:00am: medium meal, after she has burned energy on the walk\n- 5:00pm: large meal, before the evening walk so she has fuel for it\n- 9:00pm: small kibble snack, last thing before bed so she does not wake up hungry\n\nTotal daily intake is actually slightly less than before — about 8% less. We dropped some volume because she was clearly eating out of boredom rather than need in the old schedule.\n\n### Results after three weeks\n\nWay less begging — almost none, actually. No more food-gulping; the new portion sizes match what she can comfortably eat without rushing. Weight is steady at her target. She sleeps through the night without the 3am \"I am starving\" performance that we used to get every other night. The bedtime kibble snack turned out to be the single biggest improvement; whatever was triggering her hungry-wake-up routine seems to be fully addressed by having something small in her stomach overnight.\n\n### What I learned\n\nThe big takeaway was that matching meal size to upcoming activity matters way more than splitting calories evenly. The traditional \"three equal meals\" advice probably works fine for low-energy adult dogs but does not fit a teenage pup with wildly varying activity through the day. Recommend trying the activity-matched approach if anyone else has a food-obsessed pup who treats every meal like the last one they will ever get. Happy to share the exact gram measurements I landed on if {x} or anyone else wants to compare notes.",
 		"Big breakthrough this week — {x} finally sat still for a proper belly rub for the first time since we adopted her six months ago. This took longer than I expected and felt almost impossible for the first few weeks, so I want to write down what worked in case anyone else is going through the same thing with a rescue who cannot tolerate certain types of contact.\n\nWhen she came home from the shelter she would let me pet her shoulders and the top of her head, but anything near the belly meant an immediate roll-and-bolt reaction. Not aggressive, just terrified, and clearly tied to whatever happened before she was rescued. The shelter notes said she had been found underweight and skittish, so it was reasonable to assume hands near her belly had not been a positive experience in her past life.\n\n### What did not work\n\nFor the first few weeks I tried the obvious approaches — slow, gentle hand movements while talking softly, treats while petting, that kind of thing. She would tolerate it for about three seconds and then get up and walk away. The treats actually made things slightly worse because she would take them politely and then increase her distance from me afterward. Clearly she was associating the treats with whatever uncomfortable contact she was bracing for.\n\n### What worked\n\nA friend who fosters rescues suggested completely removing the petting from the equation and just being a calm presence near her food bowl during meals, without making eye contact or reaching toward her. So for about ten days I just sat on the floor a few feet away while she ate. No talking, no movement, no expectation of interaction. Just present.\n\nBy day twelve she started coming over on her own after meals to do a little tentative sniffing. By the end of week two she was nudging my hand for head scratches without prompting. By week four she was sleeping on the rug right next to my chair every evening. The belly was still off-limits, but the overall trust level had completely transformed.\n\nThe actual belly breakthrough happened almost accidentally last night. She climbed onto the couch during a movie, settled against my leg, and at some point during the second hour just rolled onto her back and stayed there. I rested a hand on her chest very lightly and she did not flinch. After about a minute I moved my hand slowly down to her belly and she just sighed and went to sleep. Three months ago I would have said this was impossible. Now she demands belly time after every single meal.",
@@ -93,7 +93,7 @@ class ChatGenerator {
 		"Quick growth comparison thread for anyone tracking their first puppy and wondering if the numbers they are seeing are normal or worrying.\n\nMine is a medium-breed mix from a rescue, neutered at six months. Here is the curve I logged from the day we brought her home, with a few notes on what was happening behaviourally at each milestone in case it helps calibrate expectations.\n\n### The curve\n\n- Month 2: 3.5 kg, fit in my forearm, slept 20 hours a day, peed every 90 minutes\n- Month 3: 5.8 kg, learned name, learned \"sit\", terrorized every shoe in the house\n- Month 4: 8.0 kg, ate one of my running shoes, started losing puppy fluff in patches\n- Month 5: 10.5 kg, energy levels peaked, needed two long walks plus yard time\n- Month 6: 13.0 kg, learned to open doors, neutered at the end of this month\n- Month 7: 15.0 kg, growth slowed noticeably, energy started to settle\n- Month 9: 18.0 kg, calmed down dramatically, adult coat almost fully in\n- Month 12: 21.0 kg, finally stopped growing taller, eating like a teenager\n- Month 18: 23.0 kg, filled out into final adult shape, sleeps a lot again\n\n### Observations\n\nThe biggest surprise was how much the growth slowed after the neuter. The vet said this is completely expected — hormones drive a lot of the late vertical growth, and once those are removed the curve flattens fast. Energy levels dropped noticeably too in the weeks after the surgery, which honestly was welcome after the chaos of month five.\n\nFood intake stayed roughly flat across the whole period, which surprised me. I thought she would need progressively more food as she got bigger, but the calorie density of the food matters way more than the raw quantity. We did switch from a puppy formula to an adult formula around month nine, with a slightly higher protein content but smaller meal sizes overall.\n\n### Things I wish I had known\n\nTrack weight weekly for the first six months, then monthly. Knowing the trajectory makes it way easier to spot anything unusual. Photograph her in the same spot every month — the growth is more dramatic visually than the numbers suggest, and it is fun to look back on. Do not stress about temporary food refusals; puppies skip meals occasionally during growth spurts, and as long as it does not last more than a day, it is almost always fine.\n\nHappy to compare notes with anyone else tracking their first one. Ping {x} if you want to see the actual chart — it is mildly nerdy but the trend lines are oddly satisfying.",
 	];
 
-	private Randomizer $rng;
+	private readonly Randomizer $rng;
 
 	public function __construct(int $seed) {
 		$this->rng = new Randomizer(new Mt19937($seed));
