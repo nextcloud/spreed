@@ -335,16 +335,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "36ea5200e1565fd0ede70fb8f36696abbf0279ae"
+                "reference": "7d059d4879e98fbb2a68bc703b5fa0b94638be42"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/36ea5200e1565fd0ede70fb8f36696abbf0279ae",
-                "reference": "36ea5200e1565fd0ede70fb8f36696abbf0279ae",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/7d059d4879e98fbb2a68bc703b5fa0b94638be42",
+                "reference": "7d059d4879e98fbb2a68bc703b5fa0b94638be42",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.1 || ~8.2 || ~8.3 || ~8.4 || ~8.5",
+                "php": "~8.2 || ~8.3 || ~8.4 || ~8.5",
                 "psr/clock": "^1.0",
                 "psr/container": "^2.0.2",
                 "psr/event-dispatcher": "^1.0",
@@ -376,7 +376,7 @@
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
                 "source": "https://github.com/nextcloud-deps/ocp/tree/stable34"
             },
-            "time": "2026-06-12T02:30:14+00:00"
+            "time": "2026-06-12T14:48:56+00:00"
         },
         {
             "name": "psr/clock",
