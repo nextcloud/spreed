@@ -274,7 +274,7 @@ class ChatManagerTest extends TestCase {
 			->method('notifyMentionedUsers')
 			->with($chat, $comment);
 
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$return = $this->chatManager->sendMessage($chat, $participant, 'users', $userId, $message, $creationDateTime, $replyTo, $referenceId, false);
 
@@ -469,7 +469,7 @@ class ChatManagerTest extends TestCase {
 			->method('save')
 			->with($comment);
 
-		$systemMessage = $this->createMock(IComment::class);
+		$systemMessage = $this->createStub(IComment::class);
 
 		$chatManager = $this->getManager(['addSystemMessage']);
 		$chatManager->expects($this->once())
@@ -562,7 +562,7 @@ class ChatManagerTest extends TestCase {
 			->method('save')
 			->with($comment);
 
-		$systemMessage = $this->createMock(IComment::class);
+		$systemMessage = $this->createStub(IComment::class);
 
 		$chatManager = $this->getManager(['addSystemMessage']);
 		$chatManager->expects($this->once())
@@ -634,7 +634,7 @@ class ChatManagerTest extends TestCase {
 		$this->commentsManager->expects($this->never())
 			->method('save');
 
-		$systemMessage = $this->createMock(IComment::class);
+		$systemMessage = $this->createStub(IComment::class);
 
 		$chatManager = $this->getManager(['addSystemMessage']);
 		$chatManager->expects($this->never())

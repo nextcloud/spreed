@@ -760,7 +760,7 @@ class SignalingControllerTest extends TestCase {
 
 	public function testBackendRoomUnknown(): void {
 		$roomToken = 'the-room';
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->manager->expects($this->once())
 			->method('getRoomByToken')
 			->with($roomToken)
@@ -1169,7 +1169,7 @@ class SignalingControllerTest extends TestCase {
 	public function testBackendRoomAnonymousOneToOne(): void {
 		$roomToken = 'the-room';
 		$sessionId = 'the-session';
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->manager->expects($this->once())
 			->method('getRoomByToken')
 			->with($roomToken)

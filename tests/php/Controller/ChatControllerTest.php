@@ -216,7 +216,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testSendMessageByUser(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
@@ -286,7 +286,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testSendMessageByUserWithReferenceId(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
@@ -356,7 +356,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testSendReplyByUser(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
@@ -487,7 +487,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testSendReplyByUserToNotReplyable(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$date = new \DateTime();
 		/** @var IComment&MockObject $comment */
@@ -523,7 +523,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testSendMessageByUserNotJoinedButInRoom(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
@@ -671,7 +671,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testShareObjectToChatByUser(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$this->avatarService->method('getAvatarUrl')
 			->with($this->room)
@@ -777,7 +777,7 @@ class ChatControllerTest extends TestCase {
 				$comment1 = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000004), 'testMessage1')
 			]);
 
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$i = 4;
 		$expectedCalls = [
@@ -834,7 +834,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testReceiveMessagesByUserNotJoinedButInRoom(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$offset = 23;
 		$limit = 4;
@@ -906,7 +906,7 @@ class ChatControllerTest extends TestCase {
 		$this->userId = null;
 		$this->recreateChatController();
 
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$offset = 23;
 		$limit = 4;
@@ -980,7 +980,7 @@ class ChatControllerTest extends TestCase {
 			->method('getUID')
 			->willReturn('testUser');
 
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$offset = 23;
 		$limit = 4;
@@ -1055,7 +1055,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testWaitForNewMessagesTimeoutExpired(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		$testUser = $this->createMock(IUser::class);
 		$testUser
 			->method('getUID')
@@ -1083,7 +1083,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testWaitForNewMessagesTimeoutTooLarge(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		$testUser = $this->createMock(IUser::class);
 		$testUser
 			->method('getUID')
@@ -1141,7 +1141,7 @@ class ChatControllerTest extends TestCase {
 
 	#[DataProvider('dataMentions')]
 	public function testMentions(string $search, int $limit, array $result, array $expected): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		$this->room
 			->method('getId')
 			->willReturn(1234);

@@ -21,7 +21,7 @@ return RectorConfig::configure()
 	->withSkipPath(__DIR__ . '/lib/Vendor')
 	->withPhpSets(php82: true)
 	->withSets([
-		PHPUnitSetList::PHPUNIT_110,
+		PHPUnitSetList::PHPUNIT_120,
 		NextcloudSets::NEXTCLOUD_34,
 	])
 	->withSkip([

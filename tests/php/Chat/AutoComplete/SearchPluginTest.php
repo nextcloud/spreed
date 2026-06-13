@@ -98,8 +98,8 @@ class SearchPluginTest extends TestCase {
 	}
 
 	public function testSearch(): void {
-		$result = $this->createMock(ISearchResult::class);
-		$room = $this->createMock(Room::class);
+		$result = $this->createStub(ISearchResult::class);
+		$room = $this->createStub(Room::class);
 
 		$this->participantService->expects($this->once())
 			->method('getParticipantsForRoom')

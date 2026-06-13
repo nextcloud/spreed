@@ -105,7 +105,7 @@ class InvitationTest extends TestCase {
 			->method('getAffectedUser')
 			->willReturn('user');
 
-		$user = $this->createMock(IUser::class);
+		$user = $this->createStub(IUser::class);
 		$this->userManager->expects($this->once())
 			->method('get')
 			->with('user')
@@ -152,7 +152,7 @@ class InvitationTest extends TestCase {
 			->method('getAffectedUser')
 			->willReturn('user');
 
-		$user = $this->createMock(IUser::class);
+		$user = $this->createStub(IUser::class);
 		$this->userManager->expects($this->once())
 			->method('get')
 			->with('user')

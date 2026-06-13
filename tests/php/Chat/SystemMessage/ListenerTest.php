@@ -693,7 +693,7 @@ class ListenerTest extends TestCase {
 
 	public function testFixMimeTypeSkippedForAttachmentRoute(): void {
 		$share = $this->makeShareMock(IShare::TYPE_ROOM, 'roomtoken');
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->manager->method('getRoomByToken')->with('roomtoken')->willReturn($room);
 
 		// ensureOneToOneRoomIsFilled runs for post (attendees must be persisted),
@@ -739,7 +739,7 @@ class ListenerTest extends TestCase {
 
 	public function testFixMimeTypeTriggersForRegularFileShare(): void {
 		$share = $this->makeShareMock(IShare::TYPE_ROOM, 'roomtoken', 'image/png');
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->manager->method('getRoomByToken')->with('roomtoken')->willReturn($room);
 		$this->mockLoggedInUser('alice');
 
@@ -757,7 +757,7 @@ class ListenerTest extends TestCase {
 	 */
 	public function testFixMimeTypeTriggersForRegularFolderShare(): void {
 		$share = $this->makeShareMock(IShare::TYPE_ROOM, 'roomtoken', 'httpd/unix-directory');
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->manager->method('getRoomByToken')->with('roomtoken')->willReturn($room);
 		$this->mockLoggedInUser('alice');
 
@@ -769,7 +769,7 @@ class ListenerTest extends TestCase {
 
 	public function testFixMimeTypeSkippedForAttachmentRouteWithDuplicateEvent(): void {
 		$share = $this->makeShareMock(IShare::TYPE_ROOM, 'roomtoken');
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->manager->method('getRoomByToken')->with('roomtoken')->willReturn($room);
 
 		$this->participantService->expects($this->once())->method('ensureOneToOneRoomIsFilled')->with($room);

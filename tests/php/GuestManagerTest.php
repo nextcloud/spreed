@@ -137,7 +137,7 @@ class GuestManagerTest extends TestCase {
 				return $this->createMock(Participant::class);
 			});
 
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		try {
 			$guestManager = $this->getGuestManager(['sendEmailInvitation']);

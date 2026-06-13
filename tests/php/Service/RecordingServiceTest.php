@@ -154,7 +154,7 @@ class RecordingServiceTest extends TestCase {
 			$this->expectExceptionMessage($exceptionMessage);
 		}
 
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$attendee = Attendee::fromRow([
 			'actor_type' => Attendee::ACTOR_USERS,
 			'actor_id' => 'participant1',

@@ -53,7 +53,7 @@ class ConversationProviderTest extends TestCase {
 	}
 
 	public function testCanAccessResourceThrowsGuest(): void {
-		$resource = $this->createMock(IResource::class);
+		$resource = $this->createStub(IResource::class);
 
 		$this->expectException(ResourceException::class);
 		$this->expectExceptionMessage('Guests are not supported at the moment');
@@ -88,7 +88,7 @@ class ConversationProviderTest extends TestCase {
 		$resource->expects($this->once())
 			->method('getId')
 			->willReturn('token');
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->participantService->expects($this->once())
 			->method('getParticipant')
 			->with($room, 'uid')
@@ -122,7 +122,7 @@ class ConversationProviderTest extends TestCase {
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->participantService->expects($this->once())
 			->method('getParticipant')
 			->with($room, 'uid')
@@ -164,7 +164,7 @@ class ConversationProviderTest extends TestCase {
 		$participant->expects($this->any())
 			->method('getAttendee')
 			->willReturn($attendee);
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->participantService->expects($this->once())
 			->method('getParticipant')
 			->with($room, 'uid')

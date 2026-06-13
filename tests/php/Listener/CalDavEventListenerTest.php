@@ -119,7 +119,7 @@ EOD;
 	}
 
 	public function testIsNotCalendarEvent(): void {
-		$event = $this->createMock(ACallEndedEvent::class);
+		$event = $this->createStub(ACallEndedEvent::class);
 		$this->manager->expects(self::never())
 			->method('getRoomForUserByToken');
 		$this->logger->expects(self::never())

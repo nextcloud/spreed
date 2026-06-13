@@ -85,11 +85,11 @@ class UserMentionTest extends TestCase {
 		$comment = $this->newComment([]);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Message without enrichable references', []);
 
@@ -116,11 +116,11 @@ class UserMentionTest extends TestCase {
 			->willReturn('testUser display name');
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @testUser', []);
 
@@ -156,11 +156,11 @@ class UserMentionTest extends TestCase {
 			->willReturn('testUser display name');
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @testUser and @testUser again', []);
 
@@ -217,11 +217,11 @@ class UserMentionTest extends TestCase {
 			]);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		if ($quoted) {
 			$chatMessage->setMessage('Mention to @"' . $baseId . '" and @"' . $longerId . '"', []);
@@ -275,11 +275,11 @@ class UserMentionTest extends TestCase {
 			]);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @testUser1, @testUser2, @testUser1 again and @testUser3', []);
 
@@ -330,11 +330,11 @@ class UserMentionTest extends TestCase {
 			]);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention @me to @testUser', []);
 
@@ -369,11 +369,11 @@ class UserMentionTest extends TestCase {
 			->willReturn('existing user but does not resolve later');
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @testUser', []);
 
@@ -413,9 +413,9 @@ class UserMentionTest extends TestCase {
 			->method('getDisplayName')
 			->willReturn('name');
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @all', []);
 
@@ -447,11 +447,11 @@ class UserMentionTest extends TestCase {
 		$comment = $this->newComment($mentions);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @"federated_user/testUser@example.tld"', []);
 
@@ -489,11 +489,11 @@ class UserMentionTest extends TestCase {
 		$comment = $this->newComment($mentions);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 
 		$this->participantService->method('getParticipantByActor')
 			->with($room, Attendee::ACTOR_GUESTS, '123456')
@@ -527,11 +527,11 @@ class UserMentionTest extends TestCase {
 		$comment = $this->newComment($mentions);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 
 		$this->participantService->method('getParticipantByActor')
 			->with($room, Attendee::ACTOR_GUESTS, '123456')
@@ -565,11 +565,11 @@ class UserMentionTest extends TestCase {
 		$comment = $this->newComment($mentions);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
 		$participant = $this->createMock(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 
 		$attendee = Attendee::fromRow([
 			'actor_type' => 'guests',
@@ -631,11 +631,11 @@ class UserMentionTest extends TestCase {
 			->willReturn('testUser display name');
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention @testUser but not `' . $codeBlock . '` in inline code', []);
 
@@ -672,11 +672,11 @@ class UserMentionTest extends TestCase {
 			->willReturn('testUser display name');
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage("Mention @testUser but not\n```\n" . $codeBlock . "\n```\nin code block", []);
 
@@ -713,11 +713,11 @@ class UserMentionTest extends TestCase {
 			->willReturn('testUser display name');
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Only in code `' . $codeBlock . '`', []);
 

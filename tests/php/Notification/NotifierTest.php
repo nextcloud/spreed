@@ -205,7 +205,7 @@ class NotifierTest extends TestCase {
 			->with('spreed', 'de')
 			->willReturn($l);
 
-		$recipient = $this->createMock(IUser::class);
+		$recipient = $this->createStub(IUser::class);
 		$this->userManager->expects($this->once())
 			->method('get')
 			->with('recipient')
@@ -320,7 +320,7 @@ class NotifierTest extends TestCase {
 			->with('spreed', 'de')
 			->willReturn($l);
 
-		$recipient = $this->createMock(IUser::class);
+		$recipient = $this->createStub(IUser::class);
 		$this->userManager->method('get')
 			->with('recipient')
 			->willReturn($recipient);
@@ -830,7 +830,7 @@ class NotifierTest extends TestCase {
 			->with('spreed', 'de')
 			->willReturn($l);
 
-		$recipient = $this->createMock(IUser::class);
+		$recipient = $this->createStub(IUser::class);
 		$this->userManager->expects($this->once())
 			->method('get')
 			->with('recipient')
@@ -994,7 +994,7 @@ class NotifierTest extends TestCase {
 	public function testPrepareThrows(string $message, string $app, ?bool $isDisabledForUser, ?bool $validRoom, ?string $subject, ?array $params, ?string $objectType, string $token = 'roomToken'): void {
 		/** @var INotification&MockObject $n */
 		$n = $this->createMock(INotification::class);
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 
 		if ($validRoom === null) {
 			$this->manager->expects($this->never())
