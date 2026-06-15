@@ -90,7 +90,7 @@
     "@nextcloud/stylelint-config": "^3.2.2",
     "@rsdoctor/rspack-plugin": "^1.5.12",
     "@rspack/cli": "^2.0.6",
-    "@rspack/core": "^2.0.5",
+    "@rspack/core": "^2.0.8",
     "@rspack/dev-server": "^2.0.3",
     "@rspack/plugin-node-polyfill": "^0.5.8",
     "@total-typescript/ts-reset": "^0.6.1",
