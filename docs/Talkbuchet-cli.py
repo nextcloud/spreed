@@ -295,6 +295,9 @@ class SeleniumHelper:
         """
 
         options = webdriver.ChromeOptions()
+
+        options.set_capability('acceptInsecureCerts', True)
+
         options.set_capability("goog:loggingPrefs", { 'browser': 'ALL' })
         options.add_argument('--use-fake-device-for-media-stream')
         options.add_argument('--use-fake-ui-for-media-stream')
@@ -340,6 +343,8 @@ class SeleniumHelper:
         """
 
         options = webdriver.FirefoxOptions()
+
+        options.set_capability('acceptInsecureCerts', True)
 
         # "webSocketUrl" is needed for BiDi; this should be set already by
         # default, but just in case.
