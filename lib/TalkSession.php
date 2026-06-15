@@ -87,15 +87,15 @@ class TalkSession {
 	}
 
 	public function getPasswordForRoom(string $token): ?string {
-		return $this->getValue('spreed-password', $token);
+		return $this->getValue('spreed-password', $token, false);
 	}
 
 	public function setPasswordForRoom(string $token, string $password): void {
-		$this->setValue('spreed-password', $token, $password);
+		$this->setValue('spreed-password', $token, $password, false);
 	}
 
 	public function removePasswordForRoom(string $token): void {
-		$this->removeValue('spreed-password', $token);
+		$this->removeValue('spreed-password', $token, false);
 	}
 
 	protected function getValues(string $key): array {
