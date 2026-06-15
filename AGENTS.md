@@ -4,90 +4,54 @@
 -->
 # AGENTS.md — Nextcloud Talk (spreed)
 
-Guidance for AI coding agents working in this repository. The PHP backend lives in
-`lib/`, integration tests in `tests/integration/` (Behat), unit tests in `tests/php/`.
-The Vue 3 frontend lives in `src/`, with frontend tests colocated as `*.spec.js`/`*.spec.ts`.
+Guidance for AI coding agents in this repo. PHP backend in `lib/`, Behat integration tests in `tests/integration/`, unit tests in `tests/php/`. Vue 3 + TS frontend in `src/`, tests colocated as `*.spec.js`/`*.spec.ts`.
 
-## Nextcloud Contribution Policy
+## Contribution policy
 
-All contributions generated or assisted by this agent must fully comply with:
+Comply with the [AI Contribution Policy](https://github.com/nextcloud/.github/blob/master/AI_POLICY.md) (disclosure, accountability, security, licensing, code quality, autonomous behavior) and [Contribution Guidelines](https://github.com/nextcloud/.github/blob/master/CONTRIBUTING.md) (testing, DCO, license headers, conventional commits, translations).
 
-- **[AI Contribution Policy](https://github.com/nextcloud/.github/blob/master/AI_POLICY.md)** - the primary reference for AI-specific rules, covering disclosure, author accountability, communication, security, licensing, code quality, and autonomous agent behavior.
-- **[Contribution Guidelines](https://github.com/nextcloud/.github/blob/master/CONTRIBUTING.md)** - covering testing requirements, the Developer Certificate of Origin (DCO), license headers, conventional commits, and translations. These apply in full to all contributions regardless of how they were produced.
+**Always:**
+- Add an `Assisted-by: AGENT_NAME:MODEL_VERSION` trailer to every AI-assisted commit.
+- Disclose AI tool use in every PR description.
+- Keep PRs focused on one concern; no unrelated files or incidental refactors.
+- Verify dependencies exist in real package registries.
+- Tell the contributor when an action would violate the policy/guidelines — name the rule and the alternative; never silently proceed.
+- Warn before a PR grows too large (approaching several thousand lines) and suggest a split.
+- Recommend a discussion ticket before complex changes (multiple subsystems, architectural decisions, unclear approach).
 
-### What this agent must always do
-
-- Add an `Assisted-by: AGENT_NAME:MODEL_VERSION` git trailer to every commit containing AI-assisted content.
-- Ensure every pull request includes a disclosure of AI tool use in the PR description.
-- Produce focused, scoped pull requests that address exactly one concern. Do not touch unrelated files or introduce incidental refactors.
-- Verify all dependencies against actual package registries before suggesting them.
-- Explicitly inform the contributor when any action they are about to take, or have taken, would violate the AI Contribution Policy or the Contribution Guidelines. Do not silently proceed. State which rule is at risk and what the contributor should do instead.
-- Warn the contributor if a pull request is growing too large. A PR approaching several thousand lines of changed code is a signal that it should be split into smaller, focused PRs. Suggest a logical split before the PR is opened, not after.
-- Recommend opening a ticket for discussion before starting implementation whenever a feature or change is sufficiently complex - for example when it touches multiple subsystems, requires architectural decisions, or the right approach is not yet clear. A ticket allows maintainers and the contributor to align on direction before code is written, avoiding wasted effort on a PR that may be rejected or require fundamental rework.
-
-### What this agent must never do
-
-- Open issues, submit pull requests, post review comments, or send security reports autonomously. Every contribution must be reviewed and submitted by a human.
-- Add `Signed-off-by` tags to commits. Only the human contributor can certify the Developer Certificate of Origin.
-- Generate or submit security reports without independent human verification. Report verified vulnerabilities via [HackerOne](https://hackerone.com/nextcloud), not as GitHub issues.
-- Write PR descriptions, review comments, or issue reports on behalf of the contributor. These must be in the contributor's own words.
-- Fully automate the resolution of issues labeled [`good first issue`](https://github.com/issues?q=org%3Anextcloud+label%3A%22good+first+issue%22) or similar beginner-friendly labels.
-- Submit code that has not been reviewed and cleaned up by the contributor. Dead code, redundant logic, excessive comments, and unrelated changes must be removed before submission.
+**Never:**
+- Open issues, submit PRs, post review comments, or send security reports autonomously — a human submits every contribution.
+- Add `Signed-off-by` tags (only the human certifies the DCO).
+- Submit unverified security reports; report verified ones via [HackerOne](https://hackerone.com/nextcloud), not GitHub issues.
+- Write PR descriptions, review comments, or issue reports for the contributor — these must be in their own words.
+- Fully automate resolution of [`good first issue`](https://github.com/issues?q=org%3Anextcloud+label%3A%22good+first+issue%22)-style issues.
+- Submit unreviewed code — remove dead code, redundant logic, excessive comments, and unrelated changes first.
 
 ## Baseline & tooling
 
-### General
-- `l10n/` is generated from Transifex (the `fix(l10n): Update translations from
-  Transifex` commits). **Never hand-edit translation files.**
+- `l10n/` is generated from Transifex (`fix(l10n): Update translations…` commits). **Never hand-edit translation files.**
 
-### Backend
-- Info: PHP **8.2+**, Nextcloud server **35** (`appinfo/info.xml`). Code must stay portable
-  across MariaDB, MySQL, PostgreSQL, SQLite, and Oracle — migrations, query-builder
-  usage, and tests alike.
-- Setup: `composer i`
-- `lib/Vendor/` is third-party code bundled via Mozart (`cuyz/valinor`,
-  `firebase/php-jwt`). **Never edit or analyze it as project code.**
-- Checks: `composer cs:fix` (php-cs-fixer, Nextcloud coding standard),
-  `composer psalm` (level 4, baseline in `tests/psalm-baseline.xml`),
-  `composer rector:fix`, `composer lint`.
-- OpenAPI: controller docblocks/psalm types in `lib/ResponseDefinitions.php` feed
-  `composer openapi`, which also regenerates the TypeScript types. Regenerate after
-  adding/removing/renaming a route, changing a controller method signature or its
-  `@param`/`@return`/psalm-shape annotations, changing a response shape in
-  `ResponseDefinitions.php`, or adding/removing an HTTP status code from a return
-  type. CI fails if the generated spec or `src/types/openapi/` is stale.
+**Backend:** PHP **8.2+**, Nextcloud server **35** (`appinfo/info.xml`). Stay portable across MariaDB, MySQL, PostgreSQL, SQLite, Oracle (migrations, query builder, tests).
+- Setup: `composer i`. `lib/Vendor/` is Mozart-bundled third-party code (`cuyz/valinor`, `firebase/php-jwt`) — **never edit or analyze it.**
+- Checks: `composer cs:fix`, `composer psalm`, `composer rector:fix`, `composer lint`.
+- OpenAPI: docblocks/psalm types + `lib/ResponseDefinitions.php` feed `composer openapi` (also regenerates TS types). Regenerate after adding/removing/renaming a route, changing a controller signature or its `@param`/`@return`/psalm-shape, changing a response shape, or adding/removing an HTTP status code. CI fails on a stale spec or `src/types/openapi/`.
 
-### Frontend
-- Info: Vue **3.5** + TypeScript, built with **rspack** (`rspack.config.js`), no Vite. State:
-  **Pinia** (`src/stores/`, target) and legacy **Vuex 4** (`src/store/`, being phased
-  out). UI components from `@nextcloud/vue` only.
-- Setup: `npm ci`. Frontend builds: `npm run build` (production),
-  `npm run dev` / `npm run watch` (development).
-- Checks: `npm run lint:fix` (ESLint), `npm run stylelint`,
-  `npm run ts:check` (TS typecheck), `npm run test` (vitest + @vue/test-utils v2; no jest).
-- OCS/API types are generated: `npm run ts:generate` (openapi-typescript) into
-  `src/types/openapi/` — regenerate instead of hand-editing after API changes.
-- No compat mode, no mixins, no `mapGetters`/`$set`/`::v-deep` — the Vue 2 → 3
-  migration removed these; do not reintroduce them.
+**Frontend:** Vue **3.5** + TypeScript, built with **rspack** (no Vite). State: **Pinia** (`src/stores/`, target) and legacy **Vuex 4** (`src/store/`, being phased out). UI components from `@nextcloud/vue` only.
+- Setup: `npm ci`. Build: `npm run build` (prod), `npm run dev`/`npm run watch`.
+- Checks: `npm run lint:fix`, `npm run stylelint`, `npm run ts:check`, `npm run test` (vitest + @vue/test-utils v2; no jest).
+- OCS/API types generated via `npm run ts:generate` (openapi-typescript) into `src/types/openapi/` — regenerate, don't hand-edit.
+- No compat mode, mixins, `mapGetters`/`$set`/`::v-deep` — removed in the Vue 2→3 migration; don't reintroduce.
 
 ## Running tests
 
-- PHP unit tests (PHPUnit, `tests/php/`): `composer run test:unit`. Single file:
-  `composer run test:unit -- tests/php/Service/AvatarServiceTest.php`; filter:
-  `composer run test:unit -- --filter="testMethodName"`.
-- `tests/php/bootstrap.php` requires `../../../../lib/base.php`: the suite only runs
-  when this repo lives at `<nextcloud-server>/apps/spreed` inside a configured server
-  checkout. **If you cannot run a test suite, say so explicitly rather than claiming
-  it passes** — `composer lint` and `composer psalm` work standalone and catch a lot.
-- Integration tests (Behat, `tests/integration/`): `tests/integration/run.sh` against
-  a configured local server, or `tests/integration/run-docker.sh` for a containerized
-  run.
-- Frontend tests: `npm run test` (vitest); single file via `npm run test -- <path>`.
+- PHP unit (`tests/php/`): `composer run test:unit`. Single file: `composer run test:unit -- tests/php/Service/AvatarServiceTest.php`; filter: `composer run test:unit -- --filter="testMethodName"`.
+- `tests/php/bootstrap.php` requires `../../../../lib/base.php`: the suite only runs when this repo lives at `<nextcloud-server>/apps/spreed`. **If you cannot run a suite, say so — don't claim it passes.** `composer lint`/`composer psalm` run standalone.
+- Integration (Behat, `tests/integration/`): `run.sh` against a local server, or `run-docker.sh`.
+- Frontend: `npm run test`; single file via `npm run test -- <path>`.
 
 ## License headers
 
-Every new file needs an SPDX header. Use `AGPL-3.0-or-later` — never
-`AGPL-3.0-only`:
+Every new file needs an SPDX header. Use `AGPL-3.0-or-later`, never `AGPL-3.0-only`:
 
 ```php
 /**
@@ -96,262 +60,67 @@ Every new file needs an SPDX header. Use `AGPL-3.0-or-later` — never
  */
 ```
 
-Adapt the comment style to the file type; files that cannot carry a header (e.g.
-binary assets) are covered via `REUSE.toml`. CI enforces REUSE compliance.
+Adapt the comment style to the file type; files that can't carry a header (binary assets) go in `REUSE.toml`. CI enforces REUSE.
 
 ## Git workflow
 
-- Do **not** commit or push unless explicitly asked. Leave changes in the working
-  directory, summarize what changed and why, and suggest a commit message.
-- Never commit on or push to `main` — use a descriptive feature branch following the
-  existing `type/issue-or-noid/short-description` pattern (e.g.
-  `fix/12345/handle-mcu-disconnect`, `chore/noid/start-agents-md`), not generated
-  names like `agent-xxxx`.
-- Commit messages follow Conventional Commits with a component scope, matching the
-  existing history: `feat(chat): …`, `fix(call): …`, `fix(api): …`,
-  `fix(settings): …`.
-- Backports to stable branches are done by the backport bot via a
-  `/backport to stable-X.Y` comment on the merged PR — don't cherry-pick manually.
+- Do **not** commit or push unless explicitly asked. Leave changes in the working dir, summarize, and suggest a commit message.
+- Never commit/push to `main` — use a `type/issue-or-noid/short-description` branch (e.g. `fix/12345/handle-mcu-disconnect`), not generated names like `agent-xxxx`.
+- Conventional Commits with a component scope: `feat(chat): …`, `fix(call): …`, `fix(api): …`.
+- Backports happen via a `/backport to stable-X.Y` comment on the merged PR — don't cherry-pick manually.
 
-## Conventions to follow (and the drift to avoid)
+## Backend conventions (modern pattern first; avoid the drift)
 
-These rules come from a 2026-06 technical-debt analysis. Where the codebase has two
-patterns, **new code must use the modern one** listed first.
+From a 2026-06 tech-debt analysis. New code uses the modern pattern.
 
-### Dependency injection
-- Constructor injection with property promotion everywhere. Do **not** add new
-  `\OCP\Server::get()` calls; the existing ones are debt:
-  - `lib/Room.php:231-332` — four `// TODO use DI` service-locator blocks (the domain
-    model pulls `ParticipantService`/`RoomService`/`Manager` from the container;
-    `getName()` even writes to the DB). Do not extend this pattern.
-  - Controllers contain ~42 `Server::get()` calls to instantiate federation proxy
-    controllers (`ChatController` alone has 13) — tolerated pattern, don't add more
-    variants of it.
+- **DI:** constructor injection with property promotion. Don't add `\OCP\Server::get()` calls — existing ones are debt (the service-locator blocks in `lib/Room.php` where `getName()` even writes to the DB; ~42 `Server::get()` calls instantiating federation proxy controllers, 13 in `ChatController`).
+- **Data access:** new persisted entities use `QBMapper` + `SnowflakeAwareEntity` in `lib/Model/` (templates: `ConversationTag`, `ScheduledMessage`). `Room`/`Participant` are **not** Entities — hand-hydrated in `Manager::createRoomObject()` from columns aliased in `lib/Model/SelectHelper.php`; adding a column means touching the migration, `SelectHelper`, `Manager` hydration, and the constructor **in lockstep**. Query builder only (no raw SQL outside migrations). Build queries **outside** loops via `createParameter`/`setParameter`; chunk `IN ()` with `array_chunk(…, IQueryBuilder::MAX_IN_PARAMETERS)` for Oracle and `array_merge(...$results)` once after the loop (see `lib/Model/ThreadMapper.php`).
+- **Services:** reads/lookups in `lib/Manager.php`; writes/mutations + event dispatch in `lib/Service/RoomService.php`/`ParticipantService.php` — keep the split. New services in `lib/Service/` named `*Service`. Lib-root `GuestManager`, `MatterbridgeManager`, `lib/Chat/ChatManager` are legacy naming. Use `lib/Federation/`, `RecordingService`, `BotService`, `lib/RoomPresets/` as templates, not 2016-era core.
+- **Errors:** lookups throw domain exceptions (`RoomNotFoundException`, `ParticipantNotFoundException` in `lib/Exceptions/`). Idempotent setters may return `bool` (false = no-op), e.g. `RoomService::setPermissions()`; don't return `null`/`false` for "not found".
+- **Events:** typed only (`dispatchTyped()`), extending the `A`-prefixed bases in `lib/Events/`, with `Before*`/`*` pairs for mutations; registered in `lib/AppInfo/Application.php`. No string events/hooks.
+- **Controllers/API:** OCS controllers needing room/participant context extend `AEnvironmentAwareOCSController` (populated by `InjectionMiddleware` via `#[RequireRoom]`-style attributes in `lib/Middleware/Attribute/`); others extend `OCSController`. PHP attributes only (`#[NoAdminRequired]`, `#[PublicPage]`, `#[BruteForceProtection]`, `#[ApiRoute]`) — never docblock annotations. Responses are `DataResponse` with psalm shapes from `ResponseDefinitions.php`.
+- **Config:** settings go through the `lib/Config.php` facade; register new app-config keys in `lib/ConfigLexicon.php` (the emerging registry).
+- **Caching:** cache prefixes belong in `lib/CachePrefix.php` — don't add ad-hoc prefixes (drift: `hpb_servers` lacks `talk/`, `Capabilities.php` uses raw `'talk::'`).
+- **PHP style:** strict comparisons, `?Type` nullables, `match` over `switch`, `str_contains`/`str_starts_with`, `readonly` where applicable, arrow functions, `JSON_THROW_ON_ERROR` on new json calls. Prefer native backed enums for new value sets (only `lib/RoomAttributes.php`, `lib/RoomPresets/Parameter.php` exist today); bitflags (`Attendee::PERMISSIONS_*`, `Participant::FLAG_*`) stay int constants.
 
-### Data access
-- New persisted entities use `QBMapper` + `SnowflakeAwareEntity` in `lib/Model/` (see `ConversationTag`,
-  `ScheduledMessage` as templates).
-- `Room` and `Participant` are **not** Entities: they are hydrated by hand in
-  `Manager::createRoomObject()` (`lib/Manager.php:127`) from columns aliased in
-  `lib/Model/SelectHelper.php`. Adding a Room/Participant column means touching the
-  migration, `SelectHelper`, `Manager` hydration, and the constructor **in lockstep**.
-- Query builder only; no raw SQL outside migrations.
-- Build query-builder queries **outside** loops: use `$qb->createParameter('x')` as a
-  placeholder and `$qb->setParameter('x', $value, IQueryBuilder::PARAM_*)` inside the
-  loop. Chunk `IN ()` lists with `array_chunk(..., IQueryBuilder::MAX_IN_PARAMETERS)`
-  for Oracle compatibility (see `lib/Model/ThreadMapper.php:82`); accumulate chunk
-  results in an array and `array_merge(...$results)` once after the loop, never
-  inside it.
+## Frontend conventions (modern pattern first; avoid the drift)
 
-### Services & responsibility split
-- Reads/lookups: `lib/Manager.php`. Writes/mutations + event dispatch:
-  `lib/Service/RoomService.php` / `ParticipantService.php`. Keep that split.
-- New service classes go in `lib/Service/` with a `*Service` name. The lib-root
-  `GuestManager`, `MatterbridgeManager` and `lib/Chat/ChatManager` are legacy naming —
-  don't copy that layout.
-- Use the newer modules (`lib/Federation/`, `lib/Service/RecordingService.php`,
-  `lib/Service/BotService.php`, `lib/RoomPresets/`) as style templates, not the
-  2016-era core.
+- **Components:** new/rewritten SFCs use `<script setup lang="ts">` with `defineProps<T>()`/`defineEmits<T>()`.
+- **State:** new state in a **Pinia setup-style TS store** (`defineStore('x', () => {…})`, see `src/stores/actor.ts`, `token.ts`). No new options-style or JS stores. **Never add to the Vuex modules** (`conversationsStore.js`, `messagesStore.js`, `participantsStore.js`) — migration targets; if forced, keep minimal and flag in the PR. Don't add new Pinia↔Vuex coupling. Instantiate stores lazily inside actions/setup (`useXStore()`), not at module level. Stores sync through reactivity, not the EventBus.
+- **Services/composables:** TypeScript with **named function exports** (convert JS ones when touched). Error split: **services throw** (bare axios, no try/catch, no UI); **stores/composables catch** and surface via `showError(t('spreed', …))` from `@nextcloud/dialogs` — don't toast from services or swallow with `console.debug`. Use types from `src/types/index.ts`. URLs via `generateOcsUrl()` with `{token}` placeholders — never concatenation, never `OC.linkTo()`. Translations: `t`/`n` from `@nextcloud/l10n`, interpolate via placeholder objects; date/time via `src/utils/formattedTime.ts` (Intl) — no moment.js.
+- **EventBus:** `src/services/EventBus.ts` (typed mitt) bridges the non-Vue signaling/call layer into Vue only — not for component-to-component UI coordination or store-to-store sync; register every new event in the `Events` type. `@nextcloud/event-bus` is only for cross-app server events.
+- **Dialogs:** declarative `<NcDialog>` in the owning template is the target; `spawnDialog()` only without template context; `NcModal` is legacy.
+- **Icons/loading:** `vue-material-design-icons` components (not `icon-*` CSS classes); `NcLoadingIcon` (not `icon-loading*` divs).
+- **Styling:** scoped styles with Nextcloud CSS vars (`var(--color-*)`, defined in `apps/theming/css/default.css`); hardcoded colors only for brand exceptions. Avoid new `:deep()` overrides of `@nextcloud/vue` internals — prefer props/slots or an upstream issue. Spacing/dimensions use the standard vars (`calc(x * var(--default-grid-baseline))`), no magic numbers. Follow the [string-writing rules](https://docs.nextcloud.com/server/latest/developer_manual/design/writing.html).
+- **Call layer (WebRTC/signaling):** `src/utils/webrtc/simplewebrtc/`, `webrtc/models/`, `signaling.js`, `EmitterMixin.js` are pre-Vue legacy — **don't copy these patterns**; use ES6 classes + async/await, with `src/utils/media/pipeline/` as the template. Don't add new manual model `.on()`/`.off()` subscriptions in components — prefer a composable wrapper that cleans up.
 
-### Error signaling
-- Lookups throw domain exceptions (`RoomNotFoundException`,
-  `ParticipantNotFoundException` — `lib/Exceptions/`).
-- Idempotent setters may return `bool` (false = no-op/invalid), e.g.
-  `RoomService::setPermissions()`. Don't return `null`/`false` for "not found".
+## Known technical debt (2026-06 analysis)
 
-### Events
-- Typed events only (`IEventDispatcher::dispatchTyped()`), extending the `A`-prefixed
-  abstract bases in `lib/Events/`, with `Before*`/`*` pairs for mutations. Listeners
-  are registered in `lib/AppInfo/Application.php`. No string-based events or hooks.
+Roadmap, not new-code patterns. Don't extend these; extract/repair when touching nearby code.
 
-### Controllers & API
-- OCS controllers needing room/participant context extend
-  `AEnvironmentAwareOCSController` (populated by `InjectionMiddleware` via the
-  `#[RequireRoom]`-style attributes in `lib/Middleware/Attribute/`); others extend
-  `OCSController` directly.
-- PHP attributes only (`#[NoAdminRequired]`, `#[PublicPage]`,
-  `#[BruteForceProtection]`, `#[ApiRoute]`) — never docblock annotations.
-- Responses are `DataResponse` with psalm type shapes from `ResponseDefinitions.php`.
+**Backend:**
+1. `\OC_Util::tearDownFS()/setupFS()` in `lib/Chat/Parser/SystemMessage.php` — last private-server-API usage; replace with a public per-user FS API.
+2. `Room.php` service locators — move name resolution / display-name / last-message loading into `Manager`/formatter; removes the `Room↔RoomService` cycle and a getter-with-DB-write.
+3. Enum migration — convert constant groups (`Room::TYPE_*`, `Participant::OWNER/…`, `Attendee::ACTOR_*`) to native backed enums, keeping `->value` at OCS/DB boundaries.
+4. Room/Participant hydration — introduce a mapper owning the `SelectHelper`⇄constructor mapping now spread over three files.
+5. Stale "temporary" code — 15× `FIXME Temporary solution for the Talk6 release` in `lib/Manager.php`; `Room::OBJECT_TYPE_PHONE_LEGACY` (`@deprecated`) still used in 5 places (`Notifier`, `AvatarService`, `RoomController`, `RoomService`, `RestrictStartingCalls`).
+6. God classes — `RoomController.php` (~3.3k, 63 endpoints), `ChatController.php` (~2.6k), `ParticipantService.php` (~2.4k, a `SessionService` would split out), `RoomService.php`, `Manager.php`. Don't grow them.
+7. Copy-paste `BackendNotifier`s — `Signaling/`, `Recording/`, `Federation/` share `doRequest()`+retry+`PHPUNIT_RUN` boilerplate; extract a base.
+8. `MatterbridgeManager` — 16-branch elseif in `generateConfig()`, `is_null()`/`strpos`/`substr` clusters; oldest-style file.
+9. Tests — inverted pyramid (~61 unit files vs huge Behat suite)
+10. Static analysis — psalm level 4 with `findUnusedCode="false"` and ~200-line baseline; tightening surfaces hidden debt.
+11. `json_encode`/`json_decode` — ~164 of 193 calls lack `JSON_THROW_ON_ERROR`; fix opportunistically.
+12. Loose comparison in `BackgroundJob/CheckCertificates.php` (`== null`) and `Command/Signaling/VerifyKeys.php` (`!=`).
 
-### Config
-- Talk settings go through the `lib/Config.php` facade; `lib/ConfigLexicon.php`
-  (currently `Strictness::IGNORE`, only 2 user-preference entries) is the emerging
-  registry — register new app-config keys there as well.
-
-### Caching
-- Cache prefixes belong in `lib/CachePrefix.php`. Known drift: `hpb_servers` lacks the
-  `talk/` prefix and `Capabilities.php` uses a raw `'talk::'` string — don't add more
-  ad-hoc prefixes.
-
-### PHP style
-- Strict comparisons, `?Type` nullables, `match` over `switch`, `str_contains`/
-  `str_starts_with` over `strpos`/`substr` checks, `readonly` where applicable,
-  arrow functions, `JSON_THROW_ON_ERROR` on new `json_encode`/`json_decode` calls.
-- Only two native enums exist (`lib/RoomAttributes.php`,
-  `lib/RoomPresets/Parameter.php`); the domain otherwise uses int constant groups
-  (`Room::TYPE_*`, `Participant::OWNER/...`, `Attendee::ACTOR_*`, …). Prefer native
-  backed enums for new value sets; bitflags (`Attendee::PERMISSIONS_*`,
-  `Participant::FLAG_*`) stay int constants.
-
-## Known backend technical debt (2026-06 analysis)
-
-1. **`\OC_Util::tearDownFS()/setupFS()`** at `lib/Chat/Parser/SystemMessage.php:990-992`
-   — last private-server-API usage; the only real forward-compat risk. Replace with a
-   public API for per-user filesystem context.
-2. **`Room.php` service locators** (`lib/Room.php:231-332`) — move 1:1 name
-   resolution, display-name and last-message loading out of the model into
-   `Manager`/formatter code; removes the `Room ↔ RoomService` cycle and a
-   getter-with-DB-write.
-3. **Enum migration** — convert the constant groups above to native backed enums,
-   group by group, keeping `->value` at OCS/DB boundaries.
-4. **Room/Participant hydration** — introduce a mapper that owns the
-   `SelectHelper` ⇄ constructor column mapping currently spread over three files.
-5. **Stale "temporary" code** — 15× `FIXME Temporary solution for the Talk6 release`
-   in `lib/Manager.php` (Talk 6 shipped 2019): decide permanent vs repair-step and
-   delete the comments. Likewise `Room::OBJECT_TYPE_PHONE_LEGACY` (`@deprecated`) is
-   still consumed in 5 places (`Notification/Notifier.php:1095`,
-   `Service/AvatarService.php:265`, `Controller/RoomController.php:767`,
-   `Service/RoomService.php:192`, `Listener/RestrictStartingCalls.php:57`).
-6. **God classes** — `Controller/RoomController.php` (~3.3k lines, 63 endpoints),
-   `Controller/ChatController.php` (~2.6k), `Service/ParticipantService.php` (~2.4k;
-   a `SessionService` would split out naturally), `Service/RoomService.php`,
-   `Manager.php`. Don't grow them; extract when touching related code.
-7. **Copy-paste `BackendNotifier`s** — `Signaling/`, `Recording/`, `Federation/`
-   share the `doRequest()` + retry + `PHPUNIT_RUN` boilerplate; extract a base class.
-8. **`MatterbridgeManager`** — 16-branch elseif chain in `generateConfig()` (~line
-   337), remaining `is_null()` calls and `strpos`/`substr` clusters; oldest-style file
-   in the repo.
-9. **Tests** — pyramid is inverted (~61 unit-test files vs huge Behat suite); core
-   domain is only covered end-to-end. Unit tests still use `@dataProvider`
-   annotations — migrate to `#[DataProvider]` attributes before the next PHPUnit bump.
-10. **Static analysis headroom** — psalm level 4 with `findUnusedCode="false"` and a
-    ~200-line baseline; tightening would surface hidden debt.
-11. **`json_encode`/`json_decode`** — ~164 of 193 calls lack `JSON_THROW_ON_ERROR`
-    (e.g. the 1:1 name trick at `Room.php:248`); fix opportunistically.
-12. **Loose comparison** at `BackgroundJob/CheckCertificates.php:90` (`== null`) and
-    `Command/Signaling/VerifyKeys.php:50` (`!=`).
-
-## Frontend conventions to follow (and the drift to avoid)
-
-These rules come from a 2026-06 technical-debt analysis of `src/`. Where the codebase
-has two patterns, **new code must use the modern one** listed first.
-
-### Components
-- New/rewritten SFCs use `<script setup lang="ts">` with `defineProps<T>()` and
-  `defineEmits<T>()`.
-
-### State management
-- New state goes in a **Pinia setup-style TS store** (`defineStore('x', () => {...})`,
-  see `src/stores/actor.ts`, `token.ts`). Don't add options-style stores and don't
-  add new JS stores (`integrations.js`, `reactions.js`, `sounds.js`, `talkHash.js`
-  are stragglers awaiting conversion).
-- **Never add state, getters, mutations, or actions to the Vuex modules**
-  (`src/store/conversationsStore.js`, `messagesStore.js`, `participantsStore.js`) —
-  they are migration targets. If a change forces you into them, keep it minimal and
-  flag it in the PR.
-- Don't add new Pinia ↔ Vuex coupling. Existing bridges (`stores/reactions.js`
-  committing Vuex mutations, `stores/chat.ts:97` reading raw Vuex state,
-  `stores/session.ts`/`breakoutRooms.ts` dispatching into Vuex, and `conversationsStore.js`
-  importing ten Pinia stores) are debt that each new link makes harder to unwind.
-- Instantiate stores lazily inside actions/setup (`useXStore()`), not at module level
-  with the pinia instance (`conversationsStore.js:82`, `participantsStore.js:47` are
-  the anti-pattern).
-- Stores synchronize through reactivity, not the EventBus.
-
-### Services & composables
-- New services and composables are TypeScript with **named function exports**
-  (8 of 38 services and 7 of 31 composables are still JS — convert when touching,
-  don't add more).
-- Error-handling split: **services throw** (bare axios calls, no try/catch, no UI);
-  **stores/composables catch** and surface with `showError(t('spreed', ...))` from
-  `@nextcloud/dialogs`. Don't show toasts from services
-  (`participantsService.js:37-50` is drift) or swallow errors with `console.debug`.
-- Use the type definitions from `src/types/index.ts` for services, API endpoints
-  and internal logic in TS files
-- URLs via `generateOcsUrl()` with `{token}` placeholders — never string
-  concatenation, never `OC.linkTo()` (last use: `src/collections.js:12`).
-- Translations: `t`/`n` imported from `@nextcloud/l10n`, variables interpolated via
-  placeholder objects, never concatenated. Date/time formatting goes through
-  `src/utils/formattedTime.ts` (Intl-based) — no moment.js.
-
-### EventBus
-- `src/services/EventBus.ts` (typed mitt) is for bridging the non-Vue
-  signaling/call layer into Vue. Don't use it for component-to-component UI
-  coordination (use props/provide-inject/store state) or store-to-store sync.
-  Register every new event in the `Events` type. `@nextcloud/event-bus`
-  (`subscribe`/`unsubscribe`) is only for cross-app events from the server.
-
-### Dialogs
-- Declarative `<NcDialog>` in the owning component's template is the target.
-  `spawnDialog()` only where no template context exists. `NcModal` for dialogs is
-  legacy (see the `FIXME: Align NcModal header with NcDialog` in `App.vue`).
-
-### Icons & loading states
-- Icons: `vue-material-design-icons` components, not legacy `icon-*` CSS classes
-  (~11 files remain, e.g. `PublicShareAuthSidebar.vue:15`).
-- Loading: `NcLoadingIcon`, not `icon-loading`/`icon-loading-small` divs.
-
-### Styling
-- For CSS variables only use variables defined in `apps/theming/css/default.css`
-- Scoped styles with Nextcloud CSS variables (`var(--color-*)`); hardcoded colors
-  only for brand exceptions. Avoid new `:deep()` overrides of `@nextcloud/vue`
-  internals — the existing ~174 are a breakage hotspot on library bumps; prefer
-  component props/slots or an upstream issue.
-- Spacing and dimensions use the standard variables too — no magic numbers; use
-  `calc(x * var(--default-grid-baseline))` when finer control is needed.
-- For wording of translated strings stick to the rules mentioned in
-  https://docs.nextcloud.com/server/latest/developer_manual/design/writing.html
-
-### Call layer (WebRTC/signaling)
-- `src/utils/webrtc/simplewebrtc/`, `src/utils/webrtc/models/`,
-  `src/utils/signaling.js` and `src/utils/EmitterMixin.js` are pre-Vue legacy
-  (function constructors, `util.inherits`, WildEmitter, `.bind(this)` handler
-  chains, promise chains). **Do not copy these patterns** — for new code in this
-  area use ES6 classes and async/await; `src/utils/media/pipeline/` is the style
-  template.
-- Don't add new manual model `.on()`/`.off()` subscriptions in components
-  (`CallView.vue:535/546` style); prefer a composable wrapper that handles cleanup.
-
-## Known frontend technical debt (2026-06 analysis)
-
-1. **Vuex → Pinia migration** — 3 modules, ~4,200 lines
-   (`conversationsStore.js` 1,377 / `messagesStore.js` 1,485 /
-   `participantsStore.js` 1,306) with bidirectional Pinia coupling and duplicated
-   reactions state (`messagesStore.js` mutations vs `stores/reactions.js`).
-   Finishing this also removes the non-atomic multi-store fan-out in
-   `deleteConversation` (`conversationsStore.js:404`) and the last `useStore()`
-   components (~23).
-2. **Deprecated WebRTC APIs** — `pc.addStream()` at
-   `src/utils/webrtc/simplewebrtc/peer.js:125`, `addstream`/`removestream` event
-   listeners at `peer.js:55-57` and `src/utils/e2ee/encryption.js:646`; removed from
-   the spec, migrate to `addTrack()`/`ontrack`.
-3. **Legacy call layer modernization** (~4,800 lines) — ES6-classify
-   `simplewebrtc/` (2,009 lines) and `webrtc/models/` (1,170 lines), replace
-   `EmitterMixin`/WildEmitter with `EventTarget`, convert `signaling.js`
-   (1,617 lines, 26 promise chains, zero async/await). Drops the `wildemitter`,
-   `util` and `mockconsole` dependencies as a side effect.
-4. **`crypto-js` → Web Crypto** — 8 files use it only for SHA hashing
-   (`prepareTemporaryMessage.ts`, `messagesService.ts`, `stores/session.ts`,
-   `store/participantsStore.js`, `AdminSettings/TurnServer.vue`, …);
-   `crypto.subtle.digest` is async, so call sites need small refactors.
-5. **`hark` (unmaintained)** — `media/pipeline/SpeakingMonitor.js`,
-   `composables/useDevices.js`; replace with native AnalyserNode/AudioWorklet.
-6. **Options API components** — 141 SFCs; migrate directory-by-directory, pulling
-   `defineProps<T>`/`defineEmits<T>` along. Self-contained starts: AdminSettings
-   (15/16 Options API), BreakoutRoomsEditor (4/4), Dashboard (3/3).
-7. **JS stragglers** — 8 services (`signalingService.js`, `participantsService.js`,
-   `BrowserStorage.js`, …), 7 composables (`useDevices.js`, `useIsInCall.js`, …),
-   4 Pinia stores; convert to TS when touched.
-8. **EventBus overreach** — UI-coordination events (`focus-message`,
-   `scroll-chat-to-bottom`) and store-sync listeners (`token.ts`/`session.ts` on
-   `signaling-join-room`, `upload.ts` lifecycle emits) should move to
-   reactivity/provide-inject; signaling fan-out stays.
-9. **`:deep()` overrides** — ~174 overrides of `@nextcloud/vue` internals; audit on
-   each library bump, upstream what's generally useful.
-10. **`@matrix-org/olm`** — deprecated upstream in favor of vodozemac; track for the
-    e2ee code (`src/utils/e2ee/`).
-11. **Misc** — legacy `icon-*` CSS classes (~11 files), `OC.linkTo()` in
-    `src/collections.js:12`, `cropperjs` v1 (+`vue-cropperjs`), `base64-js` in
-    `e2ee/encryption.js` (native `TextEncoder`/`Uint8Array` suffices),
-    `vue-material-design-icons` (421 imports — consider `@mdi/js` +
-    `NcIconSvgWrapper` for bundle size, low priority).
+**Frontend:**
+1. Vuex→Pinia — 3 modules ~4,200 lines (`conversationsStore.js`, `messagesStore.js`, `participantsStore.js`), bidirectional coupling, duplicated reactions state. Finishing removes the non-atomic fan-out in `deleteConversation` and ~23 `useStore()` components.
+2. Deprecated WebRTC APIs — `pc.addStream()` and `addstream`/`removestream` listeners in `simplewebrtc/peer.js` and `e2ee/encryption.js`; migrate to `addTrack()`/`ontrack`.
+3. Legacy call layer (~4,800 lines) — ES6-classify `simplewebrtc/` and `webrtc/models/`, replace `EmitterMixin`/WildEmitter with `EventTarget`, convert `signaling.js` (~26 promise chains) to async/await. Drops `wildemitter`/`util`/`mockconsole`.
+4. `crypto-js`→Web Crypto — 8 files use it only for SHA (`prepareTemporaryMessage.ts`, `messagesService.ts`, `stores/session.ts`, `store/participantsStore.js`, `AdminSettings/TurnServer.vue`, …); `crypto.subtle.digest` is async.
+5. `hark` (unmaintained) — `media/pipeline/SpeakingMonitor.js`, `composables/useDevices.js`; replace with native AnalyserNode/AudioWorklet.
+6. Options API components — 141 SFCs; migrate directory-by-directory. Self-contained starts: AdminSettings (15/16), BreakoutRoomsEditor (4/4), Dashboard (3/3).
+7. JS stragglers — 8 services, 7 composables, 4 Pinia stores; convert to TS when touched.
+8. EventBus overreach — UI-coordination events (`focus-message`, `scroll-chat-to-bottom`) and store-sync listeners should move to reactivity/provide-inject; signaling fan-out stays.
+9. `:deep()` overrides — ~174 of `@nextcloud/vue` internals; audit on each library bump, upstream what's useful.
+10. `@matrix-org/olm` — deprecated upstream for vodozemac; track for `src/utils/e2ee/`.
+11. Misc — `icon-*` CSS classes (~11 files), `OC.linkTo()` in `src/collections.js`, `cropperjs` v1, `base64-js` in `e2ee/encryption.js`, `vue-material-design-icons` (421 imports — consider `@mdi/js`+`NcIconSvgWrapper`, low priority).
