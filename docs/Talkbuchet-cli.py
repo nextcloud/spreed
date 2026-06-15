@@ -113,6 +113,7 @@ from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.support.wait import WebDriverWait
 from shutil import disk_usage
 from time import sleep
@@ -372,6 +373,12 @@ class SeleniumHelper:
         if headless:
             options.add_argument('--headless')
 
+        options.binary_location = '/usr/bin/firefox'
+
+        service = FirefoxService(
+            executable_path='/usr/bin/geckodriver',
+        )
+
         if remoteSeleniumUrl:
             self.driver = webdriver.Remote(
                 command_executor=remoteSeleniumUrl,
@@ -382,7 +389,8 @@ class SeleniumHelper:
                 print('Warning: less than 128 MiB available in "/tmp", strange failures may occur')
 
             self.driver = webdriver.Firefox(
-                options=options
+                options=options,
+                service=service
             )
 
         self.bidiLogsHelper = BiDiLogsHelper(self.driver)
