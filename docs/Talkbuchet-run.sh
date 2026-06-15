@@ -153,7 +153,7 @@ fi
 
 CUSTOM_CONTAINER_OPTIONS=false
 
-SELENIUM_IMAGE="selenium/standalone-firefox:99.0-20220427"
+SELENIUM_IMAGE="selenium/standalone-firefox:135.0-20260505"
 if [ "$1" = "--selenium-image" ]; then
 	SELENIUM_IMAGE="$2"
 	CUSTOM_CONTAINER_OPTIONS=true
@@ -164,7 +164,7 @@ if [ "$1" = "--selenium-image" ]; then
 
 	shift 2
 elif [ "$1" = "--chrome" ]; then
-	SELENIUM_IMAGE="selenium/standalone-chrome:101.0-20220427"
+	SELENIUM_IMAGE="selenium/standalone-chrome:148.0-20260505"
 
 	if $CUSTOM_CONTAINER_NAME; then
 		CUSTOM_CONTAINER_OPTIONS=true

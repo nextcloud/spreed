@@ -386,8 +386,10 @@ class Signaling extends EventTarget {
 		this.signalingTicket = signalingSettings.ticket
 
 		let resolveSessionId
+		let rejectSessionId
 		this.sessionId = new Promise((resolve, reject) => {
 			resolveSessionId = resolve
+			rejectSessionId = reject
 		})
 
 		this.messageId = 1
@@ -411,6 +413,10 @@ class Signaling extends EventTarget {
 		}
 		this.socket.onclose = () => {
 			console.warn('Socket closed')
+
+			if (this.sessionId instanceof Promise) {
+				rejectSessionId('Socket closed before getting session id')
+			}
 		}
 
 		this.addEventListener('hello', async event => {
@@ -622,6 +628,8 @@ class Peer {
 		this.peerConnection.onicecandidate = async event => {
 			const candidate = event.candidate
 
+			// console.info('onicecandidate', JSON.stringify(candidate))
+
 			if (candidate) {
 				// Retain legacy data structure for compatibility with
 				// mobile clients.
@@ -641,6 +649,7 @@ class Peer {
 
 			if (message.data.type === 'candidate' && message.data.from === this.sessionId) {
 				const candidate = message.data.payload
+				// console.info('Received candidate', JSON.stringify(candidate))
 				this.peerConnection.addIceCandidate(candidate.candidate)
 			}
 		})
@@ -874,7 +883,13 @@ async function initSubscribers() {
 			continue
 		}
 
-		await signaling.getSessionId()
+		try {
+			await signaling.getSessionId()
+		} catch (exception) {
+			console.error('Subscriber ' + i + ' error: ' + exception)
+
+			continue
+		}
 
 		Object.keys(publishers).forEach(async publisherSessionId => {
 			const subscriber = new Subscriber(user, signalingSettings, signaling, publisherSessionId)

@@ -109,6 +109,7 @@ import websocket
 from datetime import datetime
 from pathlib import Path
 from selenium import webdriver
+from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -178,6 +179,14 @@ class BiDiLogsHelper:
             if 'text' in event['params']:
                 text = event['params']['text']
 
+            eventType = ''
+            if 'type' in event['params']:
+                eventType = event['params']['type']
+
+            eventArgs = ''
+            if 'args' in event['params']:
+                eventArgs = event['params']['args']
+
             time = '??:??:??'
             if 'timestamp' in event['params']:
                 timestamp = event['params']['timestamp']
@@ -198,7 +207,7 @@ class BiDiLogsHelper:
             elif method == 'debug':
                 methodShort = 'D'
 
-            return time + ' ' + methodShort + ' ' + text
+            return time + ' ' + methodShort + ' ' + eventType + ' ' + text + ' ' + f'{eventArgs}'
 
     def __processLogEvents(self):
         while True:
@@ -755,16 +764,34 @@ class Siege(TalkbuchetCommon):
 
         savedScriptTimeout = self.seleniumHelper.driver.timeouts.script
 
+        if hasattr(self.seleniumHelper.driver.command_executor, 'client_config'):
+            savedExecutorTimeout = self.seleniumHelper.driver.command_executor.client_config.timeout
+        else:
+            savedExecutorTimeout = self.seleniumHelper.driver.command_executor.get_timeout()
+
+        print(f'Saved script timeout: {savedScriptTimeout}')
+
         # Adjust script timeout to prevent it from ending before the siege has
         # started.
         scriptTimeout = (self.publishersCount + self.publishersCount * self.subscribersPerPublisherCount) * (self.connectionWarningTimeout / 1000)
         if scriptTimeout > savedScriptTimeout:
             self.seleniumHelper.driver.set_script_timeout(scriptTimeout)
+        print(f'Script timeout: {scriptTimeout}')
+
+        if scriptTimeout > savedExecutorTimeout:
+            if hasattr(self.seleniumHelper.driver.command_executor, 'client_config'):
+                self.seleniumHelper.driver.command_executor.client_config.timeout = scriptTimeout
+            else:
+                self.seleniumHelper.driver.command_executor.set_timeout(scriptTimeout)
 
         self.seleniumHelper.executeAsync('await siege()')
 
         self.seleniumHelper.driver.set_script_timeout(savedScriptTimeout)
 
+        if hasattr(self.seleniumHelper.driver.command_executor, 'client_config'):
+            self.seleniumHelper.driver.command_executor.client_config.timeout = savedExecutorTimeout
+        else:
+            self.seleniumHelper.driver.command_executor.set_timeout(savedExecutorTimeout)
 
 class VirtualParticipant(TalkbuchetCommon):
     """
@@ -858,7 +885,20 @@ class RealParticipant():
         else:
             raise Exception('Invalid browser: ' + browser)
 
+        self.audio = True
+        self.video = True
+        self.currentAudio = True
+        self.currentVideo = True
+
         self.seleniumHelper.driver.get(nextcloudUrl)
+
+    def setMedia(self, audio, video):
+        """
+        Enables or disables media devices.
+        """
+
+        self.audio = audio
+        self.video = video
 
     def login(self, user, appToken):
         """
@@ -897,6 +937,17 @@ class RealParticipant():
         if self.loggedIn:
             return
 
+        try:
+            mediaContainer = WebDriverWait(self.seleniumHelper.driver, timeout=10).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.modal-container .media-settings'))
+
+            mediaContainer.find_element(By.XPATH, '//input[@type="text"]').send_keys('Talkbuchet')
+
+            self._enableOrDisableMediaDevices()
+
+            return
+        except TimeoutException:
+            pass
+
         # Starting with Talk 18 guests need to set their name after joining a
         # room. If the dialog is not shown it is assumed that an older version
         # is being used.
@@ -916,13 +967,18 @@ class RealParticipant():
         A room must have been joined before joining the call.
         """
 
-        self.seleniumHelper.driver.find_element(By.CSS_SELECTOR, '.top-bar #call_button').click()
+        try:
+            self.seleniumHelper.driver.find_element(By.CSS_SELECTOR, '.top-bar .join-call').click()
+        except ElementClickInterceptedException:
+            pass
+
+        self._enableOrDisableMediaDevices()
 
         try:
             # If the device selector is shown click on the "Join call" button
             # in the dialog to actually join the call. Recording consent is
             # granted first if needed.
-            callButton = WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.device-checker #call_button, .media-settings #call_button'))
+            callButton = WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.device-checker .join-call, .media-settings .join-call'))
 
             try:
                 self.seleniumHelper.driver.find_element(By.XPATH, '//label[contains(., "Give consent to the recording of this call")]').click()
@@ -933,6 +989,25 @@ class RealParticipant():
         except TimeoutException:
             pass
 
+    def _enableOrDisableMediaDevices(self):
+        if self.audio != self.currentAudio:
+            audioDropdown = WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '#device-selector-audioinput')).click()
+            if self.audio:
+                WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.vs__dropdown-menu li:nth-of-type(1)')).click()
+                self.currentAudio = True
+            else:
+                WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.XPATH, '//ul[contains(concat(" ", normalize-space(@class), " "), " vs__dropdown-menu ")]//li[contains(., "None")]')).click()
+                self.currentAudio = False
+
+        if self.video != self.currentVideo:
+            videoDropdown = WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '#device-selector-videoinput')).click()
+            if self.video:
+                WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.vs__dropdown-menu li:nth-of-type(1)')).click()
+                self.currentVideo = True
+            else:
+                WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.XPATH, '//ul[contains(concat(" ", normalize-space(@class), " "), " vs__dropdown-menu ")]//li[contains(., "None")]')).click()
+                self.currentVideo = False
+
     def leaveCall(self):
         """
         Leaves the current call.
@@ -940,7 +1015,7 @@ class RealParticipant():
         The call must have been joined first.
         """
 
-        self.seleniumHelper.driver.find_element(By.CSS_SELECTOR, '.top-bar #call_button').click()
+        self.seleniumHelper.driver.find_element(By.CSS_SELECTOR, '.top-bar .join-call').click()
 
 
 _talkbuchetMode = ''
@@ -1692,6 +1767,8 @@ def switchToRealParticipantMode():
             return
 
         realParticipant = RealParticipant(_getBrowser(), _nextcloudUrl, _headless, _remoteSeleniumUrl)
+
+        realParticipant.setMedia(_audio, _video)
 
         realParticipants.append(realParticipant)
 
