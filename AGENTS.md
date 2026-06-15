@@ -20,7 +20,7 @@ All contributions generated or assisted by this agent must fully comply with:
 - Add an `Assisted-by: AGENT_NAME:MODEL_VERSION` git trailer to every commit containing AI-assisted content.
 - Ensure every pull request includes a disclosure of AI tool use in the PR description.
 - Produce focused, scoped pull requests that address exactly one concern. Do not touch unrelated files or introduce incidental refactors.
-- Verify all dependencies against actual package registries before suggesting them. Do not use hallucinated or unverified package names.
+- Verify all dependencies against actual package registries before suggesting them.
 - Explicitly inform the contributor when any action they are about to take, or have taken, would violate the AI Contribution Policy or the Contribution Guidelines. Do not silently proceed. State which rule is at risk and what the contributor should do instead.
 - Warn the contributor if a pull request is growing too large. A PR approaching several thousand lines of changed code is a signal that it should be split into smaller, focused PRs. Suggest a logical split before the PR is opened, not after.
 - Recommend opening a ticket for discussion before starting implementation whenever a feature or change is sufficiently complex - for example when it touches multiple subsystems, requires architectural decisions, or the right approach is not yet clear. A ticket allows maintainers and the contributor to align on direction before code is written, avoiding wasted effort on a PR that may be rejected or require fundamental rework.
@@ -36,24 +36,39 @@ All contributions generated or assisted by this agent must fully comply with:
 
 ## Baseline & tooling
 
-- PHP **8.2+**, Nextcloud server **35** (`appinfo/info.xml`). Code must stay portable
-  across MariaDB, MySQL, PostgreSQL, SQLite, and Oracle — migrations, query-builder
-  usage, and tests alike.
-- Setup: `composer i` and `npm ci`. Frontend builds: `npm run build` (production),
-  `npm run dev` / `npm run watch` (development).
-- `lib/Vendor/` is third-party code bundled via Mozart (`cuyz/valinor`,
-  `firebase/php-jwt`). **Never edit or analyze it as project code.**
+### General
 - `l10n/` is generated from Transifex (the `fix(l10n): Update translations from
   Transifex` commits). **Never hand-edit translation files.**
+
+### Backend
+- Info: PHP **8.2+**, Nextcloud server **35** (`appinfo/info.xml`). Code must stay portable
+  across MariaDB, MySQL, PostgreSQL, SQLite, and Oracle — migrations, query-builder
+  usage, and tests alike.
+- Setup: `composer i`
+- `lib/Vendor/` is third-party code bundled via Mozart (`cuyz/valinor`,
+  `firebase/php-jwt`). **Never edit or analyze it as project code.**
 - Checks: `composer cs:fix` (php-cs-fixer, Nextcloud coding standard),
   `composer psalm` (level 4, baseline in `tests/psalm-baseline.xml`),
-  `composer rector:check`, `composer lint`.
+  `composer rector:fix`, `composer lint`.
 - OpenAPI: controller docblocks/psalm types in `lib/ResponseDefinitions.php` feed
   `composer openapi`, which also regenerates the TypeScript types. Regenerate after
   adding/removing/renaming a route, changing a controller method signature or its
   `@param`/`@return`/psalm-shape annotations, changing a response shape in
   `ResponseDefinitions.php`, or adding/removing an HTTP status code from a return
   type. CI fails if the generated spec or `src/types/openapi/` is stale.
+
+### Frontend
+- Info: Vue **3.5** + TypeScript, built with **rspack** (`rspack.config.js`), no Vite. State:
+  **Pinia** (`src/stores/`, target) and legacy **Vuex 4** (`src/store/`, being phased
+  out). UI components from `@nextcloud/vue` only.
+- Setup: `npm ci`. Frontend builds: `npm run build` (production),
+  `npm run dev` / `npm run watch` (development).
+- Checks: `npm run lint:fix` (ESLint), `npm run stylelint`,
+  `npm run ts:check` (TS typecheck), `npm run test` (vitest + @vue/test-utils v2; no jest).
+- OCS/API types are generated: `npm run ts:generate` (openapi-typescript) into
+  `src/types/openapi/` — regenerate instead of hand-editing after API changes.
+- No compat mode, no mixins, no `mapGetters`/`$set`/`::v-deep` — the Vue 2 → 3
+  migration removed these; do not reintroduce them.
 
 ## Running tests
 
@@ -178,9 +193,7 @@ patterns, **new code must use the modern one** listed first.
   backed enums for new value sets; bitflags (`Attendee::PERMISSIONS_*`,
   `Participant::FLAG_*`) stay int constants.
 
-## Known technical debt (2026-06 analysis)
-
-Prioritized backlog; safe to pick up as standalone PRs.
+## Known backend technical debt (2026-06 analysis)
 
 1. **`\OC_Util::tearDownFS()/setupFS()`** at `lib/Chat/Parser/SystemMessage.php:990-992`
    — last private-server-API usage; the only real forward-compat risk. Replace with a
@@ -218,19 +231,6 @@ Prioritized backlog; safe to pick up as standalone PRs.
 12. **Loose comparison** at `BackgroundJob/CheckCertificates.php:90` (`== null`) and
     `Command/Signaling/VerifyKeys.php:50` (`!=`).
 
-## Frontend baseline & tooling
-
-- Vue **3.5** + TypeScript, built with **rspack** (`rspack.config.js`), no Vite. State:
-  **Pinia** (`src/stores/`, target) and legacy **Vuex 4** (`src/store/`, being phased
-  out). UI components from `@nextcloud/vue` 9 — import via
-  `@nextcloud/vue/components/NcXxx` only, never `@nextcloud/vue/dist/...`.
-- Checks: `npm run lint` (eslint flat config), `npm run stylelint`,
-  `npm run ts:check` (vue-tsc), `npm run test` (vitest + @vue/test-utils v2; no jest).
-- OCS/API types are generated: `npm run ts:generate` (openapi-typescript) into
-  `src/types/openapi/` — regenerate instead of hand-editing after API changes.
-- No compat mode, no mixins, no `mapGetters`/`$set`/`::v-deep` — the Vue 2 → 3
-  migration removed these; do not reintroduce them.
-
 ## Frontend conventions to follow (and the drift to avoid)
 
 These rules come from a 2026-06 technical-debt analysis of `src/`. Where the codebase
@@ -238,11 +238,7 @@ has two patterns, **new code must use the modern one** listed first.
 
 ### Components
 - New/rewritten SFCs use `<script setup lang="ts">` with `defineProps<T>()` and
-  `defineEmits<T>()`. ~141 of 198 SFCs are still Options API — don't add more, and
-  don't create the hybrid Options-API-plus-`setup()` style (`App.vue:81-244`,
-  `ChatView.vue:91-243` are debt, not templates).
-- Lifecycle/reactivity via imported `nextTick`/`watch`/`computed`, router via
-  `useRoute()`/`useRouter()` — already 100% migrated, keep it that way.
+  `defineEmits<T>()`.
 
 ### State management
 - New state goes in a **Pinia setup-style TS store** (`defineStore('x', () => {...})`,
@@ -270,8 +266,8 @@ has two patterns, **new code must use the modern one** listed first.
   **stores/composables catch** and surface with `showError(t('spreed', ...))` from
   `@nextcloud/dialogs`. Don't show toasts from services
   (`participantsService.js:37-50` is drift) or swallow errors with `console.debug`.
-- Use the typed OCS helpers from `src/types/index.ts` instead of new manual
-  `response.data.ocs.data` unwrapping.
+- Use the type definitions from `src/types/index.ts` for services, API endpoints
+  and internal logic in TS files
 - URLs via `generateOcsUrl()` with `{token}` placeholders — never string
   concatenation, never `OC.linkTo()` (last use: `src/collections.js:12`).
 - Translations: `t`/`n` imported from `@nextcloud/l10n`, variables interpolated via
@@ -296,13 +292,15 @@ has two patterns, **new code must use the modern one** listed first.
 - Loading: `NcLoadingIcon`, not `icon-loading`/`icon-loading-small` divs.
 
 ### Styling
+- For CSS variables only use variables defined in `apps/theming/css/default.css`
 - Scoped styles with Nextcloud CSS variables (`var(--color-*)`); hardcoded colors
   only for brand exceptions. Avoid new `:deep()` overrides of `@nextcloud/vue`
   internals — the existing ~174 are a breakage hotspot on library bumps; prefer
   component props/slots or an upstream issue.
 - Spacing and dimensions use the standard variables too — no magic numbers; use
-  `calc(x * var(--default-grid-baseline))` when finer control is needed. Reference:
-  https://docs.nextcloud.com/server/latest/developer_manual/html_css_design/css.html
+  `calc(x * var(--default-grid-baseline))` when finer control is needed.
+- For wording of translated strings stick to the rules mentioned in
+  https://docs.nextcloud.com/server/latest/developer_manual/design/writing.html
 
 ### Call layer (WebRTC/signaling)
 - `src/utils/webrtc/simplewebrtc/`, `src/utils/webrtc/models/`,
@@ -315,8 +313,6 @@ has two patterns, **new code must use the modern one** listed first.
   (`CallView.vue:535/546` style); prefer a composable wrapper that handles cleanup.
 
 ## Known frontend technical debt (2026-06 analysis)
-
-Prioritized backlog; larger items (1, 3) need a discussion ticket and a PR series.
 
 1. **Vuex → Pinia migration** — 3 modules, ~4,200 lines
    (`conversationsStore.js` 1,377 / `messagesStore.js` 1,485 /
