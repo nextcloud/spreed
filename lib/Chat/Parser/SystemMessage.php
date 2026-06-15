@@ -32,6 +32,7 @@ use OCP\Federation\ICloudIdManager;
 use OCP\Files\FileInfo;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
+use OCP\Files\ISetupManager;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\FilesMetadata\Exceptions\FilesMetadataNotFoundException;
@@ -77,6 +78,7 @@ class SystemMessage implements IEventListener {
 		private readonly RoomShareProvider $shareProvider,
 		private readonly PhotoCache $photoCache,
 		private readonly IRootFolder $rootFolder,
+		private readonly ISetupManager $setupManager,
 		private readonly ICloudIdManager $cloudIdManager,
 		private readonly IURLGenerator $url,
 		private readonly FilesMetadataCache $metadataCache,
@@ -983,13 +985,12 @@ class SystemMessage implements IEventListener {
 
 				$node = $userFolder->getFirstNodeById($share->getNodeId());
 				if (!$node instanceof Node) {
+					$user = $this->userManager->getExistingUser($participant->getAttendee()->getActorId());
 					// FIXME This should be much more sensible, e.g.
 					// 1. Only be executed on "Waiting for new messages"
 					// 2. Once per request
-					/** @psalm-suppress UndefinedClass */
-					\OC_Util::tearDownFS();
-					/** @psalm-suppress UndefinedClass */
-					\OC_Util::setupFS($participant->getAttendee()->getActorId());
+					$this->setupManager->tearDown();
+					$this->setupManager->setupForUser($user);
 					$userNodes = $userFolder->getById($share->getNodeId());
 
 					if (empty($userNodes)) {
