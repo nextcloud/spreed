@@ -70,6 +70,11 @@ class Update extends Base {
 				null,
 				InputOption::VALUE_REQUIRED,
 				'Seconds to expire a message after sent. If zero will disable the expire message duration.'
+			)->addOption(
+				'preserve',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Preserves the room (value 1) so it can not be deleted, its history cleared or its guests/joinable settings changed; pass value 0 to remove the protection'
 			);
 	}
 
@@ -83,9 +88,15 @@ class Update extends Base {
 		$password = $input->getOption('password');
 		$owner = $input->getOption('owner');
 		$messageExpiration = $input->getOption('message-expiration');
+		$preserve = $input->getOption('preserve');
 
 		if (!in_array($public, [null, '0', '1'], true)) {
 			$output->writeln('<error>Invalid value for option "--public" given.</error>');
+			return 1;
+		}
+
+		if (!in_array($preserve, [null, '0', '1'], true)) {
+			$output->writeln('<error>Invalid value for option "--preserve" given.</error>');
 			return 1;
 		}
 
@@ -156,6 +167,10 @@ class Update extends Base {
 
 			if ($messageExpiration !== null) {
 				$this->setMessageExpiration($room, (int)$messageExpiration);
+			}
+
+			if ($preserve !== null) {
+				$this->setRoomPreserve($room, ($preserve === '1'));
 			}
 		} catch (InvalidArgumentException $e) {
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));

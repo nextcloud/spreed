@@ -294,7 +294,7 @@ Create a new room
 
 ### Usage
 
-* `talk:room:create [--description DESCRIPTION] [--user USER] [--group GROUP] [--public] [--readonly] [--listable LISTABLE] [--password PASSWORD] [--owner OWNER] [--moderator MODERATOR] [--message-expiration MESSAGE-EXPIRATION] [--] <name>`
+* `talk:room:create [--description DESCRIPTION] [--user USER] [--group GROUP] [--public] [--readonly] [--listable LISTABLE] [--password PASSWORD] [--owner OWNER] [--moderator MODERATOR] [--message-expiration MESSAGE-EXPIRATION] [--preserve] [--] <name>`
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -312,6 +312,7 @@ Create a new room
 | `--owner` | Sets the given user as owner of the room to create | yes | yes | no | *Required* |
 | `--moderator` | Promotes the given users to moderators | yes | yes | yes | *Required* |
 | `--message-expiration` | Seconds to expire a message after sent. If zero will disable the expire message duration. | yes | yes | no | *Required* |
+| `--preserve` | Preserves the room so it can not be deleted, its history cleared or its guests/joinable settings changed | no | no | no | `false` |
 
 ## talk:room:delete
 
@@ -370,7 +371,7 @@ Updates a room
 
 ### Usage
 
-* `talk:room:update [--name NAME] [--description DESCRIPTION] [--public PUBLIC] [--readonly READONLY] [--listable LISTABLE] [--password PASSWORD] [--owner OWNER] [--message-expiration MESSAGE-EXPIRATION] [--] <token>`
+* `talk:room:update [--name NAME] [--description DESCRIPTION] [--public PUBLIC] [--readonly READONLY] [--listable LISTABLE] [--password PASSWORD] [--owner OWNER] [--message-expiration MESSAGE-EXPIRATION] [--preserve PRESERVE] [--] <token>`
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -386,6 +387,7 @@ Updates a room
 | `--password` | Sets a new password for the room; pass an empty value to remove password protection | yes | yes | no | *Required* |
 | `--owner` | Sets the given user as owner of the room; pass an empty value to remove the owner | yes | yes | no | *Required* |
 | `--message-expiration` | Seconds to expire a message after sent. If zero will disable the expire message duration. | yes | yes | no | *Required* |
+| `--preserve` | Preserves the room (value 1) so it can not be deleted, its history cleared or its guests/joinable settings changed; pass value 0 to remove the protection | yes | yes | no | *Required* |
 
 ## talk:signaling:add
 

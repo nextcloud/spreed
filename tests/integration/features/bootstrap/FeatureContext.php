@@ -1788,6 +1788,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
+	#[Then('/^user "([^"]*)" (preserves|stops preserving) room "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function userChangesPreserveStateOfTheRoom(string $user, string $newState, string $identifier, int $statusCode, string $apiVersion): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			$newState === 'preserves' ? 'POST' : 'DELETE',
+			'/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/preserve'
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
 	#[Then('/^user "([^"]*)" (locks|unlocks) room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userChangesReadOnlyStateOfTheRoom(string $user, string $newState, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);

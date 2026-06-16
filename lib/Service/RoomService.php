@@ -838,6 +838,41 @@ class RoomService {
 	}
 
 	/**
+	 * Mark a conversation as preserved (or remove the mark again).
+	 *
+	 * While preserved the conversation can not be deleted, its chat history can
+	 * not be cleared and the "guests" (public link) and "joinable" (listable)
+	 * settings can not be changed via the API.
+	 */
+	public function setPreserveConversation(Room $room, bool $preserve): void {
+		$oldPreserve = $room->isPreserved();
+		if ($preserve === $oldPreserve) {
+			return;
+		}
+
+		$oldAttributes = $room->getAttributes();
+		if ($preserve) {
+			$newAttributes = $oldAttributes | RoomAttributes::PRESERVE_CONVERSATION->value;
+		} else {
+			$newAttributes = $oldAttributes & ~RoomAttributes::PRESERVE_CONVERSATION->value;
+		}
+
+		$event = new BeforeRoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_PRESERVE_CONVERSATION, $preserve, $oldPreserve);
+		$this->dispatcher->dispatchTyped($event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('attributes', $update->createNamedParameter($newAttributes, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setAttributes($newAttributes);
+
+		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_PRESERVE_CONVERSATION, $preserve, $oldPreserve);
+		$this->dispatcher->dispatchTyped($event);
+	}
+
+	/**
 	 * @param Room $room
 	 * @param int $newState New mention permissions from Room::MENTION_PERMISSIONS_*
 	 * @psalm-param Room::MENTION_PERMISSIONS_* $newState

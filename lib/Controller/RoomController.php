@@ -1026,10 +1026,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Delete a room
 	 *
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, null, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
 	 *
 	 * 200: Room successfully deleted
 	 * 400: Deleting room is not possible
+	 * 403: Conversation is preserved
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
@@ -1038,6 +1039,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function deleteRoom(): DataResponse {
+		if ($this->room->isPreserved()) {
+			return new DataResponse(['error' => 'preserved'], Http::STATUS_FORBIDDEN);
+		}
+
 		if (!$this->appConfig->getAppValueBool('delete_one_to_one_conversations')
 			&& in_array($this->room->getType(), [Room::TYPE_ONE_TO_ONE, Room::TYPE_ONE_TO_ONE_FORMER], true)) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
@@ -1675,10 +1680,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Required capability: `conversation-creation-password` for `string $password` parameter
 	 *
 	 * @param string $password New password (only available with `conversation-creation-password` capability)
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'|'password', message?: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'|'password', message?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
 	 *
 	 * 200: Allowed guests successfully
 	 * 400: Allowing guests is not possible
+	 * 403: Conversation is preserved
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
@@ -1687,6 +1693,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function makePublic(string $password = ''): DataResponse {
+		if ($this->room->isPreserved()) {
+			return new DataResponse(['error' => 'preserved'], Http::STATUS_FORBIDDEN);
+		}
+
 		if ($this->talkConfig->isPasswordEnforced() && $password === '') {
 			return new DataResponse(['error' => 'password', 'message' => $this->l->t('Password needs to be set')], Http::STATUS_BAD_REQUEST);
 		}
@@ -1709,10 +1719,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Disallowed guests to join conversation
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
 	 *
 	 * 200: Room unpublished Disallowing guests successfully
 	 * 400: Disallowing guests is not possible
+	 * 403: Conversation is preserved
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
@@ -1721,6 +1732,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function makePrivate(): DataResponse {
+		if ($this->room->isPreserved()) {
+			return new DataResponse(['error' => 'preserved'], Http::STATUS_FORBIDDEN);
+		}
+
 		try {
 			$this->roomService->setType($this->room, Room::TYPE_GROUP);
 		} catch (TypeException $e) {
@@ -1770,10 +1785,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param 0|1|2 $scope Scope where the room is listable
 	 * @psalm-param Room::LISTABLE_* $scope
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}|array{error: 'forced', forced?: 0|1|2}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}|array{error: 'forced', forced?: 0|1|2}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
 	 *
 	 * 200: Made room listable successfully
 	 * 400: Making room listable is not possible
+	 * 403: Conversation is preserved
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
@@ -1782,6 +1798,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setListable(int $scope): DataResponse {
+		if ($this->room->isPreserved()) {
+			return new DataResponse(['error' => 'preserved'], Http::STATUS_FORBIDDEN);
+		}
+
 		/** @var Room::LISTABLE_* $forced */
 		$forced = $this->forcedParameters->getForcedParameter(Parameter::LISTABLE);
 		if ($forced !== null && $forced !== $scope) {
@@ -1897,6 +1917,60 @@ class RoomController extends AEnvironmentAwareOCSController {
 	])]
 	public function unarchiveConversation(): DataResponse {
 		$this->participantService->unarchiveConversation($this->participant);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
+	 * Preserve a conversation
+	 *
+	 * While preserved the conversation can not be deleted, its chat history can
+	 * not be cleared and the guests (public link) and joinable (listable)
+	 * settings can not be changed.
+	 *
+	 * Required capability: `preserve-conversation`
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'permissions'}, array{}>
+	 *
+	 * 200: Conversation was preserved
+	 * 403: Only the owner can preserve a conversation
+	 */
+	#[NoAdminRequired]
+	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/preserve', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function preserveConversation(): DataResponse {
+		if ($this->participant->getAttendee()->getParticipantType() !== Participant::OWNER) {
+			return new DataResponse(['error' => 'permissions'], Http::STATUS_FORBIDDEN);
+		}
+
+		$this->roomService->setPreserveConversation($this->room, true);
+		return new DataResponse($this->formatRoom($this->room, $this->participant));
+	}
+
+	/**
+	 * Stop preserving a conversation
+	 *
+	 * Required capability: `preserve-conversation`
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'permissions'}, array{}>
+	 *
+	 * 200: Conversation is not preserved anymore
+	 * 403: Only the owner can stop preserving a conversation
+	 */
+	#[NoAdminRequired]
+	#[RequireLoggedInModeratorParticipant]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/preserve', requirements: [
+		'apiVersion' => '(v4)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function unpreserveConversation(): DataResponse {
+		if ($this->participant->getAttendee()->getParticipantType() !== Participant::OWNER) {
+			return new DataResponse(['error' => 'permissions'], Http::STATUS_FORBIDDEN);
+		}
+
+		$this->roomService->setPreserveConversation($this->room, false);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
 

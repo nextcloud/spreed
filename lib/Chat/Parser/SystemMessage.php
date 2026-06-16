@@ -280,6 +280,20 @@ class SystemMessage implements IEventListener {
 			} elseif ($cliIsActor) {
 				$parsedMessage = $this->l->t('An administrator opened the conversation to registered users and users created with the Guests app');
 			}
+		} elseif ($message === 'preserve_conversation') {
+			$parsedMessage = $this->l->t('{actor} preserved the conversation');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You preserved the conversation');
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator preserved the conversation');
+			}
+		} elseif ($message === 'preserve_conversation_off') {
+			$parsedMessage = $this->l->t('{actor} stopped preserving the conversation');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You stopped preserving the conversation');
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator stopped preserving the conversation');
+			}
 		} elseif ($message === 'lobby_timer_reached') {
 			$parsedMessage = $this->l->t('The conversation is now open to everyone');
 		} elseif ($message === 'lobby_none') {
