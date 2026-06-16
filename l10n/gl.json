@@ -794,7 +794,7 @@
     "Error: Running version: {version}; Server needs to be updated to be compatible with this version of Talk" : "Erro: Versión en execución: {version}; Debe actualizar o servidor para que sexa compatíbel con esta versión de Parladoiro",
     "Error: Server responded with: {error}" : "Erro: o servidor respondeu con: {error}",
     "Error: Unknown error occurred" : "Erro: produciuse un erro descoñecido",
-    "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Advertencia: Versión en execución: {version}; O servidor non admite todas as funcionalidades desta versión de Talk, faltan as funcionalidades: {features}",
+    "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Advertencia: Versión en execución: {version}; O servidor non admite todas as funcionalidades desta versión de Parladoiro, faltan as funcionalidades: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "É moi recomendábel configurar unha memoria tobo cando se executa Parladoiro de Nextcloud cunha infraestrutura de alto rendemento.",
     "Client Push" : "Notificación automática ao cliente",
     "Client Push is installed, this improves the punctuality of Talk notifications." : "A notificación automática ao cliente está instalada, isto mellora a puntualidade das notificacións de Parladoiro.",
