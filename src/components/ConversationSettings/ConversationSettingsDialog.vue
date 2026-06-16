@@ -103,9 +103,10 @@
 
 			<!-- Destructive actions -->
 			<NcAppSettingsSection
-				v-if="canLeaveConversation || canDeleteConversation"
+				v-if="canLeaveConversation || canDeleteConversation || showPreserveConversationSetting"
 				id="dangerzone"
 				:name="t('spreed', 'Danger zone')">
+				<PreserveConversationSettings v-if="showPreserveConversationSetting" :token="token" />
 				<LockingSettings v-if="canFullModerate && !isNoteToSelf" :token="token" />
 				<template v-if="supportsArchive">
 					<h4 class="app-settings-section__subtitle">
@@ -152,6 +153,7 @@ import LockingSettings from './LockingSettings.vue'
 import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings.vue'
 import MentionsSettings from './MentionsSettings.vue'
 import NotificationsSettings from './NotificationsSettings.vue'
+import PreserveConversationSettings from './PreserveConversationSettings.vue'
 import RecordingConsentSettings from './RecordingConsentSettings.vue'
 import SipSettings from './SipSettings.vue'
 import { CALL, CONFIG, CONVERSATION, PARTICIPANT } from '../../constants.ts'
@@ -165,6 +167,7 @@ import { useActorStore } from '../../stores/actor.ts'
 // FIXME Should use remote not local
 const matterbridgeEnabled = getTalkConfig('local', 'chat', 'matterbridge-enabled')
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
+const supportsPreserve = hasTalkFeature('local', 'preserve-conversation')
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -188,6 +191,7 @@ export default {
 		NcAppSettingsSection,
 		NcCheckboxRadioSwitch,
 		NotificationsSettings,
+		PreserveConversationSettings,
 		RecordingConsentSettings,
 		SipSettings,
 	},
@@ -200,6 +204,7 @@ export default {
 		return {
 			matterbridgeEnabled,
 			supportsArchive,
+			supportsPreserve,
 			token,
 			meetingHeader,
 			actorStore: useActorStore(),
@@ -253,6 +258,10 @@ export default {
 
 		selfIsOwnerOrModerator() {
 			return (this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR)
+		},
+
+		showPreserveConversationSetting() {
+			return supportsPreserve && this.canFullModerate
 		},
 
 		canFullModerate() {

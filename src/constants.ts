@@ -82,6 +82,7 @@ export const CONVERSATION = {
 	ATTRIBUTE: {
 		NONE: 0,
 		VOICE_ROOM: 1,
+		PRESERVE: 2,
 	},
 
 	PRESET: {
@@ -258,6 +259,8 @@ export const MESSAGE = {
 		PHONE_REMOVED: 'phone_removed',
 		POLL_CLOSED: 'poll_closed',
 		POLL_VOTED: 'poll_voted',
+		PRESERVE_CONVERSATION: 'preserve_conversation',
+		PRESERVE_CONVERSATION_OFF: 'preserve_conversation_off',
 		REACTION: 'reaction',
 		REACTION_DELETED: 'reaction_deleted',
 		REACTION_REVOKED: 'reaction_revoked',
