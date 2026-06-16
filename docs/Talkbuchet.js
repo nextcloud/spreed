@@ -337,12 +337,14 @@ function extractFeatureVersion(feature) {
 
 const signalingApiVersion = extractFeatureVersion('signaling')
 const conversationApiVersion = extractFeatureVersion('conversation')
+const guestApiVersion = 1
 
 const talkOcsApiUrl = host + '/ocs/v2.php/apps/spreed/api/'
 const signalingSettingsUrl = talkOcsApiUrl + 'v' + signalingApiVersion + '/signaling/settings'
 const signalingBackendUrl = talkOcsApiUrl + 'v' + signalingApiVersion + '/signaling/backend'
 let joinLeaveRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
 let joinLeaveCallUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/call/' + token
+let setGuestDisplayNameUrl = talkOcsApiUrl + 'v' + guestApiVersion + '/guest/' + token +  '/name'
 
 const publishers = []
 const subscribers = []
@@ -564,6 +566,27 @@ class Signaling extends EventTarget {
 		}
 
 		await fetchOrFail(joinLeaveCallUrl, fetchOptions)
+	}
+
+	async setGuestDisplayName(displayName) {
+		if (user) {
+			console.error('Guest name can not be set when credentials (user and appToken) are set')
+
+			return
+		}
+
+		const fetchOptions = {
+			headers: {
+				'OCS-ApiRequest': true,
+				'Accept': 'application/json',
+			},
+			method: 'POST',
+			body: new URLSearchParams({
+				displayName,
+			}),
+		}
+
+		await fetchOrFail(setGuestDisplayNameUrl, fetchOptions)
 	}
 
 	async leaveCall() {
@@ -1102,6 +1125,7 @@ const setToken = function(tokenToSet) {
 
 	joinLeaveRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
 	joinLeaveCallUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/call/' + token
+	setGuestDisplayNameUrl = talkOcsApiUrl + 'v' + guestApiVersion + '/guest/' + token +  '/name'
 }
 
 const setPublishersAndSubscribersCount = function(publishersCountToSet, subscribersPerPublisherCountToSet) {
@@ -1262,6 +1286,10 @@ const stopVirtualParticipant = async function() {
 	}
 
 	virtualParticipant = null
+}
+
+const setGuestDisplayName = async function(displayName) {
+	virtualParticipant.signaling.setGuestDisplayName(displayName)
 }
 
 function isVirtualParticipantAndDataChannelAvailable() {

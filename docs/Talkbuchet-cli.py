@@ -569,6 +569,7 @@ class TalkbuchetCommon:
         window.getVirtualParticipant = getVirtualParticipant
         window.startVirtualParticipant = startVirtualParticipant
         window.stopVirtualParticipant = stopVirtualParticipant
+        window.setGuestDisplayName = setGuestDisplayName
         window.sendMediaEnabledStateThroughDataChannel = sendMediaEnabledStateThroughDataChannel
         window.sendSpeakingStateThroughDataChannel = sendSpeakingStateThroughDataChannel
         window.sendNickThroughDataChannel = sendNickThroughDataChannel
@@ -829,6 +830,15 @@ class VirtualParticipant(TalkbuchetCommon):
         """
 
         self.seleniumHelper.executeAsync('await stopVirtualParticipant()')
+
+    def setGuestDisplayName(self, displayName):
+        """
+        Sets the display name of the guest.
+
+        :param displayName: the display name to set.
+        """
+
+        self.seleniumHelper.executeAsync('await setGuestDisplayName(\'' + displayName + '\')')
 
     def sendMediaEnabledStateThroughDataChannel(self, mediaType, enabled):
         """
