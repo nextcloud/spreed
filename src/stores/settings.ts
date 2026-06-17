@@ -3,15 +3,17 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { ConversationPreset } from '../types/index.ts'
+import type { ConversationPreset, SignalingSettings } from '../types/index.ts'
 
 import { getCurrentUser } from '@nextcloud/auth'
+import { t } from '@nextcloud/l10n'
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, onScopeDispose, ref } from 'vue'
 import { CHAT_STYLE, CONVERSATION, PRIVACY } from '../constants.ts'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { getPresets } from '../services/conversationsService.ts'
+import { EventBus } from '../services/EventBus.ts'
 import {
 	setAttachmentFolder,
 	setBlurVirtualBackground,
@@ -63,6 +65,21 @@ export const useSettingsStore = defineStore('settings', () => {
 
 	const attachmentFolder = ref<string>(getTalkConfig('local', 'attachments', 'folder') ?? '')
 	const presets = ref<ConversationPreset[]>([])
+
+	const dialInInfo = ref(t('spreed', 'Loading …'))
+
+	EventBus.on('signaling-settings-updated', setDialInInfoFromSettings)
+	onScopeDispose(() => {
+		EventBus.off('signaling-settings-updated', setDialInInfoFromSettings)
+	})
+
+	/**
+	 * @param payload emitted payload (array)
+	 * @param payload."0" received signaling settings upon joining
+	 */
+	function setDialInInfoFromSettings([settings]: [SignalingSettings]) {
+		dialInInfo.value = settings.sipDialinInfo
+	}
 
 	/**
 	 * Update the read status privacy for the user
@@ -251,6 +268,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		liveTranscriptionTargetLanguageId,
 		presets,
 		visiblePresets,
+		dialInInfo,
 
 		fetchPresets,
 		updateSortOrder,
