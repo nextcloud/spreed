@@ -605,6 +605,22 @@
                         }
                     },
                     {
+                        "name": "x-nextcloud-talk-bot-random",
+                        "in": "header",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-bot-signature",
+                        "in": "header",
+                        "description": "SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "OCS-APIRequest",
                         "in": "header",
                         "description": "Required to be true for the API request to pass",
@@ -805,6 +821,22 @@
                         "schema": {
                             "type": "integer",
                             "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-bot-random",
+                        "in": "header",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-bot-signature",
+                        "in": "header",
+                        "description": "SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -1024,6 +1056,22 @@
                         "in": "query",
                         "description": "Reaction to delete",
                         "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-bot-random",
+                        "in": "header",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-bot-signature",
+                        "in": "header",
+                        "description": "SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity",
                         "schema": {
                             "type": "string"
                         }
