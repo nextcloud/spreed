@@ -142,10 +142,10 @@ class SignalingController extends OCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[BruteForceProtection(action: 'talkFederationAccess')]
 	#[OpenAPI(tags: ['internal_signaling', 'external_signaling'])]
-	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-recording-checksum', description: 'Checksum over the request body to verify authenticity from the recording backend', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the room token to verify authenticity from the SIP bridge', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared recording secret, to verify authenticity from the recording backend', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
 	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/signaling/settings', requirements: [
 		'apiVersion' => '(v3)',
 	])]
@@ -304,8 +304,8 @@ class SignalingController extends OCSController {
 	#[OpenAPI(scope: 'backend-signaling')]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSignalingSecret')]
-	#[RequestHeader(name: 'spreed-signaling-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'spreed-signaling-checksum', description: 'Checksum over the request body to verify authenticity from the signaling backend', indirect: true)]
+	#[RequestHeader(name: 'spreed-signaling-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'spreed-signaling-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared signaling secret, to verify authenticity from the signaling backend', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/signaling/backend', requirements: [
 		'apiVersion' => '(v3)',
 	])]

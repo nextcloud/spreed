@@ -426,8 +426,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[OpenAPI]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
 	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/{token}', requirements: [
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
@@ -2260,8 +2260,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
-	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
 	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/room/{token}/pin/{pin}', requirements: [
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
@@ -2315,8 +2315,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
-	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/direct-dial-in', requirements: [
 		'apiVersion' => '(v4)',
 	])]
@@ -2382,8 +2382,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
-	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/verify-dialout', requirements: [
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
@@ -2435,8 +2435,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
-	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/room/{token}/open-dial-in', requirements: [
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
@@ -2480,8 +2480,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
-	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'Checksum over the request body to verify authenticity from the Sipbridge', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
 	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/room/{token}/rejected-dialout', requirements: [
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
