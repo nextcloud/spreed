@@ -184,8 +184,8 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	#[BruteForceProtection(action: 'talkRecordingStatus')]
-	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-recording-checksum', description: 'Checksum over the request body to verify authenticity from the recording backend', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared recording secret, to verify authenticity from the recording backend', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/recording/backend', requirements: [
 		'apiVersion' => '(v1)',
 	])]
@@ -403,8 +403,8 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	#[OpenAPI(scope: 'backend-recording')]
 	#[RequireRoom]
-	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-recording-checksum', description: 'Checksum over the request body to verify authenticity from the recording backend', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared recording secret, to verify authenticity from the recording backend', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/recording/{token}/store', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
