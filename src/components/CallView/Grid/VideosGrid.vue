@@ -184,7 +184,6 @@ import { placeholderImage, placeholderModel, placeholderName, placeholderSharedD
 
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = getTalkConfig('local', 'call', 'grid-limit') || 0
-const videosCapEnforced = getTalkConfig('local', 'call', 'grid-limit-enforced')
 
 // Align with var(--grid-gap) in CallView
 const GRID_GAP = 8
@@ -292,7 +291,6 @@ export default {
 			dummies,
 			screenshotMode,
 			videosCap,
-			videosCapEnforced,
 			callViewStore: useCallViewStore(),
 			actorStore: useActorStore(),
 		}
@@ -362,7 +360,7 @@ export default {
 				return []
 			}
 
-			const slots = (this.videosCap && this.videosCapEnforced) ? Math.min(this.videosCap, this.slots) : this.slots
+			const slots = this.cappedSlots
 
 			// Slice the `videos` array to display the current page of videos
 			if (((this.currentPage + 1) * slots) >= this.orderedVideos.length) {
@@ -461,6 +459,16 @@ export default {
 			return this.isStripe ? this.rows * this.columns : this.rows * this.columns - 1
 		},
 
+		// Number of grid slots, clamped to `videosCap` (`0` means no cap)
+		cappedSlots() {
+			return this.videosCap ? Math.min(this.videosCap, this.slots) : this.slots
+		},
+
+		// Number of videos, clamped to `videosCap` (`0` means no cap)
+		cappedVideosCount() {
+			return this.videosCap ? Math.min(this.videosCap, this.videosCount) : this.videosCount
+		},
+
 		// Grid pages at any given moment
 		numberOfPages() {
 			return Math.ceil(this.videosCount / this.slots)
@@ -500,11 +508,6 @@ export default {
 				gridTemplateColumns: `repeat(${columns}, minmax(${this.dpiAwareMinWidth}px, 1fr))`,
 				gridTemplateRows: `repeat(${rows}, minmax(${this.dpiAwareMinHeight}px, 1fr))`,
 			}
-		},
-
-		// Check if there's an overflow of videos (videos that don't fit in the grid)
-		hasVideoOverflow() {
-			return this.videosCount > this.slots
 		},
 
 		wrapperStyle() {
@@ -669,7 +672,6 @@ export default {
 				minWidth: this.minWidth,
 				minHeight: this.minHeight,
 				videosCap: this.videosCap,
-				videosCapEnforced: this.videosCapEnforced,
 				targetAspectRatio: this.targetAspectRatio,
 				videosCount: this.videosCount,
 				videoWidth: this.videoWidth,
@@ -755,11 +757,7 @@ export default {
 			// video components would occupy only the first 2 slots and be too small.
 			// To solve this, we shrink this 'max grid' we've just created to fit the
 			// number of videos that we have.
-			if (this.videosCap !== 0 && this.videosCount > this.videosCap) {
-				this.shrinkGrid(this.videosCap)
-			} else {
-				this.shrinkGrid(this.videosCount)
-			}
+			this.shrinkGrid(this.cappedVideosCount)
 		},
 
 		// Fine tune the number of rows and columns of the grid
