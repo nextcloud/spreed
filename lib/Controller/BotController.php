@@ -79,15 +79,11 @@ class BotController extends AEnvironmentAwareOCSController {
 	 * @return Bot
 	 * @throws \InvalidArgumentException When the request could not be linked with a bot
 	 */
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed used to generate the request signature')]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'Signature over the request body to verify authenticity')]
-	protected function getBotFromHeaders(string $token, string $message): Bot {
-		$random = $this->request->getHeader('x-nextcloud-talk-bot-random');
+	protected function getBotFromHeaders(string $token, string $message, string $random, string $checksum): Bot {
 		if (empty($random) || strlen($random) < 32) {
 			$this->logger->error('Invalid Random received from bot response');
 			throw new \InvalidArgumentException('Invalid Random received from bot response', Http::STATUS_BAD_REQUEST);
 		}
-		$checksum = $this->request->getHeader('x-nextcloud-talk-bot-signature');
 		if (empty($checksum)) {
 			$this->logger->error('Invalid Signature received from bot response');
 			throw new \InvalidArgumentException('Invalid Signature received from bot response', Http::STATUS_BAD_REQUEST);
@@ -140,13 +136,18 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity')]
 	public function sendMessage(string $token, string $message, string $referenceId = '', int $replyTo = 0, bool $silent = false, string $threadTitle = '', int $threadId = 0): DataResponse {
 		if (trim($message) === '') {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
+		$random = $this->request->getHeader('x-nextcloud-talk-bot-random');
+		$checksum = $this->request->getHeader('x-nextcloud-talk-bot-signature');
+
 		try {
-			$bot = $this->getBotFromHeaders($token, $message);
+			$bot = $this->getBotFromHeaders($token, $message, $random, $checksum);
 		} catch (\InvalidArgumentException $e) {
 			/** @var Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED $status */
 			$status = $e->getCode();
@@ -226,9 +227,14 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity')]
 	public function react(string $token, int $messageId, string $reaction): DataResponse {
+		$random = $this->request->getHeader('x-nextcloud-talk-bot-random');
+		$checksum = $this->request->getHeader('x-nextcloud-talk-bot-signature');
+
 		try {
-			$bot = $this->getBotFromHeaders($token, $reaction);
+			$bot = $this->getBotFromHeaders($token, $reaction, $random, $checksum);
 		} catch (\InvalidArgumentException $e) {
 			/** @var Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED $status */
 			$status = $e->getCode();
@@ -280,9 +286,14 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity')]
 	public function deleteReaction(string $token, int $messageId, string $reaction): DataResponse {
+		$random = $this->request->getHeader('x-nextcloud-talk-bot-random');
+		$checksum = $this->request->getHeader('x-nextcloud-talk-bot-signature');
+
 		try {
-			$bot = $this->getBotFromHeaders($token, $reaction);
+			$bot = $this->getBotFromHeaders($token, $reaction, $random, $checksum);
 		} catch (\InvalidArgumentException $e) {
 			/** @var Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED $status */
 			$status = $e->getCode();
