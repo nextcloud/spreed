@@ -459,7 +459,10 @@ export default {
 			return this.isStripe ? this.rows * this.columns : this.rows * this.columns - 1
 		},
 
-		// Number of grid slots, clamped to `videosCap` (`0` means no cap)
+		// Number of grid slots, clamped to `videosCap` (`0` means no cap).
+		// The cap is primarily enforced by shrinking the grid layout (see
+		// `makeGrid`/`shrinkGrid`); this clamp keeps the "videos per page" math
+		// consistent even before the layout has been recomputed.
 		cappedSlots() {
 			return this.videosCap ? Math.min(this.videosCap, this.slots) : this.slots
 		},
@@ -692,10 +695,9 @@ export default {
 		},
 
 		rebuildGrid() {
-			console.debug('isStripe: ', this.isStripe)
-			console.debug('stripeOpen: ', this.stripeOpen)
-			console.debug('previousGridWidth: ', this.gridWidth, 'previousGridHeight: ', this.gridHeight)
-			console.debug('newGridWidth: ', this.gridWidth, 'newGridHeight: ', this.gridHeight)
+			if (this.devMode) {
+				console.debug('Rebuilding grid', { isStripe: this.isStripe, stripeOpen: this.stripeOpen, gridWidth: this.gridWidth, gridHeight: this.gridHeight })
+			}
 			if (!this.isStripe || this.stripeOpen) {
 				this.$nextTick(this.makeGrid)
 			}
@@ -852,7 +854,7 @@ export default {
 
 		handleClickNext() {
 			this.currentPage++
-			console.debug('handleclicknext, ', 'currentPage ', this.currentPage, 'slots ', this.slot, 'videos.length ', this.videos.length)
+			console.debug('handleclicknext, ', 'currentPage ', this.currentPage, 'slots ', this.slots, 'videos.length ', this.videos.length)
 		},
 
 		handleClickPrevious() {
