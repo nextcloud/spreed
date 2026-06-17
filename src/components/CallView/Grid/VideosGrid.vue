@@ -360,7 +360,7 @@ export default {
 				return []
 			}
 
-			const slots = this.cappedSlots
+			const slots = this.slots
 
 			// Slice the `videos` array to display the current page of videos
 			if (((this.currentPage + 1) * slots) >= this.orderedVideos.length) {
@@ -452,16 +452,15 @@ export default {
 			}
 		},
 
-		// Number of grid slots at any given moment
-		// The local video always takes one slot if the grid view is not shown
-		// as a stripe.
+		// Number of grid slots (videos per page) at any given moment, clamped to
+		// `videosCap` (`0` means no cap). The local video always takes one slot if
+		// the grid view is not shown as a stripe.
+		// The cap is primarily enforced by shrinking the grid layout (see
+		// `makeGrid`/`shrinkGrid`); this clamp keeps the "videos per page" math
+		// consistent even before the layout has been recomputed.
 		slots() {
-			return this.isStripe ? this.rows * this.columns : this.rows * this.columns - 1
-		},
-
-		// Number of grid slots, clamped to `videosCap` (`0` means no cap)
-		cappedSlots() {
-			return this.videosCap ? Math.min(this.videosCap, this.slots) : this.slots
+			const slots = this.isStripe ? this.rows * this.columns : this.rows * this.columns - 1
+			return this.videosCap ? Math.min(this.videosCap, slots) : slots
 		},
 
 		// Number of videos, clamped to `videosCap` (`0` means no cap)
