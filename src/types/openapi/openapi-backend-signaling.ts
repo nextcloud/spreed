@@ -263,9 +263,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "spreed-signaling-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the signaling backend */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared signaling secret, to verify authenticity from the signaling backend */
                 "spreed-signaling-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
