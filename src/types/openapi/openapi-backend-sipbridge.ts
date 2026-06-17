@@ -544,9 +544,9 @@ export interface operations {
             header: {
                 /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
                 "x-nextcloud-federation"?: string;
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the Sipbridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -609,9 +609,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the Sipbridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -688,9 +688,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the Sipbridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -772,9 +772,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the Sipbridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -880,9 +880,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the Sipbridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -979,9 +979,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the Sipbridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -1047,9 +1047,9 @@ export interface operations {
                 options?: string;
             };
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the Sipbridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
