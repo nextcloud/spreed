@@ -691,10 +691,9 @@ export default {
 		},
 
 		rebuildGrid() {
-			console.debug('isStripe: ', this.isStripe)
-			console.debug('stripeOpen: ', this.stripeOpen)
-			console.debug('previousGridWidth: ', this.gridWidth, 'previousGridHeight: ', this.gridHeight)
-			console.debug('newGridWidth: ', this.gridWidth, 'newGridHeight: ', this.gridHeight)
+			if (this.devMode) {
+				console.debug('Rebuilding grid', { isStripe: this.isStripe, stripeOpen: this.stripeOpen, gridWidth: this.gridWidth, gridHeight: this.gridHeight })
+			}
 			if (!this.isStripe || this.stripeOpen) {
 				this.$nextTick(this.makeGrid)
 			}
@@ -851,7 +850,7 @@ export default {
 
 		handleClickNext() {
 			this.currentPage++
-			console.debug('handleclicknext, ', 'currentPage ', this.currentPage, 'slots ', this.slot, 'videos.length ', this.videos.length)
+			console.debug('handleclicknext, ', 'currentPage ', this.currentPage, 'slots ', this.slots, 'videos.length ', this.videos.length)
 		},
 
 		handleClickPrevious() {
