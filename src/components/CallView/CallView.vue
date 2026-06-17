@@ -231,7 +231,7 @@ export default {
 		useWakeLock()
 
 		// For debug and screenshot purposes. Set to true to enable
-		const devMode = ref(false)
+		const devMode = ref(true)
 		provide('CallView:devModeEnabled', devMode)
 		const screenshotMode = ref(false)
 		provide('CallView:screenshotModeEnabled', screenshotMode)

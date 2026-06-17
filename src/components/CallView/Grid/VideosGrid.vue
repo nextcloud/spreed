@@ -42,15 +42,16 @@
 					<div
 						ref="grid"
 						class="grid"
-						:class="{ stripe: isStripe }"
+						:class="{ stripe: isStripe, 'last-row-incomplete': lastRowTileCount !== 0 }"
 						:style="gridStyle"
 						@wheel="debounceHandleWheelEvent">
 						<template v-if="!devMode && !(isLessThanTwoVideos && isStripe)">
 							<EmptyCallView v-if="videos.length === 0 && !isStripe" class="video" :isGrid="true" />
 							<VideoVue
-								v-for="callParticipantModel in displayedVideos"
+								v-for="(callParticipantModel, index) in displayedVideos"
 								:key="callParticipantModel.attributes.peerId"
 								:class="{ video: !isStripe }"
+								:style="lastRowTileStyle(index)"
 								:showVideoOverlay="showVideoOverlay"
 								:token="token"
 								:model="callParticipantModel"
@@ -65,9 +66,10 @@
 						<!-- VideosGrid developer mode -->
 						<template v-if="devMode">
 							<div
-								v-for="key in displayedVideos"
+								v-for="(key, index) in displayedVideos"
 								:key="key"
 								class="dev-mode-video video"
+								:style="lastRowTileStyle(index)"
 								:class="{ 'dev-mode-screenshot': screenshotMode }">
 								<img :alt="placeholderName(key)" :src="placeholderImage(key)">
 								<VideoBottomBar
@@ -82,9 +84,10 @@
 							</h1>
 						</template>
 						<LocalVideo
-							v-if="!isStripe && !isRecording"
+							v-if="showLocalVideo"
 							ref="localVideo"
-							class="video"
+							class="video local-video"
+							:style="lastRowTileStyle(displayedVideos.length)"
 							isGrid
 							:fitVideo="false"
 							:token="token"
@@ -163,7 +166,7 @@
 
 <script>
 import { loadState } from '@nextcloud/initial-state'
-import { t } from '@nextcloud/l10n'
+import { isRTL, t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 import { inject, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -358,18 +361,24 @@ export default {
 		// Array of videos that are being displayed in the grid at any given
 		// moment
 		displayedVideos() {
-			if (!this.slots) {
+			if (this.pageCapacity(0) <= 0) {
 				return []
 			}
 
-			const slots = (this.videosCap && this.videosCapEnforced) ? Math.min(this.videosCap, this.slots) : this.slots
+			// The first page reserves one cell for the local video while the
+			// following pages do not, so the page boundaries are cumulative.
+			let start = 0
+			for (let page = 0; page < this.currentPage; page++) {
+				start += this.pageCapacity(page)
+			}
+			const end = start + this.pageCapacity(this.currentPage)
 
 			// Slice the `videos` array to display the current page of videos
-			if (((this.currentPage + 1) * slots) >= this.orderedVideos.length) {
-				return this.orderedVideos.slice(this.currentPage * slots)
+			if (end >= this.orderedVideos.length) {
+				return this.orderedVideos.slice(start)
 			}
 
-			return this.orderedVideos.slice(this.currentPage * slots, (this.currentPage + 1) * slots)
+			return this.orderedVideos.slice(start, end)
 		},
 
 		isLessThanTwoVideos() {
@@ -454,16 +463,27 @@ export default {
 			}
 		},
 
-		// Number of grid slots at any given moment
-		// The local video always takes one slot if the grid view is not shown
-		// as a stripe.
+		// Number of grid slots on the first page. The local video takes one slot
+		// on the first page if the grid view is not shown as a stripe.
 		slots() {
-			return this.isStripe ? this.rows * this.columns : this.rows * this.columns - 1
+			return this.pageCapacity(0)
 		},
 
 		// Grid pages at any given moment
 		numberOfPages() {
-			return Math.ceil(this.videosCount / this.slots)
+			if (this.pageCapacity(0) <= 0) {
+				return 1
+			}
+
+			// The first page holds one less video than the following pages, as
+			// the local video only occupies a slot on the first page.
+			let remaining = this.videosCount
+			let pages = 0
+			while (remaining > 0) {
+				remaining -= this.pageCapacity(pages)
+				pages++
+			}
+			return Math.max(1, pages)
 		},
 
 		// Hides or displays the `grid-navigation next` button
@@ -505,6 +525,45 @@ export default {
 		// Check if there's an overflow of videos (videos that don't fit in the grid)
 		hasVideoOverflow() {
 			return this.videosCount > this.slots
+		},
+
+		// Whether the local video is rendered as a tile inside the grid.
+		// It is not shown as a stripe, while recording, or on pages other than
+		// the first one (the local video always stays on the first page).
+		showLocalVideo() {
+			return !this.isStripe && !this.isRecording && this.currentPage === 0
+		},
+
+		// Total number of tiles in the grid, including the local video tile.
+		totalTiles() {
+			return this.displayedVideos.length + (this.showLocalVideo ? 1 : 0)
+		},
+
+		// Number of tiles in the last row. `0` means the last row is full and
+		// no centering is needed.
+		lastRowTileCount() {
+			if (this.isStripe || this.columns <= 1) {
+				return 0
+			}
+			return this.totalTiles % this.columns
+		},
+
+		// Index of the first tile that belongs to an incomplete last row.
+		firstLastRowTileIndex() {
+			return this.totalTiles - this.lastRowTileCount
+		},
+
+		// Horizontal offset (in px) needed to center the tiles of an incomplete
+		// last row. The empty slots are split evenly on both sides, which also
+		// yields the half-column shift when a single slot is left empty.
+		lastRowOffset() {
+			if (this.lastRowTileCount === 0) {
+				return 0
+			}
+			const emptySlots = this.columns - this.lastRowTileCount
+			const offset = (emptySlots / 2) * (this.videoWidth + GRID_GAP)
+			// translateX is not direction-aware, so flip it in RTL layouts
+			return isRTL() ? -offset : offset
 		},
 
 		wrapperStyle() {
@@ -879,6 +938,28 @@ export default {
 			return callParticipantModel.attributes.peerId === this.callViewStore.selectedVideoPeerId
 		},
 
+		// Number of videos that fit on the given page. The local video occupies
+		// one cell, but only on the first page (page 0), so subsequent pages can
+		// hold one more remote video.
+		pageCapacity(page) {
+			const cells = this.rows * this.columns
+			if (cells <= 0) {
+				return 0
+			}
+			const localReserved = (!this.isStripe && !this.isRecording && page === 0) ? 1 : 0
+			const capacity = cells - localReserved
+			return this.videosCap ? Math.min(this.videosCap, capacity) : capacity
+		},
+
+		// Shift the tiles of an incomplete last row so that the filled tiles are
+		// centered and the empty space is split evenly on both sides.
+		lastRowTileStyle(index) {
+			if (this.lastRowOffset === 0 || index < this.firstLastRowTileIndex) {
+				return undefined
+			}
+			return { transform: `translateX(${this.lastRowOffset}px)` }
+		},
+
 		isModelWithVideo(callParticipantModel) {
 			return callParticipantModel.attributes.videoAvailable
 				&& (typeof callParticipantModel.attributes.stream === 'object')
@@ -1066,10 +1147,6 @@ export default {
 		min-height: unset;
 		margin: 0;
 	}
-}
-
-.video:last-child {
-	grid-column-end: -1;
 }
 
 .grid-navigation {
