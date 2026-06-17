@@ -471,7 +471,7 @@ export default {
 
 		// Grid pages at any given moment
 		numberOfPages() {
-			return Math.ceil(this.videosCount / this.slots)
+			return Math.ceil(this.videosCount / this.cappedSlots)
 		},
 
 		// Hides or displays the `grid-navigation next` button
@@ -904,7 +904,7 @@ export default {
 			const id = model.attributes.nextcloudSessionId
 
 			// if model is already in the first page, do nothing
-			if (this.orderedVideos.slice(0, this.slots).find((video) => video.attributes.nextcloudSessionId === id)) {
+			if (this.orderedVideos.slice(0, this.cappedSlots).find((video) => video.attributes.nextcloudSessionId === id)) {
 				return
 			}
 
