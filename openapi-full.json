@@ -19513,7 +19513,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed used to generate the request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -19521,7 +19521,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
@@ -27087,7 +27087,7 @@
                     {
                         "name": "talk-recording-random",
                         "in": "header",
-                        "description": "Random seed used to generate the request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -27095,7 +27095,7 @@
                     {
                         "name": "talk-recording-checksum",
                         "in": "header",
-                        "description": "Checksum over the request body to verify authenticity from the recording backend",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared recording secret, to verify authenticity from the recording backend",
                         "schema": {
                             "type": "string"
                         }
@@ -27103,7 +27103,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed used to generate the request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -27111,7 +27111,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "Checksum over the room token to verify authenticity from the SIP bridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
@@ -30006,6 +30006,22 @@
                         }
                     },
                     {
+                        "name": "x-nextcloud-talk-bot-random",
+                        "in": "header",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-bot-signature",
+                        "in": "header",
+                        "description": "SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "OCS-APIRequest",
                         "in": "header",
                         "description": "Required to be true for the API request to pass",
@@ -30206,6 +30222,22 @@
                         "schema": {
                             "type": "integer",
                             "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-bot-random",
+                        "in": "header",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-bot-signature",
+                        "in": "header",
+                        "description": "SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -30425,6 +30457,22 @@
                         "in": "query",
                         "description": "Reaction to delete",
                         "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-bot-random",
+                        "in": "header",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-bot-signature",
+                        "in": "header",
+                        "description": "SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity",
                         "schema": {
                             "type": "string"
                         }
@@ -32295,7 +32343,7 @@
                     {
                         "name": "talk-recording-random",
                         "in": "header",
-                        "description": "Random seed used to generate the request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -32303,7 +32351,7 @@
                     {
                         "name": "talk-recording-checksum",
                         "in": "header",
-                        "description": "Checksum over the request body to verify authenticity from the recording backend",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared recording secret, to verify authenticity from the recording backend",
                         "schema": {
                             "type": "string"
                         }
@@ -32573,7 +32621,7 @@
                     {
                         "name": "talk-recording-random",
                         "in": "header",
-                        "description": "Random seed used to generate the request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -32581,7 +32629,7 @@
                     {
                         "name": "talk-recording-checksum",
                         "in": "header",
-                        "description": "Checksum over the request body to verify authenticity from the recording backend",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared recording secret, to verify authenticity from the recording backend",
                         "schema": {
                             "type": "string"
                         }
@@ -32774,7 +32822,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed used to generate the request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -32782,7 +32830,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
@@ -32982,7 +33030,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed used to generate the request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -32990,7 +33038,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
@@ -33187,7 +33235,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed used to generate the request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -33195,7 +33243,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
@@ -33442,7 +33490,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed used to generate the request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -33450,7 +33498,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
@@ -33661,7 +33709,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed used to generate the request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -33669,7 +33717,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
@@ -33837,7 +33885,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed used to generate the request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -33845,7 +33893,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "Checksum over the request body to verify authenticity from the Sipbridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
@@ -34048,7 +34096,7 @@
                     {
                         "name": "spreed-signaling-random",
                         "in": "header",
-                        "description": "Random seed used to generate the request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -34056,7 +34104,7 @@
                     {
                         "name": "spreed-signaling-checksum",
                         "in": "header",
-                        "description": "Checksum over the request body to verify authenticity from the signaling backend",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared signaling secret, to verify authenticity from the signaling backend",
                         "schema": {
                             "type": "string"
                         }

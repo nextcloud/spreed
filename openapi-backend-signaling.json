@@ -551,7 +551,7 @@
                     {
                         "name": "spreed-signaling-random",
                         "in": "header",
-                        "description": "Random seed used to generate the request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -559,7 +559,7 @@
                     {
                         "name": "spreed-signaling-checksum",
                         "in": "header",
-                        "description": "Checksum over the request body to verify authenticity from the signaling backend",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared signaling secret, to verify authenticity from the signaling backend",
                         "schema": {
                             "type": "string"
                         }
