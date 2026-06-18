@@ -770,10 +770,243 @@
                 }
             }
         },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/{token}/request-upload": {
+            "post": {
+                "operationId": "recording-request-upload",
+                "summary": "Request a temporary upload share for a recording",
+                "description": "Creates a password-protected public link share with create-only permissions on the per-room recording folder, so the recording backend can upload a large recording via the chunked public WebDAV API.\nChunked uploading works the same way as it does for clients, documented in https://docs.nextcloud.com/server/latest/developer_manual/client_apis/WebDAV/chunking.html#chunked-upload-v2\n- Base URL: `public.php/dav/uploads/$SHARETOKEN` - HTTP user: share token - HTTP password: share password\nAfter the upload and assembling is finished call the `/api/{apiVersion}/recording/{token}/store` endpoint {@see self::store()} and provide the file name, to trigger the notification for the moderator.\nRequired capability: `recording-chunked-upload`",
+                "tags": [
+                    "recording"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "owner",
+                                    "fileName"
+                                ],
+                                "properties": {
+                                    "owner": {
+                                        "type": "string",
+                                        "description": "User that will own the recording file."
+                                    },
+                                    "fileName": {
+                                        "type": "string",
+                                        "description": "Suggested file name of the recording. The extension must be one of the allowed recording formats."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "talk-recording-random",
+                        "in": "header",
+                        "description": "Random seed used to generate the request checksum",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "talk-recording-checksum",
+                        "in": "header",
+                        "description": "Checksum over the request body to verify authenticity from the recording backend",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Upload share created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "token",
+                                                        "password",
+                                                        "fileName"
+                                                    ],
+                                                    "properties": {
+                                                        "token": {
+                                                            "type": "string"
+                                                        },
+                                                        "password": {
+                                                            "type": "string"
+                                                        },
+                                                        "fileName": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Creating the upload share is not possible",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Missing permissions to request the upload share",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "type",
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string"
+                                                        },
+                                                        "error": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "code",
+                                                                "message"
+                                                            ],
+                                                            "properties": {
+                                                                "code": {
+                                                                    "type": "string"
+                                                                },
+                                                                "message": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/{token}/store": {
             "post": {
                 "operationId": "recording-store",
                 "summary": "Store the recording",
+                "description": "When a `fileName` is provided the recording is expected to have been uploaded already through a share requested with {@see self::requestUpload()}, and only the post-processing is run. Otherwise the recording is read from the multipart `file` upload.\nRequired capability: `recording-v1`",
                 "tags": [
                     "recording"
                 ],
@@ -797,6 +1030,12 @@
                                         "type": "string",
                                         "nullable": true,
                                         "description": "User that will own the recording file. `null` is actually not allowed and will always result in a \"400 Bad Request\". It's only allowed code-wise to handle requests where the post data exceeded the limits, so we can return a proper error instead of \"500 Internal Server Error\"."
+                                    },
+                                    "fileName": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "File name of the recording uploaded through a previously requested upload share. When provided, no multipart `file` is expected."
                                     }
                                 }
                             }

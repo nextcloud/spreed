@@ -21,6 +21,30 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/{token}/request-upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request a temporary upload share for a recording
+         * @description Creates a password-protected public link share with create-only permissions on the per-room recording folder, so the recording backend can upload a large recording via the chunked public WebDAV API.
+         *     Chunked uploading works the same way as it does for clients, documented in https://docs.nextcloud.com/server/latest/developer_manual/client_apis/WebDAV/chunking.html#chunked-upload-v2
+         *     - Base URL: `public.php/dav/uploads/$SHARETOKEN` - HTTP user: share token - HTTP password: share password
+         *     After the upload and assembling is finished call the `/api/{apiVersion}/recording/{token}/store` endpoint {@see self::store()} and provide the file name, to trigger the notification for the moderator.
+         *     Required capability: `recording-chunked-upload`
+         */
+        post: operations["recording-request-upload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/recording/{token}/store": {
         parameters: {
             query?: never;
@@ -30,7 +54,11 @@ export type paths = {
         };
         get?: never;
         put?: never;
-        /** Store the recording */
+        /**
+         * Store the recording
+         * @description When a `fileName` is provided the recording is expected to have been uploaded already through a share requested with {@see self::requestUpload()}, and only the post-processing is run. Otherwise the recording is read from the multipart `file` upload.
+         *     Required capability: `recording-v1`
+         */
         post: operations["recording-store"];
         delete?: never;
         options?: never;
@@ -367,6 +395,90 @@ export interface operations {
             };
         };
     };
+    "recording-request-upload": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Random seed used to generate the request checksum */
+                "talk-recording-random"?: string;
+                /** @description Checksum over the request body to verify authenticity from the recording backend */
+                "talk-recording-checksum"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description User that will own the recording file. */
+                    owner: string;
+                    /** @description Suggested file name of the recording. The extension must be one of the allowed recording formats. */
+                    fileName: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Upload share created successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                token: string;
+                                password: string;
+                                fileName: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Creating the upload share is not possible */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Missing permissions to request the upload share */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                type: string;
+                                error: {
+                                    code: string;
+                                    message: string;
+                                };
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
     "recording-store": {
         parameters: {
             query?: never;
@@ -389,6 +501,11 @@ export interface operations {
                 "application/json": {
                     /** @description User that will own the recording file. `null` is actually not allowed and will always result in a "400 Bad Request". It's only allowed code-wise to handle requests where the post data exceeded the limits, so we can return a proper error instead of "500 Internal Server Error". */
                     owner?: string | null;
+                    /**
+                     * @description File name of the recording uploaded through a previously requested upload share. When provided, no multipart `file` is expected.
+                     * @default null
+                     */
+                    fileName?: string | null;
                 };
             };
         };

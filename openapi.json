@@ -17774,6 +17774,7 @@
             "post": {
                 "operationId": "recording-start",
                 "summary": "Start the recording",
+                "description": "Required capability: `recording-v1`",
                 "tags": [
                     "recording"
                 ],
@@ -17940,6 +17941,7 @@
             "delete": {
                 "operationId": "recording-stop",
                 "summary": "Stop the recording",
+                "description": "Required capability: `recording-v1`",
                 "tags": [
                     "recording"
                 ],
