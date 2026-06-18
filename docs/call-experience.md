@@ -10,33 +10,39 @@ If a participant enabled their microphone and starts speaking the video quality 
 
 ### Number of video streams
 
-| Streams | Quality   |
-|---------|-----------|
-| < 4     | High      |
-| 4-7     | Medium    |
-| 8-10    | Low       |
-| 11-14   | Very low  |
-| > 14    | Thumbnail |
+| Streams | Quality        |
+|---------|----------------|
+| < 20    | High           |
+| 21-80   | Medium         |
+| 80-119  | Low / Very low |
+| > 120   | Thumbnail      |
 
 ### Number of audio streams
 
 | Streams | Quality   |
 |---------|-----------|
-| < 10    | High      |
-| 10-19   | Medium    |
-| 20-29   | Low       |
-| 30-39   | Very low  |
-| > 40    | Thumbnail |
+| < 40    | High      |
+| 40-79   | Medium    |
+| 80-119  | Low       |
+| 120-199 | Very low  |
+| > 200   | Thumbnail |
 
 ### Video qualities
 
-| Quality   | Max width | Ideal width | Max height | Ideal height | Max frames | Ideal frames |
-|-----------|-----------|-------------|------------|--------------|------------|--------------|
-| High      | -         | 720         | -          | 540          | -          | 30           |
-| Medium    | 640       | 560         | 480        | 420          | 24         | 24           |
-| Low       | 480       | 360         | 320        | 270          | 15         | 15           |
-| Very low  | 320       | -           | 240        | -            | 8          | -            |
-| Thumbnail | 320       | -           | 240        | -            | 1          | -            |
+Frames:
+- Max frames: 30
+- Ideal frames: 30
+- Min frames: 20
+
+| Quality   | Max width | Ideal width | Min width | Max height | Ideal height | Min height |
+|-----------|-----------|-------------|-----------|------------|--------------|------------|
+| High      | -         | -           | 1440      | -          | -            | 1080       |
+| Medium    | -         | -           | 720       | -          | -            | 540        |
+| Low       | 640       | 560         | 480       | 480        | 420          | 320        |
+| Very low  | 480       | 360         | 320       | 320        | 270          | 240        |
+| Thumbnail | 320       | -           | -         | 240        | -            | -          |
+
+*These values were last changes in Nextcloud Talk 24.0.1, 23.0.7 and 22.0.14*
 
 ## Judging the connection quality
 
