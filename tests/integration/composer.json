@@ -5,6 +5,11 @@
 		},
 		"sort-packages": true
 	},
+	"autoload": {
+		"psr-4": {
+			"OCA\\Talk\\Tests\\Integration\\Behat\\GithubActions\\": "github-actions-formatter/"
+		}
+	},
 	"require-dev": {
 		"behat/behat": "^3.31.0",
 		"guzzlehttp/guzzle": "^7.10.6",
