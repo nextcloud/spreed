@@ -30,13 +30,21 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Constants;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\File;
+use OCP\Files\Folder;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
 use OCP\IConfig;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Notification\IManager;
+use OCP\Notification\INotification;
+use OCP\Security\ISecureRandom;
 use OCP\Share\IManager as ShareManager;
+use OCP\Share\IShare;
 use OCP\SystemTag\ISystemTagObjectMapper;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -63,6 +71,8 @@ class RecordingServiceTest extends TestCase {
 	protected ISystemTagObjectMapper&MockObject $systemTagMapper;
 	protected IFactory&MockObject $l10nFactory;
 	protected IUserManager&MockObject $userManager;
+	protected IEventDispatcher&MockObject $eventDispatcher;
+	protected ISecureRandom&MockObject $secureRandom;
 	protected RecordingService $recordingService;
 
 	public function setUp(): void {
@@ -86,6 +96,8 @@ class RecordingServiceTest extends TestCase {
 		$this->systemTagMapper = $this->createMock(ISystemTagObjectMapper::class);
 		$this->l10nFactory = $this->createMock(IFactory::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->eventDispatcher = $this->createMock(IEventDispatcher::class);
+		$this->secureRandom = $this->createMock(ISecureRandom::class);
 
 		$this->recordingService = new RecordingService(
 			$this->mimeTypeDetector,
@@ -106,6 +118,8 @@ class RecordingServiceTest extends TestCase {
 			$this->systemTagMapper,
 			$this->l10nFactory,
 			$this->userManager,
+			$this->eventDispatcher,
+			$this->secureRandom,
 		);
 	}
 
@@ -163,5 +177,221 @@ class RecordingServiceTest extends TestCase {
 
 		$actual = stream_get_contents($this->recordingService->getResourceFromFileArray($file, $room, $participant));
 		$this->assertEquals($expected, $actual);
+	}
+
+	protected function createRoom(string $token = 'token123'): Room&MockObject {
+		$room = $this->createMock(Room::class);
+		$room->method('getToken')->willReturn($token);
+		return $room;
+	}
+
+	protected function createParticipant(Room $room, string $actorId = 'user1'): Participant {
+		$attendee = Attendee::fromRow([
+			'actor_type' => Attendee::ACTOR_USERS,
+			'actor_id' => $actorId,
+		]);
+		return new Participant($room, $attendee, null);
+	}
+
+	protected function mockRecordingFolder(string $owner, string $token): Folder&MockObject {
+		$userFolder = $this->createMock(Folder::class);
+		$this->rootFolder->method('getUserFolder')->with($owner)->willReturn($userFolder);
+		$this->config->method('getRecordingFolder')->with($owner)->willReturn('/Talk');
+
+		$rootRecordingFolder = $this->createMock(Folder::class);
+		$userFolder->method('get')->with('/Talk')->willReturn($rootRecordingFolder);
+		$rootRecordingFolder->method('isShared')->willReturn(false);
+
+		$recordingFolder = $this->createMock(Folder::class);
+		$rootRecordingFolder->method('get')->with($token)->willReturn($recordingFolder);
+
+		return $recordingFolder;
+	}
+
+	protected function mockNotification(): void {
+		$notification = $this->createMock(INotification::class);
+		$notification->method('setApp')->willReturnSelf();
+		$notification->method('setDateTime')->willReturnSelf();
+		$notification->method('setObject')->willReturnSelf();
+		$notification->method('setUser')->willReturnSelf();
+		$notification->method('setSubject')->willReturnSelf();
+		$this->notificationManager->method('createNotification')->willReturn($notification);
+		$this->timeFactory->method('getDateTime')->willReturnCallback(fn () => new \DateTime());
+	}
+
+	public function testRequestUpload(): void {
+		$owner = 'user1';
+		$room = $this->createRoom();
+		$participant = $this->createParticipant($room, $owner);
+		$this->participantService->method('getParticipant')
+			->with($room, $owner)
+			->willReturn($participant);
+
+		$recordingFolder = $this->mockRecordingFolder($owner, 'token123');
+
+		$this->shareManager->method('shareApiAllowLinks')->willReturn(true);
+		$this->shareManager->method('shareApiLinkAllowPublicUpload')->willReturn(true);
+
+		$this->secureRandom->method('generate')->willReturn('s3cr3tp4ssw0rd');
+		$this->timeFactory->method('getDateTime')->willReturnCallback(fn () => new \DateTime());
+
+		$share = $this->createMock(IShare::class);
+		$share->expects($this->once())->method('setNode')->with($recordingFolder);
+		$share->expects($this->once())->method('setShareType')->with(IShare::TYPE_LINK);
+		$share->expects($this->once())->method('setPermissions')->with(Constants::PERMISSION_CREATE);
+		$share->expects($this->once())->method('setPassword')->with('s3cr3tp4ssw0rd');
+		$share->method('getToken')->willReturn('shareToken');
+		$this->shareManager->method('newShare')->willReturn($share);
+		$this->shareManager->expects($this->once())->method('createShare')->with($share)->willReturn($share);
+
+		$this->appConfig->expects($this->once())
+			->method('setAppValueString')
+			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . 'token123/recording.mp4', 'shareToken', true, true);
+
+		// The active-recording marker is cleared once the upload share is created,
+		// so a new recording can start while this one is still being uploaded.
+		$this->appConfig->expects($this->once())
+			->method('deleteAppValue')
+			->with(RecordingService::APPCONFIG_PREFIX . 'token123');
+
+		$result = $this->recordingService->requestUpload($room, $owner, 'recording.mp4');
+
+		$this->assertSame([
+			'token' => 'shareToken',
+			'password' => 's3cr3tp4ssw0rd',
+			'fileName' => 'recording.mp4',
+		], $result);
+	}
+
+	public function testRequestUploadSharingDisabled(): void {
+		$owner = 'user1';
+		$room = $this->createRoom();
+		$participant = $this->createParticipant($room, $owner);
+		$this->participantService->method('getParticipant')
+			->with($room, $owner)
+			->willReturn($participant);
+
+		$this->shareManager->method('shareApiAllowLinks')->willReturn(true);
+		$this->shareManager->method('shareApiLinkAllowPublicUpload')->willReturn(false);
+		$this->shareManager->expects($this->never())->method('createShare');
+
+		$this->expectExceptionMessage('sharing_disabled');
+		$this->recordingService->requestUpload($room, $owner, 'recording.mp4');
+	}
+
+	public function testRequestUploadInvalidExtension(): void {
+		$owner = 'user1';
+		$room = $this->createRoom();
+		$participant = $this->createParticipant($room, $owner);
+		$this->participantService->method('getParticipant')
+			->with($room, $owner)
+			->willReturn($participant);
+
+		$this->shareManager->expects($this->never())->method('createShare');
+
+		$this->expectExceptionMessage('file_extension');
+		$this->recordingService->requestUpload($room, $owner, 'recording.exe');
+	}
+
+	public function testFinishUpload(): void {
+		$owner = 'user1';
+		$room = $this->createRoom();
+		$participant = $this->createParticipant($room, $owner);
+		$this->participantService->method('getParticipant')
+			->with($room, $owner)
+			->willReturn($participant);
+
+		$recordingFolder = $this->mockRecordingFolder($owner, 'token123');
+
+		$file = $this->createMock(File::class);
+		$file->method('getName')->willReturn('name.ogg');
+		$file->method('getMimeType')->willReturn('audio/ogg');
+		$file->method('getSize')->willReturn(1024);
+		$file->method('getId')->willReturn(42);
+		$recordingFolder->method('get')->with('name.ogg')->willReturn($file);
+
+		$this->mockNotification();
+		// Disable both AI tasks to keep the finalize path simple
+		$this->serverConfig->method('getAppValue')->willReturnCallback(
+			fn (string $app, string $key, string $default = '') => $key === 'call_recording_summary' ? 'no' : 'no'
+		);
+
+		// Cleanup of the temporary share
+		$this->appConfig->method('getAppValueString')->willReturn('shareToken');
+		$share = $this->createMock(IShare::class);
+		$this->shareManager->method('getShareByToken')->with('shareToken')->willReturn($share);
+		$this->shareManager->expects($this->once())->method('deleteShare')->with($share);
+		// Only the temporary upload share's tracking value is cleared here; the
+		// active-recording marker was already removed in requestUpload().
+		$this->appConfig->expects($this->once())->method('deleteAppValue')
+			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . 'token123/name.ogg');
+
+		$this->notificationManager->expects($this->once())->method('notify');
+
+		$this->recordingService->finishUpload($room, $owner, 'name.ogg');
+	}
+
+	public function testFinishUploadMissingFile(): void {
+		$owner = 'user1';
+		$room = $this->createRoom();
+		$participant = $this->createParticipant($room, $owner);
+		$this->participantService->method('getParticipant')
+			->with($room, $owner)
+			->willReturn($participant);
+
+		$recordingFolder = $this->mockRecordingFolder($owner, 'token123');
+		$recordingFolder->method('get')->with('name.ogg')->willThrowException(new NotFoundException());
+
+		$this->appConfig->method('getAppValueString')->willReturn('');
+
+		$this->expectExceptionMessage('invalid_file');
+		$this->recordingService->finishUpload($room, $owner, 'name.ogg');
+	}
+
+	public function testFinishUploadEmptyFile(): void {
+		$owner = 'user1';
+		$room = $this->createRoom();
+		$participant = $this->createParticipant($room, $owner);
+		$this->participantService->method('getParticipant')
+			->with($room, $owner)
+			->willReturn($participant);
+
+		$recordingFolder = $this->mockRecordingFolder($owner, 'token123');
+
+		$file = $this->createMock(File::class);
+		$file->method('getSize')->willReturn(0);
+		$file->expects($this->once())->method('delete');
+		$recordingFolder->method('get')->with('name.ogg')->willReturn($file);
+
+		$this->appConfig->method('getAppValueString')->willReturn('');
+
+		$this->expectExceptionMessage('empty_file');
+		$this->recordingService->finishUpload($room, $owner, 'name.ogg');
+	}
+
+	public function testFinishUploadInvalidFormat(): void {
+		$owner = 'user1';
+		$room = $this->createRoom();
+		$participant = $this->createParticipant($room, $owner);
+		$this->participantService->method('getParticipant')
+			->with($room, $owner)
+			->willReturn($participant);
+
+		$recordingFolder = $this->mockRecordingFolder($owner, 'token123');
+
+		$file = $this->createMock(File::class);
+		$file->method('getName')->willReturn('name.ogg');
+		$file->method('getMimeType')->willReturn('image/svg+xml');
+		$file->method('getSize')->willReturn(1024);
+		$file->expects($this->once())->method('delete');
+		$recordingFolder->method('get')->with('name.ogg')->willReturn($file);
+
+		$this->appConfig->method('getAppValueString')->willReturn('shareToken');
+		$share = $this->createMock(IShare::class);
+		$this->shareManager->method('getShareByToken')->willReturn($share);
+		$this->shareManager->expects($this->once())->method('deleteShare')->with($share);
+
+		$this->expectExceptionMessage('file_mimetype');
+		$this->recordingService->finishUpload($room, $owner, 'name.ogg');
 	}
 }

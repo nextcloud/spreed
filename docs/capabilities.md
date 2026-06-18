@@ -227,3 +227,6 @@
 * `private-reply` - Whether clients can link the original message to a private reply in one-to-one conversations
 * `config => attachments => conversation-subfolders` (local) - Whether per-conversation subfolders are used for Talk attachments; when `true` files must be uploaded to `Talk/<ConversationName>-<token>/<DisplayName>-<uid>/` before calling the attachment endpoint
 * `conversation-tags` (local) - Whether the user can create custom tags to organize conversations in the sidebar
+
+## 24.0.1
+* `recording-chunked-upload` (local) - Whether the recording backend can request a temporary upload share to upload large recordings via chunked public WebDAV before finishing with the store endpoint
