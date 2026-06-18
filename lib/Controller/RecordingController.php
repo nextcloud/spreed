@@ -344,6 +344,8 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	/**
 	 * Start the recording
 	 *
+	 * Required capability: `recording-v1`
+	 *
 	 * @param int $status Type of the recording
 	 * @psalm-param Room::RECORDING_* $status
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
@@ -369,6 +371,8 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	/**
 	 * Stop the recording
 	 *
+	 * Required capability: `recording-v1`
+	 *
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Recording stopped successfully
@@ -390,9 +394,78 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
+	 * Request a temporary upload share for a recording
+	 *
+	 * Creates a password-protected public link share with create-only permissions
+	 * on the per-room recording folder, so the recording backend can upload a
+	 * large recording via the chunked public WebDAV API.
+	 *
+	 * Chunked uploading works the same way as it does for clients, documented in
+	 * https://docs.nextcloud.com/server/latest/developer_manual/client_apis/WebDAV/chunking.html#chunked-upload-v2
+	 *
+	 * - Base URL: `public.php/dav/uploads/$SHARETOKEN`
+	 * - HTTP user: share token
+	 * - HTTP password: share password
+	 *
+	 * After the upload and assembling is finished call the
+	 * `/api/{apiVersion}/recording/{token}/store` endpoint {@see self::store()}
+	 * and provide the file name, to trigger the notification for the moderator.
+	 *
+	 * Required capability: `recording-chunked-upload`
+	 *
+	 * @param string $owner User that will own the recording file.
+	 * @param string $fileName Suggested file name of the recording. The extension must be one of the allowed recording formats.
+	 * @return DataResponse<Http::STATUS_OK, array{token: string, password: string, fileName: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED, array{type: string, error: array{code: string, message: string}}, array{}>
+	 *
+	 * 200: Upload share created successfully
+	 * 400: Creating the upload share is not possible
+	 * 401: Missing permissions to request the upload share
+	 */
+	#[PublicPage]
+	#[BruteForceProtection(action: 'talkRecordingSecret')]
+	#[OpenAPI(scope: 'backend-recording')]
+	#[RequireRoom]
+	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed used to generate the request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-checksum', description: 'Checksum over the request body to verify authenticity from the recording backend', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/recording/{token}/request-upload', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function requestUpload(string $owner, string $fileName): DataResponse {
+		$data = $this->room->getToken();
+		if (!$this->validateBackendRequest($data)) {
+			$response = new DataResponse([
+				'type' => 'error',
+				'error' => [
+					'code' => 'invalid_request',
+					'message' => 'The request could not be authenticated.',
+				],
+			], Http::STATUS_UNAUTHORIZED);
+			$response->throttle(['action' => 'talkRecordingSecret']);
+			return $response;
+		}
+
+		try {
+			$result = $this->recordingService->requestUpload($this->getRoom(), $owner, $fileName);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+		return new DataResponse($result);
+	}
+
+	/**
 	 * Store the recording
 	 *
+	 * When a `fileName` is provided the recording is expected to have been
+	 * uploaded already through a share requested with
+	 * {@see self::requestUpload()}, and only the post-processing is run.
+	 * Otherwise the recording is read from the multipart `file` upload.
+	 *
+	 *
+	 * Required capability: `recording-v1`
+	 *
 	 * @param ?string $owner User that will own the recording file. `null` is actually not allowed and will always result in a "400 Bad Request". It's only allowed code-wise to handle requests where the post data exceeded the limits, so we can return a proper error instead of "500 Internal Server Error".
+	 * @param ?string $fileName File name of the recording uploaded through a previously requested upload share. When provided, no multipart `file` is expected.
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED, array{type: string, error: array{code: string, message: string}}, array{}>
 	 *
 	 * 200: Recording stored successfully
@@ -409,7 +482,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function store(?string $owner): DataResponse {
+	public function store(?string $owner, ?string $fileName = null): DataResponse {
 		$data = $this->room->getToken();
 		if (!$this->validateBackendRequest($data)) {
 			$response = new DataResponse([
@@ -434,8 +507,12 @@ class RecordingController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$file = $this->request->getUploadedFile('file');
-			$this->recordingService->store($this->getRoom(), $owner, $file);
+			if ($fileName !== null) {
+				$this->recordingService->finishUpload($this->getRoom(), $owner, $fileName);
+			} else {
+				$file = $this->request->getUploadedFile('file');
+				$this->recordingService->store($this->getRoom(), $owner, $file);
+			}
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
