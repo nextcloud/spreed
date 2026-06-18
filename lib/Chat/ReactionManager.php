@@ -123,7 +123,7 @@ class ReactionManager {
 		$comment->setVerb(ChatManager::VERB_REACTION_DELETED);
 		$this->commentsManager->save($comment);
 
-		$this->chatManager->addSystemMessage(
+		$revokedComment = $this->chatManager->addSystemMessage(
 			$chat,
 			null,
 			$actorType,
@@ -136,7 +136,7 @@ class ReactionManager {
 			true
 		);
 
-		$event = new ReactionRemovedEvent($chat, $parentComment, $actorType, $actorId, $actorDisplayName, $reaction, $comment);
+		$event = new ReactionRemovedEvent($chat, $parentComment, $actorType, $actorId, $actorDisplayName, $reaction, $revokedComment);
 		$this->dispatcher->dispatchTyped($event);
 
 		return $comment;
