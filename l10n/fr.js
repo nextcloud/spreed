@@ -1852,7 +1852,7 @@ OC.L10N.register(
     "Either there are no open conversations or you joined all of them." : "Soit il n'y a pas de conversations publiques, soit vous les avez toutes rejointes.",
     "Check spelling or use complete words." : "Vérifier l'orthographe ou utiliser les mots complets.",
     "Search conversations or users" : "Rechercher des conversations ou des utilisateurs",
-    "Select conversation" : "Sélectionnez la conversation",
+    "Select conversation" : "Sélectionner la conversation",
     "Number length is not valid" : "La longueur du numéro est invalide",
     "Region code is not valid" : "L'indicatif téléphonique est invalide",
     "Number length is too short" : "La longueur du numéro est trop courte",
