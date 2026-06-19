@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 default:
+  extensions:
+    OCA\Talk\Tests\Integration\Behat\GithubActions\GithubActionsExtension: ~
   formatters:
     junit:
       output_path: '%paths.base%/../output'
