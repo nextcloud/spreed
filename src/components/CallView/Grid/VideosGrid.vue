@@ -184,7 +184,6 @@ import { placeholderImage, placeholderModel, placeholderName, placeholderSharedD
 
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = getTalkConfig('local', 'call', 'grid-limit') || 0
-const videosCapEnforced = getTalkConfig('local', 'call', 'grid-limit-enforced')
 
 // Align with var(--grid-gap) in CallView
 const GRID_GAP = 8
@@ -292,7 +291,6 @@ export default {
 			dummies,
 			screenshotMode,
 			videosCap,
-			videosCapEnforced,
 			callViewStore: useCallViewStore(),
 			actorStore: useActorStore(),
 		}
@@ -362,7 +360,7 @@ export default {
 				return []
 			}
 
-			const slots = (this.videosCap && this.videosCapEnforced) ? Math.min(this.videosCap, this.slots) : this.slots
+			const slots = this.slots
 
 			// Slice the `videos` array to display the current page of videos
 			if (((this.currentPage + 1) * slots) >= this.orderedVideos.length) {
@@ -454,11 +452,20 @@ export default {
 			}
 		},
 
-		// Number of grid slots at any given moment
-		// The local video always takes one slot if the grid view is not shown
-		// as a stripe.
+		// Number of grid slots (videos per page) at any given moment, clamped to
+		// `videosCap` (`0` means no cap). The local video always takes one slot if
+		// the grid view is not shown as a stripe.
+		// The cap is primarily enforced by shrinking the grid layout (see
+		// `makeGrid`/`shrinkGrid`); this clamp keeps the "videos per page" math
+		// consistent even before the layout has been recomputed.
 		slots() {
-			return this.isStripe ? this.rows * this.columns : this.rows * this.columns - 1
+			const slots = this.isStripe ? this.rows * this.columns : this.rows * this.columns - 1
+			return this.videosCap ? Math.min(this.videosCap, slots) : slots
+		},
+
+		// Number of videos, clamped to `videosCap` (`0` means no cap)
+		cappedVideosCount() {
+			return this.videosCap ? Math.min(this.videosCap, this.videosCount) : this.videosCount
 		},
 
 		// Grid pages at any given moment
@@ -500,11 +507,6 @@ export default {
 				gridTemplateColumns: `repeat(${columns}, minmax(${this.dpiAwareMinWidth}px, 1fr))`,
 				gridTemplateRows: `repeat(${rows}, minmax(${this.dpiAwareMinHeight}px, 1fr))`,
 			}
-		},
-
-		// Check if there's an overflow of videos (videos that don't fit in the grid)
-		hasVideoOverflow() {
-			return this.videosCount > this.slots
 		},
 
 		wrapperStyle() {
@@ -669,7 +671,6 @@ export default {
 				minWidth: this.minWidth,
 				minHeight: this.minHeight,
 				videosCap: this.videosCap,
-				videosCapEnforced: this.videosCapEnforced,
 				targetAspectRatio: this.targetAspectRatio,
 				videosCount: this.videosCount,
 				videoWidth: this.videoWidth,
@@ -690,10 +691,9 @@ export default {
 		},
 
 		rebuildGrid() {
-			console.debug('isStripe: ', this.isStripe)
-			console.debug('stripeOpen: ', this.stripeOpen)
-			console.debug('previousGridWidth: ', this.gridWidth, 'previousGridHeight: ', this.gridHeight)
-			console.debug('newGridWidth: ', this.gridWidth, 'newGridHeight: ', this.gridHeight)
+			if (this.devMode) {
+				console.debug('Rebuilding grid', { isStripe: this.isStripe, stripeOpen: this.stripeOpen, gridWidth: this.gridWidth, gridHeight: this.gridHeight })
+			}
 			if (!this.isStripe || this.stripeOpen) {
 				this.$nextTick(this.makeGrid)
 			}
@@ -755,11 +755,7 @@ export default {
 			// video components would occupy only the first 2 slots and be too small.
 			// To solve this, we shrink this 'max grid' we've just created to fit the
 			// number of videos that we have.
-			if (this.videosCap !== 0 && this.videosCount > this.videosCap) {
-				this.shrinkGrid(this.videosCap)
-			} else {
-				this.shrinkGrid(this.videosCount)
-			}
+			this.shrinkGrid(this.cappedVideosCount)
 		},
 
 		// Fine tune the number of rows and columns of the grid
@@ -854,7 +850,7 @@ export default {
 
 		handleClickNext() {
 			this.currentPage++
-			console.debug('handleclicknext, ', 'currentPage ', this.currentPage, 'slots ', this.slot, 'videos.length ', this.videos.length)
+			console.debug('handleclicknext, ', 'currentPage ', this.currentPage, 'slots ', this.slots, 'videos.length ', this.videos.length)
 		},
 
 		handleClickPrevious() {
