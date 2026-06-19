@@ -161,6 +161,8 @@ echo ''
 echo -e "\033[0;36m#\033[0m"
 echo -e "\033[0;36m# Optimizing configuration\033[0m"
 echo -e "\033[0;36m#\033[0m"
+
+EXCLUDE_TAGS=''
 for OCC in occ_host occ_remote; do
 	# Disable bruteforce protection because the integration tests do trigger them
 	${OCC} config:system:set auth.bruteforce.protection.enabled --value false --type bool
@@ -172,6 +174,10 @@ for OCC in occ_host occ_remote; do
 	${OCC} config:system:set debug --value true --type bool
 	# Use faster password hashing
 	${OCC} config:system:set hashing_default_password --value=true --type=bool
+
+	# Build skip list
+	MAJOR_VERSION=$(${OCC} status | grep -Eo 'version: ([0-9]+).' | grep -Eo '[0-9]+')
+	EXCLUDE_TAGS="${EXCLUDE_TAGS} --tags=~skip${MAJOR_VERSION}"
 done
 
 # Restore default config dir to local server in case it is used from the tests
@@ -186,7 +192,15 @@ echo -e "\033[1;33m# ██╔══██╗██║   ██║██║╚�
 echo -e "\033[1;33m# ██║  ██║╚██████╔╝██║ ╚████║       ██║   ███████╗███████║   ██║   ███████║\033[0m"
 echo -e "\033[1;33m# ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝       ╚═╝   ╚══════╝╚══════╝   ╚═╝   ╚══════╝\033[0m"
 echo -e "\033[1;33m#\033[0m"
-${APP_INTEGRATION_DIR}/vendor/bin/behat --colors -f junit -f pretty $1 $2
+# When running on GitHub Actions, additionally emit failures as workflow
+# error annotations (https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#setting-an-error-message)
+# while keeping the regular junit and pretty output intact.
+FORMATTERS="-f junit -f pretty"
+if [ "$GITHUB_ACTIONS" = "true" ]; then
+	FORMATTERS="${FORMATTERS} -f github_actions"
+fi
+echo ${APP_INTEGRATION_DIR}/vendor/bin/behat --colors ${FORMATTERS} ${EXCLUDE_TAGS} $1 $2
+${APP_INTEGRATION_DIR}/vendor/bin/behat --colors ${FORMATTERS} ${EXCLUDE_TAGS} $1 $2
 RESULT=$?
 
 echo ''
