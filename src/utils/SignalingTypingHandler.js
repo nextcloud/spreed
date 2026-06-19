@@ -5,6 +5,7 @@
 
 import { useActorStore } from '../stores/actor.ts'
 import pinia from '../stores/pinia.ts'
+import { useSignalingStateStore } from '../stores/signalingState.ts'
 import { useTokenStore } from '../stores/token.ts'
 import SignalingParticipantList from './SignalingParticipantList.js'
 
@@ -15,12 +16,10 @@ import SignalingParticipantList from './SignalingParticipantList.js'
  *
  * It is expected that the typing status of the current participant will be
  * modified only when the current conversation is joined.
- *
- * @param {object} store the Vuex store
  */
-export default function SignalingTypingHandler(store) {
-	this._store = store
+export default function SignalingTypingHandler() {
 	this._actorStore = useActorStore(pinia)
+	this._signalingStateStore = useSignalingStateStore(pinia)
 	this._tokenStore = useTokenStore(pinia)
 
 	this._signaling = null
@@ -92,10 +91,10 @@ SignalingTypingHandler.prototype = {
 			})
 		}
 
-		this._store.dispatch('setTyping', {
+		this._signalingStateStore.setTyping({
 			token: this._tokenStore.token,
 			sessionId: this._actorStore.sessionId,
-			typing,
+			isTyping: typing,
 		})
 	},
 
@@ -109,15 +108,15 @@ SignalingTypingHandler.prototype = {
 			return
 		}
 
-		this._store.dispatch('setTyping', {
+		this._signalingStateStore.setTyping({
 			token: this._tokenStore.token,
 			sessionId: participant.nextcloudSessionId,
-			typing: data.type === 'startedTyping',
+			isTyping: data.type === 'startedTyping',
 		})
 	},
 
 	_handleParticipantsJoined(SignalingParticipantList, participants) {
-		if (!this._store.getters.actorIsTyping) {
+		if (!this._signalingStateStore.isSelfActorTyping(this._tokenStore.token)) {
 			return
 		}
 
@@ -131,10 +130,10 @@ SignalingTypingHandler.prototype = {
 
 	_handleParticipantsLeft(SignalingParticipantList, participants) {
 		for (const participant of participants) {
-			this._store.dispatch('setTyping', {
+			this._signalingStateStore.setTyping({
 				token: this._tokenStore.token,
 				sessionId: participant.nextcloudSessionId,
-				typing: false,
+				isTyping: false,
 			})
 		}
 	},
