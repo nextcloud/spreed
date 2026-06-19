@@ -21,6 +21,7 @@
 | `sample`                | No             | Room is a sample conversation                                                | User ID the sample                                                                |
 | `event`                 | Yes            | Event conversation created via the calendar                                  | Start and end unix timestamp of the event concatenated by pound sign: `start#end` |
 | `extended_conversation` | Yes            | Room is created from another conversation (e.g. adding a participant to 1-1) | Token of previous conversation                                                    |
+| `external_call`         | Yes            | Room whose calls are handled by an external video service (see [External Call Service](external-call-service.md)) | Meeting/room identifier on the external service side |
 
 ### Read-only states
 * `0` Read-write
