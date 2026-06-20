@@ -80,7 +80,7 @@
     "vuex": "^4.1.0",
     "wasm-check": "^3.0.2",
     "webdav": "^5.10.0",
-    "webrtc-adapter": "^9.0.5",
+    "webrtc-adapter": "^9.0.6",
     "webrtcsupport": "^2.2.0",
     "wildemitter": "^1.2.1"
   },
