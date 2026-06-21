@@ -1,64 +1,16 @@
 diff --git a/.github/workflows/dependabot-approve-merge.yml b/.github/workflows/dependabot-approve-merge.yml
-index e4fa4e58ff..a1127d8826 100644
+index 68f8ca09c2..3d34b9735a 100644
 --- a/.github/workflows/dependabot-approve-merge.yml
 +++ b/.github/workflows/dependabot-approve-merge.yml
-@@ -26,6 +26,9 @@ jobs:
-   auto-approve-merge:
-     if: github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'renovate[bot]'
-     runs-on: ubuntu-latest-low
-+    env:
+@@ -30,9 +30,9 @@ jobs:
+       # env variable for maintainers: 'true' allows to auto-merge 1.0.2 -> 2.0.0
+       ALLOW_MAJOR: false
+       # env variable for maintainers: 'true' allows to auto-merge 1.0.2 -> 1.1.0
+-      ALLOW_MINOR: true
 +      ALLOW_MINOR: false
+       # env variable for maintainers: RegExp string to ignore some dependencies from auto-approve and auto-merge
+-      IGNORE_PATTERN: ''
 +      IGNORE_PATTERN: '(webrtc-adapter|\@nextcloud\/vue)'
      permissions:
-       # for hmarr/auto-approve-action to approve PRs
+       # for auto-approve step to work
        pull-requests: write
-@@ -42,20 +42,43 @@ jobs:
-           echo 'Can not approve PRs from forks'
-           exit 1
-
--      - uses: mdecoleman/pr-branch-name@55795d86b4566d300d237883103f052125cc7508 # v3.0.0
--        id: branchname
-+      - name: Dependabot metadata
-+        if: github.event.pull_request.user.login == 'dependabot[bot]'
-+        id: metadata
-+        uses: dependabot/fetch-metadata@ffa630c65fa7e0ecfa0625b5ceda64399aea1b36 # v3.0.0
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          github-token: ${{ secrets.GITHUB_TOKEN }}
-+
-+      - name: Check allowed dependency update
-+        if: github.event.pull_request.user.login == 'dependabot[bot]'
-+        id: validate
-+        env:
-+          IGNORE_PATTERN: ${{ env.IGNORE_PATTERN }}
-+          DEPENDENCY_NAMES: ${{ steps.metadata.outputs.dependency-names }}
-+        run: |
-+          if [[ -z ${IGNORE_PATTERN} ]]; then
-+              echo "ignore=false" >> "$GITHUB_OUTPUT"
-+          elif [[ -z ${DEPENDENCY_NAMES} ]]; then
-+              echo "ignore=false" >> "$GITHUB_OUTPUT"
-+          elif [[ ${DEPENDENCY_NAMES} =~ ${IGNORE_PATTERN} ]]; then
-+              echo "ignore=true" >> "$GITHUB_OUTPUT"
-+          fi
-
-       # GitHub actions bot approve
--      - uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
--        if: startsWith(steps.branchname.outputs.branch, 'dependabot/')
-+      - name: Auto approve
-+        id: auto_approve
-+        uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
-+        if: ${{ github.event.pull_request.user.login == 'dependabot[bot]'
-+            && steps.validate.outputs.ignore != 'true'
-+            && ((fromJSON(env.ALLOW_MINOR) && steps.metadata.outputs.update-type == 'version-update:semver-minor')
-+                || steps.metadata.outputs.update-type == 'version-update:semver-patch')
-+            }}
-         with:
-           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-       # Enable GitHub auto merge
-       - name: Auto merge
-         uses: alexwilson/enable-github-automerge-action@56e3117d1ae1540309dc8f7a9f2825bc3c5f06ff # v2.0.0
--        if: startsWith(steps.branchname.outputs.branch, 'dependabot/')
-+        if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && steps.auto_approve.conclusion == 'success' }}
-         with:
-           github-token: ${{ secrets.GITHUB_TOKEN }}
