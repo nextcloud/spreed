@@ -21,6 +21,9 @@ jobs:
   update-nextcloud-ocp:
     runs-on: ubuntu-latest
 
+    # Only allowed to be run on nextcloud repositories
+    if: ${{ github.repository_owner == 'nextcloud' }}
+
     strategy:
       fail-fast: false
       matrix:

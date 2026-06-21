@@ -27,7 +27,11 @@ jobs:
     if: github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest-low
     env:
+      # env variable for maintainers: 'true' allows to auto-merge 1.0.2 -> 2.0.0
+      ALLOW_MAJOR: false
+      # env variable for maintainers: 'true' allows to auto-merge 1.0.2 -> 1.1.0
       ALLOW_MINOR: false
+      # env variable for maintainers: RegExp string to ignore some dependencies from auto-approve and auto-merge
       IGNORE_PATTERN: '(webrtc-adapter|\@nextcloud\/vue)'
     permissions:
       # for auto-approve step to work
@@ -42,16 +46,21 @@ jobs:
           echo 'Can not approve PRs from forks'
           exit 1
 
+      - uses: mdecoleman/pr-branch-name@55795d86b4566d300d237883103f052125cc7508 # v3.0.0
+        id: branchname
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Dependabot metadata
-        if: github.event.pull_request.user.login == 'dependabot[bot]'
         id: metadata
+        if: startsWith(steps.branchname.outputs.branch, 'dependabot/')
         uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check allowed dependency update
-        if: github.event.pull_request.user.login == 'dependabot[bot]'
+      - name: Check for ignored dependencies in the PR
         id: validate
+        if: startsWith(steps.branchname.outputs.branch, 'dependabot/')
         env:
           IGNORE_PATTERN: ${{ env.IGNORE_PATTERN }}
           DEPENDENCY_NAMES: ${{ steps.metadata.outputs.dependency-names }}
@@ -64,21 +73,29 @@ jobs:
               echo "ignore=true" >> "$GITHUB_OUTPUT"
           fi
 
-      # GitHub actions bot approve
-      - name: Auto approve
+      - name: GitHub actions bot approve
         id: auto_approve
-        uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
-        if: ${{ github.event.pull_request.user.login == 'dependabot[bot]'
-            && steps.validate.outputs.ignore != 'true'
-            && ((fromJSON(env.ALLOW_MINOR) && steps.metadata.outputs.update-type == 'version-update:semver-minor')
-                || steps.metadata.outputs.update-type == 'version-update:semver-patch')
-            }}
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{
+          startsWith(steps.branchname.outputs.branch, 'dependabot/')
+          && steps.validate.outputs.ignore != 'true'
+          }}
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Enable GitHub auto merge
       - name: Auto merge
         uses: alexwilson/enable-github-automerge-action@2c32e18a76e0726ffe7a573bfff2d42a20885126 # 3.0.0
-        if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && steps.auto_approve.conclusion == 'success' }}
+        if: ${{
+          startsWith(steps.branchname.outputs.branch, 'dependabot/')
+          && steps.auto_approve.conclusion == 'success'
+          && (github.event.action == 'opened' || github.event.action == 'reopened')
+          && (
+          steps.metadata.outputs.update-type == 'version-update:semver-patch'
+          || (fromJSON(env.ALLOW_MINOR) && steps.metadata.outputs.update-type == 'version-update:semver-minor')
+          || (fromJSON(env.ALLOW_MAJOR) && steps.metadata.outputs.update-type == 'version-update:semver-major')
+          )
+          }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
