@@ -30,9 +30,9 @@ jobs:
       # env variable for maintainers: 'true' allows to auto-merge 1.0.2 -> 2.0.0
       ALLOW_MAJOR: false
       # env variable for maintainers: 'true' allows to auto-merge 1.0.2 -> 1.1.0
-      ALLOW_MINOR: true
+      ALLOW_MINOR: false
       # env variable for maintainers: RegExp string to ignore some dependencies from auto-approve and auto-merge
-      IGNORE_PATTERN: ''
+      IGNORE_PATTERN: '(webrtc-adapter|\@nextcloud\/vue)'
     permissions:
       # for auto-approve step to work
       pull-requests: write
