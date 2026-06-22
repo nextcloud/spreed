@@ -2020,7 +2020,7 @@
     "Bot user name" : "Boto vartotojo vardas",
     "Bot API key" : "Boto API raktas",
     "Zulip channel" : "„Zulip“ kanalas",
-    "API token" : "API prieigos raktas",
+    "API token" : "API žymuo",
     "Slack channel" : "Slack kanalas",
     "Server ID or name" : "Serverio ID ar pavadinimas",
     "Channel ID (prefixed with \"ID:\") or name" : "Kanalo ID (su prefiksu „ID:“) arba pavadinimas",
