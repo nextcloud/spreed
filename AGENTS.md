@@ -38,8 +38,8 @@ Comply with the [AI Contribution Policy](https://github.com/nextcloud/.github/bl
 
 **Frontend:** Vue **3.5** + TypeScript, built with **rspack** (no Vite). State: **Pinia** (`src/stores/`, target) and legacy **Vuex 4** (`src/store/`, being phased out). UI components from `@nextcloud/vue` only.
 - Setup: `npm ci`. Build: `npm run build` (prod), `npm run dev`/`npm run watch`.
-- Checks: `npm run lint:fix`, `npm run stylelint`, `npm run ts:check`, `npm run test` (vitest + @vue/test-utils v2; no jest).
-- OCS/API types generated via `npm run ts:generate` (openapi-typescript) into `src/types/openapi/` — regenerate, don't hand-edit.
+- Checks: `npm run lint:fix`, `npm run stylelint:fix`, `npm run ts:check`.
+- OCS/API types generated via `npm run ts:generate` (also triggered by  `composer openapi`) into `src/types/openapi/` — regenerate, don't hand-edit.
 - No compat mode, mixins, `mapGetters`/`$set`/`::v-deep` — removed in the Vue 2→3 migration; don't reintroduce.
 
 ## Running tests
@@ -47,7 +47,7 @@ Comply with the [AI Contribution Policy](https://github.com/nextcloud/.github/bl
 - PHP unit (`tests/php/`): `composer run test:unit`. Single file: `composer run test:unit -- tests/php/Service/AvatarServiceTest.php`; filter: `composer run test:unit -- --filter="testMethodName"`.
 - `tests/php/bootstrap.php` requires `../../../../lib/base.php`: the suite only runs when this repo lives at `<nextcloud-server>/apps/spreed`. **If you cannot run a suite, say so — don't claim it passes.** `composer lint`/`composer psalm` run standalone.
 - Integration (Behat, `tests/integration/`): `run.sh` against a local server, or `run-docker.sh`.
-- Frontend: `npm run test`; single file via `npm run test -- <path>`.
+- Frontend: `npm run test` (vitest + @vue/test-utils v2; no jest); single file via `npm run test -- <path>`.
 
 ## License headers
 
@@ -66,7 +66,7 @@ Adapt the comment style to the file type; files that can't carry a header (binar
 
 - Do **not** commit or push unless explicitly asked. Leave changes in the working dir, summarize, and suggest a commit message.
 - Never commit/push to `main` — use a `type/issue-or-noid/short-description` branch (e.g. `fix/12345/handle-mcu-disconnect`), not generated names like `agent-xxxx`.
-- Conventional Commits with a component scope: `feat(chat): …`, `fix(call): …`, `fix(api): …`.
+- Follow Conventional Commits with a component scope: `feat(chat): …`, `fix(call): …`, `fix(api): …`.
 - Backports happen via a `/backport to stable-X.Y` comment on the merged PR — don't cherry-pick manually.
 
 ## Backend conventions (modern pattern first; avoid the drift)
