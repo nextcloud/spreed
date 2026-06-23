@@ -127,6 +127,18 @@
 			<!-- Upcoming meetings -->
 			<CalendarEventsDialog v-if="showCalendarEvents" :token="token" />
 
+			<!-- Search messages button -->
+			<NcButton
+				v-if="!isInCall && !isSidebar && getUserId"
+				:title="t('spreed', 'Search messages')"
+				:aria-label="t('spreed', 'Search messages')"
+				variant="tertiary"
+				@click="openSidebar('search')">
+				<template #icon>
+					<IconMagnify :size="20" />
+				</template>
+			</NcButton>
+
 			<CallButton v-if="!isInCall" shrinkOnMobile />
 
 			<!-- TopBar menu -->
@@ -156,6 +168,7 @@ import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMul
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
+import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import CalendarEventsDialog from '../CalendarEventsDialog.vue'
 import ConversationIcon from '../ConversationIcon.vue'
@@ -201,6 +214,7 @@ export default {
 		IconArrowLeft,
 		IconChevronRight,
 		IconClockOutline,
+		IconMagnify,
 	},
 
 	props: {
