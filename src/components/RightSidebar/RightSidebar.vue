@@ -543,6 +543,11 @@ export default {
 		},
 
 		handleUpdateActive(active) {
+			if (active === 'search') {
+				// 'search' is not a real tab: route it to the search content state
+				this.handleUpdateState('search')
+				return
+			}
 			this.activeTab = active
 		},
 
