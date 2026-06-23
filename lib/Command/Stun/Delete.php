@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Delete extends Base {
 
 	public function __construct(
-		private IConfig $config,
+		private readonly IConfig $config,
 	) {
 		parent::__construct();
 	}
@@ -44,9 +44,7 @@ class Delete extends Base {
 		}
 		$count = count($servers);
 		// remove all occurrences of $server
-		$servers = array_filter($servers, function ($s) use ($server) {
-			return $s !== $server;
-		});
+		$servers = array_filter($servers, fn ($s) => $s !== $server);
 		$servers = array_values($servers); // reindex
 
 		if (empty($servers)) {

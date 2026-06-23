@@ -65,7 +65,7 @@ class ProxyCacheMessageMapper extends QBMapper {
 		$query = $this->db->getQueryBuilder();
 		$query->delete($this->getTableName())
 			->where($query->expr()->isNotNull('expiration_datetime'))
-			->andWhere($query->expr()->lte('expiration_datetime', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATE)));
+			->andWhere($query->expr()->lte('expiration_datetime', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE)));
 
 		return $query->executeStatement();
 	}

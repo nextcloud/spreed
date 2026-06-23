@@ -11,7 +11,7 @@ namespace OCA\Talk\DataObjects;
 class AccountId {
 
 	public function __construct(
-		private string $accountId,
+		private readonly string $accountId,
 	) {
 	}
 

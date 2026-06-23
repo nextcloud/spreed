@@ -2,7 +2,6 @@ Feature: chat-4/reply
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
-    Given user "participant3" exists
     And group "attendees1" exists
     And user "participant2" is member of group "attendees1"
 
@@ -193,6 +192,7 @@ Feature: chat-4/reply
 
 
   Scenario: user can not reply when not in the room
+    Given user "participant3" exists
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |

@@ -27,6 +27,7 @@ use OCA\Talk\Model\BotServer;
 use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -36,7 +37,6 @@ use OCP\Http\Client\IResponse;
 use OCP\ICertificateManager;
 use OCP\IConfig;
 use OCP\ISession;
-use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
@@ -48,23 +48,25 @@ use Psr\Log\LoggerInterface;
  * @psalm-import-type InvocationData from BotInvokeEvent
  */
 class BotService {
-	private ActivityPubHelper $activityPubHelper;
+	private readonly ActivityPubHelper $activityPubHelper;
 
 	public function __construct(
-		protected BotServerMapper $botServerMapper,
-		protected BotConversationMapper $botConversationMapper,
-		protected IClientService $clientService,
-		protected IConfig $serverConfig,
-		protected IUserSession $userSession,
-		protected TalkSession $talkSession,
-		protected ISession $session,
-		protected ISecureRandom $secureRandom,
-		protected IURLGenerator $urlGenerator,
-		protected IFactory $l10nFactory,
-		protected ITimeFactory $timeFactory,
-		protected LoggerInterface $logger,
-		protected ICertificateManager $certificateManager,
-		protected IEventDispatcher $dispatcher,
+		private readonly BotServerMapper $botServerMapper,
+		private readonly BotConversationMapper $botConversationMapper,
+		private readonly ThreadService $threadService,
+		private readonly ChatManager $chatManager,
+		private readonly IClientService $clientService,
+		private readonly IConfig $serverConfig,
+		private readonly IUserSession $userSession,
+		private readonly TalkSession $talkSession,
+		private readonly ISession $session,
+		private readonly ISecureRandom $secureRandom,
+		private readonly IFactory $l10nFactory,
+		private readonly ITimeFactory $timeFactory,
+		private readonly LoggerInterface $logger,
+		private readonly ICertificateManager $certificateManager,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly IAppManager $appManager,
 	) {
 		$this->activityPubHelper = new ActivityPubHelper();
 	}
@@ -74,6 +76,7 @@ class BotService {
 			'type' => 'Join',
 			'actor' => $this->activityPubHelper->generateApplicationFromBot($event->getBotServer()),
 			'object' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
+			'published' => $this->timeFactory->getDateTime()->format(DATE_ATOM),
 		]);
 	}
 
@@ -82,6 +85,7 @@ class BotService {
 			'type' => 'Leave',
 			'actor' => $this->activityPubHelper->generateApplicationFromBot($event->getBotServer()),
 			'object' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
+			'published' => $this->timeFactory->getDateTime()->format(DATE_ATOM),
 		]);
 	}
 
@@ -138,6 +142,7 @@ class BotService {
 			'actor' => $this->activityPubHelper->generatePersonFromAttendee($attendee),
 			'object' => $this->activityPubHelper->generateNote($event->getComment(), $messageData, 'message', $inReplyTo),
 			'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
+			'published' => $event->getComment()->getCreationDateTime()->format(DATE_ATOM),
 		]);
 	}
 
@@ -166,6 +171,7 @@ class BotService {
 			'actor' => $this->activityPubHelper->generatePersonFromMessageActor($message),
 			'object' => $this->activityPubHelper->generateNote($event->getComment(), $messageData, $message->getMessageRaw() ?: 'message'),
 			'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
+			'published' => $event->getComment()->getCreationDateTime()->format(DATE_ATOM),
 		]);
 	}
 
@@ -195,6 +201,7 @@ class BotService {
 			'object' => $this->activityPubHelper->generateNote($event->getMessage(), $messageData, $message->getMessageRaw()),
 			'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
 			'content' => $event->getReaction(),
+			'published' => $event->getReactionMessage()?->getCreationDateTime()->format(DATE_ATOM),
 		]);
 	}
 
@@ -229,6 +236,7 @@ class BotService {
 				'content' => $event->getReaction(),
 			],
 			'target' => $this->activityPubHelper->generateCollectionFromRoom($event->getRoom()),
+			'published' => $event->getReactionMessage()?->getCreationDateTime()->format(DATE_ATOM),
 		]);
 	}
 
@@ -282,12 +290,19 @@ class BotService {
 							$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 							try {
 								$replyTo = null;
+								$threadId = 0;
+								$threadTitle = '';
 								if ($answer['reply'] === true) {
 									$replyTo = $comment;
 								} elseif (is_int($answer['reply'])) {
 									$replyTo = $chatManager->getParentComment($room, (string)$answer['reply']);
+								} elseif ($answer['thread'] === true) {
+									$threadId = (int)$comment->getTopmostParentId() ?: (int)$comment->getId();
+								} elseif ($answer['threadTitle'] !== null) {
+									$threadTitle = $answer['threadTitle'];
 								}
-								$chatManager->sendMessage(
+
+								$botComment = $chatManager->sendMessage(
 									$room,
 									null,
 									Attendee::ACTOR_BOTS,
@@ -297,8 +312,28 @@ class BotService {
 									$replyTo,
 									$answer['referenceId'],
 									$answer['silent'],
-									rateLimitGuestMentions: false
+									rateLimitGuestMentions: false,
+									threadId: $threadId,
+									threadTitle: $threadTitle,
 								);
+
+								if ($threadTitle !== '') {
+									$thread = $this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
+
+									$this->chatManager->addSystemMessage(
+										$room,
+										null,
+										Attendee::ACTOR_BOTS,
+										Attendee::ACTOR_BOT_PREFIX . $bot->getUrlHash(),
+										json_encode(['message' => 'thread_created', 'parameters' => ['thread' => (int)$botComment->getId(), 'title' => $thread->getName()]]),
+										$this->timeFactory->getDateTime(),
+										false,
+										null,
+										$botComment,
+										true,
+										true
+									);
+								}
 							} catch (\Exception $e) {
 								$this->logger->error('Error while trying to answer as a bot: ' . $e->getMessage(), ['exception' => $e]);
 							}
@@ -317,7 +352,7 @@ class BotService {
 	 *                    #param string|null $jsonBody
 	 */
 	protected function sendAsyncRequest(BotServer $botServer, array $body, ?string $jsonBody = null): void {
-		$jsonBody = $jsonBody ?? json_encode($body, JSON_THROW_ON_ERROR);
+		$jsonBody ??= json_encode($body, JSON_THROW_ON_ERROR);
 
 		$random = $this->secureRandom->generate(64);
 		$hash = hash_hmac('sha256', $random . $jsonBody, $botServer->getSecret());
@@ -354,7 +389,7 @@ class BotService {
 			$this->logger->error('Bot error occurred, increasing error count', ['exception' => $exception]);
 			$botServer->setErrorCount($botServer->getErrorCount() + 1);
 			$botServer->setLastErrorDate($this->timeFactory->now());
-			$botServer->setLastErrorMessage(get_class($exception) . ': ' . $exception->getMessage());
+			$botServer->setLastErrorMessage($exception::class . ': ' . $exception->getMessage());
 			$this->botServerMapper->update($botServer);
 		});
 	}
@@ -473,5 +508,15 @@ class BotService {
 		if (strlen($description) > 4000) {
 			throw new \InvalidArgumentException('The provided description is too long (max. 4000 chars)');
 		}
+	}
+
+	public function isAppForBotEnabled(BotServer $bot): bool {
+		if (!str_starts_with($bot->getUrl(), Bot::URL_APP_PREFIX)) {
+			return true;
+		}
+
+		$url = substr($bot->getUrl(), strlen(Bot::URL_APP_PREFIX));
+		[$appId] = explode('/', $url, 2);
+		return $this->appManager->isEnabledForAnyone($appId);
 	}
 }

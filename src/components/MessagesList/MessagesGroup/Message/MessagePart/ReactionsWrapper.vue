@@ -92,6 +92,7 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { n, t } from '@nextcloud/l10n'
+import { emojiAddRecent } from '@nextcloud/vue/functions/emoji'
 import { inject } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
@@ -242,6 +243,8 @@ export default {
 					messageId: this.id,
 					selectedEmoji: clickedEmoji,
 				})
+				// Update value in frequently used emoji
+				emojiAddRecent(clickedEmoji)
 			} else {
 				this.reactionsStore.removeReactionFromMessage({
 					token: this.token,

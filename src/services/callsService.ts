@@ -35,10 +35,11 @@ import {
  * sound for other participants or not
  * @param recordingConsent Whether the participant gave their consent to be recorded
  * @param silentFor List of participants that should not receive a notification about the call
+ * @param options Additional options (for media)
  * @return The actual flags based on the available media
  */
-async function joinCall(token: string, flags: number, silent: boolean, recordingConsent: boolean, silentFor: string[]): Promise<void> {
-	return signalingJoinCall(token, flags, silent, recordingConsent, silentFor)
+async function joinCall(token: string, flags: number, silent: boolean, recordingConsent: boolean, silentFor: string[], options = {}): Promise<void> {
+	return signalingJoinCall(token, flags, silent, recordingConsent, silentFor, options)
 }
 
 /**

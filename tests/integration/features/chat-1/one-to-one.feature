@@ -2,7 +2,6 @@ Feature: chat-1/one-to-one
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
-    Given user "participant3" exists
 
   Scenario: owner can send and receive chat messages to and from one-to-one room
     Given user "participant1" creates room "one-to-one room" (v4)
@@ -26,6 +25,7 @@ Feature: chat-1/one-to-one
       | one-to-one room | users     | participant2 | participant2-displayname | Message 1 | []                |
 
   Scenario: not invited user can not send nor receive chat messages to nor from one-to-one room
+    Given user "participant3" exists
     Given user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |

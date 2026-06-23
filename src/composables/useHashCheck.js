@@ -30,7 +30,7 @@ export function useHashCheck() {
 	const showReloadWarning = () => {
 		reloadWarningShown = true
 
-		showError(t('spreed', 'Nextcloud Talk was updated.') + '\n' + messagePleaseReload, {
+		showError(t('spreed', 'The server was updated.') + '\n' + messagePleaseReload, {
 			timeout: TOAST_PERMANENT_TIMEOUT,
 		})
 	}

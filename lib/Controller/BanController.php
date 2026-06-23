@@ -27,8 +27,8 @@ class BanController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected BanService $banService,
-		protected ITimeFactory $timeFactory,
+		private readonly BanService $banService,
+		private readonly ITimeFactory $timeFactory,
 	) {
 		parent::__construct($appName, $request);
 	}

@@ -5,6 +5,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\Migration;
 
 use Closure;
@@ -15,7 +16,7 @@ use OCP\Migration\SimpleMigrationStep;
 class Version14000Date20220217115327 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IConfig $config,
+		private readonly IConfig $config,
 	) {
 	}
 

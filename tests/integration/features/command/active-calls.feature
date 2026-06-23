@@ -1,7 +1,6 @@
 Feature: command/active-calls
 
   Background:
-    Given user "participant1" exists
 
   Scenario: No call in progress
     Given invoking occ with "talk:active-calls"
@@ -9,6 +8,7 @@ Feature: command/active-calls
     And the command output contains the text "No calls in progress"
 
   Scenario: Users only chatting
+    Given user "participant1" exists
     When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -22,6 +22,7 @@ Feature: command/active-calls
 
 
   Scenario: Call in progress
+    Given user "participant1" exists
     When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |

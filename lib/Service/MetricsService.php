@@ -11,13 +11,11 @@ namespace OCA\Talk\Service;
 
 use OCA\Talk\Participant;
 use OCP\IDBConnection;
-use Psr\Log\LoggerInterface;
 
 class MetricsService {
 
 	public function __construct(
-		protected LoggerInterface $logger,
-		protected IDBConnection $connection,
+		private readonly IDBConnection $connection,
 	) {
 	}
 
@@ -43,7 +41,7 @@ class MetricsService {
 			->andWhere($query->expr()->gt('last_ping', $query->createNamedParameter(time() - 60)));
 
 		$result = $query->executeQuery();
-		$numSessions = (int)$result->fetchColumn();
+		$numSessions = (int)$result->fetchOne();
 		$result->closeCursor();
 
 		return $numSessions;

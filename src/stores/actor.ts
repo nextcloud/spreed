@@ -18,6 +18,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
+import { hasServerAppCapabilities } from '../services/CapabilitiesManager.ts'
 import { getTeams } from '../services/teamsService.ts'
 
 export const useActorStore = defineStore('actor', () => {
@@ -139,7 +140,7 @@ export const useActorStore = defineStore('actor', () => {
 	 *
 	 */
 	async function getCurrentUserTeams() {
-		if (!loadState('spreed', 'circles_enabled', false)) {
+		if (!hasServerAppCapabilities('circles')) {
 			return
 		}
 

@@ -464,7 +464,7 @@ export default {
 		},
 
 		sendingErrorCanRetry() {
-			return ['timeout', 'other', 'failed-upload'].includes(this.message.sendingFailure)
+			return ['timeout', 'other', 'failed-upload', 'failed-share'].includes(this.message.sendingFailure)
 		},
 
 		sendingErrorIconTitle() {
@@ -476,9 +476,6 @@ export default {
 			}
 			if (this.message.sendingFailure === 'quota') {
 				return t('spreed', 'Not enough free space to upload file')
-			}
-			if (this.message.sendingFailure === 'failed-share') {
-				return t('spreed', 'You are not allowed to share files')
 			}
 			return t('spreed', 'You cannot send messages to this conversation at the moment')
 		},
@@ -529,6 +526,11 @@ export default {
 						token: this.message.token,
 						uploadId: this.$store.getters.message(this.message.token, this.message.id)?.uploadId,
 						caption: this.renderedMessage !== this.message.message ? this.message.message : undefined,
+					})
+				} else if (this.message.sendingFailure === 'failed-share') {
+					this.uploadStore.retryShareFiles({
+						token: this.message.token,
+						uploadId: this.$store.getters.message(this.message.token, this.message.id)?.uploadId,
 					})
 				} else {
 					EventBus.emit('retry-message', this.message.id)

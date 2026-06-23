@@ -150,6 +150,8 @@ export default {
 					return { state_icon_component: IconLockOutline, state_icon_label: t('spreed', 'Locked for moderators'), state_icon_color: 'var(--color-favorite)' }
 				case BOT.STATE.ENABLED:
 					return { state_icon_component: IconCheck, state_icon_label: t('spreed', 'Enabled'), state_icon_color: 'var(--color-border-success)' }
+				case BOT.STATE.UNAVAILABLE:
+					return { state_icon_component: IconCancel, state_icon_label: t('spreed', 'App disabled'), state_icon_color: 'var(--color-text-maxcontrast)' }
 				case BOT.STATE.DISABLED:
 				default:
 					return { state_icon_component: IconCancel, state_icon_label: t('spreed', 'Disabled'), state_icon_color: 'var(--color-border-error)' }

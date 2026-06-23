@@ -109,6 +109,8 @@ import websocket
 from datetime import datetime
 from pathlib import Path
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from shutil import disk_usage
@@ -293,6 +295,9 @@ class SeleniumHelper:
         """
 
         options = webdriver.ChromeOptions()
+
+        options.set_capability('acceptInsecureCerts', True)
+
         options.set_capability("goog:loggingPrefs", { 'browser': 'ALL' })
         options.add_argument('--use-fake-device-for-media-stream')
         options.add_argument('--use-fake-ui-for-media-stream')
@@ -339,6 +344,8 @@ class SeleniumHelper:
 
         options = webdriver.FirefoxOptions()
 
+        options.set_capability('acceptInsecureCerts', True)
+
         # "webSocketUrl" is needed for BiDi; this should be set already by
         # default, but just in case.
         options.set_capability('webSocketUrl', True)
@@ -353,7 +360,8 @@ class SeleniumHelper:
 
         # Headless mode uses a little less memory on each instance, so it is
         # specially useful when there are several virtual participants.
-        options.headless = headless
+        if headless:
+            options.add_argument('--headless')
 
         if remoteSeleniumUrl:
             self.driver = webdriver.Remote(
@@ -837,6 +845,8 @@ class RealParticipant():
             the local server is used by default.
         """
 
+        self.loggedIn = False
+
         self.nextcloudUrl = nextcloudUrl
 
         self.seleniumHelper = SeleniumHelper()
@@ -871,6 +881,8 @@ class RealParticipant():
             await fetch(\'''' + self.nextcloudUrl + '''\', fetchOptions)
         ''')
 
+        self.loggedIn = True
+
     def joinRoom(self, token):
         """
         Joins the room with the given token.
@@ -881,6 +893,21 @@ class RealParticipant():
         """
 
         self.seleniumHelper.driver.get(self.nextcloudUrl + '/call/' + token)
+
+        if self.loggedIn:
+            return
+
+        # Starting with Talk 18 guests need to set their name after joining a
+        # room. If the dialog is not shown it is assumed that an older version
+        # is being used.
+        try:
+            submitNameButton = WebDriverWait(self.seleniumHelper.driver, timeout=10).until(lambda driver: driver.find_element(By.XPATH, '//button[contains(., "Submit name and join")]'))
+
+            submitNameButton.find_element(By.XPATH, '..//input[@type="text"]').send_keys('Talkbuchet')
+
+            submitNameButton.click()
+        except TimeoutException:
+            pass
 
     def joinCall(self):
         """
@@ -893,10 +920,17 @@ class RealParticipant():
 
         try:
             # If the device selector is shown click on the "Join call" button
-            # in the dialog to actually join the call.
-            WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.device-checker #call_button'))
-            self.seleniumHelper.driver.find_element(By.CSS_SELECTOR, '.device-checker #call_button').click()
-        except:
+            # in the dialog to actually join the call. Recording consent is
+            # granted first if needed.
+            callButton = WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.device-checker #call_button, .media-settings #call_button'))
+
+            try:
+                self.seleniumHelper.driver.find_element(By.XPATH, '//label[contains(., "Give consent to the recording of this call")]').click()
+            except NoSuchElementException:
+                pass
+
+            callButton.click()
+        except TimeoutException:
             pass
 
     def leaveCall(self):

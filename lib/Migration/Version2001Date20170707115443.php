@@ -5,6 +5,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\Migration;
 
 use OCA\Talk\Participant;
@@ -20,8 +21,8 @@ use OCP\Migration\SimpleMigrationStep;
 class Version2001Date20170707115443 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IDBConnection $db,
-		protected IConfig $config,
+		private readonly IDBConnection $db,
+		private readonly IConfig $config,
 	) {
 	}
 
@@ -67,7 +68,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 		$query->selectAlias($query->func()->count('*'), 'num_rooms')
 			->from('spreedme_rooms');
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 		$numRooms = (int)$row['num_rooms'];
 
@@ -81,7 +82,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 		$result = $query->executeQuery();
 
 		$one2oneRooms = [];
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$one2oneRooms[] = (int)$row['id'];
 		}
 		$result->closeCursor();

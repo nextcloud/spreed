@@ -17,7 +17,7 @@ abstract class AttendeesEvent extends ARoomEvent {
 	 */
 	public function __construct(
 		Room $room,
-		protected array $attendees,
+		private readonly array $attendees,
 	) {
 		parent::__construct($room);
 	}

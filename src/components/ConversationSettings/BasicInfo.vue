@@ -5,7 +5,7 @@
 
 <template>
 	<!-- eslint-disable-next-line vue/no-v-html -->
-	<p v-if="canFullModerate && isEventConversation" class="app-settings-section__hint" v-html="calendarHint" />
+	<p v-if="isCalendarEnabled && canFullModerate && isEventConversation" class="app-settings-section__hint" v-html="calendarHint" />
 	<h4 class="app-settings-section__subtitle">
 		{{ t('spreed', 'Name') }}
 	</h4>
@@ -53,8 +53,9 @@ import { generateUrl } from '@nextcloud/router'
 import EditableTextField from '../UIShared/EditableTextField.vue'
 import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import { CONVERSATION } from '../../constants.ts'
-import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature, localCapabilities } from '../../services/CapabilitiesManager.ts'
 
+const isCalendarEnabled = localCapabilities.calendar?.webui ?? false
 const supportsAvatar = hasTalkFeature('local', 'avatar')
 const maxDescriptionLength = getTalkConfig('local', 'conversations', 'description-length') || 500
 
@@ -80,6 +81,7 @@ export default {
 
 	setup() {
 		return {
+			isCalendarEnabled,
 			supportsAvatar,
 			CONVERSATION,
 			maxDescriptionLength,

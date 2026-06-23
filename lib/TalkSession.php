@@ -8,13 +8,26 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCP\IRequest;
 use OCP\ISession;
 
 class TalkSession {
+	public const HEADER_TAB_ID = 'x-nextcloud-talk-session-tab-id';
+	public const HEADER_TAB_ID_REGEX = '/^[a-zA-Z0-9]{64}$/';
+	public const TAB_ID_SEPARATOR = '$';
 
 	public function __construct(
-		protected ISession $session,
+		private readonly ISession $session,
+		private readonly IRequest $request,
 	) {
+	}
+
+	protected function getTabId(): string {
+		$tabId = $this->request->getHeader(self::HEADER_TAB_ID);
+		if (preg_match(self::HEADER_TAB_ID_REGEX, $tabId)) {
+			return self::TAB_ID_SEPARATOR . $tabId;
+		}
+		return '';
 	}
 
 	/**
@@ -50,11 +63,15 @@ class TalkSession {
 	}
 
 	public function getAuthedEmailActorIdForRoom(string $token): ?string {
-		return $this->getValue('spreed-authed-email', $token);
+		return $this->getValue('spreed-authed-email', $token, false);
 	}
 
 	public function setAuthedEmailActorIdForRoom(string $token, string $actorId): void {
-		$this->setValue('spreed-authed-email', $token, $actorId);
+		$this->setValue('spreed-authed-email', $token, $actorId, false);
+	}
+
+	public function removeAuthedEmailActorIdForRoom(string $token): void {
+		$this->removeValue('spreed-authed-email', $token, false);
 	}
 
 	public function getFileShareTokenForRoom(string $roomToken): ?string {
@@ -70,15 +87,15 @@ class TalkSession {
 	}
 
 	public function getPasswordForRoom(string $token): ?string {
-		return $this->getValue('spreed-password', $token);
+		return $this->getValue('spreed-password', $token, false);
 	}
 
 	public function setPasswordForRoom(string $token, string $password): void {
-		$this->setValue('spreed-password', $token, $password);
+		$this->setValue('spreed-password', $token, $password, false);
 	}
 
 	public function removePasswordForRoom(string $token): void {
-		$this->removeValue('spreed-password', $token);
+		$this->removeValue('spreed-password', $token, false);
 	}
 
 	protected function getValues(string $key): array {
@@ -95,29 +112,41 @@ class TalkSession {
 		return $values;
 	}
 
-	protected function getValue(string $key, string $token): ?string {
+	protected function getValue(string $key, string $token, bool $useTabId = true): ?string {
+		$token .= $useTabId ? $this->getTabId() : '';
 		$values = $this->getValues($key);
 		return $values[$token] ?? null;
 	}
 
-	protected function setValue(string $key, string $token, string $value): void {
+	protected function setValue(string $key, string $token, string $value, bool $useTabId = true): void {
+		$token .= $useTabId ? $this->getTabId() : '';
 		$reopened = $this->session->reopen();
 
 		$values = $this->getValues($key);
 		$values[$token] = $value;
 		$this->session->set($key, json_encode($values));
 
-
 		if ($reopened) {
 			$this->session->close();
 		}
 	}
 
-	protected function removeValue(string $key, string $token): void {
+	protected function removeValue(string $key, string $token, bool $useTabId = true): void {
 		$reopened = $this->session->reopen();
 
 		$values = $this->getValues($key);
-		unset($values[$token]);
+		$tabId = $useTabId ? $this->getTabId() : '';
+		if ($tabId !== '') {
+			unset($values[$token . $tabId]);
+		} else {
+			// This request does not support tabId, so we need to destroy all related data
+			foreach ($values as $tokenKey => $value) {
+				$tokenKey = (string)$tokenKey;
+				if (str_starts_with($tokenKey, $token)) {
+					unset($values[$tokenKey]);
+				}
+			}
+		}
 		$this->session->set($key, json_encode($values));
 
 		if ($reopened) {

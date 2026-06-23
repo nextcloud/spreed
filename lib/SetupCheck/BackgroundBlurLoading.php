@@ -6,6 +6,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\SetupCheck;
 
 use OCP\Http\Client\IClientService;
@@ -24,7 +25,7 @@ class BackgroundBlurLoading implements ISetupCheck {
 	use CheckServerResponseTrait;
 
 	public function __construct(
-		protected IL10N $l10n,
+		private readonly IL10N $l10n,
 		protected IConfig $config,
 		protected IURLGenerator $urlGenerator,
 		protected IClientService $clientService,

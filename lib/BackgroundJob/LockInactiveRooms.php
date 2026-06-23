@@ -21,9 +21,9 @@ class LockInactiveRooms extends TimedJob {
 
 	public function __construct(
 		ITimeFactory $timeFactory,
-		private RoomService $roomService,
-		private Config $appConfig,
-		private LoggerInterface $logger,
+		private readonly RoomService $roomService,
+		private readonly Config $appConfig,
+		private readonly LoggerInterface $logger,
 	) {
 		parent::__construct($timeFactory);
 

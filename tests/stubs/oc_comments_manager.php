@@ -4,6 +4,7 @@
  * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OC\Comments;
 
 use OCP\Comments\IComment;
@@ -18,6 +19,9 @@ class Manager implements \OCP\Comments\ICommentsManager {
 	}
 
 	protected function cache(IComment $comment): void {
+	}
+
+	protected function uncache($id): void {
 	}
 
 	public function get($id) {

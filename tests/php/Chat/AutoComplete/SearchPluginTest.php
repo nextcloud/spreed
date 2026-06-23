@@ -10,15 +10,12 @@ namespace OCA\Talk\Tests\php\Chat\AutoComplete;
 
 use OC\Collaboration\Collaborators\SearchResult;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Files\Util;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
-use OCA\Talk\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\IL10N;
 use OCP\IUser;
@@ -29,11 +26,8 @@ use Test\TestCase;
 
 class SearchPluginTest extends TestCase {
 	protected IUserManager&MockObject $userManager;
-	protected GuestManager&MockObject $guestManager;
-	protected TalkSession&MockObject $talkSession;
 	protected ParticipantService&MockObject $participantService;
 	protected Util&MockObject $util;
-	protected Authenticator&MockObject $federationAuthenticator;
 	protected IL10N&MockObject $l;
 	protected ?string $userId = null;
 	protected SearchPlugin $plugin;
@@ -42,18 +36,13 @@ class SearchPluginTest extends TestCase {
 		parent::setUp();
 
 		$this->userManager = $this->createMock(IUserManager::class);
-		$this->guestManager = $this->createMock(GuestManager::class);
-		$this->talkSession = $this->createMock(TalkSession::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->util = $this->createMock(Util::class);
-		$this->federationAuthenticator = $this->createMock(Authenticator::class);
 		$this->userId = 'current';
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
 	}
 
 	/**
@@ -64,26 +53,20 @@ class SearchPluginTest extends TestCase {
 		if (empty($methods)) {
 			return new SearchPlugin(
 				$this->userManager,
-				$this->guestManager,
-				$this->talkSession,
 				$this->participantService,
 				$this->util,
-				$this->userId,
 				$this->l,
-				$this->federationAuthenticator,
+				$this->userId,
 			);
 		}
 
 		return $this->getMockBuilder(SearchPlugin::class)
 			->setConstructorArgs([
 				$this->userManager,
-				$this->guestManager,
-				$this->talkSession,
 				$this->participantService,
 				$this->util,
-				$this->userId,
 				$this->l,
-				$this->federationAuthenticator,
+				$this->userId,
 			])
 			->onlyMethods($methods)
 			->getMock();
@@ -115,8 +98,8 @@ class SearchPluginTest extends TestCase {
 	}
 
 	public function testSearch(): void {
-		$result = $this->createMock(ISearchResult::class);
-		$room = $this->createMock(Room::class);
+		$result = $this->createStub(ISearchResult::class);
+		$room = $this->createStub(Room::class);
 
 		$this->participantService->expects($this->once())
 			->method('getParticipantsForRoom')
@@ -153,7 +136,7 @@ class SearchPluginTest extends TestCase {
 
 	public static function dataSearchUsers(): array {
 		return [
-			['test', [], [], [], []],
+			['test', [], [], []],
 			['test', [
 				'current' => 'test',
 				'foo' => '',
@@ -175,16 +158,13 @@ class SearchPluginTest extends TestCase {
 	public function testSearchUsers(string $search, array $users, array $expected, array $expectedExact): void {
 		$result = $this->createMock(ISearchResult::class);
 
-
 		$result->expects($this->once())
 			->method('addResultSet')
 			->with($this->anything(), $expected, $expectedExact);
 
 		$plugin = $this->getPlugin(['createResult']);
 		$plugin->method('createResult')
-			->willReturnCallback(function ($type, $uid, $name) {
-				return [$uid => $name];
-			});
+			->willReturnCallback(fn ($type, $uid, $name) => [$uid => $name]);
 
 		self::invokePrivate($plugin, 'searchUsers', [$search, $users, $result]);
 	}
@@ -217,9 +197,7 @@ class SearchPluginTest extends TestCase {
 		$plugin = $this->getPlugin(['createGuestResult']);
 		$plugin->expects($this->any())
 			->method('createGuestResult')
-			->willReturnCallback(function ($hash, $name) {
-				return [$hash => $name];
-			});
+			->willReturnCallback(fn ($hash, $name) => [$hash => $name]);
 
 		self::invokePrivate($plugin, 'searchGuests', [$search, $attendees, $result]);
 	}
@@ -262,7 +240,6 @@ class SearchPluginTest extends TestCase {
 		$this->assertEquals($expected, self::invokePrivate($plugin, 'createResult', [$type, $uid, $name]));
 	}
 
-
 	public static function dataCreateGuestResult(): array {
 		return [
 			['1234', 'foo', ['label' => 'foo', 'value' => ['shareType' => 'guest', 'shareWith' => 'guest/1234']]],
@@ -294,15 +271,13 @@ class SearchPluginTest extends TestCase {
 		$plugin = $this->getPlugin(['createGroupResult']);
 		$plugin->expects($this->any())
 			->method('createGroupResult')
-			->willReturnCallback(function ($groupId) {
-				return [
-					'label' => $groupId,
-					'value' => [
-						'shareType' => 'group',
-						'shareWith' => 'group/' . $groupId,
-					],
-				];
-			});
+			->willReturnCallback(fn ($groupId) => [
+				'label' => $groupId,
+				'value' => [
+					'shareType' => 'group',
+					'shareWith' => 'group/' . $groupId,
+				],
+			]);
 		$searchResult = new SearchResult();
 		self::invokePrivate($plugin, 'searchGroups', [$search, $groups, $searchResult]);
 		$actual = $searchResult->asArray();

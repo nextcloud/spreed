@@ -29,94 +29,215 @@ export type webhooks = Record<string, never>;
 export type components = {
     schemas: {
         Capabilities: {
+            /** @description List of features available on the server */
             features: string[];
+            /** @description List of features only available locally (not for federated conversations) */
             "features-local": string[];
             config: {
                 attachments: {
+                    /** @description Whether file sharing is allowed in conversations */
                     allowed: boolean;
+                    /** @description User's attachment folder (only available for logged in users) */
                     folder?: string;
+                    /** @description Whether per-conversation subfolders are used for attachments */
+                    "conversation-subfolders": boolean;
                 };
                 call: {
+                    /** @description Whether calls are enabled */
                     enabled: boolean;
+                    /** @description Whether breakout rooms are enabled */
                     "breakout-rooms": boolean;
+                    /** @description Whether call recording is enabled */
                     recording: boolean;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Whether recording consent is required (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#recording-consent-required))
+                     */
                     "recording-consent": number;
+                    /** @description List of supported reaction emojis during calls */
                     "supported-reactions": string[];
                     /** @description List of file names relative to the spreed/img/backgrounds/ web path, e.g. `2_home.jpg` */
                     "predefined-backgrounds": string[];
                     /** @description List of file paths relative to the server web root with leading slash, e.g. `/apps/spreed/img/backgrounds/2_home.jpg` */
                     "predefined-backgrounds-v2": string[];
+                    /** @description Whether the user can upload custom virtual backgrounds */
                     "can-upload-background": boolean;
+                    /** @description Whether SIP is enabled on the server */
                     "sip-enabled": boolean;
+                    /** @description Whether SIP dial-out is enabled on the server */
                     "sip-dialout-enabled": boolean;
+                    /** @description Default phone region of the server */
+                    "default-phone-region": string;
+                    /** @description Whether the user can enable SIP for conversations */
                     "can-enable-sip": boolean;
+                    /** @description Whether calls start without media by default */
                     "start-without-media": boolean;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum duration of a call in seconds, `0` means unlimited
+                     */
                     "max-duration": number;
+                    /** @description Whether the blur virtual background is available */
                     "blur-virtual-background": boolean;
+                    /** @description Whether end-to-end encryption is available */
                     "end-to-end-encryption": boolean;
+                    /** @description Whether live transcription is available */
                     "live-transcription": boolean;
+                    /** @description Whether live translation is available */
                     "live-translation": boolean;
+                    /** @description The default target language for live transcription */
                     "live-transcription-target-language-id": string;
+                    /** @description Whether to play sounds for call events */
+                    "play-sounds": boolean;
+                    /**
+                     * Format: int64
+                     * @description Maximum number of participants shown in the grid view
+                     */
+                    "grid-limit": number;
+                    /** @description Whether the grid limit is enforced by the server */
+                    "grid-limit-enforced": boolean;
                 };
                 chat: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum length of a chat message
+                     */
                     "max-length": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Read privacy setting for the user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-read-status-privacy))
+                     */
                     "read-privacy": number;
+                    /** @description Whether translation providers are available */
                     "has-translation-providers": boolean;
+                    /** @description Whether translation task providers are available */
                     "has-translation-task-providers": boolean;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Typing privacy setting for the user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-typing-privacy))
+                     */
                     "typing-privacy": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Minimum number of chat messages before a summary can be generated
+                     */
                     "summary-threshold": number;
-                    /** @enum {string} */
+                    /**
+                     * @description Chat message rendering style (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#chat-style))
+                     * @enum {string}
+                     */
                     style: "split" | "unified";
+                    /** @description Whether Matterbridge is enabled */
+                    "matterbridge-enabled": boolean;
                 };
                 conversations: {
+                    /** @description Whether the user can create conversations */
                     "can-create": boolean;
+                    /** @description Whether passwords are enforced for public conversations */
                     "force-passwords": boolean;
-                    /** @enum {string} */
+                    /**
+                     * @description Conversation list style (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-list-style))
+                     * @enum {string}
+                     */
                     "list-style": "two-lines" | "compact";
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum length of a conversation description
+                     */
                     "description-length": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Retention period for event conversations in seconds, `0` means no retention
+                     */
                     "retention-event": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Retention period for phone conversations in seconds, `0` means no retention
+                     */
                     "retention-phone": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Retention period for instant meetings in seconds, `0` means no retention
+                     */
                     "retention-instant-meetings": number;
+                    /**
+                     * @description User selected sort order for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-sort-options))
+                     * @enum {string}
+                     */
+                    "sort-order": "activity" | "alphabetical";
+                    /**
+                     * @description User selected grouping mode for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-group-mode))
+                     * @enum {string}
+                     */
+                    "group-mode": "none" | "group-first" | "private-first";
                 };
                 federation: {
+                    /** @description Whether federation is enabled */
                     enabled: boolean;
+                    /** @description Whether incoming federation is enabled */
                     "incoming-enabled": boolean;
+                    /** @description Whether outgoing federation is enabled */
                     "outgoing-enabled": boolean;
+                    /** @description Whether only trusted servers are allowed for federation */
                     "only-trusted-servers": boolean;
                 };
                 previews: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum GIF file size in bytes for previews
+                     */
                     "max-gif-size": number;
                 };
                 signaling: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum number of sessions that can be pinged in a single request
+                     */
                     "session-ping-limit": number;
+                    /**
+                     * @description Signaling mode (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#signaling-modes))
+                     * @enum {string}
+                     */
+                    mode: "internal" | "external" | "conversation_cluster";
+                    /** @description Public key for hello v2 authentication */
                     "hello-v2-token-key"?: string;
                 };
                 experiments: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Bit-flag of enabled experiments
+                     */
                     enabled: number;
                 };
+                "feature-hints": {
+                    /** Format: int64 */
+                    current: number;
+                    /** Format: int64 */
+                    hidden: number;
+                };
                 permissions: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum default permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))
+                     */
                     "max-default": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum custom permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))
+                     */
                     "max-custom": number;
+                    /**
+                     * Format: int64
+                     * @description Server default permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))
+                     */
+                    default: number;
                 };
             };
+            /** @description Map of config keys that are only available locally (not for federated conversations) */
             "config-local": {
                 [key: string]: string[];
             };
+            /** @description Version of the Talk app */
             version: string;
         };
         OCSMeta: {
@@ -142,9 +263,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "spreed-signaling-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the signaling backend */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared signaling secret, to verify authenticity from the signaling backend */
                 "spreed-signaling-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;

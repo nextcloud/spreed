@@ -2,9 +2,9 @@ Feature: callapi/public
   Background:
     Given user "participant1" exists
     And user "participant2" exists
-    And user "participant3" exists
 
   Scenario: User has no rooms
+    Given user "participant3" exists
     Then user "participant1" is participant of the following rooms (v4)
     Then user "participant2" is participant of the following rooms (v4)
     Then user "participant3" is participant of the following rooms (v4)
@@ -44,6 +44,7 @@ Feature: callapi/public
     And user "participant2" sees 0 peers in call "room" with 200 (v4)
 
   Scenario: User1 invites user2 to a public room and user3 can do everything
+    Given user "participant3" exists
     When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |

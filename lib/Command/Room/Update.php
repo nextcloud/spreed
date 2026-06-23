@@ -116,8 +116,8 @@ class Update extends Base {
 			return 1;
 		}
 
-		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
-			$output->writeln('<error>Room is no group call.</error>');
+		if (in_array($room->getType(), [Room::TYPE_ONE_TO_ONE, Room::TYPE_ONE_TO_ONE_FORMER], true)) {
+			$output->writeln('<error>Room is a private (1 to 1) conversation.</error>');
 			return 1;
 		}
 
@@ -168,31 +168,23 @@ class Update extends Base {
 
 	#[\Override]
 	public function completeOptionValues($optionName, CompletionContext $context) {
-		switch ($optionName) {
-			case 'public':
-			case 'readonly':
-				return [(string)Room::READ_ONLY, (string)Room::READ_WRITE];
-			case 'listable':
-				return [
-					(string)Room::LISTABLE_ALL,
-					(string)Room::LISTABLE_USERS,
-					(string)Room::LISTABLE_NONE,
-				];
-
-			case 'owner':
-				return $this->completeParticipantValues($context);
-		}
-
-		return parent::completeOptionValues($optionName, $context);
+		return match ($optionName) {
+			'public', 'readonly' => [(string)Room::READ_ONLY, (string)Room::READ_WRITE],
+			'listable' => [
+				(string)Room::LISTABLE_ALL,
+				(string)Room::LISTABLE_USERS,
+				(string)Room::LISTABLE_NONE,
+			],
+			'owner' => $this->completeParticipantValues($context),
+			default => parent::completeOptionValues($optionName, $context),
+		};
 	}
 
 	#[\Override]
 	public function completeArgumentValues($argumentName, CompletionContext $context) {
-		switch ($argumentName) {
-			case 'token':
-				return $this->completeTokenValues($context);
-		}
-
-		return parent::completeArgumentValues($argumentName, $context);
+		return match ($argumentName) {
+			'token' => $this->completeTokenValues($context),
+			default => parent::completeArgumentValues($argumentName, $context),
+		};
 	}
 }

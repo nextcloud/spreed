@@ -20,7 +20,6 @@ use OCA\Talk\Service\ConsentService;
 use OCA\Talk\Service\RecordingService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\Files\IRootFolder;
 use OCP\TaskProcessing\Events\AbstractTaskProcessingEvent;
 use OCP\TaskProcessing\Events\TaskFailedEvent;
 use OCP\TaskProcessing\Events\TaskSuccessfulEvent;
@@ -31,10 +30,9 @@ use Psr\Log\LoggerInterface;
  */
 class Listener implements IEventListener {
 	public function __construct(
-		protected RecordingService $recordingService,
-		protected ConsentService $consentService,
-		protected IRootFolder $rootFolder,
-		protected LoggerInterface $logger,
+		private readonly RecordingService $recordingService,
+		private readonly ConsentService $consentService,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 
@@ -53,7 +51,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		match (get_class($event)) {
+		match ($event::class) {
 			RoomDeletedEvent::class => $this->roomDeleted($event),
 			CallEndedEvent::class,
 			CallEndedForEveryoneEvent::class => $this->endRecordingOnCallEnd($event),
@@ -68,14 +66,14 @@ class Listener implements IEventListener {
 
 		// 'call/transcription/' . $room->getToken()
 		$customId = $task->getCustomId();
-		if (str_starts_with($customId, 'call/transcription/')) {
+		if (str_starts_with((string)$customId, 'call/transcription/')) {
 			$aiType = 'transcript';
-			$roomToken = substr($customId, strlen('call/transcription/'));
+			$roomToken = substr((string)$customId, strlen('call/transcription/'));
 
 			$fileId = (int)($task->getInput()['input'] ?? null);
-		} elseif (str_starts_with($customId, 'call/summary/')) {
+		} elseif (str_starts_with((string)$customId, 'call/summary/')) {
 			$aiType = 'summary';
-			[$roomToken, $fileId] = explode('/', substr($customId, strlen('call/summary/')));
+			[$roomToken, $fileId] = explode('/', substr((string)$customId, strlen('call/summary/')));
 			$fileId = (int)$fileId;
 		} else {
 			return;

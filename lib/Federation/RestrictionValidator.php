@@ -21,11 +21,11 @@ use Psr\Log\LoggerInterface;
 
 class RestrictionValidator {
 	public function __construct(
-		private AddressHandler $addressHandler,
-		private IAppManager $appManager,
-		private Config $talkConfig,
-		private IAppConfig $appConfig,
-		private LoggerInterface $logger,
+		private readonly AddressHandler $addressHandler,
+		private readonly IAppManager $appManager,
+		private readonly Config $talkConfig,
+		private readonly IAppConfig $appConfig,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 

@@ -28,12 +28,12 @@ use OCP\Share\IShare;
 class ShareAPIController {
 
 	public function __construct(
-		protected string $userId,
-		protected Manager $manager,
-		protected ParticipantService $participantService,
-		protected ITimeFactory $timeFactory,
-		protected IL10N $l,
-		protected IURLGenerator $urlGenerator,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IL10N $l,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly string $userId,
 	) {
 	}
 
@@ -50,7 +50,7 @@ class ShareAPIController {
 
 		try {
 			$room = $this->manager->getRoomByToken($share->getSharedWith(), $this->userId);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			return $result;
 		}
 
@@ -58,7 +58,7 @@ class ShareAPIController {
 		try {
 			$this->participantService->getParticipant($room, $this->userId, false);
 			$result['share_with_link'] = $this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			// Removing the conversation token from the leaked data if not a participant.
 			// Adding some unique but reproducable part to the share_with here
 			// so the avatars for conversations are distinguishable
@@ -89,7 +89,7 @@ class ShareAPIController {
 			try {
 				$expireDateTime = $this->parseDate($expireDate);
 				$share->setExpirationDate($expireDateTime);
-			} catch (\Exception $e) {
+			} catch (\Exception) {
 				throw new OCSNotFoundException($this->l->t('Invalid date, date format must be YYYY-MM-DD'));
 			}
 		}
@@ -109,7 +109,7 @@ class ShareAPIController {
 	private function parseDate(string $expireDate): \DateTime {
 		try {
 			$date = $this->timeFactory->getDateTime($expireDate);
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			throw new \Exception('Invalid date. Format must be YYYY-MM-DD');
 		}
 
@@ -130,13 +130,13 @@ class ShareAPIController {
 	public function canAccessShare(IShare $share, string $user): bool {
 		try {
 			$room = $this->manager->getRoomByToken($share->getSharedWith(), $user);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			return false;
 		}
 
 		try {
 			$this->participantService->getParticipant($room, $user, false);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return false;
 		}
 

@@ -40,15 +40,15 @@ class FilesIntegrationController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private Manager $manager,
-		private RoomService $roomService,
-		private IShareManager $shareManager,
-		private ISession $session,
-		private IUserSession $userSession,
-		private TalkSession $talkSession,
-		private Util $util,
-		private IConfig $config,
-		private IL10N $l,
+		private readonly Manager $manager,
+		private readonly RoomService $roomService,
+		private readonly IShareManager $shareManager,
+		private readonly ISession $session,
+		private readonly IUserSession $userSession,
+		private readonly TalkSession $talkSession,
+		private readonly Util $util,
+		private readonly IConfig $config,
+		private readonly IL10N $l,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -98,7 +98,6 @@ class FilesIntegrationController extends OCSController {
 			throw new OCSException($this->l->t('File is not shared, or shared but not with the user'), Http::STATUS_UNAUTHORIZED);
 		}
 
-
 		$node = $this->util->getAnyNodeOfFileAccessibleByUser($fileId, $currentUser->getUID());
 		if ($node === null) {
 			throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));
@@ -111,7 +110,7 @@ class FilesIntegrationController extends OCSController {
 
 		try {
 			$room = $this->manager->getRoomByObject('file', $fileId);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			$name = $node->getName();
 			$name = $this->roomService->prepareConversationName($name);
 			$room = $this->roomService->createConversation(
@@ -181,7 +180,7 @@ class FilesIntegrationController extends OCSController {
 					throw new ShareNotFound();
 				}
 			}
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			$response = new DataResponse(null, Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $shareToken, 'action' => 'shareinfo']);
 			return $response;

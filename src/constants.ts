@@ -79,6 +79,19 @@ export const CONVERSATION = {
 		MODERATORS: 2,
 	},
 
+	ATTRIBUTE: {
+		NONE: 0,
+		VOICE_ROOM: 1,
+	},
+
+	PRESET: {
+		DEFAULT: 'default',
+		FORCED: 'forced',
+		VOICE_ROOM: 'voiceroom',
+		PRESENTATION: 'presentation',
+		WEBINAR: 'webinar',
+	},
+
 	STATE: {
 		READ_WRITE: 0,
 		READ_ONLY: 1,
@@ -144,6 +157,17 @@ export const CONVERSATION = {
 	LIST_STYLE: {
 		TWO_LINES: 'two-lines',
 		COMPACT: 'compact',
+	},
+
+	SORT_ORDER: {
+		ACTIVITY: 'activity',
+		ALPHABETICAL: 'alphabetical',
+	},
+
+	GROUP_MODE: {
+		NONE: 'none',
+		GROUP_FIRST: 'group-first',
+		PRIVATE_FIRST: 'private-first',
 	},
 
 	MAX_NAME_LENGTH: 255,
@@ -426,6 +450,7 @@ export const BOT = {
 		DISABLED: 0,
 		ENABLED: 1,
 		NO_SETUP: 2,
+		UNAVAILABLE: 3,
 	},
 } as const
 

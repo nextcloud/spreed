@@ -2,7 +2,6 @@ Feature: sharing-4/sharees
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
-    Given user "participant3" exists
     And group "attendees1" exists
     And user "participant2" is member of group "attendees1"
 
@@ -84,6 +83,7 @@ Feature: sharing-4/sharees
 
 
   Scenario: search group room not invited to
+    Given user "participant3" exists
     Given user "participant1" creates room "group room not invited to" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -182,6 +182,7 @@ Feature: sharing-4/sharees
 
 
   Scenario: search public room not joined to
+    Given user "participant3" exists
     Given user "participant1" creates room "public room not joined to" (v4)
       | roomType | 3 |
       | roomName | room |

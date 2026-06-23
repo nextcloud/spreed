@@ -70,9 +70,9 @@ class AdminSettingsTest extends TestCase {
 				$this->groupManager,
 				$this->matterbridgeManager,
 				$this->subscription,
-				$this->userSession,
 				$this->l10n,
-				$this->l10nFactory
+				$this->l10nFactory,
+				$this->userSession,
 			);
 		}
 
@@ -86,9 +86,9 @@ class AdminSettingsTest extends TestCase {
 				$this->groupManager,
 				$this->matterbridgeManager,
 				$this->subscription,
-				$this->userSession,
 				$this->l10n,
 				$this->l10nFactory,
+				$this->userSession,
 			])
 			->onlyMethods($methods)
 			->getMock();

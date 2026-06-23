@@ -8,13 +8,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Middleware;
 
+use OCA\Talk\Authenticator;
 use OCA\Talk\Controller\AEnvironmentAwareOCSController;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\PermissionsException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Attribute\AllowWithoutParticipantWhenPendingInvitation;
 use OCA\Talk\Middleware\Attribute\FederationSupported;
@@ -40,6 +40,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Controller;
@@ -51,7 +52,6 @@ use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
-use OCP\Federation\ICloudIdManager;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\Security\Bruteforce\IThrottler;
@@ -60,18 +60,18 @@ use Psr\Log\LoggerInterface;
 
 class InjectionMiddleware extends Middleware {
 	public function __construct(
-		protected IRequest $request,
-		protected ParticipantService $participantService,
-		protected TalkSession $talkSession,
-		protected Manager $manager,
-		protected ICloudIdManager $cloudIdManager,
-		protected IThrottler $throttler,
-		protected IURLGenerator $url,
-		protected InvitationMapper $invitationMapper,
-		protected Authenticator $federationAuthenticator,
-		protected BanService $banService,
-		protected LoggerInterface $logger,
-		protected ?string $userId,
+		private readonly IRequest $request,
+		private readonly ParticipantService $participantService,
+		private readonly TalkSession $talkSession,
+		private readonly Manager $manager,
+		private readonly IThrottler $throttler,
+		private readonly IURLGenerator $url,
+		private readonly InvitationMapper $invitationMapper,
+		private readonly Authenticator $federationAuthenticator,
+		private readonly BanService $banService,
+		private readonly RoomService $roomService,
+		private readonly LoggerInterface $logger,
+		private readonly ?string $userId,
 	) {
 	}
 
@@ -94,7 +94,7 @@ class InjectionMiddleware extends Middleware {
 		$reflectionMethod = new \ReflectionMethod($controller, $methodName);
 
 		$apiVersion = $this->request->getParam('apiVersion');
-		$controller->setAPIVersion((int)substr($apiVersion, 1));
+		$controller->setAPIVersion((int)substr((string)$apiVersion, 1));
 
 		if (!empty($reflectionMethod->getAttributes(AllowWithoutParticipantWhenPendingInvitation::class))) {
 			try {
@@ -220,7 +220,7 @@ class InjectionMiddleware extends Middleware {
 		bool $requireFederationWhenNotLoggedIn = false,
 		?string $sessionIdParameter = null,
 	): void {
-		if ($requireFederationWhenNotLoggedIn && $this->userId === null && !$this->federationAuthenticator->isFederationRequest()) {
+		if ($requireFederationWhenNotLoggedIn && $this->userId === null && !$this->federationAuthenticator->isAuthenticatedRequest()) {
 			throw new ParticipantNotFoundException();
 		}
 
@@ -232,7 +232,35 @@ class InjectionMiddleware extends Middleware {
 		$sessionId = null;
 		if (!$room instanceof Room) {
 			$token = $this->request->getParam('token');
-			if (!$this->federationAuthenticator->isFederationRequest()) {
+			if ($this->userId === null && $this->federationAuthenticator->isAuthenticatedEmailGuest()) {
+				$room = $this->manager->getRoomByToken($token);
+
+				// After joinRoom() the email guest owns a regular spreed-session for the room.
+				// Prefer the session lookup so the resolved Participant carries its Session
+				// (joinCall/chat/etc. require it). Sanity-check that the session actually
+				// belongs to the authenticated email attendee.
+				$sessionId = $this->talkSession->getSessionForRoom($token);
+				if ($sessionId !== null) {
+					try {
+						$participant = $this->participantService->getParticipantBySession($room, $sessionId);
+						$attendee = $participant->getAttendee();
+						if ($attendee->getActorType() !== Attendee::ACTOR_EMAILS
+							|| $attendee->getActorId() !== $this->federationAuthenticator->getActorId()) {
+							throw new ParticipantNotFoundException('3');
+						}
+					} catch (ParticipantNotFoundException) {
+						// Guest might be reloading so the session has the old Talk session while the join happens in parallel
+						$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_EMAILS, $this->federationAuthenticator->getActorId());
+					}
+				} else {
+					// No session yet (e.g. between landing on the page and joining); trust the
+					// session-stored actor id only as long as the email attendee still exists.
+					$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_EMAILS, $this->federationAuthenticator->getActorId());
+				}
+
+				$this->federationAuthenticator->authenticated($room, $participant);
+				$controller->setParticipant($participant);
+			} elseif (!$this->federationAuthenticator->isFederationRequest()) {
 				$sessionId = $this->talkSession->getSessionForRoom($token);
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
 			} else {
@@ -260,7 +288,7 @@ class InjectionMiddleware extends Middleware {
 				try {
 					$participant = $this->participantService->getParticipantBySession($room, $sessionId);
 					$controller->setParticipant($participant);
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					// ignore and fall back in case a concurrent request might have
 					// invalidated the session
 				}
@@ -343,6 +371,22 @@ class InjectionMiddleware extends Middleware {
 			throw new PermissionsException();
 		}
 
+		$room = $controller->getRoom();
+
+		/**
+		 * This handles version mismatches where the local instance may have different
+		 * permission bits than the host (e.g., after a migration that adds new permission types like REACT).
+		 *
+		 * - REACT to CHAT fallback introduced with Nextcloud 34, can be dropped once Nextcloud 33 can not be federated with
+		 */
+		if ($permission === RequirePermission::REACT
+			&& !($participant->getPermissions() & Attendee::PERMISSIONS_REACT)
+			&& ($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)
+			&& $room?->isFederatedConversation()) {
+			// Allow reacting with chat permission for now, in case the host server does not have split permissions yet.
+			return;
+		}
+
 		if ($permission === RequirePermission::CHAT && !($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
 			throw new PermissionsException();
 		}
@@ -371,7 +415,11 @@ class InjectionMiddleware extends Middleware {
 		}
 
 		$room = $controller->getRoom();
-		if (!$room instanceof Room || $room->getLobbyState() !== Webinary::LOBBY_NONE) {
+		if (!$room instanceof Room) {
+			throw new LobbyException();
+		}
+		$this->roomService->validateLobbyTimer($room);
+		if ($room->getLobbyState() !== Webinary::LOBBY_NONE) {
 			throw new LobbyException();
 		}
 	}

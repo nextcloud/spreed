@@ -24,9 +24,9 @@ class CheckMatterbridges extends TimedJob {
 
 	public function __construct(
 		ITimeFactory $time,
-		protected IConfig $serverConfig,
-		protected MatterbridgeManager $bridgeManager,
-		protected LoggerInterface $logger,
+		private readonly IConfig $serverConfig,
+		private readonly MatterbridgeManager $bridgeManager,
+		private readonly LoggerInterface $logger,
 	) {
 		parent::__construct($time);
 

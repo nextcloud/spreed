@@ -8,15 +8,17 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Events\BeforeTurnServersGetEvent;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Settings\UserPreference;
 use OCA\Talk\Vendor\Firebase\JWT\JWT;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IFilenameValidator;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -38,6 +40,11 @@ class Config {
 	public const SIGNALING_TICKET_V2 = 2;
 
 	/**
+	 * 1. Call recording, …
+	 */
+	public const FEATURE_HINT = 34;
+
+	/**
 	 * Currently limiting to 1k users because the user_status API would yield
 	 * an error on Oracle otherwise. Clients should use a virtual scrolling
 	 * mechanism so the data should not be a problem nowadays
@@ -48,14 +55,16 @@ class Config {
 	protected array $canEnableSIP = [];
 
 	public function __construct(
-		protected IConfig $config,
-		protected IAppConfig $appConfig,
-		private ISecureRandom $secureRandom,
-		private IGroupManager $groupManager,
-		private IUserManager $userManager,
-		private IURLGenerator $urlGenerator,
-		protected ITimeFactory $timeFactory,
-		private IEventDispatcher $dispatcher,
+		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
+		private readonly IUserConfig $userConfig,
+		private readonly ISecureRandom $secureRandom,
+		private readonly IGroupManager $groupManager,
+		private readonly IUserManager $userManager,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly IFilenameValidator $filenameValidator,
 	) {
 	}
 
@@ -128,6 +137,10 @@ class Config {
 
 	public function isBreakoutRoomsEnabled(): bool {
 		return $this->config->getAppValue('spreed', 'breakout_rooms', 'yes') === 'yes';
+	}
+
+	public function isConversationSubfoldersEnabled(): bool {
+		return $this->appConfig->getAppValueBool('conversation_subfolders', true);
 	}
 
 	public function getDialInInfo(): string {
@@ -252,6 +265,10 @@ class Config {
 	}
 
 	public function isDisabledForUser(IUser $user): bool {
+		if ($user->getUID() === MatterbridgeManager::BRIDGE_BOT_USERID) {
+			return false;
+		}
+
 		$allowedGroups = $this->getAllowedTalkGroupIds();
 		if (empty($allowedGroups)) {
 			return false;
@@ -298,6 +315,71 @@ class Config {
 	public function getAttachmentFolder(string $userId): string {
 		$defaultAttachmentFolder = $this->config->getAppValue('spreed', 'default_attachment_folder', '/Talk');
 		return $this->config->getUserValue($userId, 'spreed', UserPreference::ATTACHMENT_FOLDER, $defaultAttachmentFolder);
+	}
+
+	/**
+	 * Returns the per-conversation folder name: "<sanitizedDisplayName>-<token>"
+	 * The display name is sanitized and trimmed to 64 characters.
+	 *
+	 * @throws \LogicException if the conversation-subfolders feature is disabled
+	 */
+	public function getConversationFolderName(Room $room, string $userId): string {
+		if (!$this->isConversationSubfoldersEnabled()) {
+			throw new \LogicException('getConversationFolderName called while conversation subfolders are disabled');
+		}
+		return $this->buildConversationFolderName($room->getDisplayName($userId), $room->getToken());
+	}
+
+	public function buildConversationFolderName(string $displayName, string $token): string {
+		return $this->sanitizeDisplayName($displayName, 64) . '-' . $token;
+	}
+
+	/**
+	 * Returns the per-user subfolder name within a conversation folder.
+	 *
+	 * Format: "<displayPrefix>-<uid>" where the prefix length is capped so that
+	 * the total segment length stays under 64 characters on all filesystems.
+	 * If the uid is 63+ characters, the prefix is omitted.
+	 */
+	public function getConversationSubfolderName(string $userId): string {
+		if (!$this->isConversationSubfoldersEnabled()) {
+			throw new \LogicException('getConversationSubfolderName called while conversation subfolders are disabled');
+		}
+		$displayName = $this->userManager->getDisplayName($userId) ?? '';
+		return $this->buildConversationSubfolderName($userId, $displayName);
+	}
+
+	/**
+	 * Builds the per-user subfolder name from a pre-fetched display name.
+	 * Use this when the caller already holds the IUser object (e.g. the current
+	 * user from IUserSession) to avoid an extra IUserManager::get() lookup.
+	 */
+	public function buildConversationSubfolderName(string $userId, string $displayName): string {
+		$prefixLen = min(16, max(0, 63 - strlen($userId)));
+		if ($prefixLen > 0) {
+			$prefix = $this->sanitizeDisplayName($displayName, $prefixLen);
+			if ($prefix !== '') {
+				return $prefix . '-' . $userId;
+			}
+		}
+		return $userId;
+	}
+
+	/**
+	 * Sanitizes a display name for use as (part of) a filesystem folder name.
+	 *
+	 * Replaces forward slash, backslash, and ASCII control characters (U+0000–U+001F)
+	 * with a space, trims whitespace, then truncates to $maxChars Unicode code points.
+	 */
+	private function sanitizeDisplayName(string $name, int $maxChars): string {
+		// phpcs:ignore -- control characters are intentional
+		$name = preg_replace('/[\x00-\x1f\/\\\\]+/', ' ', $name);
+		$name = trim((string)$name);
+		$name = $this->filenameValidator->sanitizeFilename($name, '_');
+		if (mb_strlen($name) > $maxChars) {
+			$name = trim(mb_substr($name, 0, $maxChars));
+		}
+		return rtrim($name, '_-');
 	}
 
 	/**
@@ -363,9 +445,7 @@ class Config {
 		}
 
 		if (!$this->config->getSystemValueBool('has_internet_connection', true)) {
-			$servers = array_filter($servers, static function ($server) {
-				return $server !== 'stun.nextcloud.com:443';
-			});
+			$servers = array_filter($servers, static fn ($server) => $server !== 'stun.nextcloud.com:443');
 		}
 
 		return $servers;
@@ -417,7 +497,7 @@ class Config {
 
 		foreach ($servers as $server) {
 			$u = $server['username'] ?? $username;
-			$password = $server['password'] ?? base64_encode(hash_hmac('sha1', $u, $server['secret'], true));
+			$password = $server['password'] ?? base64_encode(hash_hmac('sha1', (string)$u, (string)$server['secret'], true));
 
 			$turnSettings[] = [
 				'schemes' => $server['schemes'],
@@ -431,6 +511,9 @@ class Config {
 		return $turnSettings;
 	}
 
+	/**
+	 * @psalm-return self::SIGNALING_INTERNAL|self::SIGNALING_EXTERNAL|self::SIGNALING_CLUSTER_CONVERSATION
+	 */
 	public function getSignalingMode(bool $cleanExternalSignaling = true): string {
 		$validModes = [
 			self::SIGNALING_INTERNAL,
@@ -452,7 +535,7 @@ class Config {
 			return self::SIGNALING_EXTERNAL;
 		}
 
-		return \in_array($mode, $validModes) ? $mode : self::SIGNALING_EXTERNAL;
+		return $mode === self::SIGNALING_CLUSTER_CONVERSATION ? $mode : self::SIGNALING_EXTERNAL;
 	}
 
 	/**
@@ -495,13 +578,10 @@ class Config {
 	 * @return string
 	 */
 	public function getSignalingTicket(int $version, ?string $userId, ?string $cloudId = null): string {
-		switch ($version) {
-			case self::SIGNALING_TICKET_V2:
-				return $this->getSignalingTicketV2($userId, $cloudId);
-			case self::SIGNALING_TICKET_V1:
-			default:
-				return $this->getSignalingTicketV1($userId);
-		}
+		return match ($version) {
+			self::SIGNALING_TICKET_V2 => $this->getSignalingTicketV2($userId, $cloudId),
+			default => $this->getSignalingTicketV1($userId),
+		};
 	}
 
 	/**
@@ -749,7 +829,7 @@ class Config {
 	}
 
 	/**
-	 * User setting for conversations list style
+	 * User setting falling back to admin defined app config
 	 *
 	 * @param ?string $userId
 	 * @return UserPreference::CONVERSATION_LIST_STYLE_*
@@ -760,18 +840,23 @@ class Config {
 				$userId,
 				'spreed',
 				UserPreference::CONVERSATIONS_LIST_STYLE,
-				UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES
 			);
 
 			if (in_array($userSetting, [UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, UserPreference::CONVERSATION_LIST_STYLE_COMPACT], true)) {
 				return $userSetting;
 			}
 		}
+
+		$appSetting = $this->appConfig->getAppValueString(UserPreference::CONVERSATIONS_LIST_STYLE);
+		if (in_array($appSetting, [UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES, UserPreference::CONVERSATION_LIST_STYLE_COMPACT], true)) {
+			return $appSetting;
+		}
+
 		return UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES;
 	}
 
 	/**
-	 * User setting for chat style
+	 * User setting falling back to admin defined app config
 	 *
 	 * @param ?string $userId
 	 * @return UserPreference::CHAT_STYLE_*
@@ -782,14 +867,67 @@ class Config {
 				$userId,
 				'spreed',
 				UserPreference::CHAT_STYLE,
-				UserPreference::CHAT_STYLE_SPLIT
 			);
 
 			if (in_array($userSetting, [UserPreference::CHAT_STYLE_SPLIT, UserPreference::CHAT_STYLE_UNIFIED], true)) {
 				return $userSetting;
 			}
 		}
+
+		$appSetting = $this->appConfig->getAppValueString(UserPreference::CHAT_STYLE);
+		if (in_array($appSetting, [UserPreference::CHAT_STYLE_SPLIT, UserPreference::CHAT_STYLE_UNIFIED], true)) {
+			return $appSetting;
+		}
+
 		return UserPreference::CHAT_STYLE_SPLIT;
+	}
+
+	/**
+	 * User setting for conversations sort order
+	 *
+	 * @param ?string $userId
+	 * @return UserPreference::CONVERSATIONS_SORT_ORDER_*
+	 */
+	public function getConversationsSortOrder(?string $userId): string {
+		if ($userId !== null) {
+			$userSetting = $this->config->getUserValue(
+				$userId,
+				'spreed',
+				UserPreference::CONVERSATIONS_SORT_ORDER,
+			);
+
+			if (in_array($userSetting, [UserPreference::CONVERSATIONS_SORT_ORDER_ACTIVITY, UserPreference::CONVERSATIONS_SORT_ORDER_ALPHABETICAL], true)) {
+				return $userSetting;
+			}
+		}
+
+		return UserPreference::CONVERSATIONS_SORT_ORDER_ACTIVITY;
+	}
+
+	/**
+	 * User setting for conversations group mode
+	 *
+	 * @param ?string $userId
+	 * @return UserPreference::CONVERSATIONS_GROUP_MODE_*
+	 */
+	public function getConversationsGroupMode(?string $userId): string {
+		if ($userId !== null) {
+			$userSetting = $this->config->getUserValue(
+				$userId,
+				'spreed',
+				UserPreference::CONVERSATIONS_GROUP_MODE,
+			);
+
+			if (in_array($userSetting, [
+				UserPreference::CONVERSATIONS_GROUP_MODE_NONE,
+				UserPreference::CONVERSATIONS_GROUP_MODE_GROUP_FIRST,
+				UserPreference::CONVERSATIONS_GROUP_MODE_PRIVATE_FIRST,
+			], true)) {
+				return $userSetting;
+			}
+		}
+
+		return UserPreference::CONVERSATIONS_GROUP_MODE_NONE;
 	}
 
 	/**
@@ -822,6 +960,13 @@ class Config {
 
 		// TODO Default value will be set to true, once all mobile clients support it.
 		return $this->appConfig->getAppValueBool('call_end_to_end_encryption');
+	}
+
+	public function getPlaySoundsForUser(?IUser $user): bool {
+		if (!$user instanceof IUser) {
+			return $this->getPlaySoundsDefaultForGuests();
+		}
+		return $this->userConfig->getValueBool($user->getUID(), Application::APP_ID, UserPreference::PLAY_SOUNDS);
 	}
 
 	public function getPlaySoundsDefaultForGuests(): bool {

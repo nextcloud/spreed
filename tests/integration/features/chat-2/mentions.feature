@@ -4,7 +4,6 @@ Feature: chat-2/mentions
     Given user "participant1" exists
     Given user "participant2" exists
     Given user "participant3" exists
-    Given user "participant4" exists
 
   Scenario: get mentions in a one-to-one room
     When user "participant1" creates room "one-to-one room" (v4)
@@ -67,6 +66,7 @@ Feature: chat-2/mentions
       | participant1 | participant1-displayname | users  | participant1 |                   |
 
   Scenario: Cyrillic lower casing test
+    Given user "participant4" exists
     When user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | Кирилл |
@@ -153,6 +153,7 @@ Feature: chat-2/mentions
     And user "participant3" gets the following candidate mentions in room "group room" for "unknown" with 200
 
   Scenario: get mentions in a group room with a participant not in the room
+    Given user "participant4" exists
     When user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -304,6 +305,7 @@ Feature: chat-2/mentions
     And user "guest" gets the following candidate mentions in room "public room" for "unknown" with 200
 
   Scenario: get mentions in a public room with a participant not in the room
+    Given user "participant4" exists
     When user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -416,6 +418,7 @@ Feature: chat-2/mentions
     And user "guest" gets the following candidate mentions in room "file last share room" for "" with 404
 
   Scenario: get mentions in a room for a file shared by link
+    Given user "participant4" exists
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" with user "participant4" with OCS 100
@@ -474,6 +477,7 @@ Feature: chat-2/mentions
       | GUEST_ID     | Guest                    | guests | GUEST_ID     |
 
   Scenario: get matched mentions in a room for a file shared by link
+    Given user "participant4" exists
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" with user "participant4" with OCS 100
@@ -524,6 +528,7 @@ Feature: chat-2/mentions
       | participant3 | participant3-displayname | users  | participant3 |
 
   Scenario: get unmatched mentions in a room for a file shared by link
+    Given user "participant4" exists
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" with user "participant4" with OCS 100

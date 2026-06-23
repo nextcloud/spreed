@@ -119,7 +119,7 @@ EOD;
 	}
 
 	public function testIsNotCalendarEvent(): void {
-		$event = $this->createMock(ACallEndedEvent::class);
+		$event = $this->createStub(ACallEndedEvent::class);
 		$this->manager->expects(self::never())
 			->method('getRoomForUserByToken');
 		$this->logger->expects(self::never())
@@ -158,6 +158,37 @@ EOD;
 		$this->logger->expects(self::once())
 			->method('debug')
 			->with('System calendar, skipping for calendar event integration');
+
+		$this->listener->handle($event);
+	}
+
+	public function testIsCalendarEventNoEventInVObject(): void {
+		$calData = <<<EOD
+BEGIN:VCALENDAR
+PRODID:-//IDN nextcloud.com//Something fancy//EN
+CALSCALE:GREGORIAN
+VERSION:2.0
+BEGIN:VTIMEZONE
+TZID:Europe/Paris
+X-LIC-LOCATION:Europe/Paris
+END:VTIMEZONE
+BEGIN:VTODO
+CREATED:20250310T171800Z
+DTSTAMP:20250310T171819Z
+LAST-MODIFIED:20250310T171819Z
+UID:4d336aa1-a29e-4015-b1dd-98e1dae802db
+DTSTART;TZID=Europe/Vienna:20250314T100000
+DUE;TZID=Europe/Vienna:20250314T110000
+STATUS:CONFIRMED
+SUMMARY:Test
+END:VTODO
+END:VCALENDAR
+EOD;
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
+
+		$this->logger->expects(self::once())
+			->method('debug')
+			->with('Calendar object is not an event, skipping for calendar event integration');
 
 		$this->listener->handle($event);
 	}
@@ -734,6 +765,78 @@ EOF;
 		$this->logger->expects(self::never())
 			->method('debug');
 		$this->logger->expects(self::once())
+			->method('warning');
+
+		$this->listener->handle($event);
+	}
+
+	public function testSummaryWithSurroundingWhitespaceGetsTrimmed(): void {
+		$calData = str_replace(
+			'SUMMARY:Test',
+			'SUMMARY:  Test Meeting  ',
+			str_replace('{{{LOCATION}}}', 'http://talk.example.com/call/12345', $this->calData)
+		);
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
+		$room = $this->createMock(Room::class);
+		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
+
+		$this->manager->expects(self::once())
+			->method('getRoomForUserByToken')
+			->willReturn($room);
+		$this->participantService->expects(self::once())
+			->method('getParticipant')
+			->willReturn($this->participant);
+		$this->roomService->expects(self::once())
+			->method('hasExistingCalendarEvents')
+			->willReturn(false);
+		$this->roomService->expects(self::never())
+			->method('resetObject');
+		$this->roomService->expects(self::once())
+			->method('setName')
+			->with($room, 'Test Meeting');
+		$this->timezoneService->expects(self::never())
+			->method('getUserTimezone');
+		$this->timezoneService->expects(self::never())
+			->method('getDefaultTimezone');
+		$this->logger->expects(self::never())
+			->method('debug');
+		$this->logger->expects(self::never())
+			->method('warning');
+
+		$this->listener->handle($event);
+	}
+
+	public function testWhitespaceOnlySummaryBecomesEmptyString(): void {
+		$calData = str_replace(
+			'SUMMARY:Test',
+			'SUMMARY:   ',
+			str_replace('{{{LOCATION}}}', 'http://talk.example.com/call/12345', $this->calData)
+		);
+		$event = new CalendarObjectCreatedEvent(1, ['principaluri' => $this->userUri], [], ['calendardata' => $calData]);
+		$room = $this->createMock(Room::class);
+		$room->method('getObjectType')->willReturn(Room::OBJECT_TYPE_EVENT);
+
+		$this->manager->expects(self::once())
+			->method('getRoomForUserByToken')
+			->willReturn($room);
+		$this->participantService->expects(self::once())
+			->method('getParticipant')
+			->willReturn($this->participant);
+		$this->roomService->expects(self::once())
+			->method('hasExistingCalendarEvents')
+			->willReturn(false);
+		$this->roomService->expects(self::never())
+			->method('resetObject');
+		$this->roomService->expects(self::once())
+			->method('setName')
+			->with($room, '');
+		$this->timezoneService->expects(self::never())
+			->method('getUserTimezone');
+		$this->timezoneService->expects(self::never())
+			->method('getDefaultTimezone');
+		$this->logger->expects(self::never())
+			->method('debug');
+		$this->logger->expects(self::never())
 			->method('warning');
 
 		$this->listener->handle($event);

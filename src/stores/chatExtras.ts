@@ -58,6 +58,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	const allFollowedThreadsReceived = ref(false)
 	const threadTitle = ref<Record<string, string>>({})
 	const parentToReply = ref<Record<string, number>>({})
+	const privateReply = ref<Record<string, string>>({})
 	const chatInput = ref<Record<string, string>>({})
 	const messageIdToEdit = ref<Record<string, number | string>>({})
 	const chatEditInput = ref<Record<string, string>>({})
@@ -502,6 +503,26 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	}
 
 	/**
+	 * Add a private reply parent conversation token to the store
+	 *
+	 * @param payload - Payload containing token and parent token
+	 * @param payload.token - private conversation token (where message would be replied to)
+	 * @param payload.parentToken - group conversation token (where message would be replied from)
+	 */
+	function setPrivateReplyParentToken({ token, parentToken }: { token: string, parentToken: string }) {
+		privateReply.value[token] = parentToken
+	}
+
+	/**
+	 * Method to delete the parentToken that is set
+	 *
+	 * @param token - Parent Token to reset private reply
+	 */
+	function removePrivateReplyParentToken(token: string) {
+		delete privateReply.value[token]
+	}
+
+	/**
 	 * Removes a reply message id from the store
 	 * (after posting message or dismissing the operation)
 	 *
@@ -509,6 +530,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	 */
 	function removeParentIdToReply(token: string) {
 		delete parentToReply.value[token]
+		delete privateReply.value[token]
 	}
 
 	/**
@@ -822,6 +844,7 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 		chatInput,
 		messageIdToEdit,
 		chatEditInput,
+		privateReply,
 		tasksCount,
 		tasksDoneCount,
 		chatSummary,
@@ -858,6 +881,8 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 		setThreadTitle,
 		removeThreadTitle,
 		setParentIdToReply,
+		setPrivateReplyParentToken,
+		removePrivateReplyParentToken,
 		removeParentIdToReply,
 		restoreChatInput,
 		setChatInput,

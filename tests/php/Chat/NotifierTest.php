@@ -47,9 +47,7 @@ class NotifierTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->userManager
 			->method('userExists')
-			->willReturnCallback(function ($userId) {
-				return $userId !== 'unknownUser';
-			});
+			->willReturnCallback(fn ($userId) => $userId !== 'unknownUser');
 		$this->groupManager = $this->createMock(IGroupManager::class);
 
 		$this->participantService = $this->createMock(ParticipantService::class);
@@ -180,7 +178,7 @@ class NotifierTest extends TestCase {
 		$room = $this->getRoom();
 		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
 		$notifier = $this->getNotifier([]);
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		$actual = $notifier->notifyMentionedUsers($room, $comment, $alreadyNotifiedUsers, false, $participant);
 
 		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
@@ -212,7 +210,7 @@ class NotifierTest extends TestCase {
 		$comment->method('getActorId')
 			->willReturn($commentActorId);
 
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$attendee = Attendee::fromRow([
 			'actor_type' => $actorType,
 			'actor_id' => $actorId,

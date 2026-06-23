@@ -9,16 +9,12 @@ import { getSharingToken } from '@nextcloud/sharing/public'
 import { createApp, reactive } from 'vue'
 import PublicShareSidebar from './PublicShareSidebar.vue'
 import PublicShareSidebarTrigger from './PublicShareSidebarTrigger.vue'
+import { initializeTalkOnce } from './init.js'
 import { createMemoryRouter } from './router/router.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
-import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
-import './init.js'
-// Leaflet icon patch
-import 'leaflet/dist/leaflet.css'
-import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
-import 'leaflet-defaulticon-compatibility'
+initializeTalkOnce()
 
 // CSP config for webpack dynamic chunk loading
 __webpack_nonce__ = getCSPNonce()
@@ -79,7 +75,6 @@ function addTalkSidebar() {
 		.use(pinia)
 		.use(store)
 		.use(router)
-		.use(NextcloudGlobalsVuePlugin)
 		.mount(document.querySelector('#talk-sidebar'))
 }
 

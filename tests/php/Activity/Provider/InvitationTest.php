@@ -105,7 +105,7 @@ class InvitationTest extends TestCase {
 			->method('getAffectedUser')
 			->willReturn('user');
 
-		$user = $this->createMock(IUser::class);
+		$user = $this->createStub(IUser::class);
 		$this->userManager->expects($this->once())
 			->method('get')
 			->with('user')
@@ -135,9 +135,7 @@ class InvitationTest extends TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
 
 		/** @var IEvent&MockObject $event */
 		$event = $this->createMock(IEvent::class);
@@ -154,7 +152,7 @@ class InvitationTest extends TestCase {
 			->method('getAffectedUser')
 			->willReturn('user');
 
-		$user = $this->createMock(IUser::class);
+		$user = $this->createStub(IUser::class);
 		$this->userManager->expects($this->once())
 			->method('get')
 			->with('user')

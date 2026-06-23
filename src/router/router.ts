@@ -11,6 +11,7 @@ import {
 	createRouter,
 	createWebHashHistory,
 	createWebHistory,
+	START_LOCATION,
 } from 'vue-router'
 import CallView from '../components/CallView/CallView.vue'
 import ChatView from '../components/ChatView.vue'
@@ -106,6 +107,12 @@ export function createMemoryRouter() {
 	})
 
 	router.beforeEach((to, from) => {
+		if (from === START_LOCATION && to.matched.length === 0) {
+			// Ignore the router's initial in-memory navigation to "/".
+			// Fix error when trying to mount an app the second time
+			return
+		}
+
 		if (to.name === 'conversation' && (from.params.token && from.params.token !== to.params.token)) {
 			// in case of a link to a different conversation, open it in a new tab
 			window.open(window.location.origin + router.resolve(to).href, '_blank', 'noopener,noreferrer')

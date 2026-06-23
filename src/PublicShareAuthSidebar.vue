@@ -11,8 +11,10 @@
 				<h2>{{ t('spreed', 'This conversation has ended') }}</h2>
 			</div>
 			<template v-else>
-				<TopBar isInCall isSidebar />
-				<CallView :token="token" isSidebar />
+				<div class="talk-sidebar-callview">
+					<TopBar isInCall isSidebar />
+					<CallView :token="token" isSidebar />
+				</div>
 				<InternalSignalingHint />
 				<RouterView />
 				<PollManager />
@@ -37,12 +39,14 @@ import TopBar from './components/TopBar/TopBar.vue'
 import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
 import { useGetMessagesProvider } from './composables/useGetMessages.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
+import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
 import {
 	leaveConversationSync,
 	setGuestUserName,
 } from './services/participantsService.js'
+import SessionStorage from './services/SessionStorage.js'
 import { useActorStore } from './stores/actor.ts'
 import { useTokenStore } from './stores/token.ts'
 import { signalingKill } from './utils/webrtc/index.js'
@@ -64,6 +68,7 @@ export default {
 	setup() {
 		useHashCheck()
 		useGetMessagesProvider()
+		useRecordingStatusSync()
 
 		return {
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
@@ -115,6 +120,7 @@ export default {
 		window.addEventListener('unload', () => {
 			console.info('Navigating away, leaving conversation')
 			if (this.token) {
+				SessionStorage.removeItem('joined_conversation')
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
 				signalingKill()
@@ -215,10 +221,12 @@ export default {
 
 /* Styles based on the NcAppSidebar */
 #talk-sidebar {
-	position: relative;
+	position: absolute;
+	top: 0;
+	inset-inline-end: 0;
 	flex-shrink: 0;
 	width: clamp(300px, 27vw, 500px);
-	height: 100%;
+	height: 100vh;
 
 	background: var(--color-main-background);
 	border-inline-start: 1px solid var(--color-border);
@@ -243,13 +251,11 @@ export default {
 	& #call-container {
 		position: relative;
 
-		flex-grow: 1;
-
 		/* Prevent shadows of videos from leaking on other elements. */
 		overflow: hidden;
 
-		/* Distribute available height between call container and chat view. */
-		height: 40%;
+		padding-bottom: var(--sidebar-container-height, 56.25%);
+		max-height: var(--sidebar-container-height, 56.25%);
 
 		/* Ensure that the background will be black also in voice only calls. */
 		background-color: $color-call-background;

@@ -29,7 +29,6 @@ class ProxyCacheMessageServiceTest extends TestCase {
 	protected ?ProxyCacheMessageMapper $mapper = null;
 	protected ?ProxyCacheMessageService $service = null;
 
-
 	public function setUp(): void {
 		parent::setUp();
 

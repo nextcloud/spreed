@@ -4,9 +4,8 @@
  */
 
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 import { flushPromises, mount } from '@vue/test-utils'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'es-toolkit'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
@@ -18,11 +17,14 @@ import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import storeConfig from '../../store/storeConfig.js'
 import { useActorStore } from '../../stores/actor.ts'
-import { findNcActionButton, findNcButton } from '../../test-helpers.js'
+import { findNcActionButton, findNcButton, generateOCSResponse } from '../../test-helpers.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
 vi.mock('../../services/conversationsService', () => ({
 	searchListedConversations: vi.fn(),
+}))
+vi.mock('../../services/conversationTagsService', () => ({
+	fetchTags: vi.fn(() => generateOCSResponse({ payload: [] })),
 }))
 vi.mock('../../services/coreService', () => ({
 	autocompleteQuery: vi.fn(),
@@ -36,7 +38,6 @@ vi.mock('debounce', () => ({
 describe('LeftSidebar.vue', () => {
 	let store
 	let testStoreConfig
-	let loadStateSettings
 	let conversationsListMock
 	let conversationsInitialisedMock
 	let fetchConversationsAction
@@ -80,16 +81,9 @@ describe('LeftSidebar.vue', () => {
 		setActivePinia(createPinia())
 		const actorStore = useActorStore()
 
-		loadStateSettings = {
-			circles_enabled: true,
+		localCapabilities.circles = {
+			version: '33.0.0',
 		}
-
-		loadState.mockImplementation((app, key) => {
-			if (app === 'spreed') {
-				return loadStateSettings[key]
-			}
-			return null
-		})
 
 		testStoreConfig = cloneDeep(storeConfig)
 
@@ -167,6 +161,12 @@ describe('LeftSidebar.vue', () => {
 			await flushPromises()
 
 			const normalConversationsList = conversationsList.filter((conversation) => !conversation.isArchived)
+				.sort((a, b) => {
+					if (a.isFavorite !== b.isFavorite) {
+						return a.isFavorite ? -1 : 1
+					}
+					return b.lastActivity - a.lastActivity
+				})
 			const conversationListItems = wrapper.findAll('.conversation')
 			expect(conversationListItems).toHaveLength(normalConversationsList.length)
 			expect(conversationListItems.at(0).text()).toContain(normalConversationsList[0].displayName)
@@ -300,9 +300,9 @@ describe('LeftSidebar.vue', () => {
 		 * @param {string} searchTerm The search term to filter by
 		 * @param {Array} possibleResults Result options returned by the APIs
 		 * @param {Array} listedResults The displayed results
-		 * @param {object} loadStateSettingsOverride Allows to override some properties
+		 * @param {object} localCapabilitiesOverride Allows to override some localCapabilities
 		 */
-		async function testSearch(searchTerm, possibleResults, listedResults, loadStateSettingsOverride) {
+		async function testSearch(searchTerm, possibleResults, listedResults, localCapabilitiesOverride) {
 			autocompleteQuery.mockResolvedValue({
 				data: {
 					ocs: {
@@ -318,8 +318,14 @@ describe('LeftSidebar.vue', () => {
 				},
 			})
 
-			if (loadStateSettingsOverride) {
-				loadStateSettings = loadStateSettingsOverride
+			if (localCapabilitiesOverride) {
+				for (const k in localCapabilitiesOverride) {
+					if (localCapabilitiesOverride[k] === undefined) {
+						delete localCapabilities[k]
+					} else {
+						localCapabilities[k] = localCapabilitiesOverride[k]
+					}
+				}
 			}
 
 			const wrapper = mountComponent()
@@ -402,9 +408,6 @@ describe('LeftSidebar.vue', () => {
 					SEARCH_TERM,
 					[...usersResults, ...groupsResults, ...circlesResults],
 					listedResults,
-					{
-						circles_enabled: true,
-					},
 				)
 				const itemsListNames = prepareExpectedResults(usersResults, groupsResults, circlesResults, listedResults, 'Other sources')
 				// Not all items are rendered by useVirtualList
@@ -425,9 +428,6 @@ describe('LeftSidebar.vue', () => {
 					SEARCH_TERM,
 					[...usersResults, ...groupsResults, ...circlesResults],
 					listedResults,
-					{
-						circles_enabled: true,
-					},
 				)
 
 				const itemsListNames = prepareExpectedResults(usersResults, groupsResults, circlesResults, listedResults, 'Groups and teams', true, false)
@@ -447,9 +447,6 @@ describe('LeftSidebar.vue', () => {
 					SEARCH_TERM,
 					[...usersResults, ...groupsResults],
 					listedResults,
-					{
-						circles_enabled: false,
-					},
 				)
 
 				const itemsListNames = prepareExpectedResults(usersResults, groupsResults, circlesResults, listedResults, 'Other sources', false, true)
@@ -496,9 +493,7 @@ describe('LeftSidebar.vue', () => {
 					SEARCH_TERM,
 					[],
 					[],
-					{
-						circles_enabled: true,
-					},
+					{},
 					'Users, groups and teams',
 				)
 			})
@@ -507,9 +502,7 @@ describe('LeftSidebar.vue', () => {
 					SEARCH_TERM,
 					[],
 					listedResults,
-					{
-						circles_enabled: true,
-					},
+					{},
 					'Users, groups and teams',
 				)
 			})
@@ -519,7 +512,7 @@ describe('LeftSidebar.vue', () => {
 					[],
 					[],
 					{
-						circles_enabled: false,
+						circles: undefined,
 					},
 					'Users and groups',
 				)
@@ -529,9 +522,7 @@ describe('LeftSidebar.vue', () => {
 					SEARCH_TERM,
 					[...circlesResults],
 					[],
-					{
-						circles_enabled: true,
-					},
+					{},
 					'Users and groups',
 				)
 			})
@@ -540,9 +531,7 @@ describe('LeftSidebar.vue', () => {
 					SEARCH_TERM,
 					[...circlesResults, ...groupsResults],
 					[],
-					{
-						circles_enabled: true,
-					},
+					{},
 					'Users',
 				)
 			})
@@ -551,9 +540,7 @@ describe('LeftSidebar.vue', () => {
 					SEARCH_TERM,
 					[...usersResults, ...circlesResults],
 					[],
-					{
-						circles_enabled: true,
-					},
+					{},
 					'Groups',
 				)
 			})
@@ -562,9 +549,7 @@ describe('LeftSidebar.vue', () => {
 					SEARCH_TERM,
 					[...usersResults],
 					[],
-					{
-						circles_enabled: true,
-					},
+					{},
 					'Groups and teams',
 				)
 			})
@@ -573,9 +558,7 @@ describe('LeftSidebar.vue', () => {
 					SEARCH_TERM,
 					[...groupsResults],
 					[],
-					{
-						circles_enabled: true,
-					},
+					{},
 					'Users and teams',
 				)
 			})

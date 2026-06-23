@@ -32,6 +32,7 @@ use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\RoomAttributes;
 use OCA\Talk\Service\NoteToSelfService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SampleConversationsService;
@@ -59,18 +60,18 @@ use Psr\Log\LoggerInterface;
 class Listener implements IEventListener {
 
 	public function __construct(
-		protected IRequest $request,
-		protected ChatManager $chatManager,
-		protected TalkSession $talkSession,
-		protected ISession $session,
-		protected IUserSession $userSession,
-		protected ITimeFactory $timeFactory,
-		protected Manager $manager,
-		protected ParticipantService $participantService,
-		protected MessageParser $messageParser,
-		protected ThreadService $threadService,
-		protected IL10N $l,
-		protected LoggerInterface $logger,
+		private readonly IRequest $request,
+		private readonly ChatManager $chatManager,
+		private readonly TalkSession $talkSession,
+		private readonly ISession $session,
+		private readonly IUserSession $userSession,
+		private readonly ITimeFactory $timeFactory,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly MessageParser $messageParser,
+		private readonly ThreadService $threadService,
+		private readonly IL10N $l,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 
@@ -117,7 +118,36 @@ class Listener implements IEventListener {
 		} elseif ($event instanceof BeforeShareCreatedEvent) {
 			$this->setShareExpiration($event);
 		} elseif ($event instanceof BeforeDuplicateShareSentEvent || $event instanceof ShareCreatedEvent) {
-			$this->fixMimeTypeOfVoiceMessage($event);
+			$share = $event->getShare();
+			if ($share->getShareType() !== IShare::TYPE_ROOM) {
+				return;
+			}
+
+			$route = strtolower($this->request->getParam('_route') ?? '');
+
+			// Recording endpoint posts its own system message; skip the generic one.
+			if ($route === 'ocs.spreed.recording.sharetochat') {
+				return;
+			}
+
+			// Probe only creates the folder share for access control and never
+			// posts a message, so ensureOneToOneRoomIsFilled is not needed here —
+			// it will run when the actual chat message is posted.
+			if ($route === 'ocs.spreed.chat.probeattachmentfolder') {
+				return;
+			}
+
+			$room = $this->manager->getRoomByToken($share->getSharedWith());
+			// ensureOneToOneRoomIsFilled must run so attendees are persisted.
+			$this->participantService->ensureOneToOneRoomIsFilled($room);
+
+			// Attachment endpoint posts its own file_shared message by node ID;
+			// the folder-level TYPE_ROOM share it creates here is only for access control.
+			if ($route === 'ocs.spreed.chat.postattachmenttoroom') {
+				return;
+			}
+
+			$this->fixMimeTypeOfVoiceMessage($event, $room);
 		}
 	}
 
@@ -127,7 +157,8 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($this->participantService->hasActiveSessionsInCall($event->getRoom())) {
+		$isVoiceRoom = $event->getRoom()->getAttributes() & RoomAttributes::VOICE_ROOM->value;
+		if ($isVoiceRoom || $this->participantService->hasActiveSessionsInCall($event->getRoom())) {
 			$this->sendSystemMessage($event->getRoom(), 'call_joined', [], $event->getParticipant());
 		} else {
 			$silent = $event->getDetail(AParticipantModifiedEvent::DETAIL_IN_CALL_SILENT) ?? false;
@@ -346,6 +377,14 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		// The attachment and probe endpoints create a folder-level TYPE_ROOM share
+		// purely for access control — it must not be given a message-expiration date.
+		$route = strtolower($this->request->getParam('_route') ?? '');
+		if ($route === 'ocs.spreed.chat.postattachmenttoroom'
+			|| $route === 'ocs.spreed.chat.probeattachmentfolder') {
+			return;
+		}
+
 		$room = $this->manager->getRoomByToken($share->getSharedWith());
 
 		$messageExpiration = $room->getMessageExpiration();
@@ -358,21 +397,11 @@ class Listener implements IEventListener {
 		$share->setExpirationDate($dateTime);
 	}
 
-	protected function fixMimeTypeOfVoiceMessage(ShareCreatedEvent|BeforeDuplicateShareSentEvent $event): void {
+	protected function fixMimeTypeOfVoiceMessage(ShareCreatedEvent|BeforeDuplicateShareSentEvent $event, Room $room): void {
 		$share = $event->getShare();
 
-		if ($share->getShareType() !== IShare::TYPE_ROOM) {
-			return;
-		}
-
-		if (strtolower($this->request->getParam('_route')) === 'ocs.spreed.recording.sharetochat') {
-			return;
-		}
-		$room = $this->manager->getRoomByToken($share->getSharedWith());
-		$this->participantService->ensureOneToOneRoomIsFilled($room);
-
 		$metaData = $this->request->getParam('talkMetaData') ?? '';
-		$metaData = json_decode($metaData, true);
+		$metaData = json_decode((string)$metaData, true);
 		$metaData = is_array($metaData) ? $metaData : [];
 
 		if (isset($metaData['messageType']) && $metaData['messageType'] === ChatManager::VERB_VOICE_MESSAGE) {

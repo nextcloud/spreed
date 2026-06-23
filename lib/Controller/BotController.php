@@ -25,11 +25,13 @@ use OCA\Talk\Model\BotConversation;
 use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BotServer;
 use OCA\Talk\Model\BotServerMapper;
+use OCA\Talk\Model\Thread;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BotService;
 use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\ThreadService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -43,6 +45,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\MessageTooLongException;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IL10N;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
@@ -54,17 +57,19 @@ class BotController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected ChatManager $chatManager,
-		protected ParticipantService $participantService,
-		protected ITimeFactory $timeFactory,
-		protected ChecksumVerificationService $checksumVerificationService,
-		protected BotConversationMapper $botConversationMapper,
-		protected BotServerMapper $botServerMapper,
-		protected BotService $botService,
-		protected Manager $manager,
-		protected ReactionManager $reactionManager,
-		protected LoggerInterface $logger,
-		private IEventDispatcher $dispatcher,
+		private readonly ChatManager $chatManager,
+		private readonly ParticipantService $participantService,
+		private readonly ITimeFactory $timeFactory,
+		private readonly ChecksumVerificationService $checksumVerificationService,
+		private readonly BotConversationMapper $botConversationMapper,
+		private readonly BotServerMapper $botServerMapper,
+		private readonly BotService $botService,
+		private readonly Manager $manager,
+		private readonly ReactionManager $reactionManager,
+		private readonly ThreadService $threadService,
+		private readonly IL10N $l,
+		private readonly LoggerInterface $logger,
+		private readonly IEventDispatcher $dispatcher,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -75,15 +80,11 @@ class BotController extends AEnvironmentAwareOCSController {
 	 * @return Bot
 	 * @throws \InvalidArgumentException When the request could not be linked with a bot
 	 */
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed used to generate the request signature')]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'Signature over the request body to verify authenticity')]
-	protected function getBotFromHeaders(string $token, string $message): Bot {
-		$random = $this->request->getHeader('x-nextcloud-talk-bot-random');
+	protected function getBotFromHeaders(string $token, string $message, string $random, string $checksum): Bot {
 		if (empty($random) || strlen($random) < 32) {
 			$this->logger->error('Invalid Random received from bot response');
 			throw new \InvalidArgumentException('Invalid Random received from bot response', Http::STATUS_BAD_REQUEST);
 		}
-		$checksum = $this->request->getHeader('x-nextcloud-talk-bot-signature');
 		if (empty($checksum)) {
 			$this->logger->error('Invalid Signature received from bot response');
 			throw new \InvalidArgumentException('Invalid Signature received from bot response', Http::STATUS_BAD_REQUEST);
@@ -124,6 +125,8 @@ class BotController extends AEnvironmentAwareOCSController {
 	 * @param string $referenceId For the message to be able to later identify it again
 	 * @param int $replyTo Parent id which this message is a reply to
 	 * @param bool $silent If sent silent the chat message will not create any notifications
+	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
+	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
 	 * @return DataResponse<Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, null, array{}>
 	 *
 	 * 201: Message sent successfully
@@ -134,17 +137,22 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity')]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/bot/{token}/message', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function sendMessage(string $token, string $message, string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
+	public function sendMessage(string $token, string $message, string $referenceId = '', int $replyTo = 0, bool $silent = false, string $threadTitle = '', int $threadId = 0): DataResponse {
 		if (trim($message) === '') {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
+		$random = $this->request->getHeader('x-nextcloud-talk-bot-random');
+		$checksum = $this->request->getHeader('x-nextcloud-talk-bot-signature');
+
 		try {
-			$bot = $this->getBotFromHeaders($token, $message);
+			$bot = $this->getBotFromHeaders($token, $message, $random, $checksum);
 		} catch (\InvalidArgumentException $e) {
 			/** @var Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED $status */
 			$status = $e->getCode();
@@ -164,8 +172,12 @@ class BotController extends AEnvironmentAwareOCSController {
 		if ($replyTo !== 0) {
 			try {
 				$parent = $this->chatManager->getParentComment($room, (string)$replyTo);
-			} catch (NotFoundException $e) {
+			} catch (NotFoundException) {
 				// Someone is trying to reply cross-rooms or to a non-existing message
+				return new DataResponse(null, Http::STATUS_BAD_REQUEST);
+			}
+		} elseif ($threadId !== Thread::THREAD_NONE && $threadId !== Thread::THREAD_CREATE) {
+			if (!$this->threadService->validateThread($room->getId(), $threadId)) {
 				return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 			}
 		}
@@ -174,7 +186,26 @@ class BotController extends AEnvironmentAwareOCSController {
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
-			$this->chatManager->sendMessage($room, null, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent, rateLimitGuestMentions: false);
+			$createThread = $replyTo === 0 && $threadId === Thread::THREAD_NONE && $threadTitle !== '';
+			$threadId = $createThread ? Thread::THREAD_CREATE : $threadId;
+			$comment = $this->chatManager->sendMessage($room, null, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent, false, $threadId, $threadTitle);
+			if ($createThread) {
+				$thread = $this->threadService->createThread($room, (int)$comment->getId(), $threadTitle);
+
+				$this->chatManager->addSystemMessage(
+					$room,
+					null,
+					$actorType,
+					$actorId,
+					json_encode(['message' => 'thread_created', 'parameters' => ['thread' => (int)$comment->getId(), 'title' => $thread->getName()]]),
+					$this->timeFactory->getDateTime(),
+					false,
+					null,
+					$comment,
+					true,
+					true
+				);
+			}
 		} catch (MessageTooLongException) {
 			return new DataResponse(null, Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception) {
@@ -201,14 +232,19 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity')]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/bot/{token}/reaction/{messageId}', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 		'messageId' => '[0-9]+',
 	])]
 	public function react(string $token, int $messageId, string $reaction): DataResponse {
+		$random = $this->request->getHeader('x-nextcloud-talk-bot-random');
+		$checksum = $this->request->getHeader('x-nextcloud-talk-bot-signature');
+
 		try {
-			$bot = $this->getBotFromHeaders($token, $reaction);
+			$bot = $this->getBotFromHeaders($token, $reaction, $random, $checksum);
 		} catch (\InvalidArgumentException $e) {
 			/** @var Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED $status */
 			$status = $e->getCode();
@@ -260,14 +296,19 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity')]
 	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/bot/{token}/reaction/{messageId}', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 		'messageId' => '[0-9]+',
 	])]
 	public function deleteReaction(string $token, int $messageId, string $reaction): DataResponse {
+		$random = $this->request->getHeader('x-nextcloud-talk-bot-random');
+		$checksum = $this->request->getHeader('x-nextcloud-talk-bot-signature');
+
 		try {
-			$bot = $this->getBotFromHeaders($token, $reaction);
+			$bot = $this->getBotFromHeaders($token, $reaction, $random, $checksum);
 		} catch (\InvalidArgumentException $e) {
 			/** @var Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED $status */
 			$status = $e->getCode();
@@ -318,6 +359,14 @@ class BotController extends AEnvironmentAwareOCSController {
 		foreach ($bots as $bot) {
 			$botData = $bot->jsonSerialize();
 			unset($botData['secret']);
+
+			if (!$this->botService->isAppForBotEnabled($bot)) {
+				$botData['state'] = Bot::STATE_UNAVAILABLE;
+				$botData['error_count'] = 1;
+				$botData['last_error_date'] = $this->timeFactory->getTime();
+				$botData['last_error_message'] = $this->l->t('App disabled');
+			}
+
 			$data[] = $botData;
 		}
 
@@ -338,14 +387,21 @@ class BotController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function listBots(): DataResponse {
-		$alreadyInstalled = array_map(static function (BotConversation $bot): int {
-			return $bot->getBotId();
-		}, $this->botConversationMapper->findForToken($this->room->getToken()));
+		$alreadyInstalled = array_map(static fn (BotConversation $bot): int => $bot->getBotId(), $this->botConversationMapper->findForToken($this->room->getToken()));
 
 		$data = [];
 		$bots = $this->botServerMapper->getAllBots();
 		foreach ($bots as $bot) {
 			$botData = $this->formatBot($bot, in_array($bot->getId(), $alreadyInstalled, true));
+
+			if (!$this->botService->isAppForBotEnabled($bot)) {
+				if ($botData['state'] !== Bot::STATE_DISABLED) {
+					$botData['state'] = Bot::STATE_UNAVAILABLE;
+				} else {
+					continue;
+				}
+			}
+
 			if ($botData !== null) {
 				$data[] = $botData;
 			}
@@ -386,15 +442,13 @@ class BotController extends AEnvironmentAwareOCSController {
 			], Http::STATUS_BAD_REQUEST);
 		}
 
-		if ($bot->getState() !== Bot::STATE_ENABLED) {
+		if ($bot->getState() !== Bot::STATE_ENABLED || !$this->botService->isAppForBotEnabled($bot)) {
 			return new DataResponse([
 				'error' => 'bot',
 			], Http::STATUS_BAD_REQUEST);
 		}
 
-		$alreadyInstalled = array_map(static function (BotConversation $bot): int {
-			return $bot->getBotId();
-		}, $this->botConversationMapper->findForToken($this->room->getToken()));
+		$alreadyInstalled = array_map(static fn (BotConversation $bot): int => $bot->getBotId(), $this->botConversationMapper->findForToken($this->room->getToken()));
 
 		if (in_array($botId, $alreadyInstalled)) {
 			return new DataResponse($this->formatBot($bot, true), Http::STATUS_OK);

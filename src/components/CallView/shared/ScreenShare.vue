@@ -21,6 +21,7 @@
 			isBig
 			isScreen
 			:model="model"
+			:showVideoOverlay="showVideoOverlay"
 			:participantName="remoteParticipantName" />
 	</div>
 </template>
@@ -71,6 +72,11 @@ export default {
 		isBig: {
 			type: Boolean,
 			default: false,
+		},
+
+		showVideoOverlay: {
+			type: Boolean,
+			default: true,
 		},
 	},
 

@@ -46,7 +46,7 @@
 					</NcNoteCard>
 				</template>
 
-				<form v-if="showPasswordField" class="password-form" @submit.prevent="handleSetNewPassword">
+				<form v-if="isPasswordProtectionChecked" class="password-form" @submit.prevent="handleSetNewPassword">
 					<NcPasswordField
 						ref="passwordField"
 						v-model="password"
@@ -55,11 +55,11 @@
 						:disabled="isSaving"
 						class="password-form__input-field"
 						labelVisible
-						:label="t('spreed', 'Enter new password')"
+						:label="conversation.hasPassword ? t('spreed', 'Change password') : t('spreed', 'Enter new password')"
 						@valid="isValid = true"
 						@invalid="isValid = false" />
 					<NcButton
-						:disabled="isSaving || !isValid"
+						:disabled="isSaving || !isValid || !password.length"
 						variant="primary"
 						type="submit"
 						class="password-form__button">
@@ -162,8 +162,6 @@ export default {
 		return {
 			// The conversation's password
 			password: '',
-			// Switch for the password-editing operation
-			showPasswordField: false,
 			isSaving: false,
 			isSendingInvitations: false,
 			isValid: true,
@@ -184,7 +182,7 @@ export default {
 		},
 
 		isPasswordProtectionChecked() {
-			return this.conversation.hasPassword || this.showPasswordField
+			return this.conversation.hasPassword || this.password.length > 0
 		},
 
 		forcePasswordProtection() {
@@ -226,14 +224,12 @@ export default {
 			if (checked) {
 				// Generate a random password
 				this.password = await generatePassword()
-				this.showPasswordField = true
 			} else {
 				// disable the password protection for the current conversation
 				if (this.conversation.hasPassword) {
 					await this.setConversationPassword('')
 				}
 				this.password = ''
-				this.showPasswordField = false
 				this.isValid = true
 			}
 		},
@@ -242,7 +238,6 @@ export default {
 			if (this.isValid) {
 				await this.setConversationPassword(this.password)
 				this.password = ''
-				this.showPasswordField = false
 			}
 		},
 

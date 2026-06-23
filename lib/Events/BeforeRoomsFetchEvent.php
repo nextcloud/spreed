@@ -12,7 +12,7 @@ use OCP\EventDispatcher\Event;
 
 class BeforeRoomsFetchEvent extends Event {
 	public function __construct(
-		protected string $userId,
+		private readonly string $userId,
 	) {
 		parent::__construct();
 	}

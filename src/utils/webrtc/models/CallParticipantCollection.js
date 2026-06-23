@@ -5,12 +5,12 @@
 
 import { reactive } from 'vue'
 import EmitterMixin from '../../EmitterMixin.js'
-import CallParticipantModel from './CallParticipantModel.js'
+import { CallParticipantModel } from './CallParticipantModel.js'
 
 /**
  *
  */
-export default function CallParticipantCollection() {
+export function CallParticipantCollection() {
 	this._superEmitterMixin()
 
 	this.callParticipantModels = reactive([])

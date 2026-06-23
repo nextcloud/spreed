@@ -4,7 +4,11 @@
 -->
 
 <template>
-	<div id="call-container" :class="callContainerClass">
+	<div
+		id="call-container"
+		@mousemove="debounceHandleMovement"
+		@keydown="debounceHandleMovement"
+		@mouseleave="hideOverlay">
 		<ViewerOverlayCallView
 			v-if="isViewerOverlay"
 			:token="token"
@@ -54,6 +58,7 @@
 						key="screen-local"
 						:token="token"
 						:localMediaModel="localMediaModel"
+						:showVideoOverlay="showVideoOverlay"
 						:sharedData="localSharedData"
 						isBig />
 					<!-- Remote or selected screen -->
@@ -62,6 +67,7 @@
 						:key="`screen-${shownRemoteScreenPeerId}`"
 						:token="token"
 						:callParticipantModel="shownRemoteScreenCallParticipantModel"
+						:showVideoOverlay="showVideoOverlay"
 						:sharedData="sharedDatas[shownRemoteScreenPeerId]"
 						isBig />
 					<!-- Promoted "autopilot" mode -->
@@ -115,6 +121,7 @@
 					:screens="screens"
 					:localMediaModel="localMediaModel"
 					:localCallParticipantModel="localCallParticipantModel"
+					:showVideoOverlay="showVideoOverlay"
 					:sharedDatas="sharedDatas"
 					v-bind="$attrs"
 					@selectVideo="handleSelectVideo"
@@ -171,20 +178,17 @@ import VideoBottomBar from './shared/VideoBottomBar.vue'
 import VideoVue from './shared/VideoVue.vue'
 import ViewerOverlayCallView from './shared/ViewerOverlayCallView.vue'
 import { SIMULCAST } from '../../constants.ts'
-import BrowserStorage from '../../services/BrowserStorage.js'
 import { fetchPeers } from '../../services/callsService.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useCallViewStore } from '../../stores/callView.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
-import { satisfyVersion } from '../../utils/satisfyVersion.ts'
 import { callParticipantCollection, localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './Grid/gridPlaceholders.ts'
 import { useWakeLock } from './useWakeLock.ts'
 
 const serverVersion = loadState('core', 'config', {}).version ?? '29.0.0.0'
-const serverSupportsBackgroundBlurred = satisfyVersion(serverVersion, '29.0.4.0')
 
 export default {
 	name: 'CallView',
@@ -238,16 +242,12 @@ export default {
 			localMediaModel.disableVideo()
 		}
 
-		// Fallback ref for versions before v29.0.4
-		const isBackgroundBlurred = ref(BrowserStorage.getItem('background-blurred') !== 'false')
-
 		return {
 			localMediaModel,
 			localCallParticipantModel,
 			callParticipantCollection,
 			devMode,
 			callViewStore: useCallViewStore(),
-			isBackgroundBlurred,
 		}
 	},
 
@@ -266,6 +266,11 @@ export default {
 			showPresenterOverlay: true,
 			debounceFetchPeers: () => {},
 			forcePromotedModel: null,
+			// Videos controls and name
+			showVideoOverlay: true,
+			// Timer for the videos bottom bar
+			showVideoOverlayTimer: null,
+			debounceHandleMovement: () => {},
 		}
 	},
 
@@ -395,6 +400,11 @@ export default {
 		},
 
 		shouldShowPresenterOverlay() {
+			if (this.isSidebar) {
+				// Do not overload small video tile
+				return false
+			}
+
 			return (this.showLocalScreen && this.hasLocalVideo)
 				|| ((this.showRemoteScreen || this.showSelectedScreen)
 					&& (this.shownRemoteScreenCallParticipantModel?.attributes.videoAvailable || this.isModelWithVideo(this.shownRemoteScreenCallParticipantModel)))
@@ -419,17 +429,6 @@ export default {
 
 		supportedReactions() {
 			return getTalkConfig(this.token, 'call', 'supported-reactions')
-		},
-
-		/**
-		 * Fallback style for versions before v29.0.4
-		 */
-		callContainerClass() {
-			if (serverSupportsBackgroundBlurred) {
-				return
-			}
-
-			return this.isBackgroundBlurred ? 'call-container__blurred' : 'call-container__non-blurred'
 		},
 
 		isLiveTranscriptionEnabled() {
@@ -531,21 +530,27 @@ export default {
 		this.debounceFetchPeers = debounce(this.fetchPeers, 1500)
 		EventBus.on('refresh-peer-list', this.debounceFetchPeers)
 
+		this.debounceHandleMovement = debounce(this.handleMovement, 100, { immediate: true })
+
 		callParticipantCollection.on('remove', this._lowerHandWhenParticipantLeaves)
 
 		subscribe('switch-screen-to-id', this._switchScreenToId)
-		subscribe('set-background-blurred', this.setBackgroundBlurred)
 	},
 
 	beforeUnmount() {
 		this.debounceFetchPeers.clear?.()
+		this.debounceHandleMovement.clear?.()
 		this.callViewStore.setIsEmptyCallView(true)
 		EventBus.off('refresh-peer-list', this.debounceFetchPeers)
 
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
 
 		unsubscribe('switch-screen-to-id', this._switchScreenToId)
-		unsubscribe('set-background-blurred', this.setBackgroundBlurred)
+
+		if (this.showVideoOverlayTimer !== null) {
+			clearTimeout(this.showVideoOverlayTimer)
+			this.showVideoOverlayTimer = null
+		}
 	},
 
 	methods: {
@@ -834,15 +839,6 @@ export default {
 			}
 		},
 
-		/**
-		 * Fallback method for versions before v29.0.4
-		 *
-		 * @param {boolean} value whether background should be blurred
-		 */
-		setBackgroundBlurred(value) {
-			this.isBackgroundBlurred = value
-		},
-
 		isModelWithVideo(callParticipantModel) {
 			if (!callParticipantModel) {
 				return false
@@ -860,6 +856,24 @@ export default {
 			}
 		},
 
+		handleMovement() {
+			if (this.showVideoOverlayTimer !== null) {
+				clearTimeout(this.showVideoOverlayTimer)
+			}
+			this.showVideoOverlay = true
+			this.showVideoOverlayTimer = setTimeout(() => {
+				this.showVideoOverlay = false
+				this.showVideoOverlayTimer = null
+			}, 5_000)
+		},
+
+		hideOverlay() {
+			if (this.showVideoOverlayTimer !== null) {
+				clearTimeout(this.showVideoOverlayTimer)
+				this.showVideoOverlayTimer = null
+			}
+			this.showVideoOverlay = false
+		},
 	},
 }
 </script>
@@ -871,19 +885,12 @@ export default {
 	width: 100%;
 	height: 100%;
 	background-color: $color-call-background;
-	// Default value has changed since v29.0.4: 'blur(25px)' => 'none'
-	backdrop-filter: var(--filter-background-blur);
 	--grid-gap: calc(var(--default-grid-baseline) * 2);
 	--top-bar-height: 51px;
 	--wrapper-padding: calc(var(--default-grid-baseline) * 2.5);
 	--bottom-bar-height: calc(var(--default-clickable-area) + var(--wrapper-padding) * 2);
-
-	&.call-container__blurred {
-		backdrop-filter: blur(25px);
-	}
-	&.call-container__non-blurred {
-		backdrop-filter: none;
-	}
+	// For sidebar integrations: show container in a 16/9 proportion (+ top/bottom bar) based on the sidebar width
+	--sidebar-container-height: calc(56.25% + var(--top-bar-height) + var(--bottom-bar-height));
 }
 
 #videos {
@@ -945,12 +952,13 @@ export default {
 	position: absolute;
 	inset-inline-end: 0;
 	bottom: 0;
-	width: 300px;
-	height: 250px;
+	width: fit-content;
+	max-width: 300px;
+	max-height: 250px;
 
 	&--sidebar {
-		width: 150px;
-		height: 100px;
+		max-width: 150px;
+		max-height: 100px;
 		bottom: var(--bottom-bar-height);
 		margin: var(--default-grid-baseline);
 	}

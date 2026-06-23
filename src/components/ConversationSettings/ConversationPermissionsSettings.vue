@@ -27,7 +27,9 @@
 			<span v-show="loading && radioValue === 'all'" class="icon-loading-small" />
 		</div>
 		<p class="conversation-permissions-editor__hint">
-			{{ t('spreed', 'Participants have permissions to start a call, join a call, enable audio and video, and share screen.') }}
+			{{ isCallEnabled
+				? t('spreed', 'Participants have permissions to start a call, join a call, enable audio and video, and share screen.')
+				: t('spreed', 'Participants can use all available features.') }}
 		</p>
 
 		<!-- No permissions -->
@@ -44,7 +46,9 @@
 			<span v-show="loading && radioValue === 'restricted'" class="icon-loading-small" />
 		</div>
 		<p class="conversation-permissions-editor__hint">
-			{{ t('spreed', 'Participants can join calls, but cannot enable audio nor video nor share screen until a moderator manually grants them permissions.') }}
+			{{ isCallEnabled
+				? t('spreed', 'Participants can join calls, but cannot enable audio nor video nor share screen until a moderator manually grants them permissions.')
+				: t('spreed', 'Participants get a reduced feature set until a moderator manually grants additional permissions.') }}
 		</p>
 
 		<!-- Advanced permissions -->
@@ -76,6 +80,7 @@
 			:conversationName="conversationName"
 			:permissions="conversationPermissions"
 			:loading="loading"
+			:token="token"
 			nestedContainer=".conversation-permissions-editor"
 			@close="handleClosePermissionsEditor"
 			@submit="handleSubmitPermissions" />
@@ -146,6 +151,10 @@ export default {
 
 		hasReactPermissions() {
 			return hasTalkFeature(this.token, 'react-permission')
+		},
+
+		isCallEnabled() {
+			return getTalkConfig(this.token, 'call', 'enabled')
 		},
 
 		maxDefaultPermission() {

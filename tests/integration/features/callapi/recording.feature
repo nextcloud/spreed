@@ -1,7 +1,6 @@
 Feature: callapi/recording
   Background:
     Given user "participant1" exists
-    Given user "participant2" exists
 
   Scenario: Start and stop video recording
     Given recording server is started
@@ -413,6 +412,7 @@ Feature: callapi/recording
       | 2    | room1 | 0             |
 
   Scenario: Get error when non moderator/owner try to start recording
+    Given user "participant2" exists
     Given recording server is started
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
@@ -495,6 +495,21 @@ Feature: callapi/recording
       | room1 | users     | participant1          | participant1-displayname | record-audio | {file}  | "IGNORE"          |
       | room1 | users     | participant1          | participant1-displayname | record-audio | {file}  | "IGNORE"          |
       | room1 | users     | participant1          | participant1-displayname | record-audio | {file}  | "IGNORE"          |
+    Given user "participant2" exists
+    And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
+
+    # Check paths on the actual file system
+    When user "participant2" gets the DAV properties for "/"
+    Then the list of returned files for "participant2" is
+      | / |
+      | /Talk/ |
+      | /welcome.txt |
+    When user "participant2" gets the DAV properties for "/Talk"
+    Then the list of returned files for "participant2" is
+      | /Talk/ |
+      | /Talk/join_call%20-%20summary.md |
+      | /Talk/join_call.md |
+      | /Talk/join_call.ogg |
 
   Scenario: Store recording with success but fail to transcript
     Given Fake summary task provider is enabled

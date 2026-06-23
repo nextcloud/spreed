@@ -16,8 +16,8 @@ use OCP\Talk\IConversation;
 class Conversation implements IConversation {
 
 	public function __construct(
-		protected IURLGenerator $url,
-		protected Room $room,
+		private readonly IURLGenerator $url,
+		private readonly Room $room,
 	) {
 	}
 

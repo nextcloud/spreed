@@ -105,6 +105,17 @@ class BotController extends OCSController {
 			$messageData = json_decode($data['object']['content'], true);
 			$message = $messageData['message'];
 
+			if (str_starts_with($message, '/thread')) {
+				[, $title, $message] = explode(' ', $message, 3);
+				$body = [
+					'message' => $message,
+					'referenceId' => sha1($random),
+					'threadTitle' => $title,
+				];
+				$this->sendResponse($server, $secret, $body, $data);
+				return new DataResponse();
+			}
+
 			if (!$this->logEntryMapper->hasActiveCall($server, $data['target']['id'])) {
 				$agendaDetected = $this->summaryService->readAgendaFromMessage($message, $messageData, $server, $data);
 

@@ -27,24 +27,26 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Mail\IEmailValidator;
 use OCP\Mail\IMailer;
 use OCP\Util;
 use Psr\Log\LoggerInterface;
 
 class GuestManager {
 	public function __construct(
-		protected Config $talkConfig,
-		protected IMailer $mailer,
-		protected Defaults $defaults,
-		protected IUserSession $userSession,
-		protected ParticipantService $participantService,
-		protected PollService $pollService,
-		protected RoomService $roomService,
-		protected IURLGenerator $url,
-		protected IL10N $l,
-		protected IEventDispatcher $dispatcher,
-		protected LoggerInterface $logger,
-		protected IDateTimeZone $dateTimeZone,
+		private readonly Config $talkConfig,
+		private readonly IEmailValidator $emailValidator,
+		private readonly IMailer $mailer,
+		private readonly Defaults $defaults,
+		private readonly IUserSession $userSession,
+		private readonly ParticipantService $participantService,
+		private readonly PollService $pollService,
+		private readonly RoomService $roomService,
+		private readonly IURLGenerator $url,
+		private readonly IL10N $l,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly LoggerInterface $logger,
+		private readonly IDateTimeZone $dateTimeZone,
 	) {
 	}
 
@@ -79,7 +81,7 @@ class GuestManager {
 	}
 
 	public function validateMailAddress(string $email): bool {
-		return $this->mailer->validateMailAddress($email);
+		return $this->emailValidator->isValid($email);
 	}
 
 	/**
@@ -100,9 +102,9 @@ class GuestManager {
 
 		$emailKey = $nameKey = null;
 		foreach ($details as $key => $header) {
-			if (strtolower($header) === 'email') {
+			if (strtolower((string)$header) === 'email') {
 				$emailKey = $key;
-			} elseif (strtolower($header) === 'name') {
+			} elseif (strtolower((string)$header) === 'name') {
 				$nameKey = $key;
 			}
 		}
@@ -110,7 +112,7 @@ class GuestManager {
 		if ($emailKey === null) {
 			throw new GuestImportException(
 				GuestImportException::REASON_HEADER_EMAIL,
-				$this->l->t('Missing email field in header line'),
+				$this->l->t('Missing %s field in header line', ['"email"']),
 			);
 		}
 
@@ -220,27 +222,28 @@ class GuestManager {
 
 		$user = $this->userSession->getUser();
 		$invitee = $user instanceof IUser ? $user->getDisplayName() : '';
+		$roomName = $room->getDisplayName('', true);
 
 		$template = $this->mailer->createEMailTemplate('Talk.InviteByEmail', [
 			'invitee' => $invitee,
-			'roomName' => $room->getDisplayName(''),
+			'roomName' => $roomName,
 			'roomLink' => $link,
 			'email' => $email,
 			'pin' => $pin,
 		]);
 
 		if ($user instanceof IUser) {
-			$subject = $this->l->t('%1$s invited you to conversation "%2$s".', [$user->getDisplayName(), $room->getDisplayName('')]);
+			$subject = $this->l->t('%1$s invited you to conversation "%2$s".', [$user->getDisplayName(), $roomName]);
 			$message->setFrom([Util::getDefaultEmailAddress('no-reply') => $user->getDisplayName()]);
 		} else {
-			$subject = $this->l->t('You were invited to conversation "%s".', $room->getDisplayName(''));
+			$subject = $this->l->t('You were invited to conversation "%s".', $roomName);
 			$message->setFrom([Util::getDefaultEmailAddress('no-reply') => $this->defaults->getName()]);
 		}
 
 		$template->setSubject($subject);
 		$template->addHeader();
 		$template->addHeading(
-			htmlspecialchars($room->getDisplayName('')),
+			htmlspecialchars($roomName),
 			$this->l->t('Conversation invitation')
 		);
 		$template->addBodyText(
@@ -296,7 +299,7 @@ class GuestManager {
 				$this->l->t('Click the link below to join the lobby now.')
 			);
 			$template->addBodyButton(
-				$this->l->t('Join lobby for "%s"', [$room->getDisplayName('')]),
+				$this->l->t('Join lobby for "%s"', [$roomName]),
 				$link
 			);
 		} else {
@@ -306,7 +309,7 @@ class GuestManager {
 				$this->l->t('Click the link below to join the conversation now.')
 			);
 			$template->addBodyButton(
-				$this->l->t('Join "%s"', [$room->getDisplayName('')]),
+				$this->l->t('Join "%s"', [$roomName]),
 				$link
 			);
 		}
@@ -319,7 +322,7 @@ class GuestManager {
 
 			$event = new EmailInvitationSentEvent($room, $participant->getAttendee());
 			$this->dispatcher->dispatchTyped($event);
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 		}
 	}
 }

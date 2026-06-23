@@ -19,8 +19,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Uninstall extends Base {
 	public function __construct(
-		private BotConversationMapper $botConversationMapper,
-		private BotServerMapper $botServerMapper,
+		private readonly BotConversationMapper $botConversationMapper,
+		private readonly BotServerMapper $botServerMapper,
 	) {
 		parent::__construct();
 	}

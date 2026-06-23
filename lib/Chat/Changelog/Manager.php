@@ -10,21 +10,17 @@ namespace OCA\Talk\Chat\Changelog;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Manager as RoomManager;
-use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
-use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\PreConditionNotMetException;
 
 class Manager {
 
 	public function __construct(
-		protected IConfig $config,
-		protected IDBConnection $connection,
-		protected RoomManager $roomManager,
-		protected ChatManager $chatManager,
-		protected ITimeFactory $timeFactory,
-		protected IL10N $l,
+		private readonly IConfig $config,
+		private readonly RoomManager $roomManager,
+		private readonly ChatManager $chatManager,
+		private readonly IL10N $l,
 	) {
 	}
 
@@ -160,6 +156,11 @@ class Manager {
 			$this->l->t('## New in Talk %s', ['23']) . "\n"
 			. $this->l->t('- Moderators can now pin messages so they are kept at the top') . "\n"
 			. $this->l->t('- Schedule a message to send it at a later time') . "\n",
+			$this->l->t('## New in Talk %s', ['24']) . "\n"
+			. $this->l->t('- Conversation tags, grouping and sorting to organize the conversation list') . "\n"
+			. $this->l->t('- Voice-rooms to connect spontaneously') . "\n"
+			. $this->l->t('- Presets for quick conversation configuration during creation') . "\n"
+			. $this->l->t('- Direct calls from profile menus for calls within other apps') . "\n",
 		];
 	}
 }

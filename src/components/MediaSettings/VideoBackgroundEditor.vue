@@ -270,11 +270,11 @@ export default {
 
 		loadBackground() {
 			// Set virtual background depending on browser storage's settings
-			if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
-				if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
+			if (BrowserStorage.getItem('virtualBackgroundEnabled') === 'true') {
+				if (BrowserStorage.getItem('virtualBackgroundType') === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
 					this.selectedBackground = 'blur'
-				} else if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
-					this.selectedBackground = BrowserStorage.getItem('virtualBackgroundUrl_' + this.token)
+				} else if (BrowserStorage.getItem('virtualBackgroundType') === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+					this.selectedBackground = BrowserStorage.getItem('virtualBackgroundUrl')
 				} else {
 					this.selectedBackground = 'none'
 				}

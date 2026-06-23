@@ -5,6 +5,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\Tests\php;
 
 use OCA\Talk\Config;
@@ -21,6 +22,7 @@ use OCP\IDateTimeZone;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
+use OCP\Mail\IEmailValidator;
 use OCP\Mail\IMailer;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -29,6 +31,7 @@ use Test\TestCase;
 
 class GuestManagerTest extends TestCase {
 	protected Config&MockObject $talkConfig;
+	protected IEmailValidator&MockObject $emailValidator;
 	protected IMailer&MockObject $mailer;
 	protected Defaults&MockObject $defaults;
 	protected IUserSession&MockObject $userSession;
@@ -44,6 +47,7 @@ class GuestManagerTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 		$this->talkConfig = $this->createMock(Config::class);
+		$this->emailValidator = $this->createMock(IEmailValidator::class);
 		$this->mailer = $this->createMock(IMailer::class);
 		$this->defaults = $this->createMock(Defaults::class);
 		$this->userSession = $this->createMock(IUserSession::class);
@@ -62,6 +66,7 @@ class GuestManagerTest extends TestCase {
 			return $this->getMockBuilder(GuestManager::class)
 				->setConstructorArgs([
 					$this->talkConfig,
+					$this->emailValidator,
 					$this->mailer,
 					$this->defaults,
 					$this->userSession,
@@ -80,6 +85,7 @@ class GuestManagerTest extends TestCase {
 
 		$this->guestManager = new GuestManager(
 			$this->talkConfig,
+			$this->emailValidator,
 			$this->mailer,
 			$this->defaults,
 			$this->userSession,
@@ -121,7 +127,7 @@ class GuestManagerTest extends TestCase {
 
 	#[DataProvider('dataImportEmails')]
 	public function testImportEmails(string $fileName, int $invites, int $duplicates, array $invited, ?string $reason = null, array $invalidLines = []): void {
-		$this->mailer->method('validateMailAddress')
+		$this->emailValidator->method('isValid')
 			->willReturnCallback(static fn (string $email): bool => str_starts_with($email, 'valid'));
 
 		$actualInvites = [];
@@ -131,7 +137,7 @@ class GuestManagerTest extends TestCase {
 				return $this->createMock(Participant::class);
 			});
 
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		try {
 			$guestManager = $this->getGuestManager(['sendEmailInvitation']);

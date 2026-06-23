@@ -9,7 +9,8 @@
 		v-if="show"
 		:size="isDialog ? 'large' : undefined"
 		:labelId="isDialog ? dialogHeaderId : undefined"
-		@close="close">
+		:noClose="hideCloseButton"
+		@close="handleDialogClose">
 		<div class="media-settings">
 			<h2
 				v-if="isDialog"
@@ -39,6 +40,11 @@
 						{{ t('spreed', 'Give consent to the recording of this call') }}
 					</NcCheckboxRadioSwitch>
 				</template>
+			</NcNoteCard>
+			<NcNoteCard
+				v-if="isBeforeJoinCall && isVoiceRoom"
+				type="info">
+				{{ t('spreed', 'You can only join a voice room via a call.') }}
 			</NcNoteCard>
 			<div class="media-settings__content" :class="{ 'media-settings__content--mobile': isMobile }">
 				<!-- Preview -->
@@ -205,6 +211,13 @@
 						class="checkbox">
 						{{ t('spreed', 'Start recording immediately with the call') }}
 					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch
+						v-else-if="hintRecordingOption"
+						:description="t('spreed', 'Recording backend is not installed')"
+						disabled
+						class="checkbox">
+						{{ t('spreed', 'Start recording immediately with the call') }}
+					</NcCheckboxRadioSwitch>
 					<!-- Notify call option-->
 					<NcCheckboxRadioSwitch
 						v-if="showNotifyCallOption"
@@ -269,9 +282,12 @@ import IconBackground from '../../../img/material-icons/replace-background.svg?r
 import { useDevices } from '../../composables/useDevices.js'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
-import { ATTENDEE, AVATAR, CALL, CONFIG, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.ts'
+import { ATTENDEE, AVATAR, CALL, CONFIG, CONVERSATION, PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
-import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
+import {
+	getTalkConfig,
+	showTalkFeatureHint,
+} from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useGuestNameStore } from '../../stores/guestName.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
@@ -428,6 +444,15 @@ export default {
 			return !this.userId && this.actorStore.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
 		},
 
+		isVoiceRoom() {
+			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+		},
+
+		hideCloseButton() {
+			// Guests don't have Home dashboard so no rooting possible
+			return this.isGuest && this.isVoiceRoom && this.isBeforeJoinCall
+		},
+
 		userId() {
 			return this.actorStore.userId
 		},
@@ -509,11 +534,15 @@ export default {
 
 		showNotifyCallOption() {
 			return !this.hasCall && !this.isPublicShareAuthSidebar
-				&& this.isBeforeJoinCall
+				&& this.isBeforeJoinCall && !this.isVoiceRoom
 		},
 
 		showStartRecordingOption() {
 			return !this.hasCall && this.canModerateRecording && this.isBeforeJoinCall
+		},
+
+		hintRecordingOption() {
+			return !this.hasCall && this.canFullModerate && !(getTalkConfig(this.token, 'call', 'recording') || false) && this.isBeforeJoinCall && showTalkFeatureHint(34)
 		},
 
 		showUpdateChangesButton() {
@@ -597,7 +626,7 @@ export default {
 	watch: {
 		show(newValue) {
 			if (newValue) {
-				this.subscribeToDevices()
+				this.subscribeToDevices(PARTICIPANT.PERMISSIONS.MAX_DEFAULT)
 				this.$nextTick(() => {
 					this.registerVideoElement(this.video)
 				})
@@ -616,11 +645,11 @@ export default {
 				this.notifyCall = BrowserStorage.getItem('silentCall_' + this.token) !== 'true'
 
 				// Set virtual background depending on BrowserStorage's settings
-				if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
-					if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
+				if (BrowserStorage.getItem('virtualBackgroundEnabled') === 'true') {
+					if (BrowserStorage.getItem('virtualBackgroundType') === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
 						this.blurVirtualBackground()
-					} else if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
-						this.setVirtualBackgroundImage(BrowserStorage.getItem('virtualBackgroundUrl_' + this.token))
+					} else if (BrowserStorage.getItem('virtualBackgroundType') === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+						this.setVirtualBackgroundImage(BrowserStorage.getItem('virtualBackgroundUrl'))
 					}
 				} else if (this.blurVirtualBackgroundEnabled && !this.skipBlurVirtualBackground) {
 					// Fall back to global blur background setting
@@ -629,7 +658,9 @@ export default {
 					this.clearVirtualBackground()
 				}
 			} else {
-				this.unsubscribeFromDevices()
+				// Disable virtual background when closing
+				this.clearVirtualBackground()
+				this.unsubscribeFromDevices(PARTICIPANT.PERMISSIONS.MAX_DEFAULT)
 			}
 		},
 
@@ -651,7 +682,7 @@ export default {
 
 		isInCall(value) {
 			if (value) {
-				const virtualBackgroundEnabled = BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true'
+				const virtualBackgroundEnabled = BrowserStorage.getItem('virtualBackgroundEnabled') === 'true'
 				// Apply global blur background setting
 				if (this.blurVirtualBackgroundEnabled && !this.skipBlurVirtualBackground && !virtualBackgroundEnabled) {
 					this.blurBackground(true)
@@ -697,6 +728,13 @@ export default {
 
 	methods: {
 		t,
+		handleDialogClose() {
+			if (this.isBeforeJoinCall && this.isVoiceRoom && !this.isGuest) {
+				this.$router?.push({ name: 'root' })
+			}
+			this.close()
+		},
+
 		showMediaSettings(page) {
 			this.show = true
 			if (page === 'video-verification') {
@@ -821,7 +859,7 @@ export default {
 			if (this.isInCall) {
 				localMediaModel.disableVirtualBackground()
 			} else {
-				BrowserStorage.removeItem('virtualBackgroundEnabled_' + this.token)
+				BrowserStorage.removeItem('virtualBackgroundEnabled')
 			}
 		},
 
@@ -847,9 +885,9 @@ export default {
 				localMediaModel.setVirtualBackgroundBlur(VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT, globalBlurVirtualBackground)
 			} else if (!globalBlurVirtualBackground) {
 				this.skipBlurVirtualBackground = true
-				BrowserStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
-				BrowserStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
-				BrowserStorage.setItem('virtualBackgroundBlurStrength_' + this.token, VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
+				BrowserStorage.setItem('virtualBackgroundEnabled', 'true')
+				BrowserStorage.setItem('virtualBackgroundType', VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
+				BrowserStorage.setItem('virtualBackgroundBlurStrength', VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
 			}
 		},
 
@@ -876,9 +914,9 @@ export default {
 				localMediaModel.enableVirtualBackground()
 				localMediaModel.setVirtualBackgroundImage(background)
 			} else {
-				BrowserStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
-				BrowserStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
-				BrowserStorage.setItem('virtualBackgroundUrl_' + this.token, background)
+				BrowserStorage.setItem('virtualBackgroundEnabled', 'true')
+				BrowserStorage.setItem('virtualBackgroundType', VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
+				BrowserStorage.setItem('virtualBackgroundUrl', background)
 			}
 		},
 

@@ -8,9 +8,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Recording;
 
+use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\SessionMapper;
@@ -22,7 +22,9 @@ use OCA\Talk\TalkSession;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IFilenameValidator;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -31,7 +33,6 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -49,6 +50,7 @@ class CustomBackendNotifier extends BackendNotifier {
 		$this->requests = [];
 	}
 
+	#[\Override]
 	protected function doRequest(string $url, array $params, int $retries = 3): void {
 		$this->requests[] = [
 			'url' => $url,
@@ -87,12 +89,13 @@ class BackendNotifierTest extends TestCase {
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 
 		$appConfig = $this->createMock(IAppConfig::class);
+		$userConfig = $this->createMock(IUserConfig::class);
 		$groupManager = $this->createMock(IGroupManager::class);
 		$userManager = $this->createMock(IUserManager::class);
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$dispatcher = \OCP\Server::get(IEventDispatcher::class);
 
-		$this->config = new Config($config, $appConfig, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $timeFactory, $dispatcher);
+		$this->config = new Config($config, $appConfig, $userConfig, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $timeFactory, $dispatcher, $this->createMock(IFilenameValidator::class));
 
 		$this->recreateBackendNotifier();
 
@@ -114,7 +117,6 @@ class BackendNotifierTest extends TestCase {
 			$this->createMock(TalkSession::class),
 			$dispatcher,
 			$timeFactory,
-			$this->createMock(IHasher::class),
 			$this->createMock(IL10N::class),
 			$this->createMock(Authenticator::class),
 		);
@@ -137,10 +139,10 @@ class BackendNotifierTest extends TestCase {
 	}
 
 	private function calculateBackendChecksum($data, $random) {
-		if (empty($random) || strlen($random) < 32) {
+		if (empty($random) || strlen((string)$random) < 32) {
 			return false;
 		}
-		return hash_hmac('sha256', $random . $data, $this->recordingSecret);
+		return hash_hmac('sha256', $random . $data, (string)$this->recordingSecret);
 	}
 
 	private function validateBackendRequest($expectedUrl, $request) {
@@ -159,16 +161,10 @@ class BackendNotifierTest extends TestCase {
 		$expectedUrl = $this->baseUrl . '/api/v1/room/' . $room->getToken();
 
 		$requests = $this->backendNotifier->getRequests();
-		$requests = array_filter($requests, function ($request) use ($expectedUrl) {
-			return $request['url'] === $expectedUrl;
-		});
-		$bodies = array_map(function ($request) use ($expectedUrl) {
-			return json_decode($this->validateBackendRequest($expectedUrl, $request), true);
-		}, $requests);
+		$requests = array_filter($requests, fn ($request) => $request['url'] === $expectedUrl);
+		$bodies = array_map(fn ($request) => json_decode((string)$this->validateBackendRequest($expectedUrl, $request), true), $requests);
 
-		$bodies = array_filter($bodies, function (array $body) use ($message) {
-			return $body['type'] === $message['type'];
-		});
+		$bodies = array_filter($bodies, fn (array $body) => $body['type'] === $message['type']);
 
 		$this->assertContainsEquals($message, $bodies, json_encode($bodies, JSON_PRETTY_PRINT));
 	}

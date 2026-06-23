@@ -1,10 +1,10 @@
 Feature: conversation-5/delete-room
   Background:
     Given user "participant1" exists
-    Given user "participant2" exists
-    Given user "participant3" exists
 
   Scenario: Owner deletes
+    Given user "participant2" exists
+    Given user "participant3" exists
     Given signaling server is started
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
@@ -22,6 +22,7 @@ Feature: conversation-5/delete-room
     Then user "participant1" is not participant of room "room" (v4)
 
   Scenario: Moderator deletes
+    Given user "participant2" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -37,6 +38,7 @@ Feature: conversation-5/delete-room
     And user "participant2" is not participant of room "room" (v4)
 
   Scenario: User deletes
+    Given user "participant2" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -51,6 +53,7 @@ Feature: conversation-5/delete-room
     And user "participant2" is participant of room "room" (v4)
 
   Scenario: Stranger deletes
+    Given user "participant2" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |

@@ -198,6 +198,9 @@
 * `threads` - Whether the chat supports threads
 * `config => call => live-transcription` - Whether live transcription is supported in calls
 
+## 22.0.10
+* `config => call => default-phone-region` - System value for the default phone region to predict the regional phone numbers
+
 ## 23
 * `pinned-messages` - Whether messages can be pinned
 * `federated-shared-items` - Whether shared items endpoints can be called in a federated conversation
@@ -210,4 +213,17 @@
 * `react-permission` - When permission 256 is required to add reactions (previously handled by the chat permission)
 * `config => permissions => max-default` - Maximum value for default permissions (510 with react-permission, 254 without)
 * `config => permissions => max-custom` - Maximum value for custom permissions (511 with react-permission, 255 without)
+* `config => permissions => default` - The admin configured default permissions
 * `conversation-presets` (local) - Whether conversation presets endpoint is available and should be used by clients
+* `config => chat => matterbridge-enabled` (local) - Whether matterbridge is installed on the server and can be configured for conversations
+* `config => signaling => mode` (local) - Signaling mode (external with High-performance backend, internal otherwise)
+* `config => call => play-sounds` (local) - Whether the user has sounds enabled for calls (falls back to admin default for guests)
+* `config => call => grid-limit` (local) - Suggested gird size for all participants
+* `config => call => grid-limit-enforced` (local) - Whether the limit is hard enforced for all participants
+* `config => feature-hints => current` (local) - The current feature hint count that should be sent to the app config to hide all current feature hints
+* `config => feature-hints => hidden` (local) - Number of the last hint the administration has hidden via the app config
+* `config => conversations => sort-order` (local) - User selected sort order for conversations (`activity` or `alphabetical`)
+* `config => conversations => group-mode` (local) - User selected grouping mode for conversations (`none`, `group-first` or `private-first`)
+* `private-reply` - Whether clients can link the original message to a private reply in one-to-one conversations
+* `config => attachments => conversation-subfolders` (local) - Whether per-conversation subfolders are used for Talk attachments; when `true` files must be uploaded to `Talk/<ConversationName>-<token>/<DisplayName>-<uid>/` before calling the attachment endpoint
+* `conversation-tags` (local) - Whether the user can create custom tags to organize conversations in the sidebar

@@ -14,7 +14,7 @@
 				class="actions"
 				:container="container"
 				:inline="editable ? 1 : 0"
-				placement="bottom">
+				placement="bottom-end">
 				<NcActionButton v-if="editable" closeAfterClick @click="$emit('editClicked')">
 					<template #icon>
 						<IconCheck v-if="editing" :size="20" />

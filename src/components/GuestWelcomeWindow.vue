@@ -42,14 +42,12 @@
 
 			<div class="separator" />
 
-			<div class="login-info">
-				<span> {{ t('spreed', 'Do you already have an account?') }}</span>
-				<NcButton
-					variant="secondary"
-					:href="getLoginUrl()">
+			<p class="login-info">
+				{{ t('spreed', 'Do you already have an account?') }}
+				<a class="login-info__link" :href="getLoginUrl()">
 					{{ t('spreed', 'Log in') }}
-				</NcButton>
-			</div>
+				</a>
+			</p>
 		</div>
 	</NcModal>
 </template>
@@ -158,14 +156,15 @@ export default {
 }
 
 .login-info {
-	display: flex;
-	align-items: center;
-	gap: calc(var(--default-grid-baseline) * 2);
 	padding-top: calc(var(--default-grid-baseline) * 2);
+
+	&__link {
+		text-decoration: underline;
+	}
 }
 
 .separator {
     margin: calc(var(--default-grid-baseline) * 3) 0 var(--default-grid-baseline);
-    border-top: 1px solid;
+    border-top: 1px solid var(--color-border-dark);
 }
 </style>

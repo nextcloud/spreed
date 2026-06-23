@@ -22,8 +22,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Install extends Base {
 	public function __construct(
-		private BotService $botService,
-		private BotServerMapper $botServerMapper,
+		private readonly BotService $botService,
+		private readonly BotServerMapper $botServerMapper,
 	) {
 		parent::__construct();
 	}
@@ -92,6 +92,14 @@ class Install extends Base {
 			$featureFlags = Bot::FEATURE_WEBHOOK + Bot::FEATURE_RESPONSE;
 		}
 
+		if ($featureFlags & Bot::FEATURE_EVENT
+			&& ($featureFlags & Bot::FEATURE_WEBHOOK
+				|| $featureFlags & Bot::FEATURE_RESPONSE
+				|| $featureFlags & Bot::FEATURE_REACTION)) {
+			$output->writeln('<error>Bots with feature "event" can not support "webhook", "response" or "reaction" feature. They are mutual exclusive</error>');
+			return 1;
+		}
+
 		try {
 			$this->botService->validateBotParameters($name, $secret, $url, $description);
 		} catch (\InvalidArgumentException $e) {
@@ -121,7 +129,7 @@ class Install extends Base {
 				$output->writeln('<error>Bot with the same secret is already registered</error>');
 				return 3;
 			} else {
-				$output->writeln('<error>' . get_class($e) . ': ' . $e->getMessage() . '</error>');
+				$output->writeln('<error>' . $e::class . ': ' . $e->getMessage() . '</error>');
 				return 1;
 			}
 		}

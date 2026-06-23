@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OC\AppFramework\Http\Dispatcher;
 use OCA\Talk\Model\Invitation;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -53,24 +52,12 @@ abstract class AEnvironmentAwareOCSController extends OCSController {
 	}
 
 	/**
-	 * Following the logic of {@see Dispatcher::executeController}
-	 * @return string Either 'json' or 'xml'
-	 * @psalm-return 'json'|'xml'
+	 * @return 'json'|'xml'
 	 */
 	public function getResponseFormat(): string {
-		// get format from the url format or request format parameter
-		$format = $this->request->getParam('format');
-
-		// if none is given try the first Accept header
-		if ($format === null) {
-			$headers = $this->request->getHeader('accept');
-			/**
-			 * Default value of
-			 * @see OCSController::buildResponse()
-			 */
-			$format = $this->getResponderByHTTPHeader($headers, 'xml');
-		}
-
-		return $format;
+		return match ($this->request->getFormat()) {
+			'json' => 'json',
+			default => 'xml',
+		};
 	}
 }

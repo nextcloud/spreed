@@ -16,6 +16,7 @@
 				<form @submit.prevent="handleSubmitPermissions">
 					<NcCheckboxRadioSwitch
 						v-model="callStart"
+						:disabled="!isCallEnabled"
 						class="checkbox">
 						{{ t('spreed', 'Start a call') }}
 					</NcCheckboxRadioSwitch>
@@ -37,16 +38,19 @@
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch
 						v-model="publishAudio"
+						:disabled="!isCallEnabled"
 						class="checkbox">
 						{{ t('spreed', 'Enable the microphone') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch
 						v-model="publishVideo"
+						:disabled="!isCallEnabled"
 						class="checkbox">
 						{{ t('spreed', 'Enable the camera') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch
 						v-model="publishScreen"
+						:disabled="!isCallEnabled"
 						class="checkbox">
 						{{ t('spreed', 'Share the screen') }}
 					</NcCheckboxRadioSwitch>
@@ -68,7 +72,6 @@
 </template>
 
 <script>
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { ref, useId } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -124,6 +127,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		token: {
+			type: String,
+			required: true,
+		},
 	},
 
 	emits: ['close', 'submit'],
@@ -178,6 +186,10 @@ export default {
 			return hasTalkFeature('local', 'react-permission')
 		},
 
+		isCallEnabled() {
+			return getTalkConfig(this.token, 'call', 'enabled')
+		},
+
 		maxDefaultPermission() {
 			// Use API value if available, otherwise compute from constants
 			const apiValue = getTalkConfig('local', 'permissions', 'max-default')
@@ -196,11 +208,19 @@ export default {
 				return this.permissions
 			}
 
-			return loadState(
-				'spreed',
-				'default_permissions',
-				this.maxDefaultPermission & ~PERMISSIONS.LOBBY_IGNORE,
-			)
+			// Use API value if available, otherwise compute from constants
+			const apiValue = getTalkConfig('local', 'permissions', 'default')
+			if (apiValue !== undefined) {
+				return apiValue
+			}
+
+			const permissionsWithoutLobbyIgnore = PERMISSIONS.MAX_DEFAULT & ~PERMISSIONS.LOBBY_IGNORE
+
+			// Fallback for older servers: MAX_DEFAULT minus REACT if capability missing
+			if (this.hasReactPermissions) {
+				return permissionsWithoutLobbyIgnore
+			}
+			return permissionsWithoutLobbyIgnore & ~PERMISSIONS.REACT
 		},
 
 		/**

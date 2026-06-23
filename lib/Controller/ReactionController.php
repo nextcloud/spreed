@@ -34,7 +34,7 @@ class ReactionController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private ReactionManager $reactionManager,
+		private readonly ReactionManager $reactionManager,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -81,11 +81,11 @@ class ReactionController extends AEnvironmentAwareOCSController {
 				$reaction
 			);
 			$status = Http::STATUS_CREATED;
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
-		} catch (ReactionAlreadyExistsException $e) {
+		} catch (ReactionAlreadyExistsException) {
 			$status = Http::STATUS_OK;
-		} catch (ReactionNotSupportedException|ReactionOutOfContextException|\Exception $e) {
+		} catch (ReactionNotSupportedException|ReactionOutOfContextException|\Exception) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 		$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId);
@@ -133,9 +133,9 @@ class ReactionController extends AEnvironmentAwareOCSController {
 				$reaction
 			);
 			$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId);
-		} catch (ReactionNotSupportedException|ReactionOutOfContextException|NotFoundException $e) {
+		} catch (ReactionNotSupportedException|ReactionOutOfContextException|NotFoundException) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
@@ -173,7 +173,7 @@ class ReactionController extends AEnvironmentAwareOCSController {
 		try {
 			// Verify that messageId is part of the room
 			$this->reactionManager->getCommentToReact($this->getRoom(), (string)$messageId);
-		} catch (ReactionNotSupportedException|ReactionOutOfContextException|NotFoundException $e) {
+		} catch (ReactionNotSupportedException|ReactionOutOfContextException|NotFoundException) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 

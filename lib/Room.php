@@ -8,18 +8,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use OCA\Talk\Events\BeforeSignalingRoomPropertiesSentEvent;
-use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Model\Attendee;
-use OCA\Talk\Model\SelectHelper;
-use OCA\Talk\Model\Session;
-use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
-use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
-use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IDBConnection;
 use OCP\Server;
 
 class Room {
@@ -64,7 +55,6 @@ class Room {
 	public const RECORDING_AUDIO_STARTING = 4;
 	public const RECORDING_FAILED = 5;
 
-
 	public const READ_WRITE = 0;
 	public const READ_ONLY = 1;
 
@@ -107,11 +97,7 @@ class Room {
 	 * @psalm-param self::MENTION_PERMISSIONS_* $mentionPermissions
 	 */
 	public function __construct(
-		private Manager $manager,
-		private IDBConnection $db,
-		private IEventDispatcher $dispatcher,
-		private ITimeFactory $timeFactory,
-		private int $id,
+		private readonly int $id,
 		private int $type,
 		private int $readOnly,
 		private int $listable,
@@ -119,15 +105,14 @@ class Room {
 		private int $lobbyState,
 		private int $sipEnabled,
 		private ?int $assignedSignalingServer,
-		private string $token,
+		private readonly string $token,
 		private string $name,
 		private string $description,
 		private string $password,
 		private string $avatar,
-		private string $remoteServer,
-		private string $remoteToken,
+		private readonly string $remoteServer,
+		private readonly string $remoteToken,
 		private int $defaultPermissions,
-		private int $callPermissions,
 		private int $callFlag,
 		private ?\DateTime $activeSince,
 		private ?\DateTime $lastActivity,
@@ -144,6 +129,7 @@ class Room {
 		private int $mentionPermissions,
 		private string $liveTranscriptionLanguageId,
 		private int $lastPinnedId,
+		private int $attributes,
 	) {
 	}
 
@@ -202,10 +188,7 @@ class Room {
 		$this->messageExpiration = $messageExpiration;
 	}
 
-	public function getLobbyState(bool $validateTime = true): int {
-		if ($validateTime) {
-			$this->validateTimer();
-		}
+	public function getLobbyState(): int {
 		return $this->lobbyState;
 	}
 
@@ -213,23 +196,12 @@ class Room {
 		$this->lobbyState = $lobbyState;
 	}
 
-	public function getLobbyTimer(bool $validateTime = true): ?\DateTime {
-		if ($validateTime) {
-			$this->validateTimer();
-		}
+	public function getLobbyTimer(): ?\DateTime {
 		return $this->lobbyTimer;
 	}
 
 	public function setLobbyTimer(?\DateTime $lobbyTimer): void {
 		$this->lobbyTimer = $lobbyTimer;
-	}
-
-	protected function validateTimer(): void {
-		if ($this->lobbyTimer !== null && $this->lobbyTimer < $this->timeFactory->getDateTime()) {
-			/** @var RoomService $roomService */
-			$roomService = Server::get(RoomService::class);
-			$roomService->setLobby($this, Webinary::LOBBY_NONE, null, true);
-		}
 	}
 
 	public function getSIPEnabled(): int {
@@ -253,29 +225,9 @@ class Room {
 	}
 
 	public function getName(): string {
-		if ($this->type === self::TYPE_ONE_TO_ONE) {
-			if ($this->name === '') {
-				// TODO use DI
-				$participantService = Server::get(ParticipantService::class);
-				// Fill the room name with the participants for 1-to-1 conversations
-				$users = $participantService->getParticipantUserIds($this);
-				sort($users);
-				/** @var RoomService $roomService */
-				$roomService = Server::get(RoomService::class);
-				$roomService->setName($this, json_encode($users), '');
-			} elseif (!str_starts_with($this->name, '["')) {
-				// TODO use DI
-				$participantService = Server::get(ParticipantService::class);
-				// Not the json array, but the old fallback when someone left
-				$users = $participantService->getParticipantUserIds($this);
-				if (count($users) !== 2) {
-					$users[] = $this->name;
-				}
-				sort($users);
-				/** @var RoomService $roomService */
-				$roomService = Server::get(RoomService::class);
-				$roomService->setName($this, json_encode($users), '');
-			}
+		if ($this->type === self::TYPE_ONE_TO_ONE && !str_starts_with($this->name, '["')) {
+			// TODO use DI
+			Server::get(RoomService::class)->resolveOneToOneName($this, $this->name);
 		}
 		return $this->name;
 	}
@@ -300,7 +252,8 @@ class Room {
 	}
 
 	public function getDisplayName(string $userId, bool $forceName = false): string {
-		return $this->manager->resolveRoomDisplayName($this, $userId, $forceName);
+		// TODO use DI
+		return Server::get(Manager::class)->resolveRoomDisplayName($this, $userId, $forceName);
 	}
 
 	public function getDescription(): string {
@@ -322,20 +275,6 @@ class Room {
 
 	public function setDefaultPermissions(int $defaultPermissions): void {
 		$this->defaultPermissions = $defaultPermissions;
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public function getCallPermissions(): int {
-		return Attendee::PERMISSIONS_DEFAULT;
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public function setCallPermissions(int $callPermissions): void {
-		$this->callPermissions = $callPermissions;
 	}
 
 	public function getCallFlag(): int {
@@ -368,7 +307,8 @@ class Room {
 		}
 
 		if ($this->lastMessageId && $this->lastMessage === null) {
-			$this->lastMessage = $this->manager->loadLastCommentInfo($this->lastMessageId);
+			// TODO use DI
+			$this->lastMessage = Server::get(Manager::class)->loadLastCommentInfo($this->lastMessageId);
 			if ($this->lastMessage === null) {
 				$this->lastMessageId = 0;
 			}
@@ -430,96 +370,6 @@ class Room {
 		// FIXME Also used with cloudId, need actorType checking?
 		$this->currentUser = $userId;
 		$this->participant = $participant;
-	}
-
-	/**
-	 * Return the room properties to send to the signaling server.
-	 *
-	 * @param string $userId
-	 * @param bool $roomModified
-	 * @return array
-	 */
-	public function getPropertiesForSignaling(string $userId, bool $roomModified = true): array {
-		$properties = [
-			'name' => $this->getDisplayName($userId),
-			'type' => $this->getType(),
-			'lobby-state' => $this->getLobbyState(),
-			'lobby-timer' => $this->getLobbyTimer(),
-			'read-only' => $this->getReadOnly(),
-			'listable' => $this->getListable(),
-			'active-since' => $this->getActiveSince(),
-			'sip-enabled' => $this->getSIPEnabled(),
-		];
-
-		if ($roomModified) {
-			$properties['description'] = $this->getDescription();
-		} else {
-			$properties['participant-list'] = 'refresh';
-		}
-
-		$event = new BeforeSignalingRoomPropertiesSentEvent($this, $userId, $properties);
-		$this->dispatcher->dispatchTyped($event);
-		return $event->getProperties();
-	}
-
-	/**
-	 * @param string|null $userId
-	 * @param string|null|false $sessionId Set to false if you don't want to load a session (and save resources),
-	 *                                     string to try loading a specific session
-	 *                                     null to try loading "any"
-	 * @return Participant
-	 * @throws ParticipantNotFoundException When the user is not a participant
-	 * @deprecated
-	 */
-	public function getParticipant(?string $userId, $sessionId = null): Participant {
-		if (!is_string($userId) || $userId === '') {
-			throw new ParticipantNotFoundException('Not a user');
-		}
-
-		if ($this->currentUser === $userId && $this->participant instanceof Participant) {
-			if (!$sessionId
-				|| ($this->participant->getSession() instanceof Session
-					&& $this->participant->getSession()->getSessionId() === $sessionId)) {
-				return $this->participant;
-			}
-		}
-
-		$query = $this->db->getQueryBuilder();
-		$helper = new SelectHelper();
-		$helper->selectAttendeesTable($query);
-		$query->from('talk_attendees', 'a')
-			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
-			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)))
-			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
-			->setMaxResults(1);
-
-		if ($sessionId !== false) {
-			if ($sessionId !== null) {
-				$helper->selectSessionsTable($query);
-				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
-					$query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)),
-					$query->expr()->eq('a.id', 's.attendee_id')
-				));
-			} else {
-				$helper->selectSessionsTable($query); // FIXME PROBLEM
-				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'));
-			}
-		}
-
-		$result = $query->executeQuery();
-		$row = $result->fetch();
-		$result->closeCursor();
-
-		if ($row === false) {
-			throw new ParticipantNotFoundException('User is not a participant');
-		}
-
-		if ($this->currentUser === $userId) {
-			$this->participant = $this->manager->createParticipantObject($this, $row);
-			return $this->participant;
-		}
-
-		return $this->manager->createParticipantObject($this, $row);
 	}
 
 	public function setActiveSince(\DateTime $since, int $callFlag): void {
@@ -625,5 +475,13 @@ class Room {
 
 	public function setLastPinnedId(int $lastPinnedId): void {
 		$this->lastPinnedId = $lastPinnedId;
+	}
+
+	public function getAttributes(): int {
+		return $this->attributes;
+	}
+
+	public function setAttributes(int $attributes): void {
+		$this->attributes = $attributes;
 	}
 }

@@ -35,11 +35,11 @@ class ChatController {
 	protected ?ICache $proxyCacheMessages;
 
 	public function __construct(
-		protected ProxyRequest $proxy,
-		protected UserConverter $userConverter,
-		protected ParticipantService $participantService,
-		protected RoomFormatter $roomFormatter,
-		protected Notifier $notifier,
+		private readonly ProxyRequest $proxy,
+		private readonly UserConverter $userConverter,
+		private readonly ParticipantService $participantService,
+		private readonly RoomFormatter $roomFormatter,
+		private readonly Notifier $notifier,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->proxyCacheMessages = $cacheFactory->isAvailable() ? $cacheFactory->createDistributed(CachePrefix::FEDERATED_PCM) : null;
@@ -130,7 +130,6 @@ class ChatController {
 		int $noStatusUpdate,
 		int $markNotificationsAsRead): DataResponse {
 		$cacheKey = sha1(json_encode([$room->getRemoteServer(), $room->getRemoteToken()]));
-
 
 		if ($lookIntoFuture && $markNotificationsAsRead && $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 			$this->notifier->markMentionNotificationsRead($room, $participant->getAttendee()->getActorId());

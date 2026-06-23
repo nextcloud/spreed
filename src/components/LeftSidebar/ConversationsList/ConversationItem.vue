@@ -36,12 +36,15 @@
 		</template>
 		<template #name>
 			<template v-if="compact && iconType">
-				<component :is="iconType.component" :size="15" :fillColor="iconType.color" />
+				<component
+					:is="iconType.component"
+					:size="15"
+					:fillColor="iconType.color" />
 				<span class="hidden-visually">{{ iconType.text }}</span>
 			</template>
 			<span class="text"> {{ item.displayName }} </span>
 		</template>
-		<template v-if="!compact && !item.isSensitive" #subname>
+		<template v-if="!compact && !item.isSensitive && !isVoiceRoom" #subname>
 			<span class="conversation__subname" :title="conversationInformation.title">
 				<span
 					v-if="conversationInformation.actor"
@@ -113,6 +116,17 @@
 						<IconArchiveOffOutline v-else :size="20" />
 					</template>
 					{{ labelArchive }}
+				</NcActionButton>
+
+				<NcActionButton
+					v-if="supportTags"
+					key="show-tags"
+					isMenu
+					@click="submenu = 'tags'">
+					<template #icon>
+						<IconTagMultipleOutline :size="20" />
+					</template>
+					{{ t('spreed', 'Tags') }}
 				</NcActionButton>
 
 				<NcActionButton
@@ -208,6 +222,52 @@
 					</NcActionButton>
 				</template>
 			</template>
+			<template v-else-if="submenu === 'tags'">
+				<NcActionButton
+					key="action-back-tags"
+					:aria-label="t('spreed', 'Back')"
+					@click.stop="submenu = null">
+					<template #icon>
+						<IconArrowLeft class="bidirectional-icon" :size="20" />
+					</template>
+					{{ t('spreed', 'Back') }}
+				</NcActionButton>
+
+				<NcActionButton
+					v-if="currentTagIds.length"
+					key="no-tag"
+					closeAfterClick
+					@click="assignToTags([])">
+					<template #icon>
+						<IconMinusCircleOutline :size="20" />
+					</template>
+					{{ t('spreed', 'Remove all tags') }}
+				</NcActionButton>
+
+				<NcActionButton
+					v-for="tag in tagsStore.customTags"
+					:key="'tag-' + tag.id"
+					type="checkbox"
+					:modelValue="isTagAssigned(tag.id)"
+					@click="toggleTag(tag.id)">
+					<template #icon>
+						<IconTagOutline :size="20" />
+					</template>
+					{{ tag.name }}
+				</NcActionButton>
+
+				<NcActionSeparator />
+
+				<NcActionButton
+					key="create-tag-button"
+					closeAfterClick
+					@click.stop="handleCreateTag">
+					<template #icon>
+						<IconPlus :size="20" />
+					</template>
+					{{ t('spreed', 'New tag') }}
+				</NcActionButton>
+			</template>
 		</template>
 
 		<template v-else-if="item.token" #actions>
@@ -235,7 +295,7 @@ import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
-import { ref, toRefs } from 'vue'
+import { h, ref, toRefs } from 'vue'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
@@ -255,22 +315,29 @@ import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import IconExitToApp from 'vue-material-design-icons/ExitToApp.vue'
 import IconMessageAlertOutline from 'vue-material-design-icons/MessageAlertOutline.vue'
 import IconMessageBadgeOutline from 'vue-material-design-icons/MessageBadgeOutline.vue'
+import IconMinusCircleOutline from 'vue-material-design-icons/MinusCircleOutline.vue'
 import IconPhoneRingOutline from 'vue-material-design-icons/PhoneRingOutline.vue'
+import IconPlus from 'vue-material-design-icons/Plus.vue'
 import IconShieldLockOutline from 'vue-material-design-icons/ShieldLockOutline.vue'
 import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better indication
+import IconTagMultipleOutline from 'vue-material-design-icons/TagMultipleOutline.vue'
+import IconTagOutline from 'vue-material-design-icons/TagOutline.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import ConfirmDialog from '../../UIShared/ConfirmDialog.vue'
 import ConversationIcon from './../../ConversationIcon.vue'
 import IconMarkChatRead from '../../../../img/material-icons/mark-chat-read.svg?raw'
+import IconVolumeHighOutline from '../../../../img/material-icons/volume-high-outline.svg?raw'
 import { useConversationInfo } from '../../../composables/useConversationInfo.ts'
 import { AVATAR, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
-import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
+import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const supportImportantConversations = hasTalkFeature('local', 'important-conversations')
 const supportSensitiveConversations = hasTalkFeature('local', 'sensitive-conversations')
+const supportTags = hasTalkFeature('local', 'conversation-tags')
 
 const notificationLevels = [
 	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages'), icon: IconBellRingOutline },
@@ -295,8 +362,12 @@ export default {
 		IconMessageAlertOutline,
 		IconMessageBadgeOutline,
 		IconPhoneRingOutline,
+		IconPlus,
 		IconShieldLockOutline,
 		IconStar,
+		IconMinusCircleOutline,
+		IconTagMultipleOutline,
+		IconTagOutline,
 		IconVideo,
 		NcActionButton,
 		NcActionSeparator,
@@ -350,12 +421,16 @@ export default {
 		const { item, isSearchResult } = toRefs(props)
 		const { counterType, conversationInformation } = useConversationInfo({ item, isSearchResult })
 
+		const tagsStore = useConversationTagsStore()
+
 		return {
 			AVATAR,
 			IconMarkChatRead,
 			supportsArchive,
 			supportImportantConversations,
 			supportSensitiveConversations,
+			supportTags,
+			tagsStore,
 			submenu,
 			isDarkTheme,
 			counterType,
@@ -402,12 +477,21 @@ export default {
 			return this.item.notificationLevel.toString()
 		},
 
+		currentTagIds() {
+			return this.item.tagIds ?? []
+		},
+
 		notificationCalls() {
 			return this.item.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON
 		},
 
 		showCallNotificationSettings() {
-			return !this.item.remoteServer || hasTalkFeature(this.item.token, 'federation-v2')
+			return getTalkConfig(this.item.token, 'call', 'enabled')
+				&& (!this.item.remoteServer || hasTalkFeature(this.item.token, 'federation-v2'))
+		},
+
+		isVoiceRoom() {
+			return !!(this.item.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
 		},
 
 		iconType() {
@@ -422,6 +506,11 @@ export default {
 					component: IconStar,
 					color: this.isDarkTheme ? '#FFCC00' : 'currentColor',
 					text: t('spreed', 'Favorite'),
+				}
+			} else if (this.isVoiceRoom) {
+				return {
+					component: h(NcIconSvgWrapper, { svg: IconVolumeHighOutline, inline: true }),
+					text: t('spreed', 'Voice room'),
 				}
 			}
 			return null
@@ -538,6 +627,47 @@ export default {
 			this.$store.dispatch('toggleArchive', this.item)
 		},
 
+		isTagAssigned(tagId) {
+			return this.currentTagIds.includes(tagId)
+		},
+
+		async toggleTag(tagId) {
+			const newIds = this.isTagAssigned(tagId)
+				? this.currentTagIds.filter((id) => id !== tagId)
+				: [...this.currentTagIds, tagId]
+			this.assignToTags(newIds)
+		},
+
+		async assignToTags(tagIds) {
+			this.$store.dispatch('assignConversationToTags', {
+				token: this.item.token,
+				tagIds,
+			})
+		},
+
+		async handleCreateTag() {
+			const name = await spawnDialog(ConfirmDialog, {
+				name: t('spreed', 'New tag'),
+				isForm: true,
+				inputProps: { label: t('spreed', 'Tag name') },
+				buttons: [
+					{ label: t('spreed', 'Cancel'), variant: 'tertiary', callback: () => false },
+					{ label: t('spreed', 'Save'), variant: 'primary', type: 'submit', callback: () => true },
+				],
+			})
+			if (!name) {
+				return
+			}
+			try {
+				const tag = await this.tagsStore.createTag(name)
+				if (tag) {
+					await this.assignToTags([...this.currentTagIds, tag.id])
+				}
+			} catch (error) {
+				console.error('Failed to create tag:', error)
+			}
+		},
+
 		/**
 		 * Set the notification level for the conversation
 		 *
@@ -641,7 +771,6 @@ export default {
 				font-weight: 400;
 			}
 		}
-
 	}
 
 	&__subname {

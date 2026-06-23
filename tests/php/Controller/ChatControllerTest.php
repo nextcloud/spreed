@@ -8,13 +8,14 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Controller;
 
+use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Chat\ReactionManager;
+use OCA\Talk\Config;
 use OCA\Talk\Controller\ChatController;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
@@ -25,6 +26,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\BotService;
+use OCA\Talk\Service\ConversationFolderService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\ReminderService;
@@ -92,6 +94,8 @@ class ChatControllerTest extends TestCase {
 	private ITaskProcessingManager&MockObject $taskProcessingManager;
 	private IAppConfig&MockObject $appConfig;
 	private LoggerInterface&MockObject $logger;
+	private ConversationFolderService&MockObject $conversationFolderService;
+	private Config&MockObject $talkConfig;
 
 	protected Room&MockObject $room;
 
@@ -138,6 +142,8 @@ class ChatControllerTest extends TestCase {
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->scheduledMessageService = $this->createMock(ScheduledMessageService::class);
+		$this->conversationFolderService = $this->createMock(ConversationFolderService::class);
+		$this->talkConfig = $this->createMock(Config::class);
 
 		$this->room = $this->createMock(Room::class);
 
@@ -145,10 +151,11 @@ class ChatControllerTest extends TestCase {
 
 		// Verifies that the difference of the given DateTime and now is at most
 		// five seconds, and that it uses the UTC time zone.
-		$this->newMessageDateTimeConstraint = $this->callback(function (\DateTime $dateTime) {
-			return abs((new \DateTime())->getTimestamp() - $dateTime->getTimestamp()) <= 5
-				&& (new \DateTimeZone('UTC'))->getName() === $dateTime->getTimezone()->getName();
-		});
+		$this->newMessageDateTimeConstraint = $this->callback(
+			fn (\DateTime $dateTime)
+				=> abs((new \DateTime())->getTimestamp() - $dateTime->getTimestamp()) <= 5
+				&& (new \DateTimeZone('UTC'))->getName() === $dateTime->getTimezone()->getName()
+		);
 	}
 
 	private function recreateChatController(): void {
@@ -190,6 +197,8 @@ class ChatControllerTest extends TestCase {
 			$this->appConfig,
 			$this->logger,
 			$this->scheduledMessageService,
+			$this->conversationFolderService,
+			$this->talkConfig,
 		);
 	}
 
@@ -207,7 +216,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testSendMessageByUser(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
@@ -277,7 +286,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testSendMessageByUserWithReferenceId(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
@@ -347,7 +356,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testSendReplyByUser(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
@@ -375,6 +384,9 @@ class ChatControllerTest extends TestCase {
 			->willReturn($parent);
 
 		$parentMessage = $this->createMock(Message::class);
+		$parentMessage->expects($this->any())
+			->method('getComment')
+			->willReturn($parent);
 		$parentMessage->expects($this->once())
 			->method('isReplyable')
 			->willReturn(true);
@@ -396,6 +408,9 @@ class ChatControllerTest extends TestCase {
 			]);
 
 		$chatMessage = $this->createMock(Message::class);
+		$chatMessage->expects($this->any())
+			->method('getComment')
+			->willReturn($comment);
 		$chatMessage->expects($this->once())
 			->method('getVisibility')
 			->willReturn(true);
@@ -472,7 +487,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testSendReplyByUserToNotReplyable(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$date = new \DateTime();
 		/** @var IComment&MockObject $comment */
@@ -508,7 +523,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testSendMessageByUserNotJoinedButInRoom(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
@@ -656,7 +671,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testShareObjectToChatByUser(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$this->avatarService->method('getAvatarUrl')
 			->with($this->room)
@@ -762,7 +777,7 @@ class ChatControllerTest extends TestCase {
 				$comment1 = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000004), 'testMessage1')
 			]);
 
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$i = 4;
 		$expectedCalls = [
@@ -819,7 +834,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testReceiveMessagesByUserNotJoinedButInRoom(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$offset = 23;
 		$limit = 4;
@@ -891,7 +906,7 @@ class ChatControllerTest extends TestCase {
 		$this->userId = null;
 		$this->recreateChatController();
 
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$offset = 23;
 		$limit = 4;
@@ -965,7 +980,7 @@ class ChatControllerTest extends TestCase {
 			->method('getUID')
 			->willReturn('testUser');
 
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$offset = 23;
 		$limit = 4;
@@ -1040,7 +1055,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testWaitForNewMessagesTimeoutExpired(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		$testUser = $this->createMock(IUser::class);
 		$testUser
 			->method('getUID')
@@ -1068,7 +1083,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testWaitForNewMessagesTimeoutTooLarge(): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		$testUser = $this->createMock(IUser::class);
 		$testUser
 			->method('getUID')
@@ -1126,7 +1141,7 @@ class ChatControllerTest extends TestCase {
 
 	#[DataProvider('dataMentions')]
 	public function testMentions(string $search, int $limit, array $result, array $expected): void {
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		$this->room
 			->method('getId')
 			->willReturn(1234);

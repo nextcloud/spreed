@@ -32,7 +32,7 @@ class RetryNotificationMapper extends QBMapper {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
-			->where($query->expr()->lte('next_retry', $query->createNamedParameter($dueDateTime, IQueryBuilder::PARAM_DATE), IQueryBuilder::PARAM_DATE));
+			->where($query->expr()->lte('next_retry', $query->createNamedParameter($dueDateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE), IQueryBuilder::PARAM_DATETIME_MUTABLE));
 
 		if ($limit !== null) {
 			$query->setMaxResults($limit)

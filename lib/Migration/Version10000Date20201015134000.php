@@ -28,8 +28,8 @@ use OCP\Migration\SimpleMigrationStep;
 class Version10000Date20201015134000 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IDBConnection $connection,
-		protected ITimeFactory $timeFactory,
+		private readonly IDBConnection $connection,
+		private readonly ITimeFactory $timeFactory,
 	) {
 	}
 
@@ -113,7 +113,6 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 			$table->addIndex(['actor_type', 'actor_id'], 'ta_actor');
 		}
 
-
 		if (!$schema->hasTable('talk_sessions')) {
 			$table = $schema->createTable('talk_sessions');
 
@@ -184,9 +183,8 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 			->where($query->expr()->neq('user_id', $query->createNamedParameter('')))
 			->andWhere($query->expr()->isNotNull('user_id'));
 
-
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$lastJoinedCall = 0;
 			if (!empty($row['last_joined_call'])) {
 				$lastJoinedCall = $this->timeFactory->getDateTime($row['last_joined_call'])->getTimestamp();

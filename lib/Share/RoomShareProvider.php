@@ -61,18 +61,18 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	private CappedMemoryCache $sharesByIdCache;
 
 	public function __construct(
-		private IDBConnection $dbConnection,
-		private ISecureRandom $secureRandom,
-		private IShareManager $shareManager,
-		private IEventDispatcher $dispatcher,
-		private Manager $manager,
-		private ParticipantService $participantService,
-		protected RoomService $roomService,
-		protected ITimeFactory $timeFactory,
-		private IL10N $l,
-		private IMimeTypeLoader $mimeTypeLoader,
-		private IUserManager $userManager,
-		protected Config $config,
+		private readonly IDBConnection $dbConnection,
+		private readonly ISecureRandom $secureRandom,
+		private readonly IShareManager $shareManager,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IL10N $l,
+		private readonly IMimeTypeLoader $mimeTypeLoader,
+		private readonly IUserManager $userManager,
+		private readonly Config $config,
 	) {
 		$this->sharesByIdCache = new CappedMemoryCache();
 	}
@@ -105,7 +105,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	public function create(IShare $share): IShare {
 		try {
 			$room = $this->manager->getRoomByToken($share->getSharedWith(), $share->getSharedBy());
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			throw new GenericShareException('Room not found', $this->l->t('Conversation not found'), 404);
 		}
 
@@ -119,7 +119,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 		try {
 			$participant = $this->participantService->getParticipant($room, $share->getSharedBy(), false);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			// If the sharer is not a participant of the room even if the room
 			// exists the error is still "Room not found".
 			throw new GenericShareException('Room not found', $this->l->t('Conversation not found'), 404);
@@ -230,7 +230,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)));
 
 		$cursor = $qb->executeQuery();
-		$data = $cursor->fetch();
+		$data = $cursor->fetchAssociative();
 		$cursor->closeCursor();
 
 		if ($data === false) {
@@ -304,7 +304,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->set('permissions', $update->createNamedParameter($share->getPermissions()))
 			->set('item_source', $update->createNamedParameter($share->getNode()->getId()))
 			->set('file_source', $update->createNamedParameter($share->getNode()->getId()))
-			->set('expiration', $update->createNamedParameter($share->getExpirationDate(), IQueryBuilder::PARAM_DATE))
+			->set('expiration', $update->createNamedParameter($share->getExpirationDate(), IQueryBuilder::PARAM_DATETIME_MUTABLE))
 			->executeStatement();
 
 		/*
@@ -317,7 +317,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->set('uid_initiator', $update->createNamedParameter($share->getSharedBy()))
 			->set('item_source', $update->createNamedParameter($share->getNode()->getId()))
 			->set('file_source', $update->createNamedParameter($share->getNode()->getId()))
-			->set('expiration', $update->createNamedParameter($share->getExpirationDate(), IQueryBuilder::PARAM_DATE))
+			->set('expiration', $update->createNamedParameter($share->getExpirationDate(), IQueryBuilder::PARAM_DATETIME_MUTABLE))
 			->executeStatement();
 
 		/*
@@ -377,7 +377,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			))
 			->executeQuery();
 
-		$data = $stmt->fetch();
+		$data = $stmt->fetchAssociative();
 		$stmt->closeCursor();
 
 		if ($data === false) {
@@ -426,7 +426,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				$qb->expr()->eq('id', $qb->createNamedParameter($share->getId()))
 			);
 		$cursor = $qb->executeQuery();
-		$data = $cursor->fetch();
+		$data = $cursor->fetchAssociative();
 		$cursor->closeCursor();
 
 		$originalPermission = $data['permissions'];
@@ -476,7 +476,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->setMaxResults(1)
 			->executeQuery();
 
-		$data = $stmt->fetch();
+		$data = $stmt->fetchAssociative();
 		$stmt->closeCursor();
 
 		if ($data === false) {
@@ -561,7 +561,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 		$cursor = $qb->executeQuery();
 		$shares = [];
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$shares[$data['fileid']][] = $this->createShareObject($data);
 		}
 		$cursor->closeCursor();
@@ -615,7 +615,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 		$cursor = $qb->executeQuery();
 		$shares = [];
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$shares[] = $this->createShareObject($data);
 		}
 		$cursor->closeCursor();
@@ -687,7 +687,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		 * the share refers to a deleted file.)
 		 */
 		$shares = [];
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$id = $data['id'];
 			if ($this->isAccessibleResult($data)) {
 				$share = $this->createShareObject($data);
@@ -744,7 +744,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 			$stmt->closeCursor();
 		} else {
-			$chunks = array_chunk($shareMap, 1000, true);
+			$chunks = array_chunk($shareMap, IQueryBuilder::MAX_IN_PARAMETERS, true);
 			$query->andWhere($qb->expr()->in('parent', $qb->createParameter('share_ids')));
 			foreach ($chunks as $chunk) {
 				$ids = array_keys($chunk);
@@ -780,7 +780,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->executeQuery();
 
 		$shares = [];
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$shares[] = $this->createShareObject($data);
 		}
 		$cursor->closeCursor();
@@ -809,7 +809,8 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		/** @var IShare[] $shares */
 		$shares = [];
 
-		$chunks = array_chunk($allRooms, 100);
+		$chunkSize = min(100, IQueryBuilder::MAX_IN_PARAMETERS);
+		$chunks = array_chunk($allRooms, $chunkSize);
 		foreach ($chunks as $rooms) {
 			$qb = $this->dbConnection->getQueryBuilder();
 			$qb->select('s.*',
@@ -839,7 +840,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				)));
 
 			$cursor = $qb->executeQuery();
-			while ($data = $cursor->fetch()) {
+			while ($data = $cursor->fetchAssociative()) {
 				if ($data['uid_initiator'] === $userId || $data['uid_owner'] === $userId) {
 					continue;
 				}
@@ -887,7 +888,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($userId)));
 
 			$result = $qb->executeQuery();
-			$shareId = $result->fetchColumn();
+			$shareId = $result->fetchOne();
 			$result->closeCursor();
 
 			if ($shareId !== false) {
@@ -905,7 +906,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)));
 
 			$result = $qb->executeQuery();
-			$potentialShare = $result->fetch();
+			$potentialShare = $result->fetchAssociative();
 			$result->closeCursor();
 
 			if ($potentialShare !== false && $this->manager->isUserAttendeeInRoom($userId, $potentialShare['share_with'])) {
@@ -928,9 +929,19 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$escapedAttachmentFolder = preg_quote($attachmentFolder, '/');
 		$pathWithPlaceholder = preg_replace("/^$escapedAttachmentFolder/", self::TALK_FOLDER_PLACEHOLDER, $path);
 		$childPathTemplate = $this->dbConnection->escapeLikeParameter($path) . '/_%';
-		$childPathTemplatePlaceholder = $this->dbConnection->escapeLikeParameter($pathWithPlaceholder) . '/_%';
+		// In 1-on-1 rooms the conversation folder name differs per user
+		// (each side sees the other's display name). The TYPE_ROOM share
+		// stores the sharer's folder name, so match by token instead.
+		if (preg_match('/-([a-z0-9]{4,30})$/', (string)$pathWithPlaceholder, $m)) {
+			$escapedPlaceholder = $this->dbConnection->escapeLikeParameter(self::TALK_FOLDER_PLACEHOLDER);
+			$escapedToken = $this->dbConnection->escapeLikeParameter($m[1]);
+			$childPathTemplatePlaceholder = $escapedPlaceholder . '/%-' . $escapedToken . '/_%';
+		} else {
+			$childPathTemplatePlaceholder = $this->dbConnection->escapeLikeParameter($pathWithPlaceholder) . '/_%';
+		}
 
-		$chunks = array_chunk($allRooms, 100);
+		$chunkSize = min(100, IQueryBuilder::MAX_IN_PARAMETERS);
+		$chunks = array_chunk($allRooms, $chunkSize);
 		foreach ($chunks as $rooms) {
 			$qb = $this->dbConnection->getQueryBuilder();
 			$qb->select('s.*',
@@ -958,10 +969,12 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				->selectAlias('sc.permissions', 'sc_permissions');
 
 			$qb->andWhere(
-				$qb->expr()->like('s.file_target', $qb->createNamedParameter($childPathTemplatePlaceholder, IQueryBuilder::PARAM_STR)),
 				$qb->expr()->orX(
+					$qb->expr()->andX(
+						$qb->expr()->like('s.file_target', $qb->createNamedParameter($childPathTemplatePlaceholder, IQueryBuilder::PARAM_STR)),
+						$qb->expr()->isNull('sc.file_target'),
+					),
 					$qb->expr()->like('sc.file_target', $qb->createNamedParameter($childPathTemplate, IQueryBuilder::PARAM_STR)),
-					$qb->expr()->isNull('sc.file_target'),
 				),
 			);
 
@@ -972,7 +985,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				)));
 
 			$cursor = $qb->executeQuery();
-			while ($data = $cursor->fetch()) {
+			while ($data = $cursor->fetchAssociative()) {
 				if ($data['uid_initiator'] === $userId || $data['uid_owner'] === $userId) {
 					continue;
 				}
@@ -1008,7 +1021,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$pathSections = explode('/', $data['path'], 2);
 		// FIXME: would not detect rare md5'd home storage case properly
 		if ($pathSections[0] !== 'files'
-			&& (str_starts_with($data['storage_string_id'], 'home::') || str_starts_with($data['storage_string_id'], 'object::user'))) {
+			&& (str_starts_with((string)$data['storage_string_id'], 'home::') || str_starts_with((string)$data['storage_string_id'], 'object::user'))) {
 			return false;
 		}
 		return true;
@@ -1033,7 +1046,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->andWhere($qb->expr()->eq('token', $qb->createNamedParameter($token)))
 			->executeQuery();
 
-		$data = $cursor->fetch();
+		$data = $cursor->fetchAssociative();
 
 		if ($data === false) {
 			throw new ShareNotFound();
@@ -1042,7 +1055,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$roomToken = $data['share_with'];
 		try {
 			$room = $this->manager->getRoomByToken($roomToken);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			throw new ShareNotFound();
 		}
 
@@ -1123,13 +1136,13 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$cursor = $qb->executeQuery();
 
 		$users = [];
-		while ($row = $cursor->fetch()) {
+		while ($row = $cursor->fetchAssociative()) {
 			$type = (int)$row['share_type'];
 			if ($type === IShare::TYPE_ROOM) {
 				$roomToken = $row['share_with'];
 				try {
 					$room = $this->manager->getRoomByToken($roomToken);
-				} catch (RoomNotFoundException $e) {
+				} catch (RoomNotFoundException) {
 					continue;
 				}
 
@@ -1147,7 +1160,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$cursor->closeCursor();
 
 		if ($currentAccess === true) {
-			$users = array_map([$this, 'filterSharesOfUser'], $users);
+			$users = array_map($this->filterSharesOfUser(...), $users);
 			$users = array_filter($users);
 		} else {
 			$users = array_keys($users);
@@ -1179,7 +1192,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$best = [];
 		$bestDepth = 0;
 		foreach ($shares as $id => $share) {
-			$depth = substr_count($share['file_target'], '/');
+			$depth = substr_count((string)$share['file_target'], '/');
 			if (empty($best) || $depth < $bestDepth) {
 				$bestDepth = $depth;
 				$best = [
@@ -1212,7 +1225,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->orderBy('id', 'ASC');
 
 		$cursor = $qb->executeQuery();
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$children[] = $this->createShareObject($data);
 		}
 		$cursor->closeCursor();
@@ -1248,7 +1261,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 		$cursor = $qb->executeQuery();
 		$ids = [];
-		while ($row = $cursor->fetch()) {
+		while ($row = $cursor->fetchAssociative()) {
 			$ids[] = (int)$row['id'];
 		}
 		$cursor->closeCursor();
@@ -1259,7 +1272,8 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 				->where($delete->expr()->eq('share_type', $delete->createNamedParameter(self::SHARE_TYPE_USERROOM)))
 				->andWhere($delete->expr()->in('parent', $delete->createParameter('ids')));
 
-			$chunks = array_chunk($ids, 100);
+			$chunkSize = min(100, IQueryBuilder::MAX_IN_PARAMETERS);
+			$chunks = array_chunk($ids, $chunkSize);
 			foreach ($chunks as $chunk) {
 				$delete->setParameter('ids', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
 				$delete->executeStatement();
@@ -1288,13 +1302,14 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 
 			$cursor = $query->executeQuery();
 			$ids = [];
-			while ($row = $cursor->fetch()) {
+			while ($row = $cursor->fetchAssociative()) {
 				$ids[] = (int)$row['id'];
 			}
 			$cursor->closeCursor();
 
 			if (!empty($ids)) {
-				$chunks = array_chunk($ids, 100);
+				$chunkSize = min(100, IQueryBuilder::MAX_IN_PARAMETERS);
+				$chunks = array_chunk($ids, $chunkSize);
 				foreach ($chunks as $chunk) {
 					$delete->delete('share')
 						->where($delete->expr()->eq('share_type', $delete->createNamedParameter(self::SHARE_TYPE_USERROOM)))
@@ -1326,7 +1341,7 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			);
 
 		$cursor = $qb->executeQuery();
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$share = $this->createShareObject($data);
 
 			yield $share;

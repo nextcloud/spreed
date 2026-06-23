@@ -84,6 +84,13 @@ function useGetParticipantsComposable(activeTab = ref('participants')) {
 	 * @param payload."0" - users list
 	 */
 	async function checkCurrentUserPermissions([users]: [StandaloneSignalingUpdateSession[]]) {
+		if (!token.value || !conversation.value) {
+			// No token / conversation to associate message with (user left the room)
+			// TODO: should instead compare if signaling message came for the right room (need event payload change):
+			// data.event.update.roomid === token.value
+			return
+		}
+
 		// TODO: move logic to sessionStore
 		const currentUser = users.find((user) => {
 			return user.userId ? user.userId === actorStore.userId : user.actorId === actorStore.actorId
@@ -92,7 +99,7 @@ function useGetParticipantsComposable(activeTab = ref('participants')) {
 			return
 		}
 		// refresh conversation, if current user permissions have been changed
-		if (currentUser.participantPermissions !== conversation.value?.permissions) {
+		if (currentUser.participantPermissions !== conversation.value.permissions) {
 			await store.dispatch('fetchConversation', { token: token.value })
 		}
 

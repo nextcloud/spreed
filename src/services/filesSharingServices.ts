@@ -4,6 +4,10 @@ import type {
 	createFileShareParams,
 	createFileShareResponse,
 	getFileTemplatesListResponse,
+	PostAttachmentFolderParams,
+	PostAttachmentFolderResponse,
+	ProbeAttachmentFolderParams,
+	ProbeAttachmentFolderResponse,
 } from '../types/index.ts'
 
 /**
@@ -56,8 +60,59 @@ async function createNewFile({ filePath, templatePath, templateType }: createFil
 	} as createFileFromTemplateParams)
 }
 
+/**
+ * Probe the conversation attachment folder for the given conversation.
+ *
+ * Creates the caller's conversation subfolder hierarchy (and the folder-level
+ * TYPE_ROOM share that grants all room members access) server-side if not yet
+ * present, and returns the path of the Draft staging folder where files must
+ * be uploaded before being posted via {@link postAttachment}.
+ *
+ * @param payload The function payload
+ * @param payload.token The conversation token
+ * @param payload.fileNames Desired file names — used only for server-side
+ *        rename-on-conflict probing; the authoritative final names are
+ *        returned by {@link postAttachment}.
+ * @return Draft folder path (relative to user home root, no leading slash)
+ *         and a rename simulation for the requested file names.
+ */
+async function probeAttachmentFolder({ token, fileNames }: { token: string } & ProbeAttachmentFolderParams): ProbeAttachmentFolderResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/attachment/folder', { token }), { fileNames })
+}
+
+/**
+ * Post a file staged in the conversation Draft folder as a chat message.
+ *
+ * Unlike {@link shareFile}, this does not create a per-file TYPE_ROOM share —
+ * access is controlled by the folder-level share created by
+ * {@link probeAttachmentFolder}. The backend moves the file from Draft into
+ * the shared conversation subfolder, resolving name conflicts by appending
+ * " (1)", " (2)", … to the desired file name.
+ *
+ * @param payload The function payload
+ * @param payload.token The conversation token
+ * @param payload.filePath Draft file path relative to the user's home root
+ *        (must be inside the Draft folder returned by probeAttachmentFolder)
+ * @param payload.fileName Desired final file name (for rename-on-conflict)
+ * @param payload.referenceId Client reference ID for the chat message
+ * @param payload.talkMetaData JSON-encoded metadata (caption, messageType, silent, …)
+ * @return An array of `{ originalName: finalName }` entries — one per posted
+ *         file.  When the backend had to rename due to a conflict the two
+ *         names differ; otherwise they are identical.
+ */
+async function postAttachment({ token, filePath, fileName, referenceId, talkMetaData }: { token: string } & PostAttachmentFolderParams): PostAttachmentFolderResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/attachment', { token }), {
+		filePath,
+		fileName,
+		referenceId,
+		talkMetaData,
+	})
+}
+
 export {
 	createNewFile,
 	getFileTemplates,
+	postAttachment,
+	probeAttachmentFolder,
 	shareFile,
 }

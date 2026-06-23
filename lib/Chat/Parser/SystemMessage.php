@@ -10,12 +10,11 @@ namespace OCA\Talk\Chat\Parser;
 
 use OCA\Circles\CirclesManager;
 use OCA\DAV\CardDAV\PhotoCache;
+use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Events\OverwritePublicSharePropertiesEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Federation\Authenticator;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
@@ -33,6 +32,7 @@ use OCP\Federation\ICloudIdManager;
 use OCP\Files\FileInfo;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
+use OCP\Files\ISetupManager;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\FilesMetadata\Exceptions\FilesMetadataNotFoundException;
@@ -67,24 +67,23 @@ class SystemMessage implements IEventListener {
 	/** @var array<string, array<string, string>> */
 	protected array $phoneNames = [];
 
-
 	protected array $currentFederatedUserDetails = [];
 
 	public function __construct(
-		protected IAppConfig $appConfig,
-		protected IUserManager $userManager,
-		protected IGroupManager $groupManager,
-		protected GuestManager $guestManager,
-		protected ParticipantService $participantService,
-		protected IPreviewManager $previewManager,
-		protected RoomShareProvider $shareProvider,
-		protected PhotoCache $photoCache,
-		protected IRootFolder $rootFolder,
-		protected ICloudIdManager $cloudIdManager,
-		protected IURLGenerator $url,
-		protected FilesMetadataCache $metadataCache,
-		protected Authenticator $federationAuthenticator,
-		protected IEventDispatcher $dispatcher,
+		private readonly IAppConfig $appConfig,
+		private readonly IUserManager $userManager,
+		private readonly IGroupManager $groupManager,
+		private readonly ParticipantService $participantService,
+		private readonly IPreviewManager $previewManager,
+		private readonly RoomShareProvider $shareProvider,
+		private readonly PhotoCache $photoCache,
+		private readonly IRootFolder $rootFolder,
+		private readonly ISetupManager $setupManager,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly IURLGenerator $url,
+		private readonly FilesMetadataCache $metadataCache,
+		private readonly Authenticator $federationAuthenticator,
+		private readonly IEventDispatcher $dispatcher,
 	) {
 	}
 
@@ -98,7 +97,7 @@ class SystemMessage implements IEventListener {
 			try {
 				$this->parseMessage($event->getMessage(), $event->allowInaccurate());
 				// Disabled so we can parse mentions in captions: $event->stopPropagation();
-			} catch (\OutOfBoundsException $e) {
+			} catch (\OutOfBoundsException) {
 				// Unknown message, ignore
 			}
 		} elseif ($event->getMessage()->getMessageType() === ChatManager::VERB_MESSAGE_DELETED) {
@@ -519,7 +518,13 @@ class SystemMessage implements IEventListener {
 			}
 		} elseif ($message === 'file_shared') {
 			try {
-				$parsedParameters['file'] = $this->getFileFromShare($room, $participant, $parameters['share'], $allowInaccurate);
+				if (isset($parameters['share'])) {
+					$parsedParameters['file'] = $this->getFileFromShare($room, $participant, $parameters['share'], $allowInaccurate);
+				} elseif (isset($parameters['fileId'])) {
+					$parsedParameters['file'] = $this->getFileFromNodeId($room, $participant, (int)$parameters['fileId'], $allowInaccurate);
+				} else {
+					throw new \InvalidArgumentException('No share or fileId in file_shared message');
+				}
 				$parsedMessage = '{file}';
 				$metaData = $parameters['metaData'] ?? [];
 				if (isset($metaData['messageType'])) {
@@ -798,6 +803,163 @@ class SystemMessage implements IEventListener {
 	}
 
 	/**
+	 * Build the same file-metadata array as getFileFromShare() but starting
+	 * from a node ID rather than a share ID.
+	 *
+	 * Files posted via the conversation-folder mechanism are accessible to room
+	 * members through the folder-level TYPE_ROOM share, so
+	 * userFolder->getFirstNodeById() will find them via the share mount.
+	 *
+	 * @throws NotFoundException
+	 * @throws ShareNotFound
+	 */
+	protected function getFileFromNodeId(Room $room, ?Participant $participant, int $nodeId, bool $allowInaccurate = false): array {
+		if ($participant && $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			if ($allowInaccurate) {
+				// Lightweight lookup: search the filecache directly without setting up the user
+				// filesystem, mirroring getFileFromShare()'s use of getNodeCacheEntry().
+				// Path is intentionally inaccurate (filename only) — callers that need the full
+				// relative path must pass $allowInaccurate = false.
+				$node = $this->rootFolder->getFirstNodeById($nodeId);
+				if (!$node instanceof Node) {
+					throw new NotFoundException('File node ' . $nodeId . ' not found');
+				}
+
+				$name = $node->getName();
+				$size = $node->getSize();
+				$path = $name;
+			} else {
+				$uid = $participant->getAttendee()->getActorId();
+				$userFolder = $this->rootFolder->getUserFolder($uid);
+
+				$node = $userFolder->getFirstNodeById($nodeId);
+				if (!$node instanceof Node) {
+					throw new NotFoundException('File node ' . $nodeId . ' not found for user ' . $uid);
+				}
+
+				$fullPath = $node->getPath();
+				$pathSegments = explode('/', $fullPath, 4);
+				$name = $node->getName();
+				$size = $node->getSize();
+				$path = $pathSegments[3] ?? $name;
+			}
+
+			$url = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', [
+				'fileid' => $node->getId(),
+			]);
+		} elseif ($participant && $room->getType() !== Room::TYPE_PUBLIC && $participant->getAttendee()->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			throw new ShareNotFound();
+		} else {
+			$node = $this->rootFolder->getFirstNodeById($nodeId);
+			if (!$node instanceof Node) {
+				throw new NotFoundException('File node ' . $nodeId . ' not found');
+			}
+
+			// Guests and public-room participants cannot follow /f/<id> links
+			// (authentication required). Resolve the enclosing folder-level
+			// TYPE_ROOM share for this room and point at the public /s/<token>
+			// URL so attendees without a Nextcloud login can still open the file.
+			[$shareToken, $pathInShare] = $this->resolvePublicShareForNode($room, $node);
+			if ($shareToken === null) {
+				throw new ShareNotFound();
+			}
+
+			$name = $node->getName();
+			$size = $node->getSize();
+			$path = $name;
+
+			$params = ['token' => $shareToken];
+			if ($pathInShare !== '/' && $pathInShare !== '') {
+				$params['path'] = $pathInShare;
+			}
+			$url = $this->url->linkToRouteAbsolute('files_sharing.sharecontroller.showShare', $params);
+		}
+
+		$fileId = $node->getId();
+		$isPreviewAvailable = $size > 0 && $this->previewManager->isMimeSupported($node->getMimeType());
+
+		$data = [
+			'type' => 'file',
+			'id' => (string)$fileId,
+			'name' => $name,
+			'size' => (string)$size,
+			'path' => $path,
+			'link' => $url,
+			'etag' => $node->getEtag(),
+			'permissions' => (string)$node->getPermissions(),
+			'mimetype' => $node->getMimeType(),
+			'preview-available' => $isPreviewAvailable ? 'yes' : 'no',
+			'hide-download' => 'no',
+		];
+
+		if ($isPreviewAvailable && str_starts_with($node->getMimeType(), 'image/')) {
+			try {
+				$sizeMetadata = $this->metadataCache->getImageMetadataForFileId($fileId);
+				if (isset($sizeMetadata['width'], $sizeMetadata['height'])) {
+					$data['width'] = (string)$sizeMetadata['width'];
+					$data['height'] = (string)$sizeMetadata['height'];
+				}
+				if (isset($sizeMetadata['blurhash'])) {
+					$data['blurhash'] = $sizeMetadata['blurhash'];
+				}
+			} catch (\OCP\FilesMetadata\Exceptions\FilesMetadataNotFoundException) {
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Walk up the node's parent chain to find the folder-level TYPE_ROOM share
+	 * that the conversation-folder mechanism creates for $room, and return the
+	 * share's public token plus the relative directory path from the share root
+	 * to the file's parent directory (suitable as the `path` query parameter on
+	 * the /s/<token> URL).
+	 *
+	 * Returns [null, ''] when no matching share is found (e.g. in non-public
+	 * rooms where the token would be rejected by ShareManager anyway).
+	 *
+	 * @return array{0: ?string, 1: string}
+	 */
+	private function resolvePublicShareForNode(Room $room, Node $node): array {
+		$roomToken = $room->getToken();
+		$shareToken = null;
+		$shareFolder = null;
+
+		$current = $node;
+		for ($depth = 0; $depth < 10; $depth++) {
+			try {
+				$parent = $current->getParent();
+			} catch (NotFoundException) {
+				break;
+			}
+			if ($parent === $current) {
+				break;
+			}
+			foreach ($this->shareProvider->getSharesByPath($parent) as $share) {
+				if ($share->getSharedWith() === $roomToken) {
+					$shareToken = $share->getToken();
+					$shareFolder = $parent;
+					break 2;
+				}
+			}
+			$current = $parent;
+		}
+
+		if ($shareToken === null || $shareFolder === null) {
+			return [null, ''];
+		}
+
+		$relative = substr($node->getPath(), strlen($shareFolder->getPath()));
+		$dir = dirname($relative);
+		if ($dir === '' || $dir === '.') {
+			$dir = '/';
+		}
+
+		return [$shareToken, $dir];
+	}
+
+	/**
 	 * @throws InvalidPathException
 	 * @throws NotFoundException
 	 * @throws ShareNotFound
@@ -823,11 +985,12 @@ class SystemMessage implements IEventListener {
 
 				$node = $userFolder->getFirstNodeById($share->getNodeId());
 				if (!$node instanceof Node) {
+					$user = $this->userManager->getExistingUser($participant->getAttendee()->getActorId());
 					// FIXME This should be much more sensible, e.g.
 					// 1. Only be executed on "Waiting for new messages"
 					// 2. Once per request
-					\OC_Util::tearDownFS();
-					\OC_Util::setupFS($participant->getAttendee()->getActorId());
+					$this->setupManager->tearDown();
+					$this->setupManager->setupForUser($user);
 					$userNodes = $userFolder->getById($share->getNodeId());
 
 					if (empty($userNodes)) {
@@ -923,7 +1086,7 @@ class SystemMessage implements IEventListener {
 			$photo = $this->photoCache->getPhotoFromVObject($vObject);
 			if ($photo) {
 				$data['contact-photo-mimetype'] = $photo['Content-Type'];
-				$data['contact-photo'] = base64_encode($photo['body']);
+				$data['contact-photo'] = base64_encode((string)$photo['body']);
 			}
 		}
 
@@ -976,7 +1139,7 @@ class SystemMessage implements IEventListener {
 		if (!isset($this->displayNames[$uid])) {
 			try {
 				$this->displayNames[$uid] = $this->getDisplayName($uid);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				$this->displayNames[$uid] = null;
 			}
 		}
@@ -1100,7 +1263,7 @@ class SystemMessage implements IEventListener {
 
 			$this->circleNames[$circleId] = $circle->getDisplayName();
 			$this->circleLinks[$circleId] = $circle->getUrl();
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			$circlesManager->stopSession();
 		}
 	}
@@ -1143,7 +1306,7 @@ class SystemMessage implements IEventListener {
 				return $this->l->t('Guest');
 			}
 			return $this->l->t('%s (guest)', [$name]);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return $this->l->t('Guest');
 		}
 	}
@@ -1190,7 +1353,6 @@ class SystemMessage implements IEventListener {
 			'call_tried',
 		];
 	}
-
 
 	protected function parseCall(Room $room, string $message, array $parameters, array $params): array {
 		$actorIsSystem = $params['actor']['type'] === 'guest' && $params['actor']['id'] === 'guest/' . Attendee::ACTOR_ID_SYSTEM;

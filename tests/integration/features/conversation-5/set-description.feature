@@ -3,9 +3,7 @@ Feature: conversation-5/set-description
     Given user "owner" exists
     Given user "moderator" exists
     Given user "invited user" exists
-    Given user "not invited user" exists
     Given user "not invited but joined user" exists
-    Given user "not joined user" exists
 
   Scenario: a description of 2000 characters can be set
     Given signaling server is started
@@ -108,6 +106,7 @@ Feature: conversation-5/set-description
       | the description |
 
   Scenario: others can not set description in group room
+    Given user "not invited user" exists
     Given user "owner" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -225,6 +224,7 @@ Feature: conversation-5/set-description
       | the description |
 
   Scenario: others can not set description in public room
+    Given user "not joined user" exists
     Given user "owner" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |

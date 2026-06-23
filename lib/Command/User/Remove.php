@@ -18,8 +18,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Remove extends Base {
 
 	public function __construct(
-		private IUserManager $userManager,
-		private Manager $manager,
+		private readonly IUserManager $userManager,
+		private readonly Manager $manager,
 	) {
 		parent::__construct();
 	}

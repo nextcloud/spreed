@@ -11,7 +11,7 @@ import EmptyView from '../components/EmptyView.vue'
 <template>
 	<EmptyView
 		:name="t('spreed', 'Duplicate session')"
-		:description="t('spreed', 'You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed.')">
+		:description="t('spreed', 'This conversation was opened in another tab. The current server version does not support opening a conversation in multiple tabs.')">
 		<template #icon>
 			<!-- TODO: use information-slab-symbol after update to MDI 7 -->
 			<IconInformationOutline />

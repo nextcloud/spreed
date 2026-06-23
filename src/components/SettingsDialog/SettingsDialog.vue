@@ -18,6 +18,7 @@
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection
+			v-if="isCallEnabled"
 			id="devices"
 			:name="t('spreed', 'Devices')">
 			<NcFormBox>
@@ -36,7 +37,7 @@
 					v-if="!isGuest"
 					:modelValue="hideMediaSettings"
 					:label="t('spreed', 'Skip device preview before joining a call')"
-					:description="t('spreed', 'Always shown if recording consent is required')"
+					:description="t('spreed', 'Camera will be turned off when joining. Always shown if recording consent is required.')"
 					@update:modelValue="setHideMediaSettings" />
 				<NcFormBoxButton
 					:label="t('spreed', 'Microphone settings')"
@@ -101,7 +102,7 @@
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection
-			v-if="supportLiveTranslation"
+			v-if="isCallEnabled && supportLiveTranslation"
 			id="live_transcription"
 			:name="t('spreed', 'Live transcription')">
 			<NcFormBox v-slot="{ itemClass }">
@@ -124,7 +125,9 @@
 				<NcHotkey v-if="!isGuest" :label="t('spreed', 'Edit your last message')" hotkey="Control ArrowUp" />
 			</NcHotkeyList>
 
-			<NcHotkeyList :label="t('spreed', 'Shortcuts while in a call')">
+			<NcHotkeyList
+				v-if="isCallEnabled"
+				:label="t('spreed', 'Shortcuts while in a call')">
 				<NcHotkey :label="t('spreed', 'Camera on and off')" hotkey="V" />
 				<NcHotkey :label="t('spreed', 'Microphone on and off')" hotkey="M" />
 				<NcHotkey :label="t('spreed', 'Raise or lower hand')" hotkey="R" />
@@ -171,6 +174,7 @@ import { useSettingsStore } from '../../stores/settings.ts'
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 
 const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !== undefined
+const isCallEnabled = getTalkConfig('local', 'call', 'enabled')
 const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 const supportLiveTranslation = getTalkConfig('local', 'call', 'live-translation') === true
@@ -206,6 +210,7 @@ export default {
 			settingsStore,
 			supportTypingStatus,
 			customSettingsSections,
+			isCallEnabled,
 			supportStartWithoutMedia,
 			supportDefaultBlurVirtualBackground,
 			supportLiveTranslation,

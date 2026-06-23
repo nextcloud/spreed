@@ -85,6 +85,7 @@ class ChatManager {
 	public const VERB_VOICE_MESSAGE = 'voice-message';
 	public const VERB_RECORD_AUDIO = 'record-audio';
 	public const VERB_RECORD_VIDEO = 'record-video';
+	public const VERB_PRIVATE_REPLY = 'private_reply';
 
 	/**
 	 * Last read message ID of -1 is set on the attendee table as default.
@@ -104,30 +105,30 @@ class ChatManager {
 	 */
 	public const UNREAD_FIRST_MESSAGE = -2;
 
-	protected ICache $cache;
-	protected ICache $unreadCountCache;
+	private readonly ICache $cache;
+	private readonly ICache $unreadCountCache;
 
 	public function __construct(
-		private CommentsManager $commentsManager,
-		private IEventDispatcher $dispatcher,
-		private IDBConnection $connection,
-		private INotificationManager $notificationManager,
-		private IManager $shareManager,
-		private RoomShareProvider $shareProvider,
-		private ParticipantService $participantService,
-		private RoomService $roomService,
-		private PollService $pollService,
-		protected ThreadService $threadService,
-		private Notifier $notifier,
+		private readonly CommentsManager $commentsManager,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly IDBConnection $connection,
+		private readonly INotificationManager $notificationManager,
+		private readonly IManager $shareManager,
+		private readonly RoomShareProvider $shareProvider,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
+		private readonly PollService $pollService,
+		private readonly ThreadService $threadService,
+		private readonly Notifier $notifier,
 		ICacheFactory $cacheFactory,
-		protected ITimeFactory $timeFactory,
-		protected AttachmentService $attachmentService,
-		protected IReferenceManager $referenceManager,
-		protected ILimiter $rateLimiter,
-		protected IRequest $request,
-		protected IJobList $jobList,
-		protected IL10N $l,
-		protected LoggerInterface $logger,
+		private readonly ITimeFactory $timeFactory,
+		private readonly AttachmentService $attachmentService,
+		private readonly IReferenceManager $referenceManager,
+		private readonly ILimiter $rateLimiter,
+		private readonly IRequest $request,
+		private readonly IJobList $jobList,
+		private readonly IL10N $l,
+		private readonly LoggerInterface $logger,
 	) {
 		$this->cache = $cacheFactory->createDistributed(CachePrefix::CHAT_LAST_MESSAGE_ID);
 		$this->unreadCountCache = $cacheFactory->createDistributed(CachePrefix::CHAT_UNREAD_COUNT);
@@ -273,7 +274,7 @@ class ChatManager {
 
 			$event = new SystemMessageSentEvent($chat, $comment, silent: $silent, parent: $replyTo, skipLastActivityUpdate: $shouldSkipLastMessageUpdate);
 			$this->dispatcher->dispatchTyped($event);
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 		}
 		$this->cache->remove($chat->getToken());
 		if ($threadId !== 0) {
@@ -318,7 +319,7 @@ class ChatManager {
 
 			$event = new SystemMessageSentEvent($chat, $comment);
 			$this->dispatcher->dispatchTyped($event);
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 		}
 		$this->cache->remove($chat->getToken());
 		if ($threadId !== 0) {
@@ -362,7 +363,7 @@ class ChatManager {
 
 			$event = new SystemMessageSentEvent($chat, $comment);
 			$this->dispatcher->dispatchTyped($event);
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 		}
 		$this->cache->remove($chat->getToken());
 		if ($threadId !== 0) {
@@ -393,6 +394,8 @@ class ChatManager {
 		int $threadId = 0,
 		string $threadTitle = '',
 		bool $fromScheduledMessage = false,
+		string $verb = self::VERB_MESSAGE,
+		array $extraMetaData = [],
 	): IComment {
 		if ($chat->isFederatedConversation()) {
 			$e = new MessagingNotAllowedException();
@@ -405,7 +408,7 @@ class ChatManager {
 		$comment->setCreationDateTime($creationDateTime);
 		// A verb ('comment', 'like'...) must be provided to be able to save a
 		// comment
-		$comment->setVerb(self::VERB_MESSAGE);
+		$comment->setVerb($verb);
 
 		if ($replyTo instanceof IComment) {
 			$comment->setParentId($replyTo->getId());
@@ -443,7 +446,7 @@ class ChatManager {
 		if ($threadId !== Thread::THREAD_NONE) {
 			$metadata[Message::METADATA_THREAD_ID] = $threadId;
 		}
-		$comment->setMetaData($metadata);
+		$comment->setMetaData(array_merge($metadata, $extraMetaData));
 
 		$event = new BeforeChatMessageSentEvent($chat, $comment, $participant, $silent, $replyTo);
 		$this->dispatcher->dispatchTyped($event);
@@ -474,7 +477,7 @@ class ChatManager {
 			// Update last_message
 			if ($comment->getActorType() !== Attendee::ACTOR_BOTS
 				|| $comment->getActorId() === Attendee::ACTOR_ID_CHANGELOG
-				|| str_starts_with($comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)) {
+				|| str_starts_with((string)$comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)) {
 				$this->roomService->setLastMessage($chat, $comment);
 				$this->unreadCountCache->clear($chat->getId() . '-');
 			} else {
@@ -507,7 +510,7 @@ class ChatManager {
 
 			$event = new ChatMessageSentEvent($chat, $comment, $participant, $silent, $replyTo);
 			$this->dispatcher->dispatchTyped($event);
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 		}
 		$this->cache->remove($chat->getToken());
 		if ($threadId !== Thread::THREAD_NONE) {
@@ -574,7 +577,7 @@ class ChatManager {
 
 		try {
 			$poll = $this->pollService->getPoll($room->getId(), (int)$messageData['parameters']['objectId']);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			return;
 		}
 
@@ -727,12 +730,12 @@ class ChatManager {
 		$this->referenceManager->invalidateCache($chat->getToken());
 
 		if (!$wasSilent) {
-			$removedMentions = empty($mentionsAfter) ? $mentionsBefore : array_udiff($mentionsBefore, $mentionsAfter, [$this, 'compareMention']);
-			$addedMentions = empty($mentionsBefore) ? $mentionsAfter : array_udiff($mentionsAfter, $mentionsBefore, [$this, 'compareMention']);
+			$removedMentions = empty($mentionsAfter) ? $mentionsBefore : array_udiff($mentionsBefore, $mentionsAfter, $this->compareMention(...));
+			$addedMentions = empty($mentionsBefore) ? $mentionsAfter : array_udiff($mentionsAfter, $mentionsBefore, $this->compareMention(...));
 
 			if (!empty($removedMentions)) {
 				$usersToNotifyAfter = $this->notifier->getUsersToNotify($chat, $comment, []);
-				$removedUsersMentioned = array_udiff($usersToNotifyBefore, $usersToNotifyAfter, [$this, 'compareMention']);
+				$removedUsersMentioned = array_udiff($usersToNotifyBefore, $usersToNotifyAfter, $this->compareMention(...));
 				$userIds = array_column($removedUsersMentioned, 'id');
 				$this->notifier->removeMentionNotificationAfterEdit($chat, $comment, $userIds);
 			}
@@ -1214,12 +1217,10 @@ class ChatManager {
 	 * @return IComment[]
 	 */
 	public function getMessagesForRoomById(Room $chat, array $commentIds): array {
-		$comments = $this->commentsManager->getCommentsById(array_map('strval', $commentIds));
+		$comments = $this->commentsManager->getCommentsById(array_map(strval(...), $commentIds));
 
-		$comments = array_filter($comments, static function (IComment $comment) use ($chat) {
-			return $comment->getObjectType() === 'chat'
-				&& (int)$comment->getObjectId() === $chat->getId();
-		});
+		$comments = array_filter($comments, static fn (IComment $comment) => $comment->getObjectType() === 'chat'
+				&& (int)$comment->getObjectId() === $chat->getId());
 
 		return $comments;
 	}
@@ -1231,7 +1232,7 @@ class ChatManager {
 	 * @return array<int, IComment> Key is the message id
 	 */
 	public function getMessagesById(array $commentIds): array {
-		return $this->commentsManager->getCommentsById(array_map('strval', $commentIds));
+		return $this->commentsManager->getCommentsById(array_map(strval(...), $commentIds));
 	}
 
 	/**
@@ -1325,7 +1326,7 @@ class ChatManager {
 		$parameters = $this->getParametersFromMessage($message);
 		try {
 			$this->shareProvider->getShareById($parameters['share']);
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			return false;
 		}
 		return true;

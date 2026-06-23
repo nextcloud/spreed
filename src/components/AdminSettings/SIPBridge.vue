@@ -269,7 +269,7 @@ export default {
 				await OCP.AppConfig.setValue('spreed', 'sip_dialout', this.dialOutEnabled ? 'yes' : 'no')
 			}
 			if (this.currentSetup.dialOutAnonymous !== this.dialOutAnonymous) {
-				await OCP.AppConfig.setValue('spreed', 'sip_bridge_dialout_anonymous', this.dialOutAnonymous)
+				await OCP.AppConfig.setValue('spreed', 'sip_bridge_dialout_anonymous', String(this.dialOutAnonymous))
 			}
 			if (this.currentSetup.dialOutNumber !== this.dialOutNumber) {
 				await OCP.AppConfig.setValue('spreed', 'sip_bridge_dialout_number', this.dialOutNumber)

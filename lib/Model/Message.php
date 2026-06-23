@@ -57,11 +57,11 @@ class Message {
 	protected array $metaData = [];
 
 	public function __construct(
-		protected Room $room,
-		protected ?Participant $participant,
-		protected ?IComment $comment,
-		protected IL10N $l,
-		protected ?ProxyCacheMessage $proxy = null,
+		private readonly Room $room,
+		private readonly ?Participant $participant,
+		private readonly ?IComment $comment,
+		private readonly IL10N $l,
+		private readonly ?ProxyCacheMessage $proxy = null,
 	) {
 	}
 
@@ -168,6 +168,7 @@ class Message {
 			&& $this->getMessageType() !== ChatManager::VERB_COMMAND
 			&& $this->getMessageType() !== ChatManager::VERB_MESSAGE_DELETED
 			&& $this->getMessageType() !== ChatManager::VERB_REACTION
+			&& $this->getMessageType() !== ChatManager::VERB_PRIVATE_REPLY
 			&& $this->getMessageType() !== ChatManager::VERB_REACTION_DELETED
 			&& \in_array($this->getActorType(), [
 				Attendee::ACTOR_USERS,

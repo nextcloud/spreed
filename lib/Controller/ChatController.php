@@ -9,16 +9,17 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Chat\ReactionManager;
+use OCA\Talk\Config;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ChatSummaryException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
@@ -44,6 +45,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\BotService;
+use OCA\Talk\Service\ConversationFolderService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\ReminderService;
@@ -69,6 +71,9 @@ use OCP\Comments\IComment;
 use OCP\Comments\MessageTooLongException;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\FileInfo;
+use OCP\Files\NotEnoughSpaceException;
+use OCP\Files\NotFoundException as FileNotFoundException;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
@@ -103,52 +108,151 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 	public function __construct(
 		string $appName,
-		private ?string $userId,
+		private readonly ?string $userId,
 		IRequest $request,
-		private IUserManager $userManager,
-		private IAppManager $appManager,
-		private ChatManager $chatManager,
-		protected Manager $manager,
-		private RoomFormatter $roomFormatter,
-		private ReactionManager $reactionManager,
-		private ParticipantService $participantService,
-		private SessionService $sessionService,
-		protected AttachmentService $attachmentService,
-		protected AvatarService $avatarService,
-		protected ReminderService $reminderService,
-		protected ThreadService $threadService,
-		private GuestManager $guestManager,
-		private MessageParser $messageParser,
-		protected Preloader $sharePreloader,
-		private IManager $autoCompleteManager,
-		private IUserStatusManager $statusManager,
-		protected MatterbridgeManager $matterbridgeManager,
-		protected BotService $botService,
-		private SearchPlugin $searchPlugin,
-		private ISearchResult $searchResult,
-		protected ITimeFactory $timeFactory,
-		protected IEventDispatcher $eventDispatcher,
-		protected IValidator $richObjectValidator,
-		protected ITrustedDomainHelper $trustedDomainHelper,
-		private IL10N $l,
-		protected Authenticator $federationAuthenticator,
-		protected ProxyCacheMessageService $pcmService,
-		protected Notifier $notifier,
-		protected IRichTextFormatter $richTextFormatter,
-		protected ITaskProcessingManager $taskProcessingManager,
-		protected IAppConfig $appConfig,
-		protected LoggerInterface $logger,
-		protected ScheduledMessageService $scheduledMessageManager,
+		private readonly IUserManager $userManager,
+		private readonly IAppManager $appManager,
+		private readonly ChatManager $chatManager,
+		private readonly Manager $manager,
+		private readonly RoomFormatter $roomFormatter,
+		private readonly ReactionManager $reactionManager,
+		private readonly ParticipantService $participantService,
+		private readonly SessionService $sessionService,
+		private readonly AttachmentService $attachmentService,
+		private readonly AvatarService $avatarService,
+		private readonly ReminderService $reminderService,
+		private readonly ThreadService $threadService,
+		private readonly GuestManager $guestManager,
+		private readonly MessageParser $messageParser,
+		private readonly Preloader $sharePreloader,
+		private readonly IManager $autoCompleteManager,
+		private readonly IUserStatusManager $statusManager,
+		private readonly MatterbridgeManager $matterbridgeManager,
+		private readonly BotService $botService,
+		private readonly SearchPlugin $searchPlugin,
+		private readonly ISearchResult $searchResult,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IEventDispatcher $eventDispatcher,
+		private readonly IValidator $richObjectValidator,
+		private readonly ITrustedDomainHelper $trustedDomainHelper,
+		private readonly IL10N $l,
+		private readonly Authenticator $federationAuthenticator,
+		private readonly ProxyCacheMessageService $pcmService,
+		private readonly Notifier $notifier,
+		private readonly IRichTextFormatter $richTextFormatter,
+		private readonly ITaskProcessingManager $taskProcessingManager,
+		private readonly IAppConfig $appConfig,
+		private readonly LoggerInterface $logger,
+		private readonly ScheduledMessageService $scheduledMessageManager,
+		private readonly ConversationFolderService $conversationFolderService,
+		private readonly Config $talkConfig,
 	) {
 		parent::__construct($appName, $request);
 	}
 
 	/**
+	 * @return array{parent: IComment, parentMessage: Message}
+	 * @throws \InvalidArgumentException When a 400 should be thrown
+	 * @throws \DomainException When a 403 should be thrown
+	 */
+	private function resolveReplyTo(int $replyTo, string $replyToToken, string $actorType, string $actorId, \DateTime $creationDateTime): array {
+		$isPrivateReplyFromAnotherConvo = $replyToToken !== '';
+
+		try {
+			$targetParentRoom = $isPrivateReplyFromAnotherConvo ? $this->manager->getRoomByToken($replyToToken) : $this->room;
+			$parent = $this->chatManager->getParentComment($targetParentRoom, (string)$replyTo);
+		} catch (NotFoundException) {
+			throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($isPrivateReplyFromAnotherConvo) {
+			if ($this->room->getType() !== Room::TYPE_ONE_TO_ONE) {
+				throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
+			}
+
+			$parentActorId = $parent->getActorId();
+			$parentActorType = $parent->getActorType();
+			if ($parentActorType !== Attendee::ACTOR_USERS
+				|| $actorType !== Attendee::ACTOR_USERS) {
+				// Quoted actor or quoting actor is not a user
+				throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
+			}
+
+			if ($parentActorId === $actorId) {
+				// Don't allow reply-private on own messages
+				throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
+			}
+
+			$users = [$actorId, $parentActorId];
+			sort($users);
+			$name = json_encode($users);
+			if ($name !== $this->room->getName()) {
+				// Target conversation is not the one-to-one between both users (actor and parent actor).
+				throw new \DomainException('reply-to', Http::STATUS_FORBIDDEN);
+			}
+
+			try {
+				$this->participantService->getParticipantByActor($targetParentRoom, $actorType, $actorId);
+				$this->participantService->getParticipantByActor($targetParentRoom, $parentActorType, $parentActorId);
+			} catch (ParticipantNotFoundException) {
+				throw new \DomainException('reply-to', Http::STATUS_FORBIDDEN);
+			}
+
+			$originalParentMessage = $this->messageParser->createMessage($targetParentRoom, $this->participant, $parent, $this->l);
+			$this->messageParser->parseMessage($originalParentMessage);
+
+			if (!$originalParentMessage->isReplyable()) {
+				throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
+			}
+
+			$originalMessageData = $originalParentMessage->toArray('json', null);
+			$originalMessageData['threadId'] = Thread::THREAD_NONE;
+			$originalMessageData['reactions'] = new \stdClass();
+			$originalMessageData['messageType'] = $originalParentMessage->getMessageType();
+
+			$extraMetaData = [
+				'replyToMessageId' => $replyTo,
+				'replyToConversationToken' => $replyToToken,
+				'replyToConversationName' => $targetParentRoom->getName(),
+				'replyToActorDisplayName' => $originalParentMessage->getActorDisplayName(),
+			];
+			$originalMessageData['metaData'] = array_merge($originalMessageData['metaData'] ?? [], $extraMetaData);
+			// Create a link message for the private reply
+			$copiedParent = $this->chatManager->sendMessage(
+				$this->room,
+				$this->participant,
+				$parentActorType,
+				$parentActorId,
+				ChatManager::VERB_PRIVATE_REPLY,
+				$creationDateTime,
+				null,
+				'',
+				true,
+				verb: ChatManager::VERB_PRIVATE_REPLY,
+				extraMetaData: [
+					'originalMessage' => $originalMessageData,
+				],
+			);
+
+			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $copiedParent, $this->l);
+			$this->messageParser->parseMessage($parentMessage);
+		} else {
+			$parentMessage = $this->messageParser->createMessage($targetParentRoom, $this->participant, $parent, $this->l);
+			$this->messageParser->parseMessage($parentMessage);
+
+			if (!$parentMessage->isReplyable()) {
+				throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
+			}
+		}
+
+		return ['parent' => $isPrivateReplyFromAnotherConvo ? $copiedParent : $parent, 'parentMessage' => $parentMessage];
+	}
+	/**
 	 * @return list{0: Attendee::ACTOR_*, 1: string}
 	 */
 	protected function getActorInfo(string $actorDisplayName = ''): array {
-		$remoteCloudId = $this->federationAuthenticator->getCloudId();
-		if ($remoteCloudId !== '') {
+		if ($this->federationAuthenticator->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+			$remoteCloudId = $this->federationAuthenticator->getActorId();
 			if ($actorDisplayName) {
 				$this->participantService->updateDisplayNameForActor(Attendee::ACTOR_FEDERATED_USERS, $remoteCloudId, $actorDisplayName);
 			}
@@ -219,7 +323,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 		$data = $chatMessage->toArray($this->getResponseFormat(), $thread);
 		if ($parentMessage instanceof Message) {
-			$data['parent'] = $parentMessage->toArray($this->getResponseFormat(), $thread);
+			$parentComment = $parentMessage->getComment();
+			if ($parentComment->getVerb() === ChatManager::VERB_PRIVATE_REPLY && $parentComment->getParentId() === '0') {
+				$data['parent'] = $this->buildPrivateReplyParentSnapshot($parentComment);
+			} else {
+				$data['parent'] = $parentMessage->toArray($this->getResponseFormat(), $thread);
+			}
 		}
 
 		$headers = [];
@@ -240,13 +349,15 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param string $referenceId for the message to be able to later identify it again
 	 * @param int $replyTo Parent id which this message is a reply to
 	 * @psalm-param non-negative-int $replyTo
+	 * @param string $replyToToken Parent token to which reply is initiated
 	 * @param bool $silent If sent silent the chat message will not create any notifications
 	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
 	 * @param int $threadId Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
-	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE|Http::STATUS_TOO_MANY_REQUESTS, array{error: string}, array{}>
 	 *
 	 * 201: Message sent successfully
 	 * 400: Sending message is not possible
+	 * 403: When trying to cross reference wrongly on a reply-private
 	 * 404: Actor not found
 	 * 413: Message too long
 	 * 429: Mention rate limit exceeded (guests only)
@@ -262,7 +373,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, bool $silent = false, string $threadTitle = '', int $threadId = 0): DataResponse {
+	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, string $replyToToken = '', bool $silent = false, string $threadTitle = '', int $threadId = 0): DataResponse {
 		if ($this->room->isFederatedConversation()) {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ChatController::class);
@@ -279,19 +390,18 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		$parent = $parentMessage = null;
+		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
+
 		if ($replyTo !== 0) {
 			try {
-				$parent = $this->chatManager->getParentComment($this->room, (string)$replyTo);
-			} catch (NotFoundException $e) {
-				// Someone is trying to reply cross-rooms or to a non-existing message
+				$resolvedReplyTo = $this->resolveReplyTo($replyTo, $replyToToken, $actorType, $actorId, $creationDateTime);
+			} catch (\InvalidArgumentException) {
 				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+			} catch (\DomainException) {
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_FORBIDDEN);
 			}
-
-			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
-			$this->messageParser->parseMessage($parentMessage);
-			if (!$parentMessage->isReplyable()) {
-				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
-			}
+			$parent = $resolvedReplyTo['parent'];
+			$parentMessage = $resolvedReplyTo['parentMessage'];
 		} elseif ($threadId !== 0) {
 			if (!$this->threadService->validateThread($this->room->getId(), $threadId)) {
 				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
@@ -299,7 +409,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
-		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
 			$createThread = $replyTo === 0 && $threadId === Thread::THREAD_NONE && $threadTitle !== '';
@@ -398,10 +507,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param bool $silent If sent silent the scheduled message will not create any notifications when sent
 	 * @param string $threadTitle Only supported when not replying, when given will create a thread (requires `threads` capability)
 	 * @param int $threadId Thread id without quoting a specific message (requires `threads` capability)
-	 * @return DataResponse<Http::STATUS_CREATED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'message'|'reply-to'|'send-at'}, array{}>|DataResponse<Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: 'message'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'actor'}, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, TalkScheduledMessage, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'message'|'reply-to'|'send-at'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'reply-to'}, array{}>|DataResponse<Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array{error: 'message'}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error: 'actor'}, array{}>
 	 *
 	 * 201: Message scheduled successfully
 	 * 400: Scheduling the message is not possible
+	 * 403: When trying to cross reference wrongly on a reply-private
 	 * 404: Actor not found
 	 * 413: Message too long
 	 */
@@ -435,19 +545,19 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		$parent = $parentMessage = null;
-		if ($replyTo !== 0) {
-			try {
-				$parent = $this->chatManager->getParentComment($this->room, (string)$replyTo);
-			} catch (NotFoundException $e) {
-				// Someone is trying to reply cross-rooms or to a non-existing message
-				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
-			}
+		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
-			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
-			$this->messageParser->parseMessage($parentMessage);
-			if (!$parentMessage->isReplyable()) {
+		if ($replyTo !== 0) {
+			[$actorType, $actorId] = $this->getActorInfo();
+			try {
+				$resolvedReplyTo = $this->resolveReplyTo($replyTo, '', $actorType, $actorId, $creationDateTime);
+			} catch (\InvalidArgumentException) {
 				return new DataResponse(['error' => 'reply-to'], Http::STATUS_BAD_REQUEST);
+			} catch (\DomainException) {
+				return new DataResponse(['error' => 'reply-to'], Http::STATUS_FORBIDDEN);
 			}
+			$parent = $resolvedReplyTo['parent'];
+			$parentMessage = $resolvedReplyTo['parentMessage'];
 		}
 
 		if ($threadId !== 0 && !$this->threadService->validateThread($this->room->getId(), $threadId)) {
@@ -654,7 +764,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		try {
 			$this->richObjectValidator->validate('{object}', ['object' => $data]);
-		} catch (InvalidObjectExeption $e) {
+		} catch (InvalidObjectExeption) {
 			return new DataResponse(['error' => 'object'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -686,9 +796,9 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		try {
 			$comment = $this->chatManager->addSystemMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, true, $referenceId, threadId: $threadId);
-		} catch (MessageTooLongException $e) {
+		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1069,6 +1179,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 						continue;
 					}
 
+					if ($comment->getVerb() === ChatManager::VERB_PRIVATE_REPLY && $comment->getParentId() === '0') {
+						$loadedParents[$parentId] = $this->buildPrivateReplyParentSnapshot($comment);
+						$messages[$commentKey]['parent'] = $loadedParents[$parentId];
+						continue;
+					}
+
 					$expireDate = $message->getComment()->getExpireDate();
 					if ($expireDate instanceof \DateTime && $expireDate < $now) {
 						$commentIdToIndex[$id] = null;
@@ -1079,7 +1195,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 						'id' => (int)$parentId,
 						'deleted' => true,
 					];
-				} catch (NotFoundException $e) {
+				} catch (NotFoundException) {
 				}
 			}
 
@@ -1164,7 +1280,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 		}
 
-		$currentUser = $this->userManager->get($this->userId);
+		$currentUser = $this->userId !== null ? $this->userManager->getExistingUser($this->userId) : null;
 		if ($messageId === 0) {
 			// Guest in a fully expired chat, no history, just loading the chat from beginning for now
 			$commentsHistory = $commentsFuture = [];
@@ -1512,8 +1628,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, TalkChatReminder, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{error?: string}, array{}>
 	 *
 	 * 200: Reminder returned
-	 * 404: No reminder found
-	 * 404: Message not found
+	 * 404: No reminder found or message not found
 	 */
 	#[FederationSupported]
 	#[NoAdminRequired]
@@ -1671,6 +1786,16 @@ class ChatController extends AEnvironmentAwareOCSController {
 		return new DataResponse($resultData, Http::STATUS_OK);
 	}
 
+	private function buildPrivateReplyParentSnapshot(IComment $comment): array {
+		$metaData = $comment->getMetaData() ?? [];
+		$message = $metaData['originalMessage'];
+		$message['id'] = (int)$comment->getId();
+		unset($metaData['originalMessage']);
+		$message['metaData'] = array_merge($metaData, $message['metaData'] ?? []);
+
+		return $message;
+	}
+
 	/**
 	 * @throws DoesNotExistException
 	 * @throws CannotReachRemoteException
@@ -1732,7 +1857,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		$systemMessage = $this->messageParser->createMessage($this->room, $this->participant, $systemMessageComment, $this->l);
 		$this->messageParser->parseMessage($systemMessage);
-
 
 		$data = $systemMessage->toArray($this->getResponseFormat(), null);
 
@@ -2218,9 +2342,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		if ($this->userId !== null
 			&& $includeStatus
 			&& $this->appManager->isEnabledForUser('user_status')) {
-			$userIds = array_filter(array_map(static function (array $userResult) {
-				return $userResult['value']['shareWith'];
-			}, $results['users']));
+			$userIds = array_filter(array_map(static fn (array $userResult) => $userResult['value']['shareWith'], $results['users']));
 
 			$statuses = $this->statusManager->getUserStatuses($userIds);
 		}
@@ -2231,7 +2353,6 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		return new DataResponse($results);
 	}
-
 
 	/**
 	 * @param array $results
@@ -2273,5 +2394,211 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		// We want "federated_user/admin@example.tld" so we have to strip off the trailing "s" from the type "federated_users"
 		return substr($type, 0, -1) . '/' . $id;
+	}
+
+	/**
+	 * Prepare the conversation attachment folder and probe filename conflicts
+	 *
+	 * Creates the caller's conversation subfolder (and the room share) if not
+	 * yet present, then creates or returns a Draft folder for staging uploads.
+	 * Simulates the rename-on-conflict logic for each requested filename without
+	 * requiring the files to already exist.
+	 *
+	 * The returned `folder` is the Draft path — a staging area that is NOT shared
+	 * with the room, so other participants cannot see in-progress uploads or files
+	 * from aborted messages.  Files are moved into the shared subfolder atomically
+	 * when the attachment endpoint is called.
+	 *
+	 * Recommended client flow:
+	 * 1. Call this endpoint to obtain the Draft folder path and predicted final names.
+	 * 2. Display the predicted names as accessibility placeholders immediately.
+	 * 3. Upload each file to a random temporary name (e.g. a UUID) inside the
+	 *    returned Draft folder — do NOT upload to the predicted final name.
+	 * 4. Call the attachment endpoint with the temp path as `filePath` and the
+	 *    original desired name as `fileName`.  The server moves the file from Draft
+	 *    into the shared subfolder, resolves any conflicts, and posts the message.
+	 *
+	 * @param list<string> $fileNames Desired filenames to probe
+	 * @return DataResponse<Http::STATUS_OK, array{folder: string, renames: list<array<string, string>>}, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_INSUFFICIENT_STORAGE|Http::STATUS_NOT_IMPLEMENTED, array{error: string}, array{}>
+	 *
+	 * 200: Draft folder path and rename map returned
+	 * 500: Could not prepare the conversation folder
+	 * 501: Conversation subfolders feature is disabled
+	 * 507: User storage quota exceeded
+	 */
+	#[NoAdminRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/attachment/folder', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function probeAttachmentFolder(array $fileNames = []): DataResponse {
+		/** @var string $uid — non-null, guaranteed by RequireLoggedInParticipant */
+		$uid = $this->userId;
+
+		if (!$this->talkConfig->isConversationSubfoldersEnabled()) {
+			$this->conversationFolderService->ensureAttachmentFolderExists($uid);
+			return new DataResponse(['error' => $this->l->t('Conversation subfolders are disabled')], Http::STATUS_NOT_IMPLEMENTED);
+		}
+
+		try {
+			$subfolder = $this->conversationFolderService->getOrCreateSubfolder($uid, $this->room);
+			$draftFolder = $this->conversationFolderService->getOrCreateDraftFolder($subfolder);
+		} catch (NotEnoughSpaceException) {
+			return new DataResponse(['error' => $this->l->t('Storage quota exceeded')], Http::STATUS_INSUFFICIENT_STORAGE);
+		} catch (\Exception $e) {
+			$this->logger->error('probeAttachmentFolder: failed to prepare conversation folder: {error}', [
+				'error' => $e->getMessage(),
+				'exception' => $e,
+			]);
+			return new DataResponse(['error' => $this->l->t('Could not prepare conversation folder')], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+		// Return the Draft path — conflicts are checked against the shared subfolder
+		// (the final destination), not the Draft folder itself.
+		$folderPath = $this->conversationFolderService->getRelativePath($uid, $draftFolder);
+		$renames = $this->conversationFolderService->probeFilenames($subfolder, $fileNames);
+
+		return new DataResponse(['folder' => $folderPath, 'renames' => $renames]);
+	}
+
+	/**
+	 * Post a file from the conversation Draft folder as a chat message
+	 *
+	 * The file must be inside the Draft folder returned by the probe endpoint.
+	 * This endpoint moves the file from Draft into the shared conversation
+	 * subfolder (resolving any name conflicts), creates the chat message, and
+	 * returns the actual final filename.  The subfolder is shared with the room
+	 * via a folder-level TYPE_ROOM share — no per-file share is created, keeping
+	 * the Share Overview clean.
+	 *
+	 * @param string $filePath Path of the file relative to the user's home root
+	 *                         (e.g. "Talk/Group Chat-abc123/Draft/uuid.jpg")
+	 * @param string $referenceId Client-generated reference ID for the message
+	 * @param string $talkMetaData JSON-encoded metadata (caption, messageType, silent, …)
+	 * @param string $fileName Desired final file name; the service resolves conflicts
+	 *                         by appending " (1)", " (2)", … if already taken
+	 * @return DataResponse<Http::STATUS_OK, array{renames: list<array<string, string>>}, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_UNPROCESSABLE_ENTITY|Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_INSUFFICIENT_STORAGE|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_IMPLEMENTED, array{error: string}, array{}>
+	 *
+	 * 200: File moved from Draft and posted as chat message
+	 * 400: Path does not point to a file
+	 * 404: File not found
+	 * 422: File is not inside the conversation Draft folder for this room
+	 * 500: Could not prepare the conversation folder
+	 * 501: Conversation subfolders feature is disabled
+	 * 507: User storage quota exceeded
+	 */
+	#[NoAdminRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/chat/{token}/attachment', requirements: [
+		'apiVersion' => '(v1)',
+		'token' => '[a-z0-9]{4,30}',
+	])]
+	public function postAttachmentToRoom(string $filePath, string $referenceId, string $talkMetaData = '', string $fileName = ''): DataResponse {
+		if (!$this->talkConfig->isConversationSubfoldersEnabled()) {
+			return new DataResponse(['error' => $this->l->t('Conversation subfolders are disabled')], Http::STATUS_NOT_IMPLEMENTED);
+		}
+
+		/** @var string $uid — non-null, guaranteed by RequireLoggedInParticipant */
+		$uid = $this->userId;
+
+		// Ensure the user's conversation subfolder exists and is shared with
+		// the room.  The service creates the full folder hierarchy if missing.
+		try {
+			$subfolder = $this->conversationFolderService->getOrCreateSubfolder($uid, $this->room);
+			$draftFolder = $this->conversationFolderService->getOrCreateDraftFolder($subfolder);
+		} catch (NotEnoughSpaceException) {
+			return new DataResponse(['error' => $this->l->t('Storage quota exceeded')], Http::STATUS_INSUFFICIENT_STORAGE);
+		} catch (\Exception $e) {
+			$this->logger->error('postAttachmentToRoom: failed to prepare conversation folder: {error}', [
+				'error' => $e->getMessage(),
+				'exception' => $e,
+			]);
+			return new DataResponse(['error' => $this->l->t('Could not prepare conversation folder')], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+		// Look up the file in the caller's file tree.
+		try {
+			$node = $this->conversationFolderService->getFileNode($uid, $filePath);
+		} catch (FileNotFoundException) {
+			return new DataResponse(['error' => $this->l->t('File not found')], Http::STATUS_NOT_FOUND);
+		}
+		if ($node->getType() !== FileInfo::TYPE_FILE) {
+			return new DataResponse(['error' => $this->l->t('Path must point to a file')], Http::STATUS_BAD_REQUEST);
+		}
+
+		// Verify the file is inside the Draft folder for this conversation.
+		if ($node->getParent()->getId() !== $draftFolder->getId()) {
+			return new DataResponse(['error' => $this->l->t('File is not inside the conversation draft folder for this room')], Http::STATUS_UNPROCESSABLE_ENTITY);
+		}
+
+		// Move the file from Draft into the shared subfolder, resolving any name
+		// conflicts by appending " (1)", " (2)", … to the base name.
+		$desiredName = $fileName !== '' ? $fileName : $node->getName();
+		$result = $this->conversationFolderService->finalizeUploadedFile($subfolder, $node, $desiredName);
+		$renameFrom = $result['from'];
+		$renameTo = $result['to'];
+		$node = $result['node'];
+
+		// Parse talkMetaData for caption, messageType, silent, replyTo, threadId.
+		$metaData = json_decode($talkMetaData, true);
+		$metaData = is_array($metaData) ? $metaData : [];
+
+		// Validate and sanitize messageType.
+		if (isset($metaData['messageType']) && $metaData['messageType'] === ChatManager::VERB_VOICE_MESSAGE) {
+			$mime = $node->getMimeType();
+			if ($mime !== 'audio/mpeg' && $mime !== 'audio/wav') {
+				unset($metaData['messageType']);
+			}
+		}
+		$metaData['mimeType'] = $node->getMimeType();
+
+		if (isset($metaData['caption'])) {
+			if (is_string($metaData['caption']) && trim($metaData['caption']) !== '') {
+				$metaData['caption'] = trim($metaData['caption']);
+			} else {
+				unset($metaData['caption']);
+			}
+		}
+
+		$silent = (bool)($metaData[Message::METADATA_SILENT] ?? false);
+		$replyToId = isset($metaData['replyTo']) ? (int)$metaData['replyTo'] : null;
+		$threadId = isset($metaData['threadId']) ? (int)$metaData['threadId'] : 0;
+		unset($metaData['replyTo'], $metaData['threadId'], $metaData[Message::METADATA_SILENT]);
+
+		$replyToComment = null;
+		if ($replyToId !== null) {
+			try {
+				$replyToComment = $this->chatManager->getComment($this->room, (string)$replyToId);
+			} catch (\Exception) {
+				// Invalid replyTo — ignore.
+			}
+		}
+
+		// Create the file_shared system message referencing the file by node ID.
+		// The parameters use 'fileId' instead of 'share' so no per-file TYPE_ROOM
+		// share is needed; access is controlled by the folder-level share.
+		$this->chatManager->addSystemMessage(
+			$this->room,
+			$this->participant,
+			Attendee::ACTOR_USERS,
+			$uid,
+			json_encode(['message' => 'file_shared', 'parameters' => ['fileId' => (string)$node->getId(), 'metaData' => $metaData]]),
+			$this->timeFactory->getDateTime(),
+			true,
+			$referenceId !== '' ? $referenceId : null,
+			$replyToComment,
+			false,
+			$silent,
+			$threadId,
+		);
+
+		return new DataResponse(['renames' => [[$renameFrom => $renameTo]]], Http::STATUS_OK);
 	}
 }

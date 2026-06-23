@@ -24,7 +24,6 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\IJobList;
 use OCP\Calendar\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
@@ -49,7 +48,6 @@ class RoomServiceTest extends TestCase {
 	protected Config&MockObject $config;
 	protected IHasher&MockObject $hasher;
 	protected IEventDispatcher&MockObject $dispatcher;
-	protected IJobList&MockObject $jobList;
 	protected LoggerInterface&MockObject $logger;
 	protected IL10N&MockObject $l10n;
 	protected IManager $calendarManager;
@@ -67,7 +65,6 @@ class RoomServiceTest extends TestCase {
 		$this->config = $this->createMock(Config::class);
 		$this->hasher = $this->createMock(IHasher::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
-		$this->jobList = $this->createMock(IJobList::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->l10n = $this->createMock(IL10N::class);
 		$this->emojiService = Server::get(EmojiService::class);
@@ -82,7 +79,6 @@ class RoomServiceTest extends TestCase {
 			$this->config,
 			$this->hasher,
 			$this->dispatcher,
-			$this->jobList,
 			$this->emojiService,
 			$this->logger,
 			$this->l10n,
@@ -128,7 +124,7 @@ class RoomServiceTest extends TestCase {
 		$user2->method('getUID')
 			->willReturn('uid2');
 
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->participantService->expects($this->once())
 			->method('ensureOneToOneRoomIsFilled')
 			->with($room);
@@ -158,7 +154,7 @@ class RoomServiceTest extends TestCase {
 			->method('currentUserCanEnumerateTargetUser')
 			->willReturn(true);
 
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->participantService->expects($this->once())
 			->method('addUsers')
 			->with($room, [[
@@ -258,7 +254,7 @@ class RoomServiceTest extends TestCase {
 
 	#[DataProvider('dataCreateConversation')]
 	public function testCreateConversation(int $type, string $name, string $ownerId, string $objectType, string $objectId, string $password): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		if ($ownerId !== '') {
 			$owner = $this->createMock(IUser::class);
@@ -312,6 +308,41 @@ class RoomServiceTest extends TestCase {
 		$this->assertSame($expected, $this->service->prepareConversationName($input));
 	}
 
+	public function testValidateLobbyTimerDoesNothingWithNullTimer(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getLobbyTimer')->willReturn(null);
+		$room->expects($this->never())->method('setLobbyState');
+
+		$this->service->validateLobbyTimer($room);
+	}
+
+	public function testValidateLobbyTimerDoesNothingWithFutureTimer(): void {
+		$future = new \DateTime('+1 hour');
+		$this->timeFactory->method('getDateTime')->willReturn(new \DateTime());
+
+		$room = $this->createMock(Room::class);
+		$room->method('getLobbyTimer')->willReturn($future);
+		$room->expects($this->never())->method('setLobbyState');
+
+		$this->service->validateLobbyTimer($room);
+	}
+
+	public function testValidateLobbyTimerResetsLobbyWhenExpired(): void {
+		$past = new \DateTime('-1 hour');
+		$this->timeFactory->method('getDateTime')->willReturn(new \DateTime());
+
+		$room = $this->createMock(Room::class);
+		$room->method('getLobbyTimer')->willReturn($past);
+		$room->method('getLobbyState')->willReturn(Webinary::LOBBY_NON_MODERATORS);
+		$room->method('getType')->willReturn(Room::TYPE_GROUP);
+		$room->method('getObjectType')->willReturn('');
+		$room->method('getId')->willReturn(0);
+		$room->expects($this->once())->method('setLobbyState')->with(Webinary::LOBBY_NONE);
+		$room->expects($this->once())->method('setLobbyTimer')->with(null);
+
+		$this->service->validateLobbyTimer($room);
+	}
+
 	public function testVerifyPassword(): void {
 		$dispatcher = new EventDispatcher(
 			new \Symfony\Component\EventDispatcher\EventDispatcher(),
@@ -339,7 +370,6 @@ class RoomServiceTest extends TestCase {
 			$this->config,
 			$this->hasher,
 			$dispatcher,
-			$this->jobList,
 			$this->emojiService,
 			$this->logger,
 			$this->l10n,
@@ -348,10 +378,6 @@ class RoomServiceTest extends TestCase {
 		);
 
 		$room = new Room(
-			$this->createMock(Manager::class),
-			$this->createMock(IDBConnection::class),
-			$dispatcher,
-			$this->createMock(ITimeFactory::class),
 			1,
 			Room::TYPE_PUBLIC,
 			Room::READ_WRITE,
@@ -368,7 +394,6 @@ class RoomServiceTest extends TestCase {
 			'',
 			'',
 			Attendee::PERMISSIONS_DEFAULT,
-			Attendee::PERMISSIONS_DEFAULT,
 			Participant::FLAG_DISCONNECTED,
 			null,
 			null,
@@ -384,6 +409,7 @@ class RoomServiceTest extends TestCase {
 			Room::HAS_FEDERATION_NONE,
 			Room::MENTION_PERMISSIONS_EVERYONE,
 			'',
+			0,
 			0,
 		);
 

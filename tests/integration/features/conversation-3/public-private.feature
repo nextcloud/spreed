@@ -1,8 +1,6 @@
 Feature: conversation-3/public-private
   Background:
     Given user "participant1" exists
-    Given user "participant2" exists
-    Given user "participant3" exists
 
   Scenario: Owner makes room private/public
     Given signaling server is started
@@ -32,6 +30,7 @@ Feature: conversation-3/public-private
       | room | 3    | 1               |
 
   Scenario: Moderator makes room private/public
+    Given user "participant2" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -50,6 +49,7 @@ Feature: conversation-3/public-private
       | room | 3    | 1               |
 
   Scenario: User makes room private/public
+    Given user "participant2" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -71,6 +71,7 @@ Feature: conversation-3/public-private
       | room | 2    | 1               |
 
   Scenario: Stranger makes room private/public
+    Given user "participant2" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |

@@ -6,6 +6,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\SetupCheck;
 
 use OCP\AppFramework\Services\IAppConfig;
@@ -19,9 +20,9 @@ use OCP\SetupCheck\SetupResult;
  */
 class Configuration implements ISetupCheck {
 	public function __construct(
-		protected IL10N $l10n,
-		protected IConfig $config,
-		protected IAppConfig $appConfig,
+		private readonly IL10N $l10n,
+		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 	) {
 	}
 

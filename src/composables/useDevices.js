@@ -6,17 +6,24 @@
 import { createSharedComposable } from '@vueuse/core'
 import createHark from 'hark'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { PARTICIPANT } from '../constants.ts'
 import { useSoundsStore } from '../stores/sounds.js'
 import attachMediaStream from '../utils/attachmediastream.js'
 import TrackToStream from '../utils/media/pipeline/TrackToStream.js'
 import VirtualBackground from '../utils/media/pipeline/VirtualBackground.js'
 import { callParticipantsAudioPlayer, mediaDevicesManager } from '../utils/webrtc/index.js'
 
-let subscribersCount = 0
+/** Permissions bitmask of each active subscriber */
+const subscribersPermissions = []
 const videoElement = ref(null)
 
 /**
- * Check whether the user joined the call of the current token in this PHP session or not
+ * Composable to manage local audio/video devices (microphone and camera).
+ *
+ * This is a shared composable — all callers access the same instance.
+ * Permissions are managed per-subscriber via subscribeToDevices(permissions)
+ * and unsubscribeFromDevices(permissions). The combined (OR) permissions
+ * of all current subscribers determine which media streams are allowed and started.
  *
  * @return {{[key:string]: Function|import('vue').Ref|import('vue').ComputedRef}}
  */
@@ -133,32 +140,115 @@ export const useDevices = createSharedComposable(function() {
 	/**
 	 * Subscribe element to device changes
 	 * If at least one component instance is subscribed, initialize devices
+	 * Streams are started based on the combined (OR) permissions of all subscribers
 	 *
+	 * @param {number} permissions - requested permission (for call - attendee check, for device preview - MAX_DEFAULT)
 	 * @public
 	 */
-	function subscribeToDevices() {
-		if (subscribersCount === 0) {
+	function subscribeToDevices(permissions = PARTICIPANT.PERMISSIONS.MAX_DEFAULT) {
+		subscribersPermissions.push(permissions)
+		if (!initialized) {
 			initializeDevices()
+		} else {
+			// A new subscriber may request additional media access
+			startPermittedStreams()
 		}
-		subscribersCount++
 	}
 
 	/**
 	 * Unsubscribe element from device changes
 	 * If no more component instances are subscribed, stop devices
+	 * If reduced permissions no longer allow a stream, that stream should be stopped
 	 *
+	 * @param {number} permissions bitmask, must match the value passed to subscribeToDevices
 	 * @public
 	 */
-	function unsubscribeFromDevices() {
-		if (subscribersCount === 0) {
-			console.error('Attempt to unsubscribe from devices when no subscribers')
+	function unsubscribeFromDevices(permissions = PARTICIPANT.PERMISSIONS.MAX_DEFAULT) {
+		const index = subscribersPermissions.indexOf(permissions)
+		if (index === -1) {
+			console.error('Attempt to unsubscribe from devices with unknown permissions')
 			return
 		}
 
-		subscribersCount--
-		if (subscribersCount === 0) {
+		subscribersPermissions.splice(index, 1)
+		if (subscribersPermissions.length === 0) {
 			stopDevices()
+			return
 		}
+
+		// Stop streams no longer permitted by any remaining subscriber
+		stopForbiddenStreams()
+	}
+
+	/**
+	 * Update the permissions of one of existing subscribers.
+	 * Starts streams newly permitted by the updated permissions,
+	 * and stops streams no longer permitted by any subscriber.
+	 *
+	 * @param {number} oldPermissions bitmask passed to subscribeToDevices originally (from watcher)
+	 * @param {number} newPermissions updated bitmask value (e.g. from attendee object)
+	 * @public
+	 */
+	function updateSubscriptionPermissions(oldPermissions, newPermissions) {
+		const index = subscribersPermissions.indexOf(oldPermissions)
+		if (index === -1) {
+			console.error('Attempt to update permissions for unknown subscription')
+			return
+		}
+
+		subscribersPermissions[index] = newPermissions
+
+		if (!initialized) {
+			return
+		}
+
+		startPermittedStreams()
+		stopForbiddenStreams()
+	}
+
+	/**
+	 * Start streams that are permitted and not yet running
+	 */
+	function startPermittedStreams() {
+		if (hasAudioPermission() && !audioStream.value && !pendingGetUserMediaAudioCount) {
+			updateAudioStream()
+		}
+		if (hasVideoPermission() && !videoStream.value && !pendingGetUserMediaVideoCount) {
+			updateVideoStream()
+		}
+	}
+
+	/**
+	 * Stop streams that are no longer permitted by any subscriber
+	 */
+	function stopForbiddenStreams() {
+		if (!hasAudioPermission()) {
+			stopAudioStream()
+		}
+		if (!hasVideoPermission()) {
+			stopVideoStream()
+		}
+	}
+
+	/**
+	 * Get combined permissions of all active subscribers (bitwise OR)
+	 */
+	function getEffectivePermissions() {
+		return subscribersPermissions.reduce((acc, p) => acc | p, 0)
+	}
+
+	/**
+	 * Checks whether any subscriber allows publishing audio
+	 */
+	function hasAudioPermission() {
+		return !!(getEffectivePermissions() & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
+	}
+
+	/**
+	 * Checks whether any subscriber allows publishing video
+	 */
+	function hasVideoPermission() {
+		return !!(getEffectivePermissions() & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)
 	}
 
 	/**
@@ -321,6 +411,11 @@ export const useDevices = createSharedComposable(function() {
 		if (!mediaDevicesManager.isSupported()) {
 			return
 		}
+
+		if (!hasAudioPermission()) {
+			return
+		}
+
 		if (!force && audioStreamInputId.value && audioStreamInputId.value === audioInputId.value) {
 			return
 		}
@@ -420,6 +515,11 @@ export const useDevices = createSharedComposable(function() {
 		if (!mediaDevicesManager.isSupported()) {
 			return
 		}
+
+		if (!hasVideoPermission()) {
+			return
+		}
+
 		if (videoStreamInputId.value && videoStreamInputId.value === videoInputId.value) {
 			return
 		}
@@ -473,6 +573,7 @@ export const useDevices = createSharedComposable(function() {
 		updateAudioStream,
 		subscribeToDevices,
 		unsubscribeFromDevices,
+		updateSubscriptionPermissions,
 		// MediaDevicesPreview only
 		audioStream,
 		audioStreamError,

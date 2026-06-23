@@ -7,17 +7,22 @@ import { showError } from '@nextcloud/dialogs'
 import { getUploader } from '@nextcloud/upload'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { getDavClient } from '../../services/DavClient.ts'
-import { shareFile } from '../../services/filesSharingServices.ts'
+import { postAttachment, probeAttachmentFolder, shareFile } from '../../services/filesSharingServices.ts'
+import { generateOCSResponse } from '../../test-helpers.js'
 import { findUniquePath } from '../../utils/fileUpload.ts'
 import { useActorStore } from '../actor.ts'
 import { useSettingsStore } from '../settings.ts'
 import { useUploadStore } from '../upload.ts'
 
+// conversationGetter must be defined before vi.mock so the factory can close over it.
+// Vitest evaluates the factory lazily (after module-level init), so this works.
+const conversationGetter = vi.fn().mockReturnValue(null)
 const vuexStoreDispatch = vi.fn()
 vi.mock('vuex', () => ({
 	useStore: vi.fn(() => ({
-		getters: {},
+		getters: { conversation: conversationGetter },
 		dispatch: vuexStoreDispatch,
 	})),
 }))
@@ -33,8 +38,17 @@ vi.mock('../../utils/fileUpload.ts', async () => {
 	}
 })
 vi.mock('../../services/filesSharingServices.ts', () => ({
+	postAttachment: vi.fn(),
+	probeAttachmentFolder: vi.fn(),
 	shareFile: vi.fn(),
 }))
+vi.mock('../../services/CapabilitiesManager.ts', async (importOriginal) => {
+	const actual = await importOriginal()
+	return {
+		...actual,
+		getTalkConfig: vi.fn().mockReturnValue(true),
+	}
+})
 
 describe('fileUploadStore', () => {
 	let actorStore
@@ -63,6 +77,7 @@ describe('fileUploadStore', () => {
 	describe('uploading', () => {
 		const uploadMock = vi.fn()
 		const client = {
+			createDirectory: vi.fn().mockResolvedValue(undefined),
 			exists: vi.fn(),
 		}
 
@@ -70,6 +85,8 @@ describe('fileUploadStore', () => {
 			getDavClient.mockReturnValue(client)
 			getUploader.mockReturnValue({ upload: uploadMock })
 			console.error = vi.fn()
+			// Default: ONE_TO_ONE room — no conversation folder used
+			conversationGetter.mockReturnValue({ type: 1, displayName: 'Direct message' })
 		})
 
 		afterEach(() => {
@@ -367,6 +384,156 @@ describe('fileUploadStore', () => {
 			expect(uploads).toStrictEqual([])
 
 			expect(uploadStore.currentUploadId).not.toBeDefined()
+		})
+
+		describe('conversation folder (group/public rooms)', () => {
+			const TOKEN = 'XXTOKENXX'
+			const DRAFT_PATH = 'Talk/My Room-XXTOKENXX/Draft'
+
+			beforeEach(() => {
+				uploadMock.mockResolvedValue()
+				postAttachment.mockResolvedValue()
+				probeAttachmentFolder.mockResolvedValue(generateOCSResponse({ payload: { folder: DRAFT_PATH, renames: [] } }))
+			})
+
+			test('probes the attachment folder and posts via postAttachment for a group room', async () => {
+				conversationGetter.mockReturnValue({ type: 2, displayName: 'My Room' })
+
+				const file = {
+					name: 'pngimage.png',
+					type: 'image/png',
+					size: 123,
+					lastModified: Date.UTC(2021, 3, 27, 15, 30, 0),
+				}
+
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [file] })
+
+				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', options: { silent: false } })
+
+				// Probe endpoint is called with the desired file names;
+				// folder creation and the TYPE_ROOM share happen server-side.
+				expect(probeAttachmentFolder).toHaveBeenCalledTimes(1)
+				expect(probeAttachmentFolder).toHaveBeenCalledWith({
+					token: TOKEN,
+					fileNames: [file.name],
+				})
+
+				// No client-side MKCOL and no PROPFIND round-trip.
+				expect(client.createDirectory).not.toHaveBeenCalled()
+				expect(findUniquePath).not.toHaveBeenCalled()
+
+				// File is uploaded under a random UUID temp name inside the Draft folder.
+				expect(uploadMock).toHaveBeenCalledTimes(1)
+				const uploadedPath = uploadMock.mock.calls[0][0]
+				const uuidRe = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+				expect(uploadedPath).toMatch(new RegExp('^/' + DRAFT_PATH + '/' + uuidRe + '$'))
+
+				// File is posted via the Talk attachment endpoint with the
+				// original name for rename-on-conflict on the backend.
+				expect(postAttachment).toHaveBeenCalledTimes(1)
+				expect(postAttachment).toHaveBeenCalledWith(expect.objectContaining({
+					token: TOKEN,
+					fileName: file.name,
+					filePath: expect.stringMatching(new RegExp('^' + DRAFT_PATH + '/' + uuidRe + '$')),
+				}))
+				expect(shareFile).not.toHaveBeenCalled()
+			})
+
+			test('probes with all file names and posts each file in a multi-file upload', async () => {
+				conversationGetter.mockReturnValue({ type: 2, displayName: 'Room' })
+
+				const file1 = { name: 'photo.jpg', type: 'image/jpeg', size: 100, lastModified: 0 }
+				const file2 = { name: 'doc.pdf', type: 'application/pdf', size: 200, lastModified: 0 }
+
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [file1, file2] })
+
+				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', options: null })
+
+				expect(probeAttachmentFolder).toHaveBeenCalledWith({
+					token: TOKEN,
+					fileNames: ['photo.jpg', 'doc.pdf'],
+				})
+				expect(findUniquePath).not.toHaveBeenCalled()
+				expect(postAttachment).toHaveBeenCalledTimes(2)
+				expect(postAttachment).toHaveBeenCalledWith(expect.objectContaining({ fileName: 'photo.jpg' }))
+				expect(postAttachment).toHaveBeenCalledWith(expect.objectContaining({ fileName: 'doc.pdf' }))
+			})
+
+			test('updates temporary message file names when probe predicts renames', async () => {
+				conversationGetter.mockReturnValue({ type: 2, displayName: 'Room' })
+				probeAttachmentFolder.mockResolvedValue(generateOCSResponse({ payload: {
+					folder: DRAFT_PATH,
+					renames: [
+						{ 'photo.jpg': 'photo (1).jpg' },
+						{ 'doc.pdf': 'doc.pdf' },
+					],
+				}}))
+
+				const file1 = { name: 'photo.jpg', type: 'image/jpeg', size: 100, lastModified: 0 }
+				const file2 = { name: 'doc.pdf', type: 'application/pdf', size: 200, lastModified: 0 }
+
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [file1, file2] })
+
+				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', options: null })
+
+				// Only the renamed file should trigger a dispatch
+				const updateCalls = vuexStoreDispatch.mock.calls
+					.filter(([action]) => action === 'addTemporaryMessage')
+
+				const expectedFileNameMatch = (name) => expect.objectContaining({
+					messageParameters: expect.objectContaining({
+						file: expect.objectContaining({
+							name,
+						}),
+					}),
+				})
+
+				expect(updateCalls).toHaveLength(3)
+				// Initial name assignment
+				expect(updateCalls[0][1]).toMatchObject({
+					token: TOKEN,
+					message: expectedFileNameMatch('photo.jpg'),
+				})
+				expect(updateCalls[1][1]).toMatchObject({
+					token: TOKEN,
+					message: expectedFileNameMatch('doc.pdf'),
+				})
+				// Rename from probeAttachment
+				expect(updateCalls[2][1]).toMatchObject({
+					token: TOKEN,
+					message: expectedFileNameMatch('photo (1).jpg'),
+				})
+			})
+
+			test('falls back to shareFile when the probe endpoint fails', async () => {
+				conversationGetter.mockReturnValue({ type: 2, displayName: 'My Room' })
+				probeAttachmentFolder.mockRejectedValueOnce(new Error('boom'))
+				findUniquePath.mockResolvedValueOnce({ path: '/Talk/photo.jpg', name: 'photo.jpg' })
+
+				const file = { name: 'photo.jpg', type: 'image/jpeg', size: 100, lastModified: 0 }
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [file] })
+
+				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', options: null })
+
+				expect(probeAttachmentFolder).toHaveBeenCalledTimes(1)
+				expect(postAttachment).not.toHaveBeenCalled()
+				expect(shareFile).toHaveBeenCalledTimes(1)
+			})
+
+			test('falls back to shareFile when conversation-subfolders capability is false', async () => {
+				getTalkConfig.mockReturnValueOnce(false)
+				conversationGetter.mockReturnValue({ type: 2, displayName: 'My Room' })
+				findUniquePath.mockResolvedValueOnce({ path: '/Talk/photo.jpg', name: 'photo.jpg' })
+
+				const file = { name: 'photo.jpg', type: 'image/jpeg', size: 100, lastModified: 0 }
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [file] })
+
+				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', options: null })
+
+				expect(probeAttachmentFolder).not.toHaveBeenCalled()
+				expect(postAttachment).not.toHaveBeenCalled()
+				expect(shareFile).toHaveBeenCalledTimes(1)
+			})
 		})
 
 		test('autorenames files using timestamps when requested', () => {

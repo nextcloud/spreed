@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use OCA\Guests\UserBackend;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\LiveTranscriptionService;
@@ -130,6 +131,8 @@ class Capabilities implements IPublicCapability {
 		'federated-shared-items',
 		'scheduled-messages',
 		'conversation-presets',
+		'private-reply',
+		'conversation-tags',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -162,12 +165,14 @@ class Capabilities implements IPublicCapability {
 		'sensitive-conversations',
 		'scheduled-messages',
 		'conversation-presets',
+		'conversation-tags',
 	];
 
 	public const LOCAL_CONFIGS = [
 		'attachments' => [
 			'allowed',
 			'folder',
+			'conversation-subfolders',
 		],
 		'call' => [
 			'predefined-backgrounds',
@@ -176,6 +181,9 @@ class Capabilities implements IPublicCapability {
 			'start-without-media',
 			'blur-virtual-background',
 			'live-transcription-target-language-id',
+			'play-sounds',
+			'grid-limit',
+			'grid-limit-enforced',
 		],
 		'chat' => [
 			'read-privacy',
@@ -184,10 +192,13 @@ class Capabilities implements IPublicCapability {
 			'typing-privacy',
 			'summary-threshold',
 			'style',
+			'matterbridge-enabled',
 		],
 		'conversations' => [
 			'can-create',
 			'list-style',
+			'sort-order',
+			'group-mode',
 			'description-length',
 		],
 		'federation' => [
@@ -201,27 +212,32 @@ class Capabilities implements IPublicCapability {
 		],
 		'signaling' => [
 			'session-ping-limit',
+			'mode',
 			'hello-v2-token-key',
 		],
 		'experiments' => [
 			'enabled',
 		],
+		'feature-hints' => [
+			'current',
+			'hidden',
+		],
 		'permissions' => [
 		],
 	];
 
-	protected ICache $talkCache;
+	private readonly ICache $talkCache;
 
 	public function __construct(
-		protected IConfig $serverConfig,
-		protected Config $talkConfig,
-		protected IAppConfig $appConfig,
-		protected ICommentsManager $commentsManager,
-		protected IUserSession $userSession,
-		protected IAppManager $appManager,
-		protected ITranslationManager $translationManager,
-		protected ITaskProcessingManager $taskProcessingManager,
-		protected LiveTranscriptionService $liveTranscriptionService,
+		private readonly IConfig $serverConfig,
+		private readonly Config $talkConfig,
+		private readonly IAppConfig $appConfig,
+		private readonly ICommentsManager $commentsManager,
+		private readonly IUserSession $userSession,
+		private readonly IAppManager $appManager,
+		private readonly ITranslationManager $translationManager,
+		private readonly ITaskProcessingManager $taskProcessingManager,
+		private readonly LiveTranscriptionService $liveTranscriptionService,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->talkCache = $cacheFactory->createLocal('talk::');
@@ -244,8 +260,9 @@ class Capabilities implements IPublicCapability {
 			'features-local' => self::LOCAL_FEATURES,
 			'config' => [
 				'attachments' => [
-					'allowed' => $user instanceof IUser,
+					'allowed' => $user instanceof IUser && $user->getBackendClassName() !== UserBackend::class,
 					// 'folder' => string,
+					'conversation-subfolders' => $this->talkConfig->isConversationSubfoldersEnabled(),
 				],
 				'call' => [
 					'enabled' => ((int)$this->serverConfig->getAppValue('spreed', 'start_calls', (string)Room::START_CALL_EVERYONE)) !== Room::START_CALL_NOONE,
@@ -258,6 +275,7 @@ class Capabilities implements IPublicCapability {
 					'can-upload-background' => false,
 					'sip-enabled' => $this->talkConfig->isSIPConfigured(),
 					'sip-dialout-enabled' => $this->talkConfig->isSIPDialOutEnabled(),
+					'default-phone-region' => $this->serverConfig->getSystemValueString('default_phone_region'),
 					'can-enable-sip' => false,
 					'start-without-media' => $this->talkConfig->getCallsStartWithoutMedia($user?->getUID()),
 					'max-duration' => $this->appConfig->getAppValueInt('max_call_duration'),
@@ -265,6 +283,9 @@ class Capabilities implements IPublicCapability {
 					'end-to-end-encryption' => $this->talkConfig->isCallEndToEndEncryptionEnabled(),
 					'live-transcription' => $this->isLiveTranscriptionSupported(),
 					'live-translation' => $this->isLiveTranslationSupported(),
+					'play-sounds' => $this->talkConfig->getPlaySoundsForUser($user),
+					'grid-limit' => $this->talkConfig->getGridVideosLimit(),
+					'grid-limit-enforced' => $this->talkConfig->getGridVideosLimitEnforced(),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
@@ -274,11 +295,14 @@ class Capabilities implements IPublicCapability {
 					'typing-privacy' => Participant::PRIVACY_PUBLIC,
 					'summary-threshold' => max(1, $this->appConfig->getAppValueInt('summary_threshold', 100)),
 					'style' => $this->talkConfig->getChatStyle($user?->getUID()),
+					'matterbridge-enabled' => $user instanceof IUser && $this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1',
 				],
 				'conversations' => [
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user),
 					'force-passwords' => $this->talkConfig->isPasswordEnforced(),
 					'list-style' => $this->talkConfig->getConversationsListStyle($user?->getUID()),
+					'sort-order' => $this->talkConfig->getConversationsSortOrder($user?->getUID()),
+					'group-mode' => $this->talkConfig->getConversationsGroupMode($user?->getUID()),
 					'description-length' => Room::DESCRIPTION_MAXIMUM_LENGTH,
 					'retention-event' => max(0, $this->appConfig->getAppValueInt('retention_event_rooms', 28)),
 					'retention-phone' => max(0, $this->appConfig->getAppValueInt('retention_phone_rooms', 7)),
@@ -295,14 +319,20 @@ class Capabilities implements IPublicCapability {
 				],
 				'signaling' => [
 					'session-ping-limit' => max(0, (int)$this->serverConfig->getAppValue('spreed', 'session-ping-limit', '200')),
+					'mode' => $this->talkConfig->getSignalingMode(),
 					// 'hello-v2-token-key' => string,
 				],
 				'experiments' => [
 					'enabled' => max(0, $this->appConfig->getAppValueInt($user instanceof IUser ? 'experiments_users' : 'experiments_guests')),
 				],
+				'feature-hints' => [
+					'current' => Config::FEATURE_HINT,
+					'hidden' => max(0, $this->appConfig->getAppValueInt('feature_hints_hidden')),
+				],
 				'permissions' => [
 					'max-default' => Attendee::PERMISSIONS_MAX_DEFAULT,
 					'max-custom' => Attendee::PERMISSIONS_MAX_CUSTOM,
+					'default' => $this->talkConfig->getDefaultPermissions(),
 				],
 			],
 			'config-local' => self::LOCAL_CONFIGS,
@@ -425,7 +455,7 @@ class Capabilities implements IPublicCapability {
 
 		try {
 			$isLiveTranslationSupported = $this->liveTranscriptionService->isLiveTranslationSupported();
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 			$isLiveTranslationSupported = false;
 		}
 

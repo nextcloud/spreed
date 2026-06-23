@@ -21,10 +21,10 @@ class TalkAction implements ILinkAction {
 	private ?IUser $targetUser = null;
 
 	public function __construct(
-		private Config $config,
-		private IL10N $l,
-		private IURLGenerator $urlGenerator,
-		private IUserSession $userSession,
+		private readonly Config $config,
+		private readonly IL10N $l,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly IUserSession $userSession,
 	) {
 	}
 
@@ -54,11 +54,12 @@ class TalkAction implements ILinkAction {
 		if (!$visitingUser || $visitingUser === $this->targetUser) {
 			return $this->l->t('Open Talk');
 		}
-		return $this->l->t('Talk to %s', [$this->targetUser->getDisplayName()]);
+		return $this->l->t('Chat with %s', [$this->targetUser->getDisplayName()]);
 	}
 
 	#[\Override]
 	public function getPriority(): int {
+		// prioritize actions, low order ones are shown on top
 		return 10;
 	}
 

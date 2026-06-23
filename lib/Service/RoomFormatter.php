@@ -5,12 +5,12 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\Service;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
-use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Session;
@@ -37,22 +37,22 @@ use OCP\UserStatus\IUserStatus;
  */
 class RoomFormatter {
 	public function __construct(
-		protected Config $talkConfig,
-		protected IAppConfig $appConfig,
-		protected AvatarService $avatarService,
-		protected ParticipantService $participantService,
-		protected ChatManager $chatManager,
-		protected MessageParser $messageParser,
-		protected IConfig $serverConfig,
-		protected ITimeFactory $timeFactory,
-		protected IAppManager $appManager,
-		protected IManager $userStatusManager,
-		protected IUserManager $userManager,
-		protected ProxyCacheMessageService $pcmService,
-		protected UserConverter $userConverter,
-		protected IL10N $l10n,
-		protected ?string $userId,
-		protected ThreadService $threadService,
+		private readonly Config $talkConfig,
+		private readonly IAppConfig $appConfig,
+		private readonly AvatarService $avatarService,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
+		private readonly ChatManager $chatManager,
+		private readonly MessageParser $messageParser,
+		private readonly IConfig $serverConfig,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IAppManager $appManager,
+		private readonly IManager $userStatusManager,
+		private readonly IUserManager $userManager,
+		private readonly ProxyCacheMessageService $pcmService,
+		private readonly IL10N $l10n,
+		private readonly ThreadService $threadService,
+		private readonly ?string $userId,
 	) {
 	}
 
@@ -158,7 +158,9 @@ class RoomFormatter {
 			'isArchived' => false,
 			'isImportant' => false,
 			'isSensitive' => false,
+			'tagIds' => [],
 			'hasScheduledMessages' => 0,
+			'attributes' => 0,
 		];
 
 		if ($room->isFederatedConversation()) {
@@ -171,6 +173,8 @@ class RoomFormatter {
 		} else {
 			$lastActivity = 0;
 		}
+
+		$this->roomService->validateLobbyTimer($room);
 
 		$lobbyTimer = $room->getLobbyTimer();
 		if ($lobbyTimer instanceof \DateTimeInterface) {
@@ -201,6 +205,7 @@ class RoomFormatter {
 				'breakoutRoomStatus' => $room->getBreakoutRoomStatus(),
 				'callStartTime' => $room->getActiveSince() instanceof \DateTimeInterface ? $room->getActiveSince()->getTimestamp() : 0,
 				'callRecording' => $room->getCallRecording(),
+				'attributes' => $room->getAttributes(),
 			]);
 		}
 
@@ -246,8 +251,10 @@ class RoomFormatter {
 			'isArchived' => $attendee->isArchived(),
 			'isImportant' => $attendee->isImportant(),
 			'isSensitive' => $attendee->isSensitive(),
+			'tagIds' => array_values(array_map(strval(...), json_decode($attendee->getTagIds() ?? '[]', true))),
 			'lastPinnedId' => $room->getLastPinnedId(),
 			'hiddenPinnedId' => $attendee->getHiddenPinnedId(),
+			'attributes' => $room->getAttributes(),
 		]);
 
 		if ($room->isFederatedConversation()) {
@@ -379,7 +386,9 @@ class RoomFormatter {
 			return $roomData;
 		}
 
-		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->serverConfig);
+		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->serverConfig)
+			|| ($room->getType() === Room::TYPE_PUBLIC
+				&& $room->getObjectType() === Room::OBJECT_TYPE_VIDEO_VERIFICATION);
 
 		// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {

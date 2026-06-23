@@ -1,8 +1,6 @@
 Feature: chat-3/public
   Background:
     Given user "participant1" exists
-    Given user "participant2" exists
-    Given user "participant3" exists
 
   Scenario: owner can send and receive chat messages to and from public room
     Given user "participant1" creates room "public room" (v4)
@@ -14,6 +12,7 @@ Feature: chat-3/public
       | public room | users     | participant1 | participant1-displayname | Message 1 | []                |
 
   Scenario: invited user can send and receive chat messages to and from public room
+    Given user "participant2" exists
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -24,6 +23,7 @@ Feature: chat-3/public
       | public room | users     | participant2 | participant2-displayname | Message 1 | []                |
 
   Scenario: invited user can not send without chat permissions
+    Given user "participant2" exists
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -37,6 +37,7 @@ Feature: chat-3/public
       | public room | users     | participant1 | participant1-displayname | Message 2 | []                |
 
   Scenario: not invited but joined user can send and receive chat messages to and from public room
+    Given user "participant3" exists
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -47,6 +48,7 @@ Feature: chat-3/public
       | public room | users     | participant3 | participant3-displayname | Message 1 | []                |
 
   Scenario: not invited user can not send nor receive chat messages to and from public room
+    Given user "participant3" exists
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -73,6 +75,7 @@ Feature: chat-3/public
     Then user "guest" sees the following messages in room "public room" with 404
 
   Scenario: everyone in a public room can receive messages from everyone in that room
+    Given user "participant2" exists
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |

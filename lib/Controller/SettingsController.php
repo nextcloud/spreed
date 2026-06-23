@@ -15,24 +15,20 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
-use OCP\Files\IRootFolder;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IRequest;
-use Psr\Log\LoggerInterface;
 
 class SettingsController extends OCSController {
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected IRootFolder $rootFolder,
-		protected IConfig $config,
-		protected IGroupManager $groupManager,
-		protected LoggerInterface $logger,
-		protected BeforePreferenceSetEventListener $preferenceListener,
-		protected ?string $userId,
+		private readonly IConfig $config,
+		private readonly IGroupManager $groupManager,
+		private readonly BeforePreferenceSetEventListener $preferenceListener,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}

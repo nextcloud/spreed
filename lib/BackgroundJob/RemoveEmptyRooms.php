@@ -29,15 +29,15 @@ class RemoveEmptyRooms extends TimedJob {
 	protected int $numDeletedRooms = 0;
 
 	public function __construct(
-		ITimeFactory $timeFactory,
-		protected Manager $manager,
-		protected RoomService $roomService,
-		protected ParticipantService $participantService,
-		protected FederationManager $federationManager,
-		protected LoggerInterface $logger,
-		protected IUserMountCache $userMountCache,
+		ITimeFactory $time,
+		private readonly Manager $manager,
+		private readonly RoomService $roomService,
+		private readonly ParticipantService $participantService,
+		private readonly FederationManager $federationManager,
+		private readonly LoggerInterface $logger,
+		private readonly IUserMountCache $userMountCache,
 	) {
-		parent::__construct($timeFactory);
+		parent::__construct($time);
 
 		// Every 5 minutes
 		$this->setInterval(60 * 5);
@@ -47,7 +47,7 @@ class RemoveEmptyRooms extends TimedJob {
 
 	#[\Override]
 	protected function run($argument): void {
-		$this->manager->forAllRooms([$this, 'callback']);
+		$this->manager->forAllRooms($this->callback(...));
 
 		if ($this->numDeletedRooms) {
 			$this->logger->info('Deleted {numDeletedRooms} rooms because they were empty', [

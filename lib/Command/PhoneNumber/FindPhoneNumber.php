@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class FindPhoneNumber extends Base {
 
 	public function __construct(
-		private PhoneNumberMapper $mapper,
+		private readonly PhoneNumberMapper $mapper,
 	) {
 		parent::__construct();
 	}

@@ -12,7 +12,7 @@ use OCP\AppFramework\Http;
 
 class UnsupportedClientVersionException extends \Exception {
 	public function __construct(
-		protected string $version,
+		private readonly string $version,
 	) {
 		parent::__construct('Unsupported client version', Http::STATUS_UPGRADE_REQUIRED);
 	}

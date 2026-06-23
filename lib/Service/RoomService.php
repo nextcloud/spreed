@@ -54,9 +54,9 @@ use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
+use OCA\Talk\RoomAttributes;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\IJobList;
 use OCP\Calendar\IManager;
 use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -79,20 +79,19 @@ use Psr\Log\LoggerInterface;
 class RoomService {
 
 	public function __construct(
-		protected Manager $manager,
-		protected ParticipantService $participantService,
-		protected IDBConnection $db,
-		protected ITimeFactory $timeFactory,
-		protected IShareManager $shareManager,
-		protected Config $config,
-		protected IHasher $hasher,
-		protected IEventDispatcher $dispatcher,
-		protected IJobList $jobList,
-		protected EmojiService $emojiService,
-		protected LoggerInterface $logger,
-		protected IL10N $l10n,
-		protected IManager $calendarManager,
-		protected IUserManager $userManager,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly IDBConnection $db,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IShareManager $shareManager,
+		private readonly Config $config,
+		private readonly IHasher $hasher,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly EmojiService $emojiService,
+		private readonly LoggerInterface $logger,
+		private readonly IL10N $l10n,
+		private readonly IManager $calendarManager,
+		private readonly IUserManager $userManager,
 	) {
 	}
 
@@ -157,6 +156,7 @@ class RoomService {
 		string $description = '',
 		?string $emoji = null,
 		?string $avatarColor = null,
+		int $attributes = RoomAttributes::NONE->value,
 		bool $allowInternalTypes = true,
 	): Room {
 		$name = trim($name);
@@ -302,6 +302,7 @@ class RoomService {
 			$recordingConsent,
 			$mentionPermissions,
 			$description,
+			$attributes,
 		);
 
 		if ($emoji !== null) {
@@ -318,7 +319,6 @@ class RoomService {
 			]], null);
 		}
 		return $room;
-
 	}
 
 	public function prepareConversationName(string $objectName): string {
@@ -335,7 +335,6 @@ class RoomService {
 				return true;
 			} catch (InvalidArgumentException) {
 				return false;
-
 			}
 		}
 		return false;
@@ -463,7 +462,7 @@ class RoomService {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('recording_consent', $update->createNamedParameter($recordingConsent, IQueryBuilder::PARAM_INT))
-			->set('last_activity', $update->createNamedParameter($now, IQueryBuilder::PARAM_DATE))
+			->set('last_activity', $update->createNamedParameter($now, IQueryBuilder::PARAM_DATETIME_MUTABLE))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 
@@ -482,6 +481,22 @@ class RoomService {
 		}
 	}
 
+	public function resolveOneToOneName(Room $room, string $currentName): void {
+		if ($currentName === '') {
+			$users = $this->participantService->getParticipantUserIds($room);
+			sort($users);
+			$this->setName($room, json_encode($users), '');
+		} elseif (!str_starts_with($currentName, '["')) {
+			// Legacy format: plain string (other user's ID), not a JSON array
+			$users = $this->participantService->getParticipantUserIds($room);
+			if (count($users) !== 2) {
+				$users[] = $currentName;
+			}
+			sort($users);
+			$this->setName($room, json_encode($users), '');
+		}
+	}
+
 	/**
 	 * @throws NameException
 	 */
@@ -491,7 +506,7 @@ class RoomService {
 		}
 
 		$newName = trim($newName);
-		$oldName = $oldName ?? $room->getName();
+		$oldName ??= $room->getName();
 		if ($newName === $oldName) {
 			return;
 		}
@@ -526,8 +541,15 @@ class RoomService {
 	 * @param bool $dispatchEvents (Only skip if the room is created in the same PHP request)
 	 * @throws LobbyException
 	 */
+	public function validateLobbyTimer(Room $room): void {
+		$lobbyTimer = $room->getLobbyTimer();
+		if ($lobbyTimer !== null && $lobbyTimer < $this->timeFactory->getDateTime()) {
+			$this->setLobby($room, Webinary::LOBBY_NONE, null, true);
+		}
+	}
+
 	public function setLobby(Room $room, int $newState, ?\DateTime $dateTime, bool $timerReached = false, bool $dispatchEvents = true): void {
-		$oldState = $room->getLobbyState(false);
+		$oldState = $room->getLobbyState();
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
 			throw new LobbyException(LobbyException::REASON_TYPE);
@@ -555,7 +577,7 @@ class RoomService {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('lobby_state', $update->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
-			->set('lobby_timer', $update->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATE))
+			->set('lobby_timer', $update->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATETIME_MUTABLE))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 
@@ -678,11 +700,13 @@ class RoomService {
 		$room->setType($newType);
 
 		if ($oldType === Room::TYPE_PUBLIC) {
-			// Kick all guests and users that were not invited
+			// Kick all guests that are not email invited
+			// and all users that joined the public link
 			$delete = $this->db->getQueryBuilder();
 			$delete->delete('talk_attendees')
 				->where($delete->expr()->eq('room_id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-				->andWhere($delete->expr()->in('participant_type', $delete->createNamedParameter([Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], IQueryBuilder::PARAM_INT_ARRAY)));
+				->andWhere($delete->expr()->in('participant_type', $delete->createNamedParameter([Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], IQueryBuilder::PARAM_INT_ARRAY)))
+				->andWhere($delete->expr()->neq('actor_type', $delete->createNamedParameter(Attendee::ACTOR_EMAILS, IQueryBuilder::PARAM_INT)));
 			$delete->executeStatement();
 		}
 
@@ -1114,7 +1138,7 @@ class RoomService {
 	public function resetActiveSinceInDatabaseOnly(Room $room): bool {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
-			->set('active_since', $update->createNamedParameter(null, IQueryBuilder::PARAM_DATE))
+			->set('active_since', $update->createNamedParameter(null, IQueryBuilder::PARAM_DATETIME_MUTABLE))
 			->set('call_flag', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->set('call_permissions', $update->createNamedParameter(Attendee::PERMISSIONS_DEFAULT, IQueryBuilder::PARAM_INT))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
@@ -1202,7 +1226,7 @@ class RoomService {
 
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
-			->set('active_since', $update->createNamedParameter($since, IQueryBuilder::PARAM_DATE))
+			->set('active_since', $update->createNamedParameter($since, IQueryBuilder::PARAM_DATETIME_MUTABLE))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($update->expr()->isNull('active_since'));
 		$result = (bool)$update->executeStatement();
@@ -1342,7 +1366,7 @@ class RoomService {
 			$this->setLastActivity($local, $lastActivity);
 			$changed[] = ARoomSyncedEvent::PROPERTY_LAST_ACTIVITY;
 		}
-		if (isset($host['lobbyState'], $host['lobbyTimer']) && ($host['lobbyState'] !== $local->getLobbyState(false) || $host['lobbyTimer'] !== ((int)$local->getLobbyTimer(false)?->getTimestamp()))) {
+		if (isset($host['lobbyState'], $host['lobbyTimer']) && ($host['lobbyState'] !== $local->getLobbyState() || $host['lobbyTimer'] !== ((int)$local->getLobbyTimer()?->getTimestamp()))) {
 			$hostTimer = $host['lobbyTimer'] === 0 ? null : $this->timeFactory->getDateTime('@' . $host['lobbyTimer']);
 			try {
 				$this->setLobby($local, $host['lobbyState'], $hostTimer);

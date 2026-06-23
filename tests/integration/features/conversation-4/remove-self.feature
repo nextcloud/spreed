@@ -2,9 +2,9 @@ Feature: conversation-4/remove-self
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
-    Given user "participant3" exists
 
   Scenario: Owner removes the room from their room list
+    Given user "participant3" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |

@@ -31,13 +31,13 @@ use OCP\PreConditionNotMetException;
 class ReactionManager {
 
 	public function __construct(
-		private ChatManager $chatManager,
-		private CommentsManager $commentsManager,
-		private IL10N $l,
-		private MessageParser $messageParser,
-		private Notifier $notifier,
-		protected IEventDispatcher $dispatcher,
-		protected ITimeFactory $timeFactory,
+		private readonly ChatManager $chatManager,
+		private readonly CommentsManager $commentsManager,
+		private readonly IL10N $l,
+		private readonly MessageParser $messageParser,
+		private readonly Notifier $notifier,
+		private readonly IEventDispatcher $dispatcher,
+		private readonly ITimeFactory $timeFactory,
 	) {
 	}
 
@@ -60,7 +60,7 @@ class ReactionManager {
 				$reaction
 			);
 			throw new ReactionAlreadyExistsException();
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 		}
 
 		/** @var IComment $comment */
@@ -123,7 +123,7 @@ class ReactionManager {
 		$comment->setVerb(ChatManager::VERB_REACTION_DELETED);
 		$this->commentsManager->save($comment);
 
-		$this->chatManager->addSystemMessage(
+		$revokedComment = $this->chatManager->addSystemMessage(
 			$chat,
 			null,
 			$actorType,
@@ -136,7 +136,7 @@ class ReactionManager {
 			true
 		);
 
-		$event = new ReactionRemovedEvent($chat, $parentComment, $actorType, $actorId, $actorDisplayName, $reaction, $comment);
+		$event = new ReactionRemovedEvent($chat, $parentComment, $actorType, $actorId, $actorDisplayName, $reaction, $revokedComment);
 		$this->dispatcher->dispatchTyped($event);
 
 		return $comment;

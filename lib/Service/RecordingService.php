@@ -34,6 +34,7 @@ use OCP\L10N\IFactory;
 use OCP\Notification\IManager;
 use OCP\Share\IManager as ShareManager;
 use OCP\Share\IShare;
+use OCP\SystemTag\ISystemTagObjectMapper;
 use OCP\TaskProcessing\Exception\Exception;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\Task;
@@ -51,6 +52,7 @@ class RecordingService {
 	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
 		'audio/ogg' => ['ogg'],
 		'video/ogg' => ['ogv'],
+		'video/mp4' => ['mp4'],
 		'video/webm' => ['webm'],
 		'video/x-matroska' => ['mkv'],
 	];
@@ -65,23 +67,24 @@ class RecordingService {
 	];
 
 	public function __construct(
-		protected IMimeTypeDetector $mimeTypeDetector,
-		protected ParticipantService $participantService,
-		protected IRootFolder $rootFolder,
-		protected IManager $notificationManager,
-		protected Manager $roomManager,
-		protected ITimeFactory $timeFactory,
-		protected Config $config,
-		protected IConfig $serverConfig,
-		protected IAppConfig $appConfig,
-		protected RoomService $roomService,
-		protected ShareManager $shareManager,
-		protected ChatManager $chatManager,
-		protected LoggerInterface $logger,
-		protected BackendNotifier $backendNotifier,
-		protected ITaskProcessingManager $taskProcessingManager,
-		protected IFactory $l10nFactory,
-		protected IUserManager $userManager,
+		private readonly IMimeTypeDetector $mimeTypeDetector,
+		private readonly ParticipantService $participantService,
+		private readonly IRootFolder $rootFolder,
+		private readonly IManager $notificationManager,
+		private readonly Manager $roomManager,
+		private readonly ITimeFactory $timeFactory,
+		private readonly Config $config,
+		private readonly IConfig $serverConfig,
+		private readonly IAppConfig $appConfig,
+		private readonly RoomService $roomService,
+		private readonly ShareManager $shareManager,
+		private readonly ChatManager $chatManager,
+		private readonly LoggerInterface $logger,
+		private readonly BackendNotifier $backendNotifier,
+		private readonly ITaskProcessingManager $taskProcessingManager,
+		private readonly ISystemTagObjectMapper $systemTagMapper,
+		private readonly IFactory $l10nFactory,
+		private readonly IUserManager $userManager,
 	) {
 	}
 
@@ -117,7 +120,7 @@ class RecordingService {
 
 		try {
 			$this->backendNotifier->stop($room, $participant);
-		} catch (RecordingNotFoundException $e) {
+		} catch (RecordingNotFoundException) {
 			// If the recording to be stopped is not known to the recording
 			// server it will never notify that the recording was stopped, so
 			// the status needs to be explicitly changed here.
@@ -135,7 +138,7 @@ class RecordingService {
 
 		$resource = $this->getResourceFromFileArray($file, $room, $participant);
 
-		$fileName = basename($file['name']);
+		$fileName = basename((string)$file['name']);
 		$fileRealPath = realpath($file['tmp_name']);
 
 		$this->validateFileFormat($fileName, $fileRealPath);
@@ -239,6 +242,7 @@ class RecordingService {
 					$transcriptFileName,
 					$output . "\n\n$warning\n",
 				);
+				$this->systemTagMapper->assignGeneratedByAITag((string)$fileNode->getId(), 'files');
 				$this->notifyStoredTranscript($room, $participant, $fileNode, $aiTask);
 			} catch (NoUserException) {
 				throw new InvalidArgumentException('owner_invalid');
@@ -431,13 +435,13 @@ class RecordingService {
 
 				$this->serverConfig->setUserValue($owner, 'spreed', UserPreference::ATTACHMENT_FOLDER, '/');
 			}
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			/** @var Folder */
 			$recordingRootFolder = $userFolder->newFolder($recordingRootFolderName);
 		}
 		try {
 			$recordingFolder = $recordingRootFolder->get($token);
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			$recordingFolder = $recordingRootFolder->newFolder($token);
 		}
 		return $recordingFolder;
@@ -458,7 +462,6 @@ class RecordingService {
 			]);
 		$this->notificationManager->notify($notification);
 	}
-
 
 	/**
 	 * @param 'transcript'|'summary' $aiType
@@ -513,7 +516,7 @@ class RecordingService {
 			$files = $userFolder->getById($fileId);
 			/** @var \OCP\Files\File $file */
 			$file = array_shift($files);
-		} catch (\Throwable $th) {
+		} catch (\Throwable) {
 			throw new InvalidArgumentException('file');
 		}
 

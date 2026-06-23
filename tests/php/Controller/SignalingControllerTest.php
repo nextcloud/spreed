@@ -8,13 +8,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Controller;
 
+use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Controller\SignalingController;
 use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
@@ -27,21 +27,25 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Signaling\Messages;
+use OCA\Talk\Signaling\RoomPropertiesHelper;
 use OCA\Talk\TalkSession;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IFilenameValidator;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
+use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\Bruteforce\IThrottler;
-use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -56,6 +60,7 @@ class CustomInputSignalingController extends SignalingController {
 		$this->inputStream = $data;
 	}
 
+	#[\Override]
 	protected function getInputStream(): string {
 		return $this->inputStream;
 	}
@@ -66,6 +71,7 @@ class SignalingControllerTest extends TestCase {
 	protected TalkSession&MockObject $session;
 	protected \OCA\Talk\Signaling\Manager&MockObject $signalingManager;
 	protected IRequest&MockObject $request;
+	protected ISession&MockObject $serverSession;
 	protected Manager|MockObject $manager;
 	protected ParticipantService&MockObject $participantService;
 	protected RoomService&MockObject $roomService;
@@ -78,6 +84,7 @@ class SignalingControllerTest extends TestCase {
 	protected BanService&MockObject $banService;
 	protected LoggerInterface&MockObject $logger;
 	protected Authenticator&MockObject $authenticator;
+	protected RoomPropertiesHelper&MockObject $roomPropertiesHelper;
 	protected IDBConnection $dbConnection;
 	protected IConfig $serverConfig;
 	protected ?Config $config = null;
@@ -106,7 +113,8 @@ class SignalingControllerTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->dispatcher = \OCP\Server::get(IEventDispatcher::class);
 		$urlGenerator = $this->createMock(IURLGenerator::class);
-		$this->config = new Config($this->serverConfig, $appConfig, $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher);
+		$this->config = new Config($this->serverConfig, $appConfig, $this->createMock(IUserConfig::class), $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher, $this->createMock(IFilenameValidator::class));
+		$this->serverSession = $this->createMock(ISession::class);
 		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OCP\Server::get(IDBConnection::class);
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
@@ -120,6 +128,7 @@ class SignalingControllerTest extends TestCase {
 		$this->banService = $this->createMock(BanService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->authenticator = $this->createMock(Authenticator::class);
+		$this->roomPropertiesHelper = $this->createMock(RoomPropertiesHelper::class);
 		$this->recreateSignalingController();
 	}
 
@@ -129,6 +138,7 @@ class SignalingControllerTest extends TestCase {
 			$this->request,
 			$this->config,
 			$this->signalingManager,
+			$this->serverSession,
 			$this->session,
 			$this->manager,
 			$this->participantService,
@@ -143,6 +153,7 @@ class SignalingControllerTest extends TestCase {
 			$this->banService,
 			$this->logger,
 			$this->authenticator,
+			$this->roomPropertiesHelper,
 			$this->userId,
 		);
 	}
@@ -535,18 +546,18 @@ class SignalingControllerTest extends TestCase {
 	}
 
 	private function validateBackendRandom($data, $random, $checksum) {
-		if (empty($random) || strlen($random) < 32) {
+		if (empty($random) || strlen((string)$random) < 32) {
 			return false;
 		}
 		if (empty($checksum)) {
 			return false;
 		}
 		$hash = hash_hmac('sha256', $random . $data, $this->config->getSignalingSecret());
-		return hash_equals($hash, strtolower($checksum));
+		return hash_equals($hash, strtolower((string)$checksum));
 	}
 
 	private function calculateBackendChecksum($data, $random) {
-		if (empty($random) || strlen($random) < 32) {
+		if (empty($random) || strlen((string)$random) < 32) {
 			return false;
 		}
 		$hash = hash_hmac('sha256', $random . $data, $this->config->getSignalingSecret());
@@ -750,7 +761,7 @@ class SignalingControllerTest extends TestCase {
 
 	public function testBackendRoomUnknown(): void {
 		$roomToken = 'the-room';
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->manager->expects($this->once())
 			->method('getRoomByToken')
 			->with($roomToken)
@@ -800,9 +811,9 @@ class SignalingControllerTest extends TestCase {
 		$room->expects($this->once())
 			->method('getToken')
 			->willReturn($roomToken);
-		$room->expects($this->once())
+		$this->roomPropertiesHelper->expects($this->once())
 			->method('getPropertiesForSignaling')
-			->with($this->userId)
+			->with($room, $this->userId)
 			->willReturn([
 				'name' => $roomName,
 				'type' => Room::TYPE_ONE_TO_ONE,
@@ -861,9 +872,9 @@ class SignalingControllerTest extends TestCase {
 		$room->expects($this->once())
 			->method('getToken')
 			->willReturn($roomToken);
-		$room->expects($this->once())
+		$this->roomPropertiesHelper->expects($this->once())
 			->method('getPropertiesForSignaling')
-			->with($this->userId)
+			->with($room, $this->userId)
 			->willReturn([
 				'name' => $roomName,
 				'type' => Room::TYPE_PUBLIC,
@@ -926,9 +937,9 @@ class SignalingControllerTest extends TestCase {
 		$room->expects($this->once())
 			->method('getToken')
 			->willReturn($roomToken);
-		$room->expects($this->once())
+		$this->roomPropertiesHelper->expects($this->once())
 			->method('getPropertiesForSignaling')
-			->with($this->userId)
+			->with($room, $this->userId)
 			->willReturn([
 				'name' => $roomName,
 				'type' => Room::TYPE_PUBLIC,
@@ -989,9 +1000,9 @@ class SignalingControllerTest extends TestCase {
 		$room->expects($this->once())
 			->method('getToken')
 			->willReturn($roomToken);
-		$room->expects($this->once())
+		$this->roomPropertiesHelper->expects($this->once())
 			->method('getPropertiesForSignaling')
-			->with('')
+			->with($room, '')
 			->willReturn([
 				'name' => $roomName,
 				'type' => Room::TYPE_PUBLIC,
@@ -1051,9 +1062,9 @@ class SignalingControllerTest extends TestCase {
 		$room->expects($this->once())
 			->method('getToken')
 			->willReturn($roomToken);
-		$room->expects($this->once())
+		$this->roomPropertiesHelper->expects($this->once())
 			->method('getPropertiesForSignaling')
-			->with($this->userId)
+			->with($room, $this->userId)
 			->willReturn([
 				'name' => $roomName,
 				'type' => Room::TYPE_PUBLIC,
@@ -1126,9 +1137,9 @@ class SignalingControllerTest extends TestCase {
 		$room->expects($this->once())
 			->method('getToken')
 			->willReturn($roomToken);
-		$room->expects($this->once())
+		$this->roomPropertiesHelper->expects($this->once())
 			->method('getPropertiesForSignaling')
-			->with($this->userId)
+			->with($room, $this->userId)
 			->willReturn([
 				'name' => $roomName,
 				'type' => Room::TYPE_PUBLIC,
@@ -1159,7 +1170,7 @@ class SignalingControllerTest extends TestCase {
 	public function testBackendRoomAnonymousOneToOne(): void {
 		$roomToken = 'the-room';
 		$sessionId = 'the-session';
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->manager->expects($this->once())
 			->method('getRoomByToken')
 			->with($roomToken)
@@ -1221,9 +1232,9 @@ class SignalingControllerTest extends TestCase {
 		$room->expects($this->atLeastOnce())
 			->method('getToken')
 			->willReturn($roomToken);
-		$room->expects($this->once())
+		$this->roomPropertiesHelper->expects($this->once())
 			->method('getPropertiesForSignaling')
-			->with($this->userId)
+			->with($room, $this->userId)
 			->willReturn([
 				'name' => $roomName,
 				'type' => Room::TYPE_ONE_TO_ONE,
@@ -1351,7 +1362,6 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-
 	public function testLeaveRoomWithOldSession(): void {
 		// Make sure that leaving a user with an old session id doesn't remove
 		// the current user from the room if they re-joined in the meantime.
@@ -1375,7 +1385,6 @@ class SignalingControllerTest extends TestCase {
 			$this->createMock(TalkSession::class),
 			$dispatcher,
 			$this->timeFactory,
-			$this->createMock(IHasher::class),
 			$this->createMock(IL10N::class),
 			$this->authenticator,
 		);
@@ -1441,5 +1450,86 @@ class SignalingControllerTest extends TestCase {
 		// ...will keep the new session id in the database.
 		$participant = $participantService->getParticipant($room, $this->userId, $newSessionId);
 		$this->assertEquals($newSessionId, $participant->getSession()->getSessionId());
+	}
+
+	private const string SIP_BRIDGE_SECRET = 'MySIPSecretValueMySIPSecretValue1234';
+
+	private function sipBridgeChecksum(string $data, string $random): string {
+		return hash_hmac('sha256', $random . $data, self::SIP_BRIDGE_SECRET);
+	}
+
+	private function setUpSIPBridgeConfig(): void {
+		$this->config = $this->createMock(Config::class);
+		$this->config->method('getSIPSharedSecret')->willReturn(self::SIP_BRIDGE_SECRET);
+		$this->userId = null;
+		$this->recreateSignalingController();
+	}
+
+	public function testGetSettingsUnauthenticatedWithoutToken(): void {
+		$this->userId = null;
+		$this->recreateSignalingController();
+
+		$this->request->method('getHeader')->willReturn('');
+
+		$result = $this->controller->getSettings();
+		$this->assertSame(Http::STATUS_NOT_FOUND, $result->getStatus());
+	}
+
+	public function testGetSettingsSIPBridgeInvalidChecksum(): void {
+		$this->setUpSIPBridgeConfig();
+
+		$random = 'afb6b872ab03e3376b31bf0af601067222ff7990335ca02d327071b73c0119c6';
+		$this->request->method('getHeader')
+			->willReturnCallback(fn (string $header): string => match ($header) {
+				'talk-sipbridge-random' => $random,
+				'talk-sipbridge-checksum' => 'invalid-checksum',
+				default => '',
+			});
+
+		$result = $this->controller->getSettings();
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $result->getStatus());
+	}
+
+	public function testGetSettingsSIPBridgeShortRandom(): void {
+		$this->setUpSIPBridgeConfig();
+
+		$random = 'tooshort';
+		$checksum = $this->sipBridgeChecksum('', $random);
+		$this->request->method('getHeader')
+			->willReturnCallback(fn (string $header): string => match ($header) {
+				'talk-sipbridge-random' => $random,
+				'talk-sipbridge-checksum' => $checksum,
+				default => '',
+			});
+
+		$result = $this->controller->getSettings();
+		$this->assertSame(Http::STATUS_UNAUTHORIZED, $result->getStatus());
+	}
+
+	public function testGetSettingsSIPBridgeValidNoToken(): void {
+		$this->config = $this->createMock(Config::class);
+		$this->config->method('getSIPSharedSecret')->willReturn(self::SIP_BRIDGE_SECRET);
+		$this->config->method('getStunServers')->willReturn([]);
+		$this->config->method('getTurnSettings')->willReturn([]);
+		$this->config->method('getSignalingMode')->willReturn(Config::SIGNALING_INTERNAL);
+		$this->config->method('getHideSignalingWarning')->willReturn(false);
+		$this->config->method('isSIPConfigured')->willReturn(false);
+		$this->signalingManager->method('getSignalingServerLinkForConversation')->willReturn('');
+		$this->userId = null;
+		$this->recreateSignalingController();
+
+		$random = 'afb6b872ab03e3376b31bf0af601067222ff7990335ca02d327071b73c0119c6';
+		$checksum = $this->sipBridgeChecksum('', $random);
+		$this->request->method('getHeader')
+			->willReturnCallback(fn (string $header): string => match ($header) {
+				'talk-sipbridge-random' => $random,
+				'talk-sipbridge-checksum' => $checksum,
+				default => '',
+			});
+
+		$this->serverSession->method('get')->willReturn(null);
+
+		$result = $this->controller->getSettings();
+		$this->assertSame(Http::STATUS_OK, $result->getStatus());
 	}
 }

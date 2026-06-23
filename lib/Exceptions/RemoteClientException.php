@@ -14,7 +14,7 @@ class RemoteClientException extends \Exception {
 		string $message = '',
 		int $code = 0,
 		?\Throwable $previous = null,
-		protected array $responseData = [],
+		private readonly array $responseData = [],
 	) {
 		parent::__construct($message, $code, $previous);
 	}

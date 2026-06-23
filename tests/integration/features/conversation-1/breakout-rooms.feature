@@ -2,12 +2,11 @@ Feature: conversation-1/breakout-rooms
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
-    Given user "participant3" exists
-    Given user "participant4" exists
-    Given group "group1" exists
 
   Scenario: Teacher creates manual breakout rooms
-    Given signaling server is started
+    Given user "participant3" exists
+    And user "participant4" exists
+    And signaling server is started
     Given user "participant1" creates room "class room" (v4)
       | roomType | 2 |
       | roomName | class room |
@@ -100,7 +99,9 @@ Feature: conversation-1/breakout-rooms
       | Room 3 | {"type":"update","update":{"userids":["participant1","participant4"],"properties":{"name":"Private conversation","type":2,"lobby-state":1,"lobby-timer":null,"read-only":0,"listable":0,"active-since":null,"sip-enabled":0,"description":""}}} |
 
   Scenario: Teacher creates automatic breakout rooms
-    Given user "participant1" creates room "class room" (v4)
+    Given user "participant3" exists
+    And user "participant4" exists
+    And user "participant1" creates room "class room" (v4)
       | roomType | 2 |
       | roomName | class room |
     And user "participant1" adds user "participant2" to room "class room" with 200 (v4)
@@ -610,7 +611,9 @@ Feature: conversation-1/breakout-rooms
       | 2    | class room | 0          | 0                | 0                  |
 
   Scenario: Deleting a single breakout room unassigned the students from the mapping
-    Given user "participant1" creates room "class room" (v4)
+    Given user "participant3" exists
+    And user "participant4" exists
+    And user "participant1" creates room "class room" (v4)
       | roomType | 2 |
       | roomName | class room |
     And user "participant1" adds user "participant2" to room "class room" with 200 (v4)
@@ -703,7 +706,9 @@ Feature: conversation-1/breakout-rooms
       | 2    | Room 2     | 1          | 0                | 0                  |
 
   Scenario: Removing a user from the parent also removes them from the breakout room
-    Given user "participant1" creates room "class room" (v4)
+    Given user "participant3" exists
+    And user "participant4" exists
+    And user "participant1" creates room "class room" (v4)
       | roomType | 2 |
       | roomName | class room |
     When user "participant1" adds user "participant2" to room "class room" with 200 (v4)
@@ -758,10 +763,13 @@ Feature: conversation-1/breakout-rooms
     # Can not "move" moderators
     When user "participant1" adds user "participant2" to room "Room 2" with 400 (v4)
     # Can not "add" groups
+    Given group "group1" exists
     When user "participant1" adds group "group1" to room "Room 2" with 400 (v4)
 
   Scenario: Teacher applies a new attendee map
-    Given user "participant1" creates room "class room" (v4)
+    Given user "participant3" exists
+    And user "participant4" exists
+    And user "participant1" creates room "class room" (v4)
       | roomType | 2 |
       | roomName | class room |
     And user "participant1" adds user "participant2" to room "class room" with 200 (v4)

@@ -5,12 +5,11 @@
  */
 
 import { createSharedComposable } from '@vueuse/core'
-import { computed, onBeforeMount, onBeforeUnmount, ref } from 'vue'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
-import { EventBus } from '../services/EventBus.ts'
-import SessionStorage from '../services/SessionStorage.js'
 import { useCallViewStore } from '../stores/callView.ts'
 import { useGetToken } from './useGetToken.ts'
+import { useJoinedConversation } from './useJoinedConversation.ts'
 
 /**
  * Check whether the user joined the call of the current token in this PHP session or not
@@ -21,27 +20,13 @@ function useIsInCallComposable() {
 	const store = useStore()
 	const callViewStore = useCallViewStore()
 	const token = useGetToken()
-
-	const sessionStorageJoinedConversation = ref(null)
-
-	const readSessionStorageJoinedConversation = () => {
-		sessionStorageJoinedConversation.value = SessionStorage.getItem('joined_conversation')
-	}
-
-	onBeforeMount(() => {
-		EventBus.on('joined-conversation', readSessionStorageJoinedConversation)
-		readSessionStorageJoinedConversation()
-	})
-
-	onBeforeUnmount(() => {
-		EventBus.off('joined-conversation', readSessionStorageJoinedConversation)
-	})
+	const joinedConversationToken = useJoinedConversation()
 
 	return computed(() => {
 		if (callViewStore.forceCallView) {
 			return true
 		}
-		return sessionStorageJoinedConversation.value === token.value && store.getters.isInCall(token.value)
+		return joinedConversationToken.value === token.value && store.getters.isInCall(token.value)
 	})
 }
 

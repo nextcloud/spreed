@@ -19,7 +19,7 @@ use OCP\Migration\SimpleMigrationStep;
 class Version11000Date20200922161218 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IDBConnection $connection,
+		private readonly IDBConnection $connection,
 	) {
 	}
 
@@ -68,7 +68,7 @@ class Version11000Date20200922161218 extends SimpleMigrationStep {
 		$query->select('id', 'json_values')
 			->from('talk_bridges');
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$bridges[] = [
 				'id' => $row['id'],
 				'json_values' => $row['json_values'],
@@ -88,7 +88,7 @@ class Version11000Date20200922161218 extends SimpleMigrationStep {
 			->where($update->expr()->eq('id', $update->createParameter('id')));
 
 		foreach ($bridges as $bridge) {
-			$values = json_decode($bridge['json_values'], true);
+			$values = json_decode((string)$bridge['json_values'], true);
 			if (isset($values['pid'], $values['enabled'])) {
 				$intEnabled = $values['enabled'] ? 1 : 0;
 				$newValues = $values['parts'] ?: [];

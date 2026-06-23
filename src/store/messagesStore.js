@@ -5,7 +5,6 @@
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-import cloneDeep from 'lodash/cloneDeep.js'
 import {
 	ATTENDEE,
 	CHAT,
@@ -471,14 +470,22 @@ const actions = {
 
 		if (isHiddenSystemMessage(message)) {
 			if (message.systemMessage === MESSAGE.SYSTEM_TYPE.POLL_VOTED) {
-				const pollsStore = usePollsStore()
-				pollsStore.debounceGetPollData({
-					token,
-					pollId: message.messageParameters.poll.id,
-				})
-
-				if (conversation?.lastMessage?.id && message.id > conversation.lastMessage.id) {
-					context.dispatch('updateConversationLastMessage', { token, lastMessage: message })
+				if (fromRealtime) {
+					const pollsStore = usePollsStore()
+					if ('poll' in message && message.poll.id) {
+						pollsStore.addPoll({
+							token,
+							poll: message.poll,
+						})
+					} else {
+						pollsStore.debounceGetPollData({
+							token,
+							pollId: message.messageParameters.poll.id,
+						})
+					}
+					if (conversation?.lastMessage?.id && message.id > conversation.lastMessage.id) {
+						context.dispatch('updateConversationLastMessage', { token, lastMessage: message })
+					}
 				}
 				// Quit processing
 				context.commit('addMessage', { token, message })
@@ -618,12 +625,19 @@ const actions = {
 			}
 		}
 
-		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.POLL_CLOSED) {
+		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.POLL_CLOSED && fromRealtime) {
 			const pollsStore = usePollsStore()
-			pollsStore.getPollData({
-				token,
-				pollId: message.messageParameters.poll.id,
-			})
+			if ('poll' in message && message.poll.id) {
+				pollsStore.addPoll({
+					token,
+					poll: message.poll,
+				})
+			} else {
+				pollsStore.getPollData({
+					token,
+					pollId: message.messageParameters.poll.id,
+				})
+			}
 		}
 
 		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.HISTORY_CLEARED) {
@@ -956,7 +970,7 @@ const actions = {
 
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach((message) => {
-			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+			if ([ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(message.actorType)) {
 				// update guest display names cache
 				const guestNameStore = useGuestNameStore()
 				guestNameStore.addGuestName(message, { noUpdate: true })
@@ -1045,7 +1059,7 @@ const actions = {
 
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach((message) => {
-			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+			if ([ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(message.actorType)) {
 				// update guest display names cache
 				const guestNameStore = useGuestNameStore()
 				guestNameStore.addGuestName(message, { noUpdate: true })
@@ -1168,7 +1182,7 @@ const actions = {
 		})
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach((message) => {
-			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+			if ([ATTENDEE.ACTOR_TYPE.GUESTS, ATTENDEE.ACTOR_TYPE.EMAILS].includes(message.actorType)) {
 				// update guest display names cache,
 				// force in case the display name has changed since
 				// the last fetch
@@ -1281,16 +1295,18 @@ const actions = {
 				? conversation.lastMessage.id
 				: chatStore.getLastKnownId(token, { threadId: temporaryMessage.threadId })
 
-			const response = await request({
+			const requestPayload = {
 				token,
 				message: temporaryMessage.message,
 				actorDisplayName: temporaryMessage.actorDisplayName,
 				referenceId: temporaryMessage.referenceId,
 				replyTo: temporaryMessage.parent?.id,
+				replyToToken: temporaryMessage.parent?.metaData?.replyToConversationToken,
 				threadId: temporaryMessage.threadId,
 				silent: temporaryMessage.silent,
 				threadTitle: temporaryMessage.threadTitle,
-			}, options)
+			}
+			const response = await request(requestPayload, options)
 			clearTimeout(timeout)
 			context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: null })
 
@@ -1379,7 +1395,7 @@ const actions = {
 	 * @param {object} data.messageToBeForwarded the message object;
 	 */
 	async forwardMessage(context, { targetToken, messageToBeForwarded }) {
-		const message = cloneDeep(messageToBeForwarded)
+		const message = structuredClone(messageToBeForwarded)
 
 		// when there is no token provided, the message will be forwarded to the Note to self conversation
 		if (!targetToken) {

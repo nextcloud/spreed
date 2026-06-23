@@ -3,6 +3,8 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script lang="ts" setup>
+import type { Conversation } from '../../types/index.ts'
+
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { isRTL, t } from '@nextcloud/l10n'
@@ -28,7 +30,7 @@ import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import DashboardSection from './DashboardSection.vue'
 import EventCard from './EventCard.vue'
 import { CONVERSATION } from '../../constants.ts'
-import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature, localCapabilities } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useDashboardStore } from '../../stores/dashboard.ts'
@@ -40,7 +42,9 @@ const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
 	&& getTalkConfig('local', 'call', 'sip-enabled')
 	&& getTalkConfig('local', 'call', 'sip-dialout-enabled')
 	&& getTalkConfig('local', 'call', 'can-enable-sip')
+const isCallEnabled = getTalkConfig('local', 'call', 'enabled')
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
+const isCalendarEnabled = localCapabilities.calendar?.webui ?? false
 const isDirectionRTL = isRTL()
 const isMobile = useIsMobile()
 const isSmallMobile = useIsSmallMobile()
@@ -121,7 +125,11 @@ const resizeObserver = new ResizeObserver(() => {
 })
 
 const conversationsInitialised = computed(() => store.getters.conversationsInitialised)
-const filteredConversations = computed(() => store.getters.conversationsList.filter(hasUnreadMentions))
+const filteredConversations = computed(() => {
+	return (store.getters.conversationsList as Conversation[])
+		.filter(hasUnreadMentions)
+		.sort((conversation1, conversation2) => conversation2.lastActivity - conversation1.lastActivity)
+})
 
 /**
  * Creates a new group conversation and navigates to the conversation page.
@@ -195,7 +203,9 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					v-if="canStartConversations"
 					popupRole="dialog">
 					<template #trigger>
-						<NcButton variant="primary">
+						<NcButton
+							v-if="isCallEnabled"
+							variant="primary">
 							<template #icon>
 								<IconVideoOutline />
 							</template>
@@ -211,7 +221,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 						<NcInputField
 							id="room-name"
 							v-model="conversationName"
-							:placeholder="t('spreed', 'Meeting')" />
+							:placeholder="t('spreed', 'Meeting')"
+							@keyup.enter="startMeeting" />
 						<NcButton
 							variant="primary"
 							@click="startMeeting">
@@ -236,7 +247,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 				</NcButton>
 
 				<NcButton
-					v-if="canModerateSipDialOut"
+					v-if="isCallEnabled && canModerateSipDialOut"
 					@click="EventBus.emit('call-phone-dialog:show')">
 					<template #icon>
 						<IconPhoneOutline :size="20" />
@@ -244,6 +255,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					{{ t('spreed', 'Call a phone number') }}
 				</NcButton>
 				<NcButton
+					v-if="isCallEnabled"
 					variant="secondary"
 					@click="emit('talk:media-settings:show', 'device-check')">
 					<template #icon>
@@ -307,12 +319,13 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					wide
 					:title="t('spreed', 'Schedule meetings')"
 					:subtitle="t('spreed', 'You don\'t have any upcoming meetings')"
-					:description="t('spreed', 'Schedule a meeting from your calendar. A Talk conversation needs to be set as location to show up here')">
+					:description="t('spreed', 'Calendar events with a conversation link as the location are shown here')">
 					<template #image>
 						<img :src="imagePath('spreed', 'dashboard/meetings.png')">
 					</template>
 					<template #action>
 						<NcButton
+							v-if="isCalendarEnabled"
 							variant="secondary"
 							:href="generateUrl('apps/calendar')"
 							target="_blank">

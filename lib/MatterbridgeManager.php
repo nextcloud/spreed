@@ -26,6 +26,7 @@ use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
+use OCP\Security\IRemoteHostValidator;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
@@ -37,18 +38,19 @@ class MatterbridgeManager {
 	public const BRIDGE_BOT_USERID = 'bridge-bot';
 
 	public function __construct(
-		private IDBConnection $db,
-		private IConfig $config,
-		private IURLGenerator $urlGenerator,
-		private IUserManager $userManager,
-		private Manager $manager,
-		private ParticipantService $participantService,
-		private ChatManager $chatManager,
-		private IAuthTokenProvider $tokenProvider,
-		private ISecureRandom $random,
-		private IAvatarManager $avatarManager,
-		private LoggerInterface $logger,
-		private ITimeFactory $timeFactory,
+		private readonly IDBConnection $db,
+		private readonly IConfig $config,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly IUserManager $userManager,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly ChatManager $chatManager,
+		private readonly IAuthTokenProvider $tokenProvider,
+		private readonly ISecureRandom $random,
+		private readonly IAvatarManager $avatarManager,
+		private readonly LoggerInterface $logger,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IRemoteHostValidator $hostValidator,
 	) {
 	}
 
@@ -159,15 +161,15 @@ class MatterbridgeManager {
 			->where($query->expr()->eq('enabled', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$bridge = [
 				'enabled' => (bool)$row['enabled'],
 				'pid' => (int)$row['pid'],
-				'parts' => json_decode($row['json_values'], true),
+				'parts' => json_decode((string)$row['json_values'], true),
 			];
 			try {
 				$room = $this->manager->getRoomById((int)$row['room_id']);
-			} catch (RoomNotFoundException $e) {
+			} catch (RoomNotFoundException) {
 				continue;
 			}
 			$this->checkBridge($room, $bridge);
@@ -265,7 +267,7 @@ class MatterbridgeManager {
 			if (!$isBridgeEnabled) {
 				$this->participantService->removeUser($room, $botUser, AAttendeeRemovedEvent::REASON_REMOVED);
 			}
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			if ($isBridgeEnabled) {
 				$this->participantService->addUsers($room, [[
 					'actorType' => Attendee::ACTOR_USERS,
@@ -358,7 +360,7 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat="[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'mattermost') {
 				// remove protocol from server URL
-				if (preg_match('/^https?:/', $part['server'])) {
+				if (preg_match('/^https?:/', (string)$part['server'])) {
 					$part['server'] = $this->cleanUrl($part['server']);
 				}
 				$content .= sprintf('[%s]', $type) . "\n";
@@ -386,7 +388,7 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'rocketchat') {
 				// include # in channel
-				if (!str_starts_with($part['channel'], '#')) {
+				if (!str_starts_with((string)$part['channel'], '#')) {
 					$bridge['parts'][$k]['channel'] = '#' . $part['channel'];
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
@@ -400,8 +402,8 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'slack') {
 				// do not include # in channel
-				if (str_starts_with($part['channel'], '#')) {
-					$bridge['parts'][$k]['channel'] = ltrim($part['channel'], '#');
+				if (str_starts_with((string)$part['channel'], '#')) {
+					$bridge['parts'][$k]['channel'] = ltrim((string)$part['channel'], '#');
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
@@ -409,8 +411,8 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'discord') {
 				// do not include # in channel
-				if (str_starts_with($part['channel'], '#')) {
-					$bridge['parts'][$k]['channel'] = ltrim($part['channel'], '#');
+				if (str_starts_with((string)$part['channel'], '#')) {
+					$bridge['parts'][$k]['channel'] = ltrim((string)$part['channel'], '#');
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
 				$content .= sprintf('	Token = "%s"', $part['token']) . "\n";
@@ -430,7 +432,7 @@ class MatterbridgeManager {
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
 			} elseif ($type === 'irc') {
 				// include # in channel
-				if (!str_starts_with($part['channel'], '#')) {
+				if (!str_starts_with((string)$part['channel'], '#')) {
 					$bridge['parts'][$k]['channel'] = '#' . $part['channel'];
 				}
 				$content .= sprintf('[%s.%s]', $type, $k) . "\n";
@@ -501,8 +503,59 @@ class MatterbridgeManager {
 				$this->logger->error('User tried to configure a malicious matterbridge setup');
 				throw new \InvalidArgumentException('Invalid matterbridge parameters');
 			}
+
+			/**
+			 * Applicable:
+			 * - irc: Server="irc.freenode.net:6667"
+			 * - mattermost: Server="yourmattermostserver.domain" (do not prefix it with http or https)
+			 * - matrix: Server="https://matrix.org"
+			 * - rocketchat: Server="https://yourrocketchatserver.domain.com:443"
+			 * - xmpp: Server="jabber.example.com:5222"
+			 * - zulip: Server="https://yourserver.zulipchat.com"
+			 *
+			 * Maybe applicable:
+			 * - nctalk: If it's not the same server as the current one
+			 *
+			 * Not applicable:
+			 * - discord: If you want to bridge https://discord.com/channels/AAAA/BBBB, then this should be AAAA.
+			 */
+			if (in_array($part['type'], ['irc', 'mattermost', 'matrix', 'rocketchat', 'xmpp', 'zulip'], true)) {
+				$tempServer = str_starts_with((string)$part['server'], 'https://') ? $part['server'] : ('https://' . $part['server']);
+				$host = parse_url((string)$tempServer, PHP_URL_HOST);
+				if ($host === null || !$this->hostValidator->isValid($host)) {
+					$this->logger->error('User tried to configure a malicious matterbridge setup');
+					throw new \InvalidArgumentException('Invalid matterbridge parameters');
+				}
+			} elseif ($part['type'] === 'nctalk') {
+				$host = parse_url((string)$part['server'], PHP_URL_HOST);
+				$currentDomain = $this->urlGenerator->getAbsoluteURL('/');
+				$currentHost = parse_url($currentDomain, PHP_URL_HOST);
+
+				if ($host === null || ($host !== $currentHost && !$this->hostValidator->isValid($host))) {
+					$this->logger->error('User tried to configure a malicious matterbridge setup');
+					throw new \InvalidArgumentException('Invalid matterbridge parameters');
+				}
+
+				if ($host === $currentHost && !$this->hostValidator->isValid($host)) {
+					$port = parse_url((string)$part['server'], PHP_URL_PORT);
+					$currentPort = parse_url($currentDomain, PHP_URL_PORT);
+					if ($port !== $currentPort) {
+						$this->logger->error('User tried to configure a malicious matterbridge setup');
+						throw new \InvalidArgumentException('Invalid matterbridge parameters');
+					}
+				}
+			}
+
 			foreach ($part as $key => $value) {
-				if (preg_match('/["\n]/', $key) || preg_match('/["\n]/', $value)) {
+				if (in_array($key, ['editing', 'skiptls', 'usesasl', 'usetls'], true)) {
+					if (!is_bool($value)) {
+						$this->logger->error('User tried to configure a malicious matterbridge setup');
+						throw new \InvalidArgumentException('Invalid matterbridge parameters');
+					}
+					continue;
+				}
+
+				if (!is_string($key) || !is_string($value) || preg_match('/["\n\r]/', $key) || preg_match('/["\n\r]/', $value)) {
 					$this->logger->error('User tried to configure a malicious matterbridge setup');
 					throw new \InvalidArgumentException('Invalid matterbridge parameters');
 				}
@@ -713,7 +766,7 @@ class MatterbridgeManager {
 		$cmd = 'ps x -o user,pid,args';
 		$cmdResult = $this->runCommand($cmd);
 		if ($cmdResult && $cmdResult['return_code'] === 0) {
-			$lines = explode("\n", $cmdResult['stdout']);
+			$lines = explode("\n", (string)$cmdResult['stdout']);
 			foreach ($lines as $l) {
 				if (preg_match('/matterbridge/i', $l)) {
 					$items = preg_split('/\s+/', $l);
@@ -745,7 +798,7 @@ class MatterbridgeManager {
 			->andWhere($query->expr()->gt('pid', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$expectedPidList[] = (int)$row['pid'];
 		}
 		$result->closeCursor();
@@ -783,7 +836,7 @@ class MatterbridgeManager {
 			$cmd = 'ps x -o user,pid,args';
 			$cmdResult = $this->runCommand($cmd);
 			if ($cmdResult && $cmdResult['return_code'] === 0) {
-				$lines = explode("\n", $cmdResult['stdout']);
+				$lines = explode("\n", (string)$cmdResult['stdout']);
 				foreach ($lines as $l) {
 					$items = preg_split('/\s+/', $l);
 					if (count($items) > 1 && is_numeric($items[1])) {
@@ -794,7 +847,7 @@ class MatterbridgeManager {
 					}
 				}
 			}
-		} catch (\Exception $e) {
+		} catch (\Exception) {
 		}
 		return false;
 	}
@@ -807,7 +860,6 @@ class MatterbridgeManager {
 	 */
 	private function runCommand(string $cmd): ?array {
 		$descriptorspec = [fopen('php://stdin', 'r'), ['pipe', 'w'], ['pipe', 'w']];
-		// noopengrep: php.lang.security.exec-use.exec-use
 		$process = proc_open($cmd, $descriptorspec, $pipes);
 		if ($process) {
 			$output = stream_get_contents($pipes[1]);
@@ -862,7 +914,7 @@ class MatterbridgeManager {
 		$enabled = false;
 		$pid = 0;
 		$jsonValues = '[]';
-		if ($row = $result->fetch()) {
+		if ($row = $result->fetchAssociative()) {
 			$pid = (int)$row['pid'];
 			$enabled = ((int)$row['enabled'] === 1);
 			$jsonValues = $row['json_values'];

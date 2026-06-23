@@ -80,7 +80,7 @@
 								v-if="shouldShowSummaryOption"
 								:disabled="loadingSummary"
 								@click="generateSummary">
-								{{ t('spreed', 'Generate summary') }}
+								{{ t('spreed', 'Generate summary with AI') }}
 							</NcAssistantButton>
 						</div>
 					</div>

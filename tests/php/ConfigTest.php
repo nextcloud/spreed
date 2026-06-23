@@ -5,6 +5,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\Tests\php;
 
 use OCA\Talk\Config;
@@ -14,7 +15,9 @@ use OCA\Talk\Vendor\Firebase\JWT\JWT;
 use OCA\Talk\Vendor\Firebase\JWT\Key;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IFilenameValidator;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -26,24 +29,44 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class ConfigTest extends TestCase {
-	private function createConfig(IConfig $config) {
-		/** @var MockObject|IAppConfig $appConfig */
-		$appConfig = $this->createMock(IAppConfig::class);
-		/** @var MockObject|ITimeFactory $timeFactory */
-		$timeFactory = $this->createMock(ITimeFactory::class);
-		/** @var MockObject|ISecureRandom $secureRandom */
-		$secureRandom = $this->createMock(ISecureRandom::class);
-		/** @var MockObject|IGroupManager $groupManager */
-		$groupManager = $this->createMock(IGroupManager::class);
-		/** @var MockObject|IUserManager $userManager */
-		$userManager = $this->createMock(IUserManager::class);
-		/** @var MockObject|IURLGenerator $urlGenerator */
-		$urlGenerator = $this->createMock(IURLGenerator::class);
-		/** @var MockObject|IEventDispatcher $dispatcher */
-		$dispatcher = $this->createMock(IEventDispatcher::class);
+	protected IConfig $config;
+	protected IAppConfig&MockObject $appConfig;
+	protected IUserConfig&MockObject $userConfig;
+	protected ISecureRandom&MockObject $secureRandom;
+	protected IGroupManager&MockObject $groupManager;
+	protected IUserManager&MockObject $userManager;
+	protected IURLGenerator&MockObject $urlGenerator;
+	protected ITimeFactory&MockObject $timeFactory;
+	protected IEventDispatcher $dispatcher;
+	protected IFilenameValidator&MockObject $filenameValidator;
 
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
-		return $helper;
+	public function setUp(): void {
+		parent::setUp();
+		$this->config = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->userConfig = $this->createMock(IUserConfig::class);
+		$this->secureRandom = $this->createMock(ISecureRandom::class);
+		$this->groupManager = $this->createMock(IGroupManager::class);
+		$this->userManager = $this->createMock(IUserManager::class);
+		$this->urlGenerator = $this->createMock(IURLGenerator::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
+		$this->dispatcher = $this->createMock(IEventDispatcher::class);
+		$this->filenameValidator = $this->createMock(IFilenameValidator::class);
+	}
+
+	protected function getConfig(): Config {
+		return new Config(
+			$this->config,
+			$this->appConfig,
+			$this->userConfig,
+			$this->secureRandom,
+			$this->groupManager,
+			$this->userManager,
+			$this->urlGenerator,
+			$this->timeFactory,
+			$this->dispatcher,
+			$this->filenameValidator,
+		);
 	}
 
 	public function testGetStunServers(): void {
@@ -52,63 +75,55 @@ class ConfigTest extends TestCase {
 			'stun2.example.com:129',
 		];
 
-		/** @var MockObject|IConfig $config */
-		$config = $this->createMock(IConfig::class);
-		$config
+		$this->config
 			->expects($this->once())
 			->method('getAppValue')
 			->with('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']))
 			->willReturn(json_encode($servers));
-		$config
+		$this->config
 			->expects($this->once())
 			->method('getSystemValueBool')
 			->with('has_internet_connection', true)
 			->willReturn(true);
 
-		$helper = $this->createConfig($config);
+		$helper = $this->getConfig();
 		$this->assertSame($helper->getStunServers(), $servers);
 	}
 
 	public function testGetDefaultStunServer(): void {
-		/** @var MockObject|IConfig $config */
-		$config = $this->createMock(IConfig::class);
-		$config
+		$this->config
 			->expects($this->once())
 			->method('getAppValue')
 			->with('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']))
 			->willReturn(json_encode([]));
-		$config
+		$this->config
 			->expects($this->once())
 			->method('getSystemValueBool')
 			->with('has_internet_connection', true)
 			->willReturn(true);
 
-		$helper = $this->createConfig($config);
+		$helper = $this->getConfig();
 		$this->assertSame(['stun.nextcloud.com:443'], $helper->getStunServers());
 	}
 
 	public function testGetDefaultStunServerNoInternet(): void {
-		/** @var MockObject|IConfig $config */
-		$config = $this->createMock(IConfig::class);
-		$config
+		$this->config
 			->expects($this->once())
 			->method('getAppValue')
 			->with('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']))
 			->willReturn(json_encode([]));
-		$config
+		$this->config
 			->expects($this->once())
 			->method('getSystemValueBool')
 			->with('has_internet_connection', true)
 			->willReturn(false);
 
-		$helper = $this->createConfig($config);
+		$helper = $this->getConfig();
 		$this->assertSame([], $helper->getStunServers());
 	}
 
 	public function testGenerateTurnSettings(): void {
-		/** @var MockObject|IConfig $config */
-		$config = $this->createMock(IConfig::class);
-		$config
+		$this->config
 			->expects($this->once())
 			->method('getAppValue')
 			->with('spreed', 'turn_servers', '')
@@ -133,34 +148,19 @@ class ConfigTest extends TestCase {
 				],
 			]));
 
-		/** @var MockObject|ITimeFactory $timeFactory */
-		$timeFactory = $this->createMock(ITimeFactory::class);
-		$timeFactory
+		$this->timeFactory
 			->expects($this->once())
 			->method('getTime')
 			->willReturn(1479743025);
 
-		/** @var MockObject|IAppConfig $appConfig */
-		$appConfig = $this->createMock(IAppConfig::class);
-		/** @var MockObject|IGroupManager $groupManager */
-		$groupManager = $this->createMock(IGroupManager::class);
-		/** @var MockObject|IUserManager $userManager */
-		$userManager = $this->createMock(IUserManager::class);
-		/** @var MockObject|IURLGenerator $urlGenerator */
-		$urlGenerator = $this->createMock(IURLGenerator::class);
-		/** @var MockObject|IEventDispatcher $dispatcher */
-		$dispatcher = $this->createMock(IEventDispatcher::class);
-
-		/** @var MockObject|ISecureRandom $secureRandom */
-		$secureRandom = $this->createMock(ISecureRandom::class);
-		$secureRandom
+		$this->secureRandom
 			->expects($this->once())
 			->method('generate')
 			->with(16)
 			->willReturn('abcdefghijklmnop');
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
 
-		//
+		$helper = $this->getConfig();
+
 		$settings = $helper->getTurnSettings();
 		$this->assertEquals(3, count($settings));
 		$this->assertSame([
@@ -187,49 +187,26 @@ class ConfigTest extends TestCase {
 	}
 
 	public function testGenerateTurnSettingsEmpty(): void {
-		/** @var MockObject|IConfig $config */
-		$config = $this->createMock(IConfig::class);
-		$config
+		$this->config
 			->expects($this->once())
 			->method('getAppValue')
 			->with('spreed', 'turn_servers', '')
 			->willReturn(json_encode([]));
 
-		$helper = $this->createConfig($config);
+		$helper = $this->getConfig();
 
 		$settings = $helper->getTurnSettings();
 		$this->assertEquals(0, count($settings));
 	}
 
 	public function testGenerateTurnSettingsEvent(): void {
-		/** @var MockObject|IConfig $config */
-		$config = $this->createMock(IConfig::class);
-		$config
+		$this->config
 			->expects($this->once())
 			->method('getAppValue')
 			->with('spreed', 'turn_servers', '')
 			->willReturn(json_encode([]));
 
-		/** @var MockObject|IAppConfig $appConfig */
-		$appConfig = $this->createMock(IAppConfig::class);
-
-		/** @var MockObject|ITimeFactory $timeFactory */
-		$timeFactory = $this->createMock(ITimeFactory::class);
-
-		/** @var MockObject|IGroupManager $groupManager */
-		$groupManager = $this->createMock(IGroupManager::class);
-
-		/** @var MockObject|IUserManager $userManager */
-		$userManager = $this->createMock(IUserManager::class);
-
-		/** @var MockObject|IURLGenerator $urlGenerator */
-		$urlGenerator = $this->createMock(IURLGenerator::class);
-
-		/** @var MockObject|ISecureRandom $secureRandom */
-		$secureRandom = $this->createMock(ISecureRandom::class);
-
-		/** @var IEventDispatcher $dispatcher */
-		$dispatcher = \OCP\Server::get(IEventDispatcher::class);
+		$this->dispatcher = \OCP\Server::get(IEventDispatcher::class);
 
 		$servers = [
 			[
@@ -248,9 +225,9 @@ class ConfigTest extends TestCase {
 			],
 		];
 
-		$dispatcher->addServiceListener(BeforeTurnServersGetEvent::class, GetTurnServerListener::class);
+		$this->dispatcher->addServiceListener(BeforeTurnServersGetEvent::class, GetTurnServerListener::class);
 
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = $this->getConfig();
 
 		$settings = $helper->getTurnSettings();
 		$this->assertSame($servers, $settings);
@@ -336,10 +313,7 @@ class ConfigTest extends TestCase {
 	 */
 	#[DataProvider('dataGetWebSocketDomainForSignalingServer')]
 	public function testGetWebSocketDomainForSignalingServer($url, $expectedWebSocketDomain): void {
-		/** @var MockObject|IConfig $config */
-		$config = $this->createMock(IConfig::class);
-
-		$helper = $this->createConfig($config);
+		$helper = $this->getConfig();
 
 		$this->assertEquals(
 			$expectedWebSocketDomain,
@@ -360,35 +334,22 @@ class ConfigTest extends TestCase {
 
 	#[DataProvider('dataTicketV2Algorithm')]
 	public function testSignalingTicketV2User(string $algo): void {
-		$config = \OCP\Server::get(IConfig::class);
-		/** @var MockObject|IAppConfig $appConfig */
-		$appConfig = $this->createMock(IAppConfig::class);
-		/** @var MockObject|ITimeFactory $timeFactory */
-		$timeFactory = $this->createMock(ITimeFactory::class);
-		/** @var MockObject|ISecureRandom $secureRandom */
-		$secureRandom = $this->createMock(ISecureRandom::class);
-		/** @var MockObject|IGroupManager $groupManager */
-		$groupManager = $this->createMock(IGroupManager::class);
-		/** @var MockObject|IUserManager $userManager */
-		$userManager = $this->createMock(IUserManager::class);
-		/** @var MockObject|IURLGenerator $urlGenerator */
-		$urlGenerator = $this->createMock(IURLGenerator::class);
-		/** @var MockObject|IEventDispatcher $dispatcher */
-		$dispatcher = $this->createMock(IEventDispatcher::class);
-		/** @var MockObject|IUser $user */
+		$this->config = \OCP\Server::get(IConfig::class);
+
+		/** @var IUser&MockObject $user */
 		$user = $this->createMock(IUser::class);
 
 		$now = time();
-		$timeFactory
+		$this->timeFactory
 			->expects($this->once())
 			->method('getTime')
 			->willReturn($now);
-		$urlGenerator
+		$this->urlGenerator
 			->expects($this->once())
 			->method('getAbsoluteURL')
 			->with('')
 			->willReturn('https://domain.invalid/nextcloud');
-		$userManager
+		$this->userManager
 			->expects($this->once())
 			->method('get')
 			->with('user1')
@@ -402,16 +363,16 @@ class ConfigTest extends TestCase {
 			->method('getDisplayName')
 			->willReturn('Jane Doe');
 
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = $this->getConfig();
 
-		$config->setAppValue('spreed', 'signaling_token_alg', $algo);
+		$this->config->setAppValue('spreed', 'signaling_token_alg', $algo);
 		// Make sure new keys are generated.
-		$config->deleteAppValue('spreed', 'signaling_token_privkey_' . strtolower($algo));
-		$config->deleteAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo));
+		$this->config->deleteAppValue('spreed', 'signaling_token_privkey_' . strtolower($algo));
+		$this->config->deleteAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo));
 		$ticket = $helper->getSignalingTicket(Config::SIGNALING_TICKET_V2, 'user1');
 		$this->assertNotNull($ticket);
 
-		$key = new Key($config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo)), $algo);
+		$key = new Key($this->config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo)), $algo);
 		$decoded = JWT::decode($ticket, $key);
 
 		$this->assertEquals($now, $decoded->iat);
@@ -422,44 +383,29 @@ class ConfigTest extends TestCase {
 
 	#[DataProvider('dataTicketV2Algorithm')]
 	public function testSignalingTicketV2Anonymous(string $algo): void {
-		/** @var IConfig $config */
-		$config = \OCP\Server::get(IConfig::class);
-		/** @var MockObject|IAppConfig $appConfig */
-		$appConfig = $this->createMock(IAppConfig::class);
-		/** @var MockObject|ITimeFactory $timeFactory */
-		$timeFactory = $this->createMock(ITimeFactory::class);
-		/** @var MockObject|ISecureRandom $secureRandom */
-		$secureRandom = $this->createMock(ISecureRandom::class);
-		/** @var MockObject|IGroupManager $groupManager */
-		$groupManager = $this->createMock(IGroupManager::class);
-		/** @var MockObject|IUserManager $userManager */
-		$userManager = $this->createMock(IUserManager::class);
-		/** @var MockObject|IURLGenerator $urlGenerator */
-		$urlGenerator = $this->createMock(IURLGenerator::class);
-		/** @var MockObject|IEventDispatcher $dispatcher */
-		$dispatcher = $this->createMock(IEventDispatcher::class);
+		$this->config = \OCP\Server::get(IConfig::class);
 
 		$now = time();
-		$timeFactory
+		$this->timeFactory
 			->expects($this->once())
 			->method('getTime')
 			->willReturn($now);
-		$urlGenerator
+		$this->urlGenerator
 			->expects($this->once())
 			->method('getAbsoluteURL')
 			->with('')
 			->willReturn('https://domain.invalid/nextcloud');
 
-		$helper = new Config($config, $appConfig, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+		$helper = $this->getConfig();
 
-		$config->setAppValue('spreed', 'signaling_token_alg', $algo);
+		$this->config->setAppValue('spreed', 'signaling_token_alg', $algo);
 		// Make sure new keys are generated.
-		$config->deleteAppValue('spreed', 'signaling_token_privkey_' . strtolower($algo));
-		$config->deleteAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo));
+		$this->config->deleteAppValue('spreed', 'signaling_token_privkey_' . strtolower($algo));
+		$this->config->deleteAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo));
 		$ticket = $helper->getSignalingTicket(Config::SIGNALING_TICKET_V2, null);
 		$this->assertNotNull($ticket);
 
-		$key = new Key($config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo)), $algo);
+		$key = new Key($this->config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo)), $algo);
 		$decoded = JWT::decode($ticket, $key);
 
 		$this->assertEquals($now, $decoded->iat);

@@ -181,7 +181,7 @@ class ChatManagerTest extends TestCase {
 			if ($key === 'id') {
 				$value = (string)$value;
 			}
-			$comment->method('get' . ucfirst($key))->willReturn($value);
+			$comment->method('get' . ucfirst((string)$key))->willReturn($value);
 		}
 
 		return $comment;
@@ -274,7 +274,7 @@ class ChatManagerTest extends TestCase {
 			->method('notifyMentionedUsers')
 			->with($chat, $comment);
 
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$return = $this->chatManager->sendMessage($chat, $participant, 'users', $userId, $message, $creationDateTime, $replyTo, $referenceId, false);
 
@@ -439,6 +439,7 @@ class ChatManagerTest extends TestCase {
 			'archived' => 0,
 			'important' => 0,
 			'sensitive' => 0,
+			'tag_ids' => null,
 			'has_unread_threads' => false,
 			'has_unread_thread_mentions' => false,
 			'has_unread_thread_directs' => false,
@@ -468,7 +469,7 @@ class ChatManagerTest extends TestCase {
 			->method('save')
 			->with($comment);
 
-		$systemMessage = $this->createMock(IComment::class);
+		$systemMessage = $this->createStub(IComment::class);
 
 		$chatManager = $this->getManager(['addSystemMessage']);
 		$chatManager->expects($this->once())
@@ -509,6 +510,7 @@ class ChatManagerTest extends TestCase {
 			'archived' => 0,
 			'important' => 0,
 			'sensitive' => 0,
+			'tag_ids' => null,
 			'has_unread_threads' => false,
 			'has_unread_thread_mentions' => false,
 			'has_unread_thread_directs' => false,
@@ -560,7 +562,7 @@ class ChatManagerTest extends TestCase {
 			->method('save')
 			->with($comment);
 
-		$systemMessage = $this->createMock(IComment::class);
+		$systemMessage = $this->createStub(IComment::class);
 
 		$chatManager = $this->getManager(['addSystemMessage']);
 		$chatManager->expects($this->once())
@@ -601,6 +603,7 @@ class ChatManagerTest extends TestCase {
 			'archived' => 0,
 			'important' => 0,
 			'sensitive' => 0,
+			'tag_ids' => null,
 			'has_unread_threads' => false,
 			'has_unread_thread_mentions' => false,
 			'has_unread_thread_directs' => false,
@@ -631,7 +634,7 @@ class ChatManagerTest extends TestCase {
 		$this->commentsManager->expects($this->never())
 			->method('save');
 
-		$systemMessage = $this->createMock(IComment::class);
+		$systemMessage = $this->createStub(IComment::class);
 
 		$chatManager = $this->getManager(['addSystemMessage']);
 		$chatManager->expects($this->never())
@@ -840,7 +843,7 @@ class ChatManagerTest extends TestCase {
 			$list[$key] = $this->createMock(IComment::class);
 			$list[$key]->method('getMessage')
 				->willReturn($message);
-			$messageDecoded = json_decode($message, true);
+			$messageDecoded = json_decode((string)$message, true);
 			if (isset($messageDecoded['parameters']['share']) && $messageDecoded['parameters']['share'] === 'notExists') {
 				$this->shareProvider->expects($this->once())
 					->method('getShareById')

@@ -3,92 +3,67 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-	<div id="submit-wrapper" class="request-password-wrapper">
-		<!-- "submit-wrapper" is used to mimic the login button and thus get
-		automatic colouring of the confirm icon by the Theming app. -->
-		<NcButton
-			id="request-password-button"
-			variant="primary"
-			:wide="true"
-			:disabled="isRequestInProgress"
-			@click="requestPassword">
-			{{ t('spreed', 'Request password') }}
-		</NcButton>
-	</div>
-	<p v-if="hasRequestFailed" class="warning error-message">
-		{{ t('spreed', 'Error requesting the password.') }}
-	</p>
-</template>
-
-<script>
+<script setup lang="ts">
 import { t } from '@nextcloud/l10n'
+import { getSharingToken } from '@nextcloud/sharing/public'
+import { computed, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import { useGetToken } from './composables/useGetToken.ts'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import IconTalkApp from '../img/app.svg?raw'
 import { getPublicShareAuthConversationToken } from './services/filesIntegrationServices.ts'
 import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
 
-export default {
+const tokenStore = useTokenStore()
 
-	name: 'PublicShareAuthRequestPasswordButton',
+const loading = ref(false)
+const failed = ref(false)
 
-	components: {
-		NcButton,
-	},
+const isVerificationInProgress = computed(() => loading.value || !!tokenStore.token)
 
-	props: {
-		shareToken: {
-			type: String,
-			required: true,
-		},
-	},
+/**
+ * Creates a conversation with share owner and triggers sidebar initialization to sar the call
+ */
+async function requestVideoVerification() {
+	checkBrowser()
 
-	setup() {
-		return {
-			token: useGetToken(),
-			tokenStore: useTokenStore(),
-		}
-	},
+	try {
+		failed.value = false
+		loading.value = true
+		const response = await getPublicShareAuthConversationToken(getSharingToken()!)
 
-	data() {
-		return {
-			isRequestLoading: false,
-			hasRequestFailed: false,
-		}
-	},
-
-	computed: {
-		iconClass() {
-			return {
-				'icon-confirm-white': !this.isRequestInProgress,
-				'icon-loading-small-dark': this.isRequestInProgress,
-			}
-		},
-
-		isRequestInProgress() {
-			return this.isRequestLoading || !!this.token
-		},
-	},
-
-	methods: {
-		t,
-		async requestPassword() {
-			checkBrowser()
-
-			this.hasRequestFailed = false
-			this.isRequestLoading = true
-
-			try {
-				const response = await getPublicShareAuthConversationToken(this.shareToken)
-
-				this.tokenStore.updateToken(response.data.ocs.data.token)
-			} catch (exception) {
-				this.hasRequestFailed = true
-			}
-
-			this.isRequestLoading = false
-		},
-	},
+		tokenStore.updateToken(response.data.ocs.data.token)
+	} catch (exception) {
+		failed.value = true
+	} finally {
+		loading.value = false
+	}
 }
 </script>
+
+<template>
+	<NcNoteCard v-if="failed" type="warning">
+		{{ t('spreed', 'Error requesting the password.') }}
+	</NcNoteCard>
+	<NcButton
+		id="request-password-button"
+		class="request-password-button"
+		variant="primary"
+		wide
+		:disabled="isVerificationInProgress"
+		@click="requestVideoVerification">
+		<template #icon>
+			<NcLoadingIcon v-if="isVerificationInProgress" :size="20" />
+			<NcIconSvgWrapper v-else :svg="IconTalkApp" :size="20" />
+		</template>
+		{{ t('spreed', 'Request password') }}
+	</NcButton>
+</template>
+
+<style lang="scss" scoped>
+.request-password-button {
+	margin-top: calc(2 * var(--default-grid-baseline));
+}
+</style>

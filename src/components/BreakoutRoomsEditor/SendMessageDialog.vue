@@ -5,6 +5,7 @@
 
 <template>
 	<NcDialog
+		:id="dialogMaskId"
 		ref="dialog"
 		:name="dialogTitle"
 		closeOnClickOutside
@@ -25,6 +26,7 @@
 
 <script>
 import { t } from '@nextcloud/l10n'
+import { useId } from 'vue'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NewMessage from '../NewMessage/NewMessage.vue'
 
@@ -66,15 +68,17 @@ export default {
 
 	emits: ['close', 'submit'],
 
-	data() {
+	setup() {
+		const dialogMaskId = `new-message-upload-${useId()}`
+		const modalContainerId = '#' + dialogMaskId
+
 		return {
-			modalContainerId: null,
+			dialogMaskId,
+			modalContainerId,
 		}
 	},
 
 	mounted() {
-		// Postpone render of NewMessage until modal container is mounted
-		this.modalContainerId = '#' + this.$refs.dialog.$el.querySelector('.modal-container')?.id
 		this.$nextTick(() => {
 			this.$refs.newMessage.focusInput()
 		})

@@ -55,7 +55,7 @@
 				<div class="new-message-form__emoji-picker">
 					<NcEmojiPicker
 						v-if="!disabled"
-						keepOpen
+						:closeOnSelect="false"
 						:setReturnFocus="getContenteditable"
 						@select="addEmoji">
 						<NcButton
@@ -126,14 +126,13 @@
 
 				<NcRichContenteditable
 					ref="richContenteditable"
-					:key="container"
 					v-model="text"
 					:class="{ 'new-message-form__input-rich--required': errorMessage }"
 					:title="errorMessage"
 					:autoComplete="autoComplete"
 					:disabled="disabled"
 					:userData="userData"
-					:menuContainer="containerElement"
+					:menuContainer="container"
 					:placeholder="placeholderText"
 					:aria-label="placeholderText"
 					:dir="text ? 'auto' : undefined"
@@ -160,7 +159,7 @@
 				</template>
 				<template v-if="submenu === null">
 					<NcActionButton
-						v-if="supportScheduleMessages && !dialog"
+						v-if="supportScheduleMessages && !dialog && !isPrivateReply"
 						key="action-schedule"
 						isMenu
 						@click.stop="submenu = 'schedule'">
@@ -361,10 +360,11 @@ import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import { useChatMentions } from '../../composables/useChatMentions.ts'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useTemporaryMessage } from '../../composables/useTemporaryMessage.ts'
-import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.ts'
+import { CONVERSATION, MESSAGE, PARTICIPANT, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
+import { setTyping } from '../../services/participantsService.js'
 import { useActorStore } from '../../stores/actor.ts'
 import { useChatStore } from '../../stores/chat.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
@@ -588,9 +588,21 @@ export default {
 			return this.silentChat ? t('spreed', 'Send message silently') : t('spreed', 'Send message')
 		},
 
+		parentConversationToken() {
+			return this.chatExtrasStore.privateReply[this.token]
+		},
+
+		isPrivateReply() {
+			return !!this.parentConversationToken && this.parentConversationToken !== this.token
+		},
+
+		parentToken() {
+			return this.isPrivateReply ? this.parentConversationToken : this.token
+		},
+
 		parentMessage() {
 			const parentId = this.chatExtrasStore.getParentIdToReply(this.token)
-			return parentId && this.$store.getters.message(this.token, parentId)
+			return parentId && this.$store.getters.message(this.parentToken, parentId)
 		},
 
 		messageToEdit() {
@@ -611,8 +623,8 @@ export default {
 
 		canUploadFiles() {
 			// TODO attachments should be allowed on both instances?
-			return getTalkConfig(this.token, 'attachments', 'allowed') && this.canShareFiles
-				&& this.settingsStore.attachmentFolderFreeSpace !== 0
+			return getTalkConfig(this.token, 'attachments', 'allowed')
+				&& this.canShareFiles
 				&& !this.scheduleMessageTime && !this.showScheduledMessages
 		},
 
@@ -632,10 +644,6 @@ export default {
 
 		hasText() {
 			return this.text.trim() !== ''
-		},
-
-		containerElement() {
-			return document.querySelector(this.container)
 		},
 
 		isOneToOne() {
@@ -792,6 +800,12 @@ export default {
 			this.errorTitle = ''
 		},
 
+		isPrivateReply(newValue) {
+			if (newValue && this.scheduleMessageTime) {
+				this.chatExtrasStore.setScheduleMessageTime(null)
+			}
+		},
+
 		messageToEdit(newValue, oldValue) {
 			if (newValue?.id === oldValue?.id) {
 				// Currently edited message was updated, keep cursor position
@@ -924,12 +938,12 @@ export default {
 
 			if (!this.typingInterval) {
 				// Send first signal after first keystroke
-				this.$store.dispatch('sendTypingSignal', { typing: true })
+				this.sendTypingSignal(true)
 
 				// Continuously send signals with 10s interval if still typing
 				this.typingInterval = setInterval(() => {
 					if (this.wasTypingWithinInterval) {
-						this.$store.dispatch('sendTypingSignal', { typing: true })
+						this.sendTypingSignal(true)
 						this.wasTypingWithinInterval = false
 					} else {
 						this.clearTypingInterval()
@@ -947,9 +961,15 @@ export default {
 		},
 
 		resetTypingIndicator() {
-			this.$store.dispatch('sendTypingSignal', { typing: false })
+			this.sendTypingSignal(false)
 			if (this.typingInterval) {
 				this.clearTypingInterval()
+			}
+		},
+
+		async sendTypingSignal(isTyping) {
+			if (this.currentConversationIsJoined) {
+				await setTyping(isTyping)
 			}
 		},
 
@@ -1014,7 +1034,7 @@ export default {
 				}
 			}
 
-			if (supportScheduleMessages && this.scheduleMessageTime) {
+			if (supportScheduleMessages && this.scheduleMessageTime && !this.isPrivateReply) {
 				await this.handleScheduleMessage()
 				return
 			}
@@ -1235,7 +1255,6 @@ export default {
 			if (this.messageToEdit || this.scheduleMessageTime) {
 				return
 			}
-			e.preventDefault()
 			// Prevent a new call of this.handleFiles if already called
 			if (this.clipboardTimeStamp === e.timeStamp) {
 				return
@@ -1245,9 +1264,6 @@ export default {
 			const content = fetchClipboardContent(e)
 			if (content.kind === 'file') {
 				this.handleFiles(content.files, true)
-			} else {
-				// FIXME NcRichContenteditable prevents trigger input event on pasting text
-				this.handleTyping()
 			}
 		},
 
@@ -1324,12 +1340,17 @@ export default {
 				return
 			}
 
+			const messagesList = this.showScheduledMessages
+				? this.chatExtrasStore.getScheduledMessagesList(this.token)
+				: this.chatStore.getMessagesList(this.token, {
+						threadId: this.threadId,
+					})
 			// last message within 24 hours
-			const lastMessageByCurrentUser = this.chatStore.getMessagesList(this.token, {
-				threadId: this.threadId,
-			}).findLast((message) => {
-				return this.actorStore.checkIfSelfIsActor(message)
-					&& !message.isTemporary && !message.systemMessage
+			const lastMessageByCurrentUser = messagesList.findLast((message) => {
+				return this.actorStore.checkIfSelfIsActor(message) // From same actor
+					&& message.messageType !== MESSAGE.TYPE.COMMENT_DELETED // Not deleted
+					&& message.timestamp !== 0 // Not temporary
+					&& !message.systemMessage // Not system message
 					&& (Date.now() - message.timestamp * 1000 < ONE_DAY_IN_MS)
 			})
 
@@ -1547,17 +1568,6 @@ export default {
 		// good looking on dark AND white bg
 		background-color: rgba(127, 127, 127, .25);
 	}
-}
-
-// Override actions styles TODO: upstream this change
-:deep(.action-item__menutoggle) {
-	opacity: 1 !important;
-
-	&:hover,
-	&:focus {
-		background-color: var(--color-background-hover) !important;
-	}
-
 }
 
 </style>

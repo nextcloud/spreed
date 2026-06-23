@@ -24,12 +24,11 @@ class CallNotificationController extends OCSController {
 	public const CASE_MISSED_CALL = 2;
 	public const CASE_PARTICIPANT_JOINED = 3;
 
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected ParticipantService $participantService,
-		protected ?string $userId,
+		private readonly ParticipantService $participantService,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}

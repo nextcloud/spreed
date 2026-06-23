@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class HasActiveCalls extends Base {
 
 	public function __construct(
-		protected MetricsService $metricsService,
+		private readonly MetricsService $metricsService,
 	) {
 		parent::__construct();
 	}

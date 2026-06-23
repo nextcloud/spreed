@@ -18,8 +18,8 @@ use OCP\IConfig;
  */
 class Listener implements IEventListener {
 	public function __construct(
-		protected Manager $manager,
-		protected IConfig $serverConfig,
+		private readonly Manager $manager,
+		private readonly IConfig $serverConfig,
 	) {
 	}
 

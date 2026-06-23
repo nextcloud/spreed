@@ -4,12 +4,12 @@
  */
 
 import { isCancel } from '@nextcloud/axios'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
-import { ATTENDEE, PARTICIPANT } from '../constants.ts'
+import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { banActor } from '../services/banService.ts'
 import {
 	joinCall,
@@ -30,7 +30,6 @@ import {
 	resendInvitations,
 	sendCallNotification,
 	setPermissions,
-	setTyping,
 } from '../services/participantsService.js'
 import SessionStorage from '../services/SessionStorage.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
@@ -82,8 +81,6 @@ function state() {
 		},
 		connectionFailed: {
 		},
-		typing: {
-		},
 		speaking: {
 		},
 		// TODO: moved from callViewStore, separate to callExtras (with typing + speaking)
@@ -128,56 +125,6 @@ const getters = {
 			return Object.values(state.attendees[token])
 		}
 		return []
-	},
-
-	/**
-	 * Gets the array of external session ids.
-	 *
-	 * @param {object} state - the state object.
-	 * @return {Array} the typing session IDs array.
-	 */
-	externalTypingSignals: (state) => (token) => {
-		if (!state.typing[token]) {
-			return []
-		}
-		const actorStore = useActorStore()
-		return Object.keys(state.typing[token]).filter((sessionId) => actorStore.sessionId !== sessionId)
-	},
-
-	/**
-	 * Gets the array of external session ids.
-	 *
-	 * @param {object} state - the state object.
-	 * @return {boolean} the typing status of actor.
-	 */
-	actorIsTyping: (state) => {
-		if (!state.typing[tokenStore.token]) {
-			return false
-		}
-		const actorStore = useActorStore()
-		return Object.keys(state.typing[tokenStore.token]).some((sessionId) => actorStore.sessionId === sessionId)
-	},
-
-	/**
-	 * Gets the participants array filtered to include only those that are
-	 * currently typing.
-	 *
-	 * @param {object} state - the state object.
-	 * @param {object} getters - the getters object.
-	 * @return {Array} the participants array (for registered users only).
-	 */
-	participantsListTyping: (state, getters) => (token) => {
-		if (!getters.externalTypingSignals(token).length) {
-			return []
-		}
-
-		const actorStore = useActorStore()
-		return getters.participantsList(token).filter((attendee) => {
-			// Check if participant's sessionId matches with any of sessionIds from signaling...
-			return getters.externalTypingSignals(token).some((sessionId) => attendee.sessionIds.includes(sessionId))
-				// ... and it's not the participant with same actorType and actorId as yourself
-				&& !actorStore.checkIfSelfIsActor(attendee)
-		})
 	},
 
 	/**
@@ -390,41 +337,6 @@ const mutations = {
 			if (!Object.keys(state.connecting[token]).length) {
 				delete state.connecting[token]
 			}
-		}
-	},
-
-	/**
-	 * Sets the typing status of a participant in a conversation.
-	 *
-	 * Note that "updateParticipant" should not be called to add a "typing"
-	 * property to an existing participant, as the participant would be reset
-	 * when the participants are purged whenever they are fetched again.
-	 * Similarly, "addParticipant" can not be called either to add a participant
-	 * if it was not fetched yet but the signaling reported it as being typing,
-	 * as the attendeeId would be unknown.
-	 *
-	 * @param {object} state - current store state.
-	 * @param {object} data - the wrapping object.
-	 * @param {string} data.token - the conversation that the participant is
-	 *        typing in.
-	 * @param {string} data.sessionId - the Nextcloud session ID of the
-	 *        participant.
-	 * @param {boolean} data.typing - whether the participant is typing or not.
-	 * @param {number} data.expirationTimeout - id of timeout to watch for received signal expiration.
-	 */
-	setTyping(state, { token, sessionId, typing, expirationTimeout }) {
-		if (!state.typing[token]) {
-			state.typing[token] = {}
-		}
-
-		if (state.typing[token][sessionId]) {
-			clearTimeout(state.typing[token][sessionId].expirationTimeout)
-		}
-
-		if (typing) {
-			state.typing[token][sessionId] = { expirationTimeout }
-		} else {
-			delete state.typing[token][sessionId]
 		}
 	},
 
@@ -849,7 +761,7 @@ const actions = {
 		return false
 	},
 
-	async joinCall({ commit, getters, state }, { token, participantIdentifier, flags, silent, recordingConsent, silentFor }) {
+	async joinCall({ commit, getters, state }, { token, participantIdentifier, flags, silent, recordingConsent, silentFor, options }) {
 		// SUMMARY: join call process
 		// There are 2 main steps to join a call:
 		// 1. Join the call (signaling-join-call)
@@ -945,7 +857,7 @@ const actions = {
 		EventBus.on('signaling-users-changed', handleUsersChanged)
 
 		try {
-			const actualFlags = await joinCall(token, flags, silent, recordingConsent, silentFor)
+			const actualFlags = await joinCall(token, flags, silent, recordingConsent, silentFor, options)
 			const updatedData = {
 				inCall: actualFlags,
 			}
@@ -1109,7 +1021,15 @@ const actions = {
 			})
 		}
 
-		await leaveConversation(token)
+		try {
+			await leaveConversation(token)
+			if (SessionStorage.getItem('joined_conversation') === token) {
+				// Drop token from SessionStorage to not consider a room joined anymore
+				SessionStorage.removeItem('joined_conversation')
+			}
+		} catch (error) {
+			console.error('Error while leaving conversation:', error)
+		}
 	},
 
 	/**
@@ -1185,26 +1105,6 @@ const actions = {
 		context.commit('updateParticipant', { token, attendeeId, updatedData })
 	},
 
-	async sendTypingSignal(context, { typing }) {
-		if (!tokenStore.currentConversationIsJoined) {
-			return
-		}
-
-		await setTyping(typing)
-	},
-
-	async setTyping(context, { token, sessionId, typing }) {
-		if (!typing) {
-			context.commit('setTyping', { token, sessionId, typing: false })
-		} else {
-			const expirationTimeout = setTimeout(() => {
-				// If updated 'typing' signal doesn't come in last 15s, remove it from store
-				context.commit('setTyping', { token, sessionId, typing: false })
-			}, 15000)
-			context.commit('setTyping', { token, sessionId, typing: true, expirationTimeout })
-		}
-	},
-
 	setSpeaking(context, { attendeeId, speaking }) {
 		// We should update time before speaking state, to be able to check previous state
 		context.commit('updateTimeSpeaking', { attendeeId, speaking })
@@ -1242,13 +1142,34 @@ const actions = {
 		context.commit('setPhoneState', { callid })
 	},
 
-	processTransientCallStatus(context, { value }) {
+	async processTransientCallStatus(context, { value }) {
 		context.commit('setPhoneState', { callid: value.callid, value })
 
 		if (value.status === 'cleared' || value.status === 'rejected') {
 			setTimeout(() => {
 				context.commit('deletePhoneState', value.callid)
 			}, 5000)
+		}
+
+		// Special handling for dial-out rooms, if a call was rejected
+		if (value.status === 'rejected') {
+			const conversation = context.rootGetters.conversation(tokenStore.token)
+			const isConversationPhoneRoom = [
+				CONVERSATION.OBJECT_TYPE.PHONE_LEGACY,
+				CONVERSATION.OBJECT_TYPE.PHONE_PERSISTENT,
+				CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY,
+			].includes(conversation.objectType)
+			&& conversation.objectId === CONVERSATION.OBJECT_ID.PHONE_OUTGOING
+
+			if (isConversationPhoneRoom) {
+				const actorStore = useActorStore()
+				await context.dispatch('leaveCall', {
+					token: tokenStore.token,
+					participantIdentifier: actorStore.participantIdentifier,
+					all: true,
+				})
+				showInfo(t('spreed', 'Call rejected'))
+			}
 		}
 	},
 

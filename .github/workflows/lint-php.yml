@@ -21,34 +21,35 @@ jobs:
   matrix:
     runs-on: ubuntu-latest-low
     outputs:
-      php-versions: ${{ steps.versions.outputs.php-versions }}
+      php-min: ${{ steps.versions.outputs.php-min }}
+      php-max: ${{ steps.versions.outputs.php-max }}
     steps:
       - name: Checkout app
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
 
       - name: Get version matrix
         id: versions
-        uses: icewind1991/nextcloud-version-matrix@58becf3b4bb6dc6cef677b15e2fd8e7d48c0908f # v1.0.0
+        uses: icewind1991/nextcloud-version-matrix@8a7bac6300b2f0f3100088b297995a229558ddba # v1.3.2
 
   php-lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-low
     needs: matrix
     strategy:
       matrix:
-        php-versions: ${{fromJson(needs.matrix.outputs.php-versions)}}
+        php-versions: ['${{ needs.matrix.outputs.php-min }}', '${{ needs.matrix.outputs.php-max }}']
 
     name: php-lint
 
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
 
       - name: Set up php ${{ matrix.php-versions }}
-        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2.36.0
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, sqlite, pdo_sqlite

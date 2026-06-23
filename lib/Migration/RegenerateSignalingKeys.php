@@ -20,8 +20,8 @@ use OCP\Migration\IRepairStep;
  */
 class RegenerateSignalingKeys implements IRepairStep {
 	public function __construct(
-		protected IAppConfig $appConfig,
-		protected Config $talkConfig,
+		private readonly IAppConfig $appConfig,
+		private readonly Config $talkConfig,
 	) {
 	}
 
@@ -37,9 +37,9 @@ class RegenerateSignalingKeys implements IRepairStep {
 		if ($alg === 'ES384') {
 			try {
 				$this->talkConfig->getSignalingTicket(2, null);
-			} catch (\Exception $e) {
-				$this->appConfig->setAppValue('signaling_token_privkey_' . strtolower($alg), '');
-				$this->appConfig->setAppValue('signaling_token_pubkey_' . strtolower($alg), '');
+			} catch (\Exception) {
+				$this->appConfig->setAppValueString('signaling_token_privkey_' . strtolower($alg), '');
+				$this->appConfig->setAppValueString('signaling_token_pubkey_' . strtolower($alg), '');
 
 				$this->talkConfig->getSignalingTokenPrivateKey($alg);
 			}

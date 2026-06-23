@@ -10,7 +10,6 @@ namespace OCA\Talk\Tests\php\Chat\Parser;
 
 use OCA\Talk\Chat\Parser\UserMention;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
@@ -34,7 +33,6 @@ class UserMentionTest extends TestCase {
 	protected ICommentsManager&MockObject $commentsManager;
 	protected IUserManager&MockObject $userManager;
 	protected IGroupManager&MockObject $groupManager;
-	protected GuestManager&MockObject $guestManager;
 	protected AvatarService&MockObject $avatarService;
 	protected ICloudIdManager&MockObject $cloudIdManager;
 	protected ParticipantService&MockObject $participantService;
@@ -49,7 +47,6 @@ class UserMentionTest extends TestCase {
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
-		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
@@ -60,7 +57,6 @@ class UserMentionTest extends TestCase {
 			$this->commentsManager,
 			$this->userManager,
 			$this->groupManager,
-			$this->guestManager,
 			$this->avatarService,
 			$this->cloudIdManager,
 			$this->participantService,
@@ -89,11 +85,11 @@ class UserMentionTest extends TestCase {
 		$comment = $this->newComment([]);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Message without enrichable references', []);
 
@@ -120,11 +116,11 @@ class UserMentionTest extends TestCase {
 			->willReturn('testUser display name');
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @testUser', []);
 
@@ -160,11 +156,11 @@ class UserMentionTest extends TestCase {
 			->willReturn('testUser display name');
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @testUser and @testUser again', []);
 
@@ -211,9 +207,7 @@ class UserMentionTest extends TestCase {
 
 		$this->commentsManager->expects($this->exactly(2))
 			->method('resolveDisplayName')
-			->willReturnCallback(function ($type, $id) {
-				return $id . ' display name';
-			});
+			->willReturnCallback(fn ($type, $id) => $id . ' display name');
 
 		$this->userManager->expects($this->exactly(2))
 			->method('getDisplayName')
@@ -223,11 +217,11 @@ class UserMentionTest extends TestCase {
 			]);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		if ($quoted) {
 			$chatMessage->setMessage('Mention to @"' . $baseId . '" and @"' . $longerId . '"', []);
@@ -281,11 +275,11 @@ class UserMentionTest extends TestCase {
 			]);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @testUser1, @testUser2, @testUser1 again and @testUser3', []);
 
@@ -336,11 +330,11 @@ class UserMentionTest extends TestCase {
 			]);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention @me to @testUser', []);
 
@@ -375,11 +369,11 @@ class UserMentionTest extends TestCase {
 			->willReturn('existing user but does not resolve later');
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @testUser', []);
 
@@ -419,9 +413,9 @@ class UserMentionTest extends TestCase {
 			->method('getDisplayName')
 			->willReturn('name');
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @all', []);
 
@@ -453,11 +447,11 @@ class UserMentionTest extends TestCase {
 		$comment = $this->newComment($mentions);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @"federated_user/testUser@example.tld"', []);
 
@@ -495,20 +489,18 @@ class UserMentionTest extends TestCase {
 		$comment = $this->newComment($mentions);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 
 		$this->participantService->method('getParticipantByActor')
 			->with($room, Attendee::ACTOR_GUESTS, '123456')
 			->willThrowException(new ParticipantNotFoundException());
 		$this->l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
 
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @"guest/123456"', []);
@@ -535,20 +527,18 @@ class UserMentionTest extends TestCase {
 		$comment = $this->newComment($mentions);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 
 		$this->participantService->method('getParticipantByActor')
 			->with($room, Attendee::ACTOR_GUESTS, '123456')
 			->willThrowException(new ParticipantNotFoundException());
 		$this->l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
 
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @"guest/123456", and again @"guest/123456"', []);
@@ -575,11 +565,11 @@ class UserMentionTest extends TestCase {
 		$comment = $this->newComment($mentions);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		/** @var Participant&MockObject $participant */
 		$participant = $this->createMock(Participant::class);
 		/** @var IL10N&MockObject $l */
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 
 		$attendee = Attendee::fromRow([
 			'actor_type' => 'guests',
@@ -594,9 +584,7 @@ class UserMentionTest extends TestCase {
 			->willReturn($participant);
 		$this->l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
 
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @"guest/abcdef", and again @"guest/abcdef"', []);
@@ -613,6 +601,138 @@ class UserMentionTest extends TestCase {
 		];
 
 		$this->assertEquals('Mention to {mention-guest1}, and again {mention-guest1}', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
+	}
+
+	public static function dataCodeBlockMention(): array {
+		return [
+			['@testUser'],
+			['Hello @testUser'],
+			['Hello @testUser bye'],
+			['@testUser bye'],
+		];
+	}
+
+	#[DataProvider(methodName: 'dataCodeBlockMention')]
+	public function testGetRichMessageWithMentionInInlineCode(string $codeBlock): void {
+		$mentions = [
+			['type' => 'user', 'id' => 'testUser'],
+		];
+		$comment = $this->newComment($mentions);
+
+		$this->commentsManager->expects($this->once())
+			->method('resolveDisplayName')
+			->with('user', 'testUser')
+			->willReturn('testUser display name');
+
+		$this->userManager->expects($this->once())
+			->method('getDisplayName')
+			->with('testUser')
+			->willReturn('testUser display name');
+
+		/** @var Room&MockObject $room */
+		$room = $this->createStub(Room::class);
+		/** @var Participant&MockObject $participant */
+		$participant = $this->createStub(Participant::class);
+		/** @var IL10N&MockObject $l */
+		$l = $this->createStub(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Mention @testUser but not `' . $codeBlock . '` in inline code', []);
+
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
+
+		$expectedMessageParameters = [
+			'mention-user1' => [
+				'type' => 'user',
+				'id' => 'testUser',
+				'name' => 'testUser display name',
+				'mention-id' => 'testUser',
+			]
+		];
+
+		$this->assertEquals('Mention {mention-user1} but not `' . $codeBlock . '` in inline code', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
+	}
+
+	#[DataProvider(methodName: 'dataCodeBlockMention')]
+	public function testGetRichMessageWithMentionInFencedCodeBlock(string $codeBlock): void {
+		$mentions = [
+			['type' => 'user', 'id' => 'testUser'],
+		];
+		$comment = $this->newComment($mentions);
+
+		$this->commentsManager->expects($this->once())
+			->method('resolveDisplayName')
+			->with('user', 'testUser')
+			->willReturn('testUser display name');
+
+		$this->userManager->expects($this->once())
+			->method('getDisplayName')
+			->with('testUser')
+			->willReturn('testUser display name');
+
+		/** @var Room&MockObject $room */
+		$room = $this->createStub(Room::class);
+		/** @var Participant&MockObject $participant */
+		$participant = $this->createStub(Participant::class);
+		/** @var IL10N&MockObject $l */
+		$l = $this->createStub(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage("Mention @testUser but not\n```\n" . $codeBlock . "\n```\nin code block", []);
+
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
+
+		$expectedMessageParameters = [
+			'mention-user1' => [
+				'type' => 'user',
+				'id' => 'testUser',
+				'name' => 'testUser display name',
+				'mention-id' => 'testUser',
+			]
+		];
+
+		$this->assertEquals("Mention {mention-user1} but not\n```\n" . $codeBlock . "\n```\nin code block", $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
+	}
+
+	#[DataProvider(methodName: 'dataCodeBlockMention')]
+	public function testGetRichMessageWithMentionOnlyInCodeBlock(string $codeBlock): void {
+		$mentions = [
+			['type' => 'user', 'id' => 'testUser'],
+		];
+		$comment = $this->newComment($mentions);
+
+		$this->commentsManager->expects($this->once())
+			->method('resolveDisplayName')
+			->with('user', 'testUser')
+			->willReturn('testUser display name');
+
+		$this->userManager->expects($this->once())
+			->method('getDisplayName')
+			->with('testUser')
+			->willReturn('testUser display name');
+
+		/** @var Room&MockObject $room */
+		$room = $this->createStub(Room::class);
+		/** @var Participant&MockObject $participant */
+		$participant = $this->createStub(Participant::class);
+		/** @var IL10N&MockObject $l */
+		$l = $this->createStub(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Only in code `' . $codeBlock . '`', []);
+
+		self::invokePrivate($this->parser, 'parseMessage', [$chatMessage]);
+
+		$expectedMessageParameters = [
+			'mention-user1' => [
+				'type' => 'user',
+				'id' => 'testUser',
+				'name' => 'testUser display name',
+				'mention-id' => 'testUser',
+			]
+		];
+
+		$this->assertEquals('Only in code `' . $codeBlock . '`', $chatMessage->getMessage());
 		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
 	}
 }

@@ -14,7 +14,7 @@ use OCA\Talk\Room;
 class GuestJoinedRoomEvent extends ARoomEvent {
 	public function __construct(
 		Room $room,
-		protected Participant $participant,
+		private readonly Participant $participant,
 	) {
 		parent::__construct($room);
 	}

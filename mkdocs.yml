@@ -20,6 +20,7 @@ markdown_extensions:
 
 nav:
   - 'Overview': 'index.md'
+  - 'Changelogs': 'changelog.md'
   - 'User documentation':
       - 'User system requirements': 'user-requirements.md'
       - 'User feature documentation ↗': 'https://docs.nextcloud.com/server/latest/user_manual/en/talk/index.html'

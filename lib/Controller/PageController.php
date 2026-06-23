@@ -19,9 +19,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
-use OCA\Talk\TInitialState;
 use OCA\Viewer\Event\LoadViewer;
-use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
@@ -39,12 +37,8 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
-use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Files\IRootFolder;
 use OCP\HintException;
-use OCP\ICacheFactory;
-use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IRequest;
 use OCP\IURLGenerator;
@@ -57,39 +51,26 @@ use SensitiveParameter;
 
 #[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 class PageController extends Controller {
-	use TInitialState;
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private IEventDispatcher $eventDispatcher,
-		private RoomController $api,
-		private TalkSession $talkSession,
-		private IUserSession $userSession,
-		private ?string $userId,
-		LoggerInterface $logger,
-		private Manager $manager,
-		private ParticipantService $participantService,
-		private RoomService $roomService,
-		private IURLGenerator $url,
-		private INotificationManager $notificationManager,
-		private IAppManager $appManager,
-		IInitialState $initialState,
-		ICacheFactory $memcacheFactory,
-		private IRootFolder $rootFolder,
-		private IThrottler $throttler,
-		Config $talkConfig,
-		IConfig $serverConfig,
-		protected IUserConfig $userConfig,
-		IGroupManager $groupManager,
+		private readonly IEventDispatcher $eventDispatcher,
+		private readonly RoomController $api,
+		private readonly TalkSession $talkSession,
+		private readonly IUserSession $userSession,
+		private readonly LoggerInterface $logger,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly RoomService $roomService,
+		private readonly IURLGenerator $url,
+		private readonly INotificationManager $notificationManager,
+		private readonly IInitialState $initialState,
+		private readonly IThrottler $throttler,
+		private readonly Config $talkConfig,
+		private readonly IGroupManager $groupManager,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
-		$this->logger = $logger;
-		$this->initialState = $initialState;
-		$this->memcacheFactory = $memcacheFactory;
-		$this->talkConfig = $talkConfig;
-		$this->serverConfig = $serverConfig;
-		$this->groupManager = $groupManager;
 	}
 
 	/**
@@ -206,7 +187,7 @@ class PageController extends Controller {
 				if ($room->getType() !== Room::TYPE_PUBLIC) {
 					$this->manager->getRoomForUser($room->getId(), $this->userId);
 				}
-			} catch (RoomNotFoundException $e) {
+			} catch (RoomNotFoundException) {
 				// Room not found, redirect to main page
 				$token = '';
 				$throttle = true;
@@ -217,7 +198,7 @@ class PageController extends Controller {
 				try {
 					$participant = $this->participantService->getParticipant($room, $this->userId, false);
 					$requirePassword = $participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED;
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					$requirePassword = true;
 				}
 
@@ -232,7 +213,7 @@ class PageController extends Controller {
 						$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomPassword', ['token' => $token, 'action' => 'talkRoomPassword']);
 					} else {
 						$this->talkSession->removePasswordForRoom($token);
-						$showBruteForceWarning = $this->throttler->getDelay($this->request->getRemoteAddress(), 'talkRoomPassword') > 5000;
+						$showBruteForceWarning = $this->throttler->showBruteforceWarning($this->request->getRemoteAddress(), 'talkRoomPassword');
 
 						if ($passwordVerification['url'] === '') {
 							$response = new TemplateResponse($this->appName, 'authenticate', [
@@ -258,7 +239,10 @@ class PageController extends Controller {
 			}
 		}
 
-		$this->publishInitialStateForUser($user, $this->rootFolder, $this->appManager);
+		$this->initialState->provideInitialState(
+			'user_group_ids',
+			$this->groupManager->getUserGroupIds($user)
+		);
 
 		if (class_exists(LoadViewer::class)) {
 			$this->eventDispatcher->dispatchTyped(new LoadViewer());
@@ -278,8 +262,8 @@ class PageController extends Controller {
 		$csp->addAllowedMediaDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain("'self'");
-		$csp->addAllowedChildSrcDomain('blob:');
-		$csp->addAllowedChildSrcDomain("'self'");
+		$csp->addAllowedFrameDomain('blob:');
+		$csp->addAllowedFrameDomain("'self'");
 		$csp->addAllowedScriptDomain('blob:');
 		$csp->addAllowedScriptDomain("'self'");
 		$csp->addAllowedScriptDomain("'wasm-unsafe-eval'");
@@ -312,7 +296,7 @@ class PageController extends Controller {
 	public function recording(string $token): Response {
 		try {
 			$room = $this->manager->getRoomByToken($token);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			$response = new NotFoundResponse();
 			$this->logger->debug('Recording "' . ($this->userId ?? 'ANONYMOUS') . '" throttled for accessing "' . $token . '"', ['app' => 'spreed-bfp']);
 			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
@@ -331,8 +315,6 @@ class PageController extends Controller {
 			$this->eventDispatcher->dispatchTyped(new LoadViewer());
 		}
 
-		$this->publishInitialStateForGuest();
-
 		$this->eventDispatcher->dispatchTyped(new LoadAdditionalScriptsEvent());
 		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
 
@@ -347,8 +329,8 @@ class PageController extends Controller {
 		$csp->addAllowedMediaDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain("'self'");
-		$csp->addAllowedChildSrcDomain('blob:');
-		$csp->addAllowedChildSrcDomain("'self'");
+		$csp->addAllowedFrameDomain('blob:');
+		$csp->addAllowedFrameDomain("'self'");
 		$csp->addAllowedScriptDomain('blob:');
 		$csp->addAllowedScriptDomain("'self'");
 		$csp->addAllowedScriptDomain("'wasm-unsafe-eval'");
@@ -385,7 +367,7 @@ class PageController extends Controller {
 			if ($room->getType() !== Room::TYPE_PUBLIC) {
 				throw new RoomNotFoundException();
 			}
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			$redirectUrl = $this->url->linkToRoute('spreed.Page.index');
 			if ($token) {
 				$redirectUrl = $this->url->linkToRoute('spreed.Page.showCall', ['token' => $token]);
@@ -407,7 +389,7 @@ class PageController extends Controller {
 				$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomPassword', ['token' => $token, 'action' => 'talkRoomPassword']);
 			} else {
 				$this->talkSession->removePasswordForRoom($token);
-				$showBruteForceWarning = $this->throttler->getDelay($this->request->getRemoteAddress(), 'talkRoomPassword') > 5000;
+				$showBruteForceWarning = $this->throttler->showBruteforceWarning($this->request->getRemoteAddress(), 'talkRoomPassword');
 
 				if ($passwordVerification['url'] === '') {
 					$response = new TemplateResponse($this->appName, 'authenticate', [
@@ -422,7 +404,6 @@ class PageController extends Controller {
 			}
 		}
 
-		$this->publishInitialStateForGuest();
 		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
 
 		$response = new PublicTemplateResponse($this->appName, 'index', [
@@ -436,8 +417,8 @@ class PageController extends Controller {
 		$csp->addAllowedMediaDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain("'self'");
-		$csp->addAllowedChildSrcDomain('blob:');
-		$csp->addAllowedChildSrcDomain("'self'");
+		$csp->addAllowedFrameDomain('blob:');
+		$csp->addAllowedFrameDomain("'self'");
 		$csp->addAllowedScriptDomain('blob:');
 		$csp->addAllowedScriptDomain("'self'");
 		$csp->addAllowedScriptDomain("'wasm-unsafe-eval'");
@@ -482,7 +463,6 @@ class PageController extends Controller {
 			return $response;
 		}
 
-		$this->publishInitialStateForGuest();
 		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
 
 		$response = new PublicTemplateResponse($this->appName, 'index', [
@@ -496,8 +476,8 @@ class PageController extends Controller {
 		$csp->addAllowedMediaDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain("'self'");
-		$csp->addAllowedChildSrcDomain('blob:');
-		$csp->addAllowedChildSrcDomain("'self'");
+		$csp->addAllowedFrameDomain('blob:');
+		$csp->addAllowedFrameDomain("'self'");
 		$csp->addAllowedScriptDomain('blob:');
 		$csp->addAllowedScriptDomain("'self'");
 		$csp->addAllowedScriptDomain("'wasm-unsafe-eval'");
@@ -525,7 +505,7 @@ class PageController extends Controller {
 					throw new RoomNotFoundException();
 				}
 				return new RedirectResponse($this->url->linkToRoute('spreed.Page.showCall', ['token' => $token]));
-			} catch (RoomNotFoundException $e) {
+			} catch (RoomNotFoundException) {
 				return new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
 					'redirect_url' => $this->url->linkToRoute('spreed.Page.showCall', ['token' => $token]),
 				]));

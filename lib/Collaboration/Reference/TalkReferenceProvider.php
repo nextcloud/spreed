@@ -36,18 +36,17 @@ use OCP\IURLGenerator;
 class TalkReferenceProvider extends ADiscoverableReferenceProvider implements ISearchableReferenceProvider {
 
 	public function __construct(
-		protected IURLGenerator $urlGenerator,
-		protected Manager $roomManager,
-		protected ParticipantService $participantService,
-		protected ChatManager $chatManager,
-		protected ProxyCacheMessageMapper $proxyCacheMessageMapper,
-		protected AvatarService $avatarService,
-		protected MessageParser $messageParser,
-		protected IL10N $l,
-		protected ?string $userId,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly Manager $roomManager,
+		private readonly ParticipantService $participantService,
+		private readonly ChatManager $chatManager,
+		private readonly ProxyCacheMessageMapper $proxyCacheMessageMapper,
+		private readonly AvatarService $avatarService,
+		private readonly MessageParser $messageParser,
+		private readonly IL10N $l,
+		private readonly ?string $userId,
 	) {
 	}
-
 
 	#[\Override]
 	public function matchReference(string $referenceText): bool {
@@ -113,7 +112,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 			$reference = new Reference($referenceText);
 			try {
 				$this->fetchReference($reference);
-			} catch (RoomNotFoundException|ParticipantNotFoundException $e) {
+			} catch (RoomNotFoundException|ParticipantNotFoundException) {
 				$reference->setRichObject('call', null);
 				$reference->setAccessible(false);
 			}
@@ -139,7 +138,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 		$room = $this->roomManager->getRoomForUserByToken($referenceMatch['token'], $this->userId);
 		try {
 			$participant = $this->participantService->getParticipant($room, $this->userId);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			$participant = null;
 		}
 
@@ -157,7 +156,6 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 			|| $this->roomManager->isRoomListableByUser($room, $this->userId)) {
 			$description = $room->getDescription();
 		}
-
 
 		/**
 		 * If linking to a comment and the user is already a participant
@@ -266,17 +264,13 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 	}
 
 	protected function getRoomType(Room $room): string {
-		switch ($room->getType()) {
-			case Room::TYPE_ONE_TO_ONE:
-			case Room::TYPE_ONE_TO_ONE_FORMER:
-				return 'one2one';
-			case Room::TYPE_GROUP:
-				return 'group';
-			case Room::TYPE_PUBLIC:
-				return 'public';
-			default:
-				return 'unknown';
-		}
+		return match ($room->getType()) {
+			Room::TYPE_ONE_TO_ONE,
+			Room::TYPE_ONE_TO_ONE_FORMER => 'one2one',
+			Room::TYPE_GROUP => 'group',
+			Room::TYPE_PUBLIC => 'public',
+			default => 'unknown',
+		};
 	}
 
 	/**
@@ -313,6 +307,9 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 
 	#[\Override]
 	public function getSupportedSearchProviderIds(): array {
+		if ($this->userId === null) {
+			return [];
+		}
 		return ['talk-conversations'];
 	}
 }

@@ -40,14 +40,14 @@ class Notifier {
 	public const PRIORITY_IMPORTANT = 2;
 
 	public function __construct(
-		private INotificationManager $notificationManager,
-		private IUserManager $userManager,
-		private IGroupManager $groupManager,
-		private ParticipantService $participantService,
-		private ThreadService $threadService,
-		private IConfig $config,
-		private ITimeFactory $timeFactory,
-		private Util $util,
+		private readonly INotificationManager $notificationManager,
+		private readonly IUserManager $userManager,
+		private readonly IGroupManager $groupManager,
+		private readonly ParticipantService $participantService,
+		private readonly ThreadService $threadService,
+		private readonly IConfig $config,
+		private readonly ITimeFactory $timeFactory,
+		private readonly Util $util,
 	) {
 	}
 
@@ -156,9 +156,7 @@ class Notifier {
 	 * @psalm-return array<int, array{id: string, type: string, reason: string, sourceId?: string, attendee?: Attendee}>
 	 */
 	private function addMentionAllToList(Room $chat, array $list, ?Participant $participant = null): array {
-		$usersToNotify = array_filter($list, static function (array $entry): bool {
-			return $entry['type'] !== Attendee::ACTOR_USERS || $entry['id'] !== 'all';
-		});
+		$usersToNotify = array_filter($list, static fn (array $entry): bool => $entry['type'] !== Attendee::ACTOR_USERS || $entry['id'] !== 'all');
 
 		if (count($list) === count($usersToNotify)) {
 			return $usersToNotify;
@@ -169,9 +167,7 @@ class Notifier {
 
 		$attendees = $this->participantService->getActorsByType($chat, Attendee::ACTOR_USERS);
 		foreach ($attendees as $attendee) {
-			$alreadyAddedToNotify = array_filter($list, static function ($user) use ($attendee): bool {
-				return $user['id'] === $attendee->getActorId();
-			});
+			$alreadyAddedToNotify = array_filter($list, static fn ($user): bool => $user['id'] === $attendee->getActorId());
 			if (!empty($alreadyAddedToNotify)) {
 				continue;
 			}
@@ -186,7 +182,6 @@ class Notifier {
 
 		return $usersToNotify;
 	}
-
 
 	/**
 	 * Notifies the author that wrote the comment which was replied to
@@ -332,7 +327,7 @@ class Notifier {
 
 		try {
 			$participant = $this->participantService->getParticipant($chat, $comment->getActorId(), false);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			return;
 		}
 
@@ -451,9 +446,7 @@ class Notifier {
 	 */
 	public function getMentionedUserIds(IComment $comment): array {
 		$mentionedUsers = $this->getMentionedUsers($comment);
-		return array_map(static function ($mentionedUser) {
-			return $mentionedUser['id'];
-		}, $mentionedUsers);
+		return array_map(static fn ($mentionedUser) => $mentionedUser['id'], $mentionedUsers);
 	}
 
 	/**
@@ -464,9 +457,7 @@ class Notifier {
 	 */
 	public function getMentionedCloudIds(IComment $comment): array {
 		$mentionedFederatedUsers = $this->getMentionedFederatedUsers($comment);
-		return array_map(static function ($mentionedUser) {
-			return $mentionedUser['id'];
-		}, $mentionedFederatedUsers);
+		return array_map(static fn ($mentionedUser) => $mentionedUser['id'], $mentionedFederatedUsers);
 	}
 
 	/**
@@ -556,7 +547,7 @@ class Notifier {
 
 			try {
 				$this->participantService->getParticipantByActor($chat, Attendee::ACTOR_GROUPS, $group->getGID());
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				continue;
 			}
 
@@ -717,7 +708,7 @@ class Notifier {
 				return self::PRIORITY_IMPORTANT;
 			}
 			return self::PRIORITY_NORMAL;
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			if ($room->getObjectType() === 'file' && $this->util->canUserAccessFile($room->getObjectId(), $userId)) {
 				// Users are added on mentions in file-rooms,
 				// so they can see the room in their room list and

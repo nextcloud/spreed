@@ -29,10 +29,10 @@ class PublicShareAuthController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private IUserManager $userManager,
-		private IShareManager $shareManager,
-		private IUserSession $userSession,
-		private RoomService $roomService,
+		private readonly IUserManager $userManager,
+		private readonly IShareManager $shareManager,
+		private readonly IUserSession $userSession,
+		private readonly RoomService $roomService,
 	) {
 		parent::__construct($appName, $request);
 	}

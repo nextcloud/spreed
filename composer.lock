@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a6b9bc9900f6188a01ed473e703c3206",
+    "content-hash": "fc9835858b83c370567dd34af1a54703",
     "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
@@ -65,16 +65,16 @@
         },
         {
             "name": "cuyz/valinor",
-            "version": "2.3.2",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "3b9f3f54901371d589776502aab3da3a046801a7"
+                "reference": "3b0afa3a287ed7f3a69aab223726cf1139454c34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/3b9f3f54901371d589776502aab3da3a046801a7",
-                "reference": "3b9f3f54901371d589776502aab3da3a046801a7",
+                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/3b0afa3a287ed7f3a69aab223726cf1139454c34",
+                "reference": "3b0afa3a287ed7f3a69aab223726cf1139454c34",
                 "shasum": ""
             },
             "require": {
@@ -86,14 +86,15 @@
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.91",
-                "infection/infection": "^0.31",
+                "infection/infection": "^0.32",
                 "marcocesarato/php-conventional-changelog": "^1.12",
                 "mikey179/vfsstream": "^1.6.10",
                 "phpbench/phpbench": "^1.3",
                 "phpstan/phpstan": "^2.0",
                 "phpstan/phpstan-phpunit": "^2.0",
                 "phpstan/phpstan-strict-rules": "^2.0",
-                "phpunit/phpunit": "^10.5",
+                "phpunit/phpunit": "^11.5",
+                "psr/http-message": "^2.0",
                 "rector/rector": "^2.0",
                 "vimeo/psalm": "^6.0"
             },
@@ -129,7 +130,7 @@
             ],
             "support": {
                 "issues": "https://github.com/CuyZ/Valinor/issues",
-                "source": "https://github.com/CuyZ/Valinor/tree/2.3.2"
+                "source": "https://github.com/CuyZ/Valinor/tree/2.4.0"
             },
             "funding": [
                 {
@@ -137,7 +138,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-23T15:26:34+00:00"
+            "time": "2026-03-23T17:38:05+00:00"
         },
         {
             "name": "cweagans/composer-configurable-plugin",
@@ -264,16 +265,16 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v7.0.2",
+            "version": "v7.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "5645b43af647b6947daac1d0f659dd1fbe8d3b65"
+                "url": "https://github.com/googleapis/php-jwt.git",
+                "reference": "b374a5d1a4f1f67fadc2165cdb284645945e2fc0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/5645b43af647b6947daac1d0f659dd1fbe8d3b65",
-                "reference": "5645b43af647b6947daac1d0f659dd1fbe8d3b65",
+                "url": "https://api.github.com/repos/googleapis/php-jwt/zipball/b374a5d1a4f1f67fadc2165cdb284645945e2fc0",
+                "reference": "b374a5d1a4f1f67fadc2165cdb284645945e2fc0",
                 "shasum": ""
             },
             "require": {
@@ -281,6 +282,8 @@
             },
             "require-dev": {
                 "guzzlehttp/guzzle": "^7.4",
+                "phpfastcache/phpfastcache": "^9.2",
+                "phpseclib/phpseclib": "~3.0",
                 "phpspec/prophecy-phpunit": "^2.0",
                 "phpunit/phpunit": "^9.5",
                 "psr/cache": "^2.0||^3.0",
@@ -289,7 +292,8 @@
             },
             "suggest": {
                 "ext-sodium": "Support EdDSA (Ed25519) signatures",
-                "paragonie/sodium_compat": "Support EdDSA (Ed25519) signatures when libsodium is not present"
+                "paragonie/sodium_compat": "Support EdDSA (Ed25519) signatures when libsodium is not present",
+                "phpseclib/phpseclib": "Support PS256 (RSASSA-PSS) signatures"
             },
             "type": "library",
             "autoload": {
@@ -314,16 +318,16 @@
                 }
             ],
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
-            "homepage": "https://github.com/firebase/php-jwt",
+            "homepage": "https://github.com/googleapis/php-jwt",
             "keywords": [
                 "jwt",
                 "php"
             ],
             "support": {
-                "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v7.0.2"
+                "issues": "https://github.com/googleapis/php-jwt/issues",
+                "source": "https://github.com/googleapis/php-jwt/tree/v7.1.0"
             },
-            "time": "2025-12-16T22:17:28+00:00"
+            "time": "2026-06-11T17:54:14+00:00"
         }
     ],
     "packages-dev": [
@@ -333,26 +337,27 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "c3db5d19b356eca3c95f405649dcad282222a306"
+                "reference": "57eba542a591eb3c3c093cd12b0dce770132adda"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/c3db5d19b356eca3c95f405649dcad282222a306",
-                "reference": "c3db5d19b356eca3c95f405649dcad282222a306",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/57eba542a591eb3c3c093cd12b0dce770132adda",
+                "reference": "57eba542a591eb3c3c093cd12b0dce770132adda",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.1 || ~8.2 || ~8.3 || ~8.4 || ~8.5",
+                "php": "~8.3 || ~8.4 || ~8.5",
                 "psr/clock": "^1.0",
                 "psr/container": "^2.0.2",
                 "psr/event-dispatcher": "^1.0",
+                "psr/http-client": "^1.0.3",
                 "psr/log": "^3.0.2"
             },
             "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "34.0.0-dev"
+                    "dev-master": "35.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -374,7 +379,7 @@
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
                 "source": "https://github.com/nextcloud-deps/ocp/tree/master"
             },
-            "time": "2026-02-18T08:26:21+00:00"
+            "time": "2026-06-19T02:51:56+00:00"
         },
         {
             "name": "psr/clock",
@@ -528,6 +533,111 @@
             "time": "2019-01-08T18:20:26+00:00"
         },
         {
+            "name": "psr/http-client",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-client.git",
+                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-client/zipball/bb5906edc1c324c9a05aa0873d40117941e5fa90",
+                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0 || ^8.0",
+                "psr/http-message": "^1.0 || ^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Client\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP clients",
+            "homepage": "https://github.com/php-fig/http-client",
+            "keywords": [
+                "http",
+                "http-client",
+                "psr",
+                "psr-18"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/http-client"
+            },
+            "time": "2023-09-23T14:17:50+00:00"
+        },
+        {
+            "name": "psr/http-message",
+            "version": "2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-message.git",
+                "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/402d35bcb92c70c026d1a6a9883f06b2ead23d71",
+                "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2 || ^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP messages",
+            "homepage": "https://github.com/php-fig/http-message",
+            "keywords": [
+                "http",
+                "http-message",
+                "psr",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/http-message/tree/2.0"
+            },
+            "time": "2023-04-04T09:54:51+00:00"
+        },
+        {
             "name": "psr/log",
             "version": "3.0.2",
             "source": {
@@ -588,7 +698,7 @@
     "platform": {},
     "platform-dev": {},
     "platform-overrides": {
-        "php": "8.2"
+        "php": "8.3"
     },
     "plugin-api-version": "2.9.0"
 }

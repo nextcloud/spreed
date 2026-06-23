@@ -3,7 +3,6 @@ Feature: conversation-4/password-request
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
-    Given user "participant3" exists
 
   Scenario: create password-request room for file shared by link
     Given user "participant1" shares "welcome.txt" by link with OCS 100
@@ -112,6 +111,7 @@ Feature: conversation-4/password-request
     Then user "participant2" is not participant of room "password request for last share room" (v4)
 
   Scenario: other users can not join the password request room when a user already joined
+    Given user "participant3" exists
     Given user "participant1" shares "welcome.txt" by link with OCS 100
       | password | 123456 |
       | sendPasswordByTalk | true |

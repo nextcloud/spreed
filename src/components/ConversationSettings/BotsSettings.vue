@@ -21,11 +21,17 @@
 					<span class="bots-settings__item-description">
 						{{ bot.description ?? t('spreed', 'Description is not provided') }}
 					</span>
+					<NcNoteCard v-if="isBotUnavailable(bot)" type="warning">
+						<template #icon>
+							<IconCancel :size="20" />
+						</template>
+						{{ t('spreed', 'The bot is not available anymore') }}
+					</NcNoteCard>
 				</div>
 				<div v-if="isLoading[bot.id]" class="bots-settings__item-loader icon icon-loading-small" />
 				<NcButton
 					class="bots-settings__item-button"
-					:variant="bot.state ? 'primary' : 'secondary'"
+					:variant="buttonType(bot)"
 					:disabled="isBotLocked(bot) || isLoading[bot.id]"
 					@click="toggleBotState(bot)">
 					{{ toggleButtonTitle(bot) }}
@@ -38,6 +44,8 @@
 <script>
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import IconCancel from 'vue-material-design-icons/Cancel.vue'
 import { BOT } from '../../constants.ts'
 import { useBotsStore } from '../../stores/bots.ts'
 
@@ -46,6 +54,8 @@ export default {
 
 	components: {
 		NcButton,
+		NcNoteCard,
+		IconCancel,
 	},
 
 	props: {
@@ -96,6 +106,10 @@ export default {
 			return bot.state === BOT.STATE.NO_SETUP
 		},
 
+		isBotUnavailable(bot) {
+			return bot.state === BOT.STATE.UNAVAILABLE
+		},
+
 		async toggleBotState(bot) {
 			if (this.isBotLocked(bot)) {
 				return
@@ -105,7 +119,19 @@ export default {
 			this.isLoading[bot.id] = false
 		},
 
+		buttonType(bot) {
+			if (this.isBotUnavailable(bot)) {
+				return 'warning'
+			}
+
+			return bot.state === BOT.STATE.ENABLED ? 'primary' : 'secondary'
+		},
+
 		toggleButtonTitle(bot) {
+			if (this.isBotUnavailable(bot)) {
+				return t('spreed', 'Disable')
+			}
+
 			if (this.isBotLocked(bot)) {
 				return t('spreed', 'Enabled')
 			}

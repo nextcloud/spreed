@@ -48,17 +48,17 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private ?string $userId,
-		private Config $talkConfig,
-		private IClientService $clientService,
-		private Manager $manager,
-		private CertificateService $certificateService,
-		private ParticipantService $participantService,
-		private RecordingService $recordingService,
-		private RoomService $roomService,
-		private ITimeFactory $timeFactory,
-		private ChecksumVerificationService $checksumVerificationService,
-		private LoggerInterface $logger,
+		private readonly Config $talkConfig,
+		private readonly IClientService $clientService,
+		private readonly Manager $manager,
+		private readonly CertificateService $certificateService,
+		private readonly ParticipantService $participantService,
+		private readonly RecordingService $recordingService,
+		private readonly RoomService $roomService,
+		private readonly ITimeFactory $timeFactory,
+		private readonly ChecksumVerificationService $checksumVerificationService,
+		private readonly LoggerInterface $logger,
+		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -84,7 +84,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
 
-		$url = rtrim($recordingServers[$serverId]['server'], '/');
+		$url = rtrim((string)$recordingServers[$serverId]['server'], '/');
 		$url = strtolower($url);
 
 		$verifyServer = (bool)$recordingServers[$serverId]['verify'];
@@ -132,7 +132,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 			}
 
 			return new DataResponse($data);
-		} catch (ConnectException $e) {
+		} catch (ConnectException) {
 			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
 		} catch (\Exception $e) {
 			return new DataResponse(['error' => (string)$e->getCode()], Http::STATUS_INTERNAL_SERVER_ERROR);
@@ -184,8 +184,8 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	#[BruteForceProtection(action: 'talkRecordingStatus')]
-	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-recording-checksum', description: 'Checksum over the request body to verify authenticity from the recording backend', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared recording secret, to verify authenticity from the recording backend', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/recording/backend', requirements: [
 		'apiVersion' => '(v1)',
 	])]
@@ -285,7 +285,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			$this->logger->debug('Failed to get room {token}', [
 				'token' => $token,
 				'app' => 'spreed-recording',
@@ -305,7 +305,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 			}
 
 			$participant = $this->participantService->getParticipantByActor($room, $actor['type'], $actor['id']);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			$participant = null;
 		}
 
@@ -403,8 +403,8 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	#[OpenAPI(scope: 'backend-recording')]
 	#[RequireRoom]
-	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-recording-checksum', description: 'Checksum over the request body to verify authenticity from the recording backend', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared recording secret, to verify authenticity from the recording backend', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/recording/{token}/store', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',

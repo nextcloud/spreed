@@ -2,10 +2,9 @@ Feature: conversation-1/ban
     Background:
         Given user "participant1" exists
         Given user "participant2" exists
-        Given user "participant3" exists
-        Given group "group1" exists
 
     Scenario: Moderator banning and unbanning multiple users
+        Given user "participant3" exists
         Given user "participant1" creates room "room" (v4)
         | roomType | 3 |
         | roomName | room |
@@ -29,6 +28,7 @@ Feature: conversation-1/ban
         And user "participant3" joins room "room" with 200 (v4)
 
     Scenario: Users trying to ban moderator
+        Given user "participant3" exists
         Given user "participant1" creates room "room" (v4)
         | roomType | 3 |
         | roomName | room |
@@ -40,6 +40,7 @@ Feature: conversation-1/ban
             | internalNote | BannedP1 |
 
     Scenario: Users trying to ban other users
+        Given user "participant3" exists
         Given user "participant1" creates room "room" (v4)
         | roomType | 3 |
         | roomName | room |
@@ -60,6 +61,7 @@ Feature: conversation-1/ban
             | internalNote | BannedP2 |
 
     Scenario: Moderator trying to ban an invalid user
+        Given user "participant3" exists
         Given user "participant1" creates room "room" (v4)
         | roomType | 3 |
         | roomName | room |
@@ -152,6 +154,7 @@ Feature: conversation-1/ban
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
+    Given group "group1" exists
     And user "participant2" is member of group "group1"
     And user "participant1" bans user "participant2" from room "room" with 200 (v1)
       | internalNote | BannedP2 |
@@ -173,6 +176,7 @@ Feature: conversation-1/ban
     And user "participant1" sees the following bans in room "room" with 200 (v1)
       | moderatorActorType | moderatorActorId | moderatorDisplayName     | bannedActorType | bannedActorId | bannedDisplayName        | internalNote |
       | users              | participant1     | participant1-displayname | users           | participant2  | participant2-displayname | BannedP2     |
+    Given group "group1" exists
     And user "participant1" adds group "group1" to room "room" with 200 (v4)
     Then user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId                     |

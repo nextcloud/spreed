@@ -65,6 +65,17 @@
 				:name="t('spreed', 'Live transcription')">
 				<LiveTranscriptionSettings :token="token" />
 			</NcAppSettingsSection>
+			<NcAppSettingsSection
+				v-else-if="hintLiveTranscription"
+				id="live-transcription"
+				:name="t('spreed', 'Live transcription')">
+				<NcCheckboxRadioSwitch
+					:description="t('spreed', 'Live transcriptions app is not installed')"
+					type="switch"
+					disabled>
+					{{ t('spreed', 'Enable live transcription') }}
+				</NcCheckboxRadioSwitch>
+			</NcAppSettingsSection>
 
 			<!-- Breakout rooms -->
 			<NcAppSettingsSection
@@ -121,7 +132,6 @@
 
 <script>
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { ref } from 'vue'
 import NcAppSettingsDialog from '@nextcloud/vue/components/NcAppSettingsDialog'
@@ -145,10 +155,15 @@ import NotificationsSettings from './NotificationsSettings.vue'
 import RecordingConsentSettings from './RecordingConsentSettings.vue'
 import SipSettings from './SipSettings.vue'
 import { CALL, CONFIG, CONVERSATION, PARTICIPANT } from '../../constants.ts'
-import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import {
+	getTalkConfig,
+	hasTalkFeature,
+	showTalkFeatureHint,
+} from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 
-const matterbridgeEnabled = loadState('spreed', 'enable_matterbridge')
+// FIXME Should use remote not local
+const matterbridgeEnabled = getTalkConfig('local', 'chat', 'matterbridge-enabled')
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 
 export default {
@@ -194,6 +209,10 @@ export default {
 	computed: {
 		canUserEnableSIP() {
 			return this.conversation.canEnableSIP
+		},
+
+		isCallEnabled() {
+			return getTalkConfig(this.token, 'call', 'enabled')
 		},
 
 		isNoteToSelf() {
@@ -263,18 +282,28 @@ export default {
 		},
 
 		canConfigureLiveTranscription() {
-			return this.isLiveTranscriptionSupported
+			return this.isCallEnabled
+				&& this.isLiveTranscriptionSupported
 				&& this.selfIsOwnerOrModerator
 		},
 
+		hintLiveTranscription() {
+			return this.isCallEnabled
+				&& !this.isLiveTranscriptionSupported
+				&& this.selfIsOwnerOrModerator
+				&& showTalkFeatureHint(34)
+		},
+
 		canConfigureBreakoutRooms() {
-			return this.canFullModerate
+			return !this.isVoiceRoom
+				&& this.canFullModerate
 				&& (getTalkConfig(this.token, 'call', 'breakout-rooms') || false)
 				&& this.conversation.type === CONVERSATION.TYPE.GROUP
 		},
 
 		recordingConsentAvailable() {
-			return (getTalkConfig(this.token, 'call', 'recording') || false)
+			return this.isCallEnabled
+				&& (getTalkConfig(this.token, 'call', 'recording') || false)
 				&& hasTalkFeature(this.token, 'recording-consent')
 				&& getTalkConfig(this.token, 'call', 'recording-consent') !== CONFIG.RECORDING_CONSENT.OFF
 		},
@@ -285,6 +314,10 @@ export default {
 
 		hasMessageExpirationFeature() {
 			return hasTalkFeature(this.token, 'message-expiration')
+		},
+
+		isVoiceRoom() {
+			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
 		},
 	},
 

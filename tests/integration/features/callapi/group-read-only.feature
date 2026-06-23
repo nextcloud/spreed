@@ -2,7 +2,6 @@ Feature: callapi/group-read-only
   Background:
     Given user "participant1" exists
     And user "participant2" exists
-    And user "participant3" exists
     And group "attendees1" exists
     And user "participant2" is member of group "attendees1"
 

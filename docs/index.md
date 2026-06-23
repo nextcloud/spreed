@@ -2,6 +2,10 @@
 
 # Nextcloud Talk Documentation
 
+## Changelogs
+
+* [Changelogs](changelog.md)
+
 ## User documentation
 
 * [User system requirements](user-requirements.md)

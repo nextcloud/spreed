@@ -24,6 +24,7 @@ import { useSoundsStore } from '../../stores/sounds.js'
 const settingsUrl = generateUrl('/settings/user/notifications')
 const supportConversationsListStyle = getTalkConfig('local', 'conversations', 'list-style') !== undefined
 const supportChatStyle = getTalkConfig('local', 'chat', 'style') !== undefined
+const isCallEnabled = getTalkConfig('local', 'call', 'enabled')
 
 const actorStore = useActorStore()
 const settingsStore = useSettingsStore()
@@ -50,7 +51,7 @@ const mockMessageOutgoing = computed(() => ({
 		// TRANSLATORS fake message to show chat appearance in settings
 		? t('spreed', 'I picked message bubbles')
 		// TRANSLATORS fake message to show chat appearance in settings
-		: t('spreed', 'I picked list style'),
+		: t('spreed', 'I picked the list style'),
 }))
 provide('messagesList:isSplitViewEnabled', chatSplitViewEnabled)
 
@@ -135,6 +136,7 @@ async function togglePlaySounds(value: boolean) {
 
 	<NcFormBox>
 		<NcFormBoxSwitch
+			v-if="isCallEnabled"
 			:modelValue="shouldPlaySounds"
 			:label="t('spreed', 'Play sounds when participants join or leave a call')"
 			:description="t('spreed', 'Currently not available on iPhone and iPad due to technical restrictions by the manufacturer')"

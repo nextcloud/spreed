@@ -1,7 +1,6 @@
 Feature: conversation-5/set-listable
   Background:
     Given user "creator" exists
-    Given user "regular-user" exists
 
   Scenario Outline: Setting listable attribute
     Given user "creator" creates room "room" (v4)
@@ -25,6 +24,7 @@ Feature: conversation-5/set-listable
 
 
   Scenario: Only moderators and owners can change listable attribute
+    Given user "regular-user" exists
     Given signaling server is started
     Given user "creator" creates room "room" (v4)
       | roomType | 3 |
@@ -54,6 +54,7 @@ Feature: conversation-5/set-listable
     And user "guest" allows listing room "room" for "users" with 401 (v4)
 
   Scenario: Cannot change listable attribute of one to one conversations
+    Given user "regular-user" exists
     Given user "creator" creates room "room" (v4)
       | roomType | 1            |
       | invite   | regular-user |
@@ -64,6 +65,7 @@ Feature: conversation-5/set-listable
     And user "regular-user" allows listing room "room" for "all" with 400 (v4)
 
   Scenario: Cannot change listable attribute on a file conversation
+    Given user "regular-user" exists
     Given user "creator" logs in
     And user "creator" shares "welcome.txt" with user "regular-user" with OCS 100
     And user "regular-user" accepts last share

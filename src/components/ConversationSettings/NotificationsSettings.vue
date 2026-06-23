@@ -14,7 +14,7 @@ import IconBellOffOutline from 'vue-material-design-icons/BellOffOutline.vue'
 import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
 import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
 import { PARTICIPANT } from '../../constants.ts'
-import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 
 const props = defineProps<{
 	conversation: Conversation
@@ -44,7 +44,8 @@ const notificationLevels = [
 const store = useStore()
 
 const showCallNotificationSettings = computed(() => {
-	return !props.conversation.remoteServer || hasTalkFeature(props.conversation.token, 'federation-v2')
+	return getTalkConfig(props.conversation.token, 'call', 'enabled')
+		&& (!props.conversation.remoteServer || hasTalkFeature(props.conversation.token, 'federation-v2'))
 })
 
 const loading = reactive({

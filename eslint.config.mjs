@@ -39,8 +39,8 @@ export default [
 	{
 		name: 'talk/disabled-during-migration',
 		rules: {
-			'@nextcloud-l10n/non-breaking-space': 'off', // changes translation strings
-			'@nextcloud-l10n/non-breaking-space-vue': 'off', // changes translation strings
+			'@nextcloud/l10n-non-breaking-space': 'off', // changes translation strings
+			'@nextcloud/l10n-non-breaking-space-vue': 'off', // changes translation strings
 			'@typescript-eslint/no-unused-expressions': 'off', // non-fixable
 			'@typescript-eslint/no-unused-vars': 'off', // non-fixable
 			'@typescript-eslint/no-use-before-define': 'off', // non-fixable
@@ -53,6 +53,7 @@ export default [
 			'jsdoc/require-throws-type': 'off', // need to respect JS
 			'no-console': 'off', // non-fixable
 			'no-unused-vars': 'off', // non-fixable
+			'no-useless-assignment': 'off', // non-fixable
 			'no-use-before-define': 'off', // non-fixable
 			'vue/no-boolean-default': 'off', // non-fixable
 			'vue/no-required-prop-with-default': 'off', // non-fixable

@@ -41,9 +41,9 @@ class Participant {
 	public const ERROR_SCHEDULED_MESSAGE = -1;
 
 	public function __construct(
-		protected Room $room,
-		protected Attendee $attendee,
-		protected ?Session $session,
+		private readonly Room $room,
+		private readonly Attendee $attendee,
+		private ?Session $session,
 	) {
 	}
 

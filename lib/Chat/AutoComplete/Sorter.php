@@ -14,7 +14,7 @@ use OCP\Collaboration\AutoComplete\ISorter;
 
 class Sorter implements ISorter {
 	public function __construct(
-		protected CommentsManager $commentsManager,
+		private readonly CommentsManager $commentsManager,
 	) {
 	}
 
@@ -47,9 +47,7 @@ class Sorter implements ISorter {
 				$context['itemId'],
 				ChatManager::VERB_MESSAGE,
 				$type,
-				array_map(function (array $suggestion) {
-					return $suggestion['value']['shareWith'];
-				}, $byType));
+				array_map(fn (array $suggestion) => $suggestion['value']['shareWith'], $byType));
 
 			$search = $context['search'];
 			$selfUserId = $context['selfUserId'] ?? null;
@@ -64,11 +62,11 @@ class Sorter implements ISorter {
 
 				if ($search) {
 					// If the user searched for "Dani" we make sure "Daniel" comes before "Madani"
-					if (stripos($a['label'], $search) === 0) {
-						if (stripos($b['label'], $search) !== 0) {
+					if (stripos((string)$a['label'], $search) === 0) {
+						if (stripos((string)$b['label'], $search) !== 0) {
 							return -1;
 						}
-					} elseif (stripos($b['label'], $search) === 0) {
+					} elseif (stripos((string)$b['label'], $search) === 0) {
 						return 1;
 					}
 				}

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.13.1@1e3b7f0a8ab32b23197b91107adc0a7ed8a05b51">
+<files psalm-version="6.16.1@f1f5de594dc76faf8784e02d3dc4716c91c6f6ac">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass>
       <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
@@ -8,6 +8,16 @@
       <code><![CDATA[EditingCircleEvent]]></code>
     </UndefinedClass>
   </file>
+  <file src="lib/Authenticator.php">
+    <NoInterfaceProperties>
+      <code><![CDATA[$this->request->server]]></code>
+    </NoInterfaceProperties>
+  </file>
+  <file src="lib/Capabilities.php">
+    <DeprecatedInterface>
+      <code><![CDATA[private]]></code>
+    </DeprecatedInterface>
+  </file>
   <file src="lib/Chat/CommentsManager.php">
     <UndefinedMethod>
       <code><![CDATA[getLastKnownComment]]></code>
@@ -15,8 +25,11 @@
   </file>
   <file src="lib/Chat/Parser/SystemMessage.php">
     <UndefinedClass>
-      <code><![CDATA[\OC_Util]]></code>
+      <code><![CDATA[Reader]]></code>
     </UndefinedClass>
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[getContent]]></code>
+    </UndefinedInterfaceMethod>
   </file>
   <file src="lib/Command/PhoneNumber/AddPhoneNumber.php">
     <UndefinedConstant>
@@ -60,6 +73,11 @@
       <code><![CDATA[null]]></code>
     </NullArgument>
   </file>
+  <file src="lib/Controller/RoomController.php">
+    <DeprecatedConstant>
+      <code><![CDATA[Room::OBJECT_TYPE_PHONE_LEGACY]]></code>
+    </DeprecatedConstant>
+  </file>
   <file src="lib/Controller/TempAvatarController.php">
     <MissingDependency>
       <code><![CDATA[\OCP\Image]]></code>
@@ -68,11 +86,6 @@
       <code><![CDATA[$e]]></code>
       <code><![CDATA[NotSquareException]]></code>
     </UndefinedClass>
-  </file>
-  <file src="lib/Federation/Authenticator.php">
-    <NoInterfaceProperties>
-      <code><![CDATA[$this->request->server]]></code>
-    </NoInterfaceProperties>
   </file>
   <file src="lib/Files/Util.php">
     <InvalidArgument>
@@ -89,6 +102,11 @@
       <code><![CDATA[EditingCircleEvent]]></code>
     </UndefinedClass>
   </file>
+  <file src="lib/Listener/RestrictStartingCalls.php">
+    <DeprecatedConstant>
+      <code><![CDATA[Room::OBJECT_TYPE_PHONE_LEGACY]]></code>
+    </DeprecatedConstant>
+  </file>
   <file src="lib/MatterbridgeManager.php">
     <UndefinedClass>
       <code><![CDATA[$this->tokenProvider]]></code>
@@ -96,6 +114,11 @@
       <code><![CDATA[$this->tokenProvider]]></code>
       <code><![CDATA[private]]></code>
     </UndefinedClass>
+  </file>
+  <file src="lib/Migration/Version14000Date20220330141647.php">
+    <DeprecatedMethod>
+      <code><![CDATA[getDatabasePlatform]]></code>
+    </DeprecatedMethod>
   </file>
   <file src="lib/Model/Poll.php">
     <LessSpecificReturnStatement>
@@ -118,6 +141,9 @@
     </MoreSpecificReturnType>
   </file>
   <file src="lib/Notification/Notifier.php">
+    <DeprecatedConstant>
+      <code><![CDATA[Room::OBJECT_TYPE_PHONE_LEGACY]]></code>
+    </DeprecatedConstant>
     <InvalidPropertyAssignmentValue>
       <code><![CDATA[$this->participants]]></code>
       <code><![CDATA[$this->rooms]]></code>
@@ -135,6 +161,9 @@
     </UndefinedClass>
   </file>
   <file src="lib/Service/AvatarService.php">
+    <DeprecatedConstant>
+      <code><![CDATA[Room::OBJECT_TYPE_PHONE_LEGACY]]></code>
+    </DeprecatedConstant>
     <MissingDependency>
       <code><![CDATA[\OCP\Image]]></code>
       <code><![CDATA[\OCP\Image]]></code>
@@ -152,25 +181,19 @@
       <code><![CDATA[NoUserException]]></code>
     </UndefinedClass>
   </file>
+  <file src="lib/Service/RoomService.php">
+    <DeprecatedConstant>
+      <code><![CDATA[Room::OBJECT_TYPE_PHONE_LEGACY]]></code>
+    </DeprecatedConstant>
+  </file>
   <file src="lib/Share/Listener.php">
     <UndefinedClass>
-      <code><![CDATA[$event->getView()]]></code>
-      <code><![CDATA[$event->getView()]]></code>
-      <code><![CDATA[$event->getView()]]></code>
-      <code><![CDATA[$view]]></code>
-      <code><![CDATA[$view]]></code>
-      <code><![CDATA[$view]]></code>
       <code><![CDATA[Filesystem]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Share/RoomShareProvider.php">
     <UndefinedClass>
       <code><![CDATA[Cache]]></code>
-    </UndefinedClass>
-  </file>
-  <file src="lib/TInitialState.php">
-    <UndefinedClass>
-      <code><![CDATA[NoUserException]]></code>
     </UndefinedClass>
   </file>
 </files>

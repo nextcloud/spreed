@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Middleware;
 
 use OCA\Talk\Config;
+use OCA\Talk\Controller\BotController;
 use OCA\Talk\Controller\HostedSignalingServerController;
 use OCA\Talk\Controller\RecordingController;
 use OCA\Talk\Controller\SignalingController;
@@ -51,14 +52,13 @@ class CanUseTalkMiddleware extends Middleware {
 	// Support for E2EE on Talk iOS is still pending
 	public const TALK_IOS_MIN_VERSION_E2EE_CALLS = '23.0.0';
 
-
 	public function __construct(
-		protected IUserSession $userSession,
-		protected IGroupManager $groupManager,
-		protected Config $talkConfig,
-		protected IConfig $serverConfig,
-		protected IRequest $request,
-		protected IURLGenerator $url,
+		private readonly IUserSession $userSession,
+		private readonly IGroupManager $groupManager,
+		private readonly Config $talkConfig,
+		private readonly IConfig $serverConfig,
+		private readonly IRequest $request,
+		private readonly IURLGenerator $url,
 	) {
 	}
 
@@ -91,7 +91,19 @@ class CanUseTalkMiddleware extends Middleware {
 				return;
 			}
 
+			if ($methodName === 'getSettings'
+				&& $controller instanceof SignalingController
+				&& $this->groupManager->isAdmin($user->getUID())) {
+				return;
+			}
+
 			if ($controller instanceof HostedSignalingServerController
+				&& $this->groupManager->isAdmin($user->getUID())) {
+				return;
+			}
+
+			if ($methodName === 'adminListBots'
+				&& $controller instanceof BotController
 				&& $this->groupManager->isAdmin($user->getUID())) {
 				return;
 			}

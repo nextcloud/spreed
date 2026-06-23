@@ -688,6 +688,136 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/attachment/folder": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Prepare the conversation attachment folder and probe filename conflicts
+         * @description Creates the caller's conversation subfolder (and the room share) if not yet present, then creates or returns a Draft folder for staging uploads. Simulates the rename-on-conflict logic for each requested filename without requiring the files to already exist.
+         *     The returned `folder` is the Draft path — a staging area that is NOT shared with the room, so other participants cannot see in-progress uploads or files from aborted messages. Files are moved into the shared subfolder atomically when the attachment endpoint is called.
+         *     Recommended client flow: 1. Call this endpoint to obtain the Draft folder path and predicted final names. 2. Display the predicted names as accessibility placeholders immediately. 3. Upload each file to a random temporary name (e.g. a UUID) inside the returned Draft folder — do NOT upload to the predicted final name. 4. Call the attachment endpoint with the temp path as `filePath` and the original desired name as `fileName`. The server moves the file from Draft into the shared subfolder, resolves any conflicts, and posts the message.
+         */
+        post: operations["chat-probe-attachment-folder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/chat/{token}/attachment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Post a file from the conversation Draft folder as a chat message
+         * @description The file must be inside the Draft folder returned by the probe endpoint. This endpoint moves the file from Draft into the shared conversation subfolder (resolving any name conflicts), creates the chat message, and returns the actual final filename. The subfolder is shared with the room via a folder-level TYPE_ROOM share — no per-file share is created, keeping the Share Overview clean.
+         */
+        post: operations["chat-post-attachment-to-room"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all conversation tags for the current user
+         * @description Required capability: `conversation-tags`
+         */
+        get: operations["conversation_tag-get-tags"];
+        put?: never;
+        /**
+         * Create a new conversation tag
+         * @description Required capability: `conversation-tags`
+         */
+        post: operations["conversation_tag-create-tag"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/tags/{tagId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update a conversation tag
+         * @description Required capability: `conversation-tags`
+         */
+        put: operations["conversation_tag-update-tag"];
+        post?: never;
+        /**
+         * Delete a conversation tag
+         * @description Required capability: `conversation-tags`
+         */
+        delete: operations["conversation_tag-delete-tag"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/tags/reorder": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Reorder conversation tags
+         * @description Required capability: `conversation-tags`
+         */
+        put: operations["conversation_tag-reorder-tags"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/tags/{tagId}/collapsed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set the collapsed state of a conversation tag
+         * @description Required capability: `conversation-tags`
+         */
+        put: operations["conversation_tag-update-tag-collapsed"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/file/{fileId}": {
         parameters: {
             query?: never;
@@ -953,6 +1083,23 @@ export type paths = {
         post: operations["poll-vote-poll"];
         /** Close a poll */
         delete: operations["poll-close-poll"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/poll/{token}/{pollId}/export/{format}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export poll results as a spreadsheet */
+        get: operations["poll-export-poll"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -1434,6 +1581,26 @@ export type paths = {
          * @description Required capability: `archived-conversations-v2`
          */
         delete: operations["room-unarchive-conversation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Assign conversation tags
+         * @description Required capability: `conversation-tags`
+         */
+        post: operations["room-assign-tags"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -2412,189 +2579,403 @@ export type components = {
         /** @enum {string} */
         ActorTypes: "users" | "groups" | "guests" | "emails" | "circles" | "bridged" | "bots" | "federated_users" | "phones";
         Ban: {
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Identifier of the ban
+             */
             id: number;
+            /** @description Actor type of the moderator that banned the participant */
             moderatorActorType: string;
+            /** @description Actor id of the moderator that banned the participant */
             moderatorActorId: string;
+            /** @description Display name of the moderator that banned the participant */
             moderatorDisplayName: string;
+            /** @description Actor type of the banned participant */
             bannedActorType: string;
+            /** @description Actor id of the banned participant */
             bannedActorId: string;
+            /** @description Display name of the banned participant */
             bannedDisplayName: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description UNIX timestamp when the participant was banned
+             */
             bannedTime: number;
+            /** @description Internal note for the moderator to remember the reason for the ban */
             internalNote: string;
         };
         BaseMessage: {
+            /** @description Display name of the message author (can be empty for type `deleted_users` and `guests`) */
             actorDisplayName: string;
+            /** @description Actor id of the message author */
             actorId: string;
+            /** @description See [Constants - Actor types of chat messages](https://nextcloud-talk.readthedocs.io/en/latest/constants#actor-types-of-chat-messages) */
             actorType: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Unix time stamp when the message expires and should be removed from the clients UI without further note or warning (only available with `message-expiration` capability)
+             */
             expirationTimestamp: number;
+            /** @description Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706)) */
             message: string;
+            /** @description Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706)) */
             messageParameters: {
                 [key: string]: components["schemas"]["RichObjectParameter"];
             };
+            /** @description Currently known types are `comment`, `comment_deleted`, `system` and `command` */
             messageType: string;
+            /** @description Empty for normal chat message or the type of the system message (untranslated) */
             systemMessage: string;
         };
         Bot: {
+            /** @description A longer description of the bot helping moderators to decide if they want to enable this bot */
             description: string | null;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Unique numeric identifier of the bot on this server
+             */
             id: number;
+            /** @description Display name of the bot shown as author when it posts a message or reaction */
             name: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description One of the [Bot states](https://nextcloud-talk.readthedocs.io/en/latest/constants#bot-states)
+             */
             state: number;
         };
         BotWithDetails: components["schemas"]["Bot"] & {
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Number of consecutive errors
+             */
             error_count: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Feature flags for the bot (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#bot-features))
+             */
             features: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description UNIX timestamp of the last error
+             */
             last_error_date: number;
+            /** @description The last exception message or error response information when trying to reach the bot */
             last_error_message: string;
+            /** @description URL endpoint that is triggered by this bot */
             url: string;
+            /** @description Hash of the URL prefixed with `bot-` serves as `actorId` */
             url_hash: string;
         };
         CallPeer: {
+            /** @description The user id, guest random id or email address of the attendee */
             actorId: string;
+            /** @description Actor type of the attendee (see [Constants - Attendee types](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-types)) */
             actorType: string;
+            /** @description The display name of the attendee */
             displayName: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Timestamp of the last ping of the user (should be used for sorting)
+             */
             lastPing: number;
+            /** @description up to 512 character long string */
             sessionId: string;
+            /** @description Conversation token */
             token: string;
         };
         Capabilities: {
+            /** @description List of features available on the server */
             features: string[];
+            /** @description List of features only available locally (not for federated conversations) */
             "features-local": string[];
             config: {
                 attachments: {
+                    /** @description Whether file sharing is allowed in conversations */
                     allowed: boolean;
+                    /** @description User's attachment folder (only available for logged in users) */
                     folder?: string;
+                    /** @description Whether per-conversation subfolders are used for attachments */
+                    "conversation-subfolders": boolean;
                 };
                 call: {
+                    /** @description Whether calls are enabled */
                     enabled: boolean;
+                    /** @description Whether breakout rooms are enabled */
                     "breakout-rooms": boolean;
+                    /** @description Whether call recording is enabled */
                     recording: boolean;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Whether recording consent is required (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#recording-consent-required))
+                     */
                     "recording-consent": number;
+                    /** @description List of supported reaction emojis during calls */
                     "supported-reactions": string[];
                     /** @description List of file names relative to the spreed/img/backgrounds/ web path, e.g. `2_home.jpg` */
                     "predefined-backgrounds": string[];
                     /** @description List of file paths relative to the server web root with leading slash, e.g. `/apps/spreed/img/backgrounds/2_home.jpg` */
                     "predefined-backgrounds-v2": string[];
+                    /** @description Whether the user can upload custom virtual backgrounds */
                     "can-upload-background": boolean;
+                    /** @description Whether SIP is enabled on the server */
                     "sip-enabled": boolean;
+                    /** @description Whether SIP dial-out is enabled on the server */
                     "sip-dialout-enabled": boolean;
+                    /** @description Default phone region of the server */
+                    "default-phone-region": string;
+                    /** @description Whether the user can enable SIP for conversations */
                     "can-enable-sip": boolean;
+                    /** @description Whether calls start without media by default */
                     "start-without-media": boolean;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum duration of a call in seconds, `0` means unlimited
+                     */
                     "max-duration": number;
+                    /** @description Whether the blur virtual background is available */
                     "blur-virtual-background": boolean;
+                    /** @description Whether end-to-end encryption is available */
                     "end-to-end-encryption": boolean;
+                    /** @description Whether live transcription is available */
                     "live-transcription": boolean;
+                    /** @description Whether live translation is available */
                     "live-translation": boolean;
+                    /** @description The default target language for live transcription */
                     "live-transcription-target-language-id": string;
+                    /** @description Whether to play sounds for call events */
+                    "play-sounds": boolean;
+                    /**
+                     * Format: int64
+                     * @description Maximum number of participants shown in the grid view
+                     */
+                    "grid-limit": number;
+                    /** @description Whether the grid limit is enforced by the server */
+                    "grid-limit-enforced": boolean;
                 };
                 chat: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum length of a chat message
+                     */
                     "max-length": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Read privacy setting for the user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-read-status-privacy))
+                     */
                     "read-privacy": number;
+                    /** @description Whether translation providers are available */
                     "has-translation-providers": boolean;
+                    /** @description Whether translation task providers are available */
                     "has-translation-task-providers": boolean;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Typing privacy setting for the user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-typing-privacy))
+                     */
                     "typing-privacy": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Minimum number of chat messages before a summary can be generated
+                     */
                     "summary-threshold": number;
-                    /** @enum {string} */
+                    /**
+                     * @description Chat message rendering style (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#chat-style))
+                     * @enum {string}
+                     */
                     style: "split" | "unified";
+                    /** @description Whether Matterbridge is enabled */
+                    "matterbridge-enabled": boolean;
                 };
                 conversations: {
+                    /** @description Whether the user can create conversations */
                     "can-create": boolean;
+                    /** @description Whether passwords are enforced for public conversations */
                     "force-passwords": boolean;
-                    /** @enum {string} */
+                    /**
+                     * @description Conversation list style (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-list-style))
+                     * @enum {string}
+                     */
                     "list-style": "two-lines" | "compact";
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum length of a conversation description
+                     */
                     "description-length": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Retention period for event conversations in seconds, `0` means no retention
+                     */
                     "retention-event": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Retention period for phone conversations in seconds, `0` means no retention
+                     */
                     "retention-phone": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Retention period for instant meetings in seconds, `0` means no retention
+                     */
                     "retention-instant-meetings": number;
+                    /**
+                     * @description User selected sort order for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-sort-options))
+                     * @enum {string}
+                     */
+                    "sort-order": "activity" | "alphabetical";
+                    /**
+                     * @description User selected grouping mode for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-group-mode))
+                     * @enum {string}
+                     */
+                    "group-mode": "none" | "group-first" | "private-first";
                 };
                 federation: {
+                    /** @description Whether federation is enabled */
                     enabled: boolean;
+                    /** @description Whether incoming federation is enabled */
                     "incoming-enabled": boolean;
+                    /** @description Whether outgoing federation is enabled */
                     "outgoing-enabled": boolean;
+                    /** @description Whether only trusted servers are allowed for federation */
                     "only-trusted-servers": boolean;
                 };
                 previews: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum GIF file size in bytes for previews
+                     */
                     "max-gif-size": number;
                 };
                 signaling: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum number of sessions that can be pinged in a single request
+                     */
                     "session-ping-limit": number;
+                    /**
+                     * @description Signaling mode (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#signaling-modes))
+                     * @enum {string}
+                     */
+                    mode: "internal" | "external" | "conversation_cluster";
+                    /** @description Public key for hello v2 authentication */
                     "hello-v2-token-key"?: string;
                 };
                 experiments: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Bit-flag of enabled experiments
+                     */
                     enabled: number;
                 };
+                "feature-hints": {
+                    /** Format: int64 */
+                    current: number;
+                    /** Format: int64 */
+                    hidden: number;
+                };
                 permissions: {
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum default permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))
+                     */
                     "max-default": number;
-                    /** Format: int64 */
+                    /**
+                     * Format: int64
+                     * @description Maximum custom permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))
+                     */
                     "max-custom": number;
+                    /**
+                     * Format: int64
+                     * @description Server default permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))
+                     */
+                    default: number;
                 };
             };
+            /** @description Map of config keys that are only available locally (not for federated conversations) */
             "config-local": {
                 [key: string]: string[];
             };
+            /** @description Version of the Talk app */
             version: string;
         };
         ChatMentionSuggestion: {
+            /** @description The actor id of the suggestion */
             id: string;
+            /** @description The display name of the suggestion */
             label: string;
+            /** @description The source of the suggestion (e.g. `users`, `groups`, `calls`) */
             source: string;
+            /** @description The mention id to use for the mention */
             mentionId: string;
+            /** @description Additional details of the suggestion (e.g. group description) */
             details?: string;
+            /** @description User status of the suggestion */
             status?: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description UNIX timestamp when the user status will be cleared
+             */
             statusClearAt?: number | null;
+            /** @description User status icon */
             statusIcon?: string | null;
+            /** @description User status message */
             statusMessage?: string | null;
         };
         ChatMessage: components["schemas"]["BaseMessage"] & {
-            /** @enum {boolean} */
+            /**
+             * @description Set to `true` when the message was deleted
+             * @enum {boolean}
+             */
             deleted?: true;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description ID of the comment
+             */
             id: number;
+            /** @description True if the user can post a reply to this message (only available with `chat-replies` capability) */
             isReplyable: boolean;
+            /** @description Whether the message should be rendered as markdown or shown as plain text */
             markdown: boolean;
+            /** @description An array map with relation between reaction emoji and total count of reactions with this emoji */
             reactions: {
                 [key: string]: number;
             };
+            /** @description When the user reacted this is the list of emojis the user reacted with */
             reactionsSelf?: string[];
+            /** @description A reference string that was given while posting the message to be able to identify a sent message again (only available with `chat-reference-id` capability) */
             referenceId: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Timestamp in seconds and UTC time zone
+             */
             timestamp: number;
+            /** @description Conversation token */
             token: string;
+            /** @description Display name of the last editing author (only available with `edit-messages` capability and when the message was actually edited) */
             lastEditActorDisplayName?: string;
+            /** @description Actor id of the last editing author (only available with `edit-messages` capability and when the message was actually edited) */
             lastEditActorId?: string;
+            /** @description Actor type of the last editing author - See [Constants - Actor types of chat messages](https://nextcloud-talk.readthedocs.io/en/latest/constants#actor-types-of-chat-messages) (only available with `edit-messages` capability and when the message was actually edited) */
             lastEditActorType?: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Unix time stamp when the message was last edited (only available with `edit-messages` capability and when the message was actually edited)
+             */
             lastEditTimestamp?: number;
+            /** @description Whether the message was sent silently (only available with `silent-send-state` capability) */
             silent?: boolean;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Thread ID if this message is part of a thread
+             */
             threadId?: number;
+            /** @description Whether this message is the root of a thread */
             isThread?: boolean;
+            /** @description Title of the thread if this message is the root of a thread */
             threadTitle?: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Number of replies in the thread if this message is the root of a thread
+             */
             threadReplies?: number;
+            /** @description Additional metadata of the message */
             metaData?: components["schemas"]["ChatMessageMetaData"];
         };
         ChatMessageMetaData: {
@@ -2621,31 +3002,62 @@ export type components = {
             threadId?: number;
             /** @description Set when a thread is created with this message. If missing, no thread creation is associated with this message */
             threadTitle?: string;
+            /**
+             * Format: int64
+             * @description Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message id
+             */
+            replyToMessageId?: number;
+            /** @description Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation token. */
+            replyToConversationToken?: string;
+            /** @description Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's group conversation name */
+            replyToConversationName?: string;
+            /** @description Set only when a message in a convo is private replied on a 1-1 room. Represents the parent message's actor display name */
+            replyToActorDisplayName?: string;
         };
         ChatMessageWithParent: components["schemas"]["ChatMessage"] & {
             parent?: components["schemas"]["ChatMessage"] | components["schemas"]["DeletedChatMessage"];
         };
         ChatProxyMessage: components["schemas"]["BaseMessage"];
         ChatReminder: {
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description ID of the message the reminder is for
+             */
             messageId: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description UNIX timestamp when the reminder should trigger
+             */
             timestamp: number;
+            /** @description Conversation token */
             token: string;
+            /** @description User id of the user that set the reminder */
             userId: string;
         };
         ChatReminderUpcoming: {
+            /** @description Display name of the message author */
             actorDisplayName: string;
+            /** @description Actor id of the message author */
             actorId: string;
+            /** @description Actor type of the message author */
             actorType: string;
+            /** @description Message string with placeholders */
             message: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description ID of the message the reminder is for
+             */
             messageId: number;
+            /** @description Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706)) */
             messageParameters: {
                 [key: string]: components["schemas"]["RichObjectParameter"];
             };
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description UNIX timestamp when the reminder should trigger
+             */
             reminderTimestamp: number;
+            /** @description Conversation token */
             roomToken: string;
         };
         ConversationPreset: {
@@ -2660,97 +3072,199 @@ export type components = {
                 [key: string]: number;
             };
         };
+        ConversationTag: {
+            /** @description SnowflakeID */
+            id: string;
+            /** @description Display name */
+            name: string;
+            /**
+             * Format: int64
+             * @description Sort order from 0 (top) to higher (bottom)
+             */
+            sortOrder: number;
+            /** @description Whether the tag list should be open or collapsed */
+            collapsed: boolean;
+            /**
+             * @description favorites and other are special tags and have a fixed sorting position
+             * @enum {string}
+             */
+            type: "custom" | "favorites" | "other";
+        };
         DashboardEvent: {
+            /** @description List of calendars this event belongs to */
             calendars: components["schemas"]["DashboardEventCalendar"][];
+            /** @description Name of the event */
             eventName: string;
+            /** @description Description of the event */
             eventDescription: string | null;
+            /** @description Attachments of the event */
             eventAttachments: {
                 [key: string]: components["schemas"]["DashboardEventAttachment"];
             };
+            /** @description Link to the event */
             eventLink: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description UNIX timestamp of the event start
+             */
             start: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description UNIX timestamp of the event end
+             */
             end: number;
+            /** @description Conversation token */
             roomToken: string;
+            /** @description Version of conversation avatar for caching */
             roomAvatarVersion: string;
+            /** @description Name of the conversation */
             roomName: string;
+            /** @description Display name of the conversation */
             roomDisplayName: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Type of the conversation (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-types))
+             */
             roomType: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description UNIX timestamp since when a call is active, or null if no call
+             */
             roomActiveSince: number | null;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Number of invited attendees
+             */
             invited: number | null;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Number of accepted attendees
+             */
             accepted: number | null;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Number of tentative attendees
+             */
             tentative: number | null;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Number of declined attendees
+             */
             declined: number | null;
         };
         DashboardEventAttachment: {
+            /** @description List of calendar principal URIs this attachment belongs to */
             calendars: string[];
+            /** @description MIME type of the attachment */
             fmttype: string;
+            /** @description File name of the attachment */
             filename: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description File id of the attachment
+             */
             fileid: number;
+            /** @description Whether a preview is available for the attachment */
             preview: boolean;
+            /** @description Link to the preview of the attachment */
             previewLink: string | null;
         };
         DashboardEventCalendar: {
+            /** @description Principal URI of the calendar owner */
             principalUri: string;
+            /** @description Name of the calendar */
             calendarName: string;
+            /** @description Color of the calendar */
             calendarColor: string | null;
         };
         DeletedChatMessage: {
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description ID of the parent comment
+             */
             id: number;
-            /** @enum {boolean} */
+            /**
+             * @description `true` when the parent is deleted
+             * @enum {boolean}
+             */
             deleted: true;
         };
         FederationInvite: {
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Identifier of the invitation
+             */
             id: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description State of the invitation
+             */
             state: number;
+            /** @description Cloud ID of the local user */
             localCloudId: string;
+            /** @description Token of the local conversation */
             localToken: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Attendee ID on the remote server
+             */
             remoteAttendeeId: number;
+            /** @description URL of the remote server */
             remoteServerUrl: string;
+            /** @description Token on the remote server */
             remoteToken: string;
+            /** @description Name of the conversation on the remote server */
             roomName: string;
+            /** @description User id of the invited user */
             userId: string;
+            /** @description Cloud ID of the inviter */
             inviterCloudId: string;
+            /** @description Display name of the inviter */
             inviterDisplayName: string;
         };
         InvitationList: {
+            /** @description List of user ids that could not be invited */
             users?: string[];
+            /** @description List of federated user ids that could not be invited */
             federated_users?: string[];
+            /** @description List of group ids that could not be invited */
             groups?: string[];
+            /** @description List of email addresses that could not be invited */
             emails?: string[];
+            /** @description List of phone numbers that could not be invited */
             phones?: string[];
+            /** @description List of team ids that could not be invited */
             teams?: string[];
         };
         LiveTranscriptionLanguage: {
+            /** @description Name of the language */
             name: string;
+            /** @description Metadata of the language */
             metadata: {
+                /** @description Word separator character */
                 separator: string;
+                /** @description Whether the language is right-to-left */
                 rtl: boolean;
             };
         };
         Matterbridge: {
+            /** @description Whether the bridge is enabled */
             enabled: boolean;
+            /** @description Bridge configuration parts */
             parts: components["schemas"]["MatterbridgeConfigFields"];
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Process ID of the Matterbridge process
+             */
             pid: number;
         };
         MatterbridgeConfigFields: {
             [key: string]: Record<string, never>;
         }[];
         MatterbridgeProcessState: {
+            /** @description Log output of the Matterbridge process */
             log: string;
+            /** @description Whether the Matterbridge process is running */
             running: boolean;
         };
         MatterbridgeWithProcessState: components["schemas"]["Matterbridge"] & components["schemas"]["MatterbridgeProcessState"];
@@ -2762,114 +3276,217 @@ export type components = {
             itemsperpage?: string;
         };
         Participant: {
+            /** @description The unique identifier for the given actor type */
             actorId: string;
+            /** @description The cloud id of the invited user */
             invitedActorId?: string;
+            /** @description Currently known `users|guests|emails|groups|circles` (see [Constants - Attendee types](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-types)) */
             actorType: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Unique attendee id
+             */
             attendeeId: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Dedicated permissions for the current participant, if not `Custom` this are not the resulting permissions (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))
+             */
             attendeePermissions: number;
+            /** @description Unique dial-in authentication code for this user, when the conversation has SIP enabled (see `sipEnabled` attribute) */
             attendeePin: string;
+            /** @description Can be empty for guests */
             displayName: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Call flags the user joined with (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-in-call-flag))
+             */
             inCall: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Timestamp of the last ping of the user (should be used for sorting)
+             */
             lastPing: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Permissions level of the participant (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-types))
+             */
             participantType: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Combined final permissions for the participant, permissions are picked in order of attendee then call then default and the first which is `Custom` will apply (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))
+             */
             permissions: number;
+            /** @description Only available with `breakout-rooms-v1` capability */
             roomToken: string;
+            /** @description Array of session ids, each are up to 512 character long strings, or empty if no session */
             sessionIds: string[];
+            /** @description Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation */
             status?: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation
+             */
             statusClearAt?: number | null;
+            /** @description Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation */
             statusIcon?: string | null;
+            /** @description Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation */
             statusMessage?: string | null;
+            /** @description Only available with `sip-support-dialout` capability and only filled for moderators that are allowed to configure SIP for conversations */
             phoneNumber?: string | null;
+            /** @description Only available with `sip-support-dialout` capability and only filled for moderators that are allowed to configure SIP for conversations */
             callId?: string | null;
         };
         Poll: components["schemas"]["PollDraft"] & {
+            /** @description Detailed list who voted for which option (only available for public closed polls) */
             details?: components["schemas"]["PollVote"][];
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description The number of unique voters that voted (only available when the actor voted on public poll or the poll is closed unless for the creator and moderators)
+             */
             numVoters?: number;
+            /** @description Array of option ids the participant voted for */
             votedSelf?: number[];
+            /** @description Map with `'option-' + optionId` => number of votes (only available when the actor voted on public poll or the poll is closed) */
             votes?: {
                 [key: string]: number;
             };
         };
         PollDraft: {
+            /** @description Display name of the poll author */
             actorDisplayName: string;
+            /** @description Actor ID identifying the poll author */
             actorId: string;
+            /** @description Actor type of the poll author (see [Constants - Attendee types](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-types)) */
             actorType: components["schemas"]["ActorTypes"];
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description ID of the poll
+             */
             id: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Maximum amount of options a user can vote for, `0` means unlimited
+             */
             maxVotes: number;
+            /** @description The options participants can vote for */
             options: string[];
+            /** @description The question of the poll */
             question: string;
             /**
              * Format: int64
+             * @description Result mode of the poll (see [Constants - Poll mode](https://nextcloud-talk.readthedocs.io/en/latest/constants#poll-mode))
              * @enum {integer}
              */
             resultMode: 0 | 1;
             /**
              * Format: int64
+             * @description Status of the poll (see [Constants - Poll status](https://nextcloud-talk.readthedocs.io/en/latest/constants#poll-status))
              * @enum {integer}
              */
             status: 0 | 1 | 2;
         };
         PollVote: {
+            /** @description The display name of the participant that voted */
             actorDisplayName: string;
+            /** @description The actor id of the participant that voted */
             actorId: string;
+            /** @description The actor type of the participant that voted (see [Constants - Attendee types](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-types)) */
             actorType: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description The option that was voted for
+             */
             optionId: number;
         };
         PublicCapabilities: {
             spreed?: components["schemas"]["Capabilities"];
         };
         Reaction: {
+            /** @description Display name of the reaction author */
             actorDisplayName: string;
+            /** @description Actor id of the reacting participant */
             actorId: string;
+            /** @description `guests` or `users` */
             actorType: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Timestamp in seconds and UTC time zone
+             */
             timestamp: number;
         };
         RichObjectParameter: {
+            /** @description Object type (see [Rich Object String](https://github.com/nextcloud/server/issues/1706)) */
             type: string;
+            /** @description Object id */
             id: string;
+            /** @description Visible name */
             name: string;
+            /** @description Server URL for federated users */
             server?: string;
+            /** @description URL of the object */
             link?: string;
-            /** @enum {string} */
+            /**
+             * @description Type of the call
+             * @enum {string}
+             */
             "call-type"?: "one2one" | "group" | "public";
+            /** @description URL of the icon */
             "icon-url"?: string;
+            /** @description ID of a message that this object refers to */
             "message-id"?: string;
+            /** @description Name of the Deck board */
             boardname?: string;
+            /** @description Name of the Deck stack */
             stackname?: string;
+            /** @description File size in bytes */
             size?: string;
+            /** @description Path of the file */
             path?: string;
+            /** @description Mimetype of the file */
             mimetype?: string;
-            /** @enum {string} */
+            /**
+             * @description Whether a preview is available for the file
+             * @enum {string}
+             */
             "preview-available"?: "yes" | "no";
-            /** @enum {string} */
+            /**
+             * @description Whether the download should be hidden for the file
+             * @enum {string}
+             */
             "hide-download"?: "yes" | "no";
+            /** @description Modification time of the file as UNIX timestamp */
             mtime?: string;
+            /** @description Latitude of a location */
             latitude?: string;
+            /** @description Longitude of a location */
             longitude?: string;
+            /** @description Description of the object */
             description?: string;
+            /** @description URL of a thumbnail */
             thumb?: string;
+            /** @description Website URL */
             website?: string;
-            /** @enum {string} */
+            /**
+             * @description Visibility of the object
+             * @enum {string}
+             */
             visibility?: "0" | "1";
-            /** @enum {string} */
+            /**
+             * @description Whether the object is assignable
+             * @enum {string}
+             */
             assignable?: "0" | "1";
+            /** @description Conversation token */
             conversation?: string;
+            /** @description ETag of the object for caching */
             etag?: string;
+            /** @description Permissions for the file */
             permissions?: string;
+            /** @description Width of the object (e.g. image, video) */
             width?: string;
+            /** @description Height of the object (e.g. image, video) */
             height?: string;
+            /** @description Blurhash of the image */
             blurhash?: string;
         };
         Room: {
@@ -2947,7 +3564,7 @@ export type components = {
             hasPassword: boolean;
             /**
              * Format: int64
-             * @description Numeric identifier of the conversation
+             * @description Identifier of the conversation
              */
             id: number;
             /** @description Flag if the conversation has a custom avatar (only available with `avatar` capability) */
@@ -2978,7 +3595,7 @@ export type components = {
             lastReadMessage: number;
             /**
              * Format: int64
-             * @description Listable scope for the room (only available with `listable-rooms` capability)
+             * @description Listable scope for the room (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#listable-scope)) (only available with `listable-rooms` capability)
              */
             listable: number;
             /** @description ID of the language to use for live transcriptions in the room, */
@@ -3006,7 +3623,10 @@ export type components = {
             messageExpiration: number;
             /** @description Name of the conversation (can also be empty) */
             name: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description The call notification level for the user (see [Participant call notification levels](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-call-notification-levels))
+             */
             notificationCalls: number;
             /**
              * Format: int64
@@ -3019,12 +3639,12 @@ export type components = {
             objectType: string;
             /**
              * Format: int64
-             * @description "In call" flags of the user's session making the request (only available with `in-call-flags` capability)
+             * @description "In call" flags of the user's session making the request (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-in-call-flag)) (only available with `in-call-flags` capability)
              */
             participantFlags: number;
             /**
              * Format: int64
-             * @description Permissions level of the current user
+             * @description Permissions level of the current user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-types))
              */
             participantType: number;
             /**
@@ -3034,7 +3654,7 @@ export type components = {
             permissions: number;
             /**
              * Format: int64
-             * @description Read-only state for the current user (only available with `read-only-rooms` capability)
+             * @description Read-only state for the current user (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#read-only-states)) (only available with `read-only-rooms` capability)
              */
             readOnly: number;
             /**
@@ -3051,16 +3671,16 @@ export type components = {
              * @description SIP enable status (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#sip-states))
              */
             sipEnabled: number;
-            /** @description Optional: Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status */
+            /** @description Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status */
             status?: string;
             /**
              * Format: int64
-             * @description Optional: Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status
+             * @description Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status
              */
             statusClearAt?: number | null;
-            /** @description Optional: Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status */
+            /** @description Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status */
             statusIcon?: string | null;
-            /** @description Optional: Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status */
+            /** @description Only available for one-to-one conversations, when `includeStatus=true` is set and the user has a status, can still be null even with a status */
             statusMessage?: string | null;
             /** @description Token identifier of the conversation which is used for further interaction */
             token: string;
@@ -3084,6 +3704,8 @@ export type components = {
             isImportant: boolean;
             /** @description Required capability: `sensitive-conversations` */
             isSensitive: boolean;
+            /** @description IDs of the custom tags this conversation is marked with (only available with `conversation-tags` capability) */
+            tagIds: string[];
             /**
              * Format: int64
              * @description Required capability: `pinned-messages`
@@ -3099,26 +3721,48 @@ export type components = {
              * @description Required capability: `scheduled-messages` (local)
              */
             hasScheduledMessages: number;
+            /**
+             * Format: int64
+             * @description Bit-flag of enabled attributes of this conversation (only available with capability: `conversation-attributes`). See [attributes list](https://nextcloud-talk.readthedocs.io/en/latest/constants/#conversation-attributes) for details
+             */
+            attributes: number;
         };
         RoomLastMessage: components["schemas"]["ChatMessage"] | components["schemas"]["ChatProxyMessage"];
         RoomWithInvalidInvitations: components["schemas"]["Room"] & {
+            /** @description List of participants that could not be invited grouped by source type */
             invalidParticipants: components["schemas"]["InvitationList"];
         };
         ScheduledMessage: {
             /** @description SnowflakeID */
             id: string;
+            /** @description Actor id of the message author */
             actorId: string;
+            /** @description Actor type of the message author */
             actorType: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Thread ID if the scheduled message is for a thread
+             */
             threadId: number;
+            /** @description Title of the thread if the scheduled message is for a thread */
             threadTitle?: string;
+            /** @description Parent message if the scheduled message is a reply */
             parent?: components["schemas"]["ChatMessage"];
+            /** @description Message string with placeholders */
             message: string;
+            /** @description Currently known types are `comment`, `comment_deleted`, `system` and `command` */
             messageType: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description UNIX timestamp when the scheduled message was created
+             */
             createdAt: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description UNIX timestamp when the message should be sent
+             */
             sendAt: number;
+            /** @description Whether the message should be sent silently without creating chat notifications */
             silent: boolean;
             /**
              * Format: int64
@@ -3127,30 +3771,52 @@ export type components = {
             originalSendAt?: number;
         };
         SignalingFederationSettings: {
+            /** @description URL of the signaling server for federation */
             server: string;
+            /** @description URL of the Nextcloud server for federation */
             nextcloudServer: string;
+            /** @description Authentication parameters for the hello request */
             helloAuthParams: {
                 token: string;
             };
+            /** @description Room id on the federated server */
             roomId: string;
         };
         SignalingSession: {
+            /** @description The unique identifier for the given actor type */
             actorId: string;
+            /** @description Actor type of the attendee (see [Constants - Attendee types](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-types)) */
             actorType: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Call flags the user joined with (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-in-call-flag))
+             */
             inCall: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Timestamp of the last ping of the user
+             */
             lastPing: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Combined final permissions for the participant (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#attendee-permissions))
+             */
             participantPermissions: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Identifier of the conversation
+             */
             roomId: number;
+            /** @description up to 512 character long string */
             sessionId: string;
+            /** @description User id of the participant (empty for guests) */
             userId: string;
         };
         SignalingSettings: {
+            /** @description Federation signaling settings, or null if not federated */
             federation: components["schemas"]["SignalingFederationSettings"] | null;
-            helloAuthParams: {
+            /** @description Authentication parameters for the hello request */
+            helloAuthParams?: {
                 "1.0": {
                     userid: string | null;
                     ticket: string;
@@ -3159,44 +3825,71 @@ export type components = {
                     token: string;
                 };
             };
+            /** @description Whether the warning about the signaling server should be hidden */
             hideWarning: boolean;
+            /** @description URL of the signaling server */
             server: string;
+            /** @description Signaling mode (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#signaling-modes)) */
             signalingMode: string;
+            /** @description SIP dial-in information */
             sipDialinInfo: string;
+            /** @description STUN servers */
             stunservers: {
                 urls: string[];
             }[];
-            ticket: string;
+            /** @description Authentication ticket for the signaling server */
+            ticket?: string;
+            /** @description TURN servers */
             turnservers: {
                 urls: string[];
                 username: string;
-                credential: Record<string, never>;
+                credential: string;
             }[];
+            /** @description User id of the current user */
             userId: string | null;
         };
         Thread: {
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Identifier of the thread
+             */
             id: number;
+            /** @description Conversation token */
             roomToken: string;
+            /** @description Title of the thread */
             title: string;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description ID of the last message in the thread
+             */
             lastMessageId: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description UNIX timestamp of the last activity in the thread
+             */
             lastActivity: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Number of replies in the thread
+             */
             numReplies: number;
         };
         ThreadAttendee: {
             /**
              * Format: int64
+             * @description The notification level for the user in this thread (See [Participant notification levels](https://nextcloud-talk.readthedocs.io/en/latest/constants#participant-notification-levels))
              * @enum {integer}
              */
             notificationLevel: 0 | 1 | 2 | 3;
         };
         ThreadInfo: {
+            /** @description Thread details */
             thread: components["schemas"]["Thread"];
+            /** @description Attendee details for the current user in this thread */
             attendee: components["schemas"]["ThreadAttendee"];
+            /** @description First message in the thread (root message) */
             first: components["schemas"]["ChatMessage"] | null;
+            /** @description Last message in the thread */
             last: components["schemas"]["ChatMessage"] | null;
         };
     };
@@ -5239,6 +5932,11 @@ export interface operations {
                      */
                     replyTo?: number;
                     /**
+                     * @description Parent token to which reply is initiated
+                     * @default
+                     */
+                    replyToToken?: string;
+                    /**
                      * @description If sent silent the chat message will not create any notifications
                      * @default false
                      */
@@ -5275,6 +5973,22 @@ export interface operations {
             };
             /** @description Sending message is not possible */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description When trying to cross reference wrongly on a reply-private */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5566,6 +6280,23 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description When trying to cross reference wrongly on a reply-private */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "reply-to";
+                            };
                         };
                     };
                 };
@@ -6385,7 +7116,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Message not found */
+            /** @description No reminder found or message not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -6940,6 +7671,669 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: components["schemas"]["ChatMentionSuggestion"][];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-probe-attachment-folder": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description Desired filenames to probe
+                     * @default []
+                     */
+                    fileNames?: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description Draft folder path and rename map returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                folder: string;
+                                renames: {
+                                    [key: string]: string;
+                                }[];
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Could not prepare the conversation folder */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Conversation subfolders feature is disabled */
+            501: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description User storage quota exceeded */
+            507: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "chat-post-attachment-to-room": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Path of the file relative to the user's home root (e.g. "Talk/Group Chat-abc123/Draft/uuid.jpg") */
+                    filePath: string;
+                    /** @description Client-generated reference ID for the message */
+                    referenceId: string;
+                    /**
+                     * @description JSON-encoded metadata (caption, messageType, silent, …)
+                     * @default
+                     */
+                    talkMetaData?: string;
+                    /**
+                     * @description Desired final file name; the service resolves conflicts by appending " (1)", " (2)", … if already taken
+                     * @default
+                     */
+                    fileName?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description File moved from Draft and posted as chat message */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                renames: {
+                                    [key: string]: string;
+                                }[];
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Path does not point to a file */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description File not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description File is not inside the conversation Draft folder for this room */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Could not prepare the conversation folder */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Conversation subfolders feature is disabled */
+            501: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description User storage quota exceeded */
+            507: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "conversation_tag-get-tags": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tags returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ConversationTag"][];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "conversation_tag-create-tag": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Name of the tag */
+                    name: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Tag created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ConversationTag"];
+                        };
+                    };
+                };
+            };
+            /** @description Invalid or duplicate name, or the user has reached the tag limit */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "name" | "limit";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "conversation_tag-update-tag": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                /** @description ID of the tag */
+                tagId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description New name for the tag */
+                    name: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Tag updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ConversationTag"];
+                        };
+                    };
+                };
+            };
+            /** @description Invalid or duplicate name, or the tag is a built-in and cannot be renamed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "name" | "type";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Tag not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "conversation_tag-delete-tag": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                /** @description ID of the tag */
+                tagId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tag deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description The tag is a built-in and cannot be deleted */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "type";
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Tag not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "conversation_tag-reorder-tags": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Ordered list of tag IDs */
+                    orderedIds: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description Tags reordered */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ConversationTag"][];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "conversation_tag-update-tag-collapsed": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                /** @description ID of the tag */
+                tagId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Whether the tag should be collapsed */
+                    collapsed: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Collapsed state updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["ConversationTag"];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Tag not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
                         };
                     };
                 };
@@ -8193,6 +9587,69 @@ export interface operations {
             };
         };
     };
+    "poll-export-poll": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+                token: string;
+                /** @description ID of the poll */
+                pollId: number;
+                /** @description Export format */
+                format: "ods" | "csv";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Poll exported successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/vnd.oasis.opendocument.spreadsheet": string;
+                    "text/csv": string;
+                };
+            };
+            /** @description Missing permissions to export poll */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Poll not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
     "preset-get-presets": {
         parameters: {
             query?: never;
@@ -9017,7 +10474,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "password" | "permissions" | "read-only" | "recording-consent" | "sip-enabled" | "type";
+                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
                                 message?: string;
                             };
                         };
@@ -9049,7 +10506,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "password" | "permissions" | "read-only" | "recording-consent" | "sip-enabled" | "type";
+                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
                                 message?: string;
                             };
                         };
@@ -9067,7 +10524,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "password" | "permissions" | "read-only" | "recording-consent" | "sip-enabled" | "type";
+                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
                                 message?: string;
                             };
                         };
@@ -9190,9 +10647,9 @@ export interface operations {
             header: {
                 /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
                 "x-nextcloud-federation"?: string;
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the Sipbridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -10614,6 +12071,61 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Conversation was unarchived */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "room-assign-tags": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v4";
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description IDs of tags to assign (empty array to unassign all)
+                     * @default []
+                     */
+                    tagIds?: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description Conversation tags updated */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -12152,10 +13664,14 @@ export interface operations {
                 token?: string;
             };
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-recording-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the recording backend */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared recording secret, to verify authenticity from the recording backend */
                 "talk-recording-checksum"?: string;
+                /** @description Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum */
+                "talk-sipbridge-random"?: string;
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
+                "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -13261,6 +14777,10 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature */
+                "x-nextcloud-talk-bot-random"?: string;
+                /** @description SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity */
+                "x-nextcloud-talk-bot-signature"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -13292,6 +14812,17 @@ export interface operations {
                      * @default false
                      */
                     silent?: boolean;
+                    /**
+                     * @description Only supported when not replying, when given will create a thread (requires `threads` capability)
+                     * @default
+                     */
+                    threadTitle?: string;
+                    /**
+                     * Format: int64
+                     * @description Thread id which this message is a reply to without quoting a specific message (ignored when $replyTo is given, also requires `threads` capability)
+                     * @default 0
+                     */
+                    threadId?: number;
                 };
             };
         };
@@ -13358,6 +14889,10 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature */
+                "x-nextcloud-talk-bot-random"?: string;
+                /** @description SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity */
+                "x-nextcloud-talk-bot-signature"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -13458,6 +14993,10 @@ export interface operations {
                 reaction: string;
             };
             header: {
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature */
+                "x-nextcloud-talk-bot-random"?: string;
+                /** @description SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity */
+                "x-nextcloud-talk-bot-signature"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -14274,9 +15813,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-recording-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the recording backend */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared recording secret, to verify authenticity from the recording backend */
                 "talk-recording-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -14368,9 +15907,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-recording-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the recording backend */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared recording secret, to verify authenticity from the recording backend */
                 "talk-recording-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -14446,9 +15985,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the Sipbridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -14525,9 +16064,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the Sipbridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -14609,9 +16148,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the Sipbridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -14708,9 +16247,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the Sipbridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -14816,9 +16355,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the Sipbridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -14884,9 +16423,9 @@ export interface operations {
                 options?: string;
             };
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the Sipbridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -14975,9 +16514,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
                 "spreed-signaling-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the signaling backend */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared signaling secret, to verify authenticity from the signaling backend */
                 "spreed-signaling-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;

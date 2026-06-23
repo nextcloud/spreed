@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { showError } from '@nextcloud/dialogs'
-import { getLanguage, t } from '@nextcloud/l10n'
+import { n, t } from '@nextcloud/l10n'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { computed } from 'vue'
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
@@ -52,8 +52,12 @@ const descriptionLabel = computed(() => {
 	if (expirationDuration.value === 0) {
 		return t('spreed', 'Would you like to delete this conversation?')
 	}
-	const expirationDurationFormatted = new Intl.RelativeTimeFormat(getLanguage(), { numeric: 'always' }).format(expirationDuration.value!, 'days')
-	return t('spreed', 'This conversation will be automatically deleted for everyone {expirationDurationFormatted} of no activity.', { expirationDurationFormatted })
+	return n(
+		'spreed',
+		'This conversation will be automatically deleted for everyone after %n day of inactivity.',
+		'This conversation will be automatically deleted for everyone after %n days of inactivity.',
+		expirationDuration.value!,
+	)
 })
 
 /**

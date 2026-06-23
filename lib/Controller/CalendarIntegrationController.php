@@ -20,7 +20,6 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 use OCP\IUserSession;
-use Psr\Log\LoggerInterface;
 
 /**
  * @psalm-import-type TalkDashboardEvent from ResponseDefinitions
@@ -29,9 +28,8 @@ class CalendarIntegrationController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected IUserSession $userSession,
-		protected LoggerInterface $logger,
-		protected CalendarIntegrationService $service,
+		private readonly IUserSession $userSession,
+		private readonly CalendarIntegrationService $service,
 	) {
 		parent::__construct($appName, $request);
 	}

@@ -1,20 +1,16 @@
-diff --git b/.github/workflows/dependabot-approve-merge.yml a/.github/workflows/dependabot-approve-merge.yml
-index c0411c057..e1d0b9b2f 100644
---- b/.github/workflows/dependabot-approve-merge.yml
-+++ a/.github/workflows/dependabot-approve-merge.yml
-@@ -46,13 +46,13 @@ jobs:
-
-       # GitHub actions bot approve
-       - uses: hmarr/auto-approve-action@f0939ea97e9205ef24d872e76833fa908a770363 # v4.0.0
--        if: startsWith(steps.branchname.outputs.branch, 'dependabot/')
-+        if: startsWith(steps.branchname.outputs.branch, 'dependabot/') && contains(steps.branchname.outputs.branch, '/webrtc-adapter-') != true && contains(steps.branchname.outputs.branch, '/nextcloud/vue-') != true
-         with:
-           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-       # Enable GitHub auto merge
-       - name: Auto merge
-         uses: alexwilson/enable-github-automerge-action@56e3117d1ae1540309dc8f7a9f2825bc3c5f06ff # v2.0.0
--        if: startsWith(steps.branchname.outputs.branch, 'dependabot/')
-+        if: startsWith(steps.branchname.outputs.branch, 'dependabot/') && contains(steps.branchname.outputs.branch, '/webrtc-adapter-') != true && contains(steps.branchname.outputs.branch, '/nextcloud/vue-') != true
-         with:
-           github-token: ${{ secrets.GITHUB_TOKEN }}
+diff --git a/.github/workflows/dependabot-approve-merge.yml b/.github/workflows/dependabot-approve-merge.yml
+index 68f8ca09c2..3d34b9735a 100644
+--- a/.github/workflows/dependabot-approve-merge.yml
++++ b/.github/workflows/dependabot-approve-merge.yml
+@@ -30,9 +30,9 @@ jobs:
+       # env variable for maintainers: 'true' allows to auto-merge 1.0.2 -> 2.0.0
+       ALLOW_MAJOR: false
+       # env variable for maintainers: 'true' allows to auto-merge 1.0.2 -> 1.1.0
+-      ALLOW_MINOR: true
++      ALLOW_MINOR: false
+       # env variable for maintainers: RegExp string to ignore some dependencies from auto-approve and auto-merge
+-      IGNORE_PATTERN: ''
++      IGNORE_PATTERN: '(webrtc-adapter|\@nextcloud\/vue)'
+     permissions:
+       # for auto-approve step to work
+       pull-requests: write

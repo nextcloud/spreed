@@ -15,7 +15,6 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Federation\FederationManager;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BotServerMapper;
@@ -40,7 +39,6 @@ use OCP\L10N\IFactory;
 use OCP\Notification\AlreadyProcessedException;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
-use OCP\RichObjectStrings\Definitions;
 use OCP\Share\IManager as IShareManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -54,7 +52,6 @@ class NotifierTest extends TestCase {
 	protected IAppManager&MockObject $appManager;
 	protected IUserManager&MockObject $userManager;
 	protected IGroupManager&MockObject $groupManager;
-	protected GuestManager&MockObject $guestManager;
 	protected IShareManager&MockObject $shareManager;
 	protected Manager&MockObject $manager;
 	protected ParticipantService&MockObject $participantService;
@@ -65,7 +62,6 @@ class NotifierTest extends TestCase {
 	protected MessageParser&MockObject $messageParser;
 	protected IRootFolder&MockObject $rootFolder;
 	protected ITimeFactory&MockObject $timeFactory;
-	protected Definitions&MockObject $definitions;
 	protected AddressHandler&MockObject $addressHandler;
 	protected BotServerMapper&MockObject $botServerMapper;
 	protected FederationManager&MockObject $federationManager;
@@ -82,7 +78,6 @@ class NotifierTest extends TestCase {
 		$this->appManager = $this->createMock(IAppManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
-		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->shareManager = $this->createMock(IShareManager::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
@@ -93,7 +88,6 @@ class NotifierTest extends TestCase {
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->rootFolder = $this->createMock(IRootFolder::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
-		$this->definitions = $this->createMock(Definitions::class);
 		$this->addressHandler = $this->createMock(AddressHandler::class);
 		$this->botServerMapper = $this->createMock(BotServerMapper::class);
 		$this->federationManager = $this->createMock(FederationManager::class);
@@ -107,7 +101,6 @@ class NotifierTest extends TestCase {
 			$this->appManager,
 			$this->userManager,
 			$this->groupManager,
-			$this->guestManager,
 			$this->shareManager,
 			$this->manager,
 			$this->participantService,
@@ -118,7 +111,6 @@ class NotifierTest extends TestCase {
 			$this->messageParser,
 			$this->rootFolder,
 			$this->timeFactory,
-			$this->definitions,
 			$this->addressHandler,
 			$this->botServerMapper,
 			$this->federationManager,
@@ -193,9 +185,7 @@ class NotifierTest extends TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
 
 		$room = $this->createMock(Room::class);
 		$room->expects($this->atLeastOnce())
@@ -215,7 +205,7 @@ class NotifierTest extends TestCase {
 			->with('spreed', 'de')
 			->willReturn($l);
 
-		$recipient = $this->createMock(IUser::class);
+		$recipient = $this->createStub(IUser::class);
 		$this->userManager->expects($this->once())
 			->method('get')
 			->with('recipient')
@@ -311,9 +301,7 @@ class NotifierTest extends TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
 
 		$room = $this->createMock(Room::class);
 		$room->expects($this->atLeastOnce())
@@ -332,7 +320,7 @@ class NotifierTest extends TestCase {
 			->with('spreed', 'de')
 			->willReturn($l);
 
-		$recipient = $this->createMock(IUser::class);
+		$recipient = $this->createStub(IUser::class);
 		$this->userManager->method('get')
 			->with('recipient')
 			->willReturn($recipient);
@@ -795,9 +783,7 @@ class NotifierTest extends TestCase {
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
-			->willReturnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
 
 		$this->notificationManager->method('isPreparingPushNotification')
 			->willReturn($isPushNotification);
@@ -844,7 +830,7 @@ class NotifierTest extends TestCase {
 			->with('spreed', 'de')
 			->willReturn($l);
 
-		$recipient = $this->createMock(IUser::class);
+		$recipient = $this->createStub(IUser::class);
 		$this->userManager->expects($this->once())
 			->method('get')
 			->with('recipient')
@@ -1008,7 +994,7 @@ class NotifierTest extends TestCase {
 	public function testPrepareThrows(string $message, string $app, ?bool $isDisabledForUser, ?bool $validRoom, ?string $subject, ?array $params, ?string $objectType, string $token = 'roomToken'): void {
 		/** @var INotification&MockObject $n */
 		$n = $this->createMock(INotification::class);
-		$l = $this->createMock(IL10N::class);
+		$l = $this->createStub(IL10N::class);
 
 		if ($validRoom === null) {
 			$this->manager->expects($this->never())

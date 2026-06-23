@@ -9,9 +9,9 @@ declare(strict_types=1);
 namespace OCA\Talk\Recording;
 
 final readonly class RecordingRequest {
-	public const TYPE_STARTED = 'started';
-	public const TYPE_STOPPED = 'stopped';
-	public const TYPE_FAILED = 'failed';
+	public const string TYPE_STARTED = 'started';
+	public const string TYPE_STOPPED = 'stopped';
+	public const string TYPE_FAILED = 'failed';
 
 	public function __construct(
 		/** @var self::TYPE_* */

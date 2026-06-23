@@ -6,7 +6,6 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-
 namespace OCA\Talk\Exceptions;
 
 class FederationRestrictionException extends \InvalidArgumentException {
@@ -19,7 +18,7 @@ class FederationRestrictionException extends \InvalidArgumentException {
 	 * @param self::REASON_* $reason
 	 */
 	public function __construct(
-		protected readonly string $reason,
+		private readonly string $reason,
 	) {
 		parent::__construct($this->reason);
 	}

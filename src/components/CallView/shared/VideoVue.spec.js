@@ -4,14 +4,14 @@
  */
 
 import { mount } from '@vue/test-utils'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'es-toolkit'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import VideoVue from './VideoVue.vue'
 import storeConfig from '../../../store/storeConfig.js'
 import EmitterMixin from '../../../utils/EmitterMixin.js'
-import CallParticipantModel from '../../../utils/webrtc/models/CallParticipantModel.js'
+import { CallParticipantModel } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 describe('VideoVue.vue', () => {
 	let store

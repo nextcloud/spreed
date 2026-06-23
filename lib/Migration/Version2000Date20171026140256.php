@@ -5,6 +5,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\Migration;
 
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -17,9 +18,9 @@ use OCP\Migration\SimpleMigrationStep;
 class Version2000Date20171026140256 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IDBConnection $connection,
-		protected IConfig $config,
-		protected IGroupManager $groupManager,
+		private readonly IDBConnection $connection,
+		private readonly IConfig $config,
+		private readonly IGroupManager $groupManager,
 	) {
 	}
 
@@ -47,10 +48,10 @@ class Version2000Date20171026140256 extends SimpleMigrationStep {
 		$result = $query->executeQuery();
 
 		$output->startProgress();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$output->advance();
 
-			if (strlen($row['name']) !== 12 || $this->groupManager->groupExists($row['name'])) {
+			if (strlen((string)$row['name']) !== 12 || $this->groupManager->groupExists($row['name'])) {
 				continue;
 			}
 

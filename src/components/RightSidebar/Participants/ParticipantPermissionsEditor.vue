@@ -8,6 +8,7 @@
 		<PermissionEditor
 			:displayName="displayName"
 			:permissions="permissions"
+			:token="token"
 			@close="$emit('close')"
 			@submit="handleSubmitPermissions" />
 	</div>

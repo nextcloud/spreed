@@ -21,7 +21,7 @@ use OCP\Migration\SimpleMigrationStep;
  */
 class Version19000Date20240312105627 extends SimpleMigrationStep {
 	public function __construct(
-		protected IDBConnection $connection,
+		private readonly IDBConnection $connection,
 	) {
 	}
 
@@ -67,7 +67,6 @@ class Version19000Date20240312105627 extends SimpleMigrationStep {
 		$table->addColumn('notification', Types::TEXT, [
 			'notnull' => true,
 		]);
-
 
 		$table->setPrimaryKey(['id']);
 		$table->addIndex(['next_retry'], 'talk_retry_ocm_next');

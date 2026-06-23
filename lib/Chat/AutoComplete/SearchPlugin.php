@@ -8,13 +8,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\AutoComplete;
 
-use OCA\Talk\Federation\Authenticator;
 use OCA\Talk\Files\Util;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
-use OCA\Talk\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchPlugin;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
@@ -26,14 +23,11 @@ class SearchPlugin implements ISearchPlugin {
 	protected ?Room $room = null;
 
 	public function __construct(
-		protected IUserManager $userManager,
-		protected GuestManager $guestManager,
-		protected TalkSession $talkSession,
-		protected ParticipantService $participantService,
-		protected Util $util,
-		protected ?string $userId,
-		protected IL10N $l,
-		protected Authenticator $federationAuthenticator,
+		private readonly IUserManager $userManager,
+		private readonly ParticipantService $participantService,
+		private readonly Util $util,
+		private readonly IL10N $l,
+		private readonly ?string $userId,
 	) {
 	}
 

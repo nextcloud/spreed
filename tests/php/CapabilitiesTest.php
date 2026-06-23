@@ -100,14 +100,32 @@ class CapabilitiesTest extends TestCase {
 		$this->talkConfig->method('getConversationsListStyle')
 			->willReturn('two-lines');
 
+		$this->talkConfig->method('getConversationsSortOrder')
+			->willReturn('activity');
+
+		$this->talkConfig->method('getConversationsGroupMode')
+			->willReturn('none');
+
 		$this->talkConfig->expects($this->once())
 			->method('isBreakoutRoomsEnabled')
+			->willReturn(false);
+
+		$this->talkConfig->expects($this->once())
+			->method('isConversationSubfoldersEnabled')
 			->willReturn(false);
 
 		$this->talkConfig->expects($this->once())
 			->method('getChatStyle')
 			->with(null)
 			->willReturn('split');
+
+		$this->talkConfig->expects($this->any())
+			->method('getSignalingMode')
+			->willReturn('internal');
+
+		$this->talkConfig->expects($this->any())
+			->method('getDefaultPermissions')
+			->willReturn(502);
 
 		$this->talkConfig->expects($this->once())
 			->method('getLiveTranscriptionTargetLanguageId')
@@ -117,7 +135,6 @@ class CapabilitiesTest extends TestCase {
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
 			->willReturnMap([
-				['spreed', 'has_reference_id', 'no', 'no'],
 				['spreed', 'max-gif-size', '3145728', '200000'],
 				['spreed', 'start_calls', (string)Room::START_CALL_EVERYONE, (string)Room::START_CALL_EVERYONE],
 				['spreed', 'session-ping-limit', '200', '200'],
@@ -132,6 +149,7 @@ class CapabilitiesTest extends TestCase {
 				['retention_instant_meetings', 1, 1],
 				['experiments_guests', 0, 0],
 				['summary_threshold', 100, 100],
+				['feature_hints_hidden', 0, 999],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
@@ -147,6 +165,7 @@ class CapabilitiesTest extends TestCase {
 				'config' => [
 					'attachments' => [
 						'allowed' => false,
+						'conversation-subfolders' => false,
 					],
 					'call' => [
 						'enabled' => true,
@@ -157,6 +176,7 @@ class CapabilitiesTest extends TestCase {
 						'can-upload-background' => false,
 						'sip-enabled' => false,
 						'sip-dialout-enabled' => false,
+						'default-phone-region' => '',
 						'can-enable-sip' => false,
 						'start-without-media' => false,
 						'max-duration' => 0,
@@ -164,6 +184,9 @@ class CapabilitiesTest extends TestCase {
 						'end-to-end-encryption' => false,
 						'live-transcription' => false,
 						'live-translation' => false,
+						'play-sounds' => false,
+						'grid-limit' => 0,
+						'grid-limit-enforced' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -194,11 +217,14 @@ class CapabilitiesTest extends TestCase {
 						'typing-privacy' => 0,
 						'summary-threshold' => 100,
 						'style' => 'split',
+						'matterbridge-enabled' => false,
 					],
 					'conversations' => [
 						'can-create' => false,
 						'force-passwords' => false,
 						'list-style' => 'two-lines',
+						'sort-order' => 'activity',
+						'group-mode' => 'none',
 						'description-length' => 2000,
 						'retention-event' => 28,
 						'retention-phone' => 7,
@@ -215,13 +241,19 @@ class CapabilitiesTest extends TestCase {
 					],
 					'signaling' => [
 						'session-ping-limit' => 200,
+						'mode' => 'internal',
 					],
 					'experiments' => [
 						'enabled' => 0,
 					],
+					'feature-hints' => [
+						'current' => 34,
+						'hidden' => 999,
+					],
 					'permissions' => [
 						'max-default' => 510,
 						'max-custom' => 511,
+						'default' => 502,
 					],
 				],
 				'config-local' => Capabilities::LOCAL_CONFIGS,
@@ -260,6 +292,10 @@ class CapabilitiesTest extends TestCase {
 			->willReturn(true);
 
 		$this->talkConfig->expects($this->once())
+			->method('isConversationSubfoldersEnabled')
+			->willReturn(true);
+
+		$this->talkConfig->expects($this->once())
 			->method('getAttachmentFolder')
 			->with('uid')
 			->willReturn('/Talk');
@@ -287,6 +323,20 @@ class CapabilitiesTest extends TestCase {
 		$this->talkConfig->method('getConversationsListStyle')
 			->willReturn('two-lines');
 
+		$this->talkConfig->method('getConversationsSortOrder')
+			->willReturn('activity');
+
+		$this->talkConfig->method('getConversationsGroupMode')
+			->willReturn('none');
+
+		$this->talkConfig->expects($this->any())
+			->method('getSignalingMode')
+			->willReturn('internal');
+
+		$this->talkConfig->expects($this->any())
+			->method('getDefaultPermissions')
+			->willReturn(502);
+
 		$user->method('getQuota')
 			->willReturn($quota);
 
@@ -296,7 +346,6 @@ class CapabilitiesTest extends TestCase {
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
 			->willReturnMap([
-				['spreed', 'has_reference_id', 'no', 'yes'],
 				['spreed', 'max-gif-size', '3145728', '200000'],
 				['spreed', 'start_calls', (string)Room::START_CALL_EVERYONE, (string)Room::START_CALL_NOONE],
 				['spreed', 'session-ping-limit', '200', '50'],
@@ -318,6 +367,13 @@ class CapabilitiesTest extends TestCase {
 				['retention_instant_meetings', 1, 1],
 				['experiments_users', 0, 0],
 				['summary_threshold', 100, 100],
+				['feature_hints_hidden', 0, 1],
+			]);
+
+		$this->serverConfig->expects($this->any())
+			->method('getSystemValueString')
+			->willReturnMap([
+				['default_phone_region', '', 'DE'],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
@@ -335,6 +391,7 @@ class CapabilitiesTest extends TestCase {
 				'config' => [
 					'attachments' => [
 						'allowed' => true,
+						'conversation-subfolders' => true,
 						'folder' => '/Talk',
 					],
 					'call' => [
@@ -346,6 +403,7 @@ class CapabilitiesTest extends TestCase {
 						'can-upload-background' => $canUpload,
 						'sip-enabled' => false,
 						'sip-dialout-enabled' => false,
+						'default-phone-region' => 'DE',
 						'can-enable-sip' => false,
 						'start-without-media' => false,
 						'max-duration' => 0,
@@ -353,6 +411,9 @@ class CapabilitiesTest extends TestCase {
 						'end-to-end-encryption' => false,
 						'live-transcription' => false,
 						'live-translation' => false,
+						'play-sounds' => false,
+						'grid-limit' => 0,
+						'grid-limit-enforced' => false,
 						'predefined-backgrounds' => [
 							'1_office.jpg',
 							'2_home.jpg',
@@ -383,11 +444,14 @@ class CapabilitiesTest extends TestCase {
 						'typing-privacy' => 0,
 						'summary-threshold' => 100,
 						'style' => 'split',
+						'matterbridge-enabled' => false,
 					],
 					'conversations' => [
 						'can-create' => $canCreate,
 						'force-passwords' => false,
 						'list-style' => 'two-lines',
+						'sort-order' => 'activity',
+						'group-mode' => 'none',
 						'description-length' => 2000,
 						'retention-event' => 28,
 						'retention-phone' => 7,
@@ -404,13 +468,19 @@ class CapabilitiesTest extends TestCase {
 					],
 					'signaling' => [
 						'session-ping-limit' => 50,
+						'mode' => 'internal',
 					],
 					'experiments' => [
 						'enabled' => 0,
 					],
+					'feature-hints' => [
+						'current' => 34,
+						'hidden' => 1,
+					],
 					'permissions' => [
 						'max-default' => 510,
 						'max-custom' => 511,
+						'default' => 502,
 					],
 				],
 				'config-local' => Capabilities::LOCAL_CONFIGS,
@@ -461,7 +531,7 @@ class CapabilitiesTest extends TestCase {
 	public function testGetCapabilitiesUserDisallowed(): void {
 		$capabilities = $this->getCapabilities();
 
-		$user = $this->createMock(IUser::class);
+		$user = $this->createStub(IUser::class);
 		$this->userSession->expects($this->once())
 			->method('getUser')
 			->willReturn($user);

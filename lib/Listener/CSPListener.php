@@ -20,7 +20,7 @@ use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 class CSPListener implements IEventListener {
 
 	public function __construct(
-		private Config $config,
+		private readonly Config $config,
 	) {
 	}
 
@@ -35,8 +35,8 @@ class CSPListener implements IEventListener {
 		$csp->addAllowedMediaDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain("'self'");
-		$csp->addAllowedChildSrcDomain('blob:');
-		$csp->addAllowedChildSrcDomain("'self'");
+		$csp->addAllowedFrameDomain('blob:');
+		$csp->addAllowedFrameDomain("'self'");
 		$csp->addAllowedScriptDomain('blob:');
 		$csp->addAllowedScriptDomain("'self'");
 		$csp->addAllowedScriptDomain("'wasm-unsafe-eval'");

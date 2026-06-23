@@ -34,17 +34,17 @@ export default function SentVideoQualityThrottler(localMediaModel, callParticipa
 	this._speakingOrInGracePeriodAfterSpeaking = false
 
 	this._availableVideosThreshold = {}
-	this._availableVideosThreshold[QUALITY.THUMBNAIL] = 15
-	this._availableVideosThreshold[QUALITY.VERY_LOW] = 10
-	this._availableVideosThreshold[QUALITY.LOW] = 7
-	this._availableVideosThreshold[QUALITY.MEDIUM] = 4
+	this._availableVideosThreshold[QUALITY.THUMBNAIL] = 120
+	this._availableVideosThreshold[QUALITY.VERY_LOW] = 120
+	this._availableVideosThreshold[QUALITY.LOW] = 80
+	this._availableVideosThreshold[QUALITY.MEDIUM] = 20
 	// QUALITY.HIGH otherwise
 
 	this._availableAudiosThreshold = {}
-	this._availableAudiosThreshold[QUALITY.THUMBNAIL] = 40
-	this._availableAudiosThreshold[QUALITY.VERY_LOW] = 30
-	this._availableAudiosThreshold[QUALITY.LOW] = 20
-	this._availableAudiosThreshold[QUALITY.MEDIUM] = 10
+	this._availableAudiosThreshold[QUALITY.THUMBNAIL] = 200
+	this._availableAudiosThreshold[QUALITY.VERY_LOW] = 120
+	this._availableAudiosThreshold[QUALITY.LOW] = 80
+	this._availableAudiosThreshold[QUALITY.MEDIUM] = 40
 	// QUALITY.HIGH otherwise
 
 	this._handleLocalVideoAvailableChangeBound = this._handleLocalVideoAvailableChange.bind(this)

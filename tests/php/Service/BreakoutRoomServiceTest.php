@@ -15,7 +15,6 @@ use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\Notification\IManager as INotificationManager;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -30,7 +29,6 @@ class BreakoutRoomServiceTest extends TestCase {
 	protected ChatManager&MockObject $chatManager;
 	protected INotificationManager&MockObject $notificationManager;
 	protected ITimeFactory&MockObject $timeFactory;
-	protected IEventDispatcher&MockObject $dispatcher;
 	protected IL10N&MockObject $l;
 	protected BreakoutRoomService $service;
 
@@ -44,7 +42,6 @@ class BreakoutRoomServiceTest extends TestCase {
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->notificationManager = $this->createMock(INotificationManager::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
-		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->service = new BreakoutRoomService(
 			$this->config,
@@ -54,8 +51,7 @@ class BreakoutRoomServiceTest extends TestCase {
 			$this->chatManager,
 			$this->notificationManager,
 			$this->timeFactory,
-			$this->dispatcher,
-			$this->l
+			$this->l,
 		);
 	}
 	public static function dataParseAttendeeMap(): array {

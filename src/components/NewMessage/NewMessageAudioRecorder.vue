@@ -55,6 +55,12 @@ import IconClose from 'vue-material-design-icons/Close.vue'
 import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.vue'
 import { useAudioEncoder } from '../../composables/useAudioEncoder.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
+import { useSettingsStore } from '../../stores/settings.ts'
+import {
+	processNoiseSuppression,
+	registerNoiseSuppressionWorklet,
+	unregisterNoiseSuppressionWorklet,
+} from '../../utils/suppressNoise.ts'
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
 export default {
@@ -77,6 +83,8 @@ export default {
 	emits: ['recording', 'audioFile'],
 
 	setup() {
+		const settingsStore = useSettingsStore()
+
 		const {
 			isMediaRecorderReady,
 			isMediaRecorderLoading,
@@ -85,6 +93,7 @@ export default {
 		} = useAudioEncoder()
 
 		return {
+			settingsStore,
 			token: useGetToken(),
 			isMediaRecorderReady,
 			isMediaRecorderLoading,
@@ -112,6 +121,9 @@ export default {
 				minutes: 0,
 				seconds: 0,
 			},
+
+			// consumer ID for noise suppression worklet
+			noiseSuppressionConsumer: null,
 		}
 	},
 
@@ -173,7 +185,11 @@ export default {
 			// Create new audio stream
 			try {
 				this.audioStream = await mediaDevicesManager.getUserMedia({
-					audio: true,
+					audio: {
+						noiseSuppression: this.settingsStore.noiseSuppression && this.settingsStore.noiseSuppressionWithModel === 'none',
+						echoCancellation: this.settingsStore.echoCancellation,
+						autoGainControl: this.settingsStore.autoGainControl,
+					},
 					video: false,
 				})
 			} catch (exception) {
@@ -189,7 +205,11 @@ export default {
 
 			// Create a media recorder to capture the stream
 			try {
-				this.mediaRecorder = new this.MediaRecorder(this.audioStream, {
+				if (this.settingsStore.noiseSuppressionWithModel !== 'none') {
+					this.noiseSuppressionConsumer = await registerNoiseSuppressionWorklet()
+				}
+				const audioStreamProcessed = processNoiseSuppression(this.audioStream, this.noiseSuppressionConsumer, this.settingsStore.noiseSuppressionWithModel)
+				this.mediaRecorder = new this.MediaRecorder(audioStreamProcessed, {
 					mimeType: 'audio/wav',
 				})
 			} catch (exception) {
@@ -243,6 +263,10 @@ export default {
 			this.mediaRecorder.stop()
 			clearInterval(this.recordTimer)
 			this.$emit('recording', false)
+			if (this.noiseSuppressionConsumer) {
+				unregisterNoiseSuppressionWorklet(this.noiseSuppressionConsumer)
+				this.noiseSuppressionConsumer = null
+			}
 		},
 
 		/**
@@ -292,7 +316,7 @@ export default {
 			const today = new Date()
 			let time = today.getFullYear() + '-' + ('0' + today.getMonth()).slice(-2) + '-' + ('0' + today.getDay()).slice(-2)
 			time += ' ' + ('0' + today.getHours()).slice(-2) + '-' + ('0' + today.getMinutes()).slice(-2) + '-' + ('0' + today.getSeconds()).slice(-2)
-			const name = t('spreed', 'Talk recording from {time} ({conversation})', { time, conversation })
+			const name = t('spreed', 'Voice message {time} ({conversation})', { time, conversation })
 			return name.substring(0, 146) + '.wav'
 		},
 

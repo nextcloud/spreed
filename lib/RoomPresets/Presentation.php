@@ -15,12 +15,12 @@ use OCP\IL10N;
 
 readonly class Presentation extends APreset {
 	public function __construct(
-		protected IL10N $l,
+		private IL10N $l,
 	) {
 	}
 
 	#[\Override]
-	public function getIdentifier(): string {
+	public static function getIdentifier(): string {
 		return 'presentation';
 	}
 
@@ -31,7 +31,7 @@ readonly class Presentation extends APreset {
 
 	#[\Override]
 	public function getDescription(): string {
-		return $this->l->t('Presentation');
+		return $this->l->t('Restricted conversation for internal presentations.');
 	}
 
 	#[\Override]

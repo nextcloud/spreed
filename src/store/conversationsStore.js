@@ -54,6 +54,7 @@ import {
 	unarchiveConversation,
 	unbindConversationFromObject,
 } from '../services/conversationsService.ts'
+import { assignConversationToTags } from '../services/conversationTagsService.ts'
 import { setLiveTranscriptionLanguage } from '../services/liveTranscriptionService.ts'
 import {
 	clearConversationHistory,
@@ -109,6 +110,13 @@ const DUMMY_CONVERSATION = {
 }
 
 /**
+ * FIXME use IndexedDB for storing data (with proper offline-support)
+ * localStorage has a limit of information it can store per browser page.
+ * If exceeded (1000+ conversations for a user), do not cache conversations list
+ */
+let isLocalStorageQuotaExceeded = false
+
+/**
  * Emit global event for user status update with the status from a 1-1 conversation
  *
  * @param {object} conversation - a 1-1 conversation
@@ -137,22 +145,15 @@ function state() {
 const getters = {
 	conversations: (state) => state.conversations,
 	/**
-	 * List of all conversations sorted by isFavorite and lastActivity without breakout rooms
+	 * List of all conversations without breakout rooms
 	 *
 	 * @param {object} state state
-	 * @return {object[]} sorted conversations list
+	 * @return {object[]} conversations list
 	 */
 	conversationsList: (state) => {
 		return Object.values(state.conversations)
 			// Filter out breakout rooms
 			.filter((conversation) => conversation.objectType !== CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
-			// Sort by isFavorite and lastActivity
-			.sort((conversation1, conversation2) => {
-				if (conversation1.isFavorite !== conversation2.isFavorite) {
-					return conversation1.isFavorite ? -1 : 1
-				}
-				return conversation2.lastActivity - conversation1.lastActivity
-			})
 	},
 	/**
 	 * List of all archived conversations sorted
@@ -493,14 +494,29 @@ const actions = {
 	 * @param {object} context default store context
 	 */
 	cacheConversations(context) {
+		if (isLocalStorageQuotaExceeded) {
+			// Ignore caching to BrowserStorage
+			return
+		}
+
 		const conversations = context.getters.conversationsList
 		if (!conversations.length) {
 			return
 		}
 
-		const serializedConversations = JSON.stringify(conversations)
-		BrowserStorage.setItem('cachedConversations', serializedConversations)
-		console.debug(`Conversations were saved to BrowserStorage. Estimated object size: ${(serializedConversations.length / 1024).toFixed(2)} kB`)
+		try {
+			const serializedConversations = JSON.stringify(conversations)
+			BrowserStorage.setItem('cachedConversations', serializedConversations)
+			console.debug(`Conversations were saved to BrowserStorage. Estimated object size: ${(serializedConversations.length / 1024).toFixed(2)} kB`)
+		} catch (error) {
+			if (error.name === 'QuotaExceededError') {
+				console.error('Too many conversations to cache, disabling: ', error)
+				isLocalStorageQuotaExceeded = true
+				BrowserStorage.removeItem('cachedConversations')
+			} else {
+				console.error('Error while caching conversations: ', error)
+			}
+		}
 	},
 
 	/**
@@ -608,6 +624,19 @@ const actions = {
 			context.commit('addConversation', response.data.ocs.data)
 		} catch (error) {
 			console.error('Error while changing the conversation archived status: ', error)
+		}
+	},
+
+	async assignConversationToTags(context, { token, tagIds }) {
+		if (!context.getters.conversations[token]) {
+			return
+		}
+
+		try {
+			const response = await assignConversationToTags(token, tagIds)
+			context.commit('addConversation', response.data.ocs.data)
+		} catch (error) {
+			console.error('Error while assigning conversation to tags: ', error)
 		}
 	},
 
@@ -1097,8 +1126,17 @@ const actions = {
 	 * @param {string} [payload.password] password for a public conversation
 	 * @param {string} [payload.description] description for a new conversation
 	 * @param {number} [payload.listable] whether a conversation is opened to registered users
+	 * @param {number} [payload.messageExpiration] message expiration time for the conversation
+	 * @param {boolean} [payload.readOnly] whether the conversation is read-only
+	 * @param {string} [payload.lobbyState] lobby state for the conversation
+	 * @param {number} [payload.lobbyTimer] lobby timer for the conversation
+	 * @param {boolean} [payload.recordingConsent] whether recording consent is required
+	 * @param {boolean} [payload.sipEnabled] whether SIP is enabled
+	 * @param {object} [payload.permissions] permissions for the conversation
+	 * @param {object} [payload.mentionPermissions] mention permissions for the conversation
 	 * @param {Array} [payload.participants] list of participants
 	 * @param {object} [payload.avatar] avatar object: { emoji, color } | { file }
+	 * @param {string} [payload.preset] preset for the conversation
 	 * @return {object} new conversation object
 	 */
 	async createGroupConversation(context, {
@@ -1109,8 +1147,17 @@ const actions = {
 		password,
 		description,
 		listable,
+		messageExpiration,
+		readOnly,
+		lobbyState,
+		lobbyTimer,
+		recordingConsent,
+		sipEnabled,
+		permissions,
+		mentionPermissions,
 		participants,
 		avatar,
+		preset,
 	}) {
 		if (roomType === CONVERSATION.TYPE.PUBLIC && forcePasswordProtection && !password) {
 			throw new Error('password_required')
@@ -1141,9 +1188,18 @@ const actions = {
 					password,
 					description,
 					listable,
+					messageExpiration,
+					readOnly,
+					lobbyState,
+					lobbyTimer,
+					recordingConsent,
+					sipEnabled,
+					permissions,
+					mentionPermissions,
 					emoji: avatar?.emoji,
 					avatarColor: avatar?.color,
 					participants: participantsMap,
+					preset,
 				})
 			} else {
 				response = await createLegacyConversation({
@@ -1280,7 +1336,7 @@ const actions = {
 			context.commit('addConversation', conversation)
 			showSuccess(t('spreed', 'Conversation picture set'))
 		} catch (error) {
-			throw new Error(error.response?.data?.ocs?.data?.message ?? error.message)
+			throw new Error(error.response?.data?.ocs?.data?.message ?? error.message, { cause: error })
 		}
 	},
 
@@ -1291,7 +1347,7 @@ const actions = {
 			context.commit('addConversation', conversation)
 			showSuccess(t('spreed', 'Conversation picture set'))
 		} catch (error) {
-			throw new Error(error.response?.data?.ocs?.data?.message ?? error.message)
+			throw new Error(error.response?.data?.ocs?.data?.message ?? error.message, { cause: error })
 		}
 	},
 

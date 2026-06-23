@@ -225,7 +225,7 @@ class RoomPluginTest extends TestCase {
 	) {
 		$rooms = [];
 		foreach ($roomsForParticipant as $roomData) {
-			$rooms[] = call_user_func_array([$this, 'newRoom'], $roomData);
+			$rooms[] = call_user_func_array($this->newRoom(...), $roomData);
 		}
 
 		$this->manager->expects($this->any())
@@ -237,9 +237,7 @@ class RoomPluginTest extends TestCase {
 			->method('addResultSet')
 			->with(
 				$this->callback(
-					function (SearchResultType $searchResultType) {
-						return $searchResultType->getLabel() === 'rooms';
-					}
+					static fn (SearchResultType $searchResultType) => $searchResultType->getLabel() === 'rooms'
 				),
 				$expectedMatches,
 				$expectedMatchesExact

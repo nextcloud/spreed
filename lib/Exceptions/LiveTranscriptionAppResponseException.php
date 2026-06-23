@@ -13,12 +13,10 @@ use OCP\Http\Client\IResponse;
 class LiveTranscriptionAppResponseException extends \Exception {
 
 	public function __construct(
-		string $message = '',
-		int $code = 0,
-		?\Throwable $previous = null,
-		protected IResponse $response,
+		string $message,
+		private readonly IResponse $response,
 	) {
-		parent::__construct($message, $code, $previous);
+		parent::__construct($message);
 	}
 
 	public function getResponse(): IResponse {

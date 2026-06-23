@@ -1,9 +1,8 @@
 Feature: chat-1/group
   Background:
     Given user "participant1" exists
-    Given user "participant2" exists
-    Given user "participant3" exists
     And group "attendees1" exists
+    And user "participant2" exists
     And user "participant2" is member of group "attendees1"
 
   Scenario: owner can send and receive chat messages to and from group room
@@ -37,6 +36,7 @@ Feature: chat-1/group
       | group room | users     | participant1 | participant1-displayname | Message 2 | []                |
 
   Scenario: not invited user can not send nor receive chat messages to nor from group room
+    Given user "participant3" exists
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |

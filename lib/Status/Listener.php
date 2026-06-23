@@ -24,7 +24,7 @@ use OCP\UserStatus\IUserStatus;
 class Listener implements IEventListener {
 
 	public function __construct(
-		protected IManager $statusManager,
+		private readonly IManager $statusManager,
 	) {
 	}
 

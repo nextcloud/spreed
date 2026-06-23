@@ -1,11 +1,10 @@
 Feature: conversation-5/bruteforce-protection
   Background:
-    Given user "participant1" exists
     Given user "participant2" exists
-    Given group "group1" exists
 
   # Does not log an attempt but shows the password form
   Scenario: User opens the call/{token} URL of a password protected public room
+    Given user "participant1" exists
     Given enable brute force protection
     And user "participant1" creates room "room" (v4)
       | roomType | 3 |
@@ -18,6 +17,7 @@ Feature: conversation-5/bruteforce-protection
     And disable brute force protection
 
   Scenario: User opens the call/{token} URL of a private room
+    Given user "participant1" exists
     Given enable brute force protection
     And user "participant1" creates room "room" (v4)
       | roomType | 2 |
@@ -43,6 +43,7 @@ Feature: conversation-5/bruteforce-protection
     And disable brute force protection
 
   Scenario: User joins a password protected public room
+    Given user "participant1" exists
     Given enable brute force protection
     And user "participant1" creates room "room" (v4)
       | roomType | 3 |
@@ -82,6 +83,7 @@ Feature: conversation-5/bruteforce-protection
     And disable brute force protection
 
   Scenario: Prevent brute forcing on an endpoint that is not meant to handle the password
+    Given user "participant1" exists
     Given enable brute force protection
     And user "participant1" creates room "room" (v4)
       | roomType | 3 |

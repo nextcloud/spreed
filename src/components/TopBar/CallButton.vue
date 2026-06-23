@@ -39,7 +39,7 @@
 		</template>
 	</NcButton>
 	<NcButton
-		v-else-if="showLeaveCallButton && !canEndForAll && !isBreakoutRoom"
+		v-else-if="showLeaveCallButton && (!canEndForAll || isVoiceRoom) && !isBreakoutRoom"
 		:aria-label="leaveCallLabel"
 		class="leave-call"
 		:variant="isScreensharing ? 'tertiary' : 'error'"
@@ -88,7 +88,7 @@
 				{{ leaveCallLabel }}
 			</template>
 		</NcActionButton>
-		<NcActionButton v-if="canEndForAll" @click="leaveCall(true)">
+		<NcActionButton v-if="canEndForAll && !isVoiceRoom" @click="leaveCall(true)">
 			<template #icon>
 				<IconPhoneOffOutline :size="20" />
 			</template>
@@ -100,7 +100,6 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
@@ -116,9 +115,10 @@ import IconPhoneOffOutline from 'vue-material-design-icons/PhoneOffOutline.vue'
 import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
+import { useJoinCall } from '../../composables/useJoinCall.ts'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { callSIPDialOut } from '../../services/callsService.ts'
-import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
@@ -205,6 +205,7 @@ export default {
 	},
 
 	setup() {
+		const { joinCall } = useJoinCall()
 		return {
 			actorStore: useActorStore(),
 			tokenStore: useTokenStore(),
@@ -216,13 +217,13 @@ export default {
 			settingsStore: useSettingsStore(),
 			soundsStore: useSoundsStore(),
 			isMobile: useIsMobile(),
+			joinCall,
 		}
 	},
 
 	data() {
 		return {
 			loading: false,
-			callEnabled: false,
 		}
 	},
 
@@ -310,7 +311,7 @@ export default {
 
 		startCallTitle() {
 			if (this.isNextcloudTalkHashDirty) {
-				return t('spreed', 'Nextcloud Talk was updated, you cannot start or join a call.') + ' ' + messagePleaseReload
+				return t('spreed', 'The server was updated, you cannot start or join a call.') + ' ' + messagePleaseReload
 			}
 
 			if (this.callViewStore.callHasJustEnded) {
@@ -329,7 +330,7 @@ export default {
 		},
 
 		showStartCallButton() {
-			return this.callEnabled
+			return getTalkConfig(this.token, 'call', 'enabled')
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 				&& this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 				&& (!this.conversation.remoteServer || hasTalkFeature(this.token, 'federation-v2'))
@@ -366,6 +367,10 @@ export default {
 			}
 			return this.isBreakoutRoom ? 'primary' : 'error'
 		},
+
+		isVoiceRoom() {
+			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+		},
 	},
 
 	watch: {
@@ -375,58 +380,17 @@ export default {
 		},
 	},
 
-	mounted() {
-		this.callEnabled = loadState('spreed', 'call_enabled')
-	},
-
 	methods: {
 		t,
-		isParticipantTypeModerator(participantType) {
-			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].includes(participantType)
-		},
 
-		/**
-		 * Starts or joins a call
-		 */
-		async joinCall() {
-			let flags = PARTICIPANT.CALL_FLAG.IN_CALL
-			if (this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
-				flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
-			}
-			if (this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO && !this.isPhoneRoom) {
-				flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
-			}
-
-			console.info('Joining call')
+		async handleJoinCall() {
 			this.loading = true
-			// Close navigation
-			emit('toggle-navigation', {
-				open: false,
-			})
-			await this.$store.dispatch('joinCall', {
-				token: this.token,
-				participantIdentifier: this.actorStore.participantIdentifier,
-				flags,
+			await this.joinCall(this.token, {
 				silent: this.hasCall ? true : this.silentCall,
 				recordingConsent: this.recordingConsentGiven,
+				shouldStartRecording: this.isRecordingFromStart,
 			})
 			this.loading = false
-
-			if (this.isRecordingFromStart) {
-				this.$store.dispatch('startCallRecording', {
-					token: this.token,
-					callRecording: CALL.RECORDING.VIDEO,
-				})
-			}
-
-			if (this.isPhoneRoom) {
-				const attendeeId = this.$store.getters.participantsList(this.token)
-					.find((participant) => participant.actorType === ATTENDEE.ACTOR_TYPE.PHONES)
-					?.attendeeId
-				if (attendeeId) {
-					this.dialOutPhoneNumber(attendeeId)
-				}
-			}
 		},
 
 		async leaveCall(endMeetingForAll = false) {
@@ -434,6 +398,12 @@ export default {
 				console.info('End meeting for everyone')
 			} else {
 				console.info('Leaving call')
+			}
+
+			if (this.isVoiceRoom) {
+				this.$router.push({ name: 'root' })
+				// Call ending is handled in App.vue
+				return
 			}
 
 			// Remove selected participant
@@ -459,16 +429,14 @@ export default {
 			this.soundsStore.initAudioObjects()
 
 			if (this.isMediaSettings || this.isPhoneRoom) {
-				emit('talk:media-settings:hide')
-				this.joinCall()
+				this.handleJoinCall()
 				return
 			}
 
 			if (this.showRecordingWarning || this.showMediaSettings) {
 				emit('talk:media-settings:show')
 			} else {
-				emit('talk:media-settings:hide')
-				this.joinCall()
+				this.handleJoinCall()
 			}
 		},
 
@@ -476,21 +444,6 @@ export default {
 			EventBus.emit('switch-to-conversation', {
 				token: this.breakoutRoomsStore.getParentRoomToken(this.token),
 			})
-		},
-
-		async dialOutPhoneNumber(attendeeId) {
-			try {
-				await callSIPDialOut(this.token, attendeeId)
-			} catch (error) {
-				if (error?.response?.data?.ocs?.data?.message) {
-					showError(t('spreed', 'Phone number could not be called: {error}', {
-						error: error?.response?.data?.ocs?.data?.message,
-					}))
-				} else {
-					console.error(error)
-					showError(t('spreed', 'Phone number could not be called'))
-				}
-			}
 		},
 	},
 }

@@ -21,7 +21,7 @@ class AttendeesAddedEvent extends AttendeesEvent {
 	public function __construct(
 		Room $room,
 		array $attendees,
-		protected bool $skipLastMessageUpdate = false,
+		private readonly bool $skipLastMessageUpdate = false,
 	) {
 		parent::__construct($room, $attendees);
 	}

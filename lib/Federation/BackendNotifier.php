@@ -37,16 +37,16 @@ use SensitiveParameter;
 class BackendNotifier {
 
 	public function __construct(
-		private ICloudFederationFactory $cloudFederationFactory,
-		private AddressHandler $addressHandler,
-		private LoggerInterface $logger,
-		private ICloudFederationProviderManager $federationProviderManager,
-		private IUserManager $userManager,
-		private IURLGenerator $url,
-		private RetryNotificationMapper $retryNotificationMapper,
-		private ITimeFactory $timeFactory,
-		private ICloudIdManager $cloudIdManager,
-		private RestrictionValidator $restrictionValidator,
+		private readonly ICloudFederationFactory $cloudFederationFactory,
+		private readonly AddressHandler $addressHandler,
+		private readonly LoggerInterface $logger,
+		private readonly ICloudFederationProviderManager $federationProviderManager,
+		private readonly IUserManager $userManager,
+		private readonly IURLGenerator $url,
+		private readonly RetryNotificationMapper $retryNotificationMapper,
+		private readonly ITimeFactory $timeFactory,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly RestrictionValidator $restrictionValidator,
 	) {
 	}
 

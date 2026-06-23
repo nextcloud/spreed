@@ -22,12 +22,12 @@ use Psr\Log\LoggerInterface;
 
 class ReminderService {
 	public function __construct(
-		protected IManager $notificationManager,
-		protected ReminderMapper $reminderMapper,
-		protected ChatManager $chatManager,
-		protected ProxyCacheMessageService $pcmService,
-		protected Manager $manager,
-		protected LoggerInterface $logger,
+		private readonly IManager $notificationManager,
+		private readonly ReminderMapper $reminderMapper,
+		private readonly ChatManager $chatManager,
+		private readonly ProxyCacheMessageService $pcmService,
+		private readonly Manager $manager,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 
@@ -75,6 +75,10 @@ class ReminderService {
 				]);
 			$this->notificationManager->markProcessed($notification);
 		}
+	}
+
+	public function deleteAllRemindersForUser(string $userId, ?string $token = null): void {
+		$this->reminderMapper->deleteAllRemindersForUser($userId, $token);
 	}
 
 	public function executeReminders(\DateTime $executeBefore): void {

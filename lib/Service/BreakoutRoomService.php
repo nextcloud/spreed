@@ -21,21 +21,19 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\Notification\IManager as INotificationManager;
 
 class BreakoutRoomService {
 	public function __construct(
-		protected Config $config,
-		protected Manager $manager,
-		protected RoomService $roomService,
-		protected ParticipantService $participantService,
-		protected ChatManager $chatManager,
-		protected INotificationManager $notificationManager,
-		protected ITimeFactory $timeFactory,
-		protected IEventDispatcher $dispatcher,
-		protected IL10N $l,
+		private readonly Config $config,
+		private readonly Manager $manager,
+		private readonly RoomService $roomService,
+		private readonly ParticipantService $participantService,
+		private readonly ChatManager $chatManager,
+		private readonly INotificationManager $notificationManager,
+		private readonly ITimeFactory $timeFactory,
+		private readonly IL10N $l,
 	) {
 	}
 
@@ -171,7 +169,6 @@ class BreakoutRoomService {
 			$this->addOthersToBreakoutRooms($breakoutRooms, $map);
 		}
 
-
 		return $breakoutRooms;
 	}
 
@@ -192,9 +189,7 @@ class BreakoutRoomService {
 
 		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
 		$amount = count($breakoutRooms);
-		usort($breakoutRooms, static function (Room $roomA, Room $roomB) {
-			return $roomA->getId() - $roomB->getId();
-		});
+		usort($breakoutRooms, static fn (Room $roomA, Room $roomB) => $roomA->getId() - $roomB->getId());
 
 		$cleanedMap = $this->parseAttendeeMap($attendeeMap, $amount);
 		$attendeeIds = array_keys($cleanedMap);
@@ -483,7 +478,7 @@ class BreakoutRoomService {
 						AAttendeeRemovedEvent::REASON_LEFT
 					);
 				}
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				if ($targetToken === $breakoutRoom->getToken()) {
 					// Join the target breakout room
 					$this->participantService->addUsers(
@@ -531,7 +526,7 @@ class BreakoutRoomService {
 						$participant->getAttendee()->getActorId()
 					);
 					$rooms[] = $breakoutRoom;
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					// Skip this room
 				}
 			}
@@ -564,7 +559,7 @@ class BreakoutRoomService {
 				}
 
 				$this->participantService->removeAttendee($breakoutRoom, $participant, AAttendeeRemovedEvent::REASON_REMOVED);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				// Skip this room
 			}
 		}

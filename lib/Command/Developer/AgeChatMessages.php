@@ -81,7 +81,7 @@ class AgeChatMessages extends Base {
 			->andWhere($query->expr()->eq('object_id', $query->createNamedParameter($room->getId())));
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$creationTimestamp = new \DateTime($row['creation_timestamp']);
 			$creationTimestamp->sub(new \DateInterval('PT' . $hours . 'H'));
 
@@ -93,7 +93,7 @@ class AgeChatMessages extends Base {
 
 			$metaData = 'null';
 			if ($row['meta_data'] !== 'null') {
-				$metaData = json_decode($row['meta_data'], true);
+				$metaData = json_decode((string)$row['meta_data'], true);
 				if (isset($metaData['last_edited_time'])) {
 					$metaData['last_edited_time'] -= $hours * 3600;
 				}
@@ -101,8 +101,8 @@ class AgeChatMessages extends Base {
 			}
 
 			$update->setParameter('id', $row['id']);
-			$update->setParameter('creation_timestamp', $creationTimestamp, IQueryBuilder::PARAM_DATE);
-			$update->setParameter('expire_date', $expireDate, IQueryBuilder::PARAM_DATE);
+			$update->setParameter('creation_timestamp', $creationTimestamp, IQueryBuilder::PARAM_DATETIME_MUTABLE);
+			$update->setParameter('expire_date', $expireDate, IQueryBuilder::PARAM_DATETIME_MUTABLE);
 			$update->setParameter('meta_data', $metaData);
 			$update->executeStatement();
 		}

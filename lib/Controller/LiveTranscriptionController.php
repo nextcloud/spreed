@@ -30,7 +30,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private LiveTranscriptionService $liveTranscriptionService,
+		private readonly LiveTranscriptionService $liveTranscriptionService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -63,7 +63,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 
 		try {
 			$this->liveTranscriptionService->enable($this->room, $this->participant);
-		} catch (LiveTranscriptionAppNotEnabledException $e) {
+		} catch (LiveTranscriptionAppNotEnabledException) {
 			return new DataResponse(['error' => 'app'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -97,7 +97,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 
 		try {
 			$this->liveTranscriptionService->disable($this->room, $this->participant);
-		} catch (LiveTranscriptionAppNotEnabledException $e) {
+		} catch (LiveTranscriptionAppNotEnabledException) {
 			return new DataResponse(['error' => 'app'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -119,7 +119,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	public function getAvailableLanguages(): DataResponse {
 		try {
 			$languages = $this->liveTranscriptionService->getAvailableLanguages();
-		} catch (LiveTranscriptionAppNotEnabledException $e) {
+		} catch (LiveTranscriptionAppNotEnabledException) {
 			return new DataResponse(['error' => 'app'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -149,9 +149,9 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	public function getAvailableTranslationLanguages(): DataResponse {
 		try {
 			$languages = $this->liveTranscriptionService->getAvailableTranslationLanguages();
-		} catch (LiveTranscriptionAppNotEnabledException $e) {
+		} catch (LiveTranscriptionAppNotEnabledException) {
 			return new DataResponse(['error' => 'app'], Http::STATUS_BAD_REQUEST);
-		} catch (LiveTranslationNotSupportedException $e) {
+		} catch (LiveTranslationNotSupportedException) {
 			return new DataResponse(['error' => 'translations'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -177,7 +177,7 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	public function setLanguage(string $languageId): DataResponse {
 		try {
 			$this->liveTranscriptionService->setLanguage($this->room, $languageId);
-		} catch (LiveTranscriptionAppNotEnabledException $e) {
+		} catch (LiveTranscriptionAppNotEnabledException) {
 			return new DataResponse(['error' => 'app'], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -221,9 +221,9 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 
 		try {
 			$this->liveTranscriptionService->setTargetLanguage($this->room, $this->participant, $targetLanguageId);
-		} catch (LiveTranscriptionAppNotEnabledException $e) {
+		} catch (LiveTranscriptionAppNotEnabledException) {
 			return new DataResponse(['error' => 'app'], Http::STATUS_BAD_REQUEST);
-		} catch (LiveTranslationNotSupportedException $e) {
+		} catch (LiveTranslationNotSupportedException) {
 			return new DataResponse(['error' => 'translations'], Http::STATUS_BAD_REQUEST);
 		}
 

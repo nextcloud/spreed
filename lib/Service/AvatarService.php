@@ -11,8 +11,8 @@ namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
 use OCA\Talk\Room;
+use OCA\Talk\RoomAttributes;
 use OCP\Files\IAppData;
-use OCP\Files\IFilenameValidator;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\InMemoryFile;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -29,14 +29,13 @@ class AvatarService {
 	public const THEMING_BRIGHT_BACKGROUND = '6B6B6B';
 
 	public function __construct(
-		private IAppData $appData,
-		private IL10N $l,
-		private IURLGenerator $url,
-		private ISecureRandom $random,
-		private RoomService $roomService,
-		private IAvatarManager $avatarManager,
-		private EmojiService $emojiService,
-		private IFilenameValidator $filenameValidator,
+		private readonly IAppData $appData,
+		private readonly IL10N $l,
+		private readonly IURLGenerator $url,
+		private readonly ISecureRandom $random,
+		private readonly RoomService $roomService,
+		private readonly IAvatarManager $avatarManager,
+		private readonly EmojiService $emojiService,
 	) {
 	}
 
@@ -57,7 +56,6 @@ class AvatarService {
 		}
 
 		$content = file_get_contents($file['tmp_name']);
-		// noopengrep: php.lang.security.unlink-use.unlink-use
 		unlink($file['tmp_name']);
 		$image = new \OCP\Image();
 		$image->loadFromData($content);
@@ -117,7 +115,6 @@ class AvatarService {
 			throw new InvalidArgumentException($this->l->t('Unknown filetype'));
 		}
 
-
 		$token = $room->getToken();
 		$avatarFolder = $this->getAvatarFolder($token);
 
@@ -140,12 +137,12 @@ class AvatarService {
 	private function getAvatarFolder(string $token): ISimpleFolder {
 		try {
 			$folder = $this->appData->getFolder('room-avatar');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			$folder = $this->appData->newFolder('room-avatar');
 		}
 		try {
 			$avatarFolder = $folder->getFolder($token);
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 			$avatarFolder = $folder->newFolder($token);
 		}
 		return $avatarFolder;
@@ -190,7 +187,7 @@ class AvatarService {
 
 					return $file;
 				}
-			} catch (NotFoundException $e) {
+			} catch (NotFoundException) {
 			}
 		}
 
@@ -274,6 +271,9 @@ class AvatarService {
 		if ($room->isFederatedConversation()) {
 			return __DIR__ . '/../../img/icon-conversation-federation-' . $colorTone . '.svg';
 		}
+		if (($room->getAttributes() & RoomAttributes::VOICE_ROOM->value) === RoomAttributes::VOICE_ROOM->value) {
+			return __DIR__ . '/../../img/icon-conversation-voice-room-' . $colorTone . '.svg';
+		}
 		if ($room->getType() === Room::TYPE_PUBLIC) {
 			return __DIR__ . '/../../img/icon-conversation-public-' . $colorTone . '.svg';
 		}
@@ -291,7 +291,7 @@ class AvatarService {
 			$avatarFolder = $folder->getFolder($room->getToken());
 			$avatarFolder->delete();
 			$this->roomService->setAvatar($room, '');
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException) {
 		}
 	}
 

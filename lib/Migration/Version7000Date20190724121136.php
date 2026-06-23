@@ -5,6 +5,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\Migration;
 
 use Doctrine\DBAL\Schema\SchemaException;
@@ -18,7 +19,7 @@ use OCP\Migration\SimpleMigrationStep;
 class Version7000Date20190724121136 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IDBConnection $connection,
+		private readonly IDBConnection $connection,
 	) {
 	}
 
@@ -80,7 +81,7 @@ class Version7000Date20190724121136 extends SimpleMigrationStep {
 			->andWhere($update->expr()->eq('room_id', $update->createParameter('room_id')));
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$update->setParameter('message_id', (int)$row['last_comment'], IQueryBuilder::PARAM_INT)
 				->setParameter('user_id', $row['user_id'])
 				->setParameter('room_id', (int)$row['object_id'], IQueryBuilder::PARAM_INT);

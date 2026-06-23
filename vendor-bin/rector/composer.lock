@@ -4,34 +4,35 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "76a369652b72c076d87f7436e537df14",
+    "content-hash": "2fa647963bf9e573eae1ea0ba4d7f943",
     "packages": [],
     "packages-dev": [
         {
             "name": "nextcloud/ocp",
-            "version": "v32.0.0",
+            "version": "v34.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "f25b267f759f10e5aad18ed15f14b9881df5652d"
+                "reference": "1ce31d2ac587e22269fedd9d5b231c4380d8c5af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/f25b267f759f10e5aad18ed15f14b9881df5652d",
-                "reference": "f25b267f759f10e5aad18ed15f14b9881df5652d",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/1ce31d2ac587e22269fedd9d5b231c4380d8c5af",
+                "reference": "1ce31d2ac587e22269fedd9d5b231c4380d8c5af",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.1 || ~8.2 || ~8.3 || ~8.4",
+                "php": "~8.1 || ~8.2 || ~8.3 || ~8.4 || ~8.5",
                 "psr/clock": "^1.0",
                 "psr/container": "^2.0.2",
                 "psr/event-dispatcher": "^1.0",
+                "psr/http-client": "^1.0.3",
                 "psr/log": "^3.0.2"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-stable32": "32.0.0-dev"
+                    "dev-stable34": "34.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -51,22 +52,22 @@
             "description": "Composer package containing Nextcloud's public OCP API and the unstable NCU API",
             "support": {
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
-                "source": "https://github.com/nextcloud-deps/ocp/tree/v32.0.0"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/v34.0.0"
             },
-            "time": "2025-09-16T00:45:44+00:00"
+            "time": "2026-06-04T02:37:14+00:00"
         },
         {
             "name": "nextcloud/rector",
-            "version": "v0.4.1",
+            "version": "v0.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-libraries/rector.git",
-                "reference": "9c5c78cc323537ec6dba5b3cd9c422ff9524d8cf"
+                "reference": "9967d62256cd7507f1104491fb2c427456481b56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-libraries/rector/zipball/9c5c78cc323537ec6dba5b3cd9c422ff9524d8cf",
-                "reference": "9c5c78cc323537ec6dba5b3cd9c422ff9524d8cf",
+                "url": "https://api.github.com/repos/nextcloud-libraries/rector/zipball/9967d62256cd7507f1104491fb2c427456481b56",
+                "reference": "9967d62256cd7507f1104491fb2c427456481b56",
                 "shasum": ""
             },
             "require": {
@@ -116,17 +117,17 @@
             ],
             "support": {
                 "issues": "https://github.com/nextcloud-libraries/rector/issues",
-                "source": "https://github.com/nextcloud-libraries/rector/tree/v0.4.1"
+                "source": "https://github.com/nextcloud-libraries/rector/tree/v0.5.2"
             },
-            "time": "2025-03-31T15:27:10+00:00"
+            "time": "2026-06-15T06:39:12+00:00"
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.39",
+            "version": "2.2.2",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c6f73a2af4cbcd99c931d0fb8f08548cc0fa8224",
-                "reference": "c6f73a2af4cbcd99c931d0fb8f08548cc0fa8224",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e5cc34d491a90e79c216d824f60fe21fd4d93bd6",
+                "reference": "e5cc34d491a90e79c216d824f60fe21fd4d93bd6",
                 "shasum": ""
             },
             "require": {
@@ -148,6 +149,17 @@
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ondřej Mirtes"
+                },
+                {
+                    "name": "Markus Staab"
+                },
+                {
+                    "name": "Vincent Langlet"
+                }
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
             "keywords": [
@@ -171,7 +183,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-11T14:48:56+00:00"
+            "time": "2026-06-05T09:00:01+00:00"
         },
         {
             "name": "psr/clock",
@@ -325,6 +337,111 @@
             "time": "2019-01-08T18:20:26+00:00"
         },
         {
+            "name": "psr/http-client",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-client.git",
+                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-client/zipball/bb5906edc1c324c9a05aa0873d40117941e5fa90",
+                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0 || ^8.0",
+                "psr/http-message": "^1.0 || ^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Client\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP clients",
+            "homepage": "https://github.com/php-fig/http-client",
+            "keywords": [
+                "http",
+                "http-client",
+                "psr",
+                "psr-18"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/http-client"
+            },
+            "time": "2023-09-23T14:17:50+00:00"
+        },
+        {
+            "name": "psr/http-message",
+            "version": "2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-message.git",
+                "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/402d35bcb92c70c026d1a6a9883f06b2ead23d71",
+                "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2 || ^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP messages",
+            "homepage": "https://github.com/php-fig/http-message",
+            "keywords": [
+                "http",
+                "http-message",
+                "psr",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/http-message/tree/2.0"
+            },
+            "time": "2023-04-04T09:54:51+00:00"
+        },
+        {
             "name": "psr/log",
             "version": "3.0.2",
             "source": {
@@ -376,21 +493,21 @@
         },
         {
             "name": "rector/rector",
-            "version": "2.3.6",
+            "version": "2.4.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "ca9ebb81d280cd362ea39474dabd42679e32ca6b"
+                "reference": "9b9e5c76618e4d359f65b54ca2eabcad3d1761ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/ca9ebb81d280cd362ea39474dabd42679e32ca6b",
-                "reference": "ca9ebb81d280cd362ea39474dabd42679e32ca6b",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/9b9e5c76618e4d359f65b54ca2eabcad3d1761ee",
+                "reference": "9b9e5c76618e4d359f65b54ca2eabcad3d1761ee",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4|^8.0",
-                "phpstan/phpstan": "^2.1.38"
+                "phpstan/phpstan": "^2.2.2"
             },
             "conflict": {
                 "rector/rector-doctrine": "*",
@@ -424,7 +541,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/2.3.6"
+                "source": "https://github.com/rectorphp/rector/tree/2.4.6"
             },
             "funding": [
                 {
@@ -432,32 +549,32 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-06T14:25:06+00:00"
+            "time": "2026-06-17T11:56:28+00:00"
         },
         {
             "name": "webmozart/assert",
-            "version": "1.11.0",
+            "version": "1.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozarts/assert.git",
-                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991"
+                "reference": "9be6926d8b485f55b9229203f962b51ed377ba68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/11cb2199493b2f8a3b53e7f19068fc6aac760991",
-                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/9be6926d8b485f55b9229203f962b51ed377ba68",
+                "reference": "9be6926d8b485f55b9229203f962b51ed377ba68",
                 "shasum": ""
             },
             "require": {
                 "ext-ctype": "*",
+                "ext-date": "*",
+                "ext-filter": "*",
                 "php": "^7.2 || ^8.0"
             },
-            "conflict": {
-                "phpstan/phpstan": "<0.12.20",
-                "vimeo/psalm": "<4.6.1 || 4.6.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^8.5.13"
+            "suggest": {
+                "ext-intl": "",
+                "ext-simplexml": "",
+                "ext-spl": ""
             },
             "type": "library",
             "extra": {
@@ -488,9 +605,9 @@
             ],
             "support": {
                 "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/1.11.0"
+                "source": "https://github.com/webmozarts/assert/tree/1.12.1"
             },
-            "time": "2022-06-03T18:03:27+00:00"
+            "time": "2025-10-29T15:56:20+00:00"
         }
     ],
     "aliases": [],
@@ -500,5 +617,5 @@
     "prefer-lowest": false,
     "platform": {},
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

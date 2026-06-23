@@ -9,6 +9,8 @@ declare(strict_types=1);
 namespace OCA\SpreedCheats\Controller;
 
 use OCA\SpreedCheats\Calendar\EventGenerator;
+use OCA\Talk\Model\Attendee;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
@@ -29,6 +31,7 @@ class ApiController extends OCSController {
 		IRequest $request,
 		protected IDBConnection $db,
 		private IManager $calendarManager,
+		private IAppManager $appManager,
 		private ?string $userId,
 	) {
 		parent::__construct($appName, $request);
@@ -58,6 +61,9 @@ class ApiController extends OCSController {
 
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_consent')->executeStatement();
+
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_conversation_tags')->executeStatement();
 
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_internalsignaling')->executeStatement();
@@ -106,7 +112,6 @@ class ApiController extends OCSController {
 			))
 			->executeStatement();
 
-
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('preferences')
 			->where($delete->expr()->in('configkey', $delete->createNamedParameter(['changelog', 'note_to_self', 'samples_created'], IQueryBuilder::PARAM_STR_ARRAY)))
@@ -128,6 +133,7 @@ class ApiController extends OCSController {
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('calendarobjects_props')->executeStatement();
 
+		$this->appManager->disableApp('password_policy');
 
 		return new DataResponse();
 	}
@@ -162,7 +168,6 @@ class ApiController extends OCSController {
 			$update->set('object_id', $update->createNamedParameter(implode('#', $eventConversationObjectId)));
 		}
 		$update->executeStatement();
-
 
 		$update = $this->db->getQueryBuilder();
 		$update->update('comments')
@@ -206,6 +211,67 @@ class ApiController extends OCSController {
 		$result->closeCursor();
 
 		return new DataResponse();
+	}
+
+	public function emailAccessToken(string $token, string $email): DataResponse {
+		$query = $this->db->getQueryBuilder();
+		$query->select('a.access_token')
+			->from('talk_rooms', 'r')
+			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+				$query->expr()->eq('a.room_id', 'r.id'),
+				$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_EMAILS)),
+				$query->expr()->eq('a.actor_id', $query->createNamedParameter(hash('sha256', $email))),
+			))
+			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
+
+		$result = $query->executeQuery();
+		$accessToken = $result->fetchOne();
+		$result->closeCursor();
+
+		if (!$accessToken) {
+			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+		}
+
+		return new DataResponse(['access_token' => $accessToken]);
+	}
+
+	public function forgedFederationLeave(string $token, string $actingUser, string $targetUser): DataResponse {
+		$query = $this->db->getQueryBuilder();
+		$query->select('id')
+			->from('talk_rooms')
+			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
+
+		$result = $query->executeQuery();
+		$roomId = (int)$result->fetchOne();
+		$result->closeCursor();
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('access_token', 'invited_cloud_id')
+			->from('talk_attendees')
+			->where($query->expr()->eq('actor_id', $query->createNamedParameter($actingUser)))
+			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($roomId)));
+
+		$result = $query->executeQuery();
+		$access = $result->fetch();
+		$result->closeCursor();
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('s.session_id')
+			->from('talk_attendees', 'a')
+			->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'))
+			->where($query->expr()->eq('actor_id', $query->createNamedParameter($targetUser)))
+			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($roomId)));
+
+		$result = $query->executeQuery();
+		$session = $result->fetch();
+		$result->closeCursor();
+
+		return new DataResponse([
+			'access' => $access,
+			'session' => $session,
+		]);
 	}
 
 	#[NoAdminRequired]

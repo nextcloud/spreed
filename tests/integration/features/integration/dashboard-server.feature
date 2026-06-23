@@ -1,8 +1,6 @@
 Feature: integration/dashboard-server
   Background:
     Given user "participant1" exists
-    Given user "participant2" exists
-    Given user "participant3" exists
 
   Scenario: User gets the available dashboard widgets
     When user "participant1" sees the following entry when loading the list of dashboard widgets (v1)
@@ -10,6 +8,8 @@ Feature: integration/dashboard-server
       | spreed | Talk mentions | dashboard-talk-icon | img/app-dark.svg | {$BASE_URL}index.php/apps/spreed/ | true             | 10    | [{"type":"more","text":"More conversations","link":"{$BASE_URL}index.php/apps/spreed/"}] | [1,2] | 30 |
 
   Scenario: User gets the dashboard widget content
+    Given user "participant2" exists
+    Given user "participant3" exists
     When user "participant1" sees the following entries for dashboard widgets "spreed" (v1)
       | title | subtitle | link | iconUrl |
     When user "participant1" sees the following entries for dashboard widgets "spreed" (v2)

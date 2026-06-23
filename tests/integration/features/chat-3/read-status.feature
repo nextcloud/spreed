@@ -1,8 +1,6 @@
 Feature: chat-3/read-status
   Background:
     Given user "participant1" exists
-    Given user "participant2" exists
-    Given user "participant3" exists
 
   Scenario: User toggles the read privacy
     Given user "participant1" creates room "chatting" (v4)
@@ -41,6 +39,7 @@ Feature: chat-3/read-status
 
 
   Scenario: Read status is the minimum of all public users
+    Given user "participant2" exists
     Given user "participant1" creates room "chatting" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -92,6 +91,7 @@ Feature: chat-3/read-status
 
 
   Scenario: User switching to private is not considered anymore
+    Given user "participant2" exists
     Given user "participant1" creates room "chatting" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -120,6 +120,8 @@ Feature: chat-3/read-status
 
 
   Scenario: New users added start with the last message of when they are added
+    Given user "participant2" exists
+    Given user "participant3" exists
     Given user "participant1" creates room "chatting" (v4)
       | roomType | 3 |
       | roomName | room |

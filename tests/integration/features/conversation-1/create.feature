@@ -1,8 +1,6 @@
 Feature: conversation-1/create
   Background:
     Given user "participant1" exists
-    Given user "participant2" exists
-    Given user "participant3" exists
 
   Scenario: Set password during creation
     Given user "participant1" creates room "room1" (v4)
@@ -118,6 +116,8 @@ Feature: conversation-1/create
       | room | 3    | 1               | Lorem ipsum |
 
   Scenario: Create extended conversation
+    Given user "participant2" exists
+    Given user "participant3" exists
     Given user "participant1" creates room "room1" (v4)
       | roomType | 3 |
       | roomName | Your Group |

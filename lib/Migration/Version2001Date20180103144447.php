@@ -5,6 +5,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\Migration;
 
 use OCP\DB\ISchemaWrapper;
@@ -17,11 +18,10 @@ use OCP\Migration\SimpleMigrationStep;
 class Version2001Date20180103144447 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IDBConnection $connection,
-		protected IConfig $config,
+		private readonly IDBConnection $connection,
+		private readonly IConfig $config,
 	) {
 	}
-
 
 	/**
 	 * @param IOutput $output

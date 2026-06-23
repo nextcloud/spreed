@@ -21,11 +21,10 @@ use OCP\IConfig;
  * @template-implements IEventListener<Event>
  */
 class GroupDeletedListener implements IEventListener {
-
 	public function __construct(
-		private IConfig $config,
-		private Manager $manager,
-		private ParticipantService $participantService,
+		private readonly IConfig $config,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
 	) {
 	}
 
@@ -55,9 +54,7 @@ class GroupDeletedListener implements IEventListener {
 		$array = json_decode($json, true);
 		$gids = \is_array($array) ? $array : [];
 
-		$gids = array_filter($gids, static function ($gid) use ($removeGroupId) {
-			return $gid !== $removeGroupId;
-		});
+		$gids = array_filter($gids, static fn ($gid) => $gid !== $removeGroupId);
 
 		$this->config->setAppValue('spreed', $configKey, json_encode($gids));
 	}

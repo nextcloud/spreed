@@ -1,8 +1,6 @@
 Feature: command/monitor-room
 
   Background:
-    Given user "participant1" exists
-    Given user "participant2" exists
 
   Scenario: No call in progress
     Given invoking occ with "talk:monitor:room abcdef"
@@ -10,6 +8,8 @@ Feature: command/monitor-room
     And the command output contains the text "Room with token abcdef not found"
 
   Scenario: From nothing to calling
+    Given user "participant1" exists
+    Given user "participant2" exists
     When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |

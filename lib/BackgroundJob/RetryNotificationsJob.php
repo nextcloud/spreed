@@ -6,6 +6,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\BackgroundJob;
 
 use OCA\Talk\Federation\BackendNotifier;
@@ -17,10 +18,10 @@ use OCP\BackgroundJob\TimedJob;
  */
 class RetryNotificationsJob extends TimedJob {
 	public function __construct(
-		private BackendNotifier $backendNotifier,
-		ITimeFactory $timeFactory,
+		ITimeFactory $time,
+		private readonly BackendNotifier $backendNotifier,
 	) {
-		parent::__construct($timeFactory);
+		parent::__construct($time);
 
 		// Every time the jobs run
 		$this->setInterval(1);

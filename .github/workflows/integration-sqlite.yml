@@ -26,7 +26,7 @@ jobs:
       src: ${{ steps.changes.outputs.src}}
 
     steps:
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
         id: changes
         continue-on-error: true
         with:
@@ -53,11 +53,12 @@ jobs:
       fail-fast: false
       matrix:
         test-suite: ['callapi', 'chat-1', 'chat-2', 'chat-3', 'chat-4', 'command', 'conversation-1', 'conversation-2', 'conversation-3', 'conversation-4', 'conversation-5', 'federation', 'integration', 'sharing-1', 'sharing-2', 'sharing-3', 'sharing-4']
-        php-versions: ['8.2']
+        php-versions: ['8.3']
         server-versions: ['master']
         guests-versions: ['main']
         circles-versions: ['master']
         notifications-versions: ['master']
+        password-policy-versions: ['master']
 
     steps:
       - name: Set app env
@@ -66,7 +67,7 @@ jobs:
           echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
 
       - name: Checkout server
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
           submodules: true
@@ -74,13 +75,13 @@ jobs:
           ref: ${{ matrix.server-versions }}
 
       - name: Checkout app
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
           path: apps/${{ env.APP_NAME }}
 
       - name: Checkout circles app
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
           repository: nextcloud/circles
@@ -88,7 +89,7 @@ jobs:
           ref: ${{ matrix.circles-versions }}
 
       - name: Checkout guests app
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
           repository: nextcloud/guests
@@ -96,15 +97,23 @@ jobs:
           ref: ${{ matrix.guests-versions }}
 
       - name: Checkout notifications app
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
           repository: nextcloud/notifications
           path: apps/notifications
           ref: ${{ matrix.notifications-versions }}
 
+      - name: Checkout password_policy app
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+          repository: nextcloud/password_policy
+          path: apps/password_policy
+          ref: ${{ matrix.password-policy-versions }}
+
       - name: Set up php ${{ matrix.php-versions }}
-        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2.36.0
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
         with:
           php-version: ${{ matrix.php-versions }}
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
@@ -142,6 +151,7 @@ jobs:
           ./occ app:enable --force circles
           ./occ app:enable --force guests
           ./occ app:enable --force notifications
+          ./occ app:disable password_policy
 
       - name: Run integration
         working-directory: apps/${{ env.APP_NAME }}/tests/integration
@@ -155,7 +165,7 @@ jobs:
       - name: Check Federation log
         if: always()
         id: check_federation_log
-        uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3.0.0
+        uses: andstor/file-existence-action@558493d6c74bf472d87c84eab196434afc2fa029 # v3.1.0
         with:
           files: "data/tests-talk-real-federated-server/data/nextcloud.log"
 

@@ -14,7 +14,6 @@ use OCA\Talk\Federation\FederationManager;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\OCM\Events\ResourceTypeRegisterEvent;
-use OCP\OCM\IOCMProvider;
 
 /**
  * @template-implements IEventListener<Event>
@@ -22,9 +21,8 @@ use OCP\OCM\IOCMProvider;
 class ResourceTypeRegisterListener implements IEventListener {
 
 	public function __construct(
-		protected Config $talkConfig,
-		protected IOCMProvider $provider,
-		protected CloudFederationProviderTalk $talkProvider,
+		private readonly Config $talkConfig,
+		private readonly CloudFederationProviderTalk $talkProvider,
 	) {
 	}
 

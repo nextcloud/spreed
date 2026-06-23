@@ -5,6 +5,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\Migration;
 
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -20,9 +21,9 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 	protected array $tokens;
 
 	public function __construct(
-		protected IDBConnection $connection,
-		protected IConfig $config,
-		protected ISecureRandom $secureRandom,
+		private readonly IDBConnection $connection,
+		private readonly IConfig $config,
+		private readonly ISecureRandom $secureRandom,
 	) {
 		$this->tokens = [];
 	}
@@ -56,7 +57,7 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 		$result = $query->executeQuery();
 
 		$output->startProgress();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$output->advance();
 
 			$token = $this->getNewToken($entropy, $chars);

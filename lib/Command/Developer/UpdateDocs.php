@@ -20,8 +20,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateDocs extends Base {
 	public function __construct(
-		private IConfig $config,
-		private IAppManager $appManager,
+		private readonly IConfig $config,
+		private readonly IAppManager $appManager,
 	) {
 		parent::__construct();
 	}
@@ -75,9 +75,7 @@ class UpdateDocs extends Base {
 					$command->getAliases(),
 					$command->getUsages()
 				),
-				function ($carry, $usage) {
-					return $carry . '* `' . $usage . '`' . "\n";
-				}
+				fn ($carry, $usage) => $carry . '* `' . $usage . '`' . "\n"
 			);
 		$doc .= $this->describeInputDefinition($command);
 

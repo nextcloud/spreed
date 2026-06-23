@@ -1,11 +1,11 @@
 Feature: conversation-1/avatar
   Background:
     Given user "participant1" exists
-    Given user "participant2" exists
     And guest accounts can be created
     And user "user-guest@example.com" is a guest account user
 
   Scenario: Misteps
+    Given user "participant2" exists
     Given user "participant1" creates room "room1" (v4)
       | roomType | 3 |
       | roomName | room1 |
@@ -47,6 +47,7 @@ Feature: conversation-1/avatar
       | isCustomAvatar | 0 |
 
   Scenario: Get avatar of conversation without being a participant
+    Given user "participant2" exists
     Given user "participant1" creates room "room3" (v4)
       | roomType | 3 |
       | roomName | room3 |
@@ -76,6 +77,7 @@ Feature: conversation-1/avatar
     And the room "room3" has an avatar with 404
 
   Scenario: Get avatar of one2one without custom avatar (fallback)
+    Given user "participant2" exists
     When user "participant1" creates room "one2one" (v4)
       | roomType | 1 |
       | invite   | participant2 |
@@ -85,6 +87,7 @@ Feature: conversation-1/avatar
       | isCustomAvatar | 0 |
 
   Scenario: Try to change avatar of one2one without success
+    Given user "participant2" exists
     When user "participant1" creates room "one2one" (v4)
       | roomType | 1 |
       | invite   | participant2 |

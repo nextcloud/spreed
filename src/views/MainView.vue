@@ -3,8 +3,10 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script lang="ts" setup>
+import type { WatchStopHandle } from 'vue'
+
 import { emit } from '@nextcloud/event-bus'
-import { computed, onMounted, watch, watchEffect } from 'vue'
+import { computed, onMounted, onUnmounted, watch, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import CallFailedDialog from '../components/CallView/CallFailedDialog.vue'
@@ -14,7 +16,11 @@ import LobbyScreen from '../components/LobbyScreen.vue'
 import PollViewer from '../components/PollViewer/PollViewer.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
 import { useIsInCall } from '../composables/useIsInCall.js'
+import { useJoinCall } from '../composables/useJoinCall.ts'
+import { watchJoinedConversation } from '../composables/useJoinedConversation.ts'
+import { CALL, CONVERSATION } from '../constants.ts'
 import { useActorStore } from '../stores/actor.ts'
+import { useSettingsStore } from '../stores/settings.ts'
 
 const props = defineProps<{
 	token: string
@@ -22,12 +28,37 @@ const props = defineProps<{
 
 const store = useStore()
 const isInCall = useIsInCall()
+const { joinCall } = useJoinCall()
 const router = useRouter()
 const route = useRoute()
 const actorStore = useActorStore()
+const settingsStore = useSettingsStore()
+
+/** Internal handlers for 'joined-conversation' watcher (direct-call) */
+let unwatchJoinedConversation: WatchStopHandle | undefined
+let watchedJoinedConversationToken: string | undefined
+/**
+ * Release the listener for joined conversation
+ */
+function stopWatchingJoinedConversation() {
+	unwatchJoinedConversation?.()
+	unwatchJoinedConversation = undefined
+	watchedJoinedConversationToken = undefined
+}
 
 const isInLobby = computed(() => store.getters.isInLobby)
 const connectionFailed = computed(() => store.getters.connectionFailed(props.token))
+const isVoiceRoom = computed(() => Boolean(store.getters.conversation(props.token)?.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM))
+
+watch([() => props.token, isVoiceRoom], ([newToken, newIsVoiceRoom]) => {
+	// Release a stale joined-conversation listener when navigating away
+	if (watchedJoinedConversationToken && watchedJoinedConversationToken !== newToken) {
+		stopWatchingJoinedConversation()
+	}
+	if (newIsVoiceRoom && newToken) {
+		handleDirectCall(newToken)
+	}
+}, { immediate: true })
 
 watch(isInLobby, (isInLobby) => {
 	// User is now blocked by the lobby
@@ -42,7 +73,7 @@ watch(isInLobby, (isInLobby) => {
 onMounted(() => {
 	watchEffect(() => {
 		if (route.hash === '#direct-call') {
-			emit('talk:media-settings:show', '')
+			handleDirectCall(route.params.token as string)
 			router.replace({ hash: '' })
 		} else if (route.hash === '#settings') {
 			emit('show-conversation-settings', { token: props.token })
@@ -50,6 +81,51 @@ onMounted(() => {
 		}
 	})
 })
+
+onUnmounted(() => {
+	stopWatchingJoinedConversation()
+})
+
+/**
+ * Check if the user should join the call directly or show MediaSettings
+ *
+ * @param routeToken token of conversation to join
+ */
+function handleDirectCall(routeToken: string) {
+	stopWatchingJoinedConversation()
+
+	const conversation = store.getters.conversation(routeToken)
+	if ([CONVERSATION.TYPE.CHANGELOG, CONVERSATION.TYPE.NOTE_TO_SELF].includes(conversation.type)) {
+		// Do not allow calls in these conversations
+		return
+	}
+
+	const showRecordingWarning = [
+		CALL.RECORDING.VIDEO_STARTING,
+		CALL.RECORDING.AUDIO_STARTING,
+		CALL.RECORDING.VIDEO,
+		CALL.RECORDING.AUDIO,
+	].includes(conversation.callRecording)
+	|| conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED
+	const isConversationPhoneRoom = [
+		CONVERSATION.OBJECT_TYPE.PHONE_LEGACY,
+		CONVERSATION.OBJECT_TYPE.PHONE_PERSISTENT,
+		CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY,
+	].includes(conversation.objectType)
+	&& conversation.objectId === CONVERSATION.OBJECT_ID.PHONE_OUTGOING
+
+	// Verify conditions for showing MediaSettings (required or user opted out)
+	if (showRecordingWarning || settingsStore.showMediaSettings || isConversationPhoneRoom) {
+		emit('talk:media-settings:show')
+		return
+	}
+
+	watchedJoinedConversationToken = routeToken
+	unwatchJoinedConversation = watchJoinedConversation(routeToken, () => {
+		stopWatchingJoinedConversation()
+		void joinCall(routeToken, { directCall: true })
+	}, { immediate: true })
+}
 </script>
 
 <template>

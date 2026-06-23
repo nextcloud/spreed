@@ -14,8 +14,8 @@ use OCA\Talk\Room;
 class MessageParseEvent extends ARoomEvent {
 	public function __construct(
 		Room $room,
-		protected Message $message,
-		protected bool $allowInaccurate,
+		private readonly Message $message,
+		private readonly bool $allowInaccurate,
 	) {
 		parent::__construct($room);
 	}

@@ -280,7 +280,6 @@ class SummaryService {
 		$logEntries = $this->logEntryMapper->findByConversation($server, $token);
 		$this->logEntryMapper->deleteByConversation($server, $token);
 
-
 		$agenda = [];
 		foreach ($logEntries as $logEntry) {
 			if ($logEntry->getType() === LogEntry::TYPE_AGENDA) {

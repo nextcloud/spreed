@@ -1,9 +1,6 @@
 Feature: chat-4/rich-messages
   Background:
     Given user "participant1" exists
-    Given user "participant2" exists
-    Given user "participant3" exists
-    Given user "participant3a" exists
 
   Scenario: message without enrichable references has empty parameters
     Given user "participant1" creates room "public room" (v4)
@@ -15,6 +12,7 @@ Feature: chat-4/rich-messages
       | public room | users     | participant1 | participant1-displayname | Message without enrichable references | []                |
 
   Scenario: message with mention to valid user has mention parameter
+    Given user "participant2" exists
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -33,6 +31,7 @@ Feature: chat-4/rich-messages
       | public room | users     | participant1 | participant1-displayname | Mention to @unknownUser | [] |
 
   Scenario: message with duplicated mention has single mention parameter
+    Given user "participant2" exists
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -42,6 +41,8 @@ Feature: chat-4/rich-messages
       | public room | users     | participant1 | participant1-displayname | Mention to {mention-user1} and {mention-user1} again | {"mention-user1":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"}} |
 
   Scenario: message with mentions to several users has mention parameters
+    Given user "participant2" exists
+    Given user "participant3" exists
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -51,6 +52,8 @@ Feature: chat-4/rich-messages
       | public room | users     | participant1 | participant1-displayname | Mention to {mention-user1}, @unknownUser, {mention-user1} again and {mention-user2} | {"mention-user1":{"type":"user","id":"participant2","name":"participant2-displayname","mention-id":"participant2"},"mention-user2":{"type":"user","id":"participant3","name":"participant3-displayname","mention-id":"participant3"}} |
 
   Scenario: message with mentions of subname users (uid1 is fully part of uid2)
+    Given user "participant3" exists
+    Given user "participant3a" exists
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |

@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php;
 
 use OCA\Talk\TalkSession;
+use OCP\IRequest;
 use OCP\ISession;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -16,13 +17,18 @@ use Test\TestCase;
 
 class TalkSessionTest extends TestCase {
 	protected ISession&MockObject $session;
+	protected IRequest&MockObject $request;
 	protected ?TalkSession $talkSession = null;
 
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->session = $this->createMock(ISession::class);
-		$this->talkSession = new TalkSession($this->session);
+		$this->request = $this->createMock(IRequest::class);
+		$this->talkSession = new TalkSession(
+			$this->session,
+			$this->request,
+		);
 	}
 
 	public static function dataGet(): array {
@@ -90,7 +96,7 @@ class TalkSessionTest extends TestCase {
 			'session is null' => [null, json_encode([])],
 			'corrupted json' => ['{invalid json', json_encode([])],
 			'no data for token' => [json_encode(['t2' => 'd2']), json_encode(['t2' => 'd2'])],
-			'remove data' => [json_encode(['t2' => 'd2', 't1' => 'd1']), json_encode(['t2' => 'd2'])],
+			'remove data' => [json_encode(['t2' => 'd2', 't1' => 'd1', '12345' => 'd3']), json_encode(['t2' => 'd2', '12345' => 'd3'])],
 		];
 	}
 
@@ -115,6 +121,61 @@ class TalkSessionTest extends TestCase {
 		$this->session->expects($this->once())
 			->method('set')
 			->with('spreed-password', $expected);
+		$this->talkSession->removePasswordForRoom('t1');
+	}
+
+	/**
+	 * The password is stored during the HTML page request (no x-nextcloud-talk-session-tab-id
+	 * header) and read back during a subsequent API call (which carries the header via the
+	 * axios interceptor set up in init.js). The methods must ignore the tab-ID so that the
+	 * two contexts share the same session key.
+	 */
+	public function testGetPasswordForRoomIgnoresTabId(): void {
+		$this->request->method('getHeader')
+			->with(TalkSession::HEADER_TAB_ID)
+			->willReturn(str_repeat('a', 64));
+
+		// Password was stored without a tab-ID suffix (page-request context)
+		$this->session->expects($this->once())
+			->method('get')
+			->with('spreed-password')
+			->willReturn(json_encode(['t1' => 'secret']));
+
+		// Must resolve to the value even though a tab-ID header is now present
+		$this->assertSame('secret', $this->talkSession->getPasswordForRoom('t1'));
+	}
+
+	public function testSetPasswordForRoomIgnoresTabId(): void {
+		$this->request->method('getHeader')
+			->with(TalkSession::HEADER_TAB_ID)
+			->willReturn(str_repeat('a', 64));
+
+		$this->session->expects($this->once())
+			->method('get')
+			->with('spreed-password')
+			->willReturn(null);
+		// Key must be the bare token, not 't1$<tabId>'
+		$this->session->expects($this->once())
+			->method('set')
+			->with('spreed-password', json_encode(['t1' => 'secret']));
+
+		$this->talkSession->setPasswordForRoom('t1', 'secret');
+	}
+
+	public function testRemovePasswordForRoomIgnoresTabId(): void {
+		$this->request->method('getHeader')
+			->with(TalkSession::HEADER_TAB_ID)
+			->willReturn(str_repeat('a', 64));
+
+		$this->session->expects($this->once())
+			->method('get')
+			->with('spreed-password')
+			->willReturn(json_encode(['t1' => 'secret', 't2' => 'other']));
+		// 't1' must be removed by bare key, not 't1$<tabId>'
+		$this->session->expects($this->once())
+			->method('set')
+			->with('spreed-password', json_encode(['t2' => 'other']));
+
 		$this->talkSession->removePasswordForRoom('t1');
 	}
 }

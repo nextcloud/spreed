@@ -10,6 +10,14 @@ declare module '@nextcloud/event-bus' {
 		'user:info:changed': NextcloudUser
 		'notifications:action:execute': NotificationEvent
 		'notifications:notification:received': NotificationEvent
+		// LeftSidebar > NcAppNavigation
+		'toggle-navigation': { open: boolean }
+		// MediaSettings
+		'talk:media-settings:hide': void
+		'talk:media-settings:show': void | 'video-verification' | 'device-check' | 'backgrounds'
+		// ConversationSettingsDialog
+		'show-conversation-settings': { token: string }
+		'hide-conversation-settings': void
 	}
 }
 export {}

@@ -13,7 +13,6 @@ use OCP\EventDispatcher\Event;
 
 abstract class ARoomEvent extends Event {
 
-
 	public function __construct(
 		protected Room $room,
 	) {

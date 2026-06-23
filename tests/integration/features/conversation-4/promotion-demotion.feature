@@ -2,7 +2,6 @@ Feature: conversation-4/promotion-demotion
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
-    Given user "participant3" exists
 
   Scenario: Owner promotes/demotes moderator
     Given signaling server is started
@@ -33,6 +32,7 @@ Feature: conversation-4/promotion-demotion
       | room | 3    | 3               |
 
   Scenario: Moderator promotes/demotes moderator
+    Given user "participant3" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -90,6 +90,7 @@ Feature: conversation-4/promotion-demotion
       | room | 3    | 3               |
 
   Scenario: User promotes/demotes moderator
+    Given user "participant3" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -113,6 +114,7 @@ Feature: conversation-4/promotion-demotion
       | room | 3    | 2               |
 
   Scenario: Stranger promotes/demotes moderator
+    Given user "participant3" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |

@@ -5,6 +5,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\Migration;
 
 use OCP\DB\ISchemaWrapper;
@@ -17,7 +18,7 @@ use OCP\Migration\SimpleMigrationStep;
 class Version3003Date20180718112436 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IDBConnection $connection,
+		private readonly IDBConnection $connection,
 	) {
 	}
 
@@ -66,9 +67,9 @@ class Version3003Date20180718112436 extends SimpleMigrationStep {
 			->groupBy('object_id');
 
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$lastActivity = new \DateTime($row['last_activity']);
-			$update->setParameter('activity', $lastActivity, IQueryBuilder::PARAM_DATE)
+			$update->setParameter('activity', $lastActivity, IQueryBuilder::PARAM_DATETIME_MUTABLE)
 				->setParameter('room', $row['object_id']);
 			$update->executeStatement();
 		}

@@ -20,7 +20,7 @@ use OCP\Migration\SimpleMigrationStep;
 class Version14000Date20220330141647 extends SimpleMigrationStep {
 
 	public function __construct(
-		protected IDBConnection $connection,
+		private readonly IDBConnection $connection,
 	) {
 	}
 
@@ -118,7 +118,7 @@ class Version14000Date20220330141647 extends SimpleMigrationStep {
 
 		$attachments = $sharesWithoutMimetype = [];
 		$result = $select->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$attachment = [
 				'room_id' => (int)$row['object_id'],
 				'message_id' => (int)$row['id'],
@@ -129,7 +129,7 @@ class Version14000Date20220330141647 extends SimpleMigrationStep {
 			$datetime = new \DateTime($row['creation_timestamp']);
 			$attachment['message_time'] = $datetime->getTimestamp();
 
-			$message = json_decode($row['message'], true);
+			$message = json_decode((string)$row['message'], true);
 			$messageType = $message['message'] ?? '';
 			$parameters = $message['parameters'] ?? [];
 
@@ -148,9 +148,9 @@ class Version14000Date20220330141647 extends SimpleMigrationStep {
 
 				if ($messageType === 'voice-message') {
 					$attachment['object_type'] = Attachment::TYPE_VOICE;
-				} elseif (str_starts_with($mimetype, 'audio/')) {
+				} elseif (str_starts_with((string)$mimetype, 'audio/')) {
 					$attachment['object_type'] = Attachment::TYPE_AUDIO;
-				} elseif (str_starts_with($mimetype, 'image/') || str_starts_with($mimetype, 'video/')) {
+				} elseif (str_starts_with((string)$mimetype, 'image/') || str_starts_with((string)$mimetype, 'video/')) {
 					$attachment['object_type'] = Attachment::TYPE_MEDIA;
 				} else {
 					if ($mimetype === '' && isset($parameters['share'])) {
@@ -174,9 +174,9 @@ class Version14000Date20220330141647 extends SimpleMigrationStep {
 				continue;
 			}
 
-			if (str_starts_with($mimetype, 'audio/')) {
+			if (str_starts_with((string)$mimetype, 'audio/')) {
 				$attachments[$sharesWithoutMimetype[$shareId]]['object_type'] = Attachment::TYPE_AUDIO;
-			} elseif (str_starts_with($mimetype, 'image/') || str_starts_with($mimetype, 'video/')) {
+			} elseif (str_starts_with((string)$mimetype, 'image/') || str_starts_with((string)$mimetype, 'video/')) {
 				$attachments[$sharesWithoutMimetype[$shareId]]['object_type'] = Attachment::TYPE_MEDIA;
 			}
 		}
@@ -209,7 +209,7 @@ class Version14000Date20220330141647 extends SimpleMigrationStep {
 			->leftJoin('f', 'mimetypes', 'm', $query->expr()->eq('f.mimetype', 'm.id'))
 			->where($query->expr()->in('s.id', $query->createNamedParameter($shareIds, IQueryBuilder::PARAM_INT_ARRAY)));
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$mimetype[$row['id']] = $row['mimetype'];
 		}
 		$result->closeCursor();

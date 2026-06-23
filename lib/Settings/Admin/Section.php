@@ -15,8 +15,8 @@ use OCP\Settings\IIconSection;
 class Section implements IIconSection {
 
 	public function __construct(
-		private IURLGenerator $url,
-		private IL10N $l,
+		private readonly IURLGenerator $url,
+		private readonly IL10N $l,
 	) {
 	}
 

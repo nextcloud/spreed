@@ -28,7 +28,6 @@ class SelectHelper {
 			$alias . 'avatar',
 			$alias . 'active_since',
 			$alias . 'default_permissions',
-			$alias . 'call_permissions',
 			$alias . 'call_flag',
 			$alias . 'last_activity',
 			$alias . 'last_message',
@@ -47,6 +46,7 @@ class SelectHelper {
 			$alias . 'mention_permissions',
 			$alias . 'transcription_language',
 			$alias . 'last_pinned_id',
+			$alias . 'attributes',
 		])->selectAlias($alias . 'id', 'r_id');
 	}
 
@@ -73,7 +73,6 @@ class SelectHelper {
 			$alias . 'last_activity',
 			$alias . 'name',
 		])->selectAlias($alias . 'id', 'th_id');
-
 
 	}
 
@@ -109,6 +108,7 @@ class SelectHelper {
 			$alias . 'archived',
 			$alias . 'important',
 			$alias . 'sensitive',
+			$alias . 'tag_ids',
 			$alias . 'has_unread_threads',
 			$alias . 'has_unread_thread_mentions',
 			$alias . 'has_unread_thread_directs',

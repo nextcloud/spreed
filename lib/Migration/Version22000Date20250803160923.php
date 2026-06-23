@@ -24,7 +24,7 @@ use Override;
  */
 class Version22000Date20250803160923 extends SimpleMigrationStep {
 	public function __construct(
-		protected IDBConnection $db,
+		private readonly IDBConnection $db,
 	) {
 	}
 
@@ -66,13 +66,13 @@ class Version22000Date20250803160923 extends SimpleMigrationStep {
 
 		$tokens = [];
 		$result = $query->executeQuery();
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$tokens[] = $row['share_with'];
 		}
 		$result->closeCursor();
 
 		// Update current conversations with the correct flag
-		$chunks = array_chunk($tokens, 1000);
+		$chunks = array_chunk($tokens, IQueryBuilder::MAX_IN_PARAMETERS);
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			/** Can not use @see \OCA\Talk\Model\Attachment::ATTACHMENTS_ATLEAST_ONE during update */

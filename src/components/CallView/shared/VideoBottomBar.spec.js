@@ -6,7 +6,7 @@
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { mount } from '@vue/test-utils'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'es-toolkit'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
@@ -167,7 +167,7 @@ describe('VideoBottomBar.vue', () => {
 				componentProps.showVideoOverlay = false
 				const wrapper = mountVideoBottomBar(componentProps)
 				const participantName = wrapper.find('.participant-name')
-				expect(participantName.isVisible()).toBeFalsy()
+				expect(participantName.classes()).toContain('participant-name--hidden')
 			})
 		})
 

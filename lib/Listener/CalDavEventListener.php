@@ -6,6 +6,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\Listener;
 
 use OCA\DAV\CalDAV\TimezoneService;
@@ -33,12 +34,12 @@ use Sabre\VObject\Reader;
 class CalDavEventListener implements IEventListener {
 
 	public function __construct(
-		private Manager $manager,
-		private RoomService $roomService,
-		private LoggerInterface $logger,
-		private TimezoneService $timezoneService,
-		private ParticipantService $participantService,
-		private IL10N $l10n,
+		private readonly Manager $manager,
+		private readonly RoomService $roomService,
+		private readonly LoggerInterface $logger,
+		private readonly TimezoneService $timezoneService,
+		private readonly ParticipantService $participantService,
+		private readonly IL10N $l10n,
 	) {
 
 	}
@@ -61,7 +62,7 @@ class CalDavEventListener implements IEventListener {
 		}
 
 		// The principal uri is in the format 'principals/users/<userId>'
-		$userId = substr($principaluri, 17);
+		$userId = substr((string)$principaluri, 17);
 
 		$calData = $event->getObjectData()['calendardata'] ?? null;
 		if (!$calData) {
@@ -69,8 +70,8 @@ class CalDavEventListener implements IEventListener {
 			return;
 		}
 
-		if (!str_contains($calData, 'LOCATION:')) {
-			$this->logger->debug('No location for the even, skipping for calendar event integration');
+		if (!str_contains((string)$calData, 'LOCATION:')) {
+			$this->logger->debug('No location for the event, skipping for calendar event integration');
 			return;
 		}
 
@@ -82,6 +83,13 @@ class CalDavEventListener implements IEventListener {
 		}
 
 		$vevent = $vobject->VEVENT;
+
+		// Calendar objects can also be VTODO or VJOURNAL for instance
+		if ($vevent === null) {
+			$this->logger->debug('Calendar object is not an event, skipping for calendar event integration');
+			return;
+		}
+
 		// Check if the location is set and if the location string contains a call url
 		$location = $vevent->LOCATION?->getValue();
 		if ($location === null || !str_contains($location, '/call/')) {
@@ -127,7 +135,7 @@ class CalDavEventListener implements IEventListener {
 
 		$name = $vevent->SUMMARY?->getValue();
 		if ($name !== null) {
-			$name = strlen($name) > 254 ? substr($name, 0, 254) . "\u{2026}" : $name;
+			$name = strlen($name) > 254 ? substr($name, 0, 254) . "\u{2026}" : trim($name);
 		}
 
 		$description = $vevent->DESCRIPTION?->getValue();
@@ -169,9 +177,8 @@ class CalDavEventListener implements IEventListener {
 			return;
 		}
 
-
 		// So we can unset names & descriptions in case the user deleted them
-		$this->roomService->setName($room, $name ?? $this->l10n->t('Talk conversation for event'));
+		$this->roomService->setName($room, $name ?? $this->l10n->t('Meeting'));
 		$this->roomService->setDescription($room, $description ?? '');
 
 		/** @var DateTime $start */

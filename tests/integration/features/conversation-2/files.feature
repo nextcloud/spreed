@@ -3,9 +3,6 @@ Feature: conversation-2/files
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
-    Given user "participant3" exists
-    And group "group1" exists
-    And user "participant2" is member of group "group1"
 
   # When "user XXX gets the room for path YYY with 200" succeeds the room token
   # can later be used by any participant using the "file YYY room" identifier.
@@ -41,6 +38,7 @@ Feature: conversation-2/files
     And user "participant2" is not participant of room "file test/renamed.txt room" (v4)
 
   Scenario: get room for file in folder reshared with user
+    Given user "participant3" exists
     Given user "participant1" creates folder "/test"
     And user "participant1" moves file "/welcome.txt" to "/test/renamed.txt" with 201
     And user "participant1" shares "test" with user "participant2" with OCS 100
@@ -65,6 +63,8 @@ Feature: conversation-2/files
 
 
   Scenario: get room for file shared with group
+    Given group "group1" exists
+    And user "participant2" is member of group "group1"
     Given user "participant1" shares "welcome.txt" with group "group1" with OCS 100
     And user "participant2" accepts last share
     When user "participant1" gets the room for path "welcome.txt" with 200 (v1)
@@ -73,6 +73,9 @@ Feature: conversation-2/files
     And user "participant2" is not participant of room "file welcome (2).txt room" (v4)
 
   Scenario: get room for file shared with user and group
+    Given group "group1" exists
+    And user "participant2" is member of group "group1"
+    Given user "participant3" exists
     Given user "participant1" shares "welcome.txt" with group "group1" with OCS 100
     And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" with user "participant3" with OCS 100
@@ -97,6 +100,7 @@ Feature: conversation-2/files
 
 
   Scenario: get room for link share
+    Given user "participant3" exists
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" by link with OCS 100
@@ -110,6 +114,7 @@ Feature: conversation-2/files
     And user "guest" is not participant of room "file last share room" (v4)
 
   Scenario: get room for link share protected by password
+    Given user "participant3" exists
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" by link with OCS 100
@@ -127,6 +132,7 @@ Feature: conversation-2/files
     And user "guest" gets the room for last share with 404 (v1)
 
   Scenario: get room for link no longer shared
+    Given user "participant3" exists
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" by link with OCS 100
@@ -222,6 +228,7 @@ Feature: conversation-2/files
     Then user "participant2" is participant of room "file test/renamed.txt room" (v4)
 
   Scenario: user with access to a file in a reshared folder can join its room
+    Given user "participant3" exists
     Given user "participant1" creates folder "/test"
     And user "participant1" moves file "/welcome.txt" to "/test/renamed.txt" with 201
     And user "participant1" shares "test" with user "participant2" with OCS 100
@@ -241,6 +248,7 @@ Feature: conversation-2/files
     Then user "participant1" is participant of room "file welcome (2).txt room" (v4)
 
   Scenario: user no longer with access to a file can not join its room
+    Given user "participant3" exists
     Given user "participant1" shares "welcome.txt" with user "participant3" with OCS 100
     And user "participant3" accepts last share
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
@@ -251,6 +259,7 @@ Feature: conversation-2/files
     Then user "participant2" is not participant of room "file welcome.txt room" (v4)
 
   Scenario: user without access to a file can not join its room
+    Given user "participant3" exists
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" accepts last share
     And user "participant1" gets the room for path "welcome.txt" with 200 (v1)
@@ -266,6 +275,8 @@ Feature: conversation-2/files
 
 
   Scenario: join room for file shared with group
+    Given group "group1" exists
+    And user "participant2" is member of group "group1"
     Given user "participant1" shares "welcome.txt" with group "group1" with OCS 100
     And user "participant2" accepts last share
     And user "participant1" gets the room for path "welcome.txt" with 200 (v1)
@@ -276,6 +287,9 @@ Feature: conversation-2/files
     And user "participant2" is participant of room "file welcome (2).txt room" (v4)
 
   Scenario: join room for file shared with user and group
+    Given group "group1" exists
+    And user "participant2" is member of group "group1"
+    Given user "participant3" exists
     Given user "participant1" shares "welcome.txt" with group "group1" with OCS 100
     And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" with user "participant3" with OCS 100

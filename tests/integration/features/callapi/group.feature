@@ -1,17 +1,18 @@
 Feature: callapi/group
   Background:
     Given user "participant1" exists
-    And user "participant2" exists
-    And user "participant3" exists
     And group "attendees1" exists
-    And user "participant2" is member of group "attendees1"
 
   Scenario: User has no rooms
+    Given user "participant2" exists
+    Given user "participant3" exists
     Then user "participant1" is participant of the following rooms (v4)
     Then user "participant2" is participant of the following rooms (v4)
     Then user "participant3" is participant of the following rooms (v4)
 
   Scenario: User1 invites group attendees1 to a group room and they can do everything
+    Given user "participant2" exists
+    And user "participant2" is member of group "attendees1"
     When user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |
@@ -52,6 +53,9 @@ Feature: callapi/group
     And user "participant2" sees 0 peers in call "room" with 200 (v4)
 
   Scenario: User1 invites group attendees1 to a group room and user3 can't do anything
+    Given user "participant2" exists
+    And user "participant2" is member of group "attendees1"
+    Given user "participant3" exists
     When user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | invite   | attendees1 |

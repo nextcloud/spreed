@@ -23,6 +23,15 @@ vi.mock('vuex', () => ({
 	})),
 }))
 
+function requiresObject(type) {
+	return [
+		SHARED_ITEM.TYPES.LOCATION,
+		SHARED_ITEM.TYPES.DECK_CARD,
+		SHARED_ITEM.TYPES.POLL,
+		SHARED_ITEM.TYPES.OTHER,
+	].includes(type)
+}
+
 describe('sharedItemsStore', () => {
 	const token = 'TOKEN'
 	let sharedItemsStore
@@ -35,8 +44,10 @@ describe('sharedItemsStore', () => {
 		setActivePinia(createPinia())
 		sharedItemsStore = useSharedItemsStore()
 		sharedItemsOrder.forEach((type, index) => {
-			payloadOverview[type] = [{ id: 100 + index, message: type }]
-			result[type] = { [100 + index]: { id: 100 + index, message: type } }
+			const message = { id: 100 + index, message: type, messageParameters: {} }
+			message.messageParameters = requiresObject(type) ? { object: {} } : { file: {} }
+			payloadOverview[type] = [message]
+			result[type] = { [100 + index]: message }
 		})
 	})
 

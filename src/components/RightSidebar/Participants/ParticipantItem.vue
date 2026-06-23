@@ -947,6 +947,7 @@ export default {
 						flags,
 						silent: false,
 						recordingConsent: true,
+						options: { videoOn: false },
 					})
 				}
 				await callSIPDialOut(this.token, this.participant.attendeeId)

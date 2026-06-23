@@ -23,7 +23,6 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\Event;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -43,21 +42,20 @@ class Listener implements IEventListener {
 	protected array $preparedCallNotifications = [];
 
 	public function __construct(
-		protected IConfig $serverConfig,
-		protected IDBConnection $connection,
-		protected IManager $notificationManager,
-		protected Notifier $notificationProvider,
-		protected ParticipantService $participantsService,
-		protected IEventDispatcher $dispatcher,
-		protected IUserSession $userSession,
-		protected ITimeFactory $timeFactory,
-		protected LoggerInterface $logger,
+		private readonly IConfig $serverConfig,
+		private readonly IDBConnection $connection,
+		private readonly IManager $notificationManager,
+		private readonly Notifier $notificationProvider,
+		private readonly ParticipantService $participantsService,
+		private readonly IUserSession $userSession,
+		private readonly ITimeFactory $timeFactory,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 
 	#[\Override]
 	public function handle(Event $event): void {
-		match (get_class($event)) {
+		match ($event::class) {
 			CallNotificationSendEvent::class => $this->sendCallNotification($event->getRoom(), $event->getActor()?->getAttendee(), $event->getTarget()->getAttendee()),
 			AttendeesAddedEvent::class => $this->generateInvitation($event->getRoom(), $event->getAttendees()),
 			UserJoinedRoomEvent::class => $this->handleUserJoinedRoomEvent($event),
@@ -306,7 +304,7 @@ class Listener implements IEventListener {
 			} else {
 				$fallbackLang = $this->serverConfig->getSystemValueString('default_language', 'en');
 				/** @psalm-var array<string, string> $userLanguages */
-				$userLanguages = $this->serverConfig->getUserValueForUsers('core', 'lang', array_map('strval', array_keys($users)));
+				$userLanguages = $this->serverConfig->getUserValueForUsers('core', 'lang', array_map(strval(...), array_keys($users)));
 			}
 		}
 

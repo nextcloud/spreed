@@ -16,7 +16,7 @@ use OCP\Share\IShare;
  */
 class OverwritePublicSharePropertiesEvent extends Event {
 	public function __construct(
-		protected IShare $share,
+		private readonly IShare $share,
 	) {
 		parent::__construct();
 	}

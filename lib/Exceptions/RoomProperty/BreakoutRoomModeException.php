@@ -15,7 +15,7 @@ class BreakoutRoomModeException extends \InvalidArgumentException {
 	 * @param self::REASON_* $reason
 	 */
 	public function __construct(
-		protected string $reason,
+		private readonly string $reason,
 	) {
 		parent::__construct($reason);
 	}

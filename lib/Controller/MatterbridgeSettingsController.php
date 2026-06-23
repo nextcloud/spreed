@@ -23,7 +23,7 @@ class MatterbridgeSettingsController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected MatterbridgeManager $bridgeManager,
+		private readonly MatterbridgeManager $bridgeManager,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -48,7 +48,7 @@ class MatterbridgeSettingsController extends OCSController {
 					'error' => 'binary',
 				], Http::STATUS_BAD_REQUEST);
 			}
-		} catch (WrongPermissionsException $e) {
+		} catch (WrongPermissionsException) {
 			return new DataResponse([
 				'error' => 'binary_permissions',
 			], Http::STATUS_BAD_REQUEST);

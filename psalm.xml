@@ -5,7 +5,7 @@
 	findUnusedBaselineEntry="true"
 	findUnusedCode="false"
 	resolveFromConfigFile="true"
-	phpVersion="8.2"
+	phpVersion="8.3"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="https://getpsalm.org/schema/config"
 	xsi:schemaLocation="https://getpsalm.org/schema/config vendor-bin/psalm/vendor/vimeo/psalm/config.xsd"
@@ -26,6 +26,25 @@
 		<LessSpecificReturnType errorLevel="error"/>
 		<LessSpecificImplementedReturnType errorLevel="error"/>
 		<MoreSpecificReturnType errorLevel="error"/>
+		<DeprecatedClass errorLevel="error"/>
+		<DeprecatedConstant errorLevel="error"/>
+		<DeprecatedFunction errorLevel="error"/>
+		<DeprecatedInterface errorLevel="error"/>
+		<DeprecatedMethod>
+			<errorLevel type="error">
+				<directory name="lib"/>
+			</errorLevel>
+			<errorLevel type="suppress">
+				<referencedMethod name="OCP\IConfig::getAppValue"/>
+				<referencedMethod name="OCP\IConfig::setAppValue"/>
+				<referencedMethod name="OCP\IConfig::deleteAppValue"/>
+				<referencedMethod name="OCP\IConfig::getUserValue"/>
+				<referencedMethod name="OCP\IConfig::setUserValue"/>
+				<referencedMethod name="OCP\IConfig::getUserValueForUsers"/>
+			</errorLevel>
+		</DeprecatedMethod>
+		<DeprecatedProperty errorLevel="error"/>
+		<DeprecatedTrait errorLevel="error"/>
 		<UndefinedClass>
 			<errorLevel type="suppress">
 				<referencedClass name="Doctrine\DBAL\Exception" />
@@ -84,6 +103,7 @@
 		<file name="tests/stubs/oca_dav_caldav_timezoneservice.php" />
 		<file name="tests/stubs/oca_files_events.php" />
 		<file name="tests/stubs/oca_files_sharing_events.php" />
+		<file name="tests/stubs/oca_guests.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ClientException.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ConnectException.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ServerException.php" />

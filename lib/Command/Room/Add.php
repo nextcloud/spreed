@@ -60,8 +60,8 @@ class Add extends Base {
 			return 1;
 		}
 
-		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
-			$output->writeln('<error>Room is no group call.</error>');
+		if (in_array($room->getType(), [Room::TYPE_ONE_TO_ONE, Room::TYPE_ONE_TO_ONE_FORMER], true)) {
+			$output->writeln('<error>Room is a private (1 to 1) conversation.</error>');
 			return 1;
 		}
 
@@ -79,24 +79,18 @@ class Add extends Base {
 
 	#[\Override]
 	public function completeOptionValues($optionName, CompletionContext $context) {
-		switch ($optionName) {
-			case 'user':
-				return $this->completeUserValues($context);
-
-			case 'group':
-				return $this->completeGroupValues($context);
-		}
-
-		return parent::completeOptionValues($optionName, $context);
+		return match ($optionName) {
+			'user' => $this->completeUserValues($context),
+			'group' => $this->completeGroupValues($context),
+			default => parent::completeOptionValues($optionName, $context),
+		};
 	}
 
 	#[\Override]
 	public function completeArgumentValues($argumentName, CompletionContext $context) {
-		switch ($argumentName) {
-			case 'token':
-				return $this->completeTokenValues($context);
-		}
-
-		return parent::completeArgumentValues($argumentName, $context);
+		return match ($argumentName) {
+			'token' => $this->completeTokenValues($context),
+			default => parent::completeArgumentValues($argumentName, $context),
+		};
 	}
 }

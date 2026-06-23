@@ -542,8 +542,8 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 		.catch(function(error) {
 			if (token !== this.currentRoomToken) {
 				// User navigated away in the meantime. Ignore
-			} else if (isCancel(error)) {
-				console.debug('Pulling messages request was cancelled')
+			} else if (isCancel(error) || error.code === 'ECONNABORTED') {
+				console.debug('Pulling messages request was cancelled or aborted')
 			} else if (error?.response?.status === 409) {
 				// Participant joined a second time and this session was killed
 				console.error('Session was killed but the conversation still exists')
@@ -1505,7 +1505,9 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 				EventBus.emit('deleted-session-detected')
 				break
 			}
-		// eslint-disable-next-line no-fallthrough
+
+			EventBus.emit('should-refresh-conversations', { all: true })
+			break
 		default:
 			console.debug('Room list event', data)
 			EventBus.emit('should-refresh-conversations')

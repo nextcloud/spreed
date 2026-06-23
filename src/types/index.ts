@@ -55,10 +55,27 @@ type PasswordPolicyCapabilities = {
 		validate: string
 	}
 }
+// From https://github.com/nextcloud/calendar/blob/main/lib/AppInfo/Capabilities.php
+type CalendarCapabilities = {
+	webui: boolean
+}
+
+// From https://github.com/nextcloud/circles/blob/master/lib/AppInfo/Capabilities.php
+type CirclesCapabilities = {
+	version: string
+}
+
+// From https://github.com/nextcloud/guests/blob/master/lib/AppInfo/Capabilities.php
+type GuestsCapabilities = {
+	enabled: boolean
+}
 
 // Capabilities
 export type Capabilities = {
 	spreed: SpreedCapabilities
+	calendar?: CalendarCapabilities
+	circles?: CirclesCapabilities
+	guests?: GuestsCapabilities
 	password_policy?: PasswordPolicyCapabilities
 }
 
@@ -227,6 +244,129 @@ export type JoinRoomFullResponse = {
 // Call
 export type fetchPeersResponse = ApiResponse<operations['call-get-peers-for-call']['responses'][200]['content']['application/json']>
 export type callSIPDialOutResponse = ApiResponse<operations['call-sip-dial-out']['responses'][201]['content']['application/json']>
+
+/* eslint-disable @typescript-eslint/no-explicit-any --
+ * Arguments of function types are contravariant in strict mode, so the
+ * "any" type is required here, as the "unknown" type would prevent
+ * assigning a function type with narrower argument types.
+ */
+type SuperEmittedMixin<T> = {
+	on(event: string, handler: (self: T, ...args: any[]) => void): void
+	off(event: string, handler: (self: T, ...args: any[]) => void): void
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+export interface CallParticipantCollection extends SuperEmittedMixin<CallParticipantCollection> {
+	callParticipantModels: Array<CallParticipantModel>
+
+	add(options: CallParticipantModelOptions): CallParticipantModel
+	get(peerId: string): CallParticipantModel | undefined
+	remove(peerId: string): boolean
+}
+
+export type CallParticipantModelOptions = {
+	peerId: string
+	webRtc: WebRtc
+}
+
+export interface CallParticipantModel extends SuperEmittedMixin<CallParticipantModel> {
+	get(key: string): unknown
+	set(key: string, value: unknown): void
+
+	destroy(): void
+	forceMute(): void
+	setPeer(peer: unknown | null): void
+	setScreenPeer(screenPeer: unknown | null): void
+	setActor(actor: string | null): void
+	setUserId(userId: string): void
+	setNameForUserFromPeerNick(nick: string): void
+	setNextcloudSessionId(nextcloudSessionId: string): void
+	setVideoBlocked(blocked: boolean): void
+	setSimulcastVideoQuality(quality: number): void
+	setSimulcastScreenQuality(quality: number): void
+}
+
+export interface LocalCallParticipantModel extends SuperEmittedMixin<LocalCallParticipantModel> {
+	get(key: string): unknown
+	set(key: string, value: unknown): void
+
+	setWebRtc(webRtc: WebRtc): void
+	setPeerId(peerId: string): void
+	setPeer(peer: unknown | null): void
+	setPeerNeeded(peerNeeded: boolean): void
+	setScreenPeer(screenPeer: unknown | null): void
+	setName(name: string): void
+	sendReaction(reaction: string): void
+}
+
+export interface LocalMediaModel extends SuperEmittedMixin<LocalMediaModel> {
+	attributes: {
+		localStream: unknown | null
+		audioAvailable: boolean
+		audioEnabled: boolean
+		speaking: boolean
+		speakingWhileMuted: boolean
+		currentVolume: number
+		volumeThreshold: number
+		videoAvailable: boolean
+		videoEnabled: boolean
+		virtualBackgroundAvailable: boolean
+		virtualBackgroundEnabled: boolean
+		virtualBackgroundType: string | null
+		virtualBackgroundBlurStrength: number | null
+		virtualBackgroundUrl: string | null
+		localScreen: unknown | null
+		token: string
+		raisedHand: { state: boolean, timestamp: Date }
+	}
+
+	get(key: string): unknown
+	set(key: string, value: unknown): void
+
+	getWebRtc(): WebRtc
+	setWebRtc(webRtc: WebRtc): void
+	enableAudio(): void
+	disableAudio(): void
+	enableVideo(): void
+	disableVideo(): void
+	enableNoiseSuppression(): void
+	disableNoiseSuppression(): void
+	enableVirtualBackground(): void
+	setVirtualBackgroundBlur(blurStrength: number, globalBlurVirtualBackground: boolean): void
+	setVirtualBackgroundImage(imageUrl: string): void
+	setVirtualBackgroundVideo(videoUrl: string): void
+	disableVirtualBackground(): void
+	shareScreen(mode: string | undefined, callback: () => void): void
+	stopSharingScreen(): void
+	toggleHandRaised(raised: boolean): void
+}
+
+export type Signaling = {
+	settings: {
+		userId: string | null
+	}
+}
+
+export type InternalWebRtc = {
+	isAudioEnabled(): boolean
+	isVideoEnabled(): boolean
+	isSpeaking(): boolean
+}
+
+export type WebRtc = {
+	on(event: string, handler: () => void): void
+	off(event: string, handler: () => void): void
+	emit(event: string): void
+
+	sendDataChannelToAll(channel: string, message: string, payload?: string | object): void
+	sendToAll(message: string, payload: object): void
+
+	sendDataChannelTo(peerId: string, channel: string, message: string, payload?: string | object): void
+	sendTo(peerId: string, messageType: string, payload: object): void
+
+	connection: Signaling
+	webrtc: InternalWebRtc
+}
 
 // Participants
 export type ParticipantStatus = {
@@ -469,6 +609,10 @@ export type {
 	UserProfileResponse,
 } from './core.ts'
 
+// Presets
+export type ConversationPreset = components['schemas']['ConversationPreset']
+export type getPresetsResponse = ApiResponse<operations['preset-get-presets']['responses'][200]['content']['application/json']>
+
 // Settings
 export type setSipSettingsParams = Required<operationsAdmin['settings-setsip-settings']>['requestBody']['content']['application/json']
 export type setSipSettingsResponse = ApiResponse<operationsAdmin['settings-setsip-settings']['responses'][200]['content']['application/json']>
@@ -509,6 +653,13 @@ export type {
 	UnifiedSearchResultEntry,
 } from './core.ts'
 
+// Translation API
+export type {
+	TranslationGetLanguagesResponse,
+	TranslationTranslateParams,
+	TranslationTranslateResponse,
+} from './core.ts'
+
 // Files API
 export type {
 	createFileFromTemplateParams,
@@ -537,6 +688,7 @@ export type UploadFile = {
 	}
 	sharePath?: string
 	status?: string
+	talkMetaData?: string
 	temporaryMessage: ChatMessage
 	totalSize?: number
 }
@@ -552,3 +704,27 @@ export type liveTranscriptionGetAvailableLanguagesResponse = ApiResponse<operati
 export type liveTranscriptionGetAvailableTranslationLanguagesResponse = ApiResponse<operations['live_transcription-get-available-translation-languages']['responses'][200]['content']['application/json']>
 export type liveTranscriptionSetLanguageResponse = ApiResponse<operations['live_transcription-set-language']['responses'][200]['content']['application/json']>
 export type liveTranscriptionSetTargetLanguageResponse = ApiResponse<operations['live_transcription-set-target-language']['responses'][200]['content']['application/json']>
+
+// Attachment post folder
+
+export type PostAttachmentFolderParams = Required<operations['chat-post-attachment-to-room']>['requestBody']['content']['application/json']
+export type PostAttachmentFolderResponse = ApiResponse<operations['chat-post-attachment-to-room']['responses'][200]['content']['application/json']>
+
+export type ProbeAttachmentFolderParams = Required<operations['chat-probe-attachment-folder']>['requestBody']['content']['application/json']
+export type ProbeAttachmentFolderResponse = ApiResponse<operations['chat-probe-attachment-folder']['responses'][200]['content']['application/json']>
+
+// Conversation tags
+export type ConversationTag = components['schemas']['ConversationTag']
+
+export type fetchTagsResponse = ApiResponse<operations['conversation_tag-get-tags']['responses'][200]['content']['application/json']>
+export type createTagParams = Required<operations['conversation_tag-create-tag']>['requestBody']['content']['application/json']
+export type createTagResponse = ApiResponse<operations['conversation_tag-create-tag']['responses'][201]['content']['application/json']>
+export type updateTagParams = Required<operations['conversation_tag-update-tag']>['requestBody']['content']['application/json']
+export type updateTagResponse = ApiResponse<operations['conversation_tag-update-tag']['responses'][200]['content']['application/json']>
+export type deleteTagResponse = ApiResponse<operations['conversation_tag-delete-tag']['responses'][200]['content']['application/json']>
+export type reorderTagsParams = Required<operations['conversation_tag-reorder-tags']>['requestBody']['content']['application/json']
+export type reorderTagsResponse = ApiResponse<operations['conversation_tag-reorder-tags']['responses'][200]['content']['application/json']>
+export type updateTagCollapsedParams = Required<operations['conversation_tag-update-tag-collapsed']>['requestBody']['content']['application/json']
+export type updateTagCollapsedResponse = ApiResponse<operations['conversation_tag-update-tag-collapsed']['responses'][200]['content']['application/json']>
+export type assignConversationToTagsParams = Required<operations['room-assign-tags']>['requestBody']['content']['application/json']
+export type assignConversationToTagsResponse = ApiResponse<operations['room-assign-tags']['responses'][200]['content']['application/json']>

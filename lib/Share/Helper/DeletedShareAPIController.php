@@ -22,8 +22,8 @@ use OCP\Share\IShare;
 class DeletedShareAPIController {
 
 	public function __construct(
-		private string $userId,
-		private Manager $manager,
+		private readonly string $userId,
+		private readonly Manager $manager,
 	) {
 	}
 
@@ -41,7 +41,7 @@ class DeletedShareAPIController {
 
 		try {
 			$room = $this->manager->getRoomByToken($share->getSharedWith(), $this->userId);
-		} catch (RoomNotFoundException $e) {
+		} catch (RoomNotFoundException) {
 			return $result;
 		}
 

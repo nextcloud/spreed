@@ -168,7 +168,7 @@ class AttendeeMapper extends QBMapper {
 		}
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		return (int)($row['num_actors'] ?? 0);
@@ -311,6 +311,7 @@ class AttendeeMapper extends QBMapper {
 			'archived' => (bool)$row['archived'],
 			'important' => (bool)$row['important'],
 			'sensitive' => (bool)$row['sensitive'],
+			'tag_ids' => $row['tag_ids'],
 			'has_unread_threads' => (bool)$row['has_unread_threads'],
 			'has_unread_thread_mentions' => (bool)$row['has_unread_thread_mentions'],
 			'has_unread_thread_directs' => (bool)$row['has_unread_thread_directs'],

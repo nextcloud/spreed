@@ -58,6 +58,25 @@
 * `two-lines` Normal (default) - two-line elements (with display name and last message)
 * `compact` Compact - one-line elements (with display name)
 
+### Conversations sort options
+Required capability: `config => conversations => sort-order`
+
+* `activity` (default) - Conversations are ordered by last chat or call activity
+* `alphabetical` - Conversations are ordered by the display name
+
+### Conversations group mode
+Required capability: `config => conversations => group-mode`
+
+* `none` (default) - Conversations are not grouped by type
+* `group-first` - Conversations are grouped and group (and public) conversations shown first
+* `private-first` - Conversations are grouped and private (one-to-one) conversations shown first
+
+### Conversation attributes
+Required capability: `conversation-presets`
+
+* `0` None
+* `1` Voice rooms - Join call when joining conversation
+
 ## Participants
 
 ### Participant types
@@ -152,6 +171,10 @@
 * `2` - Recording consent can be enabled by moderators on conversation level (not allowed on conversation API level, only on config level)
 
 ## Chat
+
+### Chat style
+* `split` Split (default) - chat messages are split into two columns (with different sides per actor)
+* `unified` Unified - chat messages are displayed in a single column
 
 ### Shared item types
 * `audio` - Shared audio file

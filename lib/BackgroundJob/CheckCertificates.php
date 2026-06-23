@@ -11,6 +11,7 @@ namespace OCA\Talk\BackgroundJob;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
 use OCA\Talk\Service\CertificateService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
@@ -21,14 +22,15 @@ use Psr\Log\LoggerInterface;
 
 class CheckCertificates extends TimedJob {
 	public function __construct(
-		protected CertificateService $certService,
-		protected Config $talkConfig,
-		protected ITimeFactory $timeFactory,
-		protected IGroupManager $groupManager,
-		protected IManager $notificationManager,
-		protected LoggerInterface $logger,
+		ITimeFactory $time,
+		private readonly CertificateService $certService,
+		private readonly Config $talkConfig,
+		private readonly IGroupManager $groupManager,
+		private readonly IManager $notificationManager,
+		private readonly IAppConfig $appConfig,
+		private readonly LoggerInterface $logger,
 	) {
-		parent::__construct($timeFactory);
+		parent::__construct($time);
 
 		// Run once a week
 		$this->setInterval(60 * 60 * 24 * 7);
@@ -62,7 +64,7 @@ class CheckCertificates extends TimedJob {
 
 		try {
 			$notification->setApp(Application::APP_ID)
-				->setDateTime(new \DateTime())
+				->setDateTime($this->time->getDateTime())
 				->setObject('certificate_expiration', $host);
 
 			$notification->setSubject('certificate_expiration', [
@@ -74,7 +76,7 @@ class CheckCertificates extends TimedJob {
 				$notification->setUser($uid);
 				$this->notificationManager->notify($notification);
 			}
-		} catch (\InvalidArgumentException $e) {
+		} catch (\InvalidArgumentException) {
 			return;
 		}
 	}
@@ -91,7 +93,9 @@ class CheckCertificates extends TimedJob {
 			return;
 		}
 
-		if ($expirationInDays < 10) {
+		$expirationWarningLimit = $this->appConfig->getAppValueInt('certificate_expiration_days', 10);
+		$expirationWarningLimit = min(365, max(0, $expirationWarningLimit));
+		if ($expirationInDays < $expirationWarningLimit) {
 			$this->logger->warning('Certificate of ' . $host . ' expires in less than ' . $expirationInDays . ' days');
 
 			$this->createNotifications($host, $expirationInDays);
@@ -109,7 +113,7 @@ class CheckCertificates extends TimedJob {
 
 		foreach ($turnServers as $turnServer) {
 			// Only check server which support the 'turns' protocol
-			if (!str_contains($turnServer['schemes'], 'turns')) {
+			if (!str_contains((string)$turnServer['schemes'], 'turns')) {
 				continue;
 			}
 

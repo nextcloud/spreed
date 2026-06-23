@@ -8,18 +8,14 @@ import { emit, subscribe } from '@nextcloud/event-bus'
 import { generateFilePath } from '@nextcloud/router'
 import { createApp, reactive, watch } from 'vue'
 import App from './App.vue'
+import { initializeTalkOnce } from './init.js'
 import { createTalkRouter } from './router/router.ts'
 import { SettingsAPI } from './services/SettingsAPI.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
-import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 
-import './init.js'
-// Leaflet icon patch
-import 'leaflet/dist/leaflet.css'
-import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
-import 'leaflet-defaulticon-compatibility'
+initializeTalkOnce()
 
 if (!IS_DESKTOP) {
 	// CSP config for webpack dynamic chunk loading
@@ -38,10 +34,7 @@ const instance = createApp(App, { fileInfo: null })
 	.use(store)
 	.use(pinia)
 	.use(router)
-	.use(NextcloudGlobalsVuePlugin)
 	.mount('#content')
-
-window.store = store
 
 // Setup Viewer to be used with Talk sidebar
 /**

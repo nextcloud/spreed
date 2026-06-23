@@ -26,9 +26,9 @@ use Psr\Log\LoggerInterface;
  */
 class PollController {
 	public function __construct(
-		protected ProxyRequest $proxy,
-		protected UserConverter $userConverter,
-		protected LoggerInterface $logger,
+		private readonly ProxyRequest $proxy,
+		private readonly UserConverter $userConverter,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 
@@ -131,7 +131,6 @@ class PollController {
 
 		return new DataResponse($data);
 	}
-
 
 	/**
 	 * @return DataResponse<Http::STATUS_OK, TalkPollDraft, array{}>|DataResponse<Http::STATUS_CREATED, TalkPoll, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'draft'|'options'|'poll'|'question'|'room'}, array{}>

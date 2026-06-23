@@ -27,9 +27,9 @@ use Psr\Log\LoggerInterface;
  */
 class BeforePreferenceSetEventListener implements IEventListener {
 	public function __construct(
-		protected IRootFolder $rootFolder,
-		protected ParticipantService $participantService,
-		protected LoggerInterface $logger,
+		private readonly IRootFolder $rootFolder,
+		private readonly ParticipantService $participantService,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 
@@ -83,6 +83,16 @@ class BeforePreferenceSetEventListener implements IEventListener {
 		}
 		if ($key === UserPreference::CHAT_STYLE) {
 			return $value === UserPreference::CHAT_STYLE_SPLIT || $value === UserPreference::CHAT_STYLE_UNIFIED;
+		}
+		if ($key === UserPreference::CONVERSATIONS_SORT_ORDER) {
+			return $value === UserPreference::CONVERSATIONS_SORT_ORDER_ACTIVITY || $value === UserPreference::CONVERSATIONS_SORT_ORDER_ALPHABETICAL;
+		}
+		if ($key === UserPreference::CONVERSATIONS_GROUP_MODE) {
+			return in_array($value, [
+				UserPreference::CONVERSATIONS_GROUP_MODE_NONE,
+				UserPreference::CONVERSATIONS_GROUP_MODE_GROUP_FIRST,
+				UserPreference::CONVERSATIONS_GROUP_MODE_PRIVATE_FIRST,
+			], true);
 		}
 
 		if ($key === UserPreference::LIVE_TRANSCRIPTION_TARGET_LANGUAGE_ID) {

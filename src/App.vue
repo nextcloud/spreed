@@ -51,17 +51,32 @@ import { useGetToken } from './composables/useGetToken.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useInterceptNotifications } from './composables/useInterceptNotifications.ts'
 import { useIsInCall } from './composables/useIsInCall.js'
+import { watchJoinedConversation } from './composables/useJoinedConversation.ts'
+import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { CONVERSATION, PARTICIPANT } from './constants.ts'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.ts'
 import { leaveConversationSync } from './services/participantsService.js'
+import SessionStorage from './services/SessionStorage.js'
 import { useActorStore } from './stores/actor.ts'
 import { useCallViewStore } from './stores/callView.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
 import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
 import { signalingKill } from './utils/webrtc/index.js'
+
+/** Internal handlers for 'joined-conversation' watcher (voice-, breakout- rooms) */
+let unwatchJoinedConversation = undefined
+let watchedJoinedConversationToken = undefined
+/**
+ * Release the listener for joined conversation
+ */
+function stopWatchingJoinedConversation() {
+	unwatchJoinedConversation?.()
+	unwatchJoinedConversation = undefined
+	watchedJoinedConversationToken = undefined
+}
 
 export default {
 	name: 'App',
@@ -82,6 +97,8 @@ export default {
 		useGetMessagesProvider()
 		// Intercept some notifications and handle them in the Talk app
 		useInterceptNotifications()
+		// Register recording status sync from signaling message
+		useRecordingStatusSync()
 		// Add provided value to check if we're in the main app or plugin
 		provide('Talk:isMainApp', true)
 		useDocumentFullscreen()
@@ -174,6 +191,10 @@ export default {
 			if (!this.isBreakoutRoomsNavigation(oldValue, newValue)) {
 				this.recordingConsentGiven = false
 			}
+
+			if (watchedJoinedConversationToken && watchedJoinedConversationToken !== newValue) {
+				stopWatchingJoinedConversation()
+			}
 		},
 
 		isInCall: {
@@ -229,6 +250,7 @@ export default {
 		}
 
 		window.removeEventListener('beforeunload', this.preventUnload)
+		stopWatchingJoinedConversation()
 
 		EventBus.off('joined-conversation')
 		EventBus.off('switch-to-conversation')
@@ -254,6 +276,7 @@ export default {
 		window.addEventListener('unload', () => {
 			console.info('Navigating away, leaving conversation')
 			if (this.token) {
+				SessionStorage.removeItem('joined_conversation')
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
 				signalingKill()
@@ -264,93 +287,7 @@ export default {
 		})
 
 		EventBus.on('switch-to-conversation', async (params) => {
-			if (this.isInCall) {
-				this.callViewStore.setForceCallView(true)
-
-				const enableAudio = !BrowserStorage.getItem('audioDisabled_' + this.token)
-				const enableVideo = !BrowserStorage.getItem('videoDisabled_' + this.token)
-				const enableVirtualBackground = !!BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token)
-				const virtualBackgroundType = BrowserStorage.getItem('virtualBackgroundType_' + this.token)
-				const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength_' + this.token)
-				const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl_' + this.token)
-
-				// Fetch conversation object, if it's not known yet to the client
-				if (!this.$store.getters.conversation(params.token)) {
-					await this.fetchSingleConversation(params.token)
-				}
-
-				const conversation = this.$store.getters.conversation(this.token)
-				const previousParticipants = []
-				if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE) {
-					previousParticipants.push(conversation.name)
-				}
-
-				EventBus.once('joined-conversation', async ({ token }) => {
-					if (params.token !== token) {
-						return
-					}
-
-					if (enableAudio) {
-						BrowserStorage.removeItem('audioDisabled_' + token)
-					} else {
-						BrowserStorage.setItem('audioDisabled_' + token, 'true')
-					}
-					if (enableVideo) {
-						BrowserStorage.removeItem('videoDisabled_' + token)
-					} else {
-						BrowserStorage.setItem('videoDisabled_' + token, 'true')
-					}
-					if (enableVirtualBackground) {
-						BrowserStorage.setItem('virtualBackgroundEnabled_' + token, 'true')
-					} else {
-						BrowserStorage.removeItem('virtualBackgroundEnabled_' + token)
-					}
-					if (virtualBackgroundType) {
-						BrowserStorage.setItem('virtualBackgroundType_' + token, virtualBackgroundType)
-					} else {
-						BrowserStorage.removeItem('virtualBackgroundType_' + token)
-					}
-					if (virtualBackgroundBlurStrength) {
-						BrowserStorage.setItem('virtualBackgroundBlurStrength' + token, virtualBackgroundBlurStrength)
-					} else {
-						BrowserStorage.removeItem('virtualBackgroundBlurStrength' + token)
-					}
-					if (virtualBackgroundUrl) {
-						BrowserStorage.setItem('virtualBackgroundUrl_' + token, virtualBackgroundUrl)
-					} else {
-						BrowserStorage.removeItem('virtualBackgroundUrl_' + token)
-					}
-
-					const conversation = this.$store.getters.conversation(token)
-
-					let flags = PARTICIPANT.CALL_FLAG.IN_CALL
-					if (conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
-						flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
-					}
-					if (conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO) {
-						flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
-					}
-
-					const payload = {
-						token: params.token,
-						participantIdentifier: this.actorStore.participantIdentifier,
-						flags,
-						silent: true,
-						recordingConsent: this.recordingConsentGiven,
-					}
-
-					if (conversation.objectType === CONVERSATION.OBJECT_TYPE.EXTENDED) {
-						payload.silent = false
-						if (previousParticipants.length) {
-							payload.silentFor = previousParticipants
-						}
-					}
-
-					await this.$store.dispatch('joinCall', payload)
-
-					this.callViewStore.setForceCallView(false)
-				})
-			}
+			await this.joinCallAutomatically(params.token)
 
 			this.skipLeaveWarning = true
 			this.$router.push({ name: 'conversation', params: { token: params.token } })
@@ -386,7 +323,8 @@ export default {
 			}
 
 			if (from.name === 'conversation' && from.params.token !== to.params.token) {
-				this.$store.dispatch('leaveConversation', { token: from.params.token })
+				// Await to properly close session / leave call before joining another one
+				await this.$store.dispatch('leaveConversation', { token: from.params.token })
 			}
 
 			/**
@@ -436,8 +374,9 @@ export default {
 			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
 				// Navigating within the same conversation
 				beforeRouteChangeListener(to, from, next)
-			} else if (!this.warnLeaving || this.skipLeaveWarning) {
+			} else if (!this.warnLeaving || this.skipLeaveWarning || this.isVoiceRoom(from.params.token)) {
 				// Safe to navigate
+				// Note: voice rooms are intended to be left without confirmation.
 				beforeRouteChangeListener(to, from, next)
 			} else {
 				spawnDialog(ConfirmDialog, {
@@ -479,8 +418,13 @@ export default {
 			this.fetchSingleConversation(this.token)
 		},
 
+		isVoiceRoom(token) {
+			const conversation = this.$store.getters.conversation(token)
+			return Boolean(conversation?.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+		},
+
 		preventUnload(event) {
-			if (!this.warnLeaving && !this.isSendingMessages) {
+			if ((!this.warnLeaving && !this.isSendingMessages) || this.isVoiceRoom(this.token)) {
 				return
 			}
 
@@ -568,6 +512,103 @@ export default {
 		openRoot() {
 			if (this.$route.name !== 'root' && !this.isInCall) {
 				this.$router.push({ name: 'root' })
+			}
+		},
+
+		async joinCallAutomatically(targetToken, prevToken = this.token) {
+			if (this.isInCall) {
+				this.callViewStore.setForceCallView(true)
+
+				const enableAudio = !BrowserStorage.getItem('audioDisabled_' + prevToken)
+				const enableVideo = !BrowserStorage.getItem('videoDisabled_' + prevToken)
+				const enableVirtualBackground = !!BrowserStorage.getItem('virtualBackgroundEnabled')
+				const virtualBackgroundType = BrowserStorage.getItem('virtualBackgroundType')
+				const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength')
+				const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl')
+
+				// Fetch conversation object, if it's not known yet to the client
+				if (!this.$store.getters.conversation(targetToken)) {
+					await this.fetchSingleConversation(targetToken)
+				}
+
+				const previousConversation = this.$store.getters.conversation(prevToken)
+				const previousParticipants = []
+				if (previousConversation?.type === CONVERSATION.TYPE.ONE_TO_ONE) {
+					previousParticipants.push(previousConversation.name)
+				}
+
+				stopWatchingJoinedConversation()
+
+				this._joinCallHandler = async ({ token }) => {
+					if (targetToken !== token) {
+						return
+					}
+					if (enableAudio) {
+						BrowserStorage.removeItem('audioDisabled_' + token)
+					} else {
+						BrowserStorage.setItem('audioDisabled_' + token, 'true')
+					}
+					if (enableVideo) {
+						BrowserStorage.removeItem('videoDisabled_' + token)
+					} else {
+						BrowserStorage.setItem('videoDisabled_' + token, 'true')
+					}
+					if (enableVirtualBackground) {
+						BrowserStorage.setItem('virtualBackgroundEnabled', 'true')
+					} else {
+						BrowserStorage.removeItem('virtualBackgroundEnabled')
+					}
+					if (virtualBackgroundType) {
+						BrowserStorage.setItem('virtualBackgroundType', virtualBackgroundType)
+					} else {
+						BrowserStorage.removeItem('virtualBackgroundType')
+					}
+					if (virtualBackgroundBlurStrength) {
+						BrowserStorage.setItem('virtualBackgroundBlurStrength', virtualBackgroundBlurStrength)
+					} else {
+						BrowserStorage.removeItem('virtualBackgroundBlurStrength')
+					}
+					if (virtualBackgroundUrl) {
+						BrowserStorage.setItem('virtualBackgroundUrl', virtualBackgroundUrl)
+					} else {
+						BrowserStorage.removeItem('virtualBackgroundUrl')
+					}
+
+					const conversation = this.$store.getters.conversation(token)
+
+					let flags = PARTICIPANT.CALL_FLAG.IN_CALL
+					if (conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
+						flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
+					}
+					if (conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO) {
+						flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
+					}
+
+					const payload = {
+						token,
+						participantIdentifier: this.actorStore.participantIdentifier,
+						flags,
+						silent: true,
+						recordingConsent: this.recordingConsentGiven,
+					}
+
+					if (conversation.objectType === CONVERSATION.OBJECT_TYPE.EXTENDED) {
+						payload.silent = false
+						if (previousParticipants.length) {
+							payload.silentFor = previousParticipants
+						}
+					}
+
+					await this.$store.dispatch('joinCall', payload)
+
+					this.callViewStore.setForceCallView(false)
+				}
+
+				watchedJoinedConversationToken = targetToken
+				unwatchJoinedConversation = watchJoinedConversation(targetToken, () => {
+					stopWatchingJoinedConversation()
+					this._joinCallHandler({ token: targetToken })
+				}, { immediate: true })
 			}
 		},
 	},

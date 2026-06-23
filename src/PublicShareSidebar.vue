@@ -21,8 +21,10 @@
 				</NcButton>
 			</div>
 			<template v-else>
-				<TopBar v-if="isInCall" isInCall isSidebar />
-				<CallView v-if="isInCall" :token="token" isSidebar />
+				<div v-if="isInCall" class="talk-sidebar-callview">
+					<TopBar isInCall isSidebar />
+					<CallView :token="token" isSidebar />
+				</div>
 				<InternalSignalingHint />
 				<CallButton v-if="!isInCall" class="call-button" />
 				<CallFailedDialog v-if="connectionFailed" :token="token" />
@@ -53,12 +55,14 @@ import TransitionWrapper from './components/UIShared/TransitionWrapper.vue'
 import { useGetMessagesProvider } from './composables/useGetMessages.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
+import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
 import { EventBus } from './services/EventBus.ts'
 import { getPublicShareConversationData } from './services/filesIntegrationServices.ts'
 import {
 	leaveConversationSync,
 } from './services/participantsService.js'
+import SessionStorage from './services/SessionStorage.js'
 import { useActorStore } from './stores/actor.ts'
 import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
@@ -96,6 +100,7 @@ export default {
 	setup() {
 		useHashCheck()
 		useGetMessagesProvider()
+		useRecordingStatusSync()
 
 		return {
 			isInCall: useIsInCall(),
@@ -142,6 +147,7 @@ export default {
 	beforeMount() {
 		window.addEventListener('unload', () => {
 			if (this.token) {
+				SessionStorage.removeItem('joined_conversation')
 				// We have to do this synchronously, because in unload and beforeunload
 				// Promises, async and await are prohibited.
 				signalingKill()
@@ -320,20 +326,11 @@ footer {
 #talk-sidebar #call-container {
 	position: relative;
 
-	flex-grow: 1;
-
 	/* Prevent shadows of videos from leaking on other elements. */
 	overflow: hidden;
 
-	/* Show the call container in a 16/9 proportion based on the sidebar
-	 * width. This is the same proportion used for previews of images by the
-	 * SidebarPreviewManager. */
-	padding-bottom: 56.25%;
-	max-height: 56.25%;
-
-	/* Override the call container height so it properly adjusts to the 16/9
-	 * proportion. */
-	height: unset;
+	padding-bottom: var(--sidebar-container-height, 56.25%);
+	max-height: var(--sidebar-container-height, 56.25%);
 }
 
 #talk-sidebar #call-container :deep(.videoContainer) {

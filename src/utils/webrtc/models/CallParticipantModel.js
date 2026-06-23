@@ -22,7 +22,7 @@ export const ConnectionState = {
  * @param {string} options.peerId The peerId of the participant
  * @param {object} options.webRtc The WebRTC connection to the participant
  */
-export default function CallParticipantModel(options) {
+export function CallParticipantModel(options) {
 	this._superEmitterMixin()
 
 	this.attributes = reactive({
@@ -101,6 +101,7 @@ CallParticipantModel.prototype = {
 		this._webRtc.off('channelMessage', this._handleChannelMessageBound)
 		this._webRtc.off('raisedHand', this._handleRaisedHandBound)
 		this._webRtc.off('reaction', this._handleReactionBound)
+		this._webRtc.off('transcript', this._handleTranscriptBound)
 	},
 
 	get(key) {
@@ -109,12 +110,24 @@ CallParticipantModel.prototype = {
 
 	set(key, value) {
 		if (this.attributes[key] === value) {
+			// FIXME Special case to detect when a null peer was set; "peer"
+			// attribute should be initialized instead to "undefined" and
+			// clients should listen to "change:" as for other attributes.
+			if (key === 'peer') {
+				this._trigger('set:' + key, [value])
+			}
+
 			return
 		}
 
 		this.attributes[key] = value
 
 		this._trigger('change:' + key, [value])
+
+		// FIXME Special case to detect when a null peer was set; see above.
+		if (key === 'peer') {
+			this._trigger('set:' + key, [value])
+		}
 	},
 
 	_handlePeerStreamAdded(peer) {

@@ -1,8 +1,6 @@
 Feature: chat-1/password
   Background:
     Given user "participant1" exists
-    Given user "participant2" exists
-    Given user "participant3" exists
 
   Scenario: owner can send and receive chat messages to and from public password protected room
     Given user "participant1" creates room "public password protected room" (v4)
@@ -15,6 +13,7 @@ Feature: chat-1/password
       | public password protected room | users     | participant1 | participant1-displayname | Message 1 | []                |
 
   Scenario: invited user can send and receive chat messages to and from public password protected room
+    Given user "participant2" exists
     Given user "participant1" creates room "public password protected room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -26,6 +25,7 @@ Feature: chat-1/password
       | public password protected room | users     | participant2 | participant2-displayname | Message 1 | []                |
 
   Scenario: invited user can send and receive chat messages to and from public password protected room with initial password
+    Given user "participant2" exists
     Given user "participant1" creates room "public password protected room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -38,6 +38,7 @@ Feature: chat-1/password
       | public password protected room | users     | participant2 | participant2-displayname | Message 1 | []                |
 
   Scenario: not invited but joined with password user can send and receive chat messages to and from public password protected room
+    Given user "participant3" exists
     Given user "participant1" creates room "public password protected room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -50,6 +51,7 @@ Feature: chat-1/password
       | public password protected room | users     | participant3 | participant3-displayname | Message 1 | []                |
 
   Scenario: not invited user can not send nor receive chat messages to and from public password protected room
+    Given user "participant3" exists
     Given user "participant1" creates room "public password protected room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -80,6 +82,8 @@ Feature: chat-1/password
     Then user "guest" sees the following messages in room "public password protected room" with 404
 
   Scenario: everyone in a public password protected room can receive messages from everyone in that room
+    Given user "participant2" exists
+    Given user "participant3" exists
     Given user "participant1" creates room "public password protected room" (v4)
       | roomType | 3 |
       | roomName | room |

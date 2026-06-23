@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class State extends Base {
 	public function __construct(
-		private BotServerMapper $botServerMapper,
+		private readonly BotServerMapper $botServerMapper,
 	) {
 		parent::__construct();
 	}

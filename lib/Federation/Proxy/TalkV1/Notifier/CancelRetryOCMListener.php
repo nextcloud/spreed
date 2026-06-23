@@ -19,7 +19,7 @@ use OCP\EventDispatcher\IEventListener;
  */
 class CancelRetryOCMListener implements IEventListener {
 	public function __construct(
-		protected RetryNotificationMapper $retryNotificationMapper,
+		private readonly RetryNotificationMapper $retryNotificationMapper,
 	) {
 	}
 

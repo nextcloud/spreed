@@ -1,12 +1,12 @@
 Feature: conversation-5/sip-dialin
   Background:
-    Given user "participant1" exists
-    Given user "participant2" exists
-    Given user "participant3" exists
     Given group "group1" exists
+    And user "participant1" exists
     Given user "participant1" is member of group "group1"
 
   Scenario: SIP admin enables SIP
+    Given user "participant2" exists
+    Given user "participant3" exists
     Given the following "spreed" app config is set
       | sip_bridge_dialin_info | +49-1234-567890 |
       | sip_bridge_shared_secret | 1234567890abcdef |
@@ -59,6 +59,7 @@ Feature: conversation-5/sip-dialin
       | 3               | 0        | users     | participant3             | **PIN**     |
 
   Scenario: Non-SIP admin tries to enable SIP
+    Given user "participant2" exists
     Given the following "spreed" app config is set
       | sip_bridge_dialin_info | +49-1234-567890 |
       | sip_bridge_shared_secret | 1234567890abcdef |

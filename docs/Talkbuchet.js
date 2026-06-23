@@ -272,6 +272,22 @@ let connectionWarningTimeout = 5000
  * End of configuration section
  */
 
+/**
+ * Helper function to fetch a URL and fail in case of 40X or 50X error.
+ *
+ * By default fetch() only fails in case of network error, but not if the URL
+ * could be fetch but returned an error code.
+ */
+async function fetchOrFail(resource, options) {
+	const response = await fetch(resource, options)
+
+	if (!response.ok) {
+		throw new Error(response.status + ' ' + response.statusText + ': ' + JSON.stringify(await response.json()))
+	}
+
+	return response
+}
+
 // To run the script the current page in the browser must be a page of the
 // target Nextcloud instance, as cross-doman requests are not allowed, so the
 // host is directly got from the current location.
@@ -283,17 +299,24 @@ async function getCapabilities() {
 	const fetchOptions = {
 		headers: {
 			'OCS-ApiRequest': true,
-			'Accept': 'json',
+			'Accept': 'application/json',
 		},
 	}
 
-	const capabilitiesResponse = await fetch(capabitiliesUrl, fetchOptions)
+	const capabilitiesResponse = await fetchOrFail(capabitiliesUrl, fetchOptions)
 	const capabilities = await capabilitiesResponse.json()
 
 	return capabilities.ocs.data
 }
 
-const capabilities = await getCapabilities()
+let capabilities = null
+try {
+	capabilities = await getCapabilities()
+} catch (exception) {
+	console.error('Capabilities could not be got: ' + exception)
+
+	throw Error('Talkbuchet could not be initialized, is the current page a working Nextcloud instance?')
+}
 
 function extractFeatureVersion(feature) {
 	const talkFeatures = capabilities?.capabilities?.spreed?.features
@@ -332,7 +355,7 @@ async function getSignalingSettings(user, appToken, token) {
 	const fetchOptions = {
 		headers: {
 			'OCS-ApiRequest': true,
-			'Accept': 'json',
+			'Accept': 'application/json',
 		},
 	}
 
@@ -340,7 +363,7 @@ async function getSignalingSettings(user, appToken, token) {
 		fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
 	}
 
-	const signalingSettingsResponse = await fetch(signalingSettingsUrl + '?token=' + token, fetchOptions)
+	const signalingSettingsResponse = await fetchOrFail(signalingSettingsUrl + '?token=' + token, fetchOptions)
 	const signalingSettings = await signalingSettingsResponse.json()
 
 	return signalingSettings.ocs.data
@@ -495,7 +518,7 @@ class Signaling extends EventTarget {
 		const fetchOptions = {
 			headers: {
 				'OCS-ApiRequest': true,
-				'Accept': 'json',
+				'Accept': 'application/json',
 			},
 			method: 'POST',
 		}
@@ -504,7 +527,7 @@ class Signaling extends EventTarget {
 			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
 		}
 
-		const joinRoomResponse = await fetch(joinLeaveRoomUrl, fetchOptions)
+		const joinRoomResponse = await fetchOrFail(joinLeaveRoomUrl, fetchOptions)
 		const joinRoomResult = await joinRoomResponse.json()
 		const nextcloudSessionId = joinRoomResult.ocs.data.sessionId
 
@@ -521,11 +544,12 @@ class Signaling extends EventTarget {
 		const fetchOptions = {
 			headers: {
 				'OCS-ApiRequest': true,
-				'Accept': 'json',
+				'Accept': 'application/json',
 			},
 			method: 'POST',
 			body: new URLSearchParams({
 				flags,
+				recordingConsent: true,
 			}),
 		}
 
@@ -533,14 +557,14 @@ class Signaling extends EventTarget {
 			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
 		}
 
-		await fetch(joinLeaveCallUrl, fetchOptions)
+		await fetchOrFail(joinLeaveCallUrl, fetchOptions)
 	}
 
 	async leaveCall() {
 		const fetchOptions = {
 			headers: {
 				'OCS-ApiRequest': true,
-				'Accept': 'json',
+				'Accept': 'application/json',
 			},
 			method: 'DELETE',
 		}
@@ -549,14 +573,14 @@ class Signaling extends EventTarget {
 			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
 		}
 
-		await fetch(joinLeaveCallUrl, fetchOptions)
+		await fetchOrFail(joinLeaveCallUrl, fetchOptions)
 	}
 
 	async leaveRoom() {
 		const fetchOptions = {
 			headers: {
 				'OCS-ApiRequest': true,
-				'Accept': 'json',
+				'Accept': 'application/json',
 			},
 			method: 'DELETE',
 		}
@@ -565,7 +589,7 @@ class Signaling extends EventTarget {
 			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
 		}
 
-		await fetch(joinLeaveRoomUrl, fetchOptions)
+		await fetchOrFail(joinLeaveRoomUrl, fetchOptions)
 
         this.send({
 			'type': 'room',
@@ -599,7 +623,16 @@ class Peer {
 			const candidate = event.candidate
 
 			if (candidate) {
-				this.send('candidate', candidate)
+				// Retain legacy data structure for compatibility with
+				// mobile clients.
+				const expandedCandidate = {
+					candidate: {
+						candidate: candidate.candidate,
+						sdpMid: candidate.sdpMid,
+						sdpMLineIndex: candidate.sdpMLineIndex,
+					},
+				}
+				this.send('candidate', expandedCandidate)
 			}
 		}
 
@@ -756,12 +789,21 @@ function listenToPublisherConnectionChanges() {
 
 async function initPublishers() {
 	for (let i = 0; i < publishersCount; i++) {
-		const signalingSettings = await getSignalingSettings(user, appToken, token)
+		let signalingSettings = null
+		try {
+			signalingSettings = await getSignalingSettings(user, appToken, token)
+		} catch (exception) {
+			console.error('Publisher ' + i + ' get signaling settings error: ' + exception)
+
+			continue
+		}
+
 		let signaling = null
 		try {
 			signaling = new Signaling(user, signalingSettings)
 		} catch (exception) {
 			console.error('Publisher ' + i + ' init error: ' + exception)
+
 			continue
 		}
 
@@ -814,12 +856,21 @@ async function initSubscribers() {
 	for (let i = 0; i < subscribersPerPublisherCount; i++) {
 		// The same signaling session can be shared between subscribers to
 		// different publishers.
-		const signalingSettings = await getSignalingSettings(user, appToken, token)
+		let signalingSettings = null
+		try {
+			signalingSettings = await getSignalingSettings(user, appToken, token)
+		} catch (exception) {
+			console.error('Subscriber ' + i + ' get signaling settings error: ' + exception)
+
+			continue
+		}
+
 		let signaling = null
 		try {
 			signaling = new Signaling(user, signalingSettings)
 		} catch (exception) {
 			console.error('Subscriber ' + i + ' init error: ' + exception)
+
 			continue
 		}
 
@@ -1097,12 +1148,21 @@ const startVirtualParticipant = async function() {
 		return
 	}
 
-	const signalingSettings = await getSignalingSettings(user, appToken, token)
+	let signalingSettings
+	try {
+		signalingSettings = await getSignalingSettings(user, appToken, token)
+	} catch (exception) {
+		console.error('Virtual participant get signaling settings error: ' + exception)
+
+		return
+	}
+
 	let signaling = null
 	try {
 		signaling = new Signaling(user, signalingSettings)
 	} catch (exception) {
 		console.error('Virtual participant init error: ' + exception)
+
 		return
 	}
 
@@ -1125,8 +1185,21 @@ const startVirtualParticipant = async function() {
 		await signaling.getSessionId()
 	}
 
-	await signaling.joinRoom()
-	await signaling.joinCall(flags)
+	try {
+		await signaling.joinRoom()
+	} catch (exception) {
+		console.error('Virtual participant join room error: ' + exception)
+
+		return
+	}
+
+	try {
+		await signaling.joinCall(flags)
+	} catch (exception) {
+		console.error('Virtual participant join call error: ' + exception)
+
+		return
+	}
 
 	virtualParticipant = {
 		signaling
@@ -1157,8 +1230,21 @@ const stopVirtualParticipant = async function() {
 		delete publishers[virtualParticipant.publisherSessionId]
 	}
 
-	await virtualParticipant.signaling.leaveCall()
-	virtualParticipant.signaling.leaveRoom()
+	try {
+		await virtualParticipant.signaling.leaveCall()
+	} catch (exception) {
+		console.error('Virtual participant leave call error: ' + exception)
+
+		return
+	}
+
+	try {
+		virtualParticipant.signaling.leaveRoom()
+	} catch (exception) {
+		console.error('Virtual participant leave room error: ' + exception)
+
+		return
+	}
 
 	virtualParticipant = null
 }

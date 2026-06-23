@@ -23,10 +23,10 @@ use OCP\Notification\INotification;
 
 class FederationChatNotifier {
 	public function __construct(
-		protected IAppConfig $appConfig,
-		protected IManager $notificationManager,
-		protected UserConverter $userConverter,
-		protected ThreadService $threadService,
+		private readonly IAppConfig $appConfig,
+		private readonly IManager $notificationManager,
+		private readonly UserConverter $userConverter,
+		private readonly ThreadService $threadService,
 	) {
 	}
 
@@ -60,7 +60,6 @@ class FederationChatNotifier {
 			// User has an active session
 			return;
 		}
-
 
 		$notificationLevel = $participant->getAttendee()->getNotificationLevel();
 		if ($threadId !== null) {

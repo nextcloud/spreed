@@ -104,17 +104,17 @@ class Listener implements IEventListener {
 	protected bool $pauseRoomModifiedListener = false;
 
 	public function __construct(
-		protected Config $talkConfig,
-		protected Messages $internalSignaling,
-		protected BackendNotifier $externalSignaling,
-		protected Manager $manager,
-		protected ParticipantService $participantService,
-		protected SessionService $sessionService,
-		protected ITimeFactory $timeFactory,
-		protected MessageParser $messageParser,
-		protected ThreadService $threadService,
-		protected IFactory $l10nFactory,
-		protected PollService $pollService,
+		private readonly Config $talkConfig,
+		private readonly Messages $internalSignaling,
+		private readonly BackendNotifier $externalSignaling,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly SessionService $sessionService,
+		private readonly ITimeFactory $timeFactory,
+		private readonly MessageParser $messageParser,
+		private readonly ThreadService $threadService,
+		private readonly IFactory $l10nFactory,
+		private readonly PollService $pollService,
 	) {
 	}
 
@@ -128,7 +128,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function handleInternalSignaling(Event $event): void {
-		match (get_class($event)) {
+		match ($event::class) {
 			BeforeSessionLeftRoomEvent::class,
 			BeforeAttendeeRemovedEvent::class,
 			GuestJoinedRoomEvent::class,
@@ -167,7 +167,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function handleExternalSignaling(Event $event): void {
-		match (get_class($event)) {
+		match ($event::class) {
 			RoomModifiedEvent::class,
 			LobbyModifiedEvent::class => $this->notifyRoomModified($event),
 			RoomExtendedEvent::class => $this->notifyRoomExtended($event),
@@ -535,7 +535,16 @@ class Listener implements IEventListener {
 		if ($parent !== null) {
 			$parentMessage = $this->messageParser->createMessage($event->getRoom(), null, $parent, $l10n);
 			$this->messageParser->parseMessage($parentMessage);
-			$data['chat']['comment']['parent'] = $parentMessage->toArray('json', $thread);
+			if ($parent->getVerb() === ChatManager::VERB_PRIVATE_REPLY && $parent->getParentId() === '0') {
+				$metaData = $parent->getMetaData() ?? [];
+				$parentSnapshot = $metaData['originalMessage'];
+				$parentSnapshot['id'] = (int)$parent->getId();
+				unset($metaData['originalMessage']);
+				$parentSnapshot['metaData'] = array_merge($metaData, $parentSnapshot['metaData'] ?? []);
+				$data['chat']['comment']['parent'] = $parentSnapshot;
+			} else {
+				$data['chat']['comment']['parent'] = $parentMessage->toArray('json', $thread);
+			}
 		}
 
 		$this->externalSignaling->sendRoomMessage($room, $data);

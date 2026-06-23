@@ -1,9 +1,6 @@
 Feature: command/monitor-calls
 
   Background:
-    Given user "participant1" exists
-    Given user "participant2" exists
-    Given user "participant3" exists
 
   Scenario: No call in progress
     Given invoking occ with "talk:monitor:calls"
@@ -11,6 +8,7 @@ Feature: command/monitor-calls
     And the command output contains the text "No calls in progress"
 
   Scenario: Users only chatting
+    Given user "participant1" exists
     When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -24,6 +22,9 @@ Feature: command/monitor-calls
 
 
   Scenario: Calls in progress
+    Given user "participant1" exists
+    Given user "participant2" exists
+    Given user "participant3" exists
     When user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |

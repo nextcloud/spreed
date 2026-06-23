@@ -9,11 +9,10 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Chat\Parser;
 
 use OCA\DAV\CardDAV\PhotoCache;
+use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\Parser\SystemMessage;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Federation\Authenticator;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Session;
@@ -30,6 +29,7 @@ use OCP\Federation\ICloudIdManager;
 use OCP\Files\Folder;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
+use OCP\Files\ISetupManager;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\IGroup;
@@ -50,12 +50,12 @@ class SystemMessageTest extends TestCase {
 	protected IAppConfig&MockObject $appConfig;
 	protected IUserManager&MockObject $userManager;
 	protected IGroupManager&MockObject $groupManager;
-	protected GuestManager&MockObject $guestManager;
 	protected ParticipantService&MockObject $participantService;
 	protected IPreviewManager&MockObject $previewManager;
 	protected RoomShareProvider&MockObject $shareProvider;
 	protected PhotoCache&MockObject $photoCache;
 	protected IRootFolder&MockObject $rootFolder;
+	protected ISetupManager&MockObject $setupManager;
 	protected IURLGenerator&MockObject $url;
 	protected ICloudIdManager&MockObject $cloudIdManager;
 	protected FilesMetadataCache&MockObject $filesMetadataCache;
@@ -69,12 +69,12 @@ class SystemMessageTest extends TestCase {
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
-		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->previewManager = $this->createMock(IPreviewManager::class);
 		$this->shareProvider = $this->createMock(RoomShareProvider::class);
 		$this->photoCache = $this->createMock(PhotoCache::class);
 		$this->rootFolder = $this->createMock(IRootFolder::class);
+		$this->setupManager = $this->createMock(ISetupManager::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->filesMetadataCache = $this->createMock(FilesMetadataCache::class);
@@ -82,9 +82,7 @@ class SystemMessageTest extends TestCase {
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->method('t')
-			->willReturnCallback(function ($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->willReturnCallback(fn ($text, $parameters = []) => vsprintf($text, $parameters));
 		$this->l->method('n')
 			->willReturnCallback(function (string $singular, string $plural, int $count, array $parameters = []) {
 				$text = $count === 1 ? $singular : $plural;
@@ -103,12 +101,12 @@ class SystemMessageTest extends TestCase {
 					$this->appConfig,
 					$this->userManager,
 					$this->groupManager,
-					$this->guestManager,
 					$this->participantService,
 					$this->previewManager,
 					$this->shareProvider,
 					$this->photoCache,
 					$this->rootFolder,
+					$this->setupManager,
 					$this->cloudIdManager,
 					$this->url,
 					$this->filesMetadataCache,
@@ -124,12 +122,12 @@ class SystemMessageTest extends TestCase {
 			$this->appConfig,
 			$this->userManager,
 			$this->groupManager,
-			$this->guestManager,
 			$this->participantService,
 			$this->previewManager,
 			$this->shareProvider,
 			$this->photoCache,
 			$this->rootFolder,
+			$this->setupManager,
 			$this->cloudIdManager,
 			$this->url,
 			$this->filesMetadataCache,
@@ -374,6 +372,18 @@ class SystemMessageTest extends TestCase {
 				'*You shared a file which is no longer available*',
 				['actor' => ['id' => 'actor', 'type' => 'user']],
 			],
+			['file_shared', ['fileId' => '42'], 'recipient',
+				'{file}',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'file' => ['id' => 'file-from-node']],
+			],
+			['file_shared', ['fileId' => NotFoundException::class], 'actor',
+				'*You shared a file which is no longer available*',
+				['actor' => ['id' => 'actor', 'type' => 'user']],
+			],
+			['file_shared', ['fileId' => '42', 'metaData' => ['messageType' => 'voice-message', 'caption' => 'Hello!']], 'recipient',
+				'Hello!',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'file' => ['id' => 'file-from-node']],
+			],
 			['read_only', [], 'recipient',
 				'{actor} locked the conversation',
 				['actor' => ['id' => 'actor', 'type' => 'user']],
@@ -571,9 +581,9 @@ class SystemMessageTest extends TestCase {
 			});
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
-		$parser = $this->getParser(['getActorFromComment', 'getUser', 'getRemoteUser', 'getGroup', 'getGuest', 'parseCall', 'getFileFromShare']);
+		$parser = $this->getParser(['getActorFromComment', 'getUser', 'getRemoteUser', 'getGroup', 'getGuest', 'parseCall', 'getFileFromShare', 'getFileFromNodeId']);
 		$parser->expects($this->once())
 			->method('getActorFromComment')
 			->with($room, $comment)
@@ -613,20 +623,39 @@ class SystemMessageTest extends TestCase {
 		}
 
 		if ($message === 'file_shared') {
-			if (is_subclass_of($parameters['share'], \Exception::class)) {
-				$parser->expects($this->once())
-					->method('getFileFromShare')
-					->with($room, $participant, $parameters['share'])
-					->willThrowException(new $parameters['share']());
-			} else {
-				$parser->expects($this->once())
-					->method('getFileFromShare')
-					->with($room, $participant, $parameters['share'])
-					->willReturn(['id' => 'file-from-share']);
+			if (isset($parameters['share'])) {
+				if (is_subclass_of($parameters['share'], \Exception::class)) {
+					$parser->expects($this->once())
+						->method('getFileFromShare')
+						->with($room, $participant, $parameters['share'])
+						->willThrowException(new $parameters['share']());
+				} else {
+					$parser->expects($this->once())
+						->method('getFileFromShare')
+						->with($room, $participant, $parameters['share'])
+						->willReturn(['id' => 'file-from-share']);
+				}
+				$parser->expects($this->never())
+					->method('getFileFromNodeId');
+			} elseif (isset($parameters['fileId'])) {
+				$parser->expects($this->never())
+					->method('getFileFromShare');
+				if (is_subclass_of($parameters['fileId'], \Exception::class)) {
+					$parser->expects($this->once())
+						->method('getFileFromNodeId')
+						->willThrowException(new $parameters['fileId']());
+				} else {
+					$parser->expects($this->once())
+						->method('getFileFromNodeId')
+						->with($room, $participant, (int)$parameters['fileId'])
+						->willReturn(['id' => 'file-from-node']);
+				}
 			}
 		} else {
 			$parser->expects($this->never())
 				->method('getFileFromShare');
+			$parser->expects($this->never())
+				->method('getFileFromNodeId');
 		}
 
 		$chatMessage = new Message($room, $participant, $comment, $this->l);
@@ -640,8 +669,14 @@ class SystemMessageTest extends TestCase {
 		$this->assertSame($expectedMessage, $chatMessage->getMessage());
 		$this->assertSame($expectedParameters, $chatMessage->getMessageParameters());
 
-		if ($message === 'file_shared' && !is_subclass_of($parameters['share'], \Exception::class)) {
-			$this->assertSame(ChatManager::VERB_MESSAGE, $chatMessage->getMessageType());
+		if ($message === 'file_shared') {
+			if (isset($parameters['share']) && !is_subclass_of($parameters['share'], \Exception::class)) {
+				$this->assertSame(ChatManager::VERB_MESSAGE, $chatMessage->getMessageType());
+			} elseif (isset($parameters['fileId']) && !is_subclass_of($parameters['fileId'], \Exception::class)) {
+				$metaType = $parameters['metaData']['messageType'] ?? null;
+				$expected = $metaType === ChatManager::VERB_VOICE_MESSAGE ? ChatManager::VERB_VOICE_MESSAGE : ChatManager::VERB_MESSAGE;
+				$this->assertSame($expected, $chatMessage->getMessageType());
+			}
 		}
 	}
 
@@ -656,10 +691,10 @@ class SystemMessageTest extends TestCase {
 	#[DataProvider('dataParseMessageThrows')]
 	public function testParseMessageThrows(?string $return): void {
 		/** @var IComment&MockObject $comment */
-		$comment = $this->createMock(IComment::class);
+		$comment = $this->createStub(IComment::class);
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$parser = $this->getParser(['getActorFromComment']);
 		$parser->expects($this->any())
@@ -668,7 +703,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn(['id' => 'actor', 'type' => 'user']);
 
 		/** @var Participant&MockObject $participant */
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 		$chatMessage = new Message($room, $participant, $comment, $this->l);
 		$chatMessage->setMessage($return, []);
 
@@ -677,7 +712,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareForGuest(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$node = $this->createMock(Node::class);
 		$node->expects($this->once())
 			->method('getId')
@@ -728,7 +763,7 @@ class SystemMessageTest extends TestCase {
 			->with(54)
 			->willReturn(['width' => 1234, 'height' => 4567]);
 
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$parser = $this->getParser();
 		$this->assertSame([
@@ -749,7 +784,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareForGuestWithBlurhash(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$node = $this->createMock(Node::class);
 		$node->expects($this->once())
 			->method('getId')
@@ -804,7 +839,7 @@ class SystemMessageTest extends TestCase {
 				'blurhash' => 'LEHV9uae2yk8pyo0adR*.7kCMdnj'
 			]);
 
-		$participant = $this->createMock(Participant::class);
+		$participant = $this->createStub(Participant::class);
 
 		$parser = $this->getParser();
 
@@ -827,7 +862,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareForOwner(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$node = $this->createMock(Node::class);
 		$node->expects($this->exactly(2))
 			->method('getId')
@@ -905,7 +940,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareForRecipient(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->any())
 			->method('getNodeId')
@@ -991,7 +1026,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareForRecipientThrows(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->any())
 			->method('getNodeId')
@@ -1035,7 +1070,7 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareThrows(): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$this->shareProvider->expects($this->once())
 			->method('getShareById')
 			->with('23')
@@ -1054,6 +1089,332 @@ class SystemMessageTest extends TestCase {
 		self::invokePrivate($parser, 'getFileFromShare', [$room, $participant, '23', false]);
 	}
 
+	public function testGetFileFromNodeIdForUser(): void {
+		$room = $this->createStub(Room::class);
+
+		$node = $this->createMock(Node::class);
+		$node->expects($this->exactly(2))
+			->method('getId')
+			->willReturn(42);
+		$node->expects($this->once())
+			->method('getName')
+			->willReturn('photo.jpg');
+		$node->expects($this->once())
+			->method('getPath')
+			->willReturn('/alice/files/Talk/Room-TOKEN/Alice-alice/photo.jpg');
+		$node->expects($this->once())
+			->method('getSize')
+			->willReturn(12345);
+		$node->expects($this->once())
+			->method('getEtag')
+			->willReturn(md5('etag'));
+		$node->expects($this->once())
+			->method('getPermissions')
+			->willReturn(27);
+		$node->expects($this->atLeastOnce())
+			->method('getMimeType')
+			->willReturn('image/jpeg');
+
+		$userFolder = $this->createMock(Folder::class);
+		$userFolder->expects($this->once())
+			->method('getFirstNodeById')
+			->with(42)
+			->willReturn($node);
+		$userFolder->expects($this->never())
+			->method('getById');
+
+		$this->rootFolder->expects($this->once())
+			->method('getUserFolder')
+			->with('alice')
+			->willReturn($userFolder);
+
+		$this->previewManager->expects($this->once())
+			->method('isMimeSupported')
+			->with('image/jpeg')
+			->willReturn(true);
+		$this->previewManager->expects($this->never())
+			->method('isAvailable');
+
+		$this->filesMetadataCache->expects($this->once())
+			->method('getImageMetadataForFileId')
+			->with(42)
+			->willReturn([]);
+
+		$this->url->expects($this->once())
+			->method('linkToRouteAbsolute')
+			->with('files.viewcontroller.showFile', ['fileid' => 42])
+			->willReturn('absolute-link');
+
+		$participant = $this->createMock(Participant::class);
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'users',
+			'actor_id' => 'alice',
+		]);
+		$participant->expects($this->any())
+			->method('getAttendee')
+			->willReturn($attendee);
+
+		$parser = $this->getParser();
+		$this->assertSame([
+			'type' => 'file',
+			'id' => '42',
+			'name' => 'photo.jpg',
+			'size' => '12345',
+			'path' => 'Talk/Room-TOKEN/Alice-alice/photo.jpg',
+			'link' => 'absolute-link',
+			'etag' => md5('etag'),
+			'permissions' => '27',
+			'mimetype' => 'image/jpeg',
+			'preview-available' => 'yes',
+			'hide-download' => 'no',
+		], self::invokePrivate($parser, 'getFileFromNodeId', [$room, $participant, 42]));
+	}
+
+	public function testGetFileFromNodeIdThrowsWhenNotFound(): void {
+		$room = $this->createStub(Room::class);
+
+		$userFolder = $this->createMock(Folder::class);
+		$userFolder->expects($this->once())
+			->method('getFirstNodeById')
+			->with(42)
+			->willReturn(null);
+		$userFolder->expects($this->never())
+			->method('getById');
+
+		$this->rootFolder->expects($this->once())
+			->method('getUserFolder')
+			->with('alice')
+			->willReturn($userFolder);
+
+		$participant = $this->createMock(Participant::class);
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'users',
+			'actor_id' => 'alice',
+		]);
+		$participant->expects($this->any())
+			->method('getAttendee')
+			->willReturn($attendee);
+
+		$parser = $this->getParser();
+		$this->expectException(NotFoundException::class);
+		self::invokePrivate($parser, 'getFileFromNodeId', [$room, $participant, 42]);
+	}
+
+	public function testGetFileFromNodeIdForGuest(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getToken')->willReturn('ROOMTOKEN');
+
+		$shareFolder = $this->createMock(Folder::class);
+		$shareFolder->method('getPath')
+			->willReturn('/alice/files/Talk/Room-ROOMTOKEN/Alice-alice');
+
+		$node = $this->createMock(Node::class);
+		$node->expects($this->once())
+			->method('getId')
+			->willReturn(42);
+		$node->expects($this->once())
+			->method('getName')
+			->willReturn('photo.jpg');
+		$node->expects($this->once())
+			->method('getSize')
+			->willReturn(12345);
+		$node->expects($this->once())
+			->method('getEtag')
+			->willReturn(md5('etag'));
+		$node->expects($this->once())
+			->method('getPermissions')
+			->willReturn(27);
+		$node->expects($this->atLeastOnce())
+			->method('getMimeType')
+			->willReturn('image/jpeg');
+		$node->method('getParent')->willReturn($shareFolder);
+		$node->method('getPath')
+			->willReturn('/alice/files/Talk/Room-ROOMTOKEN/Alice-alice/photo.jpg');
+
+		$this->rootFolder->expects($this->once())
+			->method('getFirstNodeById')
+			->with(42)
+			->willReturn($node);
+
+		$this->rootFolder->expects($this->never())
+			->method('getUserFolder');
+
+		$share = $this->createMock(IShare::class);
+		$share->method('getSharedWith')->willReturn('ROOMTOKEN');
+		$share->method('getToken')->willReturn('SHARETOKEN');
+
+		$this->shareProvider->expects($this->once())
+			->method('getSharesByPath')
+			->with($shareFolder)
+			->willReturn([$share]);
+
+		$this->previewManager->expects($this->once())
+			->method('isMimeSupported')
+			->with('image/jpeg')
+			->willReturn(true);
+
+		$this->filesMetadataCache->expects($this->once())
+			->method('getImageMetadataForFileId')
+			->with(42)
+			->willReturn([]);
+
+		$this->url->expects($this->once())
+			->method('linkToRouteAbsolute')
+			->with('files_sharing.sharecontroller.showShare', ['token' => 'SHARETOKEN'])
+			->willReturn('absolute-link');
+
+		$participant = $this->createMock(Participant::class);
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'guests',
+			'actor_id' => 'guest-hash',
+		]);
+		$participant->expects($this->any())
+			->method('getAttendee')
+			->willReturn($attendee);
+
+		$parser = $this->getParser();
+		$this->assertSame([
+			'type' => 'file',
+			'id' => '42',
+			'name' => 'photo.jpg',
+			'size' => '12345',
+			'path' => 'photo.jpg',
+			'link' => 'absolute-link',
+			'etag' => md5('etag'),
+			'permissions' => '27',
+			'mimetype' => 'image/jpeg',
+			'preview-available' => 'yes',
+			'hide-download' => 'no',
+		], self::invokePrivate($parser, 'getFileFromNodeId', [$room, $participant, 42]));
+	}
+
+	public function testGetFileFromNodeIdForGuestWithoutMatchingShareThrows(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getToken')->willReturn('ROOMTOKEN');
+
+		$parentFolder = $this->createMock(Folder::class);
+		$parentFolder->method('getPath')->willReturn('/alice/files/somewhere');
+		$parentFolder->method('getParent')->willReturnSelf();
+
+		$node = $this->createMock(Node::class);
+		$node->method('getParent')->willReturn($parentFolder);
+		$node->method('getPath')->willReturn('/alice/files/somewhere/photo.jpg');
+
+		$this->rootFolder->expects($this->once())
+			->method('getFirstNodeById')
+			->with(42)
+			->willReturn($node);
+
+		$this->shareProvider->expects($this->atLeastOnce())
+			->method('getSharesByPath')
+			->willReturn([]);
+
+		$participant = $this->createMock(Participant::class);
+		$attendee = Attendee::fromRow([
+			'actor_type' => 'guests',
+			'actor_id' => 'guest-hash',
+		]);
+		$participant->method('getAttendee')->willReturn($attendee);
+
+		$parser = $this->getParser();
+		$this->expectException(ShareNotFound::class);
+		self::invokePrivate($parser, 'getFileFromNodeId', [$room, $participant, 42]);
+	}
+
+	public function testGetFileFromNodeIdWithoutParticipant(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('getToken')->willReturn('ROOMTOKEN');
+
+		$shareFolder = $this->createMock(Folder::class);
+		$shareFolder->method('getPath')
+			->willReturn('/alice/files/Talk/Room-ROOMTOKEN/Alice-alice');
+
+		$node = $this->createMock(Node::class);
+		$node->expects($this->once())
+			->method('getId')
+			->willReturn(42);
+		$node->expects($this->once())
+			->method('getName')
+			->willReturn('photo.jpg');
+		$node->expects($this->once())
+			->method('getSize')
+			->willReturn(12345);
+		$node->expects($this->once())
+			->method('getEtag')
+			->willReturn(md5('etag'));
+		$node->expects($this->once())
+			->method('getPermissions')
+			->willReturn(27);
+		$node->expects($this->atLeastOnce())
+			->method('getMimeType')
+			->willReturn('image/jpeg');
+		$node->method('getParent')->willReturn($shareFolder);
+		$node->method('getPath')
+			->willReturn('/alice/files/Talk/Room-ROOMTOKEN/Alice-alice/photo.jpg');
+
+		$this->rootFolder->expects($this->once())
+			->method('getFirstNodeById')
+			->with(42)
+			->willReturn($node);
+
+		$this->rootFolder->expects($this->never())
+			->method('getUserFolder');
+
+		$share = $this->createMock(IShare::class);
+		$share->method('getSharedWith')->willReturn('ROOMTOKEN');
+		$share->method('getToken')->willReturn('SHARETOKEN');
+
+		$this->shareProvider->expects($this->once())
+			->method('getSharesByPath')
+			->with($shareFolder)
+			->willReturn([$share]);
+
+		$this->previewManager->expects($this->once())
+			->method('isMimeSupported')
+			->with('image/jpeg')
+			->willReturn(true);
+		$this->previewManager->expects($this->never())
+			->method('isAvailable');
+
+		$this->filesMetadataCache->expects($this->once())
+			->method('getImageMetadataForFileId')
+			->with(42)
+			->willReturn([]);
+
+		$this->url->expects($this->once())
+			->method('linkToRouteAbsolute')
+			->with('files_sharing.sharecontroller.showShare', ['token' => 'SHARETOKEN'])
+			->willReturn('absolute-link');
+
+		$parser = $this->getParser();
+		$this->assertSame([
+			'type' => 'file',
+			'id' => '42',
+			'name' => 'photo.jpg',
+			'size' => '12345',
+			'path' => 'photo.jpg',
+			'link' => 'absolute-link',
+			'etag' => md5('etag'),
+			'permissions' => '27',
+			'mimetype' => 'image/jpeg',
+			'preview-available' => 'yes',
+			'hide-download' => 'no',
+		], self::invokePrivate($parser, 'getFileFromNodeId', [$room, null, 42]));
+	}
+
+	public function testGetFileFromNodeIdWithoutParticipantNotFound(): void {
+		$room = $this->createStub(Room::class);
+
+		$this->rootFolder->expects($this->once())
+			->method('getFirstNodeById')
+			->with(42)
+			->willReturn(null);
+
+		$parser = $this->getParser();
+		$this->expectException(NotFoundException::class);
+		self::invokePrivate($parser, 'getFileFromNodeId', [$room, null, 42]);
+	}
+
 	public static function dataGetActor(): array {
 		return [
 			['users', [], ['user'], ['user']],
@@ -1064,7 +1425,7 @@ class SystemMessageTest extends TestCase {
 	#[DataProvider('dataGetActor')]
 	public function testGetActor(string $actorType, array $guestData, array $userData, array $expected): void {
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$chatMessage = $this->createMock(IComment::class);
 		$chatMessage->expects($this->once())
@@ -1170,12 +1531,12 @@ class SystemMessageTest extends TestCase {
 		self::invokePrivate($parser, 'groupNames', [$cache]);
 
 		if (!$cacheHit) {
-			$parser->expects(self::once())
+			$parser->expects($this->once())
 				->method('getDisplayNameGroup')
 				->with($gid)
 				->willReturn($name);
 		} else {
-			$parser->expects(self::never())
+			$parser->expects($this->never())
 				->method('getDisplayNameGroup');
 		}
 
@@ -1225,7 +1586,7 @@ class SystemMessageTest extends TestCase {
 	#[DataProvider('dataGetGuest')]
 	public function testGetGuest(string $attendeeType, string $actorId, string $expected): void {
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$parser = $this->getParser(['getGuestName']);
 		$parser->expects($this->once())
@@ -1265,7 +1626,7 @@ class SystemMessageTest extends TestCase {
 	#[DataProvider('dataGetGuestName')]
 	public function testGetGuestName(string $actorType, string $actorId, string $attendeeName, string $expected): void {
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$attendee = Attendee::fromParams([
 			'displayName' => $attendeeName,
@@ -1289,7 +1650,7 @@ class SystemMessageTest extends TestCase {
 		$actorId = sha1('name');
 
 		/** @var Room&MockObject $room */
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 
 		$this->participantService->method('getParticipantByActor')
 			->with($room, Attendee::ACTOR_GUESTS, $actorId)
@@ -1563,7 +1924,7 @@ class SystemMessageTest extends TestCase {
 
 	#[DataProvider('dataParseCall')]
 	public function testParseCall(string $message, array $parameters, array $actor, array $expected): void {
-		$room = $this->createMock(Room::class);
+		$room = $this->createStub(Room::class);
 		$parser = $this->getParser(['getDuration', 'getUser']);
 		$parser->expects($this->once())
 			->method('getDuration')
@@ -1576,9 +1937,7 @@ class SystemMessageTest extends TestCase {
 
 		$parser->expects($this->any())
 			->method('getUser')
-			->willReturnCallback(function ($user) {
-				return ['data' => $user];
-			});
+			->willReturnCallback(fn ($user) => ['data' => $user]);
 
 		// Prepend the actor
 		$expected[1]['actor'] = $actor;

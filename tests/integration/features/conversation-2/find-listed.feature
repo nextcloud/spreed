@@ -107,6 +107,11 @@ Feature: conversation-2/find-listed
       | name                 | listable |
       | group-the-cool-room  | 2        |
       | public-the-cool-room | 2        |
+    # Fuzzy search
+    And user "regular-user" can find listed rooms with term "the room" (v4)
+      | name                 | listable |
+      | group-the-cool-room  | 2        |
+      | public-the-cool-room | 2        |
 
   Scenario: Searching for a listable room by unknown term returns no results
     Given user "creator" creates room "group-room" (v4)

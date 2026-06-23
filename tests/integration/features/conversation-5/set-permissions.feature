@@ -1,10 +1,10 @@
 Feature: conversation-5/set-publishing-permissions
   Background:
     Given user "owner" exists
-    Given user "moderator" exists
     Given user "invited user" exists
 
   Scenario: Owner and moderators can set default permissions users can not
+    Given user "moderator" exists
     Given user "owner" creates room "group room" (v4)
       | roomType | 2 |
       | roomName | room |

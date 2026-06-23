@@ -11,7 +11,6 @@ import RecordingApp from './RecordingApp.vue'
 import { createTalkRouter } from './router/router.ts'
 import store from './store/index.js'
 import pinia from './stores/pinia.ts'
-import { NextcloudGlobalsVuePlugin } from './utils/NextcloudGlobalsVuePlugin.js'
 import {
 	signalingGetSettingsForRecording,
 	signalingJoinCallForRecording,
@@ -19,10 +18,6 @@ import {
 } from './utils/webrtc/index.js'
 
 import '@nextcloud/dialogs/style.css'
-// Leaflet icon patch
-import 'leaflet/dist/leaflet.css'
-import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
-import 'leaflet-defaulticon-compatibility'
 
 // CSP config for webpack dynamic chunk loading
 __webpack_nonce__ = getCSPNonce()
@@ -32,8 +27,6 @@ __webpack_nonce__ = getCSPNonce()
 // OC.generateUrl ensure the index.php (or not)
 // We do not want the index.php since we're loading files
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
-
-window.store = store
 
 if (!window.OCA.Talk) {
 	window.OCA.Talk = reactive({})
@@ -45,7 +38,6 @@ const instance = createApp(RecordingApp)
 	.use(pinia)
 	.use(store)
 	.use(router)
-	.use(NextcloudGlobalsVuePlugin)
 	.mount('#content')
 
 // make the instance available to global components that might run on the same page

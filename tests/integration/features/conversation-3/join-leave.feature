@@ -3,9 +3,9 @@ Feature: conversation-3/join-leave
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
-    Given user "participant3" exists
 
   Scenario: join a one-to-one room
+    Given user "participant3" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
@@ -38,6 +38,7 @@ Feature: conversation-3/join-leave
 
 
   Scenario: join a group room
+    Given user "participant3" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -66,6 +67,7 @@ Feature: conversation-3/join-leave
 
 
   Scenario: join a public room
+    Given user "participant3" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -80,6 +82,7 @@ Feature: conversation-3/join-leave
     And user "guest" is participant of room "room" (v4)
 
   Scenario: leave a public room
+    Given user "participant3" exists
     Given signaling server is started
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |

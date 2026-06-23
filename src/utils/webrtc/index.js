@@ -17,12 +17,12 @@ import SignalingTypingHandler from '../SignalingTypingHandler.js'
 import CallAnalyzer from './analyzers/CallAnalyzer.js'
 import CallParticipantsAudioPlayer from './CallParticipantsAudioPlayer.js'
 import MediaDevicesManager from './MediaDevicesManager.js'
-import CallParticipantCollection from './models/CallParticipantCollection.js'
-import LocalCallParticipantModel from './models/LocalCallParticipantModel.js'
-import LocalMediaModel from './models/LocalMediaModel.js'
+import { CallParticipantCollection } from './models/CallParticipantCollection.js'
+import { LocalCallParticipantModel } from './models/LocalCallParticipantModel.js'
+import { LocalMediaModel } from './models/LocalMediaModel.js'
 import SentVideoQualityThrottler from './SentVideoQualityThrottler.js'
 import SpeakingStatusHandler from './SpeakingStatusHandler.js'
-import initWebRtc from './webrtc.js'
+import { destroyWebRtc, initWebRtc } from './webrtc.js'
 
 import './shims/MediaStream.js'
 import './shims/MediaStreamTrack.js'
@@ -233,10 +233,13 @@ async function signalingJoinConversation(token, sessionId) {
  * sound for other participants or not
  * @param {boolean} recordingConsent Whether the participant gave their consent to be recorded
  * @param {Array<string>} silentFor List of participants that should not receive a notification about the call
+ * @param {object} options Additional options (for media)
+ * @param {boolean} [options.audioOn] Whether to enable audio on join
+ * @param {boolean} [options.videoOn] Whether to enable audio on join
  * @return {Promise<void>} Resolved with the actual flags based on the
  *          available media
  */
-async function signalingJoinCall(token, flags, silent, recordingConsent, silentFor) {
+async function signalingJoinCall(token, flags, silent, recordingConsent, silentFor, options = {}) {
 	if (tokensInSignaling[token]) {
 		pendingJoinCallToken = token
 
@@ -262,12 +265,13 @@ async function signalingJoinCall(token, flags, silent, recordingConsent, silentF
 
 			// The previous state might be wiped after the media is started, so
 			// it should be saved now.
-			const enableAudio = !BrowserStorage.getItem('audioDisabled_' + token)
-			const enableVideo = !BrowserStorage.getItem('videoDisabled_' + token)
-			const enableVirtualBackground = !!BrowserStorage.getItem('virtualBackgroundEnabled_' + token)
-			const virtualBackgroundType = BrowserStorage.getItem('virtualBackgroundType_' + token)
-			const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength_' + token)
-			const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl_' + token)
+			const noiseSuppressionWithModel = !!BrowserStorage.getItem('noiseSuppressionWithModel')
+			const enableAudio = options?.audioOn ?? !BrowserStorage.getItem('audioDisabled_' + token)
+			const enableVideo = options?.videoOn ?? !BrowserStorage.getItem('videoDisabled_' + token)
+			const enableVirtualBackground = !!BrowserStorage.getItem('virtualBackgroundEnabled')
+			const virtualBackgroundType = BrowserStorage.getItem('virtualBackgroundType')
+			const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength')
+			const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl')
 
 			localMediaModel.set('token', token)
 
@@ -285,6 +289,11 @@ async function signalingJoinCall(token, flags, silent, recordingConsent, silentF
 				localMediaModel.enableVirtualBackground()
 			} else {
 				localMediaModel.disableVirtualBackground()
+			}
+			if (noiseSuppressionWithModel) {
+				localMediaModel.enableNoiseSuppression()
+			} else {
+				localMediaModel.disableNoiseSuppression()
 			}
 			if (virtualBackgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
 				localMediaModel.setVirtualBackgroundImage(virtualBackgroundUrl)
@@ -387,6 +396,20 @@ async function signalingJoinCallForRecording(token, settings, internalClientAuth
 	signaling = Signaling.createConnection(settings)
 
 	await signalingIsConnected(signaling)
+
+	// Set up E2EE for recording server
+	// Copied from connectSignaling()
+	if (Encryption.isEnabled()) {
+		let supported
+		try {
+			supported = await Encryption.isSupported()
+		} catch (e) {
+			console.error('Encryption is not supported', e)
+		}
+		if (supported) {
+			encryption = new Encryption(signaling)
+		}
+	}
 
 	// The default call flags for internal clients include audio, so they must
 	// be downgraded to just "in call" to prevent other participants from trying
@@ -491,6 +514,18 @@ async function signalingLeaveConversation(token) {
 function signalingKill() {
 	if (signaling) {
 		signaling.disconnect()
+		signaling = null
+	}
+}
+
+/**
+ * Immediately kill the WebRTC instance synchronously
+ * This should be called only in the unload handler
+ */
+function signalingWebRtcKill() {
+	if (webRtc) {
+		destroyWebRtc()
+		webRtc = null
 	}
 }
 
@@ -529,4 +564,5 @@ export {
 	signalingLeaveConversation,
 	signalingSendCallMessage,
 	signalingSetTyping,
+	signalingWebRtcKill,
 }

@@ -22,7 +22,7 @@ class GuestController extends AEnvironmentAwareOCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private GuestManager $guestManager,
+		private readonly GuestManager $guestManager,
 	) {
 		parent::__construct($appName, $request);
 	}

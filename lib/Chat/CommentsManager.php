@@ -15,6 +15,10 @@ use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 
 class CommentsManager extends Manager {
+	public function removeFromCache(int|string $id): void {
+		$this->uncache((string)$id);
+	}
+
 	/**
 	 * @param array $data
 	 * @return IComment
@@ -33,7 +37,7 @@ class CommentsManager extends Manager {
 	 * @throws Exception
 	 */
 	public function getCommentsById(array $ids): array {
-		$commentIds = array_map('intval', $ids);
+		$commentIds = array_map(intval(...), $ids);
 
 		$query = $this->dbConn->getQueryBuilder();
 		$query->select('*')
@@ -216,7 +220,6 @@ class CommentsManager extends Manager {
 		return $comments;
 	}
 
-
 	/**
 	 * @param string $actorType
 	 * @param string $actorId
@@ -225,7 +228,7 @@ class CommentsManager extends Manager {
 	 * @psalm-return array<int, string[]>
 	 */
 	public function retrieveReactionsByActor(string $actorType, string $actorId, array $messageIds): array {
-		$commentIds = array_map('intval', $messageIds);
+		$commentIds = array_map(intval(...), $messageIds);
 
 		$query = $this->dbConn->getQueryBuilder();
 		$query->select('*')
@@ -270,11 +273,11 @@ class CommentsManager extends Manager {
 		}
 
 		if ($since !== null) {
-			$query->andWhere($query->expr()->gte('creation_timestamp', $query->createNamedParameter($since, IQueryBuilder::PARAM_DATE), IQueryBuilder::PARAM_DATE));
+			$query->andWhere($query->expr()->gte('creation_timestamp', $query->createNamedParameter($since, IQueryBuilder::PARAM_DATETIME_MUTABLE), IQueryBuilder::PARAM_DATETIME_MUTABLE));
 		}
 
 		if ($until !== null) {
-			$query->andWhere($query->expr()->lte('creation_timestamp', $query->createNamedParameter($until, IQueryBuilder::PARAM_DATE), IQueryBuilder::PARAM_DATE));
+			$query->andWhere($query->expr()->lte('creation_timestamp', $query->createNamedParameter($until, IQueryBuilder::PARAM_DATETIME_MUTABLE), IQueryBuilder::PARAM_DATETIME_MUTABLE));
 		}
 
 		if ($actorType !== null && $actorId !== null) {

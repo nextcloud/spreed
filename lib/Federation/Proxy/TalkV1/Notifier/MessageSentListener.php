@@ -31,12 +31,12 @@ use OCP\L10N\IFactory;
  */
 class MessageSentListener implements IEventListener {
 	public function __construct(
-		protected BackendNotifier $backendNotifier,
-		protected ParticipantService $participantService,
-		protected ICloudIdManager $cloudIdManager,
-		protected MessageParser $messageParser,
-		protected IFactory $l10nFactory,
-		protected ChatManager $chatManager,
+		private readonly BackendNotifier $backendNotifier,
+		private readonly ParticipantService $participantService,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly MessageParser $messageParser,
+		private readonly IFactory $l10nFactory,
+		private readonly ChatManager $chatManager,
 	) {
 	}
 

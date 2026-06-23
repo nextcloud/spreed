@@ -179,6 +179,7 @@ export default {
 					flags,
 					silent: false,
 					recordingConsent: true,
+					options: { videoOn: false },
 				})
 
 				// request above could be cancelled, if there is parallel request, and return null

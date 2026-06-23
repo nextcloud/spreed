@@ -21,7 +21,6 @@ use Test\TestCase;
 class AttendeeMapperTest extends TestCase {
 	protected ?AttendeeMapper $attendeeMapper = null;
 
-
 	public function setUp(): void {
 		parent::setUp();
 
@@ -347,7 +346,7 @@ class AttendeeMapperTest extends TestCase {
 			try {
 				$attendee = $this->attendeeMapper->findByActor($roomId, $attendeeData['actor_type'], $attendeeData['actor_id']);
 				$this->attendeeMapper->delete($attendee);
-			} catch (DoesNotExistException $e) {
+			} catch (DoesNotExistException) {
 			}
 
 			$attendee = new Attendee();

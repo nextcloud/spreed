@@ -20,7 +20,7 @@ use OCP\Util;
 class DeckPluginLoader implements IEventListener {
 
 	public function __construct(
-		private IRequest $request,
+		private readonly IRequest $request,
 	) {
 	}
 

@@ -29,11 +29,11 @@ class HostedSignalingServerService {
 	private $apiServerUrl;
 
 	public function __construct(
-		private IConfig $config,
-		private IClientService $clientService,
-		private LoggerInterface $logger,
-		private IL10N $l10n,
-		private ISecureRandom $secureRandom,
+		private readonly IConfig $config,
+		private readonly IClientService $clientService,
+		private readonly LoggerInterface $logger,
+		private readonly IL10N $l10n,
+		private readonly ISecureRandom $secureRandom,
 	) {
 
 		$this->apiServerUrl = $this->config->getSystemValue('talk_hardcoded_hpb_service', 'https://api.spreed.cloud');
@@ -82,7 +82,7 @@ class HostedSignalingServerService {
 				case Http::STATUS_BAD_REQUEST:
 					$body = $response->getBody()->getContents();
 					if ($body) {
-						$parsedBody = json_decode($body, true);
+						$parsedBody = json_decode((string)$body, true);
 						if (json_last_error() !== JSON_ERROR_NONE) {
 							$this->logger->error('Requesting hosted signaling server trial failed: cannot parse JSON response - JSON error: ' . json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
 
@@ -255,7 +255,7 @@ class HostedSignalingServerService {
 				case Http::STATUS_BAD_REQUEST:
 					$body = $response->getBody()->getContents();
 					if ($body) {
-						$parsedBody = json_decode($body, true);
+						$parsedBody = json_decode((string)$body, true);
 						if (json_last_error() !== JSON_ERROR_NONE) {
 							$this->logger->error('Getting the account information failed: cannot parse JSON response - JSON error: ' . json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
 
@@ -324,7 +324,6 @@ class HostedSignalingServerService {
 		if ($status !== Http::STATUS_OK) {
 			$body = $response->getBody();
 			$this->logger->error('Getting the account information failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body);
-
 
 			$message = $this->l10n->t('Something unexpected happened.');
 			throw new HostedSignalingServerAPIException($message, $status);
@@ -409,7 +408,7 @@ class HostedSignalingServerService {
 				case Http::STATUS_BAD_REQUEST:
 					$body = $response->getBody()->getContents();
 					if ($body) {
-						$parsedBody = json_decode($body, true);
+						$parsedBody = json_decode((string)$body, true);
 						if (json_last_error() !== JSON_ERROR_NONE) {
 							$this->logger->error('Deleting the hosted signaling server account failed: cannot parse JSON response - JSON error: ' . json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);
 
@@ -478,7 +477,6 @@ class HostedSignalingServerService {
 		if ($status !== Http::STATUS_NO_CONTENT) {
 			$body = $response->getBody();
 			$this->logger->error('Deleting the hosted signaling server account failed: something else happened - HTTP status: ' . $status . ' Response body: ' . $body);
-
 
 			$message = $this->l10n->t('Something unexpected happened.');
 			throw new HostedSignalingServerAPIException($message, $status);

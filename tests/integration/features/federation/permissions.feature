@@ -3,7 +3,6 @@ Feature: federation/permissions
   Background:
     Given using server "REMOTE"
     And user "participant2" exists
-    And user "participant3" exists
     And the following "spreed" app config is set
       | federation_enabled | yes |
     And using server "LOCAL"
@@ -13,6 +12,9 @@ Feature: federation/permissions
 
   @skip33
   Scenario: set participant permissions
+    Given using server "REMOTE"
+    And user "participant3" exists
+    And using server "LOCAL"
     And user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room name |
@@ -123,6 +125,9 @@ Feature: federation/permissions
       | CM                 | D                   | CM          |
 
   Scenario: set participant permissions after setting conversation permissions and then invite another federated user
+    Given using server "REMOTE"
+    And user "participant3" exists
+    And using server "LOCAL"
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room name |

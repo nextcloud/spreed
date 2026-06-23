@@ -5,6 +5,7 @@
 
 <script setup lang="ts">
 import { t } from '@nextcloud/l10n'
+import { computed } from 'vue'
 import IconReload from 'vue-material-design-icons/Reload.vue'
 import StaticDateTime from './StaticDateTime.vue'
 
@@ -15,17 +16,33 @@ const props = defineProps<{
 	isRecurring?: boolean
 	href?: string
 }>()
+
+const event = computed(() => {
+	if (props.href) {
+		return {
+			component: 'a',
+			attrs: {
+				href: props.href,
+				title: t('spreed', 'Open Calendar'),
+				tabindex: 0,
+				rel: 'noreferrer nofollow',
+				target: '_blank',
+			},
+		}
+	}
+
+	return {
+		component: 'span',
+	}
+})
 </script>
 
 <template>
 	<li class="calendar-event">
-		<a
+		<component
+			:is="event.component"
 			class="calendar-event__item"
-			:class="{ 'calendar-event__item--thumb': !href }"
-			:href="href"
-			:title="t('spreed', 'Open Calendar')"
-			:tabindex="0"
-			target="_blank">
+			v-bind="event.attrs">
 			<span class="calendar-event__badge" :style="{ backgroundColor: color }" />
 			<span class="calendar-event__content">
 				<span class="calendar-event__header">
@@ -34,7 +51,7 @@ const props = defineProps<{
 				</span>
 				<StaticDateTime :time="start" calendar />
 			</span>
-		</a>
+		</component>
 	</li>
 </template>
 
@@ -48,14 +65,10 @@ const props = defineProps<{
 		padding-inline: var(--default-grid-baseline);
 		height: 100%;
 		border-radius: var(--border-radius);
+	}
 
-		&--thumb {
-			cursor: default;
-		}
-
-		&:hover {
-			background-color: var(--color-background-hover);
-		}
+	a.calendar-event__item:hover {
+		background-color: var(--color-background-hover);
 	}
 
 	&__badge {

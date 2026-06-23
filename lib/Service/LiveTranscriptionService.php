@@ -17,7 +17,6 @@ use OCA\Talk\Exceptions\LiveTranslationNotSupportedException;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\App\IAppManager;
-use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Server;
 use Psr\Container\ContainerExceptionInterface;
@@ -27,12 +26,11 @@ use Psr\Log\LoggerInterface;
 class LiveTranscriptionService {
 
 	public function __construct(
-		private ?string $userId,
-		private IAppManager $appManager,
-		private IUserManager $userManager,
-		private IFactory $l10nFactory,
-		private RoomService $roomService,
-		protected LoggerInterface $logger,
+		private readonly ?string $userId,
+		private readonly IAppManager $appManager,
+		private readonly IFactory $l10nFactory,
+		private readonly RoomService $roomService,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 
@@ -41,7 +39,7 @@ class LiveTranscriptionService {
 			if ($appApiPublicFunctions === null) {
 				$appApiPublicFunctions = $this->getAppApiPublicFunctions();
 			}
-		} catch (LiveTranscriptionAppAPIException $e) {
+		} catch (LiveTranscriptionAppAPIException) {
 			return false;
 		}
 
@@ -65,7 +63,7 @@ class LiveTranscriptionService {
 
 		try {
 			$appApiPublicFunctions = Server::get(PublicFunctions::class);
-		} catch (ContainerExceptionInterface|NotFoundExceptionInterface $e) {
+		} catch (ContainerExceptionInterface|NotFoundExceptionInterface) {
 			throw new LiveTranscriptionAppAPIException('app-api-functions');
 		}
 
@@ -414,7 +412,7 @@ class LiveTranscriptionService {
 		}
 
 		$responseContentType = $response->getHeader('Content-Type');
-		if (str_contains($responseContentType, 'application/json')) {
+		if (str_contains((string)$responseContentType, 'application/json')) {
 			$body = $response->getBody();
 			if (!is_string($body)) {
 				$this->logger->error('Request to live_transcription (ExApp) failed: response body is not a string, but content type is application/json', ['response' => $response]);
@@ -440,7 +438,7 @@ class LiveTranscriptionService {
 			if (is_array($decodedBody) && isset($decodedBody['error'])) {
 				$exceptionMessage .= ': ' . $decodedBody['error'];
 			}
-			throw new LiveTranscriptionAppResponseException($exceptionMessage, 0, null, $response);
+			throw new LiveTranscriptionAppResponseException($exceptionMessage, $response);
 		}
 
 		return $decodedBody;

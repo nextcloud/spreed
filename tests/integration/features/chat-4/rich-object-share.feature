@@ -1,7 +1,6 @@
 Feature: chat-4/rich-object-share
   Background:
     Given user "participant1" exists
-    Given user "participant2" exists
 
   Scenario: Share a rich object to a chat
     Given user "participant1" creates room "public room" (v4)
@@ -13,6 +12,7 @@ Feature: chat-4/rich-object-share
       | public room | users     | participant1 | participant1-displayname | {object} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"},"object":{"name":"Another room","call-type":"group","type":"call","id":"R4nd0mT0k3n","icon-url":"{VALIDATE_ICON_URL_PATTERN}"}} |
 
   Scenario: Can not share without chat permission
+    Given user "participant2" exists
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -34,6 +34,7 @@ Feature: chat-4/rich-object-share
       | public room | users     | participant1 | participant1-displayname | Message deleted by you   | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}}                |               |
 
   Scenario: Can not delete without chat permission
+    Given user "participant2" exists
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
       | roomName | room |

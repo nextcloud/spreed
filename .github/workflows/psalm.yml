@@ -24,19 +24,19 @@ jobs:
     name: static-psalm-analysis
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
 
       - name: Get php version
         id: versions
-        uses: icewind1991/nextcloud-version-matrix@58becf3b4bb6dc6cef677b15e2fd8e7d48c0908f # v1.3.1
+        uses: icewind1991/nextcloud-version-matrix@8a7bac6300b2f0f3100088b297995a229558ddba # v1.3.2
 
       - name: Check enforcement of minimum PHP version ${{ steps.versions.outputs.php-min }} in psalm.xml
         run: grep 'phpVersion="${{ steps.versions.outputs.php-min }}' psalm.xml
 
       - name: Set up php${{ steps.versions.outputs.php-available }}
-        uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2.36.0
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: ${{ steps.versions.outputs.php-available }}
           extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, sqlite, pdo_sqlite
@@ -51,9 +51,6 @@ jobs:
         run: |
           composer remove nextcloud/ocp --dev --no-scripts
           composer i
-
-      - name: Check for vulnerable PHP dependencies
-        run: composer require --dev roave/security-advisories:dev-latest
 
       - name: Install nextcloud/ocp
         run: composer require --dev nextcloud/ocp:dev-${{ steps.versions.outputs.branches-max }} --ignore-platform-reqs --with-dependencies

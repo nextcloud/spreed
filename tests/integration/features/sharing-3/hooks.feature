@@ -4,7 +4,6 @@ Feature: sharing-3/hooks
     Given user "participant1" exists
     Given user "participant2" exists
     Given user "participant3" exists
-    Given user "participant4" exists
 
   # Entering a room does not really require any hook to work, but conceptually
   # these tests belong here.
@@ -988,6 +987,7 @@ Feature: sharing-3/hooks
       | share_with_displayname | Group room invited to |
 
   Scenario: delete user after resharing a file
+    Given user "participant4" exists
     Given user "participant1" creates room "group room invited to" (v4)
       | roomType | 2 |
       | roomName | room |

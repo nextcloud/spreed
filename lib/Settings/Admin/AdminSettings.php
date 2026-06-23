@@ -32,17 +32,17 @@ class AdminSettings implements ISettings {
 	private ?IUser $currentUser = null;
 
 	public function __construct(
-		private Config $talkConfig,
-		private IConfig $serverConfig,
-		private IAppConfig $appConfig,
-		private IInitialState $initialState,
-		private ICacheFactory $memcacheFactory,
-		private IGroupManager $groupManager,
-		private MatterbridgeManager $bridgeManager,
-		private IRegistry $subscription,
+		private readonly Config $talkConfig,
+		private readonly IConfig $serverConfig,
+		private readonly IAppConfig $appConfig,
+		private readonly IInitialState $initialState,
+		private readonly ICacheFactory $memcacheFactory,
+		private readonly IGroupManager $groupManager,
+		private readonly MatterbridgeManager $bridgeManager,
+		private readonly IRegistry $subscription,
+		private readonly IL10N $l10n,
+		private readonly IFactory $l10nFactory,
 		IUserSession $userSession,
-		private IL10N $l10n,
-		private IFactory $l10nFactory,
 	) {
 		$this->currentUser = $userSession->getUser();
 	}
@@ -62,7 +62,6 @@ class AdminSettings implements ISettings {
 		$this->initRequestSignalingServerTrial();
 		$this->initRecording();
 		$this->initSIPBridge();
-
 
 		Util::addScript('spreed', 'talk-admin-settings');
 		Util::addStyle('spreed', 'talk-admin-settings');
@@ -102,7 +101,7 @@ class AdminSettings implements ISettings {
 			if ($version === '') {
 				$error = 'binary';
 			}
-		} catch (WrongPermissionsException $e) {
+		} catch (WrongPermissionsException) {
 			$version = '';
 			$error = 'binary_permissions';
 		}
@@ -435,9 +434,7 @@ class AdminSettings implements ISettings {
 		}
 		$languages['commonLanguages'] = array_values($languages['commonLanguages']);
 		// TODO maybe filter out languages with an _
-		usort($countries, function (array $a, array $b) {
-			return strcmp($a['name'], $b['name']);
-		});
+		usort($countries, fn (array $a, array $b) => strcmp($a['name'], $b['name']));
 		$this->initialState->provideInitialState('hosted_signaling_server_language_data', [
 			'languages' => $languages,
 			'countries' => $countries,
@@ -481,9 +478,7 @@ class AdminSettings implements ISettings {
 		}
 
 		if (count($gids) !== count($groups)) {
-			$gids = array_map(static function (array $group) {
-				return $group['id'];
-			}, $groups);
+			$gids = array_map(static fn (array $group) => $group['id'], $groups);
 			$this->serverConfig->setAppValue('spreed', $configKey, json_encode($gids));
 		}
 
@@ -498,7 +493,7 @@ class AdminSettings implements ISettings {
 		$output = [];
 		try {
 			@exec('apachectl -V | grep MPM', $output, $returnCode);
-		} catch (\Throwable $e) {
+		} catch (\Throwable) {
 			return 'unknown';
 		}
 

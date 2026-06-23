@@ -4,7 +4,6 @@ Feature: sharing-2/get
     Given user "participant1" exists
     Given user "participant2" exists
     Given user "participant3" exists
-    Given user "participant4" exists
 
 
 
@@ -166,6 +165,7 @@ Feature: sharing-2/get
 
 
   Scenario: get all shares of a user
+    Given user "participant4" exists
     Given user "participant1" creates room "own group room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -238,6 +238,7 @@ Feature: sharing-2/get
       | permissions            | 31 |
 
   Scenario: get all shares and reshares of a user
+    Given user "participant4" exists
     Given user "participant1" creates room "own group room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -408,6 +409,7 @@ Feature: sharing-2/get
       | share_with_displayname | Private conversation |
 
   Scenario: get all shares of a file
+    Given user "participant4" exists
     Given user "participant1" creates room "own group room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -455,6 +457,7 @@ Feature: sharing-2/get
       | share_with_displayname | Group room invited to |
 
   Scenario: get all shares of a deleted file
+    Given user "participant4" exists
     Given user "participant1" creates room "own group room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -484,6 +487,7 @@ Feature: sharing-2/get
     And the HTTP status code should be "200"
 
   Scenario: get all shares and reshares of a file
+    Given user "participant4" exists
     Given user "participant1" creates room "own group room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -776,6 +780,7 @@ Feature: sharing-2/get
       | token                  | A_TOKEN |
 
   Scenario: get all shares and reshares of a deleted file
+    Given user "participant4" exists
     Given user "participant1" creates room "own group room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -805,6 +810,7 @@ Feature: sharing-2/get
     And the HTTP status code should be "200"
 
   Scenario: get all shares of a folder
+    Given user "participant4" exists
     Given user "participant1" creates room "own group room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -897,6 +903,7 @@ Feature: sharing-2/get
       | permissions            | 31 |
 
   Scenario: get all shares of a deleted folder
+    Given user "participant4" exists
     Given user "participant1" creates room "own group room" (v4)
       | roomType | 2 |
       | roomName | room |

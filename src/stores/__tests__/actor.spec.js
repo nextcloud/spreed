@@ -4,16 +4,16 @@
  */
 
 import { getCurrentUser } from '@nextcloud/auth'
-import { loadState } from '@nextcloud/initial-state'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { ATTENDEE, PARTICIPANT } from '../../constants.ts'
+import { hasServerAppCapabilities } from '../../services/CapabilitiesManager.ts'
 import { getTeams } from '../../services/teamsService.ts'
 import { generateOCSResponse } from '../../test-helpers.js'
 import { useActorStore } from '../actor.ts'
 
-vi.mock('@nextcloud/initial-state', () => ({
-	loadState: vi.fn(() => false),
+vi.mock('../../services/CapabilitiesManager.ts', () => ({
+	hasServerAppCapabilities: vi.fn(() => false),
 }))
 vi.mock('../../services/teamsService.ts', () => ({
 	getTeams: vi.fn(() => Promise.resolve({
@@ -168,14 +168,14 @@ describe('actorStore', () => {
 
 	describe('getCurrentUserTeams', () => {
 		test('does nothing if circles are not enabled', async () => {
-			loadState.mockReturnValue(false)
+			hasServerAppCapabilities.mockReturnValue(false)
 			await actorStore.getCurrentUserTeams()
 			expect(getTeams).not.toHaveBeenCalled()
 			expect(actorStore.actorTeams).toEqual([])
 		})
 
 		test('sets actorTeams from API response', async () => {
-			loadState.mockReturnValue(true)
+			hasServerAppCapabilities.mockReturnValue(true)
 			getTeams.mockResolvedValue(generateOCSResponse({
 				payload: [
 					{ id: 'team1' },
@@ -188,7 +188,7 @@ describe('actorStore', () => {
 		})
 
 		test('logs error if getTeams throws', async () => {
-			loadState.mockReturnValue(true)
+			hasServerAppCapabilities.mockReturnValue(true)
 			const error = new Error('fail')
 			getTeams.mockRejectedValue(error)
 			const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})

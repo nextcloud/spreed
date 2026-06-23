@@ -9,6 +9,7 @@ APP_NAME=spreed
 NOTIFICATIONS_BRANCH="master"
 GUESTS_BRANCH="main"
 CIRCLES_BRANCH="master"
+PASSWORD_POLICY_BRANCH="master"
 
 APP_INTEGRATION_DIR=$PWD
 ROOT_DIR=${APP_INTEGRATION_DIR}/../../../..
@@ -103,6 +104,7 @@ MAIN_OVERWRITE_CLI_URL=$(occ_host config:system:get overwrite.cli.url)
 MAIN_SKELETON_DIR=$(occ_host config:system:get skeletondirectory)
 occ_host config:system:set overwrite.cli.url --value "http://localhost:8080/"
 occ_host config:app:set dav enableDefaultContact --value false --type boolean
+occ_host config:app:set guests hash_user_ids --value false --type boolean
 if [[ "$MAIN_SKELETON_DIR" != "" ]]; then
 	echo "Resetting custom skeletondirectory so that tests pass"
 	occ_host config:system:delete skeletondirectory
@@ -112,6 +114,7 @@ REAL_FEDERATED_OVERWRITE_CLI_URL=$(occ_remote config:system:get overwrite.cli.ur
 REAL_FEDERATED_SKELETON_DIR=$(occ_remote config:system:get skeletondirectory)
 occ_remote config:system:set overwrite.cli.url --value "$TEST_REMOTE_URL"
 occ_remote config:app:set dav enableDefaultContact --value false --type boolean
+occ_remote config:app:set guests hash_user_ids --value false --type boolean
 if [[ "$REAL_FEDERATED_SKELETON_DIR" != "" ]]; then
 	echo "Resetting custom skeletondirectory so that tests pass"
 	occ_remote config:system:delete skeletondirectory
@@ -139,6 +142,8 @@ fi
 occ_host app:getpath notifications || (cd ../../../ && git clone --depth 1 --branch ${NOTIFICATIONS_BRANCH} https://github.com/nextcloud/notifications)
 occ_host app:getpath guests || (cd ../../../ && git clone --depth 1 --branch ${GUESTS_BRANCH} https://github.com/nextcloud/guests)
 occ_host app:getpath circles || (cd ../../../ && git clone --depth 1 --branch ${CIRCLES_BRANCH} https://github.com/nextcloud/circles)
+# password_policy is available but not globally enabled; enabled/disabled per-scenario in tests
+occ_host app:getpath password_policy || (cd ../../../ && git clone --depth 1 --branch ${PASSWORD_POLICY_BRANCH} https://github.com/nextcloud/password_policy)
 
 for OCC in occ_host occ_remote; do
 	${OCC} app:enable spreed || exit 1
@@ -147,6 +152,9 @@ for OCC in occ_host occ_remote; do
 	${OCC} app:enable --force notifications || exit 1
 	${OCC} app:enable --force guests || exit 1
 	${OCC} app:enable --force circles || exit 1
+	# Explicitly disable password_policy so it starts inactive; individual
+	# scenarios enable it via "Given password policy app is enabled"
+	${OCC} app:disable password_policy
 
 	${OCC} app:list | grep spreed
 	${OCC} app:list | grep talk_webhook_demo
@@ -192,8 +200,16 @@ echo -e "\033[1;33m# ██╔══██╗██║   ██║██║╚�
 echo -e "\033[1;33m# ██║  ██║╚██████╔╝██║ ╚████║       ██║   ███████╗███████║   ██║   ███████║\033[0m"
 echo -e "\033[1;33m# ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝       ╚═╝   ╚══════╝╚══════╝   ╚═╝   ╚══════╝\033[0m"
 echo -e "\033[1;33m#\033[0m"
-echo ${APP_INTEGRATION_DIR}/vendor/bin/behat --colors -f junit -f pretty ${EXCLUDE_TAGS} $1 $2
-${APP_INTEGRATION_DIR}/vendor/bin/behat --colors -f junit -f pretty ${EXCLUDE_TAGS} $1 $2
+# When running on GitHub Actions, additionally emit failures as workflow
+# error annotations (https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#setting-an-error-message)
+# while keeping the regular junit and pretty output intact.
+FORMATTERS="-f junit -f pretty"
+if [ "$GITHUB_ACTIONS" = "true" ]; then
+	FORMATTERS="${FORMATTERS} -f github_actions"
+fi
+
+echo ${APP_INTEGRATION_DIR}/vendor/bin/behat --colors ${FORMATTERS} ${EXCLUDE_TAGS} $1 $2
+${APP_INTEGRATION_DIR}/vendor/bin/behat --colors ${FORMATTERS} ${EXCLUDE_TAGS} $1 $2
 RESULT=$?
 
 echo ''

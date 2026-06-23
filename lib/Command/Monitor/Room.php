@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Room extends Base {
 
 	public function __construct(
-		protected IDBConnection $connection,
+		private readonly IDBConnection $connection,
 	) {
 		parent::__construct();
 	}

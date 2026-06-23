@@ -37,6 +37,7 @@ use Psr\Log\LoggerInterface;
  */
 class SendScheduledMessages extends TimedJob {
 	public function __construct(
+		ITimeFactory $time,
 		private readonly ScheduledMessageService $scheduledMessageService,
 		private readonly ParticipantService $participantService,
 		private readonly Manager $manager,
@@ -45,7 +46,6 @@ class SendScheduledMessages extends TimedJob {
 		private readonly ThreadService $threadService,
 		private readonly IL10n $l10n,
 		private readonly LoggerInterface $logger,
-		ITimeFactory $time,
 	) {
 		// Every minute
 		$this->setInterval(60);

@@ -12,8 +12,8 @@ use OCP\EventDispatcher\Event;
 
 class BotUninstallEvent extends Event {
 	public function __construct(
-		protected string $secret,
-		protected string $url,
+		private readonly string $secret,
+		private readonly string $url,
 	) {
 		parent::__construct();
 	}

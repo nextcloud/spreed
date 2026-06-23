@@ -6,13 +6,12 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-
 namespace OCA\Talk\Exceptions;
 
 class DialOutFailedException extends \RuntimeException {
 	public function __construct(
 		string $errorCode,
-		protected string $readableError,
+		private readonly string $readableError,
 	) {
 		parent::__construct($errorCode);
 	}

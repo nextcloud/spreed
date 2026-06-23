@@ -15,11 +15,12 @@ use OCA\Talk\Exceptions\HostedSignalingServerInputException;
 use OCA\Talk\Service\HostedSignalingServerService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
-use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -30,11 +31,10 @@ class HostedSignalingServerController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected IClientService $clientService,
-		protected IL10N $l10n,
-		protected IConfig $config,
-		protected LoggerInterface $logger,
-		private HostedSignalingServerService $hostedSignalingServerService,
+		private readonly IL10N $l10n,
+		private readonly IConfig $config,
+		private readonly LoggerInterface $logger,
+		private readonly HostedSignalingServerService $hostedSignalingServerService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -42,28 +42,44 @@ class HostedSignalingServerController extends OCSController {
 	/**
 	 * Get the authentication credentials
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{nonce: string}, array{}>|DataResponse<Http::STATUS_PRECONDITION_FAILED, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{nonce: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, null, array{}>
 	 *
 	 * 200: Authentication credentials returned
+	 * 403: Provided nonce is wrong
 	 * 412: Getting authentication credentials is not possible
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 	#[PublicPage]
+	#[BruteForceProtection(action: 'hosted-hpb-nonce')]
+	#[RequestHeader(name: 'x-account-service-nonce', description: 'Random string provided to the hostedsignalingserver entity, so it can verify that it was requested')]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/hostedsignalingserver/auth', requirements: [
 		'apiVersion' => '(v1)',
 	])]
 	public function auth(): DataResponse {
+		$sentNonce = $this->request->getHeader('x-account-service-nonce');
+		if ($sentNonce === '') {
+			$response = new DataResponse(null, Http::STATUS_FORBIDDEN);
+			$response->throttle();
+			return $response;
+		}
+
 		$storedNonce = $this->config->getAppValue('spreed', 'hosted-signaling-server-nonce', '');
+		if ($storedNonce === '') {
+			return new DataResponse(null, Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		if (!hash_equals($storedNonce, $sentNonce)) {
+			$response = new DataResponse(null, Http::STATUS_FORBIDDEN);
+			$response->throttle();
+			return $response;
+		}
+
 		// reset nonce after one request
 		$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
 
-		if ($storedNonce !== '') {
-			return new DataResponse([
-				'nonce' => $storedNonce,
-			]);
-		}
-
-		return new DataResponse(null, Http::STATUS_PRECONDITION_FAILED);
+		return new DataResponse([
+			'nonce' => $storedNonce,
+		]);
 	}
 
 	/**
@@ -101,7 +117,6 @@ class HostedSignalingServerController extends OCSController {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
-
 		return new DataResponse($accountInfo);
 	}
 
@@ -128,8 +143,6 @@ class HostedSignalingServerController extends OCSController {
 		} catch (HostedSignalingServerAPIException $e) {
 			if ($e->getCode() === Http::STATUS_NOT_FOUND) {
 				// Account was deleted, so remove the information locally
-			} elseif ($e->getCode() === Http::STATUS_UNAUTHORIZED) {
-				// Account is expired and deletion is pending unless it's reactivated.
 			} else {
 				// API or connection issues - do nothing and just try again later
 				return new DataResponse(['message' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);

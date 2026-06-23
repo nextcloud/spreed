@@ -18,11 +18,9 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Federation\FederationManager;
-use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BotServerMapper;
-use OCA\Talk\Model\Message;
 use OCA\Talk\Model\ProxyCacheMessageMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -32,7 +30,6 @@ use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\Federation\ICloudIdManager;
 use OCP\Files\IRootFolder;
@@ -48,7 +45,6 @@ use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 use OCP\Notification\UnknownNotificationException;
-use OCP\RichObjectStrings\Definitions;
 use OCP\Server;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
@@ -66,34 +62,30 @@ class Notifier implements INotifier {
 	protected array $circleNames = [];
 	/** @var array<string, string> */
 	protected array $circleLinks = [];
-	protected ICommentsManager $commentManager;
 
 	public function __construct(
-		protected IFactory $lFactory,
-		protected IURLGenerator $url,
-		protected Config $config,
-		protected IAppManager $appManager,
-		protected IUserManager $userManager,
-		protected IGroupManager $groupManager,
-		protected GuestManager $guestManager,
-		private IShareManager $shareManager,
-		protected Manager $manager,
-		protected ParticipantService $participantService,
-		protected AvatarService $avatarService,
-		protected INotificationManager $notificationManager,
-		CommentsManager $commentManager,
-		protected ProxyCacheMessageMapper $proxyCacheMessageMapper,
-		protected MessageParser $messageParser,
-		protected IRootFolder $rootFolder,
-		protected ITimeFactory $timeFactory,
-		protected Definitions $definitions,
-		protected AddressHandler $addressHandler,
-		protected BotServerMapper $botServerMapper,
-		protected FederationManager $federationManager,
-		protected ICloudIdManager $cloudIdManager,
-		protected LoggerInterface $logger,
+		private readonly IFactory $lFactory,
+		private readonly IURLGenerator $url,
+		private readonly Config $config,
+		private readonly IAppManager $appManager,
+		private readonly IUserManager $userManager,
+		private readonly IGroupManager $groupManager,
+		private readonly IShareManager $shareManager,
+		private readonly Manager $manager,
+		private readonly ParticipantService $participantService,
+		private readonly AvatarService $avatarService,
+		private readonly INotificationManager $notificationManager,
+		private readonly CommentsManager $commentManager,
+		private readonly ProxyCacheMessageMapper $proxyCacheMessageMapper,
+		private readonly MessageParser $messageParser,
+		private readonly IRootFolder $rootFolder,
+		private readonly ITimeFactory $timeFactory,
+		private readonly AddressHandler $addressHandler,
+		private readonly BotServerMapper $botServerMapper,
+		private readonly FederationManager $federationManager,
+		private readonly ICloudIdManager $cloudIdManager,
+		private readonly LoggerInterface $logger,
 	) {
-		$this->commentManager = $commentManager;
 	}
 
 	/**
@@ -236,14 +228,14 @@ class Notifier implements INotifier {
 		} else {
 			try {
 				$room = $this->getRoom($notification->getObjectId(), $userId);
-			} catch (RoomNotFoundException $e) {
+			} catch (RoomNotFoundException) {
 				// Room does not exist
 				throw new AlreadyProcessedException();
 			}
 
 			try {
 				$participant = $this->getParticipant($room, $userId);
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				// Room does not exist
 				throw new AlreadyProcessedException();
 			}
@@ -334,7 +326,7 @@ class Notifier implements INotifier {
 			/** @var \OCP\Files\File $file */
 			$file = array_shift($files);
 			$path = $userFolder->getRelativePath($file->getPath());
-		} catch (\Throwable $th) {
+		} catch (\Throwable) {
 			throw new AlreadyProcessedException();
 		}
 
@@ -553,30 +545,42 @@ class Notifier implements INotifier {
 			}
 		} elseif ($subjectParameters['userType'] === Attendee::ACTOR_FEDERATED_USERS) {
 			try {
-				$cloudId = $this->cloudIdManager->resolveCloudId($message->getActorId());
+				if (isset($subjectParameters['userId']) && $subjectParameters['userId'] !== $message->getActorId()) {
+					$cloudId = $this->cloudIdManager->resolveCloudId($subjectParameters['userId']);
+					try {
+						$reactionUser = $this->participantService->getParticipantByActor($message->getRoom(), Attendee::ACTOR_FEDERATED_USERS, $subjectParameters['userId']);
+						$displayName = $reactionUser->getAttendee()->getDisplayName();
+					} catch (ParticipantNotFoundException) {
+						$displayName = $cloudId->getDisplayId();
+					}
+				} else {
+					$cloudId = $this->cloudIdManager->resolveCloudId($message->getActorId());
+					$displayName = $message->getActorDisplayName();
+				}
+
 				$richSubjectUser = [
 					'type' => 'user',
 					'id' => $cloudId->getUser(),
-					'name' => $message->getActorDisplayName(),
+					'name' => $displayName,
 					'server' => $cloudId->getRemote(),
 				];
 			} catch (\InvalidArgumentException) {
 				$richSubjectUser = [
 					'type' => 'highlight',
-					'id' => $message->getActorId(),
-					'name' => $message->getActorId(),
+					'id' => $subjectParameters['userId'] ?? $message->getActorId(),
+					'name' => $subjectParameters['userId'] ?? $message->getActorId(),
 				];
 			}
 		} elseif ($subjectParameters['userType'] === Attendee::ACTOR_BOTS) {
 			$botId = $subjectParameters['userId'];
 			try {
-				$bot = $this->botServerMapper->findByUrlHash(substr($botId, strlen(Attendee::ACTOR_BOT_PREFIX)));
+				$bot = $this->botServerMapper->findByUrlHash(substr((string)$botId, strlen(Attendee::ACTOR_BOT_PREFIX)));
 				$richSubjectUser = [
 					'type' => 'highlight',
 					'id' => $botId,
 					'name' => $bot->getName() . ' (Bot)',
 				];
-			} catch (DoesNotExistException $e) {
+			} catch (DoesNotExistException) {
 				$richSubjectUser = [
 					'type' => 'highlight',
 					'id' => $botId,
@@ -707,7 +711,7 @@ class Notifier implements INotifier {
 						$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorType(), $message->getActorId());
 						// TRANSLATORS Reminder for a message from a guest in conversation {call}
 						$subject = $l->t('Reminder: {guest} (guest) in {call}') . "\n{message}";
-					} catch (ParticipantNotFoundException $e) {
+					} catch (ParticipantNotFoundException) {
 						// TRANSLATORS Reminder for a message from a guest in conversation {call}
 						$subject = $l->t('Reminder: Guest in {call}') . "\n{message}";
 					}
@@ -729,7 +733,7 @@ class Notifier implements INotifier {
 					try {
 						$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorType(), $message->getActorId());
 						$subject = $l->t('{guest} (guest) reacted with {reaction} in {call}') . "\n{message}";
-					} catch (ParticipantNotFoundException $e) {
+					} catch (ParticipantNotFoundException) {
 						$subject = $l->t('Guest reacted with {reaction} in {call}') . "\n{message}";
 					}
 				}
@@ -744,7 +748,7 @@ class Notifier implements INotifier {
 					try {
 						$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorType(), $message->getActorId());
 						$subject = $l->t('{guest} (guest) in {call}') . "\n{message}";
-					} catch (ParticipantNotFoundException $e) {
+					} catch (ParticipantNotFoundException) {
 						$subject = $l->t('Guest in {call}') . "\n{message}";
 					}
 				}
@@ -760,7 +764,7 @@ class Notifier implements INotifier {
 				try {
 					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorType(), $message->getActorId());
 					$subject = $l->t('{guest} (guest) sent a message in conversation {call}');
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					$subject = $l->t('A guest sent a message in conversation {call}');
 				}
 			}
@@ -775,7 +779,7 @@ class Notifier implements INotifier {
 				try {
 					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorType(), $message->getActorId());
 					$subject = $l->t('{guest} (guest) replied to your message in conversation {call}');
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					$subject = $l->t('A guest replied to your message in conversation {call}');
 				}
 			}
@@ -821,7 +825,7 @@ class Notifier implements INotifier {
 				try {
 					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $message->getActorType(), $message->getActorId());
 					$subject = $l->t('{guest} (guest) reacted with {reaction} to your message in conversation {call}');
-				} catch (ParticipantNotFoundException $e) {
+				} catch (ParticipantNotFoundException) {
 					$subject = $l->t('A guest reacted with {reaction} to your message in conversation {call}');
 				}
 			}
@@ -883,7 +887,7 @@ class Notifier implements INotifier {
 				} else {
 					$subject = $l->t('{guest} (guest) mentioned you in conversation {call}');
 				}
-			} catch (ParticipantNotFoundException $e) {
+			} catch (ParticipantNotFoundException) {
 				if ($notification->getSubject() === 'mention_group') {
 					$groupName = $this->groupManager->getDisplayName($subjectParameters['sourceId']) ?? $subjectParameters['sourceId'];
 					$richSubjectParameters['group'] = [
@@ -974,18 +978,14 @@ class Notifier implements INotifier {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function getRoomType(Room $room): string {
-		switch ($room->getType()) {
-			case Room::TYPE_ONE_TO_ONE:
-			case Room::TYPE_ONE_TO_ONE_FORMER:
-				return 'one2one';
-			case Room::TYPE_GROUP:
-			case Room::TYPE_NOTE_TO_SELF:
-				return 'group';
-			case Room::TYPE_PUBLIC:
-				return 'public';
-			default:
-				throw new \InvalidArgumentException('Unknown room type');
-		}
+		return match ($room->getType()) {
+			Room::TYPE_ONE_TO_ONE,
+			Room::TYPE_ONE_TO_ONE_FORMER => 'one2one',
+			Room::TYPE_GROUP,
+			Room::TYPE_NOTE_TO_SELF => 'group',
+			Room::TYPE_PUBLIC => 'public',
+			default => throw new \InvalidArgumentException('Unknown room type'),
+		};
 	}
 
 	/**
@@ -1164,7 +1164,7 @@ class Notifier implements INotifier {
 
 		try {
 			$share = $this->shareManager->getShareByToken($room->getObjectId());
-		} catch (ShareNotFound $e) {
+		} catch (ShareNotFound) {
 			throw new AlreadyProcessedException();
 		}
 
@@ -1174,7 +1174,7 @@ class Notifier implements INotifier {
 				'id' => (string)$share->getNodeId(),
 				'name' => $share->getNode()->getName(),
 			];
-		} catch (\OCP\Files\NotFoundException $e) {
+		} catch (\OCP\Files\NotFoundException) {
 			throw new AlreadyProcessedException();
 		}
 

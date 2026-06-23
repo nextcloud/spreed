@@ -16,12 +16,12 @@ use OCP\IL10N;
 
 readonly class Webinar extends APreset {
 	public function __construct(
-		protected IL10N $l,
+		private IL10N $l,
 	) {
 	}
 
 	#[\Override]
-	public function getIdentifier(): string {
+	public static function getIdentifier(): string {
 		return 'webinar';
 	}
 
@@ -32,7 +32,7 @@ readonly class Webinar extends APreset {
 
 	#[\Override]
 	public function getDescription(): string {
-		return $this->l->t('Webinar');
+		return $this->l->t('Restricted conversation with lobby enabled, ideal for public webinars.');
 	}
 
 	#[\Override]

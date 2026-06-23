@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - name: Get repository from pull request comment
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         id: get-repository
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
@@ -52,7 +52,7 @@ jobs:
           exit 1
 
       - name: Check actor permission
-        uses: skjnldsv/check-actor-permission@69e92a3c4711150929bca9fcf34448c5bf5526e7 # v2
+        uses: skjnldsv/check-actor-permission@69e92a3c4711150929bca9fcf34448c5bf5526e7 # v3.0
         with:
           require: write
 
@@ -65,7 +65,7 @@ jobs:
           reactions: '+1'
 
       - name: Parse command
-        uses: skjnldsv/parse-command-comment@5c955203c52424151e6d0e58fb9de8a9f6a605a1 # v2
+        uses: skjnldsv/parse-command-comment@5c955203c52424151e6d0e58fb9de8a9f6a605a1 # v3.1
         id: command
 
       # Init path depending on which command is run
@@ -97,13 +97,13 @@ jobs:
 
     steps:
       - name: Restore cached git repository
-        uses: buildjet/cache@3e70d19e31d6a8030aeddf6ed8dbe601f94d09f4 # v4.0.2
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: .git
           key: git-repo
 
       - name: Checkout ${{ needs.init.outputs.head_ref }}
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           # Needed to allow force push later
           persist-credentials: true
@@ -118,7 +118,7 @@ jobs:
 
       - name: Check Typescript OpenApi types
         id: check_typescript_openapi
-        uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3.0.0
+        uses: andstor/file-existence-action@558493d6c74bf472d87c84eab196434afc2fa029 # v3.1.0
         with:
           files: "src/types/openapi/openapi*.ts"
 
@@ -134,7 +134,7 @@ jobs:
 
       - name: Set up node ${{ steps.node_versions.outputs.nodeVersion }}
         if: ${{ steps.node_versions.outputs.nodeVersion }}
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: ${{ steps.node_versions.outputs.nodeVersion }}
 

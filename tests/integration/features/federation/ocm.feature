@@ -1,7 +1,4 @@
 Feature: federation/ocm
-  Background:
-    Given user "participant1" exists
-
   Scenario: Check that the OCM resource is not registered when federation is disabled
     Given the following "spreed" app config is set
       | federation_enabled | no |

@@ -4,9 +4,9 @@ Feature: command/user-transfer-ownership
     Given user "participant1" exists
     Given user "participant2" exists
     Given user "participant3" exists
-    Given user "participant4" exists
 
   Scenario: Only transfer when moderator permissions
+    Given user "participant4" exists
     Given user "participant1" creates room "one-to-one" (v4)
       | roomType | 1 |
       | invite   | participant2 |
@@ -53,6 +53,7 @@ Feature: command/user-transfer-ownership
       | owner       | owner        | 2    | 1               |
 
   Scenario: Also transfer without moderator permissions
+    Given user "participant4" exists
     Given user "participant1" creates room "one-to-one" (v4)
       | roomType | 1 |
       | invite   | participant2 |
@@ -100,6 +101,7 @@ Feature: command/user-transfer-ownership
       | owner       | owner        | 2    | 1               |
 
   Scenario: Remove source user on successful transfer
+    Given user "participant4" exists
     Given user "participant1" creates room "one-to-one" (v4)
       | roomType | 1 |
       | invite   | participant2 |

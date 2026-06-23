@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2025 Nextcloud GmbH
+ * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -17,8 +17,8 @@ use OCP\SetupCheck\SetupResult;
 class NotifyPush implements ISetupCheck {
 
 	public function __construct(
-		protected IL10N $l10n,
-		protected IAppManager $appManager,
+		private readonly IL10N $l10n,
+		private readonly IAppManager $appManager,
 	) {
 	}
 

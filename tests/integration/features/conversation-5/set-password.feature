@@ -1,10 +1,9 @@
 Feature: conversation-5/set-password
   Background:
     Given user "participant1" exists
-    Given user "participant2" exists
-    Given user "participant3" exists
 
   Scenario: Owner sets a room password
+    Given user "participant3" exists
     Given signaling server is started
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
@@ -26,6 +25,8 @@ Feature: conversation-5/set-password
     Then user "participant3" joins room "room" with 200 (v4)
 
   Scenario: Moderator sets a room password
+    Given user "participant2" exists
+    Given user "participant3" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -43,6 +44,8 @@ Feature: conversation-5/set-password
     Then user "participant3" joins room "room" with 200 (v4)
 
   Scenario: User sets a room password
+    Given user "participant2" exists
+    Given user "participant3" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
@@ -62,6 +65,8 @@ Feature: conversation-5/set-password
     Then user "participant3" joins room "room" with 403 (v4)
 
   Scenario: Stranger sets a room password
+    Given user "participant2" exists
+    Given user "participant3" exists
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
