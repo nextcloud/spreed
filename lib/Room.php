@@ -484,4 +484,8 @@ class Room {
 	public function setAttributes(int $attributes): void {
 		$this->attributes = $attributes;
 	}
+
+	public function isPreserved(): bool {
+		return ($this->attributes & RoomAttributes::PRESERVE_CONVERSATION->value) === RoomAttributes::PRESERVE_CONVERSATION->value;
+	}
 }

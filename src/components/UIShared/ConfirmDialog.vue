@@ -11,7 +11,7 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 // FIXME use real types from @nextcloud/vue
 type ClassType = string | Record<string, boolean | undefined>
 type VueClassType = ClassType | ClassType[] | VueClassType[]
-type NcDialogButtonProps = {
+export type NcDialogButtonProps = {
 	label: string
 	callback?: () => unknown | false | Promise<unknown | false>
 	disabled?: boolean
@@ -57,6 +57,11 @@ const emit = defineEmits<{
 	close: [value?: unknown]
 }>()
 
+defineSlots<{
+	/** Custom dialog body content, replaces `customMessages` rendering when provided */
+	default?(props: Record<string, never>): unknown
+}>()
+
 const inputValue = ref(props.inputProps?.value ?? '')
 
 /**
@@ -90,11 +95,13 @@ function onSubmit(value: string) {
 		:size="size"
 		:buttons="buttons"
 		@closing="onClosing">
-		<template v-if="customMessages">
-			<p v-for="customMessage in customMessages" :key="customMessage">
-				{{ customMessage }}
-			</p>
-		</template>
+		<slot name="default">
+			<template v-if="customMessages">
+				<p v-for="customMessage in customMessages" :key="customMessage">
+					{{ customMessage }}
+				</p>
+			</template>
+		</slot>
 		<template v-if="isForm && inputProps">
 			<NcTextField
 				v-model="inputValue"

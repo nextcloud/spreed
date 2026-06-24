@@ -18,6 +18,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\RoomAttributes;
 use OCA\Talk\Service\EmojiService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
@@ -418,5 +419,89 @@ class RoomServiceTest extends TestCase {
 		$verificationResult = $service->verifyPassword($room, '4321');
 		$this->assertSame($verificationResult, ['result' => false, 'url' => 'https://test']);
 		$this->assertSame('passy', $room->getPassword());
+	}
+
+	protected function createRoomWithAttributes(int $attributes): Room {
+		return new Room(
+			0,
+			Room::TYPE_PUBLIC,
+			Room::READ_WRITE,
+			Room::LISTABLE_NONE,
+			0,
+			Webinary::LOBBY_NONE,
+			Webinary::SIP_DISABLED,
+			null,
+			'foobar',
+			'Test',
+			'description',
+			'',
+			'',
+			'',
+			'',
+			Attendee::PERMISSIONS_DEFAULT,
+			Participant::FLAG_DISCONNECTED,
+			null,
+			null,
+			0,
+			null,
+			null,
+			'',
+			'',
+			BreakoutRoom::MODE_NOT_CONFIGURED,
+			BreakoutRoom::STATUS_STOPPED,
+			Room::RECORDING_NONE,
+			RecordingService::CONSENT_REQUIRED_NO,
+			Room::HAS_FEDERATION_NONE,
+			Room::MENTION_PERMISSIONS_EVERYONE,
+			'',
+			0,
+			$attributes,
+		);
+	}
+
+	public function testSetPreserveConversationEnables(): void {
+		$room = $this->createRoomWithAttributes(RoomAttributes::NONE->value);
+		$this->assertFalse($room->isPreserved());
+
+		$this->dispatcher->expects($this->exactly(2))
+			->method('dispatchTyped');
+
+		$this->service->setPreserveConversation($room, true);
+
+		$this->assertTrue($room->isPreserved());
+		$this->assertSame(RoomAttributes::PRESERVE_CONVERSATION->value, $room->getAttributes() & RoomAttributes::PRESERVE_CONVERSATION->value);
+	}
+
+	public function testSetPreserveConversationDisables(): void {
+		$room = $this->createRoomWithAttributes(RoomAttributes::PRESERVE_CONVERSATION->value);
+		$this->assertTrue($room->isPreserved());
+
+		$this->dispatcher->expects($this->exactly(2))
+			->method('dispatchTyped');
+
+		$this->service->setPreserveConversation($room, false);
+
+		$this->assertFalse($room->isPreserved());
+		$this->assertSame(0, $room->getAttributes() & RoomAttributes::PRESERVE_CONVERSATION->value);
+	}
+
+	public function testSetPreserveConversationKeepsOtherAttributes(): void {
+		$room = $this->createRoomWithAttributes(RoomAttributes::VOICE_ROOM->value);
+
+		$this->service->setPreserveConversation($room, true);
+
+		$this->assertTrue($room->isPreserved());
+		$this->assertSame(RoomAttributes::VOICE_ROOM->value, $room->getAttributes() & RoomAttributes::VOICE_ROOM->value, 'Voice room attribute must be kept');
+	}
+
+	public function testSetPreserveConversationIsNoopWhenUnchanged(): void {
+		$room = $this->createRoomWithAttributes(RoomAttributes::PRESERVE_CONVERSATION->value);
+
+		$this->dispatcher->expects($this->never())
+			->method('dispatchTyped');
+
+		$this->service->setPreserveConversation($room, true);
+
+		$this->assertTrue($room->isPreserved());
 	}
 }

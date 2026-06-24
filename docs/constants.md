@@ -76,6 +76,7 @@ Required capability: `conversation-presets`
 
 * `0` None
 * `1` Voice rooms - Join call when joining conversation
+* `2` Preserved - Conversation can not be deleted, its chat history can not be cleared and the guests (public link) and joinable (listable) settings can not be changed (only owners can toggle this attribute, requires capability `preserve-conversation`)
 
 ## Participants
 

@@ -149,6 +149,10 @@ trait TRoomCommand {
 		}
 	}
 
+	protected function setRoomPreserve(Room $room, bool $preserve): void {
+		$this->roomService->setPreserveConversation($room, $preserve);
+	}
+
 	/**
 	 * @param Room $room
 	 * @param string $password

@@ -18,6 +18,10 @@
 					{{ t('spreed', 'Leave conversation') }}
 				</NcButton>
 			</div>
+			<NcNoteCard
+				v-if="isPreserved"
+				type="info"
+				:text="t('spreed', 'This conversation is preserved. It can not be deleted and its chat messages can not be cleared.')" />
 			<div v-if="canDeleteConversation" class="app-settings-subsection">
 				<h4 class="app-settings-section__subtitle">
 					{{ t('spreed', 'Delete conversation') }}
@@ -27,6 +31,7 @@
 				</p>
 				<NcButton
 					variant="error"
+					:disabled="isPreserved"
 					@click="deleteConversation">
 					{{ t('spreed', 'Delete conversation') }}
 				</NcButton>
@@ -40,6 +45,7 @@
 				</p>
 				<NcButton
 					variant="error"
+					:disabled="isPreserved"
 					@click="clearChatHistory">
 					{{ t('spreed', 'Delete chat messages') }}
 				</NcButton>
@@ -57,6 +63,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import ConfirmDialog from '../UIShared/ConfirmDialog.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
+import { CONVERSATION } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useTokenStore } from '../../stores/token.ts'
 
@@ -91,6 +98,12 @@ export default {
 			token: useGetToken(),
 			tokenStore: useTokenStore(),
 		}
+	},
+
+	computed: {
+		isPreserved() {
+			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.PRESERVE)
+		},
 	},
 
 	methods: {

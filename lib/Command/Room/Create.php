@@ -79,6 +79,11 @@ class Create extends Base {
 				null,
 				InputOption::VALUE_REQUIRED,
 				'Seconds to expire a message after sent. If zero will disable the expire message duration.'
+			)->addOption(
+				'preserve',
+				null,
+				InputOption::VALUE_NONE,
+				'Preserves the room so it can not be deleted, its history cleared or its guests/joinable settings changed'
 			);
 	}
 
@@ -94,6 +99,7 @@ class Create extends Base {
 		$owner = $input->getOption('owner');
 		$moderators = $input->getOption('moderator');
 		$messageExpiration = $input->getOption('message-expiration');
+		$preserve = $input->getOption('preserve');
 
 		if (!in_array($listable, [
 			null,
@@ -138,6 +144,10 @@ class Create extends Base {
 
 			if ($messageExpiration !== null) {
 				$this->setMessageExpiration($room, (int)$messageExpiration);
+			}
+
+			if ($preserve) {
+				$this->setRoomPreserve($room, true);
 			}
 		} catch (InvalidArgumentException $e) {
 			$this->roomService->deleteRoom($room);

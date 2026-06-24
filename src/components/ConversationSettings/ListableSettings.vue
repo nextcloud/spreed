@@ -7,7 +7,7 @@
 	<div v-if="canModerate">
 		<NcCheckboxRadioSwitch
 			:modelValue="listable !== LISTABLE.NONE"
-			:disabled="isListableLoading"
+			:disabled="isListableLoading || isPreserved"
 			type="switch"
 			@update:modelValue="toggleListableUsers">
 			{{ t('spreed', 'Open conversation to registered users, showing it in search results') }}
@@ -16,11 +16,14 @@
 			v-if="listable !== LISTABLE.NONE && isGuestsAccountsEnabled"
 			class="additional-top-margin"
 			:modelValue="listable === LISTABLE.ALL"
-			:disabled="isListableLoading"
+			:disabled="isListableLoading || isPreserved"
 			type="switch"
 			@update:modelValue="toggleListableGuests">
 			{{ t('spreed', 'Also open to users created with the Guests app') }}
 		</NcCheckboxRadioSwitch>
+		<p v-if="isPreserved" class="app-settings-section__hint">
+			{{ t('spreed', 'This setting can not be changed while the conversation is preserved.') }}
+		</p>
 	</div>
 
 	<div v-else>
@@ -78,6 +81,10 @@ export default {
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
+		isPreserved() {
+			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.PRESERVE)
 		},
 
 		summaryLabel() {

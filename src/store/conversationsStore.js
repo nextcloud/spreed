@@ -39,6 +39,7 @@ import {
 	markAsInsensitive,
 	markAsSensitive,
 	markAsUnimportant,
+	preserveConversation,
 	removeFromFavorites,
 	setCallPermissions,
 	setConversationDescription,
@@ -53,6 +54,7 @@ import {
 	setSIPEnabled,
 	unarchiveConversation,
 	unbindConversationFromObject,
+	unpreserveConversation,
 } from '../services/conversationsService.ts'
 import { assignConversationToTags } from '../services/conversationTagsService.ts'
 import { setLiveTranscriptionLanguage } from '../services/liveTranscriptionService.ts'
@@ -624,6 +626,22 @@ const actions = {
 			context.commit('addConversation', response.data.ocs.data)
 		} catch (error) {
 			console.error('Error while changing the conversation archived status: ', error)
+		}
+	},
+
+	async setPreserveConversation(context, { token, preserve }) {
+		if (!context.getters.conversations[token]) {
+			return
+		}
+
+		try {
+			const response = preserve
+				? await preserveConversation(token)
+				: await unpreserveConversation(token)
+			context.commit('addConversation', response.data.ocs.data)
+		} catch (error) {
+			console.error('Error while changing the conversation preserved status: ', error)
+			showError(t('spreed', 'Error while changing the preserved status of the conversation'))
 		}
 	},
 

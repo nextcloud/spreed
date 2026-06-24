@@ -25,6 +25,7 @@ import type {
 	markConversationAsInsensitiveResponse,
 	markConversationAsSensitiveResponse,
 	markConversationAsUnimportantResponse,
+	preserveConversationResponse,
 	removeConversationFromFavoritesResponse,
 	setConversationDescriptionParams,
 	setConversationDescriptionResponse,
@@ -54,6 +55,7 @@ import type {
 	setConversationSipResponse,
 	unarchiveConversationResponse,
 	unbindConversationFromObjectResponse,
+	unpreserveConversationResponse,
 } from '../types/index.ts'
 
 import axios from '@nextcloud/axios'
@@ -263,6 +265,24 @@ async function unarchiveConversation(token: string): unarchiveConversationRespon
 }
 
 /**
+ * Mark a conversation as preserved
+ *
+ * @param token The token of the conversation to be preserved
+ */
+async function preserveConversation(token: string): preserveConversationResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/preserve', { token }))
+}
+
+/**
+ * Stop preserving a conversation
+ *
+ * @param token The token of the conversation to stop preserving
+ */
+async function unpreserveConversation(token: string): unpreserveConversationResponse {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v4/room/{token}/preserve', { token }))
+}
+
+/**
  * Set notification level
  *
  * @param token The token of the conversation to change the notification level
@@ -455,6 +475,7 @@ export {
 	markAsInsensitive,
 	markAsSensitive,
 	markAsUnimportant,
+	preserveConversation,
 	removeFromFavorites,
 	searchListedConversations,
 	setCallPermissions,
@@ -470,4 +491,5 @@ export {
 	setSIPEnabled,
 	unarchiveConversation,
 	unbindConversationFromObject,
+	unpreserveConversation,
 }

@@ -10,17 +10,20 @@
 		</h4>
 
 		<template v-if="canModerate">
-			<p v-if="hasBreakoutRooms" class="app-settings-section__hint">
-				{{ t('spreed', 'Breakout rooms are not allowed in public conversations.') }}
-			</p>
 			<NcCheckboxRadioSwitch
 				:modelValue="isSharedPublicly"
-				:disabled="hasBreakoutRooms || isSaving"
+				:disabled="hasBreakoutRooms || isSaving || isPreserved"
 				type="switch"
 				aria-describedby="link_share_settings_hint"
 				@update:modelValue="toggleGuests">
 				{{ t('spreed', 'Allow guests to join this conversation via link') }}
 			</NcCheckboxRadioSwitch>
+			<p v-if="isPreserved" class="app-settings-section__hint">
+				{{ t('spreed', 'This setting can not be changed while the conversation is preserved.') }}
+			</p>
+			<p v-else-if="hasBreakoutRooms" class="app-settings-section__hint">
+				{{ t('spreed', 'Breakout rooms are not allowed in public conversations.') }}
+			</p>
 
 			<template v-if="isSharedPublicly">
 				<NcCheckboxRadioSwitch
@@ -179,6 +182,10 @@ export default {
 
 		hasBreakoutRooms() {
 			return this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
+		},
+
+		isPreserved() {
+			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.PRESERVE)
 		},
 
 		isPasswordProtectionChecked() {

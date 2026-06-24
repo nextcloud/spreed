@@ -100,6 +100,7 @@ class Listener implements IEventListener {
 				ARoomModifiedEvent::PROPERTY_MESSAGE_EXPIRATION => $this->afterSetMessageExpiration($event),
 				ARoomModifiedEvent::PROPERTY_NAME => $this->sendSystemMessageAboutConversationRenamed($event),
 				ARoomModifiedEvent::PROPERTY_PASSWORD => $this->sendSystemMessageAboutRoomPassword($event),
+				ARoomModifiedEvent::PROPERTY_PRESERVE_CONVERSATION => $this->sendSystemPreserveConversationMessage($event),
 				ARoomModifiedEvent::PROPERTY_READ_ONLY => $this->sendSystemReadOnlyMessage($event),
 				ARoomModifiedEvent::PROPERTY_TYPE => $this->sendSystemGuestPermissionsMessage($event),
 				default => null,
@@ -265,6 +266,18 @@ class Listener implements IEventListener {
 			$this->sendSystemMessage($event->getRoom(), 'listable_users');
 		} elseif ($event->getNewValue() === Room::LISTABLE_ALL) {
 			$this->sendSystemMessage($event->getRoom(), 'listable_all');
+		}
+	}
+
+	protected function sendSystemPreserveConversationMessage(RoomModifiedEvent $event): void {
+		if ($event->getNewValue() === $event->getOldValue()) {
+			return;
+		}
+
+		if ($event->getNewValue()) {
+			$this->sendSystemMessage($event->getRoom(), 'preserve_conversation');
+		} else {
+			$this->sendSystemMessage($event->getRoom(), 'preserve_conversation_off');
 		}
 	}
 
