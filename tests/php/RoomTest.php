@@ -67,4 +67,31 @@ class RoomTest extends TestCase {
 		$this->assertEquals($timer, $room->getLobbyTimer());
 		$this->assertEquals($timer, $room->getLobbyTimer());
 	}
+
+	public function testSetActiveSinceSetsValue(): void {
+		$room = $this->createRoom();
+		$since = new \DateTime();
+		$room->setActiveSince($since);
+		$this->assertSame($since, $room->getActiveSince());
+	}
+
+	public function testSetActiveSinceAcceptsNull(): void {
+		$room = $this->createRoom();
+		$room->setActiveSince(new \DateTime());
+		$room->setActiveSince(null);
+		$this->assertNull($room->getActiveSince());
+	}
+
+	public function testSetCallFlagSetsValue(): void {
+		$room = $this->createRoom();
+		$room->setCallFlag(Participant::FLAG_WITH_VIDEO);
+		$this->assertSame(Participant::FLAG_WITH_VIDEO, $room->getCallFlag());
+	}
+
+	public function testSetCallFlagReplacesValue(): void {
+		$room = $this->createRoom();
+		$room->setCallFlag(Participant::FLAG_IN_CALL);
+		$room->setCallFlag(Participant::FLAG_WITH_VIDEO);
+		$this->assertSame(Participant::FLAG_WITH_VIDEO, $room->getCallFlag());
+	}
 }

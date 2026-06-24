@@ -1216,7 +1216,7 @@ class RoomService {
 
 		if ($room->getActiveSince() instanceof \DateTime) {
 			// Call is already active, just someone upgrading the call flags
-			$room->setActiveSince($room->getActiveSince(), $callFlag);
+			$room->setCallFlag($callFlag);
 
 			$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_IN_CALL, $callFlag, $oldCallFlag);
 			$this->dispatcher->dispatchTyped($event);
@@ -1231,7 +1231,8 @@ class RoomService {
 			->andWhere($update->expr()->isNull('active_since'));
 		$result = (bool)$update->executeStatement();
 
-		$room->setActiveSince($since, $callFlag);
+		$room->setActiveSince($since);
+		$room->setCallFlag($callFlag);
 
 		if (!$result) {
 			// Lost the race, someone else updated the database

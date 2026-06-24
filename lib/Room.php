@@ -372,11 +372,12 @@ class Room {
 		$this->participant = $participant;
 	}
 
-	public function setActiveSince(\DateTime $since, int $callFlag): void {
-		if (!$this->activeSince) {
-			$this->activeSince = $since;
-		}
-		$this->callFlag |= $callFlag;
+	public function setActiveSince(?\DateTime $activeSince): void {
+		$this->activeSince = $activeSince;
+	}
+
+	public function setCallFlag(int $callFlag): void {
+		$this->callFlag = $callFlag;
 	}
 
 	public function getBreakoutRoomMode(): int {
