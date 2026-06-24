@@ -639,6 +639,54 @@ Feature: callapi/recording
       | app    | object_type           | object_id | subject                         |
       | spreed | recording_information | room1     | Failed to upload call recording |
 
+  Scenario: Store recording through a requested chunked upload share
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    When recording server requests recording upload of "join_call.ogg" for "participant1" in room "room1" with 200 (v1)
+    And recording server uploads recording file "/img/join_call.ogg" to the requested upload share with 201
+    And recording server finishes recording upload of "join_call.ogg" for "participant1" in room "room1" with 200 (v1)
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                      | message                                                                                        |
+      | spreed | recording   | room1     | Call recording now available | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.ogg. |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
+
+  Scenario: Request recording upload with an invalid file extension
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    When recording server requests recording upload of "recording.exe" for "participant1" in room "room1" with 400 (v1)
+    Then the response error matches with "file_extension"
+
+  Scenario: Request recording upload for an owner that is not a participant
+    Given user "participant2" exists
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    When recording server requests recording upload of "recording.ogg" for "participant2" in room "room1" with 400 (v1)
+    Then the response error matches with "owner_participant"
+
+  Scenario: Request recording upload as backend without a valid secret
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    When recording server requests recording upload of "recording.ogg" for "participant1" in room "room1" with invalid secret with 401 (v1)
+
+  Scenario: Finish a recording upload without uploading a file first
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    When recording server requests recording upload of "join_call.ogg" for "participant1" in room "room1" with 200 (v1)
+    And recording server finishes recording upload of "join_call.ogg" for "participant1" in room "room1" with 400 (v1)
+    Then the response error matches with "invalid_file"
+
   Scenario: Stop recording automatically when end the call
     Given recording server is started
     And user "participant1" creates room "room1" (v4)

@@ -179,6 +179,8 @@
     <UndefinedClass>
       <code><![CDATA[NoUserException]]></code>
       <code><![CDATA[NoUserException]]></code>
+      <code><![CDATA[NoUserException]]></code>
+      <code><![CDATA[NoUserException]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Service/RoomService.php">

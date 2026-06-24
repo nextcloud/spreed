@@ -22,6 +22,8 @@ use OCA\Talk\Room;
 use OCA\Talk\Settings\UserPreference;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Constants;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IMimeTypeDetector;
@@ -32,6 +34,10 @@ use OCP\IConfig;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Notification\IManager;
+use OCP\Security\Events\GenerateSecurePasswordEvent;
+use OCP\Security\ISecureRandom;
+use OCP\Security\PasswordContext;
+use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
 use OCP\Share\IShare;
 use OCP\SystemTag\ISystemTagObjectMapper;
@@ -48,6 +54,7 @@ class RecordingService {
 	public const CONSENT_REQUIRED_OPTIONAL = 2;
 
 	public const APPCONFIG_PREFIX = 'recording/';
+	public const APPCONFIG_UPLOAD_PREFIX = 'recording-upload/';
 
 	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
 		'audio/ogg' => ['ogg'],
@@ -85,6 +92,8 @@ class RecordingService {
 		private readonly ISystemTagObjectMapper $systemTagMapper,
 		private readonly IFactory $l10nFactory,
 		private readonly IUserManager $userManager,
+		private readonly IEventDispatcher $eventDispatcher,
+		private readonly ISecureRandom $secureRandom,
 	) {
 	}
 
@@ -146,12 +155,197 @@ class RecordingService {
 		try {
 			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
 			$fileNode = $recordingFolder->newFile($fileName, $resource);
-			$this->notifyStoredRecording($room, $participant, $fileNode);
 		} catch (NoUserException $e) {
 			throw new InvalidArgumentException('owner_invalid');
 		} catch (NotPermittedException $e) {
 			throw new InvalidArgumentException('owner_permission');
 		}
+
+		$this->finalizeRecording($room, $participant, $fileNode, $owner);
+	}
+
+	/**
+	 * Request a temporary password-protected public link share so a recording
+	 * backend can upload a (potentially large) recording through the chunked
+	 * public WebDAV API instead of a single multipart request.
+	 *
+	 * The share targets the per-room recording folder with create-only
+	 * permissions (file-drop), so previously stored recordings stay private and
+	 * the uploaded file lands directly in its final location.
+	 *
+	 * @return array{token: string, password: string, fileName: string}
+	 * @throws InvalidArgumentException
+	 */
+	public function requestUpload(Room $room, string $owner, string $fileName): array {
+		try {
+			$participant = $this->participantService->getParticipant($room, $owner);
+		} catch (ParticipantNotFoundException) {
+			throw new InvalidArgumentException('owner_participant');
+		}
+
+		$fileName = $this->sanitizeUploadFileName($fileName);
+
+		if (!$this->shareManager->shareApiAllowLinks()
+			|| !$this->shareManager->shareApiLinkAllowPublicUpload()) {
+			throw new InvalidArgumentException('sharing_disabled');
+		}
+
+		try {
+			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
+		} catch (NoUserException) {
+			throw new InvalidArgumentException('owner_invalid');
+		} catch (NotPermittedException) {
+			throw new InvalidArgumentException('owner_permission');
+		}
+
+		$event = new GenerateSecurePasswordEvent(PasswordContext::SHARING);
+		$this->eventDispatcher->dispatchTyped($event);
+		$password = $event->getPassword() ?? $this->secureRandom->generate(20);
+
+		$expiration = $this->timeFactory->getDateTime();
+		$expiration->add(new \DateInterval('P1D'));
+		$expiration->setTime(0, 0);
+
+		try {
+			$share = $this->shareManager->newShare();
+			$share->setNode($recordingFolder);
+			$share->setShareType(IShare::TYPE_LINK);
+			$share->setPermissions(Constants::PERMISSION_CREATE);
+			$share->setSharedBy($owner);
+			$share->setShareOwner($owner);
+			$share->setLabel('Talk recording upload ' . $room->getToken());
+			$share->setExpirationDate($expiration);
+			$share->setPassword($password);
+			$share = $this->shareManager->createShare($share);
+		} catch (\Exception $e) {
+			$this->logger->error('Could not create upload share for call recording', ['exception' => $e]);
+			throw new InvalidArgumentException('sharing_disabled');
+		}
+
+		$this->appConfig->setAppValueString($this->getUploadShareConfigKey($room, $fileName), $share->getToken(), true, true);
+
+		// The recording session is over once the backend requests the upload
+		// share; only the (potentially long-running) chunked upload remains. Clear
+		// the active-recording marker now so a new recording can be started in this
+		// conversation while the previous one is still being uploaded. The marker is
+		// only needed to recover the owner for a body-less failed multipart store,
+		// which cannot happen on the chunked path (the owner is always provided).
+		$this->appConfig->deleteAppValue(self::APPCONFIG_PREFIX . $room->getToken());
+
+		return [
+			'token' => $share->getToken(),
+			'password' => $password,
+			'fileName' => $fileName,
+		];
+	}
+
+	/**
+	 * Finish a chunked upload started with {@see self::requestUpload()}: locate
+	 * the uploaded file in the recording folder, validate it and run the same
+	 * post-processing as the direct multipart upload, then clean up the
+	 * temporary share.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	public function finishUpload(Room $room, string $owner, string $fileName): void {
+		try {
+			$participant = $this->participantService->getParticipant($room, $owner);
+		} catch (ParticipantNotFoundException) {
+			throw new InvalidArgumentException('owner_participant');
+		}
+
+		$fileName = basename($fileName);
+
+		try {
+			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
+		} catch (NoUserException) {
+			throw new InvalidArgumentException('owner_invalid');
+		} catch (NotPermittedException) {
+			throw new InvalidArgumentException('owner_permission');
+		}
+
+		try {
+			$fileNode = $recordingFolder->get($fileName);
+		} catch (NotFoundException) {
+			$this->cleanupUploadShare($room, $fileName);
+			throw new InvalidArgumentException('invalid_file');
+		}
+
+		if (!$fileNode instanceof File) {
+			$this->cleanupUploadShare($room, $fileName);
+			throw new InvalidArgumentException('invalid_file');
+		}
+
+		if ($fileNode->getSize() === 0) {
+			$fileNode->delete();
+			$this->cleanupUploadShare($room, $fileName);
+			throw new InvalidArgumentException('empty_file');
+		}
+
+		try {
+			// Trust the file node information so the (potentially large) file does
+			// not have to be downloaded again from the storage for content detection.
+			$this->validateMimeTypeAndExtension($fileNode->getName(), $fileNode->getMimeType());
+		} catch (InvalidArgumentException $e) {
+			$fileNode->delete();
+			$this->cleanupUploadShare($room, $fileName);
+			throw $e;
+		}
+
+		$this->finalizeRecording($room, $participant, $fileNode, $owner);
+
+		$this->cleanupUploadShare($room, $fileName);
+	}
+
+	/**
+	 * Delete the temporary upload share for the given file
+	 */
+	private function cleanupUploadShare(Room $room, string $fileName): void {
+		$configKey = $this->getUploadShareConfigKey($room, $fileName);
+		$shareToken = $this->appConfig->getAppValueString($configKey, lazy: true);
+		if ($shareToken !== '') {
+			try {
+				$share = $this->shareManager->getShareByToken($shareToken);
+				$this->shareManager->deleteShare($share);
+			} catch (ShareNotFound) {
+				// Already gone, nothing to clean up
+			}
+		}
+		$this->appConfig->deleteAppValue($configKey);
+	}
+
+	private function getUploadShareConfigKey(Room $room, string $fileName): string {
+		return self::APPCONFIG_UPLOAD_PREFIX . $room->getToken() . '/' . basename($fileName);
+	}
+
+	/**
+	 * Make sure the requested upload file name is a plain name with an allowed
+	 * recording extension, so the file dropped into the share already has a
+	 * valid extension once the content is validated on finish.
+	 *
+	 * @throws InvalidArgumentException
+	 */
+	private function sanitizeUploadFileName(string $fileName): string {
+		$fileName = basename($fileName);
+		if ($fileName === '') {
+			throw new InvalidArgumentException('file_name');
+		}
+
+		$extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+		$allowedExtensions = array_merge(...array_values(self::DEFAULT_ALLOWED_RECORDING_FORMATS));
+		if (!$extension || !in_array($extension, $allowedExtensions, true)) {
+			throw new InvalidArgumentException('file_extension');
+		}
+
+		return $fileName;
+	}
+
+	/**
+	 * Run the post-processing shared by the direct multipart upload and the
+	 * chunked upload: notify the owner and schedule transcription/summary.
+	 */
+	private function finalizeRecording(Room $room, Participant $participant, File $fileNode, string $owner): void {
+		$this->notifyStoredRecording($room, $participant, $fileNode);
 
 		$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
 		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes';
@@ -405,6 +599,13 @@ class RecordingService {
 		}
 
 		$mimeType = $this->mimeTypeDetector->detectContent($fileRealPath);
+		$this->validateMimeTypeAndExtension($fileName, $mimeType);
+	}
+
+	/**
+	 * @throws InvalidArgumentException
+	 */
+	private function validateMimeTypeAndExtension(string $fileName, string $mimeType): void {
 		$allowed = self::DEFAULT_ALLOWED_RECORDING_FORMATS;
 		if (!array_key_exists($mimeType, $allowed)) {
 			$this->logger->warning("Uploaded file detected mime type ($mimeType) is not allowed");

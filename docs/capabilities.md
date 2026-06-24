@@ -230,3 +230,4 @@
 
 ## 25
 * `preserve-conversation` - Whether the owner can preserve a conversation
+* `recording-chunked-upload` (local) - Whether the recording backend can request a temporary upload share to upload large recordings via chunked public WebDAV before finishing with the store endpoint
