@@ -243,6 +243,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "A palavra-passe está errada. Por favor, tente de novo.",
     "Password" : "Palavra-passe",
     "Submit" : "Submeter",
+    "Request password" : "Solicitar a senha",
     "Everyone" : "Para todos",
     "Save changes" : "Guardar alterações",
     "Saving …" : "A guardar...",
