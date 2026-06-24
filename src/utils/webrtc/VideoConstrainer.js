@@ -169,12 +169,10 @@ VideoConstrainer.prototype = {
 		if (quality === QUALITY.HIGH) {
 			return {
 				width: {
-					ideal: 720,
-					min: 640,
+					min: 1440,
 				},
 				height: {
-					ideal: 540,
-					min: 480,
+					min: 1080,
 				},
 				frameRate: {
 					max: 30,
@@ -188,6 +186,23 @@ VideoConstrainer.prototype = {
 		if (quality === QUALITY.MEDIUM) {
 			return {
 				width: {
+					min: 720,
+				},
+				height: {
+					min: 540,
+				},
+				frameRate: {
+					max: 30,
+					ideal: 30,
+					min: 20,
+				},
+				resizeMode: 'none',
+			}
+		}
+
+		if (quality === QUALITY.LOW) {
+			return {
+				width: {
 					max: 640,
 					ideal: 560,
 					min: 480,
@@ -198,15 +213,15 @@ VideoConstrainer.prototype = {
 					min: 320,
 				},
 				frameRate: {
-					max: 24,
-					ideal: 24,
-					min: 15,
+					max: 30,
+					ideal: 30,
+					min: 20,
 				},
 				resizeMode: 'none',
 			}
 		}
 
-		if (quality === QUALITY.LOW) {
+		if (quality === QUALITY.VERY_LOW) {
 			return {
 				width: {
 					max: 480,
@@ -219,24 +234,9 @@ VideoConstrainer.prototype = {
 					min: 240,
 				},
 				frameRate: {
-					max: 15,
-					ideal: 15,
-					min: 8,
-				},
-				resizeMode: 'none',
-			}
-		}
-
-		if (quality === QUALITY.VERY_LOW) {
-			return {
-				width: {
-					max: 320,
-				},
-				height: {
-					max: 240,
-				},
-				frameRate: {
-					max: 8,
+					max: 30,
+					ideal: 30,
+					min: 20,
 				},
 				resizeMode: 'none',
 			}
@@ -250,7 +250,9 @@ VideoConstrainer.prototype = {
 				max: 240,
 			},
 			frameRate: {
-				max: 1,
+				max: 30,
+				ideal: 30,
+				min: 20,
 			},
 			resizeMode: 'none',
 		}
