@@ -139,6 +139,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	private array $passwordPolicyAppWasEnabled = [];
 	private array $taskProcessingProviderPreference = [];
 
+	/** @var array{token: string, password: string, fileName: string} */
+	private array $recordingUploadShare = [];
+
 	private array $guestsOldWhitelist = [];
 
 	use CommandLineTrait;
@@ -4809,6 +4812,115 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$headers,
 			$options
 		);
+		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
+	}
+
+	#[When('/^recording server requests recording upload of "([^"]*)" for "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function recordingServerRequestsRecordingUploadInRoom(string $fileName, string $owner, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->requestRecordingUpload($owner, $fileName, $identifier, $statusCode, 'the secret', $apiVersion);
+	}
+
+	#[When('/^recording server requests recording upload of "([^"]*)" for "([^"]*)" in room "([^"]*)" with invalid secret with (\d+)(?: \((v1)\))?$/')]
+	public function recordingServerRequestsRecordingUploadInRoomWithInvalidSecret(string $fileName, string $owner, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->requestRecordingUpload($owner, $fileName, $identifier, $statusCode, 'invalid secret', $apiVersion);
+	}
+
+	private function requestRecordingUpload(string $owner, string $fileName, string $identifier, int $statusCode, string $secret, string $apiVersion): void {
+		$recordingServerSharedSecret = 'the secret';
+		$this->setAppConfig('spreed', new TableNode([['recording_servers', json_encode(['secret' => $recordingServerSharedSecret])]]));
+
+		$random = md5((string)rand());
+		// Sign with the given secret so an invalid secret can be used to test the authentication failure
+		$checksum = hash_hmac('sha256', $random . self::$identifierToToken[$identifier], $secret);
+		$headers = [
+			'TALK_RECORDING_RANDOM' => $random,
+			'TALK_RECORDING_CHECKSUM' => $checksum,
+		];
+
+		// The recording backend authenticates with the shared secret only and
+		// has no user session, so send the request without any user auth.
+		$currentUser = $this->setCurrentUser('');
+
+		$this->recordingUploadShare = [];
+		$this->sendRequest(
+			'POST',
+			'/apps/spreed/api/' . $apiVersion . '/recording/' . self::$identifierToToken[$identifier] . '/request-upload',
+			[
+				'owner' => $owner,
+				'fileName' => $fileName,
+			],
+			$headers,
+		);
+		$this->setCurrentUser($currentUser);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode === 200) {
+			$this->recordingUploadShare = $this->getDataFromResponse($this->response);
+		}
+	}
+
+	#[When('/^recording server uploads recording file "([^"]*)" to the requested upload share with (\d+)$/')]
+	public function recordingServerUploadsRecordingFileToRequestedShare(string $file, int $statusCode): void {
+		Assert::assertNotEmpty($this->recordingUploadShare, 'No upload share was requested before uploading the recording file');
+
+		// The recording backend uploads via the public WebDAV endpoint of the
+		// requested share using the share token as username and the returned
+		// password as password (HTTP Basic auth).
+		$davUrl = $this->baseUrl . 'public.php/dav/files/' . $this->recordingUploadShare['token'] . '/' . $this->recordingUploadShare['fileName'];
+
+		$options = [
+			'auth' => [$this->recordingUploadShare['token'], $this->recordingUploadShare['password']],
+			'headers' => [
+				'X-Requested-With' => 'XMLHttpRequest',
+			],
+		];
+
+		if ($file === 'empty') {
+			$options['body'] = '';
+		} else {
+			$options['body'] = fopen(__DIR__ . '/../../../..' . $file, 'r');
+		}
+
+		$client = new Client();
+		try {
+			$this->response = $client->request('PUT', $davUrl, $options);
+		} catch (ClientException $ex) {
+			$this->response = $ex->getResponse();
+		} catch (\GuzzleHttp\Exception\ServerException $ex) {
+			$this->response = $ex->getResponse();
+		}
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	#[When('/^recording server finishes recording upload of "([^"]*)" for "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function recordingServerFinishesRecordingUploadInRoom(string $fileName, string $owner, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$recordingServerSharedSecret = 'the secret';
+		$this->setAppConfig('spreed', new TableNode([['recording_servers', json_encode(['secret' => $recordingServerSharedSecret])]]));
+
+		$random = md5((string)rand());
+		$checksum = hash_hmac('sha256', $random . self::$identifierToToken[$identifier], $recordingServerSharedSecret);
+		$headers = [
+			'TALK_RECORDING_RANDOM' => $random,
+			'TALK_RECORDING_CHECKSUM' => $checksum,
+		];
+
+		// The recording backend authenticates with the shared secret only and
+		// has no user session, so send the request without any user auth.
+		$currentUser = $this->setCurrentUser('');
+
+		// Finishing a chunked upload passes the file name of the previously
+		// uploaded file instead of a multipart "file" body.
+		$this->sendRequest(
+			'POST',
+			'/apps/spreed/api/' . $apiVersion . '/recording/' . self::$identifierToToken[$identifier] . '/store',
+			[
+				'owner' => $owner,
+				'fileName' => $fileName,
+			],
+			$headers,
+		);
+		$this->setCurrentUser($currentUser);
 		$this->assertStatusCode($this->response, $statusCode);
 		sleep(1); // make sure Postgres manages the order of the messages
 	}

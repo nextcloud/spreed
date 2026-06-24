@@ -1175,9 +1175,15 @@ export type paths = {
         };
         get?: never;
         put?: never;
-        /** Start the recording */
+        /**
+         * Start the recording
+         * @description Required capability: `recording-v1`
+         */
         post: operations["recording-start"];
-        /** Stop the recording */
+        /**
+         * Stop the recording
+         * @description Required capability: `recording-v1`
+         */
         delete: operations["recording-stop"];
         options?: never;
         head?: never;
