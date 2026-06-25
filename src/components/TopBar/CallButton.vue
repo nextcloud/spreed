@@ -116,7 +116,7 @@ import IconPhoneHangupOutline from 'vue-material-design-icons/PhoneHangupOutline
 import IconPhoneOffOutline from 'vue-material-design-icons/PhoneOffOutline.vue'
 import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import { useGetToken } from '../../composables/useGetToken.ts'
-import { useIsInCall } from '../../composables/useIsInCall.js'
+import { useCallMinimized, useIsInCall } from '../../composables/useIsInCall.js'
 import { useJoinCall } from '../../composables/useJoinCall.ts'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { callSIPDialOut } from '../../services/callsService.ts'
@@ -207,12 +207,13 @@ export default {
 	},
 
 	setup() {
-		const { joinCall } = useJoinCall()
+		const { joinCall, confirmLeaveMinimizedCall } = useJoinCall()
 		return {
 			actorStore: useActorStore(),
 			tokenStore: useTokenStore(),
 			token: useGetToken(),
 			isInCall: useIsInCall(),
+			isCallMinimized: useCallMinimized(),
 			breakoutRoomsStore: useBreakoutRoomsStore(),
 			callViewStore: useCallViewStore(),
 			talkHashStore: useTalkHashStore(),
@@ -220,6 +221,7 @@ export default {
 			soundsStore: useSoundsStore(),
 			isMobile: useIsMobile(),
 			joinCall,
+			confirmLeaveMinimizedCall,
 		}
 	},
 
@@ -285,7 +287,7 @@ export default {
 				|| this.isInLobby
 				|| this.conversation.readOnly
 				|| this.isNextcloudTalkHashDirty
-				|| !this.tokenStore.currentConversationIsJoined
+				|| (!this.tokenStore.currentConversationIsJoined && !this.isCallMinimized)
 				|| blockCalls
 		},
 
@@ -432,7 +434,7 @@ export default {
 			this.loading = false
 		},
 
-		handleClick() {
+		async handleClick() {
 			if (this.hasExternalCallService) {
 				// Another service is in charge, trigger iframe rendering in MainView
 				this.handleExternalCall()
@@ -441,6 +443,13 @@ export default {
 
 			// Create audio objects as a result of a user interaction to allow playing sounds in Safari
 			this.soundsStore.initAudioObjects()
+
+			// If another call is kept alive (minimized), confirm leaving it and
+			// re-join this conversation before continuing the normal join flow
+			// (which may open MediaSettings). Cancelling keeps the other call.
+			if (!await this.confirmLeaveMinimizedCall(this.token)) {
+				return
+			}
 
 			if (this.isMediaSettings || this.isPhoneRoom) {
 				this.handleJoinCall()

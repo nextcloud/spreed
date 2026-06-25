@@ -59,7 +59,13 @@ vi.mock('../services/conversationsService', () => ({
 }))
 vi.mock('../stores/callView', () => ({
 	useCallViewStore: vi.fn(() => ({
+		activeCallToken: '',
+		isLiveTranscriptionEnabled: false,
 		handleJoinCall: vi.fn(),
+		setActiveCallToken: vi.fn(),
+		clearActiveCallToken: vi.fn(),
+		setForceCallView: vi.fn(),
+		disableLiveTranscription: vi.fn(),
 	})),
 }))
 

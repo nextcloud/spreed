@@ -10,6 +10,12 @@
 		@dragleave.prevent="handleDragLeave"
 		@drop.prevent="handleDropFiles">
 		<GuestWelcomeWindow v-if="showGuestWelcomeWindow" :token="token" />
+		<NcNoteCard
+			v-if="showLimitedUpdatesHint"
+			type="info"
+			class="chatView__call-hint">
+			{{ t('spreed', 'Live updates are limited while you are in a call. New messages may appear with a short delay.') }}
+		</NcNoteCard>
 		<div class="messages-list-dragover-wrapper">
 			<TransitionWrapper name="slide-up" mode="out-in">
 				<NcEmptyContent
@@ -68,6 +74,7 @@ import { provide } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
+import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconAlertOctagonOutline from 'vue-material-design-icons/AlertOctagonOutline.vue'
 import IconChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
@@ -80,6 +87,7 @@ import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 import IconFileUpload from '../../img/material-icons/file-upload.svg?raw'
 import { useGetThreadId } from '../composables/useGetThreadId.ts'
 import { useGetToken } from '../composables/useGetToken.ts'
+import { useCallMinimized } from '../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
@@ -97,6 +105,7 @@ export default {
 		NcButton,
 		NcEmptyContent,
 		NcIconSvgWrapper,
+		NcNoteCard,
 		MessagesList,
 		NewMessage,
 		NewMessageUploadEditor,
@@ -126,6 +135,7 @@ export default {
 			IconFileUpload,
 			token: useGetToken(),
 			threadId: useGetThreadId(),
+			isCallMinimized: useCallMinimized(),
 			chatExtrasStore: useChatExtrasStore(),
 			actorStore: useActorStore(),
 			settingsStore: useSettingsStore(),
@@ -147,6 +157,17 @@ export default {
 
 		isGuestWithoutDisplayName() {
 			return this.isGuest && !this.actorStore.displayName
+		},
+
+		/**
+		 * Whether to warn that chat updates are poll-only because a call is
+		 * kept alive in another conversation. Not shown in the sidebar chat
+		 * (which belongs to the active call itself).
+		 *
+		 * @return {boolean}
+		 */
+		showLimitedUpdatesHint() {
+			return this.isCallMinimized && !this.isSidebar
 		},
 
 		canUploadFiles() {

@@ -8,11 +8,14 @@ import type { Conversation, Participant } from '../types/index.ts'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
+import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { useStore } from 'vuex'
+import ConfirmDialog from '../components/UIShared/ConfirmDialog.vue'
 import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../constants.ts'
 import { callSIPDialOut } from '../services/callsService.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { useActorStore } from '../stores/actor.ts'
+import { useCallViewStore } from '../stores/callView.ts'
 import { useSettingsStore } from '../stores/settings.ts'
 import { isAxiosErrorResponse } from '../types/guards.ts'
 
@@ -22,7 +25,47 @@ import { isAxiosErrorResponse } from '../types/guards.ts'
 export function useJoinCall() {
 	const actorStore = useActorStore()
 	const settingsStore = useSettingsStore()
+	const callViewStore = useCallViewStore()
 	const vuexStore = useStore()
+
+	/**
+	 * If a call is kept alive (minimized) in another conversation, ask the user
+	 * to leave it before joining this one. A single signaling connection can
+	 * only be in one call at a time. Returns false if the user cancelled.
+	 *
+	 * @param token - conversation token the user wants to join a call in
+	 */
+	async function confirmLeaveMinimizedCall(token: string): Promise<boolean> {
+		const activeCallToken = callViewStore.activeCallToken
+		if (!activeCallToken || activeCallToken === token || !vuexStore.getters.isInCall(activeCallToken)) {
+			return true
+		}
+
+		const activeConversation = vuexStore.getters.conversation(activeCallToken)
+		const result = await spawnDialog(ConfirmDialog, {
+			name: t('spreed', 'Leave call'),
+			message: t('spreed', 'You are already in a call in {conversation}. Leave it and join the call here?', {
+				conversation: activeConversation?.displayName ?? '',
+			}),
+			buttons: [
+				{ label: t('spreed', 'Cancel'), variant: 'tertiary', callback: () => false },
+				{ label: t('spreed', 'Leave call & join'), variant: 'primary', callback: () => true },
+			],
+		})
+		if (result !== true) {
+			return false
+		}
+
+		// Leave the previous call, then re-join this conversation fully so the
+		// actor session / signaling move here before joining its call.
+		await vuexStore.dispatch('leaveCall', {
+			token: activeCallToken,
+			participantIdentifier: actorStore.participantIdentifier,
+			all: false,
+		})
+		await vuexStore.dispatch('joinConversation', { token })
+		return true
+	}
 
 	/**
 	 * Returns whether the conversation is a phone room (with a single SIP phone participant)
@@ -77,6 +120,13 @@ export function useJoinCall() {
 		shouldStartRecording = false,
 		directCall = false,
 	} = {}) {
+		// If another call is kept alive (minimized), confirm leaving it first.
+		// This also re-joins the target conversation so the actor session moves
+		// here before the guard below and before joining the call.
+		if (!await confirmLeaveMinimizedCall(token)) {
+			return
+		}
+
 		const conversation = vuexStore.getters.conversation(token)
 		if (!actorStore.participantIdentifier.sessionId || conversation.attendeeId !== actorStore.participantIdentifier.attendeeId) {
 			console.error('Trying to join call without having joined the conversation')
@@ -143,5 +193,6 @@ export function useJoinCall() {
 
 	return {
 		joinCall,
+		confirmLeaveMinimizedCall,
 	}
 }

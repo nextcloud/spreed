@@ -8,6 +8,7 @@ import { useStore } from 'vuex'
 import { SESSION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { setSessionState } from '../services/participantsService.js'
+import { useCallViewStore } from '../stores/callView.ts'
 import { useTokenStore } from '../stores/token.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useGetToken } from './useGetToken.ts'
@@ -27,6 +28,7 @@ export function useActiveSession() {
 	const store = useStore()
 	const token = useGetToken()
 	const tokenStore = useTokenStore()
+	const callViewStore = useCallViewStore()
 	// FIXME has no API support on federated conversations
 	const supportSessionState = computed(() => hasTalkFeature(token.value, 'session-state'))
 
@@ -81,8 +83,13 @@ export function useActiveSession() {
 			if (error?.response?.status === 404) {
 				// In case of 404 - participant did not have a session, block UI to join call
 				tokenStore.updateLastJoinedConversationToken('')
-				// Automatically try to join the conversation again
-				store.dispatch('joinConversation', { token: token.value })
+				// Automatically try to join the conversation again, unless a call
+				// is kept alive in another conversation: this one is intentionally
+				// chat-only and has no session, so re-joining would only churn
+				// (and the central guard would force it chat-only anyway).
+				if (!(callViewStore.activeCallToken && callViewStore.activeCallToken !== token.value)) {
+					store.dispatch('joinConversation', { token: token.value })
+				}
 			}
 		}
 	}
@@ -107,8 +114,13 @@ export function useActiveSession() {
 			if (error?.response?.status === 404) {
 				// In case of 404 - participant did not have a session, block UI to join call
 				tokenStore.updateLastJoinedConversationToken('')
-				// Automatically try to join the conversation again
-				store.dispatch('joinConversation', { token: token.value })
+				// Automatically try to join the conversation again, unless a call
+				// is kept alive in another conversation: this one is intentionally
+				// chat-only and has no session, so re-joining would only churn
+				// (and the central guard would force it chat-only anyway).
+				if (!(callViewStore.activeCallToken && callViewStore.activeCallToken !== token.value)) {
+					store.dispatch('joinConversation', { token: token.value })
+				}
 			}
 		}
 	}
