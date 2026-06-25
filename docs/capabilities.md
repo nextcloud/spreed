@@ -211,3 +211,6 @@
 * `config => call => play-sounds` (local) - Whether the user has sounds enabled for calls (falls back to admin default for guests)
 * `config => call => grid-limit` (local) - Suggested gird size for all participants
 * `config => call => grid-limit-enforced` (local) - Whether the limit is hard enforced for all participants
+
+## 22.0.14
+* `recording-chunked-upload` (local) - Whether the recording backend can request a temporary upload share to upload large recordings via chunked public WebDAV before finishing with the store endpoint
