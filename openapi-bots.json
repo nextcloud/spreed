@@ -208,6 +208,10 @@
                                     "grid-limit-enforced": {
                                         "type": "boolean",
                                         "description": "Whether the grid limit is enforced by the server"
+                                    },
+                                    "external-call-service": {
+                                        "type": "string",
+                                        "description": "URL of an external call service if one is used"
                                     }
                                 }
                             },

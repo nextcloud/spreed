@@ -1237,6 +1237,7 @@ export type paths = {
         /**
          * Create a room with a user, a group or a circle
          * @description With the `conversation-creation-all` capability a lot of new options where introduced. Before that only `$roomType`, `$roomName`, `$objectType` and `$objectId` were supported all the time, and `$password` with the `conversation-creation-password` capability In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite` or `$participants` parameter is supported.
+         *     The endpoint can also be used unauthenticated by an external call service by sending the configured shared secret in the `x-nextcloud-talk-external-service` header. In that case the `$owner` parameter is required and will be used as the actor and conversation owner.
          */
         post: operations["room-create-room"];
         delete?: never;
@@ -2248,6 +2249,8 @@ export type components = {
                     "grid-limit": number;
                     /** @description Whether the grid limit is enforced by the server */
                     "grid-limit-enforced": boolean;
+                    /** @description URL of an external call service if one is used */
+                    "external-call-service"?: string;
                 };
                 chat: {
                     /**
@@ -9755,6 +9758,8 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
+                /** @description Shared secret used by the external call service to authenticate when creating a conversation on behalf of a user */
+                "x-nextcloud-talk-external-service"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -9877,6 +9882,11 @@ export interface operations {
                      */
                     participants?: components["schemas"]["InvitationList"];
                     /**
+                     * @description User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated via the `x-nextcloud-talk-external-service` header, otherwise ignored.
+                     * @default
+                     */
+                    owner?: string;
+                    /**
                      * @description Identifier of the preset that was used (only available with `conversation-preset` capability)
                      * @default null
                      */
@@ -9938,14 +9948,14 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
+                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "owner" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
                                 message?: string;
                             };
                         };
                     };
                 };
             };
-            /** @description Current user is not logged in */
+            /** @description Request not authenticated (missing user session or invalid external call service secret) */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -9954,7 +9964,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "auth";
+                            };
                         };
                     };
                 };
@@ -9970,7 +9983,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
+                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "owner" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
                                 message?: string;
                             };
                         };
@@ -9988,7 +10001,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
+                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "owner" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
                                 message?: string;
                             };
                         };
@@ -12033,6 +12046,23 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Bad request when the external call access check failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "field" | "response";
+                            };
                         };
                     };
                 };

@@ -1183,6 +1183,35 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
+	#[Then('/^external call service creates room "([^"]*)" with secret "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function externalCallServiceCreatesRoom(string $identifier, string $secret, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
+		$body = $formData ? $formData->getRowsHash() : [];
+		if (isset($body['roomName']) && $body['roomName'] === 'IDENTIFIER') {
+			$body['roomName'] = $identifier;
+		}
+		if (isset($body['permissions'])) {
+			$body['permissions'] = $this->mapPermissionsTestInput($body['permissions']);
+		}
+
+		$headers = [];
+		if ($secret !== '') {
+			$headers = [
+				'x-nextcloud-talk-external-service' => $secret,
+			];
+		}
+
+		$this->setCurrentUser('');
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body, $headers);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode === 201) {
+			$response = $this->getDataFromResponse($this->response);
+			self::$identifierToToken[$identifier] = $response['token'];
+			self::$identifierToId[$identifier] = $response['id'];
+			self::$tokenToIdentifier[$response['token']] = $identifier;
+		}
+	}
+
 	#[Then('/^user "([^"]*)" gets the room for path "([^"]*)" with (\d+) \((v1)\)$/')]
 	public function userGetsTheRoomForPath(string $user, string $path, int $statusCode, string $apiVersion): void {
 		$fileId = $this->getFileIdForPath($user, $path);
@@ -1759,6 +1788,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			new TableNode([['state', $lobbyState], ['timer', time() + $lobbyTimer]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	#[When('/^user "([^"]*)" gets external call url for room "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function userGetsExternalCallUrl(string $user, string $identifier, int $statusCode, string $apiVersion, TableNode $tableNode): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/external-call');
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$actual = $this->getDataFromResponse($this->response);
+		Assert::assertEquals($tableNode->getRowsHash(), $actual);
 	}
 
 	#[When('/^user "([^"]*)" sets SIP state for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/')]

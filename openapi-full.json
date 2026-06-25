@@ -442,6 +442,10 @@
                                     "grid-limit-enforced": {
                                         "type": "boolean",
                                         "description": "Whether the grid limit is enforced by the server"
+                                    },
+                                    "external-call-service": {
+                                        "type": "string",
+                                        "description": "URL of an external call service if one is used"
                                     }
                                 }
                             },
@@ -18699,11 +18703,12 @@
             "post": {
                 "operationId": "room-create-room",
                 "summary": "Create a room with a user, a group or a circle",
-                "description": "With the `conversation-creation-all` capability a lot of new options where introduced. Before that only `$roomType`, `$roomName`, `$objectType` and `$objectId` were supported all the time, and `$password` with the `conversation-creation-password` capability In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite` or `$participants` parameter is supported.",
+                "description": "With the `conversation-creation-all` capability a lot of new options where introduced. Before that only `$roomType`, `$roomName`, `$objectType` and `$objectId` were supported all the time, and `$password` with the `conversation-creation-password` capability In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite` or `$participants` parameter is supported.\nThe endpoint can also be used unauthenticated by an external call service by sending the configured shared secret in the `x-nextcloud-talk-external-service` header. In that case the `$owner` parameter is required and will be used as the actor and conversation owner.",
                 "tags": [
                     "room"
                 ],
                 "security": [
+                    {},
                     {
                         "bearer_auth": []
                     },
@@ -18857,6 +18862,11 @@
                                         "default": [],
                                         "description": "List of participants to add grouped by type (only available with `conversation-creation-all` capability)"
                                     },
+                                    "owner": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated via the `x-nextcloud-talk-external-service` header, otherwise ignored."
+                                    },
                                     "preset": {
                                         "type": "string",
                                         "nullable": true,
@@ -18879,6 +18889,14 @@
                                 "v4"
                             ],
                             "default": "v4"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-external-service",
+                        "in": "header",
+                        "description": "Shared secret used by the external call service to authenticate when creating a conversation on behalf of a user",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {
@@ -19024,6 +19042,7 @@
                                                                 "object",
                                                                 "object-id",
                                                                 "object-type",
+                                                                "owner",
                                                                 "password",
                                                                 "permissions",
                                                                 "preset",
@@ -19086,6 +19105,7 @@
                                                                 "object",
                                                                 "object-id",
                                                                 "object-type",
+                                                                "owner",
                                                                 "password",
                                                                 "permissions",
                                                                 "preset",
@@ -19148,6 +19168,7 @@
                                                                 "object",
                                                                 "object-id",
                                                                 "object-type",
+                                                                "owner",
                                                                 "password",
                                                                 "permissions",
                                                                 "preset",
@@ -19170,7 +19191,7 @@
                         }
                     },
                     "401": {
-                        "description": "Current user is not logged in",
+                        "description": "Request not authenticated (missing user session or invalid external call service secret)",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -19189,7 +19210,20 @@
                                                 "meta": {
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
-                                                "data": {}
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "auth"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -24288,6 +24322,48 @@
                                                 },
                                                 "data": {
                                                     "$ref": "#/components/schemas/Room"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request when the external call access check failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "field",
+                                                                "response"
+                                                            ]
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
