@@ -1024,7 +1024,10 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 			// If permissions were revoked, disable media devices
 			webrtc.webrtc.disallowAudio()
 		} else if (!webrtc.webrtc.isAudioAllowed()) {
-			// If permissions were just granted and media was not previous allowed
+			// If permissions were just granted and media was not previously
+			// allowed, re-enable the media device so that MediaDevicesSource
+			// restarts the track and trigger force reconnection
+			webrtc.webrtc.allowAudio()
 			// Mute audio to avoid unintentional audio publishing
 			webrtc.webrtc.mute()
 		}
@@ -1032,6 +1035,8 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 		if (!hasPublishVideoPermissions) {
 			webrtc.webrtc.disallowVideo()
 		} else if (!webrtc.webrtc.isVideoAllowed()) {
+			webrtc.webrtc.allowVideo()
+			// Mute video to avoid unintentional audio publishing
 			webrtc.webrtc.pauseVideo()
 		}
 
