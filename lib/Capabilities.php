@@ -173,6 +173,7 @@ class Capabilities implements IPublicCapability {
 			'play-sounds',
 			'grid-limit',
 			'grid-limit-enforced',
+			'external-call-service',
 		],
 		'chat' => [
 			'read-privacy',
@@ -383,6 +384,11 @@ class Capabilities implements IPublicCapability {
 
 		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_EXTERNAL) {
 			$capabilities['features'][] = 'call-end-to-end-encryption';
+		}
+
+		$callService = $this->talkConfig->getExternalCallService();
+		if ($callService !== null) {
+			$capabilities['config']['call']['external-call-service'] = $callService;
 		}
 
 		return [

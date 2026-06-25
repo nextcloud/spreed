@@ -62,6 +62,8 @@ export type components = {
                     /** Format: int64 */
                     "grid-limit": number;
                     "grid-limit-enforced": boolean;
+                    /** @description URL of an external call service if one is used */
+                    "external-call-service"?: string;
                 };
                 chat: {
                     /** Format: int64 */
