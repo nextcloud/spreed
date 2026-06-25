@@ -528,6 +528,8 @@ namespace OCA\Talk;
  *             play-sounds: bool,
  *             grid-limit: int,
  *             grid-limit-enforced: bool,
+ *             // URL of an external call service if one is used
+ *             external-call-service?: string,
  *         },
  *         chat: array{
  *             max-length: int,

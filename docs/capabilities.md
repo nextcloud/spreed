@@ -221,3 +221,4 @@
 
 ## 23.0.7
 * `recording-chunked-upload` (local) - Whether the recording backend can request a temporary upload share to upload large recordings via chunked public WebDAV before finishing with the store endpoint
+* `config => call => external-call-service` (local) - The target URL for an external call service if one is configured

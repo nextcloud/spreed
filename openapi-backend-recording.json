@@ -178,6 +178,10 @@
                                     },
                                     "grid-limit-enforced": {
                                         "type": "boolean"
+                                    },
+                                    "external-call-service": {
+                                        "type": "string",
+                                        "description": "URL of an external call service if one is used"
                                     }
                                 }
                             },
