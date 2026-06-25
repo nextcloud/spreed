@@ -290,7 +290,9 @@ class ListenerTest extends TestCase {
 		$comment->method('getId')->willReturn(1);
 		$message = $this->createConfiguredMock(Message::class, [
 			'getVisibility' => true,
-			'toArray' => [],
+			'toArray' => [
+				'id' => 123,
+			],
 			'getMessageId' => 123,
 		]);
 		$l10n = $this->createStub(IL10N::class);
@@ -317,7 +319,10 @@ class ListenerTest extends TestCase {
 				'type' => 'chat',
 				'chat' => [
 					'refresh' => true,
-					'comment' => [],
+					'comment' => [
+						'id' => 123,
+						'lastCommonRead' => 0,
+					],
 				],
 			]);
 
@@ -333,7 +338,9 @@ class ListenerTest extends TestCase {
 		$comment->method('getId')->willReturn(1);
 		$message = $this->createConfiguredMock(Message::class, [
 			'getVisibility' => true,
-			'toArray' => [],
+			'toArray' => [
+				'id' => 123,
+			],
 			'getMessageId' => 123,
 		]);
 
@@ -365,7 +372,10 @@ class ListenerTest extends TestCase {
 				'type' => 'chat',
 				'chat' => [
 					'refresh' => true,
-					'comment' => [],
+					'comment' => [
+						'id' => 123,
+						'lastCommonRead' => 0,
+					],
 				],
 			]);
 
