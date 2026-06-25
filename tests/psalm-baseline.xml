@@ -31,6 +31,11 @@
       <code><![CDATA[getContent]]></code>
     </UndefinedInterfaceMethod>
   </file>
+  <file src="lib/Command/Bot/Create.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
+  </file>
   <file src="lib/Command/PhoneNumber/AddPhoneNumber.php">
     <UndefinedConstant>
       <code><![CDATA[self::FAILURE]]></code>
@@ -68,7 +73,17 @@
       <code><![CDATA[self::SUCCESS]]></code>
     </UndefinedConstant>
   </file>
+  <file src="lib/Command/Turn/Add.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
+  </file>
   <file src="lib/Config.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+      <code><![CDATA[generate]]></code>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
     <NullArgument>
       <code><![CDATA[null]]></code>
     </NullArgument>
@@ -107,7 +122,20 @@
       <code><![CDATA[Room::OBJECT_TYPE_PHONE_LEGACY]]></code>
     </DeprecatedConstant>
   </file>
+  <file src="lib/Manager.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
+  </file>
   <file src="lib/MatterbridgeManager.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+      <code><![CDATA[generate]]></code>
+      <code><![CDATA[generate]]></code>
+      <code><![CDATA[generate]]></code>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
     <UndefinedClass>
       <code><![CDATA[$this->tokenProvider]]></code>
       <code><![CDATA[$this->tokenProvider]]></code>
@@ -118,6 +146,12 @@
   <file src="lib/Migration/Version14000Date20220330141647.php">
     <DeprecatedMethod>
       <code><![CDATA[getDatabasePlatform]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="lib/Migration/Version2000Date20171026140257.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+      <code><![CDATA[generate]]></code>
     </DeprecatedMethod>
   </file>
   <file src="lib/Model/Poll.php">
@@ -160,16 +194,52 @@
       <code><![CDATA[BeforeTemplateRenderedEvent]]></code>
     </UndefinedClass>
   </file>
+  <file src="lib/Recording/BackendNotifier.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
+  </file>
   <file src="lib/Service/AvatarService.php">
     <DeprecatedConstant>
       <code><![CDATA[Room::OBJECT_TYPE_PHONE_LEGACY]]></code>
     </DeprecatedConstant>
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
     <MissingDependency>
       <code><![CDATA[\OCP\Image]]></code>
       <code><![CDATA[\OCP\Image]]></code>
     </MissingDependency>
   </file>
+  <file src="lib/Service/BotService.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="lib/Service/HostedSignalingServerService.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+      <code><![CDATA[generate]]></code>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="lib/Service/NoteToSelfService.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
+  </file>
+  <file src="lib/Service/ParticipantService.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+      <code><![CDATA[generate]]></code>
+      <code><![CDATA[generate]]></code>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
+  </file>
   <file src="lib/Service/RecordingService.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
     <LessSpecificReturnStatement>
       <code><![CDATA[$recordingFolder]]></code>
     </LessSpecificReturnStatement>
@@ -188,14 +258,27 @@
       <code><![CDATA[Room::OBJECT_TYPE_PHONE_LEGACY]]></code>
     </DeprecatedConstant>
   </file>
+  <file src="lib/Service/SessionService.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
+  </file>
   <file src="lib/Share/Listener.php">
     <UndefinedClass>
       <code><![CDATA[Filesystem]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Share/RoomShareProvider.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
     <UndefinedClass>
       <code><![CDATA[Cache]]></code>
     </UndefinedClass>
+  </file>
+  <file src="lib/Signaling/BackendNotifier.php">
+    <DeprecatedMethod>
+      <code><![CDATA[generate]]></code>
+    </DeprecatedMethod>
   </file>
 </files>
