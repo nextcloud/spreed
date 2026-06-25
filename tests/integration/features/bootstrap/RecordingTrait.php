@@ -27,11 +27,15 @@ trait RecordingTrait {
 	private $recordingServerProcess = '';
 	/** @var ?resource */
 	private $signalingServerProcess = '';
+	/** @var ?resource */
+	private $externalCallServerProcess = '';
 
 	private string $recordingServerAddress = 'localhost';
 	private int $recordingServerPort = 0;
 	private string $signalingServerAddress = 'localhost';
 	private int $signalingServerPort = 0;
+	private string $externalCallServerAddress = 'localhost';
+	private int $externalCallServerPort = 0;
 
 	private function getRecordingServerAddress(): string {
 		if (!str_contains($this->recordingServerAddress, ':')) {
@@ -47,6 +51,14 @@ trait RecordingTrait {
 			$this->signalingServerAddress = $this->signalingServerAddress . ':' . $port;
 		}
 		return $this->signalingServerAddress;
+	}
+
+	private function getExternalCallServerAddress(): string {
+		if (!str_contains($this->externalCallServerAddress, ':')) {
+			$port = $this->getOpenPort($this->externalCallServerAddress);
+			$this->externalCallServerAddress = $this->externalCallServerAddress . ':' . $port;
+		}
+		return $this->externalCallServerAddress;
 	}
 
 	/**
@@ -103,7 +115,27 @@ trait RecordingTrait {
 			$this->getSignalingServerAddress() . ' ' . $path
 		);
 
-		$this->waitForMockServer();
+		$this->waitForMockServer($this->getSignalingServerAddress());
+
+		register_shutdown_function(function () {
+			$this->recordingServerIsStopped();
+		});
+	}
+
+	#[Given('/^(external call) server is started$/')]
+	public function externalCallServerIsStarted(): void {
+		if ($this->isExternalCallRunning()) {
+			return;
+		}
+
+		$this->setAppConfig('spreed', new TableNode([['external_call_service', 'http://' . $this->getExternalCallServerAddress() . '/nextcloud/meeting/{meetingId}']]));
+
+		$path = 'mocks/FakeExternalCallServer.php';
+		$this->externalCallServerProcess = $this->startMockServer(
+			$this->getExternalCallServerAddress() . ' ' . $path
+		);
+
+		$this->waitForMockServer($this->getExternalCallServerAddress());
 
 		register_shutdown_function(function () {
 			$this->recordingServerIsStopped();
@@ -149,8 +181,9 @@ trait RecordingTrait {
 		throw new \Exception('Error starting server');
 	}
 
-	private function waitForMockServer(): void {
-		[$host, $port] = explode(':', $this->getSignalingServerAddress());
+	private function waitForMockServer(string $serverAddress): void {
+
+		[$host, $port] = explode(':', $serverAddress);
 		$mockServerIsUp = false;
 		for ($i = 0; $i <= 20; $i++) {
 			$open = @fsockopen($host, (int)$port);
@@ -183,16 +216,34 @@ trait RecordingTrait {
 		return $processStatus['running'];
 	}
 
+	public function isExternalCallRunning(): bool {
+		if (!is_resource($this->externalCallServerProcess)) {
+			return false;
+		}
+
+		$processStatus = proc_get_status($this->externalCallServerProcess);
+
+		if (!$processStatus) {
+			return false;
+		}
+
+		return $processStatus['running'];
+	}
+
 	#[AfterScenario]
-	#[Given('/^(recording|signaling) server is stopped$/')]
+	#[Given('/^(recording|signaling|external call) server is stopped$/')]
 	public function recordingServerIsStopped(): void {
-		if (gettype($this->recordingServerProcess) === 'resource') {
+		if (is_resource($this->recordingServerProcess)) {
 			$this->stop($this->recordingServerProcess);
 			$this->recordingServerProcess = null;
 		}
-		if (gettype($this->signalingServerProcess) === 'resource') {
+		if (is_resource($this->signalingServerProcess)) {
 			$this->stop($this->signalingServerProcess);
 			$this->signalingServerProcess = null;
+		}
+		if (is_resource($this->externalCallServerProcess)) {
+			$this->stop($this->externalCallServerProcess);
+			$this->externalCallServerProcess = null;
 		}
 	}
 
@@ -406,12 +457,14 @@ trait RecordingTrait {
 		file_put_contents($nextResponseFile, $data['response']);
 	}
 
-	#[Then('/^reset (recording|signaling) server requests$/')]
+	#[Then('/^reset (recording|signaling|external call) server requests$/')]
 	public function resetSignalingServerRequests(string $server): void {
 		if ($server === 'recording') {
 			$this->getRecordingServerReceivedRequests();
-		} else {
+		} elseif ($server === 'signaling') {
 			$this->getSignalingServerReceivedRequests();
+		} else {
+			$this->getExternalCallServerReceivedRequests();
 		}
 	}
 
@@ -425,6 +478,14 @@ trait RecordingTrait {
 
 	private function getSignalingServerReceivedRequests(): ?array {
 		$url = 'http://' . $this->getSignalingServerAddress() . '/fake/requests';
+		$client = new Client();
+		$response = $client->get($url);
+
+		return json_decode($response->getBody()->getContents(), true);
+	}
+
+	private function getExternalCallServerReceivedRequests(): ?array {
+		$url = 'http://' . $this->getExternalCallServerAddress() . '/fake/requests';
 		$client = new Client();
 		$response = $client->get($url);
 
