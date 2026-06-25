@@ -4,35 +4,22 @@
 -->
 
 <script setup lang="ts">
-import type { Conversation, SignalingSettings } from '../../types/index.ts'
+import type { Conversation } from '../../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { EventBus } from '../../services/EventBus.ts'
+import { computed } from 'vue'
+import { useSettingsStore } from '../../stores/settings.ts'
 import { readableNumber } from '../../utils/readableNumber.ts'
 
 const props = defineProps<{
 	conversation: Conversation
 }>()
 
-const dialInInfo = ref(t('spreed', 'Loading …'))
+const settingStore = useSettingsStore()
+
+const dialInInfo = computed(() => settingStore.dialInInfo)
 const meetingId = computed(() => readableNumber(props.conversation.token))
 const attendeePin = computed(() => readableNumber(props.conversation.attendeePin!))
-
-onMounted(() => {
-	EventBus.on('signaling-settings-updated', setDialInInfoFromSettings)
-})
-onBeforeUnmount(() => {
-	EventBus.off('signaling-settings-updated', setDialInInfoFromSettings)
-})
-
-/**
- * @param payload emitted payload (array)
- * @param payload."0" received signaling settings upon joining
- */
-function setDialInInfoFromSettings([settings]: [SignalingSettings]) {
-	dialInInfo.value = settings.sipDialinInfo
-}
 </script>
 
 <template>
