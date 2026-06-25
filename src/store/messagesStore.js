@@ -5,6 +5,7 @@
 
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import { cloneDeep } from 'es-toolkit/object'
 import {
 	ATTENDEE,
 	CHAT,
@@ -1395,7 +1396,7 @@ const actions = {
 	 * @param {object} data.messageToBeForwarded the message object;
 	 */
 	async forwardMessage(context, { targetToken, messageToBeForwarded }) {
-		const message = structuredClone(messageToBeForwarded)
+		const message = cloneDeep(messageToBeForwarded)
 
 		// when there is no token provided, the message will be forwarded to the Note to self conversation
 		if (!targetToken) {
