@@ -114,6 +114,8 @@ export type components = {
                     "grid-limit": number;
                     /** @description Whether the grid limit is enforced by the server */
                     "grid-limit-enforced": boolean;
+                    /** @description URL of an external call service if one is used */
+                    "external-call-service"?: string;
                 };
                 chat: {
                     /**
