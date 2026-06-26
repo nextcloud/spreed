@@ -1330,6 +1330,7 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "Telefoon en SIP inbellen",
     "Enable phone and SIP dial-in" : "Inschakelen telefoon en SIP inbellen",
     "Allow to dial-in without a PIN" : "Inbellen zonder PIN toestaan",
+    "Conversation token" : "Gesprekstoken",
     "Ongoing" : "Lopend",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n persoon geaccepteerd","%n personen geaccepteerd"],

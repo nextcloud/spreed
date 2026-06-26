@@ -1329,6 +1329,8 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "Telefon och SIP-inringning",
     "Enable phone and SIP dial-in" : "Aktivera telefon och SIP-inringning",
     "Allow to dial-in without a PIN" : "Tillåt att ringa in utan PIN",
+    "Conversation token" : "Konversationstoken",
+    "Conversation" : "Konversation",
     "Ongoing" : "Pågår",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n person har accepterat","%n personer har accepterat"],

@@ -1010,6 +1010,7 @@ OC.L10N.register(
     "Recording Consent" : "Згода на запіс",
     "Require recording consent before joining call in this conversation" : "Патрабаваць згоду на запіс перад далучэннем да выкліку ў гэтай размове",
     "Recording consent is required for all calls" : "Для ўсіх выклікаў патрабуецца згода на запіс",
+    "Conversation token" : "Токен размовы",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n чалавек прыняты","%n чалавекі прыняты","%n чалавек прынята","%n чалавек прынята"],
     "_%n person declined_::_%n people declined_" : ["%n чалавек адхілены","%n чалавекі адхілены","%n чалавек адхілена","%n чалавек адхілена"],

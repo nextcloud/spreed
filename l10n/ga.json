@@ -1328,6 +1328,8 @@
     "Phone and SIP dial-in" : "Fón agus SIP dhiailiú-i",
     "Enable phone and SIP dial-in" : "Cumasaigh guthán agus SIP diailithe",
     "Allow to dial-in without a PIN" : "Ceadaigh diailiú isteach gan UAP",
+    "Conversation token" : "Comhartha comhartha",
+    "Conversation" : "Comhrá",
     "Ongoing" : "Ar siúl",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n duine glactha","%n duine glactha","%n duine glactha","%n duine glactha","%n duine glactha"],

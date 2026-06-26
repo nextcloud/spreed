@@ -1329,6 +1329,8 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "電話及 SIP 撥入",
     "Enable phone and SIP dial-in" : "啟用電話及 SIP 撥入",
     "Allow to dial-in without a PIN" : "允許在沒有密碼的情況下撥入",
+    "Conversation token" : "對話權杖",
+    "Conversation" : "對話",
     "Ongoing" : "持續進行",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["已接受 %n 個人"],

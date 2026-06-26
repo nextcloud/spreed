@@ -1310,6 +1310,7 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "Telefonos és SIP-es betárcsázás",
     "Enable phone and SIP dial-in" : "Telefonos és SIP-es betárcsázás engedélyezése",
     "Allow to dial-in without a PIN" : "PIN-kód nélküli betárcsázás engedélyezése",
+    "Conversation token" : "Beszélgetés tokenje",
     "Ongoing" : "Folyamatban",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n személy elfogadta","%n személy elfogadta"],
