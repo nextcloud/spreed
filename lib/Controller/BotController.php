@@ -137,8 +137,8 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature')]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the message to generate the SHA256-HMAC request signature')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the message, signed with the shared bot secret, to verify authenticity')]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/bot/{token}/message', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
@@ -232,8 +232,8 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature')]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the reaction to generate the SHA256-HMAC request signature')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the reaction, signed with the shared bot secret, to verify authenticity')]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/bot/{token}/reaction/{messageId}', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
@@ -296,8 +296,8 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature')]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the reaction to generate the SHA256-HMAC request signature')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the reaction, signed with the shared bot secret, to verify authenticity')]
 	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/bot/{token}/reaction/{messageId}', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
