@@ -1333,7 +1333,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -1341,7 +1341,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
@@ -1509,7 +1509,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -1517,7 +1517,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
@@ -1717,7 +1717,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -1725,7 +1725,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
@@ -1922,7 +1922,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the phone number to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -1930,7 +1930,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the phone number, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
@@ -2177,7 +2177,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -2185,7 +2185,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
@@ -2396,7 +2396,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -2404,7 +2404,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
@@ -2572,7 +2572,7 @@
                     {
                         "name": "talk-sipbridge-random",
                         "in": "header",
-                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum",
+                        "description": "Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum",
                         "schema": {
                             "type": "string"
                         }
@@ -2580,7 +2580,7 @@
                     {
                         "name": "talk-sipbridge-checksum",
                         "in": "header",
-                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
+                        "description": "SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge",
                         "schema": {
                             "type": "string"
                         }
