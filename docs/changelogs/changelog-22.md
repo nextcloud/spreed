@@ -5,6 +5,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.14 – 2026-06-26
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(call): Increase FPS to 30 in all levels and update video quality
+  [#18408](https://github.com/nextcloud/spreed/pull/18408)
+- fix(call): reconnect participants when media-permissions are re-granted
+  [#18439](https://github.com/nextcloud/spreed/pull/18439)
+- fix(call): stop virtual background effect when device checker is not in use
+  [#18295](https://github.com/nextcloud/spreed/pull/18295)
+- fix(recording): allow recording service to work on E2EE calls
+  [#18266](https://github.com/nextcloud/spreed/pull/18266)
+
 ## 22.0.13 – 2026-05-28
 ### Changed
 - Update dependencies
