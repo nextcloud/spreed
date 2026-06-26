@@ -1325,6 +1325,8 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "Vytáčanie telefónom a SIP ",
     "Enable phone and SIP dial-in" : "Povoliť vytáčanie telefónom a SIP ",
     "Allow to dial-in without a PIN" : "Povoliť vytáčanie bez pin-u",
+    "Conversation token" : "Token konverzácie",
+    "Conversation" : "Konverzácia",
     "Ongoing" : "Prebieha",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n osoba prijala","%n ľudí prijalo","%n ľudí prijalo","%n ľudí prijalo"],

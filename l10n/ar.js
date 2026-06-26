@@ -1218,6 +1218,8 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "الاتصال الهاتفي dial-in، و عبر الإنترنت SIP",
     "Enable phone and SIP dial-in" : "تمكين الاتصال الهاتفي dial-in، و عبر الإنترنت SIP",
     "Allow to dial-in without a PIN" : "السماح بالاتصال بدون رقم التعريف الشخصي PIN",
+    "Conversation token" : "أَمَارَة المحادثة",
+    "Conversation" : "محادثة",
     "Join" : "إن",
     "Error while creating the conversation" : "حدث خطأ اثناء نسخ رابط المحادثة",
     "Create a new conversation" : "إنشاء محادثة جديدة",

@@ -1144,6 +1144,7 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "電話とSIP 着信",
     "Enable phone and SIP dial-in" : "電話とSIP 着信を有効にする",
     "Allow to dial-in without a PIN" : "PINコードなしでダイヤルインを許可する",
+    "Conversation token" : "会話トークン",
     "Ongoing" : "進行中",
     "View attachment" : "添付ファイルを見る",
     "Join" : "参加",

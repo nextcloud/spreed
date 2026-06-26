@@ -1284,6 +1284,7 @@
     "Phone and SIP dial-in" : "Upigaji simu na SIP",
     "Enable phone and SIP dial-in" : "Washa upigaji simu na SIP",
     "Allow to dial-in without a PIN" : "Ruhusu kupiga simu bila PIN",
+    "Conversation" : "Mazungumzo",
     "Ongoing" : "Inaendelea",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n person accepted","%n watu walikubali"],

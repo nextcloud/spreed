@@ -1286,6 +1286,8 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "Телефонний та SIP-додзвін",
     "Enable phone and SIP dial-in" : "Увімкніть телефон і SIP-додзвін",
     "Allow to dial-in without a PIN" : "Дозвіл на вхід без PIN-коду",
+    "Conversation token" : "Токен розмови",
+    "Conversation" : "Розмова",
     "Ongoing" : "Триває",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n осіб прийнято","%n осіб прийнято","%n осіб прийнято","%n осіб прийнято"],

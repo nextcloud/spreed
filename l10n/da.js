@@ -582,6 +582,7 @@ OC.L10N.register(
     "Message preview will be disabled in conversation list and notifications" : "Forhåndsvisning af beskeder vil blive deaktiveret i samtalelisten og notifikationer",
     "Require recording consent before joining call in this conversation" : "Kræv optagelsessamtykke inden deltagelse i opkaldet i denne samtale",
     "Recording consent is required for all calls" : "Optagelsessamtykke er kræver for alle opkald",
+    "Conversation token" : "Samtaletoken",
     "Join" : "Deltag",
     "Error while creating the conversation" : "Fejl under oprettelse af samtalen",
     "Create a new conversation" : "Opret ny samtale",

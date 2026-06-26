@@ -1284,6 +1284,8 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "Τηλεφωνική και SIP σύνδεση",
     "Enable phone and SIP dial-in" : "Ενεργοποίηση τηλεφωνικής και SIP σύνδεσης",
     "Allow to dial-in without a PIN" : "Να επιτρέπεται η σύνδεση χωρίς PIN",
+    "Conversation token" : "Διακριτικό συνομιλίας",
+    "Conversation" : "Συνομιλία",
     "Ongoing" : "Σε εξέλιξη",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n άτομο δέχτηκε","%n άτομα δέχτηκαν"],

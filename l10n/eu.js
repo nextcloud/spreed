@@ -1038,6 +1038,8 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "Telefonoa eta SIP markatzea",
     "Enable phone and SIP dial-in" : "Gaitu telefonoa eta SIP markatzea",
     "Allow to dial-in without a PIN" : "Baimendu PINik gabe deitzeko",
+    "Conversation token" : "Elkarrizketa tokena",
+    "Conversation" : "Elkarrizketa",
     "Join" : "Batu",
     "Error while creating the conversation" : "Errorea elkarrizketa sortzean",
     "Create a new conversation" : "Sortu elkarrizketa berri bat",

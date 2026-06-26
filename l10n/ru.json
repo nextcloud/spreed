@@ -1328,6 +1328,7 @@
     "Phone and SIP dial-in" : "Телефон и SIP-вызовы",
     "Enable phone and SIP dial-in" : "Включить телефон и входящие SIP-вызовы",
     "Allow to dial-in without a PIN" : "Разрешить набор номера без PIN-кода",
+    "Conversation token" : "Токен беседы",
     "Ongoing" : "Текущий",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n человек принял","%n человека приняли","%n человек приняли","%n человек приняли"],

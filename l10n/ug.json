@@ -1289,6 +1289,8 @@
     "Phone and SIP dial-in" : "تېلېفون ۋە SIP چاقىرىش",
     "Enable phone and SIP dial-in" : "تېلېفون ۋە SIP چاقىرىشنى قوزغىتىڭ",
     "Allow to dial-in without a PIN" : "PIN بولمىسا تېلېفون ئۇرسىڭىز بولىدۇ",
+    "Conversation token" : "سۆھبەت بەلگىسى",
+    "Conversation" : "سۆھبەت",
     "Ongoing" : "يۈز بېرىۋاتقان",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n كىشلەر قۇبۇل قىلدى","%n كىشلەر قۇبۇل قىلدى"],

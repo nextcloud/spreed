@@ -1288,6 +1288,8 @@
     "Phone and SIP dial-in" : "Телефонски и SIP приступ",
     "Enable phone and SIP dial-in" : "Уљкучи телефонски и SIP приступ",
     "Allow to dial-in without a PIN" : "Дозволи приступ без PIN",
+    "Conversation token" : "Жетон разговора",
+    "Conversation" : "Разговор",
     "Ongoing" : "Траје",
     "{dayPrefix} {dateTime}" : "{dayPrefix} од {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n особа је прихватила","%n особа су прихватиле","%n особа је прихватило"],
