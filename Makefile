@@ -26,6 +26,9 @@ validate-release:
 prepare-changelog:
 	./docs/validate-release.sh --prepare-changelog $(BRANCHES)
 
+bump-version:
+	./docs/bump-version.sh $(PR)
+
 release: appstore create-tag
 
 build-dev: composer-install-dev build-js
