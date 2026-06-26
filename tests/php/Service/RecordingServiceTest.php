@@ -246,7 +246,7 @@ class RecordingServiceTest extends TestCase {
 
 		$this->appConfig->expects($this->once())
 			->method('setAppValueString')
-			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . 'token123/recording.mp4', 'shareToken', true, true);
+			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . 'token123/' . sha1('recording.mp4'), 'shareToken', true, true);
 
 		// The active-recording marker is cleared once the upload share is created,
 		// so a new recording can start while this one is still being uploaded.
@@ -324,7 +324,7 @@ class RecordingServiceTest extends TestCase {
 		// Only the temporary upload share's tracking value is cleared here; the
 		// active-recording marker was already removed in requestUpload().
 		$this->appConfig->expects($this->once())->method('deleteAppValue')
-			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . 'token123/name.ogg');
+			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . 'token123/' . sha1('name.ogg'));
 
 		$this->notificationManager->expects($this->once())->method('notify');
 
