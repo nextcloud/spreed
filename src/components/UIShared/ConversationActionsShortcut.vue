@@ -144,10 +144,11 @@ async function showConfirmationDialog() {
 
 	&--highlighted {
 		background-color: var(--color-primary-element-light);
+		border-radius: var(--border-radius);
+
 		p {
 			color: var(--color-main-text);
 		}
-		border-radius: var(--border-radius);
 	}
 
 	&__buttons {
