@@ -73,4 +73,16 @@ class ReminderMapper extends QBMapper {
 
 		$query->executeStatement();
 	}
+
+	public function deleteAllRemindersForUser(string $userId, ?string $token): void {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId, IQueryBuilder::PARAM_STR)));
+
+		if ($token !== null) {
+			$query->andWhere($query->expr()->eq('token', $query->createNamedParameter($token, IQueryBuilder::PARAM_STR)));
+		}
+
+		$query->executeStatement();
+	}
 }

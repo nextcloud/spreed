@@ -226,6 +226,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(AttendeeRemovedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(AttendeesRemovedEvent::class, ChatListener::class);
 		$context->registerEventListener(BeforeDuplicateShareSentEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(BeforeParticipantModifiedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(BeforeShareCreatedEvent::class, SystemMessageListener::class);
