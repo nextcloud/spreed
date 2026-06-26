@@ -996,11 +996,12 @@ export default {
 }
 
 .dev-mode-video {
+	position: relative;
+
 	&:not(.dev-mode-screenshot) {
 		outline: 1px solid #00FF41;
 		color: #00FF41;
 	}
-	position: relative;
 
 	img {
 		object-fit: cover;

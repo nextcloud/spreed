@@ -176,14 +176,13 @@ export default {
 	display: inline-flex;
 	bottom: 0;
 	pointer-events: none;
+	/* Overlay icon inherits container color */
+	color: var(--color-border-success);
 
 	& > span {
 		position: absolute;
 		bottom: 0;
 	}
-
-	/* Overlay icon inherits container color */
-	color: var(--color-border-success);
 
 	&-mute {
 		color: var(--color-loading-dark);
