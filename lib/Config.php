@@ -182,25 +182,13 @@ class Config {
 	}
 
 	public function getRecordingServers(): array {
-		$config = $this->config->getAppValue('spreed', 'recording_servers');
-		$recording = json_decode($config, true);
-
-		if (!is_array($recording) || !isset($recording['servers'])) {
-			return [];
-		}
-
-		return $recording['servers'];
+		$recording = $this->appConfig->getAppValueArray('recording_servers');
+		return $recording['servers'] ?? [];
 	}
 
 	public function getRecordingSecret(): string {
-		$config = $this->config->getAppValue('spreed', 'recording_servers');
-		$recording = json_decode($config, true);
-
-		if (!is_array($recording)) {
-			return '';
-		}
-
-		return $recording['secret'];
+		$recording = $this->appConfig->getAppValueArray('recording_servers');
+		return $recording['secret'] ?? '';
 	}
 
 	public function isRecordingEnabled(): bool {
