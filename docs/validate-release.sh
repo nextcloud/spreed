@@ -375,12 +375,14 @@ generate_changelog_section() {
     local has_deps=false
     local has_l10n=false
     local entries_added=()
-    local entries_changed=()
     local entries_fixed=()
     local entries_removed=()
 
     while IFS=$'\x1f' read -r number title; do
         [ -z "$number" ] && continue
+
+        # Strip [stableXX] backport prefix so entries read cleanly
+        title=$(echo "$title" | sed 's/^\[stable[0-9.]*\] //')
 
         if echo "$title" | grep -qE '^(chore|build)\(deps'; then
             has_deps=true
@@ -401,13 +403,11 @@ generate_changelog_section() {
             entries_fixed+=("$entry")
         elif echo "$title" | grep -qE '^revert'; then
             entries_removed+=("$entry")
-        else
-            entries_changed+=("$entry")
         fi
+        # docs, ci, chore, perf, refactor, build, test entries are intentionally omitted
     done < <(echo "$pr_data" | jq -r '.[] | select(.pull_request != null) | [(.number | tostring), .title] | join("")' 2>/dev/null)
 
     echo "## ${version} – ${today}"
-    echo ""
 
     if [ "${#entries_added[@]}" -gt 0 ]; then
         echo "### Added"
@@ -416,7 +416,6 @@ generate_changelog_section() {
     fi
 
     local show_changed=false
-    [ "${#entries_changed[@]}" -gt 0 ] && show_changed=true
     [ "$has_deps" = true ] && show_changed=true
     [ "$has_l10n" = true ] && show_changed=true
 
@@ -424,7 +423,6 @@ generate_changelog_section() {
         echo "### Changed"
         [ "$has_deps" = true ] && echo "- Update dependencies"
         [ "$has_l10n" = true ] && echo "- Update translations"
-        for e in "${entries_changed[@]}"; do printf '%s\n' "$e"; done
         echo ""
     fi
 
@@ -573,10 +571,14 @@ else
                     COMMIT_COUNT=$((COMMIT_COUNT + 1))
                 done
 
+                NEXT_MAJOR_MILESTONE=$(echo "${MILESTONES_JSON:-[]}" | jq -r '[.[] | select(.title | test("Next Major"))] | sort_by(.title) | last | .title // empty' 2>/dev/null)
+                MILESTONE_FLAG=""
+                [ -n "$NEXT_MAJOR_MILESTONE" ] && MILESTONE_FLAG="--milestone \"${NEXT_MAJOR_MILESTONE}\" "
+
                 echo ""
                 print_success "Branch '$PR_BRANCH' ready — review and adjust the changelog, then:"
                 echo "  git push -u origin $PR_BRANCH"
-                echo "  gh pr create --title \"chore(release): Changelog for ${VERSIONS_STR}\" --base main --body \"\$(git diff HEAD~${COMMIT_COUNT}..HEAD -- docs/changelogs/ | grep '^+[^+]' | sed 's/^+//')\" --repo nextcloud/spreed"
+                echo "  gh pr create --title \"chore(release): Changelog for ${VERSIONS_STR}\" --base main --assignee @me ${MILESTONE_FLAG}--body \"\$(git diff HEAD~${COMMIT_COUNT}..HEAD -- docs/changelogs/ | grep '^+[^+]' | sed 's/^+//')\" --repo nextcloud/spreed"
             fi
         fi
     fi
