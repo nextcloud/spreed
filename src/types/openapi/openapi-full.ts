@@ -6793,9 +6793,9 @@ export interface operations {
             header: {
                 /** @description Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request */
                 "x-nextcloud-federation"?: string;
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -9737,9 +9737,9 @@ export interface operations {
                 token?: string;
             };
             header: {
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
+                /** @description Random seed (at least 32 bytes) used to generate the SHA256-HMAC request checksum */
                 "talk-recording-random"?: string;
-                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared recording secret, to verify authenticity from the recording backend */
+                /** @description SHA256-HMAC checksum over the random seed, signed with the shared recording secret, to verify authenticity from the recording backend */
                 "talk-recording-checksum"?: string;
                 /** @description Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
@@ -12279,9 +12279,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature */
+                /** @description Random seed (at least 32 bytes) used together with the message to generate the SHA256-HMAC request signature */
                 "x-nextcloud-talk-bot-random"?: string;
-                /** @description SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity */
+                /** @description SHA256-HMAC signature over the concatenation of the random seed and the message, signed with the shared bot secret, to verify authenticity */
                 "x-nextcloud-talk-bot-signature"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -12391,9 +12391,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature */
+                /** @description Random seed (at least 32 bytes) used together with the reaction to generate the SHA256-HMAC request signature */
                 "x-nextcloud-talk-bot-random"?: string;
-                /** @description SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity */
+                /** @description SHA256-HMAC signature over the concatenation of the random seed and the reaction, signed with the shared bot secret, to verify authenticity */
                 "x-nextcloud-talk-bot-signature"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -12495,9 +12495,9 @@ export interface operations {
                 reaction: string;
             };
             header: {
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature */
+                /** @description Random seed (at least 32 bytes) used together with the reaction to generate the SHA256-HMAC request signature */
                 "x-nextcloud-talk-bot-random"?: string;
-                /** @description SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity */
+                /** @description SHA256-HMAC signature over the concatenation of the random seed and the reaction, signed with the shared bot secret, to verify authenticity */
                 "x-nextcloud-talk-bot-signature"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -13409,9 +13409,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum */
                 "talk-recording-random"?: string;
-                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared recording secret, to verify authenticity from the recording backend */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared recording secret, to verify authenticity from the recording backend */
                 "talk-recording-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -13492,9 +13492,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed used to generate the request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum */
                 "talk-recording-random"?: string;
-                /** @description Checksum over the request body to verify authenticity from the recording backend */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared recording secret, to verify authenticity from the recording backend */
                 "talk-recording-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -13576,9 +13576,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -13655,9 +13655,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -13739,9 +13739,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -13847,9 +13847,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the phone number to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the phone number, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -13946,9 +13946,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -14014,9 +14014,9 @@ export interface operations {
                 options?: string;
             };
             header: {
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum */
+                /** @description Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum */
                 "talk-sipbridge-random"?: string;
-                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge */
                 "talk-sipbridge-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
