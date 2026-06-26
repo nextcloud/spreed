@@ -498,7 +498,7 @@
                     {
                         "name": "x-nextcloud-talk-bot-random",
                         "in": "header",
-                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature",
+                        "description": "Random seed (at least 32 bytes) used together with the message to generate the SHA256-HMAC request signature",
                         "schema": {
                             "type": "string"
                         }
@@ -506,7 +506,7 @@
                     {
                         "name": "x-nextcloud-talk-bot-signature",
                         "in": "header",
-                        "description": "SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity",
+                        "description": "SHA256-HMAC signature over the concatenation of the random seed and the message, signed with the shared bot secret, to verify authenticity",
                         "schema": {
                             "type": "string"
                         }
@@ -717,7 +717,7 @@
                     {
                         "name": "x-nextcloud-talk-bot-random",
                         "in": "header",
-                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature",
+                        "description": "Random seed (at least 32 bytes) used together with the reaction to generate the SHA256-HMAC request signature",
                         "schema": {
                             "type": "string"
                         }
@@ -725,7 +725,7 @@
                     {
                         "name": "x-nextcloud-talk-bot-signature",
                         "in": "header",
-                        "description": "SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity",
+                        "description": "SHA256-HMAC signature over the concatenation of the random seed and the reaction, signed with the shared bot secret, to verify authenticity",
                         "schema": {
                             "type": "string"
                         }
@@ -954,7 +954,7 @@
                     {
                         "name": "x-nextcloud-talk-bot-random",
                         "in": "header",
-                        "description": "Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature",
+                        "description": "Random seed (at least 32 bytes) used together with the reaction to generate the SHA256-HMAC request signature",
                         "schema": {
                             "type": "string"
                         }
@@ -962,7 +962,7 @@
                     {
                         "name": "x-nextcloud-talk-bot-signature",
                         "in": "header",
-                        "description": "SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity",
+                        "description": "SHA256-HMAC signature over the concatenation of the random seed and the reaction, signed with the shared bot secret, to verify authenticity",
                         "schema": {
                             "type": "string"
                         }
