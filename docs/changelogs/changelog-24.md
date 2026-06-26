@@ -5,6 +5,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.0.1 – 2026-06-26
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(call): Increase FPS to 30 in all levels and update video quality
+  [#18410](https://github.com/nextcloud/spreed/pull/18410)
+- fix(call): reconnect participants when media-permissions are re-granted
+  [#18441](https://github.com/nextcloud/spreed/pull/18441)
+- fix(session): restore access to password-protected rooms for email guests
+  [#18347](https://github.com/nextcloud/spreed/pull/18347)
+- fix(settings): Allow to configure certificates expiration
+  [#18300](https://github.com/nextcloud/spreed/pull/18300)
+- fix(call): stop virtual background effect when device checker is not in use
+  [#18292](https://github.com/nextcloud/spreed/pull/18292)
+- fix(admin): restore admin setting for default group notifications
+  [#18281](https://github.com/nextcloud/spreed/pull/18281)
+- fix(recording): allow recording service to work on E2EE calls
+  [#18268](https://github.com/nextcloud/spreed/pull/18268)
+
 ## 24.0.0 – 2026-06-08
 ### Added
 - Call from anywhere - Integration of calls into the avatar menu
