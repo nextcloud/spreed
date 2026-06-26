@@ -283,9 +283,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature */
+                /** @description Random seed (at least 32 bytes) used together with the message to generate the SHA256-HMAC request signature */
                 "x-nextcloud-talk-bot-random"?: string;
-                /** @description SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity */
+                /** @description SHA256-HMAC signature over the concatenation of the random seed and the message, signed with the shared bot secret, to verify authenticity */
                 "x-nextcloud-talk-bot-signature"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -395,9 +395,9 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature */
+                /** @description Random seed (at least 32 bytes) used together with the reaction to generate the SHA256-HMAC request signature */
                 "x-nextcloud-talk-bot-random"?: string;
-                /** @description SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity */
+                /** @description SHA256-HMAC signature over the concatenation of the random seed and the reaction, signed with the shared bot secret, to verify authenticity */
                 "x-nextcloud-talk-bot-signature"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
@@ -499,9 +499,9 @@ export interface operations {
                 reaction: string;
             };
             header: {
-                /** @description Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request signature */
+                /** @description Random seed (at least 32 bytes) used together with the reaction to generate the SHA256-HMAC request signature */
                 "x-nextcloud-talk-bot-random"?: string;
-                /** @description SHA256-HMAC signature over the concatenation of the random seed and the request body, signed with the shared bot secret, to verify authenticity */
+                /** @description SHA256-HMAC signature over the concatenation of the random seed and the reaction, signed with the shared bot secret, to verify authenticity */
                 "x-nextcloud-talk-bot-signature"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
