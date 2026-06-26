@@ -223,6 +223,7 @@ function checkRemoteCapabilitiesHasChanged(newObject: Capabilities['spreed'], ol
 	 * @param object remote capabilities object
 	 */
 	function getStrippedCapabilities(object: Capabilities['spreed']): { config: Partial<Config>, features: string[] } {
+		// Cloning a plain object (not reactive / not proxied)
 		const config = structuredClone(object.config)
 
 		for (const key1 of Object.keys(object['config-local']) as Array<keyof Config>) {
