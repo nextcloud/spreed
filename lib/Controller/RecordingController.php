@@ -425,8 +425,8 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	#[OpenAPI(scope: 'backend-recording')]
 	#[RequireRoom]
-	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed used to generate the request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-recording-checksum', description: 'Checksum over the request body to verify authenticity from the recording backend', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared recording secret, to verify authenticity from the recording backend', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/recording/{token}/request-upload', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
@@ -461,7 +461,6 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	 * {@see self::requestUpload()}, and only the post-processing is run.
 	 * Otherwise the recording is read from the multipart `file` upload.
 	 *
-	 *
 	 * Required capability: `recording-v1`
 	 *
 	 * @param ?string $owner User that will own the recording file. `null` is actually not allowed and will always result in a "400 Bad Request". It's only allowed code-wise to handle requests where the post data exceeded the limits, so we can return a proper error instead of "500 Internal Server Error".
@@ -476,8 +475,8 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	#[OpenAPI(scope: 'backend-recording')]
 	#[RequireRoom]
-	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-recording-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared recording secret, to verify authenticity from the recording backend', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-random', description: 'Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-recording-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared recording secret, to verify authenticity from the recording backend', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/recording/{token}/store', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
