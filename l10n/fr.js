@@ -1325,6 +1325,8 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "Numérotation téléphonique et SIP",
     "Enable phone and SIP dial-in" : "Activer la numérotation téléphonique et SIP",
     "Allow to dial-in without a PIN" : "Autoriser la numérotation sans code PIN",
+    "Conversation token" : "Jeton de conversation",
+    "Conversation" : "Conversation",
     "Ongoing" : "En cours",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n personne a accepté","%n personnes ont accepté","%n personnes ont accepté"],

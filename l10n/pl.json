@@ -1327,6 +1327,8 @@
     "Phone and SIP dial-in" : "Połączenie telefoniczne i SIP",
     "Enable phone and SIP dial-in" : "Włącz połączenie telefoniczne i SIP",
     "Allow to dial-in without a PIN" : "Zezwalaj na połączenie telefoniczne bez kodu PIN",
+    "Conversation token" : "Token konwersacji",
+    "Conversation" : "Rozmowa",
     "Ongoing" : "Trwające",
     "{dayPrefix} {dateTime}" : "{dayPrefix}{dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["Zaakceptowane przez %n osobę","Zaakceptowane przez %n osoby","Zaakceptowało %n osób","Zaakceptowało %nosób"],

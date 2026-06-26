@@ -1032,6 +1032,7 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "Telefonske in klicne povezave SIP",
     "Enable phone and SIP dial-in" : "Omogoči telefonske in klicne povezave SIP",
     "Allow to dial-in without a PIN" : "Dovoli klicanje brez kode PIN",
+    "Conversation" : "Pogovor",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "Join" : "Pridruži se",
     "Error while creating the conversation" : "Prišlo je do napake med ustvarjanjem pogovora",

@@ -1280,6 +1280,7 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "Утас болон SIP залгалт",
     "Enable phone and SIP dial-in" : "Утас болон SIP залгалтыг идэвхжүүлэх",
     "Allow to dial-in without a PIN" : "PIN-гүйгээр залгахыг зөвшөөрөх",
+    "Conversation token" : "Харилцааны токен",
     "Ongoing" : "Үргэлжилж байна",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n хүн зөвшөөрсөн","%n хүн зөвшөөрсөн"],
