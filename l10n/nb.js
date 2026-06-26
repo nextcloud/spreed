@@ -1099,6 +1099,7 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "Telefon- og SIP-innringing",
     "Enable phone and SIP dial-in" : "Aktiver telefon- og SIP-innringing",
     "Allow to dial-in without a PIN" : "Tillat innringing uten PIN-kode",
+    "Conversation" : "Samtale",
     "Join" : "Bli med",
     "Error while creating the conversation" : "Feil under oppretting av samtalen",
     "Create a new conversation" : "Opprett en ny samtale",

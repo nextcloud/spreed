@@ -366,6 +366,8 @@ OC.L10N.register(
     "More information" : "Informasi lebih lanjut",
     "Delete" : "Hapus",
     "Notifications" : "Pemberitahuan",
+    "Conversation token" : "Token percakapan",
+    "Conversation" : "Percakapan",
     "In {conversation}" : "Di {conversation}",
     "Join" : "Gabung",
     "Create conversation" : "Buat percakapan",

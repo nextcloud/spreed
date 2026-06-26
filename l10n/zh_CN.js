@@ -1330,6 +1330,8 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "电话和 SIP 拨号",
     "Enable phone and SIP dial-in" : "启用电话和 SIP 拨号",
     "Allow to dial-in without a PIN" : "允许在没有 PIN 的情况下拨号",
+    "Conversation token" : "对话令牌",
+    "Conversation" : "会话",
     "Ongoing" : "正在进行",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n 人接受"],

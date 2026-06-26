@@ -1328,6 +1328,8 @@
     "Phone and SIP dial-in" : "تلفن و ورود از طریق SIP",
     "Enable phone and SIP dial-in" : "فعال‌سازی تلفن و ورود از طریق SIP",
     "Allow to dial-in without a PIN" : "اجازه ورود بدون PIN",
+    "Conversation token" : "توکن مکالمه",
+    "Conversation" : "گفت‌وگو",
     "Ongoing" : "در حال انجام",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n person accepted","%n people accepted"],

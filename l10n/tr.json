@@ -1328,6 +1328,8 @@
     "Phone and SIP dial-in" : "Telefon ve SIP çevirme",
     "Enable phone and SIP dial-in" : "Telefon ve SIP çevirme özelliğini kullanıma al",
     "Allow to dial-in without a PIN" : "Pin kodu olmadan numara aranabilsin",
+    "Conversation token" : "Görüşme kodu",
+    "Conversation" : "Görüşme",
     "Ongoing" : "Sürüyor",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n kişi kabul etti","%n kişi kabul etti"],

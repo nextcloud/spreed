@@ -1310,6 +1310,7 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "Telefonsko i SIP biranje prema unutra",
     "Enable phone and SIP dial-in" : "Omogući telefonsko i SIP biranje prema unutra",
     "Allow to dial-in without a PIN" : "Dopusti biranje prema unutra bez PIN-a",
+    "Conversation token" : "Token razgovora",
     "Ongoing" : "U tijeku",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n osoba je prihvatila","%n osobe su prihvatile","%n osoba je prihvatilo"],

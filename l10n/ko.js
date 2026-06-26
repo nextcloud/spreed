@@ -1047,6 +1047,7 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "전화 및 SIP 전화 연결",
     "Enable phone and SIP dial-in" : "전화 및 SIP 전화 연결 활성화",
     "Allow to dial-in without a PIN" : "PIN 없이 전화 접속 허용",
+    "Conversation" : "대화",
     "Join" : "참가",
     "Error while creating the conversation" : "대화를 만드는 중에 오류 발생",
     "Create a new conversation" : "새 대화 만들기",

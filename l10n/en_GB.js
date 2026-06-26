@@ -1320,6 +1320,8 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "Phone and SIP dial-in",
     "Enable phone and SIP dial-in" : "Enable phone and SIP dial-in",
     "Allow to dial-in without a PIN" : "Allow to dial-in without a PIN",
+    "Conversation token" : "Conversation token",
+    "Conversation" : "Conversation",
     "Ongoing" : "Ongoing",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n person accepted","%n people accepted"],

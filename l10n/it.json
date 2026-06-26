@@ -1284,6 +1284,8 @@
     "Phone and SIP dial-in" : "Telefono e connessione SIP",
     "Enable phone and SIP dial-in" : "Abilita telefono e connessione SIP",
     "Allow to dial-in without a PIN" : "Consenti l'accesso senza PIN",
+    "Conversation token" : "Token della conversazione",
+    "Conversation" : "Conversazione",
     "Ongoing" : "In corso",
     "{dayPrefix} {dateTime}" : "{dayPrefix} {dateTime}",
     "_%n person accepted_::_%n people accepted_" : ["%n persona ha accettato","%n persone hanno accettato","%n persone hanno accettato"],

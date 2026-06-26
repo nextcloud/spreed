@@ -374,6 +374,7 @@ OC.L10N.register(
     "Projects" : "Projectos",
     "No shared items" : "Sem itens partilhados",
     "Notification settings" : "Definições de notificação",
+    "Default language" : "Idioma padrão",
     "Appearance & Sounds" : "Aspeto e sons",
     "Privacy" : "Privacidade",
     "Search" : "Pesquisa sobre",

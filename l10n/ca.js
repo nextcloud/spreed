@@ -1213,6 +1213,7 @@ OC.L10N.register(
     "Phone and SIP dial-in" : "Telèfon i marcatge SIP",
     "Enable phone and SIP dial-in" : "Habilita el telèfon i el trucades SIP",
     "Allow to dial-in without a PIN" : "Permet marcar sense un PIN",
+    "Conversation token" : "Testimoni de conversa",
     "Join" : "Uneix-te",
     "Error while creating the conversation" : "Error en crear la conversa",
     "Create a new conversation" : "Crea una conversa nova",
