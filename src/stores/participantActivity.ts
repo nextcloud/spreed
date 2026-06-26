@@ -4,7 +4,7 @@
  */
 
 import { defineStore } from 'pinia'
-import { reactive } from 'vue'
+import { onScopeDispose, reactive } from 'vue'
 import { useActorStore } from './actor.ts'
 
 type TypingState = {
@@ -38,6 +38,12 @@ export const useParticipantActivityStore = defineStore('participantActivity', ()
 	let speakingInterval: ReturnType<typeof setInterval> | null = null
 
 	const actorStore = useActorStore()
+
+	onScopeDispose(() => {
+		purgeTypingState()
+		purgeSpeakingState()
+		purgeRaisedHandsState()
+	})
 
 	/**
 	 * Get the array of external session ids for a conversation (excluding current user)
@@ -96,6 +102,19 @@ export const useParticipantActivityStore = defineStore('participantActivity', ()
 			typing[token][sessionId] = { expirationTimeout }
 		} else {
 			delete typing[token][sessionId]
+		}
+	}
+
+	/**
+	 * Purge the typing information for all conversations (called when leaving).
+	 */
+	function purgeTypingState() {
+		for (const token in typing) {
+			for (const sessionId in typing[token]) {
+				clearTimeout(typing[token][sessionId].expirationTimeout)
+				delete typing[token][sessionId]
+			}
+			delete typing[token]
 		}
 	}
 
@@ -162,6 +181,13 @@ export const useParticipantActivityStore = defineStore('participantActivity', ()
 
 		if (!speakingInterval && isSpeaking) {
 			speakingInterval = setInterval(updateIntervalTimeSpeaking, 1000)
+		}
+
+		// Stop interval ticks if nobody is speaking
+		if (!isSpeaking && speakingInterval
+			&& Object.values(speaking).every((attendee) => !attendee.isSpeaking)) {
+			clearInterval(speakingInterval)
+			speakingInterval = null
 		}
 	}
 
@@ -242,6 +268,7 @@ export const useParticipantActivityStore = defineStore('participantActivity', ()
 		externalTypingSignals,
 		isSelfActorTyping,
 		setTyping,
+		purgeTypingState,
 
 		speaking,
 		getParticipantSpeakingInformation,
