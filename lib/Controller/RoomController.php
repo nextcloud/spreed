@@ -415,8 +415,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[OpenAPI]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequestHeader(name: 'x-nextcloud-federation', description: 'Set to 1 when the request is performed by another Nextcloud Server to indicate a federation request', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
 	public function getSingleRoom(string $token): DataResponse {
 		try {
 			$isSIPBridgeRequest = $this->validateSIPBridgeRequest($token);
@@ -2135,8 +2135,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
-	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
 	public function verifyDialInPin(string $pin): DataResponse {
 		if (!$this->talkConfig->isSIPConfigured()) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
@@ -2181,8 +2181,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
-	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the phone number to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the phone number, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
 	public function directDialIn(string $phoneNumber, string $caller): DataResponse {
 		if (!$this->talkConfig->isSIPConfigured()) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
@@ -2245,8 +2245,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
-	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
 	public function verifyDialOutNumber(string $number, array $options = []): DataResponse {
 		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
@@ -2294,8 +2294,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
-	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
 	public function createGuestByDialIn(): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
@@ -2335,8 +2335,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[OpenAPI(scope: 'backend-sipbridge')]
 	#[RequireRoom]
-	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the request body to generate the SHA256-HMAC request checksum', indirect: true)]
-	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the request body, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-random', description: 'Random seed (at least 32 bytes) used together with the room token to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'talk-sipbridge-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the room token, signed with the shared SIP bridge secret, to verify authenticity from the SIP bridge', indirect: true)]
 	public function rejectedDialOutRequest(string $callId, array $options = []): DataResponse {
 		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->isSIPDialOutEnabled()) {
 			return new DataResponse(null, Http::STATUS_NOT_IMPLEMENTED);
