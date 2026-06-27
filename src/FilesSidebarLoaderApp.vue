@@ -4,8 +4,9 @@
 -->
 
 <script setup lang="ts">
+import type { INode } from '@nextcloud/files'
+
 import { showWarning } from '@nextcloud/dialogs'
-import { type INode } from '@nextcloud/files'
 import { FileType, getSidebar } from '@nextcloud/files'
 import { t } from '@nextcloud/l10n'
 import { ShareType } from '@nextcloud/sharing'
