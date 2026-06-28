@@ -1447,6 +1447,7 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "You are currently waiting in the lobby",
     "Enable noise suppression" : "Enable noise suppression",
     "Reduce background noises for better voice quality" : "Reduce background noises for better voice quality",
+    "Basic" : "Basic",
     "Advanced" : "Advanced",
     "Enable echo cancellation" : "Enable echo cancellation",
     "Minimize echo effect from own surrounding" : "Minimize echo effect from own surrounding",
