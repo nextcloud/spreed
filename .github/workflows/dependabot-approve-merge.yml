@@ -92,9 +92,9 @@ jobs:
           && steps.auto_approve.conclusion == 'success'
           && (github.event.action == 'opened' || github.event.action == 'reopened')
           && (
-          steps.metadata.outputs.update-type == 'version-update:semver-patch'
-          || (fromJSON(env.ALLOW_MINOR) && steps.metadata.outputs.update-type == 'version-update:semver-minor')
-          || (fromJSON(env.ALLOW_MAJOR) && steps.metadata.outputs.update-type == 'version-update:semver-major')
+            steps.metadata.outputs.update-type == 'version-update:semver-patch'
+            || (fromJSON(env.ALLOW_MINOR) && steps.metadata.outputs.update-type == 'version-update:semver-minor')
+            || (fromJSON(env.ALLOW_MAJOR) && steps.metadata.outputs.update-type == 'version-update:semver-major')
           )
           }}
         with:
