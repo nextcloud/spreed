@@ -318,7 +318,7 @@ class RecordingServiceTest extends TestCase {
 
 		// Cleanup of the temporary share
 		$this->appConfig->method('getAppValueString')->willReturn('shareToken');
-		$share = $this->createMock(IShare::class);
+		$share = $this->createStub(IShare::class);
 		$this->shareManager->method('getShareByToken')->with('shareToken')->willReturn($share);
 		$this->shareManager->expects($this->once())->method('deleteShare')->with($share);
 		// Only the temporary upload share's tracking value is cleared here; the
@@ -387,7 +387,7 @@ class RecordingServiceTest extends TestCase {
 		$recordingFolder->method('get')->with('name.ogg')->willReturn($file);
 
 		$this->appConfig->method('getAppValueString')->willReturn('shareToken');
-		$share = $this->createMock(IShare::class);
+		$share = $this->createStub(IShare::class);
 		$this->shareManager->method('getShareByToken')->willReturn($share);
 		$this->shareManager->expects($this->once())->method('deleteShare')->with($share);
 
