@@ -73,11 +73,12 @@ async function createNewFile({ filePath, templatePath, templateType }: createFil
  * @param payload.fileNames Desired file names — used only for server-side
  *        rename-on-conflict probing; the authoritative final names are
  *        returned by {@link postAttachment}.
+ * @param payload.allowUpdate Whether to grant update permissions
  * @return Draft folder path (relative to user home root, no leading slash)
  *         and a rename simulation for the requested file names.
  */
-async function probeAttachmentFolder({ token, fileNames }: { token: string } & ProbeAttachmentFolderParams): ProbeAttachmentFolderResponse {
-	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/attachment/folder', { token }), { fileNames })
+async function probeAttachmentFolder({ token, fileNames, allowUpdate }: { token: string } & ProbeAttachmentFolderParams): ProbeAttachmentFolderResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/attachment/folder', { token }), { fileNames, allowUpdate })
 }
 
 /**
@@ -96,16 +97,18 @@ async function probeAttachmentFolder({ token, fileNames }: { token: string } & P
  * @param payload.fileName Desired final file name (for rename-on-conflict)
  * @param payload.referenceId Client reference ID for the chat message
  * @param payload.talkMetaData JSON-encoded metadata (caption, messageType, silent, …)
+ * @param payload.allowUpdate Whether to grant update permissions
  * @return An array of `{ originalName: finalName }` entries — one per posted
  *         file.  When the backend had to rename due to a conflict the two
  *         names differ; otherwise they are identical.
  */
-async function postAttachment({ token, filePath, fileName, referenceId, talkMetaData }: { token: string } & PostAttachmentFolderParams): PostAttachmentFolderResponse {
+async function postAttachment({ token, filePath, fileName, referenceId, talkMetaData, allowUpdate }: { token: string } & PostAttachmentFolderParams): PostAttachmentFolderResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/attachment', { token }), {
 		filePath,
 		fileName,
 		referenceId,
 		talkMetaData,
+		allowUpdate,
 	})
 }
 

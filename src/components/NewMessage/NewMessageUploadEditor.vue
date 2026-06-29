@@ -58,6 +58,14 @@
 					:name="voiceMessageName"
 					:localUrl="voiceMessageLocalURL" />
 			</template>
+
+			<NcCheckboxRadioSwitch
+				v-if="!isVoiceMessage && supportConversationSubfolders"
+				v-model="allowUpdate"
+				type="switch">
+				{{ t('spreed', 'Allow editing of uploaded files') }}
+			</NcCheckboxRadioSwitch>
+
 			<div v-if="!supportMediaCaption" class="upload-editor__actions">
 				<NcButton variant="tertiary" @click="handleDismiss">
 					{{ t('spreed', 'Dismiss') }}
@@ -86,6 +94,7 @@
 import { t } from '@nextcloud/l10n'
 import { ref, useId } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
@@ -95,7 +104,7 @@ import NewMessage from './NewMessage.vue'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { MESSAGE } from '../../constants.ts'
-import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useUploadStore } from '../../stores/upload.ts'
 
 export default {
@@ -107,12 +116,14 @@ export default {
 		IconPlus,
 		AudioPlayer,
 		NcButton,
+		NcCheckboxRadioSwitch,
 		NewMessage,
 		TransitionWrapper,
 	},
 
 	setup() {
 		const isDraggingOver = ref(false)
+		const allowUpdate = ref(false)
 		const dialogMaskId = `new-message-upload-${useId()}`
 		const dialogHeaderId = `new-message-upload-header-${useId()}`
 		const modalContainerId = '#' + dialogMaskId
@@ -120,6 +131,7 @@ export default {
 		return {
 			modalContainerId,
 			isDraggingOver,
+			allowUpdate,
 			dialogMaskId,
 			dialogHeaderId,
 			token: useGetToken(),
@@ -131,6 +143,10 @@ export default {
 	computed: {
 		supportMediaCaption() {
 			return hasTalkFeature(this.token, 'media-caption')
+		},
+
+		supportConversationSubfolders() {
+			return getTalkConfig(this.token, 'attachments', 'conversation-subfolders') === true
 		},
 
 		currentUploadId() {
@@ -183,6 +199,9 @@ export default {
 				} else {
 					this.$refs.submitButton.$el.focus()
 				}
+			} else {
+				// Reset user's choice at closing
+				this.allowUpdate = false
 			}
 		},
 	},
@@ -200,6 +219,7 @@ export default {
 				uploadId: this.currentUploadId,
 				caption: null,
 				options: null,
+				allowUpdate: this.supportConversationSubfolders ? this.allowUpdate : undefined,
 			})
 		},
 
@@ -216,6 +236,7 @@ export default {
 						silent: temporaryMessage.silent,
 						parent: temporaryMessage.parent,
 					},
+					allowUpdate: this.supportConversationSubfolders ? this.allowUpdate : undefined,
 				})
 			} else {
 				this.uploadStore.discardUpload(this.currentUploadId)

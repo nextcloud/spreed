@@ -44,6 +44,7 @@ type UploadsState = {
 	[uploadId: string]: {
 		token: string
 		draftFolderPath?: string | null
+		allowUpdate?: boolean
 		files: {
 			[index: string]: UploadFile
 		}
@@ -55,6 +56,7 @@ type UploadFilesPayload = {
 	uploadId: string
 	caption?: string
 	options: Pick<ChatMessage, | 'threadId' | 'threadTitle' | 'silent' | 'parent'> | null
+	allowUpdate?: boolean
 }
 
 type PerformSharePayload = {
@@ -66,6 +68,7 @@ type PerformSharePayload = {
 	referenceId?: string
 	talkMetaData?: string
 	fileName?: string
+	allowUpdate?: boolean
 }
 
 export const useUploadStore = defineStore('upload', () => {
@@ -363,8 +366,9 @@ export const useUploadStore = defineStore('upload', () => {
 	 * @param payload.uploadId unique identifier
 	 * @param payload.caption The text caption to the media
 	 * @param payload.options The share options
+	 * @param payload.allowUpdate Whether to grant update permissions
 	 */
-	async function uploadFiles({ token, uploadId, caption, options }: UploadFilesPayload) {
+	async function uploadFiles({ token, uploadId, caption, options, allowUpdate }: UploadFilesPayload) {
 		if (currentUploadId.value === uploadId) {
 			currentUploadId.value = undefined
 		}
@@ -397,8 +401,9 @@ export const useUploadStore = defineStore('upload', () => {
 			const fileNames = initialisedUploads
 				.map(([, uploadedFile]) => uploadedFile.file.newName || uploadedFile.file.name)
 			try {
-				const response = await probeAttachmentFolder({ token, fileNames })
+				const response = await probeAttachmentFolder({ token, fileNames, allowUpdate })
 				uploads[uploadId].draftFolderPath = response.data.ocs.data.folder
+				uploads[uploadId].allowUpdate = allowUpdate
 
 				// Update temporary messages with predicted rename-on-conflict
 				// names so the user sees the expected final name while uploading.
@@ -434,7 +439,7 @@ export const useUploadStore = defineStore('upload', () => {
 
 		await processUpload({ token, uploadId })
 
-		await shareFiles({ token, uploadId, lastIndex, caption, options })
+		await shareFiles({ token, uploadId, lastIndex, caption, options, allowUpdate })
 
 		EventBus.emit('upload-finished')
 	}
@@ -578,8 +583,9 @@ export const useUploadStore = defineStore('upload', () => {
 	 * @param payload.lastIndex The index of last uploaded file
 	 * @param payload.caption The text caption to the media
 	 * @param payload.options The share options
+	 * @param payload.allowUpdate Whether to grant update permissions
 	 */
-	async function shareFiles({ token, uploadId, lastIndex, caption, options }: UploadFilesPayload & { lastIndex: string }) {
+	async function shareFiles({ token, uploadId, lastIndex, caption, options, allowUpdate }: UploadFilesPayload & { lastIndex: string }) {
 		const shares = getShareableFiles(uploadId)
 		for await (const share of shares) {
 			if (!share) {
@@ -601,7 +607,7 @@ export const useUploadStore = defineStore('upload', () => {
 			uploads[uploadId].files[index].talkMetaData = talkMetaData
 
 			const fileName = shareableFile.file.newName || shareableFile.file.name
-			await performShare({ token, path: shareableFile.sharePath!, index, uploadId, id, referenceId, talkMetaData, fileName })
+			await performShare({ token, path: shareableFile.sharePath!, index, uploadId, id, referenceId, talkMetaData, fileName, allowUpdate })
 		}
 	}
 
@@ -623,8 +629,9 @@ export const useUploadStore = defineStore('upload', () => {
 	 * @param [payload.talkMetaData] The metadata JSON-encoded object
 	 * @param [payload.fileName] Original file name — when present together
 	 *        with a stored draftFolderPath, the attachment endpoint is used
+	 * @param payload.allowUpdate Whether to grant update permissions
 	 */
-	async function performShare({ token, path, index, uploadId, id, referenceId, talkMetaData, fileName }: PerformSharePayload) {
+	async function performShare({ token, path, index, uploadId, id, referenceId, talkMetaData, fileName, allowUpdate }: PerformSharePayload) {
 		try {
 			if (!uploadId || !index) {
 				throw new Error('Missing uploadId or index for sharing file')
@@ -635,7 +642,7 @@ export const useUploadStore = defineStore('upload', () => {
 			if (draftFolderPath && fileName) {
 				// Draft-folder flow: post via the Talk attachment endpoint
 				const filePath = path.replace(/^\//, '')
-				await postAttachment({ token, filePath, fileName, referenceId: referenceId!, talkMetaData: talkMetaData! })
+				await postAttachment({ token, filePath, fileName, referenceId: referenceId!, talkMetaData: talkMetaData!, allowUpdate })
 			} else {
 				await shareFileApi({ path, shareWith: token, referenceId, talkMetaData })
 			}
@@ -711,6 +718,8 @@ export const useUploadStore = defineStore('upload', () => {
 		const failedShares = getUploadsArray(uploadId)
 			.filter(([, file]) => file.status === 'sharing')
 
+		// User was not asked again via dialog, so keep the initial choice
+		const allowUpdate = uploads[uploadId].allowUpdate
 		for (const [index, shareableFile] of failedShares) {
 			// Reset status so markFileAsSharing (called inside performShare) can proceed
 			uploads[uploadId].files[index].status = 'successUpload'
@@ -719,7 +728,7 @@ export const useUploadStore = defineStore('upload', () => {
 			const talkMetaData = shareableFile.talkMetaData || '{}'
 			const fileName = shareableFile.file.newName || shareableFile.file.name
 
-			await performShare({ token, path: shareableFile.sharePath!, index, uploadId, id, referenceId, talkMetaData, fileName })
+			await performShare({ token, path: shareableFile.sharePath!, index, uploadId, id, referenceId, talkMetaData, fileName, allowUpdate })
 		}
 	}
 
