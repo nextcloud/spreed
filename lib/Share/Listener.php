@@ -71,7 +71,8 @@ class Listener implements IEventListener {
 				$potentialConversationFolder = $segments[0];
 				$potentialUserFolder = $segments[1] ?? '';
 				if (str_ends_with($potentialConversationFolder, '-' . $share->getSharedWith())
-					&& str_ends_with($potentialUserFolder, '-' . $share->getShareOwner())) {
+					&& (str_ends_with($potentialUserFolder, '-' . $share->getShareOwner())
+						|| str_ends_with($potentialUserFolder, '-' . $share->getShareOwner() . '$u'))) {
 					$relativePath = $candidate;
 				}
 			}
