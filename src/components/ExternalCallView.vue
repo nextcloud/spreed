@@ -53,6 +53,8 @@ onBeforeUnmount(() => {
 /**
  * Handle messages from the external call service iframe.
  * Ignores messages from origins that don't match the service URL.
+ *
+ * @param event
  */
 function onMessage(event: MessageEvent) {
 	const serviceOrigin = new URL(externalCallServiceUrl.value).origin
