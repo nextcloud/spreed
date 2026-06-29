@@ -1437,7 +1437,8 @@ Signaling.Standalone.prototype.processRoomMessageEvent = function(token, data) {
 	switch (data.type) {
 		case 'chat':
 			if ('comment' in data.chat) {
-				EventBus.emit('signaling-message-received', { token, message: { ...data.chat.comment, token } })
+				const { lastCommonRead: lastCommonReadMessage, ...comment } = data.chat.comment
+				EventBus.emit('signaling-message-received', { token, message: { ...comment, token }, lastCommonReadMessage })
 			} else {
 				// TOREMOVE after HPB next release
 				EventBus.emit('should-refresh-chat-messages')

@@ -664,17 +664,18 @@ export function useGetMessagesProvider() {
 	/**
 	 * Chat relay sends one message at a time, we update our stores directly
 	 *
-	 * @param payload
-	 * @param payload.token
-	 * @param payload.message
+	 * @param payload - signaling event payload
+	 * @param payload.token - conversation token, where event was sent
+	 * @param payload.message - chat message from the event
+	 * @param [payload.lastCommonReadMessage] - optional last common read marker
 	 */
-	function addMessageFromChatRelay(payload: { token: string, message: ChatMessage }) {
+	function addMessageFromChatRelay(payload: { token: string, message: ChatMessage, lastCommonReadMessage?: number }) {
 		if (!chatRelaySupported) {
 			// chat relay is not supported, ignore the message
 			return
 		}
 
-		const { token, message } = payload
+		const { token, message, lastCommonReadMessage } = payload
 		if (token !== currentToken.value) {
 			// Guard: Message is for another conversation
 			// e.g., user switched conversation while messages were in-flight
@@ -714,6 +715,11 @@ export function useGetMessagesProvider() {
 
 		chatStore.processChatBlocks(token, [message], { mergeBy: chatStore.getLastKnownId(token) })
 		store.dispatch('processMessage', { token, message, fromRealtime: true })
+		if (lastCommonReadMessage !== undefined) {
+			// do not compare with conversation.lastCommonReadMessage
+			// value from signaling is actual, but not incremental (can be lesser or equal 0)
+			store.dispatch('updateLastCommonReadMessage', { token, lastCommonReadMessage })
+		}
 	}
 
 	provide(GET_MESSAGES_CONTEXT_KEY, {
