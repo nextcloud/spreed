@@ -32,6 +32,8 @@ use Psr\Log\LoggerInterface;
  * room members can access files uploaded there.
  */
 class ConversationFolderService {
+	public const UPDATABLE_SUFFIX = ' (u)';
+
 	public function __construct(
 		private readonly TalkConfig $talkConfig,
 		private readonly IRootFolder $rootFolder,
@@ -67,7 +69,7 @@ class ConversationFolderService {
 	 * @throws \RuntimeException if a path component exists but is not a folder
 	 * @throws \OCP\Files\NotPermittedException if a folder cannot be created
 	 */
-	public function getOrCreateSubfolder(string $userId, Room $room): Folder {
+	public function getOrCreateSubfolder(string $userId, Room $room, bool $allowUpdate): Folder {
 		$userFolder = $this->rootFolder->getUserFolder($userId);
 
 		$freeSpace = $userFolder->getFreeSpace();
@@ -100,7 +102,7 @@ class ConversationFolderService {
 		}
 
 		// Get or create user subfolder (e.g. Talk/Room Name-token/Alice-alice/)
-		$subfolderName = $this->talkConfig->getConversationSubfolderName($userId);
+		$subfolderName = $this->talkConfig->getConversationSubfolderName($userId, $allowUpdate);
 		try {
 			$subfolder = $convFolder->get($subfolderName);
 			if (!$subfolder instanceof Folder) {
@@ -110,7 +112,7 @@ class ConversationFolderService {
 			$subfolder = $convFolder->newFolder($subfolderName);
 		}
 
-		$this->ensureSubfolderShared($subfolder, $userId, $room->getToken());
+		$this->ensureSubfolderShared($subfolder, $userId, $room->getToken(), $allowUpdate);
 
 		return $subfolder;
 	}
@@ -282,14 +284,19 @@ class ConversationFolderService {
 	 * Uses an optimistic create-and-catch approach so it works correctly even
 	 * when the folder is already shared with many rooms (no limit on the check).
 	 */
-	private function ensureSubfolderShared(Folder $folder, string $userId, string $token): void {
+	private function ensureSubfolderShared(Folder $folder, string $userId, string $token, bool $allowUpdate): void {
+		$permissions = Constants::PERMISSION_READ;
+		if ($allowUpdate) {
+			$permissions |= Constants::PERMISSION_UPDATE;
+		}
+
 		$share = $this->shareManager->newShare();
 		$share->setNode($folder)
 			->setShareType(IShare::TYPE_ROOM)
 			->setSharedBy($userId)
 			->setShareOwner($userId)
 			->setSharedWith($token)
-			->setPermissions(Constants::PERMISSION_READ)
+			->setPermissions($permissions)
 			->setMailSend(false);
 
 		try {

@@ -13,6 +13,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Service\ConversationFolderService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Share\Events\BeforeShareCreatedEvent;
@@ -71,7 +72,8 @@ class Listener implements IEventListener {
 				$potentialConversationFolder = $segments[0];
 				$potentialUserFolder = $segments[1] ?? '';
 				if (str_ends_with($potentialConversationFolder, '-' . $share->getSharedWith())
-					&& str_ends_with($potentialUserFolder, '-' . $share->getShareOwner())) {
+					&& (str_ends_with($potentialUserFolder, '-' . $share->getShareOwner())
+						|| str_ends_with($potentialUserFolder, '-' . $share->getShareOwner() . ConversationFolderService::UPDATABLE_SUFFIX))) {
 					$relativePath = $candidate;
 				}
 			}

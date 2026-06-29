@@ -11,6 +11,7 @@ namespace OCA\Talk;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Events\BeforeTurnServersGetEvent;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Service\ConversationFolderService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Settings\UserPreference;
 use OCA\Talk\Vendor\Firebase\JWT\JWT;
@@ -327,14 +328,16 @@ class Config {
 	 *
 	 * Format: "<displayPrefix>-<uid>" where the prefix length is capped so that
 	 * the total segment length stays under 64 characters on all filesystems.
+	 * A trailing ` (u)` indicates that the share allows updates
+	 *
 	 * If the uid is 63+ characters, the prefix is omitted.
 	 */
-	public function getConversationSubfolderName(string $userId): string {
+	public function getConversationSubfolderName(string $userId, bool $allowUpdate): string {
 		if (!$this->isConversationSubfoldersEnabled()) {
 			throw new \LogicException('getConversationSubfolderName called while conversation subfolders are disabled');
 		}
 		$displayName = $this->userManager->getDisplayName($userId) ?? '';
-		return $this->buildConversationSubfolderName($userId, $displayName);
+		return $this->buildConversationSubfolderName($userId, $displayName, $allowUpdate);
 	}
 
 	/**
@@ -342,7 +345,10 @@ class Config {
 	 * Use this when the caller already holds the IUser object (e.g. the current
 	 * user from IUserSession) to avoid an extra IUserManager::get() lookup.
 	 */
-	public function buildConversationSubfolderName(string $userId, string $displayName): string {
+	public function buildConversationSubfolderName(string $userId, string $displayName, bool $allowUpdate): string {
+		if ($allowUpdate) {
+			$userId .= ConversationFolderService::UPDATABLE_SUFFIX;
+		}
 		$prefixLen = min(16, max(0, 63 - strlen($userId)));
 		if ($prefixLen > 0) {
 			$prefix = $this->sanitizeDisplayName($displayName, $prefixLen);

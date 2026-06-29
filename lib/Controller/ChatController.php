@@ -2424,6 +2424,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 *    into the shared subfolder, resolves any conflicts, and posts the message.
 	 *
 	 * @param list<string> $fileNames Desired filenames to probe
+	 * @param bool $allowUpdate Allow recipients to modify shared files
 	 * @return DataResponse<Http::STATUS_OK, array{folder: string, renames: list<array<string, string>>}, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_INSUFFICIENT_STORAGE|Http::STATUS_NOT_IMPLEMENTED, array{error: string}, array{}>
 	 *
 	 * 200: Draft folder path and rename map returned
@@ -2440,7 +2441,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function probeAttachmentFolder(array $fileNames = []): DataResponse {
+	public function probeAttachmentFolder(array $fileNames = [], bool $allowUpdate = false): DataResponse {
 		/** @var string $uid — non-null, guaranteed by RequireLoggedInParticipant */
 		$uid = $this->userId;
 
@@ -2450,7 +2451,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$subfolder = $this->conversationFolderService->getOrCreateSubfolder($uid, $this->room);
+			$subfolder = $this->conversationFolderService->getOrCreateSubfolder($uid, $this->room, $allowUpdate);
 			$draftFolder = $this->conversationFolderService->getOrCreateDraftFolder($subfolder);
 		} catch (NotEnoughSpaceException) {
 			return new DataResponse(['error' => $this->l->t('Storage quota exceeded')], Http::STATUS_INSUFFICIENT_STORAGE);
@@ -2486,6 +2487,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * @param string $talkMetaData JSON-encoded metadata (caption, messageType, silent, …)
 	 * @param string $fileName Desired final file name; the service resolves conflicts
 	 *                         by appending " (1)", " (2)", … if already taken
+	 * @param bool $allowUpdate Allow recipients to modify shared files
 	 * @return DataResponse<Http::STATUS_OK, array{renames: list<array<string, string>>}, array{}>|DataResponse<Http::STATUS_NOT_FOUND|Http::STATUS_UNPROCESSABLE_ENTITY|Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_INSUFFICIENT_STORAGE|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_IMPLEMENTED, array{error: string}, array{}>
 	 *
 	 * 200: File moved from Draft and posted as chat message
@@ -2505,7 +2507,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function postAttachmentToRoom(string $filePath, string $referenceId, string $talkMetaData = '', string $fileName = ''): DataResponse {
+	public function postAttachmentToRoom(string $filePath, string $referenceId, string $talkMetaData = '', string $fileName = '', bool $allowUpdate = false): DataResponse {
 		if (!$this->talkConfig->isConversationSubfoldersEnabled()) {
 			return new DataResponse(['error' => $this->l->t('Conversation subfolders are disabled')], Http::STATUS_NOT_IMPLEMENTED);
 		}
@@ -2516,7 +2518,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 		// Ensure the user's conversation subfolder exists and is shared with
 		// the room.  The service creates the full folder hierarchy if missing.
 		try {
-			$subfolder = $this->conversationFolderService->getOrCreateSubfolder($uid, $this->room);
+			$subfolder = $this->conversationFolderService->getOrCreateSubfolder($uid, $this->room, $allowUpdate);
 			$draftFolder = $this->conversationFolderService->getOrCreateDraftFolder($subfolder);
 		} catch (NotEnoughSpaceException) {
 			return new DataResponse(['error' => $this->l->t('Storage quota exceeded')], Http::STATUS_INSUFFICIENT_STORAGE);
