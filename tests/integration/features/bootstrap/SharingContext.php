@@ -56,8 +56,8 @@ class SharingContext implements Context {
 		$this->theHTTPStatusCodeShouldBe(201);
 	}
 
-	#[Given('/^user "([^"]*)" uploads file "([^"]*)" with content "([^"]*)" to conversation folder for room "([^"]*)" with name "([^"]*)"$/')]
-	public function userUploadsFileToConversationFolder(string $user, string $filename, string $content, string $room, string $displayName): void {
+	#[Given('/^user "([^"]*)" uploads (updatable |)file "([^"]*)" with content "([^"]*)" to conversation folder for room "([^"]*)" with name "([^"]*)"$/')]
+	public function userUploadsFileToConversationFolder(string $user, string $updatable, string $filename, string $content, string $room, string $displayName): void {
 		$this->currentUser = $user;
 
 		// $displayName is no longer needed: the probe endpoint creates the folder
@@ -66,20 +66,24 @@ class SharingContext implements Context {
 		// match without rewriting every scenario.
 		unset($displayName);
 
+		$allowUpdate = trim($updatable) === 'updatable';
+
 		$token = FeatureContext::getTokenForIdentifier($room);
-		$draftPath = $this->ensureDraftFolderViaProbe($user, $token);
+		$draftPath = $this->ensureDraftFolderViaProbe($user, $token, $allowUpdate);
 
 		$this->sendingToDav('PUT', "/$user/$draftPath/$filename", null, $content);
 		$this->theHTTPStatusCodeShouldBe(201);
 	}
 
-	#[When('/^user "([^"]*)" posts file "([^"]*)" from conversation folder of room "([^"]*)" with name "([^"]*)" with (\d+) \(v1\)$/')]
-	public function userPostsFileFromConversationFolder(string $user, string $filename, string $room, string $displayName, int $statusCode, ?TableNode $body = null): void {
+	#[When('/^user "([^"]*)" posts (updatable |)file "([^"]*)" from conversation folder of room "([^"]*)" with name "([^"]*)" with (\d+) \(v1\)$/')]
+	public function userPostsFileFromConversationFolder(string $user, string $updatable, string $filename, string $room, string $displayName, int $statusCode, ?TableNode $body = null): void {
 		$this->currentUser = $user;
 		unset($displayName); // see userUploadsFileToConversationFolder
 
+		$allowUpdate = trim($updatable) === 'updatable';
+
 		$token = FeatureContext::getTokenForIdentifier($room);
-		$draftPath = $this->ensureDraftFolderViaProbe($user, $token);
+		$draftPath = $this->ensureDraftFolderViaProbe($user, $token, $allowUpdate);
 		$filePath = $draftPath . '/' . $filename;
 
 		$talkMetaData = [];
@@ -94,7 +98,7 @@ class SharingContext implements Context {
 			}
 		}
 
-		$this->sendingToTalkAttachmentEndpoint($token, $filePath, $talkMetaData);
+		$this->sendingToTalkAttachmentEndpoint($token, $filePath, $talkMetaData, allowUpdate: $allowUpdate);
 		$this->theHTTPStatusCodeShouldBe($statusCode);
 	}
 
@@ -111,13 +115,14 @@ class SharingContext implements Context {
 	 * Post a file that was uploaded under a temporary name, passing the desired
 	 * final name via `fileName` so the backend renames it with conflict resolution.
 	 */
-	#[When('/^user "([^"]*)" posts temp file "([^"]*)" with name "([^"]*)" from conversation folder of room "([^"]*)" with name "([^"]*)" with (\d+) \(v1\)$/')]
-	public function userPostsTempFileWithDesiredName(string $user, string $tempFileName, string $desiredName, string $room, string $displayName, int $statusCode): void {
+	#[When('/^user "([^"]*)" posts (updatable |)temp file "([^"]*)" with name "([^"]*)" from conversation folder of room "([^"]*)" with name "([^"]*)" with (\d+) \(v1\)$/')]
+	public function userPostsTempFileWithDesiredName(string $user, string $updatable, string $tempFileName, string $desiredName, string $room, string $displayName, int $statusCode): void {
 		$this->currentUser = $user;
 		unset($displayName); // see userUploadsFileToConversationFolder
+		$allowUpdate = trim($updatable) === 'updatable';
 
 		$token = FeatureContext::getTokenForIdentifier($room);
-		$draftPath = $this->ensureDraftFolderViaProbe($user, $token);
+		$draftPath = $this->ensureDraftFolderViaProbe($user, $token, $allowUpdate);
 		$filePath = $draftPath . '/' . $tempFileName;
 		$this->sendingToTalkAttachmentEndpoint($token, $filePath, [], $desiredName);
 		$this->theHTTPStatusCodeShouldBe($statusCode);
@@ -127,12 +132,14 @@ class SharingContext implements Context {
 	 * Call the probe endpoint for a room and store the response.
 	 * $fileNames is a comma-separated list of desired filenames.
 	 */
-	#[When('/^user "([^"]*)" probes attachment folder for room "([^"]*)" with files "([^"]*)" with (\d+) \(v1\)$/')]
-	public function userProbesAttachmentFolder(string $user, string $room, string $fileNamesCsv, int $statusCode, ?TableNode $tableNode = null): void {
+	#[When('/^user "([^"]*)" probes attachment folder for room "([^"]*)" with (updatable |)files "([^"]*)" with (\d+) \(v1\)$/')]
+	public function userProbesAttachmentFolder(string $user, string $room, string $updatable, string $fileNamesCsv, int $statusCode, ?TableNode $tableNode = null): void {
 		$this->currentUser = $user;
 		$token = FeatureContext::getTokenForIdentifier($room);
+		$allowUpdate = trim($updatable) === 'updatable';
+
 		$fileNames = array_map('trim', explode(',', $fileNamesCsv));
-		$this->sendingToTalkAttachmentFolderProbe($token, $fileNames);
+		$this->sendingToTalkAttachmentFolderProbe($token, $fileNames, $allowUpdate);
 		$this->theHTTPStatusCodeShouldBe($statusCode);
 
 		if ($statusCode === 200 && $tableNode !== null) {
@@ -1015,7 +1022,7 @@ class SharingContext implements Context {
 	 * client should upload into. Result is cached per (user, token) so repeated
 	 * uploads in the same scenario don't issue redundant probes.
 	 */
-	private function ensureDraftFolderViaProbe(string $user, string $token): string {
+	private function ensureDraftFolderViaProbe(string $user, string $token, bool $allowUpdate): string {
 		$cacheKey = $user . '|' . $token;
 		if (isset($this->draftFolderByUserToken[$cacheKey])) {
 			return $this->draftFolderByUserToken[$cacheKey];
@@ -1023,7 +1030,7 @@ class SharingContext implements Context {
 
 		$previousUser = $this->currentUser;
 		$this->currentUser = $user;
-		$this->sendingToTalkAttachmentFolderProbe($token, []);
+		$this->sendingToTalkAttachmentFolderProbe($token, [], $allowUpdate);
 		$this->currentUser = $previousUser;
 
 		\PHPUnit\Framework\Assert::assertSame(
@@ -1049,10 +1056,12 @@ class SharingContext implements Context {
 	 *
 	 * @param list<string> $fileNames
 	 */
-	private function sendingToTalkAttachmentFolderProbe(string $token, array $fileNames): void {
+	private function sendingToTalkAttachmentFolderProbe(string $token, array $fileNames, bool $allowUpdate): void {
 		$fullUrl = $this->baseUrl . 'ocs/v2.php/apps/spreed/api/v1/chat/' . $token . '/attachment/folder?format=json';
 		$client = new Client();
-		$formParams = [];
+		$formParams = [
+			'allowUpdate' => $allowUpdate,
+		];
 		foreach ($fileNames as $i => $name) {
 			$formParams['fileNames[' . $i . ']'] = $name;
 		}
@@ -1073,7 +1082,7 @@ class SharingContext implements Context {
 	/**
 	 * POST to the Talk attachment endpoint (OCS v2).
 	 */
-	private function sendingToTalkAttachmentEndpoint(string $token, string $filePath, array $talkMetaData, string $fileName = ''): void {
+	private function sendingToTalkAttachmentEndpoint(string $token, string $filePath, array $talkMetaData, string $fileName = '', bool $allowUpdate = false): void {
 		$fullUrl = $this->baseUrl . 'ocs/v2.php/apps/spreed/api/v1/chat/' . $token . '/attachment?format=json';
 		$client = new Client();
 		$options = [
@@ -1084,6 +1093,7 @@ class SharingContext implements Context {
 				'fileName' => $fileName,
 				'referenceId' => '',
 				'talkMetaData' => !empty($talkMetaData) ? json_encode($talkMetaData) : '',
+				'allowUpdate' => $allowUpdate,
 			],
 		];
 		try {
