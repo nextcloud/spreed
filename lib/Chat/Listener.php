@@ -9,7 +9,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat;
 
+use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Service\ReminderService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 
@@ -19,6 +22,7 @@ use OCP\EventDispatcher\IEventListener;
 class Listener implements IEventListener {
 	public function __construct(
 		protected ChatManager $chatManager,
+		protected ReminderService $reminderService,
 	) {
 	}
 
@@ -26,6 +30,16 @@ class Listener implements IEventListener {
 	public function handle(Event $event): void {
 		if ($event instanceof RoomDeletedEvent) {
 			$this->chatManager->deleteMessages($event->getRoom());
+		}
+		if ($event instanceof AttendeesRemovedEvent) {
+			foreach ($event->getAttendees() as $attendee) {
+				if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
+					$this->reminderService->deleteAllRemindersForUser(
+						$attendee->getActorId(),
+						$event->getRoom()->getToken(),
+					);
+				}
+			}
 		}
 	}
 }
