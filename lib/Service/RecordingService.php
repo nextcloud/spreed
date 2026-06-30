@@ -55,7 +55,7 @@ class RecordingService {
 
 	public const APPCONFIG_PREFIX = 'recording/';
 	public const APPCONFIG_UPLOAD_PREFIX = 'recupload/';
-	private const APPCONFIG_KEY_MAX_LENGTH = 64;
+	public const APPCONFIG_KEY_MAX_LENGTH = 64;
 
 	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
 		'audio/ogg' => ['ogg'],
