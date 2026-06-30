@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\SetupCheck;
 
 use OCA\Talk\Config;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\SetupCheck\ISetupCheck;
@@ -16,6 +17,7 @@ use OCP\SetupCheck\SetupResult;
 
 class SIPConfiguration implements ISetupCheck {
 	public function __construct(
+		private readonly IAppConfig $appConfig,
 		private readonly Config $talkConfig,
 		private readonly IDBConnection $connection,
 		private readonly IL10N $l,
@@ -66,7 +68,9 @@ class SIPConfiguration implements ISetupCheck {
 			return SetupResult::error($message, 'https://portal.nextcloud.com/article/Nextcloud-Talk/Nextcloud-Talk-Phone/Direct-Dial-in#content-provisioning');
 		}
 
-		if ($this->talkConfig->getSIPSharedSecret() === '' && $this->talkConfig->getDialInInfo() === '') {
+		if ($this->talkConfig->getSIPSharedSecret() === ''
+			&& $this->talkConfig->getDialInInfo() === ''
+			&& $this->appConfig->getAppValueInt('feature_hints_hidden') < 34) {
 			return SetupResult::info($this->l->t('No SIP backend configured'));
 		}
 
