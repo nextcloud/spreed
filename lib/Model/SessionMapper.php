@@ -61,6 +61,46 @@ class SessionMapper extends QBMapper {
 	}
 
 	/**
+	 * Delete all sessions that have not been pinged since {@see $lastPingBefore}.
+	 *
+	 * Uses the ts_last_ping index on the last_ping column.
+	 *
+	 * @param int $lastPingBefore Unix timestamp, sessions with an older last_ping are deleted
+	 * @return int Number of deleted entities
+	 */
+	public function deleteByLastPingBefore(int $lastPingBefore): int {
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete($this->getTableName())
+			->where($delete->expr()->lt('last_ping', $delete->createNamedParameter($lastPingBefore, IQueryBuilder::PARAM_INT)));
+
+		return $delete->executeStatement();
+	}
+
+	/**
+	 * Find sessions whose attendee no longer exists in the talk_attendees table.
+	 *
+	 * @param int $limit Maximum number of session ids to return
+	 * @return list<int> Ids of the orphaned sessions
+	 */
+	public function findSessionIdsWithoutAttendee(int $limit): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('s.id')
+			->from($this->getTableName(), 's')
+			->leftJoin('s', 'talk_attendees', 'a', $query->expr()->eq('s.attendee_id', 'a.id'))
+			->where($query->expr()->isNull('a.id'))
+			->setMaxResults($limit);
+
+		$result = $query->executeQuery();
+		$ids = [];
+		while ($row = $result->fetch()) {
+			$ids[] = (int)$row['id'];
+		}
+		$result->closeCursor();
+
+		return $ids;
+	}
+
+	/**
 	 * @param int[] $ids
 	 * @return int Number of deleted entities
 	 */
