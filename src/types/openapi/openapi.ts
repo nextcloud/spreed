@@ -7140,6 +7140,11 @@ export interface operations {
                      * @default []
                      */
                     fileNames?: string[];
+                    /**
+                     * @description Allow recipients to modify shared files
+                     * @default false
+                     */
+                    allowUpdate?: boolean;
                 };
             };
         };
@@ -7257,6 +7262,11 @@ export interface operations {
                      * @default
                      */
                     fileName?: string;
+                    /**
+                     * @description Allow recipients to modify shared files
+                     * @default false
+                     */
+                    allowUpdate?: boolean;
                 };
             };
         };
