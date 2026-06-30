@@ -530,6 +530,7 @@ class Listener implements IEventListener {
 			$thread = null;
 		}
 		$data['chat']['comment'] = $message->toArray('json', $thread);
+		$data['chat']['comment']['lastCommonRead'] = $this->participantService->getLastCommonReadChatMessage($room);
 
 		$parent = $event->getParent();
 		if ($parent !== null) {
@@ -593,6 +594,7 @@ class Listener implements IEventListener {
 		}
 
 		$data['chat']['comment'] = $message->toArray('json', $thread);
+		$data['chat']['comment']['lastCommonRead'] = $this->participantService->getLastCommonReadChatMessage($room);
 
 		if ($messageType === 'call_started') {
 			$metaData = $comment->getMetaData() ?? [];
@@ -701,6 +703,7 @@ class Listener implements IEventListener {
 			'markdown' => false ,
 			'expirationTimestamp' => $message->getExpirationDateTime()?->getTimestamp() ?? 0,
 			'threadId' => $threadId,
+			'lastCommonRead' => $this->participantService->getLastCommonReadChatMessage($room),
 		];
 
 		$data['chat']['comment']['parent'] = $message->toArray('json', $thread);
