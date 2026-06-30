@@ -21,7 +21,7 @@ import mitt from 'mitt'
 export type Events = {
 	[key: EventType]: unknown
 	'audio-player-ended': number
-	'signaling-message-received': { token: string, message: ChatMessage }
+	'signaling-message-received': { token: string, message: ChatMessage, lastCommonReadMessage?: number }
 	'conversations-received': { singleConversation?: Conversation, fromBrowserStorage?: boolean }
 	'session-conflict-confirmation': string
 	'deleted-session-detected': void
