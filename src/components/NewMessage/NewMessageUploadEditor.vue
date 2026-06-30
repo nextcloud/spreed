@@ -65,6 +65,12 @@
 				type="switch">
 				{{ t('spreed', 'Allow editing of uploaded files') }}
 			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch
+				v-if="hasImages"
+				v-model="skipCompression"
+				type="switch">
+				{{ t('spreed', 'Send images without compression') }}
+			</NcCheckboxRadioSwitch>
 
 			<div v-if="!supportMediaCaption" class="upload-editor__actions">
 				<NcButton variant="tertiary" @click="handleDismiss">
@@ -106,6 +112,7 @@ import { useGetToken } from '../../composables/useGetToken.ts'
 import { MESSAGE } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useUploadStore } from '../../stores/upload.ts'
+import { supportImageCompression } from '../../utils/imageCompression.ts'
 
 export default {
 	name: 'NewMessageUploadEditor',
@@ -124,6 +131,7 @@ export default {
 	setup() {
 		const isDraggingOver = ref(false)
 		const allowUpdate = ref(false)
+		const skipCompression = ref(false)
 		const dialogMaskId = `new-message-upload-${useId()}`
 		const dialogHeaderId = `new-message-upload-header-${useId()}`
 		const modalContainerId = '#' + dialogMaskId
@@ -132,6 +140,7 @@ export default {
 			modalContainerId,
 			isDraggingOver,
 			allowUpdate,
+			skipCompression,
 			dialogMaskId,
 			dialogHeaderId,
 			token: useGetToken(),
@@ -147,6 +156,10 @@ export default {
 
 		supportConversationSubfolders() {
 			return getTalkConfig(this.token, 'attachments', 'conversation-subfolders') === true
+		},
+
+		hasImages() {
+			return this.files.some(([, f]) => supportImageCompression(f.file.type))
 		},
 
 		currentUploadId() {
@@ -200,8 +213,9 @@ export default {
 					this.$refs.submitButton.$el.focus()
 				}
 			} else {
-				// Reset user's choice at closing
+				// Reset user's choices at closing
 				this.allowUpdate = false
+				this.skipCompression = false
 			}
 		},
 	},
@@ -220,6 +234,7 @@ export default {
 				caption: null,
 				options: null,
 				allowUpdate: this.supportConversationSubfolders ? this.allowUpdate : undefined,
+				compressImages: this.hasImages ? !this.skipCompression : undefined,
 			})
 		},
 
@@ -237,6 +252,7 @@ export default {
 						parent: temporaryMessage.parent,
 					},
 					allowUpdate: this.supportConversationSubfolders ? this.allowUpdate : undefined,
+					compressImages: this.hasImages ? !this.skipCompression : undefined,
 				})
 			} else {
 				this.uploadStore.discardUpload(this.currentUploadId)
