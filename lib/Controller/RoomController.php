@@ -3533,7 +3533,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			}
 
 			return ['error' => 'response', 'status' => Http::STATUS_BAD_REQUEST];
-		} catch (\Throwable $e) {
+		} catch (\Throwable) {
 			return ['error' => 'response', 'status' => Http::STATUS_BAD_REQUEST];
 		}
 

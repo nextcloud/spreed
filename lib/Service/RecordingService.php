@@ -155,9 +155,9 @@ class RecordingService {
 		try {
 			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
 			$fileNode = $recordingFolder->newFile($fileName, $resource);
-		} catch (NoUserException $e) {
+		} catch (NoUserException) {
 			throw new InvalidArgumentException('owner_invalid');
-		} catch (NotPermittedException $e) {
+		} catch (NotPermittedException) {
 			throw new InvalidArgumentException('owner_permission');
 		}
 
