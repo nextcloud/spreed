@@ -17,6 +17,10 @@ Feature: conversation-1/create-external-service
     Then user "participant1" is participant of the following rooms (v4)
       | id   | name | type | participantType | objectType    | objectId                             |
       | room | room | 3    | 1               | external_call | d4e5f6a7-b8c9-0123-defa-123456789012 |
+    Then user "participant1" sees the following system messages in room "room" with 200 (v1)
+      | room | actorType     | actorId | systemMessage        | message                         | silent | messageParameters |
+      | room | guests        | system  | user_added           | System added you                | !ISSET | {"actor":{"type":"guest","id":"guest\/system","name":"System","mention-id":"guest\/system"},"user":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
+      | room | guests        | system  | conversation_created | System created the conversation | !ISSET | {"actor":{"type":"guest","id":"guest\/system","name":"System","mention-id":"guest\/system"}} |
     And user "participant1" gets external call url for room "room" with 200 (v4)
       | url | https://example.tld/webapp3/m/210987654321-afed-3210-9c8b-7a6f5e4d |
 
