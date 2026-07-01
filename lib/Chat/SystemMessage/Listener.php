@@ -554,8 +554,16 @@ class Listener implements IEventListener {
 				$actorId = $this->session->get('talk-overwrite-actor-id');
 			} else {
 				$actorType = Attendee::ACTOR_GUESTS;
-				$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
-				$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
+
+				// We might reach this point when a new user is provisioned via SAML and added
+				// to already existing groups. Check if the corresponding session value exists
+				// and use the system actor in this case.
+				if ($this->session->get('user_saml.Idp') !== null) {
+					$actorId = Attendee::ACTOR_ID_SYSTEM;
+				} else {
+					$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
+					$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
+				}
 			}
 		}
 
