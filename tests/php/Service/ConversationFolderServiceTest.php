@@ -94,7 +94,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$this->rootFolder->method('getUserFolder')->with($userId)->willReturn($userFolder);
 
 		$this->expectException(NotEnoughSpaceException::class);
-		$this->service->getOrCreateSubfolder($userId, $room);
+		$this->service->getOrCreateSubfolder($userId, $room, false);
 	}
 
 	public function testGetOrCreateSubfolderProceedsWithUnlimitedQuota(): void {
@@ -117,7 +117,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$this->shareManager->method('newShare')->willReturn($this->makeShareMock());
 
 		// No exception expected
-		$result = $this->service->getOrCreateSubfolder($userId, $room);
+		$result = $this->service->getOrCreateSubfolder($userId, $room, false);
 		$this->assertSame($subfolder, $result);
 	}
 
@@ -140,7 +140,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$convFolder->method('get')->willReturn($subfolder);
 		$this->shareManager->method('newShare')->willReturn($this->makeShareMock());
 
-		$result = $this->service->getOrCreateSubfolder($userId, $room);
+		$result = $this->service->getOrCreateSubfolder($userId, $room, false);
 		$this->assertSame($subfolder, $result);
 	}
 
@@ -163,7 +163,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$convFolder->method('get')->willReturn($subfolder);
 		$this->shareManager->method('newShare')->willReturn($this->makeShareMock());
 
-		$result = $this->service->getOrCreateSubfolder($userId, $room);
+		$result = $this->service->getOrCreateSubfolder($userId, $room, false);
 		$this->assertSame($subfolder, $result);
 	}
 
@@ -192,7 +192,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$this->shareManager->method('newShare')->willReturn($this->makeShareMock());
 		$this->shareManager->expects($this->once())->method('createShare');
 
-		$result = $this->service->getOrCreateSubfolder($userId, $room);
+		$result = $this->service->getOrCreateSubfolder($userId, $room, false);
 		$this->assertSame($subfolder, $result);
 	}
 
@@ -220,7 +220,7 @@ class ConversationFolderServiceTest extends TestCase {
 
 		$this->shareManager->method('newShare')->willReturn($this->makeShareMock());
 
-		$result = $this->service->getOrCreateSubfolder($userId, $room);
+		$result = $this->service->getOrCreateSubfolder($userId, $room, false);
 		$this->assertSame($subfolder, $result);
 	}
 
@@ -248,7 +248,7 @@ class ConversationFolderServiceTest extends TestCase {
 
 		$this->shareManager->method('newShare')->willReturn($this->makeShareMock());
 
-		$result = $this->service->getOrCreateSubfolder($userId, $room);
+		$result = $this->service->getOrCreateSubfolder($userId, $room, false);
 		$this->assertSame($subfolder, $result);
 	}
 
@@ -275,7 +275,7 @@ class ConversationFolderServiceTest extends TestCase {
 
 		$this->shareManager->method('newShare')->willReturn($this->makeShareMock());
 
-		$result = $this->service->getOrCreateSubfolder($userId, $room);
+		$result = $this->service->getOrCreateSubfolder($userId, $room, false);
 		$this->assertSame($subfolder, $result);
 	}
 
@@ -298,7 +298,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userFolder->method('get')->with('Talk')->willReturn($fileNode);
 
 		$this->expectException(\RuntimeException::class);
-		$this->service->getOrCreateSubfolder($userId, $room);
+		$this->service->getOrCreateSubfolder($userId, $room, false);
 	}
 
 	public function testGetOrCreateSubfolderThrowsWhenConvFolderIsFile(): void {
@@ -318,7 +318,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$attachmentNode->method('get')->willReturn($fileNode);
 
 		$this->expectException(\RuntimeException::class);
-		$this->service->getOrCreateSubfolder($userId, $room);
+		$this->service->getOrCreateSubfolder($userId, $room, false);
 	}
 
 	public function testGetOrCreateSubfolderThrowsWhenUserSubfolderIsFile(): void {
@@ -340,7 +340,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$convFolder->method('get')->willReturn($fileNode);
 
 		$this->expectException(\RuntimeException::class);
-		$this->service->getOrCreateSubfolder($userId, $room);
+		$this->service->getOrCreateSubfolder($userId, $room, false);
 	}
 
 	// -------------------------------------------------------------------------
@@ -371,7 +371,7 @@ class ConversationFolderServiceTest extends TestCase {
 			->willThrowException(new GenericShareException('Already shared', 'Already shared', 403));
 
 		// No exception expected
-		$result = $this->service->getOrCreateSubfolder($userId, $room);
+		$result = $this->service->getOrCreateSubfolder($userId, $room, false);
 		$this->assertSame($subfolder, $result);
 	}
 
@@ -404,7 +404,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$this->expectException(\RuntimeException::class);
 		$this->expectExceptionMessage('Unexpected DB error');
 
-		$this->service->getOrCreateSubfolder($userId, $room);
+		$this->service->getOrCreateSubfolder($userId, $room, false);
 	}
 
 	public function testGetOrCreateSubfolderRethrowsNonDuplicateGenericShareException(): void {
@@ -433,7 +433,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$this->expectException(GenericShareException::class);
 		$this->expectExceptionMessage('Room not found');
 
-		$this->service->getOrCreateSubfolder($userId, $room);
+		$this->service->getOrCreateSubfolder($userId, $room, false);
 	}
 
 	// -------------------------------------------------------------------------
@@ -469,7 +469,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$newShare->expects($this->once())->method('setPermissions')->with(Constants::PERMISSION_READ)->willReturnSelf();
 		$newShare->expects($this->once())->method('setMailSend')->with(false)->willReturnSelf();
 
-		$this->service->getOrCreateSubfolder($userId, $room);
+		$this->service->getOrCreateSubfolder($userId, $room, false);
 	}
 
 	// -------------------------------------------------------------------------

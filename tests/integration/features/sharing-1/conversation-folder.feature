@@ -31,6 +31,32 @@ Feature: sharing-1/conversation-folder
       | item_type         | folder                   |
       | permissions       | 1                        |
       | path              | REGEXP /^\/Talk\/.+\/participant1-dis-participant1$/ |
+    When user "participant1" uploads updatable file "writable.txt" with content "Update!" to conversation folder for room "group room" with name "Group room"
+    And user "participant1" posts updatable file "writable.txt" from conversation folder of room "group room" with name "Group room" with 200 (v1)
+    And user "participant1" gets all shares
+    And share 0 is returned with
+      | uid_owner         | participant1             |
+      | displayname_owner | participant1-displayname |
+      | item_type         | folder                   |
+      | permissions       | 1                        |
+      | file_target       | REGEXP /^\/\{TALK_PLACEHOLDER\}\/.+\/participant1-dis-participant1$/ |
+    And share 1 is returned with
+      | uid_owner         | participant1             |
+      | displayname_owner | participant1-displayname |
+      | item_type         | folder                   |
+      | permissions       | 3                        |
+      | file_target       | REGEXP /^\/\{TALK_PLACEHOLDER\}\/.+\/participant1-dis-participant1 \(u\)$/ |
+    And user "participant2" gets all received shares
+    And share 0 is returned with
+      | uid_owner         | participant1             |
+      | item_type         | folder                   |
+      | permissions       | 1                        |
+      | path              | REGEXP /^\/Talk\/.+\/participant1-dis-participant1$/ |
+    And share 1 is returned with
+      | uid_owner         | participant1             |
+      | item_type         | folder                   |
+      | permissions       | 3                        |
+      | path              | REGEXP /^\/Talk\/.+\/participant1-dis-participant1 \(u\)$/ |
 
   Scenario: Upload file to conversation folder and post as attachment to public room
     Given user "participant1" creates room "public room" (v4)
