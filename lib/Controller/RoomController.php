@@ -643,7 +643,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param ?non-empty-string $avatarColor Background color of the avatar (Only considered when an emoji was provided) (only available with `conversation-creation-all` capability)
 	 * @param array<string, list<string>> $participants List of participants to add grouped by type (only available with `conversation-creation-all` capability)
 	 * @psalm-param TalkInvitationList $participants
-	 * @param string $owner User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated via the `x-nextcloud-talk-external-service` header, otherwise ignored.
+	 * @param string $owner User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers, otherwise ignored.
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_ACCEPTED, TalkRoomWithInvalidInvitations, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'avatar'|'description'|'invite'|'listable'|'lobby'|'lobby-timer'|'mention-permissions'|'message-expiration'|'name'|'object'|'object-id'|'object-type'|'owner'|'password'|'permissions'|'read-only'|'recording-consent'|'sip-enabled'|'type', message?: string}, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED, array{error: 'auth'}, array{}>
 	 *
 	 * 200: Room already existed
