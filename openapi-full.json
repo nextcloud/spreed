@@ -12244,6 +12244,11 @@
                                         "items": {
                                             "type": "string"
                                         }
+                                    },
+                                    "allowUpdate": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Allow recipients to modify shared files"
                                     }
                                 }
                             }
@@ -12521,6 +12526,11 @@
                                         "type": "string",
                                         "default": "",
                                         "description": "Desired final file name; the service resolves conflicts by appending \" (1)\", \" (2)\", … if already taken"
+                                    },
+                                    "allowUpdate": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Allow recipients to modify shared files"
                                     }
                                 }
                             }
