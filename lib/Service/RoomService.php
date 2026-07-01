@@ -62,6 +62,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\HintException;
 use OCP\IDBConnection;
 use OCP\IL10N;
+use OCP\ISession;
 use OCP\IUser;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\Events\ValidatePasswordPolicyEvent;
@@ -89,6 +90,7 @@ class RoomService {
 		protected LoggerInterface $logger,
 		protected IL10N $l10n,
 		protected IManager $calendarManager,
+		private readonly ISession $session,
 	) {
 	}
 
@@ -212,6 +214,11 @@ class RoomService {
 		if (($objectType !== '' && $objectId === '')
 			|| ($objectType === '' && $objectId !== '')) {
 			throw new CreationException(CreationException::REASON_OBJECT);
+		}
+
+		if ($objectType === Room::OBJECT_TYPE_EXTERNAL_CALL) {
+			$this->session->set('talk-overwrite-actor-type', Attendee::ACTOR_GUESTS);
+			$this->session->set('talk-overwrite-actor-id', Attendee::ACTOR_ID_SYSTEM);
 		}
 
 		if ($type === Room::TYPE_PUBLIC && $password === '' && $this->config->isPasswordEnforced()) {
