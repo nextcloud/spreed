@@ -1145,15 +1145,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	#[Then('/^external call service creates room "([^"]*)" with secret "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function externalCallServiceCreatesRoom(string $identifier, string $secret, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
-		$this->externalCallServiceCreatesRoomInternal($identifier, $secret, false, $statusCode, $apiVersion, $formData);
-	}
-
-	#[Then('/^external call service creates room "([^"]*)" with legacy secret "([^"]*)" with (\d+) \((v4)\)$/')]
-	public function externalCallServiceCreatesRoomWithLegacySecret(string $identifier, string $secret, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
-		$this->externalCallServiceCreatesRoomInternal($identifier, $secret, true, $statusCode, $apiVersion, $formData);
-	}
-
-	private function externalCallServiceCreatesRoomInternal(string $identifier, string $secret, bool $legacy, int $statusCode, string $apiVersion, ?TableNode $formData = null): void {
 		$body = $formData ? $formData->getRowsHash() : [];
 		if (isset($body['roomName']) && $body['roomName'] === 'IDENTIFIER') {
 			$body['roomName'] = $identifier;
@@ -1164,18 +1155,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$headers = [];
 		if ($secret !== '') {
-			if ($legacy) {
-				$headers = [
-					'x-nextcloud-talk-external-service' => $secret,
-				];
-			} else {
-				$random = bin2hex(random_bytes(32));
-				$checksum = hash_hmac('sha256', $random . ($body['owner'] ?? ''), $secret);
-				$headers = [
-					'x-nextcloud-talk-external-service-random' => $random,
-					'x-nextcloud-talk-external-service-checksum' => $checksum,
-				];
-			}
+			$random = bin2hex(random_bytes(32));
+			$checksum = hash_hmac('sha256', $random . ($body['owner'] ?? ''), $secret);
+			$headers = [
+				'x-nextcloud-talk-external-service-random' => $random,
+				'x-nextcloud-talk-external-service-checksum' => $checksum,
+			];
 		}
 
 		$this->setCurrentUser(null);

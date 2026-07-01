@@ -557,34 +557,22 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * Check if the current request is coming from the configured external call
-	 * service.
-	 *
-	 * The `x-nextcloud-talk-external-service` variant is deprecated and going
-	 * to be removed with the next update
+	 * Check if the current request is coming from the configured external call service
 	 *
 	 * @param string $owner User ID the external call service wants to act as
 	 * @return bool True if the request is from the external call service and valid
 	 */
-	private function validateExternalCallServiceRequest(string $owner, string $legacySecret = ''): bool {
-		if (!$this->talkConfig->isExternalCallServiceConfigured()) {
+	private function validateExternalCallServiceRequest(string $owner, string $random, string $checksum): bool {
+		if ($owner === '' || !$this->talkConfig->isExternalCallServiceConfigured()) {
 			return false;
 		}
 
 		$secret = $this->talkConfig->getExternalCallServiceSharedSecret();
-
-		$random = $this->request->getHeader('x-nextcloud-talk-external-service-random');
-		$checksum = $this->request->getHeader('x-nextcloud-talk-external-service-checksum');
-		if ($random !== '' || $checksum !== '') {
-			try {
-				return $this->checksumVerificationService->validateRequest($random, $checksum, $secret, $owner);
-			} catch (UnauthorizedException) {
-				return false;
-			}
+		try {
+			return $this->checksumVerificationService->validateRequest($random, $checksum, $secret, $owner);
+		} catch (UnauthorizedException) {
+			return false;
 		}
-
-		// Deprecated: raw shared secret comparison, kept for a transition phase.
-		return $legacySecret !== '' && hash_equals($secret, $legacySecret);
 	}
 
 	/**
@@ -705,14 +693,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 	): DataResponse {
 		$externalServiceRandom = $this->request->getHeader('x-nextcloud-talk-external-service-random');
 		$externalServiceChecksum = $this->request->getHeader('x-nextcloud-talk-external-service-checksum');
-		// FIXME Remove in next update
-		$externalServiceLegacySecret = $this->request->getHeader('x-nextcloud-talk-external-service');
-		if ($externalServiceRandom !== '' || $externalServiceChecksum !== '' || $externalServiceLegacySecret !== '') {
+		if ($externalServiceRandom !== '' || $externalServiceChecksum !== '') {
 			if ($owner === '') {
 				return new DataResponse(['error' => 'owner'], Http::STATUS_BAD_REQUEST);
 			}
 
-			if (!$this->validateExternalCallServiceRequest($owner, $externalServiceLegacySecret)) {
+			if (!$this->validateExternalCallServiceRequest($owner, $externalServiceRandom, $externalServiceChecksum)) {
 				$response = new DataResponse(['error' => 'auth'], Http::STATUS_UNAUTHORIZED);
 				$response->throttle(['action' => 'talkExternalCallServiceSecret']);
 				return $response;
