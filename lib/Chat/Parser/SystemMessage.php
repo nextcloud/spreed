@@ -347,7 +347,16 @@ class SystemMessage implements IEventListener {
 		} elseif ($message === 'user_added') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			$parsedMessage = $this->l->t('{actor} added {user}');
-			if ($parsedParameters['user']['id'] === $parsedParameters['actor']['id']) {
+			$systemIsActor = $parsedParameters['actor']['type'] === 'guest'
+				&& 'guest/' . Attendee::ACTOR_ID_SYSTEM === $parsedParameters['actor']['id'];
+
+			if ($systemIsActor) {
+				if ($this->isCurrentParticipantChangedUser($currentActorType, $currentActorId, $parsedParameters['user'])) {
+					$parsedMessage = $this->l->t('System added you');
+				} else {
+					$parsedMessage = $this->l->t('System added {user}');
+				}
+			} elseif ($parsedParameters['user']['id'] === $parsedParameters['actor']['id']) {
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You joined the conversation');
 				} else {
