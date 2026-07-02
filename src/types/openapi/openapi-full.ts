@@ -16303,7 +16303,7 @@ export interface operations {
                     /** @description User that will own the recording file. `null` is actually not allowed and will always result in a "400 Bad Request". It's only allowed code-wise to handle requests where the post data exceeded the limits, so we can return a proper error instead of "500 Internal Server Error". */
                     owner?: string | null;
                     /**
-                     * @description File name of the recording uploaded through a previously requested upload share. When provided, no multipart `file` is expected.
+                     * @description The sanitized file name returned by the request-upload request. When provided, no multipart `file` is expected.
                      * @default null
                      */
                     fileName?: string | null;
