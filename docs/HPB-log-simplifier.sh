@@ -19,39 +19,94 @@
 # is converted to:
 # May 26 13:31:36 server nextcloud-spreed-signaling[726]: clientsession.go:425: Session User151 joined room token123 with room session id Session120
 #
-# Afterwards the script also creates a file per user and session
+# Afterwards the script also creates a file per user and session, plus a
+# mapping.log dictionary file (replacement<TAB>original token) so the
+# anonymized IDs can be traced back if needed.
+#
+# The whole log is only ever read once (this file) and written once
+# (via a single-pass awk program), regardless of the number of user
+# and room sessions found, so it scales to large HPB logs.
 #
 
-LOG_CONTENT="`cat $1`"
-USER_SESSIONS=$(echo "$LOG_CONTENT" | egrep -o '[-a-zA-Z0-9_]{294,}==' | sort | uniq)
-NUM_USER_SESSIONS=$(echo "$USER_SESSIONS" | wc -l)
+trap 'exit 130' INT
+
+LOG_FILE="$1"
+PARENT_DIR="$(cd "$(dirname "$LOG_FILE")" && pwd)"
+OUTPUT_DIR="$PARENT_DIR/$(basename "$LOG_FILE")-simplified"
+# Start from a clean output directory. The per-entity files are written in
+# append mode during the single pass, so a leftover directory from a previous
+# run would otherwise double their contents and keep orphan files for tokens
+# that no longer appear in the current log.
+rm -rf "$OUTPUT_DIR"
+mkdir -p "$OUTPUT_DIR"
+
+echo "Scanning for user sessions..."
+mapfile -t USER_SESSIONS < <(egrep -o '[-a-zA-Z0-9_]{294,}==' "$LOG_FILE" | sort -u)
+NUM_USER_SESSIONS=${#USER_SESSIONS[@]}
 echo "User sessions found: $NUM_USER_SESSIONS"
 
-for i in $(seq 1 $NUM_USER_SESSIONS);
-do
-  SESSION_NAME=$(echo "$USER_SESSIONS" | head -n $i | tail -n 1)
-  LOG_CONTENT=$(echo "${LOG_CONTENT//$SESSION_NAME/user$i}")
-done
-
-ROOM_SESSIONS=$(echo "$LOG_CONTENT" | egrep -o '[-a-zA-Z0-9_+\/]{255}( |$)' | sort | uniq)
-NUM_ROOM_SESSIONS=$(echo "$ROOM_SESSIONS" | wc -l)
+echo "Scanning for room sessions..."
+mapfile -t ROOM_SESSIONS < <(egrep -o '[-a-zA-Z0-9_+\/]{255}( |$)' "$LOG_FILE" | sort -u)
+NUM_ROOM_SESSIONS=${#ROOM_SESSIONS[@]}
 echo "Room sessions found: $NUM_ROOM_SESSIONS"
 
-for i in $(seq 1 $NUM_ROOM_SESSIONS);
-do
-  SESSION_NAME=$(echo "$ROOM_SESSIONS" | head -n $i | tail -n 1)
-  LOG_CONTENT=$(echo "${LOG_CONTENT//$SESSION_NAME/session$i}")
+# Build a token -> replacement map file for awk, instead of doing a
+# bash string replacement (and full-content copy) per session.
+MAP_FILE="$(mktemp)"
+trap 'rm -f "$MAP_FILE"; exit 130' INT
+for i in "${!USER_SESSIONS[@]}"; do
+  printf '%s\tuser%d\n' "${USER_SESSIONS[$i]}" "$((i + 1))" >> "$MAP_FILE"
+done
+for i in "${!ROOM_SESSIONS[@]}"; do
+  printf '%s\tsession%d\n' "${ROOM_SESSIONS[$i]}" "$((i + 1))" >> "$MAP_FILE"
 done
 
-echo "$LOG_CONTENT" > simple.log
+echo "Rewriting log and splitting per user/session (single pass)..."
+awk -v mapfile="$MAP_FILE" -v outdir="$OUTPUT_DIR" '
+function escape_regex(s,    result, i, c, special) {
+  special = "\\^$.[]|()*+?{}"
+  result = ""
+  for (i = 1; i <= length(s); i++) {
+    c = substr(s, i, 1)
+    if (index(special, c) > 0) {
+      result = result "\\" c
+    } else {
+      result = result c
+    }
+  }
+  return result
+}
+BEGIN {
+  n = 0
+  while ((getline line < mapfile) > 0) {
+    split(line, parts, "\t")
+    map_tokens[n] = parts[1]
+    map_escaped[n] = escape_regex(parts[1])
+    map_repl[n] = parts[2]
+    n++
+  }
+  close(mapfile)
+  simple_log = outdir "/simple.log"
+}
+{
+  line = $0
+  for (i = 0; i < n; i++) {
+    if (index(line, map_tokens[i]) > 0) {
+      gsub(map_escaped[i], map_repl[i], line)
+    }
+  }
+  print line > simple_log
+  for (i = 0; i < n; i++) {
+    if (index(line, map_repl[i]) > 0) {
+      print line >> (outdir "/" map_repl[i] ".log")
+    }
+  }
+}
+' "$LOG_FILE"
 
-for i in $(seq 1 $NUM_USER_SESSIONS);
-do
-  echo "$LOG_CONTENT" | egrep "user$i( |$)" > user$i.log
-done
+awk -F'\t' '{ print $2 "\t" $1 }' "$WORK_DIR/full.map" | sort -V > "$OUTPUT_DIR/mapping.log"
 
-for i in $(seq 1 $NUM_ROOM_SESSIONS);
-do
-  echo "$LOG_CONTENT" | egrep "session$i( |$)" > session$i.log
-done
+rm -f "$MAP_FILE"
 
+echo "Logs written to: $OUTPUT_DIR"
+echo "Token mapping written to: $OUTPUT_DIR/mapping.log"
