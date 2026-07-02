@@ -21,6 +21,7 @@ use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Share\IManager;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\TaskTypes\TextToTextSummary;
 use OCP\TaskProcessing\TaskTypes\TextToTextTranslate;
@@ -129,7 +130,6 @@ class Capabilities implements IPublicCapability {
 		'pinned-messages',
 		'federated-shared-items',
 		'scheduled-messages',
-		'recording-chunked-upload',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -137,6 +137,7 @@ class Capabilities implements IPublicCapability {
 		'reactions',
 		'chat-summary-api',
 		'call-end-to-end-encryption',
+		'recording-chunked-upload',
 	];
 
 	public const LOCAL_FEATURES = [
@@ -228,6 +229,7 @@ class Capabilities implements IPublicCapability {
 		protected ITranslationManager $translationManager,
 		protected ITaskProcessingManager $taskProcessingManager,
 		protected LiveTranscriptionService $liveTranscriptionService,
+		protected IManager $shareManager,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->talkCache = $cacheFactory->createLocal('talk::');
@@ -403,6 +405,11 @@ class Capabilities implements IPublicCapability {
 		$callService = $this->talkConfig->getExternalCallService();
 		if ($callService !== null) {
 			$capabilities['config']['call']['external-call-service'] = $callService;
+		}
+
+		if ($this->shareManager->shareApiAllowLinks()
+			&& $this->shareManager->shareApiLinkAllowPublicUpload()) {
+			$capabilities['features'][] = 'recording-chunked-upload';
 		}
 
 		return [
