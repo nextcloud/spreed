@@ -220,7 +220,8 @@ done > "$WORK_DIR/ip.map"
 cat "$WORK_DIR/user.map" "$WORK_DIR/room.map" "$WORK_DIR/roomtoken.map" "$WORK_DIR/ip.map" > "$WORK_DIR/full.map"
 
 echo "Rewriting log and splitting per user/session (single pass)..."
-awk -v mapfile="$WORK_DIR/full.map" -v outdir="$OUTPUT_DIR" '
+TOTAL_LINES=$(wc -l < "$LOG_FILE")
+awk -v mapfile="$WORK_DIR/full.map" -v outdir="$OUTPUT_DIR" -v total_lines="$TOTAL_LINES" '
 function escape_regex(s,    result, i, c, special) {
   special = "\\^$.[]|()*+?{}"
   result = ""
@@ -295,6 +296,15 @@ BEGIN {
     if (matched) {
       print line >> (outdir "/" t ".log")
     }
+  }
+  if (total_lines > 0 && (NR % 500 == 0 || NR == total_lines)) {
+    printf("\rProcessing: %d/%d lines (%.1f%%)", NR, total_lines, (NR / total_lines) * 100) > "/dev/stderr"
+    fflush("/dev/stderr")
+  }
+}
+END {
+  if (total_lines > 0) {
+    printf("\n") > "/dev/stderr"
   }
 }
 ' "$LOG_FILE"
