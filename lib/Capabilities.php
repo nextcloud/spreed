@@ -42,6 +42,7 @@ class Capabilities implements IPublicCapability {
 		'multi-room-users',
 		'favorites',
 		'last-room-activity',
+		'last-metadata-activity',
 		'no-ping',
 		'system-messages',
 		'delete-messages',

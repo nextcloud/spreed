@@ -466,12 +466,12 @@ class RoomService {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('recording_consent', $update->createNamedParameter($recordingConsent, IQueryBuilder::PARAM_INT))
-			->set('last_activity', $update->createNamedParameter($now, IQueryBuilder::PARAM_DATETIME_MUTABLE))
+			->set('last_metadata_activity', $update->createNamedParameter($now, IQueryBuilder::PARAM_DATETIME_MUTABLE))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 
 		$room->setRecordingConsent($recordingConsent);
-		$room->setLastActivity($now);
+		$room->setLastMetaDataActivity($now);
 
 		$event = new RoomModifiedEvent($room, ARoomModifiedEvent::PROPERTY_RECORDING_CONSENT, $recordingConsent, $oldRecordingConsent);
 		$this->dispatcher->dispatchTyped($event);
@@ -1288,11 +1288,13 @@ class RoomService {
 		$update->update('talk_rooms')
 			->set('last_message', $update->createNamedParameter((int)$message->getId()))
 			->set('last_activity', $update->createNamedParameter($message->getCreationDateTime(), 'datetime'))
+			->set('last_metadata_activity', $update->createNamedParameter($message->getCreationDateTime(), 'datetime'))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 
 		$room->setLastMessage($message);
 		$room->setLastActivity($message->getCreationDateTime());
+		$room->setLastMetadataActivity($message->getCreationDateTime());
 	}
 
 	public function setLastMessageInfo(Room $room, int $messageId, \DateTime $dateTime): void {
@@ -1300,11 +1302,13 @@ class RoomService {
 		$update->update('talk_rooms')
 			->set('last_message', $update->createNamedParameter($messageId))
 			->set('last_activity', $update->createNamedParameter($dateTime, 'datetime'))
+			->set('last_metadata_activity', $update->createNamedParameter($dateTime, 'datetime'))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 
 		$room->setLastMessageId($messageId);
 		$room->setLastActivity($dateTime);
+		$room->setLastMetadataActivity($dateTime);
 	}
 
 	/**
@@ -1336,6 +1340,16 @@ class RoomService {
 		$update->executeStatement();
 
 		$room->setLastActivity($now);
+	}
+
+	public function setLastMetadataActivity(Room $room, \DateTime $now): void {
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('last_metadata_activity', $update->createNamedParameter($now, 'datetime'))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setLastMetadataActivity($now);
 	}
 
 	/**
@@ -1404,6 +1418,11 @@ class RoomService {
 			$lastActivity = $this->timeFactory->getDateTime('@' . $host['lastActivity']);
 			$this->setLastActivity($local, $lastActivity);
 			$changed[] = ARoomSyncedEvent::PROPERTY_LAST_ACTIVITY;
+		}
+		if (isset($host['lastMetadataActivity']) && $host['lastMetadataActivity'] !== 0 && $host['lastMetadataActivity'] !== ((int)$local->getLastMetadataActivity()?->getTimestamp())) {
+			$lastMetadataActivity = $this->timeFactory->getDateTime('@' . $host['lastMetadataActivity']);
+			$this->setLastMetadataActivity($local, $lastMetadataActivity);
+			$changed[] = ARoomSyncEvent::PROPERTY_LAST_METADATA_ACTIVITY;
 		}
 		if (isset($host['lobbyState'], $host['lobbyTimer']) && ($host['lobbyState'] !== $local->getLobbyState() || $host['lobbyTimer'] !== ((int)$local->getLobbyTimer()?->getTimestamp()))) {
 			$hostTimer = $host['lobbyTimer'] === 0 ? null : $this->timeFactory->getDateTime('@' . $host['lobbyTimer']);

@@ -118,6 +118,7 @@ class RoomFormatter {
 			'callRecording' => Room::RECORDING_NONE,
 			'canStartCall' => false,
 			'lastActivity' => 0,
+			'lastMetadataActivity' => 0,
 			'lastReadMessage' => 0,
 			'unreadMessages' => 0,
 			'unreadMention' => false,
@@ -173,6 +174,12 @@ class RoomFormatter {
 		} else {
 			$lastActivity = 0;
 		}
+		$lastMetadataActivity = $room->getLastMetadataActivity();
+		if ($lastMetadataActivity instanceof \DateTimeInterface) {
+			$lastMetadataActivity = $lastMetadataActivity->getTimestamp();
+		} else {
+			$lastMetadataActivity = 0;
+		}
 
 		$this->roomService->validateLobbyTimer($room);
 
@@ -196,6 +203,7 @@ class RoomFormatter {
 				'readOnly' => $room->getReadOnly(),
 				'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 				'lastActivity' => $lastActivity,
+				'lastMetadataActivity' => $lastMetadataActivity,
 				'callFlag' => $room->getCallFlag(),
 				'lobbyState' => $room->getLobbyState(),
 				'lobbyTimer' => $lobbyTimer,
@@ -228,6 +236,7 @@ class RoomFormatter {
 			'callRecording' => $room->getCallRecording(),
 			'recordingConsent' => $this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_OPTIONAL ? $room->getRecordingConsent() : $this->talkConfig->recordingConsentRequired(),
 			'lastActivity' => $lastActivity,
+			'lastMetadataActivity' => $lastMetadataActivity,
 			'callFlag' => $room->getCallFlag(),
 			'isFavorite' => $attendee->isFavorite(),
 			'notificationLevel' => $attendee->getNotificationLevel(),
