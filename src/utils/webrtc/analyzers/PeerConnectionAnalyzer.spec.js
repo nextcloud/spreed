@@ -3793,7 +3793,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(consoleDebugMock).toHaveBeenNthCalledWith(6, '%s: Round trip time: %s', tag, '[0.2, 0.3, 0.4]')
 			expect(consoleDebugMock).toHaveBeenNthCalledWith(7, '%s: Timestamps: %s', tag, '[0, 1250, 1000]')
 			expect(logRtcStatsMock).toHaveBeenCalledTimes(1)
-			expect(logRtcStatsMock).toHaveBeenCalledWith(tag, kind)
+			expect(logRtcStatsMock).toHaveBeenCalledWith(tag, kind, 0, 0)
 		})
 
 		test.each([
@@ -3821,7 +3821,7 @@ describe('PeerConnectionAnalyzer', () => {
 			expect(consoleDebugMock).toHaveBeenNthCalledWith(6, '%s: Round trip time: %s', tag, '[0.2, 0.3, 0.4]')
 			expect(consoleDebugMock).toHaveBeenNthCalledWith(7, '%s: Timestamps: %s', tag, '[0, 1250, 1000]')
 			expect(logRtcStatsMock).toHaveBeenCalledTimes(1)
-			expect(logRtcStatsMock).toHaveBeenCalledWith(tag, kind)
+			expect(logRtcStatsMock).toHaveBeenCalledWith(tag, kind, 0, 0)
 		})
 
 		describe('log RTC stats', () => {
