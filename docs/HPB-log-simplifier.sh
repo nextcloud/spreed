@@ -65,14 +65,16 @@ WORK_DIR="$(mktemp -d)"
 trap 'rm -rf "$WORK_DIR"; exit 130' INT
 
 # Emits token<TAB>label<TAB>file_target lines. label is what the token gets
-# replaced with in the logs; file_target picks the *.log the line goes into
-# (label and file_target are the same, except for aliased private tokens).
+# replaced with in the logs; file_target (a path relative to $OUTPUT_DIR,
+# without the .log extension) picks which file the line goes into. label and
+# file_target's basename are the same, except for aliased private tokens.
 write_map() {
-  local prefix="$1"
-  shift
+  local dir="$1"
+  local prefix="$2"
+  shift 2
   local i=1
   for token in "$@"; do
-    printf '%s\t%s%d\t%s%d\n' "$token" "$prefix" "$i" "$prefix" "$i"
+    printf '%s\t%s%d\t%s/%s%d\n' "$token" "$prefix" "$i" "$dir" "$prefix" "$i"
     i=$((i + 1))
   done
 }
@@ -189,20 +191,26 @@ echo "Room sessions found: ${#ROOM_SESSIONS[@]}"
 echo "Room/call tokens found: ${#ROOM_TOKENS[@]}"
 echo "Client IP addresses found: ${#IP_ADDRESSES[@]}"
 
-write_map "session" "${ROOM_SESSIONS[@]}" > "$WORK_DIR/room.map"
+# Each category's per-entity files live in their own nested subfolder.
+(( NUM_DISTINCT_USERS > 0 )) && mkdir -p "$OUTPUT_DIR/user"
+(( ${#ROOM_SESSIONS[@]} > 0 )) && mkdir -p "$OUTPUT_DIR/session"
+(( ${#ROOM_TOKENS[@]} > 0 )) && mkdir -p "$OUTPUT_DIR/room"
+(( ${#IP_ADDRESSES[@]} > 0 )) && mkdir -p "$OUTPUT_DIR/ip"
+
+write_map "session" "session" "${ROOM_SESSIONS[@]}" > "$WORK_DIR/room.map"
 for TOKEN in "${!USER_NUM[@]}"; do
   N="${USER_NUM[$TOKEN]}"
   if [[ -n "${USER_IS_PRIVATE[$TOKEN]+x}" ]]; then
-    printf '%s\tprivate_session%d\tuser%d\n' "$TOKEN" "$N" "$N"
+    printf '%s\tprivate_session%d\tuser/user%d\n' "$TOKEN" "$N" "$N"
   else
-    printf '%s\tuser%d\tuser%d\n' "$TOKEN" "$N" "$N"
+    printf '%s\tuser%d\tuser/user%d\n' "$TOKEN" "$N" "$N"
   fi
 done > "$WORK_DIR/user.map"
 # Room/call tokens are not anonymized (label == token), but lines mentioning
 # the same room token - regardless of which (possibly different) sessionN
-# they carry - are still collected into a single room_<token>.log.
+# they carry - are still collected into a single file under room/.
 for TOKEN in "${ROOM_TOKENS[@]}"; do
-  printf '%s\t%s\troom_%s\n' "$TOKEN" "$TOKEN" "$TOKEN"
+  printf '%s\t%s\troom/%s\n' "$TOKEN" "$TOKEN" "$TOKEN"
 done > "$WORK_DIR/roomtoken.map"
 # IP addresses are handled like room/call tokens: not anonymized (label == IP),
 # but lines mentioning the same IP are collected into a single file under ip/.
@@ -296,7 +304,7 @@ awk -F'\t' '$1 != $2 { print $2 "\t" $1 }' "$WORK_DIR/full.map" | sort -V > "$OU
 # Record, for each room/call token, which (possibly several) sessionN ids
 # were seen together with it.
 for TOKEN in "${ROOM_TOKENS[@]}"; do
-  ROOM_LOG="$OUTPUT_DIR/room_${TOKEN}.log"
+  ROOM_LOG="$OUTPUT_DIR/room/${TOKEN}.log"
   if [[ -f "$ROOM_LOG" ]]; then
     SESSIONS=$(egrep -o '(^|[^a-zA-Z0-9_])session[0-9]+([^a-zA-Z0-9_]|$)' "$ROOM_LOG" | egrep -o 'session[0-9]+' | sort -Vu | paste -sd, -)
   else
