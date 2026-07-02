@@ -219,15 +219,23 @@ class RecordingServiceTest extends TestCase {
 		$this->timeFactory->method('getDateTime')->willReturnCallback(fn () => new \DateTime());
 	}
 
-	public function testRequestUpload(): void {
+	public static function dataRequestUpload(): array {
+		return [
+			['token123', sha1('recording.mp4')],
+			[str_repeat('a', 30), substr(sha1('recording.mp4'), 0, 23)],
+		];
+	}
+
+	#[DataProvider('dataRequestUpload')]
+	public function testRequestUpload(string $roomToken, string $fileNameHash): void {
 		$owner = 'user1';
-		$room = $this->createRoom();
+		$room = $this->createRoom($roomToken);
 		$participant = $this->createParticipant($room, $owner);
 		$this->participantService->method('getParticipant')
 			->with($room, $owner)
 			->willReturn($participant);
 
-		$recordingFolder = $this->mockRecordingFolder($owner, 'token123');
+		$recordingFolder = $this->mockRecordingFolder($owner, $roomToken);
 
 		$this->shareManager->method('shareApiAllowLinks')->willReturn(true);
 		$this->shareManager->method('shareApiLinkAllowPublicUpload')->willReturn(true);
@@ -246,13 +254,13 @@ class RecordingServiceTest extends TestCase {
 
 		$this->appConfig->expects($this->once())
 			->method('setAppValueString')
-			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . 'token123/' . sha1('recording.mp4'), 'shareToken', true, true);
+			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . $roomToken . '/' . $fileNameHash, 'shareToken', true, true);
 
 		// The active-recording marker is cleared once the upload share is created,
 		// so a new recording can start while this one is still being uploaded.
 		$this->appConfig->expects($this->once())
 			->method('deleteAppValue')
-			->with(RecordingService::APPCONFIG_PREFIX . 'token123');
+			->with(RecordingService::APPCONFIG_PREFIX . $roomToken);
 
 		$result = $this->recordingService->requestUpload($room, $owner, 'recording.mp4');
 
