@@ -864,12 +864,15 @@ const actions = {
 			commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
 			const callViewStore = useCallViewStore()
 			callViewStore.handleJoinCall(getters.conversation(token))
+			// Remember the joined call so it survives navigation to other
+			// conversations and can be shown in the MinimizedCallBar.
+			callViewStore.setActiveCallToken(token)
 		} catch (e) {
 			console.error('Error while joining call: ', e)
 		}
 	},
 
-	async leaveCall({ commit, getters }, { token, participantIdentifier, all = false }) {
+	async leaveCall({ commit, dispatch, getters }, { token, participantIdentifier, all = false }) {
 		if (!participantIdentifier?.sessionId) {
 			console.error('Trying to leave call without sessionId')
 		}
@@ -904,6 +907,34 @@ const actions = {
 			sessionId: participantIdentifier.sessionId,
 			flags: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 		})
+
+		// Forget the active call so the MinimizedCallBar is dismissed.
+		if (callViewStore.activeCallToken === token) {
+			callViewStore.clearActiveCallToken()
+		}
+
+		// Always drop the forced call view on leave. It is only set by the
+		// automatic call-switch flow and its single reset lives in an
+		// async, success-only callback; without this, a stuck forceCallView
+		// would keep useIsInCall returning true and the call view mounted
+		// after leaving (the "leave does nothing" symptom).
+		callViewStore.setForceCallView(false)
+
+		// When leaving a call that is not the conversation currently open (i.e.
+		// leaving from the minimized call bar while browsing another one), the
+		// left conversation's chat is no longer polled, so its "call_ended"
+		// system message never arrives to clear the "Call in progress"
+		// indicator. Refresh it from the server.
+		//
+		// NB: re-establishing the actor session for the currently open
+		// (chat-only) conversation is intentionally NOT done here. It is
+		// handled by the leave caller (MinimizedCallBar when hanging up while
+		// browsing, or confirmLeaveMinimizedCall when starting a call here),
+		// so the join happens exactly once and is awaited before any follow-up
+		// joinCall — doing it here as well races and drops the new call.
+		if (tokenStore.token && tokenStore.token !== token) {
+			dispatch('fetchConversation', { token })
+		}
 	},
 
 	/**
@@ -952,8 +983,42 @@ const actions = {
 	 * @param {object} context - unused.
 	 * @param {object} data - the wrapping object.
 	 * @param {string} data.token - conversation token.
+	 * @param data.chatOnly
 	 */
-	async joinConversation(context, { token }) {
+	async joinConversation(context, { token, chatOnly = false }) {
+		// Invariant: while a call is active in another conversation, NEVER create
+		// a second active session. Talk has a single active session per user, so
+		// a real join (POST participants/active + signaling.joinRoom) would move
+		// the signaling room off the call and the server would drop it after a
+		// few seconds (start->auto-leave loop). Force chat-only here so every
+		// caller (navigation, useActiveSession 404 handler, forceJoinConversation
+		// churn) is safe regardless of how it dispatched. A real join is only
+		// allowed again after leaveCall has cleared the active call token.
+		const callViewStore = useCallViewStore()
+		if (callViewStore.activeCallToken
+			&& callViewStore.activeCallToken !== token
+			&& context.getters.isInCall(callViewStore.activeCallToken)) {
+			chatOnly = true
+		}
+
+		// Chat-only mode: opened while a call is kept alive in another
+		// conversation. Do NOT create a second active session (which would
+		// conflict with the call's session and trigger a "duplicate session"
+		// error). The chat works over REST + polling, which only needs the
+		// conversation and its participants in the store, not an active session.
+		if (chatOnly) {
+			await context.dispatch('fetchConversation', { token })
+			await context.dispatch('fetchParticipants', { token })
+			// NB: we deliberately do NOT mark this conversation as "joined"
+			// (updateLastJoinedConversationToken) — that would falsely imply a
+			// signaling-room join and mislead consumers of currentConversationIsJoined
+			// (typing, WebRTC, presence). Chat input and the call button are
+			// instead enabled via the dedicated "chat available" / minimized-call
+			// state (see currentConversationChatAvailable in NewMessage/CallButton,
+			// derived from useCallMinimized). The chat works over REST + polling.
+			return
+		}
+
 		const forceJoin = SessionStorage.getItem('joined_conversation') === token
 		const actorStore = useActorStore()
 

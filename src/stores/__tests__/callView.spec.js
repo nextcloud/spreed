@@ -230,6 +230,14 @@ describe('callViewStore', () => {
 			expect(callViewStore.forceCallView).toBeTruthy()
 		})
 
+		it('sets and clears the active call token', () => {
+			expect(callViewStore.activeCallToken).toBe('')
+			callViewStore.setActiveCallToken(TOKEN)
+			expect(callViewStore.activeCallToken).toBe(TOKEN)
+			callViewStore.clearActiveCallToken()
+			expect(callViewStore.activeCallToken).toBe('')
+		})
+
 		it('sets value on isViewerOverlay', () => {
 			expect(callViewStore.isViewerOverlay).toBeFalsy()
 			callViewStore.setIsViewerOverlay(true)

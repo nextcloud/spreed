@@ -359,6 +359,7 @@ import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
 import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import { useChatMentions } from '../../composables/useChatMentions.ts'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
+import { useCallMinimized } from '../../composables/useIsInCall.js'
 import { useTemporaryMessage } from '../../composables/useTemporaryMessage.ts'
 import { CONVERSATION, MESSAGE, PARTICIPANT, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -502,6 +503,7 @@ export default {
 			createTemporaryMessage,
 			convertToUnix,
 			isSidebar,
+			isCallMinimized: useCallMinimized(),
 		}
 	},
 
@@ -544,7 +546,7 @@ export default {
 		},
 
 		disabled() {
-			return this.isReadOnly || this.noChatPermission || !this.currentConversationIsJoined || this.isRecordingAudio
+			return this.isReadOnly || this.noChatPermission || !this.currentConversationChatAvailable || this.isRecordingAudio
 		},
 
 		scheduleMessageTime() {
@@ -571,7 +573,7 @@ export default {
 				return t('spreed', 'This conversation has been locked')
 			} else if (this.noChatPermission) {
 				return t('spreed', 'No permission to post messages in this conversation')
-			} else if (!this.currentConversationIsJoined) {
+			} else if (!this.currentConversationChatAvailable) {
 				return t('spreed', 'Joining conversation …')
 			} else if (this.silentChat) {
 				return t('spreed', 'Write a message without notification')
@@ -636,6 +638,18 @@ export default {
 
 		currentConversationIsJoined() {
 			return this.tokenStore.currentConversationIsJoined
+		},
+
+		/**
+		 * Whether chatting in this conversation is available. True when the
+		 * conversation is joined in the signaling server, OR when a call is kept
+		 * alive in another conversation and this one is browsed chat-only (no
+		 * signaling join). In the latter case the chat works over REST/polling.
+		 *
+		 * @return {boolean}
+		 */
+		currentConversationChatAvailable() {
+			return this.currentConversationIsJoined || this.isCallMinimized
 		},
 
 		currentUploadId() {
@@ -771,7 +785,7 @@ export default {
 	},
 
 	watch: {
-		currentConversationIsJoined() {
+		currentConversationChatAvailable() {
 			this.focusInput()
 		},
 

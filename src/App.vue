@@ -5,8 +5,9 @@
 
 <template>
 	<NcContent
-		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
+		:class="{ 'icon-loading': loading, 'in-call': isInCall, 'call-minimized': isCallMinimized }"
 		appName="talk">
+		<MinimizedCallBar v-if="isCallMinimized" class="app-call-bar" />
 		<LeftSidebar v-if="getUserId" ref="leftSidebar" />
 		<NcAppContent>
 			<router-view />
@@ -33,6 +34,7 @@ import { provide } from 'vue'
 import { START_LOCATION } from 'vue-router'
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import NcContent from '@nextcloud/vue/components/NcContent'
+import MinimizedCallBar from './components/CallView/MinimizedCallBar.vue'
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog.vue'
 import LeftSidebar from './components/LeftSidebar/LeftSidebar.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
@@ -50,7 +52,7 @@ import { useGetMessagesProvider } from './composables/useGetMessages.ts'
 import { useGetToken } from './composables/useGetToken.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useInterceptNotifications } from './composables/useInterceptNotifications.ts'
-import { useIsInCall } from './composables/useIsInCall.js'
+import { useCallMinimized, useIsInCall } from './composables/useIsInCall.js'
 import { watchJoinedConversation } from './composables/useJoinedConversation.ts'
 import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
@@ -88,6 +90,7 @@ export default {
 		SettingsDialog,
 		ConversationSettingsDialog,
 		MediaSettings,
+		MinimizedCallBar,
 		PollManager,
 	},
 
@@ -107,6 +110,7 @@ export default {
 			token: useGetToken(),
 			tokenStore: useTokenStore(),
 			isInCall: useIsInCall(),
+			isCallMinimized: useCallMinimized(),
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			isMobile: useIsMobile(),
 			isNextcloudTalkHashDirty: useHashCheck(),
@@ -322,15 +326,38 @@ export default {
 				return
 			}
 
-			if (from.name === 'conversation' && from.params.token !== to.params.token) {
+			// Whether we are navigating away from the conversation that holds
+			// the active call. In that case we keep the call (and its signaling
+			// room) alive so it can be shown minimized, and open the target
+			// conversation as chat-only (no signaling join for it).
+			const keepCallAlive = from.name === 'conversation'
+				&& from.params.token !== to.params.token
+				&& this.callViewStore.activeCallToken === from.params.token
+				&& this.$store.getters.isInCall(from.params.token)
+
+			// Whether we are navigating back to the conversation that holds the
+			// active (minimized) call. Its session was never left, so we must
+			// NOT re-join it (that would trigger a "duplicate session" error).
+			const returningToActiveCall = to.name === 'conversation'
+				&& from.params.token !== to.params.token
+				&& this.callViewStore.activeCallToken === to.params.token
+				&& this.$store.getters.isInCall(to.params.token)
+
+			if (from.name === 'conversation' && from.params.token !== to.params.token && !keepCallAlive) {
 				// Await to properly close session / leave call before joining another one
 				await this.$store.dispatch('leaveConversation', { token: from.params.token })
 			}
 
-			/**
-			 * This runs whenever the new route is a conversation.
-			 */
-			if (to.name === 'conversation' && from.params.token !== to.params.token) {
+			if (returningToActiveCall) {
+				// Returning to the active call's conversation: its session was
+				// never left, so do not re-join. Restore the "joined" marker
+				// (a chat-only visit to another conversation moved it away) so
+				// the call controls are enabled again.
+				this.tokenStore.updateLastJoinedConversationToken(to.params.token)
+			} else if (to.name === 'conversation' && from.params.token !== to.params.token) {
+				/**
+				 * This runs whenever the new route is a conversation.
+				 */
 				// Fetch conversation object, if it's not known yet to the client
 				if (!this.$store.getters.conversation(to.params.token)) {
 					const result = await this.fetchSingleConversation(to.params.token)
@@ -340,7 +367,13 @@ export default {
 						return
 					}
 				}
-				this.$store.dispatch('joinConversation', { token: to.params.token })
+				// While a call is kept alive in another conversation, open the
+				// target as chat-only so we don't move the single signaling
+				// connection out of the call's room. Chat works over REST/poll.
+				// Awaited so the session is stable before next()/any follow-up
+				// joinCall reads the actor session id (otherwise a concurrent
+				// join can replace the session under a live call).
+				await this.$store.dispatch('joinConversation', { token: to.params.token, chatOnly: keepCallAlive })
 			}
 
 			next()
@@ -373,6 +406,10 @@ export default {
 			}
 			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
 				// Navigating within the same conversation
+				beforeRouteChangeListener(to, from, next)
+			} else if (this.canMinimizeCall(to, from)) {
+				// Navigating to another conversation while in a call: keep the
+				// call running and show it minimized instead of asking to leave.
 				beforeRouteChangeListener(to, from, next)
 			} else if (!this.warnLeaving || this.skipLeaveWarning || this.isVoiceRoom(from.params.token)) {
 				// Safe to navigate
@@ -421,6 +458,38 @@ export default {
 		isVoiceRoom(token) {
 			const conversation = this.$store.getters.conversation(token)
 			return Boolean(conversation?.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+		},
+
+		/**
+		 * Whether navigating from `from` to `to` should keep the active call
+		 * running (minimized) instead of prompting to leave it. True both when
+		 * leaving the active call's conversation to browse another one, and when
+		 * returning to the active call's conversation.
+		 *
+		 * @param {object} to target route
+		 * @param {object} from current route
+		 * @return {boolean}
+		 */
+		canMinimizeCall(to, from) {
+			const activeCallToken = this.callViewStore.activeCallToken
+			if (!activeCallToken
+				|| from.name !== 'conversation'
+				|| to.name !== 'conversation'
+				|| from.params.token === to.params.token) {
+				return false
+			}
+			// Leaving the active call's conversation to browse another one.
+			if (activeCallToken === from.params.token
+				&& this.$store.getters.isInCall(from.params.token)
+				&& !this.isVoiceRoom(from.params.token)) {
+				return true
+			}
+			// Returning to the active call's conversation from elsewhere.
+			if (activeCallToken === to.params.token
+				&& this.$store.getters.isInCall(to.params.token)) {
+				return true
+			}
+			return false
 		},
 
 		preventUnload(event) {
@@ -655,9 +724,25 @@ body#body-public {
 <style lang="scss" scoped>
 
 .content {
+	--call-bar-height: var(--default-clickable-area);
+
 	&.in-call {
 		:deep(.app-content) {
 			background-color: transparent;
+		}
+	}
+
+	// Minimized call bar: a full-width banner pinned just below the app header,
+	// pushing the navigation/content/sidebar columns down so it never overlaps
+	// existing UI (matches the "return to call" banner in Teams/Meet/Zoom).
+	&.call-minimized {
+		padding-block-start: var(--call-bar-height);
+
+		:deep(.app-call-bar) {
+			position: absolute;
+			inset-block-start: 0;
+			inset-inline: 0;
+			z-index: 1;
 		}
 	}
 

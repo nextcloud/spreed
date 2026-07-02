@@ -27,6 +27,7 @@ type State = {
 	callEndedTimeout: NodeJS.Timeout | number | undefined
 	isLiveTranscriptionEnabled: boolean
 	externalCallServiceUrl: string | null
+	activeCallToken: string
 }
 
 type CallViewModePayload = {
@@ -50,6 +51,10 @@ export const useCallViewStore = defineStore('callView', {
 		callEndedTimeout: undefined,
 		isLiveTranscriptionEnabled: false,
 		externalCallServiceUrl: null,
+		// Token of the call the user actually joined. Unlike the route token,
+		// this stays set while the user navigates to other conversations, so
+		// the call keeps running and can be shown in the MinimizedCallBar.
+		activeCallToken: '',
 	}),
 
 	getters: {
@@ -75,6 +80,20 @@ export const useCallViewStore = defineStore('callView', {
 
 		setSelectedVideoPeerId(value: string | null) {
 			this.selectedVideoPeerId = value
+		},
+
+		/**
+		 * Remembers which call the user is actually connected to, so the call
+		 * survives navigation to other conversations and can be minimized.
+		 *
+		 * @param token conversation token of the joined call
+		 */
+		setActiveCallToken(token: string) {
+			this.activeCallToken = token
+		},
+
+		clearActiveCallToken() {
+			this.activeCallToken = ''
 		},
 
 		handleJoinCall(conversation: Conversation) {
