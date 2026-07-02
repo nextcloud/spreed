@@ -22,6 +22,7 @@ use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Share\IManager;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\TaskTypes\TextToTextFormalization;
 use OCP\TaskProcessing\TaskTypes\TextToTextSummary;
@@ -41,6 +42,7 @@ class CapabilitiesTest extends TestCase {
 	protected ITranslationManager&MockObject $translationManager;
 	protected ITaskProcessingManager&MockObject $taskProcessingManager;
 	protected LiveTranscriptionService&MockObject $liveTranscriptionService;
+	protected IManager&MockObject $shareManager;
 	protected ICacheFactory&MockObject $cacheFactory;
 	protected ICache&MockObject $talkCache;
 
@@ -55,6 +57,7 @@ class CapabilitiesTest extends TestCase {
 		$this->translationManager = $this->createMock(ITranslationManager::class);
 		$this->taskProcessingManager = $this->createMock(ITaskProcessingManager::class);
 		$this->liveTranscriptionService = $this->createMock(LiveTranscriptionService::class);
+		$this->shareManager = $this->createMock(IManager::class);
 		$this->cacheFactory = $this->createMock(ICacheFactory::class);
 		$this->talkCache = $this->createMock(ICache::class);
 
@@ -83,6 +86,7 @@ class CapabilitiesTest extends TestCase {
 			$this->translationManager,
 			$this->taskProcessingManager,
 			$this->liveTranscriptionService,
+			$this->shareManager,
 			$this->cacheFactory,
 		);
 	}
