@@ -1195,8 +1195,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$headers = [];
 		if ($secret !== '') {
+			$random = bin2hex(random_bytes(32));
+			$checksum = hash_hmac('sha256', $random . ($body['owner'] ?? ''), $secret);
 			$headers = [
-				'x-nextcloud-talk-external-service' => $secret,
+				'x-nextcloud-talk-external-service-random' => $random,
+				'x-nextcloud-talk-external-service-checksum' => $checksum,
 			];
 		}
 

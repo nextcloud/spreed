@@ -1237,7 +1237,7 @@ export type paths = {
         /**
          * Create a room with a user, a group or a circle
          * @description With the `conversation-creation-all` capability a lot of new options where introduced. Before that only `$roomType`, `$roomName`, `$objectType` and `$objectId` were supported all the time, and `$password` with the `conversation-creation-password` capability In case the `$roomType` is {@see Room::TYPE_ONE_TO_ONE} only the `$invite` or `$participants` parameter is supported.
-         *     The endpoint can also be used unauthenticated by an external call service by sending the configured shared secret in the `x-nextcloud-talk-external-service` header. In that case the `$owner` parameter is required and will be used as the actor and conversation owner.
+         *     The endpoint can also be used unauthenticated by an external call service by signing the request with the configured shared secret via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers (SHA256-HMAC of the random seed and the `$owner` user ID).
          */
         post: operations["room-create-room"];
         delete?: never;
@@ -9768,8 +9768,10 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Shared secret used by the external call service to authenticate when creating a conversation on behalf of a user */
-                "x-nextcloud-talk-external-service"?: string;
+                /** @description Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum */
+                "x-nextcloud-talk-external-service-random"?: string;
+                /** @description SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service */
+                "x-nextcloud-talk-external-service-checksum"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
@@ -9892,7 +9894,7 @@ export interface operations {
                      */
                     participants?: components["schemas"]["InvitationList"];
                     /**
-                     * @description User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated via the `x-nextcloud-talk-external-service` header, otherwise ignored.
+                     * @description User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers, otherwise ignored.
                      * @default
                      */
                     owner?: string;
