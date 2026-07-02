@@ -76,8 +76,8 @@ async function createNewFile({ filePath, templatePath, templateType }: createFil
  * @return Draft folder path (relative to user home root, no leading slash)
  *         and a rename simulation for the requested file names.
  */
-async function probeAttachmentFolder({ token, fileNames }: { token: string } & ProbeAttachmentFolderParams): ProbeAttachmentFolderResponse {
-	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/attachment/folder', { token }), { fileNames })
+async function probeAttachmentFolder({ token, fileNames, allowUpdate }: { token: string } & ProbeAttachmentFolderParams): ProbeAttachmentFolderResponse {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/attachment/folder', { token }), { fileNames, allowUpdate })
 }
 
 /**
@@ -100,12 +100,13 @@ async function probeAttachmentFolder({ token, fileNames }: { token: string } & P
  *         file.  When the backend had to rename due to a conflict the two
  *         names differ; otherwise they are identical.
  */
-async function postAttachment({ token, filePath, fileName, referenceId, talkMetaData }: { token: string } & PostAttachmentFolderParams): PostAttachmentFolderResponse {
+async function postAttachment({ token, filePath, fileName, referenceId, talkMetaData, allowUpdate }: { token: string } & PostAttachmentFolderParams): PostAttachmentFolderResponse {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/chat/{token}/attachment', { token }), {
 		filePath,
 		fileName,
 		referenceId,
 		talkMetaData,
+		allowUpdate,
 	})
 }
 
