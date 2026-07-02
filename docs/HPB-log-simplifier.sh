@@ -26,7 +26,12 @@
 #
 # Afterwards the script also creates a file per user and room session, plus a
 # mapping.log dictionary file (replacement<TAB>original token) so the
-# anonymized IDs can be traced back if needed.
+# anonymized IDs can be traced back if needed. Room/call tokens (e.g. "joined
+# room token123") are short, human-chosen identifiers rather than randomly
+# generated session ids, so they are not anonymized - instead, lines mentioning
+# the same room token are grouped into their own room_<token>.log, and
+# mapping.log records which sessionN ids were seen together with each room
+# token.
 #
 # Tokens are found by first extracting the MAXIMAL contiguous run of the
 # combined charset (rather than a fixed-length slice anchored on a trailing
@@ -146,8 +151,21 @@ if (( ${#USER_NUM[@]} > 0 )); then
   NUM_DISTINCT_USERS=$(printf '%s\n' "${USER_NUM[@]}" | sort -un | wc -l)
 fi
 
+# Room/call tokens (e.g. "joined room token123", "joined call token123") are
+# short, human-chosen identifiers, not randomly generated session ids, so
+# they are only extracted/listed for reference, not replaced in the logs.
+mapfile -t ROOM_TOKEN_MATCHES < <(egrep -o 'joined (call|room) [a-z0-9]{4,30}' "$LOG_FILE" | sort -u)
+ROOM_TOKENS=()
+for MATCH in "${ROOM_TOKEN_MATCHES[@]}"; do
+  ROOM_TOKENS+=("${MATCH##* }")
+done
+if (( ${#ROOM_TOKENS[@]} > 0 )); then
+  mapfile -t ROOM_TOKENS < <(printf '%s\n' "${ROOM_TOKENS[@]}" | sort -u)
+fi
+
 echo "User sessions found: ${NUM_DISTINCT_USERS:-0}"
 echo "Room sessions found: ${#ROOM_SESSIONS[@]}"
+echo "Room/call tokens found: ${#ROOM_TOKENS[@]}"
 
 write_map "session" "${ROOM_SESSIONS[@]}" > "$WORK_DIR/room.map"
 for TOKEN in "${!USER_NUM[@]}"; do
@@ -158,7 +176,13 @@ for TOKEN in "${!USER_NUM[@]}"; do
     printf '%s\tuser%d\tuser%d\n' "$TOKEN" "$N" "$N"
   fi
 done > "$WORK_DIR/user.map"
-cat "$WORK_DIR/user.map" "$WORK_DIR/room.map" > "$WORK_DIR/full.map"
+# Room/call tokens are not anonymized (label == token), but lines mentioning
+# the same room token - regardless of which (possibly different) sessionN
+# they carry - are still collected into a single room_<token>.log.
+for TOKEN in "${ROOM_TOKENS[@]}"; do
+  printf '%s\t%s\troom_%s\n' "$TOKEN" "$TOKEN" "$TOKEN"
+done > "$WORK_DIR/roomtoken.map"
+cat "$WORK_DIR/user.map" "$WORK_DIR/room.map" "$WORK_DIR/roomtoken.map" > "$WORK_DIR/full.map"
 
 echo "Rewriting log and splitting per user/session (single pass)..."
 awk -v mapfile="$WORK_DIR/full.map" -v outdir="$OUTPUT_DIR" '
@@ -185,13 +209,21 @@ BEGIN {
     map_label[n] = parts[2]
     map_target[n] = parts[3]
     n++
-    # Several distinct raw tokens (e.g. a session'"'"'s public and private id)
-    # can share the same file_target; only write to its .log once.
-    if (!(parts[3] in seen_target)) {
-      seen_target[parts[3]] = 1
-      uniq_target[m] = parts[3]
+    # Several distinct labels (e.g. a session'"'"'s public "userN" and private
+    # "private_sessionN", or a room token appearing verbatim) can share the
+    # same file_target; collect all of them so each is checked when deciding
+    # whether a (post-rewrite) line belongs in that file.
+    t = parts[3]
+    if (!(t in seen_target)) {
+      seen_target[t] = 1
+      uniq_target[m] = t
+      target_label_count[t] = 0
       m++
     }
+    idx = target_label_count[t]
+    target_labels[t, idx] = parts[2]
+    target_patterns[t, idx] = "(^|[^a-zA-Z0-9_])" parts[2] "([^a-zA-Z0-9_]|$)"
+    target_label_count[t] = idx + 1
   }
   close(mapfile)
   simple_log = outdir "/simple.log"
@@ -205,19 +237,46 @@ BEGIN {
   }
   print line > simple_log
   for (i = 0; i < m; i++) {
-    # Match uniq_target[i] as a whole token: not immediately adjacent to
-    # another alphanumeric char (or underscore) on either side. The right
-    # boundary stops "user6" from matching "user60"; the left boundary stops
-    # the room-session target "sessionN" from matching inside the private
-    # label "private_sessionN" (which shares the number but belongs to userN).
-    if (line ~ ("(^|[^a-zA-Z0-9_])" uniq_target[i] "([^a-zA-Z0-9_]|$)")) {
-      print line >> (outdir "/" uniq_target[i] ".log")
+    t = uniq_target[i]
+    matched = 0
+    for (k = 0; k < target_label_count[t]; k++) {
+      # Cheap substring pre-check before the regex match below: skips the
+      # (much more expensive) dynamic regex compile+match for the common
+      # case where this label is not even present in the line.
+      if (index(line, target_labels[t, k]) == 0) {
+        continue
+      }
+      # Match the label as a whole token: not immediately adjacent to another
+      # alphanumeric character or underscore on either side, otherwise e.g.
+      # "user6" would match "user60", the room-session target "sessionN" would
+      # match inside the private label "private_sessionN", or a room token
+      # would match as a substring of an unrelated longer word. Pattern is
+      # precomputed in BEGIN so this loop only ever does the match.
+      if (line ~ target_patterns[t, k]) {
+        matched = 1
+        break
+      }
+    }
+    if (matched) {
+      print line >> (outdir "/" t ".log")
     }
   }
 }
 ' "$LOG_FILE"
 
-awk -F'\t' '{ print $2 "\t" $1 }' "$WORK_DIR/full.map" | sort -V > "$OUTPUT_DIR/mapping.log"
+awk -F'\t' '$1 != $2 { print $2 "\t" $1 }' "$WORK_DIR/full.map" | sort -V > "$OUTPUT_DIR/mapping.log"
+
+# Record, for each room/call token, which (possibly several) sessionN ids
+# were seen together with it.
+for TOKEN in "${ROOM_TOKENS[@]}"; do
+  ROOM_LOG="$OUTPUT_DIR/room_${TOKEN}.log"
+  if [[ -f "$ROOM_LOG" ]]; then
+    SESSIONS=$(egrep -o '(^|[^a-zA-Z0-9_])session[0-9]+([^a-zA-Z0-9_]|$)' "$ROOM_LOG" | egrep -o 'session[0-9]+' | sort -Vu | paste -sd, -)
+  else
+    SESSIONS=""
+  fi
+  printf '%s\t%s\n' "$TOKEN" "$SESSIONS" >> "$OUTPUT_DIR/mapping.log"
+done
 
 rm -rf "$WORK_DIR"
 
