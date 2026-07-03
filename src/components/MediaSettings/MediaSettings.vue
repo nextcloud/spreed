@@ -665,13 +665,15 @@ export default {
 		},
 
 		audioInputId(audioInputId) {
-			if (this.tabContent === 'devices' && audioInputId && !this.audioOn) {
+			if (this.tabContent === 'devices' && audioInputId && !this.audioOn
+				&& !this.settingsStore.startWithoutMedia) {
 				this.toggleAudio()
 			}
 		},
 
 		videoInputId(videoInputId) {
-			if (this.tabContent === 'devices' && videoInputId && !this.videoOn) {
+			if (this.tabContent === 'devices' && videoInputId && !this.videoOn
+				&& !this.settingsStore.startWithoutMedia) {
 				this.toggleVideo()
 			}
 		},
