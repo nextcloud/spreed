@@ -169,6 +169,19 @@
                     }
                 }
             },
+            "BotFeatures": {
+                "type": "object",
+                "required": [
+                    "features"
+                ],
+                "properties": {
+                    "features": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Feature flags enabled for the bot (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#bot-features))"
+                    }
+                }
+            },
             "BotWithDetails": {
                 "allOf": [
                     {
@@ -31135,6 +31148,167 @@
                     },
                     "401": {
                         "description": "Reacting is not allowed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "nullable": true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/{token}/features": {
+            "get": {
+                "operationId": "bot-get-bot-features",
+                "summary": "Get the features that are enabled for the requesting bot",
+                "description": "Allows bots to check which features an administrator has enabled for them, without requiring administrator credentials. The request is signed with the shared bot secret like all other bot requests. As GET requests have no body, the signature is computed over the random seed alone (the conversation to look the bot up in is taken from the URL). This also keeps the signature out of the value space of the message and reaction endpoints, which reject empty content before authenticating.",
+                "tags": [
+                    "bot"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "apiVersion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "v1"
+                            ],
+                            "default": "v1"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "description": "Conversation token",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^[a-z0-9]{4,30}$"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-bot-random",
+                        "in": "header",
+                        "description": "Random seed (at least 32 bytes) used to generate the SHA256-HMAC request signature",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-nextcloud-talk-bot-signature",
+                        "in": "header",
+                        "description": "SHA256-HMAC signature over the random seed, signed with the shared bot secret, to verify authenticity",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bot features returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/BotFeatures"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Missing or malformed signature headers",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "nullable": true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Bot could not be verified for the conversation",
                         "content": {
                             "application/json": {
                                 "schema": {
