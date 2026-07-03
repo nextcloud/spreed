@@ -579,6 +579,7 @@ OC.L10N.register(
     "Edit" : "Redigér",
     "More information" : "Mere information",
     "Delete" : "Slet",
+    "running" : "kører",
     "Log content" : "Log indhold",
     "Notifications" : "Notifikationer",
     "Important conversation" : "Vigtig samtale",
