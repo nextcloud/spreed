@@ -541,15 +541,34 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * Authenticate an external call service request via the
-	 * `x-nextcloud-talk-external-service` header.
+	 * Check if the current request is coming from the configured external call
+	 * service.
+	 *
+	 * The `x-nextcloud-talk-external-service` variant is deprecated and going
+	 * to be removed with the next update
+	 *
+	 * @param string $owner User ID the external call service wants to act as
+	 * @return bool True if the request is from the external call service and valid
 	 */
-	private function validateExternalCallServiceRequest(string $providedSecret): bool {
+	private function validateExternalCallServiceRequest(string $owner, string $legacySecret = ''): bool {
 		if (!$this->talkConfig->isExternalCallServiceConfigured()) {
 			return false;
 		}
 
-		return hash_equals($this->talkConfig->getExternalCallServiceSharedSecret(), $providedSecret);
+		$secret = $this->talkConfig->getExternalCallServiceSharedSecret();
+
+		$random = $this->request->getHeader('x-nextcloud-talk-external-service-random');
+		$checksum = $this->request->getHeader('x-nextcloud-talk-external-service-checksum');
+		if ($random !== '' || $checksum !== '') {
+			try {
+				return $this->checksumVerificationService->validateRequest($random, $checksum, $secret, $owner);
+			} catch (UnauthorizedException) {
+				return false;
+			}
+		}
+
+		// Deprecated: raw shared secret comparison, kept for a transition phase.
+		return $legacySecret !== '' && hash_equals($secret, $legacySecret);
 	}
 
 	/**
@@ -591,10 +610,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * or `$participants` parameter is supported.
 	 *
 	 * The endpoint can also be used unauthenticated by an external call service
-	 * by sending the configured shared secret in the
-	 * `x-nextcloud-talk-external-service` header. In that case the `$owner`
-	 * parameter is required and will be used as the actor and conversation
-	 * owner.
+	 * by signing the request with the configured shared secret via the
+	 * `x-nextcloud-talk-external-service-random` and
+	 * `x-nextcloud-talk-external-service-checksum` headers (SHA256-HMAC of the
+	 * random seed and the `$owner` user ID).
 	 *
 	 * @param int $roomType Type of the room
 	 * @psalm-param Room::TYPE_* $roomType
@@ -627,7 +646,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @param ?non-empty-string $avatarColor Background color of the avatar (Only considered when an emoji was provided) (only available with `conversation-creation-all` capability)
 	 * @param array<string, list<string>> $participants List of participants to add grouped by type (only available with `conversation-creation-all` capability)
 	 * @psalm-param TalkInvitationList $participants
-	 * @param string $owner User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated via the `x-nextcloud-talk-external-service` header, otherwise ignored.
+	 * @param string $owner User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers, otherwise ignored.
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_ACCEPTED, TalkRoomWithInvalidInvitations, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'avatar'|'description'|'invite'|'listable'|'lobby'|'lobby-timer'|'mention-permissions'|'message-expiration'|'name'|'object'|'object-id'|'object-type'|'owner'|'password'|'permissions'|'read-only'|'recording-consent'|'sip-enabled'|'type', message?: string}, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED, array{error: 'auth'}, array{}>
 	 *
 	 * 200: Room already existed
@@ -640,7 +659,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 */
 	#[PublicPage]
 	#[BruteForceProtection(action: 'talkExternalCallServiceSecret')]
-	#[RequestHeader(name: 'x-nextcloud-talk-external-service', description: 'Shared secret used by the external call service to authenticate when creating a conversation on behalf of a user', indirect: true)]
+	#[RequestHeader(name: 'x-nextcloud-talk-external-service-random', description: 'Random seed (at least 32 bytes) used together with the owner user ID to generate the SHA256-HMAC request checksum', indirect: true)]
+	#[RequestHeader(name: 'x-nextcloud-talk-external-service-checksum', description: 'SHA256-HMAC checksum over the concatenation of the random seed and the owner user ID, signed with the shared external call service secret, to verify authenticity from the external call service', indirect: true)]
 	public function createRoom(
 		int $roomType = Room::TYPE_GROUP,
 		string $invite = '', /* @deprecated */
@@ -664,16 +684,19 @@ class RoomController extends AEnvironmentAwareOCSController {
 		array $participants = [],
 		string $owner = '',
 	): DataResponse {
-		$externalServiceHeader = $this->request->getHeader('x-nextcloud-talk-external-service');
-		if ($externalServiceHeader !== '') {
-			if (!$this->validateExternalCallServiceRequest($externalServiceHeader)) {
+		$externalServiceRandom = $this->request->getHeader('x-nextcloud-talk-external-service-random');
+		$externalServiceChecksum = $this->request->getHeader('x-nextcloud-talk-external-service-checksum');
+		// FIXME Remove in next update
+		$externalServiceLegacySecret = $this->request->getHeader('x-nextcloud-talk-external-service');
+		if ($externalServiceRandom !== '' || $externalServiceChecksum !== '' || $externalServiceLegacySecret !== '') {
+			if ($owner === '') {
+				return new DataResponse(['error' => 'owner'], Http::STATUS_BAD_REQUEST);
+			}
+
+			if (!$this->validateExternalCallServiceRequest($owner, $externalServiceLegacySecret)) {
 				$response = new DataResponse(['error' => 'auth'], Http::STATUS_UNAUTHORIZED);
 				$response->throttle(['action' => 'talkExternalCallServiceSecret']);
 				return $response;
-			}
-
-			if ($owner === '') {
-				return new DataResponse(['error' => 'owner'], Http::STATUS_BAD_REQUEST);
 			}
 
 			$actorUserId = $owner;

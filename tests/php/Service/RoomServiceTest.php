@@ -29,6 +29,7 @@ use OCP\Calendar\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
 use OCP\IL10N;
+use OCP\ISession;
 use OCP\IUser;
 use OCP\Security\IHasher;
 use OCP\Server;
@@ -52,6 +53,7 @@ class RoomServiceTest extends TestCase {
 	protected LoggerInterface&MockObject $logger;
 	protected IL10N&MockObject $l10n;
 	protected IManager $calendarManager;
+	protected ISession&MockObject $session;
 	protected EmojiService $emojiService;
 	protected ?RoomService $service = null;
 
@@ -70,6 +72,7 @@ class RoomServiceTest extends TestCase {
 		$this->l10n = $this->createMock(IL10N::class);
 		$this->emojiService = Server::get(EmojiService::class);
 		$this->calendarManager = $this->createMock(IManager::class);
+		$this->session = $this->createMock(ISession::class);
 		$this->service = new RoomService(
 			$this->manager,
 			$this->participantService,
@@ -84,6 +87,7 @@ class RoomServiceTest extends TestCase {
 			$this->logger,
 			$this->l10n,
 			$this->calendarManager,
+			$this->session,
 		);
 	}
 
@@ -278,7 +282,7 @@ class RoomServiceTest extends TestCase {
 		}
 
 		if ($password !== '') {
-			$this->hasher->expects(self::once())
+			$this->hasher->expects($this->once())
 				->method('hash')
 				->willReturn($password);
 		}
@@ -340,6 +344,7 @@ class RoomServiceTest extends TestCase {
 			$this->logger,
 			$this->l10n,
 			$this->calendarManager,
+			$this->session,
 		);
 
 		$room = new Room(
