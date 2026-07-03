@@ -100,16 +100,13 @@ export function useJoinCall() {
 		emit('toggle-navigation', { open: false })
 
 		const options: Partial<Record<'audioOn' | 'videoOn', boolean>> = {}
-		if (settingsStore.startWithoutMedia) {
-			// Option: 'Turn camera and microphone off by default'
-			options.audioOn = false
+		if (!settingsStore.showMediaSettings || directCall) {
+			// Join calls with video off if device preview skipped or bypassed
 			options.videoOn = false
-		} else if (!settingsStore.showMediaSettings) {
-			// Join calls with video off if device preview skipped
-			options.videoOn = false
-		} else if (directCall) {
-			// Join direct calls with video off
-			options.videoOn = false
+			if (settingsStore.startWithoutMedia) {
+				// Option: 'Turn camera and microphone off by default'
+				options.audioOn = false
+			}
 		}
 
 		console.debug('Joining call')
