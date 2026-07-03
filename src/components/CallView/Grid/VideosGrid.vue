@@ -452,14 +452,19 @@ export default {
 			}
 		},
 
+		// The local video always takes one slot if the grid view is not shown as a stripe.
+		// In recording mode the local video is not shown, so all slots are available.
+		noLocalVideoReserve() {
+			return this.isStripe || this.isRecording
+		},
+
 		// Number of grid slots (videos per page) at any given moment, clamped to
-		// `videosCap` (`0` means no cap). The local video always takes one slot if
-		// the grid view is not shown as a stripe.
+		// `videosCap` (`0` means no cap).
 		// The cap is primarily enforced by shrinking the grid layout (see
 		// `makeGrid`/`shrinkGrid`); this clamp keeps the "videos per page" math
 		// consistent even before the layout has been recomputed.
 		slots() {
-			const slots = this.isStripe ? this.rows * this.columns : this.rows * this.columns - 1
+			const slots = this.noLocalVideoReserve ? this.rows * this.columns : this.rows * this.columns - 1
 			return this.videosCap ? Math.min(this.videosCap, slots) : slots
 		},
 
@@ -771,7 +776,7 @@ export default {
 
 			let currentColumns = this.columns
 			let currentRows = this.rows
-			let currentSlots = this.isStripe ? currentColumns * currentRows : currentColumns * currentRows - 1
+			let currentSlots = this.noLocalVideoReserve ? currentColumns * currentRows : currentColumns * currentRows - 1
 
 			// Run this code only if we don't have an 'overflow' of videos. If the
 			// videos are populating the grid, there's no point in shrinking it.
@@ -804,7 +809,7 @@ export default {
 						currentColumns--
 					}
 
-					currentSlots = this.isStripe ? currentColumns * currentRows : currentColumns * currentRows - 1
+					currentSlots = this.noLocalVideoReserve ? currentColumns * currentRows : currentColumns * currentRows - 1
 
 					// Check that there are still enough slots available
 					if (numberOfVideos > currentSlots) {
@@ -817,7 +822,7 @@ export default {
 						currentRows--
 					}
 
-					currentSlots = this.isStripe ? currentColumns * currentRows : currentColumns * currentRows - 1
+					currentSlots = this.noLocalVideoReserve ? currentColumns * currentRows : currentColumns * currentRows - 1
 
 					// Check that there are still enough slots available
 					if (numberOfVideos > currentSlots) {
