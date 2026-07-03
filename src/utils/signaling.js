@@ -820,6 +820,9 @@ Signaling.Standalone.prototype.connect = function() {
 					case 'token_expired':
 						this.processErrorTokenExpired()
 						break
+					case 'no_such_room':
+						console.error('An error occurred getting the room for user')
+						break
 					default:
 						console.error('Ignore unknown error: %s', JSON.stringify(data.error))
 						this._trigger('error', [data.error])
@@ -1284,6 +1287,13 @@ Signaling.Standalone.prototype.joinCall = function(token, flags, silent, recordi
 
 Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 	console.debug('Joined', data, token)
+
+	if (data.type === 'error' && data.error.code === 'no_such_room') {
+		this.processErrorNoSuchRoom()
+		return
+	}
+
+	this._rejoinRoomAfterInvalidSession = null
 	this.signalingRoomJoined = token
 	if (this.pendingJoinCall && token === this.pendingJoinCall.token) {
 		const pendingJoinCallResolve = this.pendingJoinCall.resolve
@@ -1543,6 +1553,34 @@ Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
 			console.error('Unknown room participant event', data)
 			break
 	}
+}
+
+Signaling.Standalone.prototype.processErrorNoSuchRoom = function() {
+	// 'no_such_room' is a generic rejection of a room join:
+	// - the room might be gone;
+	// - the user might no longer be a participant (banned/removed);
+	// - the client was offline and then WS reconnects to the room with a stale PHP session id).
+	//
+	// Re-establish a fresh session as a best effort; if the room/participant is
+	// actually gone, the rejoin below fails and surfaces the proper error.
+	const token = this.currentRoomToken
+	if (!token) {
+		return
+	}
+
+	if (this._rejoinRoomAfterInvalidSession === token) {
+		// prevent re-join loop
+		console.error('Rejoining room with a new session failed, giving up', token)
+		return
+	}
+
+	console.debug('Room join was rejected, attempting to rejoin with a new session', token)
+	this._rejoinRoomAfterInvalidSession = token
+	this.resumeId = null
+	this.signalingRoomJoined = null
+	store.dispatch('joinConversation', { token }).catch((error) => {
+		console.error('Failed to rejoin conversation with a new session', token, error)
+	})
 }
 
 Signaling.Standalone.prototype.processErrorTokenExpired = function() {
