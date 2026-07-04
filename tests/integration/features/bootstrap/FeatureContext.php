@@ -5058,25 +5058,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
-	#[Then('/^Bot "([^"]*)" retrieves its features for room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
-	public function botRetrievesFeatures(string $botName, string $identifier, int $status, string $apiVersion, TableNode $body): void {
+	#[Then('/^Bot "([^"]*)" retrieves its features for room "([^"]*)" using secret "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function botRetrievesFeatures(string $botName, string $identifier, string $secret, int $status, string $apiVersion, ?TableNode $body = null): void {
 		$currentUser = $this->setCurrentUser('');
-
-		$data = $body->getRowsHash();
-		$secret = $data['secret'];
-		$token = self::$identifierToToken[$identifier];
 
 		$this->sendBotSignedRequest(
 			'GET',
-			'/apps/spreed/api/' . $apiVersion . '/bot/' . $token . '/features',
+			'/apps/spreed/api/' . $apiVersion . '/bot/' . self::$identifierToToken[$identifier] . '/features',
 			$secret,
 			''
 		);
 		$this->assertStatusCode($this->response, $status);
 
-		if ($status === 200 && isset($data['features'])) {
+		if ($body instanceof TableNode) {
+			$expected = $body->getRowsHash();
 			$response = $this->getDataFromResponse($this->response);
-			Assert::assertSame((int)$data['features'], $response['features']);
+			Assert::assertSame((int)$expected['features'], $response['features']);
 		}
 
 		$this->setCurrentUser($currentUser);
