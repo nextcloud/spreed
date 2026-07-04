@@ -424,30 +424,25 @@ Feature: chat-2/bots
       | roomName | room1 |
 
     # Not set up for the conversation yet
-    When Bot "Bot" retrieves its features for room "room1" with 401 (v1)
-      | secret | Secret1234567890123456789012345678901234567890 |
+    When Bot "Bot" retrieves its features for room "room1" using secret "Secret1234567890123456789012345678901234567890" with 401 (v1)
 
     Given invoking occ with "talk:bot:setup BOT(Bot) ROOM(room1)"
     And the command was successful
-    Then Bot "Bot" retrieves its features for room "room1" with 200 (v1)
-      | secret   | Secret1234567890123456789012345678901234567890 |
-      | features | 3                                              |
+    Then Bot "Bot" retrieves its features for room "room1" using secret "Secret1234567890123456789012345678901234567890" with 200 (v1)
+      | features | 3 |
 
     When set state enabled for bot "Bot" via OCC
       | feature |
       | webhook |
-    Then Bot "Bot" retrieves its features for room "room1" with 200 (v1)
-      | secret   | Secret1234567890123456789012345678901234567890 |
-      | features | 1                                              |
+    Then Bot "Bot" retrieves its features for room "room1" using secret "Secret1234567890123456789012345678901234567890" with 200 (v1)
+      | features | 1 |
 
     # Bots can authenticate even when all features are disabled
     When set state enabled for bot "Bot" via OCC
       | feature |
       | none    |
-    Then Bot "Bot" retrieves its features for room "room1" with 200 (v1)
-      | secret   | Secret1234567890123456789012345678901234567890 |
-      | features | 0                                              |
+    Then Bot "Bot" retrieves its features for room "room1" using secret "Secret1234567890123456789012345678901234567890" with 200 (v1)
+      | features | 0 |
 
     # Wrong secret is rejected
-    When Bot "Bot" retrieves its features for room "room1" with 401 (v1)
-      | secret | WrongSecret4567890123456789012345678901234567890 |
+    When Bot "Bot" retrieves its features for room "room1" using secret "WrongSecret4567890123456789012345678901234567890" with 401 (v1)
