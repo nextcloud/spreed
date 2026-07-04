@@ -87,7 +87,7 @@
     "@nextcloud/browserslist-config": "^3.1.2",
     "@nextcloud/eslint-config": "^9.0.0",
     "@nextcloud/stylelint-config": "^3.1.1",
-    "@rspack/cli": "^1.7.11",
+    "@rspack/cli": "^1.7.12",
     "@rspack/core": "^1.7.11",
     "@rspack/plugin-node-polyfill": "^0.5.8",
     "@total-typescript/ts-reset": "^0.6.1",
