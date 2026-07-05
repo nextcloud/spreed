@@ -162,6 +162,8 @@ OC.L10N.register(
     "You removed the password" : "Bhain tú an focal faire",
     "An administrator removed the password" : "Bhain riarthóir an focal faire",
     "{actor} added {user}" : "Chuir {actor} {user} leis",
+    "System added you" : "Chuir an córas thú leis",
+    "System added {user}" : "Cuireadh {user} leis an gcóras",
     "You joined the conversation" : "Ghlac tú páirt sa chomhrá",
     "{actor} joined the conversation" : "Tháinig {actor} isteach sa chomhrá",
     "You added {user}" : "Chuir tú {user} leis",

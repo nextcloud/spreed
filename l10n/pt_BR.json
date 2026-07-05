@@ -160,6 +160,8 @@
     "You removed the password" : "Você removeu a senha",
     "An administrator removed the password" : "Um administrador removeu a senha",
     "{actor} added {user}" : "{actor} adicionou {user}",
+    "System added you" : "O sistema adicionou você",
+    "System added {user}" : "O sistema adicionou {user}",
     "You joined the conversation" : "Você juntou-se à conversa",
     "{actor} joined the conversation" : "{actor} juntou-se à conversa",
     "You added {user}" : "Você adicionou {user}",
