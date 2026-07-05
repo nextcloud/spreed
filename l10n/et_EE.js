@@ -162,6 +162,8 @@ OC.L10N.register(
     "You removed the password" : "Sina eemaldasid salasõna",
     "An administrator removed the password" : "Peakasutaja eemaldas salasõna",
     "{actor} added {user}" : "{actor} lisas kasutaja „{user}“",
+    "System added you" : "Süsteem lisas sinu",
+    "System added {user}" : "Süsteem lisas kasutaja {user}",
     "You joined the conversation" : "Sina liitusid vestlusega",
     "{actor} joined the conversation" : "{actor} liitus vestlusega",
     "You added {user}" : "Sina lisasid kasutaja {user}",
