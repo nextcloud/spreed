@@ -1714,6 +1714,7 @@ OC.L10N.register(
     "{user1}, {user2} and {user3} are typing …" : "Tá {user1}, {user2} agus {user3} ag clóscríobh…",
     "_{user1}, {user2}, {user3} and %n other are typing …_::_{user1}, {user2}, {user3} and %n others are typing …_" : ["Tá {user1}, {user2}, {user3} agus %n eile ag clóscríobh…","Tá {user1}, {user2}, {user3} agus %n duine eile ag clóscríobh…","Tá {user1}, {user2}, {user3} agus %n duine eile ag clóscríobh…","Tá {user1}, {user2}, {user3} agus %n duine eile ag clóscríobh…","Tá {user1}, {user2}, {user3} agus %n duine eile ag clóscríobh…"],
     "Add more files" : "Cuir tuilleadh comhad leis",
+    "Allow editing of uploaded files" : "Ceadaigh eagarthóireacht ar chomhaid uaslódáilte",
     "Send" : "Seol",
     "In this conversation <strong>{user}</strong> can:" : "Sa chomhrá seo is féidir le<strong>{user}</strong>:",
     "Edit default permissions for participants in <strong>{conversationName}</strong>" : "Cuir ceadanna réamhshocraithe do rannpháirtithe in <strong>{conversationName}</strong>in eagar",

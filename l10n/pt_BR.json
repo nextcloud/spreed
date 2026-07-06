@@ -1712,6 +1712,7 @@
     "{user1}, {user2} and {user3} are typing …" : "{user1}, {user2} e {user3} estão digitando …",
     "_{user1}, {user2}, {user3} and %n other are typing …_::_{user1}, {user2}, {user3} and %n others are typing …_" : ["{user1}, {user2}, {user3} e %n outro estão digitando …","{user1}, {user2}, {user3} e %n outros estão digitando …","{user1}, {user2}, {user3} e %n outros estão digitando …"],
     "Add more files" : "Adicionar mais arquivos",
+    "Allow editing of uploaded files" : "Permitir a edição de arquivos enviados",
     "Send" : "Enviar",
     "In this conversation <strong>{user}</strong> can:" : "Nesta conversa, <strong>{user}</strong> pode:",
     "Edit default permissions for participants in <strong>{conversationName}</strong>" : "Editar permissões padrão para participantes em <strong>{conversationName}</strong>",
