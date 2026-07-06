@@ -1039,7 +1039,7 @@
                                         "type": "string",
                                         "nullable": true,
                                         "default": null,
-                                        "description": "File name of the recording uploaded through a previously requested upload share. When provided, no multipart `file` is expected."
+                                        "description": "The sanitized file name returned by the request-upload request. When provided, no multipart `file` is expected."
                                     }
                                 }
                             }

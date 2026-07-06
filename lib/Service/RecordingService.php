@@ -204,7 +204,6 @@ class RecordingService {
 
 		$expiration = $this->timeFactory->getDateTime();
 		$expiration->add(new \DateInterval('P1D'));
-		$expiration->setTime(0, 0);
 
 		try {
 			$share = $this->shareManager->newShare();
@@ -226,10 +225,7 @@ class RecordingService {
 
 		// The recording session is over once the backend requests the upload
 		// share; only the (potentially long-running) chunked upload remains. Clear
-		// the active-recording marker now so a new recording can be started in this
-		// conversation while the previous one is still being uploaded. The marker is
-		// only needed to recover the owner for a body-less failed multipart store,
-		// which cannot happen on the chunked path (the owner is always provided).
+		// the appconfig which is used to notify about failed uploads.
 		$this->appConfig->deleteAppValue(self::APPCONFIG_PREFIX . $room->getToken());
 
 		return [
