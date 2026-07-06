@@ -1714,6 +1714,7 @@ OC.L10N.register(
     "{user1}, {user2} and {user3} are typing …" : "{user1}, {user2} und {user3} schreiben …",
     "_{user1}, {user2}, {user3} and %n other are typing …_::_{user1}, {user2}, {user3} and %n others are typing …_" : ["{user1}, {user2}, {user3} and %n weiterer schreibt …","{user1}, {user2}, {user3} and %n weitere schreiben …"],
     "Add more files" : "Weitere Dateien hinzufügen",
+    "Allow editing of uploaded files" : "Bearbeitung hochgeladener Dateien erlauben",
     "Send" : "Senden",
     "In this conversation <strong>{user}</strong> can:" : "In dieser Unterhaltung kann <strong>{user}</strong>:",
     "Edit default permissions for participants in <strong>{conversationName}</strong>" : "Standardberechtigungen für Teilnehmer in <strong>{conversationName}</strong> bearbeiten",
