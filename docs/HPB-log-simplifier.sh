@@ -33,6 +33,11 @@
 # mapping.log records which sessionN ids were seen together with each room
 # token.
 #
+# Client IP addresses (logged as "... from <ip> in <ua> userN ...") are
+# treated the same way: they are kept verbatim, lines mentioning the same IP
+# are grouped into their own ip/<ip>.log, and mapping.log records which
+# userN ids were seen together with each IP.
+#
 # Tokens are found by first extracting the MAXIMAL contiguous run of the
 # combined charset (rather than a fixed-length slice anchored on a trailing
 # space/end-of-line). This guarantees a token is never sliced mid-way just
@@ -163,9 +168,26 @@ if (( ${#ROOM_TOKENS[@]} > 0 )); then
   mapfile -t ROOM_TOKENS < <(printf '%s\n' "${ROOM_TOKENS[@]}" | sort -u)
 fi
 
+# Client IP addresses (logged as "... from <ip> in <ua> userN ...") are, like
+# room/call tokens, not randomly generated session ids, so they are only
+# extracted/listed for reference, not replaced in the logs. Anchoring on the
+# preceding "from " keeps the match to actual client IPs and avoids picking up
+# unrelated dotted/coloned strings (version numbers, ports, timestamps, ...).
+# The first alternative matches IPv4 (dotted quad); the second matches IPv6,
+# which always contains at least one colon.
+mapfile -t IP_MATCHES < <(egrep -o 'from (([0-9]{1,3}\.){3}[0-9]{1,3}|[0-9a-fA-F:]*:[0-9a-fA-F:]+)' "$LOG_FILE" | sort -u)
+IP_ADDRESSES=()
+for MATCH in "${IP_MATCHES[@]}"; do
+  IP_ADDRESSES+=("${MATCH##* }")
+done
+if (( ${#IP_ADDRESSES[@]} > 0 )); then
+  mapfile -t IP_ADDRESSES < <(printf '%s\n' "${IP_ADDRESSES[@]}" | sort -u)
+fi
+
 echo "User sessions found: ${NUM_DISTINCT_USERS:-0}"
 echo "Room sessions found: ${#ROOM_SESSIONS[@]}"
 echo "Room/call tokens found: ${#ROOM_TOKENS[@]}"
+echo "Client IP addresses found: ${#IP_ADDRESSES[@]}"
 
 write_map "session" "${ROOM_SESSIONS[@]}" > "$WORK_DIR/room.map"
 for TOKEN in "${!USER_NUM[@]}"; do
@@ -182,7 +204,12 @@ done > "$WORK_DIR/user.map"
 for TOKEN in "${ROOM_TOKENS[@]}"; do
   printf '%s\t%s\troom_%s\n' "$TOKEN" "$TOKEN" "$TOKEN"
 done > "$WORK_DIR/roomtoken.map"
-cat "$WORK_DIR/user.map" "$WORK_DIR/room.map" "$WORK_DIR/roomtoken.map" > "$WORK_DIR/full.map"
+# IP addresses are handled like room/call tokens: not anonymized (label == IP),
+# but lines mentioning the same IP are collected into a single file under ip/.
+for IP in "${IP_ADDRESSES[@]}"; do
+  printf '%s\t%s\tip/%s\n' "$IP" "$IP" "$IP"
+done > "$WORK_DIR/ip.map"
+cat "$WORK_DIR/user.map" "$WORK_DIR/room.map" "$WORK_DIR/roomtoken.map" "$WORK_DIR/ip.map" > "$WORK_DIR/full.map"
 
 echo "Rewriting log and splitting per user/session (single pass)..."
 awk -v mapfile="$WORK_DIR/full.map" -v outdir="$OUTPUT_DIR" '
@@ -276,6 +303,19 @@ for TOKEN in "${ROOM_TOKENS[@]}"; do
     SESSIONS=""
   fi
   printf '%s\t%s\n' "$TOKEN" "$SESSIONS" >> "$OUTPUT_DIR/mapping.log"
+done
+
+# Record, for each client IP address, which (possibly several) userN ids were
+# seen together with it. The public "userN" and its private "private_sessionN"
+# share the same number, so matching "userN" lists each session once.
+for IP in "${IP_ADDRESSES[@]}"; do
+  IP_LOG="$OUTPUT_DIR/ip/${IP}.log"
+  if [[ -f "$IP_LOG" ]]; then
+    USERS=$(egrep -o '(^|[^a-zA-Z0-9_])user[0-9]+([^a-zA-Z0-9_]|$)' "$IP_LOG" | egrep -o 'user[0-9]+' | sort -Vu | paste -sd, -)
+  else
+    USERS=""
+  fi
+  printf '%s\t%s\n' "$IP" "$USERS" >> "$OUTPUT_DIR/mapping.log"
 done
 
 rm -rf "$WORK_DIR"
