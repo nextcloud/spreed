@@ -2507,6 +2507,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		$caller = trim($caller);
 		// TODO: Use later and get name from addressbook? $cleanedCaller = $this->phoneNumberUtil->convertToStandardFormat($caller);
+		$inBoundPhoneNumber = $this->phoneNumberUtil->convertToStandardFormat($caller);
 		$user = $this->userManager->get($entity->getActorId());
 		try {
 			$room = $this->roomService->createConversation(
@@ -2522,7 +2523,14 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
-		$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, '', true, displayName: $caller);
+		$participant = $this->participantService->joinRoomAsNewGuest(
+			$this->roomService,
+			$room,
+			'',
+			true,
+			displayName: $caller,
+			phoneNumber: $inBoundPhoneNumber,
+		);
 		return new DataResponse($this->formatRoom($room, $participant));
 	}
 
