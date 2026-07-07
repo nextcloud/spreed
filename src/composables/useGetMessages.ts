@@ -27,7 +27,7 @@ import { useChatExtrasStore } from '../stores/chatExtras.ts'
 import { useGuestNameStore } from '../stores/guestName.ts'
 import { isAxiosErrorResponse } from '../types/guards.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
-import { tryLocalizeSystemMessage } from '../utils/message.ts'
+import { isFileShareMessage, tryLocalizeSystemMessage } from '../utils/message.ts'
 import { useGetThreadId } from './useGetThreadId.ts'
 import { useGetToken } from './useGetToken.ts'
 
@@ -701,13 +701,14 @@ export function useGetMessagesProvider() {
 		}
 
 		// FIXME Patch for file uploads: messageParameters['file']['path'] and messageParameters['file']['link'] do not match server request
-		if (Object.keys(message.messageParameters ?? {}).some((key) => key.startsWith('file'))) {
+		// Additionally check messages and system messages with parent
+		if (isFileShareMessage(message) || (message.parent && 'messageParameters' in message.parent && isFileShareMessage(message.parent))) {
 			tryPollNewMessages()
 			return
 		}
 
 		// Patch for federated conversations: disable unsupported file shares
-		if (conversation?.remoteServer && Object.keys(message.messageParameters ?? {}).some((key) => key.startsWith('file'))
+		if (conversation?.remoteServer && isFileShareMessage(message)
 			&& [MESSAGE.TYPE.COMMENT, MESSAGE.TYPE.VOICE_MESSAGE, MESSAGE.TYPE.RECORD_VIDEO, MESSAGE.TYPE.RECORD_AUDIO].includes(message.messageType)) {
 			message.message = '*' + t('spreed', 'File shares are currently not supported in federated conversations') + '*'
 			delete message.messageParameters.file
