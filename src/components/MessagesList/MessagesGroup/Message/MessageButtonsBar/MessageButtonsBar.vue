@@ -178,17 +178,17 @@
 							<template #icon>
 								<IconFileOutline :size="20" />
 							</template>
-							{{ t('spreed', 'Go to file') }}
+							{{ isSharedFolder ? t('spreed', 'Go to folder') : t('spreed', 'Go to file') }}
 						</NcActionLink>
 						<NcActionLink
 							v-if="!hideDownloadOption"
 							:href="linkToFileDownload"
-							:download="messageFile.name"
+							:download="downloadFileName"
 							closeAfterClick>
 							<template #icon>
 								<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
 							</template>
-							{{ t('spreed', 'Download file') }}
+							{{ isSharedFolder ? t('spreed', 'Download folder') : t('spreed', 'Download file') }}
 						</NcActionLink>
 					</template>
 					<template v-if="isThreadStarterMessage">
@@ -465,7 +465,7 @@ import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useReactionsStore } from '../../../../../stores/reactions.js'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
-import { generatePublicShareDownloadUrl, generateUserFileUrl } from '../../../../../utils/davUtils.ts'
+import { generatePublicShareDownloadUrl, generateUserFileUrl, generateUserFolderUrl } from '../../../../../utils/davUtils.ts'
 import { convertToUnix, formatDateTime, ONE_DAY_IN_MS } from '../../../../../utils/formattedTime.ts'
 import { getCustomDateOptions } from '../../../../../utils/getCustomDateOptions.ts'
 import { copyConversationLinkToClipboard } from '../../../../../utils/handleUrl.ts'
@@ -664,9 +664,19 @@ export default {
 			return this.message.messageParameters[firstFileKey]
 		},
 
+		isSharedFolder() {
+			return this.messageFile?.mimetype === 'httpd/unix-directory'
+		},
+
+		downloadFileName() {
+			return this.messageFile.name + (this.isSharedFolder ? '.zip' : '')
+		},
+
 		linkToFileDownload() {
 			return getCurrentUser()
-				? generateUserFileUrl(this.messageFile.path)
+				? (this.isSharedFolder
+						? generateUserFolderUrl(this.messageFile.path)
+						: generateUserFileUrl(this.messageFile.path))
 				: generatePublicShareDownloadUrl(this.messageFile.link)
 		},
 
