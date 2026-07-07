@@ -4,7 +4,7 @@
  */
 
 import type { WebDAVClient } from 'webdav'
-import type { UploadEntry, UploadFile } from '../types/index.ts'
+import type { UploadEntry } from '../types/index.ts'
 
 const extensionRegex = /\.[0-9a-z]+$/i
 const suffixRegex = / \(\d+\)$/

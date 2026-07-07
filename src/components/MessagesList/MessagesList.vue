@@ -103,7 +103,7 @@
 import { n, t } from '@nextcloud/l10n'
 import { vIntersectionObserver as IntersectionObserver } from '@vueuse/components'
 import debounce from 'debounce'
-import { computed, provide, ref } from 'vue'
+import { computed, provide } from 'vue'
 import NcAssistantButton from '@nextcloud/vue/components/NcAssistantButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'

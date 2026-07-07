@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { DeepReadonly, Ref } from 'vue'
-
 import { createSharedComposable } from '@vueuse/core'
 import { onBeforeMount, onBeforeUnmount, readonly, ref } from 'vue'
 
@@ -34,6 +32,6 @@ function useDocumentVisibilityComposable() {
 /**
  * Shared composable to check whether the page is visible.
  *
- * @return {DeepReadonly<Ref<boolean>>} - computed boolean whether the page is visible
+ * @return computed boolean whether the page is visible
  */
 export const useDocumentVisibility = createSharedComposable(useDocumentVisibilityComposable)

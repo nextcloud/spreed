@@ -11,7 +11,6 @@ import type {
 } from '../../types/index.ts'
 
 import { LocalStateBroadcaster } from './LocalStateBroadcaster.ts'
-import { ConnectionState } from './models/CallParticipantModel.js'
 
 /**
  * Helper class to run a callback with an exponential backoff.

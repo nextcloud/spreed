@@ -8,10 +8,7 @@ import base64js from 'base64-js'
 import debounce from 'debounce'
 import { v4 as uuidv4 } from 'uuid'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
-import Signaling from '../signaling.js'
 import { isEqualJson } from '../utils.ts'
-import Peer from '../webrtc/simplewebrtc/peer.js'
-import SimpleWebRTC from '../webrtc/simplewebrtc/simplewebrtc.js'
 import { importKey, ratchet } from './crypto-utils.js'
 import Deferred from './JitsiDeferred.js'
 import E2EEcontext from './JitsiE2EEContext.js'
@@ -68,7 +65,7 @@ class Encryption {
 	/**
 	 * Create the encryption session.
 	 *
-	 * @param {Signaling} signaling The signaling instance.
+	 * @param {import('../signaling.js').default} signaling The signaling instance.
 	 */
 	constructor(signaling) {
 		this.signaling = signaling
@@ -106,7 +103,7 @@ class Encryption {
 	/**
 	 * Set the WebRTC instance to use.
 	 *
-	 * @param {SimpleWebRTC} webrtc The WebRTC instance.
+	 * @param {import('../webrtc/simplewebrtc/simplewebrtc.js').default} webrtc The WebRTC instance.
 	 */
 	setWebRtc(webrtc) {
 		if (this._webrtc) {
@@ -629,7 +626,7 @@ class Encryption {
 	/**
 	 * A peer was created.
 	 *
-	 * @param {Peer} peer The peer that was created.
+	 * @param {import('../webrtc/simplewebrtc/peer.js').default} peer The peer that was created.
 	 * @private
 	 */
 	_handlePeerCreated(peer) {
@@ -664,7 +661,7 @@ class Encryption {
 	/**
 	 * Process streams of a receiving peer for decrypting.
 	 *
-	 * @param {Peer} peer The peer where the stream has been created.
+	 * @param {import('../webrtc/simplewebrtc/peer.js').default} peer The peer where the stream has been created.
 	 * @param {MediaStream} stream The created stream.
 	 * @private
 	 */
