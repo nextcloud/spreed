@@ -167,6 +167,15 @@ function selfIsUser(message: ChatMessage, selfActorId: string, selfActorType: st
 }
 
 /**
+ * Returns whether the given message shares a file (has a rich object parameter with a key starting with 'file').
+ *
+ * @param message Chat message (or a parent message)
+ */
+export function isFileShareMessage(message: ChatMessage): boolean {
+	return Object.keys(message.messageParameters ?? {}).some((key) => key.startsWith('file'))
+}
+
+/**
  * Returns whether the given system message should be hidden in the UI
  *
  * @param message Chat message
