@@ -710,7 +710,8 @@ export function useGetMessagesProvider() {
 		}
 
 		// FIXME Patch for file uploads: messageParameters['file']['path'] and messageParameters['file']['link'] do not match server request
-		if (isFileShareMessage(message)) {
+		// Additionally check messages and system messages with parent
+		if (isFileShareMessage(message) || (message.parent && 'messageParameters' in message.parent && isFileShareMessage(message.parent))) {
 			tryPollNewMessages()
 			return
 		}
