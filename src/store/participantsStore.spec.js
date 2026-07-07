@@ -10,11 +10,12 @@ import { cloneDeep } from 'es-toolkit'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { createStore } from 'vuex'
-import { PARTICIPANT } from '../constants.ts'
+import { PARTICIPANT, SIGNALING } from '../constants.ts'
 import {
 	joinCall,
 	leaveCall,
 } from '../services/callsService.ts'
+import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { fetchConversation } from '../services/conversationsService.ts'
 import { EventBus } from '../services/EventBus.ts'
 import {
@@ -67,6 +68,13 @@ vi.mock('@nextcloud/event-bus', () => ({
 	emit: vi.fn(),
 	subscribe: vi.fn(),
 }))
+vi.mock('../services/CapabilitiesManager.ts', async (importOriginal) => {
+	const actual = await importOriginal()
+	return {
+		...actual,
+		getTalkConfig: vi.fn(actual.getTalkConfig),
+	}
+})
 
 vi.spyOn(EventBus, 'emit')
 
@@ -789,6 +797,109 @@ describe('participantsStore', () => {
 				expect(store.getters.getParticipantRaisedHand(['session-id-1', 'session-id-2', 'session-id-3']))
 					.toStrictEqual({ state: true, timestamp: 1 })
 			})
+		})
+	})
+
+	describe('optimistic call join (external signaling)', () => {
+		const actualFlags = PARTICIPANT.CALL_FLAG.WITH_AUDIO
+		const flags = PARTICIPANT.CALL_FLAG.WITH_AUDIO | PARTICIPANT.CALL_FLAG.WITH_VIDEO
+		let resolveJoinCall = null
+
+		const usersChangedPayload = [{
+			attendeeId: 1,
+			nextcloudSessionId: 'session-id-1',
+			inCall: actualFlags,
+			participantType: PARTICIPANT.TYPE.USER,
+		}]
+
+		beforeEach(() => {
+			// No ongoing call yet, so the current participant is the call starter
+			testStoreConfig.getters.conversation = () => vi.fn().mockReturnValue({
+				token: TOKEN,
+				type: 3,
+				hasCall: false,
+			})
+			store = createStore(testStoreConfig)
+			store.dispatch('addParticipant', {
+				token: TOKEN,
+				participant: {
+					attendeeId: 1,
+					sessionId: 'session-id-1',
+					participantType: PARTICIPANT.TYPE.USER,
+					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+				},
+			})
+			// Delay the "join call" request so the signaling message arrives first
+			joinCall.mockImplementation(() => new Promise((resolve) => {
+				resolveJoinCall = resolve
+			}))
+			leaveCall.mockResolvedValue()
+		})
+
+		afterEach(() => {
+			// Settle any still-pending request and restore a resolving default so
+			// the deferred implementation does not leak into later tests
+			resolveJoinCall?.(actualFlags)
+			joinCall.mockResolvedValue(actualFlags)
+		})
+
+		const dispatchJoinCall = () => {
+			// Use external signaling for this join request
+			getTalkConfig.mockReturnValueOnce(SIGNALING.MODE.EXTERNAL)
+			return store.dispatch('joinCall', {
+				token: TOKEN,
+				participantIdentifier: {
+					attendeeId: 1,
+					sessionId: 'session-id-1',
+				},
+				flags,
+				silent: false,
+				recordingConsent: false,
+			})
+		}
+
+		test('call starter joins optimistically before the request returns', async () => {
+			// Act: request is pending
+			const promise = dispatchJoinCall()
+			expect(store.getters.isJoiningCall(TOKEN)).toBe(true)
+			expect(store.getters.isInCall(TOKEN)).toBe(false)
+
+			// Act: signaling reports us in the call before the request resolves
+			EventBus.emit('signaling-users-changed', [usersChangedPayload])
+
+			// Assert: UI switched to "in call" optimistically
+			expect(store.getters.isInCall(TOKEN)).toBe(true)
+			expect(store.getters.isConnecting(TOKEN)).toBe(false)
+			expect(store.getters.isJoiningCall(TOKEN)).toBe(false)
+
+			// Act: the delayed request finally returns
+			resolveJoinCall(actualFlags)
+			await promise
+
+			// Assert: still in the call, flags reconciled with the actual ones
+			expect(store.getters.isInCall(TOKEN)).toBe(true)
+			expect(store.getters.participantsList(TOKEN)).toStrictEqual([{
+				attendeeId: 1,
+				sessionId: 'session-id-1',
+				inCall: actualFlags,
+				participantType: PARTICIPANT.TYPE.USER,
+			}])
+		})
+
+		test('optimistic join is rolled back when the request fails', () => {
+			// Act: request is pending, then optimistic join from signaling
+			dispatchJoinCall()
+			EventBus.emit('signaling-users-changed', [usersChangedPayload])
+			expect(store.getters.isInCall(TOKEN)).toBe(true)
+
+			// Act: the delayed request ultimately fails
+			EventBus.emit('signaling-join-call-failed', [TOKEN, 'error reason'])
+
+			// Assert: optimistic join rolled back
+			expect(store.getters.isInCall(TOKEN)).toBe(false)
+			expect(store.getters.isConnecting(TOKEN)).toBe(false)
+			expect(store.getters.isJoiningCall(TOKEN)).toBe(false)
+			expect(store.getters.connectionFailed(TOKEN)).toBe('error reason')
 		})
 	})
 
