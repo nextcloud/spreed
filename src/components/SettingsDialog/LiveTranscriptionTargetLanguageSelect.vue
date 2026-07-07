@@ -4,7 +4,7 @@
 -->
 
 <script setup lang="ts">
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'

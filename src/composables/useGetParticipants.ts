@@ -5,7 +5,6 @@
 
 import type {
 	Conversation,
-	Participant,
 	SignalingSessionPayload,
 	StandaloneSignalingLeaveSession,
 	StandaloneSignalingUpdateSession,

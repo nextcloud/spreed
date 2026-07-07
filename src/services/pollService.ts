@@ -18,7 +18,7 @@ import type {
 } from '../types/index.ts'
 
 import axios from '@nextcloud/axios'
-import { generateOcsUrl, generateUrl } from '@nextcloud/router'
+import { generateOcsUrl } from '@nextcloud/router'
 import { downloadBlob } from '../utils/fileDownload.ts'
 
 type createPollPayload = { token: string } & createPollParams

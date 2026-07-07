@@ -90,7 +90,6 @@
 </template>
 
 <script>
-import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcButton from '@nextcloud/vue/components/NcButton'
