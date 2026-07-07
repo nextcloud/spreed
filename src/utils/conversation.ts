@@ -56,6 +56,25 @@ export function isEvent(conversation: Conversation): boolean {
 }
 
 /**
+ * Returns whether the conversation is a phone room (with a single SIP phone participant).
+ * Covers both dial-out and direct-dial-in rooms.
+ *
+ * @param conversation - conversation object
+ * @param conversation.objectId - conversation objectId
+ * @param conversation.objectType - conversation objectType
+ */
+export function isConversationPhoneRoom({ objectId, objectType }: Conversation) {
+	return [
+		CONVERSATION.OBJECT_ID.PHONE_OUTGOING,
+		CONVERSATION.OBJECT_ID.PHONE_INCOMING,
+	].includes(objectId) && [
+		CONVERSATION.OBJECT_TYPE.PHONE_LEGACY,
+		CONVERSATION.OBJECT_TYPE.PHONE_PERSISTENT,
+		CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY,
+	].includes(objectType)
+}
+
+/**
  * check if the conversation is archived
  *
  * @param conversation conversation object

@@ -36,6 +36,7 @@ import IconLink from 'vue-material-design-icons/Link.vue'
 import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import { useGetToken } from '../../../composables/useGetToken.ts'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.ts'
+import { isConversationPhoneRoom } from '../../../utils/conversation.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
 export default {
@@ -104,10 +105,7 @@ export default {
 		},
 
 		isPhoneConversation() {
-			return this.conversation
-				&& (this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_LEGACY
-					|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_PERSISTENT
-					|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY)
+			return this.conversation && isConversationPhoneRoom(this.conversation)
 		},
 
 		canInviteOthers() {

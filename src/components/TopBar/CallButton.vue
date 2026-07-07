@@ -129,6 +129,7 @@ import { useSoundsStore } from '../../stores/sounds.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import { useTokenStore } from '../../stores/token.ts'
 import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.ts'
+import { isConversationPhoneRoom } from '../../utils/conversation.ts'
 import { messagePleaseReload } from '../../utils/talkDesktopUtils.ts'
 
 export default {
@@ -354,10 +355,7 @@ export default {
 		},
 
 		isPhoneRoom() {
-			return this.conversation.objectId === CONVERSATION.OBJECT_ID.PHONE_OUTGOING
-				&& (this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_LEGACY
-					|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_PERSISTENT
-					|| this.conversation.objectType === CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY)
+			return isConversationPhoneRoom(this.conversation)
 		},
 
 		isInLobby() {
