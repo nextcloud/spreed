@@ -10,8 +10,6 @@ import type {
 	WebRtc,
 } from '../../types/index.ts'
 
-import { ConnectionState } from './models/CallParticipantModel.js'
-
 /**
  * Helper class to send the local participant state to the other participants in
  * the call.
