@@ -51,6 +51,40 @@
 
 trap 'exit 130' INT
 
+usage() {
+  cat <<'EOF'
+Usage: HPB-log-simplifier.sh <LOG_FILE>
+
+Simplify a High-performance backend (signaling server) log:
+  - replaces user sessions (public/private session ids) with "userN"
+  - replaces room sessions with "sessionN"
+  - groups lines by room/call token and by client IP into separate files
+  - writes a mapping.log so anonymized ids can be traced back
+
+Arguments:
+  LOG_FILE    Path to the HPB log file to process (required)
+
+Options:
+  -h, --help  Show usage docs
+
+Output is written to "<LOG_FILE>-simplified/" at the source directory of the log file.
+EOF
+}
+
+case "$1" in
+  -h | --help)
+    usage
+    exit 0
+    ;;
+esac
+
+if [[ -z "$1" ]]; then
+  echo "Error: path to log file is required." >&2
+  echo >&2
+  usage >&2
+  exit 1
+fi
+
 LOG_FILE="$1"
 PARENT_DIR="$(cd "$(dirname "$LOG_FILE")" && pwd)"
 OUTPUT_DIR="$PARENT_DIR/$(basename "$LOG_FILE")-simplified"
