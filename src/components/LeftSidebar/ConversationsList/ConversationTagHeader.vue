@@ -26,6 +26,8 @@ import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
 export type TagHeaderItem = ConversationTag & {
 	_type: 'tag-header'
 	unreadCount: number
+	unreadMention: boolean
+	unreadMentionDirect: boolean
 	isFirst?: boolean
 	isLast?: boolean
 }
@@ -38,6 +40,15 @@ const vuexStore = useStore()
 const tagsStore = useConversationTagsStore()
 
 const isCustomTag = computed(() => props.item.type === 'custom')
+const counterType = computed(() => {
+	if (props.item.unreadMentionDirect) {
+		return 'highlighted'
+	} else if (props.item.unreadMention) {
+		return 'outlined'
+	} else {
+		return ''
+	}
+})
 
 /**
  * Assign a new name to the tag via dialog
@@ -129,7 +140,7 @@ async function handleMarkReadTag() {
 		<!-- Invisible child to trigger the collapse chevron -->
 		<li class="tag-header__spacer" />
 		<template #counter>
-			<NcCounterBubble v-if="item.unreadCount > 0" :count="item.unreadCount" />
+			<NcCounterBubble v-if="item.unreadCount > 0" :count="item.unreadCount" :type="counterType" />
 		</template>
 		<template #actions>
 			<NcActionButton
