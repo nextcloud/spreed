@@ -155,8 +155,8 @@ jobs:
         run: |
           npm ci
 
-      - name: Set up dependencies
-        run: composer i
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
       - name: Regenerate OpenAPI
         run: composer run openapi
