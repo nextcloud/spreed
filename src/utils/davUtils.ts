@@ -21,6 +21,23 @@ export function generateUserFileUrl(filepath: string, userid: string | undefined
 }
 
 /**
+ * Generate a WebDAV url to a user folder (to download as a ZIP archive).
+ * Mirrors Files app behaviour (appends trailing slash and `accept=zip` to the DAV URL).
+ *
+ * @param filepath - The path to the user's folder, e.g., Talk/Media
+ * @param userid - The user id, e.g., 'admin'. Defaults to the current user id
+ * @return The WebDAV URL to download the folder as ZIP, e.g., https://nextcloud.ltd/remote.php/dav/files/admin/Talk/Media/?accept=zip
+ */
+export function generateUserFolderUrl(filepath: string, userid: string | undefined = getCurrentUser()?.uid) {
+	const url = new URL(generateUserFileUrl(filepath, userid))
+	url.searchParams.append('accept', 'zip')
+	if (!url.pathname.endsWith('/')) {
+		url.pathname = `${url.pathname}/`
+	}
+	return url.href
+}
+
+/**
  * Generate a download link for a public share
  *
  * @param shareLink - The public share link, e.g., https://nextcloud.ltd/s/CBeNTiJz5JeT2CH/
