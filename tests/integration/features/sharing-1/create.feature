@@ -428,7 +428,7 @@ Feature: sharing-1/create
       | share_type             | 0 |
     And user "participant1" accepts last share
     When user "participant1" shares "welcome (2).txt" with room "group room"
-    Then the OCS status code should be "404"
+    Then the OCS status code should be "403"
     And the HTTP status code should be "200"
     And user "participant1" gets all shares
     And the list of returned shares has 0 shares
