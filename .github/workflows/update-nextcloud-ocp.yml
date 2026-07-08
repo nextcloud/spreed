@@ -62,9 +62,9 @@ jobs:
           grep '/appinfo/info.xml' .github/CODEOWNERS | cut -f 2- -d ' ' | xargs | awk '{ print "codeowners="$0 }' >> $GITHUB_OUTPUT
         continue-on-error: true
 
-      - name: Composer install
+      - name: Install composer dependencies
         if: steps.checkout.outcome == 'success'
-        run: composer install
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
       - name: Check composer bin for nextcloud/ocp exists
         id: check_composer_bin
