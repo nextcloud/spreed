@@ -47,12 +47,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
+      - name: Remove nextcloud/ocp
         run: |
           composer remove nextcloud/ocp --dev --no-scripts
-          composer i
 
-      - name: Install nextcloud/ocp
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
+
+      - name: Install nextcloud/ocp:dev-${{ steps.versions.outputs.branches-max }}
         run: composer require --dev nextcloud/ocp:dev-${{ steps.versions.outputs.branches-max }} --ignore-platform-reqs --with-dependencies
 
       - name: Run coding standards check
