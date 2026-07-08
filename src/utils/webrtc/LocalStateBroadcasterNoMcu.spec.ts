@@ -22,7 +22,6 @@ import WildEmitter from 'wildemitter'
 import { LocalStateBroadcasterNoMcu } from './LocalStateBroadcasterNoMcu.ts'
 import { CallParticipantCollection } from './models/CallParticipantCollection.js'
 import {
-	CallParticipantModel,
 	ConnectionState,
 } from './models/CallParticipantModel.js'
 import { LocalCallParticipantModel } from './models/LocalCallParticipantModel.js'

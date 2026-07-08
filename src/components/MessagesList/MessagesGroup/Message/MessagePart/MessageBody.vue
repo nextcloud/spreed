@@ -181,7 +181,7 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showError } from '@nextcloud/dialogs'
 import { n, t } from '@nextcloud/l10n'
 import emojiRegex from 'emoji-regex'
 import { inject, toRefs } from 'vue'

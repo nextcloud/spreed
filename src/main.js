@@ -6,7 +6,7 @@
 import { getCSPNonce } from '@nextcloud/auth'
 import { emit, subscribe } from '@nextcloud/event-bus'
 import { generateFilePath } from '@nextcloud/router'
-import { createApp, reactive, watch } from 'vue'
+import { createApp, reactive } from 'vue'
 import App from './App.vue'
 import { initializeTalkOnce } from './init.js'
 import { createTalkRouter } from './router/router.ts'

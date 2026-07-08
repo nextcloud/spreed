@@ -150,7 +150,6 @@ import { generateOcsUrl } from '@nextcloud/router'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-import { EventBus } from '../../services/EventBus.ts'
 import { formatDateTime } from '../../utils/formattedTime.ts'
 
 export default {

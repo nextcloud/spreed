@@ -4,7 +4,6 @@
  */
 
 import { FilesetResolver, ImageSegmenter } from '@mediapipe/tasks-vision'
-import { generateFilePath } from '@nextcloud/router'
 import { VIRTUAL_BACKGROUND } from '../../../../constants.ts'
 import {
 	CLEAR_TIMEOUT,

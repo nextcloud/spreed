@@ -8,7 +8,7 @@ import type { Conversation, ConversationTag } from '../../../types/index.ts'
 import type { TagHeaderItem } from './ConversationTagHeader.vue'
 
 import { useVirtualList } from '@vueuse/core'
-import { computed, toRef } from 'vue'
+import { computed } from 'vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 import ConversationItem from './ConversationItem.vue'
 import ConversationTagHeader from './ConversationTagHeader.vue'
