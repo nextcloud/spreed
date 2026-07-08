@@ -15,7 +15,7 @@ import {
 	joinCall,
 	leaveCall,
 } from '../services/callsService.ts'
-import { hasTalkFeature, setRemoteCapabilities } from '../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature, setRemoteCapabilities } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
 import {
 	demoteFromModerator,
@@ -792,6 +792,13 @@ const actions = {
 		let connectingTimeout = null
 		commit('joiningCall', { token, sessionId, flags })
 
+		// FIXME currently participant that starts the call can experience delays
+		// to receive a response from POST 'apps/spreed/api/v4/call/{token}' in large calls,
+		// so should render call UI optimistically based on the signaling message
+		const isCallStarter = !getters.conversation(token)?.hasCall
+		const isStandaloneSignaling = getTalkConfig(token, 'signaling', 'mode') !== 'internal'
+		let hasJoinedCallOptimistically = false
+
 		const handleJoinCall = ([token, flags]) => {
 			commit('setInCall', { token, sessionId, flags })
 			commit('finishedJoiningCall', { token, sessionId })
@@ -824,9 +831,22 @@ const actions = {
 		const handleParticipantsListReceived = (payload, key) => {
 			const participant = payload[0].find((p) => p[key] === sessionId)
 			if (participant && participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED) {
+				const flags = participant.inCall
 				if (state.joiningCall[token]?.[sessionId]) {
 					isParticipantsListReceived = true
-					commit('connecting', { token, sessionId, flags })
+					// If both conditions match the call starter expectations, update UI optimistically
+					if (isStandaloneSignaling && isCallStarter) {
+						hasJoinedCallOptimistically = true
+						handleJoinCall([token, flags])
+
+						// Restore the failure listener in case server request goes rogue to rollback
+						EventBus.once('signaling-join-call-failed', handleJoinCallFailed)
+						// Show call UI
+						const callViewStore = useCallViewStore()
+						callViewStore.handleJoinCall(getters.conversation(token))
+					} else {
+						commit('connecting', { token, sessionId, flags })
+					}
 					return
 				}
 				finishConnecting()
@@ -862,6 +882,13 @@ const actions = {
 				inCall: actualFlags,
 			}
 			commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
+			if (hasJoinedCallOptimistically) {
+				// Request confirmed: set actual call flags and drop failure listener
+				commit('setInCall', { token, sessionId, flags: actualFlags })
+				EventBus.off('signaling-join-call-failed', handleJoinCallFailed)
+				return
+			}
+
 			const callViewStore = useCallViewStore()
 			callViewStore.handleJoinCall(getters.conversation(token))
 		} catch (e) {
