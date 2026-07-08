@@ -89,13 +89,17 @@ class CircleMembershipListener extends AMembershipListener {
 		// Get the base circle of the membership
 		$basedOnCircle = $newMember->getBasedOn();
 		// Get all (nested) memberships in the added $newMember as a flat list
-		$userMembers = $basedOnCircle->getInheritedMembers();
+		$userMembers = $basedOnCircle?->getInheritedMembers();
+
+		if ($userMembers === null) {
+			return;
+		}
 
 		$invitedBy = $circle->hasInitiator() ? $circle->getInitiator() : $newMember->getInvitedBy();
 		if ($invitedBy->getUserType() === Member::TYPE_USER && $invitedBy->getUserId() !== '') {
 			$this->session->set('talk-overwrite-actor-id', $invitedBy->getUserId());
 			$this->session->set('talk-overwrite-actor-displayname', $invitedBy->getDisplayName());
-		} elseif ($invitedBy->getUserType() === Member::TYPE_APP && $invitedBy->getBasedOn()->getSource() === Member::APP_OCC) {
+		} elseif ($invitedBy->getUserType() === Member::TYPE_APP && $invitedBy->getBasedOn()?->getSource() === Member::APP_OCC) {
 			$this->session->set('talk-overwrite-actor-cli', 'cli');
 		}
 
