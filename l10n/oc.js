@@ -781,6 +781,7 @@ OC.L10N.register(
     "More actions" : "Mai d’accions",
     "Reply privately" : "Respondre en privat",
     "Copy message link" : "Copiar ligam messatge",
+    "Go to folder" : "Anar al dossièr",
     "Go to file" : "Anar al fichièr",
     "Forward message" : "Transferir lo messatge",
     "Translate" : "Tradurre",

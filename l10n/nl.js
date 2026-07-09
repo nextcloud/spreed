@@ -1544,6 +1544,7 @@ OC.L10N.register(
     "Edit message" : "Bewerk bericht",
     "Copy message" : "Bericht kopiëren",
     "Copy message link" : "Kopiëren berichtlink",
+    "Go to folder" : "Ga naar map",
     "Go to file" : "Ga naar bestand",
     "Download file" : "Downloaden bestand",
     "Go to thread" : "Ga naar draad",

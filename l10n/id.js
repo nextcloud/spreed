@@ -408,6 +408,7 @@ OC.L10N.register(
     "Set reminder" : "Tetapkan pengingat",
     "Edit message" : "Edit pesan",
     "Copy message" : "Salin pesan",
+    "Go to folder" : "Buka folder",
     "Download file" : "Unduh berkas",
     "Translate" : "Terjemahkan",
     "Set custom reminder" : "Tetapkan pengingat kustom",

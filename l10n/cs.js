@@ -1511,6 +1511,7 @@ OC.L10N.register(
     "Edit message" : "Upravit zprávu",
     "Copy message" : "Zkopírovat zprávu",
     "Copy message link" : "Zkopírovat odkaz zprávy",
+    "Go to folder" : "Přejít do složky",
     "Go to file" : "Přejít k souboru",
     "Download file" : "Stáhnout si soubor",
     "Go to thread" : "Přejít na vlákno",

@@ -1538,6 +1538,7 @@ OC.L10N.register(
     "Edit message" : "Modifier le message",
     "Copy message" : "Copier le message",
     "Copy message link" : "Copier le lien du message",
+    "Go to folder" : "Aller au dossier",
     "Go to file" : "Aller au fichier",
     "Download file" : "Télécharger le fichier",
     "Go to thread" : "Aller au fil de discussion",

@@ -344,6 +344,7 @@ OC.L10N.register(
     "24 hours" : "24 soat",
     "Reply" : "Javob bering",
     "More actions" : "Ko'proq harakatlar",
+    "Go to folder" : "Go to folder",
     "Translate" : "Tarjima",
     "Dismiss" : "Dismiss",
     "Contact" : "Aloqa",

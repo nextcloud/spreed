@@ -1478,6 +1478,7 @@ OC.L10N.register(
     "Edit message" : "Уреди поруку",
     "Copy message" : "Копирај поруку",
     "Copy message link" : "Копирај линк поруке",
+    "Go to folder" : "Иди у фасциклу",
     "Go to file" : "Иди на фајл",
     "Download file" : "Преузми фајл",
     "Go to thread" : "Иди на нит",

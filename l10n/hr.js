@@ -1518,6 +1518,7 @@ OC.L10N.register(
     "Edit message" : "Uredi poruku",
     "Copy message" : "Kopiraj poruku",
     "Copy message link" : "Kopiraj poveznicu poruke",
+    "Go to folder" : "Idi u mapu",
     "Go to file" : "Idi na datoteku",
     "Download file" : "Preuzmi datoteku",
     "Go to thread" : "Idi na nit",
