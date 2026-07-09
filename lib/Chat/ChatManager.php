@@ -154,7 +154,7 @@ class ChatManager {
 		bool $sendNotifications,
 		?string $referenceId = null,
 		?IComment $replyTo = null,
-		bool $shouldSkipLastMessageUpdate = false,
+		bool $shouldSkipLastMessageUpdate = true,
 		bool $silent = false,
 		int $threadId = 0,
 	): IComment {
@@ -473,15 +473,15 @@ class ChatManager {
 			if (!$fromScheduledMessage && $participant instanceof Participant) {
 				$this->participantService->updateLastReadMessage($participant, $messageId);
 			}
-
 			// Update last_message
 			if ($comment->getActorType() !== Attendee::ACTOR_BOTS
 				|| $comment->getActorId() === Attendee::ACTOR_ID_CHANGELOG
 				|| str_starts_with((string)$comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)) {
-				$this->roomService->setLastMessage($chat, $comment);
+				$this->roomService->setLastMessageInfo($chat, (int)$comment->getId(), $comment->getCreationDateTime());
+				$this->roomService->setLastMetadataActivity($chat, $comment->getCreationDateTime());
 				$this->unreadCountCache->clear($chat->getId() . '-');
 			} else {
-				$this->roomService->setLastActivity($chat, $comment->getCreationDateTime());
+				$this->roomService->setLastMetadataActivity($chat, $comment->getCreationDateTime);
 			}
 
 			$alreadyNotifiedUsers = [];
