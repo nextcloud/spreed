@@ -1361,6 +1361,7 @@ OC.L10N.register(
     "Edit message" : "Edició del missatge",
     "Copy message" : "Copia el missatge",
     "Copy message link" : "Copia l'enllaç del missatge",
+    "Go to folder" : "Ves a la carpeta",
     "Go to file" : "Vés al fitxer",
     "Download file" : "Baixa el fitxer",
     "Forward message" : "Missatge de reenviament",

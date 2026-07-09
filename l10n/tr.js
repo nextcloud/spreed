@@ -1545,6 +1545,7 @@ OC.L10N.register(
     "Edit message" : "İletiyi düzenle",
     "Copy message" : "İletiyi kopyala",
     "Copy message link" : "İleti bağlantısını kopyala",
+    "Go to folder" : "Klasöre git",
     "Go to file" : "Dosyaya git",
     "Download file" : "Dosyayı indir",
     "Go to thread" : "Yazışmaya git",

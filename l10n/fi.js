@@ -930,6 +930,7 @@ OC.L10N.register(
     "Reply privately" : "Vastaa yksityisesti",
     "Edit message" : "Muokkaa viestiä",
     "Copy message link" : "Kopioi viestin linkki",
+    "Go to folder" : "Siirry kansioon",
     "Go to file" : "Siirry tiedostoon",
     "Forward message" : "Lähetä edelleen",
     "Translate" : "Käännä",

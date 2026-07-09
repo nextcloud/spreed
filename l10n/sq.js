@@ -243,6 +243,7 @@ OC.L10N.register(
     "7 days" : "7 ditë ",
     "Reply" : "Përgjigju",
     "More actions" : "Më tepër veprime ",
+    "Go to folder" : "Shko te dosja",
     "Translate" : "Përkthe",
     "Dismiss" : "Hiq",
     "Message sent" : "Mesazhi u dërgua",

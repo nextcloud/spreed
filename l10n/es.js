@@ -1486,6 +1486,7 @@ OC.L10N.register(
     "Edit message" : "Editar mensaje",
     "Copy message" : "Copiar mensaje",
     "Copy message link" : "Copiar link del mensaje",
+    "Go to folder" : "Ir a la carpeta",
     "Go to file" : "Ir al archivo",
     "Download file" : "Descargar archivo",
     "Go to thread" : "Ir al hilo",

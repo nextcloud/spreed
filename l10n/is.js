@@ -506,6 +506,7 @@ OC.L10N.register(
     "Set reminder" : "Setja áminningu",
     "Edit message" : "Breyta skilaboðum",
     "Copy message link" : "Afrita skilaboðatengil",
+    "Go to folder" : "Fara í möppu",
     "Go to file" : "Fara í skrá",
     "Translate" : "Þýða",
     "Dismiss" : "Hafna",

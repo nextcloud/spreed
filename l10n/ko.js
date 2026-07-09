@@ -1158,6 +1158,7 @@ OC.L10N.register(
     "Edit message" : "메시지 편집",
     "Copy message" : "메시지 복사",
     "Copy message link" : "메시지 링크 복사",
+    "Go to folder" : "폴더로 이동",
     "Go to file" : "파일로 이동",
     "Forward message" : "메시지 전달",
     "Translate" : "번역:",

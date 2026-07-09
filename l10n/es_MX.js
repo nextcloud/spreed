@@ -441,6 +441,7 @@ OC.L10N.register(
     "Reply" : "Responder",
     "More actions" : "Más acciones",
     "Set reminder" : "Establecer recordatorio",
+    "Go to folder" : "Ir a la carpeta",
     "Translate" : "Traducir",
     "Dismiss" : "Descartar",
     "Detect language" : "Detectar idioma",

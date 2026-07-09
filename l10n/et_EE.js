@@ -1563,6 +1563,7 @@ OC.L10N.register(
     "Edit message" : "Muuda sõnumit",
     "Copy message" : "Kopeeri sõnum",
     "Copy message link" : "Kopeeri sõnumi link",
+    "Go to folder" : "Mine kausta",
     "Go to file" : "Mine faili juurde",
     "Download file" : "Laadi fail alla",
     "Go to thread" : "Ava jutulõng",

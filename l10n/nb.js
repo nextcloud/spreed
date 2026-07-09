@@ -1229,6 +1229,7 @@ OC.L10N.register(
     "Edit message" : "Rediger melding",
     "Copy message" : "Kopier melding",
     "Copy message link" : "Kopier meldingskobling",
+    "Go to folder" : "Gå til mappe",
     "Go to file" : "Gå til fil",
     "Forward message" : "Videresend melding",
     "Translate" : "Oversette",

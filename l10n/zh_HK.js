@@ -1542,6 +1542,7 @@ OC.L10N.register(
     "Edit message" : "編輯訊息",
     "Copy message" : "複製訊息",
     "Copy message link" : "複製訊息連結",
+    "Go to folder" : "前往資料夾",
     "Go to file" : "前往檔案",
     "Download file" : "下載檔案",
     "Go to thread" : "前往討論串",

@@ -1563,6 +1563,7 @@ OC.L10N.register(
     "Edit message" : "Upraviť správu",
     "Copy message" : "Kopírovať správu",
     "Copy message link" : "Kopírovať odkaz správy",
+    "Go to folder" : "Prejsť do priečinka",
     "Go to file" : "Prejsť na súbor",
     "Download file" : "Stiahnuť súbor",
     "Go to thread" : "Prejsť na vlákno",

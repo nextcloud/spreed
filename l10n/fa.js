@@ -1545,6 +1545,7 @@ OC.L10N.register(
     "Edit message" : "ویرایش پیام",
     "Copy message" : "کپی پیام",
     "Copy message link" : "کپی لینک پیام",
+    "Go to folder" : "رفتن به پوشه",
     "Go to file" : "رفتن به فایل",
     "Download file" : "دانلود فایل",
     "Go to thread" : "رفتن به تاپیک",
