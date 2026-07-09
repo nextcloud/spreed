@@ -143,6 +143,16 @@ function selfMentionType(actorType: string) {
 }
 
 /**
+ * Returns whether the actor is message author
+ *
+ * @param message Chat message
+ */
+function authorIsActor(message: ChatMessage) {
+	return selfMentionId(message.actorId, message.actorType) === message.messageParameters.actor.id
+		&& selfMentionType(message.actorType) === message.messageParameters.actor.type
+}
+
+/**
  * Returns whether the actor is current user (You)
  *
  * @param message Chat message
@@ -193,11 +203,11 @@ export function isHiddenSystemMessage(message: ChatMessage): boolean {
 }
 
 /**
- * Returns whether the given system message should be hidden in the UI
+ * Returns localized system message
  *
  * @param message Chat message
  * @param conversation Current conversation
- * @return whether the message is hidden in the UI
+ * @return localized string
  */
 export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Conversation): string {
 	if (SYSTEM_MESSAGE_TYPE_UNTRANSLATED.includes(message.systemMessage)) {
@@ -310,5 +320,22 @@ export function tryLocalizeSystemMessage(message: ChatMessage, conversation: Con
 			// Don't localize non-supported relayed system messages, do polling
 			throw new Error()
 		}
+	}
+}
+
+/**
+ * Returns localized deleted message
+ *
+ * @param message Deleted chat message
+ * @param conversation Current conversation
+ * @return localized string
+ */
+export function tryLocalizeDeletedMessage(message: ChatMessage, conversation: Conversation): string {
+	if (selfIsActor(message, conversation.actorId, conversation.actorType)) {
+		return t('spreed', 'Message deleted by you')
+	} else if (authorIsActor(message)) {
+		return t('spreed', 'Message deleted by author')
+	} else {
+		return t('spreed', 'Message deleted by {actor}')
 	}
 }
