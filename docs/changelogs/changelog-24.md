@@ -5,6 +5,39 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.0.2 – 2026-07-09
+### Added
+- feat(chat): Allow to mark all conversation with a tag as read
+  [#18595](https://github.com/nextcloud/spreed/pull/18595)
+
+### Changed
+- Update dependencies
+- Allow recording backends to upload the recording in chunks
+
+### Fixed
+- fix(call): keep audio/video state choice from device picker when joining call
+  [#18528](https://github.com/nextcloud/spreed/pull/18528)
+- fix(call): Directly show call screen when starting a call in large conversations
+  [#18584](https://github.com/nextcloud/spreed/pull/18584)
+- fix(call): Treat direct-dial-in and dial-out similarly
+  [#18599](https://github.com/nextcloud/spreed/pull/18599)
+- fix(chat): Fix missing language on deleted message with chat-relay
+  [#18598](https://github.com/nextcloud/spreed/pull/18598)
+- fix(chat): Download shared folder as .zip archive
+  [#18580](https://github.com/nextcloud/spreed/pull/18580)
+- fix(chat): File share links are broken after reacting/replying
+  [#18574](https://github.com/nextcloud/spreed/pull/18574)
+- fix(chat-relay): Add last-common-read to chat relay
+  [#18487](https://github.com/nextcloud/spreed/pull/18487)
+- fix(external-calls): Create conversations as System instead of guest
+  [#18527](https://github.com/nextcloud/spreed/pull/18527)
+- fix(chat): Use system actor for SAML provisioned users added to existing groups
+  [#18517](https://github.com/nextcloud/spreed/pull/18517)
+- fix(sharing): Allow sharing with read-write again
+  [#18514](https://github.com/nextcloud/spreed/pull/18514)
+- fix(sessions): Cleanup stale sessions
+  [#18499](https://github.com/nextcloud/spreed/pull/18499)
+
 ## 24.0.1 – 2026-06-26
 ### Changed
 - Update dependencies
