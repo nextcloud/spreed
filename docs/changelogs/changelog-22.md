@@ -5,6 +5,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.15 – 2026-07-09
+### Changed
+- Update dependencies
+
+### Fixed
+- fix(sessions): Cleanup stale sessions
+  [#18501](https://github.com/nextcloud/spreed/pull/18501)
+- fix(user): Clean up on user deletion
+  [#18481](https://github.com/nextcloud/spreed/pull/18481)
+
 ## 22.0.14 – 2026-06-26
 ### Changed
 - Update dependencies
