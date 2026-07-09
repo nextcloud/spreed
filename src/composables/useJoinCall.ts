@@ -3,18 +3,19 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { Conversation, Participant } from '../types/index.ts'
+import type { Participant } from '../types/index.ts'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useStore } from 'vuex'
-import { ATTENDEE, CALL, CONVERSATION, PARTICIPANT } from '../constants.ts'
+import { ATTENDEE, CALL, PARTICIPANT } from '../constants.ts'
 import { callSIPDialOut } from '../services/callsService.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useSettingsStore } from '../stores/settings.ts'
 import { isAxiosErrorResponse } from '../types/guards.ts'
+import { isConversationPhoneRoom } from '../utils/conversation.ts'
 
 /**
  * Handler function to join a call and manage side effects
@@ -23,22 +24,6 @@ export function useJoinCall() {
 	const actorStore = useActorStore()
 	const settingsStore = useSettingsStore()
 	const vuexStore = useStore()
-
-	/**
-	 * Returns whether the conversation is a phone room (with a single SIP phone participant)
-	 *
-	 * @param conversation - conversation object
-	 * @param conversation.objectId - conversation objectId
-	 * @param conversation.objectType - conversation objectType
-	 */
-	function isConversationPhoneRoom({ objectId, objectType }: Conversation) {
-		return objectId === CONVERSATION.OBJECT_ID.PHONE_OUTGOING
-			&& [
-				CONVERSATION.OBJECT_TYPE.PHONE_LEGACY,
-				CONVERSATION.OBJECT_TYPE.PHONE_PERSISTENT,
-				CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY,
-			].includes(objectType)
-	}
 
 	/**
 	 * Tries to call the given SIP phone participant
