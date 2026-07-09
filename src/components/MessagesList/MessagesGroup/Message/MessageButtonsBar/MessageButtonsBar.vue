@@ -188,6 +188,7 @@
 							<template #icon>
 								<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
 							</template>
+							<!-- TRANSLATORS: to download a folder/file -->
 							{{ isSharedFolder ? t('spreed', 'Download folder') : t('spreed', 'Download file') }}
 						</NcActionLink>
 					</template>
