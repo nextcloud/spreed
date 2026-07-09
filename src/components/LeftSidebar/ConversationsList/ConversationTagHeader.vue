@@ -14,16 +14,20 @@ import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconArrowDown from 'vue-material-design-icons/ArrowDown.vue'
 import IconArrowUp from 'vue-material-design-icons/ArrowUp.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import ConfirmDialog from '../../UIShared/ConfirmDialog.vue'
+import IconMarkChatRead from '../../../../img/material-icons/mark-chat-read.svg?raw'
 import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
 
 export type TagHeaderItem = ConversationTag & {
 	_type: 'tag-header'
 	unreadCount: number
+	unreadMention: boolean
+	unreadMentionDirect: boolean
 	isFirst?: boolean
 	isLast?: boolean
 }
@@ -36,6 +40,15 @@ const vuexStore = useStore()
 const tagsStore = useConversationTagsStore()
 
 const isCustomTag = computed(() => props.item.type === 'custom')
+const counterType = computed(() => {
+	if (props.item.unreadMentionDirect) {
+		return 'highlighted'
+	} else if (props.item.unreadMention) {
+		return 'outlined'
+	} else {
+		return ''
+	}
+})
 
 /**
  * Assign a new name to the tag via dialog
@@ -85,6 +98,34 @@ async function handleDeleteTag() {
 		}
 	}
 }
+
+/**
+ * Clear last read message of a tag from all conversations
+ */
+async function handleMarkReadTag() {
+	const conversations = (vuexStore.getters.conversationsList as Conversation[]).filter((conversation) => {
+		if (!conversation.unreadMessages) {
+			return false
+		}
+
+		switch (props.item.type) {
+			case 'favorites': {
+				return conversation.isFavorite
+			}
+			case 'other': {
+				return !conversation.isFavorite && !conversation.tagIds?.length
+			}
+			case 'custom':
+			default: {
+				return conversation.tagIds?.includes(props.item.id)
+			}
+		}
+	})
+
+	for (const conversation of conversations) {
+		vuexStore.dispatch('clearLastReadMessage', { token: conversation.token })
+	}
+}
 </script>
 
 <template>
@@ -99,9 +140,18 @@ async function handleDeleteTag() {
 		<!-- Invisible child to trigger the collapse chevron -->
 		<li class="tag-header__spacer" />
 		<template #counter>
-			<NcCounterBubble v-if="item.unreadCount > 0" :count="item.unreadCount" />
+			<NcCounterBubble v-if="item.unreadCount > 0" :count="item.unreadCount" :type="counterType" />
 		</template>
 		<template #actions>
+			<NcActionButton
+				v-if="item.unreadCount > 0"
+				closeAfterClick
+				@click="handleMarkReadTag">
+				<template #icon>
+					<NcIconSvgWrapper :svg="IconMarkChatRead" :size="20" />
+				</template>
+				{{ t('spreed', 'Mark as read') }}
+			</NcActionButton>
 			<template v-if="isCustomTag">
 				<NcActionButton closeAfterClick @click="handleRenameTag">
 					<template #icon>
