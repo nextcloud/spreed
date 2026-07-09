@@ -24,6 +24,7 @@ import { CALL, CONVERSATION } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useSettingsStore } from '../stores/settings.ts'
+import { isConversationPhoneRoom } from '../utils/conversation.ts'
 
 const props = defineProps<{
 	token: string
@@ -116,15 +117,9 @@ function handleDirectCall(routeToken: string) {
 		CALL.RECORDING.AUDIO,
 	].includes(conversation.callRecording)
 	|| conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED
-	const isConversationPhoneRoom = [
-		CONVERSATION.OBJECT_TYPE.PHONE_LEGACY,
-		CONVERSATION.OBJECT_TYPE.PHONE_PERSISTENT,
-		CONVERSATION.OBJECT_TYPE.PHONE_TEMPORARY,
-	].includes(conversation.objectType)
-	&& conversation.objectId === CONVERSATION.OBJECT_ID.PHONE_OUTGOING
 
 	// Verify conditions for showing MediaSettings (required or user opted out)
-	if (showRecordingWarning || settingsStore.showMediaSettings || isConversationPhoneRoom) {
+	if (showRecordingWarning || settingsStore.showMediaSettings || isConversationPhoneRoom(conversation)) {
 		emit('talk:media-settings:show')
 		return
 	}
