@@ -1565,6 +1565,7 @@ OC.L10N.register(
     "Copy message link" : "複製訊息連結",
     "Go to folder" : "前往資料夾",
     "Go to file" : "前往檔案",
+    "Download folder" : "下載資料夾",
     "Download file" : "下載檔案",
     "Go to thread" : "到討論串",
     "Edit thread details" : "編輯討論串詳細資訊",
