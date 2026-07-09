@@ -309,6 +309,7 @@ OC.L10N.register(
     "Upload" : "Oplaai",
     "Files" : " Lêers",
     "Reply" : "Antwoord",
+    "Go to folder" : "Gaan na vouer",
     "Dismiss" : "Ontslaan",
     "Send now" : "Stuur nou",
     "Contact" : "Kontak",
