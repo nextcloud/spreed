@@ -27,7 +27,7 @@ import { useChatExtrasStore } from '../stores/chatExtras.ts'
 import { useGuestNameStore } from '../stores/guestName.ts'
 import { isAxiosErrorResponse } from '../types/guards.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
-import { isFileShareMessage, tryLocalizeSystemMessage } from '../utils/message.ts'
+import { isFileShareMessage, tryLocalizeDeletedMessage, tryLocalizeSystemMessage } from '../utils/message.ts'
 import { useGetThreadId } from './useGetThreadId.ts'
 import { useGetToken } from './useGetToken.ts'
 
@@ -694,6 +694,17 @@ export function useGetMessagesProvider() {
 		if (message.systemMessage !== '' && conversation) {
 			try {
 				message.message = tryLocalizeSystemMessage(message, conversation)
+			} catch (exception) {
+				tryPollNewMessages()
+				return
+			}
+		}
+
+		// Attempt to localize deleted messages
+		if (message.systemMessage === MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED && conversation
+			&& 'parent' in message && message.parent && 'message' in message.parent) {
+			try {
+				message.parent.message = tryLocalizeDeletedMessage(message.parent, conversation)
 			} catch (exception) {
 				tryPollNewMessages()
 				return
