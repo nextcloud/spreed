@@ -1368,6 +1368,7 @@ OC.L10N.register(
     "Edit message" : "تحرير رسالة",
     "Copy message" : "نسخ الرسالة",
     "Copy message link" : "نسخ رابط الرسالة ",
+    "Go to folder" : "إنتقل إلى المجلد",
     "Go to file" : "الذهاب إلى ملف",
     "Download file" : "تنزيل ملف",
     "Forward message" : "رسالة معاد توجيهها",

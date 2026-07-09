@@ -1565,6 +1565,7 @@ OC.L10N.register(
     "Copy message link" : "Скопировать ссылку на сообщение",
     "Go to folder" : "Перейти в папку",
     "Go to file" : "Перейти к файлу",
+    "Download folder" : "Скачать папку",
     "Download file" : "Скачать файл",
     "Go to thread" : "Перейти в тему",
     "Edit thread details" : "Изменить детали темы",
