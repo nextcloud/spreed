@@ -911,6 +911,7 @@ Signaling.Standalone.prototype.forceReconnect = function(newSession, flags) {
 
 		rejoinConversation(this.currentRoomToken)
 			.then((response) => {
+				// FIXME use _trigger() -> EventBus to emit payload instead of direct store usage
 				store.commit('setInCall', {
 					token: this.currentRoomToken,
 					sessionId: this.nextcloudSessionId,
@@ -919,7 +920,9 @@ Signaling.Standalone.prototype.forceReconnect = function(newSession, flags) {
 
 				this.nextcloudSessionId = response.data.ocs.data.sessionId
 
+				// FIXME use _trigger() -> EventBus to emit payload instead of direct store usage
 				actorStore.setCurrentParticipant(response.data.ocs.data)
+				// FIXME use _trigger() -> EventBus to emit payload instead of direct store usage
 				store.commit('setInCall', {
 					token: this.currentRoomToken,
 					sessionId: this.nextcloudSessionId,
@@ -1358,6 +1361,7 @@ Signaling.Standalone.prototype.processEvent = function(data) {
 
 Signaling.Standalone.prototype.processDialOutEvent = function(data) {
 	if (data.dialout.callid) {
+		// FIXME use _trigger() -> EventBus to emit payload instead of direct store usage
 		store.dispatch('processDialOutAnswer', { callid: data.dialout.callid })
 	} else if (data.dialout.error) {
 		console.debug(data.dialout.error)
@@ -1368,6 +1372,7 @@ Signaling.Standalone.prototype.processTransientEvent = function(data) {
 	switch (data.transient.type) {
 		case 'set':
 			if (data.transient.key.startsWith('callstatus_')) {
+				// FIXME use _trigger() -> EventBus to emit payload instead of direct store usage
 				store.dispatch('processTransientCallStatus', { value: data.transient.value })
 			}
 			break
@@ -1376,6 +1381,7 @@ Signaling.Standalone.prototype.processTransientEvent = function(data) {
 			break
 		case 'initial':
 			if (data.transient.data) {
+				// FIXME use _trigger() -> EventBus to emit payload instead of direct store usage
 				store.dispatch('addPhonesStates', { phoneStates: data.transient.data })
 			}
 			break
@@ -1575,6 +1581,7 @@ Signaling.Standalone.prototype.processErrorNoSuchRoom = function() {
 	this._rejoinRoomAfterInvalidSession = token
 	this.resumeId = null
 	this.signalingRoomJoined = null
+	// FIXME use _trigger() -> EventBus to emit payload instead of direct store usage
 	store.dispatch('joinConversation', { token }).catch((error) => {
 		console.error('Failed to rejoin conversation with a new session', token, error)
 	})
