@@ -23,9 +23,7 @@ class PhoneNumberValidation {
 	 * Validate input as a phone number
 	 *
 	 * - Local number: allow
-	 * - International number
-	 *      a. If valid, strip + and allow
-	 *      b. If invalid, throw
+	 * - International number: If invalid, throw
 	 * @throws \InvalidArgumentException When the number is invalid
 	 */
 	public function validateNumber(string $phoneNumber): string {
@@ -46,10 +44,6 @@ class PhoneNumberValidation {
 			throw new \InvalidArgumentException();
 		}
 
-		if (str_starts_with($standardPhoneNumber, '+')) {
-			return substr($standardPhoneNumber, 1);
-		}
-
-		throw new \InvalidArgumentException();
+		return $standardPhoneNumber;
 	}
 }
