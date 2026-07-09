@@ -1563,6 +1563,7 @@ OC.L10N.register(
     "Edit message" : "Redaguoti laišką",
     "Copy message" : "Kopijuoti pranešimą",
     "Copy message link" : "Kopijuoti žinutės nuorodą",
+    "Go to folder" : "Eiti į aplanką",
     "Go to file" : "Pereiti į failą",
     "Download file" : "Atsisiųsti failą",
     "Go to thread" : "Eiti į temą",

@@ -787,6 +787,7 @@ OC.L10N.register(
     "Set reminder" : "Cunfigura un'apuntu",
     "Reply privately" : "Risponde in privadu",
     "Copy message link" : "Còpia su ligòngiu de su messàgiu",
+    "Go to folder" : "Bae a sa cartella ",
     "Go to file" : "Bae a s'archìviu",
     "Forward message" : "Torra a imbiare su messàgiu",
     "Translate" : "Borta",

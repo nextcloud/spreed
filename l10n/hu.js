@@ -1518,6 +1518,7 @@ OC.L10N.register(
     "Edit message" : "Üzenet szerkesztése",
     "Copy message" : "Üzenet másolása",
     "Copy message link" : "Üzenethivatkozás másolása",
+    "Go to folder" : "Ugrás a mappához",
     "Go to file" : "Ugrás a fájlhoz",
     "Download file" : "Fájl letöltése",
     "Go to thread" : "Ugrás a szálhoz",

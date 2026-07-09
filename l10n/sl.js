@@ -1154,6 +1154,7 @@ OC.L10N.register(
     "Edit message" : "Uredi sporočilo",
     "Copy message" : "Kopiraj sporočilo",
     "Copy message link" : "Kopiraj povezavo sporočila",
+    "Go to folder" : "Pojdi v mapo",
     "Go to file" : "Odpri mesto datoteke",
     "Download file" : "Prejmi datoteko",
     "Forward message" : "Posreduj sporočilo",

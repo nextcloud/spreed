@@ -1472,6 +1472,7 @@ OC.L10N.register(
     "Edit message" : "Επεξεργασία μηνύματος",
     "Copy message" : "Αντιγραφή μηνύματος",
     "Copy message link" : "Αντιγραφή συνδέσμου μηνύματος",
+    "Go to folder" : "Μετακίνηση στον φάκελο",
     "Go to file" : "Μετάβαση στο αρχείο",
     "Download file" : "Λήψη αρχείου",
     "Go to thread" : "Μετάβαση στη συζήτηση",

@@ -656,6 +656,7 @@ OC.L10N.register(
     "Edit message" : "Redigér besked",
     "Copy message" : "Kopiér besked",
     "Copy message link" : "Kopier besked link",
+    "Go to folder" : "Gå til mappe",
     "Go to file" : "Gå til fil",
     "Go to thread" : "Gå til tråd",
     "Forward message" : "Videresend besked",

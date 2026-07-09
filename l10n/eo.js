@@ -336,6 +336,7 @@ OC.L10N.register(
     "24 hours" : "24 horoj",
     "Reply" : "Respondi",
     "More actions" : "Pliaj agoj",
+    "Go to folder" : "Iri al dosierujo",
     "Translate" : "Traduku",
     "Dismiss" : "Preterpasi",
     "Contact" : "Kontakto",

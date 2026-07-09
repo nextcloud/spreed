@@ -108,6 +108,7 @@ OC.L10N.register(
     "Files" : "Archivos",
     "24 hours" : "24 horas",
     "Reply" : "Responder",
+    "Go to folder" : "Ir a la carpeta",
     "Translate" : "Traducir",
     "Dismiss" : "Despedir",
     "Contact" : "Contacto",

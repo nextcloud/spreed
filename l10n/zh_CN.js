@@ -1545,6 +1545,7 @@ OC.L10N.register(
     "Edit message" : "编辑消息",
     "Copy message" : "复制消息",
     "Copy message link" : "复制消息链接",
+    "Go to folder" : "前往文件夹目录",
     "Go to file" : "前往文件",
     "Download file" : "下载文件",
     "Go to thread" : "转到帖子",
