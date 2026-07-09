@@ -982,6 +982,7 @@ OC.L10N.register(
     "Reply privately" : "Отговаряне на лично ",
     "Edit message" : "Редактиране на съобщение",
     "Copy message link" : "Копиране на връзката към съобщението",
+    "Go to folder" : "Отиди до папка",
     "Go to file" : "Отидете до файла",
     "Forward message" : "Препращане на съобщение",
     "Translate" : "Превод",
