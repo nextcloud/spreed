@@ -1474,6 +1474,7 @@ OC.L10N.register(
     "Edit message" : "Мессеж засах",
     "Copy message" : "Мессеж хуулах",
     "Copy message link" : "Мессеж холбоос хуулах",
+    "Go to folder" : "хавтас руу очих",
     "Go to file" : "Файл руу очих",
     "Download file" : "Файл татах",
     "Go to thread" : "Thread руу очих",

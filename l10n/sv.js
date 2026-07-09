@@ -1542,6 +1542,7 @@ OC.L10N.register(
     "Edit message" : "Redigera meddelande",
     "Copy message" : "Kopiera meddelande",
     "Copy message link" : "Kopiera meddelandelänk",
+    "Go to folder" : "Gå till mapp",
     "Go to file" : "Gå till fil",
     "Download file" : "Ladda ner fil",
     "Go to thread" : "Gå till tråd",

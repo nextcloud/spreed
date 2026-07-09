@@ -1290,6 +1290,7 @@ OC.L10N.register(
     "Edit message" : "メッセージを編集",
     "Copy message" : "メッセージをコピー",
     "Copy message link" : "メッセージリンクのコピー",
+    "Go to folder" : "フォルダーへ移動",
     "Go to file" : "ファイルへ移動",
     "Download file" : "ファイルをダウンロード",
     "Forward message" : "メッセージを転送する",

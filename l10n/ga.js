@@ -1563,6 +1563,7 @@ OC.L10N.register(
     "Edit message" : "Cuir teachtaireacht in eagar",
     "Copy message" : "Cóipeáil teachtaireacht",
     "Copy message link" : "Cóipeáil nasc na teachtaireachta",
+    "Go to folder" : "Téigh go dtí fillteán",
     "Go to file" : "Téigh go dtí an comhad",
     "Download file" : "Íoslódáil an comhad",
     "Go to thread" : "Téigh go dtí an snáithe",

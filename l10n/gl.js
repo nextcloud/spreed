@@ -1542,6 +1542,7 @@ OC.L10N.register(
     "Edit message" : "Editar a mensaxe",
     "Copy message" : "Copiar a mensaxe",
     "Copy message link" : "Copiar a ligazón da mensaxe",
+    "Go to folder" : "Ir ao cartafol",
     "Go to file" : "Ir ao ficheiro",
     "Download file" : "Descargar ficheiro",
     "Go to thread" : "Ir ao fío",

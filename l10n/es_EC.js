@@ -1011,6 +1011,7 @@ OC.L10N.register(
     "Reply privately" : "Responder de forma privada",
     "Edit message" : "Editar mensaje",
     "Copy message link" : "Copiar enlace del mensaje",
+    "Go to folder" : "Ir a la carpeta",
     "Go to file" : "Ir al archivo",
     "Forward message" : "Reenviar mensaje",
     "Translate" : "Traducir",

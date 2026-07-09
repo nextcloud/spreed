@@ -1474,6 +1474,7 @@ OC.L10N.register(
     "Edit message" : "Hariri ujumbe",
     "Copy message" : "Nakili ujumbe",
     "Copy message link" : "Nakili kiungo cha ujumbe",
+    "Go to folder" : "Nenda kwenye folda",
     "Go to file" : "Nenda kwenye faili",
     "Download file" : "Pakua faili",
     "Go to thread" : "Nenda kwenye mjadala",

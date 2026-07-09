@@ -1563,6 +1563,7 @@ OC.L10N.register(
     "Edit message" : "Editar mensagem",
     "Copy message" : "Copiar mensagem",
     "Copy message link" : "Copiar link da mensagem",
+    "Go to folder" : "Ir para a pasta",
     "Go to file" : "Ir para o arquivo",
     "Download file" : "Baixar arquivo",
     "Go to thread" : "Ir para fio",

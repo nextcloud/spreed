@@ -113,6 +113,7 @@ OC.L10N.register(
     "24 hours" : "24 საათი",
     "Reply" : "პასუხი",
     "More actions" : "მეტი ქმედება",
+    "Go to folder" : "დირექტორიაზე გადასვლა",
     "Translate" : "გადათარგმნეთ",
     "Dismiss" : "დათხოვნა",
     "Message sent" : "წერილი გაგზავნილია",

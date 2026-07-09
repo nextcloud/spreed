@@ -1485,6 +1485,7 @@ OC.L10N.register(
     "Edit message" : "ئۇچۇرنى تەھرىرلەش",
     "Copy message" : "ئۇچۇرنى كۆچۈرۈڭ",
     "Copy message link" : "ئۇچۇر ئۇلانمىسىنى كۆچۈرۈڭ",
+    "Go to folder" : "ھۆججەت قىسقۇچقا بېرىڭ",
     "Go to file" : "ھۆججەتكە بېرىڭ",
     "Download file" : "ھۆججەت چۈشۈرۈش",
     "Go to thread" : "يىپقا بار",

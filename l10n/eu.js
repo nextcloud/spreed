@@ -1147,6 +1147,7 @@ OC.L10N.register(
     "Reply privately" : "Erantzun pribatuki",
     "Edit message" : "Editatu mezua",
     "Copy message link" : "Kopiatu mezuaren esteka",
+    "Go to folder" : "Joan karpetara",
     "Go to file" : "Joan fitxategira",
     "Download file" : "Deskargatu fitxategia",
     "Forward message" : "Birbidali mezua",

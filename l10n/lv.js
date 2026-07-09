@@ -478,6 +478,7 @@ OC.L10N.register(
     "Message forwarded to \"Note to self\"" : "Ziņojums pārvirzīts uz “Piezīme sev”",
     "Error while forwarding message to \"Note to self\"" : "Kļūda ziņojuma pārvirzīšanas uz “Piezīme sev” laikā",
     "Reply" : "Atbildēt",
+    "Go to folder" : "Doties uz mapi",
     "Go to file" : "Doties uz datni",
     "Translate" : "Tulkot",
     "Dismiss" : "Atmest",
