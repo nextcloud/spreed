@@ -5,6 +5,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 23.0.8 – 2026-07-09
+### Changed
+- Update dependencies
+
+### Fixed
+- fix(call): keep audio/video state choice from device picker when joining call
+  [#18528](https://github.com/nextcloud/spreed/pull/18528)
+- fix(call): Directly show call screen when starting a call in large conversations
+  [#18585](https://github.com/nextcloud/spreed/pull/18585)
+- fix(chat): Fix missing language on deleted message with chat-relay
+  [#18597](https://github.com/nextcloud/spreed/pull/18597)
+- fix(chat): Download shared folder as .zip archive
+  [#18579](https://github.com/nextcloud/spreed/pull/18579)
+- fix(chat): File share links are broken after reacting/replying
+  [#18573](https://github.com/nextcloud/spreed/pull/18573)
+- fix(chat-relay): Add last-common-read to chat relay
+  [#18487](https://github.com/nextcloud/spreed/pull/18487)
+- fix(sessions): Cleanup stale sessions
+  [#18500](https://github.com/nextcloud/spreed/pull/18500)
+- fix(user): Clean up on user deletion
+  [#18467](https://github.com/nextcloud/spreed/pull/18467)
+
 ## 23.0.7 – 2026-06-26
 ### Changed
 - Update dependencies
