@@ -7,7 +7,7 @@
 import type { Conversation } from '../../../types/index.ts'
 
 import { useVirtualList } from '@vueuse/core'
-import { computed, toRef } from 'vue'
+import { computed, toRef, watch } from 'vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 import ConversationItem from './ConversationItem.vue'
 import { AVATAR } from '../../../constants.ts'
@@ -30,6 +30,9 @@ const { list, containerProps, wrapperProps } = useVirtualList<Conversation>(toRe
 	itemHeight: () => itemHeight.value,
 	overscan: 10,
 })
+
+// FIXME upstream: useVirtualList does not watch for totalHeight or itemHeight changes
+watch(itemHeight, () => containerProps.onScroll())
 
 /**
  * Get an index of the first fully visible conversation in viewport
