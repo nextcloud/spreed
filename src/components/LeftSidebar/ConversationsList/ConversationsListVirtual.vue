@@ -8,7 +8,7 @@ import type { Conversation, ConversationTag } from '../../../types/index.ts'
 import type { TagHeaderItem } from './ConversationTagHeader.vue'
 
 import { useVirtualList } from '@vueuse/core'
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 import ConversationItem from './ConversationItem.vue'
 import ConversationTagHeader from './ConversationTagHeader.vue'
@@ -204,6 +204,9 @@ const { list, containerProps, wrapperProps } = useVirtualList<VirtualListItem>(l
 	itemHeight: getItemHeight,
 	overscan: 10,
 })
+
+// FIXME upstream: useVirtualList does not watch for totalHeight or itemHeight changes
+watch(itemHeight, () => containerProps.onScroll())
 
 /**
  * Get the index of the first fully visible virtual-list item in the viewport.
