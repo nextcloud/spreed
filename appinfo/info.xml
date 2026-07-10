@@ -21,7 +21,7 @@
 	<version>25.0.0-dev.0</version>
 	<licence>agpl</licence>
 
-	<author>Anna Larch</author>
+	<author>Christian Lorang</author>
 	<author>Daniel Calviño Sánchez</author>
 	<author>Dorra Jaouad</author>
 	<author>Grigorii Shartsev</author>
@@ -31,7 +31,6 @@
 	<author>Maksim Sukharev</author>
 	<author>Marcel Hibbe</author>
 	<author>Marcel Müller</author>
-	<author>Sowjanya Kota</author>
 
 	<namespace>Talk</namespace>
 
