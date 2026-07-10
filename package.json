@@ -114,5 +114,9 @@
   "engines": {
     "node": "^24.0.0",
     "npm": "^11.3.0"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.5.1": true,
+    "core-js@3.37.0": true
   }
 }
