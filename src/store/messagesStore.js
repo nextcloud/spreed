@@ -604,8 +604,8 @@ const actions = {
 			MESSAGE.SYSTEM_TYPE.CALL_ENDED_EVERYONE,
 		].includes(message.systemMessage)) {
 			// Overwrite the conversation.hasCall property so people can join
-			// after seeing the message in the chat.
-			if (conversation?.lastMessage && message.id > conversation.lastMessage.id) {
+			// after seeing the message in the chat. Only for new/live messages.
+			if (fromRealtime) {
 				context.dispatch('overwriteHasCallByChat', {
 					token,
 					hasCall: message.systemMessage === MESSAGE.SYSTEM_TYPE.CALL_STARTED,
