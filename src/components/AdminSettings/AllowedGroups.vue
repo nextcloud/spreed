@@ -70,6 +70,32 @@
 			</NcButton>
 
 			<NcSelect
+				v-model="canStartCallsGroups"
+				inputId="allow_groups_start_call"
+				:inputLabel="t('spreed', 'Limit starting calls to certain groups')"
+				name="allow_groups_start_call"
+				class="form__select"
+				:options="groups"
+				:placeholder="t('spreed', 'Limit starting calls to certain groups')"
+				:disabled="loading"
+				:multiple="true"
+				:searchable="true"
+				:tagWidth="60"
+				:loading="loadingGroups"
+				:showNoOptions="false"
+				keepOpen
+				trackBy="id"
+				label="displayname"
+				noWrap
+				@search="debounceSearchGroup" />
+			<NcButton
+				variant="primary"
+				:disabled="loading"
+				@click="saveStartCallsGroups">
+				{{ saveLabelStartCallsGroups }}
+			</NcButton>
+
+			<NcSelect
 				v-model="startCalls"
 				inputId="start_calls"
 				:inputLabel="t('spreed', 'Limit starting a call')"
@@ -84,6 +110,12 @@
 				:disabled="loading || loadingStartCalls"
 				@update:modelValue="saveStartCalls" />
 		</div>
+		<p>
+			<em>{{ t('spreed', 'When at least one group is selected, only members of these groups can start a call. This also applies to moderators, while guests and federated users are never members of these groups. Everyone can still start a call when no group is selected.') }}</em>
+		</p>
+		<p>
+			<em>{{ t('spreed', 'For conversations hosted on a federated server, the configuration of the host server applies instead.') }}</em>
+		</p>
 		<p>
 			<em>{{ t('spreed', 'When a call has started, everyone with access to the conversation can join the call.') }}</em>
 		</p>
@@ -122,8 +154,10 @@ export default {
 			groups: [],
 			allowedGroups: [],
 			canStartConversations: [],
+			canStartCallsGroups: [],
 			saveLabelAllowedGroups: t('spreed', 'Save changes'),
 			saveLabelStartConversations: t('spreed', 'Save changes'),
+			saveLabelStartCallsGroups: t('spreed', 'Save changes'),
 
 			startCallOptions,
 			startCalls: startCallOptions[0],
@@ -140,12 +174,16 @@ export default {
 		this.canStartConversations = loadState('spreed', 'start_conversations', []).sort(function(a, b) {
 			return a.displayname.localeCompare(b.displayname)
 		})
+		this.canStartCallsGroups = loadState('spreed', 'start_calls_groups', []).sort(function(a, b) {
+			return a.displayname.localeCompare(b.displayname)
+		})
 		this.startCalls = startCallOptions[parseInt(loadState('spreed', 'start_calls'))]
 
-		// Make a unique list with the groups we know from allowedGroups and canStartConversations
+		// Make a unique list with the groups we know from allowedGroups,
+		// canStartConversations and canStartCallsGroups
 		// Unique checking is done by turning the group objects (with id and name)
 		// into json strings and afterwards back again
-		const mergedGroups = Array.from(new Set(this.allowedGroups.concat(this.canStartConversations)
+		const mergedGroups = Array.from(new Set(this.allowedGroups.concat(this.canStartConversations).concat(this.canStartCallsGroups)
 			.map((g) => JSON.stringify(g)))).map((g) => JSON.parse(g))
 
 		this.groups = mergedGroups.sort(function(a, b) {
@@ -218,6 +256,27 @@ export default {
 					this.saveLabelStartConversations = t('spreed', 'Saved!')
 					setTimeout(() => {
 						this.saveLabelStartConversations = t('spreed', 'Save changes')
+					}, 5000)
+				},
+			})
+		},
+
+		saveStartCallsGroups() {
+			this.loading = true
+			this.loadingGroups = true
+			this.saveLabelStartCallsGroups = t('spreed', 'Saving …')
+
+			const groups = this.canStartCallsGroups.map((group) => {
+				return group.id
+			})
+
+			OCP.AppConfig.setValue('spreed', 'start_calls_groups', JSON.stringify(groups), {
+				success: () => {
+					this.loading = false
+					this.loadingGroups = false
+					this.saveLabelStartCallsGroups = t('spreed', 'Saved!')
+					setTimeout(() => {
+						this.saveLabelStartCallsGroups = t('spreed', 'Save changes')
 					}, 5000)
 				},
 			})

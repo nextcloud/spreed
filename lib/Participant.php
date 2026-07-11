@@ -86,7 +86,7 @@ class Participant {
 		return \in_array($participantType, [self::OWNER, self::MODERATOR, self::GUEST_MODERATOR], true);
 	}
 
-	public function canStartCall(IConfig $config): bool {
+	public function canStartCall(IConfig $config, Config $talkConfig): bool {
 		if ($this->room->getType() === Room::TYPE_NOTE_TO_SELF) {
 			return false;
 		}
@@ -98,6 +98,10 @@ class Participant {
 		}
 
 		if (!($this->getPermissions() & Attendee::PERMISSIONS_CALL_START)) {
+			return false;
+		}
+
+		if ($talkConfig->isNotAllowedToStartCalls($this)) {
 			return false;
 		}
 

@@ -38,6 +38,7 @@ class GroupDeletedListener implements IEventListener {
 		$gid = $event->getGroup()->getGID();
 
 		$this->removeGroupFromConfig('sip_bridge_groups', $gid);
+		$this->removeGroupFromConfig('start_calls_groups', $gid);
 		$this->removeGroupFromConfig('start_conversations', $gid);
 		$this->removeGroupFromConfig('allowed_groups', $gid);
 
