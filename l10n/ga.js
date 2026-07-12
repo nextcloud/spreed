@@ -1565,6 +1565,7 @@ OC.L10N.register(
     "Copy message link" : "Cóipeáil nasc na teachtaireachta",
     "Go to folder" : "Téigh go dtí fillteán",
     "Go to file" : "Téigh go dtí an comhad",
+    "Download folder" : "Íoslódála fillteán",
     "Download file" : "Íoslódáil an comhad",
     "Go to thread" : "Téigh go dtí an snáithe",
     "Edit thread details" : "Cuir sonraí an snáithe in eagar",
