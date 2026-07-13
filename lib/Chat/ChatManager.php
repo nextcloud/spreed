@@ -481,7 +481,7 @@ class ChatManager {
 				$this->roomService->setLastMetadataActivity($chat, $comment->getCreationDateTime());
 				$this->unreadCountCache->clear($chat->getId() . '-');
 			} else {
-				$this->roomService->setLastMetadataActivity($chat, $comment->getCreationDateTime);
+				$this->roomService->setLastMetadataActivity($chat, $comment->getCreationDateTime());
 			}
 
 			$alreadyNotifiedUsers = [];

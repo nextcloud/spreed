@@ -506,7 +506,7 @@ namespace OCA\Talk;
  *     // Timestamp of the last message activity in the conversation, in seconds and UTC time zone
  *     lastActivity: int,
  *     // Timestamp of the last activity (metadata, not messages) in the conversation, in seconds and UTC time zone
- *     lastMetadataActivity: int
+ *     lastMetadataActivity: int,
  *     // ID of the last message read by every user that has read privacy set to public in a room. When the user themself has it set to private the value is `0` (only available with `chat-read-status` capability)
  *     lastCommonReadMessage: int,
  * 	   // Last message in a conversation if available, otherwise empty. **Note:** Even when given the message will not contain the `parent` or `reactionsSelf` attribute due to performance reasons

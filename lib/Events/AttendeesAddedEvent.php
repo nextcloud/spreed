@@ -30,8 +30,8 @@ class AttendeesAddedEvent extends AttendeesEvent {
 		return $this->skipLastMessageUpdate;
 	}
 
-	public function setShouldSkipLastMessageUpdate(bool $ShouldSkipLastActivityUpdate) {
-		$this->shouldSkipLastMessageUpdate = $ShouldSkipLastMessageUpdate;
+	public function setShouldSkipLastMessageUpdate(bool $shouldSkipLastMessageUpdate) {
+		$this->skipLastMessageUpdate = $shouldSkipLastMessageUpdate;
 	}
 
 	public function setLastMessage(IComment $lastMessage): void {

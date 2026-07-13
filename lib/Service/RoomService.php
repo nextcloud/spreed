@@ -1429,7 +1429,7 @@ class RoomService {
 		if (isset($host['lastMetadataActivity']) && $host['lastMetadataActivity'] !== 0 && $host['lastMetadataActivity'] !== ((int)$local->getLastMetadataActivity()?->getTimestamp())) {
 			$lastMetadataActivity = $this->timeFactory->getDateTime('@' . $host['lastMetadataActivity']);
 			$this->setLastMetadataActivity($local, $lastMetadataActivity);
-			$changed[] = ARoomSyncEvent::PROPERTY_LAST_METADATA_ACTIVITY;
+			$changed[] = ARoomSyncedEvent::PROPERTY_LAST_METADATA_ACTIVITY;
 		}
 		if (isset($host['lobbyState'], $host['lobbyTimer']) && ($host['lobbyState'] !== $local->getLobbyState() || $host['lobbyTimer'] !== ((int)$local->getLobbyTimer()?->getTimestamp()))) {
 			$hostTimer = $host['lobbyTimer'] === 0 ? null : $this->timeFactory->getDateTime('@' . $host['lobbyTimer']);

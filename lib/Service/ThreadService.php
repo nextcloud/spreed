@@ -46,6 +46,7 @@ class ThreadService {
 		$thread->setName($title);
 		$thread->setRoomId($room->getId());
 		$thread->setLastActivity($this->timeFactory->getDateTime());
+		$thread->setLastMetadataActivity($this->timeFactory->getDateTime());
 		$thread = $this->threadMapper->insert($thread);
 
 		$this->cache->set(self::CACHE_PREFIX . $room->getId() . '/' . $threadId, $thread->toJson(), 60 * 15);

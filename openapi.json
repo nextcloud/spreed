@@ -1888,6 +1888,7 @@
                     "isCustomAvatar",
                     "isFavorite",
                     "lastActivity",
+                    "lastMetadataActivity",
                     "lastCommonReadMessage",
                     "lastPing",
                     "lastReadMessage",
@@ -2046,7 +2047,12 @@
                     "lastActivity": {
                         "type": "integer",
                         "format": "int64",
-                        "description": "Timestamp of the last activity in the conversation, in seconds and UTC time zone"
+                        "description": "Timestamp of the last message activity in the conversation, in seconds and UTC time zone"
+                    },
+                    "lastMetadataActivity": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Timestamp of the last activity (metadata, not messages) in the conversation, in seconds and UTC time zone"
                     },
                     "lastCommonReadMessage": {
                         "type": "integer",
@@ -2566,6 +2572,7 @@
                     "title",
                     "lastMessageId",
                     "lastActivity",
+                    "lastMetadataActivity",
                     "numReplies"
                 ],
                 "properties": {
@@ -2592,7 +2599,13 @@
                     "lastActivity": {
                         "type": "integer",
                         "format": "int64",
-                        "description": "UNIX timestamp of the last activity in the thread",
+                        "description": "UNIX timestamp of the last message activity in the thread",
+                        "minimum": 0
+                    },
+                    "lastMetadataActivity": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "UNIX timestamp of the last metadata, not message, activity in the thread",
                         "minimum": 0
                     },
                     "numReplies": {

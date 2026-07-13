@@ -677,9 +677,14 @@ export type components = {
             isFavorite: boolean;
             /**
              * Format: int64
-             * @description Timestamp of the last activity in the conversation, in seconds and UTC time zone
+             * @description Timestamp of the last message activity in the conversation, in seconds and UTC time zone
              */
             lastActivity: number;
+            /**
+             * Format: int64
+             * @description Timestamp of the last activity (metadata, not messages) in the conversation, in seconds and UTC time zone
+             */
+            lastMetadataActivity: number;
             /**
              * Format: int64
              * @description ID of the last message read by every user that has read privacy set to public in a room. When the user themself has it set to private the value is `0` (only available with `chat-read-status` capability)
