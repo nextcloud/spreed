@@ -12,10 +12,9 @@ namespace OCA\Talk\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
+use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
-use OCP\DB\QueryBuilder\IQueryBuilder;
-use OCP\IDBConnection;
 use Override;
 
 class Version24000Date20260510193300 extends SimpleMigrationStep {
@@ -48,9 +47,9 @@ class Version24000Date20260510193300 extends SimpleMigrationStep {
 
 		return $schema;
 	}
-	
+
 	/**
- 	 * @param IOutput $output
+	 * @param IOutput $output
 	 * @param Closure(): ISchemaWrapper $schemaClosure
 	 * @param array $options
 	 */
@@ -60,6 +59,6 @@ class Version24000Date20260510193300 extends SimpleMigrationStep {
 		$update->update('talk_rooms')
 			->set('last_metadata_activity', 'last_activity');
 		$update->executeStatement();
-	}	
+	}
 
 }
