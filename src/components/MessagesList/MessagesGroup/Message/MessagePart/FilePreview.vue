@@ -247,6 +247,7 @@ export default {
 					localUrl: this.fallbackLocalUrl,
 					messageId: Number(this.messageId),
 					nextMessageId: Number(this.nextMessageId),
+					showFileName: this.shouldShowFileDetail && !this.isVoiceMessage,
 				}
 			}
 			return {
