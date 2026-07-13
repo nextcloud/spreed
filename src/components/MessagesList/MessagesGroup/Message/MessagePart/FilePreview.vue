@@ -89,6 +89,7 @@ import { getTalkConfig } from '../../../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
+import { canPlayAudio } from '../../../../../utils/sounds.js'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,
@@ -227,7 +228,7 @@ export default {
 
 		// This is used to decide which outer element type to use
 		filePreviewElement() {
-			if (this.isVoiceMessage && !this.isSharedItems) {
+			if (this.isAudioPlayer) {
 				return AudioPlayer
 			} else if (this.isUploadEditor || this.isTemporaryUpload) {
 				return 'div'
@@ -238,7 +239,7 @@ export default {
 		filePreviewBinding() {
 			if (this.isUploadEditor || this.isTemporaryUpload) {
 				return
-			} else if (this.isVoiceMessage && !this.isSharedItems) {
+			} else if (this.isAudioPlayer) {
 				return {
 					name: this.file.name,
 					path: this.file.path,
@@ -246,6 +247,7 @@ export default {
 					localUrl: this.fallbackLocalUrl,
 					messageId: Number(this.messageId),
 					nextMessageId: Number(this.nextMessageId),
+					showFileName: this.shouldShowFileDetail && !this.isVoiceMessage,
 				}
 			}
 			return {
@@ -392,6 +394,26 @@ export default {
 
 		isVoiceMessage() {
 			return this.itemType === SHARED_ITEM.TYPES.VOICE
+		},
+
+		isPlayableAudio() {
+			return this.itemType === SHARED_ITEM.TYPES.AUDIO
+				&& canPlayAudio(this.file.mimetype)
+		},
+
+		isAudioPlayer() {
+			if (this.isSharedItems) {
+				return false
+			}
+			if (this.isVoiceMessage) {
+				// Voise messages are rendered in Upload editor
+				return true
+			}
+			if (this.isUploadEditor) {
+				return false
+			}
+
+			return this.isPlayableAudio
 		},
 
 		isPlayable() {
