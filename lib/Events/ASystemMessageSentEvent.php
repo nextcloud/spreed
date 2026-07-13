@@ -47,9 +47,9 @@ abstract class ASystemMessageSentEvent extends AMessageSentEvent {
 
 	/**
 	 * public setter for shouldSkipLastAcitvityUpdate
-	 * @param bool $pShouldSkipLastActivity
+	 * @param bool $ShouldSkipLastActivity
 	 */
-	public function setShouldSkipLastActivityUpdate(bool $pShouldSkipLastActivity) {
-		$this->$skipLastActivityUpdate = $pShouldSkipLastactivity;
+	public function setShouldSkipLastActivityUpdate(bool $ShouldSkipLastActivity) {
+		$this->skipLastActivityUpdate = $ShouldSkipLastactivity;
 	}
 }
