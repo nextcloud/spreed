@@ -259,6 +259,9 @@ export default {
 	},
 
 	beforeMount() {
+		// TODO used by guests only, consider when extracting
+		this.debounceRefreshCurrentConversation = debounce(this.refreshCurrentConversation, 3_000)
+
 		if (!getCurrentUser()) {
 			/**
 			 * When guest opens a public conversation, we wait for it to be fetched,
@@ -404,8 +407,6 @@ export default {
 	},
 
 	async mounted() {
-		this.debounceRefreshCurrentConversation = debounce(this.refreshCurrentConversation, 3000)
-
 		if (!IS_DESKTOP) {
 			checkBrowser()
 		}
