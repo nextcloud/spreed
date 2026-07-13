@@ -616,11 +616,8 @@ export default {
 				} else {
 					this.clearVirtualBackground()
 				}
-			} else {
-				// Disable virtual background when closing
-				this.clearVirtualBackground()
-				this.unsubscribeFromDevices()
 			}
+			// Teardown should be handled in close() to cover both NcDialog and div use-cases
 		},
 
 		audioInputId(audioInputId) {
@@ -703,6 +700,11 @@ export default {
 		},
 
 		close() {
+			if (this.show) {
+				// Disable virtual background and release devices when closing
+				this.clearVirtualBackground()
+				this.unsubscribeFromDevices()
+			}
 			this.show = false
 			this.updatedBackground = undefined
 			this.audioDeviceStateChanged = false
