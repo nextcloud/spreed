@@ -12,6 +12,22 @@ import { useTokenStore } from '../stores/token.ts'
 const soundsStore = useSoundsStore(pinia)
 const tokenStore = useTokenStore(pinia)
 
+const audioProbe = document.createElement('audio')
+const canPlayAudioCache = new Map()
+
+/**
+ * Checks whether the browser can natively play the given audio mimetype.
+ *
+ * @param {string} mimetype the audio mimetype to check, e.g. 'audio/mpeg'
+ * @return {boolean} true if the mimetype is playable
+ */
+export function canPlayAudio(mimetype) {
+	if (!canPlayAudioCache.has(mimetype)) {
+		canPlayAudioCache.set(mimetype, !!audioProbe.canPlayType(mimetype))
+	}
+	return canPlayAudioCache.get(mimetype)
+}
+
 /**
  * Checks if the current conversation is a voice room.
  */
