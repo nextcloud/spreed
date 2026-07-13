@@ -489,7 +489,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function attendeesAddedEvent(AttendeesAddedEvent $event): void {
-		$event->setShouldSkipLastActivityUpdate(true);
+		$event->setShouldSkipLastMessageUpdate(true);
 		foreach ($event->getAttendees() as $attendee) {
 			$this->logger->debug($attendee->getActorType() . ' "' . $attendee->getActorId() . '" added to room "' . $event->getRoom()->getToken() . '"', ['app' => 'spreed-bfp']);
 			if ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {

@@ -730,7 +730,7 @@ namespace OCA\Talk;
  *     // UNIX timestamp of the last message activity in the thread
  *     lastActivity: non-negative-int,
  *	   // UNIX timestamp of the last metadata, not message, activity in the thread
- *	   lastMetadataActivity: int
+ *	   lastMetadataActivity: non-negative-int,
  *     // Number of replies in the thread
  *     numReplies: non-negative-int,
  * }
