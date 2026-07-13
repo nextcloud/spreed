@@ -5,7 +5,7 @@
 
 import { createSharedComposable } from '@vueuse/core'
 import createHark from 'hark'
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onScopeDispose, ref, watch } from 'vue'
 import { useSoundsStore } from '../stores/sounds.js'
 import attachMediaStream from '../utils/attachmediastream.js'
 import TrackToStream from '../utils/media/pipeline/TrackToStream.js'
@@ -124,9 +124,9 @@ export const useDevices = createSharedComposable(function() {
 	})
 
 	/**
-	 * Called for shared composable when all subscribers are unmounted (onScopeDispose)
+	 * Called for shared composable when all subscribers are unmounted
 	 */
-	onBeforeUnmount(() => {
+	onScopeDispose(() => {
 		stopDevices()
 	})
 
