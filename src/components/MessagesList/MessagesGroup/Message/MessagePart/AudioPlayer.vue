@@ -4,14 +4,19 @@
 -->
 
 <template>
-	<audio
-		ref="audioPlayer"
-		class="audio-player"
-		controls
-		:src="fileURL"
-		@ended="handleEnded">
-		{{ t('spreed', 'Your browser does not support playing audio files') }}
-	</audio>
+	<div class="audio-player">
+		<audio
+			ref="audioPlayer"
+			class="audio-player__audio"
+			controls
+			:src="fileURL"
+			@ended="handleEnded">
+			{{ t('spreed', 'Your browser does not support playing audio files') }}
+		</audio>
+		<span v-if="showFileName" class="audio-player__name" :title="name">
+			{{ name }}
+		</span>
+	</div>
 </template>
 
 <script>
@@ -66,6 +71,11 @@ export default {
 		nextMessageId: {
 			type: Number,
 			default: 0,
+		},
+
+		showFileName: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -137,5 +147,18 @@ export default {
 
 .audio-player {
 	margin: 12px 0;
+
+	&__name {
+		display: block;
+		max-width: 100%;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		font-weight: bold;
+	}
+
+	&__audio {
+		display: block;
+	}
 }
 </style>
