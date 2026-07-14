@@ -15,6 +15,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\CertificateService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
@@ -30,6 +31,7 @@ class Manager {
 
 	public function __construct(
 		private readonly IConfig $serverConfig,
+		private readonly IAppConfig $appConfig,
 		private readonly Config $talkConfig,
 		private readonly RoomService $roomService,
 		private readonly ITimeFactory $timeFactory,
@@ -110,7 +112,8 @@ class Manager {
 				];
 			}
 
-			if (!$this->isCompatibleSignalingServer($response)) {
+			$features = $this->getFeatureArray($response);
+			if (!$this->hasRequiredFeatures($features)) {
 				return [
 					'status' => Http::STATUS_INTERNAL_SERVER_ERROR,
 					'data' => [
@@ -131,7 +134,7 @@ class Manager {
 				];
 			}
 
-			$missingFeatures = $this->getSignalingServerMissingFeatures($response);
+			$missingFeatures = $this->getSignalingServerMissingFeatures($features);
 			if (!empty($missingFeatures)) {
 				return [
 					'status' => Http::STATUS_OK,
@@ -141,6 +144,14 @@ class Manager {
 						'version' => $data['version'],
 					],
 				];
+			}
+
+			/**
+			 * Store appconfig for some optional features that require different
+			 * behaviour on PHP backend side
+			 */
+			if (in_array('changed-users', $features, true)) {
+				$this->appConfig->setAppValueBool(Manager::HAS_FEATURE_CHANGED_USERS, true);
 			}
 
 			return [
@@ -167,10 +178,23 @@ class Manager {
 
 	}
 
-	public function isCompatibleSignalingServer(IResponse $response): bool {
+	protected function getFeatureArray(IResponse $response): array {
 		$featureHeader = $response->getHeader(self::FEATURE_HEADER);
 		$features = explode(',', $featureHeader);
-		$features = array_map(trim(...), $features);
+		return array_map(trim(...), $features);
+	}
+
+	public function isCompatibleSignalingServer(IResponse $response): bool {
+		$features = $this->getFeatureArray($response);
+		return $this->hasRequiredFeatures($features);
+	}
+
+	public function hasFeature(IResponse $response, string $feature): bool {
+		$features = $this->getFeatureArray($response);
+		return in_array($feature, $features, true);
+	}
+
+	protected function hasRequiredFeatures(array $features): bool {
 		return in_array('audio-video-permissions', $features, true)
 			&& in_array('federation', $features, true)
 			&& in_array('incall-all', $features, true)
@@ -181,15 +205,12 @@ class Manager {
 	/**
 	 * @return list<string>
 	 */
-	public function getSignalingServerMissingFeatures(IResponse $response): array {
-		$featureHeader = $response->getHeader(self::FEATURE_HEADER);
-		$features = explode(',', $featureHeader);
-		$features = array_map(trim(...), $features);
-
+	protected function getSignalingServerMissingFeatures(array $features): array {
 		$optionFeatures = [
 			'dialout',
 			'join-features',
 			'chat-relay',
+			'changed-users',
 		];
 
 		return array_values(array_diff($optionFeatures, $features));
