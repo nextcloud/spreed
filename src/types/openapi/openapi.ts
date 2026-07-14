@@ -3829,6 +3829,20 @@ export interface operations {
                     };
                 };
             };
+            /** @description Host server of the federated conversation does not allow joining the call */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
             /** @description Call not found */
             404: {
                 headers: {
