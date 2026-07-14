@@ -23,6 +23,7 @@ use OCP\IConfig;
 
 class Manager {
 	public const FEATURE_HEADER = 'X-Spreed-Signaling-Features';
+	public const string HAS_FEATURE_CHANGED_USERS = 'has_feature_changed_users';
 
 	private readonly ICache $cache;
 

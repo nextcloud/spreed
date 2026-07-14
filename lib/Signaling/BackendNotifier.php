@@ -17,6 +17,7 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
 use OCP\IURLGenerator;
@@ -27,6 +28,7 @@ class BackendNotifier {
 
 	public function __construct(
 		private readonly Config $config,
+		private readonly IAppConfig $appConfig,
 		private readonly LoggerInterface $logger,
 		private readonly IClientService $clientService,
 		private readonly ISecureRandom $secureRandom,
@@ -150,23 +152,36 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomInvited(Room $room, array $attendees): void {
+		// TODO Remove once a new HPB is required
+		$supportsChangedUsers = $this->appConfig->getAppValueBool(Manager::HAS_FEATURE_CHANGED_USERS);
+
 		$userIds = [];
 		foreach ($attendees as $attendee) {
 			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 				$userIds[] = $attendee->getActorId();
 			}
 		}
-		if (empty($userIds)) {
+
+		if ($supportsChangedUsers && empty($userIds)) {
 			return;
 		}
-		$start = microtime(true);
-		$this->backendRequest($room, [
+
+		$data = [
 			'type' => 'invite',
 			'invite' => [
 				'userids' => $userIds,
 				'properties' => $this->roomPropertiesHelper->getPropertiesForSignaling($room, '', false),
 			],
-		]);
+		];
+
+		if (!$supportsChangedUsers) {
+			$allUserIds = $this->participantService->getParticipantUserIdsAndFederatedUserCloudIds($room);
+			sort($allUserIds);
+			$data['invite']['alluserids'] = $allUserIds;
+		}
+
+		$start = microtime(true);
+		$this->backendRequest($room, $data);
 		$duration = microtime(true) - $start;
 		$this->logger->debug('Now invited to {token}: {users} ({duration})', [
 			'token' => $room->getToken(),
@@ -184,23 +199,36 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomsDisinvited(Room $room, array $attendees): void {
+		// TODO Remove once a new HPB is required
+		$supportsChangedUsers = $this->appConfig->getAppValueBool(Manager::HAS_FEATURE_CHANGED_USERS);
+
 		$userIds = [];
 		foreach ($attendees as $attendee) {
 			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 				$userIds[] = $attendee->getActorId();
 			}
 		}
-		if (empty($userIds)) {
+
+		if ($supportsChangedUsers && empty($userIds)) {
 			return;
 		}
-		$start = microtime(true);
-		$this->backendRequest($room, [
+
+		$data = [
 			'type' => 'disinvite',
 			'disinvite' => [
 				'userids' => $userIds,
 				'properties' => $this->roomPropertiesHelper->getPropertiesForSignaling($room, '', false),
 			],
-		]);
+		];
+
+		if (!$supportsChangedUsers) {
+			$allUserIds = $this->participantService->getParticipantUserIdsAndFederatedUserCloudIds($room);
+			sort($allUserIds);
+			$data['disinvite']['alluserids'] = $allUserIds;
+		}
+
+		$start = microtime(true);
+		$this->backendRequest($room, $data);
 		$duration = microtime(true) - $start;
 		$this->logger->debug('No longer invited to {token}: {users} ({duration})', [
 			'token' => $room->getToken(),
@@ -218,14 +246,25 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomSessionsRemoved(Room $room, array $sessionIds): void {
-		$start = microtime(true);
-		$this->backendRequest($room, [
+		// TODO Remove once a new HPB is required
+		$supportsChangedUsers = $this->appConfig->getAppValueBool(Manager::HAS_FEATURE_CHANGED_USERS);
+
+		$data = [
 			'type' => 'disinvite',
 			'disinvite' => [
 				'sessionids' => $sessionIds,
 				'properties' => $this->roomPropertiesHelper->getPropertiesForSignaling($room, '', false),
 			],
-		]);
+		];
+
+		if (!$supportsChangedUsers) {
+			$allUserIds = $this->participantService->getParticipantUserIdsAndFederatedUserCloudIds($room);
+			sort($allUserIds);
+			$data['disinvite']['alluserids'] = $allUserIds;
+		}
+
+		$start = microtime(true);
+		$this->backendRequest($room, $data);
 		$duration = microtime(true) - $start;
 		$this->logger->debug('Removed from {token}: {users} ({duration})', [
 			'token' => $room->getToken(),
@@ -242,13 +281,22 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomModified(Room $room): void {
-		$start = microtime(true);
-		$this->backendRequest($room, [
+		// TODO Remove once a new HPB is required
+		$supportsChangedUsers = $this->appConfig->getAppValueBool(Manager::HAS_FEATURE_CHANGED_USERS);
+
+		$data = [
 			'type' => 'update',
 			'update' => [
 				'properties' => $this->roomPropertiesHelper->getPropertiesForSignaling($room, ''),
 			],
-		]);
+		];
+
+		if (!$supportsChangedUsers) {
+			$data['update']['userids'] = $this->participantService->getParticipantUserIds($room);
+		}
+
+		$start = microtime(true);
+		$this->backendRequest($room, $data);
 		$duration = microtime(true) - $start;
 		$this->logger->debug('Room modified: {token} ({duration})', [
 			'token' => $room->getToken(),
@@ -264,11 +312,22 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomDeleted(Room $room): void {
-		$start = microtime(true);
-		$this->backendRequest($room, [
+		// TODO Remove once a new HPB is required
+		$supportsChangedUsers = $this->appConfig->getAppValueBool(Manager::HAS_FEATURE_CHANGED_USERS);
+
+		$data = [
 			'type' => 'delete',
 			'delete' => new \stdClass(),
-		]);
+		];
+
+		if (!$supportsChangedUsers) {
+			$data['delete'] = [
+				'userids' => $this->participantService->getParticipantUserIds($room),
+			];
+		}
+
+		$start = microtime(true);
+		$this->backendRequest($room, $data);
 		$duration = microtime(true) - $start;
 		$this->logger->debug('Room deleted: {token} ({duration})', [
 			'token' => $room->getToken(),
@@ -312,7 +371,11 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function participantsModified(Room $room, array $sessionIds): void {
+		// TODO Remove once a new HPB is required
+		$supportsChangedUsers = $this->appConfig->getAppValueBool(Manager::HAS_FEATURE_CHANGED_USERS);
+
 		$changed = [];
+		$users = [];
 		$participants = $this->participantService->getSessionsAndParticipantsForRoom($room);
 		foreach ($participants as $participant) {
 			$attendee = $participant->getAttendee();
@@ -343,6 +406,7 @@ class BackendNotifier {
 				$data['lastPing'] = $session->getLastPing();
 				$data['sessionId'] = $session->getSessionId();
 				$data['participantPermissions'] = $participant->getPermissions();
+				$users[] = $data;
 
 				if (\in_array($session->getSessionId(), $sessionIds, true)) {
 					$data['permissions'] = [];
@@ -360,19 +424,28 @@ class BackendNotifier {
 					}
 					$changed[] = $data;
 				}
+			} else {
+				$users[] = $data;
 			}
 		}
 
-		if (empty($changed)) {
+		if ($supportsChangedUsers && empty($changed)) {
 			return;
 		}
-		$start = microtime(true);
-		$this->backendRequest($room, [
+
+		$data = [
 			'type' => 'participants',
 			'participants' => [
 				'changed' => $changed,
 			],
-		]);
+		];
+
+		if (!$supportsChangedUsers) {
+			$data['participants']['users'] = $users;
+		}
+
+		$start = microtime(true);
+		$this->backendRequest($room, $data);
 		$duration = microtime(true) - $start;
 		$this->logger->debug('Room participants modified: {token} {users} ({duration})', [
 			'token' => $room->getToken(),
@@ -392,6 +465,9 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	public function roomInCallChanged(Room $room, int $flags, array $sessionIds, bool $changeAll = false): void {
+		// TODO Remove once a new HPB is required
+		$supportsChangedUsers = $this->appConfig->getAppValueBool(Manager::HAS_FEATURE_CHANGED_USERS);
+
 		if ($changeAll) {
 			$data = [
 				'incall' => $flags,
@@ -399,6 +475,7 @@ class BackendNotifier {
 			];
 		} else {
 			$changed = [];
+			$users = [];
 
 			$participants = $this->participantService->getParticipantsForAllSessions($room);
 			foreach ($participants as $participant) {
@@ -429,18 +506,27 @@ class BackendNotifier {
 					$data['userId'] = $attendee->getActorId();
 				}
 
+				if (!$supportsChangedUsers && $session->getInCall() !== Participant::FLAG_DISCONNECTED) {
+					$users[] = $data;
+				}
+
 				if (\in_array($session->getSessionId(), $sessionIds, true)) {
 					$changed[] = $data;
 				}
 			}
 
-			if (empty($changed)) {
+			if ($supportsChangedUsers && empty($changed)) {
 				return;
 			}
+
 			$data = [
 				'incall' => $flags,
 				'changed' => $changed,
 			];
+
+			if (!$supportsChangedUsers) {
+				$data['users'] = $users;
+			}
 		}
 
 		$start = microtime(true);
