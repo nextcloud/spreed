@@ -63,6 +63,12 @@ class BackendNotifier {
 				throw new \RuntimeException('Signaling server needs to be updated to be compatible with this version of Talk');
 			}
 
+			if (!$this->appConfig->getAppValueBool(Manager::HAS_FEATURE_CHANGED_USERS)) {
+				if ($this->signalingManager->hasFeature($response, 'changed-users')) {
+					$this->appConfig->setAppValueBool(Manager::HAS_FEATURE_CHANGED_USERS, true);
+				}
+			}
+
 			return $response;
 		} catch (ConnectException $e) {
 			if ($retries > 1) {
