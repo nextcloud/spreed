@@ -84,9 +84,6 @@
       <code><![CDATA[generate]]></code>
       <code><![CDATA[generate]]></code>
     </DeprecatedMethod>
-    <NullArgument>
-      <code><![CDATA[null]]></code>
-    </NullArgument>
   </file>
   <file src="lib/Controller/RoomController.php">
     <DeprecatedConstant>

@@ -865,7 +865,7 @@ namespace OCA\Talk;
  *             // Maximum number of sessions that can be pinged in a single request
  *             session-ping-limit: int,
  *             // Signaling mode (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#signaling-modes))
- *             mode: 'internal'|'external'|'conversation_cluster',
+ *             mode: 'internal'|'external',
  *             // Public key for hello v2 authentication
  *             hello-v2-token-key?: string,
  *         },

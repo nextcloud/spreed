@@ -59,13 +59,6 @@ class HighPerformanceBackend implements ISetupCheck {
 			);
 		}
 
-		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_CLUSTER_CONVERSATION) {
-			return SetupResult::warning(
-				$this->l->t('Running the High-performance backend "conversation_cluster" mode is deprecated and will no longer be supported in the upcoming version. The High-performance backend supports real clustering nowadays which should be used instead.'),
-				'https://portal.nextcloud.com/article/Partner-Products/Talk-High-Performance-Backend/Nextcloud-Talk-High-Performance-Back-End-Requirements#content-clustering-and-use-of-multiple-hpbs',
-			);
-		}
-
 		if (count($this->talkConfig->getSignalingServers()) > 1) {
 			return SetupResult::warning(
 				$this->l->t('Defining multiple High-performance backends is deprecated and will no longer be supported in the upcoming version. Instead a load-balancer should be set up together with clustered signaling servers and configured in the Talk settings.'),

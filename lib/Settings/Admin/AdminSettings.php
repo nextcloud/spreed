@@ -130,7 +130,7 @@ class AdminSettings implements ISettings {
 	protected function initSignalingServers(): void {
 		$this->initialState->provideInitialState('has_valid_subscription', $this->subscription->delegateHasValidSubscription());
 		$this->initialState->provideInitialState('has_cache_configured', $this->memcacheFactory->isAvailable());
-		$this->initialState->provideInitialState('signaling_mode', $this->talkConfig->getSignalingMode(false));
+		$this->initialState->provideInitialState('signaling_mode', $this->talkConfig->getSignalingMode());
 		$this->initialState->provideInitialState('signaling_servers', [
 			'servers' => $this->talkConfig->getSignalingServers(),
 			'secret' => $this->talkConfig->getSignalingSecret(),
