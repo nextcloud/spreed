@@ -53,6 +53,7 @@
         + `200 OK`
         + `400 Bad Request` When recording consent is required but was not given
         + `403 Forbidden` When the conversation is read-only
+        + `403 Forbidden` When the conversation is a federated conversation and the host server did not allow joining the call
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the user did not join the conversation before
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator
