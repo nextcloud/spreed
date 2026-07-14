@@ -29,7 +29,7 @@
 								class="filters"
 								:class="{ 'hidden-visually': isSearching }">
 								<template #icon>
-									<IconFilterCogOutline :size="20" />
+									<IconFilterVariant :size="20" />
 								</template>
 								<NcActionCaption :name="t('spreed', 'Filter conversations by')" />
 
@@ -72,7 +72,7 @@
 									class="filter-actions__clearbutton"
 									@click="handleFilter(null)">
 									<template #icon>
-										<IconFilterRemoveOutline :size="20" />
+										<IconFilterVariantRemove :size="20" />
 									</template>
 									{{ t('spreed', 'Clear filters') }}
 								</NcActionButton>
@@ -304,7 +304,7 @@
 					<template #action>
 						<NcButton v-if="isFiltered" @click="handleFilter(null)">
 							<template #icon>
-								<IconFilterRemoveOutline :size="20" />
+								<IconFilterVariantRemove :size="20" />
 							</template>
 							{{ t('spreed', 'Clear filter') }}
 						</NcButton>
@@ -422,8 +422,8 @@ import IconCalendarBlankOutline from 'vue-material-design-icons/CalendarBlankOut
 import IconChatPlusOutline from 'vue-material-design-icons/ChatPlusOutline.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconCogOutline from 'vue-material-design-icons/CogOutline.vue'
-import IconFilterCogOutline from 'vue-material-design-icons/FilterCogOutline.vue'
-import IconFilterRemoveOutline from 'vue-material-design-icons/FilterRemoveOutline.vue'
+import IconFilterVariant from 'vue-material-design-icons/FilterVariant.vue'
+import IconFilterVariantRemove from 'vue-material-design-icons/FilterVariantRemove.vue'
 import IconFormatListBulleted from 'vue-material-design-icons/FormatListBulleted.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconHomeOutline from 'vue-material-design-icons/HomeOutline.vue'
@@ -545,8 +545,8 @@ export default {
 		IconAt,
 		IconMessageBadgeOutline,
 		IconMessageOutline,
-		IconFilterCogOutline,
-		IconFilterRemoveOutline,
+		IconFilterVariant,
+		IconFilterVariantRemove,
 		IconArchiveOutline,
 		IconArrowLeft,
 		IconCalendarBlankOutline,

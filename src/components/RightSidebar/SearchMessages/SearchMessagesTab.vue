@@ -27,7 +27,7 @@ import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcSelectUsers from '@nextcloud/vue/components/NcSelectUsers'
 import IconCalendarRangeOutline from 'vue-material-design-icons/CalendarRangeOutline.vue'
-import IconFilterOutline from 'vue-material-design-icons/FilterOutline.vue'
+import IconFilterVariant from 'vue-material-design-icons/FilterVariant.vue'
 import IconMessageOutline from 'vue-material-design-icons/MessageOutline.vue'
 import SearchBox from '../../UIShared/SearchBox.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
@@ -267,7 +267,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 						:title="t('spreed', 'Search options')"
 						variant="tertiary-no-background">
 						<template #icon>
-							<IconFilterOutline :size="15" />
+							<IconFilterVariant :size="15" />
 						</template>
 					</NcButton>
 				</div>
