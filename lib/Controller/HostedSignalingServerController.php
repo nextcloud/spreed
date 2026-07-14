@@ -153,7 +153,6 @@ class HostedSignalingServerController extends OCSController {
 		$this->config->deleteAppValue('spreed', 'hosted-signaling-server-account-id');
 
 		// remove signaling servers if account is not active anymore
-		$this->config->deleteAppValue('spreed', 'signaling_mode');
 		$this->config->deleteAppValue('spreed', 'signaling_servers');
 
 		$this->logger->info('Deleted hosted signaling server account with ID ' . $accountId);

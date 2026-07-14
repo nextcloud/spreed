@@ -215,4 +215,3 @@ Required capability: `conversation-presets`
 ## Signaling modes
 * `internal` - No external signaling server is used
 * `external` - A single external signaling server is used
-* `conversation_cluster` - An external signaling server is assigned per conversation.

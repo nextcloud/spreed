@@ -477,8 +477,7 @@
                                         "type": "string",
                                         "enum": [
                                             "internal",
-                                            "external",
-                                            "conversation_cluster"
+                                            "external"
                                         ],
                                         "description": "Signaling mode (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#signaling-modes))"
                                     },

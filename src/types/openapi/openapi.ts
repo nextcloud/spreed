@@ -2353,7 +2353,7 @@ export type components = {
                      * @description Signaling mode (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#signaling-modes))
                      * @enum {string}
                      */
-                    mode: "internal" | "external" | "conversation_cluster";
+                    mode: "internal" | "external";
                     /** @description Public key for hello v2 authentication */
                     "hello-v2-token-key"?: string;
                 };

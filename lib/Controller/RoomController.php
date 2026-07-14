@@ -179,7 +179,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->config->getAppValue('spreed', 'stun_servers'),
 			$this->config->getAppValue('spreed', 'turn_servers'),
 			$this->config->getAppValue('spreed', 'signaling_servers'),
-			$this->config->getAppValue('spreed', 'signaling_mode'),
 			$this->config->getAppValue('spreed', 'signaling_ticket_secret'),
 			$this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256'),
 			$this->config->getAppValue('spreed', 'signaling_token_privkey_' . $this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256')),

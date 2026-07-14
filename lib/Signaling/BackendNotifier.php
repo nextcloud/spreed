@@ -100,8 +100,13 @@ class BackendNotifier {
 			return null;
 		}
 
-		// FIXME some need to go to all HPBs, but that doesn't scale, so bad luck for now :(
-		$signaling = $this->signalingManager->getSignalingServerForConversation($room);
+		$signalingServers = $this->config->getSignalingServers();
+
+		if (empty($signalingServers)) {
+			return null;
+		}
+
+		$signaling = $signalingServers[0];
 		$signaling['server'] = rtrim((string)$signaling['server'], '/');
 
 		$url = '/api/v1/room/' . $room->getToken();

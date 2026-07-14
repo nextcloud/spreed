@@ -1514,7 +1514,6 @@ class SignalingControllerTest extends TestCase {
 		$this->config->method('getSignalingMode')->willReturn(Config::SIGNALING_INTERNAL);
 		$this->config->method('getHideSignalingWarning')->willReturn(false);
 		$this->config->method('isSIPConfigured')->willReturn(false);
-		$this->signalingManager->method('getSignalingServerLinkForConversation')->willReturn('');
 		$this->userId = null;
 		$this->recreateSignalingController();
 

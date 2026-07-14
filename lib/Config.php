@@ -31,7 +31,6 @@ class Config {
 	public const ALLOWED_BACKEND_TIMEOFFSET = 45;
 	public const SIGNALING_INTERNAL = 'internal';
 	public const SIGNALING_EXTERNAL = 'external';
-	public const SIGNALING_CLUSTER_CONVERSATION = 'conversation_cluster';
 
 	public const EXPERIMENTAL_UPDATE_PARTICIPANTS = 1;
 	public const EXPERIMENTAL_RECOVER_SESSION = 2;
@@ -582,30 +581,15 @@ class Config {
 	}
 
 	/**
-	 * @psalm-return self::SIGNALING_INTERNAL|self::SIGNALING_EXTERNAL|self::SIGNALING_CLUSTER_CONVERSATION
+	 * @psalm-return self::SIGNALING_INTERNAL|self::SIGNALING_EXTERNAL
 	 */
-	public function getSignalingMode(bool $cleanExternalSignaling = true): string {
-		$validModes = [
-			self::SIGNALING_INTERNAL,
-			self::SIGNALING_EXTERNAL,
-			self::SIGNALING_CLUSTER_CONVERSATION,
-		];
-
-		$mode = $this->config->getAppValue('spreed', 'signaling_mode', null);
-		if ($mode === self::SIGNALING_INTERNAL) {
-			return self::SIGNALING_INTERNAL;
-		}
-
+	public function getSignalingMode(): string {
 		$numSignalingServers = count($this->getSignalingServers());
 		if ($numSignalingServers === 0) {
 			return self::SIGNALING_INTERNAL;
 		}
-		if ($numSignalingServers === 1
-			&& $cleanExternalSignaling) {
-			return self::SIGNALING_EXTERNAL;
-		}
 
-		return $mode === self::SIGNALING_CLUSTER_CONVERSATION ? $mode : self::SIGNALING_EXTERNAL;
+		return self::SIGNALING_EXTERNAL;
 	}
 
 	/**
