@@ -73,11 +73,12 @@ class CallController {
 	 * @psalm-param int-mask-of<Participant::FLAG_*> $flags
 	 * @param bool $silent Join the call silently
 	 * @param bool $recordingConsent Agreement to be recorded
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 * @throws CannotReachRemoteException
 	 *
 	 * 200: Federated user is now in the call
 	 * 400: Conditions to join not met
+	 * 403: Host server does not allow the user to join the call
 	 * 404: Room not found
 	 */
 	public function joinFederatedCall(Room $room, Participant $participant, int $flags, bool $silent, bool $recordingConsent): DataResponse {
@@ -96,7 +97,7 @@ class CallController {
 		);
 
 		$statusCode = $proxy->getStatusCode();
-		if (!in_array($statusCode, [Http::STATUS_OK, Http::STATUS_BAD_REQUEST, Http::STATUS_NOT_FOUND], true)) {
+		if (!in_array($statusCode, [Http::STATUS_OK, Http::STATUS_BAD_REQUEST, Http::STATUS_FORBIDDEN, Http::STATUS_NOT_FOUND], true)) {
 			$this->proxy->logUnexpectedStatusCode(__METHOD__, $proxy->getStatusCode());
 			throw new CannotReachRemoteException();
 		}
