@@ -20,6 +20,7 @@ import { hasUnreadMessages } from '../../../utils/conversation.ts'
 export type VirtualListItem = (Conversation | TagHeaderItem) & { _key?: string }
 
 const props = defineProps<{
+	token?: string
 	listAriaLabelledBy?: string
 	conversations: Conversation[]
 	loading?: boolean
@@ -177,10 +178,18 @@ const listItems = computed<VirtualListItem[]>(() => {
 		acc.push(header)
 		if (section.tag.collapsed) {
 			if (settingsStore.tagsCollapse === CONVERSATION.TAGS_COLLAPSE.HIDE_ALL) {
+				// Show currently active conversation if under this tag
+				const currentConversation = section.conversations.find((conversation) => conversation.token === props.token)
+				if (currentConversation) {
+					acc.push({ ...currentConversation, _key: `${section.tag.id}:${currentConversation.token}` })
+				}
 				return acc
 			}
 
-			section.conversations = section.conversations.filter((conversation) => hasUnreadMessages(conversation))
+			// Show currently active conversation and all unread conversations under this tag
+			section.conversations = section.conversations.filter((conversation) => {
+				return conversation.token === props.token || hasUnreadMessages(conversation)
+			})
 		}
 
 		acc.push(...section.conversations.map((conversation) => ({ ...conversation, _key: `${section.tag.id}:${conversation.token}` })))
