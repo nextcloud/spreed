@@ -51,7 +51,8 @@
 				<IconChevronUp :size="16" />
 			</template>
 			<template v-if="isAudioAllowed">
-				<NcActionCaption :name="t('spreed', 'Select a microphone')" />
+				<!-- TRANSLATORS: Caption above the list of microphones to select from -->
+				<NcActionCaption :name="t('spreed', 'Microphone')" />
 				<NcActionButton
 					v-for="device in audioInputDevices"
 					:key="device.deviceId ?? 'none'"
@@ -66,7 +67,8 @@
 			</template>
 			<NcActionSeparator v-if="isAudioAllowed && audioOutputSupported" />
 			<template v-if="audioOutputSupported">
-				<NcActionCaption :name="t('spreed', 'Select a speaker')" />
+				<!-- TRANSLATORS: Caption above the list of speakers (audio output devices) to select from -->
+				<NcActionCaption :name="t('spreed', 'Speaker')" />
 				<NcActionButton
 					v-for="device in audioOutputDevices"
 					:key="device.deviceId ?? 'none'"
