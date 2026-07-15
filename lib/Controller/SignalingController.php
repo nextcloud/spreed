@@ -938,8 +938,18 @@ class SignalingController extends OCSController {
 			if ($participant->getSession() instanceof Session) {
 				if ($inCall !== null) {
 					$lastJoinedCall = $this->timeFactory->getDateTime();
-					$this->participantService->changeInCall($room, $participant, $inCall, lastJoinedCall: $lastJoinedCall->getTimestamp());
-					$this->roomService->setActiveSince($room, $participant, $lastJoinedCall, callFlag: $inCall, silent: false);
+					try {
+						$this->participantService->changeInCall($room, $participant, $inCall, lastJoinedCall: $lastJoinedCall->getTimestamp());
+						$this->roomService->setActiveSince($room, $participant, $lastJoinedCall, callFlag: $inCall, silent: false);
+					} catch (ForbiddenException) {
+						return new DataResponse([
+							'type' => 'error',
+							'error' => [
+								'code' => 'start_call_not_allowed',
+								'message' => 'The participant is not allowed to start a call.',
+							],
+						]);
+					}
 				}
 				$this->sessionService->updateLastPing($participant->getSession(), $this->timeFactory->getTime());
 			}

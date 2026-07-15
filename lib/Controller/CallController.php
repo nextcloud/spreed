@@ -228,10 +228,11 @@ class CallController extends AEnvironmentAwareOCSController {
 	 *                               or the capability is {@see RecordingService::CONSENT_REQUIRED_OPTIONAL}
 	 *                               and the conversation `recordingConsent` value is {@see RecordingService::CONSENT_REQUIRED_YES} )
 	 * @param list<string> $silentFor Send no call notification for previous participants
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Call joined successfully
 	 * 400: No recording consent was given
+	 * 403: Host server of the federated conversation does not allow joining the call
 	 * 404: Call not found
 	 */
 	#[FederationSupported]
