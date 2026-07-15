@@ -469,7 +469,8 @@
                                     "retention-phone",
                                     "retention-instant-meetings",
                                     "sort-order",
-                                    "group-mode"
+                                    "group-mode",
+                                    "tags-collapse"
                                 ],
                                 "properties": {
                                     "can-create": {
@@ -528,6 +529,14 @@
                                             "private-first"
                                         ],
                                         "description": "User selected grouping mode for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-group-mode))"
+                                    },
+                                    "tags-collapse": {
+                                        "type": "string",
+                                        "enum": [
+                                            "hide-all",
+                                            "show-unread"
+                                        ],
+                                        "description": "User selected collapsed appearance for conversation tags (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-tags-collapse))"
                                     }
                                 }
                             },

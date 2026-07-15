@@ -2325,6 +2325,11 @@ export type components = {
                      * @enum {string}
                      */
                     "group-mode": "none" | "group-first" | "private-first";
+                    /**
+                     * @description User selected collapsed appearance for conversation tags (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-tags-collapse))
+                     * @enum {string}
+                     */
+                    "tags-collapse": "hide-all" | "show-unread";
                 };
                 federation: {
                     /** @description Whether federation is enabled */
