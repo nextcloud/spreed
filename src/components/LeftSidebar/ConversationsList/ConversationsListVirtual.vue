@@ -14,10 +14,12 @@ import ConversationItem from './ConversationItem.vue'
 import ConversationTagHeader from './ConversationTagHeader.vue'
 import { AVATAR, CONVERSATION } from '../../../constants.ts'
 import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
+import { hasCall, hasUnreadMessages } from '../../../utils/conversation.ts'
 
 export type VirtualListItem = (Conversation | TagHeaderItem) & { _key?: string }
 
 const props = defineProps<{
+	token?: string
 	listAriaLabelledBy?: string
 	conversations: Conversation[]
 	loading?: boolean
@@ -173,7 +175,10 @@ const listItems = computed<VirtualListItem[]>(() => {
 
 		acc.push(header)
 		if (section.tag.collapsed) {
-			return acc
+			// Show currently active conversation and all unread conversations under this tag
+			section.conversations = section.conversations.filter((conversation) => {
+				return conversation.token === props.token || hasUnreadMessages(conversation) || hasCall(conversation)
+			})
 		}
 
 		acc.push(...section.conversations.map((conversation) => ({ ...conversation, _key: `${section.tag.id}:${conversation.token}` })))
