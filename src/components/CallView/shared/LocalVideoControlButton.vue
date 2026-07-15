@@ -29,7 +29,8 @@
 			<template #icon>
 				<IconChevronUp :size="16" />
 			</template>
-			<NcActionCaption :name="t('spreed', 'Select a video device')" />
+			<!-- TRANSLATORS: Caption above the list of cameras (video devices) to select from -->
+			<NcActionCaption :name="t('spreed', 'Camera')" />
 			<NcActionButton
 				v-for="device in videoDevices"
 				:key="device.deviceId ?? 'none'"
