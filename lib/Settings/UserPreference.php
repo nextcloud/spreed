@@ -34,5 +34,9 @@ class UserPreference {
 	public const CONVERSATIONS_GROUP_MODE_GROUP_FIRST = 'group-first';
 	public const CONVERSATIONS_GROUP_MODE_PRIVATE_FIRST = 'private-first';
 
+	public const CONVERSATIONS_TAGS_COLLAPSE = 'conversations_tags_collapse';
+	public const CONVERSATIONS_TAGS_COLLAPSE_HIDE_ALL = 'hide-all';
+	public const CONVERSATIONS_TAGS_COLLAPSE_SHOW_UNREAD = 'show-unread';
+
 	public const LIVE_TRANSCRIPTION_TARGET_LANGUAGE_ID = 'live_transcription_target_language_id';
 }

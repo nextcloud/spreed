@@ -3321,6 +3321,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 			if (isset($data['config']['conversations']['list-style'])) {
 				$data['config']['conversations']['list-style'] = $this->talkConfig->getConversationsListStyle($this->userId);
 			}
+			if (isset($data['config']['conversations']['tags-collapse'])) {
+				$data['config']['conversations']['tags-collapse'] = $this->talkConfig->getConversationsTagsCollapse($this->userId);
+			}
 			if (isset($data['config']['attachments']['conversation-subfolders'])) {
 				$data['config']['attachments']['conversation-subfolders'] = $this->talkConfig->isConversationSubfoldersEnabled();
 			}

@@ -985,6 +985,28 @@ class Config {
 	}
 
 	/**
+	 * User setting for conversation tags collapse mode
+	 *
+	 * @param ?string $userId
+	 * @return UserPreference::CONVERSATIONS_TAGS_COLLAPSE_*
+	 */
+	public function getConversationsTagsCollapse(?string $userId): string {
+		if ($userId !== null) {
+			$userSetting = $this->config->getUserValue(
+				$userId,
+				'spreed',
+				UserPreference::CONVERSATIONS_TAGS_COLLAPSE,
+			);
+
+			if (in_array($userSetting, [UserPreference::CONVERSATIONS_TAGS_COLLAPSE_HIDE_ALL, UserPreference::CONVERSATIONS_TAGS_COLLAPSE_SHOW_UNREAD], true)) {
+				return $userSetting;
+			}
+		}
+
+		return UserPreference::CONVERSATIONS_TAGS_COLLAPSE_HIDE_ALL;
+	}
+
+	/**
 	 * User setting falling back to admin defined app config
 	 */
 	public function getInactiveLockTime(): int {

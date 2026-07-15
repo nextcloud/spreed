@@ -110,6 +110,9 @@ class CapabilitiesTest extends TestCase {
 		$this->talkConfig->method('getConversationsGroupMode')
 			->willReturn('none');
 
+		$this->talkConfig->method('getConversationsTagsCollapse')
+			->willReturn('hide-all');
+
 		$this->talkConfig->expects($this->once())
 			->method('isBreakoutRoomsEnabled')
 			->willReturn(false);
@@ -229,6 +232,7 @@ class CapabilitiesTest extends TestCase {
 						'list-style' => 'two-lines',
 						'sort-order' => 'activity',
 						'group-mode' => 'none',
+						'tags-collapse' => 'hide-all',
 						'description-length' => 2000,
 						'retention-event' => 28,
 						'retention-phone' => 7,
@@ -332,6 +336,9 @@ class CapabilitiesTest extends TestCase {
 
 		$this->talkConfig->method('getConversationsGroupMode')
 			->willReturn('none');
+
+		$this->talkConfig->method('getConversationsTagsCollapse')
+			->willReturn('hide-all');
 
 		$this->talkConfig->expects($this->any())
 			->method('getSignalingMode')
@@ -456,6 +463,7 @@ class CapabilitiesTest extends TestCase {
 						'list-style' => 'two-lines',
 						'sort-order' => 'activity',
 						'group-mode' => 'none',
+						'tags-collapse' => 'hide-all',
 						'description-length' => 2000,
 						'retention-event' => 28,
 						'retention-phone' => 7,

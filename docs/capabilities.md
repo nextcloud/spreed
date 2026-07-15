@@ -227,6 +227,7 @@
 * `private-reply` - Whether clients can link the original message to a private reply in one-to-one conversations
 * `config => attachments => conversation-subfolders` (local) - Whether per-conversation subfolders are used for Talk attachments; when `true` files must be uploaded to `Talk/<ConversationName>-<token>/<DisplayName>-<uid>/` before calling the attachment endpoint
 * `conversation-tags` (local) - Whether the user can create custom tags to organize conversations in the sidebar
+* `config => conversations => tags-collapse` (local) - Whether conversation tags should collapse in certain way (`show-unread` or `hide-all`)
 
 ## 25
 * `preserve-conversation` - Whether the owner can preserve a conversation

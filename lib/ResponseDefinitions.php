@@ -846,6 +846,8 @@ namespace OCA\Talk;
  *             sort-order: 'activity'|'alphabetical',
  *             // User selected grouping mode for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-group-mode))
  *             group-mode: 'none'|'group-first'|'private-first',
+ *             // User selected collapsed appearance for conversation tags (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversation-tags-collapse))
+ *             tags-collapse: 'hide-all'|'show-unread',
  *         },
  *         federation: array{
  *             // Whether federation is enabled

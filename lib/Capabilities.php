@@ -205,6 +205,7 @@ class Capabilities implements IPublicCapability {
 			'sort-order',
 			'group-mode',
 			'description-length',
+			'tags-collapse',
 		],
 		'federation' => [
 			'enabled',
@@ -309,6 +310,7 @@ class Capabilities implements IPublicCapability {
 					'list-style' => $this->talkConfig->getConversationsListStyle($user?->getUID()),
 					'sort-order' => $this->talkConfig->getConversationsSortOrder($user?->getUID()),
 					'group-mode' => $this->talkConfig->getConversationsGroupMode($user?->getUID()),
+					'tags-collapse' => $this->talkConfig->getConversationsTagsCollapse($user?->getUID()),
 					'description-length' => Room::DESCRIPTION_MAXIMUM_LENGTH,
 					'retention-event' => max(0, $this->appConfig->getAppValueInt('retention_event_rooms', 28)),
 					'retention-phone' => max(0, $this->appConfig->getAppValueInt('retention_phone_rooms', 7)),

@@ -72,6 +72,12 @@ Required capability: `config => conversations => group-mode`
 * `group-first` - Conversations are grouped and group (and public) conversations shown first
 * `private-first` - Conversations are grouped and private (one-to-one) conversations shown first
 
+### Conversation tags collapse
+Required capability: `config => conversations => tags-collapse`
+
+* `hide-all` (default) - when collapsed, all tagged conversations are hidden
+* `show-unread` - when collapsed, tagged conversations with unread messages are shown
+
 ### Conversation attributes
 Required capability: `conversation-presets`
 

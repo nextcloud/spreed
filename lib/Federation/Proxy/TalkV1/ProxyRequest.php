@@ -58,6 +58,7 @@ class ProxyRequest {
 					],
 					'conversations' => [
 						'list-style',
+						'tags-collapse',
 					],
 					'attachments' => [
 						'conversation-subfolders' => $this->talkConfig->isConversationSubfoldersEnabled(),
