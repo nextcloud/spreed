@@ -23,6 +23,7 @@ import { useSoundsStore } from '../../stores/sounds.js'
 
 const settingsUrl = generateUrl('/settings/user/notifications')
 const supportConversationsListStyle = getTalkConfig('local', 'conversations', 'list-style') !== undefined
+const supportConversationsTagsCollapse = getTalkConfig('local', 'conversations', 'tags-collapse') !== undefined
 const supportChatStyle = getTalkConfig('local', 'chat', 'style') !== undefined
 const isCallEnabled = getTalkConfig('local', 'call', 'enabled')
 
@@ -31,12 +32,14 @@ const settingsStore = useSettingsStore()
 const soundsStore = useSoundsStore()
 
 const chatAppearanceLoading = ref(false)
+const tagsAppearanceLoading = ref(false)
 const appearanceLoading = ref(false)
 const playSoundsLoading = ref(false)
 
 const isGuest = computed(() => !actorStore.userId)
 
 const conversationsListStyle = computed(() => settingsStore.conversationsListStyle !== CONVERSATION.LIST_STYLE.TWO_LINES)
+const conversationsTagsCollapseAll = computed(() => settingsStore.tagsCollapse === CONVERSATION.TAGS_COLLAPSE.HIDE_ALL)
 const chatSplitViewEnabled = computed(() => settingsStore.chatStyle === CHAT_STYLE.SPLIT)
 const shouldPlaySounds = computed(() => soundsStore.shouldPlaySounds)
 
@@ -71,6 +74,21 @@ async function toggleConversationsListStyle(value: boolean) {
 }
 
 /**
+ * Change personal setting for conversations tags collapse mode
+ *
+ * @param value - new value
+ */
+async function toggleTagsCollapse(value: boolean) {
+	tagsAppearanceLoading.value = true
+	try {
+		await settingsStore.updateTagsCollapse(value ? CONVERSATION.TAGS_COLLAPSE.HIDE_ALL : CONVERSATION.TAGS_COLLAPSE.SHOW_UNREAD)
+	} catch (exception) {
+		showError(t('spreed', 'Error while setting personal setting'))
+	}
+	tagsAppearanceLoading.value = false
+}
+
+/**
  * Change personal setting for chat messages style
  *
  * @param value - new value
@@ -102,14 +120,39 @@ async function togglePlaySounds(value: boolean) {
 </script>
 
 <template>
-	<NcFormBox>
-		<NcFormBoxSwitch
-			v-if="!isGuest && supportConversationsListStyle"
-			:modelValue="conversationsListStyle"
-			:label="t('spreed', 'Compact conversations list')"
-			:disabled="appearanceLoading"
-			@update:modelValue="toggleConversationsListStyle" />
-	</NcFormBox>
+	<NcFormGroup
+		v-if="!isGuest && supportConversationsListStyle"
+		:label="t('spreed', 'Conversations appearance')">
+		<NcFormBox>
+			<NcFormBoxSwitch
+				:modelValue="conversationsListStyle"
+				:label="t('spreed', 'Compact conversations list')"
+				:disabled="appearanceLoading"
+				@update:modelValue="toggleConversationsListStyle" />
+		</NcFormBox>
+	</NcFormGroup>
+
+	<NcFormGroup
+		v-if="!isGuest && supportConversationsTagsCollapse"
+		:label="t('spreed', 'Conversation tags appearance')"
+		:description="t('spreed', 'Unread conversations can be shown, even if tag is collapsed')">
+		<NcFormBox row>
+			<NcButton
+				:disabled="tagsAppearanceLoading"
+				:pressed="!conversationsTagsCollapseAll"
+				@click="toggleTagsCollapse(false)">
+				<!-- TRANSLATORS User setting: when collapse tag category, still show unread conversations from it -->
+				{{ t('spreed', 'Always show unread') }}
+			</NcButton>
+			<NcButton
+				:disabled="tagsAppearanceLoading"
+				:pressed="conversationsTagsCollapseAll"
+				@click="toggleTagsCollapse(true)">
+				<!-- TRANSLATORS User setting: fully collapse tag category, do not show any conversations from it -->
+				{{ t('spreed', 'Collapse completely') }}
+			</NcButton>
+		</NcFormBox>
+	</NcFormGroup>
 
 	<NcFormGroup
 		v-if="supportChatStyle"

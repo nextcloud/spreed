@@ -21,6 +21,7 @@ import {
 	setConversationsGroupMode,
 	setConversationsListStyle,
 	setConversationsSortOrder,
+	setConversationsTagsCollapse,
 	setLiveTranscriptionTargetLanguageId,
 	setReadStatusPrivacy,
 	setStartWithoutMedia,
@@ -34,6 +35,7 @@ type CHAT_STYLE_OPTIONS = typeof CHAT_STYLE[keyof typeof CHAT_STYLE]
 type LIST_STYLE_OPTIONS = typeof CONVERSATION.LIST_STYLE[keyof typeof CONVERSATION.LIST_STYLE]
 type SORT_ORDER_OPTIONS = typeof CONVERSATION.SORT_ORDER[keyof typeof CONVERSATION.SORT_ORDER]
 type GROUP_MODE_OPTIONS = typeof CONVERSATION.GROUP_MODE[keyof typeof CONVERSATION.GROUP_MODE]
+type TAGS_COLLAPSE_OPTIONS = typeof CONVERSATION.TAGS_COLLAPSE[keyof typeof CONVERSATION.TAGS_COLLAPSE]
 
 const supportChatStyle = getTalkConfig('local', 'chat', 'style') !== undefined
 
@@ -57,6 +59,7 @@ export const useSettingsStore = defineStore('settings', () => {
 	const chatStyle = ref<CHAT_STYLE_OPTIONS>(supportChatStyle ? (getTalkConfig('local', 'chat', 'style') ?? CHAT_STYLE.SPLIT) : CHAT_STYLE.UNIFIED)
 	const sortOrder = ref<SORT_ORDER_OPTIONS>(getTalkConfig('local', 'conversations', 'sort-order') ?? CONVERSATION.SORT_ORDER.ACTIVITY)
 	const groupMode = ref<GROUP_MODE_OPTIONS>(getTalkConfig('local', 'conversations', 'group-mode') ?? CONVERSATION.GROUP_MODE.NONE)
+	const tagsCollapse = ref<TAGS_COLLAPSE_OPTIONS>(getTalkConfig('local', 'conversations', 'tags-collapse') ?? CONVERSATION.TAGS_COLLAPSE.HIDE_ALL)
 
 	const liveTranscriptionTargetLanguageId = ref<string | undefined>(getTalkConfig('local', 'call', 'live-transcription-target-language-id'))
 	if (!hasUserAccount && BrowserStorage.getItem('liveTranscriptionTargetLanguageId') !== null) {
@@ -237,6 +240,16 @@ export const useSettingsStore = defineStore('settings', () => {
 	}
 
 	/**
+	 * Update the tags collapse mode for the conversation list
+	 *
+	 * @param value - the tag collapse mode ('hide-all', 'show-unread')
+	 */
+	async function updateTagsCollapse(value: TAGS_COLLAPSE_OPTIONS) {
+		await setConversationsTagsCollapse(value)
+		tagsCollapse.value = value
+	}
+
+	/**
 	 * Fetch and store the list of available room presets (only once).
 	 */
 	async function fetchPresets() {
@@ -265,6 +278,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		chatStyle,
 		sortOrder,
 		groupMode,
+		tagsCollapse,
 		liveTranscriptionTargetLanguageId,
 		presets,
 		visiblePresets,
@@ -273,6 +287,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		fetchPresets,
 		updateSortOrder,
 		updateGroupMode,
+		updateTagsCollapse,
 		updateReadStatusPrivacy,
 		updateTypingStatusPrivacy,
 		setShowMediaSettings,

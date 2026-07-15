@@ -189,6 +189,7 @@ export const mockedCapabilities: Capabilities = {
 				'retention-instant-meetings': 1,
 				'sort-order': 'activity',
 				'group-mode': 'none',
+				'tags-collapse': 'hide-all',
 			},
 			federation: {
 				enabled: false,

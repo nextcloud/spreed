@@ -172,6 +172,11 @@ export const CONVERSATION = {
 		PRIVATE_FIRST: 'private-first',
 	},
 
+	TAGS_COLLAPSE: {
+		HIDE_ALL: 'hide-all',
+		SHOW_UNREAD: 'show-unread',
+	},
+
 	MAX_NAME_LENGTH: 255,
 } as const
 

@@ -133,6 +133,14 @@ async function setConversationsGroupMode(value: string) {
 }
 
 /**
+ *
+ * @param value
+ */
+async function setConversationsTagsCollapse(value: string) {
+	return setUserConfig('spreed', 'conversations_tags_collapse', value)
+}
+
+/**
  * @param hasUserAccount
  * @param value
  */
@@ -170,6 +178,7 @@ export {
 	setConversationsGroupMode,
 	setConversationsListStyle,
 	setConversationsSortOrder,
+	setConversationsTagsCollapse,
 	setLiveTranscriptionTargetLanguageId,
 	setPlaySounds,
 	setReadStatusPrivacy,
