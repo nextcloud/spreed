@@ -62,6 +62,7 @@ Feature: federation/call
       | users           | participant2              | 7      |
     And user "participant2" sees 2 peers in call "LOCAL::room" with 200 (v4)
 
+  @skip31
   Scenario: Federated user can not start a call when the host only allows moderators to start calls
     Given the following "spreed" app config is set
       | start_calls | 2 |
