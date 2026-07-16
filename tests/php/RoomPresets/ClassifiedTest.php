@@ -42,5 +42,6 @@ class ClassifiedTest extends TestCase {
 		$this->assertSame(Room::TYPE_GROUP, $parameters[Parameter::ROOM_TYPE->value], 'Classified conversations must not be public');
 		$this->assertSame(Room::LISTABLE_NONE, $parameters[Parameter::LISTABLE->value], 'Classified conversations must not be openly joinable');
 		$this->assertSame(Webinary::SIP_DISABLED, $parameters[Parameter::SIP_ENABLED->value], 'Classified conversations must not allow SIP');
+		$this->assertSame(3600, $parameters[Parameter::MESSAGE_EXPIRATION->value], 'Classified conversations expire messages after one hour');
 	}
 }
