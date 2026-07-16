@@ -1662,7 +1662,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Remove the current user from a room
 	 *
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'last-moderator'|'participant'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'participant'}, array{}>
 	 *
 	 * 200: Participant removed successfully
 	 * 400: Removing participant is not possible
@@ -1681,11 +1681,17 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'last-moderator'|'participant'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'participant'}, array{}>
 	 */
 	protected function removeSelfFromRoomLogic(Room $room, Participant $participant): DataResponse {
 		if ($room->isFederatedConversation()) {
 			$this->federationManager->rejectByRemoveSelf($room, $this->userId);
+		}
+
+		if ($room->isAnnouncement() && !$participant->hasModeratorPermissions(false)) {
+			// Announcements can not be left, so the audience can not miss out on them.
+			// Moderators can still remove participants from the conversation.
+			return new DataResponse(['error' => 'announcement'], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($room->getType() !== Room::TYPE_ONE_TO_ONE && $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER) {
