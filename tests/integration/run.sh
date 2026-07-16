@@ -182,6 +182,8 @@ for OCC in occ_host occ_remote; do
 	${OCC} config:system:set hashing_default_password --value=true --type=bool
 	# Change the default group notification level for more variate in default tests
 	${OCC} config:app:set spreed default_group_notification --value=2 --type=integer
+	# Claim that the HPB has the newest feature
+	${OCC} config:app:set spreed has_feature_changed_users --value=true --type=boolean
 
 	# Build skip list
 	MAJOR_VERSION=$(${OCC} status | grep -Eo 'version: ([0-9]+).' | grep -Eo '[0-9]+')
