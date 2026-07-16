@@ -21695,6 +21695,7 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
+                                                                "announcement",
                                                                 "last-moderator",
                                                                 "participant"
                                                             ]
@@ -21737,6 +21738,7 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
+                                                                "announcement",
                                                                 "last-moderator",
                                                                 "participant"
                                                             ]

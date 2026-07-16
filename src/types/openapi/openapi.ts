@@ -10992,7 +10992,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "last-moderator" | "participant";
+                                error: "announcement" | "last-moderator" | "participant";
                             };
                         };
                     };
@@ -11023,7 +11023,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "last-moderator" | "participant";
+                                error: "announcement" | "last-moderator" | "participant";
                             };
                         };
                     };
