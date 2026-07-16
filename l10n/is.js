@@ -434,6 +434,7 @@ OC.L10N.register(
     "You have been muted by a moderator" : "You have been muted by a moderator",
     "Disable video" : "Gera myndskeið óvirk",
     "Enable video" : "Virkja myndskeið",
+    "Camera" : "Myndavél",
     "You" : "Þú",
     "Show screen" : "Birta skjá",
     "Collapse" : "Fella saman",

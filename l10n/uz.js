@@ -312,6 +312,7 @@ OC.L10N.register(
     "Reload" : "Qayta yuklash",
     "Copy link" : "Havolani nusxalash",
     "None" : "Yo'q",
+    "Camera" : "Kamera",
     "Favorite" : "Favorite",
     "Date:" : "Sana:",
     "Hide details" : "Tafsilotlarni yashirish",

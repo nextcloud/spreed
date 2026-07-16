@@ -880,6 +880,7 @@ OC.L10N.register(
     "Enable video - Your connection will be briefly interrupted when enabling the video for the first time" : "Enable video - Your connection will be briefly interrupted when enabling the video for the first time",
     "Enable video (V) - Your connection will be briefly interrupted when enabling the video for the first time" : "Enable video (V) - Your connection will be briefly interrupted when enabling the video for the first time",
     "Enable video. Your connection will be briefly interrupted when enabling the video for the first time" : "Enable video. Your connection will be briefly interrupted when enabling the video for the first time",
+    "Camera" : "Camera",
     "Show presenter" : "Show presenter",
     "You" : "You",
     "Mute" : "Mute",

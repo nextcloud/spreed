@@ -387,6 +387,7 @@ OC.L10N.register(
     "None" : "Ninguno",
     "Disable video" : "Deshabilitar video",
     "Enable video" : "Habilitar el video",
+    "Camera" : "Cámara",
     "You" : "Tú",
     "Show screen" : "Mostrar pantalla",
     "Collapse" : "Colapsar",

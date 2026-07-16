@@ -886,6 +886,7 @@ OC.L10N.register(
     "Enable video - Your connection will be briefly interrupted when enabling the video for the first time" : "Omogoči video – Med prvim omogočanjem bo povezava za trenutek prekinjena.",
     "Enable video (V) - Your connection will be briefly interrupted when enabling the video for the first time" : "Omogoči video (v) – Med prvim omogočanjem bo povezava za trenutek prekinjena.",
     "Enable video. Your connection will be briefly interrupted when enabling the video for the first time" : "Omogoči video. – Med prvim omogočanjem bo povezava za trenutek prekinjena.",
+    "Camera" : "Kamera",
     "Show presenter" : "Pokaži govorca",
     "You" : "Jaz",
     "Mute" : "Utišaj",
