@@ -418,7 +418,7 @@ class BotController extends AEnvironmentAwareOCSController {
 	 *
 	 * 200: Bot already enabled
 	 * 201: Bot enabled successfully
-	 * 400: Enabling bot errored
+	 * 400: Enabling bot errored, e.g. when the conversation is classified
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
@@ -431,6 +431,13 @@ class BotController extends AEnvironmentAwareOCSController {
 		if ($this->room->isFederatedConversation() || $this->room->getType() === ROOM::TYPE_ONE_TO_ONE_FORMER) {
 			return new DataResponse([
 				'error' => 'room',
+			], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->room->isClassified()) {
+			// Bots would receive the messages of a classified conversation
+			return new DataResponse([
+				'error' => 'classified',
 			], Http::STATUS_BAD_REQUEST);
 		}
 

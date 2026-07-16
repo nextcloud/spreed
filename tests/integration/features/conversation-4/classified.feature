@@ -64,3 +64,20 @@ Feature: conversation-4/classified
       | invite   | participant2 |
     And user "participant2" sends message "Secret" to room "classified" with 201
     Then user "participant1" sends private reply "Reply" on message "Secret" from room "classified" to room "one-to-one room" with 403 (v1)
+
+  Scenario: Bots can not be enabled in a classified conversation
+    Given invoking occ with "app:disable talk_webhook_demo"
+    And the command was successful
+    And invoking occ with "app:enable talk_webhook_demo"
+    And the command was successful
+    And read bot ids from OCC
+    And user "participant1" creates room "classified" (v4)
+      | roomType | 2 |
+      | roomName | classified |
+      | preset   | classified |
+    Then user "participant1" sets up bot "Webhook Demo" for room "classified" with 400 (v1)
+    And setup bot "Webhook Demo" for room "classified" via OCC with exit code 2
+    And the command output contains the text "Classified conversations can not have bots"
+    And invoking occ with "talk:bot:list room-name:classified"
+    And the command was successful
+    And the command output is empty

@@ -5028,10 +5028,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	#[Then('/^(setup|remove) bot "([^"]*)" for room "([^"]*)" via OCC$/')]
-	public function setupOrRemoveBotInRoom(string $action, string $botName, string $identifier): void {
+	#[Then('/^(setup|remove) bot "([^"]*)" for room "([^"]*)" via OCC(?: with exit code (\d+))?$/')]
+	public function setupOrRemoveBotInRoom(string $action, string $botName, string $identifier, ?int $exitCode = null): void {
 		$this->invokingTheCommand('talk:bot:' . $action . ' ' . self::$botNameToId[$botName] . ' ' . self::$identifierToToken[$identifier]);
-		$this->theCommandWasSuccessful();
+		if ($exitCode === null) {
+			$this->theCommandWasSuccessful();
+		} else {
+			$this->theCommandFailedWithExitCode($exitCode);
+		}
 	}
 
 	#[Then('/^set state (enabled|disabled|no-setup) for bot "([^"]*)" via OCC$/')]
