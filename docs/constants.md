@@ -78,6 +78,7 @@ Required capability: `conversation-presets`
 * `0` None
 * `1` Voice rooms - Join call when joining conversation
 * `2` Preserved - Conversation can not be deleted, its chat history can not be cleared and the guests (public link) and joinable (listable) settings can not be changed (only owners can toggle this attribute, requires capability `preserve-conversation`)
+* `4` Classified - Locked down conversation: public link, guests, SIP, call recording, message forwarding, private-replies, live transcription, live translation, chat summaries and downloading the call participants list are disallowed and the conversation is forced sensitive for everyone (set at creation via the `classified` preset, requires capability `classified-conversations`)
 
 ## Participants
 

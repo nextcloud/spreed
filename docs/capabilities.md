@@ -230,5 +230,6 @@
 
 ## 25
 * `preserve-conversation` - Whether the owner can preserve a conversation
+* `classified-conversations` (local) - Whether classified conversations are supported (locked down: no public link, guests, SIP, recording, forwarding, private-reply, live transcription/translation, chat summary or participants-list download; forced sensitive for everyone)
 * `recording-chunked-upload` (local) - Whether the recording backend can request a temporary upload share to upload large recordings via chunked public WebDAV before finishing with the store endpoint
 * `config => call => external-call-service` (local) - The target URL for an external call service if one is configured
