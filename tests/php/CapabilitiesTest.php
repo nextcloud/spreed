@@ -151,6 +151,7 @@ class CapabilitiesTest extends TestCase {
 				['retention_event_rooms', 28, 28],
 				['retention_phone_rooms', 7, 7],
 				['retention_instant_meetings', 1, 1],
+				['retention_classified_rooms', 3600, 3600],
 				['experiments_guests', 0, 0],
 				['summary_threshold', 100, 100],
 				['feature_hints_hidden', 0, 999],
@@ -233,6 +234,7 @@ class CapabilitiesTest extends TestCase {
 						'retention-event' => 28,
 						'retention-phone' => 7,
 						'retention-instant-meetings' => 1,
+						'retention-classified' => 3600,
 					],
 					'federation' => [
 						'enabled' => false,
@@ -369,6 +371,7 @@ class CapabilitiesTest extends TestCase {
 				['retention_event_rooms', 28, 28],
 				['retention_phone_rooms', 7, 7],
 				['retention_instant_meetings', 1, 1],
+				['retention_classified_rooms', 3600, 3600],
 				['experiments_users', 0, 0],
 				['summary_threshold', 100, 100],
 				['feature_hints_hidden', 0, 1],
@@ -460,6 +463,7 @@ class CapabilitiesTest extends TestCase {
 						'retention-event' => 28,
 						'retention-phone' => 7,
 						'retention-instant-meetings' => 1,
+						'retention-classified' => 3600,
 					],
 					'federation' => [
 						'enabled' => false,

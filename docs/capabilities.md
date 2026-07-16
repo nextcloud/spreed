@@ -187,6 +187,7 @@
 * `config => conversations => retention-event` - Number of days before an inactive event conversation is deleted (`0` = disabled)
 * `config => conversations => retention-instant-meetings` - Number of days before an instant meeting conversation is deleted (`0` = disabled)
 * `config => conversations => retention-phone` - Number of days before an inactive incoming or outgoing phone conversation is deleted (`0` = disabled)
+* `config => conversations => retention-classified` - Number of seconds before a classified conversation is deleted after a call happened, unless a moderator keeps it (`0` = disabled)
 * `config => call => predefined-backgrounds-v2` (local) - Whether virtual backgrounds should be read from the theming directory
 * `config => experiments => enabled` (local) - Bit flag of enabled experiments for clients
 * `dashboard-event-rooms` (local) - Whether Talk APIs offer functionality for Dashboard requests

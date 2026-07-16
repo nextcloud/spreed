@@ -30,6 +30,8 @@ class Room {
 	public const TYPE_ONE_TO_ONE_FORMER = 5;
 	public const TYPE_NOTE_TO_SELF = 6;
 
+	public const OBJECT_TYPE_CLASSIFIED = 'classified';
+	public const OBJECT_TYPE_CLASSIFIED_PERSIST = 'classified_persist';
 	public const OBJECT_TYPE_EMAIL = 'emails';
 	public const OBJECT_TYPE_EVENT = 'event';
 	public const OBJECT_TYPE_EXTENDED_CONVERSATION = 'extended_conversation';
