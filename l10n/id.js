@@ -342,6 +342,8 @@ OC.L10N.register(
     "Reload" : "Muat ulang",
     "Copy link" : "Salin tautan",
     "None" : "Tidak ada",
+    "Microphone" : "Mikrofon",
+    "Camera" : "Kamera",
     "You" : "Anda",
     "Collapse" : "Tutup",
     "Expand" : "Perluas",

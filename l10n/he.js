@@ -433,6 +433,7 @@ OC.L10N.register(
     "Copy link" : "העתקת קישור",
     "Mute audio" : "השתקת שמע",
     "None" : "אין",
+    "Microphone" : "מיקרופון",
     "Disable video" : "השבתת וידאו",
     "Enable video" : "הפעלת וידאו",
     "You" : "אני",

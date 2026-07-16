@@ -893,6 +893,7 @@ OC.L10N.register(
     "Enable video - Your connection will be briefly interrupted when enabling the video for the first time" : "영상 활성화 - 영상을 처음 활성화하면 연결이 잠깐 끊어집니다.",
     "Enable video (V) - Your connection will be briefly interrupted when enabling the video for the first time" : "영상 활성화(V) - 영상을 처음 활성화하면 연결이 잠시 중단됩니다.",
     "Enable video. Your connection will be briefly interrupted when enabling the video for the first time" : "영상을 활성화합니다. 처음으로 영상을 활성화하면 연결이 잠시 중단됩니다.",
+    "Camera" : "카메라",
     "Show presenter" : "발표자 표시",
     "You" : "나",
     "Mute" : "음소거",
