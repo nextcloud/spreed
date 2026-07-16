@@ -3,94 +3,6 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-	<section id="signaling_server" class="signaling-servers section">
-		<NcNoteCard
-			v-if="!serversProxy.length"
-			type="warning"
-			:heading="t('spreed', 'Nextcloud Talk setup not complete')">
-			{{ t('spreed', 'Please note that in calls with more than 2 participants without the High-performance backend, participants will most likely experience connectivity issues and cause high load on participating devices.') }}
-			{{ t('spreed', 'Install the High-performance backend to ensure calls with multiple participants work seamlessly.') }}
-
-			<NcButton
-				v-if="props.hasValidSubscription"
-				variant="primary"
-				class="additional-top-margin"
-				href="https://portal.nextcloud.com/article/Nextcloud-Talk/High-Performance-Backend/Installation-of-Nextcloud-Talk-High-Performance-Backend">
-				{{ t('spreed', 'Nextcloud portal') }} ↗
-			</NcButton>
-			<NcButton
-				v-else
-				variant="primary"
-				class="additional-top-margin"
-				href="https://nextcloud-talk.readthedocs.io/en/latest/quick-install/">
-				{{ t('spreed', 'Quick installation guide') }} ↗
-			</NcButton>
-		</NcNoteCard>
-
-		<h2>
-			{{ t('spreed', 'High-performance backend') }}
-		</h2>
-
-		<p class="settings-hint">
-			{{ t('spreed', 'The High-performance backend is required for calls and conversations with multiple participants. Without the backend, all participants have to upload their own video individually for each other participant, which will most likely cause connectivity issues and a high load on participating devices.') }}
-		</p>
-
-		<NcNoteCard
-			v-if="serversProxy.length && !isCacheConfigured"
-			type="warning"
-			:text="t('spreed', 'It is highly recommended to set up a distributed cache when using Nextcloud Talk with a High-performance backend.')" />
-
-		<ul v-if="serversProxy.length">
-			<SignalingServer
-				v-for="(server, index) in serversProxy"
-				:key="index"
-				v-model:server="server.server"
-				v-model:verify="server.verify"
-				:index="index"
-				:loading="loading"
-				@removeServer="removeServer"
-				@update:server="debounceUpdateServers"
-				@update:verify="debounceUpdateServers" />
-		</ul>
-
-		<NcButton
-			v-if="!serversProxy.length || isClusteredMode"
-			class="additional-top-margin"
-			:disabled="loading"
-			@click="newServer">
-			<template #icon>
-				<NcLoadingIcon v-if="loading" :size="20" />
-				<IconPlus v-else :size="20" />
-			</template>
-			{{ t('spreed', 'Add High-performance backend server') }}
-		</NcButton>
-
-		<NcPasswordField
-			v-if="serversProxy.length"
-			v-model="secretProxy"
-			class="form__textfield additional-top-margin"
-			name="signaling_secret"
-			asText
-			:disabled="loading"
-			:placeholder="t('spreed', 'Shared secret')"
-			:label="t('spreed', 'Shared secret')"
-			labelVisible
-			@update:modelValue="debounceUpdateServers" />
-
-		<template v-if="!serversProxy.length">
-			<NcCheckboxRadioSwitch
-				v-model="showWarningProxy"
-				type="switch"
-				class="additional-top-margin"
-				:disabled="loading"
-				@update:modelValue="updateHideWarning">
-				{{ t('spreed', 'Warn about connectivity issues in calls with more than 2 participants') }}
-			</NcCheckboxRadioSwitch>
-		</template>
-	</section>
-</template>
-
 <script setup lang="ts">
 import type { InitialState } from '../../types/index.ts'
 
@@ -210,6 +122,94 @@ function updateServers() {
 	})
 }
 </script>
+
+<template>
+	<section id="signaling_server" class="signaling-servers section">
+		<NcNoteCard
+			v-if="!serversProxy.length"
+			type="warning"
+			:heading="t('spreed', 'Nextcloud Talk setup not complete')">
+			{{ t('spreed', 'Please note that in calls with more than 2 participants without the High-performance backend, participants will most likely experience connectivity issues and cause high load on participating devices.') }}
+			{{ t('spreed', 'Install the High-performance backend to ensure calls with multiple participants work seamlessly.') }}
+
+			<NcButton
+				v-if="props.hasValidSubscription"
+				variant="primary"
+				class="additional-top-margin"
+				href="https://portal.nextcloud.com/article/Nextcloud-Talk/High-Performance-Backend/Installation-of-Nextcloud-Talk-High-Performance-Backend">
+				{{ t('spreed', 'Nextcloud portal') }} ↗
+			</NcButton>
+			<NcButton
+				v-else
+				variant="primary"
+				class="additional-top-margin"
+				href="https://nextcloud-talk.readthedocs.io/en/latest/quick-install/">
+				{{ t('spreed', 'Quick installation guide') }} ↗
+			</NcButton>
+		</NcNoteCard>
+
+		<h2>
+			{{ t('spreed', 'High-performance backend') }}
+		</h2>
+
+		<p class="settings-hint">
+			{{ t('spreed', 'The High-performance backend is required for calls and conversations with multiple participants. Without the backend, all participants have to upload their own video individually for each other participant, which will most likely cause connectivity issues and a high load on participating devices.') }}
+		</p>
+
+		<NcNoteCard
+			v-if="serversProxy.length && !isCacheConfigured"
+			type="warning"
+			:text="t('spreed', 'It is highly recommended to set up a distributed cache when using Nextcloud Talk with a High-performance backend.')" />
+
+		<ul v-if="serversProxy.length">
+			<SignalingServer
+				v-for="(server, index) in serversProxy"
+				:key="index"
+				v-model:server="server.server"
+				v-model:verify="server.verify"
+				:index="index"
+				:loading="loading"
+				@removeServer="removeServer"
+				@update:server="debounceUpdateServers"
+				@update:verify="debounceUpdateServers" />
+		</ul>
+
+		<NcButton
+			v-if="!serversProxy.length || isClusteredMode"
+			class="additional-top-margin"
+			:disabled="loading"
+			@click="newServer">
+			<template #icon>
+				<NcLoadingIcon v-if="loading" :size="20" />
+				<IconPlus v-else :size="20" />
+			</template>
+			{{ t('spreed', 'Add High-performance backend server') }}
+		</NcButton>
+
+		<NcPasswordField
+			v-if="serversProxy.length"
+			v-model="secretProxy"
+			class="form__textfield additional-top-margin"
+			name="signaling_secret"
+			asText
+			:disabled="loading"
+			:placeholder="t('spreed', 'Shared secret')"
+			:label="t('spreed', 'Shared secret')"
+			labelVisible
+			@update:modelValue="debounceUpdateServers" />
+
+		<template v-if="!serversProxy.length">
+			<NcCheckboxRadioSwitch
+				v-model="showWarningProxy"
+				type="switch"
+				class="additional-top-margin"
+				:disabled="loading"
+				@update:modelValue="updateHideWarning">
+				{{ t('spreed', 'Warn about connectivity issues in calls with more than 2 participants') }}
+			</NcCheckboxRadioSwitch>
+		</template>
+	</section>
+</template>
 
 <style lang="scss" scoped>
 .signaling-servers {

@@ -3,118 +3,6 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-	<NcDialog
-		:name="dialogName"
-		:closeOnClickOutside="!isFilled"
-		:container="container"
-		@update:open="emit('close')">
-		<NcButton
-			v-if="supportPollDrafts && isOpenedFromDraft"
-			class="poll-editor__back-button"
-			variant="tertiary"
-			:title="t('spreed', 'Back')"
-			:aria-label="t('spreed', 'Back')"
-			@click="goBack">
-			<template #icon>
-				<IconArrowLeft class="bidirectional-icon" :size="20" />
-			</template>
-		</NcButton>
-		<!-- Poll Question -->
-		<p class="poll-editor__caption">
-			{{ t('spreed', 'Question') }}
-		</p>
-		<div class="poll-editor__wrapper">
-			<NcTextField v-model="pollForm.question" :label="t('spreed', 'Ask a question')" />
-			<!--native file picker, hidden -->
-			<input
-				id="poll-upload"
-				ref="pollImport"
-				type="file"
-				class="hidden-visually"
-				tabindex="-1"
-				@change="importPoll">
-			<NcActions v-if="supportPollDrafts" forceMenu>
-				<NcActionButton v-if="props.canCreatePollDrafts && !isOpenedFromDraft" closeAfterClick @click="openPollDraftHandler">
-					<template #icon>
-						<IconFileEditOutline :size="20" />
-					</template>
-					{{ t('spreed', 'Browse poll drafts') }}
-				</NcActionButton>
-				<NcActionButton closeAfterClick @click="triggerImport">
-					<template #icon>
-						<NcIconSvgWrapper :svg="IconFileUpload" :size="20" />
-					</template>
-					{{ t('spreed', 'Import draft from file') }}
-				</NcActionButton>
-			</NcActions>
-		</div>
-
-		<!-- Poll options -->
-		<p class="poll-editor__caption">
-			{{ t('spreed', 'Answers') }}
-		</p>
-		<div
-			v-for="(option, index) in pollForm.options"
-			:key="index"
-			class="poll-editor__option">
-			<NcTextField
-				ref="pollOption"
-				v-model="pollForm.options[index]"
-				:label="t('spreed', 'Answer {option}', { option: index + 1 })" />
-			<NcButton
-				v-if="pollForm.options.length > 2"
-				variant="tertiary"
-				:aria-label="t('spreed', 'Delete poll option')"
-				@click="deleteOption(index)">
-				<template #icon>
-					<Close :size="20" />
-				</template>
-			</NcButton>
-		</div>
-
-		<!-- Add options -->
-		<NcButton class="poll-editor__add-more" variant="tertiary" @click="addOption">
-			<template #icon>
-				<Plus />
-			</template>
-			{{ t('spreed', 'Add answer') }}
-		</NcButton>
-
-		<!-- Poll settings -->
-		<p class="poll-editor__caption">
-			{{ t('spreed', 'Settings') }}
-		</p>
-		<div class="poll-editor__settings">
-			<NcCheckboxRadioSwitch v-model="isAnonymous" type="checkbox">
-				{{ t('spreed', 'Anonymous poll') }}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch v-model="isMultipleAnswer" type="checkbox">
-				{{ t('spreed', 'Multiple answers') }}
-			</NcCheckboxRadioSwitch>
-		</div>
-		<template #actions>
-			<NcActions v-if="supportPollDrafts" forceMenu>
-				<NcActionButton v-if="props.canCreatePollDrafts && !editingDraftId" :disabled="!isFilled" @click="createPollDraft">
-					<template #icon>
-						<IconFileEditOutline :size="20" />
-					</template>
-					{{ t('spreed', 'Save as draft') }}
-				</NcActionButton>
-				<NcActionLink v-if="isFilled" :href="exportPollURI" :download="exportPollFileName">
-					<template #icon>
-						<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
-					</template>
-					{{ t('spreed', 'Export draft to file') }}
-				</NcActionLink>
-			</NcActions>
-			<NcButton variant="primary" :disabled="!isFilled" @click="handleSubmit">
-				{{ createPollLabel }}
-			</NcButton>
-		</template>
-	</NcDialog>
-</template>
-
 <script setup lang="ts">
 import type { createPollParams, requiredPollParams } from '../../types/index.ts'
 
@@ -363,6 +251,118 @@ function goBack() {
 	}
 }
 </script>
+
+<template>
+	<NcDialog
+		:name="dialogName"
+		:closeOnClickOutside="!isFilled"
+		:container="container"
+		@update:open="emit('close')">
+		<NcButton
+			v-if="supportPollDrafts && isOpenedFromDraft"
+			class="poll-editor__back-button"
+			variant="tertiary"
+			:title="t('spreed', 'Back')"
+			:aria-label="t('spreed', 'Back')"
+			@click="goBack">
+			<template #icon>
+				<IconArrowLeft class="bidirectional-icon" :size="20" />
+			</template>
+		</NcButton>
+		<!-- Poll Question -->
+		<p class="poll-editor__caption">
+			{{ t('spreed', 'Question') }}
+		</p>
+		<div class="poll-editor__wrapper">
+			<NcTextField v-model="pollForm.question" :label="t('spreed', 'Ask a question')" />
+			<!--native file picker, hidden -->
+			<input
+				id="poll-upload"
+				ref="pollImport"
+				type="file"
+				class="hidden-visually"
+				tabindex="-1"
+				@change="importPoll">
+			<NcActions v-if="supportPollDrafts" forceMenu>
+				<NcActionButton v-if="props.canCreatePollDrafts && !isOpenedFromDraft" closeAfterClick @click="openPollDraftHandler">
+					<template #icon>
+						<IconFileEditOutline :size="20" />
+					</template>
+					{{ t('spreed', 'Browse poll drafts') }}
+				</NcActionButton>
+				<NcActionButton closeAfterClick @click="triggerImport">
+					<template #icon>
+						<NcIconSvgWrapper :svg="IconFileUpload" :size="20" />
+					</template>
+					{{ t('spreed', 'Import draft from file') }}
+				</NcActionButton>
+			</NcActions>
+		</div>
+
+		<!-- Poll options -->
+		<p class="poll-editor__caption">
+			{{ t('spreed', 'Answers') }}
+		</p>
+		<div
+			v-for="(option, index) in pollForm.options"
+			:key="index"
+			class="poll-editor__option">
+			<NcTextField
+				ref="pollOption"
+				v-model="pollForm.options[index]"
+				:label="t('spreed', 'Answer {option}', { option: index + 1 })" />
+			<NcButton
+				v-if="pollForm.options.length > 2"
+				variant="tertiary"
+				:aria-label="t('spreed', 'Delete poll option')"
+				@click="deleteOption(index)">
+				<template #icon>
+					<Close :size="20" />
+				</template>
+			</NcButton>
+		</div>
+
+		<!-- Add options -->
+		<NcButton class="poll-editor__add-more" variant="tertiary" @click="addOption">
+			<template #icon>
+				<Plus />
+			</template>
+			{{ t('spreed', 'Add answer') }}
+		</NcButton>
+
+		<!-- Poll settings -->
+		<p class="poll-editor__caption">
+			{{ t('spreed', 'Settings') }}
+		</p>
+		<div class="poll-editor__settings">
+			<NcCheckboxRadioSwitch v-model="isAnonymous" type="checkbox">
+				{{ t('spreed', 'Anonymous poll') }}
+			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch v-model="isMultipleAnswer" type="checkbox">
+				{{ t('spreed', 'Multiple answers') }}
+			</NcCheckboxRadioSwitch>
+		</div>
+		<template #actions>
+			<NcActions v-if="supportPollDrafts" forceMenu>
+				<NcActionButton v-if="props.canCreatePollDrafts && !editingDraftId" :disabled="!isFilled" @click="createPollDraft">
+					<template #icon>
+						<IconFileEditOutline :size="20" />
+					</template>
+					{{ t('spreed', 'Save as draft') }}
+				</NcActionButton>
+				<NcActionLink v-if="isFilled" :href="exportPollURI" :download="exportPollFileName">
+					<template #icon>
+						<NcIconSvgWrapper :svg="IconFileDownload" :size="20" />
+					</template>
+					{{ t('spreed', 'Export draft to file') }}
+				</NcActionLink>
+			</NcActions>
+			<NcButton variant="primary" :disabled="!isFilled" @click="handleSubmit">
+				{{ createPollLabel }}
+			</NcButton>
+		</template>
+	</NcDialog>
+</template>
 
 <style lang="scss" scoped>
 .poll-editor {

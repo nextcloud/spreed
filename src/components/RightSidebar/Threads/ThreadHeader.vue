@@ -3,6 +3,65 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
+<script setup lang="ts">
+import { n, t } from '@nextcloud/l10n'
+import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
+import { computed, watch } from 'vue'
+import { useStore } from 'vuex'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActions from '@nextcloud/vue/components/NcActions'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
+import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
+import { useGetThreadId } from '../../../composables/useGetThreadId.ts'
+import { useGetToken } from '../../../composables/useGetToken.ts'
+import { PARTICIPANT } from '../../../constants.ts'
+import { useActorStore } from '../../../stores/actor.ts'
+import { useChatExtrasStore } from '../../../stores/chatExtras.ts'
+import { notificationLevelIcons, notificationLevels } from './threadsConstants.ts'
+
+const props = defineProps<{
+	/** Whether component is used outside TopBar */
+	standalone?: boolean
+}>()
+
+const actorStore = useActorStore()
+const chatExtrasStore = useChatExtrasStore()
+const threadId = useGetThreadId()
+const token = useGetToken()
+const store = useStore()
+
+const currentThread = computed(() => chatExtrasStore.getThread(token.value, threadId.value))
+
+const threadNotification = computed(() => currentThread.value?.attendee.notificationLevel ?? PARTICIPANT.NOTIFY.DEFAULT)
+
+const threadNotificationVariant = computed(() => {
+	return ([PARTICIPANT.NOTIFY.ALWAYS, PARTICIPANT.NOTIFY.MENTION].includes(threadNotification.value))
+		? 'secondary'
+		: 'tertiary'
+})
+
+const isModeratorOrOwner = computed(() => {
+	return store.getters.isModerator
+		|| (currentThread.value?.first?.actorId === actorStore.actorId && currentThread.value?.first?.actorType === actorStore.actorType)
+})
+
+watch(currentThread, (value) => {
+	if (threadId.value && value === undefined) {
+		chatExtrasStore.fetchSingleThread(token.value, threadId.value)
+	}
+}, { immediate: true })
+
+/**
+ * Rename a thread title on server
+ */
+async function renameThreadTitle() {
+	await chatExtrasStore.renameThread(token.value, threadId.value)
+}
+</script>
+
 <template>
 	<div
 		class="thread-header"
@@ -77,65 +136,6 @@
 		</NcActions>
 	</div>
 </template>
-
-<script setup lang="ts">
-import { n, t } from '@nextcloud/l10n'
-import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
-import { computed, watch } from 'vue'
-import { useStore } from 'vuex'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
-import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
-import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
-import { useGetThreadId } from '../../../composables/useGetThreadId.ts'
-import { useGetToken } from '../../../composables/useGetToken.ts'
-import { PARTICIPANT } from '../../../constants.ts'
-import { useActorStore } from '../../../stores/actor.ts'
-import { useChatExtrasStore } from '../../../stores/chatExtras.ts'
-import { notificationLevelIcons, notificationLevels } from './threadsConstants.ts'
-
-const props = defineProps<{
-	/** Whether component is used outside TopBar */
-	standalone?: boolean
-}>()
-
-const actorStore = useActorStore()
-const chatExtrasStore = useChatExtrasStore()
-const threadId = useGetThreadId()
-const token = useGetToken()
-const store = useStore()
-
-const currentThread = computed(() => chatExtrasStore.getThread(token.value, threadId.value))
-
-const threadNotification = computed(() => currentThread.value?.attendee.notificationLevel ?? PARTICIPANT.NOTIFY.DEFAULT)
-
-const threadNotificationVariant = computed(() => {
-	return ([PARTICIPANT.NOTIFY.ALWAYS, PARTICIPANT.NOTIFY.MENTION].includes(threadNotification.value))
-		? 'secondary'
-		: 'tertiary'
-})
-
-const isModeratorOrOwner = computed(() => {
-	return store.getters.isModerator
-		|| (currentThread.value?.first?.actorId === actorStore.actorId && currentThread.value?.first?.actorType === actorStore.actorType)
-})
-
-watch(currentThread, (value) => {
-	if (threadId.value && value === undefined) {
-		chatExtrasStore.fetchSingleThread(token.value, threadId.value)
-	}
-}, { immediate: true })
-
-/**
- * Rename a thread title on server
- */
-async function renameThreadTitle() {
-	await chatExtrasStore.renameThread(token.value, threadId.value)
-}
-</script>
 
 <style lang="scss" scoped>
 .thread-header {

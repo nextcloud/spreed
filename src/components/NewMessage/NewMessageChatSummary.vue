@@ -4,57 +4,6 @@
 -->
 
 <!-- eslint-disable vue/multiline-html-element-content-newline -->
-<template>
-	<NcAssistantContent class="chat-summary">
-		<div class="chat-summary__container">
-			<NcAssistantIcon class="chat-summary__icon" />
-
-			<div class="chat-summary__content">
-				<div class="chat-summary__header">
-					<p class="chat-summary__caption">
-						{{ chatSummaryCaption }}
-					</p>
-					<NcButton
-						v-if="loading"
-						variant="tertiary"
-						:disabled="cancelling"
-						@click="cancelSummary">
-						{{ t('spreed', 'Cancel') }}
-					</NcButton>
-					<NcButton
-						v-else-if="chatSummaryMessage"
-						variant="tertiary"
-						@click="dismissSummary">
-						{{ t('spreed', 'Dismiss') }}
-					</NcButton>
-					<NcButton
-						v-if="isTextMoreThanOneLine"
-						variant="tertiary"
-						:title="collapsed ? t('spreed', 'Expand') : t('spreed', 'Collapse')"
-						:aria-label="collapsed ? t('spreed', 'Expand') : t('spreed', 'Collapse')"
-						@click="toggleCollapsed">
-						<template #icon>
-							<IconUnfoldMoreHorizontal v-if="collapsed" :size="20" />
-							<IconUnfoldLessHorizontal v-else :size="20" />
-						</template>
-					</NcButton>
-				</div>
-
-				<p v-if="loading">
-					{{ t('spreed', 'This might take a moment') }}
-				</p>
-				<p
-					v-else
-					ref="chatSummaryRef"
-					class="chat-summary__message"
-					:class="{ 'chat-summary__message--collapsed': collapsed }">
-					{{ chatSummaryMessage }}
-				</p>
-			</div>
-		</div>
-	</NcAssistantContent>
-</template>
-
 <script setup lang="ts">
 import type { ChatTask, TaskProcessingResponse } from '../../types/index.ts'
 
@@ -237,6 +186,57 @@ function setIsTextMoreThanOneLine() {
 	collapsed.value = !isTextMoreThanOneLine.value
 }
 </script>
+
+<template>
+	<NcAssistantContent class="chat-summary">
+		<div class="chat-summary__container">
+			<NcAssistantIcon class="chat-summary__icon" />
+
+			<div class="chat-summary__content">
+				<div class="chat-summary__header">
+					<p class="chat-summary__caption">
+						{{ chatSummaryCaption }}
+					</p>
+					<NcButton
+						v-if="loading"
+						variant="tertiary"
+						:disabled="cancelling"
+						@click="cancelSummary">
+						{{ t('spreed', 'Cancel') }}
+					</NcButton>
+					<NcButton
+						v-else-if="chatSummaryMessage"
+						variant="tertiary"
+						@click="dismissSummary">
+						{{ t('spreed', 'Dismiss') }}
+					</NcButton>
+					<NcButton
+						v-if="isTextMoreThanOneLine"
+						variant="tertiary"
+						:title="collapsed ? t('spreed', 'Expand') : t('spreed', 'Collapse')"
+						:aria-label="collapsed ? t('spreed', 'Expand') : t('spreed', 'Collapse')"
+						@click="toggleCollapsed">
+						<template #icon>
+							<IconUnfoldMoreHorizontal v-if="collapsed" :size="20" />
+							<IconUnfoldLessHorizontal v-else :size="20" />
+						</template>
+					</NcButton>
+				</div>
+
+				<p v-if="loading">
+					{{ t('spreed', 'This might take a moment') }}
+				</p>
+				<p
+					v-else
+					ref="chatSummaryRef"
+					class="chat-summary__message"
+					:class="{ 'chat-summary__message--collapsed': collapsed }">
+					{{ chatSummaryMessage }}
+				</p>
+			</div>
+		</div>
+	</NcAssistantContent>
+</template>
 
 <style lang="scss" scoped>
 @use '../../assets/variables.scss' as *;
