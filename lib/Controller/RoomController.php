@@ -1144,6 +1144,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->roomService->resetObject($this->room);
 		} elseif ($this->room->getObjectType() === Room::OBJECT_TYPE_PHONE_TEMPORARY) {
 			$this->roomService->setObject($this->room, Room::OBJECT_TYPE_PHONE_PERSIST, $this->room->getObjectId());
+		} elseif ($this->room->getObjectType() === Room::OBJECT_TYPE_CLASSIFIED) {
+			// Keep the classified conversation permanently: switching to the
+			// "persist" object type removes it from the retention sweep and, since
+			// the call-end listener only queues rooms with an empty object type,
+			// prevents it from being re-queued after future calls.
+			$this->roomService->setObject($this->room, Room::OBJECT_TYPE_CLASSIFIED_PERSIST, (string)$this->timeFactory->getTime());
 		} else {
 			return new DataResponse(['error' => 'object-type'], Http::STATUS_BAD_REQUEST);
 		}
