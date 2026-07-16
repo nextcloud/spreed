@@ -545,6 +545,7 @@ OC.L10N.register(
     "Disable video (V)" : "Dezactivează video (V)",
     "Enable video" : "Activează video",
     "Enable video (V)" : "Activează video (V) ",
+    "Camera" : "Camera",
     "Show presenter" : "Arată prezentatorul",
     "You" : "Tu",
     "Mute" : "Oprește sunetul",
