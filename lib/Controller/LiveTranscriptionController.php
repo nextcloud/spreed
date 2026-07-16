@@ -38,11 +38,12 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	/**
 	 * Enable the live transcription
 	 *
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'app'|'in-call'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'app'|'classified'|'in-call'}, array{}>
 	 *
 	 * 200: Live transcription enabled successfully
 	 * 400: The external app "live_transcription" is not available
 	 * 400: The participant is not in the call
+	 * 400: The conversation is classified
 	 */
 	#[PublicPage]
 	#[RequireCallEnabled]
@@ -53,6 +54,10 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function enable(): DataResponse {
+		if ($this->room->isClassified()) {
+			return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
+		}
+
 		if ($this->room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
 			return new DataResponse(['error' => 'in-call'], Http::STATUS_BAD_REQUEST);
 		}
@@ -162,10 +167,11 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	 * Set language for live transcriptions
 	 *
 	 * @param string $languageId the ID of the language to set
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN, array{error: 'app'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'app'|'classified'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'app'}, array{}>
 	 *
 	 * 200: Language set successfully
 	 * 400: The external app "live_transcription" is not available
+	 * 400: The conversation is classified
 	 * 403: Participant is not a moderator
 	 */
 	#[PublicPage]
@@ -175,6 +181,10 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setLanguage(string $languageId): DataResponse {
+		if ($this->room->isClassified()) {
+			return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
+		}
+
 		try {
 			$this->liveTranscriptionService->setLanguage($this->room, $languageId);
 		} catch (LiveTranscriptionAppNotEnabledException) {
@@ -195,12 +205,13 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 	 * sending a null value as the language id.
 	 *
 	 * @param string $targetLanguageId the ID of the language to set
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'app'|'translations'|'in-call'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'app'|'classified'|'translations'|'in-call'}, array{}>
 	 *
 	 * 200: Target language set successfully
 	 * 400: The external app "live_transcription" is not available or
 	 * translations are not supported.
 	 * 400: The participant is not in the call.
+	 * 400: The conversation is classified
 	 */
 	#[PublicPage]
 	#[RequireCallEnabled]
@@ -211,6 +222,10 @@ class LiveTranscriptionController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setTargetLanguage(?string $targetLanguageId): DataResponse {
+		if ($this->room->isClassified()) {
+			return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
+		}
+
 		if ($this->room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
 			return new DataResponse(['error' => 'in-call'], Http::STATUS_BAD_REQUEST);
 		}
