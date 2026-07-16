@@ -3087,7 +3087,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param 0|1|2 $state New state
 	 * @psalm-param Webinary::SIP_* $state
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, array{error: 'config'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'token'|'type'|'value'}|array{error: 'forced', forced?: 0|1|2}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, array{error: 'config'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'classified'|'token'|'type'|'value'}|array{error: 'forced', forced?: 0|1|2}, array{}>
 	 *
 	 * 200: SIP enabled state updated successfully
 	 * 400: Updating SIP enabled state is not possible
@@ -3102,6 +3102,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setSIPEnabled(int $state): DataResponse {
+		if ($this->room->isClassified() && $state !== Webinary::SIP_DISABLED) {
+			// Classified conversations can not enable SIP, independently of whether
+			// SIP is configured or the user could otherwise enable it.
+			return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
+		}
+
 		$user = $this->userManager->get($this->userId);
 		if (!$user instanceof IUser) {
 			return new DataResponse(['error' => 'config'], Http::STATUS_UNAUTHORIZED);

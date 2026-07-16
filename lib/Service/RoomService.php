@@ -416,6 +416,10 @@ class RoomService {
 			return;
 		}
 
+		if ($room->isClassified() && $newSipEnabled !== Webinary::SIP_DISABLED) {
+			throw new SipConfigurationException(SipConfigurationException::REASON_CLASSIFIED);
+		}
+
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			throw new SipConfigurationException(SipConfigurationException::REASON_BREAKOUT_ROOM);
 		}
