@@ -166,6 +166,17 @@ class RoomService {
 			throw new CreationException(CreationException::REASON_NAME);
 		}
 
+		if (($attributes & RoomAttributes::CLASSIFIED->value) === RoomAttributes::CLASSIFIED->value) {
+			// Classified conversations are locked down: never public (so no public
+			// link and no guest access), not openly joinable and without SIP.
+			// Coerce here so the restrictions can not be bypassed at creation time.
+			if ($type === Room::TYPE_PUBLIC) {
+				$type = Room::TYPE_GROUP;
+			}
+			$listable = Room::LISTABLE_NONE;
+			$sipEnabled = Webinary::SIP_DISABLED;
+		}
+
 		$types = [
 			Room::TYPE_GROUP,
 			Room::TYPE_PUBLIC,

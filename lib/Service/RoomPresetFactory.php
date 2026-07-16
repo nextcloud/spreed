@@ -10,6 +10,7 @@ namespace OCA\Talk\Service;
 
 use OCA\Talk\Room;
 use OCA\Talk\RoomPresets\APreset;
+use OCA\Talk\RoomPresets\Classified;
 use OCA\Talk\RoomPresets\DefaultPreset;
 use OCA\Talk\RoomPresets\Forced;
 use OCA\Talk\RoomPresets\Presentation;
@@ -36,6 +37,7 @@ class RoomPresetFactory {
 			Forced::class,
 			Webinar::class,
 			Presentation::class,
+			Classified::class,
 		];
 
 		if ($this->appConfig->getAppValueInt('start_calls', Room::START_CALL_EVERYONE) !== Room::START_CALL_NOONE) {

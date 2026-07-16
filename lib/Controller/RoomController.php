@@ -58,6 +58,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\RoomAttributes;
+use OCA\Talk\RoomPresets\Classified;
 use OCA\Talk\RoomPresets\Forced;
 use OCA\Talk\RoomPresets\Parameter;
 use OCA\Talk\RoomPresets\VoiceRoom;
@@ -841,6 +842,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 				return new DataResponse(['error' => 'preset'], Http::STATUS_NOT_FOUND);
 			}
 			$attributes |= RoomAttributes::VOICE_ROOM->value;
+		}
+		if ($preset === Classified::getIdentifier()) {
+			$attributes |= RoomAttributes::CLASSIFIED->value;
 		}
 
 		try {

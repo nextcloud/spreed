@@ -489,4 +489,8 @@ class Room {
 	public function isPreserved(): bool {
 		return ($this->attributes & RoomAttributes::PRESERVE_CONVERSATION->value) === RoomAttributes::PRESERVE_CONVERSATION->value;
 	}
+
+	public function isClassified(): bool {
+		return ($this->attributes & RoomAttributes::CLASSIFIED->value) === RoomAttributes::CLASSIFIED->value;
+	}
 }
