@@ -92,6 +92,7 @@ use OCA\Talk\Listener\CalDavEventListener;
 use OCA\Talk\Listener\CircleDeletedListener;
 use OCA\Talk\Listener\CircleEditedListener;
 use OCA\Talk\Listener\CircleMembershipListener;
+use OCA\Talk\Listener\ClassifiedRoomAutoDeleteListener;
 use OCA\Talk\Listener\CSPListener;
 use OCA\Talk\Listener\DisplayNameListener;
 use OCA\Talk\Listener\FeaturePolicyListener;
@@ -207,6 +208,10 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AttendeesAddedEvent::class, ActivityListener::class);
 		$context->registerEventListener(CallEndedEvent::class, ActivityListener::class);
 		$context->registerEventListener(CallEndedForEveryoneEvent::class, ActivityListener::class);
+
+		// Queue classified conversations for automatic deletion after a call
+		$context->registerEventListener(CallEndedEvent::class, ClassifiedRoomAutoDeleteListener::class);
+		$context->registerEventListener(CallEndedForEveryoneEvent::class, ClassifiedRoomAutoDeleteListener::class);
 
 		// Bot listeners
 		$context->registerEventListener(BotDisabledEvent::class, BotListener::class);

@@ -842,6 +842,8 @@ namespace OCA\Talk;
  *             retention-phone: non-negative-int,
  *             // Retention period for instant meetings in seconds, `0` means no retention
  *             retention-instant-meetings: non-negative-int,
+ *             // Retention period for classified conversations after a call in seconds, `0` means no retention
+ *             retention-classified: non-negative-int,
  *             // User selected sort order for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-sort-options))
  *             sort-order: 'activity'|'alphabetical',
  *             // User selected grouping mode for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-group-mode))

@@ -35,23 +35,31 @@ class ExpireObjectRooms extends TimedJob {
 	protected function run($argument): void {
 		$phoneRetention = $this->appConfig->getAppValueInt('retention_phone_rooms', 7);
 		if ($phoneRetention !== 0) {
-			$this->executeRetention(Room::OBJECT_TYPE_PHONE_TEMPORARY, $phoneRetention);
+			$this->executeRetention(Room::OBJECT_TYPE_PHONE_TEMPORARY, $phoneRetention * 24 * 3600);
 		}
 
 		$eventRetention = $this->appConfig->getAppValueInt('retention_event_rooms', 28);
 		if ($eventRetention !== 0) {
-			$this->executeRetention(Room::OBJECT_TYPE_EVENT, $eventRetention);
+			$this->executeRetention(Room::OBJECT_TYPE_EVENT, $eventRetention * 24 * 3600);
 		}
 
 		$instantMeetingRetention = $this->appConfig->getAppValueInt('retention_instant_meetings', 1);
 		if ($instantMeetingRetention !== 0) {
-			$this->executeRetention(Room::OBJECT_TYPE_INSTANT_MEETING, $instantMeetingRetention);
+			$this->executeRetention(Room::OBJECT_TYPE_INSTANT_MEETING, $instantMeetingRetention * 24 * 3600);
+		}
+
+		// Classified conversations are deleted shortly (default 1 hour) after a
+		// call happened, unless a moderator kept them (object_type is then
+		// "classified_persist" and no longer matched here).
+		$classifiedRetention = $this->appConfig->getAppValueInt('retention_classified_rooms', 3600);
+		if ($classifiedRetention !== 0) {
+			$this->executeRetention(Room::OBJECT_TYPE_CLASSIFIED, $classifiedRetention);
 		}
 	}
 
-	protected function executeRetention(string $objectType, int $retention): void {
+	protected function executeRetention(string $objectType, int $retentionSeconds): void {
 		$now = $this->time->getTime();
-		$minimumLastActivity = $now - $retention * 24 * 3600;
+		$minimumLastActivity = $now - $retentionSeconds;
 		$rooms = $this->manager->getExpiringRoomsForObjectType($objectType, $minimumLastActivity);
 
 		$numDeletedRooms = 0;
@@ -68,10 +76,10 @@ class ExpireObjectRooms extends TimedJob {
 			$numDeletedRooms++;
 		}
 
-		$this->logger->info('Deleted {numDeletedRooms} {objectType} rooms because they did not have activity since {minimumLastActivity} days', [
+		$this->logger->info('Deleted {numDeletedRooms} {objectType} rooms because they did not have activity for {retentionSeconds} seconds', [
 			'objectType' => $objectType,
 			'numDeletedRooms' => $numDeletedRooms,
-			'minimumLastActivity' => $retention,
+			'retentionSeconds' => $retentionSeconds,
 		]);
 	}
 }
