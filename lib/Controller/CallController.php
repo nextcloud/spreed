@@ -135,10 +135,11 @@ class CallController extends AEnvironmentAwareOCSController {
 	 * Required capability: `download-call-participants`
 	 *
 	 * @param 'csv' $format Download format
-	 * @return DataDownloadResponse<Http::STATUS_OK, 'text/csv', array{}>|Response<Http::STATUS_BAD_REQUEST, array{}>
+	 * @return DataDownloadResponse<Http::STATUS_OK, 'text/csv', array{}>|Response<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN, array{}>
 	 *
 	 * 200: List of participants in the call downloaded in the requested format
 	 * 400: No call in progress
+	 * 403: Downloading the participants list is not allowed (e.g. classified conversation)
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
@@ -148,6 +149,11 @@ class CallController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function downloadParticipantsForCall(string $format = 'csv'): DataDownloadResponse|Response {
+		if ($this->room->isClassified()) {
+			// The participants list of a classified conversation can not be downloaded
+			return new Response(Http::STATUS_FORBIDDEN);
+		}
+
 		$callStart = $this->room->getActiveSince()?->getTimestamp() ?? 0;
 		if ($callStart === 0) {
 			return new Response(Http::STATUS_BAD_REQUEST);
