@@ -1236,6 +1236,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}
 
+		if ($this->room->isChannel() && !$this->participant->hasModeratorPermissions()) {
+			// The participants list of a channel can be enormous, so it is only
+			// available to moderators. Everyone else has to use the search instead.
+			return new DataResponse(null, Http::STATUS_FORBIDDEN);
+		}
+
 		$participants = $this->participantService->getSessionsAndParticipantsForRoom($this->room);
 
 		return $this->formatParticipantList($participants, $includeStatus);
@@ -1260,6 +1266,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	])]
 	public function getBreakoutRoomParticipants(bool $includeStatus = false): DataResponse {
 		if ($this->participant->getAttendee()->getParticipantType() === Participant::GUEST) {
+			return new DataResponse(null, Http::STATUS_FORBIDDEN);
+		}
+
+		if ($this->room->isChannel() && !$this->participant->hasModeratorPermissions()) {
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}
 
