@@ -3,46 +3,6 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-	<div class="username-form">
-		<!-- eslint-disable-next-line vue/no-v-html -->
-		<h3 v-if="!compact" v-html="displayNameLabel" />
-
-		<div class="username-form__display-name">
-			<IconAccountOutline class="username-form__display-name-icon" :size="20" />
-
-			<NcButton
-				v-if="!isEditingUsername && !compact"
-				@click="toggleEdit">
-				{{ t('spreed', 'Edit display name') }}
-				<template #icon>
-					<IconPencilOutline :size="20" />
-				</template>
-			</NcButton>
-			<NcTextField
-				v-else
-				ref="usernameInput"
-				v-model="guestUserName"
-				:placeholder="t('spreed', 'Guest')"
-				class="username-form__input"
-				:label="t('spreed', 'Display name (required)')"
-				:showTrailingButton="!!guestUserName && !compact"
-				trailingButtonIcon="arrowEnd"
-				:trailingButtonLabel="t('spreed', 'Save name')"
-				@trailingButtonClick="!compact ? updateDisplayName() : null"
-				@keydown.enter="!compact ? updateDisplayName() : null"
-				@keydown.esc="toggleEdit" />
-		</div>
-
-		<p class="login-info">
-			{{ t('spreed', 'Do you already have an account?') }}
-			<a class="login-info__link" :href="loginUrl">
-				{{ t('spreed', 'Log in') }}
-			</a>
-		</p>
-	</div>
-</template>
-
 <script setup lang="ts">
 import type { NextcloudUser } from '@nextcloud/auth'
 
@@ -147,6 +107,46 @@ function toggleEdit() {
 	}
 }
 </script>
+
+<template>
+	<div class="username-form">
+		<!-- eslint-disable-next-line vue/no-v-html -->
+		<h3 v-if="!compact" v-html="displayNameLabel" />
+
+		<div class="username-form__display-name">
+			<IconAccountOutline class="username-form__display-name-icon" :size="20" />
+
+			<NcButton
+				v-if="!isEditingUsername && !compact"
+				@click="toggleEdit">
+				{{ t('spreed', 'Edit display name') }}
+				<template #icon>
+					<IconPencilOutline :size="20" />
+				</template>
+			</NcButton>
+			<NcTextField
+				v-else
+				ref="usernameInput"
+				v-model="guestUserName"
+				:placeholder="t('spreed', 'Guest')"
+				class="username-form__input"
+				:label="t('spreed', 'Display name (required)')"
+				:showTrailingButton="!!guestUserName && !compact"
+				trailingButtonIcon="arrowEnd"
+				:trailingButtonLabel="t('spreed', 'Save name')"
+				@trailingButtonClick="!compact ? updateDisplayName() : null"
+				@keydown.enter="!compact ? updateDisplayName() : null"
+				@keydown.esc="toggleEdit" />
+		</div>
+
+		<p class="login-info">
+			{{ t('spreed', 'Do you already have an account?') }}
+			<a class="login-info__link" :href="loginUrl">
+				{{ t('spreed', 'Log in') }}
+			</a>
+		</p>
+	</div>
+</template>
 
 <style lang="scss" scoped>
 .username-form {

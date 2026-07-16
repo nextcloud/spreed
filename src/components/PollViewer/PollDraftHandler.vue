@@ -3,42 +3,6 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-	<NcDialog
-		class="drafts"
-		:name="t('spreed', 'Poll drafts')"
-		:container="container"
-		size="normal"
-		closeOnClickOutside
-		@update:open="emit('close')">
-		<EmptyView
-			v-if="!pollDrafts.length"
-			class="drafts__empty"
-			:name="pollDraftsLoaded ? t('spreed', 'No poll drafts') : t('spreed', 'Loading …')"
-			:description="pollDraftsLoaded ? t('spreed', 'There is no poll drafts yet saved for this conversation') : ''">
-			<template #icon>
-				<IconPoll v-if="pollDraftsLoaded" />
-				<NcLoadingIcon v-else />
-			</template>
-		</EmptyView>
-		<div v-else class="drafts__wrapper">
-			<PollCard
-				v-for="item in pollDrafts"
-				:id="item.id.toString()"
-				:key="item.id"
-				:token="token"
-				:name="item.question"
-				draft
-				@click="openPollEditor" />
-		</div>
-		<template v-if="!props.editorOpened" #actions>
-			<NcButton @click="openPollEditor({ id: null, action: 'fill' })">
-				{{ t('spreed', 'Create new poll') }}
-			</NcButton>
-		</template>
-	</NcDialog>
-</template>
-
 <script setup lang="ts">
 import { t } from '@nextcloud/l10n'
 import { computed } from 'vue'
@@ -80,6 +44,42 @@ function openPollEditor({ id, action }: { id: number | null, action?: string }) 
 	EventBus.emit('poll-editor-open', { token: props.token, id, fromDrafts: !props.editorOpened, action, selector: props.container })
 }
 </script>
+
+<template>
+	<NcDialog
+		class="drafts"
+		:name="t('spreed', 'Poll drafts')"
+		:container="container"
+		size="normal"
+		closeOnClickOutside
+		@update:open="emit('close')">
+		<EmptyView
+			v-if="!pollDrafts.length"
+			class="drafts__empty"
+			:name="pollDraftsLoaded ? t('spreed', 'No poll drafts') : t('spreed', 'Loading …')"
+			:description="pollDraftsLoaded ? t('spreed', 'There is no poll drafts yet saved for this conversation') : ''">
+			<template #icon>
+				<IconPoll v-if="pollDraftsLoaded" />
+				<NcLoadingIcon v-else />
+			</template>
+		</EmptyView>
+		<div v-else class="drafts__wrapper">
+			<PollCard
+				v-for="item in pollDrafts"
+				:id="item.id.toString()"
+				:key="item.id"
+				:token="token"
+				:name="item.question"
+				draft
+				@click="openPollEditor" />
+		</div>
+		<template v-if="!props.editorOpened" #actions>
+			<NcButton @click="openPollEditor({ id: null, action: 'fill' })">
+				{{ t('spreed', 'Create new poll') }}
+			</NcButton>
+		</template>
+	</NcDialog>
+</template>
 
 <style lang="scss" scoped>
 .drafts {

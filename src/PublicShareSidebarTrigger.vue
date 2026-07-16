@@ -3,18 +3,6 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<template>
-	<NcHeaderButton
-		id="talk-sidebar-trigger"
-		:title="ariaLabel"
-		:aria-label="ariaLabel"
-		@click="emit('click')">
-		<template #icon>
-			<IconMessageTextOutline :size="20" />
-		</template>
-	</NcHeaderButton>
-</template>
-
 <script setup lang="ts">
 import type { UnwrapNestedRefs } from 'vue'
 
@@ -37,6 +25,18 @@ const ariaLabel = computed(() => {
 		: t('spreed', 'Open Talk sidebar')
 })
 </script>
+
+<template>
+	<NcHeaderButton
+		id="talk-sidebar-trigger"
+		:title="ariaLabel"
+		:aria-label="ariaLabel"
+		@click="emit('click')">
+		<template #icon>
+			<IconMessageTextOutline :size="20" />
+		</template>
+	</NcHeaderButton>
+</template>
 
 <style scoped>
 #talk-sidebar-trigger {
