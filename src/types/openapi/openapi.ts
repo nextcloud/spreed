@@ -2316,6 +2316,11 @@ export type components = {
                      */
                     "retention-instant-meetings": number;
                     /**
+                     * Format: int64
+                     * @description Retention period for classified conversations after a call in seconds, `0` means no retention
+                     */
+                    "retention-classified": number;
+                    /**
                      * @description User selected sort order for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-sort-options))
                      * @enum {string}
                      */
@@ -4860,6 +4865,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Downloading the participants list is not allowed (e.g. classified conversation) */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     "call-update-federated-call-flags": {
@@ -6204,7 +6216,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No AI provider available or summarizing failed */
+            /** @description The conversation is classified */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -6215,7 +6227,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "ai-no-provider" | "ai-error";
+                                error: "ai-no-provider" | "ai-error" | "classified";
                             };
                         };
                     };
@@ -8066,7 +8078,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description The participant is not in the call */
+            /** @description The conversation is classified */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -8077,7 +8089,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "app" | "in-call";
+                                error: "app" | "classified" | "in-call";
                             };
                         };
                     };
@@ -8273,7 +8285,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description The external app "live_transcription" is not available */
+            /** @description The conversation is classified */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -8284,7 +8296,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "app";
+                                error: "app" | "classified";
                             };
                         };
                     };
@@ -8345,7 +8357,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description The participant is not in the call. */
+            /** @description The conversation is classified */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -8356,7 +8368,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "app" | "translations" | "in-call";
+                                error: "app" | "classified" | "translations" | "in-call";
                             };
                         };
                     };
@@ -11154,7 +11166,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "breakout-room" | "type" | "value" | "password";
+                                error: "breakout-room" | "classified" | "type" | "value" | "password";
                                 message?: string;
                             };
                         };
@@ -11234,7 +11246,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "breakout-room" | "type" | "value";
+                                error: "breakout-room" | "classified" | "type" | "value";
                             };
                         };
                     };
@@ -11397,7 +11409,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "breakout-room" | "type" | "value";
+                                error: "breakout-room" | "classified" | "type" | "value";
                             } | {
                                 /** @enum {string} */
                                 error: "forced";
@@ -12010,6 +12022,23 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Marking the conversation as insensitive is not possible (e.g. classified conversation) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "classified";
+                            };
                         };
                     };
                 };
@@ -12780,7 +12809,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "breakout-room" | "token" | "type" | "value";
+                                error: "breakout-room" | "classified" | "token" | "type" | "value";
                             } | {
                                 /** @enum {string} */
                                 error: "forced";

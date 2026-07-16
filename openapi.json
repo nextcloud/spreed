@@ -468,6 +468,7 @@
                                     "retention-event",
                                     "retention-phone",
                                     "retention-instant-meetings",
+                                    "retention-classified",
                                     "sort-order",
                                     "group-mode"
                                 ],
@@ -510,6 +511,12 @@
                                         "type": "integer",
                                         "format": "int64",
                                         "description": "Retention period for instant meetings in seconds, `0` means no retention",
+                                        "minimum": 0
+                                    },
+                                    "retention-classified": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Retention period for classified conversations after a call in seconds, `0` means no retention",
                                         "minimum": 0
                                     },
                                     "sort-order": {
@@ -6355,6 +6362,9 @@
                     },
                     "400": {
                         "description": "No call in progress"
+                    },
+                    "403": {
+                        "description": "Downloading the participants list is not allowed (e.g. classified conversation)"
                     }
                 }
             }
@@ -9626,7 +9636,7 @@
                         }
                     },
                     "400": {
-                        "description": "No AI provider available or summarizing failed",
+                        "description": "The conversation is classified",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -9655,7 +9665,8 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "ai-no-provider",
-                                                                "ai-error"
+                                                                "ai-error",
+                                                                "classified"
                                                             ]
                                                         }
                                                     }
@@ -14311,7 +14322,7 @@
                         }
                     },
                     "400": {
-                        "description": "The participant is not in the call",
+                        "description": "The conversation is classified",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -14340,6 +14351,7 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "app",
+                                                                "classified",
                                                                 "in-call"
                                                             ]
                                                         }
@@ -14835,7 +14847,7 @@
                         }
                     },
                     "400": {
-                        "description": "The external app \"live_transcription\" is not available",
+                        "description": "The conversation is classified",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -14863,7 +14875,8 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
-                                                                "app"
+                                                                "app",
+                                                                "classified"
                                                             ]
                                                         }
                                                     }
@@ -15020,7 +15033,7 @@
                         }
                     },
                     "400": {
-                        "description": "The participant is not in the call.",
+                        "description": "The conversation is classified",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -15049,6 +15062,7 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "app",
+                                                                "classified",
                                                                 "translations",
                                                                 "in-call"
                                                             ]
@@ -22008,6 +22022,7 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "breakout-room",
+                                                                "classified",
                                                                 "type",
                                                                 "value",
                                                                 "password"
@@ -22204,6 +22219,7 @@
                                                             "type": "string",
                                                             "enum": [
                                                                 "breakout-room",
+                                                                "classified",
                                                                 "type",
                                                                 "value"
                                                             ]
@@ -22601,6 +22617,7 @@
                                                                     "type": "string",
                                                                     "enum": [
                                                                         "breakout-room",
+                                                                        "classified",
                                                                         "type",
                                                                         "value"
                                                                     ]
@@ -24116,6 +24133,47 @@
                                                 },
                                                 "data": {
                                                     "$ref": "#/components/schemas/Room"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Marking the conversation as insensitive is not possible (e.g. classified conversation)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "classified"
+                                                            ]
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -26203,6 +26261,7 @@
                                                                     "type": "string",
                                                                     "enum": [
                                                                         "breakout-room",
+                                                                        "classified",
                                                                         "token",
                                                                         "type",
                                                                         "value"
