@@ -193,6 +193,17 @@ class RecordingServiceTest extends TestCase {
 		return new Participant($room, $attendee, null);
 	}
 
+	public function testStartThrowsForClassifiedRoom(): void {
+		$room = $this->createRoom();
+		$room->method('isClassified')->willReturn(true);
+		$participant = $this->createParticipant($room);
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('classified');
+
+		$this->recordingService->start($room, Room::RECORDING_VIDEO, 'user1', $participant);
+	}
+
 	protected function mockRecordingFolder(string $owner, string $token): Folder&MockObject {
 		$userFolder = $this->createMock(Folder::class);
 		$this->rootFolder->method('getUserFolder')->with($owner)->willReturn($userFolder);
