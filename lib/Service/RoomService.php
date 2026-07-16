@@ -645,6 +645,9 @@ class RoomService {
 	 */
 	public function setCallRecording(Room $room, int $status = Room::RECORDING_NONE, ?Participant $participant = null): void {
 		$syncFederatedRoom = $room->getRemoteServer() && $room->getRemoteToken();
+		if ($room->isClassified() && $status !== Room::RECORDING_NONE) {
+			throw new CallRecordingException(CallRecordingException::REASON_CLASSIFIED);
+		}
 		if (!$syncFederatedRoom && !$this->config->isRecordingEnabled() && $status !== Room::RECORDING_NONE) {
 			throw new CallRecordingException(CallRecordingException::REASON_CONFIG);
 		}
