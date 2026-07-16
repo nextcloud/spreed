@@ -333,6 +333,7 @@
 					v-else
 					v-show="sortedConversationsList.length > 0"
 					ref="scroller"
+					:token="token"
 					:listAriaLabelledBy="LIST_HEADING_ID"
 					:conversations="sortedConversationsList"
 					:loading="!conversationsInitialised"
