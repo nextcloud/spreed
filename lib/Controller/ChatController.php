@@ -969,12 +969,13 @@ class ChatController extends AEnvironmentAwareOCSController {
 	 * Required capability: `chat-summary-api`
 	 *
 	 * @param positive-int $fromMessageId Offset from where on the summary should be generated
-	 * @return DataResponse<Http::STATUS_CREATED, array{taskId: int, nextOffset?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'ai-no-provider'|'ai-error'}, array{}>|DataResponse<Http::STATUS_NO_CONTENT, null, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, array{taskId: int, nextOffset?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'ai-no-provider'|'ai-error'|'classified'}, array{}>|DataResponse<Http::STATUS_NO_CONTENT, null, array{}>
 	 * @throws \InvalidArgumentException
 	 *
 	 * 201: Summary was scheduled, use the returned taskId to get the status information and output from the TaskProcessing API: [OCS TaskProcessing API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html#fetch-a-task-by-id). If the response data contains nextOffset, not all messages could be handled in a single request. After receiving the response a second summary should be requested with the provided nextOffset.
 	 * 204: No messages found to summarize
 	 * 400: No AI provider available or summarizing failed
+	 * 400: The conversation is classified
 	 */
 	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
@@ -986,6 +987,13 @@ class ChatController extends AEnvironmentAwareOCSController {
 	public function summarizeChat(
 		int $fromMessageId,
 	): DataResponse {
+		if ($this->room->isClassified()) {
+			// The chat of a classified conversation can not be summarized
+			return new DataResponse([
+				'error' => ChatSummaryException::REASON_CLASSIFIED,
+			], Http::STATUS_BAD_REQUEST);
+		}
+
 		$fromMessageId = max(0, $fromMessageId);
 
 		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
