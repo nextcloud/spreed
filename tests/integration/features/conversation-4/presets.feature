@@ -11,6 +11,8 @@ Feature: conversation-4/presets
       | webinar      | Webinar      | {"lobbyState":1,"mentionPermissions":1,"permissions":389,"recordingConsent":1,"roomType":3} |
       | presentation | Presentation | {"mentionPermissions":1,"permissions":389,"recordingConsent":1} |
       | classified   | Classified conversation | {"roomType":2,"listable":0,"sipEnabled":0,"messageExpiration":3600} |
+      | channel      | Channel      | {"listable":1,"permissions":257} |
+      | announcement | Announcement | {"listable":0,"permissions":257} |
       | voiceroom    | Voice room   | {"listable":1,"messageExpiration":3600} |
     And the following "spreed" app config is set
       | force_listable            | 0 |
@@ -24,6 +26,8 @@ Feature: conversation-4/presets
       | webinar      | Webinar      | {"lobbyState":1,"mentionPermissions":1,"permissions":389,"recordingConsent":1,"roomType":3} |
       | presentation | Presentation | {"mentionPermissions":1,"permissions":389,"recordingConsent":1} |
       | classified   | Classified conversation | {"roomType":2,"listable":0,"sipEnabled":0,"messageExpiration":3600} |
+      | channel      | Channel      | {"listable":1,"permissions":257} |
+      | announcement | Announcement | {"listable":0,"permissions":257} |
       | voiceroom    | Voice room   | {"listable":1,"messageExpiration":3600} |
 
   Scenario: Create a voice room with preset values

@@ -58,6 +58,8 @@ use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\RoomAttributes;
+use OCA\Talk\RoomPresets\Announcement;
+use OCA\Talk\RoomPresets\Channel;
 use OCA\Talk\RoomPresets\Classified;
 use OCA\Talk\RoomPresets\Forced;
 use OCA\Talk\RoomPresets\Parameter;
@@ -845,6 +847,14 @@ class RoomController extends AEnvironmentAwareOCSController {
 		}
 		if ($preset === Classified::getIdentifier()) {
 			$attributes |= RoomAttributes::CLASSIFIED->value;
+		}
+		if ($preset === Channel::getIdentifier()) {
+			$attributes |= RoomAttributes::CHANNEL->value;
+		}
+		if ($preset === Announcement::getIdentifier()) {
+			// Announcements are channels with additional restrictions,
+			// so all channel restrictions apply to them as well.
+			$attributes |= RoomAttributes::CHANNEL->value | RoomAttributes::ANNOUNCEMENT->value;
 		}
 
 		try {
