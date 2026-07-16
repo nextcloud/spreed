@@ -166,6 +166,11 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		if ($isPrivateReplyFromAnotherConvo) {
+			if ($targetParentRoom->isClassified()) {
+				// Messages of classified conversations can not be replied to privately
+				throw new \DomainException('reply-to', Http::STATUS_FORBIDDEN);
+			}
+
 			if ($this->room->getType() !== Room::TYPE_ONE_TO_ONE) {
 				throw new \InvalidArgumentException('reply-to', Http::STATUS_BAD_REQUEST);
 			}

@@ -685,6 +685,12 @@ class RoomService {
 			return;
 		}
 
+		if ($room->isClassified() && $newType === Room::TYPE_PUBLIC) {
+			// Classified conversations can never be turned into a public link
+			// (which would also allow guest access).
+			throw new TypeException(TypeException::REASON_CLASSIFIED);
+		}
+
 		if (!$allowSwitchingOneToOne && $oldType === Room::TYPE_ONE_TO_ONE) {
 			throw new TypeException(TypeException::REASON_TYPE);
 		}
@@ -829,6 +835,10 @@ class RoomService {
 		$oldState = $room->getListable();
 		if ($newState === $oldState) {
 			return;
+		}
+
+		if ($room->isClassified() && $newState !== Room::LISTABLE_NONE) {
+			throw new ListableException(ListableException::REASON_CLASSIFIED);
 		}
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {

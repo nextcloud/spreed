@@ -1750,7 +1750,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Required capability: `conversation-creation-password` for `string $password` parameter
 	 *
 	 * @param string $password New password (only available with `conversation-creation-password` capability)
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'|'password', message?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'classified'|'type'|'value'|'password', message?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
 	 *
 	 * 200: Allowed guests successfully
 	 * 400: Allowing guests is not possible
@@ -1789,7 +1789,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Disallowed guests to join conversation
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'classified'|'type'|'value'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
 	 *
 	 * 200: Room unpublished Disallowing guests successfully
 	 * 400: Disallowing guests is not possible
@@ -1855,7 +1855,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param 0|1|2 $scope Scope where the room is listable
 	 * @psalm-param Room::LISTABLE_* $scope
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}|array{error: 'forced', forced?: 0|1|2}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'classified'|'type'|'value'}|array{error: 'forced', forced?: 0|1|2}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
 	 *
 	 * 200: Made room listable successfully
 	 * 400: Making room listable is not possible
@@ -2135,9 +2135,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * Required capability: `sensitive-conversations`
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'classified'}, array{}>
 	 *
 	 * 200: Conversation was marked as insensitive
+	 * 400: Marking the conversation as insensitive is not possible (e.g. classified conversation)
 	 */
 	#[NoAdminRequired]
 	#[FederationSupported]
@@ -2147,6 +2148,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function markConversationAsInsensitive(): DataResponse {
+		if ($this->room->isClassified()) {
+			// Classified conversations are forced sensitive for everyone and can not be reverted
+			return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
+		}
 		$this->participantService->markConversationAsInsensitive($this->participant);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
