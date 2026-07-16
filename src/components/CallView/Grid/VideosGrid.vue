@@ -164,7 +164,7 @@
 <script>
 import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
-import { inject, ref } from 'vue'
+import { computed, inject, ref, toRef, useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
@@ -179,13 +179,12 @@ import { PARTICIPANT } from '../../../constants.ts'
 import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
+import { GRID_GAP } from './gridLayout.ts'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
+import { useGridDimensions } from './useGridDimensions.ts'
 
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = getTalkConfig('local', 'call', 'grid-limit') || 0
-
-// Align with var(--grid-gap) in CallView
-const GRID_GAP = 8
 
 export default {
 	name: 'VideosGrid',
@@ -278,35 +277,56 @@ export default {
 
 	emits: ['selectVideo', 'clickLocalVideo'],
 
-	setup() {
+	setup(props) {
 		// Developer mode: If enabled it allows to debug the grid using dummy videos
 		const devMode = inject('CallView:devModeEnabled', ref(false))
 		const screenshotMode = inject('CallView:screenshotModeEnabled', ref(false))
 		// The number of dummy videos in dev mode
 		const dummies = ref(4)
 
+		const actorStore = useActorStore()
+		const callViewStore = useCallViewStore()
+
+		// Template refs for the elements measured by the grid layout
+		const gridWrapper = useTemplateRef('gridWrapper')
+		const grid = useTemplateRef('grid')
+
+		const stripeOpen = computed(() => callViewStore.isStripeOpen && !props.isRecording)
+
+		// Number of tiles to lay out (clamped to `videosCap`, `0` means no cap)
+		const cappedVideosCount = computed(() => {
+			const count = devMode.value ? dummies.value : props.callParticipantModels.length
+			return videosCap ? Math.min(videosCap, count) : count
+		})
+
+		const gridDimensions = useGridDimensions({
+			wrapper: gridWrapper,
+			grid,
+			isStripe: toRef(() => props.isStripe),
+			isSidebar: toRef(() => props.isSidebar),
+			isRecording: toRef(() => props.isRecording),
+			videoCount: cappedVideosCount,
+			stripeOpen,
+		})
+
 		return {
 			devMode,
 			dummies,
 			screenshotMode,
 			videosCap,
-			callViewStore: useCallViewStore(),
-			actorStore: useActorStore(),
+			callViewStore,
+			actorStore,
+			gridWrapper,
+			grid,
+			stripeOpen,
+			...gridDimensions,
 		}
 	},
 
 	data() {
 		return {
-			gridWidth: 0,
-			gridHeight: 0,
-			// Columns of the grid at any given moment
-			columns: 0,
-			// Rows of the grid at any given moment
-			rows: 0,
 			// The current page
 			currentPage: 0,
-			resizeObserver: null,
-			debounceMakeGrid: () => {},
 			debounceHandleWheelEvent: () => {},
 			tempPromotedModels: [],
 			unpromoteSpeakerTimer: {},
@@ -354,6 +374,10 @@ export default {
 
 		// Array of videos that are being displayed in the grid at any given
 		// moment
+		// TODO: properly handle resizes when not on first page:
+		// currently if the user is not on the 'first page', upon resize the
+		// current position in the videos array is lost (`slots` changes, so
+		// `currentPage * slots` points at a different window of the videos)
 		displayedVideos() {
 			if (!this.slots) {
 				return []
@@ -376,81 +400,6 @@ export default {
 			return this.videos.length <= 1 && !this.screens.length
 		},
 
-		dpiFactor() {
-			if (this.isStripe) {
-				// On the stripe we only ever want 1 row, so we ignore the DPR
-				// as the height of the grid is the height of the video elements then.
-				return 1.0
-			}
-
-			const devicePixelRatio = window.devicePixelRatio
-
-			// Some sanity check to not screw up the math.
-			if (devicePixelRatio < 0.5) {
-				return 0.5
-			}
-
-			if (devicePixelRatio > 2.0) {
-				return 2.0
-			}
-
-			return devicePixelRatio
-		},
-
-		/**
-		 * Minimum width of the video components
-		 */
-		minWidth() {
-			return (this.isStripe || this.isSidebar) ? 200 : 320
-		},
-
-		/**
-		 * Minimum height of the video components
-		 */
-		minHeight() {
-			return (this.isStripe || this.isSidebar) ? 150 : 240
-		},
-
-		dpiAwareMinWidth() {
-			return this.minWidth / this.dpiFactor
-		},
-
-		dpiAwareMinHeight() {
-			return this.minHeight / this.dpiFactor
-		},
-
-		// The aspect ratio of the grid (in terms of px)
-		gridAspectRatio() {
-			return (this.gridWidth / this.gridHeight).toPrecision([2])
-		},
-
-		targetAspectRatio() {
-			return this.isStripe ? 1 : 1.5
-		},
-
-		// Max number of columns possible
-		columnsMax() {
-			// Max amount of columns that fits on screen, including gaps (--grid-gap, 8px)
-			const calculatedApproxColumnsMax = Math.floor((this.gridWidth - GRID_GAP * (this.columns - 1)) / this.dpiAwareMinWidth)
-			// Max amount of columns that fits on screen (with one more gap, as if we try to fit one more column)
-			const calculatedHypotheticalColumnsMax = Math.floor((this.gridWidth - GRID_GAP * this.columns) / this.dpiAwareMinWidth)
-			// If we about to change current columns amount, check if one more column could fit the screen
-			// This helps to avoid flickering, when resize within 8px from minimal gridWidth for current amount of columns
-			const calculatedColumnsMax = calculatedApproxColumnsMax === this.columns ? calculatedApproxColumnsMax : calculatedHypotheticalColumnsMax
-			// Return at least 1 column
-			return calculatedColumnsMax <= 1 ? 1 : calculatedColumnsMax
-		},
-
-		// Max number of rows possible
-		rowsMax() {
-			if (Math.floor((this.gridHeight - GRID_GAP * (this.rows - 1)) / this.dpiAwareMinHeight) < 1) {
-				// Return at least 1 row
-				return 1
-			} else {
-				return Math.floor((this.gridHeight - GRID_GAP * (this.rows - 1)) / this.dpiAwareMinHeight)
-			}
-		},
-
 		// The local video always takes one slot if the grid view is not shown as a stripe.
 		// In recording mode the local video is not shown, so all slots are available.
 		noLocalVideoReserve() {
@@ -460,16 +409,11 @@ export default {
 		// Number of grid slots (videos per page) at any given moment, clamped to
 		// `videosCap` (`0` means no cap).
 		// The cap is primarily enforced by shrinking the grid layout (see
-		// `makeGrid`/`shrinkGrid`); this clamp keeps the "videos per page" math
+		// `computeGridDimensions`); this clamp keeps the "videos per page" math
 		// consistent even before the layout has been recomputed.
 		slots() {
 			const slots = this.noLocalVideoReserve ? this.rows * this.columns : this.rows * this.columns - 1
 			return this.videosCap ? Math.min(this.videosCap, slots) : slots
-		},
-
-		// Number of videos, clamped to `videosCap` (`0` means no cap)
-		cappedVideosCount() {
-			return this.videosCap ? Math.min(this.videosCap, this.videosCount) : this.videosCount
 		},
 
 		// Grid pages at any given moment
@@ -519,10 +463,6 @@ export default {
 			} else {
 				return 'height: 100%'
 			}
-		},
-
-		stripeOpen() {
-			return this.callViewStore.isStripeOpen && !this.isRecording
 		},
 
 		participantsInitialised() {
@@ -599,21 +539,11 @@ export default {
 	},
 
 	watch: {
-		// If the video array size changes, rebuild the grid
-		'videos.length': function() {
-			this.makeGrid()
-		},
-
 		isStripe() {
-			this.rebuildGrid()
-
 			// Reset current page when switching between stripe and full grid,
 			// as the previous page is meaningless in the new mode.
+			// The grid layout itself is recomputed by `useGridDimensions`.
 			this.currentPage = 0
-		},
-
-		stripeOpen() {
-			this.rebuildGrid()
 		},
 
 		numberOfPages() {
@@ -642,11 +572,7 @@ export default {
 	},
 
 	mounted() {
-		this.debounceMakeGrid = debounce(this.makeGrid, 200)
 		this.debounceHandleWheelEvent = debounce(this.handleWheelEvent, 50)
-		this.resizeObserver = new ResizeObserver(this.debounceMakeGrid)
-		this.resizeObserver.observe(this.$refs.gridWrapper)
-		this.makeGrid()
 
 		if (OC.debug) {
 			OCA.Talk.gridDebugInformation = this.gridDebugInformation
@@ -655,12 +581,7 @@ export default {
 	},
 
 	beforeUnmount() {
-		this.debounceMakeGrid.clear?.()
 		this.debounceHandleWheelEvent.clear?.()
-
-		if (this.resizeObserver) {
-			this.resizeObserver.disconnect()
-		}
 
 		if (OC.debug) {
 			OCA.Talk.gridDebugInformation = undefined
@@ -684,23 +605,14 @@ export default {
 				dpiAwareMinWidth: this.dpiAwareMinWidth,
 				dpiAwareMinHeight: this.dpiAwareMinHeight,
 				gridAspectRatio: this.gridAspectRatio,
-				columnsMax: this.columnsMax,
-				rowsMax: this.rowsMax,
+				columns: this.columns,
+				rows: this.rows,
 				numberOfPages: this.numberOfPages,
 				bodyWidth: document.body.clientWidth,
 				bodyHeight: document.body.clientHeight,
-				gridWidth: this.$refs.grid.clientWidth,
-				gridHeight: this.$refs.grid.clientHeight,
+				gridWidth: this.grid?.clientWidth,
+				gridHeight: this.grid?.clientHeight,
 			})
-		},
-
-		rebuildGrid() {
-			if (this.devMode) {
-				console.debug('Rebuilding grid', { isStripe: this.isStripe, stripeOpen: this.stripeOpen, gridWidth: this.gridWidth, gridHeight: this.gridHeight })
-			}
-			if (!this.isStripe || this.stripeOpen) {
-				this.$nextTick(this.makeGrid)
-			}
 		},
 
 		// Placeholder data for devMode and screenshotMode
@@ -717,127 +629,6 @@ export default {
 		disableDevMode() {
 			this.screenshotMode = false
 			this.devMode = false
-		},
-
-		// Find the right size if the grid in rows and columns (we already know the size in px).
-		makeGrid() {
-			// TODO: properly handle resizes when not on first page:
-			// currently if the user is not on the 'first page', upon resize the
-			// current position in the videos array is lost (first element
-			// in the grid goes back to be first video)
-			// TODO: rebuild the grid to have optimal for last page:
-			// Exception for when navigating in and away from the last page of the grid
-			// The last grid page is very likely not to have the same number of elements
-			// as the previous pages so the grid needs to be tweaked accordingly
-			if (!this.$refs.grid) {
-				return
-			}
-			this.gridWidth = this.$refs.grid.clientWidth
-			this.gridHeight = this.$refs.grid.clientHeight
-			// prevent making grid if no videos
-			if (this.videos.length === 0) {
-				this.columns = 0
-				this.rows = 0
-				return
-			}
-
-			if (this.devMode) {
-				console.debug('Recreating grid: videos: ', this.videos.length, 'columns: ', this.columnsMax + ', rows: ' + this.rowsMax)
-			}
-
-			// We start by assigning the max possible value to our rows and columns
-			// variables. These variables are kept in the data and represent how the
-			// grid looks at any given moment. We do this based on `gridWidth`,
-			// `gridHeight`, `minWidth` and `minHeight`. If the video is used in the
-			// context of the promoted view, we se 1 row directly, and we remove 1 column
-			// (one of the participants will be in the promoted video slot)
-			this.columns = this.columnsMax
-			this.rows = this.rowsMax
-			// This values would already work if the grid is entirely populated with
-			// video elements. However, if we'd have only a couple of videos to display
-			// and a very big screen, we'd now have a lot of columns and rows, and our
-			// video components would occupy only the first 2 slots and be too small.
-			// To solve this, we shrink this 'max grid' we've just created to fit the
-			// number of videos that we have.
-			this.shrinkGrid(this.cappedVideosCount)
-		},
-
-		// Fine tune the number of rows and columns of the grid
-		async shrinkGrid(numberOfVideos) {
-			if (this.devMode) {
-				console.debug('Shrinking grid: columns', this.columns + ', rows: ' + this.rows)
-			}
-
-			// No need to shrink more if 1 row and 1 column
-			if (this.rows === 1 && this.columns === 1) {
-				return
-			}
-
-			let currentColumns = this.columns
-			let currentRows = this.rows
-			let currentSlots = this.noLocalVideoReserve ? currentColumns * currentRows : currentColumns * currentRows - 1
-
-			// Run this code only if we don't have an 'overflow' of videos. If the
-			// videos are populating the grid, there's no point in shrinking it.
-			while (numberOfVideos < currentSlots) {
-				const previousColumns = currentColumns
-				const previousRows = currentRows
-
-				// Current video dimensions
-				const videoWidth = (this.gridWidth - GRID_GAP * (currentColumns - 1)) / currentColumns
-				const videoHeight = (this.gridHeight - GRID_GAP * (currentRows - 1)) / currentRows
-
-				// Hypothetical width/height with one column/row less than current
-				const videoWidthWithOneColumnLess = (this.gridWidth - GRID_GAP * (currentColumns - 2)) / (currentColumns - 1)
-				const videoHeightWithOneRowLess = (this.gridHeight - GRID_GAP * (currentRows - 2)) / (currentRows - 1)
-
-				// Hypothetical aspect ratio with one column/row less than current
-				const aspectRatioWithOneColumnLess = videoWidthWithOneColumnLess / videoHeight
-				const aspectRatioWithOneRowLess = videoWidth / videoHeightWithOneRowLess
-
-				// Deltas with target aspect ratio
-				const deltaAspectRatioWithOneColumnLess = Math.abs(aspectRatioWithOneColumnLess - this.targetAspectRatio)
-				const deltaAspectRatioWithOneRowLess = Math.abs(aspectRatioWithOneRowLess - this.targetAspectRatio)
-
-				if (this.devMode) {
-					console.debug('deltaAspectRatioWithOneColumnLess: ', deltaAspectRatioWithOneColumnLess, 'deltaAspectRatioWithOneRowLess: ', deltaAspectRatioWithOneRowLess)
-				}
-				// Compare the deltas to find out whether we need to remove a column or a row
-				if (deltaAspectRatioWithOneColumnLess <= deltaAspectRatioWithOneRowLess) {
-					if (currentColumns >= 2) {
-						currentColumns--
-					}
-
-					currentSlots = this.noLocalVideoReserve ? currentColumns * currentRows : currentColumns * currentRows - 1
-
-					// Check that there are still enough slots available
-					if (numberOfVideos > currentSlots) {
-						// If not, revert the changes and break the loop
-						currentColumns++
-						break
-					}
-				} else {
-					if (currentRows >= 2) {
-						currentRows--
-					}
-
-					currentSlots = this.noLocalVideoReserve ? currentColumns * currentRows : currentColumns * currentRows - 1
-
-					// Check that there are still enough slots available
-					if (numberOfVideos > currentSlots) {
-						// If not, revert the changes and break the loop
-						currentRows++
-						break
-					}
-				}
-
-				if (previousColumns === currentColumns && previousRows === currentRows) {
-					break
-				}
-			}
-
-			this.columns = currentColumns
-			this.rows = currentRows
 		},
 
 		handleWheelEvent(event) {
