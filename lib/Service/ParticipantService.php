@@ -527,6 +527,7 @@ class ParticipantService {
 			$attendee->setParticipantType(Participant::GUEST);
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setLastReadMessage($lastMessage);
+			$attendee->setSensitive($room->isClassified());
 
 			if ($displayName !== null && $displayName !== '') {
 				$attendee->setDisplayName($displayName);
@@ -682,6 +683,9 @@ class ParticipantService {
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setLastReadMessage($participant['lastReadMessage'] ?? $lastMessage);
 			$attendee->setReadPrivacy($readPrivacy);
+			// In classified conversations the "sensitive" mark is forced on for
+			// everyone and can not be reverted (see markConversationAsInsensitive).
+			$attendee->setSensitive($room->isClassified());
 			$attendees[] = $attendee;
 		}
 
@@ -840,6 +844,7 @@ class ParticipantService {
 			$attendee->setParticipantType(Participant::USER);
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
+			$attendee->setSensitive($room->isClassified());
 			$this->attendeeMapper->insert($attendee);
 
 			$attendeeEvent = new AttendeesAddedEvent($room, [$attendee]);
@@ -976,6 +981,7 @@ class ParticipantService {
 			$attendee->setParticipantType(Participant::USER);
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
+			$attendee->setSensitive($room->isClassified());
 			$this->attendeeMapper->insert($attendee);
 
 			$attendeeEvent = new AttendeesAddedEvent($room, [$attendee]);
@@ -1015,6 +1021,7 @@ class ParticipantService {
 
 		$attendee->setParticipantType(Participant::GUEST);
 		$attendee->setLastReadMessage($lastMessage);
+		$attendee->setSensitive($room->isClassified());
 		$this->attendeeMapper->insert($attendee);
 		// FIXME handle duplicate invites gracefully
 
