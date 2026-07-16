@@ -13,4 +13,6 @@ enum RoomAttributes: int {
 	case VOICE_ROOM = 1;
 	case PRESERVE_CONVERSATION = 2;
 	case CLASSIFIED = 4;
+	case CHANNEL = 8;
+	case ANNOUNCEMENT = 16;
 }

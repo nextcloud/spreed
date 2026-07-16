@@ -495,4 +495,16 @@ class Room {
 	public function isClassified(): bool {
 		return ($this->attributes & RoomAttributes::CLASSIFIED->value) === RoomAttributes::CLASSIFIED->value;
 	}
+
+	public function isChannel(): bool {
+		return ($this->attributes & RoomAttributes::CHANNEL->value) === RoomAttributes::CHANNEL->value;
+	}
+
+	/**
+	 * Announcements are channels with additional restrictions, so they also
+	 * have the channel attribute set and {@see self::isChannel()} is true for them.
+	 */
+	public function isAnnouncement(): bool {
+		return ($this->attributes & RoomAttributes::ANNOUNCEMENT->value) === RoomAttributes::ANNOUNCEMENT->value;
+	}
 }

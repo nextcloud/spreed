@@ -91,6 +91,10 @@ class Participant {
 			return false;
 		}
 
+		if ($this->room->isChannel()) {
+			return false;
+		}
+
 		$defaultStartCall = (int)$config->getAppValue('spreed', 'start_calls', (string)Room::START_CALL_EVERYONE);
 
 		if ($defaultStartCall === Room::START_CALL_NOONE) {
@@ -122,6 +126,12 @@ class Participant {
 		if ($this->hasModeratorPermissions()) {
 			// Moderators can always do everything
 			$permissions = Attendee::PERMISSIONS_MAX_DEFAULT;
+		}
+
+		if ($this->room->isChannel()) {
+			// Channels are meant for broadcasting, so calls are not possible at all,
+			// not even for moderators.
+			$permissions &= ~(Attendee::PERMISSIONS_CALL_START | Attendee::PERMISSIONS_CALL_JOIN);
 		}
 
 		return $permissions;

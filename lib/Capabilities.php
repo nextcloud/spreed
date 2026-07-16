@@ -136,6 +136,7 @@ class Capabilities implements IPublicCapability {
 		'conversation-tags',
 		'preserve-conversation',
 		'classified-conversations',
+		'announcement-preset',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -172,6 +173,7 @@ class Capabilities implements IPublicCapability {
 		'conversation-tags',
 		'recording-chunked-upload',
 		'classified-conversations',
+		'announcement-preset',
 	];
 
 	public const LOCAL_CONFIGS = [

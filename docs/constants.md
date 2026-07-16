@@ -81,6 +81,8 @@ Required capability: `conversation-presets`
 * `1` Voice rooms - Join call when joining conversation
 * `2` Preserved - Conversation can not be deleted, its chat history can not be cleared and the guests (public link) and joinable (listable) settings can not be changed (only owners can toggle this attribute, requires capability `preserve-conversation`)
 * `4` Classified - Locked down conversation: public link, guests, SIP, call recording, message forwarding, private-replies, live transcription, live translation, chat summaries and downloading the call participants list are disallowed and the conversation is forced sensitive for everyone (set at creation via the `classified` preset, requires capability `classified-conversations`)
+* `8` Channel - Broadcast conversation: calls are disallowed for everyone (including moderators) and the participants list is only available to moderators (set at creation via the `channel` preset, requires capability `announcement-preset`)
+* `16` Announcement - A channel that additionally can not be left by non-moderators and notifies all participants about every message by default. Always set together with `8` Channel, so all channel restrictions apply as well (set at creation via the `announcement` preset, requires capability `announcement-preset`)
 
 ## Participants
 
