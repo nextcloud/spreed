@@ -63,6 +63,37 @@ Feature: conversation-4/classified
       | actorType | actorId      |
       | users     | participant1 |
 
+  Scenario: The "in a call" status is not set for calls in a classified conversation
+    # The "in a call" status is visible to any user on the instance, so it would
+    # leak that a classified call is going on.
+    Given user "participant1" creates room "classified" (v4)
+      | roomType | 2 |
+      | roomName | classified |
+      | preset   | classified |
+    And user "participant1" adds user "participant2" to room "classified" with 200 (v4)
+    And user "participant1" creates room "regular" (v4)
+      | roomType | 2 |
+      | roomName | regular |
+    And user "participant1" adds user "participant2" to room "regular" with 200 (v4)
+    And user "participant1" set status to "away" with 200 (v1)
+    And user "participant2" set status to "online" with 200 (v1)
+    # A call in a regular conversation sets the status of the participant to "busy"
+    When user "participant2" joins room "regular" with 200 (v4)
+    And user "participant2" joins call "regular" with 200 (v4)
+    Then user "participant1" sees the following attendees with status in room "regular" with 200 (v4)
+      | actorType | actorId      | status |
+      | users     | participant1 | away   |
+      | users     | participant2 | busy   |
+    And user "participant2" leaves call "regular" with 200 (v4)
+    And user "participant2" leaves room "regular" with 200 (v4)
+    # The very same call in a classified conversation must leave the status alone
+    When user "participant2" joins room "classified" with 200 (v4)
+    And user "participant2" joins call "classified" with 200 (v4)
+    Then user "participant1" sees the following attendees with status in room "classified" with 200 (v4)
+      | actorType | actorId      | status |
+      | users     | participant1 | away   |
+      | users     | participant2 | online |
+
   Scenario: The name of a classified conversation never appears in the notification list
     # Both the invitation and the call notification must show the conversation as
     # "Private conversation" instead of its name.

@@ -61,6 +61,10 @@ class Listener implements IEventListener {
 	}
 
 	protected function setUserStatus(BeforeParticipantModifiedEvent $event): void {
+		if ($event->getRoom()->isClassified()) {
+			// Don't change user status in classified conversations
+			return;
+		}
 
 		$status = IUserStatus::BUSY;
 
