@@ -52,7 +52,7 @@ class InvitationService {
 			$this->validateUserInvitations($invitationList, $participants['users']);
 		}
 		if (!empty($participants['emails'])) {
-			$this->validateEmailInvitations($invitationList, $participants['emails']);
+			$this->validateEmailInvitations($invitationList, $participants['emails'], $isClassified);
 		}
 		if (!empty($participants['groups'])) {
 			$this->validateGroupInvitations($invitationList, $participants['groups']);
@@ -94,7 +94,15 @@ class InvitationService {
 	/**
 	 * @param list<string> $emails
 	 */
-	protected function validateEmailInvitations(InvitationList $invitationList, array $emails): void {
+	protected function validateEmailInvitations(InvitationList $invitationList, array $emails, bool $isClassified): void {
+		if ($isClassified) {
+			// The invitation mail would carry the conversation into the email
+			// infrastructure, and the access token link would allow joining
+			// without an account
+			$invitationList->setEmailResults([], $emails);
+			return;
+		}
+
 		$invalidEmails = $validEmails = [];
 		foreach ($emails as $email) {
 			if ($this->emailValidator->isValid($email)) {

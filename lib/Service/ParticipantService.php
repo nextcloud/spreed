@@ -994,7 +994,17 @@ class ParticipantService {
 		}
 	}
 
+	/**
+	 * @throws \InvalidArgumentException When the conversation is classified
+	 */
 	public function inviteEmailAddress(Room $room, string $actorId, string $email, ?string $name = null): Participant {
+		if ($room->isClassified()) {
+			// The invitation mail would carry the conversation into the email
+			// infrastructure, and the access token link would allow joining
+			// without an account
+			throw new \InvalidArgumentException('classified');
+		}
+
 		$lastMessage = 0;
 		if ($room->getLastMessage() instanceof IComment) {
 			$lastMessage = (int)$room->getLastMessage()->getId();

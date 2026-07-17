@@ -128,6 +128,17 @@ class ParticipantServiceTest extends TestCase {
 		self::assertCount(1, $participants);
 	}
 
+	public function testInviteEmailAddressThrowsForClassifiedRoom(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('isClassified')
+			->willReturn(true);
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('classified');
+
+		$this->service->inviteEmailAddress($room, hash('sha256', 'guest@example.tld'), 'guest@example.tld');
+	}
+
 	public function testStartDialOutRequestThrowsForClassifiedRoom(): void {
 		$room = $this->createMock(Room::class);
 		$room->method('isClassified')
