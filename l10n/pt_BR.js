@@ -1117,6 +1117,7 @@ OC.L10N.register(
     "Unmute audio" : "Ativar microfone",
     "Unmute audio (M)" : "Ativar microfone (M)",
     "None" : "Nenhum",
+    "Microphone" : "Microfone",
     "Speaker" : "Alto-falante",
     "Microphone settings" : "Configurações do microfone",
     "Check devices" : "Verificar dispositivos",
