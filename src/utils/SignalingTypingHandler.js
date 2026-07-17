@@ -4,8 +4,8 @@
  */
 
 import { useActorStore } from '../stores/actor.ts'
+import { useParticipantActivityStore } from '../stores/participantActivity.ts'
 import pinia from '../stores/pinia.ts'
-import { useSignalingStateStore } from '../stores/signalingState.ts'
 import { useTokenStore } from '../stores/token.ts'
 import SignalingParticipantList from './SignalingParticipantList.js'
 
@@ -19,7 +19,7 @@ import SignalingParticipantList from './SignalingParticipantList.js'
  */
 export default function SignalingTypingHandler() {
 	this._actorStore = useActorStore(pinia)
-	this._signalingStateStore = useSignalingStateStore(pinia)
+	this._participantActivityStore = useParticipantActivityStore(pinia)
 	this._tokenStore = useTokenStore(pinia)
 
 	this._signaling = null
@@ -91,7 +91,7 @@ SignalingTypingHandler.prototype = {
 			})
 		}
 
-		this._signalingStateStore.setTyping({
+		this._participantActivityStore.setTyping({
 			token: this._tokenStore.token,
 			sessionId: this._actorStore.sessionId,
 			isTyping: typing,
@@ -108,7 +108,7 @@ SignalingTypingHandler.prototype = {
 			return
 		}
 
-		this._signalingStateStore.setTyping({
+		this._participantActivityStore.setTyping({
 			token: this._tokenStore.token,
 			sessionId: participant.nextcloudSessionId,
 			isTyping: data.type === 'startedTyping',
@@ -116,7 +116,7 @@ SignalingTypingHandler.prototype = {
 	},
 
 	_handleParticipantsJoined(SignalingParticipantList, participants) {
-		if (!this._signalingStateStore.isSelfActorTyping(this._tokenStore.token)) {
+		if (!this._participantActivityStore.isSelfActorTyping(this._tokenStore.token)) {
 			return
 		}
 
@@ -130,7 +130,7 @@ SignalingTypingHandler.prototype = {
 
 	_handleParticipantsLeft(SignalingParticipantList, participants) {
 		for (const participant of participants) {
-			this._signalingStateStore.setTyping({
+			this._participantActivityStore.setTyping({
 				token: this._tokenStore.token,
 				sessionId: participant.nextcloudSessionId,
 				isTyping: false,

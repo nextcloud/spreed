@@ -36,6 +36,7 @@ import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 import { useActorStore } from '../stores/actor.ts'
 import { useCallViewStore } from '../stores/callView.ts'
 import { useGuestNameStore } from '../stores/guestName.ts'
+import { useParticipantActivityStore } from '../stores/participantActivity.ts'
 import pinia from '../stores/pinia.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useTokenStore } from '../stores/token.ts'
@@ -82,11 +83,6 @@ function state() {
 		},
 		connectionFailed: {
 		},
-		speaking: {
-		},
-		// TODO: moved from callViewStore, separate to callExtras (with typing + speaking)
-		participantRaisedHands: {
-		},
 		initialised: {
 		},
 		/**
@@ -95,7 +91,6 @@ function state() {
 		 * when quickly switching to a new conversation.
 		 */
 		cancelFetchParticipants: null,
-		speakingInterval: null,
 	}
 }
 
@@ -128,30 +123,6 @@ const getters = {
 		return []
 	},
 
-	/**
-	 * Gets the speaking information for the participant.
-	 *
-	 * @param {object} state - the state object.
-	 * param {number} attendeeId - attendee's ID for the participant in conversation.
-	 * @return {object|undefined}
-	 */
-	getParticipantSpeakingInformation: (state) => (attendeeId) => {
-		return state.speaking[attendeeId]
-	},
-
-	participantRaisedHandList: (state) => {
-		return state.participantRaisedHands
-	},
-	getParticipantRaisedHand: (state) => (sessionIds) => {
-		for (let i = 0; i < sessionIds.length; i++) {
-			if (state.participantRaisedHands[sessionIds[i]]) {
-				// note: only the raised states are stored, so no need to confirm
-				return state.participantRaisedHands[sessionIds[i]]
-			}
-		}
-
-		return { state: false, timestamp: null }
-	},
 	/**
 	 * Replaces the legacy getParticipant getter. Returns a callback function in which you can
 	 * pass in the token and attendeeId as arguments to get the participant object.
@@ -339,99 +310,6 @@ const mutations = {
 				delete state.connecting[token]
 			}
 		}
-	},
-
-	/**
-	 * Sets the speaking status of a participant in a conversation / call.
-	 *
-	 * Note that "updateParticipant" should not be called to add a "speaking"
-	 * property to an existing participant, as the participant would be reset
-	 * when the participants are purged whenever they are fetched again.
-	 * Similarly, "addParticipant" can not be called either to add a participant
-	 * if it was not fetched yet but the call model reported it as being
-	 * speaking, as the attendeeId would be unknown.
-	 *
-	 * @param {object} state - current store state.
-	 * @param {object} data - the wrapping object.
-	 * @param {string} data.attendeeId - the attendee ID of the participant in conversation.
-	 * @param {boolean} data.speaking - whether the participant is speaking or not
-	 */
-	setSpeaking(state, { attendeeId, speaking }) {
-		// create a dummy object for current call
-		if (!state.speaking[attendeeId]) {
-			state.speaking[attendeeId] = { speaking, lastTimestamp: Date.now(), totalCountedTime: 0 }
-		}
-		state.speaking[attendeeId].speaking = speaking
-	},
-
-	/**
-	 * Tracks the interval id to update speaking information for a current call.
-	 *
-	 * @param {object} state - current store state.
-	 * @param {number} interval - interval id.
-	 */
-	setSpeakingInterval(state, interval) {
-		state.speakingInterval = interval
-	},
-
-	/**
-	 * Update speaking information for a participant.
-	 *
-	 * @param {object} state - current store state.
-	 * @param {object} data - the wrapping object.
-	 * @param {string} data.attendeeId - the attendee ID of the participant in conversation.
-	 * @param {boolean} data.speaking - whether the participant is speaking or not
-	 */
-	updateTimeSpeaking(state, { attendeeId, speaking }) {
-		if (!state.speaking[attendeeId]) {
-			return
-		}
-
-		const currentTimestamp = Date.now()
-		const currentSpeakingState = state.speaking[attendeeId].speaking
-
-		if (!currentSpeakingState && !speaking) {
-			// false -> false, no updates
-			return
-		}
-
-		if (currentSpeakingState) {
-			// true -> false / true -> true, participant is still speaking or finished to speak, update total time
-			state.speaking[attendeeId].totalCountedTime += (currentTimestamp - state.speaking[attendeeId].lastTimestamp)
-		}
-
-		// false -> true / true -> false / true -> true, update timestamp of last check / signal
-		state.speaking[attendeeId].lastTimestamp = currentTimestamp
-	},
-
-	/**
-	 * Purge the speaking information for recent call when local participant leaves call
-	 * (including cases when the call ends for everyone).
-	 *
-	 * @param {object} state - current store state.
-	 */
-	purgeSpeakingStore(state) {
-		state.speaking = {}
-
-		if (state.speakingInterval) {
-			clearInterval(state.speakingInterval)
-			state.speakingInterval = null
-		}
-	},
-
-	setParticipantHandRaised(state, { sessionId, raisedHand }) {
-		if (!sessionId) {
-			throw new Error('Missing or empty sessionId argument in call to setParticipantHandRaised')
-		}
-		if (raisedHand && raisedHand.state) {
-			state.participantRaisedHands[sessionId] = raisedHand
-		} else {
-			delete state.participantRaisedHands[sessionId]
-		}
-	},
-
-	clearParticipantHandRaised(state) {
-		state.participantRaisedHands = {}
 	},
 
 	/**
@@ -925,7 +803,7 @@ const actions = {
 		commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
 
 		// clear raised hands as they were specific to the call
-		commit('clearParticipantHandRaised')
+		useParticipantActivityStore().purgeRaisedHandsState()
 
 		commit('setInCall', {
 			token,
@@ -1131,39 +1009,6 @@ const actions = {
 			attendeePermissions: permissions,
 		}
 		context.commit('updateParticipant', { token, attendeeId, updatedData })
-	},
-
-	setSpeaking(context, { attendeeId, speaking }) {
-		// We should update time before speaking state, to be able to check previous state
-		context.commit('updateTimeSpeaking', { attendeeId, speaking })
-		context.commit('setSpeaking', { attendeeId, speaking })
-
-		if (!context.state.speakingInterval && speaking) {
-			const interval = setInterval(() => {
-				context.dispatch('updateIntervalTimeSpeaking')
-			}, 1000)
-			context.commit('setSpeakingInterval', interval)
-		}
-	},
-
-	updateIntervalTimeSpeaking(context) {
-		if (!context.state.speaking || !context.state.speakingInterval) {
-			return
-		}
-
-		for (const attendeeId in context.state.speaking) {
-			if (context.state.speaking[attendeeId].speaking) {
-				context.commit('updateTimeSpeaking', { attendeeId, speaking: true })
-			}
-		}
-	},
-
-	purgeSpeakingStore(context) {
-		context.commit('purgeSpeakingStore')
-	},
-
-	setParticipantHandRaised(context, { sessionId, raisedHand }) {
-		context.commit('setParticipantHandRaised', { sessionId, raisedHand })
 	},
 
 	processDialOutAnswer(context, { callid }) {

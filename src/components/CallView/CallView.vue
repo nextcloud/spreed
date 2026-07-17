@@ -182,6 +182,7 @@ import { fetchPeers } from '../../services/callsService.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { useCallViewStore } from '../../stores/callView.ts'
+import { useParticipantActivityStore } from '../../stores/participantActivity.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { callParticipantCollection, localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
@@ -242,12 +243,15 @@ export default {
 			localMediaModel.disableVideo()
 		}
 
+		const participantActivityStore = useParticipantActivityStore()
+
 		return {
 			localMediaModel,
 			localCallParticipantModel,
 			callParticipantCollection,
 			devMode,
 			callViewStore: useCallViewStore(),
+			participantActivityStore,
 		}
 	},
 
@@ -679,15 +683,14 @@ export default {
 				}
 			}
 
-			// update in callViewStore
-			this.$store.dispatch('setParticipantHandRaised', {
+			this.participantActivityStore.setParticipantHandRaised({
 				sessionId: callParticipantModel.attributes.nextcloudSessionId,
 				raisedHand,
 			})
 		},
 
 		_lowerHandWhenParticipantLeaves(callParticipantCollection, callParticipantModel) {
-			this.$store.dispatch('setParticipantHandRaised', {
+			this.participantActivityStore.setParticipantHandRaised({
 				sessionId: callParticipantModel.attributes.nextcloudSessionId,
 				raisedHand: false,
 			})

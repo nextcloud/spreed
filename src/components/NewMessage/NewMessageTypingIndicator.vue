@@ -33,7 +33,7 @@ import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import { AVATAR } from '../../constants.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useGuestNameStore } from '../../stores/guestName.ts'
-import { useSignalingStateStore } from '../../stores/signalingState.ts'
+import { useParticipantActivityStore } from '../../stores/participantActivity.ts'
 
 export default {
 	name: 'NewMessageTypingIndicator',
@@ -51,11 +51,11 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		const signalingStateStore = useSignalingStateStore()
+		const participantActivityStore = useParticipantActivityStore()
 		return {
 			AVATAR,
 			guestNameStore,
-			signalingStateStore,
+			participantActivityStore,
 			actorStore: useActorStore(),
 		}
 	},
@@ -66,7 +66,7 @@ export default {
 		},
 
 		externalTypingSignals() {
-			return this.signalingStateStore.externalTypingSignals(this.token)
+			return this.participantActivityStore.externalTypingSignals(this.token)
 		},
 
 		/**

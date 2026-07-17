@@ -33,6 +33,7 @@ import {
 import SessionStorage from '../services/SessionStorage.js'
 import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.ts'
+import { useParticipantActivityStore } from '../stores/participantActivity.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useTokenStore } from '../stores/token.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
@@ -85,12 +86,14 @@ describe('participantsStore', () => {
 	let guestNameStore = null
 	let actorStore
 	let tokenStore
+	let participantActivityStore
 
 	beforeEach(() => {
 		setActivePinia(createPinia())
 		guestNameStore = useGuestNameStore()
 		actorStore = useActorStore()
 		tokenStore = useTokenStore()
+		participantActivityStore = useParticipantActivityStore()
 
 		testStoreConfig = cloneDeep(participantsStore)
 		store = createStore(testStoreConfig)
@@ -709,6 +712,8 @@ describe('participantsStore', () => {
 		})
 
 		test('leaves call', async () => {
+			vi.spyOn(participantActivityStore, 'purgeRaisedHandsState')
+
 			// Act
 			await store.dispatch('leaveCall', {
 				token: TOKEN,
@@ -730,73 +735,7 @@ describe('participantsStore', () => {
 					participantType: PARTICIPANT.TYPE.USER,
 				},
 			])
-		})
-
-		describe('raised hand', () => {
-			test('get whether participants raised hands with single session id', () => {
-				store.dispatch('setParticipantHandRaised', {
-					sessionId: 'session-id-1',
-					raisedHand: { state: true, timestamp: 1 },
-				})
-				store.dispatch('setParticipantHandRaised', {
-					sessionId: 'session-id-2',
-					raisedHand: { state: true, timestamp: 2 },
-				})
-
-				expect(store.getters.getParticipantRaisedHand(['session-id-1']))
-					.toStrictEqual({ state: true, timestamp: 1 })
-
-				expect(store.getters.getParticipantRaisedHand(['session-id-2']))
-					.toStrictEqual({ state: true, timestamp: 2 })
-
-				expect(store.getters.getParticipantRaisedHand(['session-id-another']))
-					.toStrictEqual({ state: false, timestamp: null })
-			})
-
-			test('get raised hands after lowering', () => {
-				store.dispatch('setParticipantHandRaised', {
-					sessionId: 'session-id-2',
-					raisedHand: { state: true, timestamp: 1 },
-				})
-				store.dispatch('setParticipantHandRaised', {
-					sessionId: 'session-id-2',
-					raisedHand: { state: false, timestamp: 3 },
-				})
-
-				expect(store.getters.getParticipantRaisedHand(['session-id-2']))
-					.toStrictEqual({ state: false, timestamp: null })
-			})
-
-			test('clears raised hands state after leaving call', async () => {
-				store.dispatch('setParticipantHandRaised', {
-					sessionId: 'session-id-2',
-					raisedHand: { state: true, timestamp: 1 },
-				})
-				await store.dispatch('leaveCall', {
-					token: TOKEN,
-					participantIdentifier: {
-						attendeeId: 1,
-						sessionId: 'session-id-1',
-					},
-				})
-
-				expect(store.getters.getParticipantRaisedHand(['session-id-2']))
-					.toStrictEqual({ state: false, timestamp: null })
-			})
-
-			test('get raised hands with multiple session ids only returns first found', () => {
-				store.dispatch('setParticipantHandRaised', {
-					sessionId: 'session-id-2',
-					raisedHand: { state: true, timestamp: 1 },
-				})
-				store.dispatch('setParticipantHandRaised', {
-					sessionId: 'session-id-3',
-					raisedHand: { state: true, timestamp: 1 },
-				})
-
-				expect(store.getters.getParticipantRaisedHand(['session-id-1', 'session-id-2', 'session-id-3']))
-					.toStrictEqual({ state: true, timestamp: 1 })
-			})
+			expect(participantActivityStore.purgeRaisedHandsState).toHaveBeenCalledTimes(1)
 		})
 	})
 

@@ -7,6 +7,7 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { ATTENDEE, PARTICIPANT } from '../constants.ts'
+import { useParticipantActivityStore } from '../stores/participantActivity.ts'
 import { isDoNotDisturb } from '../utils/userStatus.ts'
 import { useGetToken } from './useGetToken.ts'
 
@@ -17,6 +18,7 @@ const MODERATOR_TYPES = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PAR
  */
 export function useSortParticipants() {
 	const store = useStore()
+	const participantActivityStore = useParticipantActivityStore()
 	const token = useGetToken()
 
 	const selfIsModerator = computed(() => {
@@ -100,8 +102,8 @@ export function useSortParticipants() {
 			return p1inCall ? -1 : 1
 		}
 
-		const p1HandRaised = store.getters.getParticipantRaisedHand(participant1.sessionIds)
-		const p2HandRaised = store.getters.getParticipantRaisedHand(participant2.sessionIds)
+		const p1HandRaised = participantActivityStore.getParticipantRaisedHand(participant1.sessionIds)
+		const p2HandRaised = participantActivityStore.getParticipantRaisedHand(participant2.sessionIds)
 		if (p1HandRaised.state !== p2HandRaised.state) {
 			return p1HandRaised.state ? -1 : 1
 		}
