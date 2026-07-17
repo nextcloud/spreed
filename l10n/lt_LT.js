@@ -1117,6 +1117,7 @@ OC.L10N.register(
     "Unmute audio" : "Įjungti garsą",
     "Unmute audio (M)" : "Įjungti garsą (M)",
     "None" : "Nėra",
+    "Microphone" : "Mikrofonas",
     "Speaker" : "Garsiakalbis",
     "Microphone settings" : "Mikrofono nustatymai",
     "Check devices" : "Patikrinkite įrenginius",
