@@ -1117,6 +1117,8 @@ OC.L10N.register(
     "Unmute audio" : "Включить звук",
     "Unmute audio (M)" : "Включить звук (M)",
     "None" : "Не использовать",
+    "Microphone" : " Микрофон",
+    "Speaker" : "Динамик",
     "Microphone settings" : "Параметры микрофона",
     "Check devices" : "Проверить устройства",
     "Access to camera was denied" : "Доступ к камере запрещён",
