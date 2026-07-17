@@ -67,8 +67,21 @@ class ClassifiedRoomAutoDeleteListenerTest extends TestCase {
 		$this->listener->handle($this->callEndedEvent($room));
 	}
 
-	public function testIgnoresPreservedRoom(): void {
+	public function testQueuesPreservedClassifiedRoomForDeletion(): void {
+		// Preserving only blocks the manual deletion via the API, it must not
+		// keep a classified conversation from being deleted automatically
 		$room = $this->createRoom(classified: true, preserved: true);
+		$this->timeFactory->method('getTime')->willReturn(1234567890);
+
+		$this->roomService->expects($this->once())
+			->method('setObject')
+			->with($room, Room::OBJECT_TYPE_CLASSIFIED, '1234567890');
+
+		$this->listener->handle($this->callEndedEvent($room));
+	}
+
+	public function testIgnoresPreservedRoomThatIsNotClassified(): void {
+		$room = $this->createRoom(classified: false, preserved: true);
 		$this->roomService->expects($this->never())->method('setObject');
 		$this->listener->handle($this->callEndedEvent($room));
 	}

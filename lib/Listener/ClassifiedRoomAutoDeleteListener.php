@@ -25,6 +25,11 @@ use OCP\EventDispatcher\IEventListener;
  * type. Because we only bind rooms with an empty object type, a persisted (or
  * otherwise bound) room is never re-queued.
  *
+ * Preserving a conversation deliberately does not prevent the queueing: it only
+ * blocks the manual deletion via the API, while the retention of a classified
+ * conversation is a guarantee that must not be opted out of by an owner.
+ * Unbinding stays the single way to keep a classified conversation.
+ *
  * @template-implements IEventListener<Event>
  */
 class ClassifiedRoomAutoDeleteListener implements IEventListener {
@@ -42,8 +47,7 @@ class ClassifiedRoomAutoDeleteListener implements IEventListener {
 
 		$room = $event->getRoom();
 		if (!$room->isClassified()
-			|| $room->getObjectType() !== ''
-			|| $room->isPreserved()) {
+			|| $room->getObjectType() !== '') {
 			return;
 		}
 
