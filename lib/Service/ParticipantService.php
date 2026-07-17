@@ -1490,6 +1490,11 @@ class ParticipantService {
 	 * @throws ParticipantNotFoundException
 	 */
 	public function startDialOutRequest(SIPDialOutService $dialOutService, Room $room, int $targetAttendeeId, string|bool $callerNumber): void {
+		if ($room->isClassified()) {
+			// Classified conversations can not dial out
+			throw new \InvalidArgumentException('classified');
+		}
+
 		try {
 			$attendee = $this->attendeeMapper->getById($targetAttendeeId);
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception) {

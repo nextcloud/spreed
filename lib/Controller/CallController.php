@@ -418,7 +418,7 @@ class CallController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_NOT_IMPLEMENTED, array{error: string, message?: string}, array{}>
 	 *
 	 * 201: Dial-out initiated successfully
-	 * 400: SIP dial-out not possible
+	 * 400: SIP dial-out not possible, e.g. when the conversation is classified
 	 * 404: Participant could not be found or is a wrong type
 	 * 501: SIP dial-out is not configured on the server
 	 */
@@ -431,6 +431,10 @@ class CallController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function sipDialOut(int $attendeeId): DataResponse {
+		if ($this->room->isClassified()) {
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
+		}
+
 		if ($this->room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
