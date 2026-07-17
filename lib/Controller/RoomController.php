@@ -1444,7 +1444,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error: 'ban'|'classified'|'cloud-id'|'federation'|'moderator'|'new-participant'|'outgoing'|'reach-remote'|'room-type'|'sip'|'source'|'trusted-servers'}, array{}>
 	 *
 	 * 200: Participant successfully added
-	 * 400: Adding participant is not possible, e.g. when the user is banned or a phone number is added to a classified conversation (check error attribute of response for detail key)
+	 * 400: Adding participant is not possible, e.g. when the user is banned or a phone number or federated user is added to a classified conversation (check error attribute of response for detail key)
 	 * 404: User, group or other target to invite was not found
 	 * 501: SIP dial-out is not configured
 	 */
@@ -1548,7 +1548,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				return new DataResponse(['error' => 'cloud-id'], Http::STATUS_BAD_REQUEST);
 			}
 			try {
-				$this->federationManager->isAllowedToInvite($addedBy, $newUser);
+				$this->federationManager->isAllowedToInvite($addedBy, $newUser, $this->room);
 			} catch (FederationRestrictionException $e) {
 				return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 			}

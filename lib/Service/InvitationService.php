@@ -61,7 +61,7 @@ class InvitationService {
 			$this->validateTeamInvitations($invitationList, $participants['teams'], $currentUser);
 		}
 		if (!empty($participants['federated_users'])) {
-			$this->validateFederatedUserInvitations($invitationList, $participants['federated_users'], $currentUser);
+			$this->validateFederatedUserInvitations($invitationList, $participants['federated_users'], $currentUser, $isClassified);
 		}
 		if (!empty($participants['phones'])) {
 			$this->validatePhoneInvitations($invitationList, $participants['phones'], $currentUser, $room, $isClassified);
@@ -149,7 +149,13 @@ class InvitationService {
 	/**
 	 * @param list<string> $cloudIds
 	 */
-	protected function validateFederatedUserInvitations(InvitationList $invitationList, array $cloudIds, IUser $currentUser): void {
+	protected function validateFederatedUserInvitations(InvitationList $invitationList, array $cloudIds, IUser $currentUser, bool $isClassified): void {
+		if ($isClassified) {
+			// The remote server would receive the conversation and its messages
+			$invitationList->setFederatedUserResults([], $cloudIds);
+			return;
+		}
+
 		if (!$this->talkConfig->isFederationEnabled()) {
 			$invitationList->setFederatedUserResults([], $cloudIds);
 			return;
