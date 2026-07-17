@@ -31,7 +31,7 @@
 						variant="tertiary-no-background"
 						class="grid-navigation grid-navigation__previous"
 						:aria-label="t('spreed', 'Previous page of videos')"
-						@click="handleClickPrevious">
+						@click="previous">
 						<template #icon>
 							<IconChevronLeft
 								class="bidirectional-icon"
@@ -97,7 +97,7 @@
 						variant="tertiary-no-background"
 						class="grid-navigation grid-navigation__next"
 						:aria-label="t('spreed', 'Next page of videos')"
-						@click="handleClickNext">
+						@click="next">
 						<template #icon>
 							<IconChevronRight
 								class="bidirectional-icon"
@@ -183,6 +183,7 @@ import { useCallViewStore } from '../../../stores/callView.ts'
 import { GRID_GAP } from './gridLayout.ts'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 import { useGridDimensions } from './useGridDimensions.ts'
+import { usePagination } from './usePagination.ts'
 
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = getTalkConfig('local', 'call', 'grid-limit') || 0
@@ -504,10 +505,29 @@ export default {
 			})
 		})
 
+		const pagination = usePagination(orderedVideos, slots)
+		const { currentPage, numberOfPages, displayedVideos, next, previous } = pagination
+
+		// Hide or display the `grid-navigation` buttons
+		const hasNextPage = computed(() => props.hasPagination && pagination.hasNextPage.value)
+		const hasPreviousPage = computed(() => props.hasPagination && pagination.hasPreviousPage.value)
+
+		// Reset current page when switching between stripe and full grid,
+		// as the previous page is meaningless in the new mode.
+		// The grid layout itself is recomputed by `useGridDimensions`.
+		watch(() => props.isStripe, () => {
+			currentPage.value = 0
+		})
+
 		return {
 			videos,
-			slots,
-			orderedVideos,
+			currentPage,
+			numberOfPages,
+			displayedVideos,
+			hasNextPage,
+			hasPreviousPage,
+			next,
+			previous,
 			devMode,
 			dummies,
 			screenshotMode,
@@ -523,8 +543,6 @@ export default {
 
 	data() {
 		return {
-			// The current page
-			currentPage: 0,
 			debounceHandleWheelEvent: () => {},
 		}
 	},
@@ -556,55 +574,11 @@ export default {
 			return (this.gridHeight - GRID_GAP * (this.rows - 1)) / this.rows
 		},
 
-		// Array of videos that are being displayed in the grid at any given
-		// moment
-		// TODO: properly handle resizes when not on first page:
-		// currently if the user is not on the 'first page', upon resize the
-		// current position in the videos array is lost (`slots` changes, so
-		// `currentPage * slots` points at a different window of the videos)
-		displayedVideos() {
-			if (!this.slots) {
-				return []
-			}
-
-			const slots = this.slots
-
-			// Slice the `videos` array to display the current page of videos
-			if (((this.currentPage + 1) * slots) >= this.orderedVideos.length) {
-				return this.orderedVideos.slice(this.currentPage * slots)
-			}
-
-			return this.orderedVideos.slice(this.currentPage * slots, (this.currentPage + 1) * slots)
-		},
-
 		isLessThanTwoVideos() {
 			// without screen share, we don't want to duplicate videos if we were to show them in the stripe
 			// however, if a screen share is in progress, it means the video of the presenting user is not visible,
 			// so we can show it in the stripe
 			return this.videos.length <= 1 && !this.screens.length
-		},
-
-		// Grid pages at any given moment
-		numberOfPages() {
-			return Math.ceil(this.videosCount / this.slots)
-		},
-
-		// Hides or displays the `grid-navigation next` button
-		hasNextPage() {
-			if (this.displayedVideos.length !== 0 && this.hasPagination) {
-				return this.displayedVideos.at(-1) !== this.orderedVideos.at(-1)
-			} else {
-				return false
-			}
-		},
-
-		// Hides or displays the `grid-navigation previous` button
-		hasPreviousPage() {
-			if (this.displayedVideos.length !== 0 && this.hasPagination) {
-				return this.displayedVideos[0] !== this.orderedVideos[0]
-			} else {
-				return false
-			}
 		},
 
 		// Computed css to reactively style the grid
@@ -641,21 +615,6 @@ export default {
 			set(value) {
 				this.callViewStore.setCallViewMode({ token: this.token, isGrid: !value, clearLast: false })
 			},
-		},
-	},
-
-	watch: {
-		isStripe() {
-			// Reset current page when switching between stripe and full grid,
-			// as the previous page is meaningless in the new mode.
-			// The grid layout itself is recomputed by `useGridDimensions`.
-			this.currentPage = 0
-		},
-
-		numberOfPages() {
-			if (this.currentPage >= this.numberOfPages) {
-				this.currentPage = Math.max(0, this.numberOfPages - 1)
-			}
 		},
 	},
 
@@ -725,20 +684,10 @@ export default {
 			}
 
 			if (event.deltaY < 0 && this.hasPreviousPage) {
-				this.handleClickPrevious()
+				this.previous()
 			} else if (event.deltaY > 0 && this.hasNextPage) {
-				this.handleClickNext()
+				this.next()
 			}
-		},
-
-		handleClickNext() {
-			this.currentPage++
-			console.debug('handleclicknext, ', 'currentPage ', this.currentPage, 'slots ', this.slots, 'videos.length ', this.videos.length)
-		},
-
-		handleClickPrevious() {
-			this.currentPage--
-			console.debug('handleclickprevious, ', 'currentPage ', this.currentPage, 'slots ', this.slots, 'videos.length ', this.videos.length)
 		},
 
 		handleClickStripeCollapse() {
