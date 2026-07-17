@@ -12,9 +12,9 @@ type TypingState = {
 }
 
 /**
- * Store for signaling state used in chat and call (typing, speaking, raised hands)
+ * Store for participant activity used in chat and call (typing, speaking, raised hands)
  */
-export const useSignalingStateStore = defineStore('signalingState', () => {
+export const useParticipantActivityStore = defineStore('participantActivity', () => {
 	const typing = reactive<Record<string, Record<string, TypingState>>>({})
 
 	const actorStore = useActorStore()

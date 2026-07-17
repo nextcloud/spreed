@@ -8,8 +8,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import Vuex from 'vuex'
 import storeConfig from '../store/storeConfig.js'
 import { useActorStore } from '../stores/actor.ts'
+import { useParticipantActivityStore } from '../stores/participantActivity.ts'
 import pinia from '../stores/pinia.ts'
-import { useSignalingStateStore } from '../stores/signalingState.ts'
 import { useTokenStore } from '../stores/token.ts'
 import SignalingTypingHandler from './SignalingTypingHandler.js'
 
@@ -24,7 +24,7 @@ vi.mock('vuex', async () => {
 
 describe('SignalingTypingHandler', () => {
 	let actorStore
-	let signalingStateStore
+	let participantActivityStore
 	let tokenStore
 
 	let signaling
@@ -97,7 +97,7 @@ describe('SignalingTypingHandler', () => {
 		})
 		store = new Vuex.Store(testStoreConfig)
 		actorStore = useActorStore()
-		signalingStateStore = useSignalingStateStore()
+		participantActivityStore = useParticipantActivityStore()
 		tokenStore = useTokenStore()
 
 		signaling = new function() {
@@ -150,8 +150,8 @@ describe('SignalingTypingHandler', () => {
 		vi.clearAllMocks()
 		tokenStore.token = ''
 		tokenStore.lastJoinedConversationToken = null
-		// Dispose signalingStateStore so its setup re-runs and captures the new vuex store reference
-		useSignalingStateStore(pinia).$dispose()
+		// Dispose participantActivityStore so its setup re-runs and captures the new vuex store reference
+		useParticipantActivityStore(pinia).$dispose()
 	})
 
 	describe('start typing', () => {
@@ -169,7 +169,7 @@ describe('SignalingTypingHandler', () => {
 
 			signalingTypingHandler.setTyping(true)
 
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 
@@ -189,7 +189,7 @@ describe('SignalingTypingHandler', () => {
 
 			signalingTypingHandler.setTyping(true)
 
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(1)
 			expect(signaling.emit).toHaveBeenCalledWith('message', { type: 'startedTyping', to: 'user1SignalingSessionId' })
 		})
@@ -212,7 +212,7 @@ describe('SignalingTypingHandler', () => {
 
 			signalingTypingHandler.setTyping(true)
 
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(2)
 			expect(signaling.emit).toHaveBeenNthCalledWith(1, 'message', { type: 'startedTyping', to: 'user1SignalingSessionId' })
 			expect(signaling.emit).toHaveBeenNthCalledWith(2, 'message', { type: 'startedTyping', to: 'guest1SignalingSessionId' })
@@ -229,7 +229,7 @@ describe('SignalingTypingHandler', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
 			// Typing is not set once finally joined the room.
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 
@@ -245,7 +245,7 @@ describe('SignalingTypingHandler', () => {
 			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			// Typing is not set once finally joined the room.
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 	})
@@ -266,7 +266,7 @@ describe('SignalingTypingHandler', () => {
 			signalingTypingHandler.setTyping(true)
 			signalingTypingHandler.setTyping(false)
 
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 
@@ -287,7 +287,7 @@ describe('SignalingTypingHandler', () => {
 			signalingTypingHandler.setTyping(true)
 			signalingTypingHandler.setTyping(false)
 
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(2)
 			expect(signaling.emit).toHaveBeenNthCalledWith(1, 'message', { type: 'startedTyping', to: 'user1SignalingSessionId' })
 			expect(signaling.emit).toHaveBeenNthCalledWith(2, 'message', { type: 'stoppedTyping', to: 'user1SignalingSessionId' })
@@ -312,7 +312,7 @@ describe('SignalingTypingHandler', () => {
 			signalingTypingHandler.setTyping(true)
 			signalingTypingHandler.setTyping(false)
 
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(4)
 			expect(signaling.emit).toHaveBeenNthCalledWith(1, 'message', { type: 'startedTyping', to: 'user1SignalingSessionId' })
 			expect(signaling.emit).toHaveBeenNthCalledWith(2, 'message', { type: 'startedTyping', to: 'guest1SignalingSessionId' })
@@ -332,7 +332,7 @@ describe('SignalingTypingHandler', () => {
 			signalingTypingHandler.setSignaling(signaling)
 
 			// Typing is not set once finally joined the room.
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 
@@ -349,7 +349,7 @@ describe('SignalingTypingHandler', () => {
 			tokenStore.updateLastJoinedConversationToken(TOKEN)
 
 			// Typing is not set once finally joined the room.
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 	})
@@ -376,7 +376,7 @@ describe('SignalingTypingHandler', () => {
 				from: 'user1SignalingSessionId',
 			}])
 
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([
 				expectedUser1Participant.sessionIds[0],
 			])
 		})
@@ -404,7 +404,7 @@ describe('SignalingTypingHandler', () => {
 				from: 'user1SignalingSessionId',
 			}])
 
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 		})
 	})
 
@@ -434,7 +434,7 @@ describe('SignalingTypingHandler', () => {
 				from: 'user1SignalingSessionId',
 			}])
 
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 		})
 
 		test('in another room', () => {
@@ -464,7 +464,7 @@ describe('SignalingTypingHandler', () => {
 				from: 'user1SignalingSessionId',
 			}])
 
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 		})
 	})
 
@@ -488,7 +488,7 @@ describe('SignalingTypingHandler', () => {
 			localParticipantInSignalingParticipantList,
 		]])
 
-		expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+		expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 		expect(signaling.emit).toHaveBeenCalledTimes(1)
 		expect(signaling.emit).toHaveBeenCalledWith('message', { type: 'startedTyping', to: 'user1SignalingSessionId' })
 	})
@@ -515,7 +515,7 @@ describe('SignalingTypingHandler', () => {
 			user1ParticipantInSignalingParticipantList,
 		]])
 
-		expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+		expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 		expect(signaling.emit).toHaveBeenCalledTimes(2)
 		expect(signaling.emit).toHaveBeenNthCalledWith(1, 'message', { type: 'startedTyping', to: 'guest1SignalingSessionId' })
 		expect(signaling.emit).toHaveBeenNthCalledWith(2, 'message', { type: 'startedTyping', to: 'user1SignalingSessionId' })
@@ -544,7 +544,7 @@ describe('SignalingTypingHandler', () => {
 			user1ParticipantInSignalingParticipantList,
 		]])
 
-		expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+		expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 		expect(signaling.emit).toHaveBeenCalledTimes(2)
 		expect(signaling.emit).toHaveBeenNthCalledWith(1, 'message', { type: 'startedTyping', to: 'guest1SignalingSessionId' })
 		expect(signaling.emit).toHaveBeenNthCalledWith(2, 'message', { type: 'stoppedTyping', to: 'guest1SignalingSessionId' })
@@ -582,7 +582,7 @@ describe('SignalingTypingHandler', () => {
 			guest1ParticipantInSignalingParticipantList,
 		]])
 
-		expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([
+		expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([
 			expectedGuest2Participant.sessionIds[0],
 		])
 	})
@@ -623,7 +623,7 @@ describe('SignalingTypingHandler', () => {
 			guest1ParticipantInSignalingParticipantList,
 		]])
 
-		expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([
+		expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([
 			expectedGuest2Participant.sessionIds[0],
 		])
 	})
@@ -647,7 +647,7 @@ describe('SignalingTypingHandler', () => {
 
 			signalingTypingHandler.setTyping(true)
 
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 
@@ -674,7 +674,7 @@ describe('SignalingTypingHandler', () => {
 				from: 'user1SignalingSessionId',
 			}])
 
-			expect(signalingStateStore.externalTypingSignals(TOKEN)).toEqual([])
+			expect(participantActivityStore.externalTypingSignals(TOKEN)).toEqual([])
 		})
 	})
 })
