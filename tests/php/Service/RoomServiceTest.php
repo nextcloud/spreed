@@ -13,6 +13,7 @@ use OC\EventDispatcher\EventDispatcher;
 use OCA\Talk\Config;
 use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\CreationException;
 use OCA\Talk\Exceptions\RoomProperty\ListableException;
 use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
 use OCA\Talk\Exceptions\RoomProperty\TypeException;
@@ -539,5 +540,33 @@ class RoomServiceTest extends TestCase {
 		$this->expectExceptionMessage(TypeException::REASON_CLASSIFIED);
 
 		$this->service->setType($room, Room::TYPE_PUBLIC);
+	}
+
+	public static function dataCreateConversationClassifiedWithObject(): array {
+		return [
+			'Object type and id' => [Room::OBJECT_TYPE_EVENT, '1234#5678'],
+			'Object type only' => [Room::OBJECT_TYPE_EVENT, ''],
+			'Object id only' => ['', '1234'],
+			// Would exclude the conversation from the retention job forever
+			'Persisted phone object' => [Room::OBJECT_TYPE_PHONE_PERSIST, Room::OBJECT_ID_PHONE_OUTGOING],
+			// Binding the classified object directly would fake an already
+			// queued deletion instead of one triggered by a call
+			'Classified object' => [Room::OBJECT_TYPE_CLASSIFIED, '1234567890'],
+		];
+	}
+
+	#[DataProvider('dataCreateConversationClassifiedWithObject')]
+	public function testCreateConversationThrowsForClassifiedRoomWithObject(string $objectType, string $objectId): void {
+		$this->expectException(CreationException::class);
+		$this->expectExceptionMessage(CreationException::REASON_CLASSIFIED);
+
+		$this->service->createConversation(
+			Room::TYPE_GROUP,
+			'classified',
+			null,
+			$objectType,
+			$objectId,
+			attributes: RoomAttributes::CLASSIFIED->value,
+		);
 	}
 }

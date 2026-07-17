@@ -63,6 +63,38 @@ Feature: conversation-4/classified
       | actorType | actorId      |
       | users     | participant1 |
 
+  Scenario: Classified conversations can not be created with an object
+    # The object field is what binds a classified conversation to the retention
+    # job after a call, so occupying it at creation would exclude the
+    # conversation from the automatic deletion forever.
+    Given user "participant1" creates room "event" with 400 (v4)
+      | roomType   | 2 |
+      | roomName   | event |
+      | objectType | event |
+      # 100 days in the future
+      | objectId   | 8640000#8643600 |
+      | preset     | classified |
+    And user "participant1" creates room "phone" with 400 (v4)
+      | roomType   | 2 |
+      | roomName   | phone |
+      | objectType | phone_persist |
+      | objectId   | phone |
+      | preset     | classified |
+    # Binding the classified object directly would fake an already queued deletion
+    And user "participant1" creates room "prebound" with 400 (v4)
+      | roomType   | 2 |
+      | roomName   | prebound |
+      | objectType | classified |
+      | objectId   | 1234567890 |
+      | preset     | classified |
+    # The same object is fine on a conversation that is not classified
+    And user "participant1" creates room "regular event" (v4)
+      | roomType   | 2 |
+      | roomName   | regular event |
+      | objectType | event |
+      # 100 days in the future
+      | objectId   | 8640000#8643600 |
+
   Scenario: Breakout rooms can not be created in a classified conversation
     # Breakout rooms are separate conversations which are not classified
     # themselves, so none of the restrictions of the parent would apply in them.

@@ -166,7 +166,8 @@ class RoomService {
 			throw new CreationException(CreationException::REASON_NAME);
 		}
 
-		if (($attributes & RoomAttributes::CLASSIFIED->value) === RoomAttributes::CLASSIFIED->value) {
+		$isClassified = ($attributes & RoomAttributes::CLASSIFIED->value) === RoomAttributes::CLASSIFIED->value;
+		if ($isClassified) {
 			// Classified conversations are locked down: never public (so no public
 			// link and no guest access), not openly joinable and without SIP.
 			// Coerce here so the restrictions can not be bypassed at creation time.
@@ -197,6 +198,15 @@ class RoomService {
 		$objectId = trim($objectId);
 		if (isset($objectId[64])) {
 			throw new CreationException(CreationException::REASON_OBJECT_ID);
+		}
+
+		if ($isClassified && ($objectType !== '' || $objectId !== '')) {
+			// Classified conversations are bound to the "classified" object type
+			// once a call happened, which is what makes the retention job delete
+			// them again. Any other object at creation time would occupy the field
+			// and therefore permanently exclude the conversation from that
+			// mechanism, so it is rejected instead of silently ignored.
+			throw new CreationException(CreationException::REASON_CLASSIFIED);
 		}
 
 		$objectTypes = [
