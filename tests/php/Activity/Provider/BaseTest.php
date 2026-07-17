@@ -10,7 +10,10 @@ namespace OCA\Talk\Tests\php\Activity\Provider;
 
 use OCA\Talk\Activity\Provider\Base;
 use OCA\Talk\Config;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
@@ -18,6 +21,7 @@ use OCP\Activity\Exceptions\UnknownActivityException;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\Federation\ICloudIdManager;
+use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -199,7 +203,82 @@ class BaseTest extends TestCase {
 			'call-type' => $expectedType,
 			'link' => 'url',
 			'icon-url' => '',
-		], self::invokePrivate($provider, 'getRoom', [$room, 'user']));
+		], self::invokePrivate($provider, 'getRoom', [$room, 'user', $this->createMock(IL10N::class)]));
+	}
+
+	public function testGetRoomNameHidesClassifiedConversation(): void {
+		$provider = $this->getProvider();
+
+		$room = $this->createMock(Room::class);
+		$room->method('isClassified')->willReturn(true);
+		// The name must not be resolved at all, not even when the user is no
+		// longer an attendee of the conversation
+		$room->expects($this->never())->method('getDisplayName');
+		$this->participantService->expects($this->never())->method('getParticipantByActor');
+
+		$l = $this->createMock(IL10N::class);
+		$l->method('t')->willReturnArgument(0);
+
+		$this->assertSame(
+			'Private conversation',
+			self::invokePrivate($provider, 'getRoomName', [$room, 'user', $l]),
+		);
+	}
+
+	public function testGetRoomNameHidesSensitiveConversation(): void {
+		$provider = $this->getProvider();
+
+		$room = $this->createMock(Room::class);
+		$room->method('isClassified')->willReturn(false);
+		$room->expects($this->never())->method('getDisplayName');
+
+		$attendee = new Attendee();
+		$attendee->setSensitive(true);
+		$this->participantService->method('getParticipantByActor')
+			->with($room, Attendee::ACTOR_USERS, 'user')
+			->willReturn(new Participant($room, $attendee, null));
+
+		$l = $this->createMock(IL10N::class);
+		$l->method('t')->willReturnArgument(0);
+
+		$this->assertSame(
+			'Private conversation',
+			self::invokePrivate($provider, 'getRoomName', [$room, 'user', $l]),
+		);
+	}
+
+	public function testGetRoomNameReturnsNameForInsensitiveConversation(): void {
+		$provider = $this->getProvider();
+
+		$room = $this->createMock(Room::class);
+		$room->method('isClassified')->willReturn(false);
+		$room->method('getDisplayName')->with('user')->willReturn('group-call');
+
+		$attendee = new Attendee();
+		$attendee->setSensitive(false);
+		$this->participantService->method('getParticipantByActor')
+			->willReturn(new Participant($room, $attendee, null));
+
+		$this->assertSame(
+			'group-call',
+			self::invokePrivate($provider, 'getRoomName', [$room, 'user', $this->createMock(IL10N::class)]),
+		);
+	}
+
+	public function testGetRoomNameReturnsNameWhenParticipantIsUnknown(): void {
+		$provider = $this->getProvider();
+
+		$room = $this->createMock(Room::class);
+		$room->method('isClassified')->willReturn(false);
+		$room->method('getDisplayName')->with('user')->willReturn('group-call');
+
+		$this->participantService->method('getParticipantByActor')
+			->willThrowException(new ParticipantNotFoundException());
+
+		$this->assertSame(
+			'group-call',
+			self::invokePrivate($provider, 'getRoomName', [$room, 'user', $this->createMock(IL10N::class)]),
+		);
 	}
 
 	public static function dataGetUser(): array {
