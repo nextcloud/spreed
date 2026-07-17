@@ -63,6 +63,21 @@ Feature: conversation-4/classified
       | actorType | actorId      |
       | users     | participant1 |
 
+  Scenario: Email guests can not be added to a classified conversation
+    # The invitation mail would carry the conversation name and description into
+    # the email infrastructure, and its access token link would allow joining
+    # without an account.
+    Given user "participant1" creates room "classified" (v4)
+      | roomType | 2 |
+      | roomName | classified |
+      | preset   | classified |
+    Then user "participant1" adds email "test@example.tld" to room "classified" with 400 (v4)
+    And user "participant1" sees the following attendees in room "classified" with 200 (v4)
+      | actorType | actorId      |
+      | users     | participant1 |
+    # Nothing to resend, and no mail may be sent
+    And user "participant1" resends invite for room "classified" with 200 (v4)
+
   Scenario: Classified conversations can not be created with an object
     # The object field is what binds a classified conversation to the retention
     # job after a call, so occupying it at creation would exclude the

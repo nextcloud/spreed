@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Exceptions;
 
 class GuestImportException extends \Exception {
+	public const REASON_CLASSIFIED = 'classified';
 	public const REASON_ROOM = 'room';
 	public const REASON_ROWS = 'rows';
 	public const REASON_HEADER_EMAIL = 'header-email';

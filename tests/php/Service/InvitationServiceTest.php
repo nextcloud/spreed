@@ -104,6 +104,53 @@ class InvitationServiceTest extends TestCase {
 		self::assertSame(['+491601234567'], $invitationList->getInvalidList()['phones']);
 	}
 
+	public function testEmailInvitationsAreRejectedWhenCreatingClassifiedConversation(): void {
+		$currentUser = $this->createMock(IUser::class);
+		// The address is perfectly valid, only the classified flag must reject it
+		$this->emailValidator->expects(self::never())
+			->method('isValid');
+
+		$invitationList = $this->service->validateInvitations(
+			['emails' => ['guest@example.tld']],
+			$currentUser,
+			isClassified: true,
+		);
+
+		self::assertSame([], $invitationList->getEmails());
+		self::assertTrue($invitationList->hasInvalidInvitations());
+		self::assertSame(['guest@example.tld'], $invitationList->getInvalidList()['emails']);
+	}
+
+	public function testEmailInvitationsAreRejectedForClassifiedRoom(): void {
+		$currentUser = $this->createMock(IUser::class);
+		$room = $this->createMock(Room::class);
+		$room->method('isClassified')->willReturn(true);
+		$this->emailValidator->expects(self::never())
+			->method('isValid');
+
+		$invitationList = $this->service->validateInvitations(
+			['emails' => ['guest@example.tld']],
+			$currentUser,
+			$room,
+		);
+
+		self::assertSame([], $invitationList->getEmails());
+		self::assertSame(['guest@example.tld'], $invitationList->getInvalidList()['emails']);
+	}
+
+	public function testEmailInvitationsAreAcceptedForRegularConversation(): void {
+		$currentUser = $this->createMock(IUser::class);
+		$this->emailValidator->method('isValid')->willReturn(true);
+
+		$invitationList = $this->service->validateInvitations(
+			['emails' => ['Guest@example.tld']],
+			$currentUser,
+		);
+
+		self::assertSame(['Guest@example.tld' => 'guest@example.tld'], $invitationList->getEmails());
+		self::assertFalse($invitationList->hasInvalidInvitations());
+	}
+
 	public function testFederatedUserInvitationsAreRejectedWhenCreatingClassifiedConversation(): void {
 		$currentUser = $this->createMock(IUser::class);
 		// Federation is available, only the classified flag must reject the invite
