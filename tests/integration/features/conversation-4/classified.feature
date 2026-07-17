@@ -63,6 +63,19 @@ Feature: conversation-4/classified
       | actorType | actorId      |
       | users     | participant1 |
 
+  Scenario: Breakout rooms can not be created in a classified conversation
+    # Breakout rooms are separate conversations which are not classified
+    # themselves, so none of the restrictions of the parent would apply in them.
+    Given user "participant1" creates room "classified" (v4)
+      | roomType | 2 |
+      | roomName | classified |
+      | preset   | classified |
+    And user "participant1" adds user "participant2" to room "classified" with 200 (v4)
+    Then user "participant1" creates 3 automatic breakout rooms for "classified" with 400 (v1)
+    # "mode" (400) means the parent was not even switched into a breakout room
+    # mode, so the rejection happened before it was modified
+    And user "participant1" sees the following breakout rooms for room "classified" with 400 (v4)
+
   Scenario: A classified conversation can not be marked as insensitive again
     Given user "participant1" creates room "classified" (v4)
       | roomType | 2 |
