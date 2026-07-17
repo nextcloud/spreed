@@ -205,14 +205,7 @@ export default {
 	},
 
 	props: {
-		/**
-		 * Display the overflow of videos in separate pages;
-		 */
-		hasPagination: {
-			type: Boolean,
-			default: false,
-		},
-
+	
 		/**
 		 * To be set to true when the grid is in the promoted view.
 		 */
@@ -509,8 +502,8 @@ export default {
 		const { currentPage, numberOfPages, displayedVideos, next, previous } = pagination
 
 		// Hide or display the `grid-navigation` buttons
-		const hasNextPage = computed(() => props.hasPagination && pagination.hasNextPage.value)
-		const hasPreviousPage = computed(() => props.hasPagination && pagination.hasPreviousPage.value)
+		const hasNextPage = computed(() => pagination.hasNextPage.value)
+		const hasPreviousPage = computed(() => pagination.hasPreviousPage.value)
 
 		// Reset current page when switching between stripe and full grid,
 		// as the previous page is meaningless in the new mode.
