@@ -63,6 +63,25 @@ Feature: conversation-4/classified
       | actorType | actorId      |
       | users     | participant1 |
 
+  Scenario: The name of a classified conversation never appears in the notification list
+    # Both the invitation and the call notification must show the conversation as
+    # "Private conversation" instead of its name.
+    Given user "participant1" creates room "classified" (v4)
+      | roomType | 2 |
+      | roomName | classified |
+      | preset   | classified |
+    When user "participant1" adds user "participant2" to room "classified" with 200 (v4)
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id  | subject                                                                            |
+      | spreed | room        | classified | participant1-displayname invited you to a group conversation: Private conversation |
+    # Joining marks the invitation as read, so only the call notification is left
+    Given user "participant1" joins room "classified" with 200 (v4)
+    And user "participant2" joins room "classified" with 200 (v4)
+    And user "participant1" joins call "classified" with 200 (v4)
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id  | subject                                          |
+      | spreed | call        | classified | A group call has started in Private conversation |
+
   Scenario: Email guests can not be added to a classified conversation
     # The invitation mail would carry the conversation name and description into
     # the email infrastructure, and its access token link would allow joining

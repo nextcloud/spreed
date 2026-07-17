@@ -257,7 +257,7 @@ class Notifier implements INotifier {
 			return $this->parseStoredRecordingFail($notification, $room, $participant, $l);
 		}
 		if ($subject === 'invitation') {
-			return $this->parseInvitation($notification, $room, $l);
+			return $this->parseInvitation($notification, $room, $participant, $l);
 		}
 		if ($subject === 'call') {
 			if ($participant instanceof Participant
@@ -270,7 +270,7 @@ class Notifier implements INotifier {
 			if ($room->getObjectType() === 'share:password') {
 				return $this->parsePasswordRequest($notification, $room, $l);
 			}
-			return $this->parseCall($notification, $room, $l);
+			return $this->parseCall($notification, $room, $participant, $l);
 		}
 		if ($subject === 'reply' || $subject === 'mention' || $subject === 'mention_direct' || $subject === 'mention_group' || $subject === 'mention_team' || $subject === 'mention_all' || $subject === 'chat' || $subject === 'reaction' || $subject === 'reminder') {
 			if ($participant instanceof Participant
@@ -989,14 +989,27 @@ class Notifier implements INotifier {
 	}
 
 	/**
+	 * Resolves the conversation name for a notification, hiding it when the
+	 * conversation is classified or sensitive for the user
+	 */
+	protected function getNotificationRoomName(Room $room, ?Participant $participant, INotification $notification, IL10N $l): string {
+		if ($room->isClassified() || $participant?->getAttendee()->isSensitive() === true) {
+			return $l->t('Private conversation');
+		}
+
+		return $room->getDisplayName($notification->getUser());
+	}
+
+	/**
 	 * @param INotification $notification
 	 * @param Room $room
+	 * @param ?Participant $participant
 	 * @param IL10N $l
 	 * @return INotification
 	 * @throws AlreadyProcessedException
 	 * @throws UnknownNotificationException
 	 */
-	protected function parseInvitation(INotification $notification, Room $room, IL10N $l): INotification {
+	protected function parseInvitation(INotification $notification, Room $room, ?Participant $participant, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'room') {
 			throw new UnknownNotificationException('Unknown object type');
 		}
@@ -1009,7 +1022,7 @@ class Notifier implements INotifier {
 			throw new AlreadyProcessedException();
 		}
 
-		$roomName = $room->getDisplayName($notification->getUser());
+		$roomName = $this->getNotificationRoomName($room, $participant, $notification, $l);
 		if (\in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
 			$subject = $l->t('{user} invited you to a group conversation: {call}');
 			if ($this->participantService->hasActiveSessionsInCall($room)) {
@@ -1046,17 +1059,18 @@ class Notifier implements INotifier {
 	/**
 	 * @param INotification $notification
 	 * @param Room $room
+	 * @param ?Participant $participant
 	 * @param IL10N $l
 	 * @return INotification
 	 * @throws AlreadyProcessedException
 	 * @throws UnknownNotificationException
 	 */
-	protected function parseCall(INotification $notification, Room $room, IL10N $l): INotification {
+	protected function parseCall(INotification $notification, Room $room, ?Participant $participant, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'call') {
 			throw new UnknownNotificationException('Unknown object type');
 		}
 
-		$roomName = $room->getDisplayName($notification->getUser());
+		$roomName = $this->getNotificationRoomName($room, $participant, $notification, $l);
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			$parameters = $notification->getSubjectParameters();
 			$calleeId = $parameters['callee']; // TODO can be null on federated conversations, so needs to be changed once we have federated 1-1
