@@ -9,11 +9,31 @@
 		class="screenContainer"
 		@dblclick.capture="onDoubleClick">
 		<video
-			v-show="(localMediaModel && localMediaModel.attributes.localScreen) || (callParticipantModel && callParticipantModel.attributes.screen)"
+			v-show="isLocalScreen || isRemoteScreen"
 			ref="screen"
 			:disablePictureInPicture="!isBig ? 'true' : 'false'"
 			class="screen"
 			:class="screenClass" />
+		<NcEmptyContent
+			v-if="isLocalScreen && showScreenPlaceholder"
+			class="screen-placeholder"
+			:name="t('spreed', 'You are sharing a screen')"
+			:description="t('spreed', 'Local screen share is not displayed by default to prevent a mirroring effect')"
+			data-theme-dark>
+			<template #icon>
+				<IconMonitorScreenshot />
+			</template>
+			<template #action>
+				<div class="screen-placeholder__actions">
+					<NcButton variant="error" @click="stopLocalScreen">
+						{{ t('spreed', 'Stop screensharing') }}
+					</NcButton>
+					<NcButton variant="tertiary" @click="showScreenPlaceholder = false">
+						{{ t('spreed', 'Dismiss') }}
+					</NcButton>
+				</div>
+			</template>
+		</NcEmptyContent>
 		<VideoBottomBar
 			v-if="isBig"
 			:token="token"
@@ -32,6 +52,9 @@ import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import panzoom from 'panzoom'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import IconMonitorScreenshot from 'vue-material-design-icons/MonitorScreenshot.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
 import { useGuestNameStore } from '../../../stores/guestName.ts'
 import attachMediaStream from '../../../utils/attachmediastream.js'
@@ -45,6 +68,9 @@ export default {
 	name: 'ScreenShare',
 
 	components: {
+		IconMonitorScreenshot,
+		NcButton,
+		NcEmptyContent,
 		VideoBottomBar,
 	},
 
@@ -87,6 +113,11 @@ export default {
 		const instance = ref(null)
 		const instanceTransform = ref({ x: 0, y: 0, scale: 1 })
 		const instanceGrabbing = ref(false)
+
+		/* Flags and utilities to track, if we need to prevent mirroring effect */
+		const showScreenPlaceholder = ref(false)
+		const isLocalScreen = computed(() => props.localMediaModel && props.localMediaModel.attributes.localScreen)
+		const isRemoteScreen = computed(() => props.callParticipantModel && props.callParticipantModel.attributes.screen)
 
 		const screenClass = computed(() => {
 			if (!props.isBig) {
@@ -157,6 +188,10 @@ export default {
 			screen,
 			screenClass,
 			onDoubleClick,
+			// Mirror fix
+			showScreenPlaceholder,
+			isLocalScreen,
+			isRemoteScreen,
 		}
 	},
 
@@ -240,9 +275,23 @@ export default {
 			// able to hear it even if there is no view for it.
 			attachMediaStream(screen, this.$refs.screen)
 
+			// Modern browsers prevent streaming own tab and switching to it later.
+			// Guard is against 'window', 'monitor', undefined (unsupported in Safari/Firefox)
+			if (this.isLocalScreen) {
+				if (screen.getVideoTracks?.()[0]?.getSettings?.().displaySurface === 'browser') {
+					// Chromium only, if tab (not self) from current browser is shared - no mirroring
+					this.showScreenPlaceholder = false
+				} else {
+					this.showScreenPlaceholder = true
+				}
+			}
+
 			this.$refs.screen.muted = true
 		},
 
+		stopLocalScreen() {
+			this.localMediaModel.stopSharingScreen()
+		},
 	},
 
 }
@@ -274,6 +323,20 @@ export default {
 	}
 	&--grabbing {
 		cursor: grabbing;
+	}
+}
+
+.screen-placeholder {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	inset: 0;
+	color: var(--color-main-text);
+	background-color: rgba(var(--color-main-background-rgb), 0.95);
+
+	&__actions {
+		display: flex;
+		gap: var(--default-grid-baseline);
 	}
 }
 
