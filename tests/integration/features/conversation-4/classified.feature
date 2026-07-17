@@ -43,6 +43,26 @@ Feature: conversation-4/classified
     And user "participant1" sends message "Message 1" to room "classified" with 201
     And user "participant1" can not request summary for "classified" starting from "Message 1" with 400 (v1)
 
+  Scenario: Phone numbers can not be added to a classified conversation
+    # SIP dial-out is fully configured and allowed for the user here, so the
+    # rejection can only come from the conversation being classified. Without a
+    # phone attendee there is also nothing to dial out to later on.
+    Given group "group1" exists
+    And user "participant1" is member of group "group1"
+    And the following "spreed" app config is set
+      | sip_bridge_dialin_info   | +49-1234-567890  |
+      | sip_bridge_shared_secret | 1234567890abcdef |
+      | sip_bridge_groups        | ["group1"]       |
+      | sip_dialout              | yes              |
+    And user "participant1" creates room "classified" (v4)
+      | roomType | 2 |
+      | roomName | classified |
+      | preset   | classified |
+    Then user "participant1" adds phone "+491601231212" to room "classified" with 400 (v4)
+    And user "participant1" sees the following attendees in room "classified" with 200 (v4)
+      | actorType | actorId      |
+      | users     | participant1 |
+
   Scenario: A classified conversation can not be marked as insensitive again
     Given user "participant1" creates room "classified" (v4)
       | roomType | 2 |

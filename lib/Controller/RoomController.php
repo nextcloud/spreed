@@ -818,7 +818,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$password = '';
 		}
 
-		$invitationList = $this->invitationService->validateInvitations($participants, $user);
+		$isClassified = $preset === Classified::getIdentifier();
+
+		$invitationList = $this->invitationService->validateInvitations($participants, $user, isClassified: $isClassified);
 		if ($invitationList->hasInvalidInvitations() && !$invitationList->hasValidInvitations()) {
 			// FIXME add the list of failed invitations?
 			return new DataResponse(['error' => 'invite'], Http::STATUS_NOT_FOUND);
@@ -843,7 +845,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			}
 			$attributes |= RoomAttributes::VOICE_ROOM->value;
 		}
-		if ($preset === Classified::getIdentifier()) {
+		if ($isClassified) {
 			$attributes |= RoomAttributes::CLASSIFIED->value;
 		}
 
@@ -1439,10 +1441,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param string $newParticipant New participant
 	 * @param 'users'|'groups'|'circles'|'emails'|'federated_users'|'phones'|'teams' $source Source of the participant
-	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error: 'ban'|'cloud-id'|'federation'|'moderator'|'new-participant'|'outgoing'|'reach-remote'|'room-type'|'sip'|'source'|'trusted-servers'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error: 'ban'|'classified'|'cloud-id'|'federation'|'moderator'|'new-participant'|'outgoing'|'reach-remote'|'room-type'|'sip'|'source'|'trusted-servers'}, array{}>
 	 *
 	 * 200: Participant successfully added
-	 * 400: Adding participant is not possible, e.g. when the user is banned (check error attribute of response for detail key)
+	 * 400: Adding participant is not possible, e.g. when the user is banned or a phone number is added to a classified conversation (check error attribute of response for detail key)
 	 * 404: User, group or other target to invite was not found
 	 * 501: SIP dial-out is not configured
 	 */
@@ -1557,6 +1559,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 				'displayName' => $newUser->getDisplayId(),
 			];
 		} elseif ($source === 'phones') {
+			if ($this->room->isClassified()) {
+				return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
+			}
+
 			if (
 				!$addedBy instanceof IUser
 				|| !$this->talkConfig->isSIPConfigured()
