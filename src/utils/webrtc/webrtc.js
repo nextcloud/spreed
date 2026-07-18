@@ -708,8 +708,9 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 			peer.emit('extendedIceConnectionStateChange', 'disconnected-long')
 
 			if (!signaling.hasFeature('mcu')) {
-				// Disconnections are not handled with the MCU, only
-				// failures.
+				// ICE restarts are not performed with the MCU; if the
+				// connection stays disconnected a new connection is
+				// requested instead (see below).
 
 				// If the peer is still disconnected after 5 seconds we try
 				// ICE restart.
@@ -723,6 +724,42 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 				}
 			}
 		}, 5000)
+
+		if (signaling.hasFeature('mcu')) {
+			setTimeout(function() {
+				if (peer.pc.iceConnectionState !== 'disconnected') {
+					return
+				}
+
+				// A subscriber connection that stays disconnected is not
+				// expected to recover on its own, and some browsers may
+				// never report it as "failed" either, so after a grace
+				// period a new connection is explicitly requested, like
+				// in the "failed" case.
+				requestOfferFromMcuAndRetryUntilReceived(peer)
+			}, 10000)
+		}
+	}
+
+	/**
+	 * Requests a new offer for the given (subscriber) peer from the MCU and
+	 * keeps requesting it until a new offer is received (the retry interval
+	 * is cleared when the offer message arrives).
+	 *
+	 * @param {object} peer The peer connection to request a new offer for
+	 */
+	function requestOfferFromMcuAndRetryUntilReceived(peer) {
+		console.debug('Request offer again', peer.id, peer)
+
+		signaling.requestOffer(peer.id, 'video')
+
+		clearInterval(delayedConnectionToPeer[peer.id])
+
+		delayedConnectionToPeer[peer.id] = setInterval(function() {
+			console.debug('No offer received, request offer again', peer.id, peer)
+
+			signaling.requestOffer(peer.id, 'video')
+		}, 10000)
 	}
 
 	/**
@@ -758,17 +795,7 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 		} else {
 			// This handles ICE failures of a receiver peer; ICE failures of
 			// the sender peer are handled in the "iceFailed" event.
-			console.debug('Request offer again', peer.id, peer)
-
-			signaling.requestOffer(peer.id, 'video')
-
-			clearInterval(delayedConnectionToPeer[peer.id])
-
-			delayedConnectionToPeer[peer.id] = setInterval(function() {
-				console.debug('No offer received, request offer again', peer.id, peer)
-
-				signaling.requestOffer(peer.id, 'video')
-			}, 10000)
+			requestOfferFromMcuAndRetryUntilReceived(peer)
 		}
 	}
 
@@ -1174,6 +1201,26 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 				setHandlerForIceConnectionStateChange(peer)
 				setHandlerForConnectionStateChange(peer)
 				setHandlerForSignalingStateChange(peer)
+
+				if (signaling.hasFeature('mcu')) {
+					// ICE has no timeout while the connection is in
+					// "new" state, and "checking" may get stuck too in
+					// some browsers, so if a subscriber connection is
+					// not established in a reasonable time a new
+					// connection is explicitly requested, like in the
+					// "failed" case. If the new connection also gets
+					// stuck the timeout will be armed again when its
+					// peer is created.
+					setTimeout(function() {
+						if (peer.pc.iceConnectionState !== 'new' && peer.pc.iceConnectionState !== 'checking') {
+							return
+						}
+
+						console.debug('Subscriber connection not established after 30 seconds, requesting offer again', peer.id, peer)
+
+						requestOfferFromMcuAndRetryUntilReceived(peer)
+					}, 30000)
+				}
 			}
 
 			setHandlerForNegotiationNeeded(peer)
