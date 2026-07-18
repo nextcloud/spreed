@@ -417,15 +417,15 @@ Bots can also remove their previous reaction from a message. The same signature/
 
 🆕 Added in Talk 25.
 
-Bots can check which [features](constants.md#bot-features) an administrator enabled for them, without requiring administrator credentials. The same signature/verification method is applied. Since `GET` requests have no request body, the signature is computed over the random seed alone (`hash_hmac('sha256', $random, $secret)`); the conversation to look the bot up in is taken from the URL. Signing empty content also keeps the signature out of the value space of the `message` and `reaction` endpoints, which reject empty content before authenticating, so a captured features request cannot be replayed against them.
+Bots can check which [features](constants.md#bot-features) an administrator enabled for them, without requiring administrator credentials. The same signature/verification method is applied. The conversation token is sent in the request body and the signature is computed over the random seed and that token (`hash_hmac('sha256', $random . $token, $secret)`); the token identifies the conversation to look the bot up in. Keeping the token in the signed body binds the request to the conversation, so the signature headers on their own cannot be replayed.
 
 !!! note
 
     A bot that is set up in a conversation can authenticate against this endpoint even when all of its features were disabled (`features` = `0`), as the feature flags only control which actions and invocations are enabled. To fully cut off a bot, change its state to disabled or remove it from the conversation.
 
 * Required capability: `bot-features-api`
-* Method: `GET`
-* Endpoint: `/bot/{token}/features`
+* Method: `POST`
+* Endpoint: `/bot/ask-features`
 * Header:
 
 | Name                             | Description                                                     |
@@ -433,6 +433,12 @@ Bots can check which [features](constants.md#bot-features) an administrator enab
 | `X-Nextcloud-Talk-Bot-Random`    | The random value used when signing the request                  |
 | `X-Nextcloud-Talk-Bot-Signature` | The signature to validate the request comes from an enabled bot |
 | `OCS-APIRequest`                 | Needs to be set to `true` to access the ocs/vX.php endpoint     |
+
+* Data:
+
+| field   | type   | Description                                          |
+|---------|--------|------------------------------------------------------|
+| `token` | string | Token of the conversation the bot is set up in       |
 
 * Response:
     - Status code:
@@ -471,4 +477,4 @@ When installing the bot specify `nextcloudapp://$APPID` as the bot URL, together
 - Due to a bug the `object.name` was set to an empty string for messages with attachments. This was fixed to be `'message'` as for normal messages without any attachments.
 
 ### Nextcloud 35 / Talk 25
-- Added `GET /ocs/v2.php/apps/spreed/bot/{token}/features` endpoint which allows bots to fetch their own enabled features using their shared secret (required capability: `bot-features-api`)
+- Added `POST /ocs/v2.php/apps/spreed/bot/ask-features` endpoint which allows bots to fetch their own enabled features using their shared secret (required capability: `bot-features-api`)

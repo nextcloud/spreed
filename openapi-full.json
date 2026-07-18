@@ -31179,11 +31179,11 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/{token}/features": {
-            "get": {
+        "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/ask-features": {
+            "post": {
                 "operationId": "bot-get-bot-features",
                 "summary": "Get the features that are enabled for the requesting bot",
-                "description": "Allows bots to check which features an administrator has enabled for them, without requiring administrator credentials. The request is signed with the shared bot secret like all other bot requests. As GET requests have no body, the signature is computed over the random seed alone (the conversation to look the bot up in is taken from the URL). This also keeps the signature out of the value space of the message and reaction endpoints, which reject empty content before authenticating.\nRequired capability: `bot-features-api`",
+                "description": "Allows bots to check which features an administrator has enabled for them, without requiring administrator credentials. The request is signed with the shared bot secret like all other bot requests: the signature is computed over the random seed and the conversation token sent in the request body, which is used to look the bot up. Keeping the token in the signed body binds the request to the conversation, so the signature headers on their own cannot be replayed.\nRequired capability: `bot-features-api`",
                 "tags": [
                     "bot"
                 ],
@@ -31196,6 +31196,25 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "token"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string",
+                                        "description": "Conversation token"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
                     {
                         "name": "apiVersion",
@@ -31210,19 +31229,9 @@
                         }
                     },
                     {
-                        "name": "token",
-                        "in": "path",
-                        "description": "Conversation token",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "pattern": "^[a-z0-9]{4,30}$"
-                        }
-                    },
-                    {
                         "name": "x-nextcloud-talk-bot-random",
                         "in": "header",
-                        "description": "Random seed (at least 32 bytes) used to generate the SHA256-HMAC request signature",
+                        "description": "Random seed (at least 32 bytes) used together with the conversation token to generate the SHA256-HMAC request signature",
                         "schema": {
                             "type": "string"
                         }
@@ -31230,7 +31239,7 @@
                     {
                         "name": "x-nextcloud-talk-bot-signature",
                         "in": "header",
-                        "description": "SHA256-HMAC signature over the random seed, signed with the shared bot secret, to verify authenticity",
+                        "description": "SHA256-HMAC signature over the concatenation of the random seed and the conversation token, signed with the shared bot secret, to verify authenticity",
                         "schema": {
                             "type": "string"
                         }

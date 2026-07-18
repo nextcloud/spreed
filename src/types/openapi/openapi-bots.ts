@@ -42,21 +42,21 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/{token}/features": {
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/ask-features": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
+        get?: never;
+        put?: never;
         /**
          * Get the features that are enabled for the requesting bot
-         * @description Allows bots to check which features an administrator has enabled for them, without requiring administrator credentials. The request is signed with the shared bot secret like all other bot requests. As GET requests have no body, the signature is computed over the random seed alone (the conversation to look the bot up in is taken from the URL). This also keeps the signature out of the value space of the message and reaction endpoints, which reject empty content before authenticating.
+         * @description Allows bots to check which features an administrator has enabled for them, without requiring administrator credentials. The request is signed with the shared bot secret like all other bot requests: the signature is computed over the random seed and the conversation token sent in the request body, which is used to look the bot up. Keeping the token in the signed body binds the request to the conversation, so the signature headers on their own cannot be replayed.
          *     Required capability: `bot-features-api`
          */
-        get: operations["bot-get-bot-features"];
-        put?: never;
-        post?: never;
+        post: operations["bot-get-bot-features"];
         delete?: never;
         options?: never;
         head?: never;
@@ -607,21 +607,26 @@ export interface operations {
         parameters: {
             query?: never;
             header: {
-                /** @description Random seed (at least 32 bytes) used to generate the SHA256-HMAC request signature */
+                /** @description Random seed (at least 32 bytes) used together with the conversation token to generate the SHA256-HMAC request signature */
                 "x-nextcloud-talk-bot-random"?: string;
-                /** @description SHA256-HMAC signature over the random seed, signed with the shared bot secret, to verify authenticity */
+                /** @description SHA256-HMAC signature over the concatenation of the random seed and the conversation token, signed with the shared bot secret, to verify authenticity */
                 "x-nextcloud-talk-bot-signature"?: string;
                 /** @description Required to be true for the API request to pass */
                 "OCS-APIRequest": boolean;
             };
             path: {
                 apiVersion: "v1";
-                /** @description Conversation token */
-                token: string;
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Conversation token */
+                    token: string;
+                };
+            };
+        };
         responses: {
             /** @description Bot features returned */
             200: {
