@@ -471,4 +471,4 @@ When installing the bot specify `nextcloudapp://$APPID` as the bot URL, together
 - Due to a bug the `object.name` was set to an empty string for messages with attachments. This was fixed to be `'message'` as for normal messages without any attachments.
 
 ### Nextcloud 35 / Talk 25
-- Added `GET /bot/{token}/features` endpoint which allows bots to fetch their own enabled features using their shared secret (required capability: `bot-features-api`)
+- Added `GET /ocs/v2.php/apps/spreed/bot/{token}/features` endpoint which allows bots to fetch their own enabled features using their shared secret (required capability: `bot-features-api`)

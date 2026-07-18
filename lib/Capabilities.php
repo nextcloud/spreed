@@ -171,6 +171,7 @@ class Capabilities implements IPublicCapability {
 		'conversation-presets',
 		'conversation-tags',
 		'recording-chunked-upload',
+		'bot-features-api',
 	];
 
 	public const LOCAL_CONFIGS = [

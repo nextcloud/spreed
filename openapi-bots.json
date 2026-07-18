@@ -1232,7 +1232,7 @@
             "get": {
                 "operationId": "bot-get-bot-features",
                 "summary": "Get the features that are enabled for the requesting bot",
-                "description": "Allows bots to check which features an administrator has enabled for them, without requiring administrator credentials. The request is signed with the shared bot secret like all other bot requests. As GET requests have no body, the signature is computed over the random seed alone (the conversation to look the bot up in is taken from the URL). This also keeps the signature out of the value space of the message and reaction endpoints, which reject empty content before authenticating.",
+                "description": "Allows bots to check which features an administrator has enabled for them, without requiring administrator credentials. The request is signed with the shared bot secret like all other bot requests. As GET requests have no body, the signature is computed over the random seed alone (the conversation to look the bot up in is taken from the URL). This also keeps the signature out of the value space of the message and reaction endpoints, which reject empty content before authenticating.\nRequired capability: `bot-features-api`",
                 "tags": [
                     "bot"
                 ],
