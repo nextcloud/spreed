@@ -354,6 +354,8 @@ class BotController extends AEnvironmentAwareOCSController {
 	 * This also keeps the signature out of the value space of the message and
 	 * reaction endpoints, which reject empty content before authenticating.
 	 *
+	 * Required capability: `bot-features-api`
+	 *
 	 * @param string $token Conversation token
 	 * @return DataResponse<Http::STATUS_OK, TalkBotFeatures, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED, null, array{}>
 	 *
