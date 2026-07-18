@@ -8,14 +8,15 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Listener;
 
-use OCA\Talk\Config;
 use OCA\Talk\Events\BeforeParticipantModifiedEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Listener\RestrictStartingCalls;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -24,7 +25,8 @@ use Test\TestCase;
 #[Group('DB')]
 class RestrictStartingCallsTest extends TestCase {
 	protected IConfig&MockObject $serverConfig;
-	protected Config&MockObject $talkConfig;
+	protected IAppConfig&MockObject $appConfig;
+	protected IGroupManager&MockObject $groupManager;
 	protected ParticipantService&MockObject $participantService;
 	protected ?RestrictStartingCalls $listener = null;
 
@@ -32,9 +34,10 @@ class RestrictStartingCallsTest extends TestCase {
 		parent::setUp();
 
 		$this->serverConfig = $this->createMock(IConfig::class);
-		$this->talkConfig = $this->createMock(Config::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
-		$this->listener = new RestrictStartingCalls($this->serverConfig, $this->talkConfig, $this->participantService);
+		$this->listener = new RestrictStartingCalls($this->serverConfig, $this->appConfig, $this->groupManager, $this->participantService);
 	}
 
 	public static function dataCheckStartCallPermissions(): array {
@@ -58,7 +61,7 @@ class RestrictStartingCallsTest extends TestCase {
 
 		$participant = $this->createMock(Participant::class);
 		$participant->method('canStartCall')
-			->with($this->serverConfig, $this->talkConfig)
+			->with($this->serverConfig, $this->appConfig, $this->groupManager)
 			->willReturn($canStart);
 
 		$this->participantService->method('hasActiveSessionsInCall')

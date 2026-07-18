@@ -286,50 +286,6 @@ class Config {
 	}
 
 	/**
-	 * @return string[]
-	 */
-	public function getAllowedStartCallGroupIds(): array {
-		$groups = $this->config->getAppValue('spreed', 'start_calls_groups', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
-	}
-
-	/**
-	 * Unlike {@see self::isNotAllowedToCreateConversations()} this check works
-	 * on the participant level rather than the user level, because the room
-	 * context is required: for federated conversations the host server decides
-	 * who can start a call, and non-user actors (guests, email guests and
-	 * federated users) can never be a member of a local group. Config is used
-	 * as the location for this check as it owns the user and group managers,
-	 * which {@see Participant} does not.
-	 */
-	public function isNotAllowedToStartCalls(Participant $participant): bool {
-		$allowedGroups = $this->getAllowedStartCallGroupIds();
-		if (empty($allowedGroups)) {
-			return false;
-		}
-
-		if ($participant->getRoom()->isFederatedConversation()) {
-			// The host server of the conversation decides who can start a call
-			return false;
-		}
-
-		$attendee = $participant->getAttendee();
-		if ($attendee->getActorType() !== Attendee::ACTOR_USERS) {
-			// Guests, email guests and federated users can never be a member of a local group
-			return true;
-		}
-
-		$user = $this->userManager->get($attendee->getActorId());
-		if (!$user instanceof IUser) {
-			return true;
-		}
-
-		$userGroups = $this->groupManager->getUserGroupIds($user);
-		return empty(array_intersect($allowedGroups, $userGroups));
-	}
-
-	/**
 	 * @return int<0, 511>
 	 * @psalm-return int-mask-of<Attendee::PERMISSIONS_*>
 	 */

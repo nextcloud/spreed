@@ -10,9 +10,6 @@ namespace OCA\Talk\Tests\php;
 
 use OCA\Talk\Config;
 use OCA\Talk\Events\BeforeTurnServersGetEvent;
-use OCA\Talk\Model\Attendee;
-use OCA\Talk\Participant;
-use OCA\Talk\Room;
 use OCA\Talk\Tests\php\Mocks\GetTurnServerListener;
 use OCA\Talk\Vendor\Firebase\JWT\JWT;
 use OCA\Talk\Vendor\Firebase\JWT\Key;
@@ -415,49 +412,4 @@ class ConfigTest extends TestCase {
 		$this->assertEquals('https://domain.invalid/nextcloud', $decoded->iss);
 	}
 
-	public static function dataIsNotAllowedToStartCalls(): array {
-		return [
-			'no restriction' => ['[]', Attendee::ACTOR_USERS, ['group2'], false, false],
-			'invalid json' => ['{invalid', Attendee::ACTOR_USERS, ['group2'], false, false],
-			'member of allowed group' => ['["group1"]', Attendee::ACTOR_USERS, ['group1', 'group2'], false, false],
-			'not a member' => ['["group1"]', Attendee::ACTOR_USERS, ['group2'], false, true],
-			'guests are blocked' => ['["group1"]', Attendee::ACTOR_GUESTS, [], false, true],
-			'email guests are blocked' => ['["group1"]', Attendee::ACTOR_EMAILS, [], false, true],
-			'federated users are blocked' => ['["group1"]', Attendee::ACTOR_FEDERATED_USERS, [], false, true],
-			'host decides for proxy conversations' => ['["group1"]', Attendee::ACTOR_USERS, ['group2'], true, false],
-		];
-	}
-
-	#[DataProvider('dataIsNotAllowedToStartCalls')]
-	public function testIsNotAllowedToStartCalls(string $groupConfig, string $actorType, array $userGroups, bool $isFederatedConversation, bool $expected): void {
-		$this->config
-			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'start_calls_groups', '[]')
-			->willReturn($groupConfig);
-
-		/** @var IUser&MockObject $user */
-		$user = $this->createMock(IUser::class);
-		$this->userManager
-			->method('get')
-			->with('user1')
-			->willReturn($user);
-		$this->groupManager
-			->method('getUserGroupIds')
-			->with($user)
-			->willReturn($userGroups);
-
-		$room = $this->createMock(Room::class);
-		$room->method('isFederatedConversation')
-			->willReturn($isFederatedConversation);
-
-		$attendee = new Attendee();
-		$attendee->setActorType($actorType);
-		$attendee->setActorId('user1');
-
-		$participant = new Participant($room, $attendee, null);
-
-		$helper = $this->getConfig();
-		$this->assertSame($expected, $helper->isNotAllowedToStartCalls($participant));
-	}
 }
