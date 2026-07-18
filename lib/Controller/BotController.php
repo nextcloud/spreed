@@ -348,11 +348,11 @@ class BotController extends AEnvironmentAwareOCSController {
 	 *
 	 * Allows bots to check which features an administrator has enabled for
 	 * them, without requiring administrator credentials. The request is
-	 * signed with the shared bot secret like all other bot requests. As GET
-	 * requests have no body, the signature is computed over the random seed
-	 * alone (the conversation to look the bot up in is taken from the URL).
-	 * This also keeps the signature out of the value space of the message and
-	 * reaction endpoints, which reject empty content before authenticating.
+	 * signed with the shared bot secret like all other bot requests: the
+	 * signature is computed over the random seed and the conversation token
+	 * sent in the request body, which is used to look the bot up. Keeping the
+	 * token in the signed body binds the request to the conversation, so the
+	 * signature headers on their own cannot be replayed.
 	 *
 	 * Required capability: `bot-features-api`
 	 *
@@ -366,14 +366,13 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used to generate the SHA256-HMAC request signature', indirect: true)]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the random seed, signed with the shared bot secret, to verify authenticity', indirect: true)]
-	#[ApiRoute(verb: 'GET', url: '/api/{apiVersion}/bot/{token}/features', requirements: [
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the conversation token to generate the SHA256-HMAC request signature', indirect: true)]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the conversation token, signed with the shared bot secret, to verify authenticity', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/bot/ask-features', requirements: [
 		'apiVersion' => '(v1)',
-		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function getBotFeatures(string $token): DataResponse {
-		$bot = $this->getBotOrErrorResponse($token, '', Bot::FEATURE_NONE);
+		$bot = $this->getBotOrErrorResponse($token, $token, Bot::FEATURE_NONE);
 		if ($bot instanceof DataResponse) {
 			return $bot;
 		}

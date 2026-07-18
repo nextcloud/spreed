@@ -5055,11 +5055,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function botRetrievesFeatures(string $botName, string $identifier, string $secret, int $status, string $apiVersion, ?TableNode $body = null): void {
 		$currentUser = $this->setCurrentUser('');
 
+		$token = self::$identifierToToken[$identifier];
 		$this->sendBotSignedRequest(
-			'GET',
-			'/apps/spreed/api/' . $apiVersion . '/bot/' . self::$identifierToToken[$identifier] . '/features',
+			'POST',
+			'/apps/spreed/api/' . $apiVersion . '/bot/ask-features',
 			$secret,
-			''
+			$token,
+			['token' => $token]
 		);
 		$this->assertStatusCode($this->response, $status);
 
