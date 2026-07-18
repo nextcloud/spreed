@@ -1220,6 +1220,7 @@ OC.L10N.register(
     "Users" : "ユーザー",
     "Groups" : "グループ",
     "Teams" : "チーム",
+    "Federated users" : "フェデレーションユーザー",
     "Other sources" : "他のソース",
     "Open conversations" : "オープンな会話",
     "No search results" : "検索結果なし",
