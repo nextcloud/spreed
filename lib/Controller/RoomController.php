@@ -823,10 +823,6 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'invite'], Http::STATUS_NOT_FOUND);
 		}
 
-		if (!empty($invitationList->getEmails())) {
-			$roomType = Room::TYPE_PUBLIC;
-		}
-
 		if (in_array($objectType, [
 			Room::OBJECT_TYPE_PHONE_PERSIST,
 			Room::OBJECT_TYPE_PHONE_TEMPORARY,
