@@ -25,13 +25,9 @@ import CancelableRequest from './CancelableRequest.ts'
 import Encryption from './e2ee/encryption.js'
 import { convertToUnix } from './formattedTime.ts'
 import { messagePleaseTryToReload } from './talkDesktopUtils.ts'
+import { DEFAULT_MAX_STREAM_BITS } from './webrtc/simplewebrtc/simulcastBitrates.ts'
 
 const actorStore = useActorStore(pinia)
-
-/**
- * Default maximum bitrate (in bits per second) assumed for a published stream
- */
-const DEFAULT_MAX_STREAM_BITS = 1048576
 
 const Signaling = {
 	Base: {},

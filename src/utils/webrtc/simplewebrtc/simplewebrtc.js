@@ -6,31 +6,8 @@
 import mockconsole from 'mockconsole'
 import webrtcSupport from 'webrtcsupport'
 import WildEmitter from 'wildemitter'
+import { getSimulcastMaxBitrates } from './simulcastBitrates.ts'
 import WebRTC from './webrtc.js'
-
-/**
- * Split totalBps into integer low/medium/high parts with ratio 1:4:16 (total 21 parts).
- * Returned values are integers. Any remainder from integer division is omitted.
- *
- * @param {number} totalBps - Total bandwidth in bps (non-negative number).
- * @returns {{ low: number, medium: number, high: number }}
- */
-function splitBandwidthIntegersOmitRemainder(totalBps = 1048576) {
-	if (typeof totalBps !== 'number' || totalBps < 0) {
-		totalBps = 1048576
-	}
-
-	// Divide into 21 parts and distribute them in 2^2 way across the quality levels
-	// Additionally we divide and multiple with 100 but round down in between
-	// to create some safety bits
-	const partValue = Math.floor(totalBps / 21 / 100) * 100
-
-	return {
-		low: partValue,
-		medium: partValue * 4,
-		high: partValue * 16,
-	}
-}
 
 /**
  * @param {object} opts the options object.
@@ -43,7 +20,7 @@ export default function SimpleWebRTC(opts) {
 		debug: false,
 		enableDataChannels: true,
 		enableSimulcast: false,
-		maxBitrates: splitBandwidthIntegersOmitRemainder(opts.connection?.maxStreamBits),
+		maxBitrates: getSimulcastMaxBitrates(opts.connection?.maxStreamBits),
 		autoRequestMedia: false,
 		receiveMedia: {
 			offerToReceiveAudio: 1,
