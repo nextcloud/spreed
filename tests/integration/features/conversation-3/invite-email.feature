@@ -23,6 +23,18 @@ Feature: conversation-3/invite-email
     When user "participant1" resends invite for room "room" with 404 (v4)
       | attendeeId | not-found@example.tld |
 
+  Scenario: Creating a private conversation with an email invitation keeps the submitted room type
+    When user "participant1" creates room "room" (v4)
+      | roomType                | 2                |
+      | roomName                | room             |
+      | participants[emails][0] | test@example.tld |
+    Then user "participant1" gets room "room" with 200 (v4)
+      | type | 2 |
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | participantType | actorType | actorId                  | invitedActorId    |
+      | 4               | emails    | SHA256(test@example.tld) | test@example.tld  |
+      | 1               | users     | participant1             | ABSENT            |
+
   Scenario: Email guest joins a private conversation through their invite link
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
