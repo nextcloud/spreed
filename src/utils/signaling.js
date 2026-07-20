@@ -28,6 +28,11 @@ import { messagePleaseTryToReload } from './talkDesktopUtils.ts'
 
 const actorStore = useActorStore(pinia)
 
+/**
+ * Default maximum bitrate (in bits per second) assumed for a published stream
+ */
+const DEFAULT_MAX_STREAM_BITS = 1048576
+
 const Signaling = {
 	Base: {},
 	Internal: {},
@@ -71,7 +76,7 @@ function Base(settings) {
 	this.signalingConnectionTimeout = null
 	this.signalingConnectionWarning = null
 	this.signalingConnectionError = null
-	this.maxStreamBits = 1048576
+	this.maxStreamBits = DEFAULT_MAX_STREAM_BITS
 }
 
 Signaling.Base = Base
@@ -1299,10 +1304,13 @@ Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 
 	this._rejoinRoomAfterInvalidSession = null
 
-	// Apply room-specific max bitrate
+	// Apply the room-specific max bitrate provided in server response
+	// Falls back to the default value when a room has no configured limit
 	const totalBps = data.room?.bandwidth?.maxstreambitrate
-	if (totalBps && typeof totalBps === 'number' && totalBps > 0) {
+	if (typeof totalBps === 'number' && totalBps > 0) {
 		this.maxStreamBits = totalBps
+	} else {
+		this.maxStreamBits = DEFAULT_MAX_STREAM_BITS
 	}
 
 	this.signalingRoomJoined = token
