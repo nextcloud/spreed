@@ -337,9 +337,9 @@ export default {
 	computed: {
 		stripeButtonTitle() {
 			if (this.stripeOpen) {
-				return t('spreed', 'Collapse stripe')
+				return t('spreed', 'Collapse participant bar')
 			} else {
-				return t('spreed', 'Expand stripe')
+				return t('spreed', 'Expand participant bar')
 			}
 		},
 
