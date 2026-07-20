@@ -28,6 +28,11 @@
   "browserslist": [
     "extends @nextcloud/browserslist-config"
   ],
+  "overrides": {
+    "openapi-typescript": {
+      "typescript": "$typescript"
+    }
+  },
   "dependencies": {
     "@matrix-org/olm": "^3.2.15",
     "@mediapipe/tasks-vision": "^0.10.35",
