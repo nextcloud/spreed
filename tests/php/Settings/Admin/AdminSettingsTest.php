@@ -10,11 +10,13 @@ namespace OCA\Talk\Tests\php\Settings\Admin;
 
 use OCA\Talk\Config;
 use OCA\Talk\MatterbridgeManager;
+use OCA\Talk\Room;
 use OCA\Talk\Settings\Admin\AdminSettings;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUserSession;
@@ -131,6 +133,49 @@ class AdminSettingsTest extends TestCase {
 		$this->assertSame('settings/admin-settings', $form->getTemplateName());
 		$this->assertSame('', $form->getRenderAs());
 		$this->assertCount(0, $form->getParams());
+	}
+
+	public function testInitAllowedGroups(): void {
+		$this->serverConfig->expects($this->once())
+			->method('getAppValue')
+			->with('spreed', 'start_calls', (string)Room::START_CALL_EVERYONE)
+			->willReturn((string)Room::START_CALL_EVERYONE);
+		$this->appConfig->expects($this->once())
+			->method('getAppValueArray')
+			->with('start_calls_groups')
+			->willReturn(['group1']);
+		$this->talkConfig->expects($this->once())
+			->method('getAllowedConversationsGroupIds')
+			->willReturn([]);
+		$this->talkConfig->expects($this->once())
+			->method('getAllowedTalkGroupIds')
+			->willReturn([]);
+
+		$group = $this->createMock(IGroup::class);
+		$group->method('getGID')->willReturn('group1');
+		$group->method('getDisplayName')->willReturn('Group 1');
+		$this->groupManager->expects($this->once())
+			->method('get')
+			->with('group1')
+			->willReturn($group);
+
+		$i = 0;
+		$expectedCalls = [
+			['start_calls', Room::START_CALL_EVERYONE],
+			['start_calls_groups', [['id' => 'group1', 'displayname' => 'Group 1']]],
+			['start_conversations', []],
+			['allowed_groups', []],
+		];
+		$this->initialState->expects($this->exactly(4))
+			->method('provideInitialState')
+			->willReturnCallback(function () use ($expectedCalls, &$i): void {
+				$this->assertArrayHasKey($i, $expectedCalls);
+				$this->assertSame($expectedCalls[$i], func_get_args());
+				$i++;
+			});
+
+		$admin = $this->getAdminSettings();
+		self::invokePrivate($admin, 'initAllowedGroups');
 	}
 
 	public function testInitStunServers(): void {

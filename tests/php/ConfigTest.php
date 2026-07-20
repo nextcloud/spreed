@@ -411,4 +411,5 @@ class ConfigTest extends TestCase {
 		$this->assertEquals($now, $decoded->iat);
 		$this->assertEquals('https://domain.invalid/nextcloud', $decoded->iss);
 	}
+
 }

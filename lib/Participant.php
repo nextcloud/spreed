@@ -10,7 +10,9 @@ namespace OCA\Talk;
 
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\Server;
 
 class Participant {
@@ -86,7 +88,7 @@ class Participant {
 		return \in_array($participantType, [self::OWNER, self::MODERATOR, self::GUEST_MODERATOR], true);
 	}
 
-	public function canStartCall(IConfig $config): bool {
+	public function canStartCall(IConfig $config, IAppConfig $appConfig, IGroupManager $groupManager): bool {
 		if ($this->room->getType() === Room::TYPE_NOTE_TO_SELF) {
 			return false;
 		}
@@ -101,6 +103,10 @@ class Participant {
 			return false;
 		}
 
+		if (!$this->isAllowedToStartCallByGroup($appConfig, $groupManager)) {
+			return false;
+		}
+
 		if ($defaultStartCall === Room::START_CALL_EVERYONE) {
 			return true;
 		}
@@ -111,6 +117,31 @@ class Participant {
 
 		if ($defaultStartCall === Room::START_CALL_MODERATORS && $this->hasModeratorPermissions()) {
 			return true;
+		}
+
+		return false;
+	}
+
+	protected function isAllowedToStartCallByGroup(IAppConfig $appConfig, IGroupManager $groupManager): bool {
+		$allowedGroups = $appConfig->getAppValueArray('start_calls_groups');
+		if (empty($allowedGroups)) {
+			return true;
+		}
+
+		if ($this->room->isFederatedConversation()) {
+			// The host server of the conversation decides who can start a call
+			return true;
+		}
+
+		if ($this->attendee->getActorType() !== Attendee::ACTOR_USERS) {
+			// Guests, email guests and federated users can never be a member of a local group
+			return false;
+		}
+
+		foreach ($allowedGroups as $groupId) {
+			if ($groupManager->isInGroup($this->attendee->getActorId(), $groupId)) {
+				return true;
+			}
 		}
 
 		return false;

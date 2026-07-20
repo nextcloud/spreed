@@ -25,6 +25,7 @@ use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -45,6 +46,7 @@ class RoomFormatter {
 		private readonly ChatManager $chatManager,
 		private readonly MessageParser $messageParser,
 		private readonly IConfig $serverConfig,
+		private readonly IGroupManager $groupManager,
 		private readonly ITimeFactory $timeFactory,
 		private readonly IAppManager $appManager,
 		private readonly IManager $userStatusManager,
@@ -387,7 +389,7 @@ class RoomFormatter {
 			return $roomData;
 		}
 
-		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->serverConfig)
+		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->serverConfig, $this->appConfig, $this->groupManager)
 			|| ($room->getType() === Room::TYPE_PUBLIC
 				&& $room->getObjectType() === Room::OBJECT_TYPE_VIDEO_VERIFICATION);
 
