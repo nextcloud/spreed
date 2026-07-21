@@ -141,7 +141,7 @@ class RecordingService {
 		$this->appConfig->deleteAppValue(self::APPCONFIG_PREFIX . $room->getToken());
 		try {
 			$participant = $this->participantService->getParticipant($room, $owner);
-		} catch (ParticipantNotFoundException $e) {
+		} catch (ParticipantNotFoundException) {
 			throw new InvalidArgumentException('owner_participant');
 		}
 
