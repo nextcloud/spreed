@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Minimal config for core Nextcloud types (see generate-core-types.sh).
+# CLI uses explicit input/output paths provided by script instead of redocly.yaml at root.
+rules:
+    struct: off
