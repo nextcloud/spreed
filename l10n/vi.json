@@ -605,8 +605,6 @@
     "Reload" : "Tải lại",
     "{nickName} raised their hand." : "{nickName} giơ tay.",
     "A participant raised their hand." : "Một người tham gia giơ tay.",
-    "Collapse stripe" : "Thu gọi sọc",
-    "Expand stripe" : "Mở rộng sọc",
     "Previous page of videos" : "Trang trước của video",
     "Next page of videos" : "Trang tiếp theo của video",
     "Connecting …" : "Đang kết nối …",
@@ -948,6 +946,8 @@
     "Tasks" : "Nhiệm vụ",
     "Notes" : "Ghi chú",
     "Talk to %s" : "Trò chuyện với %s",
+    "Collapse stripe" : "Thu gọi sọc",
+    "Expand stripe" : "Mở rộng sọc",
     "Your privacy setting has been saved" : "Các thiết lập quyền riêng tư của bạn đã được lưu",
     "Failed to save sounds setting" : "Không thể lưu cài đặt âm thanh",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Bạn đã tham gia cuộc trò chuyện trong một cửa sổ hoặc thiết bị khác. Điều này hiện không được vWorkspace Talk hỗ trợ nên phiên này đã bị đóng."
