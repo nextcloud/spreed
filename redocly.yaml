@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Config for Nextcloud Talk API types (ResponseDefinitions -> OpenAPI declaration)
+# apis uses explicit output paths provided per JSON input source
+
 apis:
     openapi@v1:
         root: ./openapi.json
