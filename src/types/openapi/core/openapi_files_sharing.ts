@@ -380,6 +380,8 @@ export type components = {
                     };
                 };
                 sharee: {
+                    /** Format: int64 */
+                    minSearchStringLength: number;
                     query_lookup_default: boolean;
                     always_show_unique: boolean;
                 };
@@ -444,11 +446,12 @@ export type components = {
             permissions: number | null;
             remote: string;
             remote_id: string;
-            share_token: string;
+            refresh_token: string;
             /** Format: int64 */
             share_type: number;
             type: string | null;
             user: string;
+            item_size: (number) | null;
         };
         Share: {
             attributes: string | null;
@@ -518,7 +521,7 @@ export type components = {
             token: string | null;
             uid_file_owner: string;
             uid_owner: string;
-            url?: string;
+            url?: string | null;
         };
         ShareInfo: {
             /** Format: int64 */
