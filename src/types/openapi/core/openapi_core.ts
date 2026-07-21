@@ -82,10 +82,7 @@ export type paths = {
             path?: never;
             cookie?: never;
         };
-        /**
-         * Get app password with one-time password
-         * @description This endpoint requires password confirmation
-         */
+        /** Get app password with one-time password */
         get: operations["app_password-get-app-password-with-one-time-password"];
         put?: never;
         post?: never;
@@ -1221,6 +1218,7 @@ export type components = {
             allowCleanup: boolean;
             includeWatermark: boolean;
             userFacingErrorMessage: string | null;
+            preferStreaming: boolean;
         };
         TaskProcessingTaskType: {
             name: string;
@@ -1668,7 +1666,7 @@ export interface operations {
                 itemType?: string | null;
                 /** @description ID of the items to search for */
                 itemId?: string | null;
-                /** @description can be piped, top prio first, e.g.: "commenters|share-recipients" */
+                /** @description can be piped, top priority first, e.g.: "commenters|share-recipients" */
                 sorter?: string | null;
                 /** @description Types of shares to search for */
                 "shareTypes[]"?: number[];
@@ -3112,6 +3110,11 @@ export interface operations {
                      * @default true
                      */
                     includeWatermark?: boolean;
+                    /**
+                     * @description Whether to prefer getting a progressive output from the provider or not
+                     * @default false
+                     */
+                    preferStreaming?: boolean;
                 };
             };
         };

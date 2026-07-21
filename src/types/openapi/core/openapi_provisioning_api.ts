@@ -186,7 +186,12 @@ export type paths = {
         delete: operations["users-delete-user"];
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Update multiple user account fields atomically. All submitted fields are validated first; if any fail, no changes are applied.
+         * @description Unlike editUser (which updates one field at a time via key/value), this method accepts named fields and applies them all in a single request.
+         *     This endpoint requires password confirmation
+         */
+        patch: operations["users-edit-user-multi-field"];
         trace?: never;
     };
     "/ocs/v2.php/cloud/user": {
@@ -556,6 +561,10 @@ export type components = {
             website: string;
             websiteScope?: components["schemas"]["UserDetailsScope"];
         };
+        UserDetailsGroupDisplayname: {
+            id: string;
+            displayname: string;
+        };
         UserDetailsQuota: {
             free?: number;
             quota?: number | string;
@@ -788,6 +797,7 @@ export interface operations {
                                         id: string;
                                     };
                                 };
+                                groups: components["schemas"]["UserDetailsGroupDisplayname"][];
                             };
                         };
                     };
@@ -1046,6 +1056,7 @@ export interface operations {
                                         id: string;
                                     };
                                 };
+                                groups: components["schemas"]["UserDetailsGroupDisplayname"][];
                             };
                         };
                     };
@@ -1329,6 +1340,114 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "users-edit-user-multi-field": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                /** @description The user to update */
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description New display name (null = no change)
+                     * @default null
+                     */
+                    displayName?: string | null;
+                    /**
+                     * @description New password (null = no change)
+                     * @default null
+                     */
+                    password?: string | null;
+                    /**
+                     * @description New primary email (null = no change, '' = clear)
+                     * @default null
+                     */
+                    email?: string | null;
+                    /**
+                     * @description New quota e.g. "5 GB" (null = no change)
+                     * @default null
+                     */
+                    quota?: string | null;
+                    /**
+                     * @description Language code e.g. "de" (null = no change)
+                     * @default null
+                     */
+                    language?: string | null;
+                    /**
+                     * @description Manager user ID (null = no change, '' = clear)
+                     * @default null
+                     */
+                    manager?: string | null;
+                    /**
+                     * @description Group IDs to assign (null = no change, [] = remove all)
+                     * @default null
+                     */
+                    groups?: string[] | null;
+                    /**
+                     * @description Subadmin group IDs (null = no change, [] = remove all)
+                     * @default null
+                     */
+                    subadminGroups?: string[] | null;
+                };
+            };
+        };
+        responses: {
+            /** @description User updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["UserDetails"];
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description One or more submitted fields failed validation */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                errors: {
+                                    [key: string]: string;
+                                };
+                            };
                         };
                     };
                 };
