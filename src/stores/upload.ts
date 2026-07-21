@@ -36,6 +36,7 @@ import {
 	separateDuplicateUploads,
 } from '../utils/fileUpload.ts'
 import { parseUploadError } from '../utils/propfindErrorParse.ts'
+import { randomUuid } from '../utils/randomUuid.ts'
 import { useActorStore } from './actor.ts'
 import { useChatExtrasStore } from './chatExtras.ts'
 import { useSettingsStore } from './settings.ts'
@@ -469,7 +470,7 @@ export const useUploadStore = defineStore('upload', () => {
 			// resolves the final name (and any conflicts) when postAttachment
 			// moves the file out of Draft.
 			for (const [index] of getInitialisedUploads(uploadId)) {
-				const tempName = crypto.randomUUID()
+				const tempName = randomUuid()
 				markFileAsPendingUpload({ uploadId, index, sharePath: '/' + draftFolderPath + '/' + tempName })
 			}
 			return
