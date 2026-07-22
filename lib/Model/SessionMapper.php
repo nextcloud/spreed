@@ -92,7 +92,7 @@ class SessionMapper extends QBMapper {
 
 		$result = $query->executeQuery();
 		$ids = [];
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$ids[] = (int)$row['id'];
 		}
 		$result->closeCursor();
