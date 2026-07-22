@@ -344,6 +344,7 @@ export default {
 		const guestNameStore = useGuestNameStore()
 		const settingsStore = useSettingsStore()
 		const dialogHeaderId = `media-settings-header-${useId()}`
+		const token = useGetToken()
 
 		const {
 			devices,
@@ -422,7 +423,7 @@ export default {
 			tabContent: 'devices',
 			audioOn: undefined,
 			videoOn: undefined,
-			notifyCall: true,
+			notifyCall: false,
 			updatedBackground: undefined,
 			audioDeviceStateChanged: false,
 			videoDeviceStateChanged: false,
@@ -714,6 +715,10 @@ export default {
 		if (!this.isDialog) {
 			this.showMediaSettings()
 		}
+		const silentCall = this.settingsStore.defaultCallMethodIsSilent 
+		console.log('silentCall:', silentCall)
+		
+		BrowserStorage.setItem('silentCall_' + this.token, silentCall ? 'true' : 'false')
 	},
 
 	beforeUnmount() {

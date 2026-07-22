@@ -47,6 +47,7 @@ export const useSettingsStore = defineStore('settings', () => {
 	const readStatusPrivacy = ref<PRIVACY_KEYS>(getTalkConfig('local', 'chat', 'read-privacy') as TALK_CONFIG_PRIVACY ?? PRIVACY.PRIVATE)
 	const typingStatusPrivacy = ref<PRIVACY_KEYS>(getTalkConfig('local', 'chat', 'typing-privacy') as TALK_CONFIG_PRIVACY ?? PRIVACY.PRIVATE)
 	const showMediaSettings = ref<boolean>(BrowserStorage.getItem('showMediaSettings') !== 'false')
+	const defaultCallMethodIsSilent = ref<boolean>(BrowserStorage.getItem('defaultCallMethodIsSilent') !== 'false')
 	const noiseSuppression = ref<boolean>(BrowserStorage.getItem('noiseSuppression') !== 'false' && !isSafari)
 	const noiseSuppressionWithModel = ref<'none' | 'rnnoise' | (string & {})>(BrowserStorage.getItem('noiseSuppressionWithModel') ?? 'none')
 	const echoCancellation = ref<boolean>(BrowserStorage.getItem('echoCancellation') !== 'false')
@@ -109,6 +110,16 @@ export const useSettingsStore = defineStore('settings', () => {
 	function setShowMediaSettings(value: boolean) {
 		BrowserStorage.setItem('showMediaSettings', value.toString())
 		showMediaSettings.value = value
+	}
+
+	/**
+	 * Update the default for silent call
+	 *
+	 * @param value - new selected state
+	 */
+	function setDefaultCallMethodIsSilent(value: boolean) {
+		BrowserStorage.setItem('defaultCallMethodIsSilent', value.toString())
+		defaultCallMethodIsSilent.value = value
 	}
 
 	/**
@@ -254,6 +265,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		readStatusPrivacy,
 		typingStatusPrivacy,
 		showMediaSettings,
+		defaultCallMethodIsSilent,
 		noiseSuppression,
 		noiseSuppressionWithModel,
 		echoCancellation,
@@ -276,6 +288,7 @@ export const useSettingsStore = defineStore('settings', () => {
 		updateReadStatusPrivacy,
 		updateTypingStatusPrivacy,
 		setShowMediaSettings,
+		setDefaultCallMethodIsSilent,
 		setNoiseSuppression,
 		setNoiseSuppressionWithModel,
 		setEchoCancellation,

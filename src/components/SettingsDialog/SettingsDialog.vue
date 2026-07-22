@@ -39,6 +39,12 @@
 					:label="t('spreed', 'Skip device preview before joining a call')"
 					:description="t('spreed', 'Camera will be turned off when joining. Always shown if recording consent is required.')"
 					@update:modelValue="setHideMediaSettings" />
+				<NcFormBoxSwitch
+					v-if="!isGuest"
+					:modelValue="defaultCallMethodIsSilent"
+					:label="t('spreed', 'Default call method is silent')"
+					:description="t('spreed', 'You will be able to change this in the media settings')"
+					@update:modelValue="setDefaultCallMethodIsSilent" />
 				<NcFormBoxButton
 					:label="t('spreed', 'Microphone settings')"
 					@click="openAdvancedSettings">
@@ -142,7 +148,8 @@
 	</NcAppSettingsDialog>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
 import { showError } from '@nextcloud/dialogs'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -178,7 +185,7 @@ const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-m
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 const supportLiveTranslation = getTalkConfig('local', 'call', 'live-translation') === true
 
-export default {
+export default defineComponent({
 	name: 'SettingsDialog',
 
 	components: {
@@ -249,6 +256,9 @@ export default {
 
 		hideMediaSettings() {
 			return !this.settingsStore.showMediaSettings
+		},
+		defaultCallMethodIsSilent() {
+			return this.settingsStore.defaultCallMethodIsSilent
 		},
 	},
 
@@ -339,6 +349,10 @@ export default {
 			this.settingsStore.setShowMediaSettings(!newValue)
 		},
 
+		setDefaultCallMethodIsSilent(newValue) {
+			this.settingsStore.setDefaultCallMethodIsSilent(newValue)
+		},
+
 		async openAdvancedSettings() {
 			await spawnDialog(AdvancedAudioDialog, {
 				container: '#devices',
@@ -357,5 +371,5 @@ export default {
 			emit('talk:media-settings:show', 'device-check')
 		},
 	},
-}
+})
 </script>
