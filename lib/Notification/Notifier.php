@@ -928,7 +928,24 @@ class Notifier implements INotifier {
 
 			$notification->addParsedAction($action);
 		} else {
-			$notification = $this->addActionButton($notification, 'chat_view', $l->t('View chat'), false);
+			$notification = $this->addActionButton($notification, 'chat_view', $l->t('View chat'));
+
+			$action = $notification->createAction();
+			$action->setLabel('mark_read')
+				->setParsedLabel($l->t('Mark as read'))
+				->setLink(
+					$this->url->linkToOCSRouteAbsolute(
+						'spreed.Chat.setReadMarker',
+						[
+							'apiVersion' => 'v1',
+							'token' => $room->getToken(),
+							'lastReadMessage' => $message->getMessageId(),
+						]
+					),
+					IAction::TYPE_POST
+				);
+
+			$notification->addParsedAction($action);
 		}
 
 		if (array_key_exists('user', $richSubjectParameters) && $richSubjectParameters['user'] === null) {
