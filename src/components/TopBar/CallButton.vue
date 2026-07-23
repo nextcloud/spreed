@@ -129,7 +129,7 @@ import { useSoundsStore } from '../../stores/sounds.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import { useTokenStore } from '../../stores/token.ts'
 import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.ts'
-import { isConversationPhoneRoom } from '../../utils/conversation.ts'
+import { hasExternalCallService, isConversationPhoneRoom } from '../../utils/conversation.ts'
 import { messagePleaseReload } from '../../utils/talkDesktopUtils.ts'
 
 export default {
@@ -243,12 +243,6 @@ export default {
 			return !this.hideText && (!this.isMobile || !this.shrinkOnMobile)
 		},
 
-		hasExternalCallService() {
-			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.EXTERNAL_CALL
-				&& !getTalkConfig('local', 'call', 'enabled')
-				&& getTalkConfig('local', 'call', 'external-call-service')
-		},
-
 		showRecordingWarning() {
 			return [
 				CALL.RECORDING.VIDEO_STARTING,
@@ -281,7 +275,7 @@ export default {
 		startCallButtonDisabled() {
 			return this.disabled
 				|| (this.callViewStore.callHasJustEnded && !this.hasCall)
-				|| (!this.conversation.canStartCall && !this.hasExternalCallService && !this.hasCall)
+				|| (!this.conversation.canStartCall && !hasExternalCallService(this.conversation) && !this.hasCall)
 				|| this.isInLobby
 				|| this.conversation.readOnly
 				|| this.isNextcloudTalkHashDirty
@@ -338,7 +332,7 @@ export default {
 		},
 
 		showStartCallButton() {
-			return (getTalkConfig(this.token, 'call', 'enabled') || this.hasExternalCallService)
+			return (getTalkConfig(this.token, 'call', 'enabled') || hasExternalCallService(this.conversation))
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 				&& this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
 				&& (!this.conversation.remoteServer || hasTalkFeature(this.token, 'federation-v2'))
@@ -430,7 +424,7 @@ export default {
 		},
 
 		handleClick() {
-			if (this.hasExternalCallService) {
+			if (hasExternalCallService(this.conversation)) {
 				// Another service is in charge, trigger iframe rendering in MainView
 				this.handleExternalCall()
 				return

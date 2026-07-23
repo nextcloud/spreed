@@ -21,10 +21,9 @@ import { useIsInCall } from '../composables/useIsInCall.js'
 import { useJoinCall } from '../composables/useJoinCall.ts'
 import { watchJoinedConversation } from '../composables/useJoinedConversation.ts'
 import { CALL, CONVERSATION } from '../constants.ts'
-import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useSettingsStore } from '../stores/settings.ts'
-import { isConversationPhoneRoom } from '../utils/conversation.ts'
+import { hasExternalCallService, isConversationPhoneRoom } from '../utils/conversation.ts'
 
 const props = defineProps<{
 	token: string
@@ -55,9 +54,7 @@ const connectionFailed = computed(() => store.getters.connectionFailed(props.tok
 const isVoiceRoom = computed(() => Boolean(store.getters.conversation(props.token)?.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM))
 const isInExternalCall = computed(() => {
 	const conversation = store.getters.conversation(props.token) as Conversation | undefined
-	return conversation?.objectType === CONVERSATION.OBJECT_TYPE.EXTERNAL_CALL && isInCall.value
-		&& !getTalkConfig('local', 'call', 'enabled')
-		&& getTalkConfig('local', 'call', 'external-call-service')
+	return hasExternalCallService(conversation) && isInCall.value
 })
 
 watch([() => props.token, isVoiceRoom], ([newToken, newIsVoiceRoom]) => {

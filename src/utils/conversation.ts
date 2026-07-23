@@ -8,7 +8,7 @@ import type { Conversation, EventTimeRange } from '../types/index.ts'
 
 import { toValue } from 'vue'
 import { CONVERSATION, PARTICIPANT } from '../constants.ts'
-import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { ONE_HOUR_IN_MS } from './formattedTime.ts'
 
 type Filter = 'unread' | 'mentions' | 'events'
@@ -44,6 +44,17 @@ export function hasUnreadMentions(conversation: Conversation): boolean {
  */
 export function hasCall(conversation: Conversation): boolean {
 	return conversation.hasCall && conversation.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON
+}
+
+/**
+ * check whether the conversation is created to use an external call service
+ *
+ * @param conversation conversation object
+ */
+export function hasExternalCallService(conversation?: Conversation): boolean {
+	return conversation?.objectType === CONVERSATION.OBJECT_TYPE.EXTERNAL_CALL
+		&& !getTalkConfig('local', 'call', 'enabled')
+		&& !!(getTalkConfig('local', 'call', 'external-call-service'))
 }
 
 /**
