@@ -171,9 +171,15 @@ CallParticipantsAudioPlayer.prototype = {
 	},
 
 	async _setAudioElementOutput(deviceId, audioElement = null) {
-		if (audioElement instanceof HTMLAudioElement) {
-			await audioElement.setSinkId(deviceId)
-			console.debug('Set audio output to %s', deviceId)
+		if (audioElement instanceof HTMLAudioElement && mediaDevicesManager.isAudioOutputSelectSupported) {
+			try {
+				await audioElement.setSinkId(deviceId)
+				console.debug('Set audio output to %s', deviceId)
+			} catch (error) {
+				// "setSinkId" requires a user gesture on Safari/iOS.
+				// Audio will stay attached to the default output device.
+				console.warn('Could not set audio output device', error)
+			}
 		}
 	},
 
