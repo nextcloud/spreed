@@ -61,6 +61,7 @@ import { useCallViewStore } from './stores/callView.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
 import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
+import { hasExternalCallService } from './utils/conversation.ts'
 import { signalingKill } from './utils/webrtc/index.js'
 
 export default {
@@ -390,6 +391,11 @@ export default {
 			}
 
 			if (from.name === 'conversation' && from.params.token !== to.params.token) {
+				// Tear down the external call service view when leaving conversation,
+				// so iframe is not carried into the next one
+				if (hasExternalCallService(this.$store.getters.conversation(from.params.token))) {
+					this.callViewStore.leaveExternalCall()
+				}
 				// Await to properly close session / leave call before joining another one
 				await this.$store.dispatch('leaveConversation', { token: from.params.token })
 			}

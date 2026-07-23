@@ -64,6 +64,11 @@ export const useCallViewStore = defineStore('callView', {
 			this.externalCallServiceUrl = url
 		},
 
+		leaveExternalCall() {
+			this.setExternalCallServiceUrl(null)
+			this.setForceCallView(false)
+		},
+
 		setIsViewerOverlay(value: boolean) {
 			this.isViewerOverlay = value
 		},
