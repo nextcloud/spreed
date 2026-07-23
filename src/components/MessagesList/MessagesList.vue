@@ -125,6 +125,7 @@ import { EventBus } from '../../services/EventBus.ts'
 import { useChatStore } from '../../stores/chat.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
+import { isClassifiedConversation } from '../../utils/conversation.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
@@ -309,7 +310,9 @@ export default {
 		},
 
 		shouldShowSummaryOption() {
-			if (this.conversation.remoteServer || !canSummarizeChat || this.chatExtrasStore.hasChatSummaryTaskRequested(this.token)) {
+			// Chat summary is rejected by the backend in classified conversations
+			if (this.conversation.remoteServer || !canSummarizeChat || isClassifiedConversation(this.conversation)
+				|| this.chatExtrasStore.hasChatSummaryTaskRequested(this.token)) {
 				return false
 			}
 			return (this.conversation.unreadMessages >= summaryThreshold)
