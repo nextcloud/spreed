@@ -23,34 +23,56 @@
 			class="image-container"
 			:class="{ playable: isPlayable }"
 			:style="imageContainerStyle">
-			<img
-				class="file-preview__image"
-				:class="previewImageClass"
-				:alt="file.name"
-				:src="failed ? defaultIconUrl : previewUrl"
-				@load="onLoad"
-				@error="onError">
-			<template v-if="!isLoading || fallbackLocalUrl">
-				<span v-if="isPlayable && !smallPreview" class="play-video-button">
-					<IconPlayCircleOutline
-						:size="48"
-						fillColor="#ffffff" />
-				</span>
-				<NcProgressBar
-					v-if="showUploadProgress"
-					class="file-preview__progress"
-					type="circular"
-					:value="uploadProgress" />
-			</template>
-			<TransitionWrapper v-else-if="isLoading" name="fade">
+			<!-- In classified conversations only blurhash shown instead of preview -->
+			<template v-if="hideClassifiedPreview">
 				<canvas
-					v-if="file.blurhash"
+					v-if="blurhashOnly"
 					ref="blurCanvas"
 					width="32"
 					height="32"
 					class="preview preview-loading" />
-				<NcLoadingIcon v-else class="preview preview-loading" />
-			</TransitionWrapper>
+				<!-- Mimeicon fallback if blurhash is not available yet -->
+				<img
+					v-else
+					class="file-preview__image"
+					:class="previewImageClass"
+					:alt="file.name"
+					:src="defaultIconUrl">
+				<!-- Indicator that preview is intentionally hidden, not failed -->
+				<span v-if="!smallPreview" class="classified-preview-button">
+					<IconEyeOutline :size="20" fillColor="#ffffff" />
+				</span>
+			</template>
+			<template v-else>
+				<img
+					class="file-preview__image"
+					:class="previewImageClass"
+					:alt="file.name"
+					:src="failed ? defaultIconUrl : previewUrl"
+					@load="onLoad"
+					@error="onError">
+				<template v-if="!isLoading || fallbackLocalUrl">
+					<span v-if="isPlayable && !smallPreview" class="play-video-button">
+						<IconPlayCircleOutline
+							:size="48"
+							fillColor="#ffffff" />
+					</span>
+					<NcProgressBar
+						v-if="showUploadProgress"
+						class="file-preview__progress"
+						type="circular"
+						:value="uploadProgress" />
+				</template>
+				<TransitionWrapper v-else-if="isLoading" name="fade">
+					<canvas
+						v-if="file.blurhash"
+						ref="blurCanvas"
+						width="32"
+						height="32"
+						class="preview preview-loading" />
+					<NcLoadingIcon v-else class="preview preview-loading" />
+				</TransitionWrapper>
+			</template>
 		</span>
 
 		<NcButton
@@ -80,6 +102,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import IconClose from 'vue-material-design-icons/Close.vue'
+import IconEyeOutline from 'vue-material-design-icons/EyeOutline.vue'
 import IconPlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import TransitionWrapper from '../../../../UIShared/TransitionWrapper.vue'
 import AudioPlayer from './AudioPlayer.vue'
@@ -89,6 +112,7 @@ import { getTalkConfig } from '../../../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
+import { isClassifiedConversation } from '../../../../../utils/conversation.ts'
 import { canPlayAudio } from '../../../../../utils/sounds.js'
 
 const PREVIEW_TYPE = {
@@ -108,6 +132,7 @@ export default {
 		TransitionWrapper,
 		// Icons
 		IconClose,
+		IconEyeOutline,
 		IconPlayCircleOutline,
 	},
 
@@ -275,7 +300,8 @@ export default {
 				classes += 'preview '
 			}
 
-			if (this.failed || this.previewType === PREVIEW_TYPE.MIME_ICON || this.rowLayout) {
+			if (this.failed || this.previewType === PREVIEW_TYPE.MIME_ICON || this.rowLayout
+				|| (this.hideClassifiedPreview && !this.blurhashOnly)) {
 				classes += 'mimeicon'
 			} else if (this.file['preview-available'] === 'yes') {
 				classes += 'media'
@@ -325,6 +351,25 @@ export default {
 
 		maxGifSize() {
 			return getTalkConfig(this.token, 'previews', 'max-gif-size') || 3145728
+		},
+
+		conversation() {
+			return this.$store.getters.conversation(this.token)
+		},
+
+		// In classified conversations previews must not be auto-loaded:
+		// show the blurhash placeholder only (clicking still opens the viewer).
+		// Exception: if use who uploaded a file already has the file locally.
+		hideClassifiedPreview() {
+			return isClassifiedConversation(this.conversation)
+				&& !this.isUploadEditor
+				&& !this.isTemporaryUpload
+				&& !this.fallbackLocalUrl
+				&& (this.previewType === PREVIEW_TYPE.PREVIEW || this.previewType === PREVIEW_TYPE.DIRECT)
+		},
+
+		blurhashOnly() {
+			return this.hideClassifiedPreview && !!(this.file.blurhash)
 		},
 
 		previewType() {
@@ -493,7 +538,9 @@ export default {
 			this.uploadManager = getUploader()
 		}
 
-		if (this.file.blurhash && this.file.width && this.file.height) {
+		// The blurhash canvas is not always rendered at mount (e.g. when a local
+		// URL shows the real preview or a mime icon fallback is displayed)
+		if (this.$refs.blurCanvas && this.file.blurhash && this.file.width && this.file.height) {
 			const ctx = this.$refs.blurCanvas.getContext('2d')
 			const imageData = ctx.createImageData(32, 32)
 			imageData.data.set(decode(this.file.blurhash, 32, 32))
@@ -637,6 +684,40 @@ export default {
 		max-width: 100%;
 		max-height: 100%;
 		border-radius: var(--border-radius);
+
+		// Classified: signal that the hidden preview is clickable (not failed)
+		.classified-preview-button {
+			position: absolute;
+			top: 50%;
+			inset-inline-start: 50%;
+			transform: translate(-50%, -50%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: var(--default-clickable-area);
+			height: var(--default-clickable-area);
+			border-radius: 50%;
+			background-color: rgba(0, 0, 0, 0.5);
+			opacity: 0.9;
+			z-index: 1;
+			transition: opacity 250ms ease-in-out;
+		}
+
+		&:has(.classified-preview-button) {
+			.preview {
+				transition: filter 250ms ease-in-out;
+			}
+
+			&:hover {
+				.preview {
+					filter: brightness(80%);
+				}
+
+				.classified-preview-button {
+					opacity: 1;
+				}
+			}
+		}
 
 		&.playable {
 			.preview {

@@ -67,6 +67,15 @@ describe('FilePreview.vue', () => {
 		return mount(FilePreview, {
 			global: {
 				plugins: [router],
+				mocks: {
+					// Minimal store: FilePreview only reads the conversation to
+					// decide whether it is classified (blurhash-only previews)
+					$store: {
+						getters: {
+							conversation: () => ({ token: props.token, attributes: 0 }),
+						},
+					},
+				},
 			},
 			props,
 		})
