@@ -7,7 +7,7 @@
 	<div v-if="canModerate">
 		<NcCheckboxRadioSwitch
 			:modelValue="listable !== LISTABLE.NONE"
-			:disabled="isListableLoading || isPreserved"
+			:disabled="isListableLoading || isPreserved || disabled"
 			type="switch"
 			@update:modelValue="toggleListableUsers">
 			{{ t('spreed', 'Open conversation to registered users, showing it in search results') }}
@@ -16,7 +16,7 @@
 			v-if="listable !== LISTABLE.NONE && isGuestsAccountsEnabled"
 			class="additional-top-margin"
 			:modelValue="listable === LISTABLE.ALL"
-			:disabled="isListableLoading || isPreserved"
+			:disabled="isListableLoading || isPreserved || disabled"
 			type="switch"
 			@update:modelValue="toggleListableGuests">
 			{{ t('spreed', 'Also open to users created with the Guests app') }}
@@ -57,6 +57,11 @@ export default {
 		canModerate: {
 			type: Boolean,
 			default: true,
+		},
+
+		disabled: {
+			type: Boolean,
+			default: false,
 		},
 
 		modelValue: {

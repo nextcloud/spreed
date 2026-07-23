@@ -526,6 +526,7 @@ export default {
 
 		isRecordingConsentRequired() {
 			if (this.isClassified) {
+				// Recordings are blocked in classified conversations, UI is hidden
 				return false
 			}
 			return this.recordingConsent === CONFIG.RECORDING_CONSENT.REQUIRED
