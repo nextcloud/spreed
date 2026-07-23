@@ -67,7 +67,8 @@ const listItems = computed<VirtualListItem[]>(() => {
 		otherUnreadMention: boolean
 		otherUnreadMentionDirect: boolean
 	}>((acc, conversation) => {
-		const unreadCount = conversation.unreadMessages || 0
+		// Count amount of unread conversations, highlight if any has a direct or group mention
+		const unreadCount = conversation.unreadMessages ? 1 : 0
 		const unreadMention = conversation.unreadMention
 		const unreadMentionDirect = conversation.unreadMentionDirect
 			|| (!!unreadCount && [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(conversation.type))
