@@ -18,7 +18,7 @@
 			v-if="isLocalScreen && showScreenPlaceholder"
 			class="screen-placeholder"
 			:name="t('spreed', 'You are sharing a screen')"
-			:description="t('spreed', 'Local screen share is not displayed by default to prevent a mirroring effect')"
+			:description="t('spreed', 'Sharing this window may cause a mirroring effect')"
 			data-theme-dark>
 			<template #icon>
 				<IconMonitorScreenshot />
