@@ -41,6 +41,7 @@ class Config {
 
 	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
 	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
+	public const string FEDERATION_ENABLED = 'federation_enabled';
 
 	/**
 	 * 1. Call recording, …
@@ -121,7 +122,7 @@ class Config {
 	 */
 	public function isFederationEnabled(): bool {
 		// TODO: Set to default true once implementation is complete
-		return $this->config->getAppValue('spreed', 'federation_enabled', 'no') === 'yes';
+		return $this->appConfig->getAppValueBool(self::FEDERATION_ENABLED);
 	}
 
 	public function isFederationEnabledForUserId(IUser $user): bool {
