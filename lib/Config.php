@@ -41,6 +41,7 @@ class Config {
 
 	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
 	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
+	public const string ALLOWED_GROUPS_FEDERATION = 'federation_allowed_groups';
 	public const string FEDERATION_ENABLED = 'federation_enabled';
 
 	/**
