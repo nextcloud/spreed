@@ -16,6 +16,8 @@ const os = parser.getOS()
  */
 
 export const isMac = os.name === 'macOS'
+// Note: all browsers on iOS are using the WebKit engine
+export const isIOS = os.name === 'iOS'
 
 /**
  * Per-browser flags and a major version
