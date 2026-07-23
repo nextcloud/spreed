@@ -39,6 +39,8 @@ class Config {
 	public const SIGNALING_TICKET_V1 = 1;
 	public const SIGNALING_TICKET_V2 = 2;
 
+	public const string ALLOWED_GROUPS = 'allowed_groups';
+
 	/**
 	 * 1. Call recording, …
 	 */
@@ -72,9 +74,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedTalkGroupIds(): array {
-		$groups = $this->config->getAppValue('spreed', 'allowed_groups', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		return $this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS);
 	}
 
 	/**
