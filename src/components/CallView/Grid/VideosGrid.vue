@@ -31,7 +31,7 @@
 						variant="tertiary-no-background"
 						class="grid-navigation grid-navigation__previous"
 						:aria-label="t('spreed', 'Previous page of videos')"
-						@click="handleClickPrevious">
+						@click="previous">
 						<template #icon>
 							<IconChevronLeft
 								class="bidirectional-icon"
@@ -97,7 +97,7 @@
 						variant="tertiary-no-background"
 						class="grid-navigation grid-navigation__next"
 						:aria-label="t('spreed', 'Next page of videos')"
-						@click="handleClickNext">
+						@click="next">
 						<template #icon>
 							<IconChevronRight
 								class="bidirectional-icon"
@@ -164,7 +164,8 @@
 <script>
 import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
-import { computed, inject, ref, toRef, useTemplateRef } from 'vue'
+import { computed, inject, ref, toRef, useTemplateRef, watch } from 'vue'
+import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
@@ -182,6 +183,7 @@ import { useCallViewStore } from '../../../stores/callView.ts'
 import { GRID_GAP } from './gridLayout.ts'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 import { useGridDimensions } from './useGridDimensions.ts'
+import { usePagination } from './usePagination.ts'
 
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = getTalkConfig('local', 'call', 'grid-limit') || 0
@@ -203,14 +205,6 @@ export default {
 	},
 
 	props: {
-		/**
-		 * Display the overflow of videos in separate pages;
-		 */
-		hasPagination: {
-			type: Boolean,
-			default: false,
-		},
-
 		/**
 		 * To be set to true when the grid is in the promoted view.
 		 */
@@ -309,7 +303,231 @@ export default {
 			stripeOpen,
 		})
 
+		const vuexStore = useStore()
+
+		// The videos array. This is the total number of grid elements.
+		// Depending on the grid dimensions and `videosCap`, these videos are
+		// shown in one or more grid 'pages'.
+		const videos = computed(() => {
+			if (devMode.value) {
+				return Array.from(Array(dummies.value).keys())
+			}
+
+			return props.callParticipantModels
+		})
+
+		// Number of grid slots (videos per page) at any given moment, clamped to
+		// `videosCap` (`0` means no cap).
+		// The local video always takes one slot, unless it is not shown (stripe
+		// or recording mode).
+		// The cap is primarily enforced by shrinking the grid layout (see
+		// `computeGridDimensions`); this clamp keeps the "videos per page" math
+		// consistent even before the layout has been recomputed.
+		const slots = computed(() => {
+			const noLocalVideoReserve = props.isStripe || props.isRecording
+			const gridSlots = gridDimensions.rows.value * gridDimensions.columns.value
+			const slots = noLocalVideoReserve ? gridSlots : gridSlots - 1
+			return videosCap ? Math.min(videosCap, slots) : slots
+		})
+
+		// Speakers recently promoted to the first page and the history of
+		// promotions, used to keep the relative order of the tiles stable.
+		const tempPromotedModels = ref([])
+		const promotedHistoryMask = ref([])
+		const unpromoteSpeakerTimer = {}
+
+		const participantsInitialised = computed(() => vuexStore.getters.participantsInitialised(props.token))
+
+		const isGuestNonModerator = computed(() => {
+			return actorStore.isActorGuest
+				&& vuexStore.getters.conversation(props.token).participantType !== PARTICIPANT.TYPE.GUEST_MODERATOR
+		})
+
+		/**
+		 * @param {object} callParticipantModel the participant model
+		 */
+		function isModelWithVideo(callParticipantModel) {
+			return callParticipantModel.attributes.videoAvailable
+				&& (typeof callParticipantModel.attributes.stream === 'object')
+		}
+
+		/**
+		 * @param {object} callParticipantModel the participant model
+		 */
+		function isModelWithAudio(callParticipantModel) {
+			const participant = vuexStore.getters.getParticipantBySessionId(props.token, callParticipantModel.attributes.nextcloudSessionId)
+			if (!participant) {
+				return false
+			}
+			return participant?.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
+		}
+
+		/**
+		 * @param {Map} tilesMap map of session ids to models
+		 * @param {Array} orderMask ordered session ids to sort the tiles by
+		 */
+		function getOrderedTiles(tilesMap, orderMask) {
+			const orderedTiles = []
+			const rest = []
+			// Get the ordered tiles
+			orderMask.forEach((id) => {
+				if (tilesMap.has(id)) {
+					orderedTiles.push(tilesMap.get(id))
+				}
+			})
+
+			// Add remaining tiles not in orderMask to rest
+			tilesMap.forEach((tile, id) => {
+				if (!orderMask.includes(id)) {
+					rest.push(tile)
+				}
+			})
+
+			return [...orderedTiles, ...rest]
+		}
+
+		const orderedVideos = computed(() => {
+			// Dynamic ordering is not possible for guests because
+			// participants store is not initialized
+			if (isGuestNonModerator.value || devMode.value) {
+				return videos.value
+			}
+
+			const objectMap = {
+				modelsWithScreenshare: [],
+				modelsTempPromoted: [],
+				modelsWithVideoEnabled: [],
+				modelsWithAudioOnly: [],
+				modelsWithNoPermissions: [],
+			}
+			const screensSet = new Set(props.screens)
+			const tempPromotedModelsSet = new Set(tempPromotedModels.value.map((model) => model.attributes.nextcloudSessionId))
+			const videoTilesMap = new Map()
+			const audioTilesMap = new Map()
+
+			props.callParticipantModels.forEach((model) => {
+				if (screensSet.has(model.attributes.peerId)) {
+					objectMap.modelsWithScreenshare.push(model)
+				} else if (tempPromotedModelsSet.has(model.attributes.nextcloudSessionId)) {
+					objectMap.modelsTempPromoted.push(model)
+				} else if (isModelWithVideo(model)) {
+					videoTilesMap.set(model.attributes.nextcloudSessionId, model)
+				} else if (participantsInitialised.value && isModelWithAudio(model)) {
+					audioTilesMap.set(model.attributes.nextcloudSessionId, model)
+				} else {
+					objectMap.modelsWithNoPermissions.push(model)
+				}
+			})
+
+			objectMap.modelsWithVideoEnabled = getOrderedTiles(videoTilesMap, promotedHistoryMask.value)
+			objectMap.modelsWithAudioOnly = getOrderedTiles(audioTilesMap, promotedHistoryMask.value)
+
+			return [
+				...objectMap.modelsWithScreenshare,
+				...objectMap.modelsTempPromoted,
+				...objectMap.modelsWithVideoEnabled,
+				...objectMap.modelsWithAudioOnly,
+				...objectMap.modelsWithNoPermissions,
+			]
+		})
+
+		/**
+		 * @param {object} model the speaker model to unpromote
+		 */
+		function unpromoteSpeaker(model) {
+			// remove model from the temp promoted speakers
+			const index = tempPromotedModels.value.indexOf(model)
+			if (index === -1) {
+				return
+			}
+
+			tempPromotedModels.value.splice(index, 1)
+		}
+
+		/**
+		 * @param {object} model the speaker model to promote
+		 */
+		function promoteSpeaker(model) {
+			const id = model.attributes.nextcloudSessionId
+
+			// if model is already in the first page, do nothing
+			if (orderedVideos.value.slice(0, slots.value).find((video) => video.attributes.nextcloudSessionId === id)) {
+				return
+			}
+
+			if (props.screens.includes(model.attributes.peerId)) {
+				// tiles with screenshare have a better priority position already
+				// do nothing
+				return
+			}
+
+			// add the model
+			if (!tempPromotedModels.value.includes(model)) {
+				// remove model from the order history if it exists
+				const modelIndex = promotedHistoryMask.value.indexOf(id)
+				if (modelIndex !== -1) {
+					promotedHistoryMask.value.splice(modelIndex, 1)
+				}
+
+				tempPromotedModels.value.unshift(model)
+				// add model to the beginning of the orderedVideos in its category
+				promotedHistoryMask.value.unshift(id)
+			}
+		}
+
+		const speakers = computed(() => props.callParticipantModels.filter((model) => model.attributes.speaking))
+
+		const speakersWithAudioOff = computed(() => tempPromotedModels.value.filter((model) => !model.attributes.audioAvailable))
+
+		watch(speakers, (models) => {
+			models.forEach((model) => {
+				promoteSpeaker(model)
+				clearTimeout(unpromoteSpeakerTimer[model.attributes.nextcloudSessionId])
+			})
+		})
+
+		watch(speakersWithAudioOff, (newModels, oldModels) => {
+			newModels.forEach((speaker) => {
+				if (oldModels.includes(speaker)) {
+					return
+				}
+				unpromoteSpeakerTimer[speaker.attributes.nextcloudSessionId] = setTimeout(() => {
+					unpromoteSpeaker(speaker)
+				}, 10000)
+			})
+		})
+
+		const videosCount = computed(() => orderedVideos.value.length)
+
+		const {
+			currentPage,
+			numberOfPages,
+			currentPageBounds,
+			hasNextPage,
+			hasPreviousPage,
+			next,
+			previous,
+		} = usePagination(videosCount, slots)
+
+		// The window of the ordered videos shown on the current page
+		const displayedVideos = computed(() => orderedVideos.value.slice(...currentPageBounds.value))
+
+		// Reset current page when switching between stripe and full grid,
+		// as the previous page is meaningless in the new mode.
+		// The grid layout itself is recomputed by `useGridDimensions`.
+		watch(() => props.isStripe, () => {
+			currentPage.value = 0
+		})
+
 		return {
+			videos,
+			currentPage,
+			numberOfPages,
+			displayedVideos,
+			hasNextPage,
+			hasPreviousPage,
+			next,
+			previous,
 			devMode,
 			dummies,
 			screenshotMode,
@@ -325,12 +543,7 @@ export default {
 
 	data() {
 		return {
-			// The current page
-			currentPage: 0,
 			debounceHandleWheelEvent: () => {},
-			tempPromotedModels: [],
-			unpromoteSpeakerTimer: {},
-			promotedHistoryMask: [],
 		}
 	},
 
@@ -340,17 +553,6 @@ export default {
 				return t('spreed', 'Collapse participant bar')
 			} else {
 				return t('spreed', 'Expand participant bar')
-			}
-		},
-
-		// The videos array. This is the total number of grid elements.
-		// Depending on `gridWidth`, `gridHeight`, `minWidth`, `minHeight` and
-		// `videosCap`, these videos are shown in one or more grid 'pages'.
-		videos() {
-			if (this.devMode) {
-				return Array.from(Array(this.dummies).keys())
-			} else {
-				return this.callParticipantModels
 			}
 		},
 
@@ -372,71 +574,11 @@ export default {
 			return (this.gridHeight - GRID_GAP * (this.rows - 1)) / this.rows
 		},
 
-		// Array of videos that are being displayed in the grid at any given
-		// moment
-		// TODO: properly handle resizes when not on first page:
-		// currently if the user is not on the 'first page', upon resize the
-		// current position in the videos array is lost (`slots` changes, so
-		// `currentPage * slots` points at a different window of the videos)
-		displayedVideos() {
-			if (!this.slots) {
-				return []
-			}
-
-			const slots = this.slots
-
-			// Slice the `videos` array to display the current page of videos
-			if (((this.currentPage + 1) * slots) >= this.orderedVideos.length) {
-				return this.orderedVideos.slice(this.currentPage * slots)
-			}
-
-			return this.orderedVideos.slice(this.currentPage * slots, (this.currentPage + 1) * slots)
-		},
-
 		isLessThanTwoVideos() {
 			// without screen share, we don't want to duplicate videos if we were to show them in the stripe
 			// however, if a screen share is in progress, it means the video of the presenting user is not visible,
 			// so we can show it in the stripe
 			return this.videos.length <= 1 && !this.screens.length
-		},
-
-		// The local video always takes one slot if the grid view is not shown as a stripe.
-		// In recording mode the local video is not shown, so all slots are available.
-		noLocalVideoReserve() {
-			return this.isStripe || this.isRecording
-		},
-
-		// Number of grid slots (videos per page) at any given moment, clamped to
-		// `videosCap` (`0` means no cap).
-		// The cap is primarily enforced by shrinking the grid layout (see
-		// `computeGridDimensions`); this clamp keeps the "videos per page" math
-		// consistent even before the layout has been recomputed.
-		slots() {
-			const slots = this.noLocalVideoReserve ? this.rows * this.columns : this.rows * this.columns - 1
-			return this.videosCap ? Math.min(this.videosCap, slots) : slots
-		},
-
-		// Grid pages at any given moment
-		numberOfPages() {
-			return Math.ceil(this.videosCount / this.slots)
-		},
-
-		// Hides or displays the `grid-navigation next` button
-		hasNextPage() {
-			if (this.displayedVideos.length !== 0 && this.hasPagination) {
-				return this.displayedVideos.at(-1) !== this.orderedVideos.at(-1)
-			} else {
-				return false
-			}
-		},
-
-		// Hides or displays the `grid-navigation previous` button
-		hasPreviousPage() {
-			if (this.displayedVideos.length !== 0 && this.hasPagination) {
-				return this.displayedVideos[0] !== this.orderedVideos[0]
-			} else {
-				return false
-			}
 		},
 
 		// Computed css to reactively style the grid
@@ -465,68 +607,6 @@ export default {
 			}
 		},
 
-		participantsInitialised() {
-			return this.$store.getters.participantsInitialised(this.token)
-		},
-
-		isGuestNonModerator() {
-			return this.actorStore.isActorGuest
-				&& this.$store.getters.conversation(this.token).participantType !== PARTICIPANT.TYPE.GUEST_MODERATOR
-		},
-
-		orderedVideos() {
-			// Dynamic ordering is not possible for guests because
-			// participants store is not initialized
-			if (this.isGuestNonModerator || this.devMode) {
-				return this.videos
-			}
-
-			const objectMap = {
-				modelsWithScreenshare: [],
-				modelsTempPromoted: [],
-				modelsWithVideoEnabled: [],
-				modelsWithAudioOnly: [],
-				modelsWithNoPermissions: [],
-			}
-			const screensSet = new Set(this.screens)
-			const tempPromotedModelsSet = new Set(this.tempPromotedModels.map((model) => model.attributes.nextcloudSessionId))
-			const videoTilesMap = new Map()
-			const audioTilesMap = new Map()
-
-			this.callParticipantModels.forEach((model) => {
-				if (screensSet.has(model.attributes.peerId)) {
-					objectMap.modelsWithScreenshare.push(model)
-				} else if (tempPromotedModelsSet.has(model.attributes.nextcloudSessionId)) {
-					objectMap.modelsTempPromoted.push(model)
-				} else if (this.isModelWithVideo(model)) {
-					videoTilesMap.set(model.attributes.nextcloudSessionId, model)
-				} else if (this.participantsInitialised && this.isModelWithAudio(model)) {
-					audioTilesMap.set(model.attributes.nextcloudSessionId, model)
-				} else {
-					objectMap.modelsWithNoPermissions.push(model)
-				}
-			})
-
-			objectMap.modelsWithVideoEnabled = this.getOrderedTiles(videoTilesMap, this.promotedHistoryMask)
-			objectMap.modelsWithAudioOnly = this.getOrderedTiles(audioTilesMap, this.promotedHistoryMask)
-
-			return [
-				...objectMap.modelsWithScreenshare,
-				...objectMap.modelsTempPromoted,
-				...objectMap.modelsWithVideoEnabled,
-				...objectMap.modelsWithAudioOnly,
-				...objectMap.modelsWithNoPermissions,
-			]
-		},
-
-		speakers() {
-			return this.callParticipantModels.filter((model) => model.attributes.speaking)
-		},
-
-		speakersWithAudioOff() {
-			return this.tempPromotedModels.filter((model) => !model.attributes.audioAvailable)
-		},
-
 		devStripe: {
 			get() {
 				return this.isStripe
@@ -535,39 +615,6 @@ export default {
 			set(value) {
 				this.callViewStore.setCallViewMode({ token: this.token, isGrid: !value, clearLast: false })
 			},
-		},
-	},
-
-	watch: {
-		isStripe() {
-			// Reset current page when switching between stripe and full grid,
-			// as the previous page is meaningless in the new mode.
-			// The grid layout itself is recomputed by `useGridDimensions`.
-			this.currentPage = 0
-		},
-
-		numberOfPages() {
-			if (this.currentPage >= this.numberOfPages) {
-				this.currentPage = Math.max(0, this.numberOfPages - 1)
-			}
-		},
-
-		speakers(models) {
-			models.forEach((model) => {
-				this.promoteSpeaker(model)
-				clearTimeout(this.unpromoteSpeakerTimer[model.attributes.nextcloudSessionId])
-			})
-		},
-
-		speakersWithAudioOff(newModels, oldModels) {
-			newModels.forEach((speaker) => {
-				if (oldModels.includes(speaker)) {
-					return
-				}
-				this.unpromoteSpeakerTimer[speaker.attributes.nextcloudSessionId] = setTimeout(() => {
-					this.unpromoteSpeaker(speaker)
-				}, 10000)
-			})
 		},
 	},
 
@@ -637,20 +684,10 @@ export default {
 			}
 
 			if (event.deltaY < 0 && this.hasPreviousPage) {
-				this.handleClickPrevious()
+				this.previous()
 			} else if (event.deltaY > 0 && this.hasNextPage) {
-				this.handleClickNext()
+				this.next()
 			}
-		},
-
-		handleClickNext() {
-			this.currentPage++
-			console.debug('handleclicknext, ', 'currentPage ', this.currentPage, 'slots ', this.slots, 'videos.length ', this.videos.length)
-		},
-
-		handleClickPrevious() {
-			this.currentPage--
-			console.debug('handleclickprevious, ', 'currentPage ', this.currentPage, 'slots ', this.slots, 'videos.length ', this.videos.length)
 		},
 
 		handleClickStripeCollapse() {
@@ -668,77 +705,6 @@ export default {
 
 		isSelected(callParticipantModel) {
 			return callParticipantModel.attributes.peerId === this.callViewStore.selectedVideoPeerId
-		},
-
-		isModelWithVideo(callParticipantModel) {
-			return callParticipantModel.attributes.videoAvailable
-				&& (typeof callParticipantModel.attributes.stream === 'object')
-		},
-
-		isModelWithAudio(callParticipantModel) {
-			const participant = this.$store.getters.getParticipantBySessionId(this.token, callParticipantModel.attributes.nextcloudSessionId)
-			if (!participant) {
-				return false
-			}
-			return participant?.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
-		},
-
-		unpromoteSpeaker(model) {
-			// remove model from the temp promoted speakers
-			const index = this.tempPromotedModels.indexOf(model)
-			if (index === -1) {
-				return
-			}
-
-			this.tempPromotedModels.splice(index, 1)
-		},
-
-		promoteSpeaker(model) {
-			const id = model.attributes.nextcloudSessionId
-
-			// if model is already in the first page, do nothing
-			if (this.orderedVideos.slice(0, this.slots).find((video) => video.attributes.nextcloudSessionId === id)) {
-				return
-			}
-
-			if (this.screens.includes(model.attributes.peerId)) {
-				// tiles with screenshare have a better priority position already
-				// do nothing
-				return
-			}
-
-			// add the model
-			if (!this.tempPromotedModels.includes(model)) {
-				// remove model from the order history if it exists
-				const modelIndex = this.promotedHistoryMask.indexOf(id)
-				if (modelIndex !== -1) {
-					this.promotedHistoryMask.splice(modelIndex, 1)
-				}
-
-				this.tempPromotedModels.unshift(model)
-				// add model to the beginning of the orderedVideos in its category
-				this.promotedHistoryMask.unshift(id)
-			}
-		},
-
-		getOrderedTiles(tilesMap, orderMask) {
-			const orderedTiles = []
-			const rest = []
-			// Get the ordered tiles
-			orderMask.forEach((id) => {
-				if (tilesMap.has(id)) {
-					orderedTiles.push(tilesMap.get(id))
-				}
-			})
-
-			// Add remaining tiles not in orderMask to rest
-			tilesMap.forEach((tile, id) => {
-				if (!orderMask.includes(id)) {
-					rest.push(tile)
-				}
-			})
-
-			return [...orderedTiles, ...rest]
 		},
 	},
 }
