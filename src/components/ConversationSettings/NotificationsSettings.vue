@@ -15,6 +15,7 @@ import IconBellOutline from 'vue-material-design-icons/BellOutline.vue'
 import IconBellRingOutline from 'vue-material-design-icons/BellRingOutline.vue'
 import { PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { isClassifiedConversation } from '../../utils/conversation.ts'
 
 const props = defineProps<{
 	conversation: Conversation
@@ -96,8 +97,12 @@ const isImportant = computed({
 	},
 })
 
+// Classified conversations are forced sensitive for everyone: the backend
+// rejects un-marking them, so the toggle is locked permanently on.
+const isClassified = computed(() => isClassifiedConversation(props.conversation))
+
 const isSensitive = computed({
-	get: () => props.conversation.isSensitive,
+	get: () => isClassified.value || props.conversation.isSensitive,
 	set: async (value) => {
 		loading.sensitive = true
 		await store.dispatch('toggleSensitive', {
@@ -157,7 +162,7 @@ const isSensitive = computed({
 			v-if="supportSensitiveConversations"
 			id="sensitive"
 			v-model="isSensitive"
-			:disabled="loading.sensitive"
+			:disabled="loading.sensitive || isClassified"
 			aria-describedby="sensitive-hint"
 			type="switch">
 			{{ t('spreed', 'Sensitive conversation') }}

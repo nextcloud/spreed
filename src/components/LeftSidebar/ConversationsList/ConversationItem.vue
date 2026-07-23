@@ -213,7 +213,8 @@
 						key="toggle-sensitive"
 						type="checkbox"
 						:description="t('spreed', 'Hide message text')"
-						:modelValue="item.isSensitive"
+						:modelValue="item.isSensitive || isClassified"
+						:disabled="isClassified"
 						@click="toggleSensitive(!item.isSensitive)">
 						<template #icon>
 							<IconShieldLockOutline :size="20" />
@@ -332,6 +333,7 @@ import { useConversationInfo } from '../../../composables/useConversationInfo.ts
 import { AVATAR, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
+import { isClassifiedConversation } from '../../../utils/conversation.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
@@ -492,6 +494,10 @@ export default {
 
 		isVoiceRoom() {
 			return !!(this.item.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+		},
+
+		isClassified() {
+			return isClassifiedConversation(this.item)
 		},
 
 		iconType() {
