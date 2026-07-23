@@ -39,7 +39,8 @@ class Config {
 	public const SIGNALING_TICKET_V1 = 1;
 	public const SIGNALING_TICKET_V2 = 2;
 
-	public const string ALLOWED_GROUPS = 'allowed_groups';
+	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
+	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
 
 	/**
 	 * 1. Call recording, …
@@ -74,7 +75,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedTalkGroupIds(): array {
-		return $this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS);
+		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_TALK);
 	}
 
 	/**
@@ -107,9 +108,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getSIPGroups(): array {
-		$groups = $this->config->getAppValue('spreed', 'sip_bridge_groups', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_SIP);
 	}
 
 	public function isSIPConfigured(): bool {
