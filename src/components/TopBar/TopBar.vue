@@ -124,6 +124,17 @@
 				v-else-if="!isSidebar && canExtendOneToOneConversation"
 				:token="token" />
 
+			<!-- Classified conversation indicator (non-interactive) -->
+			<span
+				v-if="isClassified"
+				class="top-bar__classified"
+				:title="t('spreed', 'Classified conversation')">
+				<IconShieldLockOutline :size="20" />
+				<span v-if="!isMobile" class="top-bar__classified-label">
+					{{ t('spreed', 'Classified conversation') }}
+				</span>
+			</span>
+
 			<!-- Upcoming meetings -->
 			<CalendarEventsDialog v-if="showCalendarEvents" :token="token" />
 
@@ -147,6 +158,7 @@
 <script>
 import { emit } from '@nextcloud/event-bus'
 import { n, t } from '@nextcloud/l10n'
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
@@ -156,6 +168,7 @@ import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMul
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
+import IconShieldLockOutline from 'vue-material-design-icons/ShieldLockOutline.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import CalendarEventsDialog from '../CalendarEventsDialog.vue'
 import ConversationIcon from '../ConversationIcon.vue'
@@ -173,6 +186,7 @@ import { useActorStore } from '../../stores/actor.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
+import { isClassifiedConversation } from '../../utils/conversation.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
 
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
@@ -201,6 +215,7 @@ export default {
 		IconArrowLeft,
 		IconChevronRight,
 		IconClockOutline,
+		IconShieldLockOutline,
 	},
 
 	props: {
@@ -229,6 +244,7 @@ export default {
 			CONVERSATION,
 			threadId: useGetThreadId(),
 			token: useGetToken(),
+			isMobile: useIsMobile(),
 		}
 	},
 
@@ -256,6 +272,10 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
+		isClassified() {
+			return isClassifiedConversation(this.conversation)
 		},
 
 		showUserStatusAsDescription() {
@@ -460,6 +480,23 @@ export default {
 .top-bar__participants-button {
 	// Align characters width for any font
 	font-variant-numeric: tabular-nums;
+}
+
+.top-bar__classified {
+	display: flex;
+	align-items: center;
+	gap: var(--default-grid-baseline);
+	flex-shrink: 0;
+	padding: 0 calc(2 * var(--default-grid-baseline));
+	height: var(--default-clickable-area);
+	border: var(--border-width-input-focused) solid var(--color-element-error, var(--color-error));
+	border-radius: var(--border-radius-element, var(--border-radius-pill));
+	color: var(--color-element-error, var(--color-error));
+	white-space: nowrap;
+
+	&-label {
+		font-weight: bold;
+	}
 }
 
 .conversation-header {
