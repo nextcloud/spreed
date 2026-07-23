@@ -42,6 +42,7 @@ import { useActorStore } from '../../stores/actor.ts'
 import { useCallViewStore } from '../../stores/callView.ts'
 import { useLiveTranscriptionStore } from '../../stores/liveTranscription.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
+import { isClassifiedConversation } from '../../utils/conversation.ts'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 
 const { isSidebar = false } = defineProps<{
@@ -67,10 +68,12 @@ const conversation = computed(() => {
 const isGuestActor = computed(() => actorStore.actorType === ATTENDEE.ACTOR_TYPE.GUESTS)
 const isVoiceRoom = computed(() => Boolean(conversation.value.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM))
 
-const isLiveTranscriptionSupported = computed(() => getTalkConfig(token.value, 'call', 'live-transcription') || false)
-const hintTranscriptionSupported = computed(() => !isLiveTranscriptionSupported.value && showTalkFeatureHint(34))
-const isLiveTranslationSupported = computed(() => getTalkConfig(token.value, 'call', 'live-translation') || false)
-const hintTranslationSupported = computed(() => !isLiveTranslationSupported.value && showTalkFeatureHint(34))
+// Live transcription and translation are rejected by the backend in classified conversations
+const isClassified = computed(() => isClassifiedConversation(conversation.value))
+const isLiveTranscriptionSupported = computed(() => (getTalkConfig(token.value, 'call', 'live-transcription') || false) && !isClassified.value)
+const hintTranscriptionSupported = computed(() => !isLiveTranscriptionSupported.value && showTalkFeatureHint(34) && !isClassified.value)
+const isLiveTranslationSupported = computed(() => (getTalkConfig(token.value, 'call', 'live-translation') || false) && !isClassified.value)
+const hintTranslationSupported = computed(() => !isLiveTranslationSupported.value && showTalkFeatureHint(34) && !isClassified.value)
 
 const liveTranscriptionButtonLabel = computed(() => {
 	if (callViewStore.isLiveTranscriptionEnabled && languageType.value === LanguageType.Original) {
