@@ -6,6 +6,10 @@
 import attachMediaStream from '../attachmediastream.js'
 import { mediaDevicesManager } from '../webrtc/index.js'
 
+// Autoplay of an unmuted element can be blocked until the user interacts with
+// the page; these gestures are used to retry playback of blocked elements.
+const AUTOPLAY_RESUME_EVENTS = ['touchend', 'mousedown', 'keydown']
+
 /**
  * Player for audio of call participants.
  *
@@ -37,6 +41,13 @@ export default function CallParticipantsAudioPlayer(callParticipantCollection, m
 		this._audioDestination = this._audioContext.createMediaStreamDestination()
 		this._audioElement = attachMediaStream(this._audioDestination.stream, null, { audio: true })
 		this._audioNodes = new Map()
+
+		// On Safari the AudioContext starts suspended until a user gesture, so
+		// resume it (and (re)play the mixed element) on the next interaction.
+		this._playAudioElement(this._audioElement)
+		if (this._audioContext.state !== 'running') {
+			this._resumeAudioOnGesture()
+		}
 	} else {
 		this._audioElements = new Map()
 	}
@@ -65,6 +76,13 @@ CallParticipantsAudioPlayer.prototype = {
 		this._callParticipantCollection.callParticipantModels.forEach((callParticipantModel) => {
 			this._handleCallParticipantRemovedBound(this._callParticipantCollection, callParticipantModel)
 		})
+
+		if (this._resumeAudioBound) {
+			AUTOPLAY_RESUME_EVENTS.forEach((event) => {
+				document.removeEventListener(event, this._resumeAudioBound, { capture: true })
+			})
+			this._resumeAudioBound = null
+		}
 
 		if (this._mixAudio) {
 			this._audioElement.srcObject = null
@@ -148,9 +166,55 @@ CallParticipantsAudioPlayer.prototype = {
 
 		if (mute) {
 			audioElement.muted = true
+		} else {
+			this._playAudioElement(audioElement)
 		}
 
 		this._audioElements.set(id, audioElement)
+	},
+
+	_playAudioElement(audioElement) {
+		// Relying on the "autoplay" attribute fails silently when playback is
+		// blocked, so play explicitly to detect it and retry on a user gesture.
+		audioElement.play()?.catch((error) => {
+			if (error.name === 'NotAllowedError') {
+				this._resumeAudioOnGesture()
+			}
+		})
+	},
+
+	_resumeAudioOnGesture() {
+		if (this._resumeAudioBound) {
+			return
+		}
+
+		this._resumeAudioBound = () => {
+			AUTOPLAY_RESUME_EVENTS.forEach((event) => {
+				document.removeEventListener(event, this._resumeAudioBound, { capture: true })
+			})
+			this._resumeAudioBound = null
+
+			this._resumeAudio()
+		}
+
+		AUTOPLAY_RESUME_EVENTS.forEach((event) => {
+			document.addEventListener(event, this._resumeAudioBound, { capture: true, passive: true })
+		})
+	},
+
+	_resumeAudio() {
+		if (this._mixAudio) {
+			if (this._audioContext.state !== 'running') {
+				this._audioContext.resume().catch(() => {})
+			}
+			this._playAudioElement(this._audioElement)
+		} else {
+			this._audioElements.forEach((audioElement) => {
+				if (audioElement.paused && !audioElement.muted) {
+					this._playAudioElement(audioElement)
+				}
+			})
+		}
 	},
 
 	async setGeneralAudioOutput(deviceId) {
@@ -194,6 +258,7 @@ CallParticipantsAudioPlayer.prototype = {
 				// Force creating a new audio renderer to work around broken
 				// audio output in Safari after disconnecting a node.
 				this._audioElement.srcObject = this._audioDestination.stream
+				this._playAudioElement(this._audioElement)
 			}
 
 			return
@@ -205,6 +270,9 @@ CallParticipantsAudioPlayer.prototype = {
 		}
 
 		audioElement.muted = !audioAvailable
+		if (audioAvailable) {
+			this._playAudioElement(audioElement)
+		}
 	},
 
 }
