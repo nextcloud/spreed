@@ -651,7 +651,7 @@ class Listener implements IEventListener {
 		$suffix = $this->getCallRecordingSuffix($event);
 		$systemMessage = $prefix . 'recording_' . $suffix;
 
-		$this->sendSystemMessage($event->getRoom(), $systemMessage, [], $actor);
+		$this->sendSystemMessage($event->getRoom(), $systemMessage, [], $actor, false);
 	}
 
 	protected function getCallRecordingSuffix(RoomModifiedEvent $event): string {

@@ -19,7 +19,8 @@ abstract class ASystemMessageSentEvent extends AMessageSentEvent {
 		?Participant $participant = null,
 		bool $silent = false,
 		?IComment $parent = null,
-		private bool $skipLastActivityUpdate = true,
+		private bool $skipLastActivityUpdate = false,
+		private bool $skipLastMetadataActivityUpdate = true,
 	) {
 		parent::__construct(
 			$room,
@@ -47,9 +48,17 @@ abstract class ASystemMessageSentEvent extends AMessageSentEvent {
 
 	/**
 	 * public setter for shouldSkipLastAcitvityUpdate
-	 * @param bool $ShouldSkipLastActivity
+	 * @param bool $shouldSkipLastActivity
 	 */
 	public function setShouldSkipLastActivityUpdate(bool $shouldSkipLastActivity) {
 		$this->skipLastActivityUpdate = $shouldSkipLastActivity;
+	}
+
+	public function shouldSkipLastMetadataActivityUpdate(): bool {
+		return $this->skipLastMetadataActivityUpdate;
+	}
+
+	public function setShouldSkipLastMetadataActivityUpdate(bool $shouldSkipLastMetadaActivity) {
+		$this->skipLastMetadataActivityUpdate = $shouldSkipLastMetadataActivity;
 	}
 }
