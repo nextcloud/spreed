@@ -49,7 +49,7 @@
 				</div>
 			</form>
 		</div>
-		<div v-if="supportImportEmails" class="import-email-participants">
+		<div v-if="supportImportEmails && !isClassified" class="import-email-participants">
 			<h4 class="app-settings-section__subtitle">
 				{{ t('spreed', 'Import email participants') }}
 			</h4>
@@ -68,19 +68,19 @@
 				:token="token"
 				container=".import-email-participants"
 				@close="isImportEmailsDialogOpen = false" />
-
-			<template v-if="canCreatePollDrafts">
-				<h4 class="app-settings-section__subtitle">
-					{{ t('spreed', 'Poll drafts') }}
-				</h4>
-				<NcButton @click="openPollDraftHandler">
-					<template #icon>
-						<IconPoll :size="20" />
-					</template>
-					{{ t('spreed', 'Browse poll drafts') }}
-				</NcButton>
-			</template>
 		</div>
+
+		<template v-if="canCreatePollDrafts">
+			<h4 class="app-settings-section__subtitle">
+				{{ t('spreed', 'Poll drafts') }}
+			</h4>
+			<NcButton @click="openPollDraftHandler">
+				<template #icon>
+					<IconPoll :size="20" />
+				</template>
+				{{ t('spreed', 'Browse poll drafts') }}
+			</NcButton>
+		</template>
 	</div>
 </template>
 
@@ -98,6 +98,7 @@ import IconFileUpload from '../../../img/material-icons/file-upload.svg?raw'
 import { WEBINAR } from '../../constants.ts'
 import { hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../services/EventBus.ts'
+import { isClassifiedConversation } from '../../utils/conversation.ts'
 import { convertToUnix, futureRelativeTime, ONE_DAY_IN_MS } from '../../utils/formattedTime.ts'
 
 export default {
@@ -145,6 +146,10 @@ export default {
 
 		hasLobbyEnabled() {
 			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
+		},
+
+		isClassified() {
+			return isClassifiedConversation(this.conversation)
 		},
 
 		lobbyTimerFieldDisabled() {

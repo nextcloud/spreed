@@ -26,7 +26,7 @@
 				</template>
 			</NcTextField>
 			<DialpadPanel
-				v-if="canModerateSipDialOut"
+				v-if="showPhoneOptions"
 				v-model:value="searchText"
 				container=".set-contacts__form"
 				@submit="addParticipantPhone" />
@@ -48,7 +48,7 @@
 
 		<!-- Search results -->
 		<SelectPhoneNumber
-			v-if="canModerateSipDialOut"
+			v-if="showPhoneOptions"
 			v-model:participantPhoneItem="participantPhoneItem"
 			:name="t('spreed', 'Add a phone number')"
 			:value="searchText"
@@ -125,6 +125,14 @@ export default {
 			type: Boolean,
 			required: false,
 		},
+
+		/**
+		 * Whether to exclude email guests and federated users (classified conversations)
+		 */
+		onlyLocal: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	emits: ['update:selectedParticipants'],
@@ -167,8 +175,14 @@ export default {
 			return this.searchText !== ''
 		},
 
+		// Phone (SIP dial-out) participants are not local and are blocked
+		// in classified conversations
+		showPhoneOptions() {
+			return this.canModerateSipDialOut && !this.onlyLocal
+		},
+
 		textFieldLabel() {
-			return this.canModerateSipDialOut
+			return this.showPhoneOptions
 				? t('spreed', 'Search participants or phone numbers')
 				: t('spreed', 'Search participants')
 		},
@@ -225,7 +239,10 @@ export default {
 				const response = await request({
 					searchText: this.searchText,
 					token: this.token || 'new',
-					forceTypes: [SHARE.TYPE.EMAIL], // email guests are allowed directly after conversation creation
+					onlyLocal: this.onlyLocal,
+					// email guests are allowed directly after conversation creation,
+					// but not in classified conversations
+					forceTypes: this.onlyLocal ? [] : [SHARE.TYPE.EMAIL],
 				})
 
 				this.searchResults = response?.data?.ocs?.data || []

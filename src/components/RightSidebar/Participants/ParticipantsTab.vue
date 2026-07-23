@@ -121,6 +121,7 @@ import { EventBus } from '../../../services/EventBus.ts'
 import { addParticipant } from '../../../services/participantsService.js'
 import { useSidebarStore } from '../../../stores/sidebar.ts'
 import CancelableRequest from '../../../utils/CancelableRequest.ts'
+import { isClassifiedConversation } from '../../../utils/conversation.ts'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
 
@@ -235,13 +236,17 @@ export default {
 			return [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(this.conversation.type)
 		},
 
+		isClassified() {
+			return isClassifiedConversation(this.conversation)
+		},
+
 		canAddPhones() {
 			const canModerateSipDialOut = hasTalkFeature(this.token, 'sip-support-dialout')
 				&& getTalkConfig(this.token, 'call', 'enabled')
 				&& getTalkConfig(this.token, 'call', 'sip-enabled')
 				&& getTalkConfig(this.token, 'call', 'sip-dialout-enabled')
 				&& getTalkConfig(this.token, 'call', 'can-enable-sip')
-			return canModerateSipDialOut && this.conversation.canEnableSIP
+			return canModerateSipDialOut && this.conversation.canEnableSIP && !this.isClassified
 		},
 
 		hintAddPhones() {
@@ -249,7 +254,7 @@ export default {
 				&& getTalkConfig(this.token, 'call', 'sip-enabled')
 				&& getTalkConfig(this.token, 'call', 'sip-dialout-enabled')
 				&& getTalkConfig(this.token, 'call', 'can-enable-sip')
-			return getTalkConfig(this.token, 'call', 'enabled') && !canModerateSipDialOut && showTalkFeatureHint(34)
+			return getTalkConfig(this.token, 'call', 'enabled') && !canModerateSipDialOut && showTalkFeatureHint(34) && !this.isClassified
 		},
 
 		isSearching() {
@@ -314,6 +319,8 @@ export default {
 					searchText: this.searchText,
 					token: this.token,
 					onlyUsers: this.isOneToOneConversation,
+					// Classified conversations reject email guests and federated users
+					onlyLocal: this.isClassified,
 				})
 
 				this.searchResults = response?.data?.ocs?.data || []
