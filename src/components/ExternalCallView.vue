@@ -94,8 +94,7 @@ function onMessage(event: MessageEvent) {
  */
 function onIframeRemoved() {
 	externalWrapperObserver?.disconnect()
-	callViewStore.setExternalCallServiceUrl(null)
-	callViewStore.setForceCallView(false)
+	callViewStore.leaveExternalCall()
 }
 </script>
 
