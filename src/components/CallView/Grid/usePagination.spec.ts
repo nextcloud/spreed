@@ -4,11 +4,14 @@
  */
 
 import { describe, expect, test } from 'vitest'
-import { nextTick, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { usePagination } from './usePagination.ts'
 
 /**
  * Create a pagination over `count` videos with `slots` videos per page.
+ *
+ * The composable only works with counts and index bounds, so `displayedVideos`
+ * is derived here the same way the caller does, by slicing the list.
  *
  * @param count - number of videos in the list
  * @param slots - number of videos per page
@@ -16,7 +19,9 @@ import { usePagination } from './usePagination.ts'
 function createPagination(count: number, slots: number) {
 	const videos = ref(Array.from(Array(count).keys()))
 	const slotsRef = ref(slots)
-	return { videos, slots: slotsRef, ...usePagination(videos, slotsRef) }
+	const pagination = usePagination(computed(() => videos.value.length), slotsRef)
+	const displayedVideos = computed(() => videos.value.slice(...pagination.currentPageBounds.value))
+	return { videos, slots: slotsRef, displayedVideos, ...pagination }
 }
 
 describe('usePagination', () => {

@@ -497,15 +497,20 @@ export default {
 			})
 		})
 
+		const videosCount = computed(() => orderedVideos.value.length)
+
 		const {
 			currentPage,
 			numberOfPages,
-			displayedVideos,
+			currentPageBounds,
 			hasNextPage,
 			hasPreviousPage,
 			next,
 			previous,
-		} = usePagination(orderedVideos, slots)
+		} = usePagination(videosCount, slots)
+
+		// The window of the ordered videos shown on the current page
+		const displayedVideos = computed(() => orderedVideos.value.slice(...currentPageBounds.value))
 
 		// Reset current page when switching between stripe and full grid,
 		// as the previous page is meaningless in the new mode.
