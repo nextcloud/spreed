@@ -15,6 +15,7 @@ import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { getUploader } from '@nextcloud/upload'
 import { defineStore } from 'pinia'
+import { v4 as uuidv4 } from 'uuid'
 import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useTemporaryMessage } from '../composables/useTemporaryMessage.ts'
@@ -469,7 +470,15 @@ export const useUploadStore = defineStore('upload', () => {
 			// resolves the final name (and any conflicts) when postAttachment
 			// moves the file out of Draft.
 			for (const [index] of getInitialisedUploads(uploadId)) {
-				const tempName = crypto.randomUUID()
+				// crypto.randomUUID() requires a secure context and throws
+				// over plain HTTP, breaking uploads entirely (see #18733).
+				// This value only needs to be unique per upload, not
+				// cryptographically random -- the backend's rename-on-conflict
+				// handles real deduplication when the file leaves Draft -- so
+				// the uuid package (already a dependency, used the same way
+				// in src/utils/e2ee/encryption.js) is a safe drop-in that
+				// works regardless of context security.
+				const tempName = uuidv4()
 				markFileAsPendingUpload({ uploadId, index, sharePath: '/' + draftFolderPath + '/' + tempName })
 			}
 			return
