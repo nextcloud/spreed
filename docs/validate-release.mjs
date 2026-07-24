@@ -422,7 +422,6 @@ function generateChangelogSection(milestoneNumber, sectionVersion) {
 	)
 
 	let hasDeps = false
-	let hasL10n = false
 	const entriesAdded = []
 	const entriesFixed = []
 	const entriesRemoved = []
@@ -436,10 +435,6 @@ function generateChangelogSection(milestoneNumber, sectionVersion) {
 
 		if (/^(chore|build)\(deps/.test(title)) {
 			hasDeps = true
-			continue
-		}
-		if (/^(chore|fix)\(l10n/i.test(title)) {
-			hasL10n = true
 			continue
 		}
 
@@ -464,16 +459,12 @@ function generateChangelogSection(milestoneNumber, sectionVersion) {
 		lines.push('')
 	}
 
-	if (hasDeps || hasL10n) {
-		lines.push('### Changed')
-		if (hasDeps) {
-			lines.push('- Update dependencies')
-		}
-		if (hasL10n) {
-			lines.push('- Update translations')
-		}
-		lines.push('')
+	lines.push('### Changed')
+	if (hasDeps) {
+		lines.push('- Update dependencies')
 	}
+	lines.push('- Update translations')
+	lines.push('')
 
 	if (entriesFixed.length > 0) {
 		lines.push('### Fixed')
