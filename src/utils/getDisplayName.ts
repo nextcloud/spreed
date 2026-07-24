@@ -7,7 +7,7 @@ import { ATTENDEE } from '../constants.ts'
 
 /**
  * Suffixes and post-nominal credentials that may follow a comma in a display name
- * (e.g. "Martin Luther King, Jr." or "Mary Williams, RN, BSN").
+ * (e.g. "Martin Luther King, Jr." or "Mary Williams, Ph.D.").
  * Based on https://github.com/joshfraser/JavaScript-Name-Parser
  */
 const SUFFIX_PATTERN = new RegExp('^(?:'
