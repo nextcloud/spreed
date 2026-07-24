@@ -58,6 +58,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\RoomAttributes;
+use OCA\Talk\RoomPresets\Classified;
 use OCA\Talk\RoomPresets\Forced;
 use OCA\Talk\RoomPresets\Parameter;
 use OCA\Talk\RoomPresets\VoiceRoom;
@@ -674,7 +675,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * @psalm-param TalkInvitationList $participants
 	 * @param string $owner User ID that will be used as actor and made owner of the conversation. Required when the request is authenticated via the `x-nextcloud-talk-external-service-random` and `x-nextcloud-talk-external-service-checksum` headers, otherwise ignored.
 	 * @param ?string $preset Identifier of the preset that was used (only available with `conversation-preset` capability)
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_ACCEPTED, TalkRoomWithInvalidInvitations, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'avatar'|'description'|'invite'|'listable'|'lobby'|'lobby-timer'|'mention-permissions'|'message-expiration'|'name'|'object'|'object-id'|'object-type'|'owner'|'password'|'permissions'|'preset'|'read-only'|'recording-consent'|'sip-enabled'|'type', message?: string}, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED, array{error: 'auth'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_CREATED, TalkRoom, array{}>|DataResponse<Http::STATUS_ACCEPTED, TalkRoomWithInvalidInvitations, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'avatar'|'classified'|'description'|'invite'|'listable'|'lobby'|'lobby-timer'|'mention-permissions'|'message-expiration'|'name'|'object'|'object-id'|'object-type'|'owner'|'password'|'permissions'|'preset'|'read-only'|'recording-consent'|'sip-enabled'|'type', message?: string}, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED, array{error: 'auth'}, array{}>
 	 *
 	 * 200: Room already existed
 	 * 201: Room created successfully
@@ -818,7 +819,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$password = '';
 		}
 
-		$invitationList = $this->invitationService->validateInvitations($participants, $user);
+		$isClassified = $preset === Classified::getIdentifier();
+
+		$invitationList = $this->invitationService->validateInvitations($participants, $user, isClassified: $isClassified);
 		if ($invitationList->hasInvalidInvitations() && !$invitationList->hasValidInvitations()) {
 			// FIXME add the list of failed invitations?
 			return new DataResponse(['error' => 'invite'], Http::STATUS_NOT_FOUND);
@@ -838,6 +841,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 				return new DataResponse(['error' => 'preset'], Http::STATUS_NOT_FOUND);
 			}
 			$attributes |= RoomAttributes::VOICE_ROOM->value;
+		}
+		if ($isClassified) {
+			$attributes |= RoomAttributes::CLASSIFIED->value;
 		}
 
 		try {
@@ -1137,6 +1143,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->roomService->resetObject($this->room);
 		} elseif ($this->room->getObjectType() === Room::OBJECT_TYPE_PHONE_TEMPORARY) {
 			$this->roomService->setObject($this->room, Room::OBJECT_TYPE_PHONE_PERSIST, $this->room->getObjectId());
+		} elseif ($this->room->getObjectType() === Room::OBJECT_TYPE_CLASSIFIED) {
+			// Keep the classified conversation permanently: switching to the
+			// "persist" object type removes it from the retention sweep and, since
+			// the call-end listener only queues rooms with an empty object type,
+			// prevents it from being re-queued after future calls.
+			$this->roomService->setObject($this->room, Room::OBJECT_TYPE_CLASSIFIED_PERSIST, (string)$this->timeFactory->getTime());
 		} else {
 			return new DataResponse(['error' => 'object-type'], Http::STATUS_BAD_REQUEST);
 		}
@@ -1426,10 +1438,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param string $newParticipant New participant
 	 * @param 'users'|'groups'|'circles'|'emails'|'federated_users'|'phones'|'teams' $source Source of the participant
-	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error: 'ban'|'cloud-id'|'federation'|'moderator'|'new-participant'|'outgoing'|'reach-remote'|'room-type'|'sip'|'source'|'trusted-servers'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{type?: int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_NOT_IMPLEMENTED, array{error: 'ban'|'classified'|'cloud-id'|'federation'|'moderator'|'new-participant'|'outgoing'|'reach-remote'|'room-type'|'sip'|'source'|'trusted-servers'}, array{}>
 	 *
 	 * 200: Participant successfully added
-	 * 400: Adding participant is not possible, e.g. when the user is banned (check error attribute of response for detail key)
+	 * 400: Adding participant is not possible, e.g. when the user is banned or an email, phone number or federated user is added to a classified conversation (check error attribute of response for detail key)
 	 * 404: User, group or other target to invite was not found
 	 * 501: SIP dial-out is not configured
 	 */
@@ -1510,6 +1522,13 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 			$this->participantService->addCircle($this->room, $circle, $participants);
 		} elseif ($source === 'emails') {
+			if ($this->room->isClassified()) {
+				// The invitation mail would carry the conversation into the email
+				// infrastructure, and the access token link would allow joining
+				// without an account
+				return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
+			}
+
 			$email = strtolower($newParticipant);
 			$actorId = hash('sha256', $email);
 			try {
@@ -1533,7 +1552,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 				return new DataResponse(['error' => 'cloud-id'], Http::STATUS_BAD_REQUEST);
 			}
 			try {
-				$this->federationManager->isAllowedToInvite($addedBy, $newUser);
+				$this->federationManager->isAllowedToInvite($addedBy, $newUser, $this->room);
 			} catch (FederationRestrictionException $e) {
 				return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 			}
@@ -1544,6 +1563,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 				'displayName' => $newUser->getDisplayId(),
 			];
 		} elseif ($source === 'phones') {
+			if ($this->room->isClassified()) {
+				return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
+			}
+
 			if (
 				!$addedBy instanceof IUser
 				|| !$this->talkConfig->isSIPConfigured()
@@ -1743,7 +1766,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Required capability: `conversation-creation-password` for `string $password` parameter
 	 *
 	 * @param string $password New password (only available with `conversation-creation-password` capability)
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'|'password', message?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'classified'|'type'|'value'|'password', message?: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
 	 *
 	 * 200: Allowed guests successfully
 	 * 400: Allowing guests is not possible
@@ -1782,7 +1805,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Disallowed guests to join conversation
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'classified'|'type'|'value'}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
 	 *
 	 * 200: Room unpublished Disallowing guests successfully
 	 * 400: Disallowing guests is not possible
@@ -1848,7 +1871,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param 0|1|2 $scope Scope where the room is listable
 	 * @psalm-param Room::LISTABLE_* $scope
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'type'|'value'}|array{error: 'forced', forced?: 0|1|2}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'classified'|'type'|'value'}|array{error: 'forced', forced?: 0|1|2}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{error: 'preserved'}, array{}>
 	 *
 	 * 200: Made room listable successfully
 	 * 400: Making room listable is not possible
@@ -2128,9 +2151,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * Required capability: `sensitive-conversations`
 	 *
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'classified'}, array{}>
 	 *
 	 * 200: Conversation was marked as insensitive
+	 * 400: Marking the conversation as insensitive is not possible (e.g. classified conversation)
 	 */
 	#[NoAdminRequired]
 	#[FederationSupported]
@@ -2140,6 +2164,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function markConversationAsInsensitive(): DataResponse {
+		if ($this->room->isClassified()) {
+			// Classified conversations are forced sensitive for everyone and can not be reverted
+			return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
+		}
 		$this->participantService->markConversationAsInsensitive($this->participant);
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
@@ -3075,7 +3103,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param 0|1|2 $state New state
 	 * @psalm-param Webinary::SIP_* $state
-	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, array{error: 'config'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'token'|'type'|'value'}|array{error: 'forced', forced?: 0|1|2}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TalkRoom, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED|Http::STATUS_FORBIDDEN|Http::STATUS_PRECONDITION_FAILED, array{error: 'config'}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'breakout-room'|'classified'|'token'|'type'|'value'}|array{error: 'forced', forced?: 0|1|2}, array{}>
 	 *
 	 * 200: SIP enabled state updated successfully
 	 * 400: Updating SIP enabled state is not possible
@@ -3090,6 +3118,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setSIPEnabled(int $state): DataResponse {
+		if ($this->room->isClassified() && $state !== Webinary::SIP_DISABLED) {
+			// Classified conversations can not enable SIP, independently of whether
+			// SIP is configured or the user could otherwise enable it.
+			return new DataResponse(['error' => 'classified'], Http::STATUS_BAD_REQUEST);
+		}
+
 		$user = $this->userManager->get($this->userId);
 		if (!$user instanceof IUser) {
 			return new DataResponse(['error' => 'config'], Http::STATUS_UNAUTHORIZED);
@@ -3233,10 +3267,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 * Required capability: `email-csv-import`
 	 *
 	 * @param bool $testRun When set to true, the file is validated and no email is actually sent nor any participant added to the conversation
-	 * @return DataResponse<Http::STATUS_OK, array{invites: non-negative-int, duplicates: non-negative-int, invalid?: non-negative-int, invalidLines?: list<non-negative-int>, type?: int<-1, 6>}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'room'|'file'|'header-email'|'header-name'|'rows', message?: string, invites?: non-negative-int, duplicates?: non-negative-int, invalid?: non-negative-int, invalidLines?: list<non-negative-int>, type?: int<-1, 6>}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{invites: non-negative-int, duplicates: non-negative-int, invalid?: non-negative-int, invalidLines?: list<non-negative-int>, type?: int<-1, 6>}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'classified'|'room'|'file'|'header-email'|'header-name'|'rows', message?: string, invites?: non-negative-int, duplicates?: non-negative-int, invalid?: non-negative-int, invalidLines?: list<non-negative-int>, type?: int<-1, 6>}, array{}>
 	 *
 	 * 200: All entries imported successfully
-	 * 400: Import was not successful. When message is provided the string is in user language and should be displayed as an error.
+	 * 400: Import was not successful, e.g. when the conversation is classified. When message is provided the string is in user language and should be displayed as an error.
 	 */
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]

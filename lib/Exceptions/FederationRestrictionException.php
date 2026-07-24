@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Exceptions;
 
 class FederationRestrictionException extends \InvalidArgumentException {
+	public const REASON_CLASSIFIED = 'classified';
 	public const REASON_CLOUD_ID = 'cloud-id';
 	public const REASON_FEDERATION = 'federation';
 	public const REASON_OUTGOING = 'outgoing';

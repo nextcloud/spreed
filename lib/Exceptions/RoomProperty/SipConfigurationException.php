@@ -10,6 +10,7 @@ namespace OCA\Talk\Exceptions\RoomProperty;
 
 class SipConfigurationException extends \InvalidArgumentException {
 	public const REASON_BREAKOUT_ROOM = 'breakout-room';
+	public const REASON_CLASSIFIED = 'classified';
 	public const REASON_TOKEN = 'token';
 	public const REASON_TYPE = 'type';
 	public const REASON_VALUE = 'value';

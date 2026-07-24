@@ -11,6 +11,7 @@ namespace OCA\Talk\Tests\php;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\GuestImportException;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -83,7 +84,7 @@ class GuestManagerTest extends TestCase {
 				->getMock();
 		}
 
-		$this->guestManager = new GuestManager(
+		return new GuestManager(
 			$this->talkConfig,
 			$this->emailValidator,
 			$this->mailer,
@@ -154,5 +155,42 @@ class GuestManagerTest extends TestCase {
 		$this->assertSame($invited, $actualInvites);
 		$this->assertSame($invites, $data['invites'], 'Invites count mismatch');
 		$this->assertSame($duplicates, $data['duplicates'], 'Duplicates count mismatch');
+	}
+
+	public function testImportEmailsThrowsForClassifiedRoom(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('isClassified')->willReturn(true);
+
+		// Not a single address of the file may be invited
+		$this->participantService->expects(self::never())
+			->method('inviteEmailAddress');
+
+		$this->expectException(GuestImportException::class);
+		$this->expectExceptionMessage(GuestImportException::REASON_CLASSIFIED);
+
+		$guestManager = $this->getGuestManager(['sendEmailInvitation']);
+		$guestManager->importEmails($room, __DIR__ . '/data/import-valid-only-email.csv', false);
+	}
+
+	public function testSendEmailInvitationThrowsForClassifiedRoom(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('isClassified')->willReturn(true);
+
+		$attendee = new Attendee();
+		$attendee->setActorType(Attendee::ACTOR_EMAILS);
+		$attendee->setActorId(hash('sha256', 'guest@example.tld'));
+		$attendee->setInvitedCloudId('guest@example.tld');
+		$participant = new Participant($room, $attendee, null);
+
+		// No mail may be created, let alone sent
+		$this->mailer->expects(self::never())
+			->method('createMessage');
+		$this->mailer->expects(self::never())
+			->method('send');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('Cannot send email for classified conversation');
+
+		$this->getGuestManager()->sendEmailInvitation($room, $participant);
 	}
 }

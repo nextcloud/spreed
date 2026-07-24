@@ -187,6 +187,7 @@ export const mockedCapabilities: Capabilities = {
 				'retention-event': 28,
 				'retention-phone': 7,
 				'retention-instant-meetings': 1,
+				'retention-classified': 3600,
 				'sort-order': 'activity',
 				'group-mode': 'none',
 			},

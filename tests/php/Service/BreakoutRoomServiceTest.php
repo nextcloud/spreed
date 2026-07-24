@@ -11,6 +11,8 @@ namespace OCA\Talk\Tests\php\Service;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\BreakoutRoom;
+use OCA\Talk\Room;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
@@ -78,5 +80,20 @@ class BreakoutRoomServiceTest extends TestCase {
 
 		$actual = self::invokePrivate($this->service, 'parseAttendeeMap', [$json, $max]);
 		$this->assertEquals($expected, $actual);
+	}
+
+	public function testSetupBreakoutRoomsThrowsForClassifiedRoom(): void {
+		$parent = $this->createMock(Room::class);
+		$parent->method('isClassified')->willReturn(true);
+
+		// The rejection must not depend on the breakout rooms being enabled, and
+		// the parent must not be modified before the check rejects it
+		$this->config->expects(self::never())->method('isBreakoutRoomsEnabled');
+		$this->roomService->expects(self::never())->method('setBreakoutRoomMode');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('classified');
+
+		$this->service->setupBreakoutRooms($parent, BreakoutRoom::MODE_AUTOMATIC, 2, '');
 	}
 }

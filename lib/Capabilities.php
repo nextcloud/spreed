@@ -135,6 +135,7 @@ class Capabilities implements IPublicCapability {
 		'private-reply',
 		'conversation-tags',
 		'preserve-conversation',
+		'classified-conversations',
 	];
 
 	public const CONDITIONAL_FEATURES = [
@@ -170,6 +171,7 @@ class Capabilities implements IPublicCapability {
 		'conversation-presets',
 		'conversation-tags',
 		'recording-chunked-upload',
+		'classified-conversations',
 	];
 
 	public const LOCAL_CONFIGS = [
@@ -313,6 +315,7 @@ class Capabilities implements IPublicCapability {
 					'retention-event' => max(0, $this->appConfig->getAppValueInt('retention_event_rooms', 28)),
 					'retention-phone' => max(0, $this->appConfig->getAppValueInt('retention_phone_rooms', 7)),
 					'retention-instant-meetings' => max(0, $this->appConfig->getAppValueInt('retention_instant_meetings', 1)),
+					'retention-classified' => max(0, $this->appConfig->getAppValueInt('retention_classified_rooms', 3600)),
 				],
 				'federation' => [
 					'enabled' => false,

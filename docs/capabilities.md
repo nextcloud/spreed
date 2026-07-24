@@ -187,6 +187,7 @@
 * `config => conversations => retention-event` - Number of days before an inactive event conversation is deleted (`0` = disabled)
 * `config => conversations => retention-instant-meetings` - Number of days before an instant meeting conversation is deleted (`0` = disabled)
 * `config => conversations => retention-phone` - Number of days before an inactive incoming or outgoing phone conversation is deleted (`0` = disabled)
+* `config => conversations => retention-classified` - Number of seconds before a classified conversation is deleted after a call happened, unless a moderator keeps it by unbinding it from its object (`0` = disabled)
 * `config => call => predefined-backgrounds-v2` (local) - Whether virtual backgrounds should be read from the theming directory
 * `config => experiments => enabled` (local) - Bit flag of enabled experiments for clients
 * `dashboard-event-rooms` (local) - Whether Talk APIs offer functionality for Dashboard requests
@@ -230,5 +231,6 @@
 
 ## 25
 * `preserve-conversation` - Whether the owner can preserve a conversation
+* `classified-conversations` (local) - Whether classified conversations are supported: locked down conversations for confidential topics, in which everything that could carry the content or metadata to non-participants is disabled and which are forced sensitive for everyone
 * `recording-chunked-upload` (local) - Whether the recording backend can request a temporary upload share to upload large recordings via chunked public WebDAV before finishing with the store endpoint
 * `config => call => external-call-service` (local) - The target URL for an external call service if one is configured

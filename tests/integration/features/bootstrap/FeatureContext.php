@@ -1875,6 +1875,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
+	#[Then('/^user "([^"]*)" unbinds room "([^"]*)" from its object with (\d+) \((v4)\)$/')]
+	public function userUnbindsRoomFromObject(string $user, string $identifier, int $statusCode, string $apiVersion): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/object');
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
 	#[Then('/^user "([^"]*)" adds (user|group|email|federated_user|phone|team) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userAddAttendeeToRoom(string $user, string $newType, string $newId, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
@@ -2094,6 +2101,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		Assert::assertEquals(implode("\n", $expected) . "\n", $this->response->getBody()->getContents());
+	}
+
+	#[Then('/^user "([^"]*)" (enables|disables) live transcription in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userTogglesLiveTranscription(string $user, string $action, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->setCurrentUser($user);
+		$verb = $action === 'enables' ? 'POST' : 'DELETE';
+		$this->sendRequest($verb, '/apps/spreed/api/' . $apiVersion . '/live-transcription/' . self::$identifierToToken[$identifier]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	#[Then('/^user "([^"]*)" sets live translation target language to "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userSetsLiveTranslationTargetLanguage(string $user, string $targetLanguageId, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/live-transcription/' . self::$identifierToToken[$identifier] . '/target-language', [
+			'targetLanguageId' => $targetLanguageId,
+		]);
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	#[Then('/^user "([^"]*)" schedules a message to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
@@ -2467,6 +2491,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		} elseif (isset($response['nextOffset'])) {
 			Assert::assertArrayNotHasKey('nextOffset', $response, 'Did not expect a follow-up offset key on response, but received: ' . self::$messageIdToText[$response['nextOffset']]);
 		}
+	}
+
+	#[Then('/^user "([^"]*)" can not request summary for "([^"]*)" starting from ("[^"]*"|\'[^\']*\') with (\d+)(?: \((v1)\))?$/')]
+	public function userCanNotSummarizeRoom(string $user, string $identifier, string $message, int $statusCode, string $apiVersion = 'v1'): void {
+		$message = substr($message, 1, -1);
+		$fromMessageId = self::$textToMessageId[$message];
+
+		$this->setCurrentUser($user, $identifier);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/summarize',
+			['fromMessageId' => $fromMessageId],
+		);
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	#[Then('/^user "([^"]*)" receives summary for "([^"]*)" with (\d+)$/')]
@@ -4991,10 +5028,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	#[Then('/^(setup|remove) bot "([^"]*)" for room "([^"]*)" via OCC$/')]
-	public function setupOrRemoveBotInRoom(string $action, string $botName, string $identifier): void {
+	#[Then('/^(setup|remove) bot "([^"]*)" for room "([^"]*)" via OCC(?: with exit code (\d+))?$/')]
+	public function setupOrRemoveBotInRoom(string $action, string $botName, string $identifier, ?int $exitCode = null): void {
 		$this->invokingTheCommand('talk:bot:' . $action . ' ' . self::$botNameToId[$botName] . ' ' . self::$identifierToToken[$identifier]);
-		$this->theCommandWasSuccessful();
+		if ($exitCode === null) {
+			$this->theCommandWasSuccessful();
+		} else {
+			$this->theCommandFailedWithExitCode($exitCode);
+		}
 	}
 
 	#[Then('/^set state (enabled|disabled|no-setup) for bot "([^"]*)" via OCC$/')]

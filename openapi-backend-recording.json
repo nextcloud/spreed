@@ -281,6 +281,7 @@
                                     "retention-event",
                                     "retention-phone",
                                     "retention-instant-meetings",
+                                    "retention-classified",
                                     "sort-order",
                                     "group-mode"
                                 ],
@@ -323,6 +324,12 @@
                                         "type": "integer",
                                         "format": "int64",
                                         "description": "Retention period for instant meetings in seconds, `0` means no retention",
+                                        "minimum": 0
+                                    },
+                                    "retention-classified": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Retention period for classified conversations after a call in seconds, `0` means no retention",
                                         "minimum": 0
                                     },
                                     "sort-order": {

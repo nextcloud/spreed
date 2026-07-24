@@ -166,6 +166,18 @@ class RoomService {
 			throw new CreationException(CreationException::REASON_NAME);
 		}
 
+		$isClassified = ($attributes & RoomAttributes::CLASSIFIED->value) === RoomAttributes::CLASSIFIED->value;
+		if ($isClassified) {
+			// Classified conversations are locked down: never public (so no public
+			// link and no guest access), not openly joinable and without SIP.
+			// Coerce here so the restrictions can not be bypassed at creation time.
+			if ($type === Room::TYPE_PUBLIC) {
+				$type = Room::TYPE_GROUP;
+			}
+			$listable = Room::LISTABLE_NONE;
+			$sipEnabled = Webinary::SIP_DISABLED;
+		}
+
 		$types = [
 			Room::TYPE_GROUP,
 			Room::TYPE_PUBLIC,
@@ -186,6 +198,15 @@ class RoomService {
 		$objectId = trim($objectId);
 		if (isset($objectId[64])) {
 			throw new CreationException(CreationException::REASON_OBJECT_ID);
+		}
+
+		if ($isClassified && ($objectType !== '' || $objectId !== '')) {
+			// Classified conversations are bound to the "classified" object type
+			// once a call happened, which is what makes the retention job delete
+			// them again. Any other object at creation time would occupy the field
+			// and therefore permanently exclude the conversation from that
+			// mechanism, so it is rejected instead of silently ignored.
+			throw new CreationException(CreationException::REASON_CLASSIFIED);
 		}
 
 		$objectTypes = [
@@ -403,6 +424,10 @@ class RoomService {
 
 		if ($newSipEnabled === $oldSipEnabled) {
 			return;
+		}
+
+		if ($room->isClassified() && $newSipEnabled !== Webinary::SIP_DISABLED) {
+			throw new SipConfigurationException(SipConfigurationException::REASON_CLASSIFIED);
 		}
 
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
@@ -634,6 +659,9 @@ class RoomService {
 	 */
 	public function setCallRecording(Room $room, int $status = Room::RECORDING_NONE, ?Participant $participant = null): void {
 		$syncFederatedRoom = $room->getRemoteServer() && $room->getRemoteToken();
+		if ($room->isClassified() && $status !== Room::RECORDING_NONE) {
+			throw new CallRecordingException(CallRecordingException::REASON_CLASSIFIED);
+		}
 		if (!$syncFederatedRoom && !$this->config->isRecordingEnabled() && $status !== Room::RECORDING_NONE) {
 			throw new CallRecordingException(CallRecordingException::REASON_CONFIG);
 		}
@@ -669,6 +697,12 @@ class RoomService {
 		$oldType = $room->getType();
 		if ($oldType === $newType) {
 			return;
+		}
+
+		if ($room->isClassified() && $newType === Room::TYPE_PUBLIC) {
+			// Classified conversations can never be turned into a public link
+			// (which would also allow guest access).
+			throw new TypeException(TypeException::REASON_CLASSIFIED);
 		}
 
 		if (!$allowSwitchingOneToOne && $oldType === Room::TYPE_ONE_TO_ONE) {
@@ -815,6 +849,10 @@ class RoomService {
 		$oldState = $room->getListable();
 		if ($newState === $oldState) {
 			return;
+		}
+
+		if ($room->isClassified() && $newState !== Room::LISTABLE_NONE) {
+			throw new ListableException(ListableException::REASON_CLASSIFIED);
 		}
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {

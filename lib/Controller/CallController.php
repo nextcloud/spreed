@@ -135,10 +135,11 @@ class CallController extends AEnvironmentAwareOCSController {
 	 * Required capability: `download-call-participants`
 	 *
 	 * @param 'csv' $format Download format
-	 * @return DataDownloadResponse<Http::STATUS_OK, 'text/csv', array{}>|Response<Http::STATUS_BAD_REQUEST, array{}>
+	 * @return DataDownloadResponse<Http::STATUS_OK, 'text/csv', array{}>|Response<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN, array{}>
 	 *
 	 * 200: List of participants in the call downloaded in the requested format
 	 * 400: No call in progress
+	 * 403: Downloading the participants list is not allowed (e.g. classified conversation)
 	 */
 	#[PublicPage]
 	#[RequireModeratorParticipant]
@@ -148,6 +149,11 @@ class CallController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function downloadParticipantsForCall(string $format = 'csv'): DataDownloadResponse|Response {
+		if ($this->room->isClassified()) {
+			// The participants list of a classified conversation can not be downloaded
+			return new Response(Http::STATUS_FORBIDDEN);
+		}
+
 		$callStart = $this->room->getActiveSince()?->getTimestamp() ?? 0;
 		if ($callStart === 0) {
 			return new Response(Http::STATUS_BAD_REQUEST);
@@ -412,7 +418,7 @@ class CallController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_CREATED|Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, null, array{}>|DataResponse<Http::STATUS_NOT_IMPLEMENTED, array{error: string, message?: string}, array{}>
 	 *
 	 * 201: Dial-out initiated successfully
-	 * 400: SIP dial-out not possible
+	 * 400: SIP dial-out not possible, e.g. when the conversation is classified
 	 * 404: Participant could not be found or is a wrong type
 	 * 501: SIP dial-out is not configured on the server
 	 */
@@ -425,6 +431,10 @@ class CallController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function sipDialOut(int $attendeeId): DataResponse {
+		if ($this->room->isClassified()) {
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
+		}
+
 		if ($this->room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}

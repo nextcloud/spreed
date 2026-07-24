@@ -205,6 +205,11 @@ export type components = {
                      */
                     "retention-instant-meetings": number;
                     /**
+                     * Format: int64
+                     * @description Retention period for classified conversations after a call in seconds, `0` means no retention
+                     */
+                    "retention-classified": number;
+                    /**
                      * @description User selected sort order for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-sort-options))
                      * @enum {string}
                      */

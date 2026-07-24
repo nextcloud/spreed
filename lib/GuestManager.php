@@ -89,6 +89,11 @@ class GuestManager {
 	 * @throws GuestImportException
 	 */
 	public function importEmails(Room $room, string $filePath, bool $testRun): array {
+		if ($room->isClassified()) {
+			// Classified conversations can not have email guests
+			throw new GuestImportException(GuestImportException::REASON_CLASSIFIED);
+		}
+
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE
 			|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
 			|| $room->getType() === Room::TYPE_NOTE_TO_SELF
@@ -209,6 +214,11 @@ class GuestManager {
 	public function sendEmailInvitation(Room $room, Participant $participant): void {
 		if ($participant->getAttendee()->getActorType() !== Attendee::ACTOR_EMAILS) {
 			throw new \InvalidArgumentException('Cannot send email for non-email participant actor type');
+		}
+		if ($room->isClassified()) {
+			// The mail would leak the conversation name and description into the
+			// email infrastructure, so it is never sent for classified conversations
+			throw new \InvalidArgumentException('Cannot send email for classified conversation');
 		}
 		$email = $participant->getAttendee()->getInvitedCloudId();
 		$pin = $participant->getAttendee()->getPin();

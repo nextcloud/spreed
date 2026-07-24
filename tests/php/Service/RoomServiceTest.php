@@ -13,6 +13,10 @@ use OC\EventDispatcher\EventDispatcher;
 use OCA\Talk\Config;
 use OCA\Talk\Events\RoomPasswordVerifyEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomProperty\CreationException;
+use OCA\Talk\Exceptions\RoomProperty\ListableException;
+use OCA\Talk\Exceptions\RoomProperty\SipConfigurationException;
+use OCA\Talk\Exceptions\RoomProperty\TypeException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
@@ -426,10 +430,10 @@ class RoomServiceTest extends TestCase {
 		$this->assertSame('passy', $room->getPassword());
 	}
 
-	protected function createRoomWithAttributes(int $attributes): Room {
+	protected function createRoomWithAttributes(int $attributes, int $type = Room::TYPE_PUBLIC): Room {
 		return new Room(
 			0,
-			Room::TYPE_PUBLIC,
+			$type,
 			Room::READ_WRITE,
 			Room::LISTABLE_NONE,
 			0,
@@ -508,5 +512,61 @@ class RoomServiceTest extends TestCase {
 		$this->service->setPreserveConversation($room, true);
 
 		$this->assertTrue($room->isPreserved());
+	}
+
+	public function testSetSIPEnabledThrowsForClassifiedRoom(): void {
+		$room = $this->createRoomWithAttributes(RoomAttributes::CLASSIFIED->value);
+		$this->assertTrue($room->isClassified());
+
+		$this->expectException(SipConfigurationException::class);
+		$this->expectExceptionMessage(SipConfigurationException::REASON_CLASSIFIED);
+
+		$this->service->setSIPEnabled($room, Webinary::SIP_ENABLED);
+	}
+
+	public function testSetListableThrowsForClassifiedRoom(): void {
+		$room = $this->createRoomWithAttributes(RoomAttributes::CLASSIFIED->value);
+
+		$this->expectException(ListableException::class);
+		$this->expectExceptionMessage(ListableException::REASON_CLASSIFIED);
+
+		$this->service->setListable($room, Room::LISTABLE_USERS);
+	}
+
+	public function testSetTypeToPublicThrowsForClassifiedRoom(): void {
+		$room = $this->createRoomWithAttributes(RoomAttributes::CLASSIFIED->value, Room::TYPE_GROUP);
+
+		$this->expectException(TypeException::class);
+		$this->expectExceptionMessage(TypeException::REASON_CLASSIFIED);
+
+		$this->service->setType($room, Room::TYPE_PUBLIC);
+	}
+
+	public static function dataCreateConversationClassifiedWithObject(): array {
+		return [
+			'Object type and id' => [Room::OBJECT_TYPE_EVENT, '1234#5678'],
+			'Object type only' => [Room::OBJECT_TYPE_EVENT, ''],
+			'Object id only' => ['', '1234'],
+			// Would exclude the conversation from the retention job forever
+			'Persisted phone object' => [Room::OBJECT_TYPE_PHONE_PERSIST, Room::OBJECT_ID_PHONE_OUTGOING],
+			// Binding the classified object directly would fake an already
+			// queued deletion instead of one triggered by a call
+			'Classified object' => [Room::OBJECT_TYPE_CLASSIFIED, '1234567890'],
+		];
+	}
+
+	#[DataProvider('dataCreateConversationClassifiedWithObject')]
+	public function testCreateConversationThrowsForClassifiedRoomWithObject(string $objectType, string $objectId): void {
+		$this->expectException(CreationException::class);
+		$this->expectExceptionMessage(CreationException::REASON_CLASSIFIED);
+
+		$this->service->createConversation(
+			Room::TYPE_GROUP,
+			'classified',
+			null,
+			$objectType,
+			$objectId,
+			attributes: RoomAttributes::CLASSIFIED->value,
+		);
 	}
 }

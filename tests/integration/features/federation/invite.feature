@@ -29,6 +29,22 @@ Feature: federation/invite
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
 
+  Scenario: Federated users can not be invited to a classified conversation
+    # Federation is enabled on both servers here (see background), so the
+    # rejection can only come from the conversation being classified. The remote
+    # server would otherwise receive the conversation and all of its messages.
+    Given user "participant1" creates room "classified" (v4)
+      | roomType | 2 |
+      | roomName | classified |
+      | preset   | classified |
+    And user "participant1" adds federated_user "participant2" to room "classified" with 400 (v4)
+    When user "participant1" sees the following attendees in room "classified" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+    Then using server "REMOTE"
+    And user "participant2" has the following invitations (v1)
+    And using server "LOCAL"
+
   Scenario: Accepting an invite
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |

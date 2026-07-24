@@ -104,6 +104,11 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		if ($room->isClassified()) {
+			// Calls in classified conversations are not logged in the activities
+			return;
+		}
+
 		$activity = $this->activityManager->generateEvent();
 		try {
 			$activity->setApp('spreed')
@@ -159,6 +164,11 @@ class Listener implements IEventListener {
 		// so skip loading them just to make sure they can read it.
 		// Must be overwritten later on for one-to-one chats.
 		$roomName = $room->getDisplayName($actorId);
+
+		if ($room->isClassified()) {
+			// Use "Private conversation" for classified conversations (done on rendering)
+			$roomName = '';
+		}
 
 		foreach ($attendees as $attendee) {
 			if ($attendee->getActorType() !== Attendee::ACTOR_USERS) {

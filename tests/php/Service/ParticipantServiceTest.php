@@ -19,6 +19,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\MembershipService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Service\SIPDialOutService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -125,5 +126,31 @@ class ParticipantServiceTest extends TestCase {
 			->willReturn(123456789);
 		$participants = $this->service->getParticipantsByNotificationLevel($room, Participant::NOTIFY_MENTION);
 		self::assertCount(1, $participants);
+	}
+
+	public function testInviteEmailAddressThrowsForClassifiedRoom(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('isClassified')
+			->willReturn(true);
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('classified');
+
+		$this->service->inviteEmailAddress($room, hash('sha256', 'guest@example.tld'), 'guest@example.tld');
+	}
+
+	public function testStartDialOutRequestThrowsForClassifiedRoom(): void {
+		$room = $this->createMock(Room::class);
+		$room->method('isClassified')
+			->willReturn(true);
+
+		$dialOutService = $this->createMock(SIPDialOutService::class);
+		$dialOutService->expects(self::never())
+			->method('sendDialOutRequestToBackend');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('classified');
+
+		$this->service->startDialOutRequest($dialOutService, $room, 1, '+491601234567');
 	}
 }

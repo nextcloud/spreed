@@ -49,7 +49,7 @@ class BreakoutRoomController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, list<TalkRoom>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
 	 *
 	 * 200: Breakout rooms configured successfully
-	 * 400: Configuring breakout rooms errored
+	 * 400: Configuring breakout rooms errored, e.g. when the conversation is classified
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]

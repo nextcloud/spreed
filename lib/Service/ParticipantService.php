@@ -527,6 +527,7 @@ class ParticipantService {
 			$attendee->setParticipantType(Participant::GUEST);
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setLastReadMessage($lastMessage);
+			$attendee->setSensitive($room->isClassified());
 
 			if ($displayName !== null && $displayName !== '') {
 				$attendee->setDisplayName($displayName);
@@ -682,6 +683,9 @@ class ParticipantService {
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setLastReadMessage($participant['lastReadMessage'] ?? $lastMessage);
 			$attendee->setReadPrivacy($readPrivacy);
+			// In classified conversations the "sensitive" mark is forced on for
+			// everyone and can not be reverted (see markConversationAsInsensitive).
+			$attendee->setSensitive($room->isClassified());
 			$attendees[] = $attendee;
 		}
 
@@ -840,6 +844,7 @@ class ParticipantService {
 			$attendee->setParticipantType(Participant::USER);
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
+			$attendee->setSensitive($room->isClassified());
 			$this->attendeeMapper->insert($attendee);
 
 			$attendeeEvent = new AttendeesAddedEvent($room, [$attendee]);
@@ -976,6 +981,7 @@ class ParticipantService {
 			$attendee->setParticipantType(Participant::USER);
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setReadPrivacy(Participant::PRIVACY_PRIVATE);
+			$attendee->setSensitive($room->isClassified());
 			$this->attendeeMapper->insert($attendee);
 
 			$attendeeEvent = new AttendeesAddedEvent($room, [$attendee]);
@@ -988,7 +994,17 @@ class ParticipantService {
 		}
 	}
 
+	/**
+	 * @throws \InvalidArgumentException When the conversation is classified
+	 */
 	public function inviteEmailAddress(Room $room, string $actorId, string $email, ?string $name = null): Participant {
+		if ($room->isClassified()) {
+			// The invitation mail would carry the conversation into the email
+			// infrastructure, and the access token link would allow joining
+			// without an account
+			throw new \InvalidArgumentException('classified');
+		}
+
 		$lastMessage = 0;
 		if ($room->getLastMessage() instanceof IComment) {
 			$lastMessage = (int)$room->getLastMessage()->getId();
@@ -1015,6 +1031,7 @@ class ParticipantService {
 
 		$attendee->setParticipantType(Participant::GUEST);
 		$attendee->setLastReadMessage($lastMessage);
+		$attendee->setSensitive($room->isClassified());
 		$this->attendeeMapper->insert($attendee);
 		// FIXME handle duplicate invites gracefully
 
@@ -1483,6 +1500,11 @@ class ParticipantService {
 	 * @throws ParticipantNotFoundException
 	 */
 	public function startDialOutRequest(SIPDialOutService $dialOutService, Room $room, int $targetAttendeeId, string|bool $callerNumber): void {
+		if ($room->isClassified()) {
+			// Classified conversations can not dial out
+			throw new \InvalidArgumentException('classified');
+		}
+
 		try {
 			$attendee = $this->attendeeMapper->getById($targetAttendeeId);
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception) {
