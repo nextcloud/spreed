@@ -5017,6 +5017,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->theCommandWasSuccessful();
 	}
 
+	/**
+	 * Sends a request signed with the shared bot secret like a bot server would
+	 */
+	private function sendBotSignedRequest(string $verb, string $url, string $secret, string $toSign, TableNode|array|null $body = null): void {
+		$random = bin2hex(random_bytes(32));
+		$this->sendRequest($verb, $url, $body, [
+			'X-Nextcloud-Talk-Bot-Random' => $random,
+			'X-Nextcloud-Talk-Bot-Signature' => hash_hmac('sha256', $random . $toSign, $secret),
+		]);
+	}
+
 	#[Then('/^Bot "([^"]*)" (sends|removes) a (message|reaction) for room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
 	public function botSendsRequest(string $botName, string $sends, string $action, string $identifier, int $status, string $apiVersion, TableNode $body): void {
 		$currentUser = $this->setCurrentUser('');
@@ -5038,20 +5049,37 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$toSign = $data['reaction'];
 		}
 
-		$random = bin2hex(random_bytes(32));
-		$hash = hash_hmac('sha256', $random . $toSign, $secret);
-		$headers = [
-			'X-Nextcloud-Talk-Bot-Random' => $random,
-			'X-Nextcloud-Talk-Bot-Signature' => $hash,
-		];
-
-		$this->sendRequest(
+		$this->sendBotSignedRequest(
 			$sends === 'sends' ? 'POST' : 'DELETE',
 			'/apps/spreed/api/' . $apiVersion . '/bot/' . self::$identifierToToken[$identifier] . $url,
-			$data,
-			$headers
+			$secret,
+			$toSign,
+			$data
 		);
 		$this->assertStatusCode($this->response, $status);
+
+		$this->setCurrentUser($currentUser);
+	}
+
+	#[Then('/^Bot "([^"]*)" retrieves its features for room "([^"]*)" using secret "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function botRetrievesFeatures(string $botName, string $identifier, string $secret, int $status, string $apiVersion, ?TableNode $body = null): void {
+		$currentUser = $this->setCurrentUser('');
+
+		$token = self::$identifierToToken[$identifier];
+		$this->sendBotSignedRequest(
+			'POST',
+			'/apps/spreed/api/' . $apiVersion . '/bot/ask-features',
+			$secret,
+			$token,
+			['token' => $token]
+		);
+		$this->assertStatusCode($this->response, $status);
+
+		if ($body instanceof TableNode) {
+			$expected = $body->getRowsHash();
+			$response = $this->getDataFromResponse($this->response);
+			Assert::assertSame((int)$expected['features'], $response['features']);
+		}
 
 		$this->setCurrentUser($currentUser);
 	}

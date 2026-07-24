@@ -414,3 +414,35 @@ Feature: chat-2/bots
     And the command output contains the text "Secret:"
     When invoking occ with "talk:bot:create --secret Secret1234567890123456789012345678901234567890 Bot"
     Then the command was successful
+
+  Scenario: Bot fetches its own enabled features
+    Given invoking occ with "talk:bot:install Bot Secret1234567890123456789012345678901234567890 https://localhost/bot1"
+    And the command was successful
+    And read bot ids from OCC
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+
+    # Not set up for the conversation yet
+    When Bot "Bot" retrieves its features for room "room1" using secret "Secret1234567890123456789012345678901234567890" with 401 (v1)
+
+    Given invoking occ with "talk:bot:setup BOT(Bot) ROOM(room1)"
+    And the command was successful
+    Then Bot "Bot" retrieves its features for room "room1" using secret "Secret1234567890123456789012345678901234567890" with 200 (v1)
+      | features | 3 |
+
+    When set state enabled for bot "Bot" via OCC
+      | feature |
+      | webhook |
+    Then Bot "Bot" retrieves its features for room "room1" using secret "Secret1234567890123456789012345678901234567890" with 200 (v1)
+      | features | 1 |
+
+    # Bots can authenticate even when all features are disabled
+    When set state enabled for bot "Bot" via OCC
+      | feature |
+      | none    |
+    Then Bot "Bot" retrieves its features for room "room1" using secret "Secret1234567890123456789012345678901234567890" with 200 (v1)
+      | features | 0 |
+
+    # Wrong secret is rejected
+    When Bot "Bot" retrieves its features for room "room1" using secret "WrongSecret4567890123456789012345678901234567890" with 401 (v1)

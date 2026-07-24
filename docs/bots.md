@@ -413,6 +413,46 @@ Bots can also remove their previous reaction from a message. The same signature/
         + `404 Not Found` When the conversation or message could not be found
         + `429 Too Many Requests` When `401 Unauthenticated` was triggered too often
 
+## Get enabled features
+
+🆕 Added in Talk 25.
+
+Bots can check which [features](constants.md#bot-features) an administrator enabled for them, without requiring administrator credentials. The same signature/verification method is applied. The conversation token is sent in the request body and the signature is computed over the random seed and that token (`hash_hmac('sha256', $random . $token, $secret)`); the token identifies the conversation to look the bot up in. Keeping the token in the signed body binds the request to the conversation, so the signature headers on their own cannot be replayed.
+
+!!! note
+
+    A bot that is set up in a conversation can authenticate against this endpoint even when all of its features were disabled (`features` = `0`), as the feature flags only control which actions and invocations are enabled. To fully cut off a bot, change its state to disabled or remove it from the conversation.
+
+* Required capability: `bot-features-api`
+* Method: `POST`
+* Endpoint: `/bot/ask-features`
+* Header:
+
+| Name                             | Description                                                     |
+|----------------------------------|-----------------------------------------------------------------|
+| `X-Nextcloud-Talk-Bot-Random`    | The random value used when signing the request                  |
+| `X-Nextcloud-Talk-Bot-Signature` | The signature to validate the request comes from an enabled bot |
+| `OCS-APIRequest`                 | Needs to be set to `true` to access the ocs/vX.php endpoint     |
+
+* Data:
+
+| field   | type   | Description                                          |
+|---------|--------|------------------------------------------------------|
+| `token` | string | Token of the conversation the bot is set up in       |
+
+* Response:
+    - Status code:
+        + `200 OK` When the features were returned successfully
+        + `400 Bad Request` When the signature headers were missing or malformed
+        + `401 Unauthenticated` When the bot could not be verified for the conversation
+        + `429 Too Many Requests` When `401 Unauthenticated` was triggered too often
+
+    - Data:
+
+| field      | type | Description                                                                      |
+|------------|------|----------------------------------------------------------------------------------|
+| `features` | int  | Feature flags enabled for the bot, see [Bot features](constants.md#bot-features) |
+
 ## Nextcloud apps as a bot
 
 🆕 Added in Talk 21.
@@ -435,3 +475,6 @@ When installing the bot specify `nextcloudapp://$APPID` as the bot URL, together
 
 ### Nextcloud 33 / Talk 23 - February 2026
 - Due to a bug the `object.name` was set to an empty string for messages with attachments. This was fixed to be `'message'` as for normal messages without any attachments.
+
+### Nextcloud 35 / Talk 25
+- Added `POST /ocs/v2.php/apps/spreed/bot/ask-features` endpoint which allows bots to fetch their own enabled features using their shared secret (required capability: `bot-features-api`)
