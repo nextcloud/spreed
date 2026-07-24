@@ -27,10 +27,10 @@
 				:index="index"
 				:loading="loading"
 				@removeServer="removeServer"
-				@update:schemes="debounceUpdateServers"
-				@update:server="debounceUpdateServers"
-				@update:secret="debounceUpdateServers"
-				@update:protocols="debounceUpdateServers" />
+				@update:schemes="debounceUpdateServers()"
+				@update:server="debounceUpdateServers()"
+				@update:secret="debounceUpdateServers()"
+				@update:protocols="debounceUpdateServers()" />
 		</TransitionWrapper>
 
 		<NcButton
