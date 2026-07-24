@@ -857,7 +857,7 @@ OC.L10N.register(
     "Limit using Talk" : "Limitar o uso do Talk",
     "Limit creating a public and group conversation" : "Limitar criar uma conversa pública ou de grupo",
     "Limit creating conversations" : "Limitar criar conversas",
-    "Limit starting calls to certain groups" : "Limitar a iniciação de chamadas para determinados grupos",
+    "Limit starting calls to certain groups" : "Limitar a iniciação de chamadas a determinados grupos",
     "Limit starting a call" : "Limitar iniciar uma chamada",
     "Limit starting calls" : "Limitar iniciar chamadas",
     "When at least one group is selected, only members of these groups can start a call. This also applies to moderators, while guests and federated users are never members of these groups. Everyone can still start a call when no group is selected." : "Quando pelo menos um grupo estiver selecionado, somente os membros desses grupos poderão iniciar uma chamada. Isso também se aplica aos moderadores, enquanto convidados e usuários federados nunca são membros desses grupos. Todos ainda podem iniciar uma chamada quando nenhum grupo estiver selecionado.",
