@@ -55,6 +55,7 @@ class RecordingService {
 
 	public const APPCONFIG_PREFIX = 'recording/';
 	public const APPCONFIG_UPLOAD_PREFIX = 'recupload/';
+	public const APPCONFIG_KEY_MAX_LENGTH = 64;
 
 	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
 		'audio/ogg' => ['ogg'],
@@ -311,7 +312,10 @@ class RecordingService {
 	}
 
 	private function getUploadShareConfigKey(Room $room, string $fileName): string {
-		return self::APPCONFIG_UPLOAD_PREFIX . $room->getToken() . '/' . sha1(basename($fileName));
+		$prefix = self::APPCONFIG_UPLOAD_PREFIX . $room->getToken() . '/';
+		$fileNameHashLength = self::APPCONFIG_KEY_MAX_LENGTH - strlen($prefix);
+
+		return $prefix . substr(sha1(basename($fileName)), 0, $fileNameHashLength);
 	}
 
 	/**
