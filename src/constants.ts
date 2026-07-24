@@ -83,6 +83,9 @@ export const CONVERSATION = {
 		NONE: 0,
 		VOICE_ROOM: 1,
 		PRESERVE: 2,
+		CLASSIFIED: 4,
+		CHANNEL: 8,
+		ANNOUNCEMENT: 16,
 	},
 
 	PRESET: {
@@ -91,6 +94,9 @@ export const CONVERSATION = {
 		VOICE_ROOM: 'voiceroom',
 		PRESENTATION: 'presentation',
 		WEBINAR: 'webinar',
+		CLASSIFIED: 'classified',
+		CHANNEL: 'channel',
+		ANNOUNCEMENT: 'announcement',
 	},
 
 	STATE: {
@@ -148,6 +154,8 @@ export const CONVERSATION = {
 		EXTENDED: 'extended_conversation',
 		INSTANT_MEETING: 'instant_meeting',
 		EXTERNAL_CALL: 'external_call',
+		CLASSIFIED: 'classified',
+		CLASSIFIED_PERSIST: 'classified_persist',
 		DEFAULT: '',
 	},
 
