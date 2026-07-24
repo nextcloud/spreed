@@ -390,11 +390,34 @@ LocalMedia.prototype.allowVideo = function() {
 
 LocalMedia.prototype.pauseVideo = function() {
 	this._setVideoEnabled(false)
+	// Fully release the camera while the video is disabled so the camera
+	// hardware light turns off (see spreed#4008), rather than just disabling
+	// the track (which keeps the camera grabbed in Chromium).
+	this._mediaDevicesSource.setVideoActive(false)
 	this.emit('videoOff')
 }
 LocalMedia.prototype.resumeVideo = function() {
+	// Enable the track enabler before grabbing the camera again so the newly
+	// grabbed track is not disabled when it flows through the pipeline.
 	this._setVideoEnabled(true)
+	this._mediaDevicesSource.setVideoActive(true)
 	this.emit('videoOn')
+}
+
+LocalMedia.prototype.isVideoActive = function() {
+	return this._mediaDevicesSource.isVideoActive()
+}
+
+/**
+ * Returns whether a camera input device is currently selected, and thus the
+ * video can be enabled, even if the camera is not grabbed at the moment (for
+ * example while the video is disabled and the camera is released, see
+ * spreed#4008). Returns false if "no camera" ("None") is selected.
+ *
+ * @return {boolean} true if a camera input device is selected
+ */
+LocalMedia.prototype.isVideoInputAvailable = function() {
+	return mediaDevicesManager.get('videoInputId') !== null
 }
 
 LocalMedia.prototype.enableNoiseSuppression = function() {
