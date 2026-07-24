@@ -230,6 +230,22 @@
 							:text="FILTER_LABELS[filter]"
 							@close="handleFilter(filter)" />
 					</TransitionWrapper>
+					<!-- Search scopes -->
+					<div v-if="isSearching" class="conversations__search-filters">
+						<NcChip
+							v-for="filter in SEARCH_FILTERS"
+							:key="filter"
+							noClose
+							class="search-filter-chip"
+							:variant="searchFilters.includes(filter) ? 'primary' : 'secondary'"
+							:text="SEARCH_FILTER_LABELS[filter]"
+							role="button"
+							tabindex="0"
+							:aria-pressed="searchFilters.includes(filter)"
+							@click="handleSearchFilter(filter)"
+							@keydown.enter.prevent="handleSearchFilter(filter)"
+							@keydown.space.prevent="handleSearchFilter(filter)" />
+					</div>
 				</div>
 
 				<div v-if="!isSearching" class="navigation-buttons-container">
@@ -357,10 +373,15 @@
 				class="scroller"
 				:searchText="searchText"
 				:searchResultsLoading="searchResultsLoading"
+				:searchFilters="searchFilters"
 				:conversationsList="conversationsList"
 				:searchResults="searchResults"
+				:searchResultsMessages="searchResultsMessages"
 				:searchResultsListedConversations="searchResultsListedConversations"
+				:hasMoreMessages="hasMoreMessages"
+				:messagesLoadingMore="messagesLoadingMore"
 				@abortSearch="abortSearch"
+				@loadMoreMessages="fetchMoreMessages"
 				@createNewConversation="createConversation"
 				@createAndJoinConversation="createAndJoinConversation" />
 		</template>
@@ -459,7 +480,10 @@ import {
 	fetchNoteToSelfConversation,
 	searchListedConversations,
 } from '../../services/conversationsService.ts'
-import { autocompleteQuery } from '../../services/coreService.ts'
+import {
+	autocompleteQuery,
+	searchMessagesEverywhere,
+} from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import { useActorStore } from '../../stores/actor.ts'
@@ -499,6 +523,17 @@ const FILTER_LABELS = {
 	events: t('spreed', 'Meetings'),
 	default: '',
 }
+// Scopes to include in the search results. Message search is opt-in, as a
+// global message search triggers an additional request on every search.
+const SEARCH_FILTERS = ['conversations', 'people', 'messages']
+const SEARCH_FILTER_LABELS = {
+	conversations: t('spreed', 'Conversations'),
+	people: t('spreed', 'People'),
+	messages: t('spreed', 'Messages'),
+}
+const SEARCH_FILTERS_DEFAULT = ['conversations', 'people']
+// Number of message results to fetch per page in the global message search
+const MESSAGE_SEARCH_LIMIT = 5
 const SORT_LABELS = {
 	// TRANSLATORS Navigation actions: sort conversations by recent activity / sort alphabetically
 	SORTBY_HEADER: t('spreed', 'Sort conversations'),
@@ -573,6 +608,7 @@ export default {
 		const showArchived = ref(false)
 		const showThreadsList = ref(false)
 		const filters = ref(BrowserStorage.getItem('filterEnabled')?.split(',') ?? [])
+		const searchFilters = ref([...SEARCH_FILTERS_DEFAULT])
 
 		const federationStore = useFederationStore()
 		const talkHashStore = useTalkHashStore()
@@ -589,6 +625,7 @@ export default {
 			resetNavigation,
 			leftSidebar,
 			filters,
+			searchFilters,
 			searchBox,
 			scroller,
 			federationStore,
@@ -607,6 +644,8 @@ export default {
 			CONVERSATION,
 			HOME_BUTTON_LABEL,
 			FILTER_LABELS,
+			SEARCH_FILTERS,
+			SEARCH_FILTER_LABELS,
 			SORT_LABELS,
 			LIST_HEADING_ID,
 			actorStore: useActorStore(),
@@ -621,10 +660,15 @@ export default {
 			searchText: '',
 			searchResults: [],
 			searchResultsListedConversations: [],
+			searchResultsMessages: [],
 			searchResultsLoading: true,
+			searchMessagesCursor: null,
+			hasMoreMessages: false,
+			messagesLoadingMore: false,
 			canStartConversations: getTalkConfig('local', 'conversations', 'can-create'),
 			cancelSearchPossibleConversations: () => {},
 			cancelSearchListedConversations: () => {},
+			cancelSearchMessages: () => {},
 			debounceFetchSearchResults: () => {},
 			debounceFetchConversations: () => {},
 			debounceHandleScroll: () => {},
@@ -863,6 +907,9 @@ export default {
 		this.cancelSearchListedConversations()
 		this.cancelSearchListedConversations = null
 
+		this.cancelSearchMessages()
+		this.cancelSearchMessages = null
+
 		if (this.refreshTimer) {
 			clearInterval(this.refreshTimer)
 			this.refreshTimer = null
@@ -983,6 +1030,85 @@ export default {
 			}
 		},
 
+		/**
+		 * Map a raw unified search entry to a result with a router link
+		 *
+		 * @param {object} entry The unified search result entry
+		 * @return {object} The entry extended with a `to` router link
+		 */
+		mapMessageResultEntry(entry) {
+			const threadId = (entry.attributes.threadId !== entry.attributes.messageId) ? entry.attributes.threadId : undefined
+
+			return {
+				...entry,
+				to: {
+					name: 'conversation',
+					hash: `#message_${entry.attributes.messageId}`,
+					params: { token: entry.attributes.conversation },
+					query: { threadId },
+				},
+			}
+		},
+
+		async fetchMessagesEverywhere() {
+			// Reset pagination for a fresh search
+			this.searchMessagesCursor = null
+			this.hasMoreMessages = false
+
+			try {
+				this.cancelSearchMessages('canceled')
+				const { request, cancel } = CancelableRequest(searchMessagesEverywhere)
+				this.cancelSearchMessages = cancel
+
+				const response = await request({
+					term: this.searchText,
+					limit: MESSAGE_SEARCH_LIMIT,
+				})
+				const data = response?.data?.ocs?.data
+				this.searchResultsMessages = (data?.entries ?? []).map((entry) => this.mapMessageResultEntry(entry))
+				this.searchMessagesCursor = data?.cursor ?? null
+				this.hasMoreMessages = Boolean(data?.isPaginated) && data?.cursor !== null
+			} catch (exception) {
+				if (CancelableRequest.isCancel(exception)) {
+					return
+				}
+				console.error('Error searching for messages', exception)
+				showError(t('spreed', 'An error occurred while performing the search'))
+			}
+		},
+
+		async fetchMoreMessages() {
+			if (!this.hasMoreMessages || this.messagesLoadingMore) {
+				return
+			}
+
+			this.messagesLoadingMore = true
+			try {
+				this.cancelSearchMessages('canceled')
+				const { request, cancel } = CancelableRequest(searchMessagesEverywhere)
+				this.cancelSearchMessages = cancel
+
+				const response = await request({
+					term: this.searchText,
+					limit: MESSAGE_SEARCH_LIMIT,
+					cursor: this.searchMessagesCursor,
+				})
+				const data = response?.data?.ocs?.data
+				const entries = (data?.entries ?? []).map((entry) => this.mapMessageResultEntry(entry))
+				this.searchResultsMessages = [...this.searchResultsMessages, ...entries]
+				this.searchMessagesCursor = data?.cursor ?? null
+				this.hasMoreMessages = Boolean(data?.isPaginated) && data?.cursor !== null && entries.length > 0
+			} catch (exception) {
+				if (CancelableRequest.isCancel(exception)) {
+					return
+				}
+				console.error('Error searching for more messages', exception)
+				showError(t('spreed', 'An error occurred while performing the search'))
+			} finally {
+				this.messagesLoadingMore = false
+			}
+		},
+
 		async fetchSearchResults() {
 			if (!this.isSearching) {
 				return
@@ -994,9 +1120,76 @@ export default {
 
 			this.resetNavigation()
 			this.searchResultsLoading = true
-			await Promise.all([this.fetchPossibleConversations(), this.fetchListedConversations()])
+
+			// Only search the scopes enabled via the filter chips. Message search
+			// is opt-in, as it triggers an additional request on every search.
+			const requests = []
+			if (this.searchFilters.includes('people')) {
+				requests.push(this.fetchPossibleConversations())
+			} else {
+				this.searchResults = []
+			}
+			if (this.searchFilters.includes('conversations')) {
+				requests.push(this.fetchListedConversations())
+			} else {
+				this.searchResultsListedConversations = []
+			}
+			if (this.searchFilters.includes('messages')) {
+				requests.push(this.fetchMessagesEverywhere())
+			} else {
+				this.searchResultsMessages = []
+			}
+			await Promise.all(requests)
+
 			this.searchResultsLoading = false
 			this.initializeNavigation()
+		},
+
+		handleSearchFilter(filter) {
+			if (this.searchFilters.includes(filter)) {
+				this.searchFilters = this.searchFilters.filter((f) => f !== filter)
+				this.clearSearchFilterResults(filter)
+			} else {
+				this.searchFilters = [...this.searchFilters, filter]
+				if (this.isSearching) {
+					this.fetchSearchFilterResults(filter)
+				}
+			}
+		},
+
+		async fetchSearchFilterResults(filter) {
+			this.resetNavigation()
+			switch (filter) {
+				case 'people':
+					await this.fetchPossibleConversations()
+					break
+				case 'conversations':
+					await this.fetchListedConversations()
+					break
+				case 'messages':
+					await this.fetchMessagesEverywhere()
+					break
+			}
+			this.initializeNavigation()
+		},
+
+		clearSearchFilterResults(filter) {
+			switch (filter) {
+				case 'people':
+					this.cancelSearchPossibleConversations('canceled')
+					this.searchResults = []
+					break
+				case 'conversations':
+					this.cancelSearchListedConversations('canceled')
+					this.searchResultsListedConversations = []
+					break
+				case 'messages':
+					this.cancelSearchMessages('canceled')
+					this.searchResultsMessages = []
+					this.searchMessagesCursor = null
+					this.hasMoreMessages = false
+					break
+			}
 		},
 
 		/**
@@ -1061,6 +1254,12 @@ export default {
 			if (this.cancelSearchListedConversations) {
 				this.cancelSearchListedConversations()
 			}
+			if (this.cancelSearchMessages) {
+				this.cancelSearchMessages()
+			}
+			this.searchMessagesCursor = null
+			this.hasMoreMessages = false
+			this.messagesLoadingMore = false
 		},
 
 		showSettings() {
@@ -1333,6 +1532,17 @@ export default {
 	display: flex;
 	flex-wrap: wrap;
 	gap: var(--default-grid-baseline);
+}
+
+.conversations__search-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--default-grid-baseline);
+	margin-block-start: var(--default-grid-baseline);
+
+	.search-filter-chip {
+		cursor: pointer;
+	}
 }
 
 .archived-conversations-bubble {

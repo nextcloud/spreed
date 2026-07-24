@@ -104,7 +104,19 @@ async function deleteTaskById(id: number, options?: AxiosRequestConfig): Promise
  * @param params
  * @param options
  */
-async function searchMessages(params: SearchMessagePayload, options?: AxiosRequestConfig): UnifiedSearchResponse {
+async function searchMessagesEverywhere(params: SearchMessagePayload, options?: AxiosRequestConfig): UnifiedSearchResponse {
+	return axios.get(generateOcsUrl('search/providers/talk-message/search'), {
+		...options,
+		params,
+	})
+}
+
+/**
+ *
+ * @param params
+ * @param options
+ */
+async function searchMessagesInConversation(params: SearchMessagePayload, options?: AxiosRequestConfig): UnifiedSearchResponse {
 	return axios.get(generateOcsUrl('search/providers/talk-message-current/search'), {
 		...options,
 		params,
@@ -116,5 +128,6 @@ export {
 	deleteTaskById,
 	getTaskById,
 	getUserProfile,
-	searchMessages,
+	searchMessagesEverywhere,
+	searchMessagesInConversation,
 }
