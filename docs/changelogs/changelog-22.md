@@ -5,6 +5,25 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 22.0.16 – 2026-07-24
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(calendar): Fix undefined index when handling events
+  [#18772](https://github.com/nextcloud/spreed/pull/18772)
+- fix(call): Fix call audio on all iOS browsers
+  [#18766](https://github.com/nextcloud/spreed/pull/18766)
+- fix(call): Apply softer resolution constraints to camera
+  [#18738](https://github.com/nextcloud/spreed/pull/18738)
+- fix(call): Return proper permission errors when starting a call is not allowed
+  [#18670](https://github.com/nextcloud/spreed/pull/18670)
+- fix(call): Release media devices when lifting lobby
+  [#18658](https://github.com/nextcloud/spreed/pull/18658)
+- fix(conversations): Conversation updates are delayed for guest users
+  [#18653](https://github.com/nextcloud/spreed/pull/18653)
+
 ## 22.0.15 – 2026-07-09
 ### Changed
 - Update dependencies
