@@ -84,7 +84,7 @@
 				trackBy="id"
 				label="displayname"
 				noWrap
-				@search="debounceSearchGroup" />
+				@search="debounceSearchGroup($event)" />
 			<p class="settings-hint settings-hint--after-select">
 				{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
 			</p>
