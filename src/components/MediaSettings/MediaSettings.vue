@@ -291,6 +291,7 @@ import {
 import { useActorStore } from '../../stores/actor.ts'
 import { useGuestNameStore } from '../../stores/guestName.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
+import { isClassifiedConversation } from '../../utils/conversation.ts'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 
 const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
@@ -448,6 +449,10 @@ export default {
 			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
 		},
 
+		isClassified() {
+			return isClassifiedConversation(this.conversation)
+		},
+
 		hideCloseButton() {
 			// Guests don't have Home dashboard so no rooting possible
 			return this.isGuest && this.isVoiceRoom && this.isBeforeJoinCall
@@ -512,7 +517,7 @@ export default {
 		},
 
 		canModerateRecording() {
-			return this.canFullModerate && (getTalkConfig(this.token, 'call', 'recording') || false)
+			return this.canFullModerate && (getTalkConfig(this.token, 'call', 'recording') || false) && !this.isClassified
 		},
 
 		recordingConsent() {
@@ -520,6 +525,9 @@ export default {
 		},
 
 		isRecordingConsentRequired() {
+			if (this.isClassified) {
+				return false
+			}
 			return this.recordingConsent === CONFIG.RECORDING_CONSENT.REQUIRED
 				|| (this.recordingConsent === CONFIG.RECORDING_CONSENT.OPTIONAL && this.conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED)
 		},
@@ -542,7 +550,7 @@ export default {
 		},
 
 		hintRecordingOption() {
-			return !this.hasCall && this.canFullModerate && !(getTalkConfig(this.token, 'call', 'recording') || false) && this.isBeforeJoinCall && showTalkFeatureHint(34)
+			return !this.hasCall && this.canFullModerate && !(getTalkConfig(this.token, 'call', 'recording') || false) && this.isBeforeJoinCall && showTalkFeatureHint(34) && !this.isClassified
 		},
 
 		showUpdateChangesButton() {

@@ -74,14 +74,15 @@
 		</label>
 		<NcCheckboxRadioSwitch
 			v-model="isPublic"
-			type="switch">
+			type="switch"
+			:disabled="isClassified">
 			{{ t('spreed', 'Allow guests to join via link') }}
 		</NcCheckboxRadioSwitch>
 		<div class="new-group-conversation__wrapper">
 			<NcCheckboxRadioSwitch
 				v-model="hasPassword"
 				type="switch"
-				:disabled="!isPublic || forcePasswordProtection">
+				:disabled="!isPublic || forcePasswordProtection || isClassified">
 				<span class="checkbox__label">{{ t('spreed', 'Password protection') }}</span>
 			</NcCheckboxRadioSwitch>
 			<NcPasswordField
@@ -94,7 +95,7 @@
 				@valid="$emit('isPasswordValid', true)"
 				@invalid="$emit('isPasswordValid', false)" />
 		</div>
-		<ListableSettings v-model="listableValue" />
+		<ListableSettings v-model="listableValue" :disabled="isClassified" />
 	</div>
 </template>
 
@@ -105,9 +106,11 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
+import IconBullhornOutline from 'vue-material-design-icons/BullhornOutline.vue'
 import IconForumOutline from 'vue-material-design-icons/ForumOutline.vue'
 import IconMonitorAccount from 'vue-material-design-icons/MonitorAccount.vue'
 import IconPresentation from 'vue-material-design-icons/Presentation.vue'
+import IconShieldLockOutline from 'vue-material-design-icons/ShieldLockOutline.vue'
 import ConversationAvatarEditor from '../ConversationSettings/ConversationAvatarEditor.vue'
 import ListableSettings from '../ConversationSettings/ListableSettings.vue'
 import IconVolumeHighOutline from '../../../img/material-icons/volume-high-outline.svg?raw'
@@ -126,6 +129,9 @@ const presetIcons = {
 	[CONVERSATION.PRESET.VOICE_ROOM]: { svg: IconVolumeHighOutline },
 	[CONVERSATION.PRESET.PRESENTATION]: { icon: IconPresentation },
 	[CONVERSATION.PRESET.WEBINAR]: { icon: IconMonitorAccount },
+	[CONVERSATION.PRESET.CLASSIFIED]: { icon: IconShieldLockOutline },
+	[CONVERSATION.PRESET.CHANNEL]: { icon: IconBullhornOutline },
+	[CONVERSATION.PRESET.ANNOUNCEMENT]: { icon: IconBullhornOutline },
 }
 
 /**
@@ -272,7 +278,7 @@ export default {
 					value: preset.identifier,
 					label: preset.name,
 					description: preset.description,
-					...presetIcons[preset.identifier],
+					...(presetIcons[preset.identifier] ?? presetIcons[CONVERSATION.PRESET.DEFAULT]),
 				}))
 		},
 
@@ -303,6 +309,10 @@ export default {
 			set(preset) {
 				this.applyPresetParameters(preset)
 			},
+		},
+
+		isClassified() {
+			return this.preset === CONVERSATION.PRESET.CLASSIFIED
 		},
 
 		hasPassword: {

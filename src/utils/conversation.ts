@@ -17,6 +17,36 @@ const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const supportsAvatar = hasTalkFeature('local', 'avatar')
 
 /**
+ * Check if the conversation is classified (CLASSIFIED attribute bit is set)
+ * Feature is supported with `classified-conversations` capability.
+ *
+ * @param conversation conversation object
+ */
+export function isClassifiedConversation(conversation: Conversation | undefined): boolean {
+	return Boolean(conversation && conversation.attributes & CONVERSATION.ATTRIBUTE.CLASSIFIED)
+}
+
+/**
+ * Check if the conversation is a channel (CHANNEL attribute bit is set)
+ * Feature is supported with `announcement-preset` capability.
+ *
+ * @param conversation conversation object
+ */
+export function isChannelConversation(conversation: Conversation | undefined): boolean {
+	return Boolean(conversation && conversation.attributes & CONVERSATION.ATTRIBUTE.CHANNEL)
+}
+
+/**
+ * Check if the conversation is an announcement (CHANNEL+ANNOUNCEMENT attribute bits are set)
+ * Feature is supported with `announcement-preset` capability.
+ *
+ * @param conversation conversation object
+ */
+export function isAnnouncementConversation(conversation: Conversation | undefined): boolean {
+	return isChannelConversation(conversation) && Boolean(conversation!.attributes & CONVERSATION.ATTRIBUTE.ANNOUNCEMENT)
+}
+
+/**
  * check if the conversation has unread messages
  *
  * @param conversation conversation object

@@ -175,6 +175,7 @@ import {
 	hasTalkFeature,
 	showTalkFeatureHint,
 } from '../../services/CapabilitiesManager.ts'
+import { isClassifiedConversation } from '../../utils/conversation.ts'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 
@@ -266,16 +267,20 @@ export default {
 			return this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
 		},
 
+		isClassified() {
+			return isClassifiedConversation(this.conversation)
+		},
+
 		canModerateRecording() {
-			return getTalkConfig(this.token, 'call', 'recording') || false
+			return (getTalkConfig(this.token, 'call', 'recording') || false) && !this.isClassified
 		},
 
 		hintRecording() {
-			return !this.canModerateRecording && showTalkFeatureHint(34)
+			return !this.canModerateRecording && showTalkFeatureHint(34) && !this.isClassified
 		},
 
 		canConfigureBreakoutRooms() {
-			if (this.conversation.type !== CONVERSATION.TYPE.GROUP || !this.canFullModerate) {
+			if (this.conversation.type !== CONVERSATION.TYPE.GROUP || !this.canFullModerate || this.isClassified) {
 				return false
 			}
 
@@ -298,7 +303,7 @@ export default {
 		},
 
 		canDownloadCallParticipants() {
-			return hasTalkFeature(this.token, 'download-call-participants') && this.canModerate && !this.isOneToOneConversation
+			return hasTalkFeature(this.token, 'download-call-participants') && this.canModerate && !this.isOneToOneConversation && !this.isClassified
 		},
 
 		downloadCallParticipantsLink() {
