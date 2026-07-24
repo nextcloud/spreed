@@ -325,6 +325,24 @@ export default {
 				return
 			}
 
+			// While a call is ongoing, keep its signaling session alive and let the
+			// user browse other conversations without joining or leaving them, so
+			// the call is never interrupted. The call view is shown again when
+			// navigating back to its conversation.
+			const joinedToken = SessionStorage.getItem('joined_conversation')
+			const activeCallToken = joinedToken && this.$store.getters.isInCall(joinedToken) ? joinedToken : null
+			if (activeCallToken && to.name === 'conversation' && from.params.token !== to.params.token) {
+				if (to.params.token !== activeCallToken && !this.$store.getters.conversation(to.params.token)) {
+					const result = await this.fetchSingleConversation(to.params.token)
+					if (!result) {
+						// If the conversation is not found, block further navigation
+						return
+					}
+				}
+				next()
+				return
+			}
+
 			if (from.name === 'conversation' && from.params.token !== to.params.token) {
 				// Await to properly close session / leave call before joining another one
 				await this.$store.dispatch('leaveConversation', { token: from.params.token })
@@ -377,9 +395,11 @@ export default {
 			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
 				// Navigating within the same conversation
 				beforeRouteChangeListener(to, from, next)
-			} else if (!this.warnLeaving || this.skipLeaveWarning || this.isVoiceRoom(from.params.token)) {
+			} else if (!this.warnLeaving || this.skipLeaveWarning || this.isVoiceRoom(from.params.token) || to.name === 'conversation') {
 				// Safe to navigate
 				// Note: voice rooms are intended to be left without confirmation.
+				// Note: navigating to another conversation during a call keeps the
+				// call alive (see beforeRouteChangeListener), so no warning is needed.
 				beforeRouteChangeListener(to, from, next)
 			} else {
 				spawnDialog(ConfirmDialog, {

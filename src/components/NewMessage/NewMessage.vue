@@ -544,7 +544,7 @@ export default {
 		},
 
 		disabled() {
-			return this.isReadOnly || this.noChatPermission || !this.currentConversationIsJoined || this.isRecordingAudio
+			return this.isReadOnly || this.noChatPermission || (!this.currentConversationIsJoined && !this.isBrowsingDuringCall) || this.isRecordingAudio
 		},
 
 		scheduleMessageTime() {
@@ -571,7 +571,7 @@ export default {
 				return t('spreed', 'This conversation has been locked')
 			} else if (this.noChatPermission) {
 				return t('spreed', 'No permission to post messages in this conversation')
-			} else if (!this.currentConversationIsJoined) {
+			} else if (!this.currentConversationIsJoined && !this.isBrowsingDuringCall) {
 				return t('spreed', 'Joining conversation …')
 			} else if (this.silentChat) {
 				return t('spreed', 'Write a message without notification')
@@ -636,6 +636,17 @@ export default {
 
 		currentConversationIsJoined() {
 			return this.tokenStore.currentConversationIsJoined
+		},
+
+		/**
+		 * Whether this conversation is being browsed while a call is ongoing in
+		 * another conversation. In that case the conversation is not joined
+		 * (its signaling session would interrupt the call), but the user can
+		 * still read and post messages over the REST API.
+		 */
+		isBrowsingDuringCall() {
+			const callToken = this.tokenStore.lastJoinedConversationToken
+			return Boolean(callToken) && callToken !== this.token && this.$store.getters.isInCall(callToken)
 		},
 
 		currentUploadId() {
