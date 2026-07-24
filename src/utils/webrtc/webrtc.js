@@ -628,6 +628,84 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 	}
 	window.OCA.Talk.SimpleWebRTC = webrtc
 
+	// debug helper to inspect publisher simulcast layers
+	// (configured ceilings + live per-layer sent bitrate/res).
+	// Call OCA.Talk.debugPublisherStats() to start, again to stop.
+	window.OCA.Talk.debugPublisherStats = function() {
+		if (window.__pubStats) {
+			clearInterval(window.__pubStats)
+			window.__pubStats = null
+			console.log('[pub] stopped')
+			return
+		}
+		const rtc = window.OCA?.Talk?.SimpleWebRTC?.webrtc
+		if (!rtc) {
+			console.warn('No SimpleWebRTC instance')
+			return
+		}
+		const publishers = rtc.peers.filter((p) => p.pc && p.pc.getSenders().some((s) => s.track && s.track.kind === 'video'))
+		if (!publishers.length) {
+			console.warn('No publishing video peer (are you sending video?)')
+			return
+		}
+		publishers.forEach((p) => p.pc.getSenders().forEach((s) => {
+			if (s.track && s.track.kind === 'video') {
+				console.log(
+					'[pub]',
+					p.id,
+					'configured:',
+					(s.getParameters().encodings || []).map((e) => ({ rid: e.rid, maxBitrate: e.maxBitrate })),
+				)
+			}
+		}))
+		const prev = new Map()
+		const history = new Map() // key -> rolling window of recent kbps samples
+		const WINDOW = 10 // ticks to average over (~20s at the 2s interval)
+		const avg = (arr) => (arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length) : '…')
+		window.__pubStats = setInterval(async () => {
+			for (const p of publishers) {
+				const rows = []
+				let totalCur = 0
+				let totalAvg = 0
+				;(await p.pc.getStats()).forEach((r) => {
+					if (r.type === 'outbound-rtp' && r.kind === 'video') {
+						const key = p.id + ':' + (r.rid ?? r.ssrc)
+						const p0 = prev.get(key)
+						const kbps = (p0 && r.timestamp > p0.ts)
+							? Math.round(8 * (r.bytesSent - p0.bytes) / (r.timestamp - p0.ts))
+							: null
+						prev.set(key, { bytes: r.bytesSent, ts: r.timestamp })
+						const h = history.get(key) || []
+						if (kbps !== null) {
+							h.push(kbps)
+							while (h.length > WINDOW) {
+								h.shift()
+							}
+							history.set(key, h)
+							totalCur += kbps
+							totalAvg += avg(h)
+						}
+						rows.push({
+							rid: r.rid ?? '-',
+							res: (r.frameWidth || '?') + 'x' + (r.frameHeight || '?'),
+							fps: r.framesPerSecond ?? '-',
+							cur_kbps: kbps ?? '…',
+							avg_kbps: avg(h),
+							active: r.active ?? '-',
+							limit: r.qualityLimitationReason ?? '-',
+						})
+					}
+				})
+				if (rows.length) {
+					console.log('[pub]', p.id, new Date().toLocaleTimeString(),
+						`— TOTAL cur ${totalCur} kbps / avg ${totalAvg} kbps (window ${WINDOW})`)
+					console.table(rows)
+				}
+			}
+		}, 2000)
+		console.log('[pub] polling every 2s, averaging last', WINDOW, 'ticks — call OCA.Talk.debugPublisherStats() again to stop')
+	}
+
 	signaling.on('pullMessagesStoppedOnFail', function() {
 		// Force leaving the call in WebRTC; when pulling messages stops due
 		// to failures the room is left, and leaving the room indirectly
