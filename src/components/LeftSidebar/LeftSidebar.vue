@@ -16,7 +16,7 @@
 								ref="searchBox"
 								v-model:value="searchText"
 								v-model:isFocused="isFocused"
-								:listRef="[scroller, searchResults]"
+								:listRef="[scroller, searchResultsPossibleConversations]"
 								@input="debounceFetchSearchResults"
 								@abortSearch="abortSearch" />
 						</div>
@@ -358,7 +358,7 @@
 				:searchText="searchText"
 				:searchResultsLoading="searchResultsLoading"
 				:conversationsList="conversationsList"
-				:searchResults="searchResults"
+				:searchResults="searchResultsPossibleConversations"
 				:searchResultsListedConversations="searchResultsListedConversations"
 				@abortSearch="abortSearch"
 				@createNewConversation="createConversation"
@@ -396,8 +396,6 @@
 </template>
 
 <script>
-import { isCancel } from '@nextcloud/axios'
-import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
@@ -457,9 +455,7 @@ import {
 import {
 	createLegacyConversation,
 	fetchNoteToSelfConversation,
-	searchListedConversations,
 } from '../../services/conversationsService.ts'
-import { autocompleteQuery } from '../../services/coreService.ts'
 import { EventBus } from '../../services/EventBus.ts'
 import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import { useActorStore } from '../../stores/actor.ts'
@@ -469,7 +465,6 @@ import { useFederationStore } from '../../stores/federation.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import { useTokenStore } from '../../stores/token.ts'
-import CancelableRequest from '../../utils/CancelableRequest.ts'
 import {
 	filterConversation,
 	hasCall,
@@ -478,6 +473,7 @@ import {
 	sortConversationsList,
 } from '../../utils/conversation.ts'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
+import { useSearchConversationsResults } from './SearchConversationsResults/useSearchConversationsResults.ts'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
 const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
@@ -583,6 +579,14 @@ export default {
 
 		const LIST_HEADING_ID = 'left-sidebar-list-heading'
 
+		const {
+			searchResultsPossibleConversations,
+			searchResultsListedConversations,
+			searchResultsLoading,
+			search,
+			abortSearchRequests,
+		} = useSearchConversationsResults()
+
 		return {
 			token: useGetToken(),
 			initializeNavigation,
@@ -613,18 +617,19 @@ export default {
 			chatExtrasStore: useChatExtrasStore(),
 			tokenStore: useTokenStore(),
 			tagsStore,
+
+			searchResultsPossibleConversations,
+			searchResultsListedConversations,
+			searchResultsLoading,
+			search,
+			abortSearchRequests,
 		}
 	},
 
 	data() {
 		return {
 			searchText: '',
-			searchResults: [],
-			searchResultsListedConversations: [],
-			searchResultsLoading: true,
 			canStartConversations: getTalkConfig('local', 'conversations', 'can-create'),
-			cancelSearchPossibleConversations: () => {},
-			cancelSearchListedConversations: () => {},
 			debounceFetchSearchResults: () => {},
 			debounceFetchConversations: () => {},
 			debounceHandleScroll: () => {},
@@ -857,12 +862,6 @@ export default {
 		EventBus.off('open-conversations-list:show', this.showModalListConversations)
 		EventBus.off('call-phone-dialog:show', this.showModalCallPhoneDialog)
 
-		this.cancelSearchPossibleConversations()
-		this.cancelSearchPossibleConversations = null
-
-		this.cancelSearchListedConversations()
-		this.cancelSearchListedConversations = null
-
 		if (this.refreshTimer) {
 			clearInterval(this.refreshTimer)
 			this.refreshTimer = null
@@ -933,56 +932,6 @@ export default {
 			this.$refs.scroller.scrollToItem(this.lastUnreadMentionBelowViewportIndex)
 		},
 
-		async fetchPossibleConversations() {
-			try {
-				// FIXME: move to conversationsStore
-				this.cancelSearchPossibleConversations('canceled')
-				const { request, cancel } = CancelableRequest(autocompleteQuery)
-				this.cancelSearchPossibleConversations = cancel
-
-				const response = await request({
-					searchText: this.searchText,
-					token: 'new',
-					onlyUsers: !this.canStartConversations,
-				})
-
-				const oneToOneMap = this.conversationsList.reduce((acc, result) => {
-					if (result.type === CONVERSATION.TYPE.ONE_TO_ONE) {
-						acc.push(result.name)
-					}
-					return acc
-				}, [this.actorStore.userId])
-
-				this.searchResults = response?.data?.ocs?.data.filter((match) => {
-					return !(match.source === ATTENDEE.ACTOR_TYPE.USERS && oneToOneMap.includes(match.id))
-				}) ?? []
-			} catch (exception) {
-				if (isCancel(exception)) {
-					return
-				}
-				console.error('Error searching for possible conversations', exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
-			}
-		},
-
-		async fetchListedConversations() {
-			try {
-				// FIXME: move to conversationsStore
-				this.cancelSearchListedConversations('canceled')
-				const { request, cancel } = CancelableRequest(searchListedConversations)
-				this.cancelSearchListedConversations = cancel
-
-				const response = await request(this.searchText)
-				this.searchResultsListedConversations = response.data.ocs.data
-			} catch (exception) {
-				if (isCancel(exception)) {
-					return
-				}
-				console.error('Error searching for open conversations', exception)
-				showError(t('spreed', 'An error occurred while performing the search'))
-			}
-		},
-
 		async fetchSearchResults() {
 			if (!this.isSearching) {
 				return
@@ -993,9 +942,7 @@ export default {
 			this.showThreadsList = false
 
 			this.resetNavigation()
-			this.searchResultsLoading = true
-			await Promise.all([this.fetchPossibleConversations(), this.fetchListedConversations()])
-			this.searchResultsLoading = false
+			await this.search(this.searchText)
 			this.initializeNavigation()
 		},
 
@@ -1055,12 +1002,7 @@ export default {
 		abortSearch() {
 			this.searchText = ''
 			this.isFocused = false
-			if (this.cancelSearchPossibleConversations) {
-				this.cancelSearchPossibleConversations()
-			}
-			if (this.cancelSearchListedConversations) {
-				this.cancelSearchListedConversations()
-			}
+			this.abortSearchRequests()
 		},
 
 		showSettings() {
