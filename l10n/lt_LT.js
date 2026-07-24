@@ -1420,7 +1420,7 @@ OC.L10N.register(
     "Notify about calls" : "Pranešti apie skambučius",
     "Hide message text" : "Slėpti pranešimo tekstą",
     "Remove all tags" : "Pašalinti visas žymes",
-    "Rename tag" : "Pašalinti žymę",
+    "Rename tag" : "Pervadinti žymę",
     "Delete tag" : "Ištrinti žymą",
     "Do you really want to delete \"{name}\"? Conversations with this tag will be moved to \"Other\"." : "Ar tikrai norite ištrinti „{name}“? Pokalbiai su šia žyma bus perkelti į „Kita“.",
     "Move up" : "Pakelti",
