@@ -5,6 +5,43 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 24.0.3 – 2026-07-24
+### Added
+- feat(signaling): Don't send all room userids in signaling server requests
+  [#18675](https://github.com/nextcloud/spreed/pull/18675)
+- feat(attachments): Render AudioPlayer for all supported audio files
+  [#18661](https://github.com/nextcloud/spreed/pull/18661)
+
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(calendar): Fix undefined index when handling events
+  [#18774](https://github.com/nextcloud/spreed/pull/18774)
+- fix(call): Fix call audio on all iOS browsers
+  [#18768](https://github.com/nextcloud/spreed/pull/18768)
+- fix(call): Apply softer resolution constraints to camera
+  [#18740](https://github.com/nextcloud/spreed/pull/18740)
+- fix(call): Return proper permission errors when starting a call is not allowed
+  [#18672](https://github.com/nextcloud/spreed/pull/18672)
+- fix(call): Release media devices when lifting lobby
+  [#18660](https://github.com/nextcloud/spreed/pull/18660)
+- fix(chat): Update conversation state from call system messages
+  [#18618](https://github.com/nextcloud/spreed/pull/18618)
+- fix(conversations): Conversation updates are delayed for guest users
+  [#18655](https://github.com/nextcloud/spreed/pull/18655)
+- fix(conversations): Recompute virtual list after changing compact state
+  [#18615](https://github.com/nextcloud/spreed/pull/18615)
+- fix(conversations): Improve parsing of first name from complex display names
+  [#18726](https://github.com/nextcloud/spreed/pull/18726)
+- fix(conversation): Don't force conversation with email to be public on creation
+  [#18721](https://github.com/nextcloud/spreed/pull/18721)
+- fix(tags): Count unread conversations instead of total messages
+  [#18762](https://github.com/nextcloud/spreed/pull/18762)
+- fix(tags): Show unread conversations and active calls under collapsed section
+  [#18678](https://github.com/nextcloud/spreed/pull/18678)
+
 ## 24.0.2 – 2026-07-09
 ### Added
 - feat(chat): Allow to mark all conversation with a tag as read
