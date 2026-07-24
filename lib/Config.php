@@ -39,6 +39,11 @@ class Config {
 	public const SIGNALING_TICKET_V1 = 1;
 	public const SIGNALING_TICKET_V2 = 2;
 
+	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
+	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
+	public const string ALLOWED_GROUPS_FEDERATION = 'federation_allowed_groups';
+	public const string FEDERATION_ENABLED = 'federation_enabled';
+
 	/**
 	 * 1. Call recording, …
 	 */
@@ -72,9 +77,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedTalkGroupIds(): array {
-		$groups = $this->config->getAppValue('spreed', 'allowed_groups', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_TALK);
 	}
 
 	/**
@@ -107,9 +110,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getSIPGroups(): array {
-		$groups = $this->config->getAppValue('spreed', 'sip_bridge_groups', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_SIP);
 	}
 
 	public function isSIPConfigured(): bool {
@@ -122,7 +123,7 @@ class Config {
 	 */
 	public function isFederationEnabled(): bool {
 		// TODO: Set to default true once implementation is complete
-		return $this->config->getAppValue('spreed', 'federation_enabled', 'no') === 'yes';
+		return $this->appConfig->getAppValueBool(self::FEDERATION_ENABLED);
 	}
 
 	public function isFederationEnabledForUserId(IUser $user): bool {
