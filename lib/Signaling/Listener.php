@@ -554,11 +554,14 @@ class Listener implements IEventListener {
 		$params = $messageDecoded['parameters'] ?? [];
 		$messageType = $messageDecoded['message'] ?? '';
 
-		if ($event->shouldSkipLastActivityUpdate() === true
-			&& !in_array($messageType, ['message_deleted', 'message_edited', 'thread_created', 'thread_renamed'], true)
+		/**
+		 * TODO: in word list after checking which messages should not be relayed
+		 * if ($event->shouldSkipLastActivityUpdate() === true
+			&& !in_array($messageType, ['message_deleted', 'message_edited', 'thread_created', 'thread_renamed', 'user_added', 'user_removed', 'moderator_promoted', 'moderator_demoted'], true)
 		) {
 			return;
 		}
+		*/
 
 		$room = $event->getRoom();
 		$data = [

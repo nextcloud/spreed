@@ -387,7 +387,7 @@ class BreakoutRoomService {
 		}
 
 		$this->roomService->setBreakoutRoomStatus($breakoutRoom, $status);
-		$this->roomService->setLastActivity($breakoutRoom, $this->timeFactory->getDateTime());
+		$this->roomService->setLastMetadataActivity($breakoutRoom, $this->timeFactory->getDateTime());
 	}
 
 	/**
