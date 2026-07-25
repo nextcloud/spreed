@@ -46,7 +46,7 @@
 						:style="gridStyle"
 						@wheel="debounceHandleWheelEvent">
 						<template v-if="!devMode && !(isLessThanTwoVideos && isStripe)">
-							<EmptyCallView v-if="videos.length === 0 && !isStripe" class="video" :isGrid="true" />
+							<EmptyCallView v-if="orderedVideos.length === 0 && !isStripe" class="video" :isGrid="true" />
 							<VideoVue
 								v-for="callParticipantModel in displayedVideos"
 								:key="callParticipantModel.attributes.peerId"
@@ -165,7 +165,6 @@
 import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 import { computed, inject, ref, toRef, useTemplateRef, watch } from 'vue'
-import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
@@ -176,14 +175,13 @@ import EmptyCallView from '../shared/EmptyCallView.vue'
 import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
-import { PARTICIPANT } from '../../../constants.ts'
 import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
-import { useActorStore } from '../../../stores/actor.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import { GRID_GAP } from './gridLayout.ts'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 import { useGridDimensions } from './useGridDimensions.ts'
 import { usePagination } from './usePagination.ts'
+import { useTileOrdering } from './useTileOrdering.ts'
 
 // Max number of videos per page. `0`, the default value, means no cap
 const videosCap = getTalkConfig('local', 'call', 'grid-limit') || 0
@@ -278,7 +276,6 @@ export default {
 		// The number of dummy videos in dev mode
 		const dummies = ref(4)
 
-		const actorStore = useActorStore()
 		const callViewStore = useCallViewStore()
 
 		// Template refs for the elements measured by the grid layout
@@ -303,19 +300,6 @@ export default {
 			stripeOpen,
 		})
 
-		const vuexStore = useStore()
-
-		// The videos array. This is the total number of grid elements.
-		// Depending on the grid dimensions and `videosCap`, these videos are
-		// shown in one or more grid 'pages'.
-		const videos = computed(() => {
-			if (devMode.value) {
-				return Array.from(Array(dummies.value).keys())
-			}
-
-			return props.callParticipantModels
-		})
-
 		// Number of grid slots (videos per page) at any given moment, clamped to
 		// `videosCap` (`0` means no cap).
 		// The local video always takes one slot, unless it is not shown (stripe
@@ -330,171 +314,23 @@ export default {
 			return videosCap ? Math.min(videosCap, slots) : slots
 		})
 
-		// Speakers recently promoted to the first page and the history of
-		// promotions, used to keep the relative order of the tiles stable.
-		const tempPromotedModels = ref([])
-		const promotedHistoryMask = ref([])
-		const unpromoteSpeakerTimer = {}
-
-		const participantsInitialised = computed(() => vuexStore.getters.participantsInitialised(props.token))
-
-		const isGuestNonModerator = computed(() => {
-			return actorStore.isActorGuest
-				&& vuexStore.getters.conversation(props.token).participantType !== PARTICIPANT.TYPE.GUEST_MODERATOR
+		// Orders the tiles and keeps recently active speakers promoted to the
+		// first page.
+		const { orderedParticipantModels } = useTileOrdering({
+			callParticipantModels: toRef(() => props.callParticipantModels),
+			screens: toRef(() => props.screens),
+			token: toRef(() => props.token),
+			slots,
 		})
 
-		/**
-		 * @param {object} callParticipantModel the participant model
-		 */
-		function isModelWithVideo(callParticipantModel) {
-			return callParticipantModel.attributes.videoAvailable
-				&& (typeof callParticipantModel.attributes.stream === 'object')
-		}
-
-		/**
-		 * @param {object} callParticipantModel the participant model
-		 */
-		function isModelWithAudio(callParticipantModel) {
-			const participant = vuexStore.getters.getParticipantBySessionId(props.token, callParticipantModel.attributes.nextcloudSessionId)
-			if (!participant) {
-				return false
-			}
-			return participant?.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
-		}
-
-		/**
-		 * @param {Map} tilesMap map of session ids to models
-		 * @param {Array} orderMask ordered session ids to sort the tiles by
-		 */
-		function getOrderedTiles(tilesMap, orderMask) {
-			const orderedTiles = []
-			const rest = []
-			// Get the ordered tiles
-			orderMask.forEach((id) => {
-				if (tilesMap.has(id)) {
-					orderedTiles.push(tilesMap.get(id))
-				}
-			})
-
-			// Add remaining tiles not in orderMask to rest
-			tilesMap.forEach((tile, id) => {
-				if (!orderMask.includes(id)) {
-					rest.push(tile)
-				}
-			})
-
-			return [...orderedTiles, ...rest]
-		}
-
+		// The tiles to lay out across the grid pages. In developer mode these are
+		// dummy placeholder tiles; otherwise the ordered participant models.
 		const orderedVideos = computed(() => {
-			// Dynamic ordering is not possible for guests because
-			// participants store is not initialized
-			if (isGuestNonModerator.value || devMode.value) {
-				return videos.value
+			if (devMode.value) {
+				return Array.from(Array(dummies.value).keys())
 			}
 
-			const objectMap = {
-				modelsWithScreenshare: [],
-				modelsTempPromoted: [],
-				modelsWithVideoEnabled: [],
-				modelsWithAudioOnly: [],
-				modelsWithNoPermissions: [],
-			}
-			const screensSet = new Set(props.screens)
-			const tempPromotedModelsSet = new Set(tempPromotedModels.value.map((model) => model.attributes.nextcloudSessionId))
-			const videoTilesMap = new Map()
-			const audioTilesMap = new Map()
-
-			props.callParticipantModels.forEach((model) => {
-				if (screensSet.has(model.attributes.peerId)) {
-					objectMap.modelsWithScreenshare.push(model)
-				} else if (tempPromotedModelsSet.has(model.attributes.nextcloudSessionId)) {
-					objectMap.modelsTempPromoted.push(model)
-				} else if (isModelWithVideo(model)) {
-					videoTilesMap.set(model.attributes.nextcloudSessionId, model)
-				} else if (participantsInitialised.value && isModelWithAudio(model)) {
-					audioTilesMap.set(model.attributes.nextcloudSessionId, model)
-				} else {
-					objectMap.modelsWithNoPermissions.push(model)
-				}
-			})
-
-			objectMap.modelsWithVideoEnabled = getOrderedTiles(videoTilesMap, promotedHistoryMask.value)
-			objectMap.modelsWithAudioOnly = getOrderedTiles(audioTilesMap, promotedHistoryMask.value)
-
-			return [
-				...objectMap.modelsWithScreenshare,
-				...objectMap.modelsTempPromoted,
-				...objectMap.modelsWithVideoEnabled,
-				...objectMap.modelsWithAudioOnly,
-				...objectMap.modelsWithNoPermissions,
-			]
-		})
-
-		/**
-		 * @param {object} model the speaker model to unpromote
-		 */
-		function unpromoteSpeaker(model) {
-			// remove model from the temp promoted speakers
-			const index = tempPromotedModels.value.indexOf(model)
-			if (index === -1) {
-				return
-			}
-
-			tempPromotedModels.value.splice(index, 1)
-		}
-
-		/**
-		 * @param {object} model the speaker model to promote
-		 */
-		function promoteSpeaker(model) {
-			const id = model.attributes.nextcloudSessionId
-
-			// if model is already in the first page, do nothing
-			if (orderedVideos.value.slice(0, slots.value).find((video) => video.attributes.nextcloudSessionId === id)) {
-				return
-			}
-
-			if (props.screens.includes(model.attributes.peerId)) {
-				// tiles with screenshare have a better priority position already
-				// do nothing
-				return
-			}
-
-			// add the model
-			if (!tempPromotedModels.value.includes(model)) {
-				// remove model from the order history if it exists
-				const modelIndex = promotedHistoryMask.value.indexOf(id)
-				if (modelIndex !== -1) {
-					promotedHistoryMask.value.splice(modelIndex, 1)
-				}
-
-				tempPromotedModels.value.unshift(model)
-				// add model to the beginning of the orderedVideos in its category
-				promotedHistoryMask.value.unshift(id)
-			}
-		}
-
-		const speakers = computed(() => props.callParticipantModels.filter((model) => model.attributes.speaking))
-
-		const speakersWithAudioOff = computed(() => tempPromotedModels.value.filter((model) => !model.attributes.audioAvailable))
-
-		watch(speakers, (models) => {
-			models.forEach((model) => {
-				promoteSpeaker(model)
-				clearTimeout(unpromoteSpeakerTimer[model.attributes.nextcloudSessionId])
-			})
-		})
-
-		watch(speakersWithAudioOff, (newModels, oldModels) => {
-			newModels.forEach((speaker) => {
-				if (oldModels.includes(speaker)) {
-					return
-				}
-				unpromoteSpeakerTimer[speaker.attributes.nextcloudSessionId] = setTimeout(() => {
-					unpromoteSpeaker(speaker)
-				}, 10000)
-			})
+			return orderedParticipantModels.value
 		})
 
 		const videosCount = computed(() => orderedVideos.value.length)
@@ -520,7 +356,7 @@ export default {
 		})
 
 		return {
-			videos,
+			orderedVideos,
 			currentPage,
 			numberOfPages,
 			displayedVideos,
@@ -533,7 +369,6 @@ export default {
 			screenshotMode,
 			videosCap,
 			callViewStore,
-			actorStore,
 			gridWrapper,
 			grid,
 			stripeOpen,
@@ -558,12 +393,12 @@ export default {
 
 		// Number of video components (it does not include the local video)
 		videosCount() {
-			if (!this.isStripe && this.videos.length === 0) {
+			if (!this.isStripe && this.orderedVideos.length === 0) {
 				// Count the emptycontent as a grid element
 				return 1
 			}
 
-			return this.videos.length
+			return this.orderedVideos.length
 		},
 
 		videoWidth() {
@@ -578,7 +413,7 @@ export default {
 			// without screen share, we don't want to duplicate videos if we were to show them in the stripe
 			// however, if a screen share is in progress, it means the video of the presenting user is not visible,
 			// so we can show it in the stripe
-			return this.videos.length <= 1 && !this.screens.length
+			return this.orderedVideos.length <= 1 && !this.screens.length
 		},
 
 		// Computed css to reactively style the grid
@@ -588,7 +423,7 @@ export default {
 
 			// If there are no other videos the empty call view is shown above
 			// the local video.
-			if (this.videos.length === 0 && !this.isStripe) {
+			if (this.orderedVideos.length === 0 && !this.isStripe) {
 				columns = 1
 				rows = 2
 			}
