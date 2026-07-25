@@ -105,17 +105,20 @@ export function useTileOrdering({
 	 */
 	function getOrderedTiles(tilesMap: Map<string, OrderingModel>, orderMask: string[]) {
 		const orderedTiles: OrderingModel[] = []
-		const rest: OrderingModel[] = []
-		// Get the ordered tiles
+		const orderedIds = new Set<string>()
+		// Emit the tiles referenced by the mask, in mask order
 		orderMask.forEach((id) => {
-			if (tilesMap.has(id)) {
-				orderedTiles.push(tilesMap.get(id)!)
+			const tile = tilesMap.get(id)
+			if (tile) {
+				orderedTiles.push(tile)
+				orderedIds.add(id)
 			}
 		})
 
-		// Add remaining tiles not in orderMask to rest
+		// Append the remaining tiles in their original (insertion) order
+		const rest: OrderingModel[] = []
 		tilesMap.forEach((tile, id) => {
-			if (!orderMask.includes(id)) {
+			if (!orderedIds.has(id)) {
 				rest.push(tile)
 			}
 		})
