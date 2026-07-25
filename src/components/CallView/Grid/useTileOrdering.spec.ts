@@ -159,4 +159,62 @@ describe('useTileOrdering', () => {
 			expect(orderedParticipantModels.value).toEqual([first, second])
 		})
 	})
+
+	describe('participant churn', () => {
+		test('drops a departed participant and keeps ordering the rest', async () => {
+			const a = makeModel({ audioPublisher: true, audioAvailable: true })
+			const b = makeModel({ audioPublisher: true, audioAvailable: true })
+			const c = makeModel({ audioPublisher: true, audioAvailable: true })
+			const models = [a, b, c]
+			allModels = models
+
+			const { orderedParticipantModels, callParticipantModels } = createOrdering({ models, slots: 1 })
+
+			// b speaks and gets promoted to the front
+			b.attributes.speaking = true
+			await nextTick()
+			expect(orderedParticipantModels.value).toEqual([b, a, c])
+
+			// b leaves the call
+			allModels = [a, c]
+			callParticipantModels.value = [a, c]
+			await nextTick()
+			expect(orderedParticipantModels.value).toEqual([a, c])
+
+			// promotion still works for the remaining participants
+			c.attributes.speaking = true
+			await nextTick()
+			expect(orderedParticipantModels.value).toEqual([c, a])
+		})
+
+		test('cancels a pending unpromote timer when a promoted speaker leaves', async () => {
+			vi.useFakeTimers()
+			try {
+				const a = makeModel({ audioPublisher: true, audioAvailable: true })
+				const b = makeModel({ audioPublisher: true, audioAvailable: true })
+				const models = [a, b]
+				allModels = models
+
+				const { callParticipantModels } = createOrdering({ models, slots: 1 })
+
+				// b speaks (gets promoted) and then its audio goes off, which
+				// schedules an unpromote timer for it.
+				b.attributes.speaking = true
+				await nextTick()
+				b.attributes.audioAvailable = false
+				await nextTick()
+
+				const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout')
+
+				// b leaves the call before the timer fires
+				allModels = [a]
+				callParticipantModels.value = [a]
+				await nextTick()
+
+				expect(clearTimeoutSpy).toHaveBeenCalled()
+			} finally {
+				vi.useRealTimers()
+			}
+		})
+	})
 })

@@ -234,6 +234,25 @@ export function useTileOrdering({
 		})
 	})
 
+	// Drop promotion state for participants who have left the call, so the
+	// temp-promoted list, the history mask and the pending timers do not
+	// accumulate stale entries over the lifetime of a long call.
+	watch(() => callParticipantModels.value.map((model) => model.attributes.nextcloudSessionId), (sessionIds) => {
+		const presentSessions = new Set(sessionIds)
+
+		tempPromotedModels.value = tempPromotedModels.value
+			.filter((model) => presentSessions.has(model.attributes.nextcloudSessionId))
+		promotedHistoryMask.value = promotedHistoryMask.value
+			.filter((id) => presentSessions.has(id))
+
+		for (const id of Object.keys(unpromoteSpeakerTimer)) {
+			if (!presentSessions.has(id)) {
+				clearTimeout(unpromoteSpeakerTimer[id])
+				delete unpromoteSpeakerTimer[id]
+			}
+		}
+	})
+
 	// Cancel any pending unpromote timers when the owning scope is torn down.
 	onScopeDispose(() => {
 		Object.values(unpromoteSpeakerTimer).forEach((timer) => clearTimeout(timer))
