@@ -116,12 +116,33 @@ Signaling.Base.prototype._trigger = function(ev, args) {
 		}
 	}
 
+	// A secondary "browse" signaling connection (used to keep receiving live
+	// updates for a conversation that is only being browsed while a call is
+	// ongoing in another conversation) must not leak its events onto the global
+	// EventBus, as those are consumed app-wide and would interfere with the
+	// primary connection that holds the call. Only the explicitly allow-listed
+	// events are forwarded; local per-instance handlers always run.
+	if (this._eventBusEmitAllowlist && !this._eventBusEmitAllowlist.has(ev)) {
+		return
+	}
+
 	// Convert webrtc event names to kebab-case for "vue/custom-event-name-casing"
 	const kebabCase = (string) => string
 		.replace(/([a-z])([A-Z])/g, '$1-$2')
 		.replace(/[\s_]+/g, '-')
 		.toLowerCase()
 	EventBus.emit('signaling-' + kebabCase(ev), args)
+}
+
+/**
+ * Restrict which events of this signaling instance are forwarded to the global
+ * EventBus. Pass an iterable of camelCase event names (as passed to _trigger),
+ * or null to forward everything (the default).
+ *
+ * @param {Iterable<string>|null} events allow-listed event names
+ */
+Signaling.Base.prototype.setEventBusEmitAllowlist = function(events) {
+	this._eventBusEmitAllowlist = events ? new Set(events) : null
 }
 
 Signaling.Base.prototype.setSettings = function(settings) {

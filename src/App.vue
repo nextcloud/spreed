@@ -64,6 +64,7 @@ import { useCallViewStore } from './stores/callView.ts'
 import { useSidebarStore } from './stores/sidebar.ts'
 import { useTokenStore } from './stores/token.ts'
 import { checkBrowser } from './utils/browserCheck.ts'
+import { mountBrowseSignaling, unmountBrowseSignaling } from './utils/webrtc/browseSignaling.js'
 import { signalingKill } from './utils/webrtc/index.js'
 
 /** Internal handlers for 'joined-conversation' watcher (voice-, breakout- rooms) */
@@ -123,6 +124,9 @@ export default {
 			isRefreshingCurrentConversation: false,
 			skipLeaveWarning: false,
 			recordingConsentGiven: false,
+			// Token of the call kept alive in the background while browsing
+			// another conversation during a call, or null.
+			activeBrowseCallToken: null,
 			debounceRefreshCurrentConversation: () => {},
 		}
 	},
@@ -169,6 +173,21 @@ export default {
 		},
 
 		/**
+		 * Whether the conversation held in the background during browsing (see
+		 * `activeBrowseCallToken`) still has an ongoing call. Used to tear the
+		 * secondary browse session down when the call ends remotely. Depends on
+		 * the reactive `isInCall` getter for a real token, so it updates when
+		 * the call ends.
+		 *
+		 * @return {boolean}
+		 */
+		browsedCallStillActive() {
+			return this.activeBrowseCallToken
+				? this.$store.getters.isInCall(this.activeBrowseCallToken)
+				: false
+		},
+
+		/**
 		 * The current conversation
 		 *
 		 * @return {object} The conversation object.
@@ -207,6 +226,21 @@ export default {
 					toggle?.removeAttribute('data-theme-dark')
 				}
 			},
+		},
+
+		browsedCallStillActive(active) {
+			// The call ended (possibly remotely) while browsing another
+			// conversation: drop the secondary browse session and properly join
+			// the conversation that is now being viewed.
+			if (this.activeBrowseCallToken && !active) {
+				const endedCallToken = this.activeBrowseCallToken
+				this.activeBrowseCallToken = null
+				unmountBrowseSignaling()
+				if (this.token && this.token !== endedCallToken
+					&& !this.tokenStore.currentConversationIsJoined) {
+					this.$store.dispatch('joinConversation', { token: this.token })
+				}
+			}
 		},
 
 		unreadCountsMap: {
@@ -325,6 +359,38 @@ export default {
 				return
 			}
 
+			// While a call is ongoing, keep its signaling session (and the call)
+			// alive and let the user browse other conversations without joining
+			// or leaving them. The browsed conversation is kept live-updated by a
+			// secondary lightweight signaling session (new messages, typing),
+			// while the call view is shown again when navigating back to the
+			// call's conversation.
+			// Read fresh on every navigation (not via a cached computed): the
+			// call token comes from non-reactive SessionStorage, so a computed
+			// would keep a stale value and the guard would not fire.
+			const joinedToken = SessionStorage.getItem('joined_conversation')
+			const activeCallToken = joinedToken && this.$store.getters.isInCall(joinedToken) ? joinedToken : null
+			if (activeCallToken && to.name === 'conversation' && from.params.token !== to.params.token) {
+				if (to.params.token === activeCallToken) {
+					// Returning to the call: drop the secondary browse session.
+					this.activeBrowseCallToken = null
+					unmountBrowseSignaling()
+				} else {
+					// Browsing another conversation during the call.
+					if (!this.$store.getters.conversation(to.params.token)) {
+						const result = await this.fetchSingleConversation(to.params.token)
+						if (!result) {
+							// If the conversation is not found, block further navigation
+							return
+						}
+					}
+					this.activeBrowseCallToken = activeCallToken
+					mountBrowseSignaling(to.params.token)
+				}
+				next()
+				return
+			}
+
 			if (from.name === 'conversation' && from.params.token !== to.params.token) {
 				// Await to properly close session / leave call before joining another one
 				await this.$store.dispatch('leaveConversation', { token: from.params.token })
@@ -377,9 +443,11 @@ export default {
 			if (from.name === 'conversation' && to.name === 'conversation' && from.params.token === to.params.token) {
 				// Navigating within the same conversation
 				beforeRouteChangeListener(to, from, next)
-			} else if (!this.warnLeaving || this.skipLeaveWarning || this.isVoiceRoom(from.params.token)) {
+			} else if (!this.warnLeaving || this.skipLeaveWarning || this.isVoiceRoom(from.params.token) || to.name === 'conversation') {
 				// Safe to navigate
 				// Note: voice rooms are intended to be left without confirmation.
+				// Note: navigating to another conversation during a call keeps the
+				// call alive (see beforeRouteChangeListener), so no warning is needed.
 				beforeRouteChangeListener(to, from, next)
 			} else {
 				spawnDialog(ConfirmDialog, {

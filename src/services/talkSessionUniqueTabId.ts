@@ -51,7 +51,56 @@ export function setTalkSessionUniqueTabIdHeader() {
 	}
 
 	axios.interceptors.request.use((config) => {
-		config.headers[X_NEXTCLOUD_TALK_SESSION_TAB_ID] = tabId
+		// Do not clobber an explicitly set tab id. A request targeting a
+		// secondary Talk session (see getBrowseSessionRequestConfig) sets its
+		// own id, which must reach the server unchanged so it is mapped to a
+		// separate session instead of the primary one.
+		if (!config.headers[X_NEXTCLOUD_TALK_SESSION_TAB_ID]) {
+			config.headers[X_NEXTCLOUD_TALK_SESSION_TAB_ID] = tabId
+		}
 		return config
 	})
+}
+
+/**
+ * Secondary, ephemeral tab id used to open a second Talk session from the same
+ * tab (e.g. to browse another conversation with live updates while a call is
+ * ongoing). Since https://github.com/nextcloud/spreed/pull/17230 the server
+ * maps requests to distinct sessions by this id, so a different id yields a
+ * second session without dropping the primary one.
+ */
+let browseSessionTabId: string | null = null
+
+/**
+ * Get (creating it on first use) the secondary tab id for the browse session.
+ */
+export function getBrowseSessionTabId(): string {
+	if (!browseSessionTabId) {
+		browseSessionTabId = generateRandomId(64)
+	}
+	return browseSessionTabId
+}
+
+/**
+ * Rotate the secondary tab id, so the next browse session is a fresh one on the
+ * server. Call this after fully tearing down a browse session.
+ */
+export function resetBrowseSessionTabId(): void {
+	browseSessionTabId = null
+}
+
+/**
+ * Build an axios request config that routes the request through the secondary
+ * browse Talk session instead of the primary one.
+ *
+ * @param config additional axios request config to merge
+ */
+export function getBrowseSessionRequestConfig(config: Record<string, unknown> = {}): Record<string, unknown> {
+	return {
+		...config,
+		headers: {
+			...(config.headers as Record<string, string> ?? {}),
+			[X_NEXTCLOUD_TALK_SESSION_TAB_ID]: getBrowseSessionTabId(),
+		},
+	}
 }
