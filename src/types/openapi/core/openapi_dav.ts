@@ -82,6 +82,9 @@ export type components = {
             dav: {
                 chunking: string;
                 public_shares_chunking: boolean;
+                search_supports_creation_time: boolean;
+                search_supports_upload_time: boolean;
+                search_supports_last_activity: boolean;
                 bulkupload?: string;
                 "absence-supported"?: boolean;
                 "absence-replacement"?: boolean;
