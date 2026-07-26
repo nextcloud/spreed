@@ -82,10 +82,7 @@ export type paths = {
             path?: never;
             cookie?: never;
         };
-        /**
-         * Get app password with one-time password
-         * @description This endpoint requires password confirmation
-         */
+        /** Get app password with one-time password */
         get: operations["app_password-get-app-password-with-one-time-password"];
         put?: never;
         post?: never;
@@ -753,24 +750,6 @@ export type paths = {
         get: operations["unified_search-search"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/ocs/v2.php/core/whatsnew": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get the changes */
-        get: operations["whats_new-get"];
-        put?: never;
-        /** Dismiss the changes */
-        post: operations["whats_new-dismiss"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4768,120 +4747,6 @@ export interface operations {
                             data: unknown;
                         };
                     };
-                };
-            };
-        };
-    };
-    "whats_new-get": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Changes returned */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: {
-                                changelogURL: string;
-                                product: string;
-                                version: string;
-                                whatsNew?: {
-                                    regular: string[];
-                                    admin: string[];
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description No changes */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-        };
-    };
-    "whats_new-dismiss": {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Required to be true for the API request to pass */
-                "OCS-APIRequest": boolean;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** @description Version to dismiss the changes for */
-                    version: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Changes dismissed */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            /** @description Current user is not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        ocs: {
-                            meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
-                        };
-                    };
-                };
-            };
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
                 };
             };
         };
