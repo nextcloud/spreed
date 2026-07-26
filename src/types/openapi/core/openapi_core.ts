@@ -1264,18 +1264,25 @@ export type components = {
             };
         };
         Team: {
-            id: string;
-            name: string;
-            icon: string;
+            teamId: string;
+            displayName: string;
+            link: string | null;
         };
         TeamResource: {
-            /** Format: int64 */
-            id: number;
+            id: string;
             label: string;
             url: string;
             iconSvg: string | null;
             iconURL: string | null;
             iconEmoji: string | null;
+            provider: {
+                id: string;
+                name: string;
+                icon: string;
+            };
+        };
+        TeamWithResources: components["schemas"]["Team"] & {
+            resources: components["schemas"]["TeamResource"][];
         };
         TextProcessingTask: {
             /** Format: int64 */
@@ -2234,7 +2241,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Rewrite URLs to absolute ones */
-                absolute?: 0 | 1;
+                absolute?: boolean;
             };
             header: {
                 /** @description Required to be true for the API request to pass */
@@ -2286,7 +2293,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Rewrite URLs to absolute ones */
-                absolute?: 0 | 1;
+                absolute?: boolean;
             };
             header: {
                 /** @description Required to be true for the API request to pass */
@@ -3618,7 +3625,7 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
-                                teams: components["schemas"]["Team"][];
+                                teams: components["schemas"]["TeamWithResources"][];
                             };
                         };
                     };
@@ -3734,6 +3741,20 @@ export interface operations {
                     };
                 };
             };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
             /** @description Scheduling task is not possible */
             412: {
                 headers: {
@@ -3794,6 +3815,20 @@ export interface operations {
                             data: {
                                 task: components["schemas"]["TextProcessingTask"];
                             };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
                         };
                     };
                 };
@@ -4002,6 +4037,20 @@ export interface operations {
                     };
                 };
             };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
         };
     };
     "text_to_image_api-schedule": {
@@ -4048,6 +4097,20 @@ export interface operations {
                             data: {
                                 task: components["schemas"]["TextToImageTask"];
                             };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
                         };
                     };
                 };
@@ -4112,6 +4175,20 @@ export interface operations {
                             data: {
                                 task: components["schemas"]["TextToImageTask"];
                             };
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
                         };
                     };
                 };
@@ -4251,6 +4328,20 @@ export interface operations {
                 };
                 content: {
                     "*/*": string;
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
                 };
             };
             /** @description Task or image not found */
@@ -4531,7 +4622,7 @@ export interface operations {
                 term?: string;
                 /** @description Order of entries */
                 sortOrder?: number | null;
-                /** @description Maximum amount of entries, limited to 25 */
+                /** @description Maximum amount of entries (capped by configurable unified-search.max-results-per-request, default: 25) */
                 limit?: number | null;
                 /** @description Offset for searching */
                 cursor?: (number | string) | null;
@@ -4712,7 +4803,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Fallback to guest avatar if not found */
-                guestFallback?: 0 | 1;
+                guestFallback?: boolean;
             };
             header?: never;
             path: {
@@ -4766,7 +4857,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Fallback to guest avatar if not found */
-                guestFallback?: 0 | 1;
+                guestFallback?: boolean;
             };
             header?: never;
             path: {
@@ -4909,7 +5000,7 @@ export interface operations {
         parameters: {
             query?: {
                 /** @description Return dark avatar */
-                darkTheme?: 0 | 1 | null;
+                darkTheme?: boolean | null;
             };
             header?: never;
             path: {
@@ -5095,13 +5186,13 @@ export interface operations {
                 /** @description Height of the preview. A height of -1 will use the original image height. */
                 y?: number;
                 /** @description Preserve the aspect ratio */
-                a?: 0 | 1;
+                a?: boolean;
                 /** @description Force returning an icon */
-                forceIcon?: 0 | 1;
+                forceIcon?: boolean;
                 /** @description How to crop the image */
                 mode?: "fill" | "cover";
                 /** @description Whether to fallback to the mime icon if no preview is available */
-                mimeFallback?: 0 | 1;
+                mimeFallback?: boolean;
             };
             header?: never;
             path?: never;
@@ -5176,13 +5267,13 @@ export interface operations {
                 /** @description Height of the preview. A height of -1 will use the original image height. */
                 y?: number;
                 /** @description Preserve the aspect ratio */
-                a?: 0 | 1;
+                a?: boolean;
                 /** @description Force returning an icon */
-                forceIcon?: 0 | 1;
+                forceIcon?: boolean;
                 /** @description How to crop the image */
                 mode?: "fill" | "cover";
                 /** @description Whether to fallback to the mime icon if no preview is available */
-                mimeFallback?: 0 | 1;
+                mimeFallback?: boolean;
             };
             header?: never;
             path?: never;
