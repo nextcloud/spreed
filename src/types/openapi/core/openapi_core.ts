@@ -82,10 +82,7 @@ export type paths = {
             path?: never;
             cookie?: never;
         };
-        /**
-         * Get app password with one-time password
-         * @description This endpoint requires password confirmation
-         */
+        /** Get app password with one-time password */
         get: operations["app_password-get-app-password-with-one-time-password"];
         put?: never;
         post?: never;
