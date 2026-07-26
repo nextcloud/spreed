@@ -368,6 +368,7 @@ export type components = {
                 };
                 /** Format: int64 */
                 default_permissions?: number;
+                exclude_reshare_from_edit?: boolean;
                 federation: {
                     outgoing: boolean;
                     incoming: boolean;
@@ -517,7 +518,7 @@ export type components = {
             token: string | null;
             uid_file_owner: string;
             uid_owner: string;
-            url?: string;
+            url?: string | null;
         };
         ShareInfo: {
             /** Format: int64 */
