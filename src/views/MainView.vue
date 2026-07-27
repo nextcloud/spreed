@@ -17,9 +17,8 @@ import LobbyScreen from '../components/LobbyScreen.vue'
 import PollViewer from '../components/PollViewer/PollViewer.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
 import { useIsInCall } from '../composables/useIsInCall.js'
-import { CONVERSATION } from '../constants.ts'
-import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { useActorStore } from '../stores/actor.ts'
+import { hasExternalCallService } from '../utils/conversation.ts'
 
 const props = defineProps<{
 	token: string
@@ -35,9 +34,7 @@ const isInLobby = computed(() => store.getters.isInLobby)
 const connectionFailed = computed(() => store.getters.connectionFailed(props.token))
 const isInExternalCall = computed(() => {
 	const conversation = store.getters.conversation(props.token) as Conversation | undefined
-	return conversation?.objectType === CONVERSATION.OBJECT_TYPE.EXTERNAL_CALL && isInCall.value
-		&& !getTalkConfig('local', 'call', 'enabled')
-		&& getTalkConfig('local', 'call', 'external-call-service')
+	return hasExternalCallService(conversation) && isInCall.value
 })
 
 watch(isInLobby, (isInLobby) => {
