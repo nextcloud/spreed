@@ -1088,6 +1088,7 @@ OC.L10N.register(
     "Unmute audio" : "Zrušit ztlumení zvuku",
     "Unmute audio (M)" : "Zrušit ztlumení zvuku (M)",
     "None" : "Žádné",
+    "Microphone" : "Mikrofon",
     "Speaker" : "Reproduktor",
     "Microphone settings" : "Nastavení mikrofonu",
     "Check devices" : "Zkontrolovat zařízení",
