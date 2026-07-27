@@ -45,6 +45,7 @@ class Config {
 	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
 	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
 	public const string DEFAULT_PERMISSIONS = 'default_permissions';
+	public const string DEFAULT_ATTACHMENT_FOLDER = 'default_attachment_folder';
 
 	/**
 	 * 1. Call recording, …
@@ -302,7 +303,7 @@ class Config {
 	}
 
 	public function getAttachmentFolder(string $userId): string {
-		$defaultAttachmentFolder = $this->config->getAppValue('spreed', 'default_attachment_folder', '/Talk');
+		$defaultAttachmentFolder = $this->appConfig->getAppValueString(self::DEFAULT_ATTACHMENT_FOLDER);
 		return $this->config->getUserValue($userId, 'spreed', UserPreference::ATTACHMENT_FOLDER, $defaultAttachmentFolder);
 	}
 
