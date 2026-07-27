@@ -33,6 +33,7 @@ class ConfigLexicon implements ILexicon {
 			new Entry(Config::ALLOWED_GROUPS_CONVERSATIONS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to create conversation'),
 			new Entry(Config::BREAKOUT_ROOMS_ENABLED, ValueType::BOOL, true, definition: 'Whether or not breakout rooms are allowed (Will only prevent creating new breakout rooms. Existing conversations are not modified.'),
 			new Entry(Config::CONVERSATION_SUBFOLDERS, ValueType::BOOL, true, definition: ''),
+			new Entry(Config::DEFAULT_PERMISSIONS, ValueType::INT, 246, definition: 'Default permissions for non-moderators (see [constants list](constants.md#attendee-permissions) for bit flags)'),
 		];
 	}
 

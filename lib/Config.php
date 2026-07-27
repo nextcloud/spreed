@@ -44,6 +44,7 @@ class Config {
 	public const string ALLOWED_GROUPS_CONVERSATIONS = 'start_conversations';
 	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
 	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
+	public const string DEFAULT_PERMISSIONS = 'default_permissions';
 
 	/**
 	 * 1. Call recording, …
@@ -291,9 +292,9 @@ class Config {
 	 */
 	public function getDefaultPermissions(): int {
 		// Admin configured default permissions
-		$configurableDefault = $this->config->getAppValue('spreed', 'default_permissions');
-		if ($configurableDefault !== '') {
-			return min(Attendee::PERMISSIONS_MAX_CUSTOM, max(Attendee::PERMISSIONS_DEFAULT, (int)$configurableDefault));
+		$configurableDefault = $this->appConfig->getAppValueInt(self::DEFAULT_PERMISSIONS);
+		if ($configurableDefault > 0) {
+			return min(Attendee::PERMISSIONS_MAX_CUSTOM, max(Attendee::PERMISSIONS_DEFAULT, $configurableDefault));
 		}
 
 		// Falling back to an unrestricted set of permissions, only ignoring the lobby is off
