@@ -42,6 +42,7 @@ class Config {
 	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
 	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
 	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
+	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
 
 	/**
 	 * 1. Call recording, …
@@ -140,7 +141,7 @@ class Config {
 	}
 
 	public function isConversationSubfoldersEnabled(): bool {
-		return $this->appConfig->getAppValueBool('conversation_subfolders', true);
+		return $this->appConfig->getAppValueBool(self::CONVERSATION_SUBFOLDERS, true);
 	}
 
 	public function getDialInInfo(): string {
