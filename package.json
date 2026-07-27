@@ -58,6 +58,7 @@
     "@vueuse/router": "^14.3.0",
     "base64-js": "^1.5.1",
     "blurhash": "^2.0.5",
+    "brace-expansion": "^5.0.8",
     "cropperjs": "^1.6.2",
     "crypto-js": "^4.2.0",
     "debounce": "^3.0.0",
