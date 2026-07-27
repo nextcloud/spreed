@@ -22,7 +22,9 @@ use OCP\DB\Types;
  * @method void setNumReplies(int $numReplies)
  * @method int getNumReplies()
  * @method void setLastActivity(\DateTime $lastActivity)
+ * @method void setLastMetadataActivity(\DateTime $lastMetadataActivity)
  * @method \DateTime|null getLastActivity()
+ * @method \DateTime|null getLastMetadataActivity()
  * @method void setName(string $name)
  *
  * @psalm-import-type TalkThread from ResponseDefinitions
@@ -34,6 +36,7 @@ class Thread extends Entity {
 	protected int $lastMessageId = 0;
 	protected int $numReplies = 0;
 	protected ?\DateTime $lastActivity = null;
+	protected ?\DateTime $lastMetadataActivity = null;
 	protected string $name = '';
 
 	public function __construct() {
@@ -41,6 +44,7 @@ class Thread extends Entity {
 		$this->addType('lastMessageId', Types::BIGINT);
 		$this->addType('numReplies', Types::BIGINT);
 		$this->addType('lastActivity', Types::DATETIME);
+		$this->addType('lastMetadataActivity', Types::DATETIME);
 		$this->addType('name', Types::STRING);
 	}
 
@@ -51,6 +55,7 @@ class Thread extends Entity {
 		$thread->setLastMessageId((int)$row['last_message_id']);
 		$thread->setNumReplies((int)$row['num_replies']);
 		$thread->setLastActivity(new \DateTime($row['last_activity']));
+		$thread->setLastMetadataActivity(new \DateTime($row['last_metadata_activity']));
 		$thread->setName($row['name']);
 		return $thread;
 	}
@@ -68,6 +73,7 @@ class Thread extends Entity {
 		$thread->setLastMessageId((int)$row['last_message_id']);
 		$thread->setNumReplies((int)$row['num_replies']);
 		$thread->setLastActivity(new \DateTime('@' . $row['last_activity']));
+		$thread->setLastMetadataActivity(new \DateTime('@' . $row['last_metadata_activity']));
 		$thread->setName($row['name']);
 		return $thread;
 	}
@@ -83,6 +89,7 @@ class Thread extends Entity {
 			'last_message_id' => $this->getLastMessageId(),
 			'num_replies' => $this->getNumReplies(),
 			'last_activity' => $this->getLastActivity()?->getTimestamp() ?? 0,
+			'last_metadata_activity' => $this->getLastMetadataActivity()?->getTimestamp() ?? 0,
 			'name' => $this->getName(),
 		], flags: JSON_THROW_ON_ERROR);
 	}
@@ -107,6 +114,7 @@ class Thread extends Entity {
 			'lastMessageId' => max(0, $this->getLastMessageId()),
 			'numReplies' => max(0, $this->getNumReplies()),
 			'lastActivity' => max(0, $this->getLastActivity()?->getTimestamp() ?? 0),
+			'lastMetadataActivity' => max(0, $this->getLastMetadataActivity()?->getTimestamp() ?? 0),
 			'title' => $this->getName(),
 		];
 	}

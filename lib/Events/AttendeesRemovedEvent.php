@@ -9,4 +9,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Events;
 
 class AttendeesRemovedEvent extends AttendeesEvent {
+
+	private bool $shouldSkipLastMessageUpdate = true;
+
+	public function shouldSkipLastMessageUpdate() : bool {
+		return $this->shouldSkipLastMessageUpdate;
+	}
+
+	public function setShouldSkipLastActivityUpdate(bool $pShouldSkipLastActivityUpdate) {
+		$this->shouldSkipLastMessageUpdate = $pShouldSkipLastActivityUpdate;
+	}
 }

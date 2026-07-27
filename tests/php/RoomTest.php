@@ -38,6 +38,7 @@ class RoomTest extends TestCase {
 			Participant::FLAG_DISCONNECTED,
 			null,
 			null,
+			null,
 			0,
 			null,
 			$lobbyTimer,

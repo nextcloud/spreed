@@ -238,7 +238,7 @@ class ListenerTest extends TestCase {
 				false,
 				self::DUMMY_REFERENCE_ID,
 				null,
-				false,
+				true,
 				false,
 				0,
 			];
@@ -341,7 +341,7 @@ class ListenerTest extends TestCase {
 				false,
 				self::DUMMY_REFERENCE_ID,
 				null,
-				false,
+				true,
 				false,
 				0,
 			];

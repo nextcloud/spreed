@@ -489,6 +489,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function attendeesAddedEvent(AttendeesAddedEvent $event): void {
+		$event->setShouldSkipLastMessageUpdate(true);
 		foreach ($event->getAttendees() as $attendee) {
 			$this->logger->debug($attendee->getActorType() . ' "' . $attendee->getActorId() . '" added to room "' . $event->getRoom()->getToken() . '"', ['app' => 'spreed-bfp']);
 			if ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
@@ -506,6 +507,7 @@ class Listener implements IEventListener {
 	}
 
 	protected function attendeesRemovedEvent(AttendeesRemovedEvent $event): void {
+		$event->setShouldSkipLastActivityUpdate(true);
 		foreach ($event->getAttendees() as $attendee) {
 			$this->logger->debug($attendee->getActorType() . ' "' . $attendee->getActorId() . '" removed from room "' . $event->getRoom()->getToken() . '"', ['app' => 'spreed-bfp']);
 			if ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
@@ -525,7 +527,7 @@ class Listener implements IEventListener {
 		string $message,
 		array $parameters = [],
 		?Participant $participant = null,
-		bool $shouldSkipLastMessageUpdate = false,
+		bool $shouldSkipLastMessageUpdate = true,
 		bool $silent = false,
 		bool $forceSystemAsActor = false,
 		?int $replyTo = null,
@@ -649,7 +651,7 @@ class Listener implements IEventListener {
 		$suffix = $this->getCallRecordingSuffix($event);
 		$systemMessage = $prefix . 'recording_' . $suffix;
 
-		$this->sendSystemMessage($event->getRoom(), $systemMessage, [], $actor);
+		$this->sendSystemMessage($event->getRoom(), $systemMessage, [], $actor, false);
 	}
 
 	protected function getCallRecordingSuffix(RoomModifiedEvent $event): string {
