@@ -41,6 +41,7 @@ class Config {
 
 	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
 	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
+	public const string ALLOWED_GROUPS_CONVERSATIONS = 'start_conversations';
 	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
 	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
 
@@ -271,9 +272,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedConversationsGroupIds(): array {
-		$groups = $this->config->getAppValue('spreed', 'start_conversations', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_CONVERSATIONS, []);
 	}
 
 	public function isNotAllowedToCreateConversations(IUser $user): bool {
