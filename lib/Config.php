@@ -41,8 +41,7 @@ class Config {
 
 	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
 	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
-	public const string ALLOWED_GROUPS_FEDERATION = 'federation_allowed_groups';
-	public const string FEDERATION_ENABLED = 'federation_enabled';
+	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
 
 	/**
 	 * 1. Call recording, …
@@ -123,7 +122,7 @@ class Config {
 	 */
 	public function isFederationEnabled(): bool {
 		// TODO: Set to default true once implementation is complete
-		return $this->appConfig->getAppValueBool(self::FEDERATION_ENABLED);
+		return $this->config->getAppValue('spreed', 'federation_enabled', 'no') === 'yes';
 	}
 
 	public function isFederationEnabledForUserId(IUser $user): bool {
@@ -137,7 +136,7 @@ class Config {
 	}
 
 	public function isBreakoutRoomsEnabled(): bool {
-		return $this->config->getAppValue('spreed', 'breakout_rooms', 'yes') === 'yes';
+		return $this->appConfig->getAppValueBool(self::BREAKOUT_ROOMS_ENABLED);
 	}
 
 	public function isConversationSubfoldersEnabled(): bool {
