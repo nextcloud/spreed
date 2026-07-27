@@ -9,14 +9,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Command\Stun;
 
 use OCA\Talk\Command\Stun\Add;
-use OCP\IConfig;
+use OCP\AppFramework\Services\IAppConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Test\TestCase;
 
 class AddTest extends TestCase {
-	protected IConfig&MockObject $config;
+	protected IAppConfig&MockObject $appConfig;
 	protected InputInterface&MockObject $input;
 	protected OutputInterface&MockObject $output;
 	protected Add $command;
@@ -24,9 +24,9 @@ class AddTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->config = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 
-		$this->command = new Add($this->config);
+		$this->command = new Add($this->appConfig);
 
 		$this->input = $this->createMock(InputInterface::class);
 		$this->output = $this->createMock(OutputInterface::class);
@@ -39,8 +39,8 @@ class AddTest extends TestCase {
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Incorrect value. Must be stunserver:port.</error>'));
-		$this->config->expects($this->never())
-			->method('setAppValue');
+		$this->appConfig->expects($this->never())
+			->method('setAppValueArray');
 
 		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
@@ -49,15 +49,14 @@ class AddTest extends TestCase {
 		$this->input->method('getArgument')
 			->with('server')
 			->willReturn('stun.test.com:443');
-		$this->config->method('getAppValue')
-			->with('spreed', 'stun_servers')
-			->willReturn(json_encode([]));
-		$this->config->expects($this->once())
-			->method('setAppValue')
+		$this->appConfig->method('getAppValueArray')
+			->with('stun_servers')
+			->willReturn([]);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
 			->with(
-				$this->equalTo('spreed'),
 				$this->equalTo('stun_servers'),
-				$this->equalTo(json_encode(['stun.test.com:443']))
+				$this->equalTo(['stun.test.com:443'])
 			);
 		$this->output->expects($this->once())
 			->method('writeln')
@@ -70,15 +69,14 @@ class AddTest extends TestCase {
 		$this->input->method('getArgument')
 			->with('server')
 			->willReturn('stun2.test.com:443');
-		$this->config->method('getAppValue')
-			->with('spreed', 'stun_servers')
-			->willReturn(json_encode(['stun1.test.com:443']));
-		$this->config->expects($this->once())
-			->method('setAppValue')
+		$this->appConfig->method('getAppValueArray')
+			->with('stun_servers')
+			->willReturn(['stun1.test.com:443']);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
 			->with(
-				$this->equalTo('spreed'),
 				$this->equalTo('stun_servers'),
-				$this->equalTo(json_encode(['stun1.test.com:443', 'stun2.test.com:443']))
+				$this->equalTo(['stun1.test.com:443', 'stun2.test.com:443'])
 			);
 		$this->output->expects($this->once())
 			->method('writeln')
@@ -91,11 +89,11 @@ class AddTest extends TestCase {
 		$this->input->method('getArgument')
 			->with('server')
 			->willReturn('stun.test.com:443');
-		$this->config->method('getAppValue')
-			->with('spreed', 'stun_servers')
-			->willReturn(json_encode(['stun.test.com:443']));
-		$this->config->expects($this->never())
-			->method('setAppValue');
+		$this->appConfig->method('getAppValueArray')
+			->with('stun_servers')
+			->willReturn(['stun.test.com:443']);
+		$this->appConfig->expects($this->never())
+			->method('setAppValueArray');
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Server already exists.</error>'));

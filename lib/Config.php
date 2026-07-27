@@ -39,6 +39,8 @@ class Config {
 	public const SIGNALING_TICKET_V1 = 1;
 	public const SIGNALING_TICKET_V2 = 2;
 
+	public const string STUN_SERVERS = 'stun_servers';
+	public const string DEFAULT_STUN_SERVER = 'stun.nextcloud.com:443';
 	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
 	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
 	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
@@ -436,15 +438,13 @@ class Config {
 	 * @return string[]
 	 */
 	public function getStunServers(): array {
-		$config = $this->config->getAppValue('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']));
-		$servers = json_decode($config, true);
-
-		if (!is_array($servers) || empty($servers)) {
-			$servers = ['stun.nextcloud.com:443'];
+		$servers = $this->appConfig->getAppValueArray(Config::STUN_SERVERS);
+		if (empty($servers)) {
+			$servers = [Config::DEFAULT_STUN_SERVER];
 		}
 
 		if (!$this->config->getSystemValueBool('has_internet_connection', true)) {
-			$servers = array_filter($servers, static fn ($server) => $server !== 'stun.nextcloud.com:443');
+			$servers = array_filter($servers, static fn ($server) => $server !== Config::DEFAULT_STUN_SERVER);
 		}
 
 		return $servers;

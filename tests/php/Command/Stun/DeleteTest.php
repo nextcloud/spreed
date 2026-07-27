@@ -9,14 +9,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Command\Stun;
 
 use OCA\Talk\Command\Stun\Delete;
-use OCP\IConfig;
+use OCP\AppFramework\Services\IAppConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Test\TestCase;
 
 class DeleteTest extends TestCase {
-	protected IConfig&MockObject $config;
+	protected IAppConfig&MockObject $appConfig;
 	protected InputInterface&MockObject $input;
 	protected OutputInterface&MockObject $output;
 	protected Delete $command;
@@ -24,9 +24,9 @@ class DeleteTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->config = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 
-		$this->command = new Delete($this->config);
+		$this->command = new Delete($this->appConfig);
 
 		$this->input = $this->createMock(InputInterface::class);
 		$this->output = $this->createMock(OutputInterface::class);
@@ -36,16 +36,15 @@ class DeleteTest extends TestCase {
 		$this->input->method('getArgument')
 			->with('server')
 			->willReturn('stun1.test.com:443');
-		$this->config->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'stun_servers')
-			->willReturn('');
-		$this->config->expects($this->once())
-			->method('setAppValue')
+		$this->appConfig->expects($this->once())
+			->method('getAppValueArray')
+			->with('stun_servers')
+			->willReturn([]);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
 			->with(
-				$this->equalTo('spreed'),
 				$this->equalTo('stun_servers'),
-				$this->equalTo(json_encode(['stun.nextcloud.com:443']))
+				$this->equalTo(['stun.nextcloud.com:443'])
 			);
 		$this->output->expects($this->once())
 			->method('writeln')
@@ -58,16 +57,15 @@ class DeleteTest extends TestCase {
 		$this->input->method('getArgument')
 			->with('server')
 			->willReturn('stun1.test.com:443');
-		$this->config->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'stun_servers')
-			->willReturn(json_encode(['stun1.test.com:443', 'stun2.test.com:443']));
-		$this->config->expects($this->once())
-			->method('setAppValue')
+		$this->appConfig->expects($this->once())
+			->method('getAppValueArray')
+			->with('stun_servers')
+			->willReturn(['stun1.test.com:443', 'stun2.test.com:443']);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
 			->with(
-				$this->equalTo('spreed'),
 				$this->equalTo('stun_servers'),
-				$this->equalTo(json_encode(['stun2.test.com:443']))
+				$this->equalTo(['stun2.test.com:443'])
 			);
 		$this->output->expects($this->once())
 			->method('writeln')
@@ -80,16 +78,15 @@ class DeleteTest extends TestCase {
 		$this->input->method('getArgument')
 			->with('server')
 			->willReturn('stun3.test.com:443');
-		$this->config->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'stun_servers')
-			->willReturn(json_encode(['stun1.test.com:443']));
-		$this->config->expects($this->once())
-			->method('setAppValue')
+		$this->appConfig->expects($this->once())
+			->method('getAppValueArray')
+			->with('stun_servers')
+			->willReturn(['stun1.test.com:443']);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
 			->with(
-				$this->equalTo('spreed'),
 				$this->equalTo('stun_servers'),
-				$this->equalTo(json_encode(['stun1.test.com:443']))
+				$this->equalTo(['stun1.test.com:443'])
 			);
 		$this->output->expects($this->once())
 			->method('writeln')

@@ -176,7 +176,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$values = [
 			$this->config->getSystemValueString('version'),
 			$this->config->getAppValue('spreed', 'installed_version'),
-			$this->config->getAppValue('spreed', 'stun_servers'),
+			implode(',', $this->appConfig->getAppValueArray(Config::STUN_SERVERS)),
 			$this->config->getAppValue('spreed', 'turn_servers'),
 			$this->config->getAppValue('spreed', 'signaling_servers'),
 			$this->config->getAppValue('spreed', 'signaling_ticket_secret'),

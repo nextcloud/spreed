@@ -13,6 +13,7 @@ use OCA\Talk\DataObjects\AccountId;
 use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
 use OCA\Talk\Service\HostedSignalingServerService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
@@ -34,6 +35,7 @@ class CheckHostedSignalingServer extends TimedJob {
 		private readonly IURLGenerator $urlGenerator,
 		private readonly LoggerInterface $logger,
 		private readonly Config $talkConfig,
+		private readonly IAppConfig $appConfig,
 	) {
 		parent::__construct($timeFactory);
 
@@ -71,11 +73,11 @@ class CheckHostedSignalingServer extends TimedJob {
 		if (!empty($accountInfo['stun']['servers'])) {
 			if ($this->talkConfig->getStunServers() !== $accountInfo['stun']['servers']) {
 				// STUN servers were added / changed
-				$this->config->setAppValue('spreed', 'stun_servers', json_encode($accountInfo['stun']['servers']));
+				$this->appConfig->setAppValueArray(Config::STUN_SERVERS, $accountInfo['stun']['servers']);
 			}
 		} elseif (!empty($oldAccountInfo['stun']['servers'])) {
 			// STUN servers are no longer available, reset to default.
-			$this->config->deleteAppValue('spreed', 'stun_servers');
+			$this->appConfig->deleteAppValue(Config::STUN_SERVERS);
 		}
 
 		if (!empty($accountInfo['turn']['servers'])) {
