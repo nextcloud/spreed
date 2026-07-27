@@ -42,10 +42,38 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/ask-features": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Get the features that are enabled for the requesting bot
+         * @description Allows bots to check which features an administrator has enabled for them, without requiring administrator credentials. The request is signed with the shared bot secret like all other bot requests: the signature is computed over the random seed and the conversation token sent in the request body, which is used to look the bot up. Keeping the token in the signed body binds the request to the conversation, so the signature headers on their own cannot be replayed.
+         *     Required capability: `bot-features-api`
+         */
+        post: operations["bot-get-bot-features"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 };
 export type webhooks = Record<string, never>;
 export type components = {
     schemas: {
+        BotFeatures: {
+            /**
+             * Format: int64
+             * @description Feature flags enabled for the bot (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#bot-features))
+             */
+            features: number;
+        };
         Capabilities: {
             /** @description List of features available on the server */
             features: string[];
@@ -561,6 +589,75 @@ export interface operations {
             };
             /** @description Reaction not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "bot-get-bot-features": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Random seed (at least 32 bytes) used together with the conversation token to generate the SHA256-HMAC request signature */
+                "x-nextcloud-talk-bot-random"?: string;
+                /** @description SHA256-HMAC signature over the concatenation of the random seed and the conversation token, signed with the shared bot secret, to verify authenticity */
+                "x-nextcloud-talk-bot-signature"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Conversation token */
+                    token: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Bot features returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["BotFeatures"];
+                        };
+                    };
+                };
+            };
+            /** @description Missing or malformed signature headers */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Bot could not be verified for the conversation */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

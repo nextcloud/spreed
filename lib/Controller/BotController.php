@@ -51,6 +51,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * @psalm-import-type TalkBot from ResponseDefinitions
+ * @psalm-import-type TalkBotFeatures from ResponseDefinitions
  * @psalm-import-type TalkBotWithDetails from ResponseDefinitions
  */
 class BotController extends AEnvironmentAwareOCSController {
@@ -77,10 +78,11 @@ class BotController extends AEnvironmentAwareOCSController {
 	/**
 	 * @param string $token
 	 * @param string $message
+	 * @param int $requiredFeature Feature the bot needs to have enabled, Bot::FEATURE_NONE to skip the check
 	 * @return Bot
 	 * @throws \InvalidArgumentException When the request could not be linked with a bot
 	 */
-	protected function getBotFromHeaders(string $token, string $message, string $random, string $checksum): Bot {
+	protected function getBotFromHeaders(string $token, string $message, string $random, string $checksum, int $requiredFeature = Bot::FEATURE_RESPONSE): Bot {
 		if (empty($random) || strlen($random) < 32) {
 			$this->logger->error('Invalid Random received from bot response');
 			throw new \InvalidArgumentException('Invalid Random received from bot response', Http::STATUS_BAD_REQUEST);
@@ -90,7 +92,7 @@ class BotController extends AEnvironmentAwareOCSController {
 			throw new \InvalidArgumentException('Invalid Signature received from bot response', Http::STATUS_BAD_REQUEST);
 		}
 
-		$bots = $this->botService->getBotsForToken($token, Bot::FEATURE_RESPONSE);
+		$bots = $this->botService->getBotsForToken($token, $requiredFeature === Bot::FEATURE_NONE ? null : $requiredFeature);
 		foreach ($bots as $botAttempt) {
 			try {
 				$this->checksumVerificationService->validateRequest(
@@ -100,11 +102,6 @@ class BotController extends AEnvironmentAwareOCSController {
 					$message
 				);
 
-				if (!($botAttempt->getBotServer()->getFeatures() & Bot::FEATURE_RESPONSE)) {
-					$this->logger->debug('Not accepting response from bot ID ' . $botAttempt->getBotServer()->getId() . ' because the feature is disabled for it');
-					throw new \InvalidArgumentException('Feature not enabled for bot', Http::STATUS_BAD_REQUEST);
-				}
-
 				return $botAttempt;
 			} catch (UnauthorizedException) {
 			}
@@ -112,6 +109,32 @@ class BotController extends AEnvironmentAwareOCSController {
 
 		$this->logger->debug('No valid Bot entry found');
 		throw new \InvalidArgumentException('No valid Bot entry found', Http::STATUS_UNAUTHORIZED);
+	}
+
+	/**
+	 * Authenticate the requesting bot via the signature headers or build the
+	 * error response, throttled on failed authentication
+	 *
+	 * @param string $token
+	 * @param string $message
+	 * @param int $requiredFeature Feature the bot needs to have enabled, Bot::FEATURE_NONE to skip the check
+	 * @return Bot|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED, null, array{}>
+	 */
+	protected function getBotOrErrorResponse(string $token, string $message, int $requiredFeature = Bot::FEATURE_RESPONSE): Bot|DataResponse {
+		$random = $this->request->getHeader('x-nextcloud-talk-bot-random');
+		$checksum = $this->request->getHeader('x-nextcloud-talk-bot-signature');
+
+		try {
+			return $this->getBotFromHeaders($token, $message, $random, $checksum, $requiredFeature);
+		} catch (\InvalidArgumentException $e) {
+			/** @var Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED $status */
+			$status = $e->getCode();
+			$response = new DataResponse(null, $status);
+			if ($status === Http::STATUS_UNAUTHORIZED) {
+				$response->throttle(['action' => 'bot']);
+			}
+			return $response;
+		}
 	}
 
 	/**
@@ -137,8 +160,8 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the message to generate the SHA256-HMAC request signature')]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the message, signed with the shared bot secret, to verify authenticity')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the message to generate the SHA256-HMAC request signature', indirect: true)]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the message, signed with the shared bot secret, to verify authenticity', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/bot/{token}/message', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
@@ -148,19 +171,9 @@ class BotController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
-		$random = $this->request->getHeader('x-nextcloud-talk-bot-random');
-		$checksum = $this->request->getHeader('x-nextcloud-talk-bot-signature');
-
-		try {
-			$bot = $this->getBotFromHeaders($token, $message, $random, $checksum);
-		} catch (\InvalidArgumentException $e) {
-			/** @var Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED $status */
-			$status = $e->getCode();
-			$response = new DataResponse(null, $status);
-			if ($e->getCode() === Http::STATUS_UNAUTHORIZED) {
-				$response->throttle(['action' => 'bot']);
-			}
-			return $response;
+		$bot = $this->getBotOrErrorResponse($token, $message);
+		if ($bot instanceof DataResponse) {
+			return $bot;
 		}
 
 		$room = $this->manager->getRoomByToken($token);
@@ -232,27 +245,21 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the reaction to generate the SHA256-HMAC request signature')]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the reaction, signed with the shared bot secret, to verify authenticity')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the reaction to generate the SHA256-HMAC request signature', indirect: true)]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the reaction, signed with the shared bot secret, to verify authenticity', indirect: true)]
 	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/bot/{token}/reaction/{messageId}', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 		'messageId' => '[0-9]+',
 	])]
 	public function react(string $token, int $messageId, string $reaction): DataResponse {
-		$random = $this->request->getHeader('x-nextcloud-talk-bot-random');
-		$checksum = $this->request->getHeader('x-nextcloud-talk-bot-signature');
+		if ($reaction === '') {
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
+		}
 
-		try {
-			$bot = $this->getBotFromHeaders($token, $reaction, $random, $checksum);
-		} catch (\InvalidArgumentException $e) {
-			/** @var Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED $status */
-			$status = $e->getCode();
-			$response = new DataResponse(null, $status);
-			if ($e->getCode() === Http::STATUS_UNAUTHORIZED) {
-				$response->throttle(['action' => 'bot']);
-			}
-			return $response;
+		$bot = $this->getBotOrErrorResponse($token, $reaction);
+		if ($bot instanceof DataResponse) {
+			return $bot;
 		}
 
 		$room = $this->manager->getRoomByToken($token);
@@ -296,27 +303,21 @@ class BotController extends AEnvironmentAwareOCSController {
 	#[BruteForceProtection(action: 'bot')]
 	#[OpenAPI(scope: 'bots')]
 	#[PublicPage]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the reaction to generate the SHA256-HMAC request signature')]
-	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the reaction, signed with the shared bot secret, to verify authenticity')]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the reaction to generate the SHA256-HMAC request signature', indirect: true)]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the reaction, signed with the shared bot secret, to verify authenticity', indirect: true)]
 	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/bot/{token}/reaction/{messageId}', requirements: [
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 		'messageId' => '[0-9]+',
 	])]
 	public function deleteReaction(string $token, int $messageId, string $reaction): DataResponse {
-		$random = $this->request->getHeader('x-nextcloud-talk-bot-random');
-		$checksum = $this->request->getHeader('x-nextcloud-talk-bot-signature');
+		if ($reaction === '') {
+			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
+		}
 
-		try {
-			$bot = $this->getBotFromHeaders($token, $reaction, $random, $checksum);
-		} catch (\InvalidArgumentException $e) {
-			/** @var Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED $status */
-			$status = $e->getCode();
-			$response = new DataResponse(null, $status);
-			if ($e->getCode() === Http::STATUS_UNAUTHORIZED) {
-				$response->throttle(['action' => 'bot']);
-			}
-			return $response;
+		$bot = $this->getBotOrErrorResponse($token, $reaction);
+		if ($bot instanceof DataResponse) {
+			return $bot;
 		}
 
 		$room = $this->manager->getRoomByToken($token);
@@ -340,6 +341,45 @@ class BotController extends AEnvironmentAwareOCSController {
 		}
 
 		return new DataResponse(null, Http::STATUS_OK);
+	}
+
+	/**
+	 * Get the features that are enabled for the requesting bot
+	 *
+	 * Allows bots to check which features an administrator has enabled for
+	 * them, without requiring administrator credentials. The request is
+	 * signed with the shared bot secret like all other bot requests: the
+	 * signature is computed over the random seed and the conversation token
+	 * sent in the request body, which is used to look the bot up. Keeping the
+	 * token in the signed body binds the request to the conversation, so the
+	 * signature headers on their own cannot be replayed.
+	 *
+	 * Required capability: `bot-features-api`
+	 *
+	 * @param string $token Conversation token
+	 * @return DataResponse<Http::STATUS_OK, TalkBotFeatures, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_UNAUTHORIZED, null, array{}>
+	 *
+	 * 200: Bot features returned
+	 * 400: Missing or malformed signature headers
+	 * 401: Bot could not be verified for the conversation
+	 */
+	#[BruteForceProtection(action: 'bot')]
+	#[OpenAPI(scope: 'bots')]
+	#[PublicPage]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-random', description: 'Random seed (at least 32 bytes) used together with the conversation token to generate the SHA256-HMAC request signature', indirect: true)]
+	#[RequestHeader(name: 'x-nextcloud-talk-bot-signature', description: 'SHA256-HMAC signature over the concatenation of the random seed and the conversation token, signed with the shared bot secret, to verify authenticity', indirect: true)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/bot/ask-features', requirements: [
+		'apiVersion' => '(v1)',
+	])]
+	public function getBotFeatures(string $token): DataResponse {
+		$bot = $this->getBotOrErrorResponse($token, $token, Bot::FEATURE_NONE);
+		if ($bot instanceof DataResponse) {
+			return $bot;
+		}
+
+		return new DataResponse([
+			'features' => $bot->getBotServer()->getFeatures(),
+		]);
 	}
 
 	/**

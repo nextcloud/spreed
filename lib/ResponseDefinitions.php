@@ -57,6 +57,11 @@ namespace OCA\Talk;
  *     state: int,
  * }
  *
+ * @psalm-type TalkBotFeatures = array{
+ *     // Feature flags enabled for the bot (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#bot-features))
+ *     features: int,
+ * }
+ *
  * @psalm-type TalkBotWithDetails = TalkBot&array{
  *     // Number of consecutive errors
  *     error_count: int,
