@@ -1241,7 +1241,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$url = "/$user/$path";
 
 		$headers = [];
-		$headers['Depth'] = 0;
+		$headers['Depth'] = '0';
 
 		$body = '<d:propfind xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">'
 				. '	<d:prop>'
@@ -1279,7 +1279,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		try {
-			$this->response = $client->{$verb}($fullUrl, $options);
+			$this->response = $client->request($verb, $fullUrl, $options);
 		} catch (GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
 		}
