@@ -188,7 +188,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			implode(',', $this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_TALK)),
 			$this->config->getAppValue('spreed', 'start_calls'),
 			$this->config->getAppValue('spreed', 'start_calls_groups'),
-			$this->config->getAppValue('spreed', 'start_conversations'),
+			implode(',', $this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_CONVERSATIONS)),
 			$this->config->getAppValue('spreed', 'default_permissions'),
 			$this->appConfig->getAppValueBool(Config::BREAKOUT_ROOMS_ENABLED),
 			$this->config->getAppValue('spreed', 'federation_enabled'),
