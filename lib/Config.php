@@ -272,7 +272,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedConversationsGroupIds(): array {
-		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_CONVERSATIONS, []);
+		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_CONVERSATIONS);
 	}
 
 	public function isNotAllowedToCreateConversations(IUser $user): bool {
