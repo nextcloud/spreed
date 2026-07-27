@@ -39,6 +39,11 @@ class Config {
 	public const SIGNALING_TICKET_V1 = 1;
 	public const SIGNALING_TICKET_V2 = 2;
 
+	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
+	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
+	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
+	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
+
 	/**
 	 * 1. Call recording, …
 	 */
@@ -72,9 +77,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedTalkGroupIds(): array {
-		$groups = $this->config->getAppValue('spreed', 'allowed_groups', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_TALK);
 	}
 
 	/**
@@ -107,9 +110,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getSIPGroups(): array {
-		$groups = $this->config->getAppValue('spreed', 'sip_bridge_groups', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_SIP);
 	}
 
 	public function isSIPConfigured(): bool {
@@ -136,11 +137,11 @@ class Config {
 	}
 
 	public function isBreakoutRoomsEnabled(): bool {
-		return $this->config->getAppValue('spreed', 'breakout_rooms', 'yes') === 'yes';
+		return $this->appConfig->getAppValueBool(self::BREAKOUT_ROOMS_ENABLED);
 	}
 
 	public function isConversationSubfoldersEnabled(): bool {
-		return $this->appConfig->getAppValueBool('conversation_subfolders', true);
+		return $this->appConfig->getAppValueBool(self::CONVERSATION_SUBFOLDERS, true);
 	}
 
 	public function getDialInInfo(): string {
