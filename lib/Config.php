@@ -47,6 +47,7 @@ class Config {
 	public const string DEFAULT_PERMISSIONS = 'default_permissions';
 	public const string DEFAULT_ATTACHMENT_FOLDER = 'default_attachment_folder';
 	public const string GRID_VIDEOS_LIMIT = 'grid_videos_limit';
+	public const string GRID_VIDEOS_LIMIT_ENFORCED = 'grid_videos_limit_enforced';
 
 	/**
 	 * 1. Call recording, …
@@ -851,7 +852,7 @@ class Config {
 	}
 
 	public function getGridVideosLimitEnforced(): bool {
-		return $this->config->getAppValue('spreed', 'grid_videos_limit_enforced', 'no') === 'yes';
+		return $this->appConfig->getAppValueBool(self::GRID_VIDEOS_LIMIT_ENFORCED);
 	}
 
 	/**
