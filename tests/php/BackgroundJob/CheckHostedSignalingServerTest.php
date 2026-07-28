@@ -11,6 +11,7 @@ namespace OCA\Talk\Tests\BackgroundJob;
 use OCA\Talk\BackgroundJob\CheckHostedSignalingServer;
 use OCA\Talk\Config;
 use OCA\Talk\Service\HostedSignalingServerService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IGroup;
@@ -30,6 +31,7 @@ class CheckHostedSignalingServerTest extends TestCase {
 	protected IURLGenerator&MockObject $urlGenerator;
 	protected LoggerInterface&MockObject $logger;
 	protected Config&MockObject $talkConfig;
+	protected IAppConfig&MockObject $appConfig;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -42,6 +44,7 @@ class CheckHostedSignalingServerTest extends TestCase {
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->talkConfig = $this->createMock(Config::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 	}
 
 	public function getBackgroundJob(): CheckHostedSignalingServer {
@@ -53,7 +56,8 @@ class CheckHostedSignalingServerTest extends TestCase {
 			$this->groupManager,
 			$this->urlGenerator,
 			$this->logger,
-			$this->talkConfig
+			$this->talkConfig,
+			$this->appConfig,
 		);
 	}
 
@@ -162,7 +166,6 @@ class CheckHostedSignalingServerTest extends TestCase {
 
 		$expectedCalls = [
 			['spreed', 'signaling_servers', '{"servers":[{"server":"signaling-url","verify":true}],"secret":"signaling-secret"}'],
-			['spreed', 'stun_servers', '["stun.domain.invalid:443","stun.domain.invalid:3478"]'],
 			['spreed', 'turn_servers', '[{"server":"turn1.domain.invalid:443","secret":"turn-secret","schemes":"turn,turns","protocols":"udp,tcp"},{"server":"turn2.domain.invalid:443","secret":"other-turn-secret","schemes":"turns","protocols":"tcp"}]'],
 			['spreed', 'hosted-signaling-server-account', json_encode($newStatus)],
 		];
@@ -174,6 +177,20 @@ class CheckHostedSignalingServerTest extends TestCase {
 				$this->assertArrayHasKey($i, $expectedCalls);
 				$this->assertSame($expectedCalls[$i], func_get_args());
 				$i++;
+			});
+
+		$expectedAppConfigCalls = [
+			['stun_servers', ['stun.domain.invalid:443','stun.domain.invalid:3478'], false, false],
+		];
+
+		$j = 0;
+		$this->appConfig->expects($this->exactly(count($expectedAppConfigCalls)))
+			->method('setAppValueArray')
+			->willReturnCallback(function () use ($expectedAppConfigCalls, &$j): bool {
+				$this->assertArrayHasKey($j, $expectedAppConfigCalls);
+				$this->assertSame($expectedAppConfigCalls[$j], func_get_args());
+				$j++;
+				return true;
 			});
 
 		$group = $this->createMock(IGroup::class);

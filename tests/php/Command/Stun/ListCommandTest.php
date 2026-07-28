@@ -9,14 +9,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Command\Stun;
 
 use OCA\Talk\Command\Stun\ListCommand;
-use OCP\IConfig;
+use OCP\AppFramework\Services\IAppConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Test\TestCase;
 
 class ListCommandTest extends TestCase {
-	protected IConfig&MockObject $config;
+	protected IAppConfig&MockObject $appConfig;
 	protected InputInterface&MockObject $input;
 	protected OutputInterface&MockObject $output;
 	protected ListCommand&MockObject $command;
@@ -24,10 +24,10 @@ class ListCommandTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->config = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 
 		$this->command = $this->getMockBuilder(ListCommand::class)
-			->setConstructorArgs([$this->config])
+			->setConstructorArgs([$this->appConfig])
 			->onlyMethods(['writeArrayInOutputFormat'])
 			->getMock();
 
@@ -36,10 +36,10 @@ class ListCommandTest extends TestCase {
 	}
 
 	public function testEmptyAppConfig(): void {
-		$this->config->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'stun_servers')
-			->willReturn(json_encode([]));
+		$this->appConfig->expects($this->once())
+			->method('getAppValueArray')
+			->with('stun_servers')
+			->willReturn([]);
 
 		$this->command->expects($this->once())
 			->method('writeArrayInOutputFormat')
@@ -53,13 +53,13 @@ class ListCommandTest extends TestCase {
 	}
 
 	public function testAppConfigDataChanges(): void {
-		$this->config->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'stun_servers')
-			->willReturn(json_encode([
+		$this->appConfig->expects($this->once())
+			->method('getAppValueArray')
+			->with('stun_servers')
+			->willReturn([
 				'stun.test.com:443',
 				'stun2.test.com:443'
-			]));
+			]);
 
 		$this->command->expects($this->once())
 			->method('writeArrayInOutputFormat')
