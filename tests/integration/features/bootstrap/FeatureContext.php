@@ -1207,8 +1207,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body, $headers);
 		$this->assertStatusCode($this->response, $statusCode);
 
-		if ($statusCode === 201) {
+		if ($statusCode === 201 || $statusCode === 200) {
 			$response = $this->getDataFromResponse($this->response);
+			if ($statusCode === 200 && isset(self::$identifierToToken[$identifier])) {
+				// The room already existed, so the same room has to be returned
+				Assert::assertSame(self::$identifierToToken[$identifier], $response['token'], 'Token of existing room does not match');
+			}
 			self::$identifierToToken[$identifier] = $response['token'];
 			self::$identifierToId[$identifier] = $response['id'];
 			self::$tokenToIdentifier[$response['token']] = $identifier;
