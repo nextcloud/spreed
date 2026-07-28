@@ -123,7 +123,7 @@
 		<NcActionButton
 			v-if="actorStore.isLoggedIn"
 			variant="tertiary"
-			@click="sidebarStore.showSidebar({ activeTab: 'search' })">
+			@click="sidebarStore.showSidebar({ activeTab: 'search-messages' })">
 			<template #icon>
 				<IconMagnify :size="20" />
 			</template>
