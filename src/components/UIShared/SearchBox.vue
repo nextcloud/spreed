@@ -127,10 +127,11 @@ export default {
 		},
 
 		/**
-		 * Focuses the input
+		 * Focuses the input. `preventScroll` is on to avoid scrolling
+		 * hidden containers (e.g. sidebar) into view and aborting animations.
 		 */
 		focus() {
-			this.$refs.searchConversations.focus()
+			this.$refs.searchConversations.focus({ preventScroll: true })
 		},
 
 		getTrailingButton() {
