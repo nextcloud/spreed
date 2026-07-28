@@ -57,6 +57,11 @@ class Config {
 	public const string EXTERNAL_CALL_SERVICE_AUTH_PASSWORD = 'external_call_service_auth_password';
 	public const string EXTERNAL_CALL_SERVICE_IFRAME_FIELD = 'external_call_service_iframe_field';
 	public const string CALLS_START_WITHOUT_MEDIA = 'calls_start_without_media';
+	public const string INACTIVITY_LOCK_AFTER_DAYS = 'inactivity_lock_after_days';
+	public const string INACTIVITY_ENABLE_LOBBY = 'inactivity_enable_lobby';
+	public const string EXPERIMENTS_USERS = 'experiments_users';
+	public const string EXPERIMENTS_GUESTS = 'experiments_guests';
+	public const string CALL_END_TO_END_ENCRYPTION = 'call_end_to_end_encryption';
 
 	/**
 	 * 1. Call recording, …
@@ -1001,19 +1006,19 @@ class Config {
 	 * User setting falling back to admin defined app config
 	 */
 	public function getInactiveLockTime(): int {
-		return $this->appConfig->getAppValueInt('inactivity_lock_after_days');
+		return $this->appConfig->getAppValueInt(self::INACTIVITY_LOCK_AFTER_DAYS);
 	}
 
 	public function enableLobbyOnLockedRooms(): bool {
-		return $this->appConfig->getAppValueBool('inactivity_enable_lobby');
+		return $this->appConfig->getAppValueBool(self::INACTIVITY_ENABLE_LOBBY);
 	}
 
 	/**
 	 * @param self::EXPERIMENTAL_* $experiment
 	 */
 	public function hasExperiment(int $experiment): bool {
-		return $this->appConfig->getAppValueInt('experiments_users') & $experiment
-			|| $this->appConfig->getAppValueInt('experiments_guests') & $experiment;
+		return $this->appConfig->getAppValueInt(self::EXPERIMENTS_USERS) & $experiment
+			|| $this->appConfig->getAppValueInt(self::EXPERIMENTS_GUESTS) & $experiment;
 	}
 
 	public function isPasswordEnforced(): bool {
@@ -1026,7 +1031,7 @@ class Config {
 		}
 
 		// TODO Default value will be set to true, once all mobile clients support it.
-		return $this->appConfig->getAppValueBool('call_end_to_end_encryption');
+		return $this->appConfig->getAppValueBool(self::CALL_END_TO_END_ENCRYPTION);
 	}
 
 	public function getPlaySoundsForUser(?IUser $user): bool {

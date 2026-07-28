@@ -209,10 +209,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 		];
 
 		if ($this->userId !== null) {
-			$values[] = $this->appConfig->getAppValueInt('experiments_users');
+			$values[] = $this->appConfig->getAppValueInt(Config::EXPERIMENTS_USERS);
 			$values[] = $this->config->getUserValue($this->userId, 'spreed', UserPreference::ATTACHMENT_FOLDER);
 		} else {
-			$values[] = $this->appConfig->getAppValueInt('experiments_guests');
+			$values[] = $this->appConfig->getAppValueInt(Config::EXPERIMENTS_GUESTS);
 		}
 
 		return [

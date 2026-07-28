@@ -46,6 +46,11 @@ class ConfigLexicon implements ILexicon {
 			new Entry(Config::EXTERNAL_CALL_SERVICE_FRAME_ORIGINS, ValueType::STRING, '', definition: 'JSON array of scheme+host(+port) origins that may be loaded in the iframe. Added to `Content-Security-Policy: frame-src` and the `Permissions-Policy` for camera/microphone'),
 			new Entry(Config::EXTERNAL_CALL_SERVICE_IFRAME_FIELD, ValueType::STRING, '', definition: 'JSON field name in the external service response that contains the iframe URL'),
 			new Entry(Config::CALLS_START_WITHOUT_MEDIA, ValueType::BOOL, false, definition: 'Whether participants start with enabled or disabled audio and video by default'),
+			new Entry(Config::INACTIVITY_LOCK_AFTER_DAYS, ValueType::INT, 0, definition: 'A duration (in days) after which rooms are locked. Calculated from the last activity in the room,'),
+			new Entry(Config::INACTIVITY_ENABLE_LOBBY, ValueType::BOOL, false, definition: 'Additionally enable the lobby for inactive rooms so they can only be read by moderators.'),
+			new Entry(Config::EXPERIMENTS_USERS, ValueType::INT, 0, definition: 'Bit flag of experiments that should be enabled for logged-in users on this server (see [Experiments](#experiments))'),
+			new Entry(Config::EXPERIMENTS_GUESTS, ValueType::INT, 0, definition: 'Bit flag of experiments that should be enabled for guests on this server (see [Experiments](#experiments))'),
+			new Entry(Config::CALL_END_TO_END_ENCRYPTION, ValueType::BOOL, false, definition: 'Whether clients should end-to-end encrypt streams in calls (Only supported with High-performance backend'),
 		];
 	}
 
