@@ -44,7 +44,7 @@ class Config {
 	public const string ALLOWED_GROUPS_CONVERSATIONS = 'start_conversations';
 	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
 	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
-	public const string DEFAULT_PERMISSIONS = 'default_permissions';
+	public const string DEFAULT_ROOM_PERMISSIONS = 'default_permissions';
 	public const string DEFAULT_ATTACHMENT_FOLDER = 'default_attachment_folder';
 	public const string GRID_VIDEOS_LIMIT = 'grid_videos_limit';
 	public const string GRID_VIDEOS_LIMIT_ENFORCED = 'grid_videos_limit_enforced';
@@ -295,8 +295,8 @@ class Config {
 	 */
 	public function getDefaultPermissions(): int {
 		// Admin configured default permissions
-		$configurableDefault = $this->appConfig->getAppValueInt(self::DEFAULT_PERMISSIONS);
-		if ($configurableDefault !== Attendee::PERMISSIONS_DEFAULT) {
+		$configurableDefault = $this->appConfig->getAppValueInt(self::DEFAULT_ROOM_PERMISSIONS);
+		if ($configurableDefault < Attendee::PERMISSIONS_DEFAULT) {
 			return min(Attendee::PERMISSIONS_MAX_CUSTOM, max(Attendee::PERMISSIONS_DEFAULT, $configurableDefault));
 		}
 
