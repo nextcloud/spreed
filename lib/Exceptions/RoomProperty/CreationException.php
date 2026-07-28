@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Exceptions\RoomProperty;
 
+use OCA\Talk\Room;
+
 class CreationException extends \InvalidArgumentException {
 	public const REASON_AVATAR = 'avatar';
 	public const REASON_DESCRIPTION = 'description';
@@ -31,6 +33,7 @@ class CreationException extends \InvalidArgumentException {
 	 */
 	public function __construct(
 		private readonly string $reason,
+		private readonly ?Room $room = null,
 	) {
 		parent::__construct($reason);
 	}
@@ -40,5 +43,12 @@ class CreationException extends \InvalidArgumentException {
 	 */
 	public function getReason(): string {
 		return $this->reason;
+	}
+
+	/**
+	 * Room for the object when it already existed
+	 */
+	public function getRoom(): ?Room {
+		return $this->room;
 	}
 }
