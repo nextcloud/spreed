@@ -90,11 +90,11 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initFederation(): void {
-		$this->initialState->provideInitialState('federation_enabled', $this->talkConfig->isFederationEnabled());
+		$this->initialState->provideInitialState(Config::FEDERATION_ENABLED, $this->talkConfig->isFederationEnabled());
 		$this->initialState->provideInitialState('federation_incoming_enabled', $this->appConfig->getAppValueBool('federation_incoming_enabled', true));
 		$this->initialState->provideInitialState('federation_outgoing_enabled', $this->appConfig->getAppValueBool('federation_outgoing_enabled', true));
 		$this->initialState->provideInitialState('federation_only_trusted_servers', $this->appConfig->getAppValueBool('federation_only_trusted_servers'));
-		$this->initialState->provideInitialState('federation_allowed_groups', $this->appConfig->getAppValueArray('federation_allowed_groups'));
+		$this->initialState->provideInitialState(Config::ALLOWED_GROUPS_FEDERATION, $this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_FEDERATION));
 	}
 
 	protected function initMatterbridge(): void {

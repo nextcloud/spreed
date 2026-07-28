@@ -175,8 +175,8 @@ The provided `docker-compose.yml` file from `nextcloud-docker-dev` supports spin
 
 6. Enable federation in the admin settings of Nextcloud Talk or alternatively via occ:
 
-        ./scripts/occ.sh nextcloud -- config:app:set spreed federation_enabled --value yes
-        ./scripts/occ.sh nextcloud2 -- config:app:set spreed federation_enabled --value yes
+        ./scripts/occ.sh nextcloud -- config:app:set spreed federation_enabled --value true --type boolean
+        ./scripts/occ.sh nextcloud2 -- config:app:set spreed federation_enabled --value true --type boolean
 
 ### Rebuild / update Talk after code changes
 

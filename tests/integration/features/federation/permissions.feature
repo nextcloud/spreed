@@ -4,11 +4,11 @@ Feature: federation/permissions
     Given using server "REMOTE"
     And user "participant2" exists
     And the following "spreed" app config is set
-      | federation_enabled | yes |
+      | federation_enabled | true |
     And using server "LOCAL"
     And user "participant1" exists
     And the following "spreed" app config is set
-      | federation_enabled | yes |
+      | federation_enabled | true |
 
   @skip33
   Scenario: set participant permissions
