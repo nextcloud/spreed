@@ -942,8 +942,10 @@ export default {
 			this.showThreadsList = false
 
 			this.resetNavigation()
-			await this.search(this.searchText)
-			this.initializeNavigation()
+			// Re-initialize navigation only for successfull result
+			if (await this.search(this.searchText)) {
+				this.initializeNavigation()
+			}
 		},
 
 		/**

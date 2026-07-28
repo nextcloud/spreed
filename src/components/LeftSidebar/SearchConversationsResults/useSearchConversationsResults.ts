@@ -39,6 +39,9 @@ export function useSearchConversationsResults() {
 
 	let cancelSearchListedConversations: ReturnType<typeof CancelableRequest>['cancel'] | null = null
 	let cancelSearchPossibleConversations: ReturnType<typeof CancelableRequest>['cancel'] | null = null
+	// Generation counter - increases with every started or aborted search.
+	// Results of a search are only applied with matching generation
+	let searchGeneration = 0
 
 	onBeforeUnmount(() => {
 		abortSearchRequests()
@@ -48,8 +51,9 @@ export function useSearchConversationsResults() {
 	 * Get list of possible conversations (users, groups, teams) and write to ref
 	 *
 	 * @param query search text
+	 * @param generation search generation
 	 */
-	async function fetchPossibleConversations(query: string) {
+	async function fetchPossibleConversations(query: string, generation: number) {
 		const { request, cancel } = CancelableRequest(autocompleteQuery)
 		try {
 			// Cancel previous search request if pending, and store reference to new one
@@ -61,6 +65,11 @@ export function useSearchConversationsResults() {
 				token: 'new',
 				onlyUsers: !canStartConversations,
 			})
+
+			if (generation !== searchGeneration) {
+				// Results are outdated
+				return
+			}
 
 			// Get all known user ids of 1:1 conversations
 			const oneToOneMap = new Set(vuexStore.getters.conversationsList.reduce(
@@ -83,6 +92,10 @@ export function useSearchConversationsResults() {
 				return
 			}
 			console.error('Error searching for possible conversations', exception)
+			if (generation === searchGeneration) {
+				// Drop results of the failed search
+				searchResultsPossibleConversations.value = []
+			}
 			throw exception
 		} finally {
 			if (cancelSearchPossibleConversations === cancel) {
@@ -95,8 +108,9 @@ export function useSearchConversationsResults() {
 	 * Get list of listable conversations (open to registered users) and write to ref
 	 *
 	 * @param query search text
+	 * @param generation search generation
 	 */
-	async function fetchListedConversations(query: string) {
+	async function fetchListedConversations(query: string, generation: number) {
 		const { request, cancel } = CancelableRequest(searchListedConversations)
 		try {
 			// Cancel previous search request if pending, and store reference to new one
@@ -104,12 +118,22 @@ export function useSearchConversationsResults() {
 			cancelSearchListedConversations = cancel
 
 			const response = await request(query)
+
+			if (generation !== searchGeneration) {
+				// Results are outdated
+				return
+			}
+
 			searchResultsListedConversations.value = response.data.ocs.data
 		} catch (exception) {
 			if (isCancel(exception)) {
 				return
 			}
 			console.error('Error searching for open conversations', exception)
+			if (generation === searchGeneration) {
+				// Drop results of the failed search
+				searchResultsListedConversations.value = []
+			}
 			throw exception
 		} finally {
 			if (cancelSearchListedConversations === cancel) {
@@ -122,21 +146,20 @@ export function useSearchConversationsResults() {
 	 * Fetch and prepare results (in parallel)
 	 *
 	 * @param query search text
+	 * @return whether the results of this search were applied
 	 */
-	async function search(query: string) {
+	async function search(query: string): Promise<boolean> {
+		const generation = ++searchGeneration
 		searchResultsLoading.value = true
 
 		const promiseResults = await Promise.allSettled([
-			fetchListedConversations(query),
-			fetchPossibleConversations(query),
+			fetchListedConversations(query, generation),
+			fetchPossibleConversations(query, generation),
 		])
 
-		if (
-			cancelSearchListedConversations !== null
-			|| cancelSearchPossibleConversations !== null
-		) {
-			// New search request was triggered, do not proceed
-			return
+		if (generation !== searchGeneration) {
+			// Search was superseded by a newer one or aborted, do not proceed
+			return false
 		}
 
 		if (promiseResults.some((result) => result.status === 'rejected')) {
@@ -144,12 +167,16 @@ export function useSearchConversationsResults() {
 		}
 
 		searchResultsLoading.value = false
+		return true
 	}
 
 	/**
 	 * Abort running requests and cleanup cancel functions
 	 */
 	function abortSearchRequests() {
+		// Invalidate a pending search, so that its results are not applied
+		searchGeneration++
+
 		cancelSearchListedConversations?.()
 		cancelSearchListedConversations = null
 
