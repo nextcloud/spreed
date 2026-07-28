@@ -24,6 +24,55 @@ Feature: conversation-1/create-external-service
     And user "participant1" gets external call url for room "room" with 200 (v4)
       | url | https://example.tld/webapp3/m/210987654321-afed-3210-9c8b-7a6f5e4d |
 
+  Scenario: External call service creating a room with a duplicate object id returns the existing room
+    Given the following "spreed" app config is set
+      | external_call_service_shared_secret | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
+      | external_call_service_auth_user | nextcloud |
+      | external_call_service_iframe_field | targetUrl |
+    Given external call server is started
+    When external call service creates room "room" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 201 (v4)
+      | roomType | 3 |
+      | roomName | room |
+      | owner | participant1 |
+      | objectType | external_call |
+      | objectId | d4e5f6a7-b8c9-0123-defa-123456789012 |
+    When external call service creates room "room" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 200 (v4)
+      | roomType | 3 |
+      | roomName | second attempt |
+      | owner | participant1 |
+      | objectType | external_call |
+      | objectId | d4e5f6a7-b8c9-0123-defa-123456789012 |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | name | type | participantType | objectType    | objectId                             |
+      | room | room | 3    | 1               | external_call | d4e5f6a7-b8c9-0123-defa-123456789012 |
+    Then user "participant1" sees the following system messages in room "room" with 200 (v1)
+      | room | actorType     | actorId | systemMessage        | message                         | silent | messageParameters |
+      | room | guests        | system  | user_added           | System added you                | !ISSET | {"actor":{"type":"guest","id":"guest\/system","name":"System","mention-id":"guest\/system"},"user":{"type":"user","id":"participant1","name":"participant1-displayname","mention-id":"participant1"}} |
+      | room | guests        | system  | conversation_created | System created the conversation | !ISSET | {"actor":{"type":"guest","id":"guest\/system","name":"System","mention-id":"guest\/system"}} |
+
+  Scenario: External call service creating a room with a different object id creates a second room
+    Given the following "spreed" app config is set
+      | external_call_service_shared_secret | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
+      | external_call_service_auth_user | nextcloud |
+      | external_call_service_iframe_field | targetUrl |
+    Given external call server is started
+    When external call service creates room "room1" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 201 (v4)
+      | roomType | 3 |
+      | roomName | room1 |
+      | owner | participant1 |
+      | objectType | external_call |
+      | objectId | d4e5f6a7-b8c9-0123-defa-123456789012 |
+    When external call service creates room "room2" with secret "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" with 201 (v4)
+      | roomType | 3 |
+      | roomName | room2 |
+      | owner | participant1 |
+      | objectType | external_call |
+      | objectId | e5f6a7b8-c9d0-1234-efab-234567890123 |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id    | name  | type | participantType | objectType    | objectId                             |
+      | room1 | room1 | 3    | 1               | external_call | d4e5f6a7-b8c9-0123-defa-123456789012 |
+      | room2 | room2 | 3    | 1               | external_call | e5f6a7b8-c9d0-1234-efab-234567890123 |
+
   Scenario: Unauthenticated user without external service header is rejected
     Given the following "spreed" app config is set
       | external_call_service               | https://external-service.example.org/ |
