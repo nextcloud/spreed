@@ -41,8 +41,13 @@ class Config {
 
 	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
 	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
+	public const string ALLOWED_GROUPS_CONVERSATIONS = 'start_conversations';
 	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
 	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
+	public const string DEFAULT_ROOM_PERMISSIONS = 'default_permissions';
+	public const string DEFAULT_ATTACHMENT_FOLDER = 'default_attachment_folder';
+	public const string GRID_VIDEOS_LIMIT = 'grid_videos_limit';
+	public const string GRID_VIDEOS_LIMIT_ENFORCED = 'grid_videos_limit_enforced';
 
 	/**
 	 * 1. Call recording, …
@@ -271,9 +276,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedConversationsGroupIds(): array {
-		$groups = $this->config->getAppValue('spreed', 'start_conversations', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_CONVERSATIONS);
 	}
 
 	public function isNotAllowedToCreateConversations(IUser $user): bool {
@@ -292,9 +295,9 @@ class Config {
 	 */
 	public function getDefaultPermissions(): int {
 		// Admin configured default permissions
-		$configurableDefault = $this->config->getAppValue('spreed', 'default_permissions');
-		if ($configurableDefault !== '') {
-			return min(Attendee::PERMISSIONS_MAX_CUSTOM, max(Attendee::PERMISSIONS_DEFAULT, (int)$configurableDefault));
+		$configurableDefault = $this->appConfig->getAppValueInt(self::DEFAULT_ROOM_PERMISSIONS);
+		if ($configurableDefault < Attendee::PERMISSIONS_DEFAULT) {
+			return min(Attendee::PERMISSIONS_MAX_CUSTOM, max(Attendee::PERMISSIONS_DEFAULT, $configurableDefault));
 		}
 
 		// Falling back to an unrestricted set of permissions, only ignoring the lobby is off
@@ -302,7 +305,7 @@ class Config {
 	}
 
 	public function getAttachmentFolder(string $userId): string {
-		$defaultAttachmentFolder = $this->config->getAppValue('spreed', 'default_attachment_folder', '/Talk');
+		$defaultAttachmentFolder = $this->appConfig->getAppValueString(self::DEFAULT_ATTACHMENT_FOLDER);
 		return $this->config->getUserValue($userId, 'spreed', UserPreference::ATTACHMENT_FOLDER, $defaultAttachmentFolder);
 	}
 
@@ -845,11 +848,11 @@ class Config {
 	}
 
 	public function getGridVideosLimit(): int {
-		return (int)$this->config->getAppValue('spreed', 'grid_videos_limit', '19'); // 5*4 - self
+		return $this->appConfig->getAppValueInt(self::GRID_VIDEOS_LIMIT);
 	}
 
 	public function getGridVideosLimitEnforced(): bool {
-		return $this->config->getAppValue('spreed', 'grid_videos_limit_enforced', 'no') === 'yes';
+		return $this->appConfig->getAppValueBool(self::GRID_VIDEOS_LIMIT_ENFORCED);
 	}
 
 	/**
