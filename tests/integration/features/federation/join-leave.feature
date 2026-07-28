@@ -4,11 +4,11 @@ Feature: federation/join-leave
     Given using server "REMOTE"
     And user "participant2" exists
     And the following "spreed" app config is set
-      | federation_enabled | yes |
+      | federation_enabled | true |
     And using server "LOCAL"
     And user "participant1" exists
     And the following "spreed" app config is set
-      | federation_enabled | yes |
+      | federation_enabled | true |
 
   Scenario: join a group room
     Given user "participant1" creates room "room" (v4)
