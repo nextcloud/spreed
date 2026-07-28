@@ -37,6 +37,14 @@ class ConfigLexicon implements ILexicon {
 			new Entry(Config::DEFAULT_ATTACHMENT_FOLDER, ValueType::STRING, '/Talk', definition: 'Specify default attachment folder location'),
 			new Entry(Config::GRID_VIDEOS_LIMIT, ValueType::INT, 19 /* 5*4 - self */, definition: 'Maximum number of videos to show (additional to the own video)'),
 			new Entry(Config::GRID_VIDEOS_LIMIT_ENFORCED, ValueType::BOOL, false, definition: 'Whether the number of grid videos should be enforced'),
+			new Entry(Config::GUESTS_PLAY_SOUNDS, ValueType::BOOL, true, definition: 'Whether guests hear the join and leave sounds by default'),
+			new Entry(Config::GROUP_CHATS_FORCE_PASSWORDS_ENABLED, ValueType::BOOL, false, definition: 'Whether public chats are forced to use a password'),
+			new Entry(Config::EXTERNAL_CALL_SERVICE, ValueType::STRING, '', definition: 'URL of the external service endpoint. `{meetingId}` is replaced with the conversation\'s `objectId` when Talk makes the request'),
+			new Entry(Config::EXTERNAL_CALL_SERVICE_SHARED_SECRET, ValueType::STRING, '', definition: 'Shared secret used for two purposes: as the HTTP Basic Auth password when Talk calls the external service, and as the bearer token when the external service calls Talk. Minimum 64 characters, `a-zA-Z0-9` recommended'),
+			new Entry(Config::EXTERNAL_CALL_SERVICE_AUTH_USER, ValueType::STRING, '', definition: 'HTTP Basic Auth username used when Talk calls the external service'),
+			new Entry(Config::EXTERNAL_CALL_SERVICE_AUTH_PASSWORD, ValueType::STRING, '', definition: 'HTTP Basic Auth password used when Talk calls the external service'),
+			new Entry(Config::EXTERNAL_CALL_SERVICE_FRAME_ORIGINS, ValueType::STRING, '', definition: 'JSON array of scheme+host(+port) origins that may be loaded in the iframe. Added to `Content-Security-Policy: frame-src` and the `Permissions-Policy` for camera/microphone'),
+			new Entry(Config::EXTERNAL_CALL_SERVICE_IFRAME_FIELD, ValueType::STRING, '', definition: 'JSON field name in the external service response that contains the iframe URL'),
 		];
 	}
 
