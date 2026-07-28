@@ -31,8 +31,8 @@
 					:index="index"
 					:loading="loading"
 					@removeServer="removeServer"
-					@update:server="debounceUpdateServers"
-					@update:verify="debounceUpdateServers" />
+					@update:server="debounceUpdateServers()"
+					@update:verify="debounceUpdateServers()" />
 			</TransitionWrapper>
 
 			<NcButton
@@ -56,7 +56,7 @@
 				:placeholder="t('spreed', 'Shared secret')"
 				:label="t('spreed', 'Shared secret')"
 				labelVisible
-				@update:modelValue="debounceUpdateServers" />
+				@update:modelValue="debounceUpdateServers()" />
 
 			<template v-if="servers.length && recordingConsentCapability">
 				<h3>{{ t('spreed', 'Recording consent') }}</h3>
