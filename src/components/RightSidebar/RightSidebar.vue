@@ -538,12 +538,17 @@ export default {
 		},
 
 		handleUpdateActive(active) {
-			if (active === 'search') {
-				// 'search' is not a real tab: route it to the search content state
-				this.handleUpdateState('search')
-				return
+			switch (active) {
+				case 'search-messages':
+					this.handleUpdateState('search')
+					break
+				case 'threads':
+					this.handleUpdateState('threads')
+					break
+				default:
+					this.contentState = 'default'
+					this.activeTab = active
 			}
-			this.activeTab = active
 		},
 
 		handleUpdateMode(mode) {
@@ -554,13 +559,19 @@ export default {
 		},
 
 		handleUpdateState(value) {
+			if (value === this.contentState) {
+				return
+			}
+			// Remember the tab to return to, but only when leaving the default state,
+			// so re-entering search / threads does not make them their own previous tab
+			if (this.contentState === 'default') {
+				this.previousActiveTab = this.activeTab
+			}
 			this.contentState = value
 			// FIXME upstream: NcAppSidebar should emit update:active
 			if (value === 'search') {
-				this.previousActiveTab = this.activeTab
 				this.activeTab = 'search-messages'
 			} else if (value === 'threads') {
-				this.previousActiveTab = this.activeTab
 				this.activeTab = 'threads'
 			} else {
 				this.activeTab = this.previousActiveTab
@@ -583,7 +594,7 @@ export default {
 			if (message) {
 				this.unreadNotificationHandle = showMessage(message, {
 					onClick: () => {
-						this.activeTab = 'chat'
+						this.handleUpdateActive('chat')
 						this.sidebarStore.showSidebar()
 					},
 				})

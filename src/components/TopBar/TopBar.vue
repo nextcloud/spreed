@@ -129,11 +129,11 @@
 
 			<!-- Search messages button -->
 			<NcButton
-				v-if="!isInCall && !isSidebar && getUserId"
+				v-if="!isSidebar && getUserId"
 				:title="t('spreed', 'Search messages')"
 				:aria-label="t('spreed', 'Search messages')"
 				variant="tertiary"
-				@click="openSidebar('search')">
+				@click="openSidebar('search-messages')">
 				<template #icon>
 					<IconMagnify :size="20" />
 				</template>
