@@ -218,8 +218,8 @@ class RoomService {
 
 		if ($objectType === Room::OBJECT_TYPE_EXTERNAL_CALL) {
 			try {
-				$this->manager->getRoomByObject(Room::OBJECT_TYPE_EXTERNAL_CALL, $objectId);
-				throw new CreationException(CreationException::REASON_OBJECT);
+				$room = $this->manager->getRoomByObject(Room::OBJECT_TYPE_EXTERNAL_CALL, $objectId);
+				throw new CreationException(CreationException::REASON_OBJECT, $room);
 			} catch (RoomNotFoundException) {
 				// Object ID is unique, continue
 			}
