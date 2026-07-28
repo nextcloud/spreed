@@ -835,6 +835,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 				allowInternalTypes: $allowInternalTypes,
 			);
 		} catch (CreationException $e) {
+			$room = $e->getRoom();
+			if ($room instanceof Room) {
+				return new DataResponse($this->formatRoom($room, $this->participantService->getParticipant($room, $actorUserId, false)), Http::STATUS_OK);
+			}
 			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		} catch (PasswordException $e) {
 			return new DataResponse(['error' => 'password', 'message' => $e->getHint()], Http::STATUS_BAD_REQUEST);
