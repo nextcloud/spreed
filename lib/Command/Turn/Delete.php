@@ -9,7 +9,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Turn;
 
 use OC\Core\Command\Base;
-use OCP\IConfig;
+use OCA\Talk\Config;
+use OCP\AppFramework\Services\IAppConfig;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Delete extends Base {
 
 	public function __construct(
-		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 	) {
 		parent::__construct();
 	}
@@ -47,19 +48,14 @@ class Delete extends Base {
 		$server = $input->getArgument('server');
 		$protocols = $input->getArgument('protocols');
 
-		$config = $this->config->getAppValue('spreed', 'turn_servers');
-		$servers = json_decode($config, true);
-
-		if ($servers === null || empty($servers) || !is_array($servers)) {
-			$servers = [];
-		}
+		$servers = $this->appConfig->getAppValueArray(Config::TURN_SERVERS);
 
 		$count = count($servers);
 		// remove all occurrences which match $schemes, $server and $protocols
 		$servers = array_filter($servers, fn ($s) => $s['schemes'] !== $schemes || $s['server'] !== $server || $s['protocols'] !== $protocols);
 		$servers = array_values($servers); // reindex
 
-		$this->config->setAppValue('spreed', 'turn_servers', json_encode($servers));
+		$this->appConfig->setAppValueArray(Config::TURN_SERVERS, $servers);
 		if ($count > count($servers)) {
 			$output->writeln('<info>Deleted ' . $server . '.</info>');
 		} else {

@@ -166,7 +166,6 @@ class CheckHostedSignalingServerTest extends TestCase {
 
 		$expectedCalls = [
 			['spreed', 'signaling_servers', '{"servers":[{"server":"signaling-url","verify":true}],"secret":"signaling-secret"}'],
-			['spreed', 'turn_servers', '[{"server":"turn1.domain.invalid:443","secret":"turn-secret","schemes":"turn,turns","protocols":"udp,tcp"},{"server":"turn2.domain.invalid:443","secret":"other-turn-secret","schemes":"turns","protocols":"tcp"}]'],
 			['spreed', 'hosted-signaling-server-account', json_encode($newStatus)],
 		];
 
@@ -181,6 +180,7 @@ class CheckHostedSignalingServerTest extends TestCase {
 
 		$expectedAppConfigCalls = [
 			['stun_servers', ['stun.domain.invalid:443','stun.domain.invalid:3478'], false, false],
+			['turn_servers', [['server' => 'turn1.domain.invalid:443','secret' => 'turn-secret','schemes' => 'turn,turns','protocols' => 'udp,tcp'],['server' => 'turn2.domain.invalid:443','secret' => 'other-turn-secret','schemes' => 'turns','protocols' => 'tcp']], false, false],
 		];
 
 		$j = 0;

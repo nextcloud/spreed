@@ -123,11 +123,11 @@ class ConfigTest extends TestCase {
 	}
 
 	public function testGenerateTurnSettings(): void {
-		$this->config
+		$this->appConfig
 			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'turn_servers', '')
-			->willReturn(json_encode([
+			->method('getAppValueArray')
+			->with('turn_servers')
+			->willReturn([
 				[
 					// No scheme explicitly given
 					'server' => 'turn.example.org:3478',
@@ -146,7 +146,7 @@ class ConfigTest extends TestCase {
 					'secret' => 'ThisIsAlsoSuperSecret',
 					'protocols' => 'tcp',
 				],
-			]));
+			]);
 
 		$this->timeFactory
 			->expects($this->once())
@@ -187,11 +187,11 @@ class ConfigTest extends TestCase {
 	}
 
 	public function testGenerateTurnSettingsEmpty(): void {
-		$this->config
+		$this->appConfig
 			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'turn_servers', '')
-			->willReturn(json_encode([]));
+			->method('getAppValueArray')
+			->with('turn_servers')
+			->willReturn([]);
 
 		$helper = $this->getConfig();
 
@@ -200,11 +200,11 @@ class ConfigTest extends TestCase {
 	}
 
 	public function testGenerateTurnSettingsEvent(): void {
-		$this->config
+		$this->appConfig
 			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'turn_servers', '')
-			->willReturn(json_encode([]));
+			->method('getAppValueArray')
+			->with('turn_servers')
+			->willReturn([]);
 
 		$this->dispatcher = \OCP\Server::get(IEventDispatcher::class);
 
