@@ -221,6 +221,13 @@ class RoomService {
 		}
 
 		if ($objectType === Room::OBJECT_TYPE_EXTERNAL_CALL) {
+			try {
+				$this->manager->getRoomByObject(Room::OBJECT_TYPE_EXTERNAL_CALL, $objectId);
+				throw new CreationException(CreationException::REASON_OBJECT);
+			} catch (RoomNotFoundException) {
+				// Object ID is unique, continue
+			}
+
 			$this->session->set('talk-overwrite-actor-type', Attendee::ACTOR_GUESTS);
 			$this->session->set('talk-overwrite-actor-id', Attendee::ACTOR_ID_SYSTEM);
 		}
