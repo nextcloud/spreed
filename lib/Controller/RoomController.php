@@ -203,9 +203,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_CONVERSATIONS)),
 			$this->appConfig->getAppValueInt(Config::DEFAULT_ROOM_PERMISSIONS),
 			$this->appConfig->getAppValueBool(Config::BREAKOUT_ROOMS_ENABLED),
-			$this->config->getAppValue('spreed', 'federation_enabled'),
 			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_SIP)),
 			$this->appConfig->getAppValueBool(Config::MATTERBRIDGE_ENABLED),
+			$this->appConfig->getAppValueBool(Config::FEDERATION_ENABLED),
 			$this->config->getAppValue('spreed', 'sip_bridge_dialin_info'),
 			$this->config->getAppValue('spreed', 'sip_bridge_shared_secret'),
 			$this->appConfig->getAppValueInt(Config::RECORDING_CONSENT),
@@ -218,6 +218,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->config->getAppValue('spreed', 'federation_only_trusted_servers'),
 			$this->config->getAppValue('spreed', 'federation_allowed_groups', '[]'),
 			$this->appConfig->getAppValueInt(Config::FEATURE_HINTS_HIDDEN),
+			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_FEDERATION)),
 		];
 
 		if ($this->userId !== null) {

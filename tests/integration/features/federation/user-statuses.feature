@@ -5,11 +5,11 @@ Feature: federation/user-statuses
     And user "participant2" exists
     And user "participant3" exists
     And the following "spreed" app config is set
-      | federation_enabled | yes |
+      | federation_enabled | true |
     And using server "LOCAL"
     And user "participant1" exists
     And the following "spreed" app config is set
-      | federation_enabled | yes |
+      | federation_enabled | true |
 
   Scenario: User statuses are added to the participant request in federated conversations
     Given user "participant1" creates room "room" (v4)
