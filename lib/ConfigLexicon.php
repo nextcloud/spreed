@@ -45,6 +45,7 @@ class ConfigLexicon implements ILexicon {
 			new Entry(Config::EXTERNAL_CALL_SERVICE_AUTH_PASSWORD, ValueType::STRING, '', definition: 'HTTP Basic Auth password used when Talk calls the external service'),
 			new Entry(Config::EXTERNAL_CALL_SERVICE_FRAME_ORIGINS, ValueType::STRING, '', definition: 'JSON array of scheme+host(+port) origins that may be loaded in the iframe. Added to `Content-Security-Policy: frame-src` and the `Permissions-Policy` for camera/microphone'),
 			new Entry(Config::EXTERNAL_CALL_SERVICE_IFRAME_FIELD, ValueType::STRING, '', definition: 'JSON field name in the external service response that contains the iframe URL'),
+			new Entry(Config::CALLS_START_WITHOUT_MEDIA, ValueType::BOOL, false, definition: 'Whether participants start with enabled or disabled audio and video by default'),
 		];
 	}
 

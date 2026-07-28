@@ -56,6 +56,7 @@ class Config {
 	public const string EXTERNAL_CALL_SERVICE_AUTH_USER = 'external_call_service_auth_user';
 	public const string EXTERNAL_CALL_SERVICE_AUTH_PASSWORD = 'external_call_service_auth_password';
 	public const string EXTERNAL_CALL_SERVICE_IFRAME_FIELD = 'external_call_service_iframe_field';
+	public const string CALLS_START_WITHOUT_MEDIA = 'calls_start_without_media';
 
 	/**
 	 * 1. Call recording, …
@@ -877,7 +878,7 @@ class Config {
 			}
 		}
 
-		return $this->appConfig->getAppValueBool('calls_start_without_media');
+		return $this->appConfig->getAppValueBool(self::CALLS_START_WITHOUT_MEDIA);
 	}
 
 	/**
