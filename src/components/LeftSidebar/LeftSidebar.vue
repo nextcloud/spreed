@@ -340,7 +340,7 @@
 					:compact="isCompact"
 					:showTags="supportTags && !showArchived"
 					class="scroller"
-					@scroll="debounceHandleScroll" />
+					@scroll="debounceHandleScroll()" />
 				<NcButton
 					v-if="!showThreadsList && lastUnreadMentionBelowViewportIndex !== null && !filters.includes('mentions')"
 					class="unread-mention-button"
