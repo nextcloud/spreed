@@ -1141,6 +1141,8 @@ OC.L10N.register(
     "Camera" : "Câmera",
     "Show presenter" : "Mostrar apresentador",
     "You" : "Você",
+    "You are sharing a screen" : "Você está compartilhando uma tela",
+    "Sharing this window may cause a mirroring effect" : "Compartilhar essa janela pode causar um efeito de espelhamento",
     "Stop screensharing" : "Encerrar compartilhamento da tela",
     "Dismiss" : "Dispensar",
     "Mute" : "Desativar microfone",

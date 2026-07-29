@@ -1141,6 +1141,8 @@ OC.L10N.register(
     "Camera" : "Kamera",
     "Show presenter" : "Rodyti pranešėją",
     "You" : "Jūs",
+    "You are sharing a screen" : "Dalijatės ekranu",
+    "Sharing this window may cause a mirroring effect" : "Bendrinant šį langą gali atsirasti veidrodinis efektas",
     "Stop screensharing" : "Stabdyti ekrano bendrinimą",
     "Dismiss" : "Atmesti",
     "Mute" : "Nutildyti",

@@ -1141,6 +1141,8 @@ OC.L10N.register(
     "Camera" : "攝影機",
     "Show presenter" : "顯示演講者",
     "You" : "您",
+    "You are sharing a screen" : "您正在分享螢幕",
+    "Sharing this window may cause a mirroring effect" : "分享此視窗可能會造成鏡室效應",
     "Stop screensharing" : "停止分享螢幕",
     "Dismiss" : "取消",
     "Mute" : "靜音",
