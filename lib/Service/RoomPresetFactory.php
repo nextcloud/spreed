@@ -19,6 +19,7 @@ use OCA\Talk\RoomPresets\Presentation;
 use OCA\Talk\RoomPresets\VoiceRoom;
 use OCA\Talk\RoomPresets\Webinar;
 use OCP\AppFramework\Services\IAppConfig;
+use OCP\IGroupManager;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
@@ -26,7 +27,9 @@ use Psr\Log\LoggerInterface;
 class RoomPresetFactory {
 	public function __construct(
 		private readonly IAppConfig $appConfig,
+		private readonly IGroupManager $groupManager,
 		private readonly LoggerInterface $logger,
+		private readonly ?string $userId,
 	) {
 	}
 
@@ -41,8 +44,11 @@ class RoomPresetFactory {
 			Presentation::class,
 			Classified::class,
 			Channel::class,
-			Announcement::class,
 		];
+
+		if ($this->userId !== null && $this->groupManager->isAdmin($this->userId)) {
+			$presetClasses[] = Announcement::class;
+		}
 
 		if ($this->appConfig->getAppValueInt('start_calls', Room::START_CALL_EVERYONE) !== Room::START_CALL_NOONE) {
 			$presetClasses[] = VoiceRoom::class;

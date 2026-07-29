@@ -3,6 +3,24 @@ Feature: conversation-4/announcement
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
+    # Announcements can only be created by administrators
+    And user "participant1" is member of group "admin"
+
+  Scenario: Only administrators can create an announcement
+    Given user "participant2" creates room "announcement" with 403 (v4)
+      | roomType    | 2            |
+      | roomName    | announcement |
+      | permissions | 257          |
+      | preset      | announcement |
+    # Channels are still available to everyone
+    And user "participant2" creates room "channel" (v4)
+      | roomType    | 2       |
+      | roomName    | channel |
+      | permissions | 257     |
+      | preset      | channel |
+    Then user "participant2" is participant of the following rooms (v4)
+      | id      | type | participantType | attributes |
+      | channel | 2    | 1               | 8          |
 
   Scenario: An announcement inherits all restrictions of a channel
     Given user "participant1" creates room "announcement" (v4)

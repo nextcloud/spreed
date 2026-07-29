@@ -851,6 +851,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$attributes |= RoomAttributes::CHANNEL->value;
 		}
 		if ($preset === Announcement::getIdentifier()) {
+			if (!$this->groupManager->isAdmin($actorUserId)) {
+				// Announcements can only be created by administrators,
+				// so the preset is not offered to anyone else either.
+				return new DataResponse(['error' => 'preset'], Http::STATUS_FORBIDDEN);
+			}
 			// Announcements are channels with additional restrictions,
 			// so all channel restrictions apply to them as well.
 			$attributes |= RoomAttributes::CHANNEL->value | RoomAttributes::ANNOUNCEMENT->value;
