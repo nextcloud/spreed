@@ -9,7 +9,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Turn;
 
 use OC\Core\Command\Base;
-use OCP\IConfig;
+use OCA\Talk\Config;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Security\ISecureRandom;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Add extends Base {
 
 	public function __construct(
-		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 		private readonly ISecureRandom $secureRandom,
 	) {
 		parent::__construct();
@@ -94,12 +95,7 @@ class Add extends Base {
 			$server = substr($server, 7);
 		}
 
-		$config = $this->config->getAppValue('spreed', 'turn_servers');
-		$servers = json_decode($config, true);
-
-		if ($servers === null || empty($servers) || !is_array($servers)) {
-			$servers = [];
-		}
+		$servers = $this->appConfig->getAppValueArray(Config::TURN_SERVERS);
 
 		//Checking if the server is already added
 		foreach ($servers as $existingServer) {
@@ -120,7 +116,7 @@ class Add extends Base {
 			'protocols' => $protocols,
 		];
 
-		$this->config->setAppValue('spreed', 'turn_servers', json_encode($servers));
+		$this->appConfig->setAppValueArray(Config::TURN_SERVERS, $servers);
 		$output->writeln('<info>Added ' . $server . '.</info>');
 		return 0;
 	}

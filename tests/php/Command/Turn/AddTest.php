@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Command\Turn;
 
 use OCA\Talk\Command\Turn\Add;
-use OCP\IConfig;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Test\TestCase;
 
 class AddTest extends TestCase {
-	protected IConfig&MockObject $config;
+	protected IAppConfig&MockObject $appConfig;
 	protected ISecureRandom&MockObject $secureRandom;
 	protected InputInterface&MockObject $input;
 	protected OutputInterface&MockObject $output;
@@ -26,10 +26,10 @@ class AddTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->config = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->secureRandom = $this->createMock(ISecureRandom::class);
 
-		$this->command = new Add($this->config, $this->secureRandom);
+		$this->command = new Add($this->appConfig, $this->secureRandom);
 
 		$this->input = $this->createMock(InputInterface::class);
 		$this->output = $this->createMock(OutputInterface::class);
@@ -59,8 +59,8 @@ class AddTest extends TestCase {
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Server cannot be empty.</error>'));
-		$this->config->expects($this->never())
-			->method('setAppValue');
+		$this->appConfig->expects($this->never())
+			->method('setAppValueArray');
 
 		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
@@ -89,8 +89,8 @@ class AddTest extends TestCase {
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Secret cannot be empty.</error>'));
-		$this->config->expects($this->never())
-			->method('setAppValue');
+		$this->appConfig->expects($this->never())
+			->method('setAppValueArray');
 
 		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
@@ -120,22 +120,21 @@ class AddTest extends TestCase {
 		$this->secureRandom->expects($this->once())
 			->method('generate')
 			->willReturn('O2vWVFk5QRdJ/9clK4XIHbkxYXvVe6ySggANw4TG/B/HCtFzpi7v4GVNB/6wUZvA13v2EN4WgDk+gjATk9zhhc7B6FzxLNWOlQFBADg2aYHb+Ozse2BABDk3VUHCR+W9');
-		$this->config->method('getAppValue')
-			->with('spreed', 'turn_servers')
-			->willReturn(json_encode([]));
-		$this->config->expects($this->once())
-			->method('setAppValue')
+		$this->appConfig->method('getAppValueArray')
+			->with('turn_servers')
+			->willReturn([]);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
 			->with(
-				$this->equalTo('spreed'),
 				$this->equalTo('turn_servers'),
-				$this->equalTo(json_encode([
+				$this->equalTo([
 					[
 						'schemes' => 'turn,turns',
 						'server' => 'turn.test.com',
 						'secret' => 'O2vWVFk5QRdJ/9clK4XIHbkxYXvVe6ySggANw4TG/B/HCtFzpi7v4GVNB/6wUZvA13v2EN4WgDk+gjATk9zhhc7B6FzxLNWOlQFBADg2aYHb+Ozse2BABDk3VUHCR+W9',
-						'protocols' => 'udp,tcp'
-					]
-				]))
+						'protocols' => 'udp,tcp',
+					],
+				]),
 			);
 		$this->output->expects($this->once())
 			->method('writeln')
@@ -168,8 +167,8 @@ class AddTest extends TestCase {
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>You must provide --secret or --generate-secret.</error>'));
-		$this->config->expects($this->never())
-			->method('setAppValue');
+		$this->appConfig->expects($this->never())
+			->method('setAppValueArray');
 
 		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
@@ -198,8 +197,8 @@ class AddTest extends TestCase {
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Not allowed schemes, must be turn or turns or turn,turns.</error>'));
-		$this->config->expects($this->never())
-			->method('setAppValue');
+		$this->appConfig->expects($this->never())
+			->method('setAppValueArray');
 
 		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
@@ -228,8 +227,8 @@ class AddTest extends TestCase {
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Not allowed protocols, must be udp or tcp or udp,tcp.</error>'));
-		$this->config->expects($this->never())
-			->method('setAppValue');
+		$this->appConfig->expects($this->never())
+			->method('setAppValueArray');
 
 		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
@@ -255,22 +254,21 @@ class AddTest extends TestCase {
 				}
 				throw new \Exception();
 			});
-		$this->config->method('getAppValue')
-			->with('spreed', 'turn_servers')
-			->willReturn(json_encode([]));
-		$this->config->expects($this->once())
-			->method('setAppValue')
+		$this->appConfig->method('getAppValueArray')
+			->with('turn_servers')
+			->willReturn([]);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
 			->with(
-				$this->equalTo('spreed'),
 				$this->equalTo('turn_servers'),
-				$this->equalTo(json_encode([
+				$this->equalTo([
 					[
 						'schemes' => 'turn,turns',
 						'server' => 'turn.test.com',
 						'secret' => 'my-test-secret',
-						'protocols' => 'udp,tcp'
-					]
-				]))
+						'protocols' => 'udp,tcp',
+					],
+				]),
 			);
 		$this->output->expects($this->once())
 			->method('writeln')
@@ -300,35 +298,34 @@ class AddTest extends TestCase {
 				}
 				throw new \Exception();
 			});
-		$this->config->method('getAppValue')
-			->with('spreed', 'turn_servers')
-			->willReturn(json_encode([
+		$this->appConfig->method('getAppValueArray')
+			->with('turn_servers')
+			->willReturn([
 				[
 					'schemes' => 'turn',
 					'server' => 'turn1.test.com',
 					'secret' => 'my-test-secret-1',
-					'protocols' => 'udp,tcp'
-				]
-			]));
-		$this->config->expects($this->once())
-			->method('setAppValue')
+					'protocols' => 'udp,tcp',
+				],
+			]);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
 			->with(
-				$this->equalTo('spreed'),
 				$this->equalTo('turn_servers'),
-				$this->equalTo(json_encode([
+				$this->equalTo([
 					[
 						'schemes' => 'turn',
 						'server' => 'turn1.test.com',
 						'secret' => 'my-test-secret-1',
-						'protocols' => 'udp,tcp'
+						'protocols' => 'udp,tcp',
 					],
 					[
 						'schemes' => 'turn,turns',
 						'server' => 'turn2.test.com',
 						'secret' => 'my-test-secret-2',
-						'protocols' => 'udp,tcp'
-					]
-				]))
+						'protocols' => 'udp,tcp',
+					],
+				])
 			);
 		$this->output->expects($this->once())
 			->method('writeln')
@@ -358,22 +355,21 @@ class AddTest extends TestCase {
 				}
 				throw new \Exception();
 			});
-		$this->config->method('getAppValue')
-			->with('spreed', 'turn_servers')
-			->willReturn(json_encode([]));
-		$this->config->expects($this->once())
-			->method('setAppValue')
+		$this->appConfig->method('getAppValueArray')
+			->with('turn_servers')
+			->willReturn([]);
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
 			->with(
-				$this->equalTo('spreed'),
 				$this->equalTo('turn_servers'),
-				$this->equalTo(json_encode([
+				$this->equalTo([
 					[
 						'schemes' => 'turn,turns',
 						'server' => 'turn.test.com',
 						'secret' => 'my-test-secret',
-						'protocols' => 'udp,tcp'
+						'protocols' => 'udp,tcp',
 					]
-				]))
+				])
 			);
 
 		self::invokePrivate($this->command, 'execute', [$this->input, $this->output]);
@@ -400,16 +396,16 @@ class AddTest extends TestCase {
 				}
 				throw new \Exception();
 			});
-		$this->config->method('getAppValue')
-			->with('spreed', 'turn_servers')
-			->willReturn(json_encode([[
+		$this->appConfig->method('getAppValueArray')
+			->with('turn_servers')
+			->willReturn([[
 				'schemes' => 'turn,turns',
 				'server' => 'turn.test.com',
 				'secret' => 'my-test-secret',
-				'protocols' => 'udp,tcp'
-			]]));
-		$this->config->expects($this->never())
-			->method('setAppValue');
+				'protocols' => 'udp,tcp',
+			]]);
+		$this->appConfig->expects($this->never())
+			->method('setAppValueArray');
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<error>Server already exists with the same configuration.</error>'));

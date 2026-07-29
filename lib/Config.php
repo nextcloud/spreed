@@ -40,6 +40,7 @@ class Config {
 	public const SIGNALING_TICKET_V2 = 2;
 
 	public const string STUN_SERVERS = 'stun_servers';
+	public const string TURN_SERVERS = 'turn_servers';
 	public const string DEFAULT_STUN_SERVER = 'stun.nextcloud.com:443';
 	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
 	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
@@ -459,12 +460,7 @@ class Config {
 	 * @return array
 	 */
 	public function getTurnServers(bool $withEvent = true): array {
-		$config = $this->config->getAppValue('spreed', 'turn_servers');
-		$servers = json_decode($config, true);
-
-		if ($servers === null || empty($servers) || !is_array($servers)) {
-			$servers = [];
-		}
+		$servers = $this->appConfig->getAppValueArray(self::TURN_SERVERS);
 
 		if ($withEvent) {
 			$event = new BeforeTurnServersGetEvent($servers);

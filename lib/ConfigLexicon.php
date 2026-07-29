@@ -30,6 +30,7 @@ class ConfigLexicon implements ILexicon {
 			new Entry(UserPreference::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT),
 			new Entry(SignalingManager::HAS_FEATURE_CHANGED_USERS, ValueType::BOOL, false),
 			new Entry(Config::STUN_SERVERS, ValueType::ARRAY, [Config::DEFAULT_STUN_SERVER], definition: 'List of STUN servers for WebRTC connections', flags: IAppConfig::FLAG_SENSITIVE),
+			new Entry(Config::TURN_SERVERS, ValueType::ARRAY, [], definition: 'List of TURN servers for WebRTC connections', flags: IAppConfig::FLAG_SENSITIVE),
 			new Entry(Config::ALLOWED_GROUPS_TALK, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to use Talk'),
 			new Entry(Config::ALLOWED_GROUPS_SIP, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to enable SIP dial-in in a conversation'),
 			new Entry(Config::ALLOWED_GROUPS_CONVERSATIONS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to create conversation'),

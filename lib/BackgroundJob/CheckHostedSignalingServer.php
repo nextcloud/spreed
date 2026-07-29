@@ -93,11 +93,11 @@ class CheckHostedSignalingServer extends TimedJob {
 
 			if ($this->talkConfig->getTurnServers() !== $newTurnServers) {
 				// TURN servers were added / changed
-				$this->config->setAppValue('spreed', 'turn_servers', json_encode($newTurnServers));
+				$this->appConfig->setAppValueArray(Config::TURN_SERVERS, $newTurnServers);
 			}
 		} elseif (!empty($oldAccountInfo['turn']['servers'])) {
 			// TURN servers are no longer available, reset to default.
-			$this->config->deleteAppValue('spreed', 'turn_servers');
+			$this->appConfig->deleteAppValue(Config::TURN_SERVERS);
 		}
 	}
 
