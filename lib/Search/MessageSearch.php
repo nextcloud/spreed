@@ -246,12 +246,7 @@ class MessageSearch implements IProvider, IFilteringProvider {
 		}
 		$messageStr = str_replace($search, $replace, $messageStr);
 
-		$matchPosition = mb_stripos($messageStr, $query->getTerm());
-		if ($matchPosition > 30 && mb_strlen($messageStr) > 40) {
-			// Mostlikely the result is not visible from the beginning,
-			// so we cut of the message a bit.
-			$messageStr = '…' . mb_substr($messageStr, $matchPosition - 10);
-		}
+		$messageStr = $this->cutMessageToSearchResult($messageStr, $query->getTerm(), $participant->getAttendee()->isSensitive());
 
 		$now = $this->timeFactory->getDateTime();
 		$expireDate = $message->getComment()->getExpireDate();
@@ -320,6 +315,42 @@ class MessageSearch implements IProvider, IFilteringProvider {
 		$entry->addAttribute('timestamp', '' . $comment->getCreationDateTime()->getTimestamp());
 
 		return $entry;
+	}
+
+	/**
+	 * Cut the message down to the part surrounding the search result.
+	 *
+	 * When the conversation is sensitive for the participant, only 10 characters
+	 * before and after the search result are shown, so no additional message
+	 * content is exposed in the search results.
+	 */
+	protected function cutMessageToSearchResult(string $messageStr, string $term, bool $isSensitive): string {
+		$matchPosition = mb_stripos($messageStr, $term);
+
+		if ($isSensitive) {
+			$matchLength = mb_strlen($term);
+			if ($matchPosition === false) {
+				// The term is not part of the parsed message (e.g. it only matched
+				// a placeholder), so we don't have a result to surround.
+				$matchPosition = 0;
+				$matchLength = 0;
+			}
+
+			$start = max(0, $matchPosition - 10);
+			$length = ($matchPosition - $start) + $matchLength + 10;
+
+			return ($start > 0 ? '…' : '')
+				. mb_substr($messageStr, $start, $length)
+				. (mb_strlen($messageStr) > ($start + $length) ? '…' : '');
+		}
+
+		if ($matchPosition > 30 && mb_strlen($messageStr) > 40) {
+			// Mostlikely the result is not visible from the beginning,
+			// so we cut of the message a bit.
+			return '…' . mb_substr($messageStr, $matchPosition - 10);
+		}
+
+		return $messageStr;
 	}
 
 	#[\Override]
