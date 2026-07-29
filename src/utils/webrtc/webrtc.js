@@ -1469,7 +1469,15 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 		return webrtc.webrtc.getPeers(null, 'video').length > 0 || Object.keys(delayedConnectionToPeer).length > 0
 	}
 
+	const skippedTrackRemovals = new Set()
+
 	webrtc.on('localTrackReplaced', function(newTrack, oldTrack/* , stream */) {
+		// The old track is stopped before the new one is ready; flags are checked once the change settles
+		if (!newTrack && webrtc.webrtc.isInputIdChangePending(oldTrack.kind)) {
+			skippedTrackRemovals.add(oldTrack.kind)
+			return
+		}
+
 		const callFlags = getCallFlagsFromLocalMedia()
 
 		// A reconnection is not needed if a device is disabled or if there are
@@ -1485,6 +1493,19 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 
 			return
 		}
+
+		if (signaling.getCurrentCallFlags() !== callFlags) {
+			signaling.updateCurrentCallFlags(callFlags)
+		}
+	})
+
+	webrtc.on('localInputIdChangeSettled', function(kind) {
+		// Only a skipped removal needs a check, other changes already updated the flags
+		if (!skippedTrackRemovals.delete(kind)) {
+			return
+		}
+
+		const callFlags = getCallFlagsFromLocalMedia()
 
 		if (signaling.getCurrentCallFlags() !== callFlags) {
 			signaling.updateCurrentCallFlags(callFlags)
