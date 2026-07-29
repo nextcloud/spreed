@@ -525,6 +525,8 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 		// is received before the "leave call" request ends.
 		localUserInCall = false
 
+		clearTimeout(updateCallFlagsFromLocalMediaTimeout)
+
 		localStateBroadcaster.destroy()
 		localStateBroadcaster = null
 	})
@@ -1422,6 +1424,24 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 		return callFlags
 	}
 
+	let updateCallFlagsFromLocalMediaTimeout = null
+
+	/**
+	 * Update the call flags to match the current local tracks.
+	 */
+	function updateCallFlagsFromLocalMedia() {
+		// As update can be deferred, check whether the call may have been left in the meantime
+		if (!localUserInCall) {
+			return
+		}
+
+		const callFlags = getCallFlagsFromLocalMedia()
+
+		if (signaling.getCurrentCallFlags() !== callFlags) {
+			signaling.updateCurrentCallFlags(callFlags)
+		}
+	}
+
 	signaling.on('joinCall', function(token) {
 		const expectedCallFlags = getCallFlagsFromLocalMedia()
 
@@ -1463,6 +1483,8 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 	}
 
 	webrtc.on('localTrackReplaced', function(newTrack, oldTrack/* , stream */) {
+		clearTimeout(updateCallFlagsFromLocalMediaTimeout)
+
 		const callFlags = getCallFlagsFromLocalMedia()
 
 		// A reconnection is not needed if a device is disabled or if there are
@@ -1479,7 +1501,13 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 			return
 		}
 
-		if (signaling.getCurrentCallFlags() !== callFlags) {
+		const removedCallFlags = signaling.getCurrentCallFlags() & ~callFlags
+		if (removedCallFlags) {
+			// If a media is no longer sent because of "MediaDevicesManager._stopIncompatibleTracks()"
+			// (flags change 7->5->7 or 7->3->7 on input device replacement), defer the update
+			// and give some time for the new track to be set, then check local flags again.
+			updateCallFlagsFromLocalMediaTimeout = setTimeout(updateCallFlagsFromLocalMedia, 1_000)
+		} else if (signaling.getCurrentCallFlags() !== callFlags) {
 			signaling.updateCurrentCallFlags(callFlags)
 		}
 	})
