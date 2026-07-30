@@ -24,6 +24,7 @@ readonly class VoiceRoom extends APreset {
 
 	#[\Override]
 	public function getName(): string {
+		// TRANSLATORS Conversation type - Discord-like, directly join the call, messages are expiring
 		return $this->l->t('Voice room');
 	}
 

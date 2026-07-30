@@ -22,6 +22,7 @@ readonly class Announcement extends Channel {
 
 	#[\Override]
 	public function getName(): string {
+		// TRANSLATORS Conversation type - channel to inform a fixed audience, which can not be left
 		return $this->l->t('Announcement');
 	}
 
