@@ -443,7 +443,7 @@ class Application extends App implements IBootstrap {
 		IAppConfig $appConfig,
 		ICloudFederationProviderManager $manager,
 	): void {
-		if ($appConfig->getAppValueBool(Config::FEDERATION_ENABLED)) {
+		if (!$appConfig->getAppValueBool(Config::FEDERATION_ENABLED)) {
 			return;
 		}
 
