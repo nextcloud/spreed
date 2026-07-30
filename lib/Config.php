@@ -45,6 +45,8 @@ class Config {
 	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
 	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
 	public const string ALLOWED_GROUPS_CONVERSATIONS = 'start_conversations';
+	public const string ALLOWED_GROUPS_FEDERATION = 'federation_allowed_groups';
+	public const string FEDERATION_ENABLED = 'federation_enabled';
 	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
 	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
 	public const string DEFAULT_ROOM_PERMISSIONS = 'default_permissions';
@@ -131,11 +133,11 @@ class Config {
 	 */
 	public function isFederationEnabled(): bool {
 		// TODO: Set to default true once implementation is complete
-		return $this->config->getAppValue('spreed', 'federation_enabled', 'no') === 'yes';
+		return $this->appConfig->getAppValueBool(self::FEDERATION_ENABLED);
 	}
 
 	public function isFederationEnabledForUserId(IUser $user): bool {
-		$allowedGroups = $this->appConfig->getAppValueArray('federation_allowed_groups', lazy: true);
+		$allowedGroups = $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_FEDERATION, lazy: true);
 		if (empty($allowedGroups)) {
 			return true;
 		}

@@ -138,6 +138,7 @@ use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Calendar\Events\CalendarObjectCreatedEvent;
 use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use OCP\Collaboration\AutoComplete\AutoCompleteFilterEvent;
@@ -152,7 +153,6 @@ use OCP\Group\Events\GroupChangedEvent;
 use OCP\Group\Events\GroupDeletedEvent;
 use OCP\Group\Events\UserAddedEvent;
 use OCP\Group\Events\UserRemovedEvent;
-use OCP\IConfig;
 use OCP\INavigationManager;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -433,10 +433,10 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function registerCloudFederationProviderManager(
-		IConfig $config,
+		IAppConfig $appConfig,
 		ICloudFederationProviderManager $manager,
 	): void {
-		if ($config->getAppValue('spreed', 'federation_enabled', 'no') !== 'yes') {
+		if ($appConfig->getAppValueBool(Config::FEDERATION_ENABLED)) {
 			return;
 		}
 
