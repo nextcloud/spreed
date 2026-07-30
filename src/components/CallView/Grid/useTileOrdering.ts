@@ -67,9 +67,10 @@ export function useTileOrdering({
 	const vuexStore = useStore()
 	const actorStore = useActorStore()
 
-	// Speakers recently promoted to the first page and the history of
-	// promotions, used to keep the relative order of the tiles stable.
-	const tempPromotedModels = ref<OrderingModel[]>([])
+	// Session ids of the speakers recently promoted to the first page and the
+	// history of promotions, used to keep the relative order of the tiles
+	// stable. Only ids are kept, so no participant model is referenced here.
+	const tempPromotedSessionIds = ref(new Set<string>())
 	const promotedHistoryMask = ref<string[]>([])
 	const unpromoteSpeakerTimer: Record<string, ReturnType<typeof setTimeout>> = {}
 
@@ -142,14 +143,13 @@ export function useTileOrdering({
 			modelsWithNoPermissions: [] as OrderingModel[],
 		}
 		const screensSet = new Set(screens.value)
-		const tempPromotedModelsSet = new Set(tempPromotedModels.value.map((model) => model.attributes.nextcloudSessionId))
 		const videoTilesMap = new Map<string, OrderingModel>()
 		const audioTilesMap = new Map<string, OrderingModel>()
 
 		callParticipantModels.value.forEach((model) => {
 			if (screensSet.has(model.attributes.peerId)) {
 				objectMap.modelsWithScreenshare.push(model)
-			} else if (tempPromotedModelsSet.has(model.attributes.nextcloudSessionId)) {
+			} else if (tempPromotedSessionIds.value.has(model.attributes.nextcloudSessionId)) {
 				objectMap.modelsTempPromoted.push(model)
 			} else if (isModelWithVideo(model)) {
 				videoTilesMap.set(model.attributes.nextcloudSessionId, model)
@@ -173,16 +173,10 @@ export function useTileOrdering({
 	})
 
 	/**
-	 * @param model the speaker model to unpromote
+	 * @param sessionId session id of the speaker to unpromote
 	 */
-	function unpromoteSpeaker(model: OrderingModel) {
-		// remove model from the temp promoted speakers
-		const index = tempPromotedModels.value.indexOf(model)
-		if (index === -1) {
-			return
-		}
-
-		tempPromotedModels.value.splice(index, 1)
+	function unpromoteSpeaker(sessionId: string) {
+		tempPromotedSessionIds.value.delete(sessionId)
 	}
 
 	/**
@@ -207,38 +201,47 @@ export function useTileOrdering({
 			return
 		}
 
-		// add the model
-		if (!tempPromotedModels.value.includes(model)) {
-			// remove model from the order history if it exists
-			const modelIndex = promotedHistoryMask.value.indexOf(id)
-			if (modelIndex !== -1) {
-				promotedHistoryMask.value.splice(modelIndex, 1)
+		// add the speaker
+		if (!tempPromotedSessionIds.value.has(id)) {
+			// remove the speaker from the order history if it exists
+			const maskIndex = promotedHistoryMask.value.indexOf(id)
+			if (maskIndex !== -1) {
+				promotedHistoryMask.value.splice(maskIndex, 1)
 			}
 
-			tempPromotedModels.value.unshift(model)
-			// add model to the beginning of the ordered models in its category
+			tempPromotedSessionIds.value.add(id)
+			// add speaker to the beginning of the ordered models in its category
 			promotedHistoryMask.value.unshift(id)
 		}
 	}
 
 	const speakers = computed(() => callParticipantModels.value.filter((model) => model.attributes.speaking))
 
-	const speakersWithAudioOff = computed(() => tempPromotedModels.value.filter((model) => !model.attributes.audioAvailable))
+	const promotedSessionIdsWithAudioOff = computed(() => {
+		const sessionIdsWithAudio = new Set(callParticipantModels.value
+			.filter(({ attributes }) => attributes.audioAvailable)
+			.map(({ attributes }) => attributes.nextcloudSessionId))
+		// All that aren't in Set - muted or disconnected
+		return [...tempPromotedSessionIds.value].filter((id) => !sessionIdsWithAudio.has(id))
+	})
 
 	watch(speakers, (models) => {
 		models.forEach((model) => {
 			promoteSpeaker(model)
 			clearTimeout(unpromoteSpeakerTimer[model.attributes.nextcloudSessionId])
+			delete unpromoteSpeakerTimer[model.attributes.nextcloudSessionId]
 		})
 	})
 
-	watch(speakersWithAudioOff, (newModels, oldModels) => {
-		newModels.forEach((speaker) => {
-			if (oldModels.includes(speaker)) {
+	watch(promotedSessionIdsWithAudioOff, (sessionIds) => {
+		sessionIds.forEach((sessionId) => {
+			if (unpromoteSpeakerTimer[sessionId]) {
+				// an unpromote is already pending for this speaker
 				return
 			}
-			unpromoteSpeakerTimer[speaker.attributes.nextcloudSessionId] = setTimeout(() => {
-				unpromoteSpeaker(speaker)
+			unpromoteSpeakerTimer[sessionId] = setTimeout(() => {
+				delete unpromoteSpeakerTimer[sessionId]
+				unpromoteSpeaker(sessionId)
 			}, UNPROMOTE_DELAY)
 		})
 	})

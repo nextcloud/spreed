@@ -159,4 +159,88 @@ describe('useTileOrdering', () => {
 			expect(orderedParticipantModels.value).toEqual([first, second])
 		})
 	})
+
+	describe('participant churn', () => {
+		test('drops a departed participant and keeps ordering the rest', async () => {
+			const a = makeModel({ audioPublisher: true, audioAvailable: true })
+			const b = makeModel({ audioPublisher: true, audioAvailable: true })
+			const c = makeModel({ audioPublisher: true, audioAvailable: true })
+			const models = [a, b, c]
+			allModels = models
+
+			const { orderedParticipantModels, callParticipantModels } = createOrdering({ models, slots: 1 })
+
+			// b speaks and gets promoted to the front
+			b.attributes.speaking = true
+			await nextTick()
+			expect(orderedParticipantModels.value).toEqual([b, a, c])
+
+			// b leaves the call
+			allModels = [a, c]
+			callParticipantModels.value = [a, c]
+			await nextTick()
+			expect(orderedParticipantModels.value).toEqual([a, c])
+
+			// promotion still works for the remaining participants
+			c.attributes.speaking = true
+			await nextTick()
+			expect(orderedParticipantModels.value).toEqual([c, a])
+		})
+
+		test('keeps the promoted place when a participant reconnects with the same session', async () => {
+			const a = makeModel({ audioPublisher: true, audioAvailable: true })
+			const b = makeModel({ audioPublisher: true, audioAvailable: true })
+			const models = [a, b]
+			allModels = models
+
+			const { orderedParticipantModels, callParticipantModels } = createOrdering({ models, slots: 1 })
+
+			// b speaks and gets promoted to the front
+			b.attributes.speaking = true
+			await nextTick()
+			expect(orderedParticipantModels.value).toEqual([b, a])
+
+			// b drops out of the call and comes back with the same session id
+			allModels = [a]
+			callParticipantModels.value = [a]
+			await nextTick()
+			b.attributes.speaking = false
+			allModels = [a, b]
+			callParticipantModels.value = [a, b]
+			await nextTick()
+
+			expect(orderedParticipantModels.value).toEqual([b, a])
+		})
+
+		test('lets a pending unpromote timer of a departed participant run out harmlessly', async () => {
+			vi.useFakeTimers()
+			try {
+				const a = makeModel({ audioPublisher: true, audioAvailable: true })
+				const b = makeModel({ audioPublisher: true, audioAvailable: true })
+				const models = [a, b]
+				allModels = models
+
+				const { orderedParticipantModels, callParticipantModels } = createOrdering({ models, slots: 1 })
+
+				// b speaks (gets promoted) and then its audio goes off, which
+				// schedules an unpromote timer for it.
+				b.attributes.speaking = true
+				await nextTick()
+				b.attributes.audioAvailable = false
+				await nextTick()
+
+				// b leaves the call before the timer fires
+				allModels = [a]
+				callParticipantModels.value = [a]
+				await nextTick()
+
+				vi.runAllTimers()
+				await nextTick()
+
+				expect(orderedParticipantModels.value).toEqual([a])
+			} finally {
+				vi.useRealTimers()
+			}
+		})
+	})
 })
