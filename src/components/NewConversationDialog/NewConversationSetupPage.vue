@@ -358,11 +358,15 @@ export default {
 		applyPresetParameters(preset) {
 			const parameters = this.settingsStore.presets.find((p) => p.identifier === preset)?.parameters ?? {}
 
-			let attributes = this.newConversation.attributes
+			let attributes = CONVERSATION.ATTRIBUTE.NONE
 			if (preset === CONVERSATION.PRESET.VOICE_ROOM) {
 				attributes |= CONVERSATION.ATTRIBUTE.VOICE_ROOM
-			} else {
-				attributes &= ~CONVERSATION.ATTRIBUTE.VOICE_ROOM
+			} else if (preset === CONVERSATION.PRESET.CLASSIFIED) {
+				attributes |= CONVERSATION.ATTRIBUTE.CLASSIFIED
+			} else if (preset === CONVERSATION.PRESET.CHANNEL) {
+				attributes |= CONVERSATION.ATTRIBUTE.CHANNEL
+			} else if (preset === CONVERSATION.PRESET.ANNOUNCEMENT) {
+				attributes |= CONVERSATION.ATTRIBUTE.CHANNEL | CONVERSATION.ATTRIBUTE.ANNOUNCEMENT
 			}
 
 			const update = { attributes, preset }

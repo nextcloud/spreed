@@ -25,6 +25,7 @@ readonly class Channel extends APreset {
 
 	#[\Override]
 	public function getName(): string {
+		// TRANSLATORS Conversation type - broadcast-like, only moderators can post, calls are disabled
 		return $this->l->t('Channel');
 	}
 

@@ -35,6 +35,28 @@
 	background-image: url(../img/icon-contacts-white.svg);
 }
 
+.app-talk .icon-classified,
+.modal-mask .icon-classified,
+.v-popper__popper .icon-classified,
+.talk-sidebar-callview .icon-classified,
+#talk-panel .icon-classified,
+#talk-sidebar .icon-classified,
+#call-container .icon-classified,
+.talkChatTab .icon-classified {
+	background-image: url(../img/icon-classified-white.svg);
+}
+
+.app-talk .icon-channel,
+.modal-mask .icon-channel,
+.v-popper__popper .icon-channel,
+.talk-sidebar-callview .icon-channel,
+#talk-panel .icon-channel,
+#talk-sidebar .icon-channel,
+#call-container .icon-channel,
+.talkChatTab .icon-channel {
+	background-image: url(../img/icon-channel-white.svg);
+}
+
 .app-talk .icon-phone,
 .modal-mask .icon-phone,
 .v-popper__popper .icon-phone,
