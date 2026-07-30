@@ -197,6 +197,10 @@ export function getFallbackIconClass(conversation: Conversation, forceFallback: 
 		// Prevent a 404 when trying to load an avatar before the conversation data is actually loaded
 		if (conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM) {
 			return 'icon-voice-room'
+		} else if (isClassifiedConversation(conversation)) {
+			return 'icon-classified'
+		} else if (isChannelConversation(conversation)) {
+			return 'icon-channel'
 		}
 		return conversation.type === CONVERSATION.TYPE.PUBLIC ? 'icon-public' : 'icon-contacts'
 	}
@@ -219,6 +223,10 @@ export function getFallbackIconClass(conversation: Conversation, forceFallback: 
 			return 'icon-team'
 		} else if (conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM) {
 			return 'icon-voice-room'
+		} else if (isClassifiedConversation(conversation)) {
+			return 'icon-classified'
+		} else if (isChannelConversation(conversation)) {
+			return 'icon-channel'
 		} else if (conversation.type === CONVERSATION.TYPE.CHANGELOG) {
 			return 'icon-changelog'
 		} else if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
