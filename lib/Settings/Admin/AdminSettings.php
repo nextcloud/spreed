@@ -91,9 +91,9 @@ class AdminSettings implements ISettings {
 
 	protected function initFederation(): void {
 		$this->initialState->provideInitialState(Config::FEDERATION_ENABLED, $this->talkConfig->isFederationEnabled());
-		$this->initialState->provideInitialState('federation_incoming_enabled', $this->appConfig->getAppValueBool('federation_incoming_enabled', true));
-		$this->initialState->provideInitialState('federation_outgoing_enabled', $this->appConfig->getAppValueBool('federation_outgoing_enabled', true));
-		$this->initialState->provideInitialState('federation_only_trusted_servers', $this->appConfig->getAppValueBool('federation_only_trusted_servers'));
+		$this->initialState->provideInitialState(Config::FEDERATION_INCOMING_ENABLED, $this->appConfig->getAppValueBool(Config::FEDERATION_INCOMING_ENABLED));
+		$this->initialState->provideInitialState(Config::FEDERATION_OUTGOING_ENABLED, $this->appConfig->getAppValueBool(Config::FEDERATION_OUTGOING_ENABLED));
+		$this->initialState->provideInitialState(Config::FEDERATION_ONLY_TRUSTED_SERVERS, $this->appConfig->getAppValueBool(Config::FEDERATION_ONLY_TRUSTED_SERVERS));
 		$this->initialState->provideInitialState(Config::ALLOWED_GROUPS_FEDERATION, $this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_FEDERATION));
 	}
 

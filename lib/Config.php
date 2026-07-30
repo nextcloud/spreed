@@ -44,6 +44,9 @@ class Config {
 	public const string ALLOWED_GROUPS_CONVERSATIONS = 'start_conversations';
 	public const string ALLOWED_GROUPS_FEDERATION = 'federation_allowed_groups';
 	public const string FEDERATION_ENABLED = 'federation_enabled';
+	public const string FEDERATION_INCOMING_ENABLED = 'federation_incoming_enabled';
+	public const string FEDERATION_OUTGOING_ENABLED = 'federation_outgoing_enabled';
+	public const string FEDERATION_ONLY_TRUSTED_SERVERS = 'federation_only_trusted_servers';
 	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
 	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
 	public const string DEFAULT_ROOM_PERMISSIONS = 'default_permissions';

@@ -201,9 +201,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->config->getAppValue('spreed', 'call_recording_summary'),
 			$this->config->getAppValue('theming', 'cachebuster', '1'),
 			$this->config->getUserValue($this->userId, 'theming', 'userCacheBuster', '0'),
-			$this->config->getAppValue('spreed', 'federation_incoming_enabled'),
-			$this->config->getAppValue('spreed', 'federation_outgoing_enabled'),
-			$this->config->getAppValue('spreed', 'federation_only_trusted_servers'),
+			$this->appConfig->getAppValueBool(Config::FEDERATION_INCOMING_ENABLED),
+			$this->appConfig->getAppValueBool(Config::FEDERATION_OUTGOING_ENABLED),
+			$this->appConfig->getAppValueBool(Config::FEDERATION_ONLY_TRUSTED_SERVERS),
 			implode(',', $this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_FEDERATION)),
 			$this->appConfig->getAppValueInt('feature_hints_hidden'),
 		];

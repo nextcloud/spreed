@@ -359,9 +359,9 @@ class Capabilities implements IPublicCapability {
 			if ($this->talkConfig->isFederationEnabled() && $this->talkConfig->isFederationEnabledForUserId($user)) {
 				$capabilities['config']['federation'] = [
 					'enabled' => true,
-					'incoming-enabled' => $this->appConfig->getAppValueBool('federation_incoming_enabled', true),
-					'outgoing-enabled' => $this->appConfig->getAppValueBool('federation_outgoing_enabled', true),
-					'only-trusted-servers' => $this->appConfig->getAppValueBool('federation_only_trusted_servers'),
+					'incoming-enabled' => $this->appConfig->getAppValueBool(Config::FEDERATION_INCOMING_ENABLED),
+					'outgoing-enabled' => $this->appConfig->getAppValueBool(Config::FEDERATION_OUTGOING_ENABLED),
+					'only-trusted-servers' => $this->appConfig->getAppValueBool(Config::FEDERATION_ONLY_TRUSTED_SERVERS),
 				];
 			}
 
