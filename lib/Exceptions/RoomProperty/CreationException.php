@@ -12,6 +12,7 @@ use OCA\Talk\Room;
 
 class CreationException extends \InvalidArgumentException {
 	public const REASON_AVATAR = 'avatar';
+	public const REASON_CLASSIFIED = 'classified';
 	public const REASON_DESCRIPTION = 'description';
 	public const REASON_LISTABLE = 'listable';
 	public const REASON_LOBBY = 'lobby';

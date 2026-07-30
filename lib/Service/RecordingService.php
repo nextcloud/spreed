@@ -101,6 +101,9 @@ class RecordingService {
 	 * @psalm-param Room::RECORDING_* $status
 	 */
 	public function start(Room $room, int $status, string $owner, Participant $participant): void {
+		if ($room->isClassified()) {
+			throw new InvalidArgumentException('classified');
+		}
 		$availableRecordingTypes = [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
 		if (!in_array($status, $availableRecordingTypes, true)) {
 			throw new InvalidArgumentException('status');

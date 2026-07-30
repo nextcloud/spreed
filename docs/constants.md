@@ -22,6 +22,8 @@
 | `event`                 | Yes            | Event conversation created via the calendar                                  | Start and end unix timestamp of the event concatenated by pound sign: `start#end` |
 | `extended_conversation` | Yes            | Room is created from another conversation (e.g. adding a participant to 1-1) | Token of previous conversation                                                    |
 | `external_call`         | Yes            | Room whose calls are handled by an external video service (see [External Call Service](external-call-service.md)) | Meeting/room identifier on the external service side |
+| `classified`            | No             | Classified conversation queued for automatic deletion after a call (retention `retention_classified_rooms`) | Unix timestamp of the call that queued the deletion                               |
+| `classified_persist`    | No             | Classified conversation a moderator kept (unbound), so it is no longer auto-deleted | Unix timestamp of when it was kept                                                |
 
 ### Read-only states
 * `0` Read-write
@@ -77,7 +79,8 @@ Required capability: `conversation-presets`
 
 * `0` None
 * `1` Voice rooms - Join call when joining conversation
-* `2` Preserved - Conversation can not be deleted, its chat history can not be cleared and the guests (public link) and joinable (listable) settings can not be changed (only owners can toggle this attribute, requires capability `preserve-conversation`)
+* `2` Preserved - Conversation can not be deleted, its chat history can not be cleared and the guests (public link) and joinable (listable) settings can not be changed (only owners can toggle this attribute, requires capability `preserve-conversation`). It only blocks the deletion via the API and therefore does not prevent the automatic deletion of a classified conversation
+* `4` Classified - Locked down conversation for confidential topics: everything that could carry the content or metadata to non-participants is disallowed, no object can be bound (it is reserved for the automatic deletion, see the `classified` object type) and the conversation is forced sensitive for everyone (set at creation via the `classified` preset, requires capability `classified-conversations`)
 
 ## Participants
 
