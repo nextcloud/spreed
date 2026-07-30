@@ -65,7 +65,7 @@ class ParticipantTest extends TestCase {
 
 		$groupManager = $this->createMock(IGroupManager::class);
 		$groupManager->method('isInGroup')
-			->willReturnCallback(static fn(string $userId, string $groupId): bool => $userId === 'user1' && in_array($groupId, $userGroups, true));
+			->willReturnCallback(static fn (string $userId, string $groupId): bool => $userId === 'user1' && in_array($groupId, $userGroups, true));
 
 		$this->assertSame($expected, $participant->canStartCall($serverConfig, $appConfig, $groupManager));
 	}

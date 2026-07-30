@@ -1754,7 +1754,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $attendeeId ID of the attendee
 	 * @psalm-param non-negative-int $attendeeId
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'last-moderator'|'owner'|'participant'|'room-type'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'owner'|'participant'|'room-type'}, array{}>
 	 *
 	 * 200: Attendee removed successfully
 	 * 400: Removing attendee is not possible
