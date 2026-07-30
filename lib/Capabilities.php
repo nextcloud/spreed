@@ -336,7 +336,7 @@ class Capabilities implements IPublicCapability {
 					// 'hello-v2-token-key' => string,
 				],
 				'experiments' => [
-					'enabled' => max(0, $this->appConfig->getAppValueInt($user instanceof IUser ? 'experiments_users' : 'experiments_guests')),
+					'enabled' => max(0, $this->appConfig->getAppValueInt($user instanceof IUser ? Config::EXPERIMENTS_USERS : Config::EXPERIMENTS_GUESTS)),
 				],
 				'feature-hints' => [
 					'current' => Config::FEATURE_HINT,
