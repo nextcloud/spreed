@@ -39,6 +39,7 @@ class Config {
 	public const SIGNALING_TICKET_V1 = 1;
 	public const SIGNALING_TICKET_V2 = 2;
 
+	public const string RETENTION_CLASSIFIED_ROOMS = 'retention_classified_rooms';
 	public const string STUN_SERVERS = 'stun_servers';
 	public const string TURN_SERVERS = 'turn_servers';
 	public const string DEFAULT_STUN_SERVER = 'stun.nextcloud.com:443';

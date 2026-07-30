@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
+use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
@@ -51,7 +52,7 @@ class ExpireObjectRooms extends TimedJob {
 		// Classified conversations are deleted shortly (default 1 hour) after a
 		// call happened, unless a moderator kept them (object_type is then
 		// "classified_persist" and no longer matched here).
-		$classifiedRetention = $this->appConfig->getAppValueInt('retention_classified_rooms', 3600);
+		$classifiedRetention = $this->appConfig->getAppValueInt(Config::RETENTION_CLASSIFIED_ROOMS);
 		if ($classifiedRetention !== 0) {
 			$this->executeRetention(Room::OBJECT_TYPE_CLASSIFIED, $classifiedRetention);
 		}
