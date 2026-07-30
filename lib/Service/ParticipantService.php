@@ -686,6 +686,11 @@ class ParticipantService {
 			// In classified conversations the "sensitive" mark is forced on for
 			// everyone and can not be reverted (see markConversationAsInsensitive).
 			$attendee->setSensitive($room->isClassified());
+			if ($room->isAnnouncement() && $participant['actorType'] === Attendee::ACTOR_USERS) {
+				// Announcements notify about all messages by default. It is only a
+				// default, so participants can still change the level afterwards.
+				$attendee->setNotificationLevel(Participant::NOTIFY_ALWAYS);
+			}
 			$attendees[] = $attendee;
 		}
 

@@ -233,5 +233,6 @@
 * `preserve-conversation` - Whether the owner can preserve a conversation
 * `classified-conversations` (local) - Whether classified conversations are supported: locked down conversations for confidential topics, in which everything that could carry the content or metadata to non-participants is disabled and which are forced sensitive for everyone
 * `recording-chunked-upload` (local) - Whether the recording backend can request a temporary upload share to upload large recordings via chunked public WebDAV before finishing with the store endpoint
+* `announcement-preset` (local) - Whether the `channel` and `announcement` presets are supported (channels disallow calls for everyone and only show the participants list to moderators, announcements additionally are not listable, can not be left by non-moderators and notify about all messages by default)
 * `config => call => external-call-service` (local) - The target URL for an external call service if one is configured
 * `bot-features-api` (local) - Whether bots can fetch their own enabled features using their shared secret

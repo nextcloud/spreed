@@ -58,6 +58,8 @@ use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\RoomAttributes;
+use OCA\Talk\RoomPresets\Announcement;
+use OCA\Talk\RoomPresets\Channel;
 use OCA\Talk\RoomPresets\Classified;
 use OCA\Talk\RoomPresets\Forced;
 use OCA\Talk\RoomPresets\Parameter;
@@ -845,6 +847,19 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if ($isClassified) {
 			$attributes |= RoomAttributes::CLASSIFIED->value;
 		}
+		if ($preset === Channel::getIdentifier()) {
+			$attributes |= RoomAttributes::CHANNEL->value;
+		}
+		if ($preset === Announcement::getIdentifier()) {
+			if (!$this->groupManager->isAdmin($actorUserId)) {
+				// Announcements can only be created by administrators,
+				// so the preset is not offered to anyone else either.
+				return new DataResponse(['error' => 'preset'], Http::STATUS_FORBIDDEN);
+			}
+			// Announcements are channels with additional restrictions,
+			// so all channel restrictions apply to them as well.
+			$attributes |= RoomAttributes::CHANNEL->value | RoomAttributes::ANNOUNCEMENT->value;
+		}
 
 		try {
 			$room = $this->roomService->createConversation(
@@ -1226,6 +1241,12 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}
 
+		if ($this->room->isChannel() && !$this->participant->hasModeratorPermissions()) {
+			// The participants list of a channel can be enormous, so it is only
+			// available to moderators. Everyone else has to use the search instead.
+			return new DataResponse(null, Http::STATUS_FORBIDDEN);
+		}
+
 		$participants = $this->participantService->getSessionsAndParticipantsForRoom($this->room);
 
 		return $this->formatParticipantList($participants, $includeStatus);
@@ -1250,6 +1271,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 	])]
 	public function getBreakoutRoomParticipants(bool $includeStatus = false): DataResponse {
 		if ($this->participant->getAttendee()->getParticipantType() === Participant::GUEST) {
+			return new DataResponse(null, Http::STATUS_FORBIDDEN);
+		}
+
+		if ($this->room->isChannel() && !$this->participant->hasModeratorPermissions()) {
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}
 
@@ -1656,7 +1681,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	/**
 	 * Remove the current user from a room
 	 *
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'last-moderator'|'participant'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'participant'}, array{}>
 	 *
 	 * 200: Participant removed successfully
 	 * 400: Removing participant is not possible
@@ -1675,11 +1700,17 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'last-moderator'|'participant'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'participant'}, array{}>
 	 */
 	protected function removeSelfFromRoomLogic(Room $room, Participant $participant): DataResponse {
 		if ($room->isFederatedConversation()) {
 			$this->federationManager->rejectByRemoveSelf($room, $this->userId);
+		}
+
+		if ($room->isAnnouncement() && !$participant->hasModeratorPermissions(false)) {
+			// Announcements can not be left, so the audience can not miss out on them.
+			// Moderators can still remove participants from the conversation.
+			return new DataResponse(['error' => 'announcement'], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($room->getType() !== Room::TYPE_ONE_TO_ONE && $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER) {
@@ -1723,7 +1754,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param int $attendeeId ID of the attendee
 	 * @psalm-param non-negative-int $attendeeId
-	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'last-moderator'|'owner'|'participant'|'room-type'}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'announcement'|'last-moderator'|'owner'|'participant'|'room-type'}, array{}>
 	 *
 	 * 200: Attendee removed successfully
 	 * 400: Removing attendee is not possible
