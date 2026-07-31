@@ -97,54 +97,58 @@
 				</div>
 			</a>
 
-			<TasksCounter v-if="conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF" />
+			<div class="top-bar__controls">
+				<TasksCounter v-if="conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF" />
 
-			<!-- Call time -->
-			<CallTime
-				v-if="isInCall"
-				:start="conversation.callStartTime" />
+				<!-- Call time -->
+				<CallTime
+					v-if="isInCall"
+					:start="conversation.callStartTime" />
 
-			<!-- Participants counter -->
-			<NcButton
-				v-if="isInCall && isModeratorOrUser"
-				:title="participantsInCallAriaLabel"
-				:aria-label="participantsInCallAriaLabel"
-				class="top-bar__participants-button"
-				variant="tertiary"
-				@click="openSidebar('participants')">
-				<template #icon>
-					<IconAccountMultiplePlusOutline v-if="canExtendOneToOneConversation" :size="20" />
-					<IconAccountMultipleOutline v-else :size="20" />
-				</template>
-				<template v-if="!canExtendOneToOneConversation" #default>
-					{{ participantsInCall }}
-				</template>
-			</NcButton>
-			<ExtendOneToOneDialog
-				v-else-if="!isSidebar && canExtendOneToOneConversation"
-				:token="token" />
+				<!-- Participants counter -->
+				<NcButton
+					v-if="isInCall && isModeratorOrUser"
+					:title="participantsInCallAriaLabel"
+					:aria-label="participantsInCallAriaLabel"
+					class="top-bar__participants-button"
+					variant="tertiary"
+					@click="openSidebar('participants')">
+					<template #icon>
+						<IconAccountMultiplePlusOutline v-if="canExtendOneToOneConversation" :size="20" />
+						<IconAccountMultipleOutline v-else :size="20" />
+					</template>
+					<template v-if="!canExtendOneToOneConversation" #default>
+						{{ participantsInCall }}
+					</template>
+				</NcButton>
+				<ExtendOneToOneDialog
+					v-else-if="!isSidebar && canExtendOneToOneConversation"
+					:token="token" />
 
-			<!-- Classified conversation indicator (non-interactive) -->
-			<span
-				v-if="isClassified"
-				class="top-bar__classified"
-				:title="t('spreed', 'Classified conversation')">
-				<IconShieldLockOutline :size="20" />
-				<span v-if="!isMobile" class="top-bar__classified-label">
-					{{ t('spreed', 'Classified conversation') }}
+				<!-- Classified conversation indicator (non-interactive) -->
+				<span
+					v-if="isClassified"
+					class="top-bar__classified"
+					:title="t('spreed', 'Classified conversation')">
+					<IconShieldLockOutline :size="20" />
+					<span v-if="!isMobile" class="top-bar__classified-label">
+						{{ t('spreed', 'Classified conversation') }}
+					</span>
 				</span>
-			</span>
 
-			<!-- Upcoming meetings -->
-			<CalendarEventsDialog v-if="showCalendarEvents" :token="token" />
+				<!-- Upcoming meetings -->
+				<CalendarEventsDialog
+					v-if="showCalendarEvents"
+					:token="token" />
 
-			<CallButton v-if="!isInCall" shrinkOnMobile />
+				<CallButton v-if="!isInCall" shrinkOnMobile />
 
-			<!-- TopBar menu -->
-			<TopBarMenu
-				v-if="!isSidebar"
-				:token="token"
-				@openBreakoutRoomsEditor="showBreakoutRoomsEditor = true" />
+				<!-- TopBar menu -->
+				<TopBarMenu
+					v-if="!isSidebar"
+					:token="token"
+					@openBreakoutRoomsEditor="showBreakoutRoomsEditor = true" />
+			</div>
 
 			<!-- Breakout rooms editor -->
 			<BreakoutRoomsEditor
