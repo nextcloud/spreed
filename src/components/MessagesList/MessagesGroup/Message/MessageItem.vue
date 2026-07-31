@@ -256,7 +256,7 @@ export default {
 						component: LocationCard,
 						props: this.message.messageParameters[p],
 					}
-				} else if (type === 'talk-poll' && this.message.systemMessage !== 'poll_closed') {
+				} else if (type === 'talk-poll' && this.message.systemMessage !== MESSAGE.SYSTEM_TYPE.POLL_CLOSED) {
 					const props = { ...this.message.messageParameters[p] }
 					// Add the token to the component props
 					props.token = this.message.token

@@ -233,7 +233,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				message: '👍',
 				messageType: MESSAGE.TYPE.SYSTEM,
-				systemMessage: 'reaction',
+				systemMessage: MESSAGE.SYSTEM_TYPE.REACTION,
 				parent: {
 					id: 2,
 					token: TOKEN,
@@ -350,7 +350,7 @@ describe('messagesStore', () => {
 				id: 11,
 				token: TOKEN,
 				message: '(deleted)',
-				systemMessage: 'message_deleted',
+				systemMessage: MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED,
 				parent: {
 					id: 10,
 					token: TOKEN,
@@ -393,7 +393,7 @@ describe('messagesStore', () => {
 				id: 12,
 				token: TOKEN,
 				message: '(deleted)',
-				systemMessage: 'message_deleted',
+				systemMessage: MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED,
 				parent: cloneDeep(deletedParent),
 			}
 			const response = generateOCSResponse({ payload })
@@ -415,7 +415,7 @@ describe('messagesStore', () => {
 				id: 11,
 				token: TOKEN,
 				message: '(deleted)',
-				systemMessage: 'message_deleted',
+				systemMessage: MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED,
 				parent: {
 					id: 9,
 					token: TOKEN,
@@ -480,7 +480,7 @@ describe('messagesStore', () => {
 				id: 11,
 				token: TOKEN,
 				message: 'You edited a message',
-				systemMessage: 'message_edited',
+				systemMessage: MESSAGE.SYSTEM_TYPE.MESSAGE_EDITED,
 				parent: {
 					id: 10,
 					token: TOKEN,
@@ -521,7 +521,7 @@ describe('messagesStore', () => {
 				id: 12,
 				token: TOKEN,
 				message: 'You edited a message',
-				systemMessage: 'message_edited',
+				systemMessage: MESSAGE.SYSTEM_TYPE.MESSAGE_EDITED,
 				parent: cloneDeep(editedParent),
 			}
 			const response = generateOCSResponse({ payload })

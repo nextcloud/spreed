@@ -46,7 +46,7 @@ describe('MessagesSystemGroup.vue', () => {
 					type: ATTENDEE.ACTOR_TYPE.USERS,
 				},
 			},
-			systemMessage: 'call_left',
+			systemMessage: MESSAGE.SYSTEM_TYPE.CALL_LEFT,
 			timestamp: 2000,
 			isReplyable: false,
 		}, {
@@ -64,7 +64,7 @@ describe('MessagesSystemGroup.vue', () => {
 					type: ATTENDEE.ACTOR_TYPE.USERS,
 				},
 			},
-			systemMessage: 'call_joined',
+			systemMessage: MESSAGE.SYSTEM_TYPE.CALL_JOINED,
 			timestamp: 1000,
 			isReplyable: false,
 		}]
@@ -133,7 +133,7 @@ describe('MessagesSystemGroup.vue', () => {
 						type: ATTENDEE.ACTOR_TYPE.USERS,
 					},
 				},
-				systemMessage: 'call_joined',
+				systemMessage: MESSAGE.SYSTEM_TYPE.CALL_JOINED,
 				timestamp: 2000,
 				isReplyable: false,
 			}, {
@@ -151,7 +151,7 @@ describe('MessagesSystemGroup.vue', () => {
 						type: ATTENDEE.ACTOR_TYPE.USERS,
 					},
 				},
-				systemMessage: 'call_joined',
+				systemMessage: MESSAGE.SYSTEM_TYPE.CALL_JOINED,
 				timestamp: 1000,
 				isReplyable: false,
 			}, {
@@ -169,7 +169,7 @@ describe('MessagesSystemGroup.vue', () => {
 						type: ATTENDEE.ACTOR_TYPE.USERS,
 					},
 				},
-				systemMessage: 'call_joined',
+				systemMessage: MESSAGE.SYSTEM_TYPE.CALL_JOINED,
 				timestamp: 300,
 				isReplyable: false,
 			}]
@@ -217,7 +217,7 @@ describe('MessagesSystemGroup.vue', () => {
 			MESSAGES = MESSAGES.map((message) => {
 				return {
 					...message,
-					systemMessage: 'call_left',
+					systemMessage: MESSAGE.SYSTEM_TYPE.CALL_LEFT,
 					message: 'Actor left the call',
 				}
 			})
@@ -323,7 +323,7 @@ describe('MessagesSystemGroup.vue', () => {
 						type: ATTENDEE.ACTOR_TYPE.USERS,
 					},
 				},
-				systemMessage: 'user_removed',
+				systemMessage: MESSAGE.SYSTEM_TYPE.USER_REMOVED,
 				timestamp: 100,
 				isReplyable: false,
 			}, {
@@ -346,7 +346,7 @@ describe('MessagesSystemGroup.vue', () => {
 						type: ATTENDEE.ACTOR_TYPE.USERS,
 					},
 				},
-				systemMessage: 'user_removed',
+				systemMessage: MESSAGE.SYSTEM_TYPE.USER_REMOVED,
 				timestamp: 200,
 				isReplyable: false,
 			}, {
@@ -369,7 +369,7 @@ describe('MessagesSystemGroup.vue', () => {
 						type: ATTENDEE.ACTOR_TYPE.USERS,
 					},
 				},
-				systemMessage: 'user_removed',
+				systemMessage: MESSAGE.SYSTEM_TYPE.USER_REMOVED,
 				timestamp: 300,
 				isReplyable: false,
 			}]
@@ -396,7 +396,7 @@ describe('MessagesSystemGroup.vue', () => {
 			MESSAGES = MESSAGES.map((message) => {
 				return {
 					...message,
-					systemMessage: 'user_added',
+					systemMessage: MESSAGE.SYSTEM_TYPE.USER_ADDED,
 					message: '{actor} added {user}',
 				}
 			})
@@ -420,7 +420,7 @@ describe('MessagesSystemGroup.vue', () => {
 			MESSAGES = MESSAGES.map((message) => {
 				return {
 					...message,
-					systemMessage: 'moderator_promoted',
+					systemMessage: MESSAGE.SYSTEM_TYPE.MODERATOR_PROMOTED,
 					message: '{actor} promoted {user} to moderator',
 				}
 			})
@@ -444,7 +444,7 @@ describe('MessagesSystemGroup.vue', () => {
 			MESSAGES = MESSAGES.map((message) => {
 				return {
 					...message,
-					systemMessage: 'moderator_demoted',
+					systemMessage: MESSAGE.SYSTEM_TYPE.MODERATOR_DEMOTED,
 					message: '{actor} demoted {user} from moderator',
 				}
 			})

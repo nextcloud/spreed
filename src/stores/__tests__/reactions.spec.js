@@ -6,6 +6,7 @@
 import { showError } from '@nextcloud/dialogs'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { MESSAGE } from '../../constants.ts'
 import { addReactionToMessage, getReactionsDetails, removeReactionFromMessage } from '../../services/reactionsService.ts'
 import vuexStore from '../../store/index.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
@@ -114,7 +115,7 @@ describe('reactionsStore', () => {
 	it('adds reaction from system messages', () => {
 		// Arrange
 		const message = {
-			systemMessage: 'reaction',
+			systemMessage: MESSAGE.SYSTEM_TYPE.REACTION,
 			actorDisplayName: 'Test Actor',
 			actorId: '123',
 			actorType: 'user',
@@ -135,7 +136,7 @@ describe('reactionsStore', () => {
 	it('does not add a reaction actor when it already exists', () => {
 		// Arrange
 		const message = {
-			systemMessage: 'reaction',
+			systemMessage: MESSAGE.SYSTEM_TYPE.REACTION,
 			actorDisplayName: 'Test Actor',
 			actorId: 'actorId1',
 			actorType: 'users',
@@ -157,7 +158,7 @@ describe('reactionsStore', () => {
 	it('removes a reaction from the store', async () => {
 		// Arrange
 		const message = {
-			systemMessage: 'reaction_revoked',
+			systemMessage: MESSAGE.SYSTEM_TYPE.REACTION_REVOKED,
 			actorDisplayName: 'Test Actor',
 			actorId: '123',
 			actorType: 'user',
@@ -200,7 +201,7 @@ describe('reactionsStore', () => {
 	it('does not fetch reactions when receiving a reaction_deleted system message', async () => {
 		// Arrange
 		const message = {
-			systemMessage: 'reaction_deleted',
+			systemMessage: MESSAGE.SYSTEM_TYPE.REACTION_DELETED,
 			actorDisplayName: 'Test Actor',
 			actorId: '123',
 			actorType: 'user',

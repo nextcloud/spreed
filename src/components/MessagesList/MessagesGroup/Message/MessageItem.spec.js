@@ -150,11 +150,11 @@ describe('MessageItem.vue', () => {
 				testStoreConfig.modules.messagesStore.getters.messagesList = vi.fn().mockReturnValue((token) => {
 					return [{
 						id: 1,
-						systemMessage: 'call_started',
+						systemMessage: MESSAGE.SYSTEM_TYPE.CALL_STARTED,
 						message: 'message one',
 					}, {
 						id: 2,
-						systemMessage: 'call_started',
+						systemMessage: MESSAGE.SYSTEM_TYPE.CALL_STARTED,
 						message: 'message two',
 					}]
 				})
@@ -163,7 +163,7 @@ describe('MessageItem.vue', () => {
 
 			test('shows join call button on last message when a call is in progress', () => {
 				messageProps.message.id = 2
-				messageProps.message.systemMessage = 'call_started'
+				messageProps.message.systemMessage = MESSAGE.SYSTEM_TYPE.CALL_STARTED
 				messageProps.message.message = 'message two'
 				conversationProps.hasCall = true
 
@@ -178,7 +178,7 @@ describe('MessageItem.vue', () => {
 
 			test('does not show join call button on non-last message when a call is in progress', () => {
 				messageProps.message.id = 1
-				messageProps.message.systemMessage = 'call_started'
+				messageProps.message.systemMessage = MESSAGE.SYSTEM_TYPE.CALL_STARTED
 				messageProps.message.message = 'message one'
 				conversationProps.hasCall = true
 
@@ -190,7 +190,7 @@ describe('MessageItem.vue', () => {
 
 			test('does not show join call button when no call is in progress', () => {
 				messageProps.message.id = 2
-				messageProps.message.systemMessage = 'call_started'
+				messageProps.message.systemMessage = MESSAGE.SYSTEM_TYPE.CALL_STARTED
 				messageProps.message.message = 'message two'
 				conversationProps.hasCall = false
 
@@ -202,7 +202,7 @@ describe('MessageItem.vue', () => {
 
 			test('does not show join call button when self is in call', () => {
 				messageProps.message.id = 2
-				messageProps.message.systemMessage = 'call_started'
+				messageProps.message.systemMessage = MESSAGE.SYSTEM_TYPE.CALL_STARTED
 				messageProps.message.message = 'message two'
 				conversationProps.hasCall = true
 
@@ -216,7 +216,7 @@ describe('MessageItem.vue', () => {
 		})
 
 		test('renders deleted system message', () => {
-			messageProps.message.systemMessage = 'message_deleted'
+			messageProps.message.systemMessage = MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED
 			messageProps.message.message = 'message deleted'
 			conversationProps.hasCall = true
 

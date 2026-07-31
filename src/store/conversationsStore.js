@@ -868,11 +868,11 @@ const actions = {
 		 */
 		if ((lastMessage.actorType !== ATTENDEE.ACTOR_TYPE.BOTS
 			|| lastMessage.actorId === ATTENDEE.CHANGELOG_BOT_ID)
-		&& lastMessage.systemMessage !== 'reaction'
-		&& lastMessage.systemMessage !== 'reaction_deleted'
-		&& lastMessage.systemMessage !== 'reaction_revoked'
-		&& lastMessage.systemMessage !== 'message_deleted'
-		&& lastMessage.systemMessage !== 'message_edited') {
+		&& lastMessage.systemMessage !== MESSAGE.SYSTEM_TYPE.REACTION
+		&& lastMessage.systemMessage !== MESSAGE.SYSTEM_TYPE.REACTION_DELETED
+		&& lastMessage.systemMessage !== MESSAGE.SYSTEM_TYPE.REACTION_REVOKED
+		&& lastMessage.systemMessage !== MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED
+		&& lastMessage.systemMessage !== MESSAGE.SYSTEM_TYPE.MESSAGE_EDITED) {
 			commit('updateConversationLastMessage', { token, lastMessage })
 		}
 	},
@@ -982,7 +982,7 @@ const actions = {
 			messageParameters: notification.subjectRichParameters,
 			timestamp: activeSince,
 			messageType: MESSAGE.TYPE.SYSTEM,
-			systemMessage: 'call_started',
+			systemMessage: MESSAGE.SYSTEM_TYPE.CALL_STARTED,
 			expirationTimestamp: 0,
 			isReplyable: false,
 			reactions: {},

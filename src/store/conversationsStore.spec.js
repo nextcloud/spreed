@@ -12,6 +12,7 @@ import { createStore } from 'vuex'
 import {
 	ATTENDEE,
 	CONVERSATION,
+	MESSAGE,
 	PARTICIPANT,
 	WEBINAR,
 } from '../constants.ts'
@@ -1100,7 +1101,7 @@ describe('conversationsStore', () => {
 			const testLastMessage = {
 				actorType: 'users',
 				actorId: 'admin',
-				systemMessage: 'reaction',
+				systemMessage: MESSAGE.SYSTEM_TYPE.REACTION,
 				id: 42,
 				message: '👍',
 			}
@@ -1122,7 +1123,7 @@ describe('conversationsStore', () => {
 			const testLastMessage = {
 				actorType: 'users',
 				actorId: 'admin',
-				systemMessage: 'reaction_revoked',
+				systemMessage: MESSAGE.SYSTEM_TYPE.REACTION_REVOKED,
 				id: 42,
 				message: 'Admin deleted a reaction',
 			}
@@ -1144,7 +1145,7 @@ describe('conversationsStore', () => {
 			const testLastMessage = {
 				actorType: 'users',
 				actorId: 'admin',
-				systemMessage: 'reaction_deleted',
+				systemMessage: MESSAGE.SYSTEM_TYPE.REACTION_DELETED,
 				id: 42,
 				message: 'Reaction deleted by author',
 			}
@@ -1166,7 +1167,7 @@ describe('conversationsStore', () => {
 			const testLastMessage = {
 				actorType: 'users',
 				actorId: 'admin',
-				systemMessage: 'message_deleted',
+				systemMessage: MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED,
 				id: 42,
 				message: 'Admin deleted a message',
 			}

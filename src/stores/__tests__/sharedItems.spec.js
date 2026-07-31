@@ -6,7 +6,7 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { sharedItemsOrder } from '../../components/RightSidebar/SharedItems/sharedItemsConstants.ts'
-import { SHARED_ITEM } from '../../constants.ts'
+import { MESSAGE, SHARED_ITEM } from '../../constants.ts'
 import { getSharedItems, getSharedItemsOverview } from '../../services/sharedItemsService.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../../test-helpers.js'
 import { useSharedItemsStore } from '../sharedItems.ts'
@@ -281,7 +281,7 @@ describe('sharedItemsStore', () => {
 				id: 3,
 				token,
 				message: 'history cleared',
-				systemMessage: 'history_cleared',
+				systemMessage: MESSAGE.SYSTEM_TYPE.HISTORY_CLEARED,
 			}, {
 				id: 4,
 				token,
