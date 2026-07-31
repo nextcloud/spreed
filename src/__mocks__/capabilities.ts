@@ -4,6 +4,7 @@
  */
 import type { Capabilities } from '../types/index.ts'
 
+import { SIGNALING } from '../constants.ts'
 export const mockedCapabilities: Capabilities = {
 	spreed: {
 		features: [
@@ -203,7 +204,7 @@ export const mockedCapabilities: Capabilities = {
 			signaling: {
 				'session-ping-limit': 200,
 				'hello-v2-token-key': '123',
-				mode: 'internal',
+				mode: SIGNALING.MODE.INTERNAL,
 			},
 			experiments: {
 				enabled: 0,
