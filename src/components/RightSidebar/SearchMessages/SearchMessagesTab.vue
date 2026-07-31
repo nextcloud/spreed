@@ -76,7 +76,7 @@ const participants = computed<IUserData[]>(() => {
 		.map(({ actorId, displayName, actorType }: { actorId: string, displayName: string, actorType: string }) => ({
 			id: actorId,
 			displayName,
-			isNoUser: actorType !== 'users',
+			isNoUser: actorType !== ATTENDEE.ACTOR_TYPE.USERS,
 			user: actorId,
 			disableMenu: true,
 			showUserStatus: false,

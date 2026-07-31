@@ -1186,9 +1186,15 @@ const actions = {
 			let response
 			if (supportConversationCreationAll) {
 				const participantsMap = participants?.reduce((map, participant) => {
-					// FIXME type Record<'users'|'federated_users'|'groups'|'emails'|'phones'|'teams', string[]>
-					const source = participant.source === 'circles' ? 'teams' : participant.source
-					if (!['users', 'federated_users', 'groups', 'emails', 'phones', 'teams'].includes(source)) {
+					const source = participant.source === ATTENDEE.ACTOR_TYPE.CIRCLES ? ATTENDEE.ACTOR_TYPE.TEAMS : participant.source
+					if (![
+						ATTENDEE.ACTOR_TYPE.USERS,
+						ATTENDEE.ACTOR_TYPE.FEDERATED_USERS,
+						ATTENDEE.ACTOR_TYPE.GROUPS,
+						ATTENDEE.ACTOR_TYPE.EMAILS,
+						ATTENDEE.ACTOR_TYPE.PHONES,
+						ATTENDEE.ACTOR_TYPE.TEAMS,
+					].includes(source)) {
 						return map
 					}
 
