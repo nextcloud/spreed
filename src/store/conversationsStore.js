@@ -10,6 +10,7 @@ import {
 	ATTENDEE,
 	CALL,
 	CONVERSATION,
+	MENTION,
 	MESSAGE,
 	PARTICIPANT,
 	WEBINAR,
@@ -893,7 +894,7 @@ const actions = {
 		}
 
 		const actor = notification.subjectRichParameters.user || notification.subjectRichParameters.guest || {
-			type: 'guest',
+			type: MENTION.TYPE.GUEST,
 			id: 'unknown',
 			name: t('spreed', 'Guest'),
 		}
@@ -932,10 +933,10 @@ const actions = {
 			unreadCounterUpdate.unreadMessages++
 			Object.keys(notification.messageRichParameters).forEach(function(p) {
 				const parameter = notification.messageRichParameters[p]
-				if (parameter.type === 'user' && parameter.id === notification.user) {
+				if (parameter.type === MENTION.TYPE.USER && parameter.id === notification.user) {
 					unreadCounterUpdate.unreadMention++
 					unreadCounterUpdate.unreadMentionDirect = true
-				} else if (parameter.type === 'call' && parameter.id === token) {
+				} else if (parameter.type === MENTION.TYPE.CALL && parameter.id === token) {
 					unreadCounterUpdate.unreadMention++
 				}
 			})

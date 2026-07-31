@@ -10,6 +10,7 @@ import {
 	ATTENDEE,
 	CHAT,
 	CONVERSATION,
+	MENTION,
 	MESSAGE,
 	SHARED_ITEM,
 } from '../constants.ts'
@@ -57,15 +58,15 @@ function hasMentionToSelf(context, message) {
 	for (const key in message.messageParameters) {
 		const param = message.messageParameters[key]
 
-		if (param.type === 'call') {
+		if (param.type === MENTION.TYPE.CALL) {
 			return true
 		}
-		if (param.type === 'guest'
+		if (param.type === MENTION.TYPE.GUEST
 			&& actorStore.isActorGuest
 			&& param.id === ('guest/' + actorStore.actorId)) {
 			return true
 		}
-		if (param.type === 'user'
+		if (param.type === MENTION.TYPE.USER
 			&& actorStore.isActorUser
 			&& param.id === actorStore.userId) {
 			return true

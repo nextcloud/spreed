@@ -6,7 +6,7 @@
 import { n, t } from '@nextcloud/l10n'
 import { cloneDeep } from 'es-toolkit/object'
 import { useStore } from 'vuex'
-import { MESSAGE } from '../constants.ts'
+import { MENTION, MESSAGE } from '../constants.ts'
 import { useActorStore } from '../stores/actor.ts'
 
 /**
@@ -64,7 +64,7 @@ export function useCombinedSystemMessage() {
 		// clear messageParameters to be filled later
 		const actor = messages[0].messageParameters.actor
 		combinedMessage.messageParameters = { actor }
-		const actorIsAdministrator = actor.id === 'guest/cli' && actor.type === 'guest'
+		const actorIsAdministrator = actor.id === 'guest/cli' && actor.type === MENTION.TYPE.GUEST
 
 		// usersCounter should be equal at least 2, as we're using method only for groups
 		let usersCounter = 0
