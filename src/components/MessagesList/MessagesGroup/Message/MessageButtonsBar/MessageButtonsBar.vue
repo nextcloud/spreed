@@ -458,7 +458,7 @@ import MessageTranslateDialog from './MessageTranslateDialog.vue'
 import IconFileDownload from '../../../../../../img/material-icons/file-download.svg?raw'
 import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.ts'
-import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../../../constants.ts'
+import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT, SHARED_ITEM } from '../../../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { useActorStore } from '../../../../../stores/actor.ts'
@@ -691,7 +691,7 @@ export default {
 
 		isPollMessage() {
 			return this.message.messageType === MESSAGE.TYPE.COMMENT
-				&& this.message.messageParameters?.object?.type === 'talk-poll'
+				&& this.message.messageParameters?.object?.type === SHARED_ITEM.OBJECT_TYPE.POLL
 		},
 
 		isInNoteToSelf() {

@@ -205,7 +205,7 @@ import PollCard from './PollCard.vue'
 import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { useMessageInfo } from '../../../../../composables/useMessageInfo.ts'
-import { CONVERSATION, MESSAGE } from '../../../../../constants.ts'
+import { CONVERSATION, MESSAGE, SHARED_ITEM } from '../../../../../constants.ts'
 import { hasTalkFeature } from '../../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
@@ -343,7 +343,7 @@ export default {
 		},
 
 		isNewPollMessage() {
-			if (this.message.messageParameters?.object?.type !== 'talk-poll') {
+			if (this.message.messageParameters?.object?.type !== SHARED_ITEM.OBJECT_TYPE.POLL) {
 				return false
 			}
 
@@ -352,7 +352,7 @@ export default {
 
 		isLocationMessageWithName() {
 			return this.message.messageType === MESSAGE.TYPE.COMMENT
-				&& this.message.messageParameters?.object?.type === 'geo-location'
+				&& this.message.messageParameters?.object?.type === SHARED_ITEM.OBJECT_TYPE.LOCATION
 				&& this.message.messageParameters?.object?.name
 		},
 

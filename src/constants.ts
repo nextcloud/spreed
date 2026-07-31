@@ -356,6 +356,11 @@ export const PARTICIPANT = {
 } as const
 
 export const SHARED_ITEM = {
+	OBJECT_TYPE: {
+		DECK_CARD: 'deck-card',
+		LOCATION: 'geo-location',
+		POLL: 'talk-poll',
+	},
 	TYPES: {
 		AUDIO: 'audio',
 		DECK_CARD: 'deckcard',

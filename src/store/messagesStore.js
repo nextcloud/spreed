@@ -697,7 +697,7 @@ const actions = {
 			if (message.messageParameters?.object || message.messageParameters?.file) {
 				// Handle voice messages, shares with single file, polls, deck cards, e.t.c
 				sharedItemsStore.addSharedItemFromMessage(token, message)
-				if (message.messageParameters?.object?.type === 'talk-poll') {
+				if (message.messageParameters?.object?.type === SHARED_ITEM.OBJECT_TYPE.POLL) {
 					EventBus.emit('talk:poll-added', { token, message })
 				}
 			} else if (Object.keys(message.messageParameters).some((key) => key.startsWith('file'))) {
