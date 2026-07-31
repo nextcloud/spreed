@@ -5,7 +5,7 @@
 
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { PRIVACY } from '../../constants.ts'
+import { CONVERSATION, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import {
@@ -51,7 +51,7 @@ describe('settingsStore', () => {
 		settingsStore.showMediaSettings = true
 		settingsStore.startWithoutMedia = false
 		settingsStore.blurVirtualBackgroundEnabled = false
-		settingsStore.conversationsListStyle = 'two-lines'
+		settingsStore.conversationsListStyle = CONVERSATION.LIST_STYLE.TWO_LINES
 		settingsStore.attachmentFolder = '/Talk'
 	})
 
