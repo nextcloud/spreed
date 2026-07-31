@@ -362,6 +362,7 @@ export default {
 		showBreakoutRoomsTab() {
 			return this.getUserId && !this.isOneToOne
 				&& !this.conversation.remoteServer // no breakout rooms support in federated conversations
+				&& !isChannelConversation(this.conversation)
 				&& (this.breakoutRoomsConfigured || this.conversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.FREE || this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 		},
 

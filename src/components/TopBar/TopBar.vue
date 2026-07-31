@@ -186,7 +186,7 @@ import { useActorStore } from '../../stores/actor.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
-import { isClassifiedConversation } from '../../utils/conversation.ts'
+import { isChannelConversation, isClassifiedConversation } from '../../utils/conversation.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
 
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
@@ -333,6 +333,7 @@ export default {
 			return this.getUserId && !this.isInCall && !this.isSidebar
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 				&& this.conversation.type !== CONVERSATION.TYPE.CHANGELOG
+				&& !isChannelConversation(this.conversation)
 		},
 
 		getUserId() {

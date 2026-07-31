@@ -175,7 +175,7 @@ import {
 	hasTalkFeature,
 	showTalkFeatureHint,
 } from '../../services/CapabilitiesManager.ts'
-import { isClassifiedConversation } from '../../utils/conversation.ts'
+import { isChannelConversation, isClassifiedConversation } from '../../utils/conversation.ts'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 
@@ -280,7 +280,9 @@ export default {
 		},
 
 		canConfigureBreakoutRooms() {
-			if (this.conversation.type !== CONVERSATION.TYPE.GROUP || !this.canFullModerate || this.isClassified) {
+			if (this.conversation.type !== CONVERSATION.TYPE.GROUP || !this.canFullModerate
+				|| this.isClassified
+				|| isChannelConversation(this.conversation)) {
 				return false
 			}
 
