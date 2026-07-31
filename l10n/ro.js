@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Conversație privată",
     "a conversation" : "o conversație",
     "(Duration %s)" : "(Durata %s)",
     "You attended a call with {user1}" : "Ați participat la un apel cu {user1}",
@@ -142,7 +143,6 @@ OC.L10N.register(
     "Meeting ID" : "ID întâlnire",
     "Meeting" : "Videoconferință",
     "Password request: %s" : "Solicitare parolă: %s",
-    "Private conversation" : "Conversație privată",
     "Deleted user (%s)" : "Utilizator (%s) șters",
     "Share to chat" : "Partajați în chat",
     "Dismiss notification" : "Elimină notificarea",

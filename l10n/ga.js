@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Comhrá príobháideach",
     "a conversation" : "comhrá",
     "(Duration %s)" : "(Ré %s)",
     "You attended a call with {user1}" : "D'fhreastail tú ar ghlao le {user1}",
@@ -356,7 +357,6 @@ OC.L10N.register(
     "Join \"%s\"" : "Glac páirt i \"%s\"",
     "Meeting" : "Cruinniú",
     "Password request: %s" : "Iarratas pasfhocail: %s",
-    "Private conversation" : "Comhrá príobháideach",
     "Deleted user (%s)" : "Úsáideoir scriosta (%s)",
     "Failed to upload call recording" : "Theip ar thaifeadadh glaonna a uaslódáil",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Theip ar an bhfreastalaí taifeadta taifeadadh an ghlao {call} a uaslódáil. Déan teagmháil leis an riarachán le do thoil.",
@@ -475,6 +475,8 @@ OC.L10N.register(
     "Contact via Talk" : "Déan teagmháil trí Talk",
     "Open Talk" : "Caint Oscailte",
     "Call via Talk" : "Glaoigh trí Chomhrá",
+    "Announcement" : "Fógra",
+    "Channel" : "Cainéal",
     "Default" : "Réamhshocrú",
     "Send messages, create threads, and start voice and video calls." : "Seol teachtaireachtaí, cruthaigh snáitheanna, agus cuir tús le glaonna gutha agus físe.",
     "Presentation" : "Cur i láthair",
@@ -2051,7 +2053,6 @@ OC.L10N.register(
     "Slack channel" : "Cainéal caol",
     "Server ID or name" : "Aitheantas nó ainm an fhreastalaí",
     "Channel ID (prefixed with \"ID:\") or name" : "Aitheantas an chainéil (le \"ID:\") nó ainm",
-    "Channel" : "Cainéal",
     "Login" : "Logáil isteach",
     "Chat ID" : "ID comhrá",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "URL an fhreastalaí IRC (m.sh. chat.freenode.net: 6667)",

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Privaatne vestlus",
     "a conversation" : "vestlus",
     "(Duration %s)" : "(kestus %s)",
     "You attended a call with {user1}" : "Sa osalesid kõnes kasutajaga {user1}",
@@ -356,7 +357,6 @@ OC.L10N.register(
     "Join \"%s\"" : "Liitu: „%s“",
     "Meeting" : "Kohtumine",
     "Password request: %s" : "Salasõnapäring: %s",
-    "Private conversation" : "Privaatne vestlus",
     "Deleted user (%s)" : "Kustutatud kasutaja (%s)",
     "Failed to upload call recording" : "Ei õnnestu üles laadida kõnesalvestust",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Serveril ei õnnestunud üles laadida „{call}“ kõne salvestust. Palun küsi abi peakasutajalt.",
@@ -475,6 +475,8 @@ OC.L10N.register(
     "Contact via Talk" : "Suhtle Kõnerakenduses",
     "Open Talk" : "Ava kõnerakendus",
     "Call via Talk" : "Helista kõnerakendusega",
+    "Announcement" : "Teadaanne",
+    "Channel" : "Kanal",
     "Default" : "Vaikeväärtus",
     "Send messages, create threads, and start voice and video calls." : "Saada sõnumeid, koosta jutulõngu ja helista tava- või videokõnena.",
     "Presentation" : "Esitlus",
@@ -2053,7 +2055,6 @@ OC.L10N.register(
     "Slack channel" : "Slacki kanal",
     "Server ID or name" : "Serveri tunnus või nimi",
     "Channel ID (prefixed with \"ID:\") or name" : "Kanali tunnus/ID (eesliiteks „ID:“) või nimi",
-    "Channel" : "Kanal",
     "Login" : "Kasutajanimi",
     "Chat ID" : "Vestluse tunnus",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC serveri võrguaadress (nt. chat.freenode.net:6667)",

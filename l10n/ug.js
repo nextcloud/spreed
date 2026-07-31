@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "شەخسىي سۆھبەت",
     "a conversation" : "سۆھبەت",
     "(Duration %s)" : "(ئۇزۇنلۇقى %s)",
     "You attended a call with {user1}" : "سىز {user1} بىلەن تېلېفونغا قاتناشتىڭىز",
@@ -335,7 +336,6 @@ OC.L10N.register(
     "Join \"%s\"" : "\"%s\" غا كىر",
     "Meeting" : "يىغىن",
     "Password request: %s" : "پارول تەلىپى:%s",
-    "Private conversation" : "شەخسىي سۆھبەت",
     "Deleted user (%s)" : "ئۆچۈرۈلگەن ئىشلەتكۈچى (%s)",
     "Failed to upload call recording" : "چاقىرىش خاتىرىسىنى يۈكلىيەلمىدى",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "خاتىرىلەش مۇلازىمىتىرى چاقىرىش {call} خاتىرىسىنى يۈكلىيەلمىدى. مەمۇرىي ئورگان بىلەن ئالاقىلىشىڭ.",
@@ -453,6 +453,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "{host} گۇۋاھنامىسى توشتى",
     "Contact via Talk" : "سۆھبەت ئارقىلىق ئالاقىلىشىڭ",
     "Open Talk" : "ئوچۇق سۆھبەت",
+    "Channel" : "قانال",
     "Default" : "كۆڭۈلدىكى",
     "Presentation" : "لېكسىيە",
     "Webinar" : "تور سۆھبىتى",
@@ -1918,7 +1919,6 @@ OC.L10N.register(
     "Slack channel" : "Slack قانىلى",
     "Server ID or name" : "مۇلازىمېتىر كىملىكى ياكى ئىسمى",
     "Channel ID (prefixed with \"ID:\") or name" : "قانال ID (\"ID\" بىلەن باشلىندۇ) ياكى ئىسىم",
-    "Channel" : "قانال",
     "Login" : "كىرىش",
     "Chat ID" : "پاراڭ كىملىكى",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC مۇلازىمېتىر ئادرېسى (مەسىلەن chat.freenode.net:6667)",

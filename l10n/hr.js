@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Privatni razgovor",
     "a conversation" : "razgovor",
     "(Duration %s)" : "(Trajanje %s)",
     "You attended a call with {user1}" : "Sudjelovali ste u pozivu s {user1}",
@@ -337,7 +338,6 @@ OC.L10N.register(
     "Join \"%s\"" : "Pridružite se \"%s\"",
     "Meeting" : "Sastanak",
     "Password request: %s" : "Zaporka: %s",
-    "Private conversation" : "Privatni razgovor",
     "Deleted user (%s)" : "Izbrisan korisnik (%s)",
     "Failed to upload call recording" : "Prijenos snimke poziva nije uspio",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Poslužitelj za snimanje nije uspio prenijeti snimku poziva {call}. Obratite se administratoru.",
@@ -455,6 +455,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "Certifikat za {host} je istekao",
     "Contact via Talk" : "Kontaktirajte putem aplikacije Talk",
     "Open Talk" : "Otvori Talk",
+    "Channel" : "Kanal",
     "Default" : "Zadano",
     "Presentation" : "Prezentacija",
     "Voice room" : "Glasovna soba",
@@ -1988,7 +1989,6 @@ OC.L10N.register(
     "Slack channel" : "Slack kanal",
     "Server ID or name" : "ID ili naziv poslužitelja",
     "Channel ID (prefixed with \"ID:\") or name" : "ID kanala (s prefiksom \"ID:\") ili naziv",
-    "Channel" : "Kanal",
     "Login" : "Prijava",
     "Chat ID" : "ID alata za razmjenu poruka",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "URL IRC poslužitelja (npr. chat.freenode.net:6667)",

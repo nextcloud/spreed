@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Privāta saruna",
     "a conversation" : "saruna",
     "(Duration %s)" : "(Ilgums %s)",
     "You attended a call with {user1}" : "Tu piedalījies zvanā ar {user1}",
@@ -82,7 +83,6 @@ OC.L10N.register(
     "Description" : "Apraksts",
     "Meeting" : "Tikšanās",
     "Password request: %s" : "Paroles pieprasījums: %s",
-    "Private conversation" : "Privāta saruna",
     "Dismiss notification" : "Noraidīt paziņojumu",
     "Accept" : "Pieņemt",
     "Decline" : "Noraidīt",

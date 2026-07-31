@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "비공개 대화",
     "a conversation" : "대화",
     "(Duration %s)" : "(시간 %s)",
     "You attended a call with {user1}" : "{user1} 님과의 통화에 참가함",
@@ -264,7 +265,6 @@ OC.L10N.register(
     "Your PIN" : "당신의 PIN",
     "Meeting" : "회의",
     "Password request: %s" : "암호 요구사항: %s",
-    "Private conversation" : "비공개 대화",
     "Deleted user (%s)" : "삭제된 사용자 (%s)",
     "Failed to upload call recording" : "통화 녹음/녹화를 업로드하지 못했습니다.",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "녹음/녹화 서버가 {call} 통화의 녹음/녹화를 업로드하지 못했습니다. 관리자에게 연락해 주세요.",
@@ -362,6 +362,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "{host}의 인증서가 만료되었습니다.",
     "Contact via Talk" : "토크로 연락",
     "Open Talk" : "토크 열기",
+    "Channel" : "채널",
     "Default" : "기본값",
     "Presentation" : "프레젠테이션",
     "Webinar" : "웨비나",
@@ -1464,7 +1465,6 @@ OC.L10N.register(
     "API token" : "API 토큰",
     "Slack channel" : "Slack 채널",
     "Server ID or name" : "서버 아이디 또는 이름",
-    "Channel" : "채널",
     "Login" : "로그인",
     "Chat ID" : "채팅 아이디",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC 서버 URL (e.g. chat.freenode.net:6667)",

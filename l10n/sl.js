@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Zasebni pogovor",
     "a conversation" : "pogovor",
     "(Duration %s)" : "(Trajanje %s)",
     "You attended a call with {user1}" : "Opravite klic: {user1}",
@@ -278,7 +279,6 @@ OC.L10N.register(
     "Your PIN" : "Koda PIN",
     "Meeting" : "Srečanje",
     "Password request: %s" : "Geslo: %s",
-    "Private conversation" : "Zasebni pogovor",
     "Deleted user (%s)" : "Izbrisan uporabnik (%s)",
     "Failed to upload call recording" : "Pošiljanje posnetka pogovora je spodletelo",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Pošiljanje posnetka s strežnika za snemanje je spodletelo za klic {call}. Stopite v stik s skrbnikom sistema.",
@@ -349,6 +349,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "Potrdilo gostitelja {host} je poteklo",
     "Contact via Talk" : "Stopi v stik s Talk",
     "Open Talk" : "Odpri Talk",
+    "Channel" : "Kanal",
     "Default" : "Privzeta",
     "Presentation" : "Predstavitev",
     "Webinar" : "Webinar",
@@ -1488,7 +1489,6 @@ OC.L10N.register(
     "API token" : "Žeton vmesnika API",
     "Slack channel" : "Kanal Slack",
     "Server ID or name" : "Določilo ID strežnika ali ime",
-    "Channel" : "Kanal",
     "Login" : "Prijava",
     "Chat ID" : "Določilo ID klepeta",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "Naslov URL strežnika IRC (npr. chat.freenode.net:6667)",
