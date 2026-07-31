@@ -68,8 +68,9 @@ jobs:
           - 'sharing-2'
           - 'sharing-3'
           - 'sharing-4'
+
         php-versions: ['8.5']
-        server-versions: ['master']
+        server-versions: ['perf/base/basic-auth-fs-setup']
         guests-versions: ['main']
         circles-versions: ['master']
         notifications-versions: ['master']
