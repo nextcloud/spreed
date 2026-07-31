@@ -37,7 +37,7 @@ class ConfigLexicon implements ILexicon {
 			new Entry(Config::FEDERATION_OUTGOING_ENABLED, ValueType::BOOL, true, definition: 'Whether users of this instance can invite federated users into conversations'),
 			new Entry(Config::FEDERATION_ONLY_TRUSTED_SERVERS, ValueType::BOOL, false, definition: 'Whether federation should be limited to the list of "Trusted servers"'),
 			new Entry(Config::BREAKOUT_ROOMS_ENABLED, ValueType::BOOL, true, definition: 'Whether or not breakout rooms are allowed (Will only prevent creating new breakout rooms. Existing conversations are not modified.'),
-			new Entry(Config::CONVERSATION_SUBFOLDERS, ValueType::BOOL, true, definition: 'Whether users of this instance can invite federated users into conversations'),
+			new Entry(Config::CONVERSATION_SUBFOLDERS, ValueType::BOOL, true, definition: ''),
 			new Entry(Config::DEFAULT_ROOM_PERMISSIONS, ValueType::INT, 246, definition: 'Default permissions for non-moderators (see [constants list](constants.md#attendee-permissions) for bit flags)'),
 			new Entry(Config::DEFAULT_ATTACHMENT_FOLDER, ValueType::STRING, '/Talk', definition: 'Specify default attachment folder location'),
 			new Entry(Config::GRID_VIDEOS_LIMIT, ValueType::INT, 19 /* 5*4 - self */, definition: 'Maximum number of videos to show (additional to the own video)'),
