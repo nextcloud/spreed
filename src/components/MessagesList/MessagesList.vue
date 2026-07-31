@@ -125,7 +125,7 @@ import { EventBus } from '../../services/EventBus.ts'
 import { useChatStore } from '../../stores/chat.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
-import { isClassifiedConversation } from '../../utils/conversation.ts'
+import { isChannelConversation, isClassifiedConversation } from '../../utils/conversation.ts'
 import { convertToUnix } from '../../utils/formattedTime.ts'
 
 const SCROLL_TOLERANCE = 10
@@ -230,6 +230,8 @@ export default {
 			 */
 			messagesGroupedByDateByAuthor: {},
 
+			hasVisibleMessages: false,
+
 			/**
 			 * We store this value in order to determine whether the user has scrolled up
 			 * or down at each iteration of the debounceHandleScroll method.
@@ -281,7 +283,7 @@ export default {
 		},
 
 		showEmptyContent() {
-			return !this.messagesList.length
+			return !this.hasVisibleMessages
 		},
 
 		/**
@@ -299,6 +301,10 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.token)
+		},
+
+		isChannel() {
+			return isChannelConversation(this.conversation)
 		},
 
 		showScheduledMessages() {
@@ -359,6 +365,7 @@ export default {
 			immediate: true,
 			handler(newMessages, oldMessages) {
 				const newGroups = this.prepareMessagesGroups(newMessages)
+				this.hasVisibleMessages = Object.keys(newGroups).length > 0
 				if (!oldMessages || (oldMessages?.length && newMessages.length && newMessages[0].token !== oldMessages?.at(0)?.token)
 					|| this.showScheduledMessages) {
 					// messages were just loaded or token has changed, reset the messages
@@ -462,6 +469,10 @@ export default {
 			let groupId = null
 			let dateTimestamp = null
 			for (const message of messages) {
+				if (this.isChannel && message.systemMessage !== '') {
+					continue
+				}
+
 				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
 					groupId = message.id
 					if (message.timestamp === 0) {

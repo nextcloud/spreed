@@ -23,7 +23,7 @@ import { watchJoinedConversation } from '../composables/useJoinedConversation.ts
 import { CALL, CONVERSATION } from '../constants.ts'
 import { useActorStore } from '../stores/actor.ts'
 import { useSettingsStore } from '../stores/settings.ts'
-import { hasExternalCallService, isConversationPhoneRoom } from '../utils/conversation.ts'
+import { hasExternalCallService, isChannelConversation, isConversationPhoneRoom } from '../utils/conversation.ts'
 
 const props = defineProps<{
 	token: string
@@ -102,7 +102,8 @@ function handleDirectCall(routeToken: string) {
 	stopWatchingJoinedConversation()
 
 	const conversation = store.getters.conversation(routeToken)
-	if ([CONVERSATION.TYPE.CHANGELOG, CONVERSATION.TYPE.NOTE_TO_SELF].includes(conversation.type)) {
+	if ([CONVERSATION.TYPE.CHANGELOG, CONVERSATION.TYPE.NOTE_TO_SELF].includes(conversation.type)
+		|| isChannelConversation(conversation)) {
 		// Do not allow calls in these conversations
 		return
 	}

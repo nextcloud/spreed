@@ -170,7 +170,7 @@
 			</NcActionButton>
 			<template v-if="canBeModerated && isPhoneActor">
 				<NcActionButton
-					v-if="!conversation.hasCall && !isInCall && !participant.callId"
+					v-if="!conversation.hasCall && !isInCall && !participant.callId && !isChannel"
 					key="dial-out-phone-number"
 					closeAfterClick
 					@click="dialOutPhoneNumber">
@@ -386,6 +386,7 @@ import {
 import { hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useParticipantActivityStore } from '../../../stores/participantActivity.ts'
+import { isChannelConversation } from '../../../utils/conversation.ts'
 import { formattedTime } from '../../../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
 import { readableNumber } from '../../../utils/readableNumber.ts'
@@ -647,6 +648,10 @@ export default {
 			return this.$store.getters.conversation(this.token) || {
 				type: CONVERSATION.TYPE.GROUP,
 			}
+		},
+
+		isChannel() {
+			return isChannelConversation(this.conversation)
 		},
 
 		isBridgeBotUser() {
