@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Хувийн яриа",
     "a conversation" : "яриа",
     "(Duration %s)" : "(Үргэлжлэх хугацаа %s)",
     "You attended a call with {user1}" : "Та {user1}-тай дуудлагад оролцлоо",
@@ -335,7 +336,6 @@ OC.L10N.register(
     "Join \"%s\"" : "\"%s\" нэгдэх",
     "Meeting" : "Уулзалт",
     "Password request: %s" : "Нууц үг хүсэлт: %s",
-    "Private conversation" : "Хувийн яриа",
     "Deleted user (%s)" : "Устгагдсан хэрэглэгч (%s)",
     "Failed to upload call recording" : "Дуудлагын бичлэг байршуулах амжилтгүй болсон",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Бичлэгийн сервер {call} дуудлагын бичлэгийг байршуулж чадсангүй. Администрацитай холбогдоно уу.",
@@ -453,6 +453,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "{host}-ийн сертификат дууссан",
     "Contact via Talk" : "Talk-аар холбогдох",
     "Open Talk" : "Talk нээх",
+    "Channel" : "–°—É–≤–∞–≥",
     "Default" : "Өгөгдмөл",
     "Presentation" : "Танилцуулга",
     "Webinar" : "Вебинар",
@@ -1917,7 +1918,6 @@ OC.L10N.register(
     "Slack channel" : "Slack суваг",
     "Server ID or name" : "Серверийн ID эсвэл нэр",
     "Channel ID (prefixed with \"ID:\") or name" : "Сувгийн ID (\"ID:\" угтвартай) эсвэл нэр",
-    "Channel" : "–°—É–≤–∞–≥",
     "Login" : "–ù—ç–≤—Ç—Ä—ç—Ö",
     "Chat ID" : "Чат ID",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC серверийн URL (жнь. chat.freenode.net:6667)",

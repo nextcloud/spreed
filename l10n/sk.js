@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Súkromná konverzácia",
     "a conversation" : "konverzácia",
     "(Duration %s)" : "(Trvanie %s)",
     "You attended a call with {user1}" : "Zúčastnili ste sa hovoru s {user1}",
@@ -356,7 +357,6 @@ OC.L10N.register(
     "Join \"%s\"" : "Pripojiť sa k \"%s\"",
     "Meeting" : "Porada",
     "Password request: %s" : "Požiadavka na heslo: %s",
-    "Private conversation" : "Súkromná konverzácia",
     "Deleted user (%s)" : "Odstránený používateľ (%s)",
     "Failed to upload call recording" : "Chyba pri nahrávaní záznamu hovoru",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Záznamový server zlyhal pri nahrávaní nahrávky hovoru {call}. Prosím, obráťte sa na administráciu.",
@@ -475,6 +475,7 @@ OC.L10N.register(
     "Contact via Talk" : "Kontaktovať cez Talk /Rozhovor/",
     "Open Talk" : "Otvoriť Talk",
     "Call via Talk" : "Hovor cez Talk",
+    "Channel" : "Kanál",
     "Default" : "Predvolené",
     "Send messages, create threads, and start voice and video calls." : "Odosielajte správy, vytvárajte vlákna a začnite hlasové a videohovory.",
     "Presentation" : "Prezentácia",
@@ -2045,7 +2046,6 @@ OC.L10N.register(
     "Slack channel" : "Slack kanál",
     "Server ID or name" : "Identifikátor alebo názov servera",
     "Channel ID (prefixed with \"ID:\") or name" : "ID kanála (s predponou \"ID:\") alebo názov",
-    "Channel" : "Kanál",
     "Login" : "Prihlásiť sa",
     "Chat ID" : "Identifikátor četu",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "URL IRC servera (napr. chat.freenode.net:6667)",

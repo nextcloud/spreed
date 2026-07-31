@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Conversacion privada",
     "a conversation" : "una conversacion",
     "(Duration %s)" : "(Durada %s)",
     "You attended a call with {user1}" : "Avètz assistit a una sonada amb {user1}",
@@ -176,7 +177,6 @@ OC.L10N.register(
     "Your PIN" : "Vòstre còdi",
     "Meeting" : "Reünion",
     "Password request: %s" : "Senhal requerit : %s",
-    "Private conversation" : "Conversacion privada",
     "Deleted user (%s)" : "Utilizaire suprimit (%s)",
     "Dismiss notification" : "Ignorar la notificacion",
     "Call recording now available" : "L'enregistrament de sonada es ara disponible",
@@ -233,6 +233,7 @@ OC.L10N.register(
     "error" : "error",
     "Contact via Talk" : "Contactar via Talk",
     "Open Talk" : "Dobrir la conversacion",
+    "Channel" : "Cadena",
     "Default" : "Defaut",
     "Presentation" : "Presentacion",
     "Conversations" : "Discussions",
@@ -1004,7 +1005,6 @@ OC.L10N.register(
     "API token" : "Geton API",
     "Slack channel" : "Canal Slack",
     "Server ID or name" : "ID o nom del servidor",
-    "Channel" : "Cadena",
     "Login" : "Login",
     "Chat ID" : "ID del chat",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "URL servidor IRC (per exemple chat.freenode.net:6667)",

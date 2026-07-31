@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Private conversation",
     "a conversation" : "a conversation",
     "(Duration %s)" : "(Duration %s)",
     "You attended a call with {user1}" : "You attended a call with {user1}",
@@ -255,7 +256,6 @@ OC.L10N.register(
     "Your PIN" : "Your PIN",
     "Meeting" : "Meeting",
     "Password request: %s" : "Password request: %s",
-    "Private conversation" : "Private conversation",
     "Deleted user (%s)" : "Deleted user (%s)",
     "Failed to upload call recording" : "Failed to upload call recording",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "The recording server failed to upload recording of call {call}. Please reach out to the administration.",
@@ -353,6 +353,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "The certificate of {host} expired",
     "Contact via Talk" : "Contact via Talk",
     "Open Talk" : "Open Talk",
+    "Channel" : "Channel",
     "Default" : "Default",
     "Presentation" : "Presentation",
     "Conversations" : "Conversations",
@@ -1450,7 +1451,6 @@ OC.L10N.register(
     "API token" : "API token",
     "Slack channel" : "Slack channel",
     "Server ID or name" : "Server ID or name",
-    "Channel" : "Channel",
     "Login" : "Login",
     "Chat ID" : "Chat ID",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC server URL (e.g. chat.freenode.net:6667)",

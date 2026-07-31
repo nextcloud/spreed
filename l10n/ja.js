@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "プライベート会話",
     "a conversation" : "会話",
     "(Duration %s)" : "(時間 %s )",
     "You attended a call with {user1}" : "{user1} さんとの通話に参加しました",
@@ -289,7 +290,6 @@ OC.L10N.register(
     "Your PIN" : "あなたのPIN",
     "Meeting" : "会議",
     "Password request: %s" : "パスワードのリクエスト :%s",
-    "Private conversation" : "プライベート会話",
     "Deleted user (%s)" : "削除済みユーザー(%s)",
     "Failed to upload call recording" : "通話録音のアップロードに失敗しました",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "レコーディングサーバーは、通話 {call} の録音のアップロードに失敗しました。管理者に連絡してください。",
@@ -391,6 +391,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "{host} の証明書が期限切れです",
     "Contact via Talk" : "Talk経由で連絡",
     "Open Talk" : "公開トーク",
+    "Channel" : "チャンネル",
     "Default" : "デフォルト",
     "Presentation" : "プレゼンテーション",
     "Conversations" : "会話",
@@ -1648,7 +1649,6 @@ OC.L10N.register(
     "API token" : "APIトークン",
     "Slack channel" : "Slackチャンネル",
     "Server ID or name" : "サーバーIDまたは名前",
-    "Channel" : "チャンネル",
     "Login" : "ログイン",
     "Chat ID" : "チャットID",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC サーバーURL (e.g. chat.freenode.net:6667)",

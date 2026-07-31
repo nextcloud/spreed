@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Özel görüşme",
     "a conversation" : "bir görüşme",
     "(Duration %s)" : "(Süre %s)",
     "You attended a call with {user1}" : "{user1} ile bir çağrıya katıldınız",
@@ -348,7 +349,6 @@ OC.L10N.register(
     "Join \"%s\"" : "\"%s\" görüşmesine katıl",
     "Meeting" : "Toplantı",
     "Password request: %s" : "Parola isteği: %s",
-    "Private conversation" : "Özel görüşme",
     "Deleted user (%s)" : "Silinmiş kullanıcı (%s)",
     "Failed to upload call recording" : "Çağrı kaydı yüklenemedi",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Kayıt sunucusu {call} çağrısının kaydını yüklemedi. Lütfen yönetim ile görüşün.",
@@ -467,6 +467,7 @@ OC.L10N.register(
     "Contact via Talk" : "Konuş ile görüşün",
     "Open Talk" : "Konuş uygulamasını aç",
     "Call via Talk" : "Konuş ile çağrı gönder",
+    "Channel" : "Kanal",
     "Default" : "Varsayılan",
     "Send messages, create threads, and start voice and video calls." : "İletiler gönderin, konular oluşturun ve sesli veya görüntülü görüşmeler yapın.",
     "Presentation" : "Sunum",
@@ -2025,7 +2026,6 @@ OC.L10N.register(
     "Slack channel" : "Slack kanalı",
     "Server ID or name" : "Sunucu kimliği ya da adı",
     "Channel ID (prefixed with \"ID:\") or name" : "Kanal kimliği (\"ID:\"  ön ekiyle) ya da ad",
-    "Channel" : "Kanal",
     "Login" : "Oturum aç",
     "Chat ID" : "Sohbet kimliği",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC sunucusunun adresi (örnek: chat.freenode.net:6667)",

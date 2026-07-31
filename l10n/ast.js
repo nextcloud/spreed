@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Conversación privada",
     "a conversation" : "un conversación",
     "(Duration %s)" : "(Duración %s)",
     "You attended a call with {user1}" : "Atendiesti una llamada con «{user1}»",
@@ -196,7 +197,6 @@ OC.L10N.register(
     "You were mentioned" : "Mentáronte",
     "Write to conversation" : "Escribi na conversación",
     "Description" : "Descripción",
-    "Private conversation" : "Conversación privada",
     "Failed to upload call recording" : "Nun se pue xubir la grabación de la llamada",
     "Dismiss notification" : "Escargar l'avisu",
     "Transcript now available" : "La trescripción ta disponible",
@@ -224,6 +224,7 @@ OC.L10N.register(
     "Open settings" : "Abrir la configuración",
     "pending" : "pendiente",
     "error" : "error",
+    "Channel" : "Canal",
     "Default" : "Por defeutu",
     "Presentation" : "Presentación",
     "Webinar" : "Webinariu",
@@ -884,7 +885,6 @@ OC.L10N.register(
     "API token" : "Pase de l'API",
     "Slack channel" : "Canal de Slack",
     "Server ID or name" : "ID o nome del sirvidor",
-    "Channel" : "Canal",
     "Login" : "Aniciar la sesión",
     "Chat ID" : "ID de la charra",
     "Nickname" : "Nomatu",

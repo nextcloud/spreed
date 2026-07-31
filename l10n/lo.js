@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Private conversation",
     "a conversation" : "a conversation",
     "(Duration %s)" : "(Duration %s)",
     "You attended a call with {user1}" : "You attended a call with {user1}",
@@ -335,7 +336,6 @@ OC.L10N.register(
     "Join \"%s\"" : "Join \"%s\"",
     "Meeting" : "Meeting",
     "Password request: %s" : "Password request: %s",
-    "Private conversation" : "Private conversation",
     "Deleted user (%s)" : "Deleted user (%s)",
     "Failed to upload call recording" : "Failed to upload call recording",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "The recording server failed to upload recording of call {call}. Please reach out to the administration.",
@@ -453,6 +453,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "The certificate of {host} expired",
     "Contact via Talk" : "Contact via Talk",
     "Open Talk" : "Open Talk",
+    "Channel" : "Channel",
     "Default" : "ເລີ່ມຕົ້ນ",
     "Presentation" : "ງານນຳສະເໜີ",
     "Webinar" : "Webinar",
@@ -1904,7 +1905,6 @@ OC.L10N.register(
     "Slack channel" : "Slack channel",
     "Server ID or name" : "Server ID or name",
     "Channel ID (prefixed with \"ID:\") or name" : "Channel ID (prefixed with \"ID:\") or name",
-    "Channel" : "Channel",
     "Login" : "ເຂົ້າສູ່ລະບົບ",
     "Chat ID" : "Chat ID",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC server URL (e.g. chat.freenode.net:6667)",

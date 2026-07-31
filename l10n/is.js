@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Einkasamtal",
     "a conversation" : "samtal",
     "(Duration %s)" : "(tímalengd %s)",
     "You attended a call with {user1}" : "Þú varst í símtali við {user1}",
@@ -74,7 +75,6 @@ OC.L10N.register(
     "Description" : "Lýsing",
     "Meeting" : "Fundur",
     "Password request: %s" : "Beiðni um lykilorð: %s",
-    "Private conversation" : "Einkasamtal",
     "Deleted user (%s)" : "Eyddi notanda (%s)",
     "Dismiss notification" : "Afgreiða tilkynningu",
     "Accept" : "Samþykkja",

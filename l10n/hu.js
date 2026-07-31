@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Privát beszélgetés",
     "a conversation" : "egy beszélgetés",
     "(Duration %s)" : "(Időtartam: %s)",
     "You attended a call with {user1}" : "Részt vett egy hívásban vele: {user1}",
@@ -337,7 +338,6 @@ OC.L10N.register(
     "Join \"%s\"" : "Csatlakozás ehhez: „%s”",
     "Meeting" : "Találkozó",
     "Password request: %s" : "Jelszókérés: %s",
-    "Private conversation" : "Privát beszélgetés",
     "Deleted user (%s)" : "Törölt felhasználó (%s)",
     "Failed to upload call recording" : "A hívásfelvétel feltöltése sikertelen",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "A felvételi kiszolgáló nem tudta feltölteni a következő hívást: {call}. Vegye fel a kapcsolatot a rendszergazdákkal.",
@@ -455,6 +455,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "A(z) {host} tanúsítványa lejárt",
     "Contact via Talk" : "Beszélgetés",
     "Open Talk" : "Beszélgetés megnyitása",
+    "Channel" : "Csatorna",
     "Default" : "Alapértelmezett",
     "Presentation" : "Bemutató",
     "Voice room" : "Hangos szoba",
@@ -1990,7 +1991,6 @@ OC.L10N.register(
     "Slack channel" : "Slack csatorna",
     "Server ID or name" : "Kiszolgálóazonosító vagy név",
     "Channel ID (prefixed with \"ID:\") or name" : "Csatornaazonosító („ID:” előtaggal) vagy név",
-    "Channel" : "Csatorna",
     "Login" : "Bejelentkezés",
     "Chat ID" : "Csevegésazonosító",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC-kiszolgáló webcíme (pl. chat.freenode.net:6667)",
