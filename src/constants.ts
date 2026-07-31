@@ -452,6 +452,7 @@ export const SIMULCAST = {
 
 export const VIRTUAL_BACKGROUND = {
 	BACKGROUND_TYPE: {
+		NONE: 'none',
 		BLUR: 'blur',
 		IMAGE: 'image',
 		VIDEO: 'video',
