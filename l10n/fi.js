@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Yksityinen keskustelu",
     "a conversation" : "keskustelu",
     "(Duration %s)" : "(Kesto %s)",
     "You attended a call with {user1}" : "Osallistuit puheluun käyttäjän {user1} kanssa",
@@ -204,7 +205,6 @@ OC.L10N.register(
     "Your PIN" : "PIN-koodisi",
     "Meeting" : "Kokous",
     "Password request: %s" : "Salasanapyyntö: %s",
-    "Private conversation" : "Yksityinen keskustelu",
     "Deleted user (%s)" : "Poistettiin käyttäjä (%s)",
     "Share to chat" : "Jaa keskusteluun",
     "Dismiss notification" : "Hylkää ilmoitus",
@@ -257,6 +257,7 @@ OC.L10N.register(
     "The certificate of {host} expires in {days} days" : "Palvelimen {host} varmenne vanhenee {days} päivän kuluttua",
     "The certificate of {host} expired" : "Palvelimen {host} varmenne vanheni",
     "Open Talk" : "Avaa Talk",
+    "Channel" : "Kanava",
     "Default" : "Oletus",
     "Presentation" : "Esitys",
     "Conversations" : "Keskustelut",
@@ -1229,7 +1230,6 @@ OC.L10N.register(
     "Bot API key" : "Botin rajapinta-avain",
     "API token" : "API-poletti",
     "Slack channel" : "Slack-kanava",
-    "Channel" : "Kanava",
     "Login" : "Kirjaudu",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC-palvelimen URL-osoite (e.g. chat.freenode.net:6667)",
     "Nickname" : "Nimimerkki",

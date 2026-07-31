@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "محادثة خاصة",
     "a conversation" : "محادثة",
     "(Duration %s)" : "(المدة الزمنية %s)",
     "You attended a call with {user1}" : "لقد حضرت مكالمة مع {user1}",
@@ -311,7 +312,6 @@ OC.L10N.register(
     "Your PIN" : "رقمك السري",
     "Meeting" : "اجتماع",
     "Password request: %s" : "طلب كلمة المرور: %s",
-    "Private conversation" : "محادثة خاصة",
     "Deleted user (%s)" : "تم حذف العضو (%s)",
     "Failed to upload call recording" : "تعذّر رفع تسجيل المكالمة",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "خادم التسجل فشل في رفع تسجيل المكالمة  {call}. يرجى التواصل مع مسؤول النظام.",
@@ -419,6 +419,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "انتهت صلاحية شهادة {host}",
     "Contact via Talk" : "تواصل عبر تطبيق المحادثة",
     "Open Talk" : "تطبيق مؤتمرات الفيديو OpenTalk ",
+    "Channel" : "قناة",
     "Default" : "افتراضي",
     "Presentation" : "عرض تقديمي",
     "Webinar" : "نقاش عبر الويب - ويب نير",
@@ -1763,7 +1764,6 @@ OC.L10N.register(
     "Slack channel" : "قناة سلاك Slack",
     "Server ID or name" : "معرف الخادم السحابي او الاسم",
     "Channel ID (prefixed with \"ID:\") or name" : "مُعرِّف القناة (مسبوقاً بـ \"ID:\") أو اسمها",
-    "Channel" : "قناة",
     "Login" : "الدخول",
     "Chat ID" : "معرف المحادثة",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "عنوان URL لخادم IRC (مثل chat.freenode.net:6667)",

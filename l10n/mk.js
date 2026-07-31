@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Приватен разговор",
     "a conversation" : "разговор",
     "(Duration %s)" : "(Времетраење %s)",
     "You attended a call with {user1}" : "Присуствувавте на повик со {user1}",
@@ -235,7 +236,6 @@ OC.L10N.register(
     "Join lobby for \"%s\"" : "Придружете се на лобито на \"%s\"",
     "Meeting" : "Средба",
     "Password request: %s" : "Барање за лозинка: %s",
-    "Private conversation" : "Приватен разговор",
     "Deleted user (%s)" : "Избришан корисник (%s)",
     "Dismiss notification" : "Отфрли известување",
     "{user1} invited you to join {roomName} on {remoteServer}" : "{user1} ве покани да се приклучите во {roomName} на {remoteServer}",

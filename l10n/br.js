@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Diviz prevez",
     "a conversation" : "un diviz",
     "(Duration %s)" : "(Padelezh %s)",
     "You attended a call with {user1}" : "Ur galvavadenn o peus bet gant {user1}",
@@ -110,7 +111,6 @@ OC.L10N.register(
     "Conversation invitation" : "Kouviadenn diviz",
     "Description" : "Deskrivadur",
     "Password request: %s" : "Ger-tremen goulennet : %s",
-    "Private conversation" : "Diviz prevez",
     "Deleted user (%s)" : "Implijour dilamet (%s)",
     "Dismiss notification" : "Arrest ar gemenadennoù",
     "Accept" : "Asantiñ",

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Частен разговор",
     "a conversation" : "разговор",
     "(Duration %s)" : "(Продължителност %s)",
     "You attended a call with {user1}" : "Присъствахте на разговор с {user1}",
@@ -225,7 +226,6 @@ OC.L10N.register(
     "Your PIN" : "Вашият ПИН",
     "Meeting" : "Среща",
     "Password request: %s" : "Заявка за парола %s",
-    "Private conversation" : "Частен разговор",
     "Deleted user (%s)" : "Изтрит потребител (%s)",
     "Failed to upload call recording" : "Неуспешно качване на запис на обаждане/то/",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Записващият сървър не успя да качи записа на обаждането {call}. Моля, свържете се с администрацията.",
@@ -294,6 +294,7 @@ OC.L10N.register(
     "error" : "грешка",
     "Contact via Talk" : "Свързване чрез Talk",
     "Open Talk" : "Отваряне на Talk",
+    "Channel" : "Канал",
     "Default" : "Стандартен",
     "Presentation" : "Презентация",
     "Conversations" : "Разговори",
@@ -1253,7 +1254,6 @@ OC.L10N.register(
     "API token" : "API токен",
     "Slack channel" : "Slack канал",
     "Server ID or name" : "Идентификатор или име на сървъра",
-    "Channel" : "Канал",
     "Login" : "Вписване",
     "Chat ID" : "Идентификатор за чат",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "URL адрес на IRC сървър (напр. chat.freenode.net:6667)",

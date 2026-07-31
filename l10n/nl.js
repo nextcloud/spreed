@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Privégesprek",
     "a conversation" : "een gesprek",
     "(Duration %s)" : "(Duur %s)",
     "You attended a call with {user1}" : "Je nam deel aan een oproep met {user1}",
@@ -348,7 +349,6 @@ OC.L10N.register(
     "Join \"%s\"" : "Deelnemen aan \"%s\"",
     "Meeting" : "Vergadering",
     "Password request: %s" : "Wachtwoordverzoek: %s",
-    "Private conversation" : "Privégesprek",
     "Deleted user (%s)" : "Verwijderde gebruiker (%s)",
     "Failed to upload call recording" : "Upload gespreksopname mislukt",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "De opnameserver kon de gespreksopname {call} niet uploaden. Neem contact op met de administratie a.u.b.",
@@ -467,6 +467,8 @@ OC.L10N.register(
     "Contact via Talk" : "Contacteer via Talk",
     "Open Talk" : "Open Talk",
     "Call via Talk" : "Bellen via Talk",
+    "Announcement" : "Aankondiging",
+    "Channel" : "Kanaal",
     "Default" : "Standaard",
     "Send messages, create threads, and start voice and video calls." : "Stuur berichten, maak threads aan en start spraak- en video-oproepen.",
     "Presentation" : "Presentatie",
@@ -2027,7 +2029,6 @@ OC.L10N.register(
     "Slack channel" : "Slack kanaal",
     "Server ID or name" : "Server ID of naam",
     "Channel ID (prefixed with \"ID:\") or name" : "Kanaal-ID (voorafgegaan door \"ID:\") of naam",
-    "Channel" : "Kanaal",
     "Login" : "Inloggen",
     "Chat ID" : "Chat ID",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC server URL (bijv. chat.freenode.net:6667)",

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "דיון פרטי",
     "a conversation" : "דיון",
     "(Duration %s)" : "(משך %s)",
     "You attended a call with {user1}" : "הצטרפת לשיחה עם {user1}",
@@ -80,7 +81,6 @@ OC.L10N.register(
     "Meeting ID" : "מזהה פגישה",
     "Meeting" : "מפגש",
     "Password request: %s" : "בקשת ססמה: %s",
-    "Private conversation" : "דיון פרטי",
     "Deleted user (%s)" : "משתמש שנמחק (%s)",
     "Dismiss notification" : "התעלמות מהתראה",
     "Accept" : "אשר",
@@ -96,6 +96,7 @@ OC.L10N.register(
     "A group call has started in {call}" : "החלה שיחה קבוצתית תחת {call}",
     "Open settings" : "פתיחת הגדרות",
     "error" : "שגיאה",
+    "Channel" : "ערוץ",
     "Default" : "בררת מחדל",
     "Presentation" : "מצגת",
     "Conversations" : "דיונים",
@@ -588,7 +589,6 @@ OC.L10N.register(
     "API token" : "אסימון API",
     "Slack channel" : "ערוץ Slack",
     "Server ID or name" : "מזהה או שם שרת",
-    "Channel" : "ערוץ",
     "Login" : "התחבר",
     "Chat ID" : "מזהה צ׳אט",
     "Nickname" : "כינוי",

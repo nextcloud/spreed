@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Soukromá konverzace",
     "a conversation" : "konverzace",
     "(Duration %s)" : "(Doba trvání %s)",
     "You attended a call with {user1}" : "Zúčastnili jste se hovoru s {user1}",
@@ -338,7 +339,6 @@ OC.L10N.register(
     "Join \"%s\"" : "Připojit se k „%s“",
     "Meeting" : "Schůze",
     "Password request: %s" : "Požadavek na heslo: %s",
-    "Private conversation" : "Soukromá konverzace",
     "Deleted user (%s)" : "Smazán uživatel (%s)",
     "Failed to upload call recording" : "Nahrávku se nepodařilo nahrát na server",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Nahrávacímu serveru se nepodařilo nahrát záznam hovoru {call}. Obraťte se na správu.",
@@ -456,6 +456,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "Platnost certifikátu {host} skončila",
     "Contact via Talk" : "Kontakt přes Talk",
     "Open Talk" : "Otevřít Talk",
+    "Channel" : "Kanál",
     "Default" : "Výchozí",
     "Presentation" : "Prezentace",
     "Voice room" : "Hlasová místnost",
@@ -1985,7 +1986,6 @@ OC.L10N.register(
     "Slack channel" : "Slack kanál",
     "Server ID or name" : "Identif. nebo název serveru",
     "Channel ID (prefixed with \"ID:\") or name" : "Identif. kanálu (předeslaný „ID:“) nebo název",
-    "Channel" : "Kanál",
     "Login" : "Přihlašovací jméno",
     "Chat ID" : "Identif. chatu",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "URL adresa IRC serveru (např. chat.freenode.net:6667)",

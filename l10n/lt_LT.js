@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Privatus pokalbis",
     "a conversation" : "pokalbis",
     "(Duration %s)" : "(Trukmė %s)",
     "You attended a call with {user1}" : "Jūs dalyvavote skambutyje su {user1}",
@@ -356,7 +357,6 @@ OC.L10N.register(
     "Join \"%s\"" : "Prisijungti „%s“",
     "Meeting" : "Susitikimas",
     "Password request: %s" : "Slaptažodžio prašymas: %s",
-    "Private conversation" : "Privatus pokalbis",
     "Deleted user (%s)" : "Ištrintas naudotojas (%s)",
     "Failed to upload call recording" : "Nepavyko įkelti skambučio įrašo",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Įrašymo serveriui nepavyko įkelti {call} skambučio įrašo. Susisiekite su administracija.",
@@ -475,6 +475,7 @@ OC.L10N.register(
     "Contact via Talk" : "Susisiekti per programėlę „Pokalbiai“",
     "Open Talk" : "Atverti programėlę „Pokalbiai“",
     "Call via Talk" : "Skambutis per programėlę „Pokalbiai“",
+    "Channel" : "Kanalas",
     "Default" : "Numatytoji",
     "Send messages, create threads, and start voice and video calls." : "Siųskite žinutes, kurkite diskusijas ir pradėkite balso bei vaizdo skambučius.",
     "Presentation" : "Pateiktis",
@@ -2053,7 +2054,6 @@ OC.L10N.register(
     "Slack channel" : "Slack kanalas",
     "Server ID or name" : "Serverio ID ar pavadinimas",
     "Channel ID (prefixed with \"ID:\") or name" : "Kanalo ID (su prefiksu „ID:“) arba pavadinimas",
-    "Channel" : "Kanalas",
     "Login" : "Prisijungti",
     "Chat ID" : "Pokalbio ID",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC serverio URL (pvz., chat.freenode.net:6667)",

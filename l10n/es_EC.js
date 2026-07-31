@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Conversación privada",
     "a conversation" : "una conversación",
     "(Duration %s)" : "(Duración %s)",
     "You attended a call with {user1}" : "Atendiste una llamada de {user1}",
@@ -230,7 +231,6 @@ OC.L10N.register(
     "Your PIN" : "Tu PIN",
     "Meeting" : "Reunión",
     "Password request: %s" : "Solicitud de contraseña: %s",
-    "Private conversation" : "Conversación privada",
     "Deleted user (%s)" : "Usuario eliminado (%s)",
     "Failed to upload call recording" : "Error al cargar la grabación de llamada",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "El servidor de grabación falló al cargar la grabación de la llamada {call}. Por favor, comunícalo a la administración.",
@@ -300,6 +300,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "El certificado de {host} expiró",
     "Contact via Talk" : "Contacto a través de Talk",
     "Open Talk" : "Abrir Talk",
+    "Channel" : "Canal",
     "Default" : "Predeterminado",
     "Presentation" : "Presentación",
     "Webinar" : "Seminario web",
@@ -1299,7 +1300,6 @@ OC.L10N.register(
     "API token" : "Ficha del API",
     "Slack channel" : "Canal de Slack",
     "Server ID or name" : "ID o nombre del servidor",
-    "Channel" : "Canal",
     "Login" : "Iniciar sesión",
     "Chat ID" : "ID de chat",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "URL del servidor de IRC (por ejemplo, chat.freenode.net:6667)",

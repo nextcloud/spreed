@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Ιδιωτική συνομιλία",
     "a conversation" : "μια συνομιλία",
     "(Duration %s)" : "(Διάρκεια %s)",
     "You attended a call with {user1}" : "Παρακολουθήσατε μια κλήση με {user1}",
@@ -329,7 +330,6 @@ OC.L10N.register(
     "Join \"%s\"" : "Συμμετοχή στο \"%s\"",
     "Meeting" : "Συνάντηση",
     "Password request: %s" : "Αίτημα κωδικού πρόσβασης: %s",
-    "Private conversation" : "Ιδιωτική συνομιλία",
     "Deleted user (%s)" : "Διεγραμμένος χρήστης (%s)",
     "Failed to upload call recording" : "Αποτυχία μεταφόρτωσης εγγραφής κλήσης",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Ο διακομιστής εγγραφής απέτυχε να μεταφορτώσει την εγγραφή της κλήσης {call}. Παρακαλώ επικοινωνήστε με τη διαχείριση.",
@@ -447,6 +447,8 @@ OC.L10N.register(
     "The certificate of {host} expired" : "Το πιστοποιητικό του {host} έληξε",
     "Contact via Talk" : "Επικοινωνία μέσω Talk",
     "Open Talk" : "Άνοιγμα του Talk",
+    "Announcement" : "Ανακοίνωση",
+    "Channel" : "Κανάλι",
     "Default" : "Προεπιλεγμένο",
     "Presentation" : "Παρουσίαση",
     "Conversations" : "Συνομιλίες",
@@ -1885,7 +1887,6 @@ OC.L10N.register(
     "Slack channel" : "Κανάλι Slack",
     "Server ID or name" : "Όνομα ή ταυτότητα διακομιστή",
     "Channel ID (prefixed with \"ID:\") or name" : "Αναγνωριστικό καναλιού (με πρόθεμα \"ID:\") ή όνομα",
-    "Channel" : "Κανάλι",
     "Login" : "Είσοδος",
     "Chat ID" : "Αναγνωριστικό συνομιλίας",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "URL διακομιστή IRC (πχ chat.freenode.net:6667)",

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Прыватная размова",
     "a conversation" : "размова",
     "(Duration %s)" : "(Працягласць %s)",
     "_%n guest_::_%n guests_" : ["%n госць","%n госці","%n гасцей","%n гасцей"],
@@ -276,7 +277,6 @@ OC.L10N.register(
     "Join \"%s\"" : "Далучыцца да \"%s\"",
     "Meeting" : "Сустрэча",
     "Password request: %s" : "Запыт пароля: %s",
-    "Private conversation" : "Прыватная размова",
     "Deleted user (%s)" : "Выдалены карыстальнік (%s)",
     "Failed to upload call recording" : "Не ўдалося запампаваць запіс выкліку",
     "Share to chat" : "Абагуіць у чаце",
@@ -376,6 +376,7 @@ OC.L10N.register(
     "The certificate of {host} expires in {days} days" : "Тэрмін дзеяння сертыфіката {host} заканчваецца праз {days} дзён",
     "The certificate of {host} expired" : "Тэрмін дзеяння сертыфіката {host} скончыўся",
     "Open Talk" : "Адкрыць Talk",
+    "Channel" : "Канал",
     "Default" : "Прадвызначаныя",
     "Webinar" : "Вэбінар",
     "Conversations" : "Размовы",
@@ -1566,7 +1567,6 @@ OC.L10N.register(
     "Slack channel" : "Канал Slack",
     "Server ID or name" : "Ідэнтыфікатар або назва сервера",
     "Channel ID (prefixed with \"ID:\") or name" : "Ідэнтыфікатар (з прэфіксам \"ID:\") або назва канала",
-    "Channel" : "Канал",
     "Login" : "Лагін",
     "Chat ID" : "Ідэнтыфікатар чата",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "URL-адрас IRC-сервера (напрыклад, chat.freenode.net:6667)",

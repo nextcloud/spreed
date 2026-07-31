@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "私人對話",
     "a conversation" : "對話",
     "(Duration %s)" : "（歷時 %s）",
     "You attended a call with {user1}" : "您加入了與 {user1} 的通話",
@@ -356,7 +357,6 @@ OC.L10N.register(
     "Join \"%s\"" : "加入「%s」",
     "Meeting" : "會議",
     "Password request: %s" : "索取密碼： %s",
-    "Private conversation" : "私人對話",
     "Deleted user (%s)" : "已刪除用戶（%s）",
     "Failed to upload call recording" : "上傳通話錄音失敗",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "錄音伺服器無法上傳通話 {call} 的錄音。請聯絡管理員。",
@@ -475,6 +475,8 @@ OC.L10N.register(
     "Contact via Talk" : "透過 Talk 聯絡",
     "Open Talk" : "開啟 Talk",
     "Call via Talk" : "透過 Talk 通話",
+    "Announcement" : "公告",
+    "Channel" : "頻道",
     "Default" : "默認",
     "Send messages, create threads, and start voice and video calls." : "傳送訊息、建立討論串、開始音訊與視訊通話。",
     "Presentation" : "簡報",
@@ -2051,7 +2053,6 @@ OC.L10N.register(
     "Slack channel" : "Slack 頻道",
     "Server ID or name" : "伺服器 ID 或名稱",
     "Channel ID (prefixed with \"ID:\") or name" : "頻道 ID（前綴為「ID:」）或名稱",
-    "Channel" : "頻道",
     "Login" : "登入",
     "Chat ID" : "聊天 ID",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC 伺服器 URL（e.g. chat.freenode.net:6667）",

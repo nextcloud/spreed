@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Mazungumzo ya faragha",
     "a conversation" : "mazungumzo",
     "(Duration %s)" : "(Muda %s)",
     "You attended a call with {user1}" : "Ulihudhuria simu na {user1}",
@@ -330,7 +331,6 @@ OC.L10N.register(
     "Join \"%s\"" : "Jiunge \"%s\"",
     "Meeting" : "Mkutano",
     "Password request: %s" : "Ombi la nenosiri: %s",
-    "Private conversation" : "Mazungumzo ya faragha",
     "Deleted user (%s)" : "Mtumiaji aliyefutwa (%s)",
     "Failed to upload call recording" : "Imeshindwa kupakia rekodi ya simu",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Seva ya kurekodi imeshindwa kupakia rekodi ya simu {call}. Tafadhali wasiliana na utawala.",
@@ -448,6 +448,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "Cheti cha {host} muda wake umekwisha",
     "Contact via Talk" : "Wasiliana kupitia Talk",
     "Open Talk" : "Fungua Talk",
+    "Channel" : "Njia ",
     "Default" : "Chaguo msingi",
     "Presentation" : "Wasilisho",
     "Webinar" : "Webinar",
@@ -1893,7 +1894,6 @@ OC.L10N.register(
     "Slack channel" : "Njia ya Slack ",
     "Server ID or name" : "Kitambulisho cha seva au jina",
     "Channel ID (prefixed with \"ID:\") or name" : "Kitambulisho cha njia (kilichoambishwa na \"ID:\") au jina",
-    "Channel" : "Njia ",
     "Login" : "Ingia",
     "Chat ID" : "Kitambulisho cha gumzo",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "URL ya seva ya IRC (e.g. chat.freenode.net:6667)",

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "گفتگوی خصوصی",
     "a conversation" : "یک گفتگو",
     "(Duration %s)" : "(مدت زمان %s)",
     "You attended a call with {user1}" : "شما در یک تماس با {user1} شرکت کردید",
@@ -348,7 +349,6 @@ OC.L10N.register(
     "Join \"%s\"" : "پیوستن به \"%s\"",
     "Meeting" : "جلسه",
     "Password request: %s" : "درخواست رمز عبور: %s",
-    "Private conversation" : "گفتگوی خصوصی",
     "Deleted user (%s)" : "کاربر حذف شده (%s)",
     "Failed to upload call recording" : "بارگذاری ضبط تماس ناموفق بود",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "سرور ضبط نتوانست ضبط تماس {call} را بارگذاری کند. لطفاً با مدیریت تماس بگیرید.",
@@ -467,6 +467,7 @@ OC.L10N.register(
     "Contact via Talk" : "تماس از طریق Talk",
     "Open Talk" : "باز کردن Talk",
     "Call via Talk" : "تماس صوتی از طریق Talk",
+    "Channel" : "کانال",
     "Default" : "پیش‌فرض",
     "Send messages, create threads, and start voice and video calls." : "ارسال پیام، ایجاد موضوعات و شروع تماس‌های صوتی و تصویری",
     "Presentation" : "ارائه",
@@ -2026,7 +2027,6 @@ OC.L10N.register(
     "Slack channel" : "کانال Slack",
     "Server ID or name" : "شناسه یا نام سرور",
     "Channel ID (prefixed with \"ID:\") or name" : "شناسه کانال (با پیشوند \"ID:\") یا نام",
-    "Channel" : "کانال",
     "Login" : "ورود",
     "Chat ID" : "شناسه چت",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "آدرس سرور IRC (مثال: chat.freenode.net:6667)",
