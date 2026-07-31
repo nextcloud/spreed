@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Cuộc trò chuyện bí mật",
     "a conversation" : "Một cuộc đàm thoại",
     "(Duration %s)" : "(Thời lượng %s)",
     "You attended a call with {user1}" : "Bạn đã tham dự một cuộc gọi với {user1}",
@@ -160,7 +161,6 @@ OC.L10N.register(
     "Your PIN" : "Mã PIN của bạn",
     "Meeting" : "Cuộc họp",
     "Password request: %s" : "Yêu cầu mật khẩu: %s",
-    "Private conversation" : "Cuộc trò chuyện bí mật",
     "Deleted user (%s)" : "Người dùng đã xóa (%s)",
     "Dismiss notification" : "Bỏ qua thông báo ",
     "Accept" : "Đồng ý",
@@ -205,6 +205,7 @@ OC.L10N.register(
     "The hosted signaling server was removed and will not be used anymore." : "Máy chủ báo hiệu đã bị xóa và sẽ không được sử dụng nữa.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Tài khoản máy chủ báo hiệu đã thay đổi trạng thái từ \"{oldstatus}\" thành \"{newstatus}\".",
     "error" : "Lỗi",
+    "Channel" : "Kênh",
     "Default" : "Mặc định",
     "Presentation" : "Buổi thuyết trình",
     "Conversations" : "Đàm thoại",
@@ -872,7 +873,6 @@ OC.L10N.register(
     "API token" : "Tín chỉ API",
     "Slack channel" : "Kênh Slack",
     "Server ID or name" : "ID hoặc tên máy chủ",
-    "Channel" : "Kênh",
     "Login" : "Login",
     "Chat ID" : "ID trò chuyện",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "URL máy chủ IRC (ví dụ: chat.freenode.net:6667)",

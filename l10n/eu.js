@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Elkarrizketa pribatua",
     "a conversation" : "elkarrizketa bat",
     "(Duration %s)" : "(Iraupena %s)",
     "You attended a call with {user1}" : "Dei batean parte hartu duzu {user1} erabiltzailearekin",
@@ -270,7 +271,6 @@ OC.L10N.register(
     "Your PIN" : "Zure PINa",
     "Meeting" : "Bilera",
     "Password request: %s" : "Pasahitz eskaera: %s",
-    "Private conversation" : "Elkarrizketa pribatua",
     "Deleted user (%s)" : "Ezabatutako erabiltzailea (%s)",
     "Failed to upload call recording" : "Deien grabaketaren igotzeak huts egin du",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Grabaketa-zerbitzariak huts egin du {call} deiaren grabazioa igotzean. Jarri harremanetan administrazioarekin.",
@@ -352,6 +352,7 @@ OC.L10N.register(
     "error" : "errorea",
     "Contact via Talk" : "Jarri harremanetan Talk bidez",
     "Open Talk" : "Ireki Talk",
+    "Channel" : "Kanala",
     "Default" : "Lehenetsia",
     "Presentation" : "Aurkezpena",
     "Conversations" : "Elkarrizketak",
@@ -1463,7 +1464,6 @@ OC.L10N.register(
     "API token" : "API tokena",
     "Slack channel" : "Slack kanala",
     "Server ID or name" : "Zerbitzariaren IDa edo izena",
-    "Channel" : "Kanala",
     "Login" : "Hasi saioa",
     "Chat ID" : "Txataren IDa",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC zerbitzariaren URLa (adib. chat.freenode.net:6667)",

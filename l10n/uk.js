@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Приватна розмова",
     "a conversation" : "розмова",
     "(Duration %s)" : "(Тривалість %s)",
     "You attended a call with {user1}" : "Ви були на дзвінку з {user1}",
@@ -330,7 +331,6 @@ OC.L10N.register(
     "Join \"%s\"" : "Приєднайте \"%s\"",
     "Meeting" : "Зустріч",
     "Password request: %s" : "Запит пароля:%s",
-    "Private conversation" : "Приватна розмова",
     "Deleted user (%s)" : "Вилучений користувач (%s)",
     "Failed to upload call recording" : "Не вдалося завантажити запис розмови",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Серверу запису не вдалося завантажити запис дзвінка {call}. Будь ласка, зверніться до адміністрації.",
@@ -448,6 +448,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "Термін дії сертифіката {host} закінчився",
     "Contact via Talk" : "Зв'яжіться з нами через Talk",
     "Open Talk" : "Відкрити Talk",
+    "Channel" : "Канал",
     "Default" : "За замовчуванням",
     "Presentation" : "Презентація",
     "Webinar" : "Вебінар",
@@ -1887,7 +1888,6 @@ OC.L10N.register(
     "Slack channel" : "Слабкий канал",
     "Server ID or name" : "Ідентифікатор або ім'я сервера",
     "Channel ID (prefixed with \"ID:\") or name" : "Ідентифікатор каналу (з префіксом \"ID:\") або назва",
-    "Channel" : "Канал",
     "Login" : "Login",
     "Chat ID" : "Ідентифікатор чату",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "URL-адреса IRC-сервера (наприклад, chat.freenode.net:6667)",

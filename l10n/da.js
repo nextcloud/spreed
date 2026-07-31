@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Privat samtale",
     "a conversation" : "en samtale",
     "(Duration %s)" : "(Varighed %s)",
     "You attended a call with {user1}" : "Du deltog i et opkald med {user1}",
@@ -162,7 +163,6 @@ OC.L10N.register(
     "Description" : "Beskrivelse",
     "Meeting" : "Møde",
     "Password request: %s" : "Adgangskode-forespørgsel: %s",
-    "Private conversation" : "Privat samtale",
     "Deleted user (%s)" : "Slettet bruger (%s)",
     "Dismiss notification" : "Fjern notifikation",
     "{user1} invited you to join {roomName} on {remoteServer}" : "{user1} inviterede dig til at deltage i {roomName} på {remoteServer}",

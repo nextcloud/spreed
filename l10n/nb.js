@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Privat samtale",
     "a conversation" : "en samtale",
     "(Duration %s)" : "(Varighet %s)",
     "You attended a call with {user1}" : "Du har tatt del i en samtale med {user1}",
@@ -284,7 +285,6 @@ OC.L10N.register(
     "Your PIN" : "Din PIN",
     "Meeting" : "Møte",
     "Password request: %s" : "Forespørsel om passord: %s",
-    "Private conversation" : "Privat samtale",
     "Deleted user (%s)" : "Slettet bruker (%s)",
     "Failed to upload call recording" : "Opplasting av samtaleopptak feilet",
     "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "Opptaksserveren kunne ikke laste opp opptak av samtale {call}. Vennligst ta kontakt med administrasjonen.",
@@ -384,6 +384,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "Sertifikatet til {host} er utløpt",
     "Contact via Talk" : "Kontakt via Talk",
     "Open Talk" : "Åpne Talk",
+    "Channel" : "Kanal",
     "Default" : "Standard",
     "Presentation" : "Presentasjon",
     "Conversations" : "Samtaler",
@@ -1593,7 +1594,6 @@ OC.L10N.register(
     "API token" : "API-symbol",
     "Slack channel" : "Slack-kanal",
     "Server ID or name" : "Server-ID eller navn",
-    "Channel" : "Kanal",
     "Login" : "Logg inn",
     "Chat ID" : "Chat-ID",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC server URL (f.eks. chat.freenode.net:6667)",

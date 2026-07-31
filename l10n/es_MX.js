@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Conversación privada",
     "a conversation" : "una conversación",
     "(Duration %s)" : "(Duración %s)",
     "You attended a call with {user1}" : "Tomaste una llamda con {user1}",
@@ -86,7 +87,6 @@ OC.L10N.register(
     "Description" : "Descripción",
     "Meeting" : "Reunión",
     "Password request: %s" : "Solicitud de Password: %s",
-    "Private conversation" : "Conversación privada",
     "Deleted user (%s)" : "Usuario eliminado (%s)",
     "Dismiss notification" : "Descartar notificación",
     "Accept" : "Aceptar",
