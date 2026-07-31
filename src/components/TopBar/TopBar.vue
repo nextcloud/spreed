@@ -10,7 +10,8 @@
 			'top-bar--sidebar': isSidebar,
 			'top-bar--in-call': isInCall,
 			'top-bar--authorised': getUserId,
-		}">
+		}"
+		:data-theme-dark="isInCall ? true : undefined">
 		<a
 			class="top-bar__icon-wrapper"
 			:class="{ 'top-bar__icon-wrapper--with-action': showBackAction }"
@@ -53,10 +54,7 @@
 
 		<ThreadHeader v-else-if="!isInCall && threadId" class="top-bar__wrapper" />
 
-		<div
-			v-else
-			class="top-bar__wrapper"
-			:data-theme-dark="isInCall ? true : undefined">
+		<template v-else>
 			<!-- conversation header -->
 			<a
 				role="button"
@@ -139,6 +137,7 @@
 				<!-- Upcoming meetings -->
 				<CalendarEventsDialog
 					v-if="showCalendarEvents"
+					class="top-bar__calendar-events"
 					:token="token" />
 
 				<CallButton v-if="!isInCall" shrinkOnMobile />
@@ -155,7 +154,7 @@
 				v-if="showBreakoutRoomsEditor"
 				:token="token"
 				@close="showBreakoutRoomsEditor = false" />
-		</div>
+		</template>
 	</div>
 </template>
 
@@ -402,6 +401,7 @@ export default {
 	--border-width: 1px;
 	display: flex;
 	flex-wrap: wrap;
+	flex-shrink: 0;
 	gap: 3px;
 	align-items: center;
 	justify-content: flex-end;
@@ -455,6 +455,22 @@ export default {
 	justify-content: flex-end;
 }
 
+.top-bar__controls {
+	display: flex;
+	gap: 3px;
+	align-items: center;
+
+	&,
+	& > :deep(.button-vue),
+	& > .top-bar__calendar-events,
+	& > .top-bar__classified,
+	.top-bar__calendar-events :deep(.v-popper),
+	.top-bar__calendar-events :deep(.button-vue) {
+		min-width: 0;
+		max-width: 100%;
+	}
+}
+
 .top-bar__icon-wrapper {
 	position: relative;
 	border-radius: var(--border-radius-pill);
@@ -491,7 +507,7 @@ export default {
 	display: flex;
 	align-items: center;
 	gap: var(--default-grid-baseline);
-	flex-shrink: 0;
+	min-width: var(--default-clickable-area);
 	padding: 0 calc(2 * var(--default-grid-baseline));
 	height: var(--default-clickable-area);
 	border: var(--border-width-input-focused) solid var(--color-element-error, var(--color-error));
@@ -500,6 +516,9 @@ export default {
 	white-space: nowrap;
 
 	&-label {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
 		font-weight: bold;
 	}
 }
@@ -511,8 +530,8 @@ export default {
 	overflow-x: hidden;
 	overflow-y: clip;
 	white-space: nowrap;
-	width: 0;
-	flex-grow: 1;
+	flex: 1 1 0;
+	min-width: 200px;
 	cursor: pointer;
 	&__text {
 		display: flex;
@@ -521,6 +540,7 @@ export default {
 		margin-inline-start: 8px;
 		justify-content: center;
 		width: 100%;
+		min-width: 0;
 		overflow: hidden;
 		// Text is guaranteed to be one line. Make line-height 20px to fit top bar
 		line-height: 20px;
