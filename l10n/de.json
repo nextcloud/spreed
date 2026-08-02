@@ -477,7 +477,7 @@
     "Conversation to inform a fixed audience, which can not be left." : "Unterhaltung, um ein bestimmtes Publikum zu informieren, welche nicht verlassen werden kann.",
     "Channel" : "Kanal",
     "Broadcast conversation for a large audience, where only moderators can post and calls are disabled." : "Broadcast-Unterhaltung für ein großes Publikum, in der nur die Moderation Beiträge verfassen kann und Anrufe deaktiviert sind.",
-    "Classified conversation" : "Klassifizierte Unterhaltung",
+    "Classified conversation" : "Geheime Unterhaltung",
     "Locked down conversation for confidential topics, with public access, guests, SIP and recordings disabled." : "Geschützte Unterhaltung für vertrauliche Themen, bei der der öffentliche Zugriff, Gäste, SIP und Aufzeichnungen deaktiviert sind.",
     "Default" : "Standard",
     "Send messages, create threads, and start voice and video calls." : "Nachrichten senden, Themen erstellen und Sprach- sowie und Videoanrufe starten.",
