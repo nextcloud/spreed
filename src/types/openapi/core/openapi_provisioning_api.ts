@@ -556,6 +556,10 @@ export type components = {
             website: string;
             websiteScope?: components["schemas"]["UserDetailsScope"];
         };
+        UserDetailsGroupDisplayname: {
+            id: string;
+            displayname: string;
+        };
         UserDetailsQuota: {
             free?: number;
             quota?: number | string;
@@ -788,6 +792,7 @@ export interface operations {
                                         id: string;
                                     };
                                 };
+                                groups: components["schemas"]["UserDetailsGroupDisplayname"][];
                             };
                         };
                     };
@@ -1046,6 +1051,7 @@ export interface operations {
                                         id: string;
                                     };
                                 };
+                                groups: components["schemas"]["UserDetailsGroupDisplayname"][];
                             };
                         };
                     };
