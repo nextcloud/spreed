@@ -67,7 +67,7 @@ class InvitationServiceTest extends TestCase {
 	}
 
 	public function testPhoneInvitationsAreRejectedWhenCreatingClassifiedConversation(): void {
-		$currentUser = $this->createMock(IUser::class);
+		$currentUser = $this->createStub(IUser::class);
 		// SIP is fully available, only the classified flag must reject the number
 		$this->talkConfig->method('isSIPConfigured')->willReturn(true);
 		$this->talkConfig->method('canUserDialOutSIP')->willReturn(true);
@@ -86,7 +86,7 @@ class InvitationServiceTest extends TestCase {
 	}
 
 	public function testPhoneInvitationsAreRejectedForClassifiedRoom(): void {
-		$currentUser = $this->createMock(IUser::class);
+		$currentUser = $this->createStub(IUser::class);
 		$room = $this->createMock(Room::class);
 		$room->method('isClassified')->willReturn(true);
 		$this->talkConfig->method('isSIPConfigured')->willReturn(true);
@@ -105,7 +105,7 @@ class InvitationServiceTest extends TestCase {
 	}
 
 	public function testEmailInvitationsAreRejectedWhenCreatingClassifiedConversation(): void {
-		$currentUser = $this->createMock(IUser::class);
+		$currentUser = $this->createStub(IUser::class);
 		// The address is perfectly valid, only the classified flag must reject it
 		$this->emailValidator->expects(self::never())
 			->method('isValid');
@@ -122,7 +122,7 @@ class InvitationServiceTest extends TestCase {
 	}
 
 	public function testEmailInvitationsAreRejectedForClassifiedRoom(): void {
-		$currentUser = $this->createMock(IUser::class);
+		$currentUser = $this->createStub(IUser::class);
 		$room = $this->createMock(Room::class);
 		$room->method('isClassified')->willReturn(true);
 		$this->emailValidator->expects(self::never())
@@ -139,7 +139,7 @@ class InvitationServiceTest extends TestCase {
 	}
 
 	public function testEmailInvitationsAreAcceptedForRegularConversation(): void {
-		$currentUser = $this->createMock(IUser::class);
+		$currentUser = $this->createStub(IUser::class);
 		$this->emailValidator->method('isValid')->willReturn(true);
 
 		$invitationList = $this->service->validateInvitations(
@@ -152,7 +152,7 @@ class InvitationServiceTest extends TestCase {
 	}
 
 	public function testFederatedUserInvitationsAreRejectedWhenCreatingClassifiedConversation(): void {
-		$currentUser = $this->createMock(IUser::class);
+		$currentUser = $this->createStub(IUser::class);
 		// Federation is available, only the classified flag must reject the invite
 		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
 		$this->cloudIdManager->expects(self::never())
@@ -172,7 +172,7 @@ class InvitationServiceTest extends TestCase {
 	}
 
 	public function testFederatedUserInvitationsAreRejectedForClassifiedRoom(): void {
-		$currentUser = $this->createMock(IUser::class);
+		$currentUser = $this->createStub(IUser::class);
 		$room = $this->createMock(Room::class);
 		$room->method('isClassified')->willReturn(true);
 		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
@@ -190,7 +190,7 @@ class InvitationServiceTest extends TestCase {
 	}
 
 	public function testFederatedUserInvitationsAreAcceptedForRegularConversation(): void {
-		$currentUser = $this->createMock(IUser::class);
+		$currentUser = $this->createStub(IUser::class);
 		$cloudId = $this->createMock(ICloudId::class);
 		$cloudId->method('getId')->willReturn('remote-user@remote.example.tld');
 		$this->talkConfig->method('isFederationEnabled')->willReturn(true);
@@ -206,7 +206,7 @@ class InvitationServiceTest extends TestCase {
 	}
 
 	public function testPhoneInvitationsAreAcceptedForRegularConversation(): void {
-		$currentUser = $this->createMock(IUser::class);
+		$currentUser = $this->createStub(IUser::class);
 		$this->talkConfig->method('isSIPConfigured')->willReturn(true);
 		$this->talkConfig->method('canUserDialOutSIP')->willReturn(true);
 		$this->serverConfig->method('getSystemValueString')->willReturn('DE');
