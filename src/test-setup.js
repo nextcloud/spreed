@@ -102,6 +102,29 @@ global.OCP = {
 }
 global.IS_DESKTOP = false
 
+/** Mock toDataUrl() for jsdom */
+HTMLCanvasElement.prototype.toDataURL = vi.fn((type = 'image/png') => `data:${type};base64,AAAA`)
+
+/**
+ * Mock OffscreenCanvas for jsdom.
+ * Methods are defined on the prototype, as feature detection relies on it.
+ * Spy on the prototype methods to adjust the behaviour in tests.
+ */
+global.OffscreenCanvas = class OffscreenCanvas {
+	constructor(width, height) {
+		this.width = width
+		this.height = height
+	}
+
+	getContext() {
+		return { fillRect: vi.fn(), drawImage: vi.fn() }
+	}
+
+	convertToBlob({ type } = {}) {
+		return Promise.resolve(new Blob([], { type }))
+	}
+}
+
 /**
  * Polyfill for Blob.prototype.arrayBuffer
  * Required as jsdom breaks Nodejs's native Blob
