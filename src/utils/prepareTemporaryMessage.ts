@@ -22,7 +22,7 @@ export type RawTemporaryMessagePayload = Pick<ChatMessage, | 'message'
 	| 'parent'>> & {
 		uploadId?: string
 		index?: string
-		file?: File & { newName?: string }
+		file?: File
 		localUrl?: string
 		messageType?: typeof MESSAGE.TYPE['VOICE_MESSAGE' | 'COMMENT']
 	}
@@ -40,7 +40,7 @@ export type PrepareTemporaryMessagePayload = Pick<ChatMessage, | 'message'
 	| 'parent'> & {
 		uploadId?: string
 		index?: string
-		file?: File & { newName?: string }
+		file?: File
 		localUrl?: string
 		messageType?: typeof MESSAGE.TYPE['VOICE_MESSAGE' | 'COMMENT']
 	}
@@ -48,7 +48,7 @@ export type PrepareTemporaryMessagePayload = Pick<ChatMessage, | 'message'
 export type TempChatMessageWithFile = Omit<ChatMessage, 'messageParameters'> & {
 	messageParameters: ChatMessage['messageParameters'] & {
 		file: ChatMessage['messageParameters'][string] & {
-			file: File & { newName?: string }
+			file: File
 			uploadId: string
 			index: number
 			localUrl?: string
@@ -107,7 +107,7 @@ export function prepareTemporaryMessage({
 			file,
 			mimetype: file.type,
 			id: tempId,
-			name: file.newName || file.name,
+			name: file.name,
 			// index, will be the id from now on
 			uploadId,
 			localUrl,

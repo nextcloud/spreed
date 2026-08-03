@@ -57,8 +57,7 @@ describe('prepareTemporaryMessage', () => {
 
 	const textFile = {
 		type: 'text/plain',
-		name: 'original-name.txt',
-		newName: 'new-name.txt',
+		name: 'new-name.txt',
 	}
 	const textFilePayload = {
 		...defaultPayload,
