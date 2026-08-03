@@ -6,9 +6,11 @@
 import { describe, expect, test } from 'vitest'
 import {
 	computeGridDimensions,
+	computeLastRowCentering,
 	getMinTileHeight,
 	getMinTileWidth,
 	getTargetAspectRatio,
+	GRID_GAP,
 } from './gridLayout.ts'
 
 /**
@@ -153,6 +155,72 @@ describe('gridLayout', () => {
 								expect({ columns, rows }).toEqual(max)
 							}
 						}
+					}
+				}
+			}
+		})
+	})
+
+	describe('computeLastRowCentering', () => {
+		// A 4 columns grid of 200px wide tiles
+		const grid = { columns: 4, tileWidth: 200 }
+		// Half of the width of a tile and its gap
+		const halfTile = (200 + GRID_GAP) / 2
+
+		test('does not center a complete last row', () => {
+			for (const totalTiles of [4, 8, 12]) {
+				expect(computeLastRowCentering({ ...grid, totalTiles }))
+					.toEqual({ firstTileIndex: totalTiles, offset: 0 })
+			}
+		})
+
+		test('shifts the last row by half a tile when one slot is left empty', () => {
+			expect(computeLastRowCentering({ ...grid, totalTiles: 7 }))
+				.toEqual({ firstTileIndex: 4, offset: halfTile })
+		})
+
+		test('splits the empty slots evenly on both sides', () => {
+			// Two empty slots, so one full tile of offset
+			expect(computeLastRowCentering({ ...grid, totalTiles: 6 }))
+				.toEqual({ firstTileIndex: 4, offset: 2 * halfTile })
+			// Three empty slots, so one and a half tile of offset
+			expect(computeLastRowCentering({ ...grid, totalTiles: 5 }))
+				.toEqual({ firstTileIndex: 4, offset: 3 * halfTile })
+		})
+
+		test('centers a single incomplete row', () => {
+			expect(computeLastRowCentering({ ...grid, totalTiles: 3 }))
+				.toEqual({ firstTileIndex: 0, offset: halfTile })
+		})
+
+		test('never centers a single column grid', () => {
+			for (const totalTiles of [1, 2, 3]) {
+				expect(computeLastRowCentering({ columns: 1, tileWidth: 200, totalTiles }))
+					.toEqual({ firstTileIndex: totalTiles, offset: 0 })
+			}
+		})
+
+		test('does nothing while the grid has not been measured yet', () => {
+			expect(computeLastRowCentering({ columns: 0, tileWidth: 0, totalTiles: 0 }))
+				.toEqual({ firstTileIndex: 0, offset: 0 })
+			expect(computeLastRowCentering({ ...grid, tileWidth: 0, totalTiles: 3 }))
+				.toEqual({ firstTileIndex: 3, offset: 0 })
+		})
+
+		test('keeps the centered row within the grid', () => {
+			for (let columns = 2; columns <= 6; columns++) {
+				for (let totalTiles = 1; totalTiles <= 20; totalTiles++) {
+					const { firstTileIndex, offset } = computeLastRowCentering({ ...grid, columns, totalTiles })
+					const lastRowTileCount = totalTiles - firstTileIndex
+
+					expect(lastRowTileCount).toBeLessThanOrEqual(columns)
+					// The shifted tiles never overflow the end of the grid
+					const lastRowWidth = lastRowTileCount * (200 + GRID_GAP) - GRID_GAP
+					const gridWidth = columns * (200 + GRID_GAP) - GRID_GAP
+					expect(offset + lastRowWidth).toBeLessThanOrEqual(gridWidth)
+					// The empty space is split evenly on both sides
+					if (offset > 0) {
+						expect(offset).toBeCloseTo((gridWidth - lastRowWidth) / 2)
 					}
 				}
 			}

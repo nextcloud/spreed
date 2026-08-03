@@ -217,3 +217,52 @@ export function computeGridDimensions({
 
 	return { columns, rows }
 }
+
+type LastRowCenteringOptions = {
+	/** Number of tiles laid out on the page, including the local video tile */
+	totalTiles: number
+	/** Number of columns of the grid */
+	columns: number
+	/** Width of a single tile in px */
+	tileWidth: number
+}
+
+/**
+ * Centering of the tiles of an incomplete last row.
+ *
+ * A grid row is filled from the start, so the last row is left-aligned with a
+ * gap at the end whenever it does not hold a full set of tiles. To center it
+ * instead, the remaining empty slots are split evenly on both sides and its
+ * tiles are shifted by half of the leftover space.
+ *
+ * @param options - the layout inputs
+ * @param options.totalTiles - number of tiles on the page, including the local video tile
+ * @param options.columns - number of columns of the grid
+ * @param options.tileWidth - width of a single tile in px
+ * @return the index of the first tile of the last row and the offset, in px, to
+ *   shift it by. An offset of `0` means the last row is complete (or there is
+ *   nothing to center) and no tile has to be moved.
+ */
+export function computeLastRowCentering({
+	totalTiles,
+	columns,
+	tileWidth,
+}: LastRowCenteringOptions): { firstTileIndex: number, offset: number } {
+	const noCentering = { firstTileIndex: totalTiles, offset: 0 }
+
+	// A single column is always centered, and a grid without tiles has no last row
+	if (columns <= 1 || totalTiles <= 0 || tileWidth <= 0) {
+		return noCentering
+	}
+
+	const lastRowTileCount = totalTiles % columns
+	if (lastRowTileCount === 0) {
+		return noCentering
+	}
+
+	const emptySlots = columns - lastRowTileCount
+	return {
+		firstTileIndex: totalTiles - lastRowTileCount,
+		offset: (emptySlots / 2) * (tileWidth + GRID_GAP),
+	}
+}

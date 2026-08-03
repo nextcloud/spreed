@@ -48,9 +48,9 @@
 						<template v-if="!devMode && !(isLessThanTwoVideos && isStripe)">
 							<EmptyCallView v-if="orderedVideos.length === 0 && !isStripe" class="video" :isGrid="true" />
 							<VideoVue
-								v-for="callParticipantModel in displayedVideos"
+								v-for="(callParticipantModel, index) in displayedVideos"
 								:key="callParticipantModel.attributes.peerId"
-								:class="{ video: !isStripe }"
+								:class="{ video: !isStripe, 'last-row-tile': isLastRowTile(index) }"
 								:showVideoOverlay="showVideoOverlay"
 								:token="token"
 								:model="callParticipantModel"
@@ -65,10 +65,10 @@
 						<!-- VideosGrid developer mode -->
 						<template v-if="devMode">
 							<div
-								v-for="key in displayedVideos"
+								v-for="(key, index) in displayedVideos"
 								:key="key"
 								class="dev-mode-video video"
-								:class="{ 'dev-mode-screenshot': screenshotMode }">
+								:class="{ 'dev-mode-screenshot': screenshotMode, 'last-row-tile': isLastRowTile(index) }">
 								<img :alt="placeholderName(key)" :src="placeholderImage(key)">
 								<VideoBottomBar
 									:hasShadow="false"
@@ -82,9 +82,10 @@
 							</h1>
 						</template>
 						<LocalVideo
-							v-if="!isStripe && !isRecording"
+							v-if="showLocalVideoTile"
 							ref="localVideo"
 							class="video"
+							:class="{ 'last-row-tile': isLastRowTile(displayedVideos.length) }"
 							isGrid
 							:fitVideo="false"
 							:token="token"
@@ -177,7 +178,7 @@ import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
 import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
-import { GRID_GAP } from './gridLayout.ts'
+import { computeLastRowCentering, GRID_GAP } from './gridLayout.ts'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 import { useGridDimensions } from './useGridDimensions.ts'
 import { usePagination } from './usePagination.ts'
@@ -409,6 +410,31 @@ export default {
 			return (this.gridHeight - GRID_GAP * (this.rows - 1)) / this.rows
 		},
 
+		// Whether the local video is rendered as a tile of the grid
+		showLocalVideoTile() {
+			return !this.isStripe && !this.isRecording
+		},
+
+		// Number of tiles rendered on the current page, including the local video
+		totalTiles() {
+			return this.displayedVideos.length + (this.showLocalVideoTile ? 1 : 0)
+		},
+
+		// Index of the first tile of an incomplete last row and the offset needed
+		// to center that row. The stripe is a single scrollable row, so it is
+		// never centered.
+		lastRowCentering() {
+			if (this.isStripe) {
+				return { firstTileIndex: this.totalTiles, offset: 0 }
+			}
+
+			return computeLastRowCentering({
+				totalTiles: this.totalTiles,
+				columns: this.columns,
+				tileWidth: this.videoWidth,
+			})
+		},
+
 		isLessThanTwoVideos() {
 			// without screen share, we don't want to duplicate videos if we were to show them in the stripe
 			// however, if a screen share is in progress, it means the video of the presenting user is not visible,
@@ -431,6 +457,7 @@ export default {
 			return {
 				gridTemplateColumns: `repeat(${columns}, minmax(${this.dpiAwareMinWidth}px, 1fr))`,
 				gridTemplateRows: `repeat(${rows}, minmax(${this.dpiAwareMinHeight}px, 1fr))`,
+				'--last-row-offset': `${this.lastRowCentering.offset}px`,
 			}
 		},
 
@@ -538,6 +565,12 @@ export default {
 			this.$emit('clickLocalVideo')
 		},
 
+		// Whether the tile belongs to an incomplete last row and has to be shifted
+		// to center that row
+		isLastRowTile(index) {
+			return index >= this.lastRowCentering.firstTileIndex
+		},
+
 		isSelected(callParticipantModel) {
 			return callParticipantModel.attributes.peerId === this.callViewStore.selectedVideoPeerId
 		},
@@ -576,6 +609,14 @@ export default {
 	&.stripe {
 		padding: var(--grid-gap) var(--grid-gap) 0 0;
 	}
+}
+
+// Center the tiles of an incomplete last row by shifting them by half of the
+// space left empty by the missing tiles. Relative positioning keeps the grid
+// placement untouched and is flipped automatically in RTL layouts.
+.last-row-tile {
+	position: relative;
+	inset-inline-start: var(--last-row-offset, 0);
 }
 
 .grid-wrapper {
@@ -659,10 +700,6 @@ export default {
 		min-height: unset;
 		margin: 0;
 	}
-}
-
-.video:last-child {
-	grid-column-end: -1;
 }
 
 .grid-navigation {

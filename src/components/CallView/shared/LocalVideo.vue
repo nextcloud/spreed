@@ -377,9 +377,7 @@ export default {
 	}
 }
 
-// Always display the local video in the last row
 .localVideoContainer {
-	grid-row-end: -1;
 	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 	overflow: hidden;
 	z-index: 1;
