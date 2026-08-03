@@ -16,6 +16,7 @@
 								ref="searchBox"
 								v-model:value="searchText"
 								v-model:isFocused="isFocused"
+								:placeholderText="t('spreed', 'Search in app')"
 								:listRef="[scroller, searchResultsPossibleConversations]"
 								@input="debounceFetchSearchResults"
 								@abortSearch="abortSearch" />
