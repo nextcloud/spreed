@@ -559,8 +559,9 @@ describe('fileUploadStore', () => {
 				rename: true,
 			})
 
-			expect(files[0].newName).toBe('20210427_153000.png')
-			expect(files[1].newName).toBe('20210425_153000.txt')
+			const uploads = uploadStore.getInitialisedUploads('upload-id1')
+			expect(uploads[0][1].file.name).toBe('20210427_153000.png')
+			expect(uploads[1][1].file.name).toBe('20210425_153000.txt')
 		})
 	})
 })

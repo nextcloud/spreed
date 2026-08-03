@@ -682,11 +682,9 @@ export type {
 export type UploadFile = {
 	file: File & {
 		name: string
-		newName?: string
 		type: string
 		size: number
 		lastModified?: number
-		lastModifiedDate?: Date
 		webkitRelativePath?: string
 	}
 	sharePath?: string

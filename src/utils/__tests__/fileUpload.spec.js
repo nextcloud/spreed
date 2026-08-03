@@ -147,7 +147,7 @@ describe('hasDuplicateUploadNames', () => {
 		const uploads = [
 			[1, { file: { name: 'file.txt' } }],
 			[2, { file: { name: 'file (1).txt' } }],
-			[3, { file: { name: 'file (copy).txt', newName: 'file (2).txt' } }],
+			[3, { file: { name: 'file (2).txt' } }],
 		]
 
 		expect(hasDuplicateUploadNames(uploads)).toBe(true)
@@ -157,7 +157,7 @@ describe('hasDuplicateUploadNames', () => {
 		const uploads = [
 			[1, { file: { name: 'file.txt' } }],
 			[2, { file: { name: 'file 2.txt' } }],
-			[3, { file: { name: 'file.txt', newName: 'file (copy).txt' } }],
+			[3, { file: { name: 'file (copy).txt' } }],
 		]
 
 		expect(hasDuplicateUploadNames(uploads)).toBe(false)
@@ -168,7 +168,7 @@ describe('hasDuplicateUploadNames', () => {
 			const uploads = [
 				[1, { file: { name: 'file.txt' } }],
 				[2, { file: { name: 'file (1).jpeg' } }],
-				[3, { file: { name: 'file (copy).txt', newName: 'file (2).txt' } }],
+				[3, { file: { name: 'file (2).txt' } }],
 				[4, { file: { name: 'file (unique).txt' } }],
 			]
 
@@ -181,7 +181,7 @@ describe('hasDuplicateUploadNames', () => {
 			])
 
 			expect(duplicates).toEqual([
-				[3, { file: { name: 'file (copy).txt', newName: 'file (2).txt' } }],
+				[3, { file: { name: 'file (2).txt' } }],
 			])
 		})
 	})

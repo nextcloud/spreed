@@ -94,7 +94,7 @@ export async function findUniquePath(client: WebDAVClient, userRoot: string, pat
  */
 export function hasDuplicateUploadNames(uploads: UploadEntry[]): boolean {
 	const uploadNames = uploads.map(([_index, { file }]) => {
-		return getFileNamePrompt(file.newName || file.name)
+		return getFileNamePrompt(file.name)
 	})
 	const uploadNamesSet = new Set(uploadNames)
 
@@ -114,7 +114,7 @@ export function separateDuplicateUploads(uploads: UploadEntry[]): { uniques: Upl
 
 	// Count the occurrences of each name
 	for (const upload of uploads) {
-		const name = getFileNamePrompt(upload[1].file.newName || upload[1].file.name)
+		const name = getFileNamePrompt(upload[1].file.name)
 
 		if (nameCount.has(name)) {
 			duplicates.push(upload)
