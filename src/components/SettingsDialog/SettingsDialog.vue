@@ -115,8 +115,7 @@
 			<NcHotkeyList>
 				<NcHotkey :label="t('spreed', 'Toggle full screen')" hotkey="F" />
 				<NcHotkey v-if="!isGuest" :label="t('spreed', 'Return to Home screen')" hotkey="Escape" />
-				<!-- FIXME Overriden by Unified Search -->
-				<NcHotkey v-if="!isGuest" :label="t('spreed', 'Search')" hotkey="Control F" />
+				<NcHotkey v-if="!isGuest" :label="t('spreed', 'Search in app')" hotkey="Control F" />
 			</NcHotkeyList>
 
 			<NcHotkeyList :label="t('spreed', 'Shortcuts while in a chat')">

@@ -253,7 +253,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 						ref="searchBox"
 						v-model:value="searchText"
 						v-model:isFocused="isFocused"
-						:placeholderText="t('spreed', 'Search messages …')" />
+						:placeholderText="t('spreed', 'Search messages')" />
 					<NcButton
 						v-model:pressed="searchDetailsOpened"
 						:aria-label="t('spreed', 'Search options')"
