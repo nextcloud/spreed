@@ -506,6 +506,29 @@ describe('fileUploadStore', () => {
 				})
 			})
 
+			test('keeps the caption when the probe predicts a rename', async () => {
+				conversationGetter.mockReturnValue({ type: 2, displayName: 'Room' })
+				probeAttachmentFolder.mockResolvedValue(generateOCSResponse({ payload: {
+					folder: DRAFT_PATH,
+					renames: [{ 'photo.jpg': 'photo (1).jpg' }],
+				} }))
+
+				const file = { name: 'photo.jpg', type: 'image/jpeg', size: 100, lastModified: 0 }
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [file] })
+
+				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', caption: 'text-caption', options: null })
+
+				expect(vuexStoreDispatch).toHaveBeenLastCalledWith('addTemporaryMessage', {
+					token: TOKEN,
+					message: expect.objectContaining({
+						message: 'text-caption',
+						messageParameters: expect.objectContaining({
+							file: expect.objectContaining({ name: 'photo (1).jpg' }),
+						}),
+					}),
+				})
+			})
+
 			test('falls back to shareFile when the probe endpoint fails', async () => {
 				conversationGetter.mockReturnValue({ type: 2, displayName: 'My Room' })
 				probeAttachmentFolder.mockRejectedValueOnce(new Error('boom'))

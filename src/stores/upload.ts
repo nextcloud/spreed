@@ -449,6 +449,9 @@ export const useUploadStore = defineStore('upload', () => {
 						}
 					: uploadedFile.temporaryMessage.messageParameters,
 			}
+			// FIXME use a single source of truth, only create temp.message at this step
+			// Keep the caption and parent in sync between uploadStore and messagesStore
+			uploads[uploadId].files[index].temporaryMessage = message
 			// Add temporary messages (files) to the messages list
 			vuexStore.dispatch('addTemporaryMessage', { token, message })
 			// Scroll the message list
