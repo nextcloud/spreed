@@ -83,7 +83,7 @@ import CheckIcon from 'vue-material-design-icons/Check.vue'
 import WebIcon from 'vue-material-design-icons/Web.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 import MentionChip from '../MessagesList/MessagesGroup/Message/MessagePart/MentionChip.vue'
-import { CONVERSATION } from '../../constants.ts'
+import { CONVERSATION, MENTION } from '../../constants.ts'
 import { useFederationStore } from '../../stores/federation.ts'
 
 export default {
@@ -171,7 +171,7 @@ export default {
 			return {
 				user: {
 					component: MentionChip,
-					props: { id, name: item.inviterDisplayName, server, token: item.token || 'new', type: 'user' },
+					props: { id, name: item.inviterDisplayName, server, token: item.token || 'new', type: MENTION.TYPE.USER },
 				},
 			}
 		},

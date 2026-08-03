@@ -7,6 +7,7 @@ import { showError } from '@nextcloud/dialogs'
 import { getUploader } from '@nextcloud/upload'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { ATTENDEE } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { getDavClient } from '../../services/DavClient.ts'
 import { postAttachment, probeAttachmentFolder, shareFile } from '../../services/filesSharingServices.ts'
@@ -65,7 +66,7 @@ describe('fileUploadStore', () => {
 
 		actorStore.userId = 'current-user'
 		actorStore.actorId = 'current-user'
-		actorStore.actorType = 'users'
+		actorStore.actorType = ATTENDEE.ACTOR_TYPE.USERS
 		actorStore.displayName = 'Current User'
 		settingsStore.attachmentFolder = '/Talk'
 	})

@@ -13,11 +13,11 @@ import { MESSAGE, SHARED_ITEM } from '../constants.ts'
  */
 export function getItemTypeFromMessage(message: ChatMessage): string {
 	if (message.messageParameters?.object) {
-		if (message.messageParameters.object.type === 'geo-location') {
+		if (message.messageParameters.object.type === SHARED_ITEM.OBJECT_TYPE.LOCATION) {
 			return SHARED_ITEM.TYPES.LOCATION
-		} else if (message.messageParameters.object.type === 'deck-card') {
+		} else if (message.messageParameters.object.type === SHARED_ITEM.OBJECT_TYPE.DECK_CARD) {
 			return SHARED_ITEM.TYPES.DECK_CARD
-		} else if (message.messageParameters.object.type === 'talk-poll') {
+		} else if (message.messageParameters.object.type === SHARED_ITEM.OBJECT_TYPE.POLL) {
 			return SHARED_ITEM.TYPES.POLL
 		} else {
 			return SHARED_ITEM.TYPES.OTHER

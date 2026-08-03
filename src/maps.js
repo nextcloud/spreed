@@ -8,6 +8,7 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateFilePath, generateUrl } from '@nextcloud/router'
 import escapeHtml from 'escape-html'
+import { SHARED_ITEM } from './constants.ts'
 import { postRichObjectToConversation } from './services/messagesService.ts'
 import { requestRoomSelection } from './utils/requestRoomSelection.js'
 
@@ -22,7 +23,7 @@ import '@nextcloud/dialogs/style.css'
 async function postLocationToRoom(location, { token, displayName }) {
 	try {
 		const response = await postRichObjectToConversation(token, {
-			objectType: 'geo-location',
+			objectType: SHARED_ITEM.OBJECT_TYPE.LOCATION,
 			objectId: location.id,
 			metaData: JSON.stringify(location),
 		})

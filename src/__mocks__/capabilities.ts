@@ -4,6 +4,7 @@
  */
 import type { Capabilities } from '../types/index.ts'
 
+import { CHAT_STYLE, CONVERSATION, SIGNALING } from '../constants.ts'
 export const mockedCapabilities: Capabilities = {
 	spreed: {
 		features: [
@@ -176,20 +177,20 @@ export const mockedCapabilities: Capabilities = {
 				'has-translation-task-providers': true,
 				'typing-privacy': 0,
 				'summary-threshold': 100,
-				style: 'split',
+				style: CHAT_STYLE.SPLIT,
 				'matterbridge-enabled': false,
 			},
 			conversations: {
 				'can-create': true,
 				'force-passwords': false,
-				'list-style': 'two-lines',
+				'list-style': CONVERSATION.LIST_STYLE.TWO_LINES,
 				'description-length': 2000,
 				'retention-event': 28,
 				'retention-phone': 7,
 				'retention-instant-meetings': 1,
 				'retention-classified': 3600,
-				'sort-order': 'activity',
-				'group-mode': 'none',
+				'sort-order': CONVERSATION.SORT_ORDER.ACTIVITY,
+				'group-mode': CONVERSATION.GROUP_MODE.NONE,
 			},
 			federation: {
 				enabled: false,
@@ -203,7 +204,7 @@ export const mockedCapabilities: Capabilities = {
 			signaling: {
 				'session-ping-limit': 200,
 				'hello-v2-token-key': '123',
-				mode: 'internal',
+				mode: SIGNALING.MODE.INTERNAL,
 			},
 			experiments: {
 				enabled: 0,

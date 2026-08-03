@@ -825,13 +825,13 @@ export default {
 
 		handleUpdateBackground(background) {
 			// Default global blur background setting was changed by user
-			if (this.blurVirtualBackgroundEnabled && background !== 'blur') {
+			if (this.blurVirtualBackgroundEnabled && background !== VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
 				this.skipBlurVirtualBackground = true
 			}
 			// Apply the new background
-			if (background === 'none') {
+			if (background === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.NONE) {
 				this.clearBackground()
-			} else if (background === 'blur') {
+			} else if (background === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
 				this.blurBackground(this.blurVirtualBackgroundEnabled)
 			} else {
 				this.setBackgroundImage(background)
@@ -840,9 +840,9 @@ export default {
 
 		handleUpdateVirtualBackground(background) {
 			this.updatedBackground = background
-			if (background === 'none') {
+			if (background === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.NONE) {
 				this.clearVirtualBackground()
-			} else if (background === 'blur') {
+			} else if (background === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
 				this.blurVirtualBackground()
 			} else {
 				this.setVirtualBackgroundImage(background)

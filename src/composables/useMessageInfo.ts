@@ -137,7 +137,7 @@ export function useMessageInfo(item: MaybeRef<ChatMessage | undefined> = undefin
 			&& message.value.lastEditActorType === currentActorType) {
 			return t('spreed', '(edited by you)')
 		} else if (message.value.lastEditActorId === 'deleted_users'
-			&& message.value.lastEditActorType === 'deleted_users') {
+			&& message.value.lastEditActorType === ATTENDEE.ACTOR_TYPE.DELETED_USERS) {
 			return t('spreed', '(edited by a deleted user)')
 		} else {
 			return t('spreed', '(edited by {moderator})', { moderator: message.value.lastEditActorDisplayName! })

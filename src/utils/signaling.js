@@ -13,7 +13,7 @@ import { t } from '@nextcloud/l10n'
 import {
 	generateOcsUrl,
 } from '@nextcloud/router'
-import { PARTICIPANT } from '../constants.ts'
+import { PARTICIPANT, SIGNALING } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { rejoinConversation } from '../services/participantsService.js'
@@ -44,7 +44,7 @@ const Signaling = {
 			console.error('Signaling settings are not given')
 		}
 
-		if (settings.signalingMode !== 'internal') {
+		if (settings.signalingMode !== SIGNALING.MODE.INTERNAL) {
 			return new Signaling.Standalone(settings, settings.server)
 		} else {
 			return new Signaling.Internal(settings)

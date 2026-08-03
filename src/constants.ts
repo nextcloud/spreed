@@ -356,6 +356,11 @@ export const PARTICIPANT = {
 } as const
 
 export const SHARED_ITEM = {
+	OBJECT_TYPE: {
+		DECK_CARD: 'deck-card',
+		LOCATION: 'geo-location',
+		POLL: 'talk-poll',
+	},
 	TYPES: {
 		AUDIO: 'audio',
 		DECK_CARD: 'deckcard',
@@ -447,6 +452,7 @@ export const SIMULCAST = {
 
 export const VIRTUAL_BACKGROUND = {
 	BACKGROUND_TYPE: {
+		NONE: 'none',
 		BLUR: 'blur',
 		IMAGE: 'image',
 		VIDEO: 'video',

@@ -10,6 +10,7 @@ import {
 	ATTENDEE,
 	CALL,
 	CONVERSATION,
+	MENTION,
 	MESSAGE,
 	PARTICIPANT,
 	WEBINAR,
@@ -868,11 +869,11 @@ const actions = {
 		 */
 		if ((lastMessage.actorType !== ATTENDEE.ACTOR_TYPE.BOTS
 			|| lastMessage.actorId === ATTENDEE.CHANGELOG_BOT_ID)
-		&& lastMessage.systemMessage !== 'reaction'
-		&& lastMessage.systemMessage !== 'reaction_deleted'
-		&& lastMessage.systemMessage !== 'reaction_revoked'
-		&& lastMessage.systemMessage !== 'message_deleted'
-		&& lastMessage.systemMessage !== 'message_edited') {
+		&& lastMessage.systemMessage !== MESSAGE.SYSTEM_TYPE.REACTION
+		&& lastMessage.systemMessage !== MESSAGE.SYSTEM_TYPE.REACTION_DELETED
+		&& lastMessage.systemMessage !== MESSAGE.SYSTEM_TYPE.REACTION_REVOKED
+		&& lastMessage.systemMessage !== MESSAGE.SYSTEM_TYPE.MESSAGE_DELETED
+		&& lastMessage.systemMessage !== MESSAGE.SYSTEM_TYPE.MESSAGE_EDITED) {
 			commit('updateConversationLastMessage', { token, lastMessage })
 		}
 	},
@@ -893,7 +894,7 @@ const actions = {
 		}
 
 		const actor = notification.subjectRichParameters.user || notification.subjectRichParameters.guest || {
-			type: 'guest',
+			type: MENTION.TYPE.GUEST,
 			id: 'unknown',
 			name: t('spreed', 'Guest'),
 		}
@@ -932,10 +933,10 @@ const actions = {
 			unreadCounterUpdate.unreadMessages++
 			Object.keys(notification.messageRichParameters).forEach(function(p) {
 				const parameter = notification.messageRichParameters[p]
-				if (parameter.type === 'user' && parameter.id === notification.user) {
+				if (parameter.type === MENTION.TYPE.USER && parameter.id === notification.user) {
 					unreadCounterUpdate.unreadMention++
 					unreadCounterUpdate.unreadMentionDirect = true
-				} else if (parameter.type === 'call' && parameter.id === token) {
+				} else if (parameter.type === MENTION.TYPE.CALL && parameter.id === token) {
 					unreadCounterUpdate.unreadMention++
 				}
 			})
@@ -982,7 +983,7 @@ const actions = {
 			messageParameters: notification.subjectRichParameters,
 			timestamp: activeSince,
 			messageType: MESSAGE.TYPE.SYSTEM,
-			systemMessage: 'call_started',
+			systemMessage: MESSAGE.SYSTEM_TYPE.CALL_STARTED,
 			expirationTimestamp: 0,
 			isReplyable: false,
 			reactions: {},
@@ -1186,9 +1187,15 @@ const actions = {
 			let response
 			if (supportConversationCreationAll) {
 				const participantsMap = participants?.reduce((map, participant) => {
-					// FIXME type Record<'users'|'federated_users'|'groups'|'emails'|'phones'|'teams', string[]>
-					const source = participant.source === 'circles' ? 'teams' : participant.source
-					if (!['users', 'federated_users', 'groups', 'emails', 'phones', 'teams'].includes(source)) {
+					const source = participant.source === ATTENDEE.ACTOR_TYPE.CIRCLES ? ATTENDEE.ACTOR_TYPE.TEAMS : participant.source
+					if (![
+						ATTENDEE.ACTOR_TYPE.USERS,
+						ATTENDEE.ACTOR_TYPE.FEDERATED_USERS,
+						ATTENDEE.ACTOR_TYPE.GROUPS,
+						ATTENDEE.ACTOR_TYPE.EMAILS,
+						ATTENDEE.ACTOR_TYPE.PHONES,
+						ATTENDEE.ACTOR_TYPE.TEAMS,
+					].includes(source)) {
 						return map
 					}
 
