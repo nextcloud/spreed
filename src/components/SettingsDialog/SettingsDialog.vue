@@ -147,7 +147,6 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
 import { showError } from '@nextcloud/dialogs'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -369,5 +368,5 @@ export default {
 			emit('talk:media-settings:show', 'device-check')
 		},
 	},
-})
+}
 </script>
