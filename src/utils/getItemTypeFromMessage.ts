@@ -6,6 +6,7 @@
 import type { ChatMessage, PinnedChatMessage } from '../types/index.ts'
 
 import { MESSAGE, SHARED_ITEM } from '../constants.ts'
+import { isFileShareMessage } from '../utils/message.ts'
 
 /**
  *
@@ -65,7 +66,7 @@ export function isValidSharedItem(type: string, message: ChatMessage | PinnedCha
 		return !!(message.messageParameters?.object)
 	}
 
-	// Items that require messageParameters.file
+	// Items that require at least one shared file
 	if ([
 		SHARED_ITEM.TYPES.FILE,
 		SHARED_ITEM.TYPES.AUDIO,
@@ -73,9 +74,9 @@ export function isValidSharedItem(type: string, message: ChatMessage | PinnedCha
 		SHARED_ITEM.TYPES.RECORDING,
 		SHARED_ITEM.TYPES.VOICE,
 	].includes(type)) {
-		return !!(message.messageParameters?.file)
+		return isFileShareMessage(message)
 	}
 
 	// At least one truthy property should be present
-	return !!(message.messageParameters?.object) || !!(message.messageParameters?.file)
+	return !!(message.messageParameters?.object) || isFileShareMessage(message)
 }

@@ -475,6 +475,7 @@ import { generatePublicShareDownloadUrl, generateUserFileUrl, generateUserFolder
 import { convertToUnix, formatDateTime, ONE_DAY_IN_MS } from '../../../../../utils/formattedTime.ts'
 import { getCustomDateOptions } from '../../../../../utils/getCustomDateOptions.ts'
 import { copyConversationLinkToClipboard } from '../../../../../utils/handleUrl.ts'
+import { getFileKeys } from '../../../../../utils/message.ts'
 import { parseMentions } from '../../../../../utils/textParse.ts'
 
 const PIN_DURATION_OPTIONS = [
@@ -671,7 +672,7 @@ export default {
 		},
 
 		messageFile() {
-			const firstFileKey = (Object.keys(this.message.messageParameters).find((key) => key.startsWith('file')))
+			const firstFileKey = getFileKeys(this.message).at(0)
 			return this.message.messageParameters[firstFileKey]
 		},
 

@@ -15,7 +15,7 @@ import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.ts'
 import { ONE_DAY_IN_MS, ONE_HOUR_IN_MS } from '../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
-import { hasOnlyFilePlaceholders } from '../utils/message.ts'
+import { hasOnlyFilePlaceholders, isFileShareMessage } from '../utils/message.ts'
 import { useConversationInfo } from './useConversationInfo.ts'
 
 /**
@@ -110,7 +110,7 @@ export function useMessageInfo(item: MaybeRef<ChatMessage | undefined> = undefin
 		return (Date.now() - message.value.timestamp * 1000 < ONE_DAY_IN_MS)
 	})
 
-	const isFileShare = computed(() => Object.keys(Object(message.value.messageParameters)).some((key) => key.startsWith('file')))
+	const isFileShare = computed(() => isFileShareMessage(message.value))
 
 	const hideDownloadOption = computed(() => Object.values(Object(message.value.messageParameters) as ChatMessage['messageParameters']).some((value) => value.type === 'file' && value['hide-download'] === 'yes'))
 
