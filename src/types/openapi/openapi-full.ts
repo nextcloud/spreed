@@ -13554,7 +13554,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "breakout-room" | "call" | "value";
+                                error: "breakout-room" | "call" | "classified" | "value";
                             };
                         };
                     };
