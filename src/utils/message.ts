@@ -177,12 +177,26 @@ function selfIsUser(message: ChatMessage, selfActorId: string, selfActorType: st
 }
 
 /**
+ * Matches a file-sharing rich object parameter key ('{file}', '{file-1}', '{file-2}', …)
+ */
+const FILE_PLACEHOLDERS_REGEX = /^\s*(?:\{file(?:-\d+)?\}\s*)+$/
+
+/**
  * Returns whether the given message shares a file (has a rich object parameter with a key starting with 'file').
  *
  * @param message Chat message (or a parent message)
  */
 export function isFileShareMessage(message: ChatMessage): boolean {
 	return Object.keys(message.messageParameters ?? {}).some((key) => key.startsWith('file'))
+}
+
+/**
+ * Returns whether the given text consists of file placeholders only ('{file}', '{file-1} {file-2}', …), without caption
+ *
+ * @param text message text
+ */
+export function hasOnlyFilePlaceholders(text: string): boolean {
+	return FILE_PLACEHOLDERS_REGEX.test(text)
 }
 
 /**

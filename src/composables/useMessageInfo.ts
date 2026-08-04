@@ -15,6 +15,7 @@ import { useActorStore } from '../stores/actor.ts'
 import { useGuestNameStore } from '../stores/guestName.ts'
 import { ONE_DAY_IN_MS, ONE_HOUR_IN_MS } from '../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../utils/getDisplayName.ts'
+import { hasOnlyFilePlaceholders } from '../utils/message.ts'
 import { useConversationInfo } from './useConversationInfo.ts'
 
 /**
@@ -113,7 +114,7 @@ export function useMessageInfo(item: MaybeRef<ChatMessage | undefined> = undefin
 
 	const hideDownloadOption = computed(() => Object.values(Object(message.value.messageParameters) as ChatMessage['messageParameters']).some((value) => value.type === 'file' && value['hide-download'] === 'yes'))
 
-	const isFileShareWithoutCaption = computed(() => message.value.message === '{file}' && isFileShare.value)
+	const isFileShareWithoutCaption = computed(() => isFileShare.value && hasOnlyFilePlaceholders(message.value.message))
 
 	const isDeleteable = computed(() => (hasTalkFeature(message.value.token, 'delete-messages-unlimited') || (Date.now() - message.value.timestamp * 1000 < 6 * ONE_HOUR_IN_MS))
 		&& [MESSAGE.TYPE.COMMENT, MESSAGE.TYPE.VOICE_MESSAGE, MESSAGE.TYPE.RECORD_AUDIO, MESSAGE.TYPE.RECORD_VIDEO].includes(message.value.messageType)
