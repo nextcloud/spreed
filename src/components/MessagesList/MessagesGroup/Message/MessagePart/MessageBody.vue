@@ -11,6 +11,7 @@
 			'message-main--sided': isSplitViewEnabled && !isSystemMessage,
 			'message-main--compressed': isSplitViewEnabled && isShortSimpleMessage,
 			'message-main--compressed-system': isSplitViewEnabled && isSystemMessage,
+			'message-main--combined-files': hasCombinedFiles,
 		}">
 		<p
 			v-if="isThreadStarterMessage"
@@ -322,6 +323,10 @@ export default {
 	},
 
 	computed: {
+		hasCombinedFiles() {
+			return getFileKeys(this.message).length > 1
+		},
+
 		showQuote() {
 			return !!this.message.parent && this.message.parent.id !== this.threadId
 		},
