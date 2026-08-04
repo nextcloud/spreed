@@ -422,7 +422,7 @@ export default {
 			tabContent: 'devices',
 			audioOn: undefined,
 			videoOn: undefined,
-			notifyCall: false,
+			notifyCall: true,
 			updatedBackground: undefined,
 			audioDeviceStateChanged: false,
 			videoDeviceStateChanged: false,
