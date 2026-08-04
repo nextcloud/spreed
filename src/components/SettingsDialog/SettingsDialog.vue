@@ -42,8 +42,7 @@
 				<NcFormBoxSwitch
 					v-if="!isGuest"
 					:modelValue="defaultCallMethodIsSilent"
-					:label="t('spreed', 'Default call method is silent')"
-					:description="t('spreed', 'You will be able to change this in the media settings')"
+					:label="t('spreed', 'Start calls silently by default')"
 					@update:modelValue="setDefaultCallMethodIsSilent" />
 				<NcFormBoxButton
 					:label="t('spreed', 'Microphone settings')"
