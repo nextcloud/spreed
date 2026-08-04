@@ -25,7 +25,7 @@
 				:index="index"
 				:loading="loading"
 				@removeServer="removeServer"
-				@update:server="debounceUpdateServers" />
+				@update:server="debounceUpdateServers()" />
 		</TransitionWrapper>
 
 		<NcButton

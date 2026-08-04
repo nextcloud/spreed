@@ -101,7 +101,7 @@ export function useGetMessagesProvider() {
 		}
 
 		return firstKnownMessage.messageType === MESSAGE.TYPE.SYSTEM
-			&& ['conversation_created', 'history_cleared'].includes(firstKnownMessage.systemMessage)
+			&& [MESSAGE.SYSTEM_TYPE.CONVERSATION_CREATED, MESSAGE.SYSTEM_TYPE.HISTORY_CLEARED].includes(firstKnownMessage.systemMessage)
 	})
 
 	const conversationLastMessageId = computed<number>(() => {

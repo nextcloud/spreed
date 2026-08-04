@@ -22,7 +22,9 @@ return RectorConfig::configure()
 	->withPhpSets(php83: true)
 	->withSets([
 		PHPUnitSetList::PHPUNIT_120,
-		NextcloudSets::NEXTCLOUD_34,
+		PHPUnitSetList::PHPUNIT_NARROW_ASSERTS,
+		PHPUnitSetList::PHPUNIT_MOCK_TO_STUB,
+		NextcloudSets::NEXTCLOUD_35,
 	])
 	->withSkip([
 		ReplaceInjectedMethodCallRector::class,

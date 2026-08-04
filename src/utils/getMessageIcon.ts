@@ -15,7 +15,7 @@ import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.v
 import IconMovieOutline from 'vue-material-design-icons/MovieOutline.vue'
 import IconMusicNoteOutline from 'vue-material-design-icons/MusicNoteOutline.vue'
 import IconPoll from 'vue-material-design-icons/Poll.vue'
-import { MESSAGE } from '../constants.ts'
+import { MESSAGE, SHARED_ITEM } from '../constants.ts'
 
 /**
  *
@@ -51,13 +51,13 @@ export function getMessageIcon(lastMessage: Conversation['lastMessage']): Compon
 
 	const object = lastMessage.messageParameters?.object
 	if (object) {
-		if (object?.type === 'talk-poll') {
+		if (object?.type === SHARED_ITEM.OBJECT_TYPE.POLL) {
 			return IconPoll // Polls
 		}
-		if (object?.type === 'deck-card') {
+		if (object?.type === SHARED_ITEM.OBJECT_TYPE.DECK_CARD) {
 			return IconCardTextOutline // Deck cards
 		}
-		if (object?.type === 'geo-location') {
+		if (object?.type === SHARED_ITEM.OBJECT_TYPE.LOCATION) {
 			return IconMapMarkerOutline // Locations
 		}
 	}

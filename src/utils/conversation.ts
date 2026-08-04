@@ -8,13 +8,43 @@ import type { Conversation, EventTimeRange } from '../types/index.ts'
 
 import { toValue } from 'vue'
 import { CONVERSATION, PARTICIPANT } from '../constants.ts'
-import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import { getTalkConfig, hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { ONE_HOUR_IN_MS } from './formattedTime.ts'
 
 type Filter = 'unread' | 'mentions' | 'events'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const supportsAvatar = hasTalkFeature('local', 'avatar')
+
+/**
+ * Check if the conversation is classified (CLASSIFIED attribute bit is set)
+ * Feature is supported with `classified-conversations` capability.
+ *
+ * @param conversation conversation object
+ */
+export function isClassifiedConversation(conversation: Conversation | undefined): boolean {
+	return Boolean(conversation && conversation.attributes & CONVERSATION.ATTRIBUTE.CLASSIFIED)
+}
+
+/**
+ * Check if the conversation is a channel (CHANNEL attribute bit is set)
+ * Feature is supported with `announcement-preset` capability.
+ *
+ * @param conversation conversation object
+ */
+export function isChannelConversation(conversation: Conversation | undefined): boolean {
+	return Boolean(conversation && conversation.attributes & CONVERSATION.ATTRIBUTE.CHANNEL)
+}
+
+/**
+ * Check if the conversation is an announcement (CHANNEL+ANNOUNCEMENT attribute bits are set)
+ * Feature is supported with `announcement-preset` capability.
+ *
+ * @param conversation conversation object
+ */
+export function isAnnouncementConversation(conversation: Conversation | undefined): boolean {
+	return isChannelConversation(conversation) && Boolean(conversation!.attributes & CONVERSATION.ATTRIBUTE.ANNOUNCEMENT)
+}
 
 /**
  * check if the conversation has unread messages
@@ -44,6 +74,17 @@ export function hasUnreadMentions(conversation: Conversation): boolean {
  */
 export function hasCall(conversation: Conversation): boolean {
 	return conversation.hasCall && conversation.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON
+}
+
+/**
+ * check whether the conversation is created to use an external call service
+ *
+ * @param conversation conversation object
+ */
+export function hasExternalCallService(conversation?: Conversation): boolean {
+	return conversation?.objectType === CONVERSATION.OBJECT_TYPE.EXTERNAL_CALL
+		&& !getTalkConfig('local', 'call', 'enabled')
+		&& !!(getTalkConfig('local', 'call', 'external-call-service'))
 }
 
 /**
@@ -156,6 +197,10 @@ export function getFallbackIconClass(conversation: Conversation, forceFallback: 
 		// Prevent a 404 when trying to load an avatar before the conversation data is actually loaded
 		if (conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM) {
 			return 'icon-voice-room'
+		} else if (isClassifiedConversation(conversation)) {
+			return 'icon-classified'
+		} else if (isChannelConversation(conversation)) {
+			return 'icon-channel'
 		}
 		return conversation.type === CONVERSATION.TYPE.PUBLIC ? 'icon-public' : 'icon-contacts'
 	}
@@ -178,6 +223,10 @@ export function getFallbackIconClass(conversation: Conversation, forceFallback: 
 			return 'icon-team'
 		} else if (conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM) {
 			return 'icon-voice-room'
+		} else if (isClassifiedConversation(conversation)) {
+			return 'icon-classified'
+		} else if (isChannelConversation(conversation)) {
+			return 'icon-channel'
 		} else if (conversation.type === CONVERSATION.TYPE.CHANGELOG) {
 			return 'icon-changelog'
 		} else if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {

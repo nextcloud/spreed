@@ -76,7 +76,7 @@ class BackendNotifier {
 		$roomDefaultPermissions = $room->getDefaultPermissions();
 
 		try {
-			$this->restrictionValidator->isAllowedToInvite($sharedBy, $invitedCloudId);
+			$this->restrictionValidator->isAllowedToInvite($sharedBy, $invitedCloudId, $room);
 		} catch (\InvalidArgumentException) {
 			return false;
 		}

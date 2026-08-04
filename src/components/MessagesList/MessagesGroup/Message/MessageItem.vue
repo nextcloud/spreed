@@ -109,7 +109,7 @@ import MessageBody from './MessagePart/MessageBody.vue'
 import PollCard from './MessagePart/PollCard.vue'
 import ReactionsWrapper from './MessagePart/ReactionsWrapper.vue'
 import { useGetThreadId } from '../../../../composables/useGetThreadId.ts'
-import { CONVERSATION, MENTION, MESSAGE, PARTICIPANT } from '../../../../constants.ts'
+import { CONVERSATION, MENTION, MESSAGE, PARTICIPANT, SHARED_ITEM } from '../../../../constants.ts'
 import { hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../stores/actor.ts'
@@ -246,17 +246,17 @@ export default {
 							file: this.message.messageParameters[p],
 						},
 					}
-				} else if (type === 'deck-card') {
+				} else if (type === SHARED_ITEM.OBJECT_TYPE.DECK_CARD) {
 					richParameters[p] = {
 						component: DeckCard,
 						props: this.message.messageParameters[p],
 					}
-				} else if (type === 'geo-location') {
+				} else if (type === SHARED_ITEM.OBJECT_TYPE.LOCATION) {
 					richParameters[p] = {
 						component: LocationCard,
 						props: this.message.messageParameters[p],
 					}
-				} else if (type === 'talk-poll' && this.message.systemMessage !== 'poll_closed') {
+				} else if (type === SHARED_ITEM.OBJECT_TYPE.POLL && this.message.systemMessage !== MESSAGE.SYSTEM_TYPE.POLL_CLOSED) {
 					const props = { ...this.message.messageParameters[p] }
 					// Add the token to the component props
 					props.token = this.message.token

@@ -13,7 +13,7 @@ import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
 import ConversationItem from './ConversationItem.vue'
 import router from '../../../__mocks__/router.js'
-import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
+import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../constants.ts'
 import { leaveConversation } from '../../../services/participantsService.js'
 import storeConfig from '../../../store/storeConfig.js'
 import { findNcActionButton } from '../../../test-helpers.js'
@@ -155,7 +155,7 @@ describe('ConversationItem.vue', () => {
 
 			test('displays last system message without author', async () => {
 				item.lastMessage.message = 'Alice has joined the call'
-				item.lastMessage.systemMessage = 'call_joined'
+				item.lastMessage.systemMessage = MESSAGE.SYSTEM_TYPE.CALL_JOINED
 
 				await testConversationLabel(item, 'Alice has joined the call')
 			})

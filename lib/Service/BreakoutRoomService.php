@@ -94,8 +94,13 @@ class BreakoutRoomService {
 	 * @param string $attendeeMap
 	 * @return Room[]
 	 * @throws InvalidArgumentException When the breakout rooms are configured already
+	 *                                  or the conversation is classified
 	 */
 	public function setupBreakoutRooms(Room $parent, int $mode, int $amount, string $attendeeMap): array {
+		if ($parent->isClassified()) {
+			throw new InvalidArgumentException('classified');
+		}
+
 		if (!$this->config->isBreakoutRoomsEnabled()) {
 			throw new InvalidArgumentException('config');
 		}

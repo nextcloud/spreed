@@ -65,13 +65,15 @@ class FederationManager {
 	/**
 	 * Check if $sharedBy is allowed to invite $shareWith
 	 *
+	 * @param ?Room $room Conversation the invite is for, when it already exists
 	 * @throws FederationRestrictionException
 	 */
 	public function isAllowedToInvite(
 		IUser $user,
 		ICloudId $cloudIdToInvite,
+		?Room $room = null,
 	): void {
-		$this->restrictionValidator->isAllowedToInvite($user, $cloudIdToInvite);
+		$this->restrictionValidator->isAllowedToInvite($user, $cloudIdToInvite, $room);
 	}
 
 	public function addRemoteRoom(

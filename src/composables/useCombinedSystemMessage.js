@@ -6,6 +6,7 @@
 import { n, t } from '@nextcloud/l10n'
 import { cloneDeep } from 'es-toolkit/object'
 import { useStore } from 'vuex'
+import { MENTION, MESSAGE } from '../constants.ts'
 import { useActorStore } from '../stores/actor.ts'
 
 /**
@@ -63,7 +64,7 @@ export function useCombinedSystemMessage() {
 		// clear messageParameters to be filled later
 		const actor = messages[0].messageParameters.actor
 		combinedMessage.messageParameters = { actor }
-		const actorIsAdministrator = actor.id === 'guest/cli' && actor.type === 'guest'
+		const actorIsAdministrator = actor.id === 'guest/cli' && actor.type === MENTION.TYPE.GUEST
 
 		// usersCounter should be equal at least 2, as we're using method only for groups
 		let usersCounter = 0
@@ -71,7 +72,7 @@ export function useCombinedSystemMessage() {
 		let referenceIndex = 0
 
 		// Handle cases when actor added users to conversation (when populate on creation, for example)
-		if (type === 'user_added') {
+		if (type === MESSAGE.SYSTEM_TYPE.USER_ADDED) {
 			messages.forEach((message) => {
 				if (checkIfSelfIsOneOfUsers(message)) {
 					selfIsUser = true
@@ -137,7 +138,7 @@ export function useCombinedSystemMessage() {
 		}
 
 		// Handle cases when actor removed users from conversation (when remove team/group, for example)
-		if (type === 'user_removed') {
+		if (type === MESSAGE.SYSTEM_TYPE.USER_REMOVED) {
 			messages.forEach((message) => {
 				if (checkIfSelfIsOneOfUsers(message)) {
 					selfIsUser = true
@@ -203,7 +204,7 @@ export function useCombinedSystemMessage() {
 		}
 
 		// Handle cases when users joined or left the call
-		if (type === 'call_joined' || type === 'call_left') {
+		if (type === MESSAGE.SYSTEM_TYPE.CALL_JOINED || type === MESSAGE.SYSTEM_TYPE.CALL_LEFT) {
 			const storedUniqueUsers = []
 
 			messages.forEach((message) => {
@@ -228,7 +229,7 @@ export function useCombinedSystemMessage() {
 				return combinedMessage
 			}
 
-			if (type === 'call_joined') {
+			if (type === MESSAGE.SYSTEM_TYPE.CALL_JOINED) {
 				if (selfIsUser) {
 					if (usersCounter === 2) {
 						combinedMessage.message = t('spreed', 'You and {user0} joined the call')
@@ -252,7 +253,7 @@ export function useCombinedSystemMessage() {
 						)
 					}
 				}
-			} else if (type === 'call_left') {
+			} else if (type === MESSAGE.SYSTEM_TYPE.CALL_LEFT) {
 				if (selfIsUser) {
 					if (usersCounter === 2) {
 						combinedMessage.message = t('spreed', 'You and {user0} left the call')
@@ -280,7 +281,7 @@ export function useCombinedSystemMessage() {
 		}
 
 		// Handle cases when actor promoted several users to moderators
-		if (type === 'moderator_promoted') {
+		if (type === MESSAGE.SYSTEM_TYPE.MODERATOR_PROMOTED) {
 			messages.forEach((message) => {
 				if (checkIfSelfIsOneOfUsers(message)) {
 					selfIsUser = true
@@ -346,7 +347,7 @@ export function useCombinedSystemMessage() {
 		}
 
 		// Handle cases when actor demoted several users from moderators
-		if (type === 'moderator_demoted') {
+		if (type === MESSAGE.SYSTEM_TYPE.MODERATOR_DEMOTED) {
 			messages.forEach((message) => {
 				if (checkIfSelfIsOneOfUsers(message)) {
 					selfIsUser = true

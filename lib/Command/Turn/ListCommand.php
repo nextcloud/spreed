@@ -9,14 +9,15 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Turn;
 
 use OC\Core\Command\Base;
-use OCP\IConfig;
+use OCA\Talk\Config;
+use OCP\AppFramework\Services\IAppConfig;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ListCommand extends Base {
 
 	public function __construct(
-		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 	) {
 		parent::__construct();
 	}
@@ -31,12 +32,7 @@ class ListCommand extends Base {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$config = $this->config->getAppValue('spreed', 'turn_servers');
-		$servers = json_decode($config, true);
-		if (!is_array($servers)) {
-			$servers = [];
-		}
-
+		$servers = $this->appConfig->getAppValueArray(Config::TURN_SERVERS);
 		$this->writeMixedInOutputFormat($input, $output, $servers);
 		return 0;
 	}

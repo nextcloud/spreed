@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Private conversation" : "Conversație privată",
     "a conversation" : "o conversație",
     "(Duration %s)" : "(Durata %s)",
     "You attended a call with {user1}" : "Ați participat la un apel cu {user1}",
@@ -142,7 +143,6 @@ OC.L10N.register(
     "Meeting ID" : "ID întâlnire",
     "Meeting" : "Videoconferință",
     "Password request: %s" : "Solicitare parolă: %s",
-    "Private conversation" : "Conversație privată",
     "Deleted user (%s)" : "Utilizator (%s) șters",
     "Share to chat" : "Partajați în chat",
     "Dismiss notification" : "Elimină notificarea",
@@ -548,6 +548,8 @@ OC.L10N.register(
     "Camera" : "Camera",
     "Show presenter" : "Arată prezentatorul",
     "You" : "Tu",
+    "Stop screensharing" : "Oprește partajarea ecranului",
+    "Dismiss" : "Elimină",
     "Mute" : "Oprește sunetul",
     "Muted" : "Sunet oprit",
     "Show screen" : "Prezintă ecranul",
@@ -669,7 +671,6 @@ OC.L10N.register(
     "Edit message" : "Editare mesaj",
     "Translate" : "Tradu",
     "Set custom reminder" : "Setează memento particular",
-    "Dismiss" : "Elimină",
     "Send now" : "Trimite acum",
     "Message sent" : "Mesajul a fost transmis",
     "Contact" : "Contact",
@@ -757,7 +758,6 @@ OC.L10N.register(
     "Privacy" : "Confidențialitate",
     "Attachments folder" : "Dosarul pentru atașamente",
     "Toggle full screen" : "Comută în ecran complet",
-    "Search" : "Caută",
     "Focus the chat input" : "Focalizează inputul în chat",
     "Unfocus the chat input to use shortcuts" : "Defocalizează inputul în chat pentru folosirea scurtăturilor",
     "Shortcuts while in a call" : "Scurtături pentru videoconferință",
@@ -793,12 +793,11 @@ OC.L10N.register(
     "Screen sharing is not supported by your browser." : "Partajarea ecranului nu e posibilă în acest browser.",
     "An error occurred while starting screensharing." : "Eroare la partajarea ecranului.",
     "Show your screen" : "Prezentați ecranul",
-    "Stop screensharing" : "Oprește partajarea ecranului",
     "Mute others" : "Închide microfonul celorlalți",
     "Remove participant {name}" : "Elimină participantul {name}",
     "Keep" : "Păstrare",
     "Select a region" : "Selectează o regiune",
-    "Search …" : "Caută ...",
+    "Search" : "Caută",
     "Message without mention" : "Mesaj fără mențiuni",
     "Mention myself" : "Mă menționez",
     "The conversation does not exist" : "Conversația nu există",
@@ -886,6 +885,7 @@ OC.L10N.register(
     "Set reminder for next week" : "Setează memo pentru săptămâna viitoare",
     "Your privacy setting has been saved" : "Setările de confidențialitate au fost salvate",
     "Failed to save sounds setting" : "Eroare la salvarea setărilor de sunet",
-    "Sounds setting saved" : "Setările de sunet au fost salvate"
+    "Sounds setting saved" : "Setările de sunet au fost salvate",
+    "Search …" : "Caută ..."
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

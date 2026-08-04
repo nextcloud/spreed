@@ -57,6 +57,7 @@ import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
 import { useSessionIssueHandler } from './composables/useSessionIssueHandler.ts'
+import { SIGNALING } from './constants.ts'
 import { EventBus } from './services/EventBus.ts'
 import { getPublicShareConversationData } from './services/filesIntegrationServices.ts'
 import {
@@ -203,7 +204,7 @@ export default {
 			// used), although that should not be a problem given that only the
 			// "inCall" flag (which is locally updated when joining and leaving
 			// a call) is currently used.
-			if (loadState('spreed', 'signaling_mode') !== 'internal') {
+			if (loadState('spreed', 'signaling_mode') !== SIGNALING.MODE.INTERNAL) {
 				EventBus.on('should-refresh-conversations', this.fetchCurrentConversation)
 				EventBus.on('signaling-participant-list-changed', this.fetchCurrentConversation)
 			} else {

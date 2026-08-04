@@ -86,6 +86,18 @@ VideoConstrainer.prototype = {
 		// Quality may not actually match the default constraints, but it is the
 		// best that can be done.
 		this._currentQuality = quality
+
+		this._logAppliedSettings(quality)
+	},
+
+	_logAppliedSettings(quality) {
+		const outputTrack = this._trackConstrainer.getOutputTrack()
+		if (!outputTrack || !outputTrack.getSettings) {
+			return
+		}
+
+		const { width, height, frameRate } = outputTrack.getSettings()
+		console.debug('Camera picked resolution for quality %d: %dx%d @ %s fps', quality, width, height, frameRate)
 	},
 
 	async _applyRoughConstraints(trackConstrainer, quality) {
@@ -169,10 +181,14 @@ VideoConstrainer.prototype = {
 		if (quality === QUALITY.HIGH) {
 			return {
 				width: {
-					min: 1440,
+					max: 1920,
+					ideal: 1920,
+					min: 1280,
 				},
 				height: {
-					min: 1080,
+					max: 1080,
+					ideal: 1080,
+					min: 720,
 				},
 				frameRate: {
 					max: 30,
@@ -186,10 +202,14 @@ VideoConstrainer.prototype = {
 		if (quality === QUALITY.MEDIUM) {
 			return {
 				width: {
-					min: 720,
+					max: 1280,
+					ideal: 1280,
+					min: 640,
 				},
 				height: {
-					min: 540,
+					max: 720,
+					ideal: 720,
+					min: 480,
 				},
 				frameRate: {
 					max: 30,
@@ -245,9 +265,13 @@ VideoConstrainer.prototype = {
 		return {
 			width: {
 				max: 320,
+				ideal: 240,
+				min: 160,
 			},
 			height: {
 				max: 240,
+				ideal: 180,
+				min: 120,
 			},
 			frameRate: {
 				max: 30,

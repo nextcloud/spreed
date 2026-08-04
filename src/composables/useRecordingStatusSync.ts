@@ -7,7 +7,7 @@ import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
-import { CALL, PARTICIPANT } from '../constants.ts'
+import { CALL, PARTICIPANT, SIGNALING } from '../constants.ts'
 import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { EventBus } from '../services/EventBus.ts'
 import { useTokenStore } from '../stores/token.ts'
@@ -19,7 +19,7 @@ export function useRecordingStatusSync() {
 	const tokenStore = useTokenStore()
 	const vuexStore = useStore()
 
-	if (getTalkConfig('local', 'signaling', 'mode') !== 'internal') {
+	if (getTalkConfig('local', 'signaling', 'mode') !== SIGNALING.MODE.INTERNAL) {
 		EventBus.on('signaling-recording-status-changed', handleSignalingRecordingStatusChanged)
 	}
 
