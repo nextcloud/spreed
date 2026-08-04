@@ -222,10 +222,6 @@ export default {
 			Object.keys(this.message.messageParameters).forEach(function(p) {
 				const type = this.message.messageParameters[p].type
 				const mimetype = this.message.messageParameters[p].mimetype
-				const itemType = getItemTypeFromMessage({
-					messageParameters: this.message.messageParameters,
-					messageType: this.message.messageType,
-				})
 				if (Object.values(MENTION.TYPE).includes(type)) {
 					richParameters[p] = {
 						component: MentionChip,
@@ -241,7 +237,7 @@ export default {
 							token: this.message.token,
 							messageId: this.message.id,
 							nextMessageId: this.nextMessageId,
-							itemType,
+							itemType: getItemTypeFromMessage(this.message, p),
 							referenceId: this.message.referenceId,
 							file: this.message.messageParameters[p],
 						},
