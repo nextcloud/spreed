@@ -3,15 +3,15 @@ Feature: federation/poll
     Given using server "REMOTE"
     And user "participant2" exists
     And the following "spreed" app config is set
-      | federation_enabled | true |
+      | federation_enabled | yes |
     And using server "LOCAL"
     Given user "participant1" exists
     And the following "spreed" app config is set
-      | federation_enabled | true |
+      | federation_enabled | yes |
 
   Scenario: Create a public poll without max votes limit
     Given the following "spreed" app config is set
-      | federation_enabled | true |
+      | federation_enabled | yes |
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |

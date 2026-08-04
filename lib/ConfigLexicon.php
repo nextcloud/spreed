@@ -170,7 +170,7 @@ PROMPT;
 			new Entry(Config::CONVERSATIONS_FILES, ValueType::BOOL, true, definition: 'Whether the files app integration is enabled allowing tostart conversations in the right sidebar'),
 			new Entry(Config::CONVERSATIONS_FILES_PUBLIC_SHARES, ValueType::BOOL, true, definition: 'Whether the public share integration is enabled allowing to start conversations in the right sidebar on the public share page (Requires `conversations_files` also to be enabled'),
 			new Entry(Config::DEFAULT_ROOM_PERMISSIONS, ValueType::INT, 246, definition: 'Default permissions for non-moderators' . PHP_EOL . '(see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#attendee-permissions for bit flags)'),
-			new Entry(Config::CONVERSATION_SUBFOLDERS, ValueType::BOOL, true, definition: 'Whether users of this instance can invite federated users into conversations'),
+			new Entry(Config::CONVERSATION_SUBFOLDERS, ValueType::BOOL, true, definition: ''),
 			new Entry(Config::DEFAULT_ATTACHMENT_FOLDER, ValueType::STRING, '/Talk', definition: 'Specify default attachment folder location'),
 			new Entry(Config::GRID_VIDEOS_LIMIT, ValueType::INT, 19 /* 5*4 - self */, definition: 'Maximum number of videos to show (additional to the own video)'),
 			new Entry(Config::GRID_VIDEOS_LIMIT_ENFORCED, ValueType::BOOL, false, definition: 'Whether the number of grid videos should be enforced'),
