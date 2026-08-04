@@ -275,7 +275,7 @@ export default {
 		},
 
 		computedSilentCall() {
-			return this.silentCall !== null ? this.silentCall : this.settingsStore.defaultCallMethodIsSilent
+			return this.conversation.type !== CONVERSATION.TYPE.GROUP ? false : this.silentCall !== null ? this.silentCall : this.settingsStore.defaultCallMethodIsSilent
 		},
 
 		hasCall() {
