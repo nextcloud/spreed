@@ -183,7 +183,7 @@ const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-m
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 const supportLiveTranslation = getTalkConfig('local', 'call', 'live-translation') === true
 
-export default defineComponent({
+export default {
 	name: 'SettingsDialog',
 
 	components: {
