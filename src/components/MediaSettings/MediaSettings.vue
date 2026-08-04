@@ -715,7 +715,6 @@ export default {
 			this.showMediaSettings()
 		}
 		const silentCall = this.settingsStore.defaultCallMethodIsSilent 
-		console.log('silentCall:', silentCall)
 		
 		BrowserStorage.setItem('silentCall_' + this.token, silentCall ? 'true' : 'false')
 	},
