@@ -344,7 +344,6 @@ export default {
 		const guestNameStore = useGuestNameStore()
 		const settingsStore = useSettingsStore()
 		const dialogHeaderId = `media-settings-header-${useId()}`
-		const token = useGetToken()
 
 		const {
 			devices,
