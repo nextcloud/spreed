@@ -756,7 +756,6 @@
     "Privacy" : "Confidențialitate",
     "Attachments folder" : "Dosarul pentru atașamente",
     "Toggle full screen" : "Comută în ecran complet",
-    "Search" : "Caută",
     "Focus the chat input" : "Focalizează inputul în chat",
     "Unfocus the chat input to use shortcuts" : "Defocalizează inputul în chat pentru folosirea scurtăturilor",
     "Shortcuts while in a call" : "Scurtături pentru videoconferință",
@@ -796,7 +795,7 @@
     "Remove participant {name}" : "Elimină participantul {name}",
     "Keep" : "Păstrare",
     "Select a region" : "Selectează o regiune",
-    "Search …" : "Caută ...",
+    "Search" : "Caută",
     "Message without mention" : "Mesaj fără mențiuni",
     "Mention myself" : "Mă menționez",
     "The conversation does not exist" : "Conversația nu există",
@@ -884,6 +883,7 @@
     "Set reminder for next week" : "Setează memo pentru săptămâna viitoare",
     "Your privacy setting has been saved" : "Setările de confidențialitate au fost salvate",
     "Failed to save sounds setting" : "Eroare la salvarea setărilor de sunet",
-    "Sounds setting saved" : "Setările de sunet au fost salvate"
+    "Sounds setting saved" : "Setările de sunet au fost salvate",
+    "Search …" : "Caută ..."
 },"pluralForm" :"nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));"
 }

@@ -1169,7 +1169,6 @@ OC.L10N.register(
     "Error while setting read status privacy" : "Грешка при задаване на поверителност на състоянието на четене",
     "Privacy" : "Поверителност",
     "Attachments folder" : "Папка с прикачени файлове",
-    "Search" : "Търсене",
     "Focus the chat input" : "Фокусиране на въвеждането в чата",
     "Unfocus the chat input to use shortcuts" : "Прекратяване на фокусирането на въвеждането в чата, за да се използват преки пътища ",
     "Shortcuts while in a call" : "Преки пътища по време на обаждане",
@@ -1226,7 +1225,7 @@ OC.L10N.register(
     "Remove participant {name}" : "Премахване на участник {name}",
     "Keep" : "Запази",
     "Select a region" : "Изберете регион",
-    "Search …" : "Търсене …",
+    "Search" : "Търсене",
     "Message without mention" : "Съобщение без споменаване",
     "Mention myself" : "Споменх себе си",
     "The conversation does not exist" : "Разговорът не съществува",
@@ -1389,6 +1388,7 @@ OC.L10N.register(
     "Your personal setting has been saved" : "Личната бележка е запаметена",
     "Failed to save sounds setting" : "Неуспешно запазване на настройката за звуци",
     "Sounds setting saved" : "Настройката за звуци е запазена",
+    "Search …" : "Търсене …",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Присъединихте се към разговора в друг прозорец или устройство. Това в момента не се поддържа от Nextcloud Talk, така че тази сесия беше затворена."
 },
 "nplurals=2; plural=(n != 1);");

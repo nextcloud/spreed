@@ -1377,7 +1377,6 @@ OC.L10N.register(
     "Privacy" : "프라이버시",
     "Attachments folder" : "첨부 파일 폴더",
     "Toggle full screen" : "전체 화면 전환",
-    "Search" : "검색",
     "Focus the chat input" : "채팅 입력에 포커스",
     "Unfocus the chat input to use shortcuts" : "바로 가기를 사용하려면 채팅 입력 포커스 해제",
     "Shortcuts while in a call" : "통화 중 바로 가기",
@@ -1436,7 +1435,7 @@ OC.L10N.register(
     "Keep" : "보관",
     "Open dialpad" : "다이얼패드 열기",
     "Select a region" : "지역 선택",
-    "Search …" : "...를 검색",
+    "Search" : "검색",
     "Message without mention" : "언급이 없는 메시지",
     "Mention myself" : "자신을 언급하기",
     "The conversation does not exist" : "대화가 존재하지 않습니다.",
@@ -1613,6 +1612,7 @@ OC.L10N.register(
     "Your privacy setting has been saved" : "개인 정보 설정이 저장되었습니다.",
     "Failed to save sounds setting" : "소리 설정을 저장하지 못했습니다.",
     "Sounds setting saved" : "소리 설정이 저장되었습니다.",
+    "Search …" : "...를 검색",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "다른 창이나 기기에서 대화에 참가했습니다. 이 기능은 현재 Nextcloud 토크에서 지원되지 않으며, 현재 세션은 종료됩니다."
 },
 "nplurals=1; plural=0;");

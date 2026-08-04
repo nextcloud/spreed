@@ -1395,7 +1395,6 @@ OC.L10N.register(
     "Privacy" : "Zasebnost",
     "Attachments folder" : "Mapa prilog",
     "Toggle full screen" : "Preklopi celozaslonski način",
-    "Search" : "Odpre iskalno polje.",
     "Focus the chat input" : "V žarišče postavi vnosno polje klepeta",
     "Unfocus the chat input to use shortcuts" : "Zaustavi vnos besedila za uporabo tipkovnih bližnjic.",
     "Shortcuts while in a call" : "Omogoči tipkovne bližnjice tudi v času klica.",
@@ -1457,7 +1456,7 @@ OC.L10N.register(
     "Open dialpad" : "Pokaži številčnico",
     "Select a region" : "Izbor regije",
     "Local time: {time}" : "Krajevni čas: {time}",
-    "Search …" : "Poišči …",
+    "Search" : "Odpre iskalno polje.",
     "Message without mention" : "Sporočilo brez omenjanja",
     "Mention myself" : "Omenjanje sebe",
     "Mention everyone" : "Omeni vse",
@@ -1638,6 +1637,7 @@ OC.L10N.register(
     "Your privacy setting has been saved" : "Nastavitve zasebnosti so shranjene.",
     "Failed to save sounds setting" : "Shranjevanje nastavitev zvoka je spodletelo",
     "Sounds setting saved" : "Nastavitve zvokov so shranjene.",
+    "Search …" : "Poišči …",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Pogovoru ste se pridružili v novem oknu brskalnika, ali na drugi napravi. Nextcloud Talk te možnosti trenutno ne omogoča, zato je bila druga seja preklicana."
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

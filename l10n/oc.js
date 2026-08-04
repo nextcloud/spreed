@@ -931,7 +931,6 @@ OC.L10N.register(
     "Privacy" : "Confidencialitat",
     "Attachments folder" : "Dossièr de pèças-juntas",
     "Toggle full screen" : "Alternar ecran complèt",
-    "Search" : "Search",
     "Shortcuts while in a call" : "Acorchis pendent una sonada",
     "Camera on and off" : "Vidèo activada/desactivada",
     "Microphone on and off" : "Microfòn activat/desactivat",
@@ -977,7 +976,7 @@ OC.L10N.register(
     "Mute others" : "Copar lo son dels autres",
     "Start recording" : "Lançar l'enregistrament",
     "Select a region" : "Seleccionatz una region",
-    "Search …" : "Recercar...",
+    "Search" : "Search",
     "Message without mention" : "Messatge sens mencion",
     "Mention myself" : "Me mencionar",
     "The conversation does not exist" : "La conversacion existís pas",
@@ -1100,6 +1099,7 @@ OC.L10N.register(
     "Your privacy setting has been saved" : "Paramètre de confidencialitat enregistrat",
     "Failed to save sounds setting" : "Cargament impossible del paramètre de son",
     "Sounds setting saved" : "Paramètres de son enregistrats",
+    "Search …" : "Recercar...",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Avètz rejonch la conversacion dins una autra fenèstra o periferic. Aquò es actualament pas pres en cargar per Nextcloud Talk doncas aquesta session es estada tampada."
 },
 "nplurals=2; plural=(n > 1);");
