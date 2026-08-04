@@ -147,7 +147,7 @@
 	</NcAppSettingsDialog>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from 'vue'
 import { showError } from '@nextcloud/dialogs'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
