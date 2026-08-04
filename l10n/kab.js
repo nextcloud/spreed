@@ -407,7 +407,6 @@ OC.L10N.register(
     "Notification settings" : "Iɣewwaren n usezmel",
     "Default language" : "Tutlayt s yinner",
     "Privacy" : "Vie privée",
-    "Search" : "Nadi",
     "Start call" : "Bdu asiwel",
     "End call" : "Fakk asiwel",
     "Recording" : "Asekles",
@@ -415,7 +414,7 @@ OC.L10N.register(
     "Start recording" : "Bdu asekles",
     "Keep" : "Eǧǧ",
     "Select a region" : "Fren tamennaṭ",
-    "Search …" : "Nadi ...",
+    "Search" : "Nadi",
     "User" : "Aseqdac",
     "Login" : "Aseqdac",
     "Nickname" : "Tasaẓlut",
@@ -433,6 +432,7 @@ OC.L10N.register(
     "Tasks" : "Tiwura",
     "Notes" : "Tizmilin",
     "Reports" : "Assaɣen",
-    "Agenda" : "Tasmektit"
+    "Agenda" : "Tasmektit",
+    "Search …" : "Nadi ..."
 },
 "nplurals=2; plural=(n != 1);");

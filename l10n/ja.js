@@ -1552,7 +1552,6 @@ OC.L10N.register(
     "Attachments folder" : "添付ファイルフォルダー",
     "Toggle full screen" : "全画面に切り替え",
     "Return to Home screen" : "ホーム画面に戻る",
-    "Search" : "検索",
     "Shortcuts while in a chat" : "チャット中のショートカット",
     "Focus the chat input" : "チャット入力欄に移行",
     "Unfocus the chat input to use shortcuts" : "ショートカットを使用するには、チャット入力欄からカーソルを外す",
@@ -1618,7 +1617,7 @@ OC.L10N.register(
     "Keep" : "保持",
     "Open dialpad" : "ダイヤルパッドを開く",
     "Select a region" : "地域を選択してください",
-    "Search …" : "検索…",
+    "Search" : "検索",
     "Message without mention" : "話しの無いメッセージ",
     "Mention myself" : "自分自身の話し",
     "Mention everyone" : "全員にメンション",
@@ -1846,6 +1845,7 @@ OC.L10N.register(
     "Failed to save sounds setting" : "サウンド設定を保存できませんでした",
     "Sounds setting saved" : "サウンド設定を保存",
     "Always shown if recording consent is required" : "録音の同意が必要な場合は常に表示されます",
+    "Search …" : "検索…",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "別ウィンドウかデバイスで既に会話に参加済みです。現在、複数接続はNextcloud Talkではサポートされていないため、このセッションは閉じられます。"
 },
 "nplurals=1; plural=0;");

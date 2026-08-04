@@ -1215,7 +1215,6 @@ OC.L10N.register(
     "Privacy" : "Privacidad",
     "Attachments folder" : "Carpeta de archivos adjuntos",
     "Toggle full screen" : "Alternar pantalla completa",
-    "Search" : "Buscar",
     "Focus the chat input" : "Enfocar el área de chat",
     "Unfocus the chat input to use shortcuts" : "Desenfocar el área de chat para usar atajos",
     "Shortcuts while in a call" : "Atajos mientras estás en una llamada",
@@ -1272,7 +1271,7 @@ OC.L10N.register(
     "Remove participant {name}" : "Eliminar participante {name}",
     "Keep" : "Mantén",
     "Select a region" : "Selecciona una región",
-    "Search …" : "Buscar...",
+    "Search" : "Buscar",
     "Message without mention" : "Mensaje sin mencionar",
     "Mention myself" : "Mencionarme a mí mismo",
     "The conversation does not exist" : "La conversación no existe",
@@ -1429,6 +1428,7 @@ OC.L10N.register(
     "Your privacy setting has been saved" : "Tu configuración de privacidad ha sido guardada",
     "Failed to save sounds setting" : "Error al guardar la configuración de sonidos",
     "Sounds setting saved" : "Configuración de sonidos guardada",
+    "Search …" : "Buscar...",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Te uniste a la conversación en otra ventana o dispositivo. Actualmente, Nextcloud Talk no admite esto, por lo que esta sesión se cerró."
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
