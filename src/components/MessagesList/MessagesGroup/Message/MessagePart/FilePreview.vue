@@ -148,11 +148,6 @@ export default {
 			default: 0,
 		},
 
-		nextMessageId: {
-			type: [String, Number],
-			default: 0,
-		},
-
 		/**
 		 * File object
 		 */
@@ -272,7 +267,6 @@ export default {
 					link: this.file.link,
 					localUrl: this.fallbackLocalUrl,
 					messageId: Number(this.messageId),
-					nextMessageId: Number(this.nextMessageId),
 					showFileName: this.shouldShowFileDetail && !this.isVoiceMessage,
 				}
 			}
