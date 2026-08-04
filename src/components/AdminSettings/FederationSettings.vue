@@ -54,7 +54,7 @@ onBeforeUnmount(() => {
 async function saveFederationEnabled(value: boolean) {
 	loading.value = true
 	try {
-		await setAppConfig('spreed', 'federation_enabled', value ? 'yes' : 'no')
+		await setAppConfig('spreed', 'federation_enabled', value.toString())
 		isFederationEnabled.value = value
 	} catch (error) {
 		console.error(error)
@@ -72,7 +72,7 @@ async function saveFederationEnabled(value: boolean) {
 async function saveFederationIncomingEnabled(value: boolean) {
 	loading.value = true
 	try {
-		await setAppConfig('spreed', 'federation_incoming_enabled', value ? '1' : '0')
+		await setAppConfig('spreed', 'federation_incoming_enabled', value.toString())
 		isFederationIncomingEnabled.value = value
 	} catch (error) {
 		console.error(error)
@@ -90,7 +90,7 @@ async function saveFederationIncomingEnabled(value: boolean) {
 async function saveFederationOutgoingEnabled(value: boolean) {
 	loading.value = true
 	try {
-		await setAppConfig('spreed', 'federation_outgoing_enabled', value ? '1' : '0')
+		await setAppConfig('spreed', 'federation_outgoing_enabled', value.toString())
 		isFederationOutgoingEnabled.value = value
 	} catch (error) {
 		console.error(error)
@@ -108,7 +108,7 @@ async function saveFederationOutgoingEnabled(value: boolean) {
 async function saveFederationOnlyTrustedServersEnabled(value: boolean) {
 	loading.value = true
 	try {
-		await setAppConfig('spreed', 'federation_only_trusted_servers', value ? '1' : '0')
+		await setAppConfig('spreed', 'federation_only_trusted_servers', value.toString())
 		isFederationOnlyTrustedServersEnabled.value = value
 	} catch (error) {
 		console.error(error)

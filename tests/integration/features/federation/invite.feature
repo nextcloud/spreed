@@ -3,15 +3,15 @@ Feature: federation/invite
     Given using server "REMOTE"
     Given user "participant2" exists
     And the following "spreed" app config is set
-      | federation_enabled | true |
+      | federation_enabled | yes |
     Given using server "LOCAL"
     Given user "participant1" exists
     And the following "spreed" app config is set
-      | federation_enabled | true |
+      | federation_enabled | yes |
 
   Scenario: Federation is disabled
     Given the following "spreed" app config is set
-      | federation_enabled | false |
+      | federation_enabled | no |
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
