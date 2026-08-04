@@ -165,7 +165,10 @@ class RoomFormatter {
 			'attributes' => 0,
 		];
 
-		if ($room->isFederatedConversation()) {
+		if ($room->isClassified()) {
+			// No recording, no consent, ever
+			$roomData['recordingConsent'] = RecordingService::CONSENT_REQUIRED_NO;
+		} elseif ($room->isFederatedConversation()) {
 			$roomData['recordingConsent'] = $room->getRecordingConsent();
 		}
 
@@ -228,7 +231,6 @@ class RoomFormatter {
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 			'callStartTime' => $room->getActiveSince() instanceof \DateTimeInterface ? $room->getActiveSince()->getTimestamp() : 0,
 			'callRecording' => $room->getCallRecording(),
-			'recordingConsent' => $this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_OPTIONAL ? $room->getRecordingConsent() : $this->talkConfig->recordingConsentRequired(),
 			'lastActivity' => $lastActivity,
 			'callFlag' => $room->getCallFlag(),
 			'isFavorite' => $attendee->isFavorite(),
@@ -258,10 +260,6 @@ class RoomFormatter {
 			'hiddenPinnedId' => $attendee->getHiddenPinnedId(),
 			'attributes' => $room->getAttributes(),
 		]);
-
-		if ($room->isFederatedConversation()) {
-			$roomData['recordingConsent'] = $room->getRecordingConsent();
-		}
 
 		if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 			if (isset($commonReadMessages[$room->getId()])) {
