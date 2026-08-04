@@ -47,7 +47,7 @@ export const useSettingsStore = defineStore('settings', () => {
 	const readStatusPrivacy = ref<PRIVACY_KEYS>(getTalkConfig('local', 'chat', 'read-privacy') as TALK_CONFIG_PRIVACY ?? PRIVACY.PRIVATE)
 	const typingStatusPrivacy = ref<PRIVACY_KEYS>(getTalkConfig('local', 'chat', 'typing-privacy') as TALK_CONFIG_PRIVACY ?? PRIVACY.PRIVATE)
 	const showMediaSettings = ref<boolean>(BrowserStorage.getItem('showMediaSettings') !== 'false')
-	const defaultCallMethodIsSilent = ref<boolean>(BrowserStorage.getItem('defaultCallMethodIsSilent') !== 'false')
+	const defaultCallMethodIsSilent = ref<boolean>(BrowserStorage.getItem('defaultCallMethodIsSilent') === 'true')
 	const noiseSuppression = ref<boolean>(BrowserStorage.getItem('noiseSuppression') !== 'false' && !isSafari)
 	const noiseSuppressionWithModel = ref<'none' | 'rnnoise' | (string & {})>(BrowserStorage.getItem('noiseSuppressionWithModel') ?? 'none')
 	const echoCancellation = ref<boolean>(BrowserStorage.getItem('echoCancellation') !== 'false')
