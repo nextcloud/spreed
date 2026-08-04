@@ -839,7 +839,6 @@ OC.L10N.register(
     "Notification settings" : "Configuración de los avisos",
     "Default language" : "Llingua predeterminada",
     "Privacy" : "Privacidá",
-    "Search" : "Buscar",
     "Start call" : "Aniciar la llamada",
     "End call" : "Finar la llamada",
     "Stop recording" : "Parar la grabación",
@@ -864,7 +863,7 @@ OC.L10N.register(
     "Start recording" : "Aniciar la grabación",
     "Keep" : "Caltener",
     "Open dialpad" : "Abrir el tecláu numbéricu",
-    "Search …" : "Buscar…",
+    "Search" : "Buscar",
     "Mention everyone" : "Mentar a tol mundu",
     "The conversation does not exist" : "La conversación nun esiste",
     "Join a conversation or start a new one!" : "¡Xúnite una conversación o anicia una nueva!",
@@ -965,6 +964,7 @@ OC.L10N.register(
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Resultaos de la encuesta • %n votu","Resultaos de la encuesta • %n votos"],
     "Submit vote" : "Unviar el votu",
     "Failed to save sounds setting" : "Nun se pue guardar la configuración de los soníos",
-    "Sounds setting saved" : "Guardóse la configuración de los soníos"
+    "Sounds setting saved" : "Guardóse la configuración de los soníos",
+    "Search …" : "Buscar…"
 },
 "nplurals=2; plural=(n != 1);");

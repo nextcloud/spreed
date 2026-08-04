@@ -1363,7 +1363,6 @@ OC.L10N.register(
     "Privacy" : "Privacy",
     "Attachments folder" : "Attachments folder",
     "Toggle full screen" : "Toggle full screen",
-    "Search" : "Search",
     "Focus the chat input" : "Focus the chat input",
     "Unfocus the chat input to use shortcuts" : "Unfocus the chat input to use shortcuts",
     "Shortcuts while in a call" : "Shortcuts while in a call",
@@ -1423,7 +1422,7 @@ OC.L10N.register(
     "Keep" : "Keep",
     "Open dialpad" : "Open dialpad",
     "Select a region" : "Select a region",
-    "Search …" : "Search …",
+    "Search" : "Search",
     "Message without mention" : "Message without mention",
     "Mention myself" : "Mention myself",
     "The conversation does not exist" : "The conversation does not exist",
@@ -1628,6 +1627,7 @@ OC.L10N.register(
     "Your privacy setting has been saved" : "Your privacy setting has been saved",
     "Failed to save sounds setting" : "Failed to save sounds setting",
     "Sounds setting saved" : "Sounds setting saved",
+    "Search …" : "Search …",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed."
 },
 "nplurals=2; plural=(n!=1);");

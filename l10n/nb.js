@@ -1495,7 +1495,6 @@ OC.L10N.register(
     "Privacy" : "Personvern",
     "Attachments folder" : "Vedleggsmappe",
     "Toggle full screen" : "Veksle fullskjerm",
-    "Search" : "Søk",
     "Focus the chat input" : "Fokuser chat-inndataene",
     "Unfocus the chat input to use shortcuts" : "Fjern fokuseringen på chat-inndataene for å bruke snarveier",
     "Edit your last message" : "Rediger din seneste melding",
@@ -1559,7 +1558,7 @@ OC.L10N.register(
     "Keep" : "Behold",
     "Open dialpad" : "Åpne numerisk tastatur",
     "Select a region" : "Velg region",
-    "Search …" : "Søk...",
+    "Search" : "Søk",
     "Message without mention" : "Melding uten å nevne",
     "Mention myself" : "Nevn meg selv",
     "Mention everyone" : "Nevn alle",
@@ -1805,6 +1804,7 @@ OC.L10N.register(
     "Your privacy setting has been saved" : "Personverninnstillingen din er lagret",
     "Failed to save sounds setting" : "Kunne ikke lagre lydinnstillingen",
     "Sounds setting saved" : "Lydinnstilling lagret",
+    "Search …" : "Søk...",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Du ble med i samtalen i et annet vindu eller på en annen enhet. Dette støttes for øyeblikket ikke av Nextcloud Talk, så denne økten ble lukket."
 },
 "nplurals=2; plural=(n != 1);");

@@ -1373,7 +1373,6 @@ OC.L10N.register(
     "Privacy" : "Pribatutasuna",
     "Attachments folder" : "Eranskinen karpeta",
     "Toggle full screen" : "Txandakatu pantaila osoa",
-    "Search" : "Bilatu",
     "Focus the chat input" : "Fokuratu txat sarrera",
     "Unfocus the chat input to use shortcuts" : "Utzi txat sarrera fokuratzeari lasterbideak erabiltzeko",
     "Shortcuts while in a call" : "Lasterbideak deian zehar",
@@ -1433,7 +1432,7 @@ OC.L10N.register(
     "Remove participant {name}" : "Kendu {name} parte-hartzailea",
     "Open dialpad" : "Ireki markatze-teklatua",
     "Select a region" : "Hautatu eskualde bat",
-    "Search …" : "Bilatu …",
+    "Search" : "Bilatu",
     "Message without mention" : "Aipamenik gabeko mezua",
     "Mention myself" : "Aipatu ni",
     "Mention everyone" : "Aipatu denak",
@@ -1617,6 +1616,7 @@ OC.L10N.register(
     "Your privacy setting has been saved" : "Zure pribatutasun ezarpenak gorde dira",
     "Failed to save sounds setting" : "Soinu ezarpenak gordetzeak huts egin du",
     "Sounds setting saved" : "Soinu ezarpenak gordeta",
+    "Search …" : "Bilatu …",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Elkarrizketara batu zara beste leiho edo gailu batean. Nextcloud Talkek ez du hau onartzen une honetan, beraz saioa itxi egin da."
 },
 "nplurals=2; plural=(n != 1);");
