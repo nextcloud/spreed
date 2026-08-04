@@ -620,6 +620,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($expectedRoom['mentionPermissions'])) {
 					$data['mentionPermissions'] = (int)$room['mentionPermissions'];
 				}
+				if (isset($expectedRoom['notificationLevel'])) {
+					$data['notificationLevel'] = (int)$room['notificationLevel'];
+				}
+				if (isset($expectedRoom['canLeaveConversation'])) {
+					$data['canLeaveConversation'] = $room['canLeaveConversation'] ? 'yes' : 'no';
+				}
 				if (isset($expectedRoom['participants'])) {
 					throw new \Exception('participants key needs to be checked via participants endpoint');
 				}
@@ -1207,8 +1213,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body, $headers);
 		$this->assertStatusCode($this->response, $statusCode);
 
-		if ($statusCode === 201) {
+		if ($statusCode === 201 || $statusCode === 200) {
 			$response = $this->getDataFromResponse($this->response);
+			if ($statusCode === 200 && isset(self::$identifierToToken[$identifier])) {
+				// The room already existed, so the same room has to be returned
+				Assert::assertSame(self::$identifierToToken[$identifier], $response['token'], 'Token of existing room does not match');
+			}
 			self::$identifierToToken[$identifier] = $response['token'];
 			self::$identifierToId[$identifier] = $response['id'];
 			self::$tokenToIdentifier[$response['token']] = $identifier;
@@ -1241,7 +1251,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$url = "/$user/$path";
 
 		$headers = [];
-		$headers['Depth'] = 0;
+		$headers['Depth'] = '0';
 
 		$body = '<d:propfind xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">'
 				. '	<d:prop>'
@@ -1279,7 +1289,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		try {
-			$this->response = $client->{$verb}($fullUrl, $options);
+			$this->response = $client->request($verb, $fullUrl, $options);
 		} catch (GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
 		}
@@ -1875,6 +1885,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
+	#[Then('/^user "([^"]*)" unbinds room "([^"]*)" from its object with (\d+) \((v4)\)$/')]
+	public function userUnbindsRoomFromObject(string $user, string $identifier, int $statusCode, string $apiVersion): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/object');
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
 	#[Then('/^user "([^"]*)" adds (user|group|email|federated_user|phone|team) "([^"]*)" to room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userAddAttendeeToRoom(string $user, string $newType, string $newId, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
@@ -2094,6 +2111,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		Assert::assertEquals(implode("\n", $expected) . "\n", $this->response->getBody()->getContents());
+	}
+
+	#[Then('/^user "([^"]*)" (enables|disables) live transcription in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userTogglesLiveTranscription(string $user, string $action, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->setCurrentUser($user);
+		$verb = $action === 'enables' ? 'POST' : 'DELETE';
+		$this->sendRequest($verb, '/apps/spreed/api/' . $apiVersion . '/live-transcription/' . self::$identifierToToken[$identifier]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	#[Then('/^user "([^"]*)" sets live translation target language to "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function userSetsLiveTranslationTargetLanguage(string $user, string $targetLanguageId, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/live-transcription/' . self::$identifierToToken[$identifier] . '/target-language', [
+			'targetLanguageId' => $targetLanguageId,
+		]);
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	#[Then('/^user "([^"]*)" schedules a message to room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
@@ -2467,6 +2501,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		} elseif (isset($response['nextOffset'])) {
 			Assert::assertArrayNotHasKey('nextOffset', $response, 'Did not expect a follow-up offset key on response, but received: ' . self::$messageIdToText[$response['nextOffset']]);
 		}
+	}
+
+	#[Then('/^user "([^"]*)" can not request summary for "([^"]*)" starting from ("[^"]*"|\'[^\']*\') with (\d+)(?: \((v1)\))?$/')]
+	public function userCanNotSummarizeRoom(string $user, string $identifier, string $message, int $statusCode, string $apiVersion = 'v1'): void {
+		$message = substr($message, 1, -1);
+		$fromMessageId = self::$textToMessageId[$message];
+
+		$this->setCurrentUser($user, $identifier);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/summarize',
+			['fromMessageId' => $fromMessageId],
+		);
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	#[Then('/^user "([^"]*)" receives summary for "([^"]*)" with (\d+)$/')]
@@ -4991,10 +5038,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	#[Then('/^(setup|remove) bot "([^"]*)" for room "([^"]*)" via OCC$/')]
-	public function setupOrRemoveBotInRoom(string $action, string $botName, string $identifier): void {
+	#[Then('/^(setup|remove) bot "([^"]*)" for room "([^"]*)" via OCC(?: with exit code (\d+))?$/')]
+	public function setupOrRemoveBotInRoom(string $action, string $botName, string $identifier, ?int $exitCode = null): void {
 		$this->invokingTheCommand('talk:bot:' . $action . ' ' . self::$botNameToId[$botName] . ' ' . self::$identifierToToken[$identifier]);
-		$this->theCommandWasSuccessful();
+		if ($exitCode === null) {
+			$this->theCommandWasSuccessful();
+		} else {
+			$this->theCommandFailedWithExitCode($exitCode);
+		}
 	}
 
 	#[Then('/^set state (enabled|disabled|no-setup) for bot "([^"]*)" via OCC$/')]
@@ -5015,6 +5066,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->invokingTheCommand('talk:bot:state ' . self::$botNameToId[$botName] . ' ' . $state . $features);
 		$this->theCommandWasSuccessful();
+	}
+
+	/**
+	 * Sends a request signed with the shared bot secret like a bot server would
+	 */
+	private function sendBotSignedRequest(string $verb, string $url, string $secret, string $toSign, TableNode|array|null $body = null): void {
+		$random = bin2hex(random_bytes(32));
+		$this->sendRequest($verb, $url, $body, [
+			'X-Nextcloud-Talk-Bot-Random' => $random,
+			'X-Nextcloud-Talk-Bot-Signature' => hash_hmac('sha256', $random . $toSign, $secret),
+		]);
 	}
 
 	#[Then('/^Bot "([^"]*)" (sends|removes) a (message|reaction) for room "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
@@ -5038,20 +5100,37 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$toSign = $data['reaction'];
 		}
 
-		$random = bin2hex(random_bytes(32));
-		$hash = hash_hmac('sha256', $random . $toSign, $secret);
-		$headers = [
-			'X-Nextcloud-Talk-Bot-Random' => $random,
-			'X-Nextcloud-Talk-Bot-Signature' => $hash,
-		];
-
-		$this->sendRequest(
+		$this->sendBotSignedRequest(
 			$sends === 'sends' ? 'POST' : 'DELETE',
 			'/apps/spreed/api/' . $apiVersion . '/bot/' . self::$identifierToToken[$identifier] . $url,
-			$data,
-			$headers
+			$secret,
+			$toSign,
+			$data
 		);
 		$this->assertStatusCode($this->response, $status);
+
+		$this->setCurrentUser($currentUser);
+	}
+
+	#[Then('/^Bot "([^"]*)" retrieves its features for room "([^"]*)" using secret "([^"]*)" with (\d+)(?: \((v1)\))?$/')]
+	public function botRetrievesFeatures(string $botName, string $identifier, string $secret, int $status, string $apiVersion, ?TableNode $body = null): void {
+		$currentUser = $this->setCurrentUser('');
+
+		$token = self::$identifierToToken[$identifier];
+		$this->sendBotSignedRequest(
+			'POST',
+			'/apps/spreed/api/' . $apiVersion . '/bot/ask-features',
+			$secret,
+			$token,
+			['token' => $token]
+		);
+		$this->assertStatusCode($this->response, $status);
+
+		if ($body instanceof TableNode) {
+			$expected = $body->getRowsHash();
+			$response = $this->getDataFromResponse($this->response);
+			Assert::assertSame((int)$expected['features'], $response['features']);
+		}
 
 		$this->setCurrentUser($currentUser);
 	}

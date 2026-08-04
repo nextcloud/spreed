@@ -26,6 +26,7 @@ readonly class Presentation extends APreset {
 
 	#[\Override]
 	public function getName(): string {
+		// TRANSLATORS Conversation type - for internal presentations, non-moderators have no cam/mic permissions
 		return $this->l->t('Presentation');
 	}
 

@@ -9,7 +9,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Stun;
 
 use OC\Core\Command\Base;
-use OCP\IConfig;
+use OCA\Talk\Config;
+use OCP\AppFramework\Services\IAppConfig;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Delete extends Base {
 
 	public function __construct(
-		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 	) {
 		parent::__construct();
 	}
@@ -37,22 +38,19 @@ class Delete extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$server = $input->getArgument('server');
 
-		$config = $this->config->getAppValue('spreed', 'stun_servers');
-		$servers = json_decode($config);
-		if (! is_array($servers)) {
-			$servers = [];
-		}
+		$servers = $this->appConfig->getAppValueArray(Config::STUN_SERVERS);
+
 		$count = count($servers);
 		// remove all occurrences of $server
 		$servers = array_filter($servers, fn ($s) => $s !== $server);
 		$servers = array_values($servers); // reindex
 
 		if (empty($servers)) {
-			$servers = ['stun.nextcloud.com:443'];
-			$this->config->setAppValue('spreed', 'stun_servers', json_encode($servers));
+			$servers = [Config::DEFAULT_STUN_SERVER];
+			$this->appConfig->setAppValueArray(Config::STUN_SERVERS, $servers);
 			$output->writeln('<info>You deleted all STUN servers. A default STUN server was added.</info>');
 		} else {
-			$this->config->setAppValue('spreed', 'stun_servers', json_encode($servers));
+			$this->appConfig->setAppValueArray(Config::STUN_SERVERS, $servers);
 			if ($count > count($servers)) {
 				$output->writeln('<info>Deleted ' . $server . '.</info>');
 			} else {

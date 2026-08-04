@@ -79,40 +79,28 @@ function slotsFor(columns: number, rows: number, noLocalVideoReserve: boolean): 
 }
 
 /**
- * Maximum number of columns that fit the given width.
+ * Maximum number of tiles that fit along one axis (columns or rows) given the
+ * available size along that axis.
  *
- * A small hysteresis based on the current number of columns avoids flickering
- * when resizing within `GRID_GAP` px of the threshold for the current amount of
- * columns.
+ * A small hysteresis based on the current tile count avoids flickering when
+ * resizing within `GRID_GAP` px of the threshold for the current amount of
+ * tiles.
  *
- * @param gridWidth - available grid width in px
- * @param minWidth - minimum tile width in px
- * @param currentColumns - current number of columns
+ * @param size - available grid size in px along the axis
+ * @param minSize - minimum tile size in px along the axis
+ * @param currentCount - current number of tiles along the axis
  */
-function computeColumnsMax(gridWidth: number, minWidth: number, currentColumns: number): number {
-	// Max amount of columns that fits on screen, including gaps for the current layout
-	const approxColumnsMax = Math.floor((gridWidth - GRID_GAP * (currentColumns - 1)) / minWidth)
-	// Max amount of columns that fits on screen if we tried to fit one more column
-	const hypotheticalColumnsMax = Math.floor((gridWidth - GRID_GAP * currentColumns) / minWidth)
-	// If we are about to change the columns amount, check whether one more column could fit.
+function computeAxisMax(size: number, minSize: number, currentCount: number): number {
+	// Max amount of tiles that fits on screen, including gaps for the current layout
+	const approxMax = Math.floor((size - GRID_GAP * (currentCount - 1)) / minSize)
+	// Max amount of tiles that fits on screen if we tried to fit one more tile
+	const hypotheticalMax = Math.floor((size - GRID_GAP * currentCount) / minSize)
+	// If we are about to change the tile count, check whether one more tile could fit.
 	// This helps to avoid flickering when resizing within GRID_GAP px of the
-	// minimal gridWidth for the current amount of columns.
-	const columnsMax = approxColumnsMax === currentColumns ? approxColumnsMax : hypotheticalColumnsMax
-	// Return at least 1 column
-	return Math.max(columnsMax, 1)
-}
-
-/**
- * Maximum number of rows that fit the given height.
- *
- * @param gridHeight - available grid height in px
- * @param minHeight - minimum tile height in px
- * @param currentRows - current number of rows
- */
-function computeRowsMax(gridHeight: number, minHeight: number, currentRows: number): number {
-	const rowsMax = Math.floor((gridHeight - GRID_GAP * (currentRows - 1)) / minHeight)
-	// Return at least 1 row
-	return Math.max(rowsMax, 1)
+	// minimal size for the current amount of tiles.
+	const axisMax = approxMax === currentCount ? approxMax : hypotheticalMax
+	// Return at least 1 tile
+	return Math.max(axisMax, 1)
 }
 
 /**
@@ -161,8 +149,8 @@ export function computeGridDimensions({
 
 	// Start from the largest grid that fits the available space, then shrink it
 	// to fit the number of tiles we actually have.
-	let columns = computeColumnsMax(gridWidth, minWidth, currentColumns)
-	let rows = computeRowsMax(gridHeight, minHeight, currentRows)
+	let columns = computeAxisMax(gridWidth, minWidth, currentColumns)
+	let rows = computeAxisMax(gridHeight, minHeight, currentRows)
 
 	// No need to shrink more if 1 row and 1 column
 	if (rows === 1 && columns === 1) {

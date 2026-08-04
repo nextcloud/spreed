@@ -274,6 +274,12 @@ class AvatarService {
 		if (($room->getAttributes() & RoomAttributes::VOICE_ROOM->value) === RoomAttributes::VOICE_ROOM->value) {
 			return __DIR__ . '/../../img/icon-conversation-voice-room-' . $colorTone . '.svg';
 		}
+		if ($room->isClassified()) {
+			return __DIR__ . '/../../img/icon-conversation-classified-' . $colorTone . '.svg';
+		}
+		if ($room->isChannel()) {
+			return __DIR__ . '/../../img/icon-conversation-channel-' . $colorTone . '.svg';
+		}
 		if ($room->getType() === Room::TYPE_PUBLIC) {
 			return __DIR__ . '/../../img/icon-conversation-public-' . $colorTone . '.svg';
 		}

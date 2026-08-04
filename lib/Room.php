@@ -30,6 +30,8 @@ class Room {
 	public const TYPE_ONE_TO_ONE_FORMER = 5;
 	public const TYPE_NOTE_TO_SELF = 6;
 
+	public const OBJECT_TYPE_CLASSIFIED = 'classified';
+	public const OBJECT_TYPE_CLASSIFIED_PERSIST = 'classified_persist';
 	public const OBJECT_TYPE_EMAIL = 'emails';
 	public const OBJECT_TYPE_EVENT = 'event';
 	public const OBJECT_TYPE_EXTENDED_CONVERSATION = 'extended_conversation';
@@ -488,5 +490,21 @@ class Room {
 
 	public function isPreserved(): bool {
 		return ($this->attributes & RoomAttributes::PRESERVE_CONVERSATION->value) === RoomAttributes::PRESERVE_CONVERSATION->value;
+	}
+
+	public function isClassified(): bool {
+		return ($this->attributes & RoomAttributes::CLASSIFIED->value) === RoomAttributes::CLASSIFIED->value;
+	}
+
+	public function isChannel(): bool {
+		return ($this->attributes & RoomAttributes::CHANNEL->value) === RoomAttributes::CHANNEL->value;
+	}
+
+	/**
+	 * Announcements are channels with additional restrictions, so they also
+	 * have the channel attribute set and {@see self::isChannel()} is true for them.
+	 */
+	public function isAnnouncement(): bool {
+		return ($this->attributes & RoomAttributes::ANNOUNCEMENT->value) === RoomAttributes::ANNOUNCEMENT->value;
 	}
 }

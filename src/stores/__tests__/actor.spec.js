@@ -72,7 +72,7 @@ describe('actorStore', () => {
 		expect(actorStore.userId).toBe('userId')
 		expect(actorStore.displayName).toBe('display-name')
 		expect(actorStore.actorId).toBe('userId')
-		expect(actorStore.actorType).toBe('users')
+		expect(actorStore.actorType).toBe(ATTENDEE.ACTOR_TYPE.USERS)
 	})
 
 	test('setDisplayName updates all relevant attributes', () => {
@@ -113,7 +113,7 @@ describe('actorStore', () => {
 
 			expect(actorStore.userId).toBe(null)
 			expect(actorStore.actorId).toBe('guestActorId')
-			expect(actorStore.actorType).toBe('guests')
+			expect(actorStore.actorType).toBe(ATTENDEE.ACTOR_TYPE.GUESTS)
 			expect(actorStore.sessionId).toBe('XXSESSIONIDXX')
 		})
 
@@ -126,7 +126,7 @@ describe('actorStore', () => {
 
 			expect(actorStore.userId).toBe(null)
 			expect(actorStore.actorId).toBe('guestActorId')
-			expect(actorStore.actorType).toBe('guests')
+			expect(actorStore.actorType).toBe(ATTENDEE.ACTOR_TYPE.GUESTS)
 			expect(actorStore.sessionId).toBe('XXSESSIONIDXX')
 		})
 
@@ -148,7 +148,7 @@ describe('actorStore', () => {
 			expect(actorStore.userId).toBe('userId')
 			expect(actorStore.displayName).toBe('display-name')
 			expect(actorStore.actorId).toBe('userId')
-			expect(actorStore.actorType).toBe('users')
+			expect(actorStore.actorType).toBe(ATTENDEE.ACTOR_TYPE.USERS)
 		})
 	})
 

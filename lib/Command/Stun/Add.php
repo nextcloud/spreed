@@ -9,7 +9,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Stun;
 
 use OC\Core\Command\Base;
-use OCP\IConfig;
+use OCA\Talk\Config;
+use OCP\AppFramework\Services\IAppConfig;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Add extends Base {
 
 	public function __construct(
-		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 	) {
 		parent::__construct();
 	}
@@ -44,12 +45,7 @@ class Add extends Base {
 			return 1;
 		}
 
-		$config = $this->config->getAppValue('spreed', 'stun_servers');
-		$servers = json_decode($config, true);
-
-		if ($servers === null || empty($servers) || !is_array($servers)) {
-			$servers = [];
-		}
+		$servers = $this->appConfig->getAppValueArray(Config::STUN_SERVERS);
 
 		// check if the server is already in the list
 		foreach ($servers as $existingServer) {
@@ -61,7 +57,7 @@ class Add extends Base {
 
 		$servers[] = "$host:$port";
 
-		$this->config->setAppValue('spreed', 'stun_servers', json_encode($servers));
+		$this->appConfig->setAppValueArray(Config::STUN_SERVERS, $servers);
 		$output->writeln('<info>Added ' . "$host:$port" . '.</info>');
 		return 0;
 	}

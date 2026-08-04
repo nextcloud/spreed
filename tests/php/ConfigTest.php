@@ -75,11 +75,11 @@ class ConfigTest extends TestCase {
 			'stun2.example.com:129',
 		];
 
-		$this->config
+		$this->appConfig
 			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']))
-			->willReturn(json_encode($servers));
+			->method('getAppValueArray')
+			->with('stun_servers', [])
+			->willReturn($servers);
 		$this->config
 			->expects($this->once())
 			->method('getSystemValueBool')
@@ -91,11 +91,11 @@ class ConfigTest extends TestCase {
 	}
 
 	public function testGetDefaultStunServer(): void {
-		$this->config
+		$this->appConfig
 			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']))
-			->willReturn(json_encode([]));
+			->method('getAppValueArray')
+			->with('stun_servers', [])
+			->willReturn([]);
 		$this->config
 			->expects($this->once())
 			->method('getSystemValueBool')
@@ -107,11 +107,11 @@ class ConfigTest extends TestCase {
 	}
 
 	public function testGetDefaultStunServerNoInternet(): void {
-		$this->config
+		$this->appConfig
 			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']))
-			->willReturn(json_encode([]));
+			->method('getAppValueArray')
+			->with('stun_servers', [])
+			->willReturn([]);
 		$this->config
 			->expects($this->once())
 			->method('getSystemValueBool')
@@ -123,11 +123,11 @@ class ConfigTest extends TestCase {
 	}
 
 	public function testGenerateTurnSettings(): void {
-		$this->config
+		$this->appConfig
 			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'turn_servers', '')
-			->willReturn(json_encode([
+			->method('getAppValueArray')
+			->with('turn_servers')
+			->willReturn([
 				[
 					// No scheme explicitly given
 					'server' => 'turn.example.org:3478',
@@ -146,7 +146,7 @@ class ConfigTest extends TestCase {
 					'secret' => 'ThisIsAlsoSuperSecret',
 					'protocols' => 'tcp',
 				],
-			]));
+			]);
 
 		$this->timeFactory
 			->expects($this->once())
@@ -187,11 +187,11 @@ class ConfigTest extends TestCase {
 	}
 
 	public function testGenerateTurnSettingsEmpty(): void {
-		$this->config
+		$this->appConfig
 			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'turn_servers', '')
-			->willReturn(json_encode([]));
+			->method('getAppValueArray')
+			->with('turn_servers')
+			->willReturn([]);
 
 		$helper = $this->getConfig();
 
@@ -200,11 +200,11 @@ class ConfigTest extends TestCase {
 	}
 
 	public function testGenerateTurnSettingsEvent(): void {
-		$this->config
+		$this->appConfig
 			->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'turn_servers', '')
-			->willReturn(json_encode([]));
+			->method('getAppValueArray')
+			->with('turn_servers')
+			->willReturn([]);
 
 		$this->dispatcher = \OCP\Server::get(IEventDispatcher::class);
 

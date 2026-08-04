@@ -27,6 +27,7 @@ readonly class Webinar extends APreset {
 
 	#[\Override]
 	public function getName(): string {
+		// TRANSLATORS Conversation type - for public webinars, lobby enabled, non-moderators have no cam/mic permissions
 		return $this->l->t('Webinar');
 	}
 

@@ -2264,6 +2264,27 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/ask-features": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Get the features that are enabled for the requesting bot
+         * @description Allows bots to check which features an administrator has enabled for them, without requiring administrator credentials. The request is signed with the shared bot secret like all other bot requests: the signature is computed over the random seed and the conversation token sent in the request body, which is used to look the bot up. Keeping the token in the signed body binds the request to the conversation, so the signature headers on their own cannot be replayed.
+         *     Required capability: `bot-features-api`
+         */
+        post: operations["bot-get-bot-features"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/apps/spreed/api/{apiVersion}/bot/admin": {
         parameters: {
             query?: never;
@@ -2703,6 +2724,13 @@ export type components = {
              */
             state: number;
         };
+        BotFeatures: {
+            /**
+             * Format: int64
+             * @description Feature flags enabled for the bot (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#bot-features))
+             */
+            features: number;
+        };
         BotWithDetails: components["schemas"]["Bot"] & {
             /**
              * Format: int64
@@ -2877,6 +2905,11 @@ export type components = {
                      * @description Retention period for instant meetings in seconds, `0` means no retention
                      */
                     "retention-instant-meetings": number;
+                    /**
+                     * Format: int64
+                     * @description Retention period for classified conversations after a call in seconds, `0` means no retention
+                     */
+                    "retention-classified": number;
                     /**
                      * @description User selected sort order for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-sort-options))
                      * @enum {string}
@@ -4375,7 +4408,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Enabling bot errored */
+            /** @description Enabling bot errored, e.g. when the conversation is classified */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -4520,7 +4553,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Configuring breakout rooms errored */
+            /** @description Configuring breakout rooms errored, e.g. when the conversation is classified */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -5455,6 +5488,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Downloading the participants list is not allowed (e.g. classified conversation) */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     "call-update-federated-call-flags": {
@@ -5756,7 +5796,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description SIP dial-out not possible */
+            /** @description SIP dial-out not possible, e.g. when the conversation is classified */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -6799,7 +6839,7 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description No AI provider available or summarizing failed */
+            /** @description The conversation is classified */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -6810,7 +6850,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "ai-no-provider" | "ai-error";
+                                error: "ai-no-provider" | "ai-error" | "classified";
                             };
                         };
                     };
@@ -8661,7 +8701,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description The participant is not in the call */
+            /** @description The conversation is classified */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -8672,7 +8712,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "app" | "in-call";
+                                error: "app" | "classified" | "in-call";
                             };
                         };
                     };
@@ -8868,7 +8908,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description The external app "live_transcription" is not available */
+            /** @description The conversation is classified */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -8879,7 +8919,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "app";
+                                error: "app" | "classified";
                             };
                         };
                     };
@@ -8940,7 +8980,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description The participant is not in the call. */
+            /** @description The conversation is classified */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -8951,7 +8991,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "app" | "translations" | "in-call";
+                                error: "app" | "classified" | "translations" | "in-call";
                             };
                         };
                     };
@@ -9059,7 +9099,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Editing bridge is not possible */
+            /** @description Editing bridge is not possible, e.g. when the conversation is classified */
             406: {
                 headers: {
                     [name: string]: unknown;
@@ -10569,7 +10609,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "owner" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
+                                error: "avatar" | "classified" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "owner" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
                                 message?: string;
                             };
                         };
@@ -10604,7 +10644,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "owner" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
+                                error: "avatar" | "classified" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "owner" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
                                 message?: string;
                             };
                         };
@@ -10622,7 +10662,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "avatar" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "owner" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
+                                error: "avatar" | "classified" | "description" | "invite" | "listable" | "lobby" | "lobby-timer" | "mention-permissions" | "message-expiration" | "name" | "object" | "object-id" | "object-type" | "owner" | "password" | "permissions" | "preset" | "read-only" | "recording-consent" | "sip-enabled" | "type";
                                 message?: string;
                             };
                         };
@@ -11401,7 +11441,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Adding participant is not possible, e.g. when the user is banned (check error attribute of response for detail key) */
+            /** @description Adding participant is not possible, e.g. when the user is banned or an email, phone number or federated user is added to a classified conversation (check error attribute of response for detail key) */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -11412,7 +11452,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "ban" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
                             };
                         };
                     };
@@ -11443,7 +11483,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "ban" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
                             };
                         };
                     };
@@ -11460,7 +11500,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "ban" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
+                                error: "ban" | "classified" | "cloud-id" | "federation" | "moderator" | "new-participant" | "outgoing" | "reach-remote" | "room-type" | "sip" | "source" | "trusted-servers";
                             };
                         };
                     };
@@ -11575,7 +11615,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "last-moderator" | "participant";
+                                error: "announcement" | "last-moderator" | "participant";
                             };
                         };
                     };
@@ -11606,7 +11646,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "last-moderator" | "participant";
+                                error: "announcement" | "last-moderator" | "participant";
                             };
                         };
                     };
@@ -11657,7 +11697,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "last-moderator" | "owner" | "participant" | "room-type";
+                                error: "announcement" | "last-moderator" | "owner" | "participant" | "room-type";
                             };
                         };
                     };
@@ -11674,7 +11714,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "last-moderator" | "owner" | "participant" | "room-type";
+                                error: "announcement" | "last-moderator" | "owner" | "participant" | "room-type";
                             };
                         };
                     };
@@ -11691,7 +11731,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "last-moderator" | "owner" | "participant" | "room-type";
+                                error: "announcement" | "last-moderator" | "owner" | "participant" | "room-type";
                             };
                         };
                     };
@@ -11749,7 +11789,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "breakout-room" | "type" | "value" | "password";
+                                error: "breakout-room" | "classified" | "type" | "value" | "password";
                                 message?: string;
                             };
                         };
@@ -11829,7 +11869,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "breakout-room" | "type" | "value";
+                                error: "breakout-room" | "classified" | "type" | "value";
                             };
                         };
                     };
@@ -11992,7 +12032,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "breakout-room" | "type" | "value";
+                                error: "breakout-room" | "classified" | "type" | "value";
                             } | {
                                 /** @enum {string} */
                                 error: "forced";
@@ -12605,6 +12645,23 @@ export interface operations {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
                             data: components["schemas"]["Room"];
+                        };
+                    };
+                };
+            };
+            /** @description Marking the conversation as insensitive is not possible (e.g. classified conversation) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                /** @enum {string} */
+                                error: "classified";
+                            };
                         };
                     };
                 };
@@ -13375,7 +13432,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "breakout-room" | "token" | "type" | "value";
+                                error: "breakout-room" | "classified" | "token" | "type" | "value";
                             } | {
                                 /** @enum {string} */
                                 error: "forced";
@@ -13719,7 +13776,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Import was not successful. When message is provided the string is in user language and should be displayed as an error. */
+            /** @description Import was not successful, e.g. when the conversation is classified. When message is provided the string is in user language and should be displayed as an error. */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -13730,7 +13787,7 @@ export interface operations {
                             meta: components["schemas"]["OCSMeta"];
                             data: {
                                 /** @enum {string} */
-                                error: "room" | "file" | "header-email" | "header-name" | "rows";
+                                error: "classified" | "room" | "file" | "header-email" | "header-name" | "rows";
                                 message?: string;
                                 /** Format: int64 */
                                 invites?: number;
@@ -15362,6 +15419,75 @@ export interface operations {
             };
             /** @description Reaction not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "bot-get-bot-features": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Random seed (at least 32 bytes) used together with the conversation token to generate the SHA256-HMAC request signature */
+                "x-nextcloud-talk-bot-random"?: string;
+                /** @description SHA256-HMAC signature over the concatenation of the random seed and the conversation token, signed with the shared bot secret, to verify authenticity */
+                "x-nextcloud-talk-bot-signature"?: string;
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                apiVersion: "v1";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description Conversation token */
+                    token: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Bot features returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: components["schemas"]["BotFeatures"];
+                        };
+                    };
+                };
+            };
+            /** @description Missing or malformed signature headers */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Bot could not be verified for the conversation */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

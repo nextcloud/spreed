@@ -10,6 +10,7 @@ namespace OCA\Talk\Exceptions\RoomProperty;
 
 class TypeException extends \InvalidArgumentException {
 	public const REASON_BREAKOUT_ROOM = 'breakout-room';
+	public const REASON_CLASSIFIED = 'classified';
 	public const REASON_TYPE = 'type';
 	public const REASON_VALUE = 'value';
 

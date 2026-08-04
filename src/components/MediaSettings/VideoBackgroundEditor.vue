@@ -8,8 +8,8 @@
 		<button
 			key="clear"
 			class="background-editor__element"
-			:class="{ 'background-editor__element--selected': selectedBackground === 'none' }"
-			@click="handleSelectBackground('none')">
+			:class="{ 'background-editor__element--selected': selectedBackground === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.NONE }"
+			@click="handleSelectBackground(VIRTUAL_BACKGROUND.BACKGROUND_TYPE.NONE)">
 			<IconCancel :size="20" />
 			{{
 				// TRANSLATORS: "None" refers to "No background effect applied" in videos, for context, other options are "blur" or "image"
@@ -19,8 +19,8 @@
 		<button
 			key="blur"
 			class="background-editor__element"
-			:class="{ 'background-editor__element--selected': selectedBackground === 'blur' }"
-			@click="handleSelectBackground('blur')">
+			:class="{ 'background-editor__element--selected': selectedBackground === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR }"
+			@click="handleSelectBackground(VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)">
 			<IconBlur :size="20" />
 			{{ t('spreed', 'Blur') }}
 		</button>
@@ -128,6 +128,7 @@ export default {
 	setup() {
 		return {
 			IconFileUpload,
+			VIRTUAL_BACKGROUND,
 			canUploadBackgrounds: getTalkConfig('local', 'call', 'can-upload-background'),
 			predefinedBackgrounds: getTalkConfig('local', 'call', 'predefined-backgrounds'),
 			predefinedBackgroundsV2: getTalkConfig('local', 'call', 'predefined-backgrounds-v2'),
@@ -144,8 +145,8 @@ export default {
 
 	computed: {
 		isCustomBackground() {
-			return this.selectedBackground !== 'none'
-				&& this.selectedBackground !== 'blur'
+			return this.selectedBackground !== VIRTUAL_BACKGROUND.BACKGROUND_TYPE.NONE
+				&& this.selectedBackground !== VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR
 				&& !this.predefinedBackgroundsURLs.includes(this.selectedBackground)
 		},
 
@@ -272,16 +273,16 @@ export default {
 			// Set virtual background depending on browser storage's settings
 			if (BrowserStorage.getItem('virtualBackgroundEnabled') === 'true') {
 				if (BrowserStorage.getItem('virtualBackgroundType') === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
-					this.selectedBackground = 'blur'
+					this.selectedBackground = VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR
 				} else if (BrowserStorage.getItem('virtualBackgroundType') === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
 					this.selectedBackground = BrowserStorage.getItem('virtualBackgroundUrl')
 				} else {
-					this.selectedBackground = 'none'
+					this.selectedBackground = VIRTUAL_BACKGROUND.BACKGROUND_TYPE.NONE
 				}
 			} else if (this.settingsStore.blurVirtualBackgroundEnabled && !this.skipBlurVirtualBackground) {
-				this.selectedBackground = 'blur'
+				this.selectedBackground = VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR
 			} else {
-				this.selectedBackground = 'none'
+				this.selectedBackground = VIRTUAL_BACKGROUND.BACKGROUND_TYPE.NONE
 			}
 		},
 

@@ -307,15 +307,15 @@ export const useUploadStore = defineStore('upload', () => {
 		// Set last upload id
 		currentUploadId.value = uploadId
 		for (let i = 0; i < files.length; i++) {
-			const file = files[i]
+			let file = files[i]
 
 			if (rename) {
-				// note: can't overwrite the original read-only name attribute
 				// 'YYYY-MM-DDTHH:mm:ss.sssZ' -> 'YYYYMMDD_HHmmss.ext'
-				// @ts-expect-error: property does not exist on type File
-				file.newName = new Date(file.lastModified ?? file.lastModifiedDate)
+				const newName = new Date(file.lastModified)
 					.toISOString().replace('T', '_').replace(/[:-]/g, '').split('.')[0]
 					+ getFileExtension(file.name)
+				// The name attribute is read-only, so a new File has to be created instead
+				file = new File([file], newName, { type: file.type, lastModified: file.lastModified })
 			}
 
 			// Get localUrl for allowed image previews and voice messages uploads
@@ -399,7 +399,7 @@ export const useUploadStore = defineStore('upload', () => {
 		if (getTalkConfig(token, 'attachments', 'conversation-subfolders') === true) {
 			const initialisedUploads = getInitialisedUploads(uploadId)
 			const fileNames = initialisedUploads
-				.map(([, uploadedFile]) => uploadedFile.file.newName || uploadedFile.file.name)
+				.map(([, uploadedFile]) => uploadedFile.file.name)
 			try {
 				const response = await probeAttachmentFolder({ token, fileNames, allowUpdate })
 				uploads[uploadId].draftFolderPath = response.data.ocs.data.folder
@@ -484,7 +484,7 @@ export const useUploadStore = defineStore('upload', () => {
 
 		const performPropFind = async (uploadEntry: UploadEntry) => {
 			const [index, uploadedFile] = uploadEntry
-			const fileName = (uploadedFile.file.newName || uploadedFile.file.name)
+			const fileName = uploadedFile.file.name
 			const path = settingsStore.attachmentFolder + '/' + fileName
 
 			try {
@@ -540,7 +540,7 @@ export const useUploadStore = defineStore('upload', () => {
 		const performUpload = async (uploadEntry: UploadEntry) => {
 			const [index, uploadedFile] = uploadEntry
 			const currentFile = uploadedFile.file
-			const fileName = (currentFile.newName || currentFile.name)
+			const fileName = currentFile.name
 
 			try {
 				markFileAsUploading({ uploadId, index })
@@ -606,7 +606,7 @@ export const useUploadStore = defineStore('upload', () => {
 			// Persist talkMetaData on the file so retryShareFiles can reuse it
 			uploads[uploadId].files[index].talkMetaData = talkMetaData
 
-			const fileName = shareableFile.file.newName || shareableFile.file.name
+			const fileName = shareableFile.file.name
 			await performShare({ token, path: shareableFile.sharePath!, index, uploadId, id, referenceId, talkMetaData, fileName, allowUpdate })
 		}
 	}
@@ -726,7 +726,7 @@ export const useUploadStore = defineStore('upload', () => {
 
 			const { id, referenceId } = shareableFile.temporaryMessage || {}
 			const talkMetaData = shareableFile.talkMetaData || '{}'
-			const fileName = shareableFile.file.newName || shareableFile.file.name
+			const fileName = shareableFile.file.name
 
 			await performShare({ token, path: shareableFile.sharePath!, index, uploadId, id, referenceId, talkMetaData, fileName, allowUpdate })
 		}

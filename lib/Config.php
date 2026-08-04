@@ -39,6 +39,34 @@ class Config {
 	public const SIGNALING_TICKET_V1 = 1;
 	public const SIGNALING_TICKET_V2 = 2;
 
+	public const string RETENTION_CLASSIFIED_ROOMS = 'retention_classified_rooms';
+	public const string STUN_SERVERS = 'stun_servers';
+	public const string TURN_SERVERS = 'turn_servers';
+	public const string DEFAULT_STUN_SERVER = 'stun.nextcloud.com:443';
+	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
+	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
+	public const string ALLOWED_GROUPS_CONVERSATIONS = 'start_conversations';
+	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
+	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
+	public const string DEFAULT_ROOM_PERMISSIONS = 'default_permissions';
+	public const string DEFAULT_ATTACHMENT_FOLDER = 'default_attachment_folder';
+	public const string GRID_VIDEOS_LIMIT = 'grid_videos_limit';
+	public const string GRID_VIDEOS_LIMIT_ENFORCED = 'grid_videos_limit_enforced';
+	public const string GUESTS_PLAY_SOUNDS = 'guests_play_sounds';
+	public const string GROUP_CHATS_FORCE_PASSWORDS_ENABLED = 'force_passwords';
+	public const string EXTERNAL_CALL_SERVICE = 'external_call_service';
+	public const string EXTERNAL_CALL_SERVICE_FRAME_ORIGINS = 'external_call_service_frame_origins';
+	public const string EXTERNAL_CALL_SERVICE_SHARED_SECRET = 'external_call_service_shared_secret';
+	public const string EXTERNAL_CALL_SERVICE_AUTH_USER = 'external_call_service_auth_user';
+	public const string EXTERNAL_CALL_SERVICE_AUTH_PASSWORD = 'external_call_service_auth_password';
+	public const string EXTERNAL_CALL_SERVICE_IFRAME_FIELD = 'external_call_service_iframe_field';
+	public const string CALLS_START_WITHOUT_MEDIA = 'calls_start_without_media';
+	public const string INACTIVITY_LOCK_AFTER_DAYS = 'inactivity_lock_after_days';
+	public const string INACTIVITY_ENABLE_LOBBY = 'inactivity_enable_lobby';
+	public const string EXPERIMENTS_USERS = 'experiments_users';
+	public const string EXPERIMENTS_GUESTS = 'experiments_guests';
+	public const string CALL_END_TO_END_ENCRYPTION = 'call_end_to_end_encryption';
+
 	/**
 	 * 1. Call recording, …
 	 */
@@ -72,9 +100,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedTalkGroupIds(): array {
-		$groups = $this->config->getAppValue('spreed', 'allowed_groups', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_TALK);
 	}
 
 	/**
@@ -107,9 +133,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getSIPGroups(): array {
-		$groups = $this->config->getAppValue('spreed', 'sip_bridge_groups', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_SIP);
 	}
 
 	public function isSIPConfigured(): bool {
@@ -136,11 +160,11 @@ class Config {
 	}
 
 	public function isBreakoutRoomsEnabled(): bool {
-		return $this->config->getAppValue('spreed', 'breakout_rooms', 'yes') === 'yes';
+		return $this->appConfig->getAppValueBool(self::BREAKOUT_ROOMS_ENABLED);
 	}
 
 	public function isConversationSubfoldersEnabled(): bool {
-		return $this->appConfig->getAppValueBool('conversation_subfolders', true);
+		return $this->appConfig->getAppValueBool(self::CONVERSATION_SUBFOLDERS, true);
 	}
 
 	public function getDialInInfo(): string {
@@ -270,9 +294,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedConversationsGroupIds(): array {
-		$groups = $this->config->getAppValue('spreed', 'start_conversations', '[]');
-		$groups = json_decode($groups, true);
-		return \is_array($groups) ? $groups : [];
+		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_CONVERSATIONS);
 	}
 
 	public function isNotAllowedToCreateConversations(IUser $user): bool {
@@ -291,9 +313,9 @@ class Config {
 	 */
 	public function getDefaultPermissions(): int {
 		// Admin configured default permissions
-		$configurableDefault = $this->config->getAppValue('spreed', 'default_permissions');
-		if ($configurableDefault !== '') {
-			return min(Attendee::PERMISSIONS_MAX_CUSTOM, max(Attendee::PERMISSIONS_DEFAULT, (int)$configurableDefault));
+		$configurableDefault = $this->appConfig->getAppValueInt(self::DEFAULT_ROOM_PERMISSIONS);
+		if ($configurableDefault < Attendee::PERMISSIONS_DEFAULT) {
+			return min(Attendee::PERMISSIONS_MAX_CUSTOM, max(Attendee::PERMISSIONS_DEFAULT, $configurableDefault));
 		}
 
 		// Falling back to an unrestricted set of permissions, only ignoring the lobby is off
@@ -301,7 +323,7 @@ class Config {
 	}
 
 	public function getAttachmentFolder(string $userId): string {
-		$defaultAttachmentFolder = $this->config->getAppValue('spreed', 'default_attachment_folder', '/Talk');
+		$defaultAttachmentFolder = $this->appConfig->getAppValueString(self::DEFAULT_ATTACHMENT_FOLDER);
 		return $this->config->getUserValue($userId, 'spreed', UserPreference::ATTACHMENT_FOLDER, $defaultAttachmentFolder);
 	}
 
@@ -435,15 +457,13 @@ class Config {
 	 * @return string[]
 	 */
 	public function getStunServers(): array {
-		$config = $this->config->getAppValue('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']));
-		$servers = json_decode($config, true);
-
-		if (!is_array($servers) || empty($servers)) {
-			$servers = ['stun.nextcloud.com:443'];
+		$servers = $this->appConfig->getAppValueArray(Config::STUN_SERVERS);
+		if (empty($servers)) {
+			$servers = [Config::DEFAULT_STUN_SERVER];
 		}
 
 		if (!$this->config->getSystemValueBool('has_internet_connection', true)) {
-			$servers = array_filter($servers, static fn ($server) => $server !== 'stun.nextcloud.com:443');
+			$servers = array_filter($servers, static fn ($server) => $server !== Config::DEFAULT_STUN_SERVER);
 		}
 
 		return $servers;
@@ -455,12 +475,7 @@ class Config {
 	 * @return array
 	 */
 	public function getTurnServers(bool $withEvent = true): array {
-		$config = $this->config->getAppValue('spreed', 'turn_servers');
-		$servers = json_decode($config, true);
-
-		if ($servers === null || empty($servers) || !is_array($servers)) {
-			$servers = [];
-		}
+		$servers = $this->appConfig->getAppValueArray(self::TURN_SERVERS);
 
 		if ($withEvent) {
 			$event = new BeforeTurnServersGetEvent($servers);
@@ -510,7 +525,7 @@ class Config {
 	}
 
 	public function getExternalCallService(): ?string {
-		$callService = $this->appConfig->getAppValueString('external_call_service');
+		$callService = $this->appConfig->getAppValueString(self::EXTERNAL_CALL_SERVICE);
 		if (!str_starts_with($callService, 'https://') && !str_starts_with($callService, 'http://')) {
 			return null;
 		}
@@ -539,7 +554,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getExternalCallServiceFrameOrigins(): array {
-		return $this->appConfig->getAppValueArray('external_call_service_frame_origins');
+		return $this->appConfig->getAppValueArray(self::EXTERNAL_CALL_SERVICE_FRAME_ORIGINS);
 	}
 
 	/**
@@ -549,7 +564,7 @@ class Config {
 	protected const EXTERNAL_CALL_SERVICE_SECRET_MIN_LENGTH = 64;
 
 	public function getExternalCallServiceSharedSecret(): string {
-		$secret = $this->appConfig->getAppValueString('external_call_service_shared_secret');
+		$secret = $this->appConfig->getAppValueString(self::EXTERNAL_CALL_SERVICE_SHARED_SECRET);
 
 		if ($secret !== '' && strlen($secret) < self::EXTERNAL_CALL_SERVICE_SECRET_MIN_LENGTH) {
 			throw new \InvalidArgumentException('Invalid external call service secret length');
@@ -559,15 +574,15 @@ class Config {
 	}
 
 	public function getExternalCallServiceAuthUser(): string {
-		return $this->appConfig->getAppValueString('external_call_service_auth_user');
+		return $this->appConfig->getAppValueString(self::EXTERNAL_CALL_SERVICE_AUTH_USER);
 	}
 
 	public function getExternalCallServiceAuthPassword(): string {
-		return $this->appConfig->getAppValueString('external_call_service_auth_password');
+		return $this->appConfig->getAppValueString(self::EXTERNAL_CALL_SERVICE_AUTH_PASSWORD);
 	}
 
 	public function getExternalCallServiceIFrameResponseField(): string {
-		return $this->appConfig->getAppValueString('external_call_service_iframe_field');
+		return $this->appConfig->getAppValueString(self::EXTERNAL_CALL_SERVICE_IFRAME_FIELD);
 	}
 
 	/**
@@ -844,11 +859,11 @@ class Config {
 	}
 
 	public function getGridVideosLimit(): int {
-		return (int)$this->config->getAppValue('spreed', 'grid_videos_limit', '19'); // 5*4 - self
+		return $this->appConfig->getAppValueInt(self::GRID_VIDEOS_LIMIT);
 	}
 
 	public function getGridVideosLimitEnforced(): bool {
-		return $this->config->getAppValue('spreed', 'grid_videos_limit_enforced', 'no') === 'yes';
+		return $this->appConfig->getAppValueBool(self::GRID_VIDEOS_LIMIT_ENFORCED);
 	}
 
 	/**
@@ -865,7 +880,7 @@ class Config {
 			}
 		}
 
-		return $this->appConfig->getAppValueBool('calls_start_without_media');
+		return $this->appConfig->getAppValueBool(self::CALLS_START_WITHOUT_MEDIA);
 	}
 
 	/**
@@ -988,19 +1003,19 @@ class Config {
 	 * User setting falling back to admin defined app config
 	 */
 	public function getInactiveLockTime(): int {
-		return $this->appConfig->getAppValueInt('inactivity_lock_after_days');
+		return $this->appConfig->getAppValueInt(self::INACTIVITY_LOCK_AFTER_DAYS);
 	}
 
 	public function enableLobbyOnLockedRooms(): bool {
-		return $this->appConfig->getAppValueBool('inactivity_enable_lobby');
+		return $this->appConfig->getAppValueBool(self::INACTIVITY_ENABLE_LOBBY);
 	}
 
 	/**
 	 * @param self::EXPERIMENTAL_* $experiment
 	 */
 	public function hasExperiment(int $experiment): bool {
-		return $this->appConfig->getAppValueInt('experiments_users') & $experiment
-			|| $this->appConfig->getAppValueInt('experiments_guests') & $experiment;
+		return $this->appConfig->getAppValueInt(self::EXPERIMENTS_USERS) & $experiment
+			|| $this->appConfig->getAppValueInt(self::EXPERIMENTS_GUESTS) & $experiment;
 	}
 
 	public function isPasswordEnforced(): bool {
@@ -1013,7 +1028,7 @@ class Config {
 		}
 
 		// TODO Default value will be set to true, once all mobile clients support it.
-		return $this->appConfig->getAppValueBool('call_end_to_end_encryption');
+		return $this->appConfig->getAppValueBool(self::CALL_END_TO_END_ENCRYPTION);
 	}
 
 	public function getPlaySoundsForUser(?IUser $user): bool {

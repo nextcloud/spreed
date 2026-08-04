@@ -42,7 +42,8 @@ export default {
 		 */
 		placeholderText: {
 			type: String,
-			default: t('spreed', 'Search …'),
+			// TRANSLATORS: Search (verb) - placeholder for in-app search input field
+			default: t('spreed', 'Search'),
 		},
 
 		/**

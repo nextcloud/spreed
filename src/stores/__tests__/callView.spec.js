@@ -230,6 +230,25 @@ describe('callViewStore', () => {
 			expect(callViewStore.forceCallView).toBeTruthy()
 		})
 
+		it('sets value on externalCallServiceUrl', () => {
+			expect(callViewStore.externalCallServiceUrl).toBe(null)
+			callViewStore.setExternalCallServiceUrl('https://example.com/meeting')
+			expect(callViewStore.externalCallServiceUrl).toBe('https://example.com/meeting')
+		})
+
+		it('resets external call service view state on leaveExternalCall', () => {
+			// Arrange: mimic being in an external call
+			callViewStore.setExternalCallServiceUrl('https://example.com/meeting')
+			callViewStore.setForceCallView(true)
+
+			// Act
+			callViewStore.leaveExternalCall()
+
+			// Assert: stale iframe URL and forced call view are cleared
+			expect(callViewStore.externalCallServiceUrl).toBe(null)
+			expect(callViewStore.forceCallView).toBe(false)
+		})
+
 		it('sets value on isViewerOverlay', () => {
 			expect(callViewStore.isViewerOverlay).toBeFalsy()
 			callViewStore.setIsViewerOverlay(true)

@@ -9,7 +9,7 @@ import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
-import { ATTENDEE, PARTICIPANT } from '../constants.ts'
+import { ATTENDEE, PARTICIPANT, SIGNALING } from '../constants.ts'
 import { banActor } from '../services/banService.ts'
 import {
 	joinCall,
@@ -675,7 +675,7 @@ const actions = {
 		// to receive a response from POST 'apps/spreed/api/v4/call/{token}' in large calls,
 		// so should render call UI optimistically based on the signaling message
 		const isCallStarter = !getters.conversation(token)?.hasCall
-		const isStandaloneSignaling = getTalkConfig(token, 'signaling', 'mode') !== 'internal'
+		const isStandaloneSignaling = getTalkConfig(token, 'signaling', 'mode') !== SIGNALING.MODE.INTERNAL
 		let hasJoinedCallOptimistically = false
 
 		const handleJoinCall = ([token, flags]) => {

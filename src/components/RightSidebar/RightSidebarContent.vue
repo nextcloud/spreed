@@ -97,11 +97,13 @@ const messageExpirationDuration = computed(() => {
 
 const sidebarTitle = computed(() => {
 	if (props.state === 'search') {
+		// TRANSLATORS: Search (verb) messages in current conversation "{name}"
 		return t('spreed', 'Search in {name}', { name: conversation.value.displayName }, {
 			escape: false,
 			sanitize: false,
 		})
 	} else if (props.state === 'threads') {
+		// TRANSLATORS: Navigate existing threads in current conversation "{name}"
 		return t('spreed', 'Threads in {name}', { name: conversation.value.displayName }, {
 			escape: false,
 			sanitize: false,

@@ -12,6 +12,7 @@ use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Federation\TrustedServers;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\FederationRestrictionException;
+use OCA\Talk\Room;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Federation\ICloudId;
@@ -32,12 +33,21 @@ class RestrictionValidator {
 	/**
 	 * Check if $sharedBy is allowed to invite $shareWith
 	 *
+	 * @param ?Room $room Conversation the invite is for, when it already exists
 	 * @throws FederationRestrictionException
 	 */
 	public function isAllowedToInvite(
 		IUser $user,
 		ICloudId $cloudIdToInvite,
+		?Room $room = null,
 	): void {
+		if ($room?->isClassified() === true) {
+			// The remote server would receive the conversation and its messages,
+			// which is outside of everything a classified conversation enforces.
+			$this->logger->debug('Could not share conversation as classified conversations can not be shared with federated users');
+			throw new FederationRestrictionException(FederationRestrictionException::REASON_CLASSIFIED);
+		}
+
 		if (!($cloudIdToInvite->getUser() && $cloudIdToInvite->getRemote())) {
 			$this->logger->debug('Could not share conversation as the recipient is invalid: ' . $cloudIdToInvite->getId());
 			throw new FederationRestrictionException(FederationRestrictionException::REASON_CLOUD_ID);

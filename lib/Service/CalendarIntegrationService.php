@@ -276,7 +276,7 @@ class CalendarIntegrationService {
 					continue;
 				}
 
-				if (!isset($event['ORGANIZER']) && !isset($event['ATTENDEE'])) {
+				if (!isset($event['ORGANIZER'], $event['ATTENDEE'])) {
 					// Don't show events without attendees
 					continue;
 				}

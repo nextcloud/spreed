@@ -39,13 +39,20 @@ class InvitationService {
 	) {
 	}
 
-	public function validateInvitations(array $participants, IUser $currentUser, ?Room $room = null): InvitationList {
+	/**
+	 * @param bool $isClassified Whether the invitations target a classified conversation.
+	 *                           Only needed at creation time, when the room does not exist yet;
+	 *                           otherwise it is read from $room.
+	 */
+	public function validateInvitations(array $participants, IUser $currentUser, ?Room $room = null, bool $isClassified = false): InvitationList {
+		$isClassified = $isClassified || $room?->isClassified() === true;
+
 		$invitationList = new InvitationList();
 		if (!empty($participants['users'])) {
 			$this->validateUserInvitations($invitationList, $participants['users']);
 		}
 		if (!empty($participants['emails'])) {
-			$this->validateEmailInvitations($invitationList, $participants['emails']);
+			$this->validateEmailInvitations($invitationList, $participants['emails'], $isClassified);
 		}
 		if (!empty($participants['groups'])) {
 			$this->validateGroupInvitations($invitationList, $participants['groups']);
@@ -54,10 +61,10 @@ class InvitationService {
 			$this->validateTeamInvitations($invitationList, $participants['teams'], $currentUser);
 		}
 		if (!empty($participants['federated_users'])) {
-			$this->validateFederatedUserInvitations($invitationList, $participants['federated_users'], $currentUser);
+			$this->validateFederatedUserInvitations($invitationList, $participants['federated_users'], $currentUser, $isClassified);
 		}
 		if (!empty($participants['phones'])) {
-			$this->validatePhoneInvitations($invitationList, $participants['phones'], $currentUser, $room);
+			$this->validatePhoneInvitations($invitationList, $participants['phones'], $currentUser, $room, $isClassified);
 		}
 		return $invitationList;
 	}
@@ -87,7 +94,15 @@ class InvitationService {
 	/**
 	 * @param list<string> $emails
 	 */
-	protected function validateEmailInvitations(InvitationList $invitationList, array $emails): void {
+	protected function validateEmailInvitations(InvitationList $invitationList, array $emails, bool $isClassified): void {
+		if ($isClassified) {
+			// The invitation mail would carry the conversation into the email
+			// infrastructure, and the access token link would allow joining
+			// without an account
+			$invitationList->setEmailResults([], $emails);
+			return;
+		}
+
 		$invalidEmails = $validEmails = [];
 		foreach ($emails as $email) {
 			if ($this->emailValidator->isValid($email)) {
@@ -142,7 +157,13 @@ class InvitationService {
 	/**
 	 * @param list<string> $cloudIds
 	 */
-	protected function validateFederatedUserInvitations(InvitationList $invitationList, array $cloudIds, IUser $currentUser): void {
+	protected function validateFederatedUserInvitations(InvitationList $invitationList, array $cloudIds, IUser $currentUser, bool $isClassified): void {
+		if ($isClassified) {
+			// The remote server would receive the conversation and its messages
+			$invitationList->setFederatedUserResults([], $cloudIds);
+			return;
+		}
+
 		if (!$this->talkConfig->isFederationEnabled()) {
 			$invitationList->setFederatedUserResults([], $cloudIds);
 			return;
@@ -164,7 +185,13 @@ class InvitationService {
 	/**
 	 * @param list<string> $phoneNumbers
 	 */
-	protected function validatePhoneInvitations(InvitationList $invitationList, array $phoneNumbers, IUser $currentUser, ?Room $room): void {
+	protected function validatePhoneInvitations(InvitationList $invitationList, array $phoneNumbers, IUser $currentUser, ?Room $room, bool $isClassified): void {
+		if ($isClassified) {
+			// Classified conversations can not dial out
+			$invitationList->setPhoneNumberResults([], $phoneNumbers);
+			return;
+		}
+
 		if (!$this->talkConfig->isSIPConfigured() || !$this->talkConfig->canUserDialOutSIP($currentUser)) {
 			$invitationList->setPhoneNumberResults([], $phoneNumbers);
 			return;

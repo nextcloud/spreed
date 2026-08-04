@@ -11,6 +11,7 @@ import type {
 	SearchMessagePayload,
 	UnifiedSearchResponse,
 	UnifiedSearchResultEntry,
+	UnifiedSearchResultEntryWithRouterLink,
 } from '../../../types/index.ts'
 
 import { isCancel } from '@nextcloud/axios'
@@ -36,7 +37,7 @@ import { useArrowNavigation } from '../../../composables/useArrowNavigation.js'
 import { useGetToken } from '../../../composables/useGetToken.ts'
 import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { ATTENDEE } from '../../../constants.ts'
-import { searchMessages } from '../../../services/coreService.ts'
+import { searchMessagesInCurrentConversation } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import CancelableRequest from '../../../utils/CancelableRequest.ts'
 
@@ -53,15 +54,7 @@ const searchBox = ref<InstanceType<typeof SearchBox> | null>(null)
 const { initializeNavigation, resetNavigation } = useArrowNavigation(searchMessagesTab, searchBox)
 
 const isFocused = ref(false)
-const searchResults = ref<(UnifiedSearchResultEntry & {
-	to: {
-		name: string
-		hash: string
-		params: {
-			token: string
-		}
-	}
-})[]>([])
+const searchResults = ref<UnifiedSearchResultEntryWithRouterLink[]>([])
 const searchText = ref('')
 const fromUser = ref<IUserData | undefined>(undefined)
 const sinceDate = ref<Date | null>(null)
@@ -83,7 +76,7 @@ const participants = computed<IUserData[]>(() => {
 		.map(({ actorId, displayName, actorType }: { actorId: string, displayName: string, actorType: string }) => ({
 			id: actorId,
 			displayName,
-			isNoUser: actorType !== 'users',
+			isNoUser: actorType !== ATTENDEE.ACTOR_TYPE.USERS,
 			user: actorId,
 			disableMenu: true,
 			showUserStatus: false,
@@ -182,7 +175,7 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 		cancelSearchFn()
 		resetNavigation()
 
-		const { request, cancel } = CancelableRequest(searchMessages)
+		const { request, cancel } = CancelableRequest(searchMessagesInCurrentConversation)
 		cancelSearchFn = cancel
 
 		if (isNew) {
@@ -260,7 +253,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 						ref="searchBox"
 						v-model:value="searchText"
 						v-model:isFocused="isFocused"
-						:placeholderText="t('spreed', 'Search messages …')" />
+						:placeholderText="t('spreed', 'Search messages')" />
 					<NcButton
 						v-model:pressed="searchDetailsOpened"
 						:aria-label="t('spreed', 'Search options')"

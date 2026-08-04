@@ -9,7 +9,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import { fetchSignalingSettings } from '../../services/signalingService.js'
 import store from '../../store/index.js'
-import { isSafari } from '../browserCheck.ts'
+import { isIOS, isSafari } from '../browserCheck.ts'
 import CancelableRequest from '../CancelableRequest.ts'
 import Encryption from '../e2ee/encryption.js'
 import Signaling from '../signaling.js'
@@ -254,7 +254,7 @@ async function signalingJoinCall(token, flags, silent, recordingConsent, silentF
 			callAnalyzer = new CallAnalyzer(localMediaModel, null, callParticipantCollection)
 		}
 
-		const mixAudio = isSafari
+		const mixAudio = isIOS || isSafari
 		callParticipantsAudioPlayer = new CallParticipantsAudioPlayer(callParticipantCollection, mixAudio)
 
 		const _signaling = signaling

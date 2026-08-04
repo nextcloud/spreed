@@ -6,12 +6,13 @@
 import type { ChatMessage } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
+import { ATTENDEE } from '../constants.ts'
 
 export const mockedChatMessages: Record<string, ChatMessage> = {
 	appearance1: {
 		id: 1,
 		token: '',
-		actorType: 'deleted_users',
+		actorType: ATTENDEE.ACTOR_TYPE.DELETED_USERS,
 		actorId: 'deleted_users',
 		// TRANSLATORS fake user to show chat appearance in settings
 		actorDisplayName: t('spreed', 'Another user'),
@@ -31,7 +32,7 @@ export const mockedChatMessages: Record<string, ChatMessage> = {
 	appearance2: {
 		id: 2,
 		token: '',
-		actorType: 'deleted_users',
+		actorType: ATTENDEE.ACTOR_TYPE.DELETED_USERS,
 		actorId: 'deleted_users',
 		actorDisplayName: t('spreed', 'Another user'),
 		timestamp: 1768826627,

@@ -115,7 +115,6 @@
 					:isStripe="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
 					:isRecording="isRecording"
 					:token="token"
-					:hasPagination="true"
 					:isOverlap="showFullPage"
 					:callParticipantModels="callParticipantModels"
 					:screens="screens"

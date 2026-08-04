@@ -25,6 +25,7 @@
     "active" : "d urmid",
     "expired" : "yemmut",
     "error" : "tuccḍa",
+    "Channel" : "Abadu",
     "Default" : "Prédéfini(e)",
     "Presentation" : "Tasmuli",
     "Conversations" : "Idiwenniyen",
@@ -292,6 +293,7 @@
     "Enable video" : "Sermed abidyu",
     "Camera" : "Takamiṛat",
     "You" : "Kemm·čč",
+    "Dismiss" : "Agi",
     "Mute" : "Sgugem",
     "Muted" : "Asusam",
     "Collapse" : "Seggelmes",
@@ -363,7 +365,6 @@
     "Edit message" : "Ẓreg izen",
     "Download file" : "Sader-d afaylu",
     "Translate" : "Suqel",
-    "Dismiss" : "Agi",
     "Translate from" : "Suqel seg",
     "Translate to" : "Suqel ar",
     "Translating" : "Asuqel",
@@ -404,7 +405,6 @@
     "Notification settings" : "Iɣewwaren n usezmel",
     "Default language" : "Tutlayt s yinner",
     "Privacy" : "Vie privée",
-    "Search" : "Nadi",
     "Start call" : "Bdu asiwel",
     "End call" : "Fakk asiwel",
     "Recording" : "Asekles",
@@ -412,9 +412,8 @@
     "Start recording" : "Bdu asekles",
     "Keep" : "Eǧǧ",
     "Select a region" : "Fren tamennaṭ",
-    "Search …" : "Nadi ...",
+    "Search" : "Nadi",
     "User" : "Aseqdac",
-    "Channel" : "Abadu",
     "Login" : "Aseqdac",
     "Nickname" : "Tasaẓlut",
     "IRC channel" : "Abadu IRC",
@@ -431,6 +430,7 @@
     "Tasks" : "Tiwura",
     "Notes" : "Tizmilin",
     "Reports" : "Assaɣen",
-    "Agenda" : "Tasmektit"
+    "Agenda" : "Tasmektit",
+    "Search …" : "Nadi ..."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

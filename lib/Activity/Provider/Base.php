@@ -82,7 +82,7 @@ abstract class Base implements IProvider {
 			->setRichSubject($subject, $parameters);
 	}
 
-	protected function getRoom(Room $room, string $userId): array {
+	protected function getRoom(Room $room, string $userId, IL10N $l): array {
 		$stringType = match ($room->getType()) {
 			Room::TYPE_ONE_TO_ONE,
 			Room::TYPE_ONE_TO_ONE_FORMER => 'one2one',
@@ -93,11 +93,31 @@ abstract class Base implements IProvider {
 		return [
 			'type' => 'call',
 			'id' => (string)$room->getId(),
-			'name' => $room->getDisplayName($userId),
+			'name' => $this->getRoomName($room, $userId, $l),
 			'link' => $this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
 			'call-type' => $stringType,
 			'icon-url' => $this->avatarService->getAvatarUrl($room),
 		];
+	}
+
+	/**
+	 * Resolves the conversation name for the activity list, hiding it when the
+	 * conversation is classified or sensitive for the user.
+	 */
+	protected function getRoomName(Room $room, string $userId, IL10N $l): string {
+		if ($room->isClassified()) {
+			return $l->t('Private conversation');
+		}
+
+		try {
+			$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_USERS, $userId);
+			if ($participant->getAttendee()->isSensitive()) {
+				return $l->t('Private conversation');
+			}
+		} catch (ParticipantNotFoundException) {
+		}
+
+		return $room->getDisplayName($userId);
 	}
 
 	protected function getFormerRoom(IL10N $l): array {

@@ -83,7 +83,7 @@ class MatterbridgeController extends AEnvironmentAwareOCSController {
 	 * @return DataResponse<Http::STATUS_OK, TalkMatterbridgeProcessState, array{}>|DataResponse<Http::STATUS_NOT_ACCEPTABLE, array{error: string}, array{}>
 	 *
 	 * 200: Bridge edited successfully
-	 * 406: Editing bridge is not possible
+	 * 406: Editing bridge is not possible, e.g. when the conversation is classified
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
@@ -92,6 +92,11 @@ class MatterbridgeController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function editBridgeOfRoom(bool $enabled, array $parts = []): DataResponse {
+		if ($this->room->isClassified()) {
+			// A bridge would forward the messages of a classified conversation
+			return new DataResponse(['error' => 'classified'], Http::STATUS_NOT_ACCEPTABLE);
+		}
+
 		try {
 			$state = $this->bridgeManager->editBridgeOfRoom($this->room, $this->userId, $enabled, $parts);
 		} catch (ImpossibleToKillException $e) {
