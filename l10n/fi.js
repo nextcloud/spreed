@@ -1153,7 +1153,6 @@ OC.L10N.register(
     "Attachments folder" : "Liitteiden kansio",
     "Toggle full screen" : "Koko näyttö päälle/pois",
     "Return to Home screen" : "Palaa kotinäkymään",
-    "Search" : "Etsi",
     "Shortcuts while in a chat" : "Pikanäppäimet keskustelussa",
     "Focus the chat input" : "Kohdista keskustelun syötteeseen",
     "Unfocus the chat input to use shortcuts" : "Poista kohdistus keskustelusta käyttääksesi pikanäppäimiä",
@@ -1202,7 +1201,7 @@ OC.L10N.register(
     "Remove participant {name}" : "Poista osallistuja {name}",
     "Open dialpad" : "Avaa numeronäppäimistö",
     "Select a region" : "Valitse alue",
-    "Search …" : "Hae…",
+    "Search" : "Etsi",
     "Message without mention" : "Viesti ilman mainintaa",
     "Mention myself" : "Mainitse itsesi",
     "Mention everyone" : "Mainitse kaikki",
@@ -1344,6 +1343,7 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Ääniasetusten tallentaminen epäonnistui",
     "Sounds setting saved" : "Ääniasetukset tallennettu",
     "Always shown if recording consent is required" : "Näytetään aina, jos tarvitaan suostumus äänitykseen",
+    "Search …" : "Hae…",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Liityit keskusteluun toisessa ikkunassa tai toisella laitteella. Tämä ei ole tällä hetkellä tuettua Nextcloud Talkissa, joten tämä istunto suljettiin."
 },
 "nplurals=2; plural=(n != 1);");

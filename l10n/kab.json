@@ -405,7 +405,6 @@
     "Notification settings" : "Iɣewwaren n usezmel",
     "Default language" : "Tutlayt s yinner",
     "Privacy" : "Vie privée",
-    "Search" : "Nadi",
     "Start call" : "Bdu asiwel",
     "End call" : "Fakk asiwel",
     "Recording" : "Asekles",
@@ -413,7 +412,7 @@
     "Start recording" : "Bdu asekles",
     "Keep" : "Eǧǧ",
     "Select a region" : "Fren tamennaṭ",
-    "Search …" : "Nadi ...",
+    "Search" : "Nadi",
     "User" : "Aseqdac",
     "Login" : "Aseqdac",
     "Nickname" : "Tasaẓlut",
@@ -431,6 +430,7 @@
     "Tasks" : "Tiwura",
     "Notes" : "Tizmilin",
     "Reports" : "Assaɣen",
-    "Agenda" : "Tasmektit"
+    "Agenda" : "Tasmektit",
+    "Search …" : "Nadi ..."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
