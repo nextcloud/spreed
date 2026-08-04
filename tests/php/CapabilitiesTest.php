@@ -145,6 +145,18 @@ class CapabilitiesTest extends TestCase {
 				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
 			]);
 
+		$this->appConfig->method('getAppValueBool')
+			->willReturnMap([
+				['enable_matterbridge', false],
+				['federation_enabled', false],
+				['federation_incoming_enabled', true],
+				['federation_outgoing_enabled', true],
+				['federation_only_trusted_servers', false],
+				['backgrounds_branded_for_guests', false],
+				['backgrounds_default_for_users', true],
+				['backgrounds_upload_users', true],
+			]);
+
 		$this->appConfig->method('getAppValueInt')
 			->willReturnMap([
 				['max_call_duration', 0],
@@ -152,11 +164,10 @@ class CapabilitiesTest extends TestCase {
 				['retention_phone_rooms', 7],
 				['retention_instant_meetings', 1],
 				['retention_classified_rooms', 3600],
-				['experiments_guests', 0, 0],
+				['experiments_guests', 0],
 				['summary_threshold', 100],
-				['feature_hints_hidden', 0, 999],
 				['feature_hints_hidden', 999],
-				['max_gif_size', 3145728, 200000],
+				['max_gif_size', 200000],
 				['start_calls', Room::START_CALL_EVERYONE],
 				['session_ping_limit', 200],
 			]);
@@ -243,9 +254,9 @@ class CapabilitiesTest extends TestCase {
 					],
 					'federation' => [
 						'enabled' => false,
-						'incoming-enabled' => false,
-						'outgoing-enabled' => false,
-						'only-trusted-servers' => true,
+						'incoming-enabled' => true,
+						'outgoing-enabled' => true,
+						'only-trusted-servers' => false,
 					],
 					'previews' => [
 						'max-gif-size' => 200000,
@@ -366,21 +377,29 @@ class CapabilitiesTest extends TestCase {
 		$this->appConfig->expects($this->any())
 			->method('getAppValueBool')
 			->willReturnMap([
-				['backgrounds_default_for_users', true, true],
-				['backgrounds_upload_users', true, true],
+				['enable_matterbridge', false],
+				['federation_enabled', false],
+				['federation_incoming_enabled', true],
+				['federation_outgoing_enabled', true],
+				['federation_only_trusted_servers', false],
+				['backgrounds_branded_for_guests', false],
+				['backgrounds_default_for_users', true],
+				//['guests_play_sounds', true],
+				['backgrounds_upload_users', true],
 			]);
 
-		$this->appConfig->expects($this->any())->method('getAppValueInt')
+		$this->appConfig->expects($this->any())
+			->method('getAppValueInt')
 			->willReturnMap([
 				['max_call_duration', 0],
 				['retention_event_rooms', 28],
 				['retention_phone_rooms', 7],
 				['retention_instant_meetings', 1],
 				['retention_classified_rooms', 3600],
-				['experiments_users', 0, 0],
+				['experiments_users', 0],
 				['summary_threshold', 100],
 				['feature_hints_hidden', 1],
-				['max_gif_size', 3145728, 200000],
+				['max_gif_size', 200000],
 				['start_calls', Room::START_CALL_NOONE],
 				['session_ping_limit', 50],
 			]);
@@ -476,9 +495,9 @@ class CapabilitiesTest extends TestCase {
 					],
 					'federation' => [
 						'enabled' => false,
-						'incoming-enabled' => false,
-						'outgoing-enabled' => false,
-						'only-trusted-servers' => true,
+						'incoming-enabled' => true,
+						'outgoing-enabled' => true,
+						'only-trusted-servers' => false,
 					],
 					'previews' => [
 						'max-gif-size' => 200000,

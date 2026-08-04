@@ -8,7 +8,7 @@ Nextcloud Talk can delegate in-browser calls to a third-party video conferencing
 ## Requirements
 
 * Nextcloud Talk built-in calls must be disabled (`start_calls = 3`).
-* The conversation must have `objectType = external_call` with an `objectId` that identifies the meeting on the external service side.
+* The conversaframetion must have `objectType = external_call` with an `objectId` that identifies the meeting on the external service side.
 
 ## Server configuration
 
@@ -29,7 +29,7 @@ All settings are set with `occ config:app:set spreed`:
 ```bash
 occ config:app:set spreed start_calls --value '3'
 occ config:app:set spreed external_call_service --value 'https://pcs.example.tld/nextcloud/meeting/{meetingId}'
-occ config:app:set spreed external_call_service_frame_origins --value '["https://service.example.tld","https://service2.example.tld"]' --type array
+occ config:app:set spreed external_call_service__origins --value '["https://service.example.tld","https://service2.example.tld"]' --type array
 occ config:app:set spreed external_call_service_shared_secret --sensitive --value 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 occ config:app:set spreed external_call_service_auth_user --value 'nextcloud'
 occ config:app:set spreed external_call_service_auth_password --sensitive --value 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'

@@ -1701,8 +1701,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 		// add the remaining users in batch
 		try {
 			$this->participantService->addUsers($this->room, $participantsToAdd, $addedBy);
-		} catch (CannotReachRemoteException) {
-			return new DataResponse(['error' => 'reach-remote'], Http::STATUS_NOT_FOUND);
+		} catch (CannotReachRemoteException $e) {
+			return new DataResponse(['error' => $e], Http::STATUS_NOT_FOUND);
 		}
 
 		return new DataResponse([]);

@@ -30,6 +30,7 @@ use OCA\Talk\Collaboration\Reference\ReferenceInvalidationListener;
 use OCA\Talk\Collaboration\Reference\TalkReferenceProvider;
 use OCA\Talk\Collaboration\Resources\ConversationProvider;
 use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
+use OCA\Talk\Config;
 use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Deck\DeckPluginLoader;

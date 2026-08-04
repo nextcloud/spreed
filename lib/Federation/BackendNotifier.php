@@ -88,6 +88,9 @@ class BackendNotifier {
 		if (str_starts_with($remote, 'https://')) {
 			$remote = substr($remote, 8);
 		}
+		if (str_starts_with($remote, 'http://')) {
+			$remote = substr($remote, offset: 7);
+		}
 
 		$shareWithCloudId = $invitedCloudId->getUser() . '@' . $remote;
 		$share = $this->cloudFederationFactory->getCloudFederationShare(

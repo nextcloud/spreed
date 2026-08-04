@@ -99,7 +99,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 
-const FEDERATION_ENABLED = loadState('spreed', 'federation_enabled', false)
+const FEDERATION_ENABLED = loadState('spreed', 'federation_enabled', true)
 const FEDERATION_INCOMING_ENABLED = loadState('spreed', 'federation_incoming_enabled', true)
 const FEDERATION_OUTGOING_ENABLED = loadState('spreed', 'federation_outgoing_enabled', true)
 const FEDERATION_ONLY_TRUSTED_SERVERS = loadState('spreed', 'federation_only_trusted_servers', false)
@@ -154,7 +154,7 @@ export default {
 		saveFederationEnabled(value) {
 			this.loading = true
 
-			OCP.AppConfig.setValue('spreed', 'federation_enabled', value ? 'yes' : 'no', {
+			OCP.AppConfig.setValue('spreed', 'federation_enabled', value ? 'true' : 'false', {
 				success: () => {
 					this.loading = false
 					this.isFederationEnabled = value
@@ -165,7 +165,7 @@ export default {
 		saveFederationIncomingEnabled(value) {
 			this.loading = true
 
-			OCP.AppConfig.setValue('spreed', 'federation_incoming_enabled', value ? '1' : '0', {
+			OCP.AppConfig.setValue('spreed', 'federation_incoming_enabled', value ? 'true' : 'false', {
 				success: () => {
 					this.loading = false
 					this.isFederationIncomingEnabled = value
@@ -176,7 +176,7 @@ export default {
 		saveFederationOutgoingEnabled(value) {
 			this.loading = true
 
-			OCP.AppConfig.setValue('spreed', 'federation_outgoing_enabled', value ? '1' : '0', {
+			OCP.AppConfig.setValue('spreed', 'federation_outgoing_enabled', value ? 'true' : 'false', {
 				success: () => {
 					this.loading = false
 					this.isFederationOutgoingEnabled = value
@@ -187,7 +187,7 @@ export default {
 		saveFederationOnlyTrustedServersEnabled(value) {
 			this.loading = true
 
-			OCP.AppConfig.setValue('spreed', 'federation_only_trusted_servers', value ? '1' : '0', {
+			OCP.AppConfig.setValue('spreed', 'federation_only_trusted_servers', value ? 'true' : 'false', {
 				success: () => {
 					this.loading = false
 					this.isFederationOnlyTrustedServersEnabled = value
