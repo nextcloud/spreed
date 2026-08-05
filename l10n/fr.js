@@ -1693,7 +1693,7 @@ OC.L10N.register(
     "Adding a mention will only notify users who did not read the message." : "Ajouter une mention notifiera les utilisateurs qui n'ont pas lu le message.",
     "Thread title" : "Titre du fil de discussion",
     "Send later" : "Envoyer ultérieurement",
-    "Show scheduled messages" : "Montrer les messages programmés",
+    "Show scheduled messages" : "Afficher les messages programmés",
     "Cancel editing" : "Annuler la modification",
     "Schedule message" : "Programmer le message",
     "{user} is out of office and might not respond." : "{user} est absent et pourrait ne pas répondre.",

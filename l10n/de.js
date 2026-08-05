@@ -1459,6 +1459,7 @@ OC.L10N.register(
     "You have no unread mentions." : "Du hast keine ungelesenen Erwähnungen.",
     "You have no unread messages." : "Du hast keine ungelesenen Nachrichten.",
     "Conversation list" : "Unterhaltungsliste",
+    "Search in app" : "In der App suchen",
     "Filter conversations by" : "Unterhaltungen filtern nach",
     "Unread messages" : "Ungelesene Nachrichten",
     "Meeting conversations" : "Besprechungsunterhaltungen",
