@@ -42,7 +42,7 @@ export default {
 		/**
 		 * Whether to render button as tertiary (to reduce drawn attention)
 		 */
-		isScreensharing: {
+		tertiary: {
 			type: Boolean,
 			default: false,
 		},
@@ -125,7 +125,7 @@ export default {
 		},
 
 		leaveCallButtonVariant() {
-			if (this.isScreensharing) {
+			if (this.tertiary) {
 				return 'tertiary'
 			}
 			return this.isBreakoutRoom ? 'primary' : 'error'
@@ -199,7 +199,7 @@ export default {
 		v-else-if="(!canEndForAll || isVoiceRoom) && !isBreakoutRoom"
 		:aria-label="leaveCallLabel"
 		class="leave-call"
-		:variant="isScreensharing ? 'tertiary' : 'error'"
+		:variant="tertiary ? 'tertiary' : 'error'"
 		:disabled="loading"
 		@click="leaveCall(false)">
 		<template #icon>

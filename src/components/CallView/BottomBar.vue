@@ -8,7 +8,6 @@ import {
 	showError,
 } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
-import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { useResizeObserver } from '@vueuse/core'
 import debounce from 'debounce'
 import { computed, onMounted, onUnmounted, ref, toValue, useTemplateRef } from 'vue'
@@ -61,7 +60,6 @@ const settingsStore = useSettingsStore()
 const isLiveTranscriptionLoading = ref(false)
 const bottomBar = useTemplateRef('bottomBar')
 const callButtonWithActions = useTemplateRef('callButtonWithActions')
-const isMobile = useIsMobile()
 
 const conversation = computed(() => {
 	return store.getters.conversation(token.value) || store.getters.dummyConversation
@@ -693,8 +691,9 @@ function setCallLayout(layout: CallLayout) {
 			<CallEndLeaveButton
 				v-show="!(isVoiceRoom && isGuestActor)"
 				class="call-button"
-				:hideText="isSidebar || isMobile"
-				:isScreensharing="!!localMediaModel.attributes.localScreen" />
+				shrinkOnMobile
+				:hideText="isSidebar"
+				:tertiary="!!localMediaModel.attributes.localScreen" />
 		</div>
 	</div>
 </template>
