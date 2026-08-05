@@ -1459,6 +1459,7 @@ OC.L10N.register(
     "You have no unread mentions." : "Você não tem menções não lidas.",
     "You have no unread messages." : "Você não tem mensagens não lidas.",
     "Conversation list" : "Lista de conversas",
+    "Search in app" : "Pesquisar no aplicativo",
     "Filter conversations by" : "Filtrar conversa por",
     "Unread messages" : "Mensagens não lidas",
     "Meeting conversations" : "Conversas de reuniões",
