@@ -700,8 +700,6 @@ const actions = {
 				if (message.messageParameters?.object?.type === SHARED_ITEM.OBJECT_TYPE.POLL) {
 					EventBus.emit('talk:poll-added', { token, message })
 				}
-			} else if (Object.keys(message.messageParameters).some((key) => key.startsWith('file'))) {
-				// Handle shares with multiple files
 			}
 		}
 	},

@@ -6,25 +6,32 @@
 import type { ChatMessage, PinnedChatMessage } from '../types/index.ts'
 
 import { MESSAGE, SHARED_ITEM } from '../constants.ts'
+import { isFileShareMessage } from '../utils/message.ts'
 
 /**
+ * Derives item type from message object for preview rendering
  *
- * @param message
+ * @param message message object
+ * @param [key] key of the message parameter to check ('object', 'file', 'file-1', …)
  */
-export function getItemTypeFromMessage(message: ChatMessage): string {
-	if (message.messageParameters?.object) {
-		if (message.messageParameters.object.type === SHARED_ITEM.OBJECT_TYPE.LOCATION) {
+export function getItemTypeFromMessage(message: ChatMessage, key?: string): typeof SHARED_ITEM.TYPES[keyof typeof SHARED_ITEM.TYPES] {
+	if (message.messageParameters?.object && (!key || key === 'object')) {
+		const objectType = message.messageParameters.object.type
+		if (objectType === SHARED_ITEM.OBJECT_TYPE.LOCATION) {
 			return SHARED_ITEM.TYPES.LOCATION
-		} else if (message.messageParameters.object.type === SHARED_ITEM.OBJECT_TYPE.DECK_CARD) {
+		} else if (objectType === SHARED_ITEM.OBJECT_TYPE.DECK_CARD) {
 			return SHARED_ITEM.TYPES.DECK_CARD
-		} else if (message.messageParameters.object.type === SHARED_ITEM.OBJECT_TYPE.POLL) {
+		} else if (objectType === SHARED_ITEM.OBJECT_TYPE.POLL) {
 			return SHARED_ITEM.TYPES.POLL
 		} else {
 			return SHARED_ITEM.TYPES.OTHER
 		}
-	} else if (message.messageParameters?.file) {
+	}
+
+	const fileKey = key ?? 'file'
+	if (message.messageParameters?.[fileKey]) {
 		const messageType = message.messageType
-		const mimetype = message.messageParameters.file.mimetype || ''
+		const mimetype = message.messageParameters[fileKey].mimetype || ''
 		if (messageType === MESSAGE.TYPE.RECORD_AUDIO || messageType === MESSAGE.TYPE.RECORD_VIDEO) {
 			return SHARED_ITEM.TYPES.RECORDING
 		} else if (messageType === MESSAGE.TYPE.VOICE_MESSAGE) {
@@ -36,9 +43,9 @@ export function getItemTypeFromMessage(message: ChatMessage): string {
 		} else {
 			return SHARED_ITEM.TYPES.FILE
 		}
-	} else {
-		return SHARED_ITEM.TYPES.OTHER
 	}
+
+	return SHARED_ITEM.TYPES.OTHER
 }
 
 /**
@@ -65,7 +72,7 @@ export function isValidSharedItem(type: string, message: ChatMessage | PinnedCha
 		return !!(message.messageParameters?.object)
 	}
 
-	// Items that require messageParameters.file
+	// Items that require at least one shared file
 	if ([
 		SHARED_ITEM.TYPES.FILE,
 		SHARED_ITEM.TYPES.AUDIO,
@@ -73,9 +80,9 @@ export function isValidSharedItem(type: string, message: ChatMessage | PinnedCha
 		SHARED_ITEM.TYPES.RECORDING,
 		SHARED_ITEM.TYPES.VOICE,
 	].includes(type)) {
-		return !!(message.messageParameters?.file)
+		return isFileShareMessage(message)
 	}
 
 	// At least one truthy property should be present
-	return !!(message.messageParameters?.object) || !!(message.messageParameters?.file)
+	return !!(message.messageParameters?.object) || isFileShareMessage(message)
 }

@@ -194,7 +194,7 @@ describe('chatExtrasStore', () => {
 				token: 'token-1',
 				id: 'id-1',
 				message: '{file}',
-				messageParameters: { file0: 'file-path' },
+				messageParameters: { file: 'file-path' },
 			}
 
 			// Act

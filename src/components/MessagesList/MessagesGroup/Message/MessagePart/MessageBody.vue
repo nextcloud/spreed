@@ -213,6 +213,7 @@ import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
 import { formatDateTime } from '../../../../../utils/formattedTime.ts'
+import { getFileKeys } from '../../../../../utils/message.ts'
 import { parseMentions, parseSpecialSymbols } from '../../../../../utils/textParse.ts'
 
 // Regular expression to check for Unicode emojis in message text
@@ -292,6 +293,7 @@ export default {
 		const {
 			isEditable,
 			isFileShare,
+			isFileShareWithoutCaption,
 		} = useMessageInfo(message)
 		const threadId = useGetThreadId()
 		const isSidebar = inject('chatView:isSidebar', false)
@@ -305,6 +307,7 @@ export default {
 			threadId,
 			isEditable,
 			isFileShare,
+			isFileShareWithoutCaption,
 			isSidebar,
 			actorStore: useActorStore(),
 			isSplitViewEnabled,
@@ -324,9 +327,13 @@ export default {
 		},
 
 		renderedMessage() {
-			if (this.isFileShare && this.message.message !== '{file}') {
+			if (this.isFileShare) {
+				if (this.isFileShareWithoutCaption) {
+					return this.message.message
+				}
 				// Add a new line after file to split content into different paragraphs
-				return '{file}\n\n' + this.message.message
+				const filePlaceholdersString = getFileKeys(this.message).map((key) => `{${key}}`).join(' ')
+				return filePlaceholdersString + '\n\n' + this.message.message
 			} else if (this.isLocationMessageWithName) {
 				return this.message.message + '\n\n' + this.message.messageParameters.object.name
 			} {
@@ -526,7 +533,7 @@ export default {
 					this.uploadStore.retryUploadFiles({
 						token: this.message.token,
 						uploadId: this.$store.getters.message(this.message.token, this.message.id)?.uploadId,
-						caption: this.renderedMessage !== this.message.message ? this.message.message : undefined,
+						caption: this.isFileShareWithoutCaption ? undefined : this.message.message,
 					})
 				} else if (this.message.sendingFailure === 'failed-share') {
 					this.uploadStore.retryShareFiles({

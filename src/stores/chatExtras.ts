@@ -35,6 +35,7 @@ import {
 	setThreadNotificationLevel as setThreadNotificationLevelApi,
 	summarizeChat,
 } from '../services/messagesService.ts'
+import { hasOnlyFilePlaceholders, isFileShareMessage } from '../utils/message.ts'
 import { parseMentions, parseSpecialSymbols } from '../utils/textParse.ts'
 import { useActorStore } from './actor.ts'
 
@@ -617,9 +618,9 @@ export const useChatExtrasStore = defineStore('chatExtras', () => {
 	 */
 	function initiateEditingMessage({ token, id, message, messageParameters }: InitiateEditingMessagePayload) {
 		setMessageIdToEdit(token, id)
-		const isFileShareOnly = Object.keys(messageParameters ?? {}).some((key) => key.startsWith('file'))
-			&& message === '{file}'
-		if (isFileShareOnly) {
+		const isFileShareWithoutCaption = isFileShareMessage({ messageParameters })
+			&& hasOnlyFilePlaceholders(message)
+		if (isFileShareWithoutCaption) {
 			setChatEditInput({ token, text: '' })
 		} else {
 			setChatEditInput({

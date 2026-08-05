@@ -177,12 +177,40 @@ function selfIsUser(message: ChatMessage, selfActorId: string, selfActorType: st
 }
 
 /**
+ * Matches a file-sharing rich object parameter key ('file', 'file-1', 'file-2', …)
+ */
+const FILE_KEY_REGEX = /^file(?:-\d+)?$/
+
+/**
+ * Matches a file-sharing rich object parameter key ('{file}', '{file-1}', '{file-2}', …)
+ */
+const FILE_PLACEHOLDERS_REGEX = /^\s*(?:\{file(?:-\d+)?\}\s*)+$/
+
+/**
+ * Returns all keys of files shared with the message ('file', 'file-1', …)
+ *
+ * @param message Chat message (or an object with messageParameters)
+ */
+export function getFileKeys(message: Pick<ChatMessage, 'messageParameters'>) {
+	return Object.keys(message.messageParameters ?? {}).filter((key) => FILE_KEY_REGEX.test(key))
+}
+
+/**
  * Returns whether the given message shares a file (has a rich object parameter with a key starting with 'file').
  *
- * @param message Chat message (or a parent message)
+ * @param message Chat message (or an object with messageParameters)
  */
-export function isFileShareMessage(message: ChatMessage): boolean {
-	return Object.keys(message.messageParameters ?? {}).some((key) => key.startsWith('file'))
+export function isFileShareMessage(message: Pick<ChatMessage, 'messageParameters'>): boolean {
+	return getFileKeys(message).length > 0
+}
+
+/**
+ * Returns whether the given text consists of file placeholders only ('{file}', '{file-1} {file-2}', …), without caption
+ *
+ * @param text message text
+ */
+export function hasOnlyFilePlaceholders(text: string): boolean {
+	return FILE_PLACEHOLDERS_REGEX.test(text)
 }
 
 /**
