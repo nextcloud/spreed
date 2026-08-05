@@ -3,10 +3,13 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<script>
+<script setup lang="ts">
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -23,159 +26,89 @@ import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
 import { useCallViewStore } from '../../stores/callView.ts'
 import { isConversationPhoneRoom } from '../../utils/conversation.ts'
 
-export default {
-	name: 'CallEndLeaveButton',
+const props = defineProps<{
+	/** Whether to render button as tertiary (to reduce drawn attention) */
+	isScreensharing?: boolean
+	/** Whether to use text on button (e.g. at sidebar) */
+	hideText?: boolean
+	/** Whether to use text on button at mobile view */
+	shrinkOnMobile?: boolean
+}>()
 
-	components: {
-		NcActions,
-		NcActionButton,
-		NcButton,
-		// Icons
-		IconArrowLeft,
-		IconChevronUp,
-		IconPhoneHangupOutline,
-		IconPhoneOffOutline,
-		NcLoadingIcon,
-	},
+const endCallLabel = t('spreed', 'End call')
+const leaveCallLabel = t('spreed', 'Leave call')
+const leaveCallActionsLabel = t('spreed', 'More actions')
+const backToMainRoomLabel = t('spreed', 'Back to main room')
 
-	props: {
-		/**
-		 * Whether to render button as tertiary (to reduce drawn attention)
-		 */
-		isScreensharing: {
-			type: Boolean,
-			default: false,
-		},
+const actorStore = useActorStore()
+const breakoutRoomsStore = useBreakoutRoomsStore()
+const callViewStore = useCallViewStore()
 
-		/**
-		 * Whether to use text on button (e.g. at sidebar)
-		 */
-		hideText: {
-			type: Boolean,
-			default: false,
-		},
+const router = useRouter()
+const vuexStore = useStore()
 
-		/**
-		 * Whether to use text on button at mobile view
-		 */
-		shrinkOnMobile: {
-			type: Boolean,
-			default: false,
-		},
-	},
+const token = useGetToken()
+const isMobile = useIsMobile()
 
-	setup() {
-		return {
-			actorStore: useActorStore(),
-			token: useGetToken(),
-			breakoutRoomsStore: useBreakoutRoomsStore(),
-			callViewStore: useCallViewStore(),
-			isMobile: useIsMobile(),
-		}
-	},
+const loading = ref(false)
 
-	data() {
-		return {
-			loading: false,
-		}
-	},
+const conversation = computed(() => vuexStore.getters.conversation(token.value) || vuexStore.getters.dummyConversation)
+const showButtonText = computed(() => !props.hideText && (!isMobile.value || !props.shrinkOnMobile))
+const canEndForAll = computed(() => !isBreakoutRoom.value
+	&& [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].includes(conversation.value.participantType))
+const isBreakoutRoom = computed(() => conversation.value.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
+const isPhoneRoom = computed(() => isConversationPhoneRoom(conversation.value))
+const isVoiceRoom = computed(() => Boolean(conversation.value.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM))
+const leaveCallButtonVariant = computed(() => {
+	if (props.isScreensharing) {
+		return 'tertiary'
+	}
+	return isBreakoutRoom.value ? 'primary' : 'error'
+})
 
-	computed: {
-		conversation() {
-			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
-		},
+/**
+ * Leave or end the call
+ *
+ * @param endMeetingForAll - whether to kick all participants from the call
+ */
+async function leaveCall(endMeetingForAll = false) {
+	if (endMeetingForAll) {
+		console.info('End meeting for everyone')
+	} else {
+		console.info('Leaving call')
+	}
 
-		showButtonText() {
-			return !this.hideText && (!this.isMobile || !this.shrinkOnMobile)
-		},
+	if (isVoiceRoom.value) {
+		router.push({ name: 'root' })
+		// Call ending is handled in App.vue
+		return
+	}
 
-		participantType() {
-			return this.conversation.participantType
-		},
+	// Remove selected participant
+	callViewStore.setSelectedVideoPeerId(null)
+	loading.value = true
 
-		canEndForAll() {
-			return (this.participantType === PARTICIPANT.TYPE.OWNER
-				|| this.participantType === PARTICIPANT.TYPE.MODERATOR
-				|| this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
-			&& !this.isBreakoutRoom
-		},
+	// Open navigation
+	if (!isMobile.value) {
+		emit('toggle-navigation', {
+			open: true,
+		})
+	}
+	await vuexStore.dispatch('leaveCall', {
+		token: token.value,
+		participantIdentifier: actorStore.participantIdentifier,
+		all: endMeetingForAll,
+	})
+	loading.value = false
+}
 
-		leaveCallLabel() {
-			return t('spreed', 'Leave call')
-		},
-
-		backToMainRoomLabel() {
-			return t('spreed', 'Back to main room')
-		},
-
-		leaveCallActionsLabel() {
-			return t('spreed', 'More actions')
-		},
-
-		endCallLabel() {
-			return t('spreed', 'End call')
-		},
-
-		isBreakoutRoom() {
-			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
-		},
-
-		isPhoneRoom() {
-			return isConversationPhoneRoom(this.conversation)
-		},
-
-		leaveCallButtonVariant() {
-			if (this.isScreensharing) {
-				return 'tertiary'
-			}
-			return this.isBreakoutRoom ? 'primary' : 'error'
-		},
-
-		isVoiceRoom() {
-			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
-		},
-	},
-
-	methods: {
-		t,
-
-		async leaveCall(endMeetingForAll = false) {
-			if (endMeetingForAll) {
-				console.info('End meeting for everyone')
-			} else {
-				console.info('Leaving call')
-			}
-
-			if (this.isVoiceRoom) {
-				this.$router.push({ name: 'root' })
-				// Call ending is handled in App.vue
-				return
-			}
-
-			// Remove selected participant
-			this.callViewStore.setSelectedVideoPeerId(null)
-			this.loading = true
-
-			// Open navigation
-			if (!this.isMobile) {
-				emit('toggle-navigation', {
-					open: true,
-				})
-			}
-			await this.$store.dispatch('leaveCall', {
-				token: this.token,
-				participantIdentifier: this.actorStore.participantIdentifier,
-				all: endMeetingForAll,
-			})
-			this.loading = false
-		},
-
-		async switchToParentRoom() {
-			EventBus.emit('switch-to-conversation', {
-				token: this.breakoutRoomsStore.getParentRoomToken(this.token),
-			})
-		},
-	},
+/**
+ * Switch back from breakout room to main (parent) room
+ */
+function switchToParentRoom() {
+	EventBus.emit('switch-to-conversation', {
+		token: breakoutRoomsStore.getParentRoomToken(token.value)!,
+	})
 }
 </script>
 

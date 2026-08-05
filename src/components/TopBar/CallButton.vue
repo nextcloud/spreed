@@ -3,13 +3,16 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-<script>
+<script setup lang="ts">
 import axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { generateOcsUrl } from '@nextcloud/router'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconPhone from 'vue-material-design-icons/Phone.vue' // Filled used for non-silent calls
@@ -25,258 +28,177 @@ import { useSettingsStore } from '../../stores/settings.ts'
 import { useSoundsStore } from '../../stores/sounds.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import { useTokenStore } from '../../stores/token.ts'
+import { isAxiosErrorResponse } from '../../types/guards.ts'
 import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.ts'
 import { hasExternalCallService, isConversationPhoneRoom } from '../../utils/conversation.ts'
 import { messagePleaseReload } from '../../utils/talkDesktopUtils.ts'
 
-export default {
-	name: 'CallButton',
+const props = defineProps<{
+	disabled?: boolean
+	/** Whether the component is used in MediaSettings or not (click directly starts a call) */
+	isMediaSettings?: boolean
+	/** Whether the call should trigger a notifications and sound for other participants or not */
+	silentCall?: boolean
+	/** Whether to trigger recording to start with the call */
+	isRecordingFromStart?: boolean
+	/** Pass through of recording consent */
+	recordingConsentGiven?: boolean
+	/** Whether to use text on button (e.g. at sidebar) */
+	hideText?: boolean
+	/** Whether to use text on button at mobile view */
+	shrinkOnMobile?: boolean
+}>()
 
-	components: {
-		NcButton,
-		// Icons
-		IconPhone,
-		IconPhoneDialOutline,
-		IconPhoneOutline,
-		NcLoadingIcon,
-	},
+const { joinCall } = useJoinCall()
 
-	props: {
-		disabled: {
-			type: Boolean,
-			default: false,
-		},
+const tokenStore = useTokenStore()
+const isInCall = useIsInCall()
+const callViewStore = useCallViewStore()
+const talkHashStore = useTalkHashStore()
+const settingsStore = useSettingsStore()
+const soundsStore = useSoundsStore()
 
-		/**
-		 * Whether the component is used in MediaSettings or not
-		 * (when click will directly start a call)
-		 */
-		isMediaSettings: {
-			type: Boolean,
-			default: false,
-		},
+const router = useRouter()
+const vuexStore = useStore()
 
-		/**
-		 * Whether the call should trigger a notifications and sound
-		 * for other participants or not
-		 */
-		silentCall: {
-			type: Boolean,
-			default: false,
-		},
+const token = useGetToken()
+const isMobile = useIsMobile()
 
-		isRecordingFromStart: {
-			type: Boolean,
-			default: false,
-		},
+const loading = ref(false)
 
-		recordingConsentGiven: {
-			type: Boolean,
-			default: false,
-		},
+const conversation = computed(() => vuexStore.getters.conversation(token.value) || vuexStore.getters.dummyConversation)
+const showButtonText = computed(() => !props.hideText && (!isMobile.value || !props.shrinkOnMobile))
+const hasCall = computed(() => conversation.value.hasCall)
+const isPhoneRoom = computed(() => isConversationPhoneRoom(conversation.value))
+const isInLobby = computed(() => vuexStore.getters.isInLobby)
+const isJoiningCall = computed(() => vuexStore.getters.isJoiningCall(token.value))
+const isNextcloudTalkHashDirty = computed(() => {
+	return talkHashStore.isNextcloudTalkHashDirty
+		// @ts-expect-error talkHashStore is js
+		|| talkHashStore.isNextcloudTalkProxyHashDirty[token.value]
+})
 
-		/**
-		 * Whether to use text on button (e.g. at sidebar)
-		 */
-		hideText: {
-			type: Boolean,
-			default: false,
-		},
+const showStartCallButton = computed(() => {
+	return (getTalkConfig(token.value, 'call', 'enabled') || hasExternalCallService(conversation.value))
+		&& conversation.value.type !== CONVERSATION.TYPE.NOTE_TO_SELF
+		&& conversation.value.readOnly === CONVERSATION.STATE.READ_WRITE
+		&& (!conversation.value.remoteServer || hasTalkFeature(token.value, 'federation-v2'))
+		&& !isInCall.value
+})
+const startCallButtonDisabled = computed(() => {
+	return props.disabled
+		|| (callViewStore.callHasJustEnded && !hasCall.value)
+		|| (!conversation.value.canStartCall && !hasExternalCallService(conversation.value) && !hasCall.value)
+		|| isInLobby.value
+		|| conversation.value.readOnly
+		|| isNextcloudTalkHashDirty.value
+		|| !tokenStore.currentConversationIsJoined
+		|| blockCalls
+})
+const showRecordingWarning = computed(() => {
+	return [
+		CALL.RECORDING.VIDEO_STARTING,
+		CALL.RECORDING.AUDIO_STARTING,
+		CALL.RECORDING.VIDEO,
+		CALL.RECORDING.AUDIO,
+	].includes(conversation.value.callRecording)
+	|| conversation.value.recordingConsent === CALL.RECORDING_CONSENT.ENABLED
+})
 
-		/**
-		 * Whether to use text on button at mobile view
-		 */
-		shrinkOnMobile: {
-			type: Boolean,
-			default: false,
-		},
-	},
+const startCallLabel = computed(() => {
+	if (hasCall.value && !isInLobby.value) {
+		return t('spreed', 'Join call')
+	}
+	if (isJoiningCall.value) {
+		return t('spreed', 'Connecting …')
+	}
+	return props.silentCall ? t('spreed', 'Start call silently') : t('spreed', 'Start call')
+})
+const startCallTitle = computed(() => {
+	if (isNextcloudTalkHashDirty.value) {
+		return t('spreed', 'The server was updated, you cannot start or join a call.') + ' ' + messagePleaseReload
+	}
+	if (callViewStore.callHasJustEnded) {
+		return t('spreed', 'This call has just ended')
+	}
+	if (blockCalls) {
+		return unsupportedWarning
+	}
+	if (!conversation.value.canStartCall && !hasCall.value) {
+		return t('spreed', 'You will be able to join the call only after a moderator starts it.')
+	}
+	return ''
+})
 
-	setup() {
-		const { joinCall } = useJoinCall()
-		return {
-			tokenStore: useTokenStore(),
-			token: useGetToken(),
-			isInCall: useIsInCall(),
-			callViewStore: useCallViewStore(),
-			talkHashStore: useTalkHashStore(),
-			settingsStore: useSettingsStore(),
-			soundsStore: useSoundsStore(),
-			isMobile: useIsMobile(),
-			joinCall,
+watch(token, (newValue, oldValue) => {
+	callViewStore.resetCallHasJustEnded()
+	talkHashStore.resetTalkProxyHashDirty(oldValue)
+})
+
+/**
+ * Start or join the call
+ */
+async function handleJoinCall() {
+	loading.value = true
+	await joinCall(token.value, {
+		silent: hasCall.value ? true : props.silentCall,
+		recordingConsent: props.recordingConsentGiven,
+		shouldStartRecording: props.isRecordingFromStart,
+	})
+	loading.value = false
+}
+
+/**
+ * Run pre-checks before starting/joining the call
+ */
+function handleClick() {
+	if (hasExternalCallService(conversation.value)) {
+		// Another service is in charge, trigger iframe rendering in MainView
+		handleExternalCall()
+		return
+	}
+
+	// Create audio objects as a result of a user interaction to allow playing sounds in Safari
+	soundsStore.initAudioObjects()
+
+	if (props.isMediaSettings || isPhoneRoom.value) {
+		handleJoinCall()
+		return
+	}
+
+	if (showRecordingWarning.value || settingsStore.showMediaSettings) {
+		emit('talk:media-settings:show')
+	} else {
+		handleJoinCall()
+	}
+}
+
+/**
+ * Initiate a call at external service (iframe embedded)
+ */
+async function handleExternalCall() {
+	try {
+		loading.value = true
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/external-call', { token: token.value }))
+
+		// Check for successful response (200, 302, 303)
+		if ([200, 302, 303].includes(response.status)) {
+			const callUrl = response.data.ocs.data.url
+			if (callUrl) {
+				callViewStore.setExternalCallServiceUrl(callUrl)
+			}
+			callViewStore.setForceCallView(true)
 		}
-	},
-
-	data() {
-		return {
-			loading: false,
+	} catch (error) {
+		if (isAxiosErrorResponse(error) && error.response?.status === 403) {
+			router.push({ name: 'forbidden' })
+			return
 		}
-	},
-
-	computed: {
-		isNextcloudTalkHashDirty() {
-			return this.talkHashStore.isNextcloudTalkHashDirty
-				|| this.talkHashStore.isNextcloudTalkProxyHashDirty[this.token]
-		},
-
-		conversation() {
-			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
-		},
-
-		showButtonText() {
-			return !this.hideText && (!this.isMobile || !this.shrinkOnMobile)
-		},
-
-		showRecordingWarning() {
-			return [
-				CALL.RECORDING.VIDEO_STARTING,
-				CALL.RECORDING.AUDIO_STARTING,
-				CALL.RECORDING.VIDEO,
-				CALL.RECORDING.AUDIO,
-			].includes(this.conversation.callRecording)
-			|| this.conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED
-		},
-
-		showMediaSettings() {
-			return this.settingsStore.showMediaSettings
-		},
-
-		hasCall() {
-			return this.conversation.hasCall
-		},
-
-		startCallButtonDisabled() {
-			return this.disabled
-				|| (this.callViewStore.callHasJustEnded && !this.hasCall)
-				|| (!this.conversation.canStartCall && !hasExternalCallService(this.conversation) && !this.hasCall)
-				|| this.isInLobby
-				|| this.conversation.readOnly
-				|| this.isNextcloudTalkHashDirty
-				|| !this.tokenStore.currentConversationIsJoined
-				|| blockCalls
-		},
-
-		startCallLabel() {
-			if (this.hasCall && !this.isInLobby) {
-				return t('spreed', 'Join call')
-			}
-
-			if (this.isJoiningCall) {
-				return t('spreed', 'Connecting …')
-			}
-
-			return this.silentCall ? t('spreed', 'Start call silently') : t('spreed', 'Start call')
-		},
-
-		startCallTitle() {
-			if (this.isNextcloudTalkHashDirty) {
-				return t('spreed', 'The server was updated, you cannot start or join a call.') + ' ' + messagePleaseReload
-			}
-
-			if (this.callViewStore.callHasJustEnded) {
-				return t('spreed', 'This call has just ended')
-			}
-
-			if (blockCalls) {
-				return unsupportedWarning
-			}
-
-			if (!this.conversation.canStartCall && !this.hasCall) {
-				return t('spreed', 'You will be able to join the call only after a moderator starts it.')
-			}
-
-			return ''
-		},
-
-		showStartCallButton() {
-			return (getTalkConfig(this.token, 'call', 'enabled') || hasExternalCallService(this.conversation))
-				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
-				&& this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
-				&& (!this.conversation.remoteServer || hasTalkFeature(this.token, 'federation-v2'))
-				&& !this.isInCall
-		},
-
-		isPhoneRoom() {
-			return isConversationPhoneRoom(this.conversation)
-		},
-
-		isInLobby() {
-			return this.$store.getters.isInLobby
-		},
-
-		isJoiningCall() {
-			return this.$store.getters.isJoiningCall(this.token)
-		},
-	},
-
-	watch: {
-		token(newValue, oldValue) {
-			this.callViewStore.resetCallHasJustEnded()
-			this.talkHashStore.resetTalkProxyHashDirty(oldValue)
-		},
-	},
-
-	methods: {
-		t,
-
-		async handleJoinCall() {
-			this.loading = true
-			await this.joinCall(this.token, {
-				silent: this.hasCall ? true : this.silentCall,
-				recordingConsent: this.recordingConsentGiven,
-				shouldStartRecording: this.isRecordingFromStart,
-			})
-			this.loading = false
-		},
-
-		handleClick() {
-			if (hasExternalCallService(this.conversation)) {
-				// Another service is in charge, trigger iframe rendering in MainView
-				this.handleExternalCall()
-				return
-			}
-
-			// Create audio objects as a result of a user interaction to allow playing sounds in Safari
-			this.soundsStore.initAudioObjects()
-
-			if (this.isMediaSettings || this.isPhoneRoom) {
-				this.handleJoinCall()
-				return
-			}
-
-			if (this.showRecordingWarning || this.showMediaSettings) {
-				emit('talk:media-settings:show')
-			} else {
-				this.handleJoinCall()
-			}
-		},
-
-		async handleExternalCall() {
-			try {
-				this.loading = true
-				const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/external-call', { token: this.token }))
-
-				// Check for successful response (200, 302, 303)
-				if ([200, 302, 303].includes(response.status)) {
-					const callUrl = response.data.ocs.data.url
-					if (callUrl) {
-						this.callViewStore.setExternalCallServiceUrl(callUrl)
-					}
-					this.callViewStore.setForceCallView(true)
-				}
-			} catch (error) {
-				if (error.response?.status === 403) {
-					this.skipLeaveWarning = true
-					this.$router.push({ name: 'forbidden' })
-					return
-				}
-				console.error('Failed to initialize external call service:', error)
-				showError(t('spreed', 'Connection failed'))
-			} finally {
-				this.loading = false
-			}
-		},
-	},
+		console.error('Failed to initialize external call service:', error)
+		showError(t('spreed', 'Connection failed'))
+	} finally {
+		loading.value = false
+	}
 }
 </script>
 
