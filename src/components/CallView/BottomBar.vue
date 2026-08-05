@@ -26,9 +26,9 @@ import IconSubtitlesOutline from 'vue-material-design-icons/SubtitlesOutline.vue
 import IconViewDashboardOutline from 'vue-material-design-icons/ViewDashboardOutline.vue'
 import IconViewGalleryOutline from 'vue-material-design-icons/ViewGalleryOutline.vue'
 import IconViewGridOutline from 'vue-material-design-icons/ViewGridOutline.vue'
-import CallButton from '../TopBar/CallButton.vue'
 import ReactionMenu from '../TopBar/ReactionMenu.vue'
 import TopBarMediaControls from '../TopBar/TopBarMediaControls.vue'
+import CallEndLeaveButton from './CallEndLeaveButton.vue'
 import {
 	toggleFullscreen,
 	useDocumentFullscreen,
@@ -690,7 +690,7 @@ function setCallLayout(layout: CallLayout) {
 				</NcActionButton>
 			</NcActions>
 
-			<CallButton
+			<CallEndLeaveButton
 				v-show="!(isVoiceRoom && isGuestActor)"
 				class="call-button"
 				:hideText="isSidebar || isMobile"
