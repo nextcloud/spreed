@@ -153,6 +153,7 @@ export function useGridDimensions({
 		dpiAwareMinHeight,
 		targetAspectRatio,
 		gridAspectRatio,
+		noLocalVideoReserve,
 		/** Force a re-measure and recompute (e.g. for debugging) */
 		recompute,
 	}
