@@ -127,7 +127,7 @@
 			<!-- Upcoming meetings -->
 			<CalendarEventsDialog v-if="showCalendarEvents" :token="token" />
 
-			<CallButton v-if="!isInCall" shrinkOnMobile />
+			<CallButton v-if="!isInCall" :silentCall="directSilentCall" shrinkOnMobile />
 
 			<!-- TopBar menu -->
 			<TopBarMenu
@@ -167,6 +167,7 @@ import TasksCounter from './TasksCounter.vue'
 import TopBarMenu from './TopBarMenu.vue'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
+import { useSettingsStore } from '../../stores/settings.ts'
 import { AVATAR, CONVERSATION, PARTICIPANT } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
@@ -229,6 +230,7 @@ export default {
 			CONVERSATION,
 			threadId: useGetThreadId(),
 			token: useGetToken(),
+			settingsStore: useSettingsStore(),
 		}
 	},
 
@@ -317,6 +319,10 @@ export default {
 
 		getUserId() {
 			return this.actorStore.userId
+		},
+		directSilentCall() {
+			return !this.settingsStore.showMediaSettings 
+				&& this.settingsStore.defaultCallMethodIsSilent  
 		},
 	},
 

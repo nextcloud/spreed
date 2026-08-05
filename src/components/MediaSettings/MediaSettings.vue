@@ -644,9 +644,10 @@ export default {
 				}
 				//check if this call has a silent call flag in storage, otherwise use the default setting from the settings store
 				const hasSilentCallFlag = BrowserStorage.getItem('silentCall_' + this.token)
+				console.log('hasSilentCallFlag', hasSilentCallFlag, 'defaultCallMethodIsSilent', this.settingsStore.defaultCallMethodIsSilent)
 				this.notifyCall = hasSilentCallFlag !== null
 					? hasSilentCallFlag !== 'true' 
-					: this.settingsStore.defaultCallMethodIsSilent 
+					: !this.settingsStore.defaultCallMethodIsSilent 
 
 				// Set virtual background depending on BrowserStorage's settings
 				if (BrowserStorage.getItem('virtualBackgroundEnabled') === 'true') {

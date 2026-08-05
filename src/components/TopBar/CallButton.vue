@@ -15,7 +15,7 @@
 		<template #icon>
 			<NcLoadingIcon v-if="isJoiningCall || loading" :size="20" />
 			<IconPhoneDialOutline v-else-if="isPhoneRoom" :size="20" />
-			<IconPhoneOutline v-else-if="computedSilentCall" :size="20" />
+			<IconPhoneOutline v-else-if="silentCall" :size="20" />
 			<IconPhone v-else :size="20" />
 		</template>
 		<template v-if="showButtonText" #default>
@@ -268,10 +268,6 @@ export default {
 			&& !this.isBreakoutRoom
 		},
 
-		computedSilentCall() {
-			return this.conversation.type !== CONVERSATION.TYPE.GROUP ? false : this.silentCall !== null ? this.silentCall : this.settingsStore.defaultCallMethodIsSilent
-		},
-
 		hasCall() {
 			return this.conversation.hasCall
 		},
@@ -308,7 +304,7 @@ export default {
 				return t('spreed', 'Connecting …')
 			}
 
-			return this.computedSilentCall ? t('spreed', 'Start call silently') : t('spreed', 'Start call')
+			return this.silentCall ? t('spreed', 'Start call silently') : t('spreed', 'Start call')
 		},
 
 		endCallLabel() {
@@ -389,7 +385,7 @@ export default {
 		async handleJoinCall() {
 			this.loading = true
 			await this.joinCall(this.token, {
-				silent: this.hasCall ? true : this.computedSilentCall,
+				silent: this.hasCall ? true : this.silentCall !== null ? this.silentCall : false,
 				recordingConsent: this.recordingConsentGiven,
 				shouldStartRecording: this.isRecordingFromStart,
 			})
