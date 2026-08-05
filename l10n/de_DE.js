@@ -1930,6 +1930,7 @@ OC.L10N.register(
     "Blur camera background by default" : "Kamerahintergrund standardmäßig verwischen",
     "Skip device preview before joining a call" : "Gerätevorschau vor dem Beitritt zu einer Unterhaltung überspringen",
     "Camera will be turned off when joining. Always shown if recording consent is required." : "Beim Beitritt wird die Kamera ausgeschaltet. Dies wird immer angezeigt, wenn eine Einverständniserklärung erforderlich ist.",
+    "Start calls silently by default" : "Anrufe standardmäßig still starten",
     "Appearance & Sounds" : "Aussehen & Töne",
     "Privacy" : "Datenschutz",
     "Send read receipts" : "Lesebestätigungen senden",
