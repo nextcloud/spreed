@@ -32,6 +32,7 @@ type SearchPayload = {
 	searchText: string
 	token?: string | 'new'
 	onlyUsers?: boolean
+	onlyLocal?: boolean
 	forceTypes?: ShareType[]
 }
 
@@ -42,6 +43,7 @@ type SearchPayload = {
  * @param payload.searchText The string that will be used in the search query.
  * @param [payload.token] The token of the conversation (if any) | 'new' for new conversations
  * @param [payload.onlyUsers] Whether to return only registered users
+ * @param [payload.onlyLocal] Whether to return only internal entities (exclude email guests and federated users)
  * @param [payload.forceTypes] Whether to force some types to be included in query
  * @param [options] Axios request options
  */
@@ -49,6 +51,7 @@ async function autocompleteQuery({
 	searchText,
 	token = 'new',
 	onlyUsers = false,
+	onlyLocal = false,
 	forceTypes = [],
 }: SearchPayload, options?: AxiosRequestConfig): AutocompleteResponse {
 	const shareTypes: ShareType[] = onlyUsers
@@ -57,8 +60,8 @@ async function autocompleteQuery({
 				SHARE.TYPE.USER,
 				SHARE.TYPE.GROUP,
 				SHARE.TYPE.CIRCLE,
-				...(token !== 'new' ? [SHARE.TYPE.EMAIL] : []),
-				...(canInviteToFederation ? [SHARE.TYPE.REMOTE] : []),
+				...((!onlyLocal && token !== 'new') ? [SHARE.TYPE.EMAIL] : []),
+				...((!onlyLocal && canInviteToFederation) ? [SHARE.TYPE.REMOTE] : []),
 			]
 
 	return axios.get(generateOcsUrl('core/autocomplete/get'), {

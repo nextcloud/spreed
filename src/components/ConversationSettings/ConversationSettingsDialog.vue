@@ -33,9 +33,9 @@
 			<NcAppSettingsSection
 				id="conversation-settings"
 				:name="selfIsOwnerOrModerator ? t('spreed', 'Moderation') : t('spreed', 'Setup overview')">
-				<ListableSettings v-if="!isNoteToSelf && !isGuest && !isOneToOne" :token="token" :canModerate="canFullModerate" />
+				<ListableSettings v-if="!isNoteToSelf && !isGuest && !isOneToOne && !isClassified" :token="token" :canModerate="canFullModerate" />
 				<MentionsSettings v-if="!isNoteToSelf && !isOneToOne" :token="token" :canModerate="canFullModerate" />
-				<LinkShareSettings v-if="!isNoteToSelf" :token="token" :canModerate="canFullModerate" />
+				<LinkShareSettings v-if="!isNoteToSelf && !isClassified" :token="token" :canModerate="canFullModerate" />
 				<RecordingConsentSettings v-if="!isNoteToSelf && !isOneToOneFormer && recordingConsentAvailable" :token="token" :canModerate="selfIsOwnerOrModerator" />
 				<ExpirationSettings v-if="!isOneToOneFormer && hasMessageExpirationFeature" :token="token" :canModerate="selfIsOwnerOrModerator" />
 				<BanSettings v-if="supportBanV1 && canFullModerate" :token="token" />
@@ -87,7 +87,7 @@
 
 			<!-- Matterbridge settings -->
 			<NcAppSettingsSection
-				v-if="canFullModerate && matterbridgeEnabled"
+				v-if="canFullModerate && matterbridgeEnabled && !isClassified"
 				id="matterbridge"
 				:name="t('spreed', 'Matterbridge')">
 				<MatterbridgeSettings />
@@ -95,7 +95,7 @@
 
 			<!-- Bots settings -->
 			<NcAppSettingsSection
-				v-if="selfIsOwnerOrModerator && supportBotsV1"
+				v-if="selfIsOwnerOrModerator && supportBotsV1 && !isClassified"
 				id="bots"
 				:name="t('spreed', 'Bots')">
 				<BotsSettings :token="token" />
@@ -163,6 +163,7 @@ import {
 	showTalkFeatureHint,
 } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
+import { isClassifiedConversation } from '../../utils/conversation.ts'
 
 // FIXME Should use remote not local
 const matterbridgeEnabled = getTalkConfig('local', 'chat', 'matterbridge-enabled')
@@ -213,7 +214,7 @@ export default {
 
 	computed: {
 		canUserEnableSIP() {
-			return this.conversation.canEnableSIP
+			return this.conversation.canEnableSIP && !this.isClassified
 		},
 
 		isCallEnabled() {
@@ -294,6 +295,7 @@ export default {
 			return this.isCallEnabled
 				&& this.isLiveTranscriptionSupported
 				&& this.selfIsOwnerOrModerator
+				&& !this.isClassified
 		},
 
 		hintLiveTranscription() {
@@ -301,6 +303,7 @@ export default {
 				&& !this.isLiveTranscriptionSupported
 				&& this.selfIsOwnerOrModerator
 				&& showTalkFeatureHint(34)
+				&& !this.isClassified
 		},
 
 		canConfigureBreakoutRooms() {
@@ -308,6 +311,7 @@ export default {
 				&& this.canFullModerate
 				&& (getTalkConfig(this.token, 'call', 'breakout-rooms') || false)
 				&& this.conversation.type === CONVERSATION.TYPE.GROUP
+				&& !this.isClassified
 		},
 
 		recordingConsentAvailable() {
@@ -315,6 +319,7 @@ export default {
 				&& (getTalkConfig(this.token, 'call', 'recording') || false)
 				&& hasTalkFeature(this.token, 'recording-consent')
 				&& getTalkConfig(this.token, 'call', 'recording-consent') !== CONFIG.RECORDING_CONSENT.OFF
+				&& !this.isClassified
 		},
 
 		recordingConsentRequired() {
@@ -327,6 +332,10 @@ export default {
 
 		isVoiceRoom() {
 			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
+		},
+
+		isClassified() {
+			return isClassifiedConversation(this.conversation)
 		},
 	},
 

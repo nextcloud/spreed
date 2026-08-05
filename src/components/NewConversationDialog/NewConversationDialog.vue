@@ -34,7 +34,8 @@
 					v-if="page === 1"
 					v-model:selectedParticipants="selectedParticipants"
 					class="new-group-conversation__content"
-					:canModerateSipDialOut="canModerateSipDialOut" />
+					:canModerateSipDialOut="canModerateSipDialOut"
+					:onlyLocal="isClassified" />
 			</div>
 
 			<!-- Navigation: different buttons with different actions and
@@ -213,6 +214,12 @@ export default {
 	computed: {
 		isPublic() {
 			return this.newConversation.type === CONVERSATION.TYPE.PUBLIC
+		},
+
+		isClassified() {
+			// Before creation the CLASSIFIED attribute is not set yet (applied
+			// server-side), so detect by the selected preset instead
+			return this.newConversation.preset === CONVERSATION.PRESET.CLASSIFIED
 		},
 
 		conversationName() {

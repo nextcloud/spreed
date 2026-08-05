@@ -28,12 +28,16 @@ const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const retentionEventPeriod = computed(() => getTalkConfig(props.token, 'conversations', 'retention-event'))
 const retentionPhonePeriod = computed(() => getTalkConfig(props.token, 'conversations', 'retention-phone'))
 const retentionInstantMeetingPeriod = computed(() => getTalkConfig(props.token, 'conversations', 'retention-instant-meetings'))
+// The server provides the classified retention period in seconds
+const retentionClassifiedPeriod = computed(() => getTalkConfig(props.token, 'conversations', 'retention-classified'))
 
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
 
 const isModerator = computed(() => store.getters.isModerator)
+
+const isClassified = computed(() => props.objectType === CONVERSATION.OBJECT_TYPE.CLASSIFIED)
 
 const expirationDuration = computed(() => {
 	if (props.objectType === CONVERSATION.OBJECT_TYPE.EVENT) {
@@ -42,6 +46,8 @@ const expirationDuration = computed(() => {
 		return retentionPhonePeriod.value
 	} else if (props.objectType === CONVERSATION.OBJECT_TYPE.INSTANT_MEETING) {
 		return retentionInstantMeetingPeriod.value
+	} else if (isClassified.value) {
+		return retentionClassifiedPeriod.value
 	}
 	return 0
 })
@@ -49,8 +55,20 @@ const expirationDuration = computed(() => {
 const isShown = computed(() => isModerator.value || expirationDuration.value !== 0)
 
 const descriptionLabel = computed(() => {
+	// 0 means no retention: the conversation is not auto-deleted
 	if (expirationDuration.value === 0) {
 		return t('spreed', 'Would you like to delete this conversation?')
+	}
+	if (isClassified.value) {
+		// Classified conversations are auto-deleted for everyone after a call;
+		// the server value is in seconds, shown to the user in minutes
+		const retentionMinutes = Math.round(expirationDuration.value! / 60)
+		return n(
+			'spreed',
+			'This conversation will be automatically deleted for everyone after %n minute of inactivity.',
+			'This conversation will be automatically deleted for everyone after %n minutes of inactivity.',
+			retentionMinutes,
+		)
 	}
 	return n(
 		'spreed',
@@ -125,7 +143,7 @@ async function showConfirmationDialog() {
 				{{ t('spreed', 'Delete now') }}
 			</NcButton>
 			<NcButton
-				v-if="supportsArchive"
+				v-if="supportsArchive || isClassified"
 				variant="secondary"
 				@click="resetObjectConversation">
 				<template #icon>
