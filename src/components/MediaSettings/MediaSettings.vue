@@ -642,7 +642,11 @@ export default {
 					this.audioOn = !BrowserStorage.getItem('audioDisabled_' + this.token)
 					this.videoOn = !BrowserStorage.getItem('videoDisabled_' + this.token)
 				}
-				this.notifyCall = BrowserStorage.getItem('silentCall_' + this.token) !== 'true'
+				//check if this call has a silent call flag in storage, otherwise use the default setting from the settings store
+				const hasSilentCallFlag = BrowserStorage.getItem('silentCall_' + this.token)
+				this.notifyCall = hasSilentCallFlag !== null
+					? hasSilentCallFlag !== 'true' 
+					: this.settingsStore.defaultCallMethodIsSilent 
 
 				// Set virtual background depending on BrowserStorage's settings
 				if (BrowserStorage.getItem('virtualBackgroundEnabled') === 'true') {
@@ -714,9 +718,6 @@ export default {
 		if (!this.isDialog) {
 			this.showMediaSettings()
 		}
-		const silentCall = this.settingsStore.defaultCallMethodIsSilent 
-		
-		BrowserStorage.setItem('silentCall_' + this.token, silentCall ? 'true' : 'false')
 	},
 
 	beforeUnmount() {
