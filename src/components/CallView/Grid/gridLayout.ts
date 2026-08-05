@@ -217,3 +217,142 @@ export function computeGridDimensions({
 
 	return { columns, rows }
 }
+
+type RowDistributionOptions = {
+	/** Number of tiles laid out on the page, including the local video tile */
+	totalTiles: number
+	/** Number of rows of the grid */
+	rows: number
+}
+
+/**
+ * Number of tiles of each row of the grid, from the first row to the last one.
+ *
+ * The tiles are spread as evenly as possible: every row holds
+ * `floor(totalTiles / rows)` tiles and the `totalTiles % rows` remaining tiles
+ * are handed out one by one. Filling the rows one after the other instead would
+ * leave every extra tile in the last row, so 7 tiles over 3 rows would be laid
+ * out as 3-3-1 rather than 2-3-2.
+ *
+ * The extra tiles are handed out from the second row onwards, the first row
+ * being served last, so that the fuller rows sit towards the middle of the grid
+ * and its silhouette stays symmetric: 7 tiles give 2-3-2 and 13 tiles give
+ * 3-4-3-3. This ordering is purely cosmetic, the number of tiles per row is
+ * decided above.
+ *
+ * @param options - the layout inputs
+ * @param options.totalTiles - number of tiles on the page, including the local video tile
+ * @param options.rows - number of rows of the grid
+ * @return the number of tiles of each row. Rows that would be left empty are
+ *   dropped, so the result may be shorter than `rows`.
+ */
+export function computeRowDistribution({ totalTiles, rows }: RowDistributionOptions): number[] {
+	// Never spread the tiles over more rows than there are tiles
+	const usedRows = Math.min(rows, totalTiles)
+	if (usedRows <= 0) {
+		return []
+	}
+
+	const base = Math.floor(totalTiles / usedRows)
+	const remainder = totalTiles % usedRows
+
+	const distribution = new Array<number>(usedRows)
+	for (let index = 0; index < usedRows; index++) {
+		// Rows in the order they receive one of the `remainder` extra tiles: from
+		// the second row of the grid down to the last one, and the first row last
+		const row = (index + 1) % usedRows
+		distribution[row] = index < remainder ? base + 1 : base
+	}
+
+	return distribution
+}
+
+/**
+ * Number of grid columns a single tile spans.
+ *
+ * Every column of the grid is laid out as two half columns, so that a row
+ * holding an odd number of empty columns can be centered by starting it half a
+ * column further, on a grid line rather than with a pixel offset.
+ */
+export const TILE_COLUMN_SPAN = 2
+
+/**
+ * Number of half columns the grid template needs for the given number of tile
+ * columns.
+ *
+ * @param columns - number of tile columns of the grid
+ */
+export function getHalfColumnCount(columns: number): number {
+	return columns * TILE_COLUMN_SPAN
+}
+
+/**
+ * Minimum width of a half column, in px, for the given minimum tile width.
+ *
+ * A tile spans two half columns and the gap between them, so each half column
+ * only has to hold half of the tile minus that gap.
+ *
+ * @param minTileWidth - minimum width of a whole tile in px
+ */
+export function getHalfColumnMinWidth(minTileWidth: number): number {
+	return Math.max((minTileWidth - GRID_GAP) / TILE_COLUMN_SPAN, 0)
+}
+
+type TilePlacementOptions = {
+	/** Number of tiles laid out on the page, including the local video tile */
+	totalTiles: number
+	/** Number of rows of the grid */
+	rows: number
+	/** Number of columns of the grid */
+	columns: number
+}
+
+/** Placement of a single tile in the CSS grid */
+export type TilePlacement = {
+	/** 1-based index of the row the tile belongs to */
+	row: number
+	/** 1-based index of the half column the tile starts at */
+	column: number
+}
+
+/**
+ * Placement of each tile of the grid, in the order the tiles are rendered.
+ *
+ * The tiles are spread across the rows by {@link computeRowDistribution} and
+ * each row is then centered horizontally: the columns left empty by that row are
+ * split evenly on both sides. A row leaving an odd number of columns empty has
+ * to be shifted by half a column, which is why the grid is laid out in half
+ * columns: the shift is then just another grid line, and every placement stays a
+ * whole number handled by the grid itself.
+ *
+ * @param options - the layout inputs
+ * @param options.totalTiles - number of tiles on the page, including the local video tile
+ * @param options.rows - number of rows of the grid
+ * @param options.columns - number of columns of the grid
+ * @return the placement of each tile, indexed by its rendering order. Empty if
+ *   the grid has not been measured yet or cannot hold every tile.
+ */
+export function computeTilePlacements({
+	totalTiles,
+	rows,
+	columns,
+}: TilePlacementOptions): TilePlacement[] {
+	// Nothing to place yet, or a grid too small to hold every tile: fall back to
+	// the default placement of the browser
+	if (totalTiles <= 0 || rows <= 0 || columns <= 0 || totalTiles > rows * columns) {
+		return []
+	}
+
+	const placements: TilePlacement[] = []
+
+	for (const [index, rowSize] of computeRowDistribution({ totalTiles, rows }).entries()) {
+		// The half columns left empty by the row, split evenly on both of its sides
+		const column = columns - rowSize + 1
+
+		for (let tile = 0; tile < rowSize; tile++) {
+			placements.push({ row: index + 1, column: column + tile * TILE_COLUMN_SPAN })
+		}
+	}
+
+	return placements
+}
