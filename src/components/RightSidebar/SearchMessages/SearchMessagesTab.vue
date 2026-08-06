@@ -40,6 +40,7 @@ import { ATTENDEE } from '../../../constants.ts'
 import { searchMessagesInCurrentConversation } from '../../../services/coreService.ts'
 import { EventBus } from '../../../services/EventBus.ts'
 import CancelableRequest from '../../../utils/CancelableRequest.ts'
+import { mapMessageResultEntry } from '../../../utils/searchEntries.ts'
 
 const props = defineProps<{
 	isActive: boolean
@@ -213,19 +214,7 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 				}
 			}
 
-			searchResults.value = searchResults.value.concat(entries.map((entry: UnifiedSearchResultEntry) => {
-				const threadId = (entry.attributes.threadId !== entry.attributes.messageId) ? entry.attributes.threadId : undefined
-
-				return {
-					...entry,
-					to: {
-						name: 'conversation',
-						hash: `#message_${entry.attributes.messageId}`,
-						params: { token: entry.attributes.conversation },
-						query: { threadId },
-					},
-				}
-			}))
+			searchResults.value = searchResults.value.concat(entries.map(mapMessageResultEntry))
 			nextTick(() => initializeNavigation())
 		}
 	} catch (exception) {
