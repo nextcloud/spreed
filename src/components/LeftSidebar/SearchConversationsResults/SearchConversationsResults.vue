@@ -26,6 +26,7 @@ const props = defineProps<{
 	searchText: string
 	conversationsList: Conversation[]
 	searchResultsLoading: boolean
+	searchFilters: string[]
 	searchResultsListedConversations: Conversation[]
 	searchResults: ParticipantSearchResult[]
 }>()
@@ -74,8 +75,8 @@ type SubListType = {
 type VirtualListItem
 	= | { type: 'caption', id: string, name: string }
 		| { type: 'hint', id: string, hint: string }
-		| { type: 'conversation', id: number, object: Conversation }
-		| { type: 'open_conversation', id: number, object: Conversation }
+		| { type: 'conversation', id: string, object: Conversation }
+		| { type: 'open_conversation', id: string, object: Conversation }
 		| { type: 'action', id: string, name: string, subname: string }
 		| { type: 'user' | 'group' | 'circle' | 'federated', id: string, object: ParticipantSearchResult, icon: Record<string, unknown> }
 
@@ -93,73 +94,84 @@ const searchResultsVirtual = computed<VirtualListItem[]>(() => {
 		return searchTerms.every((term) => displayName.includes(term) || name.includes(term))
 	})
 
+	const showConversations = props.searchFilters.includes('conversations')
+
+	if (!showConversations) {
+		virtualList.push({ type: 'hint', id: 'hint_no_filters', hint: t('spreed', 'No matches found') })
+		return virtualList
+	}
+
 	// Add conversations section
-	virtualList.push({ type: 'caption', id: 'conversations_caption', name: t('spreed', 'Conversations') })
-	if (searchResultsConversationList.length === 0) {
-		virtualList.push({ type: 'hint', id: 'hint_conversations', hint: t('spreed', 'No matches found') })
-	} else {
-		sortConversationsList(searchResultsConversationList, settingsStore.groupMode, settingsStore.sortOrder)
-			.forEach((item: Conversation) => {
-				virtualList.push({ type: 'conversation', id: item.id, object: item })
-			})
+	if (showConversations) {
+		virtualList.push({ type: 'caption', id: 'conversations_caption', name: t('spreed', 'Conversations') })
+		if (searchResultsConversationList.length === 0) {
+			virtualList.push({ type: 'hint', id: 'hint_conversations', hint: t('spreed', 'No matches found') })
+		} else {
+			sortConversationsList(searchResultsConversationList, settingsStore.groupMode, settingsStore.sortOrder)
+				.forEach((item: Conversation) => {
+					virtualList.push({ type: 'conversation', id: `conversation_${item.id}`, object: item })
+				})
+		}
 	}
 
 	// Add "New Conversation" option if allowed
-	if (canStartConversations) {
+	if (canStartConversations && showConversations) {
 		virtualList.push({ type: 'action', id: 'new_conversation', name: props.searchText, subname: t('spreed', 'New private conversation') })
 	}
 
 	// Add 'Loading' message if there are no results received from the server yet
-	if (props.searchResultsLoading && !props.searchResultsListedConversations.length && !props.searchResults.length) {
+	if (showConversations && props.searchResultsLoading && !props.searchResultsListedConversations.length && !props.searchResults.length) {
 		virtualList.push({ type: 'caption', id: 'loading_results_caption', name: t('spreed', 'Other sources') })
 		virtualList.push({ type: 'hint', id: 'loading_results_hint', hint: t('spreed', 'Loading …') })
 		return virtualList
 	}
 
 	// Add open conversations section if any
-	if (props.searchResultsListedConversations.length !== 0) {
+	if (showConversations && props.searchResultsListedConversations.length !== 0) {
 		virtualList.push({ type: 'caption', id: 'open_conversation_caption', name: t('spreed', 'Open conversations') })
 		props.searchResultsListedConversations.forEach((item: Conversation) => {
-			virtualList.push({ type: 'open_conversation', id: item.id, object: item })
+			virtualList.push({ type: 'open_conversation', id: `open_conversation_${item.id}`, object: item })
 		})
 	}
 
 	// Categorize search results into different sections
-	const subList = props.searchResults.reduce<SubListType>((acc, result) => {
-		if (result.source === ATTENDEE.ACTOR_TYPE.USERS) {
-			acc.user.push(result)
-		} else if (result.source === ATTENDEE.ACTOR_TYPE.GROUPS && canStartConversations) {
-			acc.group.push(result)
-		} else if (result.source === ATTENDEE.ACTOR_TYPE.CIRCLES && canStartConversations) {
-			acc.circle.push(result)
-		} else if (result.source === ATTENDEE.ACTOR_TYPE.REMOTES && canStartConversations) {
-			acc.federated.push({ ...result, source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS })
-		}
-		return acc
-	}, {
-		user: [],
-		group: [],
-		circle: [],
-		federated: [],
-	})
+	if (showConversations) {
+		const subList = props.searchResults.reduce<SubListType>((acc, result) => {
+			if (result.source === ATTENDEE.ACTOR_TYPE.USERS) {
+				acc.user.push(result)
+			} else if (result.source === ATTENDEE.ACTOR_TYPE.GROUPS && canStartConversations) {
+				acc.group.push(result)
+			} else if (result.source === ATTENDEE.ACTOR_TYPE.CIRCLES && canStartConversations) {
+				acc.circle.push(result)
+			} else if (result.source === ATTENDEE.ACTOR_TYPE.REMOTES && canStartConversations) {
+				acc.federated.push({ ...result, source: ATTENDEE.ACTOR_TYPE.FEDERATED_USERS })
+			}
+			return acc
+		}, {
+			user: [],
+			group: [],
+			circle: [],
+			federated: [],
+		})
 
-	// Iterate over sections and build the virtualList
-	sections.forEach((section) => {
-		if (subList[section.type].length > 0) {
-			virtualList.push(section.caption)
-			virtualList.push(...subList[section.type].map((match) => ({
-				type: section.type,
-				id: `${section.type}_${match.id}`,
-				object: match,
-				icon: iconData(match),
-			})))
-		}
-	})
+		// Iterate over sections and build the virtualList
+		sections.forEach((section) => {
+			if (subList[section.type].length > 0) {
+				virtualList.push(section.caption)
+				virtualList.push(...subList[section.type].map((match) => ({
+					type: section.type,
+					id: `${section.type}_${match.id}`,
+					object: match,
+					icon: iconData(match),
+				})))
+			}
+		})
 
-	// Add "No results" message if there are no results in any section
-	if (!subList.user.length || !subList.group.length || (!subList.circle.length && isCirclesEnabled) || !subList.federated.length) {
-		virtualList.push({ type: 'caption', id: 'no_results_caption', name: sourcesWithoutResults(subList) })
-		virtualList.push({ type: 'hint', id: 'no_results_hint', hint: t('spreed', 'No search results') })
+		// Add "No results" message if there are no results in any section
+		if (!subList.user.length || !subList.group.length || (!subList.circle.length && isCirclesEnabled) || !subList.federated.length) {
+			virtualList.push({ type: 'caption', id: 'no_results_caption', name: sourcesWithoutResults(subList) })
+			virtualList.push({ type: 'hint', id: 'no_results_hint', hint: t('spreed', 'No search results') })
+		}
 	}
 
 	return virtualList

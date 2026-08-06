@@ -231,6 +231,22 @@
 							:text="FILTER_LABELS[filter]"
 							@close="handleFilter(filter)" />
 					</TransitionWrapper>
+					<!-- Search filters -->
+					<div v-if="isSearching" class="conversations__search-filters">
+						<NcChip
+							v-for="filter in SEARCH_FILTERS"
+							:key="filter"
+							noClose
+							class="search-filter-chip"
+							:variant="searchFilters.includes(filter) ? 'primary' : 'secondary'"
+							:text="SEARCH_FILTER_LABELS[filter]"
+							role="button"
+							tabindex="0"
+							:aria-pressed="searchFilters.includes(filter)"
+							@click="handleSearchFilter(filter)"
+							@keydown.enter.prevent="handleSearchFilter(filter)"
+							@keydown.space.prevent="handleSearchFilter(filter)" />
+					</div>
 				</div>
 
 				<div v-if="!isSearching" class="navigation-buttons-container">
@@ -358,6 +374,7 @@
 				class="scroller"
 				:searchText="searchText"
 				:searchResultsLoading="searchResultsLoading"
+				:searchFilters="searchFilters"
 				:conversationsList="conversationsList"
 				:searchResults="searchResultsPossibleConversations"
 				:searchResultsListedConversations="searchResultsListedConversations"
@@ -474,7 +491,7 @@ import {
 	sortConversationsList,
 } from '../../utils/conversation.ts'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
-import { useSearchConversationsResults } from './SearchConversationsResults/useSearchConversationsResults.ts'
+import { SEARCH_FILTERS, useSearchConversationsResults } from './SearchConversationsResults/useSearchConversationsResults.ts'
 
 const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
 const canModerateSipDialOut = hasTalkFeature('local', 'sip-support-dialout')
@@ -495,6 +512,9 @@ const FILTER_LABELS = {
 	mentions: t('spreed', 'Mentions'),
 	events: t('spreed', 'Meetings'),
 	default: '',
+}
+const SEARCH_FILTER_LABELS = {
+	conversations: t('spreed', 'Conversations'),
 }
 const SORT_LABELS = {
 	// TRANSLATORS Navigation actions: sort conversations by recent activity / sort alphabetically
@@ -581,10 +601,12 @@ export default {
 		const LIST_HEADING_ID = 'left-sidebar-list-heading'
 
 		const {
+			searchFilters,
 			searchResultsPossibleConversations,
 			searchResultsListedConversations,
 			searchResultsLoading,
 			search,
+			toggleFilter,
 			abortSearchRequests,
 		} = useSearchConversationsResults()
 
@@ -612,6 +634,8 @@ export default {
 			CONVERSATION,
 			HOME_BUTTON_LABEL,
 			FILTER_LABELS,
+			SEARCH_FILTERS,
+			SEARCH_FILTER_LABELS,
 			SORT_LABELS,
 			LIST_HEADING_ID,
 			actorStore: useActorStore(),
@@ -619,10 +643,12 @@ export default {
 			tokenStore: useTokenStore(),
 			tagsStore,
 
+			searchFilters,
 			searchResultsPossibleConversations,
 			searchResultsListedConversations,
 			searchResultsLoading,
 			search,
+			toggleFilter,
 			abortSearchRequests,
 		}
 	},
@@ -943,9 +969,22 @@ export default {
 			this.showThreadsList = false
 
 			this.resetNavigation()
-			// Re-initialize navigation only for successfull result
+			// Re-initialize navigation only for successful result
 			if (await this.search(this.searchText)) {
-				this.initializeNavigation()
+				this.$nextTick(() => this.initializeNavigation())
+			}
+		},
+
+		/**
+		 * Enable or disable a search filter, fetching or dropping its results
+		 *
+		 * @param {string} filter the toggled search filter
+		 */
+		async handleSearchFilter(filter) {
+			this.resetNavigation()
+			// Re-initialize navigation only for successful result
+			if (await this.toggleFilter(this.searchText, filter)) {
+				this.$nextTick(() => this.initializeNavigation())
 			}
 		},
 
@@ -1278,6 +1317,22 @@ export default {
 	display: flex;
 	flex-wrap: wrap;
 	gap: var(--default-grid-baseline);
+}
+
+.conversations__search-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--default-grid-baseline);
+	margin-block-start: var(--default-grid-baseline);
+
+	.search-filter-chip {
+		cursor: pointer;
+
+		// Overwrite NcChip styles: span inherits 'cursor: default'
+		:deep(.nc-chip__text) {
+			cursor: inherit;
+		}
+	}
 }
 
 .archived-conversations-bubble {
