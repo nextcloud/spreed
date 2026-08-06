@@ -13,6 +13,25 @@ const { token } = defineProps<{
 	token: string
 }>()
 
+/** Allowed content within iframe sandbox */
+const sandbox = [
+	'allow-same-origin',
+	'allow-scripts',
+	'allow-forms',
+	'allow-popups',
+	'allow-presentation',
+	'allow-downloads',
+].join(' ')
+
+/** Allowed permissions within iframe */
+const allow = [
+	'camera',
+	'microphone',
+	'display-capture',
+	'fullscreen',
+	'clipboard-write',
+].join('; ')
+
 const actorStore = useActorStore()
 const callViewStore = useCallViewStore()
 
@@ -104,8 +123,8 @@ function onIframeRemoved() {
 			:src="externalCallServiceUrl"
 			title="External Call Service"
 			class="external-call-view__iframe"
-			sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-presentation"
-			allow="camera; microphone; display-capture; fullscreen"
+			:sandbox
+			:allow
 			loading="eager"
 			referrerpolicy="no-referrer"
 			crossorigin="anonymous" />
