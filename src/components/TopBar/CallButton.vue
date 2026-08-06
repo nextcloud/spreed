@@ -13,8 +13,11 @@ import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import IconChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import IconPhone from 'vue-material-design-icons/Phone.vue' // Filled used for non-silent calls
 import IconPhoneDialOutline from 'vue-material-design-icons/PhoneDialOutline.vue'
 import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
@@ -95,6 +98,13 @@ const startCallButtonDisabled = computed(() => {
 		|| !tokenStore.currentConversationIsJoined
 		|| blockCalls
 })
+const showSplitStartCallButton = computed(() => {
+	return showStartCallButton.value
+		&& !props.isMediaSettings
+		&& !isPhoneRoom.value
+		&& !hasExternalCallService(conversation.value)
+		&& !hasCall.value
+})
 const showRecordingWarning = computed(() => {
 	return [
 		CALL.RECORDING.VIDEO_STARTING,
@@ -130,6 +140,9 @@ const startCallTitle = computed(() => {
 	return ''
 })
 
+const startCallSilentlyLabel = t('spreed', 'Start call silently')
+const startCallActionsLabel = t('spreed', 'More actions')
+
 watch(token, (newValue, oldValue) => {
 	callViewStore.resetCallHasJustEnded()
 	talkHashStore.resetTalkProxyHashDirty(oldValue)
@@ -137,11 +150,13 @@ watch(token, (newValue, oldValue) => {
 
 /**
  * Start or join the call
+ *
+ * @param silent - force a silent start, bypassing the `silentCall` prop
  */
-async function handleJoinCall() {
+async function handleJoinCall(silent?: boolean) {
 	loading.value = true
 	await joinCall(token.value, {
-		silent: hasCall.value ? true : props.silentCall,
+		silent: hasCall.value ? true : (silent ?? props.silentCall),
 		recordingConsent: props.recordingConsentGiven,
 		shouldStartRecording: props.isRecordingFromStart,
 	})
@@ -174,6 +189,16 @@ function handleClick() {
 }
 
 /**
+ * Skip the device checker (MediaSettings) and start the call right away
+ */
+function handleStartCallSilently() {
+	// Create audio objects as a result of a user interaction to allow playing sounds in Safari
+	soundsStore.initAudioObjects()
+
+	handleJoinCall(true)
+}
+
+/**
  * Initiate a call at external service (iframe embedded)
  */
 async function handleExternalCall() {
@@ -203,8 +228,40 @@ async function handleExternalCall() {
 </script>
 
 <template>
+	<NcActions
+		v-if="showSplitStartCallButton"
+		class="join-call join-call-actions--split"
+		:title="startCallTitle"
+		:disabled="startCallButtonDisabled || loading || isJoiningCall"
+		:forceName="showButtonText"
+		placement="top-end"
+		variant="primary"
+		:aria-label="startCallActionsLabel"
+		:inline="1">
+		<template #icon>
+			<IconChevronDown :size="20" />
+		</template>
+		<NcActionButton
+			class="start-call-button--split"
+			:aria-label="startCallLabel"
+			@click="handleClick">
+			<template #icon>
+				<NcLoadingIcon v-if="isJoiningCall || loading" :size="20" />
+				<IconPhone v-else :size="20" />
+			</template>
+			<template v-if="showButtonText" #default>
+				{{ startCallLabel }}
+			</template>
+		</NcActionButton>
+		<NcActionButton @click="handleStartCallSilently">
+			<template #icon>
+				<IconPhoneOutline :size="20" />
+			</template>
+			{{ startCallSilentlyLabel }}
+		</NcActionButton>
+	</NcActions>
 	<NcButton
-		v-if="showStartCallButton"
+		v-else-if="showStartCallButton"
 		:title="startCallTitle"
 		:aria-label="startCallLabel"
 		:disabled="startCallButtonDisabled || loading || isJoiningCall"
@@ -245,5 +302,25 @@ async function handleExternalCall() {
 	&:hover:not(:disabled) {
 		background-color: var(--join-call-border-color);
 	}
+}
+
+.join-call-actions--split {
+	gap: 1px !important;
+}
+
+.join-call-actions--split :deep(.action-item--single) {
+	border-start-end-radius: 2px;
+	border-end-end-radius: 2px;
+}
+
+.join-call-actions--split :deep(.action-item__menutoggle) {
+	--button-size: var(--clickable-area-small);
+	height: var(--default-clickable-area);
+	border-start-start-radius: 2px;
+	border-end-start-radius: 2px;
+}
+
+.join-call-actions--split :deep(.action-item--open .action-item__menutoggle) {
+	background-color: var(--color-primary-element-hover) !important;
 }
 </style>
