@@ -1459,6 +1459,7 @@ OC.L10N.register(
     "You have no unread mentions." : "Neturite neskaitytų paminėjimų.",
     "You have no unread messages." : "Jūs neturite neskaitytų žinučių.",
     "Conversation list" : "Pokalbių sąrašas",
+    "Search in app" : "Ieškoti programėlėje",
     "Filter conversations by" : "Filtruoti pokalbius pagal",
     "Unread messages" : "Neskaitytos žinutės",
     "Meeting conversations" : "Susitikimų pokalbiai",
