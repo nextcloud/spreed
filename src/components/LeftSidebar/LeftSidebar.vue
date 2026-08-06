@@ -377,6 +377,7 @@
 				:searchFilters="searchFilters"
 				:conversationsList="conversationsList"
 				:searchResults="searchResultsPossibleConversations"
+				:searchResultsMessages="searchResultsMessages"
 				:searchResultsListedConversations="searchResultsListedConversations"
 				@abortSearch="abortSearch"
 				@createNewConversation="createConversation"
@@ -515,6 +516,7 @@ const FILTER_LABELS = {
 }
 const SEARCH_FILTER_LABELS = {
 	conversations: t('spreed', 'Conversations'),
+	messages: t('spreed', 'Messages'),
 }
 const SORT_LABELS = {
 	// TRANSLATORS Navigation actions: sort conversations by recent activity / sort alphabetically
@@ -604,6 +606,7 @@ export default {
 			searchFilters,
 			searchResultsPossibleConversations,
 			searchResultsListedConversations,
+			searchResultsMessages,
 			searchResultsLoading,
 			search,
 			toggleFilter,
@@ -646,6 +649,7 @@ export default {
 			searchFilters,
 			searchResultsPossibleConversations,
 			searchResultsListedConversations,
+			searchResultsMessages,
 			searchResultsLoading,
 			search,
 			toggleFilter,

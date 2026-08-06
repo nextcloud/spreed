@@ -17,14 +17,15 @@ import { ATTENDEE, CONVERSATION } from '../../../constants.ts'
 import BrowserStorage from '../../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
 import { searchListedConversations } from '../../../services/conversationsService.ts'
-import { autocompleteQuery } from '../../../services/coreService.ts'
+import { autocompleteQuery, searchMessages } from '../../../services/coreService.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import CancelableRequest from '../../../utils/CancelableRequest.ts'
+import { mapMessageResultEntry } from '../../../utils/searchEntries.ts'
 
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 
 // Scope filters to search in
-export const SEARCH_FILTERS = ['conversations'] as const
+export const SEARCH_FILTERS = ['conversations', 'messages'] as const
 export type SearchFilter = typeof SEARCH_FILTERS[number]
 
 /**
@@ -44,6 +45,7 @@ function restoreSearchFilters(): SearchFilter[] {
  * Composable to control logic for fetching search results:
  * - listed conversations
  * - possible conversations (users, groups, teams)
+ * - messages from all conversations
  *
  * Has only single consumer (LeftSidebar.vue)
  */
@@ -54,15 +56,19 @@ export function useSearchConversationsResults() {
 	const searchFilters = ref<SearchFilter[]>(restoreSearchFilters())
 	const searchResultsListedConversations = ref<Conversation[]>([])
 	const searchResultsPossibleConversations = ref<AutocompleteResult[]>([])
+	const searchResultsMessages = ref<ReturnType<typeof mapMessageResultEntry>[]>([])
 	const searchResultsLoading = ref(true)
 
 	let cancelSearchListedConversations: ReturnType<typeof CancelableRequest>['cancel'] | null = null
 	let cancelSearchPossibleConversations: ReturnType<typeof CancelableRequest>['cancel'] | null = null
-	// Generation counter - increases with every started or aborted search.
+	let cancelSearchMessages: ReturnType<typeof CancelableRequest>['cancel'] | null = null
+
+	// Generation counter - increases with every started, aborted or disabled search.
 	// Individual per filter.
 	// Results of a search are only applied with matching generation
 	const searchGenerations: Record<SearchFilter, number> = {
 		conversations: 0,
+		messages: 0,
 	}
 
 	// Query the stored results of each filter belong to, null if there are none.
@@ -70,6 +76,7 @@ export function useSearchConversationsResults() {
 	// unchanged query shows them again instead of requesting them anew
 	const fetchedQueries: Record<SearchFilter, string | null> = {
 		conversations: null,
+		messages: null,
 	}
 
 	onBeforeUnmount(() => {
@@ -172,20 +179,68 @@ export function useSearchConversationsResults() {
 	}
 
 	/**
+	 * Get list of messages matching the query and write to ref
+	 *
+	 * @param query search text
+	 * @param generation search generation
+	 */
+	async function fetchMessages(query: string, generation: number) {
+		const { request, cancel } = CancelableRequest(searchMessages)
+		try {
+			// Cancel previous search request if pending, and store reference to new one
+			cancelSearchMessages?.()
+			cancelSearchMessages = cancel
+
+			// TODO: implement offset with 'Show more' feature
+			const response = await request({ term: query, limit: 10 })
+
+			if (generation !== searchGenerations.messages) {
+				// Results are outdated
+				return
+			}
+
+			searchResultsMessages.value = response.data.ocs.data.entries.map(mapMessageResultEntry)
+		} catch (exception) {
+			if (isCancel(exception)) {
+				return
+			}
+			console.error('Error searching for messages', exception)
+			if (generation === searchGenerations.messages) {
+				// Drop results of the failed search
+				searchResultsMessages.value = []
+			}
+			throw exception
+		} finally {
+			if (cancelSearchMessages === cancel) {
+				cancelSearchMessages = null
+			}
+		}
+	}
+
+	/**
 	 * Cancel the pending requests of a filter
 	 *
 	 * @param filter filter to cancel the requests of
 	 * @return whether any request was pending
 	 */
 	function cancelFilterRequests(filter: SearchFilter): boolean {
-		const hasPendingRequests = cancelSearchListedConversations !== null
-			|| cancelSearchPossibleConversations !== null
+		if (filter === 'conversations') {
+			const hasPendingRequests = cancelSearchListedConversations !== null
+				|| cancelSearchPossibleConversations !== null
 
-		cancelSearchListedConversations?.()
-		cancelSearchListedConversations = null
+			cancelSearchListedConversations?.()
+			cancelSearchListedConversations = null
 
-		cancelSearchPossibleConversations?.()
-		cancelSearchPossibleConversations = null
+			cancelSearchPossibleConversations?.()
+			cancelSearchPossibleConversations = null
+
+			return hasPendingRequests
+		}
+
+		const hasPendingRequests = cancelSearchMessages !== null
+
+		cancelSearchMessages?.()
+		cancelSearchMessages = null
 
 		return hasPendingRequests
 	}
@@ -214,8 +269,12 @@ export function useSearchConversationsResults() {
 		disableFilter(filter)
 		fetchedQueries[filter] = null
 
-		searchResultsListedConversations.value = []
-		searchResultsPossibleConversations.value = []
+		if (filter === 'conversations') {
+			searchResultsListedConversations.value = []
+			searchResultsPossibleConversations.value = []
+		} else {
+			searchResultsMessages.value = []
+		}
 	}
 
 	/**
@@ -224,6 +283,7 @@ export function useSearchConversationsResults() {
 	function updateLoadingState() {
 		searchResultsLoading.value = cancelSearchListedConversations !== null
 			|| cancelSearchPossibleConversations !== null
+			|| cancelSearchMessages !== null
 	}
 
 	/**
@@ -255,10 +315,9 @@ export function useSearchConversationsResults() {
 
 		const generations = filters.map((filter) => [filter, ++searchGenerations[filter]] as const)
 		const promiseResults = await Promise.all(generations.map(async ([filter, generation]) => {
-			const results = await Promise.allSettled([
-				fetchListedConversations(query, generation),
-				fetchPossibleConversations(query, generation),
-			])
+			const results = await Promise.allSettled(filter === 'conversations'
+				? [fetchListedConversations(query, generation), fetchPossibleConversations(query, generation)]
+				: [fetchMessages(query, generation)])
 
 			if (generation === searchGenerations[filter]) {
 				// Only complete results of the current query can be shown again later
@@ -332,6 +391,7 @@ export function useSearchConversationsResults() {
 		searchFilters,
 		searchResultsPossibleConversations,
 		searchResultsListedConversations,
+		searchResultsMessages,
 		searchResultsLoading,
 		search,
 		toggleFilter,

@@ -4,7 +4,11 @@
 -->
 
 <script setup lang="ts">
-import type { Conversation, ParticipantSearchResult } from '../../../types/index.ts'
+import type {
+	Conversation,
+	ParticipantSearchResult,
+	UnifiedSearchResultEntryWithRouterLink,
+} from '../../../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
 import { useVirtualList } from '@vueuse/core'
@@ -14,6 +18,7 @@ import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconChatPlusOutline from 'vue-material-design-icons/ChatPlusOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ConversationIcon from '../../ConversationIcon.vue'
+import SearchMessageItem from '../../RightSidebar/SearchMessages/SearchMessageItem.vue'
 import NavigationHint from '../../UIShared/NavigationHint.vue'
 import ConversationItem from '../ConversationsList/ConversationItem.vue'
 import { ATTENDEE, AVATAR, CONVERSATION } from '../../../constants.ts'
@@ -29,6 +34,7 @@ const props = defineProps<{
 	searchFilters: string[]
 	searchResultsListedConversations: Conversation[]
 	searchResults: ParticipantSearchResult[]
+	searchResultsMessages: UnifiedSearchResultEntryWithRouterLink[]
 }>()
 
 const emit = defineEmits<{
@@ -77,6 +83,7 @@ type VirtualListItem
 		| { type: 'hint', id: string, hint: string }
 		| { type: 'conversation', id: string, object: Conversation }
 		| { type: 'open_conversation', id: string, object: Conversation }
+		| { type: 'message', id: string, object: UnifiedSearchResultEntryWithRouterLink }
 		| { type: 'action', id: string, name: string, subname: string }
 		| { type: 'user' | 'group' | 'circle' | 'federated', id: string, object: ParticipantSearchResult, icon: Record<string, unknown> }
 
@@ -95,8 +102,9 @@ const searchResultsVirtual = computed<VirtualListItem[]>(() => {
 	})
 
 	const showConversations = props.searchFilters.includes('conversations')
+	const showMessages = props.searchFilters.includes('messages')
 
-	if (!showConversations) {
+	if (!showConversations && !showMessages) {
 		virtualList.push({ type: 'hint', id: 'hint_no_filters', hint: t('spreed', 'No matches found') })
 		return virtualList
 	}
@@ -119,19 +127,34 @@ const searchResultsVirtual = computed<VirtualListItem[]>(() => {
 		virtualList.push({ type: 'action', id: 'new_conversation', name: props.searchText, subname: t('spreed', 'New private conversation') })
 	}
 
-	// Add 'Loading' message if there are no results received from the server yet
-	if (showConversations && props.searchResultsLoading && !props.searchResultsListedConversations.length && !props.searchResults.length) {
-		virtualList.push({ type: 'caption', id: 'loading_results_caption', name: t('spreed', 'Other sources') })
-		virtualList.push({ type: 'hint', id: 'loading_results_hint', hint: t('spreed', 'Loading …') })
-		return virtualList
-	}
-
 	// Add open conversations section if any
 	if (showConversations && props.searchResultsListedConversations.length !== 0) {
 		virtualList.push({ type: 'caption', id: 'open_conversation_caption', name: t('spreed', 'Open conversations') })
 		props.searchResultsListedConversations.forEach((item: Conversation) => {
 			virtualList.push({ type: 'open_conversation', id: `open_conversation_${item.id}`, object: item })
 		})
+	}
+
+	if (showMessages) {
+		virtualList.push({ type: 'caption', id: 'messages_caption', name: t('spreed', 'Messages') })
+		if (props.searchResultsMessages.length === 0) {
+			virtualList.push({
+				type: 'hint',
+				id: 'hint_messages',
+				hint: props.searchResultsLoading ? t('spreed', 'Loading …') : t('spreed', 'No matches found'),
+			})
+		} else {
+			props.searchResultsMessages.forEach((item: UnifiedSearchResultEntryWithRouterLink) => {
+				virtualList.push({ type: 'message', id: `message_${item.attributes.messageId}`, object: item })
+			})
+		}
+	}
+
+	// Add 'Loading' message if there are no results received from the server yet
+	if (showConversations && props.searchResultsLoading && !props.searchResultsListedConversations.length && !props.searchResults.length) {
+		virtualList.push({ type: 'caption', id: 'loading_results_caption', name: t('spreed', 'Other sources') })
+		virtualList.push({ type: 'hint', id: 'loading_results_hint', hint: t('spreed', 'Loading …') })
+		return virtualList
 	}
 
 	// Categorize search results into different sections
@@ -275,6 +298,19 @@ const iconSize = computed(() => isCompact.value ? AVATAR.SIZE.COMPACT : AVATAR.S
 					v-else-if="item.data.type === 'open_conversation'"
 					:item="item.data.object"
 					isSearchResult
+					:compact="isCompact"
+					@click="emit('abortSearch')" />
+				<SearchMessageItem
+					v-else-if="item.data.type === 'message'"
+					:ref="`message-${item.data.object.attributes.conversation}`"
+					:messageId="+item.data.object.attributes.messageId"
+					:title="item.data.object.title"
+					:subline="item.data.object.subline"
+					:actorId="item.data.object.attributes.actorId"
+					:actorType="item.data.object.attributes.actorType"
+					:token="item.data.object.attributes.conversation"
+					:timestamp="+item.data.object.attributes.timestamp"
+					:to="item.data.object.to"
 					:compact="isCompact"
 					@click="emit('abortSearch')" />
 				<NcAppNavigationCaption
