@@ -28,6 +28,7 @@ vi.mock('../../services/conversationTagsService', () => ({
 }))
 vi.mock('../../services/coreService', () => ({
 	autocompleteQuery: vi.fn(),
+	searchMessages: vi.fn(),
 }))
 
 // short-circuit debounce
