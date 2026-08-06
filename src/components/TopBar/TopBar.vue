@@ -10,7 +10,8 @@
 			'top-bar--sidebar': isSidebar,
 			'top-bar--in-call': isInCall,
 			'top-bar--authorised': getUserId,
-		}">
+		}"
+		:data-theme-dark="isInCall ? true : undefined">
 		<a
 			class="top-bar__icon-wrapper"
 			:class="{ 'top-bar__icon-wrapper--with-action': showBackAction }"
@@ -53,10 +54,7 @@
 
 		<ThreadHeader v-else-if="!isInCall && threadId" class="top-bar__wrapper" />
 
-		<div
-			v-else
-			class="top-bar__wrapper"
-			:data-theme-dark="isInCall ? true : undefined">
+		<template v-else>
 			<!-- conversation header -->
 			<a
 				role="button"
@@ -97,61 +95,66 @@
 				</div>
 			</a>
 
-			<TasksCounter v-if="conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF" />
+			<div class="top-bar__controls">
+				<TasksCounter v-if="conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF" />
 
-			<!-- Call time -->
-			<CallTime
-				v-if="isInCall"
-				:start="conversation.callStartTime" />
+				<!-- Call time -->
+				<CallTime
+					v-if="isInCall"
+					:start="conversation.callStartTime" />
 
-			<!-- Participants counter -->
-			<NcButton
-				v-if="isInCall && isModeratorOrUser"
-				:title="participantsInCallAriaLabel"
-				:aria-label="participantsInCallAriaLabel"
-				class="top-bar__participants-button"
-				variant="tertiary"
-				@click="openSidebar('participants')">
-				<template #icon>
-					<IconAccountMultiplePlusOutline v-if="canExtendOneToOneConversation" :size="20" />
-					<IconAccountMultipleOutline v-else :size="20" />
-				</template>
-				<template v-if="!canExtendOneToOneConversation" #default>
-					{{ participantsInCall }}
-				</template>
-			</NcButton>
-			<ExtendOneToOneDialog
-				v-else-if="!isSidebar && canExtendOneToOneConversation"
-				:token="token" />
+				<!-- Participants counter -->
+				<NcButton
+					v-if="isInCall && isModeratorOrUser"
+					:title="participantsInCallAriaLabel"
+					:aria-label="participantsInCallAriaLabel"
+					class="top-bar__participants-button"
+					variant="tertiary"
+					@click="openSidebar('participants')">
+					<template #icon>
+						<IconAccountMultiplePlusOutline v-if="canExtendOneToOneConversation" :size="20" />
+						<IconAccountMultipleOutline v-else :size="20" />
+					</template>
+					<template v-if="!canExtendOneToOneConversation" #default>
+						{{ participantsInCall }}
+					</template>
+				</NcButton>
+				<ExtendOneToOneDialog
+					v-else-if="!isSidebar && canExtendOneToOneConversation"
+					:token="token" />
 
-			<!-- Classified conversation indicator (non-interactive) -->
-			<span
-				v-if="isClassified"
-				class="top-bar__classified"
-				:title="t('spreed', 'Classified conversation')">
-				<IconShieldLockOutline :size="20" />
-				<span v-if="!isMobile" class="top-bar__classified-label">
-					{{ t('spreed', 'Classified conversation') }}
+				<!-- Classified conversation indicator (non-interactive) -->
+				<span
+					v-if="isClassified"
+					class="top-bar__classified"
+					:title="t('spreed', 'Classified conversation')">
+					<IconShieldLockOutline :size="20" />
+					<span v-if="!isMobile" class="top-bar__classified-label">
+						{{ t('spreed', 'Classified conversation') }}
+					</span>
 				</span>
-			</span>
 
-			<!-- Upcoming meetings -->
-			<CalendarEventsDialog v-if="showCalendarEvents" :token="token" />
+				<!-- Upcoming meetings -->
+				<CalendarEventsDialog
+					v-if="showCalendarEvents"
+					class="top-bar__calendar-events"
+					:token="token" />
 
-			<CallButton v-if="!isInCall" shrinkOnMobile />
+				<CallButton v-if="!isInCall" shrinkOnMobile />
 
-			<!-- TopBar menu -->
-			<TopBarMenu
-				v-if="!isSidebar"
-				:token="token"
-				@openBreakoutRoomsEditor="showBreakoutRoomsEditor = true" />
+				<!-- TopBar menu -->
+				<TopBarMenu
+					v-if="!isSidebar"
+					:token="token"
+					@openBreakoutRoomsEditor="showBreakoutRoomsEditor = true" />
+			</div>
 
 			<!-- Breakout rooms editor -->
 			<BreakoutRoomsEditor
 				v-if="showBreakoutRoomsEditor"
 				:token="token"
 				@close="showBreakoutRoomsEditor = false" />
-		</div>
+		</template>
 	</div>
 </template>
 
@@ -186,7 +189,7 @@ import { useActorStore } from '../../stores/actor.ts'
 import { useChatExtrasStore } from '../../stores/chatExtras.ts'
 import { useGroupwareStore } from '../../stores/groupware.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
-import { isClassifiedConversation } from '../../utils/conversation.ts'
+import { isChannelConversation, isClassifiedConversation } from '../../utils/conversation.ts'
 import { getStatusMessage } from '../../utils/userStatus.ts'
 
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
@@ -333,6 +336,7 @@ export default {
 			return this.getUserId && !this.isInCall && !this.isSidebar
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 				&& this.conversation.type !== CONVERSATION.TYPE.CHANGELOG
+				&& !isChannelConversation(this.conversation)
 		},
 
 		getUserId() {
@@ -397,6 +401,7 @@ export default {
 	--border-width: 1px;
 	display: flex;
 	flex-wrap: wrap;
+	flex-shrink: 0;
 	gap: 3px;
 	align-items: center;
 	justify-content: flex-end;
@@ -450,6 +455,22 @@ export default {
 	justify-content: flex-end;
 }
 
+.top-bar__controls {
+	display: flex;
+	gap: 3px;
+	align-items: center;
+
+	&,
+	& > :deep(.button-vue),
+	& > .top-bar__calendar-events,
+	& > .top-bar__classified,
+	.top-bar__calendar-events :deep(.v-popper),
+	.top-bar__calendar-events :deep(.button-vue) {
+		min-width: 0;
+		max-width: 100%;
+	}
+}
+
 .top-bar__icon-wrapper {
 	position: relative;
 	border-radius: var(--border-radius-pill);
@@ -486,7 +507,7 @@ export default {
 	display: flex;
 	align-items: center;
 	gap: var(--default-grid-baseline);
-	flex-shrink: 0;
+	min-width: var(--default-clickable-area);
 	padding: 0 calc(2 * var(--default-grid-baseline));
 	height: var(--default-clickable-area);
 	border: var(--border-width-input-focused) solid var(--color-element-error, var(--color-error));
@@ -495,6 +516,9 @@ export default {
 	white-space: nowrap;
 
 	&-label {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
 		font-weight: bold;
 	}
 }
@@ -506,8 +530,8 @@ export default {
 	overflow-x: hidden;
 	overflow-y: clip;
 	white-space: nowrap;
-	width: 0;
-	flex-grow: 1;
+	flex: 1 1 0;
+	min-width: 200px;
 	cursor: pointer;
 	&__text {
 		display: flex;
@@ -516,6 +540,7 @@ export default {
 		margin-inline-start: 8px;
 		justify-content: center;
 		width: 100%;
+		min-width: 0;
 		overflow: hidden;
 		// Text is guaranteed to be one line. Make line-height 20px to fit top bar
 		line-height: 20px;

@@ -168,6 +168,7 @@ import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
+import { isChannelConversation } from '../../utils/conversation.ts'
 
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const supportConversationCreationAll = hasTalkFeature('local', 'conversation-creation-all')
@@ -361,11 +362,15 @@ export default {
 		showBreakoutRoomsTab() {
 			return this.getUserId && !this.isOneToOne
 				&& !this.conversation.remoteServer // no breakout rooms support in federated conversations
+				&& !isChannelConversation(this.conversation)
 				&& (this.breakoutRoomsConfigured || this.conversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.FREE || this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM)
 		},
 
 		showParticipantsTab() {
-			return (this.getUserId || this.isGuestModerator) && (!this.isOneToOne || this.isInCall) && !this.isNoteToSelf
+			return (this.getUserId || this.isGuestModerator)
+				&& (!this.isOneToOne || this.isInCall)
+				&& !this.isNoteToSelf
+				&& (!isChannelConversation(this.conversation) || this.$store.getters.isModerator)
 		},
 
 		showSharedItemsTab() {

@@ -163,7 +163,7 @@ import {
 	showTalkFeatureHint,
 } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
-import { isClassifiedConversation } from '../../utils/conversation.ts'
+import { isChannelConversation, isClassifiedConversation } from '../../utils/conversation.ts'
 
 // FIXME Should use remote not local
 const matterbridgeEnabled = getTalkConfig('local', 'chat', 'matterbridge-enabled')
@@ -296,6 +296,7 @@ export default {
 				&& this.isLiveTranscriptionSupported
 				&& this.selfIsOwnerOrModerator
 				&& !this.isClassified
+				&& !this.isChannel
 		},
 
 		hintLiveTranscription() {
@@ -312,6 +313,7 @@ export default {
 				&& (getTalkConfig(this.token, 'call', 'breakout-rooms') || false)
 				&& this.conversation.type === CONVERSATION.TYPE.GROUP
 				&& !this.isClassified
+				&& !this.isChannel
 		},
 
 		recordingConsentAvailable() {
@@ -320,6 +322,7 @@ export default {
 				&& hasTalkFeature(this.token, 'recording-consent')
 				&& getTalkConfig(this.token, 'call', 'recording-consent') !== CONFIG.RECORDING_CONSENT.OFF
 				&& !this.isClassified
+				&& !this.isChannel
 		},
 
 		recordingConsentRequired() {
@@ -336,6 +339,10 @@ export default {
 
 		isClassified() {
 			return isClassifiedConversation(this.conversation)
+		},
+
+		isChannel() {
+			return isChannelConversation(this.conversation)
 		},
 	},
 

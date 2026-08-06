@@ -129,7 +129,7 @@ import { useSoundsStore } from '../../stores/sounds.js'
 import { useTalkHashStore } from '../../stores/talkHash.js'
 import { useTokenStore } from '../../stores/token.ts'
 import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.ts'
-import { hasExternalCallService, isConversationPhoneRoom } from '../../utils/conversation.ts'
+import { hasExternalCallService, isChannelConversation, isConversationPhoneRoom } from '../../utils/conversation.ts'
 import { messagePleaseReload } from '../../utils/talkDesktopUtils.ts'
 
 export default {
@@ -335,6 +335,7 @@ export default {
 			return (getTalkConfig(this.token, 'call', 'enabled') || hasExternalCallService(this.conversation))
 				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
 				&& this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
+				&& !isChannelConversation(this.conversation)
 				&& (!this.conversation.remoteServer || hasTalkFeature(this.token, 'federation-v2'))
 				&& !this.isInCall
 		},
