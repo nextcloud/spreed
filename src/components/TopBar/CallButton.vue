@@ -3,6 +3,205 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
+<script setup lang="ts">
+import axios from '@nextcloud/axios'
+import { showError } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { t } from '@nextcloud/l10n'
+import { generateOcsUrl } from '@nextcloud/router'
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import IconPhone from 'vue-material-design-icons/Phone.vue' // Filled used for non-silent calls
+import IconPhoneDialOutline from 'vue-material-design-icons/PhoneDialOutline.vue'
+import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
+import { useGetToken } from '../../composables/useGetToken.ts'
+import { useIsInCall } from '../../composables/useIsInCall.js'
+import { useJoinCall } from '../../composables/useJoinCall.ts'
+import { CALL, CONVERSATION } from '../../constants.ts'
+import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { useCallViewStore } from '../../stores/callView.ts'
+import { useSettingsStore } from '../../stores/settings.ts'
+import { useSoundsStore } from '../../stores/sounds.js'
+import { useTalkHashStore } from '../../stores/talkHash.js'
+import { useTokenStore } from '../../stores/token.ts'
+import { isAxiosErrorResponse } from '../../types/guards.ts'
+import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.ts'
+import { hasExternalCallService, isConversationPhoneRoom } from '../../utils/conversation.ts'
+import { messagePleaseReload } from '../../utils/talkDesktopUtils.ts'
+
+const props = defineProps<{
+	disabled?: boolean
+	/** Whether the component is used in MediaSettings or not (click directly starts a call) */
+	isMediaSettings?: boolean
+	/** Whether the call should trigger a notifications and sound for other participants or not */
+	silentCall?: boolean
+	/** Whether to trigger recording to start with the call */
+	isRecordingFromStart?: boolean
+	/** Pass through of recording consent */
+	recordingConsentGiven?: boolean
+	/** Whether to use text on button (e.g. at sidebar) */
+	hideText?: boolean
+	/** Whether to use text on button at mobile view */
+	shrinkOnMobile?: boolean
+}>()
+
+const { joinCall } = useJoinCall()
+
+const tokenStore = useTokenStore()
+const isInCall = useIsInCall()
+const callViewStore = useCallViewStore()
+const talkHashStore = useTalkHashStore()
+const settingsStore = useSettingsStore()
+const soundsStore = useSoundsStore()
+
+const router = useRouter()
+const vuexStore = useStore()
+
+const token = useGetToken()
+const isMobile = useIsMobile()
+
+const loading = ref(false)
+
+const conversation = computed(() => vuexStore.getters.conversation(token.value) || vuexStore.getters.dummyConversation)
+const showButtonText = computed(() => !props.hideText && (!isMobile.value || !props.shrinkOnMobile))
+const hasCall = computed(() => conversation.value.hasCall)
+const isPhoneRoom = computed(() => isConversationPhoneRoom(conversation.value))
+const isInLobby = computed(() => vuexStore.getters.isInLobby)
+const isJoiningCall = computed(() => vuexStore.getters.isJoiningCall(token.value))
+const isNextcloudTalkHashDirty = computed(() => {
+	return talkHashStore.isNextcloudTalkHashDirty
+		// @ts-expect-error talkHashStore is js
+		|| talkHashStore.isNextcloudTalkProxyHashDirty[token.value]
+})
+
+const showStartCallButton = computed(() => {
+	return (getTalkConfig(token.value, 'call', 'enabled') || hasExternalCallService(conversation.value))
+		&& conversation.value.type !== CONVERSATION.TYPE.NOTE_TO_SELF
+		&& conversation.value.readOnly === CONVERSATION.STATE.READ_WRITE
+		&& (!conversation.value.remoteServer || hasTalkFeature(token.value, 'federation-v2'))
+		&& !isInCall.value
+})
+const startCallButtonDisabled = computed(() => {
+	return props.disabled
+		|| (callViewStore.callHasJustEnded && !hasCall.value)
+		|| (!conversation.value.canStartCall && !hasExternalCallService(conversation.value) && !hasCall.value)
+		|| isInLobby.value
+		|| conversation.value.readOnly
+		|| isNextcloudTalkHashDirty.value
+		|| !tokenStore.currentConversationIsJoined
+		|| blockCalls
+})
+const showRecordingWarning = computed(() => {
+	return [
+		CALL.RECORDING.VIDEO_STARTING,
+		CALL.RECORDING.AUDIO_STARTING,
+		CALL.RECORDING.VIDEO,
+		CALL.RECORDING.AUDIO,
+	].includes(conversation.value.callRecording)
+	|| conversation.value.recordingConsent === CALL.RECORDING_CONSENT.ENABLED
+})
+
+const startCallLabel = computed(() => {
+	if (hasCall.value && !isInLobby.value) {
+		return t('spreed', 'Join call')
+	}
+	if (isJoiningCall.value) {
+		return t('spreed', 'Connecting …')
+	}
+	return props.silentCall ? t('spreed', 'Start call silently') : t('spreed', 'Start call')
+})
+const startCallTitle = computed(() => {
+	if (isNextcloudTalkHashDirty.value) {
+		return t('spreed', 'The server was updated, you cannot start or join a call.') + ' ' + messagePleaseReload
+	}
+	if (callViewStore.callHasJustEnded) {
+		return t('spreed', 'This call has just ended')
+	}
+	if (blockCalls) {
+		return unsupportedWarning
+	}
+	if (!conversation.value.canStartCall && !hasCall.value) {
+		return t('spreed', 'You will be able to join the call only after a moderator starts it.')
+	}
+	return ''
+})
+
+watch(token, (newValue, oldValue) => {
+	callViewStore.resetCallHasJustEnded()
+	talkHashStore.resetTalkProxyHashDirty(oldValue)
+})
+
+/**
+ * Start or join the call
+ */
+async function handleJoinCall() {
+	loading.value = true
+	await joinCall(token.value, {
+		silent: hasCall.value ? true : props.silentCall,
+		recordingConsent: props.recordingConsentGiven,
+		shouldStartRecording: props.isRecordingFromStart,
+	})
+	loading.value = false
+}
+
+/**
+ * Run pre-checks before starting/joining the call
+ */
+function handleClick() {
+	if (hasExternalCallService(conversation.value)) {
+		// Another service is in charge, trigger iframe rendering in MainView
+		handleExternalCall()
+		return
+	}
+
+	// Create audio objects as a result of a user interaction to allow playing sounds in Safari
+	soundsStore.initAudioObjects()
+
+	if (props.isMediaSettings || isPhoneRoom.value) {
+		handleJoinCall()
+		return
+	}
+
+	if (showRecordingWarning.value || settingsStore.showMediaSettings) {
+		emit('talk:media-settings:show')
+	} else {
+		handleJoinCall()
+	}
+}
+
+/**
+ * Initiate a call at external service (iframe embedded)
+ */
+async function handleExternalCall() {
+	try {
+		loading.value = true
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/external-call', { token: token.value }))
+
+		// Check for successful response (200, 302, 303)
+		if ([200, 302, 303].includes(response.status)) {
+			const callUrl = response.data.ocs.data.url
+			if (callUrl) {
+				callViewStore.setExternalCallServiceUrl(callUrl)
+			}
+			callViewStore.setForceCallView(true)
+		}
+	} catch (error) {
+		if (isAxiosErrorResponse(error) && error.response?.status === 403) {
+			router.push({ name: 'forbidden' })
+			return
+		}
+		console.error('Failed to initialize external call service:', error)
+		showError(t('spreed', 'Connection failed'))
+	} finally {
+		loading.value = false
+	}
+}
+</script>
+
 <template>
 	<NcButton
 		v-if="showStartCallButton"
@@ -22,463 +221,7 @@
 			{{ startCallLabel }}
 		</template>
 	</NcButton>
-
-	<NcButton
-		v-else-if="showLeaveCallButton && canEndForAll && isPhoneRoom"
-		:aria-label="endCallLabel"
-		class="leave-call"
-		variant="error"
-		:disabled="loading"
-		@click="leaveCall(true)">
-		<template #icon>
-			<NcLoadingIcon v-if="loading" :size="20" />
-			<IconPhoneHangupOutline v-else :size="20" />
-		</template>
-		<template v-if="showButtonText" #default>
-			{{ endCallLabel }}
-		</template>
-	</NcButton>
-	<NcButton
-		v-else-if="showLeaveCallButton && (!canEndForAll || isVoiceRoom) && !isBreakoutRoom"
-		:aria-label="leaveCallLabel"
-		class="leave-call"
-		:variant="isScreensharing ? 'tertiary' : 'error'"
-		:disabled="loading"
-		@click="leaveCall(false)">
-		<template #icon>
-			<NcLoadingIcon v-if="loading" :size="20" />
-			<IconPhoneHangupOutline v-else :size="20" />
-		</template>
-		<template v-if="showButtonText" #default>
-			{{ leaveCallLabel }}
-		</template>
-	</NcButton>
-	<NcActions
-		v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
-		class="leave-call leave-call-actions--split"
-		:disabled="loading"
-		:forceName="showButtonText"
-		placement="top-end"
-		:aria-label="leaveCallActionsLabel"
-		:inline="1"
-		:variant="leaveCallButtonVariant">
-		<template #icon>
-			<IconChevronUp :size="20" />
-		</template>
-		<NcActionButton
-			v-if="isBreakoutRoom"
-			:aria-label="backToMainRoomLabel"
-			@click="switchToParentRoom">
-			<template #icon>
-				<IconArrowLeft class="bidirectional-icon" :size="20" />
-			</template>
-			<template v-if="showButtonText" #default>
-				{{ backToMainRoomLabel }}
-			</template>
-		</NcActionButton>
-		<NcActionButton
-			class="leave-call-button--split"
-			:aria-label="leaveCallLabel"
-			@click="leaveCall(false)">
-			<template #icon>
-				<NcLoadingIcon v-if="loading" :size="20" />
-				<IconPhoneHangupOutline v-else :size="20" />
-			</template>
-			<template v-if="showButtonText || isBreakoutRoom" #default>
-				{{ leaveCallLabel }}
-			</template>
-		</NcActionButton>
-		<NcActionButton v-if="canEndForAll && !isVoiceRoom" @click="leaveCall(true)">
-			<template #icon>
-				<IconPhoneOffOutline :size="20" />
-			</template>
-			{{ t('spreed', 'End call for everyone') }}
-		</NcActionButton>
-	</NcActions>
 </template>
-
-<script>
-import axios from '@nextcloud/axios'
-import { showError } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
-import { generateOcsUrl } from '@nextcloud/router'
-import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
-import NcActionButton from '@nextcloud/vue/components/NcActionButton'
-import NcActions from '@nextcloud/vue/components/NcActions'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
-import IconPhone from 'vue-material-design-icons/Phone.vue' // Filled used for non-silent calls
-import IconPhoneDialOutline from 'vue-material-design-icons/PhoneDialOutline.vue'
-import IconPhoneHangupOutline from 'vue-material-design-icons/PhoneHangupOutline.vue'
-import IconPhoneOffOutline from 'vue-material-design-icons/PhoneOffOutline.vue'
-import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
-import { useGetToken } from '../../composables/useGetToken.ts'
-import { useIsInCall } from '../../composables/useIsInCall.js'
-import { useJoinCall } from '../../composables/useJoinCall.ts'
-import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.ts'
-import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
-import { EventBus } from '../../services/EventBus.ts'
-import { useActorStore } from '../../stores/actor.ts'
-import { useBreakoutRoomsStore } from '../../stores/breakoutRooms.ts'
-import { useCallViewStore } from '../../stores/callView.ts'
-import { useSettingsStore } from '../../stores/settings.ts'
-import { useSoundsStore } from '../../stores/sounds.js'
-import { useTalkHashStore } from '../../stores/talkHash.js'
-import { useTokenStore } from '../../stores/token.ts'
-import { blockCalls, unsupportedWarning } from '../../utils/browserCheck.ts'
-import { hasExternalCallService, isConversationPhoneRoom } from '../../utils/conversation.ts'
-import { messagePleaseReload } from '../../utils/talkDesktopUtils.ts'
-
-export default {
-	name: 'CallButton',
-
-	components: {
-		NcActions,
-		NcActionButton,
-		NcButton,
-		// Icons
-		IconArrowLeft,
-		IconChevronUp,
-		IconPhone,
-		IconPhoneDialOutline,
-		IconPhoneHangupOutline,
-		IconPhoneOffOutline,
-		IconPhoneOutline,
-		NcLoadingIcon,
-	},
-
-	props: {
-		disabled: {
-			type: Boolean,
-			default: false,
-		},
-
-		/**
-		 * Whether the component is used in MediaSettings or not
-		 * (when click will directly start a call)
-		 */
-		isMediaSettings: {
-			type: Boolean,
-			default: false,
-		},
-
-		/**
-		 * Whether the call should trigger a notifications and sound
-		 * for other participants or not
-		 */
-		silentCall: {
-			type: Boolean,
-			default: false,
-		},
-
-		isRecordingFromStart: {
-			type: Boolean,
-			default: false,
-		},
-
-		recordingConsentGiven: {
-			type: Boolean,
-			default: false,
-		},
-
-		isScreensharing: {
-			type: Boolean,
-			default: false,
-		},
-
-		/**
-		 * Whether to use text on button (e.g. at sidebar)
-		 */
-		hideText: {
-			type: Boolean,
-			default: false,
-		},
-
-		/**
-		 * Whether to use text on button at mobile view
-		 */
-		shrinkOnMobile: {
-			type: Boolean,
-			default: false,
-		},
-	},
-
-	setup() {
-		const { joinCall } = useJoinCall()
-		return {
-			actorStore: useActorStore(),
-			tokenStore: useTokenStore(),
-			token: useGetToken(),
-			isInCall: useIsInCall(),
-			breakoutRoomsStore: useBreakoutRoomsStore(),
-			callViewStore: useCallViewStore(),
-			talkHashStore: useTalkHashStore(),
-			settingsStore: useSettingsStore(),
-			soundsStore: useSoundsStore(),
-			isMobile: useIsMobile(),
-			joinCall,
-		}
-	},
-
-	data() {
-		return {
-			loading: false,
-		}
-	},
-
-	computed: {
-		isNextcloudTalkHashDirty() {
-			return this.talkHashStore.isNextcloudTalkHashDirty
-				|| this.talkHashStore.isNextcloudTalkProxyHashDirty[this.token]
-		},
-
-		conversation() {
-			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
-		},
-
-		showButtonText() {
-			return !this.hideText && (!this.isMobile || !this.shrinkOnMobile)
-		},
-
-		showRecordingWarning() {
-			return [
-				CALL.RECORDING.VIDEO_STARTING,
-				CALL.RECORDING.AUDIO_STARTING,
-				CALL.RECORDING.VIDEO,
-				CALL.RECORDING.AUDIO,
-			].includes(this.conversation.callRecording)
-			|| this.conversation.recordingConsent === CALL.RECORDING_CONSENT.ENABLED
-		},
-
-		showMediaSettings() {
-			return this.settingsStore.showMediaSettings
-		},
-
-		participantType() {
-			return this.conversation.participantType
-		},
-
-		canEndForAll() {
-			return (this.participantType === PARTICIPANT.TYPE.OWNER
-				|| this.participantType === PARTICIPANT.TYPE.MODERATOR
-				|| this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
-			&& !this.isBreakoutRoom
-		},
-
-		hasCall() {
-			return this.conversation.hasCall
-		},
-
-		startCallButtonDisabled() {
-			return this.disabled
-				|| (this.callViewStore.callHasJustEnded && !this.hasCall)
-				|| (!this.conversation.canStartCall && !hasExternalCallService(this.conversation) && !this.hasCall)
-				|| this.isInLobby
-				|| this.conversation.readOnly
-				|| this.isNextcloudTalkHashDirty
-				|| !this.tokenStore.currentConversationIsJoined
-				|| blockCalls
-		},
-
-		leaveCallLabel() {
-			return t('spreed', 'Leave call')
-		},
-
-		backToMainRoomLabel() {
-			return t('spreed', 'Back to main room')
-		},
-
-		leaveCallActionsLabel() {
-			return t('spreed', 'More actions')
-		},
-
-		startCallLabel() {
-			if (this.hasCall && !this.isInLobby) {
-				return t('spreed', 'Join call')
-			}
-
-			if (this.isJoiningCall) {
-				return t('spreed', 'Connecting …')
-			}
-
-			return this.silentCall ? t('spreed', 'Start call silently') : t('spreed', 'Start call')
-		},
-
-		endCallLabel() {
-			return t('spreed', 'End call')
-		},
-
-		startCallTitle() {
-			if (this.isNextcloudTalkHashDirty) {
-				return t('spreed', 'The server was updated, you cannot start or join a call.') + ' ' + messagePleaseReload
-			}
-
-			if (this.callViewStore.callHasJustEnded) {
-				return t('spreed', 'This call has just ended')
-			}
-
-			if (blockCalls) {
-				return unsupportedWarning
-			}
-
-			if (!this.conversation.canStartCall && !this.hasCall) {
-				return t('spreed', 'You will be able to join the call only after a moderator starts it.')
-			}
-
-			return ''
-		},
-
-		showStartCallButton() {
-			return (getTalkConfig(this.token, 'call', 'enabled') || hasExternalCallService(this.conversation))
-				&& this.conversation.type !== CONVERSATION.TYPE.NOTE_TO_SELF
-				&& this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
-				&& (!this.conversation.remoteServer || hasTalkFeature(this.token, 'federation-v2'))
-				&& !this.isInCall
-		},
-
-		showLeaveCallButton() {
-			return this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
-				&& this.isInCall
-		},
-
-		isBreakoutRoom() {
-			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.BREAKOUT_ROOM
-		},
-
-		isPhoneRoom() {
-			return isConversationPhoneRoom(this.conversation)
-		},
-
-		isInLobby() {
-			return this.$store.getters.isInLobby
-		},
-
-		isJoiningCall() {
-			return this.$store.getters.isJoiningCall(this.token)
-		},
-
-		leaveCallButtonVariant() {
-			if (this.isScreensharing) {
-				return 'tertiary'
-			}
-			return this.isBreakoutRoom ? 'primary' : 'error'
-		},
-
-		isVoiceRoom() {
-			return Boolean(this.conversation.attributes & CONVERSATION.ATTRIBUTE.VOICE_ROOM)
-		},
-	},
-
-	watch: {
-		token(newValue, oldValue) {
-			this.callViewStore.resetCallHasJustEnded()
-			this.talkHashStore.resetTalkProxyHashDirty(oldValue)
-		},
-	},
-
-	methods: {
-		t,
-
-		async handleJoinCall() {
-			this.loading = true
-			await this.joinCall(this.token, {
-				silent: this.hasCall ? true : this.silentCall,
-				recordingConsent: this.recordingConsentGiven,
-				shouldStartRecording: this.isRecordingFromStart,
-			})
-			this.loading = false
-		},
-
-		async leaveCall(endMeetingForAll = false) {
-			if (endMeetingForAll) {
-				console.info('End meeting for everyone')
-			} else {
-				console.info('Leaving call')
-			}
-
-			if (this.isVoiceRoom) {
-				this.$router.push({ name: 'root' })
-				// Call ending is handled in App.vue
-				return
-			}
-
-			// Remove selected participant
-			this.callViewStore.setSelectedVideoPeerId(null)
-			this.loading = true
-
-			// Open navigation
-			if (!this.isMobile) {
-				emit('toggle-navigation', {
-					open: true,
-				})
-			}
-			await this.$store.dispatch('leaveCall', {
-				token: this.token,
-				participantIdentifier: this.actorStore.participantIdentifier,
-				all: endMeetingForAll,
-			})
-			this.loading = false
-		},
-
-		handleClick() {
-			if (hasExternalCallService(this.conversation)) {
-				// Another service is in charge, trigger iframe rendering in MainView
-				this.handleExternalCall()
-				return
-			}
-
-			// Create audio objects as a result of a user interaction to allow playing sounds in Safari
-			this.soundsStore.initAudioObjects()
-
-			if (this.isMediaSettings || this.isPhoneRoom) {
-				this.handleJoinCall()
-				return
-			}
-
-			if (this.showRecordingWarning || this.showMediaSettings) {
-				emit('talk:media-settings:show')
-			} else {
-				this.handleJoinCall()
-			}
-		},
-
-		async handleExternalCall() {
-			try {
-				this.loading = true
-				const response = await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/external-call', { token: this.token }))
-
-				// Check for successful response (200, 302, 303)
-				if ([200, 302, 303].includes(response.status)) {
-					const callUrl = response.data.ocs.data.url
-					if (callUrl) {
-						this.callViewStore.setExternalCallServiceUrl(callUrl)
-					}
-					this.callViewStore.setForceCallView(true)
-				}
-			} catch (error) {
-				if (error.response?.status === 403) {
-					this.skipLeaveWarning = true
-					this.$router.push({ name: 'forbidden' })
-					return
-				}
-				console.error('Failed to initialize external call service:', error)
-				showError(t('spreed', 'Connection failed'))
-			} finally {
-				this.loading = false
-			}
-		},
-
-		async switchToParentRoom() {
-			EventBus.emit('switch-to-conversation', {
-				token: this.breakoutRoomsStore.getParentRoomToken(this.token),
-			})
-		},
-	},
-}
-</script>
 
 <style lang="scss" scoped>
 .join-call.button-vue--success {
@@ -503,32 +246,4 @@ export default {
 		background-color: var(--join-call-border-color);
 	}
 }
-
-.leave-call.button-vue--error,
-.leave-call :deep(.button-vue--error) {
-	// Overwrite default button colors for leaving call
-	background-color: #FF3333 !important; // Nextcloud 31 --color-error
-	color: var(--color-primary-text) !important;
-
-	&:hover:not(:disabled) {
-		background-color: var(--color-error-hover) !important;
-	}
-}
-
-.leave-call-actions--split {
-	gap: 1px !important;
-}
-
-.leave-call-actions--split :deep(.action-item--single) {
-	border-start-end-radius: 2px;
-	border-end-end-radius: 2px;
-}
-
-.leave-call-actions--split :deep(.action-item__menutoggle) {
-	--button-size: var(--clickable-area-small);
-	height: var(--default-clickable-area);
-	border-start-start-radius: 2px;
-	border-end-start-radius: 2px;
-}
-
 </style>
