@@ -26570,6 +26570,7 @@
                                                             "enum": [
                                                                 "breakout-room",
                                                                 "call",
+                                                                "classified",
                                                                 "value"
                                                             ]
                                                         }

@@ -43,6 +43,108 @@ Feature: conversation-4/classified
     And user "participant1" sends message "Message 1" to room "classified" with 201
     And user "participant1" can not request summary for "classified" starting from "Message 1" with 400 (v1)
 
+  Scenario: A classified conversation never requires recording consent
+    # Classified conversations can not be recorded at all, so there is nothing to
+    # consent to and the administrator setting must not leak into them.
+    Given recording server is started
+    And the following "spreed" app config is set
+      | recording_consent | 1 |
+    And user "participant1" creates room "classified" (v4)
+      | roomType | 2 |
+      | roomName | classified |
+      | preset   | classified |
+    And user "participant1" creates room "regular" (v4)
+      | roomType | 2 |
+      | roomName | regular |
+    # The administrator setting applies to a regular conversation …
+    Then user "participant1" is participant of room "regular" (v4)
+      | id      | type | recordingConsent |
+      | regular | 2    | 1                |
+    And user "participant1" gets room "regular" with 200 (v4)
+      | recordingConsent | 1 |
+    # … but never to a classified one
+    And user "participant1" is participant of room "classified" (v4)
+      | id         | type | recordingConsent |
+      | classified | 2    | 0                |
+    And user "participant1" gets room "classified" with 200 (v4)
+      | recordingConsent | 0 |
+
+  Scenario: A moderator can not enable recording consent in a classified conversation
+    # With the optional setting a moderator can turn the consent on per
+    # conversation, but a classified conversation can not be recorded at all.
+    Given recording server is started
+    And the following "spreed" app config is set
+      | recording_consent | 2 |
+    And user "participant1" creates room "classified" (v4)
+      | roomType | 2 |
+      | roomName | classified |
+      | preset   | classified |
+    And user "participant1" creates room "regular" (v4)
+      | roomType | 2 |
+      | roomName | regular |
+    # Enabling the consent works in a regular conversation …
+    When user "participant1" sets the recording consent to 1 for room "regular" with 200 (v4)
+    Then user "participant1" is participant of room "regular" (v4)
+      | id      | type | recordingConsent |
+      | regular | 2    | 1                |
+    # … but is rejected in a classified one
+    When user "participant1" sets the recording consent to 1 for room "classified" with 400 (v4)
+    Then user "participant1" is participant of room "classified" (v4)
+      | id         | type | recordingConsent |
+      | classified | 2    | 0                |
+    And user "participant1" gets room "classified" with 200 (v4)
+      | recordingConsent | 0 |
+    # Requesting the value it already has stays a no-op
+    And user "participant1" sets the recording consent to 0 for room "classified" with 200 (v4)
+
+  Scenario: Recording consent requested during creation is never required in a classified conversation
+    Given recording server is started
+    And the following "spreed" app config is set
+      | recording_consent | 2 |
+    And user "participant1" creates room "classified" (v4)
+      | roomType         | 2 |
+      | roomName         | classified |
+      | preset           | classified |
+      | recordingConsent | 1 |
+    Then user "participant1" is participant of room "classified" (v4)
+      | id         | type | recordingConsent |
+      | classified | 2    | 0                |
+    And user "participant1" gets room "classified" with 200 (v4)
+      | recordingConsent | 0 |
+
+  Scenario: Joining a call in a classified conversation never requires consent
+    # The administrator requires the consent for all conversations, so joining a
+    # regular call without agreeing is rejected, while the classified call can be
+    # joined right away as it can not be recorded.
+    Given recording server is started
+    And the following "spreed" app config is set
+      | recording_consent | 1 |
+    And user "participant1" creates room "classified" (v4)
+      | roomType | 2 |
+      | roomName | classified |
+      | preset   | classified |
+    And user "participant1" creates room "regular" (v4)
+      | roomType | 2 |
+      | roomName | regular |
+    And user "participant1" joins room "regular" with 200 (v4)
+    When user "participant1" joins call "regular" with 400 (v4)
+    And user "participant1" joins call "regular" with 200 (v4)
+      | recordingConsent | 1 |
+    And user "participant1" leaves call "regular" with 200 (v4)
+    And user "participant1" leaves room "regular" with 200 (v4)
+    And user "participant1" joins room "classified" with 200 (v4)
+    Then user "participant1" joins call "classified" with 200 (v4)
+    And user "participant1" leaves call "classified" with 200 (v4)
+    # Agreeing anyway does not record a consent for the classified conversation,
+    # so only the consent of the regular conversation is listed
+    And user "participant1" joins call "classified" with 200 (v4)
+      | recordingConsent | 1 |
+    And user "participant1" leaves call "classified" with 200 (v4)
+    And user "participant1" leaves room "classified" with 200 (v4)
+    And the following recording consent is recorded for user "participant1"
+      | token   | actorType | actorId      |
+      | regular | users     | participant1 |
+
   Scenario: Phone numbers can not be added to a classified conversation
     # SIP dial-out is fully configured and allowed for the user here, so the
     # rejection can only come from the conversation being classified. Without a

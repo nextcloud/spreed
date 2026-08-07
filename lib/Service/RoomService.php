@@ -479,6 +479,10 @@ class RoomService {
 			return;
 		}
 
+		if ($room->isClassified()) {
+			throw new RecordingConsentException(RecordingConsentException::REASON_CLASSIFIED);
+		}
+
 		if (!in_array($recordingConsent, [RecordingService::CONSENT_REQUIRED_NO, RecordingService::CONSENT_REQUIRED_YES], true)) {
 			throw new RecordingConsentException(RecordingConsentException::REASON_VALUE);
 		}

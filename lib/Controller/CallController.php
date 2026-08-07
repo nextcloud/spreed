@@ -303,6 +303,9 @@ class CallController extends AEnvironmentAwareOCSController {
 	 *                                   not given
 	 */
 	protected function validateRecordingConsent(bool $recordingConsent): void {
+		if ($this->room->isClassified()) {
+			return;
+		}
 		if (!$recordingConsent && $this->talkConfig->recordingConsentRequired() !== RecordingService::CONSENT_REQUIRED_NO) {
 			if ($this->talkConfig->recordingConsentRequired() === RecordingService::CONSENT_REQUIRED_YES) {
 				throw new \InvalidArgumentException();

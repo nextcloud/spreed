@@ -12,6 +12,7 @@ class RecordingConsentException extends \InvalidArgumentException {
 	public const REASON_BREAKOUT_ROOM = 'breakout-room';
 	public const REASON_CALL = 'call';
 	public const REASON_VALUE = 'value';
+	public const REASON_CLASSIFIED = 'classified';
 
 	/**
 	 * @param self::REASON_* $reason
