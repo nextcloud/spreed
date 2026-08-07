@@ -30,9 +30,18 @@
 
 		<template #name>
 			<!-- First line: participant's name and type -->
-			<span class="participant__user" :title="userNameTitle">
-				<span class="participant__user-name">{{ computedName }}</span>
-				<span v-if="showModeratorLabel" class="participant__user-badge">({{ t('spreed', 'moderator') }})</span>
+			<span class="participant__user">
+				<span class="participant__user-name" :title="userNameTitle">{{ computedName }}</span>
+				<IconCrownOutline
+					v-if="showOwnerIcon"
+					class="participant__user-icon"
+					:size="16"
+					:title="ownerIconLabel" />
+				<IconShieldOutline
+					v-else-if="showModeratorIcon"
+					class="participant__user-icon"
+					:size="16"
+					:title="moderatorIconLabel" />
 				<span v-if="isBridgeBotUser" class="participant__user-badge">({{ t('spreed', 'bot') }})</span>
 				<span v-if="isGuestActor || isEmailActor" class="participant__user-badge">({{ t('spreed', 'guest') }})</span>
 				<span v-if="!isSelf && isLobbyEnabled && !canSkipLobby" class="participant__user-badge">({{ t('spreed', 'in the lobby') }})</span>
@@ -485,12 +494,19 @@ export default {
 	setup() {
 		const participantActivityStore = useParticipantActivityStore()
 
+		// TRANSLATORS: Conversation owner, participant with high-level permissions
+		const ownerIconLabel = t('spreed', 'Owner')
+		// TRANSLATORS: Conversation moderator, participant with elevated permissions
+		const moderatorIconLabel = t('spreed', 'Moderator')
+
 		return {
 			IconMicrophoneOffOutline,
 			isInCall: useIsInCall(),
 			actorStore: useActorStore(),
 			token: useGetToken(),
 			participantActivityStore,
+			ownerIconLabel,
+			moderatorIconLabel,
 		}
 	},
 
@@ -520,13 +536,19 @@ export default {
 
 		userNameTitle() {
 			let text = this.computedName
-			if (this.showModeratorLabel) {
+			if (this.showOwnerIcon) {
+				// TRANSLATORS: Conversation owner, participant with high-level permissions
+				text += ' (' + t('spreed', 'owner') + ')'
+			} else if (this.showModeratorIcon) {
+				// TRANSLATORS: Conversation moderator, participant with elevated permissions
 				text += ' (' + t('spreed', 'moderator') + ')'
 			}
 			if (this.isBridgeBotUser) {
+				// TRANSLATORS: Conversation bot, added by administrator/moderator, with certain functionality
 				text += ' (' + t('spreed', 'bot') + ')'
 			}
 			if (this.isGuestActor || this.isEmailActor) {
+				// TRANSLATORS: Conversation guest, joined by public link, with limited functionality
 				text += ' (' + t('spreed', 'guest') + ')'
 			}
 			return text
@@ -769,9 +791,25 @@ export default {
 			}
 		},
 
-		showModeratorLabel() {
+		isOwner() {
+			return this.participantType === PARTICIPANT.TYPE.OWNER
+		},
+
+		/**
+		 * Rank is only marked in conversations that actually have ranks. Both
+		 * participants of a one-to-one conversation are owners by design.
+		 */
+		showRoleIcon() {
 			return this.isModerator
 				&& ![CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER, CONVERSATION.TYPE.CHANGELOG].includes(this.conversation.type)
+		},
+
+		showOwnerIcon() {
+			return this.showRoleIcon && this.isOwner
+		},
+
+		showModeratorIcon() {
+			return this.showRoleIcon && !this.isOwner
 		},
 
 		canBeModerated() {
@@ -837,8 +875,7 @@ export default {
 		},
 
 		canBeDemotedFromOwner() {
-			return this.canChangeOwnership
-				&& this.participantType === PARTICIPANT.TYPE.OWNER
+			return this.canChangeOwnership && this.isOwner
 		},
 
 		/**
@@ -1202,13 +1239,28 @@ export default {
 	&__user-badge {
 		color: var(--color-text-maxcontrast);
 		font-weight: 300;
-		padding-inline-start: var(--default-grid-baseline);
+		flex: 0 0 auto;
+	}
+
+	&__user-icon {
+		color: var(--color-text-maxcontrast);
+		// @nextcloud/vue styles .material-design-icon as display: flex, which would
+		// put the icon on its own line when it is part of the inline text flow
+		flex: 0 0 auto;
 	}
 
 	&__user {
+		display: flex;
+		align-items: center;
+		gap: var(--default-grid-baseline);
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	&__user-name {
+		min-width: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		white-space: nowrap;
 	}
 
 	&__status {

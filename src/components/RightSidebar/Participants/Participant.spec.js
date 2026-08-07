@@ -181,8 +181,10 @@ describe('ParticipantItem.vue', () => {
 			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, 'Alice(guest)'],
 			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.EMAILS, PARTICIPANT.TYPE.GUEST, 'Alice(guest)'],
 			['', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, 'Guest(guest)'],
-			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.MODERATOR, 'Alice(moderator)'],
-			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, 'Alice(moderator)(guest)'],
+			// The role is rendered as an icon, its accessible name is part of the text content
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.OWNER, 'AliceOwner'],
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.MODERATOR, 'AliceModerator'],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, 'AliceModerator(guest)'],
 			['Bot', ATTENDEE.BRIDGE_BOT_ID, ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.USER, 'Bot(bot)'],
 		]
 
@@ -191,9 +193,22 @@ describe('ParticipantItem.vue', () => {
 			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, 'Alice(guest)(in the lobby)'],
 			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.EMAILS, PARTICIPANT.TYPE.GUEST, 'Alice(guest)(in the lobby)'],
 			['', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, 'Guest(guest)(in the lobby)'],
-			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.MODERATOR, 'Alice(moderator)'],
-			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, 'Alice(moderator)(guest)'],
+			// Owners and moderators can skip the lobby, so they get no lobby badge
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.OWNER, 'AliceOwner'],
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.MODERATOR, 'AliceModerator'],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, 'AliceModerator(guest)'],
 		]
+
+		it.each([
+			[CONVERSATION.TYPE.ONE_TO_ONE],
+			[CONVERSATION.TYPE.ONE_TO_ONE_FORMER],
+			[CONVERSATION.TYPE.CHANGELOG],
+		])('does not render a role icon in conversation type \'%d\'', (conversationType) => {
+			// Both participants of a one-to-one conversation are owners by design
+			conversation.type = conversationType
+			const wrapper = mountParticipant({ ...participant, participantType: PARTICIPANT.TYPE.OWNER })
+			expect(wrapper.find('.participant__user').text()).toBe('Alice')
+		})
 
 		it.each(testCases)(
 			'renders name and badges for participant \'%s\' - \'%s\' - \'%s\' - \'%d\'',
