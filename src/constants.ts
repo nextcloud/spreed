@@ -262,6 +262,8 @@ export const MESSAGE = {
 		MODERATOR_DEMOTED: 'moderator_demoted',
 		MODERATOR_PROMOTED: 'moderator_promoted',
 		OBJECT_SHARED: 'object_shared',
+		OWNER_DEMOTED: 'owner_demoted',
+		OWNER_PROMOTED: 'owner_promoted',
 		PASSWORD_REMOVED: 'password_removed',
 		PASSWORD_SET: 'password_set',
 		PHONE_ADDED: 'phone_added',

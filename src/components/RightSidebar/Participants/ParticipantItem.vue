@@ -127,7 +127,17 @@
 				</template>
 				{{ attendeePin }}
 			</NcActionText>
-			<!-- Grant or revoke moderator permissions -->
+			<!-- Grant or revoke owner/moderator permissions -->
+			<NcActionButton
+				v-if="canBePromotedToOwner"
+				key="promote-owner"
+				closeAfterClick
+				@click="promoteToOwner">
+				<template #icon>
+					<IconCrownOutline :size="20" />
+				</template>
+				{{ t('spreed', 'Promote to owner') }}
+			</NcActionButton>
 			<NcActionButton
 				v-if="canBeDemoted"
 				key="demote-moderator"
@@ -144,10 +154,33 @@
 				closeAfterClick
 				@click="promoteToModerator">
 				<template #icon>
-					<IconCrownOutline :size="20" />
+					<IconShieldOutline :size="20" />
 				</template>
 				{{ t('spreed', 'Promote to moderator') }}
 			</NcActionButton>
+			<NcActionButton
+				v-if="canBeDemotedFromOwner"
+				key="demote-owner-to-moderator"
+				closeAfterClick
+				@click="demoteFromOwnerToModerator">
+				<template #icon>
+					<IconShieldOutline :size="20" />
+				</template>
+				{{ t('spreed', 'Demote from owner to moderator') }}
+			</NcActionButton>
+			<NcActionButton
+				v-if="canBeDemotedFromOwnerToUser"
+				key="demote-owner-to-user"
+				closeAfterClick
+				@click="demoteFromOwnerToUser">
+				<template #icon>
+					<IconAccountOutline :size="20" />
+				</template>
+				{{ t('spreed', 'Demote from owner to user') }}
+			</NcActionButton>
+
+			<NcActionSeparator v-if="canBeModerated && (canBePromoted || canBePromotedToOwner || canBeDemoted || canBeDemotedFromOwner || canBeDemotedFromOwnerToUser)" />
+
 			<NcActionButton
 				v-if="canBeModerated && isEmailActor"
 				key="resend-invitation"
@@ -365,6 +398,7 @@ import IconPhoneDialOutline from 'vue-material-design-icons/PhoneDialOutline.vue
 import IconPhoneHangupOutline from 'vue-material-design-icons/PhoneHangupOutline.vue'
 import IconPhoneInTalkOutline from 'vue-material-design-icons/PhoneInTalkOutline.vue'
 import IconPhonePausedOutline from 'vue-material-design-icons/PhonePausedOutline.vue'
+import IconShieldOutline from 'vue-material-design-icons/ShieldOutline.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import IconTune from 'vue-material-design-icons/Tune.vue'
 import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
@@ -427,6 +461,7 @@ export default {
 		IconPhoneInTalkOutline,
 		IconPhoneHangupOutline,
 		IconPhonePausedOutline,
+		IconShieldOutline,
 		IconTune,
 		IconVideoOutline,
 	},
@@ -667,6 +702,10 @@ export default {
 			return this.participantTypeIsModerator(this.currentParticipant.participantType)
 		},
 
+		selfIsOwner() {
+			return this.currentParticipant.participantType === PARTICIPANT.TYPE.OWNER
+		},
+
 		/**
 		 * For now the user status is not overwriting the online-offline status anymore
 		 * It felt too weird having users appear as offline but they are in the call or chat actively
@@ -758,6 +797,58 @@ export default {
 					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS)
 		},
 
+		supportOwnerPromotion() {
+			return hasTalkFeature(this.token, 'promote-demote-owner')
+		},
+
+		/**
+		 * Whether the owner level can be handed out in this conversation at all.
+		 * Mirrors ParticipantService::OWNER_CHANGE_ROOM_TYPES and
+		 * ParticipantService::OWNER_CHANGE_OBJECT_TYPES so the UI never offers an
+		 * action the server refuses.
+		 */
+		conversationSupportsOwners() {
+			return [CONVERSATION.TYPE.GROUP, CONVERSATION.TYPE.PUBLIC].includes(this.conversation.type)
+				&& [
+					CONVERSATION.OBJECT_TYPE.DEFAULT,
+					CONVERSATION.OBJECT_TYPE.CLASSIFIED,
+					CONVERSATION.OBJECT_TYPE.CLASSIFIED_PERSIST,
+					CONVERSATION.OBJECT_TYPE.EXTENDED,
+					CONVERSATION.OBJECT_TYPE.INSTANT_MEETING,
+				].includes(this.conversation.objectType ?? CONVERSATION.OBJECT_TYPE.DEFAULT)
+		},
+
+		/**
+		 * Only owners can hand out and take away the owner level, and only for
+		 * regular users. Owners can step down themselves, but only to moderator.
+		 */
+		canChangeOwnership() {
+			return this.supportOwnerPromotion
+				&& this.selfIsOwner
+				&& this.conversationSupportsOwners
+				&& this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
+				&& !this.isBridgeBotUser
+		},
+
+		canBePromotedToOwner() {
+			return this.canChangeOwnership
+				&& !this.isSelf
+				&& [PARTICIPANT.TYPE.USER, PARTICIPANT.TYPE.USER_SELF_JOINED, PARTICIPANT.TYPE.MODERATOR].includes(this.participantType)
+		},
+
+		canBeDemotedFromOwner() {
+			return this.canChangeOwnership
+				&& this.participantType === PARTICIPANT.TYPE.OWNER
+		},
+
+		/**
+		 * Owners can only step down to moderator, so they do not lock themselves
+		 * out of the owner-only settings.
+		 */
+		canBeDemotedFromOwnerToUser() {
+			return this.canBeDemotedFromOwner && !this.isSelf
+		},
+
 		supportBanV1() {
 			return hasTalkFeature(this.token, 'ban-v1')
 		},
@@ -775,7 +866,7 @@ export default {
 		},
 
 		showParticipantActions() {
-			return this.canBeModerated || this.canSendCallNotification
+			return this.canBeModerated || this.canSendCallNotification || this.canBePromotedToOwner || this.canBeDemotedFromOwner
 		},
 
 		preloadedUserStatus() {
@@ -853,6 +944,47 @@ export default {
 				token: this.token,
 				attendeeId: this.attendeeId,
 			})
+		},
+
+		async promoteToOwner() {
+			try {
+				await this.$store.dispatch('promoteToModerator', {
+					token: this.token,
+					attendeeId: this.attendeeId,
+					participantType: PARTICIPANT.TYPE.OWNER,
+				})
+			} catch (error) {
+				this.showParticipantTypeError(error)
+			}
+		},
+
+		async demoteFromOwnerToModerator() {
+			await this.demoteFromOwner(PARTICIPANT.TYPE.MODERATOR)
+		},
+
+		async demoteFromOwnerToUser() {
+			await this.demoteFromOwner(PARTICIPANT.TYPE.USER)
+		},
+
+		async demoteFromOwner(participantType) {
+			try {
+				await this.$store.dispatch('demoteFromModerator', {
+					token: this.token,
+					attendeeId: this.attendeeId,
+					participantType,
+				})
+			} catch (error) {
+				this.showParticipantTypeError(error)
+			}
+		},
+
+		showParticipantTypeError(error) {
+			console.error(error)
+			if (error?.response?.data?.ocs?.data?.error === 'last-moderator') {
+				showError(t('spreed', 'The last moderator of a conversation can not be demoted'))
+			} else {
+				showError(t('spreed', 'Could not change the type of the participant'))
+			}
 		},
 
 		async resendInvitation() {
