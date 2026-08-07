@@ -22,6 +22,7 @@ use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\GuestImportException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\ParticipantProperty\ParticipantTypeException;
 use OCA\Talk\Exceptions\ParticipantProperty\PermissionsException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\RoomProperty\CreationException;
@@ -1787,7 +1788,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return $this->removeSelfFromRoomLogic($this->room, $targetParticipant);
 		}
 
-		if ($targetParticipant->getAttendee()->getParticipantType() === Participant::OWNER) {
+		if ($targetParticipant->isOwner()) {
 			return new DataResponse(['error' => 'owner'], Http::STATUS_FORBIDDEN);
 		}
 
@@ -2062,7 +2063,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function preserveConversation(): DataResponse {
-		if ($this->participant->getAttendee()->getParticipantType() !== Participant::OWNER) {
+		if (!$this->participant->isOwner()) {
 			return new DataResponse(['error' => 'permissions'], Http::STATUS_FORBIDDEN);
 		}
 
@@ -2087,7 +2088,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function unpreserveConversation(): DataResponse {
-		if ($this->participant->getAttendee()->getParticipantType() !== Participant::OWNER) {
+		if (!$this->participant->isOwner()) {
 			return new DataResponse(['error' => 'permissions'], Http::STATUS_FORBIDDEN);
 		}
 
@@ -2873,15 +2874,19 @@ class RoomController extends AEnvironmentAwareOCSController {
 	}
 
 	/**
-	 * Promote an attendee to moderator
+	 * Promote an attendee to moderator or owner
+	 *
+	 * Required capability: `promote-demote-owner` for `int $participantType`
 	 *
 	 * @param int $attendeeId ID of the attendee
 	 * @psalm-param non-negative-int $attendeeId
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, null, array{}>
+	 * @param int $participantType Level to promote the attendee to: owner (`1`) or moderator (`2`), `0` to only grant moderator permissions. Guests are promoted to guest moderator (`6`) and can never become owners.
+	 * @psalm-param 0|Participant::OWNER|Participant::MODERATOR $participantType
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'type'}, array{}>
 	 *
-	 * 200: Attendee promoted to moderator successfully
-	 * 400: Promoting attendee to moderator is not possible
-	 * 403: Promoting attendee to moderator is not allowed
+	 * 200: Attendee promoted successfully
+	 * 400: Promoting attendee is not possible
+	 * 403: Promoting attendee is not allowed
 	 * 404: Attendee not found
 	 */
 	#[PublicPage]
@@ -2890,20 +2895,24 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function promoteModerator(int $attendeeId): DataResponse {
-		return $this->changeParticipantType($attendeeId, true);
+	public function promoteModerator(int $attendeeId, int $participantType = 0): DataResponse {
+		return $this->changeParticipantType($attendeeId, true, $participantType);
 	}
 
 	/**
-	 * Demote an attendee from moderator
+	 * Demote an attendee from moderator or owner
+	 *
+	 * Required capability: `promote-demote-owner` for `int $participantType`
 	 *
 	 * @param int $attendeeId ID of the attendee
 	 * @psalm-param non-negative-int $attendeeId
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, null, array{}>
+	 * @param int $participantType Level to demote the attendee to: moderator (`2`) or user (`3`), `0` to only revoke moderator permissions. Guest moderators are demoted to guest (`4`).
+	 * @psalm-param 0|Participant::MODERATOR|Participant::USER $participantType
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'type'}, array{}>
 	 *
-	 * 200: Attendee demoted from moderator successfully
-	 * 400: Demoting attendee from moderator is not possible
-	 * 403: Demoting attendee from moderator is not allowed
+	 * 200: Attendee demoted successfully
+	 * 400: Demoting attendee is not possible
+	 * 403: Demoting attendee is not allowed
 	 * 404: Attendee not found
 	 */
 	#[PublicPage]
@@ -2912,62 +2921,48 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v4)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function demoteModerator(int $attendeeId): DataResponse {
-		return $this->changeParticipantType($attendeeId, false);
+	public function demoteModerator(int $attendeeId, int $participantType = 0): DataResponse {
+		return $this->changeParticipantType($attendeeId, false, $participantType);
 	}
 
 	/**
-	 * Toggle a user/guest to moderator/guest-moderator or vice-versa based on
-	 * attendeeId
+	 * Change the participant type of an attendee based on attendeeId
 	 *
 	 * @param int $attendeeId
 	 * @psalm-param non-negative-int $attendeeId
 	 * @param bool $promote Shall the attendee be promoted or demoted
-	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, null, array{}>
+	 * @param int $participantType Level to change the attendee to, 0 to only toggle the moderator permissions
+	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_FORBIDDEN|Http::STATUS_NOT_FOUND, array{error: 'actor-type'|'last-moderator'|'moderator'|'participant'|'participant-type'|'room-type'|'self'|'type'}, array{}>
 	 */
-	protected function changeParticipantType(int $attendeeId, bool $promote): DataResponse {
+	protected function changeParticipantType(int $attendeeId, bool $promote, int $participantType = 0): DataResponse {
 		try {
 			$targetParticipant = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
 		} catch (ParticipantNotFoundException) {
-			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => 'participant'], Http::STATUS_NOT_FOUND);
 		}
 
 		$attendee = $targetParticipant->getAttendee();
 
 		if ($attendee->getActorType() === Attendee::ACTOR_USERS
 			&& $attendee->getActorId() === MatterbridgeManager::BRIDGE_BOT_USERID) {
-			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+			return new DataResponse(['error' => 'participant'], Http::STATUS_NOT_FOUND);
 		}
 
-		// Prevent users/moderators modifying themselves
-		if ($attendee->getActorType() === $this->participant->getAttendee()->getActorType()) {
-			if ($attendee->getActorId() === $this->participant->getAttendee()->getActorId()) {
-				return new DataResponse(null, Http::STATUS_FORBIDDEN);
+		try {
+			$this->participantService->updateParticipantTypeByModerator(
+				$this->room,
+				$this->participant,
+				$targetParticipant,
+				$promote,
+				$participantType !== 0 ? $participantType : null,
+			);
+		} catch (ParticipantTypeException $e) {
+			if ($e->getReason() === ParticipantTypeException::REASON_MODERATOR
+				|| $e->getReason() === ParticipantTypeException::REASON_SELF) {
+				return new DataResponse(['error' => $e->getReason()], Http::STATUS_FORBIDDEN);
 			}
-		} elseif ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
-			// Can not promote/demote groups
-			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => $e->getReason()], Http::STATUS_BAD_REQUEST);
 		}
-
-		if ($promote === $targetParticipant->hasModeratorPermissions()) {
-			// Prevent concurrent changes
-			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
-		}
-
-		if ($attendee->getParticipantType() === Participant::USER
-			|| $attendee->getParticipantType() === Participant::USER_SELF_JOINED) {
-			$newType = Participant::MODERATOR;
-		} elseif ($attendee->getParticipantType() === Participant::GUEST) {
-			$newType = Participant::GUEST_MODERATOR;
-		} elseif ($attendee->getParticipantType() === Participant::MODERATOR) {
-			$newType = Participant::USER;
-		} elseif ($attendee->getParticipantType() === Participant::GUEST_MODERATOR) {
-			$newType = Participant::GUEST;
-		} else {
-			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
-		}
-
-		$this->participantService->updateParticipantType($this->room, $targetParticipant, $newType);
 
 		return new DataResponse(null);
 	}

@@ -311,6 +311,30 @@ class ListenerTest extends TestCase {
 				Participant::USER,
 				[['message' => 'user_added', 'parameters' => ['user' => 'bob_participant']]],
 			],
+			[
+				Attendee::ACTOR_USERS,
+				Participant::USER,
+				Participant::OWNER,
+				[['message' => 'owner_promoted', 'parameters' => ['user' => 'bob_participant']]],
+			],
+			[
+				Attendee::ACTOR_USERS,
+				Participant::MODERATOR,
+				Participant::OWNER,
+				[['message' => 'owner_promoted', 'parameters' => ['user' => 'bob_participant']]],
+			],
+			[
+				Attendee::ACTOR_USERS,
+				Participant::OWNER,
+				Participant::MODERATOR,
+				[['message' => 'owner_demoted', 'parameters' => ['user' => 'bob_participant']]],
+			],
+			[
+				Attendee::ACTOR_USERS,
+				Participant::OWNER,
+				Participant::USER,
+				[['message' => 'owner_demoted', 'parameters' => ['user' => 'bob_participant']]],
+			],
 		];
 	}
 

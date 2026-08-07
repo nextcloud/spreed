@@ -236,3 +236,4 @@
 * `announcement-preset` (local) - Whether the `channel` and `announcement` presets are supported (channels disallow calls for everyone and only show the participants list to moderators, announcements additionally are not listable, can not be left by non-moderators and notify about all messages by default)
 * `config => call => external-call-service` (local) - The target URL for an external call service if one is configured
 * `bot-features-api` (local) - Whether bots can fetch their own enabled features using their shared secret
+* `promote-demote-owner` - Whether owners can promote other participants to owner and demote other owners again, by sending the `participantType` parameter when promoting or demoting a participant

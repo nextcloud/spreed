@@ -39,6 +39,19 @@ Feature: conversation-5/preserve
     And user "participant1" preserves room "room" with 200 (v4)
     Then user "participant1" makes room "room" private with 403 (v4)
 
+  Scenario: A promoted owner can preserve a conversation and loses that again when demoted
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" loads attendees attendee ids in room "room" (v4)
+    And user "participant2" preserves room "room" with 403 (v4)
+    When user "participant1" promotes "participant2" to "OWNER" in room "room" with 200 (v4)
+    Then user "participant2" preserves room "room" with 200 (v4)
+    And user "participant2" stops preserving room "room" with 200 (v4)
+    When user "participant1" demotes "participant2" to "MODERATOR" in room "room" with 200 (v4)
+    Then user "participant2" preserves room "room" with 403 (v4)
+
   Scenario: Only the owner can preserve a conversation
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |

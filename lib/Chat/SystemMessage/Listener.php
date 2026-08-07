@@ -368,7 +368,11 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($event->getNewValue() === Participant::MODERATOR) {
+		if ($event->getNewValue() === Participant::OWNER) {
+			$this->sendSystemMessage($room, 'owner_promoted', ['user' => $attendee->getActorId()]);
+		} elseif ($event->getOldValue() === Participant::OWNER) {
+			$this->sendSystemMessage($room, 'owner_demoted', ['user' => $attendee->getActorId()]);
+		} elseif ($event->getNewValue() === Participant::MODERATOR) {
 			$this->sendSystemMessage($room, 'moderator_promoted', ['user' => $attendee->getActorId()]);
 		} elseif ($event->getNewValue() === Participant::USER) {
 			if ($event->getOldValue() === Participant::USER_SELF_JOINED) {

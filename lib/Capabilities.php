@@ -138,6 +138,7 @@ class Capabilities implements IPublicCapability {
 		'bot-features-api',
 		'classified-conversations',
 		'announcement-preset',
+		'promote-demote-owner',
 	];
 
 	public const CONDITIONAL_FEATURES = [

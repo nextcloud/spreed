@@ -133,4 +133,71 @@ class ParticipantTest extends TestCase {
 		$participant = $this->createParticipant(false, Participant::MODERATOR, Attendee::PERMISSIONS_DEFAULT);
 		$this->assertTrue($participant->canStartCall($this->createConfig(), $this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
 	}
+
+	public function testIsOwner(): void {
+		$this->assertTrue($this->createParticipant(false, Participant::OWNER, Attendee::PERMISSIONS_DEFAULT)->isOwner());
+		$this->assertFalse($this->createParticipant(false, Participant::MODERATOR, Attendee::PERMISSIONS_DEFAULT)->isOwner());
+		$this->assertFalse($this->createParticipant(false, Participant::USER, Attendee::PERMISSIONS_DEFAULT)->isOwner());
+	}
+
+	public static function dataGetParticipantTypeAfterPromotion(): array {
+		return [
+			// Without a requested type the behaviour is the legacy "toggle moderator permissions"
+			'user' => [Participant::USER, null, Participant::MODERATOR],
+			'self-joined user' => [Participant::USER_SELF_JOINED, null, Participant::MODERATOR],
+			'guest' => [Participant::GUEST, null, Participant::GUEST_MODERATOR],
+			'moderator' => [Participant::MODERATOR, null, null],
+			'guest moderator' => [Participant::GUEST_MODERATOR, null, null],
+			'owner' => [Participant::OWNER, null, null],
+
+			'user to moderator' => [Participant::USER, Participant::MODERATOR, Participant::MODERATOR],
+			'self-joined user to moderator' => [Participant::USER_SELF_JOINED, Participant::MODERATOR, Participant::MODERATOR],
+			'guest to moderator' => [Participant::GUEST, Participant::MODERATOR, Participant::GUEST_MODERATOR],
+			'moderator to moderator' => [Participant::MODERATOR, Participant::MODERATOR, null],
+			'guest moderator to moderator' => [Participant::GUEST_MODERATOR, Participant::MODERATOR, null],
+			'owner to moderator' => [Participant::OWNER, Participant::MODERATOR, null],
+
+			'user to owner' => [Participant::USER, Participant::OWNER, Participant::OWNER],
+			'self-joined user to owner' => [Participant::USER_SELF_JOINED, Participant::OWNER, Participant::OWNER],
+			'moderator to owner' => [Participant::MODERATOR, Participant::OWNER, Participant::OWNER],
+			'guest to owner' => [Participant::GUEST, Participant::OWNER, null],
+			'guest moderator to owner' => [Participant::GUEST_MODERATOR, Participant::OWNER, null],
+			'owner to owner' => [Participant::OWNER, Participant::OWNER, null],
+		];
+	}
+
+	#[DataProvider('dataGetParticipantTypeAfterPromotion')]
+	public function testGetParticipantTypeAfterPromotion(int $currentType, ?int $requestedType, ?int $expected): void {
+		$this->assertSame($expected, Participant::getParticipantTypeAfterPromotion($currentType, $requestedType));
+	}
+
+	public static function dataGetParticipantTypeAfterDemotion(): array {
+		return [
+			// Without a requested type the behaviour is the legacy "toggle moderator
+			// permissions", which can not demote owners
+			'moderator' => [Participant::MODERATOR, null, Participant::USER],
+			'guest moderator' => [Participant::GUEST_MODERATOR, null, Participant::GUEST],
+			'owner' => [Participant::OWNER, null, null],
+			'user' => [Participant::USER, null, null],
+			'self-joined user' => [Participant::USER_SELF_JOINED, null, null],
+			'guest' => [Participant::GUEST, null, null],
+
+			'owner to moderator' => [Participant::OWNER, Participant::MODERATOR, Participant::MODERATOR],
+			'moderator to moderator' => [Participant::MODERATOR, Participant::MODERATOR, null],
+			'guest moderator to moderator' => [Participant::GUEST_MODERATOR, Participant::MODERATOR, null],
+			'user to moderator' => [Participant::USER, Participant::MODERATOR, null],
+
+			'owner to user' => [Participant::OWNER, Participant::USER, Participant::USER],
+			'moderator to user' => [Participant::MODERATOR, Participant::USER, Participant::USER],
+			'guest moderator to user' => [Participant::GUEST_MODERATOR, Participant::USER, Participant::GUEST],
+			'user to user' => [Participant::USER, Participant::USER, null],
+			'self-joined user to user' => [Participant::USER_SELF_JOINED, Participant::USER, null],
+			'guest to user' => [Participant::GUEST, Participant::USER, null],
+		];
+	}
+
+	#[DataProvider('dataGetParticipantTypeAfterDemotion')]
+	public function testGetParticipantTypeAfterDemotion(int $currentType, ?int $requestedType, ?int $expected): void {
+		$this->assertSame($expected, Participant::getParticipantTypeAfterDemotion($currentType, $requestedType));
+	}
 }
