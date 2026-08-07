@@ -10,7 +10,7 @@ const { CssExtractRspackPlugin, LightningCssMinimizerRspackPlugin, DefinePlugin,
 const NodePolyfillPlugin = require('@rspack/plugin-node-polyfill')
 const browserslist = require('browserslist')
 const path = require('node:path')
-const { VueLoaderPlugin } = require('vue-loader')
+const { VueLoaderPlugin } = require('rspack-vue-loader')
 
 // browserslist-rs does not support baseline queries yet
 // Manually resolving the browserslist config to the list of browsers with minimal versions
@@ -60,6 +60,8 @@ module.exports = defineConfig((env) => {
 			path: path.resolve('./js'),
 			filename: `${appName}-[name].js?v=[contenthash]`,
 			chunkFilename: `${appName}-[name].js?v=[contenthash]`,
+			cssFilename: `../css/${appName}-[name].css?v=[contenthash]`,
+			cssChunkFilename: `../css/chunks/${appName}-[name].css?v=[contenthash]`,
 			// Set publicPath via __webpack_public_path__
 			publicPath: 'auto',
 			// We are working with .wasm and .tflite files as resources on a public path: it must be with the original name in the output folder's root
@@ -123,41 +125,19 @@ module.exports = defineConfig((env) => {
 			rules: [
 				{
 					test: /\.vue$/,
-					loader: 'vue-loader',
+					loader: 'rspack-vue-loader',
 					options: {
 						experimentalInlineMatchResource: true,
 					},
 				},
 				{
 					test: /\.css$/,
-					use: [
-						{
-							loader: CssExtractRspackPlugin.loader,
-						},
-						'css-loader',
-					],
+					type: 'css',
 				},
 				{
 					test: /\.scss$/,
-					use: [
-						{
-							loader: CssExtractRspackPlugin.loader,
-						},
-						'css-loader',
-						{
-							loader: 'sass-loader',
-							options: {
-								sassOptions: {
-									// Sass emits BOM for CSS files with non-ASCII characters in production build by default
-									// PostCSS (used in css-loader and Vue SFC compiler) starting from v8.5.24 stops removing BOM
-									// Merging these styles keeps BOM in the middle of the file, breaking the first selector of each merged stylesheet
-									// Disabling charset prevents breaking styles (a workaround until css-loader is fixed for the new PostCSS)
-									// This is safe since the document has "<meta charset="utf-8">" anyway
-									charset: false,
-								},
-							},
-						},
-					],
+					type: 'css',
+					use: ['sass-loader'],
 				},
 				{
 					test: /\.ts$/,
@@ -235,12 +215,6 @@ module.exports = defineConfig((env) => {
 				__VUE_OPTIONS_API__: true,
 				__VUE_PROD_DEVTOOLS__: false,
 				__VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
-			}),
-
-			new CssExtractRspackPlugin({
-				filename: '../css/talk-[name].css',
-				chunkFilename: '../css/chunks/[id].chunk.css',
-				ignoreOrder: true,
 			}),
 
 			process.env.RSDOCTOR && new RsdoctorRspackPlugin(),
