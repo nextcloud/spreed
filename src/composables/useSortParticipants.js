@@ -32,7 +32,7 @@ export function useSortParticipants() {
 	 * - online status
 	 * - in call
 	 * - who raised hand first
-	 * - type (moderators before normal participants)
+	 * - type (owners before moderators before normal participants)
 	 * - user status (dnd at the end)
 	 * - display name
 	 *
@@ -116,6 +116,13 @@ export function useSortParticipants() {
 			if (t1 !== t2) {
 				return t1 - t2
 			}
+		}
+
+		const owner1 = participant1.participantType === PARTICIPANT.TYPE.OWNER
+		const owner2 = participant2.participantType === PARTICIPANT.TYPE.OWNER
+
+		if (owner1 !== owner2) {
+			return owner1 ? -1 : 1
 		}
 
 		const moderator1 = MODERATOR_TYPES.includes(participant1.participantType)
