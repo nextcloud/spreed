@@ -124,6 +124,9 @@ export type UnifiedSearchResultEntryWithRouterLink = UnifiedSearchResultEntry & 
 		params: {
 			token: string
 		}
+		query?: {
+			threadId?: string
+		}
 	}
 }
 export type UnifiedSearchResponse = ApiResponse<operationsCore['unified_search-search']['responses'][200]['content']['application/json'] & {

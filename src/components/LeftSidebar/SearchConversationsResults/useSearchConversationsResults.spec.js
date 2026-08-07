@@ -11,8 +11,9 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { h } from 'vue'
 import { createStore } from 'vuex'
 import { ATTENDEE, CONVERSATION } from '../../../constants.ts'
+import BrowserStorage from '../../../services/BrowserStorage.js'
 import { searchListedConversations } from '../../../services/conversationsService.ts'
-import { autocompleteQuery } from '../../../services/coreService.ts'
+import { autocompleteQuery, searchMessages } from '../../../services/coreService.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { generateOCSResponse } from '../../../test-helpers.js'
 import { useSearchConversationsResults } from './useSearchConversationsResults.ts'
@@ -22,6 +23,13 @@ vi.mock('../../../services/conversationsService', () => ({
 }))
 vi.mock('../../../services/coreService', () => ({
 	autocompleteQuery: vi.fn(),
+	searchMessages: vi.fn(),
+}))
+vi.mock('../../../services/BrowserStorage.js', () => ({
+	default: {
+		getItem: vi.fn(),
+		setItem: vi.fn(),
+	},
 }))
 
 describe('useSearchConversationsResults', () => {
@@ -30,6 +38,7 @@ describe('useSearchConversationsResults', () => {
 	// Pending requests of each service, in the order they were created
 	let listedRequests
 	let possibleRequests
+	let messageRequests
 	// Whether aborting a request rejects it. Set to false to emulate requests
 	// that already left the pending state, so that aborting them has no effect
 	let abortRejectsRequests
@@ -56,6 +65,28 @@ describe('useSearchConversationsResults', () => {
 		}
 
 		return { promise, resolve, reject }
+	}
+
+	/**
+	 * Build a unified search entry for a message
+	 *
+	 * @param {string} messageId id of the message
+	 * @param {string} threadId id of the thread the message belongs to
+	 * @return {object} the unified search result entry
+	 */
+	function messageResult(messageId, threadId = messageId) {
+		return {
+			title: `message ${messageId}`,
+			subline: `message ${messageId}`,
+			attributes: {
+				conversation: 'token-1',
+				messageId,
+				threadId,
+				actorType: ATTENDEE.ACTOR_TYPE.USERS,
+				actorId: 'one',
+				timestamp: '1000',
+			},
+		}
 	}
 
 	/**
@@ -100,6 +131,7 @@ describe('useSearchConversationsResults', () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks()
+		BrowserStorage.getItem.mockReturnValue(null)
 		setActivePinia(createPinia())
 		useActorStore().setCurrentUser({ uid: CURRENT_USER, displayName: CURRENT_USER })
 
@@ -114,6 +146,7 @@ describe('useSearchConversationsResults', () => {
 		// Tests that do not depend on the order arrange their responses with 'mock*ValueOnce'
 		listedRequests = []
 		possibleRequests = []
+		messageRequests = []
 		abortRejectsRequests = true
 		searchListedConversations.mockImplementation((query, options) => {
 			const request = createDeferred(options?.signal)
@@ -123,6 +156,11 @@ describe('useSearchConversationsResults', () => {
 		autocompleteQuery.mockImplementation((payload, options) => {
 			const request = createDeferred(options?.signal)
 			possibleRequests.push(request)
+			return request.promise
+		})
+		searchMessages.mockImplementation((payload, options) => {
+			const request = createDeferred(options?.signal)
+			messageRequests.push(request)
 			return request.promise
 		})
 	})
@@ -194,6 +232,229 @@ describe('useSearchConversationsResults', () => {
 				autocompleteResult('two', ATTENDEE.ACTOR_TYPE.USERS),
 				autocompleteResult('one', ATTENDEE.ACTOR_TYPE.GROUPS),
 			])
+		})
+	})
+
+	describe('search filters', () => {
+		test('restores valid saved filters', () => {
+			BrowserStorage.getItem.mockReturnValueOnce('messages,unknown')
+
+			const { composable } = mountComposable()
+
+			expect(BrowserStorage.getItem).toHaveBeenCalledWith('globalSearchFilters')
+			expect(composable.searchFilters.value).toEqual(['messages'])
+		})
+
+		test('persists changed filters', async () => {
+			const { composable } = mountComposable()
+
+			await composable.toggleFilter('', 'messages')
+
+			expect(BrowserStorage.setItem).toHaveBeenCalledWith('globalSearchFilters', 'conversations,messages')
+		})
+
+		test('requests only the enabled filters', async () => {
+			// Arrange
+			searchListedConversations.mockResolvedValueOnce(generateOCSResponse({ payload: [] }))
+			autocompleteQuery.mockResolvedValueOnce(generateOCSResponse({ payload: [] }))
+			const { composable } = mountComposable()
+
+			// Act: search in the conversations filter only
+			await composable.search('query')
+
+			// Assert: conversations and people belong to the same filter
+			expect(searchListedConversations).toHaveBeenCalledTimes(1)
+			expect(autocompleteQuery).toHaveBeenCalledTimes(1)
+			expect(searchMessages).not.toHaveBeenCalled()
+		})
+
+		test('applies message results with a router link to the message', async () => {
+			// Arrange
+			searchMessages.mockResolvedValueOnce(generateOCSResponse({
+				payload: { entries: [messageResult('101'), messageResult('102', '100')] },
+			}))
+			const { composable } = mountComposable()
+			composable.searchFilters.value = ['messages']
+
+			// Act: search in the messages filter only
+			await composable.search('query')
+
+			// Assert
+			expect(searchMessages).toHaveBeenCalledWith(
+				{ term: 'query', limit: expect.any(Number) },
+				expect.objectContaining({ signal: expect.any(AbortSignal) }),
+			)
+			expect(composable.searchResultsMessages.value).toEqual([
+				{
+					...messageResult('101'),
+					// A message of the main thread has no thread to route to
+					to: { name: 'conversation', hash: '#message_101', params: { token: 'token-1' }, query: { threadId: undefined } },
+				},
+				{
+					...messageResult('102', '100'),
+					to: { name: 'conversation', hash: '#message_102', params: { token: 'token-1' }, query: { threadId: '100' } },
+				},
+			])
+		})
+
+		test('drops the results of a filter that is no longer searched', async () => {
+			// Arrange: search in all filters
+			searchListedConversations.mockResolvedValueOnce(generateOCSResponse({ payload: [{ id: 1, token: 'listed' }] }))
+			autocompleteQuery.mockResolvedValueOnce(generateOCSResponse({ payload: [] }))
+			searchMessages.mockResolvedValueOnce(generateOCSResponse({ payload: { entries: [messageResult('101')] } }))
+			const { composable } = mountComposable()
+			composable.searchFilters.value = ['conversations', 'messages']
+			await composable.search('query')
+			expect(composable.searchResultsMessages.value).toHaveLength(1)
+
+			searchListedConversations.mockResolvedValueOnce(generateOCSResponse({ payload: [{ id: 1, token: 'listed' }] }))
+			autocompleteQuery.mockResolvedValueOnce(generateOCSResponse({ payload: [] }))
+
+			// Act: search again without the messages filter
+			composable.searchFilters.value = ['conversations']
+			await composable.search('query')
+
+			// Assert
+			expect(searchMessages).toHaveBeenCalledTimes(1)
+			expect(composable.searchResultsMessages.value).toEqual([])
+			expect(composable.searchResultsListedConversations.value).toEqual([{ id: 1, token: 'listed' }])
+		})
+
+		test('clears a single filter without invalidating the others', async () => {
+			// Arrange
+			const { composable } = mountComposable()
+
+			// Act: drop the messages filter while the other requests are still pending
+			composable.searchFilters.value = ['conversations', 'messages']
+			const search = composable.search('query')
+			composable.toggleFilter('query', 'messages')
+			listedRequests[0].resolve(generateOCSResponse({ payload: [{ id: 1, token: 'listed' }] }))
+			possibleRequests[0].resolve(generateOCSResponse({ payload: [autocompleteResult('one', ATTENDEE.ACTOR_TYPE.USERS)] }))
+
+			// Assert: the remaining filters are unaffected, only the dropped one reports as outdated
+			await expect(search).resolves.toBeFalsy()
+			expect(composable.searchResultsListedConversations.value).toEqual([{ id: 1, token: 'listed' }])
+			expect(composable.searchResultsPossibleConversations.value).toEqual([autocompleteResult('one', ATTENDEE.ACTOR_TYPE.USERS)])
+			expect(composable.searchResultsMessages.value).toEqual([])
+			// The outdated search does not stop loading, dropping the filter has to
+			expect(composable.searchResultsLoading.value).toBeFalsy()
+		})
+
+		test('searches a single filter without invalidating the others', async () => {
+			// Arrange
+			const { composable } = mountComposable()
+
+			// Act: enable the messages filter while the other requests are still pending
+			const search = composable.search('query')
+			const messagesSearch = composable.toggleFilter('query', 'messages')
+			messageRequests[0].resolve(generateOCSResponse({ payload: { entries: [messageResult('101')] } }))
+
+			// Assert
+			await expect(messagesSearch).resolves.toBeTruthy()
+			expect(composable.searchResultsMessages.value).toHaveLength(1)
+			// The other filters are still pending, so loading is kept
+			expect(composable.searchResultsLoading.value).toBeTruthy()
+
+			// Act: the other filters receive their results
+			listedRequests[0].resolve(generateOCSResponse({ payload: [{ id: 1, token: 'listed' }] }))
+			possibleRequests[0].resolve(generateOCSResponse({ payload: [] }))
+
+			// Assert
+			await expect(search).resolves.toBeTruthy()
+			expect(composable.searchResultsMessages.value).toHaveLength(1)
+			expect(composable.searchResultsListedConversations.value).toEqual([{ id: 1, token: 'listed' }])
+			expect(composable.searchResultsLoading.value).toBeFalsy()
+		})
+	})
+
+	describe('re-enabled filters', () => {
+		/**
+		 * Search in both filters and disable the messages one afterwards
+		 *
+		 * @param {string} query search text to look for
+		 * @return {object} the composable
+		 */
+		async function searchAndDisableMessages(query) {
+			searchListedConversations.mockResolvedValueOnce(generateOCSResponse({ payload: [] }))
+			autocompleteQuery.mockResolvedValueOnce(generateOCSResponse({ payload: [] }))
+			searchMessages.mockResolvedValueOnce(generateOCSResponse({ payload: { entries: [messageResult('101')] } }))
+			const { composable } = mountComposable()
+			composable.searchFilters.value = ['conversations', 'messages']
+			await composable.search(query)
+			await composable.toggleFilter(query, 'messages')
+
+			return composable
+		}
+
+		test('keeps the results of a disabled filter', async () => {
+			// Act: disable the messages filter after a successful search
+			const composable = await searchAndDisableMessages('query')
+
+			// Assert: the results are kept to be shown again, the consumer hides them meanwhile
+			expect(composable.searchFilters.value).toEqual(['conversations'])
+			expect(composable.searchResultsMessages.value).toHaveLength(1)
+		})
+
+		test('does not request again if the query did not change', async () => {
+			// Arrange
+			const composable = await searchAndDisableMessages('query')
+
+			// Act: enable the messages filter again, without searching in between
+			await expect(composable.toggleFilter('query', 'messages')).resolves.toBeTruthy()
+
+			// Assert: the results of the previous search are shown again
+			expect(searchMessages).toHaveBeenCalledTimes(1)
+			expect(composable.searchResultsMessages.value).toHaveLength(1)
+			expect(composable.searchResultsLoading.value).toBeFalsy()
+		})
+
+		test('requests again if the query changed meanwhile', async () => {
+			// Arrange
+			const composable = await searchAndDisableMessages('query')
+			searchListedConversations.mockResolvedValueOnce(generateOCSResponse({ payload: [] }))
+			autocompleteQuery.mockResolvedValueOnce(generateOCSResponse({ payload: [] }))
+			searchMessages.mockResolvedValueOnce(generateOCSResponse({ payload: { entries: [messageResult('102')] } }))
+
+			// Act: search for another query, then enable the messages filter again
+			await composable.search('another query')
+			await expect(composable.toggleFilter('another query', 'messages')).resolves.toBeTruthy()
+
+			// Assert
+			expect(searchMessages).toHaveBeenCalledTimes(2)
+			expect(searchMessages).toHaveBeenLastCalledWith({ term: 'another query', limit: expect.any(Number) }, expect.anything())
+			expect(composable.searchResultsMessages.value).toEqual([expect.objectContaining(messageResult('102'))])
+		})
+
+		test('requests again if the disabled filter had a pending request', async () => {
+			// Arrange
+			const { composable } = mountComposable()
+			composable.searchFilters.value = ['conversations', 'messages']
+
+			// Act: disable the messages filter while its request is still pending
+			composable.search('query')
+			await composable.toggleFilter('query', 'messages')
+			// and enable it again with an unchanged query
+			const messagesSearch = composable.toggleFilter('query', 'messages')
+			messageRequests[1].resolve(generateOCSResponse({ payload: { entries: [messageResult('101')] } }))
+
+			// Assert: results of the aborted request are incomplete and not reused
+			await expect(messagesSearch).resolves.toBeTruthy()
+			expect(searchMessages).toHaveBeenCalledTimes(2)
+			expect(composable.searchResultsMessages.value).toHaveLength(1)
+		})
+
+		test('requests again after the search was aborted', async () => {
+			// Arrange
+			const composable = await searchAndDisableMessages('query')
+			searchMessages.mockResolvedValueOnce(generateOCSResponse({ payload: { entries: [messageResult('102')] } }))
+
+			// Act: abort the search (the search box was cleared), then start over with the same query
+			composable.abortSearchRequests()
+			await expect(composable.toggleFilter('query', 'messages')).resolves.toBeTruthy()
+
+			// Assert
+			expect(searchMessages).toHaveBeenCalledTimes(2)
+			expect(composable.searchResultsMessages.value).toEqual([expect.objectContaining(messageResult('102'))])
 		})
 	})
 
@@ -312,6 +573,24 @@ describe('useSearchConversationsResults', () => {
 			expect(composable.searchResultsListedConversations.value).toEqual([])
 			expect(composable.searchResultsPossibleConversations.value).toEqual([autocompleteResult('one', ATTENDEE.ACTOR_TYPE.USERS)])
 			expect(composable.searchResultsLoading.value).toBeFalsy()
+		})
+
+		test('requests again when a re-enabled filter failed before', async () => {
+			// Arrange: the messages filter fails, then it is disabled
+			searchMessages.mockRejectedValueOnce(new Error('Unified search is not available'))
+			const { composable } = mountComposable()
+			composable.searchFilters.value = ['messages']
+			await composable.search('query')
+			await composable.toggleFilter('query', 'messages')
+
+			searchMessages.mockResolvedValueOnce(generateOCSResponse({ payload: { entries: [messageResult('101')] } }))
+
+			// Act: enable the filter again with an unchanged query
+			await expect(composable.toggleFilter('query', 'messages')).resolves.toBeTruthy()
+
+			// Assert: a failed search leaves nothing to show again
+			expect(searchMessages).toHaveBeenCalledTimes(2)
+			expect(composable.searchResultsMessages.value).toHaveLength(1)
 		})
 
 		test('does not report a failure of a superseded search', async () => {
