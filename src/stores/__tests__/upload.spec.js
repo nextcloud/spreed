@@ -13,6 +13,7 @@ import { getDavClient } from '../../services/DavClient.ts'
 import { postAttachment, probeAttachmentFolder, shareFile } from '../../services/filesSharingServices.ts'
 import { generateOCSResponse } from '../../test-helpers.js'
 import { findUniquePath } from '../../utils/fileUpload.ts'
+import { compressImage } from '../../utils/imageCompression.ts'
 import { useActorStore } from '../actor.ts'
 import { useSettingsStore } from '../settings.ts'
 import { useUploadStore } from '../upload.ts'
@@ -43,6 +44,14 @@ vi.mock('../../services/filesSharingServices.ts', () => ({
 	probeAttachmentFolder: vi.fn(),
 	shareFile: vi.fn(),
 }))
+// Only the re-encoding itself is mocked; it has its own unit test
+vi.mock('../../utils/imageCompression.ts', async (importOriginal) => {
+	const imageCompression = await importOriginal()
+	return {
+		...imageCompression,
+		compressImage: vi.fn(),
+	}
+})
 vi.mock('../../services/CapabilitiesManager.ts', async (importOriginal) => {
 	const actual = await importOriginal()
 	return {
@@ -506,6 +515,29 @@ describe('fileUploadStore', () => {
 				})
 			})
 
+			test('keeps the caption when the probe predicts a rename', async () => {
+				conversationGetter.mockReturnValue({ type: 2, displayName: 'Room' })
+				probeAttachmentFolder.mockResolvedValue(generateOCSResponse({ payload: {
+					folder: DRAFT_PATH,
+					renames: [{ 'photo.jpg': 'photo (1).jpg' }],
+				} }))
+
+				const file = { name: 'photo.jpg', type: 'image/jpeg', size: 100, lastModified: 0 }
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [file] })
+
+				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', caption: 'text-caption', options: null })
+
+				expect(vuexStoreDispatch).toHaveBeenLastCalledWith('addTemporaryMessage', {
+					token: TOKEN,
+					message: expect.objectContaining({
+						message: 'text-caption',
+						messageParameters: expect.objectContaining({
+							file: expect.objectContaining({ name: 'photo (1).jpg' }),
+						}),
+					}),
+				})
+			})
+
 			test('falls back to shareFile when the probe endpoint fails', async () => {
 				conversationGetter.mockReturnValue({ type: 2, displayName: 'My Room' })
 				probeAttachmentFolder.mockRejectedValueOnce(new Error('boom'))
@@ -534,6 +566,98 @@ describe('fileUploadStore', () => {
 				expect(probeAttachmentFolder).not.toHaveBeenCalled()
 				expect(postAttachment).not.toHaveBeenCalled()
 				expect(shareFile).toHaveBeenCalledTimes(1)
+			})
+		})
+
+		describe('image compression', () => {
+			const TOKEN = 'XXTOKENXX'
+
+			/**
+			 * Creates a file of the given type and byte size.
+			 * Use real File instances, as the store compares result to the original by identity
+			 *
+			 * @param name the file name
+			 * @param type the MIME type
+			 * @param size the byte size
+			 */
+			function makeFile(name, type, size) {
+				return new File([new Uint8Array(size)], name, { type, lastModified: Date.UTC(2021, 3, 27, 15, 30, 0) })
+			}
+
+			/** An image as selected by the user */
+			function makeImage() {
+				return makeFile('pngimage.png', 'image/png', 4096)
+			}
+
+			/** The re-encoded image as returned by compressImage() */
+			function makeCompressed() {
+				return makeFile('pngimage.webp', 'image/webp', 1024)
+			}
+
+			beforeEach(() => {
+				uploadMock.mockResolvedValue()
+				shareFile.mockResolvedValue({ data: { ocs: { data: { id: '1' } } } })
+				findUniquePath.mockImplementation((client, userRoot, path) => {
+					return Promise.resolve({ uniquePath: path + 'uniq', suffix: 1 })
+				})
+				// Default to a flat attachment-folder upload; enabled per test where needed
+				getTalkConfig.mockReturnValue(false)
+			})
+
+			afterEach(() => {
+				getTalkConfig.mockReturnValue(true)
+			})
+
+			test('does not compress anything when not requested', async () => {
+				const file = makeImage()
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [file] })
+
+				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', options: null })
+
+				expect(compressImage).not.toHaveBeenCalled()
+				expect(uploadMock).toHaveBeenCalledWith(expect.anything(), file)
+			})
+
+			test('compresses only supported and non-empty files', async () => {
+				const image = makeImage()
+				const text = makeFile('textfile.txt', 'text/plain', 111)
+				const gif = makeFile('animation.gif', 'image/gif', 4096)
+				const empty = makeFile('empty.png', 'image/png', 0)
+
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [image, text, gif, empty] })
+				compressImage.mockResolvedValue(makeCompressed())
+
+				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', options: null, compressImages: true })
+
+				expect(compressImage).toHaveBeenCalledTimes(1)
+				expect(compressImage).toHaveBeenCalledWith(image)
+			})
+
+			test('keeps the caption and the parent of the temporary message', async () => {
+				const compressed = makeCompressed()
+				const parent = { id: 42, message: 'parent message' }
+
+				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [makeImage()] })
+				compressImage.mockResolvedValue(compressed)
+
+				await uploadStore.uploadFiles({
+					token: TOKEN,
+					uploadId: 'upload-id1',
+					caption: 'text-caption',
+					options: { parent },
+					compressImages: true,
+				})
+
+				expect(vuexStoreDispatch).toHaveBeenLastCalledWith('addTemporaryMessage', {
+					token: TOKEN,
+					message: expect.objectContaining({
+						message: 'text-caption',
+						parent,
+						messageParameters: expect.objectContaining({
+							file: expect.objectContaining({ name: compressed.name }),
+						}),
+					}),
+				})
 			})
 		})
 

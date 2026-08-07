@@ -35,6 +35,7 @@ import {
 	hasDuplicateUploadNames,
 	separateDuplicateUploads,
 } from '../utils/fileUpload.ts'
+import { compressImage, supportImageCompression } from '../utils/imageCompression.ts'
 import { parseUploadError } from '../utils/propfindErrorParse.ts'
 import { useActorStore } from './actor.ts'
 import { useChatExtrasStore } from './chatExtras.ts'
@@ -57,6 +58,7 @@ type UploadFilesPayload = {
 	caption?: string
 	options: Pick<ChatMessage, | 'threadId' | 'threadTitle' | 'silent' | 'parent'> | null
 	allowUpdate?: boolean
+	compressImages?: boolean
 }
 
 type PerformSharePayload = {
@@ -359,6 +361,49 @@ export const useUploadStore = defineStore('upload', () => {
 	}
 
 	/**
+	 * Re-encodes an initialised image upload in place, replacing the staged file
+	 * and its local preview URL.
+	 *
+	 * Returns the compressed file, or null when the original was kept
+	 * (unsupported type, no size gain, or a failed encode). Callers use the
+	 * return value to update the temporary message parameters.
+	 *
+	 * @param uploadId unique identifier
+	 * @param index the index of the file within the upload
+	 */
+	async function compressUploadedImage(uploadId: string, index: string): Promise<File | null> {
+		const uploadedFile = uploads[uploadId].files[index]
+		const currentFile = uploadedFile.file
+		if (!supportImageCompression(currentFile.type) || currentFile.size < 1) {
+			return null
+		}
+
+		try {
+			// @ts-expect-error: UploadFile.file is a custom type, not a File
+			const compressed = await compressImage(currentFile)
+			if (!compressed) {
+				// Compression was not beneficial, the original file is kept
+				return null
+			}
+
+			// @ts-expect-error: UploadFile.file is a custom type, not a File
+			uploads[uploadId].files[index].file = compressed
+			uploads[uploadId].files[index].totalSize = compressed.size
+
+			const referenceId = uploadedFile.temporaryMessage.referenceId
+			if (localUrls[referenceId]) {
+				URL.revokeObjectURL(localUrls[referenceId])
+			}
+			localUrls[referenceId] = URL.createObjectURL(compressed)
+
+			return compressed
+		} catch (error) {
+			console.error('Failed to compress image, uploading original: ', error)
+			return null
+		}
+	}
+
+	/**
 	 * Uploads the files to the root directory of the user
 	 *
 	 * @param payload the wrapping object
@@ -367,8 +412,9 @@ export const useUploadStore = defineStore('upload', () => {
 	 * @param payload.caption The text caption to the media
 	 * @param payload.options The share options
 	 * @param payload.allowUpdate Whether to grant update permissions
+	 * @param payload.compressImages Whether to re-encode uploaded images
 	 */
-	async function uploadFiles({ token, uploadId, caption, options, allowUpdate }: UploadFilesPayload) {
+	async function uploadFiles({ token, uploadId, caption, options, allowUpdate, compressImages }: UploadFilesPayload) {
 		if (currentUploadId.value === uploadId) {
 			currentUploadId.value = undefined
 		}
@@ -379,12 +425,33 @@ export const useUploadStore = defineStore('upload', () => {
 		// If caption is provided, attach to the last temporary message
 		const lastIndex = getInitialisedUploads(uploadId).at(-1)![0]
 		for (const [index, uploadedFile] of getInitialisedUploads(uploadId)) {
+			// Compress before building the temporary message, so that the caption,
+			// the parent and the final file parameters are applied in a single pass
+			// and the backend receives the final file names (e.g. .webp instead of .png)
+			const compressed = compressImages
+				? await compressUploadedImage(uploadId, index)
+				: null
+
 			// Store the previously created temporary message
 			const message = {
 				...uploadedFile.temporaryMessage,
 				parent: options?.parent ? options.parent : uploadedFile.temporaryMessage.parent,
 				message: index === lastIndex && caption ? caption : '{file}',
+				messageParameters: compressed
+					? {
+							...uploadedFile.temporaryMessage.messageParameters,
+							file: {
+								...uploadedFile.temporaryMessage.messageParameters.file,
+								file: compressed,
+								name: compressed.name,
+								mimetype: compressed.type,
+							},
+						}
+					: uploadedFile.temporaryMessage.messageParameters,
 			}
+			// FIXME use a single source of truth, only create temp.message at this step
+			// Keep the caption and parent in sync between uploadStore and messagesStore
+			uploads[uploadId].files[index].temporaryMessage = message
 			// Add temporary messages (files) to the messages list
 			vuexStore.dispatch('addTemporaryMessage', { token, message })
 			// Scroll the message list
@@ -545,7 +612,7 @@ export const useUploadStore = defineStore('upload', () => {
 			try {
 				markFileAsUploading({ uploadId, index })
 				const uploader = getUploader()
-				// @ts-expect-error: Type File is not assignable to type
+				// @ts-expect-error: UploadFile.file is a custom type, not a File
 				await uploader.upload(uploadedFile.sharePath!, currentFile)
 				markFileAsSuccessUpload({ uploadId, index })
 			} catch (exception) {
