@@ -21,7 +21,15 @@
 		</div>
 		<div class="messages__content" :class="{ 'small-view': isSmallMobile || isSidebar }">
 			<li v-if="showAuthor" class="messages__author" aria-level="4">
-				{{ actorInfo }}
+				<span>{{ actorInfo }}</span>
+				<IconCrownOutline
+					v-if="showOwnerIcon"
+					:size="16"
+					:title="ownerIconLabel" />
+				<IconShieldOutline
+					v-else-if="showModeratorIcon"
+					:size="16"
+					:title="moderatorIconLabel" />
 			</li>
 			<ul class="messages" :class="{ 'messages-bubble': isSplitViewEnabled }">
 				<!-- FIXME anchors for combined file messages (for focusMessage() to work).
@@ -51,6 +59,8 @@
 import { t } from '@nextcloud/l10n'
 import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { computed, inject, toRefs } from 'vue'
+import IconCrownOutline from 'vue-material-design-icons/CrownOutline.vue'
+import IconShieldOutline from 'vue-material-design-icons/ShieldOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import MessageItem from './Message/MessageItem.vue'
 import { useMessageInfo } from '../../../composables/useMessageInfo.ts'
@@ -65,6 +75,8 @@ export default {
 
 	components: {
 		AvatarWrapper,
+		IconCrownOutline,
+		IconShieldOutline,
 		MessageItem,
 	},
 
@@ -111,11 +123,18 @@ export default {
 				.filter((value) => value).join(' ')
 		})
 
+		const role = computed(() => firstMessage.value?.metaData?.actorRole)
+
 		const isSplitViewEnabled = inject('messagesList:isSplitViewEnabled', true)
 
 		const messagesWithCombinedFiles = computed(() => combineFileMessages(messages.value))
 		const combinedMessageIds = computed(() => messagesWithCombinedFiles.value
 			.flatMap((message) => 'combinedMessageIds' in message ? message.combinedMessageIds.slice(0, -1) : []))
+
+		// TRANSLATORS: Conversation owner, participant with high-level permissions
+		const ownerIconLabel = t('spreed', 'Owner')
+		// TRANSLATORS: Conversation moderator, participant with elevated permissions
+		const moderatorIconLabel = t('spreed', 'Moderator')
 
 		return {
 			AVATAR,
@@ -126,9 +145,13 @@ export default {
 			chatExtrasStore: useChatExtrasStore(),
 			actorDisplayName,
 			actorInfo,
+			showOwnerIcon: computed(() => role.value === 'owner'),
+			showModeratorIcon: computed(() => role.value === 'moderator'),
 			isSmallMobile: useIsSmallMobile(),
 			isSidebar,
 			isSplitViewEnabled,
+			ownerIconLabel,
+			moderatorIconLabel,
 		}
 	},
 
@@ -182,7 +205,7 @@ export default {
 	&.outgoing {
 
 		.messages__author {
-			text-align: end;
+			justify-content: flex-end;
 			padding-inline-end: var(--default-grid-baseline);
 		}
 
@@ -234,11 +257,19 @@ export default {
 	}
 
 	&__author {
+		display: flex;
+		align-items: center;
+		gap: var(--default-grid-baseline);
 		padding-inline-start: var(--default-grid-baseline);
 		color: var(--color-text-maxcontrast);
 		white-space: nowrap;
 		overflow: hidden;
-		text-overflow: ellipsis;
+
+		> span {
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 	}
 
 	// BEGIN Split view
