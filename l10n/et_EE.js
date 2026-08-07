@@ -2010,6 +2010,7 @@ OC.L10N.register(
     "Open Calendar" : "Ava kalender",
     "Remove participant {name}" : "Eemalda osaleja {name}",
     "Would you like to delete this conversation?" : "Kas sa sooviksid selle vestluse kustutada?",
+    "_This conversation will be automatically deleted for everyone after %n minute of inactivity._::_This conversation will be automatically deleted for everyone after %n minutes of inactivity._" : ["See vestlus kustutatakse kõigi jaoks %n mitteaktiivse minuti möödudes automaatselt.","See vestlus kustutatakse kõigi jaoks %n mitteaktiivse minuti möödudes automaatselt."],
     "_This conversation will be automatically deleted for everyone after %n day of inactivity._::_This conversation will be automatically deleted for everyone after %n days of inactivity._" : ["See vestlus kustutatakse kõigi jaoks %n päeva möödudes automaatselt.","See vestlus kustutatakse kõigi jaoks %n päeva möödudes automaatselt."],
     "Are you sure you want to delete this conversation?" : "Kas oled kindel, et soovid selle vestluse kustutada?",
     "Delete now" : "Kustuta kohe",
