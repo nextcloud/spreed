@@ -2008,6 +2008,7 @@
     "Open Calendar" : "Atverti kalendorių",
     "Remove participant {name}" : "Šalinti dalyvį {name}",
     "Would you like to delete this conversation?" : "Ar norėtumėte ištrinti šį pokalbį?",
+    "_This conversation will be automatically deleted for everyone after %n minute of inactivity._::_This conversation will be automatically deleted for everyone after %n minutes of inactivity._" : ["Šis pokalbis bus automatiškai ištrintas visiems po %n min. neveiklumo.","Šis pokalbis bus automatiškai ištrintas visiems po %n min. neveiklumo.","Šis pokalbis bus automatiškai ištrintas visiems po %n min. neveiklumo.","Šis pokalbis bus automatiškai ištrintas visiems po %n min. neveiklumo."],
     "_This conversation will be automatically deleted for everyone after %n day of inactivity._::_This conversation will be automatically deleted for everyone after %n days of inactivity._" : ["Šis pokalbis bus automatiškai ištrintas visiems po %n dienos neaktyvumo.","Šis pokalbis bus automatiškai ištrintas visiems po %n dienų neaktyvumo.","Šis pokalbis bus automatiškai ištrintas visiems po %n dienų neaktyvumo.","Šis pokalbis bus automatiškai ištrintas visiems po %n dienų neaktyvumo."],
     "Are you sure you want to delete this conversation?" : "Ar tikrai norite ištrinti šį pokalbį?",
     "Delete now" : "Ištrinti dabar",
