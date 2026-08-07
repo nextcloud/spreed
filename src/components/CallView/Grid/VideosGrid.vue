@@ -445,13 +445,6 @@ export default {
 			return this.orderedVideos.length <= 1 && !this.screens.length
 		},
 
-		// Whether the tiles are explicitly placed in a grid of half columns. The
-		// stripe and the empty call view keep the default placement, and so a
-		// column per tile.
-		usesHalfColumns() {
-			return this.tilePlacements.length > 0
-		},
-
 		// Computed css to reactively style the grid
 		gridStyle() {
 			let columns = this.columns
@@ -464,15 +457,14 @@ export default {
 				rows = 2
 			}
 
-			// Explicitly placed tiles span two half columns each, so that a row
-			// leaving an odd number of columns empty can be centered by starting it
-			// half a column further (see `computeTilePlacements`)
-			const [columnCount, columnMinWidth] = this.usesHalfColumns
-				? [getHalfColumnCount(columns), getHalfColumnMinWidth(this.dpiAwareMinWidth)]
-				: [columns, this.dpiAwareMinWidth]
-
+			// The grid is always laid out in half columns and every tile spans two
+			// of them, so that a row leaving an odd number of columns empty can be
+			// centered by starting it half a column further (see
+			// `computeTilePlacements`). A tile keeps the exact same width either
+			// way, as it also takes the gap between its two half columns, so the
+			// tiles do not jump around when the placement changes.
 			return {
-				gridTemplateColumns: `repeat(${columnCount}, minmax(${columnMinWidth}px, 1fr))`,
+				gridTemplateColumns: `repeat(${getHalfColumnCount(columns)}, minmax(${getHalfColumnMinWidth(this.dpiAwareMinWidth)}px, 1fr))`,
 				gridTemplateRows: `repeat(${rows}, minmax(${this.dpiAwareMinHeight}px, 1fr))`,
 			}
 		},
@@ -629,6 +621,13 @@ export default {
 
 	row-gap: var(--grid-gap);
 	column-gap: var(--grid-gap);
+
+	// The grid is laid out in half columns, so a tile takes two of them by
+	// default. Explicitly placed tiles set their own start line but keep that
+	// span (see `TILE_COLUMN_SPAN`).
+	> * {
+		grid-column: span 2;
+	}
 
 	&.stripe {
 		padding: var(--grid-gap) var(--grid-gap) 0 0;
