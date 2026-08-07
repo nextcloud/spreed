@@ -456,6 +456,7 @@ OC.L10N.register(
     "The certificate of {host} expired" : "Platnost certifikátu {host} skončila",
     "Contact via Talk" : "Kontakt přes Talk",
     "Open Talk" : "Otevřít Talk",
+    "Announcement" : "Oznámení",
     "Channel" : "Kanál",
     "Default" : "Výchozí",
     "Presentation" : "Prezentace",
