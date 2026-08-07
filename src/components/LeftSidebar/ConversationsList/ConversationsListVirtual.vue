@@ -26,7 +26,7 @@ const props = defineProps<{
 	compact?: boolean
 	/**
 	 * When true, conversations are split into tag sections defined by the server.
-	 * Requires hasCustomTags to be true; otherwise renders a plain list.
+	 * Requires at least one favorite conversation or one custom tag; otherwise renders a plain list.
 	 */
 	showTags?: boolean
 }>()
@@ -44,11 +44,12 @@ function isTagHeader(item: VirtualListItem): item is TagHeaderItem {
 
 /**
  * Build the flat list that is fed to the virtual scroller.
- * When showTags is true and custom tags exist, conversations are interspersed
+ * When showTags is true (with favorite or custom section), conversations are interspersed
  * with tag-header sentinel items so the virtual list can render section headers.
  */
 const listItems = computed<VirtualListItem[]>(() => {
-	if (!props.showTags || !tagsStore.hasCustomTags) {
+	if (!props.showTags || tagsStore.sortedTags.length === 0) {
+		// tags are hidden or not known yet, fall back to a flat list
 		return props.conversations
 	}
 
@@ -116,7 +117,8 @@ const listItems = computed<VirtualListItem[]>(() => {
 		otherUnreadMentionDirect: false,
 	})
 
-	if (!groupedConversations.hasTagged) {
+	if (!groupedConversations.hasTagged && groupedConversations.favorites.length === 0) {
+		// no custom tags and favorites, fall back to a flat list
 		return props.conversations
 	}
 

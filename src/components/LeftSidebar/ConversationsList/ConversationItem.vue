@@ -28,7 +28,7 @@
 			<ConversationIcon
 				:key="item.token"
 				:item="item"
-				:hideFavorite="compact"
+				:hideFavorite="compact || supportTags"
 				:hideCall="compact"
 				:hideUserStatus="item.type !== CONVERSATION.TYPE.ONE_TO_ONE && compact"
 				:showUserOnlineStatus="compact"
@@ -507,7 +507,7 @@ export default {
 					color: '#E9322D',
 					text: t('spreed', 'Call in progress'),
 				}
-			} else if (this.item.isFavorite) {
+			} else if (!supportTags && this.item.isFavorite) {
 				return {
 					component: IconStar,
 					color: this.isDarkTheme ? '#FFCC00' : 'currentColor',
