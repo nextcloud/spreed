@@ -53,8 +53,6 @@ export const useConversationTagsStore = defineStore('conversationTags', () => {
 
 	const customTags = computed(() => sortedTags.value.filter((c) => c.type === 'custom'))
 
-	const hasCustomTags = computed(() => customTags.value.length > 0)
-
 	/**
 	 * Fetch all conversation tags from the server
 	 */
@@ -178,7 +176,6 @@ export const useConversationTagsStore = defineStore('conversationTags', () => {
 		tags,
 		sortedTags,
 		customTags,
-		hasCustomTags,
 		fetchTags,
 		createTag,
 		updateTagName,
