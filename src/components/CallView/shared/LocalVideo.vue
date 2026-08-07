@@ -252,6 +252,10 @@ export default {
 		screenshotModeUrl() {
 			return this.screenshotMode ? placeholderImage(8) : ''
 		},
+
+		localStreamAttachIdentifier() {
+			return [this.localMediaModel.attributes.localStream, this.localMediaModel.attributes.videoAvailable]
+		},
 	},
 
 	watch: {
@@ -269,7 +273,14 @@ export default {
 			},
 		},
 
-		'localMediaModel.attributes.localStream': function(localStream) {
+		localStreamAttachIdentifier([localStream, videoAvailable], [oldLocalStream, oldVideoAvailable]) {
+			// Reattach the stream if it was replaced, or if the video is
+			// available again after the local track was replaced, to
+			// prevent rendering the last frame drawn before the change.
+			if (localStream === oldLocalStream && !(videoAvailable && !oldVideoAvailable)) {
+				return
+			}
+
 			this._setLocalStream(localStream)
 		},
 

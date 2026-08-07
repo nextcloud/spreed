@@ -545,10 +545,21 @@ export default {
 		screenshotModeUrl() {
 			return this.screenshotMode ? placeholderImage(6) : ''
 		},
+
+		streamAttachTrigger() {
+			return [this.model.attributes.stream, this.hasVideo]
+		},
 	},
 
 	watch: {
-		'model.attributes.stream': function(stream) {
+		streamAttachTrigger([stream, hasVideo], [oldStream, oldHasVideo]) {
+			// Reattach the stream if it was replaced, or if the video is
+			// available again after the remote track was replaced, to
+			// prevent rendering the last frame received before the change.
+			if (stream === oldStream && !(hasVideo && !oldHasVideo)) {
+				return
+			}
+
 			this._setStream(stream)
 		},
 
