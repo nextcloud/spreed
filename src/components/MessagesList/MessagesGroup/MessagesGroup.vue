@@ -21,7 +21,18 @@
 		</div>
 		<div class="messages__content" :class="{ 'small-view': isSmallMobile || isSidebar }">
 			<li v-if="showAuthor" class="messages__author" aria-level="4">
-				{{ actorInfo }}
+				<span>{{ actorName }}</span>
+				<IconCrownOutline
+					v-if="showOwnerIcon"
+					class="messages__author-icon"
+					:size="16"
+					:title="t('spreed', 'owner')" />
+				<IconShieldOutline
+					v-else-if="showModeratorIcon"
+					class="messages__author-icon"
+					:size="16"
+					:title="t('spreed', 'moderator')" />
+				<span v-if="lastEditor">{{ lastEditor }}</span>
 			</li>
 			<ul class="messages" :class="{ 'messages-bubble': isSplitViewEnabled }">
 				<MessageItem
@@ -44,6 +55,9 @@
 import { t } from '@nextcloud/l10n'
 import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { computed, inject, toRefs } from 'vue'
+import { useStore } from 'vuex'
+import IconCrownOutline from 'vue-material-design-icons/CrownOutline.vue'
+import IconShieldOutline from 'vue-material-design-icons/ShieldOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import MessageItem from './Message/MessageItem.vue'
 import { useMessageInfo } from '../../../composables/useMessageInfo.ts'
@@ -51,12 +65,15 @@ import { ATTENDEE, AVATAR } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../stores/chatExtras.ts'
 import { useGuestNameStore } from '../../../stores/guestName.ts'
+import { getParticipantRole } from '../../../utils/participants.ts'
 
 export default {
 	name: 'MessagesGroup',
 
 	components: {
 		AvatarWrapper,
+		IconCrownOutline,
+		IconShieldOutline,
 		MessageItem,
 	},
 
@@ -89,7 +106,8 @@ export default {
 	},
 
 	setup(props) {
-		const { messages } = toRefs(props)
+		const { messages, token } = toRefs(props)
+		const store = useStore()
 		const firstMessage = computed(() => messages.value[0])
 		const {
 			remoteServer,
@@ -99,9 +117,22 @@ export default {
 		} = useMessageInfo(firstMessage)
 		const isSidebar = inject('chatView:isSidebar', false)
 
-		const actorInfo = computed(() => {
-			return [actorDisplayNameWithFallback.value, remoteServer.value, lastEditor.value]
+		const actorName = computed(() => {
+			return [actorDisplayNameWithFallback.value, remoteServer.value]
 				.filter((value) => value).join(' ')
+		})
+
+		/**
+		 * Messages do not carry the participant type of their author, so it is
+		 * looked up in the participants list. Authors that are not (or no longer)
+		 * a participant simply get no icon.
+		 */
+		const role = computed(() => {
+			const participant = store.getters.findParticipant(token.value, {
+				actorId: firstMessage.value?.actorId,
+				actorType: firstMessage.value?.actorType,
+			})
+			return getParticipantRole(participant?.participantType, store.getters.conversation(token.value)?.type)
 		})
 
 		const isSplitViewEnabled = inject('messagesList:isSplitViewEnabled', true)
@@ -112,7 +143,10 @@ export default {
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
 			actorDisplayName,
-			actorInfo,
+			actorName,
+			lastEditor,
+			showOwnerIcon: computed(() => role.value === 'owner'),
+			showModeratorIcon: computed(() => role.value === 'moderator'),
 			isSmallMobile: useIsSmallMobile(),
 			isSidebar,
 			isSplitViewEnabled,
@@ -169,7 +203,7 @@ export default {
 	&.outgoing {
 
 		.messages__author {
-			text-align: end;
+			justify-content: flex-end;
 			padding-inline-end: var(--default-grid-baseline);
 		}
 
@@ -221,11 +255,25 @@ export default {
 	}
 
 	&__author {
+		display: flex;
+		align-items: center;
+		gap: var(--default-grid-baseline);
 		padding-inline-start: var(--default-grid-baseline);
 		color: var(--color-text-maxcontrast);
 		white-space: nowrap;
 		overflow: hidden;
-		text-overflow: ellipsis;
+
+		> span {
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+
+	&__author-icon {
+		// @nextcloud/vue styles .material-design-icon as display: flex, which would
+		// put the icon on its own line when it is part of the inline text flow
+		flex: 0 0 auto;
 	}
 
 	// BEGIN Split view
