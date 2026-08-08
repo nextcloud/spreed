@@ -65,6 +65,10 @@ class Participant {
 		$this->session = $session;
 	}
 
+	public function isOwner(): bool {
+		return $this->attendee->getParticipantType() === self::OWNER;
+	}
+
 	public function isGuest(): bool {
 		$participantType = $this->attendee->getParticipantType();
 		return \in_array($participantType, [self::GUEST, self::GUEST_MODERATOR], true);
@@ -77,6 +81,57 @@ class Participant {
 
 	public function getHasScheduledMessages(): int {
 		return $this->attendee->getHasScheduledMessages();
+	}
+
+	/**
+	 * Participant type an attendee gets when they are promoted
+	 *
+	 * Guests are promoted to their guest equivalent, so requesting
+	 * {@see self::MODERATOR} for a guest results in {@see self::GUEST_MODERATOR}.
+	 * Guests can never become owners.
+	 *
+	 * @param self::OWNER|self::MODERATOR|self::USER|self::GUEST|self::USER_SELF_JOINED|self::GUEST_MODERATOR $currentType
+	 * @param self::OWNER|self::MODERATOR|null $requestedType Target level, or null for the legacy behaviour of promoting to moderator only
+	 * @return self::OWNER|self::MODERATOR|self::GUEST_MODERATOR|null null when the attendee can not be promoted this way
+	 */
+	public static function getParticipantTypeAfterPromotion(int $currentType, ?int $requestedType = null): ?int {
+		if ($requestedType === self::OWNER) {
+			return \in_array($currentType, [self::USER, self::USER_SELF_JOINED, self::MODERATOR], true) ? self::OWNER : null;
+		}
+
+		return match ($currentType) {
+			self::USER, self::USER_SELF_JOINED => self::MODERATOR,
+			self::GUEST => self::GUEST_MODERATOR,
+			default => null,
+		};
+	}
+
+	/**
+	 * Participant type an attendee gets when they are demoted
+	 *
+	 * Guests are demoted to their guest equivalent, so requesting
+	 * {@see self::USER} for a guest moderator results in {@see self::GUEST}.
+	 *
+	 * @param self::OWNER|self::MODERATOR|self::USER|self::GUEST|self::USER_SELF_JOINED|self::GUEST_MODERATOR $currentType
+	 * @param self::MODERATOR|self::USER|null $requestedType Target level, or null for the legacy behaviour which can not demote owners
+	 * @return self::MODERATOR|self::USER|self::GUEST|null null when the attendee can not be demoted this way
+	 */
+	public static function getParticipantTypeAfterDemotion(int $currentType, ?int $requestedType = null): ?int {
+		if ($requestedType === self::MODERATOR) {
+			// Only owners have a moderation level above moderator to lose
+			return $currentType === self::OWNER ? self::MODERATOR : null;
+		}
+
+		if ($requestedType === null && $currentType === self::OWNER) {
+			// Without an explicit target the owner is kept, as before owners could be demoted
+			return null;
+		}
+
+		return match ($currentType) {
+			self::OWNER, self::MODERATOR => self::USER,
+			self::GUEST_MODERATOR => self::GUEST,
+			default => null,
+		};
 	}
 
 	public function hasModeratorPermissions(bool $guestModeratorAllowed = true): bool {

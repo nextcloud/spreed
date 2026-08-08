@@ -15,6 +15,7 @@ use OCA\Talk\Room;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Demote extends Base {
@@ -33,12 +34,18 @@ class Demote extends Base {
 				'participant',
 				InputArgument::REQUIRED | InputArgument::IS_ARRAY,
 				'Demotes the given participants of the room to regular users'
+			)->addOption(
+				'to-moderator',
+				null,
+				InputOption::VALUE_NONE,
+				'Demotes the given owners to moderators instead of regular users'
 			);
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$token = $input->getArgument('token');
 		$users = $input->getArgument('participant');
+		$toModerator = $input->getOption('to-moderator');
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
@@ -58,13 +65,17 @@ class Demote extends Base {
 		}
 
 		try {
-			$this->removeRoomModerators($room, $users);
+			$this->removeRoomModerators($room, $users, $toModerator);
 		} catch (InvalidArgumentException $e) {
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
 			return 1;
 		}
 
-		$output->writeln('<info>Participants successfully demoted to regular users.</info>');
+		if ($toModerator) {
+			$output->writeln('<info>Participants successfully demoted to moderators.</info>');
+		} else {
+			$output->writeln('<info>Participants successfully demoted to regular users.</info>');
+		}
 		return 0;
 	}
 

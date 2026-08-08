@@ -394,7 +394,7 @@ const actions = {
 		}
 	},
 
-	async promoteToModerator({ commit, getters }, { token, attendeeId }) {
+	async promoteToModerator({ commit, getters }, { token, attendeeId, participantType }) {
 		const attendee = getters.getParticipant(token, attendeeId)
 		if (!attendee) {
 			return
@@ -402,16 +402,19 @@ const actions = {
 
 		await promoteToModerator(token, {
 			attendeeId,
+			participantType,
 		})
 
 		// FIXME: don't promote already promoted or read resulting type from server response
 		const updatedData = {
-			participantType: attendee.participantType === PARTICIPANT.TYPE.GUEST ? PARTICIPANT.TYPE.GUEST_MODERATOR : PARTICIPANT.TYPE.MODERATOR,
+			participantType: participantType === PARTICIPANT.TYPE.OWNER
+				? PARTICIPANT.TYPE.OWNER
+				: (attendee.participantType === PARTICIPANT.TYPE.GUEST ? PARTICIPANT.TYPE.GUEST_MODERATOR : PARTICIPANT.TYPE.MODERATOR),
 		}
 		commit('updateParticipant', { token, attendeeId, updatedData })
 	},
 
-	async demoteFromModerator({ commit, getters }, { token, attendeeId }) {
+	async demoteFromModerator({ commit, getters }, { token, attendeeId, participantType }) {
 		const attendee = getters.getParticipant(token, attendeeId)
 		if (!attendee) {
 			return
@@ -419,11 +422,14 @@ const actions = {
 
 		await demoteFromModerator(token, {
 			attendeeId,
+			participantType,
 		})
 
 		// FIXME: don't demote already demoted, use server response instead
 		const updatedData = {
-			participantType: attendee.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR ? PARTICIPANT.TYPE.GUEST : PARTICIPANT.TYPE.USER,
+			participantType: participantType === PARTICIPANT.TYPE.MODERATOR
+				? PARTICIPANT.TYPE.MODERATOR
+				: (attendee.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR ? PARTICIPANT.TYPE.GUEST : PARTICIPANT.TYPE.USER),
 		}
 		commit('updateParticipant', { token, attendeeId, updatedData })
 	},

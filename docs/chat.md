@@ -535,6 +535,8 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `group_removed` - {actor} removed group {group} from the conversation
 * `circle_added` - {actor} added circle {circle} to the conversation
 * `circle_removed` - {actor} removed circle {circle} from the conversation
+* `owner_promoted` - {actor} promoted {user} to owner
+* `owner_demoted` - {actor} demoted {user} from owner
 * `moderator_promoted` - {actor} promoted {user} to moderator
 * `moderator_demoted` - {actor} demoted {user} from moderator
 * `guest_moderator_promoted` - {actor} promoted {user} to moderator
