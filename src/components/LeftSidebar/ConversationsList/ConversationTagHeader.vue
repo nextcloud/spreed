@@ -18,6 +18,7 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconArrowDown from 'vue-material-design-icons/ArrowDown.vue'
 import IconArrowUp from 'vue-material-design-icons/ArrowUp.vue'
 import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
+import IconStar from 'vue-material-design-icons/Star.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import ConfirmDialog from '../../UIShared/ConfirmDialog.vue'
 import IconMarkChatRead from '../../../../img/material-icons/mark-chat-read.svg?raw'
@@ -40,6 +41,7 @@ const vuexStore = useStore()
 const tagsStore = useConversationTagsStore()
 
 const isCustomTag = computed(() => props.item.type === 'custom')
+const isFavoritesTag = computed(() => props.item.type === 'favorites')
 const counterType = computed(() => {
 	if (props.item.unreadMentionDirect) {
 		return 'highlighted'
@@ -139,6 +141,10 @@ async function handleMarkReadTag() {
 		@update:open="tagsStore.toggleCollapsed(item.id)">
 		<!-- Invisible child to trigger the collapse chevron -->
 		<li class="tag-header__spacer" />
+		<template v-if="isFavoritesTag" #icon>
+			<!-- Filled for better indication -->
+			<IconStar :size="20" fillColor="var(--color-favorite)" />
+		</template>
 		<template #counter>
 			<NcCounterBubble v-if="item.unreadCount > 0" :count="item.unreadCount" :type="counterType" />
 		</template>
@@ -190,15 +196,21 @@ async function handleMarkReadTag() {
 
 <style lang="scss" scoped>
 .tag-header {
+	// Overwriting NcAppNavigationItem styles
+	// Show the name before the icon (flex siblings; icon comes after in the DOM)
 	// Hide the empty icon slot and add padding so the tag name aligns with conversation avatars
-	:deep(.app-navigation-entry-icon) {
-		display: none !important;
+	:deep(.app-navigation-entry__name) {
+		order: 1;
+		font-weight: bold;
+		padding-inline-start: calc(var(--default-grid-baseline, 4px) * 3) !important;
 	}
 
-	:deep(.app-navigation-entry__name) {
-		font-weight: bold;
-		// Compensate for hidden icon: align with avatar start position
-		padding-inline-start: calc(var(--default-grid-baseline, 4px) * 3) !important;
+	:deep(.app-navigation-entry-icon) {
+		order: 2;
+
+		&:empty {
+			display: none !important;
+		}
 	}
 
 	&__spacer {
