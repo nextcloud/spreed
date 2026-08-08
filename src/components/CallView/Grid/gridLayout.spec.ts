@@ -6,9 +6,15 @@
 import { describe, expect, test } from 'vitest'
 import {
 	computeGridDimensions,
+	computeRowDistribution,
+	computeTilePlacements,
+	getHalfColumnCount,
+	getHalfColumnMinWidth,
 	getMinTileHeight,
 	getMinTileWidth,
 	getTargetAspectRatio,
+	GRID_GAP,
+	TILE_COLUMN_SPAN,
 } from './gridLayout.ts'
 
 /**
@@ -152,6 +158,148 @@ describe('gridLayout', () => {
 								// Overflowing tiles are paginated on the maximum grid
 								expect({ columns, rows }).toEqual(max)
 							}
+						}
+					}
+				}
+			}
+		})
+	})
+
+	describe('computeRowDistribution', () => {
+		test('spreads the tiles evenly across the rows', () => {
+			expect(computeRowDistribution({ totalTiles: 7, rows: 3 })).toEqual([2, 3, 2])
+			expect(computeRowDistribution({ totalTiles: 9, rows: 3 })).toEqual([3, 3, 3])
+			expect(computeRowDistribution({ totalTiles: 13, rows: 4 })).toEqual([3, 4, 3, 3])
+			expect(computeRowDistribution({ totalTiles: 14, rows: 4 })).toEqual([3, 4, 4, 3])
+		})
+
+		test('keeps a single row untouched', () => {
+			expect(computeRowDistribution({ totalTiles: 4, rows: 1 })).toEqual([4])
+		})
+
+		test('never leaves a row empty', () => {
+			expect(computeRowDistribution({ totalTiles: 2, rows: 4 })).toEqual([1, 1])
+			expect(computeRowDistribution({ totalTiles: 0, rows: 3 })).toEqual([])
+			expect(computeRowDistribution({ totalTiles: 3, rows: 0 })).toEqual([])
+		})
+
+		test('lays out every tile in rows of an even size', () => {
+			for (let rows = 1; rows <= 6; rows++) {
+				for (let totalTiles = 1; totalTiles <= 30; totalTiles++) {
+					const distribution = computeRowDistribution({ totalTiles, rows })
+
+					// Every tile is laid out, and no row is left empty
+					expect(distribution.reduce((sum, size) => sum + size, 0)).toBe(totalTiles)
+					expect(distribution.length).toBe(Math.min(rows, totalTiles))
+					// The rows differ by at most one tile
+					expect(Math.max(...distribution) - Math.min(...distribution)).toBeLessThanOrEqual(1)
+					// The first row is the last one to receive an extra tile, so the
+					// fuller rows sit below it
+					if (totalTiles % distribution.length !== 0) {
+						expect(distribution[0]).toBe(Math.min(...distribution))
+					}
+				}
+			}
+		})
+	})
+
+	describe('half column helpers', () => {
+		test('splits every tile column in two', () => {
+			expect(TILE_COLUMN_SPAN).toBe(2)
+			expect(getHalfColumnCount(4)).toBe(8)
+			expect(getHalfColumnCount(0)).toBe(0)
+		})
+
+		test('sizes a half column so that a tile spanning two keeps its minimum width', () => {
+			// A tile spans two half columns and the gap between them
+			expect(getHalfColumnMinWidth(320) * 2 + GRID_GAP).toBe(320)
+		})
+
+		test('never returns a negative half column width', () => {
+			expect(getHalfColumnMinWidth(0)).toBe(0)
+		})
+	})
+
+	describe('computeTilePlacements', () => {
+		// A 4 columns grid, laid out as 8 half columns
+		const grid = { columns: 4 }
+
+		test('fills a complete grid from the first half column', () => {
+			expect(computeTilePlacements({ ...grid, rows: 2, totalTiles: 8 })).toEqual([
+				{ row: 1, column: 1 },
+				{ row: 1, column: 3 },
+				{ row: 1, column: 5 },
+				{ row: 1, column: 7 },
+				{ row: 2, column: 1 },
+				{ row: 2, column: 3 },
+				{ row: 2, column: 5 },
+				{ row: 2, column: 7 },
+			])
+		})
+
+		test('shifts a row by a half column when it leaves an odd number of columns empty', () => {
+			// 7 tiles over 2 rows of a 4 columns grid: 3 and 4 tiles
+			expect(computeTilePlacements({ ...grid, rows: 2, totalTiles: 7 })).toEqual([
+				{ row: 1, column: 2 },
+				{ row: 1, column: 4 },
+				{ row: 1, column: 6 },
+				{ row: 2, column: 1 },
+				{ row: 2, column: 3 },
+				{ row: 2, column: 5 },
+				{ row: 2, column: 7 },
+			])
+		})
+
+		test('centers a row leaving an even number of columns empty', () => {
+			// 7 tiles over 3 rows of a 4 columns grid: 2, 3 and 2 tiles
+			expect(computeTilePlacements({ ...grid, rows: 3, totalTiles: 7 })).toEqual([
+				{ row: 1, column: 3 },
+				{ row: 1, column: 5 },
+				{ row: 2, column: 2 },
+				{ row: 2, column: 4 },
+				{ row: 2, column: 6 },
+				{ row: 3, column: 3 },
+				{ row: 3, column: 5 },
+			])
+		})
+
+		test('falls back to the default placement when there is nothing to lay out', () => {
+			expect(computeTilePlacements({ ...grid, rows: 2, totalTiles: 0 })).toEqual([])
+			expect(computeTilePlacements({ ...grid, rows: 0, totalTiles: 4 })).toEqual([])
+			expect(computeTilePlacements({ columns: 0, rows: 0, totalTiles: 4 })).toEqual([])
+		})
+
+		test('falls back to the default placement when the grid is too small', () => {
+			expect(computeTilePlacements({ ...grid, rows: 2, totalTiles: 9 })).toEqual([])
+		})
+
+		test('keeps every row inside the grid and centered', () => {
+			for (let columns = 1; columns <= 5; columns++) {
+				const halfColumns = getHalfColumnCount(columns)
+
+				for (let rows = 1; rows <= 5; rows++) {
+					for (let totalTiles = 1; totalTiles <= columns * rows; totalTiles++) {
+						const placements = computeTilePlacements({ columns, rows, totalTiles })
+						expect(placements.length).toBe(totalTiles)
+
+						const distribution = computeRowDistribution({ totalTiles, rows })
+						for (const [index, rowSize] of distribution.entries()) {
+							const row = placements.filter((placement) => placement.row === index + 1)
+							expect(row.length).toBe(rowSize)
+
+							// The tiles of the row are laid out one after the other, every
+							// tile spanning TILE_COLUMN_SPAN half columns
+							const columnsOfRow = row.map((placement) => placement.column)
+							expect(columnsOfRow).toEqual(Array.from({ length: rowSize }, (_, i) => columnsOfRow[0] + i * TILE_COLUMN_SPAN))
+
+							// The row stays within the half columns of the grid
+							const firstLine = columnsOfRow[0]
+							const lastLine = columnsOfRow[rowSize - 1] + TILE_COLUMN_SPAN
+							expect(firstLine).toBeGreaterThanOrEqual(1)
+							expect(lastLine).toBeLessThanOrEqual(halfColumns + 1)
+
+							// The half columns left empty are split evenly on both sides
+							expect(firstLine - 1).toBe(halfColumns + 1 - lastLine)
 						}
 					}
 				}
