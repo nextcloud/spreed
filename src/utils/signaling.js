@@ -25,6 +25,7 @@ import CancelableRequest from './CancelableRequest.ts'
 import Encryption from './e2ee/encryption.js'
 import { convertToUnix } from './formattedTime.ts'
 import { messagePleaseTryToReload } from './talkDesktopUtils.ts'
+import { DEFAULT_MAX_STREAM_BITS } from './webrtc/simplewebrtc/simulcastBitrates.ts'
 
 const actorStore = useActorStore(pinia)
 
@@ -71,6 +72,7 @@ function Base(settings) {
 	this.signalingConnectionTimeout = null
 	this.signalingConnectionWarning = null
 	this.signalingConnectionError = null
+	this.maxStreamBits = DEFAULT_MAX_STREAM_BITS
 }
 
 Signaling.Base = Base
@@ -1297,6 +1299,16 @@ Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 	}
 
 	this._rejoinRoomAfterInvalidSession = null
+
+	// Apply the room-specific max bitrate provided in server response
+	// Falls back to the default value when a room has no configured limit
+	const totalBps = data.room?.bandwidth?.maxstreambitrate
+	if (typeof totalBps === 'number' && totalBps > 0) {
+		this.maxStreamBits = totalBps
+	} else {
+		this.maxStreamBits = DEFAULT_MAX_STREAM_BITS
+	}
+
 	this.signalingRoomJoined = token
 	if (this.pendingJoinCall && token === this.pendingJoinCall.token) {
 		const pendingJoinCallResolve = this.pendingJoinCall.resolve
