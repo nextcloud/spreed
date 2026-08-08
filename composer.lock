@@ -65,16 +65,16 @@
         },
         {
             "name": "cuyz/valinor",
-            "version": "2.5.0",
+            "version": "2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "afbe7352692d5925a76edd53d5998161334056d4"
+                "reference": "d1f6d5296c3cb67d64996f2570831137502c260a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/afbe7352692d5925a76edd53d5998161334056d4",
-                "reference": "afbe7352692d5925a76edd53d5998161334056d4",
+                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/d1f6d5296c3cb67d64996f2570831137502c260a",
+                "reference": "d1f6d5296c3cb67d64996f2570831137502c260a",
                 "shasum": ""
             },
             "require": {
@@ -100,6 +100,9 @@
             },
             "type": "library",
             "autoload": {
+                "files": [
+                    "src/Compiler/node-functions.php"
+                ],
                 "psr-4": {
                     "CuyZ\\Valinor\\": "src"
                 }
@@ -130,7 +133,7 @@
             ],
             "support": {
                 "issues": "https://github.com/CuyZ/Valinor/issues",
-                "source": "https://github.com/CuyZ/Valinor/tree/2.5.0"
+                "source": "https://github.com/CuyZ/Valinor/tree/2.5.1"
             },
             "funding": [
                 {
@@ -138,7 +141,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-06-28T21:53:40+00:00"
+            "time": "2026-07-28T21:32:29+00:00"
         },
         {
             "name": "cweagans/composer-configurable-plugin",
