@@ -1,6 +1,6 @@
 {
     "require-dev": {
-        "rector/rector": "^2.5.8",
+        "rector/rector": "^2.6.1",
         "nextcloud/rector": "^0.5.2"
     },
     "autoload": {
