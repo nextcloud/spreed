@@ -23,6 +23,7 @@ import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import IconSubtitles from 'vue-material-design-icons/Subtitles.vue'
 import IconSubtitlesOutline from 'vue-material-design-icons/SubtitlesOutline.vue'
+import IconViewDashboardOutline from 'vue-material-design-icons/ViewDashboardOutline.vue'
 import IconViewGalleryOutline from 'vue-material-design-icons/ViewGalleryOutline.vue'
 import IconViewGridOutline from 'vue-material-design-icons/ViewGridOutline.vue'
 import CallButton from '../TopBar/CallButton.vue'
@@ -159,14 +160,43 @@ const fullscreenLabel = computed(() => {
 		: t('spreed', 'Full screen (F)')
 })
 
-const changeViewLabel = computed(() => {
-	return isGrid.value
-		? t('spreed', 'Speaker view')
-		: t('spreed', 'Grid view')
-})
-
 const showCallLayoutSwitch = computed(() => !isSidebar && !callViewStore.isEmptyCallView)
 const isGrid = computed(() => callViewStore.isGrid)
+
+const CallLayout = {
+	Grid: 'grid',
+	Speaker: 'speaker',
+	MultiSpeaker: 'multi-speaker',
+} as const
+
+const callLayouts = computed(() => [{
+	id: CallLayout.Grid,
+	label: t('spreed', 'Grid view'),
+	icon: IconViewGridOutline,
+}, {
+	id: CallLayout.Speaker,
+	label: t('spreed', 'Speaker view'),
+	icon: IconViewGalleryOutline,
+}, {
+	id: CallLayout.MultiSpeaker,
+	label: t('spreed', 'Multi-speaker view'),
+	icon: IconViewDashboardOutline,
+}])
+
+const callLayout = computed(() => {
+	if (isGrid.value) {
+		return CallLayout.Grid
+	}
+	return callViewStore.isMultiSpeaker ? CallLayout.MultiSpeaker : CallLayout.Speaker
+})
+
+const callLayoutLabel = computed(() => {
+	return callLayouts.value.find((layout) => layout.id === callLayout.value)!.label
+})
+
+const callLayoutIcon = computed(() => {
+	return callLayouts.value.find((layout) => layout.id === callLayout.value)!.icon
+})
 
 const COLLAPSIBLE_BUTTONS = ['virtualBackground', 'liveTranscription', 'callLayout', 'fullscreen'] as const
 type CollapsibleButtons = Record<typeof COLLAPSIBLE_BUTTONS[number], boolean>
@@ -423,10 +453,19 @@ async function disableLiveTranslation() {
 }
 
 /**
- * Switches the call view mode between grid and speaker view.
+ * Switches the call view to the given layout.
+ *
+ * @param layout the layout to switch to
  */
-function changeView() {
-	callViewStore.setCallViewMode({ token: token.value, isGrid: !isGrid.value, clearLast: false })
+function setCallLayout(layout: typeof CallLayout[keyof typeof CallLayout]) {
+	callViewStore.setCallViewMode({
+		token: token.value,
+		isGrid: layout === CallLayout.Grid,
+		// Picking the grid says nothing about how speaker view should look, so
+		// the preference is kept for when it is picked again
+		isMultiSpeaker: layout === CallLayout.Grid ? null : layout === CallLayout.MultiSpeaker,
+		clearLast: false,
+	})
 	callViewStore.setSelectedVideoPeerId(null)
 }
 </script>
@@ -447,17 +486,28 @@ function changeView() {
 				</template>
 			</NcButton>
 			<!-- Call layout switcher -->
-			<NcButton
+			<NcActions
 				v-if="showCallLayoutSwitch && !hidingList.callLayout"
 				variant="tertiary"
-				:aria-label="changeViewLabel"
-				:title="changeViewLabel"
-				@click="changeView">
+				:aria-label="callLayoutLabel"
+				:title="callLayoutLabel">
 				<template #icon>
-					<IconViewGridOutline v-if="!isGrid" :size="20" />
-					<IconViewGalleryOutline v-else :size="20" />
+					<component :is="callLayoutIcon" :size="20" />
 				</template>
-			</NcButton>
+				<NcActionButton
+					v-for="layout in callLayouts"
+					:key="layout.id"
+					:modelValue="callLayout"
+					:value="layout.id"
+					type="radio"
+					closeAfterClick
+					@click="setCallLayout(layout.id)">
+					<template #icon>
+						<component :is="layout.icon" :size="20" />
+					</template>
+					{{ layout.label }}
+				</NcActionButton>
+			</NcActions>
 		</div>
 
 		<div class="bottom-bar-call-controls">
@@ -590,18 +640,21 @@ function changeView() {
 					{{ fullscreenLabel }}
 				</NcActionButton>
 				<!-- Call layout switcher -->
-				<NcActionButton
-					v-if="hidingList.callLayout && showCallLayoutSwitch"
-					variant="tertiary"
-					:aria-label="changeViewLabel"
-					:title="changeViewLabel"
-					@click="changeView">
-					<template #icon>
-						<IconViewGridOutline v-if="!isGrid" :size="20" />
-						<IconViewGalleryOutline v-else :size="20" />
-					</template>
-					{{ changeViewLabel }}
-				</NcActionButton>
+				<template v-if="hidingList.callLayout && showCallLayoutSwitch">
+					<NcActionButton
+						v-for="layout in callLayouts"
+						:key="layout.id"
+						:modelValue="callLayout"
+						:value="layout.id"
+						type="radio"
+						closeAfterClick
+						@click="setCallLayout(layout.id)">
+						<template #icon>
+							<component :is="layout.icon" :size="20" />
+						</template>
+						{{ layout.label }}
+					</NcActionButton>
+				</template>
 				<NcActionButton
 					v-if="isLiveTranscriptionSupported && hidingList.liveTranscription"
 					:title="liveTranscriptionButtonLabel"
