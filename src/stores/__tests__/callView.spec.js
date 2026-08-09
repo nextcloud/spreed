@@ -20,6 +20,7 @@ vi.mock('../../services/BrowserStorage.js', () => ({
 describe('callViewStore', () => {
 	const TOKEN = 'XXTOKENXX'
 	const BROWSER_STORAGE_KEY = 'callprefs-XXTOKENXX-isgrid'
+	const BROWSER_STORAGE_KEY_MULTISPEAKER = 'callprefs-XXTOKENXX-multispeaker'
 	const PEER_ID = 'peer-id'
 	let callViewStore
 
@@ -100,6 +101,37 @@ describe('callViewStore', () => {
 			expect(callViewStore.isGrid).toBeFalsy()
 			expect(callViewStore.isStripeOpen).toBeTruthy()
 			expect(BrowserStorage.setItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY, 'false')
+		})
+
+		it('switching multi-speaker mode saves in local storage', () => {
+			callViewStore.setCallViewMode({ token: TOKEN, isMultiSpeaker: true })
+			expect(callViewStore.isMultiSpeaker).toBeTruthy()
+			expect(BrowserStorage.setItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY_MULTISPEAKER, 'true')
+
+			callViewStore.setCallViewMode({ token: TOKEN, isMultiSpeaker: false })
+			expect(callViewStore.isMultiSpeaker).toBeFalsy()
+			expect(BrowserStorage.setItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY_MULTISPEAKER, 'false')
+		})
+
+		it('does not touch multi-speaker mode when switching between grid and speaker view', () => {
+			callViewStore.setCallViewMode({ token: TOKEN, isMultiSpeaker: true })
+			callViewStore.setCallViewMode({ token: TOKEN, isGrid: true })
+			expect(callViewStore.isMultiSpeaker).toBeTruthy()
+		})
+
+		it('restores multi-speaker state from BrowserStorage when joining call', () => {
+			// Arrange
+			const conversation = { token: TOKEN, type: CONVERSATION.TYPE.GROUP }
+			vuexStore.commit('addConversation', conversation)
+			// The grid preference is read first, the multi-speaker one right after
+			BrowserStorage.getItem.mockReturnValueOnce(null).mockReturnValueOnce('true')
+
+			// Act
+			callViewStore.handleJoinCall(conversation)
+
+			// Assert
+			expect(BrowserStorage.getItem).toHaveBeenCalledWith(BROWSER_STORAGE_KEY_MULTISPEAKER)
+			expect(callViewStore.isMultiSpeaker).toBeTruthy()
 		})
 
 		it('start presentation switches off grid view and restores when it ends', () => {
