@@ -18,6 +18,7 @@ type State = {
 	forceCallView: boolean
 	isViewerOverlay: boolean
 	isGrid: boolean
+	isMultiSpeaker: boolean
 	isStripeOpen: boolean
 	isEmptyCallView: boolean
 	lastIsGrid: boolean | null
@@ -32,6 +33,7 @@ type State = {
 type CallViewModePayload = {
 	token: string
 	isGrid?: boolean | null
+	isMultiSpeaker?: boolean | null
 	isStripeOpen?: boolean | null
 	clearLast?: boolean
 }
@@ -41,6 +43,7 @@ export const useCallViewStore = defineStore('callView', {
 		forceCallView: false,
 		isViewerOverlay: false,
 		isGrid: false,
+		isMultiSpeaker: false,
 		isStripeOpen: true,
 		isEmptyCallView: true,
 		lastIsGrid: null,
@@ -94,7 +97,9 @@ export const useCallViewStore = defineStore('callView', {
 				// not defined yet, default to grid view for group/public calls, otherwise speaker view
 				? [CONVERSATION.TYPE.GROUP, CONVERSATION.TYPE.PUBLIC].includes(conversation.type)
 				: gridPreference === 'true'
-			this.setCallViewMode({ token: conversation.token, isGrid, isStripeOpen: true })
+			// Speaker view shows a single speaker unless multi-speaker was picked before
+			const isMultiSpeaker = BrowserStorage.getItem(`callprefs-${conversation.token}-multispeaker`) === 'true'
+			this.setCallViewMode({ token: conversation.token, isGrid, isMultiSpeaker, isStripeOpen: true })
 		},
 
 		/**
@@ -104,10 +109,11 @@ export const useCallViewStore = defineStore('callView', {
 		 * @param data the wrapping object;
 		 * @param data.token current conversation token;
 		 * @param data.isGrid true for enabled grid mode, false for speaker view;
+		 * @param data.isMultiSpeaker true to promote several speakers at once in speaker view;
 		 * @param data.isStripeOpen true for visible striped mode, false for speaker view;
 		 * @param data.clearLast set false to not reset last temporary remembered state;
 		 */
-		setCallViewMode({ token, isGrid = null, isStripeOpen = null, clearLast = true }: CallViewModePayload) {
+		setCallViewMode({ token, isGrid = null, isMultiSpeaker = null, isStripeOpen = null, clearLast = true }: CallViewModePayload) {
 			if (clearLast) {
 				this.lastIsGrid = null
 				this.lastIsStripeOpen = null
@@ -121,6 +127,11 @@ export const useCallViewStore = defineStore('callView', {
 				if (isGrid) {
 					this.setSelectedVideoPeerId(null)
 				}
+			}
+
+			if (isMultiSpeaker !== null && isMultiSpeaker !== undefined) {
+				BrowserStorage.setItem(`callprefs-${token}-multispeaker`, isMultiSpeaker.toString())
+				this.isMultiSpeaker = isMultiSpeaker
 			}
 
 			if (isStripeOpen !== null && isStripeOpen !== undefined) {
