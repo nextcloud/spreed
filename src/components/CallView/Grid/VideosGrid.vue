@@ -52,6 +52,7 @@
 								:key="callParticipantModel.attributes.peerId"
 								:class="{ video: !isStripe }"
 								:style="tileStyle(index)"
+								:data-tile-session-id="callParticipantModel.attributes.nextcloudSessionId"
 								:showVideoOverlay="showVideoOverlay"
 								:token="token"
 								:model="callParticipantModel"
