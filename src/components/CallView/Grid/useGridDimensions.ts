@@ -20,6 +20,8 @@ type UseGridDimensionsOptions = {
 	isSidebar: Readonly<Ref<boolean>>
 	/** Whether the call is being recorded (the local video is then not shown) */
 	isRecording: Readonly<Ref<boolean>>
+	/** Whether no slot must be reserved for the local video */
+	noLocalVideoReserve: Readonly<Ref<boolean>>
 	/** Number of tiles to lay out (already clamped to any cap) */
 	videoCount: Readonly<Ref<number>>
 	/** Whether the stripe is expanded (only relevant in stripe mode) */
@@ -38,6 +40,7 @@ type UseGridDimensionsOptions = {
  * @param options.isStripe - whether the grid is shown as a stripe
  * @param options.isSidebar - whether the grid is shown inside the sidebar
  * @param options.isRecording - whether the call is being recorded
+ * @param options.noLocalVideoReserve - whether no slot must be reserved for the local video
  * @param options.videoCount - number of tiles to lay out (already clamped to any cap)
  * @param options.stripeOpen - whether the stripe is expanded
  */
@@ -47,6 +50,7 @@ export function useGridDimensions({
 	isStripe,
 	isSidebar,
 	isRecording,
+	noLocalVideoReserve,
 	videoCount,
 	stripeOpen,
 }: UseGridDimensionsOptions) {
@@ -81,10 +85,6 @@ export function useGridDimensions({
 	const dpiAwareMinHeight = computed(() => minHeight.value / dpiFactor.value)
 	const targetAspectRatio = computed(() => getTargetAspectRatio(isStripe.value))
 	const gridAspectRatio = computed(() => (gridWidth.value / gridHeight.value).toPrecision(2))
-
-	// The full grid reserves one slot for the local video, unless it is not shown
-	// (stripe or recording mode).
-	const noLocalVideoReserve = computed(() => isStripe.value || isRecording.value)
 
 	/**
 	 * Measure the grid element and recompute the number of columns and rows.
@@ -153,7 +153,6 @@ export function useGridDimensions({
 		dpiAwareMinHeight,
 		targetAspectRatio,
 		gridAspectRatio,
-		noLocalVideoReserve,
 		/** Force a re-measure and recompute (e.g. for debugging) */
 		recompute,
 	}
