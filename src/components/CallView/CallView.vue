@@ -70,6 +70,15 @@
 						:showVideoOverlay="showVideoOverlay"
 						:sharedData="sharedDatas[shownRemoteScreenPeerId]"
 						isBig />
+					<!-- Several active speakers sharing the main area -->
+					<SpeakersGrid
+						v-else-if="showSpeakersGrid"
+						:token="token"
+						:models="promotedSpeakerModels"
+						:sharedDatas="sharedDatas"
+						:showVideoOverlay="showVideoOverlay"
+						:isOneToOne="isOneToOne"
+						@selectVideo="handleSelectVideo" />
 					<!-- Promoted "autopilot" mode -->
 					<VideoVue
 						v-else-if="promotedParticipantModel"
@@ -116,7 +125,7 @@
 					:isRecording="isRecording"
 					:token="token"
 					:isOverlap="showFullPage"
-					:callParticipantModels="callParticipantModels"
+					:callParticipantModels="stripeParticipantModels"
 					:screens="screens"
 					:localMediaModel="localMediaModel"
 					:localCallParticipantModel="localCallParticipantModel"
@@ -164,8 +173,9 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
-import { provide, ref } from 'vue'
+import { computed, provide, ref } from 'vue'
 import BottomBar from './BottomBar.vue'
+import SpeakersGrid from './Grid/SpeakersGrid.vue'
 import VideosGrid from './Grid/VideosGrid.vue'
 import EmptyCallView from './shared/EmptyCallView.vue'
 import LiveTranscriptionRenderer from './shared/LiveTranscriptionRenderer.vue'
@@ -186,6 +196,7 @@ import { useSettingsStore } from '../../stores/settings.ts'
 import { callParticipantCollection, localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './Grid/gridPlaceholders.ts'
+import { useActiveSpeakers } from './useActiveSpeakers.ts'
 import { useWakeLock } from './useWakeLock.ts'
 
 const serverVersion = loadState('core', 'config', {}).version ?? '29.0.0.0'
@@ -202,6 +213,7 @@ export default {
 		PresenterOverlay,
 		ReactionToaster,
 		ScreenShare,
+		SpeakersGrid,
 		VideoBottomBar,
 		VideoVue,
 		ViewerOverlayCallView,
@@ -226,7 +238,7 @@ export default {
 		},
 	},
 
-	setup() {
+	setup(props) {
 		// Prevent the screen from turning off
 		useWakeLock()
 
@@ -243,14 +255,34 @@ export default {
 		}
 
 		const participantActivityStore = useParticipantActivityStore()
+		const callViewStore = useCallViewStore()
+
+		const callParticipantModels = computed(() => {
+			return callParticipantCollection.callParticipantModels
+				.filter((callParticipantModel) => !callParticipantModel.attributes.internal || callParticipantModel.attributes.videoAvailable)
+		})
+
+		// Several speakers share the main area only in speaker view, and only
+		// when asked for. The sidebar has a layout of its own.
+		const isMultiSpeaker = computed(() => {
+			return callViewStore.isMultiSpeaker && !callViewStore.isGrid && !props.isSidebar
+		})
+
+		const { promotedSessionIds } = useActiveSpeakers({
+			callParticipantModels,
+			enabled: isMultiSpeaker,
+		})
 
 		return {
 			localMediaModel,
 			localCallParticipantModel,
 			callParticipantCollection,
+			callParticipantModels,
 			devMode,
-			callViewStore: useCallViewStore(),
+			callViewStore,
 			participantActivityStore,
+			isMultiSpeaker,
+			promotedSessionIds,
 		}
 	},
 
@@ -285,8 +317,46 @@ export default {
 				?? this.callParticipantModels[0]
 		},
 
-		callParticipantModels() {
-			return callParticipantCollection.callParticipantModels.filter((callParticipantModel) => !callParticipantModel.attributes.internal || callParticipantModel.attributes.videoAvailable)
+		// The speakers currently sharing the main area, in the order they became
+		// active
+		promotedSpeakerModels() {
+			return this.promotedSessionIds
+				.map((sessionId) => this.callParticipantModels.find((model) => model.attributes.nextcloudSessionId === sessionId))
+				.filter((model) => model !== undefined)
+		},
+
+		// Whether the main area is shared between several speakers. Nobody has
+		// necessarily spoken yet, in which case the single promoted participant
+		// is shown as usual.
+		showSpeakersGrid() {
+			return this.isMultiSpeaker
+				&& !this.showSelectedVideo
+				&& !this.showLocalVideo
+				&& !this.showLocalScreen
+				&& !this.showRemoteScreen
+				&& !this.showSelectedScreen
+				&& this.promotedSpeakerModels.length > 1
+		},
+
+		// Peer ids of the speakers actually shown in the main area, which deserve
+		// the same video quality as a single promoted participant
+		promotedSpeakerPeerIds() {
+			if (!this.showSpeakersGrid) {
+				return new Set()
+			}
+
+			return new Set(this.promotedSpeakerModels.map((model) => model.attributes.peerId))
+		},
+
+		// The tiles of the stripe. Speakers shown in the main area are taken out
+		// of it, as they moved from the stripe into their slot.
+		stripeParticipantModels() {
+			if (!this.showSpeakersGrid) {
+				return this.callParticipantModels
+			}
+
+			const promoted = new Set(this.promotedSpeakerModels.map((model) => model.attributes.nextcloudSessionId))
+			return this.callParticipantModels.filter((model) => !promoted.has(model.attributes.nextcloudSessionId))
 		},
 
 		callParticipantModelsWithScreen() {
@@ -460,6 +530,10 @@ export default {
 		},
 
 		selectedVideoPeerId() {
+			this.adjustSimulcastQuality()
+		},
+
+		promotedSpeakerPeerIds() {
 			this.adjustSimulcastQuality()
 		},
 
@@ -834,7 +908,9 @@ export default {
 			// bad specially with a low number of participants.
 			if (this.isGrid) {
 				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.MEDIUM, SIMULCAST.HIGH)
-			} else if (this.sharedDatas[callParticipantModel.attributes.peerId].promoted || this.selectedVideoPeerId === callParticipantModel.attributes.peerId) {
+			} else if (this.sharedDatas[callParticipantModel.attributes.peerId].promoted
+				|| this.selectedVideoPeerId === callParticipantModel.attributes.peerId
+				|| this.promotedSpeakerPeerIds.has(callParticipantModel.attributes.peerId)) {
 				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.HIGH, SIMULCAST.HIGH)
 			} else {
 				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.LOW, SIMULCAST.HIGH)
