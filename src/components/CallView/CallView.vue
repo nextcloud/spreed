@@ -83,6 +83,7 @@
 					<VideoVue
 						v-else-if="promotedParticipantModel"
 						:key="`autopilot-${promotedParticipantModel.attributes.peerId}`"
+						:data-tile-session-id="showSpeakers ? promotedParticipantModel.attributes.nextcloudSessionId : undefined"
 						:token="token"
 						:model="promotedParticipantModel"
 						:sharedData="sharedDatas[promotedParticipantModel.attributes.peerId]"
@@ -196,6 +197,7 @@ import { useSettingsStore } from '../../stores/settings.ts'
 import { callParticipantCollection, localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './Grid/gridPlaceholders.ts'
+import { animateTilePromotion } from './Grid/tilePromotionTransition.ts'
 import { useActiveSpeakers } from './useActiveSpeakers.ts'
 import { useWakeLock } from './useWakeLock.ts'
 
@@ -348,6 +350,16 @@ export default {
 			return this.showSpeakers && this.promotedSpeakerModels.length > 1
 		},
 
+		// Session ids of the tiles actually shown in the main area, empty when a
+		// single participant is promoted there as usual
+		promotedSpeakerSessionIds() {
+			if (!this.showSpeakersGrid) {
+				return []
+			}
+
+			return this.promotedSpeakerModels.map((model) => model.attributes.nextcloudSessionId)
+		},
+
 		// Peer ids of the speakers actually shown in the main area, which deserve
 		// the same video quality as a single promoted participant
 		promotedSpeakerPeerIds() {
@@ -365,7 +377,7 @@ export default {
 				return this.callParticipantModels
 			}
 
-			const promoted = new Set(this.promotedSpeakerModels.map((model) => model.attributes.nextcloudSessionId))
+			const promoted = new Set(this.promotedSpeakerSessionIds)
 			return this.callParticipantModels.filter((model) => !promoted.has(model.attributes.nextcloudSessionId))
 		},
 
@@ -551,6 +563,12 @@ export default {
 
 		isMultiSpeaker() {
 			this._setPromotedParticipant()
+		},
+
+		promotedSpeakerSessionIds(sessionIds, previousSessionIds) {
+			// Runs before the grids are re-rendered, while the tiles are still
+			// where they are about to move from
+			animateTilePromotion(sessionIds, previousSessionIds)
 		},
 
 		speakers: {

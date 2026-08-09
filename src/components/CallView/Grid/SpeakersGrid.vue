@@ -96,6 +96,7 @@ function tileStyle(index: number) {
 				:key="model.attributes.peerId"
 				class="speakers-grid__tile"
 				:style="tileStyle(index)"
+				:data-tile-session-id="model.attributes.nextcloudSessionId"
 				:token="token"
 				:model="model"
 				:sharedData="sharedDatas[model.attributes.peerId]"
