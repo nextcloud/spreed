@@ -70,6 +70,15 @@
 						:showVideoOverlay="showVideoOverlay"
 						:sharedData="sharedDatas[shownRemoteScreenPeerId]"
 						isBig />
+					<!-- Several active speakers sharing the main area -->
+					<SpeakersGrid
+						v-else-if="showSpeakersGrid"
+						:token="token"
+						:models="promotedSpeakerModels"
+						:sharedDatas="sharedDatas"
+						:showVideoOverlay="showVideoOverlay"
+						:isOneToOne="isOneToOne"
+						@selectVideo="handleSelectVideo" />
 					<!-- Promoted "autopilot" mode -->
 					<VideoVue
 						v-else-if="promotedParticipantModel"
@@ -116,7 +125,7 @@
 					:isRecording="isRecording"
 					:token="token"
 					:isOverlap="showFullPage"
-					:callParticipantModels="callParticipantModels"
+					:callParticipantModels="stripeParticipantModels"
 					:screens="screens"
 					:localMediaModel="localMediaModel"
 					:localCallParticipantModel="localCallParticipantModel"
@@ -164,8 +173,9 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
-import { provide, ref } from 'vue'
+import { computed, provide, ref } from 'vue'
 import BottomBar from './BottomBar.vue'
+import SpeakersGrid from './Grid/SpeakersGrid.vue'
 import VideosGrid from './Grid/VideosGrid.vue'
 import EmptyCallView from './shared/EmptyCallView.vue'
 import LiveTranscriptionRenderer from './shared/LiveTranscriptionRenderer.vue'
@@ -186,6 +196,7 @@ import { useSettingsStore } from '../../stores/settings.ts'
 import { callParticipantCollection, localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './Grid/gridPlaceholders.ts'
+import { useActiveSpeakers } from './useActiveSpeakers.ts'
 import { useWakeLock } from './useWakeLock.ts'
 
 const serverVersion = loadState('core', 'config', {}).version ?? '29.0.0.0'
@@ -202,6 +213,7 @@ export default {
 		PresenterOverlay,
 		ReactionToaster,
 		ScreenShare,
+		SpeakersGrid,
 		VideoBottomBar,
 		VideoVue,
 		ViewerOverlayCallView,
@@ -226,7 +238,7 @@ export default {
 		},
 	},
 
-	setup() {
+	setup(props) {
 		// Prevent the screen from turning off
 		useWakeLock()
 
@@ -243,14 +255,34 @@ export default {
 		}
 
 		const participantActivityStore = useParticipantActivityStore()
+		const callViewStore = useCallViewStore()
+
+		const callParticipantModels = computed(() => {
+			return callParticipantCollection.callParticipantModels
+				.filter((callParticipantModel) => !callParticipantModel.attributes.internal || callParticipantModel.attributes.videoAvailable)
+		})
+
+		// Several speakers share the main area only in speaker view, and only
+		// when asked for. The sidebar has a layout of its own.
+		const isMultiSpeaker = computed(() => {
+			return callViewStore.isMultiSpeaker && !callViewStore.isGrid && !props.isSidebar
+		})
+
+		const { promotedSessionIds } = useActiveSpeakers({
+			callParticipantModels,
+			enabled: isMultiSpeaker,
+		})
 
 		return {
 			localMediaModel,
 			localCallParticipantModel,
 			callParticipantCollection,
+			callParticipantModels,
 			devMode,
-			callViewStore: useCallViewStore(),
+			callViewStore,
 			participantActivityStore,
+			isMultiSpeaker,
+			promotedSessionIds,
 		}
 	},
 
@@ -281,12 +313,60 @@ export default {
 		promotedParticipantModel() {
 			// Ensure at least one participant is always promoted to show in autopilot
 			return this.forcePromotedModel
+				// A single active speaker keeps the main area for itself, rather
+				// than being the only tile of the speakers grid
+				?? (this.showSpeakers ? this.promotedSpeakerModels[0] : undefined)
 				?? this.callParticipantModels.find((callParticipantModel) => this.sharedDatas[callParticipantModel.attributes.peerId].promoted)
 				?? this.callParticipantModels[0]
 		},
 
-		callParticipantModels() {
-			return callParticipantCollection.callParticipantModels.filter((callParticipantModel) => !callParticipantModel.attributes.internal || callParticipantModel.attributes.videoAvailable)
+		// The speakers currently sharing the main area, in the order they became
+		// active
+		promotedSpeakerModels() {
+			return this.promotedSessionIds
+				.map((sessionId) => this.callParticipantModels.find((model) => model.attributes.nextcloudSessionId === sessionId))
+				.filter((model) => model !== undefined)
+		},
+
+		// Whether the active speakers rule the main area. Until somebody has
+		// spoken there is none, and the single promoted participant is shown as
+		// usual.
+		showSpeakers() {
+			return this.isMultiSpeaker
+				&& !this.showSelectedVideo
+				&& !this.showLocalVideo
+				&& !this.showLocalScreen
+				&& !this.showRemoteScreen
+				&& !this.showSelectedScreen
+				&& this.promotedSpeakerModels.length > 0
+		},
+
+		// Whether the main area is shared between several speakers. A lone
+		// speaker is shown as the promoted participant instead, so that the
+		// speaker they already were is not moved around for nothing.
+		showSpeakersGrid() {
+			return this.showSpeakers && this.promotedSpeakerModels.length > 1
+		},
+
+		// Peer ids of the speakers actually shown in the main area, which deserve
+		// the same video quality as a single promoted participant
+		promotedSpeakerPeerIds() {
+			if (!this.showSpeakers) {
+				return new Set()
+			}
+
+			return new Set(this.promotedSpeakerModels.map((model) => model.attributes.peerId))
+		},
+
+		// The tiles of the stripe. Speakers shown in the main area are taken out
+		// of it, as they moved from the stripe into their slot.
+		stripeParticipantModels() {
+			if (!this.showSpeakersGrid) {
+				return this.callParticipantModels
+			}
+
+			const promoted = new Set(this.promotedSpeakerModels.map((model) => model.attributes.nextcloudSessionId))
+			return this.callParticipantModels.filter((model) => !promoted.has(model.attributes.nextcloudSessionId))
 		},
 
 		callParticipantModelsWithScreen() {
@@ -461,6 +541,16 @@ export default {
 
 		selectedVideoPeerId() {
 			this.adjustSimulcastQuality()
+		},
+
+		// A speaker entering or leaving the promoted area is what promotes them,
+		// so the flag is set from here rather than from `speakers`
+		promotedSpeakerPeerIds() {
+			this._setPromotedParticipant()
+		},
+
+		isMultiSpeaker() {
+			this._setPromotedParticipant()
 		},
 
 		speakers: {
@@ -709,20 +799,29 @@ export default {
 		},
 
 		_setPromotedParticipant() {
-			let promotedPeerId = null
+			let promotedPeerIds = []
 
-			if (!this.screenSharingActive && this.speakers.length) {
-				promotedPeerId = this.speakers[0].id
-			} else if (this.shownRemoteScreenPeerId && this.sharedDatas[this.shownRemoteScreenPeerId]) {
-				promotedPeerId = this.shownRemoteScreenPeerId
+			if (this.screenSharingActive) {
+				if (this.shownRemoteScreenPeerId) {
+					promotedPeerIds = [this.shownRemoteScreenPeerId]
+				}
+			} else if (this.isMultiSpeaker) {
+				// The promoted flag follows the promoted area rather than whoever
+				// speaks: a speaker only moves up once they spoke long enough, and
+				// promoting them as soon as they speak would mark a tile that is
+				// still in the stripe as promoted.
+				promotedPeerIds = this.promotedSpeakerModels.map((model) => model.attributes.peerId)
+			} else if (this.speakers.length) {
+				promotedPeerIds = [this.speakers[0].id]
 			}
 
+			promotedPeerIds = promotedPeerIds.filter((peerId) => this.sharedDatas[peerId])
+
 			// Ensure at least one participant is always promoted to show in autopilot
-			if (promotedPeerId && this.sharedDatas[promotedPeerId]) {
+			if (promotedPeerIds.length) {
 				Object.keys(this.sharedDatas).forEach((peerId) => {
-					this.sharedDatas[peerId].promoted = false
+					this.sharedDatas[peerId].promoted = promotedPeerIds.includes(peerId)
 				})
-				this.sharedDatas[promotedPeerId].promoted = true
 			}
 
 			this.adjustSimulcastQuality()
@@ -834,7 +933,9 @@ export default {
 			// bad specially with a low number of participants.
 			if (this.isGrid) {
 				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.MEDIUM, SIMULCAST.HIGH)
-			} else if (this.sharedDatas[callParticipantModel.attributes.peerId].promoted || this.selectedVideoPeerId === callParticipantModel.attributes.peerId) {
+			} else if (this.sharedDatas[callParticipantModel.attributes.peerId].promoted
+				|| this.selectedVideoPeerId === callParticipantModel.attributes.peerId
+				|| this.promotedSpeakerPeerIds.has(callParticipantModel.attributes.peerId)) {
 				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.HIGH, SIMULCAST.HIGH)
 			} else {
 				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.LOW, SIMULCAST.HIGH)
