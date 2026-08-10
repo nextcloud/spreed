@@ -15,6 +15,7 @@ type Filter = 'unread' | 'mentions' | 'events'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
 const supportsAvatar = hasTalkFeature('local', 'avatar')
+const supportsConversationTags = hasTalkFeature('local', 'conversation-tags')
 
 /**
  * Check if the conversation is classified (CLASSIFIED attribute bit is set)
@@ -272,8 +273,9 @@ export function sortConversationsList(
 ) {
 	return toValue(list).slice()
 		.sort((conversation1, conversation2) => {
-			// Favorites always first
-			if (conversation1.isFavorite !== conversation2.isFavorite) {
+			// Legacy fallback: favorites tag section is already at the top;
+			// without 'conversation-tags' capability, keep sorting to the top on flat list.
+			if (!supportsConversationTags && conversation1.isFavorite !== conversation2.isFavorite) {
 				return conversation1.isFavorite ? -1 : 1
 			}
 

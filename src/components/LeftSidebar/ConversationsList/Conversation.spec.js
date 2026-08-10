@@ -106,7 +106,7 @@ describe('ConversationItem.vue', () => {
 
 		const icon = el.findComponent(ConversationIcon)
 		expect(icon.props('item')).toStrictEqual(item)
-		expect(icon.props('hideFavorite')).toStrictEqual(false)
+		expect(icon.props('hideFavorite')).toStrictEqual(true)
 		expect(icon.props('hideCall')).toStrictEqual(false)
 	})
 

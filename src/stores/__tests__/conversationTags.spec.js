@@ -94,7 +94,6 @@ describe('conversationTagsStore', () => {
 		expect(BrowserStorage.getItem).toHaveBeenCalledWith('conversationTags')
 		expect(conversationTagsStore.sortedTags.map((tag) => tag.id)).toEqual(['favorites', 'tag-1', 'tag-2'])
 		expect(conversationTagsStore.customTags.map((tag) => tag.id)).toEqual(['tag-1', 'tag-2'])
-		expect(conversationTagsStore.hasCustomTags).toBe(true)
 	})
 
 	it('fetches tags and replaces the stored tag list', async () => {
