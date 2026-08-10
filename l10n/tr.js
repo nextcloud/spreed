@@ -1729,6 +1729,7 @@ OC.L10N.register(
     "_{user1}, {user2}, {user3} and %n other are typing …_::_{user1}, {user2}, {user3} and %n others are typing …_" : ["{user1}, {user2}, {user3} ve %n diğer kişi yazıyor…","{user1}, {user2}, {user3} ve %n diğer kişi yazıyor…"],
     "Add more files" : "Başka dosya ekle",
     "Allow editing of uploaded files" : "Yüklenen dosyalar düzenlenebilsin",
+    "Send images without compression" : "Görseller sıkıştırılmadan gönderilsin",
     "Send" : "Gönder",
     "In this conversation <strong>{user}</strong> can:" : "Bu görüşmede <strong>{user}</strong> şunları yapabilir:",
     "Edit default permissions for participants in <strong>{conversationName}</strong>" : "<strong>{conversationName}</strong> içindeki katılımcıların varsayılan izinlerini düzenle",
