@@ -432,6 +432,7 @@ import { useParticipantActivityStore } from '../../../stores/participantActivity
 import { isChannelConversation } from '../../../utils/conversation.ts'
 import { formattedTime } from '../../../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../../../utils/getDisplayName.ts'
+import { getParticipantRole } from '../../../utils/participants.ts'
 import { readableNumber } from '../../../utils/readableNumber.ts'
 import { getPreloadedUserStatus, getStatusMessage } from '../../../utils/userStatus.ts'
 
@@ -795,21 +796,16 @@ export default {
 			return this.participantType === PARTICIPANT.TYPE.OWNER
 		},
 
-		/**
-		 * Rank is only marked in conversations that actually have ranks. Both
-		 * participants of a one-to-one conversation are owners by design.
-		 */
-		showRoleIcon() {
-			return this.isModerator
-				&& ![CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER, CONVERSATION.TYPE.CHANGELOG].includes(this.conversation.type)
+		role() {
+			return getParticipantRole(this.participantType, this.conversation.type)
 		},
 
 		showOwnerIcon() {
-			return this.showRoleIcon && this.isOwner
+			return this.role === 'owner'
 		},
 
 		showModeratorIcon() {
-			return this.showRoleIcon && !this.isOwner
+			return this.role === 'moderator'
 		},
 
 		canBeModerated() {
