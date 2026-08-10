@@ -477,6 +477,32 @@ class SystemMessage implements IEventListener {
 			} elseif ($cliIsActor) {
 				$parsedMessage = $this->l->t('An administrator removed {phone}');
 			}
+		} elseif ($message === 'owner_promoted') {
+			$parsedParameters['user'] = $this->getUser($parameters['user']);
+			$parsedMessage = $this->l->t('{actor} promoted {user} to owner');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You promoted {user} to owner');
+			} elseif ($this->isCurrentParticipantChangedUser($currentActorType, $currentActorId, $parsedParameters['user'])) {
+				$parsedMessage = $this->l->t('{actor} promoted you to owner');
+				if ($cliIsActor) {
+					$parsedMessage = $this->l->t('An administrator promoted you to owner');
+				}
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator promoted {user} to owner');
+			}
+		} elseif ($message === 'owner_demoted') {
+			$parsedParameters['user'] = $this->getUser($parameters['user']);
+			$parsedMessage = $this->l->t('{actor} demoted {user} from owner');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You demoted {user} from owner');
+			} elseif ($this->isCurrentParticipantChangedUser($currentActorType, $currentActorId, $parsedParameters['user'])) {
+				$parsedMessage = $this->l->t('{actor} demoted you from owner');
+				if ($cliIsActor) {
+					$parsedMessage = $this->l->t('An administrator demoted you from owner');
+				}
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator demoted {user} from owner');
+			}
 		} elseif ($message === 'moderator_promoted') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');

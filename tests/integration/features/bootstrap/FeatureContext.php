@@ -1920,6 +1920,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	#[Then('/^user "([^"]*)" (promotes|demotes) "([^"]*)" in room "([^"]*)" with (\d+) \((v4)\)$/')]
 	public function userPromoteDemoteInRoom(string $user, string $isPromotion, string $participant, string $identifier, int $statusCode, string $apiVersion): void {
+		$this->userPromoteDemoteToTypeInRoom($user, $isPromotion, $participant, '', $identifier, $statusCode, $apiVersion);
+	}
+
+	#[Then('/^user "([^"]*)" (promotes|demotes) "([^"]*)" to "([^"]*)" in room "([^"]*)" with (\d+) \((v4)\)$/')]
+	public function userPromoteDemoteToTypeInRoom(string $user, string $isPromotion, string $participant, string $participantType, string $identifier, int $statusCode, string $apiVersion): void {
 		if ($participant === 'stranger') {
 			$attendeeId = 123456789;
 		} elseif (strpos($participant, 'guest') === 0) {
@@ -1930,6 +1935,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		$requestParameters = [['attendeeId', $attendeeId]];
+		if ($participantType !== '') {
+			$requestParameters[] = ['participantType', $this->mapParticipantTypeTestInput($participantType)];
+		}
 
 		$this->setCurrentUser($user);
 		$this->sendRequest(

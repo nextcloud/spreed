@@ -24876,7 +24876,8 @@
         "/ocs/v2.php/apps/spreed/api/{apiVersion}/room/{token}/moderators": {
             "post": {
                 "operationId": "room-promote-moderator",
-                "summary": "Promote an attendee to moderator",
+                "summary": "Promote an attendee to moderator or owner",
+                "description": "Required capability: `promote-demote-owner` for `int $participantType`",
                 "tags": [
                     "room"
                 ],
@@ -24904,6 +24905,12 @@
                                         "format": "int64",
                                         "description": "ID of the attendee",
                                         "minimum": 0
+                                    },
+                                    "participantType": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "description": "Level to promote the attendee to: owner (`1`) or moderator (`2`), `0` to only grant moderator permissions. Guests are promoted to guest moderator (`6`) and can never become owners."
                                     }
                                 }
                             }
@@ -24945,7 +24952,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Attendee promoted to moderator successfully",
+                        "description": "Attendee promoted successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -24975,7 +24982,7 @@
                         }
                     },
                     "400": {
-                        "description": "Promoting attendee to moderator is not possible",
+                        "description": "Promoting attendee is not possible",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -24995,7 +25002,25 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "nullable": true
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "actor-type",
+                                                                "last-moderator",
+                                                                "moderator",
+                                                                "participant",
+                                                                "participant-type",
+                                                                "room-type",
+                                                                "self",
+                                                                "type"
+                                                            ]
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -25005,7 +25030,7 @@
                         }
                     },
                     "403": {
-                        "description": "Promoting attendee to moderator is not allowed",
+                        "description": "Promoting attendee is not allowed",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -25025,7 +25050,25 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "nullable": true
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "actor-type",
+                                                                "last-moderator",
+                                                                "moderator",
+                                                                "participant",
+                                                                "participant-type",
+                                                                "room-type",
+                                                                "self",
+                                                                "type"
+                                                            ]
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -25055,7 +25098,25 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "nullable": true
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "actor-type",
+                                                                "last-moderator",
+                                                                "moderator",
+                                                                "participant",
+                                                                "participant-type",
+                                                                "room-type",
+                                                                "self",
+                                                                "type"
+                                                            ]
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -25068,7 +25129,8 @@
             },
             "delete": {
                 "operationId": "room-demote-moderator",
-                "summary": "Demote an attendee from moderator",
+                "summary": "Demote an attendee from moderator or owner",
+                "description": "Required capability: `promote-demote-owner` for `int $participantType`",
                 "tags": [
                     "room"
                 ],
@@ -25115,6 +25177,16 @@
                         }
                     },
                     {
+                        "name": "participantType",
+                        "in": "query",
+                        "description": "Level to demote the attendee to: moderator (`2`) or user (`3`), `0` to only revoke moderator permissions. Guest moderators are demoted to guest (`4`).",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 0
+                        }
+                    },
+                    {
                         "name": "OCS-APIRequest",
                         "in": "header",
                         "description": "Required to be true for the API request to pass",
@@ -25127,7 +25199,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Attendee demoted from moderator successfully",
+                        "description": "Attendee demoted successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -25157,7 +25229,7 @@
                         }
                     },
                     "400": {
-                        "description": "Demoting attendee from moderator is not possible",
+                        "description": "Demoting attendee is not possible",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -25177,7 +25249,25 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "nullable": true
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "actor-type",
+                                                                "last-moderator",
+                                                                "moderator",
+                                                                "participant",
+                                                                "participant-type",
+                                                                "room-type",
+                                                                "self",
+                                                                "type"
+                                                            ]
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -25187,7 +25277,7 @@
                         }
                     },
                     "403": {
-                        "description": "Demoting attendee from moderator is not allowed",
+                        "description": "Demoting attendee is not allowed",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -25207,7 +25297,25 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "nullable": true
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "actor-type",
+                                                                "last-moderator",
+                                                                "moderator",
+                                                                "participant",
+                                                                "participant-type",
+                                                                "room-type",
+                                                                "self",
+                                                                "type"
+                                                            ]
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -25237,7 +25345,25 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "nullable": true
+                                                    "type": "object",
+                                                    "required": [
+                                                        "error"
+                                                    ],
+                                                    "properties": {
+                                                        "error": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "actor-type",
+                                                                "last-moderator",
+                                                                "moderator",
+                                                                "participant",
+                                                                "participant-type",
+                                                                "room-type",
+                                                                "self",
+                                                                "type"
+                                                            ]
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }

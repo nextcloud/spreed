@@ -88,6 +88,8 @@ class Listener implements IEventListener {
 		'thread_renamed',
 		'message_deleted',
 		'message_edited',
+		'owner_promoted',
+		'owner_demoted',
 		'moderator_promoted',
 		'moderator_demoted',
 		'guest_moderator_promoted',
