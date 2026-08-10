@@ -185,7 +185,7 @@
 				<template #icon>
 					<IconAccountOutline :size="20" />
 				</template>
-				{{ t('spreed', 'Demote from owner to user') }}
+				{{ t('spreed', 'Demote from owner to participant') }}
 			</NcActionButton>
 
 			<NcActionSeparator v-if="canBeModerated && (canBePromoted || canBePromotedToOwner || canBeDemoted || canBeDemotedFromOwner || canBeDemotedFromOwnerToUser)" />
