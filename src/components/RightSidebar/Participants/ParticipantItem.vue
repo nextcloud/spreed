@@ -30,18 +30,18 @@
 
 		<template #name>
 			<!-- First line: participant's name and type -->
-			<span class="participant__user" :title="userNameTitle">
-				<span class="participant__user-name">{{ computedName }}</span>
+			<span class="participant__user">
+				<span class="participant__user-name" :title="userNameTitle">{{ computedName }}</span>
 				<IconCrownOutline
 					v-if="showOwnerIcon"
 					class="participant__user-icon"
 					:size="16"
-					:title="t('spreed', 'owner')" />
+					:title="ownerIconLabel" />
 				<IconShieldOutline
 					v-else-if="showModeratorIcon"
 					class="participant__user-icon"
 					:size="16"
-					:title="t('spreed', 'moderator')" />
+					:title="moderatorIconLabel" />
 				<span v-if="isBridgeBotUser" class="participant__user-badge">({{ t('spreed', 'bot') }})</span>
 				<span v-if="isGuestActor || isEmailActor" class="participant__user-badge">({{ t('spreed', 'guest') }})</span>
 				<span v-if="!isSelf && isLobbyEnabled && !canSkipLobby" class="participant__user-badge">({{ t('spreed', 'in the lobby') }})</span>
@@ -494,12 +494,19 @@ export default {
 	setup() {
 		const participantActivityStore = useParticipantActivityStore()
 
+		// TRANSLATORS: Conversation owner, participant with high-level permissions
+		const ownerIconLabel = t('spreed', 'Owner')
+		// TRANSLATORS: Conversation moderator, participant with elevated permissions
+		const moderatorIconLabel = t('spreed', 'Moderator')
+
 		return {
 			IconMicrophoneOffOutline,
 			isInCall: useIsInCall(),
 			actorStore: useActorStore(),
 			token: useGetToken(),
 			participantActivityStore,
+			ownerIconLabel,
+			moderatorIconLabel,
 		}
 	},
 
@@ -530,14 +537,18 @@ export default {
 		userNameTitle() {
 			let text = this.computedName
 			if (this.showOwnerIcon) {
+				// TRANSLATORS: Conversation owner, participant with high-level permissions
 				text += ' (' + t('spreed', 'owner') + ')'
 			} else if (this.showModeratorIcon) {
+				// TRANSLATORS: Conversation moderator, participant with elevated permissions
 				text += ' (' + t('spreed', 'moderator') + ')'
 			}
 			if (this.isBridgeBotUser) {
+				// TRANSLATORS: Conversation bot, added by administrator/moderator, with certain functionality
 				text += ' (' + t('spreed', 'bot') + ')'
 			}
 			if (this.isGuestActor || this.isEmailActor) {
+				// TRANSLATORS: Conversation guest, joined by public link, with limited functionality
 				text += ' (' + t('spreed', 'guest') + ')'
 			}
 			return text
