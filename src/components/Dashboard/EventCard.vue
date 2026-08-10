@@ -255,22 +255,18 @@ function handleJoin({ call }: { call: boolean }) {
 <style scoped lang="scss">
 .event-card {
 	position: relative;
-	height: 250px;
 	display: flex;
 	flex-direction: column;
 	flex: 0 0 100%;
 	max-width: 300px;
-	border: 2px solid var(--color-border);
+	border: 1px solid var(--color-primary-element-light-hover);
 	padding: calc(var(--default-grid-baseline) * 2);
+	padding-bottom: calc(var(--default-clickable-area) + var(--default-grid-baseline));
 	border-radius: var(--border-radius-large);
-	background-color: var(--color-main-background);
+	background-color: var(--color-primary-element-light);
 
 	&--highlighted {
-		background-color: var(--color-primary-light);
-
-		&:not(.event-card--in-call) {
-			border-color: var(--color-primary-element-light-hover) !important;
-		}
+		background-color: var(--color-main-background);
 	}
 
 	&--in-call {
@@ -279,6 +275,7 @@ function handleJoin({ call }: { call: boolean }) {
 
 	&:not(.event-card--in-call):hover > .event-card__invitation-info.hovered {
 		display: flex;
+		padding: var(--default-grid-baseline);
 		background-color: inherit;
 	}
 

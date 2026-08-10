@@ -49,6 +49,18 @@ const isDirectionRTL = isRTL()
 const isMobile = useIsMobile()
 const isSmallMobile = useIsSmallMobile()
 
+/**
+ * Both theme variants of a dashboard illustration, to be bound on a DashboardSection.
+ *
+ * @param name - File name in img/dashboard/, without the extension and the `-dark` suffix
+ */
+function illustration(name: string) {
+	return {
+		backgroundImage: imagePath('spreed', `dashboard/${name}.webp`),
+		backgroundImageDark: imagePath('spreed', `dashboard/${name}-dark.webp`),
+	}
+}
+
 const store = useStore()
 const router = useRouter()
 const dashboardStore = useDashboardStore()
@@ -201,6 +213,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 			<div class="talk-dashboard__actions">
 				<NcPopover
 					v-if="canStartConversations"
+					class="talk-dashboard__action"
 					popupRole="dialog">
 					<template #trigger>
 						<NcButton
@@ -232,22 +245,26 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 				</NcPopover>
 				<NcButton
 					v-if="canStartConversations"
+					class="talk-dashboard__action"
 					@click="EventBus.emit('new-conversation-dialog:show')">
 					<template #icon>
 						<IconPlus :size="20" />
 					</template>
-					{{ t('spreed', 'Create a new conversation') }}
+					{{ t('spreed', 'New conversation') }}
 				</NcButton>
 
-				<NcButton @click="EventBus.emit('open-conversations-list:show')">
+				<NcButton
+					class="talk-dashboard__action"
+					@click="EventBus.emit('open-conversations-list:show')">
 					<template #icon>
 						<IconList :size="20" />
 					</template>
-					{{ t('spreed', 'Join open conversations') }}
+					{{ t('spreed', 'Join conversations') }}
 				</NcButton>
 
 				<NcButton
 					v-if="isCallEnabled && canModerateSipDialOut"
+					class="talk-dashboard__action"
 					@click="EventBus.emit('call-phone-dialog:show')">
 					<template #icon>
 						<IconPhoneOutline :size="20" />
@@ -256,6 +273,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 				</NcButton>
 				<NcButton
 					v-if="isCallEnabled"
+					class="talk-dashboard__action"
 					variant="secondary"
 					@click="emit('talk:media-settings:show', 'device-check')">
 					<template #icon>
@@ -267,62 +285,63 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 		</div>
 		<div class="talk-dashboard__items">
 			<div class="event-section">
-				<template v-if="eventsInitialised && eventRooms.length > 0">
-					<h3 class="title">
-						{{ t('spreed', 'Upcoming meetings') }}
-					</h3>
-					<div
-						class="talk-dashboard__event-cards-wrapper"
-						:class="{ 'forward-scrollable': forwardScrollable, 'backward-scrollable': backwardScrollable }">
+				<DashboardSection
+					v-if="!eventsInitialised || eventRooms.length > 0"
+					:title="t('spreed', 'Upcoming meetings')"
+					v-bind="illustration('meetings')">
+					<template #list>
+						<LoadingPlaceholder
+							v-if="!eventsInitialised"
+							type="event-cards" />
 						<div
-							ref="eventCardsWrapper"
-							class="talk-dashboard__event-cards"
-							@scroll.passive="updateScrollableFlags">
-							<EventCard
-								v-for="eventRoom in eventRooms"
-								:key="eventRoom.eventLink"
-								:eventRoom="eventRoom"
-								class="talk-dashboard__event-card" />
+							v-else
+							class="talk-dashboard__event-cards-wrapper"
+							:class="{ 'forward-scrollable': forwardScrollable, 'backward-scrollable': backwardScrollable }">
+							<div
+								ref="eventCardsWrapper"
+								class="talk-dashboard__event-cards"
+								@scroll.passive="updateScrollableFlags">
+								<EventCard
+									v-for="eventRoom in eventRooms"
+									:key="eventRoom.eventLink"
+									:eventRoom="eventRoom"
+									class="talk-dashboard__event-card" />
+							</div>
+							<div class="talk-dashboard__event-cards__scroll-indicator">
+								<NcButton
+									v-show="backwardScrollable"
+									class="button-slide backward"
+									variant="tertiary"
+									:title="t('spreed', 'Scroll backward')"
+									:aria-label="t('spreed', 'Scroll backward')"
+									@click="scrollEventCards({ direction: 'backward' })">
+									<template #icon>
+										<IconArrowLeft class="bidirectional-icon" />
+									</template>
+								</NcButton>
+								<NcButton
+									v-show="forwardScrollable"
+									class="button-slide forward"
+									variant="tertiary"
+									:title="t('spreed', 'Scroll forward')"
+									:aria-label="t('spreed', 'Scroll forward')"
+									@click="scrollEventCards({ direction: 'forward' })">
+									<template #icon>
+										<IconArrowRight class="bidirectional-icon" />
+									</template>
+								</NcButton>
+							</div>
 						</div>
-						<div class="talk-dashboard__event-cards__scroll-indicator">
-							<NcButton
-								v-show="backwardScrollable"
-								class="button-slide backward"
-								variant="tertiary"
-								:title="t('spreed', 'Scroll backward')"
-								:aria-label="t('spreed', 'Scroll backward')"
-								@click="scrollEventCards({ direction: 'backward' })">
-								<template #icon>
-									<IconArrowLeft class="bidirectional-icon" />
-								</template>
-							</NcButton>
-							<NcButton
-								v-show="forwardScrollable"
-								class="button-slide forward"
-								variant="tertiary"
-								:title="t('spreed', 'Scroll forward')"
-								:aria-label="t('spreed', 'Scroll forward')"
-								@click="scrollEventCards({ direction: 'forward' })">
-								<template #icon>
-									<IconArrowRight class="bidirectional-icon" />
-								</template>
-							</NcButton>
-						</div>
-					</div>
-				</template>
-				<LoadingPlaceholder
-					v-else-if="!eventsInitialised"
-					type="event-cards" />
+					</template>
+				</DashboardSection>
 				<DashboardSection
 					v-else
 					class="event-section--empty"
 					wide
 					:title="t('spreed', 'Schedule meetings')"
 					:subtitle="t('spreed', 'You don\'t have any upcoming meetings')"
-					:description="t('spreed', 'Calendar events with a conversation link as the location are shown here')">
-					<template #image>
-						<img :src="imagePath('spreed', 'dashboard/meetings.png')">
-					</template>
+					:description="t('spreed', 'Calendar events with a conversation link as the location are shown here')"
+					v-bind="illustration('meetings')">
 					<template #action>
 						<NcButton
 							v-if="isCalendarEnabled"
@@ -341,7 +360,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 				<div class="talk-dashboard__unread-mentions">
 					<DashboardSection
 						v-if="filteredConversations.length > 0 || !conversationsInitialised"
-						:title="t('spreed', 'Unread mentions')">
+						:title="t('spreed', 'Unread mentions')"
+						v-bind="illustration('mentions')">
 						<template #list>
 							<ConversationsListVirtual
 								class="talk-dashboard__conversations-list"
@@ -352,18 +372,16 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					<DashboardSection
 						v-else
 						:title="t('spreed', 'Unread mentions')"
-						:description="t('spreed', 'Messages where you were mentioned will show up here. You can mention people by typing @ followed by their name')">
-						<template #image>
-							<img :src="imagePath('spreed', 'dashboard/mentions.png')">
-						</template>
-					</DashboardSection>
+						:description="t('spreed', 'Messages where you were mentioned will show up here. You can mention people by typing @ followed by their name')"
+						v-bind="illustration('mentions')" />
 				</div>
 				<div
 					v-if="supportsUpcomingReminders"
 					class="talk-dashboard__upcoming-reminders">
 					<DashboardSection
 						v-if="upcomingReminders.length > 0 || !remindersInitialised"
-						:title="t('spreed', 'Upcoming reminders')">
+						:title="t('spreed', 'Upcoming reminders')"
+						v-bind="illustration('reminders')">
 						<template #list>
 							<ul v-if="remindersInitialised" class="upcoming-reminders-list">
 								<SearchMessageItem
@@ -393,11 +411,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					<DashboardSection
 						v-else
 						:title="t('spreed', 'Message reminders')"
-						:description="t('spreed', 'Set a reminder on a message to be notified')">
-						<template #image>
-							<img :src="imagePath('spreed', 'dashboard/reminders.png')">
-						</template>
-					</DashboardSection>
+						:description="t('spreed', 'Set a reminder on a message to be notified')"
+						v-bind="illustration('reminders')" />
 				</div>
 			</div>
 		</div>
@@ -415,10 +430,15 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	flex-direction: column;
 	height: 100%;
 	max-height: 800px;
-	max-width: 1200px;
+	max-width: 900px;
 
 	&--mobile {
 		width: 100%;
+
+		.talk-dashboard__header {
+			margin-block-start: 0;
+			padding-inline-start: calc(var(--default-clickable-area) + var(--default-grid-baseline)); // navigation button
+		}
 	}
 
 	&--small-mobile {
@@ -439,8 +459,9 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 .talk-dashboard__header {
 	font-size: 21px; // NcDialog header font size
 	font-weight: bold;
-	margin: 0 auto calc(var(--default-grid-baseline) * 2);
-	padding-inline-start: calc(var(--default-clickable-area) + var(--default-grid-baseline)); // navigation button
+	margin-inline: auto;
+	margin-block: clamp(0px, calc(100vh - 800px), calc(var(--default-clickable-area) + var(--default-grid-baseline)))
+		calc(var(--default-grid-baseline) * 2);
 }
 
 .talk-dashboard__actions {
@@ -461,8 +482,34 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	}
 }
 
+// Spread the actions across the full width of every row they wrap onto
+.talk-dashboard__action {
+	flex-grow: 1;
+
+	// The popover only wraps its trigger, so the button inside has to stretch as well
+	:deep(.button-vue) {
+		width: 100%;
+	}
+}
+
 .event-section {
 	margin-block-end: calc(var(--default-grid-baseline) * 6);
+
+	:deep(.dashboard-section--list) {
+		.dashboard-section__content {
+			padding-inline: 0;
+		}
+
+		.dashboard-section__title {
+			padding-inline: calc(var(--default-grid-baseline) * 5);
+		}
+	}
+
+	.talk-dashboard-wrapper--mobile & {
+		:deep(.dashboard-section--list) .dashboard-section__title {
+			padding-inline: calc(var(--default-grid-baseline) * 3);
+		}
+	}
 
 	&--empty {
 		height: 225px;
@@ -476,7 +523,15 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	margin-block: var(--default-grid-baseline);
 	overflow-x: auto;
 	scrollbar-width: none;
-	border-radius: var(--border-radius-large);
+
+	// Keep the outermost cards off the edges of the section
+	> :first-child {
+		margin-inline-start: calc(var(--default-grid-baseline) * 5);
+	}
+
+	> :last-child {
+		margin-inline-end: calc(var(--default-grid-baseline) * 5);
+	}
 }
 
 .talk-dashboard__event-cards-wrapper {
@@ -497,14 +552,15 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	.button-slide {
 		position: absolute !important;
 		display: flex;
-		top: 0;
+		top: calc(var(--default-grid-baseline) * 2);
 		padding: 0;
-		height: 100%;
-		margin: 0 !important;
+		height: calc(100% - var(--default-grid-baseline) * 4);
+		margin: 0 var(--default-grid-baseline) !important;
 		z-index: 3;
 		justify-content: left;
 		background: var(--color-main-background);
 		border-radius: var(--border-radius-large);
+		box-shadow: 0 1px 5px rgba(var(--color-box-shadow-rgb), 0.2);
 
 		&.backward {
 			inset-inline-start: 0;
@@ -541,6 +597,33 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	}
 }
 
+// In these two sections use main text color for a11y
+.talk-dashboard__unread-mentions,
+.talk-dashboard__upcoming-reminders {
+	:deep(.list-item-content__subname) {
+		color: var(--color-main-text);
+	}
+}
+
+.talk-dashboard__unread-mentions {
+	// Sit the text at the bottom of the card, clear of the illustration above it
+	:deep(.dashboard-section__content) {
+		justify-content: end;
+	}
+}
+
+// Keep the text off the illustration on the trailing side of the card. Only on desktop,
+// where the card is wide enough to spare the room.
+.talk-dashboard-wrapper:not(.talk-dashboard-wrapper--mobile) {
+	.talk-dashboard__unread-mentions,
+	.talk-dashboard__upcoming-reminders {
+		:deep(.dashboard-section__title),
+		:deep(.dashboard-section__description) {
+			max-width: 75%;
+		}
+	}
+}
+
 .upcoming-reminders {
 	&-list {
 		overflow-y: auto;
@@ -555,12 +638,6 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	flex-grow: 1;
 	margin-block: var(--default-grid-baseline);
 	line-height: 20px;
-}
-
-.title {
-	font-size: 1.25rem;
-    font-weight: bold;
-	margin-block: 0 calc(var(--default-grid-baseline) * 2);
 }
 
 .instant-meeting__dialog {
