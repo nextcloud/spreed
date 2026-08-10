@@ -48,9 +48,10 @@
 						<template v-if="!devMode && !(isLessThanTwoVideos && isStripe)">
 							<EmptyCallView v-if="orderedVideos.length === 0 && !isStripe" class="video" :isGrid="true" />
 							<VideoVue
-								v-for="callParticipantModel in displayedVideos"
+								v-for="(callParticipantModel, index) in displayedVideos"
 								:key="callParticipantModel.attributes.peerId"
 								:class="{ video: !isStripe }"
+								:style="tileStyle(index)"
 								:showVideoOverlay="showVideoOverlay"
 								:token="token"
 								:model="callParticipantModel"
@@ -65,10 +66,11 @@
 						<!-- VideosGrid developer mode -->
 						<template v-if="devMode">
 							<div
-								v-for="key in displayedVideos"
+								v-for="(key, index) in displayedVideos"
 								:key="key"
 								class="dev-mode-video video"
-								:class="{ 'dev-mode-screenshot': screenshotMode }">
+								:class="{ 'dev-mode-screenshot': screenshotMode }"
+								:style="tileStyle(index)">
 								<img :alt="placeholderName(key)" :src="placeholderImage(key)">
 								<VideoBottomBar
 									:hasShadow="false"
@@ -82,9 +84,10 @@
 							</h1>
 						</template>
 						<LocalVideo
-							v-if="!isStripe && !isRecording"
+							v-if="!noLocalVideoReserve"
 							ref="localVideo"
 							class="video"
+							:style="tileStyle(displayedVideos.length)"
 							isGrid
 							:fitVideo="false"
 							:token="token"
@@ -177,7 +180,13 @@ import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
 import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
-import { GRID_GAP } from './gridLayout.ts'
+import {
+	computeTilePlacements,
+	getHalfColumnCount,
+	getHalfColumnMinWidth,
+	GRID_GAP,
+	TILE_COLUMN_SPAN,
+} from './gridLayout.ts'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
 import { useGridDimensions } from './useGridDimensions.ts'
 import { usePagination } from './usePagination.ts'
@@ -308,9 +317,8 @@ export default {
 		// `computeGridDimensions`); this clamp keeps the "videos per page" math
 		// consistent even before the layout has been recomputed.
 		const slots = computed(() => {
-			const noLocalVideoReserve = props.isStripe || props.isRecording
 			const gridSlots = gridDimensions.rows.value * gridDimensions.columns.value
-			const slots = noLocalVideoReserve ? gridSlots : gridSlots - 1
+			const slots = gridDimensions.noLocalVideoReserve.value ? gridSlots : gridSlots - 1
 			return videosCap ? Math.min(videosCap, slots) : slots
 		})
 
@@ -409,6 +417,27 @@ export default {
 			return (this.gridHeight - GRID_GAP * (this.rows - 1)) / this.rows
 		},
 
+		// Number of tiles rendered on the current page. The local video takes a
+		// tile of the grid, unless no slot is reserved for it.
+		totalTiles() {
+			return this.displayedVideos.length + (this.noLocalVideoReserve ? 0 : 1)
+		},
+
+		// Placement of every tile of the grid, in the order they are rendered.
+		// The stripe is a single scrollable row, and the empty call view has a
+		// layout of its own, so their tiles keep the default placement.
+		tilePlacements() {
+			if (this.isStripe || this.orderedVideos.length === 0) {
+				return []
+			}
+
+			return computeTilePlacements({
+				totalTiles: this.totalTiles,
+				rows: this.rows,
+				columns: this.columns,
+			})
+		},
+
 		isLessThanTwoVideos() {
 			// without screen share, we don't want to duplicate videos if we were to show them in the stripe
 			// however, if a screen share is in progress, it means the video of the presenting user is not visible,
@@ -428,8 +457,14 @@ export default {
 				rows = 2
 			}
 
+			// The grid is always laid out in half columns and every tile spans two
+			// of them, so that a row leaving an odd number of columns empty can be
+			// centered by starting it half a column further (see
+			// `computeTilePlacements`). A tile keeps the exact same width either
+			// way, as it also takes the gap between its two half columns, so the
+			// tiles do not jump around when the placement changes.
 			return {
-				gridTemplateColumns: `repeat(${columns}, minmax(${this.dpiAwareMinWidth}px, 1fr))`,
+				gridTemplateColumns: `repeat(${getHalfColumnCount(columns)}, minmax(${getHalfColumnMinWidth(this.dpiAwareMinWidth)}px, 1fr))`,
 				gridTemplateRows: `repeat(${rows}, minmax(${this.dpiAwareMinHeight}px, 1fr))`,
 			}
 		},
@@ -538,6 +573,20 @@ export default {
 			this.$emit('clickLocalVideo')
 		},
 
+		// Explicit placement of a tile in the grid. Columns are counted in half
+		// columns, which the grid flips on its own in RTL layouts.
+		tileStyle(index) {
+			const placement = this.tilePlacements[index]
+			if (!placement) {
+				return undefined
+			}
+
+			return {
+				gridRow: placement.row,
+				gridColumn: `${placement.column} / span ${TILE_COLUMN_SPAN}`,
+			}
+		},
+
 		isSelected(callParticipantModel) {
 			return callParticipantModel.attributes.peerId === this.callViewStore.selectedVideoPeerId
 		},
@@ -572,6 +621,13 @@ export default {
 
 	row-gap: var(--grid-gap);
 	column-gap: var(--grid-gap);
+
+	// The grid is laid out in half columns, so a tile takes two of them by
+	// default. Explicitly placed tiles set their own start line but keep that
+	// span (see `TILE_COLUMN_SPAN`).
+	> * {
+		grid-column: span 2;
+	}
 
 	&.stripe {
 		padding: var(--grid-gap) var(--grid-gap) 0 0;
@@ -659,10 +715,6 @@ export default {
 		min-height: unset;
 		margin: 0;
 	}
-}
-
-.video:last-child {
-	grid-column-end: -1;
 }
 
 .grid-navigation {
