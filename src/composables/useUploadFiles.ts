@@ -72,12 +72,17 @@ export function useUploadFiles(token: MaybeRefOrGetter<string>) {
 	}
 
 	/**
-	 * Removes a staged file from the current upload
+	 * Removes a staged file from the current upload, discarding the upload
+	 * itself once no files are left attached
 	 *
 	 * @param temporaryMessageId message id of the temporary message associated to the file
 	 */
 	function removeFile(temporaryMessageId: number) {
 		uploadStore.removeFileFromSelection(temporaryMessageId)
+
+		if (!hasFiles.value && currentUploadId.value) {
+			uploadStore.discardUpload(currentUploadId.value)
+		}
 	}
 
 	return {

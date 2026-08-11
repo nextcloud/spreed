@@ -4,110 +4,61 @@
 -->
 
 <template>
-	<NcModal
-		v-if="showModal"
-		:id="dialogMaskId"
-		ref="modal"
-		:size="isVoiceMessage ? 'small' : 'normal'"
-		:labelId="dialogHeaderId"
-		@close="handleDismiss">
-		<div
-			class="upload-editor"
-			@dragover.prevent="handleDragOver"
-			@dragleave.prevent="handleDragLeave"
-			@drop.prevent="handleDropFiles">
-			<template v-if="!isVoiceMessage">
-				<h2 :id="dialogHeaderId" class="hidden-visually">
-					{{ t('spreed', 'Upload from device') }}
-				</h2>
-				<!--native file picker, hidden -->
-				<input
-					id="file-upload"
-					ref="fileUploadInput"
-					multiple
-					type="file"
-					class="hidden-visually"
-					@change="handleFileInput">
-				<TransitionWrapper
-					class="upload-editor__previews"
-					:class="{ 'dragging-over': isDraggingOver }"
-					name="fade"
-					tag="div"
-					group>
-					<FilePreview
-						v-for="file in files"
-						:key="file[1].temporaryMessage.id"
-						:token="token"
-						isUploadEditor
-						:file="file[1].temporaryMessage.messageParameters.file"
-						@removeFile="removeFile" />
-					<NcButton
-						:aria-label="addMoreAriaLabel"
-						variant="tertiary"
-						class="add-more-button"
-						size="large"
-						@click="clickImportInput">
-						<template #icon>
-							<IconPlus :size="48" />
-						</template>
-					</NcButton>
-				</TransitionWrapper>
-			</template>
-			<template v-else>
-				<AudioPlayer
-					:name="voiceMessageName"
-					:localUrl="voiceMessageLocalURL" />
-			</template>
-
-			<NcCheckboxRadioSwitch
-				v-if="!isVoiceMessage && supportConversationSubfolders"
-				v-model="uploadStore.allowUpdate"
-				type="switch">
-				{{ t('spreed', 'Allow editing of uploaded files') }}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch
-				v-if="hasImages"
-				v-model="uploadStore.skipCompression"
-				type="switch">
-				{{ t('spreed', 'Send images without compression') }}
-			</NcCheckboxRadioSwitch>
-
-			<div v-if="!supportMediaCaption" class="upload-editor__actions">
-				<NcButton variant="tertiary" @click="handleDismiss">
-					{{ t('spreed', 'Dismiss') }}
-				</NcButton>
-				<NcButton ref="submitButton" variant="primary" @click="handleLegacyUpload">
-					{{ t('spreed', 'Send') }}
-				</NcButton>
-			</div>
-			<NewMessage
-				v-else
-				ref="newMessage"
-				role="region"
-				class="upload-editor__textfield"
-				upload
-				dialog
+	<div v-if="hasFiles" class="upload-editor">
+		<TransitionWrapper
+			v-if="!isVoiceMessage"
+			class="upload-editor__previews"
+			name="fade"
+			tag="div"
+			group>
+			<FilePreview
+				v-for="file in files"
+				:key="file[1].temporaryMessage.id"
 				:token="token"
-				:container="modalContainerId"
-				:aria-label="t('spreed', 'Post message')"
-				@submit="handleUpload"
-				@dismiss="handleDismiss" />
+				isUploadEditor
+				:file="file[1].temporaryMessage.messageParameters.file"
+				@removeFile="removeFile" />
+			<NcButton
+				:aria-label="addMoreAriaLabel"
+				:title="addMoreAriaLabel"
+				variant="tertiary"
+				class="upload-editor__add-more"
+				size="large"
+				@click="$emit('openFilePicker')">
+				<template #icon>
+					<IconPlus :size="48" />
+				</template>
+			</NcButton>
+		</TransitionWrapper>
+		<div v-else class="upload-editor__voice-message">
+			<AudioPlayer
+				:name="voiceMessageName"
+				:localUrl="voiceMessageLocalURL" />
 		</div>
-	</NcModal>
+
+		<NcCheckboxRadioSwitch
+			v-if="!isVoiceMessage && supportConversationSubfolders"
+			v-model="uploadStore.allowUpdate"
+			type="switch">
+			{{ t('spreed', 'Allow editing of uploaded files') }}
+		</NcCheckboxRadioSwitch>
+		<NcCheckboxRadioSwitch
+			v-if="hasImages"
+			v-model="uploadStore.skipCompression"
+			type="switch">
+			{{ t('spreed', 'Send images without compression') }}
+		</NcCheckboxRadioSwitch>
+	</div>
 </template>
 
 <script>
 import { t } from '@nextcloud/l10n'
-import { ref, useId } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcModal from '@nextcloud/vue/components/NcModal'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
 import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
-import NewMessage from './NewMessage.vue'
-import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { useUploadFiles } from '../../composables/useUploadFiles.ts'
 import { useUploadStore } from '../../stores/upload.ts'
@@ -116,61 +67,44 @@ export default {
 	name: 'NewMessageUploadEditor',
 
 	components: {
-		NcModal,
 		FilePreview,
 		IconPlus,
 		AudioPlayer,
 		NcButton,
 		NcCheckboxRadioSwitch,
-		NewMessage,
 		TransitionWrapper,
 	},
 
-	setup() {
-		const isDraggingOver = ref(false)
-		const dialogMaskId = `new-message-upload-${useId()}`
-		const dialogHeaderId = `new-message-upload-header-${useId()}`
-		const modalContainerId = '#' + dialogMaskId
+	emits: ['openFilePicker'],
 
+	setup() {
 		const token = useGetToken()
+		const uploadStore = useUploadStore()
 
 		const {
-			currentUploadId,
 			files,
 			hasFiles,
 			firstFile,
 			isVoiceMessage,
 			hasImages,
-			supportMediaCaption,
 			supportConversationSubfolders,
 			removeFile,
 		} = useUploadFiles(token)
 
 		return {
-			modalContainerId,
-			isDraggingOver,
-			dialogMaskId,
-			dialogHeaderId,
-			token,
-			threadId: useGetThreadId(),
-			uploadStore: useUploadStore(),
-			currentUploadId,
 			files,
 			hasFiles,
 			firstFile,
 			isVoiceMessage,
 			hasImages,
-			supportMediaCaption,
 			supportConversationSubfolders,
 			removeFile,
+			token,
+			uploadStore,
 		}
 	},
 
 	computed: {
-		showModal() {
-			return !!this.currentUploadId
-		},
-
 		addMoreAriaLabel() {
 			return t('spreed', 'Add more files')
 		},
@@ -187,141 +121,50 @@ export default {
 		},
 	},
 
-	watch: {
-		async showModal(show) {
-			if (show) {
-				// Wait for modal content to be rendered
-				await this.$nextTick()
-				if (this.supportMediaCaption) {
-					this.$refs.newMessage.focusInput()
-				} else {
-					this.$refs.submitButton.$el.focus()
-				}
-			}
-		},
-	},
-
 	methods: {
 		t,
-
-		handleDismiss() {
-			this.uploadStore.discardUpload(this.currentUploadId)
-		},
-
-		handleLegacyUpload() {
-			this.uploadStore.uploadFiles({
-				token: this.token,
-				uploadId: this.currentUploadId,
-				caption: null,
-				options: null,
-				allowUpdate: this.supportConversationSubfolders ? this.uploadStore.allowUpdate : undefined,
-				compressImages: this.hasImages ? !this.uploadStore.skipCompression : undefined,
-			})
-		},
-
-		async handleUpload({ token, temporaryMessage }) {
-			if (this.hasFiles) {
-				// Create a share with optional caption
-				await this.uploadStore.uploadFiles({
-					token,
-					uploadId: this.currentUploadId,
-					caption: temporaryMessage.message,
-					options: {
-						threadId: temporaryMessage.threadId,
-						threadTitle: temporaryMessage.threadTitle,
-						silent: temporaryMessage.silent,
-						parent: temporaryMessage.parent,
-					},
-					allowUpdate: this.supportConversationSubfolders ? this.uploadStore.allowUpdate : undefined,
-					compressImages: this.hasImages ? !this.uploadStore.skipCompression : undefined,
-				})
-			} else {
-				this.uploadStore.discardUpload(this.currentUploadId)
-				if (temporaryMessage.message.trim()) {
-					// Proceed as a normal message
-					try {
-						await this.$store.dispatch('postNewMessage', { token, temporaryMessage })
-					} catch (e) {
-						console.error(e)
-					}
-				}
-			}
-		},
-
-		/**
-		 * Clicks the hidden file input when clicking the correspondent NcActionButton,
-		 * thus opening the file-picker
-		 */
-		clickImportInput() {
-			this.$refs.fileUploadInput.click()
-		},
-
-		handleFileInput(event) {
-			const files = Object.values(event.target.files)
-			this.uploadStore.initialiseUpload({ files, token: this.token, threadId: this.threadId, uploadId: this.currentUploadId })
-			this.$refs.fileUploadInput.value = null
-		},
-
-		handleDragOver(event) {
-			if (event.dataTransfer.types.includes('Files')) {
-				this.isDraggingOver = true
-			}
-		},
-
-		handleDragLeave(event) {
-			if (!event.currentTarget.contains(event.relatedTarget)) {
-				this.isDraggingOver = false
-			}
-		},
-
-		handleDropFiles(event) {
-			if (!this.isDraggingOver) {
-				return
-			}
-
-			this.isDraggingOver = false
-
-			const files = Object.values(event.dataTransfer.files)
-			this.uploadStore.initialiseUpload({ files, token: this.token, threadId: this.threadId, uploadId: this.currentUploadId })
-		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
 .upload-editor {
-	height: 100%;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
-	padding: calc(3 * var(--default-grid-baseline));
+	gap: var(--default-grid-baseline);
+	margin-block-end: var(--default-grid-baseline);
 
 	&__previews {
 		display: flex;
-		position: relative;
-		overflow: auto;
 		flex-wrap: wrap;
+		align-items: center;
+		// Cap the previews area, so the chat input stays visible
+		max-height: 40vh;
+		overflow-y: auto;
+	}
 
-		&.dragging-over {
-			outline: 3px dashed var(--color-primary-element);
-			border-radius: var(--border-radius-large);
+	&__voice-message {
+		display: flex;
+		align-items: center;
+		gap: var(--default-grid-baseline);
+		// Stretch over the available width, which is capped by the chat input
+		width: 100%;
+
+		:deep(.audio-player) {
+			flex-grow: 1;
+			min-width: 0;
+		}
+
+		// The native audio element has an intrinsic width, override it
+		:deep(.audio-player__audio) {
+			width: 100%;
 		}
 	}
 
-	&__actions {
-		display: flex;
-		justify-content: flex-end;
-		gap: 4px;
-		padding: 12px 0;
-	}
-
-	&__textfield {
-		padding-block: calc(var(--default-grid-baseline) * 2);
-	}
-
-	.add-more-button {
-		width: 164px !important;
-		height: 176px !important;
+	&__add-more {
+		// Match the FilePreview tiles next to it
+		width: 140px !important;
+		height: 140px !important;
 		margin: 10px;
 
 		:deep(.button-vue__icon) {

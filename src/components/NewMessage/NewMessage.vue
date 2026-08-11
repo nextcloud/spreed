@@ -6,7 +6,7 @@
 <template>
 	<div
 		class="wrapper"
-		:class="{ 'wrapper--narrow': isSidebar }">
+		:class="{ 'wrapper--narrow': isSidebar || isSmallMobile }">
 		<NewMessageTypingIndicator
 			v-if="showTypingStatus"
 			:token="token" />
@@ -123,6 +123,12 @@
 					:title="errorTitle"
 					showTrailingButton
 					@trailingButtonClick="setCreateThread(false)" />
+
+				<!-- File upload interface -->
+				<NewMessageUploadEditor
+					v-if="!dialog"
+					class="new-message-form__upload"
+					@openFilePicker="openFileUploadWindow" />
 
 				<NcRichContenteditable
 					ref="richContenteditable"
@@ -328,6 +334,7 @@ import { showError, showSuccess, showWarning } from '@nextcloud/dialogs'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
+import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
 import debounce from 'debounce'
 import { inject, nextTick, toRefs, useTemplateRef } from 'vue'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
@@ -357,6 +364,7 @@ import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
 import NewMessageChatSummary from './NewMessageChatSummary.vue'
 import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
 import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
+import NewMessageUploadEditor from './NewMessageUploadEditor.vue'
 import { useChatMentions } from '../../composables/useChatMentions.ts'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useTemporaryMessage } from '../../composables/useTemporaryMessage.ts'
@@ -406,6 +414,7 @@ export default {
 		NewMessageChatSummary,
 		NewMessageNewFileDialog,
 		NewMessageTypingIndicator,
+		NewMessageUploadEditor,
 		MessageQuote,
 		// Icons
 		IconArrowLeft,
@@ -455,14 +464,6 @@ export default {
 		},
 
 		/**
-		 * Upload files caption.
-		 */
-		upload: {
-			type: Boolean,
-			default: false,
-		},
-
-		/**
 		 * Show an indicator if someone is currently typing a message.
 		 */
 		hasTypingIndicator: {
@@ -485,8 +486,14 @@ export default {
 		const threadTitleInputRef = useTemplateRef('threadTitleInputRef')
 
 		const isSidebar = inject('chatView:isSidebar', false)
+		const isSmallMobile = useIsSmallMobile()
 
 		const {
+			currentUploadId,
+			hasFiles,
+			hasImages,
+			supportMediaCaption,
+			supportConversationSubfolders,
 			addFiles,
 		} = useUploadFiles(token)
 
@@ -507,6 +514,12 @@ export default {
 			createTemporaryMessage,
 			convertToUnix,
 			isSidebar,
+			isSmallMobile,
+			currentUploadId,
+			hasFiles,
+			hasImages,
+			supportMediaCaption,
+			supportConversationSubfolders,
 			addFiles,
 		}
 	},
@@ -644,8 +657,10 @@ export default {
 			return this.tokenStore.currentConversationIsJoined
 		},
 
-		currentUploadId() {
-			return this.uploadStore.currentUploadId
+		// Whether this input has an upload staged. Upload state is global, so the
+		// breakout rooms dialog has to ignore an upload staged in the chat view
+		hasUpload() {
+			return this.hasFiles && !this.dialog
 		},
 
 		hasText() {
@@ -673,11 +688,13 @@ export default {
 
 		showAttachmentsMenu() {
 			return (this.canUploadFiles || this.canShareFiles || this.canCreatePoll || this.canCreateThread)
-				&& !this.broadcast && !this.upload && !this.messageToEdit
+				&& !this.broadcast && !this.messageToEdit
 		},
 
 		showAudioRecorder() {
-			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload
+			// An initialised upload is treated as a draft, so the send button
+			// has to stay reachable even with an empty caption
+			return !this.hasText && !this.hasUpload && this.canUploadFiles && !this.broadcast
 				&& !this.messageToEdit && !this.threadCreating
 				&& !this.scheduleMessageTime && !this.showScheduledMessages
 		},
@@ -781,22 +798,9 @@ export default {
 			this.focusInput()
 		},
 
-		currentUploadId(value) {
-			if (value && !this.upload) {
-				this.text = ''
-			} else if (!value && !this.upload) {
-				// reset or fill main input in chat view from the store
-				this.text = this.chatInput
-			}
-			// update the silent chat state
-			this.silentChat = !!BrowserStorage.getItem('silentChat_' + this.token)
-		},
-
 		text(newValue) {
 			this.errorMessage = ''
-			if (this.currentUploadId && !this.upload) {
-				return
-			} else if (this.dialog && this.broadcast) {
+			if (this.dialog && this.broadcast) {
 				return
 			}
 			this.debouncedUpdateChatInput(newValue)
@@ -865,10 +869,6 @@ export default {
 		},
 
 		chatInput(newValue) {
-			if (this.currentUploadId && !this.upload) {
-				return
-			}
-
 			if (parseSpecialSymbols(this.text) !== newValue) {
 				this.text = newValue
 			}
@@ -876,7 +876,7 @@ export default {
 
 		token: {
 			immediate: true,
-			handler(token) {
+			handler(token, oldToken) {
 				if (token) {
 					this.text = this.messageToEdit
 						? this.chatEditInput
@@ -889,6 +889,10 @@ export default {
 				this.checkAbsenceStatus()
 				this.clearSilentState()
 				this.chatExtrasStore.setScheduleMessageTime(null)
+				if (oldToken && this.hasUpload) {
+					// TODO uploads are not on conversation-level, do not keep staged upload on room change
+					this.uploadStore.discardUpload(this.currentUploadId)
+				}
 			},
 		},
 
@@ -994,9 +998,6 @@ export default {
 		},
 
 		handleUploadSideEffects() {
-			if (this.upload) {
-				return
-			}
 			this.$nextTick(() => {
 				// refocus input as the user might want to type further
 				this.focusInput()
@@ -1058,7 +1059,7 @@ export default {
 
 			this.chatExtrasStore.setShowScheduledMessages(false)
 
-			if (this.hasText || (this.dialog && this.upload)) {
+			if (this.hasText || this.hasUpload) {
 				const temporaryMessagePayload = {
 					message: this.text.trim(),
 					token: this.token,
@@ -1089,11 +1090,47 @@ export default {
 				// Also remove the message to be replied for this conversation
 				this.chatExtrasStore.removeParentIdToReply(this.token)
 
-				this.dialog
-					? await this.submitMessage(this.token, temporaryMessage)
-					: await this.postMessage(this.token, temporaryMessage)
+				if (this.hasUpload) {
+					await this.submitUpload(temporaryMessage)
+				} else if (this.dialog) {
+					await this.submitMessage(this.token, temporaryMessage)
+				} else {
+					await this.postMessage(this.token, temporaryMessage)
+				}
 				this.resetTypingIndicator()
 			}
+		},
+
+		// Upload and share the staged files, with the message as a caption
+		async submitUpload(temporaryMessage) {
+			const payload = {
+				token: this.token,
+				uploadId: this.currentUploadId,
+				allowUpdate: this.supportConversationSubfolders ? this.uploadStore.allowUpdate : undefined,
+				compressImages: this.hasImages ? !this.uploadStore.skipCompression : undefined,
+			}
+
+			// TODO drop with support for Nextcloud 27 and older (EOL in 06-2024):
+			// legacy servers can not attach a caption to a share,
+			// so the message is posted separately after the files are shared
+			if (!this.supportMediaCaption) {
+				await this.uploadStore.uploadFiles({ ...payload, caption: null, options: null })
+				if (temporaryMessage.message) {
+					await this.postMessage(this.token, temporaryMessage)
+				}
+				return
+			}
+
+			await this.uploadStore.uploadFiles({
+				...payload,
+				caption: temporaryMessage.message,
+				options: {
+					threadId: temporaryMessage.threadId,
+					threadTitle: temporaryMessage.threadTitle,
+					silent: temporaryMessage.silent,
+					parent: temporaryMessage.parent,
+				},
+			})
 		},
 
 		// Post message to conversation
@@ -1407,13 +1444,13 @@ export default {
 
 		clearSilentState() {
 			// FIXME text that is only one line should be cleared in upstream
-			if ((this.text === '' || this.text === '\n') && this.silentChat && !this.upload) {
+			if ((this.text === '' || this.text === '\n') && this.silentChat) {
 				this.toggleSilentChat()
 			}
 		},
 
 		async handleScheduleMessage() {
-			if (this.dialog && this.upload) {
+			if (this.hasUpload) {
 				// FIXME handle file upload in scheduled messages
 				return
 			}
@@ -1474,18 +1511,20 @@ export default {
 
 	.new-message-form__input > .new-message-form__hint,
 	.new-message-form__input > .new-message-form__quote,
-	.new-message-form__input > .new-message-form__thread-title {
-		width: calc(var(--app-sidebar-width) - 2 * var(--default-grid-baseline));
+	.new-message-form__input > .new-message-form__thread-title,
+	.new-message-form__input > .new-message-form__upload {
+		width: calc(var(--app-sidebar-width, 100vw) - 2 * var(--default-grid-baseline));
 	}
 
 	.new-message-form__input > .new-message-form__note-content {
-		width: calc(var(--app-sidebar-width) - 2 * var(--default-grid-baseline));
+		width: calc(var(--app-sidebar-width, 100vw) - 2 * var(--default-grid-baseline));
 		margin-inline: 0 !important;
 	}
 
 	.new-message-form__attachments + .new-message-form__input > .new-message-form__hint,
 	.new-message-form__attachments + .new-message-form__input > .new-message-form__quote,
-	.new-message-form__attachments + .new-message-form__input > .new-message-form__thread-title {
+	.new-message-form__attachments + .new-message-form__input > .new-message-form__thread-title,
+	.new-message-form__attachments + .new-message-form__input > .new-message-form__upload {
 		margin-inline-start: calc(-1 * var(--default-clickable-area) - var(--default-grid-baseline));
 	}
 
