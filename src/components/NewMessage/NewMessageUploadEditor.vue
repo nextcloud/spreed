@@ -5,6 +5,70 @@
 
 <template>
 	<div v-if="hasFiles" class="upload-editor">
+		<div v-if="showImageQuality || showSharePermission" class="upload-editor__options">
+			<NcActions
+				v-if="showSharePermission"
+				:variant="uploadStore.allowUpdate ? 'secondary' : 'tertiary'"
+				size="small"
+				:menuName="sharePermissionLabel">
+				<template #icon>
+					<IconPencilOutline v-if="uploadStore.allowUpdate" :size="20" />
+					<IconPencilOffOutline v-else :size="20" />
+				</template>
+				<NcActionButton
+					v-model="sharePermission"
+					type="radio"
+					value="view-only"
+					closeAfterClick>
+					<template #icon>
+						<IconPencilOffOutline :size="20" />
+					</template>
+					{{ labels.viewOnly }}
+				</NcActionButton>
+				<NcActionButton
+					v-model="sharePermission"
+					type="radio"
+					value="editable"
+					closeAfterClick>
+					<template #icon>
+						<IconPencilOutline :size="20" />
+					</template>
+					{{ labels.editable }}
+				</NcActionButton>
+			</NcActions>
+
+			<NcActions
+				v-if="showImageQuality"
+				:variant="uploadStore.skipCompression ? 'secondary' : 'tertiary'"
+				size="small"
+				:menuName="imageQualityLabel">
+				<template #icon>
+					<IconHighDefinition v-if="uploadStore.skipCompression" :size="20" />
+					<IconStandardDefinition v-else :size="20" />
+				</template>
+				<NcActionButton
+					v-model="imageQuality"
+					type="radio"
+					value="standard"
+					closeAfterClick>
+					<template #icon>
+						<IconStandardDefinition :size="20" />
+					</template>
+					{{ labels.standardDefinition }}
+				</NcActionButton>
+				<NcActionButton
+					v-model="imageQuality"
+					type="radio"
+					value="high"
+					closeAfterClick>
+					<template #icon>
+						<IconHighDefinition :size="20" />
+					</template>
+					{{ labels.highDefinition }}
+				</NcActionButton>
+			</NcActions>
+		</div>
+
 		<TransitionWrapper
 			v-if="!isVoiceMessage"
 			class="upload-editor__previews"
@@ -44,28 +108,20 @@
 				</template>
 			</NcButton>
 		</div>
-
-		<NcCheckboxRadioSwitch
-			v-if="!isVoiceMessage && supportConversationSubfolders"
-			v-model="uploadStore.allowUpdate"
-			type="switch">
-			{{ t('spreed', 'Allow editing of uploaded files') }}
-		</NcCheckboxRadioSwitch>
-		<NcCheckboxRadioSwitch
-			v-if="hasImages"
-			v-model="uploadStore.skipCompression"
-			type="switch">
-			{{ t('spreed', 'Send images without compression') }}
-		</NcCheckboxRadioSwitch>
 	</div>
 </template>
 
 <script>
 import { t } from '@nextcloud/l10n'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import IconClose from 'vue-material-design-icons/Close.vue'
+import IconHighDefinition from 'vue-material-design-icons/HighDefinition.vue'
+import IconPencilOffOutline from 'vue-material-design-icons/PencilOffOutline.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
+import IconStandardDefinition from 'vue-material-design-icons/StandardDefinition.vue'
 import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
 import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
@@ -79,10 +135,15 @@ export default {
 	components: {
 		FilePreview,
 		IconClose,
+		IconPencilOffOutline,
+		IconPencilOutline,
 		IconPlus,
+		IconHighDefinition,
+		IconStandardDefinition,
 		AudioPlayer,
+		NcActionButton,
+		NcActions,
 		NcButton,
-		NcCheckboxRadioSwitch,
 		TransitionWrapper,
 	},
 
@@ -91,6 +152,13 @@ export default {
 	setup() {
 		const token = useGetToken()
 		const uploadStore = useUploadStore()
+
+		const labels = {
+			standardDefinition: t('spreed', 'Standard image quality'),
+			highDefinition: t('spreed', 'Original image quality'),
+			viewOnly: t('spreed', 'View-only for others'),
+			editable: t('spreed', 'Editable by others'),
+		}
 
 		const {
 			files,
@@ -112,12 +180,53 @@ export default {
 			removeFile,
 			token,
 			uploadStore,
+			labels,
 		}
 	},
 
 	computed: {
 		addMoreAriaLabel() {
 			return t('spreed', 'Add more files')
+		},
+
+		showImageQuality() {
+			return this.hasImages
+		},
+
+		showSharePermission() {
+			return !this.isVoiceMessage && this.supportConversationSubfolders
+		},
+
+		imageQuality: {
+			get() {
+				return this.uploadStore.skipCompression ? 'high' : 'standard'
+			},
+
+			set(value) {
+				this.uploadStore.skipCompression = value === 'high'
+			},
+		},
+
+		imageQualityLabel() {
+			return this.uploadStore.skipCompression
+				? this.labels.highDefinition
+				: this.labels.standardDefinition
+		},
+
+		sharePermission: {
+			get() {
+				return this.uploadStore.allowUpdate ? 'editable' : 'view-only'
+			},
+
+			set(value) {
+				this.uploadStore.allowUpdate = value === 'editable'
+			},
+		},
+
+		sharePermissionLabel() {
+			return this.uploadStore.allowUpdate
+				? this.labels.editable
+				: this.labels.viewOnly
 		},
 
 		voiceMessageName() {
@@ -144,6 +253,25 @@ export default {
 	flex-direction: column;
 	gap: var(--default-grid-baseline);
 	margin-block-end: var(--default-grid-baseline);
+
+	&__options {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--default-grid-baseline);
+
+		// Let a menu shrink below its label, which NcButton already truncates,
+		// instead of pushing the row wider than the sidebar
+		:deep(.action-item) {
+			min-width: 0;
+		}
+
+		// NcButton sets its own font size, so it has to be overridden here
+		:deep(.button-vue) {
+			font-size: var(--font-size-small);
+			max-width: 100%;
+		}
+	}
 
 	&__previews {
 		display: flex;
