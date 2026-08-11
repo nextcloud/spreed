@@ -79,11 +79,12 @@
 			v-if="isUploadEditor"
 			class="remove-file"
 			tabindex="1"
-			variant="primary"
+			variant="secondary"
+			size="small"
 			:aria-label="removeAriaLabel"
 			@click.stop.prevent="handleClick">
 			<template #icon>
-				<IconClose />
+				<IconClose :size="20" />
 			</template>
 		</NcButton>
 		<div v-if="shouldShowFileDetail" class="name-container">
@@ -763,15 +764,39 @@ export default {
 	}
 
 	&--upload-editor {
-		max-width: 140px;
-		max-height: 140px;
-		padding: 12px 12px 24px 12px;
-		margin: 10px;
+		// The parent (NewMessageUploadEditor) defines --preview-size,
+		// --preview-padding and --preview-name-height. The fallbacks only apply
+		// if the component is ever used outside of it
+		// The box is content-box, so the padding is added around these sizes.
+		// The height holds the preview plus the file name below it
+		width: var(--preview-size, 80px);
+		height: calc(var(--preview-size, 80px) + var(--preview-name-height, 24px));
+		padding: var(--preview-padding, 8px);
+		margin: var(--default-grid-baseline);
 
-		.preview {
-			margin: auto;
-			width: 128px;
-			height: 128px;
+		// A file without a preview gets an inline 128px size on the container
+		// and a min-height on the icon. Both are overridden, so that every
+		// tile keeps the same size
+		.image-container {
+			width: var(--preview-size, 80px) !important;
+			height: var(--preview-size, 80px) !important;
+			outline: 1px solid var(--color-border);
+		}
+
+		// The size class of the image varies with the preview type, so it is
+		// matched by the class every variant shares
+		.file-preview__image {
+			width: var(--preview-size, 80px);
+			height: var(--preview-size, 80px);
+			min-height: unset;
+			max-height: none;
+		}
+
+		// Fixed, so that the height of the tile stays the same for every font
+		.name-container {
+			height: var(--preview-name-height, 24px);
+			font-weight: normal;
+			font-size: var(--font-size-small);
 		}
 	}
 
@@ -807,8 +832,10 @@ export default {
 .remove-file {
 	visibility: hidden;
 	position: absolute !important;
-	top: 8px;
-	inset-inline-end: 8px;
+	// Overhang the top corner of the preview by 4px.
+	// The tile padding is 8px, so the offsets are that padding less the overhang
+	top: 4px;
+	inset-inline-end: 4px;
 }
 
 </style>

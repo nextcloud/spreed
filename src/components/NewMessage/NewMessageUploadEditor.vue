@@ -75,6 +75,19 @@
 			name="fade"
 			tag="div"
 			group>
+			<NcButton
+				key="add-more"
+				:aria-label="addMoreAriaLabel"
+				:title="addMoreAriaLabel"
+				variant="tertiary"
+				class="upload-editor__add-more"
+				size="large"
+				wide
+				@click="$emit('openFilePicker')">
+				<template #icon>
+					<IconPlus :size="48" />
+				</template>
+			</NcButton>
 			<FilePreview
 				v-for="file in files"
 				:key="file[1].temporaryMessage.id"
@@ -82,17 +95,6 @@
 				isUploadEditor
 				:file="file[1].temporaryMessage.messageParameters.file"
 				@removeFile="removeFile" />
-			<NcButton
-				:aria-label="addMoreAriaLabel"
-				:title="addMoreAriaLabel"
-				variant="tertiary"
-				class="upload-editor__add-more"
-				size="large"
-				@click="$emit('openFilePicker')">
-				<template #icon>
-					<IconPlus :size="48" />
-				</template>
-			</NcButton>
 		</TransitionWrapper>
 		<div v-else class="upload-editor__voice-message">
 			<AudioPlayer
@@ -249,10 +251,24 @@ export default {
 
 <style lang="scss" scoped>
 .upload-editor {
+	// Size of a thumbnail in .file-preview--upload-editor (FilePreview.vue).
+	// Every other size below is derived from it, so this is the single knob
+	--preview-size: 80px;
+	--preview-padding: calc(var(--default-grid-baseline) * 2);
+	--preview-name-height: 24px;
+	// The rendered height of a tile is its content plus the padding around it.
+	// A row adds the margin of a tile and the gap to the row below
+	--preview-row-height: calc(
+		var(--preview-size) + var(--preview-name-height)
+		+ var(--preview-padding) * 2 + var(--default-grid-baseline) * 3
+	);
 	display: flex;
 	flex-direction: column;
-	gap: var(--default-grid-baseline);
+	padding: var(--default-grid-baseline);
 	margin-block-end: var(--default-grid-baseline);
+	border-radius: var(--border-radius-large);
+	border: 2px solid var(--color-border);
+	background-color: var(--color-main-background);
 
 	&__options {
 		display: flex;
@@ -277,8 +293,10 @@ export default {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		// Cap the previews area, so the chat input stays visible
-		max-height: 40vh;
+		align-content: flex-start;
+		gap: var(--default-grid-baseline);
+		// Show one and a half rows, so it is clear that the area scrolls
+		max-height: calc(var(--preview-row-height) * 1.5);
 		overflow-y: auto;
 	}
 
@@ -301,15 +319,23 @@ export default {
 	}
 
 	&__add-more {
-		// Match the FilePreview tiles next to it
-		width: 140px !important;
-		height: 140px !important;
-		margin: 10px;
+		// Match the thumbnail of the FilePreview tiles next to it. NcButton forces
+		// a square on an icon-only button with a selector this rule can not
+		// outweigh, so the `wide` prop opts out of that sizing
+		width: var(--preview-size) !important;
+		height: var(--preview-size) !important;
+		// NcButton drives its inline padding from a variable and sets its block
+		// padding to 1px, so both are replaced to match the tile
+		padding: var(--preview-padding) !important;
+		// The button is one padding narrower than a tile, so it takes that
+		// padding on top of the margin of a tile to stay aligned with them
+		margin: calc(var(--default-grid-baseline) + var(--preview-padding));
+		margin-block-end: auto;
+		background-color: var(--color-primary-element-light) !important;
 
 		:deep(.button-vue__icon) {
 			border-radius: var(--border-radius-pill);
-			color: var(--color-primary-element-text);
-			background-color: var(--color-primary-element);
+			color: var(--color-primary-element);
 		}
 	}
 }
