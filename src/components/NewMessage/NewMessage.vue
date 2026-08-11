@@ -360,6 +360,7 @@ import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import { useChatMentions } from '../../composables/useChatMentions.ts'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useTemporaryMessage } from '../../composables/useTemporaryMessage.ts'
+import { useUploadFiles } from '../../composables/useUploadFiles.ts'
 import { CONVERSATION, MESSAGE, PARTICIPANT, PRIVACY } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
@@ -485,6 +486,10 @@ export default {
 
 		const isSidebar = inject('chatView:isSidebar', false)
 
+		const {
+			addFiles,
+		} = useUploadFiles(token)
+
 		return {
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
@@ -502,6 +507,7 @@ export default {
 			createTemporaryMessage,
 			convertToUnix,
 			isSidebar,
+			addFiles,
 		}
 	},
 
@@ -1279,10 +1285,8 @@ export default {
 				showWarning(t('spreed', 'File upload is not available in this conversation'))
 				return
 			}
-			// Create a unique id for the upload operation
-			const uploadId = this.currentUploadId ?? new Date().getTime()
-			// Uploads and shares the files
-			this.uploadStore.initialiseUpload({ files, token: this.token, threadId: this.threadId, uploadId, rename, isVoiceMessage })
+			// Stage the files, they are uploaded and shared on submit
+			this.addFiles(files, { rename, isVoiceMessage })
 		},
 
 		preserveSelectionRange() {
