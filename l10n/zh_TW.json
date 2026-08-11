@@ -1727,6 +1727,7 @@
     "_{user1}, {user2}, {user3} and %n other are typing …_::_{user1}, {user2}, {user3} and %n others are typing …_" : ["{user1}、{user2}、{user3} 與 %n 個其他人在打字……"],
     "Add more files" : "新增更多檔案",
     "Allow editing of uploaded files" : "允許編輯上傳的檔案",
+    "Send images without compression" : "傳送不壓縮的影像",
     "Send" : "傳送",
     "In this conversation <strong>{user}</strong> can:" : "在此對話中，<strong>{user}</strong> 可以：",
     "Edit default permissions for participants in <strong>{conversationName}</strong>" : "編輯 <strong>{conversationName}</strong> 中參與者的預設權限",
