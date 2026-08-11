@@ -86,6 +86,22 @@ export const useUploadStore = defineStore('upload', () => {
 	const localUrls = reactive<Record<string, string>>({})
 
 	/**
+	 * The user's choices for the current upload. They are only valid until it
+	 * is sent or discarded, see resetCurrentUpload()
+	 */
+	const allowUpdate = ref(false)
+	const skipCompression = ref(false)
+
+	/**
+	 * Closes the current upload, clearing the user's choices made for it
+	 */
+	function resetCurrentUpload() {
+		currentUploadId.value = undefined
+		allowUpdate.value = false
+		skipCompression.value = false
+	}
+
+	/**
 	 * Returns an array of uploads for a given upload id
 	 *
 	 * @param uploadId unique identifier
@@ -353,7 +369,7 @@ export const useUploadStore = defineStore('upload', () => {
 	 */
 	function discardUpload(uploadId: string) {
 		if (currentUploadId.value === uploadId) {
-			currentUploadId.value = undefined
+			resetCurrentUpload()
 		}
 		EventBus.emit('upload-discard')
 
@@ -416,7 +432,8 @@ export const useUploadStore = defineStore('upload', () => {
 	 */
 	async function uploadFiles({ token, uploadId, caption, options, allowUpdate, compressImages }: UploadFilesPayload) {
 		if (currentUploadId.value === uploadId) {
-			currentUploadId.value = undefined
+			// The caller has read the user's choices into the payload already
+			resetCurrentUpload()
 		}
 
 		EventBus.emit('upload-start')
@@ -803,6 +820,8 @@ export const useUploadStore = defineStore('upload', () => {
 		uploads,
 		currentUploadId,
 		localUrls,
+		allowUpdate,
+		skipCompression,
 
 		getUploadsArray,
 		getInitialisedUploads,

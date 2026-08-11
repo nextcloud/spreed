@@ -61,13 +61,13 @@
 
 			<NcCheckboxRadioSwitch
 				v-if="!isVoiceMessage && supportConversationSubfolders"
-				v-model="allowUpdate"
+				v-model="uploadStore.allowUpdate"
 				type="switch">
 				{{ t('spreed', 'Allow editing of uploaded files') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch
 				v-if="hasImages"
-				v-model="skipCompression"
+				v-model="uploadStore.skipCompression"
 				type="switch">
 				{{ t('spreed', 'Send images without compression') }}
 			</NcCheckboxRadioSwitch>
@@ -130,8 +130,6 @@ export default {
 
 	setup() {
 		const isDraggingOver = ref(false)
-		const allowUpdate = ref(false)
-		const skipCompression = ref(false)
 		const dialogMaskId = `new-message-upload-${useId()}`
 		const dialogHeaderId = `new-message-upload-header-${useId()}`
 		const modalContainerId = '#' + dialogMaskId
@@ -139,8 +137,6 @@ export default {
 		return {
 			modalContainerId,
 			isDraggingOver,
-			allowUpdate,
-			skipCompression,
 			dialogMaskId,
 			dialogHeaderId,
 			token: useGetToken(),
@@ -212,10 +208,6 @@ export default {
 				} else {
 					this.$refs.submitButton.$el.focus()
 				}
-			} else {
-				// Reset user's choices at closing
-				this.allowUpdate = false
-				this.skipCompression = false
 			}
 		},
 	},
@@ -233,8 +225,8 @@ export default {
 				uploadId: this.currentUploadId,
 				caption: null,
 				options: null,
-				allowUpdate: this.supportConversationSubfolders ? this.allowUpdate : undefined,
-				compressImages: this.hasImages ? !this.skipCompression : undefined,
+				allowUpdate: this.supportConversationSubfolders ? this.uploadStore.allowUpdate : undefined,
+				compressImages: this.hasImages ? !this.uploadStore.skipCompression : undefined,
 			})
 		},
 
@@ -251,8 +243,8 @@ export default {
 						silent: temporaryMessage.silent,
 						parent: temporaryMessage.parent,
 					},
-					allowUpdate: this.supportConversationSubfolders ? this.allowUpdate : undefined,
-					compressImages: this.hasImages ? !this.skipCompression : undefined,
+					allowUpdate: this.supportConversationSubfolders ? this.uploadStore.allowUpdate : undefined,
+					compressImages: this.hasImages ? !this.uploadStore.skipCompression : undefined,
 				})
 			} else {
 				this.uploadStore.discardUpload(this.currentUploadId)
