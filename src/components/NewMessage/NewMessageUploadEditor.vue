@@ -34,6 +34,15 @@
 			<AudioPlayer
 				:name="voiceMessageName"
 				:localUrl="voiceMessageLocalURL" />
+			<NcButton
+				variant="error"
+				:aria-label="t('spreed', 'Dismiss')"
+				:title="t('spreed', 'Dismiss')"
+				@click="removeFile(firstFile.temporaryMessage.id)">
+				<template #icon>
+					<IconClose :size="20" />
+				</template>
+			</NcButton>
 		</div>
 
 		<NcCheckboxRadioSwitch
@@ -55,6 +64,7 @@
 import { t } from '@nextcloud/l10n'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import IconClose from 'vue-material-design-icons/Close.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
 import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
@@ -68,6 +78,7 @@ export default {
 
 	components: {
 		FilePreview,
+		IconClose,
 		IconPlus,
 		AudioPlayer,
 		NcButton,
