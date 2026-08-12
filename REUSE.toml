@@ -72,7 +72,7 @@ SPDX-FileCopyrightText = "2018-2025 Google LLC"
 SPDX-License-Identifier = "Apache-2.0"
 
 [[annotations]]
-path = "img/dashboard/**.png"
+path = ["img/dashboard/**.webp"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Nextcloud GmbH <https://nextcloud.com/trademarks/>"
 SPDX-License-Identifier = "LicenseRef-NextcloudTrademarks"
