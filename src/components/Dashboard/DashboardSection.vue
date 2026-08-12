@@ -13,16 +13,13 @@ const {
 	subtitle = '',
 	description = '',
 	backgroundImage = '',
-	backgroundImageDark = '',
 } = defineProps<{
 	wide?: boolean
 	title?: string
 	subtitle?: string
 	description?: string
-	/** Illustration to use as the background of the whole section */
+	/** Illustration to use as the background of the whole section. The caller picks the variant */
 	backgroundImage?: string
-	/** Variant of backgroundImage for dark themes. Falls back to backgroundImage when not given */
-	backgroundImageDark?: string
 }>()
 const isSmallMobile = useIsSmallMobile()
 const isMobile = useIsMobile()
@@ -31,11 +28,7 @@ const backgroundStyle = computed(() => {
 	if (!backgroundImage) {
 		return undefined
 	}
-	return {
-		'--dashboard-section-image-light': `url('${backgroundImage}')`,
-		// Left unset when there is no dark variant, so that the stylesheet can fall back
-		...(backgroundImageDark && { '--dashboard-section-image-dark': `url('${backgroundImageDark}')` }),
-	}
+	return { '--dashboard-section-image': `url('${backgroundImage}')` }
 })
 </script>
 
@@ -68,8 +61,9 @@ const backgroundStyle = computed(() => {
 <style lang="scss" scoped>
 .dashboard-section {
 	--dashboard-section-blur: 10px;
-	// The dark themes below swap in the dark illustration, where the caller provides one
-	--dashboard-section-image: var(--dashboard-section-image-light);
+	// Horizontal inset of the section content. Inherited, so that a list slot which bleeds to
+	// the section edges can re-apply the same inset to its own children.
+	--dashboard-section-inline-padding: calc(var(--default-grid-baseline) * 5);
 	display: flex;
 	border-radius: var(--border-radius-large);
 	overflow: hidden;
@@ -88,16 +82,13 @@ const backgroundStyle = computed(() => {
 		position: relative;
 		isolation: isolate;
 
-		body[data-theme-dark] &,
-		body[data-theme-dark-highcontrast] & {
-			--dashboard-section-image: var(--dashboard-section-image-dark, var(--dashboard-section-image-light));
-		}
+		// background-position has no logical keywords, so the physical side is picked here.
+		// The caller passes a mirrored illustration in right-to-left locales, which puts the
+		// busy part of the image on the left, opposite the content box.
+		--dashboard-section-image-position: right;
 
-		// System default theme following the OS preference
-		@media (prefers-color-scheme: dark) {
-			body[data-theme-default] & {
-				--dashboard-section-image: var(--dashboard-section-image-dark, var(--dashboard-section-image-light));
-			}
+		body[dir='rtl'] & {
+			--dashboard-section-image-position: left;
 		}
 
 		// The image sits in a pseudo-element rather than on the container itself, so that
@@ -108,7 +99,7 @@ const backgroundStyle = computed(() => {
 			inset: 0;
 			background-image: var(--dashboard-section-image);
 			background-size: cover;
-			background-position: right center;
+			background-position: var(--dashboard-section-image-position) center;
 			background-repeat: no-repeat;
 			z-index: -1;
 		}
@@ -147,11 +138,11 @@ const backgroundStyle = computed(() => {
 		// Without this the item cannot shrink below its content width, so a horizontally
 		// scrollable list in the slot stretches the section instead of scrolling
 		min-width: 0;
-		padding: 0 calc(var(--default-grid-baseline) * 5) calc(var(--default-grid-baseline) * 2);
+		padding: 0 var(--dashboard-section-inline-padding) calc(var(--default-grid-baseline) * 2);
 	}
 
-	&--mobile &__content {
-		padding-inline: calc(var(--default-grid-baseline) * 3);
+	&--mobile {
+		--dashboard-section-inline-padding: calc(var(--default-grid-baseline) * 3);
 	}
 
 	&__title {

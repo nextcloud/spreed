@@ -177,7 +177,7 @@ export default {
 
 	.placeholder-item {
 		&:first-child {
-			margin-inline-start: calc(var(--default-grid-baseline) * 5);
+			margin-inline-start: var(--dashboard-section-inline-padding);
 		}
 
 		&__content {

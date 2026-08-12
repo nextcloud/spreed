@@ -9,6 +9,7 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { isRTL, t } from '@nextcloud/l10n'
 import { generateUrl, imagePath } from '@nextcloud/router'
+import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { useIsMobile, useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
@@ -46,19 +47,19 @@ const isCallEnabled = getTalkConfig('local', 'call', 'enabled')
 const canStartConversations = getTalkConfig('local', 'conversations', 'can-create')
 const isCalendarEnabled = localCapabilities.calendar?.webui ?? false
 const isDirectionRTL = isRTL()
+const isDarkTheme = useIsDarkTheme()
 const isMobile = useIsMobile()
 const isSmallMobile = useIsSmallMobile()
 
 /**
- * Both theme variants of a dashboard illustration, to be bound on a DashboardSection.
+ * Path of the dashboard illustration matching the current direction and theme.
+ * Right-to-left locales use the mirrored variant, dark themes the dark one.
  *
- * @param name - File name in img/dashboard/, without the extension and the `-dark` suffix
+ * @param name - File name in img/dashboard/, without the extension and the `-rtl` / `-dark` suffixes
  */
-function illustration(name: string) {
-	return {
-		backgroundImage: imagePath('spreed', `dashboard/${name}.webp`),
-		backgroundImageDark: imagePath('spreed', `dashboard/${name}-dark.webp`),
-	}
+function illustration(name: string): string {
+	const variant = name + (isDirectionRTL ? '-rtl' : '') + (isDarkTheme.value ? '-dark' : '')
+	return imagePath('spreed', `dashboard/${variant}.webp`)
 }
 
 const store = useStore()
@@ -288,7 +289,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 				<DashboardSection
 					v-if="!eventsInitialised || eventRooms.length > 0"
 					:title="t('spreed', 'Upcoming meetings')"
-					v-bind="illustration('meetings')">
+					:backgroundImage="illustration('meetings')">
 					<template #list>
 						<LoadingPlaceholder
 							v-if="!eventsInitialised"
@@ -341,7 +342,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					:title="t('spreed', 'Schedule meetings')"
 					:subtitle="t('spreed', 'You don\'t have any upcoming meetings')"
 					:description="t('spreed', 'Calendar events with a conversation link as the location are shown here')"
-					v-bind="illustration('meetings')">
+					:backgroundImage="illustration('meetings')">
 					<template #action>
 						<NcButton
 							v-if="isCalendarEnabled"
@@ -361,7 +362,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					<DashboardSection
 						v-if="filteredConversations.length > 0 || !conversationsInitialised"
 						:title="t('spreed', 'Unread mentions')"
-						v-bind="illustration('mentions')">
+						:backgroundImage="illustration('mentions')">
 						<template #list>
 							<ConversationsListVirtual
 								class="talk-dashboard__conversations-list"
@@ -373,7 +374,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 						v-else
 						:title="t('spreed', 'Unread mentions')"
 						:description="t('spreed', 'Messages where you were mentioned will show up here. You can mention people by typing @ followed by their name')"
-						v-bind="illustration('mentions')" />
+						:backgroundImage="illustration('mentions')" />
 				</div>
 				<div
 					v-if="supportsUpcomingReminders"
@@ -381,7 +382,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 					<DashboardSection
 						v-if="upcomingReminders.length > 0 || !remindersInitialised"
 						:title="t('spreed', 'Upcoming reminders')"
-						v-bind="illustration('reminders')">
+						:backgroundImage="illustration('reminders')">
 						<template #list>
 							<ul v-if="remindersInitialised" class="upcoming-reminders-list">
 								<SearchMessageItem
@@ -412,7 +413,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 						v-else
 						:title="t('spreed', 'Message reminders')"
 						:description="t('spreed', 'Set a reminder on a message to be notified')"
-						v-bind="illustration('reminders')" />
+						:backgroundImage="illustration('reminders')" />
 				</div>
 			</div>
 		</div>
@@ -444,6 +445,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	&--small-mobile {
 		width: 100%;
 		height: auto;
+		max-height: none;
 
 		.talk-dashboard__chats {
 			grid-template-columns: 1fr;
@@ -501,13 +503,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 		}
 
 		.dashboard-section__title {
-			padding-inline: calc(var(--default-grid-baseline) * 5);
-		}
-	}
-
-	.talk-dashboard-wrapper--mobile & {
-		:deep(.dashboard-section--list) .dashboard-section__title {
-			padding-inline: calc(var(--default-grid-baseline) * 3);
+			padding-inline: var(--dashboard-section-inline-padding);
 		}
 	}
 
@@ -524,13 +520,13 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	overflow-x: auto;
 	scrollbar-width: none;
 
-	// Keep the outermost cards off the edges of the section
+	// Keep the outermost cards off the edges of the section, in line with the section title
 	> :first-child {
-		margin-inline-start: calc(var(--default-grid-baseline) * 5);
+		margin-inline-start: var(--dashboard-section-inline-padding);
 	}
 
 	> :last-child {
-		margin-inline-end: calc(var(--default-grid-baseline) * 5);
+		margin-inline-end: var(--dashboard-section-inline-padding);
 	}
 }
 
