@@ -50,7 +50,7 @@
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Siųskite pokalbių pranešimus nepranešdami gavėjams, jei tai nėra skubu",
     "- Emojis can now be autocompleted by typing a \":\"" : "- Dabar emociukus galima užbaigti automatiškai, įvedus simbolį „:“",
     "- Link various items using the new smart-picker by typing a \"/\"" : "- Susiekite įvairius elementus naudodami naująjį išmanųjį rinkiklį, įvesdami simbolį „/“",
-    "- Moderators can now create breakout rooms (requires the High-performance backend)" : "- Moderatoriai dabar gali kurti atskiras diskusijų patalpas (reikalingas didelio našumo serveris)",
+    "- Moderators can now create breakout rooms (requires the High-performance backend)" : "- Moderatoriai dabar gali kurti atskirus grupinio darbo kambarius (reikalingas didelio našumo serveris)",
     "- Calls can now be recorded (requires the High-performance backend)" : "- Dabar galima įrašyti skambučius (reikalingas našus serveris)",
     "- Conversations can now have an avatar or emoji as icon" : "- Pokalbių piktogramomis dabar gali būti avatarai arba emociukai",
     "- Virtual backgrounds are now available in addition to the blurred background in video calls" : "- Vaizdo skambučių metu dabar galima naudoti ne tik išblukintą foną, bet ir virtualius fonus",
