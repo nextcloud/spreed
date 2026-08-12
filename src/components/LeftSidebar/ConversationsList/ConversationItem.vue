@@ -20,6 +20,7 @@
 		:bold="!!item.unreadMessages"
 		:counterNumber="item.unreadMessages"
 		:counterType="counterType"
+		:details="compact ? '' : lastActivityTimeString"
 		forceMenu
 		:compact="compact"
 		@click="onClick"
@@ -334,6 +335,7 @@ import { AVATAR, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../../services/CapabilitiesManager.ts'
 import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
 import { isClassifiedConversation } from '../../../utils/conversation.ts'
+import { formatDateTime, getDiffInDays } from '../../../utils/formattedTime.ts'
 import { copyConversationLinkToClipboard } from '../../../utils/handleUrl.ts'
 
 const supportsArchive = hasTalkFeature('local', 'archived-conversations-v2')
@@ -490,6 +492,25 @@ export default {
 		showCallNotificationSettings() {
 			return getTalkConfig(this.item.token, 'call', 'enabled')
 				&& (!this.item.remoteServer || hasTalkFeature(this.item.token, 'federation-v2'))
+		},
+
+		lastActivityTimeString() {
+			const timestampInMs = (this.item.lastMessage?.timestamp ?? this.item.lastActivity ?? 0) * 1_000
+			if (timestampInMs === 0) {
+				return ''
+			}
+
+			const diffInDays = Math.abs(getDiffInDays(timestampInMs))
+			if (diffInDays === 0) {
+				// Today
+				return formatDateTime(timestampInMs, 'shortTime')
+			} else if (diffInDays < 7) {
+				// Within a week
+				return formatDateTime(timestampInMs, 'shortWeekday')
+			}
+
+			const isSameYear = new Date(timestampInMs).getFullYear() === new Date().getFullYear()
+			return formatDateTime(timestampInMs, isSameYear ? 'shortDateSameYear' : 'shortDate')
 		},
 
 		isVoiceRoom() {
@@ -750,6 +771,18 @@ export default {
 	& :deep(.list-item:hover .conversation-icon__type) {
 		background-color: var(--color-background-hover);
 		border-color: var(--color-background-hover);
+	}
+
+	// Overwrite NcListItem styles to reduce timestamp size and fit two lines in 40px height limit
+	& :deep(.list-item .list-item-content__details) {
+		justify-content: flex-start;
+		font-size: var(--font-size-small);
+	}
+	& :deep(.list-item .list-item-details__extra) {
+		margin-block-start: 0;
+	}
+	& :deep(.list-item .counter-bubble__counter) {
+		--counter-bubble-height: 20px !important;
 	}
 
 	&--active {

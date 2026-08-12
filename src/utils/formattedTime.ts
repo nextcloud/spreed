@@ -20,6 +20,7 @@ const absoluteTimeFormat = {
 	shortDateNumeric: new Intl.DateTimeFormat(locale, { year: 'numeric', month: '2-digit', day: '2-digit' }), // '02/15/2025'
 	shortDateWithTime: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }), // 'Feb 15, 2025, 8:30 PM'
 	shortDateWithTimeSeconds: new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' }), // 'Feb 15, 2025, 8:30:00 PM'
+	shortWeekday: new Intl.DateTimeFormat(locale, { weekday: 'short' }), // 'Sat'
 	shortWeekdayWithTime: new Intl.DateTimeFormat(locale, { weekday: 'short', hour: 'numeric', minute: 'numeric' }), // 'Sat 8:30 PM'
 } as const
 
