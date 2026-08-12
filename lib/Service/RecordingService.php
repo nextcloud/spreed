@@ -314,7 +314,10 @@ class RecordingService {
 	}
 
 	private function getUploadShareConfigKey(Room $room, string $fileName): string {
-		return self::APPCONFIG_UPLOAD_PREFIX . $room->getToken() . '/' . sha1(basename($fileName));
+		// Room tokens can be up to 30 characters long, so the token and file
+		// name are hashed together to keep the config key within the 64
+		// character limit regardless of the token length.
+		return self::APPCONFIG_UPLOAD_PREFIX . sha1($room->getToken() . '/' . basename($fileName));
 	}
 
 	/**
