@@ -5,7 +5,7 @@
         "version": "0.0.1",
         "description": "Chat, video & audio-conferencing using WebRTC",
         "license": {
-            "name": "agpl"
+            "name": "AGPL-3.0-or-later"
         }
     },
     "components": {

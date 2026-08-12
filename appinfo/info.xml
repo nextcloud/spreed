@@ -19,7 +19,7 @@
 ]]></description>
 
 	<version>25.0.0-dev.0</version>
-	<licence>agpl</licence>
+	<licence>AGPL-3.0-or-later</licence>
 
 	<author>Christian Lorang</author>
 	<author>Daniel Calviño Sánchez</author>
