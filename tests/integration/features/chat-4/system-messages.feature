@@ -254,6 +254,26 @@ Feature: chat-4/system-messages
       | room | users     | participant1 | participant1-displayname | user_added |
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
+  Scenario: Owner escalation
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" loads attendees attendee ids in room "room" (v4)
+    When user "participant1" promotes "participant2" to "OWNER" in room "room" with 200 (v4)
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant1 | participant1-displayname | owner_promoted |
+      | room | users     | participant1 | participant1-displayname | user_added |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+    When user "participant1" demotes "participant2" to "MODERATOR" in room "room" with 200 (v4)
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant1 | participant1-displayname | owner_demoted |
+      | room | users     | participant1 | participant1-displayname | owner_promoted |
+      | room | users     | participant1 | participant1-displayname | user_added |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+
   Scenario: Changing listable scope of room
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |

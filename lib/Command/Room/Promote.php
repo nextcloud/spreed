@@ -15,6 +15,7 @@ use OCA\Talk\Room;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Promote extends Base {
@@ -33,12 +34,18 @@ class Promote extends Base {
 				'participant',
 				InputArgument::REQUIRED | InputArgument::IS_ARRAY,
 				'Promotes the given participants of the room to moderators'
+			)->addOption(
+				'owner',
+				null,
+				InputOption::VALUE_NONE,
+				'Promotes the given participants to owners instead of moderators'
 			);
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$token = $input->getArgument('token');
 		$users = $input->getArgument('participant');
+		$toOwner = $input->getOption('owner');
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
@@ -58,13 +65,17 @@ class Promote extends Base {
 		}
 
 		try {
-			$this->addRoomModerators($room, $users);
+			$this->addRoomModerators($room, $users, $toOwner);
 		} catch (InvalidArgumentException $e) {
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
 			return 1;
 		}
 
-		$output->writeln('<info>Participants successfully promoted to moderators.</info>');
+		if ($toOwner) {
+			$output->writeln('<info>Participants successfully promoted to owners.</info>');
+		} else {
+			$output->writeln('<info>Participants successfully promoted to moderators.</info>');
+		}
 		return 0;
 	}
 

@@ -18,7 +18,7 @@ import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
 import ParticipantItem from './ParticipantItem.vue'
 import router from '../../../__mocks__/router.js'
-import { ATTENDEE, PARTICIPANT, WEBINAR } from '../../../constants.ts'
+import { ATTENDEE, CONVERSATION, PARTICIPANT, WEBINAR } from '../../../constants.ts'
 import storeConfig from '../../../store/storeConfig.js'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useParticipantActivityStore } from '../../../stores/participantActivity.ts'
@@ -181,8 +181,10 @@ describe('ParticipantItem.vue', () => {
 			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, 'Alice(guest)'],
 			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.EMAILS, PARTICIPANT.TYPE.GUEST, 'Alice(guest)'],
 			['', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, 'Guest(guest)'],
-			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.MODERATOR, 'Alice(moderator)'],
-			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, 'Alice(moderator)(guest)'],
+			// The role is rendered as an icon, its accessible name is part of the text content
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.OWNER, 'AliceOwner'],
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.MODERATOR, 'AliceModerator'],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, 'AliceModerator(guest)'],
 			['Bot', ATTENDEE.BRIDGE_BOT_ID, ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.USER, 'Bot(bot)'],
 		]
 
@@ -191,9 +193,22 @@ describe('ParticipantItem.vue', () => {
 			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, 'Alice(guest)(in the lobby)'],
 			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.EMAILS, PARTICIPANT.TYPE.GUEST, 'Alice(guest)(in the lobby)'],
 			['', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST, 'Guest(guest)(in the lobby)'],
-			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.MODERATOR, 'Alice(moderator)'],
-			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, 'Alice(moderator)(guest)'],
+			// Owners and moderators can skip the lobby, so they get no lobby badge
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.OWNER, 'AliceOwner'],
+			['Alice', 'alice', ATTENDEE.ACTOR_TYPE.USERS, PARTICIPANT.TYPE.MODERATOR, 'AliceModerator'],
+			['Alice', 'guest-id', ATTENDEE.ACTOR_TYPE.GUESTS, PARTICIPANT.TYPE.GUEST_MODERATOR, 'AliceModerator(guest)'],
 		]
+
+		it.each([
+			[CONVERSATION.TYPE.ONE_TO_ONE],
+			[CONVERSATION.TYPE.ONE_TO_ONE_FORMER],
+			[CONVERSATION.TYPE.CHANGELOG],
+		])('does not render a role icon in conversation type \'%d\'', (conversationType) => {
+			// Both participants of a one-to-one conversation are owners by design
+			conversation.type = conversationType
+			const wrapper = mountParticipant({ ...participant, participantType: PARTICIPANT.TYPE.OWNER })
+			expect(wrapper.find('.participant__user').text()).toBe('Alice')
+		})
 
 		it.each(testCases)(
 			'renders name and badges for participant \'%s\' - \'%s\' - \'%s\' - \'%d\'',
@@ -503,6 +518,106 @@ describe('ParticipantItem.vue', () => {
 			test('does not allow a non-moderator to promote', async () => {
 				conversation.participantType = PARTICIPANT.TYPE.USER
 				await testCannotPromote()
+			})
+		})
+		describe('changing ownership', () => {
+			let promoteToModeratorAction
+			let demoteFromModeratorAction
+
+			beforeEach(() => {
+				promoteToModeratorAction = vi.fn()
+				demoteFromModeratorAction = vi.fn()
+
+				testStoreConfig.modules.participantsStore.actions.promoteToModerator = promoteToModeratorAction
+				testStoreConfig.modules.participantsStore.actions.demoteFromModerator = demoteFromModeratorAction
+				store = createStore(testStoreConfig)
+
+				conversation.type = CONVERSATION.TYPE.GROUP
+				conversation.objectType = ''
+				conversation.participantType = PARTICIPANT.TYPE.OWNER
+			})
+
+			test('allows an owner to promote a user to owner', async () => {
+				const wrapper = mountParticipant(participant)
+				const actionButton = findNcActionButton(wrapper, 'Promote to owner')
+				expect(actionButton.exists()).toBeTruthy()
+
+				await actionButton.find('button').trigger('click')
+
+				expect(promoteToModeratorAction).toHaveBeenCalledWith(expect.anything(), {
+					token: TOKEN,
+					attendeeId: 'alice-attendee-id',
+					participantType: PARTICIPANT.TYPE.OWNER,
+				})
+			})
+
+			test('allows an owner to promote a moderator to owner', async () => {
+				participant.participantType = PARTICIPANT.TYPE.MODERATOR
+				const wrapper = mountParticipant(participant)
+				expect(findNcActionButton(wrapper, 'Promote to owner').exists()).toBeTruthy()
+			})
+
+			test('allows an owner to demote another owner to moderator or user', async () => {
+				participant.participantType = PARTICIPANT.TYPE.OWNER
+				const wrapper = mountParticipant(participant)
+
+				const toModerator = findNcActionButton(wrapper, 'Demote from owner to moderator')
+				expect(toModerator.exists()).toBeTruthy()
+				expect(findNcActionButton(wrapper, 'Demote from owner to participant').exists()).toBeTruthy()
+
+				await toModerator.find('button').trigger('click')
+
+				expect(demoteFromModeratorAction).toHaveBeenCalledWith(expect.anything(), {
+					token: TOKEN,
+					attendeeId: 'alice-attendee-id',
+					participantType: PARTICIPANT.TYPE.MODERATOR,
+				})
+			})
+
+			test('allows an owner to step down to moderator but not to user', async () => {
+				participant.participantType = PARTICIPANT.TYPE.OWNER
+				participant.actorId = 'user-actor-id'
+				const wrapper = mountParticipant(participant)
+
+				expect(findNcActionButton(wrapper, 'Demote from owner to moderator').exists()).toBeTruthy()
+				expect(findNcActionButton(wrapper, 'Demote from owner to participant').exists()).toBeFalsy()
+			})
+
+			test('does not allow a moderator to change ownership', async () => {
+				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
+				const wrapper = mountParticipant(participant)
+				expect(findNcActionButton(wrapper, 'Promote to owner').exists()).toBeFalsy()
+			})
+
+			test('does not allow promoting a guest to owner', async () => {
+				participant.participantType = PARTICIPANT.TYPE.GUEST
+				participant.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
+				const wrapper = mountParticipant(participant)
+				expect(findNcActionButton(wrapper, 'Promote to owner').exists()).toBeFalsy()
+			})
+
+			test('does not allow promoting a federated user to owner', async () => {
+				participant.actorType = ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
+				const wrapper = mountParticipant(participant)
+				expect(findNcActionButton(wrapper, 'Promote to owner').exists()).toBeFalsy()
+			})
+
+			test('does not allow changing ownership in a one-to-one conversation', async () => {
+				conversation.type = CONVERSATION.TYPE.ONE_TO_ONE
+				const wrapper = mountParticipant(participant)
+				expect(findNcActionButton(wrapper, 'Promote to owner').exists()).toBeFalsy()
+			})
+
+			test('does not allow changing ownership in an object bound conversation', async () => {
+				conversation.objectType = CONVERSATION.OBJECT_TYPE.EVENT
+				const wrapper = mountParticipant(participant)
+				expect(findNcActionButton(wrapper, 'Promote to owner').exists()).toBeFalsy()
+			})
+
+			test('allows changing ownership in a classified conversation', async () => {
+				conversation.objectType = CONVERSATION.OBJECT_TYPE.CLASSIFIED
+				const wrapper = mountParticipant(participant)
+				expect(findNcActionButton(wrapper, 'Promote to owner').exists()).toBeTruthy()
 			})
 		})
 		describe('resending invitations', () => {

@@ -44,6 +44,7 @@ use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\DialOutFailedException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\ParticipantProperty\ParticipantTypeException;
 use OCA\Talk\Exceptions\ParticipantProperty\PermissionsException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\BackendNotifier;
@@ -82,6 +83,34 @@ use Psr\Log\LoggerInterface;
 
 class ParticipantService {
 
+	/**
+	 * Room types in which the owner level can be handed out, next to
+	 * {@see self::OWNER_CHANGE_OBJECT_TYPES}
+	 *
+	 * One-to-one conversations already have two owners by design, note-to-self
+	 * and changelog conversations only ever have a single participant.
+	 */
+	protected const OWNER_CHANGE_ROOM_TYPES = [
+		Room::TYPE_GROUP,
+		Room::TYPE_PUBLIC,
+	];
+
+	/**
+	 * Object types in which the owner level can be handed out
+	 *
+	 * Everything else binds the conversation to an object that assumes a single
+	 * owner: file and video verification rooms derive the owner from the share,
+	 * calendar event rooms from the organiser, and breakout rooms mirror the
+	 * moderators of their parent conversation.
+	 */
+	protected const OWNER_CHANGE_OBJECT_TYPES = [
+		'',
+		Room::OBJECT_TYPE_CLASSIFIED,
+		Room::OBJECT_TYPE_CLASSIFIED_PERSIST,
+		Room::OBJECT_TYPE_EXTENDED_CONVERSATION,
+		Room::OBJECT_TYPE_INSTANT_MEETING,
+	];
+
 	/** @var array<int, array<string, array<string, Participant>>> */
 	protected array $actorCache;
 	/** @var array<int, array<string, Participant>> */
@@ -105,6 +134,80 @@ class ParticipantService {
 		private readonly IUserStatusManager $userStatusManager,
 		private readonly LoggerInterface $logger,
 	) {
+	}
+
+	/**
+	 * Promote or demote an attendee on behalf of a moderator
+	 *
+	 * Unlike {@see self::updateParticipantType()} this validates that the acting
+	 * participant is allowed to perform the change. It is therefore only meant
+	 * for requests triggered by a user, not for the command line or internal
+	 * bookkeeping.
+	 *
+	 * @param bool $promote Whether the attendee should be promoted or demoted
+	 * @param int|null $requestedType Target level, or null to only toggle the moderator level
+	 * @return int The new participant type
+	 * @throws ParticipantTypeException
+	 */
+	public function updateParticipantTypeByModerator(Room $room, Participant $actor, Participant $target, bool $promote, ?int $requestedType = null): int {
+		$attendee = $target->getAttendee();
+		$currentType = $attendee->getParticipantType();
+
+		if ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
+			// Can not promote/demote groups
+			throw new ParticipantTypeException(ParticipantTypeException::REASON_ACTOR_TYPE);
+		}
+
+		$allowedTypes = $promote
+			? [Participant::OWNER, Participant::MODERATOR]
+			: [Participant::MODERATOR, Participant::USER];
+		if ($requestedType !== null && !in_array($requestedType, $allowedTypes, true)) {
+			throw new ParticipantTypeException(ParticipantTypeException::REASON_PARTICIPANT_TYPE);
+		}
+
+		$isSelf = $attendee->getActorType() === $actor->getAttendee()->getActorType()
+			&& $attendee->getActorId() === $actor->getAttendee()->getActorId();
+
+		// Prevent users/moderators modifying themselves. Owners can step down,
+		// but only to moderator so they do not lock themselves out.
+		if ($isSelf && !($actor->isOwner() && !$promote && $requestedType === Participant::MODERATOR)) {
+			throw new ParticipantTypeException(ParticipantTypeException::REASON_SELF);
+		}
+
+		$newType = $promote
+			? Participant::getParticipantTypeAfterPromotion($currentType, $requestedType)
+			: Participant::getParticipantTypeAfterDemotion($currentType, $requestedType);
+
+		if ($newType === null || $newType === $currentType) {
+			throw new ParticipantTypeException(ParticipantTypeException::REASON_TYPE);
+		}
+
+		if ($newType === Participant::OWNER || $currentType === Participant::OWNER) {
+			if (!in_array($room->getType(), self::OWNER_CHANGE_ROOM_TYPES, true)
+				|| !in_array($room->getObjectType(), self::OWNER_CHANGE_OBJECT_TYPES, true)) {
+				throw new ParticipantTypeException(ParticipantTypeException::REASON_ROOM_TYPE);
+			}
+
+			if (!$actor->isOwner()) {
+				throw new ParticipantTypeException(ParticipantTypeException::REASON_MODERATOR);
+			}
+
+			if ($attendee->getActorType() !== Attendee::ACTOR_USERS) {
+				// Guests, email guests, federated users, phones and bots can not be owners
+				throw new ParticipantTypeException(ParticipantTypeException::REASON_ACTOR_TYPE);
+			}
+		}
+
+		if ($newType === Participant::USER
+			&& in_array($currentType, [Participant::OWNER, Participant::MODERATOR], true)
+			&& $this->getNumberOfModerators($room) <= 1) {
+			// Never leave the conversation without a moderator
+			throw new ParticipantTypeException(ParticipantTypeException::REASON_LAST_MODERATOR);
+		}
+
+		$this->updateParticipantType($room, $target, $newType);
+
+		return $newType;
 	}
 
 	public function updateParticipantType(Room $room, Participant $participant, int $participantType): void {

@@ -1730,9 +1730,15 @@ export type paths = {
         };
         get?: never;
         put?: never;
-        /** Promote an attendee to moderator */
+        /**
+         * Promote an attendee to moderator or owner
+         * @description Required capability: `promote-demote-owner` for `int $participantType`
+         */
         post: operations["room-promote-moderator"];
-        /** Demote an attendee from moderator */
+        /**
+         * Demote an attendee from moderator or owner
+         * @description Required capability: `promote-demote-owner` for `int $participantType`
+         */
         delete: operations["room-demote-moderator"];
         options?: never;
         head?: never;
@@ -12921,11 +12927,17 @@ export interface operations {
                      * @description ID of the attendee
                      */
                     attendeeId: number;
+                    /**
+                     * Format: int64
+                     * @description Level to promote the attendee to: owner (`1`) or moderator (`2`), `0` to only grant moderator permissions. Guests are promoted to guest moderator (`6`) and can never become owners.
+                     * @default 0
+                     */
+                    participantType?: number;
                 };
             };
         };
         responses: {
-            /** @description Attendee promoted to moderator successfully */
+            /** @description Attendee promoted successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -12939,7 +12951,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Promoting attendee to moderator is not possible */
+            /** @description Promoting attendee is not possible */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -12948,12 +12960,15 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
+                            };
                         };
                     };
                 };
             };
-            /** @description Promoting attendee to moderator is not allowed */
+            /** @description Promoting attendee is not allowed */
             403: {
                 headers: {
                     [name: string]: unknown;
@@ -12962,7 +12977,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
+                            };
                         };
                     };
                 };
@@ -12976,7 +12994,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
+                            };
                         };
                     };
                 };
@@ -12988,6 +13009,8 @@ export interface operations {
             query: {
                 /** @description ID of the attendee */
                 attendeeId: number;
+                /** @description Level to demote the attendee to: moderator (`2`) or user (`3`), `0` to only revoke moderator permissions. Guest moderators are demoted to guest (`4`). */
+                participantType?: number;
             };
             header: {
                 /** @description Required to be true for the API request to pass */
@@ -13001,7 +13024,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Attendee demoted from moderator successfully */
+            /** @description Attendee demoted successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -13015,7 +13038,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Demoting attendee from moderator is not possible */
+            /** @description Demoting attendee is not possible */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -13024,12 +13047,15 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
+                            };
                         };
                     };
                 };
             };
-            /** @description Demoting attendee from moderator is not allowed */
+            /** @description Demoting attendee is not allowed */
             403: {
                 headers: {
                     [name: string]: unknown;
@@ -13038,7 +13064,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
+                            };
                         };
                     };
                 };
@@ -13052,7 +13081,10 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: unknown;
+                            data: {
+                                /** @enum {string} */
+                                error: "actor-type" | "last-moderator" | "moderator" | "participant" | "participant-type" | "room-type" | "self" | "type";
+                            };
                         };
                     };
                 };

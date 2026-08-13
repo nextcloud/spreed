@@ -109,6 +109,7 @@ export const mockedCapabilities: Capabilities = {
 			'conversation-presets',
 			'private-reply',
 			'conversation-tags',
+			'promote-demote-owner',
 			// Conditional features
 			'message-expiration',
 			'reactions',

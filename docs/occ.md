@@ -332,12 +332,16 @@ Demotes participants of a room to regular users
 
 ### Usage
 
-* `talk:room:demote <token> <participant>...`
+* `talk:room:demote [--to-moderator] [--] <token> <participant>...`
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `token` | Token of the room in which users should be demoted | yes | no | *Required* |
 | `participant` | Demotes the given participants of the room to regular users | yes | yes | *Required* |
+
+| Options | Description | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|---|
+| `--to-moderator` | Demotes the given owners to moderators instead of regular users | no | no | no | `false` |
 
 ## talk:room:promote
 
@@ -345,12 +349,16 @@ Promotes participants of a room to moderators
 
 ### Usage
 
-* `talk:room:promote <token> <participant>...`
+* `talk:room:promote [--owner] [--] <token> <participant>...`
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `token` | Token of the room in which users should be promoted | yes | no | *Required* |
 | `participant` | Promotes the given participants of the room to moderators | yes | yes | *Required* |
+
+| Options | Description | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|---|
+| `--owner` | Promotes the given participants to owners instead of moderators | no | no | no | `false` |
 
 ## talk:room:remove
 

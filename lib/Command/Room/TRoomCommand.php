@@ -208,7 +208,7 @@ trait TRoomCommand {
 	protected function unsetRoomOwner(Room $room): void {
 		$participants = $this->participantService->getParticipantsForRoom($room);
 		foreach ($participants as $participant) {
-			if ($participant->getAttendee()->getParticipantType() === Participant::OWNER) {
+			if ($participant->isOwner()) {
 				$this->participantService->updateParticipantType($room, $participant, Participant::USER);
 			}
 		}
@@ -308,10 +308,11 @@ trait TRoomCommand {
 	/**
 	 * @param Room $room
 	 * @param string[] $userIds
+	 * @param bool $toOwner Promote to owner instead of moderator
 	 *
 	 * @throws InvalidArgumentException
 	 */
-	protected function addRoomModerators(Room $room, array $userIds): void {
+	protected function addRoomModerators(Room $room, array $userIds, bool $toOwner = false): void {
 		$participants = [];
 		foreach ($userIds as $userId) {
 			if ($userId === MatterbridgeManager::BRIDGE_BOT_USERID) {
@@ -324,23 +325,30 @@ trait TRoomCommand {
 				throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 			}
 
-			if ($participant->getAttendee()->getParticipantType() !== Participant::OWNER) {
+			// Owners are not demoted to moderators by a promotion
+			if ($toOwner || !$participant->isOwner()) {
 				$participants[] = $participant;
 			}
 		}
 
+		$participantType = $toOwner ? Participant::OWNER : Participant::MODERATOR;
 		foreach ($participants as $participant) {
-			$this->participantService->updateParticipantType($room, $participant, Participant::MODERATOR);
+			$this->participantService->updateParticipantType($room, $participant, $participantType);
 		}
 	}
 
 	/**
 	 * @param Room $room
 	 * @param string[] $userIds
+	 * @param bool $toModerator Demote owners to moderator instead of regular user
 	 *
 	 * @throws InvalidArgumentException
 	 */
-	protected function removeRoomModerators(Room $room, array $userIds): void {
+	protected function removeRoomModerators(Room $room, array $userIds, bool $toModerator = false): void {
+		$demotableTypes = $toModerator
+			? [Participant::OWNER]
+			: [Participant::OWNER, Participant::MODERATOR];
+
 		$participants = [];
 		foreach ($userIds as $userId) {
 			try {
@@ -349,13 +357,14 @@ trait TRoomCommand {
 				throw new InvalidArgumentException(sprintf("User '%s' is no participant.", $userId));
 			}
 
-			if ($participant->getAttendee()->getParticipantType() === Participant::MODERATOR) {
+			if (in_array($participant->getAttendee()->getParticipantType(), $demotableTypes, true)) {
 				$participants[] = $participant;
 			}
 		}
 
+		$participantType = $toModerator ? Participant::MODERATOR : Participant::USER;
 		foreach ($participants as $participant) {
-			$this->participantService->updateParticipantType($room, $participant, Participant::USER);
+			$this->participantService->updateParticipantType($room, $participant, $participantType);
 		}
 	}
 
