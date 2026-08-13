@@ -40,7 +40,7 @@
 						:token="token"
 						isUploadEditor
 						:file="file[1].temporaryMessage.messageParameters.file"
-						@removeFile="handleRemoveFileFromSelection" />
+						@removeFile="removeFile" />
 					<NcButton
 						:aria-label="addMoreAriaLabel"
 						variant="tertiary"
@@ -61,13 +61,13 @@
 
 			<NcCheckboxRadioSwitch
 				v-if="!isVoiceMessage && supportConversationSubfolders"
-				v-model="allowUpdate"
+				v-model="uploadStore.allowUpdate"
 				type="switch">
 				{{ t('spreed', 'Allow editing of uploaded files') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch
 				v-if="hasImages"
-				v-model="skipCompression"
+				v-model="uploadStore.skipCompression"
 				type="switch">
 				{{ t('spreed', 'Send images without compression') }}
 			</NcCheckboxRadioSwitch>
@@ -109,10 +109,8 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import NewMessage from './NewMessage.vue'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
-import { MESSAGE } from '../../constants.ts'
-import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
+import { useUploadFiles } from '../../composables/useUploadFiles.ts'
 import { useUploadStore } from '../../stores/upload.ts'
-import { supportImageCompression } from '../../utils/imageCompression.ts'
 
 export default {
 	name: 'NewMessageUploadEditor',
@@ -130,64 +128,51 @@ export default {
 
 	setup() {
 		const isDraggingOver = ref(false)
-		const allowUpdate = ref(false)
-		const skipCompression = ref(false)
 		const dialogMaskId = `new-message-upload-${useId()}`
 		const dialogHeaderId = `new-message-upload-header-${useId()}`
 		const modalContainerId = '#' + dialogMaskId
 
+		const token = useGetToken()
+
+		const {
+			currentUploadId,
+			files,
+			hasFiles,
+			firstFile,
+			isVoiceMessage,
+			hasImages,
+			supportMediaCaption,
+			supportConversationSubfolders,
+			removeFile,
+		} = useUploadFiles(token)
+
 		return {
 			modalContainerId,
 			isDraggingOver,
-			allowUpdate,
-			skipCompression,
 			dialogMaskId,
 			dialogHeaderId,
-			token: useGetToken(),
+			token,
 			threadId: useGetThreadId(),
 			uploadStore: useUploadStore(),
+			currentUploadId,
+			files,
+			hasFiles,
+			firstFile,
+			isVoiceMessage,
+			hasImages,
+			supportMediaCaption,
+			supportConversationSubfolders,
+			removeFile,
 		}
 	},
 
 	computed: {
-		supportMediaCaption() {
-			return hasTalkFeature(this.token, 'media-caption')
-		},
-
-		supportConversationSubfolders() {
-			return getTalkConfig(this.token, 'attachments', 'conversation-subfolders') === true
-		},
-
-		hasImages() {
-			return this.files.some(([, f]) => supportImageCompression(f.file.type))
-		},
-
-		currentUploadId() {
-			return this.uploadStore.currentUploadId
-		},
-
-		files() {
-			return this.uploadStore.getInitialisedUploads(this.currentUploadId)
-		},
-
 		showModal() {
 			return !!this.currentUploadId
 		},
 
 		addMoreAriaLabel() {
 			return t('spreed', 'Add more files')
-		},
-
-		firstFile() {
-			return this.files?.at(0)?.at(1)
-		},
-
-		// Hide the plus button in case this editor is used while sending a voice message
-		isVoiceMessage() {
-			if (!this.firstFile) {
-				return false
-			}
-			return this.firstFile.temporaryMessage.messageType === MESSAGE.TYPE.VOICE_MESSAGE
 		},
 
 		voiceMessageName() {
@@ -212,10 +197,6 @@ export default {
 				} else {
 					this.$refs.submitButton.$el.focus()
 				}
-			} else {
-				// Reset user's choices at closing
-				this.allowUpdate = false
-				this.skipCompression = false
 			}
 		},
 	},
@@ -233,13 +214,13 @@ export default {
 				uploadId: this.currentUploadId,
 				caption: null,
 				options: null,
-				allowUpdate: this.supportConversationSubfolders ? this.allowUpdate : undefined,
-				compressImages: this.hasImages ? !this.skipCompression : undefined,
+				allowUpdate: this.supportConversationSubfolders ? this.uploadStore.allowUpdate : undefined,
+				compressImages: this.hasImages ? !this.uploadStore.skipCompression : undefined,
 			})
 		},
 
 		async handleUpload({ token, temporaryMessage }) {
-			if (this.files.length) {
+			if (this.hasFiles) {
 				// Create a share with optional caption
 				await this.uploadStore.uploadFiles({
 					token,
@@ -251,8 +232,8 @@ export default {
 						silent: temporaryMessage.silent,
 						parent: temporaryMessage.parent,
 					},
-					allowUpdate: this.supportConversationSubfolders ? this.allowUpdate : undefined,
-					compressImages: this.hasImages ? !this.skipCompression : undefined,
+					allowUpdate: this.supportConversationSubfolders ? this.uploadStore.allowUpdate : undefined,
+					compressImages: this.hasImages ? !this.uploadStore.skipCompression : undefined,
 				})
 			} else {
 				this.uploadStore.discardUpload(this.currentUploadId)
@@ -279,10 +260,6 @@ export default {
 			const files = Object.values(event.target.files)
 			this.uploadStore.initialiseUpload({ files, token: this.token, threadId: this.threadId, uploadId: this.currentUploadId })
 			this.$refs.fileUploadInput.value = null
-		},
-
-		handleRemoveFileFromSelection(id) {
-			this.uploadStore.removeFileFromSelection(id)
 		},
 
 		handleDragOver(event) {
