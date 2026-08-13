@@ -56,9 +56,6 @@
 			:token="token"
 			hasTypingIndicator
 			:aria-label="t('spreed', 'Post message')" />
-
-		<!-- File upload dialog -->
-		<NewMessageUploadEditor />
 	</div>
 </template>
 
@@ -74,7 +71,6 @@ import IconChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.v
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import MessagesList from './MessagesList/MessagesList.vue'
 import NewMessage from './NewMessage/NewMessage.vue'
-import NewMessageUploadEditor from './NewMessage/NewMessageUploadEditor.vue'
 import ThreadHeader from './RightSidebar/Threads/ThreadHeader.vue'
 import TransitionWrapper from './UIShared/TransitionWrapper.vue'
 import IconFileUpload from '../../img/material-icons/file-upload.svg?raw'
@@ -99,7 +95,6 @@ export default {
 		NcIconSvgWrapper,
 		MessagesList,
 		NewMessage,
-		NewMessageUploadEditor,
 		TransitionWrapper,
 		GuestWelcomeWindow,
 		// icons

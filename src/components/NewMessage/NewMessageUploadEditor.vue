@@ -4,110 +4,129 @@
 -->
 
 <template>
-	<NcModal
-		v-if="showModal"
-		:id="dialogMaskId"
-		ref="modal"
-		:size="isVoiceMessage ? 'small' : 'normal'"
-		:labelId="dialogHeaderId"
-		@close="handleDismiss">
-		<div
-			class="upload-editor"
-			@dragover.prevent="handleDragOver"
-			@dragleave.prevent="handleDragLeave"
-			@drop.prevent="handleDropFiles">
-			<template v-if="!isVoiceMessage">
-				<h2 :id="dialogHeaderId" class="hidden-visually">
-					{{ t('spreed', 'Upload from device') }}
-				</h2>
-				<!--native file picker, hidden -->
-				<input
-					id="file-upload"
-					ref="fileUploadInput"
-					multiple
-					type="file"
-					class="hidden-visually"
-					@change="handleFileInput">
-				<TransitionWrapper
-					class="upload-editor__previews"
-					:class="{ 'dragging-over': isDraggingOver }"
-					name="fade"
-					tag="div"
-					group>
-					<FilePreview
-						v-for="file in files"
-						:key="file[1].temporaryMessage.id"
-						:token="token"
-						isUploadEditor
-						:file="file[1].temporaryMessage.messageParameters.file"
-						@removeFile="removeFile" />
-					<NcButton
-						:aria-label="addMoreAriaLabel"
-						variant="tertiary"
-						class="add-more-button"
-						size="large"
-						@click="clickImportInput">
-						<template #icon>
-							<IconPlus :size="48" />
-						</template>
-					</NcButton>
-				</TransitionWrapper>
-			</template>
-			<template v-else>
-				<AudioPlayer
-					:name="voiceMessageName"
-					:localUrl="voiceMessageLocalURL" />
-			</template>
+	<div v-if="hasFiles" class="upload-editor">
+		<div v-if="showImageQuality || showSharePermission" class="upload-editor__options">
+			<NcActions
+				v-if="showSharePermission"
+				:variant="uploadStore.allowUpdate ? 'secondary' : 'tertiary'"
+				size="small"
+				:menuName="sharePermissionLabel">
+				<template #icon>
+					<IconPencilOutline v-if="uploadStore.allowUpdate" :size="20" />
+					<IconPencilOffOutline v-else :size="20" />
+				</template>
+				<NcActionButton
+					v-model="sharePermission"
+					type="radio"
+					value="view-only"
+					closeAfterClick>
+					<template #icon>
+						<IconPencilOffOutline :size="20" />
+					</template>
+					{{ labels.viewOnly }}
+				</NcActionButton>
+				<NcActionButton
+					v-model="sharePermission"
+					type="radio"
+					value="editable"
+					closeAfterClick>
+					<template #icon>
+						<IconPencilOutline :size="20" />
+					</template>
+					{{ labels.editable }}
+				</NcActionButton>
+			</NcActions>
 
-			<NcCheckboxRadioSwitch
-				v-if="!isVoiceMessage && supportConversationSubfolders"
-				v-model="uploadStore.allowUpdate"
-				type="switch">
-				{{ t('spreed', 'Allow editing of uploaded files') }}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch
-				v-if="hasImages"
-				v-model="uploadStore.skipCompression"
-				type="switch">
-				{{ t('spreed', 'Send images without compression') }}
-			</NcCheckboxRadioSwitch>
-
-			<div v-if="!supportMediaCaption" class="upload-editor__actions">
-				<NcButton variant="tertiary" @click="handleDismiss">
-					{{ t('spreed', 'Dismiss') }}
-				</NcButton>
-				<NcButton ref="submitButton" variant="primary" @click="handleLegacyUpload">
-					{{ t('spreed', 'Send') }}
-				</NcButton>
-			</div>
-			<NewMessage
-				v-else
-				ref="newMessage"
-				role="region"
-				class="upload-editor__textfield"
-				upload
-				dialog
-				:token="token"
-				:container="modalContainerId"
-				:aria-label="t('spreed', 'Post message')"
-				@submit="handleUpload"
-				@dismiss="handleDismiss" />
+			<NcActions
+				v-if="showImageQuality"
+				:variant="uploadStore.skipCompression ? 'secondary' : 'tertiary'"
+				size="small"
+				:menuName="imageQualityLabel">
+				<template #icon>
+					<IconHighDefinition v-if="uploadStore.skipCompression" :size="20" />
+					<IconStandardDefinition v-else :size="20" />
+				</template>
+				<NcActionButton
+					v-model="imageQuality"
+					type="radio"
+					value="standard"
+					closeAfterClick>
+					<template #icon>
+						<IconStandardDefinition :size="20" />
+					</template>
+					{{ labels.standardDefinition }}
+				</NcActionButton>
+				<NcActionButton
+					v-model="imageQuality"
+					type="radio"
+					value="high"
+					closeAfterClick>
+					<template #icon>
+						<IconHighDefinition :size="20" />
+					</template>
+					{{ labels.highDefinition }}
+				</NcActionButton>
+			</NcActions>
 		</div>
-	</NcModal>
+
+		<TransitionWrapper
+			v-if="!isVoiceMessage"
+			class="upload-editor__previews"
+			name="fade"
+			tag="div"
+			group>
+			<NcButton
+				key="add-more"
+				:aria-label="addMoreAriaLabel"
+				:title="addMoreAriaLabel"
+				variant="tertiary"
+				class="upload-editor__add-more"
+				size="large"
+				wide
+				@click="$emit('openFilePicker')">
+				<template #icon>
+					<IconPlus :size="48" />
+				</template>
+			</NcButton>
+			<FilePreview
+				v-for="file in files"
+				:key="file[1].temporaryMessage.id"
+				:token="token"
+				isUploadEditor
+				:file="file[1].temporaryMessage.messageParameters.file"
+				@removeFile="removeFile" />
+		</TransitionWrapper>
+		<div v-else class="upload-editor__voice-message">
+			<AudioPlayer
+				:name="voiceMessageName"
+				:localUrl="voiceMessageLocalURL" />
+			<NcButton
+				variant="error"
+				:aria-label="t('spreed', 'Dismiss')"
+				:title="t('spreed', 'Dismiss')"
+				@click="removeFile(firstFile.temporaryMessage.id)">
+				<template #icon>
+					<IconClose :size="20" />
+				</template>
+			</NcButton>
+		</div>
+	</div>
 </template>
 
 <script>
 import { t } from '@nextcloud/l10n'
-import { ref, useId } from 'vue'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcActions from '@nextcloud/vue/components/NcActions'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
-import NcModal from '@nextcloud/vue/components/NcModal'
+import IconClose from 'vue-material-design-icons/Close.vue'
+import IconHighDefinition from 'vue-material-design-icons/HighDefinition.vue'
+import IconPencilOffOutline from 'vue-material-design-icons/PencilOffOutline.vue'
+import IconPencilOutline from 'vue-material-design-icons/PencilOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
+import IconStandardDefinition from 'vue-material-design-icons/StandardDefinition.vue'
 import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
 import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
-import NewMessage from './NewMessage.vue'
-import { useGetThreadId } from '../../composables/useGetThreadId.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
 import { useUploadFiles } from '../../composables/useUploadFiles.ts'
 import { useUploadStore } from '../../stores/upload.ts'
@@ -116,63 +135,100 @@ export default {
 	name: 'NewMessageUploadEditor',
 
 	components: {
-		NcModal,
 		FilePreview,
+		IconClose,
+		IconPencilOffOutline,
+		IconPencilOutline,
 		IconPlus,
+		IconHighDefinition,
+		IconStandardDefinition,
 		AudioPlayer,
+		NcActionButton,
+		NcActions,
 		NcButton,
-		NcCheckboxRadioSwitch,
-		NewMessage,
 		TransitionWrapper,
 	},
 
-	setup() {
-		const isDraggingOver = ref(false)
-		const dialogMaskId = `new-message-upload-${useId()}`
-		const dialogHeaderId = `new-message-upload-header-${useId()}`
-		const modalContainerId = '#' + dialogMaskId
+	emits: ['openFilePicker'],
 
+	setup() {
 		const token = useGetToken()
+		const uploadStore = useUploadStore()
+
+		const labels = {
+			standardDefinition: t('spreed', 'Standard image quality'),
+			highDefinition: t('spreed', 'Original image quality'),
+			viewOnly: t('spreed', 'View-only for others'),
+			editable: t('spreed', 'Editable by others'),
+		}
 
 		const {
-			currentUploadId,
 			files,
 			hasFiles,
 			firstFile,
 			isVoiceMessage,
 			hasImages,
-			supportMediaCaption,
 			supportConversationSubfolders,
 			removeFile,
 		} = useUploadFiles(token)
 
 		return {
-			modalContainerId,
-			isDraggingOver,
-			dialogMaskId,
-			dialogHeaderId,
-			token,
-			threadId: useGetThreadId(),
-			uploadStore: useUploadStore(),
-			currentUploadId,
 			files,
 			hasFiles,
 			firstFile,
 			isVoiceMessage,
 			hasImages,
-			supportMediaCaption,
 			supportConversationSubfolders,
 			removeFile,
+			token,
+			uploadStore,
+			labels,
 		}
 	},
 
 	computed: {
-		showModal() {
-			return !!this.currentUploadId
-		},
-
 		addMoreAriaLabel() {
 			return t('spreed', 'Add more files')
+		},
+
+		showImageQuality() {
+			return this.hasImages
+		},
+
+		showSharePermission() {
+			return !this.isVoiceMessage && this.supportConversationSubfolders
+		},
+
+		imageQuality: {
+			get() {
+				return this.uploadStore.skipCompression ? 'high' : 'standard'
+			},
+
+			set(value) {
+				this.uploadStore.skipCompression = value === 'high'
+			},
+		},
+
+		imageQualityLabel() {
+			return this.uploadStore.skipCompression
+				? this.labels.highDefinition
+				: this.labels.standardDefinition
+		},
+
+		sharePermission: {
+			get() {
+				return this.uploadStore.allowUpdate ? 'editable' : 'view-only'
+			},
+
+			set(value) {
+				this.uploadStore.allowUpdate = value === 'editable'
+			},
+		},
+
+		sharePermissionLabel() {
+			return this.uploadStore.allowUpdate
+				? this.labels.editable
+				: this.labels.viewOnly
 		},
 
 		voiceMessageName() {
@@ -187,147 +243,99 @@ export default {
 		},
 	},
 
-	watch: {
-		async showModal(show) {
-			if (show) {
-				// Wait for modal content to be rendered
-				await this.$nextTick()
-				if (this.supportMediaCaption) {
-					this.$refs.newMessage.focusInput()
-				} else {
-					this.$refs.submitButton.$el.focus()
-				}
-			}
-		},
-	},
-
 	methods: {
 		t,
-
-		handleDismiss() {
-			this.uploadStore.discardUpload(this.currentUploadId)
-		},
-
-		handleLegacyUpload() {
-			this.uploadStore.uploadFiles({
-				token: this.token,
-				uploadId: this.currentUploadId,
-				caption: null,
-				options: null,
-				allowUpdate: this.supportConversationSubfolders ? this.uploadStore.allowUpdate : undefined,
-				compressImages: this.hasImages ? !this.uploadStore.skipCompression : undefined,
-			})
-		},
-
-		async handleUpload({ token, temporaryMessage }) {
-			if (this.hasFiles) {
-				// Create a share with optional caption
-				await this.uploadStore.uploadFiles({
-					token,
-					uploadId: this.currentUploadId,
-					caption: temporaryMessage.message,
-					options: {
-						threadId: temporaryMessage.threadId,
-						threadTitle: temporaryMessage.threadTitle,
-						silent: temporaryMessage.silent,
-						parent: temporaryMessage.parent,
-					},
-					allowUpdate: this.supportConversationSubfolders ? this.uploadStore.allowUpdate : undefined,
-					compressImages: this.hasImages ? !this.uploadStore.skipCompression : undefined,
-				})
-			} else {
-				this.uploadStore.discardUpload(this.currentUploadId)
-				if (temporaryMessage.message.trim()) {
-					// Proceed as a normal message
-					try {
-						await this.$store.dispatch('postNewMessage', { token, temporaryMessage })
-					} catch (e) {
-						console.error(e)
-					}
-				}
-			}
-		},
-
-		/**
-		 * Clicks the hidden file input when clicking the correspondent NcActionButton,
-		 * thus opening the file-picker
-		 */
-		clickImportInput() {
-			this.$refs.fileUploadInput.click()
-		},
-
-		handleFileInput(event) {
-			const files = Object.values(event.target.files)
-			this.uploadStore.initialiseUpload({ files, token: this.token, threadId: this.threadId, uploadId: this.currentUploadId })
-			this.$refs.fileUploadInput.value = null
-		},
-
-		handleDragOver(event) {
-			if (event.dataTransfer.types.includes('Files')) {
-				this.isDraggingOver = true
-			}
-		},
-
-		handleDragLeave(event) {
-			if (!event.currentTarget.contains(event.relatedTarget)) {
-				this.isDraggingOver = false
-			}
-		},
-
-		handleDropFiles(event) {
-			if (!this.isDraggingOver) {
-				return
-			}
-
-			this.isDraggingOver = false
-
-			const files = Object.values(event.dataTransfer.files)
-			this.uploadStore.initialiseUpload({ files, token: this.token, threadId: this.threadId, uploadId: this.currentUploadId })
-		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
 .upload-editor {
-	height: 100%;
+	// Size of a thumbnail in .file-preview--upload-editor (FilePreview.vue).
+	// Every other size below is derived from it, so this is the single knob
+	--preview-size: 80px;
+	--preview-padding: calc(var(--default-grid-baseline) * 2);
+	--preview-name-height: 24px;
+	// The rendered height of a tile is its content plus the padding around it.
+	// A row adds the margin of a tile and the gap to the row below
+	--preview-row-height: calc(
+		var(--preview-size) + var(--preview-name-height)
+		+ var(--preview-padding) * 2 + var(--default-grid-baseline) * 3
+	);
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
-	padding: calc(3 * var(--default-grid-baseline));
+	padding: var(--default-grid-baseline);
+	margin-block-end: var(--default-grid-baseline);
+	border-radius: var(--border-radius-large);
+	border: 2px solid var(--color-border);
+	background-color: var(--color-main-background);
 
-	&__previews {
+	&__options {
 		display: flex;
-		position: relative;
-		overflow: auto;
 		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--default-grid-baseline);
 
-		&.dragging-over {
-			outline: 3px dashed var(--color-primary-element);
-			border-radius: var(--border-radius-large);
+		// Let a menu shrink below its label, which NcButton already truncates,
+		// instead of pushing the row wider than the sidebar
+		:deep(.action-item) {
+			min-width: 0;
+		}
+
+		// NcButton sets its own font size, so it has to be overridden here
+		:deep(.button-vue) {
+			font-size: var(--font-size-small);
+			max-width: 100%;
 		}
 	}
 
-	&__actions {
+	&__previews {
 		display: flex;
-		justify-content: flex-end;
-		gap: 4px;
-		padding: 12px 0;
+		flex-wrap: wrap;
+		align-items: center;
+		align-content: flex-start;
+		gap: var(--default-grid-baseline);
+		// Show one and a half rows, so it is clear that the area scrolls
+		max-height: calc(var(--preview-row-height) * 1.5);
+		overflow-y: auto;
 	}
 
-	&__textfield {
-		padding-block: calc(var(--default-grid-baseline) * 2);
+	&__voice-message {
+		display: flex;
+		align-items: center;
+		gap: var(--default-grid-baseline);
+		// Stretch over the available width, which is capped by the chat input
+		width: 100%;
+
+		:deep(.audio-player) {
+			flex-grow: 1;
+			min-width: 0;
+		}
+
+		// The native audio element has an intrinsic width, override it
+		:deep(.audio-player__audio) {
+			width: 100%;
+		}
 	}
 
-	.add-more-button {
-		width: 164px !important;
-		height: 176px !important;
-		margin: 10px;
+	&__add-more {
+		// Match the thumbnail of the FilePreview tiles next to it. NcButton forces
+		// a square on an icon-only button with a selector this rule can not
+		// outweigh, so the `wide` prop opts out of that sizing
+		width: var(--preview-size) !important;
+		height: var(--preview-size) !important;
+		// NcButton drives its inline padding from a variable and sets its block
+		// padding to 1px, so both are replaced to match the tile
+		padding: var(--preview-padding) !important;
+		// The button is one padding narrower than a tile, so it takes that
+		// padding on top of the margin of a tile to stay aligned with them
+		margin: calc(var(--default-grid-baseline) + var(--preview-padding));
+		margin-block-end: auto;
+		background-color: var(--color-primary-element-light) !important;
 
 		:deep(.button-vue__icon) {
 			border-radius: var(--border-radius-pill);
-			color: var(--color-primary-element-text);
-			background-color: var(--color-primary-element);
+			color: var(--color-primary-element);
 		}
 	}
 }
