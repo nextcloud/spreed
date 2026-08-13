@@ -22,13 +22,14 @@
 
 			<div id="videos" :class="{ 'is-sidebar': isSidebar }">
 				<div
-					v-if="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
+					v-if="showPromotedArea"
 					class="video__promoted"
 					:class="{ 'full-page': showFullPage }">
 					<!-- Selected video override mode -->
 					<VideoVue
 						v-if="showSelectedVideo && selectedCallParticipantModel"
 						:key="`promoted-${selectedVideoPeerId}`"
+						:data-tile-session-id="selectedCallParticipantModel.attributes.nextcloudSessionId"
 						:token="token"
 						:model="selectedCallParticipantModel"
 						:sharedData="sharedDatas[selectedVideoPeerId]"
@@ -83,7 +84,7 @@
 					<VideoVue
 						v-else-if="promotedParticipantModel"
 						:key="`autopilot-${promotedParticipantModel.attributes.peerId}`"
-						:data-tile-session-id="showSpeakers ? promotedParticipantModel.attributes.nextcloudSessionId : undefined"
+						:data-tile-session-id="promotedParticipantModel.attributes.nextcloudSessionId"
 						:token="token"
 						:model="promotedParticipantModel"
 						:sharedData="sharedDatas[promotedParticipantModel.attributes.peerId]"
@@ -122,7 +123,7 @@
 				<!-- Stripe or fullscreen grid depending on `isGrid` -->
 				<VideosGrid
 					v-if="!isSidebar"
-					:isStripe="devMode ? !isGrid : (!isGrid || !callParticipantModels.length)"
+					:isStripe="showPromotedArea"
 					:isRecording="isRecording"
 					:token="token"
 					:isOverlap="showFullPage"
@@ -350,14 +351,39 @@ export default {
 			return this.showSpeakers && this.promotedSpeakerModels.length > 1
 		},
 
-		// Session ids of the tiles actually shown in the main area, empty when a
-		// single participant is promoted there as usual
-		promotedSpeakerSessionIds() {
-			if (!this.showSpeakersGrid) {
+		// Whether the promoted area is shown next to the stripe, rather than the
+		// grid taking the whole view
+		showPromotedArea() {
+			return this.devMode ? !this.isGrid : (!this.isGrid || !this.callParticipantModels.length)
+		},
+
+		// Session ids of the participant tiles shown in the promoted area, be it
+		// the active speakers, a selected video or the promoted participant.
+		//
+		// A screen share holds no participant tile: the camera of whoever shares
+		// it is only shown in the stripe, so nothing is taken out of it.
+		promotedAreaSessionIds() {
+			if (!this.showPromotedArea
+				|| this.showLocalVideo
+				|| this.showLocalScreen
+				|| this.showRemoteScreen
+				|| this.showSelectedScreen) {
 				return []
 			}
 
-			return this.promotedSpeakerModels.map((model) => model.attributes.nextcloudSessionId)
+			if (this.showSelectedVideo) {
+				return this.selectedCallParticipantModel
+					? [this.selectedCallParticipantModel.attributes.nextcloudSessionId]
+					: []
+			}
+
+			if (this.showSpeakersGrid) {
+				return this.promotedSpeakerModels.map((model) => model.attributes.nextcloudSessionId)
+			}
+
+			return this.promotedParticipantModel
+				? [this.promotedParticipantModel.attributes.nextcloudSessionId]
+				: []
 		},
 
 		// Peer ids of the speakers actually shown in the main area, which deserve
@@ -370,14 +396,15 @@ export default {
 			return new Set(this.promotedSpeakerModels.map((model) => model.attributes.peerId))
 		},
 
-		// The tiles of the stripe. Speakers shown in the main area are taken out
-		// of it, as they moved from the stripe into their slot.
+		// The tiles of the stripe. Whoever is shown in the promoted area is taken
+		// out of it, as they moved from the stripe into their slot rather than
+		// being shown twice.
 		stripeParticipantModels() {
-			if (!this.showSpeakersGrid) {
+			if (!this.promotedAreaSessionIds.length) {
 				return this.callParticipantModels
 			}
 
-			const promoted = new Set(this.promotedSpeakerSessionIds)
+			const promoted = new Set(this.promotedAreaSessionIds)
 			return this.callParticipantModels.filter((model) => !promoted.has(model.attributes.nextcloudSessionId))
 		},
 
@@ -565,7 +592,7 @@ export default {
 			this._setPromotedParticipant()
 		},
 
-		promotedSpeakerSessionIds(sessionIds, previousSessionIds) {
+		promotedAreaSessionIds(sessionIds, previousSessionIds) {
 			// Runs before the grids are re-rendered, while the tiles are still
 			// where they are about to move from
 			animateTilePromotion(sessionIds, previousSessionIds)
