@@ -17,13 +17,21 @@
 				@input="handleInput"
 				@keydown.enter="addParticipants(participantPhoneItem)"
 				@abortSearch="abortSearch" />
-			<div
-				v-if="showSearchBoxDescription"
-				:id="searchBoxDescriptionId"
-				:title="searchBoxDescription"
-				class="search-form__description">
-				<IconInformationOutline :size="20" />
-				<span class="hidden-visually">{{ searchBoxDescription }}</span>
+			<div v-if="showSearchBoxDescription" class="search-form__description">
+				<NcPopover>
+					<template #trigger>
+						<NcButton
+							variant="tertiary"
+							:aria-label="searchBoxDescription"
+							:title="searchBoxDescription">
+							<template #icon>
+								<IconInformationOutline :size="20" />
+							</template>
+						</NcButton>
+					</template>
+					<span class="search-form__description-text">{{ searchBoxDescription }}</span>
+				</NcPopover>
+				<span :id="searchBoxDescriptionId" class="hidden-visually">{{ searchBoxDescription }}</span>
 			</div>
 			<DialpadPanel
 				v-if="canAddPhones"
@@ -96,7 +104,9 @@ import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 import { ref, useId } from 'vue'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import NcPopover from '@nextcloud/vue/components/NcPopover'
 import IconInformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import SelectPhoneNumber from '../../SelectPhoneNumber.vue'
 import DialpadPanel from '../../UIShared/DialpadPanel.vue'
@@ -128,7 +138,9 @@ const isFederationEnabled = getTalkConfig('local', 'federation', 'enabled')
 export default {
 	name: 'ParticipantsTab',
 	components: {
+		NcButton,
 		NcNoteCard,
+		NcPopover,
 		DialpadPanel,
 		NavigationHint,
 		NcAppNavigationCaption,
@@ -428,16 +440,15 @@ export default {
 	}
 
 	&__description {
-		width: var(--default-clickable-area);
-		height: var(--default-clickable-area);
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
 
-		&,
-		& > :deep(*) {
-			cursor: help;
-		}
+	.search-form__description-text {
+		display: block;
+		max-width: 250px;
+		padding: 8px 12px;
 	}
 }
 
