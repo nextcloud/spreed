@@ -418,7 +418,7 @@ export default {
 		},
 
 		isTemporary() {
-			return !this.isScheduledMessage && this.message.timestamp === 0
+			return !this.isScheduledMessage && String(this.message.id).startsWith('temp-')
 		},
 
 		isScheduledSendingFailure() {
@@ -430,11 +430,11 @@ export default {
 		},
 
 		messageTime() {
-			return formatDateTime(this.isTemporary ? Date.now() : this.message.timestamp * 1000, 'shortTime')
+			return formatDateTime(this.message.timestamp * 1000, 'shortTime')
 		},
 
 		messageDate() {
-			return formatDateTime(this.isTemporary ? Date.now() : this.message.timestamp * 1000, 'longDate')
+			return formatDateTime(this.message.timestamp * 1000, 'longDate')
 		},
 
 		lastCallStartedMessageId() {

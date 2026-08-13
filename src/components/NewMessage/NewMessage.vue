@@ -1349,7 +1349,7 @@ export default {
 			const lastMessageByCurrentUser = messagesList.findLast((message) => {
 				return this.actorStore.checkIfSelfIsActor(message) // From same actor
 					&& message.messageType !== MESSAGE.TYPE.COMMENT_DELETED // Not deleted
-					&& message.timestamp !== 0 // Not temporary
+					&& !String(message.id).startsWith('temp-') // Not temporary
 					&& !message.systemMessage // Not system message
 					&& (Date.now() - message.timestamp * 1000 < ONE_DAY_IN_MS)
 			})

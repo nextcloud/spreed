@@ -40,7 +40,7 @@ describe('prepareTemporaryMessage', () => {
 		reactions: {},
 		referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 		systemMessage: '',
-		timestamp: 0,
+		timestamp: 1577908800,
 		token: TOKEN,
 		silent: false,
 		threadId: undefined,

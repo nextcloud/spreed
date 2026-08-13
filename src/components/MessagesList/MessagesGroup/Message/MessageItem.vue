@@ -187,7 +187,7 @@ export default {
 		},
 
 		isTemporary() {
-			return !this.isScheduledMessage && this.message.timestamp === 0
+			return !this.isScheduledMessage && String(this.message.id).startsWith('temp-')
 		},
 
 		isDeletedMessage() {
