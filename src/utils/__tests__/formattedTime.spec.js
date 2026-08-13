@@ -112,6 +112,7 @@ describe('formatDateTime', () => {
 		['shortDateNumeric', '02/15/2025'], // 'MM/DD/YYYY'
 		['shortDateWithTime', 'Feb 15, 2025, 8:30 PM'], // 'MMM D, YYYY h:mm A'
 		['shortDateWithTimeSeconds', 'Feb 15, 2025, 8:30:00 PM'], // 'MMM D, YYYY h:mm:ss A'
+		['shortWeekday', 'Sat'], // 'ddd'
 		['shortWeekdayWithTime', 'Sat 8:30 PM'], // 'ddd h:mm A'
 	]
 

@@ -6,7 +6,7 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { flushPromises, mount } from '@vue/test-utils'
 import { cloneDeep } from 'es-toolkit'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest'
 import { createStore } from 'vuex'
 import NcListItem from '@nextcloud/vue/components/NcListItem'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
@@ -35,6 +35,7 @@ describe('ConversationItem.vue', () => {
 	let store
 	let testStoreConfig
 	let item
+	let compact
 	let messagesMock
 
 	/**
@@ -53,6 +54,7 @@ describe('ConversationItem.vue', () => {
 			props: {
 				isSearchResult,
 				item,
+				compact,
 			},
 		})
 	}
@@ -206,6 +208,53 @@ describe('ConversationItem.vue', () => {
 
 			const el = wrapper.find('.conversation__subname')
 			expect(el.exists()).toBe(false)
+		})
+	})
+
+	describe('last message timestamp', () => {
+		beforeEach(() => {
+			const mockDate = new Date('2026-08-01T12:00:00')
+			vi.useFakeTimers().setSystemTime(mockDate)
+		})
+
+		afterEach(() => {
+			vi.useRealTimers()
+			compact = undefined
+		})
+
+		const TEST_CASES = [
+			['2026-08-01T11:00:00', '2026-08-01T11:00:00', '11:00 AM'],
+			['2026-07-31T12:00:00', '2026-07-31T12:00:00', 'Fri'],
+			['2026-07-24T12:00:00', '2026-07-24T12:00:00', 'Jul 24'],
+			['2025-12-24T12:00:00', '2025-12-24T12:00:00', 'Dec 24, 2025'],
+			// Federated conversations - check activity
+			[undefined, '2026-07-30T12:00:00', 'Thu'],
+			// Fallback
+			[0, 0, ''],
+			[undefined, undefined, ''],
+		]
+
+		it.each(TEST_CASES)(
+			'should render correct timestamp for %s',
+			(message, activity, output) => {
+				item.lastMessage.timestamp = message && new Date(message).valueOf() / 1000
+				item.lastActivity = activity && new Date(activity).valueOf() / 1000
+
+				const wrapper = mountConversation(false)
+
+				const el = wrapper.findComponent(NcListItem)
+				expect(el.exists()).toBe(true)
+				expect(el.props('details')).toBe(output)
+			},
+		)
+
+		test('does not render timestamp in compact mode', () => {
+			compact = true
+			const wrapper = mountConversation(false)
+
+			const el = wrapper.findComponent(NcListItem)
+			expect(el.exists()).toBe(true)
+			expect(el.props('details')).toBe('')
 		})
 	})
 
