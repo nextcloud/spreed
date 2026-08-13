@@ -763,16 +763,13 @@ export default {
 		}
 	}
 
-	&--upload-editor {
-		// The parent (NewMessageUploadEditor) defines --preview-size,
-		// --preview-padding and --preview-name-height. The fallbacks only apply
-		// if the component is ever used outside of it
-		// The box is content-box, so the padding is added around these sizes.
-		// The height holds the preview plus the file name below it
+	// Both the upload editor and a message with combined file shares show a grid
+	// of tiles of the same size. --preview-size and --preview-name-height define sizes.
+	// The file name is not shown for every file, but its space is always reserved.
+	&--upload-editor,
+	.message-main--combined-files & {
 		width: var(--preview-size, 80px);
 		height: calc(var(--preview-size, 80px) + var(--preview-name-height, 24px));
-		padding: var(--preview-padding, 8px);
-		margin: var(--default-grid-baseline);
 
 		// A file without a preview gets an inline 128px size on the container
 		// and a min-height on the icon. Both are overridden, so that every
@@ -780,14 +777,13 @@ export default {
 		.image-container {
 			width: var(--preview-size, 80px) !important;
 			height: var(--preview-size, 80px) !important;
-			outline: 1px solid var(--color-border);
 		}
 
 		// The size class of the image varies with the preview type, so it is
 		// matched by the class every variant shares
 		.file-preview__image {
-			width: var(--preview-size, 80px);
-			height: var(--preview-size, 80px);
+			width: 100%;
+			height: 100%;
 			min-height: unset;
 			max-height: none;
 		}
@@ -797,6 +793,15 @@ export default {
 			height: var(--preview-name-height, 24px);
 			font-weight: normal;
 			font-size: var(--font-size-small);
+		}
+	}
+
+	&--upload-editor {
+		padding: var(--preview-padding, 8px);
+		margin: var(--default-grid-baseline);
+
+		.image-container {
+			outline: 1px solid var(--color-border);
 		}
 	}
 
@@ -814,6 +819,22 @@ export default {
 		.name-container {
 			padding: 0 4px;
 			font-weight: normal;
+		}
+	}
+
+	.message-main--combined-files & {
+		// Same thumbnail size as in the upload editor
+		--preview-size: 80px;
+		--preview-name-height: 24px;
+		// Align inline elements to the top, so looks even next to files with filename
+		vertical-align: top;
+
+		.file-preview__image {
+			border-radius: var(--border-radius);
+
+			&.mimeicon {
+				object-fit: contain;
+			}
 		}
 	}
 

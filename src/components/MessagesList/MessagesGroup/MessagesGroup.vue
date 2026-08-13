@@ -24,16 +24,23 @@
 				{{ actorInfo }}
 			</li>
 			<ul class="messages" :class="{ 'messages-bubble': isSplitViewEnabled }">
+				<!-- FIXME anchors for combined file messages (for focusMessage() to work).
+					Rendered first, so that the last message stays the last child (see styles below) -->
+				<li
+					v-for="id in combinedMessageIds"
+					:id="`message_${id}`"
+					:key="id"
+					style="display: none" />
 				<MessageItem
-					v-for="(message, index) of messages"
+					v-for="(message, index) of messagesWithCombinedFiles"
 					:key="message.id"
 					:class="{
 						incoming: !isSelfActor && isSplitViewEnabled,
 						outgoing: isSelfActor && isSplitViewEnabled,
 					}"
 					:message="message"
-					:nextMessageId="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
-					:previousMessageId="(index > 0 && messages[index - 1].id) || previousMessageId"
+					:nextMessageId="messagesWithCombinedFiles[index + 1]?.id || nextMessageId"
+					:previousMessageId="(index > 0 && messagesWithCombinedFiles[index - 1].id) || previousMessageId"
 					:isSelfActor />
 			</ul>
 		</div>
@@ -51,6 +58,7 @@ import { ATTENDEE, AVATAR } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../stores/chatExtras.ts'
 import { useGuestNameStore } from '../../../stores/guestName.ts'
+import { combineFileMessages } from '../../../utils/combineFileMessages.ts'
 
 export default {
 	name: 'MessagesGroup',
@@ -106,8 +114,14 @@ export default {
 
 		const isSplitViewEnabled = inject('messagesList:isSplitViewEnabled', true)
 
+		const messagesWithCombinedFiles = computed(() => combineFileMessages(messages.value))
+		const combinedMessageIds = computed(() => messagesWithCombinedFiles.value
+			.flatMap((message) => 'combinedMessageIds' in message ? message.combinedMessageIds.slice(0, -1) : []))
+
 		return {
 			AVATAR,
+			messagesWithCombinedFiles,
+			combinedMessageIds,
 			guestNameStore: useGuestNameStore(),
 			actorStore: useActorStore(),
 			chatExtrasStore: useChatExtrasStore(),
