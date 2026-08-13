@@ -4,6 +4,23 @@
 -->
 # Changelog
 All notable changes to this project will be documented in this file.
+## 24.0.4 – 2026-08-13
+### Added
+- feat(bots): Allow bots to fetch their own enabled features
+  [#18834](https://github.com/nextcloud/spreed/pull/18834)
+
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(external-call): Grant additional permissions to iframe
+  [#18920](https://github.com/nextcloud/spreed/pull/18920)
+- fix(external-call): Harden room creation checks
+  [#18849](https://github.com/nextcloud/spreed/pull/18849)
+  [#18843](https://github.com/nextcloud/spreed/pull/18843)
+- fix(call): Prevent 'hall of mirrors' effect when sharing a screen
+  [#18836](https://github.com/nextcloud/spreed/pull/18836)
 
 ## 24.0.3 – 2026-07-24
 ### Added
