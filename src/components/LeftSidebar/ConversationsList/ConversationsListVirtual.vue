@@ -387,6 +387,16 @@ defineExpose({
 	outline-offset: -2px;
 }
 
+// Overwrite NcListItem styles: virtual list can't consider 2px of padding
+// added in CSS to component to the first and last item of a list.
+:deep(.list-item__wrapper:first-of-type) {
+	padding-block-start: 2px !important;
+}
+
+:deep(.list-item__wrapper:last-of-type) {
+	padding-block-end: 2px !important;
+}
+
 /* Overwrite NcListItem styles for compact view */
 :deep(.list-item--compact) {
 	padding-block: 0 !important;

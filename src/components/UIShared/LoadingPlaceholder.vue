@@ -172,16 +172,24 @@ export default {
 	gap: calc(var(--default-grid-baseline) * 2);
 	flex-wrap: nowrap;
 	overflow: hidden;
+	margin-bottom: calc(var(--default-grid-baseline) * 2);
+	margin-top: calc(var(--default-grid-baseline) * 2);
 
 	.placeholder-item {
+		&:first-child {
+			margin-inline-start: var(--dashboard-section-inline-padding);
+		}
+
 		&__content {
 			width: 300px;
 
 			&-line {
 				margin: 0;
-				height: 250px;
-				background-color: var(--color-placeholder-light);
+				height: 175px;
+				background-color: var(--color-primary-element-light);
 				border-radius: var(--border-radius-large);
+				// Tinted shimmer, to match the event cards this stands in for
+				background-image: linear-gradient(90deg, var(--color-primary-element-light-hover) 65%, var(--color-primary-element-light) 70%, var(--color-primary-element-light-hover) 75%);
 			}
 		}
 	}
