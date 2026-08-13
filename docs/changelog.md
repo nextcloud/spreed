@@ -1,5 +1,6 @@
 # Changelog
 
+- [Talk 25 for Nextcloud 35 / Hub 26 Summer](changelogs/changelog-25.md)
 - [Talk 24 for Nextcloud 34 / Hub 26 Spring](changelogs/changelog-24.md)
 - [Talk 23 for Nextcloud 33 / Hub 26 Winter](changelogs/changelog-23.md)
 - [Talk 22 for Nextcloud 32](changelogs/changelog-22.md)
