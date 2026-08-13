@@ -199,6 +199,7 @@ import { callParticipantCollection, localCallParticipantModel, localMediaModel }
 import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './Grid/gridPlaceholders.ts'
 import { animateTilePromotion } from './Grid/tilePromotionTransition.ts'
+import { setUpSpeakerSimulation, tearDownSpeakerSimulation } from './speakerSimulation.ts'
 import { useActiveSpeakers } from './useActiveSpeakers.ts'
 import { useWakeLock } from './useWakeLock.ts'
 
@@ -673,9 +674,17 @@ export default {
 		callParticipantCollection.on('remove', this._lowerHandWhenParticipantLeaves)
 
 		subscribe('switch-screen-to-id', this._switchScreenToId)
+
+		if (OC.debug) {
+			setUpSpeakerSimulation(this.token)
+		}
 	},
 
 	beforeUnmount() {
+		if (OC.debug) {
+			tearDownSpeakerSimulation()
+		}
+
 		this.debounceFetchPeers.clear?.()
 		this.debounceHandleMovement.clear?.()
 		this.callViewStore.setIsEmptyCallView(true)
