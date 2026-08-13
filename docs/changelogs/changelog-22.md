@@ -4,6 +4,17 @@
 -->
 # Changelog
 All notable changes to this project will be documented in this file.
+## 22.0.17 – 2026-08-13
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(external-call): Grant additional permissions to iframe
+  [#18922](https://github.com/nextcloud/spreed/pull/18922)
+- fix(external-call): Harden room creation checks
+  [#18847](https://github.com/nextcloud/spreed/pull/18847)
+  [#18841](https://github.com/nextcloud/spreed/pull/18841)
 
 ## 22.0.16 – 2026-07-24
 ### Changed
