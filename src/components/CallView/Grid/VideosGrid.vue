@@ -52,6 +52,7 @@
 								:key="callParticipantModel.attributes.peerId"
 								:class="{ video: !isStripe }"
 								:style="tileStyle(index)"
+								:data-tile-session-id="callParticipantModel.attributes.nextcloudSessionId"
 								:showVideoOverlay="showVideoOverlay"
 								:token="token"
 								:model="callParticipantModel"
@@ -299,12 +300,16 @@ export default {
 			return videosCap ? Math.min(videosCap, count) : count
 		})
 
+		// The full grid reserves one slot for the local video, unless it is not
+		// shown (stripe or recording mode).
+		const noLocalVideoReserve = computed(() => props.isStripe || props.isRecording)
+
 		const gridDimensions = useGridDimensions({
 			wrapper: gridWrapper,
 			grid,
 			isStripe: toRef(() => props.isStripe),
 			isSidebar: toRef(() => props.isSidebar),
-			isRecording: toRef(() => props.isRecording),
+			noLocalVideoReserve,
 			videoCount: cappedVideosCount,
 			stripeOpen,
 		})
@@ -318,7 +323,7 @@ export default {
 		// consistent even before the layout has been recomputed.
 		const slots = computed(() => {
 			const gridSlots = gridDimensions.rows.value * gridDimensions.columns.value
-			const slots = gridDimensions.noLocalVideoReserve.value ? gridSlots : gridSlots - 1
+			const slots = noLocalVideoReserve.value ? gridSlots : gridSlots - 1
 			return videosCap ? Math.min(videosCap, slots) : slots
 		})
 
@@ -380,6 +385,7 @@ export default {
 			gridWrapper,
 			grid,
 			stripeOpen,
+			noLocalVideoReserve,
 			...gridDimensions,
 		}
 	},
