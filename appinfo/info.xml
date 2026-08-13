@@ -18,7 +18,7 @@
 * 🌉 **Sync with other chat solutions** With [Matterbridge](https://github.com/42wim/matterbridge/) being integrated in Talk, you can easily sync a lot of other chat solutions to Nextcloud Talk and vice-versa.
 ]]></description>
 
-	<version>25.0.0-dev.0</version>
+	<version>25.0.0-alpha.1</version>
 	<licence>AGPL-3.0-or-later</licence>
 
 	<author>Christian Lorang</author>
