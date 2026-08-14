@@ -730,6 +730,21 @@ export default {
 
 	// Split view end
 
+	// Keep multiple file previews on a scrollable horizontal row
+	&--combined-files .message-main__text :deep(.rich-text--wrapper) > p:has(.file-preview) {
+		position: relative;
+		display: flex;
+		flex-wrap: nowrap;
+		gap: var(--default-grid-baseline);
+		padding: 2px;
+		overflow-x: auto;
+		overflow-y: hidden;
+
+		> * {
+			flex-shrink: 0;
+		}
+	}
+
 	&__text {
 		color: var(--color-text-light);
 
