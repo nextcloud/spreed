@@ -45,7 +45,7 @@
 						:class="{ stripe: isStripe }"
 						:style="gridStyle"
 						@wheel="debounceHandleWheelEvent">
-						<template v-if="!devMode && !(isLessThanTwoVideos && isStripe)">
+						<template v-if="!devMode">
 							<EmptyCallView v-if="orderedVideos.length === 0 && !isStripe" class="video" :isGrid="true" />
 							<VideoVue
 								v-for="(callParticipantModel, index) in displayedVideos"
@@ -114,7 +114,7 @@
 					v-if="isStripe && !isRecording"
 					ref="localVideo"
 					class="video"
-					:class="{ 'local-video--highlighted': isLessThanTwoVideos && isStripe }"
+					:class="{ 'local-video--highlighted': isLocalVideoAlone && isStripe }"
 					:isStripe="true"
 					:showControls="false"
 					:token="token"
@@ -444,11 +444,11 @@ export default {
 			})
 		},
 
-		isLessThanTwoVideos() {
-			// without screen share, we don't want to duplicate videos if we were to show them in the stripe
-			// however, if a screen share is in progress, it means the video of the presenting user is not visible,
-			// so we can show it in the stripe
-			return this.orderedVideos.length <= 1 && !this.screens.length
+		// Whether the local video is the only tile left in the stripe. The models
+		// given to the stripe already leave out whoever is shown in the promoted
+		// area, so no tile is ever duplicated and only an empty stripe is special.
+		isLocalVideoAlone() {
+			return this.orderedVideos.length === 0
 		},
 
 		// Computed css to reactively style the grid
