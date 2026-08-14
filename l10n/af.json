@@ -314,7 +314,6 @@
     "Add participants" : "Voeg deelnemers toe",
     "Enter password" : "Voer wagwoord in",
     "Send later" : "Stuur later",
-    "Send" : "Stuur",
     "Settings" : "Instellings",
     "guest" : "gas",
     "Remove participant" : "Verwyder deelnemer",
@@ -338,6 +337,7 @@
     "Android app" : "Android-toep",
     "iOS app" : "iOS-toep",
     "__language_name__" : "Afrikaans",
-    "Tasks" : "Take"
+    "Tasks" : "Take",
+    "Send" : "Stuur"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

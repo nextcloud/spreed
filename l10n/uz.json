@@ -327,12 +327,12 @@
     "Edit" : "Tahrirlash",
     "Delete" : "O'chirish",
     "Notifications" : "Notifications",
-    "Create a new conversation" : "Yangi suhbat yarating",
     "Log in" : "Kirish",
     "Remove from favorites" : "Sevimlilardan olib tashlang",
     "Add to favorites" : "Sevimlilarga qo'shing",
     "Tags" : "Teglar",
     "Home" : "Uy",
+    "Create a new conversation" : "Yangi suhbat yarating",
     "Users" : "Users",
     "Groups" : "Groups",
     "Teams" : "Jamoalar",
@@ -350,9 +350,9 @@
     "Remove {fileName}" : " {fileName} ni o'chirish",
     "Add emoji" : "Emoji qo'shing",
     "Upload from device" : "Qurilmadan yuklash",
-    "Send" : "Send",
     "Settings" : "Sozlamalar",
     "Results" : "Natijalar",
+    "Owner" : "Egasi",
     "Remove participant" : "Ishtirokchini olib tashlash",
     "Remove" : "O'chirish",
     "Searching …" : "Qidirilmoqda …",
@@ -387,6 +387,7 @@
     "Notes" : "Eslatmalar",
     "Reports" : "Hisobotlar",
     "Talk conversation for event" : "Tadbir uchun suhbat",
+    "Send" : "Send",
     "Nextcloud Talk Federation was updated." : "Nextcloud Talkda jamg'arma yangilandi."
 },"pluralForm" :"nplurals=1; plural=0;"
 }

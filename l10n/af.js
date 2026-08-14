@@ -316,7 +316,6 @@ OC.L10N.register(
     "Add participants" : "Voeg deelnemers toe",
     "Enter password" : "Voer wagwoord in",
     "Send later" : "Stuur later",
-    "Send" : "Stuur",
     "Settings" : "Instellings",
     "guest" : "gas",
     "Remove participant" : "Verwyder deelnemer",
@@ -340,6 +339,7 @@ OC.L10N.register(
     "Android app" : "Android-toep",
     "iOS app" : "iOS-toep",
     "__language_name__" : "Afrikaans",
-    "Tasks" : "Take"
+    "Tasks" : "Take",
+    "Send" : "Stuur"
 },
 "nplurals=2; plural=(n != 1);");
