@@ -80,7 +80,11 @@ export function createCombinedFileMessage(messages: ChatMessage[]): CombinedFile
 	combinedMessage.messageParameters = Object.fromEntries(Object.entries(Object(lastMessage.messageParameters) as ChatMessage['messageParameters'])
 		.filter(([key]) => !key.startsWith('file')))
 	messages.forEach((message, index) => {
-		combinedMessage.messageParameters[`file-${index + 1}`] = message.messageParameters.file
+		combinedMessage.messageParameters[`file-${index + 1}`] = {
+			...message.messageParameters.file,
+			// @ts-expect-error: 'referenceId' does not exist in type RichObjectParameter,
+			referenceId: message.referenceId,
+		}
 	})
 
 	// Same shape as a single file share: either a caption or the combined placeholders,

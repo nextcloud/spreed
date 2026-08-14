@@ -238,7 +238,7 @@ export default {
 							messageId: this.message.id,
 							nextMessageId: this.nextMessageId,
 							itemType: getItemTypeFromMessage(this.message, p),
-							referenceId: this.message.referenceId,
+							referenceId: this.message.messageParameters[p].referenceId ?? this.message.referenceId,
 							file: this.message.messageParameters[p],
 						},
 					}
