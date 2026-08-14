@@ -422,8 +422,8 @@
     "Search participants" : "חיפוש משתתפים",
     "No results" : "אין תוצאות",
     "Done" : "הסתיים",
-    "Speaker view" : "תצוגת דובר",
     "Grid view" : "תצוגת טבלה",
+    "Speaker view" : "תצוגת דובר",
     "Reload" : "טעינה מחדש",
     "Waiting for others to join the call …" : "בהמתנה לאחרים להצטרף לשיחה…",
     "You can invite others in the participant tab of the sidebar" : "ניתן להזמין אחרים בלשונית המשתתפים בסרגל הצד",
@@ -521,10 +521,11 @@
     "Create new poll" : "יצירת סקר חדש",
     "New file" : "קובץ חדש",
     "Add more files" : "הוספת קבצים נוספים",
-    "Send" : "שליחה",
     "Create poll" : "יצירת סקר",
     "Settings" : "הגדרות",
     "Anonymous poll" : "סקר אלמוני",
+    "Owner" : "בעלות",
+    "Moderator" : "מפקח",
     "moderator" : "מפקח/ת",
     "guest" : "אורח",
     "Remove group and members" : "הסרת קבוצה וחברים",
@@ -621,6 +622,7 @@
     "iOS app" : "יישומון ל־iOS",
     "__language_name__" : "עברית",
     "Tasks" : "משימות",
-    "Notes" : "פתקים"
+    "Notes" : "פתקים",
+    "Send" : "שליחה"
 },"pluralForm" :"nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;"
 }

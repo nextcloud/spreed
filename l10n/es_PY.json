@@ -110,9 +110,9 @@
     "Contact" : "Contacto",
     "You voted" : "Votaste",
     "Create new poll" : "Crear nueva encuesta",
-    "Send" : "Enviar",
     "Create poll" : "Crear encuesta",
     "Settings" : "Configuraciones ",
+    "Moderator" : "Moderador",
     "moderator" : "moderador",
     "Remove participant" : "Eliminar participante",
     "Demote from moderator" : "Degradar de moderador",
@@ -147,6 +147,7 @@
     "iOS app" : "Aplicación iOS",
     "__language_name__" : "Español (Paraguay)",
     "Tasks" : "Tareas",
-    "Talk to %s" : "Hablar con %s"
+    "Talk to %s" : "Hablar con %s",
+    "Send" : "Enviar"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

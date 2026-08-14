@@ -113,9 +113,10 @@ OC.L10N.register(
     "Contact" : "Contacto",
     "You voted" : "Votaste",
     "Create new poll" : "Crear nueva encuesta",
-    "Send" : "Enviar",
     "Create poll" : "Crear encuesta",
     "Settings" : "Configuraciones ",
+    "Owner" : "Dueño",
+    "Moderator" : "Moderador",
     "moderator" : "moderador",
     "Remove participant" : "Eliminar participante",
     "Demote from moderator" : "Degradar de moderador",
@@ -150,6 +151,7 @@ OC.L10N.register(
     "__language_name__" : "Español (Panama)",
     "Tasks" : "Tareas",
     "Notes" : "Notas",
-    "Talk to %s" : "Hablar con %s"
+    "Talk to %s" : "Hablar con %s",
+    "Send" : "Enviar"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

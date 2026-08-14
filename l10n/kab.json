@@ -323,6 +323,7 @@
     "Join" : "Semlil",
     "View conversation" : "Ssken adiwenni",
     "Hello, {displayName}" : "Azul a {displayName}",
+    "New conversation" : "Adiwenni amaynut",
     "Enter your name" : "Sekcem isem-ik",
     "Log in" : "Qqen",
     "Browse" : "Ẓer isebtar",
@@ -381,11 +382,12 @@
     "Send message" : "Azen izen",
     "New file" : "Rnu afaylu",
     "Blank" : "Ilem",
-    "Send" : "Tuzna",
     "Question" : "Asteqsi",
     "Settings" : "Iɣewwaṛen",
     "Save as draft" : "Sekles tamerkast",
     "Results" : "Igmaḍ",
+    "Owner" : "Bab-is",
+    "Moderator" : "Amaẓrag",
     "bot" : "arubut",
     "Copy phone number" : "Nɣel uṭṭun n tiliɣri",
     "Remove" : "Kkes",
@@ -431,6 +433,7 @@
     "Notes" : "Tizmilin",
     "Reports" : "Assaɣen",
     "Agenda" : "Tasmektit",
+    "Send" : "Tuzna",
     "Search …" : "Nadi ..."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -341,9 +341,10 @@ OC.L10N.register(
     "Translate" : "Traduku",
     "Contact" : "Kontakto",
     "Create new poll" : "Krei novan enketon",
-    "Send" : "Sendi",
     "Settings" : "Agordoj",
     "Anonymous poll" : "Enketo sennoma",
+    "Owner" : "Posedanto",
+    "Moderator" : "Kontrolanto",
     "guest" : "gasto",
     "Add users or groups" : "Add users or groups",
     "Searching …" : "Serĉado ...",
@@ -367,6 +368,7 @@ OC.L10N.register(
     "iOS app" : "iOS-aplikaĵo",
     "__language_name__" : "Esperanto",
     "Tasks" : "Taskoj",
-    "Talk to %s" : "Paroli al %s"
+    "Talk to %s" : "Paroli al %s",
+    "Send" : "Sendi"
 },
 "nplurals=2; plural=(n != 1);");

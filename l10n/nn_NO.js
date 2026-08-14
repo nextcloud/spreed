@@ -96,6 +96,7 @@ OC.L10N.register(
     "Delete" : "Slett",
     "Notifications" : "Varsel",
     "Important conversation" : "Viktig samtale",
+    "New conversation" : "Ny samtale",
     "Log in" : "Logg inn",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
@@ -116,9 +117,9 @@ OC.L10N.register(
     "Add participants" : "Legg til deltakarar",
     "Send message" : "Send melding",
     "Record voice message" : "Ta opp lyd melding ",
-    "Send" : "Send",
     "Settings" : "Instillingar",
     "Results" : "Resultat",
+    "Moderator" : "Moderator",
     "Remove group and members" : "Eksterne gruppe og medlemmar",
     "Remove participant" : "Eksterne deltakarar",
     "Demote from moderator" : "Nedrykk frå moderator",
@@ -145,6 +146,7 @@ OC.L10N.register(
     "Away" : "Borte",
     "__language_name__" : "Nynorsk",
     "Tasks" : "Oppgåver",
-    "Notes" : "Notat"
+    "Notes" : "Notat",
+    "Send" : "Send"
 },
 "nplurals=2; plural=(n != 1);");
