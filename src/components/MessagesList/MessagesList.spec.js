@@ -201,6 +201,16 @@ describe('MessagesList.vue', () => {
 		/**
 		 * @param {Array} messagesGroups List of messages that should be grouped
 		 */
+		/**
+		 * Merge MessagesGroup and MessagesSystemGroup instances, sorted by DOM order.
+		 *
+		 * @param {object} wrapper The mounted MessagesList wrapper
+		 */
+		function findAllGroups(wrapper) {
+			return [...wrapper.findAllComponents(MessagesGroup), ...wrapper.findAllComponents(MessagesSystemGroup)]
+				.sort((a, b) => (a.element.compareDocumentPosition(b.element) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1))
+		}
+
 		function testGrouped(...messagesGroups) {
 			store.commit('addConversation', {
 				token: TOKEN,
@@ -212,7 +222,7 @@ describe('MessagesList.vue', () => {
 
 			const wrapper = mountMessagesList()
 
-			const groups = wrapper.findAllComponents('li.wrapper')
+			const groups = findAllGroups(wrapper)
 			groups.forEach((group, index) => {
 				expect(group.props('messages')).toStrictEqual(messagesGroups[index])
 			})
@@ -234,7 +244,7 @@ describe('MessagesList.vue', () => {
 
 			const wrapper = mountMessagesList()
 
-			const groups = wrapper.findAll('.messages-group')
+			const groups = findAllGroups(wrapper)
 			groups.forEach((group, index) => {
 				expect(group.props('messages')).toStrictEqual([messages[index]])
 			})
@@ -426,8 +436,8 @@ describe('MessagesList.vue', () => {
 			}])
 		})
 
-		test('does not group edited messages', () => {
-			testNotGrouped([{
+		test('groups edited messages', () => {
+			testGrouped([{
 				id: 100,
 				token: TOKEN,
 				actorId: 'alice',

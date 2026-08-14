@@ -592,10 +592,6 @@ export default {
 				return false
 			}
 
-			if (!!message1.lastEditTimestamp || !!message2.lastEditTimestamp) {
-				return false // Edited messages are not grouped
-			}
-
 			if (message1.actorType === ATTENDEE.ACTOR_TYPE.BOTS // Don't group messages of bots
 				&& message1.actorId !== ATTENDEE.CHANGELOG_BOT_ID // Apart from the changelog bot
 				&& message1.actorId !== ATTENDEE.SAMPLE_BOT_ID) { // Apart from the sample message
