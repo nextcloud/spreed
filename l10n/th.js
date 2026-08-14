@@ -80,7 +80,6 @@ OC.L10N.register(
     "Start meeting now" : "เริ่มการประชุมตอนนี้",
     "Give your meeting a title" : "ตั้งชื่อการประชุมของคุณ",
     "Create and copy link" : "สร้างและคัดลอกลิงค์",
-    "Create a new conversation" : "สร้างการสนทนาใหม่",
     "Open calendar" : "เปิดปฏิทิน",
     "Messages where you were mentioned will show up here. You can mention people by typing @ followed by their name" : "ข้อความที่คุณถูกกล่าวถึงจะแสดงที่นี่ คุณสามารถกล่าวถึงผู้อื่นได้โดยการพิมพ์ @ ตามด้วยชื่อของพวกเขา",
     "Log in" : "เข้าสู่ระบบ",
@@ -89,6 +88,7 @@ OC.L10N.register(
     "Tags" : "แท็ก",
     "Home" : "หน้าหลัก",
     "Alphabetically" : "ตัวอักษร",
+    "Create a new conversation" : "สร้างการสนทนาใหม่",
     "Users" : "ผู้ใช้",
     "Groups" : "กลุ่ม",
     "Advanced" : "ขั้นสูง",
@@ -104,9 +104,9 @@ OC.L10N.register(
     "Send message" : "ส่งข้อความ",
     "New file" : "ไฟล์ใหม่",
     "Blank" : "ว่าง",
-    "Send" : "ส่ง",
     "Settings" : "การตั้งค่า",
     "Results" : "ผลลัพธ์",
+    "Owner" : "เจ้าของ",
     "bot" : "บอต",
     "guest" : "ผู้เยี่ยมชม",
     "Remove" : "ลบออก",
@@ -136,6 +136,7 @@ OC.L10N.register(
     "iOS app" : "แอป iOS",
     "__language_name__" : "ไทย",
     "Tasks" : "งาน",
-    "Notes" : "โน้ต"
+    "Notes" : "โน้ต",
+    "Send" : "ส่ง"
 },
 "nplurals=1; plural=0;");

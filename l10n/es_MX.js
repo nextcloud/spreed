@@ -460,10 +460,11 @@ OC.L10N.register(
     "New file" : "Archivo nuevo",
     "Blank" : "Vacío",
     "Add more files" : "Añadir más archivos",
-    "Send" : "Enviar",
     "Create poll" : "Crear encuesta",
     "Settings" : "Configuraciones ",
     "Results" : "Resultados",
+    "Owner" : "Propietario",
+    "Moderator" : "Moderador",
     "moderator" : "moderador",
     "guest" : "invitado",
     "Remove participant" : "Eliminar participante",
@@ -527,6 +528,7 @@ OC.L10N.register(
     "Set reminder for later today" : "Configurar recordatorio para hoy, más tarde",
     "Set reminder for tomorrow" : "Configurar recordatorio para mañana",
     "Set reminder for this weekend" : "Configurar recordatorio para este fin de semana",
-    "Set reminder for next week" : "Configurar recordatorio para la próxima semana"
+    "Set reminder for next week" : "Configurar recordatorio para la próxima semana",
+    "Send" : "Enviar"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
