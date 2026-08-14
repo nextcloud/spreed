@@ -462,6 +462,7 @@ export const useUploadStore = defineStore('upload', () => {
 								file: compressed,
 								name: compressed.name,
 								mimetype: compressed.type,
+								localUrl: localUrls[uploadedFile.temporaryMessage.referenceId],
 							},
 						}
 					: uploadedFile.temporaryMessage.messageParameters,
