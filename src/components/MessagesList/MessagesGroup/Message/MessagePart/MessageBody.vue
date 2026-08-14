@@ -503,9 +503,8 @@ export default {
 
 		isEditorDifferentThenAuthor() {
 			return this.message.lastEditActorId
-				&& this.message.lastEditActorId !== this.message.actorId
-				&& this.message.lastEditActorDisplayName !== this.message.actorDisplayName
-				&& this.message.lastEditActorType !== this.message.actorType
+				&& !(this.message.lastEditActorId === this.message.actorId
+					&& this.message.lastEditActorType === this.message.actorType)
 		},
 
 		isMessagePinned() {
