@@ -252,9 +252,9 @@ OC.L10N.register(
     "Send message" : "Dërgo mesazh",
     "Create new poll" : "Krijo sondazh të ri",
     "New file" : "Skedë e re",
-    "Send" : "Dërgo",
     "Create poll" : "Krijo sondazh",
     "Settings" : "Rregullimet",
+    "Moderator" : "Moderator",
     "guest" : "vizitor",
     "Remove" : "Hiqe",
     "Add users or groups" : "Add users or groups",
@@ -283,6 +283,7 @@ OC.L10N.register(
     "Android app" : "Aplikacion Android",
     "iOS app" : "Aplikacion iOS",
     "__language_name__" : "Shqip",
-    "Tasks" : "Detyra"
+    "Tasks" : "Detyra",
+    "Send" : "Dërgo"
 },
 "nplurals=2; plural=(n != 1);");

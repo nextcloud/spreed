@@ -488,9 +488,10 @@ OC.L10N.register(
     "Upload from device" : "Augšupielādēt no ierīces",
     "New file" : "Jauna datne",
     "Add more files" : "Pievienot vairāk datņu",
-    "Send" : "Sūtīt",
     "Settings" : "Iestatījumi",
     "Results" : "Rezultāti",
+    "Owner" : "Īpašnieks",
+    "Moderator" : "Satura pārraudzītājs",
     "moderator" : "satura pārraudzītājs",
     "guest" : "viesis",
     "Remove participant" : "Noņemt dalībnieku",
@@ -567,6 +568,7 @@ OC.L10N.register(
     "Reports" : "Atskaites",
     "Talk to %s" : "Runāt ar %s",
     "{notify_push} is not installed, this might lead to performance issues when using desktop clients." : "{notify_push} nav uzstādīts, tas var novest pie veiktspējas sarežģījumiem, kad izmanto darbvirsmas klientus.",
-    "Set reminder for later today" : "Iestatīt atgādinājumu vēlākam šodien"
+    "Set reminder for later today" : "Iestatīt atgādinājumu vēlākam šodien",
+    "Send" : "Sūtīt"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

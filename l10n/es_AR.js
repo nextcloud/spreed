@@ -115,8 +115,8 @@ OC.L10N.register(
     "Contact" : "Contacto",
     "Send message" : "Enviar mensaje",
     "New file" : "Nuevo archivo",
-    "Send" : "Enviar",
     "Settings" : "Ajustes",
+    "Moderator" : "Moderador",
     "Remove" : "Eliminar",
     "Add users or groups" : "Agregar usuarios o grupos",
     "Searching …" : "Buscando ...",
@@ -153,6 +153,7 @@ OC.L10N.register(
     "__language_name__" : "Español (Argentina)",
     "Tasks" : "Tareas",
     "Notes" : "Notas",
-    "Reports" : "Reportes"
+    "Reports" : "Reportes",
+    "Send" : "Enviar"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

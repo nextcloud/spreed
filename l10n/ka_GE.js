@@ -121,9 +121,9 @@ OC.L10N.register(
     "Contact" : "კონტაქტი",
     "You voted" : "თქვენ მიეცით ხმა",
     "Create new poll" : "ახალი გამოკითხვის შექმნა",
-    "Send" : "გაგზავნა",
     "Create poll" : "გამოკითხვის შექმნა",
     "Settings" : "პარამეტრები",
+    "Moderator" : "მოდერატორი",
     "moderator" : "მოდერატორი",
     "Remove participant" : "მონაწილის ამოშლა",
     "Demote from moderator" : "ჩამოიქვეითება მოდერატორობისგან",
@@ -159,6 +159,7 @@ OC.L10N.register(
     "__language_name__" : "ქართული",
     "Tasks" : "დავალებები",
     "Notes" : "ჩანაწერები",
-    "Talk to %s" : "საუბარი მომხმარებელთან %s"
+    "Talk to %s" : "საუბარი მომხმარებელთან %s",
+    "Send" : "გაგზავნა"
 },
 "nplurals=2; plural=(n!=1);");

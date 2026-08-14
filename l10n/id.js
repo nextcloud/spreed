@@ -373,6 +373,7 @@ OC.L10N.register(
     "Conversation" : "Percakapan",
     "In {conversation}" : "Di {conversation}",
     "Join" : "Gabung",
+    "New conversation" : "Percakapan baru",
     "Create conversation" : "Buat percakapan",
     "Enter your name" : "Masukkan nama Anda",
     "Log in" : "Masuk",
@@ -449,10 +450,11 @@ OC.L10N.register(
     "Error while recording audio" : "Kesalahan saat merekam audio",
     "New file" : "File baru",
     "Blank" : "Kosong",
-    "Send" : "Kirim",
     "Question" : "Pertanyaan",
     "Settings" : "Setelan",
     "Results" : "Hasil",
+    "Owner" : "Pemilik",
+    "Moderator" : "Moderator",
     "guest" : "pengunjung",
     "Remove participant" : "Hapus peserta",
     "Remove" : "Hapus",
@@ -524,6 +526,7 @@ OC.L10N.register(
     "Set reminder for later today" : "Atur pengingat untuk nanti hari ini",
     "Set reminder for tomorrow" : "Atur pengingat untuk besok",
     "Set reminder for this weekend" : "Atur pengingat untuk akhir pekan ini",
-    "Set reminder for next week" : "Atur pengingat untuk minggu depan"
+    "Set reminder for next week" : "Atur pengingat untuk minggu depan",
+    "Send" : "Kirim"
 },
 "nplurals=1; plural=0;");
