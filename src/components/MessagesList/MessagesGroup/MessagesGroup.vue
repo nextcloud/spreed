@@ -101,14 +101,13 @@ export default {
 		const firstMessage = computed(() => messages.value[0])
 		const {
 			remoteServer,
-			lastEditor,
 			actorDisplayName,
 			actorDisplayNameWithFallback,
 		} = useMessageInfo(firstMessage)
 		const isSidebar = inject('chatView:isSidebar', false)
 
 		const actorInfo = computed(() => {
-			return [actorDisplayNameWithFallback.value, remoteServer.value, lastEditor.value]
+			return [actorDisplayNameWithFallback.value, remoteServer.value]
 				.filter((value) => value).join(' ')
 		})
 
