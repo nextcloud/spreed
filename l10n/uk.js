@@ -1457,6 +1457,7 @@ OC.L10N.register(
     "7 days" : "7 днів",
     "Clear reminder – {timeLocale}" : "Чітке нагадування - {timeLocale}",
     "Edited by {actor}" : "За редакцією {actor}",
+    "Until {absoluteDate}" : "До {absoluteDate}",
     "Message text copied to clipboard" : "Текст повідомлення скопійовано до буфера обміну",
     "Message text could not be copied" : "Текст повідомлення не вдалося скопіювати",
     "Message forwarded to \"Note to self\"" : "Повідомлення перенаправлено до \"Примітки для себе\"",
