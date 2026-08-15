@@ -793,6 +793,7 @@ OC.L10N.register(
     "Stop session" : "Parar la sesión",
     "Disable lobby" : "Desactivar la sala d'espera",
     "Owner" : "Propietariu",
+    "Moderator" : "Llendador",
     "moderator" : "moderador",
     "bot" : "robó",
     "guest" : "convidáu",

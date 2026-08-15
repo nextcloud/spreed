@@ -1540,6 +1540,7 @@ OC.L10N.register(
     "Talk setup incomplete" : "إعدادات \"المحادثة\" Talk لم تكتمل",
     "Disable lobby" : "تعطيل ساحة الإنتظار",
     "Owner" : "المالك",
+    "Moderator" : "مشرف",
     "Settings for participant \"{user}\"" : "إعدادات المشارك \"{المستخدم}\"",
     "Participant \"{user}\"" : "المشارك \"{user}\"",
     "moderator" : "مشرف",
