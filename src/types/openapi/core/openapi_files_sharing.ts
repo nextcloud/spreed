@@ -28,7 +28,10 @@ export type paths = {
             path?: never;
             cookie?: never;
         };
-        /** Get a preview for a shared file */
+        /**
+         * Get a preview for a public share
+         * @description For shares pointing to a single file, the file parameter is ignored. For folder shares, file must be the relative path to a file inside the shared folder.
+         */
         get: operations["public_preview-get-preview"];
         put?: never;
         post?: never;
@@ -709,7 +712,7 @@ export interface operations {
     "public_preview-get-preview": {
         parameters: {
             query?: {
-                /** @description File in the share */
+                /** @description Relative path to a file inside a shared folder; ignored for single-file shares */
                 file?: string;
                 /** @description Width of the preview */
                 x?: number;
