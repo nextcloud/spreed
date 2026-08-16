@@ -363,9 +363,7 @@ class ParticipantServiceParticipantTypeTest extends TestCase {
 			->willThrowException(new ParticipantNotFoundException());
 		$service->expects($this->once())
 			->method('addUsers')
-			->with($breakoutRoom, $this->callback(static function (array $participants): bool {
-				return $participants[0]['participantType'] === Participant::OWNER;
-			}));
+			->with($breakoutRoom, $this->callback(static fn (array $participants): bool => $participants[0]['participantType'] === Participant::OWNER));
 
 		$actor = $this->createParticipant($room, Participant::OWNER, 'owner');
 		$target = $this->createParticipant($room, Participant::USER, 'user');
