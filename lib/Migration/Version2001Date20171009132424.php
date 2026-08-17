@@ -20,7 +20,6 @@ class Version2001Date20171009132424 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @return null|ISchemaWrapper
 	 * @since 13.0.0
-	 * @psalm-suppress InvalidArgument Legacy camelCase column names
 	 */
 	#[\Override]
 	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options): ?ISchemaWrapper {
