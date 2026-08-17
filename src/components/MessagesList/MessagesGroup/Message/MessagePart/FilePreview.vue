@@ -258,9 +258,7 @@ export default {
 		},
 
 		filePreviewBinding() {
-			if (this.isUploadEditor || this.isTemporaryUpload) {
-				return
-			} else if (this.isAudioPlayer) {
+			if (this.isAudioPlayer) {
 				return {
 					name: this.file.name,
 					path: this.file.path,
@@ -269,6 +267,8 @@ export default {
 					messageId: Number(this.messageId),
 					showFileName: this.shouldShowFileDetail && !this.isVoiceMessage,
 				}
+			} else if (this.isUploadEditor || this.isTemporaryUpload) {
+				return
 			}
 			return {
 				href: this.file.link,
