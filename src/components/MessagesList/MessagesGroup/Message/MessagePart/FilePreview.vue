@@ -148,11 +148,6 @@ export default {
 			default: 0,
 		},
 
-		nextMessageId: {
-			type: [String, Number],
-			default: 0,
-		},
-
 		/**
 		 * File object
 		 */
@@ -263,18 +258,17 @@ export default {
 		},
 
 		filePreviewBinding() {
-			if (this.isUploadEditor || this.isTemporaryUpload) {
-				return
-			} else if (this.isAudioPlayer) {
+			if (this.isAudioPlayer) {
 				return {
 					name: this.file.name,
 					path: this.file.path,
 					link: this.file.link,
 					localUrl: this.fallbackLocalUrl,
 					messageId: Number(this.messageId),
-					nextMessageId: Number(this.nextMessageId),
 					showFileName: this.shouldShowFileDetail && !this.isVoiceMessage,
 				}
+			} else if (this.isUploadEditor || this.isTemporaryUpload) {
+				return
 			}
 			return {
 				href: this.file.link,

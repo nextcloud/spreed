@@ -95,7 +95,7 @@
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
-import { defineAsyncComponent, inject } from 'vue'
+import { computed, defineAsyncComponent, inject, provide } from 'vue'
 import IconPin from 'vue-material-design-icons/PinOutline.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageForwarder from './MessageButtonsBar/MessageForwarder.vue'
@@ -152,10 +152,11 @@ export default {
 		},
 	},
 
-	setup() {
+	setup(props) {
 		const isSidebar = inject('chatView:isSidebar', false)
 		const threadId = useGetThreadId()
 		const isSplitViewEnabled = inject('messagesList:isSplitViewEnabled', true)
+		provide('message:nextMessageId', computed(() => Number(props.nextMessageId) || 0))
 
 		return {
 			chatExtrasStore: useChatExtrasStore(),
@@ -236,7 +237,6 @@ export default {
 						props: {
 							token: this.message.token,
 							messageId: this.message.id,
-							nextMessageId: this.nextMessageId,
 							itemType: getItemTypeFromMessage(this.message, p),
 							referenceId: this.message.messageParameters[p].referenceId ?? this.message.referenceId,
 							file: this.message.messageParameters[p],

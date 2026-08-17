@@ -23,6 +23,7 @@
 import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl } from '@nextcloud/router'
+import { inject } from 'vue'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 
@@ -68,11 +69,6 @@ export default {
 			default: 0,
 		},
 
-		nextMessageId: {
-			type: Number,
-			default: 0,
-		},
-
 		showFileName: {
 			type: Boolean,
 			default: false,
@@ -82,6 +78,8 @@ export default {
 	setup() {
 		return {
 			actorStore: useActorStore(),
+			// Id of the next message in the list, to auto play the next audio message
+			nextMessageId: inject('message:nextMessageId', 0),
 		}
 	},
 
