@@ -113,6 +113,7 @@ import { hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.ts'
+import { isFilePreviewParameter } from '../../../../utils/message.ts'
 
 const LocationCard = defineAsyncComponent(() => import('./MessagePart/LocationCard.vue'))
 
@@ -229,7 +230,7 @@ export default {
 							token: this.message.token,
 						},
 					}
-				} else if (type === 'file' && mimetype !== 'text/vcard') {
+				} else if (isFilePreviewParameter(p, this.message.messageParameters[p])) {
 					// File previews are rendered by FilePreviewsWrapper, skip from richParameters
 					return
 				} else if (type === SHARED_ITEM.OBJECT_TYPE.DECK_CARD) {

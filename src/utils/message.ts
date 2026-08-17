@@ -198,6 +198,27 @@ export function getFileKeys(message: Pick<ChatMessage, 'messageParameters'>) {
 }
 
 /**
+ * Checks whether a message parameter should be rendered as a preview in a FilePreviewsWrapper
+ * (Contact cards with mimetype 'text/vcard' are rendered separately)
+ *
+ * @param key key of the message parameter ('file', 'file-1', …)
+ * @param parameter the message parameter itself
+ * @param parameter.mimetype the parameter's mimetype, if any
+ */
+export function isFilePreviewParameter(key: string, parameter: { mimetype?: string }): boolean {
+	return FILE_KEY_REGEX.test(key) && parameter.mimetype !== 'text/vcard'
+}
+
+/**
+ * Returns keys of files shared with the message to be rendered with a FilePreviewsWrapper
+ *
+ * @param message Chat message (or an object with messageParameters)
+ */
+export function getFilePreviewKeys(message: Pick<ChatMessage, 'messageParameters'>) {
+	return getFileKeys(message).filter((key) => isFilePreviewParameter(key, message.messageParameters[key]))
+}
+
+/**
  * Returns whether the given message shares a file (has a rich object parameter with a key starting with 'file').
  *
  * @param message Chat message (or an object with messageParameters)

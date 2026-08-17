@@ -9,13 +9,13 @@ import type { ChatMessage } from '../../../../../types/index.ts'
 import { computed } from 'vue'
 import FilePreview from './FilePreview.vue'
 import { getItemTypeFromMessage } from '../../../../../utils/getItemTypeFromMessage.ts'
-import { getFileKeys } from '../../../../../utils/message.ts'
+import { getFilePreviewKeys } from '../../../../../utils/message.ts'
 
 const props = defineProps<{
 	message: ChatMessage
 }>()
 
-const fileKeys = computed(() => getFileKeys(props.message))
+const fileKeys = computed(() => getFilePreviewKeys(props.message))
 
 /**
  * Get referenceId of a file parameter to look up a local preview (if available).

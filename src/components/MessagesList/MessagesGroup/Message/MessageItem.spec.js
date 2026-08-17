@@ -18,6 +18,7 @@ import MessageQuote from '../../../MessageQuote.vue'
 import CallButton from '../../../TopBar/CallButton.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageItem from './MessageItem.vue'
+import ContactCard from './MessagePart/ContactCard.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
@@ -406,6 +407,26 @@ describe('MessageItem.vue', () => {
 
 				// No caption: NcRichText is not rendered at all
 				expect(wrapper.findComponent(NcRichText).exists()).toBe(false)
+			})
+
+			test('renders contact card (text/vcard) via NcRichText', () => {
+				const params = {
+					file: {
+						id: '123',
+						type: 'file',
+						mimetype: 'text/vcard',
+						name: 'John Doe.vcf',
+						link: 'https://example.com/John%20Doe.vcf',
+					},
+				}
+				messageProps.message.message = '{file}'
+				messageProps.message.messageParameters = params
+				store.dispatch('processMessage', { token: TOKEN, message: messageProps.message })
+				const wrapper = mountMessage(messageProps)
+
+				expect(wrapper.findComponent(NcRichText).exists()).toBe(true)
+				expect(wrapper.findComponent(ContactCard).exists()).toBe(true)
+				expect(wrapper.findComponent(FilePreviewsWrapper).exists()).toBe(false)
 			})
 
 			test('renders deck cards', () => {

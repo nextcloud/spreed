@@ -66,11 +66,11 @@
 			<MessageQuote v-if="showQuote" :message="message.parent" />
 
 			<!-- File previews, rendered as a block on top of the (optional) caption -->
-			<FilePreviewsWrapper v-if="isFileShare" :message="message" />
+			<FilePreviewsWrapper v-if="hasFilePreviews" :message="message" />
 
 			<!-- Message content / text -->
 			<NcRichText
-				v-if="!isFileShareWithoutCaption"
+				v-if="!isFileShareWithoutCaption || !hasFilePreviews"
 				:text="renderedMessage"
 				:arguments="richParameters"
 				:class="{ 'single-emoji': isSingleEmoji }"
@@ -218,6 +218,7 @@ import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
 import { formatDateTime } from '../../../../../utils/formattedTime.ts'
+import { getFileKeys, getFilePreviewKeys, isFilePreviewParameter } from '../../../../../utils/message.ts'
 import { parseMentions, parseSpecialSymbols } from '../../../../../utils/textParse.ts'
 
 // Regular expression to check for Unicode emojis in message text
@@ -327,13 +328,22 @@ export default {
 	},
 
 	computed: {
+		hasFilePreviews() {
+			return getFilePreviewKeys(this.message).length > 0
+		},
+
 		showQuote() {
 			return !!this.message.parent && this.message.parent.id !== this.threadId
 		},
 
 		renderedMessage() {
 			// File previews are rendered separately, as a block on top of this text (see FilePreviewsWrapper)
-			if (this.isLocationMessageWithName) {
+			if (this.isFileShare && !this.isFileShareWithoutCaption) {
+				// Contact cards with mimetype 'text/vcard' are rendered here.
+				// In case of caption present, placeholder should be put before it.
+				const vcardKey = getFileKeys(this.message).find((key) => !isFilePreviewParameter(key, this.message.messageParameters[key]))
+				return vcardKey ? `{${vcardKey}}\n\n${this.message.message}` : this.message.message
+			} else if (this.isLocationMessageWithName) {
 				return this.message.message + '\n\n' + this.message.messageParameters.object.name
 			} else {
 				return this.message.message
