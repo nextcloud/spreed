@@ -11,7 +11,6 @@
 			'message-main--sided': isSplitViewEnabled && !isSystemMessage,
 			'message-main--compressed': isSplitViewEnabled && isShortSimpleMessage,
 			'message-main--compressed-system': isSplitViewEnabled && isSystemMessage,
-			'message-main--combined-files': hasCombinedFiles,
 		}">
 		<p
 			v-if="isThreadStarterMessage"
@@ -66,8 +65,12 @@
 			<!-- Replied parent message -->
 			<MessageQuote v-if="showQuote" :message="message.parent" />
 
+			<!-- File previews, rendered as a block on top of the (optional) caption -->
+			<FilePreviewsWrapper v-if="isFileShare" :message="message" />
+
 			<!-- Message content / text -->
 			<NcRichText
+				v-if="!isFileShareWithoutCaption"
 				:text="renderedMessage"
 				:arguments="richParameters"
 				:class="{ 'single-emoji': isSingleEmoji }"
@@ -202,6 +205,7 @@ import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import MessageQuote from '../../../../MessageQuote.vue'
 import CallButton from '../../../../TopBar/CallButton.vue'
 import ConversationActionsShortcut from '../../../../UIShared/ConversationActionsShortcut.vue'
+import FilePreviewsWrapper from './FilePreviewsWrapper.vue'
 import PollCard from './PollCard.vue'
 import { useGetThreadId } from '../../../../../composables/useGetThreadId.ts'
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
@@ -214,7 +218,6 @@ import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
 import { formatDateTime } from '../../../../../utils/formattedTime.ts'
-import { getFileKeys } from '../../../../../utils/message.ts'
 import { parseMentions, parseSpecialSymbols } from '../../../../../utils/textParse.ts'
 
 // Regular expression to check for Unicode emojis in message text
@@ -229,6 +232,7 @@ export default {
 	components: {
 		AvatarWrapper,
 		CallButton,
+		FilePreviewsWrapper,
 		NcButton,
 		NcRichText,
 		PollCard,
@@ -323,25 +327,15 @@ export default {
 	},
 
 	computed: {
-		hasCombinedFiles() {
-			return getFileKeys(this.message).length > 1
-		},
-
 		showQuote() {
 			return !!this.message.parent && this.message.parent.id !== this.threadId
 		},
 
 		renderedMessage() {
-			if (this.isFileShare) {
-				if (this.isFileShareWithoutCaption) {
-					return this.message.message
-				}
-				// Add a new line after file to split content into different paragraphs
-				const filePlaceholdersString = getFileKeys(this.message).map((key) => `{${key}}`).join(' ')
-				return filePlaceholdersString + '\n\n' + this.message.message
-			} else if (this.isLocationMessageWithName) {
+			// File previews are rendered separately, as a block on top of this text (see FilePreviewsWrapper)
+			if (this.isLocationMessageWithName) {
 				return this.message.message + '\n\n' + this.message.messageParameters.object.name
-			} {
+			} else {
 				return this.message.message
 			}
 		},
@@ -768,6 +762,10 @@ export default {
 
 		&.markdown-message {
 			position: relative;
+
+			:deep(.file-previews-wrapper:has(+ .rich-text--wrapper)) {
+				margin-block-end: 1em;
+			}
 
 			:deep(.rich-text--wrapper) {
 				// NcRichText is used with dir="auto", so internal text direction may vary
