@@ -708,8 +708,9 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 			peer.emit('extendedIceConnectionStateChange', 'disconnected-long')
 
 			if (!signaling.hasFeature('mcu')) {
-				// Disconnections are not handled with the MCU, only
-				// failures.
+				// ICE restarts are not performed with the MCU; if the
+				// connection stays disconnected a new connection is
+				// requested instead (see below).
 
 				// If the peer is still disconnected after 5 seconds we try
 				// ICE restart.
@@ -723,6 +724,21 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 				}
 			}
 		}, 5000)
+
+		if (signaling.hasFeature('mcu')) {
+			setTimeout(function() {
+				if (peer.pc.iceConnectionState !== 'disconnected') {
+					return
+				}
+
+				// A subscriber connection that stays disconnected is not
+				// expected to recover on its own, and some browsers may
+				// never report it as "failed" either, so after a grace
+				// period a new connection is explicitly requested, like
+				// in the "failed" case.
+				requestOfferFromMcuAndRetryUntilReceived(peer)
+			}, 10000)
+		}
 	}
 
 	/**
