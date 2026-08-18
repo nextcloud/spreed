@@ -1185,6 +1185,25 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 				setHandlerForIceConnectionStateChange(peer)
 				setHandlerForConnectionStateChange(peer)
 				setHandlerForSignalingStateChange(peer)
+
+				if (signaling.hasFeature('mcu')) {
+					// ICE has no timeout while the connection is in "new"
+					// state, and "checking" may get stuck too in some
+					// browsers, so if a subscriber connection is not
+					// established in a reasonable time a new connection is
+					// explicitly requested, like in the "failed" case. If
+					// the new connection also gets stuck the timeout will
+					// be armed again when its peer is created.
+					setTimeout(function() {
+						if (peer.pc.iceConnectionState !== 'new' && peer.pc.iceConnectionState !== 'checking') {
+							return
+						}
+
+						console.debug('Subscriber connection not established after 30 seconds, requesting offer again', peer.id, peer)
+
+						requestOfferFromMcuAndRetryUntilReceived(peer)
+					}, 30000)
+				}
 			}
 
 			setHandlerForNegotiationNeeded(peer)
