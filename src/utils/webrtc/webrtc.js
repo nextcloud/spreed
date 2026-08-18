@@ -726,6 +726,27 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 	}
 
 	/**
+	 * Requests a new offer for the given (subscriber) peer from the MCU and
+	 * keeps requesting it until a new offer is received (the retry interval
+	 * is cleared when the offer message arrives).
+	 *
+	 * @param {object} peer The peer connection to request a new offer for
+	 */
+	function requestOfferFromMcuAndRetryUntilReceived(peer) {
+		console.debug('Request offer again', peer.id, peer)
+
+		signaling.requestOffer(peer.id, 'video')
+
+		clearInterval(delayedConnectionToPeer[peer.id])
+
+		delayedConnectionToPeer[peer.id] = setInterval(function() {
+			console.debug('No offer received, request offer again', peer.id, peer)
+
+			signaling.requestOffer(peer.id, 'video')
+		}, 10000)
+	}
+
+	/**
 	 * @param {object} peer The peer connection to handle the state on
 	 */
 	function handleIceConnectionStateFailed(peer) {
@@ -758,17 +779,7 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 		} else {
 			// This handles ICE failures of a receiver peer; ICE failures of
 			// the sender peer are handled in the "iceFailed" event.
-			console.debug('Request offer again', peer.id, peer)
-
-			signaling.requestOffer(peer.id, 'video')
-
-			clearInterval(delayedConnectionToPeer[peer.id])
-
-			delayedConnectionToPeer[peer.id] = setInterval(function() {
-				console.debug('No offer received, request offer again', peer.id, peer)
-
-				signaling.requestOffer(peer.id, 'video')
-			}, 10000)
+			requestOfferFromMcuAndRetryUntilReceived(peer)
 		}
 	}
 
