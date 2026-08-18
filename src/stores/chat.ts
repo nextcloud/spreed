@@ -13,7 +13,7 @@ import type {
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 import { useStore } from 'vuex'
-import { isHiddenSystemMessage } from '../utils/message.ts'
+import { isTemporaryId, isHiddenSystemMessage } from '../utils/message.ts'
 import { useChatExtrasStore } from './chatExtras.ts'
 
 type GetMessagesListOptions = {
@@ -57,7 +57,7 @@ function checkIfBelongsToContext(message: ChatMessage, threadId?: number): boole
 		// In thread context, only thread messages with given threadId are allowed
 		? threadId === message.threadId
 		// In main context, only non-thread messages, topmost thread messages and temporary messages are allowed
-		: (!message.isThread || message.id === message.threadId || message.id.toString().startsWith('temp-'))
+		: (!message.isThread || message.id === message.threadId || isTemporaryId(message.id))
 }
 
 /**

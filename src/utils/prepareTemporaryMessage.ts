@@ -9,6 +9,7 @@ import Hex from 'crypto-js/enc-hex.js'
 import SHA256 from 'crypto-js/sha256.js'
 import { MESSAGE } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
+import { convertToUnix } from './formattedTime.ts'
 
 export type RawTemporaryMessagePayload = Pick<ChatMessage, | 'message'
 	| 'token'
@@ -129,7 +130,7 @@ export function prepareTemporaryMessage({
 		// @ts-expect-error: type 'string' is not assignable to type 'number'
 		id: tempId,
 		token,
-		timestamp: 0,
+		timestamp: convertToUnix(date),
 		expirationTimestamp: 0,
 		systemMessage: '',
 		markdown: hasTalkFeature(token, 'markdown-messages'),

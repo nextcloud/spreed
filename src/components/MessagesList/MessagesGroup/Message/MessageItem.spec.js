@@ -483,7 +483,7 @@ describe('MessageItem.vue', () => {
 		})
 
 		test('does not render actions for temporary messages', async () => {
-			messageProps.message.timestamp = 0
+			messageProps.message.id = 'temp-123'
 
 			const wrapper = mountMessage(messageProps)
 
@@ -594,7 +594,7 @@ describe('MessageItem.vue', () => {
 		})
 
 		test('displays the message already with a spinner while sending it', () => {
-			messageProps.message.timestamp = 0
+			messageProps.message.id = 'temp-123'
 			const wrapper = mountMessage(messageProps)
 			const message = wrapper.findComponent(NcRichText)
 			expect(message.text()).toBe('test message')
