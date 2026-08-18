@@ -296,7 +296,7 @@ export default {
 		font-size: calc(var(--avatar-size) / 2);
 		background-color: var(--color-text-maxcontrast-default);
 
-		&.icon {
+		& :deep(.avatar-class-icon) {
 			background-size: calc(var(--avatar-size) / 2);
 			&.icon-changelog {
 				background-size: cover !important;
@@ -323,9 +323,7 @@ export default {
 		margin-inline-start: calc(var(--condensed-overlap) * -1px);
 		display: flex;
 
-		& > .icon,
-		& > .guest,
-		:deep(img) {
+		& :deep(.avatardiv) {
 			outline: 2px solid var(--color-main-background);
 		}
 	}
@@ -369,9 +367,4 @@ export default {
 		background-color: var(--color-text-maxcontrast-default);
 	}
 }
-
-:deep(.icon-user) {
-	background-size: calc(var(--avatar-size) / 2);
-}
-
 </style>
