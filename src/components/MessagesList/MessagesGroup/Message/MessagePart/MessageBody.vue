@@ -222,7 +222,12 @@ import { useChatExtrasStore } from '../../../../../stores/chatExtras.ts'
 import { usePollsStore } from '../../../../../stores/polls.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
 import { formatDateTime } from '../../../../../utils/formattedTime.ts'
-import { getFileKeys, getFilePreviewKeys, isFilePreviewParameter } from '../../../../../utils/message.ts'
+import {
+	getFileKeys,
+	getFilePreviewKeys,
+	isFilePreviewParameter,
+	isTemporaryId,
+} from '../../../../../utils/message.ts'
 import { parseMentions, parseSpecialSymbols } from '../../../../../utils/textParse.ts'
 
 // Regular expression to check for Unicode emojis in message text
@@ -433,7 +438,7 @@ export default {
 		},
 
 		isTemporary() {
-			return !this.isScheduledMessage && this.message.timestamp === 0
+			return !this.isScheduledMessage && isTemporaryId(this.message.id)
 		},
 
 		isScheduledSendingFailure() {

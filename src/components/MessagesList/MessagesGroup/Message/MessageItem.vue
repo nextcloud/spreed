@@ -113,7 +113,7 @@ import { hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.ts'
-import { isFilePreviewParameter } from '../../../../utils/message.ts'
+import { isFilePreviewParameter, isTemporaryId } from '../../../../utils/message.ts'
 
 const LocationCard = defineAsyncComponent(() => import('./MessagePart/LocationCard.vue'))
 
@@ -187,7 +187,7 @@ export default {
 		},
 
 		isTemporary() {
-			return !this.isScheduledMessage && this.message.timestamp === 0
+			return !this.isScheduledMessage && isTemporaryId(this.message.id)
 		},
 
 		isDeletedMessage() {
@@ -319,7 +319,7 @@ export default {
 			}
 
 			return this.message.id === this.message.threadId
-				|| this.message.id.toString().startsWith('temp-')
+				|| isTemporaryId(this.message.id)
 				|| (this.isScheduledMessage && this.message.threadId === -1)
 		},
 

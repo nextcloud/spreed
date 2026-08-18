@@ -6,7 +6,7 @@
 import type { ChatMessage } from '../types/index.ts'
 
 import { MESSAGE } from '../constants.ts'
-import { getFileKeys, hasOnlyFilePlaceholders } from './message.ts'
+import { getFileKeys, hasOnlyFilePlaceholders, isTemporaryId } from './message.ts'
 
 export type CombinedFileMessage = ChatMessage & {
 	/** Ids of all messages combined into this one, in chronological order */
@@ -27,7 +27,7 @@ function isCombinableFileMessage(message: ChatMessage): boolean {
 	// TODO threads?
 	// TODO unified uploader?
 	// Temporary messages, which are not sent yet (or failed to be sent), are shown separately
-	if (message.timestamp === 0 || (message as ChatMessage & { sendingFailure?: string }).sendingFailure) {
+	if (isTemporaryId(message.id) || (message as ChatMessage & { sendingFailure?: string }).sendingFailure) {
 		return false
 	}
 
