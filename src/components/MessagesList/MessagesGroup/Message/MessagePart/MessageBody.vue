@@ -84,7 +84,11 @@
 		<div
 			v-if="!isDeletedMessage"
 			class="message-main__info">
-			<span v-if="isSplitViewEnabled && isOwnMessage && message.lastEditTimestamp" class="editor">
+			<span
+				v-if="message.lastEditTimestamp"
+				class="editor"
+				:aria-label="lastEditor"
+				:title="lastEditor">
 				<IconPencilOutline :size="14" />
 				<AvatarWrapper
 					v-if="isEditorDifferentThenAuthor"
@@ -295,6 +299,7 @@ export default {
 			isEditable,
 			isFileShare,
 			isFileShareWithoutCaption,
+			lastEditor,
 		} = useMessageInfo(message)
 		const threadId = useGetThreadId()
 		const isSidebar = inject('chatView:isSidebar', false)
@@ -309,6 +314,7 @@ export default {
 			isEditable,
 			isFileShare,
 			isFileShareWithoutCaption,
+			lastEditor,
 			isSidebar,
 			actorStore: useActorStore(),
 			isSplitViewEnabled,
@@ -503,9 +509,8 @@ export default {
 
 		isEditorDifferentThenAuthor() {
 			return this.message.lastEditActorId
-				&& this.message.lastEditActorId !== this.message.actorId
-				&& this.message.lastEditActorDisplayName !== this.message.actorDisplayName
-				&& this.message.lastEditActorType !== this.message.actorType
+				&& !(this.message.lastEditActorId === this.message.actorId
+					&& this.message.lastEditActorType === this.message.actorType)
 		},
 
 		isMessagePinned() {
@@ -617,7 +622,8 @@ export default {
 	min-height: var(--clickable-area-small);
 	min-width: 100%;
 	// Layout 1 (standard view): text and info in two columns
-	grid-template-columns: minmax(0, $messages-text-max-width) $messages-info-width;
+	// Info column grows past its minimum to fit the edited-message icon, so it never overlaps the text column
+	grid-template-columns: minmax(0, $messages-text-max-width) minmax($messages-info-width, max-content);
 	row-gap: var(--default-grid-baseline);
 
 	& .message-main__thread-title,
@@ -670,6 +676,7 @@ export default {
 		.message-main__info {
 			opacity: 0;
 			width: auto;
+			min-width: 0;
 			font-size: var(--font-size-small);
 
 			&::before {
@@ -689,13 +696,10 @@ export default {
 			align-items: end;
 			font-size: var(--font-size-small);
 			width: auto;
+			min-width: 0;
 
 			.editor {
-				display: inline-flex;
-				align-items: center;
 				margin-inline-end: var(--default-grid-baseline);
-				gap: calc(var(--default-grid-baseline) / 2);
-				height: 1lh;
 			}
 		}
 
@@ -805,12 +809,24 @@ export default {
 		position: relative;
 		user-select: none;
 		display: flex;
+		align-items: center;
 		justify-content: flex-end;
 		color: var(--color-text-maxcontrast);
 		font-size: var(--default-font-size);
-		width: $messages-info-width;
+		min-width: $messages-info-width;
 		gap: calc(var(--default-grid-baseline) / 2);
 		padding-inline: calc(2 * var(--default-grid-baseline));
+
+		.editor {
+			display: inline-flex;
+			align-items: center;
+			gap: calc(var(--default-grid-baseline) / 2);
+			height: 1lh;
+
+			:deep(.avatar-wrapper) {
+				line-height: 0;
+			}
+		}
 
 		.date {
 			width: 8ch;
