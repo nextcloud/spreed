@@ -757,13 +757,15 @@ export default {
 		}
 	}
 
-	// Both the upload editor and a message with combined file shares show a grid
-	// of tiles of the same size. --preview-size and --preview-name-height define sizes.
+	// The upload editor shows a grid of tiles of the same size.
+	// --preview-size and --preview-name-height define sizes.
 	// The file name is not shown for every file, but its space is always reserved.
-	&--upload-editor,
-	.message-main--combined-files & {
+	// (FilePreviewsWrapper applies the same sizing to combined file shares in messages)
+	&--upload-editor {
 		width: var(--preview-size, 80px);
 		height: calc(var(--preview-size, 80px) + var(--preview-name-height, 24px));
+		padding: var(--preview-padding, 8px);
+		margin: var(--default-grid-baseline);
 
 		// A file without a preview gets an inline 128px size on the container
 		// and a min-height on the icon. Both are overridden, so that every
@@ -771,6 +773,7 @@ export default {
 		.image-container {
 			width: var(--preview-size, 80px) !important;
 			height: var(--preview-size, 80px) !important;
+			outline: 1px solid var(--color-border);
 		}
 
 		// The size class of the image varies with the preview type, so it is
@@ -790,15 +793,6 @@ export default {
 		}
 	}
 
-	&--upload-editor {
-		padding: var(--preview-padding, 8px);
-		margin: var(--default-grid-baseline);
-
-		.image-container {
-			outline: 1px solid var(--color-border);
-		}
-	}
-
 	&--row-layout {
 		display: flex;
 		align-items: center;
@@ -813,22 +807,6 @@ export default {
 		.name-container {
 			padding: 0 4px;
 			font-weight: normal;
-		}
-	}
-
-	.message-main--combined-files & {
-		// Same thumbnail size as in the upload editor
-		--preview-size: 80px;
-		--preview-name-height: 24px;
-		// Align inline elements to the top, so looks even next to files with filename
-		vertical-align: top;
-
-		.file-preview__image {
-			border-radius: var(--border-radius);
-
-			&.mimeicon {
-				object-fit: contain;
-			}
 		}
 	}
 

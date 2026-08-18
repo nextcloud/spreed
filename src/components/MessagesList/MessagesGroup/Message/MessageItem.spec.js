@@ -18,9 +18,11 @@ import MessageQuote from '../../../MessageQuote.vue'
 import CallButton from '../../../TopBar/CallButton.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import MessageItem from './MessageItem.vue'
+import ContactCard from './MessagePart/ContactCard.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
+import FilePreviewsWrapper from './MessagePart/FilePreviewsWrapper.vue'
 import LocationCard from './MessagePart/LocationCard.vue'
 import MentionChip from './MessagePart/MentionChip.vue'
 import router from '../../../../__mocks__/router.js'
@@ -329,20 +331,18 @@ describe('MessageItem.vue', () => {
 						mimetype: 'txt/plain',
 					},
 				}
-				renderRichObject(
-					'{file}',
-					params,
-					{
-						actor: {
-							component: MentionChip,
-							props: params.actor,
-						},
-						file: {
-							component: FilePreview,
-							props: { file: params.file },
-						},
-					},
-				)
+				messageProps.message.message = '{file}'
+				messageProps.message.messageParameters = params
+				store.dispatch('processMessage', { token: TOKEN, message: messageProps.message })
+				const wrapper = mountMessage(messageProps)
+
+				// File previews are rendered as a block, on top of NcRichText
+				const filePreviewsWrapper = wrapper.findComponent(FilePreviewsWrapper)
+				expect(filePreviewsWrapper.exists()).toBeTruthy()
+				expect(filePreviewsWrapper.props('message').messageParameters.file).toStrictEqual(params.file)
+
+				// No caption: NcRichText is not rendered at all
+				expect(wrapper.findComponent(NcRichText).exists()).toBe(false)
 			})
 
 			test('renders single file preview with caption', () => {
@@ -361,22 +361,72 @@ describe('MessageItem.vue', () => {
 						mimetype: 'txt/plain',
 					},
 				}
-				const messageEl = renderRichObject(
-					caption,
-					params,
-					{
-						actor: {
-							component: MentionChip,
-							props: params.actor,
-						},
-						file: {
-							component: FilePreview,
-							props: { file: params.file },
-						},
-					},
-				)
+				messageProps.message.message = caption
+				messageProps.message.messageParameters = params
+				store.dispatch('processMessage', { token: TOKEN, message: messageProps.message })
+				const wrapper = mountMessage(messageProps)
 
-				expect(messageEl.props('text')).toBe('{file}\n\n' + caption)
+				// Caption is rendered as-is, the file placeholder is not part of it anymore
+				// (no 'file' argument either: previews are rendered by FilePreviewsWrapper, not NcRichText)
+				const messageEl = wrapper.findComponent(NcRichText)
+				expect(messageEl.props('text')).toBe(caption)
+				expect(Object.keys(messageEl.props('arguments'))).toMatchObject(['actor'])
+
+				// File previews are still rendered as a block, on top of the caption
+				const filePreviewsWrapper = wrapper.findComponent(FilePreviewsWrapper)
+				expect(filePreviewsWrapper.exists()).toBeTruthy()
+				expect(filePreviewsWrapper.props('message').messageParameters.file).toStrictEqual(params.file)
+			})
+
+			test('renders combined file previews as a single block', () => {
+				const params = {
+					'file-1': {
+						id: '123',
+						path: 'Talk/first.txt',
+						name: 'first.txt',
+						type: 'file',
+						mimetype: 'txt/plain',
+					},
+					'file-2': {
+						id: '456',
+						path: 'Talk/second.txt',
+						name: 'second.txt',
+						type: 'file',
+						mimetype: 'txt/plain',
+					},
+				}
+				messageProps.message.message = '{file-1} {file-2}'
+				messageProps.message.messageParameters = params
+				store.dispatch('processMessage', { token: TOKEN, message: messageProps.message })
+				const wrapper = mountMessage(messageProps)
+
+				// Both files are rendered together, as a single FilePreviewsWrapper
+				const filePreviewsWrapper = wrapper.findComponent(FilePreviewsWrapper)
+				expect(filePreviewsWrapper.exists()).toBeTruthy()
+				expect(filePreviewsWrapper.findAllComponents(FilePreview)).toHaveLength(2)
+
+				// No caption: NcRichText is not rendered at all
+				expect(wrapper.findComponent(NcRichText).exists()).toBe(false)
+			})
+
+			test('renders contact card (text/vcard) via NcRichText', () => {
+				const params = {
+					file: {
+						id: '123',
+						type: 'file',
+						mimetype: 'text/vcard',
+						name: 'John Doe.vcf',
+						link: 'https://example.com/John%20Doe.vcf',
+					},
+				}
+				messageProps.message.message = '{file}'
+				messageProps.message.messageParameters = params
+				store.dispatch('processMessage', { token: TOKEN, message: messageProps.message })
+				const wrapper = mountMessage(messageProps)
+
+				expect(wrapper.findComponent(NcRichText).exists()).toBe(true)
+				expect(wrapper.findComponent(ContactCard).exists()).toBe(true)
+				expect(wrapper.findComponent(FilePreviewsWrapper).exists()).toBe(false)
 			})
 
 			test('renders deck cards', () => {

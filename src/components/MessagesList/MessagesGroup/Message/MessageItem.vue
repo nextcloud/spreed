@@ -103,7 +103,6 @@ import ScheduledMessageActions from './MessageButtonsBar/ScheduledMessageActions
 import ContactCard from './MessagePart/ContactCard.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
-import FilePreview from './MessagePart/FilePreview.vue'
 import MentionChip from './MessagePart/MentionChip.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
 import PollCard from './MessagePart/PollCard.vue'
@@ -114,7 +113,7 @@ import { hasTalkFeature } from '../../../../services/CapabilitiesManager.ts'
 import { EventBus } from '../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../stores/actor.ts'
 import { useChatExtrasStore } from '../../../../stores/chatExtras.ts'
-import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.ts'
+import { isFilePreviewParameter } from '../../../../utils/message.ts'
 
 const LocationCard = defineAsyncComponent(() => import('./MessagePart/LocationCard.vue'))
 
@@ -231,17 +230,9 @@ export default {
 							token: this.message.token,
 						},
 					}
-				} else if (type === 'file' && mimetype !== 'text/vcard') {
-					richParameters[p] = {
-						component: FilePreview,
-						props: {
-							token: this.message.token,
-							messageId: this.message.id,
-							itemType: getItemTypeFromMessage(this.message, p),
-							referenceId: this.message.messageParameters[p].referenceId ?? this.message.referenceId,
-							file: this.message.messageParameters[p],
-						},
-					}
+				} else if (isFilePreviewParameter(p, this.message.messageParameters[p])) {
+					// File previews are rendered by FilePreviewsWrapper, skip from richParameters
+					return
 				} else if (type === SHARED_ITEM.OBJECT_TYPE.DECK_CARD) {
 					richParameters[p] = {
 						component: DeckCard,
