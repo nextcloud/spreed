@@ -88,8 +88,15 @@ async function setPlaySounds(hasUserAccount: boolean, value: 'yes' | 'no') {
  *
  * @param value
  */
-async function setStartWithoutMedia(value: boolean) {
-	return setUserConfig('spreed', 'calls_start_without_media', value ? 'yes' : 'no')
+async function setStartWithoutAudio(value: boolean) {
+	return setUserConfig('spreed', 'calls_start_without_audio', value ? 'yes' : 'no')
+}
+
+/**
+ * @param value whether calls should start without video
+ */
+async function setStartWithoutVideo(value: boolean) {
+	return setUserConfig('spreed', 'calls_start_without_video', value ? 'yes' : 'no')
 }
 
 /**
@@ -174,7 +181,8 @@ export {
 	setPlaySounds,
 	setReadStatusPrivacy,
 	setSIPSettings,
-	setStartWithoutMedia,
+	setStartWithoutAudio,
+	setStartWithoutVideo,
 	setTypingStatusPrivacy,
 	setUserConfig,
 }

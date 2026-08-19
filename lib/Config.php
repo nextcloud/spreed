@@ -60,6 +60,9 @@ class Config {
 	public const string EXTERNAL_CALL_SERVICE_AUTH_USER = 'external_call_service_auth_user';
 	public const string EXTERNAL_CALL_SERVICE_AUTH_PASSWORD = 'external_call_service_auth_password';
 	public const string EXTERNAL_CALL_SERVICE_IFRAME_FIELD = 'external_call_service_iframe_field';
+	public const string CALLS_START_WITHOUT_AUDIO = 'calls_start_without_audio';
+	public const string CALLS_START_WITHOUT_VIDEO = 'calls_start_without_video';
+	/** @deprecated Kept as fallback for existing installations. */
 	public const string CALLS_START_WITHOUT_MEDIA = 'calls_start_without_media';
 	public const string INACTIVITY_LOCK_AFTER_DAYS = 'inactivity_lock_after_days';
 	public const string INACTIVITY_ENABLE_LOBBY = 'inactivity_enable_lobby';
@@ -872,12 +875,30 @@ class Config {
 	 * @param ?string $userId
 	 * @return bool
 	 */
-	public function getCallsStartWithoutMedia(?string $userId): bool {
+	public function getCallsStartWithoutAudio(?string $userId): bool {
+		return $this->getCallsStartWithoutMediaType($userId, self::CALLS_START_WITHOUT_AUDIO);
+	}
+
+	public function getCallsStartWithoutVideo(?string $userId): bool {
+		return $this->getCallsStartWithoutMediaType($userId, self::CALLS_START_WITHOUT_VIDEO);
+	}
+
+	private function getCallsStartWithoutMediaType(?string $userId, string $key): bool {
 		if ($userId !== null) {
-			$userSetting = $this->config->getUserValue($userId, 'spreed', UserPreference::CALLS_START_WITHOUT_MEDIA);
+			$userSetting = $this->config->getUserValue($userId, 'spreed', $key);
 			if ($userSetting === 'yes' || $userSetting === 'no') {
 				return $userSetting === 'yes';
 			}
+
+			// Legacy setting for backward compatibility
+			$legacyUserSetting = $this->config->getUserValue($userId, 'spreed', UserPreference::CALLS_START_WITHOUT_MEDIA);
+			if ($legacyUserSetting === 'yes' || $legacyUserSetting === 'no') {
+				return $legacyUserSetting === 'yes';
+			}
+		}
+
+		if ($this->appConfig->getAppValue($key) !== '') {
+			return $this->appConfig->getAppValueBool($key);
 		}
 
 		return $this->appConfig->getAppValueBool(self::CALLS_START_WITHOUT_MEDIA);

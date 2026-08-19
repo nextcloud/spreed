@@ -3373,8 +3373,11 @@ class RoomController extends AEnvironmentAwareOCSController {
 			if (isset($data['config']['chat']['typing-privacy'])) {
 				$data['config']['chat']['typing-privacy'] = $this->talkConfig->getUserTypingPrivacy($this->userId);
 			}
-			if (isset($data['config']['call']['start-without-media'])) {
-				$data['config']['call']['start-without-media'] = $this->talkConfig->getCallsStartWithoutMedia($this->userId);
+			if (isset($data['config']['call']['start-without-audio'])) {
+				$data['config']['call']['start-without-audio'] = $this->talkConfig->getCallsStartWithoutAudio($this->userId);
+			}
+			if (isset($data['config']['call']['start-without-video'])) {
+				$data['config']['call']['start-without-video'] = $this->talkConfig->getCallsStartWithoutVideo($this->userId);
 			}
 			if (isset($data['config']['call']['blur-virtual-background'])) {
 				$data['config']['call']['blur-virtual-background'] = $this->talkConfig->getBlurVirtualBackground($this->userId);

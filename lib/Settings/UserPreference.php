@@ -11,6 +11,9 @@ namespace OCA\Talk\Settings;
 class UserPreference {
 	public const ATTACHMENT_FOLDER = 'attachment_folder';
 	public const BLUR_VIRTUAL_BACKGROUND = 'blur_virtual_background';
+	public const CALLS_START_WITHOUT_AUDIO = 'calls_start_without_audio';
+	public const CALLS_START_WITHOUT_VIDEO = 'calls_start_without_video';
+	/** @deprecated Kept as fallback for existing installations. */
 	public const CALLS_START_WITHOUT_MEDIA = 'calls_start_without_media';
 	public const CONVERSATIONS_LIST_STYLE = 'conversations_list_style';
 	public const CHAT_STYLE = 'chat_style';

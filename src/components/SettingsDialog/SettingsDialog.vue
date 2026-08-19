@@ -23,11 +23,17 @@
 			:name="t('spreed', 'Devices')">
 			<NcFormBox>
 				<NcFormBoxSwitch
-					v-if="supportStartWithoutMedia"
-					:modelValue="startWithoutMediaEnabled"
-					:label="t('spreed', 'Turn camera and microphone off by default')"
+					v-if="supportStartWithoutAudio"
+					:modelValue="settingsStore.startWithoutAudio"
+					:label="t('spreed', 'Turn microphone off by default')"
 					:disabled="mediaLoading"
-					@update:modelValue="toggleStartWithoutMedia" />
+					@update:modelValue="toggleStartWithoutAudio" />
+				<NcFormBoxSwitch
+					v-if="supportStartWithoutVideo"
+					:modelValue="settingsStore.startWithoutVideo"
+					:label="t('spreed', 'Turn camera off by default')"
+					:disabled="mediaLoading"
+					@update:modelValue="toggleStartWithoutVideo" />
 				<NcFormBoxSwitch
 					v-if="supportDefaultBlurVirtualBackground"
 					:modelValue="settingsStore.blurVirtualBackgroundEnabled"
@@ -173,7 +179,8 @@ const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 
 const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !== undefined
 const isCallEnabled = getTalkConfig('local', 'call', 'enabled')
-const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
+const supportStartWithoutAudio = getTalkConfig('local', 'call', 'start-without-audio') !== undefined
+const supportStartWithoutVideo = getTalkConfig('local', 'call', 'start-without-video') !== undefined
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 const supportLiveTranslation = getTalkConfig('local', 'call', 'live-translation') === true
 
@@ -209,7 +216,8 @@ export default {
 			supportTypingStatus,
 			customSettingsSections,
 			isCallEnabled,
-			supportStartWithoutMedia,
+			supportStartWithoutAudio,
+			supportStartWithoutVideo,
 			supportDefaultBlurVirtualBackground,
 			supportLiveTranslation,
 			actorStore,
@@ -240,10 +248,6 @@ export default {
 
 		typingStatusPrivacyIsPublic() {
 			return this.settingsStore.typingStatusPrivacy === PRIVACY.PUBLIC
-		},
-
-		startWithoutMediaEnabled() {
-			return this.settingsStore.startWithoutMedia
 		},
 
 		hideMediaSettings() {
@@ -319,10 +323,21 @@ export default {
 			this.privacyLoading = false
 		},
 
-		async toggleStartWithoutMedia(value) {
+		async toggleStartWithoutAudio(value) {
 			this.mediaLoading = true
 			try {
-				await this.settingsStore.updateStartWithoutMedia(value)
+				await this.settingsStore.updateStartWithoutAudio(value)
+			} catch (exception) {
+				showError(t('spreed', 'Error while setting default media state'))
+			} finally {
+				this.mediaLoading = false
+			}
+		},
+
+		async toggleStartWithoutVideo(value) {
+			this.mediaLoading = true
+			try {
+				await this.settingsStore.updateStartWithoutVideo(value)
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting default media state'))
 			} finally {

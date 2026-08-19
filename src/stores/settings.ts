@@ -23,7 +23,8 @@ import {
 	setConversationsSortOrder,
 	setLiveTranscriptionTargetLanguageId,
 	setReadStatusPrivacy,
-	setStartWithoutMedia,
+	setStartWithoutAudio,
+	setStartWithoutVideo,
 	setTypingStatusPrivacy,
 } from '../services/settingsService.ts'
 import { isSafari } from '../utils/browserCheck.ts'
@@ -51,7 +52,8 @@ export const useSettingsStore = defineStore('settings', () => {
 	const noiseSuppressionWithModel = ref<'none' | 'rnnoise' | (string & {})>(BrowserStorage.getItem('noiseSuppressionWithModel') ?? 'none')
 	const echoCancellation = ref<boolean>(BrowserStorage.getItem('echoCancellation') !== 'false')
 	const autoGainControl = ref<boolean>(BrowserStorage.getItem('autoGainControl') !== 'false' && !isSafari)
-	const startWithoutMedia = ref<boolean | undefined>(getTalkConfig('local', 'call', 'start-without-media'))
+	const startWithoutAudio = ref<boolean | undefined>(getTalkConfig('local', 'call', 'start-without-audio'))
+	const startWithoutVideo = ref<boolean | undefined>(getTalkConfig('local', 'call', 'start-without-video'))
 	const blurVirtualBackgroundEnabled = ref<boolean | undefined>(getTalkConfig('local', 'call', 'blur-virtual-background'))
 	const conversationsListStyle = ref<LIST_STYLE_OPTIONS | undefined>(getTalkConfig('local', 'conversations', 'list-style'))
 	const chatStyle = ref<CHAT_STYLE_OPTIONS>(supportChatStyle ? (getTalkConfig('local', 'chat', 'style') ?? CHAT_STYLE.SPLIT) : CHAT_STYLE.UNIFIED)
@@ -171,9 +173,20 @@ export const useSettingsStore = defineStore('settings', () => {
 	 *
 	 * @param value - new selected state
 	 */
-	async function updateStartWithoutMedia(value: boolean) {
-		await setStartWithoutMedia(value)
-		startWithoutMedia.value = value
+	/**
+	 * @param value whether calls should start without audio
+	 */
+	async function updateStartWithoutAudio(value: boolean) {
+		await setStartWithoutAudio(value)
+		startWithoutAudio.value = value
+	}
+
+	/**
+	 * @param value whether calls should start without video
+	 */
+	async function updateStartWithoutVideo(value: boolean) {
+		await setStartWithoutVideo(value)
+		startWithoutVideo.value = value
 	}
 
 	/**
@@ -258,7 +271,8 @@ export const useSettingsStore = defineStore('settings', () => {
 		noiseSuppressionWithModel,
 		echoCancellation,
 		autoGainControl,
-		startWithoutMedia,
+		startWithoutAudio,
+		startWithoutVideo,
 		blurVirtualBackgroundEnabled,
 		conversationsListStyle,
 		attachmentFolder,
@@ -281,7 +295,8 @@ export const useSettingsStore = defineStore('settings', () => {
 		setEchoCancellation,
 		setAutoGainControl,
 		setBlurVirtualBackgroundEnabled,
-		updateStartWithoutMedia,
+		updateStartWithoutAudio,
+		updateStartWithoutVideo,
 		updateConversationsListStyle,
 		updateAttachmentFolder,
 		updateChatStyle,
