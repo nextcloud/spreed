@@ -237,6 +237,15 @@ export function hasOnlyFilePlaceholders(text: string): boolean {
 }
 
 /**
+ * Returns whether the given id belongs to a temporary message
+ *
+ * @param id message id
+ */
+export function isTemporaryId(id: ChatMessage['id'] | string): boolean {
+	return id.toString().startsWith('temp-')
+}
+
+/**
  * Returns whether the given system message should be hidden in the UI
  *
  * @param message Chat message

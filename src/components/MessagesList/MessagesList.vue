@@ -476,7 +476,7 @@ export default {
 				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
 					groupId = message.id
 					if (message.timestamp === 0) {
-						// This is a temporary message, the timestamp is today
+						// This is a scheduled message that failed to send, the timestamp is today
 						dateTimestamp = this.currentDay
 					} else {
 						dateTimestamp = convertToUnix(new Date(message.timestamp * 1000).setHours(0, 0, 0, 0))
@@ -635,9 +635,6 @@ export default {
 		 * @return {object} Date object
 		 */
 		getDateOfMessage(message) {
-			if (message.id.toString().startsWith('temp-')) {
-				return new Date()
-			}
 			return new Date(message.timestamp * 1000)
 		},
 

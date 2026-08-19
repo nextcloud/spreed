@@ -38,7 +38,7 @@ import { useSharedItemsStore } from '../stores/sharedItems.ts'
 import CancelableRequest from '../utils/CancelableRequest.ts'
 import { debugTimer } from '../utils/debugTimer.ts'
 import { convertToUnix } from '../utils/formattedTime.ts'
-import { isHiddenSystemMessage } from '../utils/message.ts'
+import { isHiddenSystemMessage, isTemporaryId } from '../utils/message.ts'
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -167,7 +167,7 @@ const getters = {
 
 		return Object.values(state.messages[token]).filter((message) => {
 			return message.referenceId === referenceId
-				&& ('' + message.id).startsWith('temp-')
+				&& isTemporaryId(message.id)
 		})
 	},
 
@@ -189,7 +189,7 @@ const getters = {
 
 		return getters.messagesList(token).find((message) => {
 			return message.id >= readMessageId
-				&& !String(message.id).startsWith('temp-')
+				&& !isTemporaryId(message.id)
 				&& !isHiddenSystemMessage(message)
 		})?.id
 	},
@@ -202,7 +202,7 @@ const getters = {
 		return getters.messagesList(token).findLast((message) => {
 			return message.id < readMessageId
 				&& isMessageVisible(message.id)
-				&& !String(message.id).startsWith('temp-')
+				&& !isTemporaryId(message.id)
 				&& !isHiddenSystemMessage(message)
 		})?.id
 	},

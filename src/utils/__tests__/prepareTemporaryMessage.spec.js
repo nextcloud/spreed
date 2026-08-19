@@ -5,6 +5,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ATTENDEE, MESSAGE } from '../../constants.ts'
+import { convertToUnix } from '../formattedTime.ts'
 import { prepareTemporaryMessage } from '../prepareTemporaryMessage.ts'
 
 describe('prepareTemporaryMessage', () => {
@@ -40,7 +41,7 @@ describe('prepareTemporaryMessage', () => {
 		reactions: {},
 		referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 		systemMessage: '',
-		timestamp: 0,
+		timestamp: convertToUnix(new Date('2020-01-01T20:00:00')),
 		token: TOKEN,
 		silent: false,
 		threadId: undefined,

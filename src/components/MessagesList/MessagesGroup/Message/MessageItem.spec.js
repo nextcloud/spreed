@@ -32,6 +32,7 @@ import { EventBus } from '../../../../services/EventBus.ts'
 import storeConfig from '../../../../store/storeConfig.js'
 import { useActorStore } from '../../../../stores/actor.ts'
 import { useTokenStore } from '../../../../stores/token.ts'
+import { convertToUnix } from '../../../../utils/formattedTime.ts'
 
 let store
 
@@ -94,7 +95,7 @@ describe('MessageItem.vue', () => {
 				messageParameters: {},
 				id: 123,
 				isReplyable: true,
-				timestamp: new Date('2020-05-07 09:23:00').getTime() / 1000,
+				timestamp: convertToUnix(new Date('2020-05-07 09:23:00')),
 				token: TOKEN,
 				systemMessage: '',
 				messageType: MESSAGE.TYPE.COMMENT,
@@ -533,7 +534,7 @@ describe('MessageItem.vue', () => {
 		})
 
 		test('does not render actions for temporary messages', async () => {
-			messageProps.message.timestamp = 0
+			messageProps.message.id = 'temp-123'
 
 			const wrapper = mountMessage(messageProps)
 
@@ -644,7 +645,7 @@ describe('MessageItem.vue', () => {
 		})
 
 		test('displays the message already with a spinner while sending it', () => {
-			messageProps.message.timestamp = 0
+			messageProps.message.id = 'temp-123'
 			const wrapper = mountMessage(messageProps)
 			const message = wrapper.findComponent(NcRichText)
 			expect(message.text()).toBe('test message')
