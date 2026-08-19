@@ -18,6 +18,7 @@ import router from '../../__mocks__/router.js'
 import { ATTENDEE, MESSAGE } from '../../constants.ts'
 import storeConfig from '../../store/storeConfig.js'
 import { useChatStore } from '../../stores/chat.ts'
+import { convertToUnix } from '../../utils/formattedTime.ts'
 
 vi.mock('vuex', async () => {
 	const vuex = await vi.importActual('vuex')
@@ -48,7 +49,7 @@ vi.mock('../../composables/useGetMessages.ts', async () => ({
 	})),
 }))
 
-const fakeTimestamp = (value) => new Date(value).getTime() / 1000
+const fakeTimestamp = (value) => convertToUnix(new Date(value))
 
 describe('MessagesList.vue', () => {
 	const TOKEN = 'XXTOKENXX'

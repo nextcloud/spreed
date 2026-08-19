@@ -17,6 +17,7 @@ import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../constants.ts'
 import { leaveConversation } from '../../../services/participantsService.js'
 import storeConfig from '../../../store/storeConfig.js'
 import { findNcActionButton } from '../../../test-helpers.js'
+import { convertToUnix } from '../../../utils/formattedTime.ts'
 
 vi.mock('../../../services/participantsService', () => ({
 	leaveConversation: vi.fn(),
