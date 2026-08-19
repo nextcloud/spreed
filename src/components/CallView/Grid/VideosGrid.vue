@@ -110,18 +110,6 @@
 						</template>
 					</NcButton>
 				</div>
-				<LocalVideo
-					v-if="isStripe && !isRecording"
-					ref="localVideo"
-					class="video"
-					:class="{ 'local-video--highlighted': isLocalVideoAlone && isStripe }"
-					:isStripe="true"
-					:showControls="false"
-					:token="token"
-					:localMediaModel="localMediaModel"
-					:localCallParticipantModel="localCallParticipantModel"
-					@clickVideo="handleClickLocalVideo" />
-
 				<template v-if="devMode">
 					<NcButton
 						variant="tertiary"
@@ -300,9 +288,9 @@ export default {
 			return videosCap ? Math.min(videosCap, count) : count
 		})
 
-		// The full grid reserves one slot for the local video, unless it is not
-		// shown (stripe or recording mode).
-		const noLocalVideoReserve = computed(() => props.isStripe || props.isRecording)
+		// The grid reserves one slot for the local video, unless it is not shown
+		// (recording mode).
+		const noLocalVideoReserve = computed(() => props.isRecording)
 
 		const gridDimensions = useGridDimensions({
 			wrapper: gridWrapper,
@@ -316,8 +304,8 @@ export default {
 
 		// Number of grid slots (videos per page) at any given moment, clamped to
 		// `videosCap` (`0` means no cap).
-		// The local video always takes one slot, unless it is not shown (stripe
-		// or recording mode).
+		// The local video always takes one slot, unless it is not shown
+		// (recording mode).
 		// The cap is primarily enforced by shrinking the grid layout (see
 		// `computeGridDimensions`); this clamp keeps the "videos per page" math
 		// consistent even before the layout has been recomputed.
@@ -442,13 +430,6 @@ export default {
 				rows: this.rows,
 				columns: this.columns,
 			})
-		},
-
-		// Whether the local video is the only tile left in the stripe. The models
-		// given to the stripe already leave out whoever is shown in the promoted
-		// area, so no tile is ever duplicated and only an empty stripe is special.
-		isLocalVideoAlone() {
-			return this.orderedVideos.length === 0
 		},
 
 		// Computed css to reactively style the grid
@@ -636,7 +617,7 @@ export default {
 	}
 
 	&.stripe {
-		padding: var(--grid-gap) var(--grid-gap) 0 0;
+		padding-block-start: var(--grid-gap);
 	}
 }
 
@@ -746,7 +727,7 @@ export default {
 		}
 
 		&__next {
-			inset-inline-end: calc(var(--navigation-position) + var(--grid-gap));
+			inset-inline-end: var(--navigation-position);
 		}
 	}
 }
@@ -780,12 +761,6 @@ export default {
 		/* needed again to override default active button style */
 		background: none;
 	}
-}
-
-.local-video--highlighted {
-	inset-block-end: var(--grid-gap);
-	inset-inline-end: var(--grid-gap);
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 </style>
