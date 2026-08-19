@@ -298,6 +298,17 @@ export function getHalfColumnMinWidth(minTileWidth: number): number {
 	return Math.max((minTileWidth - GRID_GAP) / TILE_COLUMN_SPAN, 0)
 }
 
+/**
+ * How the tiles of a page are aligned in the grid.
+ *
+ * `center` spreads them evenly over the rows and centers each row, which is
+ * what a page holding every tile should look like. `start` fills the rows one
+ * after the other from the start of the grid, which is what the pages of a
+ * paginated grid should look like, so that a page which is not full is not
+ * centered on its own while the other pages are laid out edge to edge.
+ */
+export type TileAlignment = 'center' | 'start'
+
 type TilePlacementOptions = {
 	/** Number of tiles laid out on the page, including the local video tile */
 	totalTiles: number
@@ -305,6 +316,8 @@ type TilePlacementOptions = {
 	rows: number
 	/** Number of columns of the grid */
 	columns: number
+	/** How the tiles are aligned in the grid, `center` by default */
+	align?: TileAlignment
 }
 
 /** Placement of a single tile in the CSS grid */
@@ -318,17 +331,21 @@ export type TilePlacement = {
 /**
  * Placement of each tile of the grid, in the order the tiles are rendered.
  *
- * The tiles are spread across the rows by {@link computeRowDistribution} and
- * each row is then centered horizontally: the columns left empty by that row are
- * split evenly on both sides. A row leaving an odd number of columns empty has
- * to be shifted by half a column, which is why the grid is laid out in half
- * columns: the shift is then just another grid line, and every placement stays a
- * whole number handled by the grid itself.
+ * When centered, the tiles are spread across the rows by
+ * {@link computeRowDistribution} and each row is then centered horizontally: the
+ * columns left empty by that row are split evenly on both sides. A row leaving
+ * an odd number of columns empty has to be shifted by half a column, which is
+ * why the grid is laid out in half columns: the shift is then just another grid
+ * line, and every placement stays a whole number handled by the grid itself.
+ *
+ * When aligned to the start, the rows are filled one after the other from the
+ * first half column, which the grid flips on its own in RTL layouts.
  *
  * @param options - the layout inputs
  * @param options.totalTiles - number of tiles on the page, including the local video tile
  * @param options.rows - number of rows of the grid
  * @param options.columns - number of columns of the grid
+ * @param options.align - how the tiles are aligned in the grid
  * @return the placement of each tile, indexed by its rendering order. Empty if
  *   the grid has not been measured yet or cannot hold every tile.
  */
@@ -336,6 +353,7 @@ export function computeTilePlacements({
 	totalTiles,
 	rows,
 	columns,
+	align = 'center',
 }: TilePlacementOptions): TilePlacement[] {
 	// Nothing to place yet, or a grid too small to hold every tile: fall back to
 	// the default placement of the browser
@@ -344,6 +362,17 @@ export function computeTilePlacements({
 	}
 
 	const placements: TilePlacement[] = []
+
+	if (align === 'start') {
+		for (let tile = 0; tile < totalTiles; tile++) {
+			placements.push({
+				row: Math.floor(tile / columns) + 1,
+				column: (tile % columns) * TILE_COLUMN_SPAN + 1,
+			})
+		}
+
+		return placements
+	}
 
 	for (const [index, rowSize] of computeRowDistribution({ totalTiles, rows }).entries()) {
 		// The half columns left empty by the row, split evenly on both of its sides
