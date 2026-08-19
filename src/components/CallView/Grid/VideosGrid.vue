@@ -174,6 +174,7 @@ import {
 	getHalfColumnCount,
 	getHalfColumnMinWidth,
 	GRID_GAP,
+	STRIPE_HEIGHT,
 	TILE_COLUMN_SPAN,
 } from './gridLayout.ts'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
@@ -458,7 +459,7 @@ export default {
 
 		wrapperStyle() {
 			if (this.isStripe) {
-				return 'height: 250px'
+				return `height: ${STRIPE_HEIGHT}px`
 			} else {
 				return 'height: 100%'
 			}
