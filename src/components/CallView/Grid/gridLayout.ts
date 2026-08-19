@@ -15,8 +15,7 @@ export const MIN_TILE_WIDTH_COMPACT = 200
 // its grid is taken out, see STRIPE_HEIGHT
 export const MIN_TILE_HEIGHT_COMPACT = 134
 
-// Height of the stripe, in px. Align with the height of the stripe wrapper in
-// VideosGrid
+// Height of the stripe, in px. Align with var(--stripe-height) in VideosGrid
 export const STRIPE_HEIGHT = 150
 
 // Aspect ratio (width / height) the layout tries to reach for each tile.

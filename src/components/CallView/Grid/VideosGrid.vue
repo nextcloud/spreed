@@ -22,8 +22,8 @@
 				@next="next"
 				@toggle="handleClickStripeCollapse" />
 		</div>
-		<TransitionWrapper :name="isStripe ? 'slide-down' : undefined">
-			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
+		<Transition name="stripe-collapse">
+			<div v-if="!isStripe || stripeOpen" class="videos-wrapper" :class="{ 'videos-wrapper--stripe': isStripe }">
 				<div :class="[isStripe ? 'stripe-wrapper' : 'grid-wrapper']">
 					<NcButton
 						v-if="!isStripe && hasPreviousPage && gridWidth > 0"
@@ -147,7 +147,7 @@
 					</div>
 				</template>
 			</div>
-		</TransitionWrapper>
+		</Transition>
 	</div>
 </template>
 
@@ -158,7 +158,6 @@ import { computed, inject, ref, toRef, useTemplateRef, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
-import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import EmptyCallView from '../shared/EmptyCallView.vue'
 import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
@@ -172,7 +171,6 @@ import {
 	getHalfColumnMaxWidth,
 	getHalfColumnMinWidth,
 	GRID_GAP,
-	STRIPE_HEIGHT,
 	TARGET_ASPECT_RATIO,
 	TILE_COLUMN_SPAN,
 } from './gridLayout.ts'
@@ -193,7 +191,6 @@ export default {
 		EmptyCallView,
 		NcButton,
 		StripeControls,
-		TransitionWrapper,
 		VideoBottomBar,
 		IconChevronLeft,
 		IconChevronRight,
@@ -489,14 +486,6 @@ export default {
 			}
 		},
 
-		wrapperStyle() {
-			if (this.isStripe) {
-				return `height: ${STRIPE_HEIGHT}px`
-			} else {
-				return 'height: 100%'
-			}
-		},
-
 		devStripe: {
 			get() {
 				return this.isStripe
@@ -618,6 +607,8 @@ export default {
 <style lang="scss" scoped>
 .grid-main-wrapper {
 	--navigation-position: calc(var(--default-grid-baseline) * 2);
+	// Align with STRIPE_HEIGHT in gridLayout.ts
+	--stripe-height: 150px;
 	// Width the highlight of the stripe takes to fade out on either end
 	--stripe-highlight-fade: calc(var(--default-clickable-area) * 2);
 	position: relative;
@@ -628,12 +619,44 @@ export default {
 	height: 100%;
 }
 
-.wrapper {
+// Not named `wrapper`: the root of VideoBottomBar is, and the root of a child
+// component is given the scope of its parent, so the rules below would be its
+// own as well
+.videos-wrapper {
 	width: 100%;
+	height: 100%;
 	display: flex;
 	position: relative;
 	bottom: 0;
 	inset-inline-start: 0;
+
+	&--stripe {
+		height: var(--stripe-height);
+	}
+}
+
+// The stripe takes its room from the promoted area, so it is collapsed and
+// expanded by its height rather than by a transform: the promoted area is laid
+// out again on every frame of the transition and follows the stripe instead of
+// jumping once it is over.
+.stripe-collapse-enter-active,
+.stripe-collapse-leave-active {
+	overflow: hidden;
+	transition: height var(--animation-slow) ease-in-out;
+}
+
+// The height of the stripe is given by a class, which the transition has to win
+// over whichever order the two end up in
+.videos-wrapper.stripe-collapse-enter-from,
+.videos-wrapper.stripe-collapse-leave-to {
+	height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.stripe-collapse-enter-active,
+	.stripe-collapse-leave-active {
+		transition: none;
+	}
 }
 
 .grid {
@@ -664,6 +687,10 @@ export default {
 	width: 100%;
 	min-width: 0;
 	position: relative;
+	// The stripe keeps its height while it is collapsed or expanded, so that its
+	// tiles slide out of the way instead of being squashed on the way
+	flex: 0 0 auto;
+	height: var(--stripe-height);
 	// Kept out of the grid itself, whose measured height is the height of its
 	// tiles
 	padding-block: var(--grid-gap);
@@ -710,6 +737,7 @@ export default {
 		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 	}
 
+	// The bottom bar of the tile
 	.wrapper {
 		position: absolute;
 	}
