@@ -1468,6 +1468,7 @@ OC.L10N.register(
     "Until unpin" : "Hasta desfijar",
     "Clear reminder – {timeLocale}" : "Quitar recordatorio – {timeLocale}",
     "Edited by {actor}" : "Editado por {actor}",
+    "Until {absoluteDate}" : "Hasta {absoluteDate}",
     "Message text copied to clipboard" : "Texto del mensaje copiado al portapapeles",
     "Message text could not be copied" : "El texto del mensaje no pudo ser copiado",
     "Message forwarded to \"Note to self\"" : "El mensaje se reenvió a \"Nota personal\"",
