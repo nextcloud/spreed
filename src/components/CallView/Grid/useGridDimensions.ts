@@ -7,7 +7,7 @@ import type { Ref } from 'vue'
 
 import debounce from 'debounce'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { computeGridDimensions, getMinTileHeight, getMinTileWidth, getTargetAspectRatio } from './gridLayout.ts'
+import { computeGridDimensions, getMinTileHeight, getMinTileWidth, TARGET_ASPECT_RATIO } from './gridLayout.ts'
 
 type UseGridDimensionsOptions = {
 	/** Element to observe for size changes (its child grid is measured) */
@@ -79,7 +79,6 @@ export function useGridDimensions({
 	const minHeight = computed(() => getMinTileHeight(compact.value))
 	const dpiAwareMinWidth = computed(() => minWidth.value / dpiFactor.value)
 	const dpiAwareMinHeight = computed(() => minHeight.value / dpiFactor.value)
-	const targetAspectRatio = computed(() => getTargetAspectRatio(isStripe.value))
 	const gridAspectRatio = computed(() => (gridWidth.value / gridHeight.value).toPrecision(2))
 
 	/**
@@ -98,7 +97,7 @@ export function useGridDimensions({
 			gridWidth: gridWidth.value,
 			gridHeight: gridHeight.value,
 			videoCount: videoCount.value,
-			targetAspectRatio: targetAspectRatio.value,
+			targetAspectRatio: TARGET_ASPECT_RATIO,
 			minWidth: dpiAwareMinWidth.value,
 			minHeight: dpiAwareMinHeight.value,
 			noLocalVideoReserve: noLocalVideoReserve.value,
@@ -147,7 +146,6 @@ export function useGridDimensions({
 		minHeight,
 		dpiAwareMinWidth,
 		dpiAwareMinHeight,
-		targetAspectRatio,
 		gridAspectRatio,
 		/** Force a re-measure and recompute (e.g. for debugging) */
 		recompute,
