@@ -10,6 +10,7 @@ import { useStore } from 'vuex'
 import { ATTENDEE, CONVERSATION, MESSAGE } from '../../constants.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useGuestNameStore } from '../../stores/guestName.ts'
+import { convertToUnix } from '../../utils/formattedTime.ts'
 import { useConversationInfo } from '../useConversationInfo.ts'
 import { useMessageInfo } from '../useMessageInfo.ts'
 
@@ -49,7 +50,7 @@ describe('message actions', () => {
 			messageParameters: {},
 			id: 123,
 			isReplyable: true,
-			timestamp: new Date('2024-05-01 16:15:00').getTime() / 1000,
+			timestamp: convertToUnix(new Date('2024-05-01 16:15:00')),
 			token: TOKEN,
 			systemMessage: '',
 			messageType: MESSAGE.TYPE.COMMENT,
@@ -78,7 +79,7 @@ describe('message actions', () => {
 
 	test('message is not deleteable when it is older than 6 hours and unlimited capability is disabled', () => {
 		// Arrange
-		message.value.timestamp = new Date('2024-05-01 7:20:00').getTime() / 1000
+		message.value.timestamp = convertToUnix(new Date('2024-05-01 7:20:00'))
 		// Act
 		const result = useMessageInfo(message)
 		// Assert
@@ -173,7 +174,7 @@ describe('message actions', () => {
 
 	test('can edit own message in note to self', () => {
 		// Arrange
-		message.value.timestamp = new Date('2024-04-28 7:20:00').getTime() / 1000
+		message.value.timestamp = convertToUnix(new Date('2024-04-28 7:20:00'))
 		conversationProps.type = CONVERSATION.TYPE.NOTE_TO_SELF
 		// Act
 		const result = useMessageInfo(message)
@@ -368,11 +369,11 @@ describe('message actions', () => {
 				messageParameters: {},
 				id: 123,
 				isReplyable: true,
-				lastEditTimestamp: new Date('2024-05-01 16:30:00').getTime() / 1000,
+				lastEditTimestamp: convertToUnix(new Date('2024-05-01 16:30:00')),
 				lastEditActorId: 'user-id-1',
 				lastEditActorType: ATTENDEE.ACTOR_TYPE.USERS,
 				lastEditActorDisplayName: 'user-display-name-1',
-				timestamp: new Date('2024-05-01 16:15:00').getTime() / 1000,
+				timestamp: convertToUnix(new Date('2024-05-01 16:15:00')),
 				token: TOKEN,
 				systemMessage: '',
 				messageType: MESSAGE.TYPE.COMMENT,

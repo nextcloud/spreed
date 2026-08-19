@@ -36,6 +36,7 @@ import { EventBus } from '../../services/EventBus.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useDashboardStore } from '../../stores/dashboard.ts'
 import { hasUnreadMentions } from '../../utils/conversation.ts'
+import { convertToUnix } from '../../utils/formattedTime.ts'
 import { copyConversationLinkToClipboard } from '../../utils/handleUrl.ts'
 
 const supportsUpcomingReminders = hasTalkFeature('local', 'upcoming-reminders')
@@ -154,7 +155,7 @@ async function startMeeting() {
 			roomName: conversationName.value || t('spreed', 'Meeting'),
 			roomType: CONVERSATION.TYPE.PUBLIC,
 			objectType: CONVERSATION.OBJECT_TYPE.INSTANT_MEETING,
-			objectId: Math.floor(Date.now() / 1000).toString(),
+			objectId: convertToUnix(new Date()).toString(),
 		})
 		await copyConversationLinkToClipboard(conversation.token)
 		await router.push({

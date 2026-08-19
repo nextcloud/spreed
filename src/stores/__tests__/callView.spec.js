@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { CONVERSATION } from '../../constants.ts'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import vuexStore from '../../store/index.js'
+import { convertToUnix } from '../../utils/formattedTime.ts'
 import { useCallViewStore } from '../callView.ts'
 
 vi.mock('../../services/BrowserStorage.js', () => ({
@@ -299,19 +300,19 @@ describe('callViewStore', () => {
 		})
 
 		it('sets timeout if timestamp is lesser than 10 seconds', () => {
-			callViewStore.setCallHasJustEnded(Date.now() / 1000 - 3)
+			callViewStore.setCallHasJustEnded(convertToUnix(Date.now()) - 3)
 			expect(callViewStore.callHasJustEnded).toBeTruthy()
 		})
 
 		it('does not set timeout if timestamp is bigger than 10 seconds', () => {
-			callViewStore.setCallHasJustEnded(Date.now() / 1000 - 15)
+			callViewStore.setCallHasJustEnded(convertToUnix(Date.now()) - 15)
 			expect(callViewStore.callHasJustEnded).toBeFalsy()
 		})
 
 		it('resets callHasJustEnded after passed time', () => {
 			// Arrange
 			vi.useFakeTimers()
-			callViewStore.setCallHasJustEnded(Date.now() / 1000 - 2)
+			callViewStore.setCallHasJustEnded(convertToUnix(Date.now()) - 2)
 			expect(callViewStore.callHasJustEnded).toBeTruthy()
 			// Skip 4 seconds
 			vi.advanceTimersByTime(4000)

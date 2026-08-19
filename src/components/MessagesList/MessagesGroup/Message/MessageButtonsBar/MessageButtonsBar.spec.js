@@ -18,6 +18,7 @@ import { useActorStore } from '../../../../../stores/actor.ts'
 import { useIntegrationsStore } from '../../../../../stores/integrations.js'
 import { useTokenStore } from '../../../../../stores/token.ts'
 import { findNcActionButton, findNcButton } from '../../../../../test-helpers.js'
+import { convertToUnix } from '../../../../../utils/formattedTime.ts'
 
 describe('MessageButtonsBar.vue', () => {
 	const TOKEN = 'XXTOKENXX'
@@ -65,7 +66,7 @@ describe('MessageButtonsBar.vue', () => {
 				messageParameters: {},
 				id: 123,
 				isReplyable: true,
-				timestamp: new Date('2020-05-07 09:23:00').getTime() / 1000,
+				timestamp: convertToUnix(new Date('2020-05-07 09:23:00')),
 				token: TOKEN,
 				systemMessage: '',
 				messageType: MESSAGE.TYPE.COMMENT,

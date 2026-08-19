@@ -40,6 +40,7 @@ import { setConversationUnread, updateLastReadMessage } from '../services/messag
 import { useActorStore } from '../stores/actor.ts'
 import { useTalkHashStore } from '../stores/talkHash.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
+import { convertToUnix } from '../utils/formattedTime.ts'
 import storeConfig from './storeConfig.js'
 
 vi.mock('../services/conversationsService', () => ({
@@ -1022,7 +1023,7 @@ describe('conversationsStore', () => {
 			vi.useRealTimers()
 
 			const changedConversation = store.getters.conversation(testToken)
-			expect(changedConversation.lastActivity).toBe(mockDate.getTime() / 1000)
+			expect(changedConversation.lastActivity).toBe(convertToUnix(mockDate))
 		})
 	})
 

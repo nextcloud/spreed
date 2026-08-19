@@ -17,6 +17,7 @@ import { ATTENDEE, CONVERSATION, MESSAGE, PARTICIPANT } from '../../../constants
 import { leaveConversation } from '../../../services/participantsService.js'
 import storeConfig from '../../../store/storeConfig.js'
 import { findNcActionButton } from '../../../test-helpers.js'
+import { convertToUnix } from '../../../utils/formattedTime.ts'
 
 vi.mock('../../../services/participantsService', () => ({
 	leaveConversation: vi.fn(),
@@ -237,8 +238,8 @@ describe('ConversationItem.vue', () => {
 		it.each(TEST_CASES)(
 			'should render correct timestamp for %s',
 			(message, activity, output) => {
-				item.lastMessage.timestamp = message && new Date(message).valueOf() / 1000
-				item.lastActivity = activity && new Date(activity).valueOf() / 1000
+				item.lastMessage.timestamp = message && convertToUnix(new Date(message))
+				item.lastActivity = activity && convertToUnix(new Date(activity))
 
 				const wrapper = mountConversation(false)
 
