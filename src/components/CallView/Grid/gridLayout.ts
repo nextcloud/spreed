@@ -136,11 +136,15 @@ export function computeGridDimensions({
 	// The last grid page is very likely not to have the same number of elements
 	// as the previous pages so the grid needs to be tweaked accordingly
 
-	// Nothing to lay out. Note that a zero-size grid (not measured yet, hidden
-	// or mid-transition) still falls back to a 1x1 layout below while tiles are
+	// Nothing to lay out, except for the local video: it takes a tile of its own
+	// unless no slot is reserved for it, so the grid still has to hold that one
+	// tile. Without a column of its own the tile would be laid out in an
+	// implicit, content sized column and collapse to nothing as soon as the
+	// camera is off. Note that a zero-size grid (not measured yet, hidden or
+	// mid-transition) still falls back to a 1x1 layout below while tiles are
 	// present, so the downstream slot math never goes negative.
 	if (videoCount <= 0) {
-		return { columns: 0, rows: 0 }
+		return noLocalVideoReserve ? { columns: 0, rows: 0 } : { columns: 1, rows: 1 }
 	}
 
 	// Start from the largest grid that fits the available space, then shrink it
@@ -158,30 +162,29 @@ export function computeGridDimensions({
 	// Only shrink when we have an 'overflow' of slots. If the tiles already
 	// populate the grid, there is no point in shrinking it.
 	while (videoCount < currentSlots) {
-		const previousColumns = columns
-		const previousRows = rows
-
 		// Current tile dimensions
 		const videoWidth = (gridWidth - GRID_GAP * (columns - 1)) / columns
 		const videoHeight = (gridHeight - GRID_GAP * (rows - 1)) / rows
 
-		// Hypothetical width/height with one column/row less than current
-		const videoWidthWithOneColumnLess = (gridWidth - GRID_GAP * (columns - 2)) / (columns - 1)
-		const videoHeightWithOneRowLess = (gridHeight - GRID_GAP * (rows - 2)) / (rows - 1)
+		// Deltas with the target aspect ratio of the hypothetical tiles with one
+		// column/row less than current. An axis which is down to a single track
+		// cannot be shrunk any further, so it is never the one to remove.
+		const deltaAspectRatioWithOneColumnLess = columns >= 2
+			? Math.abs((gridWidth - GRID_GAP * (columns - 2)) / (columns - 1) / videoHeight - targetAspectRatio)
+			: Number.POSITIVE_INFINITY
+		const deltaAspectRatioWithOneRowLess = rows >= 2
+			? Math.abs(videoWidth / ((gridHeight - GRID_GAP * (rows - 2)) / (rows - 1)) - targetAspectRatio)
+			: Number.POSITIVE_INFINITY
 
-		// Hypothetical aspect ratio with one column/row less than current
-		const aspectRatioWithOneColumnLess = videoWidthWithOneColumnLess / videoHeight
-		const aspectRatioWithOneRowLess = videoWidth / videoHeightWithOneRowLess
-
-		// Deltas with target aspect ratio
-		const deltaAspectRatioWithOneColumnLess = Math.abs(aspectRatioWithOneColumnLess - targetAspectRatio)
-		const deltaAspectRatioWithOneRowLess = Math.abs(aspectRatioWithOneRowLess - targetAspectRatio)
+		if (deltaAspectRatioWithOneColumnLess === Number.POSITIVE_INFINITY
+			&& deltaAspectRatioWithOneRowLess === Number.POSITIVE_INFINITY) {
+			// A single tile is left, there is nothing to shrink any more
+			break
+		}
 
 		// Compare the deltas to find out whether we need to remove a column or a row
 		if (deltaAspectRatioWithOneColumnLess <= deltaAspectRatioWithOneRowLess) {
-			if (columns >= 2) {
-				columns--
-			}
+			columns--
 
 			currentSlots = slotsFor(columns, rows, noLocalVideoReserve)
 
@@ -192,9 +195,7 @@ export function computeGridDimensions({
 				break
 			}
 		} else {
-			if (rows >= 2) {
-				rows--
-			}
+			rows--
 
 			currentSlots = slotsFor(columns, rows, noLocalVideoReserve)
 
@@ -204,10 +205,6 @@ export function computeGridDimensions({
 				rows++
 				break
 			}
-		}
-
-		if (previousColumns === columns && previousRows === rows) {
-			break
 		}
 	}
 

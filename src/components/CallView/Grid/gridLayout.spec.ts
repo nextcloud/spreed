@@ -60,8 +60,16 @@ describe('gridLayout', () => {
 			noLocalVideoReserve: false,
 		}
 
-		test('returns no columns or rows when there are no tiles', () => {
+		test('keeps a tile for the local video when there is nothing else to lay out', () => {
+			// The local video takes a tile of its own, which needs a column of
+			// the grid: an implicit, content sized column would collapse to
+			// nothing as soon as the camera is off
 			expect(computeGridDimensions({ ...fullGrid, videoCount: 0 }))
+				.toEqual({ columns: 1, rows: 1 })
+		})
+
+		test('returns no columns or rows when there is no tile at all', () => {
+			expect(computeGridDimensions({ ...fullGrid, noLocalVideoReserve: true, videoCount: 0 }))
 				.toEqual({ columns: 0, rows: 0 })
 		})
 
@@ -105,6 +113,21 @@ describe('gridLayout', () => {
 				noLocalVideoReserve: true,
 			})
 			expect(result).toEqual({ columns: 5, rows: 1 })
+		})
+
+		test('shrinks a single row grid down to the tiles it holds', () => {
+			// A single row cannot be shrunk any further, so the columns are the
+			// only thing left to remove: a lone participant and the local video
+			// take 2 columns of a stripe which could hold 7 of them
+			expect(computeGridDimensions({
+				gridWidth: 1440,
+				gridHeight: 142,
+				videoCount: 1,
+				targetAspectRatio: TARGET_ASPECT_RATIO,
+				minWidth: 200,
+				minHeight: 134,
+				noLocalVideoReserve: false,
+			})).toEqual({ columns: 2, rows: 1 })
 		})
 
 		test('applies hysteresis on the current column count to avoid flickering', () => {
