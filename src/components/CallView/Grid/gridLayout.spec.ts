@@ -305,5 +305,49 @@ describe('gridLayout', () => {
 				}
 			}
 		})
+
+		test('fills the rows from the first half column when aligned to the start', () => {
+			// 6 tiles over 2 rows of a 4 columns grid: 4 and 2 tiles
+			expect(computeTilePlacements({ ...grid, rows: 2, totalTiles: 6, align: 'start' })).toEqual([
+				{ row: 1, column: 1 },
+				{ row: 1, column: 3 },
+				{ row: 1, column: 5 },
+				{ row: 1, column: 7 },
+				{ row: 2, column: 1 },
+				{ row: 2, column: 3 },
+			])
+		})
+
+		test('lays out a complete grid the same way whether centered or aligned to the start', () => {
+			expect(computeTilePlacements({ ...grid, rows: 2, totalTiles: 8, align: 'start' }))
+				.toEqual(computeTilePlacements({ ...grid, rows: 2, totalTiles: 8 }))
+		})
+
+		test('falls back to the default placement when aligned to the start with nothing to lay out', () => {
+			expect(computeTilePlacements({ ...grid, rows: 2, totalTiles: 0, align: 'start' })).toEqual([])
+			expect(computeTilePlacements({ ...grid, rows: 2, totalTiles: 9, align: 'start' })).toEqual([])
+		})
+
+		test('keeps every row inside the grid when aligned to the start', () => {
+			for (let columns = 1; columns <= 5; columns++) {
+				const halfColumns = getHalfColumnCount(columns)
+
+				for (let rows = 1; rows <= 5; rows++) {
+					for (let totalTiles = 1; totalTiles <= columns * rows; totalTiles++) {
+						const placements = computeTilePlacements({ columns, rows, totalTiles, align: 'start' })
+						expect(placements.length).toBe(totalTiles)
+
+						for (const [index, placement] of placements.entries()) {
+							// The tiles are laid out one after the other, row by row
+							expect(placement.row).toBe(Math.floor(index / columns) + 1)
+							expect(placement.column).toBe((index % columns) * TILE_COLUMN_SPAN + 1)
+
+							// The tile stays within the half columns of the grid
+							expect(placement.column + TILE_COLUMN_SPAN).toBeLessThanOrEqual(halfColumns + 1)
+						}
+					}
+				}
+			}
+		})
 	})
 })
