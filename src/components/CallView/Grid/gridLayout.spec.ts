@@ -107,6 +107,21 @@ describe('gridLayout', () => {
 			expect(result).toEqual({ columns: 5, rows: 1 })
 		})
 
+		test('shrinks a single row grid down to the tiles it holds', () => {
+			// A single row cannot be shrunk any further, so the columns are the
+			// only thing left to remove: a lone participant and the local video
+			// take 2 columns of a stripe which could hold 7 of them
+			expect(computeGridDimensions({
+				gridWidth: 1440,
+				gridHeight: 142,
+				videoCount: 1,
+				targetAspectRatio: TARGET_ASPECT_RATIO,
+				minWidth: 200,
+				minHeight: 134,
+				noLocalVideoReserve: false,
+			})).toEqual({ columns: 2, rows: 1 })
+		})
+
 		test('applies hysteresis on the current column count to avoid flickering', () => {
 			// 976px fits exactly 3 columns of 320px with two 8px gaps. Whether a
 			// fourth column is offered depends on the current column count.
