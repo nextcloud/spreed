@@ -4,30 +4,32 @@
 -->
 
 <template>
-	<div ref="gridWrapper" class="grid-main-wrapper" :class="{ 'is-grid': !isStripe, overlap: isOverlap }">
-		<NcButton
+	<!-- The call view is dark whichever theme is set, so the stripe over it and
+		the controls it holds are painted with the palette of the call -->
+	<div
+		ref="gridWrapper"
+		class="grid-main-wrapper"
+		:class="{ 'is-grid': !isStripe, overlap: isOverlap }"
+		:data-theme-dark="isStripe || undefined">
+		<div
 			v-if="isStripe && !isRecording"
-			class="stripe--collapse"
-			variant="tertiary-no-background"
-			:title="stripeButtonTitle"
-			:aria-label="stripeButtonTitle"
-			@click="handleClickStripeCollapse">
-			<template #icon>
-				<IconChevronDown
-					v-if="stripeOpen"
-					fillColor="#ffffff"
-					:size="20" />
-				<IconChevronUp
-					v-else
-					fillColor="#ffffff"
-					:size="20" />
-			</template>
-		</NcButton>
+			class="stripe-controls-position"
+			:class="{ 'stripe-controls-position--collapsed': !stripeOpen }">
+			<StripeControls
+				:currentPage="currentPage"
+				:numberOfPages="numberOfPages"
+				:hasPreviousPage="hasPreviousPage"
+				:hasNextPage="hasNextPage"
+				:isOpen="stripeOpen"
+				@previous="previous"
+				@next="next"
+				@toggle="handleClickStripeCollapse" />
+		</div>
 		<TransitionWrapper :name="isStripe ? 'slide-down' : undefined">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
 				<div :class="[isStripe ? 'stripe-wrapper' : 'grid-wrapper']">
 					<NcButton
-						v-if="hasPreviousPage && gridWidth > 0"
+						v-if="!isStripe && hasPreviousPage && gridWidth > 0"
 						variant="tertiary-no-background"
 						class="grid-navigation grid-navigation__previous"
 						:aria-label="t('spreed', 'Previous page of videos')"
@@ -96,7 +98,7 @@
 							@clickVideo="handleClickLocalVideo" />
 					</div>
 					<NcButton
-						v-if="hasNextPage && gridWidth > 0"
+						v-if="!isStripe && hasNextPage && gridWidth > 0"
 						variant="tertiary-no-background"
 						class="grid-navigation grid-navigation__next"
 						:aria-label="t('spreed', 'Next page of videos')"
@@ -157,15 +159,14 @@ import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 import { computed, inject, ref, toRef, useTemplateRef, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import IconChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
-import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import EmptyCallView from '../shared/EmptyCallView.vue'
 import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
+import StripeControls from './StripeControls.vue'
 import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import {
@@ -194,12 +195,11 @@ export default {
 		LocalVideo,
 		EmptyCallView,
 		NcButton,
+		StripeControls,
 		TransitionWrapper,
 		VideoBottomBar,
-		IconChevronDown,
 		IconChevronLeft,
 		IconChevronRight,
-		IconChevronUp,
 	},
 
 	props: {
@@ -387,14 +387,6 @@ export default {
 	},
 
 	computed: {
-		stripeButtonTitle() {
-			if (this.stripeOpen) {
-				return t('spreed', 'Collapse participant bar')
-			} else {
-				return t('spreed', 'Expand participant bar')
-			}
-		},
-
 		// Number of video components (it does not include the local video)
 		videosCount() {
 			if (!this.isStripe && this.orderedVideos.length === 0) {
@@ -656,7 +648,7 @@ export default {
 	position: relative;
 	// Kept out of the grid itself, whose measured height is the height of its
 	// tiles
-	padding-block-start: var(--grid-gap);
+	padding-block: var(--grid-gap);
 }
 
 .dev-mode-video {
@@ -729,7 +721,23 @@ export default {
 	}
 }
 
+.stripe-controls-position {
+	position: absolute;
+	top: var(--grid-gap);
+	inset-inline-end: var(--grid-gap);
+	z-index: 2;
+
+	// A collapsed stripe holds no tile to sit over, and no room of its own to
+	// sit in, so the controls take the room above it
+	&--collapsed {
+		top: calc(-1 * (var(--clickable-area-small) + var(--default-grid-baseline) + var(--grid-gap)));
+	}
+}
+
 .grid-navigation {
+	z-index: 2;
+	opacity: .7;
+
 	.grid-wrapper & {
 		position: absolute;
 		top: calc(50% - var(--default-clickable-area) / 2);
@@ -742,31 +750,6 @@ export default {
 			inset-inline-end: calc(var(--default-grid-baseline) * 2);
 		}
 	}
-
-	.stripe-wrapper & {
-		position: absolute;
-		top: calc(var(--navigation-position) + var(--grid-gap));
-
-		&__previous {
-			inset-inline-start: var(--navigation-position);
-		}
-
-		&__next {
-			inset-inline-end: var(--navigation-position);
-		}
-	}
-}
-
-.stripe--collapse {
-	position: absolute !important;
-	top: calc(-1 * (var(--default-clickable-area) + var(--grid-gap)));
-	inset-inline-end: var(--navigation-position);
-}
-
-.stripe--collapse,
-.grid-navigation {
-	z-index: 2;
-	opacity: .7;
 
 	#call-container:hover & {
 		background-color: rgba(0, 0, 0, 0.1) !important;
