@@ -13,7 +13,7 @@ import type {
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 import { useStore } from 'vuex'
-import { isHiddenSystemMessage } from '../utils/message.ts'
+import { isHiddenSystemMessage, isTemporaryId } from '../utils/message.ts'
 import { useChatExtrasStore } from './chatExtras.ts'
 
 type GetMessagesListOptions = {
@@ -57,7 +57,7 @@ function checkIfBelongsToContext(message: ChatMessage, threadId?: number): boole
 		// In thread context, only thread messages with given threadId are allowed
 		? threadId === message.threadId
 		// In main context, only non-thread messages, topmost thread messages and temporary messages are allowed
-		: (!message.isThread || message.id === message.threadId || message.id.toString().startsWith('temp-'))
+		: (!message.isThread || message.id === message.threadId || isTemporaryId(message.id))
 }
 
 /**
@@ -123,7 +123,21 @@ export const useChatStore = defineStore('chat', () => {
 	 * @param threadId
 	 */
 	function prepareMessagesList(token: string, block: Set<number>, threadId?: number): ChatMessage[] {
-		return Array.from(block).sort((a, b) => a - b)
+		return Array.from(block)
+			.sort((a, b) => {
+				const aIsTemporary = isTemporaryId(a)
+				const bIsTemporary = isTemporaryId(b)
+				if (aIsTemporary !== bIsTemporary) {
+					// Temporary messages always sorted to the end
+					return aIsTemporary ? 1 : -1
+				} else if (aIsTemporary) {
+					// Temporary messages are not sorted between themselves
+					return 0
+				} else {
+					// Numeric id messages have incremental order
+					return a - b
+				}
+			})
 			.reduce<ChatMessage[]>((acc, id) => {
 				const message = store.state.messagesStore.messages[token][id]
 				// Check for exceptions (message should not be added to the displayed list):

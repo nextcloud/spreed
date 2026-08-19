@@ -36,6 +36,7 @@ import { useGuestNameStore } from '../stores/guestName.ts'
 import { useSessionStore } from '../stores/session.ts'
 import { useTokenStore } from '../stores/token.ts'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
+import { convertToUnix } from '../utils/formattedTime.ts'
 import participantsStore from './participantsStore.js'
 import storeConfig from './storeConfig.js'
 
@@ -1002,7 +1003,7 @@ describe('participantsStore', () => {
 			 */
 			function prepareTestJoinWithMaxPingAge(lastPingAge, inCall) {
 				const mockDate = new Date('2020-01-01 20:00:00')
-				participantData.lastPing = mockDate.getTime() / 1000 - lastPingAge
+				participantData.lastPing = convertToUnix(mockDate) - lastPingAge
 				participantData.inCall = inCall
 
 				vi.useFakeTimers().setSystemTime(mockDate)
