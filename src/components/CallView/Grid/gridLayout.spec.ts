@@ -14,6 +14,7 @@ import {
 	getMinTileWidth,
 	getTargetAspectRatio,
 	GRID_GAP,
+	STRIPE_HEIGHT,
 	TILE_COLUMN_SPAN,
 } from './gridLayout.ts'
 
@@ -38,7 +39,12 @@ describe('gridLayout', () => {
 
 		test('uses the compact tile sizes for stripe/sidebar', () => {
 			expect(getMinTileWidth(true)).toBe(200)
-			expect(getMinTileHeight(true)).toBe(150)
+			expect(getMinTileHeight(true)).toBe(134)
+		})
+
+		test('fits a compact tile in the stripe', () => {
+			// The grid of the stripe is padded by a gap at its top
+			expect(getMinTileHeight(true)).toBeLessThanOrEqual(STRIPE_HEIGHT - GRID_GAP)
 		})
 
 		test('targets a wider aspect ratio for the full grid than the stripe', () => {

@@ -11,7 +11,13 @@ export const GRID_GAP = 8
 export const MIN_TILE_WIDTH = 320
 export const MIN_TILE_HEIGHT = 240
 export const MIN_TILE_WIDTH_COMPACT = 200
-export const MIN_TILE_HEIGHT_COMPACT = 150
+// A compact tile has to fit in what is left of the stripe once the padding of
+// its grid is taken out, see STRIPE_HEIGHT
+export const MIN_TILE_HEIGHT_COMPACT = 134
+
+// Height of the stripe, in px. Align with the height of the stripe wrapper in
+// VideosGrid
+export const STRIPE_HEIGHT = 150
 
 // Aspect ratio (width / height) the layout tries to reach for each tile.
 export const TARGET_ASPECT_RATIO = 1.5
