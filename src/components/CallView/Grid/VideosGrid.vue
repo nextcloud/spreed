@@ -429,11 +429,28 @@ export default {
 			return this.displayedVideos.length + (this.noLocalVideoReserve ? 0 : 1)
 		},
 
+		// Whether every slot of the current page holds a tile
+		isPageFull() {
+			return this.totalTiles >= this.rows * this.columns
+		},
+
+		// How the tiles of the current page are aligned. The tiles are centered,
+		// which is what a grid holding every tile of the call should look like,
+		// but a page which is not full is aligned to the start instead, so that
+		// the tiles it holds keep the place they would have had on a full page
+		// rather than being centered on their own.
+		//
+		// A grid which is not paginated is always centered, as its only page
+		// holds every tile there is, however many slots are left empty.
+		tileAlignment() {
+			return this.numberOfPages > 1 && !this.isPageFull ? 'start' : 'center'
+		},
+
 		// Placement of every tile of the grid, in the order they are rendered.
-		// The stripe is a single scrollable row, and the empty call view has a
-		// layout of its own, so their tiles keep the default placement.
+		// The empty call view has a layout of its own, so its tiles keep the
+		// default placement.
 		tilePlacements() {
-			if (this.isStripe || this.orderedVideos.length === 0) {
+			if (this.orderedVideos.length === 0) {
 				return []
 			}
 
@@ -441,6 +458,7 @@ export default {
 				totalTiles: this.totalTiles,
 				rows: this.rows,
 				columns: this.columns,
+				align: this.tileAlignment,
 			})
 		},
 
