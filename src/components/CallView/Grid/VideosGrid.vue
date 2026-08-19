@@ -4,30 +4,29 @@
 -->
 
 <template>
-	<div ref="gridWrapper" class="grid-main-wrapper" :class="{ 'is-grid': !isStripe, overlap: isOverlap }">
-		<NcButton
-			v-if="isStripe && !isRecording"
-			class="stripe--collapse"
-			variant="tertiary-no-background"
-			:title="stripeButtonTitle"
-			:aria-label="stripeButtonTitle"
-			@click="handleClickStripeCollapse">
-			<template #icon>
-				<IconChevronDown
-					v-if="stripeOpen"
-					fillColor="#ffffff"
-					:size="20" />
-				<IconChevronUp
-					v-else
-					fillColor="#ffffff"
-					:size="20" />
-			</template>
-		</NcButton>
+	<!-- The call view is dark whichever theme is set, so the stripe over it and
+		the controls it holds are painted with the palette of the call -->
+	<div
+		ref="gridWrapper"
+		class="grid-main-wrapper"
+		:class="{ 'is-grid': !isStripe, 'is-stripe': isStripe, overlap: isOverlap }"
+		:data-theme-dark="isStripe || undefined">
+		<div v-if="isStripe && !isRecording" class="stripe-controls-position">
+			<StripeControls
+				:currentPage="currentPage"
+				:numberOfPages="numberOfPages"
+				:hasPreviousPage="hasPreviousPage"
+				:hasNextPage="hasNextPage"
+				:isOpen="stripeOpen"
+				@previous="previous"
+				@next="next"
+				@toggle="handleClickStripeCollapse" />
+		</div>
 		<TransitionWrapper :name="isStripe ? 'slide-down' : undefined">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
 				<div :class="[isStripe ? 'stripe-wrapper' : 'grid-wrapper']">
 					<NcButton
-						v-if="hasPreviousPage && gridWidth > 0"
+						v-if="!isStripe && hasPreviousPage && gridWidth > 0"
 						variant="tertiary-no-background"
 						class="grid-navigation grid-navigation__previous"
 						:aria-label="t('spreed', 'Previous page of videos')"
@@ -96,7 +95,7 @@
 							@clickVideo="handleClickLocalVideo" />
 					</div>
 					<NcButton
-						v-if="hasNextPage && gridWidth > 0"
+						v-if="!isStripe && hasNextPage && gridWidth > 0"
 						variant="tertiary-no-background"
 						class="grid-navigation grid-navigation__next"
 						:aria-label="t('spreed', 'Next page of videos')"
@@ -157,15 +156,14 @@ import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 import { computed, inject, ref, toRef, useTemplateRef, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import IconChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
-import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import EmptyCallView from '../shared/EmptyCallView.vue'
 import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
+import StripeControls from './StripeControls.vue'
 import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import {
@@ -194,12 +192,11 @@ export default {
 		LocalVideo,
 		EmptyCallView,
 		NcButton,
+		StripeControls,
 		TransitionWrapper,
 		VideoBottomBar,
-		IconChevronDown,
 		IconChevronLeft,
 		IconChevronRight,
-		IconChevronUp,
 	},
 
 	props: {
@@ -387,14 +384,6 @@ export default {
 	},
 
 	computed: {
-		stripeButtonTitle() {
-			if (this.stripeOpen) {
-				return t('spreed', 'Collapse participant bar')
-			} else {
-				return t('spreed', 'Expand participant bar')
-			}
-		},
-
 		// Number of video components (it does not include the local video)
 		videosCount() {
 			if (!this.isStripe && this.orderedVideos.length === 0) {
@@ -629,6 +618,8 @@ export default {
 <style lang="scss" scoped>
 .grid-main-wrapper {
 	--navigation-position: calc(var(--default-grid-baseline) * 2);
+	// Width the highlight of the stripe takes to fade out on either end
+	--stripe-highlight-fade: calc(var(--default-clickable-area) * 2);
 	position: relative;
 	width: 100%;
 }
@@ -675,7 +666,33 @@ export default {
 	position: relative;
 	// Kept out of the grid itself, whose measured height is the height of its
 	// tiles
-	padding-block-start: var(--grid-gap);
+	padding-block: var(--grid-gap);
+	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
+	// Keeps the highlight below behind the tiles rather than over them
+	isolation: isolate;
+
+	// The stripe and its controls are the same control to the pointer, so the
+	// whole of it is highlighted whichever of the two is hovered. The highlight
+	// fades out on the ends of the stripe rather than ending on an edge of its
+	// own, as it is a hint of what is hovered and not a surface of the call.
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		border-radius: inherit;
+		background-image: linear-gradient(to right,
+			transparent,
+			var(--color-primary-light) var(--stripe-highlight-fade),
+			var(--color-primary-light) calc(100% - var(--stripe-highlight-fade)),
+			transparent);
+		opacity: 0;
+		transition: opacity var(--animation-quick) ease-in-out;
+	}
+
+	.grid-main-wrapper.is-stripe:hover &::before {
+		opacity: 1;
+	}
 }
 
 .dev-mode-video {
@@ -748,7 +765,21 @@ export default {
 	}
 }
 
+.stripe-controls-position {
+	position: absolute;
+	top: calc(-1 * (var(--default-clickable-area) + var(--grid-gap)));
+	inset-inline-end: var(--navigation-position);
+	z-index: 2;
+
+	.overlap & {
+		inset-inline-end: var(--grid-gap);
+	}
+}
+
 .grid-navigation {
+	z-index: 2;
+	opacity: .7;
+
 	.grid-wrapper & {
 		position: absolute;
 		top: calc(50% - var(--default-clickable-area) / 2);
@@ -761,31 +792,6 @@ export default {
 			inset-inline-end: calc(var(--default-grid-baseline) * 2);
 		}
 	}
-
-	.stripe-wrapper & {
-		position: absolute;
-		top: calc(var(--navigation-position) + var(--grid-gap));
-
-		&__previous {
-			inset-inline-start: var(--navigation-position);
-		}
-
-		&__next {
-			inset-inline-end: var(--navigation-position);
-		}
-	}
-}
-
-.stripe--collapse {
-	position: absolute !important;
-	top: calc(-1 * (var(--default-clickable-area) + var(--grid-gap)));
-	inset-inline-end: var(--navigation-position);
-}
-
-.stripe--collapse,
-.grid-navigation {
-	z-index: 2;
-	opacity: .7;
 
 	#call-container:hover & {
 		background-color: rgba(0, 0, 0, 0.1) !important;
