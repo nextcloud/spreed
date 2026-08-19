@@ -21,7 +21,6 @@ export const STRIPE_HEIGHT = 150
 
 // Aspect ratio (width / height) the layout tries to reach for each tile.
 export const TARGET_ASPECT_RATIO = 1.5
-export const TARGET_ASPECT_RATIO_STRIPE = 1
 
 /**
  * Minimum tile width for the given layout mode.
@@ -39,15 +38,6 @@ export function getMinTileWidth(compact: boolean): number {
  */
 export function getMinTileHeight(compact: boolean): number {
 	return compact ? MIN_TILE_HEIGHT_COMPACT : MIN_TILE_HEIGHT
-}
-
-/**
- * Target tile aspect ratio for the given layout mode.
- *
- * @param isStripe - whether the grid is shown as a stripe
- */
-export function getTargetAspectRatio(isStripe: boolean): number {
-	return isStripe ? TARGET_ASPECT_RATIO_STRIPE : TARGET_ASPECT_RATIO
 }
 
 type GridDimensionsOptions = {
@@ -302,6 +292,33 @@ export function getHalfColumnCount(columns: number): number {
  */
 export function getHalfColumnMinWidth(minTileWidth: number): number {
 	return Math.max((minTileWidth - GRID_GAP) / TILE_COLUMN_SPAN, 0)
+}
+
+/**
+ * Maximum width of a half column, in px, for the given tile height.
+ *
+ * The columns of the grid share whatever width is left, so a grid with room to
+ * spare would stretch its tiles far past the aspect ratio the layout aims for:
+ * the number of columns is the only thing the layout can shrink, and dropping a
+ * column only makes the remaining tiles wider. Capping the width of a column
+ * keeps the tiles at the target aspect ratio and leaves the room to spare
+ * around them instead.
+ *
+ * A tile spans two half columns and the gap between them, so each half column
+ * holds half of the tile minus that gap.
+ *
+ * @param tileHeight - height of a tile of the grid in px
+ * @param targetAspectRatio - tile aspect ratio (width / height) the layout aims for
+ * @param minHalfColumnWidth - minimum width of a half column in px, never capped below
+ */
+export function getHalfColumnMaxWidth(
+	tileHeight: number,
+	targetAspectRatio: number,
+	minHalfColumnWidth: number,
+): number {
+	const maxTileWidth = tileHeight * targetAspectRatio
+
+	return Math.max((maxTileWidth - GRID_GAP) / TILE_COLUMN_SPAN, minHalfColumnWidth)
 }
 
 /**
