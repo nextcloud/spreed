@@ -22,7 +22,7 @@
 				@next="next"
 				@toggle="handleClickStripeCollapse" />
 		</div>
-		<Transition name="stripe-collapse">
+		<Transition :name="collapseTransition">
 			<div v-if="!isStripe || stripeOpen" class="videos-wrapper" :class="{ 'videos-wrapper--stripe': isStripe }">
 				<div :class="[isStripe ? 'stripe-wrapper' : 'grid-wrapper']">
 					<NcButton
@@ -154,7 +154,7 @@
 <script>
 import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
-import { computed, inject, ref, toRef, useTemplateRef, watch } from 'vue'
+import { computed, inject, nextTick, ref, toRef, useTemplateRef, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
@@ -345,11 +345,30 @@ export default {
 		// The window of the ordered videos shown on the current page
 		const displayedVideos = computed(() => orderedVideos.value.slice(...currentPageBounds.value))
 
+		// Whether the grid is switching between the stripe and the full grid,
+		// which is rendered by the very same element: the stripe is collapsed
+		// and expanded with a transition, and the grid taking its place, or the
+		// other way around, would be given that transition as well.
+		const isSwitchingMode = ref(false)
+
 		// Reset current page when switching between stripe and full grid,
 		// as the previous page is meaningless in the new mode.
 		// The grid layout itself is recomputed by `useGridDimensions`.
 		watch(() => props.isStripe, () => {
 			currentPage.value = 0
+
+			// Set before the element is rendered again, and given back once the
+			// mode it is rendered in has settled
+			isSwitchingMode.value = true
+			nextTick(() => {
+				isSwitchingMode.value = false
+			})
+		})
+
+		// The transition of the stripe being collapsed and expanded, left out
+		// while another mode is taking over
+		const collapseTransition = computed(() => {
+			return props.isStripe && !isSwitchingMode.value ? 'stripe-collapse' : undefined
 		})
 
 		return {
@@ -369,6 +388,7 @@ export default {
 			gridWrapper,
 			grid,
 			stripeOpen,
+			collapseTransition,
 			noLocalVideoReserve,
 			...gridDimensions,
 		}
