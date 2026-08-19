@@ -22,7 +22,9 @@
 				attributionControl: false,
 			}"
 			@scroll.prevent="">
-			<LTileLayer :url="url" />
+			<LTileLayer
+				:url="url"
+				:options="tileLayerOptions" />
 			<LControlAttribution
 				position="bottomright"
 				:prefix="attribution" />
@@ -104,6 +106,11 @@ export default {
 			linkZoom: 18,
 
 			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+
+			// HTTP Referer header is required by the OpenStreetMap tile usage policy (https://operations.osmfoundation.org/policies/tiles/)
+			tileLayerOptions: {
+				referrerPolicy: 'strict-origin-when-cross-origin',
+			},
 		}
 	},
 
