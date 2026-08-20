@@ -15,6 +15,7 @@ import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { getUploader } from '@nextcloud/upload'
 import { defineStore } from 'pinia'
+import { v4 as uuidv4 } from 'uuid'
 import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useTemporaryMessage } from '../composables/useTemporaryMessage.ts'
@@ -554,7 +555,8 @@ export const useUploadStore = defineStore('upload', () => {
 			// resolves the final name (and any conflicts) when postAttachment
 			// moves the file out of Draft.
 			for (const [index] of getInitialisedUploads(uploadId)) {
-				const tempName = crypto.randomUUID()
+				// crypto.randomUUID() is not available in insecure context
+				const tempName = crypto.randomUUID ? crypto.randomUUID() : uuidv4()
 				markFileAsPendingUpload({ uploadId, index, sharePath: '/' + draftFolderPath + '/' + tempName })
 			}
 			return

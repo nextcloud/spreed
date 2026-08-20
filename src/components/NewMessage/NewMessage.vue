@@ -391,6 +391,7 @@ import {
 	selectRange,
 } from '../../utils/selectionRange.ts'
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
+import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
 const supportScheduleMessages = hasTalkFeature('local', 'scheduled-messages')
 
@@ -694,7 +695,8 @@ export default {
 		showAudioRecorder() {
 			// An initialised upload is treated as a draft, so the send button
 			// has to stay reachable even with an empty caption
-			return !this.hasText && !this.hasUpload && this.canUploadFiles && !this.broadcast
+			return mediaDevicesManager.isSupported()
+				&& !this.hasText && !this.hasUpload && this.canUploadFiles && !this.broadcast
 				&& !this.messageToEdit && !this.threadCreating
 				&& !this.scheduleMessageTime && !this.showScheduledMessages
 		},
