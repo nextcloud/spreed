@@ -67,7 +67,7 @@ export default {
 		 * The latitude of the location
 		 */
 		latitude: {
-			type: Number,
+			type: String,
 			required: true,
 		},
 
@@ -75,7 +75,7 @@ export default {
 		 * The longitude of the location
 		 */
 		longitude: {
-			type: Number,
+			type: String,
 			required: true,
 		},
 
@@ -113,7 +113,7 @@ export default {
 
 	computed: {
 		center() {
-			return [this.latitude, this.longitude]
+			return [Number(this.latitude), Number(this.longitude)]
 		},
 
 		mapLink() {
