@@ -340,12 +340,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "72acc73d21a11608d3028b26f0c10e4be622b10c"
+                "reference": "ea6ca81337a2bf762a6bf4edff634b8f313a0dd3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/72acc73d21a11608d3028b26f0c10e4be622b10c",
-                "reference": "72acc73d21a11608d3028b26f0c10e4be622b10c",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/ea6ca81337a2bf762a6bf4edff634b8f313a0dd3",
+                "reference": "ea6ca81337a2bf762a6bf4edff634b8f313a0dd3",
                 "shasum": ""
             },
             "require": {
@@ -357,7 +357,8 @@
                 "psr/log": "^3.0.2",
                 "symfony/polyfill-intl-normalizer": "^1.38",
                 "symfony/polyfill-php84": "^1.38",
-                "symfony/polyfill-php85": "^1.41"
+                "symfony/polyfill-php85": "^1.41",
+                "symfony/polyfill-php86": "^1.41"
             },
             "default-branch": true,
             "type": "library",
@@ -385,7 +386,7 @@
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
                 "source": "https://github.com/nextcloud-deps/ocp/tree/master"
             },
-            "time": "2026-08-15T00:35:30+00:00"
+            "time": "2026-08-20T13:01:12+00:00"
         },
         {
             "name": "psr/clock",
@@ -937,6 +938,86 @@
                 }
             ],
             "time": "2026-07-01T12:47:55+00:00"
+        },
+        {
+            "name": "symfony/polyfill-php86",
+            "version": "v1.41.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php86.git",
+                "reference": "6bc356ed3d8dbfeea8f0de235e34d670704e880e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php86/zipball/6bc356ed3d8dbfeea8f0de235e34d670704e880e",
+                "reference": "6bc356ed3d8dbfeea8f0de235e34d670704e880e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php86\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.6+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php86/tree/v1.41.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-07-02T13:42:24+00:00"
         }
     ],
     "aliases": [],
