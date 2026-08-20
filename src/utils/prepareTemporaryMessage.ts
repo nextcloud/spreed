@@ -65,7 +65,7 @@ export type TempChatMessageWithFile = Omit<ChatMessage, 'messageParameters'> & {
  * @param payload.message message string;
  * @param payload.token conversation token;
  * @param payload.uploadId upload id;
- * @param payload.index index;
+ * @param payload.index index of file. must be provided with file and uploadId;
  * @param payload.file file to upload;
  * @param payload.localUrl local URL of file to upload;
  * @param payload.messageType specify when the temporary file is a voice message
@@ -98,10 +98,25 @@ export function prepareTemporaryMessage({
 	isThread,
 }: PrepareTemporaryMessagePayload): ChatMessage | TempChatMessageWithFile {
 	const date = new Date()
-	let tempId = 'temp-' + date.getTime()
+	let tempId: string = 'temp-'
+	let referenceId: string
 	const messageParameters: ChatMessage['messageParameters'] = {}
 	if (file) {
-		tempId += '-' + uploadId + '-' + Math.random()
+		if (!index || !uploadId) {
+			throw new Error('[prepareTemporaryMessage]: index/uploadId is required for file messages')
+		}
+		const appendedIndex = index.split('_').pop()!.padStart(3, '0')
+		tempId += uploadId + '-' + appendedIndex
+
+		/**
+		 * Construct file share message referenceId in the following format:
+		 * /[a-f0-9]{60}-[0-9]{3}/, where:
+		 * /[a-f0-9]{60}/ - uploadId hashed with SHA-256 algorithm
+		 * /-/            - mandatory delimiter
+		 * /[0-9]{3}/     - order of file in given upload (natural integers, padded with zeroes)
+		 */
+		referenceId = Hex.stringify(SHA256(uploadId)).slice(0, 60) + '-' + appendedIndex
+
 		messageParameters.file = {
 			type: 'file',
 			// @ts-expect-error: 'file' does not exist in type RichObjectParameter
@@ -114,6 +129,9 @@ export function prepareTemporaryMessage({
 			localUrl,
 			index,
 		}
+	} else {
+		tempId += date.getTime()
+		referenceId = Hex.stringify(SHA256(tempId))
 	}
 
 	if (parent && 'token' in parent && parent.token !== token) {
@@ -140,7 +158,7 @@ export function prepareTemporaryMessage({
 		parent,
 		isReplyable: false,
 		reactions: {},
-		referenceId: Hex.stringify(SHA256(tempId)),
+		referenceId,
 		actorId,
 		actorType,
 		actorDisplayName,

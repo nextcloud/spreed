@@ -325,6 +325,10 @@ export const useUploadStore = defineStore('upload', () => {
 	function initialiseUpload({ uploadId, token, threadId, files, rename = false, isVoiceMessage }: { uploadId: string, token: string, threadId?: number, files: File[], rename?: boolean, isVoiceMessage?: boolean }) {
 		// Set last upload id
 		currentUploadId.value = uploadId
+		const stagedFilesMaxIndex = Math.max(
+			0,
+			...getUploadsArray(uploadId).map(([index, _uploadedFile]) => Number(index.split('_').pop())),
+		)
 		for (let i = 0; i < files.length; i++) {
 			let file = files[i]
 
@@ -342,9 +346,9 @@ export const useUploadStore = defineStore('upload', () => {
 				? URL.createObjectURL(file)
 				: undefined
 
-			// Create a unique index for each file
-			const date = new Date()
-			const index = 'temp_' + date.getTime() + Math.random()
+			// Create a unique index for each file (append _1, _2, ... at the end to track file order)
+			const index = `temp_${uploadId}_${stagedFilesMaxIndex + 1 + i}`
+
 			// Create temporary message for the file and add it to the message list
 			const temporaryMessage = createTemporaryMessage({
 				message: '{file}',
