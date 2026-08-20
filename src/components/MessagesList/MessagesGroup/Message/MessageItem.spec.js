@@ -468,8 +468,8 @@ describe('MessageItem.vue', () => {
 					'geo-location': {
 						id: '123',
 						name: 'Location name',
-						latitude: 12.345678,
-						longitude: 98.765432,
+						latitude: '12.345678',
+						longitude: '98.765432',
 						metadata: '{id:123}',
 						type: 'geo-location',
 					},
