@@ -87,6 +87,8 @@ declare global {
 		export default content
 	}
 
+	declare module '*.css'
+
 	// @nextcloud/webpack-vue-config build globals
 	const appName: string
 	const appVersion: string
