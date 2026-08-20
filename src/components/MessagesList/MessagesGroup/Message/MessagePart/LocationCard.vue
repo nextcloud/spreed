@@ -21,7 +21,9 @@
 				attributionControl: false,
 			}"
 			@scroll.prevent="">
-			<LTileLayer :url="url" />
+			<LTileLayer
+				:url="url"
+				:options="tileLayerOptions" />
 			<LControlAttribution
 				position="bottomright"
 				:prefix="attribution" />
@@ -65,7 +67,7 @@ export default {
 		 * The latitude of the location
 		 */
 		latitude: {
-			type: Number,
+			type: String,
 			required: true,
 		},
 
@@ -73,7 +75,7 @@ export default {
 		 * The longitude of the location
 		 */
 		longitude: {
-			type: Number,
+			type: String,
 			required: true,
 		},
 
@@ -101,12 +103,17 @@ export default {
 			linkZoom: 18,
 
 			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+
+			// HTTP Referer header is required by the OpenStreetMap tile usage policy (https://operations.osmfoundation.org/policies/tiles/)
+			tileLayerOptions: {
+				referrerPolicy: 'strict-origin-when-cross-origin',
+			},
 		}
 	},
 
 	computed: {
 		center() {
-			return [this.latitude, this.longitude]
+			return [Number(this.latitude), Number(this.longitude)]
 		},
 
 		mapLink() {
