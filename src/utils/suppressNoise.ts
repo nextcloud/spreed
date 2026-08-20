@@ -3,7 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { loadRnnoise, RnnoiseWorkletNode } from '@sapphi-red/web-noise-suppressor'
+import type { RnnoiseWorkletNode } from '@sapphi-red/web-noise-suppressor'
+
+// The rnnoise model relies on AudioWorkletNode, which only exists in a secure context
+export const isNoiseSuppressionModelSupported = 'isSecureContext' in window && window.isSecureContext
 
 let audioContext: AudioContext | null = null
 let rnnoiseWorklet: RnnoiseWorkletNode | null = null
@@ -31,6 +34,9 @@ export async function registerNoiseSuppressionWorklet(): Promise<symbol | null> 
 	}
 
 	try {
+		// Lazy load in try-catch block (AudioWorkletNode does not exist in an insecure context)
+		const { loadRnnoise, RnnoiseWorkletNode } = await import('@sapphi-red/web-noise-suppressor')
+
 		audioContext = new AudioContext()
 		const rnnoiseWasmBinary = await loadRnnoise({
 			url: new URL(
