@@ -66,6 +66,8 @@ SentVideoQualityThrottler.prototype = {
 		this._localMediaModel.off('change:videoAvailable', this._handleLocalVideoAvailableChangeBound)
 
 		this._stopListeningToChanges()
+
+		this._videoConstrainer.destroy()
 	},
 
 	_handleLocalVideoAvailableChange(localMediaModel, videoAvailable) {
