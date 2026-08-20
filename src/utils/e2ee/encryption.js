@@ -44,6 +44,10 @@ class Encryption {
 			throw new Error('stream transform is not supported')
 		}
 
+		if (!window.crypto?.subtle) {
+			throw new Error('crypto.subtle is not available in this context')
+		}
+
 		await initializeOlm()
 		return true
 	}
