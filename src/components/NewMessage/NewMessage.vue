@@ -381,6 +381,7 @@ import {
 	selectRange,
 } from '../../utils/selectionRange.ts'
 import { parseSpecialSymbols } from '../../utils/textParse.ts'
+import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
 const supportScheduleMessages = hasTalkFeature('local', 'scheduled-messages')
 
@@ -670,7 +671,8 @@ export default {
 		},
 
 		showAudioRecorder() {
-			return !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload
+			return mediaDevicesManager.isSupported()
+				&& !this.hasText && this.canUploadFiles && !this.broadcast && !this.upload
 				&& !this.messageToEdit && !this.threadCreating
 				&& !this.scheduleMessageTime && !this.showScheduledMessages
 		},
