@@ -356,42 +356,23 @@ function mungeSdpForSimulcasting(sdp) {
 }
 /* eslint-enable */
 
-Peer.prototype.offer = function(options) {
-	const sendVideo = this.sendVideoIfAvailable && this.type !== 'screen'
-	if (sendVideo && this.enableSimulcast && adapter.browserDetails.browser === 'firefox') {
-		console.debug('Enabling Simulcasting for Firefox (RID)')
-		const sender = this.pc.getSenders().find(function(s) {
-			return s.track.kind === 'video'
-		})
-		if (sender) {
-			let parameters = sender.getParameters()
-			if (!parameters) {
-				parameters = {}
-			}
-			parameters.encodings = [
-				{
-					rid: 'h',
-					active: true,
-					maxBitrate: this.maxBitrates.high,
-				},
-				{
-					rid: 'm',
-					active: true,
-					maxBitrate: this.maxBitrates.medium,
-					scaleResolutionDownBy: 2,
-				},
-				{
-					rid: 'l',
-					active: true,
-					maxBitrate: this.maxBitrates.low,
-					scaleResolutionDownBy: 4,
-				},
-			]
-			sender.setParameters(parameters)
+Peer.prototype._getMaxBitrates = function() {
+	const connection = this.parent ? this.parent.config.connection : null
+	if (connection && connection.maxStreamBits) {
+		const partValue = Math.floor(connection.maxStreamBits / 21 / 100) * 100
+		return {
+			high: partValue * 16,
+			medium: partValue * 4,
+			low: partValue,
 		}
 	}
+	return this.maxBitrates
+}
+
+Peer.prototype._createOffer = function(options, sendVideo) {
+	const self = this
 	this.pc.createOffer(options).then(function(offer) {
-		if (sendVideo && this.enableSimulcast) {
+		if (sendVideo && self.enableSimulcast) {
 			// This SDP munging only works with Chrome (Safari STP may support it too)
 			if (adapter.browserDetails.browser === 'chrome' || adapter.browserDetails.browser === 'safari') {
 				console.debug('Enabling Simulcasting for Chrome (SDP munging)')
@@ -401,24 +382,68 @@ Peer.prototype.offer = function(options) {
 			}
 		}
 
-		this.pc.setLocalDescription(offer).then(function() {
-			if (this.parent.config.nick) {
+		self.pc.setLocalDescription(offer).then(function() {
+			if (self.parent.config.nick) {
 				// The offer is a RTCSessionDescription that only serializes
 				// its own attributes to JSON, so if extra attributes are needed
 				// a regular object has to be sent instead.
 				offer = {
 					type: offer.type,
 					sdp: offer.sdp,
-					nick: this.parent.config.nick,
+					nick: self.parent.config.nick,
 				}
 			}
-			this.send('offer', offer)
-		}.bind(this)).catch(function(error) {
+			self.send('offer', offer)
+		}).catch(function(error) {
 			console.warn('setLocalDescription for offer failed: ', error)
 		})
-	}.bind(this)).catch(function(error) {
+	}).catch(function(error) {
 		console.warn('createOffer failed: ', error)
 	})
+}
+
+Peer.prototype.offer = function(options) {
+	const sendVideo = this.sendVideoIfAvailable && this.type !== 'screen'
+	if (sendVideo && this.enableSimulcast && adapter.browserDetails.browser === 'firefox') {
+		console.debug('Enabling Simulcasting for Firefox (RID)')
+		const sender = this.pc.getSenders().find(function(s) {
+			return s.track && s.track.kind === 'video'
+		})
+		if (sender) {
+			let parameters = sender.getParameters()
+			if (!parameters) {
+				parameters = {}
+			}
+			const maxBitrates = this._getMaxBitrates()
+			parameters.encodings = [
+				{
+					rid: 'h',
+					active: true,
+					maxBitrate: maxBitrates.high,
+				},
+				{
+					rid: 'm',
+					active: true,
+					maxBitrate: maxBitrates.medium,
+					scaleResolutionDownBy: 2,
+				},
+				{
+					rid: 'l',
+					active: true,
+					maxBitrate: maxBitrates.low,
+					scaleResolutionDownBy: 4,
+				},
+			]
+			sender.setParameters(parameters).then(function() {
+				this._createOffer(options, sendVideo)
+			}.bind(this)).catch(function(error) {
+				console.warn('Failed to set simulcast parameters in Firefox, creating offer anyway', error)
+				this._createOffer(options, sendVideo)
+			}.bind(this))
+			return
+		}
+	}
+	this._createOffer(options, sendVideo)
 }
 
 Peer.prototype.handleOffer = function(offer) {
