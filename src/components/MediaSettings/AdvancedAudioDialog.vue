@@ -14,6 +14,7 @@ import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import { useDevices } from '../../composables/useDevices.js'
 import { useSettingsStore } from '../../stores/settings.ts'
 import { isSafari } from '../../utils/browserCheck.ts'
+import { isNoiseSuppressionModelSupported } from '../../utils/suppressNoise.ts'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 
 const { container = undefined } = defineProps<{
@@ -53,7 +54,7 @@ const settingsStore = useSettingsStore()
 const { audioPreviewAvailable, updateAudioStream } = useDevices()
 
 const noiseSuppressionLevel = computed(() => {
-	if (settingsStore.noiseSuppressionWithModel === 'none') {
+	if (!isNoiseSuppressionModelSupported || settingsStore.noiseSuppressionWithModel === 'none') {
 		return settingsStore.noiseSuppression ? NOISE_LEVEL.BASIC : NOISE_LEVEL.OFF
 	}
 	return NOISE_LEVEL.ADVANCED
@@ -145,7 +146,7 @@ function onClosing(result?: unknown) {
 			@update:modelValue="setNoiseSuppressionLevel">
 			<NcRadioGroupButton :label="isSafari ? noiseSuppressionLevelLabelBasic : noiseSuppressionLevelLabelOff" :value="NOISE_LEVEL.OFF" />
 			<NcRadioGroupButton v-if="!isSafari" :label="noiseSuppressionLevelLabelBasic" :value="NOISE_LEVEL.BASIC" />
-			<NcRadioGroupButton :label="noiseSuppressionLevelLabelAdvanced" :value="NOISE_LEVEL.ADVANCED" />
+			<NcRadioGroupButton v-if="isNoiseSuppressionModelSupported" :label="noiseSuppressionLevelLabelAdvanced" :value="NOISE_LEVEL.ADVANCED" />
 		</NcRadioGroup>
 
 		<NcFormBox>
