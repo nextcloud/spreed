@@ -2086,7 +2086,6 @@ OC.L10N.register(
     "Sending signaling message has failed" : "El envío del mensaje de señalización falló",
     "Lost connection to signaling server. Trying to reconnect." : "Se ha perdido la conexión con el servidor de señalización. Intentando reconectar.",
     "Lost connection to signaling server." : "Se ha perdido la conexión al servidor de señalización.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "El servidor de señalización configurado debe ser actualizado para que sea compatible con esta versión de Talk. Por favor, contacte a su administrador.",
     "Please restart the app." : "Por favor, reinicie la aplicación.",
     "Please reload the page." : "Por favor, recargue la página.",
     "Please try to restart the app." : "Por favor, intente reiniciar la aplicación.",
@@ -2160,6 +2159,7 @@ OC.L10N.register(
     "Nextcloud Talk was updated." : "Se ha actualizado Nextcloud Talk.",
     "Nextcloud is in maintenance mode." : "Nextcloud está en modo mantenimiento.",
     "Nextcloud Talk Federation was updated." : "Se ha actualizado la federación de Nextcloud Talk.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "El servidor de señalización configurado debe ser actualizado para que sea compatible con esta versión de Talk. Por favor, contacte a su administrador.",
     "Enable live translation" : "Activar traducción en vivo"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

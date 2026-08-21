@@ -2178,7 +2178,6 @@ OC.L10N.register(
     "Connecting is taking longer than expected …" : "Připojování trvá déle než očekáváno …",
     "Failed to connect. Retrying …" : "Nepodařilo se připojit. Zkouší se znovu …",
     "Failed to connect. The signaling server may be set up incorrectly" : "Nepodařilo se připojit. Je možné, že signalizační server není správně nastavený",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Nastavený signální server je třeba aktualizovat, aby byl kompatibilní s touto verzí Talk. Obraťte se na správu.",
     "Please restart the app." : "Restartujte aplikaci.",
     "Please reload the page." : "Načtěte stránku znovu.",
     "Please try to restart the app." : "Zkuste aplikaci ukončit a spustit znovu.",
@@ -2253,6 +2252,7 @@ OC.L10N.register(
     "Nextcloud Talk was updated." : "Nextcloud Talk bylo aktualizováno.",
     "Nextcloud is in maintenance mode." : "Nextcloud se právě nachází v režimu údržby.",
     "Nextcloud Talk Federation was updated." : "Federovaní Nextcloud Talk bylo zaktualizováno.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Nastavený signální server je třeba aktualizovat, aby byl kompatibilní s touto verzí Talk. Obraťte se na správu.",
     "Enable live translation" : "Zapnout překlad v reálném čase",
     "I picked list style" : "Vybral/a jsem styl seznamu",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Používáte Talk ve stylu seznamu nebo bublin zpráv?"

@@ -1758,7 +1758,6 @@
     "Error while parsing a PROPFIND error" : "Feil under analyse av en PROPFIND-feil",
     "Sending signaling message has failed" : "Sending av signalmelding feilet",
     "Lost connection to signaling server. Trying to reconnect." : "Mistet forbindelsen til signalserveren. Prøver å koble til igjen.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Den konfigurerte signalserveren må oppdateres for å være kompatibel med denne versjonen av Talk. Ta kontakt med administrasjonen.",
     "Please reload the page." : "Last inn siden på nytt.",
     "Do not disturb" : "Ikke forstyrr",
     "Away" : "Borte",
@@ -1806,6 +1805,7 @@
     "Failed to save sounds setting" : "Kunne ikke lagre lydinnstillingen",
     "Sounds setting saved" : "Lydinnstilling lagret",
     "Search …" : "Søk...",
-    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Du ble med i samtalen i et annet vindu eller på en annen enhet. Dette støttes for øyeblikket ikke av Nextcloud Talk, så denne økten ble lukket."
+    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Du ble med i samtalen i et annet vindu eller på en annen enhet. Dette støttes for øyeblikket ikke av Nextcloud Talk, så denne økten ble lukket.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Den konfigurerte signalserveren må oppdateres for å være kompatibel med denne versjonen av Talk. Ta kontakt med administrasjonen."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

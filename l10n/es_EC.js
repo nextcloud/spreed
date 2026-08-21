@@ -1394,7 +1394,6 @@ OC.L10N.register(
     "The link could not be copied" : "No se pudo copiar el enlace",
     "Sending signaling message has failed" : "La entrega del mensaje de señalización ha fallado",
     "Lost connection to signaling server. Trying to reconnect." : "Se perdió la conexión con el servidor de señalización. Intentando reconectar.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "El servidor de señalización configurado necesita ser actualizado para ser compatible con esta versión de Talk. Por favor, contacta a tu administrador.",
     "Please reload the page." : "Por favor vuelve a cargar la página.",
     "Do not disturb" : "No molestar",
     "Away" : "Ausente",
@@ -1432,6 +1431,7 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Error al guardar la configuración de sonidos",
     "Sounds setting saved" : "Configuración de sonidos guardada",
     "Search …" : "Buscar...",
-    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Te uniste a la conversación en otra ventana o dispositivo. Actualmente, Nextcloud Talk no admite esto, por lo que esta sesión se cerró."
+    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Te uniste a la conversación en otra ventana o dispositivo. Actualmente, Nextcloud Talk no admite esto, por lo que esta sesión se cerró.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "El servidor de señalización configurado necesita ser actualizado para ser compatible con esta versión de Talk. Por favor, contacta a tu administrador."
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

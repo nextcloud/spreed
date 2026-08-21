@@ -1932,7 +1932,6 @@ OC.L10N.register(
     "Sending signaling message has failed" : "No s'ha pogut enviar el missatge de senyalització",
     "Lost connection to signaling server. Trying to reconnect." : "S'ha perdut la connexió al servidor de senyalització. S'està intentant tornar a connectar.",
     "Lost connection to signaling server." : "S'ha perdut la connexió amb el servidor de senyalització.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "El servidor de senyalització configurat s'ha d'actualitzar perquè sigui compatible amb aquesta versió de Converses. Si us plau, poseu-vos en contacte amb la vostre administració.",
     "Please restart the app." : "Si us plau, reinicieu l'aplicació.",
     "Please reload the page." : "Torneu a carregar la pàgina.",
     "Please try to restart the app." : "Si us plau, prova de reiniciar l'aplicació.",
@@ -2001,6 +2000,7 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "S’ha unit a la conversa en una altra finestra o dispositiu. Actualment no és compatible amb Nextcloud Talk, de manera que aquesta sessió s'ha tancat.",
     "Nextcloud Talk was updated." : "Nextcloud Talk s'ha actualitzat.",
     "Nextcloud is in maintenance mode." : "Nextcloud està en mode de manteniment.",
-    "Nextcloud Talk Federation was updated." : "Nextcloud Converses Federació s'ha actualitzat."
+    "Nextcloud Talk Federation was updated." : "Nextcloud Converses Federació s'ha actualitzat.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "El servidor de senyalització configurat s'ha d'actualitzar perquè sigui compatible amb aquesta versió de Converses. Si us plau, poseu-vos en contacte amb la vostre administració."
 },
 "nplurals=2; plural=(n != 1);");

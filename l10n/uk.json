@@ -2065,7 +2065,6 @@
     "Sending signaling message has failed" : "Не вдалося передати повідомлення сигналізації.",
     "Lost connection to signaling server. Trying to reconnect." : "Втрачено зв'язок із сервером сигналізації. Триває спроба відновити зв'язок.",
     "Lost connection to signaling server." : "Втрачено зв'язок із сервером сигналізації.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Встановлений сиґнальний сервер потрібно оновити, щоби його версія була сумісною з версією Talk. Будь ласка, сконтактуйте з адміністратором.",
     "Please restart the app." : "Будь ласка, перезапустіть програму.",
     "Please reload the page." : "Будь ласка, перезавантажте сторінку.",
     "Please try to restart the app." : "Спробуйте перезапустити програму.",
@@ -2138,6 +2137,7 @@
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Ви приєдналися до розмови в іншому вікні або на іншому пристрої. Наразі Nextcloud Talk не підтримує таку функцію, тому ця сесія була закрита.",
     "Nextcloud Talk was updated." : "Оновлений Nextcloud Talk.",
     "Nextcloud is in maintenance mode." : "Nextcloud знаходиться в режимі технічного обслуговування.",
-    "Nextcloud Talk Federation was updated." : "Оновлена Nextcloud Talk Federation."
+    "Nextcloud Talk Federation was updated." : "Оновлена Nextcloud Talk Federation.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Встановлений сиґнальний сервер потрібно оновити, щоби його версія була сумісною з версією Talk. Будь ласка, сконтактуйте з адміністратором."
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);"
 }

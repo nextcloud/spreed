@@ -1933,7 +1933,6 @@
     "Sending signaling message has failed" : "فشل إرسال رسالة الإشارة",
     "Lost connection to signaling server. Trying to reconnect." : "انقطع الاتصال بخادم التشوير. حاول معاودة الاتصال.",
     "Lost connection to signaling server." : "فُقِد الاتصال بخادوم الإشارة.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "يجب تحديث خادم الإشارة الذي تم تكوينه حتى يكون متوافقًا مع هذا الإصدار من تطبيق Talk. يرجى الاتصال بإدارتك.",
     "Please restart the app." : "يُرجى إعادة تشغيل التطبيق.",
     "Please reload the page." : "رجاء أعد تحميل الصفحة.",
     "Please try to restart the app." : "حاول رجاءً إعادة تشغيل التطبيق.",
@@ -2002,6 +2001,7 @@
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "انضممت لمحادثة آخرى في نافذة او جهاز آخر. هذه الخاصية غير مدعومة سيتم اغلاق هذه الجلسة من قبل نكست كلاود التحدث.",
     "Nextcloud Talk was updated." : "تمّ تحديث \"المحادثة\" من نكست كلاود.",
     "Nextcloud is in maintenance mode." : "نكست كلاود في وضعية الصيانة.",
-    "Nextcloud Talk Federation was updated." : "تمّ تحديث \"المحادثة الاتحادية\" Talk Federation من نكست كلاود."
+    "Nextcloud Talk Federation was updated." : "تمّ تحديث \"المحادثة الاتحادية\" Talk Federation من نكست كلاود.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "يجب تحديث خادم الإشارة الذي تم تكوينه حتى يكون متوافقًا مع هذا الإصدار من تطبيق Talk. يرجى الاتصال بإدارتك."
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }

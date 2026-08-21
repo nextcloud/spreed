@@ -2100,7 +2100,6 @@ OC.L10N.register(
     "Lost connection to signaling server. Trying to reconnect." : "Signaling серверт холболт тасарлаа. Дахин холбогдож байна.",
     "Lost connection to signaling server." : "Signaling серверт холболт тасарлаа.",
     "Failed to connect. The signaling server may be set up incorrectly" : "Холбогдож чадсангүй. Дохионы сервер буруу тохируулагдсан байж магадгүй",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Тохируулагдсан дохионы серверийг Talk-ийн энэ хувилбартай нийцтэй болгохын тулд шинэчлэх шаардлагатай. Администрацитайгаа холбогдоно уу.",
     "Please restart the app." : "Апп-ийг дахин эхлүүлнэ үү.",
     "Please reload the page." : "–•—É—É–¥–∞—Å—ã–≥ –¥–∞—Ö–∏–Ω –∞—á–∞–∞–ª–Ω–∞ —É—É",
     "Please try to restart the app." : "Апп-ийг дахин эхлүүлж үзнэ үү.",
@@ -2168,6 +2167,7 @@ OC.L10N.register(
     "Nextcloud Talk was updated." : "Nextcloud Talk шинэчлэгдлээ.",
     "Nextcloud is in maintenance mode." : "Nextcloud засвар үйлчилгээний горимд байна.",
     "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation шинэчлэгдлээ.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Тохируулагдсан дохионы серверийг Talk-ийн энэ хувилбартай нийцтэй болгохын тулд шинэчлэх шаардлагатай. Администрацитайгаа холбогдоно уу.",
     "Enable live translation" : "Шууд орчуулгыг идэвхжүүлэх",
     "I picked list style" : "Би жагсаалт хэлбэрийг сонгосон",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Сайн уу! Та Talk-ыг жагсаалт хэлбэрээр ашиглаж байна уу, эсвэл зурвасын бөмбөлгөөр үү?"
