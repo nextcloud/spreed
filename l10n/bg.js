@@ -1354,7 +1354,6 @@ OC.L10N.register(
     "Error while parsing a PROPFIND error" : "Грешка при синтактичния анализ на грешка в PROPFIND",
     "Sending signaling message has failed" : "Изпращането на сигнално съобщение е неуспешно",
     "Lost connection to signaling server. Trying to reconnect." : "Загубена връзка със сървъра за сигнализация. Опит за повторно свързване.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Конфигурираният сървър за сигнализация трябва да бъде актуализиран, за да е съвместим с тази версия на приложениетоTalk. Моля, свържете се с вашия администрация.",
     "Please reload the page." : "Моля, презаредете страницата.",
     "Do not disturb" : "Не безпокойте",
     "Away" : "Отсъстващ",
@@ -1391,6 +1390,7 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Неуспешно запазване на настройката за звуци",
     "Sounds setting saved" : "Настройката за звуци е запазена",
     "Search …" : "Търсене …",
-    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Присъединихте се към разговора в друг прозорец или устройство. Това в момента не се поддържа от Nextcloud Talk, така че тази сесия беше затворена."
+    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Присъединихте се към разговора в друг прозорец или устройство. Това в момента не се поддържа от Nextcloud Talk, така че тази сесия беше затворена.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Конфигурираният сървър за сигнализация трябва да бъде актуализиран, за да е съвместим с тази версия на приложениетоTalk. Моля, свържете се с вашия администрация."
 },
 "nplurals=2; plural=(n != 1);");

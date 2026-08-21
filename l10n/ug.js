@@ -2102,7 +2102,6 @@ OC.L10N.register(
     "Sending signaling message has failed" : "سىگنال ئۇچۇرى ئەۋەتىش مەغلۇپ بولدى",
     "Lost connection to signaling server. Trying to reconnect." : "سىگنال مۇلازىمىتىرىغا ئۇلىنىش يوقاپ كەتتى. قايتا ئۇلىماقچى بولۇۋاتىدۇ.",
     "Lost connection to signaling server." : "سىگنال مۇلازىمىتىرىغا ئۇلىنىش يوقاپ كەتتى.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "سەپلىمە سىگنال مۇلازىمېتىرى بۇ نەشرىدىكى Talk بىلەن ماسلىشىش ئۈچۈن يېڭىلىنىشى كېرەك. باشقۇرغۇچىڭىز بىلەن ئالاقىلىشىڭ.",
     "Please restart the app." : "بۇ ئەپنى قايتا قوزغىتىڭ.",
     "Please reload the page." : "بۇ بەتنى قايتا يۈكلەڭ.",
     "Please try to restart the app." : "بۇ ئەپنى قايتا قوزغىتىپ سىناپ بېقىڭ.",
@@ -2176,6 +2175,7 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "سىز باشقا كۆزنەك ياكى ئۈسكۈنىدە سۆھبەتكە قاتناشتىڭىز. بۇنى Nextcloud Talk قوللىمايدۇ ، شۇڭا بۇ يىغىن يېپىلدى.",
     "Nextcloud Talk was updated." : "Nextcloud پاراڭ يېڭىلاندى.",
     "Nextcloud is in maintenance mode." : "Nextcloud ئاسراش ھالىتىدە",
-    "Nextcloud Talk Federation was updated." : "Nextcloud پاراڭلىشىش بىرلەشمىسى يېڭىلاندى."
+    "Nextcloud Talk Federation was updated." : "Nextcloud پاراڭلىشىش بىرلەشمىسى يېڭىلاندى.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "سەپلىمە سىگنال مۇلازىمېتىرى بۇ نەشرىدىكى Talk بىلەن ماسلىشىش ئۈچۈن يېڭىلىنىشى كېرەك. باشقۇرغۇچىڭىز بىلەن ئالاقىلىشىڭ."
 },
 "nplurals=2; plural=(n != 1);");

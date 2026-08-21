@@ -2070,7 +2070,6 @@
     "Sending signaling message has failed" : "Није успело слање поруке сигнализирања",
     "Lost connection to signaling server. Trying to reconnect." : "Изгубљена је веза са сервером за сигнализирање. Покушава се поновно успостављање везе.",
     "Lost connection to signaling server." : "Изгубљена је веза са сервером за сигнализирање.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Подешени сервер за сигнализирање мора да се ажурира како би био компатибилан са овом верзијом апликације Talk. Молимо вас да се обратите својој администрацији.",
     "Please restart the app." : "Молимо вас да поново покренете апликацију.",
     "Please reload the page." : "Поново учитајте страницу.",
     "Please try to restart the app." : "Молимо вас, покушајте поново да покренете апликацију.",
@@ -2143,6 +2142,7 @@
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Приступили сте разговору у другом прозору или на другом уређају. Nextcloud Talk то тренутно не подржава, па је ова сесија затворена.",
     "Nextcloud Talk was updated." : "Nextcloud talk је ажуриран.",
     "Nextcloud is in maintenance mode." : "Nextcloud је у режиму одржавања.",
-    "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation је ажуриран."
+    "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation је ажуриран.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Подешени сервер за сигнализирање мора да се ажурира како би био компатибилан са овом верзијом апликације Talk. Молимо вас да се обратите својој администрацији."
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }
