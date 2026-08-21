@@ -85,6 +85,8 @@ export const useUploadStore = defineStore('upload', () => {
 	const uploads = reactive<UploadsState>({})
 	const currentUploadId = ref<string | undefined>(undefined)
 	const localUrls = reactive<Record<string, string>>({})
+	const compressionJobs: Record<string, Promise<File | null> | undefined> = {}
+	const compressedFileSizes = reactive<Record<string, number>>({})
 
 	/**
 	 * The user's choices for the current upload. They are only valid until it
@@ -168,7 +170,7 @@ export const useUploadStore = defineStore('upload', () => {
 	/**
 	 * Returns the local URL of uploaded image
 	 *
-	 * @param referenceId
+	 * @param referenceId the temporary message's reference id
 	 */
 	function getLocalUrl(referenceId: string): string | undefined {
 		return localUrls[referenceId]
@@ -212,6 +214,9 @@ export const useUploadStore = defineStore('upload', () => {
 		}
 		if (localUrl) {
 			localUrls[temporaryMessage.referenceId] = localUrl
+		}
+		if (supportImageCompression(file.type) && file.size > 0) {
+			void initCompressImage(temporaryMessage.referenceId, file)
 		}
 	}
 
@@ -306,6 +311,7 @@ export const useUploadStore = defineStore('upload', () => {
 		const uploadId = currentUploadId.value!
 		for (const index in uploads[uploadId].files) {
 			if (uploads[uploadId].files[index].temporaryMessage!.id === temporaryMessageId) {
+				dismissCompressImage(uploads[uploadId].files[index].temporaryMessage!.referenceId)
 				delete uploads[uploadId].files[index]
 			}
 		}
@@ -374,7 +380,48 @@ export const useUploadStore = defineStore('upload', () => {
 		}
 		EventBus.emit('upload-discard')
 
+		for (const [_index, uploadedFile] of getUploadsArray(uploadId)) {
+			dismissCompressImage(uploadedFile.temporaryMessage.referenceId)
+		}
+
 		delete uploads[uploadId]
+	}
+
+	/**
+	 * Compresses a staged image eagerly, exposing resulting preview size.
+	 * The job output is kept, so compressUploadedImage() can reuse it.
+	 * Starts a job only once per file, and returns the pending or finished one.
+	 *
+	 * @param referenceId the temporary message's reference id
+	 * @param file the staged file
+	 */
+	function initCompressImage(referenceId: string, file: File): Promise<File | null> {
+		const startedJob = compressionJobs[referenceId]
+		if (startedJob) {
+			return startedJob
+		}
+		const newJob = async () => {
+			try {
+				const compressed = await compressImage(file)
+				compressedFileSizes[referenceId] = compressed?.size ?? file.size
+				return compressed
+			} catch (error) {
+				console.error('Failed to compress image, uploading original: ', error)
+				return null
+			}
+		}
+		compressionJobs[referenceId] = newJob()
+		return compressionJobs[referenceId]
+	}
+
+	/**
+	 * Drops the job and size preview, release resources
+	 *
+	 * @param referenceId the temporary message's reference id
+	 */
+	function dismissCompressImage(referenceId: string) {
+		delete compressionJobs[referenceId]
+		delete compressedFileSizes[referenceId]
 	}
 
 	/**
@@ -395,9 +442,10 @@ export const useUploadStore = defineStore('upload', () => {
 			return null
 		}
 
+		const referenceId = uploadedFile.temporaryMessage.referenceId
 		try {
 			// @ts-expect-error: UploadFile.file is a custom type, not a File
-			const compressed = await compressImage(currentFile)
+			const compressed = await initCompressImage(referenceId, currentFile)
 			if (!compressed) {
 				// Compression was not beneficial, the original file is kept
 				return null
@@ -407,7 +455,6 @@ export const useUploadStore = defineStore('upload', () => {
 			uploads[uploadId].files[index].file = compressed
 			uploads[uploadId].files[index].totalSize = compressed.size
 
-			const referenceId = uploadedFile.temporaryMessage.referenceId
 			if (localUrls[referenceId]) {
 				URL.revokeObjectURL(localUrls[referenceId])
 			}
@@ -449,6 +496,7 @@ export const useUploadStore = defineStore('upload', () => {
 			const compressed = compressImages
 				? await compressUploadedImage(uploadId, index)
 				: null
+			dismissCompressImage(uploadedFile.temporaryMessage.referenceId)
 
 			// Store the previously created temporary message
 			const message = {
@@ -823,6 +871,7 @@ export const useUploadStore = defineStore('upload', () => {
 		uploads,
 		currentUploadId,
 		localUrls,
+		compressedFileSizes,
 		allowUpdate,
 		skipCompression,
 
