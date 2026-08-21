@@ -94,6 +94,7 @@
 				:token="token"
 				isUploadEditor
 				:file="file[1].temporaryMessage.messageParameters.file"
+				:referenceId="file[1].temporaryMessage.referenceId"
 				@removeFile="removeFile" />
 		</TransitionWrapper>
 		<div v-else class="upload-editor__voice-message">
