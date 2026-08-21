@@ -1586,7 +1586,6 @@
     "The link could not be copied" : "The link could not be copied",
     "Sending signaling message has failed" : "Sending signaling message has failed",
     "Lost connection to signaling server. Trying to reconnect." : "Lost connection to signaling server. Trying to reconnect.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration.",
     "Please reload the page." : "Please reload the page.",
     "Do not disturb" : "Do not disturb",
     "Away" : "Away",
@@ -1628,6 +1627,7 @@
     "Failed to save sounds setting" : "Failed to save sounds setting",
     "Sounds setting saved" : "Sounds setting saved",
     "Search …" : "Search …",
-    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed."
+    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration."
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }

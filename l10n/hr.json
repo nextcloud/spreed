@@ -2175,7 +2175,6 @@
     "Connecting is taking longer than expected …" : "Povezivanje traje dulje nego što se očekivalo …",
     "Failed to connect. Retrying …" : "Povezivanje nije uspjelo. Pokušavam ponovno …",
     "Failed to connect. The signaling server may be set up incorrectly" : "Povezivanje nije uspjelo. Signalni poslužitelj možda je pogrešno postavljen",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Konfigurirani signalni poslužitelj mora se ažurirati kako bi bio kompatibilan s ovom verzijom Talka. Obratite se administraciji.",
     "Please restart the app." : "Ponovno pokrenite aplikaciju.",
     "Please reload the page." : "Ponovno učitajte stranicu.",
     "Please try to restart the app." : "Pokušajte ponovno pokrenuti aplikaciju.",
@@ -2250,6 +2249,7 @@
     "Nextcloud Talk was updated." : "Nextcloud Talk je ažuriran.",
     "Nextcloud is in maintenance mode." : "Nextcloud je u načinu održavanja.",
     "Nextcloud Talk Federation was updated." : "Nextcloud Talk udruženje je ažurirano.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Konfigurirani signalni poslužitelj mora se ažurirati kako bi bio kompatibilan s ovom verzijom Talka. Obratite se administraciji.",
     "Enable live translation" : "Omogući prijevod uživo",
     "I picked list style" : "Odabrao sam stil popisa",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Koristite li Talk u prikazu popisa ili s oblačićima poruka?"

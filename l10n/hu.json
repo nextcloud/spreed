@@ -2177,7 +2177,6 @@
     "Connecting is taking longer than expected …" : "A kapcsolódás a vártnál tovább tart…",
     "Failed to connect. Retrying …" : "Nem sikerült a csatlakozás. Újrapróbálkozás…",
     "Failed to connect. The signaling server may be set up incorrectly" : "Nem sikerült a csatlakozás. A jelzőkiszolgáló lehet, hogy helytelenül van beállítva.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Frissíteni kell a beállított jelzőkiszolgálót, hogy kompatibilis legyen a Beszélgetés ezen verziójával. Lépjen kapcsolatba a rendszergazdával.",
     "Please restart the app." : "Indítsa újra az alkalmazást.",
     "Please reload the page." : "Frissítse az oldalt.",
     "Please try to restart the app." : "Próbálja meg újraindítani az alkalmazást.",
@@ -2252,6 +2251,7 @@
     "Nextcloud Talk was updated." : "A Nextcloud Beszélgetés frissítve lett.",
     "Nextcloud is in maintenance mode." : "A Nextcloud karbantartási módban van.",
     "Nextcloud Talk Federation was updated." : "A Nextcloud Beszélgetés föderációja frissült.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Frissíteni kell a beállított jelzőkiszolgálót, hogy kompatibilis legyen a Beszélgetés ezen verziójával. Lépjen kapcsolatba a rendszergazdával.",
     "Enable live translation" : "Élő fordítás bekapcsolása",
     "I picked list style" : "A listastílust választottam",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hé! A Beszélgetést listastílussal vagy üzenetbuborékokkal használod?"

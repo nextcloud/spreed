@@ -2065,7 +2065,6 @@ OC.L10N.register(
     "Sending signaling message has failed" : "Η αποστολή μηνύματος σηματοδότησης απέτυχε",
     "Lost connection to signaling server. Trying to reconnect." : "Χάθηκε η σύνδεση με τον διακομιστή σηματοδοσίας. Προσπάθεια επανασύνδεσης.",
     "Lost connection to signaling server." : "Έχασε η σύνδεση με τον διακομιστή σηματοδότησης.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Ο διαμορφωμένος διακομιστής σηματοδότησης πρέπει να ενημερωθεί για να είναι συμβατός με αυτήν την έκδοση του Talk. Παρακαλούμε επικοινωνήστε με τη διοίκησή σας.",
     "Please restart the app." : "Παρακαλούμε επανεκκινήστε την εφαρμογή.",
     "Please reload the page." : "Παρακαλούμε φορτώστε ξανά τη σελίδα.",
     "Please try to restart the app." : "Παρακαλούμε προσπαθήστε να επανεκκινήσετε την εφαρμογή.",
@@ -2138,6 +2137,7 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Συμμετείχατε στη συνομιλία σε άλλο παράθυρο ή συσκευή. Αυτήν τη στιγμή δεν υποστηρίζεται από το Nextcloud Talk, επομένως αυτή η συνεδρία τερματίστηκε.",
     "Nextcloud Talk was updated." : "Το Nextcloud Talk ενημερώθηκε.",
     "Nextcloud is in maintenance mode." : "Το Nextcloud βρίσκεται σε λειτουργία συντήρησης.",
-    "Nextcloud Talk Federation was updated." : "Το Nextcloud Talk Federation ενημερώθηκε."
+    "Nextcloud Talk Federation was updated." : "Το Nextcloud Talk Federation ενημερώθηκε.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Ο διαμορφωμένος διακομιστής σηματοδότησης πρέπει να ενημερωθεί για να είναι συμβατός με αυτήν την έκδοση του Talk. Παρακαλούμε επικοινωνήστε με τη διοίκησή σας."
 },
 "nplurals=2; plural=(n != 1);");

@@ -1797,7 +1797,6 @@
     "Error while parsing a PROPFIND error" : "PROPFINDエラーの解析中にエラーが発生しました",
     "Sending signaling message has failed" : "シグナリングメッセージの送信に失敗しました",
     "Lost connection to signaling server. Trying to reconnect." : "シグナリングサーバーへの接続が切れました。再接続してみてください。",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "設定済みのシグナルサーバーは、このバージョンのTalkと互換性を持たせるために更新する必要があります。管理者に連絡してください。",
     "Please reload the page." : "ページをリロードしてください。",
     "Do not disturb" : "取り込み中",
     "Away" : "離席中",
@@ -1846,6 +1845,7 @@
     "Sounds setting saved" : "サウンド設定を保存",
     "Always shown if recording consent is required" : "録音の同意が必要な場合は常に表示されます",
     "Search …" : "検索…",
-    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "別ウィンドウかデバイスで既に会話に参加済みです。現在、複数接続はNextcloud Talkではサポートされていないため、このセッションは閉じられます。"
+    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "別ウィンドウかデバイスで既に会話に参加済みです。現在、複数接続はNextcloud Talkではサポートされていないため、このセッションは閉じられます。",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "設定済みのシグナルサーバーは、このバージョンのTalkと互換性を持たせるために更新する必要があります。管理者に連絡してください。"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
