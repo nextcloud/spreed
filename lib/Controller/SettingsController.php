@@ -53,6 +53,7 @@ class SettingsController extends OCSController {
 		}
 
 		$this->config->setUserValue($this->userId, 'spreed', $key, $value);
+		$this->preferenceListener->synchronizeMediaPreferences($this->userId, $key, (string)$value);
 
 		return new DataResponse(null);
 	}

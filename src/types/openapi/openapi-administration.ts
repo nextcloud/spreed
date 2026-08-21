@@ -270,6 +270,8 @@ export type components = {
                     "default-phone-region": string;
                     /** @description Whether the user can enable SIP for conversations */
                     "can-enable-sip": boolean;
+                    /** @deprecated Whether calls start without media by default */
+                    "start-without-media": boolean;
                     /** @description Whether calls start without audio by default */
                     "start-without-audio": boolean;
                     /** @description Whether calls start without video by default */

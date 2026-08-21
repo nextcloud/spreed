@@ -49,6 +49,7 @@ class ConfigLexicon implements ILexicon {
 			new Entry(Config::EXTERNAL_CALL_SERVICE_AUTH_PASSWORD, ValueType::STRING, '', definition: 'HTTP Basic Auth password used when Talk calls the external service'),
 			new Entry(Config::EXTERNAL_CALL_SERVICE_FRAME_ORIGINS, ValueType::ARRAY, [], definition: 'JSON array of scheme+host(+port) origins that may be loaded in the iframe.' . PHP_EOL . 'Added to `Content-Security-Policy: frame-src` and the `Permissions-Policy` for camera/microphone'),
 			new Entry(Config::EXTERNAL_CALL_SERVICE_IFRAME_FIELD, ValueType::STRING, '', definition: 'JSON field name in the external service response that contains the iframe URL'),
+			new Entry(Config::CALLS_START_WITHOUT_MEDIA, ValueType::BOOL, false, definition: 'Deprecated: whether participants start with audio and video disabled by default', deprecated: true),
 			new Entry(Config::CALLS_START_WITHOUT_AUDIO, ValueType::BOOL, false, definition: 'Whether participants start with audio disabled by default'),
 			new Entry(Config::CALLS_START_WITHOUT_VIDEO, ValueType::BOOL, false, definition: 'Whether participants start with video disabled by default'),
 			new Entry(Config::INACTIVITY_LOCK_AFTER_DAYS, ValueType::INT, 0, definition: 'A duration (in days) after which rooms are locked. Calculated from the last activity in the room,'),

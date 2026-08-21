@@ -10,6 +10,7 @@ namespace OCA\Talk\Settings;
 
 use OCA\Files_Sharing\SharedStorage;
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Config;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Service\ParticipantService;
@@ -20,6 +21,7 @@ use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\IConfig;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -29,6 +31,7 @@ class BeforePreferenceSetEventListener implements IEventListener {
 	public function __construct(
 		private readonly IRootFolder $rootFolder,
 		private readonly ParticipantService $participantService,
+		private readonly IConfig $config,
 		private readonly LoggerInterface $logger,
 	) {
 	}
@@ -49,6 +52,9 @@ class BeforePreferenceSetEventListener implements IEventListener {
 			$event->getConfigKey(),
 			$event->getConfigValue(),
 		));
+		if ($event->isValid()) {
+			$this->synchronizeMediaPreferences($event->getUserId(), $event->getConfigKey(), $event->getConfigValue());
+		}
 	}
 
 	/**
@@ -105,6 +111,44 @@ class BeforePreferenceSetEventListener implements IEventListener {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Synchronizes media preferences based on the updated setting.
+	 * For compatibility reasons, the legacy preference `calls_start_without_media`is updated
+	 * based on the values of `calls_start_without_audio` and `calls_start_without_video`.
+	 *
+	 * @param string $userId The user ID
+	 * @param string $key The preference key
+	 * @param string $value The new preference value
+	 * @return void
+	 */
+	public function synchronizeMediaPreferences(string $userId, string $key, string $value): void {
+		// If the legacy preference is updated, we need to update the new preferences as well
+		if ($key === UserPreference::CALLS_START_WITHOUT_MEDIA) {
+			$this->config->setUserValue($userId, Application::APP_ID, UserPreference::CALLS_START_WITHOUT_AUDIO, $value);
+			$this->config->setUserValue($userId, Application::APP_ID, UserPreference::CALLS_START_WITHOUT_VIDEO, $value);
+			return;
+		}
+
+		if ($key !== UserPreference::CALLS_START_WITHOUT_AUDIO && $key !== UserPreference::CALLS_START_WITHOUT_VIDEO) {
+			return;
+		}
+
+		// Update the legacy preference based on the new preferences
+		// If either of the new preferences is set to 'yes', the legacy preference should be 'yes'
+		$otherKey = $key === UserPreference::CALLS_START_WITHOUT_AUDIO
+			? UserPreference::CALLS_START_WITHOUT_VIDEO
+			: UserPreference::CALLS_START_WITHOUT_AUDIO;
+		$otherValue = $this->config->getUserValue($userId, Application::APP_ID, $otherKey);
+		if ($otherValue !== 'yes' && $otherValue !== 'no') {
+			$otherValue = $this->config->getUserValue($userId, Application::APP_ID, UserPreference::CALLS_START_WITHOUT_MEDIA);
+		}
+		if ($otherValue !== 'yes' && $otherValue !== 'no') {
+			$otherValue = $this->config->getAppValue(Application::APP_ID, Config::CALLS_START_WITHOUT_MEDIA, 'no');
+		}
+		$legacyValue = ($value === 'yes' || $otherValue === 'yes') ? 'yes' : 'no';
+		$this->config->setUserValue($userId, Application::APP_ID, UserPreference::CALLS_START_WITHOUT_MEDIA, $legacyValue);
 	}
 
 	protected function validateAttachmentFolder(string $userId, string $value): bool {

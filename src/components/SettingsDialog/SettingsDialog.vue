@@ -23,17 +23,23 @@
 			:name="t('spreed', 'Devices')">
 			<NcFormBox>
 				<NcFormBoxSwitch
-					v-if="supportStartWithoutAudio"
+					v-if="supportStartWithoutAudio && supportStartWithoutVideo"
 					:modelValue="settingsStore.startWithoutAudio"
 					:label="t('spreed', 'Turn microphone off by default')"
 					:disabled="mediaLoading"
 					@update:modelValue="toggleStartWithoutAudio" />
 				<NcFormBoxSwitch
-					v-if="supportStartWithoutVideo"
+					v-if="supportStartWithoutAudio && supportStartWithoutVideo"
 					:modelValue="settingsStore.startWithoutVideo"
 					:label="t('spreed', 'Turn camera off by default')"
 					:disabled="mediaLoading"
 					@update:modelValue="toggleStartWithoutVideo" />
+				<NcFormBoxSwitch
+					v-else-if="supportStartWithoutMedia"
+					:modelValue="settingsStore.startWithoutAudio"
+					:label="t('spreed', 'Turn camera and microphone off by default')"
+					:disabled="mediaLoading"
+					@update:modelValue="toggleStartWithoutMedia" />
 				<NcFormBoxSwitch
 					v-if="supportDefaultBlurVirtualBackground"
 					:modelValue="settingsStore.blurVirtualBackgroundEnabled"
@@ -181,6 +187,7 @@ const supportTypingStatus = getTalkConfig('local', 'chat', 'typing-privacy') !==
 const isCallEnabled = getTalkConfig('local', 'call', 'enabled')
 const supportStartWithoutAudio = getTalkConfig('local', 'call', 'start-without-audio') !== undefined
 const supportStartWithoutVideo = getTalkConfig('local', 'call', 'start-without-video') !== undefined
+const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 const supportLiveTranslation = getTalkConfig('local', 'call', 'live-translation') === true
 
@@ -218,6 +225,7 @@ export default {
 			isCallEnabled,
 			supportStartWithoutAudio,
 			supportStartWithoutVideo,
+			supportStartWithoutMedia,
 			supportDefaultBlurVirtualBackground,
 			supportLiveTranslation,
 			actorStore,
@@ -327,6 +335,17 @@ export default {
 			this.mediaLoading = true
 			try {
 				await this.settingsStore.updateStartWithoutAudio(value)
+			} catch (exception) {
+				showError(t('spreed', 'Error while setting default media state'))
+			} finally {
+				this.mediaLoading = false
+			}
+		},
+
+		async toggleStartWithoutMedia(value) {
+			this.mediaLoading = true
+			try {
+				await this.settingsStore.updateStartWithoutMedia(value)
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting default media state'))
 			} finally {

@@ -792,6 +792,7 @@ namespace OCA\Talk;
  *             // Whether the user can enable SIP for conversations
  *             can-enable-sip: bool,
  *             // Whether calls start without media by default
+ *             start-without-media: bool,
  *             start-without-audio: bool,
  *             start-without-video: bool,
  *             // Maximum duration of a call in seconds, `0` means unlimited

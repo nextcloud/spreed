@@ -883,6 +883,41 @@ class Config {
 		return $this->getCallsStartWithoutMediaType($userId, self::CALLS_START_WITHOUT_VIDEO);
 	}
 
+	/** @deprecated Use getCallsStartWithoutAudio() and getCallsStartWithoutVideo(). */
+	public function getCallsStartWithoutMedia(?string $userId): bool {
+		if ($userId !== null) {
+			$userSetting = $this->config->getUserValue($userId, 'spreed', UserPreference::CALLS_START_WITHOUT_MEDIA);
+			if ($userSetting === 'yes' || $userSetting === 'no') {
+				return $userSetting === 'yes';
+			}
+
+			// If the legacy setting is not set, check the new settings for audio and video separately.
+			$audioSetting = $this->config->getUserValue($userId, 'spreed', UserPreference::CALLS_START_WITHOUT_AUDIO);
+			$videoSetting = $this->config->getUserValue($userId, 'spreed', UserPreference::CALLS_START_WITHOUT_VIDEO);
+			if ($audioSetting === 'yes' || $videoSetting === 'yes') {
+				return true;
+			}
+			if ($audioSetting === 'no' && $videoSetting === 'no') {
+				return false;
+			}
+		}
+
+		$legacyAppSetting = $this->appConfig->getAppValue(self::CALLS_START_WITHOUT_MEDIA);
+		if ($legacyAppSetting !== '') {
+			return $legacyAppSetting === 'yes' || $legacyAppSetting === '1';
+		}
+
+		// If the legacy setting is not set, check the new settings for audio and video separately.
+		$audioAppSetting = $this->appConfig->getAppValue(self::CALLS_START_WITHOUT_AUDIO);
+		$videoAppSetting = $this->appConfig->getAppValue(self::CALLS_START_WITHOUT_VIDEO);
+		if ($audioAppSetting !== '' || $videoAppSetting !== '') {
+			return $audioAppSetting === 'yes' || $audioAppSetting === '1'
+				|| $videoAppSetting === 'yes' || $videoAppSetting === '1';
+		}
+
+		return false;
+	}
+
 	private function getCallsStartWithoutMediaType(?string $userId, string $key): bool {
 		if ($userId !== null) {
 			$userSetting = $this->config->getUserValue($userId, 'spreed', $key);
@@ -890,7 +925,7 @@ class Config {
 				return $userSetting === 'yes';
 			}
 
-			// Legacy setting for backward compatibility
+			// If the new setting is not set, check the legacy setting.
 			$legacyUserSetting = $this->config->getUserValue($userId, 'spreed', UserPreference::CALLS_START_WITHOUT_MEDIA);
 			if ($legacyUserSetting === 'yes' || $legacyUserSetting === 'no') {
 				return $legacyUserSetting === 'yes';
@@ -901,6 +936,7 @@ class Config {
 			return $this->appConfig->getAppValueBool($key);
 		}
 
+		// If the new setting is not set, check the legacy setting.
 		return $this->appConfig->getAppValueBool(self::CALLS_START_WITHOUT_MEDIA);
 	}
 

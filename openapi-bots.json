@@ -110,6 +110,7 @@
                                     "sip-dialout-enabled",
                                     "default-phone-region",
                                     "can-enable-sip",
+                                    "start-without-media",
                                     "start-without-audio",
                                     "start-without-video",
                                     "max-duration",
@@ -180,6 +181,11 @@
                                     "can-enable-sip": {
                                         "type": "boolean",
                                         "description": "Whether the user can enable SIP for conversations"
+                                    },
+                                    "start-without-media": {
+                                        "type": "boolean",
+                                        "deprecated": true,
+                                        "description": "Whether calls start without media by default"
                                     },
                                     "start-without-audio": {
                                         "type": "boolean",

@@ -93,6 +93,13 @@ async function setStartWithoutAudio(value: boolean) {
 }
 
 /**
+ * @param value whether calls should start without audio and video
+ */
+async function setStartWithoutMedia(value: boolean) {
+	return setUserConfig('spreed', 'calls_start_without_media', value ? 'yes' : 'no')
+}
+
+/**
  * @param value whether calls should start without video
  */
 async function setStartWithoutVideo(value: boolean) {
@@ -182,6 +189,7 @@ export {
 	setReadStatusPrivacy,
 	setSIPSettings,
 	setStartWithoutAudio,
+	setStartWithoutMedia,
 	setStartWithoutVideo,
 	setTypingStatusPrivacy,
 	setUserConfig,

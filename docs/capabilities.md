@@ -163,8 +163,7 @@
 * `chat-summary-api` (local) - Whether the endpoint to get summarized chat messages in a conversation is available
 * `email-csv-import` - Whether the endpoint to import a CSV email list as participants exists
 * `config => chat => summary-threshold` (local) - Number of unread messages that should exist to show a "Generate summary" option
-* `config => call => start-without-audio` (local) - Boolean, whether audio should be disabled when starting or joining a conversation
-* `config => call => start-without-video` (local) - Boolean, whether video should be disabled when starting or joining a conversation
+* `config => call => start-without-media` (local, deprecated) - Boolean, whether media should be disabled when starting or joining a conversation
 * `config => call => max-duration` - Integer, maximum call duration in seconds. Please note that this should only be used with system cron and with a reasonable high value, due to the expended duration until the background job ran.
 * `config => call => blur-virtual-background` (local) - Boolean, whether blur background is set by default when joining a conversation
 
@@ -238,3 +237,5 @@
 * `config => call => external-call-service` (local) - The target URL for an external call service if one is configured
 * `bot-features-api` (local) - Whether bots can fetch their own enabled features using their shared secret
 * `promote-demote-owner` - Whether owners can promote other participants to owner and demote other owners again, by sending the `participantType` parameter when promoting or demoting a participant
+* `config => call => start-without-audio` (local) - Boolean, whether audio should be disabled when starting or joining a conversation
+* `config => call => start-without-video` (local) - Boolean, whether video should be disabled when starting or joining a conversation
