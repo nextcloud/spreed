@@ -445,14 +445,18 @@ export const useUploadStore = defineStore('upload', () => {
 
 		// Tag previously indexed files and add temporary messages to the MessagesList
 		// If caption is provided, attach to the last temporary message
-		const lastIndex = getInitialisedUploads(uploadId).at(-1)![0]
-		for (const [index, uploadedFile] of getInitialisedUploads(uploadId)) {
-			// Compress before building the temporary message, so that the caption,
-			// the parent and the final file parameters are applied in a single pass
-			// and the backend receives the final file names (e.g. .webp instead of .png)
-			const compressed = compressImages
-				? await compressUploadedImage(uploadId, index)
-				: null
+		const initialisedUploads = getInitialisedUploads(uploadId)
+		const lastIndex = initialisedUploads.at(-1)![0]
+
+		// Compress before building the temporary messages, so that the caption,
+		// the parent and the final file parameters are applied in a single pass
+		// and the backend receives the final file names (e.g. .webp instead of .png).
+		const compressedFiles = compressImages
+			? await Promise.all(initialisedUploads.map(([index]) => compressUploadedImage(uploadId, index)))
+			: []
+
+		for (const [key, [index, uploadedFile]] of initialisedUploads.entries()) {
+			const compressed = compressedFiles[key] ?? null
 
 			// Store the previously created temporary message
 			const message = {
@@ -477,9 +481,9 @@ export const useUploadStore = defineStore('upload', () => {
 			uploads[uploadId].files[index].temporaryMessage = message
 			// Add temporary messages (files) to the messages list
 			vuexStore.dispatch('addTemporaryMessage', { token, message })
-			// Scroll the message list
-			EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
 		}
+		// Scroll the message list
+		EventBus.emit('scroll-chat-to-bottom', { smooth: true, force: true })
 
 		// With the conversation-subfolders feature enabled,
 		// stage uploads inside the backend-provided Draft folder and

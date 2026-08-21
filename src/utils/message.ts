@@ -246,6 +246,20 @@ export function isTemporaryId(id: ChatMessage['id'] | string): boolean {
 }
 
 /**
+ * Returns whether the given message is not sent yet. A combined file share is
+ * based on its last posted message, so its own id is not temporary anymore
+ * while the other files of the upload are still in flight
+ *
+ * @param message Chat message
+ */
+export function isTemporaryMessage(message: ChatMessage): boolean {
+	const combinedMessageIds = (message as ChatMessage & { combinedMessageIds?: ChatMessage['id'][] }).combinedMessageIds
+	return combinedMessageIds
+		? combinedMessageIds.some(isTemporaryId)
+		: isTemporaryId(message.id)
+}
+
+/**
  * Returns whether the given system message should be hidden in the UI
  *
  * @param message Chat message
