@@ -2071,7 +2071,6 @@ OC.L10N.register(
     "Sending signaling message has failed" : "Imeshindwa kutuma ujumbe wa kuashiria",
     "Lost connection to signaling server. Trying to reconnect." : "Muunganisho umepoteza kwa seva ya kuashiria. Inajaribu kuunganisha tena.",
     "Lost connection to signaling server." : "Muunganisho umepoteza kwa seva ya kuashiria.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Seva ya kuashiria iliyosanidiwa inahitaji kusasishwa ili iendane na toleo hili la Talk. Tafadhali wasiliana na utawala wako.",
     "Please restart the app." : "Tafadhali anzisha upya programu.",
     "Please reload the page." : "Tafadhali pakia ukurasa upya ",
     "Please try to restart the app." : "Tafadhali jaribu kuanzisha upya programu.",
@@ -2144,6 +2143,7 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Ulijiunga kwenye mazungumzo kwenye dirisha au kifaa kingine. Hii kwa sasa haitumiki na Nextcloud Talk kwa hivyo kipindi hiki kilifungwa.",
     "Nextcloud Talk was updated." : "Nextcloud Talk imesasishwa.",
     "Nextcloud is in maintenance mode." : "Nextcloud iko katika hali ya matengenezo.",
-    "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation imesasishwa."
+    "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation imesasishwa.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Seva ya kuashiria iliyosanidiwa inahitaji kusasishwa ili iendane na toleo hili la Talk. Tafadhali wasiliana na utawala wako."
 },
 "nplurals=2; plural=(n != 1);");

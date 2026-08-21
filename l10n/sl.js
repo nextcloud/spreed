@@ -1592,7 +1592,6 @@ OC.L10N.register(
     "The link could not be copied" : "Povezave ni mogoče kopirati.",
     "Sending signaling message has failed" : "Pošiljanje signalnega sporočila je spodletelo.",
     "Lost connection to signaling server. Trying to reconnect." : "Povezava s signalnim strežnikom je izgubljena. Izveden bo ponovni poskus povezave.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Nastavljen signalni strežnik je treba posodobiti, da bo skladen s trenutno uporabljeno različico programa Talk. Stopite v stik s skrbnikom sistema.",
     "Please reload the page." : "Stran je treba osvežiti.",
     "Do not disturb" : "Ne pustim se motiti",
     "Away" : "Trenutno ne spremljam",
@@ -1641,6 +1640,7 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Shranjevanje nastavitev zvoka je spodletelo",
     "Sounds setting saved" : "Nastavitve zvokov so shranjene.",
     "Search …" : "Poišči …",
-    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Pogovoru ste se pridružili v novem oknu brskalnika, ali na drugi napravi. Nextcloud Talk te možnosti trenutno ne omogoča, zato je bila druga seja preklicana."
+    "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Pogovoru ste se pridružili v novem oknu brskalnika, ali na drugi napravi. Nextcloud Talk te možnosti trenutno ne omogoča, zato je bila druga seja preklicana.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Nastavljen signalni strežnik je treba posodobiti, da bo skladen s trenutno uporabljeno različico programa Talk. Stopite v stik s skrbnikom sistema."
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

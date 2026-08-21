@@ -2067,7 +2067,6 @@ OC.L10N.register(
     "Sending signaling message has failed" : "Invio del messaggio di segnalazione non riuscito",
     "Lost connection to signaling server. Trying to reconnect." : "Connessione al server di segnalazione interrotta. Riprova a connetterti.",
     "Lost connection to signaling server." : "Connessione persa con il server di segnalazione.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Il server di segnalazione configurato deve essere aggiornato per essere compatibile con questa versione di Talk. Contatta l'amministratore.",
     "Please restart the app." : "Riavvia l'applicazione.",
     "Please reload the page." : "Ricarica la pagina.",
     "Please try to restart the app." : "Prova a riavviare l'applicazione.",
@@ -2140,6 +2139,7 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Ti sei unito alla conversazione in un'altra finestra o dispositivo. Questo non è attualmente supportato da Nextcloud Talk, quindi questa sessione è stata chiusa.",
     "Nextcloud Talk was updated." : "Nextcloud Talk è stato aggiornato.",
     "Nextcloud is in maintenance mode." : "Nextcloud è in modalità manutenzione.",
-    "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation è stato aggiornato."
+    "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation è stato aggiornato.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Il server di segnalazione configurato deve essere aggiornato per essere compatibile con questa versione di Talk. Contatta l'amministratore."
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

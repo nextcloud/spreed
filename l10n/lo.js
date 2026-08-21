@@ -2082,7 +2082,6 @@ OC.L10N.register(
     "Sending signaling message has failed" : "Sending signaling message has failed",
     "Lost connection to signaling server. Trying to reconnect." : "Lost connection to signaling server. Trying to reconnect.",
     "Lost connection to signaling server." : "Lost connection to signaling server.",
-    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration.",
     "Please restart the app." : "Please restart the app.",
     "Please reload the page." : "ກະລຸນາໂຫຼດຫນ້າເພດອີກ.",
     "Please try to restart the app." : "Please try to restart the app.",
@@ -2156,6 +2155,7 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed.",
     "Nextcloud Talk was updated." : "Nextcloud Talk was updated.",
     "Nextcloud is in maintenance mode." : "Nextcloud is in maintenance mode.",
-    "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation was updated."
+    "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation was updated.",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration."
 },
 "nplurals=1; plural=0;");
