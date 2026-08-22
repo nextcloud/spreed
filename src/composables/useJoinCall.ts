@@ -86,10 +86,10 @@ export function useJoinCall() {
 
 		const options: Partial<Record<'audioOn' | 'videoOn', boolean>> = {}
 		if (!settingsStore.showMediaSettings || directCall) {
-			// Join calls with video off if device preview skipped or bypassed
-			options.videoOn = false
-			if (settingsStore.startWithoutMedia) {
-				// Option: 'Turn camera and microphone off by default'
+			if (directCall || settingsStore.startWithoutVideo) {
+				options.videoOn = false
+			}
+			if (settingsStore.startWithoutAudio) {
 				options.audioOn = false
 			}
 		}

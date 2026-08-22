@@ -161,6 +161,8 @@ export const mockedCapabilities: Capabilities = {
 				'default-phone-region': '',
 				'can-enable-sip': true,
 				'start-without-media': false,
+				'start-without-audio': false,
+				'start-without-video': false,
 				'max-duration': 0,
 				'blur-virtual-background': false,
 				'end-to-end-encryption': false,
@@ -231,6 +233,8 @@ export const mockedCapabilities: Capabilities = {
 				'predefined-backgrounds-v2',
 				'can-upload-background',
 				'start-without-media',
+				'start-without-audio',
+				'start-without-video',
 				'blur-virtual-background',
 			],
 			chat: [

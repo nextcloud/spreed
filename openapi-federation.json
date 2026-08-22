@@ -149,6 +149,8 @@
                                     "default-phone-region",
                                     "can-enable-sip",
                                     "start-without-media",
+                                    "start-without-audio",
+                                    "start-without-video",
                                     "max-duration",
                                     "blur-virtual-background",
                                     "end-to-end-encryption",
@@ -220,7 +222,16 @@
                                     },
                                     "start-without-media": {
                                         "type": "boolean",
+                                        "deprecated": true,
                                         "description": "Whether calls start without media by default"
+                                    },
+                                    "start-without-audio": {
+                                        "type": "boolean",
+                                        "description": "Whether calls start without audio by default"
+                                    },
+                                    "start-without-video": {
+                                        "type": "boolean",
+                                        "description": "Whether calls start without video by default"
                                     },
                                     "max-duration": {
                                         "type": "integer",

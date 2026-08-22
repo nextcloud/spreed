@@ -294,7 +294,8 @@ import { useSettingsStore } from '../../stores/settings.ts'
 import { isClassifiedConversation } from '../../utils/conversation.ts'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 
-const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
+const supportStartWithoutAudio = getTalkConfig('local', 'call', 'start-without-audio') !== undefined
+const supportStartWithoutVideo = getTalkConfig('local', 'call', 'start-without-video') !== undefined
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 
 export default {
@@ -408,7 +409,8 @@ export default {
 			virtualBackground,
 			tabs,
 			dialogHeaderId,
-			supportStartWithoutMedia,
+			supportStartWithoutAudio,
+			supportStartWithoutVideo,
 			supportDefaultBlurVirtualBackground,
 			actorStore: useActorStore(),
 			token: useGetToken(),
@@ -566,10 +568,6 @@ export default {
 			return this.$store.getters.connectionFailed(this.token)
 		},
 
-		startWithoutMediaEnabled() {
-			return this.settingsStore.startWithoutMedia
-		},
-
 		audioStreamErrorMessage() {
 			if (!this.audioStreamError) {
 				return null
@@ -640,15 +638,16 @@ export default {
 					this.registerVideoElement(this.video)
 				})
 
-				if (this.settingsStore.startWithoutMedia) {
-					// Disable audio
+				if (this.settingsStore.startWithoutAudio) {
 					this.audioOn = false
 					BrowserStorage.setItem('audioDisabled_' + this.token, 'true')
-					// Disable video
+				} else {
+					this.audioOn = !BrowserStorage.getItem('audioDisabled_' + this.token)
+				}
+				if (this.settingsStore.startWithoutVideo) {
 					this.videoOn = false
 					BrowserStorage.setItem('videoDisabled_' + this.token, 'true')
 				} else {
-					this.audioOn = !BrowserStorage.getItem('audioDisabled_' + this.token)
 					this.videoOn = !BrowserStorage.getItem('videoDisabled_' + this.token)
 				}
 				this.notifyCall = BrowserStorage.getItem('silentCall_' + this.token) !== 'true'
@@ -672,14 +671,14 @@ export default {
 
 		audioInputId(audioInputId) {
 			if (this.tabContent === 'devices' && audioInputId && !this.audioOn
-				&& !this.settingsStore.startWithoutMedia) {
+				&& !this.settingsStore.startWithoutAudio) {
 				this.toggleAudio()
 			}
 		},
 
 		videoInputId(videoInputId) {
 			if (this.tabContent === 'devices' && videoInputId && !this.videoOn
-				&& !this.settingsStore.startWithoutMedia) {
+				&& !this.settingsStore.startWithoutVideo) {
 				this.toggleVideo()
 			}
 		},

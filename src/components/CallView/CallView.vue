@@ -253,9 +253,13 @@ export default {
 		provide('CallView:screenshotModeEnabled', screenshotMode)
 		const settingsStore = useSettingsStore()
 		// If media settings was not used, we check the global config of default devices state here
-		if (!settingsStore.showMediaSettings && settingsStore.startWithoutMedia) {
-			localMediaModel.disableAudio()
-			localMediaModel.disableVideo()
+		if (!settingsStore.showMediaSettings) {
+			if (settingsStore.startWithoutAudio) {
+				localMediaModel.disableAudio()
+			}
+			if (settingsStore.startWithoutVideo) {
+				localMediaModel.disableVideo()
+			}
 		}
 
 		const participantActivityStore = useParticipantActivityStore()
