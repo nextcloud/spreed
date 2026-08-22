@@ -2274,6 +2274,8 @@
     "Connecting is taking longer than expected …" : "A conexão está demorando mais do que o esperado …",
     "Failed to connect. Retrying …" : "Falha na conexão. Tentando novamente …",
     "Failed to connect. The signaling server may be set up incorrectly" : "Falha na conexão. O servidor de sinalização pode estar configurado incorretamente",
+    "High-performance backend needs to be updated." : "O back-end de alto desempenho precisa ser atualizado.",
+    "The server is misconfigured. Please contact your administration." : "O servidor está configurado incorretamente. Entre em contato com a administração.",
     "Please restart the app." : "Por favor, reinicie o aplicativo.",
     "Please reload the page." : "Por favor, recarregue a página",
     "Please try to restart the app." : "Por favor, tente reiniciar o aplicativo.",

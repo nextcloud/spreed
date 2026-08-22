@@ -2276,6 +2276,8 @@ OC.L10N.register(
     "Connecting is taking longer than expected …" : "Bağlantı kurulması beklenenden uzun sürüyor…",
     "Failed to connect. Retrying …" : "Bağlantı kurulamadı. Yeniden deneniyor…",
     "Failed to connect. The signaling server may be set up incorrectly" : "Bağlantı kurulamadı. Signalling sunucusu yanlış yapılandırılmış olabilir",
+    "High-performance backend needs to be updated." : "Yüksek başarımlı arka yüzün güncellenmesi gerekiyor.",
+    "The server is misconfigured. Please contact your administration." : "Sunucu yanlış yapılandırılmış. Lütfen yöneticiniz ile görüşün.",
     "Please restart the app." : "Lütfen uygulamayı yeniden başlatın.",
     "Please reload the page." : "Lütfen sayfayı yeniden yükleyin.",
     "Please try to restart the app." : "Lütfen uygulamayı yeniden başlatmayı deneyin.",
