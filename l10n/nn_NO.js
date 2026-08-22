@@ -58,6 +58,7 @@ OC.L10N.register(
     "Everyone" : "Alle",
     "Save changes" : "Lagre endringar",
     "Saving …" : "Lagrar …",
+    "Saved!" : "Lagra!",
     "Disabled" : "Deaktivert",
     "Name" : "Namn",
     "Enable encryption" : "Aktiver kryptering",

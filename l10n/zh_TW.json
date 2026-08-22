@@ -2274,6 +2274,8 @@
     "Connecting is taking longer than expected …" : "連線時間比預期更長……",
     "Failed to connect. Retrying …" : "連線失敗。正在重試……",
     "Failed to connect. The signaling server may be set up incorrectly" : "無法連線。訊號伺服器可能設定錯誤",
+    "High-performance backend needs to be updated." : "需要更新高效能後端。",
+    "The server is misconfigured. Please contact your administration." : "伺服器設定錯誤。請聯絡您的管理員。",
     "Please restart the app." : "請重新啟動應用程式。",
     "Please reload the page." : "請重新載入頁面。",
     "Please try to restart the app." : "請嘗試重新啟動應用程式。",
