@@ -2276,6 +2276,8 @@ OC.L10N.register(
     "Connecting is taking longer than expected …" : "Verbinden dauert länger als erwartet …",
     "Failed to connect. Retrying …" : "Verbindung konnte nicht hergestellt werden. Erneuter Versuch …",
     "Failed to connect. The signaling server may be set up incorrectly" : "Verbindung konnte nicht hergestellt werden Der Signaling-Server könnte falsch eingerichtet sein",
+    "High-performance backend needs to be updated." : "Das Hochleistungs-Backend muss aktualisiert werden.",
+    "The server is misconfigured. Please contact your administration." : "Der Server ist falsch konfiguriert. Bitte an die Administration wenden.",
     "Please restart the app." : "Bitte die App neu starten.",
     "Please reload the page." : "Bitte die Seite neu laden.",
     "Please try to restart the app." : "Bitte versuchen, die App neu zu starten.",
