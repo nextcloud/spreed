@@ -463,7 +463,10 @@ class RecordingService {
 
 		$task = new Task(
 			TextToTextSummary::ID,
-			['input' => $output],
+			[
+				'input' => $output,
+				'talk_meeting' => 1
+			],
 			Application::APP_ID,
 			$owner,
 			'call/summary/' . $room->getToken() . '/' . $recordingFileId,
