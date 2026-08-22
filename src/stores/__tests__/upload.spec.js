@@ -608,13 +608,14 @@ describe('fileUploadStore', () => {
 				getTalkConfig.mockReturnValue(true)
 			})
 
-			test('does not compress anything when not requested', async () => {
+			test('starts eager compression on upload', async () => {
 				const file = makeImage()
+				compressImage.mockResolvedValue(makeCompressed())
 				uploadStore.initialiseUpload({ uploadId: 'upload-id1', token: TOKEN, files: [file] })
 
 				await uploadStore.uploadFiles({ token: TOKEN, uploadId: 'upload-id1', options: null })
 
-				expect(compressImage).not.toHaveBeenCalled()
+				expect(compressImage).toHaveBeenCalled()
 				expect(uploadMock).toHaveBeenCalledWith(expect.anything(), file)
 			})
 
