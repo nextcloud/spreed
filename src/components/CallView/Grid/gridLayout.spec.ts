@@ -9,11 +9,13 @@ import {
 	computeRowDistribution,
 	computeTilePlacements,
 	getHalfColumnCount,
+	getHalfColumnMaxWidth,
 	getHalfColumnMinWidth,
 	getMinTileHeight,
 	getMinTileWidth,
-	getTargetAspectRatio,
 	GRID_GAP,
+	STRIPE_HEIGHT,
+	TARGET_ASPECT_RATIO,
 	TILE_COLUMN_SPAN,
 } from './gridLayout.ts'
 
@@ -38,12 +40,12 @@ describe('gridLayout', () => {
 
 		test('uses the compact tile sizes for stripe/sidebar', () => {
 			expect(getMinTileWidth(true)).toBe(200)
-			expect(getMinTileHeight(true)).toBe(150)
+			expect(getMinTileHeight(true)).toBe(134)
 		})
 
-		test('targets a wider aspect ratio for the full grid than the stripe', () => {
-			expect(getTargetAspectRatio(false)).toBe(1.5)
-			expect(getTargetAspectRatio(true)).toBe(1)
+		test('fits a compact tile in the stripe', () => {
+			// The grid of the stripe is padded by a gap at its top
+			expect(getMinTileHeight(true)).toBeLessThanOrEqual(STRIPE_HEIGHT - GRID_GAP)
 		})
 	})
 
@@ -105,6 +107,21 @@ describe('gridLayout', () => {
 			expect(result).toEqual({ columns: 5, rows: 1 })
 		})
 
+		test('shrinks a single row grid down to the tiles it holds', () => {
+			// A single row cannot be shrunk any further, so the columns are the
+			// only thing left to remove: a lone participant and the local video
+			// take 2 columns of a stripe which could hold 7 of them
+			expect(computeGridDimensions({
+				gridWidth: 1440,
+				gridHeight: 142,
+				videoCount: 1,
+				targetAspectRatio: TARGET_ASPECT_RATIO,
+				minWidth: 200,
+				minHeight: 134,
+				noLocalVideoReserve: false,
+			})).toEqual({ columns: 2, rows: 1 })
+		})
+
 		test('applies hysteresis on the current column count to avoid flickering', () => {
 			// 976px fits exactly 3 columns of 320px with two 8px gaps. Whether a
 			// fourth column is offered depends on the current column count.
@@ -134,7 +151,7 @@ describe('gridLayout', () => {
 						const layout = {
 							gridWidth,
 							gridHeight,
-							targetAspectRatio: getTargetAspectRatio(isStripe),
+							targetAspectRatio: TARGET_ASPECT_RATIO,
 							minWidth: getMinTileWidth(isStripe),
 							minHeight: getMinTileHeight(isStripe),
 							noLocalVideoReserve: isStripe,
@@ -218,6 +235,17 @@ describe('gridLayout', () => {
 		test('never returns a negative half column width', () => {
 			expect(getHalfColumnMinWidth(0)).toBe(0)
 		})
+
+		test('caps a half column so that a tile spanning two keeps the target aspect ratio', () => {
+			// A 142px tall tile targeting 1.5 is at most 213px wide
+			expect(getHalfColumnMaxWidth(142, 1.5, 0) * 2 + GRID_GAP).toBe(142 * 1.5)
+		})
+
+		test('never caps a half column below its minimum width', () => {
+			const minWidth = getHalfColumnMinWidth(320)
+			// A tile too short to be 320px wide at the target aspect ratio
+			expect(getHalfColumnMaxWidth(100, 1.5, minWidth)).toBe(minWidth)
+		})
 	})
 
 	describe('computeTilePlacements', () => {
@@ -300,6 +328,50 @@ describe('gridLayout', () => {
 
 							// The half columns left empty are split evenly on both sides
 							expect(firstLine - 1).toBe(halfColumns + 1 - lastLine)
+						}
+					}
+				}
+			}
+		})
+
+		test('fills the rows from the first half column when aligned to the start', () => {
+			// 6 tiles over 2 rows of a 4 columns grid: 4 and 2 tiles
+			expect(computeTilePlacements({ ...grid, rows: 2, totalTiles: 6, align: 'start' })).toEqual([
+				{ row: 1, column: 1 },
+				{ row: 1, column: 3 },
+				{ row: 1, column: 5 },
+				{ row: 1, column: 7 },
+				{ row: 2, column: 1 },
+				{ row: 2, column: 3 },
+			])
+		})
+
+		test('lays out a complete grid the same way whether centered or aligned to the start', () => {
+			expect(computeTilePlacements({ ...grid, rows: 2, totalTiles: 8, align: 'start' }))
+				.toEqual(computeTilePlacements({ ...grid, rows: 2, totalTiles: 8 }))
+		})
+
+		test('falls back to the default placement when aligned to the start with nothing to lay out', () => {
+			expect(computeTilePlacements({ ...grid, rows: 2, totalTiles: 0, align: 'start' })).toEqual([])
+			expect(computeTilePlacements({ ...grid, rows: 2, totalTiles: 9, align: 'start' })).toEqual([])
+		})
+
+		test('keeps every row inside the grid when aligned to the start', () => {
+			for (let columns = 1; columns <= 5; columns++) {
+				const halfColumns = getHalfColumnCount(columns)
+
+				for (let rows = 1; rows <= 5; rows++) {
+					for (let totalTiles = 1; totalTiles <= columns * rows; totalTiles++) {
+						const placements = computeTilePlacements({ columns, rows, totalTiles, align: 'start' })
+						expect(placements.length).toBe(totalTiles)
+
+						for (const [index, placement] of placements.entries()) {
+							// The tiles are laid out one after the other, row by row
+							expect(placement.row).toBe(Math.floor(index / columns) + 1)
+							expect(placement.column).toBe((index % columns) * TILE_COLUMN_SPAN + 1)
+
+							// The tile stays within the half columns of the grid
+							expect(placement.column + TILE_COLUMN_SPAN).toBeLessThanOrEqual(halfColumns + 1)
 						}
 					}
 				}
