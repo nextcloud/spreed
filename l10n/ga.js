@@ -2276,6 +2276,8 @@ OC.L10N.register(
     "Connecting is taking longer than expected …" : "Tá an nasc ag glacadh níos faide ná mar a bhíothas ag súil leis …",
     "Failed to connect. Retrying …" : "Theip ar an nascadh. Ag iarraidh arís …",
     "Failed to connect. The signaling server may be set up incorrectly" : "Theip ar an nascadh. Seans go bhfuil an freastalaí comharthaíochta socraithe go mícheart.",
+    "High-performance backend needs to be updated." : "Ní mór an cúltaca ardfheidhmíochta a nuashonrú.",
+    "The server is misconfigured. Please contact your administration." : "Tá an freastalaí míchumraithe. Téigh i dteagmháil le do riarachán le do thoil.",
     "Please restart the app." : "Atosaigh an aip le do thoil.",
     "Please reload the page." : "Athlódáil an leathanach le do thoil.",
     "Please try to restart the app." : "Déan iarracht an aip a atosú le do thoil.",
