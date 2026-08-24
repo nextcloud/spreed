@@ -6,8 +6,8 @@
 import type { User } from '@nextcloud/e2e-test-server'
 import type { Page } from '@playwright/test'
 
-import { createRandomUser, login } from '@nextcloud/e2e-test-server/playwright'
 import { test as base } from '@playwright/test'
+import { createRandomUser, login } from '../database.ts'
 
 /**
  * The fixed admin account every throwaway Nextcloud instance ships with.
