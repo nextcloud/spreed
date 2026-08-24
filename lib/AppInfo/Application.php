@@ -27,6 +27,7 @@ use OCA\Talk\Chat\Parser\UserMention;
 use OCA\Talk\Chat\SystemMessage\Listener as SystemMessageListener;
 use OCA\Talk\Collaboration\Collaborators\Listener as CollaboratorsListener;
 use OCA\Talk\Collaboration\Reference\ReferenceInvalidationListener;
+use OCA\Talk\Collaboration\Reference\RenderReferenceEventListener as TalkRenderReferenceEventListener;
 use OCA\Talk\Collaboration\Reference\TalkReferenceProvider;
 use OCA\Talk\Collaboration\Resources\ConversationProvider;
 use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
@@ -142,6 +143,7 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\Calendar\Events\CalendarObjectCreatedEvent;
 use OCP\Calendar\Events\CalendarObjectUpdatedEvent;
 use OCP\Collaboration\AutoComplete\AutoCompleteFilterEvent;
+use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\Collaboration\Resources\IProviderManager;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\Config\BeforePreferenceSetEvent;
@@ -266,6 +268,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(LobbyModifiedEvent::class, ReferenceInvalidationListener::class);
 		$context->registerEventListener(RoomDeletedEvent::class, ReferenceInvalidationListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, ReferenceInvalidationListener::class);
+		$context->registerEventListener(RenderReferenceEvent::class, TalkRenderReferenceEventListener::class);
 
 		// Resources listeners
 		$context->registerEventListener(AttendeesAddedEvent::class, ResourceListener::class);
