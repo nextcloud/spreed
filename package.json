@@ -15,6 +15,8 @@
     "dev": "rspack build --env development",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
+    "playwright": "playwright test",
+    "playwright:ui": "playwright test --ui",
     "serve": "rspack dev --env development",
     "stylelint": "stylelint \"src/**/*.scss\" \"src/**/*.vue\"",
     "stylelint:fix": "stylelint \"src/**/*.scss\" \"src/**/*.vue\" --fix",

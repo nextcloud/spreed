@@ -1,0 +1,16 @@
+diff --git a/.github/workflows/playwright.yml b/.github/workflows/playwright.yml
+index ba4159f64d..995df0f56b 100644
+--- a/.github/workflows/playwright.yml
++++ b/.github/workflows/playwright.yml
+@@ -29,10 +29,8 @@ name: Playwright Tests
+ on:
+   pull_request:
+     branches:
+-      - master
++      - main
+       - stable35
+-      - stable34
+-      - stable33
+ 
+ permissions:
+   contents: read
