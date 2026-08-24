@@ -2,10 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 name: Playwright Tests
-# TODO: re-enable once the Talk e2e suite is ready for CI
-# on:
-#   pull_request:
-#     branches: [main, master, stable*]
+on:
+  pull_request:
+    branches: [main, master, stable*]
 
 jobs:
   playwright-tests:
