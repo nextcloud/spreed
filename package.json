@@ -20,6 +20,8 @@
     "stylelint:fix": "stylelint \"src/**/*.scss\" \"src/**/*.vue\" --fix",
     "test": "LANG=C vitest",
     "test:coverage": "LANG=C vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "ts:check": "vue-tsc --noEmit",
     "ts:generate": "npx openapi-typescript -t",
     "ts:generate-core-types": "./src/types/generate-core-types.sh",
