@@ -2276,6 +2276,8 @@ OC.L10N.register(
     "Connecting is taking longer than expected …" : "Prisijungimas užtrunka ilgiau nei tikėtasi…",
     "Failed to connect. Retrying …" : "Nepavyko prisijungti. Bandoma dar kartą…",
     "Failed to connect. The signaling server may be set up incorrectly" : "Nepavyko prisijungti. Signalinis serveris gali būti nustatytas neteisingai.",
+    "High-performance backend needs to be updated." : "Reikia atnaujinti didelio našumo foninę sistemą.",
+    "The server is misconfigured. Please contact your administration." : "Serveris netinkamai sukonfigūruotas. Prašome susisiekti su administratoriumi.",
     "Please restart the app." : "Prašome iš naujo paleisti programėlę.",
     "Please reload the page." : "Prašome įkelti puslapį iš naujo.",
     "Please try to restart the app." : "Prašome pabandyti iš naujo paleisti programėlę.",
