@@ -30,7 +30,6 @@ use OCA\Talk\Collaboration\Reference\ReferenceInvalidationListener;
 use OCA\Talk\Collaboration\Reference\TalkReferenceProvider;
 use OCA\Talk\Collaboration\Resources\ConversationProvider;
 use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
-use OCA\Talk\Config;
 use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Deck\DeckPluginLoader;
@@ -98,6 +97,7 @@ use OCA\Talk\Listener\DisplayNameListener;
 use OCA\Talk\Listener\FeaturePolicyListener;
 use OCA\Talk\Listener\GroupDeletedListener;
 use OCA\Talk\Listener\GroupMembershipListener;
+use OCA\Talk\Listener\LoadNavigationEntryListener;
 use OCA\Talk\Listener\NoteToSelfListener;
 use OCA\Talk\Listener\RestrictStartingCalls as RestrictStartingCallsListener;
 use OCA\Talk\Listener\SampleConversationsListener;
@@ -154,11 +154,7 @@ use OCP\Group\Events\GroupDeletedEvent;
 use OCP\Group\Events\UserAddedEvent;
 use OCP\Group\Events\UserRemovedEvent;
 use OCP\IConfig;
-use OCP\INavigationManager;
-use OCP\IURLGenerator;
-use OCP\IUser;
-use OCP\IUserSession;
-use OCP\L10N\IFactory;
+use OCP\Navigation\Events\LoadAdditionalEntriesEvent;
 use OCP\OCM\Events\ResourceTypeRegisterEvent;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
@@ -203,6 +199,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, PublicShareAuthTemplateLoader::class);
 		$context->registerEventListener(LoadSidebar::class, FilesTemplateLoader::class);
 		$context->registerEventListener(BeforePreferenceSetEvent::class, BeforePreferenceSetEventListener::class);
+		$context->registerEventListener(LoadAdditionalEntriesEvent::class, LoadNavigationEntryListener::class);
 
 		// Activity listeners
 		$context->registerEventListener(AttendeesAddedEvent::class, ActivityListener::class);
@@ -402,7 +399,6 @@ class Application extends App implements IBootstrap {
 	public function boot(IBootContext $context): void {
 		$context->injectFn($this->registerCollaborationResourceProvider(...));
 		$context->injectFn($this->registerClientLinks(...));
-		$context->injectFn($this->registerNavigationLink(...));
 		$context->injectFn($this->registerCloudFederationProviderManager(...));
 	}
 
@@ -417,24 +413,6 @@ class Application extends App implements IBootstrap {
 		if ($appManager->isEnabledForUser('firstrunwizard')) {
 			$settingManager->registerSetting('personal', Personal::class);
 		}
-	}
-
-	public function registerNavigationLink(INavigationManager $navigationManager): void {
-		$navigationManager->add(static function () {
-			$config = Server::get(Config::class);
-			$userSession = Server::get(IUserSession::class);
-			$urlGenerator = Server::get(IURLGenerator::class);
-			$l = Server::get(IFactory::class)->get(self::APP_ID);
-			$user = $userSession->getUser();
-			return [
-				'id' => self::APP_ID,
-				'name' => $l->t('Talk'),
-				'href' => $urlGenerator->linkToRouteAbsolute('spreed.Page.index'),
-				'icon' => $urlGenerator->imagePath(self::APP_ID, 'app.svg'),
-				'order' => -5,
-				'type' => $user instanceof IUser && !$config->isDisabledForUser($user) ? 'link' : 'hidden',
-			];
-		});
 	}
 
 	public function registerCloudFederationProviderManager(

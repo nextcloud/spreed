@@ -2796,6 +2796,40 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		return $expected;
 	}
 
+	#[Then('/^user "([^"]*)" (has|does not have) the "([^"]*)" navigation entry$/')]
+	public function userHasNavigationEntry(string $user, string $hasEntry, string $entryId, ?TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/core/navigation/apps');
+		$this->assertStatusCode($this->response, 200);
+
+		$entries = array_column($this->getDataFromResponse($this->response), null, 'id');
+
+		if ($hasEntry === 'does not have') {
+			Assert::assertArrayNotHasKey($entryId, $entries, 'Navigation entry "' . $entryId . '" should not be listed');
+			return;
+		}
+
+		Assert::assertArrayHasKey($entryId, $entries, 'Navigation entry "' . $entryId . '" is missing');
+
+		if ($formData === null) {
+			return;
+		}
+
+		$expected = $formData->getRowsHash();
+		$actual = $entries[$entryId];
+
+		if (isset($expected['icon'])) {
+			Assert::assertStringEndsWith($expected['icon'], $actual['icon'], 'Mismatch of icon for navigation entry "' . $entryId . '"');
+			unset($expected['icon'], $actual['icon']);
+		}
+
+		if (isset($expected['href'])) {
+			$expected['href'] = str_replace('{$BASE_URL}', $this->baseUrl, $expected['href']);
+		}
+
+		Assert::assertEquals($expected, array_intersect_key($actual, $expected), 'Mismatch of data for navigation entry "' . $entryId . '"');
+	}
+
 	#[Then('/^user "([^"]*)" sees the following entry when loading the list of dashboard widgets(?: \((v1)\))$/')]
 	public function userGetsDashboardWidgets(string $user, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$this->setCurrentUser($user);
