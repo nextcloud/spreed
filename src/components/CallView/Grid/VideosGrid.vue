@@ -430,10 +430,10 @@ export default {
 		},
 
 		// Placement of every tile of the grid, in the order they are rendered.
-		// The stripe is a single scrollable row, and the empty call view has a
-		// layout of its own, so their tiles keep the default placement.
+		// The empty call view has a layout of its own, so its tiles keep the
+		// default placement.
 		tilePlacements() {
-			if (this.isStripe || this.orderedVideos.length === 0) {
+			if (this.orderedVideos.length === 0) {
 				return []
 			}
 
