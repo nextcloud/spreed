@@ -2450,7 +2450,7 @@ export type components = {
             };
             /** @description When the user reacted this is the list of emojis the user reacted with */
             reactionsSelf?: string[];
-            /** @description A reference string that was given while posting the message to be able to identify a sent message again (only available with `chat-reference-id` capability) */
+            /** @description A reference string that was given while posting the message to be able to identify a sent message again (only available with `chat-reference-id` capability). For grouped file uploads support, expected format is `{sha256(uploadId)}-{order}`, matching /^[a-f0-9]{60}-[0-9]{3}$/ */
             referenceId: string;
             /**
              * Format: int64
