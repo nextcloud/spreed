@@ -44,8 +44,8 @@ describe('gridLayout', () => {
 		})
 
 		test('fits a compact tile in the stripe', () => {
-			// The grid of the stripe is padded by a gap at its top
-			expect(getMinTileHeight(true)).toBeLessThanOrEqual(STRIPE_HEIGHT - GRID_GAP)
+			// The grid of the stripe is padded by a gap at its top and bottom
+			expect(getMinTileHeight(true)).toBe(STRIPE_HEIGHT - 2 * GRID_GAP)
 		})
 	})
 

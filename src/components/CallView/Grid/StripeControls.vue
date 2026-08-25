@@ -128,7 +128,12 @@ const toggleLabel = computed(() => props.isOpen
 	opacity: .4;
 	transition: opacity var(--animation-quick) ease-in-out;
 
-	#call-container:hover & {
+	@media (hover: none) {
+		opacity: 1;
+	}
+
+	#call-container:hover &,
+	&:focus-within {
 		opacity: 1;
 	}
 }

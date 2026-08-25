@@ -634,13 +634,6 @@ export default {
 	height: 0;
 }
 
-@media (prefers-reduced-motion: reduce) {
-	.stripe-collapse-enter-active,
-	.stripe-collapse-leave-active {
-		transition: none;
-	}
-}
-
 .grid {
 	display: grid;
 	height: 100%;
@@ -754,6 +747,7 @@ export default {
 	top: var(--grid-gap);
 	inset-inline-end: var(--grid-gap);
 	z-index: 2;
+	transition: top var(--animation-slow) ease-in-out;
 
 	// A collapsed stripe holds no tile to sit over, and no room of its own to
 	// sit in, so the controls take the room above it
@@ -796,6 +790,16 @@ export default {
 	&:active {
 		/* needed again to override default active button style */
 		background: none;
+	}
+}
+
+// Kept last in the stylesheet so it overrides the transitions declared above,
+// which it only ties with on specificity
+@media (prefers-reduced-motion: reduce) {
+	.stripe-collapse-enter-active,
+	.stripe-collapse-leave-active,
+	.stripe-controls-position {
+		transition: none;
 	}
 }
 
