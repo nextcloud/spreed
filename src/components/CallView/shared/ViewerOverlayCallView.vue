@@ -77,7 +77,6 @@
 							v-if="localModel.attributes.videoEnabled"
 							class="viewer-overlay__local-video"
 							:token="token"
-							:showControls="false"
 							:localMediaModel="localModel"
 							:localCallParticipantModel="localCallParticipantModel"
 							isSmall

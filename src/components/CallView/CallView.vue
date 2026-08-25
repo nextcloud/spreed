@@ -47,7 +47,6 @@
 						:localMediaModel="localMediaModel"
 						:localCallParticipantModel="localCallParticipantModel"
 						:isStripe="false"
-						:showControls="false"
 						:isSidebar="false"
 						isBig
 						fitVideo />
@@ -154,7 +153,6 @@
 					ref="localVideo"
 					class="local-video"
 					:class="{ 'local-video--sidebar': isSidebar }"
-					:showControls="false"
 					:fitVideo="true"
 					:isStripe="true"
 					:token="token"

@@ -129,11 +129,6 @@ export default {
 			default: false,
 		},
 
-		showControls: {
-			type: Boolean,
-			default: true,
-		},
-
 		unSelectable: {
 			type: Boolean,
 			default: false,
