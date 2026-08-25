@@ -615,7 +615,7 @@ export default {
 				unwatchJoinedConversation = watchJoinedConversation(targetToken, () => {
 					stopWatchingJoinedConversation()
 					this._joinCallHandler({ token: targetToken })
-				}, { immediate: true })
+				})
 			}
 		},
 	},
