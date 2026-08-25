@@ -439,7 +439,6 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 		.talk-dashboard__header {
 			margin-block-start: 0;
-			padding-inline-start: calc(var(--default-clickable-area) + var(--default-grid-baseline)); // navigation button
 		}
 	}
 
@@ -460,11 +459,13 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 }
 
 .talk-dashboard__header {
+	--app-navigation-toggle-space: calc(var(--default-clickable-area) + var(--default-grid-baseline));
 	font-size: 21px; // NcDialog header font size
 	font-weight: bold;
 	margin-inline: auto;
-	margin-block: clamp(0px, calc(100vh - 800px), calc(var(--default-clickable-area) + var(--default-grid-baseline)))
-		calc(var(--default-grid-baseline) * 2);
+	margin-block-start: clamp(0px, calc(100vh - 800px), var(--app-navigation-toggle-space));
+	margin-block-end: calc(var(--default-grid-baseline) * 2);
+	padding-inline-start: clamp(0px, calc(900px / 2 + var(--app-navigation-toggle-space) - 50vw), var(--app-navigation-toggle-space))
 }
 
 .talk-dashboard__actions {
