@@ -43,6 +43,25 @@ describe('usePagination', () => {
 			expect(hasNextPage.value).toBe(true)
 		})
 
+		test('fills the last page by overlapping the one before it', () => {
+			const pagination = createPagination(7, 3)
+
+			pagination.next()
+			expect(pagination.displayedVideos.value).toEqual([3, 4, 5])
+
+			// Only one video is left over, but the page stays full by showing
+			// the last `slots` videos instead of trailing off with a single one
+			pagination.next()
+			expect(pagination.displayedVideos.value).toEqual([4, 5, 6])
+		})
+
+		test('does not overlap when the videos divide evenly into pages', () => {
+			const pagination = createPagination(6, 3)
+
+			pagination.next()
+			expect(pagination.displayedVideos.value).toEqual([3, 4, 5])
+		})
+
 		test('shows nothing while the layout is not known yet (0 slots)', () => {
 			const { displayedVideos, numberOfPages, hasNextPage, hasPreviousPage } = createPagination(7, 0)
 
@@ -73,7 +92,8 @@ describe('usePagination', () => {
 
 			pagination.next()
 			expect(pagination.currentPage.value).toBe(2)
-			expect(pagination.displayedVideos.value).toEqual([6])
+			// The last page is shifted back to stay full, so it overlaps page 1
+			expect(pagination.displayedVideos.value).toEqual([4, 5, 6])
 			expect(pagination.hasNextPage.value).toBe(false)
 		})
 
@@ -96,7 +116,7 @@ describe('usePagination', () => {
 			pagination.next()
 
 			expect(pagination.currentPage.value).toBe(2)
-			expect(pagination.displayedVideos.value).toEqual([6])
+			expect(pagination.displayedVideos.value).toEqual([4, 5, 6])
 		})
 
 		test('does not navigate before the first page', () => {
