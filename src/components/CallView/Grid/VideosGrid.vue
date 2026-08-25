@@ -42,7 +42,6 @@
 					<div
 						ref="grid"
 						class="grid"
-						:class="{ stripe: isStripe }"
 						:style="gridStyle"
 						@wheel="debounceHandleWheelEvent">
 						<template v-if="!devMode">
@@ -172,9 +171,11 @@ import { useCallViewStore } from '../../../stores/callView.ts'
 import {
 	computeTilePlacements,
 	getHalfColumnCount,
+	getHalfColumnMaxWidth,
 	getHalfColumnMinWidth,
 	GRID_GAP,
 	STRIPE_HEIGHT,
+	TARGET_ASPECT_RATIO,
 	TILE_COLUMN_SPAN,
 } from './gridLayout.ts'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
@@ -433,6 +434,22 @@ export default {
 			})
 		},
 
+		// Maximum width of a half column, so that the tiles are not stretched
+		// past the target aspect ratio when the grid has room to spare. The
+		// empty call view has a layout of its own and takes whatever width it
+		// is given, so it is never capped.
+		halfColumnMaxWidth() {
+			if (this.rows <= 0 || (this.orderedVideos.length === 0 && !this.isStripe)) {
+				return null
+			}
+
+			return getHalfColumnMaxWidth(this.videoHeight, TARGET_ASPECT_RATIO, this.halfColumnMinWidth)
+		},
+
+		halfColumnMinWidth() {
+			return getHalfColumnMinWidth(this.dpiAwareMinWidth)
+		},
+
 		// Computed css to reactively style the grid
 		gridStyle() {
 			let columns = this.columns
@@ -451,9 +468,16 @@ export default {
 			// `computeTilePlacements`). A tile keeps the exact same width either
 			// way, as it also takes the gap between its two half columns, so the
 			// tiles do not jump around when the placement changes.
+			const halfColumnWidth = this.halfColumnMaxWidth !== null
+				? `minmax(${this.halfColumnMinWidth}px, ${this.halfColumnMaxWidth}px)`
+				: `minmax(${this.halfColumnMinWidth}px, 1fr)`
+
 			return {
-				gridTemplateColumns: `repeat(${getHalfColumnCount(columns)}, minmax(${getHalfColumnMinWidth(this.dpiAwareMinWidth)}px, 1fr))`,
+				gridTemplateColumns: `repeat(${getHalfColumnCount(columns)}, ${halfColumnWidth})`,
 				gridTemplateRows: `repeat(${rows}, minmax(${this.dpiAwareMinHeight}px, 1fr))`,
+				// The columns no longer take the whole width once they are
+				// capped, so the grid itself has to center them
+				justifyContent: 'center',
 			}
 		},
 
@@ -501,7 +525,7 @@ export default {
 				minWidth: this.minWidth,
 				minHeight: this.minHeight,
 				videosCap: this.videosCap,
-				targetAspectRatio: this.targetAspectRatio,
+				targetAspectRatio: TARGET_ASPECT_RATIO,
 				videosCount: this.videosCount,
 				videoWidth: this.videoWidth,
 				videoHeight: this.videoHeight,
@@ -617,9 +641,6 @@ export default {
 		grid-column: span 2;
 	}
 
-	&.stripe {
-		padding-block-start: var(--grid-gap);
-	}
 }
 
 .grid-wrapper {
@@ -633,6 +654,9 @@ export default {
 	width: 100%;
 	min-width: 0;
 	position: relative;
+	// Kept out of the grid itself, whose measured height is the height of its
+	// tiles
+	padding-block-start: var(--grid-gap);
 }
 
 .dev-mode-video {
