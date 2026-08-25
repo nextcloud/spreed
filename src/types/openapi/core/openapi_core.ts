@@ -496,6 +496,23 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/taskprocessing/tasks/{taskId}/queue_position": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a task's position in the queue */
+        get: operations["task_processing_api-get-task-queue-position"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/ocs/v2.php/teams/{teamId}/resources": {
         parameters: {
             query?: never;
@@ -1092,7 +1109,24 @@ export type components = {
             order?: number;
             href: string;
             icon: string;
-            type: string;
+            /** @enum {string} */
+            type: "link";
+            name: string;
+            app?: string;
+            default?: boolean;
+            active: boolean;
+            classes: string;
+            /** Format: int64 */
+            unread: number;
+        };
+        NavigationSettingsEntry: {
+            id: string;
+            /** Format: int64 */
+            order?: number;
+            href: string;
+            icon: string;
+            /** @enum {string} */
+            type: "settings";
             name: string;
             app?: string;
             default?: boolean;
@@ -2375,7 +2409,7 @@ export interface operations {
                     "application/json": {
                         ocs: {
                             meta: components["schemas"]["OCSMeta"];
-                            data: components["schemas"]["NavigationEntry"][];
+                            data: components["schemas"]["NavigationSettingsEntry"][];
                         };
                     };
                 };
@@ -3592,6 +3626,99 @@ export interface operations {
             };
             /** @description Task not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                message: string;
+                            };
+                        };
+                    };
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                message: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "task_processing_api-get-task-queue-position": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path: {
+                /** @description The id of the task */
+                taskId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The position was found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            /** Format: int64 */
+                            data: number;
+                        };
+                    };
+                };
+            };
+            /** @description Current user is not logged in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+            /** @description Task not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                message: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description The task is not scheduled */
+            412: {
                 headers: {
                     [name: string]: unknown;
                 };

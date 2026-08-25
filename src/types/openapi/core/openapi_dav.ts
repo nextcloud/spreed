@@ -143,6 +143,23 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/ocs/v2.php/contacts/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import contacts data */
+        post: operations["contacts_import-import"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 };
 export type webhooks = Record<string, never>;
 export type components = {
@@ -921,6 +938,97 @@ export interface operations {
                         showErrors?: boolean;
                     };
                     /** @description calendar data */
+                    data: string;
+                    /**
+                     * @description system user id
+                     * @default null
+                     */
+                    user?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description NDJSON stream of import event objects */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/x-ndjson": unknown;
+                };
+            };
+            /** @description invalid parameters */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error?: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description user not authorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: {
+                                error?: string;
+                            };
+                        };
+                    } | {
+                        ocs: {
+                            meta: components["schemas"]["OCSMeta"];
+                            data: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    "contacts_import-import": {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Required to be true for the API request to pass */
+                "OCS-APIRequest": boolean;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description client generated transaction id */
+                    transaction: string;
+                    /** @description address book id */
+                    target: string;
+                    /** @description configuration options */
+                    options: {
+                        format?: string;
+                        /**
+                         * Format: int64
+                         * @enum {integer}
+                         */
+                        validation?: 0 | 1 | 2;
+                        /**
+                         * Format: int64
+                         * @enum {integer}
+                         */
+                        errors?: 0 | 1;
+                        supersede?: boolean;
+                    };
+                    /** @description contacts data */
                     data: string;
                     /**
                      * @description system user id
