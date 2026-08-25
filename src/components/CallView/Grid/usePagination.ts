@@ -17,6 +17,10 @@ import { computed, ref, watch } from 'vue'
  * resize or when participants leave), so the pagination never points past the
  * end of the list.
  *
+ * Every page is full: rather than trailing off with a half empty grid, the last
+ * page is shifted back to end on the last video, so it overlaps the page before
+ * it whenever the videos do not divide evenly into pages.
+ *
  * @param videosCount - the number of videos to paginate
  * @param slots - number of videos per page (`0` while the grid layout is not
  *   yet known, in which case nothing is displayed)
@@ -35,7 +39,10 @@ export function usePagination(videosCount: Readonly<Ref<number>>, slots: Readonl
 			return [0, 0]
 		}
 
-		const start = currentPage.value * slots.value
+		// The last page is shifted back so it holds `slots.value` tiles like
+		// every other page, rather than trailing off with a half empty grid
+		const lastPageStart = Math.max(videosCount.value - slots.value, 0)
+		const start = Math.min(currentPage.value * slots.value, lastPageStart)
 		return [start, start + slots.value]
 	})
 

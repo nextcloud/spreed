@@ -9,11 +9,13 @@ import {
 	computeRowDistribution,
 	computeTilePlacements,
 	getHalfColumnCount,
+	getHalfColumnMaxWidth,
 	getHalfColumnMinWidth,
 	getMinTileHeight,
 	getMinTileWidth,
-	getTargetAspectRatio,
 	GRID_GAP,
+	STRIPE_HEIGHT,
+	TARGET_ASPECT_RATIO,
 	TILE_COLUMN_SPAN,
 } from './gridLayout.ts'
 
@@ -38,12 +40,12 @@ describe('gridLayout', () => {
 
 		test('uses the compact tile sizes for stripe/sidebar', () => {
 			expect(getMinTileWidth(true)).toBe(200)
-			expect(getMinTileHeight(true)).toBe(150)
+			expect(getMinTileHeight(true)).toBe(134)
 		})
 
-		test('targets a wider aspect ratio for the full grid than the stripe', () => {
-			expect(getTargetAspectRatio(false)).toBe(1.5)
-			expect(getTargetAspectRatio(true)).toBe(1)
+		test('fits a compact tile in the stripe', () => {
+			// The grid of the stripe is padded by a gap at its top and bottom
+			expect(getMinTileHeight(true)).toBe(STRIPE_HEIGHT - 2 * GRID_GAP)
 		})
 	})
 
@@ -58,8 +60,16 @@ describe('gridLayout', () => {
 			noLocalVideoReserve: false,
 		}
 
-		test('returns no columns or rows when there are no tiles', () => {
+		test('keeps a tile for the local video when there is nothing else to lay out', () => {
+			// The local video takes a tile of its own, which needs a column of
+			// the grid: an implicit, content sized column would collapse to
+			// nothing as soon as the camera is off
 			expect(computeGridDimensions({ ...fullGrid, videoCount: 0 }))
+				.toEqual({ columns: 1, rows: 1 })
+		})
+
+		test('returns no columns or rows when there is no tile at all', () => {
+			expect(computeGridDimensions({ ...fullGrid, noLocalVideoReserve: true, videoCount: 0 }))
 				.toEqual({ columns: 0, rows: 0 })
 		})
 
@@ -105,6 +115,21 @@ describe('gridLayout', () => {
 			expect(result).toEqual({ columns: 5, rows: 1 })
 		})
 
+		test('shrinks a single row grid down to the tiles it holds', () => {
+			// A single row cannot be shrunk any further, so the columns are the
+			// only thing left to remove: a lone participant and the local video
+			// take 2 columns of a stripe which could hold 7 of them
+			expect(computeGridDimensions({
+				gridWidth: 1440,
+				gridHeight: 142,
+				videoCount: 1,
+				targetAspectRatio: TARGET_ASPECT_RATIO,
+				minWidth: 200,
+				minHeight: 134,
+				noLocalVideoReserve: false,
+			})).toEqual({ columns: 2, rows: 1 })
+		})
+
 		test('applies hysteresis on the current column count to avoid flickering', () => {
 			// 976px fits exactly 3 columns of 320px with two 8px gaps. Whether a
 			// fourth column is offered depends on the current column count.
@@ -134,7 +159,7 @@ describe('gridLayout', () => {
 						const layout = {
 							gridWidth,
 							gridHeight,
-							targetAspectRatio: getTargetAspectRatio(isStripe),
+							targetAspectRatio: TARGET_ASPECT_RATIO,
 							minWidth: getMinTileWidth(isStripe),
 							minHeight: getMinTileHeight(isStripe),
 							noLocalVideoReserve: isStripe,
@@ -217,6 +242,17 @@ describe('gridLayout', () => {
 
 		test('never returns a negative half column width', () => {
 			expect(getHalfColumnMinWidth(0)).toBe(0)
+		})
+
+		test('caps a half column so that a tile spanning two keeps the target aspect ratio', () => {
+			// A 142px tall tile targeting 1.5 is at most 213px wide
+			expect(getHalfColumnMaxWidth(142, 1.5, 0) * 2 + GRID_GAP).toBe(142 * 1.5)
+		})
+
+		test('never caps a half column below its minimum width', () => {
+			const minWidth = getHalfColumnMinWidth(320)
+			// A tile too short to be 320px wide at the target aspect ratio
+			expect(getHalfColumnMaxWidth(100, 1.5, minWidth)).toBe(minWidth)
 		})
 	})
 

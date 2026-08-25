@@ -129,11 +129,6 @@ export default {
 			default: false,
 		},
 
-		showControls: {
-			type: Boolean,
-			default: true,
-		},
-
 		unSelectable: {
 			type: Boolean,
 			default: false,
@@ -196,7 +191,6 @@ export default {
 			return {
 				'not-connected': this.isNotConnected,
 				'video-container-grid': this.isGrid,
-				'video-container-stripe': this.isStripe,
 				'video-container-big': this.isBig,
 				'video-container-small': this.isSmall,
 				presenter: this.isPresenterOverlay && this.mouseover,
@@ -390,19 +384,6 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-}
-
-.video-container-stripe:not(.local-video--sidebar) {
-	// aspect-ratio is set according to the maximum video resolution after applying constraints (720*540)
-	--aspect-ratio: 1.33333;
-	--stripe-height: 242px;
-	position: relative;
-	flex: 0 0 calc(var(--aspect-ratio) * var(--stripe-height));
-	overflow: hidden;
-	display: flex;
-	flex-direction: column;
-	margin-top: auto;
-	height: var(--stripe-height) !important;
 }
 
 .video-container-big {

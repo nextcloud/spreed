@@ -4,30 +4,32 @@
 -->
 
 <template>
-	<div ref="gridWrapper" class="grid-main-wrapper" :class="{ 'is-grid': !isStripe, overlap: isOverlap }">
-		<NcButton
+	<!-- The call view is dark whichever theme is set, so the stripe over it and
+		the controls it holds are painted with the palette of the call -->
+	<div
+		ref="gridWrapper"
+		class="grid-main-wrapper"
+		:class="{ 'is-grid': !isStripe, overlap: isOverlap }"
+		:data-theme-dark="isStripe || undefined">
+		<div
 			v-if="isStripe && !isRecording"
-			class="stripe--collapse"
-			variant="tertiary-no-background"
-			:title="stripeButtonTitle"
-			:aria-label="stripeButtonTitle"
-			@click="handleClickStripeCollapse">
-			<template #icon>
-				<IconChevronDown
-					v-if="stripeOpen"
-					fillColor="#ffffff"
-					:size="20" />
-				<IconChevronUp
-					v-else
-					fillColor="#ffffff"
-					:size="20" />
-			</template>
-		</NcButton>
-		<TransitionWrapper :name="isStripe ? 'slide-down' : undefined">
-			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
+			class="stripe-controls-position"
+			:class="{ 'stripe-controls-position--collapsed': !stripeOpen }">
+			<StripeControls
+				:currentPage="currentPage"
+				:numberOfPages="numberOfPages"
+				:hasPreviousPage="hasPreviousPage"
+				:hasNextPage="hasNextPage"
+				:isOpen="stripeOpen"
+				@previous="previous"
+				@next="next"
+				@toggle="handleClickStripeCollapse" />
+		</div>
+		<Transition name="stripe-collapse">
+			<div v-if="!isStripe || stripeOpen" class="videos-wrapper" :class="{ 'videos-wrapper--stripe': isStripe }">
 				<div :class="[isStripe ? 'stripe-wrapper' : 'grid-wrapper']">
 					<NcButton
-						v-if="hasPreviousPage && gridWidth > 0"
+						v-if="!isStripe && hasPreviousPage && gridWidth > 0"
 						variant="tertiary-no-background"
 						class="grid-navigation grid-navigation__previous"
 						:aria-label="t('spreed', 'Previous page of videos')"
@@ -42,7 +44,6 @@
 					<div
 						ref="grid"
 						class="grid"
-						:class="{ stripe: isStripe }"
 						:style="gridStyle"
 						@wheel="debounceHandleWheelEvent">
 						<template v-if="!devMode">
@@ -97,7 +98,7 @@
 							@clickVideo="handleClickLocalVideo" />
 					</div>
 					<NcButton
-						v-if="hasNextPage && gridWidth > 0"
+						v-if="!isStripe && hasNextPage && gridWidth > 0"
 						variant="tertiary-no-background"
 						class="grid-navigation grid-navigation__next"
 						:aria-label="t('spreed', 'Next page of videos')"
@@ -110,18 +111,6 @@
 						</template>
 					</NcButton>
 				</div>
-				<LocalVideo
-					v-if="isStripe && !isRecording"
-					ref="localVideo"
-					class="video"
-					:class="{ 'local-video--highlighted': isLocalVideoAlone && isStripe }"
-					:isStripe="true"
-					:showControls="false"
-					:token="token"
-					:localMediaModel="localMediaModel"
-					:localCallParticipantModel="localCallParticipantModel"
-					@clickVideo="handleClickLocalVideo" />
-
 				<template v-if="devMode">
 					<NcButton
 						variant="tertiary"
@@ -161,7 +150,7 @@
 					</div>
 				</template>
 			</div>
-		</TransitionWrapper>
+		</Transition>
 	</div>
 </template>
 
@@ -170,22 +159,22 @@ import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 import { computed, inject, ref, toRef, useTemplateRef, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import IconChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import IconChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
-import IconChevronUp from 'vue-material-design-icons/ChevronUp.vue'
-import TransitionWrapper from '../../UIShared/TransitionWrapper.vue'
 import EmptyCallView from '../shared/EmptyCallView.vue'
 import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import VideoVue from '../shared/VideoVue.vue'
+import StripeControls from './StripeControls.vue'
 import { getTalkConfig } from '../../../services/CapabilitiesManager.ts'
 import { useCallViewStore } from '../../../stores/callView.ts'
 import {
 	computeTilePlacements,
 	getHalfColumnCount,
+	getHalfColumnMaxWidth,
 	getHalfColumnMinWidth,
 	GRID_GAP,
+	TARGET_ASPECT_RATIO,
 	TILE_COLUMN_SPAN,
 } from './gridLayout.ts'
 import { placeholderImage, placeholderModel, placeholderName, placeholderSharedData } from './gridPlaceholders.ts'
@@ -204,12 +193,10 @@ export default {
 		LocalVideo,
 		EmptyCallView,
 		NcButton,
-		TransitionWrapper,
+		StripeControls,
 		VideoBottomBar,
-		IconChevronDown,
 		IconChevronLeft,
 		IconChevronRight,
-		IconChevronUp,
 	},
 
 	props: {
@@ -300,9 +287,9 @@ export default {
 			return videosCap ? Math.min(videosCap, count) : count
 		})
 
-		// The full grid reserves one slot for the local video, unless it is not
-		// shown (stripe or recording mode).
-		const noLocalVideoReserve = computed(() => props.isStripe || props.isRecording)
+		// The grid reserves one slot for the local video, unless it is not shown
+		// (recording mode).
+		const noLocalVideoReserve = computed(() => props.isRecording)
 
 		const gridDimensions = useGridDimensions({
 			wrapper: gridWrapper,
@@ -316,8 +303,8 @@ export default {
 
 		// Number of grid slots (videos per page) at any given moment, clamped to
 		// `videosCap` (`0` means no cap).
-		// The local video always takes one slot, unless it is not shown (stripe
-		// or recording mode).
+		// The local video always takes one slot, unless it is not shown
+		// (recording mode).
 		// The cap is primarily enforced by shrinking the grid layout (see
 		// `computeGridDimensions`); this clamp keeps the "videos per page" math
 		// consistent even before the layout has been recomputed.
@@ -397,14 +384,6 @@ export default {
 	},
 
 	computed: {
-		stripeButtonTitle() {
-			if (this.stripeOpen) {
-				return t('spreed', 'Collapse participant bar')
-			} else {
-				return t('spreed', 'Expand participant bar')
-			}
-		},
-
 		// Number of video components (it does not include the local video)
 		videosCount() {
 			if (!this.isStripe && this.orderedVideos.length === 0) {
@@ -430,10 +409,10 @@ export default {
 		},
 
 		// Placement of every tile of the grid, in the order they are rendered.
-		// The stripe is a single scrollable row, and the empty call view has a
-		// layout of its own, so their tiles keep the default placement.
+		// The empty call view has a layout of its own, so its tiles keep the
+		// default placement.
 		tilePlacements() {
-			if (this.isStripe || this.orderedVideos.length === 0) {
+			if (this.orderedVideos.length === 0) {
 				return []
 			}
 
@@ -444,11 +423,20 @@ export default {
 			})
 		},
 
-		// Whether the local video is the only tile left in the stripe. The models
-		// given to the stripe already leave out whoever is shown in the promoted
-		// area, so no tile is ever duplicated and only an empty stripe is special.
-		isLocalVideoAlone() {
-			return this.orderedVideos.length === 0
+		// Maximum width of a half column, so that the tiles are not stretched
+		// past the target aspect ratio when the grid has room to spare. The
+		// empty call view has a layout of its own and takes whatever width it
+		// is given, so it is never capped.
+		halfColumnMaxWidth() {
+			if (this.rows <= 0 || (this.orderedVideos.length === 0 && !this.isStripe)) {
+				return null
+			}
+
+			return getHalfColumnMaxWidth(this.videoHeight, TARGET_ASPECT_RATIO, this.halfColumnMinWidth)
+		},
+
+		halfColumnMinWidth() {
+			return getHalfColumnMinWidth(this.dpiAwareMinWidth)
 		},
 
 		// Computed css to reactively style the grid
@@ -469,17 +457,16 @@ export default {
 			// `computeTilePlacements`). A tile keeps the exact same width either
 			// way, as it also takes the gap between its two half columns, so the
 			// tiles do not jump around when the placement changes.
-			return {
-				gridTemplateColumns: `repeat(${getHalfColumnCount(columns)}, minmax(${getHalfColumnMinWidth(this.dpiAwareMinWidth)}px, 1fr))`,
-				gridTemplateRows: `repeat(${rows}, minmax(${this.dpiAwareMinHeight}px, 1fr))`,
-			}
-		},
+			const halfColumnWidth = this.halfColumnMaxWidth !== null
+				? `minmax(${this.halfColumnMinWidth}px, ${this.halfColumnMaxWidth}px)`
+				: `minmax(${this.halfColumnMinWidth}px, 1fr)`
 
-		wrapperStyle() {
-			if (this.isStripe) {
-				return 'height: 250px'
-			} else {
-				return 'height: 100%'
+			return {
+				gridTemplateColumns: `repeat(${getHalfColumnCount(columns)}, ${halfColumnWidth})`,
+				gridTemplateRows: `repeat(${rows}, minmax(${this.dpiAwareMinHeight}px, 1fr))`,
+				// The columns no longer take the whole width once they are
+				// capped, so the grid itself has to center them
+				justifyContent: 'center',
 			}
 		},
 
@@ -519,7 +506,7 @@ export default {
 				minWidth: this.minWidth,
 				minHeight: this.minHeight,
 				videosCap: this.videosCap,
-				targetAspectRatio: this.targetAspectRatio,
+				targetAspectRatio: TARGET_ASPECT_RATIO,
 				videosCount: this.videosCount,
 				videoWidth: this.videoWidth,
 				videoHeight: this.videoHeight,
@@ -604,6 +591,8 @@ export default {
 <style lang="scss" scoped>
 .grid-main-wrapper {
 	--navigation-position: calc(var(--default-grid-baseline) * 2);
+	// Align with STRIPE_HEIGHT in gridLayout.ts
+	--stripe-height: 150px;
 	position: relative;
 	width: 100%;
 }
@@ -612,12 +601,37 @@ export default {
 	height: 100%;
 }
 
-.wrapper {
+// Not named `wrapper`: the root of VideoBottomBar is, and the root of a child
+// component is given the scope of its parent, so the rules below would be its
+// own as well
+.videos-wrapper {
 	width: 100%;
+	height: 100%;
 	display: flex;
 	position: relative;
 	bottom: 0;
 	inset-inline-start: 0;
+
+	&--stripe {
+		height: var(--stripe-height);
+	}
+}
+
+// The stripe takes its room from the promoted area, so it is collapsed and
+// expanded by its height rather than by a transform: the promoted area is laid
+// out again on every frame of the transition and follows the stripe instead of
+// jumping once it is over.
+.stripe-collapse-enter-active,
+.stripe-collapse-leave-active {
+	overflow: hidden;
+	transition: height var(--animation-slow) ease-in-out;
+}
+
+// The height of the stripe is given by a class, which the transition has to win
+// over whichever order the two end up in
+.videos-wrapper.stripe-collapse-enter-from,
+.videos-wrapper.stripe-collapse-leave-to {
+	height: 0;
 }
 
 .grid {
@@ -635,9 +649,6 @@ export default {
 		grid-column: span 2;
 	}
 
-	&.stripe {
-		padding: var(--grid-gap) var(--grid-gap) 0 0;
-	}
 }
 
 .grid-wrapper {
@@ -651,6 +662,13 @@ export default {
 	width: 100%;
 	min-width: 0;
 	position: relative;
+	// The stripe keeps its height while it is collapsed or expanded, so that its
+	// tiles slide out of the way instead of being squashed on the way
+	flex: 0 0 auto;
+	height: var(--stripe-height);
+	// Kept out of the grid itself, whose measured height is the height of its
+	// tiles
+	padding-block: var(--grid-gap);
 }
 
 .dev-mode-video {
@@ -668,6 +686,7 @@ export default {
 		border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
 	}
 
+	// The bottom bar of the tile
 	.wrapper {
 		position: absolute;
 	}
@@ -723,7 +742,24 @@ export default {
 	}
 }
 
+.stripe-controls-position {
+	position: absolute;
+	top: var(--grid-gap);
+	inset-inline-end: var(--grid-gap);
+	z-index: 2;
+	transition: top var(--animation-slow) ease-in-out;
+
+	// A collapsed stripe holds no tile to sit over, and no room of its own to
+	// sit in, so the controls take the room above it
+	&--collapsed {
+		top: calc(-1 * (var(--clickable-area-small) + var(--default-grid-baseline) + var(--grid-gap)));
+	}
+}
+
 .grid-navigation {
+	z-index: 2;
+	opacity: .7;
+
 	.grid-wrapper & {
 		position: absolute;
 		top: calc(50% - var(--default-clickable-area) / 2);
@@ -736,31 +772,6 @@ export default {
 			inset-inline-end: calc(var(--default-grid-baseline) * 2);
 		}
 	}
-
-	.stripe-wrapper & {
-		position: absolute;
-		top: calc(var(--navigation-position) + var(--grid-gap));
-
-		&__previous {
-			inset-inline-start: var(--navigation-position);
-		}
-
-		&__next {
-			inset-inline-end: calc(var(--navigation-position) + var(--grid-gap));
-		}
-	}
-}
-
-.stripe--collapse {
-	position: absolute !important;
-	top: calc(-1 * (var(--default-clickable-area) + var(--grid-gap)));
-	inset-inline-end: var(--navigation-position);
-}
-
-.stripe--collapse,
-.grid-navigation {
-	z-index: 2;
-	opacity: .7;
 
 	#call-container:hover & {
 		background-color: rgba(0, 0, 0, 0.1) !important;
@@ -782,10 +793,14 @@ export default {
 	}
 }
 
-.local-video--highlighted {
-	inset-block-end: var(--grid-gap);
-	inset-inline-end: var(--grid-gap);
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+// Kept last in the stylesheet so it overrides the transitions declared above,
+// which it only ties with on specificity
+@media (prefers-reduced-motion: reduce) {
+	.stripe-collapse-enter-active,
+	.stripe-collapse-leave-active,
+	.stripe-controls-position {
+		transition: none;
+	}
 }
 
 </style>
