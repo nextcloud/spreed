@@ -320,7 +320,10 @@ export default {
 				// A single active speaker keeps the main area for itself, rather
 				// than being the only tile of the speakers grid
 				?? (this.showSpeakers ? this.promotedSpeakerModels[0] : undefined)
-				?? this.callParticipantModels.find((callParticipantModel) => this.sharedDatas[callParticipantModel.attributes.peerId].promoted)
+				// The shared data of a model is set from a watcher, so it may not
+				// be there yet when this is evaluated right after the model was
+				// added
+				?? this.callParticipantModels.find((callParticipantModel) => this.sharedDatas[callParticipantModel.attributes.peerId]?.promoted)
 				?? this.callParticipantModels[0]
 		},
 
@@ -596,7 +599,7 @@ export default {
 		promotedAreaSessionIds(sessionIds, previousSessionIds) {
 			// Runs before the grids are re-rendered, while the tiles are still
 			// where they are about to move from
-			animateTilePromotion(sessionIds, previousSessionIds)
+			animateTilePromotion(sessionIds, previousSessionIds ?? [])
 		},
 
 		speakers: {
@@ -987,7 +990,7 @@ export default {
 			// bad specially with a low number of participants.
 			if (this.isGrid) {
 				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.MEDIUM, SIMULCAST.HIGH)
-			} else if (this.sharedDatas[callParticipantModel.attributes.peerId].promoted
+			} else if (this.sharedDatas[callParticipantModel.attributes.peerId]?.promoted
 				|| this.selectedVideoPeerId === callParticipantModel.attributes.peerId
 				|| this.promotedSpeakerPeerIds.has(callParticipantModel.attributes.peerId)) {
 				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.HIGH, SIMULCAST.HIGH)
