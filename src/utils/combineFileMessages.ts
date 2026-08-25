@@ -50,6 +50,22 @@ function isCombinableFileMessage(message: ChatMessage): boolean {
 }
 
 /**
+ * Checks whether file share message referenceId follows the group pattern
+ * (see prepareTemporaryMessage.ts for the format)
+ *
+ * @param id referenceId
+ * @return uploadHash (repeating part for single context upload) or original referenceId
+ */
+function getUploadHashFromReferenceId(id: string): string {
+	const [uploadHash, order] = id.split('-')
+	if (uploadHash.length === 60 && Number.isInteger(+order)) {
+		return uploadHash
+	} else {
+		return id
+	}
+}
+
+/**
  * Check whether two file shares belong to each other: they are replies to the same message
  * (or no replies at all) and they were shared together in a single context
  *
@@ -58,10 +74,8 @@ function isCombinableFileMessage(message: ChatMessage): boolean {
  */
 function canBeCombinedWith(message1: ChatMessage, message2: ChatMessage): boolean {
 	return message1.parent?.id === message2.parent?.id
-		// FIXME the timestamp is not a reliable indicator here, should instead
-		// create referenceId differently (e.g. as `${SHA(uploadId) + SHA(Math.random())}`)
-		// and base splitting on this (should be aligned with mobile clients as well)
-		&& message1.timestamp - message2.timestamp <= 30
+		&& !!message1.referenceId && !!message2.referenceId
+		&& getUploadHashFromReferenceId(message1.referenceId) === getUploadHashFromReferenceId(message2.referenceId)
 }
 
 /**

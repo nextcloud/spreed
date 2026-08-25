@@ -10,6 +10,7 @@ import { prepareTemporaryMessage } from '../prepareTemporaryMessage.ts'
 
 describe('prepareTemporaryMessage', () => {
 	const TOKEN = 'XXTOKENXX'
+	const UPLOAD_ID = String(new Date('2020-01-01T20:00:00').getTime())
 
 	beforeEach(() => {
 		vi.useFakeTimers().setSystemTime(new Date('2020-01-01T20:00:00'))
@@ -63,27 +64,28 @@ describe('prepareTemporaryMessage', () => {
 	const textFilePayload = {
 		...defaultPayload,
 		message: '{file}',
-		uploadId: 'upload-id-1',
-		index: 'upload-index-1',
+		uploadId: UPLOAD_ID,
+		index: `temp_${UPLOAD_ID}_1`,
 		file: textFile,
 		localUrl: 'local-url://original-name.txt',
 	}
 	const textFileResult = {
 		...defaultResult,
-		id: expect.stringMatching(/^temp-1577908800000-upload-id-1-0\.[0-9]*$/),
+		id: `temp-${UPLOAD_ID}-001`,
 		message: '{file}',
 		messageParameters: {
 			file: {
 				type: 'file',
 				file: textFile,
 				mimetype: 'text/plain',
-				id: expect.stringMatching(/^temp-1577908800000-upload-id-1-0\.[0-9]*$/),
+				id: `temp-${UPLOAD_ID}-001`,
 				name: 'new-name.txt',
-				uploadId: 'upload-id-1',
+				uploadId: UPLOAD_ID,
 				localUrl: 'local-url://original-name.txt',
-				index: 'upload-index-1',
+				index: `temp_${UPLOAD_ID}_1`,
 			},
 		},
+		referenceId: expect.stringMatching(/^[a-f0-9]{60}-[0-9]{3}$/),
 	}
 
 	const audioFile = {
@@ -94,14 +96,14 @@ describe('prepareTemporaryMessage', () => {
 		...defaultPayload,
 		message: '{file}',
 		messageType: MESSAGE.TYPE.VOICE_MESSAGE,
-		uploadId: 'upload-id-1',
-		index: 'upload-index-1',
+		uploadId: UPLOAD_ID,
+		index: `temp_${UPLOAD_ID}_1`,
 		file: audioFile,
 		localUrl: 'local-url://original-name.txt',
 	}
 	const audioFileResult = {
 		...defaultResult,
-		id: expect.stringMatching(/^temp-1577908800000-upload-id-1-0\.[0-9]*$/),
+		id: `temp-${UPLOAD_ID}-001`,
 		message: '{file}',
 		messageType: MESSAGE.TYPE.VOICE_MESSAGE,
 		messageParameters: {
@@ -109,13 +111,14 @@ describe('prepareTemporaryMessage', () => {
 				type: 'file',
 				file: audioFile,
 				mimetype: 'audio/wav',
-				id: expect.stringMatching(/^temp-1577908800000-upload-id-1-0\.[0-9]*$/),
+				id: `temp-${UPLOAD_ID}-001`,
 				name: 'Voice message 2020-01-01 20-00-00 (Note to self).wav',
-				uploadId: 'upload-id-1',
+				uploadId: UPLOAD_ID,
 				localUrl: 'local-url://original-name.txt',
-				index: 'upload-index-1',
+				index: `temp_${UPLOAD_ID}_1`,
 			},
 		},
+		referenceId: expect.stringMatching(/^[a-f0-9]{60}-[0-9]{3}$/),
 	}
 	const threadPayload = {
 		...defaultPayload,
