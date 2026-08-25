@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { MaybeRefOrGetter, WatchCallback, WatchOptions, WatchStopHandle } from 'vue'
+import type { MaybeRefOrGetter, WatchCallback, WatchStopHandle } from 'vue'
 
-import { createSharedComposable } from '@vueuse/core'
-import { onBeforeMount, onBeforeUnmount, readonly, ref, toValue, watch } from 'vue'
+import { createSharedComposable, whenever } from '@vueuse/core'
+import { onBeforeMount, onBeforeUnmount, readonly, ref, toValue } from 'vue'
 import { EventBus } from '../services/EventBus.ts'
 import SessionStorage from '../services/SessionStorage.js'
 
@@ -39,24 +39,24 @@ export const useJoinedConversation = createSharedComposable(useJoinedConversatio
 
 /**
  * Watch for the current joined conversation matching the provided token.
+ * Fires immediately if already matching, and stops after the first match
  *
  * @param token token to match against the joined conversation
  * @param callback callback triggered when the joined conversation matches the token
- * @param options watch options
  */
 export function watchJoinedConversation(
 	token: MaybeRefOrGetter<string | null>,
-	callback: WatchCallback<string, string | null | undefined>,
-	options?: WatchOptions,
+	callback: WatchCallback<string, string | undefined>,
 ): WatchStopHandle {
 	const currentJoinedConversation = useJoinedConversation()
 
-	return watch(currentJoinedConversation, (newToken, oldToken, onCleanup) => {
+	// Getter resolves to the matching token / undefined
+	// `whenever()` only invokes the callback and stops watching on a truthy value.
+	return whenever<string | undefined>(() => {
 		const targetToken = toValue(token)
-		if (!targetToken || newToken !== targetToken) {
+		if (!targetToken || currentJoinedConversation.value !== targetToken) {
 			return
 		}
-
-		callback(newToken, oldToken, onCleanup)
-	}, options)
+		return targetToken
+	}, callback, { immediate: true, once: true })
 }
