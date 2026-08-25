@@ -231,7 +231,7 @@ namespace OCA\Talk;
  *     reactions: array<string, integer>|\stdClass,
  *     // When the user reacted this is the list of emojis the user reacted with
  *     reactionsSelf?: list<string>,
- *     // A reference string that was given while posting the message to be able to identify a sent message again (only available with `chat-reference-id` capability)
+ *     // A reference string that was given while posting the message to be able to identify a sent message again (only available with `chat-reference-id` capability). For grouped file uploads support, expected format is `{sha256(uploadId)}-{order}`, matching /^[a-f0-9]{60}-[0-9]{3}$/
  *     referenceId: string,
  *     // Timestamp in seconds and UTC time zone
  *     timestamp: int,
