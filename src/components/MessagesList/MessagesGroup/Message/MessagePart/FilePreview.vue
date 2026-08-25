@@ -62,6 +62,12 @@
 						class="file-preview__progress"
 						type="circular"
 						:value="uploadProgress" />
+					<span
+						v-if="fileSizeLabel"
+						class="file-preview__size"
+						data-theme-dark>
+						{{ fileSizeLabel }}
+					</span>
 				</template>
 				<TransitionWrapper v-else-if="isLoading" name="fade">
 					<canvas
@@ -94,6 +100,7 @@
 </template>
 
 <script>
+import { formatFileSize } from '@nextcloud/files'
 import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl, generateUrl, imagePath } from '@nextcloud/router'
@@ -241,6 +248,17 @@ export default {
 
 		fileDetail() {
 			return this.file.name
+		},
+
+		fileSizeLabel() {
+			if (!this.isUploadEditor || !this.uploadFile) {
+				return ''
+			}
+
+			const size = this.uploadStore.skipCompression
+				? this.uploadFile.totalSize
+				: this.uploadStore.compressedFileSizes[this.referenceId] ?? this.uploadFile.totalSize
+			return size ? formatFileSize(size, true) : ''
 		},
 
 		fallbackLocalUrl() {
@@ -634,6 +652,19 @@ export default {
 		top: 50%;
 		inset-inline-end: calc(var(--progress-bar-height) * -1);
 		transform: translateY(-50%);
+	}
+
+	&__size {
+		position: absolute;
+		inset-block-end: var(--default-grid-baseline);
+		inset-inline-end: var(--default-grid-baseline);
+		padding: calc(0.5 * var(--default-grid-baseline)) var(--default-grid-baseline);
+		border-radius: var(--border-radius);
+		background-color: rgba(var(--color-main-background-rgb), 0.7);
+		color: var(--color-main-text);
+		font-size: var(--font-size-small);
+		line-height: 1;
+		z-index: 1;
 	}
 
 	.mimeicon {
