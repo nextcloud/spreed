@@ -2,7 +2,6 @@ OC.L10N.register(
     "spreed",
     {
     "Other activities" : "Alia aktivado",
-    "Talk" : "Paroli",
     "Guest" : "Gasto",
     "Message deleted by author" : "Mesaĝo estas forigita per aǔtoro",
     "Administration" : "Administrado",
@@ -14,6 +13,7 @@ OC.L10N.register(
     "Invalid image" : "Nevalida bildo",
     "Unknown filetype" : "Nekonata dosiertipo",
     "Description" : "Priskribo",
+    "Talk" : "Paroli",
     "Dismiss notification" : "Forsendi sciigon",
     "Accept" : "Akcepti",
     "Decline" : "Malakcepti",

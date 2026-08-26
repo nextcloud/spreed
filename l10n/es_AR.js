@@ -2,7 +2,6 @@ OC.L10N.register(
     "spreed",
     {
     "_%n guest_::_%n guests_" : ["%n inivitado","%n inivitados","%n inivitados"],
-    "Talk" : "Hablar",
     "Guest" : "Invitado",
     "Message deleted by author" : "Mensaje eliminado por el autor",
     "Administration" : "Administración",
@@ -14,6 +13,7 @@ OC.L10N.register(
     "Invalid image" : "Imagen inválida",
     "Unknown filetype" : "Tipo de archivo desconocido",
     "Description" : "Descripción",
+    "Talk" : "Hablar",
     "Dismiss notification" : "Eliminar notificación",
     "Accept" : "Aceptar",
     "Decline" : "Declinar",
