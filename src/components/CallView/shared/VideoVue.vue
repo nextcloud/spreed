@@ -335,7 +335,7 @@ export default {
 		},
 
 		avatarSize() {
-			if (this.isStripe || (!this.isBig && !this.isGrid)) {
+			if (!this.isBig && !this.isGrid) {
 				return AVATAR.SIZE.LARGE
 			} else if (!this.containerAspectRatio) {
 				return AVATAR.SIZE.FULL
