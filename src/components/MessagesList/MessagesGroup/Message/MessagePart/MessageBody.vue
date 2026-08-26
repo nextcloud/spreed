@@ -226,7 +226,7 @@ import {
 	getFileKeys,
 	getFilePreviewKeys,
 	isFilePreviewParameter,
-	isTemporaryId,
+	isTemporaryMessage,
 } from '../../../../../utils/message.ts'
 import { parseMentions, parseSpecialSymbols } from '../../../../../utils/textParse.ts'
 
@@ -438,7 +438,7 @@ export default {
 		},
 
 		isTemporary() {
-			return !this.isScheduledMessage && isTemporaryId(this.message.id)
+			return !this.isScheduledMessage && isTemporaryMessage(this.message)
 		},
 
 		isScheduledSendingFailure() {
