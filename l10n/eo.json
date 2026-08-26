@@ -1,6 +1,5 @@
 { "translations": {
     "Other activities" : "Alia aktivado",
-    "Talk" : "Paroli",
     "Guest" : "Gasto",
     "Message deleted by author" : "Mesaĝo estas forigita per aǔtoro",
     "Administration" : "Administrado",
@@ -12,6 +11,7 @@
     "Invalid image" : "Nevalida bildo",
     "Unknown filetype" : "Nekonata dosiertipo",
     "Description" : "Priskribo",
+    "Talk" : "Paroli",
     "Dismiss notification" : "Forsendi sciigon",
     "Accept" : "Akcepti",
     "Decline" : "Malakcepti",
