@@ -60,8 +60,9 @@
 					<NcProgressBar
 						v-if="showUploadProgress"
 						class="file-preview__progress"
+						:class="{ 'file-preview__progress--pending': !uploadProgress }"
 						type="circular"
-						:value="uploadProgress" />
+						:value="uploadProgress || 30" />
 					<span
 						v-if="fileSizeLabel"
 						class="file-preview__size"
@@ -522,7 +523,7 @@ export default {
 
 		showUploadProgress() {
 			return this.isTemporaryUpload && !this.isUploadEditor
-				&& ['shared', 'sharing', 'successUpload', 'uploading', 'failedUpload'].includes(this.uploadFile?.status)
+				&& ['shared', 'sharing', 'successUpload', 'uploading'].includes(this.uploadFile?.status)
 		},
 
 		hasTemporaryImageUrl() {
@@ -649,9 +650,21 @@ export default {
 
 	&__progress {
 		position: absolute;
-		top: 50%;
-		inset-inline-end: calc(var(--progress-bar-height) * -1);
-		transform: translateY(-50%);
+		inset-block-end: var(--default-grid-baseline);
+		inset-inline-end: var(--default-grid-baseline);
+		border-radius: 50%;
+		z-index: 1;
+
+		// Override NcProgressBar styles to fake indeterminate state and mimic NcLoadingIcon
+		:deep(circle:first-of-type) {
+			stroke: var(--color-loading-dark);
+		}
+		:deep(circle:last-of-type) {
+			stroke: var(--color-loading-light);
+		}
+		&--pending {
+			animation: rotate var(--animation-duration, 0.8s) linear infinite;
+		}
 	}
 
 	&__size {
