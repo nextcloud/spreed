@@ -12,7 +12,7 @@ import { computed, watch } from 'vue'
 import LoadingPlaceholder from '../../UIShared/LoadingPlaceholder.vue'
 import ConversationItem from './ConversationItem.vue'
 import ConversationTagHeader from './ConversationTagHeader.vue'
-import { AVATAR, CONVERSATION } from '../../../constants.ts'
+import { AVATAR } from '../../../constants.ts'
 import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
 import { hasCall, hasUnreadMessages } from '../../../utils/conversation.ts'
 
@@ -57,34 +57,21 @@ const listItems = computed<VirtualListItem[]>(() => {
 		hasTagged: boolean
 		favorites: Conversation[]
 		favoritesUnreadCount: number
-		favoritesUnreadMention: boolean
-		favoritesUnreadMentionDirect: boolean
 		tagged: Record<string, Conversation[]>
 		taggedUnreadCount: Record<string, number>
-		taggedUnreadMention: Record<string, boolean>
-		taggedUnreadMentionDirect: Record<string, boolean>
 		other: Conversation[]
 		otherUnreadCount: number
-		otherUnreadMention: boolean
-		otherUnreadMentionDirect: boolean
 	}>((acc, conversation) => {
-		// Count amount of unread conversations, highlight if any has a direct or group mention
+		// Count amount of unread conversations
 		const unreadCount = conversation.unreadMessages ? 1 : 0
-		const unreadMention = conversation.unreadMention
-		const unreadMentionDirect = conversation.unreadMentionDirect
-			|| (!!unreadCount && [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER].includes(conversation.type))
 		const isTagged = !!conversation.tagIds?.length
 
 		if (conversation.isFavorite) {
 			acc.favorites.push(conversation)
 			acc.favoritesUnreadCount += unreadCount
-			acc.favoritesUnreadMention ||= unreadMention
-			acc.favoritesUnreadMentionDirect ||= unreadMentionDirect
 		} else if (!isTagged) {
 			acc.other.push(conversation)
 			acc.otherUnreadCount += unreadCount
-			acc.otherUnreadMention ||= unreadMention
-			acc.otherUnreadMentionDirect ||= unreadMentionDirect
 		}
 
 		if (isTagged) {
@@ -97,24 +84,16 @@ const listItems = computed<VirtualListItem[]>(() => {
 			acc.tagged[tagId] ??= []
 			acc.tagged[tagId].push(conversation)
 			acc.taggedUnreadCount[tagId] = (acc.taggedUnreadCount[tagId] || 0) + unreadCount
-			acc.taggedUnreadMention[tagId] = acc.taggedUnreadMention[tagId] || unreadMention
-			acc.taggedUnreadMentionDirect[tagId] = acc.taggedUnreadMentionDirect[tagId] || unreadMentionDirect
 		}
 		return acc
 	}, {
 		hasTagged: false,
 		favorites: [],
 		favoritesUnreadCount: 0,
-		favoritesUnreadMention: false,
-		favoritesUnreadMentionDirect: false,
 		tagged: {},
 		taggedUnreadCount: {},
-		taggedUnreadMention: {},
-		taggedUnreadMentionDirect: {},
 		other: [],
 		otherUnreadCount: 0,
-		otherUnreadMention: false,
-		otherUnreadMentionDirect: false,
 	})
 
 	if (!groupedConversations.hasTagged && groupedConversations.favorites.length === 0) {
@@ -126,8 +105,6 @@ const listItems = computed<VirtualListItem[]>(() => {
 		tag: ConversationTag
 		conversations: Conversation[]
 		unreadCount: number
-		unreadMention: boolean
-		unreadMentionDirect: boolean
 	}>>((acc, tag) => {
 		const conversations = tag.type === 'favorites'
 			? groupedConversations.favorites
@@ -144,23 +121,11 @@ const listItems = computed<VirtualListItem[]>(() => {
 			: tag.type === 'other'
 				? groupedConversations.otherUnreadCount
 				: (groupedConversations.taggedUnreadCount[tag.id] ?? 0)
-		const unreadMention = tag.type === 'favorites'
-			? groupedConversations.favoritesUnreadMention
-			: tag.type === 'other'
-				? groupedConversations.otherUnreadMention
-				: (groupedConversations.taggedUnreadMention[tag.id] ?? false)
-		const unreadMentionDirect = tag.type === 'favorites'
-			? groupedConversations.favoritesUnreadMentionDirect
-			: tag.type === 'other'
-				? groupedConversations.otherUnreadMentionDirect
-				: (groupedConversations.taggedUnreadMentionDirect[tag.id] ?? false)
 
 		acc.push({
 			tag,
 			conversations,
 			unreadCount,
-			unreadMention,
-			unreadMentionDirect,
 		})
 		return acc
 	}, [])
@@ -170,8 +135,6 @@ const listItems = computed<VirtualListItem[]>(() => {
 			...section.tag,
 			_type: 'tag-header',
 			unreadCount: section.unreadCount,
-			unreadMention: section.unreadMention,
-			unreadMentionDirect: section.unreadMentionDirect,
 			isFirst: index === 0,
 			isLast: index === renderedSections.length - 1,
 		}
