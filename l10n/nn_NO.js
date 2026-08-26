@@ -1,7 +1,6 @@
 OC.L10N.register(
     "spreed",
     {
-    "Talk" : "Prat",
     "Guest" : "Gjest",
     "Administration" : "Administrasjon",
     "System" : "System",
@@ -12,6 +11,7 @@ OC.L10N.register(
     "Unknown filetype" : "Ukjend filtype",
     "Say hi to your friends and colleagues!" : "Sei hei til dine venner og kollegar!",
     "Description" : "Skildring",
+    "Talk" : "Prat",
     "Accept" : "Godta",
     "Open settings" : "Opne instillingar",
     "Default" : "Standard",

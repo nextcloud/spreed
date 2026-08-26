@@ -1,5 +1,4 @@
 { "translations": {
-    "Talk" : "Prat",
     "Guest" : "Gjest",
     "Administration" : "Administrasjon",
     "System" : "System",
@@ -10,6 +9,7 @@
     "Unknown filetype" : "Ukjend filtype",
     "Say hi to your friends and colleagues!" : "Sei hei til dine venner og kollegar!",
     "Description" : "Skildring",
+    "Talk" : "Prat",
     "Accept" : "Godta",
     "Open settings" : "Opne instillingar",
     "Default" : "Standard",

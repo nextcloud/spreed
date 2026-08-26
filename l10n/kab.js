@@ -2,7 +2,6 @@ OC.L10N.register(
     "spreed",
     {
     "Other activities" : "Irmad nniḍen",
-    "Talk" : "Asqerdec",
     "Guest" : "Inebgi",
     "Administration" : "Tadbelt",
     "System" : "Anagraw",
@@ -13,6 +12,7 @@ OC.L10N.register(
     "File is too big" : "Afaylu-agi bezzaf meqqer",
     "Invalid image" : "Tugna tarameɣtut",
     "Description" : "Aglam",
+    "Talk" : "Asqerdec",
     "Dismiss notification" : "Zgel ilɣa",
     "Accept" : "Agez",
     "Decline" : "Agwi",
