@@ -13,7 +13,6 @@ import { useStore } from 'vuex'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
-import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconArrowDown from 'vue-material-design-icons/ArrowDown.vue'
 import IconArrowUp from 'vue-material-design-icons/ArrowUp.vue'
@@ -27,8 +26,6 @@ import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
 export type TagHeaderItem = ConversationTag & {
 	_type: 'tag-header'
 	unreadCount: number
-	unreadMention: boolean
-	unreadMentionDirect: boolean
 	isFirst?: boolean
 	isLast?: boolean
 }
@@ -42,15 +39,6 @@ const tagsStore = useConversationTagsStore()
 
 const isCustomTag = computed(() => props.item.type === 'custom')
 const isFavoritesTag = computed(() => props.item.type === 'favorites')
-const counterType = computed(() => {
-	if (props.item.unreadMentionDirect) {
-		return 'highlighted'
-	} else if (props.item.unreadMention) {
-		return 'outlined'
-	} else {
-		return ''
-	}
-})
 
 /**
  * Assign a new name to the tag via dialog
@@ -144,9 +132,6 @@ async function handleMarkReadTag() {
 		<template v-if="isFavoritesTag" #icon>
 			<!-- Filled for better indication -->
 			<IconStar :size="20" fillColor="var(--color-favorite)" />
-		</template>
-		<template #counter>
-			<NcCounterBubble v-if="item.unreadCount > 0" :count="item.unreadCount" :type="counterType" />
 		</template>
 		<template #actions>
 			<NcActionButton
