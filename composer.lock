@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d3fc96bab811db9aa63a13b619ae6f18",
+    "content-hash": "ead6f8b1adc0fea7172cd4c1fbd7070c",
     "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
@@ -336,7 +336,7 @@
     "packages-dev": [
         {
             "name": "nextcloud/ocp",
-            "version": "dev-master",
+            "version": "dev-stable35",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
@@ -360,7 +360,6 @@
                 "symfony/polyfill-php85": "^1.41",
                 "symfony/polyfill-php86": "^1.41"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
