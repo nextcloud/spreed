@@ -164,7 +164,7 @@ import ThreadsTab from './Threads/ThreadsTab.vue'
 import IconPermMediaOutline from '../../../img/material-icons/perm-media-outline.svg?raw'
 import { useGetParticipants } from '../../composables/useGetParticipants.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
-import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts'
+import { ATTENDEE, CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
@@ -351,7 +351,13 @@ export default {
 		},
 
 		participantsText() {
-			const participants = this.$store.getters.participantsList(this.token)
+			const participants = this.$store.getters.participantsList(this.token).filter((participant) => {
+				return participant.actorType !== ATTENDEE.ACTOR_TYPE.GROUPS
+					&& participant.actorType !== ATTENDEE.ACTOR_TYPE.CIRCLES
+					&& participant.actorType !== ATTENDEE.ACTOR_TYPE.TEAMS
+					&& participant.actorType !== ATTENDEE.ACTOR_TYPE.BOTS
+					&& participant.actorType !== ATTENDEE.ACTOR_TYPE.BRIDGED
+			})
 			return t('spreed', 'Participants ({count})', { count: participants.length })
 		},
 
