@@ -241,6 +241,10 @@ export default {
 		},
 
 		canAddPhones() {
+			if (!this.canAdd) {
+				return false
+			}
+
 			const canModerateSipDialOut = hasTalkFeature(this.token, 'sip-support-dialout')
 				&& getTalkConfig(this.token, 'call', 'enabled')
 				&& getTalkConfig(this.token, 'call', 'sip-enabled')
@@ -250,6 +254,10 @@ export default {
 		},
 
 		hintAddPhones() {
+			if (!this.canAdd) {
+				return false
+			}
+
 			const canModerateSipDialOut = hasTalkFeature(this.token, 'sip-support-dialout')
 				&& getTalkConfig(this.token, 'call', 'sip-enabled')
 				&& getTalkConfig(this.token, 'call', 'sip-dialout-enabled')
