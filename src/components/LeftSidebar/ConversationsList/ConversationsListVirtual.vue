@@ -14,7 +14,7 @@ import ConversationItem from './ConversationItem.vue'
 import ConversationTagHeader from './ConversationTagHeader.vue'
 import { AVATAR, CONVERSATION } from '../../../constants.ts'
 import { useConversationTagsStore } from '../../../stores/conversationTags.ts'
-import { hasCall, hasUnreadMessages } from '../../../utils/conversation.ts'
+import { hasCall, hasUnreadMentions, hasUnreadMessages } from '../../../utils/conversation.ts'
 
 export type VirtualListItem = (Conversation | TagHeaderItem) & { _key?: string }
 
@@ -349,11 +349,35 @@ function scrollToConversation(token: string) {
 	}
 }
 
+/**
+ * Get the indices (in the flattened virtual-list, i.e. tag-header- and
+ * collapsed-section-aware) of conversations with unread mentions.
+ */
+function getUnreadMentionIndices(): number[] {
+	const indices: number[] = []
+	listItems.value.forEach((item, index) => {
+		if (!isTagHeader(item) && hasUnreadMentions(item)) {
+			indices.push(index)
+		}
+	})
+	return indices
+}
+
+/**
+ * Get the index (in the flattened virtual-list) of the last unread-mention
+ * conversation currently below the viewport, or null if there is none.
+ */
+function getLastUnreadMentionBelowViewportIndex(): number | null {
+	const lastInViewport = getLastItemInViewportIndex()
+	return getUnreadMentionIndices().findLast((idx) => idx > lastInViewport) ?? null
+}
+
 defineExpose({
 	getFirstItemInViewportIndex,
 	getLastItemInViewportIndex,
 	scrollToItem,
 	scrollToConversation,
+	getLastUnreadMentionBelowViewportIndex,
 })
 </script>
 
