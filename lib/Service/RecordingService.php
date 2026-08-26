@@ -45,6 +45,7 @@ use OCP\TaskProcessing\Exception\Exception;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\Task;
 use OCP\TaskProcessing\TaskTypes\AudioToText;
+use OCP\TaskProcessing\TaskTypes\TextToText;
 use OCP\TaskProcessing\TaskTypes\TextToTextSummary;
 use Psr\Log\LoggerInterface;
 
@@ -455,15 +456,24 @@ class RecordingService {
 			return;
 		}
 
+		$customSummarizePrompt = $this->serverConfig->getAppValue('spreed', 'call_recording_summary_prompt', '');
+		if ($customSummarizePrompt !== '') {
+			$taskType = TextToText::ID;
+			$input = $customSummarizePrompt . "\n" . $output;
+		} else {
+			$taskType = TextToTextSummary::ID;
+			$input =  $output;
+		}
+
 		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
-		if (!in_array(TextToTextSummary::ID, $supportedTaskTypeIds, true)) {
-			$this->logger->error('Can not summarize call recording as no TextToTextSummary task provider is available');
+		if (!in_array($taskType, $supportedTaskTypeIds, true)) {
+			$this->logger->error('Can not summarize call recording as no ' . $taskType . ' task provider is available');
 			return;
 		}
 
 		$task = new Task(
-			TextToTextSummary::ID,
-			['input' => $output],
+			$taskType,
+			['input' => $input],
 			Application::APP_ID,
 			$owner,
 			'call/summary/' . $room->getToken() . '/' . $recordingFileId,
