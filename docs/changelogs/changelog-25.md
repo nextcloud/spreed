@@ -5,6 +5,30 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 25.0.0-rc.1 – 2026-08-26
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(call): Improve speaker view layout
+  [#19035](https://github.com/nextcloud/spreed/pull/19035)
+  [#19003](https://github.com/nextcloud/spreed/pull/19003)
+- fix(chat): Make scroll to bottom work for very long messages
+  [#19018](https://github.com/nextcloud/spreed/pull/19018)
+- fix(chat): Don't break message grouping on edited messages
+  [#19006](https://github.com/nextcloud/spreed/pull/19006)
+- fix(conversations): Hide unread counter from tag headers
+  [#19104](https://github.com/nextcloud/spreed/pull/19104)
+- fix(conversations): Correctly scroll to unread mentions in conversation list
+  [#19102 ](https://github.com/nextcloud/spreed/pull/19102)
+- fix(unified-search): Correctly register app as search result
+  [#19085](https://github.com/nextcloud/spreed/pull/19085)
+- fix(upload): Combine temporary messages during upload
+  [#19106](https://github.com/nextcloud/spreed/pull/19106)
+- fix(upload): Show file size on upload
+  [#19045](https://github.com/nextcloud/spreed/pull/19045)
+
 ## 25.0.0-alpha.1 – 2026-08-13
 ### Added
 - Classified conversations, announcements and channels
