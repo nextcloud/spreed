@@ -13,7 +13,7 @@ import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useGetToken } from './useGetToken.ts'
 import { useIsInCall } from './useIsInCall.js'
 
-const INACTIVE_TIME_MS = 3 * 60 * 1000
+const INACTIVE_TIME_MS = 60_000
 
 // Sessions are created as active on the server (talk_sessions.state defaults to 1)
 const currentState = ref(SESSION.STATE.ACTIVE)
