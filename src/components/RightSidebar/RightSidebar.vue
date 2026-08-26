@@ -370,6 +370,7 @@ export default {
 			return (this.getUserId || this.isGuestModerator)
 				&& (!this.isOneToOne || this.isInCall)
 				&& !this.isNoteToSelf
+				&& !this.isChangelog
 				&& (!isChannelConversation(this.conversation) || this.$store.getters.isModerator)
 		},
 
@@ -383,6 +384,10 @@ export default {
 
 		isNoteToSelf() {
 			return this.conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF
+		},
+
+		isChangelog() {
+			return this.conversation.type === CONVERSATION.TYPE.CHANGELOG
 		},
 
 		breakoutRoomsText() {
