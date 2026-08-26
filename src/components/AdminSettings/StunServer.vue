@@ -21,11 +21,12 @@
 				labelOutside />
 		</div>
 
-		<IconAlertCircleOutline
+		<span
 			v-show="!isValidServer"
 			class="stun-server__alert"
-			:title="t('spreed', 'The server address is invalid')"
-			fillColor="var(--color-border-error)" />
+			:title="t('spreed', 'The server address is invalid')">
+			<IconAlertCircleOutline fillColor="var(--color-border-error)" />
+		</span>
 
 		<NcButton
 			v-show="!loading"
@@ -135,6 +136,9 @@ export default {
 	}
 
 	&__alert {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		width: var(--default-clickable-area);
 		height: var(--default-clickable-area);
 	}

@@ -105,7 +105,6 @@ function updateDeviceId(deviceId: NcSelectOption['id']) {
 		<component
 			:is="deviceIcon"
 			class="media-devices-selector__icon"
-			title=""
 			:size="20" />
 
 		<NcSelect
