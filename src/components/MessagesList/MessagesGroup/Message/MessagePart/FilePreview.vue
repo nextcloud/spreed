@@ -523,7 +523,7 @@ export default {
 
 		showUploadProgress() {
 			return this.isTemporaryUpload && !this.isUploadEditor
-				&& ['shared', 'sharing', 'successUpload', 'uploading', 'failedUpload'].includes(this.uploadFile?.status)
+				&& ['shared', 'sharing', 'successUpload', 'uploading'].includes(this.uploadFile?.status)
 		},
 
 		hasTemporaryImageUrl() {
