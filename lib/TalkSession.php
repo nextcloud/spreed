@@ -113,9 +113,23 @@ class TalkSession {
 	}
 
 	protected function getValue(string $key, string $token, bool $useTabId = true): ?string {
-		$token .= $useTabId ? $this->getTabId() : '';
 		$values = $this->getValues($key);
-		return $values[$token] ?? null;
+		$tabId = $useTabId ? $this->getTabId() : '';
+
+		if ($tabId !== '') {
+			return $values[$token . $tabId] ?? null;
+		}
+
+		// Requests without the tab id header (e.g. an <img> tag) can not tell the
+		// tabs apart, so fall back to any value stored for the token
+		foreach ($values as $tokenKey => $value) {
+			$tokenKey = (string)$tokenKey;
+			if ($tokenKey === $token || str_starts_with($tokenKey, $token . self::TAB_ID_SEPARATOR)) {
+				return $value;
+			}
+		}
+
+		return null;
 	}
 
 	protected function setValue(string $key, string $token, string $value, bool $useTabId = true): void {
@@ -142,7 +156,7 @@ class TalkSession {
 			// This request does not support tabId, so we need to destroy all related data
 			foreach ($values as $tokenKey => $value) {
 				$tokenKey = (string)$tokenKey;
-				if (str_starts_with($tokenKey, $token)) {
+				if ($tokenKey === $token || str_starts_with($tokenKey, $token . self::TAB_ID_SEPARATOR)) {
 					unset($values[$tokenKey]);
 				}
 			}
