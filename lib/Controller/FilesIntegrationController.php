@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Config;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Files\Util;
 use OCA\Talk\Manager;
@@ -24,6 +25,7 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Files\FileInfo;
 use OCP\Files\NotFoundException;
 use OCP\IConfig;
@@ -48,6 +50,7 @@ class FilesIntegrationController extends OCSController {
 		private readonly TalkSession $talkSession,
 		private readonly Util $util,
 		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 		private readonly IL10N $l,
 	) {
 		parent::__construct($appName, $request);
@@ -89,7 +92,7 @@ class FilesIntegrationController extends OCSController {
 		'fileId' => '.+',
 	])]
 	public function getRoomByFileId(string $fileId): DataResponse {
-		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1') {
+		if (!$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES)) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
@@ -167,8 +170,8 @@ class FilesIntegrationController extends OCSController {
 		'shareToken' => '.+',
 	])]
 	public function getRoomByShareToken(string $shareToken): DataResponse {
-		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1'
-			|| $this->config->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {
+		if (!$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES)
+			|| !$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES_PUBLIC_SHARES)) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 

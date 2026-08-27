@@ -273,5 +273,5 @@ Feature: chat-1/delete
     And user "participant1" sends message "Message" to room "room" with 201
     Then user "participant1" deletes chat history for room "room" with 403
     When the following "spreed" app config is set
-      | delete_one_to_one_conversations | 1 |
+      | delete_one_to_one_conversations | true |
     Then user "participant1" deletes chat history for room "room" with 200
