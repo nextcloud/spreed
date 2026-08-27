@@ -37,3 +37,8 @@
 
 # JetBrains Fleet settings
 /.fleet
+
+# Playwright
+/playwright-report
+/test-results
+/blob-report
