@@ -1118,6 +1118,7 @@ OC.L10N.register(
     "Reload" : "Laadi uuesti",
     "{nickName} raised their hand." : "{nickName} andis käega märku.",
     "A participant raised their hand." : "Üks osaleja andis käega märku",
+    "Page {page} of {pages}" : "Leht {page} / {pages}",
     "Collapse participant bar" : "Ahenda osalejate riba",
     "Expand participant bar" : "Laienda osalejate riba",
     "Previous page of videos" : "Videote eelmine leht",

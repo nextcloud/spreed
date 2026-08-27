@@ -1118,6 +1118,7 @@ OC.L10N.register(
     "Reload" : "Recarregar",
     "{nickName} raised their hand." : "{nickName} levantou a mão.",
     "A participant raised their hand." : "Um participante levantou a mão.",
+    "Page {page} of {pages}" : "Página {page} de {pages}",
     "Collapse participant bar" : "Recolher a barra de participantes",
     "Expand participant bar" : "Expandir a barra de participantes",
     "Previous page of videos" : "Página anterior de vídeos",

@@ -1118,6 +1118,7 @@ OC.L10N.register(
     "Reload" : "Yeniden yükle",
     "{nickName} raised their hand." : "{nickName} elini kaldırdı.",
     "A participant raised their hand." : "Bir katılımcı elini kaldırdı.",
+    "Page {page} of {pages}" : "{page} / {pages}. sayfa",
     "Collapse participant bar" : "Katılımcı çubuğunu daralt",
     "Expand participant bar" : "Katılımcı çubuğunu genişlet",
     "Previous page of videos" : "Önceki görüntü sayfası",

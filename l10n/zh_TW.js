@@ -1118,6 +1118,7 @@ OC.L10N.register(
     "Reload" : "重新載入",
     "{nickName} raised their hand." : "{nickName} 舉手了。",
     "A participant raised their hand." : "一位參與者舉手了。",
+    "Page {page} of {pages}" : "第 {page} 頁，共 {pages} 頁",
     "Collapse participant bar" : "折疊參與者列",
     "Expand participant bar" : "展開參與者列",
     "Previous page of videos" : "視訊的上一頁",
