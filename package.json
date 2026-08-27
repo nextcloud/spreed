@@ -112,7 +112,7 @@
     "sass": "^1.102.0",
     "sass-loader": "^17.0.0",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.10",
+    "vitest": "^4.1.11",
     "vue-loader": "^17.4.2",
     "vue-tsc": "^3.3.10"
   },
