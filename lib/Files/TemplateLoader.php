@@ -11,6 +11,7 @@ namespace OCA\Talk\Files;
 use OCA\Files\Event\LoadSidebar;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -30,6 +31,7 @@ class TemplateLoader implements IEventListener {
 		private readonly IInitialState $initialState,
 		private readonly Config $talkConfig,
 		private readonly IConfig $serverConfig,
+		private readonly IAppConfig $appConfig,
 		private readonly IUserSession $userSession,
 		private readonly IRequest $request,
 	) {
@@ -49,7 +51,7 @@ class TemplateLoader implements IEventListener {
 			return;
 		}
 
-		if ($this->serverConfig->getAppValue('spreed', 'conversations_files', '1') !== '1') {
+		if (!$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES)) {
 			return;
 		}
 

@@ -1860,7 +1860,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}
 
-		if (!$this->appConfig->getAppValueBool('delete_one_to_one_conversations')
+		if (!$this->appConfig->getAppValueBool(Config::DELETE_ONE_TO_ONE_CONVERSATIONS)
 				&& ($this->room->getType() === Room::TYPE_ONE_TO_ONE
 					|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)) {
 			// Not allowed to purge one-to-one conversations
