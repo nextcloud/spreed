@@ -346,6 +346,12 @@ export default {
 
 	async created() {
 		await this.settingsStore.fetchPresets()
+
+		// Parameters of the default preset are configurable by administrators,
+		// so they have to be applied to the initial state as well
+		if (this.preset === CONVERSATION.PRESET.DEFAULT) {
+			await this.applyPresetParameters(CONVERSATION.PRESET.DEFAULT)
+		}
 	},
 
 	methods: {
