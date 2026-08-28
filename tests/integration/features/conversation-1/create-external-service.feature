@@ -68,7 +68,7 @@ Feature: conversation-1/create-external-service
       | owner | participant1 |
       | objectType | external_call |
       | objectId | e5f6a7b8-c9d0-1234-efab-234567890123 |
-    Then user "participant1" is participant of the following rooms (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
       | id    | name  | type | participantType | objectType    | objectId                             |
       | room1 | room1 | 3    | 1               | external_call | d4e5f6a7-b8c9-0123-defa-123456789012 |
       | room2 | room2 | 3    | 1               | external_call | e5f6a7b8-c9d0-1234-efab-234567890123 |
