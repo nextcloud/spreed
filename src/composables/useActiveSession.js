@@ -52,12 +52,12 @@ export function useActiveSession() {
 	const isInCall = useIsInCall()
 	const isDocumentVisible = useDocumentVisibility()
 
-	const inactiveTimer = ref(null)
+	let inactiveTimer = null
 	const isWindowActive = () => document.hasFocus() && isDocumentVisible.value
 
 	const scheduleSessionAsInactive = () => {
-		clearTimeout(inactiveTimer.value)
-		inactiveTimer.value = setTimeout(setSessionAsInactive, INACTIVE_TIME_MS)
+		clearTimeout(inactiveTimer)
+		inactiveTimer = setTimeout(setSessionAsInactive, INACTIVE_TIME_MS)
 	}
 
 	watch(token, () => {
@@ -98,7 +98,7 @@ export function useActiveSession() {
 	const setSessionAsActive = async () => {
 		// Without re-arming, a background window stays active until the next focus
 		if (isWindowActive()) {
-			clearTimeout(inactiveTimer.value)
+			clearTimeout(inactiveTimer)
 		} else {
 			scheduleSessionAsInactive()
 		}
@@ -135,8 +135,8 @@ export function useActiveSession() {
 			// Sessions in a call stay active, the isInCall watcher repeats the update
 			return
 		}
-		clearTimeout(inactiveTimer.value)
-		inactiveTimer.value = null
+		clearTimeout(inactiveTimer)
+		inactiveTimer = null
 		currentState.value = SESSION.STATE.INACTIVE
 
 		try {
@@ -159,7 +159,7 @@ export function useActiveSession() {
 	}
 
 	const handleWindowFocus = ({ type }) => {
-		clearTimeout(inactiveTimer.value)
+		clearTimeout(inactiveTimer)
 		if (type === 'focus') {
 			setSessionAsActive()
 
