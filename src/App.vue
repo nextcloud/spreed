@@ -103,6 +103,7 @@ export default {
 		// Add provided value to check if we're in the main app or plugin
 		provide('Talk:isMainApp', true)
 		useDocumentFullscreen()
+		useActiveSession()
 
 		return {
 			token: useGetToken(),
@@ -111,7 +112,6 @@ export default {
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			isMobile: useIsMobile(),
 			isNextcloudTalkHashDirty: useHashCheck(),
-			supportSessionState: useActiveSession(),
 			callViewStore: useCallViewStore(),
 			sidebarStore: useSidebarStore(),
 			actorStore: useActorStore(),
