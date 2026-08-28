@@ -35,8 +35,6 @@ export function useIsSessionActive() {
  * - tab or browser window was moved to background or minimized
  * - there was no movement within tab window for a long time
  * - work for both ChatView and CallView
- *
- * @return {boolean|undefined}
  */
 export function useActiveSession() {
 	const store = useStore()
@@ -44,10 +42,6 @@ export function useActiveSession() {
 	const tokenStore = useTokenStore()
 	// Without 'session-state' feature support - conversation is always considered active
 	const supportSessionState = computed(() => hasTalkFeature(token.value, 'session-state'))
-
-	if (!supportSessionState.value) {
-		return false
-	}
 
 	const isInCall = useIsInCall()
 	const isDocumentVisible = useDocumentVisibility()
@@ -206,6 +200,4 @@ export function useActiveSession() {
 		// Restart timer, if mouse leaves the tab
 		scheduleSessionAsInactive()
 	}
-
-	return true
 }
