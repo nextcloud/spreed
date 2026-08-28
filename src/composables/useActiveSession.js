@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { computed, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { SESSION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
@@ -42,7 +42,7 @@ export function useActiveSession() {
 	const store = useStore()
 	const token = useGetToken()
 	const tokenStore = useTokenStore()
-	// FIXME has no API support on federated conversations
+	// Without 'session-state' feature support - conversation is always considered active
 	const supportSessionState = computed(() => hasTalkFeature(token.value, 'session-state'))
 
 	if (!supportSessionState.value) {
@@ -61,6 +61,9 @@ export function useActiveSession() {
 	}
 
 	watch(token, () => {
+		if (!supportSessionState.value) {
+			return
+		}
 		// Joined conversation has active state by default
 		currentState.value = SESSION.STATE.ACTIVE
 		// Updating right away would race with joining the conversation
@@ -85,17 +88,34 @@ export function useActiveSession() {
 		}
 	})
 
-	onBeforeMount(() => {
-		window.addEventListener('focus', handleWindowFocus)
-		window.addEventListener('blur', handleWindowFocus)
-	})
+	watch(supportSessionState, (value) => {
+		if (value) {
+			window.addEventListener('focus', handleWindowFocus)
+			window.addEventListener('blur', handleWindowFocus)
+			if (!isWindowActive()) {
+				scheduleSessionAsInactive()
+			}
+		} else {
+			stopTrackingSessionState()
+		}
+	}, { immediate: true })
 
-	onBeforeUnmount(() => {
+	onBeforeUnmount(stopTrackingSessionState)
+
+	function stopTrackingSessionState() {
 		window.removeEventListener('focus', handleWindowFocus)
 		window.removeEventListener('blur', handleWindowFocus)
-	})
+		document.body.removeEventListener('mouseenter', handleMouseEnter)
+		document.body.removeEventListener('mouseleave', handleMouseLeave)
+		clearTimeout(inactiveTimer)
+		inactiveTimer = null
+		currentState.value = SESSION.STATE.ACTIVE
+	}
 
 	const setSessionAsActive = async () => {
+		if (!supportSessionState.value) {
+			return
+		}
 		// Without re-arming, a background window stays active until the next focus
 		if (isWindowActive()) {
 			clearTimeout(inactiveTimer)
@@ -127,6 +147,9 @@ export function useActiveSession() {
 	}
 
 	const setSessionAsInactive = async () => {
+		if (!supportSessionState.value) {
+			return
+		}
 		if (currentState.value === SESSION.STATE.INACTIVE
 			|| !token.value) {
 			return
