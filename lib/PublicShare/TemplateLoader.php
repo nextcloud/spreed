@@ -12,6 +12,7 @@ namespace OCA\Talk\PublicShare;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -31,6 +32,7 @@ class TemplateLoader implements IEventListener {
 		private readonly IInitialState $initialState,
 		private readonly Config $talkConfig,
 		private readonly IConfig $serverConfig,
+		private readonly IAppConfig $appConfig,
 	) {
 	}
 
@@ -49,8 +51,8 @@ class TemplateLoader implements IEventListener {
 			return;
 		}
 
-		if ($this->serverConfig->getAppValue('spreed', 'conversations_files', '1') !== '1'
-			|| $this->serverConfig->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {
+		if (!$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES)
+			|| !$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES_PUBLIC_SHARES)) {
 			return;
 		}
 
