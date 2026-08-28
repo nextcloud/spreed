@@ -9,14 +9,17 @@ import { SESSION } from '../constants.ts'
 import { hasTalkFeature } from '../services/CapabilitiesManager.ts'
 import { setSessionState } from '../services/participantsService.js'
 import { useTokenStore } from '../stores/token.ts'
+import { isAxiosErrorResponse } from '../types/guards.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useGetToken } from './useGetToken.ts'
 import { useIsInCall } from './useIsInCall.js'
 
+type SessionStateValue = typeof SESSION.STATE[keyof typeof SESSION.STATE]
+
 const INACTIVE_TIME_MS = 60_000
 
 // Sessions are created as active on the server (talk_sessions.state defaults to 1)
-const currentState = ref(SESSION.STATE.ACTIVE)
+const currentState = ref<SessionStateValue>(SESSION.STATE.ACTIVE)
 
 /**
  * Whether the session of the current conversation is active on the server.
@@ -24,7 +27,7 @@ const currentState = ref(SESSION.STATE.ACTIVE)
  * The server only notifies about messages with an inactive session, so marking
  * them as read has to follow the same signal, not the document visibility.
  *
- * @return {import('vue').ComputedRef<boolean>} whether the session is active
+ * @return whether the session is active
  */
 export function useIsSessionActive() {
 	return computed(() => currentState.value === SESSION.STATE.ACTIVE)
@@ -46,10 +49,19 @@ export function useActiveSession() {
 	const isInCall = useIsInCall()
 	const isDocumentVisible = useDocumentVisibility()
 
-	let inactiveTimer = null
-	const isWindowActive = () => document.hasFocus() && isDocumentVisible.value
+	let inactiveTimer: NodeJS.Timeout | undefined
 
-	const scheduleSessionAsInactive = () => {
+	/**
+	 * Whether the window is focused and visible right now.
+	 */
+	function isWindowActive() {
+		return document.hasFocus() && isDocumentVisible.value
+	}
+
+	/**
+	 * (Re)start the countdown to mark the session as inactive.
+	 */
+	function scheduleSessionAsInactive() {
 		clearTimeout(inactiveTimer)
 		inactiveTimer = setTimeout(setSessionAsInactive, INACTIVE_TIME_MS)
 	}
@@ -96,17 +108,23 @@ export function useActiveSession() {
 
 	onBeforeUnmount(stopTrackingSessionState)
 
+	/**
+	 * Undo everything set up while 'session-state' was supported.
+	 */
 	function stopTrackingSessionState() {
 		window.removeEventListener('focus', handleWindowFocus)
 		window.removeEventListener('blur', handleWindowFocus)
 		document.body.removeEventListener('mouseenter', handleMouseEnter)
 		document.body.removeEventListener('mouseleave', handleMouseLeave)
 		clearTimeout(inactiveTimer)
-		inactiveTimer = null
+		inactiveTimer = undefined
 		currentState.value = SESSION.STATE.ACTIVE
 	}
 
-	const setSessionAsActive = async () => {
+	/**
+	 * Mark the session as active, on the client and on the server.
+	 */
+	async function setSessionAsActive() {
 		if (!supportSessionState.value) {
 			return
 		}
@@ -128,7 +146,7 @@ export function useActiveSession() {
 			console.info('Session has been marked as active')
 		} catch (error) {
 			console.error(error)
-			if (error?.response?.status === 404) {
+			if (isAxiosErrorResponse(error) && error.response?.status === 404) {
 				// In case of 404 - participant did not have a session, block UI to join call
 				tokenStore.updateLastJoinedConversationToken('')
 				// Automatically try to join the conversation again
@@ -140,7 +158,10 @@ export function useActiveSession() {
 		}
 	}
 
-	const setSessionAsInactive = async () => {
+	/**
+	 * Mark the session as inactive, on the client and on the server.
+	 */
+	async function setSessionAsInactive() {
 		if (!supportSessionState.value) {
 			return
 		}
@@ -153,7 +174,7 @@ export function useActiveSession() {
 			return
 		}
 		clearTimeout(inactiveTimer)
-		inactiveTimer = null
+		inactiveTimer = undefined
 		currentState.value = SESSION.STATE.INACTIVE
 
 		try {
@@ -163,7 +184,7 @@ export function useActiveSession() {
 			console.error(error)
 			// The server still has it active, so it would keep swallowing notifications
 			currentState.value = SESSION.STATE.ACTIVE
-			if (error?.response?.status === 404) {
+			if (isAxiosErrorResponse(error) && error.response?.status === 404) {
 				// In case of 404 - participant did not have a session, block UI to join call
 				tokenStore.updateLastJoinedConversationToken('')
 				// Automatically try to join the conversation again
@@ -175,7 +196,13 @@ export function useActiveSession() {
 		}
 	}
 
-	const handleWindowFocus = ({ type }) => {
+	/**
+	 * Handle the window gaining or losing focus.
+	 *
+	 * @param event the focus/blur event
+	 * @param event.type the event type, 'focus' or 'blur'
+	 */
+	function handleWindowFocus({ type }: FocusEvent) {
 		clearTimeout(inactiveTimer)
 		if (type === 'focus') {
 			setSessionAsActive()
@@ -191,12 +218,18 @@ export function useActiveSession() {
 		}
 	}
 
-	const handleMouseEnter = (event) => {
+	/**
+	 * Handle the mouse entering the tab while it is in the background.
+	 */
+	function handleMouseEnter() {
 		// The window is not focused, so hovering it only postpones the update
 		setSessionAsActive()
 	}
 
-	const handleMouseLeave = (event) => {
+	/**
+	 * Handle the mouse leaving the tab while it is in the background.
+	 */
+	function handleMouseLeave() {
 		// Restart timer, if mouse leaves the tab
 		scheduleSessionAsInactive()
 	}
