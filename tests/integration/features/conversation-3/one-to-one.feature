@@ -236,7 +236,7 @@ Feature: conversation-3/one-to-one
       | roomType | 1 |
       | invite   | participant2 |
     And the following "spreed" app config is set
-      | delete_one_to_one_conversations | 1 |
+      | delete_one_to_one_conversations | true |
     Then user "participant1" removes themselves from room "room" with 200 (v4)
     And user "participant1" is participant of the following rooms (v4)
     And user "participant2" is participant of the following rooms (v4)
@@ -248,7 +248,7 @@ Feature: conversation-3/one-to-one
     And user "participant1" sends message "Message" to room "room" with 201
     Then user "participant1" deletes room "room" with 400 (v4)
     When the following "spreed" app config is set
-      | delete_one_to_one_conversations | 1 |
+      | delete_one_to_one_conversations | true |
     Then user "participant1" deletes room "room" with 200 (v4)
     And user "participant1" is participant of the following rooms (v4)
     And user "participant2" is participant of the following rooms (v4)
