@@ -118,6 +118,18 @@
 			</template>
 			{{ t('spreed', 'Download attendance list') }}
 		</NcActionLink>
+
+		<!-- Search messages button, only when not already shown next to CallButton -->
+		<NcActionButton
+			v-if="actorStore.isLoggedIn && showSearchAction"
+			variant="tertiary"
+			@click="sidebarStore.showSidebar({ activeTab: 'search-messages' })">
+			<template #icon>
+				<IconMagnify :size="20" />
+			</template>
+			{{ t('spreed', 'Search messages') }}
+		</NcActionButton>
+
 		<!-- Fullscreen -->
 		<NcActionButton
 			v-if="!isInCall"
@@ -159,6 +171,7 @@ import IconDotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import IconFileOutline from 'vue-material-design-icons/FileOutline.vue'
 import IconFullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import IconFullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
+import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 import IconStop from 'vue-material-design-icons/Stop.vue'
 import IconVideoOutline from 'vue-material-design-icons/VideoOutline.vue'
 import IconFileDownload from '../../../img/material-icons/file-download.svg?raw'
@@ -175,6 +188,8 @@ import {
 	hasTalkFeature,
 	showTalkFeatureHint,
 } from '../../services/CapabilitiesManager.ts'
+import { useActorStore } from '../../stores/actor.ts'
+import { useSidebarStore } from '../../stores/sidebar.ts'
 import { isChannelConversation, isClassifiedConversation } from '../../utils/conversation.ts'
 import { generateAbsoluteUrl } from '../../utils/handleUrl.ts'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
@@ -196,6 +211,7 @@ export default {
 		IconFileOutline,
 		IconFullscreen,
 		IconFullscreenExit,
+		IconMagnify,
 		IconStop,
 		IconVideoOutline,
 	},
@@ -208,11 +224,23 @@ export default {
 			type: String,
 			required: true,
 		},
+
+		/**
+		 * Whether the search messages action should be shown in this menu.
+		 * False when a dedicated search button is already shown next to CallButton.
+		 */
+		showSearchAction: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	emits: ['openBreakoutRoomsEditor'],
 
 	setup(props) {
+		const actorStore = useActorStore()
+		const sidebarStore = useSidebarStore()
+
 		return {
 			IconFileDownload,
 			IconMicrophoneOffOutline,
@@ -220,6 +248,8 @@ export default {
 			isFullscreen: useDocumentFullscreen(),
 			isInCall: useIsInCall(),
 			toggleFullscreen,
+			actorStore,
+			sidebarStore,
 		}
 	},
 
