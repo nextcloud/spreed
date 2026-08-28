@@ -40,7 +40,7 @@ import PollManager from './components/PollViewer/PollManager.vue'
 import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 import ConfirmDialog from './components/UIShared/ConfirmDialog.vue'
-import { useActiveSession } from './composables/useActiveSession.js'
+import { useActiveSession } from './composables/useActiveSession.ts'
 import {
 	toggleFullscreen,
 	useDocumentFullscreen,
