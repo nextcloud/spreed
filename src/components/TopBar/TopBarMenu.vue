@@ -119,9 +119,9 @@
 			{{ t('spreed', 'Download attendance list') }}
 		</NcActionLink>
 
-		<!-- Search messages button -->
+		<!-- Search messages button, only when not already shown next to CallButton -->
 		<NcActionButton
-			v-if="actorStore.isLoggedIn"
+			v-if="actorStore.isLoggedIn && showSearchAction"
 			variant="tertiary"
 			@click="sidebarStore.showSidebar({ activeTab: 'search-messages' })">
 			<template #icon>
@@ -223,6 +223,15 @@ export default {
 		token: {
 			type: String,
 			required: true,
+		},
+
+		/**
+		 * Whether the search messages action should be shown in this menu.
+		 * False when a dedicated search button is already shown next to CallButton.
+		 */
+		showSearchAction: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
