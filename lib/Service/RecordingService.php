@@ -20,6 +20,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Recording\BackendNotifier;
 use OCA\Talk\Room;
 use OCA\Talk\Settings\UserPreference;
+use OCP\Activity\IManager as IActivityManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Constants;
@@ -94,6 +95,7 @@ class RecordingService {
 		private readonly IUserManager $userManager,
 		private readonly IEventDispatcher $eventDispatcher,
 		private readonly ISecureRandom $secureRandom,
+		private readonly IActivityManager $activityManager,
 	) {
 	}
 
@@ -157,7 +159,10 @@ class RecordingService {
 
 		try {
 			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
-			$fileNode = $recordingFolder->newFile($fileName, $resource);
+			$fileNode = $this->runAsActor(
+				$owner,
+				static fn (): File => $recordingFolder->newFile($fileName, $resource),
+			);
 		} catch (NoUserException) {
 			throw new InvalidArgumentException('owner_invalid');
 		} catch (NotPermittedException) {
@@ -431,9 +436,12 @@ class RecordingService {
 			}
 
 			try {
-				$fileNode = $recordingFolder->newFile(
-					$transcriptFileName,
-					$output . "\n\n$warning\n",
+				$fileNode = $this->runAsActor(
+					$owner,
+					static fn (): File => $recordingFolder->newFile(
+						$transcriptFileName,
+						$output . "\n\n$warning\n",
+					),
 				);
 				$this->systemTagMapper->assignGeneratedByAITag((string)$fileNode->getId(), 'files');
 				$this->notifyStoredTranscript($room, $participant, $fileNode, $aiTask);
@@ -623,6 +631,37 @@ class RecordingService {
 	 * @throws NoUserException
 	 */
 	private function getRecordingFolder(string $owner, string $token): Folder {
+		return $this->runAsActor(
+			$owner,
+			fn (): Folder => $this->getRecordingFolderInternal($owner, $token),
+		);
+	}
+
+	/**
+	 * Run the callback with the activity actor set to the given user.
+	 *
+	 * Recordings are stored by a background job, outside of any session, so
+	 * without this the folder and the file are attributed to nobody and the
+	 * activity stream renders them as coming from a "remote account".
+	 *
+	 * @template T
+	 * @param callable():T $callback
+	 * @return T
+	 */
+	private function runAsActor(string $userId, callable $callback) {
+		$this->activityManager->setCurrentUserId($userId);
+		try {
+			return $callback();
+		} finally {
+			$this->activityManager->setCurrentUserId(null);
+		}
+	}
+
+	/**
+	 * @throws NotPermittedException
+	 * @throws NoUserException
+	 */
+	private function getRecordingFolderInternal(string $owner, string $token): Folder {
 		$userFolder = $this->rootFolder->getUserFolder($owner);
 		$recordingRootFolderName = $this->config->getRecordingFolder($owner);
 		try {
