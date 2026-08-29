@@ -1277,6 +1277,7 @@ OC.L10N.register(
     "7 days" : "7日",
     "Clear reminder – {timeLocale}" : "リマインダーを消去 – {timeLocale}",
     "Edited by {actor}" : "編集者：{actor}",
+    "Until {absoluteDate}" : "{absoluteDate}まで",
     "Message text copied to clipboard" : "メッセージテキストがクリップボードにコピーされました",
     "Message text could not be copied" : "メッセージテキストはコピーできませんでした",
     "Message forwarded to \"Note to self\"" : "メッセージが「自分のメモ」に転送されました",
