@@ -15,6 +15,7 @@
     "dev": "rspack build --env development",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
+    "release:bump-version": "node ./scripts/bump-version.mjs",
     "release:prepare-changelog": "node ./scripts/prepare-changelog.mjs",
     "release:validate-release": "node ./scripts/validate-release.mjs",
     "serve": "rspack dev --env development",
