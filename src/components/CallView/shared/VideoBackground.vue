@@ -21,12 +21,14 @@ const isDarkTheme = useIsDarkTheme()
 	top: 0;
 	height: 100%;
 	width: 100%;
-	background-color: rgba(var(--overlay-color), 0.3);
-	background-image: none;
+	// A solid surface: nothing of the call view behind the tile shows through
+	// it. The two colours are what the translucent tint they replace used to
+	// composite to over the background of the call, so a tile keeps the shade
+	// it had in either theme.
+	background-color: #363636;
 
-	--overlay-color: 0, 0, 0;
 	&.dark-theme {
-		--overlay-color: 255, 255, 255;
+		background-color: #515151;
 	}
 }
 </style>
