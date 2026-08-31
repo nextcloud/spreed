@@ -60,9 +60,11 @@ class CleanupOldShares implements IRepairStep {
 			->andWhere($delete->expr()->in('id', $delete->createParameter('ids')));
 
 		$output->startProgress();
+		$numDeleted = 0;
 		do {
-			$numDeleted = $this->deleteSomeFormerShares($output, $query, $delete);
-		} while ($numDeleted !== 0);
+			$deletedInChunk = $this->deleteSomeFormerShares($output, $query, $delete);
+			$numDeleted += $deletedInChunk;
+		} while ($deletedInChunk !== 0);
 		$output->finishProgress();
 
 		$output->info('Deleted ' . $numDeleted . ' stray shares');
