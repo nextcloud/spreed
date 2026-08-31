@@ -86,6 +86,7 @@
 			<step>OCA\Talk\Migration\FixNamespaceInDatabaseTables</step>
 		</pre-migration>
 		<post-migration>
+			<step>OCA\Talk\Migration\CleanupOldShares</step>
 			<step>OCA\Talk\Migration\ClearResourceAccessCache</step>
 			<step>OCA\Talk\Migration\CacheUserDisplayNames</step>
 			<step>OCA\Talk\Migration\FixLastReadMessageZero</step>
