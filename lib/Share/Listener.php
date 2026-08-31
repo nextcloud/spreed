@@ -96,13 +96,13 @@ class Listener implements IEventListener {
 	}
 
 	protected function roomAttendeesRemovedEvent(AttendeesRemovedEvent $event): void {
-		$userIds = array_map(
+		$userIds = array_values(array_map(
 			static fn (Attendee $attendee): string => $attendee->getActorId(),
 			array_filter(
 				$event->getAttendees(),
 				static fn (Attendee $attendee): bool => $attendee->getActorType() === Attendee::ACTOR_USERS
 			)
-		);
+		));
 
 		$this->roomShareProvider->deleteReceivedSharesInRoom($event->getRoom()->getToken(), $userIds);
 	}
