@@ -407,6 +407,7 @@ OC.L10N.register(
     "Upload" : "Unggah",
     "Files" : "Berkas",
     "7 days" : "7 hari",
+    "Until {absoluteDate}" : "Hinga 1 {absoluteDate}",
     "Reply" : "Balas",
     "More actions" : "Tindakan lainnya",
     "Set reminder" : "Tetapkan pengingat",

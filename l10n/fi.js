@@ -925,6 +925,7 @@ OC.L10N.register(
     "24 hours" : "24 tuntia",
     "7 days" : "7 päivää",
     "Clear reminder – {timeLocale}" : "Tyhjennä muistutus – {timeLocale}",
+    "Until {absoluteDate}" : "kohtaan {absoluteDate} saakka",
     "Message text copied to clipboard" : "Viestin teksti kopioitu leikepöydälle",
     "Message text could not be copied" : "Viestin tekstiä ei voitu kopioida",
     "Add a reaction to this message" : "Lisää reaktio tähän viestiin",
