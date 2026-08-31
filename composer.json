@@ -1,7 +1,8 @@
 {
 	"autoload": {
 		"psr-4": {
-			"OCA\\Talk\\": "lib/"
+			"OCA\\Talk\\": "lib/",
+			"Nextcloud\\Matrix\\": "matrix-client/src/"
 		}
 	},
 	"config": {

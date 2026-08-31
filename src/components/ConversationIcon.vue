@@ -64,9 +64,11 @@ import { h, ref } from 'vue'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import IconLink from 'vue-material-design-icons/Link.vue'
+import IconLock from 'vue-material-design-icons/Lock.vue' // Filled for better indication
 import IconStar from 'vue-material-design-icons/Star.vue' // Filled for better indication
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import IconWeb from 'vue-material-design-icons/Web.vue'
+import IconMatrix from '../../img/material-icons/matrix.svg?raw'
 import IconVolumeHighOutline from '../../img/material-icons/volume-high-outline.svg?raw'
 import { AVATAR, CONVERSATION } from '../constants.ts'
 import { getConversationAvatarOcsUrl } from '../services/avatarService.ts'
@@ -198,6 +200,19 @@ export default {
 		},
 
 		conversationType() {
+			if (this.item.objectType === CONVERSATION.OBJECT_TYPE.MATRIX) {
+				if (this.item.matrixCapabilities?.encrypted) {
+					const unverified = this.item.matrixCapabilities?.deviceVerified === false
+					return {
+						key: unverified ? 'matrix_encrypted_unverified' : 'matrix_encrypted',
+						icon: h(IconLock, { fillColor: unverified ? '#e9a800' : undefined }),
+						label: unverified
+							? t('spreed', 'Encrypted Matrix room – this device is not verified yet')
+							: t('spreed', 'Encrypted Matrix room'),
+					}
+				}
+				return { key: 'matrix', icon: h(NcIconSvgWrapper, { svg: IconMatrix }), label: t('spreed', 'Matrix room') }
+			}
 			if (this.item.remoteServer) {
 				return { key: 'federated', icon: IconWeb, label: t('spreed', 'Federated conversation') }
 			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {

@@ -11,7 +11,7 @@ import type {
 } from '../types/index.ts'
 
 import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
+import { generateOcsUrl, generateUrl } from '@nextcloud/router'
 
 /**
  *
@@ -32,6 +32,18 @@ function getConversationAvatarOcsUrl(token: string, isDarkTheme: boolean, avatar
  */
 function getUserProxyAvatarOcsUrl(token: string, cloudId: string, isDarkTheme: boolean, size: 64 | 512 = 512): string {
 	return generateOcsUrl('apps/spreed/api/v1/proxy/{token}/user-avatar/{size}' + (isDarkTheme ? '/dark' : '') + '?cloudId={cloudId}', { token, cloudId, size })
+}
+
+/**
+ * Avatar of a Matrix-only member, proxied through the user's homeserver
+ *
+ * @param token conversation token
+ * @param mxid Matrix user id
+ * @param isDarkTheme dark placeholder
+ * @param size 64 or 512
+ */
+function getMatrixMemberAvatarUrl(token: string, mxid: string, isDarkTheme: boolean, size: 64 | 512 = 512): string {
+	return generateUrl('/apps/spreed/matrix/avatar/{token}/{size}/{mxid}', { token, size, mxid }) + (isDarkTheme ? '?darkTheme=1' : '')
 }
 
 /**
@@ -65,6 +77,7 @@ async function deleteConversationAvatar(token: string): deleteAvatarResponse {
 }
 
 export {
+	getMatrixMemberAvatarUrl,
 	deleteConversationAvatar,
 	getConversationAvatarOcsUrl,
 	getUserProxyAvatarOcsUrl,

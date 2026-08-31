@@ -377,6 +377,13 @@ class RoomFormatter {
 			$roomData['remoteToken'] = $room->getRemoteToken();
 		}
 
+		if ($room->isMatrixConversation()) {
+			/** @var \OCA\Talk\Matrix\Service\RoomInfoService $matrixInfo */
+			$matrixInfo = \OCP\Server::get(\OCA\Talk\Matrix\Service\RoomInfoService::class);
+			$roomData['matrixRoomId'] = $room->getObjectId();
+			$roomData['matrixCapabilities'] = $matrixInfo->capabilitiesFor($room, $currentParticipant);
+		}
+
 		if ($room->getLobbyState() === Webinary::LOBBY_NON_MODERATORS
 			&& !$currentParticipant->hasModeratorPermissions()
 			&& !($currentParticipant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {

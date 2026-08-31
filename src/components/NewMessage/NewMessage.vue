@@ -52,6 +52,14 @@
 					v-if="!dialog && showChatSummary"
 					class="new-message-form__note-content" />
 
+				<span
+					v-if="isMatrixEncrypted"
+					class="new-message-form__e2ee"
+					role="img"
+					:aria-label="t('spreed', 'End-to-end encrypted')"
+					:title="t('spreed', 'End-to-end encrypted Matrix room: messages are encrypted before they leave this Nextcloud server')">
+					<IconLockOutline :size="20" />
+				</span>
 				<div class="new-message-form__emoji-picker">
 					<NcEmojiPicker
 						v-if="!disabled"
@@ -359,6 +367,7 @@ import IconSend from 'vue-material-design-icons/Send.vue' // Filled for better i
 import IconSendVariantClockOutline from 'vue-material-design-icons/SendVariantClockOutline.vue' // Filled for better indication
 import MessageQuote from '../MessageQuote.vue'
 import NewMessageAbsenceInfo from './NewMessageAbsenceInfo.vue'
+import IconLockOutline from 'vue-material-design-icons/LockOutline.vue'
 import NewMessageAttachments from './NewMessageAttachments.vue'
 import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
 import NewMessageChatSummary from './NewMessageChatSummary.vue'
@@ -411,6 +420,7 @@ export default {
 		NcTextField,
 		NewMessageAbsenceInfo,
 		NewMessageAttachments,
+		IconLockOutline,
 		NewMessageAudioRecorder,
 		NewMessageChatSummary,
 		NewMessageNewFileDialog,
@@ -639,6 +649,10 @@ export default {
 			return !this.actorStore.isActorGuest
 				&& !this.conversation.remoteServer // no attachments support in federated conversations
 				&& !this.scheduleMessageTime && !this.showScheduledMessages
+		},
+
+		isMatrixEncrypted() {
+			return this.conversation?.objectType === CONVERSATION.OBJECT_TYPE.MATRIX && this.conversation?.matrixCapabilities?.encrypted === true
 		},
 
 		canUploadFiles() {
@@ -1615,4 +1629,14 @@ export default {
 	}
 }
 
+
+.new-message-form__e2ee {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--default-clickable-area);
+	height: var(--default-clickable-area);
+	color: var(--color-text-maxcontrast);
+	flex-shrink: 0;
+}
 </style>

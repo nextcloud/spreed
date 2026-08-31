@@ -61,7 +61,7 @@
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/main/docs/video-verfication.png</screenshot>
 
 	<dependencies>
-		<nextcloud min-version="36" max-version="36" />
+		<nextcloud min-version="34" max-version="36" />
 	</dependencies>
 
 	<background-jobs>
@@ -79,6 +79,8 @@
 		<job>OCA\Talk\BackgroundJob\ResetAssignedSignalingServer</job>
 		<job>OCA\Talk\BackgroundJob\RetryNotificationsJob</job>
 		<job>OCA\Talk\BackgroundJob\SendScheduledMessages</job>
+		<job>OCA\Talk\Matrix\BackgroundJob\MatrixSync</job>
+		<job>OCA\Talk\Matrix\BackgroundJob\MatrixCleanup</job>
 	</background-jobs>
 
 	<repair-steps>
@@ -105,6 +107,11 @@
 		<command>OCA\Talk\Command\Developer\AgeChatMessages</command>
 		<command>OCA\Talk\Command\Developer\GenerateChats</command>
 		<command>OCA\Talk\Command\Developer\UpdateDocs</command>
+
+		<command>OCA\Talk\Command\Matrix\Homeserver</command>
+		<command>OCA\Talk\Command\Matrix\Account</command>
+		<command>OCA\Talk\Command\Matrix\Status</command>
+		<command>OCA\Talk\Command\Matrix\Rekey</command>
 
 		<command>OCA\Talk\Command\Monitor\Calls</command>
 		<command>OCA\Talk\Command\Monitor\HasActiveCalls</command>
