@@ -26,6 +26,18 @@
 
 			<ThreadHeader v-if="isSidebar && threadId" standalone />
 
+			<NcNoteCard
+				v-if="showMatrixVerifyHint"
+				type="warning"
+				class="chatView__matrix-hint">
+				<div class="chatView__matrix-hint-content">
+					<span>{{ t('spreed', 'This Matrix room is end-to-end encrypted. Verify this Talk device from another of your Matrix clients so that encryption keys are shared with it – until then some messages cannot be shown.') }}</span>
+					<NcButton variant="secondary" @click="openMatrixSettings">
+						{{ t('spreed', 'Verify device') }}
+					</NcButton>
+				</div>
+			</NcNoteCard>
+
 			<MessagesList
 				v-model:isChatScrolledToBottom="isChatScrolledToBottom"
 				role="region"
@@ -60,11 +72,13 @@
 </template>
 
 <script>
+import { emit } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
 import { provide } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
+import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconAlertOctagonOutline from 'vue-material-design-icons/AlertOctagonOutline.vue'
 import IconChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
@@ -93,6 +107,7 @@ export default {
 		NcButton,
 		NcEmptyContent,
 		NcIconSvgWrapper,
+		NcNoteCard,
 		MessagesList,
 		NewMessage,
 		TransitionWrapper,
@@ -169,6 +184,12 @@ export default {
 			}
 		},
 
+		showMatrixVerifyHint() {
+			return this.conversation?.objectType === CONVERSATION.OBJECT_TYPE.MATRIX
+				&& this.conversation?.matrixCapabilities?.encrypted === true
+				&& this.conversation?.matrixCapabilities?.deviceVerified === false
+		},
+
 		isReadOnly() {
 			if (this.conversation) {
 				return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
@@ -193,6 +214,10 @@ export default {
 	},
 
 	methods: {
+		openMatrixSettings() {
+			emit('show-settings')
+		},
+
 		t,
 
 		handleDragOver(event) {
@@ -278,5 +303,17 @@ export default {
 		inset-inline-end: 24px;
 		z-index: 2;
 	}
+}
+
+.chatView__matrix-hint {
+	margin: var(--default-grid-baseline) calc(var(--default-grid-baseline) * 2) 0 !important;
+}
+
+.chatView__matrix-hint-content {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: calc(var(--default-grid-baseline) * 2);
+	flex-wrap: wrap;
 }
 </style>

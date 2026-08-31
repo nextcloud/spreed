@@ -1,0 +1,48 @@
+{
+	"name": "nextcloud/matrix-client-php",
+	"description": "Framework-free Matrix Client-Server API client for PHP, developed for Nextcloud Talk but usable standalone",
+	"type": "library",
+	"license": "AGPL-3.0-or-later",
+	"keywords": ["matrix", "chat", "client", "synapse"],
+	"require": {
+		"php": ">=8.1",
+		"ext-json": "*",
+		"ext-dom": "*",
+		"ext-mbstring": "*",
+		"ext-bcmath": "*",
+		"psr/http-client": "^1.0",
+		"psr/http-factory": "^1.0",
+		"psr/http-message": "^1.1 || ^2.0",
+		"psr/log": "^1.1 || ^2.0 || ^3.0",
+		"psr/clock": "^1.0"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^10.5 || ^11.0",
+		"nyholm/psr7": "^1.8",
+		"guzzlehttp/guzzle": "^7.8",
+		"vimeo/psalm": "^5.26"
+	},
+	"autoload": {
+		"psr-4": {
+			"Nextcloud\\Matrix\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Nextcloud\\Matrix\\Tests\\": "tests/"
+		}
+	},
+	"scripts": {
+		"test": "phpunit --testsuite unit",
+		"test:integration": "phpunit --testsuite integration",
+		"psalm": "psalm --no-cache",
+		"lint": "find src tests examples -name '*.php' -print0 | xargs -0 -n50 php -l",
+		"check:boundary": "! grep -rlE '\\\\b(OCP|OCA|OC)\\\\\\\\' src"
+	},
+	"config": {
+		"sort-packages": true,
+		"platform": {
+			"php": "8.1"
+		}
+	}
+}

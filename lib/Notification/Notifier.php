@@ -186,6 +186,16 @@ class Notifier implements INotifier {
 	 */
 	#[\Override]
 	public function prepare(INotification $notification, string $languageCode): INotification {
+		if ($notification->getApp() === 'spreed' && $notification->getSubject() === 'matrix_relogin') {
+			$l = $this->lFactory->get('spreed', $languageCode);
+			$parameters = $notification->getSubjectParameters();
+			$notification
+				->setParsedSubject($l->t('Your Matrix account needs a new login'))
+				->setParsedMessage($l->t('The Matrix homeserver rejected the session of %s. Log in again in Talk settings to continue syncing Matrix rooms.', [(string)($parameters['mxid'] ?? '')]))
+				->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.svg')))
+				->setLink($this->url->linkToRouteAbsolute('spreed.Page.index'));
+			return $notification;
+		}
 		if ($notification->getApp() !== Application::APP_ID) {
 			throw new UnknownNotificationException('Incorrect app');
 		}

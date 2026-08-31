@@ -238,3 +238,6 @@
 * `bot-features-api` (local) - Whether bots can fetch their own enabled features using their shared secret
 * `promote-demote-owner` - Whether owners can promote other participants to owner and demote other owners again, by sending the `participantType` parameter when promoting or demoting a participant
 * `config => conversations => unarchive` (local) - User selected mode when archived conversations are unarchived automatically (`never`, `mention` or `always`)
+
+## 26
+* `matrix-rooms` (local) - Matrix rooms can be shown as conversations; `config => matrix => enabled|can-link|linked|homeservers|e2ee-enabled|upload-enabled|typing-enabled`; conversations of Matrix rooms carry `matrixRoomId` and `matrixCapabilities`

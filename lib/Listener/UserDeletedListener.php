@@ -55,5 +55,6 @@ class UserDeletedListener implements IEventListener {
 		$this->phoneService->deleteByUser($user->getUID());
 		$this->reminderService->deleteAllRemindersForUser($user->getUID());
 		$this->federationManager->deleteInvitationsForUser($user->getUID());
+		\OCP\Server::get(\OCA\Talk\Matrix\Service\LifecycleService::class)->onUserDeleted($user->getUID());
 	}
 }
