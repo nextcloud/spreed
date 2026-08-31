@@ -173,6 +173,7 @@ import {
 	getHalfColumnCount,
 	getHalfColumnMaxWidth,
 	getHalfColumnMinWidth,
+	getJustifyContent,
 	GRID_GAP,
 	TARGET_ASPECT_RATIO,
 	TILE_COLUMN_SPAN,
@@ -465,8 +466,14 @@ export default {
 				gridTemplateColumns: `repeat(${getHalfColumnCount(columns)}, ${halfColumnWidth})`,
 				gridTemplateRows: `repeat(${rows}, minmax(${this.dpiAwareMinHeight}px, 1fr))`,
 				// The columns no longer take the whole width once they are
-				// capped, so the grid itself has to center them
-				justifyContent: 'center',
+				// capped, so the grid itself has to place them
+				justifyContent: getJustifyContent({
+					isStripe: this.isStripe,
+					totalTiles: this.totalTiles,
+					// The local video is laid out after the remote tiles, so it
+					// is the only tile of the grid when no remote one is shown
+					isLocalVideoAlone: !this.noLocalVideoReserve && this.displayedVideos.length === 0,
+				}),
 			}
 		},
 
