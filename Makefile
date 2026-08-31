@@ -20,6 +20,9 @@ dev-setup: clean-dev npm-init build-dev
 
 production-setup: clean-dev npm-init build-production
 
+validate-release:
+	node ./scripts/validate-release.mjs $(BRANCHES)
+
 release: appstore create-tag
 
 build-dev: composer-install-dev build-js
