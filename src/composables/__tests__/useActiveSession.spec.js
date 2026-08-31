@@ -12,6 +12,7 @@ import { SESSION } from '../../constants.ts'
 const mocks = vi.hoisted(() => ({
 	token: { current: null },
 	isInCall: { current: null },
+	joinedConversation: { current: null },
 }))
 
 vi.mock('vuex', async () => {
@@ -23,6 +24,9 @@ vi.mock('../useGetToken.ts', () => ({
 }))
 vi.mock('../useIsInCall.js', () => ({
 	useIsInCall: () => mocks.isInCall.current,
+}))
+vi.mock('../useJoinedConversation.ts', () => ({
+	useJoinedConversation: () => mocks.joinedConversation.current,
 }))
 vi.mock('../../services/participantsService.js', () => ({
 	setSessionState: vi.fn(),
@@ -85,6 +89,7 @@ describe('useActiveSession', () => {
 		windowHasFocus = true
 		mocks.token.current = ref('XXTOKENXX')
 		mocks.isInCall.current = ref(false)
+		mocks.joinedConversation.current = ref(null)
 		useStore.mockReturnValue({ dispatch: vi.fn() })
 		await mountActiveSession()
 	})
@@ -179,8 +184,13 @@ describe('useActiveSession', () => {
 		await runInactiveTimer()
 		setSessionState.mockClear()
 
-		// Joining another conversation creates a new session, which is active again
+		// The route changes right away, but the session state waits for the join to complete
 		mocks.token.current.value = 'YYTOKENYY'
+		await flushPromises()
+		expect(useIsSessionActive().value).toBe(false)
+
+		// Joining another conversation creates a new session, which is active again
+		mocks.joinedConversation.current.value = 'YYTOKENYY'
 		await flushPromises()
 		expect(useIsSessionActive().value).toBe(true)
 
