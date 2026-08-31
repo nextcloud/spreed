@@ -29,6 +29,9 @@ prepare-changelog:
 bump-version:
 	node ./scripts/bump-version.mjs $(PR)
 
+update-milestones:
+	node ./scripts/update-milestones.mjs $(BRANCH)
+
 release: appstore create-tag
 
 build-dev: composer-install-dev build-js
