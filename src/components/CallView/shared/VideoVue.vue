@@ -189,8 +189,9 @@ export default {
 			default: false,
 		},
 
-		// True when this video component is used in one to one conversations
-		isOneToOne: {
+		// True when this video fills the whole call view, with the stripe
+		// floating over it
+		isFullPage: {
 			type: Boolean,
 			default: false,
 		},
@@ -323,7 +324,7 @@ export default {
 				presenter: this.isPresenterOverlay && this.mouseover,
 				'video-container-grid': this.isGrid,
 				'video-container-big': this.isBig,
-				'one-to-one': this.isOneToOne,
+				'full-page': this.isFullPage,
 				'presenter-overlay': this.isPresenterOverlay,
 			}
 		},
@@ -654,7 +655,7 @@ export default {
 .video-container-big {
 	position: absolute;
 
-	&.one-to-one {
+	&.full-page {
 		width: calc(100% - var(--wrapper-padding) * 2);
 	}
 

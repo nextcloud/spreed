@@ -34,7 +34,7 @@
 						:model="selectedCallParticipantModel"
 						:sharedData="sharedDatas[selectedVideoPeerId]"
 						:showTalkingHighlight="false"
-						:isOneToOne="isOneToOne"
+						:isFullPage="showFullPage"
 						isGrid
 						isBig
 						fitVideo />
@@ -77,7 +77,6 @@
 						:models="promotedSpeakerModels"
 						:sharedDatas="sharedDatas"
 						:showVideoOverlay="showVideoOverlay"
-						:isOneToOne="isOneToOne"
 						@selectVideo="handleSelectVideo" />
 					<!-- Promoted "autopilot" mode -->
 					<VideoVue
@@ -91,7 +90,7 @@
 						isGrid
 						fitVideo
 						isBig
-						:isOneToOne="isOneToOne"
+						:isFullPage="showFullPage"
 						:isSidebar="isSidebar"
 						@forcePromoteVideo="forcePromotedModel = $event" />
 					<!-- presenter overlay -->
@@ -449,10 +448,6 @@ export default {
 
 		hasSelectedVideo() {
 			return this.selectedVideoPeerId !== null && !this.screens.includes(this.selectedVideoPeerId)
-		},
-
-		isOneToOne() {
-			return this.callParticipantModels.length === 1
 		},
 
 		// Whether the promoted video covers the whole call view, with the stripe

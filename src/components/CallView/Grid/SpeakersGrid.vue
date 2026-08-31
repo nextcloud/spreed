@@ -23,8 +23,6 @@ const props = defineProps<{
 	sharedDatas: Record<string, object>
 	/** Whether the video overlay is currently shown */
 	showVideoOverlay?: boolean
-	/** Whether the call is a one to one conversation */
-	isOneToOne?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -101,7 +99,6 @@ function tileStyle(index: number) {
 				:model="model"
 				:sharedData="sharedDatas[model.attributes.peerId]"
 				:showVideoOverlay="showVideoOverlay"
-				:isOneToOne="isOneToOne"
 				isGrid
 				fitVideo
 				@clickVideo="emit('selectVideo', model.attributes.peerId)" />
