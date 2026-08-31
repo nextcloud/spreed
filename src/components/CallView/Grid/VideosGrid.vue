@@ -676,6 +676,22 @@ export default {
 	// Kept out of the grid itself, whose measured height is the height of its
 	// tiles
 	padding-block: var(--grid-gap);
+	// Keeps the tiles off the rounded corners of the card
+	padding-inline: var(--grid-gap);
+
+	// The card the tiles sit on
+	.grid-main-wrapper:not(.overlap) & {
+		background-color: #262626;
+		border-radius: var(--border-radius-container);
+	}
+
+	// A stripe overlapping the promoted video takes no card of its own, which
+	// would band that video across: its tiles - the self camera, the only one
+	// left in a one to one call - are lifted off the call by a shadow instead
+	.overlap & :deep(.localVideoContainer),
+	.overlap & :deep(.video-container-grid) {
+		box-shadow: 0 0px 10px rgba(0, 0, 0, 0.5);
+	}
 }
 
 .dev-mode-video {

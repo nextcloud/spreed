@@ -123,6 +123,7 @@ const toggleLabel = computed(() => props.isOpen
 	gap: var(--default-grid-baseline);
 	width: fit-content;
 	padding-block-start: var(--default-grid-baseline);
+	padding-inline-end: var(--default-grid-baseline);
 	// Barely there while the call is not being looked at, as they sit over the
 	// tiles, and in their own color as soon as it is
 	opacity: .4;
