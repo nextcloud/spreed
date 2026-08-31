@@ -11,6 +11,7 @@ import {
 	getHalfColumnCount,
 	getHalfColumnMaxWidth,
 	getHalfColumnMinWidth,
+	getJustifyContent,
 	getMinTileHeight,
 	getMinTileWidth,
 	GRID_GAP,
@@ -340,6 +341,27 @@ describe('gridLayout', () => {
 					}
 				}
 			}
+		})
+	})
+
+	describe('getJustifyContent', () => {
+		test('centers the tiles of the grid', () => {
+			expect(getJustifyContent({ isStripe: false, totalTiles: 1, isLocalVideoAlone: true })).toBe('center')
+			expect(getJustifyContent({ isStripe: false, totalTiles: 5, isLocalVideoAlone: false })).toBe('center')
+		})
+
+		test('centers the tiles of a stripe holding several of them', () => {
+			expect(getJustifyContent({ isStripe: true, totalTiles: 2, isLocalVideoAlone: false })).toBe('center')
+		})
+
+		test('keeps a lone local video at the end of the stripe', () => {
+			expect(getJustifyContent({ isStripe: true, totalTiles: 1, isLocalVideoAlone: true })).toBe('end')
+		})
+
+		test('keeps a lone remote tile at the start of the stripe', () => {
+			// The local video is not shown as a tile, so the only tile left is a
+			// remote one and it belongs to the start of the row
+			expect(getJustifyContent({ isStripe: true, totalTiles: 1, isLocalVideoAlone: false })).toBe('start')
 		})
 	})
 })
