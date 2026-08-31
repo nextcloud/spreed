@@ -455,8 +455,13 @@ export default {
 			return this.callParticipantModels.length === 1
 		},
 
+		// Whether the promoted video covers the whole call view, with the stripe
+		// floating over it rather than taking room of its own. A promoted area
+		// held by a single participant is laid out that way, and so is one with
+		// nobody in it yet.
 		showFullPage() {
-			return this.isOneToOne && !(this.showLocalScreen || this.showRemoteScreen || this.showSelectedScreen)
+			return this.callParticipantModels.length <= 1
+				&& !(this.showLocalScreen || this.showRemoteScreen || this.showSelectedScreen)
 		},
 
 		hasLocalVideo() {
