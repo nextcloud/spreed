@@ -1269,6 +1269,50 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	}
 
 	/**
+	 * Delete all received shares for a user in a room
+	 *
+	 * Not part of IShareProvider API, but needed by the hooks in
+	 * {@see Listener::roomAttendeesRemovedEvent()}
+	 *
+	 * @param string $roomToken
+	 * @param list<string> $userIds
+	 */
+	public function deleteReceivedSharesInRoom(string $roomToken, array $userIds): void {
+		$this->cleanSharesByIdCache();
+
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->select('id')
+			->from('share')
+			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
+			->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($roomToken)));
+
+		$cursor = $qb->executeQuery();
+		$ids = [];
+		while ($row = $cursor->fetchAssociative()) {
+			$ids[] = (int)$row['id'];
+		}
+		$cursor->closeCursor();
+
+		if (!empty($ids)) {
+			$delete = $this->dbConnection->getQueryBuilder();
+			$delete->delete('share')
+				->where($delete->expr()->eq('share_type', $delete->createNamedParameter(self::SHARE_TYPE_USERROOM)))
+				->andWhere($delete->expr()->in('share_with', $delete->createParameter('userids')))
+				->andWhere($delete->expr()->in('parent', $delete->createParameter('ids')));
+
+			$userChunks = array_chunk($userIds, 100);
+			$chunks = array_chunk($ids, 100);
+			foreach ($userChunks as $userChunk) {
+				foreach ($chunks as $chunk) {
+					$delete->setParameter('userids', $userChunk, IQueryBuilder::PARAM_STR_ARRAY)
+						->setParameter('ids', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
+					$delete->executeStatement();
+				}
+			}
+		}
+	}
+
+	/**
 	 * Get all the shares in this provider returned as iterable to reduce memory
 	 * overhead
 	 *
