@@ -13,6 +13,7 @@ import { isAxiosErrorResponse } from '../types/guards.ts'
 import { useDocumentVisibility } from './useDocumentVisibility.ts'
 import { useGetToken } from './useGetToken.ts'
 import { useIsInCall } from './useIsInCall.js'
+import { useJoinedConversation } from './useJoinedConversation.ts'
 
 type SessionStateValue = typeof SESSION.STATE[keyof typeof SESSION.STATE]
 
@@ -48,6 +49,7 @@ export function useActiveSession() {
 
 	const isInCall = useIsInCall()
 	const isDocumentVisible = useDocumentVisibility()
+	const currentJoinedConversation = useJoinedConversation()
 
 	let inactiveTimer: NodeJS.Timeout | undefined
 
@@ -66,13 +68,13 @@ export function useActiveSession() {
 		inactiveTimer = setTimeout(setSessionAsInactive, INACTIVE_TIME_MS)
 	}
 
-	watch(token, () => {
-		if (!supportSessionState.value) {
+	// Wait for the token to actually be joined
+	watch(currentJoinedConversation, (joinedToken) => {
+		if (joinedToken !== token.value || !supportSessionState.value) {
 			return
 		}
 		// Joined conversation has active state by default
 		currentState.value = SESSION.STATE.ACTIVE
-		// Updating right away would race with joining the conversation
 		if (!isWindowActive()) {
 			scheduleSessionAsInactive()
 		}
