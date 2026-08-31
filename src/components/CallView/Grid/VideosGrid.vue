@@ -621,6 +621,7 @@ export default {
 
 	&--stripe {
 		height: var(--stripe-height);
+		margin-block-start: var(--grid-gap);
 	}
 }
 
@@ -767,15 +768,15 @@ export default {
 
 .stripe-controls-position {
 	position: absolute;
-	top: var(--grid-gap);
-	inset-inline-end: var(--grid-gap);
+	top: calc(var(--default-grid-baseline) * 3);
+	inset-inline-end: calc(var(--default-grid-baseline) * 3);
 	z-index: 2;
 	transition: top var(--animation-slow) ease-in-out;
 
 	// A collapsed stripe holds no tile to sit over, and no room of its own to
 	// sit in, so the controls take the room above it
 	&--collapsed {
-		top: calc(-1 * (var(--clickable-area-small) + var(--default-grid-baseline) + var(--grid-gap)));
+		top: calc(-1 * (var(--clickable-area-small) + var(--grid-gap) + var(--grid-gap)));
 	}
 }
 
