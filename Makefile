@@ -26,6 +26,9 @@ validate-release:
 prepare-changelog:
 	node ./scripts/prepare-changelog.mjs $(BRANCHES)
 
+bump-version:
+	node ./scripts/bump-version.mjs $(PR)
+
 release: appstore create-tag
 
 build-dev: composer-install-dev build-js
