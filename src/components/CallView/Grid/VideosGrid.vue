@@ -465,8 +465,10 @@ export default {
 				gridTemplateColumns: `repeat(${getHalfColumnCount(columns)}, ${halfColumnWidth})`,
 				gridTemplateRows: `repeat(${rows}, minmax(${this.dpiAwareMinHeight}px, 1fr))`,
 				// The columns no longer take the whole width once they are
-				// capped, so the grid itself has to center them
-				justifyContent: 'center',
+				// capped, so the grid itself has to place them. A stripe holding
+				// a single tile keeps it at the inline end, where the tiles of a
+				// fuller stripe end as well, rather than in the middle.
+				justifyContent: this.isStripe && this.totalTiles === 1 ? 'end' : 'center',
 			}
 		},
 
