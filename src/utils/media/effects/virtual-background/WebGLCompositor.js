@@ -292,6 +292,14 @@ export default class WebGLCompositor {
 		this.bgScale = [1.0, 1.0]
 		this.lastOutW = 0
 		this.lastOutH = 0
+
+		// Tracks the size texMaskFiltered/texBlurred{1,2} are currently
+		// allocated at, so their storage is only reallocated on resize
+		// instead of on every render() call.
+		this._maskFilteredW = 0
+		this._maskFilteredH = 0
+		this._blurW = 0
+		this._blurH = 0
 	}
 
 	/**
@@ -528,11 +536,17 @@ export default class WebGLCompositor {
 		const texelWidth = 1 / blurWidth
 		const texelHeight = 1 / blurHeight
 
-		// Allocate blur textures
-		gl.bindTexture(gl.TEXTURE_2D, this.texBlurred1)
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, blurWidth, blurHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
-		gl.bindTexture(gl.TEXTURE_2D, this.texBlurred2)
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, blurWidth, blurHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+		// Allocate blur textures, only reallocating storage when the blur
+		// size actually changes (see the matching comment on texMaskFiltered
+		// in render() for why this check matters).
+		if (this._blurW !== blurWidth || this._blurH !== blurHeight) {
+			gl.bindTexture(gl.TEXTURE_2D, this.texBlurred1)
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, blurWidth, blurHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+			gl.bindTexture(gl.TEXTURE_2D, this.texBlurred2)
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, blurWidth, blurHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+			this._blurW = blurWidth
+			this._blurH = blurHeight
+		}
 
 		// Setup FBOs
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this.fboBlur1)
@@ -719,11 +733,18 @@ export default class WebGLCompositor {
 			return
 		}
 
-		// Allocate mask filtered texture
+		// Allocate mask filtered texture, only reallocating storage when the
+		// output size actually changes (texImage2D(null) forces the GPU to
+		// allocate new backing storage every call, which is wasted work when
+		// called every frame at an unchanged size).
 		const maskW = Math.ceil(outW / 2)
 		const maskH = Math.ceil(outH / 2)
-		gl.bindTexture(gl.TEXTURE_2D, this.texMaskFiltered)
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, maskW, maskH, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+		if (this._maskFilteredW !== maskW || this._maskFilteredH !== maskH) {
+			gl.bindTexture(gl.TEXTURE_2D, this.texMaskFiltered)
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, maskW, maskH, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+			this._maskFilteredW = maskW
+			this._maskFilteredH = maskH
+		}
 
 		// Upload and process mask
 		if (mask) {
