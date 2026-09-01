@@ -136,6 +136,9 @@ export default class VideoStreamBackgroundEffect {
 						'./vendor/models/selfie_segmenter.tflite',
 						import.meta.url,
 					).pathname,
+					// delegate: 'CPU' was tried as a GPU-load reduction; it
+					// made things worse (no GPU win, added main-thread
+					// stalls). Keeping GPU.
 					delegate: 'GPU',
 				},
 				runningMode: 'VIDEO',
@@ -486,8 +489,13 @@ export default class VideoStreamBackgroundEffect {
 			return
 		}
 
-		this._outputCanvasElement.width = width
-		this._outputCanvasElement.height = height
+		// Assigning canvas dimensions clears and reallocates its backing
+		// buffer even when the values are unchanged, so only set them on
+		// an actual resize.
+		if (this._outputCanvasElement.width !== width || this._outputCanvasElement.height !== height) {
+			this._outputCanvasElement.width = width
+			this._outputCanvasElement.height = height
+		}
 
 		if (this._useWebGL) {
 			if (!this._glFx) {
