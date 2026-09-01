@@ -127,16 +127,17 @@ describe('FilePreview.vue', () => {
 			expect(imageUrl.searchParams.get('y')).toBe('576')
 		})
 
-		test('renders small previews when requested', async () => {
-			props.smallPreview = true
+		test('renders a mime icon instead of a scaled preview in row layout', async () => {
+			props.rowLayout = true
+			OC.MimeType.getIconUrl.mockReturnValueOnce(imagePath('core', 'image/jpeg'))
 
 			const wrapper = mountFilePreview()
 
 			await wrapper.find('img').trigger('load')
 
 			expect(wrapper.element.tagName).toBe('A')
-			const imageUrl = parseRelativeUrl(wrapper.find('img').attributes('src'))
-			expect(imageUrl.searchParams.get('y')).toBe('24')
+			const imageUrl = wrapper.find('img').attributes('src')
+			expect(imageUrl).toBe(imagePath('core', 'image/jpeg'))
 		})
 
 		describe('uploading', () => {
@@ -403,8 +404,8 @@ describe('FilePreview.vue', () => {
 					await testPlayButtonVisible(true)
 				})
 
-				test('does not render play icon for small previews', async () => {
-					props.smallPreview = true
+				test('does not render play icon in row layout', async () => {
+					props.rowLayout = true
 					await testPlayButtonVisible(false)
 				})
 

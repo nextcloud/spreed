@@ -46,7 +46,6 @@
 			<FilePreview
 				v-else
 				:token="token"
-				:smallPreview="!isMedia"
 				:rowLayout="!isMedia"
 				:itemType="type"
 				isSharedItems
