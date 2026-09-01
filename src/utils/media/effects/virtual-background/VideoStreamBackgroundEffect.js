@@ -90,6 +90,9 @@ export default class VideoStreamBackgroundEffect {
 	// _renderMask: Function;
 	// _virtualImage: HTMLImageElement;
 	// _virtualVideo: HTMLVideoElement;
+	// _useRVFC: boolean;
+	// _rvfcHandle: number;
+	// _lastInferenceTimestamp: number;
 
 	/**
 	 * Create a new background effect processor.
@@ -136,6 +139,9 @@ export default class VideoStreamBackgroundEffect {
 		this._segmentationInputCtx = this._segmentationInputCanvas.getContext('2d', { alpha: false })
 		this._bgChanged = false
 		this._prevBgMode = null
+		this._useRVFC = undefined
+		this._rvfcHandle = undefined
+		this._lastInferenceTimestamp = -1
 	}
 
 	/**
@@ -179,11 +185,15 @@ export default class VideoStreamBackgroundEffect {
 			return
 		}
 
+		// MediaPipe VIDEO mode requires strictly increasing timestamps.
+		const now = performance.now()
+		this._lastInferenceTimestamp = now > this._lastInferenceTimestamp ? now : this._lastInferenceTimestamp + 1
+
 		let segmentationResult
 		try {
 			segmentationResult = await this._imageSegmenter.segmentForVideo(
 				this._getSegmentationInput(),
-				performance.now(),
+				this._lastInferenceTimestamp,
 			)
 
 			if (segmentationResult.confidenceMasks && segmentationResult.confidenceMasks.length > 0) {
@@ -321,12 +331,56 @@ export default class VideoStreamBackgroundEffect {
 			this.runPostProcessing()
 		}
 
-		// Schedule next frame
+		// rVFC reschedules itself in _startFrameLoop(); only the fallback needs this.
+		if (!this._useRVFC) {
+			this._scheduleFallbackTick()
+		}
+	}
+
+	/**
+	 * Schedules the next _renderMask() tick via the fixed-interval Worker
+	 * timer (fallback for browsers without requestVideoFrameCallback).
+	 *
+	 * @private
+	 * @return {void}
+	 */
+	_scheduleFallbackTick() {
 		this._maskFrameTimerWorker.postMessage({
 			id: SET_TIMEOUT,
 			timeMs: 1000 / this._frameRate,
 			message: 'this._maskFrameTimerWorker',
 		})
+	}
+
+	/**
+	 * Starts the loop that triggers _renderMask() once per input video frame.
+	 *
+	 * Uses requestVideoFrameCallback where available (fires exactly on new
+	 * frames, keeps working in background tabs); falls back to the
+	 * Worker-based timer otherwise.
+	 *
+	 * @private
+	 * @return {void}
+	 */
+	_startFrameLoop() {
+		if ('requestVideoFrameCallback' in this._inputVideoElement) {
+			this._useRVFC = true
+
+			const onVideoFrame = () => {
+				this._renderMask()
+
+				if (this._running) {
+					this._rvfcHandle = this._inputVideoElement.requestVideoFrameCallback(onVideoFrame)
+				}
+			}
+
+			this._rvfcHandle = this._inputVideoElement.requestVideoFrameCallback(onVideoFrame)
+
+			return
+		}
+
+		this._useRVFC = false
+		this._scheduleFallbackTick()
 	}
 
 	/**
@@ -669,11 +723,7 @@ export default class VideoStreamBackgroundEffect {
 		this._inputVideoElement.autoplay = true
 		this._inputVideoElement.srcObject = this._stream
 		this._inputVideoElement.onloadeddata = () => {
-			this._maskFrameTimerWorker.postMessage({
-				id: SET_TIMEOUT,
-				timeMs: 1000 / this._frameRate,
-				message: 'this._maskFrameTimerWorker',
-			})
+			this._startFrameLoop()
 			this._inputVideoElement.onloadeddata = null
 		}
 
@@ -718,6 +768,13 @@ export default class VideoStreamBackgroundEffect {
 	 */
 	stopEffect() {
 		this._running = false
+
+		// The "_running" check in onVideoFrame only stops future callbacks;
+		// one may already be pending, so cancel it explicitly.
+		if (this._rvfcHandle !== undefined) {
+			this._inputVideoElement.cancelVideoFrameCallback(this._rvfcHandle)
+			this._rvfcHandle = undefined
+		}
 
 		if (this._maskFrameTimerWorker) {
 			this._maskFrameTimerWorker.postMessage({
