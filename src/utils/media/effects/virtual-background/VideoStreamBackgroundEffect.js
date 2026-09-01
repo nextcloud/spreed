@@ -202,7 +202,13 @@ export default class VideoStreamBackgroundEffect {
 			}
 
 			if (segmentationResult?.confidenceMasks?.length) {
-				segmentationResult.confidenceMasks.forEach((mask) => mask.close())
+				// The mask kept as _lastMask (WebGL path) must stay open for
+				// reuse on stale redraws; see _processSegmentationResult().
+				segmentationResult.confidenceMasks.forEach((mask) => {
+					if (mask !== this._lastMask) {
+						mask.close()
+					}
+				})
 			}
 		}
 	}
@@ -281,6 +287,11 @@ export default class VideoStreamBackgroundEffect {
 			// Update segmentation mask canvas
 			this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0)
 		} else {
+			// Close the previous mask only once replaced; it stays open
+			// until then for reuse on stale redraws (see _runInference()).
+			if (this._lastMask && this._lastMask !== maskData) {
+				this._lastMask.close()
+			}
 			this._lastMask = maskData
 		}
 	}
@@ -748,6 +759,11 @@ export default class VideoStreamBackgroundEffect {
 		if (this._rvfcHandle !== undefined) {
 			this._inputVideoElement.cancelVideoFrameCallback(this._rvfcHandle)
 			this._rvfcHandle = undefined
+		}
+
+		if (this._lastMask) {
+			this._lastMask.close()
+			this._lastMask = null
 		}
 
 		if (this._maskFrameTimerWorker) {
