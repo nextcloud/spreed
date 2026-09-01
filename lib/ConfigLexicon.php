@@ -65,6 +65,7 @@ class ConfigLexicon implements ILexicon {
 			new Entry(Config::MATTERBRIDGE_ENABLED, ValueType::BOOL, false, definition: 'Whether the Matterbridge integration is enabled and can be configured'),
 			new Entry(Config::DELETE_ONE_TO_ONE_CONVERSATIONS, ValueType::BOOL, false, definition: 'Whether one-to-one conversations can be left by either participant or should be deleted when one participant leaves'),
 			new Entry(Config::MAX_GIF_SIZE, ValueType::INT, 3145728, definition: 'Maximum file size for clients to render gifs previews with animation', rename: 'max-gif-size'),
+			new Entry(Config::SESSION_PING_LIMIT, ValueType::INT, 200, definition: 'Number of sessions the HPB can ping in a single request', rename: 'session-ping-limit'),
 		];
 	}
 
