@@ -93,3 +93,13 @@ Feature: conversation-5/sip-dialin
       | name   | type | sipEnabled |
       | room 1 | 2    | 1          |
       | room 2 | 2    | 1          |
+    # The forced state is not user input, so it also applies to users that are
+    # not allowed to enable SIP themselves
+    Given user "participant2" exists
+    When user "participant2" creates room "room 3" (v4)
+      | roomType | 2 |
+      | roomName | room 3 |
+      | sipEnabled | 2 |
+    Then user "participant2" is participant of the following rooms (v4)
+      | name   | type | sipEnabled |
+      | room 3 | 2    | 1          |
