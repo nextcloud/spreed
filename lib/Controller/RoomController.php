@@ -58,6 +58,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCA\Talk\RoomAttributes;
+use OCA\Talk\RoomPresets\DefaultPreset;
 use OCA\Talk\RoomPresets\Forced;
 use OCA\Talk\RoomPresets\Parameter;
 use OCA\Talk\RoomPresets\VoiceRoom;
@@ -163,6 +164,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		private readonly IL10N $l,
 		private readonly ThreadService $threadService,
 		private readonly ConversationTagService $conversationTagService,
+		private readonly DefaultPreset $defaultParameters,
 		private readonly Forced $forcedParameters,
 		private readonly ?string $userId,
 	) {
@@ -816,6 +818,23 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if ($roomType !== Room::TYPE_PUBLIC) {
 			// Force empty password for non-public conversations
 			$password = '';
+		}
+
+		// Enabling SIP dial-in is restricted to the configured groups, so requesting
+		// it at creation time requires the same permission as toggling it later on.
+		// An administrator forced value is not user input, and classified
+		// conversations have SIP disabled during creation anyway.
+		if ($sipEnabled !== Webinary::SIP_DISABLED
+			&& $this->forcedParameters->getForcedParameter(Parameter::SIP_ENABLED) === null
+			&& (!$this->talkConfig->isSIPConfigured()
+				|| !$this->talkConfig->canUserEnableSIP($user))) {
+			if ($sipEnabled === $this->defaultParameters->getParameters()[Parameter::SIP_ENABLED->value]) {
+				// Clients send the administrator configured default value also when the
+				// user did not request SIP themselves, so it is silently disabled instead.
+				$sipEnabled = Webinary::SIP_DISABLED;
+			} else {
+				return new DataResponse(['error' => CreationException::REASON_SIP_ENABLED], Http::STATUS_FORBIDDEN);
+			}
 		}
 
 		$invitationList = $this->invitationService->validateInvitations($participants, $user);
