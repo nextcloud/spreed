@@ -39,7 +39,7 @@
 					:alt="file.name"
 					:src="defaultIconUrl">
 				<!-- Indicator that preview is intentionally hidden, not failed -->
-				<span v-if="!smallPreview" class="classified-preview-button">
+				<span v-if="!rowLayout" class="classified-preview-button">
 					<IconEyeOutline :size="20" fillColor="#ffffff" />
 				</span>
 			</template>
@@ -52,7 +52,7 @@
 					@load="onLoad"
 					@error="onError">
 				<template v-if="!isLoading || fallbackLocalUrl">
-					<span v-if="isPlayable && !smallPreview" class="play-video-button">
+					<span v-if="isPlayable && !rowLayout" class="play-video-button">
 						<IconPlayCircleOutline
 							:size="48"
 							fillColor="#ffffff" />
@@ -170,14 +170,6 @@ export default {
 		referenceId: {
 			type: String,
 			default: '',
-		},
-
-		/**
-		 * Whether to render a small preview to embed in replies
-		 */
-		smallPreview: {
-			type: Boolean,
-			default: false,
 		},
 
 		/**
@@ -306,7 +298,7 @@ export default {
 
 		previewImageClass() {
 			let classes = ''
-			if (this.smallPreview) {
+			if (this.rowLayout) {
 				classes += 'preview-small '
 			} else if (this.mediumPreview) {
 				classes += 'preview-medium '
@@ -335,16 +327,21 @@ export default {
 				return {}
 			}
 
+			// Row layout always shows a small fixed-size icon, never a medium/full preview
+			if (this.rowLayout) {
+				return { width: '24px', height: '24px' }
+			}
+
 			// Fallback for loading mimeicons (preview for audio files is not provided)
 			if (this.file['preview-available'] !== 'yes' || this.file.mimetype.startsWith('audio/') || this.failed) {
 				return {
-					width: this.smallPreview ? '24px' : '128px',
-					height: this.smallPreview ? '24px' : '128px',
+					width: '128px',
+					height: '128px',
 				}
 			}
 
-			const widthConstraint = this.smallPreview ? 24 : (this.mediumPreview ? 192 : 600)
-			const heightConstraint = this.smallPreview ? 24 : (this.mediumPreview ? 192 : 384)
+			const widthConstraint = this.mediumPreview ? 192 : 600
+			const heightConstraint = this.mediumPreview ? 192 : 384
 
 			// Actual size when no metadata available
 			if (!this.file.width || !this.file.height) {
@@ -426,11 +423,7 @@ export default {
 			}
 
 			// use preview provider URL to render a smaller preview
-			let previewSize = 384
-			if (this.smallPreview) {
-				previewSize = 24
-			}
-			previewSize = Math.ceil(previewSize * window.devicePixelRatio)
+			const previewSize = Math.ceil(384 * window.devicePixelRatio)
 			if (userId === null) {
 				// guest mode: grab token from the link URL
 				// FIXME: use a cleaner way...
