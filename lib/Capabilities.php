@@ -329,7 +329,7 @@ class Capabilities implements IPublicCapability {
 					'only-trusted-servers' => true,
 				],
 				'previews' => [
-					'max-gif-size' => (int)$this->serverConfig->getAppValue('spreed', 'max-gif-size', '3145728'),
+					'max-gif-size' => $this->appConfig->getAppValueInt(Config::MAX_GIF_SIZE, 3145728),
 				],
 				'signaling' => [
 					'session-ping-limit' => max(0, (int)$this->serverConfig->getAppValue('spreed', 'session-ping-limit', '200')),
