@@ -115,7 +115,7 @@ import TransitionWrapper from '../UIShared/TransitionWrapper.vue'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
 import PinnedMessage from './PinnedMessage/PinnedMessage.vue'
-import { useIsSessionActive } from '../../composables/useActiveSession.js'
+import { useIsSessionActive } from '../../composables/useActiveSession.ts'
 import { useDocumentVisibility } from '../../composables/useDocumentVisibility.ts'
 import { useGetMessages } from '../../composables/useGetMessages.ts'
 import { useGetThreadId } from '../../composables/useGetThreadId.ts'
@@ -960,13 +960,12 @@ export default {
 				} else if (!this.isSticky) {
 					// Reading old messages
 					return
-				} else if (!this.isChatActive) {
-					const firstUnreadMessageHeight = this.$refs.scroller.scrollHeight - this.$refs.scroller.scrollTop - this.$refs.scroller.offsetHeight
-					const scrollBy = firstUnreadMessageHeight < 40 ? 10 : 40
-					// We jump half a message and stop autoscrolling, so the user can read up
-					// Single new line from the previous author is 35px so scroll half a line (10px)
-					// Single new line from the new author is 75px so scroll half an avatar (40px)
-					newTop = this.$refs.scroller.scrollTop + scrollBy
+				} else if (!this.isChatActive && this.getVisualLastReadMessageElement()) {
+					// In inactive chat, anchor scrolling at the first unread message,
+					// 'Unread messages' delimiter does not go above the center of the viewport
+					newTop = this.getVisualLastReadMessageElement().getBoundingClientRect().bottom
+						- this.$refs.scrollerLoader.getBoundingClientRect().top
+						- this.$refs.scroller.offsetHeight / 2
 					this.setChatScrolledToBottom(false)
 				} else {
 					newTop = this.$refs.scroller.scrollHeight
