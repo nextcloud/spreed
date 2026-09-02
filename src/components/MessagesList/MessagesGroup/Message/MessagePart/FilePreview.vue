@@ -95,8 +95,11 @@
 			</template>
 		</NcButton>
 		<div v-if="shouldShowFileDetail" class="name-container">
-			<span class="name-container__basename">{{ fileNameWithoutExtension }}</span>
-			<span v-if="fileExtension" class="name-container__extension">{{ fileExtension }}</span>
+			<span class="name-container__name">
+				<span class="name-container__basename">{{ fileNameWithoutExtension }}</span>
+				<span v-if="fileExtension" class="name-container__extension">{{ fileExtension }}</span>
+			</span>
+			<span v-if="rowLayout && fileMetaLabel" class="name-container__meta">{{ fileMetaLabel }}</span>
 		</div>
 	</component>
 </template>
@@ -253,6 +256,12 @@ export default {
 		// Dot included, original case
 		fileExtension() {
 			return getFileExtension(this.file.name)
+		},
+
+		fileMetaLabel() {
+			const size = parseInt(this.file.size, 10)
+			const sizeLabel = size ? formatFileSize(size, true) : ''
+			return [this.fileExtension.slice(1).toUpperCase(), sizeLabel].filter(Boolean).join(' · ')
 		},
 
 		fileSizeLabel() {
@@ -800,14 +809,21 @@ export default {
 		white-space: nowrap;
 		display: inline-flex;
 
+		&__name {
+			display: inline-flex;
+			min-width: 0;
+		}
+
 		&__basename {
 			unicode-bidi: isolate;
+			min-width: 0;
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
 		}
 
 		&__extension {
+			flex-shrink: 0;
 			color: var(--color-text-maxcontrast);
 			overflow: visible;
 		}
@@ -858,6 +874,7 @@ export default {
 	&--row-layout {
 		display: flex;
 		align-items: center;
+		min-width: 0;
 		border-radius: var(--border-radius);
 		padding: 2px 4px;
 
@@ -867,8 +884,22 @@ export default {
 		}
 
 		.name-container {
+			display: flex;
+			flex-direction: column;
+			flex: 1 1 auto;
+			min-width: 0;
 			padding: 0 4px;
 			font-weight: normal;
+			font-size: var(--font-size-small);
+
+			&__name {
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			&__meta {
+				color: var(--color-text-maxcontrast);
+			}
 		}
 	}
 
