@@ -8,6 +8,8 @@ import type { ChatMessage, Mention } from '../types/index.ts'
 import { getBaseUrl } from '@nextcloud/router'
 import { decodeHTML } from 'entities'
 import { MENTION } from '../constants.ts'
+import { sanitizeFileName } from './fileUpload.ts'
+import { getFileKeys } from './message.ts'
 
 /**
  * Parse message text to return proper formatting for mentions
@@ -61,8 +63,10 @@ function parseToSimpleMessage(text: string, parameters: ChatMessage['messagePara
 		return text.trim()
 	}
 
+	const fileKeys = getFileKeys({ messageParameters: parameters })
 	Object.entries(parameters).forEach(([key, value]) => {
-		text = text.replaceAll('{' + key + '}', value.name)
+		const name = fileKeys.includes(key) ? sanitizeFileName(value.name) : value.name
+		text = text.replaceAll('{' + key + '}', name)
 	})
 	return text.trim()
 }
