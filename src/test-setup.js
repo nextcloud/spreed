@@ -28,6 +28,7 @@ vi.mock('@nextcloud/dialogs', () => ({
 
 vi.mock('@nextcloud/files', () => ({
 	validateFileName: vi.fn(),
+	formatFileSize: vi.fn((size) => `${size} B`),
 }))
 
 vi.mock('@nextcloud/files/dav', () => ({
