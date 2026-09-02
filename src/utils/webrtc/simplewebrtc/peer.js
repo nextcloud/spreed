@@ -49,6 +49,7 @@ function Peer(options) {
 	this.sid = options.sid || Date.now().toString()
 	this.pc = new RTCPeerConnection(this.parent.config.peerConnectionConfig)
 	this.pc.addEventListener('icecandidate', this.onIceCandidate.bind(this))
+	this.pc.addEventListener('icecandidateerror', this.onIceCandidateError.bind(this))
 	this.pc.addEventListener('endofcandidates', function(event) {
 		self.send('endOfCandidates', event)
 	})
@@ -634,6 +635,12 @@ Peer.prototype.getDataChannel = function(name, opts) {
 	channel = this.channels[name] = this.pc.createDataChannel(name, opts)
 	this._observeDataChannel(channel)
 	return channel
+}
+
+Peer.prototype.onIceCandidateError = function(event) {
+	if (event.errorCode === 401 && /^turns?:/.test(event.url)) {
+		this.parent.connection.processTurnCredentialsExpired()
+	}
 }
 
 Peer.prototype.onIceCandidate = function(event) {

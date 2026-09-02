@@ -1610,9 +1610,30 @@ Signaling.Standalone.prototype.processErrorNoSuchRoom = function() {
 	})
 }
 
+/**
+ * Requests updated signaling settings due to signaling token expiration.
+ */
 Signaling.Standalone.prototype.processErrorTokenExpired = function() {
 	console.info('The signaling token is expired, need to update settings')
 
+	this.processUpdateSettingsWithPromise()
+}
+
+/**
+ * Requests updated signaling settings due to TURN credentials expiration.
+ * Note: belongs to Signaling.Base as could work with internal signaling.
+ */
+Signaling.Base.prototype.processTurnCredentialsExpired = function() {
+	console.info('The TURN credentials are expired, need to update settings')
+
+	this.processUpdateSettingsWithPromise()
+}
+
+/**
+ * Requests updated signaling settings, deferring anything that checks
+ * "_pendingUpdateSettingsPromise" (e.g. reconnecting) until they arrive.
+ */
+Signaling.Base.prototype.processUpdateSettingsWithPromise = function() {
 	if (!this._pendingUpdateSettingsPromise) {
 		let pendingUpdateSettingsPromiseResolve
 		this._pendingUpdateSettingsPromise = new Promise((resolve, reject) => {
