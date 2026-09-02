@@ -803,7 +803,7 @@ export default {
 	}
 
 	.name-container {
-		font-weight: bold;
+		font-weight: normal;
 		width: 100%;
 		overflow: hidden;
 		white-space: nowrap;
@@ -866,7 +866,6 @@ export default {
 		// Fixed, so that the height of the tile stays the same for every font
 		.name-container {
 			height: var(--preview-name-height, 24px);
-			font-weight: normal;
 			font-size: var(--font-size-small);
 		}
 	}
@@ -889,7 +888,6 @@ export default {
 			flex: 1 1 auto;
 			min-width: 0;
 			padding: 0 4px;
-			font-weight: normal;
 			font-size: var(--font-size-small);
 
 			&__name {
