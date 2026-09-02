@@ -5,6 +5,7 @@
 
 const extensionRegex = /\.[0-9a-z]+$/i
 const suffixRegex = / \(\d+\)$/
+const bidiControlRegex = /[\u202A-\u202E\u2066-\u2069]/g
 
 /**
  * Returns the file extension for the given path
@@ -14,6 +15,16 @@ const suffixRegex = / \(\d+\)$/
  */
 function getFileExtension(path) {
 	return path.match(extensionRegex)?.[0] ?? ''
+}
+
+/**
+ * Returns name with bidi control characters replaced by '_'
+ *
+ * @param {string} name file name
+ * @return {string} sanitized file name
+ */
+export function sanitizeFileName(name) {
+	return name.replace(bidiControlRegex, '_')
 }
 
 /**

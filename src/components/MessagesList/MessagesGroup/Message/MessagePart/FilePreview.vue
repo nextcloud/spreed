@@ -19,14 +19,14 @@
 		@click.exact="handleClick"
 		@keydown.enter="handleClick">
 		<span
-			:title="file.name"
+			:title="sanitizedFileName"
 			class="image-container"
 			:class="{ playable: isPlayable }"
 			:style="imageContainerStyle">
 			<img
 				class="file-preview__image"
 				:class="previewImageClass"
-				:alt="file.name"
+				:alt="sanitizedFileName"
 				:src="failed ? defaultIconUrl : previewUrl"
 				@load="onLoad"
 				@error="onError">
@@ -65,7 +65,7 @@
 			</template>
 		</NcButton>
 		<div v-if="shouldShowFileDetail" class="name-container">
-			{{ fileDetail }}
+			<span class="name-container__basename">{{ fileNameWithoutExtension }}</span><span v-if="fileExtension">{{ fileExtension }}</span>
 		</div>
 	</component>
 </template>
@@ -88,6 +88,7 @@ import { SHARED_ITEM } from '../../../../../constants.ts'
 import { getTalkConfig } from '../../../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
+import { getFileExtension, sanitizeFileName } from '../../../../../utils/fileUpload.js'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,
@@ -215,8 +216,18 @@ export default {
 			)
 		},
 
-		fileDetail() {
-			return this.file.name
+		// file.name with bidi control chars replaced by '_', for title/alt/aria-label text
+		sanitizedFileName() {
+			return sanitizeFileName(this.file.name)
+		},
+
+		fileNameWithoutExtension() {
+			return this.file.name.slice(0, this.file.name.length - getFileExtension(this.file.name).length)
+		},
+
+		// Dot included, original case
+		fileExtension() {
+			return getFileExtension(this.file.name)
 		},
 
 		fallbackLocalUrl() {
@@ -452,7 +463,7 @@ export default {
 		},
 
 		removeAriaLabel() {
-			return t('spreed', 'Remove {fileName}', { fileName: this.file.name })
+			return t('spreed', 'Remove {fileName}', { fileName: this.sanitizedFileName })
 		},
 	},
 
@@ -649,6 +660,10 @@ export default {
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
+
+		&__basename {
+			unicode-bidi: isolate;
+		}
 	}
 
 	&:not(.file-preview--viewer-available) {
