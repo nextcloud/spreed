@@ -134,6 +134,15 @@ Signaling.Base.prototype.setSettings = function(settings) {
 	this.settings = settings
 	this._trigger('settingsUpdated', [settings])
 
+	// Re-emit so consumers (e.g. the peer connection config) pick up
+	// refreshed STUN/TURN credentials instead of keeping the stale ones.
+	for (const ev of ['stunservers', 'turnservers']) {
+		const servers = this.settings[ev] || []
+		if (servers.length) {
+			this._trigger(ev, [servers])
+		}
+	}
+
 	if (this._pendingUpdateSettingsPromise) {
 		this._pendingUpdateSettingsPromise.resolve()
 		delete this._pendingUpdateSettingsPromise
