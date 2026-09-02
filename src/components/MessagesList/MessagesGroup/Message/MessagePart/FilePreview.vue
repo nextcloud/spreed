@@ -95,7 +95,8 @@
 			</template>
 		</NcButton>
 		<div v-if="shouldShowFileDetail" class="name-container">
-			<span class="name-container__basename">{{ fileNameWithoutExtension }}</span><span v-if="fileExtension">{{ fileExtension }}</span>
+			<span class="name-container__basename">{{ fileNameWithoutExtension }}</span>
+			<span v-if="fileExtension" class="name-container__extension">{{ fileExtension }}</span>
 		</div>
 	</component>
 </template>
@@ -796,10 +797,18 @@ export default {
 		width: 100%;
 		overflow: hidden;
 		white-space: nowrap;
-		text-overflow: ellipsis;
+		display: inline-flex;
 
 		&__basename {
 			unicode-bidi: isolate;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		&__extension {
+			color: var(--color-text-maxcontrast);
+			overflow: visible;
 		}
 	}
 
