@@ -696,14 +696,8 @@ export default {
 			return sortConversationsList(this.filteredConversationsList, this.groupMode, this.sortOrder)
 		},
 
-		unreadMentionIndices() {
-			const indices = []
-			for (const i in this.sortedConversationsList) {
-				if (hasUnreadMentions(this.sortedConversationsList[i])) {
-					indices.push(i)
-				}
-			}
-			return indices
+		hasUnreadMentionsInList() {
+			return this.sortedConversationsList.filter(hasUnreadMentions).length
 		},
 
 		emptyContentLabel() {
@@ -816,7 +810,7 @@ export default {
 			}
 		},
 
-		unreadMentionIndices() {
+		hasUnreadMentionsInList() {
 			this.debounceHandleScroll()
 		},
 	},
@@ -1143,22 +1137,12 @@ export default {
 		},
 
 		handleScroll() {
-			this.computeLastUnreadMention()
-		},
-
-		/**
-		 * Find position of the last unread conversation below viewport.
-		 * Iterates only over indices with unread mentions (cached via the
-		 * unreadMentionIndices computed) instead of the full list.
-		 */
-		computeLastUnreadMention() {
-			if (!this.$refs.scroller) {
-				this.lastUnreadMentionBelowViewportIndex = null
-				return
-			}
-			const lastInViewport = this.$refs.scroller.getLastItemInViewportIndex()
-			this.lastUnreadMentionBelowViewportIndex = this.unreadMentionIndices
-				.findLast((idx) => idx > lastInViewport) ?? null
+			/**
+			 * Find position of the last unread conversation below viewport.
+			 * Delegates to the scroller, which owns the flattened list (tag
+			 * headers and sections) and its indexes.
+			 */
+			this.lastUnreadMentionBelowViewportIndex = this.$refs.scroller?.getLastUnreadMentionBelowViewportIndex() ?? null
 		},
 
 		async scrollToConversation(token) {

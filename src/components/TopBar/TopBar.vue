@@ -140,12 +140,25 @@
 					class="top-bar__calendar-events"
 					:token="token" />
 
+				<!-- Search messages button -->
+				<NcButton
+					v-if="!isSidebar && actorStore.isLoggedIn && !isSmallMobile"
+					:title="t('spreed', 'Search messages')"
+					:aria-label="t('spreed', 'Search messages')"
+					variant="tertiary"
+					@click="openSidebar('search-messages')">
+					<template #icon>
+						<IconMagnify :size="20" />
+					</template>
+				</NcButton>
+
 				<CallButton v-if="!isInCall" shrinkOnMobile />
 
 				<!-- TopBar menu -->
 				<TopBarMenu
 					v-if="!isSidebar"
 					:token="token"
+					:showSearchAction="isSmallMobile"
 					@openBreakoutRoomsEditor="showBreakoutRoomsEditor = true" />
 			</div>
 
@@ -161,7 +174,7 @@
 <script>
 import { emit } from '@nextcloud/event-bus'
 import { n, t } from '@nextcloud/l10n'
-import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { useIsMobile, useIsSmallMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
@@ -171,6 +184,7 @@ import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMul
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
+import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 import IconShieldLockOutline from 'vue-material-design-icons/ShieldLockOutline.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import CalendarEventsDialog from '../CalendarEventsDialog.vue'
@@ -218,6 +232,7 @@ export default {
 		IconArrowLeft,
 		IconChevronRight,
 		IconClockOutline,
+		IconMagnify,
 		IconShieldLockOutline,
 	},
 
@@ -248,6 +263,7 @@ export default {
 			threadId: useGetThreadId(),
 			token: useGetToken(),
 			isMobile: useIsMobile(),
+			isSmallMobile: useIsSmallMobile(),
 		}
 	},
 

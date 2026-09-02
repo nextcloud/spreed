@@ -48,6 +48,8 @@ class Config {
 	public const string ALLOWED_GROUPS_CONVERSATIONS = 'start_conversations';
 	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
 	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
+	public const string CONVERSATIONS_FILES = 'conversations_files';
+	public const string CONVERSATIONS_FILES_PUBLIC_SHARES = 'conversations_files_public_shares';
 	public const string DEFAULT_ROOM_PERMISSIONS = 'default_permissions';
 	public const string DEFAULT_ATTACHMENT_FOLDER = 'default_attachment_folder';
 	public const string GRID_VIDEOS_LIMIT = 'grid_videos_limit';
@@ -67,6 +69,13 @@ class Config {
 	public const string EXPERIMENTS_GUESTS = 'experiments_guests';
 	public const string CALL_END_TO_END_ENCRYPTION = 'call_end_to_end_encryption';
 	public const string CALL_RECORDING_SUMMARY_PROMPT = 'call_recording_summary_prompt';
+	public const string FORCE_PASSWORDS = 'force_passwords';
+	public const string BACKGROUNDS_BRANDED_FOR_GUESTS = 'backgrounds_branded_for_guests';
+	public const string BACKGROUNDS_DEFAULT_FOR_USERS = 'backgrounds_default_for_useres';
+	public const string BACKGROUNDS_UPLOAD_USERS = 'backgrounds_upload_users';
+	public const string CREATE_SAMPLES = 'create_samples';
+	public const string MATTERBRIDGE_ENABLED = 'enable_matterbridge';
+	public const string DELETE_ONE_TO_ONE_CONVERSATIONS = 'delete_one_to_one_conversations';
 
 	/**
 	 * 1. Call recording, …
@@ -1020,7 +1029,7 @@ class Config {
 	}
 
 	public function isPasswordEnforced(): bool {
-		return $this->appConfig->getAppValueBool('force_passwords');
+		return $this->appConfig->getAppValueBool(self::FORCE_PASSWORDS);
 	}
 
 	public function isCallEndToEndEncryptionEnabled(): bool {
@@ -1040,6 +1049,6 @@ class Config {
 	}
 
 	public function getPlaySoundsDefaultForGuests(): bool {
-		return $this->appConfig->getAppValueBool('guests_play_sounds', true);
+		return $this->appConfig->getAppValueBool(self::GUESTS_PLAY_SOUNDS);
 	}
 }

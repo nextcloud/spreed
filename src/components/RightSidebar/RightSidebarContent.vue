@@ -24,7 +24,6 @@ import IconAccountOutline from 'vue-material-design-icons/AccountOutline.vue'
 import IconArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconDeleteClockOutline from 'vue-material-design-icons/DeleteClockOutline.vue'
-import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 import IconOfficeBuildingOutline from 'vue-material-design-icons/OfficeBuildingOutline.vue'
 import CalendarEventSmall from '../UIShared/CalendarEventSmall.vue'
 import LocalTime from '../UIShared/LocalTime.vue'
@@ -232,8 +231,8 @@ function handleHeaderClick() {
 		class="content"
 		:class="{ ['content--' + mode]: state === 'default' }">
 		<template v-if="state === 'default'">
-			<div v-if="isUser" class="content__actions">
-				<NcActions v-if="profileActions.length" forceMenu>
+			<div v-if="isUser && profileActions.length" class="content__actions">
+				<NcActions forceMenu>
 					<NcActionLink
 						v-for="action in profileActions"
 						:key="action.id"
@@ -244,15 +243,6 @@ function handleHeaderClick() {
 						{{ action.title }}
 					</NcActionLink>
 				</NcActions>
-				<NcButton
-					variant="tertiary"
-					:title="t('spreed', 'Search messages')"
-					:aria-label="t('spreed', 'Search messages')"
-					@click="emit('update:state', 'search')">
-					<template #icon>
-						<IconMagnify :size="20" />
-					</template>
-				</NcButton>
 			</div>
 
 			<div class="content__scroller animated">
@@ -273,7 +263,7 @@ function handleHeaderClick() {
 				<!-- User / conversation profile information -->
 				<div class="content__header animated">
 					<NcAppSidebarHeader
-						class="content__name content__name--has-actions"
+						class="content__name"
 						:class="{ 'content__name--has-profile-actions': profileActions.length }"
 						:name="sidebarTitle"
 						:title="sidebarTitle"
@@ -504,12 +494,8 @@ function handleHeaderClick() {
 			text-overflow: ellipsis;
 			cursor: pointer;
 
-			&--has-actions {
-				padding-inline-end: calc(var(--actions-offset) + var(--app-sidebar-close-button-offset));
-			}
-
 			&--has-profile-actions {
-				padding-inline-end: calc(2 * var(--actions-offset) + var(--app-sidebar-close-button-offset));
+				padding-inline-end: calc(var(--actions-offset) + var(--app-sidebar-close-button-offset));
 			}
 		}
 

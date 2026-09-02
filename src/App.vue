@@ -40,7 +40,7 @@ import PollManager from './components/PollViewer/PollManager.vue'
 import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 import ConfirmDialog from './components/UIShared/ConfirmDialog.vue'
-import { useActiveSession } from './composables/useActiveSession.js'
+import { useActiveSession } from './composables/useActiveSession.ts'
 import {
 	toggleFullscreen,
 	useDocumentFullscreen,
@@ -103,6 +103,7 @@ export default {
 		// Add provided value to check if we're in the main app or plugin
 		provide('Talk:isMainApp', true)
 		useDocumentFullscreen()
+		useActiveSession()
 
 		return {
 			token: useGetToken(),
@@ -111,7 +112,6 @@ export default {
 			isLeavingAfterSessionIssue: useSessionIssueHandler(),
 			isMobile: useIsMobile(),
 			isNextcloudTalkHashDirty: useHashCheck(),
-			supportSessionState: useActiveSession(),
 			callViewStore: useCallViewStore(),
 			sidebarStore: useSidebarStore(),
 			actorStore: useActorStore(),

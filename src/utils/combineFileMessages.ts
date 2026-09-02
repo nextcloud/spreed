@@ -6,7 +6,7 @@
 import type { ChatMessage } from '../types/index.ts'
 
 import { MESSAGE } from '../constants.ts'
-import { getFileKeys, hasOnlyFilePlaceholders, isTemporaryId } from './message.ts'
+import { getFileKeys, hasOnlyFilePlaceholders } from './message.ts'
 
 export type CombinedFileMessage = ChatMessage & {
 	/** Ids of all messages combined into this one, in chronological order */
@@ -25,9 +25,9 @@ function isCombinableFileMessage(message: ChatMessage): boolean {
 	}
 
 	// TODO threads?
-	// TODO unified uploader?
-	// Temporary messages, which are not sent yet (or failed to be sent), are shown separately
-	if (isTemporaryId(message.id) || (message as ChatMessage & { sendingFailure?: string }).sendingFailure) {
+	// Messages that failed to send are shown separately, not combined into a group
+	// (sendingFailure is only ever set on temporary messages).
+	if ((message as ChatMessage & { sendingFailure?: string }).sendingFailure) {
 		return false
 	}
 
@@ -82,7 +82,10 @@ function canBeCombinedWith(message1: ChatMessage, message2: ChatMessage): boolea
  * Create a single message out of several file shares.
  * The combined message is based on the last message of the group, so that the timestamp,
  * the reading state, the reactions and the message actions refer to an existing message
- * (reactions of the other messages of the group are not shown)
+ * (reactions of the other messages of the group are not shown).
+ * If any of the combined ids is still temporary, the combined message is treated as
+ * temporary too (see isTemporaryMessage) and its actions stay disabled until every
+ * file in the group has been sent.
  *
  * @param messages array of grouped file share messages, in chronological order
  */

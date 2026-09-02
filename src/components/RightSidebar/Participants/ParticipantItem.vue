@@ -32,16 +32,13 @@
 			<!-- First line: participant's name and type -->
 			<span class="participant__user">
 				<span class="participant__user-name" :title="userNameTitle">{{ computedName }}</span>
-				<IconCrownOutline
-					v-if="showOwnerIcon"
+				<span
+					v-if="showOwnerIcon || showModeratorIcon"
 					class="participant__user-icon"
-					:size="16"
-					:title="ownerIconLabel" />
-				<IconShieldOutline
-					v-else-if="showModeratorIcon"
-					class="participant__user-icon"
-					:size="16"
-					:title="moderatorIconLabel" />
+					:title="showOwnerIcon ? ownerIconLabel : moderatorIconLabel">
+					<IconCrownOutline v-if="showOwnerIcon" :size="16" />
+					<IconShieldOutline v-else :size="16" />
+				</span>
 				<span v-if="isBridgeBotUser" class="participant__user-badge">({{ t('spreed', 'bot') }})</span>
 				<span v-if="isGuestActor || isEmailActor" class="participant__user-badge">({{ t('spreed', 'guest') }})</span>
 				<span v-if="!isSelf && isLobbyEnabled && !canSkipLobby" class="participant__user-badge">({{ t('spreed', 'in the lobby') }})</span>
@@ -92,12 +89,12 @@
 			</template>
 
 			<!-- Call state icon -->
-			<component
-				:is="callIcon.icon"
+			<span
 				v-else-if="callIcon"
 				class="participant__call-state"
-				:title="callIcon.title"
-				:size="callIcon.size" />
+				:title="callIcon.title">
+				<component :is="callIcon.icon" :size="callIcon.size" />
+			</span>
 
 			<!-- Grant or revoke lobby permissions (inline button) -->
 			<template v-if="showToggleLobbyAction">

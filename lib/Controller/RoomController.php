@@ -180,8 +180,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$values = [
 			$this->config->getSystemValueString('version'),
 			$this->config->getAppValue('spreed', 'installed_version'),
-			implode(',', $this->appConfig->getAppValueArray(Config::STUN_SERVERS)),
-			implode(',', $this->appConfig->getAppValueArray(Config::TURN_SERVERS)),
+			json_encode($this->appConfig->getAppValueArray(Config::STUN_SERVERS)),
+			json_encode($this->appConfig->getAppValueArray(Config::TURN_SERVERS)),
 			$this->config->getAppValue('spreed', 'signaling_servers'),
 			$this->config->getAppValue('spreed', 'signaling_ticket_secret'),
 			$this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256'),
@@ -189,15 +189,15 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->config->getAppValue('spreed', 'signaling_token_pubkey_' . $this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256')),
 			$this->config->getAppValue('spreed', 'call_recording'),
 			$this->config->getAppValue('spreed', 'recording_servers'),
-			implode(',', $this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_TALK)),
+			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_TALK)),
 			$this->config->getAppValue('spreed', 'start_calls'),
 			$this->config->getAppValue('spreed', 'start_calls_groups'),
-			implode(',', $this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_CONVERSATIONS)),
+			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_CONVERSATIONS)),
 			$this->appConfig->getAppValueInt(Config::DEFAULT_ROOM_PERMISSIONS),
 			$this->appConfig->getAppValueBool(Config::BREAKOUT_ROOMS_ENABLED),
 			$this->config->getAppValue('spreed', 'federation_enabled'),
-			$this->config->getAppValue('spreed', 'enable_matterbridge'),
-			implode(',', $this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_SIP)),
+			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_SIP)),
+			$this->appConfig->getAppValueBool(Config::MATTERBRIDGE_ENABLED),
 			$this->config->getAppValue('spreed', 'sip_bridge_dialin_info'),
 			$this->config->getAppValue('spreed', 'sip_bridge_shared_secret'),
 			$this->config->getAppValue('spreed', 'recording_consent'),
@@ -1132,7 +1132,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'preserved'], Http::STATUS_FORBIDDEN);
 		}
 
-		if (!$this->appConfig->getAppValueBool('delete_one_to_one_conversations')
+		if (!$this->appConfig->getAppValueBool(Config::DELETE_ONE_TO_ONE_CONVERSATIONS)
 			&& in_array($this->room->getType(), [Room::TYPE_ONE_TO_ONE, Room::TYPE_ONE_TO_ONE_FORMER], true)) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
@@ -1734,7 +1734,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null);
 		}
 
-		if ($this->appConfig->getAppValueBool('delete_one_to_one_conversations')
+		if ($this->appConfig->getAppValueBool(Config::DELETE_ONE_TO_ONE_CONVERSATIONS)
 			&& in_array($this->room->getType(), [Room::TYPE_ONE_TO_ONE, Room::TYPE_ONE_TO_ONE_FORMER], true)) {
 			$this->roomService->deleteRoom($room);
 			return new DataResponse(null);

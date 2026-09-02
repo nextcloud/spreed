@@ -164,7 +164,7 @@ import ThreadsTab from './Threads/ThreadsTab.vue'
 import IconPermMediaOutline from '../../../img/material-icons/perm-media-outline.svg?raw'
 import { useGetParticipants } from '../../composables/useGetParticipants.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
-import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts'
+import { ATTENDEE, CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants.ts'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../stores/actor.ts'
 import { useSidebarStore } from '../../stores/sidebar.ts'
@@ -351,7 +351,13 @@ export default {
 		},
 
 		participantsText() {
-			const participants = this.$store.getters.participantsList(this.token)
+			const participants = this.$store.getters.participantsList(this.token).filter((participant) => {
+				return participant.actorType !== ATTENDEE.ACTOR_TYPE.GROUPS
+					&& participant.actorType !== ATTENDEE.ACTOR_TYPE.CIRCLES
+					&& participant.actorType !== ATTENDEE.ACTOR_TYPE.TEAMS
+					&& participant.actorType !== ATTENDEE.ACTOR_TYPE.BOTS
+					&& participant.actorType !== ATTENDEE.ACTOR_TYPE.BRIDGED
+			})
 			return t('spreed', 'Participants ({count})', { count: participants.length })
 		},
 
@@ -370,6 +376,7 @@ export default {
 			return (this.getUserId || this.isGuestModerator)
 				&& (!this.isOneToOne || this.isInCall)
 				&& !this.isNoteToSelf
+				&& !this.isChangelog
 				&& (!isChannelConversation(this.conversation) || this.$store.getters.isModerator)
 		},
 
@@ -383,6 +390,10 @@ export default {
 
 		isNoteToSelf() {
 			return this.conversation.type === CONVERSATION.TYPE.NOTE_TO_SELF
+		},
+
+		isChangelog() {
+			return this.conversation.type === CONVERSATION.TYPE.CHANGELOG
 		},
 
 		breakoutRoomsText() {
@@ -543,7 +554,17 @@ export default {
 		},
 
 		handleUpdateActive(active) {
-			this.activeTab = active
+			switch (active) {
+				case 'search-messages':
+					this.handleUpdateState('search')
+					break
+				case 'threads':
+					this.handleUpdateState('threads')
+					break
+				default:
+					this.contentState = 'default'
+					this.activeTab = active
+			}
 		},
 
 		handleUpdateMode(mode) {
@@ -554,13 +575,19 @@ export default {
 		},
 
 		handleUpdateState(value) {
+			if (value === this.contentState) {
+				return
+			}
+			// Remember the tab to return to, but only when leaving the default state,
+			// so re-entering search / threads does not make them their own previous tab
+			if (this.contentState === 'default') {
+				this.previousActiveTab = this.activeTab
+			}
 			this.contentState = value
 			// FIXME upstream: NcAppSidebar should emit update:active
 			if (value === 'search') {
-				this.previousActiveTab = this.activeTab
 				this.activeTab = 'search-messages'
 			} else if (value === 'threads') {
-				this.previousActiveTab = this.activeTab
 				this.activeTab = 'threads'
 			} else {
 				this.activeTab = this.previousActiveTab
@@ -583,7 +610,7 @@ export default {
 			if (message) {
 				this.unreadNotificationHandle = showMessage(message, {
 					onClick: () => {
-						this.activeTab = 'chat'
+						this.handleUpdateActive('chat')
 						this.sidebarStore.showSidebar()
 					},
 				})
