@@ -66,6 +66,7 @@ class Config {
 	public const string EXPERIMENTS_USERS = 'experiments_users';
 	public const string EXPERIMENTS_GUESTS = 'experiments_guests';
 	public const string CALL_END_TO_END_ENCRYPTION = 'call_end_to_end_encryption';
+	public const string CALL_RECORDING_SUMMARY_PROMPT = 'call_recording_summary_prompt';
 
 	/**
 	 * 1. Call recording, …

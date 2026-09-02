@@ -46,7 +46,6 @@ use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\Task;
 use OCP\TaskProcessing\TaskTypes\AudioToText;
 use OCP\TaskProcessing\TaskTypes\TextToText;
-use OCP\TaskProcessing\TaskTypes\TextToTextSummary;
 use Psr\Log\LoggerInterface;
 
 class RecordingService {
@@ -456,14 +455,10 @@ class RecordingService {
 			return;
 		}
 
-		$customSummarizePrompt = $this->serverConfig->getAppValue('spreed', 'call_recording_summary_prompt', '');
-		if ($customSummarizePrompt !== '') {
-			$taskType = TextToText::ID;
-			$input = $customSummarizePrompt . "\n" . $output;
-		} else {
-			$taskType = TextToTextSummary::ID;
-			$input =  $output;
-		}
+		// use TextToText to keep the full transcript as a context
+		$taskType = TextToText::ID;
+		$summaryPrompt = $this->appConfig->getAppValueString(Config::CALL_RECORDING_SUMMARY_PROMPT);
+		$input = $summaryPrompt . "\n" . $output;
 
 		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
 		if (!in_array($taskType, $supportedTaskTypeIds, true)) {
