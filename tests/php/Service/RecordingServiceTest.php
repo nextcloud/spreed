@@ -432,16 +432,14 @@ class RecordingServiceTest extends TestCase {
 
 		$this->serverConfig->method('getAppValue')
 			->willReturnCallback(
-				function (string $app, string $key, string $default = '') use ($customPrompt): string {
-					if ($key === 'call_recording_summary_prompt') {
-						return $customPrompt;
-					}
-
+				function (string $app, string $key, string $default = ''): string {
 					return $default;
 				}
 			);
 
+		$this->appConfig->method('getAppValueString')->with(Config::CALL_RECORDING_SUMMARY_PROMPT)->willReturn($customPrompt);
 		$this->taskProcessingManager->method('getAvailableTaskTypeIds')->willReturn([TextToText::ID]);
+
 		$this->taskProcessingManager->expects($this->once())->method('scheduleTask')
 			->with($this->callback(
 				function (Task $task) use ($customPrompt, $output): bool {
