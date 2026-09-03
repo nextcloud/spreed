@@ -375,3 +375,43 @@ export function computeTilePlacements({
 
 	return placements
 }
+
+/** Alignment of the tile columns within the grid */
+export type GridJustifyContent = 'center' | 'start' | 'end'
+
+type JustifyContentOptions = {
+	/** Whether the grid is shown as a stripe */
+	isStripe: boolean
+	/** Number of tiles laid out on the page, including the local video tile */
+	totalTiles: number
+	/** Whether the local video is the only tile of the grid */
+	isLocalVideoAlone: boolean
+}
+
+/**
+ * Alignment of the tile columns within the grid.
+ *
+ * The columns no longer take the whole width once they are capped, so the grid
+ * itself has to place them. They are centered, except in a stripe holding a
+ * single tile: that tile keeps the side it would sit on in a fuller stripe
+ * rather than moving to the middle. The local video is laid out after the
+ * remote ones, so it stays at the inline end, while a lone remote tile keeps
+ * the inline start the tiles are laid out from - which is where it belongs once
+ * the local video is not shown as a tile.
+ *
+ * @param options - the layout inputs
+ * @param options.isStripe - whether the grid is shown as a stripe
+ * @param options.totalTiles - number of tiles on the page, including the local video tile
+ * @param options.isLocalVideoAlone - whether the local video is the only tile
+ */
+export function getJustifyContent({
+	isStripe,
+	totalTiles,
+	isLocalVideoAlone,
+}: JustifyContentOptions): GridJustifyContent {
+	if (!isStripe || totalTiles !== 1) {
+		return 'center'
+	}
+
+	return isLocalVideoAlone ? 'end' : 'start'
+}
