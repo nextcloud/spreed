@@ -139,7 +139,6 @@ class CapabilitiesTest extends TestCase {
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
 			->willReturnMap([
-				['spreed', 'max-gif-size', '3145728', '200000'],
 				['spreed', 'start_calls', (string)Room::START_CALL_EVERYONE, (string)Room::START_CALL_EVERYONE],
 				['spreed', 'session-ping-limit', '200', '200'],
 				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
@@ -155,6 +154,7 @@ class CapabilitiesTest extends TestCase {
 				['experiments_guests', 0, 0],
 				['summary_threshold', 100, 100],
 				['feature_hints_hidden', 0, 999],
+				['max_gif_size', 3145728, 200000],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
@@ -352,7 +352,6 @@ class CapabilitiesTest extends TestCase {
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
 			->willReturnMap([
-				['spreed', 'max-gif-size', '3145728', '200000'],
 				['spreed', 'start_calls', (string)Room::START_CALL_EVERYONE, (string)Room::START_CALL_NOONE],
 				['spreed', 'session-ping-limit', '200', '50'],
 				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
@@ -375,6 +374,7 @@ class CapabilitiesTest extends TestCase {
 				['experiments_users', 0, 0],
 				['summary_threshold', 100, 100],
 				['feature_hints_hidden', 0, 1],
+				['max_gif_size', 3145728, 200000],
 			]);
 
 		$this->serverConfig->expects($this->any())
