@@ -34,7 +34,7 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Defines application features from the specific context.
  */
-class FeatureContext implements Context, SnippetAcceptingContext {
+class FeatureContext implements Context {
 	public const TEST_PASSWORD = '123456';
 
 	/** @var array<string, string> */
@@ -219,8 +219,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function __construct() {
 		$this->cookieJars = [];
-		$this->localServerUrl = getenv('TEST_SERVER_URL');
-		$this->remoteServerUrl = getenv('TEST_REMOTE_URL');
+		$this->localServerUrl = getenv('TEST_SERVER_URL') ?: '';
+		$this->remoteServerUrl = getenv('TEST_REMOTE_URL') ?: '';
 
 		foreach (['LOCAL', 'REMOTE'] as $server) {
 			$this->changedConfigs[$server] = [];
