@@ -7,6 +7,8 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+namespace OCA\Talk\Tests\Integration\Contexts;
+
 use Behat\Gherkin\Node\TableNode;
 use Behat\Hook\AfterScenario;
 use Behat\Step\Given;
@@ -165,8 +167,8 @@ trait RecordingTrait {
 
 		$descriptorSpec = [
 			0 => $stdin,
-			1 => [ 'file', $stdoutf, 'a' ],
-			2 => [ 'file', $stderrf, 'a' ],
+			1 => ['file', $stdoutf, 'a'],
+			2 => ['file', $stderrf, 'a'],
 		];
 
 		$process = proc_open($fullCmd, $descriptorSpec, $pipes, $cwd, $env, [
@@ -365,7 +367,7 @@ trait RecordingTrait {
 				$write = true;
 			}
 			if (isset($actualDataJson['participants']['users'])) {
-				usort($actualDataJson['participants']['users'], static fn (array $u1, array $u2) => $u1['userId'] <=> $u2['userId']);
+				usort($actualDataJson['participants']['users'], static fn(array $u1, array $u2) => $u1['userId'] <=> $u2['userId']);
 				$write = true;
 			}
 			if (isset($actualDataJson['message']['data']['chat']['comment'])) {
