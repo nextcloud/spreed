@@ -182,6 +182,7 @@ PROMPT;
 			new Entry(Config::EXPERIMENTS_USERS, ValueType::INT, 0, definition: 'Bit flag of experiments that should be enabled for logged-in users on this server' . PHP_EOL . 'See https://github.com/nextcloud/spreed/blob/main/docs/settings.md#experiments'),
 			new Entry(Config::EXPERIMENTS_GUESTS, ValueType::INT, 0, definition: 'Bit flag of experiments that should be enabled for guests on this server' . PHP_EOL . 'See https://github.com/nextcloud/spreed/blob/main/docs/settings.md#experiments'),
 			new Entry(Config::CALL_END_TO_END_ENCRYPTION, ValueType::BOOL, false, definition: 'Whether clients should end-to-end encrypt streams in calls (Only supported with High-performance backend'),
+			new Entry(Config::CALL_RECORDING_SUMMARY_PROMPT, ValueType::STRING, self::DEFAULT_CALL_RECORDING_SUMMARY_PROMPT, definition: 'Instructions used by LLM to generate Talk call recording summaries'),
 			new Entry(Config::FORCE_PASSWORDS, ValueType::BOOL, false, definition: 'Whether public chats are forced to use a password'),
 			new Entry(Config::BACKGROUNDS_BRANDED_FOR_GUESTS, ValueType::BOOL, false, definition: 'Whether guests are allowed to use the virtual backgrounds provided via `themes/talk-backgrounds/`'),
 			new Entry(Config::BACKGROUNDS_DEFAULT_FOR_USERS, ValueType::BOOL, definition: 'Whether users are allowed to use the default virutal backgrounds provided by the releases'),
