@@ -70,12 +70,20 @@ type GuestsCapabilities = {
 	enabled: boolean
 }
 
+// From https://github.com/nextcloud/notifications/blob/master/lib/Capabilities.php
+type NotificationsCapabilities = {
+	'ocs-endpoints': string[]
+	push: string[]
+	'admin-notifications': string[]
+}
+
 // Capabilities
 export type Capabilities = {
 	spreed: SpreedCapabilities
 	calendar?: CalendarCapabilities
 	circles?: CirclesCapabilities
 	guests?: GuestsCapabilities
+	notifications?: NotificationsCapabilities
 	password_policy?: PasswordPolicyCapabilities
 }
 
@@ -424,6 +432,26 @@ export type summarizeChatResponse = ApiResponse<operations['chat-summarize-chat'
 export type SummarizeChatTask = operations['chat-summarize-chat']['responses'][201]['content']['application/json']['ocs']['data']
 export type upcomingRemindersResponse = ApiResponse<operations['chat-get-upcoming-reminders']['responses'][200]['content']['application/json']>
 export type UpcomingReminder = components['schemas']['ChatReminderUpcoming']
+// From https://github.com/nextcloud/notifications/blob/master/lib/ResponseDefinitions.php
+export type NotificationsNotification = {
+	notification_id: number
+	app: string
+	user: string
+	datetime: string
+	object_type: string
+	object_id: string
+	subject: string
+	message: string
+	link: string
+	subjectRichParameters: ChatMessage['messageParameters'] | []
+	messageRich: string
+	messageRichParameters: ChatMessage['messageParameters'] | []
+}
+// The notifications API answers 204 without a body when no app registered a notifier
+export type getReminderNotificationsResponse = ApiResponse<{ ocs: { data: NotificationsNotification[] } } | ''>
+// A reminder shown on the dashboard. `notificationId` is only set when the reminder already
+// triggered, in which case it only exists as a notification of the user.
+export type DashboardReminder = UpcomingReminder & { notificationId: number | null }
 export type pinMessageParams = Required<operations['chat-pin-message']>['requestBody']['content']['application/json']
 export type pinMessageResponse = ApiResponse<operations['chat-pin-message']['responses'][200]['content']['application/json']>
 export type unpinMessageResponse = ApiResponse<operations['chat-unpin-message']['responses'][200]['content']['application/json']>
