@@ -47,6 +47,8 @@ use OCP\Share\IManager as ShareManager;
 use OCP\Share\IShare;
 use OCP\SystemTag\ISystemTagObjectMapper;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
+use OCP\TaskProcessing\Task;
+use OCP\TaskProcessing\TaskTypes\TextToText;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
@@ -404,5 +406,59 @@ class RecordingServiceTest extends TestCase {
 
 		$this->expectExceptionMessage('file_mimetype');
 		$this->recordingService->finishUpload($room, $owner, 'name.ogg');
+	}
+
+	public function testStoreTranscriptWithCustomPrompt(): void {
+		$owner = 'user1';
+		$roomToken = 'token123';
+		$recordingFileId = 42;
+		$output = 'This is the transcript contents.';
+		$aiTask = 'transcript';
+		$customPrompt = 'Summarize this transcript:';
+
+		$userFolder = $this->createMock(Folder::class);
+		$this->rootFolder->method('getUserFolder')->with($owner)->willReturn($userFolder);
+		$recordingFolder = $this->createMock(Folder::class);
+		$recordingFolder->method('getName')->willReturn($roomToken);
+		$recording = $this->createMock(File::class);
+		$recording->method('getName')->willReturn('recording.ogg');
+		$recording->method('getParent')->willReturn($recordingFolder);
+		$userFolder->method('getById')->with($recordingFileId)->willReturn([$recording]);
+
+		$room = $this->createRoom($roomToken);
+		$participant = $this->createParticipant($room, $owner);
+		$this->roomManager->method('getRoomForUserByToken')->with($roomToken, $owner)->willReturn($room);
+		$this->participantService->method('getParticipant')->with($room, $owner)->willReturn($participant);
+
+		$this->serverConfig->method('getAppValue')
+			->willReturnCallback(
+				function (string $app, string $key, string $default = ''): string {
+					return $default;
+				}
+			);
+
+		$this->appConfig->method('getAppValueString')->with(Config::CALL_RECORDING_SUMMARY_PROMPT)->willReturn($customPrompt);
+		$this->taskProcessingManager->method('getAvailableTaskTypeIds')->willReturn([TextToText::ID]);
+
+		$this->taskProcessingManager->expects($this->once())->method('scheduleTask')
+			->with($this->callback(
+				function (Task $task) use ($customPrompt, $output): bool {
+					if ($task->getTaskTypeId() !== TextToText::ID) {
+						return false;
+					}
+
+					return $task->getInput() === [
+						'input' => $customPrompt . "\n" . $output,
+					];
+				}
+			));
+
+		$this->recordingService->storeTranscript(
+			$owner,
+			$roomToken,
+			$recordingFileId,
+			$output,
+			$aiTask,
+		);
 	}
 }
