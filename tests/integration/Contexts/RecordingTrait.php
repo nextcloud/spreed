@@ -367,7 +367,7 @@ trait RecordingTrait {
 				$write = true;
 			}
 			if (isset($actualDataJson['participants']['users'])) {
-				usort($actualDataJson['participants']['users'], static fn(array $u1, array $u2) => $u1['userId'] <=> $u2['userId']);
+				usort($actualDataJson['participants']['users'], static fn (array $u1, array $u2) => $u1['userId'] <=> $u2['userId']);
 				$write = true;
 			}
 			if (isset($actualDataJson['message']['data']['chat']['comment'])) {

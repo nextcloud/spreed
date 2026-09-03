@@ -7,12 +7,12 @@ declare(strict_types=1);
  *  SPDX-FileCopyrightText: 2016 ownCloud, Inc.
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\Talk\Tests\Integration\Contexts;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 use Behat\Behat\Context\Context;
-use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Hook\AfterScenario;
