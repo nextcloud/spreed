@@ -5,6 +5,32 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 25.0.0-rc.2 – 2026-09-03
+### Changed
+- Update dependencies
+- Update translations
+- feat(recording): support configurable call summary prompts
+  [#19252](https://github.com/nextcloud/spreed/pull/19252)
+- feat(search): promote "search messages in current chat" feature better
+  [#19185](https://github.com/nextcloud/spreed/pull/19185)
+
+### Fixed
+- fix(attachments): Fix missing previews for guests
+  [#19254](https://github.com/nextcloud/spreed/pull/19254)
+  [#19168](https://github.com/nextcloud/spreed/pull/19168)
+- fix(chat): lock scrolling in inactive session
+  [#19226](https://github.com/nextcloud/spreed/pull/19226)
+- fix(chat): Send read marker only when session is active
+  [#19219](https://github.com/nextcloud/spreed/pull/19219)
+- fix(chat): Sanitise file name
+  [#19230](https://github.com/nextcloud/spreed/pull/19230)
+- fix(presets): apply default presets that are set by admins
+  [#19184](https://github.com/nextcloud/spreed/pull/19184)
+- fix(sharing): Add a repair step to remove orphan entries
+  [#19246](https://github.com/nextcloud/spreed/pull/19246)
+- fix(sip): Correct restrict SIP creation
+  [#19243](https://github.com/nextcloud/spreed/pull/19243)
+
 ## 25.0.0-rc.1 – 2026-08-26
 ### Changed
 - Update dependencies
