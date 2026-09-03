@@ -10,7 +10,9 @@ namespace OCA\Talk\Share;
 
 use OC\Files\Filesystem;
 use OCA\Talk\Config;
+use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\RoomDeletedEvent;
+use OCA\Talk\Model\Attendee;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Share\Events\BeforeShareCreatedEvent;
@@ -34,6 +36,7 @@ class Listener implements IEventListener {
 			BeforeShareCreatedEvent::class => $this->overwriteShareTarget($event),
 			VerifyMountPointEvent::class => $this->overwriteMountPoint($event),
 			RoomDeletedEvent::class => $this->roomDeletedEvent($event),
+			AttendeesRemovedEvent::class => $this->roomAttendeesRemovedEvent($event),
 		};
 	}
 
@@ -90,5 +93,17 @@ class Listener implements IEventListener {
 
 	protected function roomDeletedEvent(RoomDeletedEvent $event): void {
 		$this->roomShareProvider->deleteInRoom($event->getRoom()->getToken());
+	}
+
+	protected function roomAttendeesRemovedEvent(AttendeesRemovedEvent $event): void {
+		$userIds = array_values(array_map(
+			static fn (Attendee $attendee): string => $attendee->getActorId(),
+			array_filter(
+				$event->getAttendees(),
+				static fn (Attendee $attendee): bool => $attendee->getActorType() === Attendee::ACTOR_USERS
+			)
+		));
+
+		$this->roomShareProvider->deleteReceivedSharesInRoom($event->getRoom()->getToken(), $userIds);
 	}
 }

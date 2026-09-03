@@ -1223,18 +1223,14 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 	}
 
 	/**
-	 * Delete all shares in a room, or only those from the given user.
-	 *
-	 * When a user is given all their shares are removed, both own shares and
-	 * received shares.
+	 * Delete all shares in a room
 	 *
 	 * Not part of IShareProvider API, but needed by the hooks in
-	 * OCA\Talk\AppInfo\Application
+	 * {@see Listener::roomDeletedEvent()}
 	 *
 	 * @param string $roomToken
-	 * @param string|null $user
 	 */
-	public function deleteInRoom(string $roomToken, ?string $user = null): void {
+	public function deleteInRoom(string $roomToken): void {
 		$this->cleanSharesByIdCache();
 
 		//First delete all custom room shares for the original shares to be removed
@@ -1243,10 +1239,6 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 			->from('share')
 			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
 			->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($roomToken)));
-
-		if ($user !== null) {
-			$qb->andWhere($qb->expr()->eq('uid_initiator', $qb->createNamedParameter($user)));
-		}
 
 		$cursor = $qb->executeQuery();
 		$ids = [];
@@ -1273,35 +1265,47 @@ class RoomShareProvider implements IShareProvider, IPartialShareProvider, IShare
 		$delete->delete('share')
 			->where($delete->expr()->eq('share_type', $delete->createNamedParameter(IShare::TYPE_ROOM)))
 			->andWhere($delete->expr()->eq('share_with', $delete->createNamedParameter($roomToken)));
-
-		if ($user !== null) {
-			$delete->andWhere($delete->expr()->eq('uid_initiator', $delete->createNamedParameter($user)));
-		}
-
 		$delete->executeStatement();
+	}
 
-		// Finally delete all custom room shares leftovers for the given user
-		if ($user !== null) {
-			$query = $this->dbConnection->getQueryBuilder();
-			$query->select('id')
-				->from('share')
-				->where($query->expr()->eq('share_type', $query->createNamedParameter(IShare::TYPE_ROOM)))
-				->andWhere($query->expr()->eq('share_with', $query->createNamedParameter($roomToken)));
+	/**
+	 * Delete all received shares for a user in a room
+	 *
+	 * Not part of IShareProvider API, but needed by the hooks in
+	 * {@see Listener::roomAttendeesRemovedEvent()}
+	 *
+	 * @param string $roomToken
+	 * @param list<string> $userIds
+	 */
+	public function deleteReceivedSharesInRoom(string $roomToken, array $userIds): void {
+		$this->cleanSharesByIdCache();
 
-			$cursor = $query->executeQuery();
-			$ids = [];
-			while ($row = $cursor->fetch()) {
-				$ids[] = (int)$row['id'];
-			}
-			$cursor->closeCursor();
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->select('id')
+			->from('share')
+			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
+			->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($roomToken)));
 
-			if (!empty($ids)) {
-				$chunks = array_chunk($ids, 100);
+		$cursor = $qb->executeQuery();
+		$ids = [];
+		while ($row = $cursor->fetchAssociative()) {
+			$ids[] = (int)$row['id'];
+		}
+		$cursor->closeCursor();
+
+		if (!empty($ids)) {
+			$delete = $this->dbConnection->getQueryBuilder();
+			$delete->delete('share')
+				->where($delete->expr()->eq('share_type', $delete->createNamedParameter(self::SHARE_TYPE_USERROOM)))
+				->andWhere($delete->expr()->in('share_with', $delete->createParameter('userids')))
+				->andWhere($delete->expr()->in('parent', $delete->createParameter('ids')));
+
+			$userChunks = array_chunk($userIds, 100);
+			$chunks = array_chunk($ids, 100);
+			foreach ($userChunks as $userChunk) {
 				foreach ($chunks as $chunk) {
-					$delete->delete('share')
-						->where($delete->expr()->eq('share_type', $delete->createNamedParameter(self::SHARE_TYPE_USERROOM)))
-						->andWhere($delete->expr()->in('share_with', $delete->createNamedParameter($user)))
-						->andWhere($delete->expr()->in('parent', $delete->createNamedParameter($chunk, IQueryBuilder::PARAM_INT_ARRAY)));
+					$delete->setParameter('userids', $userChunk, IQueryBuilder::PARAM_STR_ARRAY)
+						->setParameter('ids', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
 					$delete->executeStatement();
 				}
 			}
