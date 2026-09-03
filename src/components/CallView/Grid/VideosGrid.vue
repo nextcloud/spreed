@@ -173,6 +173,7 @@ import {
 	getHalfColumnCount,
 	getHalfColumnMaxWidth,
 	getHalfColumnMinWidth,
+	getJustifyContent,
 	GRID_GAP,
 	TARGET_ASPECT_RATIO,
 	TILE_COLUMN_SPAN,
@@ -465,8 +466,14 @@ export default {
 				gridTemplateColumns: `repeat(${getHalfColumnCount(columns)}, ${halfColumnWidth})`,
 				gridTemplateRows: `repeat(${rows}, minmax(${this.dpiAwareMinHeight}px, 1fr))`,
 				// The columns no longer take the whole width once they are
-				// capped, so the grid itself has to center them
-				justifyContent: 'center',
+				// capped, so the grid itself has to place them
+				justifyContent: getJustifyContent({
+					isStripe: this.isStripe,
+					totalTiles: this.totalTiles,
+					// The local video is laid out after the remote tiles, so it
+					// is the only tile of the grid when no remote one is shown
+					isLocalVideoAlone: !this.noLocalVideoReserve && this.displayedVideos.length === 0,
+				}),
 			}
 		},
 
@@ -614,6 +621,7 @@ export default {
 
 	&--stripe {
 		height: var(--stripe-height);
+		margin-block-start: var(--grid-gap);
 	}
 }
 
@@ -669,6 +677,22 @@ export default {
 	// Kept out of the grid itself, whose measured height is the height of its
 	// tiles
 	padding-block: var(--grid-gap);
+	// Keeps the tiles off the rounded corners of the card
+	padding-inline: var(--grid-gap);
+
+	// The card the tiles sit on
+	.grid-main-wrapper:not(.overlap) & {
+		background-color: #262626;
+		border-radius: var(--border-radius-container);
+	}
+
+	// A stripe overlapping the promoted video takes no card of its own, which
+	// would band that video across: its tiles - the self camera, the only one
+	// left in a one to one call - are lifted off the call by a shadow instead
+	.overlap & :deep(.localVideoContainer),
+	.overlap & :deep(.video-container-grid) {
+		box-shadow: 0 0px 10px rgba(0, 0, 0, 0.5);
+	}
 }
 
 .dev-mode-video {
@@ -744,15 +768,15 @@ export default {
 
 .stripe-controls-position {
 	position: absolute;
-	top: var(--grid-gap);
-	inset-inline-end: var(--grid-gap);
+	top: calc(var(--default-grid-baseline) * 3);
+	inset-inline-end: calc(var(--default-grid-baseline) * 3);
 	z-index: 2;
 	transition: top var(--animation-slow) ease-in-out;
 
 	// A collapsed stripe holds no tile to sit over, and no room of its own to
 	// sit in, so the controls take the room above it
 	&--collapsed {
-		top: calc(-1 * (var(--clickable-area-small) + var(--default-grid-baseline) + var(--grid-gap)));
+		top: calc(-1 * (var(--clickable-area-small) + var(--grid-gap) + var(--grid-gap)));
 	}
 }
 

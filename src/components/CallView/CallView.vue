@@ -34,7 +34,7 @@
 						:model="selectedCallParticipantModel"
 						:sharedData="sharedDatas[selectedVideoPeerId]"
 						:showTalkingHighlight="false"
-						:isOneToOne="isOneToOne"
+						:isFullPage="showFullPage"
 						isGrid
 						isBig
 						fitVideo />
@@ -77,7 +77,6 @@
 						:models="promotedSpeakerModels"
 						:sharedDatas="sharedDatas"
 						:showVideoOverlay="showVideoOverlay"
-						:isOneToOne="isOneToOne"
 						@selectVideo="handleSelectVideo" />
 					<!-- Promoted "autopilot" mode -->
 					<VideoVue
@@ -91,7 +90,7 @@
 						isGrid
 						fitVideo
 						isBig
-						:isOneToOne="isOneToOne"
+						:isFullPage="showFullPage"
 						:isSidebar="isSidebar"
 						@forcePromoteVideo="forcePromotedModel = $event" />
 					<!-- presenter overlay -->
@@ -451,12 +450,13 @@ export default {
 			return this.selectedVideoPeerId !== null && !this.screens.includes(this.selectedVideoPeerId)
 		},
 
-		isOneToOne() {
-			return this.callParticipantModels.length === 1
-		},
-
+		// Whether the promoted video covers the whole call view, with the stripe
+		// floating over it rather than taking room of its own. A promoted area
+		// held by a single participant is laid out that way, and so is one with
+		// nobody in it yet.
 		showFullPage() {
-			return this.isOneToOne && !(this.showLocalScreen || this.showRemoteScreen || this.showSelectedScreen)
+			return this.callParticipantModels.length <= 1
+				&& !(this.showLocalScreen || this.showRemoteScreen || this.showSelectedScreen)
 		},
 
 		hasLocalVideo() {

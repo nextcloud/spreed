@@ -90,8 +90,21 @@ export function useGridDimensions({
 			return
 		}
 
-		gridWidth.value = element.clientWidth
-		gridHeight.value = element.clientHeight
+		const width = element.clientWidth
+		const height = element.clientHeight
+
+		// The grid is hidden or mid-transition (the stripe collapses and expands
+		// by its height): measuring it now would shrink the layout down to a
+		// single row and it would be kept until the next resize, as the element
+		// is given back its size by a transition rather than by a layout change
+		// of its own. Keep the current layout instead and wait for the
+		// `ResizeObserver` to report the final size.
+		if (width <= 0 || height <= 0) {
+			return
+		}
+
+		gridWidth.value = width
+		gridHeight.value = height
 
 		const dimensions = computeGridDimensions({
 			gridWidth: gridWidth.value,
@@ -115,10 +128,26 @@ export function useGridDimensions({
 	let resizeObserver: ResizeObserver | null = null
 
 	onMounted(() => {
+		resizeObserver = new ResizeObserver(debouncedRecompute)
+
 		if (wrapper.value) {
-			resizeObserver = new ResizeObserver(debouncedRecompute)
 			resizeObserver.observe(wrapper.value)
 		}
+
+		// The grid element is observed as well: it is the one being measured and
+		// its size does not always follow the size of the wrapper, which keeps
+		// the whole height of the call view while the grid is collapsed and
+		// expanded by a transition. The element is unmounted along with the
+		// collapsed stripe, so it is observed again whenever it comes back.
+		watch(grid, (element, previousElement) => {
+			if (previousElement) {
+				resizeObserver?.unobserve(previousElement)
+			}
+			if (element) {
+				resizeObserver?.observe(element)
+			}
+		}, { immediate: true })
+
 		recompute()
 	})
 
