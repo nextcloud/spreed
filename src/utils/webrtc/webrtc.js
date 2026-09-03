@@ -525,8 +525,10 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 		// is received before the "leave call" request ends.
 		localUserInCall = false
 
-		localStateBroadcaster.destroy()
-		localStateBroadcaster = null
+		if (localStateBroadcaster) {
+			localStateBroadcaster.destroy()
+			localStateBroadcaster = null
+		}
 	})
 	signaling.on('leaveCall', function(token, reconnect) {
 		// When the MCU is used and there is a connection error the call is
