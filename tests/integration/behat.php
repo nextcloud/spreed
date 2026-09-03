@@ -1,5 +1,11 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 use Behat\Config\Config;
 use Behat\Config\Extension;
 use Behat\Config\Formatter\JUnitFormatter;
@@ -7,6 +13,8 @@ use Behat\Config\Formatter\PrettyFormatter;
 use Behat\Config\Profile;
 use Behat\Config\Suite;
 use OCA\Talk\Tests\Integration\Behat\GithubActions\GithubActionsExtension;
+use OCA\Talk\Tests\Integration\Contexts\FeatureContext;
+use OCA\Talk\Tests\Integration\Contexts\SharingContext;
 
 return (new Config())
 	->withProfile((new Profile('default', [
@@ -24,9 +32,9 @@ return (new Config())
 			]))
 		->withExtension(new Extension(GithubActionsExtension::class))
 		->withSuite((new Suite('default'))
-			->addContext(\OCA\Talk\Tests\Integration\Contexts\FeatureContext::class)
+			->addContext(FeatureContext::class)
 			->addContext(
-				\OCA\Talk\Tests\Integration\Contexts\SharingContext::class,
+				SharingContext::class,
 				[
 					'baseUrl' => 'http://localhost:8080/',
 					'admin' => [
