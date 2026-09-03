@@ -381,8 +381,9 @@ export default {
 				// guest mode: grab token from the link URL
 				// FIXME: use a cleaner way...
 				const token = this.file.link.slice(this.file.link.lastIndexOf('/') + 1)
-				return generateUrl('/apps/files_sharing/publicpreview/{token}?x=-1&y={height}&a=1', {
+				return generateUrl('/apps/files_sharing/publicpreview/{token}?file={file}&x=-1&y={height}&a=1', {
 					token,
+					file: this.internalAbsolutePath,
 					height: previewSize,
 				})
 			} else {
