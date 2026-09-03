@@ -13,8 +13,8 @@
 			@ended="handleEnded">
 			{{ t('spreed', 'Your browser does not support playing audio files') }}
 		</audio>
-		<span v-if="showFileName" class="audio-player__name" :title="name">
-			{{ name }}
+		<span v-if="showFileName" class="audio-player__name" :title="sanitizedFileName">
+			<span class="audio-player__basename">{{ fileNameWithoutExtension }}</span><span v-if="fileExtension">{{ fileExtension }}</span>
 		</span>
 	</div>
 </template>
@@ -25,6 +25,7 @@ import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl } from '@nextcloud/router'
 import { EventBus } from '../../../../../services/EventBus.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
+import { getFileExtension, sanitizeFileName } from '../../../../../utils/fileUpload.ts'
 
 export default {
 	name: 'AudioPlayer',
@@ -86,6 +87,18 @@ export default {
 	},
 
 	computed: {
+		sanitizedFileName() {
+			return sanitizeFileName(this.name)
+		},
+
+		fileNameWithoutExtension() {
+			return this.name.slice(0, this.name.length - getFileExtension(this.name).length)
+		},
+
+		fileExtension() {
+			return getFileExtension(this.name)
+		},
+
 		internalAbsolutePath() {
 			if (this.path.startsWith('/')) {
 				return this.path
@@ -155,6 +168,10 @@ export default {
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		font-weight: bold;
+	}
+
+	&__basename {
+		unicode-bidi: isolate;
 	}
 
 	&__audio {

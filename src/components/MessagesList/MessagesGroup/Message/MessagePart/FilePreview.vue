@@ -19,19 +19,19 @@
 		@click.exact="handleClick"
 		@keydown.enter="handleClick">
 		<span
-			:title="file.name"
+			:title="sanitizedFileName"
 			class="image-container"
 			:class="{ playable: isPlayable }"
 			:style="imageContainerStyle">
 			<img
 				class="file-preview__image"
 				:class="previewImageClass"
-				:alt="file.name"
+				:alt="sanitizedFileName"
 				:src="failed ? defaultIconUrl : previewUrl"
 				@load="onLoad"
 				@error="onError">
 			<template v-if="!isLoading || fallbackLocalUrl">
-				<span v-if="isPlayable && !smallPreview" class="play-video-button">
+				<span v-if="isPlayable && !rowLayout" class="play-video-button">
 					<IconPlayCircleOutline
 						:size="48"
 						fillColor="#ffffff" />
@@ -65,7 +65,8 @@
 			</template>
 		</NcButton>
 		<div v-if="shouldShowFileDetail" class="name-container">
-			{{ fileDetail }}
+			<span class="name-container__basename">{{ fileNameWithoutExtension }}</span>
+			<span v-if="fileExtension" class="name-container__extension">{{ fileExtension }}</span>
 		</div>
 	</component>
 </template>
@@ -89,6 +90,7 @@ import { getTalkConfig } from '../../../../../services/CapabilitiesManager.ts'
 import { useActorStore } from '../../../../../stores/actor.ts'
 import { useSharedItemsStore } from '../../../../../stores/sharedItems.ts'
 import { useUploadStore } from '../../../../../stores/upload.ts'
+import { getFileExtension, sanitizeFileName } from '../../../../../utils/fileUpload.ts'
 import { canPlayAudio } from '../../../../../utils/sounds.js'
 
 const PREVIEW_TYPE = {
@@ -141,14 +143,6 @@ export default {
 		referenceId: {
 			type: String,
 			default: '',
-		},
-
-		/**
-		 * Whether to render a small preview to embed in replies
-		 */
-		smallPreview: {
-			type: Boolean,
-			default: false,
 		},
 
 		/**
@@ -218,8 +212,18 @@ export default {
 			)
 		},
 
-		fileDetail() {
-			return this.file.name
+		// file.name with bidi control chars replaced by '_', for title/alt/aria-label text
+		sanitizedFileName() {
+			return sanitizeFileName(this.file.name)
+		},
+
+		fileNameWithoutExtension() {
+			return this.file.name.slice(0, this.file.name.length - getFileExtension(this.file.name).length)
+		},
+
+		// Dot included, original case
+		fileExtension() {
+			return getFileExtension(this.file.name)
 		},
 
 		fallbackLocalUrl() {
@@ -267,7 +271,7 @@ export default {
 
 		previewImageClass() {
 			let classes = ''
-			if (this.smallPreview) {
+			if (this.rowLayout) {
 				classes += 'preview-small '
 			} else if (this.mediumPreview) {
 				classes += 'preview-medium '
@@ -295,16 +299,21 @@ export default {
 				return {}
 			}
 
+			// Row layout always shows a small fixed-size icon, never a medium/full preview
+			if (this.rowLayout) {
+				return { width: '24px', height: '24px' }
+			}
+
 			// Fallback for loading mimeicons (preview for audio files is not provided)
 			if (this.file['preview-available'] !== 'yes' || this.file.mimetype.startsWith('audio/') || this.failed) {
 				return {
-					width: this.smallPreview ? '24px' : '128px',
-					height: this.smallPreview ? '24px' : '128px',
+					width: '128px',
+					height: '128px',
 				}
 			}
 
-			const widthConstraint = this.smallPreview ? 24 : (this.mediumPreview ? 192 : 600)
-			const heightConstraint = this.smallPreview ? 24 : (this.mediumPreview ? 192 : 384)
+			const widthConstraint = this.mediumPreview ? 192 : 600
+			const heightConstraint = this.mediumPreview ? 192 : 384
 
 			// Actual size when no metadata available
 			if (!this.file.width || !this.file.height) {
@@ -367,11 +376,7 @@ export default {
 			}
 
 			// use preview provider URL to render a smaller preview
-			let previewSize = 384
-			if (this.smallPreview) {
-				previewSize = 24
-			}
-			previewSize = Math.ceil(previewSize * window.devicePixelRatio)
+			const previewSize = Math.ceil(384 * window.devicePixelRatio)
 			if (userId === null) {
 				// guest mode: grab token from the link URL
 				// FIXME: use a cleaner way...
@@ -476,7 +481,7 @@ export default {
 		},
 
 		removeAriaLabel() {
-			return t('spreed', 'Remove {fileName}', { fileName: this.file.name })
+			return t('spreed', 'Remove {fileName}', { fileName: this.sanitizedFileName })
 		},
 	},
 
@@ -672,7 +677,19 @@ export default {
 		width: 100%;
 		overflow: hidden;
 		white-space: nowrap;
-		text-overflow: ellipsis;
+		display: inline-flex;
+
+		&__basename {
+			unicode-bidi: isolate;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		&__extension {
+			color: var(--color-text-maxcontrast);
+			overflow: visible;
+		}
 	}
 
 	&:not(.file-preview--viewer-available) {

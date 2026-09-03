@@ -8,6 +8,7 @@ import type { UploadEntry } from '../types/index.ts'
 
 const extensionRegex = /\.[0-9a-z]+$/i
 const suffixRegex = / \(\d+\)$/
+const bidiControlRegex = /[\u202A-\u202E\u2066-\u2069]/g
 
 /**
  * Returns the file extension for the given path
@@ -17,6 +18,16 @@ const suffixRegex = / \(\d+\)$/
  */
 export function getFileExtension(path: string): string {
 	return path.match(extensionRegex)?.[0] ?? ''
+}
+
+/**
+ * Returns name with bidi control characters replaced by '_'
+ *
+ * @param name file name
+ * @return sanitized file name
+ */
+export function sanitizeFileName(name: string): string {
+	return name.replace(bidiControlRegex, '_')
 }
 
 /**
