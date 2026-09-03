@@ -794,6 +794,14 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$password = '';
 		}
 
+		// Enabling SIP dial-in is restricted to the configured groups, so requesting
+		// it at creation time requires the same permission as toggling it later on.
+		if ($sipEnabled !== Webinary::SIP_DISABLED
+			&& (!$this->talkConfig->isSIPConfigured()
+				|| !$this->talkConfig->canUserEnableSIP($user))) {
+			return new DataResponse(['error' => CreationException::REASON_SIP_ENABLED], Http::STATUS_FORBIDDEN);
+		}
+
 		$invitationList = $this->invitationService->validateInvitations($participants, $user);
 		if ($invitationList->hasInvalidInvitations() && !$invitationList->hasValidInvitations()) {
 			// FIXME add the list of failed invitations?

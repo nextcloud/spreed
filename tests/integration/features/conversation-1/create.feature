@@ -65,10 +65,40 @@ Feature: conversation-1/create
         | room | 3    | 1               | 1          | GREATER_THAN_ZERO |
 
   Scenario: Enable SIP during creation
-    Given the following "spreed" app config is set
+    Given group "group1" exists
+    And user "participant1" is member of group "group1"
+    And the following "spreed" app config is set
       | sip_bridge_dialin_info | +49-1234-567890 |
       | sip_bridge_shared_secret | 1234567890abcdef |
       | sip_bridge_groups | ["group1"] |
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+      | sipEnabled | 1 |
+    Then user "participant1" is participant of the following rooms (v4)
+      | id   | type | participantType | sipEnabled |
+      | room | 3    | 1               | 1          |
+
+  Scenario: Enable SIP during creation without being allowed to enable SIP
+    Given group "group1" exists
+    And the following "spreed" app config is set
+      | sip_bridge_dialin_info | +49-1234-567890 |
+      | sip_bridge_shared_secret | 1234567890abcdef |
+      | sip_bridge_groups | ["group1"] |
+    When user "participant1" creates room "room" with 403 (v4)
+      | roomType | 3 |
+      | roomName | room |
+      | sipEnabled | 1 |
+    And user "participant1" creates room "room" with 403 (v4)
+      | roomType | 3 |
+      | roomName | room |
+      | sipEnabled | 2 |
+    Then user "participant1" is participant of the following rooms (v4)
+
+  Scenario: Enable SIP during creation while not being restricted by groups
+    Given the following "spreed" app config is set
+      | sip_bridge_dialin_info | +49-1234-567890 |
+      | sip_bridge_shared_secret | 1234567890abcdef |
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
