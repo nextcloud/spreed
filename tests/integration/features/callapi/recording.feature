@@ -541,7 +541,7 @@ Feature: callapi/recording
       | call_recording_transcription | yes |
       | call_recording_summary       | yes |
     Given the following testing app config is set
-      | fail-testing-text2text-summary | yes |
+      | fail-testing-text2text | yes |
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
