@@ -85,7 +85,7 @@ final class GithubActionsFormatter implements Formatter {
 		return $this->printer;
 	}
 
-	public function setParameter($name, $value): void {
+	public function setParameter(string $name, $value): void {
 		$this->parameters[$name] = $value;
 
 		if ($name === 'base_path' && is_string($value) && $value !== '') {
@@ -93,7 +93,7 @@ final class GithubActionsFormatter implements Formatter {
 		}
 	}
 
-	public function getParameter($name) {
+	public function getParameter(string $name): mixed {
 		return $this->parameters[$name] ?? null;
 	}
 
