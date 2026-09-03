@@ -126,7 +126,7 @@ function handleDirectCall(routeToken: string) {
 	unwatchJoinedConversation = watchJoinedConversation(routeToken, () => {
 		stopWatchingJoinedConversation()
 		void joinCall(routeToken, { directCall: true })
-	}, { immediate: true })
+	})
 }
 </script>
 
