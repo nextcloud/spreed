@@ -38,6 +38,9 @@ const otherKeys = computed(() => fileKeys.value.filter((key) => !isImageKey(key)
 // Multiple media tiles shrink into a grid; a single one keeps its full size
 const isImageRowCombined = computed(() => imageKeys.value.length > 1)
 
+// For the Viewer to swipe through media in this message (FilePreview can't derive this itself, combined messages are client-only)
+const viewerList = computed(() => imageKeys.value.map((key) => props.message.messageParameters[key]))
+
 const hiddenImageCount = computed(() => {
 	return imageKeys.value.length > MAX_VISIBLE_IMAGES
 		? imageKeys.value.length - (MAX_VISIBLE_IMAGES - 1)
@@ -77,6 +80,7 @@ function getReferenceId(key: string): string {
 				:messageId="message.id"
 				:itemType="getItemTypeFromMessage(message, key)"
 				:referenceId="getReferenceId(key)"
+				:viewerList="viewerList"
 				:file="message.messageParameters[key]" />
 		</div>
 		<div
