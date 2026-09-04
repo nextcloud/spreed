@@ -191,6 +191,20 @@ class MessageParser {
 					$displayName = $botName . ' (Bot)';
 				}
 			}
+		} elseif ($actorType === Attendee::ACTOR_MATRIX) {
+			$cacheKey = $actorType . '/' . $actorId;
+			if (isset($this->guestNames[$cacheKey])) {
+				$displayName = $this->guestNames[$cacheKey];
+			} else {
+				$displayName = $actorId;
+				try {
+					$participant = $this->participantService->getParticipantByActor($message->getRoom(), $actorType, $actorId);
+					$displayName = $participant->getAttendee()->getDisplayName() ?: $actorId;
+				} catch (ParticipantNotFoundException) {
+					$displayName = \OCP\Server::get(\OCA\Talk\Matrix\Service\RoomInfoService::class)->memberName($message->getRoom(), $actorId);
+				}
+				$this->guestNames[$cacheKey] = $displayName;
+			}
 		} elseif ($actorType === Attendee::ACTOR_FEDERATED_USERS) {
 			if (isset($this->federatedUsersNames[$actorId])) {
 				$displayName = $this->federatedUsersNames[$actorId];

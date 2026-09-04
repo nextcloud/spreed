@@ -1,0 +1,60 @@
+# SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.1', '8.2', '8.3', '8.4']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, mbstring, json, sodium
+      - run: composer install --no-progress
+      - run: composer lint
+      - run: composer check:boundary
+      - run: composer test
+      - run: composer psalm
+        if: matrix.php == '8.3'
+
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      synapse:
+        image: matrixdotorg/synapse:latest
+        env:
+          SYNAPSE_SERVER_NAME: localhost
+          SYNAPSE_REPORT_STATS: 'no'
+          SYNAPSE_ENABLE_REGISTRATION: 'yes'
+          SYNAPSE_ENABLE_REGISTRATION_WITHOUT_VERIFICATION: 'yes'
+        ports: ['8008:8008']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - run: composer install --no-progress
+      - name: Wait for Synapse
+        run: for i in $(seq 1 60); do curl -fs http://localhost:8008/_matrix/client/versions && break; sleep 2; done
+      - run: MATRIX_HOMESERVER=http://localhost:8008 composer test:integration
+
+  interop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: dom, mbstring, json, sodium
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: composer install --no-progress
+      - run: pip install vodozemac
+      - run: python3 tests/interop/vodozemac_check.py

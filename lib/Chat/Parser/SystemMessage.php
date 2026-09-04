@@ -608,6 +608,18 @@ class SystemMessage implements IEventListener {
 					$parsedMessage .= "\n\n" . $metaData['caption'];
 				}
 			}
+		} elseif ($message === 'matrix_user_added') {
+			$parsedParameters['user'] = $this->getMatrixUser($room, (string)$parameters['matrix_user'], $parameters['name'] ?? null);
+			$parsedMessage = $this->l->t('{user} joined the Matrix room');
+		} elseif ($message === 'matrix_user_removed') {
+			$parsedParameters['user'] = $this->getMatrixUser($room, (string)$parameters['matrix_user'], $parameters['name'] ?? null);
+			$parsedMessage = $this->l->t('{user} left the Matrix room');
+		} elseif ($message === 'matrix_room_upgraded') {
+			$parsedMessage = $this->l->t('This Matrix room was upgraded and is read-only now. Continue in the new room.');
+		} elseif ($message === 'matrix_call_unsupported') {
+			$parsedMessage = $this->l->t('A call was started in Matrix. Calls in Matrix rooms are not supported in Talk.');
+		} elseif ($message === 'matrix_encryption_enabled') {
+			$parsedMessage = $this->l->t('End-to-end encryption was enabled for this Matrix room. Encrypted Matrix rooms are not supported yet.');
 		} elseif ($message === 'object_shared') {
 			$parsedParameters['object'] = $parameters['metaData'];
 			$parsedParameters['object']['id'] = (string)$parsedParameters['object']['id'];
@@ -1180,8 +1192,32 @@ class SystemMessage implements IEventListener {
 		if ($actorType === Attendee::ACTOR_FEDERATED_USERS) {
 			return $this->getRemoteUser($room, $actorId);
 		}
+		if ($actorType === Attendee::ACTOR_MATRIX) {
+			return $this->getMatrixUser($room, $actorId);
+		}
 
 		return $this->getUser($actorId);
+	}
+
+	protected function getMatrixUser(Room $room, string $mxid, ?string $name = null): array {
+		$displayName = $name;
+		if ($displayName === null || $displayName === '') {
+			$displayName = $mxid;
+			try {
+				$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_MATRIX, $mxid);
+				$displayName = $participant->getAttendee()->getDisplayName() ?: $mxid;
+			} catch (ParticipantNotFoundException) {
+			}
+		}
+		$server = strpos($mxid, ':') !== false ? substr($mxid, strpos($mxid, ':') + 1) : '';
+
+		return [
+			'type' => 'user',
+			'id' => $mxid,
+			'name' => $displayName,
+			'server' => 'matrix:' . $server,
+			'mention-id' => 'matrix/' . $mxid,
+		];
 	}
 
 	protected function getUser(string $uid): array {
