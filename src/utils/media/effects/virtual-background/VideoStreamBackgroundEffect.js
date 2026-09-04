@@ -37,6 +37,9 @@ export default class VideoStreamBackgroundEffect {
 	// _renderMask: Function;
 	// _virtualImage: HTMLImageElement;
 	// _virtualVideo: HTMLVideoElement;
+	// _useRVFC: boolean;
+	// _rvfcHandle: number;
+	// _lastInferenceTimestamp: number;
 
 	/**
 	 * Create a new background effect processor.
@@ -81,6 +84,9 @@ export default class VideoStreamBackgroundEffect {
 		this._inputVideoElement = document.createElement('video')
 		this._bgChanged = false
 		this._prevBgMode = null
+		this._useRVFC = undefined
+		this._rvfcHandle = undefined
+		this._lastInferenceTimestamp = -1
 	}
 
 	/**
@@ -130,6 +136,9 @@ export default class VideoStreamBackgroundEffect {
 						'./vendor/models/selfie_segmenter.tflite',
 						import.meta.url,
 					).pathname,
+					// delegate: 'CPU' was tried as a GPU-load reduction; it
+					// made things worse (no GPU win, added main-thread
+					// stalls). Keeping GPU.
 					delegate: 'GPU',
 				},
 				runningMode: 'VIDEO',
@@ -157,11 +166,15 @@ export default class VideoStreamBackgroundEffect {
 			return
 		}
 
+		// MediaPipe VIDEO mode requires strictly increasing timestamps.
+		const now = performance.now()
+		this._lastInferenceTimestamp = now > this._lastInferenceTimestamp ? now : this._lastInferenceTimestamp + 1
+
 		let segmentationResult
 		try {
 			segmentationResult = await this._imageSegmenter.segmentForVideo(
 				this._inputVideoElement,
-				performance.now(),
+				this._lastInferenceTimestamp,
 			)
 
 			if (segmentationResult.confidenceMasks && segmentationResult.confidenceMasks.length > 0) {
@@ -178,7 +191,13 @@ export default class VideoStreamBackgroundEffect {
 			}
 
 			if (segmentationResult?.confidenceMasks?.length) {
-				segmentationResult.confidenceMasks.forEach((mask) => mask.close())
+				// The mask kept as _lastMask (WebGL path) must stay open for
+				// reuse on stale redraws; see _processSegmentationResult().
+				segmentationResult.confidenceMasks.forEach((mask) => {
+					if (mask !== this._lastMask) {
+						mask.close()
+					}
+				})
 			}
 		}
 	}
@@ -257,6 +276,11 @@ export default class VideoStreamBackgroundEffect {
 			// Update segmentation mask canvas
 			this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0)
 		} else {
+			// Close the previous mask only once replaced; it stays open
+			// until then for reuse on stale redraws (see _runInference()).
+			if (this._lastMask && this._lastMask !== maskData) {
+				this._lastMask.close()
+			}
 			this._lastMask = maskData
 		}
 	}
@@ -281,12 +305,56 @@ export default class VideoStreamBackgroundEffect {
 			this.runPostProcessing()
 		}
 
-		// Schedule next frame
+		// rVFC reschedules itself in _startFrameLoop(); only the fallback needs this.
+		if (!this._useRVFC) {
+			this._scheduleFallbackTick()
+		}
+	}
+
+	/**
+	 * Schedules the next _renderMask() tick via the fixed-interval Worker
+	 * timer (fallback for browsers without requestVideoFrameCallback).
+	 *
+	 * @private
+	 * @return {void}
+	 */
+	_scheduleFallbackTick() {
 		this._maskFrameTimerWorker.postMessage({
 			id: SET_TIMEOUT,
 			timeMs: 1000 / this._frameRate,
 			message: 'this._maskFrameTimerWorker',
 		})
+	}
+
+	/**
+	 * Starts the loop that triggers _renderMask() once per input video frame.
+	 *
+	 * Uses requestVideoFrameCallback where available (fires exactly on new
+	 * frames, keeps working in background tabs); falls back to the
+	 * Worker-based timer otherwise.
+	 *
+	 * @private
+	 * @return {void}
+	 */
+	_startFrameLoop() {
+		if ('requestVideoFrameCallback' in this._inputVideoElement) {
+			this._useRVFC = true
+
+			const onVideoFrame = () => {
+				this._renderMask()
+
+				if (this._running) {
+					this._rvfcHandle = this._inputVideoElement.requestVideoFrameCallback(onVideoFrame)
+				}
+			}
+
+			this._rvfcHandle = this._inputVideoElement.requestVideoFrameCallback(onVideoFrame)
+
+			return
+		}
+
+		this._useRVFC = false
+		this._scheduleFallbackTick()
 	}
 
 	/**
@@ -421,8 +489,13 @@ export default class VideoStreamBackgroundEffect {
 			return
 		}
 
-		this._outputCanvasElement.width = width
-		this._outputCanvasElement.height = height
+		// Assigning canvas dimensions clears and reallocates its backing
+		// buffer even when the values are unchanged, so only set them on
+		// an actual resize.
+		if (this._outputCanvasElement.width !== width || this._outputCanvasElement.height !== height) {
+			this._outputCanvasElement.width = width
+			this._outputCanvasElement.height = height
+		}
 
 		if (this._useWebGL) {
 			if (!this._glFx) {
@@ -629,11 +702,7 @@ export default class VideoStreamBackgroundEffect {
 		this._inputVideoElement.autoplay = true
 		this._inputVideoElement.srcObject = this._stream
 		this._inputVideoElement.onloadeddata = () => {
-			this._maskFrameTimerWorker.postMessage({
-				id: SET_TIMEOUT,
-				timeMs: 1000 / this._frameRate,
-				message: 'this._maskFrameTimerWorker',
-			})
+			this._startFrameLoop()
 			this._inputVideoElement.onloadeddata = null
 		}
 
@@ -678,6 +747,18 @@ export default class VideoStreamBackgroundEffect {
 	 */
 	stopEffect() {
 		this._running = false
+
+		// The "_running" check in onVideoFrame only stops future callbacks;
+		// one may already be pending, so cancel it explicitly.
+		if (this._rvfcHandle !== undefined) {
+			this._inputVideoElement.cancelVideoFrameCallback(this._rvfcHandle)
+			this._rvfcHandle = undefined
+		}
+
+		if (this._lastMask) {
+			this._lastMask.close()
+			this._lastMask = null
+		}
 
 		if (this._maskFrameTimerWorker) {
 			this._maskFrameTimerWorker.postMessage({
