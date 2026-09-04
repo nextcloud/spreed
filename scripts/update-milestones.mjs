@@ -207,13 +207,16 @@ async function listOpenOnMilestone(milestoneNumber) {
 /**
  * Print a single shell loop that moves every listed issue/PR to a milestone.
  *
- * @param {'issue'|'pr'} kind which `gh` subcommand to loop
+ * Always uses `gh issue edit` — PRs are issues under the GitHub API too, and
+ * `gh pr edit` errors on this repo with a deprecated Projects-classic
+ * GraphQL field (repository.pullRequest.projectCards).
+ *
  * @param {Array<{number: number}>} items the issues or PRs to move
  * @param {string} milestoneTitle the destination milestone's title
  */
-function printMoveCommand(kind, items, milestoneTitle) {
+function printMoveCommand(items, milestoneTitle) {
 	const numbers = items.map((i) => i.number).join(' ')
-	print.command(`for n in ${numbers}; do gh ${kind} edit "$n" --repo ${REPO} --milestone "${milestoneTitle}"; done`)
+	print.command(`for n in ${numbers}; do gh issue edit "$n" --repo ${REPO} --milestone "${milestoneTitle}"; done`)
 }
 
 /**
@@ -237,7 +240,7 @@ function printPlan(plan) {
 			print.warn(`No open milestone matching '(${nextNcMajor})' found — ${openIssues.length} issue(s) need manual triage`)
 		} else {
 			print.note(`${openIssues.length} issue(s) → '${nextMajorMilestone.title}'`)
-			printMoveCommand('issue', openIssues, nextMajorMilestone.title)
+			printMoveCommand(openIssues, nextMajorMilestone.title)
 		}
 
 		print.section('4. Open PRs')
@@ -255,7 +258,7 @@ function printPlan(plan) {
 			print.ok('No open issues to move')
 		} else {
 			print.note(`${openIssues.length} issue(s)`)
-			printMoveCommand('issue', openIssues, nextPatchTitle)
+			printMoveCommand(openIssues, nextPatchTitle)
 		}
 
 		print.section(`4. Move open PRs from '${releaseTitle}' to '${nextPatchTitle}'`)
@@ -263,7 +266,7 @@ function printPlan(plan) {
 			print.ok('No open PRs to move')
 		} else {
 			print.note(`${openPrs.length} PR(s)`)
-			printMoveCommand('pr', openPrs, nextPatchTitle)
+			printMoveCommand(openPrs, nextPatchTitle)
 		}
 	}
 
