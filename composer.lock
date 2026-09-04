@@ -341,12 +341,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "a56e4e2962b4f338b3233fea1fb2940d372440d7"
+                "reference": "a89b2397daebe5733ec96d9e70a4a2e974a06bfa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/a56e4e2962b4f338b3233fea1fb2940d372440d7",
-                "reference": "a56e4e2962b4f338b3233fea1fb2940d372440d7",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/a89b2397daebe5733ec96d9e70a4a2e974a06bfa",
+                "reference": "a89b2397daebe5733ec96d9e70a4a2e974a06bfa",
                 "shasum": ""
             },
             "require": {
@@ -365,7 +365,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "35.0.0-dev"
+                    "dev-master": "36.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -387,7 +387,7 @@
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
                 "source": "https://github.com/nextcloud-deps/ocp/tree/master"
             },
-            "time": "2026-09-02T01:51:46+00:00"
+            "time": "2026-09-04T01:52:33+00:00"
         },
         {
             "name": "psr/clock",
