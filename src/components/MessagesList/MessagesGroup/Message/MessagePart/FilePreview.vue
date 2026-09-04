@@ -95,8 +95,11 @@
 			</template>
 		</NcButton>
 		<div v-if="shouldShowFileDetail" class="name-container">
-			<span class="name-container__basename">{{ fileNameWithoutExtension }}</span>
-			<span v-if="fileExtension" class="name-container__extension">{{ fileExtension }}</span>
+			<span class="name-container__name">
+				<span class="name-container__basename">{{ fileNameWithoutExtension }}</span>
+				<span v-if="fileExtension" class="name-container__extension">{{ fileExtension }}</span>
+			</span>
+			<span v-if="rowLayout && fileMetaLabel" class="name-container__meta">{{ fileMetaLabel }}</span>
 		</div>
 	</component>
 </template>
@@ -198,6 +201,12 @@ export default {
 			type: String,
 			default: '',
 		},
+
+		/** Sibling media (images/videos) from this message, to scope the Viewer's list to this group */
+		viewerList: {
+			type: Array,
+			default: undefined,
+		},
 	},
 
 	emits: ['removeFile'],
@@ -230,9 +239,9 @@ export default {
 			// display the file detail below the preview if the preview
 			// is not easily recognizable, when:
 			return (
-				// the file is not an image
-				!this.file.mimetype.startsWith('image/')
-				// the image has no preview (ex: disabled on server)
+				// the file is not an image or video
+				!(this.file.mimetype.startsWith('image/') || this.file.mimetype.startsWith('video/'))
+				// the file has no preview (ex: disabled on server)
 				|| (this.file['preview-available'] !== 'yes' && !this.file.localUrl)
 				// the preview failed loading
 				|| this.failed
@@ -253,6 +262,12 @@ export default {
 		// Dot included, original case
 		fileExtension() {
 			return getFileExtension(this.file.name)
+		},
+
+		fileMetaLabel() {
+			const size = parseInt(this.file.size, 10)
+			const sizeLabel = size ? formatFileSize(size, true) : ''
+			return [this.fileExtension.slice(1).toUpperCase(), sizeLabel].filter(Boolean).join(' · ')
 		},
 
 		fileSizeLabel() {
@@ -603,22 +618,25 @@ export default {
 			event.stopPropagation()
 			event.preventDefault()
 
-			if (this.itemType === SHARED_ITEM.TYPES.MEDIA) {
+			let list = [this.file]
+			let loadMore = undefined
+
+			if (this.itemType === SHARED_ITEM.TYPES.MEDIA && this.isSharedItems) {
 				const getRevertedList = (items) => Object.values(items).reverse()
 					.map((item) => item.messageParameters.file)
 
 				// Get available media files from store and put them to the list to navigate through slides
-				const mediaFiles = this.sharedItemsStore.sharedItems(this.token).media
-				const list = getRevertedList(mediaFiles)
-				const loadMore = async () => {
+				list = getRevertedList(this.sharedItemsStore.sharedItems(this.token).media)
+				loadMore = async () => {
 					const { messages } = await this.sharedItemsStore.fetchSharedItems(this.token, SHARED_ITEM.TYPES.MEDIA)
 					return getRevertedList(messages)
 				}
-
-				this.openViewer(this.internalAbsolutePath, list, this.file, loadMore)
-			} else {
-				this.openViewer(this.internalAbsolutePath, [this.file], this.file)
+			} else if (this.itemType === SHARED_ITEM.TYPES.MEDIA && this.viewerList?.length) {
+				// Message context: only swipe through this message's images
+				list = this.viewerList
 			}
+
+			this.openViewer(this.internalAbsolutePath, list, this.file, loadMore)
 		},
 	},
 }
@@ -794,20 +812,27 @@ export default {
 	}
 
 	.name-container {
-		font-weight: bold;
+		font-weight: normal;
 		width: 100%;
 		overflow: hidden;
 		white-space: nowrap;
 		display: inline-flex;
 
+		&__name {
+			display: inline-flex;
+			min-width: 0;
+		}
+
 		&__basename {
 			unicode-bidi: isolate;
+			min-width: 0;
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
 		}
 
 		&__extension {
+			flex-shrink: 0;
 			color: var(--color-text-maxcontrast);
 			overflow: visible;
 		}
@@ -850,7 +875,6 @@ export default {
 		// Fixed, so that the height of the tile stays the same for every font
 		.name-container {
 			height: var(--preview-name-height, 24px);
-			font-weight: normal;
 			font-size: var(--font-size-small);
 		}
 	}
@@ -858,6 +882,7 @@ export default {
 	&--row-layout {
 		display: flex;
 		align-items: center;
+		min-width: 0;
 		border-radius: var(--border-radius);
 		padding: 2px 4px;
 
@@ -867,8 +892,21 @@ export default {
 		}
 
 		.name-container {
+			display: flex;
+			flex-direction: column;
+			flex: 1 1 auto;
+			min-width: 0;
 			padding: 0 4px;
-			font-weight: normal;
+			font-size: var(--font-size-small);
+
+			&__name {
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			&__meta {
+				color: var(--color-text-maxcontrast);
+			}
 		}
 	}
 
