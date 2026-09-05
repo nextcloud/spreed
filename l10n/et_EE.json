@@ -90,7 +90,6 @@
     "- Presets for quick conversation configuration during creation" : "- Eelseadistused vestluse kiireks seadistamiseks loomise ajal",
     "- Direct calls from profile menus for calls within other apps" : "- Otsekõned profiili menüüdest teistesse rakendustesse",
     "- Classified conversations for better discussions around sensitive topics" : "- Salastatud vestluste kasutamise võimalus, kui arutelu toimub tundlikul teemal",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Kanalid ja teadaanded info levitamiseks laiemale vaatajaskonnale",
     "- Owners can preserve a conversation, preventing deletion and chat purging" : "- Omanikud saavad märkida vestluse säilitamisele kuuluvaks ja seega keelates kustutamise ja sisu eemaldamise",
     "_All %n participant_::_All %n participants_" : ["%n osaleja","Kõik %n osalejat"],
     "Talk updates ✅" : "Kõnerakenduse uuendused ✅",
@@ -2361,6 +2360,7 @@
     "Open poll • Your vote is anonymous" : "Avatud küsitlus • Sinu hääl on anonüümne",
     "I picked list style" : "Ma valisin loendi",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hei! Kas sa kasutad vestlusrakendust loendivaates või jutumullide vaates?",
-    "Allow editing of uploaded files" : "Luba üleslaaditud failide muutmist"
+    "Allow editing of uploaded files" : "Luba üleslaaditud failide muutmist",
+    "- Channels and announcements to broadcast information to a broader audiance" : "- Kanalid ja teadaanded info levitamiseks laiemale vaatajaskonnale"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

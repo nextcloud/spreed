@@ -92,7 +92,6 @@ OC.L10N.register(
     "- Presets for quick conversation configuration during creation" : "- Förinställningar för snabb samtalskonfiguration vid skapande",
     "- Direct calls from profile menus for calls within other apps" : "- Direktsamtal från profilmenyer för samtal inom andra appar",
     "- Classified conversations for better discussions around sensitive topics" : "- Klassificerade konversationer för bättre diskussioner om känsliga ämnen",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Kanaler och anslag för att sprida information till en bredare målgrupp",
     "- Owners can preserve a conversation, preventing deletion and chat purging" : "- Ägare kan bevara en konversation och förhindra borttagning och rensning av chatten",
     "_All %n participant_::_All %n participants_" : ["Alla %n deltagare","Alla %n deltagare"],
     "Talk updates ✅" : "Talk-uppdateringar ✅",
@@ -2363,6 +2362,7 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Öppen omröstning • Din röst är anonym",
     "I picked list style" : "Jag valde listvy",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Använder du Talk i listvy eller meddelandebubblor?",
-    "Allow editing of uploaded files" : "Tillåt redigering av uppladdade filer"
+    "Allow editing of uploaded files" : "Tillåt redigering av uppladdade filer",
+    "- Channels and announcements to broadcast information to a broader audiance" : "- Kanaler och anslag för att sprida information till en bredare målgrupp"
 },
 "nplurals=2; plural=(n != 1);");
