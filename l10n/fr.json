@@ -90,7 +90,6 @@
     "- Presets for quick conversation configuration during creation" : "- Configurations prédéfinies pour créer rapidement une conversation",
     "- Direct calls from profile menus for calls within other apps" : "- Appels directs depuis les menus de profil pour appeler dans les autres applications",
     "- Classified conversations for better discussions around sensitive topics" : "- Conversations confidentielles pour des discussions plus appropriées autour de sujets sensibles",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Canaux et annonces pour diffuser de l'information à une audience plus large",
     "- Owners can preserve a conversation, preventing deletion and chat purging" : "- Les propriétaires peuvent préserver une conversation, empêchant sa suppression et la purge de la discussion",
     "_All %n participant_::_All %n participants_" : ["Le participant","Les %n participants","Les %n participants"],
     "Talk updates ✅" : "Mises à jour de Talk ✅",
@@ -2361,6 +2360,7 @@
     "Open poll • Your vote is anonymous" : "Sondage ouvert • Votre vote est anonyme",
     "I picked list style" : "J'ai choisi le style liste",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hé ! Utilisez-vous Talk en mode liste ou avec des bulles de message ?",
-    "Allow editing of uploaded files" : "Autoriser la modification des fichiers téléversés"
+    "Allow editing of uploaded files" : "Autoriser la modification des fichiers téléversés",
+    "- Channels and announcements to broadcast information to a broader audiance" : "- Canaux et annonces pour diffuser de l'information à une audience plus large"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

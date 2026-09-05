@@ -92,7 +92,6 @@ OC.L10N.register(
     "- Presets for quick conversation configuration during creation" : "- Réamhshocruithe le haghaidh cumraíocht chomhrá tapa le linn cruthaithe",
     "- Direct calls from profile menus for calls within other apps" : "- Glaonna díreacha ó roghchláir phróifíle le haghaidh glaonna laistigh d'aipeanna eile",
     "- Classified conversations for better discussions around sensitive topics" : "- Comhráite rúnda le haghaidh plé níos fearr ar ábhair íogaire",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Bealaí agus fógraí chun faisnéis a chraoladh chuig lucht féachana níos leithne",
     "- Owners can preserve a conversation, preventing deletion and chat purging" : "- Is féidir le húinéirí comhrá a chaomhnú, rud a chuireann cosc ​​ar scriosadh agus ar ghlanadh comhrá.",
     "_All %n participant_::_All %n participants_" : ["Gach %n rannpháirtí","Gach %n rannpháirtí","Gach %n rannpháirtí","Gach %n rannpháirtí","Gach %n rannpháirtí"],
     "Talk updates ✅" : "Labhair nuashonruithe ✅",
@@ -2363,6 +2362,7 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Vótaíocht oscailte • Tá do vóta gan ainm",
     "I picked list style" : "Roghnaigh mé stíl liosta",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Haigh! An bhfuil tú ag úsáid Talk i stíl liosta nó le boilgeoga teachtaireachta?",
-    "Allow editing of uploaded files" : "Ceadaigh eagarthóireacht ar chomhaid uaslódáilte"
+    "Allow editing of uploaded files" : "Ceadaigh eagarthóireacht ar chomhaid uaslódáilte",
+    "- Channels and announcements to broadcast information to a broader audiance" : "- Bealaí agus fógraí chun faisnéis a chraoladh chuig lucht féachana níos leithne"
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");

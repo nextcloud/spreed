@@ -92,7 +92,6 @@ OC.L10N.register(
     "- Presets for quick conversation configuration during creation" : "- 預設設定，可在建立時快速設定對話",
     "- Direct calls from profile menus for calls within other apps" : "- 透過個人檔案選單直接撥打其他應用程式內的電話",
     "- Classified conversations for better discussions around sensitive topics" : "- 機密對話功能，讓針對敏感議題的討論更為順暢",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- 透過各類頻道及公告，向更廣泛的受眾廣播資訊",
     "- Owners can preserve a conversation, preventing deletion and chat purging" : "- 群組管理員可以保留對話，防止對話被刪除或清空",
     "_All %n participant_::_All %n participants_" : ["全部 %n 個參與者"],
     "Talk updates ✅" : "Talk 更新 ✅",
@@ -2363,6 +2362,7 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "開放投票 • 您的投票是匿名的",
     "I picked list style" : "我選了清單樣式",
     "Hey! Are you using Talk in list style or with message bubbles?" : "嘿！您要使用清單樣式或訊息泡泡的 Talk？",
-    "Allow editing of uploaded files" : "允許編輯上傳的檔案"
+    "Allow editing of uploaded files" : "允許編輯上傳的檔案",
+    "- Channels and announcements to broadcast information to a broader audiance" : "- 透過各類頻道及公告，向更廣泛的受眾廣播資訊"
 },
 "nplurals=1; plural=0;");

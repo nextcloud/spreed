@@ -92,7 +92,6 @@ OC.L10N.register(
     "- Presets for quick conversation configuration during creation" : "- Prednastavenia pre rýchlu konfiguráciu konverzácie počas vytvárania",
     "- Direct calls from profile menus for calls within other apps" : "- Priame hovory z ponúk profilu pre hovory v iných aplikáciách",
     "- Classified conversations for better discussions around sensitive topics" : "- Dôverné konverzácie na lepšie diskusie o citlivých témach",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Kanály a oznámenia na šírenie informácií širšiemu publiku",
     "- Owners can preserve a conversation, preventing deletion and chat purging" : "- Vlastníci môžu zachovať konverzáciu, čím zabránia jej odstráneniu a vymazaniu chatu",
     "_All %n participant_::_All %n participants_" : ["%n účastník","Všetci %n účastníci","Všetkých %n účastníkov","Všetkých %n účastníkov"],
     "Talk updates ✅" : "Aktualizácie Talk /Rozhovor/ ✅",
@@ -2363,6 +2362,7 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Otvorená anketa • Váš hlas je anonymný",
     "I picked list style" : "Vybral/a som si štýl zoznamu",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Ahoj! Používaš Talk v zoznamovom štýle alebo s bublinami správ?",
-    "Allow editing of uploaded files" : "Povoliť úpravu nahraných súborov"
+    "Allow editing of uploaded files" : "Povoliť úpravu nahraných súborov",
+    "- Channels and announcements to broadcast information to a broader audiance" : "- Kanály a oznámenia na šírenie informácií širšiemu publiku"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");
