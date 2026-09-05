@@ -92,7 +92,6 @@ OC.L10N.register(
     "- Presets for quick conversation configuration during creation" : "- Oluşturma sırasında hızlı görüşme yapılandırması için hazır ayarlar",
     "- Direct calls from profile menus for calls within other apps" : "- Diğer uygulamalardaki aramalar için profil menülerinden doğrudan aramalar",
     "- Classified conversations for better discussions around sensitive topics" : "- Önemli konular ile ilgili daha iyi tartışmak için gizli konuşmalar",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Daha geniş bir kitleye bilgi yayınlamak için kanallar ve duyurular",
     "- Owners can preserve a conversation, preventing deletion and chat purging" : "- Sahipler bir konuşmayı koruyarak, silinmesini ve sohbetin temizlenmesini önleyebilir",
     "_All %n participant_::_All %n participants_" : ["Tüm %n katılımcı","Tüm %n katılımcı"],
     "Talk updates ✅" : "Konuş güncellemeleri ✅",
@@ -2363,6 +2362,7 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Açık anket • Oyunuz anonimdir",
     "I picked list style" : "Liste biçemini seçtim",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Talk görünümü liste olarak mı ileti balonları olarak mı kullanıyorsunuz?",
-    "Allow editing of uploaded files" : "Yüklenen dosyalar düzenlenebilsin"
+    "Allow editing of uploaded files" : "Yüklenen dosyalar düzenlenebilsin",
+    "- Channels and announcements to broadcast information to a broader audiance" : "- Daha geniş bir kitleye bilgi yayınlamak için kanallar ve duyurular"
 },
 "nplurals=2; plural=(n > 1);");
