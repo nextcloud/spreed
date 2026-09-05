@@ -92,7 +92,6 @@ OC.L10N.register(
     "- Presets for quick conversation configuration during creation" : "- Előbeállítások a gyors beszélgetésbeállításhoz a létrehozás során",
     "- Direct calls from profile menus for calls within other apps" : "- Közvetlen hívások a profilmenükből a más alkalmazásokon belüli hívásokhoz",
     "- Classified conversations for better discussions around sensitive topics" : "- Bizalmas beszélgetések a kényes témák jobb megbeszéléséhez",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Csatornák és bejelentések a nagyobb közönségnek szóló információközléshez",
     "- Owners can preserve a conversation, preventing deletion and chat purging" : "- A tulajdonosok megőrizhetik a beszélgetéseket, megakadályozva a törlést és a csevegések eltávolítását",
     "_All %n participant_::_All %n participants_" : ["Mind a(z) %n résztvevő","Mind a(z) %n résztvevő"],
     "Talk updates ✅" : "Beszélgetés frissítések ✅",
@@ -2363,6 +2362,7 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Nyitott szavazás • A szavazata anonim",
     "I picked list style" : "A listastílust választottam",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hé! A Beszélgetést listastílussal vagy üzenetbuborékokkal használod?",
-    "Allow editing of uploaded files" : "Felöltött fájlok szerkesztésének engedélyezése"
+    "Allow editing of uploaded files" : "Felöltött fájlok szerkesztésének engedélyezése",
+    "- Channels and announcements to broadcast information to a broader audiance" : "- Csatornák és bejelentések a nagyobb közönségnek szóló információközléshez"
 },
 "nplurals=2; plural=(n != 1);");

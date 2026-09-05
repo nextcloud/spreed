@@ -1493,6 +1493,7 @@ OC.L10N.register(
     "Add users or groups" : "ユーザーまたはグループの追加",
     "Add users" : "ユーザーを追加",
     "Add groups" : "グループを追加",
+    "Add teams" : "チームを追加する",
     "Add other sources" : "他のソースを追加",
     "Add emails" : "メールを追加",
     "Integrations" : "インテグレーション",

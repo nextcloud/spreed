@@ -91,6 +91,8 @@ OC.L10N.register(
     "- Voice-rooms to connect spontaneously" : "- Voice-rooms to connect spontaneously",
     "- Presets for quick conversation configuration during creation" : "- Presets for quick conversation configuration during creation",
     "- Direct calls from profile menus for calls within other apps" : "- Direct calls from profile menus for calls within other apps",
+    "- Classified conversations for better discussions around sensitive topics" : "- Classified conversations for better discussions around sensitive topics",
+    "- Owners can preserve a conversation, preventing deletion and chat purging" : "- Owners can preserve a conversation, preventing deletion and chat purging",
     "_All %n participant_::_All %n participants_" : ["All %n participant","All %n participants"],
     "Talk updates ✅" : "Talk updates ✅",
     "Reaction deleted by author" : "Reaction deleted by author",
@@ -1118,6 +1120,7 @@ OC.L10N.register(
     "Reload" : "Reload",
     "{nickName} raised their hand." : "{nickName} raised their hand.",
     "A participant raised their hand." : "A participant raised their hand.",
+    "Page {page} of {pages}" : "Page {page} of {pages}",
     "Collapse participant bar" : "Collapse participant bar",
     "Expand participant bar" : "Expand participant bar",
     "Previous page of videos" : "Previous page of videos",
@@ -2276,6 +2279,8 @@ OC.L10N.register(
     "Connecting is taking longer than expected …" : "Connecting is taking longer than expected …",
     "Failed to connect. Retrying …" : "Failed to connect. Retrying …",
     "Failed to connect. The signaling server may be set up incorrectly" : "Failed to connect. The signaling server may be set up incorrectly",
+    "High-performance backend needs to be updated." : "High-performance backend needs to be updated.",
+    "The server is misconfigured. Please contact your administration." : "The server is misconfigured. Please contact your administration.",
     "Please restart the app." : "Please restart the app.",
     "Please reload the page." : "Please reload the page.",
     "Please try to restart the app." : "Please try to restart the app.",
@@ -2357,6 +2362,7 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Open poll • Your vote is anonymous",
     "I picked list style" : "I picked list style",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hey! Are you using Talk in list style or with message bubbles?",
-    "Allow editing of uploaded files" : "Allow editing of uploaded files"
+    "Allow editing of uploaded files" : "Allow editing of uploaded files",
+    "- Channels and announcements to broadcast information to a broader audiance" : "- Channels and announcements to broadcast information to a broader audiance"
 },
 "nplurals=2; plural=(n != 1);");
