@@ -4,14 +4,20 @@
  */
 
 import { getCurrentUser } from '@nextcloud/auth'
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
-import { setPlaySounds } from '../../services/settingsService.ts'
 
 vi.mock('@nextcloud/auth', () => ({
 	getCurrentUser: vi.fn(),
+}))
+vi.mock('@nextcloud/axios', () => ({
+	default: {
+		post: vi.fn(() => Promise.resolve()),
+	},
 }))
 vi.mock('../../services/BrowserStorage.js', () => ({
 	default: {
@@ -21,9 +27,6 @@ vi.mock('../../services/BrowserStorage.js', () => ({
 }))
 vi.mock('../../services/CapabilitiesManager.ts', () => ({
 	getTalkConfig: vi.fn(),
-}))
-vi.mock('../../services/settingsService.ts', () => ({
-	setPlaySounds: vi.fn(() => Promise.resolve()),
 }))
 
 /**
@@ -100,25 +103,28 @@ describe('soundsStore', () => {
 			getTalkConfig.mockReturnValue(true)
 			const store = await loadSoundsStore()
 			await store.setShouldPlaySounds(false)
-			expect(setPlaySounds).toHaveBeenCalledWith(true, 'no')
+			expect(axios.post).toHaveBeenCalledWith(
+				generateOcsUrl('apps/spreed/api/v1/settings/user'),
+				{ key: 'play_sounds', value: 'no' },
+			)
 			expect(BrowserStorage.setItem).not.toHaveBeenCalled()
 			expect(store.shouldPlaySounds).toBe(false)
 		})
 
-		it('leaves the value to browser storage when the server has no capability', async () => {
+		it('saves to browser storage instead on older servers, since they cannot hand it back', async () => {
 			const store = await loadSoundsStore()
 			await store.setShouldPlaySounds(false)
-			expect(setPlaySounds).toHaveBeenCalledWith(false, 'no')
-			expect(BrowserStorage.setItem).not.toHaveBeenCalled()
+			expect(axios.post).not.toHaveBeenCalled()
+			expect(BrowserStorage.setItem).toHaveBeenCalledWith('play_sounds', 'no')
 			expect(store.shouldPlaySounds).toBe(false)
 		})
 
-		it('saves guests to browser storage through the settings service only', async () => {
+		it('saves guests to browser storage', async () => {
 			getCurrentUser.mockReturnValue(null)
 			const store = await loadSoundsStore()
 			await store.setShouldPlaySounds(true)
-			expect(setPlaySounds).toHaveBeenCalledWith(false, 'yes')
-			expect(BrowserStorage.setItem).not.toHaveBeenCalled()
+			expect(axios.post).not.toHaveBeenCalled()
+			expect(BrowserStorage.setItem).toHaveBeenCalledWith('play_sounds', 'yes')
 		})
 	})
 })
