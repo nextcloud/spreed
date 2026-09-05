@@ -29,6 +29,8 @@ registerWidget('call', (el, { richObject, accessible, openGraphObject }) => {
 	const app = createApp(CallReferenceWidget, {
 		richObject: richObject as unknown as TalkReferenceRichObject,
 		accessible,
+		referenceTitle: openGraphObject?.name ?? null,
+		referenceDescription: openGraphObject?.description ?? null,
 		fallbackAvatarUrl: openGraphObject?.thumb ?? null,
 	})
 	widgetApps.set(el, app)

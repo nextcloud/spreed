@@ -17,7 +17,8 @@
 				v-if="conversation"
 				:item="conversation"
 				:size="AVATAR.SIZE.DEFAULT"
-				hideUserStatus />
+				hideUserStatus
+				:hideCall="isMessageReference" />
 			<img
 				v-else-if="fallbackAvatarUrl"
 				:src="fallbackAvatarUrl"
@@ -25,8 +26,11 @@
 				class="talk-reference-call__fallback-avatar">
 
 			<span class="talk-reference-call__body">
-				<span class="talk-reference-call__title">{{ displayName }}</span>
-				<span v-if="lastMessagePreview" class="talk-reference-call__subtitle">{{ lastMessagePreview }}</span>
+				<span class="talk-reference-call__title">{{ title }}</span>
+				<span class="talk-reference-call__type">{{ referenceType }}</span>
+				<span v-if="subtitle" class="talk-reference-call__subtitle">{{ subtitle }}</span>
+				<span v-if="!isMessageReference && lastMessagePreview" class="talk-reference-call__preview">{{ lastMessagePreview }}</span>
+				<span v-if="roomMetadata" class="talk-reference-call__metadata">{{ roomMetadata }}</span>
 			</span>
 		</template>
 	</a>
@@ -35,17 +39,21 @@
 <script setup lang="ts">
 import type { Conversation, TalkReferenceRichObject } from '../../types/index.ts'
 
+import { n, t } from '@nextcloud/l10n'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import ConversationIcon from '../ConversationIcon.vue'
 import { AVATAR, MESSAGE } from '../../constants.ts'
 import { fetchConversation } from '../../services/conversationsService.ts'
+import { formatDateTime } from '../../utils/formattedTime.ts'
 import { getDisplayNameWithFallback } from '../../utils/getDisplayName.ts'
 import { parseToSimpleMessage } from '../../utils/textParse.ts'
 
 const props = defineProps<{
 	richObject: TalkReferenceRichObject
 	accessible: boolean
+	referenceTitle?: string | null
+	referenceDescription?: string | null
 	/** Server-rendered fallback avatar (open graph thumbnail), used only until/if the live conversation loads */
 	fallbackAvatarUrl?: string | null
 }>()
@@ -80,6 +88,64 @@ onBeforeUnmount(() => {
 })
 
 const displayName = computed(() => conversation.value?.displayName || props.richObject.name)
+
+const isMessageReference = computed(() => Boolean(props.richObject['message-id']))
+
+const title = computed(() => {
+	if (isMessageReference.value) {
+		return props.referenceTitle || props.richObject.name
+	}
+
+	return displayName.value
+})
+
+const subtitle = computed(() => {
+	if (isMessageReference.value) {
+		return props.referenceDescription || ''
+	}
+
+	return conversation.value?.description || props.referenceDescription || ''
+})
+
+const referenceType = computed(() => {
+	if (isMessageReference.value) {
+		return t('spreed', 'Message')
+	}
+
+	switch (conversation.value?.type ?? props.richObject['call-type']) {
+		case 'one2one':
+		case 1:
+			return t('spreed', 'One-to-one conversation')
+		case 'public':
+		case 3:
+			return t('spreed', 'Public conversation')
+		case 'group':
+		case 2:
+			return t('spreed', 'Group conversation')
+		default:
+			return t('spreed', 'Conversation')
+	}
+})
+
+const roomMetadata = computed(() => {
+	if (isMessageReference.value || !conversation.value) {
+		return ''
+	}
+
+	const metadata = []
+	const timestamp = conversation.value.lastMessage?.timestamp
+	if (timestamp) {
+		metadata.push(formatDateTime(timestamp * 1000, 'shortDateWithTime'))
+	}
+	if (conversation.value.unreadMessages > 0) {
+		metadata.push(n('spreed', '{count} unread message', '{count} unread messages', conversation.value.unreadMessages, { count: conversation.value.unreadMessages }))
+	}
+	if (conversation.value.hasCall) {
+		metadata.push(t('spreed', 'Call in progress'))
+	}
+
+	return metadata.join(' · ')
+})
 
 const fallbackAvatarUrl = computed(() => props.fallbackAvatarUrl ?? null)
 
@@ -144,14 +210,29 @@ const lastMessagePreview = computed(() => {
 		font-weight: bold;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		white-space: nowrap;
+		white-space: normal;
+	}
+
+	&__type {
+		color: var(--color-text-maxcontrast);
+		font-size: var(--font-size-small);
 	}
 
 	&__subtitle {
 		color: var(--color-text-maxcontrast);
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		white-space: normal;
+	}
+
+	&__preview {
+		margin-top: var(--default-grid-baseline);
+		white-space: normal;
+	}
+
+	&__metadata {
+		margin-top: var(--default-grid-baseline);
+		color: var(--color-text-maxcontrast);
+		font-size: var(--font-size-small);
+		white-space: normal;
 	}
 }
 </style>
