@@ -11,19 +11,31 @@ import { getTalkConfig } from '../services/CapabilitiesManager.ts'
 import { setPlaySounds } from '../services/settingsService.ts'
 
 const hasUserAccount = Boolean(getCurrentUser()?.uid)
+const playSoundsCapability = getTalkConfig('local', 'call', 'play-sounds')
+const hasPlaySoundsCapability = playSoundsCapability !== undefined
+
 /**
- * Get play sounds option (from server for user or from browser storage for guest)
+ * Get play sounds option. A guest keeps whatever this browser remembered, otherwise the
+ * capability decides. Servers before Talk 24 don't hand the value out at all, so fall back
+ * to the browser and then to enabled.
+ *
+ * @return {boolean}
  */
-let shouldPlaySounds = false
-if (hasUserAccount) {
-	shouldPlaySounds = getTalkConfig('local', 'call', 'play-sounds')
-} else {
-	if (BrowserStorage.getItem('play_sounds')) {
-		shouldPlaySounds = BrowserStorage.getItem('play_sounds') !== 'no'
-	} else {
-		shouldPlaySounds = getTalkConfig('local', 'call', 'play-sounds')
+function getInitialShouldPlaySounds() {
+	const fromStorage = BrowserStorage.getItem('play_sounds')
+
+	if (!hasUserAccount && fromStorage) {
+		return fromStorage !== 'no'
 	}
+
+	if (hasPlaySoundsCapability) {
+		return playSoundsCapability
+	}
+
+	return fromStorage ? fromStorage !== 'no' : true
 }
+
+const shouldPlaySounds = getInitialShouldPlaySounds()
 
 /**
  * Preferred version is the .ogg, with .flac fallback if .ogg is not supported (Safari)
@@ -55,7 +67,7 @@ export const useSoundsStore = defineStore('sounds', {
 		 * @param {boolean} value whether sounds should be played
 		 */
 		async setShouldPlaySounds(value) {
-			await setPlaySounds(hasUserAccount, value ? 'yes' : 'no')
+			await setPlaySounds(hasUserAccount && hasPlaySoundsCapability, value ? 'yes' : 'no')
 			this.shouldPlaySounds = value
 		},
 
