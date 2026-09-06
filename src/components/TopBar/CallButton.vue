@@ -341,8 +341,7 @@ export default {
 		},
 
 		showLeaveCallButton() {
-			return this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
-				&& this.isInCall
+			return this.isInCall
 		},
 
 		isBreakoutRoom() {
