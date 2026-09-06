@@ -18,7 +18,6 @@
 					v-if="conversation"
 					:item="conversation"
 					:size="AVATAR.SIZE.DEFAULT"
-					cssSize="min(100cqi, 100cqb)"
 					hideUserStatus
 					:hideCall="isMessageReference" />
 				<img
@@ -203,7 +202,6 @@ const lastMessagePreview = computed(() => {
 	}
 
 	&__avatar-frame {
-		container-type: size;
 		display: grid;
 		place-items: center;
 		flex: 0 0 20%;
@@ -211,10 +209,9 @@ const lastMessagePreview = computed(() => {
 	}
 
 	&__fallback-avatar {
-		width: min(100cqi, 100cqb) !important;
-		height: min(100cqi, 100cqb) !important;
-		max-width: min(100cqi, 100cqb) !important;
-		max-height: min(100cqi, 100cqb) !important;
+		width: 100% !important;
+		height: auto !important;
+		max-width: 100% !important;
 		aspect-ratio: 1;
 		border-radius: 50%;
 		object-fit: cover;
@@ -222,6 +219,9 @@ const lastMessagePreview = computed(() => {
 	}
 
 	&__avatar-frame :deep(.conversation-icon) {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 1;
 		flex: none;
 		min-width: 0;
 		min-height: 0;
@@ -229,10 +229,10 @@ const lastMessagePreview = computed(() => {
 
 	&__avatar-frame :deep(.conversation-icon img.avatar.icon),
 	&__avatar-frame :deep(.conversation-icon .avatardiv) {
-		width: var(--icon-size) !important;
-		height: var(--icon-size) !important;
-		max-width: var(--icon-size) !important;
-		max-height: var(--icon-size) !important;
+		width: 100% !important;
+		height: 100% !important;
+		max-width: 100% !important;
+		max-height: 100% !important;
 		aspect-ratio: 1;
 	}
 

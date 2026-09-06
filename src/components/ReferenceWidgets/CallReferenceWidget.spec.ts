@@ -87,7 +87,6 @@ describe('CallReferenceWidget.vue', () => {
 		expect(wrapper.text()).toContain('Call in progress')
 		const conversationIcon = wrapper.findComponent(ConversationIcon)
 		expect(conversationIcon.exists()).toBe(true)
-		expect(conversationIcon.props('cssSize')).toBe('min(100cqi, 100cqb)')
 		expect(wrapper.find('.talk-reference-call__avatar-frame').exists()).toBe(true)
 	})
 
