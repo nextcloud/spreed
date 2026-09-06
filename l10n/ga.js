@@ -92,6 +92,7 @@ OC.L10N.register(
     "- Presets for quick conversation configuration during creation" : "- Réamhshocruithe le haghaidh cumraíocht chomhrá tapa le linn cruthaithe",
     "- Direct calls from profile menus for calls within other apps" : "- Glaonna díreacha ó roghchláir phróifíle le haghaidh glaonna laistigh d'aipeanna eile",
     "- Classified conversations for better discussions around sensitive topics" : "- Comhráite rúnda le haghaidh plé níos fearr ar ábhair íogaire",
+    "- Channels and announcements to broadcast information to a broader audience" : "- Bealaí agus fógraí chun faisnéis a chraoladh chuig lucht féachana níos leithne",
     "- Owners can preserve a conversation, preventing deletion and chat purging" : "- Is féidir le húinéirí comhrá a chaomhnú, rud a chuireann cosc ​​ar scriosadh agus ar ghlanadh comhrá.",
     "_All %n participant_::_All %n participants_" : ["Gach %n rannpháirtí","Gach %n rannpháirtí","Gach %n rannpháirtí","Gach %n rannpháirtí","Gach %n rannpháirtí"],
     "Talk updates ✅" : "Labhair nuashonruithe ✅",
