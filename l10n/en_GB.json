@@ -90,6 +90,7 @@
     "- Presets for quick conversation configuration during creation" : "- Presets for quick conversation configuration during creation",
     "- Direct calls from profile menus for calls within other apps" : "- Direct calls from profile menus for calls within other apps",
     "- Classified conversations for better discussions around sensitive topics" : "- Classified conversations for better discussions around sensitive topics",
+    "- Channels and announcements to broadcast information to a broader audience" : "- Channels and announcements to broadcast information to a broader audience",
     "- Owners can preserve a conversation, preventing deletion and chat purging" : "- Owners can preserve a conversation, preventing deletion and chat purging",
     "_All %n participant_::_All %n participants_" : ["All %n participant","All %n participants"],
     "Talk updates ✅" : "Talk updates ✅",
