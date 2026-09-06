@@ -92,6 +92,7 @@ OC.L10N.register(
     "- Presets for quick conversation configuration during creation" : "- Voreinstellungen für eine schnelle Unterhaltungseinrichtung während der Erstellung",
     "- Direct calls from profile menus for calls within other apps" : "- Direkte Anrufe aus Profilmenüs für Anrufe innerhalb anderer Apps",
     "- Classified conversations for better discussions around sensitive topics" : "- Vertrauliche Gespräche für bessere Diskussionen über sensible Themen",
+    "- Channels and announcements to broadcast information to a broader audience" : "- Kanäle und Ankündigungen zum Senden von Informationen an ein breiteres Publikum",
     "- Owners can preserve a conversation, preventing deletion and chat purging" : "- Besitzer können einen Chatverlauf speichern und so das Löschen und die Bereinigung des Chats verhindern.",
     "_All %n participant_::_All %n participants_" : ["Jeder %n Teilnehmer","Alle %n Teilnehmer"],
     "Talk updates ✅" : "Talk Aktualisierungen ✅",

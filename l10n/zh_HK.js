@@ -91,6 +91,9 @@ OC.L10N.register(
     "- Voice-rooms to connect spontaneously" : "- 語音房間，讓你隨時即興連線交流",
     "- Presets for quick conversation configuration during creation" : "- 建立對話時可使用預設配置，快速完成對話設定",
     "- Direct calls from profile menus for calls within other apps" : "- 可從個人檔案選單直接撥打通話，方便於其他應用程式內進行通話",
+    "- Classified conversations for better discussions around sensitive topics" : "- 分類對話，讓敏感話題的討論更妥善有序",
+    "- Channels and announcements to broadcast information to a broader audience" : "- 頻道及公告，用於向更廣泛的受眾發放資訊",
+    "- Owners can preserve a conversation, preventing deletion and chat purging" : "- 擁有者可保留對話，防止對話被刪除或聊天記錄被清除",
     "_All %n participant_::_All %n participants_" : ["所有 %n 個參與者"],
     "Talk updates ✅" : "Talk 更新 ✅",
     "Reaction deleted by author" : "反應被作者刪除",
@@ -1118,6 +1121,7 @@ OC.L10N.register(
     "Reload" : "重新載入",
     "{nickName} raised their hand." : "{nickName} 舉起了手。",
     "A participant raised their hand." : "一位參與者舉起了手。",
+    "Page {page} of {pages}" : "第 {page} 頁，共 {pages} 頁",
     "Collapse participant bar" : "收起參與者欄",
     "Expand participant bar" : "展開參與者欄",
     "Previous page of videos" : "視像的上一頁",
@@ -2359,6 +2363,7 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "開放投票 • 您的投票是匿名的",
     "I picked list style" : "已選擇清單樣式",
     "Hey! Are you using Talk in list style or with message bubbles?" : "你目前在 Talk 中使用列表顯示還是訊息氣泡顯示？",
-    "Allow editing of uploaded files" : "允許編輯已上傳檔案"
+    "Allow editing of uploaded files" : "允許編輯已上傳檔案",
+    "- Channels and announcements to broadcast information to a broader audiance" : "- 頻道及公告，用於向更廣泛的受眾發放資訊"
 },
 "nplurals=1; plural=0;");
