@@ -13,17 +13,20 @@
 		<NcLoadingIcon v-if="loading" :size="32" />
 
 		<template v-else>
-			<ConversationIcon
-				v-if="conversation"
-				:item="conversation"
-				:size="AVATAR.SIZE.DEFAULT"
-				hideUserStatus
-				:hideCall="isMessageReference" />
-			<img
-				v-else-if="fallbackAvatarUrl"
-				:src="fallbackAvatarUrl"
-				:alt="displayName"
-				class="talk-reference-call__fallback-avatar">
+			<span class="talk-reference-call__avatar-frame">
+				<ConversationIcon
+					v-if="conversation"
+					:item="conversation"
+					:size="AVATAR.SIZE.DEFAULT"
+					cssSize="min(100cqi, 100cqb)"
+					hideUserStatus
+					:hideCall="isMessageReference" />
+				<img
+					v-else-if="fallbackAvatarUrl"
+					:src="fallbackAvatarUrl"
+					:alt="displayName"
+					class="talk-reference-call__fallback-avatar">
+			</span>
 
 			<span class="talk-reference-call__body">
 				<span class="talk-reference-call__title">{{ title }}</span>
@@ -133,7 +136,10 @@ const roomMetadata = computed(() => {
 	}
 
 	const metadata = []
-	const timestamp = conversation.value.lastMessage?.timestamp
+	const lastMessage = conversation.value.lastMessage
+	const timestamp = lastMessage && 'timestamp' in lastMessage
+		? lastMessage.timestamp
+		: conversation.value.lastActivity
 	if (timestamp) {
 		metadata.push(formatDateTime(timestamp * 1000, 'shortDateWithTime'))
 	}
@@ -180,8 +186,11 @@ const lastMessagePreview = computed(() => {
 
 <style lang="scss" scoped>
 .talk-reference-call {
+	box-sizing: border-box;
 	display: flex;
-	align-items: center;
+	width: 100%;
+	flex-grow: 1;
+	align-items: stretch;
 	gap: calc(var(--default-grid-baseline) * 2);
 	padding: calc(var(--default-grid-baseline) * 2);
 	color: var(--color-main-text);
@@ -193,15 +202,49 @@ const lastMessagePreview = computed(() => {
 		border-radius: var(--border-radius-large);
 	}
 
+	&__avatar-frame {
+		container-type: size;
+		display: grid;
+		place-items: center;
+		flex: 0 0 20%;
+		min-width: 0;
+	}
+
 	&__fallback-avatar {
-		width: v-bind('`${AVATAR.SIZE.DEFAULT}px`');
-		height: v-bind('`${AVATAR.SIZE.DEFAULT}px`');
+		width: min(100cqi, 100cqb) !important;
+		height: min(100cqi, 100cqb) !important;
+		max-width: min(100cqi, 100cqb) !important;
+		max-height: min(100cqi, 100cqb) !important;
+		aspect-ratio: 1;
 		border-radius: 50%;
 		object-fit: cover;
+		object-position: center;
+	}
+
+	&__avatar-frame :deep(.conversation-icon) {
+		flex: none;
+		min-width: 0;
+		min-height: 0;
+	}
+
+	&__avatar-frame :deep(.conversation-icon img.avatar.icon),
+	&__avatar-frame :deep(.conversation-icon .avatardiv) {
+		width: var(--icon-size) !important;
+		height: var(--icon-size) !important;
+		max-width: var(--icon-size) !important;
+		max-height: var(--icon-size) !important;
+		aspect-ratio: 1;
+	}
+
+	&__avatar-frame :deep(.conversation-icon img.avatar.icon),
+	&__avatar-frame :deep(.conversation-icon .avatardiv img) {
+		object-fit: cover;
+		object-position: center;
 	}
 
 	&__body {
 		display: flex;
+		flex: 1;
 		flex-direction: column;
 		min-width: 0;
 	}

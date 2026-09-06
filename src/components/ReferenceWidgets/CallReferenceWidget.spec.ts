@@ -61,12 +61,20 @@ describe('CallReferenceWidget.vue', () => {
 						unreadMessages: 2,
 						hasCall: true,
 						lastMessage: {
+							actorDisplayName: 'Alice',
+							actorId: 'alice',
+							actorType: 'users',
+							message: '',
+							messageParameters: {},
+							messageType: 'comment',
+							systemMessage: '',
+							expirationTimestamp: 0,
 							timestamp: 1710000000,
 						},
 					},
 				},
 			},
-		})
+		} as never)
 
 		const wrapper = mountWidget()
 		await flushPromises()
@@ -77,7 +85,10 @@ describe('CallReferenceWidget.vue', () => {
 		expect(wrapper.text()).toContain('A useful room description')
 		expect(wrapper.text()).toContain('2 unread messages')
 		expect(wrapper.text()).toContain('Call in progress')
-		expect(wrapper.findComponent(ConversationIcon).exists()).toBe(true)
+		const conversationIcon = wrapper.findComponent(ConversationIcon)
+		expect(conversationIcon.exists()).toBe(true)
+		expect(conversationIcon.props('cssSize')).toBe('min(100cqi, 100cqb)')
+		expect(wrapper.find('.talk-reference-call__avatar-frame').exists()).toBe(true)
 	})
 
 	test('renders a message reference using the provider metadata', async () => {
@@ -90,6 +101,7 @@ describe('CallReferenceWidget.vue', () => {
 						type: CONVERSATION.TYPE.GROUP,
 						lastMessage: {
 							actorDisplayName: 'Latest actor',
+							actorId: 'latest-actor',
 							actorType: 'users',
 							message: 'latest message',
 							messageParameters: {},
@@ -100,7 +112,7 @@ describe('CallReferenceWidget.vue', () => {
 					},
 				},
 			},
-		})
+		} as never)
 
 		const wrapper = mountWidget({
 			richObject: { ...richObject, 'message-id': '42' },
@@ -123,6 +135,7 @@ describe('CallReferenceWidget.vue', () => {
 
 		expect(wrapper.text()).toContain('Fallback conversation name')
 		expect(wrapper.findComponent(ConversationIcon).exists()).toBe(false)
+		expect(wrapper.find('.talk-reference-call__avatar-frame').exists()).toBe(true)
 		expect(wrapper.find('img').attributes('src')).toBe('https://nextcloud.local/avatar.png')
 	})
 
@@ -146,7 +159,7 @@ describe('CallReferenceWidget.vue', () => {
 					},
 				},
 			},
-		})
+		} as never)
 
 		const wrapper = mountWidget()
 		await flushPromises()
@@ -174,7 +187,7 @@ describe('CallReferenceWidget.vue', () => {
 					},
 				},
 			},
-		})
+		} as never)
 
 		const wrapper = mountWidget()
 		await flushPromises()
@@ -202,7 +215,7 @@ describe('CallReferenceWidget.vue', () => {
 					},
 				},
 			},
-		})
+		} as never)
 
 		const wrapper = mountWidget()
 		await flushPromises()

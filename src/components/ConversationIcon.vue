@@ -6,7 +6,7 @@
 <template>
 	<div
 		class="conversation-icon"
-		:style="{ '--icon-size': `${size}px` }"
+		:style="{ '--icon-size': iconSize }"
 		:class="[themeClass, { offline: offline }]">
 		<template v-if="!isOneToOne">
 			<div
@@ -138,6 +138,11 @@ export default {
 			type: Number,
 			default: AVATAR.SIZE.DEFAULT,
 		},
+
+		cssSize: {
+			type: String,
+			default: null,
+		},
 	},
 
 	setup() {
@@ -160,6 +165,10 @@ export default {
 	},
 
 	computed: {
+		iconSize() {
+			return this.cssSize || `${this.size}px`
+		},
+
 		showCall() {
 			return !this.hideCall && this.item.hasCall
 		},
