@@ -64,8 +64,46 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		// 'call/transcription/' . $room->getToken()
 		$customId = $task->getCustomId();
+
+		if (str_starts_with((string)$customId, 'call/subtitles/')) {
+			$roomToken = substr((string)$customId, strlen('call/subtitles/'));
+			$fileId = (int)($task->getInput()['input'] ?? null);
+			if ($fileId === 0 || $task->getUserId() === null) {
+				return;
+			}
+			if ($event instanceof TaskSuccessfulEvent) {
+				$subtitleFileId = (int)($task->getOutput()['output'] ?? 0);
+				if ($subtitleFileId === 0) {
+					return;
+				}
+				$this->recordingService->storeSubtitle($task->getUserId(), $roomToken, $fileId, $subtitleFileId);
+			} elseif ($event instanceof TaskFailedEvent) {
+				$this->logger->error('Subtitle generation failed for call recording in room {roomToken}', [
+					'roomToken' => $roomToken,
+					'exception' => $event->getException(),
+				]);
+			}
+			return;
+		}
+
+		if (str_starts_with((string)$customId, 'call/speakers/')) {
+			[$roomToken, $fileId] = explode('/', substr((string)$customId, strlen('call/speakers/')));
+			$fileId = (int)$fileId;
+			if ($fileId === 0 || $task->getUserId() === null) {
+				return;
+			}
+			if ($event instanceof TaskSuccessfulEvent) {
+				$this->recordingService->storeSpeakerSubtitles($task->getUserId(), $roomToken, $fileId, $task->getOutput()['output'] ?? '');
+			} elseif ($event instanceof TaskFailedEvent) {
+				$this->logger->error('Speaker attribution failed for call recording in room {roomToken}', [
+					'roomToken' => $roomToken,
+					'exception' => $event->getException(),
+				]);
+			}
+			return;
+		}
+
 		if (str_starts_with((string)$customId, 'call/transcription/')) {
 			$aiType = 'transcript';
 			$roomToken = substr((string)$customId, strlen('call/transcription/'));
