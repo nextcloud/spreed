@@ -538,13 +538,12 @@ class RecordingService {
 			return;
 		}
 
-		$subtitleNodes = $userFolder->getById($subtitleFileId);
-		if (empty($subtitleNodes)) {
-			$this->logger->warning('Subtitle output file not found', ['subtitleFileId' => $subtitleFileId]);
-			return;
+		$subtitleFile = $this->rootFolder->getFirstNodeById($subtitleFileId);
+		if ($subtitleFile === null) {
+			$subtitleFile = $this->rootFolder->getFirstNodeByIdInPath($subtitleFileId, '/' . $this->rootFolder->getAppDataDirectoryName() . '/');
 		}
-		$subtitleFile = array_pop($subtitleNodes);
 		if (!$subtitleFile instanceof File) {
+			$this->logger->warning('Subtitle output file not found', ['subtitleFileId' => $subtitleFileId]);
 			return;
 		}
 		$subtitleContent = $subtitleFile->getContent();
