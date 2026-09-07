@@ -81,9 +81,7 @@
 			<template v-if="servers.length">
 				<h3>{{ t('spreed', 'Recording transcription') }}</h3>
 
-				<!-- FIXME hidden until transcription quality is appropriate -->
 				<NcCheckboxRadioSwitch
-					v-if="false"
 					v-model="recordingTranscriptionEnabled"
 					type="switch"
 					:disabled="loading"
