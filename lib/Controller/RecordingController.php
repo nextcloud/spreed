@@ -465,6 +465,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 	 *
 	 * @param ?string $owner User that will own the recording file. `null` is actually not allowed and will always result in a "400 Bad Request". It's only allowed code-wise to handle requests where the post data exceeded the limits, so we can return a proper error instead of "500 Internal Server Error".
 	 * @param ?string $fileName The sanitized file name returned by the request-upload request. When provided, no multipart `file` is expected.
+	 * @param ?string $intervalsFileName The file name of the speaker intervals sidecar JSON file uploaded via the same share. Only used with chunked uploads.
 	 * @return DataResponse<Http::STATUS_OK, null, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED, array{type: string, error: array{code: string, message: string}}, array{}>
 	 *
 	 * 200: Recording stored successfully
@@ -481,7 +482,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 		'apiVersion' => '(v1)',
 		'token' => '[a-z0-9]{4,30}',
 	])]
-	public function store(?string $owner, ?string $fileName = null): DataResponse {
+	public function store(?string $owner, ?string $fileName = null, ?string $intervalsFileName = null): DataResponse {
 		$data = $this->room->getToken();
 		if (!$this->validateBackendRequest($data)) {
 			$response = new DataResponse([
@@ -507,10 +508,11 @@ class RecordingController extends AEnvironmentAwareOCSController {
 
 		try {
 			if ($fileName !== null) {
-				$this->recordingService->finishUpload($this->getRoom(), $owner, $fileName);
+				$this->recordingService->finishUpload($this->getRoom(), $owner, $fileName, $intervalsFileName);
 			} else {
 				$file = $this->request->getUploadedFile('file');
-				$this->recordingService->store($this->getRoom(), $owner, $file);
+				$intervalsFile = $this->request->getUploadedFile('intervalsFile');
+				$this->recordingService->store($this->getRoom(), $owner, $file, $intervalsFile, $intervalsFile !== null ? $intervalsFile['name'] : null);
 			}
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);

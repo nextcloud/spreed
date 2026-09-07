@@ -44,7 +44,7 @@ use OCP\SystemTag\ISystemTagObjectMapper;
 use OCP\TaskProcessing\Exception\Exception;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\Task;
-use OCP\TaskProcessing\TaskTypes\AudioToText;
+use OCP\TaskProcessing\TaskTypes\AudioToTextSubtitles;
 use OCP\TaskProcessing\TaskTypes\TextToText;
 use Psr\Log\LoggerInterface;
 
@@ -140,7 +140,7 @@ class RecordingService {
 		}
 	}
 
-	public function store(Room $room, string $owner, array $file): void {
+	public function store(Room $room, string $owner, array $file, ?array $intervalsFile = null, ?string $intervalsFileName = null): void {
 		$this->appConfig->deleteAppValue(self::APPCONFIG_PREFIX . $room->getToken());
 		try {
 			$participant = $this->participantService->getParticipant($room, $owner);
@@ -158,6 +158,25 @@ class RecordingService {
 		try {
 			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
 			$fileNode = $recordingFolder->newFile($fileName, $resource);
+
+			$intervalsFileNode = null;
+			if ($intervalsFile !== null && isset($intervalsFile['tmp_name']) && is_string($intervalsFile['name']) && $intervalsFile['name'] !== '') {
+				$intervalsResource = fopen($intervalsFile['tmp_name'], 'r');
+				if ($intervalsResource === false) {
+					throw new InvalidArgumentException('intervals_fopen_failed');
+				}
+				$intervalsContent = stream_get_contents($intervalsResource);
+				fclose($intervalsResource);
+				if ($intervalsContent === false) {
+					throw new InvalidArgumentException('intervals_read_failed');
+				}
+				$intervalsData = json_decode($intervalsContent, associative: true);
+				if (!is_array($intervalsData)) {
+					throw new InvalidArgumentException('intervals_invalid_json');
+				}
+				$intervalsFileName = basename($intervalsFile['name']);
+				$intervalsFileNode = $recordingFolder->newFile($intervalsFileName, $intervalsContent);
+			}
 		} catch (NoUserException) {
 			throw new InvalidArgumentException('owner_invalid');
 		} catch (NotPermittedException) {
@@ -246,7 +265,7 @@ class RecordingService {
 	 *
 	 * @throws InvalidArgumentException
 	 */
-	public function finishUpload(Room $room, string $owner, string $fileName): void {
+	public function finishUpload(Room $room, string $owner, string $fileName, ?string $intervalsFileName = null): void {
 		try {
 			$participant = $this->participantService->getParticipant($room, $owner);
 		} catch (ParticipantNotFoundException) {
@@ -289,6 +308,23 @@ class RecordingService {
 			$fileNode->delete();
 			$this->cleanupUploadShare($room, $fileName);
 			throw $e;
+		}
+
+		if ($intervalsFileName !== null) {
+			$intervalsFileName = basename($intervalsFileName);
+			try {
+				$intervalsFileNode = $recordingFolder->get($intervalsFileName);
+				if ($intervalsFileNode instanceof File) {
+					$intervalsContent = $intervalsFileNode->getContent();
+					$intervalsData = json_decode($intervalsContent, associative: true);
+					if (!is_array($intervalsData)) {
+						$this->logger->warning('Intervals file {name} is not valid JSON, ignoring', ['name' => $intervalsFileName]);
+						$intervalsFileNode->delete();
+					}
+				}
+			} catch (NotFoundException) {
+				$this->logger->warning('Intervals file {name} not found in recording folder, ignoring', ['name' => $intervalsFileName]);
+			}
 		}
 
 		$this->finalizeRecording($room, $participant, $fileNode, $owner);
@@ -354,24 +390,24 @@ class RecordingService {
 		}
 
 		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
-		if (!in_array(AudioToText::ID, $supportedTaskTypeIds, true)) {
-			$this->logger->error('Can not transcribe call recording as no Audio2Text task provider is available');
+		if (!in_array(AudioToTextSubtitles::ID, $supportedTaskTypeIds, true)) {
+			$this->logger->error('Can not transcribe call recording as no AudioToTextSubtitles task provider is available');
 			return;
 		}
 
 		$task = new Task(
-			AudioToText::ID,
+			AudioToTextSubtitles::ID,
 			['input' => $fileNode->getId()],
 			Application::APP_ID,
 			$owner,
-			'call/transcription/' . $room->getToken(),
+			'call/subtitles/' . $room->getToken(),
 		);
 
 		try {
 			$this->taskProcessingManager->scheduleTask($task);
-			$this->logger->debug('Scheduled call recording transcript');
+			$this->logger->debug('Scheduled call recording subtitle generation');
 		} catch (Exception $e) {
-			$this->logger->error('An error occurred while trying to transcribe the call recording', ['exception' => $e]);
+			$this->logger->error('An error occurred while trying to generate subtitles for the call recording', ['exception' => $e]);
 		}
 	}
 
@@ -480,6 +516,216 @@ class RecordingService {
 		} catch (Exception $e) {
 			$this->logger->error('An error occurred while trying to summarize the call recording', ['exception' => $e]);
 		}
+	}
+
+	public function storeSubtitle(string $owner, string $roomToken, int $recordingFileId, int $subtitleFileId): void {
+		$userFolder = $this->rootFolder->getUserFolder($owner);
+		$recordingNodes = $userFolder->getById($recordingFileId);
+		if (empty($recordingNodes)) {
+			$this->logger->warning('Could not save subtitles as the recording could not be found', [
+				'owner' => $owner,
+				'roomToken' => $roomToken,
+				'recordingFileId' => $recordingFileId,
+			]);
+			return;
+		}
+		$recording = array_pop($recordingNodes);
+		/** @var Folder $recordingFolder */
+		$recordingFolder = $recording->getParent();
+
+		if ($recordingFolder->getName() !== $roomToken) {
+			$this->logger->warning('Could not determine conversation when trying to store subtitles, as folder name did not match');
+			return;
+		}
+
+		$subtitleNodes = $userFolder->getById($subtitleFileId);
+		if (empty($subtitleNodes)) {
+			$this->logger->warning('Subtitle output file not found', ['subtitleFileId' => $subtitleFileId]);
+			return;
+		}
+		$subtitleFile = array_pop($subtitleNodes);
+		if (!$subtitleFile instanceof File) {
+			return;
+		}
+		$subtitleContent = $subtitleFile->getContent();
+
+		$subtitleFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . ' subtitles.srt';
+		try {
+			$recordingFolder->newFile($subtitleFileName, $subtitleContent);
+		} catch (NoUserException|NotPermittedException $e) {
+			$this->logger->error('Could not store subtitle file', ['exception' => $e]);
+			return;
+		}
+
+		$intervalsFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . ' speaking times.json';
+		try {
+			$intervalsFileNode = $recordingFolder->get($intervalsFileName);
+		} catch (NotFoundException) {
+			$intervalsFileNode = null;
+		}
+
+		if ($intervalsFileNode instanceof File) {
+			$intervalsContent = $intervalsFileNode->getContent();
+			$this->scheduleSpeakerAttribution($owner, $roomToken, $recordingFileId, $subtitleContent, $intervalsContent);
+		} else {
+			$transcriptFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . ' transcript.md';
+			try {
+				$recordingFolder->newFile($transcriptFileName, $subtitleContent);
+			} catch (NoUserException|NotPermittedException $e) {
+				$this->logger->error('Could not store transcript file', ['exception' => $e]);
+				return;
+			}
+			$this->scheduleSummary($owner, $roomToken, $recordingFileId, $subtitleContent);
+		}
+	}
+
+	private function scheduleSpeakerAttribution(string $owner, string $roomToken, int $recordingFileId, string $subtitleContent, string $intervalsContent): void {
+		$speakerPrompt = '
+You are given subtitle content in SRT format and speaker interval data.
+
+Produce the exact same subtitle file in the same subtitle format (subrip/srt).
+But each subtitle should be prefixed with the speaker name (speaker:).
+You can find the speaker name in the interval that best matches each subtitle.
+Only output the subtitle content, nothing else.
+		';
+		$input = $speakerPrompt . "\n\n## Speaker intervals (JSON):\n" . $intervalsContent . "\n\n## Subtitle content:\n" . $subtitleContent;
+
+		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
+		if (!in_array(TextToText::ID, $supportedTaskTypeIds, true)) {
+			$this->logger->error('Can not add speaker attribution as no TextToText task provider is available');
+			return;
+		}
+
+		$task = new Task(
+			TextToText::ID,
+			['input' => $input],
+			Application::APP_ID,
+			$owner,
+			'call/speakers/' . $roomToken . '/' . $recordingFileId,
+		);
+
+		try {
+			$this->taskProcessingManager->scheduleTask($task);
+			$this->logger->debug('Scheduled speaker attribution for call recording subtitles');
+		} catch (Exception $e) {
+			$this->logger->error('An error occurred while trying to schedule speaker attribution', ['exception' => $e]);
+		}
+	}
+
+	public function storeSpeakerSubtitles(string $owner, string $roomToken, int $recordingFileId, string $output): void {
+		$userFolder = $this->rootFolder->getUserFolder($owner);
+		$recordingNodes = $userFolder->getById($recordingFileId);
+		if (empty($recordingNodes)) {
+			$this->logger->warning('Could not save speaker subtitles as the recording could not be found', [
+				'owner' => $owner,
+				'roomToken' => $roomToken,
+				'recordingFileId' => $recordingFileId,
+			]);
+			return;
+		}
+		$recording = array_pop($recordingNodes);
+		/** @var Folder $recordingFolder */
+		$recordingFolder = $recording->getParent();
+
+		if ($recordingFolder->getName() !== $roomToken) {
+			$this->logger->warning('Could not determine conversation when trying to store speaker subtitles, as folder name did not match');
+			return;
+		}
+
+		$baseName = pathinfo($recording->getName(), PATHINFO_FILENAME);
+		$subtitleFileName = $baseName . ' subtitles speakers.srt';
+		$transcriptFileName = $baseName . ' transcript.md';
+		$transcript = $this->parseSrtToTranscript($output);
+
+		try {
+			$subtitleFileNode = $recordingFolder->newFile($subtitleFileName, $output);
+			$this->systemTagMapper->assignGeneratedByAITag((string)$subtitleFileNode->getId(), 'files');
+			$transcriptFileNode = $recordingFolder->newFile($transcriptFileName, $transcript);
+			$this->systemTagMapper->assignGeneratedByAITag((string)$transcriptFileNode->getId(), 'files');
+		} catch (NoUserException|NotPermittedException $e) {
+			$this->logger->error('Could not store speaker subtitle or transcript file', ['exception' => $e]);
+			return;
+		}
+
+		$this->scheduleSummary($owner, $roomToken, $recordingFileId, $transcript);
+	}
+
+	private function scheduleSummary(string $owner, string $roomToken, int $recordingFileId, string $transcriptContent): void {
+		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes';
+		if (!$shouldSummarize) {
+			$this->logger->debug('Skipping scheduling summary of call recording as it is disabled');
+			return;
+		}
+
+		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
+		if (!in_array(TextToText::ID, $supportedTaskTypeIds, true)) {
+			$this->logger->error('Can not summarize call recording as no TextToText task provider is available');
+			return;
+		}
+
+		$summaryPrompt = $this->appConfig->getAppValueString(Config::CALL_RECORDING_SUMMARY_PROMPT);
+		$input = $summaryPrompt . "\n" . $transcriptContent;
+
+		$task = new Task(
+			TextToText::ID,
+			['input' => $input],
+			Application::APP_ID,
+			$owner,
+			'call/summary/' . $roomToken . '/' . $recordingFileId,
+		);
+
+		try {
+			$this->taskProcessingManager->scheduleTask($task);
+			$this->logger->debug('Scheduled call recording summary');
+		} catch (Exception $e) {
+			$this->logger->error('An error occurred while trying to summarize the call recording', ['exception' => $e]);
+		}
+	}
+
+	private function parseSrtToTranscript(string $srtContent): string {
+		$blocks = preg_split('/\r?\n\r?\n/', trim($srtContent));
+		if ($blocks === false) {
+			return $srtContent;
+		}
+
+		$lines = [];
+		foreach ($blocks as $block) {
+			$blockLines = preg_split('/\r?\n/', trim($block));
+			if ($blockLines === false || empty($blockLines)) {
+				continue;
+			}
+
+			$textLines = [];
+			foreach ($blockLines as $line) {
+				if (preg_match('/^\d+$/', trim($line)) === 1) {
+					continue;
+				}
+				if (preg_match('/^\d{2}:\d{2}:\d{2}[,.]\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}[,.]\d{3}/', trim($line)) === 1) {
+					continue;
+				}
+				$textLines[] = $line;
+			}
+
+			$text = trim(implode(' ', $textLines));
+			if ($text !== '') {
+				$lines[] = $text;
+			}
+		}
+
+		$deduped = [];
+		$lastSpeaker = null;
+		foreach ($lines as $line) {
+			$colonPos = strpos($line, ':');
+			$speaker = $colonPos !== false ? substr($line, 0, $colonPos) : null;
+			if ($speaker !== null && $speaker === $lastSpeaker && !empty($deduped)) {
+				$deduped[count($deduped) - 1] .= ' ' . trim(substr($line, $colonPos + 1));
+			} else {
+				$deduped[] = $line;
+				$lastSpeaker = $speaker;
+			}
+		}
+
+		return implode("\n", $deduped);
 	}
 
 	/**
@@ -737,12 +983,16 @@ class RecordingService {
 			->setPermissions(\OCP\Constants::PERMISSION_READ);
 
 		$removeNotification = null;
-		if (!str_ends_with($file->getName(), '.md')) {
-			$removeNotification = 'record_file_stored';
-		} elseif (!str_ends_with($file->getName(), ' - summary.md')) {
-			$removeNotification = 'transcript_file_stored';
-		} elseif (str_ends_with($file->getName(), ' - summary.md')) {
+		if (str_ends_with($file->getName(), ' - summary.md')) {
 			$removeNotification = 'summary_file_stored';
+		} elseif (str_contains($file->getName(), ' transcript ') && str_ends_with($file->getName(), '.md')) {
+			$removeNotification = 'transcript_file_stored';
+		} elseif (str_ends_with($file->getName(), '.srt')) {
+			$removeNotification = null;
+		} elseif (!str_ends_with($file->getName(), '.md')) {
+			$removeNotification = 'record_file_stored';
+		} else {
+			$removeNotification = 'transcript_file_stored';
 		}
 
 		$share = $this->shareManager->createShare($share);
