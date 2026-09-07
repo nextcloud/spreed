@@ -137,6 +137,10 @@ updates:
     time: "03:00"
     timezone: Europe/Berlin
   groups:
+    vitest:
+      patterns:
+        - "vitest"
+        - "@vitest/coverage-*"
     vueuse:
       patterns:
         - "@vueuse/*"
@@ -165,6 +169,10 @@ updates:
     - dependency-name: "*"
       update-types: ["version-update:semver-major"]
   groups:
+    vitest:
+      patterns:
+        - "vitest"
+        - "@vitest/coverage-*"
     vueuse:
       patterns:
         - "@vueuse/*"
