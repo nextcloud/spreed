@@ -467,7 +467,7 @@ Feature: callapi/recording
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                      | message                                                                                       |
       | spreed | recording   | room1     | Call summary now available   | The summary for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call - summary.md. |
-      | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.md. |
+      | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call transcript.md. |
       | spreed | recording   | room1     | Call recording now available | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.ogg.  |
     When user "participant1" shares file from the last notification to room "room1" with 200 (v1)
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
@@ -479,7 +479,7 @@ Feature: callapi/recording
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                      | message                                                                                       |
       | spreed | recording   | room1     | Call summary now available   | The summary for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call - summary.md. |
-      | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.md. |
+      | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call transcript.md. |
     When user "participant1" shares file from the last notification to room "room1" with 200 (v1)
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                      | message                                                                                       |
@@ -508,7 +508,7 @@ Feature: callapi/recording
     Then the list of returned files for "participant2" is
       | /Talk/ |
       | /Talk/join_call%20-%20summary.md |
-      | /Talk/join_call.md |
+      | /Talk/join_call%20transcript.md |
       | /Talk/join_call.ogg |
 
   Scenario: Store recording with success but fail to transcript
@@ -557,7 +557,7 @@ Feature: callapi/recording
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                             | message                                                                                        |
       | spreed | recording   | room1     | Failed to summarize call recording  | The server failed to summarize the recording at /Talk/Recording/ROOM(room1)/leave_call.ogg for the call in room1. Please reach out to the administration. |
-      | spreed | recording   | room1     | Transcript now available            | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/leave_call.md. |
+      | spreed | recording   | room1     | Transcript now available            | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/leave_call transcript.md. |
       | spreed | recording   | room1     | Call recording now available        | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/leave_call.ogg.  |
 
   Scenario: Store recording and transcript with success but summarize is off
@@ -579,7 +579,7 @@ Feature: callapi/recording
     And repeating run "OC\TaskProcessing\SynchronousBackgroundJob" background jobs
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                             | message                                                                                          |
-      | spreed | recording   | room1     | Transcript now available            | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/leave_call.md.  |
+      | spreed | recording   | room1     | Transcript now available            | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/leave_call transcript.md.  |
       | spreed | recording   | room1     | Call recording now available        | The recording for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/leave_call.ogg.  |
 
   Scenario: Store recording and summarize with success but transcript is off

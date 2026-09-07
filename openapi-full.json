@@ -33805,6 +33805,12 @@
                                         "nullable": true,
                                         "default": null,
                                         "description": "The sanitized file name returned by the request-upload request. When provided, no multipart `file` is expected."
+                                    },
+                                    "intervalsFileName": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The file name of the speaker intervals sidecar JSON file uploaded via the same share. Only used with chunked uploads."
                                     }
                                 }
                             }

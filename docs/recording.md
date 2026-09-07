@@ -112,7 +112,9 @@ and provide the file name, to trigger the notification for the moderator.
 | field      | type   | Description                                                                                                                                                                                                  |
 | ---------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `file`     | string | File with the recording in a multipart/form-data request. Only used for the direct upload, must be omitted when `fileName` is provided.                                                                      |
+| `intervalsFile` | file | Optional file with the speaker intervals sidecar (JSON) in a multipart/form-data request. Only used for the direct upload; stored alongside the recording and used to attribute speakers in the subtitles. Ignored (with the recording still stored) when invalid. |
 | `fileName` | string | File name of a recording that was already uploaded through a share requested with the [request-upload endpoint](#request-recording-upload). When provided, no multipart `file` is expected (chunked upload). |
+| `intervalsFileName` | string | Optional file name of the speaker intervals sidecar (JSON) already uploaded through the same share. Only used with the chunked upload; ignored unless it names the sidecar expected for this recording: a hidden file named after the recording with the " speaking times.json" suffix. |
 | `owner`    | string | The person that started the recording.                                                                                                                                                                      |
 
 * Response:
