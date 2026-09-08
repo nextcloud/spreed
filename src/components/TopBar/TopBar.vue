@@ -140,6 +140,8 @@
 					class="top-bar__calendar-events"
 					:token="token" />
 
+				<CallButton v-if="!isInCall" shrinkOnMobile />
+
 				<!-- Search messages button -->
 				<NcButton
 					v-if="!isSidebar && actorStore.isLoggedIn && !isSmallMobile"
@@ -151,8 +153,6 @@
 						<IconMagnify :size="20" />
 					</template>
 				</NcButton>
-
-				<CallButton v-if="!isInCall" shrinkOnMobile />
 
 				<!-- TopBar menu -->
 				<TopBarMenu
@@ -547,7 +547,7 @@ export default {
 	overflow-y: clip;
 	white-space: nowrap;
 	flex: 1 1 0;
-	min-width: 200px;
+	min-width: 150px;
 	cursor: pointer;
 	&__text {
 		display: flex;
