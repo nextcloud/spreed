@@ -612,9 +612,11 @@ export default {
 		const supportReminders = hasTalkFeature(message.value.token, 'remind-me-later')
 		const supportPinMessage = hasTalkFeature(message.value.token, 'pinned-messages')
 
-		const isTranslationAvailable = getTalkConfig(message.value.token, 'chat', 'has-translation-providers')
-			// Fallback for the desktop client when connecting to Talk 17
-			?? getTalkConfig(message.value.token, 'chat', 'translations')?.length > 0
+		const hasTranslationTaskProviders = getTalkConfig(message.value.token, 'chat', 'has-translation-task-providers')
+		const isTranslationAvailable = hasTranslationTaskProviders
+			|| (getTalkConfig(message.value.token, 'chat', 'has-translation-providers')
+				// Fallback for the desktop client when connecting to Talk 17
+				?? getTalkConfig(message.value.token, 'chat', 'translations')?.length > 0)
 
 		return {
 			IconFileDownload,
@@ -629,6 +631,7 @@ export default {
 			isDeleteable,
 			isConversationReadOnly,
 			isConversationModifiable,
+			hasTranslationTaskProviders,
 			isTranslationAvailable,
 			actorStore,
 			chatExtrasStore,
@@ -898,6 +901,7 @@ export default {
 			await spawnDialog(MessageTranslateDialog, {
 				message: this.message.message,
 				richParameters: this.richParameters,
+				useTaskProcessing: !!this.hasTranslationTaskProviders,
 			})
 		},
 

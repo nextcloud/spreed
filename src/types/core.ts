@@ -88,6 +88,13 @@ export type TranslationTranslateParams = Required<operationsCore['translation_ap
 export type TranslationTranslateResponse = ApiResponse<operationsCore['translation_api-translate']['responses'][200]['content']['application/json']>
 
 // Task Processing API
+export type TaskProcessingTaskType = componentsCore['schemas']['TaskProcessingTaskType']
+export type TaskProcessingTaskTypesResponse = ApiResponse<operationsCore['task_processing_api-task-types']['responses'][200]['content']['application/json']>
+// FIXME upstream: the `input` values are typed as an empty object in the OpenAPI spec
+export type TaskProcessingScheduleParams = Omit<Required<operationsCore['task_processing_api-schedule']>['requestBody']['content']['application/json'], 'input'> & {
+	input: Record<string, string | number | boolean>
+}
+export type TaskProcessingScheduleResponse = ApiResponse<operationsCore['task_processing_api-schedule']['responses'][200]['content']['application/json']>
 export type TaskProcessingResponse = ApiResponse<operationsCore['task_processing_api-get-task']['responses'][200]['content']['application/json']>
 
 // Profile API
