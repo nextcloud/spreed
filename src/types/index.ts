@@ -387,6 +387,17 @@ export type importEmailsResponse = ApiResponse<operations['room-import-emails-as
 
 // Chats
 export type Mention = RichObject<'server' | 'call-type' | 'icon-url'> & { 'mention-id'?: string }
+
+// Collaboration reference (Smart Picker / link preview) payload for a Talk conversation link,
+// as produced by TalkReferenceProvider::fetchReference(). Not a RichObjectParameter: no 'type' key.
+export type TalkReferenceRichObject = {
+	id: string
+	name: string
+	link: string
+	'call-type': string
+	'message-id'?: string
+}
+
 export type File = RichObject<'size' | 'path' | 'link' | 'mimetype' | 'preview-available'> & {
 	etag: string
 	permissions: string

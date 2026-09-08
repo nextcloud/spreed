@@ -78,9 +78,10 @@ async function fetchConversations(params: getAllConversationsParams, options?: A
  * Fetches a conversation from the server.
  *
  * @param token The token of the conversation to be fetched.
+ * @param [options] Axios request options
  */
-async function fetchConversation(token: string): getSingleConversationResponse {
-	return axios.get(generateOcsUrl('apps/spreed/api/v4/room/{token}', { token }))
+async function fetchConversation(token: string, options?: AxiosRequestConfig): getSingleConversationResponse {
+	return axios.get(generateOcsUrl('apps/spreed/api/v4/room/{token}', { token }), options)
 }
 
 /**
