@@ -425,6 +425,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 @use '../../assets/variables.scss' as *;
 
 .talk-dashboard-wrapper {
+	--dashboard-max-height: 800px;
+	--dashboard-max-width: 900px;
 	padding: calc(var(--default-grid-baseline) * 2);
 	width: min(100%, calc(100vw - 300px - var(--body-container-margin) * 2)); // 300px for the left sidebar and body container margins
 	margin: 0 auto;
@@ -432,14 +434,15 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	flex-direction: column;
 	gap: calc(var(--default-grid-baseline) * 4);
 	height: 100%;
-	max-height: 800px;
-	max-width: 900px;
+	max-height: var(--dashboard-max-height);
+	max-width: var(--dashboard-max-width);
 
 	&--mobile {
 		width: 100%;
 
 		.talk-dashboard__header {
 			margin-block-start: 0;
+			padding-inline-start: clamp(0px, calc(var(--dashboard-max-width) / 2 + var(--app-navigation-toggle-space) - 50vw), var(--app-navigation-toggle-space));
 		}
 	}
 
@@ -459,9 +462,17 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	font-size: 21px; // NcDialog header font size
 	font-weight: bold;
 	margin-inline: auto;
-	margin-block-start: clamp(0px, calc(100vh - 800px), var(--app-navigation-toggle-space));
+	margin-block-start: clamp(0px, calc(100vh - var(--dashboard-max-height)), var(--app-navigation-toggle-space));
 	margin-block-end: calc(var(--default-grid-baseline) * 2);
-	padding-inline-start: clamp(0px, calc(900px / 2 + var(--app-navigation-toggle-space) - 50vw), var(--app-navigation-toggle-space))
+}
+
+// var(--dashboard-max-height) + var(--header-height) + var(--body-container-margin)
+@media (max-height: 852px) {
+	.talk-dashboard__header {
+		margin-block-start: 0;
+		--min-width-with-navigation: calc(var(--body-container-margin) * 2 + 300px + var(--dashboard-max-width));
+		padding-inline-start: clamp(0px, calc(var(--min-width-with-navigation) / 2 + var(--app-navigation-toggle-space) - 50vw), var(--app-navigation-toggle-space));
+	}
 }
 
 .talk-dashboard__actions {
