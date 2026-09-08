@@ -102,6 +102,7 @@ OC.L10N.register(
     "A group call has started in {call}" : "Hópsímtal er byrjað í {call}",
     "Open settings" : "Opna stillingar",
     "error" : "villa",
+    "Channel" : "Rás",
     "Default" : "Sjálfgefið",
     "Presentation" : "Kynning",
     "Conversations" : "Samtöl",
