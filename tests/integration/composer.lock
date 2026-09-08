@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "40d8916396b23c38254e3c26a1223484",
+    "content-hash": "08fad33e64cf0f0032bfe6dd433990b7",
     "packages": [],
     "packages-dev": [
         {
             "name": "behat/behat",
-            "version": "v3.32.0",
+            "version": "v4.0.0-alpha1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Behat/Behat.git",
-                "reference": "b9b89cf7a3b24c04d6e2d2865ed51bc5e1700de9"
+                "reference": "82fbe243d1c1b66f9709f11f039616347d7f2192"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Behat/Behat/zipball/b9b89cf7a3b24c04d6e2d2865ed51bc5e1700de9",
-                "reference": "b9b89cf7a3b24c04d6e2d2865ed51bc5e1700de9",
+                "url": "https://api.github.com/repos/Behat/Behat/zipball/82fbe243d1c1b66f9709f11f039616347d7f2192",
+                "reference": "82fbe243d1c1b66f9709f11f039616347d7f2192",
                 "shasum": ""
             },
             "require": {
@@ -26,15 +26,14 @@
                 "composer-runtime-api": "^2.2",
                 "composer/xdebug-handler": "^1.4 || ^2.0 || ^3.0",
                 "ext-mbstring": "*",
-                "nikic/php-parser": "^4.19.2 || ^5.2",
                 "php": ">=8.2 <8.6",
                 "psr/container": "^1.0 || ^2.0",
-                "symfony/config": "^5.4 || ^6.4 || ^7.0",
-                "symfony/console": "^5.4.9 || ^6.4 || ^7.0",
-                "symfony/dependency-injection": "^5.4 || ^6.4 || ^7.0",
-                "symfony/event-dispatcher": "^5.4 || ^6.4 || ^7.0",
-                "symfony/translation": "^5.4 || ^6.4 || ^7.0",
-                "symfony/yaml": "^5.4 || ^6.4 || ^7.0"
+                "symfony/config": "^5.4 || ^6.4 || ^7.0 || ^8.0",
+                "symfony/console": "^5.4.9 || ^6.4 || ^7.0 || ^8.0",
+                "symfony/dependency-injection": "^5.4 || ^6.4 || ^7.0 || ^8.0",
+                "symfony/event-dispatcher": "^5.4 || ^6.4 || ^7.0 || ^8.0",
+                "symfony/translation": "^5.4 || ^6.4 || ^7.0 || ^8.0",
+                "symfony/yaml": "^5.4 || ^6.4 || ^7.0 || ^8.0"
             },
             "require-dev": {
                 "opis/json-schema": "^2.5",
@@ -43,9 +42,9 @@
                 "phpunit/phpunit": "^9.6",
                 "rector/rector": "2.3.9",
                 "sebastian/diff": "^4.0",
-                "symfony/filesystem": "^5.4 || ^6.4 || ^7.0",
+                "symfony/filesystem": "^5.4 || ^6.4 || ^7.0 || ^8.0",
                 "symfony/polyfill-php84": "^1.31",
-                "symfony/process": "^5.4 || ^6.4 || ^7.0"
+                "symfony/process": "^5.4 || ^6.4 || ^7.0 || ^8.0"
             },
             "suggest": {
                 "ext-dom": "Needed to output test results in JUnit format."
@@ -93,7 +92,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Behat/Behat/issues",
-                "source": "https://github.com/Behat/Behat/tree/v3.32.0"
+                "source": "https://github.com/Behat/Behat/tree/v4.0.0-alpha1"
             },
             "funding": [
                 {
@@ -109,7 +108,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-06-20T08:34:52+00:00"
+            "time": "2026-06-22T21:13:12+00:00"
         },
         {
             "name": "behat/gherkin",
@@ -4245,7 +4244,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "behat/behat": 15
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {},

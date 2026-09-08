@@ -7,11 +7,14 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+namespace OCA\Talk\Tests\Integration\Contexts;
+
 use Behat\Step\Given;
 use Behat\Step\Then;
+use GuzzleHttp;
 use PHPUnit\Framework\Assert;
 
-require __DIR__ . '/../../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 // The following attributes are expected to be available in the class that uses
 // this trait:
