@@ -477,8 +477,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 .talk-dashboard__actions {
 	display: flex;
-	gap: calc(var(--default-grid-baseline) * 3);
-	padding-block: var(--default-grid-baseline);
+	gap: calc(var(--default-grid-baseline) * 2);
 	flex-wrap: wrap;
 	flex-direction: row;
 
@@ -495,7 +494,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 // Spread the actions across the full width of every row they wrap onto
 .talk-dashboard__action {
-	flex-grow: 1;
+	flex: 1 0 calc(50% - var(--default-grid-baseline));
 
 	// The popover only wraps its trigger, so the button inside has to stretch as well
 	:deep(.button-vue) {
@@ -655,6 +654,10 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 // Override NcButton styles for narrow screen size
 @media screen and (max-width: $breakpoint-mobile-small) {
 	.talk-dashboard__actions {
+		.talk-dashboard__action {
+			flex: 1 1 100%;
+		}
+
 		:deep(.button-vue),
 		& > div {
 			width: 100%;
