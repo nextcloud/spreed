@@ -332,7 +332,7 @@ class Capabilities implements IPublicCapability {
 					'max-gif-size' => $this->appConfig->getAppValueInt(Config::MAX_GIF_SIZE, 3145728),
 				],
 				'signaling' => [
-					'session-ping-limit' => max(0, (int)$this->serverConfig->getAppValue('spreed', 'session-ping-limit', '200')),
+					'session-ping-limit' => max(0, $this->appConfig->getAppValueInt(Config::SESSION_PING_LIMIT)),
 					'mode' => $this->talkConfig->getSignalingMode(),
 					// 'hello-v2-token-key' => string,
 				],
