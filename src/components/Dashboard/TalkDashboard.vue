@@ -425,11 +425,12 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 @use '../../assets/variables.scss' as *;
 
 .talk-dashboard-wrapper {
-	padding: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 3);
+	padding: calc(var(--default-grid-baseline) * 2);
 	width: min(100%, calc(100vw - 300px - var(--body-container-margin) * 2)); // 300px for the left sidebar and body container margins
 	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
+	gap: calc(var(--default-grid-baseline) * 4);
 	height: 100%;
 	max-height: 800px;
 	max-width: 900px;
@@ -449,13 +450,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 		.talk-dashboard__chats {
 			grid-template-columns: 1fr;
-			gap: calc(var(--default-grid-baseline) * 5);
 		}
 	}
-}
-
-.talk-dashboard__menu {
-	margin-bottom: calc(var(--default-grid-baseline) * 4);
 }
 
 .talk-dashboard__header {
@@ -497,8 +493,6 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 }
 
 .event-section {
-	margin-block-end: calc(var(--default-grid-baseline) * 6);
-
 	:deep(.dashboard-section--list) {
 		.dashboard-section__content {
 			padding-inline: 0;
@@ -579,6 +573,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 .talk-dashboard__items {
 	display: flex;
 	flex-direction: column;
+	gap: calc(var(--default-grid-baseline) * 4);
 	justify-content: space-around;
 	min-width: 0;
 	flex-grow: 3;
@@ -586,7 +581,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 .talk-dashboard__chats {
 	display: grid;
-	gap: calc(var(--default-grid-baseline) * 8);
+	gap: calc(var(--default-grid-baseline) * 4);
 	grid-template-columns: 1fr 1fr;
 	flex-grow: 1;
 
