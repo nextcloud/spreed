@@ -62,6 +62,10 @@ class ParticipantTest extends TestCase {
 			->willReturn(Room::START_CALL_EVERYONE);
 
 		$appConfig->expects($this->once())
+			->method('getAppValueInt')
+			->with('start_calls')
+			->willReturn(Room::START_CALL_EVERYONE);
+		$appConfig->expects($this->once())
 			->method('getAppValueArray')
 			->with('start_calls_groups')
 			->willReturn($allowedGroups);
@@ -91,6 +95,12 @@ class ParticipantTest extends TestCase {
 		$config = $this->createMock(IConfig::class);
 		$config->method('getAppValue')->willReturn((string)$startCalls);
 		return $config;
+	}
+
+	protected function createAppConfig(int $startCalls = Room::START_CALL_EVERYONE): IAppConfig&MockObject {
+		$appConfig = $this->createMock(IAppConfig::class);
+		$appConfig->method('getAppValueInt')->with('start_calls')->willReturn($startCalls);
+		return $appConfig;
 	}
 
 	public function testChannelRemovesCallPermissionsFromModerators(): void {
@@ -124,17 +134,17 @@ class ParticipantTest extends TestCase {
 
 	public function testCanStartCallIsFalseInChannelForModerators(): void {
 		$participant = $this->createParticipant(true, Participant::MODERATOR, Attendee::PERMISSIONS_DEFAULT);
-		$this->assertFalse($participant->canStartCall($this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
+		$this->assertFalse($participant->canStartCall($this->createAppConfig(), $this->createMock(IGroupManager::class)));
 	}
 
 	public function testCanStartCallIsFalseInChannelForUsers(): void {
 		$participant = $this->createParticipant(true, Participant::USER, Attendee::PERMISSIONS_DEFAULT);
-		$this->assertFalse($participant->canStartCall($this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
+		$this->assertFalse($participant->canStartCall($this->createAppConfig(), $this->createMock(IGroupManager::class)));
 	}
 
 	public function testCanStartCallIsTrueInNonChannelForModerators(): void {
 		$participant = $this->createParticipant(false, Participant::MODERATOR, Attendee::PERMISSIONS_DEFAULT);
-		$this->assertTrue($participant->canStartCall($this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
+		$this->assertTrue($participant->canStartCall($this->createAppConfig(), $this->createMock(IGroupManager::class)));
 	}
 
 	public function testIsOwner(): void {

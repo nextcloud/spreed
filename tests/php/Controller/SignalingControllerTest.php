@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Controller;
 
+use OC\AppFramework\Services\AppConfig;
 use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
@@ -88,7 +89,7 @@ class SignalingControllerTest extends TestCase {
 	protected IDBConnection $dbConnection;
 	protected IConfig $serverConfig;
 	protected ?Config $config = null;
-	protected IAppConfig&MockObject $appConfig;
+	protected IAppConfig $appConfig;
 	protected ?string $userId = null;
 	protected ?ISecureRandom $secureRandom = null;
 	protected ?IEventDispatcher $dispatcher = null;
@@ -101,15 +102,10 @@ class SignalingControllerTest extends TestCase {
 		$this->userId = 'testUser';
 		$this->secureRandom = \OCP\Server::get(ISecureRandom::class);
 		$this->request = $this->createMock(IRequest::class);
-		/** @var MockObject|IAppConfig $appConfig */
-		$this->appConfig = $this->createMock(IAppConfig::class);
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$groupManager = $this->createMock(IGroupManager::class);
 		$this->serverConfig = \OCP\Server::get(IConfig::class);
-		$this->serverConfig->setAppValue('spreed', 'signaling_servers', json_encode([
-			'secret' => 'MySecretValueMySecretValue1234567890',
-		]));
-		$this->serverConfig->setAppValue('spreed', 'signaling_ticket_secret', 'the-app-ticket-secret');
+		$this->appConfig = $this->getRealAppConfig();
 		$this->serverConfig->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->dispatcher = \OCP\Server::get(IEventDispatcher::class);
@@ -131,6 +127,18 @@ class SignalingControllerTest extends TestCase {
 		$this->authenticator = $this->createMock(Authenticator::class);
 		$this->roomPropertiesHelper = $this->createMock(RoomPropertiesHelper::class);
 		$this->recreateSignalingController();
+	}
+
+	protected function getAppConfig(): IAppConfig {
+		return $this->appConfig;
+	}
+
+	protected function getRealAppConfig(): AppConfig {
+		return new AppConfig(
+			\OCP\Server::get(IConfig::class),
+			\OCP\Server::get(\OCP\IAppConfig::class),
+			'spreed',
+		);
 	}
 
 	private function recreateSignalingController() {
@@ -561,7 +569,9 @@ class SignalingControllerTest extends TestCase {
 		if (empty($random) || strlen((string)$random) < 32) {
 			return false;
 		}
-		$hash = hash_hmac('sha256', $random . $data, $this->config->getSignalingSecret());
+		$this->appConfig->setAppValueString('signaling_servers_secret', 'MySecretValueMySecretValue1234567890');
+		$signalingSecret = $this->appConfig->getAppValueString('signaling_servers_secret');
+		$hash = hash_hmac('sha256', $random . $data, $signalingSecret);
 		return $hash;
 	}
 
@@ -570,6 +580,8 @@ class SignalingControllerTest extends TestCase {
 		$data = '{"type":"auth","auth":{"version":"1.0","params":{"hello":"world"}}}';
 		$random = 'afb6b872ab03e3376b31bf0af601067222ff7990335ca02d327071b73c0119c6';
 		$checksum = '37455eb661e5a4bc81cc7e1b10beb2cf09c30d0161f82ce12afcc108dd76e4f3';
+		$this->assertEquals('37455eb661e5a4bc81cc7e1b10beb2cf09c30d0161f82ce12afcc108dd76e4f3', hash_hmac('sha256', 'afb6b872ab03e3376b31bf0af601067222ff7990335ca02d327071b73c0119c6{"type":"auth","auth":{"version":"1.0","params":{"hello":"world"}}}', 'MySecretValueMySecretValue1234567890'));
+		$this->assertEquals('02dea65abdd2b67b751e6799711df7346c3a7ae3a3de5262bcc75074a87bcf47', hash_hmac('sha256', 'afb6b872ab03e3376b31bf0af601067222ff7990335ca02d327071b73c0119c6{"type":"auth","auth":{"version":"1.0","params":{"hello":"world"}}}', ''));
 		$this->assertEquals($checksum, $this->calculateBackendChecksum($data, $random));
 		$this->assertTrue($this->validateBackendRandom($data, $random, $checksum));
 	}
@@ -1370,12 +1382,13 @@ class SignalingControllerTest extends TestCase {
 		$dispatcher = \OCP\Server::get(IEventDispatcher::class);
 		/** @var ParticipantService $participantService */
 		$participantService = \OCP\Server::get(ParticipantService::class);
+		$appConfig = $this->getRealAppConfig();
 
 		$this->manager = new Manager(
 			$dbConnection,
 			\OCP\Server::get(IConfig::class),
 			$this->createMock(Config::class),
-			$this->appConfig,
+			$appConfig,
 			\OCP\Server::get(IAppManager::class),
 			\OCP\Server::get(AttendeeMapper::class),
 			\OCP\Server::get(SessionMapper::class),
