@@ -22,7 +22,6 @@ use OCA\Talk\Webinary;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
-use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IUserManager;
@@ -47,7 +46,6 @@ class Notifier {
 		private readonly IGroupManager $groupManager,
 		private readonly ParticipantService $participantService,
 		private readonly ThreadService $threadService,
-		private readonly IConfig $config,
 		private readonly IAppConfig $appConfig,
 		private readonly ITimeFactory $timeFactory,
 		private readonly Util $util,

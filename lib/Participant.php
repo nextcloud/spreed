@@ -181,7 +181,7 @@ class Participant {
 	}
 
 	protected function isAllowedToStartCallByGroup(IAppConfig $appConfig, IGroupManager $groupManager): bool {
-		$allowedGroups = $appConfig->getAppValueArray('start_calls_groups');
+		$allowedGroups = $appConfig->getAppValueArray(Config::ALLOWED_START_CALLS_GROUPS);
 		if (empty($allowedGroups)) {
 			return true;
 		}

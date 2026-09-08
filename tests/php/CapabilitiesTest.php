@@ -389,9 +389,9 @@ class CapabilitiesTest extends TestCase {
 				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
 			]);
 
-		$this->appConfig->expects($this->any())
-			->method('getAppValueBool')
+		$this->appConfig->method('getAppValueBool')
 			->willReturnMap([
+				['backgrounds_branded_for_guests', false],
 				['backgrounds_default_for_users', true, true],
 				['backgrounds_upload_users', true, true],
 				['sip_bridge_dialout', false],
@@ -401,9 +401,6 @@ class CapabilitiesTest extends TestCase {
 				['federation_incoming_enabled', true],
 				['federation_outgoing_enabled', true],
 				['federation_only_trusted_servers', false],
-				['backgrounds_branded_for_guests', false],
-				['backgrounds_default_for_users', true],
-				['backgrounds_upload_users', true],
 			]);
 
 		$this->appConfig->expects($this->any())

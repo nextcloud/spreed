@@ -41,6 +41,9 @@ class Config {
 	public const SIGNALING_TICKET_V2 = 2;
 
 	public const string RETENTION_CLASSIFIED_ROOMS = 'retention_classified_rooms';
+	public const string RETENTION_EVENT_ROOMS = 'retention_event_rooms';
+	public const string RETENTION_PHONE_ROOMS = 'retention_phone_rooms';
+	public const string RETENTION_INSTANT_MEETINGS = 'retention_instant_meetings';
 	public const string STUN_SERVERS = 'stun_servers';
 	public const string TURN_SERVERS = 'turn_servers';
 	public const string DEFAULT_STUN_SERVER = 'stun.nextcloud.com:443';
@@ -52,10 +55,13 @@ class Config {
 	public const string FEDERATION_INCOMING_ENABLED = 'federation_incoming_enabled';
 	public const string FEDERATION_OUTGOING_ENABLED = 'federation_outgoing_enabled';
 	public const string FEDERATION_ONLY_TRUSTED_SERVERS = 'federation_only_trusted_servers';
+	public const string ALLOWED_START_CALLS = 'start_calls';
+	public const string ALLOWED_START_CALLS_GROUPS = 'start_calls_groups';
 	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
 	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
 	public const string CONVERSATIONS_FILES = 'conversations_files';
 	public const string CONVERSATIONS_FILES_PUBLIC_SHARES = 'conversations_files_public_shares';
+	public const string DEFAULT_GROUP_NOTIFICATION = 'default_group_notification';
 	public const string DEFAULT_ROOM_PERMISSIONS = 'default_permissions';
 	public const string DEFAULT_ATTACHMENT_FOLDER = 'default_attachment_folder';
 	public const string GRID_VIDEOS_LIMIT = 'grid_videos_limit';
@@ -85,6 +91,7 @@ class Config {
 	public const string BACKGROUNDS_DEFAULT_FOR_USERS = 'backgrounds_default_for_users';
 	public const string BACKGROUNDS_UPLOAD_USERS = 'backgrounds_upload_users';
 	public const string CREATE_SAMPLES = 'create_samples';
+	public const string SAMPLES_DIRECTORY = 'samples_directory';
 	public const string MATTERBRIDGE_ENABLED = 'enable_matterbridge';
 	public const string MATRIX_ENABLED = 'matrix_enabled';
 	public const string MATRIX_ALLOWED_GROUPS = 'matrix_allowed_groups';
@@ -93,30 +100,30 @@ class Config {
 	public const string CERTIFICATE_EXPIRATION_DAYS = 'certificate_expiration_days';
 	public const string TOKEN_ENTROPY = 'token_entropy';
 	public const string SUMMARY_THRESHOLD = 'summary_threshold';
-	public const string ALLOWED_START_CALLS = 'start_calls';
-	public const string SAMPLES_DIRECTORY = 'samples_directory';
-	public const string RETENTION_EVENT_ROOMS = 'retention_event_rooms';
-	public const string RETENTION_PHONE_ROOMS = 'retention_phone_rooms';
-	public const string RETENTION_INSTANT_MEETINGS = 'retention_instant_meetings';
 	public const string MAX_CALL_DURATION = 'max_call_duration';
 	public const string FEATURE_HINTS_HIDDEN = 'feature_hints_hidden';
 	public const string MATTERBRIDGE_BINARY = 'matterbridge_binary';
 	public const string MATTERBRIDGE_BOT_PASSWORD = 'bridge_bot_password';
-	public const string DEFAULT_GROUP_NOTIFICATION = 'default_group_notification';
 	public const string CHAT_STYLE = 'chat_style';
 	public const string CONVERSATIONS_LIST_STYLE = 'conversations_list_style';
 	public const string HIDE_SIGNALING_WARNING = 'hide_signaling_warning';
 	public const string CHANGELOG = 'changelog';
 	public const string SESSION_PING_LIMIT = 'session_ping_limit';
-	public const string HOSTED_SIGNALING_SERVER_ACCOUNT = 'hosted_signaling_server_account';
+	public const string CONVERSATIONS_LIST_STYLES = 'conversations_list_styles';
+	public const string SIGNALING_TICKET_SECRET = 'signaling_ticket_secret';
+	public const string SIGNALING_TOKEN_ALG = 'signaling_token_alg';
 	public const string HOSTED_SIGNALING_SERVER_NONCE = 'hosted_signaling_server_nonce';
 	public const string HOSTED_SIGNALING_SERVER_ACCOUNT_ID = 'hosted_signaling_server_account_id';
+	public const string HOSTED_SIGNALING_SERVER_ACCOUNT = 'hosted_signaling_server_account';
+	public const string SIGNALING_SERVERS = 'signaling_servers';
+	public const string SIGNALING_SERVERS_SECRET = 'signaling_servers_secret';
 	public const string SIP_BRIDGE_DIALIN_INFO = 'sip_bridge_dialin_info';
 	public const string SIP_BRIDGE_DIALOUT_ANONYMOUS = 'sip_bridge_dialout_anonymous';
 	public const string SIP_BRIDGE_DIALOUT_NUMBER = 'sip_bridge_dialout_number';
 	public const string SIP_BRIDGE_DIALOUT_PREFIX = 'sip_bridge_dialout_prefix';
 	public const string SIP_BRIDGE_SHARED_SECRET = 'sip_bridge_shared_secret';
 	public const string SIP_BRIDGE_DIALOUT = 'sip_bridge_dialout';
+	public const string SIP_DIALIN_DEFAULT = 'sip_dialin_default';
 
 	/**
 	 * 1. Call recording, …
@@ -532,7 +539,7 @@ class Config {
 	 * @return array
 	 */
 	public function getTurnServers(bool $withEvent = true): array {
-		$servers = $this->appConfig->getAppValueArray(self::TURN_SERVERS);
+		$servers = $this->appConfig->getAppValueArray(Config::TURN_SERVERS);
 
 		if ($withEvent) {
 			$event = new BeforeTurnServersGetEvent($servers);
@@ -671,27 +678,30 @@ class Config {
 	 * @return array
 	 */
 	public function getSignalingServers(): array {
-		$config = $this->config->getAppValue('spreed', 'signaling_servers');
-		$signaling = json_decode($config, true);
-		if (!is_array($signaling) || !isset($signaling['servers'])) {
+		$config = $this->appConfig->getAppValueArray(Config::SIGNALING_SERVERS);
+
+		if (array_key_exists('secret', $config) && !array_key_exists('servers', $config)) {
 			return [];
 		}
 
-		return $signaling['servers'];
+		return $config['servers'];
 	}
 
 	/**
 	 * @return string
 	 */
 	public function getSignalingSecret(): string {
-		$config = $this->config->getAppValue('spreed', 'signaling_servers');
-		$signaling = json_decode($config, true);
+		$config = $this->appConfig->getAppValueString(Config::SIGNALING_SERVERS_SECRET);
+		if (!empty($config)) {
+			return $config;
+		}
 
-		if (!is_array($signaling)) {
+		$config = $this->appConfig->getAppValueArray(Config::SIGNALING_SERVERS);
+		if (empty($config)) {
 			return '';
 		}
 
-		return $signaling['secret'];
+		return $config['secret'];
 	}
 
 	public function getHideSignalingWarning(): bool {
@@ -716,7 +726,7 @@ class Config {
 	 */
 	private function getSignalingTicketV1(?string $userId): string {
 		if (empty($userId)) {
-			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret');
+			$secret = $this->appConfig->getAppValueString(self::SIGNALING_TICKET_SECRET);
 		} else {
 			$secret = $this->config->getUserValue($userId, 'spreed', 'signaling_ticket_secret');
 		}
@@ -725,7 +735,7 @@ class Config {
 			// TODO(fancycode): Is there a possibility for a race condition?
 			$secret = $this->secureRandom->generate(255);
 			if (empty($userId)) {
-				$this->config->setAppValue('spreed', 'signaling_ticket_secret', $secret);
+				$this->appConfig->setAppValueString(Config::SIGNALING_TICKET_SECRET, $secret);
 			} else {
 				$this->config->setUserValue($userId, 'spreed', 'signaling_ticket_secret', $secret);
 			}
@@ -741,7 +751,7 @@ class Config {
 	}
 
 	private function ensureSignalingTokenKeys(string $alg): void {
-		$secret = $this->config->getAppValue('spreed', 'signaling_token_privkey_' . strtolower($alg));
+		$secret = $this->appConfig->getAppValueString('signaling_token_privkey_' . strtolower($alg));
 		if ($secret) {
 			return;
 		}
@@ -775,12 +785,12 @@ class Config {
 			throw new \Exception('Unsupported algorithm ' . $alg);
 		}
 
-		$this->config->setAppValue('spreed', 'signaling_token_privkey_' . strtolower($alg), $secret);
-		$this->config->setAppValue('spreed', 'signaling_token_pubkey_' . strtolower($alg), $public);
+		$this->appConfig->setAppValueString('signaling_token_privkey_' . strtolower($alg), $secret);
+		$this->appConfig->setAppValueString('signaling_token_pubkey_' . strtolower($alg), $public);
 	}
 
 	public function getSignalingTokenAlgorithm(): string {
-		return $this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256');
+		return $this->appConfig->getAppValueString(self::SIGNALING_TOKEN_ALG);
 	}
 
 	public function getSignalingTokenPrivateKey(?string $alg = null): string {
@@ -789,7 +799,7 @@ class Config {
 		}
 		$this->ensureSignalingTokenKeys($alg);
 
-		return $this->config->getAppValue('spreed', 'signaling_token_privkey_' . strtolower($alg));
+		return $this->appConfig->getAppValueString('signaling_token_privkey_' . strtolower($alg));
 	}
 
 	public function getSignalingTokenPublicKey(?string $alg = null): string {
@@ -798,7 +808,8 @@ class Config {
 		}
 		$this->ensureSignalingTokenKeys($alg);
 
-		return $this->config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($alg));
+		return $this->appConfig->getAppValueString('signaling_token_pubkey_' . strtolower($alg));
+		;
 	}
 
 	public function deriveSignalingTokenPublicKey(#[SensitiveParameter] string $privateKey, string $alg): string {
@@ -895,7 +906,7 @@ class Config {
 	 */
 	public function validateSignalingTicket(?string $userId, #[SensitiveParameter] string $ticket): bool {
 		if (empty($userId)) {
-			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret');
+			$secret = $this->appConfig->getAppValueString(Config::SIGNALING_TICKET_SECRET);
 		} else {
 			$secret = $this->config->getUserValue($userId, 'spreed', 'signaling_ticket_secret');
 		}
