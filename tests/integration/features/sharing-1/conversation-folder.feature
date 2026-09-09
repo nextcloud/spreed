@@ -98,6 +98,22 @@ Feature: sharing-1/conversation-folder
       | group room | users     | participant1 | participant1-displayname | Caption text | "IGNORE"          | Message 1     |
       | group room | users     | participant2 | participant2-displayname | Message 1    | []                |               |
 
+  Scenario: Post with a thread title creates a thread
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2    |
+      | roomName | room |
+    And user "participant1" renames room "group room" to "Group room" with 200 (v4)
+    And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
+    And user "participant1" uploads file "test.txt" with content "Hello!" to conversation folder for room "group room" with name "Group room"
+    When user "participant1" posts file "test.txt" from conversation folder of room "group room" with name "Group room" with 200 (v1)
+      | talkMetaData.threadTitle | Thread 1 |
+    Then user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message | messageParameters | threadTitle |
+      | group room | users     | participant1 | participant1-displayname | {file}  | "IGNORE"          | Thread 1    |
+    And user "participant1" sees the following recent threads in room "group room" with 200
+      | t.id   | t.title  | t.numReplies | t.lastMessage | a.notificationLevel | firstMessage | lastMessage |
+      | {file} | Thread 1 | 0            | 0             | 0                   | {file}       | NULL        |
+
   Scenario: Room name with a hyphen does not confuse token extraction
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2        |
