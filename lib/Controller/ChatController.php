@@ -2592,6 +2592,14 @@ class ChatController extends AEnvironmentAwareOCSController {
 		$threadId = isset($metaData['threadId']) ? (int)$metaData['threadId'] : 0;
 		unset($metaData['replyTo'], $metaData['threadId'], $metaData[Message::METADATA_SILENT]);
 
+		$threadTitle = '';
+		if (isset($metaData['threadTitle'])) {
+			if (is_string($metaData['threadTitle']) && trim($metaData['threadTitle']) !== '') {
+				$threadTitle = trim($metaData['threadTitle']);
+			}
+			unset($metaData['threadTitle']);
+		}
+
 		$replyToComment = null;
 		if ($replyToId !== null) {
 			try {
@@ -2601,10 +2609,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 		}
 
+		$createThread = $replyToId === null && $threadId === Thread::THREAD_NONE && $threadTitle !== '';
+
 		// Create the file_shared system message referencing the file by node ID.
 		// The parameters use 'fileId' instead of 'share' so no per-file TYPE_ROOM
 		// share is needed; access is controlled by the folder-level share.
-		$this->chatManager->addSystemMessage(
+		$comment = $this->chatManager->addSystemMessage(
 			$this->room,
 			$this->participant,
 			Attendee::ACTOR_USERS,
@@ -2618,6 +2628,26 @@ class ChatController extends AEnvironmentAwareOCSController {
 			$silent,
 			$threadId,
 		);
+
+		if ($createThread) {
+			$thread = $this->threadService->createThread($this->room, (int)$comment->getId(), $threadTitle);
+			// Add to subscribed threads list
+			$this->threadService->setNotificationLevel($this->participant->getAttendee(), $thread->getId(), Participant::NOTIFY_DEFAULT);
+
+			$this->chatManager->addSystemMessage(
+				$this->room,
+				$this->participant,
+				$this->participant->getAttendee()->getActorType(),
+				$this->participant->getAttendee()->getActorId(),
+				json_encode(['message' => 'thread_created', 'parameters' => ['thread' => (int)$comment->getId(), 'title' => $thread->getName()]]),
+				$this->timeFactory->getDateTime(),
+				false,
+				null,
+				$comment,
+				true,
+				true
+			);
+		}
 
 		return new DataResponse(['renames' => [[$renameFrom => $renameTo]]], Http::STATUS_OK);
 	}
