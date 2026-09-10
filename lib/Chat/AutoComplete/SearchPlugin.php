@@ -72,6 +72,8 @@ class SearchPlugin implements ISearchPlugin {
 		$guestAttendees = [];
 		/** @var array<string, string> $teamIds */
 		$teamIds = [];
+		/** @var array<string, string> $matrixIds */
+		$matrixIds = [];
 
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
 			// Add potential leavers of one-to-one rooms again.
@@ -95,6 +97,8 @@ class SearchPlugin implements ISearchPlugin {
 					$groupIds[$attendee->getActorId()] = $attendee->getDisplayName();
 				} elseif ($attendee->getActorType() === Attendee::ACTOR_CIRCLES) {
 					$teamIds[$attendee->getActorId()] = $attendee->getDisplayName();
+				} elseif ($attendee->getActorType() === Attendee::ACTOR_MATRIX) {
+					$matrixIds[$attendee->getActorId()] = $attendee->getDisplayName();
 				}
 			}
 		}
@@ -105,8 +109,34 @@ class SearchPlugin implements ISearchPlugin {
 		$this->searchEmails($search, $emailAttendees, $searchResult);
 		$this->searchFederatedUsers($search, $cloudIds, $searchResult);
 		$this->searchTeams($search, $teamIds, $searchResult);
+		$this->searchMatrixUsers($search, $matrixIds, $searchResult);
 
 		return false;
+	}
+
+	/**
+	 * Matrix members without a Nextcloud account; the mention id `matrix/@user:server`
+	 * is what the Matrix formatter turns back into a pill.
+	 * @param array<string, string> $matrixIds
+	 */
+	protected function searchMatrixUsers(string $search, array $matrixIds, ISearchResult $searchResult): void {
+		if ($matrixIds === []) {
+			return;
+		}
+		$search = mb_strtolower($search);
+		$type = new SearchResultType('matrix_users');
+		$matches = $exactMatches = [];
+		foreach ($matrixIds as $mxid => $displayName) {
+			$result = ['label' => $displayName !== '' ? $displayName : $mxid, 'value' => ['shareType' => 'matrix_user', 'shareWith' => $mxid], 'shareWithDisplayNameUnique' => $mxid];
+			if ($search === '' || mb_stripos($mxid, $search) !== false || ($displayName !== '' && mb_stripos($displayName, $search) !== false)) {
+				if (mb_strtolower($mxid) === $search || mb_strtolower($displayName) === $search) {
+					$exactMatches[] = $result;
+				} else {
+					$matches[] = $result;
+				}
+			}
+		}
+		$searchResult->addResultSet($type, $matches, $exactMatches);
 	}
 
 	/**

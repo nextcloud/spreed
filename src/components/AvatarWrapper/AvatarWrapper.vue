@@ -10,7 +10,7 @@
 			:key="(isDarkTheme ? 'dark-' : 'light-') + '_' + id"
 			class="avatar"
 			:user="id"
-			:url="!isFederatedUser ? undefined : avatarUrl"
+			:url="!(isFederatedUser || isMatrixUser) ? undefined : avatarUrl"
 			:iconClass="iconClass"
 			:displayName="name"
 			:disableTooltip="disableTooltip"
@@ -62,7 +62,7 @@ import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import WebIcon from 'vue-material-design-icons/Web.vue'
 import { ATTENDEE, AVATAR } from '../../constants.ts'
-import { getUserProxyAvatarOcsUrl } from '../../services/avatarService.ts'
+import { getMatrixMemberAvatarUrl, getUserProxyAvatarOcsUrl } from '../../services/avatarService.ts'
 
 export default {
 
@@ -182,6 +182,7 @@ export default {
 				case ATTENDEE.ACTOR_TYPE.GUESTS:
 					return !this.hasCustomName ? 'icon-user' : ''
 				case ATTENDEE.ACTOR_TYPE.FEDERATED_USERS:
+				case ATTENDEE.ACTOR_TYPE.MATRIX:
 					return (this.token && !this.failed) ? '' : 'icon-user'
 				case ATTENDEE.ACTOR_TYPE.DELETED_USERS:
 					return 'icon-user'
@@ -229,6 +230,10 @@ export default {
 			return this.source === ATTENDEE.ACTOR_TYPE.FEDERATED_USERS
 		},
 
+		isMatrixUser() {
+			return this.source === ATTENDEE.ACTOR_TYPE.MATRIX
+		},
+
 		isBot() {
 			return this.source === ATTENDEE.ACTOR_TYPE.BOTS && this.id !== ATTENDEE.CHANGELOG_BOT_ID && this.id !== ATTENDEE.SAMPLE_BOT_ID
 		},
@@ -253,11 +258,14 @@ export default {
 		},
 
 		avatarUrl() {
+			if (this.isMatrixUser) {
+				return getMatrixMemberAvatarUrl(this.token, this.id, this.isDarkTheme, this.size > AVATAR.SIZE.MEDIUM ? 512 : 64)
+			}
 			return getUserProxyAvatarOcsUrl(this.token, this.id, this.isDarkTheme, this.size > AVATAR.SIZE.MEDIUM ? 512 : 64)
 		},
 
 		isSpecialAvatar() {
-			return this.isGuestUser || this.iconClass || this.isBot || (this.isFederatedUser && this.token)
+			return this.isGuestUser || this.iconClass || this.isBot || ((this.isFederatedUser || this.isMatrixUser) && this.token)
 		},
 	},
 

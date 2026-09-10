@@ -87,6 +87,8 @@ class Attendee extends Entity {
 	public const ACTOR_BOTS = 'bots';
 	public const ACTOR_FEDERATED_USERS = 'federated_users';
 	public const ACTOR_PHONES = 'phones';
+	/** Matrix users without a Nextcloud account, actor id is the Matrix user id */
+	public const ACTOR_MATRIX = 'matrix';
 
 	// Special actor IDs
 	public const ACTOR_BOT_PREFIX = 'bot-';

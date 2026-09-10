@@ -569,3 +569,13 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `avatar_removed` - {actor} removed the conversation avatar
 * `federated_user_added` - {actor} invited {federated_user} / {federated_user} accepted the invitation
 * `federated_user_removed` - {actor} removed {federated_user} / {federated_user} declined the invitation
+
+### Matrix system messages
+
+* `matrix_user_added` - {user} joined the Matrix room (Matrix-only member)
+* `matrix_user_removed` - {user} left the Matrix room
+* `matrix_room_upgraded` - The Matrix room was upgraded, the conversation is read-only
+* `matrix_call_unsupported` - A call was started in Matrix (calls are not supported in Talk for Matrix rooms)
+* `matrix_encryption_enabled` - Encryption was enabled for the Matrix room
+
+Rich object `matrix-media` (`{object}`): `id` (Matrix event id), `name`, `mimetype`, `size`, `msgtype`, `mxc`, `encrypted`, `width`, `height`, `link` (download through Talk).

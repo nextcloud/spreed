@@ -302,6 +302,28 @@ namespace OCA\Talk;
  *     roomToken: string,
  * }
  *
+ * @psalm-type TalkMatrixAccount = array{
+ *     id: int,
+ *     mxid: string,
+ *     deviceId: string,
+ *     homeserverId: int,
+ *     // 0 = active, 1 = token invalid (re-login needed), 2 = disabled
+ *     status: int,
+ *     lastSync: ?int,
+ *     lastError: ?string,
+ * }
+ *
+ * @psalm-type TalkMatrixHomeserver = array{
+ *     id: int,
+ *     name: string,
+ *     serverName: string,
+ *     baseUrl: string,
+ *     enabled: bool,
+ *     allowE2ee: bool,
+ *     allowUpload: bool,
+ *     specVersions: list<string>,
+ * }
+ *
  * @psalm-type TalkFederationInvite = array{
  *     // Identifier of the invitation
  *     id: int,
@@ -552,6 +574,10 @@ namespace OCA\Talk;
  *     recordingConsent: int,
  *     remoteServer?: string,
  *     remoteToken?: string,
+ *     // Matrix room id when the conversation mirrors a Matrix room
+ *     matrixRoomId?: string,
+ *     // What the Matrix room / the current user in it supports
+ *     matrixCapabilities?: array<string, mixed>,
  *     // `'0'` if not connected, otherwise an up to 512 character long string that is the identifier of the user's session making the request. Should only be used to pre-check if the user joined already with this session, but this might be outdated by the time of usage, so better check via [Get list of participants in a conversation](https://nextcloud-talk.readthedocs.io/en/latest/participant/#get-list-of-participants-in-a-conversation)
  *     sessionId: string,
  *     // SIP enable status (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#sip-states))

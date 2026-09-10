@@ -71,6 +71,17 @@ class ReactionController extends AEnvironmentAwareOCSController {
 			return $proxy->react($this->room, $this->participant, $messageId, $reaction, $this->getResponseFormat());
 		}
 
+		if ($this->room->isMatrixConversation()) {
+			/** @var \OCA\Talk\Matrix\Controller\ChatController $matrix */
+			$matrix = \OCP\Server::get(\OCA\Talk\Matrix\Controller\ChatController::class);
+			$result = $matrix->react($this->room, $this->participant, $messageId, $reaction);
+			if ($result instanceof DataResponse) {
+				return $result;
+			}
+			$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId);
+			return new DataResponse($this->formatReactions($reactions), $result);
+		}
+
 		try {
 			$this->reactionManager->addReactionMessage(
 				$this->getRoom(),
@@ -121,6 +132,17 @@ class ReactionController extends AEnvironmentAwareOCSController {
 			/** @var \OCA\Talk\Federation\Proxy\TalkV1\Controller\ReactionController $proxy */
 			$proxy = \OCP\Server::get(\OCA\Talk\Federation\Proxy\TalkV1\Controller\ReactionController::class);
 			return $proxy->delete($this->room, $this->participant, $messageId, $reaction, $this->getResponseFormat());
+		}
+
+		if ($this->room->isMatrixConversation()) {
+			/** @var \OCA\Talk\Matrix\Controller\ChatController $matrix */
+			$matrix = \OCP\Server::get(\OCA\Talk\Matrix\Controller\ChatController::class);
+			$error = $matrix->deleteReaction($this->room, $this->participant, $messageId, $reaction);
+			if ($error !== null) {
+				return $error;
+			}
+			$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId);
+			return new DataResponse($this->formatReactions($reactions), Http::STATUS_OK);
 		}
 
 		try {

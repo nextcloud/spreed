@@ -212,6 +212,7 @@ class Application extends App implements IBootstrap {
 
 		// Bot listeners
 		$context->registerEventListener(BotDisabledEvent::class, BotListener::class);
+		$context->registerEventListener(\OCA\Talk\Events\SystemMessageSentEvent::class, \OCA\Talk\Matrix\Listener\FileShareListener::class);
 		$context->registerEventListener(BotEnabledEvent::class, BotListener::class);
 		$context->registerEventListener(BotInstallEvent::class, BotListener::class);
 		$context->registerEventListener(BotUninstallEvent::class, BotListener::class);

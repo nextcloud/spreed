@@ -385,6 +385,16 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return $proxy->sendMessage($this->room, $this->participant, $message, $referenceId, $replyTo, $silent, $threadTitle, $threadId);
 		}
 
+		if ($this->room->isMatrixConversation()) {
+			/** @var \OCA\Talk\Matrix\Controller\ChatController $matrix */
+			$matrix = \OCP\Server::get(\OCA\Talk\Matrix\Controller\ChatController::class);
+			$result = $matrix->sendMessage($this->room, $this->participant, $message, $referenceId, $replyTo, $silent, $threadId, $threadTitle);
+			if ($result instanceof DataResponse) {
+				return $result;
+			}
+			return $this->parseCommentToResponse($result['comment'], $result['parentMessage']);
+		}
+
 		if (trim($message) === '') {
 			return new DataResponse(['error' => 'message'], Http::STATUS_BAD_REQUEST);
 		}
@@ -902,6 +912,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 				$markNotificationsAsRead,
 				// FIXME support threads in federation $threadId,
 			);
+		}
+
+		if ($this->room->isMatrixConversation()) {
+			/** @var \OCA\Talk\Matrix\Controller\ChatController $matrix */
+			$matrix = \OCP\Server::get(\OCA\Talk\Matrix\Controller\ChatController::class);
+			$matrix->beforeReceiveMessages($this->room, $this->participant, $lookIntoFuture, $lastKnownMessageId);
 		}
 
 		if ($threadId !== 0) {
@@ -1427,12 +1443,21 @@ class ChatController extends AEnvironmentAwareOCSController {
 		}
 
 		try {
-			$systemMessageComment = $this->chatManager->deleteMessage(
-				$this->room,
-				$message,
-				$this->participant,
-				$this->timeFactory->getDateTime()
-			);
+			if ($this->room->isMatrixConversation()) {
+				/** @var \OCA\Talk\Matrix\Controller\ChatController $matrix */
+				$matrix = \OCP\Server::get(\OCA\Talk\Matrix\Controller\ChatController::class);
+				$systemMessageComment = $matrix->deleteMessage($this->room, $this->participant, $message);
+				if ($systemMessageComment instanceof DataResponse) {
+					return $systemMessageComment;
+				}
+			} else {
+				$systemMessageComment = $this->chatManager->deleteMessage(
+					$this->room,
+					$message,
+					$this->participant,
+					$this->timeFactory->getDateTime()
+				);
+			}
 		} catch (ShareNotFound) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_NOT_FOUND);
 		}
@@ -1545,13 +1570,22 @@ class ChatController extends AEnvironmentAwareOCSController {
 			}
 		}
 		try {
-			$systemMessageComment = $this->chatManager->editMessage(
-				$this->room,
-				$comment,
-				$this->participant,
-				$this->timeFactory->getDateTime(),
-				$message
-			);
+			if ($this->room->isMatrixConversation()) {
+				/** @var \OCA\Talk\Matrix\Controller\ChatController $matrix */
+				$matrix = \OCP\Server::get(\OCA\Talk\Matrix\Controller\ChatController::class);
+				$systemMessageComment = $matrix->editMessage($this->room, $this->participant, $comment, $message);
+				if ($systemMessageComment instanceof DataResponse) {
+					return $systemMessageComment;
+				}
+			} else {
+				$systemMessageComment = $this->chatManager->editMessage(
+					$this->room,
+					$comment,
+					$this->participant,
+					$this->timeFactory->getDateTime(),
+					$message
+				);
+			}
 		} catch (MessageTooLongException) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\InvalidArgumentException $e) {
@@ -1928,6 +1962,12 @@ class ChatController extends AEnvironmentAwareOCSController {
 
 		$this->participantService->updateLastReadMessage($this->participant, $setToMessage);
 		$attendee = $this->participant->getAttendee();
+
+		if ($this->room->isMatrixConversation()) {
+			/** @var \OCA\Talk\Matrix\Controller\ChatController $matrix */
+			$matrix = \OCP\Server::get(\OCA\Talk\Matrix\Controller\ChatController::class);
+			$matrix->afterReadMarker($this->room, $this->participant, $setToMessage);
+		}
 
 		$headers = $lastCommonRead = [];
 		if ($attendee->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {

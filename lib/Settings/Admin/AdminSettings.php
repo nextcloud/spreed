@@ -62,11 +62,21 @@ class AdminSettings implements ISettings {
 		$this->initRequestSignalingServerTrial();
 		$this->initRecording();
 		$this->initSIPBridge();
+		$this->initMatrix();
 
 		Util::addScript('spreed', 'talk-admin-settings');
 		Util::addStyle('spreed', 'talk-admin-settings');
 
 		return new TemplateResponse('spreed', 'settings/admin-settings', [], '');
+	}
+
+	protected function initMatrix(): void {
+		$matrixConfig = \OCP\Server::get(\OCA\Talk\Matrix\MatrixConfig::class);
+		$homeservers = \OCP\Server::get(\OCA\Talk\Matrix\Service\HomeserverService::class)->getAll();
+		$this->initialState->provideInitialState('matrix_enabled', $matrixConfig->isEnabled());
+		$this->initialState->provideInitialState('matrix_allowed_groups', $this->getGroupDetailsArray($matrixConfig->getAllowedGroupIds(), 'matrix_allowed_groups'));
+		$this->initialState->provideInitialState('matrix_homeservers', array_map(static fn ($hs) => $hs->jsonSerialize(), $homeservers));
+		$this->initialState->provideInitialState('matrix_settings', $matrixConfig->getOperationalSettings());
 	}
 
 	protected function initGeneralSettings(): void {

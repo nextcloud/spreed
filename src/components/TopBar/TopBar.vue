@@ -134,6 +134,19 @@
 					</span>
 				</span>
 
+				<!-- Matrix room indicator (non-interactive) -->
+				<span
+					v-if="isMatrix"
+					class="top-bar__matrix"
+					:class="{ 'top-bar__matrix--warning': matrixEncrypted && matrixDeviceUnverified }"
+					:title="matrixTitle">
+					<IconLock v-if="matrixEncrypted" :size="16" />
+					<NcIconSvgWrapper v-else :svg="IconMatrix" :size="16" />
+					<span v-if="!isMobile" class="top-bar__matrix-label">
+						{{ matrixEncrypted ? t('spreed', 'Matrix · Encrypted') : t('spreed', 'Matrix') }}
+					</span>
+				</span>
+
 				<!-- Upcoming meetings -->
 				<CalendarEventsDialog
 					v-if="showCalendarEvents"
@@ -178,6 +191,7 @@ import { useIsMobile, useIsSmallMobile } from '@nextcloud/vue/composables/useIsM
 import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcRichText from '@nextcloud/vue/components/NcRichText'
 import IconAccountMultipleOutline from 'vue-material-design-icons/AccountMultipleOutline.vue'
 import IconAccountMultiplePlusOutline from 'vue-material-design-icons/AccountMultiplePlusOutline.vue'
@@ -186,6 +200,8 @@ import IconChevronRight from 'vue-material-design-icons/ChevronRight.vue'
 import IconClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import IconMagnify from 'vue-material-design-icons/Magnify.vue'
 import IconShieldLockOutline from 'vue-material-design-icons/ShieldLockOutline.vue'
+import IconLock from 'vue-material-design-icons/Lock.vue'
+import IconMatrix from '../../../img/material-icons/matrix.svg?raw'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import CalendarEventsDialog from '../CalendarEventsDialog.vue'
 import ConversationIcon from '../ConversationIcon.vue'
@@ -234,6 +250,8 @@ export default {
 		IconClockOutline,
 		IconMagnify,
 		IconShieldLockOutline,
+		IconLock,
+		NcIconSvgWrapper,
 	},
 
 	props: {
@@ -291,6 +309,30 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
+		isMatrix() {
+			return this.conversation.objectType === CONVERSATION.OBJECT_TYPE.MATRIX
+		},
+
+		matrixEncrypted() {
+			return this.isMatrix && this.conversation.matrixCapabilities?.encrypted === true
+		},
+
+		matrixDeviceUnverified() {
+			return this.conversation.matrixCapabilities?.deviceVerified === false
+		},
+
+		matrixTitle() {
+			const server = this.conversation.matrixCapabilities?.serverName
+			const alias = this.conversation.matrixCapabilities?.canonicalAlias
+			const where = alias ?? (server ? t('spreed', 'Matrix room on {server}', { server }) : t('spreed', 'Matrix room'))
+			if (!this.matrixEncrypted) {
+				return where
+			}
+			return this.matrixDeviceUnverified
+				? t('spreed', '{where} – end-to-end encrypted. Verify this Talk device in the settings to read all messages.', { where })
+				: t('spreed', '{where} – end-to-end encrypted', { where })
 		},
 
 		isClassified() {
@@ -603,5 +645,26 @@ export default {
 
 .icon {
 	display: flex;
+}
+
+.top-bar__matrix {
+	display: flex;
+	align-items: center;
+	gap: var(--default-grid-baseline);
+	height: var(--default-clickable-area);
+	padding: 0 calc(var(--default-grid-baseline) * 2);
+	border-radius: var(--border-radius-pill);
+	color: var(--color-text-maxcontrast);
+	border: 1px solid var(--color-border-dark);
+	white-space: nowrap;
+
+	&--warning {
+		color: var(--color-warning-text);
+		border-color: var(--color-warning);
+	}
+}
+
+.top-bar__matrix-label {
+	font-size: var(--font-size-small);
 }
 </style>

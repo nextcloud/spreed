@@ -1095,6 +1095,13 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
 			return new DataResponse(['error' => Room::OBJECT_TYPE_EVENT], Http::STATUS_BAD_REQUEST);
 		}
+		if ($this->room->isMatrixConversation()) {
+			try {
+				\OCP\Server::get(\OCA\Talk\Matrix\Service\SendService::class)->rename($this->room, $this->participant, $roomName);
+			} catch (\OCA\Talk\Matrix\Service\MatrixSendException $e) {
+				return new DataResponse(['error' => $e->getError()], $e->getStatus());
+			}
+		}
 
 		try {
 			$this->roomService->setName($this->room, $roomName, validateType: true);
@@ -1122,6 +1129,13 @@ class RoomController extends AEnvironmentAwareOCSController {
 	public function setDescription(string $description): DataResponse {
 		if ($this->room->getObjectType() === Room::OBJECT_TYPE_EVENT) {
 			return new DataResponse(['error' => Room::OBJECT_TYPE_EVENT], Http::STATUS_BAD_REQUEST);
+		}
+		if ($this->room->isMatrixConversation()) {
+			try {
+				\OCP\Server::get(\OCA\Talk\Matrix\Service\SendService::class)->setTopic($this->room, $this->participant, $description);
+			} catch (\OCA\Talk\Matrix\Service\MatrixSendException $e) {
+				return new DataResponse(['error' => $e->getError()], $e->getStatus());
+			}
 		}
 
 		try {
@@ -1462,6 +1476,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 					$this->participantService->leaveRoomAsSession($this->room, $participant);
 				}
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
+			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_MATRIX) {
+				$result['displayName'] = $participant->getAttendee()->getDisplayName() ?: $participant->getAttendee()->getActorId();
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_PHONES) {
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 				if ($this->talkConfig->isSIPConfigured()
@@ -1513,6 +1529,19 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if ($source !== 'users' && $this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			// Can only add users to breakout rooms
 			return new DataResponse(['error' => 'source'], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->room->isMatrixConversation()) {
+			// Invite on Matrix; the member shows up in Talk once they join and the next sync runs
+			if ($source !== 'users' && $source !== Attendee::ACTOR_MATRIX) {
+				return new DataResponse(['error' => 'source'], Http::STATUS_BAD_REQUEST);
+			}
+			try {
+				\OCP\Server::get(\OCA\Talk\Matrix\Service\SendService::class)->invite($this->room, $this->participant, $newParticipant, $source === 'users');
+			} catch (\OCA\Talk\Matrix\Service\MatrixSendException $e) {
+				return new DataResponse(['error' => $e->getError()], $e->getStatus());
+			}
+			return new DataResponse(null);
 		}
 
 		$participants = $this->participantService->getParticipantsForRoom($this->room);
@@ -1728,6 +1757,13 @@ class RoomController extends AEnvironmentAwareOCSController {
 		if ($room->isFederatedConversation()) {
 			$this->federationManager->rejectByRemoveSelf($room, $this->userId);
 		}
+		if ($room->isMatrixConversation()) {
+			try {
+				\OCP\Server::get(\OCA\Talk\Matrix\Service\SendService::class)->leave($room, $participant);
+			} catch (\OCA\Talk\Matrix\Service\MatrixSendException $e) {
+				return new DataResponse(['error' => $e->getError()], $e->getStatus());
+			}
+		}
 
 		if ($room->isAnnouncement() && !$participant->hasModeratorPermissions(false)) {
 			// Announcements can not be left, so the audience can not miss out on them.
@@ -1807,6 +1843,18 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if ($this->participant->getAttendee()->getId() === $targetParticipant->getAttendee()->getId()) {
 			return $this->removeSelfFromRoomLogic($this->room, $targetParticipant);
+		}
+
+		if ($this->room->isMatrixConversation()) {
+			$targetMxid = \OCP\Server::get(\OCA\Talk\Matrix\Service\RoomInfoService::class)->mxidForAttendee($targetParticipant->getAttendee());
+			if ($targetMxid === null) {
+				return new DataResponse(['error' => 'participant'], Http::STATUS_NOT_FOUND);
+			}
+			try {
+				\OCP\Server::get(\OCA\Talk\Matrix\Service\SendService::class)->kick($this->room, $this->participant, $targetMxid);
+			} catch (\OCA\Talk\Matrix\Service\MatrixSendException $e) {
+				return new DataResponse(['error' => $e->getError()], $e->getStatus());
+			}
 		}
 
 		if ($targetParticipant->isOwner()) {
@@ -1905,6 +1953,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setReadOnly(int $state): DataResponse {
+		if ($this->room->isMatrixConversation()) {
+			return new DataResponse(['error' => 'matrix-unsupported'], Http::STATUS_METHOD_NOT_ALLOWED);
+		}
 		try {
 			$this->roomService->setReadOnly($this->room, $state);
 		} catch (ReadOnlyException $e) {
@@ -1941,6 +1992,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setListable(int $scope): DataResponse {
+		if ($this->room->isMatrixConversation()) {
+			return new DataResponse(['error' => 'matrix-unsupported'], Http::STATUS_METHOD_NOT_ALLOWED);
+		}
 		if ($this->room->isPreserved()) {
 			return new DataResponse(['error' => 'preserved'], Http::STATUS_FORBIDDEN);
 		}
@@ -2008,6 +2062,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setPassword(string $password): DataResponse {
+		if ($this->room->isMatrixConversation()) {
+			return new DataResponse(['error' => 'matrix-unsupported'], Http::STATUS_METHOD_NOT_ALLOWED);
+		}
 		try {
 			$this->roomService->setPassword($this->room, $password);
 		} catch (PasswordException $e) {
@@ -2969,6 +3026,18 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'participant'], Http::STATUS_NOT_FOUND);
 		}
 
+		if ($this->room->isMatrixConversation()) {
+			$targetMxid = \OCP\Server::get(\OCA\Talk\Matrix\Service\RoomInfoService::class)->mxidForAttendee($attendee);
+			if ($targetMxid === null) {
+				return new DataResponse(['error' => 'participant'], Http::STATUS_NOT_FOUND);
+			}
+			try {
+				\OCP\Server::get(\OCA\Talk\Matrix\Service\SendService::class)->setPowerLevel($this->room, $this->participant, $targetMxid, $promote ? \Nextcloud\Matrix\Model\PowerLevels::DEFAULT_MODERATOR : 0);
+			} catch (\OCA\Talk\Matrix\Service\MatrixSendException $e) {
+				return new DataResponse(['error' => $e->getError()], $e->getStatus());
+			}
+		}
+
 		try {
 			$this->participantService->updateParticipantTypeByModerator(
 				$this->room,
@@ -3007,6 +3076,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'mode' => '(call|default)',
 	])]
 	public function setPermissions(string $mode, int $permissions): DataResponse {
+		if ($this->room->isMatrixConversation()) {
+			return new DataResponse(['error' => 'matrix-unsupported'], Http::STATUS_METHOD_NOT_ALLOWED);
+		}
 		if ($mode !== 'default') {
 			return new DataResponse(['error' => 'mode'], Http::STATUS_BAD_REQUEST);
 		}
@@ -3114,6 +3186,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setLobby(int $state, ?int $timer = null): DataResponse {
+		if ($this->room->isMatrixConversation()) {
+			return new DataResponse(['error' => 'matrix-unsupported'], Http::STATUS_METHOD_NOT_ALLOWED);
+		}
 		$timerDateTime = null;
 		if ($timer !== null && $timer > 0) {
 			try {
@@ -3169,6 +3244,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setSIPEnabled(int $state): DataResponse {
+		if ($this->room->isMatrixConversation()) {
+			return new DataResponse(['error' => 'matrix-unsupported'], Http::STATUS_METHOD_NOT_ALLOWED);
+		}
 		if ($this->room->isClassified() && $state !== Webinary::SIP_DISABLED) {
 			// Classified conversations can not enable SIP, independently of whether
 			// SIP is configured or the user could otherwise enable it.
@@ -3222,6 +3300,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setRecordingConsent(int $recordingConsent): DataResponse {
+		if ($this->room->isMatrixConversation()) {
+			return new DataResponse(['error' => 'matrix-unsupported'], Http::STATUS_METHOD_NOT_ALLOWED);
+		}
 		if (!$this->talkConfig->isRecordingEnabled()) {
 			return new DataResponse(['error' => 'config'], Http::STATUS_PRECONDITION_FAILED);
 		}
@@ -3293,6 +3374,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function setMessageExpiration(int $seconds): DataResponse {
+		if ($this->room->isMatrixConversation()) {
+			return new DataResponse(['error' => 'matrix-unsupported'], Http::STATUS_METHOD_NOT_ALLOWED);
+		}
 		/** @var int<0, max> $forced */
 		$forced = $this->forcedParameters->getForcedParameter(Parameter::MESSAGE_EXPIRATION);
 		if ($forced !== null && $forced !== $seconds) {
