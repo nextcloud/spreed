@@ -5,6 +5,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 25.0.0-rc.3 – 2026-09-10
+### Changed
+- Update translations
+- design: rearrange file previews in combined messages
+  [#19269](https://github.com/nextcloud/spreed/pull/19269)
+
+### Fixed
+- fix(chat): fallback to real image in case of a preview failure
+  [#19361](https://github.com/nextcloud/spreed/pull/19361)
+- fix(chat): start threads with the file upload
+  [#19351](https://github.com/nextcloud/spreed/pull/19351)
+
 ## 25.0.0-rc.2 – 2026-09-03
 ### Changed
 - Update dependencies
