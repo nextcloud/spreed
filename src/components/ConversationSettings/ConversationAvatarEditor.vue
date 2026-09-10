@@ -21,7 +21,8 @@
 					hideUserStatus />
 				<div v-else class="icon-loading" />
 			</div>
-			<VueCropper
+			<component
+				:is="cropperComponent"
 				v-show="showCropper"
 				ref="cropper"
 				class="avatar__cropper"
@@ -114,7 +115,7 @@ import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { generateUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
-import VueCropper from 'vue-cropperjs'
+import { markRaw } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcColorPicker from '@nextcloud/vue/components/NcColorPicker'
 import NcEmojiPicker from '@nextcloud/vue/components/NcEmojiPicker'
@@ -127,7 +128,15 @@ import ConversationIcon from '../ConversationIcon.vue'
 import IconFileUpload from '../../../img/material-icons/file-upload.svg?raw'
 import { AVATAR } from '../../constants.ts'
 
-import 'cropperjs/dist/cropper.css'
+// Asynchronous loader for VueCropper component
+let vueCropper = null
+function getCropperAsyncComponent() {
+	vueCropper ??= Promise.all([
+		import('vue-cropperjs'),
+		import('cropperjs/dist/cropper.css'),
+	]).then(([module]) => module.default)
+	return vueCropper
+}
 
 const validMimeTypes = ['image/png', 'image/jpeg']
 
@@ -140,7 +149,6 @@ export default {
 		NcColorPicker,
 		NcEmojiPicker,
 		NcIconSvgWrapper,
-		VueCropper,
 		// Icons
 		IconTrashCanOutline,
 		IconEmoticonOutline,
@@ -187,6 +195,7 @@ export default {
 
 	data() {
 		return {
+			cropperComponent: null,
 			showCropper: false,
 			loading: false,
 			cropperOptions: {
@@ -239,7 +248,14 @@ export default {
 
 	methods: {
 		t,
+
+		async waitForCropper() {
+			this.cropperComponent ??= markRaw(await getCropperAsyncComponent())
+		},
+
 		activateLocalFilePicker() {
+			// Async request to load and set up component, while user picks the file
+			getCropperAsyncComponent()
 			// Set to null so that selecting the same file will trigger the change event
 			this.$refs.input.value = null
 			this.$refs.input.click()
@@ -255,7 +271,8 @@ export default {
 			}
 
 			const reader = new FileReader()
-			reader.onload = (e) => {
+			reader.onload = async (e) => {
+				await this.waitForCropper()
 				this.$refs.cropper.replace(e.target.result)
 				this.showCropper = true
 			}
@@ -263,6 +280,8 @@ export default {
 		},
 
 		async showFilePicker() {
+			// Async request to load and set up component, while user picks the file
+			getCropperAsyncComponent()
 			const filePicker = getFilePickerBuilder(t('spreed', 'Choose your conversation picture'))
 				.setContainer('#vue-avatar-section')
 				.setMultiSelect(false)
@@ -284,6 +303,7 @@ export default {
 			}
 
 			try {
+				await this.waitForCropper()
 				const tempAvatar = generateUrl(`/core/preview?fileId=${fileid}&x=512&y=512&a=1`)
 				this.$refs.cropper.replace(tempAvatar)
 				this.showCropper = true
@@ -325,6 +345,8 @@ export default {
 		},
 
 		async getPictureFormData() {
+			// Cropper should be ready by this moment, so just a safeguard
+			await this.waitForCropper()
 			const canvasData = this.$refs.cropper.getCroppedCanvas()
 			const scaleFactor = canvasData.width > 512 ? 512 / canvasData.width : 1
 
