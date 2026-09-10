@@ -27,7 +27,7 @@
 				class="file-preview__image"
 				:class="previewImageClass"
 				:alt="sanitizedFileName"
-				:src="failed ? defaultIconUrl : previewUrl"
+				:src="previewImageSrc"
 				@load="onLoad"
 				@error="onError">
 			<template v-if="!isLoading || fallbackLocalUrl">
@@ -194,6 +194,7 @@ export default {
 		return {
 			isLoading: true,
 			failed: false,
+			previewFailed: false,
 			uploadManager: null,
 		}
 	},
@@ -350,37 +351,44 @@ export default {
 			return PREVIEW_TYPE.PREVIEW
 		},
 
-		previewUrl() {
-			const userId = this.actorStore.userId
-
+		previewImageSrc() {
 			if (this.previewType === PREVIEW_TYPE.TEMPORARY) {
 				return this.file.localUrl
 			}
 			if (this.fallbackLocalUrl) {
 				return this.fallbackLocalUrl
 			}
-			if (this.previewType === PREVIEW_TYPE.MIME_ICON || this.rowLayout) {
-				return OC.MimeType.getIconUrl(this.file.mimetype)
+			if (this.previewType === PREVIEW_TYPE.MIME_ICON || this.rowLayout || this.failed) {
+				return this.defaultIconUrl
 			}
 			// whether to embed/render the file directly
-			if (this.previewType === PREVIEW_TYPE.DIRECT) {
-				// return direct image
-				if (userId === null) {
-					// guest mode, use public link download URL
-					return this.file.link + '/download/' + encodePath(this.file.name)
-				} else {
-					// use direct DAV URL
-					return generateRemoteUrl(`dav/files/${userId}`) + encodePath(this.internalAbsolutePath)
-				}
+			if (this.previewType === PREVIEW_TYPE.DIRECT || this.previewFailed) {
+				return this.directImageUrl
 			}
 
+			// this.previewType === PREVIEW_TYPE.PREVIEW
+			return this.previewImageUrl
+		},
+
+		directImageUrl() {
+			// return direct image
+			if (this.actorStore.userId === null) {
+				// guest mode, use public link download URL
+				return this.file.link + '/download/' + encodePath(this.file.name)
+			} else {
+				// use direct DAV URL
+				return generateRemoteUrl(`dav/files/${this.actorStore.userId}`) + encodePath(this.internalAbsolutePath)
+			}
+		},
+
+		previewImageUrl() {
 			// use preview provider URL to render a smaller preview
 			let previewSize = 384
 			if (this.smallPreview) {
 				previewSize = 24
 			}
 			previewSize = Math.ceil(previewSize * window.devicePixelRatio)
-			if (userId === null) {
+			if (this.actorStore.userId === null) {
 				// guest mode: grab token from the link URL
 				// FIXME: use a cleaner way...
 				const token = this.file.link.slice(this.file.link.lastIndexOf('/') + 1)
@@ -501,6 +509,12 @@ export default {
 		},
 
 		onError() {
+			// If preview endpoint failed, retry once with the actual image (this.directImageUrl)
+			if (!this.previewFailed && this.previewType === PREVIEW_TYPE.PREVIEW && this.file.mimetype.startsWith('image/')) {
+				this.previewFailed = true
+				return
+			}
+
 			this.isLoading = false
 			this.failed = true
 		},
