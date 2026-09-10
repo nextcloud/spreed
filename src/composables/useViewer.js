@@ -117,7 +117,7 @@ export function useViewer(fileAPI) {
 				isViewerOpen.value = false
 				callViewStore.setIsViewerOverlay(false)
 			},
-			loadMore,
+			loadMore: loadMore && (async (...args) => (await loadMore(...args)).map(generateViewerObject)),
 			canLoop: false,
 		})
 
