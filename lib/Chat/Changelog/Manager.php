@@ -163,7 +163,7 @@ class Manager {
 			. $this->l->t('- Direct calls from profile menus for calls within other apps') . "\n",
 			$this->l->t('## New in Talk %s', ['25']) . "\n"
 			. $this->l->t('- Classified conversations for better discussions around sensitive topics') . "\n"
-			. $this->l->t('- Channels and announcements to broadcast information to a broader audiance') . "\n"
+			. $this->l->t('- Channels and announcements to broadcast information to a broader audience') . "\n"
 			. $this->l->t('- Owners can preserve a conversation, preventing deletion and chat purging') . "\n",
 		];
 	}
