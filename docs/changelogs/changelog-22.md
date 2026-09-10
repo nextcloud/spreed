@@ -4,6 +4,16 @@
 -->
 # Changelog
 All notable changes to this project will be documented in this file.
+
+## 22.0.18 – 2026-09-10
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix: scroll to bottom for long messages
+  [#19022](https://github.com/nextcloud/spreed/pull/19022)
+
 ## 22.0.17 – 2026-08-13
 ### Changed
 - Update dependencies
