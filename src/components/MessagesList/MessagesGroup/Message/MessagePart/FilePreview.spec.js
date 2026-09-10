@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl, imagePath } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
 import { mount } from '@vue/test-utils'
@@ -205,9 +206,44 @@ describe('FilePreview.vue', () => {
 		})
 
 		test('renders default mime icon on load error', async () => {
+			OC.MimeType.getIconUrl.mockReturnValueOnce(imagePath('core', 'video/mpeg'))
+			props.file = {
+				id: '123',
+				name: 'test.mpeg',
+				path: 'path/to/test.mpeg',
+				size: '128',
+				etag: '1872ade88f3013edeb33decd74a4f947',
+				permissions: '15',
+				mimetype: 'video/mpeg',
+				'preview-available': 'yes',
+			}
+			const wrapper = mountFilePreview()
+
+			await wrapper.find('img').trigger('error')
+
+			expect(wrapper.element.tagName).toBe('A')
+			const imageUrl = wrapper.find('img').attributes('src')
+			expect(imageUrl).toBe(imagePath('core', 'video/mpeg'))
+		})
+
+		test('renders actual image on preview load error', async () => {
+			const davPath = generateRemoteUrl(`dav/files/${actorStore.userId}`) + '/' + encodePath(props.file.path)
+			const wrapper = mountFilePreview()
+
+			await wrapper.find('img').trigger('error')
+
+			expect(wrapper.element.tagName).toBe('A')
+			const imageUrl = wrapper.find('img').attributes('src')
+			expect(imageUrl).toBe(davPath)
+		})
+
+		test('renders default mime icon on image load error', async () => {
 			OC.MimeType.getIconUrl.mockReturnValueOnce(imagePath('core', 'image/jpeg'))
 			const wrapper = mountFilePreview()
 
+			// Preview fails to load
+			await wrapper.find('img').trigger('error')
+			// Actual file fails to load
 			await wrapper.find('img').trigger('error')
 
 			expect(wrapper.element.tagName).toBe('A')
