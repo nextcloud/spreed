@@ -4,6 +4,18 @@
 -->
 # Changelog
 All notable changes to this project will be documented in this file.
+
+## 23.0.11 – 2026-09-10
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(chat): fallback to real image in case of a preview failure
+  [#19363](https://github.com/nextcloud/spreed/pull/19363)
+- fix: scroll to bottom for long messages
+  [#19023](https://github.com/nextcloud/spreed/pull/19023)
+
 ## 23.0.10 – 2026-08-13
 ### Changed
 - Update dependencies
