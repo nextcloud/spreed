@@ -4,6 +4,30 @@
 -->
 # Changelog
 All notable changes to this project will be documented in this file.
+
+## 24.0.5 – 2026-09-10
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(chat): fallback to real image in case of a preview failure
+  [#19362](https://github.com/nextcloud/spreed/pull/19362)
+- fix(chat): start threads with the file upload
+  [#19350](https://github.com/nextcloud/spreed/pull/19350)
+- fix(call): improve UI guard when leaving a call
+  [#19260](https://github.com/nextcloud/spreed/pull/19260)
+- fix(chat): lock scrolling in inactive session
+  [#19225](https://github.com/nextcloud/spreed/pull/19225)
+- fix(chat): Send read marker only when session is active
+  [#19220](https://github.com/nextcloud/spreed/pull/19220)
+- fix(tags): drop total unread counter
+  [#19103](https://github.com/nextcloud/spreed/pull/19103)
+- fix(conversation): adjust scroll to unread mentions
+  [#19101](https://github.com/nextcloud/spreed/pull/19101)
+- fix(chat): scroll to bottom for long messages
+  [#19024](https://github.com/nextcloud/spreed/pull/19024)
+
 ## 24.0.4 – 2026-08-13
 ### Added
 - feat(bots): Allow bots to fetch their own enabled features
