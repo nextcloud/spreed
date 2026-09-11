@@ -548,7 +548,7 @@ class RecordingService {
 		}
 		$subtitleContent = $subtitleFile->getContent();
 
-		$subtitleFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . ' subtitles.srt';
+		$subtitleFileName = '.' . pathinfo($recording->getName(), PATHINFO_FILENAME) . ' subtitles.srt';
 		try {
 			$recordingFolder->newFile($subtitleFileName, $subtitleContent);
 		} catch (NoUserException|NotPermittedException $e) {
@@ -556,7 +556,7 @@ class RecordingService {
 			return;
 		}
 
-		$intervalsFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . ' speaking times.json';
+		$intervalsFileName = '.' . pathinfo($recording->getName(), PATHINFO_FILENAME) . ' speaking times.json';
 		try {
 			$intervalsFileNode = $recordingFolder->get($intervalsFileName);
 		} catch (NotFoundException) {
@@ -632,7 +632,7 @@ Only output the subtitle content, nothing else.
 		}
 
 		$baseName = pathinfo($recording->getName(), PATHINFO_FILENAME);
-		$subtitleFileName = $baseName . ' subtitles speakers.srt';
+		$subtitleFileName = '.' . $baseName . ' subtitles speakers.srt';
 		$transcriptFileName = $baseName . ' transcript.md';
 		$transcript = $this->parseSrtToTranscript($output);
 
