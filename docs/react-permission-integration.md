@@ -50,7 +50,7 @@ The backend migration automatically grants the REACT permission to all users who
 ## UI Changes
 
 The permissions editor should show two separate checkboxes:
-- "Can post messages" (CHAT - 128)
-- "Can add reactions" (REACT - 256)
+- "Post messages" (CHAT - 128)
+- "Add reactions" (REACT - 256)
 
 Instead of the previous combined "Can post messages and reactions" checkbox.

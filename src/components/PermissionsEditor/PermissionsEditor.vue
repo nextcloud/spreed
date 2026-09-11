@@ -28,13 +28,13 @@
 					<NcCheckboxRadioSwitch
 						v-model="chatMessages"
 						class="checkbox">
-						{{ hasReactPermissions ? t('spreed', 'Can post messages') : t('spreed', 'Can post messages and reactions') }}
+						{{ hasReactPermissions ? t('spreed', 'Post messages') : t('spreed', 'Post messages and reactions') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch
 						v-if="hasReactPermissions"
 						v-model="chatReactions"
 						class="checkbox">
-						{{ t('spreed', 'Can add reactions') }}
+						{{ t('spreed', 'Add reactions') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch
 						v-model="publishAudio"
