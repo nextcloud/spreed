@@ -2363,7 +2363,6 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "開放投票 • 您的投票是匿名的",
     "I picked list style" : "我選了清單樣式",
     "Hey! Are you using Talk in list style or with message bubbles?" : "嘿！您要使用清單樣式或訊息泡泡的 Talk？",
-    "Allow editing of uploaded files" : "允許編輯上傳的檔案",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- 透過各類頻道及公告，向更廣泛的受眾廣播資訊"
+    "Allow editing of uploaded files" : "允許編輯上傳的檔案"
 },
 "nplurals=1; plural=0;");
