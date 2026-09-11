@@ -2363,7 +2363,6 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Buka jajak pendapat -  Suara Anda anonim",
     "I picked list style" : "Saya memilih gaya daftar",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hai! Apakah Anda menggunakan Talk dalam gaya daftar atau dengan balon pesan?",
-    "Allow editing of uploaded files" : "Izinkan pengeditan file yang diunggah",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Channel dan pengumuman untuk menyiarkan informasi ke audiens yang lebih luas"
+    "Allow editing of uploaded files" : "Izinkan pengeditan file yang diunggah"
 },
 "nplurals=1; plural=0;");

@@ -2363,7 +2363,6 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Otvorená anketa • Váš hlas je anonymný",
     "I picked list style" : "Vybral/a som si štýl zoznamu",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Ahoj! Používaš Talk v zoznamovom štýle alebo s bublinami správ?",
-    "Allow editing of uploaded files" : "Povoliť úpravu nahraných súborov",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Kanály a oznámenia na šírenie informácií širšiemu publiku"
+    "Allow editing of uploaded files" : "Povoliť úpravu nahraných súborov"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");
