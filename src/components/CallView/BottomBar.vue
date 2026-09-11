@@ -34,6 +34,7 @@ import {
 	useDocumentFullscreen,
 } from '../../composables/useDocumentFullscreen.ts'
 import { useGetToken } from '../../composables/useGetToken.ts'
+import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION } from '../../constants.ts'
 import {
 	getTalkConfig,
@@ -52,6 +53,7 @@ const { isSidebar = false } = defineProps<{
 
 const store = useStore()
 const token = useGetToken()
+const isInCall = useIsInCall()
 const actorStore = useActorStore()
 const isFullscreen = !isSidebar && useDocumentFullscreen()
 const callViewStore = useCallViewStore()
@@ -691,7 +693,7 @@ function setCallLayout(layout: CallLayout) {
 			</NcActions>
 
 			<CallButton
-				v-show="!(isVoiceRoom && isGuestActor)"
+				v-show="!isVoiceRoom || !isGuestActor || isInCall"
 				class="call-button"
 				:hideText="isSidebar || isMobile"
 				:isScreensharing="!!localMediaModel.attributes.localScreen" />
