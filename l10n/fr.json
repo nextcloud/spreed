@@ -2361,7 +2361,6 @@
     "Open poll • Your vote is anonymous" : "Sondage ouvert • Votre vote est anonyme",
     "I picked list style" : "J'ai choisi le style liste",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hé ! Utilisez-vous Talk en mode liste ou avec des bulles de message ?",
-    "Allow editing of uploaded files" : "Autoriser la modification des fichiers téléversés",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Canaux et annonces pour diffuser de l'information à une audience plus large"
+    "Allow editing of uploaded files" : "Autoriser la modification des fichiers téléversés"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

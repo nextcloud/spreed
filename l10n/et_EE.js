@@ -2363,7 +2363,6 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Avatud küsitlus • Sinu hääl on anonüümne",
     "I picked list style" : "Ma valisin loendi",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hei! Kas sa kasutad vestlusrakendust loendivaates või jutumullide vaates?",
-    "Allow editing of uploaded files" : "Luba üleslaaditud failide muutmist",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Kanalid ja teadaanded info levitamiseks laiemale vaatajaskonnale"
+    "Allow editing of uploaded files" : "Luba üleslaaditud failide muutmist"
 },
 "nplurals=2; plural=(n != 1);");

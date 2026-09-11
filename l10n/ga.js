@@ -2363,7 +2363,6 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Vótaíocht oscailte • Tá do vóta gan ainm",
     "I picked list style" : "Roghnaigh mé stíl liosta",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Haigh! An bhfuil tú ag úsáid Talk i stíl liosta nó le boilgeoga teachtaireachta?",
-    "Allow editing of uploaded files" : "Ceadaigh eagarthóireacht ar chomhaid uaslódáilte",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Bealaí agus fógraí chun faisnéis a chraoladh chuig lucht féachana níos leithne"
+    "Allow editing of uploaded files" : "Ceadaigh eagarthóireacht ar chomhaid uaslódáilte"
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");
