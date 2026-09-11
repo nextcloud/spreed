@@ -2363,7 +2363,6 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Öppen omröstning • Din röst är anonym",
     "I picked list style" : "Jag valde listvy",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Använder du Talk i listvy eller meddelandebubblor?",
-    "Allow editing of uploaded files" : "Tillåt redigering av uppladdade filer",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Kanaler och anslag för att sprida information till en bredare målgrupp"
+    "Allow editing of uploaded files" : "Tillåt redigering av uppladdade filer"
 },
 "nplurals=2; plural=(n != 1);");
