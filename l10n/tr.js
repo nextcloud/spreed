@@ -2363,7 +2363,6 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Açık anket • Oyunuz anonimdir",
     "I picked list style" : "Liste biçemini seçtim",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Talk görünümü liste olarak mı ileti balonları olarak mı kullanıyorsunuz?",
-    "Allow editing of uploaded files" : "Yüklenen dosyalar düzenlenebilsin",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Daha geniş bir kitleye bilgi yayınlamak için kanallar ve duyurular"
+    "Allow editing of uploaded files" : "Yüklenen dosyalar düzenlenebilsin"
 },
 "nplurals=2; plural=(n > 1);");

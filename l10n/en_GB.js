@@ -2363,7 +2363,6 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Open poll • Your vote is anonymous",
     "I picked list style" : "I picked list style",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hey! Are you using Talk in list style or with message bubbles?",
-    "Allow editing of uploaded files" : "Allow editing of uploaded files",
-    "- Channels and announcements to broadcast information to a broader audiance" : "- Channels and announcements to broadcast information to a broader audiance"
+    "Allow editing of uploaded files" : "Allow editing of uploaded files"
 },
 "nplurals=2; plural=(n != 1);");
