@@ -4,18 +4,11 @@
 -->
 <template>
 	<div ref="presenterOverlayContainer" class="presenter-overlay__container">
-		<VueDraggableResizable
+		<div
 			v-if="!isCollapsed"
 			ref="presenterOverlay"
-			parent
 			class="presenter-overlay"
-			:resizable="false"
-			:h="presenterOverlaySize"
-			:w="presenterOverlaySize"
-			:x="isDirectionRTL ? parentWidth - presenterOverlaySize - 10 : 10"
-			:y="10"
-			@dragging="isDragging = true"
-			@dragstop="isDragging = false">
+			:style="draggableStyle">
 			<LocalVideo
 				v-if="isLocalPresenter"
 				class="presenter-overlay__video"
@@ -37,7 +30,7 @@
 				unSelectable
 				hideBottomBar
 				@clickPresenter="$emit('click')" />
-		</VueDraggableResizable>
+		</div>
 
 		<!-- presenter button when presenter overlay is collapsed -->
 		<NcButton
@@ -57,21 +50,18 @@
 <script>
 
 import { isRTL, t } from '@nextcloud/l10n'
-import { ref } from 'vue'
-import VueDraggableResizable from 'vue-draggable-resizable'
+import { ref, useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import AccountBox from 'vue-material-design-icons/AccountBoxOutline.vue'
 import LocalVideo from './LocalVideo.vue'
 import VideoVue from './VideoVue.vue'
-
-const isDirectionRTL = isRTL()
+import { useDraggableBounded } from '../../../composables/useDraggableBounded.ts'
 
 export default {
 	name: 'PresenterOverlay',
 
 	components: {
 		AccountBox,
-		VueDraggableResizable,
 		NcButton,
 		LocalVideo,
 		VideoVue,
@@ -113,52 +103,25 @@ export default {
 
 	setup() {
 		const parentWidth = ref(document.getElementById('videos').getBoundingClientRect().width)
+		const presenterOverlayContainer = useTemplateRef('presenterOverlayContainer')
+		const presenterOverlay = useTemplateRef('presenterOverlay')
+
+		// Initial position estimate; actual size is set by CSS clamp(100px, 10cqw, 242px)
+		const initialX = isRTL() ? parentWidth.value - 128 - 10 : 10
+		const { isDragging, style: draggableStyle } = useDraggableBounded(presenterOverlay, presenterOverlayContainer, {
+			initialValue: { x: initialX, y: 10 },
+		})
+
 		return {
-			parentWidth,
-			isDirectionRTL,
-		}
-	},
-
-	data() {
-		return {
-			resizeObserver: null,
-			presenterOverlaySize: 128,
-			isDragging: false,
-		}
-	},
-
-	mounted() {
-		this.resizeObserver = new ResizeObserver(this.updateSize)
-		this.resizeObserver.observe(this.$refs.presenterOverlayContainer)
-	},
-
-	beforeUnmount() {
-		if (this.resizeObserver) {
-			this.resizeObserver.disconnect()
+			presenterOverlayContainer,
+			presenterOverlay,
+			isDragging,
+			draggableStyle,
 		}
 	},
 
 	methods: {
 		t,
-		updateSize() {
-			if (!this.$refs.presenterOverlay) {
-				// overlay is collapsed, do not process size update
-				return
-			}
-			// Size should be proportionate to the screen share size
-			const newSize = Math.round(this.$refs.presenterOverlayContainer.clientWidth * 0.1)
-			this.presenterOverlaySize = Math.min(Math.max(newSize, 100), 242)
-			// FIXME: inner method should be triggered to re-parent element
-			this.$refs.presenterOverlay.checkParentSize()
-			// FIXME: if it stays out of bounds (right and bottom), bring it back
-			// FIXME: should consider RTL
-			if (this.$refs.presenterOverlay.right < 0 && this.$refs.presenterOverlay.parentWidth > this.presenterOverlaySize) {
-				this.$refs.presenterOverlay.moveHorizontally(this.$refs.presenterOverlay.parentWidth - this.presenterOverlaySize)
-			}
-			if (this.$refs.presenterOverlay.bottom < 0 && this.$refs.presenterOverlay.parentHeight > this.presenterOverlaySize) {
-				this.$refs.presenterOverlay.moveVertically(this.$refs.presenterOverlay.parentHeight - this.presenterOverlaySize)
-			}
-		},
 	},
 }
 </script>
@@ -167,6 +130,8 @@ export default {
 .presenter-overlay__container {
 	position: absolute;
 	inset: 0;
+	// Make container size to be computed in isolation, to use container units
+	container-type: inline-size;
 
 	// Make container transparent to user events
 	pointer-events: none;
@@ -176,14 +141,14 @@ export default {
 	}
 }
 
+.presenter-overlay {
+	position: absolute;
+	width: clamp(100px, 10cqw, 242px);
+	height: clamp(100px, 10cqw, 242px);
+}
+
 .presenter-overlay__video {
 	position: relative;
-	--max-size: 242px;
-	--min-size: 100px;
-	max-width: var(--max-size);
-	max-height: var(--max-size);
-	min-width: var(--min-size);
-	min-height: var(--min-size);
 	z-index: 10;
 	aspect-ratio: 1;
 

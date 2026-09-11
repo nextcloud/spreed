@@ -10,7 +10,6 @@ import { getCurrentUser } from '@nextcloud/auth'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
-import VueDraggableResizable from 'vue-draggable-resizable'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -20,6 +19,7 @@ import CallFailedDialog from './components/CallView/CallFailedDialog.vue'
 import CallView from './components/CallView/CallView.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import CallTime from './components/TopBar/CallTime.vue'
+import { useDraggableBounded } from './composables/useDraggableBounded.ts'
 import { useHashCheck } from './composables/useHashCheck.js'
 import { useIsInCall } from './composables/useIsInCall.js'
 import { useRecordingStatusSync } from './composables/useRecordingStatusSync.ts'
@@ -51,18 +51,18 @@ const isLeavingAfterSessionIssue = useSessionIssueHandler()
 const actorStore = useActorStore()
 const tokenStore = useTokenStore()
 
-const overlayWidth = 400
-const overlayHeight = 300
-
 let fetchCurrentConversationIntervalId: NodeJS.Timeout | number | undefined
 const joiningConversation = ref(false)
 const recordingConsentGiven = ref(false)
-const overlayX = ref(20)
-const overlayY = ref(20)
-const resizeObserver = ref<ResizeObserver | null>(null)
 
 const floatingCallContainer = useTemplateRef<HTMLDivElement>('floatingCallContainer')
-const floatingCallResizable = useTemplateRef<InstanceType<typeof VueDraggableResizable>>('floatingCallResizable')
+const floatingCall = useTemplateRef<HTMLDivElement>('floatingCall')
+const floatingCallBar = useTemplateRef<HTMLDivElement>('floatingCallBar')
+
+const { isDragging, style: draggableStyle } = useDraggableBounded(floatingCall, floatingCallContainer, {
+	initialValue: { x: 20, y: 20 },
+	handle: floatingCallBar,
+})
 
 const conversation = computed<Conversation>(() => vuexStore.getters.conversation(props.token))
 const warnLeaving = computed(() => !isLeavingAfterSessionIssue.value && isInCall.value)
@@ -78,17 +78,11 @@ watch(isInCall, (newValue) => {
 window.addEventListener('beforeunload', preventUnload)
 
 onMounted(() => {
-	resizeObserver.value = new ResizeObserver(updateOverlayBounds)
-	resizeObserver.value.observe(floatingCallContainer.value!)
-
 	window.addEventListener('unload', syncLeaveConversation)
 	joinConversation()
 })
 
 onBeforeUnmount(() => {
-	if (resizeObserver.value) {
-		resizeObserver.value.disconnect()
-	}
 	window.clearInterval(fetchCurrentConversationIntervalId)
 	EventBus.off('should-refresh-conversations', fetchCurrentConversation)
 	EventBus.off('signaling-participant-list-changed', fetchCurrentConversation)
@@ -123,24 +117,6 @@ function openInNewTab() {
 	window.open(url, '_blank')
 
 	// FIXME should drop the floating call once main call is joined
-}
-
-/**
- *
- */
-function updateOverlayBounds() {
-	if (!floatingCallResizable.value) {
-		return
-	}
-	// FIXME: inner method should be triggered to re-parent element
-	floatingCallResizable.value.checkParentSize()
-	// FIXME: if it stays out of bounds (right and bottom), bring it back
-	if (floatingCallResizable.value.right < 0 && floatingCallResizable.value.parentWidth > /* props.w */overlayWidth) {
-		floatingCallResizable.value.moveHorizontally(floatingCallResizable.value.parentWidth - /* props.w */overlayWidth)
-	}
-	if (floatingCallResizable.value.bottom < 0 && floatingCallResizable.value.parentHeight > /* props.h */overlayHeight) {
-		floatingCallResizable.value.moveVertically(floatingCallResizable.value.parentHeight - /* props.h */overlayHeight)
-	}
 }
 
 /**
@@ -253,19 +229,12 @@ async function fetchCurrentConversation() {
 
 <template>
 	<div ref="floatingCallContainer" class="floating-call__container">
-		<VueDraggableResizable
-			ref="floatingCallResizable"
-			parent
+		<div
+			ref="floatingCall"
 			class="floating-call"
-			classNameDragging="floating-call--dragging"
-			:w="overlayWidth"
-			:h="overlayHeight"
-			:x="overlayX"
-			:y="overlayY"
-			:minWidth="overlayWidth"
-			:minHeight="overlayHeight"
-			:resizable="false">
-			<div class="floating-call__bar">
+			:class="{ 'floating-call--dragging': isDragging }"
+			:style="draggableStyle">
+			<div ref="floatingCallBar" class="floating-call__bar">
 				<span class="floating-call__name">{{ conversation.displayName }}</span>
 				<IconDragHorizontal :size="30" />
 				<div class="floating-call__controls">
@@ -285,7 +254,7 @@ async function fetchCurrentConversation() {
 				<CallFailedDialog v-if="connectionFailed" :token="token" />
 				<MediaSettings v-model:recordingConsentGiven="recordingConsentGiven" />
 			</div>
-		</VueDraggableResizable>
+		</div>
 	</div>
 </template>
 
@@ -315,15 +284,17 @@ async function fetchCurrentConversation() {
 }
 
 .floating-call {
+	position: absolute;
+	width: 400px;
+	height: 300px;
 	border-radius: var(--border-radius-element);
 	box-shadow: 0 0 4px 0 var(--color-box-shadow);
 
-	&:hover {
-		cursor: grab;
-	}
-
-	&--dragging {
-		cursor: grabbing;
+	&.floating-call--dragging .floating-call__bar {
+		&,
+		& *:not(button) {
+			cursor: grabbing;
+		}
 	}
 }
 
@@ -340,6 +311,11 @@ async function fetchCurrentConversation() {
 
 	color: var(--color-primary-text);
 	background-color: var(--color-primary);
+
+	&,
+	& *:not(button) {
+		cursor: grab;
+	}
 }
 
 .floating-call__name {
