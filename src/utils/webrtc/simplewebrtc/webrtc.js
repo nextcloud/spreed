@@ -27,6 +27,7 @@ export default function WebRTC(opts) {
 		},
 		enableDataChannels: true,
 		enableSimulcast: false,
+		// Overwritten by simplewebrtc.js
 		maxBitrates: {
 			high: 900000,
 			medium: 300000,
