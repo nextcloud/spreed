@@ -62,7 +62,7 @@
     "crypto-js": "^4.2.0",
     "debounce": "^3.0.0",
     "emoji-regex": "^10.6.0",
-    "entities": "^8.0.0",
+    "entities": "^8.1.0",
     "es-toolkit": "^1.52.0",
     "escape-html": "^1.0.3",
     "extendable-media-recorder": "^9.2.40",
