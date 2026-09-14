@@ -480,15 +480,12 @@ class RecordingService {
 		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes';
 
 		if ($aiTask === 'transcript') {
-			$transcriptFileName = '.' . pathinfo($recording->getName(), PATHINFO_FILENAME) . '.md';
-			if (!$shouldTranscribe) {
-				$this->logger->debug('Skipping saving of transcript for call recording as it is disabled');
-			}
+			$transcriptFileName = ($shouldTranscribe ? '' : '.') . pathinfo($recording->getName(), PATHINFO_FILENAME) . ($shouldTranscribe ? ' transcript' : '') . '.md';
 		} else {
 			$transcriptFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . ' - ' . $aiTask . '.md';
 		}
 
-		if (($shouldTranscribe && $aiTask === 'transcript')
+		if (($aiTask === 'transcript')
 			|| ($shouldSummarize && $aiTask === 'summary')) {
 			$user = $this->userManager->get($owner);
 			$language = $this->l10nFactory->getUserLanguage($user);
@@ -577,7 +574,8 @@ class RecordingService {
 			$intervalsContent = $intervalsFileNode->getContent();
 			$this->scheduleSpeakerAttribution($owner, $roomToken, $recordingFileId, $subtitleContent, $intervalsContent);
 		} else {
-			$transcriptFileName = '.' . pathinfo($recording->getName(), PATHINFO_FILENAME) . '.md';
+			$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
+			$transcriptFileName = ($shouldTranscribe ? '' : '.') . pathinfo($recording->getName(), PATHINFO_FILENAME) . ($shouldTranscribe ? ' transcript' : '') . '.md';
 			try {
 				$recordingFolder->newFile($transcriptFileName, $subtitleContent);
 			} catch (NoUserException|NotPermittedException $e) {
@@ -643,7 +641,8 @@ Only output the subtitle content, nothing else.
 
 		$baseName = pathinfo($recording->getName(), PATHINFO_FILENAME);
 		$subtitleFileName = '.' . $baseName . ' subtitles speakers.srt';
-		$transcriptFileName = '.' . $baseName . '.md';
+		$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
+		$transcriptFileName = ($shouldTranscribe ? '' : '.') . $baseName . ($shouldTranscribe ? ' transcript' : '') . '.md';
 		$transcript = $this->parseSrtToTranscript($output);
 
 		try {
