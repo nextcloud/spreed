@@ -27,7 +27,6 @@ use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\TaskTypes\TextToTextFormalization;
 use OCP\TaskProcessing\TaskTypes\TextToTextSummary;
 use OCP\TaskProcessing\TaskTypes\TextToTextTranslate;
-use OCP\Translation\ITranslationManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -39,7 +38,6 @@ class CapabilitiesTest extends TestCase {
 	protected CommentsManager&MockObject $commentsManager;
 	protected IUserSession&MockObject $userSession;
 	protected IAppManager&MockObject $appManager;
-	protected ITranslationManager&MockObject $translationManager;
 	protected ITaskProcessingManager&MockObject $taskProcessingManager;
 	protected LiveTranscriptionService&MockObject $liveTranscriptionService;
 	protected IManager&MockObject $shareManager;
@@ -54,7 +52,6 @@ class CapabilitiesTest extends TestCase {
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->appManager = $this->createMock(IAppManager::class);
-		$this->translationManager = $this->createMock(ITranslationManager::class);
 		$this->taskProcessingManager = $this->createMock(ITaskProcessingManager::class);
 		$this->liveTranscriptionService = $this->createMock(LiveTranscriptionService::class);
 		$this->shareManager = $this->createMock(IManager::class);
@@ -83,7 +80,6 @@ class CapabilitiesTest extends TestCase {
 			$this->commentsManager,
 			$this->userSession,
 			$this->appManager,
-			$this->translationManager,
 			$this->taskProcessingManager,
 			$this->liveTranscriptionService,
 			$this->shareManager,
@@ -608,16 +604,6 @@ class CapabilitiesTest extends TestCase {
 		$this->assertEquals($data['spreed']['config']['call']['live-transcription'], $expectedEnabled);
 	}
 
-	public function testCapabilitiesTranslations(): void {
-		$capabilities = $this->getCapabilities();
-
-		$this->translationManager->method('hasProviders')
-			->willReturn(true);
-
-		$data = json_decode(json_encode($capabilities->getCapabilities(), JSON_THROW_ON_ERROR), true);
-		$this->assertEquals(true, $data['spreed']['config']['chat']['has-translation-providers']);
-	}
-
 	public function testCapabilitiesTranslationsTaskProviders(): void {
 		$capabilities = $this->getCapabilities();
 
@@ -625,7 +611,19 @@ class CapabilitiesTest extends TestCase {
 			->willReturn([TextToTextTranslate::ID]);
 
 		$data = json_decode(json_encode($capabilities->getCapabilities(), JSON_THROW_ON_ERROR), true);
+		$this->assertEquals(true, $data['spreed']['config']['chat']['has-translation-providers']);
 		$this->assertEquals(true, $data['spreed']['config']['chat']['has-translation-task-providers']);
+	}
+
+	public function testCapabilitiesTranslationsWithoutTaskProviders(): void {
+		$capabilities = $this->getCapabilities();
+
+		$this->taskProcessingManager->method('getAvailableTaskTypeIds')
+			->willReturn([TextToTextFormalization::ID]);
+
+		$data = json_decode(json_encode($capabilities->getCapabilities(), JSON_THROW_ON_ERROR), true);
+		$this->assertEquals(false, $data['spreed']['config']['chat']['has-translation-providers']);
+		$this->assertEquals(false, $data['spreed']['config']['chat']['has-translation-task-providers']);
 	}
 
 	public function testSummaryTaskProviders(): void {

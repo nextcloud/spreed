@@ -84,9 +84,11 @@ import NcRichText from '@nextcloud/vue/components/NcRichText'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import IconArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import IconContentCopy from 'vue-material-design-icons/ContentCopy.vue'
-import { getTranslationLanguages, translateText } from '../../../../../services/translationService.ts'
+import { TASK_PROCESSING } from '../../../../../constants.ts'
+import { deleteTaskById, getTaskById, getTaskTypes } from '../../../../../services/coreService.ts'
+import { scheduleTranslateTask } from '../../../../../services/translationService.ts'
 
-const DETECT_LANGUAGE_OPTION = { id: null, label: t('spreed', 'Detect language') }
+const POLLING_INTERVAL = 2000
 
 export default {
 	name: 'MessageTranslateDialog',
@@ -119,13 +121,17 @@ export default {
 	data() {
 		return {
 			isMounted: false,
-			availableLanguages: null,
-			supportDetectLanguage: false,
+			translateTaskType: null,
 			selectedFrom: null,
 			selectedTo: null,
 			isLoading: false,
 			isTranslating: false,
 			translatedMessage: '',
+			taskId: null,
+			pollingTimeout: null,
+			// Incremented whenever a pending translation is discarded, so
+			// responses of outdated requests can be ignored
+			requestId: 0,
 		}
 	},
 
@@ -134,78 +140,27 @@ export default {
 			return navigator.language.substring(0, 2)
 		},
 
-		sourceTree() {
-			const tree = {}
-			const uniqueSourceLanguages = Array.from(new Set(this.availableLanguages?.map((element) => element.from)))
-
-			uniqueSourceLanguages.forEach((language) => {
-				tree[language] = {
-					id: language,
-					label: this.availableLanguages?.find((element) => element.from === language)?.fromLabel,
-					translations: this.availableLanguages?.filter((element) => element.from === language).map((model) => ({
-						id: model.to,
-						label: model.toLabel,
-					})),
-				}
-			})
-
-			return tree
-		},
-
-		translationTree() {
-			const tree = {}
-			const uniqueTranslateLanguages = Array.from(new Set(this.availableLanguages?.map((element) => element.to)))
-
-			uniqueTranslateLanguages.forEach((language) => {
-				tree[language] = {
-					id: language,
-					label: this.availableLanguages?.find((element) => element.to === language)?.toLabel,
-					sources: this.availableLanguages?.filter((element) => element.to === language).map((model) => ({
-						id: model.from,
-						label: model.fromLabel,
-					})),
-				}
-			})
-
-			return tree
-		},
-
 		optionsFrom() {
-			const languages = this.selectedTo?.id
-				? this.translationTree[this.selectedTo?.id]?.sources
-				: Object.values(this.sourceTree).map((model) => ({
-						id: model.id,
-						label: model.label,
-					}))
-
-			return this.supportDetectLanguage
-				? [DETECT_LANGUAGE_OPTION, ...languages]
-				: languages
+			return this.mapLanguageOptions(this.translateTaskType?.inputShapeEnumValues?.origin_language)
 		},
 
 		optionsTo() {
-			return this.selectedFrom?.id
-				? this.sourceTree[this.selectedFrom?.id]?.translations
-				: Object.values(this.translationTree).map((model) => ({
-						id: model.id,
-						label: model.label,
-					}))
+			return this.mapLanguageOptions(this.translateTaskType?.inputShapeEnumValues?.target_language)
 		},
 
 		disabled() {
 			return this.isLoading || this.isTranslating
-				|| (!this.supportDetectLanguage && this.selectedFrom === null)
-				|| this.selectedTo === null
+				|| this.selectedFrom === null || this.selectedTo === null
 		},
 	},
 
 	watch: {
 		selectedTo() {
-			this.translatedMessage = ''
+			this.resetTranslation()
 		},
 
 		selectedFrom() {
-			this.translatedMessage = ''
+			this.resetTranslation()
 		},
 	},
 
@@ -218,45 +173,142 @@ export default {
 
 		try {
 			this.isLoading = true
-			const response = await getTranslationLanguages()
-			this.availableLanguages = response.data.ocs.data.languages
-			this.supportDetectLanguage = response.data.ocs.data.languageDetection ?? false
+			const response = await getTaskTypes()
+			this.translateTaskType = response.data.ocs.data.types[TASK_PROCESSING.TYPE.TRANSLATE] ?? null
 		} catch (error) {
 			console.error('Error while trying to get translation languages', error)
-			this.availableLanguages = null
-			this.supportDetectLanguage = false
+			this.translateTaskType = null
 		} finally {
 			this.isLoading = false
 		}
 
-		if (this.supportDetectLanguage) {
-			this.selectedFrom = DETECT_LANGUAGE_OPTION
-		}
+		const defaultFrom = this.translateTaskType?.inputShapeDefaults?.origin_language
+		this.selectedFrom = this.optionsFrom.find((language) => language.id === defaultFrom) ?? null
 
-		this.selectedTo = this.optionsTo.find((language) => language.id === this.userLanguage) || null
+		this.selectedTo = this.optionsTo.find((language) => language.id === this.userLanguage) ?? null
 
-		if (this.selectedTo) {
+		// Wait for the watchers of the initial selection to be handled
+		await this.$nextTick()
+
+		if (this.selectedFrom && this.selectedTo) {
 			this.translateMessage()
 		}
 	},
 
+	beforeUnmount() {
+		this.discardTranslation()
+	},
+
 	methods: {
 		t,
-		handleTranslate() {
-			this.translateMessage(this.selectedFrom?.id)
+
+		mapLanguageOptions(enumValues) {
+			return enumValues?.map((enumValue) => ({ id: enumValue.value, label: enumValue.name })) ?? []
 		},
 
-		async translateMessage(sourceLanguage = null) {
+		handleTranslate() {
+			this.translateMessage()
+		},
+
+		async translateMessage() {
+			this.discardTranslation()
+			const requestId = this.requestId
+			this.isTranslating = true
+
 			try {
-				this.isTranslating = true
-				const response = await translateText(this.message, sourceLanguage, this.selectedTo?.id)
-				this.translatedMessage = response.data.ocs.data.text
+				const response = await scheduleTranslateTask(this.message, this.selectedFrom.id, this.selectedTo.id)
+				const task = response.data.ocs.data.task
+
+				if (this.requestId !== requestId) {
+					// The translation was discarded in the meantime
+					this.deleteTask(task.id)
+					return
+				}
+
+				this.taskId = task.id
+				this.handleTask(task)
 			} catch (error) {
-				console.error(error)
-				showError(error.response?.data?.ocs?.data?.message ?? t('spreed', 'The message could not be translated'))
-			} finally {
-				this.isTranslating = false
+				if (this.requestId === requestId) {
+					this.handleTranslationError(error)
+				}
 			}
+		},
+
+		async pollTask() {
+			const requestId = this.requestId
+
+			try {
+				const response = await getTaskById(this.taskId)
+				if (this.requestId === requestId) {
+					this.handleTask(response.data.ocs.data.task)
+				}
+			} catch (error) {
+				if (this.requestId === requestId) {
+					this.handleTranslationError(error)
+				}
+			}
+		},
+
+		handleTask(task) {
+			switch (task.status) {
+				case TASK_PROCESSING.STATUS.SUCCESSFUL: {
+					this.translatedMessage = task.output?.output ?? ''
+					this.isTranslating = false
+					break
+				}
+				case TASK_PROCESSING.STATUS.FAILED:
+				case TASK_PROCESSING.STATUS.CANCELLED:
+				case TASK_PROCESSING.STATUS.UNKNOWN: {
+					this.taskId = null
+					this.isTranslating = false
+					showError(t('spreed', 'The message could not be translated'))
+					break
+				}
+				case TASK_PROCESSING.STATUS.SCHEDULED:
+				case TASK_PROCESSING.STATUS.RUNNING:
+				default: {
+					// Task is still processing, scheduling next request
+					this.pollingTimeout = setTimeout(this.pollTask, POLLING_INTERVAL)
+					break
+				}
+			}
+		},
+
+		handleTranslationError(error) {
+			console.error('Error while trying to translate the message', error)
+			this.taskId = null
+			this.isTranslating = false
+			showError(error.response?.data?.ocs?.data?.message ?? t('spreed', 'The message could not be translated'))
+		},
+
+		resetTranslation() {
+			this.discardTranslation()
+			this.translatedMessage = ''
+		},
+
+		/**
+		 * Stops polling and discards a translation task that is still pending
+		 */
+		discardTranslation() {
+			this.requestId++
+
+			if (this.pollingTimeout) {
+				clearTimeout(this.pollingTimeout)
+				this.pollingTimeout = null
+			}
+
+			if (this.isTranslating && this.taskId !== null) {
+				this.deleteTask(this.taskId)
+			}
+
+			this.taskId = null
+			this.isTranslating = false
+		},
+
+		deleteTask(taskId) {
+			deleteTaskById(taskId).catch((error) => {
+				console.error('Error while trying to delete the translation task', error)
+			})
 		},
 
 		async handleCopyTranslation() {
@@ -269,7 +321,6 @@ export default {
 		},
 	},
 }
-
 </script>
 
 <style lang="scss" scoped>

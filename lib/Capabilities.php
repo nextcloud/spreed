@@ -25,7 +25,6 @@ use OCP\Share\IManager;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\TaskTypes\TextToTextSummary;
 use OCP\TaskProcessing\TaskTypes\TextToTextTranslate;
-use OCP\Translation\ITranslationManager;
 use OCP\Util;
 
 /**
@@ -247,7 +246,6 @@ class Capabilities implements IPublicCapability {
 		private readonly ICommentsManager $commentsManager,
 		private readonly IUserSession $userSession,
 		private readonly IAppManager $appManager,
-		private readonly ITranslationManager $translationManager,
 		private readonly ITaskProcessingManager $taskProcessingManager,
 		private readonly LiveTranscriptionService $liveTranscriptionService,
 		private readonly IManager $shareManager,
@@ -303,7 +301,7 @@ class Capabilities implements IPublicCapability {
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
 					'read-privacy' => Participant::PRIVACY_PUBLIC,
-					'has-translation-providers' => $this->translationManager->hasProviders(),
+					'has-translation-providers' => false,
 					'has-translation-task-providers' => false,
 					'typing-privacy' => Participant::PRIVACY_PUBLIC,
 					'summary-threshold' => max(1, $this->appConfig->getAppValueInt('summary_threshold', 100)),
@@ -418,6 +416,11 @@ class Capabilities implements IPublicCapability {
 			$capabilities['features'][] = 'chat-summary-api';
 		}
 		if (in_array(TextToTextTranslate::ID, $supportedTaskTypeIds, true)) {
+			// The deprecated capability is kept in sync with the task
+			// processing one for clients which don't support the OCS
+			// TaskProcessing API yet, as the deprecated OCS Translation API
+			// is only a fallback for providers that did not migrate yet.
+			$capabilities['config']['chat']['has-translation-providers'] = true;
 			$capabilities['config']['chat']['has-translation-task-providers'] = true;
 		}
 
