@@ -136,10 +136,10 @@ class AdminSettingsTest extends TestCase {
 	}
 
 	public function testInitAllowedGroups(): void {
-		$this->serverConfig->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'start_calls', (string)Room::START_CALL_EVERYONE)
-			->willReturn((string)Room::START_CALL_EVERYONE);
+		$this->appConfig->expects($this->once())
+			->method('getAppValueInt')
+			->with(Config::ALLOWED_START_CALLS)
+			->willReturn(Room::START_CALL_EVERYONE);
 		$this->appConfig->expects($this->once())
 			->method('getAppValueArray')
 			->with('start_calls_groups')
