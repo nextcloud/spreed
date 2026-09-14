@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Config;
 use OCA\Talk\DataObjects\AccountId;
 use OCA\Talk\DataObjects\RegisterAccountData;
 use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
@@ -21,6 +22,7 @@ use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\RequestHeader;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -33,6 +35,7 @@ class HostedSignalingServerController extends OCSController {
 		IRequest $request,
 		private readonly IL10N $l10n,
 		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 		private readonly LoggerInterface $logger,
 		private readonly HostedSignalingServerService $hostedSignalingServerService,
 	) {
@@ -63,7 +66,7 @@ class HostedSignalingServerController extends OCSController {
 			return $response;
 		}
 
-		$storedNonce = $this->config->getAppValue('spreed', 'hosted-signaling-server-nonce', '');
+		$storedNonce = $this->appConfig->getAppValueString(Config::HOSTED_SIGNALING_SERVER_NONCE);
 		if ($storedNonce === '') {
 			return new DataResponse(null, Http::STATUS_PRECONDITION_FAILED);
 		}
@@ -75,7 +78,7 @@ class HostedSignalingServerController extends OCSController {
 		}
 
 		// reset nonce after one request
-		$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
+		$this->appConfig->deleteAppValue(Config::HOSTED_SIGNALING_SERVER_NONCE);
 
 		return new DataResponse([
 			'nonce' => $storedNonce,
@@ -110,7 +113,7 @@ class HostedSignalingServerController extends OCSController {
 
 			$accountId = $this->hostedSignalingServerService->registerAccount($registerAccountData);
 			$accountInfo = $this->hostedSignalingServerService->fetchAccountInfo($accountId);
-			$this->config->setAppValue('spreed', 'hosted-signaling-server-account', json_encode($accountInfo));
+			$this->appConfig->setAppValueArray(Config::HOSTED_SIGNALING_SERVER_ACCOUNT, $accountInfo);
 		} catch (HostedSignalingServerAPIException $e) { // API or connection issues
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_INTERNAL_SERVER_ERROR);
 		} catch (HostedSignalingServerInputException $e) { // user solvable issues
@@ -132,9 +135,9 @@ class HostedSignalingServerController extends OCSController {
 		'apiVersion' => '(v1)',
 	])]
 	public function deleteAccount(): DataResponse {
-		$accountId = $this->config->getAppValue('spreed', 'hosted-signaling-server-account-id');
+		$accountId = $this->appConfig->getAppValueString(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID);
 
-		if ($accountId === null) {
+		if ($accountId === '') {
 			return new DataResponse(['message' => $this->l10n->t('No account available to delete.')], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -149,8 +152,8 @@ class HostedSignalingServerController extends OCSController {
 			}
 		}
 
-		$this->config->deleteAppValue('spreed', 'hosted-signaling-server-account');
-		$this->config->deleteAppValue('spreed', 'hosted-signaling-server-account-id');
+		$this->appConfig->deleteAppValue(Config::HOSTED_SIGNALING_SERVER_ACCOUNT);
+		$this->appConfig->deleteAppValue(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID);
 
 		// remove signaling servers if account is not active anymore
 		$this->config->deleteAppValue('spreed', 'signaling_servers');

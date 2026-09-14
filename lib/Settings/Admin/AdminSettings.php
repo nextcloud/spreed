@@ -422,7 +422,7 @@ class AdminSettings implements ISettings {
 			'country' => $guessCountry,
 		]);
 		$this->initialState->provideInitialState('hosted_signaling_server_trial_data',
-			json_decode($this->serverConfig->getAppValue('spreed', 'hosted-signaling-server-account', '{}'), true) ?? []
+			$this->appConfig->getAppValueArray(Config::HOSTED_SIGNALING_SERVER_ACCOUNT)
 		);
 		$languages = $this->l10nFactory->getLanguages();
 		foreach ($languages['commonLanguages'] as $key => $value) {
