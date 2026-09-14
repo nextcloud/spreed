@@ -346,7 +346,7 @@ class RecordingService {
 	private function finalizeRecording(Room $room, Participant $participant, File $fileNode, string $owner): void {
 		$this->notifyStoredRecording($room, $participant, $fileNode);
 
-		$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
+		$shouldTranscribe = $this->appConfig->getAppValueBool(Config::CALL_RECORDING_TRANSCRIPTION);
 		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes';
 		if (!$shouldTranscribe && !$shouldSummarize) {
 			$this->logger->debug('Skipping transcription and summary of call recording, as both are disabled');
@@ -406,7 +406,7 @@ class RecordingService {
 			throw new InvalidArgumentException('owner_participant');
 		}
 
-		$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
+		$shouldTranscribe = $this->appConfig->getAppValueBool(Config::CALL_RECORDING_TRANSCRIPTION);
 		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes';
 
 		if ($aiTask === 'transcript') {
