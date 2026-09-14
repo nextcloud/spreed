@@ -85,6 +85,7 @@ class Config {
 	public const string RETENTION_EVENT_ROOMS = 'retention_event_rooms';
 	public const string RETENTION_PHONE_ROOMS = 'retention_phone_rooms';
 	public const string RETENTION_INSTANT_MEETINGS = 'retention_instant_meetings';
+	public const string MAX_CALL_DURATION = 'max_call_duration';
 
 	/**
 	 * 1. Call recording, …
