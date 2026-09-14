@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\SetupCheck;
 
+use OCA\Talk\Config;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -39,7 +40,7 @@ class Configuration implements ISetupCheck {
 	#[\Override]
 	public function run(): SetupResult {
 		$errors = $warnings = [];
-		$maxCallDuration = $this->appConfig->getAppValueInt('max_call_duration');
+		$maxCallDuration = $this->appConfig->getAppValueInt(Config::MAX_CALL_DURATION);
 		if ($maxCallDuration > 0) {
 			if ($this->config->getAppValue('core', 'backgroundjobs_mode', 'ajax') !== 'cron') {
 				$errors[] = $this->l10n->t('Forcing a call duration is only supported with system cron. Please enable system cron or remove the `max_call_duration` configuration.');

@@ -12,6 +12,7 @@ use OCA\Circles\CirclesManager;
 use OCA\DAV\CardDAV\PhotoCache;
 use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Config;
 use OCA\Talk\Events\MessageParseEvent;
 use OCA\Talk\Events\OverwritePublicSharePropertiesEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -1401,7 +1402,7 @@ class SystemMessage implements IEventListener {
 
 	protected function parseCall(Room $room, string $message, array $parameters, array $params): array {
 		$actorIsSystem = $params['actor']['type'] === 'guest' && $params['actor']['id'] === 'guest/' . Attendee::ACTOR_ID_SYSTEM;
-		$maxDuration = $this->appConfig->getAppValueInt('max_call_duration');
+		$maxDuration = $this->appConfig->getAppValueInt(Config::MAX_CALL_DURATION);
 		$maxDurationWasReached = $message === 'call_ended_everyone' && $actorIsSystem && $maxDuration > 0 && $parameters['duration'] > $maxDuration;
 
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
