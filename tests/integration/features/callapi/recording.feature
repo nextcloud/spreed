@@ -450,8 +450,8 @@ Feature: callapi/recording
   Scenario: Store recording with success and create transcript
     Given Fake summary task provider is enabled
     Given the following spreed app config is set
-      | call_recording_transcription | yes |
-      | call_recording_summary       | yes |
+      | call_recording_transcription | true |
+      | call_recording_summary       | yes  |
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -514,8 +514,8 @@ Feature: callapi/recording
   Scenario: Store recording with success but fail to transcript
     Given Fake summary task provider is enabled
     Given the following spreed app config is set
-      | call_recording_transcription | yes |
-      | call_recording_summary       | yes |
+      | call_recording_transcription | true |
+      | call_recording_summary       | yes  |
     Given the following testing app config is set
       | fail-testing-audio2text | yes |
     Given user "participant1" creates room "room1" (v4)
@@ -538,8 +538,8 @@ Feature: callapi/recording
   Scenario: Store recording and transcript with success but fail to summarize
     Given Fake summary task provider is enabled
     Given the following spreed app config is set
-      | call_recording_transcription | yes |
-      | call_recording_summary       | yes |
+      | call_recording_transcription | true |
+      | call_recording_summary       | yes  |
     Given the following testing app config is set
       | fail-testing-text2text | yes |
     Given user "participant1" creates room "room1" (v4)
@@ -563,8 +563,8 @@ Feature: callapi/recording
   Scenario: Store recording and transcript with success but summarize is off
     Given Fake summary task provider is enabled
     Given the following spreed app config is set
-      | call_recording_transcription | yes |
-      | call_recording_summary       | no |
+      | call_recording_transcription | true |
+      | call_recording_summary       | no   |
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -585,8 +585,8 @@ Feature: callapi/recording
   Scenario: Store recording and summarize with success but transcript is off
     Given Fake summary task provider is enabled
     Given the following spreed app config is set
-      | call_recording_transcription | no  |
-      | call_recording_summary       | yes |
+      | call_recording_transcription | false |
+      | call_recording_summary       | yes   |
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |

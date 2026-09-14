@@ -204,6 +204,7 @@ PROMPT;
 			new Entry(Config::MATTERBRIDGE_BINARY, ValueType::STRING, '', definition: 'Path to the matterbridge binary file'),
 			new Entry(Config::MATTERBRIDGE_BOT_PASSWORD, ValueType::STRING, '', definition: 'Automatically generated password of the matterbridge bot user profile', flags: IAppConfig::FLAG_SENSITIVE),
 			new Entry(Config::DEFAULT_GROUP_NOTIFICATION, ValueType::INT, Participant::NOTIFY_ALWAYS, definition: 'Default notification level for group conversations, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#participant-notification-levels' . PHP_EOL . '(Default changed from 2 (mentions) to 1 (always) in Nextcloud 33 for new installations'),
+			new Entry(Config::CALL_RECORDING_TRANSCRIPTION, ValueType::BOOL, false, definition: 'Whether call recordings should automatically be transcribed when a transcription provider is enabled.'),
 		];
 	}
 
