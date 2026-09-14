@@ -13,7 +13,7 @@ updates:
     time: "03:00"
     timezone: Europe/Berlin
   cooldown:
-    default-days: 4
+    default-days: 7
 
 - package-ecosystem: composer
   target-branch: stable35
@@ -31,7 +31,7 @@ updates:
     time: "03:00"
     timezone: Europe/Berlin
   cooldown:
-    default-days: 4
+    default-days: 7
 
 - package-ecosystem: composer
   target-branch: stable34
@@ -49,7 +49,7 @@ updates:
     time: "03:00"
     timezone: Europe/Berlin
   cooldown:
-    default-days: 4
+    default-days: 7
 
 - package-ecosystem: composer
   target-branch: stable33
@@ -67,7 +67,7 @@ updates:
     time: "03:00"
     timezone: Europe/Berlin
   cooldown:
-    default-days: 4
+    default-days: 7
 
 - package-ecosystem: composer
   target-branch: stable32
@@ -85,7 +85,7 @@ updates:
     time: "03:00"
     timezone: Europe/Berlin
   cooldown:
-    default-days: 4
+    default-days: 7
 
 # Composer: Tooling
 - package-ecosystem: composer
@@ -107,7 +107,7 @@ updates:
     time: "03:00"
     timezone: Europe/Berlin
   cooldown:
-    default-days: 4
+    default-days: 7
 
 # GitHub Actions
 - package-ecosystem: "github-actions"
@@ -121,7 +121,7 @@ updates:
     time: "03:00"
     timezone: Europe/Berlin
   cooldown:
-    default-days: 4
+    default-days: 7
 
 # NPM: Code-Dependencies
 - package-ecosystem: npm
@@ -148,7 +148,7 @@ updates:
       patterns:
         - "@rspack/*"
   cooldown:
-    default-days: 4
+    default-days: 7
     exclude:
       - "@nextcloud/*"
 
@@ -180,7 +180,7 @@ updates:
       patterns:
         - "@rspack/*"
   cooldown:
-    default-days: 4
+    default-days: 7
     exclude:
       - "@nextcloud/*"
 
@@ -208,7 +208,7 @@ updates:
       patterns:
         - "@rspack/*"
   cooldown:
-    default-days: 4
+    default-days: 7
     exclude:
       - "@nextcloud/*"
 
@@ -236,7 +236,7 @@ updates:
       patterns:
         - "@rspack/*"
   cooldown:
-    default-days: 4
+    default-days: 7
     exclude:
       - "@nextcloud/*"
 
@@ -264,6 +264,6 @@ updates:
       patterns:
         - "@rspack/*"
   cooldown:
-    default-days: 4
+    default-days: 7
     exclude:
       - "@nextcloud/*"
