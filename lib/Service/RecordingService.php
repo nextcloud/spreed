@@ -480,7 +480,7 @@ class RecordingService {
 		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes';
 
 		if ($aiTask === 'transcript') {
-			$transcriptFileName = ($shouldTranscribe ? '' : '.') . pathinfo($recording->getName(), PATHINFO_FILENAME) . ($shouldTranscribe ? ' transcript' : '') . '.md';
+			$transcriptFileName = ($shouldTranscribe ? '' : '.') . pathinfo($recording->getName(), PATHINFO_FILENAME) . ' transcript.md';
 		} else {
 			$transcriptFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . ' - ' . $aiTask . '.md';
 		}
@@ -575,7 +575,7 @@ class RecordingService {
 			$this->scheduleSpeakerAttribution($owner, $roomToken, $recordingFileId, $subtitleContent, $intervalsContent);
 		} else {
 			$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
-			$transcriptFileName = ($shouldTranscribe ? '' : '.') . pathinfo($recording->getName(), PATHINFO_FILENAME) . ($shouldTranscribe ? ' transcript' : '') . '.md';
+			$transcriptFileName = ($shouldTranscribe ? '' : '.') . pathinfo($recording->getName(), PATHINFO_FILENAME) . ' transcript.md';
 			try {
 				$recordingFolder->newFile($transcriptFileName, $subtitleContent);
 			} catch (NoUserException|NotPermittedException $e) {
@@ -642,7 +642,7 @@ Only output the subtitle content, nothing else.
 		$baseName = pathinfo($recording->getName(), PATHINFO_FILENAME);
 		$subtitleFileName = '.' . $baseName . ' subtitles speakers.srt';
 		$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
-		$transcriptFileName = ($shouldTranscribe ? '' : '.') . $baseName . ($shouldTranscribe ? ' transcript' : '') . '.md';
+		$transcriptFileName = ($shouldTranscribe ? '' : '.') . $baseName . ' transcript.md';
 		$transcript = $this->parseSrtToTranscript($output);
 
 		try {
