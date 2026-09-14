@@ -77,6 +77,9 @@ class Config {
 	public const string MATTERBRIDGE_ENABLED = 'enable_matterbridge';
 	public const string DELETE_ONE_TO_ONE_CONVERSATIONS = 'delete_one_to_one_conversations';
 	public const string MAX_GIF_SIZE = 'max_gif_size';
+	public const string HOSTED_SIGNALING_SERVER_ACCOUNT = 'hosted_signaling_server_account';
+	public const string HOSTED_SIGNALING_SERVER_NONCE = 'hosted_signaling_server_nonce';
+	public const string HOSTED_SIGNALING_SERVER_ACCOUNT_ID = 'hosted_signaling_server_account_id';
 
 	/**
 	 * 1. Call recording, …

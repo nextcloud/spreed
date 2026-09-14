@@ -191,6 +191,9 @@ PROMPT;
 			new Entry(Config::MATTERBRIDGE_ENABLED, ValueType::BOOL, false, definition: 'Whether the Matterbridge integration is enabled and can be configured'),
 			new Entry(Config::DELETE_ONE_TO_ONE_CONVERSATIONS, ValueType::BOOL, false, definition: 'Whether one-to-one conversations can be left by either participant or should be deleted when one participant leaves'),
 			new Entry(Config::MAX_GIF_SIZE, ValueType::INT, 3145728, definition: 'Maximum file size for clients to render gifs previews with animation', rename: 'max-gif-size'),
+			new Entry(Config::HOSTED_SIGNALING_SERVER_ACCOUNT, ValueType::ARRAY, [], definition: 'Account information of the hosted signaling server', flags: IAppConfig::FLAG_SENSITIVE, rename: 'hosted-signaling-server-account'),
+			new Entry(Config::HOSTED_SIGNALING_SERVER_NONCE, ValueType::STRING, '', definition: 'Temporary nonce while configuring the hosted signaling server', flags: IAppConfig::FLAG_SENSITIVE, rename: 'hosted-signaling-server-nonce'),
+			new Entry(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID, ValueType::STRING, '', definition: 'Account identifier of the hosted signaling server', flags: IAppConfig::FLAG_SENSITIVE, rename: 'hosted-signaling-server-account-id'),
 		];
 	}
 

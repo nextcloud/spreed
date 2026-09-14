@@ -64,12 +64,15 @@ class CheckHostedSignalingServerTest extends TestCase {
 	public function testRunWithNoChange(): void {
 		$backgroundJob = $this->getBackgroundJob();
 
-		$this->config
-			->method('getAppValue')
-			->willReturnMap([
-				['spreed', 'hosted-signaling-server-account-id', '', 'my-account-id'],
-				['spreed', 'hosted-signaling-server-account', '{}', '{"status": "pending"}']
-			]);
+		$this->appConfig
+			->method('getAppValueString')
+			->with(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID)
+			->willReturn('my-account-id');
+
+		$this->appConfig
+			->method('getAppValueArray')
+			->with(Config::HOSTED_SIGNALING_SERVER_ACCOUNT)
+			->willReturn(["status" => "pending"]);
 
 		$this->hostedSignalingServerService->expects($this->once())
 			->method('fetchAccountInfo')
@@ -88,16 +91,19 @@ class CheckHostedSignalingServerTest extends TestCase {
 			],
 		];
 
-		$this->config
-			->method('getAppValue')
-			->willReturnMap([
-				['spreed', 'hosted-signaling-server-account-id', '', 'my-account-id'],
-				['spreed', 'hosted-signaling-server-account', '{}', '{"status": "pending"}']
-			]);
+		$this->appConfig->expects($this->any())
+			->method('getAppValueString')
+			->with(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID)
+			->willReturn('my-account-id');
+
+		$this->appConfig->expects($this->any())
+			->method('getAppValueArray')
+			->with(Config::HOSTED_SIGNALING_SERVER_ACCOUNT)
+			->willReturn(["status" => "pending"]);
 
 		$expectedCalls = [
 			['spreed', 'signaling_servers', '{"servers":[{"server":"signaling-url","verify":true}],"secret":"signaling-secret"}'],
-			['spreed', 'hosted-signaling-server-account', json_encode($newStatus)],
+			['spreed', 'hosted_signaling_server_account', json_encode($newStatus)],
 		];
 
 		$i = 0;
@@ -157,16 +163,19 @@ class CheckHostedSignalingServerTest extends TestCase {
 			],
 		];
 
-		$this->config
-			->method('getAppValue')
-			->willReturnMap([
-				['spreed', 'hosted-signaling-server-account-id', '', 'my-account-id'],
-				['spreed', 'hosted-signaling-server-account', '{}', '{"status": "pending"}']
-			]);
+		$this->appConfig
+			->method('getAppValueString')
+			->with(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID)
+			->willReturn('my-account-id');
+
+		$this->appConfig
+			->method('getAppValueArray')
+			->with(Config::HOSTED_SIGNALING_SERVER_ACCOUNT)
+			->willReturn(["status" => "pending"]);
 
 		$expectedCalls = [
 			['spreed', 'signaling_servers', '{"servers":[{"server":"signaling-url","verify":true}],"secret":"signaling-secret"}'],
-			['spreed', 'hosted-signaling-server-account', json_encode($newStatus)],
+			['spreed', 'hosted_signaling_server_account', json_encode($newStatus)],
 		];
 
 		$i = 0;

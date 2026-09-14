@@ -10,11 +10,13 @@ namespace OCA\Talk\Service;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
+use OCA\Talk\Config;
 use OCA\Talk\DataObjects\AccountId;
 use OCA\Talk\DataObjects\RegisterAccountData;
 use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
 use OCA\Talk\Exceptions\HostedSignalingServerInputException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -30,6 +32,7 @@ class HostedSignalingServerService {
 
 	public function __construct(
 		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 		private readonly IClientService $clientService,
 		private readonly LoggerInterface $logger,
 		private readonly IL10N $l10n,
@@ -46,7 +49,7 @@ class HostedSignalingServerService {
 	public function registerAccount(RegisterAccountData $registerAccountData): AccountId {
 		try {
 			$nonce = $this->secureRandom->generate(32);
-			$this->config->setAppValue('spreed', 'hosted-signaling-server-nonce', $nonce);
+			$this->appConfig->setAppValueString(Config::HOSTED_SIGNALING_SERVER_NONCE, $nonce);
 
 			$client = $this->clientService->newClient();
 			$response = $client->post($this->apiServerUrl . '/v1/account', [
@@ -181,7 +184,7 @@ class HostedSignalingServerService {
 			// this is needed here because the deletion happens in a concurrent request
 			// and thus the cached value in the config object would trigger an UPDATE
 			// instead of an INSERT if there is another request to the API server
-			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
+			$this->appConfig->deleteAppValue(Config::HOSTED_SIGNALING_SERVER_NONCE);
 		}
 
 		$status = $response->getStatusCode();
@@ -212,7 +215,8 @@ class HostedSignalingServerService {
 		}
 
 		$accountId = (string)$data['account_id'];
-		$this->config->setAppValue('spreed', 'hosted-signaling-server-account-id', $accountId);
+		$this->appConfig->setAppValueString(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID, $accountId);
+		;
 
 		return new AccountId($accountId);
 	}
@@ -225,7 +229,7 @@ class HostedSignalingServerService {
 	public function fetchAccountInfo(AccountId $accountId) {
 		try {
 			$nonce = $this->secureRandom->generate(32);
-			$this->config->setAppValue('spreed', 'hosted-signaling-server-nonce', $nonce);
+			$this->appConfig->setAppValueString(Config::HOSTED_SIGNALING_SERVER_NONCE, $nonce);
 
 			$client = $this->clientService->newClient();
 			$response = $client->get($this->apiServerUrl . '/v1/account/' . $accountId->get(), [
@@ -316,7 +320,7 @@ class HostedSignalingServerService {
 			// this is needed here because the delete happens in a concurrent request
 			// and thus the cached value in the config object would trigger an UPDATE
 			// instead of an INSERT if there is another request to the API server
-			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
+			$this->appConfig->deleteAppValue(Config::HOSTED_SIGNALING_SERVER_NONCE);
 		}
 
 		$status = $response->getStatusCode();
@@ -378,7 +382,7 @@ class HostedSignalingServerService {
 	public function deleteAccount(AccountId $accountId): void {
 		try {
 			$nonce = $this->secureRandom->generate(32);
-			$this->config->setAppValue('spreed', 'hosted-signaling-server-nonce', $nonce);
+			$this->appConfig->setAppValueString(Config::HOSTED_SIGNALING_SERVER_NONCE, $nonce);
 
 			$client = $this->clientService->newClient();
 			$response = $client->delete($this->apiServerUrl . '/v1/account/' . $accountId->get(), [
@@ -469,7 +473,7 @@ class HostedSignalingServerService {
 			// this is needed here because the delete happens in a concurrent request
 			// and thus the cached value in the config object would trigger an UPDATE
 			// instead of an INSERT if there is another request to the API server
-			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
+			$this->appConfig->deleteAppValue(Config::HOSTED_SIGNALING_SERVER_NONCE);
 		}
 
 		$status = $response->getStatusCode();
