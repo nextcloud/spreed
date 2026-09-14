@@ -446,7 +446,7 @@ class RecordingService {
 		$shouldSummarize = $this->serverConfig->getAppValue('spreed', 'call_recording_summary', 'yes') === 'yes';
 
 		if ($aiTask === 'transcript') {
-			$transcriptFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . '.md';
+			$transcriptFileName = '.' . pathinfo($recording->getName(), PATHINFO_FILENAME) . '.md';
 			if (!$shouldTranscribe) {
 				$this->logger->debug('Skipping saving of transcript for call recording as it is disabled');
 			}
@@ -567,7 +567,7 @@ class RecordingService {
 			$intervalsContent = $intervalsFileNode->getContent();
 			$this->scheduleSpeakerAttribution($owner, $roomToken, $recordingFileId, $subtitleContent, $intervalsContent);
 		} else {
-			$transcriptFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . ' transcript.md';
+			$transcriptFileName = '.' . pathinfo($recording->getName(), PATHINFO_FILENAME) . '.md';
 			try {
 				$recordingFolder->newFile($transcriptFileName, $subtitleContent);
 			} catch (NoUserException|NotPermittedException $e) {
@@ -633,7 +633,7 @@ Only output the subtitle content, nothing else.
 
 		$baseName = pathinfo($recording->getName(), PATHINFO_FILENAME);
 		$subtitleFileName = '.' . $baseName . ' subtitles speakers.srt';
-		$transcriptFileName = $baseName . ' transcript.md';
+		$transcriptFileName = '.' . $baseName . '.md';
 		$transcript = $this->parseSrtToTranscript($output);
 
 		try {
