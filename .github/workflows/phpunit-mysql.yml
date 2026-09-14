@@ -18,30 +18,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  matrix:
-    runs-on: ubuntu-latest-low
-    outputs:
-      matrix: ${{ steps.versions.outputs.sparse-matrix }}
-    steps:
-      - name: Checkout app
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Get version matrix
-        id: versions
-        uses: nextcloud-libraries/nextcloud-version-matrix@cd0211ffcef1065e2020cd579e4843b8746e7a58 # v1.3.3
-        with:
-          matrix: '{"mysql-versions": ["8.4"]}'
-
-  changes:
+  changes-and-matrix:
     runs-on: ubuntu-latest-low
     permissions:
       contents: read
       pull-requests: read
 
     outputs:
-      src: ${{ steps.changes.outputs.src}}
+      src: ${{ steps.changes.outputs.src }}
+      matrix: ${{ steps.versions.outputs.sparse-matrix }}
 
     steps:
       - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
@@ -61,15 +46,28 @@ jobs:
               - 'composer.json'
               - 'composer.lock'
 
+      - name: Checkout app
+        if: steps.changes.outputs.src != 'false'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Get version matrix
+        if: steps.changes.outputs.src != 'false'
+        id: versions
+        uses: nextcloud-libraries/nextcloud-version-matrix@cd0211ffcef1065e2020cd579e4843b8746e7a58 # v1.3.3
+        with:
+          matrix: '{"mysql-versions": ["8.4"]}'
+
   phpunit-mysql:
     runs-on: ubuntu-latest
 
-    needs: [changes, matrix]
-    if: needs.changes.outputs.src != 'false'
+    needs: changes-and-matrix
+    if: needs.changes-and-matrix.outputs.src != 'false'
 
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.changes-and-matrix.outputs.matrix) }}
 
     name: MySQL ${{ matrix.mysql-versions }} PHP ${{ matrix.php-versions }} Nextcloud ${{ matrix.server-versions }}
 
@@ -194,7 +192,7 @@ jobs:
     permissions:
       contents: none
     runs-on: ubuntu-latest-low
-    needs: [changes, phpunit-mysql]
+    needs: [changes-and-matrix, phpunit-mysql]
 
     if: always()
 
@@ -202,4 +200,4 @@ jobs:
 
     steps:
       - name: Summary status
-        run: if ${{ needs.changes.outputs.src != 'false' && needs.phpunit-mysql.result != 'success' }}; then exit 1; fi
+        run: if ${{ needs.changes-and-matrix.outputs.src != 'false' && needs.phpunit-mysql.result != 'success' }}; then exit 1; fi
