@@ -3421,6 +3421,8 @@ export type components = {
             roomToken: string;
             /** @description Array of session ids, each are up to 512 character long strings, or empty if no session */
             sessionIds: string[];
+            /** @description Version of the actor's avatar, only for users. Passing it to the avatar endpoint allows a much longer cache lifetime */
+            actorAvatarVersion?: string;
             /** @description Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation */
             status?: string;
             /**

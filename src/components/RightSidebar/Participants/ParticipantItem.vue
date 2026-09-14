@@ -23,6 +23,7 @@
 				:source="participant.actorType"
 				disableTooltip
 				:showUserStatus="showUserStatus"
+				:version="participant.actorAvatarVersion"
 				:preloadedUserStatus="preloadedUserStatus"
 				:highlighted="isSpeakingStatusAvailable && isParticipantSpeaking"
 				:offline="isOffline" />

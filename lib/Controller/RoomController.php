@@ -66,6 +66,7 @@ use OCA\Talk\RoomPresets\DefaultPreset;
 use OCA\Talk\RoomPresets\Forced;
 use OCA\Talk\RoomPresets\Parameter;
 use OCA\Talk\RoomPresets\VoiceRoom;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\BanService;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ChecksumVerificationService;
@@ -151,6 +152,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 		private readonly ITimeFactory $timeFactory,
 		private readonly ChecksumVerificationService $checksumVerificationService,
 		private readonly RoomFormatter $roomFormatter,
+		private readonly AvatarService $avatarService,
 		private readonly Preloader $sharePreloader,
 		private readonly IConfig $config,
 		private readonly IAppConfig $appConfig,
@@ -1321,21 +1323,24 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$results = $headers = $statuses = [];
 		$maxPingAge = $this->timeFactory->getTime() - Session::SESSION_TIMEOUT_KILL;
 
+		// One participant per session, so a user on several devices repeats.
+		$userIds = array_values(array_unique(array_filter(array_map(static function (Participant $participant): ?string {
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+				return $participant->getAttendee()->getActorId();
+			}
+			return null;
+		}, $participants))));
+
 		if ($this->userId !== null
 			&& $includeStatus
 			&& count($participants) < Config::USER_STATUS_INTEGRATION_LIMIT
 			&& $this->appManager->isEnabledForUser('user_status')) {
-			$userIds = array_filter(array_map(static function (Participant $participant): ?string {
-				if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
-					return $participant->getAttendee()->getActorId();
-				}
-				return null;
-			}, $participants));
-
 			$statuses = $this->statusManager->getUserStatuses($userIds);
 
 			$headers['X-Nextcloud-Has-User-Statuses'] = true;
 		}
+
+		$avatarVersions = $this->avatarService->getUserAvatarVersions($userIds);
 
 		$currentUser = null;
 		if ($this->userId !== null) {
@@ -1409,6 +1414,9 @@ class RoomController extends AEnvironmentAwareOCSController {
 					$this->participantService->leaveRoomAsSession($this->room, $participant);
 				}
 
+				if (isset($avatarVersions[$userId])) {
+					$result['actorAvatarVersion'] = $avatarVersions[$userId];
+				}
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 				if (!$result['displayName']) {
 					$userDisplayName = $this->userManager->getDisplayName($userId);

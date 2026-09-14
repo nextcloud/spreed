@@ -12,6 +12,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\EmojiService;
 use OCA\Talk\Service\RoomService;
+use OCP\Config\IUserConfig;
 use OCP\Files\IAppData;
 use OCP\Files\IFilenameValidator;
 use OCP\IAvatarManager;
@@ -27,6 +28,7 @@ use Test\TestCase;
 #[Group('DB')]
 class AvatarServiceTest extends TestCase {
 	protected IAppData&MockObject $appData;
+	protected IUserConfig&MockObject $userConfig;
 	protected IL10N&MockObject $l;
 	protected IURLGenerator&MockObject $url;
 	protected ISecureRandom&MockObject $random;
@@ -40,6 +42,7 @@ class AvatarServiceTest extends TestCase {
 		parent::setUp();
 
 		$this->appData = $this->createMock(IAppData::class);
+		$this->userConfig = $this->createMock(IUserConfig::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->random = $this->createMock(ISecureRandom::class);
@@ -49,6 +52,7 @@ class AvatarServiceTest extends TestCase {
 		$this->filenameValidator = Server::get(IFilenameValidator::class);
 		$this->service = new AvatarService(
 			$this->appData,
+			$this->userConfig,
 			$this->l,
 			$this->url,
 			$this->random,
@@ -57,6 +61,23 @@ class AvatarServiceTest extends TestCase {
 			$this->emojiService,
 			$this->filenameValidator,
 		);
+	}
+
+	public function testGetUserAvatarVersionsFillsInUsersWithoutAVersion(): void {
+		$this->userConfig->method('getValuesByUsers')
+			->with('avatar', 'version', null, ['alice', 'bob'])
+			->willReturn(['alice' => 5]);
+
+		$this->assertSame(
+			['alice' => '5', 'bob' => '0'],
+			$this->service->getUserAvatarVersions(['alice', 'bob']),
+		);
+	}
+
+	public function testGetUserAvatarVersionsSkipsAnEmptyList(): void {
+		$this->userConfig->expects($this->never())->method('getValuesByUsers');
+
+		$this->assertSame([], $this->service->getUserAvatarVersions([]));
 	}
 
 	public static function dataGetAvatarVersion(): array {

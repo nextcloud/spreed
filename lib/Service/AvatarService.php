@@ -12,6 +12,7 @@ namespace OCA\Talk\Service;
 use InvalidArgumentException;
 use OCA\Talk\Room;
 use OCA\Talk\RoomAttributes;
+use OCP\Config\IUserConfig;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\InMemoryFile;
@@ -30,6 +31,7 @@ class AvatarService {
 
 	public function __construct(
 		private readonly IAppData $appData,
+		private readonly IUserConfig $userConfig,
 		private readonly IL10N $l,
 		private readonly IURLGenerator $url,
 		private readonly ISecureRandom $random,
@@ -312,6 +314,30 @@ class AvatarService {
 			$arguments['v'] = $avatarVersion;
 		}
 		return $this->url->linkToOCSRouteAbsolute('spreed.Avatar.getAvatar', $arguments);
+	}
+
+	/**
+	 * Users who never set an avatar have no stored version and get "0", which is
+	 * their real version and becomes 1 the first time they upload one.
+	 *
+	 * Issues one query per 50 ids.
+	 *
+	 * @param list<string> $userIds
+	 * @return array<string, string>
+	 */
+	public function getUserAvatarVersions(array $userIds): array {
+		if ($userIds === []) {
+			return [];
+		}
+
+		$versions = $this->userConfig->getValuesByUsers('avatar', 'version', userIds: $userIds);
+
+		$result = [];
+		foreach ($userIds as $userId) {
+			$result[$userId] = (string)($versions[$userId] ?? 0);
+		}
+
+		return $result;
 	}
 
 	public function getAvatarVersion(Room $room): string {
