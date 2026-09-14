@@ -93,7 +93,7 @@ class CheckCertificates extends TimedJob {
 			return;
 		}
 
-		$expirationWarningLimit = $this->appConfig->getAppValueInt('certificate_expiration_days', 10);
+		$expirationWarningLimit = $this->appConfig->getAppValueInt(Config::CERTIFICATE_EXPIRATION_DAYS);
 		$expirationWarningLimit = min(365, max(0, $expirationWarningLimit));
 		if ($expirationInDays < $expirationWarningLimit) {
 			$this->logger->warning('Certificate of ' . $host . ' expires in less than ' . $expirationInDays . ' days');
