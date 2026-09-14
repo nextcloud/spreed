@@ -103,8 +103,8 @@ class CheckHostedSignalingServer extends TimedJob {
 
 	#[\Override]
 	protected function run($argument): void {
-		$accountId = $this->config->getAppValue('spreed', 'hosted-signaling-server-account-id', '');
-		$oldAccountInfo = json_decode($this->config->getAppValue('spreed', 'hosted-signaling-server-account', '{}'), true);
+		$accountId = $this->appConfig->getAppValueString(Config::HOSTED_SIGNALING_SERVER_ACCOUNT_ID);
+		$oldAccountInfo = $this->appConfig->getAppValueArray(Config::HOSTED_SIGNALING_SERVER_ACCOUNT);
 
 		if ($accountId === '') {
 			return;
@@ -178,7 +178,7 @@ class CheckHostedSignalingServer extends TimedJob {
 
 		// store new account info
 		if ($oldAccountInfo !== $accountInfo) {
-			$this->config->setAppValue('spreed', 'hosted-signaling-server-account', json_encode($accountInfo));
+			$this->appConfig->setAppValueArray(Config::HOSTED_SIGNALING_SERVER_ACCOUNT, $accountInfo);
 		}
 
 		if (!is_null($notificationSubject)) {
