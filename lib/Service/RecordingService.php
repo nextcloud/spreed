@@ -321,7 +321,7 @@ class RecordingService {
 				$intervalsFileNode = $recordingFolder->get($intervalsFileName);
 				if ($intervalsFileNode instanceof File) {
 					$intervalsContent = $intervalsFileNode->getContent();
-					$intervalsData = json_decode($intervalsContent, associative: true);
+					$intervalsData = json_decode($intervalsContent, associative: true, flags: JSON_THROW_ON_ERROR);
 					if (!is_array($intervalsData)) {
 						$this->logger->warning('Intervals file {name} is not valid JSON, ignoring', ['name' => $intervalsFileName]);
 						$intervalsFileNode->delete();
@@ -331,6 +331,11 @@ class RecordingService {
 				}
 			} catch (NotFoundException) {
 				$this->logger->warning('Intervals file {name} not found in recording folder, ignoring', ['name' => $intervalsFileName]);
+			} catch (\JsonException) {
+				$this->logger->warning('Intervals file {name} is not valid JSON, ignoring', ['name' => $intervalsFileName]);
+				if (isset($intervalsFileNode)) {
+					$intervalsFileNode->delete();
+				}
 			}
 		}
 
