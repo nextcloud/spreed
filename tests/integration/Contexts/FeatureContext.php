@@ -7,10 +7,12 @@ declare(strict_types=1);
  *  SPDX-FileCopyrightText: 2016 ownCloud, Inc.
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-require __DIR__ . '/../../vendor/autoload.php';
+
+namespace OCA\Talk\Tests\Integration\Contexts;
+
+require __DIR__ . '/../vendor/autoload.php';
 
 use Behat\Behat\Context\Context;
-use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Hook\AfterScenario;
@@ -19,16 +21,20 @@ use Behat\Hook\BeforeSuite;
 use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
+use DateTime;
+use Exception;
+use GuzzleHttp;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ClientException;
+use JsonException;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ResponseInterface;
 
 /**
  * Defines application features from the specific context.
  */
-class FeatureContext implements Context, SnippetAcceptingContext {
+class FeatureContext implements Context {
 	public const TEST_PASSWORD = '123456';
 
 	/** @var array<string, string> */
@@ -213,8 +219,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function __construct() {
 		$this->cookieJars = [];
-		$this->localServerUrl = getenv('TEST_SERVER_URL');
-		$this->remoteServerUrl = getenv('TEST_REMOTE_URL');
+		$this->localServerUrl = getenv('TEST_SERVER_URL') ?: '';
+		$this->remoteServerUrl = getenv('TEST_REMOTE_URL') ?: '';
 
 		foreach (['LOCAL', 'REMOTE'] as $server) {
 			$this->changedConfigs[$server] = [];
@@ -275,7 +281,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function getOtherRequiredSiblingContexts(BeforeScenarioScope $scope): void {
 		$environment = $scope->getEnvironment();
 
-		$this->sharingContext = $environment->getContext('SharingContext');
+		$this->sharingContext = $environment->getContext(SharingContext::class);
 	}
 
 	#[AfterScenario]
@@ -4796,7 +4802,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'multipart' => [
 				[
 					'name' => 'file',
-					'contents' => $file !== 'invalid' ? fopen(__DIR__ . '/../../../..' . $file, 'r') : '',
+					'contents' => $file !== 'invalid' ? fopen(__DIR__ . '/../../..' . $file, 'r') : '',
 				],
 			],
 		];
@@ -4943,7 +4949,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// Upload a file
 			$options['multipart'][] = [
 				'name' => 'file',
-				'contents' => fopen(__DIR__ . '/../../../..' . $file, 'r'),
+				'contents' => fopen(__DIR__ . '/../../..' . $file, 'r'),
 			];
 		}
 		$this->sendRequest(
@@ -5020,7 +5026,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($file === 'empty') {
 			$options['body'] = '';
 		} else {
-			$options['body'] = fopen(__DIR__ . '/../../../..' . $file, 'r');
+			$options['body'] = fopen(__DIR__ . '/../../..' . $file, 'r');
 		}
 
 		$client = new Client();
