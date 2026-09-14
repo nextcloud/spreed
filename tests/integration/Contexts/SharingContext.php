@@ -7,11 +7,14 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+namespace OCA\Talk\Tests\Integration\Contexts;
+
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
+use GuzzleHttp;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use Psr\Http\Message\ResponseInterface;
@@ -477,10 +480,10 @@ class SharingContext implements Context {
 		$headers = null;
 
 		$body = '<d:propfind xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">'
-				. '	<d:prop>'
-				. '		<oc:share-types/>'
-				. '	</d:prop>'
-				. '</d:propfind>';
+			. '	<d:prop>'
+			. '		<oc:share-types/>'
+			. '	</d:prop>'
+			. '</d:propfind>';
 
 		$this->sendingToDav('PROPFIND', $url, $headers, $body);
 
@@ -610,17 +613,17 @@ class SharingContext implements Context {
 		$expectedFields = array_merge($defaultExpectedFields, $fields);
 
 		if (!array_key_exists('uid_file_owner', $expectedFields)
-				&& array_key_exists('uid_owner', $expectedFields)) {
+			&& array_key_exists('uid_owner', $expectedFields)) {
 			$expectedFields['uid_file_owner'] = $expectedFields['uid_owner'];
 		}
 		if (!array_key_exists('displayname_file_owner', $expectedFields)
-				&& array_key_exists('displayname_owner', $expectedFields)) {
+			&& array_key_exists('displayname_owner', $expectedFields)) {
 			$expectedFields['displayname_file_owner'] = $expectedFields['displayname_owner'];
 		}
 
 		if (array_key_exists('share_type', $expectedFields)
-				&& $expectedFields['share_type'] == 10 /* IShare::TYPE_ROOM */
-				&& array_key_exists('share_with', $expectedFields)) {
+			&& $expectedFields['share_type'] == 10 /* IShare::TYPE_ROOM */
+			&& array_key_exists('share_with', $expectedFields)) {
 			if ($expectedFields['share_with'] === 'private_conversation') {
 				$expectedFields['share_with'] = 'REGEXP /^private_conversation_[0-9a-f]{6}$/';
 				$expectedFields['share_with_link'] = '';
@@ -738,7 +741,7 @@ class SharingContext implements Context {
 		$response = json_decode($this->responseBody);
 
 		$fileForPath = array_filter($response->files, function ($file) use ($path) {
-			$filePath = $file->path . (substr($file->path, -1) === '/'? '': '/');
+			$filePath = $file->path . (substr($file->path, -1) === '/' ? '' : '/');
 			return ($filePath . $file->name) === $path;
 		});
 
