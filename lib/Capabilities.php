@@ -341,7 +341,7 @@ class Capabilities implements IPublicCapability {
 				],
 				'feature-hints' => [
 					'current' => Config::FEATURE_HINT,
-					'hidden' => max(0, $this->appConfig->getAppValueInt('feature_hints_hidden')),
+					'hidden' => max(0, $this->appConfig->getAppValueInt(Config::FEATURE_HINTS_HIDDEN)),
 				],
 				'permissions' => [
 					'max-default' => Attendee::PERMISSIONS_MAX_DEFAULT,
