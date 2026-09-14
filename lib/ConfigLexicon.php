@@ -196,6 +196,9 @@ PROMPT;
 			new Entry(Config::SUMMARY_THRESHOLD, ValueType::INT, 100, definition: 'Amount of unread messages a user needs before they see the option to summarize with AI'),
 			new Entry(Config::ALLOWED_START_CALLS, ValueType::INT, Room::START_CALL_EVERYONE, definition: 'Who can start a call, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#start-call '),
 			new Entry(Config::SAMPLES_DIRECTORY, ValueType::STRING, '', definition: 'Specify a readable directory that contains other sample conversation data'),
+			new Entry(Config::RETENTION_EVENT_ROOMS, ValueType::INT, 28, definition: 'Retention period of event conversations in days (`0` means no-retention)'),
+			new Entry(Config::RETENTION_PHONE_ROOMS, ValueType::INT, 7, definition: 'Retention period of phone dial-in and dial-out conversations in days (`0` means no-retention)'),
+			new Entry(Config::RETENTION_INSTANT_MEETINGS, ValueType::INT, 1, definition: 'Retention period of instant meetings in days (`0` means no-retention'),
 		];
 	}
 

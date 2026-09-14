@@ -34,17 +34,17 @@ class ExpireObjectRooms extends TimedJob {
 
 	#[\Override]
 	protected function run($argument): void {
-		$phoneRetention = $this->appConfig->getAppValueInt('retention_phone_rooms', 7);
+		$phoneRetention = $this->appConfig->getAppValueInt(Config::RETENTION_PHONE_ROOMS);
 		if ($phoneRetention !== 0) {
 			$this->executeRetention(Room::OBJECT_TYPE_PHONE_TEMPORARY, $phoneRetention * 24 * 3600);
 		}
 
-		$eventRetention = $this->appConfig->getAppValueInt('retention_event_rooms', 28);
+		$eventRetention = $this->appConfig->getAppValueInt(Config::RETENTION_EVENT_ROOMS);
 		if ($eventRetention !== 0) {
 			$this->executeRetention(Room::OBJECT_TYPE_EVENT, $eventRetention * 24 * 3600);
 		}
 
-		$instantMeetingRetention = $this->appConfig->getAppValueInt('retention_instant_meetings', 1);
+		$instantMeetingRetention = $this->appConfig->getAppValueInt(Config::RETENTION_INSTANT_MEETINGS);
 		if ($instantMeetingRetention !== 0) {
 			$this->executeRetention(Room::OBJECT_TYPE_INSTANT_MEETING, $instantMeetingRetention * 24 * 3600);
 		}
