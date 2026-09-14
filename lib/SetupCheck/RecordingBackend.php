@@ -41,7 +41,7 @@ class RecordingBackend implements ISetupCheck {
 		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
 			return SetupResult::success($this->l->t('Using the recording backend requires a High-performance backend.'));
 		}
-		if (empty($this->talkConfig->getRecordingServers()) && $this->appConfig->getAppValueInt('feature_hints_hidden') < 34) {
+		if (empty($this->talkConfig->getRecordingServers()) && $this->appConfig->getAppValueInt(Config::FEATURE_HINTS_HIDDEN) < 34) {
 			return SetupResult::info($this->l->t('No recording backend configured'));
 		}
 		return SetupResult::success();
