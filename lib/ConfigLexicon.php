@@ -191,6 +191,7 @@ PROMPT;
 			new Entry(Config::MATTERBRIDGE_ENABLED, ValueType::BOOL, false, definition: 'Whether the Matterbridge integration is enabled and can be configured'),
 			new Entry(Config::DELETE_ONE_TO_ONE_CONVERSATIONS, ValueType::BOOL, false, definition: 'Whether one-to-one conversations can be left by either participant or should be deleted when one participant leaves'),
 			new Entry(Config::MAX_GIF_SIZE, ValueType::INT, 3145728, definition: 'Maximum file size for clients to render gifs previews with animation', rename: 'max-gif-size'),
+			new Entry(Config::TOKEN_ENTROPY, ValueType::INT, 8, definition: 'Length of conversation tokens, can be increased to make tokens harder to guess but reduces readability and dial-in comfort', flags: IAppConfig::FLAG_SENSITIVE),
 		];
 	}
 
