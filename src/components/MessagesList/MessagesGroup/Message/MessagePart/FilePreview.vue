@@ -244,6 +244,8 @@ export default {
 				!(this.file.mimetype.startsWith('image/') || this.file.mimetype.startsWith('video/'))
 				// the file has no preview (ex: disabled on server)
 				|| (this.file['preview-available'] !== 'yes' && !this.file.localUrl)
+				// call recordings in right sidebar
+				|| (this.itemType === SHARED_ITEM.TYPES.RECORDING && this.rowLayout)
 				// the preview failed loading
 				|| this.failed
 				// always show in upload editor
