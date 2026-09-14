@@ -211,7 +211,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->config->getAppValue('spreed', 'federation_outgoing_enabled'),
 			$this->config->getAppValue('spreed', 'federation_only_trusted_servers'),
 			$this->config->getAppValue('spreed', 'federation_allowed_groups', '[]'),
-			$this->appConfig->getAppValueInt('feature_hints_hidden'),
+			$this->appConfig->getAppValueInt(Config::FEATURE_HINTS_HIDDEN),
 		];
 
 		if ($this->userId !== null) {
