@@ -77,6 +77,10 @@ class Config {
 	public const string MATTERBRIDGE_ENABLED = 'enable_matterbridge';
 	public const string DELETE_ONE_TO_ONE_CONVERSATIONS = 'delete_one_to_one_conversations';
 	public const string MAX_GIF_SIZE = 'max_gif_size';
+	public const string CHAT_STYLE = 'chat_style';
+	public const string CONVERSATIONS_LIST_STYLE = 'conversations_list_style';
+	public const string HIDE_SIGNALING_WARNING = 'hide_signaling_warning';
+	public const string CHANGELOG = 'changelog';
 
 	/**
 	 * 1. Call recording, …
@@ -649,7 +653,7 @@ class Config {
 	}
 
 	public function getHideSignalingWarning(): bool {
-		return $this->config->getAppValue('spreed', 'hide_signaling_warning', 'no') === 'yes';
+		return $this->appConfig->getAppValueBool(Config::HIDE_SIGNALING_WARNING);
 	}
 
 	/**
