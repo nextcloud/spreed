@@ -425,20 +425,24 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 @use '../../assets/variables.scss' as *;
 
 .talk-dashboard-wrapper {
-	padding: calc(var(--default-grid-baseline) * 2) calc(var(--default-grid-baseline) * 3);
+	--dashboard-max-height: 800px;
+	--dashboard-max-width: 900px;
+	padding: calc(var(--default-grid-baseline) * 2);
 	width: min(100%, calc(100vw - 300px - var(--body-container-margin) * 2)); // 300px for the left sidebar and body container margins
 	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
+	gap: calc(var(--default-grid-baseline) * 4);
 	height: 100%;
-	max-height: 800px;
-	max-width: 900px;
+	max-height: var(--dashboard-max-height);
+	max-width: var(--dashboard-max-width);
 
 	&--mobile {
 		width: 100%;
 
 		.talk-dashboard__header {
 			margin-block-start: 0;
+			padding-inline-start: clamp(0px, calc(var(--dashboard-max-width) / 2 + var(--app-navigation-toggle-space) - 50vw), var(--app-navigation-toggle-space));
 		}
 	}
 
@@ -449,13 +453,8 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 		.talk-dashboard__chats {
 			grid-template-columns: 1fr;
-			gap: calc(var(--default-grid-baseline) * 5);
 		}
 	}
-}
-
-.talk-dashboard__menu {
-	margin-bottom: calc(var(--default-grid-baseline) * 4);
 }
 
 .talk-dashboard__header {
@@ -463,15 +462,22 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 	font-size: 21px; // NcDialog header font size
 	font-weight: bold;
 	margin-inline: auto;
-	margin-block-start: clamp(0px, calc(100vh - 800px), var(--app-navigation-toggle-space));
+	margin-block-start: clamp(0px, calc(100vh - var(--dashboard-max-height)), var(--app-navigation-toggle-space));
 	margin-block-end: calc(var(--default-grid-baseline) * 2);
-	padding-inline-start: clamp(0px, calc(900px / 2 + var(--app-navigation-toggle-space) - 50vw), var(--app-navigation-toggle-space))
+}
+
+// var(--dashboard-max-height) + var(--header-height) + var(--body-container-margin)
+@media (max-height: 852px) {
+	.talk-dashboard__header {
+		margin-block-start: 0;
+		--min-width-with-navigation: calc(var(--body-container-margin) * 2 + 300px + var(--dashboard-max-width));
+		padding-inline-start: clamp(0px, calc(var(--min-width-with-navigation) / 2 + var(--app-navigation-toggle-space) - 50vw), var(--app-navigation-toggle-space));
+	}
 }
 
 .talk-dashboard__actions {
 	display: flex;
-	gap: calc(var(--default-grid-baseline) * 3);
-	padding-block: var(--default-grid-baseline);
+	gap: calc(var(--default-grid-baseline) * 2);
 	flex-wrap: wrap;
 	flex-direction: row;
 
@@ -488,7 +494,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 // Spread the actions across the full width of every row they wrap onto
 .talk-dashboard__action {
-	flex-grow: 1;
+	flex: 1 0 calc(50% - var(--default-grid-baseline));
 
 	// The popover only wraps its trigger, so the button inside has to stretch as well
 	:deep(.button-vue) {
@@ -497,8 +503,6 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 }
 
 .event-section {
-	margin-block-end: calc(var(--default-grid-baseline) * 6);
-
 	:deep(.dashboard-section--list) {
 		.dashboard-section__content {
 			padding-inline: 0;
@@ -579,6 +583,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 .talk-dashboard__items {
 	display: flex;
 	flex-direction: column;
+	gap: calc(var(--default-grid-baseline) * 4);
 	justify-content: space-around;
 	min-width: 0;
 	flex-grow: 3;
@@ -586,7 +591,7 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 
 .talk-dashboard__chats {
 	display: grid;
-	gap: calc(var(--default-grid-baseline) * 8);
+	gap: calc(var(--default-grid-baseline) * 4);
 	grid-template-columns: 1fr 1fr;
 	flex-grow: 1;
 
@@ -649,6 +654,10 @@ function scrollEventCards({ direction }: { direction: 'backward' | 'forward' }) 
 // Override NcButton styles for narrow screen size
 @media screen and (max-width: $breakpoint-mobile-small) {
 	.talk-dashboard__actions {
+		.talk-dashboard__action {
+			flex: 1 1 100%;
+		}
+
 		:deep(.button-vue),
 		& > div {
 			width: 100%;
