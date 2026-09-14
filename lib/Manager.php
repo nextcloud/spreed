@@ -21,6 +21,7 @@ use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\NotFoundException;
@@ -43,6 +44,7 @@ class Manager {
 		private readonly IDBConnection $db,
 		private readonly IConfig $config,
 		private readonly Config $talkConfig,
+		private readonly IAppConfig $appConfig,
 		private readonly IAppManager $appManager,
 		private readonly AttendeeMapper $attendeeMapper,
 		private readonly SessionMapper $sessionMapper,
@@ -1457,8 +1459,7 @@ class Manager {
 	 * @return string
 	 */
 	protected function getNewToken(): string {
-		$entropy = (int)$this->config->getAppValue('spreed', 'token_entropy', '8');
-		$entropy = max(8, $entropy); // For update cases
+		$entropy = max(8, $this->appConfig->getAppValueInt(Config::TOKEN_ENTROPY)); // For update cases
 		$digitsOnly = $this->talkConfig->isSIPConfigured();
 		if ($digitsOnly) {
 			// Increase default token length as we only use numbers
@@ -1488,7 +1489,7 @@ class Manager {
 		}
 
 		$entropy++;
-		$this->config->setAppValue('spreed', 'token_entropy', (string)$entropy);
+		$this->appConfig->setAppValueInt(Config::TOKEN_ENTROPY, $entropy);
 		return $this->generateNewToken($query, $entropy, $digitsOnly);
 	}
 

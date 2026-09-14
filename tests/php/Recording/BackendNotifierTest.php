@@ -65,6 +65,7 @@ class BackendNotifierTest extends TestCase {
 	protected ParticipantService $participantService;
 	protected ?CustomBackendNotifier $backendNotifier = null;
 	protected ?Config $config = null;
+	protected IAppConfig&MockObject $appConfig;
 	protected ?ISecureRandom $secureRandom = null;
 	protected ?Manager $manager = null;
 	protected ?string $recordingSecret = null;
@@ -80,8 +81,8 @@ class BackendNotifierTest extends TestCase {
 		$this->secureRandom = \OCP\Server::get(ISecureRandom::class);
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 
-		$appConfig = $this->createMock(IAppConfig::class);
-		$appConfig->expects($this->any())
+		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->appConfig->expects($this->any())
 			->method('getAppValueArray')
 			->with('recording_servers')
 			->willReturn([
@@ -99,7 +100,7 @@ class BackendNotifierTest extends TestCase {
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$dispatcher = \OCP\Server::get(IEventDispatcher::class);
 
-		$this->config = new Config($config, $appConfig, $userConfig, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $timeFactory, $dispatcher, $this->createMock(IFilenameValidator::class));
+		$this->config = new Config($config, $this->appConfig, $userConfig, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $timeFactory, $dispatcher, $this->createMock(IFilenameValidator::class));
 
 		$this->recreateBackendNotifier();
 
@@ -110,6 +111,7 @@ class BackendNotifierTest extends TestCase {
 			$dbConnection,
 			$config,
 			$this->config,
+			$this->appConfig,
 			\OCP\Server::get(IAppManager::class),
 			\OCP\Server::get(AttendeeMapper::class),
 			\OCP\Server::get(SessionMapper::class),

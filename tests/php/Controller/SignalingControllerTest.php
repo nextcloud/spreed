@@ -88,6 +88,7 @@ class SignalingControllerTest extends TestCase {
 	protected IDBConnection $dbConnection;
 	protected IConfig $serverConfig;
 	protected ?Config $config = null;
+	protected IAppConfig&MockObject $appConfig;
 	protected ?string $userId = null;
 	protected ?ISecureRandom $secureRandom = null;
 	protected ?IEventDispatcher $dispatcher = null;
@@ -101,7 +102,7 @@ class SignalingControllerTest extends TestCase {
 		$this->secureRandom = \OCP\Server::get(ISecureRandom::class);
 		$this->request = $this->createMock(IRequest::class);
 		/** @var MockObject|IAppConfig $appConfig */
-		$appConfig = $this->createMock(IAppConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$groupManager = $this->createMock(IGroupManager::class);
 		$this->serverConfig = \OCP\Server::get(IConfig::class);
@@ -113,7 +114,7 @@ class SignalingControllerTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->dispatcher = \OCP\Server::get(IEventDispatcher::class);
 		$urlGenerator = $this->createMock(IURLGenerator::class);
-		$this->config = new Config($this->serverConfig, $appConfig, $this->createMock(IUserConfig::class), $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher, $this->createMock(IFilenameValidator::class));
+		$this->config = new Config($this->serverConfig, $this->appConfig, $this->createMock(IUserConfig::class), $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher, $this->createMock(IFilenameValidator::class));
 		$this->serverSession = $this->createMock(ISession::class);
 		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OCP\Server::get(IDBConnection::class);
@@ -1374,6 +1375,7 @@ class SignalingControllerTest extends TestCase {
 			$dbConnection,
 			\OCP\Server::get(IConfig::class),
 			$this->createMock(Config::class),
+			$this->appConfig,
 			\OCP\Server::get(IAppManager::class),
 			\OCP\Server::get(AttendeeMapper::class),
 			\OCP\Server::get(SessionMapper::class),
