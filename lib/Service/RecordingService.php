@@ -44,6 +44,7 @@ use OCP\SystemTag\ISystemTagObjectMapper;
 use OCP\TaskProcessing\Exception\Exception;
 use OCP\TaskProcessing\IManager as ITaskProcessingManager;
 use OCP\TaskProcessing\Task;
+use OCP\TaskProcessing\TaskTypes\AudioToText;
 use OCP\TaskProcessing\TaskTypes\AudioToTextSubtitles;
 use OCP\TaskProcessing\TaskTypes\TextToText;
 use Psr\Log\LoggerInterface;
@@ -163,19 +164,22 @@ class RecordingService {
 			if ($intervalsFile !== null && isset($intervalsFile['tmp_name']) && is_string($intervalsFile['name']) && $intervalsFile['name'] !== '') {
 				$intervalsResource = fopen($intervalsFile['tmp_name'], 'r');
 				if ($intervalsResource === false) {
-					throw new InvalidArgumentException('intervals_fopen_failed');
+					$this->logger->warning('Could not open intervals file {name}, ignoring', ['name' => $intervalsFile['name']]);
+				} else {
+					$intervalsContent = stream_get_contents($intervalsResource);
+					fclose($intervalsResource);
+					if ($intervalsContent === false) {
+						$this->logger->warning('Could not read intervals file {name}, ignoring', ['name' => $intervalsFile['name']]);
+					} else {
+						$intervalsData = json_decode($intervalsContent, associative: true);
+						if (!is_array($intervalsData)) {
+							$this->logger->warning('Intervals file {name} is not valid JSON, ignoring', ['name' => $intervalsFile['name']]);
+						} else {
+							$intervalsFileName = basename($intervalsFile['name']);
+							$intervalsFileNode = $recordingFolder->newFile($intervalsFileName, $intervalsContent);
+						}
+					}
 				}
-				$intervalsContent = stream_get_contents($intervalsResource);
-				fclose($intervalsResource);
-				if ($intervalsContent === false) {
-					throw new InvalidArgumentException('intervals_read_failed');
-				}
-				$intervalsData = json_decode($intervalsContent, associative: true);
-				if (!is_array($intervalsData)) {
-					throw new InvalidArgumentException('intervals_invalid_json');
-				}
-				$intervalsFileName = basename($intervalsFile['name']);
-				$intervalsFileNode = $recordingFolder->newFile($intervalsFileName, $intervalsContent);
 			}
 		} catch (NoUserException) {
 			throw new InvalidArgumentException('owner_invalid');
@@ -183,7 +187,7 @@ class RecordingService {
 			throw new InvalidArgumentException('owner_permission');
 		}
 
-		$this->finalizeRecording($room, $participant, $fileNode, $owner);
+		$this->finalizeRecording($room, $participant, $fileNode, $owner, $intervalsFileNode !== null);
 	}
 
 	/**
@@ -310,6 +314,7 @@ class RecordingService {
 			throw $e;
 		}
 
+		$intervalsFileAvailable = false;
 		if ($intervalsFileName !== null) {
 			$intervalsFileName = basename($intervalsFileName);
 			try {
@@ -320,6 +325,8 @@ class RecordingService {
 					if (!is_array($intervalsData)) {
 						$this->logger->warning('Intervals file {name} is not valid JSON, ignoring', ['name' => $intervalsFileName]);
 						$intervalsFileNode->delete();
+					} else {
+						$intervalsFileAvailable = true;
 					}
 				}
 			} catch (NotFoundException) {
@@ -327,7 +334,7 @@ class RecordingService {
 			}
 		}
 
-		$this->finalizeRecording($room, $participant, $fileNode, $owner);
+		$this->finalizeRecording($room, $participant, $fileNode, $owner, $intervalsFileAvailable);
 
 		$this->cleanupUploadShare($room, $fileName);
 	}
@@ -379,7 +386,7 @@ class RecordingService {
 	 * Run the post-processing shared by the direct multipart upload and the
 	 * chunked upload: notify the owner and schedule transcription/summary.
 	 */
-	private function finalizeRecording(Room $room, Participant $participant, File $fileNode, string $owner): void {
+	private function finalizeRecording(Room $room, Participant $participant, File $fileNode, string $owner, bool $intervalsFileAvailable): void {
 		$this->notifyStoredRecording($room, $participant, $fileNode);
 
 		$shouldTranscribe = $this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes';
@@ -390,24 +397,46 @@ class RecordingService {
 		}
 
 		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
-		if (!in_array(AudioToTextSubtitles::ID, $supportedTaskTypeIds, true)) {
-			$this->logger->error('Can not transcribe call recording as no AudioToTextSubtitles task provider is available');
-			return;
-		}
+		$useSubtitlesWorkflow = $intervalsFileAvailable && in_array(AudioToTextSubtitles::ID, $supportedTaskTypeIds, true);
 
-		$task = new Task(
-			AudioToTextSubtitles::ID,
-			['input' => $fileNode->getId()],
-			Application::APP_ID,
-			$owner,
-			'call/subtitles/' . $room->getToken(),
-		);
+		if ($useSubtitlesWorkflow) {
+			$task = new Task(
+				AudioToTextSubtitles::ID,
+				['input' => $fileNode->getId()],
+				Application::APP_ID,
+				$owner,
+				'call/subtitles/' . $room->getToken(),
+			);
 
-		try {
-			$this->taskProcessingManager->scheduleTask($task);
-			$this->logger->debug('Scheduled call recording subtitle generation');
-		} catch (Exception $e) {
-			$this->logger->error('An error occurred while trying to generate subtitles for the call recording', ['exception' => $e]);
+			try {
+				$this->taskProcessingManager->scheduleTask($task);
+				$this->logger->debug('Scheduled call recording subtitle generation');
+			} catch (Exception $e) {
+				$this->logger->error('An error occurred while trying to generate subtitles for the call recording', ['exception' => $e]);
+			}
+		} else {
+			if (!$intervalsFileAvailable) {
+				$this->logger->debug('No intervals file available, falling back to AudioToText transcription');
+			}
+			if (!in_array(AudioToText::ID, $supportedTaskTypeIds, true)) {
+				$this->logger->error('Can not transcribe call recording as no AudioToText task provider is available');
+				return;
+			}
+
+			$task = new Task(
+				AudioToText::ID,
+				['input' => $fileNode->getId()],
+				Application::APP_ID,
+				$owner,
+				'call/transcription/' . $room->getToken(),
+			);
+
+			try {
+				$this->taskProcessingManager->scheduleTask($task);
+				$this->logger->debug('Scheduled call recording transcript');
+			} catch (Exception $e) {
+				$this->logger->error('An error occurred while trying to transcribe the call recording', ['exception' => $e]);
+			}
 		}
 	}
 
