@@ -57,7 +57,7 @@ class CallProvider implements IProvider {
 			return;
 		}
 
-		if ($this->appConfig->getAppValueInt('start_calls') !== Room::START_CALL_NOONE) {
+		if ($this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS) !== Room::START_CALL_NOONE) {
 			// TRANSLATORS 'Call User' - open a floating call integration
 			$directTalkAction = $this->l10n->t('Call %s', [$user->getDisplayName()]);
 			$directIconUrl = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'icon-video-dark.svg'));

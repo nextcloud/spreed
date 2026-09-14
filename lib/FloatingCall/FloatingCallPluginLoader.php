@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\FloatingCall;
 
+use OCA\Talk\Config;
 use OCA\Talk\Room;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\AppFramework\Services\IAppConfig;
@@ -40,7 +41,7 @@ class FloatingCallPluginLoader implements IEventListener {
 		if (
 			!str_starts_with($this->request->getPathInfo(), '/apps/spreed')
 			&& !str_starts_with($this->request->getPathInfo(), '/call')
-			&& $this->appConfig->getAppValueInt('start_calls') !== Room::START_CALL_NOONE
+			&& $this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS) !== Room::START_CALL_NOONE
 		) {
 			Util::addScript('spreed', 'talk-floating-call');
 			// Styles are loaded asynchronously, initially no CSS file is bundled

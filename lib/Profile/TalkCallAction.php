@@ -76,7 +76,7 @@ class TalkCallAction implements ILinkAction {
 		$visitingUser = $this->userSession->getUser();
 		if (
 			!$visitingUser
-			|| ($this->appConfig->getAppValueInt('start_calls') === Room::START_CALL_NOONE)
+			|| ($this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS) === Room::START_CALL_NOONE)
 			|| $this->config->isDisabledForUser($this->targetUser)
 			|| $this->config->isDisabledForUser($visitingUser)
 		) {

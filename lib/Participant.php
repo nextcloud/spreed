@@ -152,7 +152,7 @@ class Participant {
 			return false;
 		}
 
-		$defaultStartCall = (int)$config->getAppValue('spreed', 'start_calls', (string)Room::START_CALL_EVERYONE);
+		$defaultStartCall = $appConfig->getAppValueInt(Config::ALLOWED_START_CALLS);
 
 		if ($defaultStartCall === Room::START_CALL_NOONE) {
 			return false;
