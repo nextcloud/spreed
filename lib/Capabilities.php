@@ -291,7 +291,7 @@ class Capabilities implements IPublicCapability {
 					'default-phone-region' => $this->serverConfig->getSystemValueString('default_phone_region'),
 					'can-enable-sip' => false,
 					'start-without-media' => $this->talkConfig->getCallsStartWithoutMedia($user?->getUID()),
-					'max-duration' => $this->appConfig->getAppValueInt('max_call_duration'),
+					'max-duration' => $this->appConfig->getAppValueInt(Config::MAX_CALL_DURATION),
 					'blur-virtual-background' => $this->talkConfig->getBlurVirtualBackground($user?->getUID()),
 					'end-to-end-encryption' => $this->talkConfig->isCallEndToEndEncryptionEnabled(),
 					'live-transcription' => $this->isLiveTranscriptionSupported(),

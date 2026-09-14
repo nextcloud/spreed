@@ -146,7 +146,7 @@ class CapabilitiesTest extends TestCase {
 
 		$this->appConfig->method('getAppValueInt')
 			->willReturnMap([
-				['max_call_duration', 0, 0],
+				['max_call_duration', 0],
 				['retention_event_rooms', 28, 28],
 				['retention_phone_rooms', 7, 7],
 				['retention_instant_meetings', 1, 1],
@@ -366,7 +366,7 @@ class CapabilitiesTest extends TestCase {
 
 		$this->appConfig->method('getAppValueInt')
 			->willReturnMap([
-				['max_call_duration', 0, 0],
+				['max_call_duration', 0],
 				['retention_event_rooms', 28, 28],
 				['retention_phone_rooms', 7, 7],
 				['retention_instant_meetings', 1, 1],
