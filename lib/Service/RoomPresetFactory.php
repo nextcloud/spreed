@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\Config;
 use OCA\Talk\Room;
 use OCA\Talk\RoomPresets\Announcement;
 use OCA\Talk\RoomPresets\APreset;
@@ -50,7 +51,7 @@ class RoomPresetFactory {
 			$presetClasses[] = Announcement::class;
 		}
 
-		if ($this->appConfig->getAppValueInt('start_calls', Room::START_CALL_EVERYONE) !== Room::START_CALL_NOONE) {
+		if ($this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS) !== Room::START_CALL_NOONE) {
 			$presetClasses[] = VoiceRoom::class;
 		}
 

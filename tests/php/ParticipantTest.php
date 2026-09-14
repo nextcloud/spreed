@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php;
 
+use OCA\Talk\Config;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -52,12 +53,14 @@ class ParticipantTest extends TestCase {
 		$participant = new Participant($room, $attendee, null);
 
 		$serverConfig = $this->createMock(IConfig::class);
-		$serverConfig->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'start_calls', (string)Room::START_CALL_EVERYONE)
-			->willReturn((string)Room::START_CALL_EVERYONE);
 
 		$appConfig = $this->createMock(IAppConfig::class);
+
+		$appConfig->expects($this->once())
+			->method('getAppValueInt')
+			->with(Config::ALLOWED_START_CALLS)
+			->willReturn(Room::START_CALL_EVERYONE);
+
 		$appConfig->expects($this->once())
 			->method('getAppValueArray')
 			->with('start_calls_groups')
