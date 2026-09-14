@@ -13,7 +13,7 @@
 	},
 	"require-dev": {
 		"behat/behat": "^4.0.0-alpha1@alpha",
-		"guzzlehttp/guzzle": "^8.1.0",
+		"guzzlehttp/guzzle": "^8.2.0",
 		"phpunit/phpunit": "^12.5"
 	}
 }
