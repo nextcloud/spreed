@@ -37,6 +37,7 @@
 			:hideStatus="!showUserStatus"
 			:verboseStatus="!showUserStatusCompact"
 			:preloadedUserStatus="preloadedUserStatus"
+			:version="version"
 			:size="size" />
 		<!-- Override user status for federated users -->
 		<span
@@ -98,6 +99,14 @@ export default {
 		size: {
 			type: Number,
 			default: AVATAR.SIZE.DEFAULT,
+		},
+
+		/**
+		 * The actor's avatar version, as returned with the participant list.
+		 */
+		version: {
+			type: [String, Number],
+			default: null,
 		},
 
 		condensed: {
