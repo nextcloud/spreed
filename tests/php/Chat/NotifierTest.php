@@ -18,6 +18,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ThreadService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IConfig;
@@ -36,6 +37,7 @@ class NotifierTest extends TestCase {
 	protected ParticipantService&MockObject $participantService;
 	protected ThreadService&MockObject $threadService;
 	protected IConfig&MockObject $config;
+	protected IAppConfig&MockObject $appConfig;
 	protected ITimeFactory&MockObject $timeFactory;
 	protected Util&MockObject $util;
 
@@ -53,6 +55,7 @@ class NotifierTest extends TestCase {
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->threadService = $this->createMock(ThreadService::class);
 		$this->config = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->util = $this->createMock(Util::class);
 	}
@@ -71,6 +74,7 @@ class NotifierTest extends TestCase {
 					$this->participantService,
 					$this->threadService,
 					$this->config,
+					$this->appConfig,
 					$this->timeFactory,
 					$this->util,
 				])
@@ -84,6 +88,7 @@ class NotifierTest extends TestCase {
 			$this->participantService,
 			$this->threadService,
 			$this->config,
+			$this->appConfig,
 			$this->timeFactory,
 			$this->util
 		);

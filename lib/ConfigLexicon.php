@@ -191,6 +191,7 @@ PROMPT;
 			new Entry(Config::MATTERBRIDGE_ENABLED, ValueType::BOOL, false, definition: 'Whether the Matterbridge integration is enabled and can be configured'),
 			new Entry(Config::DELETE_ONE_TO_ONE_CONVERSATIONS, ValueType::BOOL, false, definition: 'Whether one-to-one conversations can be left by either participant or should be deleted when one participant leaves'),
 			new Entry(Config::MAX_GIF_SIZE, ValueType::INT, 3145728, definition: 'Maximum file size for clients to render gifs previews with animation', rename: 'max-gif-size'),
+			new Entry(Config::DEFAULT_GROUP_NOTIFICATION, ValueType::INT, Participant::NOTIFY_ALWAYS, definition: 'Default notification level for group conversations, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#participant-notification-levels' . PHP_EOL . '(Default changed from 2 (mentions) to 1 (always) in Nextcloud 33 for new installations'),
 		];
 	}
 

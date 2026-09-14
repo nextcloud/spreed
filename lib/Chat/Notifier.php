@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat;
 
+use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Files\Util;
 use OCA\Talk\Model\Attendee;
@@ -18,6 +19,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ThreadService;
 use OCA\Talk\Webinary;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IConfig;
@@ -46,6 +48,7 @@ class Notifier {
 		private readonly ParticipantService $participantService,
 		private readonly ThreadService $threadService,
 		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 		private readonly ITimeFactory $timeFactory,
 		private readonly Util $util,
 	) {
@@ -649,7 +652,7 @@ class Notifier {
 	}
 
 	protected function getDefaultGroupNotification(): int {
-		return (int)$this->config->getAppValue('spreed', 'default_group_notification', (string)Participant::NOTIFY_ALWAYS);
+		return $this->appConfig->getAppValueInt(Config::DEFAULT_GROUP_NOTIFICATION);
 	}
 
 	/**
