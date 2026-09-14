@@ -77,6 +77,9 @@ class Config {
 	public const string MATTERBRIDGE_ENABLED = 'enable_matterbridge';
 	public const string DELETE_ONE_TO_ONE_CONVERSATIONS = 'delete_one_to_one_conversations';
 	public const string MAX_GIF_SIZE = 'max_gif_size';
+	public const string RETENTION_EVENT_ROOMS = 'retention_event_rooms';
+	public const string RETENTION_PHONE_ROOMS = 'retention_phone_rooms';
+	public const string RETENTION_INSTANT_MEETINGS = 'retention_instant_meetings';
 
 	/**
 	 * 1. Call recording, …
