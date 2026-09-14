@@ -8,7 +8,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Changelog;
 
+use OCA\Talk\Config;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IConfig;
@@ -20,6 +22,7 @@ class Listener implements IEventListener {
 	public function __construct(
 		private readonly Manager $manager,
 		private readonly IConfig $serverConfig,
+		private readonly IAppConfig $appConfig,
 	) {
 	}
 
@@ -29,7 +32,7 @@ class Listener implements IEventListener {
 			return;
 		}
 
-		if ($this->serverConfig->getAppValue('spreed', 'changelog', 'yes') !== 'yes') {
+		if (!$this->appConfig->getAppValueBool(Config::CHANGELOG)) {
 			return;
 		}
 
