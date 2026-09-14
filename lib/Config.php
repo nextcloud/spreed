@@ -79,6 +79,7 @@ class Config {
 	public const string MAX_GIF_SIZE = 'max_gif_size';
 	public const string CERTIFICATE_EXPIRATION_DAYS = 'certificate_expiration_days';
 	public const string TOKEN_ENTROPY = 'token_entropy';
+	public const string SUMMARY_THRESHOLD = 'summary_threshold';
 
 	/**
 	 * 1. Call recording, …
