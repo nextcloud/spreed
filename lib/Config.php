@@ -89,6 +89,7 @@ class Config {
 	public const string FEATURE_HINTS_HIDDEN = 'feature_hints_hidden';
 	public const string MATTERBRIDGE_BINARY = 'matterbridge_binary';
 	public const string MATTERBRIDGE_BOT_PASSWORD = 'bridge_bot_password';
+	public const string DEFAULT_GROUP_NOTIFICATION = 'default_group_notification';
 
 	/**
 	 * 1. Call recording, …

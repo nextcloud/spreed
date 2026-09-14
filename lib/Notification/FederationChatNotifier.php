@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Notification;
 
+use OCA\Talk\Config;
 use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
@@ -73,7 +74,7 @@ class FederationChatNotifier {
 		}
 
 		// Also notify default participants in one-to-one chats or when the admin default is "always"
-		$defaultLevel = $this->appConfig->getAppValueInt('default_group_notification', Participant::NOTIFY_ALWAYS);
+		$defaultLevel = $this->appConfig->getAppValueInt(Config::DEFAULT_GROUP_NOTIFICATION, Participant::NOTIFY_ALWAYS);
 		if ($notificationLevel === Participant::NOTIFY_MENTION
 			|| ($defaultLevel !== Participant::NOTIFY_NEVER && $notificationLevel === Participant::NOTIFY_DEFAULT)) {
 			if ($this->isRepliedTo($room, $participant, $metaData)) {
