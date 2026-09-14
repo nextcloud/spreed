@@ -154,7 +154,7 @@ class CapabilitiesTest extends TestCase {
 				['summary_threshold', 100, 100],
 				['feature_hints_hidden', 0, 999],
 				['max_gif_size', 3145728, 200000],
-				['session_ping_limit', 200, 200],
+				['session_ping_limit', 200],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
@@ -374,7 +374,7 @@ class CapabilitiesTest extends TestCase {
 				['summary_threshold', 100, 100],
 				['feature_hints_hidden', 0, 1],
 				['max_gif_size', 3145728, 200000],
-				['session_ping_limit', 200, 50],
+				['session_ping_limit', 50],
 			]);
 
 		$this->serverConfig->expects($this->any())
