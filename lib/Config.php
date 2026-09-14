@@ -81,6 +81,7 @@ class Config {
 	public const string TOKEN_ENTROPY = 'token_entropy';
 	public const string SUMMARY_THRESHOLD = 'summary_threshold';
 	public const string ALLOWED_START_CALLS = 'start_calls';
+	public const string SAMPLES_DIRECTORY = 'samples_directory';
 
 	/**
 	 * 1. Call recording, …

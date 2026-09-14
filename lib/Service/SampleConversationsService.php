@@ -61,7 +61,7 @@ class SampleConversationsService {
 			throw new \InvalidArgumentException('User not found');
 		}
 
-		$sampleDirectory = $this->appConfig->getAppValueString('samples_directory');
+		$sampleDirectory = $this->appConfig->getAppValueString(Config::SAMPLES_DIRECTORY);
 		if ($sampleDirectory !== '') {
 			$this->logger->debug('Creating custom sample conversations for user ' . $userId . ' from ' . $sampleDirectory);
 			$this->customSampleConversations($user, $sampleDirectory);

@@ -195,6 +195,7 @@ PROMPT;
 			new Entry(Config::TOKEN_ENTROPY, ValueType::INT, 8, definition: 'Length of conversation tokens, can be increased to make tokens harder to guess but reduces readability and dial-in comfort'),
 			new Entry(Config::SUMMARY_THRESHOLD, ValueType::INT, 100, definition: 'Amount of unread messages a user needs before they see the option to summarize with AI'),
 			new Entry(Config::ALLOWED_START_CALLS, ValueType::INT, Room::START_CALL_EVERYONE, definition: 'Who can start a call, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#start-call '),
+			new Entry(Config::SAMPLES_DIRECTORY, ValueType::STRING, '', definition: 'Specify a readable directory that contains other sample conversation data'),
 		];
 	}
 
