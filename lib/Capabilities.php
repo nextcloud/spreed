@@ -317,9 +317,9 @@ class Capabilities implements IPublicCapability {
 					'sort-order' => $this->talkConfig->getConversationsSortOrder($user?->getUID()),
 					'group-mode' => $this->talkConfig->getConversationsGroupMode($user?->getUID()),
 					'description-length' => Room::DESCRIPTION_MAXIMUM_LENGTH,
-					'retention-event' => max(0, $this->appConfig->getAppValueInt('retention_event_rooms', 28)),
-					'retention-phone' => max(0, $this->appConfig->getAppValueInt('retention_phone_rooms', 7)),
-					'retention-instant-meetings' => max(0, $this->appConfig->getAppValueInt('retention_instant_meetings', 1)),
+					'retention-event' => max(0, $this->appConfig->getAppValueInt(Config::RETENTION_EVENT_ROOMS)),
+					'retention-phone' => max(0, $this->appConfig->getAppValueInt(Config::RETENTION_PHONE_ROOMS)),
+					'retention-instant-meetings' => max(0, $this->appConfig->getAppValueInt(Config::RETENTION_INSTANT_MEETINGS)),
 					'retention-classified' => max(0, $this->appConfig->getAppValueInt(Config::RETENTION_CLASSIFIED_ROOMS)),
 				],
 				'federation' => [
