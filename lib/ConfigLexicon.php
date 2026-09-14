@@ -201,6 +201,8 @@ PROMPT;
 			new Entry(Config::RETENTION_INSTANT_MEETINGS, ValueType::INT, 1, definition: 'Retention period of instant meetings in days (`0` means no-retention'),
 			new Entry(Config::MAX_CALL_DURATION, ValueType::INT, 0, definition: 'Maximum duration of a call in seconds, 0 for unlimited. Federated calls will be terminated based on the setting of the host server.' . PHP_EOL . 'Calls are ended via a background job, so system cron should be used and calls will last a bit longer' . PHP_EOL . '(until the next execution of cron).'),
 			new Entry(Config::FEATURE_HINTS_HIDDEN, ValueType::INT, 0, definition: 'Feature hints that should be hidden. Set to `999999` to hide all.'),
+			new Entry(Config::MATTERBRIDGE_BINARY, ValueType::STRING, '', definition: 'Path to the matterbridge binary file'),
+			new Entry(Config::MATTERBRIDGE_BOT_PASSWORD, ValueType::STRING, '', definition: 'Automatically generated password of the matterbridge bot user profile', flags: IAppConfig::FLAG_SENSITIVE),
 		];
 	}
 

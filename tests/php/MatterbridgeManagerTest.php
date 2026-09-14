@@ -13,6 +13,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IAvatarManager;
 use OCP\IConfig;
@@ -31,6 +32,7 @@ use Test\TestCase;
 class MatterbridgeManagerTest extends TestCase {
 	protected IDBConnection&MockObject $db;
 	protected IConfig&MockObject $config;
+	protected IAppConfig&MockObject $appConfig;
 	protected IURLGenerator&MockObject $url;
 	protected IUserManager&MockObject $userManager;
 	protected Manager&MockObject $manager;
@@ -49,6 +51,7 @@ class MatterbridgeManagerTest extends TestCase {
 
 		$this->db = $this->createMock(IDBConnection::class);
 		$this->config = $this->createMock(IConfig::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->manager = $this->createMock(Manager::class);
@@ -64,6 +67,7 @@ class MatterbridgeManagerTest extends TestCase {
 		$this->matterbridgeManager = new MatterbridgeManager(
 			$this->db,
 			$this->config,
+			$this->appConfig,
 			$this->url,
 			$this->userManager,
 			$this->manager,
