@@ -1028,10 +1028,6 @@ class SystemMessage implements IEventListener {
 				$path = $name;
 			} elseif ($share->getShareOwner() !== $participant->getAttendee()->getActorId()) {
 				$userFolder = $this->rootFolder->getUserFolder($participant->getAttendee()->getActorId());
-				if (!$userFolder instanceof Node) {
-					throw new ShareNotFound();
-				}
-
 				$node = $userFolder->getFirstNodeById($share->getNodeId());
 				if (!$node instanceof Node) {
 					$user = $this->userManager->getExistingUser($participant->getAttendee()->getActorId());

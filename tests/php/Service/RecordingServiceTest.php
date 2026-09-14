@@ -36,6 +36,7 @@ use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
+use OCP\Files\IUserFolder;
 use OCP\Files\NotFoundException;
 use OCP\IConfig;
 use OCP\IUserManager;
@@ -207,7 +208,7 @@ class RecordingServiceTest extends TestCase {
 	}
 
 	protected function mockRecordingFolder(string $owner, string $token): Folder&MockObject {
-		$userFolder = $this->createMock(Folder::class);
+		$userFolder = $this->createMock(IUserFolder::class);
 		$this->rootFolder->method('getUserFolder')->with($owner)->willReturn($userFolder);
 		$this->config->method('getRecordingFolder')->with($owner)->willReturn('/Talk');
 
@@ -416,7 +417,7 @@ class RecordingServiceTest extends TestCase {
 		$aiTask = 'transcript';
 		$customPrompt = 'Summarize this transcript:';
 
-		$userFolder = $this->createMock(Folder::class);
+		$userFolder = $this->createMock(IUserFolder::class);
 		$this->rootFolder->method('getUserFolder')->with($owner)->willReturn($userFolder);
 		$recordingFolder = $this->createMock(Folder::class);
 		$recordingFolder->method('getName')->willReturn($roomToken);

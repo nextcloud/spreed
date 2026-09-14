@@ -16,6 +16,7 @@ use OCP\Files\FileInfo;
 use OCP\Files\Folder;
 use OCP\Files\IFilenameValidator;
 use OCP\Files\IRootFolder;
+use OCP\Files\IUserFolder;
 use OCP\Files\Node;
 use OCP\Files\NotEnoughSpaceException;
 use OCP\Files\NotFoundException;
@@ -63,8 +64,8 @@ class ConversationFolderServiceTest extends TestCase {
 	 * Defaults to SPACE_UNLIMITED so tests that don't care about quota
 	 * don't trip the quota check.
 	 */
-	private function makeUserFolderMock(int|float $freeSpace = FileInfo::SPACE_UNLIMITED): Folder&MockObject {
-		$userFolder = $this->createMock(Folder::class);
+	private function makeUserFolderMock(int|float $freeSpace = FileInfo::SPACE_UNLIMITED): IUserFolder&MockObject {
+		$userFolder = $this->createMock(IUserFolder::class);
 		$userFolder->method('getFreeSpace')->willReturn($freeSpace);
 		return $userFolder;
 	}
@@ -480,7 +481,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userId = 'alice';
 		$filePath = 'Talk/Room-tok/Alice-alice/test.txt';
 
-		$userFolder = $this->createMock(Folder::class);
+		$userFolder = $this->createMock(IUserFolder::class);
 		$node = $this->createStub(Node::class);
 
 		$this->rootFolder->method('getUserFolder')->with($userId)->willReturn($userFolder);
@@ -494,7 +495,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$userId = 'alice';
 		$filePath = 'Talk/Room-tok/Alice-alice/missing.txt';
 
-		$userFolder = $this->createMock(Folder::class);
+		$userFolder = $this->createMock(IUserFolder::class);
 
 		$this->rootFolder->method('getUserFolder')->with($userId)->willReturn($userFolder);
 		$userFolder->method('get')->with($filePath)->willThrowException(new NotFoundException('missing.txt'));
@@ -513,7 +514,7 @@ class ConversationFolderServiceTest extends TestCase {
 		$subfolder = $this->createMock(Folder::class);
 		$subfolder->method('getPath')->willReturn('/alice/files/Talk/Room-tok/Alice-alice');
 
-		$userFolder = $this->createMock(Folder::class);
+		$userFolder = $this->createMock(IUserFolder::class);
 		$userFolder->method('getRelativePath')
 			->with('/alice/files/Talk/Room-tok/Alice-alice')
 			->willReturn('/Talk/Room-tok/Alice-alice');

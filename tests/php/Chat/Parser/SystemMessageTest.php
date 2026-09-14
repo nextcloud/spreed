@@ -30,6 +30,7 @@ use OCP\Files\Folder;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\ISetupManager;
+use OCP\Files\IUserFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\IGroup;
@@ -1007,7 +1008,7 @@ class SystemMessageTest extends TestCase {
 			->method('getMimeType')
 			->willReturn('application/octet-stream');
 
-		$userFolder = $this->createMock(Folder::class);
+		$userFolder = $this->createMock(IUserFolder::class);
 		$userFolder->expects($this->once())
 			->method('getById')
 			->with('54')
@@ -1070,7 +1071,7 @@ class SystemMessageTest extends TestCase {
 			->with('23')
 			->willReturn($share);
 
-		$userFolder = $this->createMock(Folder::class);
+		$userFolder = $this->createMock(IUserFolder::class);
 		$userFolder->expects($this->once())
 			->method('getFirstNodeById')
 			->with('54')
@@ -1139,7 +1140,7 @@ class SystemMessageTest extends TestCase {
 			->method('getMimeType')
 			->willReturn('image/jpeg');
 
-		$userFolder = $this->createMock(Folder::class);
+		$userFolder = $this->createMock(IUserFolder::class);
 		$userFolder->expects($this->once())
 			->method('getFirstNodeById')
 			->with(42)
@@ -1197,7 +1198,7 @@ class SystemMessageTest extends TestCase {
 	public function testGetFileFromNodeIdThrowsWhenNotFound(): void {
 		$room = $this->createStub(Room::class);
 
-		$userFolder = $this->createMock(Folder::class);
+		$userFolder = $this->createMock(IUserFolder::class);
 		$userFolder->expects($this->once())
 			->method('getFirstNodeById')
 			->with(42)
