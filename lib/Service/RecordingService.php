@@ -520,31 +520,7 @@ class RecordingService {
 			return;
 		}
 
-		// use TextToText to keep the full transcript as a context
-		$taskType = TextToText::ID;
-		$summaryPrompt = $this->appConfig->getAppValueString(Config::CALL_RECORDING_SUMMARY_PROMPT);
-		$input = $summaryPrompt . "\n" . $output;
-
-		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();
-		if (!in_array($taskType, $supportedTaskTypeIds, true)) {
-			$this->logger->error('Can not summarize call recording as no ' . $taskType . ' task provider is available');
-			return;
-		}
-
-		$task = new Task(
-			$taskType,
-			['input' => $input],
-			Application::APP_ID,
-			$owner,
-			'call/summary/' . $room->getToken() . '/' . $recordingFileId,
-		);
-
-		try {
-			$this->taskProcessingManager->scheduleTask($task);
-			$this->logger->debug('Scheduled call recording summary');
-		} catch (Exception $e) {
-			$this->logger->error('An error occurred while trying to summarize the call recording', ['exception' => $e]);
-		}
+		$this->scheduleSummary($owner, $room->getToken(), $recordingFileId, $output);
 	}
 
 	public function storeSubtitle(string $owner, string $roomToken, int $recordingFileId, int $subtitleFileId): void {
