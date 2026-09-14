@@ -11,7 +11,6 @@ namespace OCA\Talk\Settings\Admin;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\MatterbridgeManager;
-use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IAppConfig;
@@ -70,7 +69,7 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initGeneralSettings(): void {
-		$this->initialState->provideInitialState('default_group_notification', (int)$this->serverConfig->getAppValue('spreed', 'default_group_notification', (string)Participant::NOTIFY_ALWAYS));
+		$this->initialState->provideInitialState(Config::DEFAULT_GROUP_NOTIFICATION, $this->appConfig->getAppValueInt(Config::DEFAULT_GROUP_NOTIFICATION));
 		$this->initialState->provideInitialState(Config::CONVERSATIONS_FILES, (int)$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES));
 		$this->initialState->provideInitialState(Config::CONVERSATIONS_FILES_PUBLIC_SHARES, (int)$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES_PUBLIC_SHARES));
 		$this->initialState->provideInitialState('valid_apache_php_configuration', $this->validApachePHPConfiguration());
