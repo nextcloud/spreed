@@ -8,6 +8,7 @@ import adapter from 'webrtc-adapter'
 import webrtcSupport from 'webrtcsupport'
 import WildEmitter from 'wildemitter'
 import { isSafari } from '../../browserCheck.ts'
+import { getSimulcastMaxBitrates } from './simulcastBitrates.ts'
 
 /**
  * @param {object} stream the stream object.
@@ -356,6 +357,17 @@ function mungeSdpForSimulcasting(sdp) {
 }
 /* eslint-enable */
 
+Peer.prototype._getMaxBitrates = function() {
+	// Read the live per-stream limit from the signaling connection so a room
+	// switch or reconnect is reflected, instead of the value frozen at
+	// SimpleWebRTC construction time.
+	const maxStreamBits = this.parent?.config?.connection?.maxStreamBits
+	if (maxStreamBits) {
+		return getSimulcastMaxBitrates(maxStreamBits)
+	}
+	return this.maxBitrates
+}
+
 Peer.prototype.offer = function(options) {
 	const sendVideo = this.sendVideoIfAvailable && this.type !== 'screen'
 	if (sendVideo && this.enableSimulcast && adapter.browserDetails.browser === 'firefox') {
@@ -368,22 +380,23 @@ Peer.prototype.offer = function(options) {
 			if (!parameters) {
 				parameters = {}
 			}
+			const maxBitrates = this._getMaxBitrates()
 			parameters.encodings = [
 				{
 					rid: 'h',
 					active: true,
-					maxBitrate: this.maxBitrates.high,
+					maxBitrate: maxBitrates.high,
 				},
 				{
 					rid: 'm',
 					active: true,
-					maxBitrate: this.maxBitrates.medium,
+					maxBitrate: maxBitrates.medium,
 					scaleResolutionDownBy: 2,
 				},
 				{
 					rid: 'l',
 					active: true,
-					maxBitrate: this.maxBitrates.low,
+					maxBitrate: maxBitrates.low,
 					scaleResolutionDownBy: 4,
 				},
 			]

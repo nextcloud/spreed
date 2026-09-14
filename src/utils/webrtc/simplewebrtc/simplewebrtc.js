@@ -6,6 +6,7 @@
 import mockconsole from 'mockconsole'
 import webrtcSupport from 'webrtcsupport'
 import WildEmitter from 'wildemitter'
+import { getSimulcastMaxBitrates } from './simulcastBitrates.ts'
 import WebRTC from './webrtc.js'
 
 /**
@@ -19,11 +20,7 @@ export default function SimpleWebRTC(opts) {
 		debug: false,
 		enableDataChannels: true,
 		enableSimulcast: false,
-		maxBitrates: {
-			high: 900000,
-			medium: 300000,
-			low: 100000,
-		},
+		maxBitrates: getSimulcastMaxBitrates(opts.connection?.maxStreamBits),
 		autoRequestMedia: false,
 		receiveMedia: {
 			offerToReceiveAudio: 1,
