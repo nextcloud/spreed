@@ -70,6 +70,7 @@ const raiseHandButtonLabel = computed(() => {
 })
 
 const actionsLabel = computed(() => hasReactionSupport.value ? t('spreed', 'Send a reaction') : raiseHandButtonLabel.value)
+const actionsVariant = computed(() => isHandRaised.value ? 'primary' : 'tertiary')
 
 /**
  * Throttle reaction sending from a single use (to 1 reaction every 2 seconds)
@@ -163,12 +164,13 @@ watch(() => props.localMediaModel.attributes.speaking, (speaking: boolean) => {
 
 <template>
 	<NcActions
-		variant="tertiary"
+		:variant="actionsVariant"
 		:title="actionsLabel"
 		:aria-label="actionsLabel"
 		class="reaction">
 		<template #icon>
-			<IconEmoticonOutline :size="20" />
+			<IconHandBackLeft v-if="isHandRaised" :size="18" />
+			<IconEmoticonOutline v-else :size="20" />
 		</template>
 
 		<NcActionButtonGroup
