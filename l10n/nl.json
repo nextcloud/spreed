@@ -796,7 +796,7 @@
     "Error: Running version: {version}; Server needs to be updated to be compatible with this version of Talk" : "Fout: Versie in gebruik: {version}; De server dient geüpdate te worden om compatibel te zijn met deze versie van Talk",
     "Error: Server responded with: {error}" : "Fout: Server gaf foutmelding: {error}",
     "Error: Unknown error occurred" : "Fout: Onbekende fout opgetreden!",
-    "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Waarschuwwing: Huidige versie: {version}; Server ondersteund niet alle mogelijkheden van deze Talk versie, u mist: {features}",
+    "Warning: Running version: {version}; Server does not support all features of this Talk version, missing features: {features}" : "Waarschuwing: Huidige versie:{version}; Server ondersteunt niet alle mogelijkheden van deze Talk-versie, u mist: {features}",
     "It is highly recommended to configure a memory cache when running Nextcloud Talk with a High-performance backend." : "Het wordt sterk aanbevolen om een ​​geheugencache te configureren wanneer u Nextcloud Talk uitvoert met een High-performance backend.",
     "Client Push" : "Client Push",
     "Client Push is installed, this improves the punctuality of Talk notifications." : "Client Push is geïnstalleerd, dit verbetert de stiptheid van Talk-notificaties.",
