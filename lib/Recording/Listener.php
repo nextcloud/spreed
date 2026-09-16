@@ -18,8 +18,13 @@ use OCA\Talk\Events\RoomDeletedEvent;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ConsentService;
 use OCA\Talk\Service\RecordingService;
+use OCP\Activity\IManager as IActivityManager;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\Files\Events\Node\BeforeNodeCreatedEvent;
+use OCP\Files\Events\Node\NodeWrittenEvent;
+use OCP\Files\Folder;
+use OCP\Files\Node;
 use OCP\TaskProcessing\Events\AbstractTaskProcessingEvent;
 use OCP\TaskProcessing\Events\TaskFailedEvent;
 use OCP\TaskProcessing\Events\TaskSuccessfulEvent;
@@ -29,9 +34,12 @@ use Psr\Log\LoggerInterface;
  * @template-implements IEventListener<Event>
  */
 class Listener implements IEventListener {
+	private bool $recordingUploadCurrentUserSet = false;
+
 	public function __construct(
 		private readonly RecordingService $recordingService,
 		private readonly ConsentService $consentService,
+		private readonly IActivityManager $activityManager,
 		private readonly LoggerInterface $logger,
 	) {
 	}
@@ -47,6 +55,16 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		if ($event instanceof BeforeNodeCreatedEvent) {
+			$this->beforeRecordingUploadWritten($event->getNode());
+			return;
+		}
+
+		if ($event instanceof NodeWrittenEvent) {
+			$this->afterRecordingUploadWritten();
+			return;
+		}
+
 		if ($event instanceof ARoomEvent && $event->getRoom()->isFederatedConversation()) {
 			return;
 		}
@@ -56,6 +74,37 @@ class Listener implements IEventListener {
 			CallEndedEvent::class,
 			CallEndedForEveryoneEvent::class => $this->endRecordingOnCallEnd($event),
 		};
+	}
+
+	/**
+	 * The chunked upload of a recording to the temporary public share
+	 * requested by {@see RecordingService::requestUpload()} happens in a
+	 * separate request driven by the recording backend, with no logged in
+	 * user. Attribute the resulting Files activity to the recording owner
+	 * for the duration of the write instead of leaving it as a remote user.
+	 */
+	protected function beforeRecordingUploadWritten(Node $node): void {
+		$owner = $this->getRecordingUploadOwner($node);
+		if ($owner !== null) {
+			$this->activityManager->setCurrentUserId($owner);
+			$this->recordingUploadCurrentUserSet = true;
+		}
+	}
+
+	protected function afterRecordingUploadWritten(): void {
+		if ($this->recordingUploadCurrentUserSet) {
+			$this->activityManager->setCurrentUserId(null);
+			$this->recordingUploadCurrentUserSet = false;
+		}
+	}
+
+	protected function getRecordingUploadOwner(Node $node): ?string {
+		$parent = $node->getParent();
+		if (!$parent instanceof Folder) {
+			return null;
+		}
+
+		return $this->recordingService->getRecordingUploadOwner($parent->getName(), $node->getName());
 	}
 
 	public function handleTranscriptionEvents(AbstractTaskProcessingEvent $event): void {
