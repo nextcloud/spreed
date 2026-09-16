@@ -31,6 +31,7 @@ use OCA\Talk\Service\RoomService;
 use OCA\Talk\Vendor\CuyZ\Valinor\Mapper\MappingError;
 use OCA\Talk\Vendor\CuyZ\Valinor\Mapper\Source\Source;
 use OCA\Talk\Vendor\CuyZ\Valinor\MapperBuilder;
+use OCP\Activity\IManager as IActivityManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
@@ -58,6 +59,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 		private readonly ITimeFactory $timeFactory,
 		private readonly ChecksumVerificationService $checksumVerificationService,
 		private readonly LoggerInterface $logger,
+		private readonly IActivityManager $activityManager,
 		private readonly ?string $userId,
 	) {
 		parent::__construct($appName, $request);
@@ -505,6 +507,7 @@ class RecordingController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'size'], Http::STATUS_BAD_REQUEST);
 		}
 
+		$this->activityManager->setCurrentUserId($owner);
 		try {
 			if ($fileName !== null) {
 				$this->recordingService->finishUpload($this->getRoom(), $owner, $fileName);
@@ -514,6 +517,8 @@ class RecordingController extends AEnvironmentAwareOCSController {
 			}
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		} finally {
+			$this->activityManager->setCurrentUserId(null);
 		}
 		return new DataResponse(null);
 	}
