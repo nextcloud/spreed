@@ -28,70 +28,6 @@ use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 
 class Config {
-	public const ALLOWED_BACKEND_TIMEOFFSET = 45;
-	public const SIGNALING_INTERNAL = 'internal';
-	public const SIGNALING_EXTERNAL = 'external';
-
-	public const EXPERIMENTAL_UPDATE_PARTICIPANTS = 1;
-	public const EXPERIMENTAL_RECOVER_SESSION = 2;
-	public const EXPERIMENTAL_CHAT_RELAY = 4;
-
-	public const SIGNALING_TICKET_V1 = 1;
-	public const SIGNALING_TICKET_V2 = 2;
-
-	public const string RETENTION_CLASSIFIED_ROOMS = 'retention_classified_rooms';
-	public const string STUN_SERVERS = 'stun_servers';
-	public const string TURN_SERVERS = 'turn_servers';
-	public const string DEFAULT_STUN_SERVER = 'stun.nextcloud.com:443';
-	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
-	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
-	public const string ALLOWED_GROUPS_CONVERSATIONS = 'start_conversations';
-	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
-	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
-	public const string CONVERSATIONS_FILES = 'conversations_files';
-	public const string CONVERSATIONS_FILES_PUBLIC_SHARES = 'conversations_files_public_shares';
-	public const string DEFAULT_ROOM_PERMISSIONS = 'default_permissions';
-	public const string DEFAULT_ATTACHMENT_FOLDER = 'default_attachment_folder';
-	public const string GRID_VIDEOS_LIMIT = 'grid_videos_limit';
-	public const string GRID_VIDEOS_LIMIT_ENFORCED = 'grid_videos_limit_enforced';
-	public const string GUESTS_PLAY_SOUNDS = 'guests_play_sounds';
-	public const string GROUP_CHATS_FORCE_PASSWORDS_ENABLED = 'force_passwords';
-	public const string EXTERNAL_CALL_SERVICE = 'external_call_service';
-	public const string EXTERNAL_CALL_SERVICE_FRAME_ORIGINS = 'external_call_service_frame_origins';
-	public const string EXTERNAL_CALL_SERVICE_SHARED_SECRET = 'external_call_service_shared_secret';
-	public const string EXTERNAL_CALL_SERVICE_AUTH_USER = 'external_call_service_auth_user';
-	public const string EXTERNAL_CALL_SERVICE_AUTH_PASSWORD = 'external_call_service_auth_password';
-	public const string EXTERNAL_CALL_SERVICE_IFRAME_FIELD = 'external_call_service_iframe_field';
-	public const string CALLS_START_WITHOUT_MEDIA = 'calls_start_without_media';
-	public const string INACTIVITY_LOCK_AFTER_DAYS = 'inactivity_lock_after_days';
-	public const string INACTIVITY_ENABLE_LOBBY = 'inactivity_enable_lobby';
-	public const string EXPERIMENTS_USERS = 'experiments_users';
-	public const string EXPERIMENTS_GUESTS = 'experiments_guests';
-	public const string CALL_END_TO_END_ENCRYPTION = 'call_end_to_end_encryption';
-	public const string CALL_RECORDING_SUMMARY_PROMPT = 'call_recording_summary_prompt';
-	public const string FORCE_PASSWORDS = 'force_passwords';
-	public const string BACKGROUNDS_BRANDED_FOR_GUESTS = 'backgrounds_branded_for_guests';
-	public const string BACKGROUNDS_DEFAULT_FOR_USERS = 'backgrounds_default_for_useres';
-	public const string BACKGROUNDS_UPLOAD_USERS = 'backgrounds_upload_users';
-	public const string CREATE_SAMPLES = 'create_samples';
-	public const string MATTERBRIDGE_ENABLED = 'enable_matterbridge';
-	public const string DELETE_ONE_TO_ONE_CONVERSATIONS = 'delete_one_to_one_conversations';
-	public const string MAX_GIF_SIZE = 'max_gif_size';
-	public const string CERTIFICATE_EXPIRATION_DAYS = 'certificate_expiration_days';
-	public const string TOKEN_ENTROPY = 'token_entropy';
-	public const string SUMMARY_THRESHOLD = 'summary_threshold';
-
-	/**
-	 * 1. Call recording, …
-	 */
-	public const FEATURE_HINT = 34;
-
-	/**
-	 * Currently limiting to 1k users because the user_status API would yield
-	 * an error on Oracle otherwise. Clients should use a virtual scrolling
-	 * mechanism so the data should not be a problem nowadays
-	 */
-	public const USER_STATUS_INTEGRATION_LIMIT = 1000;
 
 	/** @var array<string, bool> */
 	protected array $canEnableSIP = [];
@@ -114,7 +50,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedTalkGroupIds(): array {
-		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_TALK);
+		return $this->appConfig->getAppValueArray(ConfigLexicon::ALLOWED_GROUPS_TALK);
 	}
 
 	/**
@@ -147,7 +83,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getSIPGroups(): array {
-		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_SIP);
+		return $this->appConfig->getAppValueArray(ConfigLexicon::ALLOWED_GROUPS_SIP);
 	}
 
 	public function isSIPConfigured(): bool {
@@ -174,11 +110,11 @@ class Config {
 	}
 
 	public function isBreakoutRoomsEnabled(): bool {
-		return $this->appConfig->getAppValueBool(self::BREAKOUT_ROOMS_ENABLED);
+		return $this->appConfig->getAppValueBool(ConfigLexicon::BREAKOUT_ROOMS_ENABLED);
 	}
 
 	public function isConversationSubfoldersEnabled(): bool {
-		return $this->appConfig->getAppValueBool(self::CONVERSATION_SUBFOLDERS, true);
+		return $this->appConfig->getAppValueBool(ConfigLexicon::CONVERSATION_SUBFOLDERS, true);
 	}
 
 	public function getDialInInfo(): string {
@@ -230,7 +166,7 @@ class Config {
 	}
 
 	public function isRecordingEnabled(): bool {
-		if ($this->getSignalingMode() === self::SIGNALING_INTERNAL) {
+		if ($this->getSignalingMode() === ConfigLexicon::SIGNALING_INTERNAL) {
 			return false;
 		}
 
@@ -308,7 +244,7 @@ class Config {
 	 * @return string[]
 	 */
 	public function getAllowedConversationsGroupIds(): array {
-		return $this->appConfig->getAppValueArray(self::ALLOWED_GROUPS_CONVERSATIONS);
+		return $this->appConfig->getAppValueArray(ConfigLexicon::ALLOWED_GROUPS_CONVERSATIONS);
 	}
 
 	public function isNotAllowedToCreateConversations(IUser $user): bool {
@@ -327,7 +263,7 @@ class Config {
 	 */
 	public function getDefaultPermissions(): int {
 		// Admin configured default permissions
-		$configurableDefault = $this->appConfig->getAppValueInt(self::DEFAULT_ROOM_PERMISSIONS);
+		$configurableDefault = $this->appConfig->getAppValueInt(ConfigLexicon::DEFAULT_ROOM_PERMISSIONS);
 		if ($configurableDefault < Attendee::PERMISSIONS_DEFAULT) {
 			return min(Attendee::PERMISSIONS_MAX_CUSTOM, max(Attendee::PERMISSIONS_DEFAULT, $configurableDefault));
 		}
@@ -337,7 +273,7 @@ class Config {
 	}
 
 	public function getAttachmentFolder(string $userId): string {
-		$defaultAttachmentFolder = $this->appConfig->getAppValueString(self::DEFAULT_ATTACHMENT_FOLDER);
+		$defaultAttachmentFolder = $this->appConfig->getAppValueString(ConfigLexicon::DEFAULT_ATTACHMENT_FOLDER);
 		return $this->config->getUserValue($userId, 'spreed', UserPreference::ATTACHMENT_FOLDER, $defaultAttachmentFolder);
 	}
 
@@ -471,13 +407,13 @@ class Config {
 	 * @return string[]
 	 */
 	public function getStunServers(): array {
-		$servers = $this->appConfig->getAppValueArray(Config::STUN_SERVERS);
+		$servers = $this->appConfig->getAppValueArray(ConfigLexicon::STUN_SERVERS);
 		if (empty($servers)) {
-			$servers = [Config::DEFAULT_STUN_SERVER];
+			$servers = [ConfigLexicon::DEFAULT_STUN_SERVER];
 		}
 
 		if (!$this->config->getSystemValueBool('has_internet_connection', true)) {
-			$servers = array_filter($servers, static fn ($server) => $server !== Config::DEFAULT_STUN_SERVER);
+			$servers = array_filter($servers, static fn ($server) => $server !== ConfigLexicon::DEFAULT_STUN_SERVER);
 		}
 
 		return $servers;
@@ -489,7 +425,7 @@ class Config {
 	 * @return array
 	 */
 	public function getTurnServers(bool $withEvent = true): array {
-		$servers = $this->appConfig->getAppValueArray(self::TURN_SERVERS);
+		$servers = $this->appConfig->getAppValueArray(ConfigLexicon::TURN_SERVERS);
 
 		if ($withEvent) {
 			$event = new BeforeTurnServersGetEvent($servers);
@@ -539,7 +475,7 @@ class Config {
 	}
 
 	public function getExternalCallService(): ?string {
-		$callService = $this->appConfig->getAppValueString(self::EXTERNAL_CALL_SERVICE);
+		$callService = $this->appConfig->getAppValueString(ConfigLexicon::EXTERNAL_CALL_SERVICE);
 		if (!str_starts_with($callService, 'https://') && !str_starts_with($callService, 'http://')) {
 			return null;
 		}
@@ -568,19 +504,13 @@ class Config {
 	 * @return string[]
 	 */
 	public function getExternalCallServiceFrameOrigins(): array {
-		return $this->appConfig->getAppValueArray(self::EXTERNAL_CALL_SERVICE_FRAME_ORIGINS);
+		return $this->appConfig->getAppValueArray(ConfigLexicon::EXTERNAL_CALL_SERVICE_FRAME_ORIGINS);
 	}
 
-	/**
-	 * Minimum length of the external call service shared secret. Shorter
-	 * secrets are not considered configured to improve security.
-	 */
-	protected const EXTERNAL_CALL_SERVICE_SECRET_MIN_LENGTH = 64;
-
 	public function getExternalCallServiceSharedSecret(): string {
-		$secret = $this->appConfig->getAppValueString(self::EXTERNAL_CALL_SERVICE_SHARED_SECRET);
+		$secret = $this->appConfig->getAppValueString(ConfigLexicon::EXTERNAL_CALL_SERVICE_SHARED_SECRET);
 
-		if ($secret !== '' && strlen($secret) < self::EXTERNAL_CALL_SERVICE_SECRET_MIN_LENGTH) {
+		if ($secret !== '' && strlen($secret) < ConfigLexicon::EXTERNAL_CALL_SERVICE_SECRET_MIN_LENGTH) {
 			throw new \InvalidArgumentException('Invalid external call service secret length');
 		}
 
@@ -588,15 +518,15 @@ class Config {
 	}
 
 	public function getExternalCallServiceAuthUser(): string {
-		return $this->appConfig->getAppValueString(self::EXTERNAL_CALL_SERVICE_AUTH_USER);
+		return $this->appConfig->getAppValueString(ConfigLexicon::EXTERNAL_CALL_SERVICE_AUTH_USER);
 	}
 
 	public function getExternalCallServiceAuthPassword(): string {
-		return $this->appConfig->getAppValueString(self::EXTERNAL_CALL_SERVICE_AUTH_PASSWORD);
+		return $this->appConfig->getAppValueString(ConfigLexicon::EXTERNAL_CALL_SERVICE_AUTH_PASSWORD);
 	}
 
 	public function getExternalCallServiceIFrameResponseField(): string {
-		return $this->appConfig->getAppValueString(self::EXTERNAL_CALL_SERVICE_IFRAME_FIELD);
+		return $this->appConfig->getAppValueString(ConfigLexicon::EXTERNAL_CALL_SERVICE_IFRAME_FIELD);
 	}
 
 	/**
@@ -610,15 +540,15 @@ class Config {
 	}
 
 	/**
-	 * @psalm-return self::SIGNALING_INTERNAL|self::SIGNALING_EXTERNAL
+	 * @psalm-return ConfigLexicon::SIGNALING_INTERNAL|ConfigLexicon::SIGNALING_EXTERNAL
 	 */
 	public function getSignalingMode(): string {
 		$numSignalingServers = count($this->getSignalingServers());
 		if ($numSignalingServers === 0) {
-			return self::SIGNALING_INTERNAL;
+			return ConfigLexicon::SIGNALING_INTERNAL;
 		}
 
-		return self::SIGNALING_EXTERNAL;
+		return ConfigLexicon::SIGNALING_EXTERNAL;
 	}
 
 	/**
@@ -662,7 +592,7 @@ class Config {
 	 */
 	public function getSignalingTicket(int $version, ?string $userId, ?string $cloudId = null): string {
 		return match ($version) {
-			self::SIGNALING_TICKET_V2 => $this->getSignalingTicketV2($userId, $cloudId),
+			ConfigLexicon::SIGNALING_TICKET_V2 => $this->getSignalingTicketV2($userId, $cloudId),
 			default => $this->getSignalingTicketV1($userId),
 		};
 	}
@@ -873,11 +803,11 @@ class Config {
 	}
 
 	public function getGridVideosLimit(): int {
-		return $this->appConfig->getAppValueInt(self::GRID_VIDEOS_LIMIT);
+		return $this->appConfig->getAppValueInt(ConfigLexicon::GRID_VIDEOS_LIMIT);
 	}
 
 	public function getGridVideosLimitEnforced(): bool {
-		return $this->appConfig->getAppValueBool(self::GRID_VIDEOS_LIMIT_ENFORCED);
+		return $this->appConfig->getAppValueBool(ConfigLexicon::GRID_VIDEOS_LIMIT_ENFORCED);
 	}
 
 	/**
@@ -894,7 +824,7 @@ class Config {
 			}
 		}
 
-		return $this->appConfig->getAppValueBool(self::CALLS_START_WITHOUT_MEDIA);
+		return $this->appConfig->getAppValueBool(ConfigLexicon::CALLS_START_WITHOUT_MEDIA);
 	}
 
 	/**
@@ -1017,32 +947,32 @@ class Config {
 	 * User setting falling back to admin defined app config
 	 */
 	public function getInactiveLockTime(): int {
-		return $this->appConfig->getAppValueInt(self::INACTIVITY_LOCK_AFTER_DAYS);
+		return $this->appConfig->getAppValueInt(ConfigLexicon::INACTIVITY_LOCK_AFTER_DAYS);
 	}
 
 	public function enableLobbyOnLockedRooms(): bool {
-		return $this->appConfig->getAppValueBool(self::INACTIVITY_ENABLE_LOBBY);
+		return $this->appConfig->getAppValueBool(ConfigLexicon::INACTIVITY_ENABLE_LOBBY);
 	}
 
 	/**
-	 * @param self::EXPERIMENTAL_* $experiment
+	 * @param ConfigLexicon::EXPERIMENTAL_* $experiment
 	 */
 	public function hasExperiment(int $experiment): bool {
-		return $this->appConfig->getAppValueInt(self::EXPERIMENTS_USERS) & $experiment
-			|| $this->appConfig->getAppValueInt(self::EXPERIMENTS_GUESTS) & $experiment;
+		return $this->appConfig->getAppValueInt(ConfigLexicon::EXPERIMENTS_USERS) & $experiment
+			|| $this->appConfig->getAppValueInt(ConfigLexicon::EXPERIMENTS_GUESTS) & $experiment;
 	}
 
 	public function isPasswordEnforced(): bool {
-		return $this->appConfig->getAppValueBool(self::FORCE_PASSWORDS);
+		return $this->appConfig->getAppValueBool(ConfigLexicon::FORCE_PASSWORDS);
 	}
 
 	public function isCallEndToEndEncryptionEnabled(): bool {
-		if ($this->getSignalingMode() !== self::SIGNALING_EXTERNAL) {
+		if ($this->getSignalingMode() !== ConfigLexicon::SIGNALING_EXTERNAL) {
 			return false;
 		}
 
 		// TODO Default value will be set to true, once all mobile clients support it.
-		return $this->appConfig->getAppValueBool(self::CALL_END_TO_END_ENCRYPTION);
+		return $this->appConfig->getAppValueBool(ConfigLexicon::CALL_END_TO_END_ENCRYPTION);
 	}
 
 	public function getPlaySoundsForUser(?IUser $user): bool {
@@ -1053,6 +983,6 @@ class Config {
 	}
 
 	public function getPlaySoundsDefaultForGuests(): bool {
-		return $this->appConfig->getAppValueBool(self::GUESTS_PLAY_SOUNDS);
+		return $this->appConfig->getAppValueBool(ConfigLexicon::GUESTS_PLAY_SOUNDS);
 	}
 }

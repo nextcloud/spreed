@@ -20,6 +20,7 @@ namespace OCA\Talk\Tests\php\Service;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
@@ -438,7 +439,7 @@ class RecordingServiceTest extends TestCase {
 				}
 			);
 
-		$this->appConfig->method('getAppValueString')->with(Config::CALL_RECORDING_SUMMARY_PROMPT)->willReturn($customPrompt);
+		$this->appConfig->method('getAppValueString')->with(ConfigLexicon::CALL_RECORDING_SUMMARY_PROMPT)->willReturn($customPrompt);
 		$this->taskProcessingManager->method('getAvailableTaskTypeIds')->willReturn([TextToText::ID]);
 
 		$this->taskProcessingManager->expects($this->once())->method('scheduleTask')

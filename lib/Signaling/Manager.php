@@ -11,6 +11,7 @@ namespace OCA\Talk\Signaling;
 use GuzzleHttp\Exception\ConnectException;
 use OCA\Talk\CachePrefix;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Service\CertificateService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
@@ -123,8 +124,8 @@ class Manager {
 			}
 
 			$responseTime = $this->timeFactory->getDateTime($response->getHeader('date'))->getTimestamp();
-			if (($timeBefore - Config::ALLOWED_BACKEND_TIMEOFFSET) > $responseTime
-				|| ($timeAfter + Config::ALLOWED_BACKEND_TIMEOFFSET) < $responseTime) {
+			if (($timeBefore - ConfigLexicon::ALLOWED_BACKEND_TIMEOFFSET) > $responseTime
+				|| ($timeAfter + ConfigLexicon::ALLOWED_BACKEND_TIMEOFFSET) < $responseTime) {
 				return [
 					'status' => Http::STATUS_INTERNAL_SERVER_ERROR,
 					'data' => [

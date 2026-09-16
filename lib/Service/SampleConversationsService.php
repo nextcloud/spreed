@@ -10,7 +10,7 @@ namespace OCA\Talk\Service;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\ReactionManager;
-use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCP\AppFramework\Services\IAppConfig;
@@ -45,7 +45,7 @@ class SampleConversationsService {
 	}
 
 	public function initialCreateSamples(string $userId): void {
-		if (!$this->appConfig->getAppValueBool(Config::CREATE_SAMPLES, true)) {
+		if (!$this->appConfig->getAppValueBool(ConfigLexicon::CREATE_SAMPLES, true)) {
 			return;
 		}
 

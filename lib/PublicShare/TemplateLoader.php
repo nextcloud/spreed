@@ -12,6 +12,7 @@ namespace OCA\Talk\PublicShare;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
@@ -51,8 +52,8 @@ class TemplateLoader implements IEventListener {
 			return;
 		}
 
-		if (!$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES)
-			|| !$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES_PUBLIC_SHARES)) {
+		if (!$this->appConfig->getAppValueBool(ConfigLexicon::CONVERSATIONS_FILES)
+			|| !$this->appConfig->getAppValueBool(ConfigLexicon::CONVERSATIONS_FILES_PUBLIC_SHARES)) {
 			return;
 		}
 

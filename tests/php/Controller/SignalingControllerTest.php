@@ -11,6 +11,7 @@ namespace OCA\Talk\Tests\php\Controller;
 use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Controller\SignalingController;
 use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -680,7 +681,7 @@ class SignalingControllerTest extends TestCase {
 			'auth' => [
 				'params' => [
 					'userid' => 'invalid-userid',
-					'ticket' => $this->config->getSignalingTicket(Config::SIGNALING_TICKET_V1, $this->userId),
+					'ticket' => $this->config->getSignalingTicket(ConfigLexicon::SIGNALING_TICKET_V1, $this->userId),
 				],
 			],
 		]);
@@ -698,7 +699,7 @@ class SignalingControllerTest extends TestCase {
 			'auth' => [
 				'params' => [
 					'userid' => 'unknown-userid',
-					'ticket' => $this->config->getSignalingTicket(Config::SIGNALING_TICKET_V1, 'unknown-userid'),
+					'ticket' => $this->config->getSignalingTicket(ConfigLexicon::SIGNALING_TICKET_V1, 'unknown-userid'),
 				],
 			],
 		]);
@@ -727,7 +728,7 @@ class SignalingControllerTest extends TestCase {
 			'auth' => [
 				'params' => [
 					'userid' => $this->userId,
-					'ticket' => $this->config->getSignalingTicket(Config::SIGNALING_TICKET_V1, $this->userId),
+					'ticket' => $this->config->getSignalingTicket(ConfigLexicon::SIGNALING_TICKET_V1, $this->userId),
 				],
 			],
 		]);
@@ -748,7 +749,7 @@ class SignalingControllerTest extends TestCase {
 			'auth' => [
 				'params' => [
 					'userid' => '',
-					'ticket' => $this->config->getSignalingTicket(Config::SIGNALING_TICKET_V1, ''),
+					'ticket' => $this->config->getSignalingTicket(ConfigLexicon::SIGNALING_TICKET_V1, ''),
 				],
 			],
 		]);
@@ -1513,7 +1514,7 @@ class SignalingControllerTest extends TestCase {
 		$this->config->method('getSIPSharedSecret')->willReturn(self::SIP_BRIDGE_SECRET);
 		$this->config->method('getStunServers')->willReturn([]);
 		$this->config->method('getTurnSettings')->willReturn([]);
-		$this->config->method('getSignalingMode')->willReturn(Config::SIGNALING_INTERNAL);
+		$this->config->method('getSignalingMode')->willReturn(ConfigLexicon::SIGNALING_INTERNAL);
 		$this->config->method('getHideSignalingWarning')->willReturn(false);
 		$this->config->method('isSIPConfigured')->willReturn(false);
 		$this->userId = null;

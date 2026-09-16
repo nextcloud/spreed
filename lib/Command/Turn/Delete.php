@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Turn;
 
 use OC\Core\Command\Base;
-use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCP\AppFramework\Services\IAppConfig;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -48,14 +48,14 @@ class Delete extends Base {
 		$server = $input->getArgument('server');
 		$protocols = $input->getArgument('protocols');
 
-		$servers = $this->appConfig->getAppValueArray(Config::TURN_SERVERS);
+		$servers = $this->appConfig->getAppValueArray(ConfigLexicon::TURN_SERVERS);
 
 		$count = count($servers);
 		// remove all occurrences which match $schemes, $server and $protocols
 		$servers = array_filter($servers, fn ($s) => $s['schemes'] !== $schemes || $s['server'] !== $server || $s['protocols'] !== $protocols);
 		$servers = array_values($servers); // reindex
 
-		$this->appConfig->setAppValueArray(Config::TURN_SERVERS, $servers);
+		$this->appConfig->setAppValueArray(ConfigLexicon::TURN_SERVERS, $servers);
 		if ($count > count($servers)) {
 			$output->writeln('<info>Deleted ' . $server . '.</info>');
 		} else {

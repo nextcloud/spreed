@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\BackgroundJob;
 
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\DataObjects\AccountId;
 use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
 use OCA\Talk\Service\HostedSignalingServerService;
@@ -73,11 +74,11 @@ class CheckHostedSignalingServer extends TimedJob {
 		if (!empty($accountInfo['stun']['servers'])) {
 			if ($this->talkConfig->getStunServers() !== $accountInfo['stun']['servers']) {
 				// STUN servers were added / changed
-				$this->appConfig->setAppValueArray(Config::STUN_SERVERS, $accountInfo['stun']['servers']);
+				$this->appConfig->setAppValueArray(ConfigLexicon::STUN_SERVERS, $accountInfo['stun']['servers']);
 			}
 		} elseif (!empty($oldAccountInfo['stun']['servers'])) {
 			// STUN servers are no longer available, reset to default.
-			$this->appConfig->deleteAppValue(Config::STUN_SERVERS);
+			$this->appConfig->deleteAppValue(ConfigLexicon::STUN_SERVERS);
 		}
 
 		if (!empty($accountInfo['turn']['servers'])) {
@@ -93,11 +94,11 @@ class CheckHostedSignalingServer extends TimedJob {
 
 			if ($this->talkConfig->getTurnServers() !== $newTurnServers) {
 				// TURN servers were added / changed
-				$this->appConfig->setAppValueArray(Config::TURN_SERVERS, $newTurnServers);
+				$this->appConfig->setAppValueArray(ConfigLexicon::TURN_SERVERS, $newTurnServers);
 			}
 		} elseif (!empty($oldAccountInfo['turn']['servers'])) {
 			// TURN servers are no longer available, reset to default.
-			$this->appConfig->deleteAppValue(Config::TURN_SERVERS);
+			$this->appConfig->deleteAppValue(ConfigLexicon::TURN_SERVERS);
 		}
 	}
 

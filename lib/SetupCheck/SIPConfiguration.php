@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\SetupCheck;
 
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\IDBConnection;
 use OCP\IL10N;
@@ -32,7 +33,7 @@ class SIPConfiguration implements ISetupCheck {
 	#[\Override]
 	public function getName(): string {
 		$name = $this->l->t('SIP configuration');
-		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+		if ($this->talkConfig->getSignalingMode() === ConfigLexicon::SIGNALING_INTERNAL) {
 			return '[skip] ' . $name;
 		}
 		return $name;
@@ -40,7 +41,7 @@ class SIPConfiguration implements ISetupCheck {
 
 	#[\Override]
 	public function run(): SetupResult {
-		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+		if ($this->talkConfig->getSignalingMode() === ConfigLexicon::SIGNALING_INTERNAL) {
 			return SetupResult::success($this->l->t('Using the SIP functionality requires a High-performance backend.'));
 		}
 

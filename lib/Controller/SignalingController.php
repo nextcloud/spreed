@@ -10,6 +10,7 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Authenticator;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Events\BeforeSignalingResponseSentEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -271,16 +272,16 @@ class SignalingController extends OCSController {
 			'sipDialinInfo' => $this->talkConfig->isSIPConfigured() ? $this->talkConfig->getDialInInfo() : '',
 		];
 
-		if ($signalingMode !== Config::SIGNALING_INTERNAL) {
+		if ($signalingMode !== ConfigLexicon::SIGNALING_INTERNAL) {
 			$helloAuthParams20UserId = $isTalkFederation ? null : $this->userId;
 			$helloAuthParams20CloudId = $isTalkFederation ? $this->federationAuthenticator->getCloudId() : null;
 			$helloAuthParams = [
 				'1.0' => [
 					'userid' => $this->userId,
-					'ticket' => $this->talkConfig->getSignalingTicket(Config::SIGNALING_TICKET_V1, $this->userId),
+					'ticket' => $this->talkConfig->getSignalingTicket(ConfigLexicon::SIGNALING_TICKET_V1, $this->userId),
 				],
 				'2.0' => [
-					'token' => $this->talkConfig->getSignalingTicket(Config::SIGNALING_TICKET_V2, $helloAuthParams20UserId, $helloAuthParams20CloudId),
+					'token' => $this->talkConfig->getSignalingTicket(ConfigLexicon::SIGNALING_TICKET_V2, $helloAuthParams20UserId, $helloAuthParams20CloudId),
 				],
 			];
 
@@ -421,7 +422,7 @@ class SignalingController extends OCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function sendMessages(string $token, string $messages): DataResponse {
-		if ($this->talkConfig->getSignalingMode() !== Config::SIGNALING_INTERNAL) {
+		if ($this->talkConfig->getSignalingMode() !== ConfigLexicon::SIGNALING_INTERNAL) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
 		}
 
@@ -574,7 +575,7 @@ class SignalingController extends OCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function pullMessages(string $token): DataResponse {
-		if ($this->talkConfig->getSignalingMode() !== Config::SIGNALING_INTERNAL) {
+		if ($this->talkConfig->getSignalingMode() !== ConfigLexicon::SIGNALING_INTERNAL) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
 		}
 

@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Turn;
 
 use OC\Core\Command\Base;
-use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\Security\ISecureRandom;
 use Symfony\Component\Console\Input\InputArgument;
@@ -95,7 +95,7 @@ class Add extends Base {
 			$server = substr($server, 7);
 		}
 
-		$servers = $this->appConfig->getAppValueArray(Config::TURN_SERVERS);
+		$servers = $this->appConfig->getAppValueArray(ConfigLexicon::TURN_SERVERS);
 
 		//Checking if the server is already added
 		foreach ($servers as $existingServer) {
@@ -116,7 +116,7 @@ class Add extends Base {
 			'protocols' => $protocols,
 		];
 
-		$this->appConfig->setAppValueArray(Config::TURN_SERVERS, $servers);
+		$this->appConfig->setAppValueArray(ConfigLexicon::TURN_SERVERS, $servers);
 		$output->writeln('<info>Added ' . $server . '.</info>');
 		return 0;
 	}
