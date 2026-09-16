@@ -20,7 +20,6 @@
 			:placeholder="t('spreed', 'Default group notification for new groups')"
 			label="label"
 			trackBy="value"
-			noWrap
 			:disabled="loading || loadingDefaultGroupNotification"
 			@update:modelValue="saveDefaultGroupNotification" />
 

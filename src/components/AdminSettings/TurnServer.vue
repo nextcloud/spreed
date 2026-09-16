@@ -15,8 +15,7 @@
 			:clearable="false"
 			:searchable="false"
 			label="label"
-			trackBy="value"
-			noWrap />
+			trackBy="value" />
 
 		<NcTextField
 			ref="turn_server"
@@ -49,8 +48,7 @@
 			:clearable="false"
 			:searchable="false"
 			label="label"
-			trackBy="value"
-			noWrap />
+			trackBy="value" />
 
 		<NcButton
 			v-show="!loading"
@@ -436,8 +434,10 @@ export default {
 		}
 	}
 
-	& &__select {
-		margin-block-start: 6px;
+	// Override NcSelect styles
+	// two selects here are short and should be in in line with input fields
+	& :deep(.nc-select.turn-server__select) {
+		margin-block: 6px 0;
 		min-width: unset;
 	}
 }

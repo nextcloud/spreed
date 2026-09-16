@@ -57,8 +57,7 @@
 				:options="languages"
 				:clearable="false"
 				label="name"
-				trackBy="code"
-				noWrap />
+				trackBy="code" />
 
 			<NcSelect
 				v-model="hostedHPBCountry"
@@ -72,8 +71,7 @@
 				:options="countries"
 				:clearable="false"
 				label="name"
-				trackBy="code"
-				noWrap />
+				trackBy="code" />
 
 			<NcButton
 				class="additional-top-margin"
