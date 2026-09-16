@@ -224,7 +224,7 @@ class RecordingService {
 			throw new InvalidArgumentException('sharing_disabled');
 		}
 
-		$this->appConfig->setAppValueString($this->getUploadShareConfigKey($room, $fileName), $share->getToken(), true, true);
+		$this->appConfig->setAppValueString($this->getUploadShareConfigKey($room->getToken(), $fileName), $share->getToken(), true, true);
 
 		// The recording session is over once the backend requests the upload
 		// share; only the (potentially long-running) chunked upload remains. Clear
@@ -300,7 +300,7 @@ class RecordingService {
 	 * Delete the temporary upload share for the given file
 	 */
 	private function cleanupUploadShare(Room $room, string $fileName): void {
-		$configKey = $this->getUploadShareConfigKey($room, $fileName);
+		$configKey = $this->getUploadShareConfigKey($room->getToken(), $fileName);
 		$shareToken = $this->appConfig->getAppValueString($configKey, lazy: true);
 		if ($shareToken !== '') {
 			try {
@@ -313,8 +313,33 @@ class RecordingService {
 		$this->appConfig->deleteAppValue($configKey);
 	}
 
-	private function getUploadShareConfigKey(Room $room, string $fileName): string {
-		return self::APPCONFIG_UPLOAD_PREFIX . $room->getToken() . '/' . sha1(basename($fileName));
+	private function getUploadShareConfigKey(string $roomToken, string $fileName): string {
+		return self::APPCONFIG_UPLOAD_PREFIX . $roomToken . '/' . sha1(basename($fileName));
+	}
+
+	/**
+	 * Owner of the pending chunked recording upload that will write the given
+	 * file name into the given room's recording folder, if any.
+	 *
+	 * Used to attribute the Files activity generated while the recording
+	 * backend uploads through the temporary public share requested by
+	 * {@see self::requestUpload()}, as that upload happens in a separate
+	 * request with no logged in user.
+	 */
+	public function getRecordingUploadOwner(string $roomToken, string $fileName): ?string {
+		$configKey = $this->getUploadShareConfigKey($roomToken, $fileName);
+		$shareToken = $this->appConfig->getAppValueString($configKey, lazy: true);
+		if ($shareToken === '') {
+			return null;
+		}
+
+		try {
+			$share = $this->shareManager->getShareByToken($shareToken);
+		} catch (ShareNotFound) {
+			return null;
+		}
+
+		return $share->getShareOwner();
 	}
 
 	/**
