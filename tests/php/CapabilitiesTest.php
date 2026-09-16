@@ -152,7 +152,7 @@ class CapabilitiesTest extends TestCase {
 				['retention_instant_meetings', 1, 1],
 				['retention_classified_rooms', 0, 3600],
 				['experiments_guests', 0, 0],
-				['summary_threshold', 100, 100],
+				['summary_threshold', 100],
 				['feature_hints_hidden', 0, 999],
 				['max_gif_size', 3145728, 200000],
 			]);
@@ -372,7 +372,7 @@ class CapabilitiesTest extends TestCase {
 				['retention_instant_meetings', 1, 1],
 				['retention_classified_rooms', 0, 3600],
 				['experiments_users', 0, 0],
-				['summary_threshold', 100, 100],
+				['summary_threshold', 100],
 				['feature_hints_hidden', 0, 1],
 				['max_gif_size', 3145728, 200000],
 			]);

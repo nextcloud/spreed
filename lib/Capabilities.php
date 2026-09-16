@@ -306,7 +306,7 @@ class Capabilities implements IPublicCapability {
 					'has-translation-providers' => $this->translationManager->hasProviders(),
 					'has-translation-task-providers' => false,
 					'typing-privacy' => Participant::PRIVACY_PUBLIC,
-					'summary-threshold' => max(1, $this->appConfig->getAppValueInt('summary_threshold', 100)),
+					'summary-threshold' => max(1, $this->appConfig->getAppValueInt(Config::SUMMARY_THRESHOLD)),
 					'style' => $this->talkConfig->getChatStyle($user?->getUID()),
 					'matterbridge-enabled' => $user instanceof IUser && $this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1',
 				],
