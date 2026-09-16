@@ -7,7 +7,7 @@ import type { ComputedRef, Ref } from 'vue'
 import type { ChatMention } from '../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
+import { generateAvatarUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { computed, ref } from 'vue'
 import { ATTENDEE } from '../constants.ts'
@@ -84,7 +84,7 @@ export function useChatMentions(token: Ref<string>): ReturnType {
 			chatMention.icon = 'icon-user-forced-white'
 			if (possibleMention.source === ATTENDEE.ACTOR_TYPE.USERS && possibleMention.id !== possibleMention.mentionId) {
 				// Prevent local users avatars in federated room to be overwritten
-				chatMention.iconUrl = generateUrl('avatar/{userId}/64' + (isDarkTheme ? '/dark' : '') + '?v=0', { userId: possibleMention.id })
+				chatMention.iconUrl = generateAvatarUrl(possibleMention.id, { isDarkTheme, size: 64, guestFallback: true })
 			}
 			// Convert status properties to an object.
 			if (possibleMention.status) {
