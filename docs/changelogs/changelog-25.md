@@ -5,6 +5,25 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 25.0.0 – 2026-09-16
+### Added
+- Classified conversations, announcements and channels
+- Owner role: promote and demote users to and from owners
+- Global message search in the conversation list
+- Preserve conversations to restrict deletion, purging and visibility changes
+- Setting to limit the start of calls to specific groups
+- Upload editor in the message composer with image compression
+- Combine file shares into a single message in the chat
+- Introduce multi-speaker view in calls
+- Show the time of the last message in the conversation list
+- Support configurable call summary prompts
+- New design of the Talk dashboard panel
+
+### Changed
+- Update dependencies
+- Update translations
+- Require Nextcloud 35 / Hub 26 Summer
+
 ## 25.0.0-rc.3 – 2026-09-10
 ### Changed
 - Update translations
