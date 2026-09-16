@@ -44,6 +44,7 @@ use OCP\L10N\IFactory;
 use OCP\Notification\IManager;
 use OCP\Notification\INotification;
 use OCP\Security\ISecureRandom;
+use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
 use OCP\Share\IShare;
 use OCP\SystemTag\ISystemTagObjectMapper;
@@ -461,5 +462,31 @@ class RecordingServiceTest extends TestCase {
 			$output,
 			$aiTask,
 		);
+	}
+
+	public function testGetRecordingUploadOwnerReturnsShareOwner(): void {
+		$this->appConfig->method('getAppValueString')
+			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . 'token123/' . sha1('name.ogg'), '', true)
+			->willReturn('shareToken');
+
+		$share = $this->createStub(IShare::class);
+		$share->method('getShareOwner')->willReturn('user1');
+		$this->shareManager->method('getShareByToken')->with('shareToken')->willReturn($share);
+
+		$this->assertSame('user1', $this->recordingService->getRecordingUploadOwner('token123', 'name.ogg'));
+	}
+
+	public function testGetRecordingUploadOwnerReturnsNullWithoutPendingUpload(): void {
+		$this->appConfig->method('getAppValueString')->willReturn('');
+		$this->shareManager->expects($this->never())->method('getShareByToken');
+
+		$this->assertNull($this->recordingService->getRecordingUploadOwner('token123', 'name.ogg'));
+	}
+
+	public function testGetRecordingUploadOwnerReturnsNullWhenShareIsGone(): void {
+		$this->appConfig->method('getAppValueString')->willReturn('shareToken');
+		$this->shareManager->method('getShareByToken')->willThrowException(new ShareNotFound());
+
+		$this->assertNull($this->recordingService->getRecordingUploadOwner('token123', 'name.ogg'));
 	}
 }

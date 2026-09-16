@@ -149,6 +149,8 @@ use OCP\DB\Events\AddMissingIndicesEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudFederationProvider;
 use OCP\Federation\ICloudFederationProviderManager;
+use OCP\Files\Events\Node\BeforeNodeCreatedEvent;
+use OCP\Files\Events\Node\NodeWrittenEvent;
 use OCP\Group\Events\GroupChangedEvent;
 use OCP\Group\Events\GroupDeletedEvent;
 use OCP\Group\Events\UserAddedEvent;
@@ -310,6 +312,8 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(CallEndedForEveryoneEvent::class, RecordingListener::class);
 		$context->registerEventListener(TaskSuccessfulEvent::class, RecordingListener::class);
 		$context->registerEventListener(TaskFailedEvent::class, RecordingListener::class);
+		$context->registerEventListener(BeforeNodeCreatedEvent::class, RecordingListener::class);
+		$context->registerEventListener(NodeWrittenEvent::class, RecordingListener::class);
 
 		// Federation listeners
 		$context->registerEventListener(BeforeRoomDeletedEvent::class, TalkV1BeforeRoomDeletedListener::class);
