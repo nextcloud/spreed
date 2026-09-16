@@ -20,8 +20,7 @@
 					:clearable="false"
 					:aria-label-combobox="t('spreed', 'Source language to translate from')"
 					:placeholder="t('spreed', 'Translate from')"
-					:options="optionsFrom"
-					noWrap />
+					:options="optionsFrom" />
 
 				<IconArrowRight class="bidirectional-icon" />
 
@@ -33,8 +32,7 @@
 					:clearable="false"
 					:aria-label-combobox="t('spreed', 'Target language to translate into')"
 					:placeholder="t('spreed', 'Translate to')"
-					:options="optionsTo"
-					noWrap />
+					:options="optionsTo" />
 
 				<NcAssistantButton
 					variant="primary"
