@@ -35,6 +35,15 @@ function isImageKey(key: string): boolean {
 const imageKeys = computed(() => fileKeys.value.filter(isImageKey))
 const otherKeys = computed(() => fileKeys.value.filter((key) => !isImageKey(key)))
 
+// Single non-media file with available preview should be shown in full size
+const rowLayout = computed(() => {
+	if (otherKeys.value.length !== 1) {
+		return true
+	}
+
+	return props.message.messageParameters[otherKeys.value[0]]['preview-available'] !== 'yes'
+})
+
 // Multiple media tiles shrink into a grid; a single one keeps its full size
 const isImageRowCombined = computed(() => imageKeys.value.length > 1)
 
@@ -89,7 +98,7 @@ function getReferenceId(key: string): string {
 			<FilePreview
 				v-for="key in otherKeys"
 				:key="key"
-				rowLayout
+				:rowLayout
 				:token="message.token"
 				:messageId="message.id"
 				:itemType="getItemTypeFromMessage(message, key)"
