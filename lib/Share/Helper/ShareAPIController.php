@@ -12,6 +12,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -31,6 +32,7 @@ class ShareAPIController {
 		protected string $userId,
 		protected Manager $manager,
 		protected ParticipantService $participantService,
+		protected AvatarService $avatarService,
 		protected ITimeFactory $timeFactory,
 		protected IL10N $l,
 		protected IURLGenerator $urlGenerator,
@@ -58,6 +60,7 @@ class ShareAPIController {
 		try {
 			$this->participantService->getParticipant($room, $this->userId, false);
 			$result['share_with_link'] = $this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]);
+			$result['share_with_avatar'] = $this->avatarService->getAvatarUrl($room);
 		} catch (ParticipantNotFoundException $e) {
 			// Removing the conversation token from the leaked data if not a participant.
 			// Adding some unique but reproducable part to the share_with here
