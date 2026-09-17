@@ -80,7 +80,6 @@
 				label="label"
 				trackBy="value"
 				:clearable="false"
-				noWrap
 				:disabled="loading || loadingStartCalls"
 				@update:modelValue="saveStartCalls" />
 		</div>
