@@ -1,5 +1,5 @@
 diff --git a/.github/workflows/playwright.yml b/.github/workflows/playwright.yml
-index ba4159f64d..995df0f56b 100644
+index ba4159f64d..772187a9d2 100644
 --- a/.github/workflows/playwright.yml
 +++ b/.github/workflows/playwright.yml
 @@ -29,10 +29,8 @@ name: Playwright Tests
@@ -11,6 +11,23 @@ index ba4159f64d..995df0f56b 100644
        - stable35
 -      - stable34
 -      - stable33
- 
+
  permissions:
    contents: read
+@@ -52,6 +50,16 @@ jobs:
+     - name: Read package.json
+       uses: nextcloud-libraries/parse-package-engines-action@122ae05d4257008180a514e1ddeb0c1b9d094bdd # v0.1.0
+       id: versions
++    - name: Get php version
++      id: php-versions
++      uses: nextcloud-libraries/nextcloud-version-matrix@cd0211ffcef1065e2020cd579e4843b8746e7a58 # v1.3.3
++    - name: Set up php${{ steps.php-versions.outputs.php-available }}
++      uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
++      with:
++        php-version: ${{ steps.php-versions.outputs.php-available }}
++        coverage: none
++    - name: Install composer dependencies
++      uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
+     - name: Set up node
+       uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+       with:
