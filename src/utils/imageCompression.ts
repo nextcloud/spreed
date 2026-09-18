@@ -137,7 +137,7 @@ function scaledDimensions(width: number, height: number, maxResolution: number):
 /**
  * Compresses an image file via the Canvas API.
  * - preserve the EXIF orientation before drawing ('from-image'), while stripping EXIF tag;
- * - outputs WebP (JPEG as fallback) file with adjusted extension;
+ * - outputs WebP, PNG or JPEG file with adjusted extension;
  * - scales down images larger than maxResolution on either axis;
  * - returns null when the encode fails, or when re-encoding would not make the file smaller.
  *
@@ -150,7 +150,9 @@ export async function compressImage(file: File, quality = COMPRESS_QUALITY, maxR
 	const dimensionsOriginal = `${bitmap.width}×${bitmap.height}`
 	const { width, height } = scaledDimensions(bitmap.width, bitmap.height, maxResolution)
 
-	const outputType = supportWebpEncoding() ? OUTPUT_TYPE : FALLBACK_TYPE
+	const outputType = EXTENSIONS[file.type as keyof typeof EXTENSIONS]
+		? file.type
+		: (supportWebpEncoding() ? OUTPUT_TYPE : FALLBACK_TYPE)
 	const canvas = createCanvas(width, height)
 	const ctx = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D | null
 	if (!ctx) {

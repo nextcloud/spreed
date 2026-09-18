@@ -77,12 +77,12 @@ describe('imageCompression', () => {
 
 	describe('compressImage', () => {
 		it('re-encodes the image as WebP and adjusts the extension', async () => {
-			const file = makeFile('pngimage.png', { type: 'image/png', size: 4096 })
+			const file = makeFile('bmpimage.bmp', { type: 'image/bmp', size: 4096 })
 
 			const result = await compressImage(file)
 
 			expect(result).not.toBe(file)
-			expect(result.name).toBe('pngimage.webp')
+			expect(result.name).toBe('bmpimage.webp')
 			expect(result.type).toBe('image/webp')
 			expect(result.size).toBe(512)
 			expect(encodeCalls).toEqual([{ type: 'image/webp', quality: 0.8 }])
@@ -122,13 +122,13 @@ describe('imageCompression', () => {
 			expect(context.drawImage).toHaveBeenCalledWith(bitmap, 0, 0, 320, 240)
 		})
 
-		it('honours the given quality and maximum side', async () => {
+		it('honours the given type, quality and maximum side', async () => {
 			bitmap = { width: 1000, height: 500, close: vi.fn() }
 
 			await compressImage(makeFile('pngimage.png'), 0.5, 100)
 
 			expect(canvases.at(-1)).toMatchObject({ width: 100, height: 50 })
-			expect(encodeCalls).toEqual([{ type: 'image/webp', quality: 0.5 }])
+			expect(encodeCalls).toEqual([{ type: 'image/png', quality: 0.5 }])
 		})
 
 		it('returns null when re-encoding does not reduce the size', async () => {
