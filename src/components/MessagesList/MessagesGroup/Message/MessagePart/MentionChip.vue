@@ -127,7 +127,7 @@ export default {
 			if (this.isMentionToUser) {
 				const url = this.isRemoteUser
 					? (this.token ? getUserProxyAvatarOcsUrl(this.token, this.id + '@' + this.server, this.isDarkTheme, 64) : null)
-					: generateAvatarUrl(this.id, { isDarkTheme: this.isDarkTheme, size: 64 })
+					: generateAvatarUrl(this.id, { isDarkTheme: this.isDarkTheme, size: 64, guestFallback: true })
 				return { url, icon: 'icon-user-forced-white' }
 			} else if (this.isGroupMention) {
 				return { url: null, icon: 'icon-group-forced-white' }
@@ -158,6 +158,7 @@ export default {
 				:key="imageSource.url"
 				:src="imageSource.url"
 				:alt="name"
+				loading="lazy"
 				class="mention-chip__icon"
 				@error="failed = true">
 			<span
