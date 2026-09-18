@@ -16,6 +16,7 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "playwright": "playwright test",
+    "playwright:docs": "playwright test --config playwright-docs.config.ts",
     "playwright:ui": "playwright test --ui",
     "serve": "rspack dev --env development",
     "stylelint": "stylelint \"src/**/*.scss\" \"src/**/*.vue\"",
