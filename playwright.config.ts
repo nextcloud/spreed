@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { DocsOptions } from './tests/playwright/support/fixtures/users.ts'
+
 import { defineConfig, devices } from '@playwright/test'
 
-export default defineConfig({
-	testDir: './tests/playwright/e2e',
+export default defineConfig<DocsOptions>({
 	timeout: 90_000,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 1 : 0,
@@ -23,12 +24,38 @@ export default defineConfig({
 	projects: [
 		{
 			name: 'chromium',
+			testDir: './tests/playwright/e2e',
 			use: {
 				...devices['Desktop Chrome'],
 				// Uses the runner's pre-installed system Chrome instead of
 				// Playwright's own bundled Chromium — playwright.yml's CI
 				// workflow relies on this to skip a browser install step.
 				channel: 'chrome',
+			},
+		},
+		// Docs screenshots: run only via `npm run playwright:docs`, reviewed by a human, not asserted in CI
+		{
+			name: 'docs-setup',
+			testDir: './tests/playwright/docs-screenshots',
+			testMatch: 'global.setup.ts',
+		},
+		{
+			name: 'docs',
+			// Same specs as e2e, in docs mode: demo users, and docsScreenshot() writes files
+			testDir: './tests/playwright/e2e',
+			grep: /@docs/,
+			dependencies: ['docs-setup'],
+			// Pixel-consistent images and shared demo accounts: no retries, no parallel workers
+			retries: 0,
+			workers: 1,
+			fullyParallel: false,
+			use: {
+				...devices['Desktop Chrome'],
+				viewport: { width: 1280, height: 800 },
+				deviceScaleFactor: 2,
+				docsMode: true,
+				screenshot: 'off',
+				trace: 'off',
 			},
 		},
 	],
