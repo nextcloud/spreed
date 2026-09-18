@@ -25,6 +25,7 @@ import { useGetToken } from '../../composables/useGetToken.ts'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { useJoinCall } from '../../composables/useJoinCall.ts'
 import { CALL, CONVERSATION } from '../../constants.ts'
+import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig, hasTalkFeature } from '../../services/CapabilitiesManager.ts'
 import { useCallViewStore } from '../../stores/callView.ts'
 import { useSettingsStore } from '../../stores/settings.ts'
@@ -166,8 +167,10 @@ async function handleJoinCall(silent?: boolean) {
 
 /**
  * Run pre-checks before starting/joining the call
+ *
+ * @param silent Whether to pre-set silent flag upon click, or force a silent start
  */
-function handleClick() {
+function handleClick(silent?: boolean) {
 	if (hasExternalCallService(conversation.value)) {
 		// Another service is in charge, trigger iframe rendering in MainView
 		handleExternalCall()
@@ -177,15 +180,21 @@ function handleClick() {
 	// Create audio objects as a result of a user interaction to allow playing sounds in Safari
 	soundsStore.initAudioObjects()
 
+	if (silent === true) {
+		BrowserStorage.setItem('silentCall_' + token.value, 'true')
+	} else if (silent === false) {
+		BrowserStorage.removeItem('silentCall_' + token.value)
+	}
+
 	if (props.isMediaSettings || isPhoneRoom.value) {
 		handleJoinCall()
 		return
 	}
 
-	if (showRecordingWarning.value || settingsStore.showMediaSettings) {
+	if (showRecordingWarning.value || (settingsStore.showMediaSettings && !silent)) {
 		emit('talk:media-settings:show')
 	} else {
-		handleJoinCall()
+		handleJoinCall(silent)
 	}
 }
 
@@ -235,7 +244,7 @@ async function handleExternalCall() {
 		:title="startCallTitle"
 		:disabled="startCallButtonDisabled || loading || isJoiningCall"
 		:forceName="showButtonText"
-		placement="top-end"
+		placement="bottom-end"
 		variant="primary"
 		:aria-label="startCallActionsLabel"
 		:inline="1">
@@ -245,16 +254,14 @@ async function handleExternalCall() {
 		<NcActionButton
 			class="start-call-button--split"
 			:aria-label="startCallLabel"
-			@click="handleClick">
+			@click="handleClick(false)">
 			<template #icon>
 				<NcLoadingIcon v-if="isJoiningCall || loading" :size="20" />
 				<IconPhone v-else :size="20" />
 			</template>
-			<template v-if="showButtonText" #default>
-				{{ startCallLabel }}
-			</template>
+			{{ startCallLabel }}
 		</NcActionButton>
-		<NcActionButton @click="handleStartCallSilently">
+		<NcActionButton @click="handleClick(true)">
 			<template #icon>
 				<IconPhoneOutline :size="20" />
 			</template>
@@ -268,7 +275,7 @@ async function handleExternalCall() {
 		:disabled="startCallButtonDisabled || loading || isJoiningCall"
 		class="join-call"
 		:variant="hasCall ? 'success' : 'primary'"
-		@click="handleClick">
+		@click="handleClick(undefined)">
 		<template #icon>
 			<NcLoadingIcon v-if="isJoiningCall || loading" :size="20" />
 			<IconPhoneDialOutline v-else-if="isPhoneRoom" :size="20" />
