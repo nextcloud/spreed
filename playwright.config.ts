@@ -25,6 +25,10 @@ export default defineConfig({
 			name: 'chromium',
 			use: {
 				...devices['Desktop Chrome'],
+				// Uses the runner's pre-installed system Chrome instead of
+				// Playwright's own bundled Chromium — playwright.yml's CI
+				// workflow relies on this to skip a browser install step.
+				channel: 'chrome',
 			},
 		},
 	],
