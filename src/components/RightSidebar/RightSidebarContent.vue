@@ -11,7 +11,7 @@ import type {
 } from '../../types/index.ts'
 
 import { t } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
+import { generateAvatarUrl } from '@nextcloud/router'
 import { useIsDarkTheme } from '@nextcloud/vue/composables/useIsDarkTheme'
 import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
@@ -128,7 +128,7 @@ const avatarUrl = computed(() => {
 	}
 
 	return isOneToOneConversation.value
-		? generateUrl('avatar/{userId}/512' + (isDarkTheme.value ? '/dark' : ''), { userId: conversation.value.name })
+		? generateAvatarUrl(conversation.value.name, { isDarkTheme: isDarkTheme.value, size: 512, guestFallback: true })
 		: getConversationAvatarOcsUrl(token.value, isDarkTheme.value, conversation.value.avatarVersion)
 })
 
