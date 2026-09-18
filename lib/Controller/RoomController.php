@@ -13,6 +13,7 @@ use OCA\DAV\CalDAV\TimezoneService;
 use OCA\Talk\Authenticator;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\RoomExtendedEvent;
@@ -182,8 +183,8 @@ class RoomController extends AEnvironmentAwareOCSController {
 		$values = [
 			$this->config->getSystemValueString('version'),
 			$this->config->getAppValue('spreed', 'installed_version'),
-			json_encode($this->appConfig->getAppValueArray(Config::STUN_SERVERS)),
-			json_encode($this->appConfig->getAppValueArray(Config::TURN_SERVERS)),
+			json_encode($this->appConfig->getAppValueArray(ConfigLexicon::STUN_SERVERS)),
+			json_encode($this->appConfig->getAppValueArray(ConfigLexicon::TURN_SERVERS)),
 			$this->config->getAppValue('spreed', 'signaling_servers'),
 			$this->config->getAppValue('spreed', 'signaling_ticket_secret'),
 			$this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256'),
@@ -191,15 +192,15 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->config->getAppValue('spreed', 'signaling_token_pubkey_' . $this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256')),
 			$this->config->getAppValue('spreed', 'call_recording'),
 			$this->config->getAppValue('spreed', 'recording_servers'),
-			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_TALK)),
+			json_encode($this->appConfig->getAppValueArray(ConfigLexicon::ALLOWED_GROUPS_TALK)),
 			$this->config->getAppValue('spreed', 'start_calls'),
 			$this->config->getAppValue('spreed', 'start_calls_groups'),
-			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_CONVERSATIONS)),
-			$this->appConfig->getAppValueInt(Config::DEFAULT_ROOM_PERMISSIONS),
-			$this->appConfig->getAppValueBool(Config::BREAKOUT_ROOMS_ENABLED),
+			json_encode($this->appConfig->getAppValueArray(ConfigLexicon::ALLOWED_GROUPS_CONVERSATIONS)),
+			$this->appConfig->getAppValueInt(ConfigLexicon::DEFAULT_ROOM_PERMISSIONS),
+			$this->appConfig->getAppValueBool(ConfigLexicon::BREAKOUT_ROOMS_ENABLED),
 			$this->config->getAppValue('spreed', 'federation_enabled'),
-			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_SIP)),
-			$this->appConfig->getAppValueBool(Config::MATTERBRIDGE_ENABLED),
+			json_encode($this->appConfig->getAppValueArray(ConfigLexicon::ALLOWED_GROUPS_SIP)),
+			$this->appConfig->getAppValueBool(ConfigLexicon::MATTERBRIDGE_ENABLED),
 			$this->config->getAppValue('spreed', 'sip_bridge_dialin_info'),
 			$this->config->getAppValue('spreed', 'sip_bridge_shared_secret'),
 			$this->config->getAppValue('spreed', 'recording_consent'),
@@ -215,10 +216,10 @@ class RoomController extends AEnvironmentAwareOCSController {
 		];
 
 		if ($this->userId !== null) {
-			$values[] = $this->appConfig->getAppValueInt(Config::EXPERIMENTS_USERS);
+			$values[] = $this->appConfig->getAppValueInt(ConfigLexicon::EXPERIMENTS_USERS);
 			$values[] = $this->config->getUserValue($this->userId, 'spreed', UserPreference::ATTACHMENT_FOLDER);
 		} else {
-			$values[] = $this->appConfig->getAppValueInt(Config::EXPERIMENTS_GUESTS);
+			$values[] = $this->appConfig->getAppValueInt(ConfigLexicon::EXPERIMENTS_GUESTS);
 		}
 
 		return [
@@ -1153,7 +1154,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(['error' => 'preserved'], Http::STATUS_FORBIDDEN);
 		}
 
-		if (!$this->appConfig->getAppValueBool(Config::DELETE_ONE_TO_ONE_CONVERSATIONS)
+		if (!$this->appConfig->getAppValueBool(ConfigLexicon::DELETE_ONE_TO_ONE_CONVERSATIONS)
 			&& in_array($this->room->getType(), [Room::TYPE_ONE_TO_ONE, Room::TYPE_ONE_TO_ONE_FORMER], true)) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
@@ -1225,7 +1226,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 			if ($this->userId !== null
 				&& $includeStatus
-				&& count($data) < Config::USER_STATUS_INTEGRATION_LIMIT
+				&& count($data) < ConfigLexicon::USER_STATUS_INTEGRATION_LIMIT
 				&& $this->appManager->isEnabledForUser('user_status')) {
 				$userIds = array_filter(array_map(static function (array $parsedParticipant): ?string {
 					if ($parsedParticipant['actorType'] === Attendee::ACTOR_USERS) {
@@ -1323,7 +1324,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		if ($this->userId !== null
 			&& $includeStatus
-			&& count($participants) < Config::USER_STATUS_INTEGRATION_LIMIT
+			&& count($participants) < ConfigLexicon::USER_STATUS_INTEGRATION_LIMIT
 			&& $this->appManager->isEnabledForUser('user_status')) {
 			$userIds = array_filter(array_map(static function (Participant $participant): ?string {
 				if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
@@ -1755,7 +1756,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null);
 		}
 
-		if ($this->appConfig->getAppValueBool(Config::DELETE_ONE_TO_ONE_CONVERSATIONS)
+		if ($this->appConfig->getAppValueBool(ConfigLexicon::DELETE_ONE_TO_ONE_CONVERSATIONS)
 			&& in_array($this->room->getType(), [Room::TYPE_ONE_TO_ONE, Room::TYPE_ONE_TO_ONE_FORMER], true)) {
 			$this->roomService->deleteRoom($room);
 			return new DataResponse(null);

@@ -12,6 +12,7 @@ use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Events\AMessageSentEvent;
 use OCA\Talk\Events\AParticipantModifiedEvent;
 use OCA\Talk\Events\AReactionEvent;
@@ -122,7 +123,7 @@ class Listener implements IEventListener {
 
 	#[\Override]
 	public function handle(Event $event): void {
-		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+		if ($this->talkConfig->getSignalingMode() === ConfigLexicon::SIGNALING_INTERNAL) {
 			$this->handleInternalSignaling($event);
 		} else {
 			$this->handleExternalSignaling($event);

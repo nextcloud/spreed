@@ -1459,7 +1459,7 @@ class Manager {
 	 * @return string
 	 */
 	protected function getNewToken(): string {
-		$entropy = max(8, $this->appConfig->getAppValueInt(Config::TOKEN_ENTROPY)); // For update cases
+		$entropy = max(8, $this->appConfig->getAppValueInt(ConfigLexicon::TOKEN_ENTROPY)); // For update cases
 		$digitsOnly = $this->talkConfig->isSIPConfigured();
 		if ($digitsOnly) {
 			// Increase default token length as we only use numbers
@@ -1489,7 +1489,7 @@ class Manager {
 		}
 
 		$entropy++;
-		$this->appConfig->setAppValueInt(Config::TOKEN_ENTROPY, $entropy);
+		$this->appConfig->setAppValueInt(ConfigLexicon::TOKEN_ENTROPY, $entropy);
 		return $this->generateNewToken($query, $entropy, $digitsOnly);
 	}
 

@@ -13,6 +13,7 @@ use OC\User\NoUserException;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RecordingNotFoundException;
 use OCA\Talk\Manager;
@@ -482,7 +483,7 @@ class RecordingService {
 
 		// use TextToText to keep the full transcript as a context
 		$taskType = TextToText::ID;
-		$summaryPrompt = $this->appConfig->getAppValueString(Config::CALL_RECORDING_SUMMARY_PROMPT);
+		$summaryPrompt = $this->appConfig->getAppValueString(ConfigLexicon::CALL_RECORDING_SUMMARY_PROMPT);
 		$input = $summaryPrompt . "\n" . $output;
 
 		$supportedTaskTypeIds = $this->taskProcessingManager->getAvailableTaskTypeIds();

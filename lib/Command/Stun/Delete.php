@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Stun;
 
 use OC\Core\Command\Base;
-use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCP\AppFramework\Services\IAppConfig;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,7 +38,7 @@ class Delete extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$server = $input->getArgument('server');
 
-		$servers = $this->appConfig->getAppValueArray(Config::STUN_SERVERS);
+		$servers = $this->appConfig->getAppValueArray(ConfigLexicon::STUN_SERVERS);
 
 		$count = count($servers);
 		// remove all occurrences of $server
@@ -46,11 +46,11 @@ class Delete extends Base {
 		$servers = array_values($servers); // reindex
 
 		if (empty($servers)) {
-			$servers = [Config::DEFAULT_STUN_SERVER];
-			$this->appConfig->setAppValueArray(Config::STUN_SERVERS, $servers);
+			$servers = [ConfigLexicon::DEFAULT_STUN_SERVER];
+			$this->appConfig->setAppValueArray(ConfigLexicon::STUN_SERVERS, $servers);
 			$output->writeln('<info>You deleted all STUN servers. A default STUN server was added.</info>');
 		} else {
-			$this->appConfig->setAppValueArray(Config::STUN_SERVERS, $servers);
+			$this->appConfig->setAppValueArray(ConfigLexicon::STUN_SERVERS, $servers);
 			if ($count > count($servers)) {
 				$output->writeln('<info>Deleted ' . $server . '.</info>');
 			} else {

@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php;
 
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Events\BeforeTurnServersGetEvent;
 use OCA\Talk\Tests\php\Mocks\GetTurnServerListener;
 use OCA\Talk\Vendor\Firebase\JWT\JWT;
@@ -369,7 +370,7 @@ class ConfigTest extends TestCase {
 		// Make sure new keys are generated.
 		$this->config->deleteAppValue('spreed', 'signaling_token_privkey_' . strtolower($algo));
 		$this->config->deleteAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo));
-		$ticket = $helper->getSignalingTicket(Config::SIGNALING_TICKET_V2, 'user1');
+		$ticket = $helper->getSignalingTicket(ConfigLexicon::SIGNALING_TICKET_V2, 'user1');
 		$this->assertNotNull($ticket);
 
 		$key = new Key($this->config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo)), $algo);
@@ -402,7 +403,7 @@ class ConfigTest extends TestCase {
 		// Make sure new keys are generated.
 		$this->config->deleteAppValue('spreed', 'signaling_token_privkey_' . strtolower($algo));
 		$this->config->deleteAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo));
-		$ticket = $helper->getSignalingTicket(Config::SIGNALING_TICKET_V2, null);
+		$ticket = $helper->getSignalingTicket(ConfigLexicon::SIGNALING_TICKET_V2, null);
 		$this->assertNotNull($ticket);
 
 		$key = new Key($this->config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo)), $algo);

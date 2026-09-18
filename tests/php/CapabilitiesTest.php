@@ -11,6 +11,7 @@ namespace OCA\Talk\Tests\Unit;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\LiveTranscriptionService;
@@ -585,10 +586,10 @@ class CapabilitiesTest extends TestCase {
 
 	public static function dataTestConfigCallLiveTranscription(): array {
 		return [
-			[Config::SIGNALING_EXTERNAL, true, true],
-			[Config::SIGNALING_EXTERNAL, false, false],
-			[Config::SIGNALING_INTERNAL, true, false],
-			[Config::SIGNALING_INTERNAL, false, false],
+			[ConfigLexicon::SIGNALING_EXTERNAL, true, true],
+			[ConfigLexicon::SIGNALING_EXTERNAL, false, false],
+			[ConfigLexicon::SIGNALING_INTERNAL, true, false],
+			[ConfigLexicon::SIGNALING_INTERNAL, false, false],
 		];
 	}
 
