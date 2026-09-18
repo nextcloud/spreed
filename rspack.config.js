@@ -238,8 +238,8 @@ module.exports = defineConfig((env) => {
 			}),
 
 			new CssExtractRspackPlugin({
-				filename: '../css/talk-[name].css',
-				chunkFilename: '../css/chunks/[id].chunk.css',
+				filename: '../css/talk-[name].css?v=[contenthash]',
+				chunkFilename: '../css/chunks/[id].chunk.css?v=[contenthash]',
 				ignoreOrder: true,
 			}),
 
