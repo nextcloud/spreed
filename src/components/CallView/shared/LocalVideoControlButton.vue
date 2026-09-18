@@ -237,11 +237,13 @@ export default {
 	},
 
 	mounted() {
-		this.subscribeToDevices(this.conversation.permissions)
+		// The button only needs the device list, not a live video preview, so
+		// it does not keep the camera grabbed during the call (see spreed#4008).
+		this.subscribeToDevices(this.conversation.permissions, { videoPreview: false })
 	},
 
 	beforeUnmount() {
-		this.unsubscribeFromDevices(this.conversation.permissions)
+		this.unsubscribeFromDevices(this.conversation.permissions, { videoPreview: false })
 	},
 
 	methods: {

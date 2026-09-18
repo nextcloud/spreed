@@ -15,6 +15,14 @@ import { callParticipantsAudioPlayer, mediaDevicesManager } from '../utils/webrt
 
 /** Permissions bitmask of each active subscriber */
 const subscribersPermissions = []
+/**
+ * Number of active subscribers that request a live video preview stream.
+ * In-call control buttons only need the device list, not a live preview, so
+ * they subscribe without one; keeping a live camera track just for them would
+ * keep the camera (and its hardware light) on during the whole call even when
+ * the video is disabled (see spreed#4008).
+ */
+let videoPreviewSubscribersCount = 0
 const videoElement = ref(null)
 
 /**
@@ -143,10 +151,15 @@ export const useDevices = createSharedComposable(function() {
 	 * Streams are started based on the combined (OR) permissions of all subscribers
 	 *
 	 * @param {number} permissions - requested permission (for call - attendee check, for device preview - MAX_DEFAULT)
+	 * @param {object} [options] - subscription options
+	 * @param {boolean} [options.videoPreview] - whether a live video preview stream is needed (false for in-call control buttons)
 	 * @public
 	 */
-	function subscribeToDevices(permissions = PARTICIPANT.PERMISSIONS.MAX_DEFAULT) {
+	function subscribeToDevices(permissions = PARTICIPANT.PERMISSIONS.MAX_DEFAULT, { videoPreview = true } = {}) {
 		subscribersPermissions.push(permissions)
+		if (videoPreview) {
+			videoPreviewSubscribersCount++
+		}
 		if (!initialized) {
 			initializeDevices()
 		} else {
@@ -161,9 +174,11 @@ export const useDevices = createSharedComposable(function() {
 	 * If reduced permissions no longer allow a stream, that stream should be stopped
 	 *
 	 * @param {number} permissions bitmask, must match the value passed to subscribeToDevices
+	 * @param {object} [options] - subscription options, must match the value passed to subscribeToDevices
+	 * @param {boolean} [options.videoPreview] - whether a live video preview stream was requested
 	 * @public
 	 */
-	function unsubscribeFromDevices(permissions = PARTICIPANT.PERMISSIONS.MAX_DEFAULT) {
+	function unsubscribeFromDevices(permissions = PARTICIPANT.PERMISSIONS.MAX_DEFAULT, { videoPreview = true } = {}) {
 		const index = subscribersPermissions.indexOf(permissions)
 		if (index === -1) {
 			console.error('Attempt to unsubscribe from devices with unknown permissions')
@@ -171,12 +186,15 @@ export const useDevices = createSharedComposable(function() {
 		}
 
 		subscribersPermissions.splice(index, 1)
+		if (videoPreview && videoPreviewSubscribersCount > 0) {
+			videoPreviewSubscribersCount--
+		}
 		if (subscribersPermissions.length === 0) {
 			stopDevices()
 			return
 		}
 
-		// Stop streams no longer permitted by any remaining subscriber
+		// Stop streams no longer permitted (or no longer previewed) by any remaining subscriber
 		stopForbiddenStreams()
 	}
 
@@ -213,7 +231,7 @@ export const useDevices = createSharedComposable(function() {
 		if (hasAudioPermission() && !audioStream.value && !pendingGetUserMediaAudioCount) {
 			updateAudioStream()
 		}
-		if (hasVideoPermission() && !videoStream.value && !pendingGetUserMediaVideoCount) {
+		if (shouldGrabVideoPreview() && !videoStream.value && !pendingGetUserMediaVideoCount) {
 			updateVideoStream()
 		}
 	}
@@ -225,7 +243,7 @@ export const useDevices = createSharedComposable(function() {
 		if (!hasAudioPermission()) {
 			stopAudioStream()
 		}
-		if (!hasVideoPermission()) {
+		if (!shouldGrabVideoPreview()) {
 			stopVideoStream()
 		}
 	}
@@ -249,6 +267,16 @@ export const useDevices = createSharedComposable(function() {
 	 */
 	function hasVideoPermission() {
 		return !!(getEffectivePermissions() & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)
+	}
+
+	/**
+	 * Checks whether a live video preview stream should be grabbed: at least one
+	 * subscriber must both allow video and actually request a preview. In-call
+	 * control buttons do not request a preview, so the camera is not grabbed
+	 * just for them (see spreed#4008).
+	 */
+	function shouldGrabVideoPreview() {
+		return hasVideoPermission() && videoPreviewSubscribersCount > 0
 	}
 
 	/**
@@ -516,7 +544,7 @@ export const useDevices = createSharedComposable(function() {
 			return
 		}
 
-		if (!hasVideoPermission()) {
+		if (!shouldGrabVideoPreview()) {
 			return
 		}
 

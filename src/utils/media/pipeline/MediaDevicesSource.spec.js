@@ -882,6 +882,119 @@ describe('MediaDevicesSource', () => {
 		})
 	})
 
+	describe('activate and deactivate video', () => {
+		beforeEach(() => {
+			getUserMediaAudioTrack = newMediaStreamTrackMock('audio', 'audio')
+			getUserMediaVideoTrack = newMediaStreamTrackMock('video', 'video')
+		})
+
+		test('video is active by default', () => {
+			expect(mediaDevicesSource.isVideoActive()).toBe(true)
+		})
+
+		test('after modifying the active state', () => {
+			mediaDevicesSource.setVideoActive(false)
+			expect(mediaDevicesSource.isVideoActive()).toBe(false)
+
+			mediaDevicesSource.setVideoActive(true)
+			expect(mediaDevicesSource.isVideoActive()).toBe(true)
+		})
+
+		test('video is not grabbed on start when deactivated', async () => {
+			mediaDevicesManager.set('audioInputId', 'audio-device')
+			mediaDevicesManager.set('videoInputId', 'video-device')
+
+			mediaDevicesSource.setVideoActive(false)
+
+			await mediaDevicesSource.start(retryNoVideoCallback)
+
+			expect(mediaDevicesSource.getOutputTrack('audio')).toBe(getUserMediaAudioTrack)
+			expect(mediaDevicesSource.getOutputTrack('video')).toBe(null)
+			expect(getUserMediaVideoTrack.stop).not.toHaveBeenCalled()
+		})
+
+		test('deactivate while active releases the camera', async () => {
+			mediaDevicesManager.set('videoInputId', 'video-device')
+
+			await mediaDevicesSource.start(retryNoVideoCallback)
+
+			mediaDevicesSource.setVideoActive(false)
+
+			expect(mediaDevicesSource.getOutputTrack('video')).toBe(null)
+			expect(getUserMediaVideoTrack.stop).toHaveBeenCalledTimes(1)
+		})
+
+		test('deactivate again while active', async () => {
+			mediaDevicesManager.set('videoInputId', 'video-device')
+
+			await mediaDevicesSource.start(retryNoVideoCallback)
+
+			mediaDevicesSource.setVideoActive(false)
+			mediaDevicesSource.setVideoActive(false)
+
+			expect(mediaDevicesSource.getOutputTrack('video')).toBe(null)
+			expect(getUserMediaVideoTrack.stop).toHaveBeenCalledTimes(1)
+		})
+
+		test('activate again while active re-grabs the camera', async () => {
+			mediaDevicesManager.set('videoInputId', 'video-device')
+
+			mediaDevicesSource.setVideoActive(false)
+
+			await mediaDevicesSource.start(retryNoVideoCallback)
+
+			expect(mediaDevicesSource.getOutputTrack('video')).toBe(null)
+
+			mediaDevicesSource.setVideoActive(true)
+
+			// Wait until getUserMedia(), internally called by MediaDevicesSource
+			// when activating the video, finishes.
+			await new Promise(process.nextTick)
+
+			expect(mediaDevicesSource.getOutputTrack('video')).toBe(getUserMediaVideoTrack)
+		})
+
+		test('deactivate and activate again before starting does not grab', () => {
+			mediaDevicesManager.set('videoInputId', 'video-device')
+
+			mediaDevicesSource.setVideoActive(false)
+			mediaDevicesSource.setVideoActive(true)
+
+			expect(mediaDevicesManager.getUserMedia).not.toHaveBeenCalled()
+		})
+
+		test('activate while not allowed does not grab the camera', async () => {
+			mediaDevicesManager.set('audioInputId', 'audio-device')
+			mediaDevicesManager.set('videoInputId', 'video-device')
+
+			mediaDevicesSource.setVideoAllowed(false)
+			mediaDevicesSource.setVideoActive(false)
+
+			await mediaDevicesSource.start(retryNoVideoCallback)
+
+			mediaDevicesSource.setVideoActive(true)
+
+			await new Promise(process.nextTick)
+
+			expect(mediaDevicesSource.getOutputTrack('video')).toBe(null)
+		})
+
+		test('device change while deactivated does not grab the camera', async () => {
+			mediaDevicesManager.set('videoInputId', 'video-device')
+
+			mediaDevicesSource.setVideoActive(false)
+
+			await mediaDevicesSource.start(retryNoVideoCallback)
+
+			mediaDevicesManager.getUserMedia.mockClear()
+
+			mediaDevicesManager.set('videoInputId', 'video-device-2')
+
+			expect(mediaDevicesManager.getUserMedia).not.toHaveBeenCalled()
+			expect(mediaDevicesSource.getOutputTrack('video')).toBe(null)
+		})
+	})
+
 	describe('stop', () => {
 		test('with audio and video tracks', async () => {
 			getUserMediaAudioTrack = newMediaStreamTrackMock('audio', 'audio')
