@@ -1,6 +1,6 @@
 {
 	"extends": "@vue/tsconfig/tsconfig.json",
-	"include": ["src/**/*.ts", "src/**/*.vue", "src/env.d.ts"],
+	"include": ["src/**/*.ts", "src/**/*.vue", "src/env.d.ts", "tests/playwright/**/*.ts", "playwright.config.ts"],
 	"exclude": ["node_modules", "vendor"],
 	"compilerOptions": {
 		"outDir": "./js",

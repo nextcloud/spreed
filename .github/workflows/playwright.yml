@@ -1,0 +1,205 @@
+# This workflow is provided via the organization template repository
+#
+# https://github.com/nextcloud/.github
+# https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
+#
+# SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: MIT
+
+# This workflow runs Playwright tests on pull requests to the master and stable branches.
+# It expects the following npm scripts to be defined in package.json:
+# - "playwright": runs the Playwright tests
+# - "playwright:install-ci": installs the Playwright browsers for CI (optional)
+#
+# If you only use the "Desktop Chrome" browser with "channel: chrome" in your Playwright config,
+# you can skip the "playwright:install-ci" script as the GitHub Actions runner already has Chrome Browser installed.
+#
+# For merging the reports, it expects a Playwright merge config file at tests/playwright/merge.config.ts.
+# You can adjust the path in the "Merge into HTML Report" step if you have a different location for the merge config file.
+# The default configuration would look like this:
+# ```js
+# export default {
+#   testDir: 'tests/playwright/e2e', // path to your Playwright tests
+#   reporter: [['html', { open: 'never' }]],
+# }
+# ```
+
+name: Playwright Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - stable35
+
+permissions:
+  contents: read
+concurrency:
+  group: playwright-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  playwright-setup:
+    timeout-minutes: 10
+    name: Playwright setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Read package.json
+        uses: nextcloud-libraries/parse-package-engines-action@122ae05d4257008180a514e1ddeb0c1b9d094bdd # v0.1.0
+        id: versions
+      - name: Get php version
+        id: php-versions
+        uses: nextcloud-libraries/nextcloud-version-matrix@cd0211ffcef1065e2020cd579e4843b8746e7a58 # v1.3.3
+      - name: Set up php${{ steps.php-versions.outputs.php-available }}
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: ${{ steps.php-versions.outputs.php-available }}
+          coverage: none
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
+      - name: Set up node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ steps.versions.outputs.node-version }}
+      - name: Set up npm
+        run: npm i -g 'npm@${{ steps.versions.outputs.package-manager-version }}'
+      - name: Install dependencies and build
+        run: |
+          npm ci
+          npm run build --if-present
+      - name: Save context
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          key: playwright-context-${{ github.run_id }}
+          path: ./
+
+  playwright-tests:
+    needs: [playwright-setup]
+    timeout-minutes: 30
+    name: Playwright tests ${{ matrix.shardIndex }} / ${{ matrix.shardTotal }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2] # adjust to your needs
+        shardTotal: [2]
+    outputs:
+      node-version: ${{ steps.versions.outputs.node-version }}
+      package-manager-version: ${{ steps.versions.outputs.package-manager-version }}
+
+    steps:
+      - name: Restore context
+        id: cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          key: playwright-context-${{ github.run_id }}
+          path: ./
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          persist-credentials: false
+
+      - name: Read package.json
+        uses: nextcloud-libraries/parse-package-engines-action@122ae05d4257008180a514e1ddeb0c1b9d094bdd # v0.1.0
+        id: versions
+
+      - name: Set up node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ steps.versions.outputs.node-version }}
+
+      - name: Set up npm
+        run: npm i -g 'npm@${{ steps.versions.outputs.package-manager-version }}'
+
+      - name: Install dependencies and build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          npm ci
+          npm run build --if-present
+
+      - name: Install Playwright browsers
+        run: npm run playwright:install-ci --if-present
+
+      - name: Run Playwright tests
+        run: npm run playwright -- --shard='${{ matrix.shardIndex }}/${{ matrix.shardTotal }}'
+
+      - name: Upload blob report to GitHub Actions Artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: blob-report-${{ matrix.shardIndex }}
+          path: blob-report
+          retention-days: 1
+
+  merge-reports:
+    # Merge reports after playwright-tests, even if some shards have failed
+    if: ${{ !cancelled() }}
+    needs: [playwright-tests]
+
+    runs-on: ubuntu-latest-low
+    steps:
+      - name: Restore context
+        id: cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          key: playwright-context-${{ github.run_id }}
+          path: ./
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          node-version: ${{ needs.playwright-tests.outputs.node-version }}
+
+      - name: Set up npm
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm i -g 'npm@${{ needs.playwright-tests.outputs.package-manager-version }}'
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --config tests/playwright/merge.config.ts --reporter html,github ./all-blob-reports
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: html-report--attempt-${{ github.run_attempt }}
+          path: playwright-report
+          retention-days: 7
+
+      - name: How to show the logs
+        run: |
+          echo 'To view the report:'
+          echo '  1. Extract the folder from the zip file'
+          echo '  2. run "npx playwright show-report name-of-my-extracted-playwright-report"'
+
+  summary:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest-low
+    needs: [playwright-tests]
+
+    if: always()
+
+    name: playwright-test-summary
+
+    steps:
+      - name: Summary status
+        run: if ${{ needs.playwright-tests.result != 'success' }}; then exit 1; fi
