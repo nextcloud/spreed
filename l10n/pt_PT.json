@@ -1421,8 +1421,6 @@
     "In this conversation <strong>{user}</strong> can:" : "Nesta conversa, <strong>{user}</strong> pode:",
     "Edit default permissions for participants in <strong>{conversationName}</strong>" : "Editar permissões padrão para participantes em <strong>{conversationName}</strong>",
     "Skip the lobby" : "Pular a sala de espera",
-    "Can post messages" : "Pode postar mensagens",
-    "Can add reactions" : "Pode adicionar reações",
     "Enable the microphone" : "Ativar o microfone",
     "Enable the camera" : "Ativar a câmera",
     "Update permissions" : "Atualizar permissões",
