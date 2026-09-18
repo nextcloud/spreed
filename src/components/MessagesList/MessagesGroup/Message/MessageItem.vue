@@ -103,6 +103,7 @@ import ScheduledMessageActions from './MessageButtonsBar/ScheduledMessageActions
 import ContactCard from './MessagePart/ContactCard.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
+import MatrixMedia from './MessagePart/MatrixMedia.vue'
 import MentionChip from './MessagePart/MentionChip.vue'
 import MessageBody from './MessagePart/MessageBody.vue'
 import PollCard from './MessagePart/PollCard.vue'
@@ -233,6 +234,11 @@ export default {
 				} else if (isFilePreviewParameter(p, this.message.messageParameters[p])) {
 					// File previews are rendered by FilePreviewsWrapper, skip from richParameters
 					return
+				} else if (type === 'matrix-media') {
+					richParameters[p] = {
+						component: MatrixMedia,
+						props: this.message.messageParameters[p],
+					}
 				} else if (type === SHARED_ITEM.OBJECT_TYPE.DECK_CARD) {
 					richParameters[p] = {
 						component: DeckCard,

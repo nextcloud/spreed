@@ -168,6 +168,16 @@
 								</NcActionButton>
 
 								<NcActionButton
+									v-if="isMatrixLinked"
+									closeAfterClick
+									@click="showModalMatrixRoom">
+									<template #icon>
+										<NcIconSvgWrapper :svg="IconMatrix" :size="20" />
+									</template>
+									{{ t('spreed', 'Matrix room …') }}
+								</NcActionButton>
+
+								<NcActionButton
 									v-if="canNoteToSelf && !hasNoteToSelf"
 									closeAfterClick
 									@click="restoreNoteToSelfConversation">
@@ -212,6 +222,7 @@
 
 						<!-- New Conversation dialog -->
 						<NewConversationDialog ref="newConversationDialog" :canModerateSipDialOut="canModerateSipDialOut" />
+						<MatrixRoomDialog v-if="isMatrixLinked" ref="matrixRoomDialog" />
 
 						<!-- New phone (SIP dial-out) dialog -->
 						<CallPhoneDialog v-if="canModerateSipDialOut" ref="callPhoneDialog" />
@@ -422,6 +433,7 @@ import debounce from 'debounce'
 import { ref } from 'vue'
 import { START_LOCATION } from 'vue-router'
 import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcActionCaption from '@nextcloud/vue/components/NcActionCaption'
 import NcActions from '@nextcloud/vue/components/NcActions'
 import NcActionSeparator from '@nextcloud/vue/components/NcActionSeparator'
@@ -452,6 +464,8 @@ import IconPhoneOutline from 'vue-material-design-icons/PhoneOutline.vue'
 import IconPlus from 'vue-material-design-icons/Plus.vue'
 import IconSortAlphabeticalAscending from 'vue-material-design-icons/SortAlphabeticalAscending.vue'
 import NewConversationDialog from '../NewConversationDialog/NewConversationDialog.vue'
+import MatrixRoomDialog from './MatrixRoomDialog.vue'
+import IconMatrix from '../../../img/material-icons/matrix.svg?raw'
 import ThreadItem from '../RightSidebar/Threads/ThreadItem.vue'
 import LoadingPlaceholder from '../UIShared/LoadingPlaceholder.vue'
 import SearchBox from '../UIShared/SearchBox.vue'
@@ -550,9 +564,11 @@ export default {
 		NcChip,
 		SearchBox,
 		NewConversationDialog,
+		MatrixRoomDialog,
 		OpenConversationsList,
 		NcActions,
 		NcActionButton,
+		NcIconSvgWrapper,
 		NcActionCaption,
 		NcActionSeparator,
 		NcEmptyContent,
@@ -614,6 +630,7 @@ export default {
 		} = useSearchConversationsResults()
 
 		return {
+			IconMatrix,
 			token: useGetToken(),
 			initializeNavigation,
 			resetNavigation,
@@ -661,6 +678,7 @@ export default {
 		return {
 			searchText: '',
 			canStartConversations: getTalkConfig('local', 'conversations', 'can-create'),
+			isMatrixLinked: getTalkConfig('local', 'matrix', 'enabled') === true && getTalkConfig('local', 'matrix', 'linked') === true,
 			debounceFetchSearchResults: () => {},
 			debounceFetchConversations: () => {},
 			debounceHandleScroll: () => {},
@@ -901,6 +919,10 @@ export default {
 		t,
 		showModalNewConversation() {
 			this.$refs.newConversationDialog.showModal()
+		},
+
+		showModalMatrixRoom() {
+			this.$refs.matrixRoomDialog.showModal()
 		},
 
 		showModalListConversations() {
