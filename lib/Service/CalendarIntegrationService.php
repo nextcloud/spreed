@@ -80,7 +80,11 @@ class CalendarIntegrationService {
 		];
 
 		$pattern = '/call/';
-		$searchProperties = ['LOCATION'];
+		// A hybrid meeting keeps the room address in LOCATION, so the call link
+		// ends up in the DESCRIPTION text instead.
+		// CONFERENCE (RFC 7986) would be the proper property for it, but the
+		// CalDAV search index does not cover it, so searching it yields nothing.
+		$searchProperties = ['LOCATION', 'DESCRIPTION'];
 		$events = [];
 		/** @var ICalendar $calendar */
 		foreach ($calendars as $calendar) {
@@ -107,8 +111,12 @@ class CalendarIntegrationService {
 					break;
 				}
 
-				$location = $event['LOCATION'][0] ?? null;
-				if ($event === null || $location === null) {
+				if ($event === null) {
+					continue;
+				}
+
+				$location = $this->findRoomUrlInEvent($event);
+				if ($location === null) {
 					continue;
 				}
 
@@ -193,6 +201,36 @@ class CalendarIntegrationService {
 		usort($events, static fn (Event $a, Event $b) => $a->getStart() - $b->getStart());
 
 		return array_map(static fn (Event $event) => $event->jsonSerialize(), array_slice($events, 0, 10));
+	}
+
+	/**
+	 * Find the conversation URL of an event.
+	 *
+	 * LOCATION comes first because it is where a call-only meeting puts the
+	 * link. A hybrid meeting fills LOCATION with the room address instead, so
+	 * the link lives in CONFERENCE (RFC 7986) or, for clients that write no
+	 * CONFERENCE, somewhere in the DESCRIPTION text.
+	 *
+	 * CONFERENCE is read even though it is not searchable: an event found by
+	 * its DESCRIPTION still carries the cleaner URL in that property.
+	 *
+	 * @param array $event
+	 * @return string|null
+	 */
+	private function findRoomUrlInEvent(array $event): ?string {
+		foreach (['LOCATION', 'CONFERENCE', 'DESCRIPTION'] as $property) {
+			$value = $event[$property][0] ?? null;
+			if (!is_string($value) || $value === '') {
+				continue;
+			}
+
+			$url = $this->roomService->extractRoomUrlFromText($value);
+			if ($url !== null) {
+				return $url;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -293,8 +331,8 @@ class CalendarIntegrationService {
 				$dashboardEvent->setEventDescription($event['DESCRIPTION'][0] ?? null);
 				$dashboardEvent->addCalendar($calendar->getUri(), $calendar->getDisplayName(), $calendar->getDisplayColor());
 
-				$location = $event['LOCATION'][0] ?? null;
-				if ($location !== null && str_contains($location, '/call/') === true) {
+				$location = $this->findRoomUrlInEvent($event);
+				if ($location !== null) {
 					try {
 						$token = $this->roomService->parseRoomTokenFromUrl($location);
 						// Already returns public / open conversations
