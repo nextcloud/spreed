@@ -40,7 +40,7 @@ let speakingStatusHandler = null
 // This does not really belongs here, as it is unrelated to WebRTC, but it is
 // included here for the time being until signaling and WebRTC are split.
 const enableTypingIndicators = getTalkConfig('local', 'chat', 'typing-privacy') === PRIVACY.PUBLIC
-const signalingTypingHandler = enableTypingIndicators ? new SignalingTypingHandler(store) : null
+const signalingTypingHandler = enableTypingIndicators ? new SignalingTypingHandler() : null
 
 let cancelFetchSignalingSettings = null
 let signaling = null
