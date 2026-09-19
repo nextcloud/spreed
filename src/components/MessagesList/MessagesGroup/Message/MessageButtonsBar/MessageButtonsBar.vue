@@ -610,9 +610,7 @@ export default {
 		const supportReminders = hasTalkFeature(message.value.token, 'remind-me-later')
 		const supportPinMessage = hasTalkFeature(message.value.token, 'pinned-messages')
 
-		const isTranslationAvailable = getTalkConfig(message.value.token, 'chat', 'has-translation-providers')
-			// Fallback for the desktop client when connecting to Talk 17
-			?? getTalkConfig(message.value.token, 'chat', 'translations')?.length > 0
+		const isTranslationAvailable = getTalkConfig(message.value.token, 'chat', 'has-translation-task-providers')
 
 		return {
 			IconFileDownload,

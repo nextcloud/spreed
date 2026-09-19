@@ -133,7 +133,7 @@
 * `note-to-self` (local) - Support for "Note-to-self" conversation exists
 * `recording-consent` - Whether admins and moderators can require recording consent before joining a call
 * `sip-support-dialout` - Whether admins can enable SIP dial-out
-* `config => chat => has-translation-providers` (local) - When true, translation tuples can be loaded from the [OCS Translation API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-translation-api.html#get-available-translation-options).
+* ~~`config => chat => has-translation-providers` (local) - When true, translation tuples can be loaded from the [OCS Translation API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-translation-api.html#get-available-translation-options).~~ The OCS Translation API is deprecated, so since Talk 26 the capability mirrors `config => chat => has-translation-task-providers` and clients should use the [OCS TaskProcessing API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-taskprocessing-api.html) instead.
 * `config => call => recording-consent` - Whether users need to consent into call recording before joining a call (see [constants list](constants.md#recording-consent-required))
 * `config => call => sip-enabled` - Whether SIP is configured on the server allowing for SIP dial-in
 * `config => call => sip-dialout-enabled` - Whether SIP dial-out is configured on the server, additionally requires `config => call => sip-enabled`
@@ -237,3 +237,6 @@
 * `config => call => external-call-service` (local) - The target URL for an external call service if one is configured
 * `bot-features-api` (local) - Whether bots can fetch their own enabled features using their shared secret
 * `promote-demote-owner` - Whether owners can promote other participants to owner and demote other owners again, by sending the `participantType` parameter when promoting or demoting a participant
+
+## 26
+* `config => chat => has-translation-providers` (local) - Is now `true` when a task processing provider for `core:text2text:translate` is available, instead of being based on the deprecated OCS Translation API providers
