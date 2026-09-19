@@ -2,8 +2,8 @@ OC.L10N.register(
     "spreed",
     {
     "(Duration %s)" : "(Duración %s)",
-    "You attended a call with {user1}" : "Tomaste una llamda con {user1}",
-    "_%n guest_::_%n guests_" : ["%n inivitado","%n inivitados","%n inivitados"],
+    "You attended a call with {user1}" : "Tomaste una llamada con {user1}",
+    "_%n guest_::_%n guests_" : ["%n invitado","%n invitados","%n invitados"],
     "You attended a call with {user1} and {user2}" : "Tuviste una llamada con {user1} y {user2}",
     "You attended a call with {user1}, {user2} and {user3}" : "Tuviste una llamada con {user1}, {user2} y {user3}",
     "You attended a call with {user1}, {user2}, {user3} and {user4}" : "Tuviste una llamada con {user1}, {user2}, {user3} y {user4}",
