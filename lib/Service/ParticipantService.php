@@ -601,7 +601,7 @@ class ParticipantService {
 	 * @throws InvalidPasswordException
 	 * @throws UnauthorizedException
 	 */
-	public function joinRoomAsNewGuest(RoomService $roomService, Room $room, string $password, bool $passedPasswordProtection = false, ?Participant $previousParticipant = null, ?string $displayName = null): Participant {
+	public function joinRoomAsNewGuest(RoomService $roomService, Room $room, string $password, bool $passedPasswordProtection = false, ?Participant $previousParticipant = null, ?string $displayName = null, ?string $phoneNumber = null): Participant {
 		$event = new BeforeGuestJoinedRoomEvent($room, $password, $passedPasswordProtection);
 		$this->dispatcher->dispatchTyped($event);
 
@@ -634,6 +634,10 @@ class ParticipantService {
 
 			if ($displayName !== null && $displayName !== '') {
 				$attendee->setDisplayName($displayName);
+			}
+			if ($phoneNumber !== null && $phoneNumber !== '') {
+				$attendee->setPhoneNumber($phoneNumber);
+				$attendee->setActorType(Attendee::ACTOR_PHONES);
 			}
 
 			$this->attendeeMapper->insert($attendee);

@@ -2582,12 +2582,26 @@ class RoomController extends AEnvironmentAwareOCSController {
 		try {
 			$entity = $this->phoneService->getAccountToCallForPhoneNumber($phoneNumber);
 		} catch (DoesNotExistException) {
-			$this->logger->info('No account found for direct dial-in with number: ' . $phoneNumber);
-			return new DataResponse(null, Http::STATUS_NOT_FOUND);
+			$dialoutPrefix = $this->appConfig->getAppValueString('sip_bridge_dialout_prefix', '+');
+
+			if ($dialoutPrefix === '') {
+				$this->logger->info('No account found for direct dial-in with number: ' . $phoneNumber);
+				return new DataResponse(null, Http::STATUS_NOT_FOUND);
+			}
+
+			try {
+				// Try to find the number with added dialout prefix as a fallback for old sip-bridges
+				// TODO: Log as error in 26, remove fallback and dialout prefix with 27
+				$entity = $this->phoneService->getAccountToCallForPhoneNumber($dialoutPrefix . $phoneNumber);
+			} catch (DoesNotExistException) {
+				$this->logger->info('No account found for direct dial-in with number: ' . $phoneNumber);
+				return new DataResponse(null, Http::STATUS_NOT_FOUND);
+			}
+
+			$this->logger->warning('Found account for direct dial-in only by adding the dial-out prefix. Please adjust the mapping for number: ' . $phoneNumber);
 		}
 
 		$caller = trim($caller);
-		// TODO: Use later and get name from addressbook? $cleanedCaller = $this->phoneNumberUtil->convertToStandardFormat($caller);
 		$user = $this->userManager->get($entity->getActorId());
 		try {
 			$room = $this->roomService->createConversation(
@@ -2603,7 +2617,14 @@ class RoomController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
-		$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, '', true, displayName: $caller);
+		$participant = $this->participantService->joinRoomAsNewGuest(
+			$this->roomService,
+			$room,
+			'',
+			true,
+			displayName: $caller,
+			phoneNumber: $caller,
+		);
 		return new DataResponse($this->formatRoom($room, $participant));
 	}
 
