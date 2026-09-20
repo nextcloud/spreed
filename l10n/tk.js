@@ -1,8 +1,6 @@
 OC.L10N.register(
     "spreed",
     {
-    "Algeria" : "Zzayer",
-    "Samoa" : "Samua",
-    "Yemen" : "Yamen"
+    "Disable" : "Öçürmek"
 },
 "nplurals=2; plural=(n != 1);");
