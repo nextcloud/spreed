@@ -54,7 +54,7 @@ describe('imageCompression', () => {
 		contextAvailable = true
 		canvases = []
 		encodeCalls = []
-		encoded = { type: 'image/webp', size: 512 }
+		encoded = { type: 'image/jpeg', size: 512 }
 		bitmap = { width: 800, height: 600, close: vi.fn() }
 
 		global.createImageBitmap = vi.fn(() => Promise.resolve(bitmap))
@@ -76,16 +76,16 @@ describe('imageCompression', () => {
 	})
 
 	describe('compressImage', () => {
-		it('re-encodes the image as WebP and adjusts the extension', async () => {
-			const file = makeFile('pngimage.png', { type: 'image/png', size: 4096 })
+		it('re-encodes the image as JPEG and adjusts the extension', async () => {
+			const file = makeFile('bmpimage.bmp', { type: 'image/bmp', size: 4096 })
 
 			const result = await compressImage(file)
 
 			expect(result).not.toBe(file)
-			expect(result.name).toBe('pngimage.webp')
-			expect(result.type).toBe('image/webp')
+			expect(result.name).toBe('bmpimage.jpg')
+			expect(result.type).toBe('image/jpeg')
 			expect(result.size).toBe(512)
-			expect(encodeCalls).toEqual([{ type: 'image/webp', quality: 0.8 }])
+			expect(encodeCalls).toEqual([{ type: 'image/jpeg', quality: 0.8 }])
 		})
 
 		it('preserves the last modification time of the original file', async () => {
@@ -128,7 +128,7 @@ describe('imageCompression', () => {
 			await compressImage(makeFile('pngimage.png'), 0.5, 100)
 
 			expect(canvases.at(-1)).toMatchObject({ width: 100, height: 50 })
-			expect(encodeCalls).toEqual([{ type: 'image/webp', quality: 0.5 }])
+			expect(encodeCalls).toEqual([{ type: 'image/jpeg', quality: 0.5 }])
 		})
 
 		it('returns null when re-encoding does not reduce the size', async () => {
@@ -151,11 +151,11 @@ describe('imageCompression', () => {
 		})
 
 		it.each([
-			['pngimage.png', 'pngimage.webp'],
-			['my.photo.from.2026.jpeg', 'my.photo.from.2026.webp'],
-			['no-extension', 'no-extension.webp'],
+			['pngimage.png', 'pngimage.jpg'],
+			['my.photo.from.2026.jpeg', 'my.photo.from.2026.jpg'],
+			['no-extension', 'no-extension.jpg'],
 			// A leading dot is treated as an extension separator
-			['.hidden', '.webp'],
+			['.hidden', '.jpg'],
 		])('renames %s to %s', async (name, expectedName) => {
 			const result = await compressImage(makeFile(name))
 
