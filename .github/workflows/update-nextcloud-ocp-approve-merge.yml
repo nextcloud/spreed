@@ -6,17 +6,14 @@
 # SPDX-FileCopyrightText: 2023-2024 Nextcloud GmbH and Nextcloud contributors
 # SPDX-License-Identifier: MIT
 
-name: Auto approve nextcloud/ocp
+# TODO: Remove this after a grace period of 6 months to give everyone the chance to remove the workflow
+# TODO: To be removed mid 2027.
+name: No-op please remove this workflow
 
-on:
-  pull_request_target:  # zizmor: ignore[dangerous-triggers]
-    branches:
-      - main
-      - master
-      - stable*
+on: pull_request
 
 permissions:
-  contents: read
+  contents: none
 
 concurrency:
   group: update-nextcloud-ocp-approve-merge-${{ github.head_ref || github.run_id }}
@@ -24,36 +21,12 @@ concurrency:
 
 jobs:
   auto-approve-merge:
-    if: github.actor == 'nextcloud-command'
     runs-on: ubuntu-latest-low
-    permissions:
-      # for auto-approve-action to approve PRs
-      pull-requests: write
-      # for alexwilson/enable-github-automerge-action to approve PRs
-      contents: write
+    if: always()
+
+    # This is the summary, we just avoid to rename it so that branch protection rules still match
+    name: auto-approve-merge
 
     steps:
-      - name: Disabled on forks
-        if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
-        run: |
-          echo 'Can not approve PRs from forks'
-          exit 1
-
-      - uses: mdecoleman/pr-branch-name@55795d86b4566d300d237883103f052125cc7508 # v3.0.0
-        id: branchname
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: GitHub actions bot approve
-        if: startsWith(steps.branchname.outputs.branch, 'automated/noid/') && endsWith(steps.branchname.outputs.branch, 'update-nextcloud-ocp')
-        run: gh pr review --approve "$PR_URL"
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Enable GitHub auto merge
-      - name: Auto merge
-        uses: alexwilson/enable-github-automerge-action@2c32e18a76e0726ffe7a573bfff2d42a20885126 # 3.0.0
-        if: startsWith(steps.branchname.outputs.branch, 'automated/noid/') && endsWith(steps.branchname.outputs.branch, 'update-nextcloud-ocp')
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: No-op please remove this workflow
+        run: echo "Approve and auto-merge has been folded into update-nextcloud-ocp.yml / update-nextcloud-ocp-matrix.yml, please remove this file"; exit 1;
