@@ -14,8 +14,9 @@ on:
     - cron: "5 2 * * 0"
 
 permissions:
-  contents: read
+  contents: write
   issues: write
+  pull-requests: write
 
 jobs:
   update-nextcloud-ocp:
@@ -23,6 +24,10 @@ jobs:
 
     # Only allowed to be run on nextcloud repositories
     if: ${{ github.repository_owner == 'nextcloud' }}
+
+    env:
+      # env variable for maintainers: 'false' disables auto-merge for these pull requests
+      AUTOMERGE: true
 
     strategy:
       fail-fast: false
@@ -32,7 +37,6 @@ jobs:
           - 'stable35'
           - 'stable34'
           - 'stable33'
-          - 'stable32'
 
     name: update-nextcloud-ocp-${{ matrix.branches }}
 
@@ -101,6 +105,7 @@ jobs:
           body: 'Please check the output of the GitHub action and manually resolve the issues<br>${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}<br>${{ steps.codeowners.outputs.codeowners }}'
 
       - name: Create Pull Request
+        id: create-pull-request
         if: steps.checkout.outcome == 'success'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
@@ -111,7 +116,7 @@ jobs:
           signoff: true
           branch: 'automated/noid/${{ matrix.branches }}-update-nextcloud-ocp'
           title: '[${{ matrix.branches }}] Update nextcloud/ocp dependency'
-          add-path: |
+          add-paths: |
             composer.json
             composer.lock
             vendor-bin/nextcloud-ocp/composer.json
@@ -120,3 +125,20 @@ jobs:
             Auto-generated update of [nextcloud/ocp](https://github.com/nextcloud-deps/ocp/) dependency
           labels: |
             dependencies
+            3. to review
+
+      # Approve using the default GITHUB_TOKEN, as the PR itself was created
+      # using COMMAND_BOT_PAT and GitHub does not allow an account to approve its own PR
+      - name: GitHub actions bot approve
+        if: steps.create-pull-request.outputs.pull-request-operation != 'none'
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ steps.create-pull-request.outputs.pull-request-url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto merge
+        if: steps.create-pull-request.outputs.pull-request-operation != 'none' && fromJSON(env.AUTOMERGE)
+        uses: peter-evans/enable-pull-request-automerge@a660677d5469627102a1c1e11409dd063606628d # v3.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ steps.create-pull-request.outputs.pull-request-number }}
