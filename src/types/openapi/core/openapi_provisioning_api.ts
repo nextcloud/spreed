@@ -605,6 +605,7 @@ export interface operations {
             /** @description Groups returned */
             200: {
                 headers: {
+                    Link?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -656,6 +657,7 @@ export interface operations {
             /** @description Groups details returned */
             200: {
                 headers: {
+                    Link?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -785,6 +787,7 @@ export interface operations {
             /** @description Group users details returned */
             200: {
                 headers: {
+                    Link?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -888,6 +891,7 @@ export interface operations {
             /** @description Users returned */
             200: {
                 headers: {
+                    Link?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -1044,6 +1048,7 @@ export interface operations {
             /** @description Users details returned */
             200: {
                 headers: {
+                    Link?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -1100,6 +1105,7 @@ export interface operations {
             /** @description Disabled users details returned */
             200: {
                 headers: {
+                    Link?: string;
                     [name: string]: unknown;
                 };
                 content: {

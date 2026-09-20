@@ -1706,6 +1706,8 @@ export interface operations {
                 "shareTypes[]"?: number[];
                 /** @description Maximum number of results to return */
                 limit?: number;
+                /** @description Offset for searching */
+                offset?: number;
             };
             header: {
                 /** @description Required to be true for the API request to pass */
@@ -1719,6 +1721,7 @@ export interface operations {
             /** @description Autocomplete results returned */
             200: {
                 headers: {
+                    Link?: string;
                     [name: string]: unknown;
                 };
                 content: {
@@ -5344,9 +5347,9 @@ export interface operations {
     };
     "preview-get-preview-by-file-id": {
         parameters: {
-            query?: {
+            query: {
                 /** @description ID of the file */
-                fileId?: number;
+                fileId: number;
                 /** @description Width of the preview. A width of -1 will use the original image width. */
                 x?: number;
                 /** @description Height of the preview. A height of -1 will use the original image height. */
