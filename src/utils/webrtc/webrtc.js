@@ -15,6 +15,7 @@ import store from '../../store/index.js'
 import { useActorStore } from '../../stores/actor.ts'
 import pinia from '../../stores/pinia.ts'
 import { useTokenStore } from '../../stores/token.ts'
+import { supportsRTCPeerConnection, supportsWebRTC } from '../browserCheck.ts'
 import { Sounds } from '../sounds.js'
 import { LocalStateBroadcasterMcu } from './LocalStateBroadcasterMcu.ts'
 import { LocalStateBroadcasterNoMcu } from './LocalStateBroadcasterNoMcu.ts'
@@ -1510,7 +1511,7 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 		let message
 		let timeout = TOAST_PERMANENT_TIMEOUT
 		if ((error.name === 'NotSupportedError'
-			&& webrtc.capabilities.supportRTCPeerConnection)
+			&& supportsRTCPeerConnection)
 		|| (error.name === 'NotAllowedError'
 			&& error.message && error.message.includes('Only secure origins'))) {
 			message = t('spreed', 'Access to microphone & camera is only possible with HTTPS')
@@ -1518,7 +1519,7 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 		} else if (error.name === 'NotAllowedError') {
 			message = t('spreed', 'Access to microphone & camera was denied')
 			timeout = TOAST_DEFAULT_TIMEOUT
-		} else if (!webrtc.capabilities.support) {
+		} else if (!supportsWebRTC) {
 			console.error('WebRTC not supported')
 
 			message = t('spreed', 'WebRTC is not supported in your browser')
