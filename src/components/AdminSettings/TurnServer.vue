@@ -80,7 +80,6 @@ import { t } from '@nextcloud/l10n'
 import Base64 from 'crypto-js/enc-base64.js'
 import hmacSHA1 from 'crypto-js/hmac-sha1.js'
 import debounce from 'debounce'
-import webrtcSupport from 'webrtcsupport'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
@@ -304,7 +303,7 @@ export default {
 			pc.onicegatheringstatechange = this.gatheringStateChange.bind(this, pc, candidates, timeout)
 
 			// This test will always fail without a data channel on Safari
-			if (webrtcSupport.supportDataChannel) {
+			if ('createDataChannel' in RTCPeerConnection.prototype) {
 				pc.createDataChannel('status')
 			}
 

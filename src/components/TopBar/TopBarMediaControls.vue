@@ -143,6 +143,7 @@ import LocalVideoControlButton from '../CallView/shared/LocalVideoControlButton.
 import IconBackground from '../../../img/material-icons/replace-background.svg?raw'
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { PARTICIPANT } from '../../constants.ts'
+import { supportsScreenSharing } from '../../utils/browserCheck.ts'
 import { CONNECTION_QUALITY } from '../../utils/webrtc/analyzers/PeerConnectionAnalyzer.js'
 import { callAnalyzer } from '../../utils/webrtc/index.js'
 
@@ -409,8 +410,8 @@ export default {
 				return
 			}
 
-			if (!this.model.getWebRtc().capabilities.supportScreenSharing) {
-				if (window.location.protocol === 'https:') {
+			if (!supportsScreenSharing) {
+				if (window.isSecureContext) {
 					showMessage(t('spreed', 'Screen sharing is not supported by your browser.'))
 				} else {
 					showMessage(t('spreed', 'Screen sharing requires the page to be loaded through HTTPS.'))
