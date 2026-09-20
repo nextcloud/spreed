@@ -58,7 +58,7 @@ module.exports = defineConfig((env) => {
 
 		output: {
 			path: path.resolve('./js'),
-			filename: `${appName}-[name].js?v=[contenthash]`,
+			filename: `${appName}-[name].js`,
 			chunkFilename: `${appName}-[name].js?v=[contenthash]`,
 			// Set publicPath via __webpack_public_path__
 			publicPath: 'auto',
@@ -227,7 +227,7 @@ module.exports = defineConfig((env) => {
 
 			new CssExtractRspackPlugin({
 				filename: '../css/talk-[name].css',
-				chunkFilename: '../css/chunks/[id].chunk.css',
+				chunkFilename: '../css/chunks/[id].chunk.css?v=[contenthash]',
 				ignoreOrder: true,
 			}),
 
