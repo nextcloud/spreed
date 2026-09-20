@@ -35,6 +35,17 @@ export const isYandex = browser.name === 'Yandex'
 export const majorVersion = browser.major ? parseInt(browser.major, 10) : 0
 
 /**
+ * WebRTC feature support
+ */
+
+export const supportsRTCPeerConnection = !!window.RTCPeerConnection
+export const supportsWebRTC = supportsRTCPeerConnection && !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
+
+// Note: this is a coarse check; calling "getDisplayMedia" may still fail even if this is true.
+export const supportsScreenSharing = window.isSecureContext
+	&& !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia)
+
+/**
  * Is the browser Chromium-based
  */
 export const isChromium = isChrome
