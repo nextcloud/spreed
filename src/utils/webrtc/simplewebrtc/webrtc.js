@@ -5,7 +5,7 @@ import mockconsole from 'mockconsole'
  * SPDX-License-Identifier: MIT
  */
 import util from 'util'
-import webrtcSupport from 'webrtcsupport'
+import { supportsWebRTC } from '../../browserCheck.ts'
 import localMedia from './localmedia.js'
 import Peer from './peer.js'
 
@@ -60,7 +60,7 @@ export default function WebRTC(opts) {
 	}
 
 	// check for support
-	if (!webrtcSupport.support) {
+	if (!supportsWebRTC) {
 		this.logger.error('Your browser doesn\'t seem to support WebRTC')
 	}
 

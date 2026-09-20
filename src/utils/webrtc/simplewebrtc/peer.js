@@ -5,7 +5,6 @@
  */
 import util from 'util'
 import adapter from 'webrtc-adapter'
-import webrtcSupport from 'webrtcsupport'
 import WildEmitter from 'wildemitter'
 import { isSafari } from '../../browserCheck.ts'
 
@@ -619,7 +618,7 @@ Peer.prototype._observeDataChannel = function(channel) {
 
 // Fetch or create a data channel by the given name
 Peer.prototype.getDataChannel = function(name, opts) {
-	if (!webrtcSupport.supportDataChannel) {
+	if (!('createDataChannel' in RTCPeerConnection.prototype)) {
 		return this.emit('error', new Error('createDataChannel not supported'))
 	}
 	if (!this.enableDataChannels) {
