@@ -8,7 +8,7 @@
  *
  * Excluded types:
  * - GIF - to keep the animation;
- * - SVG - not worth to resterize the vector;
+ * - SVG - not worth to rasterize the vector;
  * - HEIC/HEIF, TIFF, RAW - need a heavy library.
  */
 const COMPRESSIBLE_TYPES = [
@@ -20,15 +20,14 @@ const COMPRESSIBLE_TYPES = [
 	'image/x-icon',
 ]
 
-/** Unified output format (lossy WebP is ~25-35% smaller than JPEG and supports an alpha channel) */
-const OUTPUT_TYPE = 'image/webp'
-/** Fallback used where WebP encoding is unavailable */
-const FALLBACK_TYPE = 'image/jpeg'
+/** Unified output format (lossy JPEG does not support an alpha channel, but small enough and enabled by default) */
+const OUTPUT_TYPE = 'image/jpeg'
 /** Default image compression quality for formats with lossy compression support (80%) */
 const COMPRESS_QUALITY = 0.8
 /** Default max resolution of compressed image in pixels (matches HD resolution) */
 const COMPRESS_MAX_RESOLUTION = 1280
 
+/** Map of supported output formats -> to file extension */
 const EXTENSIONS = {
 	'image/webp': '.webp',
 	'image/jpeg': '.jpg',
@@ -47,30 +46,6 @@ function supportOffscreenCanvas(): boolean {
 		&& typeof OffscreenCanvas.prototype.convertToBlob === 'function'
 
 	return isOffscreenCanvasSupported
-}
-
-let isWebpEncodingSupported: boolean
-
-/**
- * Detect whether the canvas encoder can produce WebP (missing on Safari < 16.4).
- * Browser fallback is lossless PNG encode.
- */
-function supportWebpEncoding(): boolean {
-	if (typeof isWebpEncodingSupported !== 'undefined') {
-		return isWebpEncodingSupported
-	}
-	if (typeof document === 'undefined') {
-		return false
-	}
-	try {
-		const canvas = document.createElement('canvas')
-		canvas.width = 1
-		canvas.height = 1
-		isWebpEncodingSupported ??= canvas.toDataURL('image/webp')?.startsWith('data:image/webp') ?? false
-	} catch (error) {
-		isWebpEncodingSupported ??= false
-	}
-	return isWebpEncodingSupported
 }
 
 /**
@@ -137,7 +112,7 @@ function scaledDimensions(width: number, height: number, maxResolution: number):
 /**
  * Compresses an image file via the Canvas API.
  * - preserve the EXIF orientation before drawing ('from-image'), while stripping EXIF tag;
- * - outputs WebP (JPEG as fallback) file with adjusted extension;
+ * - outputs JPEG file with adjusted extension;
  * - scales down images larger than maxResolution on either axis;
  * - returns null when the encode fails, or when re-encoding would not make the file smaller.
  *
@@ -150,7 +125,6 @@ export async function compressImage(file: File, quality = COMPRESS_QUALITY, maxR
 	const dimensionsOriginal = `${bitmap.width}×${bitmap.height}`
 	const { width, height } = scaledDimensions(bitmap.width, bitmap.height, maxResolution)
 
-	const outputType = supportWebpEncoding() ? OUTPUT_TYPE : FALLBACK_TYPE
 	const canvas = createCanvas(width, height)
 	const ctx = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D | null
 	if (!ctx) {
@@ -161,11 +135,9 @@ export async function compressImage(file: File, quality = COMPRESS_QUALITY, maxR
 
 	try {
 		ctx.imageSmoothingQuality = 'high'
-		if (outputType === FALLBACK_TYPE) {
-			// JPEG has no alpha channel, so composite onto white instead of black
-			ctx.fillStyle = '#ffffff'
-			ctx.fillRect(0, 0, width, height)
-		}
+		// JPEG has no alpha channel, so composite onto white instead of black
+		ctx.fillStyle = '#ffffff'
+		ctx.fillRect(0, 0, width, height)
 		ctx.drawImage(bitmap, 0, 0, width, height)
 	} catch (e) {
 		console.warn('[imageCompression] Failed to draw image on canvas')
@@ -175,7 +147,7 @@ export async function compressImage(file: File, quality = COMPRESS_QUALITY, maxR
 		bitmap.close()
 	}
 
-	const blob = await encodeCanvas(canvas, outputType, quality)
+	const blob = await encodeCanvas(canvas, OUTPUT_TYPE, quality)
 	// An unsupported type silently yields a PNG - trust the encoder to assign type
 	const type = blob.type as keyof typeof EXTENSIONS
 	const name = file.name.replace(/\.[^.]+$/, '') + (EXTENSIONS[type] ?? '')
