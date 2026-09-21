@@ -148,7 +148,6 @@ final class GithubActionsFormatter implements Formatter {
 			// when only reading Exception::getMessage().
 			$presented = $this->exceptionPresenter->presentException(
 				$result->getException(),
-				OutputPrinter::VERBOSITY_NORMAL,
 				applyEditorUrl: false,
 			);
 			$message .= "\n\n" . rtrim($presented);
