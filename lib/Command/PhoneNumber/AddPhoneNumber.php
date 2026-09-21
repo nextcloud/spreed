@@ -66,8 +66,15 @@ class AddPhoneNumber extends Base {
 		}
 		$userId = $user->getUID();
 
+		$phoneNumber = $this->phoneNumberValidation->cleanNumber($phoneNumber);
+
+		if ($phoneNumber === '') {
+			$output->writeln('<error>Phone number is invalid.</error>');
+			return self::FAILURE;
+		}
+
 		try {
-			$phoneNumber = $this->phoneNumberValidation->validateNumber($phoneNumber);
+			$this->phoneNumberValidation->validateNumber($phoneNumber);
 		} catch (\InvalidArgumentException) {
 			$output->writeln('<error>Not a valid phone number ' . $phoneNumber . '. The format is invalid.</error>');
 			return self::FAILURE;
