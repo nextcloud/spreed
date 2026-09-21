@@ -54,7 +54,7 @@ jobs:
       matrix:
         test-suite: ['conversation-2']
         php-versions: ['8.5']
-        server-versions: ['138e23c30c74248ca935724dcda0a97999c835c9']
+        server-versions: ['be4ffd4257b40fcbbcd116d41d85218acbd54e2b']
         guests-versions: ['main']
         circles-versions: ['master']
         notifications-versions: ['master']
