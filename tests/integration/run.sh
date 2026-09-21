@@ -149,9 +149,9 @@ for OCC in occ_host occ_remote; do
 	${OCC} app:enable spreed || exit 1
 	${OCC} app:enable --force spreedcheats || exit 1
 	${OCC} app:enable --force talk_webhook_demo || exit 1
-	${OCC} app:enable --force notifications || exit 1
-	${OCC} app:enable --force guests || exit 1
-	${OCC} app:enable --force circles || exit 1
+	#${OCC} app:enable --force notifications || exit 1
+	#${OCC} app:enable --force guests || exit 1
+	#${OCC} app:enable --force circles || exit 1
 	# Explicitly disable password_policy so it starts inactive; individual
 	# scenarios enable it via "Given password policy app is enabled"
 	${OCC} app:disable password_policy
