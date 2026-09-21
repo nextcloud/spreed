@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
-use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\MatterbridgeManager;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -41,7 +41,7 @@ class CheckMatterbridges extends TimedJob {
 
 	#[\Override]
 	protected function run($argument): void {
-		if ($this->appConfig->getAppValueBool(Config::MATTERBRIDGE_ENABLED)) {
+		if ($this->appConfig->getAppValueBool(ConfigLexicon::MATTERBRIDGE_ENABLED)) {
 			$this->bridgeManager->checkAllBridges();
 			$this->bridgeManager->killZombieBridges();
 			$this->logger->info('Checked if Matterbridge instances are running correctly.');

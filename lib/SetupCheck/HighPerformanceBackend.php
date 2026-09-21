@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\SetupCheck;
 
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Signaling\Manager;
 use OCP\AppFramework\Http;
 use OCP\ICacheFactory;
@@ -43,7 +44,7 @@ class HighPerformanceBackend implements ISetupCheck {
 
 	#[\Override]
 	public function run(): SetupResult {
-		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+		if ($this->talkConfig->getSignalingMode() === ConfigLexicon::SIGNALING_INTERNAL) {
 			$setupResult = SetupResult::error(...);
 			if ($this->talkConfig->getHideSignalingWarning()) {
 				$setupResult = SetupResult::info(...);

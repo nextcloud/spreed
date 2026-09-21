@@ -306,7 +306,7 @@ class Capabilities implements IPublicCapability {
 					'has-translation-providers' => $this->translationManager->hasProviders(),
 					'has-translation-task-providers' => false,
 					'typing-privacy' => Participant::PRIVACY_PUBLIC,
-					'summary-threshold' => max(1, $this->appConfig->getAppValueInt(Config::SUMMARY_THRESHOLD)),
+					'summary-threshold' => max(1, $this->appConfig->getAppValueInt(ConfigLexicon::SUMMARY_THRESHOLD)),
 					'style' => $this->talkConfig->getChatStyle($user?->getUID()),
 					'matterbridge-enabled' => $user instanceof IUser && $this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1',
 				],
@@ -320,7 +320,7 @@ class Capabilities implements IPublicCapability {
 					'retention-event' => max(0, $this->appConfig->getAppValueInt('retention_event_rooms', 28)),
 					'retention-phone' => max(0, $this->appConfig->getAppValueInt('retention_phone_rooms', 7)),
 					'retention-instant-meetings' => max(0, $this->appConfig->getAppValueInt('retention_instant_meetings', 1)),
-					'retention-classified' => max(0, $this->appConfig->getAppValueInt(Config::RETENTION_CLASSIFIED_ROOMS)),
+					'retention-classified' => max(0, $this->appConfig->getAppValueInt(ConfigLexicon::RETENTION_CLASSIFIED_ROOMS)),
 				],
 				'federation' => [
 					'enabled' => false,
@@ -329,7 +329,7 @@ class Capabilities implements IPublicCapability {
 					'only-trusted-servers' => true,
 				],
 				'previews' => [
-					'max-gif-size' => $this->appConfig->getAppValueInt(Config::MAX_GIF_SIZE, 3145728),
+					'max-gif-size' => $this->appConfig->getAppValueInt(ConfigLexicon::MAX_GIF_SIZE, 3145728),
 				],
 				'signaling' => [
 					'session-ping-limit' => max(0, (int)$this->serverConfig->getAppValue('spreed', 'session-ping-limit', '200')),
@@ -337,10 +337,10 @@ class Capabilities implements IPublicCapability {
 					// 'hello-v2-token-key' => string,
 				],
 				'experiments' => [
-					'enabled' => max(0, $this->appConfig->getAppValueInt($user instanceof IUser ? Config::EXPERIMENTS_USERS : Config::EXPERIMENTS_GUESTS)),
+					'enabled' => max(0, $this->appConfig->getAppValueInt($user instanceof IUser ? ConfigLexicon::EXPERIMENTS_USERS : ConfigLexicon::EXPERIMENTS_GUESTS)),
 				],
 				'feature-hints' => [
-					'current' => Config::FEATURE_HINT,
+					'current' => ConfigLexicon::FEATURE_HINT,
 					'hidden' => max(0, $this->appConfig->getAppValueInt('feature_hints_hidden')),
 				],
 				'permissions' => [
@@ -421,7 +421,7 @@ class Capabilities implements IPublicCapability {
 			$capabilities['config']['chat']['has-translation-task-providers'] = true;
 		}
 
-		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_EXTERNAL) {
+		if ($this->talkConfig->getSignalingMode() === ConfigLexicon::SIGNALING_EXTERNAL) {
 			$capabilities['features'][] = 'call-end-to-end-encryption';
 		}
 
@@ -447,7 +447,7 @@ class Capabilities implements IPublicCapability {
 	}
 
 	protected function isLiveTranscriptionSupported(): bool {
-		return $this->talkConfig->getSignalingMode() === Config::SIGNALING_EXTERNAL
+		return $this->talkConfig->getSignalingMode() === ConfigLexicon::SIGNALING_EXTERNAL
 			&& $this->liveTranscriptionService->isLiveTranscriptionAppEnabled();
 	}
 

@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Files\Util;
 use OCA\Talk\Manager;
@@ -92,7 +92,7 @@ class FilesIntegrationController extends OCSController {
 		'fileId' => '.+',
 	])]
 	public function getRoomByFileId(string $fileId): DataResponse {
-		if (!$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES)) {
+		if (!$this->appConfig->getAppValueBool(ConfigLexicon::CONVERSATIONS_FILES)) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
@@ -170,8 +170,8 @@ class FilesIntegrationController extends OCSController {
 		'shareToken' => '.+',
 	])]
 	public function getRoomByShareToken(string $shareToken): DataResponse {
-		if (!$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES)
-			|| !$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES_PUBLIC_SHARES)) {
+		if (!$this->appConfig->getAppValueBool(ConfigLexicon::CONVERSATIONS_FILES)
+			|| !$this->appConfig->getAppValueBool(ConfigLexicon::CONVERSATIONS_FILES_PUBLIC_SHARES)) {
 			return new DataResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 

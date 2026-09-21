@@ -11,6 +11,7 @@ namespace OCA\Talk\Controller;
 use GuzzleHttp\Exception\ConnectException;
 use InvalidArgumentException;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
@@ -117,8 +118,8 @@ class RecordingController extends AEnvironmentAwareOCSController {
 			}
 
 			$responseTime = $this->timeFactory->getDateTime($response->getHeader('date'))->getTimestamp();
-			if (($timeBefore - Config::ALLOWED_BACKEND_TIMEOFFSET) > $responseTime
-				|| ($timeAfter + Config::ALLOWED_BACKEND_TIMEOFFSET) < $responseTime) {
+			if (($timeBefore - ConfigLexicon::ALLOWED_BACKEND_TIMEOFFSET) > $responseTime
+				|| ($timeAfter + ConfigLexicon::ALLOWED_BACKEND_TIMEOFFSET) < $responseTime) {
 				return new DataResponse([
 					'error' => 'TIME_OUT_OF_SYNC',
 				], Http::STATUS_INTERNAL_SERVER_ERROR);

@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Stun;
 
 use OC\Core\Command\Base;
-use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCP\AppFramework\Services\IAppConfig;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -45,7 +45,7 @@ class Add extends Base {
 			return 1;
 		}
 
-		$servers = $this->appConfig->getAppValueArray(Config::STUN_SERVERS);
+		$servers = $this->appConfig->getAppValueArray(ConfigLexicon::STUN_SERVERS);
 
 		// check if the server is already in the list
 		foreach ($servers as $existingServer) {
@@ -57,7 +57,7 @@ class Add extends Base {
 
 		$servers[] = "$host:$port";
 
-		$this->appConfig->setAppValueArray(Config::STUN_SERVERS, $servers);
+		$this->appConfig->setAppValueArray(ConfigLexicon::STUN_SERVERS, $servers);
 		$output->writeln('<info>Added ' . "$host:$port" . '.</info>');
 		return 0;
 	}

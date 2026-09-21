@@ -17,6 +17,7 @@ use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\Notifier;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Exceptions\CannotReachRemoteException;
 use OCA\Talk\Exceptions\ChatSummaryException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -1860,7 +1861,7 @@ class ChatController extends AEnvironmentAwareOCSController {
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
 		}
 
-		if (!$this->appConfig->getAppValueBool(Config::DELETE_ONE_TO_ONE_CONVERSATIONS)
+		if (!$this->appConfig->getAppValueBool(ConfigLexicon::DELETE_ONE_TO_ONE_CONVERSATIONS)
 				&& ($this->room->getType() === Room::TYPE_ONE_TO_ONE
 					|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)) {
 			// Not allowed to purge one-to-one conversations

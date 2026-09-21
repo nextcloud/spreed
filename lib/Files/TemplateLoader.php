@@ -11,6 +11,7 @@ namespace OCA\Talk\Files;
 use OCA\Files\Event\LoadSidebar;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
@@ -51,7 +52,7 @@ class TemplateLoader implements IEventListener {
 			return;
 		}
 
-		if (!$this->appConfig->getAppValueBool(Config::CONVERSATIONS_FILES)) {
+		if (!$this->appConfig->getAppValueBool(ConfigLexicon::CONVERSATIONS_FILES)) {
 			return;
 		}
 

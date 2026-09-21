@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Listener;
 
-use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Events\AAttendeeRemovedEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -40,10 +40,10 @@ class GroupDeletedListener implements IEventListener {
 
 		$gid = $event->getGroup()->getGID();
 
-		$this->removeGroupFromConfig(Config::ALLOWED_GROUPS_SIP, $gid);
+		$this->removeGroupFromConfig(ConfigLexicon::ALLOWED_GROUPS_SIP, $gid);
 		$this->removeGroupFromConfig('start_calls_groups', $gid);
-		$this->removeGroupFromConfig(Config::ALLOWED_GROUPS_CONVERSATIONS, $gid);
-		$this->removeGroupFromConfig(Config::ALLOWED_GROUPS_TALK, $gid);
+		$this->removeGroupFromConfig(ConfigLexicon::ALLOWED_GROUPS_CONVERSATIONS, $gid);
+		$this->removeGroupFromConfig(ConfigLexicon::ALLOWED_GROUPS_TALK, $gid);
 
 		// Remove the group itself from being a participant
 		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_GROUPS, $gid);

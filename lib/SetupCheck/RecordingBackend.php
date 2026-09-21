@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\SetupCheck;
 
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\IL10N;
 use OCP\SetupCheck\ISetupCheck;
@@ -30,7 +31,7 @@ class RecordingBackend implements ISetupCheck {
 	#[\Override]
 	public function getName(): string {
 		$name = $this->l->t('Recording backend');
-		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+		if ($this->talkConfig->getSignalingMode() === ConfigLexicon::SIGNALING_INTERNAL) {
 			return '[skip] ' . $name;
 		}
 		return $name;
@@ -38,7 +39,7 @@ class RecordingBackend implements ISetupCheck {
 
 	#[\Override]
 	public function run(): SetupResult {
-		if ($this->talkConfig->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+		if ($this->talkConfig->getSignalingMode() === ConfigLexicon::SIGNALING_INTERNAL) {
 			return SetupResult::success($this->l->t('Using the recording backend requires a High-performance backend.'));
 		}
 		if (empty($this->talkConfig->getRecordingServers()) && $this->appConfig->getAppValueInt('feature_hints_hidden') < 34) {

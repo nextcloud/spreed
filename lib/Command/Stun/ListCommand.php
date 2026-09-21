@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Stun;
 
 use OC\Core\Command\Base;
-use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCP\AppFramework\Services\IAppConfig;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,7 +32,7 @@ class ListCommand extends Base {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$servers = $this->appConfig->getAppValueArray(Config::STUN_SERVERS);
+		$servers = $this->appConfig->getAppValueArray(ConfigLexicon::STUN_SERVERS);
 		$this->writeArrayInOutputFormat($input, $output, $servers);
 		return 0;
 	}

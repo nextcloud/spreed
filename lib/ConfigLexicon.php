@@ -17,6 +17,78 @@ use OCP\Config\ValueType;
 use OCP\IAppConfig;
 
 class ConfigLexicon implements ILexicon {
+
+	public const ALLOWED_BACKEND_TIMEOFFSET = 45;
+	public const SIGNALING_INTERNAL = 'internal';
+	public const SIGNALING_EXTERNAL = 'external';
+
+	public const EXPERIMENTAL_UPDATE_PARTICIPANTS = 1;
+	public const EXPERIMENTAL_RECOVER_SESSION = 2;
+	public const EXPERIMENTAL_CHAT_RELAY = 4;
+
+	public const SIGNALING_TICKET_V1 = 1;
+	public const SIGNALING_TICKET_V2 = 2;
+
+	public const string RETENTION_CLASSIFIED_ROOMS = 'retention_classified_rooms';
+	public const string STUN_SERVERS = 'stun_servers';
+	public const string TURN_SERVERS = 'turn_servers';
+	public const string DEFAULT_STUN_SERVER = 'stun.nextcloud.com:443';
+	public const string ALLOWED_GROUPS_TALK = 'allowed_groups';
+	public const string ALLOWED_GROUPS_SIP = 'sip_bridge_groups';
+	public const string ALLOWED_GROUPS_CONVERSATIONS = 'start_conversations';
+	public const string BREAKOUT_ROOMS_ENABLED = 'breakout_rooms';
+	public const string CONVERSATION_SUBFOLDERS = 'conversation_subfolders';
+	public const string CONVERSATIONS_FILES = 'conversations_files';
+	public const string CONVERSATIONS_FILES_PUBLIC_SHARES = 'conversations_files_public_shares';
+	public const string DEFAULT_ROOM_PERMISSIONS = 'default_permissions';
+	public const string DEFAULT_ATTACHMENT_FOLDER = 'default_attachment_folder';
+	public const string GRID_VIDEOS_LIMIT = 'grid_videos_limit';
+	public const string GRID_VIDEOS_LIMIT_ENFORCED = 'grid_videos_limit_enforced';
+	public const string GUESTS_PLAY_SOUNDS = 'guests_play_sounds';
+	public const string GROUP_CHATS_FORCE_PASSWORDS_ENABLED = 'force_passwords';
+	public const string EXTERNAL_CALL_SERVICE = 'external_call_service';
+	public const string EXTERNAL_CALL_SERVICE_FRAME_ORIGINS = 'external_call_service_frame_origins';
+	public const string EXTERNAL_CALL_SERVICE_SHARED_SECRET = 'external_call_service_shared_secret';
+	public const string EXTERNAL_CALL_SERVICE_AUTH_USER = 'external_call_service_auth_user';
+	public const string EXTERNAL_CALL_SERVICE_AUTH_PASSWORD = 'external_call_service_auth_password';
+	public const string EXTERNAL_CALL_SERVICE_IFRAME_FIELD = 'external_call_service_iframe_field';
+	public const string CALLS_START_WITHOUT_MEDIA = 'calls_start_without_media';
+	public const string INACTIVITY_LOCK_AFTER_DAYS = 'inactivity_lock_after_days';
+	public const string INACTIVITY_ENABLE_LOBBY = 'inactivity_enable_lobby';
+	public const string EXPERIMENTS_USERS = 'experiments_users';
+	public const string EXPERIMENTS_GUESTS = 'experiments_guests';
+	public const string CALL_END_TO_END_ENCRYPTION = 'call_end_to_end_encryption';
+	public const string CALL_RECORDING_SUMMARY_PROMPT = 'call_recording_summary_prompt';
+	public const string FORCE_PASSWORDS = 'force_passwords';
+	public const string BACKGROUNDS_BRANDED_FOR_GUESTS = 'backgrounds_branded_for_guests';
+	public const string BACKGROUNDS_DEFAULT_FOR_USERS = 'backgrounds_default_for_useres';
+	public const string BACKGROUNDS_UPLOAD_USERS = 'backgrounds_upload_users';
+	public const string CREATE_SAMPLES = 'create_samples';
+	public const string MATTERBRIDGE_ENABLED = 'enable_matterbridge';
+	public const string DELETE_ONE_TO_ONE_CONVERSATIONS = 'delete_one_to_one_conversations';
+	public const string MAX_GIF_SIZE = 'max_gif_size';
+	public const string CERTIFICATE_EXPIRATION_DAYS = 'certificate_expiration_days';
+	public const string TOKEN_ENTROPY = 'token_entropy';
+	public const string SUMMARY_THRESHOLD = 'summary_threshold';
+
+	/**
+	 * 1. Call recording, …
+	 */
+	public const FEATURE_HINT = 34;
+
+	/**
+	 * Currently limiting to 1k users because the user_status API would yield
+	 * an error on Oracle otherwise. Clients should use a virtual scrolling
+	 * mechanism so the data should not be a problem nowadays
+	 */
+	public const USER_STATUS_INTEGRATION_LIMIT = 1000;
+
+	/**
+	 * Minimum length of the external call service shared secret. Shorter
+	 * secrets are not considered configured to improve security.
+	 */
+	public const EXTERNAL_CALL_SERVICE_SECRET_MIN_LENGTH = 64;
+
 	/**
 	 * Detault instructions used to generate Talk call recording summaries.
 	 */
@@ -154,46 +226,46 @@ PROMPT;
 			new Entry(UserPreference::CONVERSATIONS_LIST_STYLE, ValueType::STRING, UserPreference::CONVERSATION_LIST_STYLE_TWO_LINES),
 			new Entry(UserPreference::CHAT_STYLE, ValueType::STRING, UserPreference::CHAT_STYLE_SPLIT),
 			new Entry(SignalingManager::HAS_FEATURE_CHANGED_USERS, ValueType::BOOL, false),
-			new Entry(Config::RETENTION_CLASSIFIED_ROOMS, ValueType::INT, 3600, definition: 'Retention period of classified conversations in seconds after a call happened (`0` means no-retention)'),
-			new Entry(Config::STUN_SERVERS, ValueType::ARRAY, [Config::DEFAULT_STUN_SERVER], definition: 'List of STUN servers for WebRTC connections', flags: IAppConfig::FLAG_SENSITIVE),
-			new Entry(Config::TURN_SERVERS, ValueType::ARRAY, [], definition: 'List of TURN servers for WebRTC connections', flags: IAppConfig::FLAG_SENSITIVE),
-			new Entry(Config::ALLOWED_GROUPS_TALK, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to use Talk'),
-			new Entry(Config::ALLOWED_GROUPS_SIP, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to enable SIP dial-in in a conversation'),
-			new Entry(Config::ALLOWED_GROUPS_CONVERSATIONS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to create conversation'),
-			new Entry(Config::BREAKOUT_ROOMS_ENABLED, ValueType::BOOL, true, definition: 'Whether or not breakout rooms are allowed (Will only prevent creating new breakout rooms. Existing conversations are not modified.'),
-			new Entry(Config::CONVERSATION_SUBFOLDERS, ValueType::BOOL, true, definition: ''),
-			new Entry(Config::CONVERSATIONS_FILES, ValueType::BOOL, true, definition: 'Whether the files app integration is enabled allowing tostart conversations in the right sidebar'),
-			new Entry(Config::CONVERSATIONS_FILES_PUBLIC_SHARES, ValueType::BOOL, true, definition: 'Whether the public share integration is enabled allowing to start conversations in the right sidebar on the public share page (Requires `conversations_files` also to be enabled'),
-			new Entry(Config::DEFAULT_ROOM_PERMISSIONS, ValueType::INT, 246, definition: 'Default permissions for non-moderators' . PHP_EOL . '(see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#attendee-permissions for bit flags)'),
-			new Entry(Config::DEFAULT_ATTACHMENT_FOLDER, ValueType::STRING, '/Talk', definition: 'Specify default attachment folder location'),
-			new Entry(Config::GRID_VIDEOS_LIMIT, ValueType::INT, 19 /* 5*4 - self */, definition: 'Maximum number of videos to show (additional to the own video)'),
-			new Entry(Config::GRID_VIDEOS_LIMIT_ENFORCED, ValueType::BOOL, false, definition: 'Whether the number of grid videos should be enforced'),
-			new Entry(Config::GUESTS_PLAY_SOUNDS, ValueType::BOOL, true, definition: 'Whether guests hear the join and leave sounds by default'),
-			new Entry(Config::GROUP_CHATS_FORCE_PASSWORDS_ENABLED, ValueType::BOOL, false, definition: 'Whether public chats are forced to use a password'),
-			new Entry(Config::EXTERNAL_CALL_SERVICE, ValueType::STRING, '', definition: 'URL of the external service endpoint. `{meetingId}` is replaced with the conversation\'s `objectId` when Talk makes the request'),
-			new Entry(Config::EXTERNAL_CALL_SERVICE_SHARED_SECRET, ValueType::STRING, '', definition: 'Shared secret used for two purposes:' . PHP_EOL . 'as the HTTP Basic Auth password when Talk calls the external service, and as the bearer token when the external service calls Talk.' . PHP_EOL . 'Minimum 64 characters, `a-zA-Z0-9` recommended'),
-			new Entry(Config::EXTERNAL_CALL_SERVICE_AUTH_USER, ValueType::STRING, '', definition: 'HTTP Basic Auth username used when Talk calls the external service'),
-			new Entry(Config::EXTERNAL_CALL_SERVICE_AUTH_PASSWORD, ValueType::STRING, '', definition: 'HTTP Basic Auth password used when Talk calls the external service'),
-			new Entry(Config::EXTERNAL_CALL_SERVICE_FRAME_ORIGINS, ValueType::ARRAY, [], definition: 'JSON array of scheme+host(+port) origins that may be loaded in the iframe.' . PHP_EOL . 'Added to `Content-Security-Policy: frame-src` and the `Permissions-Policy` for camera/microphone'),
-			new Entry(Config::EXTERNAL_CALL_SERVICE_IFRAME_FIELD, ValueType::STRING, '', definition: 'JSON field name in the external service response that contains the iframe URL'),
-			new Entry(Config::CALLS_START_WITHOUT_MEDIA, ValueType::BOOL, false, definition: 'Whether participants start with enabled or disabled audio and video by default'),
-			new Entry(Config::INACTIVITY_LOCK_AFTER_DAYS, ValueType::INT, 0, definition: 'A duration (in days) after which rooms are locked. Calculated from the last activity in the room.'),
-			new Entry(Config::INACTIVITY_ENABLE_LOBBY, ValueType::BOOL, false, definition: 'Additionally enable the lobby for inactive rooms so they can only be read by moderators.'),
-			new Entry(Config::EXPERIMENTS_USERS, ValueType::INT, 0, definition: 'Bit flag of experiments that should be enabled for logged-in users on this server' . PHP_EOL . 'See https://github.com/nextcloud/spreed/blob/main/docs/settings.md#experiments'),
-			new Entry(Config::EXPERIMENTS_GUESTS, ValueType::INT, 0, definition: 'Bit flag of experiments that should be enabled for guests on this server' . PHP_EOL . 'See https://github.com/nextcloud/spreed/blob/main/docs/settings.md#experiments'),
-			new Entry(Config::CALL_END_TO_END_ENCRYPTION, ValueType::BOOL, false, definition: 'Whether clients should end-to-end encrypt streams in calls (Only supported with High-performance backend'),
-			new Entry(Config::CALL_RECORDING_SUMMARY_PROMPT, ValueType::STRING, self::DEFAULT_CALL_RECORDING_SUMMARY_PROMPT, definition: 'Instructions used by LLM to generate Talk call recording summaries'),
-			new Entry(Config::FORCE_PASSWORDS, ValueType::BOOL, false, definition: 'Whether public chats are forced to use a password'),
-			new Entry(Config::BACKGROUNDS_BRANDED_FOR_GUESTS, ValueType::BOOL, false, definition: 'Whether guests are allowed to use the virtual backgrounds provided via `themes/talk-backgrounds/`'),
-			new Entry(Config::BACKGROUNDS_DEFAULT_FOR_USERS, ValueType::BOOL, definition: 'Whether users are allowed to use the default virutal backgrounds provided by the releases'),
-			new Entry(Config::BACKGROUNDS_UPLOAD_USERS, ValueType::BOOL, definition: 'Whether users are allowed to upload custom virtual backgrounds and choose from their Nextcloud Files'),
-			new Entry(Config::CREATE_SAMPLES, ValueType::BOOL, true, definition: 'Create sample conversations (the content can be overwritten by providing files in a provided `samples_directory` app config)'),
-			new Entry(Config::MATTERBRIDGE_ENABLED, ValueType::BOOL, false, definition: 'Whether the Matterbridge integration is enabled and can be configured'),
-			new Entry(Config::DELETE_ONE_TO_ONE_CONVERSATIONS, ValueType::BOOL, false, definition: 'Whether one-to-one conversations can be left by either participant or should be deleted when one participant leaves'),
-			new Entry(Config::MAX_GIF_SIZE, ValueType::INT, 3145728, definition: 'Maximum file size for clients to render gifs previews with animation', rename: 'max-gif-size'),
-			new Entry(Config::CERTIFICATE_EXPIRATION_DAYS, ValueType::INT, 10, definition: 'Minimum days a certificate needs to be valid for, before an expiration notification will be shown. (default 10, minimum 0 and maximum 365)'),
-			new Entry(Config::TOKEN_ENTROPY, ValueType::INT, 8, definition: 'Length of conversation tokens, can be increased to make tokens harder to guess but reduces readability and dial-in comfort'),
-			new Entry(Config::SUMMARY_THRESHOLD, ValueType::INT, 100, definition: 'Amount of unread messages a user needs before they see the option to summarize with AI'),
+			new Entry(ConfigLexicon::RETENTION_CLASSIFIED_ROOMS, ValueType::INT, 3600, definition: 'Retention period of classified conversations in seconds after a call happened (`0` means no-retention)'),
+			new Entry(ConfigLexicon::STUN_SERVERS, ValueType::ARRAY, [ConfigLexicon::DEFAULT_STUN_SERVER], definition: 'List of STUN servers for WebRTC connections', flags: IAppConfig::FLAG_SENSITIVE),
+			new Entry(ConfigLexicon::TURN_SERVERS, ValueType::ARRAY, [], definition: 'List of TURN servers for WebRTC connections', flags: IAppConfig::FLAG_SENSITIVE),
+			new Entry(ConfigLexicon::ALLOWED_GROUPS_TALK, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to use Talk'),
+			new Entry(ConfigLexicon::ALLOWED_GROUPS_SIP, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to enable SIP dial-in in a conversation'),
+			new Entry(ConfigLexicon::ALLOWED_GROUPS_CONVERSATIONS, ValueType::ARRAY, [], definition: 'List of group ids that are allowed to create conversation'),
+			new Entry(ConfigLexicon::BREAKOUT_ROOMS_ENABLED, ValueType::BOOL, true, definition: 'Whether or not breakout rooms are allowed (Will only prevent creating new breakout rooms. Existing conversations are not modified.'),
+			new Entry(ConfigLexicon::CONVERSATION_SUBFOLDERS, ValueType::BOOL, true, definition: ''),
+			new Entry(ConfigLexicon::CONVERSATIONS_FILES, ValueType::BOOL, true, definition: 'Whether the files app integration is enabled allowing tostart conversations in the right sidebar'),
+			new Entry(ConfigLexicon::CONVERSATIONS_FILES_PUBLIC_SHARES, ValueType::BOOL, true, definition: 'Whether the public share integration is enabled allowing to start conversations in the right sidebar on the public share page (Requires `conversations_files` also to be enabled'),
+			new Entry(ConfigLexicon::DEFAULT_ROOM_PERMISSIONS, ValueType::INT, 246, definition: 'Default permissions for non-moderators' . PHP_EOL . '(see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#attendee-permissions for bit flags)'),
+			new Entry(ConfigLexicon::DEFAULT_ATTACHMENT_FOLDER, ValueType::STRING, '/Talk', definition: 'Specify default attachment folder location'),
+			new Entry(ConfigLexicon::GRID_VIDEOS_LIMIT, ValueType::INT, 19 /* 5*4 - self */, definition: 'Maximum number of videos to show (additional to the own video)'),
+			new Entry(ConfigLexicon::GRID_VIDEOS_LIMIT_ENFORCED, ValueType::BOOL, false, definition: 'Whether the number of grid videos should be enforced'),
+			new Entry(ConfigLexicon::GUESTS_PLAY_SOUNDS, ValueType::BOOL, true, definition: 'Whether guests hear the join and leave sounds by default'),
+			new Entry(ConfigLexicon::GROUP_CHATS_FORCE_PASSWORDS_ENABLED, ValueType::BOOL, false, definition: 'Whether public chats are forced to use a password'),
+			new Entry(ConfigLexicon::EXTERNAL_CALL_SERVICE, ValueType::STRING, '', definition: 'URL of the external service endpoint. `{meetingId}` is replaced with the conversation\'s `objectId` when Talk makes the request'),
+			new Entry(ConfigLexicon::EXTERNAL_CALL_SERVICE_SHARED_SECRET, ValueType::STRING, '', definition: 'Shared secret used for two purposes:' . PHP_EOL . 'as the HTTP Basic Auth password when Talk calls the external service, and as the bearer token when the external service calls Talk.' . PHP_EOL . 'Minimum 64 characters, `a-zA-Z0-9` recommended'),
+			new Entry(ConfigLexicon::EXTERNAL_CALL_SERVICE_AUTH_USER, ValueType::STRING, '', definition: 'HTTP Basic Auth username used when Talk calls the external service'),
+			new Entry(ConfigLexicon::EXTERNAL_CALL_SERVICE_AUTH_PASSWORD, ValueType::STRING, '', definition: 'HTTP Basic Auth password used when Talk calls the external service'),
+			new Entry(ConfigLexicon::EXTERNAL_CALL_SERVICE_FRAME_ORIGINS, ValueType::ARRAY, [], definition: 'JSON array of scheme+host(+port) origins that may be loaded in the iframe.' . PHP_EOL . 'Added to `Content-Security-Policy: frame-src` and the `Permissions-Policy` for camera/microphone'),
+			new Entry(ConfigLexicon::EXTERNAL_CALL_SERVICE_IFRAME_FIELD, ValueType::STRING, '', definition: 'JSON field name in the external service response that contains the iframe URL'),
+			new Entry(ConfigLexicon::CALLS_START_WITHOUT_MEDIA, ValueType::BOOL, false, definition: 'Whether participants start with enabled or disabled audio and video by default'),
+			new Entry(ConfigLexicon::INACTIVITY_LOCK_AFTER_DAYS, ValueType::INT, 0, definition: 'A duration (in days) after which rooms are locked. Calculated from the last activity in the room.'),
+			new Entry(ConfigLexicon::INACTIVITY_ENABLE_LOBBY, ValueType::BOOL, false, definition: 'Additionally enable the lobby for inactive rooms so they can only be read by moderators.'),
+			new Entry(ConfigLexicon::EXPERIMENTS_USERS, ValueType::INT, 0, definition: 'Bit flag of experiments that should be enabled for logged-in users on this server' . PHP_EOL . 'See https://github.com/nextcloud/spreed/blob/main/docs/settings.md#experiments'),
+			new Entry(ConfigLexicon::EXPERIMENTS_GUESTS, ValueType::INT, 0, definition: 'Bit flag of experiments that should be enabled for guests on this server' . PHP_EOL . 'See https://github.com/nextcloud/spreed/blob/main/docs/settings.md#experiments'),
+			new Entry(ConfigLexicon::CALL_END_TO_END_ENCRYPTION, ValueType::BOOL, false, definition: 'Whether clients should end-to-end encrypt streams in calls (Only supported with High-performance backend'),
+			new Entry(ConfigLexicon::CALL_RECORDING_SUMMARY_PROMPT, ValueType::STRING, self::DEFAULT_CALL_RECORDING_SUMMARY_PROMPT, definition: 'Instructions used by LLM to generate Talk call recording summaries'),
+			new Entry(ConfigLexicon::FORCE_PASSWORDS, ValueType::BOOL, false, definition: 'Whether public chats are forced to use a password'),
+			new Entry(ConfigLexicon::BACKGROUNDS_BRANDED_FOR_GUESTS, ValueType::BOOL, false, definition: 'Whether guests are allowed to use the virtual backgrounds provided via `themes/talk-backgrounds/`'),
+			new Entry(ConfigLexicon::BACKGROUNDS_DEFAULT_FOR_USERS, ValueType::BOOL, definition: 'Whether users are allowed to use the default virutal backgrounds provided by the releases'),
+			new Entry(ConfigLexicon::BACKGROUNDS_UPLOAD_USERS, ValueType::BOOL, definition: 'Whether users are allowed to upload custom virtual backgrounds and choose from their Nextcloud Files'),
+			new Entry(ConfigLexicon::CREATE_SAMPLES, ValueType::BOOL, true, definition: 'Create sample conversations (the content can be overwritten by providing files in a provided `samples_directory` app config)'),
+			new Entry(ConfigLexicon::MATTERBRIDGE_ENABLED, ValueType::BOOL, false, definition: 'Whether the Matterbridge integration is enabled and can be configured'),
+			new Entry(ConfigLexicon::DELETE_ONE_TO_ONE_CONVERSATIONS, ValueType::BOOL, false, definition: 'Whether one-to-one conversations can be left by either participant or should be deleted when one participant leaves'),
+			new Entry(ConfigLexicon::MAX_GIF_SIZE, ValueType::INT, 3145728, definition: 'Maximum file size for clients to render gifs previews with animation', rename: 'max-gif-size'),
+			new Entry(ConfigLexicon::CERTIFICATE_EXPIRATION_DAYS, ValueType::INT, 10, definition: 'Minimum days a certificate needs to be valid for, before an expiration notification will be shown. (default 10, minimum 0 and maximum 365)'),
+			new Entry(ConfigLexicon::TOKEN_ENTROPY, ValueType::INT, 8, definition: 'Length of conversation tokens, can be increased to make tokens harder to guess but reduces readability and dial-in comfort'),
+			new Entry(ConfigLexicon::SUMMARY_THRESHOLD, ValueType::INT, 100, definition: 'Amount of unread messages a user needs before they see the option to summarize with AI'),
 		];
 	}
 

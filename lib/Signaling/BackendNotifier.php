@@ -12,6 +12,7 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
 use OC\Http\Client\Response;
 use OCA\Talk\Config;
+use OCA\Talk\ConfigLexicon;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
@@ -104,7 +105,7 @@ class BackendNotifier {
 	 * @throws \Exception
 	 */
 	private function backendRequest(Room $room, array $data): ?IResponse {
-		if ($this->config->getSignalingMode() === Config::SIGNALING_INTERNAL) {
+		if ($this->config->getSignalingMode() === ConfigLexicon::SIGNALING_INTERNAL) {
 			return null;
 		}
 
