@@ -34,10 +34,12 @@ const props = withDefaults(defineProps<{
 	timestamp: number
 	messageParameters?: ChatMessage['messageParameters']
 	isReminder?: boolean
+	notificationId?: number | null
 	compact?: boolean
 }>(), {
 	messageParameters: () => ({}),
 	isReminder: false,
+	notificationId: null,
 })
 
 const router = useRouter()
@@ -117,7 +119,7 @@ function handleResultClick() {
 		<template v-if="isReminder" #actions>
 			<NcActionButton
 				closeAfterClick
-				@click.stop="dashboardStore.removeReminder(token, messageId)">
+				@click.stop="dashboardStore.removeReminder(token, messageId, notificationId)">
 				<template #icon>
 					<CloseCircleOutline :size="20" />
 				</template>
