@@ -107,6 +107,7 @@
 
 <script>
 import { isRTL, t } from '@nextcloud/l10n'
+import { getViewer } from '@nextcloud/viewer'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import ArrowExpand from 'vue-material-design-icons/ArrowExpand.vue'
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
@@ -234,9 +235,7 @@ export default {
 	methods: {
 		t,
 		maximize() {
-			if (OCA.Viewer) {
-				OCA.Viewer.close()
-			}
+			getViewer().close()
 			this.callViewStore.setIsViewerOverlay(false)
 		},
 
