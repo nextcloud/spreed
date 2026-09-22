@@ -1,4 +1,4 @@
-/**
+/*!
  * SPDX-FileCopyrightText: 2020 Jitsi team at 8x8 and the community.
  * SPDX-License-Identifier: Apache-2.0
  *
