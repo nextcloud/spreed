@@ -231,7 +231,7 @@ export default {
 
 			this.loading = false
 
-			this.openViewer(filePath, [fileData], fileData)
+			this.openViewer([fileData], fileData)
 
 			this.closeModal()
 		},

@@ -213,11 +213,12 @@ export default {
 	emits: ['removeFile'],
 
 	setup() {
-		const { openViewer } = useViewer('talk')
+		const { openViewer, canOpenInViewer } = useViewer('talk')
 		const sharedItemsStore = useSharedItemsStore()
 
 		return {
 			openViewer,
+			canOpenInViewer,
 			sharedItemsStore,
 			actorStore: useActorStore(),
 			uploadStore: useUploadStore(),
@@ -473,7 +474,7 @@ export default {
 		},
 
 		isViewerAvailable() {
-			return OCA.Viewer?.mimetypes?.includes(this.file.mimetype)
+			return this.canOpenInViewer(this.file)
 		},
 
 		isVoiceMessage() {
@@ -646,7 +647,7 @@ export default {
 				list = this.viewerList
 			}
 
-			this.openViewer(this.internalAbsolutePath, list, this.file, loadMore)
+			this.openViewer(list, this.file, loadMore)
 		},
 	},
 }
