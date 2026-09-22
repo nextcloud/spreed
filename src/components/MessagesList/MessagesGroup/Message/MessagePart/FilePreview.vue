@@ -110,6 +110,7 @@ import { t } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
 import { generateRemoteUrl, generateUrl, imagePath } from '@nextcloud/router'
 import { getUploader } from '@nextcloud/upload'
+import { canView } from '@nextcloud/viewer'
 import { decode } from 'blurhash'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
@@ -212,11 +213,12 @@ export default {
 	emits: ['removeFile'],
 
 	setup() {
-		const { openViewer } = useViewer('talk')
+		const { openViewer, toViewerFile } = useViewer('talk')
 		const sharedItemsStore = useSharedItemsStore()
 
 		return {
 			openViewer,
+			toViewerFile,
 			sharedItemsStore,
 			actorStore: useActorStore(),
 			uploadStore: useUploadStore(),
@@ -479,7 +481,7 @@ export default {
 		},
 
 		isViewerAvailable() {
-			return OCA.Viewer?.mimetypes?.includes(this.file.mimetype)
+			return canView(this.toViewerFile(this.file))
 		},
 
 		isVoiceMessage() {
@@ -652,7 +654,7 @@ export default {
 				list = this.viewerList
 			}
 
-			this.openViewer(this.internalAbsolutePath, list, this.file, loadMore)
+			this.openViewer(list, this.file, loadMore)
 		},
 	},
 }
