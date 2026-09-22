@@ -1,3 +1,9 @@
+/*!
+ * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 import type {
 	Conversation,
 	Participant,
@@ -5,11 +11,6 @@ import type {
 	ParticipantStatus,
 } from '../types/index.ts'
 
-/**
- * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
- * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
 import { t } from '@nextcloud/l10n'
 import { ATTENDEE } from '../constants.ts'
 

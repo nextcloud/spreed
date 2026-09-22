@@ -1,8 +1,9 @@
-import { emit } from '@nextcloud/event-bus'
-/**
+/*!
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
+import { emit } from '@nextcloud/event-bus'
 import { defineStore } from 'pinia'
 import BrowserStorage from '../services/BrowserStorage.js'
 

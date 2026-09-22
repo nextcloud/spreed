@@ -1,3 +1,8 @@
+/*!
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 import type {
 	createFileFromTemplateParams,
 	createFileFromTemplateResponse,
@@ -10,10 +15,6 @@ import type {
 	ProbeAttachmentFolderResponse,
 } from '../types/index.ts'
 
-/**
- * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { SHARE } from '../constants.ts'
