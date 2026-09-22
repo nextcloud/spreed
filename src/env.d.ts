@@ -67,14 +67,6 @@ declare global {
 				gridDebugInformation?: () => void
 				gridDevModeEnable?: () => void
 			}
-
-			/** Public API */
-			Viewer: {
-				open: () => void
-				close: () => void
-				mimetypes: string[]
-				availableHandlers: Record<string, unknown>[]
-			}
 		}
 	}
 
