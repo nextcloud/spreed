@@ -5,6 +5,7 @@
 
 /** The purpose of this file is to wrap the logic shared by the different Talk entry points */
 
+import { registerDefaultHandlers } from '@nextcloud/viewer'
 import { reactive } from 'vue'
 import BrowserStorage from './services/BrowserStorage.js'
 import { setTalkSessionUniqueTabIdHeader } from './services/talkSessionUniqueTabId.ts'
@@ -36,6 +37,8 @@ export function initializeTalk() {
 	if (!storageMigrated) {
 		migrateBrowserStorageOnce()
 	}
+	// Talk pages don't load the Files init script that registers these
+	registerDefaultHandlers()
 	appInitialized = true
 }
 
