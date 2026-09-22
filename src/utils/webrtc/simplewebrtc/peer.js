@@ -1,8 +1,9 @@
-/**
+/*!
  * SPDX-FileCopyrightText: Henrik Joreteg &yet, LLC.
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: MIT
  */
+
 import util from 'util'
 import adapter from 'webrtc-adapter'
 import WildEmitter from 'wildemitter'

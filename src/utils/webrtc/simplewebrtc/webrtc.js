@@ -1,9 +1,10 @@
-import mockconsole from 'mockconsole'
-/**
+/*!
  * SPDX-FileCopyrightText: Henrik Joreteg &yet, LLC.
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: MIT
  */
+
+import mockconsole from 'mockconsole'
 import util from 'util'
 import { supportsWebRTC } from '../../browserCheck.ts'
 import localMedia from './localmedia.js'

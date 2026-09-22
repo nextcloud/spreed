@@ -1,4 +1,4 @@
-/**
+/*!
  * SPDX-FileCopyrightText: 2019 "Henrik Joreteg <henrik@andyet.net>
  * SPDX-License-Identifier: MIT
  *

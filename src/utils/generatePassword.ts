@@ -1,7 +1,8 @@
-/**
+/*!
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 import axios from '@nextcloud/axios'
 // FIXME: should use the capabilities manager to get the password policy
 import { localCapabilities } from '../services/CapabilitiesManager.ts'
