@@ -248,15 +248,15 @@ class Notifier {
 	 * @param IComment $comment
 	 * @param array[] $alreadyNotifiedUsers
 	 * @param bool $silent
+	 * @param int $threadId Validated thread ID, 0 when the message is not part of a thread
 	 * @psalm-param array<int, array{id: string, type: string, reason: string, sourceId?: string, attendee?: Attendee}> $alreadyNotifiedUsers
 	 */
-	public function notifyOtherParticipant(Room $chat, IComment $comment, array $alreadyNotifiedUsers, bool $silent): void {
+	public function notifyOtherParticipant(Room $chat, IComment $comment, array $alreadyNotifiedUsers, bool $silent, int $threadId = 0): void {
 		if ($silent) {
 			return;
 		}
 
 		$participants = $this->participantService->getParticipantsByNotificationLevel($chat, Participant::NOTIFY_ALWAYS);
-		$threadId = (int)$comment->getTopmostParentId();
 		/** @var array<int, ThreadAttendee> $threadAttendees */
 		$threadAttendees = [];
 		if ($threadId !== 0) {
