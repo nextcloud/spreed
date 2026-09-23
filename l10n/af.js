@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Message deleted by author" : "Boodskap deur outeur uitgevee",
     "File not found" : "Lêer nie gevind nie",
     "File is too big" : "Lêer is te groot",
     "Invalid file provided" : "Ongeldige lêer verskaf",
@@ -281,12 +282,14 @@ OC.L10N.register(
     "Tags" : "Etikette",
     "Home" : "Tuis",
     "Alphabetically" : "Alfabeties",
+    "Clear filters" : "Maak filter skoon",
     "Users" : "Gebruikers",
     "Groups" : "Groepe",
     "Advanced" : "Gevorderd",
     "Devices" : "Toestelle",
     "Upload" : "Oplaai",
     "Files" : "Lêer ",
+    "Until {absoluteDate}" : "Tot en met {absoluteDate}",
     "Go to folder" : "Gaan na vouer",
     "Send now" : "Stuur nou",
     "Contact" : "Kontak",
