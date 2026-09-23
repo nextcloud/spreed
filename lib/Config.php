@@ -1000,6 +1000,32 @@ class Config {
 	}
 
 	/**
+	 * User setting when archived conversations are unarchived automatically
+	 *
+	 * @param ?string $userId
+	 * @return UserPreference::CONVERSATIONS_UNARCHIVE_*
+	 */
+	public function getConversationsUnarchive(?string $userId): string {
+		if ($userId !== null) {
+			$userSetting = $this->config->getUserValue(
+				$userId,
+				'spreed',
+				UserPreference::CONVERSATIONS_UNARCHIVE,
+			);
+
+			if (in_array($userSetting, [
+				UserPreference::CONVERSATIONS_UNARCHIVE_NEVER,
+				UserPreference::CONVERSATIONS_UNARCHIVE_MENTION,
+				UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS,
+			], true)) {
+				return $userSetting;
+			}
+		}
+
+		return UserPreference::CONVERSATIONS_UNARCHIVE_NEVER;
+	}
+
+	/**
 	 * User setting falling back to admin defined app config
 	 */
 	public function getInactiveLockTime(): int {

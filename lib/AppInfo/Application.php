@@ -102,6 +102,7 @@ use OCA\Talk\Listener\NoteToSelfListener;
 use OCA\Talk\Listener\RestrictStartingCalls as RestrictStartingCallsListener;
 use OCA\Talk\Listener\SampleConversationsListener;
 use OCA\Talk\Listener\ThreadListener;
+use OCA\Talk\Listener\UnarchiveConversationListener;
 use OCA\Talk\Listener\UserDeletedListener;
 use OCA\Talk\Maps\MapsPluginLoader;
 use OCA\Talk\Middleware\CanUseTalkMiddleware;
@@ -224,6 +225,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(SystemMessageSentEvent::class, BotListener::class);
 
 		// Chat listeners
+		$context->registerEventListener(ChatMessageSentEvent::class, UnarchiveConversationListener::class);
 		$context->registerEventListener(BeforeRoomsFetchEvent::class, ChangelogListener::class);
 		$context->registerEventListener(RoomDeletedEvent::class, ChatListener::class);
 		$context->registerEventListener(BeforeRoomsFetchEvent::class, NoteToSelfListener::class);

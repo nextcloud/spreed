@@ -101,6 +101,20 @@ class AttendeeMapper extends QBMapper {
 	/**
 	 * @return list<Attendee>
 	 */
+	public function getArchivedActorsByType(int $roomId, string $actorType): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter($actorType)))
+			->andWhere($query->expr()->eq('archived', $query->createNamedParameter(true, IQueryBuilder::PARAM_BOOL)));
+
+		return $this->findEntities($query);
+	}
+
+	/**
+	 * @return list<Attendee>
+	 */
 	public function getActorsByTypes(int $roomId, array $actorTypes, ?int $lastJoinedCall = null): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')

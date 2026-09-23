@@ -34,6 +34,7 @@ Instead, the server API `POST /ocs/v2.php/apps/provisioning_api/api/v1/config/us
 | `blur_virtual_background`   | `config => call => blur-virtual-background` | `'no'`                                             | `'yes'` and `'no'`                                                                                       |
 | `conversations_list_style`  | `config => conversations => list-style`     | `''` falling back to app config with the same name | One of the constants from the [constants list](constants.md#conversation-list-style)                     |
 | `chat_style`                | `config => chat => chat-style`              | `''` falling back to app config with the same name | One of the constants from the [constants list](constants.md#chat-style)                                  |
+| `conversations_unarchive`   | `config => conversations => unarchive`      | `'never'`                                          | One of the constants from the [constants list](constants.md#conversations-unarchive-mode)                |
 
 ## Set SIP settings
 

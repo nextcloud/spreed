@@ -74,6 +74,13 @@ Required capability: `config => conversations => group-mode`
 * `group-first` - Conversations are grouped and group (and public) conversations shown first
 * `private-first` - Conversations are grouped and private (one-to-one) conversations shown first
 
+### Conversations unarchive mode
+Required capability: `config => conversations => unarchive`
+
+* `never` (default) - Archived conversations stay archived until unarchived manually
+* `mention` - Archived conversations are unarchived when the user is mentioned directly or via `@all`, when one of their messages is replied to, or when they post a message themselves
+* `always` - Additionally archived conversations are unarchived on any new chat message that is not sent silently
+
 ### Conversation attributes
 Required capability: `conversation-presets`
 
