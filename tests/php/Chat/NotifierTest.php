@@ -231,6 +231,36 @@ class NotifierTest extends TestCase {
 		self::assertSame($expected, self::invokePrivate($this->getNotifier(), 'shouldParticipantBeNotified', [$participant, $comment, $alreadyNotifiedUsers]));
 	}
 
+	public static function dataNotifyOtherParticipantThreadId(): array {
+		return [
+			'reply outside of a thread' => [0, ['commentId' => '108']],
+			'message in a thread' => [42, ['commentId' => '108', 'threadId' => 42]],
+		];
+	}
+
+	#[DataProvider('dataNotifyOtherParticipantThreadId')]
+	public function testNotifyOtherParticipantThreadId(int $threadId, array $expectedMessageData): void {
+		$room = $this->getRoom();
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), 'Reply');
+		$comment->setParentId('23');
+		$comment->setTopmostParentId('23');
+
+		$participant = new Participant($room, Attendee::fromRow(['id' => 1, 'actor_type' => 'users', 'actor_id' => 'anotherUser']), null);
+		$this->participantService->method('getParticipantsByNotificationLevel')
+			->willReturnOnConsecutiveCalls([$participant], []);
+
+		$notification = $this->createMock(INotification::class);
+		$notification->method($this->anything())->willReturnSelf();
+		$notification->expects($this->once())
+			->method('setMessage')
+			->with('comment', $expectedMessageData)
+			->willReturnSelf();
+		$this->notificationManager->method('createNotification')->willReturn($notification);
+		$this->notificationManager->expects($this->once())->method('notify');
+
+		$this->getNotifier()->notifyOtherParticipant($room, $comment, [], false, $threadId);
+	}
+
 	public function testRemovePendingNotificationsForRoom(): void {
 		$notification = $this->createMock(INotification::class);
 
