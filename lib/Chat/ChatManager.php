@@ -226,6 +226,8 @@ class ChatManager {
 						$threadId = 0;
 					}
 				}
+			} elseif ($threadId !== 0 && !$this->threadService->validateThread($chat->getId(), $threadId)) {
+				$threadId = 0;
 			}
 
 			if ($sendNotifications) {
@@ -258,7 +260,7 @@ class ChatManager {
 					$this->participantService->markUsersAsMentioned($chat, Attendee::ACTOR_FEDERATED_USERS, $federatedUsersDirectlyMentioned, (int)$comment->getId(), $federatedUsersDirectlyMentioned);
 				}
 
-				$this->notifier->notifyOtherParticipant($chat, $comment, [], $silent);
+				$this->notifier->notifyOtherParticipant($chat, $comment, [], $silent, $threadId);
 			}
 
 			if (!$shouldSkipLastMessageUpdate && $sendNotifications) {
@@ -456,6 +458,7 @@ class ChatManager {
 			$this->commentsManager->save($comment);
 			$messageId = (int)$comment->getId();
 			if ($threadId === Thread::THREAD_CREATE) {
+				$threadId = $messageId;
 				$metadata[Message::METADATA_THREAD_ID] = $messageId;
 				$metadata[Message::METADATA_THREAD_TITLE] = $threadTitle;
 				$comment->setMetaData($metadata);
@@ -506,7 +509,7 @@ class ChatManager {
 			}
 
 			// User was not mentioned, send a normal notification
-			$this->notifier->notifyOtherParticipant($chat, $comment, $alreadyNotifiedUsers, $silent);
+			$this->notifier->notifyOtherParticipant($chat, $comment, $alreadyNotifiedUsers, $silent, $threadId);
 
 			$event = new ChatMessageSentEvent($chat, $comment, $participant, $silent, $replyTo);
 			$this->dispatcher->dispatchTyped($event);
