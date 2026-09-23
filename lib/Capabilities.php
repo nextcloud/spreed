@@ -208,6 +208,7 @@ class Capabilities implements IPublicCapability {
 			'summary-threshold',
 			'style',
 			'matterbridge-enabled',
+			'mobile-preload-chat',
 		],
 		'conversations' => [
 			'can-create',
@@ -318,6 +319,7 @@ class Capabilities implements IPublicCapability {
 					'summary-threshold' => max(1, $this->appConfig->getAppValueInt(Config::SUMMARY_THRESHOLD)),
 					'style' => $this->talkConfig->getChatStyle($user?->getUID()),
 					'matterbridge-enabled' => $user instanceof IUser && $this->appConfig->getAppValueBool(Config::MATTERBRIDGE_ENABLED),
+					'mobile-preload-chat' => $this->appConfig->getAppValueBool(Config::MOBILE_PRELOAD_CHAT),
 				],
 				'conversations' => [
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user),
