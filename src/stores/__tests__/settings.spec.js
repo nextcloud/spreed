@@ -10,6 +10,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import {
 	setAttachmentFolder,
+	setConversationsUnarchive,
 	setReadStatusPrivacy,
 	setTypingStatusPrivacy,
 } from '../../services/settingsService.ts'
@@ -20,6 +21,7 @@ vi.mock('../../services/settingsService', () => ({
 	setReadStatusPrivacy: vi.fn(),
 	setTypingStatusPrivacy: vi.fn(),
 	setAttachmentFolder: vi.fn(),
+	setConversationsUnarchive: vi.fn(),
 }))
 vi.mock('../../services/CapabilitiesManager', () => ({
 	getTalkConfig: vi.fn(),
@@ -37,6 +39,8 @@ describe('settingsStore', () => {
 				return PRIVACY.PUBLIC
 			} else if (key2 === 'folder') {
 				return '/Talk'
+			} else if (key2 === 'unarchive') {
+				return CONVERSATION.UNARCHIVE.MENTION
 			}
 			return undefined
 		})
@@ -53,6 +57,7 @@ describe('settingsStore', () => {
 		settingsStore.blurVirtualBackgroundEnabled = false
 		settingsStore.conversationsListStyle = CONVERSATION.LIST_STYLE.TWO_LINES
 		settingsStore.attachmentFolder = '/Talk'
+		settingsStore.unarchive = CONVERSATION.UNARCHIVE.MENTION
 	})
 
 	describe('reading and typing statuses', () => {
@@ -112,6 +117,36 @@ describe('settingsStore', () => {
 			// Assert
 			expect(setAttachmentFolder).toHaveBeenCalledWith('/Talk-another')
 			expect(settingsStore.attachmentFolder).toBe('/Talk-another')
+		})
+	})
+
+	describe('unarchive conversations', () => {
+		it('shows correct loaded value', () => {
+			// Assert
+			expect(settingsStore.unarchive).toBe(CONVERSATION.UNARCHIVE.MENTION)
+		})
+
+		it('falls back to default value when capability is missing', () => {
+			// Arrange
+			getTalkConfig.mockReturnValue(undefined)
+			setActivePinia(createPinia())
+			settingsStore = useSettingsStore()
+
+			// Assert
+			expect(settingsStore.unarchive).toBe(CONVERSATION.UNARCHIVE.NEVER)
+		})
+
+		it('updates value correctly', async () => {
+			// Arrange
+			const response = generateOCSResponse({ payload: [] })
+			setConversationsUnarchive.mockResolvedValueOnce(response)
+
+			// Act
+			await settingsStore.updateUnarchive(CONVERSATION.UNARCHIVE.ALWAYS)
+
+			// Assert
+			expect(setConversationsUnarchive).toHaveBeenCalledWith(CONVERSATION.UNARCHIVE.ALWAYS)
+			expect(settingsStore.unarchive).toBe(CONVERSATION.UNARCHIVE.ALWAYS)
 		})
 	})
 })
