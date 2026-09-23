@@ -32,6 +32,7 @@ use OCA\Talk\Model\ProxyCacheMessageMapper;
 use OCA\Talk\Notification\FederationChatNotifier;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ConversationUnarchiveService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\RoomService;
@@ -84,6 +85,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 		private readonly FederationChatNotifier $federationChatNotifier,
 		private readonly UserConverter $userConverter,
 		private readonly ITimeFactory $timeFactory,
+		private readonly ConversationUnarchiveService $unarchiveService,
 		ICacheFactory $cacheFactory,
 	) {
 		$this->proxyCacheMessages = $cacheFactory->isAvailable() ? $cacheFactory->createDistributed(CachePrefix::FEDERATED_PCM) : null;
@@ -578,6 +580,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider, ISignedCl
 
 		if ($message instanceof ProxyCacheMessage) {
 			$this->federationChatNotifier->handleChatMessage($room, $participant, $message, $notification);
+			$this->unarchiveService->unarchiveAfterFederatedMessage($room, $participant, $message);
 		}
 
 		return [];
