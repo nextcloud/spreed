@@ -831,6 +831,8 @@ namespace OCA\Talk;
  *             style: 'split'|'unified',
  *             // Whether Matterbridge is enabled
  *             matterbridge-enabled: bool,
+ *             // Whether mobile clients should preload the chat messages of conversations
+ *             mobile-preload-chat: bool,
  *         },
  *         conversations: array{
  *             // Whether the user can create conversations
