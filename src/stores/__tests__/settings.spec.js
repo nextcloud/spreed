@@ -10,6 +10,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
 import {
 	setAttachmentFolder,
+	setConversationsUnarchive,
 	setReadStatusPrivacy,
 	setTypingStatusPrivacy,
 } from '../../services/settingsService.ts'
@@ -20,6 +21,7 @@ vi.mock('../../services/settingsService', () => ({
 	setReadStatusPrivacy: vi.fn(),
 	setTypingStatusPrivacy: vi.fn(),
 	setAttachmentFolder: vi.fn(),
+	setConversationsUnarchive: vi.fn(),
 }))
 vi.mock('../../services/CapabilitiesManager', () => ({
 	getTalkConfig: vi.fn(),
@@ -53,6 +55,25 @@ describe('settingsStore', () => {
 		settingsStore.blurVirtualBackgroundEnabled = false
 		settingsStore.conversationsListStyle = CONVERSATION.LIST_STYLE.TWO_LINES
 		settingsStore.attachmentFolder = '/Talk'
+		settingsStore.unarchive = CONVERSATION.UNARCHIVE.NEVER
+	})
+
+	describe('unarchive conversations', () => {
+		it('falls back to never when the capability is missing', () => {
+			expect(settingsStore.unarchive).toBe(CONVERSATION.UNARCHIVE.NEVER)
+		})
+
+		it('updates the unarchive mode', async () => {
+			// Arrange
+			setConversationsUnarchive.mockResolvedValueOnce(generateOCSResponse({ payload: [] }))
+
+			// Act
+			await settingsStore.updateUnarchive(CONVERSATION.UNARCHIVE.MENTION)
+
+			// Assert
+			expect(setConversationsUnarchive).toHaveBeenCalledWith(CONVERSATION.UNARCHIVE.MENTION)
+			expect(settingsStore.unarchive).toBe(CONVERSATION.UNARCHIVE.MENTION)
+		})
 	})
 
 	describe('reading and typing statuses', () => {

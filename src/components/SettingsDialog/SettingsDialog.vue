@@ -87,6 +87,13 @@
 		</NcAppSettingsSection>
 
 		<NcAppSettingsSection
+			v-if="!isGuest && supportUnarchive"
+			id="conversations"
+			:name="t('spreed', 'Conversations')">
+			<ConversationsSettings />
+		</NcAppSettingsSection>
+
+		<NcAppSettingsSection
 			v-if="!isGuest"
 			id="attachments"
 			:name="t('spreed', 'Files')">
@@ -162,6 +169,7 @@ import IconMicrophoneOutline from 'vue-material-design-icons/MicrophoneOutline.v
 import IconTune from 'vue-material-design-icons/Tune.vue'
 import AdvancedAudioDialog from '../MediaSettings/AdvancedAudioDialog.vue'
 import AppearanceSettings from './AppearanceSettings.vue'
+import ConversationsSettings from './ConversationsSettings.vue'
 import LiveTranscriptionTargetLanguageSelect from './LiveTranscriptionTargetLanguageSelect.vue'
 import { PRIVACY } from '../../constants.ts'
 import { getTalkConfig } from '../../services/CapabilitiesManager.ts'
@@ -176,6 +184,7 @@ const isCallEnabled = getTalkConfig('local', 'call', 'enabled')
 const supportStartWithoutMedia = getTalkConfig('local', 'call', 'start-without-media') !== undefined
 const supportDefaultBlurVirtualBackground = getTalkConfig('local', 'call', 'blur-virtual-background') !== undefined
 const supportLiveTranslation = getTalkConfig('local', 'call', 'live-translation') === true
+const supportUnarchive = getTalkConfig('local', 'conversations', 'unarchive') !== undefined
 
 export default {
 	name: 'SettingsDialog',
@@ -185,6 +194,7 @@ export default {
 		IconFolderOpenOutline,
 		IconMicrophoneOutline,
 		AppearanceSettings,
+		ConversationsSettings,
 		LiveTranscriptionTargetLanguageSelect,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
@@ -212,6 +222,7 @@ export default {
 			supportStartWithoutMedia,
 			supportDefaultBlurVirtualBackground,
 			supportLiveTranslation,
+			supportUnarchive,
 			actorStore,
 		}
 	},
