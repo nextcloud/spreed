@@ -237,3 +237,4 @@
 * `config => call => external-call-service` (local) - The target URL for an external call service if one is configured
 * `bot-features-api` (local) - Whether bots can fetch their own enabled features using their shared secret
 * `promote-demote-owner` - Whether owners can promote other participants to owner and demote other owners again, by sending the `participantType` parameter when promoting or demoting a participant
+* `config => conversations => unarchive` (local) - User selected mode when archived conversations are unarchived automatically (`never`, `mention` or `always`)

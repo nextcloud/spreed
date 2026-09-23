@@ -34,5 +34,10 @@ class UserPreference {
 	public const CONVERSATIONS_GROUP_MODE_GROUP_FIRST = 'group-first';
 	public const CONVERSATIONS_GROUP_MODE_PRIVATE_FIRST = 'private-first';
 
+	public const CONVERSATIONS_UNARCHIVE = 'conversations_unarchive';
+	public const CONVERSATIONS_UNARCHIVE_NEVER = 'never';
+	public const CONVERSATIONS_UNARCHIVE_MENTION = 'mention';
+	public const CONVERSATIONS_UNARCHIVE_ALWAYS = 'always';
+
 	public const LIVE_TRANSCRIPTION_TARGET_LANGUAGE_ID = 'live_transcription_target_language_id';
 }
