@@ -144,6 +144,12 @@ class CapabilitiesTest extends TestCase {
 				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
 			]);
 
+		$this->appConfig->method('getAppValueBool')
+			->willReturnMap([
+				['backgrounds_branded_for_guests', false, false],
+				['mobile_preload_chat', true],
+			]);
+
 		$this->appConfig->method('getAppValueInt')
 			->willReturnMap([
 				['max_call_duration', 0, 0],
@@ -223,6 +229,7 @@ class CapabilitiesTest extends TestCase {
 						'summary-threshold' => 100,
 						'style' => 'split',
 						'matterbridge-enabled' => false,
+						'mobile-preload-chat' => true,
 					],
 					'conversations' => [
 						'can-create' => false,
@@ -362,6 +369,7 @@ class CapabilitiesTest extends TestCase {
 			->willReturnMap([
 				['backgrounds_default_for_users', true, true],
 				['backgrounds_upload_users', true, true],
+				['mobile_preload_chat', true],
 			]);
 
 		$this->appConfig->method('getAppValueInt')
@@ -452,6 +460,7 @@ class CapabilitiesTest extends TestCase {
 						'summary-threshold' => 100,
 						'style' => 'split',
 						'matterbridge-enabled' => false,
+						'mobile-preload-chat' => true,
 					],
 					'conversations' => [
 						'can-create' => $canCreate,
