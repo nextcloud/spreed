@@ -85,8 +85,8 @@
 			{{ t('spreed', 'Settings') }}
 		</p>
 		<div class="poll-editor__settings">
-			<NcCheckboxRadioSwitch v-model="isAnonymous" type="checkbox">
-				{{ t('spreed', 'Anonymous poll') }}
+			<NcCheckboxRadioSwitch v-model="showWhoVoted" type="checkbox">
+				{{ t('spreed', 'Show names on voted options') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch v-model="isMultipleAnswer" type="checkbox">
 				{{ t('spreed', 'Multiple answers') }}
@@ -191,12 +191,12 @@ const createPollLabel = computed(() => {
 		: t('spreed', 'Create poll')
 })
 
-const isAnonymous = computed({
+const showWhoVoted = computed({
 	get() {
-		return pollForm.resultMode === POLL.MODE.HIDDEN
+		return pollForm.resultMode === POLL.MODE.PUBLIC
 	},
 	set(value) {
-		pollForm.resultMode = value ? POLL.MODE.HIDDEN : POLL.MODE.PUBLIC
+		pollForm.resultMode = value ? POLL.MODE.PUBLIC : POLL.MODE.HIDDEN
 	},
 })
 
