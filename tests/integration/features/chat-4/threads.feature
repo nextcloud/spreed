@@ -99,6 +99,19 @@ Feature: chat-4/threads
       | spreed | chat        | room/Message 1-3/Thread 1   | participant2-displayname sent a message in conversation room          |
       | spreed | chat        | room/Message 1-2/Thread 1   | participant2-displayname replied to your message in conversation room |
 
+  Scenario: Mention in the first message of a thread
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    # Join and leave to clear the invite notification
+    And user "participant2" joins room "room" with 200 (v4)
+    And user "participant2" leaves room "room" with 200 (v4)
+    When user "participant1" sends thread "Thread 1" with message "@participant2" to room "room" with 201
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id                   | subject                                                     |
+      | spreed | chat        | room/@participant2/Thread 1 | participant1-displayname mentioned you in conversation room |
+
   Scenario: Thread titles are trimmed
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
