@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   build_and_publish:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     # Only allowed to be run on nextcloud-releases repositories
     if: ${{ github.repository_owner == 'nextcloud-releases' }}

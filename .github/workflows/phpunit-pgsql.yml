@@ -59,7 +59,7 @@ jobs:
         uses: nextcloud-libraries/nextcloud-version-matrix@cd0211ffcef1065e2020cd579e4843b8746e7a58 # v1.3.3
 
   phpunit-pgsql:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     needs: changes-and-matrix
     if: needs.changes-and-matrix.outputs.src != 'false'

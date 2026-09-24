@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   static-analysis:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     name: static-psalm-analysis
     steps:
