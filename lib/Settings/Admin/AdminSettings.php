@@ -12,7 +12,6 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Participant;
-use OCA\Talk\Room;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
@@ -77,7 +76,7 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initAllowedGroups(): void {
-		$this->initialState->provideInitialState('start_calls', (int)$this->serverConfig->getAppValue('spreed', 'start_calls', (string)Room::START_CALL_EVERYONE));
+		$this->initialState->provideInitialState('start_calls', $this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS));
 
 		$groups = $this->getGroupDetailsArray($this->appConfig->getAppValueArray('start_calls_groups'), 'start_calls_groups');
 		$this->initialState->provideInitialState('start_calls_groups', $groups);

@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Service;
 
+use OCA\Talk\Config;
 use OCA\Talk\Room;
 use OCA\Talk\RoomPresets\Announcement;
 use OCA\Talk\RoomPresets\Channel;
@@ -28,7 +29,7 @@ class RoomPresetFactoryTest extends TestCase {
 
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->appConfig->method('getAppValueInt')
-			->with('start_calls', Room::START_CALL_EVERYONE)
+			->with(Config::ALLOWED_START_CALLS)
 			->willReturn(Room::START_CALL_EVERYONE);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->logger = $this->createMock(LoggerInterface::class);

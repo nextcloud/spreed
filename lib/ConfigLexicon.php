@@ -194,6 +194,7 @@ PROMPT;
 			new Entry(Config::CERTIFICATE_EXPIRATION_DAYS, ValueType::INT, 10, definition: 'Minimum days a certificate needs to be valid for, before an expiration notification will be shown. (default 10, minimum 0 and maximum 365)'),
 			new Entry(Config::TOKEN_ENTROPY, ValueType::INT, 8, definition: 'Length of conversation tokens, can be increased to make tokens harder to guess but reduces readability and dial-in comfort'),
 			new Entry(Config::SUMMARY_THRESHOLD, ValueType::INT, 100, definition: 'Amount of unread messages a user needs before they see the option to summarize with AI'),
+			new Entry(Config::ALLOWED_START_CALLS, ValueType::INT, Room::START_CALL_EVERYONE, definition: 'Who can start a call, see https://github.com/nextcloud/spreed/blob/main/docs/constants.md#start-call '),
 		];
 	}
 

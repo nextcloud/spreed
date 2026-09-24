@@ -15,7 +15,6 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Services\IAppConfig;
-use OCP\IConfig;
 use OCP\IGroupManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -24,7 +23,6 @@ use Test\TestCase;
 
 #[Group('DB')]
 class RestrictStartingCallsTest extends TestCase {
-	protected IConfig&MockObject $serverConfig;
 	protected IAppConfig&MockObject $appConfig;
 	protected IGroupManager&MockObject $groupManager;
 	protected ParticipantService&MockObject $participantService;
@@ -33,11 +31,10 @@ class RestrictStartingCallsTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
-		$this->listener = new RestrictStartingCalls($this->serverConfig, $this->appConfig, $this->groupManager, $this->participantService);
+		$this->listener = new RestrictStartingCalls($this->appConfig, $this->groupManager, $this->participantService);
 	}
 
 	public static function dataCheckStartCallPermissions(): array {
@@ -61,7 +58,7 @@ class RestrictStartingCallsTest extends TestCase {
 
 		$participant = $this->createMock(Participant::class);
 		$participant->method('canStartCall')
-			->with($this->serverConfig, $this->appConfig, $this->groupManager)
+			->with($this->appConfig, $this->groupManager)
 			->willReturn($canStart);
 
 		$this->participantService->method('hasActiveSessionsInCall')

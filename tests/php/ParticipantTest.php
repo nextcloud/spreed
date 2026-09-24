@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php;
 
+use OCA\Talk\Config;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -52,12 +53,14 @@ class ParticipantTest extends TestCase {
 		$participant = new Participant($room, $attendee, null);
 
 		$serverConfig = $this->createMock(IConfig::class);
-		$serverConfig->expects($this->once())
-			->method('getAppValue')
-			->with('spreed', 'start_calls', (string)Room::START_CALL_EVERYONE)
-			->willReturn((string)Room::START_CALL_EVERYONE);
 
 		$appConfig = $this->createMock(IAppConfig::class);
+
+		$appConfig->expects($this->once())
+			->method('getAppValueInt')
+			->with(Config::ALLOWED_START_CALLS)
+			->willReturn(Room::START_CALL_EVERYONE);
+
 		$appConfig->expects($this->once())
 			->method('getAppValueArray')
 			->with('start_calls_groups')
@@ -67,7 +70,7 @@ class ParticipantTest extends TestCase {
 		$groupManager->method('isInGroup')
 			->willReturnCallback(static fn (string $userId, string $groupId): bool => $userId === 'user1' && in_array($groupId, $userGroups, true));
 
-		$this->assertSame($expected, $participant->canStartCall($serverConfig, $appConfig, $groupManager));
+		$this->assertSame($expected, $participant->canStartCall($appConfig, $groupManager));
 	}
 	protected function createParticipant(bool $isChannel, int $participantType, int $permissions): Participant {
 		$room = $this->createMock(Room::class);
@@ -121,17 +124,17 @@ class ParticipantTest extends TestCase {
 
 	public function testCanStartCallIsFalseInChannelForModerators(): void {
 		$participant = $this->createParticipant(true, Participant::MODERATOR, Attendee::PERMISSIONS_DEFAULT);
-		$this->assertFalse($participant->canStartCall($this->createConfig(), $this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
+		$this->assertFalse($participant->canStartCall($this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
 	}
 
 	public function testCanStartCallIsFalseInChannelForUsers(): void {
 		$participant = $this->createParticipant(true, Participant::USER, Attendee::PERMISSIONS_DEFAULT);
-		$this->assertFalse($participant->canStartCall($this->createConfig(), $this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
+		$this->assertFalse($participant->canStartCall($this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
 	}
 
 	public function testCanStartCallIsTrueInNonChannelForModerators(): void {
 		$participant = $this->createParticipant(false, Participant::MODERATOR, Attendee::PERMISSIONS_DEFAULT);
-		$this->assertTrue($participant->canStartCall($this->createConfig(), $this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
+		$this->assertTrue($participant->canStartCall($this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
 	}
 
 	public function testIsOwner(): void {

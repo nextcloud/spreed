@@ -17,7 +17,6 @@ use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\IConfig;
 use OCP\IGroupManager;
 
 /**
@@ -25,7 +24,6 @@ use OCP\IGroupManager;
  */
 class RestrictStartingCalls implements IEventListener {
 	public function __construct(
-		private readonly IConfig $serverConfig,
 		private readonly IAppConfig $appConfig,
 		private readonly IGroupManager $groupManager,
 		private readonly ParticipantService $participantService,
@@ -66,7 +64,7 @@ class RestrictStartingCalls implements IEventListener {
 			return;
 		}
 
-		if (!$event->getParticipant()->canStartCall($this->serverConfig, $this->appConfig, $this->groupManager)
+		if (!$event->getParticipant()->canStartCall($this->appConfig, $this->groupManager)
 			&& !$this->participantService->hasActiveSessionsInCall($room)) {
 			throw new ForbiddenException('Can not start a call');
 		}

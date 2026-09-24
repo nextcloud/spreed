@@ -192,7 +192,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 			$this->config->getAppValue('spreed', 'call_recording'),
 			$this->config->getAppValue('spreed', 'recording_servers'),
 			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_TALK)),
-			$this->config->getAppValue('spreed', 'start_calls'),
+			$this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS),
 			$this->config->getAppValue('spreed', 'start_calls_groups'),
 			json_encode($this->appConfig->getAppValueArray(Config::ALLOWED_GROUPS_CONVERSATIONS)),
 			$this->appConfig->getAppValueInt(Config::DEFAULT_ROOM_PERMISSIONS),
@@ -861,7 +861,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		$attributes = RoomAttributes::NONE->value;
 		if ($preset === VoiceRoom::getIdentifier()) {
-			if ($this->appConfig->getAppValueInt('start_calls', Room::START_CALL_EVERYONE) === Room::START_CALL_NOONE) {
+			if ($this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS) === Room::START_CALL_NOONE) {
 				return new DataResponse(['error' => 'preset'], Http::STATUS_NOT_FOUND);
 			}
 			$attributes |= RoomAttributes::VOICE_ROOM->value;

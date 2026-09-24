@@ -388,7 +388,7 @@ class RoomFormatter {
 			return $roomData;
 		}
 
-		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->serverConfig, $this->appConfig, $this->groupManager)
+		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->appConfig, $this->groupManager)
 			|| ($room->getType() === Room::TYPE_PUBLIC
 				&& $room->getObjectType() === Room::OBJECT_TYPE_VIDEO_VERIFICATION);
 

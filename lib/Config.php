@@ -80,6 +80,7 @@ class Config {
 	public const string CERTIFICATE_EXPIRATION_DAYS = 'certificate_expiration_days';
 	public const string TOKEN_ENTROPY = 'token_entropy';
 	public const string SUMMARY_THRESHOLD = 'summary_threshold';
+	public const string ALLOWED_START_CALLS = 'start_calls';
 
 	/**
 	 * 1. Call recording, …

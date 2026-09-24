@@ -25,6 +25,7 @@ use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IRequest;
@@ -60,6 +61,7 @@ class CanUseTalkMiddleware extends Middleware {
 		private readonly IGroupManager $groupManager,
 		private readonly Config $talkConfig,
 		private readonly IConfig $serverConfig,
+		private readonly IAppConfig $appConfig,
 		private readonly IRequest $request,
 		private readonly IURLGenerator $url,
 	) {
@@ -118,7 +120,7 @@ class CanUseTalkMiddleware extends Middleware {
 		$hasAttribute = !empty($reflectionMethod->getAttributes(RequireCallEnabled::class));
 
 		if ($hasAttribute
-			&& ((int)$this->serverConfig->getAppValue('spreed', 'start_calls')) === Room::START_CALL_NOONE) {
+			&& $this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS) === Room::START_CALL_NOONE) {
 			throw new CanNotUseTalkException();
 		}
 	}
