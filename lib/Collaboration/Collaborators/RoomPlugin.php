@@ -11,6 +11,7 @@ namespace OCA\Talk\Collaboration\Collaborators;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Collaboration\Collaborators\ISearchPlugin;
 use OCP\Collaboration\Collaborators\ISearchResult;
@@ -23,6 +24,7 @@ class RoomPlugin implements ISearchPlugin {
 	public function __construct(
 		private readonly Manager $manager,
 		private readonly ParticipantService $participantService,
+		private readonly AvatarService $avatarService,
 		private readonly IUserSession $userSession,
 	) {
 	}
@@ -79,6 +81,7 @@ class RoomPlugin implements ISearchPlugin {
 		return
 		[
 			'label' => $room->getDisplayName($userId),
+			'avatar' => $this->avatarService->getAvatarUrl($room),
 			'value' => [
 				'shareType' => IShare::TYPE_ROOM,
 				'shareWith' => $room->getToken()
