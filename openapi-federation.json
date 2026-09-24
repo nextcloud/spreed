@@ -276,7 +276,8 @@
                                     "typing-privacy",
                                     "summary-threshold",
                                     "style",
-                                    "matterbridge-enabled"
+                                    "matterbridge-enabled",
+                                    "mobile-preload-chat"
                                 ],
                                 "properties": {
                                     "max-length": {
@@ -319,6 +320,10 @@
                                     "matterbridge-enabled": {
                                         "type": "boolean",
                                         "description": "Whether Matterbridge is enabled"
+                                    },
+                                    "mobile-preload-chat": {
+                                        "type": "boolean",
+                                        "description": "Whether mobile clients should preload the chat messages of conversations"
                                     }
                                 }
                             },
