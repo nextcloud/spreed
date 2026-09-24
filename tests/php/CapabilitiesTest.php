@@ -352,7 +352,6 @@ class CapabilitiesTest extends TestCase {
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
 			->willReturnMap([
-				['spreed', 'start_calls', (string)Room::START_CALL_EVERYONE, (string)Room::START_CALL_NOONE],
 				['spreed', 'session-ping-limit', '200', '50'],
 				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
 			]);

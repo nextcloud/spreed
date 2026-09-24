@@ -861,7 +861,7 @@ class RoomController extends AEnvironmentAwareOCSController {
 
 		$attributes = RoomAttributes::NONE->value;
 		if ($preset === VoiceRoom::getIdentifier()) {
-			if ($this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS, Room::START_CALL_EVERYONE) === Room::START_CALL_NOONE) {
+			if ($this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS) === Room::START_CALL_NOONE) {
 				return new DataResponse(['error' => 'preset'], Http::STATUS_NOT_FOUND);
 			}
 			$attributes |= RoomAttributes::VOICE_ROOM->value;

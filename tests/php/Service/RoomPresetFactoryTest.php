@@ -29,7 +29,7 @@ class RoomPresetFactoryTest extends TestCase {
 
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->appConfig->method('getAppValueInt')
-			->with(Config::ALLOWED_START_CALLS, Room::START_CALL_EVERYONE)
+			->with(Config::ALLOWED_START_CALLS)
 			->willReturn(Room::START_CALL_EVERYONE);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
