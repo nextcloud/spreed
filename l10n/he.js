@@ -520,7 +520,6 @@ OC.L10N.register(
     "Add more files" : "הוספת קבצים נוספים",
     "Create poll" : "יצירת סקר",
     "Settings" : "הגדרות",
-    "Anonymous poll" : "סקר אלמוני",
     "Owner" : "בעלות",
     "Moderator" : "מפקח",
     "Remove group and members" : "הסרת קבוצה וחברים",
@@ -616,6 +615,7 @@ OC.L10N.register(
     "__language_name__" : "עברית",
     "Tasks" : "משימות",
     "Notes" : "פתקים",
-    "Send" : "שליחה"
+    "Send" : "שליחה",
+    "Anonymous poll" : "סקר אלמוני"
 },
 "nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;");
