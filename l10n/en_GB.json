@@ -2355,13 +2355,8 @@
     "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation was updated.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration.",
     "Enable live translation" : "Enable live translation",
-    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Open poll • %n vote • Your vote is anonymous","Open poll • %n votes • Your vote is anonymous"],
-    "Open poll • You voted already • Your vote is anonymous" : "Open poll • You voted already • Your vote is anonymous",
-    "Open poll • Your vote is anonymous" : "Open poll • Your vote is anonymous",
     "I picked list style" : "I picked list style",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hey! Are you using Talk in list style or with message bubbles?",
-    "Allow editing of uploaded files" : "Allow editing of uploaded files",
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n vote • Your vote is anonymous","%n votes • Your vote is anonymous"],
-    "Your vote is anonymous" : "Your vote is anonymous"
+    "Allow editing of uploaded files" : "Allow editing of uploaded files"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -2224,7 +2224,6 @@ OC.L10N.register(
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Konfigurirani signalni poslužitelj mora se ažurirati kako bi bio kompatibilan s ovom verzijom Talka. Obratite se administraciji.",
     "Enable live translation" : "Omogući prijevod uživo",
     "I picked list style" : "Odabrao sam stil popisa",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Koristite li Talk u prikazu popisa ili s oblačićima poruka?",
-    "Your vote is anonymous" : "Vaš glas je anoniman"
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Koristite li Talk u prikazu popisa ili s oblačićima poruka?"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

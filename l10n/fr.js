@@ -2357,13 +2357,8 @@ OC.L10N.register(
     "Nextcloud Talk Federation was updated." : "La fédération Nextcloud Talk a été mise à jour.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Le serveur de signalement configuré doit être mis à jour pour être compatible avec cette version de Talk. Veuillez contacter votre administrateur.",
     "Enable live translation" : "Activer la traduction en direct",
-    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Sondage ouvert • %n vote • Votre vote est anonyme","Sondage ouvert • %n votes • Votre vote est anonyme","Sondage ouvert • %n votes • Votre vote est anonyme"],
-    "Open poll • You voted already • Your vote is anonymous" : "Sondage ouvert • Vous avez déjà voté • Votre vote est anonyme",
-    "Open poll • Your vote is anonymous" : "Sondage ouvert • Votre vote est anonyme",
     "I picked list style" : "J'ai choisi le style liste",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hé ! Utilisez-vous Talk en mode liste ou avec des bulles de message ?",
-    "Allow editing of uploaded files" : "Autoriser la modification des fichiers téléversés",
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : [" vote • Votre vote est anonyme"," votes • Votre vote est anonyme","%n votes • Votre vote est anonyme"],
-    "Your vote is anonymous" : "Votre vote est anonyme"
+    "Allow editing of uploaded files" : "Autoriser la modification des fichiers téléversés"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

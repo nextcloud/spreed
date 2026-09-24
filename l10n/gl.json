@@ -2276,12 +2276,7 @@
     "Nextcloud Talk Federation was updated." : "Foi actualizada a federación de Parladoiro de Nextcloud",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "O servidor de sinalización configurado debe ser actualizado para ser compatíbel con esta versión de Parladoiro. Póñase en contacto coa súa administración.",
     "Enable live translation" : "Activar a tradución en directo",
-    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Enquisa aberta • %n voto • O teu voto é anónimo","Enquisa aberta • %n votos • O teu voto é anónimo"],
-    "Open poll • You voted already • Your vote is anonymous" : "Enquisa aberta • Xa votaches • O teu voto é anónimo",
-    "Open poll • Your vote is anonymous" : "Enquisa aberta • O teu voto é anónimo",
     "I picked list style" : "Escollín o estilo de lista",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Ei! Estás a usar Parladoiro en formato de lista ou con globos de mensaxe?",
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n voto • O teu voto é anónimo","%n votos • O teu voto é anónimo"],
-    "Your vote is anonymous" : "O teu voto é anónimo"
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Ei! Estás a usar Parladoiro en formato de lista ou con globos de mensaxe?"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

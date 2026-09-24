@@ -2355,13 +2355,8 @@
     "Nextcloud Talk Federation was updated." : "Federácia Nextcloud Talk bola aktualizovaná.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Nakonfigurovaný signalizačný server je potrebné aktualizovať, aby bol kompatibilný s touto verziou Talk /Rozhovor/. Kontaktujte svojho správcu.",
     "Enable live translation" : "Povoliť živý preklad",
-    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Otvorená anketa • %n hlas • Váš hlas je anonymný","Otvorená anketa • %n hlasy • Váš hlas je anonymný","Otvorená anketa • %n hlasov • Váš hlas je anonymný","Otvorená anketa • %n hlasov • Váš hlas je anonymný"],
-    "Open poll • You voted already • Your vote is anonymous" : "Otvorená anketa • Už ste hlasovali • Váš hlas je anonymný",
-    "Open poll • Your vote is anonymous" : "Otvorená anketa • Váš hlas je anonymný",
     "I picked list style" : "Vybral/a som si štýl zoznamu",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Ahoj! Používaš Talk v zoznamovom štýle alebo s bublinami správ?",
-    "Allow editing of uploaded files" : "Povoliť úpravu nahraných súborov",
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n hlas • Váš hlas je anonymný","%n hlasy • Váš hlas je anonymný","%n hlasov • Váš hlas je anonymný","%n hlasu • Váš hlas je anonymný"],
-    "Your vote is anonymous" : "Váš hlas je anonymný"
+    "Allow editing of uploaded files" : "Povoliť úpravu nahraných súborov"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }

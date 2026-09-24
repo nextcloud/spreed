@@ -2357,13 +2357,8 @@ OC.L10N.register(
     "Nextcloud Talk Federation was updated." : "Nextcloud Konuş birliği güncellenmiş.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Bu Konuş sürümü ile uyumlu olması için yapılandırılmış signalling sunucusunun güncellenmesi gerekiyor. Lütfen yöneticiniz ile görüşün.",
     "Enable live translation" : "Canlı çeviriyi aç",
-    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Açık anket • %n oy • Oyunuz anonimdir","Açık anket • %n oy • Oyunuz anonimdir"],
-    "Open poll • You voted already • Your vote is anonymous" : "Açık anket • Zaten oy vermişsiniz • Oyunuz anonimdir",
-    "Open poll • Your vote is anonymous" : "Açık anket • Oyunuz anonimdir",
     "I picked list style" : "Liste biçemini seçtim",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Talk görünümü liste olarak mı ileti balonları olarak mı kullanıyorsunuz?",
-    "Allow editing of uploaded files" : "Yüklenen dosyalar düzenlenebilsin",
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n oy • Oyunuz anonimdir","%n oy • Oyunuz anonimdir"],
-    "Your vote is anonymous" : "Oyunuz anonim"
+    "Allow editing of uploaded files" : "Yüklenen dosyalar düzenlenebilsin"
 },
 "nplurals=2; plural=(n > 1);");

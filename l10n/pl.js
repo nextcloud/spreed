@@ -2269,12 +2269,7 @@ OC.L10N.register(
     "Nextcloud Talk Federation was updated." : "Zaktualizowano Nextcloud Talk Federation.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Skonfigurowany serwer sygnalizacyjny wymaga aktualizacji, aby był kompatybilny z tą wersją Talka. Skontaktuj się z administracją.",
     "Enable live translation" : "Włącz tłumaczenie na żywo",
-    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Otwarta ankieta • %n głos • Twój głos jest anonimowy","Otwarta ankieta • %n głosów • Twój głos jest anonimowy","Otwarta ankieta • %n głosów • Twój głos jest anonimowy","Otwarta ankieta • %n głosy • Twój głos jest anonimowy"],
-    "Open poll • You voted already • Your vote is anonymous" : "Otwarta ankieta • Już zagłosowałeś(-aś) • Twój głos jest anonimowy",
-    "Open poll • Your vote is anonymous" : "Otwarta ankieta • Twój głos jest anonimowy",
     "I picked list style" : "Wybrałem widok listy",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Korzystasz z Talk w widoku listy czy z dymkami wiadomości?",
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n głos • Twój głos jest anonimowy","%n głosów • Twój głos jest anonimowy","%n głosów • Twój głos jest anonimowy","%n głosy • Twój głos jest anonimowy"],
-    "Your vote is anonymous" : "Twój głos jest anonimowy"
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Korzystasz z Talk w widoku listy czy z dymkami wiadomości?"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

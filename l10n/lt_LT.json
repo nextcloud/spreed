@@ -2342,13 +2342,8 @@
     "Nextcloud Talk Federation was updated." : "Atnaujinta „Nextcloud Pokalbiai“ federacija.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Sukonfigūruotą signalinį serverį reikia atnaujinti, kad jis būtų suderinamas su šia „Pokalbiai“ versija. Susisiekite su administracija.",
     "Enable live translation" : "Įjungti vertimą realiuoju laiku",
-    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Atvira apklausa • %n balsas • Jūsų balsas anonimiškas","Atvira apklausa • %n balsai • Jūsų balsas anonimiškas","Atvira apklausa • %n balsų • Jūsų balsas anonimiškas","Atvira apklausa • %n balsų • Jūsų balsas anonimiškas"],
-    "Open poll • You voted already • Your vote is anonymous" : "Atidaryti apklausą • Jūs jau balsavote • Jūsų balsas anonimiškas",
-    "Open poll • Your vote is anonymous" : "Atvira apklausa • Jūsų balsas anonimiškas",
     "I picked list style" : "Pasirinkau sąrašo stilių",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Ei! Ar naudojate „Pokalbiai“ sąrašo stiliumi, ar su žinučių burbulais?",
-    "Allow editing of uploaded files" : "Leisti redaguoti įkeltus failus",
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n balsas • Jūsų balsas yra anoniminis","%n balsai • Jūsų balsas yra anoniminis","%n balsų • Jūsų balsas yra anoniminis","%n balsų • Jūsų balsas yra anoniminis"],
-    "Your vote is anonymous" : "Jūsų balsas yra anoniminis"
+    "Allow editing of uploaded files" : "Leisti redaguoti įkeltus failus"
 },"pluralForm" :"nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);"
 }

@@ -2238,7 +2238,6 @@
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Nastavený signální server je třeba aktualizovat, aby byl kompatibilní s touto verzí Talk. Obraťte se na správu.",
     "Enable live translation" : "Zapnout překlad v reálném čase",
     "I picked list style" : "Vybral/a jsem styl seznamu",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Používáte Talk ve stylu seznamu nebo bublin zpráv?",
-    "Your vote is anonymous" : "Vaše hlasování je anonymní"
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Používáte Talk ve stylu seznamu nebo bublin zpráv?"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }

@@ -2279,13 +2279,8 @@
     "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federatie is bijgewerkt.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "De geconfigureerde signaleringsserver moet worden bijgewerkt om compatibel te zijn met deze versie van Talk. Neem contact op met je beheerder.",
     "Enable live translation" : "Live vertaling inschakelen",
-    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Open enquête • %n stem • Je stem is anoniem","Open enquête • %n stemmen • Je stem is anoniem"],
-    "Open poll • You voted already • Your vote is anonymous" : "Open enquête • Je hebt al gestemd • Je stem is anoniem",
-    "Open poll • Your vote is anonymous" : "Open enquête • Je stem is anoniem",
     "I picked list style" : "Ik heb lijststijl gekozen",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hé! Gebruik je Talk met lijststijl of met berichtballonnen?",
-    "Allow editing of uploaded files" : "Bewerken van geüploade bestanden toestaan",
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n stem • Je stem is anoniem","%n stemmen • Je stem is anoniem"],
-    "Your vote is anonymous" : "Je stem is anoniem"
+    "Allow editing of uploaded files" : "Bewerken van geüploade bestanden toestaan"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

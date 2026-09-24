@@ -2357,13 +2357,8 @@ OC.L10N.register(
     "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation 已更新。",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "需要更新設定好的訊號伺服器，使其與此版本的 Talk 相容。請聯絡您的管理員。",
     "Enable live translation" : "啟用即時翻譯",
-    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["開放投票 • %n 票 • 您的投票是匿名的"],
-    "Open poll • You voted already • Your vote is anonymous" : "開放投票 • 您已投票 • 您的投票是匿名的",
-    "Open poll • Your vote is anonymous" : "開放投票 • 您的投票是匿名的",
     "I picked list style" : "我選了清單樣式",
     "Hey! Are you using Talk in list style or with message bubbles?" : "嘿！您要使用清單樣式或訊息泡泡的 Talk？",
-    "Allow editing of uploaded files" : "允許編輯上傳的檔案",
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n 票 • 您的投票是匿名的"],
-    "Your vote is anonymous" : "您的投票是匿名的"
+    "Allow editing of uploaded files" : "允許編輯上傳的檔案"
 },
 "nplurals=1; plural=0;");

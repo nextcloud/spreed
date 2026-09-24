@@ -2345,13 +2345,8 @@ OC.L10N.register(
     "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation har uppdaterats.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Den konfigurerade signalservern måste uppdateras för att vara kompatibel med den här versionen av Talk. Kontakta din administratör.",
     "Enable live translation" : "Aktivera live-översättning",
-    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Öppen omröstning • %n röst • Din röst är anonym","Öppen omröstning • %n röster • Din röst är anonym"],
-    "Open poll • You voted already • Your vote is anonymous" : "Öppen omröstning • Du har redan röstat • Din röst är anonym",
-    "Open poll • Your vote is anonymous" : "Öppen omröstning • Din röst är anonym",
     "I picked list style" : "Jag valde listvy",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Använder du Talk i listvy eller meddelandebubblor?",
-    "Allow editing of uploaded files" : "Tillåt redigering av uppladdade filer",
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n röst • Din röst är anonym","%n röster • Din röst är anonym"],
-    "Your vote is anonymous" : "Din röst är anonym"
+    "Allow editing of uploaded files" : "Tillåt redigering av uppladdade filer"
 },
 "nplurals=2; plural=(n != 1);");

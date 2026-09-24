@@ -2357,13 +2357,8 @@ OC.L10N.register(
     "Nextcloud Talk Federation was updated." : "Nuashonraíodh Cónaidhm Nextcloud Talk.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Ní mór an freastalaí comharthaíochta cumraithe a nuashonrú le bheith comhoiriúnach leis an leagan seo de Talk. Déan teagmháil le do riarachán, le do thoil.",
     "Enable live translation" : "Cumasaigh aistriúchán beo",
-    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Vótaíocht oscailte • %n vóta • Tá do vóta gan ainm","Vótaíocht oscailte • %n vótaí • Tá do vóta gan ainm","Vótaíocht oscailte • %n vótaí • Tá do vóta gan ainm","Vótaíocht oscailte • %n vótaí • Tá do vóta gan ainm","Vótaíocht oscailte • %n vótaí • Tá do vóta gan ainm"],
-    "Open poll • You voted already • Your vote is anonymous" : "Vótaíocht oscailte • Vótáil tú cheana féin • Tá do vóta gan ainm",
-    "Open poll • Your vote is anonymous" : "Vótaíocht oscailte • Tá do vóta gan ainm",
     "I picked list style" : "Roghnaigh mé stíl liosta",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Haigh! An bhfuil tú ag úsáid Talk i stíl liosta nó le boilgeoga teachtaireachta?",
-    "Allow editing of uploaded files" : "Ceadaigh eagarthóireacht ar chomhaid uaslódáilte",
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n vóta • Tá do vóta gan ainm","%n vótaí • Tá do vóta gan ainm","%n vótaí • Tá do vóta gan ainm","%n vótaí • Tá do vóta gan ainm","%n vótaí • Tá do vóta gan ainm"],
-    "Your vote is anonymous" : "Tá do vóta gan ainm"
+    "Allow editing of uploaded files" : "Ceadaigh eagarthóireacht ar chomhaid uaslódáilte"
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");

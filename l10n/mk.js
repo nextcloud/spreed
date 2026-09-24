@@ -1498,13 +1498,8 @@ OC.L10N.register(
     "Always shown if recording consent is required" : "Секогаш се прикажува ако е потребна согласност за снимање",
     "Search …" : "Пребарај ...",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Се приклучивте на разговорот во друг прозорец или уред. Ова во моментов не е поддржано, па оваа сесија е затворена.",
-    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Отворена анкета • %n глас • Вашиот глас е анонимен","Отворена анкета • %n гласови • Вашиот глас е анонимен"],
-    "Open poll • You voted already • Your vote is anonymous" : "Отворена анкета • Имате гласано • Вашиот глас е анонимен",
-    "Open poll • Your vote is anonymous" : "Отворена анкета • Вашиот глас е анонимен",
     "I picked list style" : "Избрав стил на листа",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Еј! Дали го користиш Talk во стил на листа или со Меурчиња за пораки?",
-    "Allow editing of uploaded files" : "Дозволи уредување на прикачените датотеки",
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n глас • Вашиот глас е анонимен","%n гласови • Вашиот глас е анонимен"],
-    "Your vote is anonymous" : "Вашиот глас е анонимен"
+    "Allow editing of uploaded files" : "Дозволи уредување на прикачените датотеки"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

@@ -2334,13 +2334,8 @@
     "Nextcloud Talk Federation was updated." : "A Nextcloud Beszélgetés föderációja frissült.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Frissíteni kell a beállított jelzőkiszolgálót, hogy kompatibilis legyen a Beszélgetés ezen verziójával. Lépjen kapcsolatba a rendszergazdával.",
     "Enable live translation" : "Élő fordítás bekapcsolása",
-    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["Nyitott szavazás • %n szavazat • A szavazata anonim","Nyitott szavazás • %n szavazat • A szavazata anonim"],
-    "Open poll • You voted already • Your vote is anonymous" : "Nyitott szavazás • Már szavazott • A szavazata anonim",
-    "Open poll • Your vote is anonymous" : "Nyitott szavazás • A szavazata anonim",
     "I picked list style" : "A listastílust választottam",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hé! A Beszélgetést listastílussal vagy üzenetbuborékokkal használod?",
-    "Allow editing of uploaded files" : "Felöltött fájlok szerkesztésének engedélyezése",
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n szavazat • A szavazata anonim","%n szavazat • A szavazata anonim"],
-    "Your vote is anonymous" : "A szavazata anonim"
+    "Allow editing of uploaded files" : "Felöltött fájlok szerkesztésének engedélyezése"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

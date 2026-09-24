@@ -2315,13 +2315,8 @@
     "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation 已更新。",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "配置的信令服务器需要更新才能与此版本的 Talk 兼容，请联系您的管理员。",
     "Enable live translation" : "启用实时翻译",
-    "_Open poll • %n vote • Your vote is anonymous_::_Open poll • %n votes • Your vote is anonymous_" : ["公开投票 • %n 票 • 您的投票是匿名的"],
-    "Open poll • You voted already • Your vote is anonymous" : "公开投票 • 您已投票 • 您的投票是匿名的",
-    "Open poll • Your vote is anonymous" : "公开投票 • 您的投票是匿名的",
     "I picked list style" : "我择了列表样式",
     "Hey! Are you using Talk in list style or with message bubbles?" : "嘿！您是使用列表样式还是有消息气泡的 Talk？",
-    "Allow editing of uploaded files" : "允许编辑已上传的文件",
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n 票 • 您的投票是匿名的"],
-    "Your vote is anonymous" : "您的投票是匿名的"
+    "Allow editing of uploaded files" : "允许编辑已上传的文件"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

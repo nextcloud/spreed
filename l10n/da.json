@@ -2295,11 +2295,8 @@
     "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation blev opdateret.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Den konfigurerede signalserver skal opdateres for at være kompatibel med denne version af Talk. Kontakt venligst din administration.",
     "Enable live translation" : "Aktivér live oversættelse",
-    "Open poll • You voted already • Your vote is anonymous" : "Åbn afstemning • Du har allerede stemt • Din stemme er anonym",
-    "Open poll • Your vote is anonymous" : "Åbn afstemning • Din stemme er anonym",
     "I picked list style" : "Jeg valgte listestil",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hey! Bruger du Talk i listestil eller med beskedbobler?",
-    "Allow editing of uploaded files" : "Tillad redigering af uploadede filer",
-    "Your vote is anonymous" : "Din stemme er anonym."
+    "Allow editing of uploaded files" : "Tillad redigering af uploadede filer"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
