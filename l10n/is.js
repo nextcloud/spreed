@@ -554,7 +554,6 @@ OC.L10N.register(
     "Create poll" : "Búa til könnun",
     "Question" : "Spurning",
     "Settings" : "Stillingar",
-    "Anonymous poll" : "Nafnlaus könnun",
     "Results" : "Niðurstöður",
     "Owner" : "Eigandi",
     "Moderator" : "Umsjónarmaður",
@@ -640,6 +639,7 @@ OC.L10N.register(
     "Set reminder for tomorrow" : "Setja áminningu fyrir morgundaginn",
     "Set reminder for this weekend" : "Setja áminningu fyrir þessa helgi",
     "Set reminder for next week" : "Setja áminningu fyrir í næstu viku",
-    "Send" : "Senda"
+    "Send" : "Senda",
+    "Anonymous poll" : "Nafnlaus könnun"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");
