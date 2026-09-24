@@ -202,6 +202,22 @@ Feature: chat-1/notifications
       | app    | object_type | object_id      | subject                                                      |
       | spreed | chat        | room/Message 1 | participant1-displayname sent a message in conversation room |
 
+  Scenario: Reply outside of a thread when recipient with all notifications in the group room
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "room" with 200 (v4)
+    Given user "participant2" leaves room "room" with 200 (v4)
+    And user "participant2" sets notifications to all for room "room" (v4)
+    When user "participant1" sends message "Message 1" to room "room" with 201
+    And user "participant1" sends reply "Message 2" on message "Message 1" to room "room" with 201
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id      | subject                                                      |
+      | spreed | chat        | room/Message 2 | participant1-displayname sent a message in conversation room |
+      | spreed | chat        | room/Message 1 | participant1-displayname sent a message in conversation room |
+
   Scenario: Mention when recipient is online in the group room
     When user "participant1" creates room "room" (v4)
       | roomType | 2 |
