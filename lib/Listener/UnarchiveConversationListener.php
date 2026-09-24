@@ -8,7 +8,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Listener;
 
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\ChatMessageSentEvent;
+use OCA\Talk\Events\SystemMessageSentEvent;
 use OCA\Talk\Service\ConversationUnarchiveService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -24,15 +26,15 @@ class UnarchiveConversationListener implements IEventListener {
 
 	#[\Override]
 	public function handle(Event $event): void {
-		if (!$event instanceof ChatMessageSentEvent) {
+		// Shared files and objects are system messages, but count as unread messages
+		if (!$event instanceof ChatMessageSentEvent
+			&& !($event instanceof SystemMessageSentEvent && $event->getComment()->getVerb() === ChatManager::VERB_OBJECT_SHARED)) {
 			return;
 		}
 
 		$this->unarchiveService->unarchiveAfterMessage(
 			$event->getRoom(),
 			$event->getComment(),
-			$event->getParticipant(),
-			$event->isSilentMessage(),
 			$event->getParent(),
 		);
 	}

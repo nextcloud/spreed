@@ -8,11 +8,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Federation\Proxy\TalkV1\UserConverter;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
-use OCA\Talk\Model\Message;
 use OCA\Talk\Model\ProxyCacheMessage;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -22,7 +22,12 @@ use OCP\IConfig;
 
 /**
  * Unarchive conversations for users who opted in via the
- * "conversations_unarchive" user setting when a new chat message is posted
+ * "conversations_unarchive" user setting when a new chat message, file or object is posted.
+ *
+ * A conversation is unarchived when the conversation list would show a marker
+ * for the message: a mention marker with "mention" (any message in one-to-one
+ * conversations), an unread marker with "always".
+ * Own messages create no marker and never unarchive.
  */
 class ConversationUnarchiveService {
 	public function __construct(
@@ -34,7 +39,7 @@ class ConversationUnarchiveService {
 	) {
 	}
 
-	public function unarchiveAfterMessage(Room $room, IComment $comment, ?Participant $sender, bool $silent, ?IComment $parent): void {
+	public function unarchiveAfterMessage(Room $room, IComment $comment, ?IComment $parent): void {
 		$archivedAttendees = $this->attendeeMapper->getArchivedActorsByType($room->getId(), Attendee::ACTOR_USERS);
 		if (empty($archivedAttendees)) {
 			return;
@@ -43,29 +48,22 @@ class ConversationUnarchiveService {
 		$userIds = array_map(static fn (Attendee $attendee): string => $attendee->getActorId(), $archivedAttendees);
 		$modes = $this->serverConfig->getUserValueForUsers('spreed', UserPreference::CONVERSATIONS_UNARCHIVE, $userIds);
 
-		$senderAttendeeId = $sender?->getAttendee()->getId();
-		$mentionedUserIds = $silent ? [] : $this->getMentionedUserIds($comment, $parent);
-		$everyoneMentioned = !$silent && $this->isEveryoneMentioned($comment);
+		$senderUserId = $comment->getActorType() === Attendee::ACTOR_USERS ? $comment->getActorId() : null;
+		$mentions = $this->getMentions($comment);
+		$mentionedUserIds = $this->getMentionedUserIds($mentions, $parent);
+		// Any message in a one-to-one conversation shows the mention marker
+		$everyoneMentioned = $room->getType() === Room::TYPE_ONE_TO_ONE || $this->isEveryoneMentioned($mentions);
 
 		$attendeeIds = [];
 		foreach ($archivedAttendees as $attendee) {
+			if ($attendee->getActorId() === $senderUserId) {
+				continue;
+			}
+
 			$mode = $modes[$attendee->getActorId()] ?? UserPreference::CONVERSATIONS_UNARCHIVE_NEVER;
-			if ($mode === UserPreference::CONVERSATIONS_UNARCHIVE_NEVER) {
-				continue;
-			}
-
-			if ($attendee->getId() === $senderAttendeeId) {
-				$attendeeIds[] = $attendee->getId();
-				continue;
-			}
-
-			if ($silent) {
-				continue;
-			}
-
 			if ($mode === UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS
-				|| $everyoneMentioned
-				|| in_array($attendee->getActorId(), $mentionedUserIds, true)) {
+				|| ($mode === UserPreference::CONVERSATIONS_UNARCHIVE_MENTION
+					&& ($everyoneMentioned || in_array($attendee->getActorId(), $mentionedUserIds, true)))) {
 				$attendeeIds[] = $attendee->getId();
 			}
 		}
@@ -85,36 +83,49 @@ class ConversationUnarchiveService {
 			return;
 		}
 
-		$mode = $this->talkConfig->getConversationsUnarchive($attendee->getActorId());
-		if ($mode === UserPreference::CONVERSATIONS_UNARCHIVE_NEVER) {
-			return;
-		}
-
 		if ($message->getActorType() === $attendee->getActorType()
 			&& $message->getActorId() === $attendee->getActorId()) {
-			$this->participantService->unarchiveConversation($participant);
 			return;
 		}
 
-		$metaData = $message->getParsedMetaData();
-		if (!empty($metaData[Message::METADATA_SILENT])) {
-			return;
-		}
-
+		$mode = $this->talkConfig->getConversationsUnarchive($attendee->getActorId());
 		if ($mode === UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS
-			|| $this->isMentionedInFederatedMessage($room, $attendee, $message, $metaData)) {
+			|| ($mode === UserPreference::CONVERSATIONS_UNARCHIVE_MENTION
+				&& $this->isMentionedInFederatedMessage($room, $attendee, $message))) {
 			$this->participantService->unarchiveConversation($participant);
 		}
 	}
 
 	/**
+	 * Mentions of the message, or of the caption for shared files
+	 *
+	 * @return list<array{type: string, id: string}>
+	 */
+	protected function getMentions(IComment $comment): array {
+		if ($comment->getVerb() !== ChatManager::VERB_OBJECT_SHARED) {
+			return $comment->getMentions();
+		}
+
+		$messageDecoded = json_decode($comment->getMessage(), true);
+		$caption = $messageDecoded['parameters']['metaData']['caption'] ?? null;
+		if (!is_string($caption)) {
+			return [];
+		}
+
+		$captionComment = clone $comment;
+		$captionComment->setMessage($caption, ChatManager::MAX_CHAT_LENGTH);
+		return $captionComment->getMentions();
+	}
+
+	/**
 	 * Users that are directly mentioned in the message or whose message is replied to
 	 *
+	 * @param list<array{type: string, id: string}> $mentions
 	 * @return list<string>
 	 */
-	protected function getMentionedUserIds(IComment $comment, ?IComment $parent): array {
+	protected function getMentionedUserIds(array $mentions, ?IComment $parent): array {
 		$userIds = [];
-		foreach ($comment->getMentions() as $mention) {
+		foreach ($mentions as $mention) {
 			if ($mention['type'] === 'user') {
 				$userIds[] = $mention['id'];
 			}
@@ -127,8 +138,11 @@ class ConversationUnarchiveService {
 		return $userIds;
 	}
 
-	protected function isEveryoneMentioned(IComment $comment): bool {
-		foreach ($comment->getMentions() as $mention) {
+	/**
+	 * @param list<array{type: string, id: string}> $mentions
+	 */
+	protected function isEveryoneMentioned(array $mentions): bool {
+		foreach ($mentions as $mention) {
 			if ($mention['type'] === 'call') {
 				return true;
 			}
@@ -137,10 +151,7 @@ class ConversationUnarchiveService {
 		return false;
 	}
 
-	/**
-	 * @param array{replyToActorType?: string, replyToActorId?: string} $metaData
-	 */
-	protected function isMentionedInFederatedMessage(Room $room, Attendee $attendee, ProxyCacheMessage $message, array $metaData): bool {
+	protected function isMentionedInFederatedMessage(Room $room, Attendee $attendee, ProxyCacheMessage $message): bool {
 		foreach ($message->getParsedMessageParameters() as $parameter) {
 			// RichObjectDefinition types, not Attendee::ACTOR_*
 			if ($parameter['type'] === 'call' && $parameter['id'] === $room->getToken()) {
@@ -151,6 +162,8 @@ class ConversationUnarchiveService {
 			}
 		}
 
+		/** @var array{replyToActorType?: string, replyToActorId?: string} $metaData */
+		$metaData = $message->getParsedMetaData();
 		if (!isset($metaData[ProxyCacheMessage::METADATA_REPLY_TO_ACTOR_TYPE], $metaData[ProxyCacheMessage::METADATA_REPLY_TO_ACTOR_ID])) {
 			return false;
 		}
