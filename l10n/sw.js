@@ -1460,6 +1460,7 @@ OC.L10N.register(
     "Until unpin" : "Hadi ubandue",
     "Clear reminder – {timeLocale}" : "Futa kikumbusho – {timeLocale}",
     "Edited by {actor}" : "Imehaririwa na {actor}",
+    "Until {absoluteDate}" : "Until {absoluteDate}",
     "Message text copied to clipboard" : "Maandishi ya ujumbe yamenakiliwa kwenye ubao wa kunakili",
     "Message text could not be copied" : "Maandishi ya ujumbe hayakuweza kunakiliwa",
     "Message forwarded to \"Note to self\"" : "Ujumbe umetumwa kwa \"Note to self\"",
