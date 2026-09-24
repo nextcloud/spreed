@@ -60,8 +60,9 @@ Feature: conversation-1/archive
     When user "participant1" silent sends message "Silent @participant2" to room "group room" with 201
     Then user "participant2" is participant of the following unordered rooms (v4)
       | id         | name | isArchived |
-      | group room | room | 1          |
-    When user "participant1" sends message "Hello @participant2" to room "group room" with 201
+      | group room | room | 0          |
+    When user "participant2" archives room "group room" with 200 (v4)
+    And user "participant1" sends message "Hello @participant2" to room "group room" with 201
     Then user "participant2" is participant of the following unordered rooms (v4)
       | id         | name | isArchived |
       | group room | room | 0          |
@@ -84,17 +85,17 @@ Feature: conversation-1/archive
       | id         | name | isArchived |
       | group room | room | 0          |
 
-  Scenario: Unarchive on own message
+  Scenario: Own messages keep the conversation archived
     Given user "participant1" creates room "group room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
-    And user "participant2" sets setting "conversations_unarchive" to "mention" with 200 (v1)
+    And user "participant2" sets setting "conversations_unarchive" to "always" with 200 (v1)
     And user "participant2" archives room "group room" with 200 (v4)
     When user "participant2" sends message "Message by participant2" to room "group room" with 201
     Then user "participant2" is participant of the following unordered rooms (v4)
       | id         | name | isArchived |
-      | group room | room | 0          |
+      | group room | room | 1          |
 
   Scenario: Unarchive on any message
     Given user "participant1" creates room "group room" (v4)
@@ -104,10 +105,6 @@ Feature: conversation-1/archive
     And user "participant2" sets setting "conversations_unarchive" to "always" with 200 (v1)
     And user "participant2" archives room "group room" with 200 (v4)
     When user "participant1" silent sends message "Silent message" to room "group room" with 201
-    Then user "participant2" is participant of the following unordered rooms (v4)
-      | id         | name | isArchived |
-      | group room | room | 1          |
-    When user "participant1" sends message "Message 1" to room "group room" with 201
     Then user "participant2" is participant of the following unordered rooms (v4)
       | id         | name | isArchived |
       | group room | room | 0          |

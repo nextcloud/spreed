@@ -89,7 +89,7 @@ class ConversationUnarchiveServiceTest extends TestCase {
 		$this->participantService->expects($this->never())
 			->method('unarchiveAttendeesByIds');
 
-		$this->service->unarchiveAfterMessage($this->createRoom(), $this->createComment(), null, false, null);
+		$this->service->unarchiveAfterMessage($this->createRoom(), $this->createComment(), null, null);
 	}
 
 	public static function dataUnarchiveAfterMessage(): array {
@@ -100,17 +100,16 @@ class ConversationUnarchiveServiceTest extends TestCase {
 		$allMention = [['type' => 'call', 'id' => 'token']];
 
 		return [
-			'no setting keeps archived' => [[], [], false, null, []],
-			'never keeps archived on mention' => [['bob' => $never], $directMention, false, null, []],
-			'mention: plain message keeps archived' => [['bob' => $mention], [], false, null, []],
-			'mention: direct mention unarchives' => [['bob' => $mention], $directMention, false, null, [2]],
-			'mention: @all unarchives' => [['bob' => $mention], $allMention, false, null, [2]],
-			'mention: reply to own message unarchives' => [['bob' => $mention], [], false, 'bob', [2]],
-			'mention: silent mention keeps archived' => [['bob' => $mention], $directMention, true, null, []],
-			'always: plain message unarchives' => [['bob' => $always], [], false, null, [2]],
-			'always: silent message keeps archived' => [['bob' => $always], [], true, null, []],
-			'mixed settings' => [['alice' => $always, 'bob' => $mention], [], false, null, [1]],
-			'mixed settings with mention' => [['alice' => $always, 'bob' => $mention], $directMention, false, null, [1, 2]],
+			'no setting keeps archived' => [[], [], null, []],
+			'never keeps archived on mention' => [['bob' => $never], $directMention, null, []],
+			'mention: plain message keeps archived' => [['bob' => $mention], [], null, []],
+			'mention: direct mention unarchives' => [['bob' => $mention], $directMention, null, [2]],
+			'mention: @all unarchives' => [['bob' => $mention], $allMention, null, [2]],
+			'mention: reply to own message unarchives' => [['bob' => $mention], [], 'bob', [2]],
+			'mention: reply to someone else keeps archived' => [['bob' => $mention], [], 'alice', []],
+			'always: plain message unarchives' => [['bob' => $always], [], null, [2]],
+			'mixed settings' => [['alice' => $always, 'bob' => $mention], [], null, [1]],
+			'mixed settings with mention' => [['alice' => $always, 'bob' => $mention], $directMention, null, [1, 2]],
 		];
 	}
 
@@ -120,7 +119,7 @@ class ConversationUnarchiveServiceTest extends TestCase {
 	 * @param list<int> $expectedAttendeeIds
 	 */
 	#[DataProvider('dataUnarchiveAfterMessage')]
-	public function testUnarchiveAfterMessage(array $modes, array $mentions, bool $silent, ?string $replyToUserId, array $expectedAttendeeIds): void {
+	public function testUnarchiveAfterMessage(array $modes, array $mentions, ?string $replyToUserId, array $expectedAttendeeIds): void {
 		$this->attendeeMapper->method('getArchivedActorsByType')
 			->with(42, Attendee::ACTOR_USERS)
 			->willReturn([
@@ -142,31 +141,31 @@ class ConversationUnarchiveServiceTest extends TestCase {
 			->method('unarchiveAttendeesByIds')
 			->with($expectedAttendeeIds);
 
-		$this->service->unarchiveAfterMessage($this->createRoom(), $this->createComment($mentions), null, $silent, $parent);
+		$this->service->unarchiveAfterMessage($this->createRoom(), $this->createComment($mentions), null, $parent);
 	}
 
 	public static function dataOwnMessage(): array {
 		return [
-			'own message unarchives with mention mode' => [UserPreference::CONVERSATIONS_UNARCHIVE_MENTION, true],
-			'own message unarchives with always mode' => [UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS, true],
-			'own message keeps archived with never mode' => [UserPreference::CONVERSATIONS_UNARCHIVE_NEVER, false],
+			'mention mode' => [UserPreference::CONVERSATIONS_UNARCHIVE_MENTION],
+			'always mode' => [UserPreference::CONVERSATIONS_UNARCHIVE_ALWAYS],
 		];
 	}
 
 	#[DataProvider('dataOwnMessage')]
-	public function testOwnMessage(string $mode, bool $expectUnarchive): void {
+	public function testOwnMessageKeepsArchived(string $mode): void {
 		$senderAttendee = $this->createAttendee(1, 'alice');
 		$this->attendeeMapper->method('getArchivedActorsByType')
-			->willReturn([$senderAttendee]);
+			->willReturn([$senderAttendee, $this->createAttendee(2, 'bob')]);
 		$this->serverConfig->method('getUserValueForUsers')
-			->willReturn(['alice' => $mode]);
+			->willReturn(['alice' => $mode, 'bob' => $mode]);
 
+		// Only bob is unarchived, even when the sender mentions themselves
 		$this->participantService->expects($this->once())
 			->method('unarchiveAttendeesByIds')
-			->with($expectUnarchive ? [1] : []);
+			->with([2]);
 
-		// Own messages count even when sent silently
-		$this->service->unarchiveAfterMessage($this->createRoom(), $this->createComment(), $this->createParticipant($senderAttendee), true, null);
+		$comment = $this->createComment([['type' => 'call', 'id' => 'localtoken']]);
+		$this->service->unarchiveAfterMessage($this->createRoom(), $comment, $this->createParticipant($senderAttendee), null);
 	}
 
 	/**
@@ -202,10 +201,11 @@ class ConversationUnarchiveServiceTest extends TestCase {
 			'mention: same user id on other server is not a mention' => [$mention, $remote, $remoteUserMention, [], '', true, false],
 			'mention: @all unarchives' => [$mention, $remote, $allMention, [], '', true, true],
 			'mention: reply unarchives' => [$mention, $remote, [], $reply, '', true, true],
-			'mention: silent mention keeps archived' => [$mention, $remote, $directMention, ['silent' => true], '', true, false],
-			'mention: own message unarchives' => [$mention, $own, [], ['silent' => true], '', true, true],
+			'mention: silent mention unarchives' => [$mention, $remote, $directMention, ['silent' => true], '', true, true],
+			'mention: own message keeps archived' => [$mention, $own, $allMention, [], '', true, false],
 			'always: plain message unarchives' => [$always, $remote, [], [], '', true, true],
-			'always: silent message keeps archived' => [$always, $remote, [], ['silent' => true], '', true, false],
+			'always: silent message unarchives' => [$always, $remote, [], ['silent' => true], '', true, true],
+			'always: own message keeps archived' => [$always, $own, [], [], '', true, false],
 			'always: system message keeps archived' => [$always, $remote, [], [], 'call_started', true, false],
 		];
 	}
