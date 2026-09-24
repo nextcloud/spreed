@@ -309,12 +309,12 @@ export default {
 			}
 
 			if ((this.selfIsOwnerOrModerator || this.selfHasVoted) && this.isPollPublic) {
-				return n('spreed', '%n vote', '%n votes', this.poll?.numVoters)
+				return n('spreed', '%n vote • Your name will be shown on voted options', '%n votes • Your name will be shown on voted options', this.poll?.numVoters)
 			} else if (!this.isPollPublic) {
 				if (this.selfIsOwnerOrModerator) {
-					return n('spreed', '%n vote • Your vote is anonymous', '%n votes • Your vote is anonymous', this.poll?.numVoters)
+					return n('spreed', '%n vote • Your name will not be shown on voted options', '%n votes • Your name will not be shown on voted options', this.poll?.numVoters)
 				}
-				return t('spreed', 'Your vote is anonymous')
+				return t('spreed', 'Your name will not be shown on voted options')
 			}
 
 			return ''
