@@ -263,20 +263,20 @@ export default {
 			}
 
 			if (this.isPollPublic && (this.selfIsOwnerOrModerator || this.selfHasVoted)) {
-				return n('spreed', 'Open poll • %n vote', 'Open poll • %n votes', this.poll?.numVoters)
+				return n('spreed', 'Open poll • %n vote • Your name will be shown on voted options', 'Open poll • %n votes • Your name will be shown on voted options', this.poll?.numVoters)
 			}
 
 			if (!this.isPollPublic && this.selfIsOwnerOrModerator) {
-				return n('spreed', 'Open poll • %n vote • Your vote is anonymous', 'Open poll • %n votes • Your vote is anonymous', this.poll?.numVoters)
+				return n('spreed', 'Open poll • %n vote • Your name will not be shown on voted options', 'Open poll • %n votes • Your name will not be shown on voted options', this.poll?.numVoters)
 			}
 
 			if (!this.isPollPublic && this.selfHasVoted) {
-				return t('spreed', 'Open poll • You voted already • Your vote is anonymous')
+				return t('spreed', 'Open poll • You voted already • Your name will not be shown on voted options')
 			}
 
 			return this.isPollPublic
 				? t('spreed', 'Open poll')
-				: t('spreed', 'Open poll • Your vote is anonymous')
+				: t('spreed', 'Open poll • Your name will not be shown on voted options')
 		},
 
 		canEndPoll() {
