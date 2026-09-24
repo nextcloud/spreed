@@ -14,6 +14,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
@@ -26,6 +27,7 @@ use Test\TestCase;
 
 class RoomPluginTest extends TestCase {
 	protected ParticipantService&MockObject $participantService;
+	protected AvatarService&MockObject $avatarService;
 	protected ?Manager $manager = null;
 	protected ?IUserSession $userSession = null;
 	protected ?IUser $user = null;
@@ -37,6 +39,10 @@ class RoomPluginTest extends TestCase {
 
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
+		$this->avatarService = $this->createMock(AvatarService::class);
+		$this->avatarService->expects($this->any())
+			->method('getAvatarUrl')
+			->willReturnCallback(static fn (Room $room) => 'avatar-' . $room->getToken());
 
 		$this->user = $this->createMock(IUser::class);
 		$this->user->expects($this->any())
@@ -52,6 +58,7 @@ class RoomPluginTest extends TestCase {
 		$this->plugin = new RoomPlugin(
 			$this->manager,
 			$this->participantService,
+			$this->avatarService,
 			$this->userSession
 		);
 	}
@@ -86,6 +93,7 @@ class RoomPluginTest extends TestCase {
 	private static function newResult(string $label, string $shareWith): array {
 		return [
 			'label' => $label,
+			'avatar' => 'avatar-' . $shareWith,
 			'value' => [
 				'shareType' => IShare::TYPE_ROOM,
 				'shareWith' => $shareWith
