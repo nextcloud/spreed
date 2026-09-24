@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
+# Throw-away Synapse for the integration tests:
+#   docker compose -f tests/Integration/docker-compose.yml up -d
+#   MATRIX_HOMESERVER=http://localhost:8008 composer test:integration
+services:
+  synapse:
+    image: matrixdotorg/synapse:latest
+    environment:
+      SYNAPSE_SERVER_NAME: localhost
+      SYNAPSE_REPORT_STATS: "no"
+    ports:
+      - "8008:8008"
+    volumes:
+      - ./synapse:/data
+    command: >
+      sh -c "test -f /data/homeserver.yaml || /start.py generate;
+             sed -i 's/^#*enable_registration:.*/enable_registration: true/' /data/homeserver.yaml;
+             grep -q enable_registration_without_verification /data/homeserver.yaml || echo 'enable_registration_without_verification: true' >> /data/homeserver.yaml;
+             grep -q 'rc_message:' /data/homeserver.yaml || printf 'rc_message:\n  per_second: 1000\n  burst_count: 1000\nrc_login:\n  address:\n    per_second: 1000\n    burst_count: 1000\n  account:\n    per_second: 1000\n    burst_count: 1000\n  failed_attempts:\n    per_second: 1000\n    burst_count: 1000\nrc_registration:\n  per_second: 1000\n  burst_count: 1000\nrc_joins:\n  local:\n    per_second: 1000\n    burst_count: 1000\n  remote:\n    per_second: 1000\n    burst_count: 1000\nrc_invites:\n  per_room:\n    per_second: 1000\n    burst_count: 1000\n  per_user:\n    per_second: 1000\n    burst_count: 1000\n' >> /data/homeserver.yaml;
+             /start.py"

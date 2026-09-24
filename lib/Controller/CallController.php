@@ -253,6 +253,10 @@ class CallController extends AEnvironmentAwareOCSController {
 		'token' => '[a-z0-9]{4,30}',
 	])]
 	public function joinCall(?int $flags = null, bool $silent = false, bool $recordingConsent = false, array $silentFor = []): DataResponse {
+		if ($this->room->isMatrixConversation()) {
+			// Calls in Matrix rooms are not supported (yet)
+			return new DataResponse(['error' => 'matrix-unsupported'], Http::STATUS_METHOD_NOT_ALLOWED);
+		}
 		try {
 			$this->validateRecordingConsent($recordingConsent);
 		} catch (\InvalidArgumentException) {

@@ -150,6 +150,7 @@ class Capabilities implements IPublicCapability {
 	];
 
 	public const LOCAL_FEATURES = [
+		'matrix-rooms',
 		'favorites',
 		'chat-read-status',
 		'listable-rooms',
@@ -257,6 +258,32 @@ class Capabilities implements IPublicCapability {
 	}
 
 	/**
+	 * @return array{enabled: bool, can-link: bool, linked: bool, homeservers: list<array{id: int, name: string, serverName: string}>, e2ee-enabled: bool, upload-enabled: bool, typing-enabled: bool}
+	 */
+	protected function getMatrixCapabilities(?IUser $user): array {
+		$matrixConfig = \OCP\Server::get(\OCA\Talk\Matrix\MatrixConfig::class);
+		$homeservers = [];
+		$linked = false;
+		if ($matrixConfig->isEnabled() && $user instanceof IUser) {
+			$linked = \OCP\Server::get(\OCA\Talk\Matrix\Service\AccountService::class)->getForUser($user->getUID()) !== null;
+			if ($matrixConfig->canUserLink($user)) {
+				foreach (\OCP\Server::get(\OCA\Talk\Matrix\Service\HomeserverService::class)->getAll(true) as $homeserver) {
+					$homeservers[] = $homeserver->toPublicArray();
+				}
+			}
+		}
+		return [
+			'enabled' => $matrixConfig->isEnabled(),
+			'can-link' => $matrixConfig->canUserLink($user),
+			'linked' => $linked,
+			'homeservers' => $homeservers,
+			'e2ee-enabled' => $matrixConfig->isEnabled(),
+			'upload-enabled' => false,
+			'typing-enabled' => $matrixConfig->isTypingIncomingEnabled(),
+		];
+	}
+
+	/**
 	 * @return array{
 	 *      spreed?: TalkCapabilities,
 	 * }
@@ -328,6 +355,7 @@ class Capabilities implements IPublicCapability {
 					'outgoing-enabled' => false,
 					'only-trusted-servers' => true,
 				],
+				'matrix' => $this->getMatrixCapabilities($user),
 				'previews' => [
 					'max-gif-size' => $this->appConfig->getAppValueInt(Config::MAX_GIF_SIZE, 3145728),
 				],
