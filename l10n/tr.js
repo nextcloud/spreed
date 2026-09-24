@@ -1777,13 +1777,10 @@ OC.L10N.register(
     "Delete poll option" : "Anket seçeneğini sil",
     "Add answer" : "Yanıt ekle",
     "Settings" : "Ayarlar",
-    "Anonymous poll" : "Anonim anket",
     "Multiple answers" : "Birden çok yanıt",
     "Save as draft" : "Taslak olarak kaydet",
     "Export draft to file" : "Taslağı dosyaya dışa aktar",
     "_Final results • %n vote_::_Final results • %n votes_" : ["Sonuçlar • %n oy","Sonuçlar • %n oy"],
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n oy • Oyunuz anonimdir","%n oy • Oyunuz anonimdir"],
-    "Your vote is anonymous" : "Oyunuz anonim",
     "You voted for this option" : "Bu seçenek için oy verdiniz",
     "End poll" : "Anketi sonlandır",
     "Change your vote" : "Oyunuzu değiştirin",
@@ -2342,6 +2339,7 @@ OC.L10N.register(
     "Talk recording from {time} ({conversation})" : "Konuş kaydediyor {time} ({conversation})",
     "Send" : "Gönder",
     "Can post messages and reactions" : "İleti ve tepki gönderebilir",
+    "Anonymous poll" : "Anonim anket",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Anket sonuçları • %n oy","Anket sonuçları • %n oy"],
     "_Open poll • %n vote_::_Open poll • %n votes_" : ["Açık anket • %n oy","Açık anket • %n oy"],
     "Submit vote" : "Oyu gönder",
@@ -2364,6 +2362,8 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Açık anket • Oyunuz anonimdir",
     "I picked list style" : "Liste biçemini seçtim",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Talk görünümü liste olarak mı ileti balonları olarak mı kullanıyorsunuz?",
-    "Allow editing of uploaded files" : "Yüklenen dosyalar düzenlenebilsin"
+    "Allow editing of uploaded files" : "Yüklenen dosyalar düzenlenebilsin",
+    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n oy • Oyunuz anonimdir","%n oy • Oyunuz anonimdir"],
+    "Your vote is anonymous" : "Oyunuz anonim"
 },
 "nplurals=2; plural=(n > 1);");

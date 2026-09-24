@@ -1777,13 +1777,10 @@ OC.L10N.register(
     "Delete poll option" : "Scrios an rogha vótaíochta",
     "Add answer" : "Cuir freagra leis",
     "Settings" : "Socruithe",
-    "Anonymous poll" : "Pobalbhreith gan ainm",
     "Multiple answers" : "Freagraí iolracha",
     "Save as draft" : "Sábháil mar dhréacht",
     "Export draft to file" : "Easpórtáil dréacht go comhad",
     "_Final results • %n vote_::_Final results • %n votes_" : ["Torthaí deiridh • %n vóta","Torthaí deiridh • %n vótaí","Torthaí deiridh • %n vótaí","Torthaí deiridh • %n vótaí","Torthaí deiridh • %n vótaí"],
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n vóta • Tá do vóta gan ainm","%n vótaí • Tá do vóta gan ainm","%n vótaí • Tá do vóta gan ainm","%n vótaí • Tá do vóta gan ainm","%n vótaí • Tá do vóta gan ainm"],
-    "Your vote is anonymous" : "Tá do vóta gan ainm",
     "You voted for this option" : "Vótáil tú ar son an rogha seo",
     "End poll" : "Deireadh vótaíocht",
     "Change your vote" : "Athraigh do vóta",
@@ -2342,6 +2339,7 @@ OC.L10N.register(
     "Talk recording from {time} ({conversation})" : "Taifeadadh cainte ó {time} ({conversation})",
     "Send" : "Seol",
     "Can post messages and reactions" : "Is féidir teachtaireachtaí agus freagraí a phostáil",
+    "Anonymous poll" : "Pobalbhreith gan ainm",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Torthaí na vótaíochta • %n vóta","Torthaí na vótaíochta • %n vótaí","Torthaí na vótaíochta • %n vótaí","Torthaí na vótaíochta • %n vótaí","Torthaí na vótaíochta • %n vótaí"],
     "_Open poll • %n vote_::_Open poll • %n votes_" : ["Vótaíocht oscailte • %n vóta","Vótaíocht oscailte • %n vótaí","Vótaíocht oscailte • %n vótaí","Vótaíocht oscailte • %n vótaí","Vótaíocht oscailte • %n vótaí"],
     "Submit vote" : "Cuir vóta isteach",
@@ -2364,6 +2362,8 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Vótaíocht oscailte • Tá do vóta gan ainm",
     "I picked list style" : "Roghnaigh mé stíl liosta",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Haigh! An bhfuil tú ag úsáid Talk i stíl liosta nó le boilgeoga teachtaireachta?",
-    "Allow editing of uploaded files" : "Ceadaigh eagarthóireacht ar chomhaid uaslódáilte"
+    "Allow editing of uploaded files" : "Ceadaigh eagarthóireacht ar chomhaid uaslódáilte",
+    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n vóta • Tá do vóta gan ainm","%n vótaí • Tá do vóta gan ainm","%n vótaí • Tá do vóta gan ainm","%n vótaí • Tá do vóta gan ainm","%n vótaí • Tá do vóta gan ainm"],
+    "Your vote is anonymous" : "Tá do vóta gan ainm"
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");

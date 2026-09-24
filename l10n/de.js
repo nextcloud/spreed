@@ -1777,13 +1777,10 @@ OC.L10N.register(
     "Delete poll option" : "Umfrage-Option löschen",
     "Add answer" : "Antwort hinzufügen",
     "Settings" : "Einstellungen",
-    "Anonymous poll" : "Anonyme Umfrage",
     "Multiple answers" : "Mehrere Antworten",
     "Save as draft" : "Als Entwurf speichern",
     "Export draft to file" : "Entwurf in Datei exportieren",
     "_Final results • %n vote_::_Final results • %n votes_" : ["Endergebnisse • %n Stimme","Endergebnisse • %n Stimmen"],
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n Stimme • Ihre Stimme ist anonym","%n Stimmen • Deine Stimme ist anonym"],
-    "Your vote is anonymous" : "Deine Stimme ist anonym",
     "You voted for this option" : "Du hast für diese Option gestimmt",
     "End poll" : "Umfrage beenden",
     "Change your vote" : "Ihre Stimmabgabe ändern",
@@ -2342,6 +2339,7 @@ OC.L10N.register(
     "Talk recording from {time} ({conversation})" : "Talk-Aufnahme von {time} ({conversation})",
     "Send" : "Senden",
     "Can post messages and reactions" : "Kann Nachrichten und Reaktionen posten",
+    "Anonymous poll" : "Anonyme Umfrage",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Umfrageergebnisse • %n Stimme","Umfrageergebnisse • %n Stimmen"],
     "_Open poll • %n vote_::_Open poll • %n votes_" : ["Offene Umfrage • %n Stimme","Offene Umfrage • %n Stimmen"],
     "Submit vote" : "Stimme abgeben",
@@ -2364,6 +2362,8 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Offene Umfrage • Deine Stimme ist anonym",
     "I picked list style" : "Ich habe den Listenstil ausgewählt",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hallo! Verwendest du Talk im Listenstil oder mit Sprechblasen?",
-    "Allow editing of uploaded files" : "Bearbeitung hochgeladener Dateien erlauben"
+    "Allow editing of uploaded files" : "Bearbeitung hochgeladener Dateien erlauben",
+    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n Stimme • Ihre Stimme ist anonym","%n Stimmen • Deine Stimme ist anonym"],
+    "Your vote is anonymous" : "Deine Stimme ist anonym"
 },
 "nplurals=2; plural=(n != 1);");

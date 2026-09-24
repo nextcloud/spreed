@@ -1739,11 +1739,9 @@ OC.L10N.register(
     "Delete poll option" : "Delete afstemning option",
     "Add answer" : "Tilføj svar",
     "Settings" : "Indstillinger",
-    "Anonymous poll" : "Anonym afstemning",
     "Multiple answers" : "Multiple svar",
     "Save as draft" : "Gem som udkast",
     "Export draft to file" : "Eksportér udkast til fil",
-    "Your vote is anonymous" : "Din stemme er anonym.",
     "You voted for this option" : "De stemte for denne mulighed.",
     "End poll" : "Afslut afstemning",
     "Change your vote" : "Skift afstemning",
@@ -2283,6 +2281,7 @@ OC.L10N.register(
     "Talk recording from {time} ({conversation})" : "Talk optagelse fra {time} ({conversation})",
     "Send" : "Send",
     "Can post messages and reactions" : "Kan sende beskeder og reaktioner",
+    "Anonymous poll" : "Anonym afstemning",
     "Submit vote" : "Afgiv stemme",
     "Search messages …" : "Søg efter beskeder ...",
     "Your privacy setting has been saved" : "Din personlige indstilling er blevet gemt",
@@ -2302,6 +2301,7 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Åbn afstemning • Din stemme er anonym",
     "I picked list style" : "Jeg valgte listestil",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hey! Bruger du Talk i listestil eller med beskedbobler?",
-    "Allow editing of uploaded files" : "Tillad redigering af uploadede filer"
+    "Allow editing of uploaded files" : "Tillad redigering af uploadede filer",
+    "Your vote is anonymous" : "Din stemme er anonym."
 },
 "nplurals=2; plural=(n != 1);");

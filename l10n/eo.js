@@ -333,7 +333,6 @@ OC.L10N.register(
     "Contact" : "Kontakto",
     "Create new poll" : "Krei novan enketon",
     "Settings" : "Agordoj",
-    "Anonymous poll" : "Enketo sennoma",
     "Owner" : "Posedanto",
     "Moderator" : "Kontrolanto",
     "Searching …" : "Serĉado ...",
@@ -358,6 +357,7 @@ OC.L10N.register(
     "__language_name__" : "Esperanto",
     "Tasks" : "Taskoj",
     "Talk to %s" : "Paroli al %s",
-    "Send" : "Sendi"
+    "Send" : "Sendi",
+    "Anonymous poll" : "Enketo sennoma"
 },
 "nplurals=2; plural=(n != 1);");

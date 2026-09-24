@@ -1777,13 +1777,10 @@ OC.L10N.register(
     "Delete poll option" : "刪除投票選項",
     "Add answer" : "新增答案",
     "Settings" : "設定",
-    "Anonymous poll" : "匿名投票",
     "Multiple answers" : "多個答案",
     "Save as draft" : "儲存為草稿",
     "Export draft to file" : "將草稿匯出至檔案",
     "_Final results • %n vote_::_Final results • %n votes_" : ["最終結果 • %n 票"],
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n 票 • 您的投票是匿名的"],
-    "Your vote is anonymous" : "您的投票是匿名的",
     "You voted for this option" : "您投了此選項",
     "End poll" : "結束投票",
     "Change your vote" : "變更您的投票",
@@ -2342,6 +2339,7 @@ OC.L10N.register(
     "Talk recording from {time} ({conversation})" : "從 {time} 開始的 Talk 錄音（{conversation}）",
     "Send" : "傳送",
     "Can post messages and reactions" : "可以發佈訊息與反應",
+    "Anonymous poll" : "匿名投票",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["投票結果 • %n 票"],
     "_Open poll • %n vote_::_Open poll • %n votes_" : ["開放投票 • %n 票"],
     "Submit vote" : "遞交投票",
@@ -2364,6 +2362,8 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "開放投票 • 您的投票是匿名的",
     "I picked list style" : "我選了清單樣式",
     "Hey! Are you using Talk in list style or with message bubbles?" : "嘿！您要使用清單樣式或訊息泡泡的 Talk？",
-    "Allow editing of uploaded files" : "允許編輯上傳的檔案"
+    "Allow editing of uploaded files" : "允許編輯上傳的檔案",
+    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n 票 • 您的投票是匿名的"],
+    "Your vote is anonymous" : "您的投票是匿名的"
 },
 "nplurals=1; plural=0;");

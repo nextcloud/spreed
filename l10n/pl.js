@@ -1705,13 +1705,10 @@ OC.L10N.register(
     "Delete poll option" : "Usuń opcję sondy",
     "Add answer" : "Dodaj odpowiedź",
     "Settings" : "Ustawienia",
-    "Anonymous poll" : "Anonimowa sonda",
     "Multiple answers" : "Wiele odpowiedzi",
     "Save as draft" : "Zapisz jako wersję roboczą",
     "Export draft to file" : "Eksportuj wersję roboczą do pliku",
     "_Final results • %n vote_::_Final results • %n votes_" : ["Wyniki końcowe •  %n głos","Wyniki końcowe •  %n głosów","Wyniki końcowe •  %n głosów","Wyniki końcowe •  %n głosów"],
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n głos • Twój głos jest anonimowy","%n głosów • Twój głos jest anonimowy","%n głosów • Twój głos jest anonimowy","%n głosy • Twój głos jest anonimowy"],
-    "Your vote is anonymous" : "Twój głos jest anonimowy",
     "You voted for this option" : "Głosowałeś na tę opcję",
     "End poll" : "Zakończ sondę",
     "Change your vote" : "Zmień swój głos",
@@ -2254,6 +2251,7 @@ OC.L10N.register(
     "Talk recording from {time} ({conversation})" : "Nagranie rozmowy z {time} ({conversation})",
     "Send" : "Wyślij",
     "Can post messages and reactions" : "Może publikować wiadomości i reakcje",
+    "Anonymous poll" : "Anonimowa sonda",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Wyniki sondy • %n głos","Wyniki sondy • %n głosy","Wyniki sondy • %n głosów","Wyniki sondy • %n głosów"],
     "_Open poll • %n vote_::_Open poll • %n votes_" : ["Otwórz sondę • %n głos","Otwórz sondę • %n głosy","Otwórz sondę • %n głosów","Otwórz sondę • %n głosów"],
     "Submit vote" : "Wyślij głos",
@@ -2275,6 +2273,8 @@ OC.L10N.register(
     "Open poll • You voted already • Your vote is anonymous" : "Otwarta ankieta • Już zagłosowałeś(-aś) • Twój głos jest anonimowy",
     "Open poll • Your vote is anonymous" : "Otwarta ankieta • Twój głos jest anonimowy",
     "I picked list style" : "Wybrałem widok listy",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Korzystasz z Talk w widoku listy czy z dymkami wiadomości?"
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Korzystasz z Talk w widoku listy czy z dymkami wiadomości?",
+    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n głos • Twój głos jest anonimowy","%n głosów • Twój głos jest anonimowy","%n głosów • Twój głos jest anonimowy","%n głosy • Twój głos jest anonimowy"],
+    "Your vote is anonymous" : "Twój głos jest anonimowy"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

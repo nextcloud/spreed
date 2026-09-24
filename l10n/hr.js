@@ -1666,12 +1666,10 @@ OC.L10N.register(
     "Delete poll option" : "Izbriši opciju ankete",
     "Add answer" : "Dodaj odgovor",
     "Settings" : "Postavke",
-    "Anonymous poll" : "Anonimna anketa",
     "Multiple answers" : "Više odgovora",
     "Save as draft" : "Spremi kao skicu",
     "Export draft to file" : "Izvezi skicu u datoteku",
     "_Final results • %n vote_::_Final results • %n votes_" : ["Konačni rezultati • %n glas","Konačni rezultati • %n glasa","Konačni rezultati • %n glasova"],
-    "Your vote is anonymous" : "Vaš glas je anoniman",
     "You voted for this option" : "Glasali ste za ovu opciju",
     "End poll" : "Završi anketu",
     "Change your vote" : "Promijeni glas",
@@ -2207,6 +2205,7 @@ OC.L10N.register(
     "Talk recording from {time} ({conversation})" : "Snimak iz aplikacije Talk od {time} ({conversation})",
     "Send" : "Pošaljite",
     "Can post messages and reactions" : "Može slati poruke i reakcije",
+    "Anonymous poll" : "Anonimna anketa",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Rezultati ankete • %n glas","Rezultati ankete • %n glasa","Rezultati ankete • %n glasova"],
     "_Open poll • %n vote_::_Open poll • %n votes_" : ["Otvorena anketa • %n glas","Otvorena anketa • %n glasa","Otvorena anketa • %n glasova"],
     "Submit vote" : "Pošalji glas",
@@ -2225,6 +2224,7 @@ OC.L10N.register(
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Konfigurirani signalni poslužitelj mora se ažurirati kako bi bio kompatibilan s ovom verzijom Talka. Obratite se administraciji.",
     "Enable live translation" : "Omogući prijevod uživo",
     "I picked list style" : "Odabrao sam stil popisa",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Koristite li Talk u prikazu popisa ili s oblačićima poruka?"
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Hej! Koristite li Talk u prikazu popisa ili s oblačićima poruka?",
+    "Your vote is anonymous" : "Vaš glas je anoniman"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

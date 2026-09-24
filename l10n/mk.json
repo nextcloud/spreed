@@ -1154,13 +1154,10 @@
     "Delete poll option" : "Избриши ја опцијата за анкета",
     "Add answer" : "Додади одговор",
     "Settings" : "Параметри",
-    "Anonymous poll" : "Анонимна анкета",
     "Multiple answers" : "Повеќе одговори",
     "Save as draft" : "Зачувај како нацрт",
     "Export draft to file" : "Извези го нацртот во датотека",
     "_Final results • %n vote_::_Final results • %n votes_" : ["Финални резултати • %n глас","Финални резултати • %n гласови"],
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n глас • Вашиот глас е анонимен","%n гласови • Вашиот глас е анонимен"],
-    "Your vote is anonymous" : "Вашиот глас е анонимен",
     "You voted for this option" : "Вие гласавте за оваа опција",
     "End poll" : "Затвори анкета",
     "Change your vote" : "Измени го твојот глас",
@@ -1487,6 +1484,7 @@
     "Poll • Ended" : "Анкета • Завршена",
     "Send" : "Прати",
     "Can post messages and reactions" : "Може да се пишуваат пораки и рекции",
+    "Anonymous poll" : "Анонимна анкета",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Резултати од анкетата • %n глас","Резултати од анкетата • %n гласови"],
     "_Open poll • %n vote_::_Open poll • %n votes_" : ["Отворена анкета • %n глас","Отворена анкета • %n гласови"],
     "Submit vote" : "Гласај",
@@ -1503,6 +1501,8 @@
     "Open poll • Your vote is anonymous" : "Отворена анкета • Вашиот глас е анонимен",
     "I picked list style" : "Избрав стил на листа",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Еј! Дали го користиш Talk во стил на листа или со Меурчиња за пораки?",
-    "Allow editing of uploaded files" : "Дозволи уредување на прикачените датотеки"
+    "Allow editing of uploaded files" : "Дозволи уредување на прикачените датотеки",
+    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n глас • Вашиот глас е анонимен","%n гласови • Вашиот глас е анонимен"],
+    "Your vote is anonymous" : "Вашиот глас е анонимен"
 },"pluralForm" :"nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;"
 }

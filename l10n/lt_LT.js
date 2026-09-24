@@ -1767,13 +1767,10 @@ OC.L10N.register(
     "Delete poll option" : "Ištrinti apklausos variantą",
     "Add answer" : "Pridėti atsakymą",
     "Settings" : "Nustatymai",
-    "Anonymous poll" : "Anoniminė apklausa",
     "Multiple answers" : "Keli atsakymai",
     "Save as draft" : "Išsaugoti kaip juodraštį",
     "Export draft to file" : "Eksportuoti juodraštį į failą",
     "_Final results • %n vote_::_Final results • %n votes_" : ["Galutiniai rezultatai • %n balsas","Galutiniai rezultatai • %n balsai","Galutiniai rezultatai • %n balsų","Galutiniai rezultatai • %n balsų"],
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n balsas • Jūsų balsas yra anoniminis","%n balsai • Jūsų balsas yra anoniminis","%n balsų • Jūsų balsas yra anoniminis","%n balsų • Jūsų balsas yra anoniminis"],
-    "Your vote is anonymous" : "Jūsų balsas yra anoniminis",
     "You voted for this option" : "Jūs balsavote už šį variantą",
     "End poll" : "Baigti apklausą",
     "Change your vote" : "Keisti savo balsą",
@@ -2329,6 +2326,7 @@ OC.L10N.register(
     "Talk recording from {time} ({conversation})" : "„Pokalbiai“ įrašas iš {time} ({conversation})",
     "Send" : "Siųsti",
     "Can post messages and reactions" : "Gali skelbti pranešimus ir reakcijas",
+    "Anonymous poll" : "Anoniminė apklausa",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Apklausos rezultatai • %n balsas","Apklausos rezultatai • %n balsai","Apklausos rezultatai • %n balsų","Apklausos rezultatai • %n balsų"],
     "_Open poll • %n vote_::_Open poll • %n votes_" : ["Atidaryti apklausą • %n balsas","Atidaryti apklausą • %n balsai","Atidaryti apklausą • %n balsų","Atidaryti apklausą • %n balsų"],
     "Submit vote" : "Pateikti balsavimą",
@@ -2351,6 +2349,8 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Atvira apklausa • Jūsų balsas anonimiškas",
     "I picked list style" : "Pasirinkau sąrašo stilių",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Ei! Ar naudojate „Pokalbiai“ sąrašo stiliumi, ar su žinučių burbulais?",
-    "Allow editing of uploaded files" : "Leisti redaguoti įkeltus failus"
+    "Allow editing of uploaded files" : "Leisti redaguoti įkeltus failus",
+    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n balsas • Jūsų balsas yra anoniminis","%n balsai • Jūsų balsas yra anoniminis","%n balsų • Jūsų balsas yra anoniminis","%n balsų • Jūsų balsas yra anoniminis"],
+    "Your vote is anonymous" : "Jūsų balsas yra anoniminis"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

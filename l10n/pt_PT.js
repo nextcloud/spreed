@@ -1437,10 +1437,8 @@ OC.L10N.register(
     "Answers" : "Respostas",
     "Add answer" : "Adicionar resposta",
     "Settings" : "Definições",
-    "Anonymous poll" : "Enquete anônima",
     "Multiple answers" : "Respostas múltiplas",
     "Save as draft" : "Salvar como rascunho",
-    "Your vote is anonymous" : "Seu voto é anônimo",
     "End poll" : "Encerrar enquete",
     "Change your vote" : "Alterar seu voto",
     "Withdraw vote" : "Retirar voto",
@@ -1893,6 +1891,7 @@ OC.L10N.register(
     "Poll • Ended" : "Enquete • Encerrada",
     "Talk recording from {time} ({conversation})" : "Gravação do Talk de {time} ({conversation})",
     "Send" : "Enviar",
+    "Anonymous poll" : "Enquete anônima",
     "Submit vote" : "Enviar voto",
     "Your privacy setting has been saved" : "Sua configuração de privacidade foi salva",
     "Your personal setting has been saved" : "Sua configuração pessoal foi salva",
@@ -1909,6 +1908,7 @@ OC.L10N.register(
     "Open poll • You voted already • Your vote is anonymous" : "Enquete aberta • Você já votou • Seu voto é anônimo",
     "Open poll • Your vote is anonymous" : "Enquete aberta • Seu voto é anônimo",
     "I picked list style" : "Eu escolhi o estilo lista",
-    "Hey! Are you using Talk in list style or with message bubbles?" : "Ei! Você está usando o Talk no estilo lista ou com balões de mensagem?"
+    "Hey! Are you using Talk in list style or with message bubbles?" : "Ei! Você está usando o Talk no estilo lista ou com balões de mensagem?",
+    "Your vote is anonymous" : "Seu voto é anônimo"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

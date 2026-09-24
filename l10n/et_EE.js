@@ -1777,13 +1777,10 @@ OC.L10N.register(
     "Delete poll option" : "Kustuta küsitluse valik",
     "Add answer" : "Lisa vastus",
     "Settings" : "Seadistused",
-    "Anonymous poll" : "Anonüümne küsitlus",
     "Multiple answers" : "Mitu vastust",
     "Save as draft" : "Salvesta kavandina",
     "Export draft to file" : "Ekspordi kavand faili",
     "_Final results • %n vote_::_Final results • %n votes_" : ["Lõpptulemused • %n hääl","Lõpptulemused • %n häält"],
-    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n hääl • Sinu antud hääl on anonüümne","%n häält • Sinu antud hääl on anonüümne"],
-    "Your vote is anonymous" : "Sinu hääl on anonüümne",
     "You voted for this option" : "Sina hääletasid selle eelistuse poolt",
     "End poll" : "Lõpeta küsitlus",
     "Change your vote" : "Muuda oma häält",
@@ -2342,6 +2339,7 @@ OC.L10N.register(
     "Talk recording from {time} ({conversation})" : "Salvestus: {time} ({conversation})",
     "Send" : "Saada",
     "Can post messages and reactions" : "Võib koostada sõnumeid ja neile reageerida",
+    "Anonymous poll" : "Anonüümne küsitlus",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Küsitluse tulemused • %n hääl","Küsitluse tulemused • %n häält"],
     "_Open poll • %n vote_::_Open poll • %n votes_" : ["Avalik küsitlus • %n hääletamine","Avalik küsitlus • %n hääletamist"],
     "Submit vote" : "Hääleta",
@@ -2364,6 +2362,8 @@ OC.L10N.register(
     "Open poll • Your vote is anonymous" : "Avatud küsitlus • Sinu hääl on anonüümne",
     "I picked list style" : "Ma valisin loendi",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hei! Kas sa kasutad vestlusrakendust loendivaates või jutumullide vaates?",
-    "Allow editing of uploaded files" : "Luba üleslaaditud failide muutmist"
+    "Allow editing of uploaded files" : "Luba üleslaaditud failide muutmist",
+    "_%n vote • Your vote is anonymous_::_%n votes • Your vote is anonymous_" : ["%n hääl • Sinu antud hääl on anonüümne","%n häält • Sinu antud hääl on anonüümne"],
+    "Your vote is anonymous" : "Sinu hääl on anonüümne"
 },
 "nplurals=2; plural=(n != 1);");
