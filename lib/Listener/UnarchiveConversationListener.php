@@ -32,7 +32,6 @@ class UnarchiveConversationListener implements IEventListener {
 			$event->getRoom(),
 			$event->getComment(),
 			$event->getParticipant(),
-			$event->isSilentMessage(),
 			$event->getParent(),
 		);
 	}
