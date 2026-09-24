@@ -70,7 +70,7 @@ class ParticipantTest extends TestCase {
 		$groupManager->method('isInGroup')
 			->willReturnCallback(static fn (string $userId, string $groupId): bool => $userId === 'user1' && in_array($groupId, $userGroups, true));
 
-		$this->assertSame($expected, $participant->canStartCall($serverConfig, $appConfig, $groupManager));
+		$this->assertSame($expected, $participant->canStartCall($appConfig, $groupManager));
 	}
 	protected function createParticipant(bool $isChannel, int $participantType, int $permissions): Participant {
 		$room = $this->createMock(Room::class);
@@ -124,17 +124,17 @@ class ParticipantTest extends TestCase {
 
 	public function testCanStartCallIsFalseInChannelForModerators(): void {
 		$participant = $this->createParticipant(true, Participant::MODERATOR, Attendee::PERMISSIONS_DEFAULT);
-		$this->assertFalse($participant->canStartCall($this->createConfig(), $this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
+		$this->assertFalse($participant->canStartCall($this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
 	}
 
 	public function testCanStartCallIsFalseInChannelForUsers(): void {
 		$participant = $this->createParticipant(true, Participant::USER, Attendee::PERMISSIONS_DEFAULT);
-		$this->assertFalse($participant->canStartCall($this->createConfig(), $this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
+		$this->assertFalse($participant->canStartCall($this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
 	}
 
 	public function testCanStartCallIsTrueInNonChannelForModerators(): void {
 		$participant = $this->createParticipant(false, Participant::MODERATOR, Attendee::PERMISSIONS_DEFAULT);
-		$this->assertTrue($participant->canStartCall($this->createConfig(), $this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
+		$this->assertTrue($participant->canStartCall($this->createMock(IAppConfig::class), $this->createMock(IGroupManager::class)));
 	}
 
 	public function testIsOwner(): void {

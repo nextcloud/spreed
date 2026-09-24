@@ -120,7 +120,7 @@ class CanUseTalkMiddleware extends Middleware {
 		$hasAttribute = !empty($reflectionMethod->getAttributes(RequireCallEnabled::class));
 
 		if ($hasAttribute
-			&& $this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS) === ROOM::START_CALL_NOONE) {
+			&& $this->appConfig->getAppValueInt(Config::ALLOWED_START_CALLS) === Room::START_CALL_NOONE) {
 			throw new CanNotUseTalkException();
 		}
 	}

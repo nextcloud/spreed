@@ -11,7 +11,6 @@ namespace OCA\Talk;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCP\AppFramework\Services\IAppConfig;
-use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\Server;
 
@@ -143,7 +142,7 @@ class Participant {
 		return \in_array($participantType, [self::OWNER, self::MODERATOR, self::GUEST_MODERATOR], true);
 	}
 
-	public function canStartCall(IConfig $config, IAppConfig $appConfig, IGroupManager $groupManager): bool {
+	public function canStartCall(IAppConfig $appConfig, IGroupManager $groupManager): bool {
 		if ($this->room->getType() === Room::TYPE_NOTE_TO_SELF) {
 			return false;
 		}
