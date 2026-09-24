@@ -5,6 +5,25 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 25.0.1 – 2026-09-24
+### Changed
+- Update dependencies
+- Update translations
+
+### Fixed
+- fix(polls): improve wording for 'anonymous' polls
+  [#19527](https://github.com/nextcloud/spreed/pull/19527)
+- fix(notification): fix notification links when fully subscribed
+  [#19520](https://github.com/nextcloud/spreed/pull/19520)
+- fix(integrations): show conversation avatars in Files Sharing tab
+  [#19515](https://github.com/nextcloud/spreed/pull/19515)
+- fix(upload): save compressed images as JPEG
+  [#19493](https://github.com/nextcloud/spreed/pull/19493)
+- fix(chat): show preview for single-share documents
+  [#19434](https://github.com/nextcloud/spreed/pull/19434)
+- fix(recording): log activity to recording owner
+  [#19424](https://github.com/nextcloud/spreed/pull/19424)
+
 ## 25.0.0 – 2026-09-16
 ### Added
 - Classified conversations, announcements and channels
