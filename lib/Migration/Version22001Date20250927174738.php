@@ -9,11 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Migration;
 
-use Closure;
-use OCP\DB\ISchemaWrapper;
-use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
-use Override;
 
 /**
  * Due to a missing return the migration content was never executed.
