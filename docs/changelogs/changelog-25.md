@@ -5,6 +5,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 25.0.2 – 2026-09-25
+### Fixed
+- fix(migration): Correctly check for Index rather than Constraint
+  [#19540](https://github.com/nextcloud/spreed/pull/19540)
+
 ## 25.0.1 – 2026-09-24
 ### Changed
 - Update dependencies
