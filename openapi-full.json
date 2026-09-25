@@ -1635,6 +1635,10 @@
                             "type": "string"
                         }
                     },
+                    "actorAvatarVersion": {
+                        "type": "string",
+                        "description": "Version of the actor's avatar, only for users. Passing it to the avatar endpoint allows a much longer cache lifetime"
+                    },
                     "status": {
                         "type": "string",
                         "description": "Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation"
