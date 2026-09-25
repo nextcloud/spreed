@@ -22,10 +22,9 @@
 				<div v-else class="icon-loading" />
 			</div>
 			<ConversationAvatarCropper
-				v-show="showCropper"
 				ref="cropper"
 				class="avatar__cropper"
-				v-bind="cropperOptions" />
+				:class="{ 'avatar__cropper--hidden': !showCropper }" />
 			<div v-if="editable" class="avatar__controls">
 				<div class="avatar__buttons">
 					<!-- Set emoji as avatar -->
@@ -187,16 +186,6 @@ export default {
 		return {
 			showCropper: false,
 			loading: false,
-			cropperOptions: {
-				aspectRatio: 1,
-				viewMode: 1,
-				guides: false,
-				center: false,
-				highlight: false,
-				autoCropArea: 1,
-				minContainerWidth: 300,
-				minContainerHeight: 300,
-			},
 
 			backgroundColor: '',
 			emojiAvatar: '',
@@ -253,9 +242,14 @@ export default {
 			}
 
 			const reader = new FileReader()
-			reader.onload = (e) => {
-				this.$refs.cropper.replace(e.target.result)
-				this.showCropper = true
+			reader.onload = async (e) => {
+				try {
+					await this.$refs.cropper.replace(e.target.result)
+					this.showCropper = true
+				} catch (error) {
+					showError(t('spreed', 'Error setting conversation picture'))
+					this.cancel()
+				}
 			}
 			reader.readAsDataURL(file)
 		},
@@ -283,7 +277,7 @@ export default {
 
 			try {
 				const tempAvatar = generateUrl(`/core/preview?fileId=${fileid}&x=512&y=512&a=1`)
-				this.$refs.cropper.replace(tempAvatar)
+				await this.$refs.cropper.replace(tempAvatar)
 				this.showCropper = true
 			} catch (e) {
 				showError(t('spreed', 'Error setting conversation picture'))
@@ -323,7 +317,7 @@ export default {
 		},
 
 		async getPictureFormData() {
-			const canvas = this.$refs.cropper.getCroppedCanvas()
+			const canvas = await this.$refs.cropper.getCroppedCanvas()
 			const blob = await new Promise((resolve, reject) => {
 				canvas.toBlob((blob) => blob === null
 					? reject(new Error(t('spreed', 'Error cropping conversation picture')))
@@ -428,6 +422,12 @@ section {
 		width: 300px;
 		height: 300px;
 		overflow: hidden;
+
+		// Keep the layout measurable while hidden, cropperjs needs the size
+		&--hidden {
+			position: absolute;
+			visibility: hidden;
+		}
 	}
 }
 
