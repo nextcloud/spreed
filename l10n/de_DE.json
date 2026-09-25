@@ -2359,6 +2359,10 @@
     "Nextcloud Talk Federation was updated." : "Nextcloud Talk Federation wurde aktualisiert.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Der eingerichtete Signalisierungsserver muss aktualisiert werden, damit er mit dieser Version von Talk kompatibel ist. Bitte wenden Sie sich an Ihre Administration.",
     "Enable live translation" : "Live-Übersetzung aktivieren",
+    "_Open poll • %n vote • Your name will be shown on voted options_::_Open poll • %n votes • Your name will be shown on voted options_" : ["Offene Umfrage • %n Stimme • Ihr Name wird an den Optionen angezeigt für die Sie abgestimmt haben","Offene Umfrage • %n Stimmen • Ihr Name wird an den Optionen angezeigt für die Sie abgestimmt haben"],
+    "_Open poll • %n vote • Your name will not be shown on voted options_::_Open poll • %n votes • Your name will not be shown on voted options_" : ["Offene Umfrage • %n Stimme • Ihr Name wird nicht an den Optionen angezeigt für die Sie abgestimmt haben","Offene Umfrage • %n Stimmen • Ihr Name wird nicht an den Optionen angezeigt für die Sie abgestimmt haben"],
+    "Open poll • You voted already • Your name will not be shown on voted options" : "Offene Umfrage • Sie haben bereits abgestimmt • Ihr Name wird nicht an den Optionen angezeigt für die Sie abgestimmt haben",
+    "Open poll • Your name will not be shown on voted options" : "Offene Umfrage • Ihr Name wird nicht an den Optionen angezeigt für die Sie abgestimmt haben",
     "I picked list style" : "Ich habe den Listenstil ausgewählt",
     "Hey! Are you using Talk in list style or with message bubbles?" : "Hallo! Verwenden Sie Talk im Listenstil oder mit Sprechblasen?",
     "Allow editing of uploaded files" : "Bearbeitung hochgeladener Dateien erlauben"
