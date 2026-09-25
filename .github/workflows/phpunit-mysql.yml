@@ -60,7 +60,7 @@ jobs:
           matrix: '{"mysql-versions": ["8.4"]}'
 
   phpunit-mysql:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     needs: changes-and-matrix
     if: needs.changes-and-matrix.outputs.src != 'false'

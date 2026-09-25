@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   update-nextcloud-ocp:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     # Only allowed to be run on nextcloud repositories
     if: ${{ github.repository_owner == 'nextcloud' }}
