@@ -9,35 +9,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Migration;
 
-use Closure;
-use OCP\DB\ISchemaWrapper;
-use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
-use Override;
 
+/**
+ * Replacing @see Version22001Date20250927174738
+ * Replaced by @see Version25000Date20260925166666
+ */
 class Version25000Date20260923155555 extends SimpleMigrationStep {
-	/**
-	 * @param IOutput $output
-	 * @param Closure(): ISchemaWrapper $schemaClosure
-	 * @param array $options
-	 * @return null|ISchemaWrapper
-	 */
-	#[Override]
-	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
-		/** @var ISchemaWrapper $schema */
-		$schema = $schemaClosure();
-
-		$changed = false;
-		$table = $schema->getTable('talk_thread_attendees');
-		if ($table->hasUniqueConstraint('tta_thread_attendee')) {
-			$table->removeUniqueConstraint('tta_thread_attendee');
-			$changed = true;
-		}
-		if (!$table->hasUniqueConstraint('tta_throom_attendee')) {
-			$table->addUniqueIndex(['thread_id', 'room_id', 'actor_type', 'actor_id'], 'tta_throom_attendee');
-			$changed = true;
-		}
-
-		return $changed ? $schema : null;
-	}
 }
