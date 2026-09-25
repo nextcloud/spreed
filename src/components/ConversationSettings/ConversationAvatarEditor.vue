@@ -21,7 +21,7 @@
 					hideUserStatus />
 				<div v-else class="icon-loading" />
 			</div>
-			<VueCropper
+			<ConversationAvatarCropper
 				v-show="showCropper"
 				ref="cropper"
 				class="avatar__cropper"
@@ -123,11 +123,9 @@ import IconFolder from 'vue-material-design-icons/Folder.vue' // Filled as in Fi
 import IconPaletteOutline from 'vue-material-design-icons/PaletteOutline.vue'
 import IconTrashCanOutline from 'vue-material-design-icons/TrashCanOutline.vue'
 import ConversationIcon from '../ConversationIcon.vue'
-import VueCropper from './ConversationAvatarCropper.vue'
+import ConversationAvatarCropper from './ConversationAvatarCropper.vue'
 import IconFileUpload from '../../../img/material-icons/file-upload.svg?raw'
 import { AVATAR } from '../../constants.ts'
-
-import 'cropperjs/dist/cropper.css'
 
 const validMimeTypes = ['image/png', 'image/jpeg']
 
@@ -135,12 +133,12 @@ export default {
 	name: 'ConversationAvatarEditor',
 
 	components: {
+		ConversationAvatarCropper,
 		ConversationIcon,
 		NcButton,
 		NcColorPicker,
 		NcEmojiPicker,
 		NcIconSvgWrapper,
-		VueCropper,
 		// Icons
 		IconTrashCanOutline,
 		IconEmoticonOutline,
@@ -325,14 +323,11 @@ export default {
 		},
 
 		async getPictureFormData() {
-			const canvasData = this.$refs.cropper.getCroppedCanvas()
-			const scaleFactor = canvasData.width > 512 ? 512 / canvasData.width : 1
-
+			const canvas = this.$refs.cropper.getCroppedCanvas()
 			const blob = await new Promise((resolve, reject) => {
-				this.$refs.cropper.scale(scaleFactor, scaleFactor).getCroppedCanvas()
-					.toBlob((blob) => blob === null
-						? reject(new Error(t('spreed', 'Error cropping conversation picture')))
-						: resolve(blob))
+				canvas.toBlob((blob) => blob === null
+					? reject(new Error(t('spreed', 'Error cropping conversation picture')))
+					: resolve(blob))
 			})
 			const formData = new FormData()
 			formData.append('file', blob)
@@ -433,10 +428,6 @@ section {
 		width: 300px;
 		height: 300px;
 		overflow: hidden;
-
-		&:deep(.cropper-view-box) {
-			border-radius: 50%;
-		}
 	}
 }
 
