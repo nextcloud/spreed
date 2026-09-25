@@ -14,6 +14,7 @@ use OCP\Migration\SimpleMigrationStep;
 /**
  * Due to a missing return the migration content was never executed.
  * The changes are reapplied in @see Version25000Date20260923155555
+ * and then again by @see Version25000Date20260925166666
  */
 class Version22001Date20250927174738 extends SimpleMigrationStep {
 }
