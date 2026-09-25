@@ -140,6 +140,10 @@ class BackendNotifier {
 		$params = [
 			'headers' => $headers,
 			'body' => $body,
+			// Without a connect timeout, a signaling server that is unreachable at
+			// the network level blocks the request that triggered the notification
+			// until the request timeout is reached, on every attempt.
+			'connect_timeout' => 5,
 			'nextcloud' => [
 				'allow_local_address' => true,
 			],
