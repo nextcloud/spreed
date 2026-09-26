@@ -45,7 +45,7 @@
 		"bamarni/composer-bin-plugin": "^1.9",
 		"cuyz/valinor": "^2.6",
 		"cweagans/composer-patches": "^2.0.0",
-		"firebase/php-jwt": "^7.0"
+		"firebase/php-jwt": "^7.1"
 	},
 	"extra": {
 		"mozart": {
