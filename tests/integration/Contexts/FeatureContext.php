@@ -3063,6 +3063,10 @@ class FeatureContext implements Context {
 				}
 			}
 		}
+		if (preg_match('/person:(?P<user>\w+)/', $search, $matches)) {
+			$search = trim(preg_replace('/person:\w+/', '', $search));
+			$searchUrl .= '&person=' . $matches['user'];
+		}
 
 		$searchUrl .= '&term=' . $search;
 
