@@ -193,6 +193,7 @@ export const mockedCapabilities: Capabilities = {
 				'retention-classified': 3600,
 				'sort-order': CONVERSATION.SORT_ORDER.ACTIVITY,
 				'group-mode': CONVERSATION.GROUP_MODE.NONE,
+				unarchive: CONVERSATION.UNARCHIVE.NEVER,
 			},
 			federation: {
 				enabled: false,
@@ -247,6 +248,7 @@ export const mockedCapabilities: Capabilities = {
 				'description-length',
 				'sort-order',
 				'group-mode',
+				'unarchive',
 			],
 			federation: [
 				'enabled',

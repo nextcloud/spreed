@@ -530,7 +530,8 @@
                                     "retention-instant-meetings",
                                     "retention-classified",
                                     "sort-order",
-                                    "group-mode"
+                                    "group-mode",
+                                    "unarchive"
                                 ],
                                 "properties": {
                                     "can-create": {
@@ -595,6 +596,15 @@
                                             "private-first"
                                         ],
                                         "description": "User selected grouping mode for conversations (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-group-mode))"
+                                    },
+                                    "unarchive": {
+                                        "type": "string",
+                                        "enum": [
+                                            "never",
+                                            "mention",
+                                            "always"
+                                        ],
+                                        "description": "User selected mode when archived conversations are unarchived automatically (see [constants list](https://nextcloud-talk.readthedocs.io/en/latest/constants#conversations-unarchive-mode))"
                                     }
                                 }
                             },

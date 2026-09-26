@@ -25,6 +25,7 @@ use OCA\Talk\Model\ProxyCacheMessageMapper;
 use OCA\Talk\Model\RetryNotificationMapper;
 use OCA\Talk\Notification\FederationChatNotifier;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ConversationUnarchiveService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\ProxyCacheMessageService;
 use OCA\Talk\Service\RoomService;
@@ -136,6 +137,7 @@ class FederationTest extends TestCase {
 			$this->federationChatNotifier,
 			$this->userConverter,
 			$this->timeFactory,
+			$this->createMock(ConversationUnarchiveService::class),
 			$this->cacheFactory,
 		);
 	}
