@@ -34,11 +34,50 @@ function VideoConstrainer(trackConstrainer) {
 	// least once.
 	this._currentQuality = undefined
 
+	// The last quality requested through `applyConstraints`.
+	this._lastRequestedQuality = undefined
+
+	// The track being constrained. Used to tell an external track replacement
+	// apart from the constrainer re-setting the same track while applying.
+	this._constrainedTrack = null
+
 	this._knownValidConstraintsForQuality = {}
+
+	this._handleOutputTrackSetBound = this._handleOutputTrackSet.bind(this)
+	this._trackConstrainer.on('outputTrackSet', this._handleOutputTrackSetBound)
 }
 VideoConstrainer.prototype = {
 
+	destroy() {
+		this._trackConstrainer.off('outputTrackSet', this._handleOutputTrackSetBound)
+	},
+
+	_handleOutputTrackSet(trackConstrainer, trackId, track) {
+		if (!track || track.kind !== 'video') {
+			return
+		}
+
+		if (this._lastRequestedQuality === undefined) {
+			// Initialization - no constrains were applied yet
+			return
+		}
+
+		if (track === this._constrainedTrack) {
+			// Ignore the events the constrainer emits while re-setting the same track
+			return
+		}
+
+		// The output track was replaced (e.g. camera source).
+		// Previous constraints might not be valid for the new one, so drop
+		// known constraints and reapply the last requested quality on the new track.
+		this._knownValidConstraintsForQuality = {}
+		this._currentQuality = undefined
+		void this.applyConstraints(this._lastRequestedQuality)
+	},
+
 	async applyConstraints(quality) {
+		this._lastRequestedQuality = quality
+
 		if (this._pendingApplyConstraintsCount) {
 			console.debug('Deferring applying constraints for quality ' + quality)
 
@@ -81,6 +120,9 @@ VideoConstrainer.prototype = {
 			return
 		}
 
+		// Remember the track being constrained before applying
+		this._constrainedTrack = this._trackConstrainer.getOutputTrack()
+
 		await this._applyRoughConstraints(this._trackConstrainer, quality)
 
 		// Quality may not actually match the default constraints, but it is the
@@ -91,7 +133,7 @@ VideoConstrainer.prototype = {
 	},
 
 	_logAppliedSettings(quality) {
-		const outputTrack = this._trackConstrainer.getOutputTrack()
+		const outputTrack = this._constrainedTrack
 		if (!outputTrack || !outputTrack.getSettings) {
 			return
 		}
