@@ -72,8 +72,10 @@ class ImportPhoneNumbers extends Base {
 				continue;
 			}
 
+			$row[0] = $this->phoneNumberValidation->cleanNumber($row[0]);
+
 			try {
-				$row[0] = $this->phoneNumberValidation->validateNumber($row[0]);
+				$this->phoneNumberValidation->validateNumber($row[0]);
 			} catch (\InvalidArgumentException) {
 				$output->writeln('<error>Not a valid phone number ' . $row[0] . '. The format is invalid.</error>');
 				return self::FAILURE;
