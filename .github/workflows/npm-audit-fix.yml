@@ -15,11 +15,16 @@ on:
     - cron: '30 2 * * 0'
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      # env variable for maintainers: 'false' disables auto-merge for these pull requests
+      AUTOMERGE: true
 
     strategy:
       fail-fast: false
@@ -29,7 +34,6 @@ jobs:
           - 'stable35'
           - 'stable34'
           - 'stable33'
-          - 'stable32'
 
     name: npm-audit-fix-${{ matrix.branches }}
 
@@ -70,6 +74,7 @@ jobs:
           npm run build --if-present
 
       - name: Create Pull Request
+        id: create-pull-request
         if: steps.checkout.outcome == 'success'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
@@ -84,3 +89,19 @@ jobs:
           labels: |
             dependencies
             3. to review
+
+      # Approve using the default GITHUB_TOKEN, as the PR itself was created
+      # using COMMAND_BOT_PAT and GitHub does not allow an account to approve its own PR
+      - name: GitHub actions bot approve
+        if: steps.create-pull-request.outputs.pull-request-operation != 'none'
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ steps.create-pull-request.outputs.pull-request-url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto merge
+        if: steps.create-pull-request.outputs.pull-request-operation != 'none' && fromJSON(env.AUTOMERGE)
+        uses: peter-evans/enable-pull-request-automerge@a660677d5469627102a1c1e11409dd063606628d # v3.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ steps.create-pull-request.outputs.pull-request-number }}
