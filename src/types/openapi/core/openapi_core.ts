@@ -4892,6 +4892,8 @@ export interface operations {
             query?: {
                 /** @description Fallback to guest avatar if not found */
                 guestFallback?: boolean;
+                /** @description Avatar version, which lets the response be cached for longer. A stale version still returns the current avatar */
+                v?: string;
             };
             header?: never;
             path: {
@@ -4946,6 +4948,8 @@ export interface operations {
             query?: {
                 /** @description Fallback to guest avatar if not found */
                 guestFallback?: boolean;
+                /** @description Avatar version, which lets the response be cached for longer. A stale version still returns the current avatar */
+                v?: string;
             };
             header?: never;
             path: {
