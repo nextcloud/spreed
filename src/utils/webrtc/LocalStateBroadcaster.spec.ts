@@ -47,6 +47,9 @@ describe('LocalStateBroadcaster', () => {
 			this.isAudioEnabled = vi.fn()
 			this.isSpeaking = vi.fn()
 			this.isVideoEnabled = vi.fn()
+			this.isVirtualBackgroundAvailable = vi.fn()
+			this.isVirtualBackgroundEnabled = vi.fn()
+			this.getVirtualBackground = vi.fn()
 		} as any)()
 
 		const signaling = {
@@ -125,10 +128,64 @@ describe('LocalStateBroadcaster', () => {
 		webRtc.emit('videoOn')
 
 		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(1)
-		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledWith('status', 'videoOn')
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledWith('status', 'videoOn', { effect: null })
 
 		expect(webRtc.sendToAll).toHaveBeenCalledTimes(1)
 		expect(webRtc.sendToAll).toHaveBeenCalledWith('unmute', { name: 'video' })
+	})
+
+	test('enable video with background effect', () => {
+		vi.mocked(internalWebRtc.isVirtualBackgroundAvailable).mockReturnValue(true)
+		vi.mocked(internalWebRtc.isVirtualBackgroundEnabled).mockReturnValue(true)
+		vi.mocked(internalWebRtc.getVirtualBackground).mockReturnValue({ backgroundType: 'blur' })
+
+		localStateBroadcaster = new BaseLocalStateBroadcaster(webRtc, callParticipantCollection, localCallParticipantModel)
+
+		webRtc.emit('videoOn')
+
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(1)
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledWith('status', 'videoOn', { effect: 'blur' })
+
+		expect(webRtc.sendToAll).toHaveBeenCalledTimes(1)
+		expect(webRtc.sendToAll).toHaveBeenCalledWith('unmute', { name: 'video' })
+	})
+
+	test.each([
+		['virtualBackgroundOn', true, true, 'blur'],
+		['virtualBackgroundSet', true, true, 'image'],
+		['virtualBackgroundOff', true, false, null],
+		['virtualBackgroundLoadFailed', false, true, null],
+	])('change background effect with %s', (event, available, enabled, effect) => {
+		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
+		vi.mocked(internalWebRtc.isVirtualBackgroundAvailable).mockReturnValue(available)
+		vi.mocked(internalWebRtc.isVirtualBackgroundEnabled).mockReturnValue(enabled)
+		vi.mocked(internalWebRtc.getVirtualBackground).mockReturnValue({ backgroundType: effect ?? 'blur' })
+
+		localStateBroadcaster = new BaseLocalStateBroadcaster(webRtc, callParticipantCollection, localCallParticipantModel)
+
+		webRtc.emit(event)
+
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(1)
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledWith('status', 'videoOn', { effect })
+
+		expect(webRtc.sendToAll).toHaveBeenCalledTimes(0)
+	})
+
+	test('change background effect with video disabled', () => {
+		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(false)
+		vi.mocked(internalWebRtc.isVirtualBackgroundAvailable).mockReturnValue(true)
+		vi.mocked(internalWebRtc.isVirtualBackgroundEnabled).mockReturnValue(true)
+		vi.mocked(internalWebRtc.getVirtualBackground).mockReturnValue({ backgroundType: 'blur' })
+
+		localStateBroadcaster = new BaseLocalStateBroadcaster(webRtc, callParticipantCollection, localCallParticipantModel)
+
+		webRtc.emit('virtualBackgroundOn')
+		webRtc.emit('virtualBackgroundSet')
+		webRtc.emit('virtualBackgroundOff')
+		webRtc.emit('virtualBackgroundLoadFailed')
+
+		expect(webRtc.sendDataChannelToAll).toHaveBeenCalledTimes(0)
+		expect(webRtc.sendToAll).toHaveBeenCalledTimes(0)
 	})
 
 	test('disable video', () => {
@@ -180,6 +237,10 @@ describe('LocalStateBroadcaster', () => {
 		webRtc.emit('stoppedSpeaking')
 		webRtc.emit('videoOn')
 		webRtc.emit('videoOff')
+		webRtc.emit('virtualBackgroundOn')
+		webRtc.emit('virtualBackgroundSet')
+		webRtc.emit('virtualBackgroundOff')
+		webRtc.emit('virtualBackgroundLoadFailed')
 
 		localCallParticipantModel.set('name', 'theName')
 

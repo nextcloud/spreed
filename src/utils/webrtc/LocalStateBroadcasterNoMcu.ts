@@ -122,7 +122,7 @@ export class LocalStateBroadcasterNoMcu extends LocalStateBroadcaster {
 			this._webRtc.sendDataChannelTo(peerId, 'status', 'videoOff')
 			this._webRtc.sendTo(peerId, 'mute', { name: 'video' })
 		} else {
-			this._webRtc.sendDataChannelTo(peerId, 'status', 'videoOn')
+			this._webRtc.sendDataChannelTo(peerId, 'status', 'videoOn', { effect: this._getVideoEffect() })
 			this._webRtc.sendTo(peerId, 'unmute', { name: 'video' })
 		}
 	}

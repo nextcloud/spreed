@@ -50,6 +50,9 @@ export function CallParticipantModel(options) {
 		// have been available in the remote peer if not blocked.
 		videoBlocked: undefined,
 		videoAvailable: undefined,
+		// Effect applied by the sender that marks the video as modified by AI
+		// ("blur", "image"...), or "null" if none.
+		videoEffect: null,
 		screen: null,
 		raisedHand: {
 			state: false,
@@ -150,6 +153,7 @@ CallParticipantModel.prototype = {
 			this.set('audioAvailable', undefined)
 			this.set('speaking', undefined)
 			this.set('videoAvailable', undefined)
+			this.set('videoEffect', null)
 		} else if (this.get('screenPeer') === peer) {
 			this.set('screen', null)
 		}
@@ -171,6 +175,7 @@ CallParticipantModel.prototype = {
 
 		if (data.name === 'video') {
 			this.set('videoAvailable', false)
+			this.set('videoEffect', null)
 		} else {
 			this.set('audioAvailable', false)
 			this.set('speaking', false)
@@ -199,6 +204,11 @@ CallParticipantModel.prototype = {
 
 		if (data.name === 'video') {
 			this.set('videoAvailable', true)
+
+			// Only the data channel message provides the effect.
+			if (data.effect !== undefined) {
+				this.set('videoEffect', data.effect)
+			}
 		} else {
 			this.set('audioAvailable', true)
 		}
@@ -247,6 +257,7 @@ CallParticipantModel.prototype = {
 			this.set('speaking', false)
 			this.set('videoAvailable', false)
 			this.set('videoBlocked', false)
+			this.set('videoEffect', null)
 
 			return
 		}

@@ -1546,7 +1546,7 @@ export function initWebRtc(signaling, _callParticipantCollection, _localCallPart
 		} else if (data.type === 'audioOff') {
 			webrtc.emit('mute', { id: peer.id, name: 'audio' })
 		} else if (data.type === 'videoOn') {
-			webrtc.emit('unmute', { id: peer.id, name: 'video' })
+			webrtc.emit('unmute', { id: peer.id, name: 'video', effect: data.payload?.effect })
 		} else if (data.type === 'videoOff') {
 			webrtc.emit('mute', { id: peer.id, name: 'video' })
 		} else if (data.type === 'nickChanged') {

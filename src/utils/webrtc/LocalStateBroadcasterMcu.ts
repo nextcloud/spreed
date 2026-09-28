@@ -175,7 +175,7 @@ export class LocalStateBroadcasterMcu extends LocalStateBroadcaster {
 		if (!this._webRtc.webrtc.isVideoEnabled()) {
 			this._webRtc.sendDataChannelToAll('status', 'videoOff')
 		} else {
-			this._webRtc.sendDataChannelToAll('status', 'videoOn')
+			this._webRtc.sendDataChannelToAll('status', 'videoOn', { effect: this._getVideoEffect() })
 		}
 
 		const name = this._localCallParticipantModel.get('name') as string

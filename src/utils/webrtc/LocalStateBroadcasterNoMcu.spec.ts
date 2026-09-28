@@ -54,6 +54,9 @@ describe('LocalStateBroadcasterNoMcu', () => {
 			this.isAudioEnabled = vi.fn()
 			this.isSpeaking = vi.fn()
 			this.isVideoEnabled = vi.fn()
+			this.isVirtualBackgroundAvailable = vi.fn()
+			this.isVirtualBackgroundEnabled = vi.fn()
+			this.getVirtualBackground = vi.fn()
 		} as any)()
 
 		const signaling = {
@@ -103,10 +106,33 @@ describe('LocalStateBroadcasterNoMcu', () => {
 		expect(webRtc.sendDataChannelTo).toHaveBeenCalledTimes(3)
 		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'status', 'audioOn')
 		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(2, 'thePeerId', 'status', 'speaking')
-		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(3, 'thePeerId', 'status', 'videoOn')
+		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(3, 'thePeerId', 'status', 'videoOn', { effect: null })
 
 		expect(webRtc.sendTo).toHaveBeenCalledTimes(2)
 		expect(webRtc.sendTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'unmute', { name: 'audio' })
+		expect(webRtc.sendTo).toHaveBeenNthCalledWith(2, 'thePeerId', 'unmute', { name: 'video' })
+	})
+
+	test('add participant with background effect and change to connected', () => {
+		vi.mocked(internalWebRtc.isAudioEnabled).mockReturnValue(true)
+		vi.mocked(internalWebRtc.isSpeaking).mockReturnValue(true)
+		vi.mocked(internalWebRtc.isVideoEnabled).mockReturnValue(true)
+		vi.mocked(internalWebRtc.isVirtualBackgroundAvailable).mockReturnValue(true)
+		vi.mocked(internalWebRtc.isVirtualBackgroundEnabled).mockReturnValue(true)
+		vi.mocked(internalWebRtc.getVirtualBackground).mockReturnValue({ backgroundType: 'image' })
+
+		localStateBroadcasterNoMcu = new LocalStateBroadcasterNoMcu(webRtc, callParticipantCollection, localCallParticipantModel)
+
+		const callParticipantModel = callParticipantCollection.add({ peerId: 'thePeerId', webRtc })
+
+		callParticipantModel.set('peer', new PeerMock('thePeerId'))
+
+		callParticipantModel.set('connectionState', ConnectionState.CONNECTED)
+
+		expect(webRtc.sendDataChannelTo).toHaveBeenCalledTimes(3)
+		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(3, 'thePeerId', 'status', 'videoOn', { effect: 'image' })
+
+		expect(webRtc.sendTo).toHaveBeenCalledTimes(2)
 		expect(webRtc.sendTo).toHaveBeenNthCalledWith(2, 'thePeerId', 'unmute', { name: 'video' })
 	})
 
@@ -132,7 +158,7 @@ describe('LocalStateBroadcasterNoMcu', () => {
 		expect(webRtc.sendDataChannelTo).toHaveBeenCalledTimes(3)
 		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'status', 'audioOn')
 		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(2, 'thePeerId', 'status', 'speaking')
-		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(3, 'thePeerId', 'status', 'videoOn')
+		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(3, 'thePeerId', 'status', 'videoOn', { effect: null })
 
 		expect(webRtc.sendTo).toHaveBeenCalledTimes(2)
 		expect(webRtc.sendTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'unmute', { name: 'audio' })
@@ -248,7 +274,7 @@ describe('LocalStateBroadcasterNoMcu', () => {
 		expect(webRtc.sendDataChannelTo).toHaveBeenCalledTimes(3)
 		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'status', 'audioOn')
 		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(2, 'thePeerId', 'status', 'speaking')
-		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(3, 'thePeerId', 'status', 'videoOn')
+		expect(webRtc.sendDataChannelTo).toHaveBeenNthCalledWith(3, 'thePeerId', 'status', 'videoOn', { effect: null })
 
 		expect(webRtc.sendTo).toHaveBeenCalledTimes(2)
 		expect(webRtc.sendTo).toHaveBeenNthCalledWith(1, 'thePeerId', 'unmute', { name: 'audio' })

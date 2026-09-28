@@ -37,6 +37,7 @@ export abstract class LocalStateBroadcaster {
 	private _handleStoppedSpeakingBound: () => void
 	private _handleVideoOnBound: () => void
 	private _handleVideoOffBound: () => void
+	private _handleVideoEffectChangeBound: () => void
 	private _handleChangeNameBound: (localCallParticipantModel: LocalCallParticipantModel, name: string) => void
 
 	private _handleAddCallParticipantModelBound: (callParticipantCollection: CallParticipantCollection, callParticipantModel: CallParticipantModel) => void
@@ -53,6 +54,7 @@ export abstract class LocalStateBroadcaster {
 		this._handleStoppedSpeakingBound = this._handleStoppedSpeaking.bind(this)
 		this._handleVideoOnBound = this._handleVideoOn.bind(this)
 		this._handleVideoOffBound = this._handleVideoOff.bind(this)
+		this._handleVideoEffectChangeBound = this._handleVideoEffectChange.bind(this)
 		this._handleChangeNameBound = this._handleChangeName.bind(this)
 
 		this._handleAddCallParticipantModelBound = this._handleAddCallParticipantModel.bind(this)
@@ -64,6 +66,10 @@ export abstract class LocalStateBroadcaster {
 		this._webRtc.on('stoppedSpeaking', this._handleStoppedSpeakingBound)
 		this._webRtc.on('videoOn', this._handleVideoOnBound)
 		this._webRtc.on('videoOff', this._handleVideoOffBound)
+		this._webRtc.on('virtualBackgroundOn', this._handleVideoEffectChangeBound)
+		this._webRtc.on('virtualBackgroundSet', this._handleVideoEffectChangeBound)
+		this._webRtc.on('virtualBackgroundOff', this._handleVideoEffectChangeBound)
+		this._webRtc.on('virtualBackgroundLoadFailed', this._handleVideoEffectChangeBound)
 
 		this._localCallParticipantModel.on('change:name', this._handleChangeNameBound)
 
@@ -78,6 +84,10 @@ export abstract class LocalStateBroadcaster {
 		this._webRtc.off('stoppedSpeaking', this._handleStoppedSpeakingBound)
 		this._webRtc.off('videoOn', this._handleVideoOnBound)
 		this._webRtc.off('videoOff', this._handleVideoOffBound)
+		this._webRtc.off('virtualBackgroundOn', this._handleVideoEffectChangeBound)
+		this._webRtc.off('virtualBackgroundSet', this._handleVideoEffectChangeBound)
+		this._webRtc.off('virtualBackgroundOff', this._handleVideoEffectChangeBound)
+		this._webRtc.off('virtualBackgroundLoadFailed', this._handleVideoEffectChangeBound)
 
 		this._localCallParticipantModel.off('change:name', this._handleChangeNameBound)
 
@@ -109,7 +119,7 @@ export abstract class LocalStateBroadcaster {
 	}
 
 	private _handleVideoOn(): void {
-		this._webRtc.sendDataChannelToAll('status', 'videoOn')
+		this._webRtc.sendDataChannelToAll('status', 'videoOn', { effect: this._getVideoEffect() })
 
 		this._webRtc.sendToAll('unmute', { name: 'video' })
 	}
@@ -120,10 +130,34 @@ export abstract class LocalStateBroadcaster {
 		this._webRtc.sendToAll('mute', { name: 'video' })
 	}
 
+	private _handleVideoEffectChange(): void {
+		// The effect is sent with the video state, so only while video is on
+		if (!this._webRtc.webrtc.isVideoEnabled()) {
+			return
+		}
+
+		this._webRtc.sendDataChannelToAll('status', 'videoOn', { effect: this._getVideoEffect() })
+	}
+
 	private _handleChangeName(localCallParticipantModel: LocalCallParticipantModel, name: string): void {
 		this._webRtc.sendDataChannelToAll('status', 'nickChanged', this._getNickChangedDataChannelMessagePayload(name))
 
 		this._webRtc.sendToAll('nickChanged', { name })
+	}
+
+	/**
+	 * Returns the effect applied to the local video, which marks the video as
+	 * modified by AI.
+	 *
+	 * @return string|null the background type ("blur", "image"...), or null if
+	 *         no effect is applied.
+	 */
+	protected _getVideoEffect(): string | null {
+		if (!this._webRtc.webrtc.isVirtualBackgroundAvailable() || !this._webRtc.webrtc.isVirtualBackgroundEnabled()) {
+			return null
+		}
+
+		return this._webRtc.webrtc.getVirtualBackground().backgroundType
 	}
 
 	/**

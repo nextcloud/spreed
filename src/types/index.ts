@@ -354,12 +354,15 @@ export type InternalWebRtc = {
 	isAudioEnabled(): boolean
 	isVideoEnabled(): boolean
 	isSpeaking(): boolean
+	isVirtualBackgroundAvailable(): boolean
+	isVirtualBackgroundEnabled(): boolean
+	getVirtualBackground(): { backgroundType: string }
 }
 
 export type WebRtc = {
 	on(event: string, handler: () => void): void
 	off(event: string, handler: () => void): void
-	emit(event: string): void
+	emit(event: string, ...args: unknown[]): void
 
 	sendDataChannelToAll(channel: string, message: string, payload?: string | object): void
 	sendToAll(message: string, payload: object): void
