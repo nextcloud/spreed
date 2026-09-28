@@ -11,7 +11,7 @@ import type {
 } from '../types/index.ts'
 
 import { createSharedComposable } from '@vueuse/core'
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, onScopeDispose, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { CONVERSATION } from '../constants.ts'
 import { EventBus } from '../services/EventBus.ts'
@@ -233,7 +233,7 @@ function useGetParticipantsComposable(activeTab = ref('participants')) {
 		}
 	})
 
-	onBeforeUnmount(() => {
+	onScopeDispose(() => {
 		cancelPendingUpdates()
 		stopGetParticipants()
 	})

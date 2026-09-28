@@ -4,7 +4,7 @@
  */
 
 import { createSharedComposable } from '@vueuse/core'
-import { onBeforeMount, onBeforeUnmount, readonly, ref } from 'vue'
+import { onScopeDispose, readonly, ref } from 'vue'
 
 /**
  * Composable to check whether the page is visible.
@@ -18,11 +18,9 @@ function useDocumentVisibilityComposable() {
 		isDocumentVisible.value = !document.hidden
 	}
 
-	onBeforeMount(() => {
-		document.addEventListener('visibilitychange', changeIsDocumentVisible)
-	})
+	document.addEventListener('visibilitychange', changeIsDocumentVisible)
 
-	onBeforeUnmount(() => {
+	onScopeDispose(() => {
 		document.removeEventListener('visibilitychange', changeIsDocumentVisible)
 	})
 
