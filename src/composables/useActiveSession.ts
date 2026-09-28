@@ -51,7 +51,7 @@ export function useActiveSession() {
 	const isDocumentVisible = useDocumentVisibility()
 	const currentJoinedConversation = useJoinedConversation()
 
-	let inactiveTimer: NodeJS.Timeout | undefined
+	let inactiveTimer: ReturnType<typeof setTimeout> | undefined
 
 	/**
 	 * Whether the window is focused and visible right now.
