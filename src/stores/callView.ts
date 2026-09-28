@@ -24,7 +24,7 @@ type State = {
 	lastIsStripeOpen: boolean | null
 	presentationStarted: boolean
 	selectedVideoPeerId: string | null
-	callEndedTimeout: NodeJS.Timeout | number | undefined
+	callEndedTimeout: ReturnType<typeof setTimeout> | undefined
 	isLiveTranscriptionEnabled: boolean
 	externalCallServiceUrl: string | null
 }
