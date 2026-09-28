@@ -35,6 +35,11 @@
 				v-if="isLoading"
 				:size="avatarSize / 2"
 				class="video-loading" />
+			<AiModifiedLabel
+				v-if="model.attributes.videoEffect"
+				:effect="model.attributes.videoEffect"
+				:aspectRatio="fitVideo ? videoAspectRatio : null"
+				:compact="!isBig" />
 
 			<img
 				v-if="screenshotModeUrl && isPresenterOverlay"
@@ -92,6 +97,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconAccountCircleOutline from 'vue-material-design-icons/AccountCircleOutline.vue'
 import IconAccountOffOutline from 'vue-material-design-icons/AccountOffOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
+import AiModifiedLabel from './AiModifiedLabel.vue'
 import ScreenShare from './ScreenShare.vue'
 import VideoBackground from './VideoBackground.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
@@ -109,6 +115,7 @@ export default {
 	name: 'VideoVue',
 
 	components: {
+		AiModifiedLabel,
 		AvatarWrapper,
 		VideoBackground,
 		ScreenShare,
@@ -689,6 +696,11 @@ export default {
 	height: 100%;
 	width: 100%;
 	border-radius: var(--border-radius-element, calc(var(--default-clickable-area) / 2));
+}
+
+.videoWrapper {
+	// For AiModifiedLabel sizing
+	container-type: size;
 }
 
 .videoWrapper.presenter-overlay {

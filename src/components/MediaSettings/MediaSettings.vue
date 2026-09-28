@@ -55,7 +55,14 @@
 						class="preview__video"
 						:class="{ 'preview__video--mirrored': isMirrored }"
 						disablePictureInPicture
-						tabindex="-1" />
+						tabindex="-1"
+						@loadedmetadata="updatePreviewAspectRatio"
+						@resize="updatePreviewAspectRatio" />
+					<AiModifiedLabel
+						v-if="showVideo && previewVideoEffect && isVirtualBackgroundAvailable"
+						:effect="previewVideoEffect"
+						:aspectRatio="previewAspectRatio"
+						alignStart />
 					<NcButton
 						v-if="showVideo"
 						variant="secondary"
@@ -193,6 +200,9 @@
 						</template>
 
 						<template #tab-panel:backgrounds>
+							<NcNoteCard
+								type="info"
+								:text="t('spreed', 'When a background effect is on, your video is marked as modified by AI for other participants.')" />
 							<VideoBackgroundEditor
 								class="media-settings__tab"
 								:token="token"
@@ -269,6 +279,7 @@ import IconTune from 'vue-material-design-icons/Tune.vue'
 import IconVideo from 'vue-material-design-icons/Video.vue' // Filled for better indication
 import IconVideoOffOutline from 'vue-material-design-icons/VideoOffOutline.vue'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
+import AiModifiedLabel from '../CallView/shared/AiModifiedLabel.vue'
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
 import SetGuestUsername from '../SetGuestUsername.vue'
 import CallButton from '../TopBar/CallButton.vue'
@@ -304,6 +315,7 @@ export default {
 	name: 'MediaSettings',
 
 	components: {
+		AiModifiedLabel,
 		AvatarWrapper,
 		CallButton,
 		MediaDevicesSelector,
@@ -409,6 +421,7 @@ export default {
 			audioStreamError,
 			videoStreamError,
 			virtualBackground,
+			isVirtualBackgroundAvailable,
 			tabs,
 			dialogHeaderId,
 			supportStartWithoutMedia,
@@ -424,6 +437,8 @@ export default {
 		return {
 			show: false,
 			tabContent: 'devices',
+			previewVideoEffect: null,
+			previewAspectRatio: null,
 			audioOn: undefined,
 			videoOn: undefined,
 			notifyCall: true,
@@ -899,6 +914,7 @@ export default {
 		 */
 		clearVirtualBackground() {
 			this.virtualBackground.setEnabled(false)
+			this.previewVideoEffect = null
 		},
 
 		/**
@@ -921,6 +937,7 @@ export default {
 				backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
 				blurValue: VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT,
 			})
+			this.previewVideoEffect = VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR
 		},
 
 		/**
@@ -951,6 +968,7 @@ export default {
 				backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE,
 				virtualSource: background,
 			})
+			this.previewVideoEffect = VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
 		},
 
 		/**
@@ -990,6 +1008,11 @@ export default {
 			this.updatePreferences('videoinput')
 		},
 
+		updatePreviewAspectRatio() {
+			const { videoWidth, videoHeight } = this.$refs.video
+			this.previewAspectRatio = videoHeight ? videoWidth / videoHeight : null
+		},
+
 		async openAdvancedSettings() {
 			await spawnDialog(AdvancedAudioDialog, {
 				container: '.media-settings__settings',
@@ -1002,7 +1025,7 @@ export default {
 				if (value) {
 					this.blurVirtualBackground()
 				} else {
-					this.virtualBackground.setEnabled(false)
+					this.clearVirtualBackground()
 				}
 			} catch (error) {
 				console.error('Failed to set blur background enabled:', error)
@@ -1018,6 +1041,8 @@ export default {
 
 	&__preview {
 		position: relative;
+		// For AiModifiedLabel sizing
+		container-type: size;
 		display: flex;
 		align-items: center;
 		justify-content: center;

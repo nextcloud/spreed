@@ -39,6 +39,11 @@
 				v-if="isNotConnected"
 				:size="avatarSize / 2"
 				class="video-loading" />
+			<AiModifiedLabel
+				v-if="videoEffect"
+				:effect="videoEffect"
+				:aspectRatio="fitVideo ? videoAspectRatio : null"
+				:compact="!isBig" />
 		</div>
 		<div v-if="!screenshotModeUrl && !localMediaModel.attributes.videoEnabled && !isSidebar" class="avatar-container">
 			<VideoBackground v-if="isGrid || isStripe" />
@@ -73,6 +78,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import IconAccountOffOutline from 'vue-material-design-icons/AccountOffOutline.vue'
 import AvatarWrapper from '../../AvatarWrapper/AvatarWrapper.vue'
+import AiModifiedLabel from './AiModifiedLabel.vue'
 import VideoBackground from './VideoBackground.vue'
 import { AVATAR } from '../../../constants.ts'
 import { useActorStore } from '../../../stores/actor.ts'
@@ -86,6 +92,7 @@ export default {
 	name: 'LocalVideo',
 
 	components: {
+		AiModifiedLabel,
 		AvatarWrapper,
 		IconAccountOffOutline,
 		NcButton,
@@ -175,6 +182,11 @@ export default {
 	},
 
 	computed: {
+		videoEffect() {
+			const { virtualBackgroundAvailable, virtualBackgroundEnabled, virtualBackgroundType } = this.localMediaModel.attributes
+			return (virtualBackgroundAvailable && virtualBackgroundEnabled) ? virtualBackgroundType : null
+		},
+
 		stopFollowingLabel() {
 			return t('spreed', 'Back')
 		},
@@ -406,6 +418,11 @@ export default {
 .video {
 	height: 100%;
 	width: 100%;
+}
+
+.videoWrapper {
+	// For AiModifiedLabel sizing
+	container-type: size;
 }
 
 .video-loading {
