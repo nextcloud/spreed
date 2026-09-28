@@ -125,7 +125,6 @@ jobs:
             Auto-generated update of [nextcloud/ocp](https://github.com/nextcloud-deps/ocp/) dependency
           labels: |
             dependencies
-            3. to review
 
       # Approve using the default GITHUB_TOKEN, as the PR itself was created
       # using COMMAND_BOT_PAT and GitHub does not allow an account to approve its own PR
