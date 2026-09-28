@@ -10,7 +10,7 @@ import type { Conversation, DashboardEventRoom } from '../../types/index.ts'
 import { getCanonicalLocale, getLanguage, n, t } from '@nextcloud/l10n'
 import { imagePath } from '@nextcloud/router'
 import { usernameToColor } from '@nextcloud/vue/functions/usernameToColor'
-import { useNow } from '@vueuse/core'
+import { useIntervalFn, useNow } from '@vueuse/core'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
@@ -56,11 +56,13 @@ const hasCall = computed(() => {
 		&& props.eventRoom.start * 1000 >= (Date.now() - 600_000) // 10 minutes buffer
 })
 
+const now = useNow({ scheduler: (cb) => useIntervalFn(cb, 1_000) })
+
 const elapsedTime = computed(() => {
 	if (!hasCall.value || !(props.eventRoom.roomActiveSince ?? conversation.value.callStartTime)) {
 		return ''
 	}
-	return formattedTime(+useNow({ interval: 1_000 }).value - (props.eventRoom.roomActiveSince ?? conversation.value.callStartTime) * 1000)
+	return formattedTime(+now.value - (props.eventRoom.roomActiveSince ?? conversation.value.callStartTime) * 1000)
 })
 
 const isToday = computed(() => {
