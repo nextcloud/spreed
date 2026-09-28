@@ -79,6 +79,13 @@ class ListenerTest extends TestCase {
 		$this->listener->handle(new BeforeNodeCreatedEvent($node));
 	}
 
+	public function testBeforeNodeCreatedIgnoresFolders(): void {
+		$this->recordingService->expects($this->never())->method('getRecordingUploadOwner');
+		$this->activityManager->expects($this->never())->method('setCurrentUserId');
+
+		$this->listener->handle(new BeforeNodeCreatedEvent($this->createMock(Folder::class)));
+	}
+
 	public function testNodeWrittenResetsCurrentUserIdAfterMatchingBeforeNodeCreated(): void {
 		$node = $this->nodeInFolder('token123', 'recording.mp4');
 

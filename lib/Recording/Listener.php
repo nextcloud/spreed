@@ -99,6 +99,10 @@ class Listener implements IEventListener {
 	}
 
 	protected function getRecordingUploadOwner(Node $node): ?string {
+		if ($node instanceof Folder) {
+			return null;
+		}
+
 		$parent = $node->getParent();
 		if (!$parent instanceof Folder) {
 			return null;
