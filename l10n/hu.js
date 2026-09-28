@@ -931,6 +931,7 @@ OC.L10N.register(
     "Full name of the user requesting the trial" : "A próbát kérő felhasználó teljes neve",
     "Email of the user" : "A felhasználó e-mail-címe",
     "Language" : "Nyelv",
+    "Country" : "Ország",
     "Request signaling server trial" : "Jelzőkiszolgáló próbájának kérése",
     "You can see the current status of your hosted signaling server in the following table." : "A következő táblázatban láthatja a külső üzemeltetésű jelzőkiszolgáló jelenlegi állapotát.",
     "Status" : "Állapot",
