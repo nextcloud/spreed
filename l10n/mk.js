@@ -14,6 +14,7 @@ OC.L10N.register(
     "{actor} invited you to {call}" : "{actor} ве покани во {call}",
     "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "Поканети сте во <strong>разговор</strong> или имате <strong>повик</strong>",
     "Other activities" : "Други активности",
+    "Guest" : "Гостин",
     "## New in Talk %s" : "## Ново во Talk %s",
     "- Microsoft Edge and Safari can now be used to participate in audio and video calls" : "- Microsoft Edge и Safari сега може да се користат за учество во аудио и видео повици",
     "- One-to-one conversations are now persistent and cannot be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- Разговорите еден на еден сега се постојани и не можат повеќе случајно да се претвораат во групни разговори. Исто така, кога еден од учесниците го напушта разговорот, разговорот не се брише автоматски. Само ако двајцата учесници заминат, разговорот е избришан од серверот",
