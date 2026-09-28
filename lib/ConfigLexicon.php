@@ -199,6 +199,7 @@ PROMPT;
 			new Entry(Config::RETENTION_EVENT_ROOMS, ValueType::INT, 28, definition: 'Retention period of event conversations in days (`0` means no-retention)'),
 			new Entry(Config::RETENTION_PHONE_ROOMS, ValueType::INT, 7, definition: 'Retention period of phone dial-in and dial-out conversations in days (`0` means no-retention)'),
 			new Entry(Config::RETENTION_INSTANT_MEETINGS, ValueType::INT, 1, definition: 'Retention period of instant meetings in days (`0` means no-retention'),
+			new Entry(Config::MAX_CALL_DURATION, ValueType::INT, 0, definition: 'Maximum duration of a call in seconds, 0 for unlimited. Federated calls will be terminated based on the setting of the host server.' . PHP_EOL . 'Calls are ended via a background job, so system cron should be used and calls will last a bit longer' . PHP_EOL . '(until the next execution of cron).'),
 		];
 	}
 

@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
+use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
@@ -32,7 +33,7 @@ class MaximumCallDuration extends TimedJob {
 
 	#[\Override]
 	protected function run($argument): void {
-		$maxCallDuration = $this->appConfig->getAppValueInt('max_call_duration');
+		$maxCallDuration = $this->appConfig->getAppValueInt(Config::MAX_CALL_DURATION);
 		if ($maxCallDuration <= 0) {
 			return;
 		}

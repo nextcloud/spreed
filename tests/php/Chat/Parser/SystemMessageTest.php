@@ -12,6 +12,7 @@ use OCA\DAV\CardDAV\PhotoCache;
 use OCA\Talk\Authenticator;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\Parser\SystemMessage;
+use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
@@ -1957,7 +1958,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn('"duration"');
 
 		$this->appConfig->method('getAppValueInt')
-			->with('max_call_duration')
+			->with(Config::MAX_CALL_DURATION)
 			->willReturn(60);
 
 		$parser->expects($this->any())
