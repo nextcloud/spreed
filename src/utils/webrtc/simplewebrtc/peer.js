@@ -356,6 +356,22 @@ function mungeSdpForSimulcasting(sdp) {
 }
 /* eslint-enable */
 
+/**
+ * Raises the "max-fs" (maximum frame size in macroblocks - 16x16 px)
+ * codec parameter in an SDP so high-resolution screens are not downscaled.
+ * Firefox defaults the VP8/VP9 "max-fs" to ~QHD (2560×1440px):
+ *  - a=fmtp:120 max-fs=12288;max-fr=60
+ * Raising it lets Firefox encode up to ~4K (3840×2160px):
+ *  - a=fmtp:120 max-fs=36864;max-fr=60
+ * Other browsers are not noticed to be affected with that limitation.
+ *
+ * @param {string} sdp the SDP string to munge
+ * @return {string} the updated SDP string
+ */
+function mungeSdpForScreenMaxFs(sdp) {
+	return sdp.replace(/max-fs=\d+/g, 'max-fs=' + 36864)
+}
+
 Peer.prototype.offer = function(options) {
 	const sendVideo = this.sendVideoIfAvailable && this.type !== 'screen'
 	if (sendVideo && this.enableSimulcast && adapter.browserDetails.browser === 'firefox') {
@@ -399,6 +415,12 @@ Peer.prototype.offer = function(options) {
 			} else if (adapter.browserDetails.browser !== 'firefox') {
 				console.debug('Simulcast can only be enabled on Chrome or Firefox')
 			}
+		}
+
+		// SDP munging only needed for Firefox screensharing (for 4K screens)
+		if (this.type === 'screen' && adapter.browserDetails.browser === 'firefox') {
+			console.debug('Raising VP8/9 max-fs for Firefox screensharing')
+			offer.sdp = mungeSdpForScreenMaxFs(offer.sdp)
 		}
 
 		this.pc.setLocalDescription(offer).then(function() {
