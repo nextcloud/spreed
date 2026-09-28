@@ -153,6 +153,7 @@ class CapabilitiesTest extends TestCase {
 				['experiments_guests', 0, 0],
 				['summary_threshold', 100],
 				['feature_hints_hidden', 0, 999],
+				['feature_hints_hidden', 999],
 				['max_gif_size', 3145728, 200000],
 				['start_calls', Room::START_CALL_EVERYONE]
 			]);
@@ -372,7 +373,7 @@ class CapabilitiesTest extends TestCase {
 				['retention_classified_rooms', 3600],
 				['experiments_users', 0, 0],
 				['summary_threshold', 100],
-				['feature_hints_hidden', 0, 1],
+				['feature_hints_hidden', 1],
 				['max_gif_size', 3145728, 200000],
 				['start_calls', Room::START_CALL_NOONE],
 			]);

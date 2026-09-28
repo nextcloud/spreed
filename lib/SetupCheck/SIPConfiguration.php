@@ -70,7 +70,7 @@ class SIPConfiguration implements ISetupCheck {
 
 		if ($this->talkConfig->getSIPSharedSecret() === ''
 			&& $this->talkConfig->getDialInInfo() === ''
-			&& $this->appConfig->getAppValueInt('feature_hints_hidden') < 34) {
+			&& $this->appConfig->getAppValueInt(Config::FEATURE_HINTS_HIDDEN) < 34) {
 			return SetupResult::info($this->l->t('No SIP backend configured'));
 		}
 
