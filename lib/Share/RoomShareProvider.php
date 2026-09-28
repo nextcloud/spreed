@@ -298,6 +298,7 @@ class RoomShareProvider implements IShareProvider {
 		$update = $this->dbConnection->getQueryBuilder();
 		$update->update('share')
 			->where($update->expr()->eq('parent', $update->createNamedParameter($share->getId())))
+			->andWhere($update->expr()->eq('share_type', $update->createNamedParameter(self::SHARE_TYPE_USERROOM)))
 			->set('uid_owner', $update->createNamedParameter($share->getShareOwner()))
 			->set('uid_initiator', $update->createNamedParameter($share->getSharedBy()))
 			->set('item_source', $update->createNamedParameter($share->getNode()->getId()))
@@ -312,6 +313,7 @@ class RoomShareProvider implements IShareProvider {
 		$update->update('share')
 			->where($update->expr()->eq('parent', $update->createNamedParameter($share->getId())))
 			->andWhere($update->expr()->neq('permissions', $update->createNamedParameter(0)))
+			->andWhere($update->expr()->eq('share_type', $update->createNamedParameter(self::SHARE_TYPE_USERROOM)))
 			->set('permissions', $update->createNamedParameter($share->getPermissions()))
 			->executeStatement();
 
