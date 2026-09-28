@@ -1,0 +1,65 @@
+# SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# The coding conventions themselves live in AGENTS.md, which CodeRabbit detects and
+# applies as review criteria automatically. This file only sets review behavior that a
+# guideline file cannot express, plus a few reviewer-only rules that are not author
+# conventions and would not otherwise be visible from this repository on CI.
+
+language: en-US
+
+# Review voice. Must stay within CodeRabbit's 250-character limit.
+tone_instructions: >-
+  Review like a senior Nextcloud Talk maintainer: friendly, precise, concise;
+  focus on correctness, tests and maintainability. Prefix optional/style notes
+  with "nit:" (non-blocking). Do not restate linters or comment on code the diff
+  does not touch.
+
+reviews:
+  profile: assertive
+  # Advisory reviews: findings (including critical ones) are posted as comments but
+  # never block the merge. CodeRabbit has no critical-only gate — enabling the workflow
+  # would block on every unresolved finding, nits included — so maintainers decide.
+  request_changes_workflow: false
+  review_status: false
+  enable_prompt_for_ai_agents: false
+  auto_review:
+    enabled: false
+    auto_incremental_review: false
+    base_branches:
+      - stable*
+
+  # Skip only bundled/generated output. Vendored code stays reviewable so the
+  # rabbit can still look at human-relevant files there (e.g. composer.json).
+  path_filters:
+    - "!node_modules/**"
+    - "!js/**"
+    - "!**/*.min.js"
+    - "!composer.lock"
+    - "!package-lock.json"
+    - "!**/l10n/**"
+
+  # Skip built-in linters the repo does not use (it relies on php-cs-fixer + psalm),
+  # so reviews don't raise findings from tools that are not part of this project.
+  tools:
+    phpmd:
+      enabled: false
+    phpstan:
+      enabled: false
+
+  # Reviewer-only guidance (not author conventions, so it is not in AGENTS.md).
+  path_instructions:
+    - path: "**"
+      instructions: >-
+        - Do not raise formatting issues that php-cs-fixer, eslint or stylelint already
+          enforce (tabs, quotes, semicolons, line length, trailing commas).
+
+        - Provenance/disclosure is a whole-PR judgment, made at most once per PR in the
+          summary — never attach it to an individual code or test finding, and never
+          infer it from a single weak signal such as a test that could assert more. Only
+          when the PR as a whole clearly looks agent-generated (e.g. the PR template is
+          ignored AND the Assisted-by trailer is missing AND the scope is broad/boilerplate
+          or the tests don't exercise the change), gently note the "Assisted-by:
+          <agent>:<model-id>" trailer that CONTRIBUTING.md requires and invite the author
+          to describe the change in their own words. When in doubt, say nothing.
