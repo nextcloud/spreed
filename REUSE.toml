@@ -90,6 +90,12 @@ SPDX-FileCopyrightText = "OpenStreetMap"
 SPDX-License-Identifier = "CC-BY-4.0"
 
 [[annotations]]
+path = ["img/label-ai.svg", "img/label-ai-modified.svg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 European Commission, AI Office"
+SPDX-License-Identifier = "LicenseRef-EU-AI-Icons"
+
+[[annotations]]
 path = "img/bridge-services/discord.svg"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Discord Inc."

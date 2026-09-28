@@ -1,0 +1,11 @@
+EU Icons for labelling AI-generated content
+
+These icons are made publicly available for everyone to use freely, without
+the need for attribution to the Commission or the AI Office.
+
+Signatories of the code of practice must follow the placement specifications
+in Section 2 of the Code of Practice on marking and labelling of AI-generated
+content. Usage of these icons by non-signatories of the code should not be
+construed as signaling of their adherence to the code.
+
+https://digital-strategy.ec.europa.eu/en/policies/eu-icons-labelling-ai-generated-content
