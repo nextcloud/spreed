@@ -82,6 +82,9 @@ class Config {
 	public const string SUMMARY_THRESHOLD = 'summary_threshold';
 	public const string ALLOWED_START_CALLS = 'start_calls';
 	public const string SAMPLES_DIRECTORY = 'samples_directory';
+	public const string RETENTION_EVENT_ROOMS = 'retention_event_rooms';
+	public const string RETENTION_PHONE_ROOMS = 'retention_phone_rooms';
+	public const string RETENTION_INSTANT_MEETINGS = 'retention_instant_meetings';
 
 	/**
 	 * 1. Call recording, …
