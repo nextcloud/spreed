@@ -263,6 +263,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AttendeesAddedEvent::class, ReferenceInvalidationListener::class);
 		$context->registerEventListener(AttendeesRemovedEvent::class, ReferenceInvalidationListener::class);
 		$context->registerEventListener(LobbyModifiedEvent::class, ReferenceInvalidationListener::class);
+		$context->registerEventListener(ParticipantModifiedEvent::class, ReferenceInvalidationListener::class);
 		$context->registerEventListener(RoomDeletedEvent::class, ReferenceInvalidationListener::class);
 		$context->registerEventListener(RoomModifiedEvent::class, ReferenceInvalidationListener::class);
 

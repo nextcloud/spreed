@@ -21,6 +21,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Webinary;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Collaboration\Reference\ADiscoverableReferenceProvider;
 use OCP\Collaboration\Reference\IReference;
@@ -142,6 +143,10 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 			$participant = null;
 		}
 
+		$isBlockedByLobby = $participant instanceof Participant
+			&& $room->getLobbyState() !== Webinary::LOBBY_NONE
+			&& !($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE);
+
 		/**
 		 * Default handling:
 		 * Title is the conversation name
@@ -162,7 +167,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 		 * Title is "Message of {user} in {conversation}"
 		 * Description is the plain text chat message
 		 */
-		if ($participant && !empty($referenceMatch['message'])) {
+		if ($participant && !$isBlockedByLobby && !empty($referenceMatch['message'])) {
 			$messageId = (string)$referenceMatch['message'];
 			if (!$room->isFederatedConversation()) {
 				try {
