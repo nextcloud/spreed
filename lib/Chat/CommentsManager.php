@@ -281,8 +281,8 @@ class CommentsManager extends Manager {
 		}
 
 		if ($actorType !== null && $actorId !== null) {
-			$query->andWhere($query->expr()->lte('actor_type', $query->createNamedParameter($actorType)))
-				->andWhere($query->expr()->lte('actor_id', $query->createNamedParameter($actorId)));
+			$query->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter($actorType)))
+				->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId)));
 		}
 
 		if ($objectType !== '') {
