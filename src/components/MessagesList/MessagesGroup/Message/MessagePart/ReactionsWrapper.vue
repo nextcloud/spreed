@@ -328,7 +328,7 @@ export default {
 	}
 
 	.reaction-button--thumbnail {
-		height: 100%;
+		height: var(--clickable-area-small);
 		width: var(--minimal-button-width);
 		pointer-events: none;
 	}
