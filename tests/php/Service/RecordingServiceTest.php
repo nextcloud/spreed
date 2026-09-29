@@ -261,7 +261,7 @@ class RecordingServiceTest extends TestCase {
 
 		$this->appConfig->expects($this->once())
 			->method('setAppValueString')
-			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . 'token123/' . sha1('recording.mp4'), 'shareToken', true, true);
+			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . sha1('token123/recording.mp4'), 'shareToken', true, true);
 
 		// The active-recording marker is cleared once the upload share is created,
 		// so a new recording can start while this one is still being uploaded.
@@ -339,7 +339,7 @@ class RecordingServiceTest extends TestCase {
 		// Only the temporary upload share's tracking value is cleared here; the
 		// active-recording marker was already removed in requestUpload().
 		$this->appConfig->expects($this->once())->method('deleteAppValue')
-			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . 'token123/' . sha1('name.ogg'));
+			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . sha1('token123/name.ogg'));
 
 		$this->notificationManager->expects($this->once())->method('notify');
 
@@ -466,7 +466,7 @@ class RecordingServiceTest extends TestCase {
 
 	public function testGetRecordingUploadOwnerReturnsShareOwner(): void {
 		$this->appConfig->method('getAppValueString')
-			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . 'token123/' . sha1('name.ogg'), '', true)
+			->with(RecordingService::APPCONFIG_UPLOAD_PREFIX . sha1('token123/name.ogg'), '', true)
 			->willReturn('shareToken');
 
 		$share = $this->createStub(IShare::class);
@@ -488,5 +488,21 @@ class RecordingServiceTest extends TestCase {
 		$this->shareManager->method('getShareByToken')->willThrowException(new ShareNotFound());
 
 		$this->assertNull($this->recordingService->getRecordingUploadOwner('token123', 'name.ogg'));
+	}
+
+	public function testGetRecordingUploadOwnerWithLongRoomToken(): void {
+		$roomToken = str_repeat('a', 30);
+		$this->appConfig->method('getAppValueString')
+			->willReturnCallback(function (string $key) use ($roomToken): string {
+				$this->assertSame(RecordingService::APPCONFIG_UPLOAD_PREFIX . sha1($roomToken . '/name.ogg'), $key);
+				$this->assertLessThanOrEqual(64, strlen($key));
+				return 'shareToken';
+			});
+
+		$share = $this->createStub(IShare::class);
+		$share->method('getShareOwner')->willReturn('user1');
+		$this->shareManager->method('getShareByToken')->with('shareToken')->willReturn($share);
+
+		$this->assertSame('user1', $this->recordingService->getRecordingUploadOwner($roomToken, 'name.ogg'));
 	}
 }

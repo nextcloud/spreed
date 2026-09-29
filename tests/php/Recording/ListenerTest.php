@@ -16,6 +16,7 @@ use OCP\Files\Events\Node\BeforeNodeCreatedEvent;
 use OCP\Files\Events\Node\NodeWrittenEvent;
 use OCP\Files\Folder;
 use OCP\Files\Node;
+use OCP\IUserSession;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -24,6 +25,7 @@ class ListenerTest extends TestCase {
 	protected RecordingService&MockObject $recordingService;
 	protected ConsentService&MockObject $consentService;
 	protected IActivityManager&MockObject $activityManager;
+	protected IUserSession&MockObject $userSession;
 	protected LoggerInterface&MockObject $logger;
 	protected Listener $listener;
 
@@ -33,12 +35,14 @@ class ListenerTest extends TestCase {
 		$this->recordingService = $this->createMock(RecordingService::class);
 		$this->consentService = $this->createMock(ConsentService::class);
 		$this->activityManager = $this->createMock(IActivityManager::class);
+		$this->userSession = $this->createMock(IUserSession::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 
 		$this->listener = new Listener(
 			$this->recordingService,
 			$this->consentService,
 			$this->activityManager,
+			$this->userSession,
 			$this->logger,
 		);
 	}
@@ -77,6 +81,21 @@ class ListenerTest extends TestCase {
 		$this->activityManager->expects($this->never())->method('setCurrentUserId');
 
 		$this->listener->handle(new BeforeNodeCreatedEvent($node));
+	}
+
+	public function testBeforeNodeCreatedIgnoresLoggedInUser(): void {
+		$this->userSession->method('isLoggedIn')->willReturn(true);
+		$this->recordingService->expects($this->never())->method('getRecordingUploadOwner');
+		$this->activityManager->expects($this->never())->method('setCurrentUserId');
+
+		$this->listener->handle(new BeforeNodeCreatedEvent($this->nodeInFolder('token123', 'recording.mp4')));
+	}
+
+	public function testBeforeNodeCreatedIgnoresFolders(): void {
+		$this->recordingService->expects($this->never())->method('getRecordingUploadOwner');
+		$this->activityManager->expects($this->never())->method('setCurrentUserId');
+
+		$this->listener->handle(new BeforeNodeCreatedEvent($this->createMock(Folder::class)));
 	}
 
 	public function testNodeWrittenResetsCurrentUserIdAfterMatchingBeforeNodeCreated(): void {

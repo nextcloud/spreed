@@ -25,6 +25,7 @@ use OCP\Files\Events\Node\BeforeNodeCreatedEvent;
 use OCP\Files\Events\Node\NodeWrittenEvent;
 use OCP\Files\Folder;
 use OCP\Files\Node;
+use OCP\IUserSession;
 use OCP\TaskProcessing\Events\AbstractTaskProcessingEvent;
 use OCP\TaskProcessing\Events\TaskFailedEvent;
 use OCP\TaskProcessing\Events\TaskSuccessfulEvent;
@@ -40,6 +41,7 @@ class Listener implements IEventListener {
 		private readonly RecordingService $recordingService,
 		private readonly ConsentService $consentService,
 		private readonly IActivityManager $activityManager,
+		private readonly IUserSession $userSession,
 		private readonly LoggerInterface $logger,
 	) {
 	}
@@ -84,6 +86,10 @@ class Listener implements IEventListener {
 	 * for the duration of the write instead of leaving it as a remote user.
 	 */
 	protected function beforeRecordingUploadWritten(Node $node): void {
+		if ($this->userSession->isLoggedIn()) {
+			return;
+		}
+
 		$owner = $this->getRecordingUploadOwner($node);
 		if ($owner !== null) {
 			$this->activityManager->setCurrentUserId($owner);
@@ -99,6 +105,10 @@ class Listener implements IEventListener {
 	}
 
 	protected function getRecordingUploadOwner(Node $node): ?string {
+		if ($node instanceof Folder) {
+			return null;
+		}
+
 		$parent = $node->getParent();
 		if (!$parent instanceof Folder) {
 			return null;
