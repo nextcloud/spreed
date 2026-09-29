@@ -24,9 +24,9 @@ import { useIsInCall } from './useIsInCall.js'
 
 let fetchingParticipants = false
 let pendingChanges = true
-let throttleFastUpdateTimeout: NodeJS.Timeout | undefined
-let throttleSlowUpdateTimeout: NodeJS.Timeout | undefined
-let throttleLongUpdateTimeout: NodeJS.Timeout | undefined
+let throttleFastUpdateTimeout: ReturnType<typeof setTimeout> | undefined
+let throttleSlowUpdateTimeout: ReturnType<typeof setTimeout> | undefined
+let throttleLongUpdateTimeout: ReturnType<typeof setTimeout> | undefined
 
 /**
  * Composable to control logic for fetching participants list

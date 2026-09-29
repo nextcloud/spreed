@@ -51,7 +51,7 @@ const isLeavingAfterSessionIssue = useSessionIssueHandler()
 const actorStore = useActorStore()
 const tokenStore = useTokenStore()
 
-let fetchCurrentConversationIntervalId: NodeJS.Timeout | number | undefined
+let fetchCurrentConversationIntervalId: ReturnType<typeof setInterval> | undefined
 const joiningConversation = ref(false)
 const recordingConsentGiven = ref(false)
 
@@ -83,7 +83,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-	window.clearInterval(fetchCurrentConversationIntervalId)
+	clearInterval(fetchCurrentConversationIntervalId)
 	EventBus.off('should-refresh-conversations', fetchCurrentConversation)
 	EventBus.off('signaling-participant-list-changed', fetchCurrentConversation)
 	fetchCurrentConversationIntervalId = undefined
@@ -174,7 +174,7 @@ async function joinConversation() {
 		// the external signaling server is used; when the internal
 		// signaling server is used periodic polling has to be used
 		// instead.
-		fetchCurrentConversationIntervalId = window.setInterval(fetchCurrentConversation, 30000)
+		fetchCurrentConversationIntervalId = setInterval(fetchCurrentConversation, 30000)
 	}
 
 	let flags = PARTICIPANT.CALL_FLAG.IN_CALL
@@ -216,7 +216,7 @@ async function fetchCurrentConversation() {
 			actorStore.setCurrentParticipant(conversation)
 		}
 	} catch (exception) {
-		window.clearInterval(fetchCurrentConversationIntervalId)
+		clearInterval(fetchCurrentConversationIntervalId)
 		fetchCurrentConversationIntervalId = undefined
 
 		vuexStore.dispatch('deleteConversation', props.token)
