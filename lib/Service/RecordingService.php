@@ -314,7 +314,7 @@ class RecordingService {
 	}
 
 	private function getUploadShareConfigKey(string $roomToken, string $fileName): string {
-		return self::APPCONFIG_UPLOAD_PREFIX . $roomToken . '/' . sha1(basename($fileName));
+		return self::APPCONFIG_UPLOAD_PREFIX . sha1($roomToken . '/' . basename($fileName));
 	}
 
 	/**
