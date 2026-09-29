@@ -45,11 +45,11 @@ type GetMessagesContext = {
 
 const GET_MESSAGES_CONTEXT_KEY: InjectionKey<GetMessagesContext> = Symbol.for('GET_MESSAGES_CONTEXT')
 
-let pollingTimeout: NodeJS.Timeout | undefined
-let expirationInterval: NodeJS.Timeout | undefined
+let pollingTimeout: ReturnType<typeof setTimeout> | undefined
+let expirationInterval: ReturnType<typeof setInterval> | undefined
 let pollingErrorTimeout = 1_000
 let chatRelaySupported: boolean | null = null
-let fallbackPollInterval: NodeJS.Timeout | undefined
+let fallbackPollInterval: ReturnType<typeof setInterval> | undefined
 
 /**
  * Composable to provide control logic for fetching messages list
