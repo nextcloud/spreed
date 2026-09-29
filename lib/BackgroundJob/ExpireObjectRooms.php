@@ -56,6 +56,9 @@ class ExpireObjectRooms extends TimedJob {
 		if ($classifiedRetention !== 0) {
 			$this->executeRetention(Room::OBJECT_TYPE_CLASSIFIED, $classifiedRetention);
 		}
+		// expire all rooms for share password by video conference types after one hour to clean up
+		// as these rooms cannot be used anymore. Messages can be shared in it, but no one can join anymore by design.
+		$this->executeRetention(Room::OBJECT_TYPE_VIDEO_VERIFICATION, 3600);
 	}
 
 	protected function executeRetention(string $objectType, int $retentionSeconds): void {
@@ -75,6 +78,7 @@ class ExpireObjectRooms extends TimedJob {
 
 			$this->roomService->deleteRoom($room);
 			$numDeletedRooms++;
+
 		}
 
 		$this->logger->info('Deleted {numDeletedRooms} {objectType} rooms because they did not have activity for {retentionSeconds} seconds', [
