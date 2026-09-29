@@ -138,13 +138,6 @@ function abortSearch() {
 }
 
 /**
- * Continue fetching more search results
- */
-function loadMore() {
-	return fetchSearchResults(false)
-}
-
-/**
  *
  */
 function fetchNewSearchResult() {
@@ -164,8 +157,8 @@ type SearchMessageCancelableRequest = {
  */
 async function fetchSearchResults(isNew = true): Promise<void> {
 	const term = searchText.value.trim()
-	// Don't search if the search text is empty
-	if (term.length === 0) {
+	// Don't search if the search text and filters are empty
+	if (term.length === 0 && !hasFilter.value) {
 		return
 	}
 
@@ -186,9 +179,6 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 			searchResults.value = []
 		}
 
-		if (term.length === 0 && !fromUser.value && !sinceDate.value && !untilDate.value) {
-			return
-		}
 		const response = await request({
 			term,
 			person: fromUser.value?.id,
@@ -201,18 +191,10 @@ async function fetchSearchResults(isNew = true): Promise<void> {
 
 		const data = response?.data?.ocs?.data
 		if (data && data.entries.length > 0) {
-			let entries = data.entries as UnifiedSearchResultEntry[]
+			const entries = data.entries as UnifiedSearchResultEntry[]
 
 			isSearchExhausted.value = entries.length < searchLimit.value
 			searchCursor.value = data.cursor
-
-			// FIXME: remove the filter after the person filter is fixed on the server
-			if (fromUser.value) {
-				entries = entries.filter((entry) => entry.attributes.actorId === fromUser.value?.id)
-				if (entries.length === 0 && !isSearchExhausted.value) {
-					return await loadMore()
-				}
-			}
 
 			searchResults.value = searchResults.value.concat(entries.map(mapMessageResultEntry))
 			nextTick(() => initializeNavigation())
@@ -338,7 +320,7 @@ watch([searchText, fromUser, sinceDate, untilDate], debounceFetchSearchResults)
 					:to="item.to" />
 			</template>
 			<NcEmptyContent
-				v-else-if="!isFetchingResults && searchText.trim().length !== 0"
+				v-else-if="!isFetchingResults && (searchText.trim().length !== 0 || hasFilter)"
 				class="search-results__empty"
 				:name="t('spreed', 'No results found')">
 				<template #icon>

@@ -53,6 +53,17 @@ Feature: chat-4/search
       | participant2-displayname | Thread 1-1 | room1                   | Thread 1            | Thread 1-1           |
       | participant1-displayname | Thread 1   | room1                   | Thread 1            | Thread 1             |
 
+  Scenario: Search for messages of a person without a term
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    And user "participant2" sends message "Message 2" to room "room" with 201
+    When user "participant1" searches for messages with "person:participant2" in room "room" with 200
+      | title                    | subline   | attributes.conversation | attributes.messageId |
+      | participant2-displayname | Message 2 | room                    | Message 2            |
+
   Scenario: Can not search when being blocked by the lobby
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
