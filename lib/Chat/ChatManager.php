@@ -211,7 +211,7 @@ class ChatManager {
 			if (!$shouldSkipLastMessageUpdate) {
 				// Update last_message
 				$this->roomService->setLastMessage($chat, $comment);
-				$this->unreadCountCache->clear($chat->getId() . '-');
+				$this->unreadCountCache->remove((string)$chat->getId());
 
 				if ($threadId !== 0) {
 					$isThread = $this->threadService->updateLastMessageInfoAfterReply($threadId, (int)$comment->getId(), $chat->getId());
@@ -317,7 +317,7 @@ class ChatManager {
 
 			// Update last_message
 			$this->roomService->setLastMessage($chat, $comment);
-			$this->unreadCountCache->clear($chat->getId() . '-');
+			$this->unreadCountCache->remove((string)$chat->getId());
 
 			$event = new SystemMessageSentEvent($chat, $comment);
 			$this->dispatcher->dispatchTyped($event);
@@ -361,7 +361,7 @@ class ChatManager {
 
 			// Update last_message
 			$this->roomService->setLastMessage($chat, $comment);
-			$this->unreadCountCache->clear($chat->getId() . '-');
+			$this->unreadCountCache->remove((string)$chat->getId());
 
 			$event = new SystemMessageSentEvent($chat, $comment);
 			$this->dispatcher->dispatchTyped($event);
@@ -482,7 +482,7 @@ class ChatManager {
 				|| $comment->getActorId() === Attendee::ACTOR_ID_CHANGELOG
 				|| str_starts_with((string)$comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)) {
 				$this->roomService->setLastMessage($chat, $comment);
-				$this->unreadCountCache->clear($chat->getId() . '-');
+				$this->unreadCountCache->remove((string)$chat->getId());
 			} else {
 				$this->roomService->setLastActivity($chat, $comment->getCreationDateTime());
 			}
@@ -659,7 +659,7 @@ class ChatManager {
 
 		$this->referenceManager->invalidateCache($chat->getToken());
 
-		$this->unreadCountCache->clear($chat->getId() . '-');
+		$this->unreadCountCache->remove((string)$chat->getId());
 
 		if ($chat->getLastPinnedId() === $messageId) {
 			$pinnedMessages = $this->attachmentService->getAttachmentsByType($chat, Attachment::TYPE_PINNED, 0, 1);
@@ -998,14 +998,15 @@ class ChatManager {
 		 * for a given message id $lastReadMessage we cache the number of messages
 		 * that exist past that message, which happen to also be the number of
 		 * unread messages, because this is expensive to query per room and user repeatedly
+		 * we store as a map so there is single key removal and no scan of keyspace to clear cache
 		 */
-		$key = $chat->getId() . '-' . $lastReadMessage;
-		$unreadCount = $this->unreadCountCache->get($key);
-		if ($unreadCount === null) {
-			$unreadCount = $this->commentsManager->getNumberOfCommentsWithVerbsForObjectSinceComment('chat', (string)$chat->getId(), $lastReadMessage, [self::VERB_MESSAGE, self::VERB_OBJECT_SHARED]);
-			$this->unreadCountCache->set($key, $unreadCount, 1800);
+		$roomKey = (string)$chat->getId();
+		$counts = $this->unreadCountCache->get($roomKey) ?? [];
+		if (!array_key_exists($lastReadMessage, $counts)) {
+			$counts[$lastReadMessage] = $this->commentsManager->getNumberOfCommentsWithVerbsForObjectSinceComment('chat', (string)$chat->getId(), $lastReadMessage, [self::VERB_MESSAGE, self::VERB_OBJECT_SHARED]);
+			$this->unreadCountCache->set($roomKey, $counts, 1800);
 		}
-		return $unreadCount;
+		return $counts[$lastReadMessage];
 	}
 
 	/**
