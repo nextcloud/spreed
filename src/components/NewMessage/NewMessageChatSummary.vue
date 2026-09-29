@@ -78,7 +78,7 @@ type TaskProcessingCancelableRequest = {
 	cancel: () => void
 }
 
-let getTaskInterval: NodeJS.Timeout | undefined
+let getTaskInterval: ReturnType<typeof setInterval> | undefined
 const cancelGetTask: Record<string, TaskProcessingCancelableRequest['cancel']> = {}
 
 const chatSummaryRef = useTemplateRef<HTMLParagraphElement>('chatSummaryRef')
