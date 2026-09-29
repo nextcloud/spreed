@@ -87,6 +87,8 @@ class Config {
 	public const string RETENTION_INSTANT_MEETINGS = 'retention_instant_meetings';
 	public const string MAX_CALL_DURATION = 'max_call_duration';
 	public const string FEATURE_HINTS_HIDDEN = 'feature_hints_hidden';
+	public const string MATTERBRIDGE_BINARY = 'matterbridge_binary';
+	public const string MATTERBRIDGE_BOT_PASSWORD = 'bridge_bot_password';
 
 	/**
 	 * 1. Call recording, …

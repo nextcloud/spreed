@@ -17,6 +17,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Authentication\Token\IToken;
 use OCP\DB\Exception;
@@ -40,6 +41,7 @@ class MatterbridgeManager {
 	public function __construct(
 		private readonly IDBConnection $db,
 		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
 		private readonly IURLGenerator $urlGenerator,
 		private readonly IUserManager $userManager,
 		private readonly Manager $manager,
@@ -251,7 +253,7 @@ class MatterbridgeManager {
 		// check if user exists and create it if necessary
 		if (!$this->userManager->userExists(self::BRIDGE_BOT_USERID)) {
 			$pass = $this->generatePassword();
-			$this->config->setAppValue('spreed', 'bridge_bot_password', $pass);
+			$this->appConfig->setAppValueString(Config::MATTERBRIDGE_BOT_PASSWORD, $pass);
 			$botUser = $this->userManager->createUser(self::BRIDGE_BOT_USERID, $pass);
 			// set avatar
 			$avatar = $this->avatarManager->getAvatar(self::BRIDGE_BOT_USERID);
@@ -290,7 +292,7 @@ class MatterbridgeManager {
 		if ($isBridgeEnabled) {
 			// generate app token for the bot
 			$appToken = $this->generatePassword();
-			$botPassword = $this->config->getAppValue('spreed', 'bridge_bot_password', '');
+			$botPassword = $this->appConfig->getAppValueString(Config::MATTERBRIDGE_BOT_PASSWORD);
 			$generatedToken = $this->tokenProvider->generateToken(
 				$appToken,
 				self::BRIDGE_BOT_USERID,
@@ -732,7 +734,7 @@ class MatterbridgeManager {
 	 * @return int the corresponding matterbridge process ID, 0 if it failed
 	 */
 	private function launchMatterbridge(Room $room): int {
-		$binaryPath = $this->config->getAppValue('spreed', 'matterbridge_binary');
+		$binaryPath = $this->appConfig->getAppValueString(Config::MATTERBRIDGE_BINARY);
 		$configPath = sprintf('/tmp/bridge-%s.toml', $room->getToken());
 
 		// recreate config file if it's not there (can happen after a reboot)
@@ -968,7 +970,7 @@ class MatterbridgeManager {
 	}
 
 	public function getCurrentVersionFromBinary(): ?string {
-		$binaryPath = $this->config->getAppValue('spreed', 'matterbridge_binary');
+		$binaryPath = $this->appConfig->getAppValueString(Config::MATTERBRIDGE_BINARY);
 		if (!file_exists($binaryPath)) {
 			return null;
 		}
