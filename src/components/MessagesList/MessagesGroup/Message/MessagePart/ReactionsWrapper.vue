@@ -9,7 +9,6 @@
 		class="reactions-wrapper"
 		:class="{
 			light: isSplitViewEnabled && isSelfActor,
-			compact: isSplitViewEnabled,
 		}">
 		<NcPopover
 			v-for="reaction in reactionsSorted"
@@ -49,18 +48,16 @@
 			</div>
 		</NcPopover>
 
-		<template v-if="!isSplitViewEnabled">
-			<!-- all reactions button -->
-			<NcButton
-				v-if="showControls"
-				size="small"
-				:title="t('spreed', 'Show all reactions')"
-				:aria-label="t('spreed', 'Show all reactions')"
-				@click="showAllReactions = true">
-				<IconHeartOutline :size="15" />
-			</NcButton>
-			<span v-else class="reaction-button--thumbnail" />
-		</template>
+		<!-- all reactions button -->
+		<NcButton
+			v-if="showControls"
+			size="small"
+			:title="t('spreed', 'Show all reactions')"
+			:aria-label="t('spreed', 'Show all reactions')"
+			@click="showAllReactions = true">
+			<IconHeartOutline :size="15" />
+		</NcButton>
+		<span v-else class="reaction-button--thumbnail" />
 
 		<!-- More reactions picker -->
 		<NcEmojiPicker
@@ -356,7 +353,7 @@ export default {
 }
 
 // Split view
-.reactions-wrapper.compact {
+.reactions-wrapper {
 	.reaction-button--trigger,
 	.reaction-button--thumbnail {
 		padding-inline: 4px;
