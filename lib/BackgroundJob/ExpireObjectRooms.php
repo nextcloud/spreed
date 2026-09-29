@@ -70,15 +70,14 @@ class ExpireObjectRooms extends TimedJob {
 		foreach ($rooms as $room) {
 			if ($objectType === Room::OBJECT_TYPE_EVENT) {
 				[, $endTime] = explode('#', $room->getObjectId());
-				if ($endTime >= $minimumLastActivity) {
-					// Event time is in the future, so don't even consider deleting
+				if ($endTime >= $minimumLastActivity // Event time is in the future, so don't even consider deleting
+					|| $room->getActiveSince() !== null) { // never expire rooms with ongoing video conferences
 					continue;
 				}
 			}
 
 			$this->roomService->deleteRoom($room);
 			$numDeletedRooms++;
-
 		}
 
 		$this->logger->info('Deleted {numDeletedRooms} {objectType} rooms because they did not have activity for {retentionSeconds} seconds', [
