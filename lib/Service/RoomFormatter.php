@@ -294,7 +294,7 @@ class RoomFormatter {
 			} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 				$roomData['notificationLevel'] = Participant::NOTIFY_ALWAYS;
 			} else {
-				$adminSetting = (int)$this->serverConfig->getAppValue('spreed', 'default_group_notification', (string)Participant::NOTIFY_DEFAULT);
+				$adminSetting = $this->appConfig->getAppValueInt(Config::DEFAULT_GROUP_NOTIFICATION);
 				if ($adminSetting === Participant::NOTIFY_DEFAULT) {
 					$roomData['notificationLevel'] = Participant::NOTIFY_ALWAYS;
 				} else {
