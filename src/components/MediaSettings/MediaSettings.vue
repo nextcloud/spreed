@@ -251,6 +251,7 @@
 <script>
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { t } from '@nextcloud/l10n'
+import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { computed, h, markRaw, ref, useId } from 'vue'
@@ -714,6 +715,11 @@ export default {
 		},
 	},
 
+	created() {
+		useHotKey('m', this.handleAudioHotKey, { allowInModal: true })
+		useHotKey('v', this.handleVideoHotKey, { allowInModal: true })
+	},
+
 	beforeMount() {
 		subscribe('talk:media-settings:show', this.showMediaSettings)
 		subscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
@@ -787,6 +793,18 @@ export default {
 				this.audioOn = false
 			}
 			this.audioDeviceStateChanged = true
+		},
+
+		handleAudioHotKey() {
+			if (this.show && this.audioPreviewAvailable && !this.audioStreamError) {
+				this.toggleAudio()
+			}
+		},
+
+		handleVideoHotKey() {
+			if (this.show && this.videoPreviewAvailable && !this.videoStreamError) {
+				this.toggleVideo()
+			}
 		},
 
 		toggleVideo() {
